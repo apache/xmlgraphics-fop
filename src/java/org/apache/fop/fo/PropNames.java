@@ -790,7 +790,8 @@ public class PropNames {
      */
     private static final HashMap toIndex;
     static {
-        toIndex = new HashMap(LAST_PROPERTY_INDEX + 1);
+        toIndex = new HashMap(
+                (int)((LAST_PROPERTY_INDEX + 1) / 0.75) + 1);
         // Set up the toIndex Hashmap with the name of the
         // property as a key, and the integer index as a value
         for (int i = 0; i <= LAST_PROPERTY_INDEX; i++) {
