@@ -310,7 +310,8 @@ The areas are then placed on a last page.</p>
           <tr>
             <td>Justified Text</td>
             <td>High</td>
-            <td/>
+            <td>This has been completed, thanks largely to Luca Furini. Although there is still issue 28706
+that requires further analysis.</td>
           </tr>
           <tr>
             <td>Multi-column layout</td>
