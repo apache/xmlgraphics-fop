@@ -7,20 +7,53 @@
   </header>
   <body>
     <section>
-      <title>How to report bugs</title>
-    <p>Please report bugs to <link href="http://nagoya.apache.org/bugzilla/">bugzilla</link>, the Apache bug
-       database. A copy of your bug report is sent automatically to the discussion list fop-dev@xml.apache.org. </p>
-    <p>Please make sure, before you report a bug, that it is not mentioned in the FAQ or
-       in the list of open bugs at bugzilla.</p>
-    <p>Please make your description as concise as possible and add an example fo 
-       file with your report, which just demonstrates the problem. Thanks for your help!</p>
-  </section>
-  <section>
-    <title>Known bugs</title>
-    <p>A list of known bugs can be found at
-       <link href="http://nagoya.apache.org/bugzilla/">bugzilla</link>.</p>
-  </section>
-</body>
+      <title>Bugs Already Reported</title>
+      <p>A list of unresolved reported bugs can be found at
+<link href="http://nagoya.apache.org/bugzilla/buglist.cgi?bug_status=NEW&amp;bug_status=ASSIGNED&amp;bug_status=REOPENED&amp;email1=&amp;emailtype1=substring&amp;emailassigned_to1=1&amp;email2=&amp;emailtype2=substring&amp;emailreporter2=1&amp;bugidtype=include&amp;bug_id=&amp;changedin=&amp;votes=&amp;chfieldfrom=&amp;chfieldto=Now&amp;chfieldvalue=&amp;product=Fop&amp;short_desc=&amp;short_desc_type=allwordssubstr&amp;long_desc=&amp;long_desc_type=allwordssubstr&amp;bug_file_loc=&amp;bug_file_loc_type=allwordssubstr&amp;keywords=&amp;keywords_type=anywords&amp;field0-0-0=noop&amp;type0-0-0=noop&amp;value0-0-0=&amp;order=bugs.component">FOP
+Open Bugs (Bugzilla)</link>.</p>
+    </section>
+    <section>
+      <title>Reporting New Bugs</title>
+      <p>User reports of bugs and requests for enhancements are extremely
+important parts of FOP development, and we appreciate the time you take to help
+us track these issues down.
+To help us ensure that the bug database is as useful as it should be, please
+use the following checklist if you are considering reporting a new bug:</p>
+        <ul>
+          <li>Is your issue really a request to comply with some aspect of the
+XSL-FO standard?
+If so, please do not enter a bug report.
+The developers already carefully track which standard requirements have been
+implemented.
+Other enhancement requests are welcome (although they are not technically
+"bugs", they are entered and tracked in the same system -- just be sure to mark
+the issue as an enhancement).</li>
+          <li>Is your issue addressed by an <link
+href="http://xml.apache.org/fop/faq.html">FAQ</link>? If so, please do not
+enter a bug report unless the FAQ did not adequately address your issue.</li>
+          <li>Has this bug already been reported?
+See section above for a list of bugs that have already been reported.
+If the bug has already been reported, please do not open a new bug report.
+Reporting the same bug twice will only slow the development team down.
+However, if you have insight that may help developers track an existing problem,
+please add comments and/or file attachments to the existing bug.</li>
+          <li>Do you know how to write a good bug report?
+Please review the
+<link href="http://nagoya.apache.org/bugzilla/bugwritinghelp.html">Apache Bug
+Writing Guidelines</link> before submitting your report.</li>
+          <li>If, and only if, you have passed all of the above steps, please
+enter a new bug report at
+<link href="http://nagoya.apache.org/bugzilla/enter_bug.cgi?product=Fop">The
+FOP bug database (Bugzilla)</link>.
+You will be asked to login to an existing Bugzilla account or to create a new
+one.
+When entering the bug report, please make your description complete and concise.
+If appropriate, attach a minimal fo file to your report which demonstrates the
+problem.</li>
+          <li>After submission, a copy of your bug report will be automatically
+sent to the FOP developer discussion list.</li>
+        </ul>
+    </section>
+  </body>
 </document>
-
 
