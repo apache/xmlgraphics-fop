@@ -1093,6 +1093,7 @@ public class PDFRenderer extends PrintRenderer {
             return;
         }
 
+        url = ImageFactory.getURL(url);
         ImageFactory fact = ImageFactory.getInstance();
         FopImage fopimage = fact.getImage(url, userAgent);
         if (fopimage == null) {
