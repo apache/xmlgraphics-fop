@@ -201,6 +201,9 @@ public class PropertySets {
         elem.addProperty(Constants.PR_COLOR_PROFILE_NAME);
         elem.addProperty(Constants.PR_RENDERING_INTENT);
 
+        elem = elements[Constants.FO_BOOKMARK_TREE];
+//      elem.addContent(Constants.FO_BOOKMARK);
+
         elem = elements[Constants.FO_PAGE_SEQUENCE];
         elem.addProperty(Constants.PR_COUNTRY);
         elem.addProperty(Constants.PR_FORMAT);
@@ -1117,7 +1120,7 @@ public class PropertySets {
         BitSet relevant = new BitSet();
         BitSet valid = new BitSet();
         int elementId;
-        ArrayList children;
+        ArrayList childFOs;
 
         Element(int elementId) {
             this.elementId = elementId;
@@ -1143,14 +1146,14 @@ public class PropertySets {
          * Add a single fo element as a content child.
          */
         public void addContent(int elementId) {
-            if (children == null) {
-                children = new ArrayList();
+            if (childFOs == null) {
+                childFOs = new ArrayList();
             }
-            children.add(elements[elementId]);
+            childFOs.add(elements[elementId]);
         }
 
         /**
-         * Add a set of fo elements as content children.
+         * Add a set of fo elements as content childFOs.
          */
         public void addContent(BitSet elements) {
             for (int i = 0; i < elements.size(); i++) {
@@ -1161,16 +1164,16 @@ public class PropertySets {
         }
 
         /**
-         * Merge the properties from the children into the set of valid
+         * Merge the properties from the child FO's into the set of valid
          * properties. Return true if at least one property could be added.
          */
         public boolean merge() {
-            if (children == null) {
+            if (childFOs == null) {
                 return false;
             }
             boolean dirty = false;
-            for (int i = 0; i < children.size(); i++) {
-                Element child = (Element) children.get(i);
+            for (int i = 0; i < childFOs.size(); i++) {
+                Element child = (Element) childFOs.get(i);
                 BitSet childValid = child.valid;
                 int n = childValid.length();
                 for (int j = 0; j < n; j++) {

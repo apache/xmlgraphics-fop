@@ -36,9 +36,9 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.fo.FOEventHandler;
-import org.apache.fop.fo.extensions.Bookmarks;
 import org.apache.fop.fo.pagination.PageSequence;
 import org.apache.fop.fo.pagination.Root;
+import org.apache.fop.fo.pagination.bookmarks.BookmarkTree;
 import org.apache.fop.layoutmgr.PageSequenceLayoutManager;
 import org.apache.fop.layoutmgr.LayoutManagerMaker;
 import org.apache.fop.layoutmgr.LayoutManagerMapping;
@@ -251,9 +251,9 @@ public class AreaTreeHandler extends FOEventHandler {
     public void endDocument() throws SAXException {
 
         // process fo:bookmark-tree
-        Bookmarks bookmarks = rootFObj.getBookmarks();
-        if (bookmarks != null) {
-            BookmarkData data = new BookmarkData(bookmarks);
+        BookmarkTree bookmarkTree = rootFObj.getBookmarkTree();
+        if (bookmarkTree != null) {
+            BookmarkData data = new BookmarkData(bookmarkTree);
             addOffDocumentItem(data);
         }
 

@@ -29,7 +29,7 @@ import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.PropertyList;
 import org.apache.fop.fo.ValidationException;
-import org.apache.fop.fo.extensions.Bookmarks;
+import org.apache.fop.fo.pagination.bookmarks.BookmarkTree;
 import org.apache.fop.fo.extensions.ExtensionElementMapping;
 
 /**
@@ -42,7 +42,7 @@ public class Root extends FObj {
 
     private LayoutMasterSet layoutMasterSet;
     private Declarations declarations;
-    private Bookmarks bookmarks = null;
+    private BookmarkTree bookmarkTree = null;
     private List pageSequences;
 
     // temporary until above list populated
@@ -82,7 +82,7 @@ public class Root extends FObj {
     protected void endOfNode() throws FOPException {
         if (!pageSequenceFound || layoutMasterSet == null) {
             missingChildElementError("(layout-master-set, declarations?, " + 
-                "fox:bookmarks?, page-sequence+)");
+                "bookmark-tree?, page-sequence+)");
         }
     }
 
@@ -103,10 +103,18 @@ public class Root extends FObj {
                     nodesOutOfOrderError(loc, "fo:layout-master-set", "fo:declarations");
                 } else if (declarations != null) {
                     tooManyNodesError(loc, "fo:declarations");
-                } else if (bookmarks != null) {
-                    nodesOutOfOrderError(loc, "fo:declarations", "fox:bookmarks");
+                } else if (bookmarkTree != null) {
+                    nodesOutOfOrderError(loc, "fo:declarations", "fo:bookmark-tree");
                 } else if (pageSequenceFound) {
                     nodesOutOfOrderError(loc, "fo:declarations", "fo:page-sequence");
+                }
+            } else if (localName.equals("bookmark-tree")) {
+                if (layoutMasterSet == null) {
+                    nodesOutOfOrderError(loc, "fo:layout-master-set", "fo:bookmark-tree");
+                } else if (bookmarkTree != null) {
+                    tooManyNodesError(loc, "fo:bookmark-tree");
+                } else if (pageSequenceFound) {
+                    nodesOutOfOrderError(loc, "fo:bookmark-tree", "fo:page-sequence");
                 }
             } else if (localName.equals("page-sequence")) { 
                 if (layoutMasterSet == null) {
@@ -116,16 +124,6 @@ public class Root extends FObj {
                 }
             } else {
                 invalidChildError(loc, nsURI, localName);
-            }
-        } else if (nsURI.equals(ExtensionElementMapping.URI)) {
-            if (!localName.equals("bookmarks")) {
-                invalidChildError(loc, nsURI, localName);
-            } else if (layoutMasterSet == null) {
-                nodesOutOfOrderError(loc, "fo:layout-master-set", "fox:bookmarks");
-            } else if (bookmarks != null) {
-                tooManyNodesError(loc, "fox:bookmarks");
-            } else if (pageSequenceFound) {
-                nodesOutOfOrderError(loc, "fox:bookmarks", "fo:page-sequence");
             }
         } else {
             invalidChildError(loc, nsURI, localName);
@@ -226,19 +224,19 @@ public class Root extends FObj {
     }
 
     /**
-     * Set the Bookmarks object for this FO
-     * @param bookmarks the Bookmarks object
+     * Set the BookmarkTree object for this FO
+     * @param bookmarkTree the BookmarkTree object
      */
-    public void setBookmarks(Bookmarks bookmarks) {
-        this.bookmarks = bookmarks;
+    public void setBookmarkTree(BookmarkTree bookmarkTree) {
+        this.bookmarkTree = bookmarkTree;
     }
 
     /**
-     * Public accessor for the Bookmarks for this FO
-     * @return the Bookmarks object
+     * Public accessor for the BookmarkTree object for this FO
+     * @return the BookmarkTree object
      */
-    public Bookmarks getBookmarks() {
-        return bookmarks;
+    public BookmarkTree getBookmarkTree() {
+        return bookmarkTree;
     }
 
     /**

@@ -44,15 +44,8 @@ public class ExtensionElementMapping extends ElementMapping {
     protected void initialize() {
         if (foObjs == null) {
             foObjs = new HashMap();
-            foObjs.put("bookmarks", new B());
             foObjs.put("outline", new O());
             foObjs.put("label", new L());
-        }
-    }
-
-    static class B extends ElementMapping.Maker {
-        public FONode make(FONode parent) {
-            return new Bookmarks(parent);
         }
     }
 
