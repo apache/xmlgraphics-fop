@@ -42,8 +42,34 @@ import org.apache.fop.xml.XmlEventReader;
  */
 
 public class Driver {
+
+    /** private constant to indicate renderer was not defined.  */
+    private static final int NOT_SET = 0;
+    /** Render to PDF. OutputStream must be set */
+    public static final int RENDER_PDF = 1;
+    /** Render to a GUI window. No OutputStream neccessary */
+    public static final int RENDER_AWT = 2;
+    /** Render to MIF. OutputStream must be set */
+    public static final int RENDER_MIF = 3;
+    /** Render to XML. OutputStream must be set */
+    public static final int RENDER_XML = 4;
+    /** Render to PRINT. No OutputStream neccessary */
+    public static final int RENDER_PRINT = 5;
+    /** Render to PCL. OutputStream must be set */
+    public static final int RENDER_PCL = 6;
+    /** Render to Postscript. OutputStream must be set */
+    public static final int RENDER_PS = 7;
+    /** Render to Text. OutputStream must be set */
+    public static final int RENDER_TXT = 8;
+    /** Render to SVG. OutputStream must be set */
+    public static final int RENDER_SVG = 9;
+    /** Render to RTF. OutputStream must be set */
+    public static final int RENDER_RTF = 10;
+
     /** If true, full error stacks are reported */
-    private static boolean _errorDump = false;
+    private boolean _errorDump = false;
+    private Configuration configuration = null;
+    private FOPOptions options = null;
     
     private InputHandler inputHandler;
     private XMLReader parser;
@@ -67,9 +93,18 @@ public class Driver {
      * Error handling, version and logging initialization.
      */
     public Driver() {
-        _errorDump =
-                Configuration.getBooleanValue("debugMode").booleanValue();
         String version = Version.getVersion();
+        configuration = new Configuration();
+        options = new FOPOptions(configuration);
+        _errorDump = configuration.isTrue("debugMode");
+        Fop.logger.config(version);
+    }
+    
+    public Driver(String[] args, Configuration config, FOPOptions options) {
+        String version = Version.getVersion();
+        configuration = config;
+        this.options = options;
+        _errorDump = configuration.isTrue("debugMode");
         Fop.logger.config(version);
     }
 
@@ -103,7 +138,7 @@ public class Driver {
      * @throws FOPException
      */
     public void run () throws FOPException {
-        setInputHandler(Options.getInputHandler());
+        setInputHandler(options.getInputHandler());
         parser = inputHandler.getParser();
         saxSource = inputHandler.getInputSource();
         // Setting of namespace-prefixes feature no longer required
@@ -140,26 +175,7 @@ public class Driver {
     }
 
     /**
-     * Gets the parser Class name.
-     * 
-     * @return a String with the value of the property
-     * <code>org.xml.sax.parser</code> or the default value
-     * <code>org.apache.xerces.parsers.SAXParser</code>.
-     */
-    public static final String getParserClassName() {
-        String parserClassName = null;
-        try {
-            parserClassName = System.getProperty("org.xml.sax.parser");
-        } catch (SecurityException se) {}
-
-        if (parserClassName == null) {
-            parserClassName = "org.apache.xerces.parsers.SAXParser";
-        }
-        return parserClassName;
-    }
-
-    /**
-     * Sets the InputHandler for XML imput as specified in Options.
+     * Sets the InputHandler for XML imput as specified in FOPOptions.
      * @param inputHandler the InputHandler
      */
     public void setInputHandler(InputHandler inputHandler) {
@@ -180,7 +196,7 @@ public class Driver {
      * Prints stack trace of an exception
      * @param e the exception to trace
      */
-    public static void dumpError(Exception e) {
+    public void dumpError(Exception e) {
         if (_errorDump) {
             if (e instanceof SAXException) {
                 e.printStackTrace();
