@@ -156,12 +156,11 @@ issues should be fixed in the upcoming JDK 1.4</note>
     <section id="input">
      <title>XML/XSL/DOM Inputs</title>
      <p>
-You may want to supply you input to FOP from different data sources.
-For example you may have a DOM and XSL stylesheet or you may want to
-set variables in the stylesheet. The page here:
+You can supply your input to FOP from a variety of data sources.
+For example, you may have a DOM and an XSL stylesheet; or you may want to
+set variables in the stylesheet.
 <fork href="http://xml.apache.org/xalan-j/usagepatterns.html">
-http://xml.apache.org/xalan-j/usagepatterns.html</fork> describes
-how you can do these things.
+Xalan Basic Usage Patterns</fork> provides some interface documentation and cookbook solutions for such situations.
      </p>
      <p>
 You can use the content handler from the driver to create a SAXResult.
