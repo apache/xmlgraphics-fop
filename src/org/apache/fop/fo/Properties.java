@@ -26,6 +26,7 @@ import org.apache.fop.fo.PropertyConsts;
 import org.apache.fop.fo.FOTree;
 import org.apache.fop.fo.FObjects;
 import org.apache.fop.fo.expr.PropertyValue;
+import org.apache.fop.fo.expr.AbstractPropertyValue;
 import org.apache.fop.fo.expr.PropertyValueList;
 import org.apache.fop.fo.expr.PropertyException;
 import org.apache.fop.fo.expr.PropertyNotImplementedException;
@@ -152,11 +153,12 @@ public abstract class Properties {
                                 ;
 
     /**
-     * @param datatypes <tt>int</tt> bitmap of datatype(s).
+     * Form a string representation of bitmap of datatypes.
+     * @param datatypes - a bitmap of datatype(s).
      * @return <tt>String</tt> containing a list of text names of datatypes
      * found in the bitmap.  Individual names are enclosed in angle brackets
      * and separated by a vertical bar.  Psuedo-datatypes are in upper case.
-     * @exception PropertyException if no matches are found:
+     * @exception PropertyException if no matches are found.
      */
     public static String listDataTypes(int datatypes) throws PropertyException
     {
@@ -199,9 +201,7 @@ public abstract class Properties {
         return typeNames.substring(0, typeNames.length() - 1);
     }
 
-    /**
-     * Constant specifying an initial data type or types.
-     */
+    /** Constant specifying an initial data type. */
     public static final int
                       NOTYPE_IT = 0
                     ,INTEGER_IT = 1
@@ -222,8 +222,14 @@ public abstract class Properties {
                       ,AURAL_IT = 32768
             ,TEXT_DECORATION_IT = 65536
   // Unused         ,FONTSET_IT = 131072
+                                ;
 
-           ,USE_GET_IT_FUNCTION = //NOTYPE_IT performed in Properties
+    /**
+     * Bitmap set of initial data types for which getInitialType() must be
+     * overriden.
+     */
+    public static final int
+            USE_GET_IT_FUNCTION = //NOTYPE_IT performed in Properties
                                     INTEGER_IT
                                   | NUMBER_IT
                                   | LENGTH_IT
@@ -243,9 +249,7 @@ public abstract class Properties {
                                   | TEXT_DECORATION_IT
                               ;
 
-    /**
-     * Constant specifying mapping(s) of property to trait.
-     */
+    /** Constant specifying mapping of property to trait. */
     public static final int
                        NO_TRAIT = 0
                      ,RENDERING = 1
@@ -262,9 +266,7 @@ public abstract class Properties {
                          ,MAGIC = 2048
                               ;
 
-    /**
-     * Constant specifying inheritance type.
-     */
+    /** Constant specifying inheritance type. */
     public static final int
                              NO = 0
                       ,COMPUTED = 1
@@ -275,7 +277,7 @@ public abstract class Properties {
 
     /**
      * Derive inherited value for the given property.
-     * This method must be shadowed by properties with special requirements.
+     * This method must be overriden by properties with special requirements.
      * @param foTree the <tt>FOTree</tt> being built
      * @param property the <tt>int</tt> property index
      * @return <tt>PropertyValue</tt> the inherited property value for the
@@ -290,29 +292,27 @@ public abstract class Properties {
         return foTree.getCurrentInherited(property);
     }
 
-    /**
-     * Constant for nested <tt>refineParsing</tt> methods
-     */
+    /** Constant for nested <tt>refineParsing</tt> methods. */
     public static boolean IS_NESTED = true;
 
-    /**
-     * Constant for non-nested <tt>refineParsing</tt> methods
-     */
+    /** Constant for non-nested <tt>refineParsing</tt> methods. */
     public static boolean NOT_NESTED = false;
 
     /**
-     * The final stage of parsing:<br>
-     * 1) PropertyTokenizer<br>
-     * 2) PropertyParser - returns context-free <tt>PropertyValue</tt>s
-     *    recognizable by the parser<br>
-     * 3) refineParsing - verifies results from parser, translates
+     * The final stage of property expression parsing.
+     * <ol>
+     *   <li>PropertyTokenizer</li>
+     *   <li>PropertyParser - returns context-free <tt>PropertyValue</tt>s
+     *    recognizable by the parser</li>
+     *   <li>refineParsing - verifies results from parser, translates
      *    property types like NCName into more specific value types,
-     *    resolves enumeration types, etc.<br>
+     *    resolves enumeration types, etc.</li>
+     * </ol>
      *
-     * <p>This method is shadowed by individual property classes which
+     * <p>This method is overriden by individual property classes which
      * require specific processing.
-     * @param foTree the <tt>FOTree</tt> being built
-     * @param value <tt>PropertyValue</tt> returned by the parser
+     * @param foTree - the <tt>FOTree</tt> being built
+     * @param value - <tt>PropertyValue</tt> returned by the parser
      */
     public static PropertyValue refineParsing
                                         (FOTree foTree, PropertyValue value)
@@ -323,9 +323,9 @@ public abstract class Properties {
 
     /**
      * Do the work for the two argument refineParsing method.
-     * @param foTree the <tt>FOTree</tt> being built
-     * @param value <tt>PropertyValue</tt> returned by the parser
-     * @param nested <tt>boolean</tt> indicating whether this method is
+     * @param foTree - the <tt>FOTree</tt> being built
+     * @param value - <tt>PropertyValue</tt> returned by the parser
+     * @param nested - <tt>boolean</tt> indicating whether this method is
      * called normally (false), or as part of another <i>refineParsing</i>
      * method.
      * @see #refineParsing(FOTree,PropertyValue)
@@ -337,14 +337,15 @@ public abstract class Properties {
         int property = value.getProperty();
         String propName = PropNames.getPropertyName(property);
         int datatype = PropertyConsts.dataTypes.get(property);
-        if (value instanceof Numeric) {
+        int proptype = value.getType();
+        switch (proptype) {
+        case PropertyValue.NUMERIC:
             // Can be any of
             // INTEGER, FLOAT, LENGTH, PERCENTAGE, ANGLE, FREQUENCY or TIME
             if ((datatype & (INTEGER | FLOAT | LENGTH | PERCENTAGE
                                 | ANGLE | FREQUENCY | TIME)) != 0)
                 return value;
-        }
-        if (value instanceof NCName) {
+        case PropertyValue.NCNAME:
             String ncname = ((NCName)value).getNCName();
             // Can by any of
             // NAME, COUNTRY_T, LANGUAGE_T, SCRIPT_T, ID_T, IDREF, ENUM
@@ -362,65 +363,61 @@ public abstract class Properties {
             if ((datatype & MAPPED_LENGTH) != 0)
                 return (new MappedNumeric(property, ncname, foTree))
                                 .getMappedNumValue();
-        }
-        if (value instanceof Literal) {
+        case PropertyValue.LITERAL:
             // Can be LITERAL or CHARACTER_T
             if ((datatype & (LITERAL | CHARACTER_T)) != 0) return value;
             throw new PropertyException
                             ("Literal value invalid  for " + propName);
-        }
-        if (value instanceof Auto) {
+        case PropertyValue.AUTO:
             if ((datatype & AUTO) != 0) return value;
             throw new PropertyException("'auto' invalid  for " + propName);
-        }
-        if (value instanceof Bool) {
+        case PropertyValue.BOOL:
             if ((datatype & BOOL) != 0) return value;
             throw new PropertyException
                                 ("Boolean value invalid for " + propName);
-        }
-        if (value instanceof ColorType) {
+        case PropertyValue.COLOR_TYPE:
             // Can be COLOR_T or COLOR_TRANS
             if ((datatype & (COLOR_T | COLOR_TRANS)) != 0) return value;
             throw new PropertyException("'none' invalid  for " + propName);
-        }
-        if (value instanceof None) {
+        case PropertyValue.NONE:
             // Some instances of 'none' are part of an enumeration, but
             // the parser will find and return 'none' as a None
             // PropertyValue.
             // In these cases, the individual property's refineParsing
-            // method must shadow this method.
+            // method must override this method.
             if ((datatype & NONE) != 0) return value;
             throw new PropertyException("'none' invalid  for " + propName);
-        }
-        if (value instanceof UriType) {
+        case PropertyValue.URI_TYPE:
             if ((datatype & URI_SPECIFICATION) != 0) return value;
             throw new PropertyException("uri invalid for " + propName);
-        }
-        if (value instanceof MimeType) {
+        case PropertyValue.MIME_TYPE:
             if ((datatype & MIMETYPE) != 0) return value;
             throw new PropertyException
                         ("mimetype invalid for " + propName);
-        }
-        if ( ! nested) {
-            if (value instanceof Inherit) {
-                if ((datatype & INHERIT) != 0) return value;
-                throw new PropertyException
+        default:
+            if ( ! nested) {
+                if (proptype == PropertyValue.INHERIT) {
+                    if ((datatype & INHERIT) != 0) return value;
+                    throw new PropertyException
                                     ("'inherit' invalid for " + propName);
+                }
             }
+            throw new PropertyException
+                ("Inappropriate datatype passed to Properties.refineParsing: "
+                    + value.getClass().getName());
         }
-        throw new PropertyException
-            ("Inappropriate datatype passed to Properties.refineParsing: "
-                + value.getClass().getName());
     }
 
     /**
-     * Check the PropertyValueList passed as an argument, to determine
-     * whether it contains a space-separated list from the parser.
-     * A space-separated list will be represented by a single
-     * PropertyValueList as an element of the argument PropertyValueList.
-     * @param list <tt>PropertyValueList</tt> the containing list.
-     * @return <tt>PropertyValueList</tt> the contained space-separated list.
-     * @exception <tt>PropertyException</tt>
+     * Determine whether argument <i>list</i> contains a space-separated list
+     * from the parser.
+     * A space-separated list will be represented by a
+     * <tt>PropertyValueList</tt> as the only element of the argument
+     * <tt>PropertyValueList</tt>.
+     * @param list - the containing list.
+     * @return the contained space-separated list.
+     * @throws <tt>PropertyException</tt> if <i>list</i> contains more than
+     * one element or if the contained element is not a list.
      */
     protected static PropertyValueList spaceSeparatedList
                                                     (PropertyValueList list)
@@ -431,7 +428,7 @@ public abstract class Properties {
                         (list.getClass().getName() + " list is not a "
                                 + "single list of space-separated values");
         PropertyValue val2 = (PropertyValue)(list.getFirst());
-        if ( ! (val2 instanceof PropertyValueList))
+        if ( ! (val2.getType() == PropertyValue.LIST))
                 throw new PropertyException
                         (list.getClass().getName() + " list is not a "
                                 + "single list of space-separated values");
@@ -453,7 +450,7 @@ public abstract class Properties {
                                             int property, String type)
             throws PropertyException
     {
-        if ( ! (value instanceof NCName))
+        if (value.getType() != PropertyValue.NCNAME)
             throw new PropertyException
                 (value.getClass().getName()
                                 + " instead of " + type + " for "
@@ -473,7 +470,7 @@ public abstract class Properties {
     /**
      * Fallback getInitialValue function.  This function only handles
      * those initial value types NOT in the set USE_GET_IT_FUNCTION.  It
-     * should be shadowed by all properties whose initial values come from
+     * should be overriden by all properties whose initial values come from
      * that set.
      * @param property <tt>int</tt> property index
      * @return <tt>PropertyValue</tt>
@@ -548,7 +545,7 @@ public abstract class Properties {
                 int colorProp, int widthProp, boolean nested)
                 throws PropertyException
     {
-        if ( ! (value instanceof PropertyValueList)) {
+        if (value.getType() != PropertyValue.LIST) {
             return processEdgeValue
                     (foTree, value, styleProp, colorProp, widthProp, nested);
         } else {
@@ -564,9 +561,10 @@ public abstract class Properties {
             throws PropertyException
     {
         if ( ! nested) {
-            if (value instanceof Inherit |
-                    value instanceof FromParent |
-                        value instanceof FromNearestSpecified)
+            int type = value.getType();
+            if (type == PropertyValue.INHERIT ||
+                    type == PropertyValue.FROM_PARENT ||
+                        type == PropertyValue.FROM_NEAREST_SPECIFIED)
                 // Construct a list of Inherit values
                 return PropertySets.expandAndCopySHand(value);
         }
@@ -597,13 +595,14 @@ public abstract class Properties {
 
         scanning_elements: while (elements.hasNext()) {
             PropertyValue pval = (PropertyValue)(elements.next());
-            if (pval instanceof ColorType) {
+            int type = pval.getType();
+            switch (type) {
+            case PropertyValue.COLOR_TYPE:
                 if (color != null) MessageHandler.log(propName +
                             ": duplicate color overrides previous color");
                 color = pval;
                 continue scanning_elements;
-            }
-            if (pval instanceof NCName) {
+            case PropertyValue.NCNAME:
                 // Could be standard color, style Enum or width MappedNumeric
                 PropertyValue colorFound = null;
                 PropertyValue styleFound = null;
@@ -644,10 +643,11 @@ public abstract class Properties {
 
                 throw new PropertyException
                     ("Unknown NCName value for " + propName + ": " + ncname);
-            }
-            throw new PropertyException
-                ("Invalid " + pval.getClass().getName() +
-                    " property value for " + propName);
+            default:
+                throw new PropertyException
+                    ("Invalid " + pval.getClass().getName() +
+                        " property value for " + propName);
+            } // end of switch
         }
 
         // Now construct the list of PropertyValues with their
@@ -1061,9 +1061,10 @@ public abstract class Properties {
         {
             // Can be Inherit, ColorType, UriType, None, Numeric, or an
             // NCName (i.e. enum token)
-            if (value instanceof Inherit |
-                    value instanceof FromParent |
-                        value instanceof FromNearestSpecified)
+            int type = value.getType();
+            if (type == PropertyValue.INHERIT ||
+                    type == PropertyValue.FROM_PARENT ||
+                        type == PropertyValue.FROM_NEAREST_SPECIFIED)
             {
                 // Construct a list of Inherit values
                 return PropertySets.expandAndCopySHand(value);
@@ -1096,28 +1097,27 @@ public abstract class Properties {
 
             scanning_elements: while (elements.hasNext()) {
                 PropertyValue pval = (PropertyValue)(elements.next());
-                if (pval instanceof ColorType) {
+                int type = pval.getType();
+                switch (type) {
+                case PropertyValue.COLOR_TYPE:
                     if (color != null) MessageHandler.log("background: " +
                                 "duplicate color overrides previous color");
                     color = pval;
                     continue scanning_elements;
-                }
 
-                if (pval instanceof UriType) {
+                case PropertyValue.URI_TYPE:
                     if (image != null) MessageHandler.log("background: " +
                         "duplicate image uri overrides previous image spec");
                     image = pval;
                     continue scanning_elements;
-                }
 
-                if (pval instanceof None) {
+                case PropertyValue.NONE:
                     if (image != null) MessageHandler.log("background: " +
                         "duplicate image spec overrides previous image spec");
                     image = pval;
                     continue scanning_elements;
-                }
 
-                if (pval instanceof Numeric) {
+                case PropertyValue.NUMERIC: {
                     // Must be one of the position values
                     // send it to BackgroundPosition.complex for processing
                     // If it is followed by another Numeric, form a list from
@@ -1154,9 +1154,9 @@ public abstract class Properties {
                                                 (foTree, ssList, IS_NESTED);
                     }
                     continue scanning_elements;
-                }
+                }  // end of case NUMERIC
 
-                if (pval instanceof NCName) {
+                case PropertyValue.NCNAME: {
                     // NCName can be:
                     //  a standard color name
                     //  a background attachment mode
@@ -1244,11 +1244,13 @@ public abstract class Properties {
                     }
                     throw new PropertyException
                         ("Unknown NCName value for background: " + ncname);
-                }
+                } // end of case NCNAME
 
-                throw new PropertyException
-                    ("Invalid " + pval.getClass().getName() +
-                        " property value for background");
+                default:
+                    throw new PropertyException
+                        ("Invalid " + pval.getClass().getName() +
+                            " property value for background");
+                }  // end of switch
             }
 
             // Now construct the list of PropertyValues with their
@@ -1423,17 +1425,18 @@ public abstract class Properties {
                             = new PropertyValueList(value.getProperty());
             // Can only be Inherit, NCName (i.e. enum token)
             // or Numeric (i.e. Length or Percentage)
+            int type = value.getType();
             if ( ! nested) {
-                if (value instanceof Inherit |
-                        value instanceof FromParent |
-                            value instanceof FromNearestSpecified) {
+                if (type == PropertyValue.INHERIT ||
+                        type == PropertyValue.FROM_PARENT ||
+                            type == PropertyValue.FROM_NEAREST_SPECIFIED) {
                     // Construct a list of Inherit values
                     newlist = PropertySets.expandAndCopySHand(value);
                     return newlist;
                 }
             }
 
-            if (value instanceof Numeric) {
+            if (type == PropertyValue.NUMERIC) {
                 // Single horizontal value given
                 Numeric newNum;
                 try {
@@ -1447,7 +1450,7 @@ public abstract class Properties {
                 newlist.add(Percentage.makePercentage(
                             PropNames.BACKGROUND_POSITION_VERTICAL,
                             50.0d));
-            } else if (value instanceof NCName) {
+            } else if (type == PropertyValue.NCNAME) {
                 String enumval = ((NCName)value).getNCName();
                 int enumIndex;
                 try {
@@ -1508,9 +1511,11 @@ public abstract class Properties {
             // [left center right].
             Iterator positions = value.iterator();
             PropertyValue posn = (PropertyValue)(positions.next());
+            int posntype = posn.getType();
             PropertyValue posn2 = (PropertyValue)(positions.next());
+            int posn2type = posn2.getType();
 
-            if (posn instanceof Numeric) {
+            if (posntype == PropertyValue.NUMERIC) {
                 Numeric num1;
                 try {
                     num1 = (Numeric)(posn.clone());
@@ -1520,7 +1525,7 @@ public abstract class Properties {
                 num1.setProperty(
                             PropNames.BACKGROUND_POSITION_HORIZONTAL);
                 // Now check the type of the second element
-                if ( ! (posn2 instanceof Numeric))
+                if ( ! (posn2type == PropertyValue.NUMERIC))
                     throw new PropertyException
                         ("Numeric followed by " + posn2.getClass().getName()
                         + " in BackgroundPosition list");
@@ -1539,9 +1544,9 @@ public abstract class Properties {
                 newlist.add(num1);
                 newlist.add(num2);
 
-            } else if (posn instanceof NCName) {
+            } else if (posntype == PropertyValue.NCNAME) {
                 // Now check the type of the second element
-                if ( ! (posn2 instanceof NCName))
+                if (posn2type != PropertyValue.NCNAME)
                     throw new PropertyException
                         ("NCName followed by " + posn2.getClass().getName()
                         + " in BackgroundPosition list");
@@ -1868,16 +1873,17 @@ public abstract class Properties {
                                         (FOTree foTree, PropertyValue value)
             throws PropertyException
         {
-            if (value instanceof Inherit |
-                            value instanceof FromParent |
-                                        value instanceof FromNearestSpecified)
+            int type = value.getType();
+            if (type == PropertyValue.INHERIT ||
+                    type == PropertyValue.FROM_PARENT ||
+                        type == PropertyValue.FROM_NEAREST_SPECIFIED)
                 // Construct a list of Inherit values
                 return PropertySets.expandAndCopySHand(value);
 
             PropertyValueList ssList = null;
             // Must be a space-separated list or a single value from the
             // set of choices
-            if (! (value instanceof PropertyValueList)) {
+            if (type != PropertyValue.LIST) {
                 // If it's a single value, form a list from that value
                 ssList = new PropertyValueList(PropNames.BORDER);
                 ssList.add(value);
@@ -2312,17 +2318,17 @@ public abstract class Properties {
                         (FOTree foTree, PropertyValue value, boolean nested)
                     throws PropertyException
         {
+            int type = value.getType();
             if ( ! (value instanceof PropertyValueList)) {
                 if ( ! nested) {
-                    if (value instanceof Inherit
-                        || value instanceof FromParent
-                        || value instanceof FromNearestSpecified
-                        )
+                    if (type == PropertyValue.INHERIT ||
+                            type == PropertyValue.FROM_PARENT ||
+                                type == PropertyValue.FROM_NEAREST_SPECIFIED)
                         return PropertySets.expandAndCopySHand(value);
                 }
-                if (value instanceof ColorType)
+                if (type == PropertyValue.COLOR_TYPE)
                     return PropertySets.expandAndCopySHand(value);
-                if (value instanceof NCName) {
+                if (type == PropertyValue.NCNAME) {
                     // Must be a standard color
                     ColorType color;
                     try {
@@ -2402,9 +2408,10 @@ public abstract class Properties {
                 throws PropertyException
         {
             int property = value.getProperty();
-            if (value instanceof ColorType) return (ColorType)value;
+            int type = value.getType();
+            if (type == PropertyValue.COLOR_TYPE) return (ColorType)value;
             // Must be a color enum
-            if ( ! (value instanceof NCName))
+            if (type != PropertyValue.NCNAME)
                 throw new PropertyException
                     (value.getClass().getName() + " instead of color for "
                                     + PropNames.getPropertyName(property));
@@ -2749,14 +2756,17 @@ public abstract class Properties {
                 (FOTree foTree, PropertyValue value)
                     throws PropertyException
         {
-            if ( ! (value instanceof PropertyValueList)) {
-                if (value instanceof Inherit
-                    || value instanceof FromParent
-                    || value instanceof FromNearestSpecified
-                    )
+            int type = value.getType();
+            if (type != PropertyValue.LIST) {
+                if (type == PropertyValue.INHERIT ||
+                        type == PropertyValue.FROM_PARENT ||
+                            type == PropertyValue.FROM_NEAREST_SPECIFIED)
                     return PropertySets.expandAndCopySHand(value);
-                if (value instanceof Numeric && ((Numeric)value).isLength())
+
+                if (type == PropertyValue.NUMERIC &&
+                                                ((Numeric)value).isLength())
                     return PropertySets.expandAndCopySHand(value);
+
                 throw new PropertyException
                     ("Invalid " + value.getClass().getName() +
                         " object for border-spacing");
@@ -2768,12 +2778,17 @@ public abstract class Properties {
                     throw new PropertyException
                         ("List of " + list.size() + " for border-spacing");
                 PropertyValue len1 = (PropertyValue)(list.getFirst());
+                int len1type = len1.getType();
                 PropertyValue len2 = (PropertyValue)(list.getLast());
+                int len2type = len2.getType();
                 // Note that this test excludes (deliberately) ems relative
                 // lengths.  I don't know whether this exclusion is valid.
-                if ( ! (len1 instanceof Numeric && len2 instanceof Numeric
-                    && ((Numeric)len1).isLength()
-                    && ((Numeric)len2).isLength()))
+                if ( !
+                    (len1type == PropertyValue.NUMERIC && len2type == len1type
+                        && ((Numeric)len1).isLength()
+                        && ((Numeric)len2).isLength()
+                    )
+                )
                     throw new PropertyException
                         ("Values to border-spacing are not both Lengths");
                 // Set the individual expanded properties of the
@@ -2937,15 +2952,15 @@ public abstract class Properties {
                         (FOTree foTree, PropertyValue value, boolean nested)
                     throws PropertyException
         {
-            if ( ! (value instanceof PropertyValueList)) {
+            int type = value.getType();
+            if (type != PropertyValue.LIST) {
                 if ( ! nested) {
-                    if (value instanceof Inherit
-                        || value instanceof FromParent
-                        || value instanceof FromNearestSpecified
-                        )
+                    if (type == PropertyValue.INHERIT ||
+                            type == PropertyValue.FROM_PARENT ||
+                                type == PropertyValue.FROM_NEAREST_SPECIFIED)
                         return PropertySets.expandAndCopySHand(value);
                 }
-                if (value instanceof NCName) {
+                if (type == PropertyValue.NCNAME) {
                     // Must be a border-style
                     EnumType enum;
                     try {
@@ -3154,15 +3169,15 @@ public abstract class Properties {
                         (FOTree foTree, PropertyValue value, boolean nested)
                     throws PropertyException
         {
-            if ( ! (value instanceof PropertyValueList)) {
+            int type = value.getType();
+            if (type != PropertyValue.LIST) {
                 if ( ! nested) {
-                    if (value instanceof Inherit
-                        || value instanceof FromParent
-                        || value instanceof FromNearestSpecified
-                        )
+                    if (type == PropertyValue.INHERIT ||
+                            type == PropertyValue.FROM_PARENT ||
+                                type == PropertyValue.FROM_NEAREST_SPECIFIED)
                         return PropertySets.expandAndCopySHand(value);
                 }
-                if (value instanceof NCName) {
+                if (type == PropertyValue.NCNAME) {
                     // Must be a border-width
                     // BorderWidth does not support a mapped enum
                     // transformation directly, so use BorderTopWidth to
@@ -3420,9 +3435,10 @@ public abstract class Properties {
                                         (FOTree foTree, PropertyValue value)
                         throws PropertyException
         {
-            if (value instanceof Inherit || value instanceof Auto)
+            int type = value.getType();
+            if (type == PropertyValue.INHERIT || type == PropertyValue.AUTO)
                 return value;
-            if (! (value instanceof PropertyValueList))
+            if (type != PropertyValue.LIST)
                 throw new PropertyException
                     ("clip: <shape> requires 4 <length> or <auto> args");
             PropertyValueList list = (PropertyValueList) value;
@@ -3431,8 +3447,14 @@ public abstract class Properties {
             Iterator iter = list.iterator();
             while (iter.hasNext()) {
                 Object obj = iter.next();
-                if ( ! (obj instanceof Length || obj instanceof Auto))
-                    throw new PropertyException
+                if ( obj instanceof AbstractPropertyValue)  {
+                    AbstractPropertyValue pv = (AbstractPropertyValue)obj;
+                    if (pv.type == PropertyValue.AUTO ||
+                        (pv.type == PropertyValue.NUMERIC &&
+                            ((Numeric)pv).isLength())
+                    ) continue;
+                }
+                throw new PropertyException
                         ("clip: <shape> requires 4 <length> or <auto> args");
             }
             return value;
@@ -3582,12 +3604,12 @@ public abstract class Properties {
                 (FOTree foTree, PropertyValue value)
                     throws PropertyException
         {
-            if ( ! (value instanceof PropertyValueList)) {
-                if (value instanceof Inherit
-                    || value instanceof FromParent
-                    || value instanceof FromNearestSpecified
-                    || value instanceof UriType
-                    )
+            int type = value.getType();
+            if (type == PropertyValue.LIST) {
+                if (type == PropertyValue.INHERIT ||
+                        type == PropertyValue.FROM_PARENT ||
+                            type == PropertyValue.FROM_NEAREST_SPECIFIED ||
+                                type == PropertyValue.URI_TYPE)
                     return PropertySets.expandAndCopySHand(value);
                 throw new PropertyException
                     ("Invalid " + value.getClass().getName() +
@@ -3600,10 +3622,12 @@ public abstract class Properties {
                     throw new PropertyException
                         ("List of " + list.size() + " for cue");
                 PropertyValue cue1 = (PropertyValue)(list.getFirst());
+                int cue1type = cue1.getType();
                 PropertyValue cue2 = (PropertyValue)(list.getLast());
+                int cue2type = cue2.getType();
 
-                if ( ! ((cue1 instanceof UriType) &&
-                        (cue2 instanceof UriType)))
+                if ( ! ((cue1type == PropertyValue.URI_TYPE) &&
+                        (cue2type == PropertyValue.URI_TYPE)))
                     throw new PropertyException
                         ("Values to cue are not both URIs");
                 // Set the individual expanded properties of the
@@ -4006,7 +4030,7 @@ public abstract class Properties {
         {
             PropertyValueList startList = null;
             PropertyValueList fontList = null;
-            if ( ! (value instanceof PropertyValueList)) {
+            if (value.getType() != PropertyValue.LIST) {
                 return processValue(foTree, value);
             } else {
                 fontList = (PropertyValueList)value;
@@ -4050,15 +4074,16 @@ public abstract class Properties {
         {
             // Can be Inherit, FromParent, FromNearestSpecified, a
             // system font NCName or a single element font-family specifier
-            if (value instanceof Inherit |
-                    value instanceof FromParent |
-                        value instanceof FromNearestSpecified)
+            int type = value.getType();
+            if (type == PropertyValue.INHERIT ||
+                    type == PropertyValue.FROM_PARENT ||
+                        type == PropertyValue.FROM_NEAREST_SPECIFIED)
             {
                 return PropertySets.expandAndCopySHand(value);
             }
             // else not Inherit/From../From..
             FontFamilySet family = null;
-            if (value instanceof NCName) {
+            if (type == PropertyValue.NCNAME) {
                 // Is it a system font enumeration?
                 EnumType enum = null;
                 String ncname = ((NCName)value).getNCName();
@@ -4135,9 +4160,10 @@ public abstract class Properties {
 
             for (int i = 0; i < props.length; i++) {
                 propvals[i] = (PropertyValue)(props[i]);
-                if (propvals[i] instanceof Slash)
+                int type = propvals[i].getType();
+                if (type == PropertyValue.SLASH)
                     slash = i;
-                else if (propvals[i] instanceof PropertyValueList
+                else if (type == PropertyValue.LIST
                             && firstcomma == -1)
                     firstcomma = i;
             }
@@ -4160,7 +4186,7 @@ public abstract class Properties {
                 // font-family, it must be a font-size.  Look for that.
                 if (firstcomma == -1) firstcomma = propvals.length - 1;
                 for (fontsize = firstcomma - 1; fontsize >= 0; fontsize--) {
-                    if (propvals[fontsize] instanceof NCName) {
+                    if (propvals[fontsize].getType() == PropertyValue.NCNAME) {
                         // try for a font-size enumeration
                         String name = ((NCName)propvals[fontsize]).getNCName();
                         try {
@@ -4173,7 +4199,8 @@ public abstract class Properties {
                         // Presumably we have a mapped numeric
                         break;
                     }
-                    if (propvals[fontsize] instanceof Numeric) {
+                    if (propvals[fontsize].getType() == PropertyValue.NUMERIC)
+                    {
                         // Length (incl. Ems) or Percentage allowed
                         if (((Numeric)(propvals[fontsize])).isDistance()) {
                             size = propvals[fontsize];
@@ -4296,7 +4323,7 @@ public abstract class Properties {
     }
 
     public static class FontFamily extends Properties {
-        public static final int dataTypes = COMPLEX | FONTSET;
+        public static final int dataTypes = COMPLEX | INHERIT | FONTSET;
         public static final int traitMapping = FONT_SELECTION;
         public static final int initialValueType = NOTYPE_IT;
         public static final int SERIF = 1;
@@ -4352,8 +4379,12 @@ public abstract class Properties {
                         throws PropertyException
         {
             int property = value.getProperty();
+            int type = value.getType();
             // First, check that we have a list
-            if ( ! (value instanceof PropertyValueList)) {
+            if (type != PropertyValue.LIST) {
+                if ( ! nested && type == PropertyValue.INHERIT) {
+                    return foTree.resolveInheritValue((Inherit)value);
+                }
                 if ( ! (value instanceof StringType))
                     throw new PropertyException
                         ("Invalid " + value.getClass().getName() +
@@ -4368,20 +4399,27 @@ public abstract class Properties {
             while (scan.hasNext()) {
                 Object pvalue = scan.next();
                 String name = "";
-                if (pvalue instanceof PropertyValueList) {
-                    // build a font name according to
-                    // 7.8.2 "font-family" <family-name>
-                    Iterator font = ((PropertyValueList)pvalue).iterator();
-                    while (font.hasNext())
-                        name = name + (name.length() == 0 ? "" : " ")
-                                + ((StringType)(font.next())).getString();
+                if (pvalue instanceof PropertyValue) {
+                    int ptype = ((PropertyValue)pvalue).getType();
+                    if (ptype == PropertyValue.LIST) {
+                        // build a font name according to
+                        // 7.8.2 "font-family" <family-name>
+                        Iterator font = ((PropertyValueList)pvalue).iterator();
+                        while (font.hasNext())
+                            name = name + (name.length() == 0 ? "" : " ")
+                                    + ((StringType)(font.next())).getString();
+                        strings[i++] = name;
+                        continue;
+                    }
+                    else if (pvalue instanceof StringType) {
+                        name = ((StringType)pvalue).getString();
+                        strings[i++] = name;
+                        continue;
+                    }
                 }
-                else if (pvalue instanceof StringType)
-                            name = ((StringType)pvalue).getString();
-                else throw new PropertyException
+                throw new PropertyException
                         ("Invalid " + value.getClass().getName() +
                             " PropertyValue for font-family");
-                strings[i++] = name;
             }
             // Construct the FontFamilySet property value
             return new FontFamilySet(property, strings);
@@ -6973,7 +7011,8 @@ public abstract class Properties {
     }
 
     public static class SourceDocument extends Properties {
-        public static final int dataTypes = COMPLEX | NONE | INHERIT;
+        public static final int dataTypes =
+                                COMPLEX | URI_SPECIFICATION | NONE | INHERIT;
         public static final int traitMapping = RENDERING;
         public static final int initialValueType = NONE_IT;
         public static final int inherited = NO;
@@ -6987,17 +7026,17 @@ public abstract class Properties {
                                         (FOTree foTree, PropertyValue list)
                         throws PropertyException
         {
-            PropertyValue value =
-                        Properties.refineParsing(foTree, list, IS_NESTED);
+            if ( ! (list instanceof PropertyValueList))
+                                return Properties.refineParsing(foTree, list);
             // Confirm that the list contains only UriType elements
-            Iterator iter = ((PropertyValueList)value).iterator();
+            Iterator iter = ((PropertyValueList)list).iterator();
             while (iter.hasNext()) {
                 Object obj = iter.next();
                 if ( ! (obj instanceof UriType))
                     throw new PropertyException
                         ("source-document requires a list of uris");
             }
-            return value;
+            return list;
         }
     }
 
@@ -7498,7 +7537,7 @@ public abstract class Properties {
                         throws PropertyException
         {
             // Check for the enumeration.  Look for a list of NCNames.
-            // N.B. it may be a possible to perform further checks on the
+            // N.B. it may be possible to perform further checks on the
             // validity of the NCNames - do they match multi-case case names.
             if ( ! (list instanceof PropertyValueList))
                 return Properties.refineParsing(foTree, list);
@@ -7744,9 +7783,7 @@ public abstract class Properties {
         }
         public static final int inherited = NO;
 
-        /**
-         * Text decoration constant
-         */
+        /** Text decoration constant */
         public static final byte
           NO_DECORATION = 0
              ,UNDERLINE = 1
@@ -7869,6 +7906,7 @@ public abstract class Properties {
         public static final Map enumValues = ColorCommon.colorTransEnums;
 
         /**
+         * Refine list of lists of individual shadow effects.
          * 'list' is a PropertyValueList containing, at the top level,
          * a sequence of PropertyValueLists, each representing a single
          * shadow effect.  A shadow effect must contain, at a minimum, an
