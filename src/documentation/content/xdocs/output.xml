@@ -93,6 +93,7 @@ Helvetica, and Times), as well as two symbolic fonts (Symbol and ITC Zapf
 Dingbats). These fonts, or suitable substitute fonts with the same metrics, are
 guaranteed to be available in all PDF viewer applications."</em>
     </p>
+    <p>Note that FOP does not currently support "tagged pdf".</p>
 </section>
 <section>
   <title>PCL</title>
