@@ -84,6 +84,7 @@ public class Row extends BlockStackingLayoutManager {
         // add cells to list
         while (childLMiter.hasNext()) {
             curChildLM = (LayoutManager) childLMiter.next();
+            curChildLM.setUserAgent(getUserAgent());
             curChildLM.setParentLM(this);
             curChildLM.init();
             cellList.add(curChildLM);
@@ -125,6 +126,8 @@ public class Row extends BlockStackingLayoutManager {
         int max = 0;
 
         int cellcount = 0;
+        boolean over = false;
+
         while ((curLM = getCellLM(cellcount++)) != null) {
 
             List childBreaks = new ArrayList();
@@ -151,18 +154,28 @@ public class Row extends BlockStackingLayoutManager {
 
             while (!curLM.isFinished()) {
                 if ((bp = curLM.getNextBreakPoss(childLC)) != null) {
-                    stackSize.add(bp.getStackingSize());
-                    if (stackSize.opt > context.getStackLimit().max) {
+                    if (stackSize.opt + bp.getStackingSize().opt > context.getStackLimit().max) {
                         // reset to last break
                         if (lastPos != null) {
-                            reset(lastPos.getPosition());
+                            LayoutManager lm = lastPos.getLayoutManager();
+                            lm.resetPosition(lastPos.getPosition());
+                            if (lm != curLM) {
+                                curLM.resetPosition(null);
+                            }
                         } else {
                             curLM.resetPosition(null);
                         }
+                        over = true;
                         break;
                     }
+                    stackSize.add(bp.getStackingSize());
                     lastPos = bp;
                     childBreaks.add(bp);
+
+                    if (bp.nextBreakOverflows()) {
+                        over = true;
+                        break;
+                    }
 
                     childLC.setStackLimit(MinOptMax.subtract(
                                              context.getStackLimit(), stackSize));
@@ -190,8 +203,42 @@ public class Row extends BlockStackingLayoutManager {
         setFinished(true);
         RowPosition rp = new RowPosition(this, breakList.size() - 1, breakList);
         BreakPoss breakPoss = new BreakPoss(rp);
+        if (over) { 
+            breakPoss.setFlag(BreakPoss.NEXT_OVERFLOWS, true);
+        }
         breakPoss.setStackingSize(rowSize);
         return breakPoss;
+    }
+
+    /**
+     * Reset the layoutmanager "iterator" so that it will start
+     * with the passed Position's generating LM
+     * on the next call to getChildLM.
+     * @param pos a Position returned by a child layout manager
+     * representing a potential break decision.
+     * If pos is null, then back up to the first child LM.
+     */    
+    protected void reset(Position pos) {
+        LayoutManager curLM; // currently active LM
+        int cellcount = 0;
+
+        if (pos == null) {
+            while ((curLM = getCellLM(cellcount++)) != null) {
+                curLM.resetPosition(null);
+                cellcount++;
+            }
+        } else {
+            RowPosition rpos = (RowPosition)pos;
+            List breaks = rpos.cellBreaks;
+
+            while ((curLM = getCellLM(cellcount++)) != null) {
+                List childbreaks = (List)breaks.get(cellcount);
+                curLM.resetPosition((Position)childbreaks.get(childbreaks.size() - 1));
+                cellcount++;
+            }
+        }
+
+        setFinished(false);
     }
 
     /**

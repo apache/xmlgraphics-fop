@@ -36,7 +36,8 @@ public class StaticContentLayoutManager extends BlockStackingLayoutManager {
    
     public BreakPoss getNextBreakPoss(LayoutContext context) {
 
-        LayoutManager curLM; // currently active LM
+        // currently active LM
+        LayoutManager curLM;
 
         while ((curLM = getChildLM()) != null) {
             // Make break positions and return page break
@@ -47,7 +48,7 @@ public class StaticContentLayoutManager extends BlockStackingLayoutManager {
                 if ((bp = curLM.getNextBreakPoss(childLC)) != null) {
                     blockBreaks.add(bp);
                     if (bp.isForcedBreak()) {
-                        System.out.println("Forced breaks are not allowed in static content");
+                        getLogger().error("Forced breaks are not allowed in static content - ignoring");
                         return null;
                     }
                 }
@@ -79,8 +80,6 @@ public class StaticContentLayoutManager extends BlockStackingLayoutManager {
         }
 
         flush();
-        // clear the breaks for the page to start for the next page
-        blockBreaks.clear();
     }
 
 
@@ -105,6 +104,7 @@ public class StaticContentLayoutManager extends BlockStackingLayoutManager {
      */
     public void addMarker(String name, LayoutManager lm, boolean start) {
         // error markers not allowed in static
+        getLogger().error("Cannot add marker to static areas");
     }
 }
 

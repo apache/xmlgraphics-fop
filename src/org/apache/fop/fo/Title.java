@@ -35,11 +35,13 @@ public class Title extends FObjMixed {
         InlineStackingLayoutManager lm;
         lm = new InlineStackingLayoutManager(this,
                      new LMiter(children.listIterator()));
+        lm.setUserAgent(getUserAgent());
         lm.init();
 
         // get breaks then add areas to title
 
         ContentLayoutManager clm = new ContentLayoutManager(title);
+        clm.setUserAgent(getUserAgent());
         lm.setParentLM(clm);
 
         clm.fillArea(lm);

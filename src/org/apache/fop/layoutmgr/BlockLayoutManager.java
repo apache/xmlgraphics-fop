@@ -91,6 +91,7 @@ public class BlockLayoutManager extends BlockStackingLayoutManager {
             LineLayoutManager child;
             child = new LineLayoutManager(fobj, inlines, lineHeight,
                                             lead, follow);
+            child.setUserAgent(getUserAgent());
             return child;
 
         }
@@ -149,19 +150,28 @@ public class BlockLayoutManager extends BlockStackingLayoutManager {
             boolean over = false;
             while (!curLM.isFinished()) {
                 if ((bp = curLM.getNextBreakPoss(childLC)) != null) {
-                    stackSize.add(bp.getStackingSize());
-                    if (stackSize.opt > context.getStackLimit().max) {
+                    if (stackSize.opt + bp.getStackingSize().opt > context.getStackLimit().max) {
                         // reset to last break
                         if (lastPos != null) {
-                            reset(lastPos.getPosition());
+                            LayoutManager lm = lastPos.getLayoutManager();
+                            lm.resetPosition(lastPos.getPosition());
+                            if (lm != curLM) {
+                                curLM.resetPosition(null);
+                            }
                         } else {
                             curLM.resetPosition(null);
                         }
                         over = true;
                         break;
                     }
+                    stackSize.add(bp.getStackingSize());
                     lastPos = bp;
                     childBreaks.add(bp);
+
+                    if (bp.nextBreakOverflows()) {
+                        over = true;
+                        break;
+                    }
 
                     if (curLM.generatesInlineAreas()) {
                         // Reset stackLimit for non-first lines
@@ -179,6 +189,9 @@ public class BlockLayoutManager extends BlockStackingLayoutManager {
                 }
                 BreakPoss breakPoss = new BreakPoss(
                                     new LeafPosition(this, childBreaks.size() - 1));
+                if (over) {
+                    breakPoss.setFlag(BreakPoss.NEXT_OVERFLOWS, true);
+                }
                 breakPoss.setStackingSize(stackSize);
                 return breakPoss;
             }
@@ -188,6 +201,8 @@ public class BlockLayoutManager extends BlockStackingLayoutManager {
         breakPoss.setStackingSize(stackSize);
         return breakPoss;
     }
+
+    int iStartPos = 0;
 
     public void addAreas(PositionIterator parentIter,
                          LayoutContext layoutContext) {
@@ -200,12 +215,10 @@ public class BlockLayoutManager extends BlockStackingLayoutManager {
         addID();
 
         LayoutManager childLM ;
-        int iStartPos = 0;
         LayoutContext lc = new LayoutContext(0);
         while (parentIter.hasNext()) {
             LeafPosition lfp = (LeafPosition) parentIter.next();
             if (lfp.getLeafPos() == -2) {
-                childBreaks.clear();
                 curBlockArea = null;
                 flush();
                 return;
@@ -225,7 +238,6 @@ public class BlockLayoutManager extends BlockStackingLayoutManager {
         // if adjusted space after
         addBlockSpacing(adjust, layoutProps.spaceAfter.space);
 
-        childBreaks.clear();
         curBlockArea = null;
     }
 
@@ -273,6 +285,7 @@ public class BlockLayoutManager extends BlockStackingLayoutManager {
         if (resetPos == null) {
             reset(null);
             childBreaks.clear();
+            iStartPos = 0;
         } else {
             //reset(resetPos);
             LayoutManager lm = resetPos.getLM();

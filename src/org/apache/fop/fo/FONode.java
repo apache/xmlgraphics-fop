@@ -45,6 +45,10 @@ public abstract class FONode {
         userAgent = ua;
     }
 
+    public FOUserAgent getUserAgent() {
+        return userAgent;
+    }
+
     public void setStructHandler(StructureHandler st) {
     }
 

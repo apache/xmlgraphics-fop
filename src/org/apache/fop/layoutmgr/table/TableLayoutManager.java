@@ -139,20 +139,31 @@ public class TableLayoutManager extends BlockStackingLayoutManager {
 
             curLM.setColumns(columns);
 
+            boolean over = false;
             while (!curLM.isFinished()) {
                 if ((bp = curLM.getNextBreakPoss(childLC)) != null) {
-                    stackSize.add(bp.getStackingSize());
-                    if (stackSize.opt > context.getStackLimit().max) {
+                    if (stackSize.opt + bp.getStackingSize().opt > context.getStackLimit().max) {
                         // reset to last break
                         if (lastPos != null) {
-                            reset(lastPos.getPosition());
+                            LayoutManager lm = lastPos.getLayoutManager();
+                            lm.resetPosition(lastPos.getPosition());
+                            if (lm != curLM) {
+                                curLM.resetPosition(null);
+                            }
                         } else {
                             curLM.resetPosition(null);
                         }
+                        over = true;
                         break;
                     }
+                    stackSize.add(bp.getStackingSize());
                     lastPos = bp;
                     bodyBreaks.add(bp);
+
+                    if (bp.nextBreakOverflows()) {
+                        over = true;
+                        break;
+                    }
 
                     childLC.setStackLimit(MinOptMax.subtract(
                                              context.getStackLimit(), stackSize));
@@ -160,6 +171,9 @@ public class TableLayoutManager extends BlockStackingLayoutManager {
             }
             BreakPoss breakPoss = new BreakPoss(
                                     new LeafPosition(this, bodyBreaks.size() - 1));
+            if (over) {
+                breakPoss.setFlag(BreakPoss.NEXT_OVERFLOWS, true);
+            }
             breakPoss.setStackingSize(stackSize);
             return breakPoss;
         }

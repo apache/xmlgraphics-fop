@@ -193,7 +193,7 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager {
             if (overflow == Overflow.HIDDEN) {
                 clip = true;
             } else if (overflow == Overflow.ERROR_IF_OVERFLOW) {
-                //log.error("contents overflows block-container viewport: clipping");
+                getLogger().error("contents overflows block-container viewport: clipping");
                 clip = true;
             }
         }

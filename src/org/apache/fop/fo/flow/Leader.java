@@ -123,12 +123,14 @@ public class Leader extends FObjMixed {
             InlineStackingLayoutManager lm;
             lm = new InlineStackingLayoutManager(this,
                      new LMiter(children.listIterator()));
+            lm.setUserAgent(getUserAgent());
             lm.init();
 
             // get breaks then add areas to FilledArea
             FilledArea fa = new FilledArea();
 
             ContentLayoutManager clm = new ContentLayoutManager(fa);
+            clm.setUserAgent(getUserAgent());
             lm.setParentLM(clm);
 
             clm.fillArea(lm);

@@ -82,7 +82,11 @@ public class ListItemLayoutManager extends BlockStackingLayoutManager {
      * @return the next break possibility
      */
     public BreakPoss getNextBreakPoss(LayoutContext context) {
-        Item curLM; // currently active LM
+        // currently active LM
+        Item curLM;
+
+        label.setUserAgent(getUserAgent());
+        body.setUserAgent(getUserAgent());
 
         BreakPoss lastPos = null;
         List breakList = new ArrayList();
@@ -92,6 +96,7 @@ public class ListItemLayoutManager extends BlockStackingLayoutManager {
         int max = 0;
 
         int stage = 0;
+        boolean over = false;
         while (true) {
             if(stage == 0) {
                 curLM = label;
@@ -120,11 +125,14 @@ public class ListItemLayoutManager extends BlockStackingLayoutManager {
             stage++;
             while (!curLM.isFinished()) {
                 if ((bp = curLM.getNextBreakPoss(childLC)) != null) {
-                    stackSize.add(bp.getStackingSize());
-                    if (stackSize.opt > context.getStackLimit().max) {
+                    if (stackSize.opt + bp.getStackingSize().opt > context.getStackLimit().max) {
                         // reset to last break
                         if (lastPos != null) {
-                            curLM.resetPosition(lastPos.getPosition());
+                            LayoutManager lm = lastPos.getLayoutManager();
+                            lm.resetPosition(lastPos.getPosition());
+                            if (lm != curLM) {
+                                curLM.resetPosition(null);
+                            }
                         } else {
                             curLM.resetPosition(null);
                         }
@@ -132,7 +140,13 @@ public class ListItemLayoutManager extends BlockStackingLayoutManager {
                     } else {
                         lastPos = bp;
                     }
+                    stackSize.add(bp.getStackingSize());
                     childBreaks.add(bp);
+
+                    if (bp.nextBreakOverflows()) {
+                        over = true;
+                        break;
+                    }
 
                     childLC.setStackLimit(MinOptMax.subtract(
                                              context.getStackLimit(), stackSize));
@@ -160,6 +174,9 @@ public class ListItemLayoutManager extends BlockStackingLayoutManager {
         setFinished(true);
         ItemPosition rp = new ItemPosition(this, breakList.size() - 1, breakList);
         BreakPoss breakPoss = new BreakPoss(rp);
+        if (over) { 
+            breakPoss.setFlag(BreakPoss.NEXT_OVERFLOWS, true);
+        }
         breakPoss.setStackingSize(itemSize);
         return breakPoss;
     }

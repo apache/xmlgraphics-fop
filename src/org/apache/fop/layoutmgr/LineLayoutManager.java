@@ -366,7 +366,7 @@ public class LineLayoutManager extends InlineStackingLayoutManager {
         while (bpIter.hasPrevious() && bpIter.previous() != prev) {
         }
         if (bpIter.next() != prev) {
-            //log.error("findHyphenPoss: problem!");
+            getLogger().error("findHyphenPoss: problem!");
             return null;
         }
         StringBuffer sbChars = new StringBuffer(30);
@@ -382,7 +382,7 @@ public class LineLayoutManager extends InlineStackingLayoutManager {
             prev = bp;
         }
         vecInlineBreaks.remove(vecInlineBreaks.size() - 1); // remove last
-        //log.debug("Word to hyphenate: " + sbChars.toString());
+        getLogger().debug("Word to hyphenate: " + sbChars.toString());
 
         // Now find all hyphenation points in this word (get in an array of offsets)
         // hyphProps are from the block level?. Note that according to the spec,
@@ -586,7 +586,6 @@ public class LineLayoutManager extends InlineStackingLayoutManager {
      */
     public void addAreas(PositionIterator parentIter, double dSpaceAdjust) {
         LayoutManager childLM;
-        //int iStartPos = 0;
         LayoutContext lc = new LayoutContext(0);
         while (parentIter.hasNext()) {
             LineBreakPosition lbp = (LineBreakPosition) parentIter.next();
