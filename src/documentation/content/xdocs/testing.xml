@@ -4,13 +4,10 @@
 
 <document>
     <header>
-        <title>SVG</title>
-        <subtitle>Embedding SVG in FOP</subtitle>
+        <title>Testing FOP</title>
     </header>
 
     <body>
-<section>
-  <title>Testing FOP</title>
   <section>
     <title>Running and Using Tests</title>
     <p>
@@ -106,7 +103,6 @@ accuracy by using the transcoding mechanism via Batik. So that the only part tha
 testing is how the SVG image is embedded inside the flow of the fo document.
     </p>
   </section>
-</section>
 </body>
 </document>
 

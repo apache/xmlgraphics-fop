@@ -18,6 +18,10 @@
     </p>
     <p>Font support in FOP can be extended by the addition of font metric files (written in XML) created from Adobe
     Type 1 fonts and TrueType fonts. No other font types (Type 3, etc.) are supported at this time.
+    More information about font types can be found at
+    the <link href="http://partners.adobe.com/asn/developer/type/ftypes.html">
+    Adobe font types</link>. There is also lots more font information
+    on this <link href="http://partners.adobe.com/asn/developer/technotes/fonts.html">Adobe Font Technote</link>.
     </p>
     <note>
         The font is simply embedded into the PDF file, it is not converted.
@@ -34,15 +38,15 @@
       </p>
       <p>Windows:</p>
 <source>
-
-  java -cp build\fop.jar;lib\avalon-framework.jar;lib\xml-apis.jar;lib\xercesImpl.jar;lib\xalan.jar org.apache.fop.fonts.apps.PFMReader pfm-file xml-file
-
+java -cp build\fop.jar;lib\avalon-framework.jar;lib\xml-apis.jar;
+         lib\xercesImpl.jar;lib\xalan.jar
+           org.apache.fop.fonts.apps.PFMReader pfm-file xml-file
 </source>
       <p>Unix:</p>
 <source>
-
-  java -cp build/fop.jar:lib/avalon-framework.jar:lib/xml-apis.jar:lib/xercesImpl.jar:lib/xalan.jar org.apache.fop.fonts.apps.PFMReader pfm-file xml-file
-
+java -cp build/fop.jar:lib/avalon-framework.jar:lib/xml-apis.jar:
+         lib/xercesImpl.jar:lib/xalan.jar
+           org.apache.fop.fonts.apps.PFMReader pfm-file xml-file
 </source>
       <note>
         The classpath in the above example has been simplified for readibity. 
@@ -60,17 +64,14 @@
     <section>
       <title>Register the fonts within FOP</title>
       <p>
-                Edit conf/userconfig.xml and add entries for the font
-                if the fonts section,
-                ie:
+        Edit conf/userconfig.xml and add entries for the font
+        if the fonts section,
+        ie:
       </p>
-<source>
-<![CDATA[
-  <font metrics-file="FTL_____.xml" kerning="yes" embed-file="C:\myfonts\FTL_____.pfb">
-    <font-triplet name="FrutigerLight" style="normal" weight="normal">
-  </font>]]>
-
-</source>
+<source><![CDATA[<font metrics-file="FTL_____.xml" kerning="yes"
+      embed-file="C:\myfonts\FTL_____.pfb">
+  <font-triplet name="FrutigerLight" style="normal" weight="normal">
+</font>]]></source>
       <note>
         Starting from FOP version 0.20.5 you can use URLs for the paths to the font files. Relative URLs are resolved 
         relative to the fontBaseDir property (or baseDir) if available.
@@ -109,9 +110,10 @@
             the name cmr10.ttf and exists in c:\myfonts\):
       </p>
 <source>
-
-  java -cp build\fop.jar;lib\avalon-framework.jar;lib\xml-apis.jar;lib\xercesImpl.jar;lib\xalan.jar org.apache.fop.fonts.apps.TTFReader C:\myfonts\cmr10.ttf C:\myfonts\cmr10.ttf ttfcm.xml
-
+java -cp build\fop.jar;lib\avalon-framework.jar;lib\xml-apis.jar;
+         lib\xercesImpl.jar;lib\xalan.jar
+           org.apache.fop.fonts.apps.TTFReader
+             C:\myfonts\cmr10.ttf C:\myfonts\cmr10.ttf ttfcm.xml
 </source>
     </section>
     <section>
@@ -132,9 +134,10 @@
       Example on generating metrics for a .ttc file:
       </p>
 <source>
-      
-  java -cp build\fop.jar;lib\avalon-framework.jar;lib\xml-apis.jar;lib\xercesImpl.jar;lib\xalan.jar org.apache.fop.fonts.apps.TTFReader -ttcname "MS Mincho" msmincho.ttc msminch.xml
-
+java -cp build\fop.jar;lib\avalon-framework.jar;lib\xml-apis.jar;
+         lib\xercesImpl.jar;lib\xalan.jar
+           org.apache.fop.fonts.apps.TTFReader -ttcname "MS Mincho"
+             msmincho.ttc msminch.xml
 </source>
     </section>
 
@@ -143,13 +146,10 @@
         <p>
           Similiar to Type 1 fonts.
         </p>
-<source>
-<![CDATA[
-  <font metrics-file="cyberbit.xml" kerning="yes" embed-file="C:\WINNT\Fonts\Cyberbit.ttf">
-    <font-triplet name="Cyberbit" style="normal" weight="normal">
-  </font>]]>
-
-</source>
+<source><![CDATA[<font metrics-file="cyberbit.xml" kerning="yes"
+      embed-file="C:\WINNT\Fonts\Cyberbit.ttf">
+  <font-triplet name="Cyberbit" style="normal" weight="normal">
+</font>]]></source>
       </section>
 
   </section>

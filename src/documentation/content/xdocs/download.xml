@@ -17,12 +17,12 @@
        on AnonCVS in the <link href="http://xml.apache.org/cvs.html">xml.apache.org documentation</link> for details.
        Sometimes people have difficulties to access the cvs server; in this case you can download
        a snapshot from the cvs files <link href="http://xml.apache.org/from-cvs/xml-fop/">here</link>.
-       In both cases you have to build Fop yourself - see <link href="compiling.html">Compiling Fop</link> for details.
+       In both cases you have to build FOP yourself - see <link href="compiling.html">Compiling FOP</link> for details.
     </p>
     <note>
       Important: Currently, releases of FOP are coming out of the
       "fop-0_20_2-maintain" branch. The "MAIN" branch is currently
-      under development. See <link href="http://xml.apache.org/fop/dev/index.html">Development Docs</link>
+      under development. See <link href="dev/index.html">Development Docs</link>
       for more information.
     </note>
     <p>To run FOP from the command line, see <link href="running.html">Running FOP</link>.</p>

@@ -8,6 +8,34 @@
   </header>
   <body>
     <section>
+	    <title>28 January 2003 - FOP logo contest</title>
+		<p>We are looking for a new logo. FOP <link href="logocontest.html">logo
+           contest</link> is started!</p>
+	</section>
+    <section>
+      <title>23 December 2002 - Official FOP Wiki</title>
+      <p>
+      See <link href="http://nagoya.apache.org/wiki/apachewiki.cgi?FOPProjectPages"
+      >FOP project pages</link> at the ApacheWiki.
+      </p>
+    </section>
+    <section>
+      <title>10 December 2002 - FOP 0.20.5 Release Candidate available</title>
+      <p>
+      See the full text of the <link
+      href="http://marc.theaimsgroup.com/?l=fop-user&amp;m=103954279712704&amp;w=2"
+      >announcement</link>.
+      </p>
+    </section>
+    <section>
+      <title>23 November 2002 - EXLSFO project has been created</title>
+      <p>
+      The EXSLFO project is a community effort to define functional extensions
+      to thet XSL Formatting Objects specification. See the
+      <link href="http://exslfo.sourceforge.net">EXSLFO website</link> for details.
+      </p>
+    </section>
+    <section>
       <title>22 November 2002 - New Committer</title>
   <p>Welcome Victor Mote!</p>
  </section>
