@@ -63,45 +63,46 @@ import java.io.Writer;
 import java.util.Iterator;
 import java.io.IOException;
 
-/*
- *    RtfJforCmd process "jfor-cmd"
- *
+/**
+ * Process "jfor-cmd"
  */
 public class RtfJforCmd extends RtfContainer {
 
-    private final String PARA_KEEP_ON = "para-keep:on";
-    private final String PARA_KEEP_OFF = "para-keep:off";
+    private static final String PARA_KEEP_ON = "para-keep:on";
+    private static final String PARA_KEEP_OFF = "para-keep:off";
 
-    private final RtfAttributes m_attrib;
-    private ParagraphKeeptogetherContext m_paragraphKeeptogetherContext;
+    private final RtfAttributes attrib;
+    private ParagraphKeeptogetherContext paragraphKeeptogetherContext;
 
 
 
     RtfJforCmd(RtfContainer parent, Writer w, RtfAttributes attrs) throws IOException {
         super((RtfContainer)parent, w);
-        m_attrib = attrs;
-        m_paragraphKeeptogetherContext = ParagraphKeeptogetherContext.getInstance();
+        attrib = attrs;
+        paragraphKeeptogetherContext = ParagraphKeeptogetherContext.getInstance();
     }
 
 
-
+    /**
+     *
+     * @return true (alway)
+     */
     public boolean isEmpty() {
         return true;
     }
 
-
+    /**
+     * Execute all jfor-cmd commands
+     * TODO: Consider creating one class for each jfor command.
+     */
     public void process() {
-
-        //Execute all jfor-cmd commands
-        //TODO create one class for each jfor command ?
-
-        for (Iterator it = m_attrib.nameIterator(); it.hasNext();) {
+        for (Iterator it = attrib.nameIterator(); it.hasNext();) {
             final String cmd = (String)it.next();
 
             if (cmd.equals(PARA_KEEP_ON)) {
-                m_paragraphKeeptogetherContext.keepTogetherOpen();
+                paragraphKeeptogetherContext.keepTogetherOpen();
             } else if (cmd.equals(PARA_KEEP_OFF)) {
-                  m_paragraphKeeptogetherContext.keepTogetherClose();
+                  paragraphKeeptogetherContext.keepTogetherClose();
             } else {
 //                this.getRtfFile ().getLog ().logInfo
 //                        ("JFOR-CMD ignored, command not recognised:"+cmd);
@@ -111,7 +112,5 @@ public class RtfJforCmd extends RtfContainer {
 
 
     }
-
-
 
 }

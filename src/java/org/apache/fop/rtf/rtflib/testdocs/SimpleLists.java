@@ -83,7 +83,7 @@ class SimpleLists extends TestDocument {
 
         sect.newParagraph().newText("Now a numbered list (4 items):");
         final RtfList.NumberingStyle nn = new RtfList.NumberingStyle();
-        nn.isBulletedList = false;
+        nn.setIsBulletedList(false);
         makeList(sect, 3, 4, nn);
     }
 

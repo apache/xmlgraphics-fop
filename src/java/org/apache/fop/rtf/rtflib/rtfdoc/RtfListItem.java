@@ -68,8 +68,8 @@ import java.io.IOException;
 public class RtfListItem
 extends RtfContainer
 implements IRtfParagraphContainer {
-    private RtfList m_parentList;
-    private RtfParagraph m_paragraph;
+    private RtfList parentList;
+    private RtfParagraph paragraph;
 
     /** special RtfParagraph that writes list item setup code before its content */
     private class RtfListItemParagraph extends RtfParagraph {
@@ -82,7 +82,7 @@ implements IRtfParagraphContainer {
         protected void writeRtfPrefix() throws IOException {
             super.writeRtfPrefix();
             // for bulleted list, add list item setup group before paragraph contents
-            if (m_parentList.isBulletedList()) {
+            if (parentList.isBulletedList()) {
                 writeGroupMark(true);
                 writeControlWord("pntext");
                 writeControlWord("f" + RtfFontManager.getInstance().getFontNumber("Symbol"));
@@ -101,26 +101,34 @@ implements IRtfParagraphContainer {
     /** Create an RTF list item as a child of given container with default attributes */
     RtfListItem(RtfList parent, Writer w) throws IOException {
         super((RtfContainer)parent, w);
-        m_parentList = parent;
+        parentList = parent;
     }
 
     /** Create an RTF list item as a child of given container with given attributes */
     RtfListItem(RtfList parent, Writer w, RtfAttributes attr) throws IOException {
         super((RtfContainer)parent, w, attr);
-        m_parentList = parent;
+        parentList = parent;
     }
 
-    /** close current paragraph and start a new one */
-    /** close current paragraph if any and start a new one */
+    /**
+     * Close current paragraph if any and start a new one
+     * @param attrs attributes of new paragraph
+     * @return new RtfParagraph
+     * @throws IOException for I/O problems
+     */
     public RtfParagraph newParagraph(RtfAttributes attrs) throws IOException {
-        if (m_paragraph != null) {
-            m_paragraph.close();
+        if (paragraph != null) {
+            paragraph.close();
         }
-        m_paragraph = new RtfListItemParagraph(this, attrs);
-        return m_paragraph;
+        paragraph = new RtfListItemParagraph(this, attrs);
+        return paragraph;
     }
 
-    /** close current paragraph if any and start a new one with default attributes */
+    /**
+     * Close current paragraph if any and start a new one with default attributes
+     * @return new RtfParagraph
+     * @throws IOException for I/O problems
+     */
     public RtfParagraph newParagraph() throws IOException {
         return newParagraph(null);
     }

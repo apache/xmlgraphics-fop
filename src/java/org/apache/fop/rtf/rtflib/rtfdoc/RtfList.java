@@ -61,45 +61,71 @@ package org.apache.fop.rtf.rtflib.rtfdoc;
 import java.io.Writer;
 import java.io.IOException;
 
-/**  Model of an RTF list, which can contain RTF list items
- *  @author Bertrand Delacretaz bdelacretaz@codeconsult.ch
+/**
+ * Model of an RTF list, which can contain RTF list items
+ * @author Bertrand Delacretaz bdelacretaz@codeconsult.ch
  * @author Christopher Scott, scottc@westinghouse.com
  */
-
 public class RtfList extends RtfContainer {
-    private RtfListItem m_item;
-    private RtfListTable m_listTable;
-    private final boolean m_hasTableParent;
+    private RtfListItem item;
+    private RtfListTable listTable;
+    private final boolean hasTableParent;
 
     /** list numbering style.
      *  Could add more variables, for now we simply differentiate between bullets and numbering
      */
-    private NumberingStyle m_numberingStyle;
+    private NumberingStyle numberingStyle;
+
+    /**
+     * Inner static class to handle numbering styles.
+     */
     public static class NumberingStyle {
-        public boolean isBulletedList = true;
+        private boolean isBulletedList = true;
+
+        /**
+         * accessor for isBulletedList
+         * @return isBulletedList
+         */
+        public boolean getIsBulletedList() {
+            return isBulletedList;
+        }
+
+        /**
+         * set isBulletedList
+         * @param isBL boolean value to set
+         */
+        public void setIsBulletedList(boolean isBL) {
+            isBulletedList = isBL;
+        }
     }
 
     /** Create an RTF list as a child of given container with given attributes */
     RtfList(RtfContainer parent, Writer w, RtfAttributes attr) throws IOException {
         super((RtfContainer)parent, w, attr);
-        m_numberingStyle = new NumberingStyle();
+        numberingStyle = new NumberingStyle();
         //create a new list table entry for the list
-        m_listTable = (getRtfFile()).startListTable(attr);
-        m_listTable.setParentList(this);
+        listTable = (getRtfFile()).startListTable(attr);
+        listTable.setParentList(this);
 
         // find out if we are nested in a table
-        m_hasTableParent = this.getParentOfClass(RtfTable.class) != null;
+        hasTableParent = this.getParentOfClass(RtfTable.class) != null;
     }
 
-    /** change numbering style */
+    /**
+     * Change numbering style
+     * @param ns NumberingSytle to set
+     */
     public void setNumberingStyle(NumberingStyle ns) {
-        m_numberingStyle = ns;
+        numberingStyle = ns;
     }
 
-    /** overridden to setup the list: start a group with appropriate attributes */
+    /**
+     * Overridden to setup the list: start a group with appropriate attributes
+     * @throws IOException for I/O problems
+     */
     protected void writeRtfPrefix() throws IOException {
         // pard causes word97 (and sometimes 2000 too) to crash if the list is nested in a table
-        if (!m_hasTableParent) {
+        if (!hasTableParent) {
             writeControlWord("pard");
         }
 
@@ -116,12 +142,12 @@ public class RtfList extends RtfContainer {
         //Modified by Chris Scott
         //fixes second line indentation
 
-        if (m_numberingStyle.isBulletedList) {
+        if (numberingStyle.isBulletedList) {
             // bulleted list
             writeControlWord("pnlvlblt");
             writeControlWord("ilvl0");
             writeOneAttribute(RtfListTable.LIST_NUMBER,
-            (m_listTable.getListNumber()).toString());
+            (listTable.getListNumber()).toString());
             writeOneAttribute("pnindent",
             attrib.getValue(RtfListTable.LIST_INDENT));
             writeControlWord("pnf1");
@@ -136,7 +162,7 @@ public class RtfList extends RtfContainer {
             writeControlWord("pnlvlbody");
             writeControlWord("ilvl0");
             writeOneAttribute(RtfListTable.LIST_NUMBER,
-            (m_numberingStyle.isBulletedList) ? "2" : "0");
+            (numberingStyle.isBulletedList) ? "2" : "0");
             writeControlWord("pndec");
             writeOneAttribute("pnstart",
             attrib.getValue(RtfListTable.LIST_START_AT));
@@ -147,10 +173,13 @@ public class RtfList extends RtfContainer {
 
         writeGroupMark(false);
         writeOneAttribute(RtfListTable.LIST_NUMBER,
-        (m_listTable.getListNumber()).toString());
+        (listTable.getListNumber()).toString());
     }
 
-    /** end the list group */
+    /**
+     * End the list group
+     * @throws IOException for I/O problems
+     */
     protected void writeRtfSuffix() throws IOException {
         // close group that encloses the whole list
         writeGroupMark(false);
@@ -159,22 +188,28 @@ public class RtfList extends RtfContainer {
          * but pard causes word97 (and sometimes 2000 too) to crash if the list
          * is nested in a table
          */
-        if (!m_hasTableParent) {
+        if (!hasTableParent) {
             writeControlWord("pard");
         }
     }
 
-    /** close current list item and start a new one */
+    /**
+     * Close current list item and start a new one
+     * @return new RtfListItem
+     * @throws IOException for I/O problems
+     */
     public RtfListItem newListItem() throws IOException {
-        if (m_item != null) {
-            m_item.close();
+        if (item != null) {
+            item.close();
         }
-        m_item = new RtfListItem(this, writer);
-        return m_item;
+        item = new RtfListItem(this, writer);
+        return item;
     }
 
-    /** true if this is a bulleted list (as opposed to numbered list) */
+    /**
+     * @return true if this is a bulleted list (as opposed to numbered list)
+     */
     public boolean isBulletedList() {
-        return m_numberingStyle.isBulletedList;
+        return numberingStyle.isBulletedList;
     }
 }
