@@ -60,10 +60,15 @@ Courier
   </fo:block>
 
   <fo:block font-family="Helvetica"  font-size="12pt">
- Some special symbols: Euro, Zcaron, zcaron
+ Some special characters: 
   </fo:block>
-  <fo:block space-after.optimum="10pt" font-family="Symbol">
-&#x20AC; &#x017D; 
+  <fo:block space-after.optimum="10pt" font-family="Helvetica">
+Euro ( dec 8364, hex 20AC): &#x20AC;
+  </fo:block>
+  
+
+  <fo:block space-after.optimum="10pt" font-family="Helvetica">
+
   </fo:block>
 
 </fo:flow>
