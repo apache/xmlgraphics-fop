@@ -22,7 +22,7 @@ import org.apache.fop.area.RegionReference;
 import org.apache.fop.area.Area;
 import org.apache.fop.area.Block;
 import org.apache.fop.fo.pagination.Region;
-import org.apache.fop.fo.pagination.RegionOuter;
+import org.apache.fop.fo.pagination.SideRegion;
 import org.apache.fop.fo.pagination.StaticContent;
 import org.apache.fop.traits.MinOptMax;
 
@@ -233,7 +233,7 @@ public class StaticContentLayoutManager extends BlockStackingLayoutManager {
         log.error("Cannot add marker to static areas");
     }
     
-    public void doLayout(RegionOuter region, StaticContentLayoutManager lm, MinOptMax ipd) {
+    public void doLayout(SideRegion region, StaticContentLayoutManager lm, MinOptMax ipd) {
         StaticContentBreaker breaker = new StaticContentBreaker(region, lm, ipd);
         breaker.doLayout(lm.getRegionReference().getBPD());
         if (breaker.isOverflow()) {
@@ -306,7 +306,7 @@ public class StaticContentLayoutManager extends BlockStackingLayoutManager {
         }
         
         protected void doPhase3(PageBreakingAlgorithm alg, int partCount, 
-                KnuthSequence originalList, KnuthSequence effectiveList) {
+                BlockSequence originalList, BlockSequence effectiveList) {
             //Directly add areas after finding the breaks
             addAreas(alg, partCount, originalList, effectiveList);
             if (partCount > 1) {

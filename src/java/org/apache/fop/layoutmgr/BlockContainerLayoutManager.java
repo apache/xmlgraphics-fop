@@ -470,8 +470,8 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager
         
         //Info for deferred adding of areas
         private PageBreakingAlgorithm deferredAlg;
-        private KnuthSequence deferredOriginalList;
-        private KnuthSequence deferredEffectiveList;
+        private BlockSequence deferredOriginalList;
+        private BlockSequence deferredEffectiveList;
         
         public BlockContainerBreaker(BlockContainerLayoutManager bclm, MinOptMax ipd) {
             this.bclm = bclm;
@@ -536,7 +536,7 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager
         }
         
         protected void doPhase3(PageBreakingAlgorithm alg, int partCount, 
-                KnuthSequence originalList, KnuthSequence effectiveList) {
+                BlockSequence originalList, BlockSequence effectiveList) {
             //Defer adding of areas until addAreas is called by the parent LM
             this.deferredAlg = alg;
             this.deferredOriginalList = originalList;

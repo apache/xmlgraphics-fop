@@ -41,7 +41,7 @@ public class BodyRegion extends RegionReference {
     public BodyRegion() {
         super(Constants.FO_REGION_BODY);
         addTrait(Trait.IS_REFERENCE_AREA, Boolean.TRUE);
-        mainReference = new MainReference();
+        mainReference = new MainReference(this);
     }
 
     /**
@@ -89,6 +89,11 @@ public class BodyRegion extends RegionReference {
         this.columnGap = colGap;
     }
 
+    /** @return the column-gap value */
+    public int getColumnGap() {
+        return this.columnGap;
+    }
+    
     /**
      * Set the before float area.
      *
@@ -96,15 +101,6 @@ public class BodyRegion extends RegionReference {
      */
     public void setBeforeFloat(BeforeFloat bf) {
         beforeFloat = bf;
-    }
-
-    /**
-     * Set the main reference area.
-     *
-     * @param mr the main reference area
-     */
-    public void setMainReference(MainReference mr) {
-        mainReference = mr;
     }
 
     /**

@@ -28,7 +28,7 @@ import org.apache.fop.fo.PropertyList;
 /**
  * Abstract base class for fo:region-before and fo:region-after.
  */
-public abstract class RegionBA extends RegionOuter {
+public abstract class RegionBA extends SideRegion {
     // The value of properties relevant for fo:region-[before|after].
     private int precedence;
     // End of property values

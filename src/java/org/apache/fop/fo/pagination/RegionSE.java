@@ -28,7 +28,7 @@ import org.apache.fop.fo.PropertyList;
 /**
  * Abstract base class for fo:region-start and fo:region-end.
  */
-public abstract class RegionSE extends RegionOuter {
+public abstract class RegionSE extends SideRegion {
     // The value of properties relevant for fo:region-[start|end].
     // End of property values
 
