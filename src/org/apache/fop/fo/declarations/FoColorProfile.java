@@ -11,7 +11,6 @@ package org.apache.fop.fo.declarations;
 
 // FOP
 import org.apache.fop.fo.PropNames;
-import org.apache.fop.fo.FOPropertySets;
 import org.apache.fop.fo.PropertySets;
 import org.apache.fop.fo.FObjectNames;
 import org.apache.fop.fo.FONode;
@@ -83,8 +82,7 @@ public class FoColorProfile extends FONode {
         throws TreeException, FOPException
     {
         super(foTree, FObjectNames.COLOR_PROFILE, parent, event,
-              FOPropertySets.DECLARATIONS_SET, sparsePropsMap, sparseIndices,
-              numProps);
+              FONode.DECLARATIONS_SET, sparsePropsMap, sparseIndices);
         makeSparsePropsSet();
     }
 
