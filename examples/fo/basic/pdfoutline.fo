@@ -916,8 +916,20 @@ This is not the latest Fop documentation, but just an fo example. FOP - p. <fo:p
     </fo:list-block>
 
 
+</fo:flow>
+</fo:page-sequence>
+
+  <fo:page-sequence master-reference="basicPSM">
 
 
+<fo:static-content flow-name="xsl-region-before">
+<fo:block text-align="end" font-size="10pt" font-family="serif" line-height="14pt" color="red" >
+This is not the latest Fop documentation, but just an fo example. FOP - p. <fo:page-number/>
+</fo:block>
+</fo:static-content>
+
+
+<fo:flow flow-name="xsl-region-body">
 
 
   <fo:block  id="sec6" font-size="18pt" font-family="serif" line-height="20pt" space-before.optimum="20pt" space-after.optimum="14pt" >F)
