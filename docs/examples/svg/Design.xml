@@ -31,12 +31,12 @@
 				<Body>
 					<p>
 						The primary aim is to enable the parsing of all SVG elements
-						as described in the document "WD-SVG-20000629.pdf". This applies
+						as described in the document "CR-SVG-20000802.pdf". This applies
 						to the stylable elements.
 					</p>
 					<p>
 						The java interface is available from -
-						"http://www.w3.org/TR/2000/WD-SVG-20000629/java-binding.zip"
+						"http://www.w3.org/TR/2000/CR-SVG-20000802/java-binding.zip"
 					</p>
 					<p>
 						As the SVG elements include information for animation and

@@ -1,6 +1,6 @@
 <?xml version="1.0" standalone="yes"?>
 
-<svg:svg width="400px" height="150px" xmlns:svg="http://www.w3.org/TR/2000/WD-SVG-20000629/DTD/svg-20000629.dtd">
+<svg:svg width="400px" height="150px" xmlns:svg="http://www.w3.org/TR/2000/CR-SVG-20000802/DTD/svg-20000802.dtd">
   <svg:title>OrigCoordSys</svg:title>
   <svg:desc>Example OrigCoordSys - Simple transformations: original picture</svg:desc>
   <svg:g style="fill:none; stroke:black; stroke-width:3">
