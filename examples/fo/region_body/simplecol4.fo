@@ -14,8 +14,8 @@
                   margin-left="0.75in"
                   margin-right="0.75in">
       <fo:region-body
-      margin-top="1in" margin-bottom="1in"
-    column-count="3" column-gap="0.15in"/>
+          margin-top="1in" margin-bottom="1in"
+          column-count="3" column-gap="0.15in"/>
       <fo:region-before extent="1in"/>
       <fo:region-after extent="1in"/>
     </fo:simple-page-master>

@@ -5,8 +5,14 @@
 <fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format"
          xmlns:fox="http://xml.apache.org/fop/extensions">
  <fo:layout-master-set>
-   <fo:simple-page-master page-width="21cm" page-height="29.7cm" master-name="A4">
-     <fo:region-body margin-bottom="1.5cm" margin-right="2cm" margin-left="2cm" margin-top="1.5cm"/>
+   <fo:simple-page-master master-name="A4"
+            page-width="21cm" 
+            page-height="29.7cm" >
+       <fo:region-body 
+            margin-bottom="1.5cm" 
+            margin-right="2cm" 
+            margin-left="2cm" 
+            margin-top="1.5cm"/>
    </fo:simple-page-master>
  </fo:layout-master-set>
 

@@ -10,9 +10,12 @@
   <fo:layout-master-set>
 
     <fo:simple-page-master master-name="all"
-    page-height="11.5in" page-width="8.5in"
-        margin-top="1in" margin-bottom="1in"
-        margin-left="0.75in" margin-right="0.75in">
+            page-height="11.5in" 
+            page-width="8.5in"
+            margin-top="1in" 
+            margin-bottom="1in"
+            margin-left="0.75in" 
+            margin-right="0.75in">
     <fo:region-body margin-top="1in" margin-bottom="0.75in"/>
     <fo:region-before extent="0.75in"/>
     <fo:region-after extent="0.5in"/>

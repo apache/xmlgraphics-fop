@@ -14,8 +14,7 @@ This file addresses breaks in page context.
                   margin-bottom="2cm"
                   margin-left="2.5cm"
                   margin-right="2.5cm">
-      <fo:region-body
-      margin-top="3cm" margin-bottom="2cm"/>
+      <fo:region-body margin-top="3cm" margin-bottom="2cm"/>
       <fo:region-before extent="3cm"/>
       <fo:region-after extent="2cm"/>
     </fo:simple-page-master>

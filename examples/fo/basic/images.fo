@@ -5,31 +5,36 @@
     xmlns:fox="http://xml.apache.org/fop/extensions">
 
 <fo:layout-master-set>
-<fo:simple-page-master master-name="right"
-  margin-top="75pt" margin-bottom="25pt" margin-left="100pt" margin-right="50pt">
-  <fo:region-body margin-bottom="50pt"/>
-  <fo:region-after extent="25pt"/>
-</fo:simple-page-master>
-
-<fo:simple-page-master master-name="left"
-  margin-top="75pt" margin-bottom="25pt" margin-left="50pt" margin-right="100pt">
-  <fo:region-body margin-bottom="50pt"/>
-  <fo:region-after extent="25pt"/>
-</fo:simple-page-master>
-
-<fo:page-sequence-master master-name="psmOddEven" >
-  <fo:repeatable-page-master-alternatives>
-    <fo:conditional-page-master-reference master-reference="right"
-      page-position="first" />
-    <fo:conditional-page-master-reference master-reference="left"
-      odd-or-even="even" />
-    <fo:conditional-page-master-reference master-reference="right"
-      odd-or-even="odd" />
-    <!-- recommended fallback procedure -->
-    <fo:conditional-page-master-reference master-reference="rest" />
-  </fo:repeatable-page-master-alternatives>
-</fo:page-sequence-master>
-
+    <fo:simple-page-master master-name="right"
+            margin-top="75pt"
+            margin-bottom="25pt"
+            margin-left="100pt"
+            margin-right="50pt">
+      <fo:region-body margin-bottom="50pt"/>
+      <fo:region-after extent="25pt"/>
+    </fo:simple-page-master>
+    
+    <fo:simple-page-master master-name="left"
+            margin-top="75pt"
+            margin-bottom="25pt"
+            margin-left="50pt"
+            margin-right="100pt">
+      <fo:region-body margin-bottom="50pt"/>
+      <fo:region-after extent="25pt"/>
+    </fo:simple-page-master>
+    
+    <fo:page-sequence-master master-name="psmOddEven" >
+      <fo:repeatable-page-master-alternatives>
+        <fo:conditional-page-master-reference master-reference="right"
+          page-position="first" />
+        <fo:conditional-page-master-reference master-reference="left"
+          odd-or-even="even" />
+        <fo:conditional-page-master-reference master-reference="right"
+          odd-or-even="odd" />
+        <!-- recommended fallback procedure -->
+        <fo:conditional-page-master-reference master-reference="rest" />
+      </fo:repeatable-page-master-alternatives>
+    </fo:page-sequence-master>
 </fo:layout-master-set>
 
 <fo:page-sequence id="N2528" master-reference="psmOddEven">
