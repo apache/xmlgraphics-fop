@@ -8,9 +8,9 @@
 package org.apache.fop.fonts;
 
 public class Glyphs {
-    static String notdef = ".notdef";
+    public static String notdef = ".notdef";
 
-    static String mac_glyph_names[] = {
+    public static String mac_glyph_names[] = {
         /* 0x00 */
         notdef, ".null", "CR", "space", "exclam", "quotedbl", "numbersign",
                 "dollar", "percent", "ampersand", "quotesingle", "parenleft",
@@ -68,7 +68,7 @@ public class Glyphs {
         "ccaron", "dmacron"
     };
 
-    static String[] tex8r = {
+    public static String[] tex8r = {
         // 0x00
         ".notdef", "dotaccent", "fi", "fl", "fraction", "hungarumlaut",
                    "Lslash", "lslash", "ogonek", "ring", ".notdef", "breve",
@@ -179,7 +179,7 @@ public class Glyphs {
              '\u00fc', '\u00fd', '\u00fe', '\u00ff'
     };
 
-    static String[] unicode_glyphs = {
+    public static String[] unicode_glyphs = {
               "\u0041", "A",
         "\u00C6", "AE",
         "\u01FC", "AEacute",
