@@ -1,5 +1,5 @@
 /*
-   Copyright 2004 The Apache Software Foundation.
+   Copyright 2002-2004 The Apache Software Foundation.
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -34,11 +34,11 @@ public class TNode extends Node {
     }
 
     public TNode(Tree tree, TNode parent, int index) {
-        super(parent, index);
+        super(parent, index, Node.SYNCHRONIZE);
     }
 
     public TNode(TNode parent) {
-        super(parent);
+        super(parent, Node.SYNCHRONIZE);
     }
 
     /**
@@ -49,7 +49,7 @@ public class TNode extends Node {
      */
 
     public TNode(TNode parent, Object content) {
-        super(parent);
+        super(parent, Node.SYNCHRONIZE);
         this.content = content;
     }
 
@@ -63,7 +63,7 @@ public class TNode extends Node {
 
     public TNode(TNode parent, int index, Object content)
         throws IndexOutOfBoundsException {
-        super(parent, index);
+        super(parent, index, Node.SYNCHRONIZE);
         this.content = content;
     }
 
