@@ -68,7 +68,7 @@ import org.apache.fop.fo.PropertySets;
 import org.apache.fop.fo.expr.PropertyException;
 import org.apache.fop.xml.FoXmlEvent;
 import org.apache.fop.xml.XmlEvent;
-import org.apache.fop.xml.SyncedXmlEventsBuffer;
+import org.apache.fop.xml.XmlEventReader;
 
 /**
  * Implements the fo:table-row flow object.
@@ -166,8 +166,8 @@ public class FoTableRow extends FONode {
                         getFOTree(), this, (FoXmlEvent)ev, stateFlags);
                 numCells++;
                 ev = xmlevents.getEndElement(
-                        SyncedXmlEventsBuffer.DISCARD_EV, ev);
-                namespaces.surrenderEvent(ev);
+                        XmlEventReader.DISCARD_EV, ev);
+                namespaces.relinquishEvent(ev);
             }
             if (numCells == 0)
                 throw new FOPException

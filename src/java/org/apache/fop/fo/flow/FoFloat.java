@@ -67,7 +67,7 @@ import org.apache.fop.fo.FObjects;
 import org.apache.fop.fo.PropNames;
 import org.apache.fop.xml.FoXmlEvent;
 import org.apache.fop.xml.XmlEvent;
-import org.apache.fop.xml.SyncedXmlEventsBuffer;
+import org.apache.fop.xml.XmlEventReader;
 import org.apache.fop.xml.UnexpectedStartElementException;
 
 /**
@@ -150,8 +150,8 @@ public class FoFloat extends FONode {
                     foTree, this, (FoXmlEvent)ev,
                     stateFlags | FONode.MC_FLOAT);
             // Clear the blockage
-            ev = xmlevents.getEndElement(SyncedXmlEventsBuffer.DISCARD_EV, ev);
-            namespaces.surrenderEvent(ev);
+            ev = xmlevents.getEndElement(XmlEventReader.DISCARD_EV, ev);
+            namespaces.relinquishEvent(ev);
             // Get the rest of the %block;s
             do {
                 if ((stateFlags & FONode.MC_OUT_OF_LINE) == 0)
@@ -164,8 +164,8 @@ public class FoFloat extends FONode {
                             foTree, this, (FoXmlEvent)ev,
                             stateFlags | FONode.MC_FLOAT);
                     ev = xmlevents.getEndElement(
-                            SyncedXmlEventsBuffer.DISCARD_EV, ev);
-                    namespaces.surrenderEvent(ev);
+                            XmlEventReader.DISCARD_EV, ev);
+                    namespaces.relinquishEvent(ev);
                 }
             } while (ev != null);
         } catch(UnexpectedStartElementException e) {

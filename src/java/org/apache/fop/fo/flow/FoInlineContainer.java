@@ -68,7 +68,7 @@ import org.apache.fop.fo.PropNames;
 import org.apache.fop.fo.PropertySets;
 import org.apache.fop.xml.FoXmlEvent;
 import org.apache.fop.xml.XmlEvent;
-import org.apache.fop.xml.SyncedXmlEventsBuffer;
+import org.apache.fop.xml.XmlEventReader;
 import org.apache.fop.xml.UnexpectedStartElementException;
 
 /**
@@ -170,8 +170,8 @@ public class FoInlineContainer extends FONode {
                     foTree, this, (FoXmlEvent)ev, stateFlags);
             // Clear the blockage
             ev = xmlevents.getEndElement(
-                    SyncedXmlEventsBuffer.DISCARD_EV, ev);
-            namespaces.surrenderEvent(ev);
+                    XmlEventReader.DISCARD_EV, ev);
+            namespaces.relinquishEvent(ev);
             // Get the rest of the %block;s
             do {
                 if ((stateFlags & FONode.MC_OUT_OF_LINE) == 0)
@@ -183,8 +183,8 @@ public class FoInlineContainer extends FONode {
                     FObjects.fobjects.makeFlowObject(
                             foTree, this, (FoXmlEvent)ev, stateFlags);
                     ev = xmlevents.getEndElement(
-                            SyncedXmlEventsBuffer.DISCARD_EV, ev);
-                    namespaces.surrenderEvent(ev);
+                            XmlEventReader.DISCARD_EV, ev);
+                    namespaces.relinquishEvent(ev);
                 }
             } while (ev != null);
         } catch(UnexpectedStartElementException e) {

@@ -68,7 +68,7 @@ import org.apache.fop.fo.PropertySets;
 import org.apache.fop.fo.expr.PropertyException;
 import org.apache.fop.xml.FoXmlEvent;
 import org.apache.fop.xml.XmlEvent;
-import org.apache.fop.xml.SyncedXmlEventsBuffer;
+import org.apache.fop.xml.XmlEventReader;
 
 /**
  * Implements the fo:multi-properties flow object.
@@ -147,8 +147,8 @@ public class FoMultiProperties extends FONode {
                         getFOTree(), this, (FoXmlEvent)ev, stateFlags);
                 numSets++;
                 ev = xmlevents.getEndElement(
-                        SyncedXmlEventsBuffer.DISCARD_EV, ev);
-                namespaces.surrenderEvent(ev);
+                        XmlEventReader.DISCARD_EV, ev);
+                namespaces.relinquishEvent(ev);
             }
 
             if (numSets == 0)
@@ -162,8 +162,8 @@ public class FoMultiProperties extends FONode {
                 throw new FOPException
                         ("No wrapper in multi-properties.");
             new FoWrapper(getFOTree(), this, (FoXmlEvent)ev, stateFlags);
-            ev = xmlevents.getEndElement(SyncedXmlEventsBuffer.DISCARD_EV, ev);
-            namespaces.surrenderEvent(ev);
+            ev = xmlevents.getEndElement(XmlEventReader.DISCARD_EV, ev);
+            namespaces.relinquishEvent(ev);
 
             /*
         } catch (NoSuchElementException e) {

@@ -69,7 +69,7 @@ import org.apache.fop.fo.PropertySets;
 import org.apache.fop.messaging.MessageHandler;
 import org.apache.fop.xml.FoXmlEvent;
 import org.apache.fop.xml.XmlEvent;
-import org.apache.fop.xml.SyncedXmlEventsBuffer;
+import org.apache.fop.xml.XmlEventReader;
 import org.apache.fop.xml.UnexpectedStartElementException;
 
 /**
@@ -157,8 +157,8 @@ public class FoBidiOverride extends FONode {
                             foTree, this, ev, stateFlags);
                     if (ev.getType() != XmlEvent.CHARACTERS)
                         ev = xmlevents.getEndElement(
-                                SyncedXmlEventsBuffer.DISCARD_EV, ev);
-                    namespaces.surrenderEvent(ev);
+                                XmlEventReader.DISCARD_EV, ev);
+                    namespaces.relinquishEvent(ev);
                 }
             } catch(UnexpectedStartElementException e) {
                 ev = xmlevents.getStartElement();
@@ -166,8 +166,8 @@ public class FoBidiOverride extends FONode {
                         ("Ignoring unexpected Start Element: "
                                                          + ev.getQName());
                 ev = xmlevents.getEndElement(
-                        SyncedXmlEventsBuffer.DISCARD_EV, ev);
-                namespaces.surrenderEvent(ev);
+                        XmlEventReader.DISCARD_EV, ev);
+                namespaces.relinquishEvent(ev);
             }
         } while (ev != null);
 

@@ -65,7 +65,7 @@ import org.apache.fop.fo.PropertySets;
 import org.apache.fop.fo.expr.PropertyException;
 import org.apache.fop.xml.FoXmlEvent;
 import org.apache.fop.xml.XmlEvent;
-import org.apache.fop.xml.SyncedXmlEventsBuffer;
+import org.apache.fop.xml.XmlEventReader;
 
 /**
  * Implements the fo:list-item flow object.
@@ -157,8 +157,8 @@ public class FoListItem extends FONode {
                         ("No list-item-label in list-item.");
             new FoListItemLabel(
                     getFOTree(), this, (FoXmlEvent)ev, stateFlags);
-            ev = xmlevents.getEndElement(SyncedXmlEventsBuffer.DISCARD_EV, ev);
-            namespaces.surrenderEvent(ev);
+            ev = xmlevents.getEndElement(XmlEventReader.DISCARD_EV, ev);
+            namespaces.relinquishEvent(ev);
 
             // Look for one list-item-body
             if ((ev = xmlevents.expectStartElement
@@ -167,8 +167,8 @@ public class FoListItem extends FONode {
                 throw new FOPException
                         ("No list-item-body in list-item.");
             new FoListItemBody(getFOTree(), this, (FoXmlEvent)ev, stateFlags);
-            ev = xmlevents.getEndElement(SyncedXmlEventsBuffer.DISCARD_EV, ev);
-            namespaces.surrenderEvent(ev);
+            ev = xmlevents.getEndElement(XmlEventReader.DISCARD_EV, ev);
+            namespaces.relinquishEvent(ev);
 
         } catch(TreeException e) {
             throw new FOPException("TreeException: " + e.getMessage());

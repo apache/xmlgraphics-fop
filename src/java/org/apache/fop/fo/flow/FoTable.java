@@ -68,7 +68,7 @@ import org.apache.fop.fo.PropertySets;
 import org.apache.fop.fo.expr.PropertyException;
 import org.apache.fop.xml.FoXmlEvent;
 import org.apache.fop.xml.XmlEvent;
-import org.apache.fop.xml.SyncedXmlEventsBuffer;
+import org.apache.fop.xml.XmlEventReader;
 
 /**
  * Implements the fo:table flow object.
@@ -186,8 +186,8 @@ public class FoTable extends FONode {
                         getFOTree(), this, (FoXmlEvent)ev, stateFlags);
                 numColumns++;
                 ev = xmlevents.getEndElement(
-                        SyncedXmlEventsBuffer.DISCARD_EV, ev);
-                namespaces.surrenderEvent(ev);
+                        XmlEventReader.DISCARD_EV, ev);
+                namespaces.relinquishEvent(ev);
             }
 
             // Look for optional table-header
@@ -198,8 +198,8 @@ public class FoTable extends FONode {
                 new FoTableHeader(
                         getFOTree(), this, (FoXmlEvent)ev, stateFlags);
                 ev = xmlevents.getEndElement(
-                        SyncedXmlEventsBuffer.DISCARD_EV, ev);
-                namespaces.surrenderEvent(ev);
+                        XmlEventReader.DISCARD_EV, ev);
+                namespaces.relinquishEvent(ev);
             }
 
             // Look for optional table-footer
@@ -210,8 +210,8 @@ public class FoTable extends FONode {
                 new FoTableFooter(
                         getFOTree(), this, (FoXmlEvent)ev, stateFlags);
                 ev = xmlevents.getEndElement(
-                        SyncedXmlEventsBuffer.DISCARD_EV, ev);
-                namespaces.surrenderEvent(ev);
+                        XmlEventReader.DISCARD_EV, ev);
+                namespaces.relinquishEvent(ev);
             }
 
             // Look for one or more table-body
@@ -223,8 +223,8 @@ public class FoTable extends FONode {
             firstBodyOffset = numChildren();
             new FoTableBody(getFOTree(), this, (FoXmlEvent)ev, stateFlags);
             numBodies++;
-            ev = xmlevents.getEndElement(SyncedXmlEventsBuffer.DISCARD_EV, ev);
-            namespaces.surrenderEvent(ev);
+            ev = xmlevents.getEndElement(XmlEventReader.DISCARD_EV, ev);
+            namespaces.relinquishEvent(ev);
             while ((ev = xmlevents.expectStartElement
                         (FObjectNames.TABLE_BODY, XmlEvent.DISCARD_W_SPACE))
                    != null) {
@@ -233,8 +233,8 @@ public class FoTable extends FONode {
                         getFOTree(), this, (FoXmlEvent)ev, stateFlags);
                 numBodies++;
                 ev = xmlevents.getEndElement(
-                        SyncedXmlEventsBuffer.DISCARD_EV, ev);
-                namespaces.surrenderEvent(ev);
+                        XmlEventReader.DISCARD_EV, ev);
+                namespaces.relinquishEvent(ev);
             }
 
         } catch(TreeException e) {

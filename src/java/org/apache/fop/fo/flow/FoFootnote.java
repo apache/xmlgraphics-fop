@@ -68,7 +68,7 @@ import org.apache.fop.fo.PropertySets;
 import org.apache.fop.fo.expr.PropertyException;
 import org.apache.fop.xml.FoXmlEvent;
 import org.apache.fop.xml.XmlEvent;
-import org.apache.fop.xml.SyncedXmlEventsBuffer;
+import org.apache.fop.xml.XmlEventReader;
 
 /**
  * Implements the fo:footnote flow object.
@@ -156,8 +156,8 @@ public class FoFootnote extends FONode {
                     getFOTree(), this, (FoXmlEvent)ev,
                     stateFlags | FONode.MC_FOOTNOTE);
             ev =  xmlevents.getEndElement(
-                    SyncedXmlEventsBuffer.DISCARD_EV, ev);
-            namespaces.surrenderEvent(ev);
+                    XmlEventReader.DISCARD_EV, ev);
+            namespaces.relinquishEvent(ev);
 
             // Look for the footnote-body
             if ((ev = xmlevents.expectStartElement
@@ -167,8 +167,8 @@ public class FoFootnote extends FONode {
             new FoFootnoteBody(
                     getFOTree(), this, (FoXmlEvent)ev,
                     stateFlags | FONode.MC_FOOTNOTE);
-            ev = xmlevents.getEndElement(SyncedXmlEventsBuffer.DISCARD_EV, ev);
-            namespaces.surrenderEvent(ev);
+            ev = xmlevents.getEndElement(XmlEventReader.DISCARD_EV, ev);
+            namespaces.relinquishEvent(ev);
 
             /*
         } catch (NoSuchElementException e) {

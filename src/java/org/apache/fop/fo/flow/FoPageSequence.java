@@ -68,7 +68,7 @@ import org.apache.fop.fo.PropNames;
 import org.apache.fop.fo.expr.PropertyException;
 import org.apache.fop.xml.FoXmlEvent;
 import org.apache.fop.xml.XmlEvent;
-import org.apache.fop.xml.SyncedXmlEventsBuffer;
+import org.apache.fop.xml.XmlEventReader;
 
 /**
  * Implements the fo:simple-page-master flow object
@@ -152,8 +152,8 @@ public class FoPageSequence extends FONode {
                 // process the title
                 title = numChildren();
                 new FoTitle(getFOTree(), this, (FoXmlEvent)ev);
-                ev = xmlevents.getEndElement(SyncedXmlEventsBuffer.DISCARD_EV, ev);
-                namespaces.surrenderEvent(ev);
+                ev = xmlevents.getEndElement(XmlEventReader.DISCARD_EV, ev);
+                namespaces.relinquishEvent(ev);
             } // else ignore
 
             // Look for zero or more static-content
@@ -165,8 +165,8 @@ public class FoPageSequence extends FONode {
                 if (firstStaticContent != -1)
                     firstStaticContent = numChildren();
                 new FoStaticContent(getFOTree(), this, (FoXmlEvent)ev);
-                ev = xmlevents.getEndElement(SyncedXmlEventsBuffer.DISCARD_EV, ev);
-                namespaces.surrenderEvent(ev);
+                ev = xmlevents.getEndElement(XmlEventReader.DISCARD_EV, ev);
+                namespaces.relinquishEvent(ev);
             }
 
             // Look for one or more page-sequence
@@ -178,15 +178,15 @@ public class FoPageSequence extends FONode {
                 throw new FOPException("No flow found.");
             firstFlow = numChildren();
             new FoFlow(getFOTree(), this, (FoXmlEvent)ev);
-            ev = xmlevents.getEndElement(SyncedXmlEventsBuffer.DISCARD_EV, ev);
-            namespaces.surrenderEvent(ev);
+            ev = xmlevents.getEndElement(XmlEventReader.DISCARD_EV, ev);
+            namespaces.relinquishEvent(ev);
             while ((ev = xmlevents.expectStartElement
                             (FObjectNames.FLOW, XmlEvent.DISCARD_W_SPACE))
                    != null) {
                 // Loop over remaining fo:page-sequences
                 new FoFlow(getFOTree(), this, (FoXmlEvent)ev);
-                ev = xmlevents.getEndElement(SyncedXmlEventsBuffer.DISCARD_EV, ev);
-                namespaces.surrenderEvent(ev);
+                ev = xmlevents.getEndElement(XmlEventReader.DISCARD_EV, ev);
+                namespaces.relinquishEvent(ev);
             }
         } catch (NoSuchElementException e) {
             throw new FOPException

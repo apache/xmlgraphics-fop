@@ -68,7 +68,7 @@ import org.apache.fop.fo.PropertySets;
 import org.apache.fop.fo.expr.PropertyException;
 import org.apache.fop.xml.FoXmlEvent;
 import org.apache.fop.xml.XmlEvent;
-import org.apache.fop.xml.SyncedXmlEventsBuffer;
+import org.apache.fop.xml.XmlEventReader;
 
 /**
  * Implements the fo:table-footer flow object.
@@ -167,8 +167,8 @@ public class FoTableFooter extends FONode {
                    != null) {
                 new FoMarker(getFOTree(), this, (FoXmlEvent)ev, stateFlags);
                 numMarkers++;
-                ev = xmlevents.getEndElement(SyncedXmlEventsBuffer.DISCARD_EV, ev);
-                namespaces.surrenderEvent(ev);
+                ev = xmlevents.getEndElement(XmlEventReader.DISCARD_EV, ev);
+                namespaces.relinquishEvent(ev);
             }
 
             // Look for one or more table-rows
@@ -178,8 +178,8 @@ public class FoTableFooter extends FONode {
                    != null) {
                 new FoTableRow(getFOTree(), this, (FoXmlEvent)ev, stateFlags);
                 numRows++;
-                ev = xmlevents.getEndElement(SyncedXmlEventsBuffer.DISCARD_EV, ev);
-                namespaces.surrenderEvent(ev);
+                ev = xmlevents.getEndElement(XmlEventReader.DISCARD_EV, ev);
+                namespaces.relinquishEvent(ev);
             }
 
             if (numRows > 0) {
@@ -194,8 +194,8 @@ public class FoTableFooter extends FONode {
                             getFOTree(), this, (FoXmlEvent)ev, stateFlags);
                     numCells++;
                     ev = xmlevents.getEndElement(
-                            SyncedXmlEventsBuffer.DISCARD_EV, ev);
-                    namespaces.surrenderEvent(ev);
+                            XmlEventReader.DISCARD_EV, ev);
+                    namespaces.relinquishEvent(ev);
                 }
                 if (numCells == 0)
                     throw new FOPException

@@ -68,7 +68,7 @@ import org.apache.fop.fo.PropertySets;
 import org.apache.fop.fo.expr.PropertyException;
 import org.apache.fop.xml.FoXmlEvent;
 import org.apache.fop.xml.XmlEvent;
-import org.apache.fop.xml.SyncedXmlEventsBuffer;
+import org.apache.fop.xml.XmlEventReader;
 
 /**
  * Implements the fo:table-and-caption flow object.
@@ -167,8 +167,8 @@ public class FoTableAndCaption extends FONode {
                 new FoMarker(getFOTree(), this, (FoXmlEvent)ev, stateFlags);
                 numMarkers++;
                 ev = xmlevents.getEndElement(
-                        SyncedXmlEventsBuffer.DISCARD_EV, ev);
-                namespaces.surrenderEvent(ev);
+                        XmlEventReader.DISCARD_EV, ev);
+                namespaces.relinquishEvent(ev);
             }
 
             // Look for optional table-caption
@@ -179,8 +179,8 @@ public class FoTableAndCaption extends FONode {
                 new FoTableCaption(
                         getFOTree(), this, (FoXmlEvent)ev, stateFlags);
                 captionOffset = numMarkers;
-                ev = xmlevents.getEndElement(SyncedXmlEventsBuffer.DISCARD_EV, ev);
-                namespaces.surrenderEvent(ev);
+                ev = xmlevents.getEndElement(XmlEventReader.DISCARD_EV, ev);
+                namespaces.relinquishEvent(ev);
             }
 
             // Look for one table
@@ -191,8 +191,8 @@ public class FoTableAndCaption extends FONode {
                 throw new FOPException("No table found.");
             tableOffset = numChildren();
             new FoTable(getFOTree(), this, (FoXmlEvent)ev, stateFlags);
-            ev = xmlevents.getEndElement(SyncedXmlEventsBuffer.DISCARD_EV, ev);
-            namespaces.surrenderEvent(ev);
+            ev = xmlevents.getEndElement(XmlEventReader.DISCARD_EV, ev);
+            namespaces.relinquishEvent(ev);
 
             /*
         } catch (NoSuchElementException e) {

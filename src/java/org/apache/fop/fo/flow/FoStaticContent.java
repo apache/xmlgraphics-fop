@@ -67,7 +67,7 @@ import org.apache.fop.fo.FObjects;
 import org.apache.fop.fo.PropNames;
 import org.apache.fop.xml.FoXmlEvent;
 import org.apache.fop.xml.XmlEvent;
-import org.apache.fop.xml.SyncedXmlEventsBuffer;
+import org.apache.fop.xml.XmlEventReader;
 import org.apache.fop.xml.UnexpectedStartElementException;
 
 /**
@@ -134,8 +134,8 @@ public class FoStaticContent extends FONode {
             FObjects.fobjects.makeFlowObject(
                     foTree, this, (FoXmlEvent)ev, FONode.STATIC_SET);
             // Clear the blockage
-            ev = xmlevents.getEndElement(SyncedXmlEventsBuffer.DISCARD_EV, ev);
-            namespaces.surrenderEvent(ev);
+            ev = xmlevents.getEndElement(XmlEventReader.DISCARD_EV, ev);
+            namespaces.relinquishEvent(ev);
             // Get the rest of the %block;s
             while ((ev = xmlevents.expectBlock()) != null) {
                 // Generate the flow object
@@ -143,8 +143,8 @@ public class FoStaticContent extends FONode {
                     //("Generating subsequent block for static-content.");
                 FObjects.fobjects.makeFlowObject(
                         foTree, this, (FoXmlEvent)ev, FONode.STATIC_SET);
-                ev = xmlevents.getEndElement(SyncedXmlEventsBuffer.DISCARD_EV, ev);
-                namespaces.surrenderEvent(ev);
+                ev = xmlevents.getEndElement(XmlEventReader.DISCARD_EV, ev);
+                namespaces.relinquishEvent(ev);
             }
         } catch(UnexpectedStartElementException e) {
             throw new FOPException
