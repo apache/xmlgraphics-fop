@@ -3,13 +3,14 @@
     "http://cvs.apache.org/viewcvs.cgi/*checkout*/xml-forrest/src/resources/schema/dtd/document-v11.dtd">
 
 <document>
-    <header>
-        <title>FOP Design: Layout Managers</title>
-        <subtitle>Break Possibility Proposal</subtitle>
-        <authors>
-            <person name="Karen Lease" email="klease@club-internet.fr"/>
-        </authors>
-    </header>
+  <header>
+    <title>FOP Design: Layout Managers</title>
+    <subtitle>Break Possibility Proposal</subtitle>
+    <version>$Revision$</version>
+    <authors>
+      <person name="Karen Lease" email="klease@club-internet.fr"/>
+    </authors>
+  </header>
 
     <body>
 <section id="intro">

@@ -5,10 +5,11 @@
 
 <!-- Embedding FOP -->
 <document>
-    <header>
-        <title>Embedding FOP</title>
-        <subtitle>How to Embed FOP in a Java application</subtitle>
-    </header>
+  <header>
+    <title>FOP: Embedding</title>
+    <subtitle>How to Embed FOP in a Java application</subtitle>
+    <version>$Revision$</version>
+  </header>
 
     <body>
   <section id="overview">

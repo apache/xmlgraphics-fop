@@ -4,6 +4,7 @@
 <document>
   <header>
     <title>FOP Development: Release Mechanics</title>
+    <version>$Revision$</version>
   </header>
   <body>
     <section id="intro">

@@ -3,9 +3,10 @@
     "http://cvs.apache.org/viewcvs.cgi/*checkout*/xml-forrest/src/resources/schema/dtd/document-v11.dtd">
 
 <document>
-<header>
-  <title>FOP License</title>
-</header>
+  <header>
+    <title>FOP License</title>
+    <version>$Revision$</version>
+  </header>
 <body>
 <section>
   <title>License</title>

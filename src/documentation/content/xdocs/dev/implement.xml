@@ -3,8 +3,9 @@
     "http://cvs.apache.org/viewcvs.cgi/*checkout*/xml-forrest/src/resources/schema/dtd/document-v11.dtd">
 <document>
   <header>
-    <title>Implementation Overview</title>
+    <title>FOP Development: Implementation Overview</title>
     <subtitle>Following a Document Through FOP</subtitle>
+    <version>$Revision$</version>
     <authors>
       <person name="Arved Sandstrom" email=""/>
     </authors>

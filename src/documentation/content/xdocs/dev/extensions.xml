@@ -4,7 +4,8 @@
 
 <document>
   <header>
-    <title>Adding an Extension to FOP</title>
+    <title>FOP Development: Adding an Extension</title>
+    <version>$Revision$</version>
   </header>
   <body>
     <section id="overview">

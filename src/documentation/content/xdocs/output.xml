@@ -4,13 +4,14 @@
 
 <!-- Output Formats: Renderers -->
 <document>
-    <header>
-        <title>FOP Output Options</title>
-        <authors>
-            <person name="Keiron Liddle" email="keiron@aftexsw.com"/>
-            <person name="Art Welch" email=""/>
-        </authors>
-    </header>
+  <header>
+    <title>FOP Output Options</title>
+    <version>$Revision$</version>
+    <authors>
+      <person name="Keiron Liddle" email="keiron@aftexsw.com"/>
+      <person name="Art Welch" email=""/>
+    </authors>
+  </header>
 
     <body>
     <p>

@@ -6,6 +6,7 @@
   <header>
     <title>FOP: Other Resources</title>
     <subtitle>Resources useful for developing and using FOP</subtitle>
+    <version>$Revision$</version>
   </header>
   <body>
     <section id="specs">

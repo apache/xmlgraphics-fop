@@ -2,8 +2,9 @@
 <!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V1.1//EN"
     "http://cvs.apache.org/viewcvs.cgi/*checkout*/xml-forrest/src/resources/schema/dtd/document-v11.dtd">
 <document id="logocontest">
-	<header>
-		<title>Logo Contest</title>
+  <header>
+    <title>Logo Contest</title>
+    <version>$Revision$</version>
 	</header>
 	<body>
 		<p>FOP needs a new logo and so we've decided to hold an open logo contest. We invite all members of 

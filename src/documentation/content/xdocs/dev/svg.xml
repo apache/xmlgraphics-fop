@@ -4,7 +4,8 @@
 
 <document>
   <header>
-    <title>SVG Developer Issues</title>
+    <title>FOP Development: SVG Issues</title>
+    <version>$Revision$</version>
   </header>
   <body>
     <p>See also <link href="../graphics.html#svg">SVG User Documentation</link> for more information.</p>

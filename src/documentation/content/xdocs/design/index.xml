@@ -3,7 +3,8 @@
     "http://cvs.apache.org/viewcvs.cgi/*checkout*/xml-forrest/src/resources/schema/dtd/document-v11.dtd">
 <document>
   <header>
-    <title>Introduction to FOP Design</title>
+    <title>FOP Design: Introduction</title>
+    <version>$Revision$</version>
     <authors>
       <person name="Keiron Liddle" email="keiron@aftexsw.com"/>
     </authors>

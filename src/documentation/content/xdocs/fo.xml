@@ -5,6 +5,7 @@
   <header>
     <title>XSL-FO Input</title>
     <subtitle>Basic Help for Using XML, XSLT, and XSL-FO</subtitle>
+    <version>$Revision$</version>
   </header>
   <body>
     <section id="overview">

@@ -3,7 +3,8 @@
     "http://cvs.apache.org/viewcvs.cgi/*checkout*/xml-forrest/src/resources/schema/dtd/document-v11.dtd">
 <document>
   <header>
-    <title>Managing FOP Documentation</title>
+    <title>FOP Development: Managing Documentation</title>
+    <version>$Revision$</version>
   </header>
   <body>
     <section id="general">

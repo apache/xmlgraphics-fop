@@ -6,6 +6,7 @@
   <header>
     <title>FOP Status</title>
     <subtitle>Current Status of FOP</subtitle>
+    <version>$Revision$</version>
   </header>
   <body>
     <section>

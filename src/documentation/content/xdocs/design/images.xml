@@ -3,10 +3,11 @@
     "http://cvs.apache.org/viewcvs.cgi/*checkout*/xml-forrest/src/resources/schema/dtd/document-v11.dtd">
 
 <document>
-    <header>
-        <title>FOP Design: Images</title>
-    </header>
-    <body>
+  <header>
+    <title>FOP Design: Images</title>
+    <version>$Revision$</version>
+  </header>
+  <body>
 
   <section id="intro">
     <title>Introduction</title>
