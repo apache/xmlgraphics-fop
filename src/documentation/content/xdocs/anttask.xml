@@ -9,7 +9,7 @@
   <body>
     <p>
     FOP provides an Ant task for automating the document build process.</p>
-    <section><title>Description</title>
+    <section id="basics"><title>Description</title>
     <p>
     The FOP Ant task will convert XSL-FO documents to PDF/PS/PCL/MIF/RTF output
     (see <link href="output.html">Output formats</link> for available formats).</p>
@@ -33,7 +33,7 @@
 	Then create FOP tasks within your Ant build file, using the FOP task parameters listed below.</p>
     </section>
     <!-- TODO: Installation/Configuration -->
-    <section><title>Parameters for FOP Ant task</title>
+    <section id="parameters"><title>Parameters for FOP Ant task</title>
      <table><caption>Parameters specified as attributes</caption> 
       <tr> 
        <th>Attribute</th> 
@@ -106,7 +106,7 @@
       </tr> 
 	  </table>
     </section>
-    <section>
+    <section id="examples">
     <title>Examples</title>
     <p>
     The following example converts a single XSL-FO file to a PDF document:
