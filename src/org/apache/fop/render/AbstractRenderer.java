@@ -278,7 +278,7 @@ public abstract class AbstractRenderer extends AbstractLogEnabled
      * @param bf  The before float area
      */
     protected void renderBeforeFloat(BeforeFloat bf) {
-        List blocks = bf.getBlocks();
+        List blocks = bf.getChildAreas();
         if (blocks != null) {
             renderBlocks(blocks);
             Block sep = bf.getSeparator();
@@ -294,7 +294,7 @@ public abstract class AbstractRenderer extends AbstractLogEnabled
      * @param footnote  The footnote
      */
     protected void renderFootnote(Footnote footnote) {
-        List blocks = footnote.getBlocks();
+        List blocks = footnote.getChildAreas();
         if (blocks != null) {
             Block sep = footnote.getSeparator();
             if (sep != null) {
@@ -343,7 +343,7 @@ public abstract class AbstractRenderer extends AbstractLogEnabled
      */
     protected void renderFlow(Flow flow) {
         // the normal flow reference area contains stacked blocks
-        List blocks = flow.getBlocks();
+        List blocks = flow.getChildAreas();
         renderBlocks(blocks);
 
     }
@@ -356,6 +356,7 @@ public abstract class AbstractRenderer extends AbstractLogEnabled
     protected void renderBlock(Block block) {
         List children = block.getChildAreas();
         if (children == null) {
+            handleBlockTraits(block);
             // simply move position
             currentBPPosition += block.getHeight();
         } else if (block instanceof BlockViewport) {
@@ -366,8 +367,10 @@ public abstract class AbstractRenderer extends AbstractLogEnabled
             int saveBP = currentBPPosition;
 
             if (block.getPositioning() == Block.ABSOLUTE) {
-                currentIPPosition += block.getXOffset();
-                currentBPPosition += block.getYOffset();
+                currentIPPosition = containingIPPosition + block.getXOffset();
+                currentBPPosition = containingBPPosition + block.getYOffset();
+
+                handleBlockTraits(block);
 
                 renderBlocks(children);
 
@@ -378,6 +381,8 @@ public abstract class AbstractRenderer extends AbstractLogEnabled
                 currentIPPosition += block.getXOffset();
                 currentBPPosition += block.getYOffset();
 
+                handleBlockTraits(block);
+
                 renderBlocks(children);
 
                 // stacked and relative blocks effect stacking
@@ -385,6 +390,18 @@ public abstract class AbstractRenderer extends AbstractLogEnabled
             }
             currentIPPosition = saveIP;
         }
+    }
+
+    /**
+     * Handle block traits.
+     * This method is called when the correct ip and bp posiiton is
+     * set. This should be overridden to draw border and background
+     * traits for the block area.
+     *
+     * @param block the block area
+     */
+    protected void handleBlockTraits(Block block) {
+        // draw border and background
     }
 
     /**
@@ -405,6 +422,7 @@ public abstract class AbstractRenderer extends AbstractLogEnabled
             currentBPPosition = 0;
 
             startVParea(ctm);
+            handleBlockTraits(bv);
             renderBlocks(children);
             endVParea();
 
