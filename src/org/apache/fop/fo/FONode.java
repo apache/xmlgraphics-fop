@@ -61,9 +61,6 @@ abstract public class FONode {
     protected int forcedStartOffset = 0;
     protected int forcedWidth = 0;
 
-    protected int widows = 0;
-    protected int orphans = 0;
-
     protected LinkSet linkSet;
 
     // count of areas generated-by/returned-by
@@ -117,14 +114,6 @@ abstract public class FONode {
         for (int i = 0; i < numChildren; i++) {
             ((FONode)children.elementAt(i)).resetMarker();
         }
-    }
-
-    public void setWidows(int wid) {
-        widows = wid;
-    }
-
-    public void setOrphans(int orph) {
-        orphans = orph;
     }
 
     public void removeAreas() {
