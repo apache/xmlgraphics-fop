@@ -52,12 +52,8 @@ package org.apache.fop.fo;
 
 // Java
 import java.util.NoSuchElementException;
-import java.util.List;
 
 // FOP
-import org.apache.fop.layout.TextState;
-import org.apache.fop.layoutmgr.LayoutManager;
-import org.apache.fop.layoutmgr.TextLayoutManager;
 import org.apache.fop.fo.properties.WhiteSpaceCollapse;
 import org.apache.fop.fo.flow.Block;
 import org.apache.fop.fo.pagination.Root;
@@ -76,11 +72,21 @@ import org.apache.fop.fo.properties.TextTransform;
  */
 public class FOText extends FObj {
 
+    /**
+     * the character array containing the text
+     */
     public char[] ca;
     private int start;
+
+    /**
+     * the length of the character array containing the text
+     */
     public int length;
+
+    /**
+     * The TextInfo object attached to the text
+     */
     public TextInfo textInfo;
-    private TextState ts;
 
     /**
      * Keeps track of the last FOText object created within the current
@@ -487,6 +493,12 @@ public class FOText extends FObj {
         }
     }
 
+    /**
+     * This is a hook for an FOTreeVisitor subclass to be able to access
+     * this object.
+     * @param fotv the FOTreeVisitor subclass that can access this object.
+     * @see org.apache.fop.fo.FOTreeVisitor
+     */
     public void acceptVisitor(FOTreeVisitor fotv) {
         fotv.serveVisitor(this);
     }
