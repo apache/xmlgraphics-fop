@@ -61,45 +61,6 @@ To unsubscribe: Send email to <link href="mailto:fop-user-unsubscribe@xml.apache
             </li>
       </ul>
     </section>
-    <section id="mailing-lists-fop-dev">
-      <title>FOP Developer Mailing List</title>
-          <p>
-Use this forum to discuss topics related to FOP development,
-including patch submissions, bug reports, and design issues.
-          </p>
-      <ul>
-            <li>
-To review the archives, you have several options:
-              <ul>
-                <li>The <link href="http://marc.theaimsgroup.com/?l=fop-dev&amp;r=1&amp;w=2">Mailing list ARChives</link> (MARC) at the AIMS group (search).
-                </li>
-                <li>
-The <link href="http://nagoya.apache.org/eyebrowse/SummarizeList?listName=fop-dev@xml.apache.org">Apache Eyebrowse</link> archive (search, list by date, author, subject, or thread).
-                </li>
-                <li>
-The <link href="http://xml.apache.org/mail/fop-dev/">Apache Mailing List archive</link>.
-                </li>
-              </ul>
-            </li>
-            <li>Before posting questions to any list, see "<link href="#mailing-lists-general">General Information</link>".</li>
-            <li>
-See <link href="http://xml.apache.org/mail.html#fop-dev_fop-cvs">Apache XML Mailing Lists</link>
-for detailed subscription information.
-            </li>
-            <li>
-To subscribe (digest only): Send email to <link href="mailto:fop-dev-digest-subscribe@xml.apache.org">fop-dev-digest-subscribe@xml.apache.org</link>.
-            </li>
-            <li>
-To subscribe fully: Send email to <link href="mailto:fop-dev-subscribe@xml.apache.org">fop-dev-subscribe@xml.apache.org</link>.
-            </li>
-            <li>
-For standard help: Send email to <link href="mailto:fop-dev-help@xml.apache.org">fop-dev-help@xml.apache.org</link>.
-            </li>
-            <li>
-To unsubscribe: Send email to <link href="mailto:fop-dev-unsubscribe@xml.apache.org">fop-dev-unsubscribe@xml.apache.org</link>.
-            </li>
-      </ul>
-    </section>
     <section id="mailing-lists-w3c-xslfo">
       <title>XSL:FO Mailing List (at W3C)</title>
           <p>
