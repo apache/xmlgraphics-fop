@@ -1373,7 +1373,6 @@ public class LineArea extends Area {
                                            this.green, this.blue,
                                            currentWord,
                                            wordWidth);
-                startw += wordWidth;
                 ia.setYOffset(placementOffset);
                 ia.setUnderlined(textState.getUnderlined());
                 prevUlState = textState.getUnderlined();
@@ -1395,6 +1394,7 @@ public class LineArea extends Area {
                                                  fontState.getFontSize());
                     ls.addRect(lr, this, ia);
                 }
+                startw += wordWidth;
             }
         }
     }
