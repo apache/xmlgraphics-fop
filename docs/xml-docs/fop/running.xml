@@ -18,12 +18,12 @@
     </p>
   </s2>
   <s2 title="Starting FOP as an standalone application">
-    <p>There are three ways to run FOP from the command line.</p>
+    <p>There are two ways to run FOP from the command line.</p>
     <p>a) Batch processing formatting objects (fo) files: </p>
     <p><code>java org.apache.fop.apps.CommandLine fo-file pdf-file</code></p>
-    <p>b) Batch processing xml files (includes production of the fo-files):</p>
-    <p><code>java org.apache.fop.apps.XTCommandLine xml-file xsl-file pdf-file</code></p>
-    <p>c) Previewing the fo-file:</p>
+<!--    <p>b) Batch processing xml files (includes production of the fo-files):</p>
+    <p><code>java org.apache.fop.apps.XTCommandLine xml-file xsl-file pdf-file</code></p> -->
+    <p>b) Previewing the fo-file:</p>
     <p><code>java org.apache.fop.apps.AWTCommandLine fo-file</code></p>
     <p>Each method uses next to the fop classes other packages. The following describes 
        each method in detail.</p>
@@ -47,7 +47,7 @@
       <p><code>org.apache.fop.apps.CommandLine fo-file pdf-file</code></p>
       <p>Note: The xerces jar file must be included, because xp has no dom support.</p>
     </s3>
-    <s3 title="Method Two">
+<!--    <s3 title="Method Two">
       <p>Rather than performing transformation with an XSLT before invoking FOP, it is 
          possible, if you use XT as your XSLT engine, to just call FOP and have it call 
          XT for you. To do this, run the class org.apache.fop.apps.CommandLine with the 
@@ -58,9 +58,9 @@
       <p><code>org.apache.fop.apps.XTCommandLine xml-file xsl-file pdf-file</code></p>
       <p>Again, if your SAX Parser is other than Xerces, you will need to set the property
          org.xml.sax.parser to the SAX Parser class to use.
-      </p>
-    </s3>
-    <s3 title="Method Three">
+      </p> 
+    </s3>-->
+    <s3 title="Method Two">
       <p>If you already produced the FO file, you can preview the results of your 
          transformation without using any pdf viewer by invoking FOP with the viewer 
          application. You will need to include FOP and your XML Parser in your classpath 
