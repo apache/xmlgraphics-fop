@@ -58,8 +58,8 @@ import javax.swing.JOptionPane;
 
 /**
  * Klasse <code>UserMessage</code> ist ein utility zum Abfragen oder zum Informieren des Benutzers.<br>
- * Eine Meldung besteht aus dem Identifikator (Suchschlüssel im Meldungspool), einem Dialogtitel, einem Buttonset und
- * dem Meldungstext mit eventuellen Platzhaltern für die Parameter.
+ * Eine Meldung besteht aus dem Identifikator (SuchschlÃ¼ssel im Meldungspool), einem Dialogtitel, einem Buttonset und
+ * dem Meldungstext mit eventuellen Platzhaltern fÃ¼r die Parameter.
  *
  * @author S. Gorkhover
  * @version 18.03.1999
@@ -68,7 +68,7 @@ import javax.swing.JOptionPane;
  * @subject Weitere Ausgabemethoden: show(String, String) und show(String,String,Frame)
  *
  * @changed 28.05.99 Juergen.Verwohlt@jCatalog.com
- * @subject MessageException unterstützen
+ * @subject MessageException unterstÃ¼tzen
  *
  * @changed 09.06.99 Juergen.Verwohlt@jCatalog.com
  * @subject Neue Klasse MessagesException zur Anzeige verwenden
@@ -91,30 +91,30 @@ public class UserMessage {
     }
 
 
-    // Zulässige Werte für Dialogart:
+    // ZulÃ¤ssige Werte fÃ¼r Dialogart:
 
     /**
-     * Möglicher Wert des Meldungstypes. Fenster-Title "Info" (de).
+     * MÃ¶glicher Wert des Meldungstypes. Fenster-Title "Info" (de).
      */
     private static final int INFO = JOptionPane.PLAIN_MESSAGE;
 
     /**
-     * Möglicher Wert des Meldungstypes. Fenster-Title "Warnung" (de).
+     * MÃ¶glicher Wert des Meldungstypes. Fenster-Title "Warnung" (de).
      */
     private static final int WARNING = JOptionPane.WARNING_MESSAGE;
 
     /**
-     * Möglicher Wert des Meldungstypes. Fenster-Title "Frage" (de).
+     * MÃ¶glicher Wert des Meldungstypes. Fenster-Title "Frage" (de).
      */
     private static final int QUESTION = JOptionPane.QUESTION_MESSAGE;
 
     /**
-     * Möglicher Wert des Meldungstypes. Fenster-Title "Fehler" (de).
+     * MÃ¶glicher Wert des Meldungstypes. Fenster-Title "Fehler" (de).
      */
     private static final int ERROR = JOptionPane.ERROR_MESSAGE;
 
     /**
-     * Möglicher Wert des Meldungstypes. Fenster-Title "Systemfehler" (de).
+     * MÃ¶glicher Wert des Meldungstypes. Fenster-Title "Systemfehler" (de).
      */
     private static final int SYS_ERROR = JOptionPane.ERROR_MESSAGE;
 
@@ -126,30 +126,30 @@ public class UserMessage {
      */
 
     /**
-     * Wert für Setzten keines Buttons
+     * Wert fÃ¼r Setzten keines Buttons
      */
     public static final int STYLE_NOBUTTON = -2;
 
     /**
-     * Wert für Setzten von nur Ja-Button.
+     * Wert fÃ¼r Setzten von nur Ja-Button.
      */
     public static final int STYLE_Y = JOptionPane.DEFAULT_OPTION;
     // ButtonDialog.YES;            // = 1
 
     /**
-     * Wert für Setzten von Ja- und Nein-Buttons.
+     * Wert fÃ¼r Setzten von Ja- und Nein-Buttons.
      */
     public static final int STYLE_Y_N = JOptionPane.YES_NO_OPTION;
     // ButtonDialog.YES_NO;         // = 2;
 
     /**
-     * Wert für Setzten von Ja-, Nein-und Abbruch Buttons.
+     * Wert fÃ¼r Setzten von Ja-, Nein-und Abbruch Buttons.
      */
     public static final int STYLE_Y_N_C = JOptionPane.YES_NO_CANCEL_OPTION;
     // ButtonDialog.YES_NO_CANCEL;  // = 3;
 
 
-    // Platzhalter für Parameter in der Properties-Datei
+    // Platzhalter fÃ¼r Parameter in der Properties-Datei
     private static final String PARAMETER_TAG = "&&&";
 
 
@@ -159,19 +159,19 @@ public class UserMessage {
      */
 
     /**
-     * Möglicher Rückgabewert @see ButtonDialog
+     * MÃ¶glicher RÃ¼ckgabewert @see ButtonDialog
      */
     public static final int YES = JOptionPane.YES_OPTION;
     // ButtonDialog.YES;            // = 2
 
     /**
-     * Möglicher Rückgabewert @see ButtonDialog
+     * MÃ¶glicher RÃ¼ckgabewert @see ButtonDialog
      */
     public static final int NO = JOptionPane.NO_OPTION;
     // ButtonDialog.NO;            // = 4;
 
     /**
-     * Möglicher Rückgabewert @see ButtonDialog
+     * MÃ¶glicher RÃ¼ckgabewert @see ButtonDialog
      */
     public static final int CANCEL = JOptionPane.CANCEL_OPTION;
     // ButtonDialog.CANCEL;        // = 8;
@@ -186,7 +186,7 @@ public class UserMessage {
 
 
     /**
-     * Ersetzt die eventuellen Platzhalter durch die übergebenen Parameter
+     * Ersetzt die eventuellen Platzhalter durch die Ã¼bergebenen Parameter
      */
     static String prepareMessage(String rawText, String[] par) {
         MessageHandler.logln("prepareMessage(): " + rawText + ", parameter: "
@@ -213,7 +213,7 @@ public class UserMessage {
             try {
                 composedMess += rawText.substring(0, index) + par[tagCount];
             } catch (ArrayIndexOutOfBoundsException ex) {
-                MessageHandler.logln("Anzahl der übergebenen Parameter zu der Meldung "
+                MessageHandler.logln("Anzahl der Ã¼bergebenen Parameter zu der Meldung "
                                      + actMessId
                                      + " ist weniger als erwartet.");
                 ex.printStackTrace();
@@ -225,12 +225,12 @@ public class UserMessage {
         composedMess += rawText;
         if (tagCount != par.length)
             MessageHandler.logln("Die zu der Meldung " + actMessId
-                                 + "  übergebenen Parameter sind mehr als die Meldung vorsieht.");
+                                 + "  Ã¼bergebenen Parameter sind mehr als die Meldung vorsieht.");
         return composedMess;
     }
 
     /**
-     * Gibt den Title fürs Dialogfenster.
+     * Gibt den Title fÃ¼rs Dialogfenster.
      * Dieser wird durch die Dialogart festgelegt
      * (erster Teil in der MeldungsDefinition in der Properties-Datei).
      */
@@ -256,13 +256,13 @@ public class UserMessage {
             break;
         default:
             title =
-                "Ungültiger IonType für diese Meldung. Prüfen in Übersetzungsdatei.";
+                "UngÃ¼ltiger IonType fÃ¼r diese Meldung. PrÃ¼fen in Ãœbersetzungsdatei.";
         }
         return title;
     }
 
     /**
-     * Liefert den Wert der über den Nemen übergebenen Klassenvariablen.
+     * Liefert den Wert der Ã¼ber den Nemen Ã¼bergebenen Klassenvariablen.
      */
     static int getValue(String fieldName) {
 
@@ -348,7 +348,7 @@ public class UserMessage {
         preparedMes = prepareMessage(translatedMes, param);
         // Exception exception = getException(param);
 
-        // WARNING -> nach Warnung übersetzen
+        // WARNING -> nach Warnung Ã¼bersetzen
         title = res.getString(getTitle(messageType));
 
         // WARNING -> JOptionPane.WARNING_MESSAGE
@@ -372,8 +372,8 @@ public class UserMessage {
                                                      str);
         } else {
             if (optionTypeIndex == STYLE_NOBUTTON) {
-                // Wird nicht mehr unterstützt
-                MessageHandler.logln("UserMessage: STYLE_NOBUTTON wird nicht unterstützt");
+                // Wird nicht mehr unterstÃ¼tzt
+                MessageHandler.logln("UserMessage: STYLE_NOBUTTON wird nicht unterstÃ¼tzt");
                 return result;
             } else {
                 result = MessagesDialog.showConfirmDialog(null, preparedMes,
@@ -386,20 +386,20 @@ public class UserMessage {
     }
 
     /**
-     * Öffnet das Dialogfenster mit der Übersetzung der per Suchschlüssel übergebenen Meldung
-     * mit eingesetzten Parametern. Für die Übersetzung der Parameter trägt die aufrufende Stelle die Sorge.
+     * Ã–ffnet das Dialogfenster mit der Ãœbersetzung der per SuchschlÃ¼ssel Ã¼bergebenen Meldung
+     * mit eingesetzten Parametern. FÃ¼r die Ãœbersetzung der Parameter trÃ¤gt die aufrufende Stelle die Sorge.
      * Der Dialog ist modal zum Frame <code>frame</code>.
      * @param <UL>
-     * <LI> textID - Suchschlüssel der Meldung im Meldungspool,
+     * <LI> textID - SuchschlÃ¼ssel der Meldung im Meldungspool,
      * <LI> param - Array der in die Meldung einzusetztenden Parameter,
      * <LI> frame - das Fenster, zu dem der Dialog modal ist.
      * </UL>
      * @return <UL>
-     * <LI> -1 wenn keine Rückgabe möglich ist oder Dialog NICHT MODAL ist.
+     * <LI> -1 wenn keine RÃ¼ckgabe mÃ¶glich ist oder Dialog NICHT MODAL ist.
      * <LI> ButtonDialog.YES = 2
      * <LI> ButtonDialog.NO = 4
      * <LI> ButtonDialog.CANCEL = 8
-     * <LI> Wird das Dialog-Fenster ohne Buttonklick geschlossen (Kreuzchen oben rechts), so ist die Rückgabe gleich ButtonDialog.CANCEL.
+     * <LI> Wird das Dialog-Fenster ohne Buttonklick geschlossen (Kreuzchen oben rechts), so ist die RÃ¼ckgabe gleich ButtonDialog.CANCEL.
      * </UL>
      */
     public static int show(String messageId, String[] parameterList,

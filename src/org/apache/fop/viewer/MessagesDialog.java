@@ -62,7 +62,7 @@ import javax.swing.JTextArea;
 
 /**
  * Die Klasse <code>MessagesDialog</code> dient der Anzeige von Meldungen.
- * Die Klasse erweitert <code>JOptionPane</code> um die Möglichkeit, auf Knopfdruck
+ * Die Klasse erweitert <code>JOptionPane</code> um die MÃ¶glichkeit, auf Knopfdruck
  * eine Detailanzeige einzublenden, in der z.B. bei Fehlern der StackTrace ausgegeben
  * werden kann.
  *
@@ -195,9 +195,9 @@ public class MessagesDialog extends JOptionPane {
     }
 
     /**
-     * Öffnet ein Dialogfenster, bei dem zusätzlich zu den spez. Buttons noch ein
-     * 'Detail'-Button erscheint. Wird dieser Knopf vom Benutzer betätigt, erscheint
-     * die übergebene Detailinformation in einem scrollbaren Bereich des Dialogs.
+     * Ã–ffnet ein Dialogfenster, bei dem zusÃ¤tzlich zu den spez. Buttons noch ein
+     * 'Detail'-Button erscheint. Wird dieser Knopf vom Benutzer betÃ¤tigt, erscheint
+     * die Ã¼bergebene Detailinformation in einem scrollbaren Bereich des Dialogs.
      */
     public static int showDetailDialog(Component parentComponent,
                                        Object message, String title,
@@ -255,10 +255,10 @@ public class MessagesDialog extends JOptionPane {
     }
 
     /**
-     * Die Methode fügt in den übergebenen Dialog eine scrollbare Textkomponente ein,
+     * Die Methode fÃ¼gt in den Ã¼bergebenen Dialog eine scrollbare Textkomponente ein,
      * in der die Detailinformation angezeigt wird.
      *
-     * @param JDialog dialog   Der Dialog, in den die Textkomponente eingefügt werden soll
+     * @param JDialog dialog   Der Dialog, in den die Textkomponente eingefÃ¼gt werden soll
      */
     protected void displayDetails(JDialog dialog) {
         if (getDetailInformation() != null && dialog != null
