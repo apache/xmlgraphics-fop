@@ -101,6 +101,10 @@ public class NumberProperty extends Property implements Numeric {
         return number.doubleValue();
     }
 
+    public int getValue() {
+    	return number.intValue();
+    }
+
     /**
      * Return true because all numbers are absolute.
      * @return true.
