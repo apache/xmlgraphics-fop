@@ -102,7 +102,7 @@ public class FOText extends FONode {
         if(this.whiteSpaceCollapse == WhiteSpaceCollapse.FALSE && length > 0) {
             return true;
         }
-        for (int i = start; i < start + length - 1; i++) {
+        for (int i = start; i < start + length; i++) {
             char ch = ca[i];
             if (!((ch == ' ') || (ch == '\n') || (ch == '\r') ||
                     (ch == '\t'))) { // whitespace
