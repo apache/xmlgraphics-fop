@@ -33,7 +33,7 @@ public class XSLTInputHandler extends InputHandler {
         traxInputHandler = new TraxInputHandler(xmlURL, xsltURL);
     }
 
-    public XSLTInputHandler(InputSource xmlSource, String xsltSource)
+    public XSLTInputHandler(InputSource xmlSource, InputSource xsltSource)
       throws FOPException {
         traxInputHandler = new TraxInputHandler(xmlSource, xsltSource);
     }
