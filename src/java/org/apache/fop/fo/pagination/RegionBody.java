@@ -60,6 +60,7 @@ import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.Property;
 import org.apache.fop.fo.PropertyList;
 import org.apache.fop.fo.properties.CommonMarginBlock;
+import org.apache.fop.fo.properties.FOPropertyMapping;
 import org.apache.fop.fo.properties.WritingMode;
 
 /**
@@ -112,9 +113,11 @@ public class RegionBody extends Region {
         FObj parent = (FObj) getParent();
         String sPropName = "margin-"
                 + parent.propertyList.wmRelToAbs(reldir);
-        Property prop = propertyList.getExplicitBaseProp(sPropName);
+        int propId = FOPropertyMapping.getPropertyId(sPropName);
+        Property prop = propertyList.getExplicitBaseProp(propId);
         if (prop == null) {
-            prop = propertyList.getExplicitBaseProp(sRelPropName);
+            propId = FOPropertyMapping.getPropertyId(sRelPropName);
+            prop = propertyList.getExplicitBaseProp(propId);
         }
         return ((prop != null) ? prop.getLength().getValue() : 0);
     }

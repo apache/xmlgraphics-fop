@@ -184,20 +184,11 @@ public class PropertyList extends HashMap {
      */
     public Property getExplicitOrShorthand(int propId) {
         /* Handle request for one part of a compound property */
-        String propertyName = FOPropertyMapping.getPropertyName(propId);
-
-        int sepchar = propertyName.indexOf('.');
-        String baseName;
-        if (sepchar > -1) {
-            baseName = propertyName.substring(0, sepchar);
-        } else {
-            baseName = propertyName;
-        }
-        Property p = getExplicitBaseProp(baseName);
+        Property p = getExplicitBaseProp(propId & Constants.PROPERTY_MASK);
         if (p == null) {
             p = getShorthand(propId & Constants.PROPERTY_MASK);
         }
-        if (p != null && sepchar > -1) {
+        if (p != null && (propId & Constants.PROPERTY_MASK) != 0) {
             return getSubpropValue(p, propId);
         }
         return p;
@@ -213,10 +204,8 @@ public class PropertyList extends HashMap {
         String propertyName = FOPropertyMapping.getPropertyName(propId);
 
         /* Handle request for one part of a compound property */
-        int sepchar = propertyName.indexOf('.');
-        if (sepchar > -1) {
-            String baseName = propertyName.substring(0, sepchar);
-            Property p = getExplicitBaseProp(baseName);
+        if ((propId & Constants.COMPOUND_MASK) != 0) {
+            Property p = getExplicitBaseProp(propId & Constants.PROPERTY_MASK);
             if (p != null) {
                 return getSubpropValue(p, propId);
             } else {
@@ -231,7 +220,8 @@ public class PropertyList extends HashMap {
      * @param propertyName The name of the base property whose value is desired.
      * @return The value if the property is explicitly set, otherwise null.
      */
-    public Property getExplicitBaseProp(String propertyName) {
+    public Property getExplicitBaseProp(int propId) {
+        String propertyName = FOPropertyMapping.getPropertyName(propId);
         return (Property) super.get(propertyName);
     }
 
@@ -239,11 +229,10 @@ public class PropertyList extends HashMap {
      * Return the value of this property inherited by this FO.
      * Implements the inherited-property-value function.
      * The property must be inheritable!
-     * @param propertyName The name of the property whose value is desired.
+     * @param propID The ID of the property whose value is desired.
      * @return The inherited value, otherwise null.
      */
-    public Property getInherited(String propertyName) {
-        int propId = FOPropertyMapping.getPropertyId(propertyName);
+    public Property getInherited(int propId) {
 
         if (parentPropertyList != null
                 && isInherited(propId)) {
@@ -315,14 +304,12 @@ public class PropertyList extends HashMap {
      * happens in computeProperty.
      */
     private Property findProperty(int propId, boolean bTryInherit) {
-
-        String propertyName = FOPropertyMapping.getPropertyName(propId);
-
         Property p = null;
+
         if (isCorrespondingForced(propId)) {
             p = computeProperty(propId);
         } else {
-            p = getExplicitBaseProp(propertyName);
+            p = getExplicitBaseProp(propId);
             if (p == null) {
                 p = this.computeProperty(propId);
             }
@@ -348,13 +335,13 @@ public class PropertyList extends HashMap {
      * ancestor of the current FO, else the initial value.
      */
     public Property getNearestSpecified(int propId) {
-        String propertyName = FOPropertyMapping.getPropertyName(propId);
-
         Property p = null;
+
         for (PropertyList plist = this; p == null && plist != null;
                 plist = plist.parentPropertyList) {
             p = plist.getExplicit(propId);
         }
+
         if (p == null) {
             // If no explicit setting found, return initial (default) value.
             try {
@@ -506,7 +493,7 @@ public class PropertyList extends HashMap {
                  * the base attribute was already created in 
                  * findBaseProperty()
                  */
-                if (getExplicitBaseProp(basePropertyName) != null) {
+                if (super.get(basePropertyName) != null) {
                     return;
                 }
                 prop = propertyMaker.make(this, attributeValue, parentFO);
@@ -534,7 +521,9 @@ public class PropertyList extends HashMap {
         /* If the baseProperty has already been created, return it
          * e.g. <fo:leader xxxx="120pt" xxxx.maximum="200pt"... />
          */
-        Property baseProperty = getExplicitBaseProp(basePropName);
+        int propId = FOPropertyMapping.getPropertyId(basePropName);
+        Property baseProperty = getExplicitBaseProp(propId);
+
         if (baseProperty != null) {
             return baseProperty;
         }
@@ -544,13 +533,10 @@ public class PropertyList extends HashMap {
          */
         String basePropertyValue = attributes.getValue(basePropName);
         
-        if (basePropertyValue != null) {
-            int propertyId = FOPropertyMapping.getPropertyId(basePropName);
-            if (propertyId != -1) {
-                baseProperty = propertyMaker.make(this, basePropertyValue,
-                    parentFO);
-                return baseProperty;
-            }
+        if (basePropertyValue != null && propertyMaker != null) {
+            baseProperty = propertyMaker.make(this, basePropertyValue,
+                                              parentFO);
+            return baseProperty;
         }
         
         return null;  // could not find base property

@@ -142,7 +142,7 @@ public class LengthBase implements PercentBase {
         case FONTSIZE:
             return propertyList.get(Constants.PR_FONT_SIZE).getLength().getValue();
         case INH_FONTSIZE:
-            return propertyList.getInherited("font-size").getLength().getValue();
+            return propertyList.getInherited(Constants.PR_FONT_SIZE).getLength().getValue();
         //case CONTAINING_BOX:
             // depends on property?? inline-progression vs block-progression
             //return parentFO.getContentWidth();

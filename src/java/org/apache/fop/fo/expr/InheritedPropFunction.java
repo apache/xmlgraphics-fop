@@ -51,6 +51,7 @@
 package org.apache.fop.fo.expr;
 
 import org.apache.fop.fo.Property;
+import org.apache.fop.fo.properties.FOPropertyMapping;
 
 /**
  * Class modelling the inherited-property-value Property Value function. See
@@ -79,7 +80,9 @@ public class InheritedPropFunction extends FunctionBase {
         if (propName == null) {
             throw new PropertyException("Incorrect parameter to inherited-property-value function");
         }
-        return pInfo.getPropertyList().getInherited(propName);
+
+        int propId = FOPropertyMapping.getPropertyId(propName);
+        return pInfo.getPropertyList().getInherited(propId);
     }
 
 }
