@@ -1,102 +1,102 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE compliance PUBLIC "-//APACHE//DTD Compliance V1.0//EN"
-    "http://cvs.apache.org/viewcvs.cgi/*checkout*/xml-fop/src/documentation/resources/schema/dtd/compliance-v10.dtd?rev=1.1">
+    "http://cvs.apache.org/viewcvs.cgi/*checkout*/xml-fop/src/documentation/resources/schema/dtd/compliance-v10.dtd?rev=1.3">
 
 <compliance>
   <head>
     <title>FOP 0.20.4 Standards Compliance</title>
   </head>
   <body>
-    <standard name="W3C XSL-FO 1.0 Standard" baseURL="" compliance-level-1-desc="Basic" compliance-level-2-desc="Extended" compliance-level-3-desc="Complete">
+    <standard name="W3C XSL-FO 1.0 Standard" baseURL="http://www.w3.org/TR/xsl/" compliance-level-1-desc="Basic" compliance-level-2-desc="Extended" compliance-level-3-desc="Complete">
       <explanatory>
         <p>FOP's goal is to be compliant with the W3C XSL-FO 1.0 standard. There are three levels of compliance specified in the standard: basic, extended, and complete. In the tables below, blue indicates support at the specified level of compliance, and red indicates a lack of support.</p>
       </explanatory>
-      <level-1 name="XSL-FO Object Support" compliance-item-desc="Object Name">
+      <level-1 name="XSL-FO Object Support" citation="§6" extURL="slice6.html#fo-section" compliance-item-desc="Object Name">
         <explanatory>
           <p>The following is a summary of FOP's current support for the standard XSL-FO objects.</p>
         </explanatory>
-        <level-2 name="Declarations and Pagination and Layout Objects">
-          <level-3 name="root" compliance-level="1" comply="yes"/>
-          <level-3 name="page-sequence" compliance-level="1" comply="yes"/>
-          <level-3 name="page-sequence-master" compliance-level="1" comply="yes"/>
-          <level-3 name="single-page-master-reference" compliance-level="1" comply="yes"/>
-          <level-3 name="repeatable-page-master-reference" compliance-level="1" comply="yes"/>
-          <level-3 name="repeatable-page-master-alternatives" compliance-level="2" comply="yes"/>
-          <level-3 name="conditional-page-master-reference" compliance-level="2" comply="yes"/>
-          <level-3 name="layout-master-set" compliance-level="1" comply="yes"/>
-          <level-3 name="simple-page-master" compliance-level="1" comply="yes"/>
-          <level-3 name="region-body" compliance-level="1" comply="yes"/>
-          <level-3 name="region-before" compliance-level="2" comply="yes"/>
-          <level-3 name="region-after" compliance-level="2" comply="yes"/>
-          <level-3 name="region-start" compliance-level="2" comply="yes"/>
-          <level-3 name="region-end" compliance-level="2" comply="yes"/>
-          <level-3 name="flow" compliance-level="1" comply="yes"/>
-          <level-3 name="static-content" compliance-level="2" comply="yes"/>
-          <level-3 name="declarations" compliance-level="1" comply="no"/>
-          <level-3 name="color-profile" compliance-level="2" comply="no"/>
-          <level-3 name="title" compliance-level="2" comply="no"/>
+        <level-2 name="Declarations and Pagination and Layout Formatting Objects" citation="§6.4" extURL="slice6.html#section-N10029-Declarations-and-Pagination-and-Layout-Formatting-Objects">
+          <level-3 name="root" citation="§6.4.2" extURL="slice6.html#fo_root" compliance-level="1" comply="yes"/>
+          <level-3 name="declarations" citation="§6.4.3" extURL="slice6.html#fo_declarations" compliance-level="1" comply="no"/>
+          <level-3 name="color-profile" citation="§6.4.4" extURL="slice6.html#fo_color-profile" compliance-level="2" comply="no"/>
+          <level-3 name="page-sequence" citation="§6.4.5" extURL="slice6.html#fo_page-sequence" compliance-level="1" comply="yes"/>
+          <level-3 name="layout-master-set" citation="§6.4.6" extURL="slice6.html#fo_layout-master-set" compliance-level="1" comply="yes"/>
+          <level-3 name="page-sequence-master" citation="§6.4.7" extURL="slice6.html#fo_page-sequence-master" compliance-level="1" comply="yes"/>
+          <level-3 name="single-page-master-reference" citation="§6.4.8" extURL="slice6.html#fo_single-page-master-reference" compliance-level="1" comply="yes"/>
+          <level-3 name="repeatable-page-master-reference" citation="§6.4.9" extURL="slice6.html#fo_repeatable-page-master-reference" compliance-level="1" comply="yes"/>
+          <level-3 name="repeatable-page-master-alternatives" citation="§6.4.10" extURL="slice6.html#fo_repeatable-page-master-alternatives" compliance-level="2" comply="yes"/>
+          <level-3 name="conditional-page-master-reference" citation="§6.4.11" extURL="slice6.html#fo_conditional-page-master-reference" compliance-level="2" comply="yes"/>
+          <level-3 name="simple-page-master" citation="§6.4.12" extURL="slice6.html#fo_simple-page-master" compliance-level="1" comply="yes"/>
+          <level-3 name="region-body" citation="§6.4.13" extURL="slice6.html#fo_region-body" compliance-level="1" comply="yes"/>
+          <level-3 name="region-before" citation="§6.4.14" extURL="slice6.html#fo_region-before" compliance-level="2" comply="yes"/>
+          <level-3 name="region-after" citation="§6.4.15" extURL="slice6.html#fo_region-after" compliance-level="2" comply="yes"/>
+          <level-3 name="region-start" citation="§6.4.16" extURL="slice6.html#fo_region-start" compliance-level="2" comply="yes"/>
+          <level-3 name="region-end" citation="§6.4.17" extURL="slice6.html#fo_region-end" compliance-level="2" comply="yes"/>
+          <level-3 name="flow" citation="§6.4.18" extURL="slice6.html#fo_flow" compliance-level="1" comply="yes"/>
+          <level-3 name="static-content" citation="§6.4.19" extURL="slice6.html#fo_static-content" compliance-level="2" comply="yes"/>
+          <level-3 name="title" citation="§6.4.20" extURL="slice6.html#fo_title" compliance-level="2" comply="no"/>
         </level-2>
-        <level-2 name="Block-level Formatting Objects">
-          <level-3 name="block" compliance-level="1" comply="yes"/>
-          <level-3 name="block-container" compliance-level="2" comply="partial"/>
+        <level-2 name="Block Formatting Objects" citation="§6.5" extURL="slice6.html#section-N12764-Block-level-Formatting-Objects">
+          <level-3 name="block" citation="§6.5.2" extURL="slice6.html#fo_block" compliance-level="1" comply="yes"/>
+          <level-3 name="block-container" citation="§6.5.3" extURL="slice6.html#fo_block-container" compliance-level="2" comply="partial"/>
         </level-2>
-        <level-2 name="Inline-level Formatting Objects">
-          <level-3 name="character" compliance-level="1" comply="yes"/>
-          <level-3 name="external-graphic" compliance-level="1" comply="yes"/>
-          <level-3 name="inline" compliance-level="1" comply="yes"/>
-          <level-3 name="instream-foreign-object" compliance-level="2" comply="yes"/>
-          <level-3 name="leader" compliance-level="1" comply="partial"/>
-          <level-3 name="page-number" compliance-level="1" comply="yes"/>
-          <level-3 name="page-number-citation" compliance-level="2" comply="partial">
+        <level-2 name="Inline Formatting Objects" citation="§6.6" extURL="slice6.html#section-N13277-Inline-level-Formatting-Objects">
+          <level-3 name="bidi-override" citation="§6.6.2" extURL="slice6.html#fo_bidi-override" compliance-level="2" comply="no"/>
+          <level-3 name="character" citation="§6.6.3" extURL="slice6.html#fo_character" compliance-level="1" comply="yes"/>
+          <level-3 name="initial-property-set" citation="§6.6.4" extURL="slice6.html#fo_initial-property-set" compliance-level="2" comply="no"/>
+          <level-3 name="external-graphic" citation="§6.6.5" extURL="slice6.html#fo_external-graphic" compliance-level="1" comply="yes"/>
+          <level-3 name="instream-foreign-object" citation="§6.6.6" extURL="slice6.html#fo_instream-foreign-object" compliance-level="2" comply="yes"/>
+          <level-3 name="inline" citation="§6.6.7" extURL="slice6.html#fo_inline" compliance-level="1" comply="yes"/>
+          <level-3 name="inline-container" citation="§6.6.8" extURL="slice6.html#fo_inline-container" compliance-level="2" comply="no"/>
+          <level-3 name="leader" citation="§6.6.9" extURL="slice6.html#fo_leader" compliance-level="1" comply="partial"/>
+          <level-3 name="page-number" citation="§6.6.10" extURL="slice6.html#fo_page-number" compliance-level="1" comply="yes"/>
+          <level-3 name="page-number-citation" citation="§6.6.11" extURL="slice6.html#fo_page-number-citation" compliance-level="2" comply="partial">
             <comment>Only works for table of contents without any problems. The case
 where the page number doesn't fit on a line isn't handled, and any text on
 the same line and after the page-number might not appear exactly where you
 want it to.</comment>
           </level-3>
-          <level-3 name="bidi-override" compliance-level="2" comply="no"/>
-          <level-3 name="initial-property-set" compliance-level="2" comply="no"/>
-          <level-3 name="inline-container" compliance-level="2" comply="no"/>
         </level-2>
-        <level-2 name="Formatting Objects for Tables">
-          <level-3 name="table" compliance-level="1" comply="yes"/>
-          <level-3 name="table-body" compliance-level="1" comply="yes"/>
-          <level-3 name="table-cell" compliance-level="1" comply="yes">
-            <comment>must contain block-level FOs (cannot contain straight character data</comment>
-          </level-3>
-          <level-3 name="table-column" compliance-level="1" comply="yes">
+        <level-2 name="Table Formatting Objects" citation="§6.7" extURL="slice6.html#section-N15442-Formatting-Objects-for-Tables">
+          <level-3 name="table-and-caption" citation="§6.7.2" extURL="slice6.html#fo_table-and-caption" compliance-level="1" comply="no"/>
+          <level-3 name="table" citation="§6.7.3" extURL="slice6.html#fo_table" compliance-level="1" comply="yes"/>
+          <level-3 name="table-column" citation="§6.7.4" extURL="slice6.html#fo_table-column" compliance-level="1" comply="yes">
             <comment>you must explicitly specify column widths</comment>
           </level-3>
-          <level-3 name="table-footer" compliance-level="2" comply="yes"/>
-          <level-3 name="table-header" compliance-level="1" comply="yes"/>
-          <level-3 name="table-row" compliance-level="1" comply="yes"/>
-          <level-3 name="table-and-caption" compliance-level="1" comply="no"/>
-          <level-3 name="table-caption" compliance-level="2" comply="no"/>
+          <level-3 name="table-caption" citation="§6.7.5" extURL="slice6.html#fo_table-caption" compliance-level="2" comply="no"/>
+          <level-3 name="table-header" citation="§6.7.6" extURL="slice6.html#fo_table-header" compliance-level="1" comply="yes"/>
+          <level-3 name="table-footer" citation="§6.7.7" extURL="slice6.html#fo_table-footer" compliance-level="2" comply="yes"/>
+          <level-3 name="table-body" citation="§6.7.8" extURL="slice6.html#fo_table-body" compliance-level="1" comply="yes"/>
+          <level-3 name="table-row" citation="§6.7.9" extURL="slice6.html#fo_table-row" compliance-level="1" comply="yes"/>
+          <level-3 name="table-cell" citation="§6.7.10" extURL="slice6.html#fo_table-cell" compliance-level="1" comply="yes">
+            <comment>must contain block-level FOs (cannot contain straight character data</comment>
+          </level-3>
         </level-2>
-        <level-2 name="Formatting Objects for Lists">
-          <level-3 name="list-block" compliance-level="1" comply="yes"/>
-          <level-3 name="list-item" compliance-level="1" comply="yes"/>
-          <level-3 name="list-item-body" compliance-level="1" comply="yes"/>
-          <level-3 name="list-item-label" compliance-level="2" comply="yes"/>
+        <level-2 name="List Formatting Objects" citation="§6.8" extURL="slice6.html#section-N17076-Formatting-Objects-for-Lists">
+          <level-3 name="list-block" citation="§6.8.2" extURL="slice6.html#fo_list-block" compliance-level="1" comply="yes"/>
+          <level-3 name="list-item" citation="§6.8.3" extURL="slice6.html#fo_list-item" compliance-level="1" comply="yes"/>
+          <level-3 name="list-item-body" citation="§6.8.4" extURL="slice6.html#fo_list-item-body" compliance-level="1" comply="yes"/>
+          <level-3 name="list-item-label" citation="§6.8.5" extURL="slice6.html#fo_list-item-label" compliance-level="2" comply="yes"/>
         </level-2>
-        <level-2 name="Dynamic Effects: Link and Multi Formatting Objects">
-          <level-3 name="basic-link" compliance-level="2" comply="yes">
+        <level-2 name="Link and Multi Formatting Objects" citation="§6.9" extURL="slice6.html#section-N17805-Dynamic-Effects:-Link-and-Multi-Formatting-Objects">
+          <level-3 name="basic-link" citation="§6.9.2" extURL="slice6.html#fo_basic-link" compliance-level="2" comply="yes">
             <comment>both internal and external supported</comment>
           </level-3>
-          <level-3 name="multi-switch" compliance-level="2" comply="no"/>
-          <level-3 name="multi-case" compliance-level="1" comply="no"/>
-          <level-3 name="multi-toggle" compliance-level="2" comply="no"/>
-          <level-3 name="multi-properties" compliance-level="2" comply="no"/>
-          <level-3 name="multi-property-set" compliance-level="2" comply="no"/>
+          <level-3 name="multi-switch" citation="§6.9.3" extURL="slice6.html#fo_multi-switch" compliance-level="2" comply="no"/>
+          <level-3 name="multi-case" citation="§6.9.4" extURL="slice6.html#fo_multi-case" compliance-level="1" comply="no"/>
+          <level-3 name="multi-toggle" citation="§6.9.5" extURL="slice6.html#fo_multi-toggle" compliance-level="2" comply="no"/>
+          <level-3 name="multi-properties" citation="§6.9.6" extURL="slice6.html#fo_multi-properties" compliance-level="2" comply="no"/>
+          <level-3 name="multi-property-set" citation="§6.9.7" extURL="slice6.html#fo_multi-property-set" compliance-level="2" comply="no"/>
         </level-2>
-        <level-2 name="Out-of-Line Formatting Objects">
-          <level-3 name="footnote" compliance-level="2" comply="yes"/>
-          <level-3 name="footnote-body" compliance-level="2" comply="yes"/>
-          <level-3 name="float" compliance-level="2" comply="no"/>
+        <level-2 name="Out-of-line Formatting Objects" citation="§6.10" extURL="slice6.html#section-N18509-Out-of-Line-Formatting-Objects">
+          <level-3 name="float" citation="§6.10.2" extURL="slice6.html#fo_float" compliance-level="2" comply="no"/>
+          <level-3 name="footnote" citation="§6.10.3" extURL="slice6.html#fo_footnote" compliance-level="2" comply="yes"/>
+          <level-3 name="footnote-body" citation="§6.10.4" extURL="slice6.html#fo_footnote-body" compliance-level="2" comply="yes"/>
         </level-2>
-        <level-2 name="Other Formatting Objects">
-          <level-3 name="wrapper" compliance-level="1" comply="yes"/>
-          <level-3 name="marker" compliance-level="2" comply="yes"/>
-          <level-3 name="retrieve-marker" compliance-level="2" comply="yes"/>
+        <level-2 name="Other Formatting Objects" citation="§6.11" extURL="slice6.html#section-N19019-Other-Formatting-Objects">
+          <level-3 name="wrapper" citation="§6.11.2" extURL="slice6.html#fo_wrapper" compliance-level="1" comply="yes"/>
+          <level-3 name="marker" citation="§6.11.3" extURL="slice6.html#fo_marker" compliance-level="2" comply="yes"/>
+          <level-3 name="retrieve-marker" citation="§6.11.4" extURL="slice6.html#fo_retrieve-marker" compliance-level="2" comply="yes"/>
         </level-2>
       </level-1>
       <level-1 name="XSL-FO Property Support" compliance-item-desc="Property Name">
