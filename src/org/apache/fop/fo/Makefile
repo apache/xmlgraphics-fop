@@ -7,7 +7,8 @@ SUBDIRS=flow \
 	pagination 
 
 
-SOURCES=FONode.java \
+SOURCES=ElementMapping.java \
+	FONode.java \
 	FOText.java \
 	FOTreeBuilder.java \
 	FObj.java \
