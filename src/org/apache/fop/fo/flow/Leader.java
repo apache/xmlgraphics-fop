@@ -108,8 +108,14 @@ public class Leader extends FObjMixed {
             this.properties.get("leader-length.optimum").getLength().mvalue();
         int leaderLengthMinimum =
             this.properties.get("leader-length.minimum").getLength().mvalue();
-        int leaderLengthMaximum =
-            this.properties.get("leader-length.maximum").getLength().mvalue();
+        Length maxlength = this.properties.get("leader-length.maximum").getLength();
+        int leaderLengthMaximum;
+        if(maxlength instanceof PercentLength) {
+            leaderLengthMaximum = (int)(((PercentLength)maxlength).value()
+                                      * area.getAllocationWidth());
+        } else {
+            leaderLengthMaximum = maxlength.mvalue();
+        }
         // the following properties only apply for leader-pattern = "rule"
         int ruleThickness =
             this.properties.get("rule-thickness").getLength().mvalue();
