@@ -32,7 +32,7 @@ public class JpegImage extends AbstractFopImage {
     boolean found_icc_profile = false;
     boolean found_dimensions = false;
 
-    public JpegImage(URL href, ImageReader imgReader) {
+    public JpegImage(URL href, FopImage.ImageInfo imgReader) {
         super(href, imgReader);
     }
 

@@ -27,7 +27,7 @@ import org.apache.fop.fo.FOUserAgent;
  * @see FopImage
  */
 public class GifImage extends AbstractFopImage {
-    public GifImage(URL href, ImageReader imgReader) {
+    public GifImage(URL href, FopImage.ImageInfo imgReader) {
         super(href, imgReader);
     }
 

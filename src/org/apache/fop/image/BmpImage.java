@@ -26,7 +26,7 @@ import org.apache.fop.image.analyser.ImageReader;
 import org.apache.fop.fo.FOUserAgent;
 
 public class BmpImage extends AbstractFopImage {
-    public BmpImage(URL href, ImageReader imgReader) {
+    public BmpImage(URL href, FopImage.ImageInfo imgReader) {
         super(href, imgReader);
     }
 

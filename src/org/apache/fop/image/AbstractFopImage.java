@@ -45,7 +45,7 @@ public abstract class AbstractFopImage implements FopImage {
     /**
      * ImageReader object (to obtain image header informations).
      */
-    protected ImageReader m_imageReader = null;
+    protected FopImage.ImageInfo imageInfo = null;
 
     /**
      * Image color space (org.apache.fop.datatypes.ColorSpace).
@@ -95,16 +95,16 @@ public abstract class AbstractFopImage implements FopImage {
      * imgReader ImageReader object
      * @return a new FopImage object
      */
-    public AbstractFopImage(URL href, ImageReader imgReader) {
+    public AbstractFopImage(URL href, FopImage.ImageInfo info) {
         this.m_href = href;
-        this.m_imageReader = imgReader;
-        this.m_width = this.m_imageReader.getWidth();
-        this.m_height = this.m_imageReader.getHeight();
+        this.imageInfo = info;
+        this.m_width = this.imageInfo.width;
+        this.m_height = this.imageInfo.height;
         loaded = loaded & DIMENSIONS;
     }
 
     public String getMimeType() {
-        return m_imageReader.getMimeType();
+        return imageInfo.mimeType;
     }
 
     /**
