@@ -17,6 +17,8 @@ import org.apache.fop.render.Renderer;
 import org.apache.fop.messaging.MessageHandler;
 import org.apache.fop.configuration.ConfigurationReader;
 import org.apache.fop.configuration.Configuration;
+import org.apache.fop.tools.DocumentInputSource;
+import org.apache.fop.tools.DocumentReader;
 
 
 // DOM
@@ -37,370 +39,443 @@ import java.io.*;
 
 
 /**
- * <P>Primary class that drives overall FOP process.
+ * Primary class that drives overall FOP process.
+ * <P>
+ * The simplest way to use this is to instantiate it with the
+ * InputSource and OutputStream, then set the renderer desired, and
+ * calling run();
+ * <P>
+ * Here is an example use of Driver which outputs PDF:
  *
- * <P>Once this class is instantiated, methods are called to set the
+ * <PRE>
+ *   Driver driver = new Driver(new InputSource (args[0]), 
+ *                              new FileOutputStream(args[1]));
+ *   driver.setRenderer(RENDER_PDF);
+ *   driver.run();
+ * </PRE>
+
+ * If neccessary, calling classes can call into the lower level
+ * methods to setup and
+ * render. Methods can be called to set the
  * Renderer to use, the (possibly multiple) ElementMapping(s) to
- * use and the PrintWriter to use to output the results of the
+ * use and the OutputStream to use to output the results of the
  * rendering (where applicable). In the case of the Renderer and
  * ElementMapping(s), the Driver may be supplied either with the
  * object itself, or the name of the class, in which case Driver will
  * instantiate the class itself. The advantage of the latter is it
  * enables runtime determination of Renderer and ElementMapping(s).
- *
- * <P>Once the Driver is set up, the buildFOTree method
+ * <P>
+ * Once the Driver is set up, the buildFOTree method
  * is called. Depending on whether DOM or SAX is being used, the
  * invocation of the method is either buildFOTree(Document) or
  * buildFOTree(Parser, InputSource) respectively.
- *
- * <P>A third possibility may be used to build the FO Tree, namely
+ * <P>
+ * A third possibility may be used to build the FO Tree, namely
  * calling getContentHandler() and firing the SAX events yourself.
- *
- * <P>Once the FO Tree is built, the format() and render() methods may be
+ * <P>
+ * Once the FO Tree is built, the format() and render() methods may be
  * called in that order.
- *
- * <P>Here is an example use of Driver from CommandLine.java:
+ * <P>
+ * Here is an example use of Driver which outputs to AWT:
  *
  * <PRE>
  *   Driver driver = new Driver();
- *   driver.setRenderer("org.apache.fop.render.pdf.PDFRenderer", version);
- *   driver.addElementMapping("org.apache.fop.fo.StandardElementMapping");
- *   driver.addElementMapping("org.apache.fop.svg.SVGElementMapping");
- *   driver.addPropertyList("org.apache.fop.fo.StandardPropertyListMapping");
- *   driver.addPropertyList("org.apache.fop.svg.SVGPropertyListMapping");
- *   driver.setOutputStream(new FileOutputStream(args[1]));
+ *   driver.setRenderer(new org.apache.fop.render.awt.AWTRenderer(translator));
  *   driver.buildFOTree(parser, fileInputSource(args[0]));
  *   driver.format();
  *   driver.render();
  * </PRE>
  */
 public class Driver {
+    
+    /** Render to PDF. OutputStream must be set */
+    public static final int RENDER_PDF = 1;
+    
+    /** Render to a GUI window. No OutputStream neccessary */
+    public static final int RENDER_AWT = 2;
+
+    /** Render to MIF. OutputStream must be set */
+    public static final int RENDER_MIF = 3;
+
+    /** Render to XML. OutputStream must be set */
+    public static final int RENDER_XML = 4;
+   
+    /** Render to PRINT. No OutputStream neccessary */
+    public static final int RENDER_PRINT = 5;
 
     /** the FO tree builder */
-    protected FOTreeBuilder treeBuilder;
+    private FOTreeBuilder _treeBuilder;
 
     /** the area tree that is the result of formatting the FO tree */
-    protected AreaTree areaTree;
+    private AreaTree _areaTree;
 
     /** the renderer to use to output the area tree */
-    protected Renderer renderer;
+    private Renderer _renderer;
 
+    /** the source of the FO file */
+    private InputSource _source;
+    
     /** the stream to use to output the results of the renderer */
-    protected OutputStream stream;
+    private OutputStream _stream;
 
+    /** The XML parser to use when building the FO tree */
+    private XMLReader _reader;
+    
     /** If true, full error stacks are reported */
-    protected boolean errorDump = false;
+    private boolean _errorDump = false;
 
     /** create a new Driver */
     public Driver() {
-        this.treeBuilder = new FOTreeBuilder();
+        reset();
     }
 
-    /** Set the error dump option
-         * @param dump if true, full stacks will be reported to the error log
-         */
+    public Driver(InputSource source, OutputStream stream) {
+	this();
+	_source = source;
+	_stream = stream;
+    }
+
+    /**
+     * Resets the Driver so it can be reused. Property and element mappings are reset to defaults.
+     * The output stream is cleared. The renderer is cleared.
+     */
+    public synchronized void reset() 
+    {
+	_stream = null;
+	_treeBuilder = new FOTreeBuilder();
+	setupDefaultMappings();
+    }
+    
+    /** 
+     * Set the error dump option
+     * @param dump if true, full stacks will be reported to the error log
+     */
     public void setErrorDump(boolean dump) {
-        errorDump = dump;
+        _errorDump = dump;
     }
 
-    /** set the Renderer to use */
+    /**
+     * Set the OutputStream to use to output the result of the Renderer
+     * (if applicable)
+     * @param stream the stream to output the result of rendering to
+     *
+     */
+    public void setOutputStream(OutputStream stream) {
+        _stream = stream;
+    }
+
+    /**
+     * Set the source for the FO document. This can be a normal SAX 
+     * InputSource, or an DocumentInputSource containing a DOM document.
+     * @see DocumentInputSource
+     */
+    public void setInputSource(InputSource source) 
+    {
+	_source = source;
+    }
+    
+    /**
+     * Sets the reader used when reading in the source. If not set,
+     * this defaults to a basic SAX parser.
+     */
+    public void setXMLReader(XMLReader reader) 
+    {
+	_reader = reader;
+    }
+    
+
+    /**
+     * Sets all the element and property list mappings to their default values.
+     *
+     */
+    public void setupDefaultMappings() 
+    {
+	addElementMapping("org.apache.fop.fo.StandardElementMapping");
+	addPropertyList  ("org.apache.fop.fo.StandardPropertyListMapping");
+
+	addElementMapping("org.apache.fop.svg.SVGElementMapping");
+	addPropertyList  ("org.apache.fop.svg.SVGPropertyListMapping");
+
+        addElementMapping("org.apache.fop.extensions.ExtensionElementMapping");
+	addPropertyList  ("org.apache.fop.extensions.ExtensionPropertyListMapping");
+    }
+
+    /**
+     * Set the rendering type to use. Must be one of 
+     * <ul>
+     *   <li>RENDER_PDF
+     *   <li>RENDER_AWT
+     *   <li>RENDER_MIF
+     *   <li>RENDER_XML
+     * </ul>
+     * @param renderer the type of renderer to use
+     */
+    public void setRenderer(int renderer) 
+	throws IllegalArgumentException
+    {
+	switch (renderer) {
+	case RENDER_PDF:
+	    setRenderer(new org.apache.fop.render.pdf.PDFRenderer());
+	    break;
+	case RENDER_AWT:
+	    throw new IllegalArgumentException("Use renderer form of setRenderer() for AWT");
+	case RENDER_PRINT:
+	    throw new IllegalArgumentException("Use renderer form of setRenderer() for PRINT");
+	case RENDER_MIF:
+	    setRenderer(new org.apache.fop.render.mif.MIFRenderer());
+	    break;
+	case RENDER_XML:
+	    setRenderer(new org.apache.fop.render.xml.XMLRenderer());
+	    break;
+	default:
+	    throw new IllegalArgumentException("Unknown renderer type");
+	}
+	
+    }
+    
+
+    /** 
+     * Set the Renderer to use 
+     * @param renderer the renderer instance to use
+     */
     public void setRenderer(Renderer renderer) {
-        this.renderer = renderer;
+        _renderer = renderer;
     }
 
     /**
-         * set the class name of the Renderer to use as well as the
-         * producer string for those renderers that can make use of it
-         */
-    public void setRenderer(String rendererClassName, String producer) {
-        this.renderer = createRenderer(rendererClassName);
-        this.renderer.setProducer(producer);
+     * @deprecated use renderer.setProducer(version) + setRenderer(renderer) or just setRenderer(renderer_type) which will use the default producer string.
+     * @see #setRenderer(int)
+     * @see #setRenderer(Renderer)
+     */
+    public void setRenderer(String rendererClassName, String version) 
+    {
+	setRenderer(rendererClassName);
     }
-
+    
     /**
-         * protected method used by setRenderer(String, String) to
-         * instantiate the Renderer class
-         */
-    protected Renderer createRenderer(String rendererClassName) {
-        MessageHandler.logln("using renderer " + rendererClassName);
-
-        try {
-            return (Renderer) Class.forName(
-                     rendererClassName).newInstance();
-        } catch (ClassNotFoundException e) {
-            MessageHandler.errorln("Could not find " + rendererClassName);
+     * Set the class name of the Renderer to use as well as the
+     * producer string for those renderers that can make use of it.
+     * @param rendererClassName classname of the renderer to use such as 
+     * "org.apache.fop.render.pdf.PDFRenderer"
+     * @exception IllegalArgumentException if the classname was invalid.
+     * @see #setRenderer(int)
+     */
+    public void setRenderer(String rendererClassName) 
+	throws IllegalArgumentException
+    {
+	try {
+	    _renderer = (Renderer) Class.forName(rendererClassName).newInstance();
+	    _renderer.setProducer(Version.getVersion());
+	}
+	catch (ClassNotFoundException e) {
+            throw new IllegalArgumentException("Could not find " + 
+					       rendererClassName);
         }
         catch (InstantiationException e) {
-            MessageHandler.errorln("Could not instantiate " +
+            throw new IllegalArgumentException("Could not instantiate " +
                                    rendererClassName);
         }
         catch (IllegalAccessException e) {
-            MessageHandler.errorln("Could not access " + rendererClassName);
+            throw new IllegalArgumentException("Could not access " + rendererClassName);
         }
         catch (ClassCastException e) {
-            MessageHandler.errorln(rendererClassName + " is not a renderer");
+            throw new IllegalArgumentException(rendererClassName + " is not a renderer");
         }
-        return null;
     }
 
     /**
-         * add the given element mapping.
-         *
-         * an element mapping maps element names to Java classes
-         */
+     * Add the given element mapping.
+     * An element mapping maps element names to Java classes.
+     *
+     * @param mapping the element mappingto add
+     */
     public void addElementMapping(ElementMapping mapping) {
-        mapping.addToBuilder(this.treeBuilder);
+	mapping.addToBuilder(_treeBuilder);
     }
 
     /**
-         * add the element mapping with the given class name
-         */
-    public void addElementMapping(String mappingClassName) {
-        createElementMapping(mappingClassName).addToBuilder(
-          this.treeBuilder);
-    }
-
-    /**
-         * protected method used by addElementMapping(String) to
-         * instantiate element mapping class
-         */
-    protected ElementMapping createElementMapping(
-      String mappingClassName) {
-        MessageHandler.logln("using element mapping " + mappingClassName);
-
-        try {
-            return (ElementMapping) Class.forName(
+     * add the element mapping with the given class name
+     */
+    public void addElementMapping(String mappingClassName) 
+	throws IllegalArgumentException
+    {
+	try {
+            ElementMapping mapping = (ElementMapping) Class.forName(
                      mappingClassName).newInstance();
-        } catch (ClassNotFoundException e) {
-            MessageHandler.errorln("Could not find " + mappingClassName);
-            dumpError(e);
-        }
+	    addElementMapping(mapping);
+	} catch (ClassNotFoundException e) {
+            throw new IllegalArgumentException("Could not find " + mappingClassName);
+	}
         catch (InstantiationException e) {
-            MessageHandler.errorln("Could not instantiate " +
+            throw new IllegalArgumentException("Could not instantiate " +
                                    mappingClassName);
-            dumpError(e);
-        }
+	}
         catch (IllegalAccessException e) {
-            MessageHandler.errorln("Could not access " + mappingClassName);
-            dumpError(e);
-        }
+            throw new IllegalArgumentException("Could not access " + mappingClassName);
+	}
         catch (ClassCastException e) {
-            MessageHandler.errorln(mappingClassName + " is not an element mapping");
-            dumpError(e);
-        }
-        return null;
+            throw new IllegalArgumentException(mappingClassName + " is not an ElementMapping");
+	}
     }
 
     /**
-         * add the element mapping with the given class name
-         */
-    public void addPropertyList(String listClassName) {
-        createPropertyList(listClassName).addToBuilder(this.treeBuilder);
+     * Add the PropertyListMapping.
+     */
+    public void addPropertyList(PropertyListMapping mapping) 
+    {
+	mapping.addToBuilder(_treeBuilder);
     }
+    
 
     /**
-         * protected method used by addPropertyList(String) to
-         * instantiate list mapping class
-         */
-    protected PropertyListMapping createPropertyList(
-      String listClassName) {
-        MessageHandler.logln("using property list mapping " +
-                             listClassName);
-
-        try {
-            return (PropertyListMapping) Class.forName(
+     * Add the PropertyListMapping with the given class name.
+     */
+    public void addPropertyList(String listClassName) 
+	throws IllegalArgumentException
+    {
+	try {
+            PropertyListMapping mapping = (PropertyListMapping) Class.forName(
                      listClassName).newInstance();
-        } catch (ClassNotFoundException e) {
-            MessageHandler.errorln("Could not find " + listClassName);
-            dumpError(e);
-        }
+	    addPropertyList(mapping);
+	    
+	} catch (ClassNotFoundException e) {
+            throw new IllegalArgumentException("Could not find " + listClassName);
+	}
         catch (InstantiationException e) {
-            MessageHandler.errorln("Could not instantiate " +
-                                   listClassName);
-            dumpError(e);
-        }
+            throw new IllegalArgumentException("Could not instantiate " +
+					       listClassName);
+	}
         catch (IllegalAccessException e) {
-            MessageHandler.errorln("Could not access " + listClassName);
-            dumpError(e);
-        }
+            throw new IllegalArgumentException("Could not access " + listClassName);
+	}
         catch (ClassCastException e) {
-            MessageHandler.errorln(listClassName + " is not an property list");
-            dumpError(e);
-        }
-        return null;
+            throw new IllegalArgumentException(listClassName + " is not an ElementMapping");
+	}
     }
 
     /**
-         * return the tree builder (a SAX ContentHandler).
-         *
-         * used in situations where SAX is used but not via a FOP-invoked
-         * SAX parser. A good example is an XSLT engine that fires SAX
-         * events but isn't a SAX Parser itself.
-         */
+     * Returns the tree builder (a SAX ContentHandler).
+     *
+     * Used in situations where SAX is used but not via a FOP-invoked
+     * SAX parser. A good example is an XSLT engine that fires SAX
+     * events but isn't a SAX Parser itself.
+     */
     public ContentHandler getContentHandler() {
-        return this.treeBuilder;
+        return _treeBuilder;
     }
 
     /**
-         * build the formatting object tree using the given SAX Parser and
-         * SAX InputSource
-         */
-    public void buildFOTree(XMLReader parser,
-                            InputSource source) throws FOPException {
+     * Build the formatting object tree using the given SAX Parser and
+     * SAX InputSource
+     */
+    public synchronized void buildFOTree(XMLReader parser,
+                            InputSource source)
+	throws FOPException 
+    {
 
-        parser.setContentHandler(this.treeBuilder);
+        parser.setContentHandler(_treeBuilder);
         try {
             parser.parse(source);
         } catch (SAXException e) {
             if (e.getException() instanceof FOPException) {
-                dumpError(e.getException());
                 throw (FOPException) e.getException();
             } else {
-                dumpError(e);
-                throw new FOPException(e.getMessage());
+                throw new FOPException(e);
             }
         }
         catch (IOException e) {
-            dumpError(e);
-            throw new FOPException(e.getMessage());
+            throw new FOPException(e);
         }
     }
 
     /**
-         * build the formatting object tree using the given DOM Document
-         */
-    public void buildFOTree(Document document) throws FOPException {
-
-        /* most of this code is modified from John Cowan's */
-
-        Node currentNode;
-        AttributesImpl currentAtts;
-
-        /* temporary array for making Strings into character arrays */
-        char[] array = null;
-
-        currentAtts = new AttributesImpl();
-
-        /* start at the document element */
-        currentNode = document;
-
-        try {
-            while (currentNode != null) {
-                switch (currentNode.getNodeType()) {
-                    case Node.DOCUMENT_NODE:
-                        this.treeBuilder.startDocument();
-                        break;
-                    case Node.CDATA_SECTION_NODE:
-                    case Node.TEXT_NODE:
-                        String data = currentNode.getNodeValue();
-                        int datalen = data.length();
-                        if (array == null || array.length < datalen) {
-                            /* if the array isn't big enough, make a new
-                                   one */
-                            array = new char[datalen];
-                        }
-                        data.getChars(0, datalen, array, 0);
-                        this.treeBuilder.characters(array, 0, datalen);
-                        break;
-                    case Node.PROCESSING_INSTRUCTION_NODE:
-                        this.treeBuilder.processingInstruction(
-                          currentNode.getNodeName(),
-                          currentNode.getNodeValue());
-                        break;
-                    case Node.ELEMENT_NODE:
-                        NamedNodeMap map = currentNode.getAttributes();
-                        currentAtts.clear();
-                        for (int i = map.getLength() - 1; i >= 0; i--) {
-                            Attr att = (Attr) map.item(i);
-                            currentAtts.addAttribute( att.getNamespaceURI(),
-                                                      att.getLocalName(), att.getName(),
-                                                      "CDATA", att.getValue());
-                        }
-                        this.treeBuilder.startElement(
-                          currentNode.getNamespaceURI(),
-                          currentNode.getLocalName(),
-                          currentNode.getNodeName(), currentAtts);
-                        break;
-                }
-
-                Node nextNode = currentNode.getFirstChild();
-                if (nextNode != null) {
-                    currentNode = nextNode;
-                    continue;
-                }
-
-                while (currentNode != null) {
-                    switch (currentNode.getNodeType()) {
-                        case Node.DOCUMENT_NODE:
-                            this.treeBuilder.endDocument();
-                            break;
-                        case Node.ELEMENT_NODE:
-                            this.treeBuilder.endElement(
-                              currentNode.getNamespaceURI(),
-                              currentNode.getLocalName(),
-                              currentNode.getNodeName());
-                            break;
-                    }
-
-                    nextNode = currentNode.getNextSibling();
-                    if (nextNode != null) {
-                        currentNode = nextNode;
-                        break;
-                    }
-
-                    currentNode = currentNode.getParentNode();
-                }
-            }
-        } catch (SAXException e) {
-            dumpError(e);
-            throw new FOPException(e.getMessage());
-        }
-    }
+     * Build the formatting object tree using the given DOM Document
+     */
+    public synchronized void buildFOTree(Document document) 
+	throws FOPException 
+    {
+	try {
+	    DocumentInputSource source = new DocumentInputSource(document);
+	    DocumentReader reader = new DocumentReader();
+	    reader.setContentHandler(_treeBuilder);
+	    reader.parse(source);
+	} catch (SAXException e) {
+            throw new FOPException(e);
+	} catch (IOException e) {
+            throw new FOPException(e);
+	}
+	
+    } 
 
     /**
-         * Dumps an error
-         */
+     * Dumps an error
+     */
     public void dumpError(Exception e) {
-        if (errorDump) {
+        if (_errorDump) {
             if (e instanceof SAXException) {
                 e.printStackTrace();
                 if (((SAXException) e).getException() != null) {
                     ((SAXException) e).getException().printStackTrace();
                 }
-            } else {
+            }
+            else if (e instanceof FOPException) {
+                e.printStackTrace();
+                if (((FOPException) e).getException() != null) {
+                    ((FOPException) e).getException().printStackTrace();
+                }
+            }
+	    else {
                 e.printStackTrace();
             }
         }
-
     }
 
     /**
-        * set the OutputStream to use to output the result of the Renderer
-        * (if applicable)
-        */
-    public void setOutputStream(OutputStream stream) {
-        this.stream = stream;
-    }
-
-    /**
-         * format the formatting object tree into an area tree
-         */
-    public void format() throws FOPException {
+     * format the formatting object tree into an area tree
+     */
+    public synchronized void format() throws FOPException {
         FontInfo fontInfo = new FontInfo();
-        this.renderer.setupFontInfo(fontInfo);
+        _renderer.setupFontInfo(fontInfo);
 
-        this.areaTree = new AreaTree();
-        this.areaTree.setFontInfo(fontInfo);
+        _areaTree = new AreaTree();
+        _areaTree.setFontInfo(fontInfo);
 
-        this.treeBuilder.format(areaTree);
+        _treeBuilder.format(_areaTree);
     }
 
     /**
-         * render the area tree to the output form
-         */
-    public void render() throws IOException, FOPException {
-        this.renderer.render(areaTree, this.stream);
+     * render the area tree to the output form
+     */
+    public synchronized void render() throws IOException, FOPException {
+        _renderer.render(_areaTree, _stream);
     }
 
-
+    /**
+     * Runs the formatting and renderering process using the previously set
+     * inputsource and outputstream
+     */
+    public synchronized void run()
+	throws IOException, FOPException 
+    {
+	if (_renderer == null) {
+	    setRenderer(RENDER_PDF);
+	}
+	if (_source == null) {
+	    throw new FOPException("InputSource is not set.");
+	}
+	if (_reader == null) {
+	    if (!(_source instanceof DocumentInputSource)) {
+		_reader = ConfigurationReader.createParser();
+	    }
+	}
+	if (_source instanceof DocumentInputSource) {
+	    buildFOTree(((DocumentInputSource)_source).getDocument());
+	}
+	else {
+	    buildFOTree(_reader, _source);
+	}
+	format();
+	render();
+    }
+    
 }

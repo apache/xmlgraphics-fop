@@ -99,42 +99,32 @@ public class Fop extends Starter {
     }
 
 
-	public void run () {
-        Driver driver = new Driver();
-		Options options = new Options();
-		boolean errors = false;
+    public void run () {
+	Options options = new Options();
+	boolean errors = false;
         String version = Version.getVersion();
-
-		File fofileF = new File (fofile);
-		Configuration.put("baseDir",new File(fofileF.getAbsolutePath()).getParent());
-		if (!fofileF.exists()) {
+	
+	File fofileF = new File (fofile);
+	Configuration.put("baseDir",new File(fofileF.getAbsolutePath()).getParent());
+	if (!fofileF.exists()) {
             errors = true;
-            MessageHandler.errorln(
-              "Task Fop - ERROR: Formatting objects file " +
-              fofile + " missing.");
+            MessageHandler.errorln("Task Fop - ERROR: Formatting objects file " +
+				   fofile + " missing.");
         }
-
-		InputHandler inputHandler = new FOInputHandler(fofileF);
+	
+	InputHandler inputHandler = new FOInputHandler(fofileF);
         XMLReader parser = inputHandler.getParser();
-		super.setParserFeatures(parser);
-
+	super.setParserFeatures(parser);
+	
         MessageHandler.logln("=======================\nTask " +
                              version + "\nconverting file " + fofile + " to " + pdffile);
-
+	
         if (!errors) {
             try {
-                driver.setRenderer("org.apache.fop.render.pdf.PDFRenderer",
-                                   version);
-                driver.addElementMapping("org.apache.fop.fo.StandardElementMapping");
-                driver.addElementMapping("org.apache.fop.svg.SVGElementMapping");
-				driver.addElementMapping("org.apache.fop.extensions.ExtensionElementMapping");
-                driver.addPropertyList("org.apache.fop.fo.StandardPropertyListMapping");
-                driver.addPropertyList("org.apache.fop.svg.SVGPropertyListMapping");
-				driver.addPropertyList("org.apache.fop.extensions.ExtensionPropertyListMapping");
-                driver.setOutputStream(new FileOutputStream(pdffile));
-                driver.buildFOTree(parser, inputHandler.fileInputSource(fofileF));
-                driver.format();
-                driver.render();
+		Driver driver = new Driver(inputHandler.fileInputSource(fofileF), new FileOutputStream(pdffile));
+                driver.setRenderer(Driver.RENDER_PDF);
+		driver.setXMLReader(parser);
+		driver.run();
             } catch (Exception e) {
                 MessageHandler.errorln("Task Fop - FATAL ERROR: " +
                                        e.getMessage());
@@ -142,7 +132,7 @@ public class Fop extends Starter {
             }
         }
         MessageHandler.logln("=======================\n");
-	}
+    }
 
     /**
      * main method, starts execution of this task

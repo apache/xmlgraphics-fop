@@ -38,20 +38,15 @@ public class CommandLineStarter extends Starter {
         XMLReader parser = inputHandler.getParser();
         setParserFeatures(parser,errorDump);
 
-		Driver driver = new Driver();
+	Driver driver = new Driver();
         if (errorDump) {
             driver.setErrorDump(true);
         }
 			
         try {
-            driver.setRenderer(commandLineOptions.getRenderer(), "");
-            driver.addElementMapping("org.apache.fop.fo.StandardElementMapping");
-            driver.addElementMapping("org.apache.fop.svg.SVGElementMapping");
-            driver.addElementMapping("org.apache.fop.extensions.ExtensionElementMapping");
-            driver.addPropertyList("org.apache.fop.fo.StandardPropertyListMapping");
-            driver.addPropertyList("org.apache.fop.svg.SVGPropertyListMapping");
-            driver.addPropertyList("org.apache.fop.extensions.ExtensionPropertyListMapping");
-            driver.buildFOTree(parser,inputHandler.getInputSource());
+            driver.setRenderer(commandLineOptions.getRenderer());
+
+            driver.buildFOTree(parser, inputHandler.getInputSource());
             driver.format();
             driver.setOutputStream(new FileOutputStream(commandLineOptions.getOutputFile()));
             driver.render();
