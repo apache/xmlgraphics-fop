@@ -263,7 +263,7 @@ public class XMLRenderer implements Renderer {
 		     + fontWeight + "\" red=\""
 		     + area.getRed() + "\" green=\""
 		     + area.getGreen() + "\" blue = \""
-		     + area.getBlue() + " width = \""
+		     + area.getBlue() + "\" width = \""
 		     + area.getContentWidth() + "\">" + sb.toString()
 		     + "</InlineArea>");
     }
