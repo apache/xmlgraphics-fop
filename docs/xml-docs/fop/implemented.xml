@@ -1,5 +1,4 @@
 <?xml version="1.0" standalone="no"?>
-<!DOCTYPE s1 SYSTEM "sbk:/style/dtd/document.dtd">
 
 
 <!-- What's Implemented? -->
@@ -26,6 +25,7 @@
       <li>list-item-body </li>
       <li>list-item-label </li>
       <li>page-number </li>
+      <li>page-number-citation, see <jump href="limitations.html">limitations</jump></li>
       <li>page-sequence </li>
       <li>region-after </li>
       <li>region-before </li>
@@ -36,6 +36,7 @@
       <li>sequence-specifier-repeating </li>
       <li>sequence-specifier-single </li>
       <li>simple-page-master </li>
+      <li>simple-link (internal and external)</li>
       <li>static-content </li>
       <li>table (minimal support)</li>
       <li>table-body (minimal support)</li>
@@ -86,6 +87,7 @@
       <li>column-width </li>
       <li>end-indent </li>
       <li>extent </li>
+      <li>external-destination</li>
       <li>flow-name </li>
       <li>font-family </li>
       <li>font-size </li>
@@ -95,6 +97,7 @@
       <li>href </li>
       <li>id</li>
       <li>initial-page-number</li>
+      <li>internal-destination</li>
       <li>keep-with-next</li>
       <li>left</li>
       <li>line-height </li>
@@ -121,6 +124,7 @@
       <li>position (allowed values: "static" (default),"relative", "absolute", fixed ) </li>
       <li>provisional-distance-between-starts </li>
       <li>provisional-label-separation </li>
+      <li>ref-id </li>
       <li>right</li>
       <li>rule-thickness </li>
       <li>space-after.optimum </li>
