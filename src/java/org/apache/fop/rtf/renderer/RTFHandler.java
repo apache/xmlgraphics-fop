@@ -55,7 +55,8 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 
-import org.apache.fop.apps.Driver;
+import org.apache.avalon.framework.logger.ConsoleLogger;
+import org.apache.avalon.framework.logger.Logger;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.datatypes.ColorType;
 import org.apache.fop.fo.FOInputHandler;
@@ -73,7 +74,9 @@ import org.apache.fop.fo.flow.TableRow;
 import org.apache.fop.fo.pagination.Flow;
 import org.apache.fop.fo.pagination.PageSequence;
 import org.apache.fop.fo.properties.Constants;
+import org.apache.fop.fo.Property;
 import org.apache.fop.apps.Document;
+import org.apache.fop.rtf.rtflib.rtfdoc.IRtfParagraphContainer;
 import org.apache.fop.rtf.rtflib.rtfdoc.RtfAttributes;
 import org.apache.fop.rtf.rtflib.rtfdoc.RtfColorTable;
 import org.apache.fop.rtf.rtflib.rtfdoc.RtfDocumentArea;
@@ -81,22 +84,31 @@ import org.apache.fop.rtf.rtflib.rtfdoc.RtfFile;
 import org.apache.fop.rtf.rtflib.rtfdoc.RtfParagraph;
 import org.apache.fop.rtf.rtflib.rtfdoc.RtfSection;
 import org.apache.fop.rtf.rtflib.rtfdoc.RtfText;
+import org.apache.fop.rtf.rtflib.rtfdoc.RtfTable;
+import org.apache.fop.rtf.rtflib.rtfdoc.RtfTableRow;
+import org.apache.fop.rtf.rtflib.rtfdoc.RtfTableCell;
+import org.apache.fop.rtf.rtflib.rtfdoc.IRtfTableContainer;
 import org.xml.sax.SAXException;
 
 /**
  * RTF Handler: generates RTF output using the structure events from
  * the FO Tree sent to this structure handler.
  *
- * @author bdelacretaz@apache.org
+ * @author Bertrand Delacretaz <bdelacretaz@codeconsult.ch>
+ * @author Trembicki-Guy, Ed <GuyE@DNB.com>
+ * @author Boris Poudérous <boris.pouderous@eads-telecom.com>
+ * @author Peter Herweg <pherweg@web.de>
  */
 public class RTFHandler extends FOInputHandler {
 
     private RtfFile rtfFile;
     private final OutputStream os;
+    private final Logger log=new ConsoleLogger();
     private RtfSection sect;
     private RtfDocumentArea docArea;
     private RtfParagraph para;
     private boolean warned = false;
+    private BuilderContext m_context=new BuilderContext(null);
 
     private static final String ALPHA_WARNING = "WARNING: RTF renderer is "
         + "veryveryalpha at this time, see class org.apache.fop.rtf.renderer.RTFHandler";
@@ -116,7 +128,7 @@ public class RTFHandler extends FOInputHandler {
         this.os = os;
         // use pdf fonts for now, this is only for resolving names
         org.apache.fop.render.pdf.FontSetup.setup(doc, null);
-        System.err.println(ALPHA_WARNING);
+        log.warn(ALPHA_WARNING);
     }
 
     /**
@@ -151,12 +163,14 @@ public class RTFHandler extends FOInputHandler {
     public void startPageSequence(PageSequence pageSeq)  {
         try {
             sect = docArea.newSection();
+            m_context.pushContainer(sect);
             if (!warned) {
                 sect.newParagraph().newText(ALPHA_WARNING);
                 warned = true;
             }
         } catch (IOException ioe) {
             // FIXME could we throw Exception in all FOInputHandler events?
+            log.error("startPageSequence: " + ioe.getMessage());
             throw new Error("IOException: " + ioe);
         }
     }
@@ -165,6 +179,7 @@ public class RTFHandler extends FOInputHandler {
      * @see org.apache.fop.fo.FOInputHandler#endPageSequence(PageSequence)
      */
     public void endPageSequence(PageSequence pageSeq) throws FOPException {
+        m_context.popContainer();
     }
 
     /**
@@ -190,10 +205,19 @@ public class RTFHandler extends FOInputHandler {
             attrBlockFontSize(bl, rtfAttr);
             attrBlockFontWeight(bl, rtfAttr);
 
-            para = sect.newParagraph(rtfAttr);
+            IRtfParagraphContainer pc=(IRtfParagraphContainer)m_context.getContainer(IRtfParagraphContainer.class,true,null);
+            para = pc.newParagraph(rtfAttr);
+
+            m_context.pushContainer(para);
         } catch (IOException ioe) {
             // FIXME could we throw Exception in all FOInputHandler events?
+            log.error("startBlock: " + ioe.getMessage());
             throw new Error("IOException: " + ioe);
+        }
+        catch(Exception e)
+        {
+            log.error("startBlock: " + e.getMessage());
+            throw new Error("Exception: " + e);
         }
     }
 
@@ -202,18 +226,65 @@ public class RTFHandler extends FOInputHandler {
      * @see org.apache.fop.fo.FOInputHandler#endBlock(Block)
      */
     public void endBlock(Block bl) {
+        m_context.popContainer();
     }
 
     /**
      * @see org.apache.fop.fo.FOInputHandler#startTable(Table)
      */
     public void startTable(Table tbl) {
+        // create an RtfTable in the current table container
+        TableContext tableContext = new TableContext(m_context);
+        RtfAttributes atts=new RtfAttributes();
+
+        try
+        {
+            final IRtfTableContainer tc = (IRtfTableContainer)m_context.getContainer(IRtfTableContainer.class,true,null);
+            m_context.pushContainer(tc.newTable(atts, tableContext));
+        }
+        catch(Exception e)
+        {
+            log.error("startTable:" + e.getMessage());
+            throw new Error(e.getMessage());
+        }
+
+        m_context.pushTableContext(tableContext);
     }
 
     /**
      * @see org.apache.fop.fo.FOInputHandler#endTable(Table)
      */
     public void endTable(Table tbl) {
+        m_context.popTableContext();
+        m_context.popContainer();
+    }
+
+    /**
+    *
+    * @param th TableColumn that is starting;
+    */
+
+    public void startColumn(TableColumn tc) {
+        try
+        {
+            Integer iWidth=new Integer(tc.getColumnWidth()/1000);
+            m_context.getTableContext().setNextColumnWidth(iWidth.toString()+"pt");
+            m_context.getTableContext().setNextColumnRowSpanning(new Integer(0),null);
+        }
+        catch(Exception e)
+        {
+            log.error("startColumn: " + e.getMessage());
+            throw new Error(e.getMessage());
+        }
+
+    }
+
+     /**
+     *
+     * @param th TableColumn that is ending;
+     */
+
+    public void endColumn(TableColumn tc){
     }
 
     /**
@@ -244,50 +315,124 @@ public class RTFHandler extends FOInputHandler {
      * @see org.apache.fop.fo.FOInputHandler#startBody(TableBody)
      */
     public void startBody(TableBody tb) {
+        try
+        {
+            RtfAttributes atts=TableAttributesConverter.convertRowAttributes (tb.properties, null, null);
+
+            RtfTable tbl = (RtfTable)m_context.getContainer(RtfTable.class,true,this);
+            tbl.setHeaderAttribs(atts);
+        }
+        catch(Exception e)
+        {
+            log.error("startBody: " + e.getMessage());
+            throw new Error(e.getMessage());
+        }
     }
 
     /**
      * @see org.apache.fop.fo.FOInputHandler#endBody(TableBody)
      */
     public void endBody(TableBody tb) {
-    }
-
-    /**
-     *
-     * @param tc TableColumn that is starting;
-     */
-    public void startColumn(TableColumn tc) {
-    }
-
-    /**
-     *
-     * @param tc TableColumn that is ending;
-     */
-    public void endColumn(TableColumn tc) {
+        try
+        {
+            RtfTable tbl = (RtfTable)m_context.getContainer(RtfTable.class,true,this);
+            tbl.setHeaderAttribs( null );
+        }
+        catch(Exception e)
+        {
+            log.error("endBody: " + e.getMessage());
+            throw new Error(e.getMessage());
+        }
     }
 
     /**
      * @see org.apache.fop.fo.FOInputHandler#startRow(TableRow)
      */
     public void startRow(TableRow tr) {
+        try
+        {
+            // create an RtfTableRow in the current RtfTable
+            final RtfTable tbl = (RtfTable)m_context.getContainer(RtfTable.class,true,null);
+
+            RtfAttributes tblAttribs = tbl.getRtfAttributes();
+            RtfAttributes tblRowAttribs = new RtfAttributes();
+            RtfAttributes atts=TableAttributesConverter.convertRowAttributes(tr.properties,null,tbl.getHeaderAttribs());
+
+            m_context.pushContainer(tbl.newTableRow( atts ));
+
+            // reset column iteration index to correctly access column widths
+            m_context.getTableContext().selectFirstColumn();
+        }
+        catch(Exception e)
+        {
+            log.error("startRow: " + e.getMessage());
+            throw new Error(e.getMessage());
+        }
     }
 
     /**
      * @see org.apache.fop.fo.FOInputHandler#endRow(TableRow)
      */
     public void endRow(TableRow tr) {
+        m_context.popContainer();
+        m_context.getTableContext().decreaseRowSpannings();
     }
 
     /**
      * @see org.apache.fop.fo.FOInputHandler#startCell(TableCell)
      */
     public void startCell(TableCell tc) {
+        try
+        {
+            TableContext tctx=m_context.getTableContext();
+            final RtfTableRow row = (RtfTableRow)m_context.getContainer(RtfTableRow.class,true,null);
+
+
+            //while the current column is in row-spanning, act as if
+            //a vertical merged cell would have been specified.
+            while(tctx.getNumberOfColumns()>tctx.getColumnIndex() && tctx.getColumnRowSpanningNumber().intValue()>0)
+            {
+                row.newTableCellMergedVertically((int)tctx.getColumnWidth(),tctx.getColumnRowSpanningAttrs());
+                tctx.selectNextColumn();
+            }
+
+            //get the width of the currently started cell
+            float width=tctx.getColumnWidth();
+
+            // create an RtfTableCell in the current RtfTableRow
+            RtfAttributes atts=TableAttributesConverter.convertCellAttributes(tc.properties,null);
+            RtfTableCell cell=row.newTableCell((int)width, atts);
+
+            //process number-rows-spanned attribute
+            Property p=null;
+            if ((p=tc.properties.get("number-rows-spanned")) != null && false)
+            {
+                // Start vertical merge
+                cell.setVMerge(RtfTableCell.MERGE_START);
+
+                // set the number of rows spanned
+                tctx.setCurrentColumnRowSpanning(new Integer(p.getNumber().intValue()), cell.getRtfAttributes());
+            }
+            else
+            {
+                tctx.setCurrentColumnRowSpanning(new Integer(1),null);
+            }
+
+            m_context.pushContainer(cell);
+        }
+        catch(Exception e)
+        {
+            log.error("startCell: " + e.getMessage());
+            throw new Error(e.getMessage());
+        }
     }
 
     /**
      * @see org.apache.fop.fo.FOInputHandler#endCell(TableCell)
      */
     public void endCell(TableCell tc) {
+        m_context.popContainer();
+        m_context.getTableContext().selectNextColumn();
     }
 
     // Lists
@@ -414,6 +559,7 @@ public class RTFHandler extends FOInputHandler {
             para.newText(new String(data, start, length));
          } catch (IOException ioe) {
             // FIXME could we throw Exception in all FOInputHandler events?
+            log.error("characters: " + ioe.getMessage());
             throw new Error("IOException: " + ioe);
         }
     }
@@ -468,6 +614,8 @@ public class RTFHandler extends FOInputHandler {
         if ((fopValue.getRed() == 0) && (fopValue.getGreen() == 0)
                 && (fopValue.getBlue() == 0) && (fopValue.getAlpha() == 0)) {
             rtfColor = RtfColorTable.getInstance().getColorNumber("white").intValue();
+            currentRTFBackgroundColor = -1;
+            return;
         } else {
             rtfColor = convertFOPColorToRTF(fopValue);
         }

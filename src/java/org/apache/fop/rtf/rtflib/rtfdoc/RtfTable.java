@@ -176,6 +176,10 @@ public class RtfTable extends RtfContainer {
         headerAttribs = attrs;
     }
 
+    public RtfAttributes getHeaderAttribs() {
+        return headerAttribs;
+    }
+
     /**
      * Added by Normand Masse
      * @return the table-header attributes if they are present, otherwise the

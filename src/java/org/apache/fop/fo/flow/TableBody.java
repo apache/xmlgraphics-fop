@@ -50,6 +50,9 @@
  */
 package org.apache.fop.fo.flow;
 
+// XML
+import org.xml.sax.Attributes;
+
 // FOP
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.datatypes.ColorType;
@@ -121,6 +124,21 @@ public class TableBody extends FObj {
      */
     public void acceptVisitor(FOTreeVisitor fotv) {
         fotv.serveTableBody(this);
+    }
+
+    /**
+     * @see org.apache.fop.fo.FObj#handleAttrs
+     */
+    public void handleAttrs(Attributes attlist) throws FOPException {
+        super.handleAttrs(attlist);
+
+        setupID();
+
+        getFOTreeControl().getFOInputHandler().startBody(this);
+    }
+
+    protected void end() {
+        getFOTreeControl().getFOInputHandler().endBody(this);
     }
 
 }
