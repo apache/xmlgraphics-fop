@@ -1,0 +1,49 @@
+<?xml version="1.0" standalone="no"?>
+<!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V1.1//EN" "document-v11.dtd">
+
+
+<!-- How to get Help -->
+<document>
+    <header>
+        <title>How to Get Help</title>
+        <subtitle>Solving problems</subtitle>
+    </header>
+
+    <body>
+<section>
+  <title>How to get Help</title>
+  <ol>
+    <li>
+      Have a look at the documentation pages on this site. You can find information on how to run FOP,
+      how to embed it, how to add custom fonts etc.
+    </li>
+    <li>
+      Consult the <link href="faq.html">FAQ</link> to see if your question has already been answered before.
+    </li>
+    <li>
+      If you have a question concerning XSL:FO that is not related to FOP directly, please consult the various
+      resources on the net. See <link href="resources.html">Resources</link> for some interesting links.
+    </li>
+    <li>
+      Before you post your questions to one of the mailing lists, please search the mailing list archives, since it's
+      possible that your question has already been answered but it may not have found its way into the FAQ. You'll
+      find links to the mailing list archive in the <link href="resources.html">Resources</link>.
+    </li>
+    <li>
+      If you still can't solve your problem subscribe to FOP's user mailing list and post your question there. Please
+      don't forget to supply the version you're using, detailed error messages etc. This makes it easier to help you.
+      The instructions on how to subscribe can be found in the <link href="resources.html">Resources</link>
+    </li>
+    <li>
+You should probably read ESR's
+<link href="http://www.tuxedo.org/~esr/faqs/smart-questions.html">"How to Ask Questions the Smart Way"</link>
+    </li>
+  </ol>
+    <note>
+      Please don't use Bugzilla to post questions and please ask on the user mailing list first, if you think you've
+      found a bug.
+    </note>
+</section>
+    </body>
+</document>
+

@@ -1,0 +1,78 @@
+<?xml version="1.0"?>
+<!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V1.1//EN" "document-v11.dtd">
+
+<document>
+    <header>
+        <title>Limitations</title>
+    </header>
+
+    <body>
+<section>
+  <title>Limitations</title>
+  <p>FOP implements the fo objects and properties listed
+     in <jump href="implemented.html">features</jump>, sometimes it does so only in a limited way.
+  </p>
+
+  <section>
+    <title>fo:leader</title>
+    <p>leader-length.minimum is not used at all</p>
+  </section>
+
+  <section>
+    <title>page-number-citation</title>
+    <p>Only works for table of contents without any problems. The case where the page number doesn't
+    fit on a line isn't handled, and any text on the same line and after the page-number might not
+    appear exactly where you want it to.
+    </p>
+  </section>
+
+  <section>
+    <title>Padding</title>
+    <p>Padding works in conjunction with indents and spaces. It is only implemented
+       for blocks. At the moment padding can't be used to make extra space (indents+spaces
+       must be used), but only to control how much the background-color extends beyond
+       the content rectangle.
+    </p>
+  </section>
+  <section>
+    <title>Tables</title>
+    <p>There two limitations for tables: 1) FOP needs you to explicitly specify column widths
+       2) Cells have to contain block-level FOs. They can't contain straight character data.
+    </p>
+    <p>A working basic example of a table looks like this: </p>
+  <source><![CDATA[
+<fo:table>
+ <fo:table-column column-width="150pt"/>
+ <fo:table-column column-width="150pt"/>
+ <fo:table-body font-size="10pt" font-family="sans-serif">
+  <fo:table-row>
+   <fo:table-cell>
+    <fo:block>text</fo:block>
+   </fo:table-cell>
+   <fo:table-cell>
+    <fo:block>text</fo:block>
+   </fo:table-cell>
+  </fo:table-row>
+  <fo:table-row>
+   <fo:table-cell>
+    <fo:block>text</fo:block>
+   </fo:table-cell>
+   <fo:table-cell>
+    <fo:block>text</fo:block>
+   </fo:table-cell>
+  </fo:table-row>
+  <fo:table-row>
+   <fo:table-cell>
+    <fo:block>text</fo:block>
+   </fo:table-cell>
+   <fo:table-cell>
+    <fo:block>text</fo:block>
+   </fo:table-cell>
+  </fo:table-row>
+ </fo:table-body>
+</fo:table>]]></source>
+  </section>
+</section>
+</body>
+</document>
+
