@@ -18,8 +18,8 @@
     <section>
       <title>Startup</title>
       <ul>
-        <li>The job starts in apps.Fop.main().</li>
-        <li>Control is passed to apps.CommandLineStarter.run().</li>
+        <li>The job starts in <em>apps.Fop.main()</em>.</li>
+        <li>Control is passed to <em>apps.CommandLineStarter.run()</em>.</li>
         <li>Control is passed to <em>apps.Driver.render()</em>. This class fires up a SAX parser, the events from which indirectly control the remaining processing, including building the FO Tree, building the Area Tree, rendering, output and logging.</li>
       </ul>
     </section>
@@ -27,8 +27,8 @@
       <title>Formatting Object Tree</title>
       <ul>
         <li>The SAX events that the parser creates are handled by <em>fo.FOTreeBuilder</em>, which uses <code>startElement()</code>, <code>endElement()</code>, and <code>characters()</code> methods to build the FO Tree.</li>
-        <li>fo.FOTreeBuilder.endElement() runs the end() method for each node as it is created. The fo.pagination.PageSequence class overrides this end() method to run apps.LayoutHandler.endPageSequence().</li>
-        <li>apps.LayoutHandler.endPageSequence() in turn runs fo.pagination.PageSequence.format, which drives the layout process.</li>
+        <li><em>fo.FOTreeBuilder.endElement()</em> runs the end() method for each node as it is created. The <em>fo.pagination.PageSequence</em> class overrides this end() method to run <em>apps.LayoutHandler.endPageSequence()</em>.</li>
+        <li><em>apps.LayoutHandler.endPageSequence()</em> in turn runs <em>fo.pagination.PageSequence.format()</em>, which drives the layout process.</li>
       </ul>
     </section>
     <section>
