@@ -1,5 +1,6 @@
 <?xml version="1.0" standalone="no"?>
-<!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V1.1//EN" "document-v11.dtd">
+<!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V1.1//EN"
+    "http://cvs.apache.org/viewcvs.cgi/*checkout*/xml-forrest/src/resources/schema/dtd/document-v11.dtd">
 
 <document>
     <header>
@@ -119,7 +120,7 @@ n(orphans) + n(widows) in total. This will only be relevant for areas at
 the start or end of a particular reference area.
    </p>
   <p>
-   <image src="page.svg"/>
+   <img src="page.svg" alt="Diagram of Page Layout"/>
   </p>
   <p>
 The spacing between the areas (including spacing in block areas inside
@@ -267,7 +268,7 @@ also effected as there must be enough space on the page to fit the
 side float.
   </p>
   <p>
-<image src="float.svg"/>
+<img src="float.svg" alt="Diagram of Float"/>
   </p>
   </section>
 <section>
@@ -369,27 +370,15 @@ when the value is resolved.
   <title>Block Areas</title>
   <p>
 The block area has info about the following:
-       <ul>
-       <li><p>
-all anchors including which lines they are on
-       </p></li>
-       <li><p>
-unresolved page references with line info
-       </p></li>
-       <li><p>
-id and link areas
-       </p></li>
-       <li><p>
-height (min/max/optimum) or area including floats
-       </p></li>
-       <li><p>
-holds space before/after and keep information
-       </p></li>
-       <li><p>
-widows and orphans
-       </p></li>
-       </ul>
   </p>
+       <ul>
+       <li>all anchors including which lines they are on</li>
+       <li>unresolved page references with line info</li>
+       <li>id and link areas</li>
+       <li>height (min/max/optimum) or area including floats</li>
+       <li>holds space before/after and keep information</li>
+       <li>widows and orphans</li>
+       </ul>
   <p>
 Once the layout has been finalised then this information can be
 discarded.

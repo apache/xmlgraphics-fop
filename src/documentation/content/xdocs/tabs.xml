@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-      <!DOCTYPE tabs PUBLIC "-//APACHE//DTD Cocoon Documentation Tab V1.0//EN" "tab-cocoon-v10.dtd">
+      <!DOCTYPE tabs PUBLIC "-//APACHE//DTD Cocoon Documentation Tab V1.0//EN"
+    "http://cvs.apache.org/viewcvs.cgi/*checkout*/xml-forrest/src/resources/schema/dtd/tab-cocoon-v10.dtd">
 
       <tabs software="MyProj"
         title="MyProj"
@@ -7,6 +8,6 @@
         xmlns:xlink="http://www.w3.org/1999/xlink">
 
         <tab label="Home" dir=""/>
-        <tab label="dev" dir="dev/"/>
+        <tab label="Redesign" dir="dev/"/>
 
     </tabs>

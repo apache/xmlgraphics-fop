@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
-<!DOCTYPE faqs PUBLIC "-//APACHE//DTD FAQ V1.1//EN" "dtd/faq-v11.dtd">
+<!DOCTYPE faqs PUBLIC "-//APACHE//DTD FAQ V1.1//EN"
+    "http://cvs.apache.org/viewcvs.cgi/*checkout*/xml-forrest/src/resources/schema/dtd/faq-v11.dtd">
+
 <faqs title="FOP FAQ">
   <part>
     <title>General questions</title>

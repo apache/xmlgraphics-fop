@@ -1,5 +1,6 @@
 <?xml version="1.0" standalone="no"?>
-<!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V1.1//EN" "document-v11.dtd">
+<!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V1.1//EN"
+    "http://cvs.apache.org/viewcvs.cgi/*checkout*/xml-forrest/src/resources/schema/dtd/document-v11.dtd">
 
 <document>
     <header>
@@ -34,52 +35,44 @@ specific information. The list of user agent values can be found on the
   </section>
 <section>
   <title>Logging</title>
-<p>
 <ul>
 <li>logging level</li>
 <li>logging messages of various levels</li>
 <li>error handling</li>
 <li>Logging setup (LogKit, Log4J, JDK14Logging)</li>
 </ul>
-   </p>
   </section>
 <section>
   <title>XML input</title>
-<p>
 <ul>
 <li>various ways to supply FOP with the xsl:fo file, fo, xml+xsl</li>
 <li>sax handler</li>
 </ul>
-   </p>
   </section>
 <section>
   <title>general options</title>
-<p>
 <ul>
 <li>base directory</li>
 <li>uri resolvers</li>
 <li>which implementation of a particular</li>
 <li>LayoutManager to use</li>
 </ul>
-   </p>
   </section>
 <section>
   <title>Rendering Options</title>
-<p>
 <ul>
 <li>embedding fonts</li>
 <li>compression in pdf</li>
 <li>image embedding</li>
 </ul>
-</p>
 <p>
 for the PS renderer (eventually):
+</p>
 <ul>
 <li>PostScript Level</li>
 <li>PPD to use</li>
 <li>binary/ascii switch</li>
 </ul>
-   </p>
   </section>
 <section>
   <title>User Agent</title>

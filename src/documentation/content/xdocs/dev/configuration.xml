@@ -1,13 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
-      <!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V1.1//EN" "document-v11.dtd">
-      <document> 
-        <header> 
-          <title>Configuration</title> 
-        </header> 
-        <body> 
-          <section>
-            <title>Configuring FOP</title>
-            <p>
+<!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V1.1//EN"
+    "http://cvs.apache.org/viewcvs.cgi/*checkout*/xml-forrest/src/resources/schema/dtd/document-v11.dtd">
+
+<document> 
+  <header> 
+    <title>Configuration</title> 
+  </header> 
+  <body> 
+    <section>
+      <title>Configuring FOP</title>
+      <p>
 In the directory xml-fop/conf you will find an example
 configuration file. It contains the default values of various
 configurable options available in FOP.
@@ -40,6 +42,7 @@ configurable options available in FOP.
           and rebuild Fop. The file will be picked up and added
           to the fop.jar.
     </p>
-          </section>
-        </body>
-    </document>
+    </section>
+  </body>
+</document>
+

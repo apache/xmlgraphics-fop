@@ -1,16 +1,17 @@
 <?xml version="1.0" standalone="no"?> 
-<!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V1.1//EN" "document-v11.dtd">
+<!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V1.1//EN"
+    "http://cvs.apache.org/viewcvs.cgi/*checkout*/xml-forrest/src/resources/schema/dtd/document-v11.dtd">
 
 <document>
-    <header>
-        <title>Area Tree</title>
-        <subtitle>Area Tree Design for FOP</subtitle>
-        <authors>
-            <person name="Keiron Liddle" email="keiron@aftexsw.com"/>
-        </authors>
-    </header>
+  <header>
+    <title>Area Tree</title>
+    <subtitle>Area Tree Design for FOP</subtitle>
+    <authors>
+      <person name="Keiron Liddle" email="keiron@aftexsw.com"/>
+    </authors>
+  </header>
 
-    <body>
+  <body>
 <section>
   <title>Area Tree</title>
 <p>
@@ -169,21 +170,13 @@ Inline
   </p>
   <p>
 The renderer will need to be able to:
-       <ul>
-       <li><p>
-render each individual page
-       </p></li>
-       <li><p>
-clip and align child areas to a viewport
-       </p></li>
-       <li><p>
-handle all types of inline area, text, image etc.
-       </p></li>
-       <li><p>
-draw various lines and rectangles
-       </p></li>
-       </ul>
   </p>
+       <ul>
+       <li>render each individual page</li>
+       <li>clip and align child areas to a viewport</li>
+       <li>handle all types of inline area, text, image etc.</li>
+       <li>draw various lines and rectangles</li>
+       </ul>
   <p>
 An abstract renderer will be able to handle the generic positioning
 of child areas, iterating through areas that have child areas.
@@ -191,6 +184,6 @@ of child areas, iterating through areas that have child areas.
   </section>
   </section>
 
-    </body>
+  </body>
 </document>
 

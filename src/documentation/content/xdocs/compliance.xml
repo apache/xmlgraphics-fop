@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!--DOCTYPE compliance PUBLIC "-//APACHE//DTD Compliance V1.0//EN" "compliance-v10.dtd"-->
+<!DOCTYPE compliance PUBLIC "-//APACHE//DTD Compliance V1.0//EN"
+    "http://cvs.apache.org/viewcvs.cgi/*checkout*/xml-fop/src/documentation/resources/schema/dtd/compliance-v10.dtd?rev=1.1">
 
 <compliance>
   <head>
