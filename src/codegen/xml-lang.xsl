@@ -86,6 +86,11 @@ public class CountryLanguageScript {
     private static final HashMap iso639_1_To_639_2T;
 
     /**
+     * Map of ISO 639-1 2-letter codes keyed on ISO 639-2 terminology code.
+     */
+    private static final HashMap iso639_2T_To_639_1;
+
+    /**
      * Map of English script names keyed on ISO 15924 script code.
      */
     private static final HashMap iso15924ToName;
@@ -93,10 +98,11 @@ public class CountryLanguageScript {
     static {
         iso3166ToName = new HashMap(<xsl:value-of select="$countries"/>);
 
-        iso639_2T_ToENLang = new HashMap(<xsl:value-of select="$languages"/>);
-        iso639_2T_ToFRLang = new HashMap(<xsl:value-of select="$languages"/>);
-        iso639_2B_To_639_2T = new HashMap(<xsl:value-of select="$languages"/>);
-        iso639_1_To_639_2T = new HashMap(<xsl:value-of select="$languages"/>);
+        iso639_2T_ToENLang = new HashMap((int)(<xsl:value-of select="$languages"/> * 1.4));
+        iso639_2T_ToFRLang = new HashMap((int)(<xsl:value-of select="$languages"/> * 1.4));
+        iso639_2B_To_639_2T = new HashMap((int)(<xsl:value-of select="$languages"/> * 1.4));
+        iso639_1_To_639_2T = new HashMap((int)(<xsl:value-of select="$languages"/> * 1.4));
+        iso639_2T_To_639_1 = new HashMap((int)(<xsl:value-of select="$languages"/> * 1.4));
 
         iso15924ToName = new HashMap(<xsl:value-of select="$scripts"/>);
     <xsl:apply-templates select="countrycodes/country"/>
@@ -134,23 +140,36 @@ public class CountryLanguageScript {
      * code, an ISO 639-2 Bibliographic code, or an ISO 639-1 2-letter code.
      * By convention, language codes are expressed in lower case.
      * @param code - the <tt>String</tt> code.
-     * @return - the equivalent ISO 639-2T code, or <tt>null</tt> if the
-     * code is invalid.
+     * @return - the equivalent ISO 639-2T code, or the ISO 639_1 code if no
+     * not three-letter code exists, or <tt>null</tt> if the code is invalid.
      */
     public static String canonicalLangCode(String code) {
-        String biblio;
-        String iso639_1;
+        String wasBiblio;
+        String wasIso639_1;
         String locode = code.toLowerCase();
         // Check for valid terminology code
         if (iso639_2T_ToENLang.get(locode) != null)
             return locode;
         // Check for valid 2-letter code
-        if ((iso639_1 = (String)(iso639_1_To_639_2T.get(locode))) != null)
-            return iso639_1;
+        if ((wasIso639_1 = (String)(iso639_1_To_639_2T.get(locode))) != null)
+            return wasIso639_1;
         // Check for valid bibliographic code
-        if ((biblio = (String)(iso639_2B_To_639_2T.get(locode))) != null)
-            return biblio;
+        if ((wasBiblio = (String)(iso639_2B_To_639_2T.get(locode))) != null)
+            return wasBiblio;
         return null;
+    }
+
+    /**
+     * Get the canonical 2-letter ISO 639-1 code corresponding to an
+     * ISO 639 code.  The argument must be an ISO 639-2 Terminology code.
+     * By convention, language codes are expressed in lower case.
+     * @param code - the 3-letter ISO 639-2 Terminology code.
+     * @return - the equivalent ISO 639-1 code, or <tt>null</tt> if the
+     * code is invalid.
+     */
+    public static String canonical639_1Code(String code) {
+        // Check for valid 3-letter code
+        return (String)(iso639_2T_To_639_1.get(code.toLowerCase()));
     }
 
     /**
@@ -217,6 +236,7 @@ public class CountryLanguageScript {
   </xsl:template>
   <xsl:template match="@iso639-1">
         iso639_1_To_639_2T.put("<xsl:value-of select="."/>", "<xsl:value-of select="../@terminology"/>");
+        iso639_2T_To_639_1.put("<xsl:value-of select="../@terminology"/>", "<xsl:value-of select="."/>");
   </xsl:template>
   <xsl:template match="scriptcodes/script">
         iso15924ToName.put("<xsl:value-of select="@code"/>", "<xsl:value-of select="@name"/>");
