@@ -44,8 +44,8 @@ public class PFMFile extends AbstractLogEnabled {
     // Extent table
     private int[] extentTable;
 
-    private Map kerningTab = new java.util.HashMap();;
-    
+    private Map kerningTab = new java.util.HashMap();
+
     /**
      * Parses a PFM file
      *
