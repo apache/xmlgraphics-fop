@@ -118,16 +118,16 @@ public class Symbol extends SVGObj {
 		float height = 0;
 		try {
 			if(st.hasMoreTokens()) {
-				x = Float.parseFloat(st.nextToken());
+				x = Double.valueOf(st.nextToken()).floatValue();
 			}
 			if(st.hasMoreTokens()) {
-				y = Float.parseFloat(st.nextToken());
+				y = Double.valueOf(st.nextToken()).floatValue();
 			}
 			if(st.hasMoreTokens()) {
-				width = Float.parseFloat(st.nextToken());
+				width = Double.valueOf(st.nextToken()).floatValue();
 			}
 			if(st.hasMoreTokens()) {
-				height = Float.parseFloat(st.nextToken());
+				height = Double.valueOf(st.nextToken()).floatValue();
 			}
 		} catch(Exception e) {
 		}

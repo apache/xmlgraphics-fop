@@ -52,7 +52,7 @@ package org.apache.fop.messaging;
 
 import java.io.*;
 import java.util.*;
-import javax.swing.*;
+//import javax.swing.*;
 
 /** The class MessageHandler contains the static methods log and error which
  *  should be used for any end user information instead of System.out.print() or

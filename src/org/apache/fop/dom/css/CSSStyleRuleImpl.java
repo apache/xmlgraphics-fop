@@ -188,7 +188,7 @@ public class CSSStyleRuleImpl implements CSSStyleRule {
                 }
             }
             if(current != null)
-                selectors.add(current);
+                selectors.addElement(current);
         }
     }
 
