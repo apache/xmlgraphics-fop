@@ -23,11 +23,6 @@
           <td><link href="#native">FOP native</link></td>
         </tr>
         <tr>
-          <td>CUR</td>
-          <td>unknown</td>
-          <td><link href="#jimi">JIMI</link></td>
-        </tr>
-        <tr>
           <td><link href="#eps">EPS</link> (Encapsulated PostScript)</td>
           <td>metafile (both bitmap and vector), probably most frequently used for vector drawings</td>
           <td><link href="#native">FOP native</link> (limited support)</td>
@@ -38,29 +33,9 @@
           <td><link href="#native">FOP native</link></td>
         </tr>
         <tr>
-          <td>FPX</td>
-          <td>unknown</td>
-          <td><link href="#jai">JAI</link></td>
-        </tr>
-        <tr>
-          <td>ICO (Sun Icon)</td>
-          <td>bitmap</td>
-          <td><link href="#jimi">JIMI</link></td>
-        </tr>
-        <tr>
           <td><link href="#jpeg">JPEG</link> (Joint Photographic Experts Group)</td>
           <td>bitmap</td>
           <td><link href="#native">FOP native</link></td>
-        </tr>
-        <tr>
-          <td>PCX (PC Paintbrush)</td>
-          <td>bitmap</td>
-          <td><link href="#jimi">JIMI</link></td>
-        </tr>
-        <tr>
-          <td>PICT (Macintosh PICT)</td>
-          <td>metafile</td>
-          <td><link href="#jimi">JIMI</link></td>
         </tr>
         <tr>
           <td>PNG (Portable Network Graphic)</td>
@@ -68,44 +43,14 @@
           <td><link href="#jimi">JIMI</link> or <link href="#jai">JAI</link></td>
         </tr>
         <tr>
-          <td>PNM (Portable aNyMap Utilities, part of the Portable Bitmap Utilies, aka pbmplus. PNM is a superset encompassing PBM or Portable Bitmap, PGM or Portable Grayscale, and PPM or Portable Pixmap.)</td>
-          <td>bitmap</td>
-          <td><link href="#jai">JAI</link></td>
-        </tr>
-        <tr>
-          <td>PSD (Adobe Photoshop)</td>
-          <td>bitmap</td>
-          <td><link href="#jimi">JIMI</link></td>
-        </tr>
-        <tr>
-          <td>RAS (Sunraster)</td>
-          <td>bitmap</td>
-          <td><link href="#jimi">JIMI</link></td>
-        </tr>
-        <tr>
           <td><link href="#svg">SVG</link> (Scalable Vector Graphics)</td>
           <td>vector (with embedded bitmaps)</td>
           <td><link href="#batik">Batik</link></td>
         </tr>
         <tr>
-          <td>TGA (Targa)</td>
-          <td>bitmap</td>
-          <td><link href="#jimi">JIMI</link></td>
-        </tr>
-        <tr>
           <td><link href="#tiff">TIFF</link> (Tag Image Format File)</td>
           <td>bitmap</td>
           <td><link href="#native">FOP native</link> or <link href="#jai">JAI</link>, depending on the subformat. See <link href="#tiff">TIFF</link> for more details.(JIMI also supports TIFF, but this has not been implemented within FOP).</td>
-        </tr>
-        <tr>
-          <td>XBM (X BitMap)</td>
-          <td>bitmap</td>
-          <td><link href="#jimi">JIMI</link></td>
-        </tr>
-        <tr>
-          <td>XPM (X PixMap)</td>
-          <td>bitmap</td>
-          <td><link href="#jimi">JIMI</link></td>
         </tr>
       </table>
     </section>
