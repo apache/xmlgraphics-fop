@@ -51,6 +51,7 @@
 package org.apache.fop.datatypes;
 
 import org.apache.fop.fo.Property;
+import org.apache.fop.fo.properties.Constants;
 
 /**
  * a space quantity in XSL (space-before, space-after)
