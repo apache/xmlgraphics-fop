@@ -1,12 +1,12 @@
-package org.apache.fop.datatypes;
+package org.apache.fop.datatypes.indirect;
 
 import org.apache.fop.fo.expr.PropertyException;
-import org.apache.fop.fo.expr.PropertyValue;
-import org.apache.fop.fo.expr.PropertyTriplet;
+import org.apache.fop.datatypes.PropertyValue;
+import org.apache.fop.datatypes.PropertyTriplet;
 import org.apache.fop.fo.Properties;
 import org.apache.fop.fo.PropNames;
 import org.apache.fop.fo.PropertyConsts;
-import org.apache.fop.datatypes.IndirectValue;
+import org.apache.fop.datatypes.indirect.IndirectValue;
 
 /*
  * $Id$

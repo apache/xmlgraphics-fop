@@ -13,8 +13,8 @@ import org.apache.fop.fo.PropNames;
 import org.apache.fop.fo.FOTree;
 import org.apache.fop.fo.expr.SystemFontFunction;
 
-import org.apache.fop.fo.expr.PropertyValue;
-import org.apache.fop.fo.expr.PropertyValueList;
+import org.apache.fop.datatypes.PropertyValue;
+import org.apache.fop.datatypes.PropertyValueList;
 import org.apache.fop.datatypes.Numeric;
 import org.apache.fop.datatypes.Literal;
 import org.apache.fop.datatypes.NCName;
@@ -26,8 +26,6 @@ import org.apache.fop.datatypes.Time;
 import org.apache.fop.datatypes.Frequency;
 import org.apache.fop.datatypes.Angle;
 import org.apache.fop.datatypes.Bool;
-import org.apache.fop.datatypes.Inherit;
-import org.apache.fop.datatypes.InheritedValue;
 import org.apache.fop.datatypes.Auto;
 import org.apache.fop.datatypes.None;
 import org.apache.fop.datatypes.Slash;
@@ -35,8 +33,10 @@ import org.apache.fop.datatypes.ColorType;
 import org.apache.fop.datatypes.StringType;
 import org.apache.fop.datatypes.MimeType;
 import org.apache.fop.datatypes.UriType;
-import org.apache.fop.datatypes.FromParent;
-import org.apache.fop.datatypes.FromNearestSpecified;
+import org.apache.fop.datatypes.indirect.Inherit;
+import org.apache.fop.datatypes.indirect.InheritedValue;
+import org.apache.fop.datatypes.indirect.FromParent;
+import org.apache.fop.datatypes.indirect.FromNearestSpecified;
 
 import java.util.HashMap;
 
