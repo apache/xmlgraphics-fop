@@ -26,6 +26,7 @@ import org.apache.fop.area.inline.Space;
 import org.apache.fop.area.inline.Word;
 import org.apache.fop.area.inline.Stretch;
 import org.apache.fop.area.inline.InlineParent;
+import org.apache.fop.area.inline.FilledArea;
 import org.apache.fop.util.CharUtilities;
 import org.apache.fop.apps.StructureHandler;
 import org.apache.fop.area.Trait;
@@ -140,39 +141,6 @@ public class Leader extends FObjMixed {
                 fa.addChild(spacer);
             }
             leaderArea = fa;
-        }
-    }
-
-    protected static class FilledArea extends InlineParent {
-        MinOptMax alloc;
-        int unitWidth;
-
-        public FilledArea() {
-        }
-
-        public void setUnitWidth(int w) {
-            unitWidth = w;
-        }
-
-        public void setAllocationIPD(MinOptMax all) {
-            alloc = all;
-        }
-
-        public MinOptMax getAllocationIPD() {
-            return alloc;
-        }
-
-        public void addChild(InlineArea childArea) {
-            inlines.add(childArea);
-        }
-
-        public List getChildAreas() {
-            int units = (int)(getWidth() / unitWidth);
-            ArrayList newList = new ArrayList();
-            for(int count = 0; count < units; count++) {
-                newList.addAll(inlines);
-            }
-            return newList;
         }
     }
 
