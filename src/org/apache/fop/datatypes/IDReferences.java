@@ -154,6 +154,19 @@ public class IDReferences {
         idValidation.remove(id);     
     }
 
+
+    /**
+     * Removes id from IDReferences
+     * 
+     * @param id     The id to remove
+     * @exception FOPException
+     */
+    public void removeID(String id)
+    {        
+        idReferences.remove(id);        
+    }
+
+
     /**
      * Determines whether all id's are valid
      * 
