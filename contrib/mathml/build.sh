@@ -1,7 +1,7 @@
 #!/bin/sh
 echo
 echo "MathML Build System"
-echo "----------------"
+echo "---------------------"
 echo
 
 if [ "$JAVA_HOME" = "" ] ; then
@@ -12,7 +12,11 @@ if [ "$JAVA_HOME" = "" ] ; then
   exit 1
 fi
 LIBDIR=../../lib
-LOCALCLASSPATH=$JAVA_HOME/lib/tools.jar:$JAVA_HOME/lib/classes.zip:$LIBDIR/ant.jar:$LIBDIR/batik.jar:$LIBDIR/buildtools.jar:$LIBDIR/xercesImpl-2.0.1.jar:$LIBDIR/xalan-2.2D11.jar:$LIBDIR/xml-apis.jar:../../build/fop.jar:$LIBDIR/avalon-framework-cvs-20020806.jar:lib/jeuclid.jar
+LOCALCLASSPATH=$JAVA_HOME/lib/tools.jar:$JAVA_HOME/lib/classes.zip
+LOCALCLASSPATH=$LOCALCLASSPATH:$LIBDIR/ant.jar
+LOCALCLASSPATH=$LOCALCLASSPATH:$LIBDIR/xml-apis.jar
+LOCALCLASSPATH=$LOCALCLASSPATH:$LIBDIR/xercesImpl-2.2.1.jar
+LOCALCLASSPATH=$LOCALCLASSPATH:$LIBDIR/xalan-2.4.1.jar
 ANT_HOME=$LIBDIR
 
 echo
