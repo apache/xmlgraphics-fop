@@ -75,6 +75,7 @@ public class RtfPageNumber extends RtfContainer {
      * @throws IOException for I/O problems
      */
     protected void writeRtfContent() throws IOException {
+        /*
         writeGroupMark(true);
         writeControlWord(RTF_FIELD);
         writeGroupMark(true);
@@ -84,6 +85,11 @@ public class RtfPageNumber extends RtfContainer {
         writeGroupMark(true);
         writeControlWord(RTF_FIELD_RESULT);
         writeGroupMark(false);
+        writeGroupMark(false);
+        */
+        writeGroupMark(true);
+        writeAttributes(attrib, RtfText.ATTR_NAMES);
+        writeControlWord("chpgn");
         writeGroupMark(false);
     }
 
