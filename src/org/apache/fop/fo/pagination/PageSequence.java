@@ -222,12 +222,14 @@ public class PageSequence extends FObj
             (currentPage.getBefore() != null) )
             {
                 AreaContainer beforeArea = currentPage.getBefore();
+                beforeArea.setIDReferences(areaTree.getIDReferences());
                 this.staticBefore.layout(beforeArea);
             }
             if ( (this.staticAfter != null) &&
             (currentPage.getAfter() != null) )
             {
                 AreaContainer afterArea = currentPage.getAfter();
+                afterArea.setIDReferences(areaTree.getIDReferences());
                 this.staticAfter.layout(afterArea);
             }
             if ( (status.getCode() == Status.FORCE_PAGE_BREAK_EVEN) &&
