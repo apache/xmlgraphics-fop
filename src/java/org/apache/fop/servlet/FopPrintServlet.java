@@ -32,7 +32,6 @@ import org.apache.commons.logging.impl.SimpleLog;
 import org.apache.commons.logging.Log;
 import org.apache.fop.apps.Driver;
 import org.apache.fop.apps.XSLTInputHandler;
-import org.apache.fop.render.awt.AWTPrintRenderer;
 import org.xml.sax.InputSource;
 
 /**
@@ -132,9 +131,7 @@ public class FopPrintServlet extends HttpServlet {
                          HttpServletResponse response) throws ServletException {
         try {
             Driver driver = new Driver(foFile, null);
-            AWTPrintRenderer renderer = new AWTPrintRenderer();
-
-            driver.setRenderer(renderer);
+            driver.setRenderer(Driver.RENDER_PRINT);
             driver.run();
 
             reportOK (response);
@@ -153,9 +150,7 @@ public class FopPrintServlet extends HttpServlet {
                           HttpServletResponse response) throws ServletException {
         try {
             Driver driver = new Driver();
-            AWTPrintRenderer renderer = new AWTPrintRenderer();
-
-            driver.setRenderer(renderer);
+            driver.setRenderer(Driver.RENDER_PRINT);
             driver.render(input.getParser(), input.getInputSource());
 
             reportOK (response);

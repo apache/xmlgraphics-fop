@@ -47,6 +47,7 @@ import java.util.Vector;
 
 import org.apache.fop.fonts.FontInfo;
 import org.apache.fop.apps.FOPException;
+import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.apps.InputHandler;
 import org.apache.fop.area.Area;
 import org.apache.fop.area.Page;
@@ -81,12 +82,6 @@ public class AWTRenderer extends AbstractRenderer implements Printable, Pageable
     protected FontInfo fontInfo;
 
     /**
-        The InputHandler associated with this Renderer.
-        Sent to the PreviewDialog for document reloading.
-    */
-    private InputHandler inputHandler;
-
-    /**
      * The resource bundle used for AWT messages.
      */
     protected Translator translator = null;
@@ -102,15 +97,13 @@ public class AWTRenderer extends AbstractRenderer implements Printable, Pageable
      */
     protected PreviewDialog frame;
 
-    public AWTRenderer(InputHandler handler) {
-        inputHandler = handler;
-        translator = new Translator();
-        createPreviewDialog(inputHandler);
-    }
-
     public AWTRenderer() {
         translator = new Translator();
-        createPreviewDialog(null);
+    }
+
+    public void setUserAgent(FOUserAgent foUserAgent) {
+        super.setUserAgent(foUserAgent);
+        createPreviewDialog(foUserAgent.getInputHandler());
     }
 
     /**
