@@ -57,12 +57,18 @@ public class AWTCommandLine {
     frame.setVisible(true);
   }
 
+ /**
+     * creates a SAX parser, using the value of org.xml.sax.parser
+     * defaulting to org.apache.xerces.parsers.SAXParser
+     *
+     * @return the created SAX parser
+     */
 
     static Parser createParser() {
 	String parserClassName =
 	    System.getProperty("org.xml.sax.parser");
 	if (parserClassName == null) {
-	    parserClassName = "com.jclark.xml.sax.Driver";
+	    parserClassName = "org.apache.xerces.parsers.SAXParser";
 	}
 	System.err.println("using SAX parser " + parserClassName);
 

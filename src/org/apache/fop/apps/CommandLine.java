@@ -76,7 +76,7 @@ public class CommandLine {
 
     /**
      * creates a SAX parser, using the value of org.xml.sax.parser
-     * defaulting to com.jclark.xml.sax.Driver 
+     * defaulting to org.apache.xerces.parsers.SAXParser
      *
      * @return the created SAX parser
      */
@@ -84,7 +84,7 @@ public class CommandLine {
 	String parserClassName =
 	    System.getProperty("org.xml.sax.parser");
 	if (parserClassName == null) {
-	    parserClassName = "com.jclark.xml.sax.Driver";
+	    parserClassName = "org.apache.xerces.parsers.SAXParser";
 	}
 	System.err.println("using SAX parser " + parserClassName);
 
