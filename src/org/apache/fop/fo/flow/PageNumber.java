@@ -127,7 +127,7 @@ public class PageNumber extends FObj {
 				}
 
 				String p = Integer.toString(area.getPage().getNumber());
-				this.marker = ((BlockArea) area).addText(fs, red, green, blue,
+				this.marker = FOText.addText((BlockArea) area, fs, red, green, blue,
 											wrapOption, null, whiteSpaceCollapse, p.toCharArray(),
 											0, p.length(), ts);
 				return new Status(Status.OK);

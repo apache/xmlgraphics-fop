@@ -57,6 +57,7 @@ import org.apache.fop.datatypes.*;
 import org.apache.fop.layout.Area;
 import org.apache.fop.layout.BlockArea;
 import org.apache.fop.layout.inline.LeaderArea;
+import org.apache.fop.layout.LineArea;
 import org.apache.fop.layout.FontState;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.messaging.MessageHandler;
@@ -140,7 +141,7 @@ public class Leader extends FObjMixed {
 				blockArea.getIDReferences().initializeID(id, blockArea);
 
 				//adds leader to blockarea, there the leaderArea is generated
-				int succeeded = blockArea.addLeader(fontstate, red, green, blue,
+				int succeeded = addLeader(blockArea, fontstate, red, green, blue,
 																						leaderPattern, leaderLengthMinimum,
 																						leaderLengthOptimum, leaderLengthMaximum,
 																						ruleThickness, ruleStyle, leaderPatternWidth,
@@ -160,5 +161,66 @@ public class Leader extends FObjMixed {
 				}
 			*/
 
+
+		/**
+			* adds a leader to current line area of containing block area
+			* the actual leader area is created in the line area
+			*
+			* @return int +1 for success and -1 for none
+			*/
+		public int addLeader(BlockArea ba, FontState fontState, float red, float green,
+												 float blue, int leaderPattern, int leaderLengthMinimum,
+												 int leaderLengthOptimum, int leaderLengthMaximum,
+												 int ruleThickness, int ruleStyle, int leaderPatternWidth,
+												 int leaderAlignment) {
+
+				LineArea la = ba.getCurrentLineArea();
+				//this should start a new page
+				if (la == null) {
+						return -1;
+				}
+
+				la.changeFont(fontState);
+				la.changeColor(red, green, blue);
+
+				//check whether leader fits into the (rest of the) line
+				//using length.optimum to determine where to break the line as defined
+				// in the xsl:fo spec: "User agents may choose to use the value of 'leader-length.optimum'
+				// to determine where to break the line" (7.20.4)
+				//if leader is longer then create a new LineArea and put leader there
+				if (leaderLengthOptimum <= (la.getRemainingWidth())) {
+						la.addLeader(leaderPattern,
+																					 leaderLengthMinimum, leaderLengthOptimum,
+																					 leaderLengthMaximum, ruleStyle, ruleThickness,
+																					 leaderPatternWidth, leaderAlignment);
+				} else {
+						la = ba.createNextLineArea();
+						if(la == null) {
+						    // not enough room
+						    return -1;
+						}
+						la.changeFont(fontState);
+						la.changeColor(red, green, blue);
+
+						//check whether leader fits into LineArea at all, otherwise
+						//clip it (should honor the clip option of containing area)
+						if (leaderLengthMinimum <=
+											la.getContentWidth()) {
+								la.addLeader(leaderPattern,
+																							 leaderLengthMinimum, leaderLengthOptimum,
+																							 leaderLengthMaximum, ruleStyle, ruleThickness,
+																							 leaderPatternWidth, leaderAlignment);
+						} else {
+								MessageHandler.errorln("Leader doesn't fit into line, it will be clipped to fit.");
+								la.addLeader(leaderPattern,
+																							 la.getRemainingWidth(),
+																							 leaderLengthOptimum, leaderLengthMaximum,
+																							 ruleStyle, ruleThickness, leaderPatternWidth,
+																							 leaderAlignment);
+						}
+				}
+//				this.hasLines = true;
+				return 1;
+		}
 
 }

@@ -203,13 +203,16 @@ public class PageNumberCitation extends FObj {
 				pageNumber = idReferences.getPageNumber(refId);
 
 				if (pageNumber != null) { // if we already know the page number
-						this.marker = ((BlockArea) area).addText(fs, red, green, blue,
+						this.marker = FOText.addText((BlockArea) area, fs, red, green, blue,
 													wrapOption, null, whiteSpaceCollapse,
 													pageNumber.toCharArray(), 0, pageNumber.length(),
 													ts);
 				} else { // add pageNumberCitation to area to be resolved during rendering
             BlockArea blockArea = (BlockArea)area;
             LineArea la = blockArea.getCurrentLineArea();
+            if(la == null) {
+						return new Status(Status.AREA_FULL_NONE);
+            }
             la.changeFont(fs);
             la.changeColor(red, green, blue);
             la.changeWrapOption(wrapOption);

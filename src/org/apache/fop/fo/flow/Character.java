@@ -145,6 +145,9 @@ public class Character  extends FObj {
 				blockArea.getIDReferences().initializeID(id, blockArea);
 
         LineArea la = blockArea.getCurrentLineArea();
+        if(la == null) {
+            return new Status(Status.AREA_FULL_NONE);
+        }
         la.changeFont(fontstate);
         la.changeColor(red, green, blue);
         la.changeWrapOption(wrapOption);
