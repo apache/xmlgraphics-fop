@@ -50,7 +50,7 @@
  */
 package org.apache.fop.fonts;
 
-import java.io.*;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;

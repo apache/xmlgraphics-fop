@@ -3,34 +3,34 @@
  * ============================================================================
  *                    The Apache Software License, Version 1.1
  * ============================================================================
- * 
+ *
  * Copyright (C) 1999-2003 The Apache Software Foundation. All rights reserved.
- * 
+ *
  * Redistribution and use in source and binary forms, with or without modifica-
  * tion, are permitted provided that the following conditions are met:
- * 
+ *
  * 1. Redistributions of source code must retain the above copyright notice,
  *    this list of conditions and the following disclaimer.
- * 
+ *
  * 2. Redistributions in binary form must reproduce the above copyright notice,
  *    this list of conditions and the following disclaimer in the documentation
  *    and/or other materials provided with the distribution.
- * 
+ *
  * 3. The end-user documentation included with the redistribution, if any, must
  *    include the following acknowledgment: "This product includes software
  *    developed by the Apache Software Foundation (http://www.apache.org/)."
  *    Alternately, this acknowledgment may appear in the software itself, if
  *    and wherever such third-party acknowledgments normally appear.
- * 
+ *
  * 4. The names "FOP" and "Apache Software Foundation" must not be used to
  *    endorse or promote products derived from this software without prior
  *    written permission. For written permission, please contact
  *    apache@apache.org.
- * 
+ *
  * 5. Products derived from this software may not be called "Apache", nor may
  *    "Apache" appear in their name, without prior written permission of the
  *    Apache Software Foundation.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESSED OR IMPLIED WARRANTIES,
  * INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND
  * FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
@@ -42,12 +42,12 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ============================================================================
- * 
+ *
  * This software consists of voluntary contributions made by many individuals
  * on behalf of the Apache Software Foundation and was originally created by
  * James Tauber <jtauber@jtauber.com>. For more information on the Apache
  * Software Foundation, please see <http://www.apache.org/>.
- */ 
+ */
 
 package org.apache.fop.mif;
 
@@ -57,8 +57,9 @@ package org.apache.fop.mif;
 import org.apache.fop.messaging.MessageHandler;
 
 // Java
-import java.io.*;
-import java.util.*;
+import java.io.OutputStream;
+import java.io.IOException;
+import java.util.ArrayList;
 
 /**
  * class representing a MIF document.
@@ -85,7 +86,7 @@ public class MIFDocument {
         int len = val.length();
         StringBuffer buf = new StringBuffer(len * 2);
         char c;
-        
+
         for(int i = 0; i < len; i++) {
             c = val.charAt(i);
             switch(c) {
@@ -99,7 +100,7 @@ public class MIFDocument {
                 case '\u00cc':  buf.append("\\xed "); break;
                 case '\u00d2':  buf.append("\\xf1 "); break;
                 case '\u00d9':  buf.append("\\xf4 "); break;
-                    
+
                 case '\u00e1':  buf.append("\\x87 "); break;
                 case '\u00e9':  buf.append("\\x8e "); break;
                 case '\u00ed':  buf.append("\\x92 "); break;
@@ -110,19 +111,19 @@ public class MIFDocument {
                 case '\u00cd':  buf.append("\\xea "); break;
                 case '\u00d3':  buf.append("\\xee "); break;
                 case '\u00da':  buf.append("\\xf2 "); break;
-                    
+
                 case '\u00f1':  buf.append("\\x96 "); break;
                 case '\u00d1':  buf.append("\\x84 "); break;
-                    
+
                 case '\u00e7':  buf.append("\\x8d "); break;
                 case '\u00c7':  buf.append("\\x82 "); break;
-                    
+
                 case '`':       buf.append("\\xd4 "); break;
                 case '\'':      buf.append("\\xd5 "); break;
                 case '\u00b4':  buf.append("\\xab "); break;
                 case '\u00aa':  buf.append("\\xbb "); break;
                 case '\u00ba':  buf.append("\\xbc "); break;
-                    
+
                 case '>':       buf.append("\\>"); break;
                 default:        buf.append(c);
             }
