@@ -50,20 +50,20 @@ public class <xsl:value-of select="class-name"/> extends Font {
         return fontName;
     }
 
-    public int getAscender() {
-        return ascender;
+    public int getAscender(int size) {
+        return size * ascender;
     }
 
-    public int getCapHeight() {
-        return capHeight;
+    public int getCapHeight(int size) {
+        return size * capHeight;
     }
 
-    public int getDescender() {
-        return descender;
+    public int getDescender(int size) {
+        return size * descender;
     }
 
-    public int getXHeight() {
-        return xHeight;
+    public int getXHeight(int size) {
+        return size * xHeight;
     }
 
     public int getFirstChar() {
@@ -74,13 +74,14 @@ public class <xsl:value-of select="class-name"/> extends Font {
         return lastChar;
     }
 
-    public int width(int i) {
-        return width[i];
+    public int width(int i,int size) {
+        return size * width[i];
     }
 
-    public int[] getWidths() {
+    public int[] getWidths(int size) {
         int[] arr = new int[getLastChar()-getFirstChar()+1];
         System.arraycopy(width, getFirstChar(), arr, 0, getLastChar()-getFirstChar()+1);
+        for( int i = 0; i &lt; arr.length; i++) arr[i] *= size;
         return arr;
     }
 }
