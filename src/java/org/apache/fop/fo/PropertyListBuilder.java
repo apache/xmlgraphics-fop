@@ -137,10 +137,6 @@ public class PropertyListBuilder {
         HashMap table;
         table = (HashMap)elementTable.get(elementName);
 
-        /* Store names of properties already set. */
-        StringBuffer propsDone = new StringBuffer(256);
-        propsDone.append(' ');
-
         /*
          * If font-size is set on this FO, must set it first, since
          * other attributes specified in terms of "ems" depend on it.
@@ -158,8 +154,6 @@ public class PropertyListBuilder {
                     /**@todo log this exception */
                 }
             }
-            // Put in the "done" list even if error or no Maker.
-            propsDone.append(FONTSIZEATTR + ' ');
         }
 
         for (int i = 0; i < attributes.getLength(); i++) {
@@ -181,7 +175,6 @@ public class PropertyListBuilder {
                             if (baseValue != null) {
                                 baseProp = propertyMaker.make(p, baseValue,
                                                               parentFO);
-                                propsDone.append(basePropName + ' ');
                             }
                             // else baseProp = propertyMaker.makeCompound(p, parentFO);
                         }
