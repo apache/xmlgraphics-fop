@@ -63,7 +63,6 @@ import org.apache.fop.fo.properties.CommonHyphenation;
 import org.apache.fop.fo.properties.CommonMarginInline;
 import org.apache.fop.fo.properties.CommonRelativePosition;
 import org.apache.fop.apps.FOPException;
-import org.apache.fop.area.inline.InlineArea;
 
 /**
  * This class represents the flow object 'fo:character'. Its use is defined by

@@ -294,24 +294,16 @@ public class AddLMVisitor extends FOTreeVisitor {
      }
 
      private InlineArea getLeaderInlineArea(Leader node) {
-         if (node.leaderArea == null) {
-             createLeaderArea(node);
-         }
-         return node.leaderArea;
-     }
-
-     protected void createLeaderArea(Leader node) {
          node.setup();
+         InlineArea leaderArea = null;
 
          if (node.getLeaderPattern() == LeaderPattern.RULE) {
              org.apache.fop.area.inline.Leader leader = new org.apache.fop.area.inline.Leader();
-
              leader.setRuleStyle(node.getRuleStyle());
              leader.setRuleThickness(node.getRuleThickness());
-
-             node.leaderArea = leader;
+             leaderArea = leader;
          } else if (node.getLeaderPattern() == LeaderPattern.SPACE) {
-             node.leaderArea = new Space();
+             leaderArea = new Space();
          } else if (node.getLeaderPattern() == LeaderPattern.DOTS) {
              Word w = new Word();
              char dot = '.'; // userAgent.getLeaderDotCharacter();
@@ -337,11 +329,11 @@ public class AddLMVisitor extends FOTreeVisitor {
              }
              fa.setHeight(node.getFontState().getAscender());
 
-             node.leaderArea = fa;
+             leaderArea = fa;
          } else if (node.getLeaderPattern() == LeaderPattern.USECONTENT) {
              if (node.getChildren() == null) {
                  node.getLogger().error("Leader use-content with no content");
-                 return;
+                 return null;
              }
              InlineStackingLayoutManager lm;
              lm = new InlineStackingLayoutManager();
@@ -369,8 +361,9 @@ public class AddLMVisitor extends FOTreeVisitor {
              if (spacer != null) {
                  fa.addChild(spacer);
              }
-             node.leaderArea = fa;
+             leaderArea = fa;
          }
+         return leaderArea;
      }
 
      public void serveVisitor(RetrieveMarker node) {
