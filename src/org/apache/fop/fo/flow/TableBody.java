@@ -60,6 +60,7 @@ import org.apache.fop.apps.FOPException;
 
 // Java
 import java.util.Vector;
+import java.util.Enumeration;
 
 public class TableBody extends FObj {
 	
@@ -78,6 +79,9 @@ public class TableBody extends FObj {
     int spaceBefore;
     int spaceAfter;
     ColorType backgroundColor;
+    ColorType borderColor;
+    int borderWidth;
+    int borderStyle;
     String id;            
 
     Vector columns;
@@ -91,6 +95,21 @@ public class TableBody extends FObj {
 
     public void setColumns(Vector columns) {
 	this.columns = columns;
+    }
+
+    public void setYPosition(int value)
+    {
+        areaContainer.setYPosition(value);
+    }
+
+    public int getYPosition()
+    {
+        return areaContainer.getYPosition();
+    }
+
+    public int getHeight()
+    {
+        return areaContainer.getHeight();
     }
 
     public Status layout(Area area) throws FOPException {
@@ -116,6 +135,12 @@ public class TableBody extends FObj {
 		this.properties.get("space-after.optimum").getLength().mvalue(); 
 	    this.backgroundColor =
 		this.properties.get("background-color").getColorType();
+	    this.borderColor =
+		this.properties.get("border-color").getColorType();
+	    this.borderWidth =
+		this.properties.get("border-width").getLength().mvalue();
+	    this.borderStyle =
+		this.properties.get("border-style").getEnum();
             this.id = 
                 this.properties.get("id").getString();            
 
@@ -143,27 +168,69 @@ public class TableBody extends FObj {
         }
 
 	this.areaContainer =
-	    new AreaContainer(fs, -area.borderWidthLeft, -area.borderWidthTop, area.getAllocationWidth(), 
+	    new AreaContainer(fs, -area.borderWidthLeft, -area.borderWidthTop + area.getHeight(), area.getAllocationWidth(), 
 			  area.spaceLeft(), Position.RELATIVE);
 	areaContainer.setPage(area.getPage());
 	areaContainer.setBackgroundColor(backgroundColor);
+        areaContainer.setBorderStyle(borderStyle, borderStyle, borderStyle, borderStyle); 
+        areaContainer.setBorderWidth(borderWidth, borderWidth, borderWidth, borderWidth); 
+        areaContainer.setBorderColor(borderColor, borderColor, borderColor, borderColor); 
 	areaContainer.start();
 
         areaContainer.setAbsoluteHeight(area.getAbsoluteHeight());
         areaContainer.setIDReferences(area.getIDReferences());
 
+	Vector keepWith = new Vector();
 	int numChildren = this.children.size();
+	TableRow lastRow = null;
 	for (int i = this.marker; i < numChildren; i++) {
 	    TableRow row = (TableRow) children.elementAt(i);
 
 	    row.setColumns(columns);
+	    row.doSetup(areaContainer);
+	    if(row.getKeepWithPrevious() != 0 && lastRow != null) {
+	        keepWith.addElement(lastRow);
+	    }
 
 	    Status status;
 	    if ((status = row.layout(areaContainer)).isIncomplete()) {
+	            if(keepWith.size() > 0) { // && status.getCode() == Status.AREA_FULL_NONE
+	                for(Enumeration e = keepWith.elements(); e.hasMoreElements(); ) {
+	                    TableRow tr = (TableRow)e.nextElement();
+	                    tr.removeLayout(areaContainer);
+	                    i--;
+	                }
+	            }
 		this.marker = i;
 		if ((i != 0) && (status.getCode() == Status.AREA_FULL_NONE)) {
 		    status = new Status(Status.AREA_FULL_SOME);
 		}
+            if(i < widows && numChildren >= widows) {
+                resetMarker();
+                return new Status(Status.AREA_FULL_NONE);
+            }
+            if(numChildren <= orphans) {
+                resetMarker();
+                return new Status(Status.AREA_FULL_NONE);
+            }
+            if(numChildren - i < orphans && numChildren > orphans) {
+                for(int count = numChildren - orphans - i; count > 0; count--) {
+	                row = (TableRow) children.elementAt(count);
+                    row.removeLayout(areaContainer);
+                    i--;
+                }
+                if(i < widows && numChildren >= widows) {
+                    resetMarker();
+                    return new Status(Status.AREA_FULL_NONE);
+                }
+        		this.marker = i;
+    	        area.addChild(areaContainer);
+		//areaContainer.end();
+
+		        area.increaseHeight(areaContainer.getHeight());
+                area.setAbsoluteHeight(areaContainer.getAbsoluteHeight());
+                return new Status(Status.AREA_FULL_SOME);
+            }
 		if(!((i == 0) && (areaContainer.getContentHeight() <= 0))) {
     	        area.addChild(areaContainer);
 		//areaContainer.end();
@@ -172,7 +239,14 @@ public class TableBody extends FObj {
                 area.setAbsoluteHeight(areaContainer.getAbsoluteHeight());
             }
 		return status;
+        } else if(status.getCode() == Status.KEEP_WITH_NEXT) {
+            keepWith.addElement(row);
+	    } else {
+            if(keepWith.size() > 0 && row.getKeepWithPrevious() != 0) {
+	            keepWith = new Vector();
+	        }
 	    }
+	    lastRow = row;
 	}
 	area.addChild(areaContainer);
 	areaContainer.end();

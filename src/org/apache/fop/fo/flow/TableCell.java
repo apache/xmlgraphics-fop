@@ -93,10 +93,13 @@ public class TableCell extends FObj {
     int paddingRight;
     int position;
     String id;
+    int numColumnsSpanned;
+    int numRowsSpanned;
     
     protected int startOffset;
     protected int width;
     protected int height = 0;
+    boolean setup = false;
 
     AreaContainer areaContainer;
 
@@ -113,12 +116,22 @@ public class TableCell extends FObj {
 	this.width = width;
     }
 
-    public Status layout(Area area) throws FOPException {
-	if (this.marker == BREAK_AFTER) {
-	    return new Status(Status.OK);
-	}
+    public int getNumColumnsSpanned()
+    {
+        return numColumnsSpanned;
+    }
 
-	if (this.marker == START) {
+    public int getNumRowsSpanned()
+    {
+        return numRowsSpanned;
+    }
+
+    public void doSetup(Area area) throws FOPException
+    {
+	    this.numColumnsSpanned = 
+		this.properties.get("number-columns-spanned").getNumber().intValue();
+	    this.numRowsSpanned = 
+		this.properties.get("number-rows-spanned").getNumber().intValue();
 	    String fontFamily =
 		this.properties.get("font-family").getString(); 
 	    String fontStyle =
@@ -199,6 +212,16 @@ public class TableCell extends FObj {
 		this.properties.get("background-color").getColorType();
             this.id =
                 this.properties.get("id").getString();
+    }
+
+    public Status layout(Area area) throws FOPException {
+	if (this.marker == BREAK_AFTER) {
+	    return new Status(Status.OK);
+	}
+
+	if (this.marker == START) {
+	    if(!setup)
+	        doSetup(area);
 
 	    if (area instanceof BlockArea) {
 		area.end();
@@ -255,6 +278,8 @@ public class TableCell extends FObj {
 		} else {
 					// hani Elabed 11/21/2000
 			 area.addChild(areaContainer);
+//         	area.setHeight(getHeight());
+         	area.setAbsoluteHeight(areaContainer.getAbsoluteHeight());
 
 		    return new Status(Status.AREA_FULL_SOME);
 		}
