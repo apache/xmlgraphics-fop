@@ -63,15 +63,12 @@ public class PDFDocumentGraphics2D extends PDFGraphics2D {
             //                          FontInfo.NORMAL, 12, 0);
         }
 
-        standalone = true;
         this.pdfDoc = new PDFDocument("FOP SVG Renderer");
 
         graphicsState = new PDFState();
 
         currentFontName = "";
         currentFontSize = 0;
-        currentYPosition = 0;
-        currentXPosition = 0;
 
         pdfStream = this.pdfDoc.makeStream(PDFStream.CONTENT_FILTER, false);
     }

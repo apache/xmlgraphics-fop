@@ -1,64 +1,122 @@
 /*
  * $Id$
- * Copyright (C) 2001 The Apache Software Foundation. All rights reserved.
+ * Copyright (C) 2001-2002 The Apache Software Foundation. All rights reserved.
  * For details on use and redistribution please refer to the
  * LICENSE file included with these sources.
  */
 
 package org.apache.fop.render.pdf;
 
-import org.apache.fop.fo.FOUserAgent;
 import org.apache.fop.render.XMLHandler;
 import org.apache.fop.render.RendererContext;
-import org.apache.fop.pdf.*;
-import org.apache.fop.svg.*;
+import org.apache.fop.pdf.PDFDocument;
+import org.apache.fop.pdf.PDFPage;
+import org.apache.fop.pdf.PDFState;
+import org.apache.fop.pdf.PDFStream;
+import org.apache.fop.pdf.PDFNumber;
+import org.apache.fop.svg.PDFTextElementBridge;
+import org.apache.fop.svg.PDFAElementBridge;
+import org.apache.fop.svg.PDFGraphics2D;
 import org.apache.fop.svg.SVGUserAgent;
 import org.apache.fop.layout.FontInfo;
 
-import org.apache.batik.dom.util.DOMUtilities;
-
 import org.w3c.dom.Document;
-import org.w3c.dom.Node;
-import org.w3c.dom.NamedNodeMap;
-import org.w3c.dom.Attr;
 
-import java.io.IOException;
 import java.io.OutputStream;
 
-import org.apache.batik.bridge.*;
-import org.apache.batik.swing.svg.*;
-import org.apache.batik.swing.gvt.*;
-import org.apache.batik.gvt.*;
-import org.apache.batik.gvt.renderer.*;
-import org.apache.batik.gvt.filter.*;
-import org.apache.batik.gvt.event.*;
+import org.apache.batik.bridge.GVTBuilder;
+import org.apache.batik.bridge.BridgeContext;
+import org.apache.batik.bridge.ViewBox;
 
-import org.w3c.dom.*;
-import org.w3c.dom.svg.*;
-import org.w3c.dom.css.*;
-import org.w3c.dom.svg.SVGLength;
+import org.apache.batik.gvt.GraphicsNode;
+
+import org.w3c.dom.svg.SVGDocument;
+import org.w3c.dom.svg.SVGSVGElement;
 
 import java.awt.geom.AffineTransform;
 
 /**
+ * PDF XML handler.
+ * This handler handles XML for foreign objects when rendering to PDF.
+ * It renders SVG to the PDF document using the PDFGraphics2D.
+ * The properties from the PDF renderer are subject to change.
  */
 public class PDFXMLHandler implements XMLHandler {
-public static final String PDF_DOCUMENT = "pdfDoc";
-public static final String OUTPUT_STREAM = "outputStream";
-public static final String PDF_STATE = "pdfState";
-public static final String PDF_PAGE = "pdfPage";
-public static final String PDF_STREAM = "pdfStream";
-public static final String PDF_WIDTH = "width";
-public static final String PDF_HEIGHT = "height";
-public static final String PDF_FONT_INFO = "fontInfo";
-public static final String PDF_FONT_NAME = "fontName";
-public static final String PDF_FONT_SIZE = "fontSize";
-public static final String PDF_XPOS = "xpos";
-public static final String PDF_YPOS = "ypos";
+    /**
+     * The PDF document that is being drawn into.
+     */
+    public static final String PDF_DOCUMENT = "pdfDoc";
 
+    /**
+     * The output stream that the document is being sent to.
+     */
+    public static final String OUTPUT_STREAM = "outputStream";
+
+    /**
+     * The current pdf state.
+     */
+    public static final String PDF_STATE = "pdfState";
+
+    /**
+     * The current PDF page for page renference and as a resource context.
+     */
+    public static final String PDF_PAGE = "pdfPage";
+
+    /**
+     * The current PDF stream to draw directly to.
+     */
+    public static final String PDF_STREAM = "pdfStream";
+
+    /**
+     * The width of the current pdf page.
+     */
+    public static final String PDF_WIDTH = "width";
+
+    /**
+     * The height of the current pdf page.
+     */
+    public static final String PDF_HEIGHT = "height";
+
+    /**
+     * The current font information for the pdf renderer.
+     */
+    public static final String PDF_FONT_INFO = "fontInfo";
+
+    /**
+     * The current pdf font name.
+     */
+    public static final String PDF_FONT_NAME = "fontName";
+
+    /**
+     * The current pdf font size.
+     */
+    public static final String PDF_FONT_SIZE = "fontSize";
+
+    /**
+     * The x position that this is being drawn at.
+     */
+    public static final String PDF_XPOS = "xpos";
+
+    /**
+     * The y position that this is being drawn at.
+     */
+    public static final String PDF_YPOS = "ypos";
+
+    /**
+     * Create a new PDF XML handler for use by the PDF renderer.
+     */
     public PDFXMLHandler() {
     }
 
+    /**
+     * Handle the XML.
+     * This checks the type of XML and handles appropraitely.
+     *
+     * @param context the renderer context
+     * @param doc the XML document to render
+     * @param ns the namespace of the XML document
+     * @throws Exception any sort of exception could be thrown and shuld be handled
+     */
     public void handleXML(RendererContext context, Document doc,
                           String ns) throws Exception {
         PDFInfo pdfi = getPDFInfo(context);
@@ -71,6 +129,12 @@ public static final String PDF_YPOS = "ypos";
         }
     }
 
+    /**
+     * Get the pdf information from the render context.
+     *
+     * @param context the renderer context
+     * @return the pdf information retrieved from the context
+     */
     public static PDFInfo getPDFInfo(RendererContext context) {
         PDFInfo pdfi = new PDFInfo();
         pdfi.pdfDoc = (PDFDocument)context.getProperty(PDF_DOCUMENT);
@@ -88,19 +152,34 @@ public static final String PDF_YPOS = "ypos";
         return pdfi;
     }
 
+    /**
+     * PDF information structure for drawing the XML document.
+     */
     public static class PDFInfo {
-        PDFDocument pdfDoc;
-        OutputStream outputStream;
-        PDFState pdfState;
-        PDFPage pdfPage;
+        /** see PDF_DOCUMENT */
+        public PDFDocument pdfDoc;
+        /** see OUTPUT_STREAM */
+        public OutputStream outputStream;
+        /** see PDF_STATE */
+        public PDFState pdfState;
+        /** see PDF_PAGE */
+        public PDFPage pdfPage;
+        /** see PDF_STREAM */
         public PDFStream currentStream;
-        int width;
-        int height;
-        FontInfo fi;
-        String currentFontName;
-        int currentFontSize;
-        int currentXPosition;
-        int currentYPosition;
+        /** see PDF_WIDTH */
+        public int width;
+        /** see PDF_HEIGHT */
+        public int height;
+        /** see PDF_FONT_INFO */
+        public FontInfo fi;
+        /** see PDF_FONT_NAME */
+        public String currentFontName;
+        /** see PDF_FONT_SIZE */
+        public int currentFontSize;
+        /** see PDF_XPOS */
+        public int currentXPosition;
+        /** see PDF_YPOS */
+        public int currentYPosition;
     }
 
     /**
@@ -108,6 +187,12 @@ public static final String PDF_YPOS = "ypos";
      * loading errors if batik is not present.
      */
     protected class SVGHandler {
+        /**
+         * Render the svg document.
+         * @param context the renderer context
+         * @param doc the svg document
+         * @param pdfInfo the pdf information of the current context
+         */
         protected void renderSVGDocument(RendererContext context, Document doc, PDFInfo pdfInfo) {
             int xOffset = pdfInfo.currentXPosition;
             int yOffset = pdfInfo.currentYPosition;
@@ -159,7 +244,7 @@ public static final String PDF_YPOS = "ypos";
 
             SVGSVGElement svg = ((SVGDocument)doc).getRootElement();
             AffineTransform at = ViewBox.getPreserveAspectRatioTransform(svg, w / 1000f, h / 1000f);
-            if(!at.isIdentity()) {
+            if (!at.isIdentity()) {
                 double[] vals = new double[6];
                 at.getMatrix(vals);
                 pdfInfo.currentStream.add(PDFNumber.doubleOut(vals[0]) + " "
@@ -171,14 +256,13 @@ public static final String PDF_YPOS = "ypos";
             }
 
             PDFGraphics2D graphics = new PDFGraphics2D(true, pdfInfo.fi, pdfInfo.pdfDoc,
-                                     pdfInfo.pdfPage, pdfInfo.pdfPage.referencePDF(), pdfInfo.currentFontName,
-                                     pdfInfo.currentFontSize,
-                                     pdfInfo.currentXPosition,
-                                     pdfInfo.currentYPosition);
+                                     pdfInfo.pdfPage, pdfInfo.pdfPage.referencePDF(),
+                                     pdfInfo.currentFontName,
+                                     pdfInfo.currentFontSize);
             graphics.setGraphicContext(new org.apache.batik.ext.awt.g2d.GraphicContext());
             pdfInfo.pdfState.push();
             transform = new AffineTransform();
-            // TODO scale to viewbox
+            // scale to viewbox
             transform.translate(xOffset / 1000f, yOffset / 1000f);
             pdfInfo.pdfState.setTransform(transform);
             graphics.setPDFState(pdfInfo.pdfState);

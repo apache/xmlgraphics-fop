@@ -82,8 +82,6 @@ import java.util.HashMap;
  * @see org.apache.batik.ext.awt.g2d.AbstractGraphics2D
  */
 public class PDFGraphics2D extends AbstractGraphics2D {
-    protected boolean standalone = false;
-
     /**
      * the PDF Document being created
      */
@@ -93,21 +91,37 @@ public class PDFGraphics2D extends AbstractGraphics2D {
      * The current resource context for adding fonts, patterns etc.
      */
     protected PDFResourceContext resourceContext;
+
+    /**
+     * The PDF reference of the current page.
+     */
     protected String pageRef;
 
     /**
      * the current state of the pdf graphics
      */
     protected PDFState graphicsState;
-    int baseLevel = 0;
 
+    /**
+     * The PDF graphics state level that this svg is being drawn into.
+     */
+    protected int baseLevel = 0;
+
+    /**
+     * The current font information.
+     */
     protected FontInfo fontInfo;
+
+    /**
+     * The override font state used when drawing text and the font cannot be
+     * set using java fonts.
+     */
     protected FontState ovFontState = null;
 
     /**
      * the current stream to add PDF commands to
      */
-    StringWriter currentStream = new StringWriter();
+    protected StringWriter currentStream = new StringWriter();
 
     /**
      * the current (internal) font name
@@ -118,16 +132,6 @@ public class PDFGraphics2D extends AbstractGraphics2D {
      * the current font size in millipoints
      */
     protected float currentFontSize;
-
-    /**
-     * the current vertical position in millipoints from bottom
-     */
-    protected int currentYPosition = 0;
-
-    /**
-     * the current horizontal position in millipoints from left
-     */
-    protected int currentXPosition = 0;
 
     /**
      * The output stream for the pdf document.
@@ -141,48 +145,93 @@ public class PDFGraphics2D extends AbstractGraphics2D {
      * Create a new PDFGraphics2D with the given pdf document info.
      * This is used to create a Graphics object for use inside an already
      * existing document.
+     *
+     * @param textAsShapes if true then draw text as shapes
+     * @param fi the current font information
+     * @param doc the pdf document for creating pdf objects
+     * @param page the current resource context or page
+     * @param pref the PDF reference of the current page
+     * @param font the current font name
+     * @param size the current font size
      */
     public PDFGraphics2D(boolean textAsShapes, FontInfo fi, PDFDocument doc,
-                         PDFResourceContext page, String pref, String font, float size, int xpos, int ypos) {
+                         PDFResourceContext page, String pref, String font, float size) {
         super(textAsShapes);
         pdfDoc = doc;
         resourceContext = page;
         currentFontName = font;
         currentFontSize = size;
-        currentYPosition = ypos;
-        currentXPosition = xpos;
         fontInfo = fi;
         pageRef = pref;
         graphicsState = new PDFState();
     }
 
+    /**
+     * Create a new PDFGraphics2D.
+     *
+     * @param textAsShapes true if drawing text as shapes
+     */
     protected PDFGraphics2D(boolean textAsShapes) {
         super(textAsShapes);
     }
 
+    /**
+     * Set the PDF state to use when starting to draw
+     * into the PDF graphics.
+     *
+     * @param state the PDF state
+     */
     public void setPDFState(PDFState state) {
         graphicsState = state;
         baseLevel = graphicsState.getStackLevel();
     }
 
+    /**
+     * Set the output stream that this PDF document is
+     * being drawn to. This is so that it can progressively
+     * use the PDF document to output data such as images.
+     * This results in a significant saving on memory.
+     *
+     * @param os the output stream that is being used for the PDF document
+     */
     public void setOutputStream(OutputStream os) {
         outputStream = os;
     }
 
+    /**
+     * Get the string containing all the commands written into this
+     * Grpahics.
+     * @return the string containing the PDF markup
+     */
     public String getString() {
         return currentStream.toString();
     }
 
+    /**
+     * Set the Grpahics context.
+     * @param c the graphics context to use
+     */
     public void setGraphicContext(GraphicContext c) {
         gc = c;
     }
 
+    /**
+     * Set the override font state for drawing text.
+     * This is used by the PDF text painter so that it can temporarily
+     * set the font state when a java font cannot be used.
+     * The next drawString will use this font state.
+     *
+     * @param infont the font state to use
+     */
     public void setOverrideFontState(FontState infont) {
         ovFontState = infont;
     }
 
     /**
-     * This constructor supports the create method
+     * This constructor supports the create method.
+     * This is not implemented properly.
+     *
+     * @param g the PDF graphics to make a copy of
      */
     public PDFGraphics2D(PDFGraphics2D g) {
         super(g);
@@ -198,6 +247,9 @@ public class PDFGraphics2D extends AbstractGraphics2D {
         return new PDFGraphics2D(this);
     }
 
+    /**
+     * Restore the PDF graphics state to the starting state level.
+     */
     public void restorePDFState() {
         for (int count = graphicsState.getStackLevel(); count > baseLevel; count--) {
             currentStream.write("Q\n");
@@ -208,6 +260,11 @@ public class PDFGraphics2D extends AbstractGraphics2D {
     /**
      * This is a pdf specific method used to add a link to the
      * pdf document.
+     *
+     * @param bounds the bounds of the link in user coordinates
+     * @param trans the transform of the current drawing position
+     * @param dest the PDF destination
+     * @param linkType the type of link, internal or external
      */
     public void addLink(Rectangle2D bounds, AffineTransform trans, String dest, int linkType) {
         AffineTransform at = getTransform();
@@ -224,6 +281,18 @@ public class PDFGraphics2D extends AbstractGraphics2D {
         }
     }
 
+    /**
+     * Add a JPEG image directly to the PDF document.
+     * This is used by the PDFImageElementBridge to draw a JPEG
+     * directly into the pdf document rather than converting the image into
+     * a bitmap and increasing the size.
+     *
+     * @param jpeg the jpeg image to draw
+     * @param x the x position
+     * @param y the y position
+     * @param width the width to draw the image
+     * @param height the height to draw the image
+     */
     public void addJpegImage(JpegImage jpeg, float x, float y, float width, float height) {
         FopPDFImage fopimage = new FopPDFImage(jpeg, jpeg.getURL());
         int xObjectNum = this.pdfDoc.addImage(resourceContext, fopimage).getXNumber();
@@ -275,6 +344,7 @@ public class PDFGraphics2D extends AbstractGraphics2D {
      * @param    y   the <i>y</i> coordinate.
      * @param    observer    object to be notified as more of
      * the image is converted.
+     * @return true if the image was drawn
      * @see      java.awt.Image
      * @see      java.awt.image.ImageObserver
      * @see      java.awt.image.ImageObserver#imageUpdate(java.awt.Image, int, int, int, int, int)
@@ -339,7 +409,9 @@ public class PDFGraphics2D extends AbstractGraphics2D {
                         mask[maskpos++] = (byte)(alpha & 0xFF);
                         if (alpha != 255) {
                             hasMask = true;
-                            if (alpha != 0) binaryMask = false;
+                            if (alpha != 0) {
+                                binaryMask = false;
+                            }
 
                             // System.out.println("Alpha: " + alpha);
                             // Composite with opaque white...
@@ -369,7 +441,9 @@ public class PDFGraphics2D extends AbstractGraphics2D {
             String ref = null;
             if (hasMask) {
                 // if the mask is binary then we could convert it into a bitmask
-                BitmapImage fopimg = new BitmapImage("TempImageMask:" + img.toString(), buf.getWidth(), buf.getHeight(), mask, null);
+                BitmapImage fopimg = new BitmapImage("TempImageMask:"
+                                             + img.toString(), buf.getWidth(),
+                                             buf.getHeight(), mask, null);
                 fopimg.setColorSpace(new PDFColorSpace(PDFColorSpace.DEVICE_GRAY));
                 PDFXObject xobj = pdfDoc.addImage(resourceContext, fopimg);
                 ref = xobj.referencePDF();
@@ -385,7 +459,9 @@ public class PDFGraphics2D extends AbstractGraphics2D {
                 mask = null;
             }
 
-            BitmapImage fopimg = new BitmapImage("TempImage:" + img.toString(), buf.getWidth(), buf.getHeight(), result, ref);
+            BitmapImage fopimg = new BitmapImage("TempImage:"
+                                          + img.toString(), buf.getWidth(),
+                                          buf.getHeight(), result, ref);
             fopimg.setTransparent(new PDFColor(255, 255, 255));
             imageInfo = pdfDoc.addImage(resourceContext, fopimg);
             int xObjectNum = imageInfo.getXNumber();
@@ -420,7 +496,7 @@ public class PDFGraphics2D extends AbstractGraphics2D {
         return true;
     }
 
-    public BufferedImage buildBufferedImage(Dimension size) {
+    private BufferedImage buildBufferedImage(Dimension size) {
         return new BufferedImage(size.width, size.height,
                                  BufferedImage.TYPE_INT_ARGB);
     }
@@ -454,6 +530,7 @@ public class PDFGraphics2D extends AbstractGraphics2D {
      * @param    height the height of the rectangle.
      * @param    observer    object to be notified as more of
      * the image is converted.
+     * @return true if the image was drawn
      * @see      java.awt.Image
      * @see      java.awt.image.ImageObserver
      * @see      java.awt.image.ImageObserver#imageUpdate(java.awt.Image, int, int, int, int, int)
@@ -614,7 +691,8 @@ public class PDFGraphics2D extends AbstractGraphics2D {
     public void clip(Shape cl) {
         super.clip(cl);
         Shape newClip = getClip();
-        if (newClip == null || lastClip == null || !(new Area(newClip).equals(new Area(lastClip)))) {
+        if (newClip == null || lastClip == null
+                || !(new Area(newClip).equals(new Area(lastClip)))) {
         graphicsState.setClip(newClip);
         writeClip(newClip);
         }
@@ -625,7 +703,8 @@ public class PDFGraphics2D extends AbstractGraphics2D {
     public void setClip(Shape cl) {
         super.setClip(cl);
         Shape newClip = getClip();
-        if (newClip == null || lastClip == null || !(new Area(newClip).equals(new Area(lastClip)))) {
+        if (newClip == null || lastClip == null
+                || !(new Area(newClip).equals(new Area(lastClip)))) {
         for (int count = graphicsState.getStackLevel(); count > baseLevel; count--) {
             currentStream.write("Q\n");
         }
@@ -641,6 +720,14 @@ public class PDFGraphics2D extends AbstractGraphics2D {
         lastClip = newClip;
     }
 */
+
+    /**
+     * Set the clipping shape for future PDF drawing in the current graphics state.
+     * This sets creates and writes a clipping shape that will apply
+     * to future drawings in the current graphics state.
+     *
+     * @param s the clipping shape
+     */
     protected void writeClip(Shape s) {
         if (s == null) {
             return;
@@ -685,6 +772,14 @@ public class PDFGraphics2D extends AbstractGraphics2D {
         currentStream.write("n\n");
     }
 
+    /**
+     * Apply the java Color to PDF.
+     * This converts the java colour to a PDF colour and
+     * sets it for the next drawing.
+     *
+     * @param col the java colour
+     * @param fill true if the colour will be used for filling
+     */
     protected void applyColor(Color col, boolean fill) {
         Color c = col;
         if (c.getColorSpace().getType()
@@ -717,6 +812,15 @@ public class PDFGraphics2D extends AbstractGraphics2D {
         }
     }
 
+    /**
+     * Apply the java paint to the PDF.
+     * This takes the java paint sets up the appropraite PDF commands
+     * for the drawing with that paint.
+     * Currently this supports the gradients and patterns from batik.
+     *
+     * @param paint the paint to convert to PDF
+     * @param fill true if the paint should be set for filling
+     */
     protected void applyPaint(Paint paint, boolean fill) {
 
         if (paint instanceof LinearGradientPaint) {
@@ -804,7 +908,8 @@ public class PDFGraphics2D extends AbstractGraphics2D {
             Color[] cols = rgp.getColors();
             ArrayList someColors = new ArrayList();
             for (int count = 0; count < cols.length; count++) {
-                someColors.add(new PDFColor(cols[count].getRed(), cols[count].getGreen(), cols[count].getBlue()));
+                Color cc = cols[count];
+                someColors.add(new PDFColor(cc.getRed(), cc.getGreen(), cc.getBlue()));
             }
 
             float[] fractions = rgp.getFractions();
@@ -821,72 +926,81 @@ public class PDFGraphics2D extends AbstractGraphics2D {
 
         } else if (paint instanceof PatternPaint) {
             PatternPaint pp = (PatternPaint)paint;
-            Rectangle2D rect = pp.getPatternRect();
-
-            FontInfo fi = new FontInfo();
-            FontSetup.setup(fi, null);
-
-            PDFResources res = pdfDoc.makeResources();
-            PDFResourceContext context = new PDFResourceContext(0, pdfDoc, res);
-            PDFGraphics2D pattGraphic = new PDFGraphics2D(textAsShapes, fi,
-                                            pdfDoc, context, pageRef,
-                                            "", 0,
-                                            currentYPosition, currentXPosition);
-            pattGraphic.gc = (GraphicContext)this.gc.clone();
-            pattGraphic.gc.validateTransformStack();
-            pattGraphic.setOutputStream(outputStream);
-
-            GraphicsNode gn = pp.getGraphicsNode();
-            gn.paint(pattGraphic);
-
-            StringWriter pattStream = new StringWriter();
-            pattStream.write("q\n");
-
-            // this makes the pattern the right way up, since
-            // it is outside the original transform around the
-            // whole svg document
-            pattStream.write("1 0 0 -1 0 " + (rect.getHeight() + rect.getY()) + " cm\n");
-
-            pattStream.write(pattGraphic.getString());
-            pattStream.write("Q");
-
-            ArrayList bbox = new ArrayList();
-            bbox.add(new Double(0));
-            bbox.add(new Double(0));
-            bbox.add(new Double(rect.getWidth() + rect.getX()));
-            bbox.add(new Double(rect.getHeight() + rect.getY()));
-
-            ArrayList translate = new ArrayList();
-            AffineTransform pattt = pp.getPatternTransform();
-            pattt.translate(rect.getWidth() + rect.getX(), rect.getHeight() + rect.getY());
-            double[] flatmatrix = new double[6];
-            pattt.getMatrix(flatmatrix);
-            translate.add(new Double(flatmatrix[0]));
-            translate.add(new Double(flatmatrix[1]));
-            translate.add(new Double(flatmatrix[2]));
-            translate.add(new Double(flatmatrix[3]));
-            translate.add(new Double(flatmatrix[4]));
-            translate.add(new Double(flatmatrix[5]));
-
-            FontSetup.addToResources(pdfDoc, res, fi);
-
-            PDFPattern myPat = pdfDoc.makePattern(resourceContext, 1, res, 1, 1, bbox,
-                                    rect.getWidth(), rect.getHeight(),
-                                    translate, null, pattStream.getBuffer());
-
-            currentStream.write(myPat.getColorSpaceOut(fill));
-
-            if (outputStream != null) {
-                try {
-                    this.pdfDoc.output(outputStream);
-                } catch (IOException ioe) {
-                    // ignore exception, will be thrown again later
-                } 
-            }
-
+            createPattern(pp, fill);
         }
     }
 
+    private void createPattern(PatternPaint pp, boolean fill) {
+        Rectangle2D rect = pp.getPatternRect();
+
+        FontInfo fi = new FontInfo();
+        FontSetup.setup(fi, null);
+
+        PDFResources res = pdfDoc.makeResources();
+        PDFResourceContext context = new PDFResourceContext(0, pdfDoc, res);
+        PDFGraphics2D pattGraphic = new PDFGraphics2D(textAsShapes, fi,
+                                        pdfDoc, context, pageRef,
+                                        "", 0);
+        pattGraphic.gc = (GraphicContext)this.gc.clone();
+        pattGraphic.gc.validateTransformStack();
+        pattGraphic.setOutputStream(outputStream);
+
+        GraphicsNode gn = pp.getGraphicsNode();
+        gn.paint(pattGraphic);
+
+        StringWriter pattStream = new StringWriter();
+        pattStream.write("q\n");
+
+        // this makes the pattern the right way up, since
+        // it is outside the original transform around the
+        // whole svg document
+        pattStream.write("1 0 0 -1 0 " + (rect.getHeight() + rect.getY()) + " cm\n");
+
+        pattStream.write(pattGraphic.getString());
+        pattStream.write("Q");
+
+        ArrayList bbox = new ArrayList();
+        bbox.add(new Double(0));
+        bbox.add(new Double(0));
+        bbox.add(new Double(rect.getWidth() + rect.getX()));
+        bbox.add(new Double(rect.getHeight() + rect.getY()));
+
+        ArrayList translate = new ArrayList();
+        AffineTransform pattt = pp.getPatternTransform();
+        pattt.translate(rect.getWidth() + rect.getX(), rect.getHeight() + rect.getY());
+        double[] flatmatrix = new double[6];
+        pattt.getMatrix(flatmatrix);
+        translate.add(new Double(flatmatrix[0]));
+        translate.add(new Double(flatmatrix[1]));
+        translate.add(new Double(flatmatrix[2]));
+        translate.add(new Double(flatmatrix[3]));
+        translate.add(new Double(flatmatrix[4]));
+        translate.add(new Double(flatmatrix[5]));
+
+        FontSetup.addToResources(pdfDoc, res, fi);
+
+        PDFPattern myPat = pdfDoc.makePattern(resourceContext, 1, res, 1, 1, bbox,
+                                rect.getWidth(), rect.getHeight(),
+                                translate, null, pattStream.getBuffer());
+
+        currentStream.write(myPat.getColorSpaceOut(fill));
+
+        if (outputStream != null) {
+            try {
+                this.pdfDoc.output(outputStream); 
+            } catch (IOException ioe) {
+                // ignore exception, will be thrown again later
+            }
+        }
+    }
+
+    /**
+     * Apply the stroke to the PDF.
+     * This takes the java stroke and outputs the appropriate settings
+     * to the PDF so that the stroke attributes are handled.
+     *
+     * @param stroke the java stroke
+     */
     protected void applyStroke(Stroke stroke) {
         if (stroke instanceof BasicStroke) {
             BasicStroke bs = (BasicStroke)stroke;
@@ -1015,7 +1129,9 @@ public class PDFGraphics2D extends AbstractGraphics2D {
      * left, in which case the coordinate supplied is the location of the
      * leftmost character on the baseline.
      * @param s the <code>String</code> to be rendered
-     * @param x,&nbsp;y the coordinates where the <code>String</code>
+     * @param x the coordinate where the <code>String</code>
+     * should be rendered
+     * @param y the coordinate where the <code>String</code>
      * should be rendered
      * @see #setPaint
      * @see java.awt.Graphics#setColor
@@ -1042,7 +1158,8 @@ public class PDFGraphics2D extends AbstractGraphics2D {
             fontState = new FontState(fname, metrics, siz * 1000);
         } else {
             FontMetric metrics = fontInfo.getMetricsFor(ovFontState.getFontName());
-            fontState = new FontState(ovFontState.getFontName(), metrics, ovFontState.getFontSize());
+            fontState = new FontState(ovFontState.getFontName(),
+                                      metrics, ovFontState.getFontSize());
             ovFontState = null;
         }
         String name;
@@ -1080,7 +1197,7 @@ public class PDFGraphics2D extends AbstractGraphics2D {
         boolean kerningAvailable = false;
 
         kerning = fontState.getKerning();
-        if (kerning != null &&!kerning.isEmpty()) {
+        if (kerning != null && !kerning.isEmpty()) {
             kerningAvailable = true;
         }
 
@@ -1088,11 +1205,11 @@ public class PDFGraphics2D extends AbstractGraphics2D {
         boolean useMultiByte = false;
         org.apache.fop.render.pdf.Font f =
             (org.apache.fop.render.pdf.Font)fontInfo.getFonts().get(name);
-        if (f instanceof LazyFont){
-            if (((LazyFont) f).getRealFont() instanceof CIDFont){
+        if (f instanceof LazyFont) {
+            if (((LazyFont) f).getRealFont() instanceof CIDFont) {
                 useMultiByte = true;
             }
-        } else if (f instanceof CIDFont){
+        } else if (f instanceof CIDFont) {
             useMultiByte = true;
         }
 
@@ -1186,10 +1303,11 @@ public class PDFGraphics2D extends AbstractGraphics2D {
                     : (int)uniBytes[i];
 
             String hexString = Integer.toHexString(b);
-            if (hexString.length() == 1)
+            if (hexString.length() == 1) {
                 buf = buf.append("0" + hexString);
-            else
+            } else {
                 buf = buf.append(hexString);
+            }
         }
 
         return buf.toString();
@@ -1210,7 +1328,9 @@ public class PDFGraphics2D extends AbstractGraphics2D {
      * coordinate supplied is the location of the leftmost character
      * on the baseline.
      * @param iterator the iterator whose text is to be rendered
-     * @param x,&nbsp;y the coordinates where the iterator's text is to be
+     * @param x the coordinate where the iterator's text is to be
+     * rendered
+     * @param y the coordinate where the iterator's text is to be
      * rendered
      * @see #setPaint
      * @see java.awt.Graphics#setColor
@@ -1381,6 +1501,15 @@ public class PDFGraphics2D extends AbstractGraphics2D {
         }
     }
 
+    /**
+     * Do the PDF drawing command.
+     * This does the PDF drawing command according to fill
+     * stroke and winding rule.
+     *
+     * @param fill true if filling the path
+     * @param stroke true if stroking the path
+     * @param nonzero true if using the non-zero winding rule
+     */
     protected void doDrawing(boolean fill, boolean stroke, boolean nonzero) {
         if (fill) {
             if (stroke) {
@@ -1405,6 +1534,8 @@ public class PDFGraphics2D extends AbstractGraphics2D {
     /**
      * Returns the device configuration associated with this
      * <code>Graphics2D</code>.
+     *
+     * @return the PDF graphics configuration
      */
     public GraphicsConfiguration getDeviceConfiguration() {
         return new PDFGraphicsConfiguration();
