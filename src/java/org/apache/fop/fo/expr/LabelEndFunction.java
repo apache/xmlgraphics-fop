@@ -63,7 +63,7 @@ public class LabelEndFunction extends FunctionBase {
         if (item == null) {
             throw new PropertyException("label-end() called from outside an fo:list-item");
         }
-        Length startIndent = ((ListItem)item).propertyList.get(Constants.PR_START_INDENT).getLength();
+        Length startIndent = ((ListItem)item).getProperty(Constants.PR_START_INDENT).getLength();
 
         // Should be CONTAINING_REFAREA but that doesn't work
         LengthBase base = new LengthBase((ListItem)item, pInfo.getPropertyList(),

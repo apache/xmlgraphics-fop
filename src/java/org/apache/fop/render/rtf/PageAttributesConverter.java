@@ -28,7 +28,6 @@ import org.apache.fop.fo.Constants;
 import org.apache.fop.fo.pagination.Region;
 import org.apache.fop.fo.pagination.SimplePageMaster;
 import org.apache.fop.fo.properties.Property;
-import org.apache.fop.fo.PropertyList;
 import org.apache.fop.render.rtf.rtflib.rtfdoc.RtfAttributes;
 import org.apache.fop.render.rtf.rtflib.rtfdoc.RtfPage;
 
@@ -51,7 +50,6 @@ class PageAttributesConverter {
             
             float fPageTop = 0;
             float fPageBottom = 0;
-            PropertyList props = null;                        
             Property p = null;
             Float f = null;
             
@@ -59,35 +57,32 @@ class PageAttributesConverter {
             Region body   = pagemaster.getRegion(Region.BODY_CODE);
             Region after  = pagemaster.getRegion(Region.AFTER_CODE);
             
-            //page attributes
-            props = pagemaster.propertyList;
-            
-            if ((p = props.get(Constants.PR_PAGE_WIDTH)) != null) {
+            if ((p = pagemaster.getProperty(Constants.PR_PAGE_WIDTH)) != null) {
                 f = new Float(p.getLength().getValue() / 1000f);
                 attrib.set(RtfPage.PAGE_WIDTH,
                     (int)converter.convertToTwips(f.toString() + "pt"));
             }
             
-            if ((p = props.get(Constants.PR_PAGE_HEIGHT)) != null) {
+            if ((p = pagemaster.getProperty(Constants.PR_PAGE_HEIGHT)) != null) {
                 f = new Float(p.getLength().getValue() / 1000f);
                 attrib.set(RtfPage.PAGE_HEIGHT,
                     (int)converter.convertToTwips(f.toString() + "pt"));
             }
          
-            if ((p = props.get(Constants.PR_MARGIN_TOP)) != null) {
+            if ((p = pagemaster.getProperty(Constants.PR_MARGIN_TOP)) != null) {
                 fPageTop = p.getLength().getValue() / 1000f;
             }
 
-            if ((p = props.get(Constants.PR_MARGIN_BOTTOM)) != null) {
+            if ((p = pagemaster.getProperty(Constants.PR_MARGIN_BOTTOM)) != null) {
                 fPageBottom = p.getLength().getValue() / 1000f;
             }
 
-            if ((p = props.get(Constants.PR_MARGIN_LEFT)) != null) {
+            if ((p = pagemaster.getProperty(Constants.PR_MARGIN_LEFT)) != null) {
                 f = new Float(p.getLength().getValue() / 1000f);
                 attrib.set(RtfPage.MARGIN_LEFT,
                     (int)converter.convertToTwips(f.toString() + "pt"));
             }
-            if ((p = props.get(Constants.PR_MARGIN_RIGHT)) != null) {
+            if ((p = pagemaster.getProperty(Constants.PR_MARGIN_RIGHT)) != null) {
                 f = new Float(p.getLength().getValue() / 1000f);
                 attrib.set(RtfPage.MARGIN_RIGHT,
                     (int)converter.convertToTwips(f.toString() + "pt"));
@@ -98,13 +93,11 @@ class PageAttributesConverter {
             float fBodyBottom = fPageBottom;
             
             if (body != null) {
-                props = body.propertyList;
-            
-                if ((p = props.get(Constants.PR_MARGIN_TOP)) != null) {
+                if ((p = body.getProperty(Constants.PR_MARGIN_TOP)) != null) {
                     fBodyTop += p.getLength().getValue() / 1000f;
                 }
             
-                if ((p = props.get(Constants.PR_MARGIN_BOTTOM)) != null) {
+                if ((p = body.getProperty(Constants.PR_MARGIN_BOTTOM)) != null) {
                     fBodyBottom += p.getLength().getValue() / 1000f;
                 }
             }
@@ -121,9 +114,7 @@ class PageAttributesConverter {
             float fBeforeTop = fPageTop;
                         
             if (before != null) {
-                props = before.propertyList;
-            
-                if ((p = props.get(Constants.PR_MARGIN_TOP)) != null) {
+                if ((p = before.getProperty(Constants.PR_MARGIN_TOP)) != null) {
                     fBeforeTop += p.getLength().getValue() / 1000f;
                 }
             }
@@ -136,9 +127,7 @@ class PageAttributesConverter {
             float fAfterBottom = fPageBottom;
             
             if (after != null) {
-                props = after.propertyList;
-                
-                if ((p = props.get(Constants.PR_MARGIN_BOTTOM)) != null) {
+                if ((p = after.getProperty(Constants.PR_MARGIN_BOTTOM)) != null) {
                     fAfterBottom += p.getLength().getValue() / 1000f;
                 }             
             }

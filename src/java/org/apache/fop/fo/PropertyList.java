@@ -33,9 +33,11 @@ import org.apache.fop.fo.properties.PropertyMaker;
 public class PropertyList extends HashMap {
 
     // writing-mode values
-    private byte[] wmtable = null;
+    private byte[] writingModeTable = null;
+
     // writing-mode index
     private int writingMode;
+
     private static boolean[] inheritableProperty;
 
     // absolute directions and dimensions
@@ -66,11 +68,11 @@ public class PropertyList extends HashMap {
     /** constant for dimension "inline-progression-dimension" */
     public static final int INLINEPROGDIM = 5;
 
-    private static final String[] ABS_NAMES = new String[] {
+    private static final String[] ABS_WM_NAMES = new String[] {
         "left", "right", "top", "bottom", "height", "width"
     };
 
-    private static final String[] REL_NAMES = new String[] {
+    private static final String[] REL_WM_NAMES = new String[] {
         "start", "end", "before", "after", "block-progression-dimension",
         "inline-progression-dimension"
     };
@@ -307,16 +309,25 @@ public class PropertyList extends HashMap {
     }
 
     /**
+     * Set the writing mode traits for the FO with this property list.
+     * @param writingMode the writing-mode property to be set for this object
+     */
+    public void setWritingMode(int writingMode) {
+        this.writingMode = writingMode;
+        this.writingModeTable = (byte[])WRITING_MODE_TABLES.get(new Integer(writingMode));
+    }
+
+    /**
      * Uses the stored writingMode.
      * @param absdir an absolute direction (top, bottom, left, right)
      * @return the corresponding writing model relative direction name
      * for the flow object.
      */
-    public int wmMap(int lrtb, int rltb, int tbrl) {
+    public int getWritingMode(int lrtb, int rltb, int tbrl) {
         switch (writingMode) {
-        case Constants.WritingMode.LR_TB: return lrtb;
-        case Constants.WritingMode.RL_TB: return rltb;
-        case Constants.WritingMode.TB_RL: return tbrl;
+            case Constants.WritingMode.LR_TB: return lrtb;
+            case Constants.WritingMode.RL_TB: return rltb;
+            case Constants.WritingMode.TB_RL: return tbrl;
         }
         return -1;
     }
@@ -324,27 +335,18 @@ public class PropertyList extends HashMap {
 
     /**
      * Uses the stored writingMode.
-     * @param reldir a writing mode relative direction (start, end, before, after)
+     * @param relativeWritingMode relative direction (start, end, before, after)
      * @return the corresponding absolute direction name for the flow object.
      */
-    public String wmRelToAbs(int reldir) {
-        if (wmtable != null) {
-            for (int i = 0; i < wmtable.length; i++) {
-                if (wmtable[i] == reldir) {
-                    return ABS_NAMES[i];
+    public String getAbsoluteWritingMode(int relativeWritingMode) {
+        if (writingModeTable != null) {
+            for (int i = 0; i < writingModeTable.length; i++) {
+                if (writingModeTable[i] == relativeWritingMode) {
+                    return ABS_WM_NAMES[i];
                 }
             }
         }
         return "";
-    }
-
-    /**
-     * Set the writing mode traits for the FO with this property list.
-     * @param writingMode the writing-mode property to be set for this object
-     */
-    public void setWritingMode(int writingMode) {
-        this.writingMode = writingMode;
-        this.wmtable = (byte[])WRITING_MODE_TABLES.get(new Integer(writingMode));
     }
 
     /**

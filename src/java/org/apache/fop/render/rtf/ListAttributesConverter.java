@@ -21,7 +21,7 @@ package org.apache.fop.render.rtf;
 //FOP
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.fo.Constants;
-import org.apache.fop.fo.PropertyList;
+import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.properties.LengthProperty;
 import org.apache.fop.fo.properties.Property;
 
@@ -44,7 +44,7 @@ import org.apache.fop.render.rtf.rtflib.rtfdoc.RtfText;
 public class ListAttributesConverter {
     
     
-    static RtfAttributes convertAttributes(PropertyList propertyList)
+    static RtfAttributes convertAttributes(FObj fobj)
     throws FOPException {
         
         RtfAttributes attrib = new RtfAttributes();
@@ -53,7 +53,7 @@ public class ListAttributesConverter {
         int iStartIndentInTwips = 0;
         
         //start-indent
-        if ((prop = propertyList.get(Constants.PR_START_INDENT)) != null) {
+        if ((prop = fobj.getProperty(Constants.PR_START_INDENT)) != null) {
             LengthProperty lengthprop = (LengthProperty)prop;
 
             Float f = new Float(lengthprop.getLength().getValue() / 1000f);
@@ -67,7 +67,7 @@ public class ListAttributesConverter {
         attrib.set(RtfListTable.LIST_INDENT, iStartIndentInTwips);
         
         //end-indent
-        if ((prop = propertyList.get(Constants.PR_END_INDENT)) != null) {
+        if ((prop = fobj.getProperty(Constants.PR_END_INDENT)) != null) {
             LengthProperty lengthprop = (LengthProperty)prop;
 
             Float f = new Float(lengthprop.getLength().getValue() / 1000f);
