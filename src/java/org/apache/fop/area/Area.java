@@ -25,6 +25,7 @@ import java.util.HashMap;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.fop.traits.BorderProps;
 
 // If the area appears more than once in the output
 // or if the area has external data it is cached
@@ -119,7 +120,8 @@ public class Area implements Serializable {
     public static final int CLASS_MAX = CLASS_SIDE_FLOAT + 1;
 
     private int areaClass = CLASS_NORMAL;
-    private int ipd;
+    protected int ipd;
+    protected int bpd;
 
     /**
      * Traits for this area stored in a HashMap
@@ -151,23 +153,151 @@ public class Area implements Serializable {
     }
 
     /**
-     * Set the inline progression dimension of this area.
+     * Set the inline progression dimension of content rectangle
+     * for this area.
      *
      * @param i the new inline progression dimension
+     * @see http://www.w3.org/TR/xsl/slice4.html#area-common
      */
     public void setIPD(int i) {
         ipd = i;
     }
 
     /**
-     * Get the inline progression dimension of this area.
-     *
+     * Get the inline progression dimension of the content rectangle 
+     * for this area.
+     * 
      * @return the inline progression dimension
+     * @see http://www.w3.org/TR/xsl/slice4.html#area-common
      */
     public int getIPD() {
         return ipd;
     }
 
+    /**
+     * Set the block progression dimension of the content rectangle
+     * for this area.
+     *
+     * @param b the new block progression dimension
+     * @see http://www.w3.org/TR/xsl/slice4.html#area-common
+     */
+    public void setBPD(int b) {
+        bpd = b;
+    }
+
+    /**
+     * Get the block progression dimension of the content rectangle
+     * for this area.
+     *
+     * @return the block progression dimension
+     * @see http://www.w3.org/TR/xsl/slice4.html#area-common
+     */
+    public int getBPD() {
+        return bpd;
+    }
+
+    /**
+     * Get the allocation inline progression dimension of this area.
+     * This adds the content, borders and the padding to find the
+     * total allocated IPD.
+     *
+     * @return the total IPD allocation for this area
+     */
+    public int getAllocIPD() {
+        return getBorderAndPaddingWidthStart() + getIPD() + getBorderAndPaddingWidthEnd();
+    }
+
+    /**
+     * Get the allocation block progression dimension of this area.
+     * This adds the content, borders and the padding to find the
+     * total allocated BPD.
+     *
+     * @return the total IPD allocation for this area
+     */
+    public int getAllocBPD() {
+        return getBorderAndPaddingWidthBefore() + getBPD() + getBorderAndPaddingWidthAfter();
+    }
+
+    /**
+     * Return the sum of region border- and padding-before
+     *
+     * @return width in millipoints
+     */
+    public int getBorderAndPaddingWidthBefore() {
+        int margin = 0;
+        BorderProps bps = (BorderProps) getTrait(Trait.BORDER_BEFORE);
+        if (bps != null) {
+            margin = bps.width;
+        }
+        
+        Integer padWidth = (Integer) getTrait(Trait.PADDING_BEFORE);
+        if (padWidth != null) {
+            margin += padWidth.intValue();
+        }
+
+        return margin;
+    }
+    
+    /**
+     * Return the sum of region border- and padding-after
+     *
+     * @return width in millipoints
+     */
+    public int getBorderAndPaddingWidthAfter() {
+        int margin = 0;
+        
+        BorderProps bps = (BorderProps) getTrait(Trait.BORDER_AFTER);
+        if (bps != null) {
+            margin = bps.width;
+        }
+        
+        Integer padWidth = (Integer) getTrait(Trait.PADDING_AFTER);
+        if (padWidth != null) {
+            margin += padWidth.intValue();
+        }
+
+        return margin;
+    }
+
+    /**
+     * Return the sum of region border- and padding-start
+     *
+     * @return width in millipoints
+     */
+    public int getBorderAndPaddingWidthStart() {
+        int margin = 0;
+        BorderProps bps = (BorderProps) getTrait(Trait.BORDER_START);
+        if (bps != null) {
+            margin = bps.width;
+        }
+        
+        Integer padWidth = (Integer) getTrait(Trait.PADDING_START);
+        if (padWidth != null) {
+            margin += padWidth.intValue();
+        }
+
+        return margin;
+    }
+
+    /**
+     * Return the sum of region border- and padding-end
+     *
+     * @return width in millipoints
+     */
+    public int getBorderAndPaddingWidthEnd() {
+        int margin = 0;
+        BorderProps bps = (BorderProps) getTrait(Trait.BORDER_END);
+        if (bps != null) {
+            margin = bps.width;
+        }
+        
+        Integer padWidth = (Integer) getTrait(Trait.PADDING_END);
+        if (padWidth != null) {
+            margin += padWidth.intValue();
+        }
+
+        return margin;
+    }
     /**
      * Add a child to this area.
      * The default is to do nothing. Subclasses must override
