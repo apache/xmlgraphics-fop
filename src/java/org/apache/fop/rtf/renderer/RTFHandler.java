@@ -55,6 +55,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 
+import org.apache.fop.apps.Driver;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.datatypes.ColorType;
 import org.apache.fop.fo.FOInputHandler;
@@ -110,7 +111,8 @@ public class RTFHandler extends FOInputHandler {
      * Creates a new RTF structure handler.
      * @param os OutputStream to write to
      */
-    public RTFHandler(OutputStream os) {
+    public RTFHandler(Driver driver, OutputStream os) {
+        super(driver);
         this.os = os;
         // use pdf fonts for now, this is only for resolving names
         org.apache.fop.render.pdf.FontSetup.setup(fontInfo, null);

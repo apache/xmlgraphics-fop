@@ -51,11 +51,17 @@
 package org.apache.fop.apps;
 
 // FOP
+import org.apache.fop.area.AreaTree;
+import org.apache.fop.area.AreaTreeModel;
 import org.apache.fop.fo.ElementMapping;
 import org.apache.fop.fo.FOTreeBuilder;
 import org.apache.fop.fo.FOUserAgent;
 import org.apache.fop.fo.FOInputHandler;
 import org.apache.fop.fo.FOTreeHandler;
+import org.apache.fop.fo.FOTreeListener;
+import org.apache.fop.fo.FOTreeEvent;
+import org.apache.fop.area.Title;
+import org.apache.fop.fo.pagination.PageSequence;
 import org.apache.fop.mif.MIFHandler;
 import org.apache.fop.render.Renderer;
 import org.apache.fop.render.awt.AWTRenderer;
@@ -128,7 +134,7 @@ import java.io.OutputStream;
  * driver.render(parser, fileInputSource(args[0]));
  * </PRE>
  */
-public class Driver implements LogEnabled {
+public class Driver implements LogEnabled, FOTreeListener {
 
     /**
      * Render to PDF. OutputStream must be set
@@ -220,6 +226,12 @@ public class Driver implements LogEnabled {
      */
     private Logger log = null;
     private FOUserAgent userAgent = null;
+
+    /**
+     * The current AreaTree for the PageSequence being rendered.
+     */
+    private AreaTree areaTree;
+    private AreaTreeModel atModel;
 
     /**
      * Main constructor for the Driver class.
@@ -528,15 +540,15 @@ public class Driver implements LogEnabled {
         // TODO: - do this stuff in a better way
         // PIJ: I guess the structure handler should be created by the renderer.
         if (rendererType == RENDER_MIF) {
-            foInputHandler = new MIFHandler(stream);
+            foInputHandler = new MIFHandler(this, stream);
         } else if (rendererType == RENDER_RTF) {
-            foInputHandler = new RTFHandler(stream);
+            foInputHandler = new RTFHandler(this, stream);
         } else {
             if (renderer == null) {
                 throw new IllegalStateException(
                         "Renderer not set when using standard foInputHandler");
             }
-            foInputHandler = new FOTreeHandler(stream, renderer, true);
+            foInputHandler = new FOTreeHandler(this, stream, renderer, true);
         }
 
         foInputHandler.enableLogging(getLogger());
@@ -574,7 +586,19 @@ public class Driver implements LogEnabled {
         }
         parser.setContentHandler(getContentHandler());
         try {
+            if (foInputHandler instanceof FOTreeHandler) {
+                FOTreeHandler foTreeHandler = (FOTreeHandler)foInputHandler;
+                foTreeHandler.addFOTreeListener(this);
+                this.areaTree = new AreaTree();
+                this.atModel = AreaTree.createRenderPagesModel(renderer);
+                //this.atModel = new CachedRenderPagesModel(renderer);
+                areaTree.setTreeModel(atModel);
+            }
             parser.parse(source);
+            if (foInputHandler instanceof FOTreeHandler) {
+                FOTreeHandler foTreeHandler = (FOTreeHandler)foInputHandler;
+                foTreeHandler.removeFOTreeListener(this);
+            }
         } catch (SAXException e) {
             if (e.getException() instanceof FOPException) {
                 // Undo exception tunneling.
@@ -635,5 +659,35 @@ public class Driver implements LogEnabled {
             render(reader, source);
         }
     }
+
+    public void foPageSequenceComplete (FOTreeEvent event) throws FOPException{
+        PageSequence pageSeq = event.getPageSequence();
+        Title title = null;
+        if (pageSeq.getTitleFO() != null) {
+            title = pageSeq.getTitleFO().getTitleArea();
+        }
+        areaTree.startPageSequence(title);
+        pageSeq.format(areaTree);
+    }
+
+    public void foDocumentComplete (FOTreeEvent event) throws SAXException{
+        //processAreaTree(atModel);
+        try {
+            areaTree.endDocument();
+            renderer.stopRenderer();
+        }
+        catch (IOException ex) {
+        }
+    }
+
+    /**
+     * Get the area tree for this layout handler.
+     *
+     * @return the area tree for this document
+     */
+    public AreaTree getAreaTree() {
+        return areaTree;
+    }
+
 }
 

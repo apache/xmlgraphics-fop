@@ -54,18 +54,17 @@ package org.apache.fop.fo;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.List;
+import java.util.HashSet;
+import java.util.Iterator;
 
 // SAX
 import org.xml.sax.SAXException;
 
 // FOP
+import org.apache.fop.apps.Driver;
 import org.apache.fop.apps.FOPException;
-import org.apache.fop.area.AreaTree;
-import org.apache.fop.area.AreaTreeModel;
 import org.apache.fop.area.StorePagesModel;
-import org.apache.fop.area.Title;
 import org.apache.fop.area.TreeExt;
-import org.apache.fop.fo.FOInputHandler;
 import org.apache.fop.fo.flow.Block;
 import org.apache.fop.fo.flow.ExternalGraphic;
 import org.apache.fop.fo.flow.InstreamForeignObject;
@@ -134,10 +133,10 @@ public class FOTreeHandler extends FOInputHandler {
     private FontInfo fontInfo = new FontInfo();
 
     /**
-     * The current AreaTree for the PageSequence being rendered.
+     * Collection of objects that have registered to be notified about
+     * FOTreeEvent firings.
      */
-    private AreaTree areaTree;
-    private AreaTreeModel atModel;
+    private HashSet foTreeListeners = new HashSet();
 
     /**
      * Main constructor
@@ -146,27 +145,15 @@ public class FOTreeHandler extends FOInputHandler {
      * @param store if true then use the store pages model and keep the
      *              area tree in memory
      */
-    public FOTreeHandler(OutputStream outputStream, Renderer renderer,
+    public FOTreeHandler(Driver driver, OutputStream outputStream, Renderer renderer,
                          boolean store) {
+        super(driver);
         if (collectStatistics) {
             runtime = Runtime.getRuntime();
         }
         this.outputStream = outputStream;
         this.renderer = renderer;
 
-        this.areaTree = new AreaTree();
-        this.atModel = AreaTree.createRenderPagesModel(renderer);
-        //this.atModel = new CachedRenderPagesModel(renderer);
-        areaTree.setTreeModel(atModel);
-    }
-
-    /**
-     * Get the area tree for this layout handler.
-     *
-     * @return the area tree for this document
-     */
-    public AreaTree getAreaTree() {
-        return areaTree;
     }
 
     /**
@@ -205,13 +192,7 @@ public class FOTreeHandler extends FOInputHandler {
      * @throws SAXException if there is some error
      */
     public void endDocument() throws SAXException {
-        try {
-            //processAreaTree(atModel);
-            areaTree.endDocument();
-            renderer.stopRenderer();
-        } catch (Exception e) {
-            throw new SAXException(e);
-        }
+        notifyDocumentComplete();
 
         if (collectStatistics) {
             if (MEM_PROFILE_WITH_GC) {
@@ -246,11 +227,6 @@ public class FOTreeHandler extends FOInputHandler {
      * @param pageSeq the page sequence starting
      */
     public void startPageSequence(PageSequence pageSeq) {
-        Title title = null;
-        if (pageSeq.getTitleFO() != null) {
-            title = pageSeq.getTitleFO().getTitleArea();
-        }
-        areaTree.startPageSequence(title);
     }
 
     /**
@@ -275,7 +251,7 @@ public class FOTreeHandler extends FOInputHandler {
                 getLogger().debug("Current heap size: " + (memoryNow / 1024L) + "Kb");
             }
         }
-        pageSequence.format(areaTree);
+        notifyPageSequenceComplete(pageSequence);
     }
 
     /**
@@ -497,38 +473,6 @@ public class FOTreeHandler extends FOInputHandler {
     }
 
     /**
-     * Process an area tree.
-     * If a store pages model is used this can read and send all the
-     * pages to the renderer.
-     *
-     * @param model the store pages model
-     * @throws FOPException if there is an error
-     */
-    private void processAreaTree(StorePagesModel model) throws FOPException {
-        int count = 0;
-        int seqc = model.getPageSequenceCount();
-        while (count < seqc) {
-            Title title = model.getTitle(count);
-            renderer.startPageSequence(title);
-            int pagec = model.getPageCount(count);
-            for (int c = 0; c < pagec; c++) {
-                try {
-                    renderer.renderPage(model.getPage(count, c));
-                } catch (IOException ioex) {
-                    throw new FOPException("I/O Error rendering page",
-                                           ioex);
-                }
-            }
-            count++;
-        }
-        List list = model.getEndExtensions();
-        for (count = 0; count < list.size(); count++) {
-            TreeExt ext = (TreeExt)list.get(count);
-            renderer.renderExtension(ext);
-        }
-    }
-
-    /**
      * Get the font information for the layout handler.
      *
      * @return the font information
@@ -536,5 +480,64 @@ public class FOTreeHandler extends FOInputHandler {
     public FontInfo getFontInfo() {
         return this.fontInfo;
     }
-}
 
+    /**
+     * Add an object to the collection of objects that should be notified about
+     * FOTreeEvent firings.
+     * @param listener the Object which should be notified
+     */
+    public void addFOTreeListener (FOTreeListener listener) {
+        if (listener == null) {
+            return;
+        }
+        foTreeListeners.add(listener);
+    }
+
+    /**
+     * Remove an object from the collection of objects that should be notified
+     * about FOTreeEvent firings.
+     * @param listener the Object which should no longer be notified
+     */
+    public void removeFOTreeListener (FOTreeListener listener) {
+        if (listener == null) {
+            return;
+        }
+        foTreeListeners.remove(listener);
+    }
+
+    /**
+     * Notify all objects in the foTreeListeners that a "Page Sequence Complete"
+     * FOTreeEvent has been fired.
+     * @param eventType integer indicating which type of event is created
+     * @param event the Event object that should be passed to the listeners
+     */
+    private void notifyPageSequenceComplete(PageSequence pageSequence)
+            throws FOPException {
+        FOTreeEvent event = new FOTreeEvent(this);
+        event.setPageSequence(pageSequence);
+        Iterator iterator = foTreeListeners.iterator();
+        FOTreeListener foTreeListenerItem = null;
+        while (iterator.hasNext()) {
+            foTreeListenerItem = (FOTreeListener)iterator.next();
+            foTreeListenerItem.foPageSequenceComplete(event);
+        }
+    }
+
+    /**
+     * Notify all objects in the foTreeListeners that a "Document Complete"
+     * FOTreeEvent has been fired.
+     * @param eventType integer indicating which type of event is created
+     * @param event the Event object that should be passed to the listeners
+     */
+    private void notifyDocumentComplete()
+            throws SAXException {
+        FOTreeEvent event = new FOTreeEvent(this);
+        Iterator iterator = foTreeListeners.iterator();
+        FOTreeListener foTreeListenerItem = null;
+        while (iterator.hasNext()) {
+            foTreeListenerItem = (FOTreeListener)iterator.next();
+            foTreeListenerItem.foDocumentComplete(event);
+        }
+    }
+
+}
