@@ -26,7 +26,7 @@ public class TextDecoration extends Property  {
         return new TextDecorations
                             (PropNames.TEXT_DECORATION, NO_DECORATION);
     }
-    public static final int inherited = NO;
+    public static final int inherited = COMPUTED;
 
     /** Text decoration constant */
     public static final byte

@@ -15,7 +15,7 @@ public class TextShadow extends ColorNonTransparent  {
     public static final int dataTypes = COMPLEX | NONE | INHERIT;
     public static final int traitMapping = RENDERING;
     public static final int initialValueType = NONE_IT;
-    public static final int inherited = NO;
+    public static final int inherited = COMPUTED;
 
 
     /**
