@@ -58,7 +58,6 @@ For more information see <link href="http://xml.apache.org/batik/">Batik</link>
 for how transcoders work.
             </p>
           </section>
-<!--
           <section>
             <title>Examples</title>
             <p>
@@ -75,31 +74,31 @@ to PDF:
     <tr>
       <td>images</td> 
       <td><link href="svg/images.svg">images.svg</link></td> 
-      <td><link href="svg/images.png">images.png</link></td>
+      <td><!--link href="svg/images.png"-->images.png<!--/link--></td>
       <td><link href="svg/images.pdf">images.pdf</link></td>
     </tr>
     <tr>
       <td>svg linking</td>
       <td><link href="svg/link.svg">link.svg</link></td>
-      <td><link href="svg/link.png">link.png</link></td>
+      <td><!--link href="svg/link.png"-->link.png<!--/link--></td>
       <td><link href="svg/link.pdf">link.pdf</link></td>
     </tr>
     <tr>
       <td>gradients and patterns</td>
       <td><link href="svg/paints.svg">paints.svg</link></td>
-      <td><link href="svg/paints.png">paints.png</link></td>
+      <td><!--link href="svg/paints.png"-->paints.png<!--/link--></td>
       <td><link href="svg/paints.pdf">paints.pdf</link></td>
     </tr>
     <tr>
       <td>various text and effects on text</td>
       <td><link href="svg/text.svg">text.svg</link></td>
-      <td><link href="svg/text.png">text.png</link></td>
+      <td><!--link href="svg/text.png"-->text.png<!--/link--></td>
       <td><link href="svg/text.pdf">text.pdf</link></td>
     </tr>
     <tr>
       <td>transparent objects</td>
       <td><link href="svg/transparency.svg">transparency.svg</link></td>
-      <td><link href="svg/transparency.png">transparency.png</link></td>
+      <td><!--link href="svg/transparency.png"-->transparency.png<!--/link--></td>
       <td><link href="svg/transparency.pdf">transparency.pdf</link></td>
     </tr>
   </table>
@@ -126,7 +125,6 @@ You will need Acrobat 5.0 to see transparency.
   </table> 
             </p>
           </section>
--->
           <section>
             <title>Important Notes</title>
             <p>

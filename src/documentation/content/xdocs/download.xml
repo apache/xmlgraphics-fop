@@ -19,8 +19,10 @@
        In both cases you have to build Fop yourself - see <link href="compiling.html">Compiling Fop</link> for details.
     </p>
     <note>
-      Important: Currently, releases of FOP are coming out of the "fop-0_20_2-maintain" branch. The "MAIN" branch is
-      used for the redesign. See <link href="design/index.html">NEW DESIGN</link> for more information.
+      Important: Currently, releases of FOP are coming out of the
+      "fop-0_20_2-maintain" branch. The "MAIN" branch is currently
+      under development. See <link href="dev/index.html">Development Docs</link>
+      for more information.
     </note>
     <p>To run FOP from the command line, see <link href="running.html">Running FOP</link>.</p>
     <p>If you are interested in embedding FOP in a Java application of your own, see
