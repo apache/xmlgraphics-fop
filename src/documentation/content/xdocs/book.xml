@@ -43,7 +43,6 @@
         </menu>
 
         <menu label="Developing">
-          <menu-item label="Getting Involved" href="involved.html"/>
           <menu-item label="Testing" href="testing.html"/>
         </menu>
 
