@@ -181,9 +181,9 @@ public class LineArea extends Area {
         }
         void expand() {
             char dot = '.';
-            int dotWidth =  currentFontState.getCharWidth(dot);
+            int dotWidth =  fontState.getCharWidth(dot);
             char space = ' ';
-            int spaceWidth = currentFontState.getCharWidth(space);
+            int spaceWidth = fontState.getCharWidth(space);
             int idx=children.indexOf(this);
             children.remove(this);
             switch (leaderPattern) {
@@ -242,12 +242,19 @@ public class LineArea extends Area {
                     for (int i = 0; i < factor; i++) {
                         leaderChars[i] = dot;
                     }
+                    String leaderWord = new String(leaderChars);
+                    int leaderWordWidth = fontState.getWordWidth(leaderWord);
                     WordArea leaderPatternArea =
-                        new WordArea(currentFontState, red, green, blue,
-                                     new String(leaderChars),
-                                     leaderLengthOptimum);
+                        new WordArea(fontState, red, green, blue,
+                                     leaderWord,leaderWordWidth);
                     leaderPatternArea.setYOffset(placementOffset);
                     children.add(idx, leaderPatternArea);
+                    int spaceAfterLeader = leaderLengthOptimum
+                        - leaderWordWidth;
+                    if (spaceAfterLeader!=0) {
+                        children.add(idx+1, new InlineSpace(spaceAfterLeader,
+                                                            false));
+                    }
                 } else {
                     // if leader-alignment is used, calculate space to
                     // insert before leader so that all dots will be
