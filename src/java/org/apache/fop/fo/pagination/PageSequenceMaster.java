@@ -80,7 +80,7 @@ public class PageSequenceMaster extends FObj {
     }
 
     protected void end() {
-        if (children == null) {
+        if (childNodes == null) {
            missingChildElementError("(single-page-master-reference|" +
             "repeatable-page-master-reference|repeatable-page-master-alternatives)+");
         }

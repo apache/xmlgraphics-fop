@@ -185,10 +185,10 @@ public class AddLMVisitor implements FOTreeVisitor {
     }
 
     public void serveFObjMixed(FObjMixed node) {
-        if (node.getChildren() != null) {
+        if (node.getChildNodes() != null) {
             InlineStackingLayoutManager lm;
             lm = new InlineStackingLayoutManager(node);
-            lm.setLMiter(new LMiter(lm, node.getChildren()));
+            lm.setLMiter(new LMiter(lm, node.getChildNodes()));
             currentLMList.add(lm);
         }
     }
@@ -253,7 +253,7 @@ public class AddLMVisitor implements FOTreeVisitor {
                 return area;
             }
         };
-        lm.setLMiter(new LMiter(lm, node.getChildren()));
+        lm.setLMiter(new LMiter(lm, node.getChildNodes()));
         currentLMList.add(lm);
     }
 
@@ -347,13 +347,13 @@ public class AddLMVisitor implements FOTreeVisitor {
 
              leaderArea = fa;
          } else if (node.getLeaderPattern() == Constants.LeaderPattern.USECONTENT) {
-             if (node.getChildren() == null) {
+             if (node.getChildNodes() == null) {
                  node.getLogger().error("Leader use-content with no content");
                  return null;
              }
              InlineStackingLayoutManager lm;
              lm = new InlineStackingLayoutManager(node);
-             lm.setLMiter(new LMiter(lm, node.getChildren()));
+             lm.setLMiter(new LMiter(lm, node.getChildNodes()));
              lm.initialize();
 
              // get breaks then add areas to FilledArea
@@ -479,15 +479,15 @@ public class AddLMVisitor implements FOTreeVisitor {
       * @return the viewport inline area
       */
      public Viewport getInstreamForeignObjectInlineArea(InstreamForeignObject node) {
-         if (node.getChildren() == null) {
+         if (node.getChildNodes() == null) {
              return null;
          }
 
-         if (node.children.size() != 1) {
+         if (node.childNodes.size() != 1) {
              // error
              return null;
          }
-         FONode fo = (FONode)node.children.get(0);
+         FONode fo = (FONode) node.childNodes.get(0);
          if (!(fo instanceof XMLObj)) {
              // error
              return null;
@@ -610,7 +610,7 @@ public class AddLMVisitor implements FOTreeVisitor {
          org.w3c.dom.Document doc = child.getDOMDocument();
          String ns = child.getDocumentNamespace();
 
-         node.children = null;
+         node.childNodes = null;
          ForeignObject foreign = new ForeignObject(doc, ns);
 
          Viewport areaCurrent = new Viewport(foreign);
@@ -894,7 +894,7 @@ public class AddLMVisitor implements FOTreeVisitor {
      */
     public void serveWrapper(Wrapper node) {
         ListIterator baseIter;
-        baseIter = node.getChildren();
+        baseIter = node.getChildNodes();
         if (baseIter == null) return;
         while (baseIter.hasNext()) {
             FObj child = (FObj) baseIter.next();

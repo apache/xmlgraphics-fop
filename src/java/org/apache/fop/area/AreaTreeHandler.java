@@ -437,7 +437,7 @@ public class AreaTreeHandler extends FOInputHandler {
         // to the Title.
         InlineStackingLayoutManager lm;
         lm = new InlineStackingLayoutManager(foTitle);
-        lm.setLMiter(new LMiter(lm, foTitle.children.listIterator()));
+        lm.setLMiter(new LMiter(lm, foTitle.childNodes.listIterator()));
         lm.initialize();
 
         // get breaks then add areas to title

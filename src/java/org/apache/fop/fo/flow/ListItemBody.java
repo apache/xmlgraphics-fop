@@ -49,7 +49,7 @@ public class ListItemBody extends FObj {
          * For calculating the lineage - The fo:list-item-body formatting object
          * does not generate any areas. The fo:list-item-body formatting object
          * returns the sequence of areas created by concatenating the sequences
-         * of areas returned by each of the children of the fo:list-item-body.
+         * of areas returned by each of the child nodes of the fo:list-item-body.
          */
 
     }

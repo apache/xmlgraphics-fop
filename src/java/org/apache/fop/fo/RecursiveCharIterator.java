@@ -22,13 +22,13 @@ import java.util.Iterator;
 import java.util.NoSuchElementException;
 
 /**
- * Kind of a super-iterator that iterates through children of an FONode,
+ * Kind of a super-iterator that iterates through child nodes of an FONode,
  * in turn managing character iterators for each of them. Caveat: Because this
  * class is itself a CharIterator, and manages a collection of CharIterators, it
  * is easy to get confused.
  */
 public class RecursiveCharIterator extends AbstractCharIterator {
-    /** parent node for whose children this iterator iterates */
+    /** parent node for whose child nodes this iterator iterates */
     private FONode fobj;
     /** iterator for the child nodes */
     private Iterator childIter = null;
@@ -39,25 +39,25 @@ public class RecursiveCharIterator extends AbstractCharIterator {
     private CharIterator curCharIter = null;
 
     /**
-     * Constructor which creates an iterator for all children
+     * Constructor which creates an iterator for all child nodes
      * @param fobj FONode for which an iterator should be created
      */
     public RecursiveCharIterator(FObj fobj) {
         // Set up first child iterator
         this.fobj = fobj;
-        this.childIter = fobj.getChildren();
+        this.childIter = fobj.getChildNodes();
         getNextCharIter();
     }
 
     /**
-     * Constructor which creates an iterator for only some children
+     * Constructor which creates an iterator for only some child nodes
      * @param fobj FObj for which an iterator should be created
      * @param child FONode of the first child to include in iterator
      */
     public RecursiveCharIterator(FObj fobj, FONode child) {
         // Set up first child iterator
         this.fobj = fobj;
-        this.childIter = fobj.getChildren(child);
+        this.childIter = fobj.getChildNodes(child);
         getNextCharIter();
     }
 
@@ -73,7 +73,7 @@ public class RecursiveCharIterator extends AbstractCharIterator {
      */
     public Object clone() {
         RecursiveCharIterator ci = (RecursiveCharIterator) super.clone();
-        ci.childIter = fobj.getChildren(ci.curChild);
+        ci.childIter = fobj.getChildNodes(ci.curChild);
         // Need to advance to the next child, else we get the same one!!!
         ci.childIter.next();
         ci.curCharIter = (CharIterator) curCharIter.clone();

@@ -61,7 +61,7 @@ public class ListItemLabel extends FObj {
          * For calculating the lineage - The fo:list-item-label formatting object
          * does not generate any areas. The fo:list-item-label formatting object
          * returns the sequence of areas created by concatenating the sequences
-         * of areas returned by each of the children of the fo:list-item-label.
+         * of areas returned by each of the child nodes of the fo:list-item-label.
          */
 
     }

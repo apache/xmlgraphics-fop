@@ -79,7 +79,7 @@ public abstract class AbstractLayoutManager implements LayoutManager, Constants 
         this.fobj = fo;
         foID = fobj.getID();
         markers = fobj.getMarkers();
-        childLMiter = new LMiter(this, fobj.getChildren());
+        childLMiter = new LMiter(this, fobj.getChildNodes());
     }
 
     /**

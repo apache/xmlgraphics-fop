@@ -1231,8 +1231,8 @@ public class RTFHandler extends FOInputHandler {
     private void recurseFObj(FObj fobj) {
         invokeDeferredEvent(fobj, true);
         
-        if (fobj.children!=null) {
-            for(Iterator it=fobj.children.iterator();it.hasNext();) {
+        if (fobj.childNodes != null) {
+            for(Iterator it=fobj.childNodes.iterator();it.hasNext();) {
                 recurseFObj( (FObj) it.next() );
             }
         }

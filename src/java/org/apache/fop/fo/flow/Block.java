@@ -220,13 +220,13 @@ public class Block extends FObjMixed {
      */
     public void addChildNode(FONode child) {
         // Handle whitespace based on values of properties
-        // Handle a sequence of inline-producing children in
+        // Handle a sequence of inline-producing child nodes in
         // one pass
         if (child instanceof FObj && ((FObj) child).generatesInlineAreas()) {
             if (firstInlineChild == null) {
                 firstInlineChild = child;
             }
-            // lastInlineChild = children.size();
+            // lastInlineChild = childNodes.size();
         } else {
             // Handle whitespace in preceeding inline areas if any
             handleWhiteSpace();

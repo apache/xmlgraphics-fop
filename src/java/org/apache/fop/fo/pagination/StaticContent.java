@@ -60,7 +60,7 @@ public class StaticContent extends Flow {
      * @see org.apache.fop.fo.FONode#end
      */
     protected void end() {
-        if (children == null) {
+        if (childNodes == null) {
             missingChildElementError("(%block;)+");
         }
         getFOInputHandler().endFlow(this);

@@ -47,8 +47,8 @@ public class FObj extends FONode implements Constants {
     /** Id of this fo element of null if no id. */
     protected String id = null;
 
-    /** The children of this node. */
-    public ArrayList children = null;
+    /** The immediate child nodes of this node. */
+    public ArrayList childNodes = null;
 
     /** Markers added to this element. */
     protected Map markers = null;
@@ -139,7 +139,21 @@ public class FObj extends FONode implements Constants {
         return propertyList.get(propId);
     }
 
-   /**
+    /**
+     * @see org.apache.fop.fo.FONode#addChildNode(FONode)
+     */
+    protected void addChildNode(FONode child) {
+        if (containsMarkers() && "fo:marker".equals(child.getName())) {
+            addMarker((Marker)child);
+        } else {
+            if (childNodes == null) {
+                childNodes = new ArrayList();
+            }
+            childNodes.add(child);
+        }
+    }
+
+    /**
      * Find the nearest parent, grandparent, etc. FONode that is also an FObj
      * @return FObj the nearest ancestor FONode that is an FObj
      */
@@ -251,20 +265,6 @@ public class FObj extends FONode implements Constants {
     }
 
     /**
-     * @see org.apache.fop.fo.FONode#addChildNode(FONode)
-     */
-    protected void addChildNode(FONode child) {
-        if (containsMarkers() && "fo:marker".equals(child.getName())) {
-            addMarker((Marker)child);
-        } else {
-            if (children == null) {
-                children = new ArrayList();
-            }
-            children.add(child);
-        }
-    }
-
-    /**
      * Setup the id for this formatting object.
      * Most formatting objects can have an id that can be referenced.
      * This methods checks that the id isn't already used by another
@@ -335,28 +335,27 @@ public class FObj extends FONode implements Constants {
     }
 
     /**
-     * Return an iterator over all the children of this FObj.
-     * @return A ListIterator.
+     * @see org.apache.fop.fo.FONode#getChildNodes()
      */
-    public ListIterator getChildren() {
-        if (children != null) {
-            return children.listIterator();
+    public ListIterator getChildNodes() {
+        if (childNodes != null) {
+            return childNodes.listIterator();
         }
         return null;
     }
 
     /**
-     * Return an iterator over the object's children starting
+     * Return an iterator over the object's childNodes starting
      * at the pased node.
      * @param childNode First node in the iterator
      * @return A ListIterator or null if childNode isn't a child of
      * this FObj.
      */
     public ListIterator getChildren(FONode childNode) {
-        if (children != null) {
-            int i = children.indexOf(childNode);
+        if (childNodes != null) {
+            int i = childNodes.indexOf(childNode);
             if (i >= 0) {
-                return children.listIterator(i);
+                return childNodes.listIterator(i);
             }
         }
         return null;
@@ -371,9 +370,9 @@ public class FObj extends FONode implements Constants {
      */
     public void addMarker(Marker marker) {
         String mcname = marker.getMarkerClassName();
-        if (children != null) {
-            // check for empty children
-            for (Iterator iter = children.iterator(); iter.hasNext();) {
+        if (childNodes != null) {
+            // check for empty childNodes
+            for (Iterator iter = childNodes.iterator(); iter.hasNext();) {
                 FONode node = (FONode)iter.next();
                 if (node instanceof FOText) {
                     FOText text = (FOText)node;
