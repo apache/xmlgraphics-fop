@@ -35,9 +35,6 @@ import org.apache.fop.image.analyser.ImageReader;
  * @see FopImage
  */
 public class JAIImage extends AbstractFopImage {
-    public JAIImage(URL href) {
-        super(href);
-    }
 
     public JAIImage(URL href, FopImage.ImageInfo imgReader) {
         super(href, imgReader);
