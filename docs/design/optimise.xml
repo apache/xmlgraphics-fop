@@ -33,5 +33,11 @@ been finalised. Consecutive characters with the same properties
 can be combined into a "word" to hold the information with
 limited overhead.
   </para>
+  <para>
+If there are a large number of pages where forward references
+cannot be resolved the a method of writing a page onto disk
+could be used to save memory. The easiest way to achieve this
+is to make the page and all children serializable.
+  </para>
 
 </section>
