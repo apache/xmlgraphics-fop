@@ -1,7 +1,8 @@
-/* $Id$
+/*
+ * $Id$
  * Copyright (C) 2001 The Apache Software Foundation. All rights reserved.
  * For details on use and redistribution please refer to the
- * LICENSE file included with these sources."
+ * LICENSE file included with these sources.
  */
 
 package org.apache.fop.image;
@@ -51,11 +52,12 @@ public class SVGImage extends AbstractFopImage {
 
     protected void loadImage() throws FopImageException {
         try {
-            SAXSVGDocumentFactory factory = new SAXSVGDocumentFactory(SVGImage.getParserName());
+            SAXSVGDocumentFactory factory =
+                new SAXSVGDocumentFactory(SVGImage.getParserName());
             doc = factory.createDocument(this.m_href.toExternalForm());
         } catch (Exception e) {
-            MessageHandler.errorln("ERROR LOADING EXTERNAL SVG: " +
-                                   e.getMessage());
+            MessageHandler.errorln("ERROR LOADING EXTERNAL SVG: "
+                                   + e.getMessage());
         }
     }
 
@@ -64,4 +66,5 @@ public class SVGImage extends AbstractFopImage {
             this.loadImage();
         return doc;
     }
+
 }

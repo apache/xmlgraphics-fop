@@ -1,4 +1,5 @@
-/* $Id$
+/*
+ * $Id$
  * Copyright (C) 2001 The Apache Software Foundation. All rights reserved.
  * For details on use and redistribution please refer to the
  * LICENSE file included with these sources.
@@ -61,22 +62,19 @@ abstract public class InputHandler {
         MessageHandler.logln("using SAX parser " + parserClassName);
 
         try {
-            return (XMLReader) Class.forName(
-                     parserClassName).newInstance();
+            return (XMLReader)Class.forName(parserClassName).newInstance();
         } catch (ClassNotFoundException e) {
             throw new FOPException(e);
-        }
-        catch (InstantiationException e) {
-            throw new FOPException("Could not instantiate " +
-                                   parserClassName, e);
-        }
-        catch (IllegalAccessException e) {
-            throw new FOPException("Could not access " +
-                                   parserClassName, e);
-        }
-        catch (ClassCastException e) {
-            throw new FOPException(parserClassName + " is not a SAX driver",e);
+        } catch (InstantiationException e) {
+            throw new FOPException("Could not instantiate "
+                                   + parserClassName, e);
+        } catch (IllegalAccessException e) {
+            throw new FOPException("Could not access " + parserClassName, e);
+        } catch (ClassCastException e) {
+            throw new FOPException(parserClassName + " is not a SAX driver",
+                                   e);
         }
     }
+
 }
 

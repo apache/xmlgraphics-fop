@@ -1,4 +1,5 @@
-/* $Id$
+/*
+ * $Id$
  * Copyright (C) 2001 The Apache Software Foundation. All rights reserved.
  * For details on use and redistribution please refer to the
  * LICENSE file included with these sources.
@@ -14,7 +15,7 @@ import org.apache.fop.fo.Property;
 public class Space extends LengthRange {
 
     private Property precedence;
-    private Property conditionality ;
+    private Property conditionality;
 
     // From CompoundDatatype
     public void setComponent(String sCmpnName, Property cmpnValue,
@@ -47,16 +48,17 @@ public class Space extends LengthRange {
     }
 
     public Property getPrecedence() {
-        return this.precedence ;
+        return this.precedence;
     }
 
     /*
-     public boolean isDiscard() {
-       return (this.conditionality == DISCARD);
-     }
+     * public boolean isDiscard() {
+     * return (this.conditionality == DISCARD);
+     * }
      */
 
     public Property getConditionality() {
-        return this.conditionality ;
+        return this.conditionality;
     }
+
 }

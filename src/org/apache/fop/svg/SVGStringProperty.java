@@ -1,7 +1,8 @@
-/* $Id$
+/*
+ * $Id$
  * Copyright (C) 2001 The Apache Software Foundation. All rights reserved.
  * For details on use and redistribution please refer to the
- * LICENSE file included with these sources."
+ * LICENSE file included with these sources.
  */
 
 package org.apache.fop.svg;
@@ -47,10 +48,10 @@ public class SVGStringProperty extends Property {
          *
          * @param propertyList the property list the property is a member of
          */
-        public Property make(PropertyList propertyList)
-        throws FOPException {
+        public Property make(PropertyList propertyList) throws FOPException {
             return make(propertyList, null, null);
         }
+
     }
 
     /**
@@ -62,7 +63,9 @@ public class SVGStringProperty extends Property {
         return new SVGStringProperty.Maker();
     }
 
-    /** the value */
+    /**
+     * the value
+     */
     protected String value;
 
     /**
@@ -84,4 +87,5 @@ public class SVGStringProperty extends Property {
     public String getString() {
         return this.value;
     }
+
 }

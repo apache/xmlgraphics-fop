@@ -1,8 +1,8 @@
-/*-- $Id$ --
- *
+/*
+ * $Id$
  * Copyright (C) 2001 The Apache Software Foundation. All rights reserved.
  * For details on use and redistribution please refer to the
- * LICENSE file included with these sources."
+ * LICENSE file included with these sources.
  */
 
 package org.apache.fop.fo.flow;
@@ -25,6 +25,7 @@ public class StaticContent extends Flow {
                          PropertyList propertyList) throws FOPException {
             return new StaticContent(parent, propertyList);
         }
+
     }
 
     public static FObj.Maker maker() {
@@ -34,7 +35,7 @@ public class StaticContent extends Flow {
     protected StaticContent(FObj parent,
                             PropertyList propertyList) throws FOPException {
         super(parent, propertyList);
-        ((PageSequence) parent).setIsFlowSet(false); // hacquery of sorts
+        ((PageSequence)parent).setIsFlowSet(false);    // hacquery of sorts
     }
 
     public Status layout(Area area) throws FOPException {
@@ -62,29 +63,27 @@ public class StaticContent extends Flow {
 
         }
 
-		if (area instanceof org.apache.fop.layout.AreaContainer)
-			((org.apache.fop.layout.AreaContainer)area).setAreaName(regionClass);
-			
+        if (area instanceof org.apache.fop.layout.AreaContainer)
+            ((org.apache.fop.layout.AreaContainer)area).setAreaName(regionClass);
+
         if (regionClass.equals(RegionBefore.REGION_CLASS)) {
             area.setAbsoluteHeight(-area.getMaxHeight());
         } else if (regionClass.equals(RegionAfter.REGION_CLASS)) {
-            area.setAbsoluteHeight(
-              area.getPage().getBody().getMaxHeight());
+            area.setAbsoluteHeight(area.getPage().getBody().getMaxHeight());
         }
 
         for (int i = 0; i < numChildren; i++) {
-            FObj fo = (FObj) children.elementAt(i);
+            FObj fo = (FObj)children.elementAt(i);
 
             Status status;
             if ((status = fo.layout(area)).isIncomplete()) {
                 // in fact all should be laid out and clip, error etc depending on 'overflow'
                 MessageHandler.logln("Warning: Some static content could not fit in the area.");
                 this.marker = i;
-                if ((i != 0) &&
-                        (status.getCode() == Status.AREA_FULL_NONE)) {
+                if ((i != 0) && (status.getCode() == Status.AREA_FULL_NONE)) {
                     status = new Status(Status.AREA_FULL_SOME);
                 }
-                return(status);
+                return (status);
             }
         }
         resetMarker();
@@ -98,11 +97,12 @@ public class StaticContent extends Flow {
     // flowname checking is more stringient for static content currently
     protected void setFlowName(String name) throws FOPException {
         if (name == null || name.equals("")) {
-            throw new FOPException("A 'flow-name' is required for "+
-                                   getElementName() + ".");
+            throw new FOPException("A 'flow-name' is required for "
+                                   + getElementName() + ".");
         } else {
             super.setFlowName(name);
         }
 
     }
+
 }

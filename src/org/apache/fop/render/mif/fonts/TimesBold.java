@@ -1,4 +1,9 @@
-
+/*
+ * $Id$
+ * Copyright (C) 2001 The Apache Software Foundation. All rights reserved.
+ * For details on use and redistribution please refer to the
+ * LICENSE file included with these sources.
+ */
 
 package org.apache.fop.render.mif.fonts;
 
@@ -240,7 +245,7 @@ public class TimesBold extends Font {
     public String encoding() {
         return encoding;
     }
-    
+
     public String fontName() {
         return fontName;
     }
@@ -269,15 +274,18 @@ public class TimesBold extends Font {
         return lastChar;
     }
 
-    public int width(int i,int size) {
+    public int width(int i, int size) {
         return size * width[i];
     }
 
     public int[] getWidths(int size) {
-        int[] arr = new int[getLastChar()-getFirstChar()+1];
-        System.arraycopy(width, getFirstChar(), arr, 0, getLastChar()-getFirstChar()+1);
-        for( int i = 0; i < arr.length; i++) arr[i] *= size;
+        int[] arr = new int[getLastChar() - getFirstChar() + 1];
+        System.arraycopy(width, getFirstChar(), arr, 0,
+                         getLastChar() - getFirstChar() + 1);
+        for (int i = 0; i < arr.length; i++)
+            arr[i] *= size;
         return arr;
     }
+
 }
 

@@ -1,4 +1,5 @@
-/* $Id$
+/*
+ * $Id$
  * Copyright (C) 2001 The Apache Software Foundation. All rights reserved.
  * For details on use and redistribution please refer to the
  * LICENSE file included with these sources.
@@ -30,15 +31,15 @@ public class XSLTInputHandler extends InputHandler {
     File xmlfile, xsltfile;
     boolean useOldTransform = false;
 
-    public XSLTInputHandler (File xmlfile, File xsltfile) {
+    public XSLTInputHandler(File xmlfile, File xsltfile) {
         this.xmlfile = xmlfile;
         this.xsltfile = xsltfile;
     }
 
     /**
-     *  overwrites the method of the super class to return the xmlfile
+     * overwrites the method of the super class to return the xmlfile
      */
-    public InputSource getInputSource () {
+    public InputSource getInputSource() {
         if (useOldTransform) {
             try {
                 java.io.Writer writer;
@@ -87,26 +88,29 @@ public class XSLTInputHandler extends InputHandler {
         XMLReader result = null;
         try {
             // try trax first
-            Class transformer = Class.forName("javax.xml.transform.Transformer");
-            transformer = Class.forName("org.apache.fop.apps.TraxInputHandler");
-            Class[] argTypes = { File.class, File.class };
-            Method getFilterMethod =
-              transformer.getMethod("getXMLFilter",argTypes);
-            File[] args = {xmlfile, xsltfile};
+            Class transformer =
+                Class.forName("javax.xml.transform.Transformer");
+            transformer =
+                Class.forName("org.apache.fop.apps.TraxInputHandler");
+            Class[] argTypes = {
+                File.class, File.class
+            };
+            Method getFilterMethod = transformer.getMethod("getXMLFilter",
+                    argTypes);
+            File[] args = {
+                xmlfile, xsltfile
+            };
             Object obj = getFilterMethod.invoke(null, args);
             if (obj instanceof XMLReader) {
-                result = (XMLReader) obj;
+                result = (XMLReader)obj;
             }
         } catch (ClassNotFoundException ex) {
             throw new FOPException(ex);
-        }
-        catch (InvocationTargetException ex) {
+        } catch (InvocationTargetException ex) {
             throw new FOPException(ex);
-        }
-        catch (IllegalAccessException ex) {
+        } catch (IllegalAccessException ex) {
             throw new FOPException(ex);
-        }
-        catch (NoSuchMethodException ex) {
+        } catch (NoSuchMethodException ex) {
             throw new FOPException(ex);
         }
         // otherwise, use DOM documents via our XSLTransform tool class old style
@@ -117,5 +121,6 @@ public class XSLTInputHandler extends InputHandler {
         return result;
 
     }
+
 }
 

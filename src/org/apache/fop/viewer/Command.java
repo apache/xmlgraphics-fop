@@ -1,4 +1,5 @@
-/* $Id$
+/*
+ * $Id$
  * Copyright (C) 2001 The Apache Software Foundation. All rights reserved.
  * For details on use and redistribution please refer to the
  * LICENSE file included with these sources.
@@ -6,9 +7,9 @@
 
 package org.apache.fop.viewer;
 /*
-  Juergen Verwohlt: Juergen.Verwohlt@jcatalog.com,
-  Rainer Steinkuhle: Rainer.Steinkuhle@jcatalog.com,
-  Stanislav Gorkhover: Stanislav.Gorkhover@jcatalog.com
+ * Juergen Verwohlt: Juergen.Verwohlt@jcatalog.com,
+ * Rainer Steinkuhle: Rainer.Steinkuhle@jcatalog.com,
+ * Stanislav Gorkhover: Stanislav.Gorkhover@jcatalog.com
  */
 
 import java.awt.event.ActionEvent;
@@ -33,7 +34,7 @@ public class Command extends AbstractAction {
     public static String IMAGE_DIR = "/org/apache/fop/viewer/Images/";
 
     public Command(String name) {
-        this(name, (ImageIcon) null);
+        this(name, (ImageIcon)null);
     }
 
     public Command(String name, ImageIcon anIcon) {
@@ -61,4 +62,5 @@ public class Command extends AbstractAction {
     public void undoit() {
         MessageHandler.errorln("Not implemented.");
     }
+
 }

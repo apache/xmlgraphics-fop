@@ -1,4 +1,5 @@
-/* $Id$
+/*
+ * $Id$
  * Copyright (C) 2001 The Apache Software Foundation. All rights reserved.
  * For details on use and redistribution please refer to the
  * LICENSE file included with these sources.
@@ -15,27 +16,31 @@ public class RegionArea {
     protected int yPosition;
     protected int width;
     protected int height;
-    
+
     protected ColorType backgroundColor;
 
     public RegionArea(int xPosition, int yPosition, int width, int height) {
-	this.xPosition = xPosition;
-	this.yPosition = yPosition;
-	this.width = width;
-	this.height = height;
+        this.xPosition = xPosition;
+        this.yPosition = yPosition;
+        this.width = width;
+        this.height = height;
     }
 
     public AreaContainer makeAreaContainer() {
-	return new AreaContainer(null, xPosition, yPosition, width, height, Position.ABSOLUTE);
+        return new AreaContainer(null, xPosition, yPosition, width, height,
+                                 Position.ABSOLUTE);
     }
 
     public ColorType getBackgroundColor() {
-	return this.backgroundColor;
+        return this.backgroundColor;
     }
 
     public void setBackgroundColor(ColorType bgColor) {
-	this.backgroundColor = bgColor;
+        this.backgroundColor = bgColor;
     }
 
-	public int getHeight() { return height; }
+    public int getHeight() {
+        return height;
+    }
+
 }

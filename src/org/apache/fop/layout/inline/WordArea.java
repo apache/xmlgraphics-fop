@@ -1,4 +1,5 @@
-/* $Id$
+/*
+ * $Id$
  * Copyright (C) 2001 The Apache Software Foundation. All rights reserved.
  * For details on use and redistribution please refer to the
  * LICENSE file included with these sources.
@@ -19,8 +20,8 @@ public class WordArea extends InlineArea {
     protected boolean lineThrough = false;
 
 
-    public WordArea(FontState fontState, float red, float green,
-                      float blue, String text, int width) {
+    public WordArea(FontState fontState, float red, float green, float blue,
+                    String text, int width) {
         super(fontState, width, red, green, blue);
         this.text = text;
         this.contentRectangleWidth = width;

@@ -1,53 +1,10 @@
-/*-- $Id$ --
-
- ============================================================================
-                   The Apache Software License, Version 1.1
- ============================================================================
-
-    Copyright (C) 1999 The Apache Software Foundation. All rights reserved.
-
- Redistribution and use in source and binary forms, with or without modifica-
- tion, are permitted provided that the following conditions are met:
-
- 1. Redistributions of  source code must  retain the above copyright  notice,
-    this list of conditions and the following disclaimer.
-
- 2. Redistributions in binary form must reproduce the above copyright notice,
-    this list of conditions and the following disclaimer in the documentation
-    and/or other materials provided with the distribution.
-
- 3. The end-user documentation included with the redistribution, if any, must
-    include  the following  acknowledgment:  "This product includes  software
-    developed  by the  Apache Software Foundation  (http://www.apache.org/)."
-    Alternately, this  acknowledgment may  appear in the software itself,  if
-    and wherever such third-party acknowledgments normally appear.
-
- 4. The names "Fop" and  "Apache Software Foundation"  must not be used to
-    endorse  or promote  products derived  from this  software without  prior
-    written permission. For written permission, please contact
-    apache@apache.org.
-
- 5. Products  derived from this software may not  be called "Apache", nor may
-    "Apache" appear  in their name,  without prior written permission  of the
-    Apache Software Foundation.
-
- THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESSED OR IMPLIED WARRANTIES,
- INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND
- FITNESS  FOR A PARTICULAR  PURPOSE ARE  DISCLAIMED.  IN NO  EVENT SHALL  THE
- APACHE SOFTWARE  FOUNDATION  OR ITS CONTRIBUTORS  BE LIABLE FOR  ANY DIRECT,
- INDIRECT, INCIDENTAL, SPECIAL,  EXEMPLARY, OR CONSEQUENTIAL  DAMAGES (INCLU-
- DING, BUT NOT LIMITED TO, PROCUREMENT  OF SUBSTITUTE GOODS OR SERVICES; LOSS
- OF USE, DATA, OR  PROFITS; OR BUSINESS  INTERRUPTION)  HOWEVER CAUSED AND ON
- ANY  THEORY OF LIABILITY,  WHETHER  IN CONTRACT,  STRICT LIABILITY,  OR TORT
- (INCLUDING  NEGLIGENCE OR  OTHERWISE) ARISING IN  ANY WAY OUT OF THE  USE OF
- THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-
- This software  consists of voluntary contributions made  by many individuals
- on  behalf of the Apache Software  Foundation and was  originally created by
- James Tauber <jtauber@jtauber.com>. For more  information on the Apache
- Software Foundation, please see <http://www.apache.org/>.
-
+/*
+ * $Id$
+ * Copyright (C) 2001 The Apache Software Foundation. All rights reserved.
+ * For details on use and redistribution please refer to the
+ * LICENSE file included with these sources.
  */
+
 package org.apache.fop.pdf;
 
 /**
@@ -61,22 +18,43 @@ package org.apache.fop.pdf;
  */
 public class PDFFont extends PDFObject {
 
-    /** font subtype to be used as parameter to createFont() */
+    /**
+     * font subtype to be used as parameter to createFont()
+     */
     public static final byte TYPE0 = 0;
-    /** font subtype to be used as parameter to createFont() */
+
+    /**
+     * font subtype to be used as parameter to createFont()
+     */
     public static final byte TYPE1 = 1;
-    /** font subtype to be used as parameter to createFont() */
+
+    /**
+     * font subtype to be used as parameter to createFont()
+     */
     public static final byte MMTYPE1 = 2;
-    /** font subtype to be used as parameter to createFont() */
+
+    /**
+     * font subtype to be used as parameter to createFont()
+     */
     public static final byte TYPE3 = 3;
-    /** font subtype to be used as parameter to createFont() */
+
+    /**
+     * font subtype to be used as parameter to createFont()
+     */
     public static final byte TRUETYPE = 4;
 
-    /** font subtype names as output in the PDF */
-    protected static final String[] TYPE_NAMES = new String[] // take care of the order
-            {"Type0", "Type1", "MMType1", "Type3", "TrueType"};
+    /**
+     * font subtype names as output in the PDF
+     */
+    protected static final String[] TYPE_NAMES =
+        new String[]    // take care of the order
+     {
+        "Type0", "Type1", "MMType1", "Type3", "TrueType"
+    };
 
-    /** the internal name for the font (eg "F1") */
+    /**
+     * the internal name for the font (eg "F1")
+     */
     protected String fontname;
 
     /**
@@ -85,7 +63,9 @@ public class PDFFont extends PDFObject {
      */
     protected byte subtype;
 
-    /** the base font name (eg "Helvetica") */
+    /**
+     * the base font name (eg "Helvetica")
+     */
     protected String basefont;
 
     /**
@@ -97,8 +77,10 @@ public class PDFFont extends PDFObject {
      */
     protected Object encoding;
 
-    /** the Unicode mapping mechanism */
-    //protected PDFToUnicode mapping;
+    /**
+     * the Unicode mapping mechanism
+     */
+    // protected PDFToUnicode mapping;
 
     /**
      * create the /Font object
@@ -110,8 +92,9 @@ public class PDFFont extends PDFObject {
      * @param encoding the character encoding schema used by the font
      * @param mapping the Unicode mapping mechanism
      */
-    public PDFFont(int number, String fontname, byte subtype, String basefont,
-            Object encoding/*, PDFToUnicode mapping*/) {
+    public PDFFont(int number, String fontname, byte subtype,
+                   String basefont,
+                   Object encoding /* , PDFToUnicode mapping */) {
 
         /* generic creation of PDF object */
         super(number);
@@ -121,7 +104,7 @@ public class PDFFont extends PDFObject {
         this.subtype = subtype;
         this.basefont = basefont;
         this.encoding = encoding;
-        //this.mapping = mapping;
+        // this.mapping = mapping;
     }
 
     /**
@@ -134,20 +117,23 @@ public class PDFFont extends PDFObject {
      * @param encoding the character encoding schema used by the font
      */
     public static PDFFont createFont(int number, String fontname,
-            byte subtype, String basefont, Object encoding) {
+                                     byte subtype, String basefont,
+                                     Object encoding) {
         switch (subtype) {
-            case TYPE0 :
-                return new PDFFontType0(number, fontname, subtype,
-                                        basefont, encoding);
-            case TYPE1 :
-            case MMTYPE1 :
-                return new PDFFontType1(number, fontname, subtype, basefont, encoding);
-            /*
-            case TYPE3 :
-                return new PDFFontType3(number, fontname, subtype, basefont, encoding);
-            */
-            case TRUETYPE :
-                return new PDFFontTrueType(number, fontname, subtype, basefont, encoding);
+        case TYPE0:
+            return new PDFFontType0(number, fontname, subtype, basefont,
+                                    encoding);
+        case TYPE1:
+        case MMTYPE1:
+            return new PDFFontType1(number, fontname, subtype, basefont,
+                                    encoding);
+        /*
+         * case TYPE3 :
+         * return new PDFFontType3(number, fontname, subtype, basefont, encoding);
+         */
+        case TRUETYPE:
+            return new PDFFontTrueType(number, fontname, subtype, basefont,
+                                       encoding);
         }
         return null;    // should not happend
     }
@@ -167,31 +153,34 @@ public class PDFFont extends PDFObject {
      * @param descriptor the descriptor for other font's metrics
      */
     public static PDFFont createFont(int number, String fontname,
-            byte subtype, String basefont, Object encoding,
-            int firstChar, int lastChar, PDFArray widths,
-            PDFFontDescriptor descriptor) {
+                                     byte subtype, String basefont,
+                                     Object encoding, int firstChar,
+                                     int lastChar, PDFArray widths,
+                                     PDFFontDescriptor descriptor) {
 
         PDFFontNonBase14 font;
         switch (subtype) {
-            case TYPE0 :
-                font = new PDFFontType0(number, fontname, subtype,
-                                        basefont, encoding);
-                font.setDescriptor(descriptor);
-                return font;
-            case TYPE1 :
-            case MMTYPE1 :
-                font = new PDFFontType1(number, fontname, subtype, basefont, encoding);
-                font.setWidthMetrics(firstChar, lastChar, widths);
-                font.setDescriptor(descriptor);
-                return font;
-            case TYPE3 :
-                return null;    // should not happend
+        case TYPE0:
+            font = new PDFFontType0(number, fontname, subtype, basefont,
+                                    encoding);
+            font.setDescriptor(descriptor);
+            return font;
+        case TYPE1:
+        case MMTYPE1:
+            font = new PDFFontType1(number, fontname, subtype, basefont,
+                                    encoding);
+            font.setWidthMetrics(firstChar, lastChar, widths);
+            font.setDescriptor(descriptor);
+            return font;
+        case TYPE3:
+            return null;    // should not happend
 
-            case TRUETYPE :
-               font = new PDFFontTrueType(number, fontname, subtype, basefont, encoding);
-               font.setWidthMetrics(firstChar, lastChar, widths);
-               font.setDescriptor(descriptor);
-               return font;
+        case TRUETYPE:
+            font = new PDFFontTrueType(number, fontname, subtype, basefont,
+                                       encoding);
+            font.setWidthMetrics(firstChar, lastChar, widths);
+            font.setDescriptor(descriptor);
+            return font;
 
         }
         return null;    // should not happend
@@ -214,8 +203,9 @@ public class PDFFont extends PDFObject {
     public byte[] toPDF() {
         StringBuffer p = new StringBuffer();
         p.append(this.number + " " + this.generation
-                + " obj\n<< /Type /Font\n/Subtype /" + TYPE_NAMES[this.subtype]
-                + "\n/Name /" + this.fontname + "\n/BaseFont /" + this.basefont);
+                 + " obj\n<< /Type /Font\n/Subtype /"
+                 + TYPE_NAMES[this.subtype] + "\n/Name /" + this.fontname
+                 + "\n/BaseFont /" + this.basefont);
         if (encoding != null) {
             p.append("\n/Encoding ");
             if (encoding instanceof PDFEncoding) {
@@ -238,6 +228,6 @@ public class PDFFont extends PDFObject {
      *
      * @param begin the buffer to be completed with the type specific fields
      */
-    protected void fillInPDF(StringBuffer begin) {
-    }
+    protected void fillInPDF(StringBuffer begin) {}
+
 }

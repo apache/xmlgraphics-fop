@@ -1,4 +1,5 @@
-/*-- $Id$ --
+/*
+ * $Id$
  * Copyright (C) 2001 The Apache Software Foundation. All rights reserved.
  * For details on use and redistribution please refer to the
  * LICENSE file included with these sources.
@@ -30,6 +31,7 @@ public class Root extends FObj {
                          PropertyList propertyList) throws FOPException {
             return new Root(parent, propertyList);
         }
+
     }
 
     public static FObj.Maker maker() {
@@ -39,7 +41,9 @@ public class Root extends FObj {
     LayoutMasterSet layoutMasterSet;
     Vector pageSequences;
 
-    /** keeps count of page number from over PageSequence instances*/
+    /**
+     * keeps count of page number from over PageSequence instances
+     */
     private int runningPageNumberCounter = 0;
 
     protected Root(FObj parent,
@@ -47,10 +51,10 @@ public class Root extends FObj {
         super(parent, propertyList);
         this.name = "fo:root";
 
-      //this.properties.get("media-usage");
+        // this.properties.get("media-usage");
 
         pageSequences = new Vector();
-		
+
         if (parent != null) {
             throw new FOPException("root must be root element");
         }
@@ -64,31 +68,33 @@ public class Root extends FObj {
         this.runningPageNumberCounter = count;
     }
 
-    /** @deprecated handled by addChild now
+    /**
+     * @deprecated handled by addChild now
      */
     public void addPageSequence(PageSequence pageSequence) {
         this.pageSequences.addElement(pageSequence);
     }
 
-	public int getPageSequenceCount() {
-		return pageSequences.size();
-	}
-	
-	/**
-	 * Some properties, such as 'force-page-count', require a
-	 * page-sequence to know about some properties of the next.
-	 * @returns succeeding PageSequence; null if none
-	*/
-	public PageSequence getSucceedingPageSequence(PageSequence current) {
-		int currentIndex = pageSequences.indexOf(current);
-		if (currentIndex == -1) return null;
-		if (currentIndex < (pageSequences.size()-1)) {
-			return (PageSequence)pageSequences.elementAt(currentIndex+1);
-		} else {
-			return null;
-		}
-	}
-	
+    public int getPageSequenceCount() {
+        return pageSequences.size();
+    }
+
+    /**
+     * Some properties, such as 'force-page-count', require a
+     * page-sequence to know about some properties of the next.
+     * @returns succeeding PageSequence; null if none
+     */
+    public PageSequence getSucceedingPageSequence(PageSequence current) {
+        int currentIndex = pageSequences.indexOf(current);
+        if (currentIndex == -1)
+            return null;
+        if (currentIndex < (pageSequences.size() - 1)) {
+            return (PageSequence)pageSequences.elementAt(currentIndex + 1);
+        } else {
+            return null;
+        }
+    }
+
     public LayoutMasterSet getLayoutMasterSet() {
         return this.layoutMasterSet;
     }
@@ -98,7 +104,7 @@ public class Root extends FObj {
     }
 
     public void format(AreaTree areaTree) throws FOPException {
-        //	MessageHandler.errorln(" Root[" + marker + "] ");
+        // MessageHandler.errorln(" Root[" + marker + "] ");
         if (layoutMasterSet == null) {
             throw new FOPException("No layout master set.");
         }
@@ -107,10 +113,11 @@ public class Root extends FObj {
         while (e.hasMoreElements()) {
             Object o = e.nextElement();
             if (o instanceof PageSequence) {
-                ((PageSequence) o).format(areaTree);
+                ((PageSequence)o).format(areaTree);
             } else if (o instanceof ExtensionObj) {
-                ((ExtensionObj) o).format(areaTree);
+                ((ExtensionObj)o).format(areaTree);
             }
         }
     }
+
 }

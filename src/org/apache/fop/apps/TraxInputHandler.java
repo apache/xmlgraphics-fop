@@ -1,4 +1,5 @@
-/* $Id$
+/*
+ * $Id$
  * Copyright (C) 2001 The Apache Software Foundation. All rights reserved.
  * For details on use and redistribution please refer to the
  * LICENSE file included with these sources.
@@ -39,21 +40,21 @@ public class TraxInputHandler extends InputHandler {
 
     File xmlfile, xsltfile;
 
-    public TraxInputHandler (File xmlfile, File xsltfile) {
+    public TraxInputHandler(File xmlfile, File xsltfile) {
         this.xmlfile = xmlfile;
         this.xsltfile = xsltfile;
     }
 
     /**
-     *  overwrites the method of the super class to return the xmlfile
+     * overwrites the method of the super class to return the xmlfile
      */
-    public InputSource getInputSource () {
+    public InputSource getInputSource() {
         return fileInputSource(xmlfile);
     }
 
     /**
-     *  overwrites this method of the super class and returns an XMLFilter instead of a
-     *  simple XMLReader which allows chaining of transformations
+     * overwrites this method of the super class and returns an XMLFilter instead of a
+     * simple XMLReader which allows chaining of transformations
      *
      */
     public XMLReader getParser() throws FOPException {
@@ -69,21 +70,21 @@ public class TraxInputHandler extends InputHandler {
      * @param xsltfile An xslt stylesheet
      * @return XMLFilter an XMLFilter which can be chained together with other XMLReaders or XMLFilters
      */
-    public static XMLFilter getXMLFilter (File xmlfile,
-                                          File xsltfile) throws FOPException {
+    public static XMLFilter getXMLFilter(File xmlfile,
+                                         File xsltfile) throws FOPException {
         try {
             // Instantiate  a TransformerFactory.
             TransformerFactory tFactory = TransformerFactory.newInstance();
             // Determine whether the TransformerFactory supports The use uf SAXSource
             // and SAXResult
-            if (tFactory.getFeature(SAXSource.FEATURE) &&
-                    tFactory.getFeature(SAXResult.FEATURE)) {
+            if (tFactory.getFeature(SAXSource.FEATURE)
+                    && tFactory.getFeature(SAXResult.FEATURE)) {
                 // Cast the TransformerFactory to SAXTransformerFactory.
                 SAXTransformerFactory saxTFactory =
-                  ((SAXTransformerFactory) tFactory);
+                    ((SAXTransformerFactory)tFactory);
                 // Create an XMLFilter for each stylesheet.
-                XMLFilter xmlfilter = saxTFactory.newXMLFilter(
-                                        new StreamSource(xsltfile));
+                XMLFilter xmlfilter =
+                    saxTFactory.newXMLFilter(new StreamSource(xsltfile));
 
                 // Create an XMLReader.
                 XMLReader parser = createParser();
@@ -95,17 +96,16 @@ public class TraxInputHandler extends InputHandler {
                 xmlfilter.setParent(parser);
                 return xmlfilter;
             } else {
-                throw new FOPException(
-                  "Your parser doesn't support the features SAXSource and SAXResult." +
-                  "\nMake sure you are using a xsl parser which supports TrAX");
+                throw new FOPException("Your parser doesn't support the features SAXSource and SAXResult."
+                                       + "\nMake sure you are using a xsl parser which supports TrAX");
             }
-        }
-        catch (Exception ex) {
+        } catch (Exception ex) {
             if (ex instanceof FOPException) {
-                throw (FOPException) ex;
+                throw (FOPException)ex;
             }
             throw new FOPException(ex);
         }
     }
+
 }
 

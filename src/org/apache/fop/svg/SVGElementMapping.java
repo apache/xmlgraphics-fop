@@ -1,4 +1,5 @@
-/* $Id$
+/*
+ * $Id$
  * Copyright (C) 2001 The Apache Software Foundation. All rights reserved.
  * For details on use and redistribution please refer to the
  * LICENSE file included with these sources.
@@ -60,8 +61,7 @@ public class SVGElementMapping implements ElementMapping {
         builder.addMapping(uri, "set", Set.maker());
         builder.addMapping(uri, "animateMotion", AnimateMotion.maker());
         builder.addMapping(uri, "animateColor", AnimateColor.maker());
-        builder.addMapping(uri, "animateTransform",
-                           AnimateTransform.maker());
+        builder.addMapping(uri, "animateTransform", AnimateTransform.maker());
         builder.addMapping(uri, "cursor", Cursor.maker());
         builder.addMapping(uri, "filter", Filter.maker());
 
@@ -72,14 +72,14 @@ public class SVGElementMapping implements ElementMapping {
         builder.addMapping(uri, "feMergeNode", FeMergeNode.maker());
 
 
-        builder.addPropertyList(uri,
-                                SVGPropertyMapping.getGenericMappings());
+        builder.addPropertyList(uri, SVGPropertyMapping.getGenericMappings());
         /* Add any element mappings */
         for (Enumeration e = SVGPropertyMapping.getElementMappings();
-                e.hasMoreElements();) {
-            String elem = (String) e.nextElement();
+                e.hasMoreElements(); ) {
+            String elem = (String)e.nextElement();
             builder.addElementPropertyList(uri, elem,
                                            SVGPropertyMapping.getElementMapping(elem));
         }
     }
+
 }

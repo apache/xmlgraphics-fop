@@ -1,4 +1,5 @@
-/* $Id$
+/*
+ * $Id$
  * Copyright (C) 2001 The Apache Software Foundation. All rights reserved.
  * For details on use and redistribution please refer to the
  * LICENSE file included with these sources.
@@ -16,8 +17,7 @@ public class Keep implements CompoundDatatype {
     private Property withinColumn;
     private Property withinPage;
 
-    public Keep () {
-    }
+    public Keep() {}
 
     // From CompoundDatatype
     public void setComponent(String sCmpnName, Property cmpnValue,
@@ -67,8 +67,11 @@ public class Keep implements CompoundDatatype {
         return this.withinPage;
     }
 
-    /** What to do here?? There isn't really a meaningful single value. */
+    /**
+     * What to do here?? There isn't really a meaningful single value.
+     */
     public String toString() {
         return "Keep";
     }
+
 }

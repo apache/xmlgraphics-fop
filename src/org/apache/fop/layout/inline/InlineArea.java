@@ -1,4 +1,5 @@
-/* $Id$
+/*
+ * $Id$
  * Copyright (C) 2001 The Apache Software Foundation. All rights reserved.
  * For details on use and redistribution please refer to the
  * LICENSE file included with these sources.
@@ -15,7 +16,9 @@ public abstract class InlineArea extends Area {
 
     private int yOffset = 0;
 
-    /** amount of space added since the original layout - needed by links */
+    /**
+     * amount of space added since the original layout - needed by links
+     */
     private int xOffset = 0;
     protected int height = 0;
     private int verticalAlign = 0;
@@ -94,19 +97,19 @@ public abstract class InlineArea extends Area {
     }
 
     public void setOverlined(boolean ol) {
-	    this.overlined = ol;
+        this.overlined = ol;
     }
 
     public boolean getOverlined() {
-	    return this.overlined;
+        return this.overlined;
     }
 
     public void setLineThrough(boolean lt) {
-	    this.lineThrough = lt;
+        this.lineThrough = lt;
     }
 
     public boolean getLineThrough() {
-	    return this.lineThrough;
+        return this.lineThrough;
     }
 
 }

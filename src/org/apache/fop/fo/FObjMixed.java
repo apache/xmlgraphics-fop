@@ -1,4 +1,5 @@
-/* $Id$
+/*
+ * $Id$
  * Copyright (C) 2001 The Apache Software Foundation. All rights reserved.
  * For details on use and redistribution please refer to the
  * LICENSE file included with these sources.
@@ -11,15 +12,16 @@ import org.apache.fop.apps.FOPException;
 
 /**
  * base class for representation of mixed content formatting objects
- * and their processing 
+ * and their processing
  */
 public class FObjMixed extends FObj {
 
     public static class Maker extends FObj.Maker {
-        public FObj make(FObj parent, PropertyList propertyList)
-        throws FOPException {
+        public FObj make(FObj parent,
+                         PropertyList propertyList) throws FOPException {
             return new FObjMixed(parent, propertyList);
         }
+
     }
 
     public static FObj.Maker maker() {
@@ -30,40 +32,41 @@ public class FObjMixed extends FObj {
         super(parent, propertyList);
     }
 
-    protected void addCharacters(char data[], int start, int length) { 
-        children.addElement(new FOText(data,start,length,this));
+    protected void addCharacters(char data[], int start, int length) {
+        children.addElement(new FOText(data, start, length, this));
     }
 
     public Status layout(Area area) throws FOPException {
 
-        if(this.properties != null) {
+        if (this.properties != null) {
             Property prop = this.properties.get("id");
-            if(prop != null) {
+            if (prop != null) {
                 String id = prop.getString();
 
-                if ( this.marker == START ) {
-                    if(area.getIDReferences() != null)
-                        area.getIDReferences().createID(id);                                
+                if (this.marker == START) {
+                    if (area.getIDReferences() != null)
+                        area.getIDReferences().createID(id);
                     this.marker = 0;
                 }
 
-                if ( this.marker == 0 ) {
-                    if(area.getIDReferences() != null)
-                        area.getIDReferences().configureID(id,area);                                
+                if (this.marker == 0) {
+                    if (area.getIDReferences() != null)
+                        area.getIDReferences().configureID(id, area);
                 }
             }
         }
 
         int numChildren = this.children.size();
-        for ( int i = this.marker; i < numChildren; i++ ) {
-            FONode fo = (FONode) children.elementAt(i);
+        for (int i = this.marker; i < numChildren; i++) {
+            FONode fo = (FONode)children.elementAt(i);
             Status status;
-            if ( (status = fo.layout(area)).isIncomplete() ) {
+            if ((status = fo.layout(area)).isIncomplete()) {
                 this.marker = i;
                 return status;
             }
         }
         return new Status(Status.OK);
     }
+
 }
 

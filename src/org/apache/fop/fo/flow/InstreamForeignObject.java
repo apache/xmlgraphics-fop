@@ -1,4 +1,5 @@
-/* $Id$
+/*
+ * $Id$
  * Copyright (C) 2001 The Apache Software Foundation. All rights reserved.
  * For details on use and redistribution please refer to the
  * LICENSE file included with these sources.
@@ -19,6 +20,7 @@ import org.apache.fop.apps.FOPException;
 import java.util.Enumeration;
 
 public class InstreamForeignObject extends FObj {
+
     /**
      * inner class for making SVG objects.
      */
@@ -36,6 +38,7 @@ public class InstreamForeignObject extends FObj {
                          PropertyList propertyList) throws FOPException {
             return new InstreamForeignObject(parent, propertyList);
         }
+
     }
 
     /**
@@ -96,39 +99,37 @@ public class InstreamForeignObject extends FObj {
             int valign = this.properties.get("vertical-align").getEnum();
             int overflow = this.properties.get("overflow").getEnum();
 
-            this.breakBefore =
-              this.properties.get("break-before").getEnum();
+            this.breakBefore = this.properties.get("break-before").getEnum();
             this.breakAfter = this.properties.get("break-after").getEnum();
             this.width = this.properties.get("width").getLength().mvalue();
-            this.height =
-              this.properties.get("height").getLength().mvalue();
-            this.contwidth = this.properties.get(
-                               "content-width").getLength().mvalue();
-            this.contheight = this.properties.get(
-                                "content-height").getLength().mvalue();
+            this.height = this.properties.get("height").getLength().mvalue();
+            this.contwidth =
+                this.properties.get("content-width").getLength().mvalue();
+            this.contheight =
+                this.properties.get("content-height").getLength().mvalue();
             this.wauto = this.properties.get("width").getLength().isAuto();
             this.hauto = this.properties.get("height").getLength().isAuto();
-            this.cwauto = this.properties.get(
-                            "content-width").getLength().isAuto();
-            this.chauto = this.properties.get(
-                            "content-height").getLength().isAuto();
+            this.cwauto =
+                this.properties.get("content-width").getLength().isAuto();
+            this.chauto =
+                this.properties.get("content-height").getLength().isAuto();
 
-            this.startIndent = this.properties.get(
-                                 "start-indent").getLength().mvalue();
-            this.endIndent = this.properties.get(
-                               "end-indent").getLength().mvalue();
-            this.spaceBefore = this.properties.get(
-                                 "space-before.optimum").getLength().mvalue();
-            this.spaceAfter = this.properties.get(
-                                "space-after.optimum").getLength().mvalue();
+            this.startIndent =
+                this.properties.get("start-indent").getLength().mvalue();
+            this.endIndent =
+                this.properties.get("end-indent").getLength().mvalue();
+            this.spaceBefore =
+                this.properties.get("space-before.optimum").getLength().mvalue();
+            this.spaceAfter =
+                this.properties.get("space-after.optimum").getLength().mvalue();
 
             this.scaling = this.properties.get("scaling").getEnum();
 
             area.getIDReferences().createID(id);
             if (this.areaCurrent == null) {
-                this.areaCurrent = new ForeignObjectArea(
-                                     propMgr.getFontState(area.getFontInfo()),
-                                     area.getAllocationWidth());
+                this.areaCurrent =
+                    new ForeignObjectArea(propMgr.getFontState(area.getFontInfo()),
+                                          area.getAllocationWidth());
 
                 this.areaCurrent.start();
                 areaCurrent.setWidth(this.width);
@@ -151,11 +152,11 @@ public class InstreamForeignObject extends FObj {
                 }
                 /* layout foreign object */
                 if (this.children.size() > 0) {
-                    FONode fo = (FONode) children.elementAt(0);
+                    FONode fo = (FONode)children.elementAt(0);
                     Status status;
                     // currently FONode must be an SVG
                     if ((status =
-                              fo.layout(this.areaCurrent)).isIncomplete()) {
+                            fo.layout(this.areaCurrent)).isIncomplete()) {
                         return status;
                     }
 
@@ -166,9 +167,9 @@ public class InstreamForeignObject extends FObj {
 
             this.marker = 0;
 
-            if (breakBefore == BreakBefore.PAGE ||
-                    ((spaceBefore + areaCurrent.getEffectiveHeight()) >
-                     area.spaceLeft())) {
+            if (breakBefore == BreakBefore.PAGE
+                    || ((spaceBefore + areaCurrent.getEffectiveHeight())
+                        > area.spaceLeft())) {
                 return new Status(Status.FORCE_PAGE_BREAK);
             }
 
@@ -186,7 +187,7 @@ public class InstreamForeignObject extends FObj {
         }
 
         if (area instanceof BlockArea) {
-            BlockArea ba = (BlockArea) area;
+            BlockArea ba = (BlockArea)area;
             LineArea la = ba.getCurrentLineArea();
             if (la == null) {
                 return new Status(Status.AREA_FULL_NONE);
@@ -206,31 +207,33 @@ public class InstreamForeignObject extends FObj {
 
         if (this.isInTableCell) {
             startIndent += forcedStartOffset;
-            /*	endIndent = areaCurrent.getEffectiveWidth() - forcedWidth -
-             			forcedStartOffset;*/
+            /*
+             * endIndent = areaCurrent.getEffectiveWidth() - forcedWidth -
+             * forcedStartOffset;
+             */
         }
 
         areaCurrent.setStartIndent(startIndent);
-        //	areaCurrent.setEndIndent(endIndent);
+        // areaCurrent.setEndIndent(endIndent);
 
         /* if there is a space-before */
         if (spaceBefore != 0) {
             /* add a display space */
-            //		area.addDisplaySpace(spaceBefore);
+            // area.addDisplaySpace(spaceBefore);
         }
 
         /* add the SVG area to the containing area */
-        //	area.addChild(areaCurrent);
+        // area.addChild(areaCurrent);
 
         areaCurrent.setPage(area.getPage());
 
         /* increase the height of the containing area accordingly */
-        //	area.increaseHeight(areaCurrent.getEffectiveHeight());
+        // area.increaseHeight(areaCurrent.getEffectiveHeight());
 
         /* if there is a space-after */
         if (spaceAfter != 0) {
             /* add a display space */
-            //		area.addDisplaySpace(spaceAfter);
+            // area.addDisplaySpace(spaceAfter);
         }
 
 
@@ -253,4 +256,5 @@ public class InstreamForeignObject extends FObj {
         /* return status */
         return new Status(Status.OK);
     }
+
 }

@@ -1,4 +1,5 @@
-/* $Id$
+/*
+ * $Id$
  * Copyright (C) 2001 The Apache Software Foundation. All rights reserved.
  * For details on use and redistribution please refer to the
  * LICENSE file included with these sources.
@@ -79,8 +80,7 @@ public class FOTreeBuilder extends DefaultHandler implements TreeBuilder {
      */
     public void addPropertyList(String namespaceURI, Hashtable list) {
         PropertyListBuilder plb;
-        plb = (PropertyListBuilder) this.propertylistTable.get(
-                namespaceURI);
+        plb = (PropertyListBuilder)this.propertylistTable.get(namespaceURI);
         if (plb == null) {
             plb = new PropertyListBuilder();
             plb.addList(list);
@@ -97,11 +97,10 @@ public class FOTreeBuilder extends DefaultHandler implements TreeBuilder {
      * @param localName local name of formatting object element
      * @param maker Maker for class representing formatting object
      */
-    public void addElementPropertyList(String namespaceURI,
-                                       String localName, Hashtable list) {
+    public void addElementPropertyList(String namespaceURI, String localName,
+                                       Hashtable list) {
         PropertyListBuilder plb;
-        plb = (PropertyListBuilder) this.propertylistTable.get(
-                namespaceURI);
+        plb = (PropertyListBuilder)this.propertylistTable.get(namespaceURI);
         if (plb == null) {
             plb = new PropertyListBuilder();
             plb.addElementList(localName, list);
@@ -111,53 +110,62 @@ public class FOTreeBuilder extends DefaultHandler implements TreeBuilder {
         }
     }
 
-    /** SAX Handler for characters */
+    /**
+     * SAX Handler for characters
+     */
     public void characters(char data[], int start, int length) {
         currentFObj.addCharacters(data, start, start + length);
     }
 
-    /** SAX Handler for the end of an element */
+    /**
+     * SAX Handler for the end of an element
+     */
     public void endElement(String uri, String localName, String rawName) {
         currentFObj.end();
-        currentFObj = (FObj) currentFObj.getParent();
+        currentFObj = (FObj)currentFObj.getParent();
     }
 
-    /** SAX Handler for the start of the document */
+    /**
+     * SAX Handler for the start of the document
+     */
     public void startDocument() {
-        rootFObj = null; // allows FOTreeBuilder to be reused
+        rootFObj = null;    // allows FOTreeBuilder to be reused
         MessageHandler.logln("building formatting object tree");
     }
 
-    /** SAX Handler for the start of an element */
-    public void startElement(String uri, String localName,
-                             String rawName, Attributes attlist) throws SAXException {
+    /**
+     * SAX Handler for the start of an element
+     */
+    public void startElement(String uri, String localName, String rawName,
+                             Attributes attlist) throws SAXException {
         /* the formatting object started */
         FObj fobj;
 
         /* the maker for the formatting object started */
         FObj.Maker fobjMaker;
 
-        //String fullName = mapName(rawName);
+        // String fullName = mapName(rawName);
         String fullName = uri + "^" + localName;
-        fobjMaker = (FObj.Maker) fobjTable.get(fullName);
+        fobjMaker = (FObj.Maker)fobjTable.get(fullName);
         PropertyListBuilder currentListBuilder =
-          (PropertyListBuilder) this.propertylistTable.get(uri);
+            (PropertyListBuilder)this.propertylistTable.get(uri);
 
         if (fobjMaker == null) {
             if (!this.unknownFOs.containsKey(fullName)) {
                 this.unknownFOs.put(fullName, "");
-                MessageHandler.errorln(
-                  "WARNING: Unknown formatting object " + fullName);
+                MessageHandler.errorln("WARNING: Unknown formatting object "
+                                       + fullName);
             }
-            fobjMaker = new FObjMixed.Maker(); // fall back
+            fobjMaker = new FObjMixed.Maker();    // fall back
         }
 
         try {
             PropertyList list = null;
             if (currentListBuilder != null) {
-                list = currentListBuilder.makeList(fullName, attlist,
-                                                   (currentFObj == null) ? null :
-                                                   currentFObj.properties, currentFObj);
+                list =
+                    currentListBuilder.makeList(fullName, attlist,
+                                                (currentFObj == null) ? null
+                                                : currentFObj.properties, currentFObj);
             } else {
                 list = currentFObj.properties;
             }
@@ -170,9 +178,9 @@ public class FOTreeBuilder extends DefaultHandler implements TreeBuilder {
             rootFObj = fobj;
             rootFObj.setBufferManager(this.bufferManager);
             if (!fobj.getName().equals("fo:root")) {
-                throw new SAXException(
-                  new FOPException("Root element must" +
-                                   " be root, not " + fobj.getName()));
+                throw new SAXException(new FOPException("Root element must"
+                                                        + " be root, not "
+                                                        + fobj.getName()));
             }
         } else {
             currentFObj.addChild(fobj);
@@ -189,7 +197,7 @@ public class FOTreeBuilder extends DefaultHandler implements TreeBuilder {
     public void format(AreaTree areaTree) throws FOPException {
         MessageHandler.logln("formatting FOs into areas");
         this.bufferManager.readComplete();
-        ((Root) this.rootFObj).format(areaTree);
+        ((Root)this.rootFObj).format(areaTree);
     }
 
     public void reset() {
@@ -204,4 +212,5 @@ public class FOTreeBuilder extends DefaultHandler implements TreeBuilder {
     public void setBufferManager(BufferManager bufferManager) {
         this.bufferManager = bufferManager;
     }
+
 }

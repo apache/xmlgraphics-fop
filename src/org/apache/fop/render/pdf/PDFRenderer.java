@@ -1,7 +1,8 @@
-/* $Id$
+/*
+ * $Id$
  * Copyright (C) 2001 The Apache Software Foundation. All rights reserved.
  * For details on use and redistribution please refer to the
- * LICENSE file included with these sources."
+ * LICENSE file included with these sources.
  */
 
 package org.apache.fop.render.pdf;
@@ -53,44 +54,66 @@ import java.awt.Dimension;
  */
 public class PDFRenderer extends PrintRenderer {
 
-    /** the PDF Document being created */
+    /**
+     * the PDF Document being created
+     */
     protected PDFDocument pdfDoc;
 
-    /** the /Resources object of the PDF document being created */
+    /**
+     * the /Resources object of the PDF document being created
+     */
     protected PDFResources pdfResources;
 
-    /** the current stream to add PDF commands to */
+    /**
+     * the current stream to add PDF commands to
+     */
     PDFStream currentStream;
 
-    /** the current annotation list to add annotations to */
+    /**
+     * the current annotation list to add annotations to
+     */
     PDFAnnotList currentAnnotList;
 
-    /** the current page to add annotations to */
+    /**
+     * the current page to add annotations to
+     */
     PDFPage currentPage;
 
     PDFColor currentColor;
 
-    /** true if a TJ command is left to be written */
+    /**
+     * true if a TJ command is left to be written
+     */
     boolean textOpen = false;
 
-    /** the previous Y coordinate of the last word written.
-      Used to decide if we can draw the next word on the same line. */
+    /**
+     * the previous Y coordinate of the last word written.
+     * Used to decide if we can draw the next word on the same line.
+     */
     int prevWordY = 0;
 
-    /** the previous X coordinate of the last word written.
-     used to calculate how much space between two words */
+    /**
+     * the previous X coordinate of the last word written.
+     * used to calculate how much space between two words
+     */
     int prevWordX = 0;
 
-    /** The  width of the previous word. Used to calculate space between */
+    /**
+     * The  width of the previous word. Used to calculate space between
+     */
     int prevWordWidth = 0;
 
     private PDFOutline rootOutline;
 
-    /** reusable word area string buffer to reduce memory usage */
+    /**
+     * reusable word area string buffer to reduce memory usage
+     */
     private StringBuffer _wordAreaPDF = new StringBuffer();
 
-	/** options */
-	protected Hashtable options;
+    /**
+     * options
+     */
+    protected Hashtable options;
 
     /**
      * create the PDF renderer
@@ -99,11 +122,13 @@ public class PDFRenderer extends PrintRenderer {
         this.pdfDoc = new PDFDocument();
     }
 
-	/** set up renderer options */
-	public void setOptions(Hashtable options) {
-		this.options = options;
-	}
-	
+    /**
+     * set up renderer options
+     */
+    public void setOptions(Hashtable options) {
+        this.options = options;
+    }
+
     /**
      * set the PDF document's producer
      *
@@ -127,13 +152,13 @@ public class PDFRenderer extends PrintRenderer {
         this.pdfDoc.setIDReferences(idReferences);
         Enumeration e = areaTree.getPages().elements();
         while (e.hasMoreElements()) {
-            this.renderPage((Page) e.nextElement());
+            this.renderPage((Page)e.nextElement());
         }
 
         if (!idReferences.isEveryIdValid()) {
-            //          throw new FOPException("The following id's were referenced but not found: "+idReferences.getInvalidIds()+"\n");
-            MessageHandler.errorln("WARNING: The following id's were referenced but not found: "+
-                                   idReferences.getInvalidIds() + "\n");
+            // throw new FOPException("The following id's were referenced but not found: "+idReferences.getInvalidIds()+"\n");
+            MessageHandler.errorln("WARNING: The following id's were referenced but not found: "
+                                   + idReferences.getInvalidIds() + "\n");
 
         }
         renderRootExtensions(areaTree);
@@ -160,10 +185,10 @@ public class PDFRenderer extends PrintRenderer {
                            PDFPathPaint stroke) {
         closeText();
 
-        currentStream.add("ET\nq\n" + stroke.getColorSpaceOut(false) +
-                          (x1 / 1000f) + " "+ (y1 / 1000f) + " m " +
-                          (x2 / 1000f) + " "+ (y2 / 1000f) + " l " +
-                          (th / 1000f) + " w S\n" + "Q\nBT\n");
+        currentStream.add("ET\nq\n" + stroke.getColorSpaceOut(false)
+                          + (x1 / 1000f) + " " + (y1 / 1000f) + " m "
+                          + (x2 / 1000f) + " " + (y2 / 1000f) + " l "
+                          + (th / 1000f) + " w S\n" + "Q\nBT\n");
     }
 
     /**
@@ -179,13 +204,14 @@ public class PDFRenderer extends PrintRenderer {
      * @param g the green component
      * @param b the blue component
      */
-    protected void addLine(int x1, int y1, int x2, int y2, int th,
-                           int rs, PDFPathPaint stroke) {
+    protected void addLine(int x1, int y1, int x2, int y2, int th, int rs,
+                           PDFPathPaint stroke) {
         closeText();
-        currentStream.add("ET\nq\n" + stroke.getColorSpaceOut(false) +
-                          setRuleStylePattern(rs) + (x1 / 1000f) + " "+
-                          (y1 / 1000f) + " m " + (x2 / 1000f) + " "+
-                          (y2 / 1000f) + " l " + (th / 1000f) + " w S\n" + "Q\nBT\n");
+        currentStream.add("ET\nq\n" + stroke.getColorSpaceOut(false)
+                          + setRuleStylePattern(rs) + (x1 / 1000f) + " "
+                          + (y1 / 1000f) + " m " + (x2 / 1000f) + " "
+                          + (y2 / 1000f) + " l " + (th / 1000f) + " w S\n"
+                          + "Q\nBT\n");
     }
 
     /**
@@ -197,12 +223,12 @@ public class PDFRenderer extends PrintRenderer {
      * @param h the height in millipoints
      * @param stroke the stroke color/gradient
      */
-    protected void addRect(int x, int y, int w, int h,
-                           PDFPathPaint stroke) {
+    protected void addRect(int x, int y, int w, int h, PDFPathPaint stroke) {
         closeText();
-        currentStream.add("ET\nq\n" + stroke.getColorSpaceOut(false) +
-                          (x / 1000f) + " " + (y / 1000f) + " " + (w / 1000f) +
-                          " " + (h / 1000f) + " re s\n" + "Q\nBT\n");
+        currentStream.add("ET\nq\n" + stroke.getColorSpaceOut(false)
+                          + (x / 1000f) + " " + (y / 1000f) + " "
+                          + (w / 1000f) + " " + (h / 1000f) + " re s\n"
+                          + "Q\nBT\n");
     }
 
     /**
@@ -215,31 +241,31 @@ public class PDFRenderer extends PrintRenderer {
      * @param fill the fill color/gradient
      * @param stroke the stroke color/gradient
      */
-    protected void addRect(int x, int y, int w, int h,
-                           PDFPathPaint stroke, PDFPathPaint fill) {
+    protected void addRect(int x, int y, int w, int h, PDFPathPaint stroke,
+                           PDFPathPaint fill) {
         closeText();
-	currentStream.add("ET\nq\n" + fill.getColorSpaceOut(true) +
-                          stroke.getColorSpaceOut(false) + (x / 1000f) + " " +
-                          (y / 1000f) + " " + (w / 1000f) + " " + (h / 1000f) +
-                          " re b\n" + "Q\nBT\n");
+        currentStream.add("ET\nq\n" + fill.getColorSpaceOut(true)
+                          + stroke.getColorSpaceOut(false) + (x / 1000f)
+                          + " " + (y / 1000f) + " " + (w / 1000f) + " "
+                          + (h / 1000f) + " re b\n" + "Q\nBT\n");
     }
 
     /**
-       * add a filled rectangle to the current stream
-       *
-       * @param x the x position of left edge in millipoints
-       * @param y the y position of top edge in millipoints
-       * @param w the width in millipoints
-       * @param h the height in millipoints
-       * @param fill the fill color/gradient
-       */
+     * add a filled rectangle to the current stream
+     *
+     * @param x the x position of left edge in millipoints
+     * @param y the y position of top edge in millipoints
+     * @param w the width in millipoints
+     * @param h the height in millipoints
+     * @param fill the fill color/gradient
+     */
     protected void addFilledRect(int x, int y, int w, int h,
-                            PDFPathPaint fill) {
+                                 PDFPathPaint fill) {
         closeText();
-	currentStream.add("ET\nq\n" + fill.getColorSpaceOut(true) +
-                          (x / 1000f) + " " +
-                          (y / 1000f) + " " + (w / 1000f) + " " + (h / 1000f) +
-                          " re f\n" + "Q\nBT\n");
+        currentStream.add("ET\nq\n" + fill.getColorSpaceOut(true)
+                          + (x / 1000f) + " " + (y / 1000f) + " "
+                          + (w / 1000f) + " " + (h / 1000f) + " re f\n"
+                          + "Q\nBT\n");
     }
 
     /**
@@ -261,57 +287,57 @@ public class PDFRenderer extends PrintRenderer {
             try {
                 closeText();
 
-                SVGDocument svg =
-                  ((SVGImage) img).getSVGDocument();
+                SVGDocument svg = ((SVGImage)img).getSVGDocument();
                 currentStream.add("ET\nq\n");
-                renderSVGDocument(svg, (int) x, (int) y, area.getFontState());
+                renderSVGDocument(svg, (int)x, (int)y, area.getFontState());
                 currentStream.add("Q\nBT\n");
-            } catch (FopImageException e) {
-            }
+            } catch (FopImageException e) {}
         } else {
             int xObjectNum = this.pdfDoc.addImage(img);
             closeText();
 
-            currentStream.add("ET\nq\n" + (((float) w) / 1000f) +
-                              " 0 0 " + (((float) h) / 1000f) + " " +
-                              (((float) x) / 1000f) + " " +
-                              (((float)(y - h)) / 1000f) + " cm\n" + "/Im" +
-                              xObjectNum + " Do\nQ\nBT\n");
+            currentStream.add("ET\nq\n" + (((float)w) / 1000f) + " 0 0 "
+                              + (((float)h) / 1000f) + " "
+                              + (((float)x) / 1000f) + " "
+                              + (((float)(y - h)) / 1000f) + " cm\n" + "/Im"
+                              + xObjectNum + " Do\nQ\nBT\n");
         }
-	this.currentXPosition += area.getContentWidth();
+        this.currentXPosition += area.getContentWidth();
     }
 
-    /** render a foreign object area */
+    /**
+     * render a foreign object area
+     */
     public void renderForeignObjectArea(ForeignObjectArea area) {
         // if necessary need to scale and align the content
         this.currentXPosition = this.currentXPosition + area.getXOffset();
         this.currentYPosition = this.currentYPosition;
         switch (area.getAlign()) {
-            case TextAlign.START:
-                break;
-            case TextAlign.END:
-                break;
-            case TextAlign.CENTER:
-            case TextAlign.JUSTIFY:
-                break;
+        case TextAlign.START:
+            break;
+        case TextAlign.END:
+            break;
+        case TextAlign.CENTER:
+        case TextAlign.JUSTIFY:
+            break;
         }
         switch (area.getVerticalAlign()) {
-            case VerticalAlign.BASELINE:
-                break;
-            case VerticalAlign.MIDDLE:
-                break;
-            case VerticalAlign.SUB:
-                break;
-            case VerticalAlign.SUPER:
-                break;
-            case VerticalAlign.TEXT_TOP:
-                break;
-            case VerticalAlign.TEXT_BOTTOM:
-                break;
-            case VerticalAlign.TOP:
-                break;
-            case VerticalAlign.BOTTOM:
-                break;
+        case VerticalAlign.BASELINE:
+            break;
+        case VerticalAlign.MIDDLE:
+            break;
+        case VerticalAlign.SUB:
+            break;
+        case VerticalAlign.SUPER:
+            break;
+        case VerticalAlign.TEXT_TOP:
+            break;
+        case VerticalAlign.TEXT_BOTTOM:
+            break;
+        case VerticalAlign.TOP:
+            break;
+        case VerticalAlign.BOTTOM:
+            break;
         }
         closeText();
 
@@ -320,28 +346,28 @@ public class PDFRenderer extends PrintRenderer {
         // align and scale
         currentStream.add("q\n");
         switch (area.scalingMethod()) {
-            case Scaling.UNIFORM:
-                break;
-            case Scaling.NON_UNIFORM:
-                break;
+        case Scaling.UNIFORM:
+            break;
+        case Scaling.NON_UNIFORM:
+            break;
         }
         // if the overflow is auto (default), scroll or visible
         // then the contents should not be clipped, since this
         // is considered a printing medium.
         switch (area.getOverflow()) {
-            case Overflow.VISIBLE:
-            case Overflow.SCROLL:
-            case Overflow.AUTO:
-                break;
-            case Overflow.HIDDEN:
-                break;
+        case Overflow.VISIBLE:
+        case Overflow.SCROLL:
+        case Overflow.AUTO:
+            break;
+        case Overflow.HIDDEN:
+            break;
         }
 
         area.getObject().render(this);
         currentStream.add("Q\n");
         currentStream.add("BT\n");
         this.currentXPosition += area.getEffectiveWidth();
-        //        this.currentYPosition -= area.getEffectiveHeight();
+        // this.currentYPosition -= area.getEffectiveHeight();
     }
 
     /**
@@ -356,7 +382,8 @@ public class PDFRenderer extends PrintRenderer {
         renderSVGDocument(area.getSVGDocument(), x, y, area.getFontState());
     }
 
-    protected void renderSVGDocument(Document doc, int x, int y, FontState fs) {
+    protected void renderSVGDocument(Document doc, int x, int y,
+                                     FontState fs) {
         SVGSVGElement svg = ((SVGDocument)doc).getRootElement();
         int w = (int)(svg.getWidth().getBaseVal().getValue() * 1000);
         int h = (int)(svg.getHeight().getBaseVal().getValue() * 1000);
@@ -372,8 +399,8 @@ public class PDFRenderer extends PrintRenderer {
         if (w != 0 && h != 0) {
             currentStream.add(x / 1000f + " " + y / 1000f + " m\n");
             currentStream.add((x + w) / 1000f + " " + y / 1000f + " l\n");
-            currentStream.add((x + w) / 1000f + " " + (y - h) / 1000f +
-                              " l\n");
+            currentStream.add((x + w) / 1000f + " " + (y - h) / 1000f
+                              + " l\n");
             currentStream.add(x / 1000f + " " + (y - h) / 1000f + " l\n");
             currentStream.add("h\n");
             currentStream.add("W\n");
@@ -382,8 +409,8 @@ public class PDFRenderer extends PrintRenderer {
         // transform so that the coordinates (0,0) is from the top left
         // and positive is down and to the right. (0,0) is where the
         // viewBox puts it.
-        currentStream.add(sx + " 0 0 " + sy + " " + xOffset / 1000f +
-                          " " + yOffset / 1000f + " cm\n");
+        currentStream.add(sx + " 0 0 " + sy + " " + xOffset / 1000f + " "
+                          + yOffset / 1000f + " cm\n");
 
 
         UserAgent userAgent = new MUserAgent(new AffineTransform());
@@ -394,12 +421,12 @@ public class PDFRenderer extends PrintRenderer {
         PDFAElementBridge aBridge = new PDFAElementBridge();
         ctx.putBridge(aBridge);
         GraphicsNode root;
-        PDFGraphics2D graphics =
-          new PDFGraphics2D(true, fs, pdfDoc,
-                            currentFontName, currentFontSize, currentXPosition,
-                            currentYPosition);
-        graphics.setGraphicContext(
-          new org.apache.batik.ext.awt.g2d.GraphicContext());
+        PDFGraphics2D graphics = new PDFGraphics2D(true, fs, pdfDoc,
+                                                   currentFontName,
+                                                   currentFontSize,
+                                                   currentXPosition,
+                                                   currentYPosition);
+        graphics.setGraphicContext(new org.apache.batik.ext.awt.g2d.GraphicContext());
         graphics.setRenderingHints(rc.getRenderingHints());
         aBridge.setPDFGraphics2D(graphics);
         try {
@@ -407,7 +434,8 @@ public class PDFRenderer extends PrintRenderer {
             root.paint(graphics, rc);
             currentStream.add(graphics.getString());
         } catch (Exception e) {
-            MessageHandler.errorln("Error: svg graphic could not be rendered: " + e.getMessage());
+            MessageHandler.errorln("Error: svg graphic could not be rendered: "
+                                   + e.getMessage());
         }
 
         currentStream.add("Q\n");
@@ -424,22 +452,23 @@ public class PDFRenderer extends PrintRenderer {
                       RenderingHints.VALUE_INTERPOLATION_BILINEAR);
 
             FontRenderContext fontRenderContext =
-              new FontRenderContext(new AffineTransform(), true,
-                                    true);
+                new FontRenderContext(new AffineTransform(), true, true);
 
             TextPainter textPainter = null;
-            Boolean bl = org.apache.fop.configuration.Configuration.getBooleanValue("strokeSVGText");
-            if(bl == null || bl.booleanValue()) {
+            Boolean bl =
+                org.apache.fop.configuration.Configuration.getBooleanValue("strokeSVGText");
+            if (bl == null || bl.booleanValue()) {
                 textPainter = new StrokingTextPainter();
             } else {
                 textPainter = new PDFTextPainter(fs);
             }
             GraphicsNodeRableFactory gnrFactory =
-              new ConcreteGraphicsNodeRableFactory();
+                new ConcreteGraphicsNodeRableFactory();
 
-            nodeRenderContext = new GraphicsNodeRenderContext(
-                                  new AffineTransform(), null, hints,
-                                  fontRenderContext, textPainter, gnrFactory);
+            nodeRenderContext =
+                new GraphicsNodeRenderContext(new AffineTransform(), null,
+                                              hints, fontRenderContext,
+                                              textPainter, gnrFactory);
             nodeRenderContext.setTextPainter(textPainter);
         }
 
@@ -460,7 +489,7 @@ public class PDFRenderer extends PrintRenderer {
             boolean kerningAvailable = false;
 
             kerning = area.getFontState().getKerning();
-            if (kerning != null && !kerning.isEmpty()) {
+            if (kerning != null &&!kerning.isEmpty()) {
                 kerningAvailable = true;
             }
 
@@ -469,16 +498,16 @@ public class PDFRenderer extends PrintRenderer {
 
             // This assumes that *all* CIDFonts use a /ToUnicode mapping
             boolean useMultiByte = false;
-            Font f = (Font) area.getFontState().getFontInfo().getFonts().
-                     get(name);
+            Font f =
+                (Font)area.getFontState().getFontInfo().getFonts().get(name);
             if (f instanceof CIDFont)
                 useMultiByte = true;
-            //String startText = useMultiByte ? "<FEFF" : "(";
+                // String startText = useMultiByte ? "<FEFF" : "(";
             String startText = useMultiByte ? "<" : "(";
             String endText = useMultiByte ? "> " : ") ";
 
-            if ((!name.equals(this.currentFontName)) ||
-                    (size != this.currentFontSize)) {
+            if ((!name.equals(this.currentFontName))
+                    || (size != this.currentFontSize)) {
                 closeText();
 
                 this.currentFontName = name;
@@ -488,16 +517,16 @@ public class PDFRenderer extends PrintRenderer {
 
             PDFColor areaColor = null;
             if (this.currentFill instanceof PDFColor) {
-                areaColor = (PDFColor) this.currentFill;
+                areaColor = (PDFColor)this.currentFill;
             }
 
-            if (areaColor == null ||
-                    areaColor.red() != (double) area.getRed() ||
-                    areaColor.green() != (double) area.getGreen() ||
-                    areaColor.blue() != (double) area.getBlue()) {
+            if (areaColor == null || areaColor.red() != (double)area.getRed()
+                    || areaColor.green() != (double)area.getGreen()
+                    || areaColor.blue() != (double)area.getBlue()) {
 
-                areaColor = new PDFColor((double) area.getRed(),
-                                         (double) area.getGreen(), (double) area.getBlue());
+                areaColor = new PDFColor((double)area.getRed(),
+                                         (double)area.getGreen(),
+                                         (double)area.getBlue());
 
 
                 closeText();
@@ -515,22 +544,21 @@ public class PDFRenderer extends PrintRenderer {
             if (!textOpen || bl != prevWordY) {
                 closeText();
 
-                pdf.append("1 0 0 1 " +(rx / 1000f) + " " +
-                           (bl / 1000f) + " Tm [" + startText);
+                pdf.append("1 0 0 1 " + (rx / 1000f) + " " + (bl / 1000f)
+                           + " Tm [" + startText);
                 prevWordY = bl;
                 textOpen = true;
             } else {
                 // express the space between words in thousandths of an em
                 int space = prevWordX - rx + prevWordWidth;
-                float emDiff =
-                  (float) space / (float) currentFontSize * 1000f;
+                float emDiff = (float)space / (float)currentFontSize * 1000f;
                 // this prevents a problem in Acrobat Reader where large
                 // numbers cause text to disappear or default to a limit
-                if(emDiff < -33000) {
+                if (emDiff < -33000) {
                     closeText();
 
-                    pdf.append("1 0 0 1 " +(rx / 1000f) + " " +
-                               (bl / 1000f) + " Tm [" + startText);
+                    pdf.append("1 0 0 1 " + (rx / 1000f) + " " + (bl / 1000f)
+                               + " Tm [" + startText);
                     textOpen = true;
                 } else {
                     pdf.append(Float.toString(emDiff));
@@ -543,7 +571,8 @@ public class PDFRenderer extends PrintRenderer {
 
 
             String s;
-            if (area.getPageNumberID() != null) { // this text is a page number, so resolve it
+            if (area.getPageNumberID()
+                    != null) {    // this text is a page number, so resolve it
                 s = idReferences.getPageNumber(area.getPageNumberID());
                 if (s == null) {
                     s = "";
@@ -560,15 +589,15 @@ public class PDFRenderer extends PrintRenderer {
                 if (!useMultiByte) {
                     if (ch > 127) {
                         pdf.append("\\");
-                        pdf.append(Integer.toOctalString((int) ch));
+                        pdf.append(Integer.toOctalString((int)ch));
 
                     } else {
                         switch (ch) {
-                            case '(':
-                            case ')':
-                            case '\\':
-                                pdf.append("\\");
-                                break;
+                        case '(':
+                        case ')':
+                        case '\\':
+                            pdf.append("\\");
+                            break;
                         }
                         pdf.append(ch);
                     }
@@ -577,8 +606,8 @@ public class PDFRenderer extends PrintRenderer {
                 }
 
                 if (kerningAvailable && (i + 1) < l) {
-                    addKerning(pdf, (new Integer((int) ch)),
-                               (new Integer((int) area.getFontState().mapChar(s.charAt(i + 1)))),
+                    addKerning(pdf, (new Integer((int)ch)),
+                               (new Integer((int)area.getFontState().mapChar(s.charAt(i + 1)))),
                                kerning, startText, endText);
                 }
 
@@ -602,19 +631,21 @@ public class PDFRenderer extends PrintRenderer {
 
         byte[] uniBytes = null;
         try {
-            char[] a = {c};
+            char[] a = {
+                c
+            };
             uniBytes = new String(a).getBytes("UnicodeBigUnmarked");
         } catch (Exception e) {
             // This should never fail
         }
 
         for (int i = 0; i < uniBytes.length; i++) {
-            int b = (uniBytes[i] < 0) ? (int)(256 + uniBytes[i]) :
-                    (int) uniBytes[i];
+            int b = (uniBytes[i] < 0) ? (int)(256 + uniBytes[i])
+                    : (int)uniBytes[i];
 
             String hexString = Integer.toHexString(b);
             if (hexString.length() == 1)
-                buf = buf.append("0"+hexString);
+                buf = buf.append("0" + hexString);
             else
                 buf = buf.append(hexString);
         }
@@ -624,7 +655,8 @@ public class PDFRenderer extends PrintRenderer {
     }
 
 
-    /** Checks to see if we have some text rendering commands open
+    /**
+     * Checks to see if we have some text rendering commands open
      * still and writes out the TJ command to the stream if we do
      */
     private void closeText() {
@@ -637,14 +669,14 @@ public class PDFRenderer extends PrintRenderer {
     }
 
     private void addKerning(StringBuffer buf, Integer ch1, Integer ch2,
-                            Hashtable kerning, String startText, String endText) {
-        Hashtable kernPair = (Hashtable) kerning.get(ch1);
+                            Hashtable kerning, String startText,
+                            String endText) {
+        Hashtable kernPair = (Hashtable)kerning.get(ch1);
 
         if (kernPair != null) {
-            Integer width = (Integer) kernPair.get(ch2);
+            Integer width = (Integer)kernPair.get(ch2);
             if (width != null) {
-                buf.append(endText).append(-
-                                           (width.intValue())).append(' ').append(startText);
+                buf.append(endText).append(-(width.intValue())).append(' ').append(startText);
             }
         }
     }
@@ -692,7 +724,8 @@ public class PDFRenderer extends PrintRenderer {
         currentStream.add("ET\n");
 
         currentPage = this.pdfDoc.makePage(this.pdfResources, currentStream,
-                                           page.getWidth() / 1000, page.getHeight() / 1000, page);
+                                           page.getWidth() / 1000,
+                                           page.getHeight() / 1000, page);
 
         if (page.hasLinks()) {
             currentAnnotList = this.pdfDoc.makeAnnotList();
@@ -700,18 +733,16 @@ public class PDFRenderer extends PrintRenderer {
 
             Enumeration e = page.getLinkSets().elements();
             while (e.hasMoreElements()) {
-                LinkSet linkSet = (LinkSet) e.nextElement();
+                LinkSet linkSet = (LinkSet)e.nextElement();
 
                 linkSet.align();
                 String dest = linkSet.getDest();
                 int linkType = linkSet.getLinkType();
                 Enumeration f = linkSet.getRects().elements();
                 while (f.hasMoreElements()) {
-                    LinkedRectangle lrect =
-                      (LinkedRectangle) f.nextElement();
-                    currentAnnotList.addLink(
-                      this.pdfDoc.makeLink(lrect.getRectangle(),
-                                           dest, linkType));
+                    LinkedRectangle lrect = (LinkedRectangle)f.nextElement();
+                    currentAnnotList.addLink(this.pdfDoc.makeLink(lrect.getRectangle(),
+                            dest, linkType));
                 }
             }
         } else {
@@ -726,23 +757,23 @@ public class PDFRenderer extends PrintRenderer {
     /**
      * defines a string containing dashArray and dashPhase for the rule style
      */
-    private String setRuleStylePattern (int style) {
+    private String setRuleStylePattern(int style) {
         String rs = "";
         switch (style) {
-            case org.apache.fop.fo.properties.RuleStyle.SOLID:
-                rs = "[] 0 d ";
-                break;
-            case org.apache.fop.fo.properties.RuleStyle.DASHED:
-                rs = "[3 3] 0 d ";
-                break;
-            case org.apache.fop.fo.properties.RuleStyle.DOTTED:
-                rs = "[1 3] 0 d ";
-                break;
-            case org.apache.fop.fo.properties.RuleStyle.DOUBLE:
-                rs = "[] 0 d ";
-                break;
-            default:
-                rs = "[] 0 d ";
+        case org.apache.fop.fo.properties.RuleStyle.SOLID:
+            rs = "[] 0 d ";
+            break;
+        case org.apache.fop.fo.properties.RuleStyle.DASHED:
+            rs = "[3 3] 0 d ";
+            break;
+        case org.apache.fop.fo.properties.RuleStyle.DOTTED:
+            rs = "[1 3] 0 d ";
+            break;
+        case org.apache.fop.fo.properties.RuleStyle.DOUBLE:
+            rs = "[] 0 d ";
+            break;
+        default:
+            rs = "[] 0 d ";
         }
         return rs;
     }
@@ -752,9 +783,9 @@ public class PDFRenderer extends PrintRenderer {
         if (v != null) {
             Enumeration e = v.elements();
             while (e.hasMoreElements()) {
-                ExtensionObj ext = (ExtensionObj) e.nextElement();
+                ExtensionObj ext = (ExtensionObj)e.nextElement();
                 if (ext instanceof Outline) {
-                    renderOutline((Outline) ext);
+                    renderOutline((Outline)ext);
                 }
             }
         }
@@ -768,18 +799,20 @@ public class PDFRenderer extends PrintRenderer {
         PDFOutline pdfOutline = null;
         Outline parent = outline.getParentOutline();
         if (parent == null) {
-            pdfOutline = this.pdfDoc.makeOutline(rootOutline,
-                                                 outline.getLabel().toString(),
-                                                 outline.getInternalDestination());
+            pdfOutline =
+                this.pdfDoc.makeOutline(rootOutline,
+                                        outline.getLabel().toString(),
+                                        outline.getInternalDestination());
         } else {
             PDFOutline pdfParentOutline =
-              (PDFOutline) parent.getRendererObject();
+                (PDFOutline)parent.getRendererObject();
             if (pdfParentOutline == null) {
                 MessageHandler.errorln("Error: pdfParentOutline is null");
             } else {
-                pdfOutline = this.pdfDoc.makeOutline(pdfParentOutline,
-                                                     outline.getLabel().toString(),
-                                                     outline.getInternalDestination());
+                pdfOutline =
+                    this.pdfDoc.makeOutline(pdfParentOutline,
+                                            outline.getLabel().toString(),
+                                            outline.getInternalDestination());
             }
 
         }
@@ -789,12 +822,13 @@ public class PDFRenderer extends PrintRenderer {
         Vector v = outline.getOutlines();
         Enumeration e = v.elements();
         while (e.hasMoreElements()) {
-            renderOutline((Outline) e.nextElement());
+            renderOutline((Outline)e.nextElement());
         }
     }
 
     protected class MUserAgent implements UserAgent {
         AffineTransform currentTransform = null;
+
         /**
          * Creates a new SVGUserAgent.
          */
@@ -828,14 +862,14 @@ public class PDFRenderer extends PrintRenderer {
          * Returns a customized the pixel to mm factor.
          */
         public float getPixelToMM() {
-            return 0.264583333333333333333f; // 72 dpi
+            return 0.264583333333333333333f;    // 72 dpi
         }
 
         /**
          * Returns the language settings.
          */
         public String getLanguages() {
-            return "en";//userLanguages;
+            return "en";    // userLanguages;
         }
 
         /**
@@ -843,7 +877,7 @@ public class PDFRenderer extends PrintRenderer {
          * @return null if no user style sheet was specified.
          */
         public String getUserStyleSheetURI() {
-            return null;//userStyleSheetURI;
+            return null;    // userStyleSheetURI;
         }
 
         /**
@@ -859,15 +893,14 @@ public class PDFRenderer extends PrintRenderer {
          * @param uri The document URI.
          */
         public void openLink(SVGAElement elt) {
-            //application.openLink(uri);
+            // application.openLink(uri);
         }
 
         public Point getClientAreaLocationOnScreen() {
             return new Point(0, 0);
         }
 
-        public void setSVGCursor(java.awt.Cursor cursor) {
-        }
+        public void setSVGCursor(java.awt.Cursor cursor) {}
 
         public AffineTransform getTransform() {
             return currentTransform;
@@ -889,7 +922,7 @@ public class PDFRenderer extends PrintRenderer {
             return false;
         }
 
-        public void registerExtension(BridgeExtension be) {
-        }
+        public void registerExtension(BridgeExtension be) {}
+
     }
 }

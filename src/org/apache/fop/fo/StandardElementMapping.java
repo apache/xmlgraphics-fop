@@ -1,4 +1,5 @@
-/*-- $Id$ --
+/*
+ * $Id$
  * Copyright (C) 2001 The Apache Software Foundation. All rights reserved.
  * For details on use and redistribution please refer to the
  * LICENSE file included with these sources.
@@ -24,8 +25,7 @@ public class StandardElementMapping implements ElementMapping {
         builder.addMapping(uri, "declarations", Declarations.maker());
         builder.addMapping(uri, "color-profile", ColorProfile.maker());
         builder.addMapping(uri, "page-sequence", PageSequence.maker());
-        builder.addMapping(uri, "layout-master-set",
-                           LayoutMasterSet.maker());
+        builder.addMapping(uri, "layout-master-set", LayoutMasterSet.maker());
         builder.addMapping(uri, "page-sequence-master",
                            PageSequenceMaster.maker());
         builder.addMapping(uri, "single-page-master-reference",
@@ -55,9 +55,9 @@ public class StandardElementMapping implements ElementMapping {
         builder.addMapping(uri, "bidi-override", BidiOverride.maker());
         builder.addMapping(uri, "character",
                            org.apache.fop.fo.flow.Character.maker());
-        builder.addMapping(uri, "initial-property-set", InitialPropertySet.maker());
-        builder.addMapping(uri, "external-graphic",
-                           ExternalGraphic.maker());
+        builder.addMapping(uri, "initial-property-set",
+                           InitialPropertySet.maker());
+        builder.addMapping(uri, "external-graphic", ExternalGraphic.maker());
         builder.addMapping(uri, "instream-foreign-object",
                            InstreamForeignObject.maker());
         builder.addMapping(uri, "inline", Inline.maker());
@@ -90,10 +90,12 @@ public class StandardElementMapping implements ElementMapping {
         builder.addMapping(uri, "multi-case", MultiCase.maker());
         builder.addMapping(uri, "multi-toggle", MultiToggle.maker());
         builder.addMapping(uri, "multi-properties", MultiProperties.maker());
-        builder.addMapping(uri, "multi-property-set", MultiPropertySet.maker());
+        builder.addMapping(uri, "multi-property-set",
+                           MultiPropertySet.maker());
 
         // Out-of-Line Formatting Objects
-        builder.addMapping(uri, "float", org.apache.fop.fo.flow.Float.maker());
+        builder.addMapping(uri, "float",
+                           org.apache.fop.fo.flow.Float.maker());
         builder.addMapping(uri, "footnote", Footnote.maker());
         builder.addMapping(uri, "footnote-body", FootnoteBody.maker());
 
@@ -102,15 +104,15 @@ public class StandardElementMapping implements ElementMapping {
         builder.addMapping(uri, "marker", Marker.maker());
         builder.addMapping(uri, "retrieve-marker", RetrieveMarker.maker());
 
-        builder.addPropertyList(uri,
-                                FOPropertyMapping.getGenericMappings());
+        builder.addPropertyList(uri, FOPropertyMapping.getGenericMappings());
         /* Add any element mappings */
         for (Enumeration e = FOPropertyMapping.getElementMappings();
-                e.hasMoreElements();) {
-            String elem = (String) e.nextElement();
+                e.hasMoreElements(); ) {
+            String elem = (String)e.nextElement();
             builder.addElementPropertyList(uri, elem,
                                            FOPropertyMapping.getElementMapping(elem));
         }
 
     }
+
 }

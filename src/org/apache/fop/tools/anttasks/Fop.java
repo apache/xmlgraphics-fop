@@ -1,4 +1,5 @@
-/* $Id$
+/*
+ * $Id$
  * Copyright (C) 2001 The Apache Software Foundation. All rights reserved.
  * For details on use and redistribution please refer to the
  * LICENSE file included with these sources.
@@ -34,10 +35,10 @@ import org.apache.fop.configuration.Configuration;
  * Wrapper for Fop which allows it to be accessed from within an Ant task.
  * Accepts the inputs:
  * <ul>
- *   <li>fofile -> formatting objects file to be transformed</li>
- *   <li>pdffile -> output filename</li>
- *   <li>baseDir -> directory to work from</li>
- *   <li>messagelevel -> (info | verbose | debug) level to output non-error messages</li>
+ * <li>fofile -> formatting objects file to be transformed</li>
+ * <li>pdffile -> output filename</li>
+ * <li>baseDir -> directory to work from</li>
+ * <li>messagelevel -> (info | verbose | debug) level to output non-error messages</li>
  * </ul>
  */
 public class Fop extends Task {
@@ -96,8 +97,8 @@ public class Fop extends Task {
         } else if (messageLevel.equalsIgnoreCase("debug")) {
             messageType = Project.MSG_DEBUG;
         } else {
-            log("messagelevel set to unknown value \"" + messageLevel +
-                "\"", Project.MSG_ERR);
+            log("messagelevel set to unknown value \"" + messageLevel + "\"",
+                Project.MSG_ERR);
             throw new BuildException("unknown messagelevel");
         }
     }
@@ -128,7 +129,7 @@ public class Fop extends Task {
     /**
      * Starts execution of this task
      */
-    public void execute () throws BuildException {
+    public void execute() throws BuildException {
         try {
             Starter starter = new FOPTaskStarter(this);
             starter.run();
@@ -137,6 +138,7 @@ public class Fop extends Task {
         }
 
     }
+
 }
 
 class FOPTaskStarter extends Starter {
@@ -150,10 +152,11 @@ class FOPTaskStarter extends Starter {
         logger.setMessageLevel(task.getMessageType());
     }
 
-    public void run () throws FOPException {
+    public void run() throws FOPException {
         try {
-            //Configuration.put("baseDir", task.getBasedir().toURL().toExternalForm());
-            Configuration.put("baseDir", task.getFofile().getParentFile().toURL().toExternalForm());
+            // Configuration.put("baseDir", task.getBasedir().toURL().toExternalForm());
+            Configuration.put("baseDir",
+                              task.getFofile().getParentFile().toURL().toExternalForm());
         } catch (Exception e) {
             task.log("Error setting base directory", Project.MSG_DEBUG);
         }
@@ -170,14 +173,13 @@ class FOPTaskStarter extends Starter {
             throw new BuildException(ex);
         }
 
-        task.log("Using base directory: " +
-                 Configuration.getValue("baseDir"), Project.MSG_DEBUG);
-        task.log(task.getFofile().getName() + " -> " +
-                 task.getPdffile().getName(), Project.MSG_INFO);
+        task.log("Using base directory: "
+                 + Configuration.getValue("baseDir"), Project.MSG_DEBUG);
+        task.log(task.getFofile().getName() + " -> "
+                 + task.getPdffile().getName(), Project.MSG_INFO);
 
         try {
-            Driver driver =
-              new Driver(inputHandler.getInputSource(), pdfOut);
+            Driver driver = new Driver(inputHandler.getInputSource(), pdfOut);
             driver.setRenderer(Driver.RENDER_PDF);
             driver.setXMLReader(parser);
             driver.run();
@@ -187,6 +189,7 @@ class FOPTaskStarter extends Starter {
         }
         logger.die();
     }
+
 }
 
 class MessageLogger implements MessageListener {
@@ -245,8 +248,7 @@ class MessageLogger implements MessageListener {
         }
 
         for (int i = 0; !flushed && i < breakChars.length(); i++) {
-            if (event.getMessage().lastIndexOf(breakChars.charAt(i)) !=
-                    -1) {
+            if (event.getMessage().lastIndexOf(breakChars.charAt(i)) != -1) {
                 flush();
                 flushed = true;
             }
@@ -254,8 +256,8 @@ class MessageLogger implements MessageListener {
     }
 
     public void flush() {
-        StringTokenizer output =
-          new StringTokenizer(cache.toString(), "\n", false);
+        StringTokenizer output = new StringTokenizer(cache.toString(), "\n",
+                false);
         while (output.hasMoreElements()) {
             task.log(output.nextElement().toString(), lastMessageLevel);
         }
@@ -269,4 +271,5 @@ class MessageLogger implements MessageListener {
         // multiple <fop> tags in a buildfile
         handler.removeListener(this);
     }
+
 }

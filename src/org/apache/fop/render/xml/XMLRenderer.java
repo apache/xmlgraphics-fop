@@ -1,7 +1,8 @@
-/* $Id$
+/*
+ * $Id$
  * Copyright (C) 2001 The Apache Software Foundation. All rights reserved.
  * For details on use and redistribution please refer to the
- * LICENSE file included with these sources."
+ * LICENSE file included with these sources.
  */
 
 package org.apache.fop.render.xml;
@@ -28,22 +29,31 @@ import java.util.Hashtable;
  */
 public class XMLRenderer implements Renderer {
 
-    /** indentation to use for pretty-printing the XML */
+    /**
+     * indentation to use for pretty-printing the XML
+     */
     protected int indent = 0;
 
-    /** the application producing the XML */
+    /**
+     * the application producing the XML
+     */
     protected String producer;
 
-    /** the writer used to output the XML */
+    /**
+     * the writer used to output the XML
+     */
     protected PrintWriter writer;
 
-    /** options */
+    /**
+     * options
+     */
     protected Hashtable options;
 
-    public XMLRenderer() {
-    }
+    public XMLRenderer() {}
 
-    /** set up renderer options */
+    /**
+     * set up renderer options
+     */
     public void setOptions(Hashtable options) {
         this.options = options;
     }
@@ -67,12 +77,12 @@ public class XMLRenderer implements Renderer {
                        OutputStream stream) throws IOException {
         MessageHandler.logln("rendering areas to XML");
         this.writer = new PrintWriter(stream);
-        this.writer.write( "<?xml version=\"1.0\"?>\n<!-- produced by " +
-                           this.producer + " -->\n");
+        this.writer.write("<?xml version=\"1.0\"?>\n<!-- produced by "
+                          + this.producer + " -->\n");
         writeStartTag("<AreaTree>");
         Enumeration e = areaTree.getPages().elements();
         while (e.hasMoreElements()) {
-            this.renderPage((Page) e.nextElement());
+            this.renderPage((Page)e.nextElement());
         }
         writeEndTag("</AreaTree>");
         this.writer.flush();
@@ -152,7 +162,7 @@ public class XMLRenderer implements Renderer {
         writeStartTag("<AreaContainer name=\"" + area.getAreaName() + "\">");
         Enumeration e = area.getChildren().elements();
         while (e.hasMoreElements()) {
-            Box b = (Box) e.nextElement();
+            Box b = (Box)e.nextElement();
             b.render(this);
         }
         writeEndTag("</AreaContainer>");
@@ -167,7 +177,7 @@ public class XMLRenderer implements Renderer {
         writeStartTag("<BodyAreaContainer>");
         Enumeration e = area.getChildren().elements();
         while (e.hasMoreElements()) {
-            Box b = (Box) e.nextElement();
+            Box b = (Box)e.nextElement();
             b.render(this);
         }
         writeEndTag("</BodyAreaContainer>");
@@ -182,7 +192,7 @@ public class XMLRenderer implements Renderer {
         writeStartTag("<SpanArea>");
         Enumeration e = area.getChildren().elements();
         while (e.hasMoreElements()) {
-            Box b = (Box) e.nextElement();
+            Box b = (Box)e.nextElement();
             b.render(this);
         }
         writeEndTag("</SpanArea>");
@@ -194,80 +204,83 @@ public class XMLRenderer implements Renderer {
      * @param area the block area to render
      */
     public void renderBlockArea(BlockArea area) {
-		StringBuffer baText = new StringBuffer();
-		baText.append("<BlockArea start-indent=\"" + area.getStartIndent() + "\"");
-		baText.append(" end-indent=\"" + area.getEndIndent() + "\"");
-		baText.append("\nis-first=\"" + area.isFirst() + "\"");
-		baText.append(" is-last=\"" + area.isLast() + "\"");
-		if (null != area.getGeneratedBy())
-			baText.append(" generated-by=\"" + area.getGeneratedBy().getName() +
-			"//" + area.getGeneratedBy() + "\"");
-		baText.append(">");
+        StringBuffer baText = new StringBuffer();
+        baText.append("<BlockArea start-indent=\"" + area.getStartIndent()
+                      + "\"");
+        baText.append(" end-indent=\"" + area.getEndIndent() + "\"");
+        baText.append("\nis-first=\"" + area.isFirst() + "\"");
+        baText.append(" is-last=\"" + area.isLast() + "\"");
+        if (null != area.getGeneratedBy())
+            baText.append(" generated-by=\""
+                          + area.getGeneratedBy().getName() + "//"
+                          + area.getGeneratedBy() + "\"");
+        baText.append(">");
         writeStartTag(baText.toString());
-		
-		// write out marker info
-		java.util.Vector markers = area.getMarkers();
-		if (!markers.isEmpty()) {
-			writeStartTag("<Markers>");
-			for (int m = 0; m < markers.size(); m++) {
-				org.apache.fop.fo.flow.Marker marker =
-					(org.apache.fop.fo.flow.Marker)markers.elementAt(m);
-				StringBuffer maText = new StringBuffer();
-				maText.append("<Marker marker-class-name=\"" +
-					marker.getMarkerClassName() + "\"");
-				maText.append(" RegisteredArea=\"" +
-					marker.getRegistryArea() + "\"");
-				maText.append("/>");
-				writeEmptyElementTag(maText.toString());
-			}
-			writeEndTag("</Markers>");
-		}
-		
+
+        // write out marker info
+        java.util.Vector markers = area.getMarkers();
+        if (!markers.isEmpty()) {
+            writeStartTag("<Markers>");
+            for (int m = 0; m < markers.size(); m++) {
+                org.apache.fop.fo.flow.Marker marker =
+                    (org.apache.fop.fo.flow.Marker)markers.elementAt(m);
+                StringBuffer maText = new StringBuffer();
+                maText.append("<Marker marker-class-name=\""
+                              + marker.getMarkerClassName() + "\"");
+                maText.append(" RegisteredArea=\"" + marker.getRegistryArea()
+                              + "\"");
+                maText.append("/>");
+                writeEmptyElementTag(maText.toString());
+            }
+            writeEndTag("</Markers>");
+        }
+
         Enumeration e = area.getChildren().elements();
         while (e.hasMoreElements()) {
-            Box b = (Box) e.nextElement();
+            Box b = (Box)e.nextElement();
             b.render(this);
         }
         writeEndTag("</BlockArea>");
     }
 
-	public void renderInlineArea(InlineArea area) {
-		StringBuffer iaText = new StringBuffer();
-		iaText.append("<InlineArea");
-		iaText.append("\nis-first=\"" + area.isFirst() + "\"");
-		iaText.append(" is-last=\"" + area.isLast() + "\"");
-		if (null != area.getGeneratedBy())
-			iaText.append(" generated-by=\"" + area.getGeneratedBy().getName() +
-			"//" + area.getGeneratedBy() + "\"");
-		iaText.append(">");
+    public void renderInlineArea(InlineArea area) {
+        StringBuffer iaText = new StringBuffer();
+        iaText.append("<InlineArea");
+        iaText.append("\nis-first=\"" + area.isFirst() + "\"");
+        iaText.append(" is-last=\"" + area.isLast() + "\"");
+        if (null != area.getGeneratedBy())
+            iaText.append(" generated-by=\""
+                          + area.getGeneratedBy().getName() + "//"
+                          + area.getGeneratedBy() + "\"");
+        iaText.append(">");
         writeStartTag(iaText.toString());
-		
-		// write out marker info
-		java.util.Vector markers = area.getMarkers();
-		if (!markers.isEmpty()) {
-			writeStartTag("<Markers>");
-			for (int m = 0; m < markers.size(); m++) {
-				org.apache.fop.fo.flow.Marker marker =
-					(org.apache.fop.fo.flow.Marker)markers.elementAt(m);
-				StringBuffer maText = new StringBuffer();
-				maText.append("<Marker marker-class-name=\"" +
-					marker.getMarkerClassName() + "\"");
-				maText.append(" RegisteredArea=\"" +
-					marker.getRegistryArea() + "\"");
-				maText.append("/>");
-				writeEmptyElementTag(maText.toString());
-			}
-			writeEndTag("</Markers>");
-		}
-		
+
+        // write out marker info
+        java.util.Vector markers = area.getMarkers();
+        if (!markers.isEmpty()) {
+            writeStartTag("<Markers>");
+            for (int m = 0; m < markers.size(); m++) {
+                org.apache.fop.fo.flow.Marker marker =
+                    (org.apache.fop.fo.flow.Marker)markers.elementAt(m);
+                StringBuffer maText = new StringBuffer();
+                maText.append("<Marker marker-class-name=\""
+                              + marker.getMarkerClassName() + "\"");
+                maText.append(" RegisteredArea=\"" + marker.getRegistryArea()
+                              + "\"");
+                maText.append("/>");
+                writeEmptyElementTag(maText.toString());
+            }
+            writeEndTag("</Markers>");
+        }
+
         Enumeration e = area.getChildren().elements();
         while (e.hasMoreElements()) {
-            Box b = (Box) e.nextElement();
+            Box b = (Box)e.nextElement();
             b.render(this);
         }
         writeEndTag("</InlineArea>");
-	}
-	
+    }
+
     /**
      * render a display space to XML
      *
@@ -275,11 +288,13 @@ public class XMLRenderer implements Renderer {
      */
     public void renderDisplaySpace(DisplaySpace space) {
         if (!isCoarseXml())
-            writeEmptyElementTag("<DisplaySpace size=\"" +
-                                 space.getSize() + "\"/>");
+            writeEmptyElementTag("<DisplaySpace size=\"" + space.getSize()
+                                 + "\"/>");
     }
 
-    /** render a foreign object area */
+    /**
+     * render a foreign object area
+     */
     public void renderForeignObjectArea(ForeignObjectArea area) {
         // if necessary need to scale and align the content
         area.getObject().render(this);
@@ -316,16 +331,16 @@ public class XMLRenderer implements Renderer {
         for (int i = 0; i < l; i++) {
             char ch = s.charAt(i);
             if (ch > 127)
-                sb = sb.append("&#"+(int) ch + ";");
+                sb = sb.append("&#" + (int)ch + ";");
             else
                 sb = sb.append(ch);
         }
         if (!isCoarseXml()) {
-            writeElement("<WordArea font-weight=\"" + fontWeight +
-                         "\" red=\"" + area.getRed() + "\" green=\"" +
-                         area.getGreen() + "\" blue=\"" + area.getBlue() +
-                         "\" width=\"" + area.getContentWidth() + "\">" +
-                         sb.toString() + "</WordArea>");
+            writeElement("<WordArea font-weight=\"" + fontWeight
+                         + "\" red=\"" + area.getRed() + "\" green=\""
+                         + area.getGreen() + "\" blue=\"" + area.getBlue()
+                         + "\" width=\"" + area.getContentWidth() + "\">"
+                         + sb.toString() + "</WordArea>");
         } else {
             this.writer.write(sb.toString());
         }
@@ -338,8 +353,8 @@ public class XMLRenderer implements Renderer {
      */
     public void renderInlineSpace(InlineSpace space) {
         if (!isCoarseXml())
-            writeEmptyElementTag("<InlineSpace size=\"" +
-                                 space.getSize() + "\"/>");
+            writeEmptyElementTag("<InlineSpace size=\"" + space.getSize()
+                                 + "\"/>");
         else
             this.writer.write(" ");
     }
@@ -356,7 +371,7 @@ public class XMLRenderer implements Renderer {
         }
         Enumeration e = area.getChildren().elements();
         while (e.hasMoreElements()) {
-            Box b = (Box) e.nextElement();
+            Box b = (Box)e.nextElement();
             b.render(this);
         }
         if (!isCoarseXml())
@@ -397,30 +412,32 @@ public class XMLRenderer implements Renderer {
             return;
         String leaderPattern = "";
         switch (area.getLeaderPattern()) {
-            case LeaderPattern.SPACE:
-                leaderPattern = "space";
-                break;
-            case LeaderPattern.RULE:
-                leaderPattern = "rule";
-                break;
-            case LeaderPattern.DOTS:
-                leaderPattern = "dots";
-                break;
-            case LeaderPattern.USECONTENT:
-                leaderPattern = "use-content";
-                break;
+        case LeaderPattern.SPACE:
+            leaderPattern = "space";
+            break;
+        case LeaderPattern.RULE:
+            leaderPattern = "rule";
+            break;
+        case LeaderPattern.DOTS:
+            leaderPattern = "dots";
+            break;
+        case LeaderPattern.USECONTENT:
+            leaderPattern = "use-content";
+            break;
         }
 
-        writeEmptyElementTag("<Leader leader-pattern=\"" +
-                             leaderPattern + " leader-length=\"" +
-                             area.getLeaderLength() + "\" rule-thickness=\"" +
-                             area.getRuleThickness() + "\" rule-style=\"" +
-                             area.getRuleStyle() + "\" red=\"" + area.getRed() +
-                             "\" green=\"" + area.getGreen() + "\" blue=\"" +
-                             area.getBlue() + "\"/>");
+        writeEmptyElementTag("<Leader leader-pattern=\"" + leaderPattern
+                             + " leader-length=\"" + area.getLeaderLength()
+                             + "\" rule-thickness=\""
+                             + area.getRuleThickness() + "\" rule-style=\""
+                             + area.getRuleStyle() + "\" red=\""
+                             + area.getRed() + "\" green=\""
+                             + area.getGreen() + "\" blue=\""
+                             + area.getBlue() + "\"/>");
     }
 
     private boolean isCoarseXml() {
-        return ((Boolean) options.get("fineDetail")).booleanValue();
+        return ((Boolean)options.get("fineDetail")).booleanValue();
     }
+
 }

@@ -1,4 +1,5 @@
-/* $Id$
+/*
+ * $Id$
  * Copyright (C) 2001 The Apache Software Foundation. All rights reserved.
  * For details on use and redistribution please refer to the
  * LICENSE file included with these sources.
@@ -35,7 +36,7 @@ public class LengthPair implements CompoundDatatype {
         else if (sCmpnName.equals("inline-progression-direction"))
             return getIPD();
         else
-            return null; // SHOULDN'T HAPPEN
+            return null;    // SHOULDN'T HAPPEN
     }
 
     public Property getIPD() {
@@ -45,4 +46,5 @@ public class LengthPair implements CompoundDatatype {
     public Property getBPD() {
         return this.bpd;
     }
+
 }

@@ -1,4 +1,5 @@
-/* $Id$ --
+/*
+ * $Id$ --
  * Copyright (C) 2001 The Apache Software Foundation. All rights reserved.
  * For details on use and redistribution please refer to the
  * LICENSE file included with these sources.
@@ -22,13 +23,15 @@ public class ToBeImplementedProperty extends Property {
             if (p instanceof ToBeImplementedProperty)
                 return p;
             ToBeImplementedProperty val =
-              new ToBeImplementedProperty(getPropName());
+    new ToBeImplementedProperty(getPropName());
             return val;
         }
+
     }
 
     public ToBeImplementedProperty(String propName) {
-        MessageHandler.errorln("Warning: property - \"" + propName + "\" is not implemented yet.");
+        MessageHandler.errorln("Warning: property - \"" + propName
+                               + "\" is not implemented yet.");
     }
 
 }

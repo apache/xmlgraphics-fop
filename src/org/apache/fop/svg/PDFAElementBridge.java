@@ -1,4 +1,5 @@
-/* $Id$
+/*
+ * $Id$
  * Copyright (C) 2001 The Apache Software Foundation. All rights reserved.
  * For details on use and redistribution please refer to the
  * LICENSE file included with these sources.
@@ -62,7 +63,7 @@ public class PDFAElementBridge extends AbstractGraphicsNodeBridge {
      * @param node the graphics node to build
      */
     public GraphicsNode createGraphicsNode(BridgeContext ctx, Element e) {
-        PDFANode aNode = (PDFANode) super.createGraphicsNode(ctx, e);
+        PDFANode aNode = (PDFANode)super.createGraphicsNode(ctx, e);
         return aNode;
     }
 

@@ -1,4 +1,5 @@
 /*
+ * $Id$
  * Copyright (C) 2001 The Apache Software Foundation. All rights reserved.
  * For details on use and redistribution please refer to the
  * LICENSE file included with these sources.
@@ -36,8 +37,7 @@ public class RunTest extends Task {
     String referenceJar = "";
     String refVersion = "";
 
-    public RunTest() {
-    }
+    public RunTest() {}
 
     public void setTestSuite(String str) {
         testsuite = str;
@@ -73,18 +73,21 @@ public class RunTest extends Task {
      */
     protected void testNewBuild() {
         try {
-            ClassLoader loader = new URLClassLoader(new URL[]{new URL("file:build/fop.jar")});
-            Hashtable diff = runConverter(loader, "areatree", "reference/output/");
-            if (diff != null && !diff.isEmpty()) {
+            ClassLoader loader = new URLClassLoader(new URL[] {
+                new URL("file:build/fop.jar")
+            });
+            Hashtable diff = runConverter(loader, "areatree",
+                                          "reference/output/");
+            if (diff != null &&!diff.isEmpty()) {
                 System.out.println("====================================");
                 System.out.println("The following files differ:");
                 boolean broke = false;
                 for (Enumeration keys = diff.keys();
-                        keys.hasMoreElements();) {
+                        keys.hasMoreElements(); ) {
                     Object fname = keys.nextElement();
-                    Boolean pass = (Boolean) diff.get(fname);
-                    System.out.println("file: " + fname +
-                                       " - reference success: " + pass);
+                    Boolean pass = (Boolean)diff.get(fname);
+                    System.out.println("file: " + fname
+                                       + " - reference success: " + pass);
                     if (pass.booleanValue()) {
                         broke = true;
                     }
@@ -108,13 +111,14 @@ public class RunTest extends Task {
     protected void runReference() throws BuildException {
         // check not already done
         File f = new File(basedir + "/reference/output/");
-        //if(f.exists()) {
+        // if(f.exists()) {
         // need to check that files have actually been created.
-        //return;
-        //} else {
+        // return;
+        // } else {
         try {
-            ClassLoader loader = new URLClassLoader(
-                                   new URL[]{new URL("file:" + referenceJar)});
+            ClassLoader loader = new URLClassLoader(new URL[] {
+                new URL("file:" + referenceJar)
+            });
             boolean failed = false;
 
             try {
@@ -125,39 +129,32 @@ public class RunTest extends Task {
                                     loader);
                 Method get = cla.getMethod("getVersion", new Class[]{});
                 if (!get.invoke(null, new Object[]{}).equals(refVersion)) {
-                    throw new BuildException(
-                      "Reference jar is not correct version it must be: " +
-                      refVersion);
+                    throw new BuildException("Reference jar is not correct version it must be: "
+                                             + refVersion);
                 }
             } catch (IllegalAccessException iae) {
                 failed = true;
-            }
-            catch (IllegalArgumentException are) {
+            } catch (IllegalArgumentException are) {
                 failed = true;
-            }
-            catch (InvocationTargetException are) {
+            } catch (InvocationTargetException are) {
                 failed = true;
-            }
-            catch (ClassNotFoundException are) {
+            } catch (ClassNotFoundException are) {
                 failed = true;
-            }
-            catch (InstantiationException are) {
+            } catch (InstantiationException are) {
                 failed = true;
-            }
-            catch (NoSuchMethodException are) {
+            } catch (NoSuchMethodException are) {
                 failed = true;
             }
             if (failed) {
-                throw new BuildException(
-                  "Reference jar could not be found in: " +
-                  basedir + "/reference/");
+                throw new BuildException("Reference jar could not be found in: "
+                                         + basedir + "/reference/");
             }
             f.mkdirs();
             runConverter(loader, "reference/output/", null);
         } catch (MalformedURLException mue) {
             mue.printStackTrace();
         }
-        //}
+        // }
     }
 
     /**
@@ -178,16 +175,23 @@ public class RunTest extends Task {
             Object tc = cla.newInstance();
             Method meth;
 
-            meth = cla.getMethod("setBaseDir", new Class[]{String.class});
-            meth.invoke(tc, new Object[]{basedir});
+            meth = cla.getMethod("setBaseDir", new Class[] {
+                String.class
+            });
+            meth.invoke(tc, new Object[] {
+                basedir
+            });
 
-            meth = cla.getMethod("runTests", new Class[]{String.class,
-                                 String.class, String.class});
-            diff = (Hashtable) meth.invoke(tc, new Object[]{testsuite,
-                                           dest, compDir});
+            meth = cla.getMethod("runTests", new Class[] {
+                String.class, String.class, String.class
+            });
+            diff = (Hashtable)meth.invoke(tc, new Object[] {
+                testsuite, dest, compDir
+            });
         } catch (Exception e) {
             e.printStackTrace();
         }
         return diff;
     }
+
 }

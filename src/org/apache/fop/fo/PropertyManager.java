@@ -1,9 +1,10 @@
-/*-- $Id$ -- */
 /*
+ * $Id$
  * Copyright (C) 2001 The Apache Software Foundation. All rights reserved.
  * For details on use and redistribution please refer to the
  * LICENSE file included with these sources.
  */
+
 package org.apache.fop.fo;
 
 import org.apache.fop.layout.FontState;
@@ -28,15 +29,19 @@ public class PropertyManager {
     private BorderAndPadding borderAndPadding = null;
     private HyphenationProps hyphProps = null;
 
-    private String[] saLeft ;
+    private String[] saLeft;
     private String[] saRight;
-    private String[] saTop ;
-    private String[] saBottom ;
+    private String[] saTop;
+    private String[] saBottom;
 
-    private static MessageFormat msgColorFmt = new MessageFormat("border-{0}-color");
-    private static MessageFormat msgStyleFmt = new MessageFormat("border-{0}-style");
-    private static MessageFormat msgWidthFmt = new MessageFormat("border-{0}-width");
-    private static MessageFormat msgPaddingFmt = new MessageFormat("padding-{0}");
+    private static MessageFormat msgColorFmt =
+        new MessageFormat("border-{0}-color");
+    private static MessageFormat msgStyleFmt =
+        new MessageFormat("border-{0}-style");
+    private static MessageFormat msgWidthFmt =
+        new MessageFormat("border-{0}-width");
+    private static MessageFormat msgPaddingFmt =
+        new MessageFormat("padding-{0}");
 
     public PropertyManager(PropertyList pList) {
         this.properties = pList;
@@ -66,7 +71,7 @@ public class PropertyManager {
             fontState = new FontState(fontInfo, fontFamily, fontStyle,
                                       fontWeight, fontSize, fontVariant);
         }
-        return fontState ;
+        return fontState;
     }
 
 
@@ -85,34 +90,27 @@ public class PropertyManager {
 
     private void initBorderInfo(int whichSide, String[] saSide) {
         borderAndPadding.setPadding(whichSide,
-                                    properties.get(
-                                      msgPaddingFmt.format(saSide)).getCondLength());
+                                    properties.get(msgPaddingFmt.format(saSide)).getCondLength());
         // If style = none, force width to 0, don't get Color
         int style = properties.get(msgStyleFmt.format(saSide)).getEnum();
         if (style != Constants.NONE) {
             borderAndPadding.setBorder(whichSide, style,
-                                       properties.get(
-                                         msgWidthFmt.format(saSide)).getCondLength(),
-                                       properties.get(
-                                         msgColorFmt.format(saSide)).getColorType());
+                                       properties.get(msgWidthFmt.format(saSide)).getCondLength(),
+                                       properties.get(msgColorFmt.format(saSide)).getColorType());
         }
     }
 
     public HyphenationProps getHyphenationProps() {
         if (hyphProps == null) {
             this.hyphProps = new HyphenationProps();
-            hyphProps.hyphenate =
-              this.properties.get("hyphenate").getEnum();
-            hyphProps.hyphenationChar = this.properties.get(
-                                          "hyphenation-character").getCharacter();
-            hyphProps.hyphenationPushCharacterCount = this.properties.get(
-                      "hyphenation-push-character-count").getNumber().
-                    intValue();
-            hyphProps.hyphenationRemainCharacterCount = this.properties.get(
-                      "hyphenation-remain-character-count").getNumber().
-                    intValue();
-            hyphProps.language =
-              this.properties.get("language").getString();
+            hyphProps.hyphenate = this.properties.get("hyphenate").getEnum();
+            hyphProps.hyphenationChar =
+                this.properties.get("hyphenation-character").getCharacter();
+            hyphProps.hyphenationPushCharacterCount =
+                this.properties.get("hyphenation-push-character-count").getNumber().intValue();
+            hyphProps.hyphenationRemainCharacterCount =
+                this.properties.get("hyphenation-remain-character-count").getNumber().intValue();
+            hyphProps.language = this.properties.get("language").getString();
             hyphProps.country = this.properties.get("country").getString();
         }
         return hyphProps;
@@ -121,94 +119,94 @@ public class PropertyManager {
     public int checkBreakBefore(Area area) {
         if (!(area instanceof ColumnArea)) {
             switch (properties.get("break-before").getEnum()) {
-                case BreakBefore.PAGE:
-                    return Status.FORCE_PAGE_BREAK;
-                case BreakBefore.ODD_PAGE:
-                    return Status.FORCE_PAGE_BREAK_ODD;
-                case BreakBefore.EVEN_PAGE:
-                    return Status.FORCE_PAGE_BREAK_EVEN;
-                case BreakBefore.COLUMN:
-                    return Status.FORCE_COLUMN_BREAK;
-                default:
-                    return Status.OK;
+            case BreakBefore.PAGE:
+                return Status.FORCE_PAGE_BREAK;
+            case BreakBefore.ODD_PAGE:
+                return Status.FORCE_PAGE_BREAK_ODD;
+            case BreakBefore.EVEN_PAGE:
+                return Status.FORCE_PAGE_BREAK_EVEN;
+            case BreakBefore.COLUMN:
+                return Status.FORCE_COLUMN_BREAK;
+            default:
+                return Status.OK;
             }
         } else {
-            ColumnArea colArea = (ColumnArea) area;
+            ColumnArea colArea = (ColumnArea)area;
             switch (properties.get("break-before").getEnum()) {
-                case BreakBefore.PAGE:
-                    // if first ColumnArea, and empty, return OK
-                    if (!colArea.hasChildren() &&
-                            (colArea.getColumnIndex() == 1))
-                        return Status.OK;
-                    else
-                        return Status.FORCE_PAGE_BREAK;
-                case BreakBefore.ODD_PAGE:
-                    // if first ColumnArea, empty, _and_ in odd page,
-                    // return OK
-                    if (!colArea.hasChildren() &&
-                            (colArea.getColumnIndex() == 1) &&
-                            (colArea.getPage().getNumber() % 2 != 0))
-                        return Status.OK;
-                    else
-                        return Status.FORCE_PAGE_BREAK_ODD;
-                case BreakBefore.EVEN_PAGE:
-                    // if first ColumnArea, empty, _and_ in even page,
-                    // return OK
-                    if (!colArea.hasChildren() &&
-                            (colArea.getColumnIndex() == 1) &&
-                            (colArea.getPage().getNumber() % 2 == 0))
-                        return Status.OK;
-                    else
-                        return Status.FORCE_PAGE_BREAK_EVEN;
-                case BreakBefore.COLUMN:
-                    // if ColumnArea is empty return OK
-                    if (!area.hasChildren())
-                        return Status.OK;
-                    else
-                        return Status.FORCE_COLUMN_BREAK;
-                default:
+            case BreakBefore.PAGE:
+                // if first ColumnArea, and empty, return OK
+                if (!colArea.hasChildren() && (colArea.getColumnIndex() == 1))
                     return Status.OK;
+                else
+                    return Status.FORCE_PAGE_BREAK;
+            case BreakBefore.ODD_PAGE:
+                // if first ColumnArea, empty, _and_ in odd page,
+                // return OK
+                if (!colArea.hasChildren() && (colArea.getColumnIndex() == 1)
+                        && (colArea.getPage().getNumber() % 2 != 0))
+                    return Status.OK;
+                else
+                    return Status.FORCE_PAGE_BREAK_ODD;
+            case BreakBefore.EVEN_PAGE:
+                // if first ColumnArea, empty, _and_ in even page,
+                // return OK
+                if (!colArea.hasChildren() && (colArea.getColumnIndex() == 1)
+                        && (colArea.getPage().getNumber() % 2 == 0))
+                    return Status.OK;
+                else
+                    return Status.FORCE_PAGE_BREAK_EVEN;
+            case BreakBefore.COLUMN:
+                // if ColumnArea is empty return OK
+                if (!area.hasChildren())
+                    return Status.OK;
+                else
+                    return Status.FORCE_COLUMN_BREAK;
+            default:
+                return Status.OK;
             }
         }
     }
 
     public int checkBreakAfter(Area area) {
         switch (properties.get("break-after").getEnum()) {
-            case BreakAfter.PAGE:
-                return Status.FORCE_PAGE_BREAK;
-            case BreakAfter.ODD_PAGE:
-                return Status.FORCE_PAGE_BREAK_ODD;
-            case BreakAfter.EVEN_PAGE:
-                return Status.FORCE_PAGE_BREAK_EVEN;
-            case BreakAfter.COLUMN:
-                return Status.FORCE_COLUMN_BREAK;
-            default:
-                return Status.OK;
+        case BreakAfter.PAGE:
+            return Status.FORCE_PAGE_BREAK;
+        case BreakAfter.ODD_PAGE:
+            return Status.FORCE_PAGE_BREAK_ODD;
+        case BreakAfter.EVEN_PAGE:
+            return Status.FORCE_PAGE_BREAK_EVEN;
+        case BreakAfter.COLUMN:
+            return Status.FORCE_COLUMN_BREAK;
+        default:
+            return Status.OK;
         }
     }
 
-public MarginProps getMarginProps()
-{
-MarginProps props = new MarginProps();
+    public MarginProps getMarginProps() {
+        MarginProps props = new MarginProps();
 
-// Common Margin Properties-Block
-  props.marginTop = this.properties.get("margin-top").getLength().mvalue();
-  props.marginBottom = this.properties.get("margin-bottom").getLength().mvalue();
-  props.marginLeft = this.properties.get("margin-left").getLength().mvalue();
-  props.marginRight = this.properties.get("margin-right").getLength().mvalue();
-/*
-// need to get opt, min and max
-  props.spaceBefore = this.properties.get("space-before").getLength().mvalue();
-  props.spaceAfter = this.properties.get("space-after").getLength().mvalue();
-  props.startIndent = this.properties.get("start-indent").getLength().mvalue();
-  props.endIndent = this.properties.get("end-indent").getLength().mvalue();
-*/
-return props;
-}
+        // Common Margin Properties-Block
+        props.marginTop =
+            this.properties.get("margin-top").getLength().mvalue();
+        props.marginBottom =
+            this.properties.get("margin-bottom").getLength().mvalue();
+        props.marginLeft =
+            this.properties.get("margin-left").getLength().mvalue();
+        props.marginRight =
+            this.properties.get("margin-right").getLength().mvalue();
+        /*
+         * // need to get opt, min and max
+         * props.spaceBefore = this.properties.get("space-before").getLength().mvalue();
+         * props.spaceAfter = this.properties.get("space-after").getLength().mvalue();
+         * props.startIndent = this.properties.get("start-indent").getLength().mvalue();
+         * props.endIndent = this.properties.get("end-indent").getLength().mvalue();
+         */
+        return props;
+    }
 
-public BackgroundProps getBackgroundProps() {
-BackgroundProps bp = new BackgroundProps();
-return bp;
-}
+    public BackgroundProps getBackgroundProps() {
+        BackgroundProps bp = new BackgroundProps();
+        return bp;
+    }
 
 }

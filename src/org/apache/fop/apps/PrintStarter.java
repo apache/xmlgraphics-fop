@@ -1,4 +1,5 @@
-/* $Id$
+/*
+ * $Id$
  * Copyright (C) 2001 The Apache Software Foundation. All rights reserved.
  * For details on use and redistribution please refer to the
  * LICENSE file included with these sources.
@@ -7,9 +8,9 @@
 package org.apache.fop.apps;
 
 /*
-  originally contributed by
-  Stanislav Gorkhover: stanislav.gorkhover@jcatalog.com
-  jCatalog Software AG
+ * originally contributed by
+ * Stanislav Gorkhover: stanislav.gorkhover@jcatalog.com
+ * jCatalog Software AG
  */
 
 
@@ -43,11 +44,11 @@ import org.apache.fop.messaging.MessageHandler;
  */
 public class PrintStarter extends CommandLineStarter {
 
-    public PrintStarter (CommandLineOptions options) throws FOPException {
+    public PrintStarter(CommandLineOptions options) throws FOPException {
         super(options);
     }
 
-    public void run () throws FOPException {
+    public void run() throws FOPException {
         Driver driver = new Driver();
         if (errorDump) {
             driver.setErrorDump(true);
@@ -69,7 +70,7 @@ public class PrintStarter extends CommandLineStarter {
             driver.render();
         } catch (Exception e) {
             if (e instanceof FOPException) {
-                throw (FOPException) e;
+                throw (FOPException)e;
             }
             throw new FOPException(e);
         }
@@ -111,8 +112,7 @@ public class PrintStarter extends CommandLineStarter {
             if (str != null) {
                 try {
                     mode = Boolean.valueOf(str).booleanValue() ? EVEN : ODD;
-                } catch (Exception e) {
-                }
+                } catch (Exception e) {}
             }
 
         }
@@ -140,14 +140,13 @@ public class PrintStarter extends CommandLineStarter {
 
             Vector numbers = getInvalidPageNumbers();
             for (int i = numbers.size() - 1; i > -1; i--)
-                tree.getPages().removeElementAt(
-                  Integer.parseInt((String) numbers.elementAt(i)));
+                tree.getPages().removeElementAt(Integer.parseInt((String)numbers.elementAt(i)));
 
         }
 
         public void renderPage(Page page) {
-            pageWidth = (int)((float) page.getWidth() / 1000f);
-            pageHeight = (int)((float) page.getHeight() / 1000f);
+            pageWidth = (int)((float)page.getWidth() / 1000f);
+            pageHeight = (int)((float)page.getHeight() / 1000f);
             super.renderPage(page);
         }
 
@@ -184,8 +183,8 @@ public class PrintStarter extends CommandLineStarter {
 
         }
 
-    } // class PrintRenderer
-} // class PrintCommandLine
+    }    // class PrintRenderer
+}        // class PrintCommandLine
 
 
 

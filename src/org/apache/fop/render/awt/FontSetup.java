@@ -1,53 +1,10 @@
-/*-- $Id: FontSetup.java --
-
- ============================================================================
-                   The Apache Software License, Version 1.1
- ============================================================================
-
-    Copyright (C) 1999 The Apache Software Foundation. All rights reserved.
-
- Redistribution and use in source and binary forms, with or without modifica-
- tion, are permitted provided that the following conditions are met:
-
- 1. Redistributions of  source code must  retain the above copyright  notice,
-    this list of conditions and the following disclaimer.
-
- 2. Redistributions in binary form must reproduce the above copyright notice,
-    this list of conditions and the following disclaimer in the documentation
-    and/or other materials provided with the distribution.
-
- 3. The end-user documentation included with the redistribution, if any, must
-    include  the following  acknowledgment:  "This product includes  software
-    developed  by the  Apache Software Foundation  (http://www.apache.org/)."
-    Alternately, this  acknowledgment may  appear in the software itself,  if
-    and wherever such third-party acknowledgments normally appear.
-
- 4. The names "Fop" and  "Apache Software Foundation"  must not be used to
-    endorse  or promote  products derived  from this  software without  prior
-    written permission. For written permission, please contact
-    apache@apache.org.
-
- 5. Products  derived from this software may not  be called "Apache", nor may
-    "Apache" appear  in their name,  without prior written permission  of the
-    Apache Software Foundation.
-
- THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESSED OR IMPLIED WARRANTIES,
- INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND
- FITNESS  FOR A PARTICULAR  PURPOSE ARE  DISCLAIMED.  IN NO  EVENT SHALL  THE
- APACHE SOFTWARE  FOUNDATION  OR ITS CONTRIBUTORS  BE LIABLE FOR  ANY DIRECT,
- INDIRECT, INCIDENTAL, SPECIAL,  EXEMPLARY, OR CONSEQUENTIAL  DAMAGES (INCLU-
- DING, BUT NOT LIMITED TO, PROCUREMENT  OF SUBSTITUTE GOODS OR SERVICES; LOSS
- OF USE, DATA, OR  PROFITS; OR BUSINESS  INTERRUPTION)  HOWEVER CAUSED AND ON
- ANY  THEORY OF LIABILITY,  WHETHER  IN CONTRACT,  STRICT LIABILITY,  OR TORT
- (INCLUDING  NEGLIGENCE OR  OTHERWISE) ARISING IN  ANY WAY OUT OF THE  USE OF
- THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-
- This software  consists of voluntary contributions made  by many individuals
- on  behalf of the Apache Software  Foundation and was  originally created by
- James Tauber <jtauber@jtauber.com>. For more  information on the Apache
- Software Foundation, please see <http://www.apache.org/>.
-
+/*
+ * $Id$
+ * Copyright (C) 2001 The Apache Software Foundation. All rights reserved.
+ * For details on use and redistribution please refer to the
+ * LICENSE file included with these sources.
  */
+
 package org.apache.fop.render.awt;
 
 // FOP
@@ -65,31 +22,33 @@ import java.awt.Graphics2D;
  * sets up the AWT fonts. It is similar to
  * org.apache.fop.render.pdf.FontSetup.
  * Assigns the font (with metrics) to internal names like "F1" and
- *  assigns family-style-weight triplets to the fonts
+ * assigns family-style-weight triplets to the fonts
  */
 public class FontSetup {
 
 
-    /** sets up the font info object.
-    *
-    * adds metrics for basic fonts and useful family-style-weight
-    * triplets for lookup
-    *
-    * @param fontInfo the font info object to set up
-    * @param parent needed, since a live AWT component is needed
-    *               to get a valid java.awt.FontMetrics object
-    */
+    /**
+     * sets up the font info object.
+     *
+     * adds metrics for basic fonts and useful family-style-weight
+     * triplets for lookup
+     *
+     * @param fontInfo the font info object to set up
+     * @param parent needed, since a live AWT component is needed
+     * to get a valid java.awt.FontMetrics object
+     */
     public static void setup(FontInfo fontInfo, Graphics2D graphics) {
         FontMetricsMapper metric;
         int normal, bold, bolditalic, italic;
 
         MessageHandler.logln("setting up fonts");
 
-        /* available java fonts are:
-           Serif - bold, normal, italic, bold-italic
-           SansSerif - bold, normal, italic, bold-italic
-           MonoSpaced - bold, normal, italic, bold-italic
-        */
+        /*
+         * available java fonts are:
+         * Serif - bold, normal, italic, bold-italic
+         * SansSerif - bold, normal, italic, bold-italic
+         * MonoSpaced - bold, normal, italic, bold-italic
+         */
         normal = java.awt.Font.PLAIN;
         bold = java.awt.Font.BOLD;
         italic = java.awt.Font.ITALIC;
@@ -98,7 +57,7 @@ public class FontSetup {
         metric = new FontMetricsMapper("SansSerif", normal, graphics);
         // --> goes to  F1
         fontInfo.addMetrics("F1", metric);
-        metric = new FontMetricsMapper("SansSerif",italic, graphics);
+        metric = new FontMetricsMapper("SansSerif", italic, graphics);
         // --> goes to  F2
         fontInfo.addMetrics("F2", metric);
         metric = new FontMetricsMapper("SansSerif", bold, graphics);
@@ -140,10 +99,10 @@ public class FontSetup {
         fontInfo.addMetrics("F13", metric);
         fontInfo.addMetrics("F14", metric);
 
-        //Custom type 1 fonts step 1/2
-        //    fontInfo.addMetrics("F15", new OMEP());
-        //    fontInfo.addMetrics("F16", new GaramondLightCondensed());
-        //    fontInfo.addMetrics("F17", new BauerBodoniBoldItalic());
+        // Custom type 1 fonts step 1/2
+        // fontInfo.addMetrics("F15", new OMEP());
+        // fontInfo.addMetrics("F16", new GaramondLightCondensed());
+        // fontInfo.addMetrics("F17", new BauerBodoniBoldItalic());
 
         /* any is treated as serif */
         fontInfo.addFontProperties("F5", "any", "normal", "normal");
@@ -193,10 +152,10 @@ public class FontSetup {
         fontInfo.addFontProperties("F13", "Symbol", "normal", "normal");
         fontInfo.addFontProperties("F14", "ZapfDingbats", "normal", "normal");
 
-        //Custom type 1 fonts step 2/2
-        //    fontInfo.addFontProperties("F15", "OMEP", "normal", "normal");
-        //    fontInfo.addFontProperties("F16", "Garamond-LightCondensed", "normal", "normal");
-        //    fontInfo.addFontProperties("F17", "BauerBodoni", "italic", "bold");
+        // Custom type 1 fonts step 2/2
+        // fontInfo.addFontProperties("F15", "OMEP", "normal", "normal");
+        // fontInfo.addFontProperties("F16", "Garamond-LightCondensed", "normal", "normal");
+        // fontInfo.addFontProperties("F17", "BauerBodoni", "italic", "bold");
 
         /* for compatibility with PassiveTex */
         fontInfo.addFontProperties("F5", "Times-Roman", "normal", "normal");

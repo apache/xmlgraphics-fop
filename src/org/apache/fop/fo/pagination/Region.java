@@ -1,4 +1,5 @@
-/* $Id$
+/*
+ * $Id$
  * Copyright (C) 2001 The Apache Software Foundation. All rights reserved.
  * For details on use and redistribution please refer to the
  * LICENSE file included with these sources.
@@ -29,35 +30,36 @@ public abstract class Region extends FObj {
         // regions may have name, or default
         if (null == this.properties.get(PROP_REGION_NAME)) {
             setRegionName(getDefaultRegionName());
-        } else if ( this.properties.get(
-              PROP_REGION_NAME).getString().equals("")) {
+        } else if (this.properties.get(PROP_REGION_NAME).getString().equals("")) {
             setRegionName(getDefaultRegionName());
         } else {
-            setRegionName(
-              this.properties.get(PROP_REGION_NAME).getString());
+            setRegionName(this.properties.get(PROP_REGION_NAME).getString());
             // check that name is OK. Not very pretty.
-            if (isReserved(getRegionName()) &&
-                    !getRegionName().equals(getDefaultRegionName())) {
-                throw new FOPException(PROP_REGION_NAME + " '" +
-                                       _regionName + "' for "+this.name + " not permitted.");
+            if (isReserved(getRegionName())
+                    &&!getRegionName().equals(getDefaultRegionName())) {
+                throw new FOPException(PROP_REGION_NAME + " '" + _regionName
+                                       + "' for " + this.name
+                                       + " not permitted.");
             }
         }
 
         if (parent.getName().equals("fo:simple-page-master")) {
-            _layoutMaster = (SimplePageMaster) parent;
+            _layoutMaster = (SimplePageMaster)parent;
             getPageMaster().addRegion(this);
         } else {
-            throw new FOPException(getElementName() + " must be child " +
-                                   "of simple-page-master, not " + parent.getName());
+            throw new FOPException(getElementName() + " must be child "
+                                   + "of simple-page-master, not "
+                                   + parent.getName());
         }
     }
 
     /**
      * Creates a Region layout object for this pagination Region.
      */
-    abstract RegionArea makeRegionArea( int allocationRectangleXPosition,
-                                        int allocationRectangleYPosition,
-                                        int allocationRectangleWidth, int allocationRectangleHeight);
+    abstract RegionArea makeRegionArea(int allocationRectangleXPosition,
+                                       int allocationRectangleYPosition,
+                                       int allocationRectangleWidth,
+                                       int allocationRectangleHeight);
 
     /**
      * Returns the default region name (xsl-region-before, xsl-region-start,
@@ -96,12 +98,12 @@ public abstract class Region extends FObj {
      * @return true if the name parameter is a reserved region name
      */
     protected boolean isReserved(String name) throws FOPException {
-        return (name.equals("xsl-region-before") ||
-                name.equals("xsl-region-start") ||
-                name.equals("xsl-region-end") ||
-                name.equals("xsl-region-after") ||
-                name.equals("xsl-before-float-separator") ||
-                name.equals("xsl-footnote-separator"));
+        return (name.equals("xsl-region-before")
+                || name.equals("xsl-region-start")
+                || name.equals("xsl-region-end")
+                || name.equals("xsl-region-after")
+                || name.equals("xsl-before-float-separator")
+                || name.equals("xsl-footnote-separator"));
     }
 
     public boolean generatesReferenceAreas() {

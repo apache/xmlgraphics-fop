@@ -1,4 +1,5 @@
-/* $Id$
+/*
+ * $Id$
  * Copyright (C) 2001 The Apache Software Foundation. All rights reserved.
  * For details on use and redistribution please refer to the
  * LICENSE file included with these sources.
@@ -22,7 +23,7 @@ public class LengthRange implements CompoundDatatype {
     private static final int MINSET = 1;
     private static final int OPTSET = 2;
     private static final int MAXSET = 4;
-    private int bfSet = 0; // bit field
+    private int bfSet = 0;    // bit field
     private boolean bChecked = false;
 
     // From CompoundDatatype
@@ -45,7 +46,7 @@ public class LengthRange implements CompoundDatatype {
         else if (sCmpnName.equals("maximum"))
             return getMaximum();
         else
-            return null; // SHOULDN'T HAPPEN
+            return null;    // SHOULDN'T HAPPEN
     }
 
     /**
@@ -91,52 +92,55 @@ public class LengthRange implements CompoundDatatype {
     private void checkConsistency() {
         if (bChecked)
             return;
-        // Make sure max >= min
-        // Must also control if have any allowed enum values!
-        /*********************
-        if (minimum.mvalue() > maximum.mvalue()) {
-          if ((bfSet&MINSET)!=0) {
-        // if minimum is explicit, force max to min
-        if ((bfSet&MAXSET)!=0) {
-        // Warning: min>max, resetting max to min
-        MessageHandler.errorln("WARNING: forcing max to min in LengthRange");
-    }
-        maximum = minimum ;
-          }
-          else {
-        minimum = maximum; // minimum was default value
-          }
-    }
-        // Now make sure opt <= max and opt >= min
-        if (optimum.mvalue() > maximum.mvalue()) {
-          if ((bfSet&OPTSET)!=0) {
-        if ((bfSet&MAXSET)!=0) {
-        // Warning: opt > max, resetting opt to max
-        MessageHandler.errorln("WARNING: forcing opt to max in LengthRange");
-        optimum = maximum ;
-    }
-        else {
-        maximum = optimum; // maximum was default value
-    }
-          }
-          else {
-        // opt is default and max is explicit or default
-        optimum = maximum ;
-          }
-    }
-        else if (optimum.mvalue() < minimum.mvalue()) {
-          if ((bfSet&MINSET)!=0) {
-        // if minimum is explicit, force opt to min
-        if ((bfSet&OPTSET)!=0) {
-        MessageHandler.errorln("WARNING: forcing opt to min in LengthRange");
-    }
-        optimum = minimum ;
-          }
-          else {
-        minimum = optimum; // minimum was default value
-          }
-    }
-         ********$*********/
+            // Make sure max >= min
+            // Must also control if have any allowed enum values!
+
+            /**
+             * *******************
+             * if (minimum.mvalue() > maximum.mvalue()) {
+             * if ((bfSet&MINSET)!=0) {
+             * // if minimum is explicit, force max to min
+             * if ((bfSet&MAXSET)!=0) {
+             * // Warning: min>max, resetting max to min
+             * MessageHandler.errorln("WARNING: forcing max to min in LengthRange");
+             * }
+             * maximum = minimum ;
+             * }
+             * else {
+             * minimum = maximum; // minimum was default value
+             * }
+             * }
+             * // Now make sure opt <= max and opt >= min
+             * if (optimum.mvalue() > maximum.mvalue()) {
+             * if ((bfSet&OPTSET)!=0) {
+             * if ((bfSet&MAXSET)!=0) {
+             * // Warning: opt > max, resetting opt to max
+             * MessageHandler.errorln("WARNING: forcing opt to max in LengthRange");
+             * optimum = maximum ;
+             * }
+             * else {
+             * maximum = optimum; // maximum was default value
+             * }
+             * }
+             * else {
+             * // opt is default and max is explicit or default
+             * optimum = maximum ;
+             * }
+             * }
+             * else if (optimum.mvalue() < minimum.mvalue()) {
+             * if ((bfSet&MINSET)!=0) {
+             * // if minimum is explicit, force opt to min
+             * if ((bfSet&OPTSET)!=0) {
+             * MessageHandler.errorln("WARNING: forcing opt to min in LengthRange");
+             * }
+             * optimum = minimum ;
+             * }
+             * else {
+             * minimum = optimum; // minimum was default value
+             * }
+             * }
+             * *******$*******
+             */
         bChecked = true;
     }
 
@@ -154,4 +158,5 @@ public class LengthRange implements CompoundDatatype {
         checkConsistency();
         return this.optimum;
     }
+
 }

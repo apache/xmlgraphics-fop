@@ -1,4 +1,5 @@
-/* $Id$
+/*
+ * $Id$
  * Copyright (C) 2001 The Apache Software Foundation. All rights reserved.
  * For details on use and redistribution please refer to the
  * LICENSE file included with these sources.
@@ -35,8 +36,7 @@ public class SVGUtilities {
 
     public static final Document createSVGDocument(float width,
             float height) {
-        DOMImplementation impl =
-          SVGDOMImplementation.getDOMImplementation();
+        DOMImplementation impl = SVGDOMImplementation.getDOMImplementation();
         Document doc = impl.createDocument(svgNS, "svg", null);
 
         Element svgRoot = doc.getDocumentElement();
@@ -48,21 +48,24 @@ public class SVGUtilities {
     /**
      * Get the string width for a particular string given the font.
      */
-    public static final float getStringWidth(String str,
-            java.awt.Font font) {
-        Rectangle2D rect = font.getStringBounds(str, 0, str.length(),
-                                                new FontRenderContext(new AffineTransform(), true, true));
-        return (float) rect.getWidth();
+    public static final float getStringWidth(String str, java.awt.Font font) {
+        Rectangle2D rect =
+            font.getStringBounds(str, 0, str.length(),
+                                 new FontRenderContext(new AffineTransform(),
+                                 true, true));
+        return (float)rect.getWidth();
     }
 
     /**
      * Get the string height for a particular string given the font.
      */
     public static final float getStringHeight(String str,
-            java.awt.Font font) {
-        Rectangle2D rect = font.getStringBounds(str, 0, str.length(),
-                                                new FontRenderContext(new AffineTransform(), true, true));
-        return (float) rect.getHeight();
+                                              java.awt.Font font) {
+        Rectangle2D rect =
+            font.getStringBounds(str, 0, str.length(),
+                                 new FontRenderContext(new AffineTransform(),
+                                 true, true));
+        return (float)rect.getHeight();
     }
 
     /**
@@ -71,14 +74,15 @@ public class SVGUtilities {
     public static final Rectangle2D getStringBounds(String str,
             java.awt.Font font) {
         return font.getStringBounds(str, 0, str.length(),
-                                    new FontRenderContext(new AffineTransform(), true, true));
+                                    new FontRenderContext(new AffineTransform(),
+                                    true, true));
     }
 
     /**
      * Create an SVG Line
      */
-    public static final Element createLine(Document doc, float x,
-                                           float y, float x2, float y2) {
+    public static final Element createLine(Document doc, float x, float y,
+                                           float x2, float y2) {
         Element ellipse = doc.createElementNS(svgNS, "line");
         ellipse.setAttributeNS(null, "x1", "" + x);
         ellipse.setAttributeNS(null, "x2", "" + x2);
@@ -91,7 +95,7 @@ public class SVGUtilities {
      * Create an SVG Ellipse
      */
     public static final Element createEllipse(Document doc, float cx,
-            float cy, float rx, float ry) {
+                                              float cy, float rx, float ry) {
         Element ellipse = doc.createElementNS(svgNS, "ellipse");
         ellipse.setAttributeNS(null, "cx", "" + cx);
         ellipse.setAttributeNS(null, "rx", "" + rx);
@@ -112,8 +116,8 @@ public class SVGUtilities {
     /**
      * Create an SVG Text object.
      */
-    public static final Element createText(Document doc, float x,
-                                           float y, String str) {
+    public static final Element createText(Document doc, float x, float y,
+                                           String str) {
         Element textGraph = doc.createElementNS(svgNS, "text");
         textGraph.setAttributeNS(null, "x", "" + x);
         textGraph.setAttributeNS(null, "y", "" + y);
@@ -125,8 +129,8 @@ public class SVGUtilities {
     /**
      * Create an SVG Rectangle.
      */
-    public static final Element createRect(Document doc, float x,
-                                           float y, float width, float height) {
+    public static final Element createRect(Document doc, float x, float y,
+                                           float width, float height) {
         Element border = doc.createElementNS(svgNS, "rect");
         border.setAttributeNS(null, "x", "" + x);
         border.setAttributeNS(null, "y", "" + y);
@@ -198,4 +202,5 @@ public class SVGUtilities {
 
         return g;
     }
+
 }

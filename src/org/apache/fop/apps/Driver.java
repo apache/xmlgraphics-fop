@@ -1,4 +1,5 @@
-/* $Id$
+/*
+ * $Id$
  * Copyright (C) 2001 The Apache Software Foundation. All rights reserved.
  * For details on use and redistribution please refer to the
  * LICENSE file included with these sources.
@@ -47,12 +48,11 @@ import java.util.*;
  * Here is an example use of Driver which outputs PDF:
  *
  * <PRE>
- *   Driver driver = new Driver(new InputSource (args[0]),
- *                              new FileOutputStream(args[1]));
- *   driver.setRenderer(RENDER_PDF);
- *   driver.run();
+ * Driver driver = new Driver(new InputSource (args[0]),
+ * new FileOutputStream(args[1]));
+ * driver.setRenderer(RENDER_PDF);
+ * driver.run();
  * </PRE>
-
  * If neccessary, calling classes can call into the lower level
  * methods to setup and
  * render. Methods can be called to set the
@@ -78,76 +78,109 @@ import java.util.*;
  * Here is an example use of Driver which outputs to AWT:
  *
  * <PRE>
- *   Driver driver = new Driver();
- *   driver.setRenderer(new org.apache.fop.render.awt.AWTRenderer(translator));
- *   driver.buildFOTree(parser, fileInputSource(args[0]));
- *   driver.format();
- *   driver.render();
+ * Driver driver = new Driver();
+ * driver.setRenderer(new org.apache.fop.render.awt.AWTRenderer(translator));
+ * driver.buildFOTree(parser, fileInputSource(args[0]));
+ * driver.format();
+ * driver.render();
  * </PRE>
  */
 public class Driver {
 
-    /** Render to PDF. OutputStream must be set */
+    /**
+     * Render to PDF. OutputStream must be set
+     */
     public static final int RENDER_PDF = 1;
 
-    /** Render to a GUI window. No OutputStream neccessary */
+    /**
+     * Render to a GUI window. No OutputStream neccessary
+     */
     public static final int RENDER_AWT = 2;
 
-    /** Render to MIF. OutputStream must be set */
+    /**
+     * Render to MIF. OutputStream must be set
+     */
     public static final int RENDER_MIF = 3;
 
-    /** Render to XML. OutputStream must be set */
+    /**
+     * Render to XML. OutputStream must be set
+     */
     public static final int RENDER_XML = 4;
 
-    /** Render to PRINT. No OutputStream neccessary */
+    /**
+     * Render to PRINT. No OutputStream neccessary
+     */
     public static final int RENDER_PRINT = 5;
 
-    /** Render to PCL. OutputStream must be set */
+    /**
+     * Render to PCL. OutputStream must be set
+     */
     public static final int RENDER_PCL = 6;
 
-    /** Render to Postscript. OutputStream must be set */
+    /**
+     * Render to Postscript. OutputStream must be set
+     */
     public static final int RENDER_PS = 7;
 
-    /** Render to Text. OutputStream must be set */
+    /**
+     * Render to Text. OutputStream must be set
+     */
     public static final int RENDER_TXT = 8;
 
-    /** the FO tree builder */
+    /**
+     * the FO tree builder
+     */
     private FOTreeBuilder _treeBuilder;
 
-    /** the area tree that is the result of formatting the FO tree */
+    /**
+     * the area tree that is the result of formatting the FO tree
+     */
     private AreaTree _areaTree;
 
-    /** the renderer to use to output the area tree */
+    /**
+     * the renderer to use to output the area tree
+     */
     private Renderer _renderer;
 
-    /** the source of the FO file */
+    /**
+     * the source of the FO file
+     */
     private InputSource _source;
 
-    /** the stream to use to output the results of the renderer */
+    /**
+     * the stream to use to output the results of the renderer
+     */
     private OutputStream _stream;
 
-    /** The XML parser to use when building the FO tree */
+    /**
+     * The XML parser to use when building the FO tree
+     */
     private XMLReader _reader;
 
-    /** If true, full error stacks are reported */
+    /**
+     * If true, full error stacks are reported
+     */
     private boolean _errorDump = false;
 
-    /** the system resources that FOP will use    */
+    /**
+     * the system resources that FOP will use
+     */
     private BufferManager _bufferManager;
 
     public static final String getParserClassName() {
         String parserClassName = null;
         try {
             parserClassName = System.getProperty("org.xml.sax.parser");
-        } catch(SecurityException se) {
-        }
+        } catch (SecurityException se) {}
         if (parserClassName == null) {
             parserClassName = "org.apache.xerces.parsers.SAXParser";
         }
         return parserClassName;
     }
 
-    /** create a new Driver */
+    /**
+     * create a new Driver
+     */
     public Driver() {
         _stream = null;
         _bufferManager = new BufferManager();
@@ -173,7 +206,7 @@ public class Driver {
     }
 
     public boolean hasData() {
-        return(_treeBuilder.hasData());
+        return (_treeBuilder.hasData());
     }
 
     /**
@@ -221,14 +254,14 @@ public class Driver {
         addElementMapping("org.apache.fop.extensions.ExtensionElementMapping");
 
         // add mappings from available services
-        Enumeration providers = Service.providers(org.apache.fop.fo.ElementMapping.class);
+        Enumeration providers =
+            Service.providers(org.apache.fop.fo.ElementMapping.class);
         if (providers != null) {
-            while(providers.hasMoreElements()) {
+            while (providers.hasMoreElements()) {
                 String str = (String)providers.nextElement();
                 try {
                     addElementMapping(str);
-                } catch (IllegalArgumentException e) {
-                }
+                } catch (IllegalArgumentException e) {}
             }
         }
     }
@@ -236,42 +269,42 @@ public class Driver {
     /**
      * Set the rendering type to use. Must be one of
      * <ul>
-     *   <li>RENDER_PDF
-     *   <li>RENDER_AWT
-     *   <li>RENDER_MIF
-     *   <li>RENDER_XML
-     *   <li>RENDER_PCL
-     *   <li>RENDER_PS
-     *   <li>RENDER_TXT
+     * <li>RENDER_PDF
+     * <li>RENDER_AWT
+     * <li>RENDER_MIF
+     * <li>RENDER_XML
+     * <li>RENDER_PCL
+     * <li>RENDER_PS
+     * <li>RENDER_TXT
      * </ul>
      * @param renderer the type of renderer to use
      */
     public void setRenderer(int renderer) throws IllegalArgumentException {
         switch (renderer) {
-            case RENDER_PDF:
-                setRenderer(new org.apache.fop.render.pdf.PDFRenderer());
-                break;
-            case RENDER_AWT:
-                throw new IllegalArgumentException("Use renderer form of setRenderer() for AWT");
-            case RENDER_PRINT:
-                throw new IllegalArgumentException("Use renderer form of setRenderer() for PRINT");
-            case RENDER_PCL:
-                setRenderer(new org.apache.fop.render.pcl.PCLRenderer());
-                break;
-            case RENDER_PS:
-                setRenderer(new org.apache.fop.render.ps.PSRenderer());
-                break;
-            case RENDER_TXT:
-                setRenderer(new org.apache.fop.render.txt.TXTRenderer());
-                break;
-            case RENDER_MIF:
-                setRenderer(new org.apache.fop.render.mif.MIFRenderer());
-                break;
-            case RENDER_XML:
-                setRenderer(new org.apache.fop.render.xml.XMLRenderer());
-                break;
-            default:
-                throw new IllegalArgumentException("Unknown renderer type");
+        case RENDER_PDF:
+            setRenderer(new org.apache.fop.render.pdf.PDFRenderer());
+            break;
+        case RENDER_AWT:
+            throw new IllegalArgumentException("Use renderer form of setRenderer() for AWT");
+        case RENDER_PRINT:
+            throw new IllegalArgumentException("Use renderer form of setRenderer() for PRINT");
+        case RENDER_PCL:
+            setRenderer(new org.apache.fop.render.pcl.PCLRenderer());
+            break;
+        case RENDER_PS:
+            setRenderer(new org.apache.fop.render.ps.PSRenderer());
+            break;
+        case RENDER_TXT:
+            setRenderer(new org.apache.fop.render.txt.TXTRenderer());
+            break;
+        case RENDER_MIF:
+            setRenderer(new org.apache.fop.render.mif.MIFRenderer());
+            break;
+        case RENDER_XML:
+            setRenderer(new org.apache.fop.render.xml.XMLRenderer());
+            break;
+        default:
+            throw new IllegalArgumentException("Unknown renderer type");
         }
 
     }
@@ -306,25 +339,23 @@ public class Driver {
      * @see #setRenderer(int)
      */
     public void setRenderer(String rendererClassName)
-    throws IllegalArgumentException {
+            throws IllegalArgumentException {
         try {
-            _renderer = (Renderer) Class.forName(
-                          rendererClassName).newInstance();
+            _renderer =
+                (Renderer)Class.forName(rendererClassName).newInstance();
             _renderer.setProducer(Version.getVersion());
         } catch (ClassNotFoundException e) {
-            throw new IllegalArgumentException("Could not find " +
-                                               rendererClassName);
-        }
-        catch (InstantiationException e) {
-            throw new IllegalArgumentException(
-              "Could not instantiate " + rendererClassName);
-        }
-        catch (IllegalAccessException e) {
-            throw new IllegalArgumentException("Could not access " +
-                                               rendererClassName);
-        }
-        catch (ClassCastException e) {
-            throw new IllegalArgumentException(rendererClassName + " is not a renderer");
+            throw new IllegalArgumentException("Could not find "
+                                               + rendererClassName);
+        } catch (InstantiationException e) {
+            throw new IllegalArgumentException("Could not instantiate "
+                                               + rendererClassName);
+        } catch (IllegalAccessException e) {
+            throw new IllegalArgumentException("Could not access "
+                                               + rendererClassName);
+        } catch (ClassCastException e) {
+            throw new IllegalArgumentException(rendererClassName
+                                               + " is not a renderer");
         }
     }
 
@@ -342,25 +373,23 @@ public class Driver {
      * add the element mapping with the given class name
      */
     public void addElementMapping(String mappingClassName)
-    throws IllegalArgumentException {
+            throws IllegalArgumentException {
         try {
-            ElementMapping mapping = (ElementMapping) Class.forName(
-                                       mappingClassName).newInstance();
+            ElementMapping mapping =
+                (ElementMapping)Class.forName(mappingClassName).newInstance();
             addElementMapping(mapping);
         } catch (ClassNotFoundException e) {
-            throw new IllegalArgumentException("Could not find " +
-                                               mappingClassName);
-        }
-        catch (InstantiationException e) {
-            throw new IllegalArgumentException(
-              "Could not instantiate " + mappingClassName);
-        }
-        catch (IllegalAccessException e) {
-            throw new IllegalArgumentException("Could not access " +
-                                               mappingClassName);
-        }
-        catch (ClassCastException e) {
-            throw new IllegalArgumentException(mappingClassName + " is not an ElementMapping");
+            throw new IllegalArgumentException("Could not find "
+                                               + mappingClassName);
+        } catch (InstantiationException e) {
+            throw new IllegalArgumentException("Could not instantiate "
+                                               + mappingClassName);
+        } catch (IllegalAccessException e) {
+            throw new IllegalArgumentException("Could not access "
+                                               + mappingClassName);
+        } catch (ClassCastException e) {
+            throw new IllegalArgumentException(mappingClassName
+                                               + " is not an ElementMapping");
         }
     }
 
@@ -379,21 +408,19 @@ public class Driver {
      * Build the formatting object tree using the given SAX Parser and
      * SAX InputSource
      */
-    public synchronized void buildFOTree(XMLReader parser,
-                                         InputSource source)
-        throws FOPException {
+    public synchronized void buildFOTree(XMLReader parser, InputSource source)
+            throws FOPException {
 
         parser.setContentHandler(_treeBuilder);
         try {
             parser.parse(source);
         } catch (SAXException e) {
             if (e.getException() instanceof FOPException) {
-                throw (FOPException) e.getException();
+                throw (FOPException)e.getException();
             } else {
                 throw new FOPException(e);
             }
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
             throw new FOPException(e);
         }
     }
@@ -402,7 +429,7 @@ public class Driver {
      * Build the formatting object tree using the given DOM Document
      */
     public synchronized void buildFOTree(Document document)
-        throws FOPException {
+            throws FOPException {
         try {
             DocumentInputSource source = new DocumentInputSource(document);
             DocumentReader reader = new DocumentReader();
@@ -410,8 +437,7 @@ public class Driver {
             reader.parse(source);
         } catch (SAXException e) {
             throw new FOPException(e);
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
             throw new FOPException(e);
         }
 
@@ -424,13 +450,13 @@ public class Driver {
         if (_errorDump) {
             if (e instanceof SAXException) {
                 e.printStackTrace();
-                if (((SAXException) e).getException() != null) {
-                    ((SAXException) e).getException().printStackTrace();
+                if (((SAXException)e).getException() != null) {
+                    ((SAXException)e).getException().printStackTrace();
                 }
             } else if (e instanceof FOPException) {
                 e.printStackTrace();
-                if (((FOPException) e).getException() != null) {
-                    ((FOPException) e).getException().printStackTrace();
+                if (((FOPException)e).getException() != null) {
+                    ((FOPException)e).getException().printStackTrace();
                 }
             } else {
                 e.printStackTrace();
@@ -447,8 +473,7 @@ public class Driver {
     /**
      * format the formatting object tree into an area tree
      */
-    public synchronized void format()
-        throws FOPException {
+    public synchronized void format() throws FOPException {
         FontInfo fontInfo = new FontInfo();
         _renderer.setupFontInfo(fontInfo);
 
@@ -461,8 +486,7 @@ public class Driver {
     /**
      * render the area tree to the output form
      */
-    public synchronized void render()
-        throws IOException, FOPException {
+    public synchronized void render() throws IOException, FOPException {
         _renderer.render(_areaTree, _stream);
     }
 
@@ -470,8 +494,7 @@ public class Driver {
      * Runs the formatting and renderering process using the previously set
      * inputsource and outputstream
      */
-    public synchronized void run()
-        throws IOException, FOPException {
+    public synchronized void run() throws IOException, FOPException {
         if (_renderer == null) {
             setRenderer(RENDER_PDF);
         }
@@ -491,11 +514,13 @@ public class Driver {
         format();
         render();
     }
+
 }
 
 // code stolen from org.apache.batik.util and modified slightly
 // does what sun.misc.Service probably does, but it cannot be relied on.
 // hopefully will be part of standard jdk sometime.
+
 /**
  * This class loads services present in the class path.
  */
@@ -505,7 +530,7 @@ class Service {
 
     public static synchronized Enumeration providers(Class cls) {
         ClassLoader cl = cls.getClassLoader();
-        String serviceFile = "META-INF/services/"+cls.getName();
+        String serviceFile = "META-INF/services/" + cls.getName();
 
         // System.out.println("File: " + serviceFile);
 
@@ -528,8 +553,8 @@ class Service {
                 java.net.URL u = (java.net.URL)e.nextElement();
                 // System.out.println("URL: " + u);
 
-                InputStream    is = u.openStream();
-                Reader         r  = new InputStreamReader(is, "UTF-8");
+                InputStream is = u.openStream();
+                Reader r = new InputStreamReader(is, "UTF-8");
                 BufferedReader br = new BufferedReader(r);
 
                 String line = br.readLine();
@@ -540,7 +565,7 @@ class Service {
                         if (idx != -1)
                             line = line.substring(0, idx);
 
-                        // Trim whitespace.
+                            // Trim whitespace.
                         line = line.trim();
 
                         // If nothing left then loop around...
@@ -551,7 +576,7 @@ class Service {
                         // System.out.println("Line: " + line);
 
                         // Try and load the class
-                        //Object obj = cl.loadClass(line).newInstance();
+                        // Object obj = cl.loadClass(line).newInstance();
                         // stick it into our vector...
                         v.add(line);
                     } catch (Exception ex) {
@@ -565,5 +590,6 @@ class Service {
         }
         return v.elements();
     }
+
 }
 
