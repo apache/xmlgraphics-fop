@@ -18,7 +18,7 @@ import org.apache.fop.apps.FOPException;
 import java.util.Vector;
 import java.util.Enumeration;
 
-public class TableHeader extends TableBody {
+public class TableHeader extends AbstractTableBody {
 
     public static class Maker extends FObj.Maker {
         public FObj make(FObj parent,
@@ -32,7 +32,8 @@ public class TableHeader extends TableBody {
         return new TableHeader.Maker();
     }
 
-    public TableHeader(FObj parent, PropertyList propertyList) {
+    public TableHeader(FObj parent, PropertyList propertyList)
+        throws FOPException {
         super(parent, propertyList);
         this.name = "fo:table-header";
     }

@@ -18,7 +18,7 @@ import org.apache.fop.apps.FOPException;
 import java.util.Vector;
 import java.util.Enumeration;
 
-public class TableFooter extends TableBody {
+public class TableFooter extends AbstractTableBody {
 
     public static class Maker extends FObj.Maker {
         public FObj make(FObj parent,
@@ -28,21 +28,22 @@ public class TableFooter extends TableBody {
 
     }
 
+    public static FObj.Maker maker() {
+        return new TableFooter.Maker();
+    }
+
+    public TableFooter(FObj parent, PropertyList propertyList)
+        throws FOPException {
+        super(parent, propertyList);
+        this.name = "fo:table-footer";
+    }
+
     public int getYPosition() {
         return areaContainer.getCurrentYPosition() - spaceBefore;
     }
 
     public void setYPosition(int value) {
         areaContainer.setYPosition(value + 2 * spaceBefore);
-    }
-
-    public static FObj.Maker maker() {
-        return new TableFooter.Maker();
-    }
-
-    public TableFooter(FObj parent, PropertyList propertyList) {
-        super(parent, propertyList);
-        this.name = "fo:table-footer";
     }
 
 }
