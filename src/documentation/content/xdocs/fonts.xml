@@ -238,7 +238,7 @@ While the document will be displayed correctly, the net effect of this is that s
         <p>One workaround for this behavior is to use the "-enc ansi" option when generating metrics with TTFReader.
 This will cause the whole font to be embedded in the pdf document.
 Characters will be WinAnsi encoded (as specified in the PDF spec), so you lose the ability to use characters from other character sets.
-See <link href="ttf-encoding">Table of TTF Encoding Options</link> for more details.</p>
+See <link href="#ttf-encoding">Table of TTF Encoding Options</link> for more details.</p>
       </section>
     </section>
   </body>
