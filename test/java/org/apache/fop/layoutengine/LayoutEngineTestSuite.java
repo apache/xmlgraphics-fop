@@ -18,13 +18,21 @@
 
 package org.apache.fop.layoutengine;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.Reader;
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.List;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
+import org.apache.commons.io.filefilter.AndFileFilter;
 import org.apache.commons.io.filefilter.IOFileFilter;
 import org.apache.commons.io.filefilter.NameFileFilter;
+import org.apache.commons.io.filefilter.NotFileFilter;
 import org.apache.commons.io.filefilter.SuffixFileFilter;
 import org.apache.commons.io.filefilter.TrueFileFilter;
 
@@ -37,10 +45,21 @@ import junit.framework.TestSuite;
  */
 public class LayoutEngineTestSuite {
 
+    private static String[] readLinesFromFile(File f) throws IOException {
+        List lines = new java.util.ArrayList();
+        Reader reader = new FileReader(f);
+        BufferedReader br = new BufferedReader(reader);
+        String line;
+        while ((line = br.readLine()) != null) {
+            lines.add(line);
+        }
+        return (String[])lines.toArray(new String[lines.size()]);
+    }
+    
     /**
      * @return the test suite with all the tests (one for each XML file)
      */
-    public static Test suite() {
+    public static Test suite() throws IOException {
         TestSuite suite = new TestSuite();
 
         File mainDir = new File("test/layoutengine");
@@ -49,12 +68,19 @@ public class LayoutEngineTestSuite {
 
         final LayoutEngineTester tester = new LayoutEngineTester(backupDir);
         
-        String single = System.getProperty("fop.layoutengine.single");
         IOFileFilter filter;
+        String single = System.getProperty("fop.layoutengine.single");
         if (single != null) {
             filter = new NameFileFilter(single);
         } else {
             filter = new SuffixFileFilter(".xml");
+            String disabled = System.getProperty("fop.layoutengine.disabled");
+            if (disabled != null && disabled.length() > 0) {
+                filter = new AndFileFilter(new NotFileFilter(
+                        new NameFileFilter(readLinesFromFile(new File(disabled)))),
+                        filter);
+            }
+            
         }
         Collection files = FileUtils.listFiles(new File(mainDir, "testcases"), 
                 filter, TrueFileFilter.INSTANCE);
