@@ -90,7 +90,6 @@ public class PDFWArray {
      * inner class for entries in the form "c [w ...]"
      */
     private static class Entry {
-        private static final StringBuffer p = new StringBuffer();
         private int start;
         private int[] metrics;
         public Entry(int s, int[] m) {
