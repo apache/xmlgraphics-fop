@@ -41,31 +41,31 @@
 
     <fo:table-body>
 	  <fo:table-row>
-	    <fo:table-cell border-left-color="green" border-left-width="0.5pt">
+	    <fo:table-cell border-left-color="green" border-left-width="0.5pt" border-left-style="solid">
 	      <fo:block text-align="center">
 	      green left
 	      </fo:block>
 	    </fo:table-cell>
-	    <fo:table-cell border-top-color="red" border-top-width="0.5pt">
+	    <fo:table-cell border-top-color="red" border-top-width="0.5pt" border-top-style="solid">
 	      <fo:block text-align="center">
 	      red top
 	      </fo:block>
 	    </fo:table-cell>
-	    <fo:table-cell border-right-color="blue" border-right-width="0.5pt">
+	    <fo:table-cell border-right-color="blue" border-right-width="0.5pt" border-right-style="solid">
 	      <fo:block text-align="center">
 	      blue right
 	      </fo:block>
 	    </fo:table-cell>
-	    <fo:table-cell border-bottom-color="yellow" border-bottom-width="0.5pt">
+	    <fo:table-cell border-bottom-color="yellow" border-bottom-width="0.5pt" border-bottom-style="solid">
 	      <fo:block text-align="center">
 	      yellow bottom
 	      </fo:block>
 	    </fo:table-cell>
 	    <fo:table-cell
-	        border-left-color="green" border-left-width="0.5pt"
-	        border-top-color="red" border-top-width="0.5pt"
-	        border-right-color="blue" border-right-width="0.5pt"
-	        border-bottom-color="yellow" border-bottom-width="0.5pt">
+	        border-left-color="green" border-left-width="0.5pt" border-left-style="solid"
+	        border-top-color="red" border-top-width="0.5pt" border-top-style="solid"
+	        border-right-color="blue" border-right-width="0.5pt" border-right-style="solid"
+	        border-bottom-color="yellow" border-bottom-width="0.5pt" border-bottom-style="solid">
 	      <fo:block text-align="center">
 	      all
 	      </fo:block>
@@ -77,31 +77,31 @@
 	    </fo:table-cell>
 	  </fo:table-row>
 	  <fo:table-row>
-	    <fo:table-cell border-color="green" border-left-width="2pt">
+	    <fo:table-cell border-color="green" border-left-width="2pt" border-style="solid">
 	      <fo:block text-align="center">
 	      2pt
 	      </fo:block>
 	    </fo:table-cell>
-	    <fo:table-cell border-top-color="red" border-top-width="2pt">
+	    <fo:table-cell border-top-color="red" border-top-width="2pt" border-top-style="dashed">
 	      <fo:block text-align="center">
 	      2pt
 	      </fo:block>
 	    </fo:table-cell>
-	    <fo:table-cell border-right-color="blue" border-right-width="2pt">
+	    <fo:table-cell border-right-color="blue" border-right-width="2pt" border-right-style="dotted">
 	      <fo:block text-align="center">
 	      2pt
 	      </fo:block>
 	    </fo:table-cell>
-	    <fo:table-cell border-bottom-color="yellow" border-bottom-width="2pt">
+	    <fo:table-cell border-bottom-color="yellow" border-bottom-width="2pt" border-bottom-style="double">
 	      <fo:block text-align="center">
 	      2pt
 	      </fo:block>
 	    </fo:table-cell>
 	    <fo:table-cell
-	        border-left-color="green" border-left-width="2pt"
-	        border-top-color="red" border-top-width="2pt"
-	        border-right-color="blue" border-right-width="2pt"
-	        border-bottom-color="yellow" border-bottom-width="2pt">
+	        border-left-color="green" border-left-width="2pt" border-left-style="solid"
+	        border-top-color="red" border-top-width="2pt" border-top-style="dashed"
+	        border-right-color="blue" border-right-width="2pt" border-right-style="double"
+	        border-bottom-color="yellow" border-bottom-width="2pt" border-bottom-style="dotted">
 	      <fo:block text-align="center">
 	      2pt
 	      </fo:block>
@@ -113,31 +113,31 @@
 	    </fo:table-cell>
 	  </fo:table-row>
 	  <fo:table-row>
-	    <fo:table-cell border-left-color="green" border-left-width="10pt">
+	    <fo:table-cell border-left-color="green" border-left-width="10pt" border-left-style="solid">
 	      <fo:block text-align="center">
 	      10pt
 	      </fo:block>
 	    </fo:table-cell>
-	    <fo:table-cell border-top-color="red" border-top-width="10pt">
+	    <fo:table-cell border-top-color="red" border-top-width="10pt" border-top-style="solid">
 	      <fo:block text-align="center">
 	      10pt
 	      </fo:block>
 	    </fo:table-cell>
-	    <fo:table-cell border-right-color="blue" border-right-width="10pt">
+	    <fo:table-cell border-right-color="blue" border-right-width="10pt" border-right-style="solid">
 	      <fo:block text-align="center">
 	      10pt
 	      </fo:block>
 	    </fo:table-cell>
-	    <fo:table-cell border-bottom-color="yellow" border-bottom-width="10pt">
+	    <fo:table-cell border-bottom-color="yellow" border-bottom-width="10pt" border-bottom-style="solid">
 	      <fo:block text-align="center">
 	      10pt
 	      </fo:block>
 	    </fo:table-cell>
 	    <fo:table-cell
-	        border-left-color="green" border-left-width="2pt"
-	        border-top-color="red" border-top-width="4pt"
-	        border-right-color="blue" border-right-width="8pt"
-	        border-bottom-color="yellow" border-bottom-width="10pt">
+	        border-left-color="green" border-left-width="2pt" border-left-style="solid"
+	        border-top-color="red" border-top-width="4pt" border-top-style="solid"
+	        border-right-color="blue" border-right-width="8pt" border-right-style="solid"
+	        border-bottom-color="yellow" border-bottom-width="10pt" border-bottom-style="solid">
 	      <fo:block text-align="center">
 	      2pt - 10pt
 	      </fo:block>
@@ -149,27 +149,27 @@
 	    </fo:table-cell>
 	  </fo:table-row>
 	  <fo:table-row>
-	    <fo:table-cell border-color="green" border-width="0.5pt">
+	    <fo:table-cell border-color="green" border-width="0.5pt" border-style="solid">
 	      <fo:block text-align="center">
 	      0.5pt
 	      </fo:block>
 	    </fo:table-cell>
-	    <fo:table-cell border-color="red" border-width="1pt">
+	    <fo:table-cell border-color="red" border-width="1pt" border-style="solid">
 	      <fo:block text-align="center">
 	      1pt
 	      </fo:block>
 	    </fo:table-cell>
-	    <fo:table-cell border-color="blue" border-width="2pt">
+	    <fo:table-cell border-color="blue" border-width="2pt" border-style="solid">
 	      <fo:block text-align="center">
 	      2pt
 	      </fo:block>
 	    </fo:table-cell>
-	    <fo:table-cell border-color="yellow" border-width="10pt">
+	    <fo:table-cell border-color="yellow" border-width="10pt" border-style="solid">
 	      <fo:block text-align="center">
 	      10pt
 	      </fo:block>
 	    </fo:table-cell>
-	    <fo:table-cell border-color="yellow" border-width="20pt">
+	    <fo:table-cell border-color="yellow" border-width="20pt" border-style="solid">
 	      <fo:block text-align="center">
 	      20pt
 	      </fo:block>
@@ -194,7 +194,7 @@
 	<fo:table-column column-width="3cm"/>
 
     <fo:table-body>
-	  <fo:table-row border-left-color="green" border-left-width="0.5pt">
+	  <fo:table-row border-left-color="green" border-left-width="0.5pt" border-left-style="solid">
 	    <fo:table-cell>
 	      <fo:block text-align="center">
 	      row with
@@ -216,7 +216,7 @@
 	      </fo:block>
 	    </fo:table-cell>
 	  </fo:table-row>
-	  <fo:table-row border-top-color="red" border-top-width="0.5pt">
+	  <fo:table-row border-top-color="red" border-top-width="0.5pt" border-top-style="solid">
 	    <fo:table-cell>
 	      <fo:block text-align="center">
 	      row with
@@ -238,7 +238,7 @@
 	      </fo:block>
 	    </fo:table-cell>
 	  </fo:table-row>
-	  <fo:table-row border-right-color="blue" border-right-width="0.5pt">
+	  <fo:table-row border-right-color="blue" border-right-width="0.5pt" border-right-style="solid">
 	    <fo:table-cell>
 	      <fo:block text-align="center">
 	      row with
@@ -260,7 +260,7 @@
 	      </fo:block>
 	    </fo:table-cell>
 	  </fo:table-row>
-	  <fo:table-row border-bottom-color="yellow" border-bottom-width="0.5pt">
+	  <fo:table-row border-bottom-color="yellow" border-bottom-width="0.5pt" border-bottom-style="solid">
 	    <fo:table-cell>
 	      <fo:block text-align="center">
 	      row with
@@ -282,7 +282,7 @@
 	      </fo:block>
 	    </fo:table-cell>
 	  </fo:table-row>
-	  <fo:table-row border-color="purple" border-width="0.5pt">
+	  <fo:table-row border-color="purple" border-width="0.5pt" border-style="solid">
 	    <fo:table-cell>
 	      <fo:block text-align="center">
 	      row with
@@ -312,11 +312,11 @@
       </fo:block>
 
       <fo:table>
-	<fo:table-column column-width="3cm" border-left-color="green" border-left-width="0.5pt"/>
-	<fo:table-column column-width="3cm" border-top-color="red" border-top-width="0.5pt"/>
-	<fo:table-column column-width="3cm" border-right-color="blue" border-right-width="0.5pt"/>
-	<fo:table-column column-width="3cm" border-bottom-color="yellow" border-bottom-width="0.5pt"/>
-	<fo:table-column column-width="3cm" border-color="orange" border-width="0.5pt"/>
+	<fo:table-column column-width="3cm" border-left-color="green" border-left-width="0.5pt" border-left-style="solid"/>
+	<fo:table-column column-width="3cm" border-top-color="red" border-top-width="0.5pt" border-top-style="solid"/>
+	<fo:table-column column-width="3cm" border-right-color="blue" border-right-width="0.5pt" border-right-style="solid"/>
+	<fo:table-column column-width="3cm" border-bottom-color="yellow" border-bottom-width="0.5pt" border-bottom-style="solid"/>
+	<fo:table-column column-width="3cm" border-color="orange" border-width="0.5pt" border-style="solid"/>
 
     <fo:table-body>
 	  <fo:table-row>
@@ -379,11 +379,11 @@
       </fo:block>
 
       <fo:table>
-	<fo:table-column column-width="3cm" border-left-color="green" border-left-width="0.5pt"/>
-	<fo:table-column column-width="3cm" border-top-color="red" border-top-width="0.5pt"/>
-	<fo:table-column column-width="3cm" border-right-color="blue" border-right-width="0.5pt"/>
-	<fo:table-column column-width="3cm" border-bottom-color="yellow" border-bottom-width="0.5pt"/>
-	<fo:table-column column-width="3cm" border-color="orange" border-width="0.5pt"/>
+	<fo:table-column column-width="3cm" border-left-color="green" border-left-width="0.5pt" border-left-style="solid"/>
+	<fo:table-column column-width="3cm" border-top-color="red" border-top-width="0.5pt" border-top-style="solid"/>
+	<fo:table-column column-width="3cm" border-right-color="blue" border-right-width="0.5pt" border-right-style="solid"/>
+	<fo:table-column column-width="3cm" border-bottom-color="yellow" border-bottom-width="0.5pt" border-bottom-style="solid"/>
+	<fo:table-column column-width="3cm" border-color="orange" border-width="0.5pt" border-style="solid"/>
 
     <fo:table-body>
 	  <fo:table-row>
@@ -452,7 +452,7 @@
 	<fo:table-column column-width="3cm"/>
 	<fo:table-column column-width="3cm"/>
 
-    <fo:table-body border-left-color="green" border-left-width="0.5pt">
+    <fo:table-body border-left-color="green" border-left-width="0.5pt" border-left-style="solid">
 	  <fo:table-row>
 	    <fo:table-cell>
 	      <fo:block text-align="center">
@@ -488,7 +488,7 @@
 	<fo:table-column column-width="3cm"/>
 	<fo:table-column column-width="3cm"/>
 
-    <fo:table-body border-top-color="red" border-top-width="0.5pt">
+    <fo:table-body border-top-color="red" border-top-width="0.5pt" border-top-style="solid">
 	  <fo:table-row>
 	    <fo:table-cell>
 	      <fo:block text-align="center">
@@ -524,7 +524,7 @@
 	<fo:table-column column-width="3cm"/>
 	<fo:table-column column-width="3cm"/>
 
-    <fo:table-body border-right-color="blue" border-right-width="0.5pt">
+    <fo:table-body border-right-color="blue" border-right-width="0.5pt" border-right-style="solid">
 	  <fo:table-row>
 	    <fo:table-cell>
 	      <fo:block text-align="center">
@@ -560,7 +560,7 @@
 	<fo:table-column column-width="3cm"/>
 	<fo:table-column column-width="3cm"/>
 
-    <fo:table-body border-bottom-color="yellow" border-bottom-width="0.5pt">
+    <fo:table-body border-bottom-color="yellow" border-bottom-width="0.5pt" border-bottom-style="solid">
 	  <fo:table-row>
 	    <fo:table-cell>
 	      <fo:block text-align="center">
@@ -596,7 +596,7 @@
 	<fo:table-column column-width="3cm"/>
 	<fo:table-column column-width="3cm"/>
 
-    <fo:table-body border-color="orange" border-width="0.5pt">
+    <fo:table-body border-color="orange" border-width="0.5pt" border-style="solid">
 	  <fo:table-row>
 	    <fo:table-cell>
 	      <fo:block text-align="center">
@@ -629,7 +629,7 @@
       Table 1: table borders
       </fo:block>
 
-      <fo:table border-left-color="green" border-left-width="0.5pt">
+      <fo:table border-left-color="green" border-left-width="0.5pt" border-left-style="solid">
 	<fo:table-column column-width="3cm"/>
 	<fo:table-column column-width="3cm"/>
 	<fo:table-column column-width="3cm"/>
@@ -665,7 +665,7 @@
 	</fo:table-body>
       </fo:table>
 
-      <fo:table border-top-color="red" border-top-width="0.5pt">
+      <fo:table border-top-color="red" border-top-width="0.5pt" border-top-style="solid">
 	<fo:table-column column-width="3cm"/>
 	<fo:table-column column-width="3cm"/>
 	<fo:table-column column-width="3cm"/>
@@ -701,7 +701,7 @@
 	</fo:table-body>
       </fo:table>
 
-      <fo:table border-right-color="blue" border-right-width="0.5pt">
+      <fo:table border-right-color="blue" border-right-width="0.5pt" border-right-style="solid">
 	<fo:table-column column-width="3cm"/>
 	<fo:table-column column-width="3cm"/>
 	<fo:table-column column-width="3cm"/>
@@ -737,7 +737,7 @@
 	</fo:table-body>
       </fo:table>
 
-      <fo:table border-bottom-color="yellow" border-bottom-width="0.5pt">
+      <fo:table border-bottom-color="yellow" border-bottom-width="0.5pt" border-bottom-style="solid">
 	<fo:table-column column-width="3cm"/>
 	<fo:table-column column-width="3cm"/>
 	<fo:table-column column-width="3cm"/>
@@ -773,7 +773,7 @@
 	</fo:table-body>
       </fo:table>
 
-      <fo:table border-color="orange" border-width="0.5pt">
+      <fo:table border-color="orange" border-width="0.5pt" border-style="solid">
 	<fo:table-column column-width="3cm"/>
 	<fo:table-column column-width="3cm"/>
 	<fo:table-column column-width="3cm"/>
@@ -813,37 +813,37 @@
       Table 1: combinations
       </fo:block>
 
-      <fo:table border-left-color="green" border-left-width="0.5pt">
+      <fo:table border-left-color="green" border-left-width="0.5pt" border-left-style="solid">
 	<fo:table-column column-width="2.5cm"/>
-	<fo:table-column column-width="2.5cm" border-left-color="green" border-left-width="0.5pt"/>
-	<fo:table-column column-width="2.5cm" border-top-color="red" border-top-width="0.5pt"/>
-	<fo:table-column column-width="2.5cm" border-right-color="blue" border-right-width="0.5pt"/>
-	<fo:table-column column-width="2.5cm" border-bottom-color="yellow" border-bottom-width="0.5pt"/>
-	<fo:table-column column-width="2.5cm" border-color="orange" border-width="0.5pt"/>
+	<fo:table-column column-width="2.5cm" border-left-color="green" border-left-width="0.5pt" border-left-style="solid"/>
+	<fo:table-column column-width="2.5cm" border-top-color="red" border-top-width="0.5pt" border-top-style="solid"/>
+	<fo:table-column column-width="2.5cm" border-right-color="blue" border-right-width="0.5pt" border-right-style="solid"/>
+	<fo:table-column column-width="2.5cm" border-bottom-color="yellow" border-bottom-width="0.5pt" border-bottom-style="solid"/>
+	<fo:table-column column-width="2.5cm" border-color="orange" border-width="0.5pt" border-style="solid"/>
 
-    <fo:table-body border-color="aqua" border-width="0.5pt">
-	  <fo:table-row border-left-color="green" border-left-width="0.5pt">
-	    <fo:table-cell border-left-color="green" border-left-width="0.5pt">
+    <fo:table-body border-color="aqua" border-width="0.5pt" border-style="solid">
+	  <fo:table-row border-left-color="green" border-left-width="0.5pt" border-left-style="solid">
+	    <fo:table-cell border-left-color="green" border-left-width="0.5pt" border-left-style="solid">
 	      <fo:block text-align="center">
 	      a
 	      </fo:block>
 	    </fo:table-cell>
-	    <fo:table-cell border-top-color="red" border-top-width="0.5pt">
+	    <fo:table-cell border-top-color="red" border-top-width="0.5pt" border-top-style="solid">
 	      <fo:block text-align="center">
 	      b
 	      </fo:block>
 	    </fo:table-cell>
-	    <fo:table-cell border-right-color="blue" border-right-width="0.5pt">
+	    <fo:table-cell border-right-color="blue" border-right-width="0.5pt" border-right-style="solid">
 	      <fo:block text-align="center">
 	      c
 	      </fo:block>
 	    </fo:table-cell>
-	    <fo:table-cell border-bottom-color="yellow" border-bottom-width="0.5pt">
+	    <fo:table-cell border-bottom-color="yellow" border-bottom-width="0.5pt" border-bottom-style="solid">
 	      <fo:block text-align="center">
 	      d
 	      </fo:block>
 	    </fo:table-cell>
-	    <fo:table-cell border-color="orange" border-width="0.5pt">
+	    <fo:table-cell border-color="orange" border-width="0.5pt" border-style="solid">
 	      <fo:block text-align="center">
 	      e
 	      </fo:block>
@@ -854,28 +854,28 @@
 	      </fo:block>
 	    </fo:table-cell>
 	  </fo:table-row>
-	  <fo:table-row border-top-color="red" border-top-width="0.5pt">
-	    <fo:table-cell border-left-color="green" border-left-width="0.5pt">
+	  <fo:table-row border-top-color="red" border-top-width="0.5pt" border-top-style="solid">
+	    <fo:table-cell border-left-color="green" border-left-width="0.5pt" border-left-style="solid">
 	      <fo:block text-align="center">
 	      a
 	      </fo:block>
 	    </fo:table-cell>
-	    <fo:table-cell border-top-color="red" border-top-width="0.5pt">
+	    <fo:table-cell border-top-color="red" border-top-width="0.5pt" border-top-style="solid">
 	      <fo:block text-align="center">
 	      b
 	      </fo:block>
 	    </fo:table-cell>
-	    <fo:table-cell border-right-color="blue" border-right-width="0.5pt">
+	    <fo:table-cell border-right-color="blue" border-right-width="0.5pt" border-right-style="solid">
 	      <fo:block text-align="center">
 	      c
 	      </fo:block>
 	    </fo:table-cell>
-	    <fo:table-cell border-bottom-color="yellow" border-bottom-width="0.5pt">
+	    <fo:table-cell border-bottom-color="yellow" border-bottom-width="0.5pt" border-bottom-style="solid">
 	      <fo:block text-align="center">
 	      d
 	      </fo:block>
 	    </fo:table-cell>
-	    <fo:table-cell border-color="orange" border-width="0.5pt">
+	    <fo:table-cell border-color="orange" border-width="0.5pt" border-style="solid">
 	      <fo:block text-align="center">
 	      e
 	      </fo:block>
@@ -886,28 +886,28 @@
 	      </fo:block>
 	    </fo:table-cell>
 	  </fo:table-row>
-	  <fo:table-row border-right-color="blue" border-right-width="0.5pt">
-	    <fo:table-cell border-left-color="green" border-left-width="0.5pt">
+	  <fo:table-row border-right-color="blue" border-right-width="0.5pt" border-right-style="solid">
+	    <fo:table-cell border-left-color="green" border-left-width="0.5pt" border-left-style="solid">
 	      <fo:block text-align="center">
 	      a
 	      </fo:block>
 	    </fo:table-cell>
-	    <fo:table-cell border-top-color="red" border-top-width="0.5pt">
+	    <fo:table-cell border-top-color="red" border-top-width="0.5pt" border-top-style="solid">
 	      <fo:block text-align="center">
 	      b
 	      </fo:block>
 	    </fo:table-cell>
-	    <fo:table-cell border-right-color="blue" border-right-width="0.5pt">
+	    <fo:table-cell border-right-color="blue" border-right-width="0.5pt" border-right-style="solid">
 	      <fo:block text-align="center">
 	      c
 	      </fo:block>
 	    </fo:table-cell>
-	    <fo:table-cell border-bottom-color="yellow" border-bottom-width="0.5pt">
+	    <fo:table-cell border-bottom-color="yellow" border-bottom-width="0.5pt" border-bottom-style="solid">
 	      <fo:block text-align="center">
 	      d
 	      </fo:block>
 	    </fo:table-cell>
-	    <fo:table-cell border-color="orange" border-width="0.5pt">
+	    <fo:table-cell border-color="orange" border-width="0.5pt" border-style="solid">
 	      <fo:block text-align="center">
 	      e
 	      </fo:block>
@@ -918,28 +918,28 @@
 	      </fo:block>
 	    </fo:table-cell>
 	  </fo:table-row>
-	  <fo:table-row border-bottom-color="yellow" border-bottom-width="0.5pt">
-	    <fo:table-cell border-left-color="green" border-left-width="0.5pt">
+	  <fo:table-row border-bottom-color="yellow" border-bottom-width="0.5pt" border-bottom-style="solid">
+	    <fo:table-cell border-left-color="green" border-left-width="0.5pt" border-left-style="solid">
 	      <fo:block text-align="center">
 	      a
 	      </fo:block>
 	    </fo:table-cell>
-	    <fo:table-cell border-top-color="red" border-top-width="0.5pt">
+	    <fo:table-cell border-top-color="red" border-top-width="0.5pt" border-top-style="solid">
 	      <fo:block text-align="center">
 	      b
 	      </fo:block>
 	    </fo:table-cell>
-	    <fo:table-cell border-right-color="blue" border-right-width="0.5pt">
+	    <fo:table-cell border-right-color="blue" border-right-width="0.5pt" border-right-style="solid">
 	      <fo:block text-align="center">
 	      c
 	      </fo:block>
 	    </fo:table-cell>
-	    <fo:table-cell border-bottom-color="yellow" border-bottom-width="0.5pt">
+	    <fo:table-cell border-bottom-color="yellow" border-bottom-width="0.5pt" border-bottom-style="solid">
 	      <fo:block text-align="center">
 	      d
 	      </fo:block>
 	    </fo:table-cell>
-	    <fo:table-cell border-color="orange" border-width="0.5pt">
+        <fo:table-cell border-color="orange" border-width="0.5pt" border-style="solid">
 	      <fo:block text-align="center">
 	      e
 	      </fo:block>
@@ -950,28 +950,28 @@
 	      </fo:block>
 	    </fo:table-cell>
 	  </fo:table-row>
-	  <fo:table-row border-color="orange" border-width="0.5pt">
-	    <fo:table-cell border-left-color="green" border-left-width="0.5pt">
+	  <fo:table-row border-color="orange" border-width="0.5pt" border-style="solid">
+	    <fo:table-cell border-left-color="green" border-left-width="0.5pt" border-left-style="solid">
 	      <fo:block text-align="center">
 	      a
 	      </fo:block>
 	    </fo:table-cell>
-	    <fo:table-cell border-top-color="red" border-top-width="0.5pt">
+	    <fo:table-cell border-top-color="red" border-top-width="0.5pt" border-top-style="solid">
 	      <fo:block text-align="center">
 	      b
 	      </fo:block>
 	    </fo:table-cell>
-	    <fo:table-cell border-right-color="blue" border-right-width="0.5pt">
+	    <fo:table-cell border-right-color="blue" border-right-width="0.5pt" border-right-style="solid">
 	      <fo:block text-align="center">
 	      c
 	      </fo:block>
 	    </fo:table-cell>
-	    <fo:table-cell border-bottom-color="yellow" border-bottom-width="0.5pt">
+	    <fo:table-cell border-bottom-color="yellow" border-bottom-width="0.5pt" border-bottom-style="solid">
 	      <fo:block text-align="center">
 	      d
 	      </fo:block>
 	    </fo:table-cell>
-	    <fo:table-cell border-color="orange" border-width="0.5pt">
+	    <fo:table-cell border-color="orange" border-width="0.5pt" border-style="solid">
 	      <fo:block text-align="center">
 	      e
 	      </fo:block>
@@ -983,27 +983,27 @@
 	    </fo:table-cell>
 	  </fo:table-row>
 	  <fo:table-row>
-	    <fo:table-cell border-left-color="green" border-left-width="0.5pt">
+	    <fo:table-cell border-left-color="green" border-left-width="0.5pt" border-left-style="solid">
 	      <fo:block text-align="center">
 	      a
 	      </fo:block>
 	    </fo:table-cell>
-	    <fo:table-cell border-top-color="red" border-top-width="0.5pt">
+	    <fo:table-cell border-top-color="red" border-top-width="0.5pt" border-top-style="solid">
 	      <fo:block text-align="center">
 	      b
 	      </fo:block>
 	    </fo:table-cell>
-	    <fo:table-cell border-right-color="blue" border-right-width="0.5pt">
+	    <fo:table-cell border-right-color="blue" border-right-width="0.5pt" border-right-style="solid">
 	      <fo:block text-align="center">
 	      c
 	      </fo:block>
 	    </fo:table-cell>
-	    <fo:table-cell border-bottom-color="yellow" border-bottom-width="0.5pt">
+	    <fo:table-cell border-bottom-color="yellow" border-bottom-width="0.5pt" border-bottom-style="solid">
 	      <fo:block text-align="center">
 	      d
 	      </fo:block>
 	    </fo:table-cell>
-	    <fo:table-cell border-color="orange" border-width="0.5pt">
+	    <fo:table-cell border-color="orange" border-width="0.5pt"  border-style="solid">
 	      <fo:block text-align="center">
 	      e
 	      </fo:block>
