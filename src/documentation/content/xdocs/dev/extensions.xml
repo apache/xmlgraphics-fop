@@ -42,7 +42,7 @@ the instream-foreign-object.
           <section>
             <title>PDF Bookmarks</title>
             <p>
-To use this standard Fop extension, you need to add a namespace entry for
+To use this standard FOP extension, you need to add a namespace entry for
      http://xml.apache.org/fop/extensions on the root element. </p>
 
     <p>You can provide outlines inside the root object (but outside
