@@ -5,7 +5,7 @@
 		<fo:region-body margin-bottom="30pt" margin-top="30pt"/>
 		</fo:simple-page-master>
 	</fo:layout-master-set>
-	<fo:page-sequence master-name="one">
+	<fo:page-sequence master-reference="one">
 		<fo:flow font-size="12pt" flow-name="xsl-region-body">
 			<fo:block>
 				This file contains a list of many characters in various fonts. The text is

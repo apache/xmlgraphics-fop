@@ -15,7 +15,7 @@
     </fo:simple-page-master>
   </fo:layout-master-set>
 
-  <fo:page-sequence master-name="first">
+  <fo:page-sequence master-reference="first">
     <fo:static-content flow-name="xsl-region-before">
       <fo:block line-height="14pt" font-size="10pt"
     text-align="end">Embedding SVG examples</fo:block>
