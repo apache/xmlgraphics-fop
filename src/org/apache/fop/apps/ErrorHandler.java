@@ -50,9 +50,5 @@
  */
 package org.apache.fop.apps;
 
-
-
 /** not implemented yet */
-
 public interface ErrorHandler {}
-

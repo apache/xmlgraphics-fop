@@ -50,27 +50,14 @@
  */
 package org.apache.fop.fo.pagination;
 
-
-
 import org.apache.fop.fo.*;
-
 import org.apache.fop.layout.PageMasterFactory;
 
-
-
 abstract public class SequenceSpecifier extends FObj {
-
 	
-
     protected SequenceSpecifier(FObj parent, PropertyList propertyList) {
-
 	super(parent, propertyList);
-
     }
 
-
-
     public abstract PageMasterFactory getPageMasterFactory();
-
 }
-
