@@ -65,13 +65,13 @@ public class LengthBase implements PercentBase {
   /**
    * FO parent of the FO for which this property is to be calculated.
    */
-  protected final FObj parentFO;
+  protected /* final */ FObj parentFO;
   /**
    * PropertyList for the FO where this property is calculated.
    */
-  private final PropertyList propertyList;
+  private /* final */ PropertyList propertyList;
   /** One of the defined types of LengthBase */
-  private final int iBaseType;
+  private /* final */ int iBaseType;
 
   public LengthBase(FObj parentFO, PropertyList plist, int iBaseType) {
     this.parentFO = parentFO;
