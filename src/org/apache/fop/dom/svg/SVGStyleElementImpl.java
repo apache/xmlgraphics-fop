@@ -51,16 +51,22 @@
 
 package org.apache.fop.dom.svg;
 
+import org.apache.fop.dom.css.*;
+
 import org.w3c.dom.svg.*;
+import org.w3c.dom.css.*;
+import org.w3c.dom.stylesheets.*;
 
 /**
  *
  */
 public class SVGStyleElementImpl extends GraphicElement implements SVGStyleElement {
 	String type;
+	CSSStyleSheet styleSheet;
 
-	public SVGStyleElementImpl()
+	public SVGStyleElementImpl(String str)
 	{
+		styleSheet = new CSSStyleSheetImpl(str);
 	}
 
 	public String getType()
@@ -89,5 +95,15 @@ public class SVGStyleElementImpl extends GraphicElement implements SVGStyleEleme
 
 	public void setTitle( String title )
 	{
+	}
+
+    public StyleSheet getStyleSheet()
+    {
+        return styleSheet;
+    }
+
+    public String getTagName()
+	{
+		return "style";
 	}
 }

@@ -49,53 +49,31 @@
  
  */
 
-package org.apache.fop.dom.svg;
+package org.apache.fop.dom.stylesheets;
+
+import org.w3c.dom.stylesheets.*;
 
 import java.util.*;
 
-import org.w3c.dom.svg.*;
-
 /**
  *
+ *
  */
-public class SVGPolygonElementImpl extends GraphicElement implements SVGPolygonElement {
+public class StyleSheetListImpl implements StyleSheetList {
+    Vector sheets = new Vector();
 
-	public Vector points;
-
-	public SVGPolygonElementImpl(Vector p)
+	public StyleSheetListImpl(Vector sheets)
 	{
-		this.points = p;
+		this.sheets = sheets;
 	}
 
-	public SVGList getPoints( )
-	{
-		return null;
-	}
+    public int getLength()
+    {
+        return sheets.size();
+    }
 
-	public SVGList getAnimatedPoints( )
-	{
-		return null;
-	}
-
-	public SVGRect getBBox()
-	{
-		float minX = 10000000; // a big number
-		float maxX = -10000000; // a low number
-		float minY = 10000000; // a big number
-		float maxY = -10000000; // a low number
-		for(Enumeration e = points.elements(); e.hasMoreElements(); ) {
-			e.nextElement();
-		}
-		SVGRect rect = new SVGRectImpl();
-		rect.setX(minX);
-		rect.setY(minY);
-		rect.setWidth(maxX - minX);
-		rect.setHeight(maxY - minY);
-		return rect;
-	}
-
-    public String getTagName()
-	{
-		return "polygon";
-	}
+    public StyleSheet item(int pos)
+    {
+        return (StyleSheet)sheets.elementAt(pos);
+    }
 }

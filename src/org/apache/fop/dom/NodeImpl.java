@@ -92,21 +92,35 @@ public class NodeImpl implements Node {
 
     public Node getFirstChild()
 	{
+		if(childs.size() > 0) {
+			return (Node)childs.elementAt(0);
+		}
 		return null;
 	}
 
     public Node getLastChild()
 	{
+		if(childs.size() > 0) {
+			return (Node)childs.elementAt(childs.size() - 1);
+		}
 		return null;
 	}
 
     public Node getPreviousSibling()
 	{
+		int ind = ((NodeImpl)parent).childs.indexOf(this);
+		if(ind > 0) {
+			return (Node)((NodeImpl)parent).childs.elementAt(ind - 1);
+		}
 		return null;
 	}
 
     public Node getNextSibling()
 	{
+		int ind = ((NodeImpl)parent).childs.indexOf(this);
+		if(ind + 1 < ((NodeImpl)parent).childs.size()) {
+			return (Node)((NodeImpl)parent).childs.elementAt(ind + 1);
+		}
 		return null;
 	}
 
@@ -210,89 +224,6 @@ public class NodeImpl implements Node {
 		return null;
 	}
 
-/*    public String getAttribute(String name)
-	{
-		return null;
-	}
-
-    public void setAttribute(String name, String value) throws DOMException
-	{
-	}
-
-    public void removeAttribute(String name) throws DOMException
-	{
-	}
-
-    public Attr getAttributeNode(String name)
-	{
-		return null;
-	}
-
-    public Attr setAttributeNode(Attr newAttr)
-                                         throws DOMException
-	{
-		return null;
-	}
-
-    public Attr removeAttributeNode(Attr oldAttr)
-                                            throws DOMException
-	{
-		return null;
-	}
-
-    public NodeList getElementsByTagName(String name)
-	{
-		return null;
-	}
-
-    public String getAttributeNS(String namespaceURI,
-                                       String localName)
-	{
-		return null;
-	}
-
-    public void setAttributeNS(String namespaceURI,
-                                       String qualifiedName,
-                                       String value)
-                                       throws DOMException
-	{
-	}
-
-    public void removeAttributeNS(String namespaceURI,
-                                          String localName)
-                                          throws DOMException
-	{
-	}
-
-    public Attr getAttributeNodeNS(String namespaceURI,
-                                           String localName)
-	{
-		return null;
-	}
-
-    public Attr setAttributeNodeNS(Attr newAttr)
-                                           throws DOMException
-	{
-		return null;
-	}
-
-    public NodeList getElementsByTagNameNS(String namespaceURI,
-                                               String localName)
-	{
-		return null;
-	}
-
-    public boolean hasAttributeNS (String namespaceURI,
-                                   String localName)
-  {
-    return false;
-  }
-
-    public boolean hasAttribute (String name)
-  {
-    return false;
-  }
-*/
     public boolean hasAttributes()
     {
         return false;

@@ -50,6 +50,7 @@
  */
 package org.apache.fop.dom.svg;
 
+import org.apache.fop.dom.stylesheets.StyleSheetListImpl;
 import org.apache.fop.fo.Property;
 
 import java.util.*;
@@ -59,6 +60,7 @@ import org.w3c.dom.Element;
 import org.w3c.dom.css.RGBColor;
 import org.w3c.dom.css.CSSStyleDeclaration;
 import org.w3c.dom.stylesheets.StyleSheetList;
+import org.w3c.dom.stylesheets.StyleSheet;
 import org.w3c.dom.NodeList;
 import org.w3c.dom.views.DocumentView;
 import org.w3c.dom.svg.*;
@@ -134,7 +136,7 @@ public class SVGSVGElementImpl extends GraphicElement implements SVGSVGElement {
 	{
 	}
 
-	public CSSValue getPresentationAttribute ( String name )
+/*	public CSSValue getPresentationAttribute ( String name )
 	{
 		CSSStyleDeclaration style;
 		style = getStyle();
@@ -151,7 +153,7 @@ public class SVGSVGElementImpl extends GraphicElement implements SVGSVGElement {
 			}
 		}
 		return val;
-	}
+	}*/
 
 	public SVGPoint getCurrentTranslate( )
 	{
@@ -351,7 +353,15 @@ public class SVGSVGElementImpl extends GraphicElement implements SVGSVGElement {
 
 	public StyleSheetList getStyleSheets()
 	{
-		return null;
+		NodeList nl = getElementsByTagName("style");
+		Vector shs = new Vector();
+		for(int count = 0; count < nl.getLength(); count++) {
+			Node el = (Node)nl.item(count);
+			SVGStyleElementImpl sse = (SVGStyleElementImpl)el;
+			StyleSheet sheet = sse.getStyleSheet();
+			shs.addElement(sheet);
+		}
+		return new StyleSheetListImpl(shs);
 	}
 
 	public Event createEvent(String str)
@@ -362,5 +372,29 @@ public class SVGSVGElementImpl extends GraphicElement implements SVGSVGElement {
 	public DocumentView getDocument()
 	{
 		return null;
+	}
+
+    public Node appendChild(Node newChild)
+                                    throws DOMException
+	{
+		Node nChild = super.appendChild(newChild);
+		if(newChild instanceof SVGElementImpl) {
+			SVGElementImpl ele = (SVGElementImpl)newChild;
+			ele.setOwnerSVG(this);
+		}
+		setOwnerSVG(this);
+		return nChild;
+	}
+
+    public void setOwnerSVG(SVGSVGElement owner)
+	{
+		ownerSvg = owner;
+		NodeList nl = getChildNodes();
+		for(int count = 0; count < nl.getLength(); count++) {
+			Node n = nl.item(count);
+			if(n instanceof SVGElementImpl) {
+				((SVGElementImpl)n).setOwnerSVG(this);
+			}
+		}
 	}
 }
