@@ -6,14 +6,14 @@ echo ----------------
 
 if "%JAVA_HOME%" == "" goto error
 
-set LOCALCLASSPATH=%JAVA_HOME%\lib\tools.jar;%JAVA_HOME%\lib\classes.zip;..\..\lib\ant.jar;..\..\lib\xml.jar;..\..\lib\w3c.jar;..\..\lib\buildtools.jar;..\..\build\fop.jar;..\..\lib\stylebook.jar
+set LOCALCLASSPATH=%JAVA_HOME%\lib\tools.jar;%JAVA_HOME%\lib\classes.zip;..\..\lib\ant.jar;..\..\lib\w3c.jar;..\..\lib\buildtools.jar;..\..\build\fop.jar;..\..\lib\stylebook.jar
 set ANT_HOME=.\lib
 
 
 %JAVA_HOME%\bin\java.exe -Dant.home=%ANT_HOME% -classpath %LOCALCLASSPATH%;%CLASSPATH% org.apache.tools.ant.Main %1 %2 %3 %4 %5
 
 
-%JAVA_HOME%\bin\java.exe -classpath %LOCALCLASSPATH%;%CLASSPATH% org.apache.stylebook.StyleBook "targetDirectory=../html-docs/" fop.xml style/
+rem %JAVA_HOME%\bin\java.exe -classpath %LOCALCLASSPATH%;%CLASSPATH% org.apache.stylebook.StyleBook "targetDirectory=../html-docs/" fop.xml style/
 
 goto end
 
