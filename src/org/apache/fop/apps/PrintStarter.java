@@ -68,15 +68,15 @@ public class PrintStarter extends CommandLineStarter {
 
         PrinterJob pj = PrinterJob.getPrinterJob();
         if(System.getProperty("dialog") != null)
-          if(!pj.printDialog())
-            throw new FOPException("Printing cancelled by operator");
-            
+            if(!pj.printDialog())
+                throw new FOPException("Printing cancelled by operator");
+
         PrintRenderer renderer = new PrintRenderer(pj);
         int copies = getIntProperty("copies", 1);
         pj.setCopies(copies);
-        
+
         //renderer.setCopies(copies);
-        
+
         try {
             driver.setRenderer(renderer);
             driver.render(parser, inputHandler.getInputSource());
@@ -88,16 +88,16 @@ public class PrintStarter extends CommandLineStarter {
         }
 
         System.exit(0);
-      }
-        int getIntProperty(String name, int def) {
-          String propValue = System.getProperty(name);
-          if(propValue != null) {
+    }
+    int getIntProperty(String name, int def) {
+        String propValue = System.getProperty(name);
+        if(propValue != null) {
             try {
-              return Integer.parseInt(propValue);
+                return Integer.parseInt(propValue);
             } catch (Exception e) {
-              return def;
+                return def;
             }
-          } else {
+        } else {
             return def;
         }
     }
@@ -113,7 +113,7 @@ public class PrintStarter extends CommandLineStarter {
         private int mode = EVEN_AND_ALL;
         private int copies = 1;
         private PrinterJob printerJob;
-        
+
         PrintRenderer(PrinterJob printerJob) {
             super(null);
 
@@ -129,33 +129,31 @@ public class PrintStarter extends CommandLineStarter {
                 try {
                     mode = Boolean.valueOf(str).booleanValue() ? EVEN : ODD;
                 } catch (Exception e) {}
+
             }
 
         }
 
 
 
-       public void stopRenderer(OutputStream outputStream)
-         throws IOException
-       {
-          super.stopRenderer(outputStream);
-          
-          if(endNumber == -1)
-            endNumber = getPageCount();
-            
+        public void stopRenderer(OutputStream outputStream)
+        throws IOException {
+            super.stopRenderer(outputStream);
+
+            if(endNumber == -1)
+                endNumber = getPageCount();
+
             Vector numbers = getInvalidPageNumbers();
             for (int i = numbers.size() - 1; i > -1; i--)
                 removePage(Integer.parseInt((String)numbers.elementAt(i)));
 
             try {
-              printerJob.print();
-            }
-            catch (PrinterException e)
-            {
-              e.printStackTrace();
-              throw new IOException(
-                 "Unable to print: " + e.getClass().getName() +
-                 ": " + e.getMessage());
+                printerJob.print();
+            } catch (PrinterException e) {
+                e.printStackTrace();
+                throw new IOException(
+                    "Unable to print: " + e.getClass().getName() +
+                    ": " + e.getMessage());
             }
         }
 
@@ -197,8 +195,8 @@ public class PrintStarter extends CommandLineStarter {
                 tree.getPages().addAll(copie);
             }
 
-        }
-      */
+    }
+        */
     }    // class PrintRenderer
 }        // class PrintCommandLine
 

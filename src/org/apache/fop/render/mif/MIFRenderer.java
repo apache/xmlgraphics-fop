@@ -113,6 +113,7 @@ public class MIFRenderer implements Renderer {
      */
     public void setProducer(String producer) {}
 
+
     public void renderAreaContainer(AreaContainer area) {
 
         if (area.foCreator != null
@@ -228,6 +229,7 @@ public class MIFRenderer implements Renderer {
             b.render(this);    // span areas
         }
 
+
         if (area.getPosition() != Position.STATIC) {
             this.currentYPosition = saveY;
             this.currentAreaContainerXPosition = saveX;
@@ -302,6 +304,7 @@ public class MIFRenderer implements Renderer {
             Box b = (Box)e.nextElement();
             b.render(this);    // column areas
         }
+
     }
 
     /**
@@ -337,6 +340,7 @@ public class MIFRenderer implements Renderer {
      * render a foreign object area
      */
     public void renderForeignObjectArea(ForeignObjectArea area) {}
+
 
     public void renderWordArea(WordArea area) {
         String s;
@@ -482,25 +486,23 @@ public class MIFRenderer implements Renderer {
       normally be overridden. (mark-fop@inomial.com).
     */
     public void startRenderer(OutputStream outputStream)
-      throws IOException
-    {
-    	MessageHandler.logln("rendering areas to MIF");
+    throws IOException {
+        MessageHandler.logln("rendering areas to MIF");
     }
-    
+
     /**
       Default stop renderer method. This would
       normally be overridden. (mark-fop@inomial.com)
     */
     public void stopRenderer(OutputStream outputStream)
-      throws IOException
-    {
-    	MessageHandler.logln("writing out MIF");
-    	this.mifDoc.output(outputStream);
-    	outputStream.flush();
+    throws IOException {
+        MessageHandler.logln("writing out MIF");
+        this.mifDoc.output(outputStream);
+        outputStream.flush();
     }
 
     public void render(Page page, OutputStream outputStream) {
-       this.renderPage(page);
+        this.renderPage(page);
     }
 }
 

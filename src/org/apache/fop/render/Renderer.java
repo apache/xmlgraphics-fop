@@ -91,7 +91,7 @@ public interface Renderer {
      */
     //public void render(AreaTree areaTree, OutputStream stream) throws IOException, FOPException;
     public void render(Page page, OutputStream stream)
-      throws IOException, FOPException;
+    throws IOException, FOPException;
 
     /**
      * render the given area container
@@ -159,9 +159,9 @@ public interface Renderer {
     public void renderLeaderArea(LeaderArea area);
 
     public void startRenderer(OutputStream outputStream)
-      throws IOException;
-    
+    throws IOException;
+
     public void stopRenderer(OutputStream outputStream)
-      throws IOException;
+    throws IOException;
 
 }

@@ -146,17 +146,15 @@ public class PDFRenderer extends PrintRenderer {
     }
 
     public void startRenderer(OutputStream stream)
-      throws IOException
-    {
-    	pdfDoc.outputHeader(stream);
+    throws IOException {
+        pdfDoc.outputHeader(stream);
     }
 
     public void stopRenderer(OutputStream stream)
-      throws IOException
-    {
-    	pdfDoc.outputTrailer(stream);
+    throws IOException {
+        pdfDoc.outputTrailer(stream);
     }
-    
+
     /**
      * add a line to the current stream
      *
@@ -280,6 +278,7 @@ public class PDFRenderer extends PrintRenderer {
                 renderSVGDocument(svg, (int)x, (int)y, area.getFontState());
                 currentStream.add("Q\nBT\n");
             } catch (FopImageException e) {}
+
         } else {
             int xObjectNum = this.pdfDoc.addImage(img);
             closeText();
@@ -410,10 +409,10 @@ public class PDFRenderer extends PrintRenderer {
         ctx.putBridge(aBridge);
         GraphicsNode root;
         PDFGraphics2D graphics = new PDFGraphics2D(true, fs, pdfDoc,
-                                                   currentFontName,
-                                                   currentFontSize,
-                                                   currentXPosition,
-                                                   currentYPosition);
+                                 currentFontName,
+                                 currentFontSize,
+                                 currentXPosition,
+                                 currentYPosition);
         graphics.setGraphicContext(new org.apache.batik.ext.awt.g2d.GraphicContext());
         graphics.setRenderingHints(rc.getRenderingHints());
         aBridge.setPDFGraphics2D(graphics);
@@ -490,7 +489,7 @@ public class PDFRenderer extends PrintRenderer {
                 (Font)area.getFontState().getFontInfo().getFonts().get(name);
             if (f instanceof CIDFont)
                 useMultiByte = true;
-                // String startText = useMultiByte ? "<FEFF" : "(";
+            // String startText = useMultiByte ? "<FEFF" : "(";
             String startText = useMultiByte ? "<" : "(";
             String endText = useMultiByte ? "> " : ") ";
 
@@ -628,6 +627,7 @@ public class PDFRenderer extends PrintRenderer {
             // This should never fail
         }
 
+
         for (int i = 0; i < uniBytes.length; i++) {
             int b = (uniBytes[i] < 0) ? (int)(256 + uniBytes[i])
                     : (int)uniBytes[i];
@@ -671,21 +671,20 @@ public class PDFRenderer extends PrintRenderer {
     }
 
     public void render(Page page, OutputStream outputStream)
-      throws FOPException, IOException
-    {
-      // MessageHandler.logln("rendering single page to PDF");
-      this.idReferences = page.getIDReferences();
-      this.pdfResources = this.pdfDoc.getResources();
-      this.pdfDoc.setIDReferences(idReferences);
-      this.renderPage(page);
+    throws FOPException, IOException {
+        // MessageHandler.logln("rendering single page to PDF");
+        this.idReferences = page.getIDReferences();
+        this.pdfResources = this.pdfDoc.getResources();
+        this.pdfDoc.setIDReferences(idReferences);
+        this.renderPage(page);
 
-      FontSetup.addToResources(this.pdfDoc, fontInfo);
+        FontSetup.addToResources(this.pdfDoc, fontInfo);
 
-      // TODO: this needs to be implemented
-      renderRootExtensions(page);
+        // TODO: this needs to be implemented
+        renderRootExtensions(page);
 
-      // MessageHandler.logln("writing out PDF");
-      this.pdfDoc.output(outputStream);
+        // MessageHandler.logln("writing out PDF");
+        this.pdfDoc.output(outputStream);
     }
 
     /**
@@ -749,7 +748,7 @@ public class PDFRenderer extends PrintRenderer {
                 while (f.hasMoreElements()) {
                     LinkedRectangle lrect = (LinkedRectangle)f.nextElement();
                     currentAnnotList.addLink(this.pdfDoc.makeLink(lrect.getRectangle(),
-                            dest, linkType));
+                                             dest, linkType));
                 }
             }
         } else {
@@ -901,11 +900,13 @@ public class PDFRenderer extends PrintRenderer {
             // application.openLink(uri);
         }
 
+
         public Point getClientAreaLocationOnScreen() {
             return new Point(0, 0);
         }
 
         public void setSVGCursor(java.awt.Cursor cursor) {}
+
 
         public AffineTransform getTransform() {
             return currentTransform;
@@ -928,6 +929,7 @@ public class PDFRenderer extends PrintRenderer {
         }
 
         public void registerExtension(BridgeExtension be) {}
+
 
     }
 }

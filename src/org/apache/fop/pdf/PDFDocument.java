@@ -69,7 +69,7 @@ public class PDFDocument {
     protected Vector location = new Vector();
 
     /** List of objects to write in the trailer */
-      private Vector trailerObjects = new Vector();
+    private Vector trailerObjects = new Vector();
 
     /**
      * the counter for object numbering
@@ -93,10 +93,10 @@ public class PDFDocument {
 
     /** The root outline object */
     private PDFOutline outlineRoot = null;
-    
+
     /** The /Pages object (mark-fop@inomial.com) */
     private PDFPages pages;
-    
+
     /**
      * the /Info object
      */
@@ -160,13 +160,13 @@ public class PDFDocument {
 
         /* create the /Root, /Info and /Resources objects */
         this.pages = makePages();
-        
+
         // Create the Root object
         this.root = makeRoot(pages);
-        
+
         // Create the Resources object
         this.resources = makeResources();
-        
+
         // Make the /Info record
         this.info = makeInfo();
     }
@@ -184,37 +184,34 @@ public class PDFDocument {
      * Make a /Catalog (Root) object. This object is written in
      * the trailer.
      */
-    public PDFRoot makeRoot(PDFPages pages)
-    {
+    public PDFRoot makeRoot(PDFPages pages) {
 
-         /*
-         * Make a /Pages object. This object is written in the trailer.
-         */
-         PDFRoot pdfRoot = new PDFRoot(++this.objectcount, pages);
-         addTrailerObject(pdfRoot);
-         return pdfRoot;
-    }       
- 
+        /*
+        * Make a /Pages object. This object is written in the trailer.
+        */
+        PDFRoot pdfRoot = new PDFRoot(++this.objectcount, pages);
+        addTrailerObject(pdfRoot);
+        return pdfRoot;
+    }
+
     /**
      * Make a /Pages object. This object is written in the trailer.
      */
-     
-     public PDFPages makePages()
-     {
+
+    public PDFPages makePages() {
         PDFPages pdfPages = new PDFPages(++this.objectcount);
         addTrailerObject(pdfPages);
         return pdfPages;
-     }
+    }
 
     /**
      * Make a /Resources object. This object is written in the trailer.
      */
-     public PDFResources makeResources()
-     {
-     	PDFResources pdfResources = new PDFResources(++this.objectcount);
-     	addTrailerObject(pdfResources);
-     	return pdfResources;
-     }
+    public PDFResources makeResources() {
+        PDFResources pdfResources = new PDFResources(++this.objectcount);
+        addTrailerObject(pdfResources);
+        return pdfResources;
+    }
 
     /**
      * make an /Info object
@@ -601,9 +598,9 @@ public class PDFDocument {
      * @param thePatternDataStream The stream of pattern data to be tiled.
      */
     public PDFPattern makePattern(int thePatternType,    // 1
-    PDFResources theResources, int thePaintType, int theTilingType,
-    Vector theBBox, double theXStep, double theYStep, Vector theMatrix,
-    Vector theXUID, StringBuffer thePatternDataStream) {
+                                  PDFResources theResources, int thePaintType, int theTilingType,
+                                  Vector theBBox, double theXStep, double theYStep, Vector theMatrix,
+                                  Vector theXUID, StringBuffer thePatternDataStream) {
         String thePatternName = new String("Pa" + (++this.patternCount));
         // int theNumber, String thePatternName,
         // PDFResources theResources
@@ -680,7 +677,7 @@ public class PDFDocument {
             PDFColor currentColor =
                 (PDFColor)theColors.elementAt(currentPosition);
             PDFColor nextColor = (PDFColor)theColors.elementAt(currentPosition
-                    + 1);
+                                 + 1);
             // colorspace must be consistant
             if (this.colorspace.getColorSpace()
                     != currentColor.getColorSpace())
@@ -784,7 +781,7 @@ public class PDFDocument {
                     ((org.apache.fop.render.pdf.Font)metrics).getSubType();
 
             PDFFontDescriptor pdfdesc = makeFontDescriptor(descriptor,
-        subtype);
+                                        subtype);
 
             PDFFontNonBase14 font = null;
             if (subtype == PDFFont.TYPE0) {
@@ -847,7 +844,7 @@ public class PDFDocument {
      * make a /FontDescriptor object
      */
     public PDFFontDescriptor makeFontDescriptor(FontDescriptor desc,
-                                                byte subtype) {
+            byte subtype) {
         PDFFontDescriptor font = null;
 
         if (subtype == PDFFont.TYPE0) {
@@ -856,12 +853,13 @@ public class PDFDocument {
                                             desc.fontName(),
                                             desc.getFontBBox(),
                                             // desc.getAscender(),
-            // desc.getDescender(),
-            desc.getCapHeight(), desc.getFlags(),
-                                 // new PDFRectangle(desc.getFontBBox()),
-            desc.getItalicAngle(), desc.getStemV(), null);    // desc.getLang(),
+                                            // desc.getDescender(),
+                                            desc.getCapHeight(), desc.getFlags(),
+                                            // new PDFRectangle(desc.getFontBBox()),
+                                            desc.getItalicAngle(), desc.getStemV(), null);    // desc.getLang(),
             // null);//desc.getPanose());
-        } else {
+        }
+        else {
             // Create normal FontDescriptor
             font = new PDFFontDescriptor(++this.objectcount, desc.fontName(),
                                          desc.getAscender(),
@@ -904,7 +902,7 @@ public class PDFDocument {
         PDFXObject xObject = (PDFXObject)this.xObjectsMap.get(url);
         if (xObject != null)
             return xObject.getXNumber();
-            // else, create a new one
+        // else, create a new one
         xObject = new PDFXObject(++this.objectcount, ++this.xObjectCount,
                                  img);
         this.objects.addElement(xObject);
@@ -938,7 +936,7 @@ public class PDFDocument {
             while (enum.hasMoreElements()) {
                 String id = enum.nextElement().toString();
                 idReferences.setInternalGoToPageReference(id,
-                                                          page.referencePDF());
+                        page.referencePDF());
             }
         }
 
@@ -1005,25 +1003,23 @@ public class PDFDocument {
             idReferences.createNewId(destination);
             idReferences.addToIdValidationList(destination);
             goToReference = idReferences.createInternalLinkGoTo(destination,
-                    ++this.objectcount);
+                            ++this.objectcount);
             addTrailerObject(idReferences.getPDFGoTo(destination));
         }
         return goToReference;
     }
-    
-    public void addTrailerObject(PDFObject object)
-    {
-      this.trailerObjects.addElement(object);
+
+    public void addTrailerObject(PDFObject object) {
+        this.trailerObjects.addElement(object);
     }
-    
+
     /**
       Ensure there is room in the locations xref for the number of
       objects that have been created.
      */
-    private void prepareLocations()
-    {
-      while(location.size() < objectcount)
-        location.addElement(locationPlaceholder);
+    private void prepareLocations() {
+        while(location.size() < objectcount)
+            location.addElement(locationPlaceholder);
     }
 
     /**
@@ -1068,13 +1064,13 @@ public class PDFDocument {
      * reference for later.
      */
     public PDFOutline getOutlineRoot() {
-      if(outlineRoot != null)
+        if(outlineRoot != null)
+            return outlineRoot;
+
+        outlineRoot = new PDFOutline(++this.objectcount, null, null);
+        addTrailerObject(outlineRoot);
+        root.setRootOutline(outlineRoot);
         return outlineRoot;
-      
-      outlineRoot = new PDFOutline(++this.objectcount, null, null);
-      addTrailerObject(outlineRoot);
-      root.setRootOutline(outlineRoot);
-      return outlineRoot;
     }
 
     /**
@@ -1112,8 +1108,7 @@ public class PDFDocument {
      *
      * @param writer the OutputStream to output the document to
      */
-    public void output(OutputStream stream) throws IOException
-    {
+    public void output(OutputStream stream) throws IOException {
 
         prepareLocations();
 
@@ -1127,7 +1122,7 @@ public class PDFDocument {
              * locations
              */
             location.setElementAt(
-             new Integer(this.position),object.getNumber() - 1);
+                new Integer(this.position),object.getNumber() - 1);
 
             /*
              * output the object and increment the character position
@@ -1149,10 +1144,9 @@ public class PDFDocument {
      * @return the number of bytes written
      */
     public void outputHeader(OutputStream stream)
-    throws IOException
-    {
+    throws IOException {
         this.position=0;
-        
+
         byte[] pdf = ("%PDF-" + this.pdfVersion + "\n").getBytes();
         stream.write(pdf);
         this.position += pdf.length;
@@ -1174,32 +1168,30 @@ public class PDFDocument {
      * @param stream the OutputStream to write the trailer to
      */
     public void outputTrailer(OutputStream stream)
-    throws IOException
-    {
-    	output(stream);
-    	Enumeration e = trailerObjects.elements();
-    	while(e.hasMoreElements())
-    	{
-    	  PDFObject o = (PDFObject) e.nextElement();
-    	  this.location.setElementAt(
-    	    new Integer(this.position), o.getNumber() - 1);
-    	  this.position += o.output(stream);
-    	}
+    throws IOException {
+        output(stream);
+        Enumeration e = trailerObjects.elements();
+        while(e.hasMoreElements()) {
+            PDFObject o = (PDFObject) e.nextElement();
+            this.location.setElementAt(
+                new Integer(this.position), o.getNumber() - 1);
+            this.position += o.output(stream);
+        }
         /* output the xref table and increment the character position
           by the table's length */
         this.position += outputXref(stream);
-        
+
         /* construct the trailer */
-        String pdf = 
-         "trailer\n" +
-         "<<\n" +
-         "/Size " + (this.objectcount + 1) + "\n" +
-         "/Root " + this.root.number + " " + this.root.generation + " R\n" +
-         "/Info " + this.info.number + " " + this.info.generation + " R\n" +
-         ">>\n" +
-         "startxref\n" +
-         this.xref + "\n" +
-         "%%EOF\n";
+        String pdf =
+            "trailer\n" +
+            "<<\n" +
+            "/Size " + (this.objectcount + 1) + "\n" +
+            "/Root " + this.root.number + " " + this.root.generation + " R\n" +
+            "/Info " + this.info.number + " " + this.info.generation + " R\n" +
+            ">>\n" +
+            "startxref\n" +
+            this.xref + "\n" +
+            "%%EOF\n";
 
         /* write the trailer */
         stream.write(pdf.getBytes());

@@ -437,10 +437,10 @@ public class PSRenderer implements Renderer {
         BridgeContext ctx = new BridgeContext(userAgent, rc);
         GraphicsNode root;
         PSGraphics2D graphics = new PSGraphics2D(false, area.getFontState(),
-                                                 this, currentFontName,
-                                                 currentFontSize,
-                                                 currentXPosition,
-                                                 currentYPosition);
+                                this, currentFontName,
+                                currentFontSize,
+                                currentXPosition,
+                                currentYPosition);
         graphics.setGraphicContext(new org.apache.batik.ext.awt.g2d.GraphicContext());
         graphics.setRenderingHints(rc.getRenderingHints());
         try {
@@ -451,6 +451,7 @@ public class PSRenderer implements Renderer {
                                    + e.getMessage());
             // e.printStackTrace();
         }
+
 
         write("grestore");
 
@@ -747,6 +748,7 @@ public class PSRenderer implements Renderer {
         switch (area.getLeaderPattern()) {
         case LeaderPattern.SPACE:
             // NOP
+
             break;
         case LeaderPattern.RULE:
             if (area.getRuleStyle() == RuleStyle.NONE)
@@ -993,11 +995,13 @@ public class PSRenderer implements Renderer {
             // application.openLink(uri);
         }
 
+
         public Point getClientAreaLocationOnScreen() {
             return new Point(0, 0);
         }
 
         public void setSVGCursor(java.awt.Cursor cursor) {}
+
 
         public AffineTransform getTransform() {
             return currentTransform;
@@ -1021,17 +1025,17 @@ public class PSRenderer implements Renderer {
 
         public void registerExtension(BridgeExtension be) {}
 
+
     }
 
     /**
       Default start renderer method. This would
       normally be overridden. (mark-fop@inomial.com).
-    */ 
+    */
     public void startRenderer(OutputStream outputStream)
-      throws IOException
-    {
+    throws IOException {
         MessageHandler.logln("rendering areas to PostScript");
-     
+
         this.out = new PSStream(outputStream);
         write("%!PS-Adobe-3.0");
         write("%%Creator: "+this.producer);
@@ -1047,14 +1051,13 @@ public class PSRenderer implements Renderer {
         write("%%EndSetup");
         write("FOPFonts begin");
     }
-    
+
     /**
       Default stop renderer method. This would
       normally be overridden. (mark-fop@inomial.com).
     */
     public void stopRenderer(OutputStream outputStream)
-      throws IOException
-    {
+    throws IOException {
         write("%%Trailer");
         write("%%EOF");
         this.out.flush();
@@ -1062,6 +1065,6 @@ public class PSRenderer implements Renderer {
     }
 
     public void render(Page page, OutputStream outputStream) {
-      this.renderPage(page);
-     }
+        this.renderPage(page);
+    }
 }

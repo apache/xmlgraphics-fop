@@ -73,17 +73,15 @@ public class FOTreeBuilder extends DefaultHandler implements TreeBuilder {
      * The class that handles formatting and rendering to a stream
      * (mark-fop@inomial.com)
      */
-     private StreamRenderer streamRenderer;
-     
-     public FOTreeBuilder()
-     {
-     }
-     
-     public void setStreamRenderer(StreamRenderer streamRenderer)
-     {
-       this.streamRenderer = streamRenderer;
-     }
-      
+    private StreamRenderer streamRenderer;
+
+    public FOTreeBuilder() {}
+
+
+    public void setStreamRenderer(StreamRenderer streamRenderer) {
+        this.streamRenderer = streamRenderer;
+    }
+
     /**
      * add a mapping from element name to maker.
      *
@@ -146,38 +144,35 @@ public class FOTreeBuilder extends DefaultHandler implements TreeBuilder {
      * SAX Handler for the end of an element
      */
     public void endElement(String uri, String localName, String rawName)
-      throws SAXException
-    {
+    throws SAXException {
         currentFObj.end();
-        
+
         //
         // mark-fop@inomial.com - tell the stream renderer to render
         // this page-sequence
         //
         if(currentFObj instanceof PageSequence)
-          streamRenderer.render((PageSequence) currentFObj);
-        
-          currentFObj = (FObj)currentFObj.getParent();
+            streamRenderer.render((PageSequence) currentFObj);
+
+        currentFObj = (FObj)currentFObj.getParent();
     }
 
     /**
      * SAX Handler for the start of the document
      */
     public void startDocument()
-      throws SAXException
-    {
+    throws SAXException {
         rootFObj = null;    // allows FOTreeBuilder to be reused
         MessageHandler.logln("building formatting object tree");
         streamRenderer.startRenderer();
     }
 
     public void endDocument()
-      throws SAXException
-    {
-      MessageHandler.logln("Parsing of document complete, stopping renderer");
-      streamRenderer.stopRenderer();
+    throws SAXException {
+        MessageHandler.logln("Parsing of document complete, stopping renderer");
+        streamRenderer.stopRenderer();
     }
-      
+
     /**
      * SAX Handler for the start of an element
      */
@@ -204,6 +199,7 @@ public class FOTreeBuilder extends DefaultHandler implements TreeBuilder {
             fobjMaker = new FObjMixed.Maker();    // fall back
         }
 
+
         try {
             PropertyList list = null;
             if (currentListBuilder != null) {
@@ -227,7 +223,7 @@ public class FOTreeBuilder extends DefaultHandler implements TreeBuilder {
                                                         + " be root, not "
                                                         + fobj.getName()));
             }
-        } else if(!(fobj instanceof org.apache.fop.fo.pagination.PageSequence)){
+        } else if(!(fobj instanceof org.apache.fop.fo.pagination.PageSequence)) {
             currentFObj.addChild(fobj);
         }
 

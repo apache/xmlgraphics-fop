@@ -35,7 +35,7 @@ import java.util.Vector;
    Any extensions added to the AreaTree while generating a page
    are given to the Page for the renderer to deal with.
   */
- 
+
 public class AreaTree {
 
     /**
@@ -48,14 +48,13 @@ public class AreaTree {
      * List of root extension objects
      */
     Vector rootExtensions = null;
-    
+
     private StreamRenderer streamRenderer;
-    
-    public AreaTree(StreamRenderer streamRenderer)
-    {
-    	this.streamRenderer = streamRenderer;
+
+    public AreaTree(StreamRenderer streamRenderer) {
+        this.streamRenderer = streamRenderer;
     }
-    
+
     public void setFontInfo(FontInfo fontInfo) {
         this.fontInfo = fontInfo;
     }
@@ -70,21 +69,18 @@ public class AreaTree {
     }
 
     public Page getPreviousPage(Page current, boolean isWithinPageSequence,
-                                boolean isFirstCall) {  
+                                boolean isFirstCall) {
         return current;
     }
 
     public void addPage(Page page)
-    throws FOPException
-    {
+    throws FOPException {
         try {
-          page.setExtensions(rootExtensions);
-          rootExtensions = null;
-          streamRenderer.queuePage(page);
-        }
-        catch (IOException e)
-        {
-           throw new FOPException(e);
+            page.setExtensions(rootExtensions);
+            rootExtensions = null;
+            streamRenderer.queuePage(page);
+        } catch (IOException e) {
+            throw new FOPException(e);
         }
     }
 
@@ -92,11 +88,10 @@ public class AreaTree {
         return streamRenderer.getIDReferences();
     }
 
-    public void addExtension(ExtensionObj obj)
-    {
-      if(rootExtensions ==null)
-        rootExtensions = new Vector();
-      rootExtensions.addElement(obj);
+    public void addExtension(ExtensionObj obj) {
+        if(rootExtensions ==null)
+            rootExtensions = new Vector();
+        rootExtensions.addElement(obj);
     }
-    
+
 }

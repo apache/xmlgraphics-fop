@@ -36,9 +36,9 @@ public class Page {
     private AreaContainer end;
 
     private AreaTree areaTree;
-    
+
     private Vector rootExtensions;
-    
+
     private PageSequence pageSequence;
 
     protected int pageNumber = 0;
@@ -59,11 +59,10 @@ public class Page {
         markers = new Vector();
     }
 
-    public IDReferences getIDReferences()
-    {
-      return areaTree.getIDReferences();
+    public IDReferences getIDReferences() {
+        return areaTree.getIDReferences();
     }
-    
+
     public void setPageSequence(PageSequence pageSequence) {
         this.pageSequence = pageSequence;
     }
@@ -186,13 +185,13 @@ public class Page {
     }
 
     public Vector getExtensions() {
-      return rootExtensions;
+        return rootExtensions;
     }
 
     public void setExtensions(Vector extensions) {
-      this.rootExtensions = extensions;
+        this.rootExtensions = extensions;
     }
-    
+
     public void setPendingFootnotes(Vector v) {
         footnotes = v;
         if (footnotes != null) {
@@ -202,6 +201,7 @@ public class Page {
                 if (!Footnote.layoutFootnote(this, fb, null)) {
                     // footnotes are too large to fit on empty page
                 }
+
             }
             footnotes = null;
         }

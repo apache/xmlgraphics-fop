@@ -74,7 +74,7 @@ public class AWTRenderer implements Renderer, Printable, Pageable {
     protected Color saveColor = null;
 
     protected IDReferences idReferences = null;
-    
+
     /**
      * Image Object and Graphics Object. The Graphics Object is the Graphics
      * object that is contained withing the Image Object.
@@ -189,10 +189,10 @@ public class AWTRenderer implements Renderer, Printable, Pageable {
         int y = y1;
         int height, width;
         if (x1 == x2)    // vertical line
-         {
+        {
             height = y2 - y1;
             if (height > 0)    // y coordinates are reversed between fo and AWT
-             {
+            {
                 height = -height;
                 y = y2;
             }
@@ -202,7 +202,7 @@ public class AWTRenderer implements Renderer, Printable, Pageable {
                 x -= width;
             }
         } else           // horizontal line
-         {
+        {
             width = x2 - x1;
             if (width < 0) {
                 width = -width;
@@ -210,7 +210,7 @@ public class AWTRenderer implements Renderer, Printable, Pageable {
             }
             height = th;
             if (height > 0)    // y coordinates are reversed between fo and AWT
-             {
+            {
                 height = -height;
                 y -= height;
             }
@@ -238,6 +238,7 @@ public class AWTRenderer implements Renderer, Printable, Pageable {
 
     // changed by aml/rlc to use helper function that
     // corrects for integer roundoff, and to remove 3D effect
+
 
     protected void addRect(int x, int y, int w, int h, float r, float g,
                            float b) {
@@ -335,33 +336,31 @@ public class AWTRenderer implements Renderer, Printable, Pageable {
     }
 
     public void removePage(int page) {
-      pageList.removeElementAt(page);
+        pageList.removeElementAt(page);
     }
 
-    public void render(int aPageNumber)
-    {
-      if(aPageNumber >= pageList.size())
-        return;
-        
-      try{
-      	render((Page) pageList.elementAt(aPageNumber));
-      } catch(IOException e){
-        e.printStackTrace();
-        // This exception can't occur because we are not dealing with
-        // any files
-      }      
+    public void render(int aPageNumber) {
+        if(aPageNumber >= pageList.size())
+            return;
+
+        try {
+            render((Page) pageList.elementAt(aPageNumber));
+        } catch(IOException e) {
+            e.printStackTrace();
+            // This exception can't occur because we are not dealing with
+            // any files
+        }
+
     }
 
     public void render(Page page, OutputStream stream)
-      throws IOException
-    {
-      pageList.addElement(page);
+    throws IOException {
+        pageList.addElement(page);
     }
 
     public void render(Page page)
-      throws IOException
-    {
-        idReferences = page.getIDReferences();   
+    throws IOException {
+        idReferences = page.getIDReferences();
 
         pageWidth = (int)((float)page.getWidth() / 1000f + .5);
         pageHeight = (int)((float)page.getHeight() / 1000f + .5);
@@ -464,6 +463,7 @@ public class AWTRenderer implements Renderer, Printable, Pageable {
                 (org.apache.fop.layout.Box)e.nextElement();
             b.render(this);    // span areas
         }
+
     }
 
     // empty for now
@@ -474,6 +474,7 @@ public class AWTRenderer implements Renderer, Printable, Pageable {
                 (org.apache.fop.layout.Box)e.nextElement();
             b.render(this);    // column areas
         }
+
     }
 
     private void doFrame(org.apache.fop.layout.Area area) {
@@ -528,9 +529,9 @@ public class AWTRenderer implements Renderer, Printable, Pageable {
             borderColor = bp.getBorderColor(BorderAndPadding.RIGHT);
             addLine(rx + w, ry, rx + w, ry - h,
                     // area.getBorderRightWidth(), borderColor.red(), // corrected aml/rlc
-            -area.getBorderRightWidth(), borderColor.red(),
-                                         borderColor.green(),
-                                         borderColor.blue());
+                    -area.getBorderRightWidth(), borderColor.red(),
+                    borderColor.green(),
+                    borderColor.blue());
         }
 
         if (area.getBorderBottomWidth() != 0) {
@@ -611,7 +612,7 @@ public class AWTRenderer implements Renderer, Printable, Pageable {
 
             java.awt.Font f = graphics.getFont();
             java.awt.Font smallFont = new java.awt.Font(f.getFontName(),
-                                                        f.getStyle(), 8);
+                                      f.getStyle(), 8);
 
             graphics.setFont(smallFont);
 
@@ -630,6 +631,7 @@ public class AWTRenderer implements Renderer, Printable, Pageable {
                     SVGDocument svg = ((SVGImage)img).getSVGDocument();
                     renderSVGDocument(svg, (int)x, (int)y);
                 } catch (FopImageException e) {}
+
             } else {
 
                 String urlString = img.getURL();
@@ -657,6 +659,7 @@ public class AWTRenderer implements Renderer, Printable, Pageable {
                     // cannot normally occur because, if URL is wrong, constructing FopImage
                     // will already have failed earlier on
                 }
+
             }
         }
 
@@ -881,6 +884,7 @@ public class AWTRenderer implements Renderer, Printable, Pageable {
         // defined in Renderer Interface
     }
 
+
     public int print(Graphics g, PageFormat pageFormat,
                      int pageIndex) throws PrinterException {
         if (pageIndex >= pageList.size())
@@ -902,7 +906,7 @@ public class AWTRenderer implements Renderer, Printable, Pageable {
     }
 
     public PageFormat getPageFormat(int pageIndex)
-            throws IndexOutOfBoundsException {
+    throws IndexOutOfBoundsException {
         if (pageIndex >= pageList.size())
             return null;
 
@@ -929,7 +933,7 @@ public class AWTRenderer implements Renderer, Printable, Pageable {
     }
 
     public Printable getPrintable(int pageIndex)
-            throws IndexOutOfBoundsException {
+    throws IndexOutOfBoundsException {
         return this;
     }
 
@@ -1060,11 +1064,13 @@ public class AWTRenderer implements Renderer, Printable, Pageable {
             // application.openLink(uri);
         }
 
+
         public Point getClientAreaLocationOnScreen() {
             return new Point(0, 0);
         }
 
         public void setSVGCursor(java.awt.Cursor cursor) {}
+
 
         public AffineTransform getTransform() {
             return currentTransform;
@@ -1088,17 +1094,16 @@ public class AWTRenderer implements Renderer, Printable, Pageable {
 
         public void registerExtension(BridgeExtension be) {}
 
+
     }
-    
+
     public void startRenderer(OutputStream outputStream)
-      throws IOException
-    {
-    }
-    
+    throws IOException {}
+
+
     public void stopRenderer(OutputStream outputStream)
-      throws IOException
-    {
-    	render(0);
+    throws IOException {
+        render(0);
     }
-    
+
 }

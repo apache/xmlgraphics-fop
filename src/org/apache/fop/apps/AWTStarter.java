@@ -57,7 +57,7 @@ public class AWTStarter extends CommandLineStarter {
     private Translator resource;
 
     public AWTStarter(CommandLineOptions commandLineOptions)
-            throws FOPException {
+    throws FOPException {
         super(commandLineOptions);
         init();
     }
@@ -78,8 +78,8 @@ public class AWTStarter extends CommandLineStarter {
                                      + language);
 
         UserMessage.setTranslator(getResourceBundle(TRANSLATION_PATH
-                                                    + "messages."
-                                                    + language));
+                                  + "messages."
+                                  + language));
 
         resource.setMissingEmphasized(false);
         renderer = new AWTRenderer(resource);
@@ -127,7 +127,7 @@ public class AWTStarter extends CommandLineStarter {
     }
 
     protected PreviewDialog createPreviewDialog(AWTRenderer renderer,
-                                                Translator res) {
+            Translator res) {
         PreviewDialog frame = new PreviewDialog(renderer, res);
         frame.validate();
 
