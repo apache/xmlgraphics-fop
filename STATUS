@@ -6,7 +6,7 @@ Things to do before releasing as 0.12.0:
 
 Make sure Makefiles work
 Get images working
-Incorporate Arved Sandstrom's simple-link implementation
+[PARTIAL] Incorporate Arved Sandstrom's simple-link implementation
 Switch to using Status object as return from layout()
 Implement basic keeps
 Incorporate Eric Schaeffer's fix to tables in static-content
