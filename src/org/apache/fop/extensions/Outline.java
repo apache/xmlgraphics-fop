@@ -114,7 +114,7 @@ public class Outline extends ExtensionObj
 	    _label = (Label)obj;
 	}
 	else if (obj instanceof Outline) {
-	    _outlines.add(obj);
+	    _outlines.addElement(obj);
 	}
 	super.addChild(obj);
     }

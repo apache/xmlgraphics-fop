@@ -72,7 +72,7 @@ public class PDFWArray {
 	 * @param metrics the metrics array.
 	 */
 	public void addEntry(int start, int[] metrics) {
-		entries.add(new Entry(start, metrics));
+		entries.addElement(new Entry(start, metrics));
 	}
 
 	/**
@@ -83,7 +83,7 @@ public class PDFWArray {
 	 * @param width the width for all CIDs in the range
 	 */
 	public void addEntry(int first, int last, int width) {
-		entries.add(new int[] {first, last, width});
+		entries.addElement(new int[] {first, last, width});
 	}
 
 	/**
@@ -96,7 +96,7 @@ public class PDFWArray {
 	 * @param posY the y component for the vertical position vector
 	 */
 	public void addEntry(int first, int last, int width, int posX, int posY) {
-		entries.add(new int[] {first, last, width, posX, posY});
+		entries.addElement(new int[] {first, last, width, posX, posY});
 	}
 
 	public byte[] toPDF() {
