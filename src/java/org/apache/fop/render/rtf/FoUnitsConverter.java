@@ -68,7 +68,7 @@ import org.apache.fop.apps.FOPException;
  */
 
 class FoUnitsConverter {
-    private static final FoUnitsConverter m_instance = new FoUnitsConverter();
+    private static final FoUnitsConverter INSTANCE = new FoUnitsConverter();
 
     /** points to twips: 1 twip is 1/20 of a point */
     public static final float POINT_TO_TWIPS = 20f;
@@ -80,12 +80,12 @@ class FoUnitsConverter {
 
 
     /** conversion factors keyed by xsl:fo units names */
-    private static final Map m_twipFactors = new HashMap();
+    private static final Map TWIP_FACTORS = new HashMap();
     static {
-        m_twipFactors.put("mm", new Float(MM_TO_TWIPS));
-        m_twipFactors.put("cm", new Float(CM_TO_TWIPS));
-        m_twipFactors.put("pt", new Float(POINT_TO_TWIPS));
-        m_twipFactors.put("in", new Float(IN_TO_TWIPS));
+        TWIP_FACTORS.put("mm", new Float(MM_TO_TWIPS));
+        TWIP_FACTORS.put("cm", new Float(CM_TO_TWIPS));
+        TWIP_FACTORS.put("pt", new Float(POINT_TO_TWIPS));
+        TWIP_FACTORS.put("in", new Float(IN_TO_TWIPS));
     }
 
     /** singleton pattern */
@@ -94,7 +94,7 @@ class FoUnitsConverter {
 
     /** singleton pattern */
     static FoUnitsConverter getInstance() {
-        return m_instance;
+        return INSTANCE;
     }
 
     /** convert given value to RTF units
@@ -143,7 +143,7 @@ class FoUnitsConverter {
 
         // find conversion factor
         if (units != null && units.trim().length() > 0) {
-            final Float factor = (Float)m_twipFactors.get(units.toLowerCase());
+            final Float factor = (Float)TWIP_FACTORS.get(units.toLowerCase());
             if (factor == null) {
                 throw new FOPException("conversion factor not found for '" + units + "' units");
             }

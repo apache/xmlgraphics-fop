@@ -161,10 +161,10 @@ public class RtfExternalGraphic extends RtfElement {
      protected int graphicCompressionRate = 80;
 
      /** The image data */
-     private byte[] data = null;
+     private byte[] imagedata = null;
 
      /** The image type */
-     private int type;
+     private int imagetype;
 
     //////////////////////////////////////////////////
     // @@ Construction
@@ -244,11 +244,11 @@ public class RtfExternalGraphic extends RtfElement {
 //        getRtfFile ().getLog ().logInfo ("Writing image '" + url + "'.");
 
 
-        data = null;
+        imagedata = null;
         try {
             final InputStream in = url.openStream();
             try {
-                data = IOUtil.toByteArray(url.openStream());
+                imagedata = IOUtil.toByteArray(url.openStream());
             } finally {
                 IOUtil.shutdownStream(in);
             }
@@ -258,17 +258,17 @@ public class RtfExternalGraphic extends RtfElement {
                     + url + "' (" + e + ")");
         }
 
-        if (data == null) {
+        if (imagedata == null) {
             return;
         }
 
         // Determine image file format
         String file = url.getFile ();
-        type = determineImageType(data, file.substring(file.lastIndexOf(".") + 1));
+        imagetype = determineImageType(imagedata, file.substring(file.lastIndexOf(".") + 1));
 
-        if (type >= ImageConstants.I_TO_CONVERT_BASIS) {
+        if (imagetype >= ImageConstants.I_TO_CONVERT_BASIS) {
             // convert
-            int to = ImageConstants.CONVERT_TO [type - ImageConstants.I_TO_CONVERT_BASIS];
+            int to = ImageConstants.CONVERT_TO[imagetype - ImageConstants.I_TO_CONVERT_BASIS];
 
 //            if (to == ImageConstants.I_JPG) {
 //                ByteArrayOutputStream out = null;
@@ -276,8 +276,8 @@ public class RtfExternalGraphic extends RtfElement {
 //                    //convert to jpeg
 //                    out = new ByteArrayOutputStream();
 //                    Encoder jpgEncoder = new Encoder(graphicCompressionRate, out);
-//                    jpgEncoder.encodeJPEG(data);
-//                    data = out.toByteArray();
+//                    jpgEncoder.encodeJPEG(imagedata);
+//                    imagedata = out.toByteArray();
 //                    type = to;
 //                }
 //                catch (JPEGException e) {
@@ -288,19 +288,19 @@ public class RtfExternalGraphic extends RtfElement {
 //                    out.close();
 //                }
 //            } else {
-                type = ImageConstants.I_NOT_SUPPORTED;
+                imagetype = ImageConstants.I_NOT_SUPPORTED;
 //            }
         }
 
 
-        if (type == ImageConstants.I_NOT_SUPPORTED) {
+        if (imagetype == ImageConstants.I_NOT_SUPPORTED) {
             throw new ExternalGraphicException("The tag <fo:external-graphic> "
                     + "does not support "
                     + file.substring(file.lastIndexOf(".") + 1)
                     + " - image type.");
         }
 
-        String rtfImageCode = ImageConstants.RTF_TAGS [type];
+        String rtfImageCode = ImageConstants.RTF_TAGS[imagetype];
 
         // Writes the beginning of the rtf image
 
@@ -309,15 +309,15 @@ public class RtfExternalGraphic extends RtfElement {
         writeGroupMark(true);
         writeControlWord("pict");
 
-        StringBuffer buf = new StringBuffer(data.length * 3);
+        StringBuffer buf = new StringBuffer(imagedata.length * 3);
 
         writeControlWord(rtfImageCode);
 
         computeImageSize();
         writeSizeInfo();
 
-        for (int i = 0; i < data.length; i++) {
-            int iData = data [i];
+        for (int i = 0; i < imagedata.length; i++) {
+            int iData = imagedata [i];
 
             // Make positive byte
             if (iData < 0) {
@@ -345,22 +345,22 @@ public class RtfExternalGraphic extends RtfElement {
     }
 
     private void computeImageSize () {
-        if (type == ImageConstants.I_PNG) {
-            width = ImageUtil.getIntFromByteArray(data, 16, 4, true);
-            height = ImageUtil.getIntFromByteArray(data, 20, 4, true);
-        } else if (type == ImageConstants.I_JPG) {
+        if (imagetype == ImageConstants.I_PNG) {
+            width = ImageUtil.getIntFromByteArray(imagedata, 16, 4, true);
+            height = ImageUtil.getIntFromByteArray(imagedata, 20, 4, true);
+        } else if (imagetype == ImageConstants.I_JPG) {
             int basis = -1;
             byte ff = (byte) 0xff;
             byte c0 = (byte) 0xc0;
-            for (int i = 0; i < data.length; i++) {
-                byte b = data[i];
+            for (int i = 0; i < imagedata.length; i++) {
+                byte b = imagedata[i];
                 if (b != ff) {
                     continue;
                 }
-                if (i == data.length - 1) {
+                if (i == imagedata.length - 1) {
                     continue;
                 }
-                b = data[i + 1];
+                b = imagedata[i + 1];
                 if (b != c0) {
                     continue;
                 }
@@ -369,12 +369,12 @@ public class RtfExternalGraphic extends RtfElement {
             }
 
             if (basis != -1) {
-                width = ImageUtil.getIntFromByteArray(data, basis + 2, 2, true);
-                height = ImageUtil.getIntFromByteArray(data, basis, 2, true);
+                width = ImageUtil.getIntFromByteArray(imagedata, basis + 2, 2, true);
+                height = ImageUtil.getIntFromByteArray(imagedata, basis, 2, true);
             }
-        } else if (type == ImageConstants.I_EMF) {
-            width = ImageUtil.getIntFromByteArray(data, 151, 4, false);
-            height = ImageUtil.getIntFromByteArray(data, 155, 4, false);
+        } else if (imagetype == ImageConstants.I_EMF) {
+            width = ImageUtil.getIntFromByteArray(imagedata, 151, 4, false);
+            height = ImageUtil.getIntFromByteArray(imagedata, 155, 4, false);
         }
     }
 
@@ -511,7 +511,7 @@ public class RtfExternalGraphic extends RtfElement {
     /**
      * Determines wheter the image is a jpeg.
      *
-     * @param data Image
+     * @param imagedata Image
      *
      * @return
      * true    If JPEG type\n

@@ -81,29 +81,29 @@ public class RtfPageNumberCitation extends RtfContainer {
     // The 'id' of the referenced page
     private String id = null;
 
-  /** Create an RTF page number citation as a child of given container with default attributes */
-  RtfPageNumberCitation (IRtfPageNumberCitationContainer parent, Writer w, String id)
-          throws IOException {
-     super((RtfContainer)parent, w);
-     this.id = id;
-  }
+    /** Create an RTF page number citation as a child of given container with default attributes */
+    RtfPageNumberCitation (IRtfPageNumberCitationContainer parent, Writer w, String id)
+            throws IOException {
+        super((RtfContainer)parent, w);
+        this.id = id;
+    }
 
-  /** Create an RTF page number citation as a child of given
-   *    paragraph, copying its attributes */
-  RtfPageNumberCitation (RtfParagraph parent, Writer w, String id)
-    throws IOException {
-      // add the attributes ant text attributes of the parent paragraph
-      super((RtfContainer)parent, w, parent.attrib);
-      if (parent.getTextAttributes() != null) {
-          attrib.set(parent.getTextAttributes());
-      }
-      this.id = id;
-  }
+    /** Create an RTF page number citation as a child of given
+     *    paragraph, copying its attributes */
+    RtfPageNumberCitation (RtfParagraph parent, Writer w, String id)
+            throws IOException {
+        // add the attributes ant text attributes of the parent paragraph
+        super((RtfContainer)parent, w, parent.attrib);
+        if (parent.getTextAttributes() != null) {
+            attrib.set(parent.getTextAttributes());
+        }
+        this.id = id;
+    }
 
-  /**
-   * Write the content
-   * @throws IOException for I/O problems
-   */
+    /**
+     * Write the content
+     * @throws IOException for I/O problems
+     */
     protected void writeRtfContent() throws IOException {
         // If we have a valid ID
         if (isValid()) {
@@ -130,19 +130,15 @@ public class RtfPageNumberCitation extends RtfContainer {
         }
     }
 
-  /** checks that the 'ref-id' attribute exists */
-  private boolean isValid() {
-    if (id != null) {
-      return true;
-    } else {
-      return false;
+    /** checks that the 'ref-id' attribute exists */
+    private boolean isValid() {
+        return (id != null);
     }
-  }
 
-  /**
-   * @return true if this element would generate no "useful" RTF content
-   */
-  public boolean isEmpty() {
-      return false;
-  }
+    /**
+     * @return true if this element would generate no "useful" RTF content
+     */
+    public boolean isEmpty() {
+        return false;
+    }
 }

@@ -60,7 +60,6 @@ package org.apache.fop.render.rtf.rtflib.rtfdoc;
 
 import java.util.LinkedList;
 import java.util.Iterator;
-import java.util.LinkedList;
 import java.io.Writer;
 import java.io.IOException;
 //import org.apache.fop.render.rtf.rtflib.jfor.main.JForVersionInfo;
@@ -138,7 +137,7 @@ public class RtfListTable extends RtfContainer {
     throws IOException {
         super(parent, w, attrs);
 
-        styles=new LinkedList();
+        styles = new LinkedList();
     }
 
     /**
@@ -146,8 +145,8 @@ public class RtfListTable extends RtfContainer {
      * @param list RtfList to add
      */
     public int addList(RtfList list) {
-        if(lists == null) {
-            lists=new LinkedList();
+        if (lists == null) {
+            lists = new LinkedList();
         }
 
         lists.add(list);
@@ -160,7 +159,7 @@ public class RtfListTable extends RtfContainer {
      * @throws IOException for I/O problems
      */
     public void writeRtfContent() throws IOException {
-        if(lists!=null) {
+        if (lists != null) {
             //write '\listtable'
         writeGroupMark(true);
         writeStarControlWordNS(LIST_TABLE);
@@ -173,7 +172,7 @@ public class RtfListTable extends RtfContainer {
             //write '\listoveridetable'
         writeGroupMark(true);
             writeStarControlWordNS(LIST_OVR_TABLE);
-            int z=1;
+            int z = 1;
             
             for (Iterator it = styles.iterator(); it.hasNext();) {
                 final RtfListStyle style = (RtfListStyle)it.next();
@@ -220,7 +219,7 @@ public class RtfListTable extends RtfContainer {
         writeOneAttributeNS(LIST_SPACE, new Integer(0));
         writeOneAttributeNS(LIST_INDENT, attrib.getValue(LIST_INDENT));
         
-        RtfListItem item=(RtfListItem)list.getChildren().get(0);
+        RtfListItem item = (RtfListItem)list.getChildren().get(0);
         item.getRtfListStyle().writeLevelGroup(this);
         
         writeGroupMark(false);

@@ -50,7 +50,7 @@
  */
 package org.apache.fop.render.rtf;
 
-import java.util.ArrayList;
+import java.util.List;
 
 import org.apache.avalon.framework.logger.ConsoleLogger;
 import org.apache.avalon.framework.logger.Logger;
@@ -72,9 +72,9 @@ import org.apache.fop.render.rtf.rtflib.interfaces.ITableColumnsInfo;
 
 class TableContext implements ITableColumnsInfo {
     private final Logger log = new ConsoleLogger();
-    private final BuilderContext m_context;
-    private final ArrayList m_colWidths = new ArrayList();
-    private int m_colIndex;
+    private final BuilderContext context;
+    private final List colWidths = new java.util.ArrayList();
+    private int colIndex;
 
     /**
      * Added by Peter Herweg on 2002-06-29
@@ -83,7 +83,7 @@ class TableContext implements ITableColumnsInfo {
      * value >  0 means there is row-spanning
      * Each value in the list is decreased by 1 after each finished table-row
      */
-    private final ArrayList m_colRowSpanningNumber = new ArrayList();
+    private final List colRowSpanningNumber = new java.util.ArrayList();
 
     /**
      * Added by Peter Herweg on 2002-06-29
@@ -92,75 +92,75 @@ class TableContext implements ITableColumnsInfo {
      * For this purpose the attributes of a cell are stored in this array, as soon
      * as a number-rows-spanned attribute has been found.
      */
-    private final ArrayList m_colRowSpanningAttrs = new ArrayList();
+    private final List colRowSpanningAttrs = new java.util.ArrayList();
 
-    private boolean m_bNextRowBelongsToHeader = false;
+    private boolean bNextRowBelongsToHeader = false;
 
-    public void setNextRowBelongsToHeader(boolean bNextRowBelongsToHeader) {
-        m_bNextRowBelongsToHeader = bNextRowBelongsToHeader;
+    public void setNextRowBelongsToHeader(boolean value) {
+        this.bNextRowBelongsToHeader = value;
     }
 
     public boolean getNextRowBelongsToHeader() {
-        return m_bNextRowBelongsToHeader;
+        return bNextRowBelongsToHeader;
     }
 
     TableContext(BuilderContext ctx) {
-        m_context = ctx;
+        context = ctx;
     }
 
     void setNextColumnWidth(String strWidth)
             throws Exception {
-        m_colWidths.add(new Float(FoUnitsConverter.getInstance().convertToTwips(strWidth)));
+        colWidths.add(new Float(FoUnitsConverter.getInstance().convertToTwips(strWidth)));
     }
 
     //Added by Peter Herweg on 2002-06-29
     RtfAttributes getColumnRowSpanningAttrs() {
-        return (RtfAttributes)m_colRowSpanningAttrs.get(m_colIndex);
+        return (RtfAttributes)colRowSpanningAttrs.get(colIndex);
     }
 
     //Added by Peter Herweg on 2002-06-29
     Integer getColumnRowSpanningNumber() {
-        return (Integer)m_colRowSpanningNumber.get(m_colIndex);
+        return (Integer)colRowSpanningNumber.get(colIndex);
     }
 
     //Added by Peter Herweg on 2002-06-29
     void setCurrentColumnRowSpanning(Integer iRowSpanning,  RtfAttributes attrs)
             throws Exception {
 
-        if (m_colIndex < m_colRowSpanningNumber.size()) {
-            m_colRowSpanningNumber.set(m_colIndex, iRowSpanning);
-            m_colRowSpanningAttrs.set(m_colIndex, attrs);
+        if (colIndex < colRowSpanningNumber.size()) {
+            colRowSpanningNumber.set(colIndex, iRowSpanning);
+            colRowSpanningAttrs.set(colIndex, attrs);
         } else {
-            m_colRowSpanningNumber.add(iRowSpanning);
-            m_colRowSpanningAttrs.add(m_colIndex, attrs);
+            colRowSpanningNumber.add(iRowSpanning);
+            colRowSpanningAttrs.add(colIndex, attrs);
         }
     }
 
     //Added by Peter Herweg on 2002-06-29
     public void setNextColumnRowSpanning(Integer iRowSpanning,
             RtfAttributes attrs) {
-        m_colRowSpanningNumber.add(iRowSpanning);
-        m_colRowSpanningAttrs.add(m_colIndex, attrs);
+        colRowSpanningNumber.add(iRowSpanning);
+        colRowSpanningAttrs.add(colIndex, attrs);
     }
 
     /**
      * Added by Peter Herweg on 2002-06-29
      * This function is called after each finished table-row.
-     * It decreases all values in m_colRowSpanningNumber by 1. If a value
+     * It decreases all values in colRowSpanningNumber by 1. If a value
      * reaches 0 row-spanning is finished, and the value won't be decreased anymore.
      */
     public void decreaseRowSpannings() {
-        for (int z = 0; z < m_colRowSpanningNumber.size(); ++z) {
-            Integer i = (Integer)m_colRowSpanningNumber.get(z);
+        for (int z = 0; z < colRowSpanningNumber.size(); ++z) {
+            Integer i = (Integer)colRowSpanningNumber.get(z);
 
             if (i.intValue() > 0) {
                 i = new Integer(i.intValue() - 1);
             }
 
-            m_colRowSpanningNumber.set(z, i);
+            colRowSpanningNumber.set(z, i);
 
             if (i.intValue() == 0) {
-                m_colRowSpanningAttrs.set(z, null);
+                colRowSpanningAttrs.set(z, null);
             }
         }
     }
@@ -171,7 +171,7 @@ class TableContext implements ITableColumnsInfo {
      * 'number-columns-spanned' processing
      */
     public void selectFirstColumn() {
-        m_colIndex = 0;
+        colIndex = 0;
     }
 
     /**
@@ -180,7 +180,7 @@ class TableContext implements ITableColumnsInfo {
      * 'number-columns-spanned' processing
      */
     public void selectNextColumn() {
-        m_colIndex++;
+        colIndex++;
     }
 
     /**
@@ -191,7 +191,7 @@ class TableContext implements ITableColumnsInfo {
      */
     public float getColumnWidth() {
         try {
-            return ((Float)m_colWidths.get(m_colIndex)).floatValue();
+            return ((Float)colWidths.get(colIndex)).floatValue();
         } catch (IndexOutOfBoundsException ex) {
             // this code contributed by Trembicki-Guy, Ed <GuyE@DNB.com>
             log.warn("fo:table-column width not defined, using " + INVALID_COLUM_WIDTH);
@@ -201,13 +201,13 @@ class TableContext implements ITableColumnsInfo {
 
      /** Added by Boris Poudérous on 07/22/2002 */
      public int getColumnIndex() {
-       return m_colIndex;
+       return colIndex;
      }
      /** - end - */
 
      /** Added by Boris Poudérous on 07/22/2002 */
      public int getNumberOfColumns() {
-       return m_colWidths.size();
+       return colWidths.size();
      }
      /** - end - */
 }
