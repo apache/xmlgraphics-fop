@@ -1,0 +1,74 @@
+<?xml version="1.0" standalone="no"?>
+<!DOCTYPE s1 SYSTEM "sbk:/style/dtd/document.dtd">
+
+
+<!-- Limitations --> 
+
+<s1 title="Limitations">
+  <p>The main limitation at the moment is: FOP only supports the XSL working draft 21 Apr 1999, 
+     not the latest from 27 March 2000. FOP implements the fo objects and properties listed 
+     in <jump href="implemented.html">features</jump>, sometimes it does so only in a limited way. 
+  </p>
+
+  <s2 title="list-block">
+    <p>The fo working draft allows describes two ways to markup lists.The list-block must have as 
+       children either: 1) pairs of fo:list-item-label and fo:list-item-body formatting objects, or
+       2) fo:list-item formatting objects.</p>
+    <p>At the moment FOP only implements the second way. Therefore a list has a basic structure like this:</p>
+    <p><code>&lt;fo:list-block></code></p>
+    <p><code>&lt;fo:list-item></code></p>
+    <p><code>&lt;fo:list-item-label>&lt;fo:block>&lt;/fo:block>&lt;/fo:list-item-label></code></p>
+    <p><code>&lt;fo:list-item-body>&lt;fo:block>&lt;/fo:block>&lt;/fo:list-item-body></code></p>
+    <p><code>&lt;/fo:list-item></code></p>
+    <p><code>&lt;/fo:list-block></code></p>
+  </s2>
+  <s2 title="Padding">
+    <p>Padding works in conjunction with indents and spaces. It is only implemented 
+       for blocks. At the moment padding can't be used to make extra space (indents+spaces
+       must be used), but only to control how much the background-color extends beyond
+       the content rectangle.
+    </p>  
+  </s2>
+  <s2 title="Tables">
+    <p>There two limitations for tables: 1) FOP needs you to explicitly specify column widths 
+       2) Cells have to contain block-level FOs. They can't contain straight character data.
+    </p>
+    <p>A working basic example of a table looks like this: </p>  
+    <p><code>&lt;fo:table></code></p>
+    <p><code>&nbsp;&lt;fo:table-column column-width="150pt"/></code></p>
+    <p><code>&nbsp;&lt;fo:table-column column-width="150pt"/></code></p>
+    <p><code>&nbsp;&lt;fo:table-body font-size="10pt" font-family="sans-serif"></code></p>
+    <p><code>&nbsp;&nbsp;&lt;fo:table-row></code></p>
+    <p><code>&nbsp;&nbsp;&nbsp;&lt;fo:table-cell></code></p>
+    <p><code>&nbsp;&nbsp;&nbsp;&nbsp;&lt;fo:block>text&lt;/fo:block></code></p>
+    <p><code>&nbsp;&nbsp;&nbsp;&lt;/fo:table-cell></code></p>
+    <p><code>&nbsp;&nbsp;&nbsp;&lt;fo:table-cell></code></p>
+    <p><code>&nbsp;&nbsp;&nbsp;&nbsp;&lt;fo:block>text&lt;/fo:block></code></p>
+    <p><code>&nbsp;&nbsp;&nbsp;&lt;/fo:table-cell></code></p>
+    <p><code>&nbsp;&nbsp;&lt;/fo:table-row></code></p>
+    <p><code>&nbsp;&nbsp;&lt;fo:table-row></code></p>
+    <p><code>&nbsp;&nbsp;&nbsp;&lt;fo:table-cell></code></p>
+    <p><code>&nbsp;&nbsp;&nbsp;&nbsp;&lt;fo:block>text&lt;/fo:block></code></p>
+    <p><code>&nbsp;&nbsp;&nbsp;&lt;/fo:table-cell></code></p>
+    <p><code>&nbsp;&nbsp;&nbsp;&lt;fo:table-cell></code></p>
+    <p><code>&nbsp;&nbsp;&nbsp;&nbsp;&lt;fo:block>text&lt;/fo:block></code></p>
+    <p><code>&nbsp;&nbsp;&nbsp;&lt;/fo:table-cell></code></p>
+    <p><code>&nbsp;&nbsp;&lt;/fo:table-row></code></p>
+    <p><code>&nbsp;&nbsp;&lt;fo:table-row></code></p>
+    <p><code>&nbsp;&nbsp;&nbsp;&lt;fo:table-cell></code></p>
+    <p><code>&nbsp;&nbsp;&nbsp;&nbsp;&lt;fo:block>text&lt;/fo:block></code></p>
+    <p><code>&nbsp;&nbsp;&nbsp;&lt;/fo:table-cell></code></p>
+    <p><code>&nbsp;&nbsp;&nbsp;&lt;fo:table-cell></code></p>
+    <p><code>&nbsp;&nbsp;&nbsp;&nbsp;&lt;fo:block>text&lt;/fo:block></code></p>
+    <p><code>&nbsp;&nbsp;&nbsp;&lt;/fo:table-cell></code></p>
+    <p><code>&nbsp;&nbsp;&lt;/fo:table-row></code></p>
+    <p><code>&nbsp;&lt;/fo:table-body></code></p>
+    <p><code>&lt;/fo:table></code></p>
+  </s2>
+
+  
+  <!--<s2 title="display-graphic">
+    <p>Which formats are supported? Compression etc. </p>  
+  </s2>-->
+
+</s1>
