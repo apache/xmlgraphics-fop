@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 
 
-<book title="FOP XSL-FO documentation" copyright="1999 The Apache Software Foundation">
+<book title="FOP XSL-FO documentation" copyright="1999-2001 The Apache Software Foundation">
   <external href="../index.html"  label="Home"/>
   <separator/>
   <document id="index"          label="Readme"      source="fop/readme.xml"/>
