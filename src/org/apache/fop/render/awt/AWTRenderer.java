@@ -9,12 +9,16 @@ package org.apache.fop.render.awt;
   Stanislav Gorkhover: Stanislav.Gorkhover@af-software.de
  */
 
- 
+
 import org.apache.fop.layout.*;
+import org.apache.fop.datatypes.*;
 import org.apache.fop.image.*;
 import org.apache.fop.svg.*;
 import org.apache.fop.render.pdf.*;
 import org.apache.fop.viewer.*;
+import org.apache.fop.apps.*;
+
+
 
 
 import java.awt.*;
@@ -23,20 +27,28 @@ import java.awt.geom.*;
 import java.awt.font.*;
 import java.util.*;
 import java.io.*;
+import java.beans.*;
 import javax.swing.*;
+import java.awt.print.*;
 
 
-public class AWTRenderer implements org.apache.fop.render.Renderer {
+public class AWTRenderer implements org.apache.fop.render.Renderer, Printable, Pageable {
 
   protected int pageWidth    = 0;
   protected int pageHeight   = 0;
   protected double scaleFactor = 100.0;
   protected int pageNumber = 0;
+  protected AreaTree tree;
+  protected ProgressListener progressListener = null;
+
+  protected Translator res = null;
 
   protected Hashtable fontNames = new Hashtable();
   protected Hashtable fontStyles = new Hashtable();
 
 
+  // Key - Font name, Value - java Font name.
+  protected static Hashtable JAVA_FONT_NAMES;
 
 
   protected Graphics2D graphics = null;
@@ -69,7 +81,21 @@ public class AWTRenderer implements org.apache.fop.render.Renderer {
   private int currentAreaContainerXPosition = 0;
 
 
-  public AWTRenderer() {
+  // String oldFontName = null;
+
+
+  static {
+    JAVA_FONT_NAMES = new Hashtable();
+    JAVA_FONT_NAMES.put("Times", "serif");
+    JAVA_FONT_NAMES.put("Times-Roman", "serif");
+    JAVA_FONT_NAMES.put("Courier", "monospaced");
+    JAVA_FONT_NAMES.put("Helvetica", "sansserif");
+    // JAVA_FONT_NAMES.put("Serif", "sansserif");
+  }
+
+
+  public AWTRenderer(Translator aRes) {
+    res = aRes;
   }
 
   public void setGraphics(Graphics2D g) {
@@ -137,13 +163,15 @@ public class AWTRenderer implements org.apache.fop.render.Renderer {
 
 
   public void render(AreaTree areaTree, PrintWriter writer) throws IOException {
+    tree = areaTree;
     documentPanel.setAreaTree(areaTree);
     documentPanel.setPageCount(areaTree.getPages().size());
+    documentPanel.setPageNumber(0);
     documentPanel.updateSize(pageNumber, scaleFactor/100.0);
-    render(areaTree, 0);
   }
 
   public void render(AreaTree areaTree, int aPageNumber) throws IOException {
+    tree = areaTree;
     Page page = (Page)areaTree.getPages().elementAt(aPageNumber);
 
     pageWidth  = (int)((float)page.getWidth() / 1000f);
@@ -206,6 +234,17 @@ public class AWTRenderer implements org.apache.fop.render.Renderer {
 	int ry = this.currentYPosition;
 	int w = area.getContentWidth();
 	int h = area.getHeight();
+    ColorType bg = area.getBackgroundColor();
+  	if ((bg != null) && (bg.alpha() == 0)) {
+      Color oldColor = graphics.getColor();
+      // Color bgColor = new Color(bg.red(), bg.green(), bg.blue());
+      Color bgColor = colorType2Color(bg);
+      graphics.setColor(bgColor);
+      graphics.fillRect((int)(rx / 1000f), (int)(pageHeight - ry/ 1000f),
+                        (int)(w / 1000f), (int)(h / 1000f));
+      graphics.setColor(oldColor);
+    }
+
 	Enumeration e = area.getChildren().elements();
 	while (e.hasMoreElements()) {
 	    org.apache.fop.layout.Box b = (org.apache.fop.layout.Box) e.nextElement();
@@ -215,12 +254,13 @@ public class AWTRenderer implements org.apache.fop.render.Renderer {
 
 
   public void setupFontInfo(FontInfo fontInfo) {
-	  FontSetup.setup(fontInfo);
+    FontSetup.setup(fontInfo);
     Hashtable hash = fontInfo.getFonts();
     org.apache.fop.render.pdf.Font f;
     String name;
     Object key;
     int fontStyle;
+
     for (Enumeration e = hash.keys(); e.hasMoreElements();) {
       fontStyle = java.awt.Font.PLAIN;
       key = e.nextElement();
@@ -271,7 +311,7 @@ public class AWTRenderer implements org.apache.fop.render.Renderer {
     String path = img.gethref();
     // path = "c:/any.gif";
 
-    ImageIcon icon = new ImageIcon(path); 
+    ImageIcon icon = new ImageIcon(path);
 
     Image imgage = icon.getImage();
 
@@ -282,22 +322,12 @@ public class AWTRenderer implements org.apache.fop.render.Renderer {
                        null);
 
 	currentYPosition -= h;
-
-
-	/* int xObjectNum = this.pdfDoc.addImage(img);
-
-	currentStream.add("ET\nq\n" + (img.getWidth()/1000f) + " 0 0 " +
-			  (img.getHeight()/1000f) + " " +
-			  ((x + img.getX())/1000f) + " " +
-			  (((y - h) - img.getY())/1000f) + " cm\n" +
-			  "/Im" + xObjectNum + " Do\nQ\nBT\n");
-    */
     }
 
 
 
 
-    public void renderInlineArea(InlineArea area) {
+  public void renderInlineArea(InlineArea area) {
 	char ch;
 	StringBuffer pdf = new StringBuffer();
 
@@ -329,16 +359,34 @@ public class AWTRenderer implements org.apache.fop.render.Renderer {
 	String s = area.getText();
     Color oldColor = graphics.getColor();
     java.awt.Font oldFont = graphics.getFont();
-    java.awt.Font f = new java.awt.Font(fontNames.get(name).toString(),
+    String aFontName = fontNames.get(name).toString();
+
+    aFontName = getJavaFontName(aFontName);
+
+    java.awt.Font f = new java.awt.Font(aFontName,
                                         ((Integer)fontStyles.get(name)).intValue(),
                                         (int)(size / 1000f));
 
-
     graphics.setColor(new Color(red, green, blue));
+
+
+    /*
+    Die KLasse TextLayout nimmt für die Ausgabe eigenen Schriftsatz,
+    der i.R. breiter ist. Deshalb wird bis diese Tatsache sich geklärt/
+    geregelt hat weniger schöne Ausgabe über Graphics benutzt.
+    */
+
+    /*
+    FontRenderContext newContext = new FontRenderContext(null, true, false);
+    TextLayout layout = new TextLayout(s, f, newContext);
+    layout.draw(graphics, rx / 1000f, (int)(pageHeight - bl / 1000f));
+   */
 
     graphics.setFont(f);
     graphics.drawString(s, rx / 1000f, (int)(pageHeight - bl / 1000f));
     graphics.setFont(oldFont);
+
+
     graphics.setColor(oldColor);
 
 
@@ -396,8 +444,6 @@ public class AWTRenderer implements org.apache.fop.render.Renderer {
                       (int)(w / 1000f), (int)(th / 1000f));
     graphics.setColor(oldColor);
 
-
-
     }
 
 
@@ -436,13 +482,70 @@ public class AWTRenderer implements org.apache.fop.render.Renderer {
     }
 
 
+
+  protected String getJavaFontName(String aName) {
+    if (aName == null)
+      return null;
+
+    Object o = JAVA_FONT_NAMES.get(aName);
+
+    return (o == null) ? aName : o.toString();
+  }
+
   public void setProducer(String producer) {
-    // this.pdfDoc.setProducer(producer);
   }
 
 
   public void setComponent(DocumentPanel comp) {
     documentPanel = comp;
+  }
+
+  public int print(Graphics g, PageFormat pageFormat, int pageIndex) throws PrinterException {
+    if (pageIndex >= tree.getPages().size())
+      return NO_SUCH_PAGE;
+
+    Graphics2D oldGraphics = graphics;
+    int oldPageNumber = pageNumber;
+
+    graphics = (Graphics2D)g;
+    Page aPage = (Page)tree.getPages().elementAt(pageIndex);
+    renderPage(aPage);
+    graphics = oldGraphics;
+
+    return PAGE_EXISTS;
+  }
+
+  public int getNumberOfPages() {
+    return tree.getPages().size();
+  }
+
+  public PageFormat getPageFormat(int pageIndex) throws IndexOutOfBoundsException {
+    if (pageIndex >= tree.getPages().size())
+      return null;
+
+    Page page = (Page)tree.getPages().elementAt(pageIndex);
+    PageFormat pageFormat = new PageFormat();
+    Paper paper = new Paper();
+    paper.setImageableArea(0, 0, page.getWidth() / 1000d, page.getHeight() / 1000d);
+    paper.setSize(page.getWidth() / 1000d, page.getHeight() / 1000d);
+    pageFormat.setPaper(paper);
+
+    return pageFormat;
+  }
+
+  public Printable getPrintable(int pageIndex) throws IndexOutOfBoundsException {
+    return this;
+  }
+
+
+  public void setProgressListener(ProgressListener l) {
+    progressListener = l;
+  }
+
+  public static Color colorType2Color(ColorType ct) {
+    if (ct == null)
+      return null;
+    return new Color(ct.red(), ct.green(), ct.blue());
   }
 
 }

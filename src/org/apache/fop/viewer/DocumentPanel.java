@@ -1,12 +1,5 @@
 package org.apache.fop.viewer;
 
-/*
-  originally contributed by
-  Juergen Verwohlt: Juergen.Verwohlt@af-software.de,
-  Rainer Steinkuhle: Rainer.Steinkuhle@af-software.de,
-  Stanislav Gorkhover: Stanislav.Gorkhover@af-software.de
- */
-
 
 
 import java.awt.*;
@@ -31,12 +24,14 @@ public class DocumentPanel extends JComponent {
 
   protected int docWidth;
   protected int docHeight;
-  protected Color myColor = Color.lightGray;
+  protected Color myColor;
+  protected int pageCount = 0;
 
   public DocumentPanel(AWTRenderer aRenderer, PreviewDialog p) {
     previewDialog = p;
     renderer = aRenderer;
     renderer.setComponent(this);
+    myColor = previewDialog.getBackground();
   }
 
   public void updateSize(int aPageNumber, double aFactor) {
@@ -46,6 +41,7 @@ public class DocumentPanel extends JComponent {
     Page aPage = (Page)areaTree.getPages().elementAt(aPageNumber);
     docWidth  = aPage.getWidth() / 1000;
     docHeight = aPage.getHeight() / 1000;
+    // Ruft paintComponent auf.
     setSize((int)(aFactor * aPage.getWidth() / 1000.0 + 2*V_BORDER),
             (int)(aFactor * aPage.getHeight()/ 1000.0 + 2*H_BORDER));
   }
@@ -83,7 +79,8 @@ public class DocumentPanel extends JComponent {
     return getSize();
   }
 
-  public void setPageCount(int pageCount) {
+  public void setPageCount(int aPageCount) {
+    pageCount = aPageCount;
     previewDialog.setPageCount(pageCount);
   }
 

@@ -1,0 +1,17 @@
+File=Файл
+Exit=Закончить
+View=Вид
+First page=Первая страница
+Previous page=Прелылущая страница
+Next page=Следующая страница
+Last page=Последняя страница
+Help=Помощь
+Default zoom=Стандаотный масштаб
+Introduction=Введение
+About=О программе
+Show=Показ
+Preview=Просмотр
+Print=Печатать
+Page=Стоаница
+of=из
+Zoom=Масштаб

@@ -29,8 +29,9 @@ import java.io.FileWriter;
 import java.io.PrintWriter;
 import java.io.IOException;
 import java.io.FileNotFoundException;
+import java.io.FileInputStream;
 import java.net.URL;
-
+import java.util.*;
 
 
 
@@ -41,34 +42,85 @@ import java.net.URL;
 public class AWTCommandLine {
 
 
-  public AWTCommandLine(AWTRenderer aRenderer) {
+  public static String DEFAULT_TRANSLATION_PATH
+                               = "../viewer/resources/resources." +
+                                 System.getProperty("user.language");
 
-    PreviewDialog frame = new PreviewDialog(aRenderer);
-    frame.validate();
 
-    // center window
-    Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-    Dimension frameSize = frame.getSize();
-    if (frameSize.height > screenSize.height)
-      frameSize.height = screenSize.height;
-    if (frameSize.width > screenSize.width)
-      frameSize.width = screenSize.width;
-    frame.setLocation((screenSize.width - frameSize.width) / 2, (screenSize.height - frameSize.height) / 2);
-    frame.setVisible(true);
+  private Translator resource;
+
+
+
+  public AWTCommandLine(String srcFile, String translationPath) {
+
+    resource = getResourceBundle(translationPath);
+
+    String messPath = new File(translationPath).getAbsoluteFile().getParent();
+    if (!messPath.endsWith(System.getProperty("file.separator")))
+      messPath += System.getProperty("file.separator");
+    messPath += "messages." + System.getProperty("user.language");
+    System.out.println("Set messages resource: " + messPath);
+    UserMessage.setTranslator(getResourceBundle(messPath));
+
+    resource.setMissingEmphasized(false);
+
+    if (!resource.isSourceFound())
+      UserMessage.show("TRANSLATION_SOURCE_NOT_FOUND",
+                       new File(translationPath).getAbsolutePath());
+
+    AWTRenderer renderer = new AWTRenderer(resource);
+    PreviewDialog frame = createPreviewDialog(renderer, resource);
+    renderer.setProgressListener(frame);
+
+
+//init parser
+    frame.progress(resource.getString("Init parser") + " ...");
+    Parser parser = createParser();
+
+
+	if (parser == null) {
+	    System.err.println("ERROR: Unable to create SAX parser");
+	    System.exit(1);
+	}
+
+
+	try {
+	    Driver driver = new Driver();
+	    driver.setRenderer(renderer);
+
+// init mappings: time
+        frame.progress(resource.getString("Init mappings") + " ...");
+
+	    driver.addElementMapping("org.apache.fop.fo.StandardElementMapping");
+	    driver.addElementMapping("org.apache.fop.svg.SVGElementMapping");
+
+// build FO tree: time
+        frame.progress(resource.getString("Build FO tree") + " ...");
+	    driver.buildFOTree(parser, fileInputSource(srcFile));
+
+// layout FO tree: time
+        frame.progress(resource.getString("Layout FO tree") + " ...");
+	    driver.format();
+
+// render: time
+        frame.progress(resource.getString("Render") + " ...");
+        driver.render();
+        
+        frame.progress(resource.getString("Show"));
+
+	} catch (Exception e) {
+	    System.err.println("FATAL ERROR: " + e.getMessage());
+        e.printStackTrace();
+	    System.exit(1);
+	}
   }
 
- /**
-     * creates a SAX parser, using the value of org.xml.sax.parser
-     * defaulting to org.apache.xerces.parsers.SAXParser
-     *
-     * @return the created SAX parser
-     */
 
     static Parser createParser() {
 	String parserClassName =
 	    System.getProperty("org.xml.sax.parser");
 	if (parserClassName == null) {
-	    parserClassName = "org.apache.xerces.parsers.SAXParser";
+	    parserClassName = "com.jclark.xml.sax.Driver";
 	}
 	System.err.println("using SAX parser " + parserClassName);
 
@@ -87,6 +139,26 @@ public class AWTCommandLine {
 	}
 	return null;
     }
+
+
+
+  protected PreviewDialog createPreviewDialog(AWTRenderer renderer, Translator res) {
+    PreviewDialog frame = new PreviewDialog(renderer, res);
+    frame.validate();
+
+    // center window
+    Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+    Dimension frameSize = frame.getSize();
+    if (frameSize.height > screenSize.height)
+      frameSize.height = screenSize.height;
+    if (frameSize.width > screenSize.width)
+      frameSize.width = screenSize.width;
+    frame.setLocation((screenSize.width - frameSize.width) / 2, (screenSize.height - frameSize.height) / 2);
+    frame.setVisible(true);
+    return frame;
+  }
+
+
 
   /**
    * create an InputSource from a file name
@@ -114,6 +186,17 @@ public class AWTCommandLine {
   }
 
 
+  private SecureResourceBundle getResourceBundle(String path) {
+    FileInputStream in = null;
+    try {
+    in = new FileInputStream(path);
+    } catch(Exception ex) {
+      System.out.println("Abgefangene Exception: " + ex.getMessage());
+    }
+    return new SecureResourceBundle(in);
+  }
+
+
 
   /* main
    */
@@ -125,52 +208,34 @@ public class AWTCommandLine {
     }
 
     String srcPath = null;
+    String translationFile = null;
+    String imageDir = null;
 
     System.err.println(Version.getVersion());
-    if (args.length == 1) {
-      srcPath = args[0];
-    }
-    else {
-      System.err.println("usage: java " +
-                         "AWTCommandLine " +
-                         "formatting-object-file");
-
+    if (args.length < 1 || args.length > 3) {
+      System.err.println("usage: java AWTCommandLine " +
+                         "formatting-object-file [translation-file] " +
+                         "[image-dir]");
       System.exit(1);
     }
 
+    srcPath = args[0];
+    if (args.length > 1) {
+      translationFile = args[1];
+    }
+    if (args.length > 2) {
+      imageDir = args[2];
+      if (!imageDir.endsWith(System.getProperty("file.separator")))
+        imageDir += System.getProperty("file.separator");
+        
+      Command.IMAGE_DIR = imageDir;
+    }
 
-    AWTRenderer renderer = new AWTRenderer();
-    new AWTCommandLine(renderer);
+    if (translationFile == null)
+      translationFile = DEFAULT_TRANSLATION_PATH;
 
-//init parser
-    Parser parser = createParser();
 
-	if (parser == null) {
-	    System.err.println("ERROR: Unable to create SAX parser");
-	    System.exit(1);
-	}
-
-	try {
-	    Driver driver = new Driver();
-	    driver.setRenderer(renderer);
-
-// init mappings: time
-	    driver.addElementMapping("org.apache.fop.fo.StandardElementMapping");
-	    driver.addElementMapping("org.apache.fop.svg.SVGElementMapping");
-
-// build FO tree: time
-	    driver.buildFOTree(parser, fileInputSource(srcPath));
-
-// layout FO tree: time
-	    driver.format();
-
-// render: time
-        driver.render();
-
-	} catch (Exception e) {
-	    System.err.println("FATAL ERROR: " + e.getMessage());
-	    System.exit(1);
-	}
+    new AWTCommandLine(srcPath, translationFile);
 
   }  // main
 }  // AWTCommandLine

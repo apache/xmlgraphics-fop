@@ -69,7 +69,7 @@ import java.net.URL;
  * mainline class.
  *
  * Gets input and output filenames from the command line.
- * Creates a SAX Parser (defaulting to XP).
+ * Creates a SAX Parser (defaulting to Xerces).
  * 
  */
 public class CommandLine {
