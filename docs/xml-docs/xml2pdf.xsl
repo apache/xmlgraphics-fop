@@ -6,7 +6,7 @@ TBD: - The faq doesn't show in the content
      - check why margin-bottom on the page with properties is too large
      - check why keep-next not only doesn't work, but leads to repeating already printed lines
      - make lines containing only code look nicer (smaller line height)
-     - check why in section "FO Formatting" p. 17 the bullets are overwritten
+     - replace bullets in ordered lists with numbers
      - correct the hack replacing nbsp with '-'
      - handle the links correctly which have been external in the html doc and are now internal
 
@@ -268,22 +268,53 @@ TBD: - The faq doesn't show in the content
    </fo:list-block>
 </xsl:template>
 
-<!-- li (list item) -->
-<xsl:template match ="li">
-  <fo:list-item>
-    <fo:list-item-label>
-      <fo:block><fo:inline-sequence font-family="Symbol">&#183;</fo:inline-sequence></fo:block>
-    </fo:list-item-label>
-    <fo:list-item-body>
-      <fo:block space-after.optimum="4pt"
-            text-align="justified"
-            padding-top="3pt">
-        <xsl:apply-templates/> 
-     </fo:block>
-    </fo:list-item-body>
-  </fo:list-item>
+
+<!-- ol (ordered list) -->
+<xsl:template match ="ol">
+  <fo:list-block start-indent="1cm" 
+                 provisional-distance-between-starts="12pt" 
+                 font-family="sans-serif" 
+                 font-size="11pt" 
+                 line-height="11pt">
+     <xsl:apply-templates/> 
+   </fo:list-block>
 </xsl:template>
 
+
+<!-- li (list item) in unordered list -->
+<xsl:template match ="ul/li">
+    <fo:list-item>
+      <fo:list-item-label>
+        <fo:block><fo:inline-sequence font-family="Symbol">&#183;</fo:inline-sequence></fo:block>
+      </fo:list-item-label>
+      <fo:list-item-body>
+        <fo:block space-after.optimum="4pt"
+              text-align="justified"
+              padding-top="3pt">
+          <xsl:apply-templates/> 
+       </fo:block>
+      </fo:list-item-body>
+    </fo:list-item>
+</xsl:template>
+
+
+<!-- li (list item) in ordered list -->
+<xsl:template match ="ol/li">
+    <fo:list-item>
+      <fo:list-item-label>
+        <fo:block>
+          <xsl:number level="multiple" count="li" format="1"/>)
+        </fo:block>
+      </fo:list-item-label>
+      <fo:list-item-body>
+        <fo:block space-after.optimum="4pt"
+              text-align="justified"
+              padding-top="3pt">
+          <xsl:apply-templates/> 
+       </fo:block>
+      </fo:list-item-body>
+    </fo:list-item>
+</xsl:template>
 
 <!-- end body -->
 
