@@ -27,16 +27,28 @@ Jon Smirl
 
 **** HISTORY **** 
 
+
 Done since 0.15 release
+- added: Finnish hyphenation patterns [Jarno Elovirta]
+- added: hyphenation package (Carlos Villegas), integration into Fop [Fotis Jannidis]
+- added: interim configuration package [Fotis Jannidis]
 - added: FopImage class that uses JAI [Eric Schaeffer] and JAI compile target [Kelly Campbell]
 - added: support for rule-style [Fotis Jannidis]
+- updated tables to handle headers, footers, keep-with, colspan 
+          is partly done [Marcus Crafter]
 - updated: svg stuff for the latest java bindings [Keiron Liddle]
 - fixed: enhanced error messages for page layout (region names, master) [Norm Walsh]
 - fixed: infinite looping bug when TableCell or TableRow is larger than a page [Hani Elabed]
 - fixed: corrected the size of the "-" char [Marcus Crafter]
 - fixed: check for unnecessary whitespace at end of line [Marcus Crafter]
 - fixed: moves table completely to next page if first row doesn't fit into last page [Marcus Crafter]
-
+- fixed: problem where id's where being setup twice for
+         table row going over the page  [Kelly Campbell]
+- fixed colspanning so that the cell state keeps track of the
+        width so far properly [Marcus Crafter]
+- fix to allow JDK 1.1 users to compile and use FOP [Mikko Honkala] 
+- fix: removing duplicate character mappings [Dharamveer Salecha]
+- fix: NullPointerException in FopImageFactory [Kelly Campbell] 
 
 Done since 0.14 release
 - added region-name support, refactoring of region, PageSequence, 
@@ -114,8 +126,9 @@ columns, footnotes, floats [Arved Sandstrom, Kelly Campbell]
 image support [Eric Schaeffer, Pankaj Narula, Andreas Rueckert] 
 SVG support [Keiron Liddle][Torsten Friebe] 
 smooth shading in PDF [Steven Coffman] 
-tables [Karen Lease] 
-hyphenation [Carlos Villegas] 
+properties [Karen Lease]
+tables [Karen Lease, Marcus Crafter] 
+hyphenation,line break [Carlos Villegas] 
 docs [Fotis Jannidis] 
 
 
