@@ -43,7 +43,7 @@ contain element-specific property maker hashes; these are based on the
 <em>local name</em> of the flow object, ie. <em>table-row</em>, not
 <em>fo:table-row</em>. If an element-specific property mapping exists,
 it is preferred to the generic mapping.</p>
-    <p>The PLB handles loops through each attribute in the list, finds an appropriate "Maker" for it, then calls the Maker to convert the attribute value into a Property object of the correct type, and stores that Property in the PropertyList.</p>
+    <p>The PLB loops through each attribute in the list, finds an appropriate "Maker" for it, then calls the Maker to convert the attribute value into a Property object of the correct type, and stores that Property in the PropertyList.</p>
     </section>
     <section id="datatypes">
       <title>Property datatypes</title>
@@ -174,7 +174,10 @@ inherited or no value is found at any level, the initial value is
 returned.</p>
     </section>
     <section id="property-spec">
-      <title>XML property specification format</title>
+      <title>Implementing Standard Properties</title>
+      <p>Because the properties defined in the standard are basically static, FOP currently builds the source code for the related Property classes from an XML data file.
+All properties are specified in src/codegen/foproperties.xml.
+The related classes are created automatically during the build process by applying an XSLT stylesheet to the foproperties.xml file.</p>
       <section id="generic">
         <title>Generic properties</title>
         <p>In the properties xml files, one can define generic property
@@ -350,16 +353,11 @@ the result is a Property object, and the actual value may be accessed
     </section>
     <section id="refine">
       <title>Refinement</title>
-      <p>The <strong>Refinement</strong> step is part of reading and using the properties which may happen immediately or during the layout process.</p>
+      <p>The <strong>Refinement</strong> step is part of reading and using the properties which may happen immediately or during the layout process. FOP does not currently use a separate Refinement process, but tends to handle refining steps as the FO Tree is built.</p>
     </section>
     <section id="refined-fo-tree">
       <title>Refined FO Tree</title>
+      <p>The Refined FO Tree is the result of the Refinement process.</p>
     </section>
-    <section id="implement">
-      <title>Implementation Notes</title>
-    </section>
-      <p>All properties are specified in src/codegen/foproperties.xml.
-The related classes are created automatically during the build process.</p>
-      <p>The base class for all properties is <em>fo.Property</em>, and the base class for all the property makers is the inner class <em>Property.Maker</em>.</p>
   </body>
 </document>
