@@ -3,13 +3,14 @@
     "http://cvs.apache.org/viewcvs.cgi/*checkout*/xml-forrest/src/resources/schema/dtd/document-v11.dtd">
 <document>
   <header>
-    <title>Layout</title>
-    <subtitle>Layout Process in FOP</subtitle>
+    <title>FOP Design: Layout</title>
     <authors>
       <person name="Keiron Liddle" email="keiron@aftexsw.com"/>
     </authors>
   </header>
   <body>
+    <section id="into">
+      <title>Introduction</title>
     <p>The role of the layout managers is to build the Area Tree by using the information from the FO Tree.
 The layout managers decide where information is placed in the area tree.</p>
     <p>A layout manager is typically associated with an FO Object but not always.</p>
@@ -28,6 +29,9 @@ It is also possible to layout all pages in a page sequence after each page seque
     <p>The layout process is handled by a set of layout managers.
 The block level layout managers are used to create the block areas which are added to the region area of a page.</p>
       <p>The traversal is done by the layout or structure process only in the flow elements.</p>
+    </section>
+    <section id="issues">
+      <title>Design Issues</title>
       <section id="issue-simple-layout">
         <title>Keep Layouts Simple</title>
         <p>Layout should handle floats, footnotes and keeps in a simple, straightforward way.</p>
@@ -40,6 +44,7 @@ The block level layout managers are used to create the block areas which are add
         <p>The issue here is that we wish to recycle the Area Tree memory as much as possible. The problem is that forward references prevent pages from being resolved until the forward references are resolved. If memory is insufficient to store unresolved pages, Area Tree fragments must be serialized until resolved.</p>
         <p>FOP developers have discussed adding the capability of using an Area Tree to render to more than one output target in the same run, which would be a complicating factor in disposal of pages as they are rendered.</p>
       </section>
+    </section>
     <section id="lm">
       <title>Layout Managers</title>
       <p>The layout managers are set up from the hierarchy of the formatting object tree.
