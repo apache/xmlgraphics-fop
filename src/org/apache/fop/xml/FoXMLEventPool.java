@@ -1,11 +1,10 @@
 package org.apache.fop.xml;
 
 import org.apache.fop.apps.FOPException;
+import org.apache.fop.fo.FObjectNames;
 import org.apache.fop.xml.FoXMLEvent;
 import org.apache.fop.xml.XMLNamespaces;
 import org.apache.fop.xml.XMLEventPool;
-
-import java.util.LinkedList;
 
 /*
  * $Id$
@@ -25,12 +24,20 @@ public class FoXMLEventPool extends XMLEventPool {
     private static final String revision = "$Revision$";
 
     /**
-     * The one-argument constructor uses the default initialization values:
-     * NOEVENT for the event <i>type</i>, and null references for all others
-     * except <i>namespaces</i>.
+     * The one-argument constructor requires <i>namespaces</i>.
+     * @param namespaces - an <tt>XMLNamespaces</tt> object.
      */
     public FoXMLEventPool(XMLNamespaces namespaces) {
         super(namespaces);
+    }
+
+    /**
+     * Construct a pool with a given initial size.
+     * @param namespaces - an <tt>XMLNamespaces</tt> object.
+     * @param initialSize - the initial size of the pool.
+     */
+    public FoXMLEventPool(XMLNamespaces namespaces, int initialSize) {
+        super(namespaces, initialSize);
     }
 
     /**
@@ -38,16 +45,9 @@ public class FoXMLEventPool extends XMLEventPool {
      * @return an <tt>FoXMLEvent</tt>.
      */
     public synchronized FoXMLEvent acquireFoXMLEvent() {
-        return (FoXMLEvent)(acquireXMLEvent());
-    }
-
-    /**
-     * Return an <tt>FoXMLEvent</tt> to the pool.
-     * @param ev - the event being returned.
-     */
-    public synchronized void surrenderFoXMLEvent(FoXMLEvent ev) {
-        ev.clear();
-        pool.add(ev);
+        FoXMLEvent ev = (FoXMLEvent)(acquireXMLEvent());
+        ev.setFoType(FObjectNames.NO_FO);
+        return ev;
     }
 
     /**
