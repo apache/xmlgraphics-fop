@@ -21,6 +21,7 @@ package org.apache.fop.layoutmgr;
 import org.apache.fop.datatypes.Length;
 import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.PropertyManager;
+import org.apache.fop.fo.Constants;
 import org.apache.fop.fo.properties.CommonMarginBlock;
 import org.apache.fop.fo.properties.CommonHyphenation;
 import org.apache.fop.layout.hyphenation.Hyphenation;
@@ -209,7 +210,7 @@ public class LineLayoutManager extends InlineStackingLayoutManager {
 
                     // This break position doesn't fit
                     // TODO: If we are in nowrap, we use it as is!
-                    if (bTextAlignment == TextAlign.JUSTIFY || prevBP == null) {
+                    if (hyphProps.hyphenate == Constants.TRUE) {
                         // If we are already in a hyphenation loop, then stop.
 
                         if (inlineLC.tryHyphenate()) {

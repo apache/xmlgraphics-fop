@@ -488,6 +488,9 @@ public class PropertyManager implements Constants {
             textInfo.textTransform
                     = this.propertyList.get(PR_TEXT_TRANSFORM).getEnum();
 
+            textInfo.hyphChar = this.propertyList.get(
+                                  PR_HYPHENATION_CHARACTER).getCharacter();
+
         }
         return textInfo;
     }

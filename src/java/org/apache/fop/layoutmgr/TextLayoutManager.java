@@ -46,12 +46,14 @@ public class TextLayoutManager extends AbstractLayoutManager {
         private short iBreakIndex;
         private short iWScount;
         private MinOptMax ipdArea;
+        private boolean bHyphenated;
         public AreaInfo(short iSIndex, short iBIndex, short iWS,
-                 MinOptMax ipd) {
+                 MinOptMax ipd, boolean bHyph) {
             iStartIndex = iSIndex;
             iBreakIndex = iBIndex;
             iWScount = iWS;
             ipdArea = ipd;
+            bHyphenated = bHyph;
         }
     }
 
@@ -107,7 +109,7 @@ public class TextLayoutManager extends AbstractLayoutManager {
         // With CID fonts, space isn't neccesary currentFontState.width(32)
         spaceCharIPD = foText.textInfo.fs.getCharWidth(' ');
         // Use hyphenationChar property
-        hyphIPD = foText.textInfo.fs.getCharWidth('-');
+        hyphIPD = foText.textInfo.fs.getCharWidth(foText.textInfo.hyphChar);
         // Make half-space: <space> on either side of a word-space)
         SpaceVal ws = foText.textInfo.wordSpacing;
         halfWS = new SpaceVal(MinOptMax.multiply(ws.getSpace(), 0.5),
@@ -201,7 +203,7 @@ public class TextLayoutManager extends AbstractLayoutManager {
         boolean bCanHyphenate = true;
         int iStopIndex = iNextStart + hc.getNextHyphPoint();
 
-        if (textArray.length < iStopIndex || foText.textInfo.bCanHyphenate == false) {
+        if (textArray.length < iStopIndex) {
             iStopIndex = textArray.length;
             bCanHyphenate = false;
         }
@@ -396,7 +398,8 @@ public class TextLayoutManager extends AbstractLayoutManager {
 
         // Position is the index of the info for this word in the vector
         vecAreaInfo.add(
-          new AreaInfo(iWordStart, iNextStart, iWScount, ipd));
+          new AreaInfo(iWordStart, iNextStart, iWScount, ipd, 
+                       ((flags & BreakPoss.HYPHENATED) != 0)));
         BreakPoss bp = new BreakPoss(
                          new LeafPosition(this, vecAreaInfo.size() - 1));
         ipdTotal = ipd;
@@ -465,6 +468,20 @@ public class TextLayoutManager extends AbstractLayoutManager {
         if (ai == null) {
             return;
         }
+
+        // ignore newline character
+        int adjust = 0;
+        if (textArray[ai.iBreakIndex - 1] == NEWLINE) {
+            adjust = 1;
+        }
+        String str = new String(textArray, iStart, ai.iBreakIndex - iStart - adjust);
+
+        // add hyphenation character if the last word is hyphenated
+        if (ai.bHyphenated) {
+            str += foText.textInfo.hyphChar;
+            ai.ipdArea = MinOptMax.add(ai.ipdArea, new MinOptMax(hyphIPD));
+        }
+
         // Calculate total adjustment
         int iRealWidth = ai.ipdArea.opt;
         int iAdjust = 0;
@@ -482,13 +499,6 @@ public class TextLayoutManager extends AbstractLayoutManager {
 
         // Make an area containing all characters between start and end.
         InlineArea word = null;
-        int adjust = 0;
-        
-        // ignore newline character
-        if (textArray[ai.iBreakIndex - 1] == NEWLINE) {
-            adjust = 1;
-        }
-        String str = new String(textArray, iStart, ai.iBreakIndex - iStart - adjust);
 
         if (" ".equals(str)) {
             word = new Space();
