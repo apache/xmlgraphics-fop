@@ -78,7 +78,7 @@ correctly.
     <title>Placing SVG Text into PDF</title>
     <p>If possible, Batik will use normal PDF text when inserting text. It does
 this by checking if the text can be drawn normally and the font is
-supported. This example svg <link href="svg/text.svg">text.svg</link> /
+supported. This example svg <link href="dev/svg/text.svg">text.svg</link> /
 <link href="dev/svg/text.pdf">text.pdf</link>
 shows how various types and effects with text are handled.
 Note that tspan and outlined text are not yet implemented.</p>
