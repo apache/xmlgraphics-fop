@@ -21,7 +21,7 @@
 			</fo:simple-page-master>
 		</fo:layout-master-set>
 
-		<fo:page-sequence master-name="simple">
+		<fo:page-sequence master-reference="simple">
 			<fo:static-content flow-name="xsl-region-before">
 				<fo:block text-align="end" 
 							font-size="10pt" 
