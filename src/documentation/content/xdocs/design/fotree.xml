@@ -10,7 +10,7 @@
     </authors>
   </header>
   <body>
-    <section>
+    <section id="intro">
       <title>Introduction</title>
       <p>The FO Tree is an internal representation of the input XSL-FO document.
 The tree is created by building the elements and attributes from the SAX events.
@@ -21,7 +21,7 @@ into the area tree. The complete FO tree should not be held in memory
 since FOP should be able to handle FO documents of any size.</p>
       <p>The FO Tree is simply a heirarchy of java objects that represent the fo elements from xml.
 The traversal is done by the layout or structure process only in the flow elements.</p>
-      <section>
+      <section id="fonode">
         <title>FONode</title>
         <p>The base class for all objects in the tree is FONode. The base class for
 all FO Objects is FObj.</p>
@@ -36,7 +36,7 @@ classes are in <code>org.apache.fop.fo.pagination.*</code>, for elements in the 
 they are in <code>org.apache.fop.fo.flow.*</code> and some others are in
 <code>org.apache.fop.fo.*.</code></p>
       </section>
-      <section>
+      <section id="create-fo">
         <title>Making FO's</title>
         <p>There is a class for each element in the FO set. An object is created for
 each element in the FO Tree. This object holds the properties for the FO
@@ -53,7 +53,7 @@ element name. This maker is then used to create a new class that
 represents an FO element. This is then added to the FO tree as a child
 of the current parent.</p>
       </section>
-      <section>
+      <section id="properties">
         <title>Properties</title>
         <p>The XML attributes on each element are passed to the object. The objects
 that represent FO objects then convert the attributes into properties.</p>
@@ -80,7 +80,7 @@ properties is <em>Property</em>, and all the property makers extend
 <em>Property.Maker</em>. A more complete discussion of the property
 architecture may be found in <jump href="properties.html">Properties</jump>.</p>
     </section>
-    <section>
+    <section id="foreign">
       <title>Foreign XML</title>
       <p>FOP supports the handlingof foreign XML.
 The XML is converted internally into a DOM, this is then available to
@@ -88,15 +88,6 @@ the FO tree to convert the DOM into another format which can be rendered.
 In the case of SVG the DOM needs to be created with Batik, so an element
 mapping is used to read all elements in the SVG namespace and pass them
 into the Batik DOM.</p>
-    </section>
-    <section>
-      <title>Extensions</title>
-      <p>It is possible to add extensions to FOP so that you can extend the ability of
-FOP with respect to render output, document specific information or extended
-layout functionality.</p>
-    </section>
-    <section>
-      <title>Foreign XML</title>
       <p>The base class for foreign XML is XMLObj. This class handles creating a
 DOM Element and the setting of attributes. It also can create a DOM
 Document if it is a top level element, class XMLElement.
@@ -115,7 +106,7 @@ it. Other XML from an unknwon namespace will be ignored.</p>
         <li>create FO Objects</li>
       </ul>
     </section>
-    <section>
+    <section id="unknown">
       <title>Unknown Elements</title>
       <p>If an element is in a known namespace but the element is unknown then an
 Unknown object is created. This is mainly to provide information to the
@@ -123,7 +114,13 @@ user.
 This could happen if the fo document contains an element from a different
 version or the element is misspelt.</p>
     </section>
-    <section>
+    <section id="extensions">
+      <title>Extensions</title>
+      <p>It is possible to add extensions to FOP so that you can extend the ability of
+FOP with respect to render output, document specific information or extended
+layout functionality.</p>
+    </section>
+    <section id="page-master">
       <title>Page Masters</title>
       <p>The first elements in a document are the elements for the page master setup.
 This is usually only a small number and will be used throughout the document to create new pages.
@@ -131,13 +128,13 @@ These elements are kept as a factory to create the page and appropriate regions 
 The objects in the FO Tree that represent these elements are themselves the factory.
 The root element keeps these objects as a factory for the page sequences.</p>
     </section>
-    <section>
+    <section id="flow">
       <title>Flow</title>
       <p>The elements that are in the flow of the document are a set of elements
 that is needed for the layout process. Each element is important in the
 creation of areas.</p>
     </section>
-    <section>
+    <section id="other-elements">
       <title>Other Elements</title>
       <p>The remaining FO Objects are things like page-sequence, title and color-profile.
 These are handled by their parent element; i.e. the root looks after the declarations and the declarations maintains a list of colour profiles.
