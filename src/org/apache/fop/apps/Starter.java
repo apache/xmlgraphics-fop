@@ -48,8 +48,9 @@ public abstract class Starter {
             parser.setFeature("http://xml.org/sax/features/namespace-prefixes",
                               true);
         } catch (SAXException e) {
-            throw new FOPException("Error in setting up parser feature namespace-prefixes\n"
-                                   + "You need a parser which supports SAX version 2", e);
+            throw new FOPException("Error: You need a parser which allows the"
+                   + " http://xml.org/sax/features/namespace-prefixes"
+                   + " feature to be set to true to support namespaces", e);
         }
     }
 
