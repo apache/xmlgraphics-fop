@@ -34,6 +34,9 @@ public class LazyFont extends Font implements FontDescriptor {
         if(! isMetricsLoaded){
             isMetricsLoaded = true;
             try{
+
+                // TODO - Possible thread problem here
+
                 FontReader reader = new FontReader(metricsFileName);
                 reader.useKerning(useKerning);
                 reader.setFontEmbedPath(fontEmbedPath);
