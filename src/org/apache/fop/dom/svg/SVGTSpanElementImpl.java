@@ -62,12 +62,10 @@ public class SVGTSpanElementImpl extends SVGTextContentElementImpl implements SV
 	public String str;
 	public int dx = 0;
 	public int dy = 0;
-//	public int x = 0;
-//	public int y = 0;
-	public Vector xlist = null;
-	public Vector ylist = null;
-	public Vector dxlist = null;
-	public Vector dylist = null;
+	public SVGAnimatedLengthList xlist = null;
+	public SVGAnimatedLengthList ylist = null;
+	public SVGAnimatedLengthList dxlist = null;
+	public SVGAnimatedLengthList dylist = null;
 
 	/**
 	 *
@@ -78,22 +76,22 @@ public class SVGTSpanElementImpl extends SVGTextContentElementImpl implements SV
 
 	public SVGAnimatedLengthList getX( )
 	{
-		return null;
+		return xlist;
 	}
 
 	public SVGAnimatedLengthList getY( )
 	{
-		return null;
+		return ylist;
 	}
 
 	public SVGAnimatedLengthList getDx( )
 	{
-		return null;
+		return dxlist;
 	}
 
 	public SVGAnimatedLengthList getDy( )
 	{
-		return null;
+		return dylist;
 	}
 
 	public SVGAnimatedTextRotate getRotate( )

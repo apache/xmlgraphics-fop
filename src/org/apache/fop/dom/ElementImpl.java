@@ -48,7 +48,7 @@
  Software Foundation, please see <http://www.apache.org/>.
 
  */
-package org.apache.fop.dom.svg;
+package org.apache.fop.dom;
 
 import org.apache.fop.datatypes.*;
 
@@ -60,16 +60,17 @@ import java.util.*;
  *
  *
  */
-public class ElementImpl implements Element {
-	Vector childs = new Vector();
-	Node parent = null;
+public class ElementImpl extends NodeImpl implements Element {
+//	Vector childs = new Vector();
+//	Node parent = null;
+//	Document ownerDoc;
 
 	public Node replaceChild(Node n, Node no)
 	{
 		return null;
 	}
 
-    public String getNodeName()
+/*    public String getNodeName()
 	{
 		return null;
 	}
@@ -116,8 +117,20 @@ public class ElementImpl implements Element {
 
     public Document getOwnerDocument()
 	{
-		return null;
+		return ownerDoc;
 	}
+
+    void setOwnerDocument(Document doc)
+    {
+        ownerDoc = doc;
+		NodeList nl = getChildNodes();
+		for(int count = 0; count < nl.getLength(); count++) {
+			Node n = nl.item(count);
+			if(n instanceof ElementImpl) {
+				((ElementImpl)n).setOwnerDocument(ownerDoc);
+			}
+		}
+    }
 
     public Node insertBefore(Node newChild,
                                      Node refChild)
@@ -137,7 +150,9 @@ public class ElementImpl implements Element {
 	{
 		childs.addElement(newChild);
 		if(newChild instanceof ElementImpl) {
-			((ElementImpl)newChild).parent = this;
+			ElementImpl ele = (ElementImpl)newChild;
+			ele.parent = this;
+			ele.setOwnerDocument(ownerDoc);
 		}
 		return newChild;
 	}
@@ -194,7 +209,7 @@ public class ElementImpl implements Element {
 	{
 		return null;
 	}
-
+*/
     public String getAttribute(String name)
 	{
 		return null;
@@ -283,7 +298,7 @@ public class ElementImpl implements Element {
         return false;
     }
 }
-
+/*
 class NodeListImpl implements NodeList
 {
 	Vector vect = null;
@@ -302,4 +317,4 @@ class NodeListImpl implements NodeList
 	{
 		return (Node)vect.elementAt(i);
 	}
-}
+}*/
