@@ -374,11 +374,13 @@ public class XMLRenderer extends AbstractRenderer {
         if (port != null) {
             atts.clear();
             addAreaAttributes(port);
+            addTraitAttributes(port);
             addAttribute("rect", port.getViewArea());
             startElement("regionViewport", atts);
             RegionReference region = port.getRegion();
             atts.clear();
             addAreaAttributes(region);
+            addTraitAttributes(region);
             if (region.getRegionClass() == FO_REGION_BEFORE) {
                 startElement("regionBefore", atts);
                 renderRegion(region);
@@ -428,6 +430,7 @@ public class XMLRenderer extends AbstractRenderer {
     protected void renderMainReference(MainReference mr) {
         atts.clear();
         addAreaAttributes(mr);
+        addTraitAttributes(mr);
         addAttribute("columnGap", mr.getColumnGap());
         addAttribute("width", mr.getWidth());
         startElement("mainReference", atts);
@@ -438,6 +441,7 @@ public class XMLRenderer extends AbstractRenderer {
             span = (Span) spans.get(count);
             atts.clear();
             addAreaAttributes(span);
+            addTraitAttributes(span);
             startElement("span", atts);
             for (int c = 0; c < span.getColumnCount(); c++) {
                 Flow flow = (Flow) span.getFlow(c);
@@ -456,6 +460,7 @@ public class XMLRenderer extends AbstractRenderer {
         // the normal flow reference area contains stacked blocks
         atts.clear();
         addAreaAttributes(flow);
+        addTraitAttributes(flow);
         startElement("flow", atts);
         super.renderFlow(flow);
         endElement("flow");
