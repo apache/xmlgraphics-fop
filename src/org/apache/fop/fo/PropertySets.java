@@ -718,6 +718,11 @@ public class PropertySets {
             int expandedProp = expansion.get(i);
             PropertyValue expandedPropValue;
             //   The PropertyValue must be cloneable
+            // Generally, this method will be called with one of the
+            // pseudo-values - Inherit, FromParent or FromNearestSpecified
+            // e.g. - and becaue those properties may have individual
+            // IndirectValue settings, the value for each expanded
+            // property must be unique.`
             try {
                 expandedPropValue = (PropertyValue)(value.clone());
             } catch (CloneNotSupportedException e) {
