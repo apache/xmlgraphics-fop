@@ -79,7 +79,10 @@ public class FObjMixed extends FObj {
         }
 
         FOText ft = new FOText(data, start, length, textInfo, this);
+        
+        /* characters() processing empty for FOTreeHandler, not empty for RTF & MIFHandlers */
         getFOTreeControl().getFOInputHandler().characters(ft.ca, ft.start, ft.length);
+
         addChild(ft);
     }
 
