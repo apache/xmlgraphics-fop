@@ -471,6 +471,26 @@ public class PropertyConsts {
      */
     private static final BitSet noninheritedprops;
 
+    /**
+     * An <tt>ROBitSet</tt> of properties which are normally inherited
+     * (strictly, not not inherited).
+     * It is defined relative to the set of all properties; i.e. the
+     * inheritability of any property can be established by testing the
+     * bit in this set that corresponds to the queried property's index.
+     */
+    public static final ROBitSet inheritedProps;
+
+    /**
+     * A <tt>BitSet</tt> of properties which are normally inherited
+     * (strictly, not not inherited).
+     * It is defined relative to the set of all properties; i.e. the
+     * inheritability of any property can be established by testing the
+     * bit in this set that corresponds to the queried property's index.
+     * <p>The <tt>BitSet</tt> is private and is the basis for
+     * <i>inheritedProperties</i>.
+     */
+    private static final BitSet inheritedprops;
+
     /** <p>
      * An int[] array of the types of the <i>initialValue</i> field of each
      * property.  The array is indexed by the index value constants that are
@@ -657,11 +677,15 @@ public class PropertyConsts {
         }
 
         // Initialise the RO arrays
+        inheritedprops       = (BitSet)noninheritedprops.clone();
+        inheritedprops.flip(1, inheritedprops.length() - 1);
+
         propertyClassNames   = new ROStringArray(classNames);
         propertyClasses      = Collections.unmodifiableList
-                                        (Arrays.asList(classes));
+                                                    (Arrays.asList(classes));
         inherited            = new ROIntArray(inherit);
         nonInheritedProps    = new ROBitSet(noninheritedprops);
+        inheritedProps       = new ROBitSet(inheritedprops);
         dataTypes            = new ROIntArray(datatypes);
         refineParsingMethods = Collections.unmodifiableList
                                     (Arrays.asList(refineparsingmethods));
