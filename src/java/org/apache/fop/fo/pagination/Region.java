@@ -64,8 +64,6 @@ import org.xml.sax.Attributes;
  */
 public abstract class Region extends FObj {
 
-    private static final String PROP_REGION_NAME = "region-name";
-
     /** Key for before regions */
     public static final String BEFORE = "before";
     /** Key for start regions */
@@ -111,16 +109,16 @@ public abstract class Region extends FObj {
         super.handleAttrs(attlist);
 
         // regions may have name, or default
-        if (null == this.propertyList.get(PROP_REGION_NAME)) {
+        if (null == this.propertyList.get(PR_REGION_NAME)) {
             setRegionName(getDefaultRegionName());
-        } else if (this.propertyList.get(PROP_REGION_NAME).getString().equals("")) {
+        } else if (this.propertyList.get(PR_REGION_NAME).getString().equals("")) {
             setRegionName(getDefaultRegionName());
         } else {
-            setRegionName(this.propertyList.get(PROP_REGION_NAME).getString());
+            setRegionName(this.propertyList.get(PR_REGION_NAME).getString());
             // check that name is OK. Not very pretty.
             if (isReserved(getRegionName())
                     && !getRegionName().equals(getDefaultRegionName())) {
-                throw new FOPException(PROP_REGION_NAME + " '" + regionName
+                throw new FOPException("region-name '" + regionName
                         + "' for " + this.name
                         + " not permitted.");
             }

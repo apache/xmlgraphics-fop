@@ -51,6 +51,7 @@
 package org.apache.fop.fo.expr;
 
 import org.apache.fop.fo.Property;
+import org.apache.fop.fo.properties.FOPropertyMapping;
 
 
 /**
@@ -80,8 +81,9 @@ public class FopPropValFunction extends FunctionBase {
         if (propName == null) {
             throw new PropertyException("Incorrect parameter to _int-property-value function");
         }
-        // System.err.println("Get property-value for " + propName);
-        return pInfo.getPropertyList().get(propName);
+
+        int propId = FOPropertyMapping.getPropertyId(propName);
+        return pInfo.getPropertyList().get(propId);
     }
 
 }

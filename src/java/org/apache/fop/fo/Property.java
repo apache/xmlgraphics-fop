@@ -95,7 +95,7 @@ public class Property {
 
         /**
          * Construct an instance of a Property.Maker.
-         * Note: the property name is set to "UNKNOWN".
+         * Note: the property ID is set to zero
          */
         protected Maker() {
             this.propId = 0;

@@ -285,7 +285,6 @@ public class PropertyList extends HashMap {
         return get(propertyName, false, false);
     }
 
-
     /**
      * Return the property on the current FlowObject. If it isn't set explicitly,
      * this will try to compute it based on other properties, or if it is
