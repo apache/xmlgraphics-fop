@@ -67,10 +67,24 @@ PDF document. The fox:destination simply gives that view an independent name.
 fox:destination.</warning>
       </section>
       <section id="table-continue-label">
-        <title>Continued-label (for table-header/-footer)</title>
-        <p>
-Please see examples/fo/basic/contlabel.fo
-        </p>
+        <title>Table Continuation Label</title>
+        <p>Use the fox:continued-label element to create content in table-header and
+table-footer cells that will appear only on pages after the first page that the table
+appears. fox:continued-label is itself inline content, and is a container of fo:inline
+content. This content will be laid out only if the table does not fit on a single page and flows
+to following pages. Here is an example of FO code creating such a table-header:</p>
+<source><![CDATA[<fo:table-header>
+  <fo:table-row>
+    <fo:table-cell>
+      <fo:block>Header column 1 with continued label
+          <fox:continued-label><fo:inline> (cont.)</fo:inline></fox:continued-label>
+      </fo:block>
+    </fo:table-cell>
+    <fo:table-cell>
+      <fo:block>Header column 2 with no continued label</fo:block>
+    </fo:table-cell>
+  </fo:table-row>
+</fo:table-header>]]></source>
       </section>
     </section>
   </body>
