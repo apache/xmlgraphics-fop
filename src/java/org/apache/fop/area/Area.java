@@ -19,6 +19,7 @@
 package org.apache.fop.area;
 
 import java.awt.geom.Rectangle2D;
+import java.util.ArrayList;
 
 import org.apache.fop.datastructs.Node;
 import org.apache.fop.fo.FONode;
@@ -83,7 +84,8 @@ public class Area extends AreaNode implements Cloneable  {
      * @param pageSeq through which this area was generated
      * @param generatedBy the given <code>FONode</code> generated this
      * @param parent <code>Node</code> of this
-     * @param sync the object on which this area is synchronized
+     * @param sync the object on which this area is synchronized <code>for tree
+     * operations</code>.
      */
     public Area(
             Rectangle2D area,
@@ -100,7 +102,8 @@ public class Area extends AreaNode implements Cloneable  {
      * @param pageSeq through which this area was generated
      * @param generatedBy the given <code>FONode</code> generated this
      * @param parent <code>Node</code> of this
-     * @param sync the object on which this area is synchronized
+     * @param sync the object on which this area is synchronized <code>for tree
+     * operations</code>.
      * @throws IndexOutOfBoundsException
      */
     public Area(
@@ -158,10 +161,11 @@ public class Area extends AreaNode implements Cloneable  {
      * of the <code>Rectangle2D</code> representing this area.  If no
      * <code>Rectangle2D</code> exists, a zero-dimensioned default is first
      * created, then the zero value is returned.
+     * N.B. The method is synchronized only on this object.
      * @return the <code>block-progression-dimension</code> in points
      */
     public double getBPDimPts() {
-        synchronized (sync) {
+        synchronized (this) {
             if (area == null) {
                 return 0;
             }
@@ -194,10 +198,11 @@ public class Area extends AreaNode implements Cloneable  {
      * <code>Rectangle2D</code> representing this area.  If no
      * <code>Rectangle2D</code> exists, a zero-dimensioned default is first
      * created, then the value is applied.
+     * N.B. The method is synchronized only on this object.
      * @param pts <code>block-progression-dimension</code> to set, in points
      */
     public void setBPDimPts(double pts) {
-        synchronized (sync) {
+        synchronized (this) {
             if (area == null) {
                 area = new Rectangle2D.Double();
             }
@@ -214,10 +219,11 @@ public class Area extends AreaNode implements Cloneable  {
     /**
      * Gets the <code>block-progression-dimension</code> maximum value,
      * in millipoints
+     * N.B. The method is synchronized only on this object.
      * @return the <code>block-progression-dimension</code> maximum value
      */
     public Integer getBPDimMax() {
-        synchronized (sync) {
+        synchronized (this) {
             return bPDimMax;
         }
     }
@@ -225,11 +231,12 @@ public class Area extends AreaNode implements Cloneable  {
     /**
      * Sets the <code>block-progression-dimension</code> maximum value,
      * in millipoints
+     * N.B. The method is synchronized only on this object.
      * @param dimMax <code>block-progression-dimension</code> maximum value
      * to set
      */
     public void setBPDimMax(Integer dimMax) {
-        synchronized (sync) {
+        synchronized (this) {
             bPDimMax = dimMax;
         }
     }
@@ -237,10 +244,11 @@ public class Area extends AreaNode implements Cloneable  {
     /**
      * Gets the <code>block-progression-dimension</code> minimum value,
      * in millipoints
+     * N.B. The method is synchronized only on this object.
      * @return the <code>block-progression-dimension</code> minimum value
      */
     public Integer getBPDimMin() {
-        synchronized (sync) {
+        synchronized (this) {
             return bPDimMin;
         }
     }
@@ -248,11 +256,12 @@ public class Area extends AreaNode implements Cloneable  {
     /**
      * Sets the <code>block-progression-dimension</code> minimum value,
      * in millipoints
+     * N.B. The method is synchronized only on this object.
      * @param dimMin <code>block-progression-dimension</code> minimum value
      * to set
      */
     public void setBPDimMin(Integer dimMin) {
-        synchronized (sync) {
+        synchronized (this) {
             bPDimMin = dimMin;
         }
     }
@@ -263,6 +272,7 @@ public class Area extends AreaNode implements Cloneable  {
      * dimension of the <code>Rectangle2D</code> representing this area.  If no
      * <code>Rectangle2D</code> exists, a zero-dimensioned default is first
      * created, then the zero value is returned.
+     * N.B. The method is synchronized only on this object.
      * @return the <code>inline-progression-dimension</code> in millipoints
      */
     public int getIPDim() {
@@ -275,10 +285,11 @@ public class Area extends AreaNode implements Cloneable  {
      * of the <code>Rectangle2D</code> representing this area.  If no
      * <code>Rectangle2D</code> exists, a zero-dimensioned default is first
      * created, then the zero value is returned.
+     * N.B. The method is synchronized only on this object.
      * @return the <code>inline-progression-dimension</code> in points
      */
     public double getIPDimPts() {
-        synchronized (sync) {
+        synchronized (this) {
             if (area == null) {
                 area = new Rectangle2D.Double();
             }
@@ -309,10 +320,11 @@ public class Area extends AreaNode implements Cloneable  {
      * dimension of the <code>Rectangle2D</code> representing this area.  If no
      * <code>Rectangle2D</code> exists, a zero-dimensioned default is first
      * created, then the value is applied.
+     * N.B. The method is synchronized only on this object.
      * @param pts <code>inline-progression-dimension</code> to set, in points
      */
     public void setIPDimPts(double pts) {
-        synchronized (sync) {
+        synchronized (this) {
             if (area == null) {
                 area = new Rectangle2D.Double();
             }
@@ -327,10 +339,11 @@ public class Area extends AreaNode implements Cloneable  {
     /**
      * Gets the <code>inline-progression-dimension</code> maximum value,
      * in millipoints
+     * N.B. The method is synchronized only on this object.
      * @return the <code>inline-progression-dimension</code> maximum value
      */
     public Integer getIPDimMax() {
-        synchronized(sync) {
+        synchronized(this) {
             return iPDimMax;
         }
     }
@@ -338,11 +351,12 @@ public class Area extends AreaNode implements Cloneable  {
     /**
      * Sets the <code>inline-progression-dimension</code> maximum value,
      * in millipoints
+     * N.B. The method is synchronized only on this object.
      * @param dimMax <code>inline-progression-dimension</code> maximum value
      * to set
      */
     public void setIPDimMax(Integer dimMax) {
-        synchronized (sync) {
+        synchronized (this) {
             iPDimMax = dimMax;
         }
     }
@@ -350,10 +364,11 @@ public class Area extends AreaNode implements Cloneable  {
     /**
      * Gets the <code>inline-progression-dimension</code> mimimum value,
      * in millipoints
+     * N.B. The method is synchronized only on this object.
      * @return the <code>inline-progression-dimension</code> minimum value
      */
     public Integer getIPDimMin() {
-        synchronized (sync) {
+        synchronized (this) {
             return iPDimMin;
         }
     }
@@ -361,16 +376,44 @@ public class Area extends AreaNode implements Cloneable  {
     /**
      * Sets the <code>inline-progression-dimension</code> minimum value,
      * in millipoints
+     * N.B. The method is synchronized only on this object.
      * @param dimMin <code>inline-progression-dimension</code> minimum value
      * to set
      */
     public void setIPDimMin(Integer dimMin) {
-        synchronized (sync) {
+        synchronized (this) {
             iPDimMin = dimMin;
         }
     }
 
-    public void registerAreaListener(AreaListener area) {
-        
+    /** Initial size of the <code>listeners</code> array */
+    private static final int INITIAL_LISTENER_SIZE = 4;
+    /** Array of registered <code>AreaListener</code>s */
+    private ArrayList listeners = null;
+    /**
+     * Registers a listener to be notified on any change of dimension in the
+     * <code>Rectangle2D</code> area
+     * @param listener to be notified
+     */
+    public void registerAreaListener(AreaListener listener) {
+        synchronized (this) {
+            if (listeners == null) {
+                listeners = new ArrayList(INITIAL_LISTENER_SIZE);
+            }
+            listeners.add(listener);
+        }
     }
+
+    /**
+     * Notifies any registered listener of a change of dimensions in the
+     * <code>Rectangle2D</code> area
+     */
+    protected void notifyListeners() {
+        for (int i = 0; i < listeners.size(); i++) {
+            synchronized (this) {
+                ((AreaListener)(listeners.get(i))).setDimensions(area);
+            }
+        }
+    }
+
 }
