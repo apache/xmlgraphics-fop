@@ -11,9 +11,6 @@
 <section>
   <title>Renderers</title>
 
-<section>
-  <title>Renderers</title>
-
 <p>A renderer is used to convert the Area Tree into the output document.
 The renderer is given the tree one page at a time. All pages are supplied
 in the order they appear in the document. In order to save memory it is
@@ -122,8 +119,6 @@ implement the basic functionality such as text and lines.
 If two renderers have the same font metrics then it is possible to render
 the Area Tree in each renderer. This can be handled by the AreaTree
 Handler.</p>
-</section>
-
 </section>
 
     </body>

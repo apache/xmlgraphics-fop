@@ -10,8 +10,6 @@
     <body>
 <section>
   <title>Area Tree</title>
-<section>
-  <title>Area Tree</title>
 <p>The Area Tree is an internal representation of the result document. This
 is a set of java classes that can put together a set of objects that
 represent the pages and their contents.</p>
@@ -118,8 +116,6 @@ area tree in the spec) so that this information can be passed to the
 renderer. This is useful for setting the title and organising the groups
 of page sequences.</p>
 </section>
-
-  </section>
 
     </body>
 </document>

@@ -8,8 +8,6 @@
     </header>
 
     <body>
-<section>
-  <title>FO Tree</title>
       <p>
         The FO Tree is a representation of the XSL:FO document. This
         represents the <strong>Objectify</strong> step from the
@@ -136,8 +134,6 @@ creation of areas.</p>
           page-sequences are direct descendents of root.
         </p>
       </section>
-
-</section>
 
     </body>
 </document>
