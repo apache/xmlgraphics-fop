@@ -72,289 +72,289 @@ parent.
 The Name, Spec Content, and Breaks &amp; Keeps information is definite.
 The type and multiplicity of generated areas is definite, as well as whether
 the generated areas are reference areas or not. The BaseClass and the
-layout area information is FOP-implementation dependent. 
+layout area information is FOP-implementation dependent.
 </para>
 <para><em>Note:</em> Numbers in parentheses refer to Notes. A * after
 an FO name indicates that the object is not yet implemented.</para>
 </usage>
 <category class="block-level">
 <object>
-	<name>block</name>
-	<baseClass>FObjMixed</baseClass>
-	<specContent><![CDATA[(#PCDATA|%inline;|%block;)*]]></specContent>
-	<generatedAreas>
-		<type><class>normal</class><stacking>block</stacking></type>
-		<multiplicity>1..*</multiplicity>
-		<currentLayout>BlockArea</currentLayout>
-	</generatedAreas>
-	<breaksKeeps>All (2)</breaksKeeps>
+  <name>block</name>
+  <baseClass>FObjMixed</baseClass>
+  <specContent><![CDATA[(#PCDATA|%inline;|%block;)*]]></specContent>
+  <generatedAreas>
+    <type><class>normal</class><stacking>block</stacking></type>
+    <multiplicity>1..*</multiplicity>
+    <currentLayout>BlockArea</currentLayout>
+  </generatedAreas>
+  <breaksKeeps>All (2)</breaksKeeps>
 </object>
 <object>
-	<name>block-container</name>
-	<baseClass>FObj</baseClass>
-	<specContent><![CDATA[(%block;)+]]></specContent>
-	<generatedAreas isReference="true">
-		<type><class>viewport/ref</class><stacking>block</stacking></type>
-		<multiplicity>1..*</multiplicity>
-		<currentLayout>AreaContainer</currentLayout>
-	</generatedAreas>
-	<breaksKeeps>All</breaksKeeps>
+  <name>block-container</name>
+  <baseClass>FObj</baseClass>
+  <specContent><![CDATA[(%block;)+]]></specContent>
+  <generatedAreas isReference="true">
+    <type><class>viewport/ref</class><stacking>block</stacking></type>
+    <multiplicity>1..*</multiplicity>
+    <currentLayout>AreaContainer</currentLayout>
+  </generatedAreas>
+  <breaksKeeps>All</breaksKeeps>
 </object>
 <object implemented="false">
-	<name>table-and-caption</name>
-	<baseClass>FObj (1)</baseClass>
-	<specContent>(table-caption?,table)</specContent>
-	<generatedAreas>
-		<type><class>normal</class><stacking>block</stacking></type>
-		<multiplicity>1..*</multiplicity>
-		<currentLayout>AreaContainer</currentLayout>
-	</generatedAreas>
-	<breaksKeeps>All keeps</breaksKeeps>
+  <name>table-and-caption</name>
+  <baseClass>FObj (1)</baseClass>
+  <specContent>(table-caption?,table)</specContent>
+  <generatedAreas>
+    <type><class>normal</class><stacking>block</stacking></type>
+    <multiplicity>1..*</multiplicity>
+    <currentLayout>AreaContainer</currentLayout>
+  </generatedAreas>
+  <breaksKeeps>All keeps</breaksKeeps>
 </object>
 <object>
-	<name>table</name>
-	<baseClass>FObj</baseClass>
-	<specContent>(table-column*,table-header?, table-footer?,table-body+)</specContent>
-	<generatedAreas isReference="true">
-		<type><class>normal</class><stacking>block</stacking></type>
-		<multiplicity>1..*</multiplicity>
-		<currentLayout>AreaContainer</currentLayout>
-	</generatedAreas>
-	<breaksKeeps>All</breaksKeeps>
+  <name>table</name>
+  <baseClass>FObj</baseClass>
+  <specContent>(table-column*,table-header?, table-footer?,table-body+)</specContent>
+  <generatedAreas isReference="true">
+    <type><class>normal</class><stacking>block</stacking></type>
+    <multiplicity>1..*</multiplicity>
+    <currentLayout>AreaContainer</currentLayout>
+  </generatedAreas>
+  <breaksKeeps>All</breaksKeeps>
 </object>
 <object>
-	<name>list-block</name>
-	<baseClass>FObj</baseClass>
-	<specContent>(list-item+)</specContent>
-	<generatedAreas>
-		<type><class>normal</class><stacking>block</stacking></type>
-		<multiplicity>1..*</multiplicity>
-		<currentLayout>BlockArea</currentLayout>
-	</generatedAreas>
-	<breaksKeeps>All</breaksKeeps>
+  <name>list-block</name>
+  <baseClass>FObj</baseClass>
+  <specContent>(list-item+)</specContent>
+  <generatedAreas>
+    <type><class>normal</class><stacking>block</stacking></type>
+    <multiplicity>1..*</multiplicity>
+    <currentLayout>BlockArea</currentLayout>
+  </generatedAreas>
+  <breaksKeeps>All</breaksKeeps>
 </object>
 </category>
 <category class="inline-level">
 <object implemented="false">
-	<name>bidi-override</name>
-	<baseClass>FObjMixed (1)</baseClass>
-	<specContent><![CDATA[(#PCDATA|%inline;|%block;)*]]></specContent>
-	<generatedAreas>
-		<type><class>normal</class><stacking>inline</stacking></type>
-		<multiplicity>1..*</multiplicity>
-		<currentLayout/>
-	</generatedAreas>
-	<breaksKeeps/>
+  <name>bidi-override</name>
+  <baseClass>FObjMixed (1)</baseClass>
+  <specContent><![CDATA[(#PCDATA|%inline;|%block;)*]]></specContent>
+  <generatedAreas>
+    <type><class>normal</class><stacking>inline</stacking></type>
+    <multiplicity>1..*</multiplicity>
+    <currentLayout/>
+  </generatedAreas>
+  <breaksKeeps/>
 </object>
 <object>
-	<name>character</name>
-	<baseClass>FObj</baseClass>
-	<specContent>EMPTY</specContent>
-	<generatedAreas>
-		<type><class>normal</class><stacking>inline</stacking></type>
-		<multiplicity>1</multiplicity>
-		<currentLayout intoParentArea="true">BlockArea</currentLayout>
-	</generatedAreas>
-	<breaksKeeps>kwn, kwp</breaksKeeps>
+  <name>character</name>
+  <baseClass>FObj</baseClass>
+  <specContent>EMPTY</specContent>
+  <generatedAreas>
+    <type><class>normal</class><stacking>inline</stacking></type>
+    <multiplicity>1</multiplicity>
+    <currentLayout intoParentArea="true">BlockArea</currentLayout>
+  </generatedAreas>
+  <breaksKeeps>kwn, kwp</breaksKeeps>
 </object>
 <object>
-	<name>external-graphic</name>
-	<baseClass>FObj</baseClass>
-	<specContent>EMPTY</specContent>
-	<generatedAreas>
-		<type><class>viewport/ref</class><stacking>inline</stacking></type>
-		<multiplicity>1</multiplicity>
-		<currentLayout>ImageArea</currentLayout>
-	</generatedAreas>
-	<breaksKeeps>kwn, kwp</breaksKeeps>
+  <name>external-graphic</name>
+  <baseClass>FObj</baseClass>
+  <specContent>EMPTY</specContent>
+  <generatedAreas>
+    <type><class>viewport/ref</class><stacking>inline</stacking></type>
+    <multiplicity>1</multiplicity>
+    <currentLayout>ImageArea</currentLayout>
+  </generatedAreas>
+  <breaksKeeps>kwn, kwp</breaksKeeps>
 </object>
 <object implemented="false">
-	<name>initial-property-set</name>
-	<baseClass>FObj (1)</baseClass>
-	<specContent>EMPTY</specContent>
-	<generatedAreas/>
-	<breaksKeeps/>
+  <name>initial-property-set</name>
+  <baseClass>FObj (1)</baseClass>
+  <specContent>EMPTY</specContent>
+  <generatedAreas/>
+  <breaksKeeps/>
 </object>
 <object>
-	<name>instream-foreign-object</name>
-	<baseClass>FObj</baseClass>
-	<specContent>XML</specContent>
-	<generatedAreas>
-		<type><class>viewport/ref</class><stacking>inline</stacking></type>
-		<multiplicity>1</multiplicity>
-		<currentLayout>ForeignObjectArea</currentLayout>
-	</generatedAreas>
-	<breaksKeeps>kwn, kwp</breaksKeeps>
+  <name>instream-foreign-object</name>
+  <baseClass>FObj</baseClass>
+  <specContent>XML</specContent>
+  <generatedAreas>
+    <type><class>viewport/ref</class><stacking>inline</stacking></type>
+    <multiplicity>1</multiplicity>
+    <currentLayout>ForeignObjectArea</currentLayout>
+  </generatedAreas>
+  <breaksKeeps>kwn, kwp</breaksKeeps>
 </object>
 <object>
-	<name>inline</name>
-	<baseClass>FObjMixed</baseClass>
-	<specContent><![CDATA[(#PCDATA|%inline;|%block;)*]]></specContent>
-	<generatedAreas>
-		<type><class>normal</class><stacking>inline</stacking></type>
-		<multiplicity>1..*</multiplicity>
-		<currentLayout intoParentArea="true">Area</currentLayout>
-	</generatedAreas>
-	<breaksKeeps>All keeps</breaksKeeps>
+  <name>inline</name>
+  <baseClass>FObjMixed</baseClass>
+  <specContent><![CDATA[(#PCDATA|%inline;|%block;)*]]></specContent>
+  <generatedAreas>
+    <type><class>normal</class><stacking>inline</stacking></type>
+    <multiplicity>1..*</multiplicity>
+    <currentLayout intoParentArea="true">Area</currentLayout>
+  </generatedAreas>
+  <breaksKeeps>All keeps</breaksKeeps>
 </object>
 <object implemented="false">
-	<name>inline-container</name>
-	<baseClass>FObj (1)</baseClass>
-	<specContent><![CDATA[(%block;)+]]></specContent>
-	<generatedAreas isReference="true">
-		<type><class>viewport/ref</class><stacking>inline</stacking></type>
-		<multiplicity>1..*</multiplicity>
-		<currentLayout/>
-	</generatedAreas>
-	<breaksKeeps>All keeps</breaksKeeps>
+  <name>inline-container</name>
+  <baseClass>FObj (1)</baseClass>
+  <specContent><![CDATA[(%block;)+]]></specContent>
+  <generatedAreas isReference="true">
+    <type><class>viewport/ref</class><stacking>inline</stacking></type>
+    <multiplicity>1..*</multiplicity>
+    <currentLayout/>
+  </generatedAreas>
+  <breaksKeeps>All keeps</breaksKeeps>
 </object>
 <object>
-	<name>leader</name>
-	<baseClass>FObjMixed</baseClass>
-	<specContent><![CDATA[(#PCDATA|%inline;)*]]></specContent>
-	<generatedAreas>
-		<type><class>normal</class><stacking>inline</stacking></type>
-		<multiplicity>1</multiplicity>
-		<currentLayout intoParentArea="true">BlockArea</currentLayout>
-	</generatedAreas>
-	<breaksKeeps/>
+  <name>leader</name>
+  <baseClass>FObjMixed</baseClass>
+  <specContent><![CDATA[(#PCDATA|%inline;)*]]></specContent>
+  <generatedAreas>
+    <type><class>normal</class><stacking>inline</stacking></type>
+    <multiplicity>1</multiplicity>
+    <currentLayout intoParentArea="true">BlockArea</currentLayout>
+  </generatedAreas>
+  <breaksKeeps/>
 </object>
 <object>
-	<name>page-number</name>
-	<baseClass>FObj</baseClass>
-	<specContent>EMPTY</specContent>
-	<generatedAreas>
-		<type><class>normal</class><stacking>inline</stacking></type>
-		<multiplicity>1</multiplicity>
-		<currentLayout intoParentArea="true">BlockArea (4)</currentLayout>
-	</generatedAreas>
-	<breaksKeeps>kwn, kwp</breaksKeeps>
+  <name>page-number</name>
+  <baseClass>FObj</baseClass>
+  <specContent>EMPTY</specContent>
+  <generatedAreas>
+    <type><class>normal</class><stacking>inline</stacking></type>
+    <multiplicity>1</multiplicity>
+    <currentLayout intoParentArea="true">BlockArea (4)</currentLayout>
+  </generatedAreas>
+  <breaksKeeps>kwn, kwp</breaksKeeps>
 </object>
 <object>
-	<name>page-number-citation</name>
-	<baseClass>FObj</baseClass>
-	<specContent>EMPTY</specContent>
-	<generatedAreas>
-		<type><class>normal</class><stacking>inline</stacking></type>
-		<multiplicity>1</multiplicity>
-		<currentLayout intoParentArea="true">BlockArea (4)</currentLayout>
-	</generatedAreas>
-	<breaksKeeps>kwn, kwp</breaksKeeps>
+  <name>page-number-citation</name>
+  <baseClass>FObj</baseClass>
+  <specContent>EMPTY</specContent>
+  <generatedAreas>
+    <type><class>normal</class><stacking>inline</stacking></type>
+    <multiplicity>1</multiplicity>
+    <currentLayout intoParentArea="true">BlockArea (4)</currentLayout>
+  </generatedAreas>
+  <breaksKeeps>kwn, kwp</breaksKeeps>
 </object>
 <object>
-	<name>basic-link</name>
-	<baseClass>FObjMixed</baseClass>
-	<specContent><![CDATA[(#PCDATA|%inline;|%block;)*]]></specContent>
-	<generatedAreas>
-		<type><class>normal</class><stacking>inline</stacking></type>
-		<multiplicity>1..*</multiplicity>
-		<currentLayout intoParentArea="true">Area (4)</currentLayout>
-	</generatedAreas>
-	<breaksKeeps>All keeps</breaksKeeps>
+  <name>basic-link</name>
+  <baseClass>FObjMixed</baseClass>
+  <specContent><![CDATA[(#PCDATA|%inline;|%block;)*]]></specContent>
+  <generatedAreas>
+    <type><class>normal</class><stacking>inline</stacking></type>
+    <multiplicity>1..*</multiplicity>
+    <currentLayout intoParentArea="true">Area (4)</currentLayout>
+  </generatedAreas>
+  <breaksKeeps>All keeps</breaksKeeps>
 </object>
 </category>
 <category class="other">
 <object>
-	<name>list-item-body</name>
-	<baseClass>FObj</baseClass>
-	<specContent><![CDATA[(%block;)+]]></specContent>
-	<generatedAreas>
-		<type><class>None</class><stacking>None</stacking></type>
-		<multiplicity/>
-		<currentLayout intoParentArea="true">Area</currentLayout>
-	</generatedAreas>
-	<breaksKeeps>kt</breaksKeeps>
+  <name>list-item-body</name>
+  <baseClass>FObj</baseClass>
+  <specContent><![CDATA[(%block;)+]]></specContent>
+  <generatedAreas>
+    <type><class>None</class><stacking>None</stacking></type>
+    <multiplicity/>
+    <currentLayout intoParentArea="true">Area</currentLayout>
+  </generatedAreas>
+  <breaksKeeps>kt</breaksKeeps>
 </object>
 <object>
-	<name>list-item</name>
-	<baseClass>FObj</baseClass>
-	<specContent>(list-item-label,list-item-body)</specContent>
-	<generatedAreas>
-		<type><class>normal</class><stacking>block</stacking></type>
-		<multiplicity>1..*</multiplicity>
-		<currentLayout>BlockArea</currentLayout>
-	</generatedAreas>
-	<breaksKeeps>All</breaksKeeps>
+  <name>list-item</name>
+  <baseClass>FObj</baseClass>
+  <specContent>(list-item-label,list-item-body)</specContent>
+  <generatedAreas>
+    <type><class>normal</class><stacking>block</stacking></type>
+    <multiplicity>1..*</multiplicity>
+    <currentLayout>BlockArea</currentLayout>
+  </generatedAreas>
+  <breaksKeeps>All</breaksKeeps>
 </object>
 <object>
-	<name>list-item-label</name>
-	<baseClass>FObj</baseClass>
-	<specContent><![CDATA[(%block;)*]]></specContent>
-	<generatedAreas>
-		<type><class>None</class><stacking>None</stacking></type>
-		<multiplicity/>
-		<currentLayout intoParentArea="true">Area</currentLayout>
-	</generatedAreas>
-	<breaksKeeps>kt</breaksKeeps>
+  <name>list-item-label</name>
+  <baseClass>FObj</baseClass>
+  <specContent><![CDATA[(%block;)*]]></specContent>
+  <generatedAreas>
+    <type><class>None</class><stacking>None</stacking></type>
+    <multiplicity/>
+    <currentLayout intoParentArea="true">Area</currentLayout>
+  </generatedAreas>
+  <breaksKeeps>kt</breaksKeeps>
 </object>
 <object>
-	<name>table-body</name>
-	<baseClass>FObj</baseClass>
-	<specContent>(table-row+|table-cell+)</specContent>
-	<generatedAreas>
-		<type><class>None</class><stacking>None</stacking></type>
-		<multiplicity/>
-		<currentLayout>AreaContainer (3)</currentLayout>
-	</generatedAreas>
-	<breaksKeeps/>
+  <name>table-body</name>
+  <baseClass>FObj</baseClass>
+  <specContent>(table-row+|table-cell+)</specContent>
+  <generatedAreas>
+    <type><class>None</class><stacking>None</stacking></type>
+    <multiplicity/>
+    <currentLayout>AreaContainer (3)</currentLayout>
+  </generatedAreas>
+  <breaksKeeps/>
 </object>
 <object implemented="false">
-	<name>table-caption</name>
-	<baseClass>FObj (1)</baseClass>
-	<specContent><![CDATA[(%block;)+]]></specContent>
-	<generatedAreas>
-		<type><class>normal</class><stacking>block</stacking></type>
-		<multiplicity>1..*</multiplicity>
-		<currentLayout/>
-	</generatedAreas>
-	<breaksKeeps>kt</breaksKeeps>
+  <name>table-caption</name>
+  <baseClass>FObj (1)</baseClass>
+  <specContent><![CDATA[(%block;)+]]></specContent>
+  <generatedAreas>
+    <type><class>normal</class><stacking>block</stacking></type>
+    <multiplicity>1..*</multiplicity>
+    <currentLayout/>
+  </generatedAreas>
+  <breaksKeeps>kt</breaksKeeps>
 </object>
 <object>
-	<name>table-cell</name>
-	<baseClass>FObj</baseClass>
-	<specContent><![CDATA[(%block;)+]]></specContent>
-	<generatedAreas isReference="true">
-		<type><class>normal</class><stacking>block</stacking></type>
-		<multiplicity>1..*</multiplicity>
-		<currentLayout>AreaContainer</currentLayout>
-	</generatedAreas>
-	<breaksKeeps/>
+  <name>table-cell</name>
+  <baseClass>FObj</baseClass>
+  <specContent><![CDATA[(%block;)+]]></specContent>
+  <generatedAreas isReference="true">
+    <type><class>normal</class><stacking>block</stacking></type>
+    <multiplicity>1..*</multiplicity>
+    <currentLayout>AreaContainer</currentLayout>
+  </generatedAreas>
+  <breaksKeeps/>
 </object>
 <object>
-	<name>table-column</name>
-	<baseClass>FObj</baseClass>
-	<specContent>EMPTY</specContent>
-	<generatedAreas/>
-	<breaksKeeps/>
+  <name>table-column</name>
+  <baseClass>FObj</baseClass>
+  <specContent>EMPTY</specContent>
+  <generatedAreas/>
+  <breaksKeeps/>
 </object>
 <object>
-	<name>table-footer</name>
-	<baseClass>TableBody</baseClass>
-	<specContent>(table-row+|table-cell+)</specContent>
-	<generatedAreas>
-		<type><class>None</class><stacking>None</stacking></type>
-		<multiplicity/>
-		<currentLayout>AreaContainer (3)</currentLayout>
-	</generatedAreas>
-	<breaksKeeps/>
+  <name>table-footer</name>
+  <baseClass>TableBody</baseClass>
+  <specContent>(table-row+|table-cell+)</specContent>
+  <generatedAreas>
+    <type><class>None</class><stacking>None</stacking></type>
+    <multiplicity/>
+    <currentLayout>AreaContainer (3)</currentLayout>
+  </generatedAreas>
+  <breaksKeeps/>
 </object>
 <object>
-	<name>table-header</name>
-	<baseClass>TableBody</baseClass>
-	<specContent>(table-row+|table-cell+)</specContent>
-	<generatedAreas>
-		<type><class>None</class><stacking>None</stacking></type>
-		<multiplicity/>
-		<currentLayout>AreaContainer (3)</currentLayout>
-	</generatedAreas>
-	<breaksKeeps/>
+  <name>table-header</name>
+  <baseClass>TableBody</baseClass>
+  <specContent>(table-row+|table-cell+)</specContent>
+  <generatedAreas>
+    <type><class>None</class><stacking>None</stacking></type>
+    <multiplicity/>
+    <currentLayout>AreaContainer (3)</currentLayout>
+  </generatedAreas>
+  <breaksKeeps/>
 </object>
 <object>
-	<name>table-row</name>
-	<baseClass>FObj</baseClass>
-	<specContent>(table-cell+)</specContent>
-	<generatedAreas/>
-	<breaksKeeps>All</breaksKeeps>
+  <name>table-row</name>
+  <baseClass>FObj</baseClass>
+  <specContent>(table-cell+)</specContent>
+  <generatedAreas/>
+  <breaksKeeps>All</breaksKeeps>
 </object>
 </category>
 <notes>
