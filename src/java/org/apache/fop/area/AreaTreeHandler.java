@@ -1,5 +1,5 @@
 /*
- * Copyright 1999-2004 The Apache Software Foundation.
+ * Copyright 1999-2005 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -103,9 +103,10 @@ public class AreaTreeHandler extends FOEventHandler {
      * @param renderType Desired fo.Constants output type (RENDER_PDF, 
      *   RENDER_PS, etc.)
      * @param stream OutputStream
+     * @throws FOPException if the RenderPagesModel cannot be created
      */
     public AreaTreeHandler (FOUserAgent userAgent, int renderType, 
-        OutputStream stream) throws FOPException {
+                OutputStream stream) throws FOPException {
         super(userAgent);
 
         model = new RenderPagesModel(userAgent, renderType, fontInfo,
@@ -149,6 +150,9 @@ public class AreaTreeHandler extends FOEventHandler {
      * @param pv a page viewport that contains the area with this ID
      */
     public void associateIDWithPageViewport(String id, PageViewport pv) {
+        if (log.isDebugEnabled()) {
+            log.debug("associateIDWithPageViewport(" + id + ", " + pv + ")");
+        }
         List pvList = (List) idLocations.get(id);
         if (pvList == null) { // first time ID located
             pvList = new ArrayList();
@@ -234,7 +238,8 @@ public class AreaTreeHandler extends FOEventHandler {
                 pageSLM = (PageSequenceLayoutManager)
                 getLayoutManagerMaker().makeLayoutManager(pageSequence);
             } catch (FOPException e) {
-                log.error("Failed to create a PageSequenceLayoutManager; no pages will be laid out:");
+                log.error("Failed to create a PageSequenceLayoutManager; "
+                        + "no pages will be laid out:");
                 log.error(e.getMessage());
                 return;
             }
@@ -300,6 +305,15 @@ public class AreaTreeHandler extends FOEventHandler {
         } else {
             model.handleOffDocumentItem(odi);
         }
+    }
+
+    /**
+     * Called by the PageSequenceLayoutManager to notify the AreaTreeHandler
+     * of a new page being started.
+     * @param pageNumber page number
+     */
+    public void notifyNewPage(String pageNumber) {
+        pageCount++;
     }
 }
 
