@@ -66,6 +66,7 @@ import org.apache.fop.fo.flow.Leader;
 import org.apache.fop.fo.flow.ListBlock;
 import org.apache.fop.fo.flow.ListItem;
 import org.apache.fop.fo.flow.Table;
+import org.apache.fop.fo.flow.TableColumn;
 import org.apache.fop.fo.flow.TableBody;
 import org.apache.fop.fo.flow.TableCell;
 import org.apache.fop.fo.flow.TableRow;
@@ -247,6 +248,20 @@ public class FOTreeHandler extends FOInputHandler {
      * @see org.apache.fop.fo.FOInputHandler#endTable(Table)
      */
     public void endTable(Table tbl) {
+    }
+
+    /**
+     *
+     * @param tc TableColumn that is starting;
+     */
+    public void startColumn(TableColumn tc) {
+    }
+
+    /**
+     *
+     * @param tc TableColumn that is ending;
+     */
+    public void endColumn(TableColumn tc) {
     }
 
     /**

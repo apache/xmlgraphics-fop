@@ -62,6 +62,7 @@ import org.apache.fop.fo.flow.Leader;
 import org.apache.fop.fo.flow.ListBlock;
 import org.apache.fop.fo.flow.ListItem;
 import org.apache.fop.fo.flow.Table;
+import org.apache.fop.fo.flow.TableColumn;
 import org.apache.fop.fo.flow.TableBody;
 import org.apache.fop.fo.flow.TableCell;
 import org.apache.fop.fo.flow.TableRow;
@@ -166,6 +167,18 @@ public abstract class FOInputHandler extends AbstractLogEnabled {
      * @param tbl Table that is ending.
      */
     public abstract void endTable(Table tbl);
+
+    /**
+     *
+     * @param tc TableColumn that is starting;
+     */
+    public abstract void startColumn(TableColumn tc);
+
+    /**
+     *
+     * @param tc TableColumn that is ending;
+     */
+    public abstract void endColumn(TableColumn tc);
 
     /**
      *
