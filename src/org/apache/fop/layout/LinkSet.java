@@ -91,7 +91,7 @@ public class LinkSet {
     // intermediate implementation for joining all sublinks on same line
     public void mergeLinks() {
         int numRects = rects.size();
-        if (numRects < 1) return;
+        if (numRects <= 1) return;
 
         LinkedRectangle curRect =
             new LinkedRectangle((LinkedRectangle)rects.get(0));
