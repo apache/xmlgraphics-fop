@@ -34,6 +34,9 @@ import java.util.ArrayList;
 
 public class FONode extends FOTree.Node{
 
+    private static final String tag = "$Name$";
+    private static final String revision = "$Revision$";
+
     /**
      * Constants for the set of attributes of interest with this FONode
      */

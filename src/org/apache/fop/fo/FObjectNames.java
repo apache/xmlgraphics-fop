@@ -17,6 +17,9 @@ package org.apache.fop.fo;
 
 public class FObjectNames {
 
+    private static final String tag = "$Name$";
+    private static final String revision = "$Revision$";
+
     /**
      * Constant for matching Flow Object defined in <i>XSLFO</i>.
      */

@@ -35,6 +35,9 @@ import java.util.Collections;
 
 public class FOAttributes {
 
+    private static final String tag = "$Name$";
+    private static final String revision = "$Revision$";
+
     /**
      * <i>nSpaceAttrLists</i> is an <tt>ArrayList</tt> to hold the array of 
      * <tt>HashMap</tt>s which contain the attribute lists for each

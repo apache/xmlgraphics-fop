@@ -46,6 +46,9 @@ import java.lang.reflect.InvocationTargetException;
 
 public class FOTree extends Tree implements Runnable {
 
+    private static final String tag = "$Name$";
+    private static final String revision = "$Revision$";
+
     /**
      * The buffer from which the <tt>XMLEvent</tt>s from the parser will
      * be read.  <tt>protected</tt> so that FONode can access it.

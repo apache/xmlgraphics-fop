@@ -32,6 +32,9 @@ import org.apache.fop.datatypes.Ints;
  */
 public class PropertySets {
 
+    private static final String tag = "$Name$";
+    private static final String revision = "$Revision$";
+
     private static final String packageName = "org.apache.fop.fo";
 
     /**

@@ -32,6 +32,9 @@ import org.apache.fop.datastructs.ROIntArray;
 
 public class FObjects {
 
+    private static final String tag = "$Name$";
+    private static final String revision = "$Revision$";
+
     public static final String XSLNamespace =
                                         "http://www.w3.org/1999/XSL/Format";
 
