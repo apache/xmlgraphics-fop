@@ -109,6 +109,8 @@ After reviewing the instructions there, send your subscribe or unsubscribe reque
           <li>[online reference] <jump href="http://zvon.org/xxl/xslfoReference/Output/index.html">XSL FO reference</jump>, by Miloslav Nic.</li>
           <li>[online book] <jump href="http://www.dpawson.co.uk/xsl/sect3/bk/index.html">An introduction to XSL Formatting Objects</jump>, by Dave Pawson. See hardcopy version below.</li>
           <li>[book] <jump href="http://www.oreilly.com/catalog/xslfo">XSL-FO</jump>, by Dave Pawson, O'Reilly &amp; Associates, 2002, ISBN 0-596-00355-2. See online version above.</li>
+          <li>[book] <jump href="http://www.phptr.com/browse/product.asp?product_id={CEA527AF-412D-49DA-8C1F-46E0A519B8D8}">Definitive XSL-FO</jump>, by G. Ken Holman, Prentice Hall PTR, 2003, ISBN 0-131-40374-5.</li>
+          <li>[book] <jump href="http://www.sams.com/catalog/product.asp?product_id={F7ADFA46-6AF1-497C-9163-0D6337F727B3}">XSL Formatting Objects Developer's Handbook</jump>, by Doug Lovell, Sams, 2002, ISBN 0-672-32281-1.</li>
         </ul>
       </section>
       <section id="documents-xslt">
@@ -118,6 +120,8 @@ After reviewing the instructions there, send your subscribe or unsubscribe reque
           <li>[book] <jump href="http://www.oreilly.com/catalog/xslt">XSLT</jump>, by Doug Tidwell, O'Reilly &amp; Associates, 2001, ISBN 0-596-00053-7.</li>
           <li>[book] <jump href="http://www.oreilly.com/catalog/xsltckbk">XSLT Cookbook</jump>, by Sal Mangano, O'Reilly &amp; Associates, 2002, ISBN 0-596-00372-2.</li>
           <li>[article] <jump href="http://www.dpawson.co.uk/xsl/xslfaq.html">Dave Pawson's XSLT FAQ</jump>.</li>
+         <li>[book] <jump href="http://www.oreilly.com/catalog/xpathpointer">XPath and XPointer: Locating Content in XML Documents</jump>, by John E. Simpson, O'Reilly &amp; Associates, 2002, ISBN 0-596-00291-2.</li>
+          <li>[book] <jump href="http://www.wiley.com/cda/product/0,,0471416207,00.html">XSL Essentials</jump>, by Michael Fitzgerald, John Wiley &amp; Sons, 2001, ISBN 0-471-41620-7.</li>
         </ul>
       </section>
       <section id="documents-xml">
@@ -125,6 +129,7 @@ After reviewing the instructions there, send your subscribe or unsubscribe reque
         <ul>
           <li>[online book] <jump href="http://www.ibiblio.org/xml/books/bible2">The XML Bible</jump>, by Elliotte Rusty Harold. See hardcopy version below.</li>
           <li>[book] <jump href="http://www.wiley.com/cda/product/0,,0764547607,00.html">The XML Bible</jump>, by Elliotte Rusty Harold, John Wiley &amp; Sons, ISBN 0-764-54760-7. See online version above.</li>
+          <li>[online resource] A great number of additional XML-related books and articles can be found at the <jump href="http://xml.oreilly.com">O'Reilly XML Site</jump>.</li>
         </ul>
       </section>
     </section>
@@ -140,6 +145,7 @@ post processing of the generated PDF files: <jump href="http://www.lowagie.com/i
         <li>TIFFRenderer is a renderer for outputting multi-page TIFF: <jump href="http://www.tkachenko.com/fop/tiffrenderer.html">http://www.tkachenko.com/fop/tiffrenderer.html</jump>.</li>
         <li>AFP Renderer / Batch Assembler for FOP: <jump href="http://mypage.bluewin.ch/huanderegg/">http://mypage.bluewin.ch/huanderegg/</jump>.</li>
         <li>The <jump href="http://mogwai.sourceforge.net">Mogwai Project</jump> includes a renderer for FOP that generates output for Okidata dot matrix printers.</li>
+        <li> [software] <jump href="http://www.vbxml.com/xpathvisualizer">The XPath Visualizer</jump>. Web site says: "This is a full blown Visual XPath Interpreter for the evaluation of any XPath expression and visual presentation of the resulting nodeset or scalar value."</li>
       </ul>
     </section>
   </body>
