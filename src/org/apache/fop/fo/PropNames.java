@@ -372,21 +372,22 @@ public class PropNames {
                                             TOP = 302,
                             TREAT_AS_WORD_SPACE = 303,
                                    UNICODE_BIDI = 304,
-                                     VISIBILITY = 305,
-                                   VOICE_FAMILY = 306,
-                                         VOLUME = 307,
-                           WHITE_SPACE_COLLAPSE = 308,
-                          WHITE_SPACE_TREATMENT = 309,
-                                         WIDOWS = 310,
-                                          WIDTH = 311,
-                                   WORD_SPACING = 312,
-                           WORD_SPACING_MINIMUM = 313,
-                           WORD_SPACING_OPTIMUM = 314,
-                           WORD_SPACING_MAXIMUM = 315,
-                    WORD_SPACING_CONDITIONALITY = 316,
-                        WORD_SPACING_PRECEDENCE = 317,
-                                    WRAP_OPTION = 318,
-                                        Z_INDEX = 319,
+        USAGE_CONTEXT_OF_SUPPRESS_AT_LINE_BREAK = 305,
+                                     VISIBILITY = 306,
+                                   VOICE_FAMILY = 307,
+                                         VOLUME = 308,
+                           WHITE_SPACE_COLLAPSE = 309,
+                          WHITE_SPACE_TREATMENT = 310,
+                                         WIDOWS = 311,
+                                          WIDTH = 312,
+                                   WORD_SPACING = 313,
+                           WORD_SPACING_MINIMUM = 314,
+                           WORD_SPACING_OPTIMUM = 315,
+                           WORD_SPACING_MAXIMUM = 316,
+                    WORD_SPACING_CONDITIONALITY = 317,
+                        WORD_SPACING_PRECEDENCE = 318,
+                                    WRAP_OPTION = 319,
+                                        Z_INDEX = 320,
         
                             LAST_PROPERTY_INDEX = Z_INDEX;
 
@@ -720,21 +721,22 @@ public class PropNames {
                                                ,"top"  // 302
                                ,"treat-as-word-space"  // 303
                                       ,"unicode-bidi"  // 304
-                                        ,"visibility"  // 305
-                                      ,"voice-family"  // 306
-                                            ,"volume"  // 307
-                              ,"white-space-collapse"  // 308
-                             ,"white-space-treatment"  // 309
-                                            ,"widows"  // 310
-                                             ,"width"  // 311
-                                      ,"word-spacing"  // 312
-                              ,"word-spacing-minimum"  // 313
-                              ,"word-spacing-optimum"  // 314
-                              ,"word-spacing-maximum"  // 315
-                       ,"word-spacing-conditionality"  // 316
-                           ,"word-spacing-precedence"  // 317
-                                       ,"wrap-option"  // 318
-                                           ,"z-index"  // 319
+           ,"usage-context-of-suppress-at-line-break"  // 305
+                                        ,"visibility"  // 306
+                                      ,"voice-family"  // 307
+                                            ,"volume"  // 308
+                              ,"white-space-collapse"  // 309
+                             ,"white-space-treatment"  // 310
+                                            ,"widows"  // 311
+                                             ,"width"  // 312
+                                      ,"word-spacing"  // 313
+                              ,"word-spacing-minimum"  // 314
+                              ,"word-spacing-optimum"  // 315
+                              ,"word-spacing-maximum"  // 316
+                       ,"word-spacing-conditionality"  // 317
+                           ,"word-spacing-precedence"  // 318
+                                       ,"wrap-option"  // 319
+                                           ,"z-index"  // 320
     };
 
     /**
