@@ -118,17 +118,8 @@ public class Leader extends FObjMixed {
                                     "leader-length.optimum").getLength().mvalue();
         int leaderLengthMinimum = this.properties.get(
                                     "leader-length.minimum").getLength().mvalue();
-        //brute force method to set default, because default values cannot be set
-        //in the properties classes for all subtypes
-        if (leaderLengthMinimum == 12000) {
-            leaderLengthMinimum = 0;
-        }
         int leaderLengthMaximum = this.properties.get(
                                     "leader-length.maximum").getLength().mvalue();
-        //here too
-        if (leaderLengthMaximum == 12000) {
-            leaderLengthMaximum = 24000;
-        }
         //the following properties only apply for leader-pattern = "rule"
         int ruleThickness = this.properties.get(
                               "rule-thickness").getLength().mvalue();

@@ -442,15 +442,12 @@ public class LineArea extends Area {
         int leaderLength;
         int remainingWidth =
           this.getContentWidth() - this.getCurrentXPosition();
-
-        //here is the point to decide which leader-length is to be used, either
-        //optimum or maximum. At the moment maximum is used if the remaining
-        //width isn't smaller. In this case only the remaining width is used for
-        //the leader. Actually this means, optimum is never used at the moment.
-        if (remainingWidth < leaderLengthMaximum) {
+        //checks whether leaderLenghtOptimum fits into rest of line;
+        //should never overflow, asit has been checked already in BlockArea
+        if (remainingWidth < leaderLengthOptimum) {
             leaderLength = remainingWidth;
         } else {
-            leaderLength = leaderLengthMaximum;
+            leaderLength = leaderLengthOptimum;
         }
         switch (leaderPattern) {
             case LeaderPattern.SPACE:
@@ -751,6 +748,10 @@ public class LineArea extends Area {
     }
 
 
+    /** extracts word for hyphenation and calls hyphenation package, 
+     *  handles cases of inword punctuation and quotation marks at the beginning
+     *  of words, but not in a internationalized way 
+     */
     private int doHyphenation (char [] characters, int position, int wordStart, int remainingWidth) {
         //check whether the language property has been set
         if (this.language.equalsIgnoreCase("none")) {
@@ -783,11 +784,8 @@ public class LineArea extends Area {
             //extracts whole word from string
             wordToHyphenate = getHyphenationWord(characters,wordStart+1);
         } else {
-//            remainingString = "";
             wordToHyphenate = getHyphenationWord(characters,wordStart);
         }
-
-
 
         //if the extracted word is smaller than the remaining width
         //we have a non letter character inside the word. at the moment
@@ -844,6 +842,7 @@ public class LineArea extends Area {
         return wordStart;
     }
 
+
     /** calculates the wordWidth using the actual fontstate*/
     private int getWordWidth (String word) {
       int wordLength = word.length();
@@ -856,6 +855,8 @@ public class LineArea extends Area {
       return width;
     }
 
+
+    /** adds a single character to the line area tree*/ 
     public int addCharacter (char data, LinkSet ls, boolean ul) {
         InlineArea ia = null;
         int remainingWidth =
@@ -886,7 +887,8 @@ public class LineArea extends Area {
         }
     }
 
-    /** adds a string to the line area children. insert a space before the word */
+
+    /** adds a InlineArea containing the String startChar+wordBuf to the line area children.  */
     private void addWord (char startChar, StringBuffer wordBuf) {
         String word = wordBuf.toString();
         InlineArea hia;
@@ -910,6 +912,7 @@ public class LineArea extends Area {
     }
 
 
+    /** extracts from a hyphenated word the best (most greedy) fit */ 
     private int getFinalHyphenationPoint(Hyphenation hyph, int remainingWidth) {
         int [] hyphenationPoints = hyph.getHyphenationPoints();
         int numberOfHyphenationPoints = hyphenationPoints.length;
