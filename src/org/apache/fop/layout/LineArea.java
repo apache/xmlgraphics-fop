@@ -53,6 +53,7 @@ package org.apache.fop.layout;
 
 import org.apache.fop.render.Renderer;
 import org.apache.fop.messaging.MessageHandler;
+import org.apache.fop.layout.LeaderArea;
 
 import java.util.Vector;
 import java.util.Enumeration;
@@ -66,6 +67,8 @@ import org.apache.fop.fo.properties.TextAlign; // for enumerated
 // values
 import org.apache.fop.fo.properties.TextAlignLast; // for enumerated
 // values
+import org.apache.fop.fo.properties.LeaderPattern;
+import org.apache.fop.fo.properties.LeaderAlignment;
 
 import org.apache.fop.datatypes.IDNode;
 
@@ -179,6 +182,11 @@ public class LineArea extends Area {
     }
 
 
+    /**
+      * adds text to line area
+      *
+      * @return int character position
+      */
     public int addText(char odata[], int start, int end, LinkSet ls,
                        boolean ul) {
         boolean overrun = false;
@@ -248,17 +256,19 @@ public class LineArea extends Area {
 
                     Enumeration e = pendingAreas.elements();
                     while (e.hasMoreElements()) {
-                        InlineArea inlineArea =
-                          (InlineArea) e.nextElement();
-                        if (ls != null) {
-                            Rectangle lr = new Rectangle(finalWidth, 0,
-                                                         inlineArea.getContentWidth(),
-                                                         fontState.getFontSize());
-                            ls.addRect(lr, this);
+                        Box box = (Box) e.nextElement();
+                        if (box instanceof InlineArea) {
+                            if (ls != null) {
+                                Rectangle lr = new Rectangle(finalWidth, 0,
+                                                             ((InlineArea) box).
+                                                             getContentWidth(),
+                                                             fontState.getFontSize());
+                                ls.addRect(lr, this);
+                            }
                         }
-
-                        addChild(inlineArea);
+                        addChild(box);
                     }
+
                     finalWidth += pendingWidth;
 
                     // reset pending areas array
@@ -300,9 +310,9 @@ public class LineArea extends Area {
                     if (this.spaceTreatment ==
                             SpaceTreatment.IGNORE) {
                         // do nothing
-                    } else {
+                } else {
                             spaceWidth = currentFontState.width(32);
-                    }
+                }
 
                     */
 
@@ -406,6 +416,113 @@ public class LineArea extends Area {
         return -1;
     }
 
+    /**
+      * adds a Leader; actually the method receives the leader properties
+      * and creates a leader area or an inline area which is appended to
+      * the children of the containing line area. <br>
+      * leader pattern use-content is not implemented.
+      */
+    public void addLeader(int leaderPattern, int leaderLengthMinimum,
+                          int leaderLengthOptimum, int leaderLengthMaximum,
+                          int ruleStyle, int ruleThickness, int leaderPatternWidth,
+                          int leaderAlignment) {
+        InlineArea leaderPatternArea;
+        int leaderLength;
+        int remainingWidth = this.getContentWidth() - this.getCurrentXPosition();
+
+        //here is the point to decide which leader-length is to be used, either
+        //optimum or maximum. At the moment maximum is used if the remaining
+        //width isn't smaller. In this case only the remaining width is used for
+        //the leader. Actually this means, optimum is never used at the moment.
+        if (remainingWidth < leaderLengthMaximum) {
+            leaderLength = remainingWidth;
+        } else {
+            leaderLength = leaderLengthMaximum;
+        }
+        switch (leaderPattern) {
+            case LeaderPattern.SPACE:
+                //whitespace setting must be false for this
+                int whiteSpaceSetting = this.whiteSpaceCollapse;
+                this.changeWhiteSpaceCollapse(WhiteSpaceCollapse.FALSE);
+                pendingAreas.addElement(this.buildSimpleLeader(32,leaderLength));
+                this.changeWhiteSpaceCollapse(whiteSpaceSetting);
+                break;
+            case LeaderPattern.RULE:
+                LeaderArea leaderArea =
+                  new LeaderArea(fontState, red, green, blue, "",
+                                 leaderLength, leaderPattern, ruleThickness,
+                                 ruleStyle);
+                pendingAreas.addElement(leaderArea);
+                break;
+            case LeaderPattern.DOTS:
+                //if the width of a dot is larger than leader-pattern-width
+                //ignore this property
+                if (leaderPatternWidth < this.currentFontState.width(46)) {
+                    leaderPatternWidth = 0;
+                }
+                //if value of leader-pattern-width is 'use-font-metrics' (0)
+                if (leaderPatternWidth == 0) {
+                    pendingAreas.addElement(this.buildSimpleLeader(46,leaderLength));
+                } else {
+                    //if leader-alignment is used, calculate space to insert before leader
+                    //so that all dots will be parallel.
+                    if (leaderAlignment == LeaderAlignment.REFERENCE_AREA) {
+                        int spaceBeforeLeader =
+                          this.getLeaderAlignIndent(leaderLength,
+                                                          leaderPatternWidth);
+                        //appending indent space leader-alignment
+                        //setting InlineSpace to false, so it is not used in line justification
+                        if (spaceBeforeLeader != 0) {
+                            pendingAreas.addElement(
+                              new InlineSpace(spaceBeforeLeader,false));
+                            pendingWidth += spaceBeforeLeader;
+                            //shorten leaderLength, otherwise - in case of
+                            //leaderLength=remaining length - it will cut off the end of
+                            //leaderlength
+                            leaderLength -= spaceBeforeLeader;
+                        }
+                    }
+
+                    // calculate the space to insert between the dots and create a
+                    //inline area with this width
+                    InlineSpace spaceBetweenDots =
+                      new InlineSpace(leaderPatternWidth -
+                                      this.currentFontState.width(46),false);
+                    leaderPatternArea = new InlineArea(currentFontState, this.red,
+                                                this.green, this.blue, new String ("."),
+                                                this.currentFontState.width(46));
+                    int dotsFactor = (int) Math.floor (((double) leaderLength )/
+                                                 ((double)leaderPatternWidth));
+
+                    //add combination of dot + space to fill leader
+                    //is there a way to do this in a more effective way?
+                    for (int i = 0; i < dotsFactor; i++) {
+                        pendingAreas.addElement(leaderPatternArea);
+                        pendingAreas.addElement(spaceBetweenDots);
+                    }
+                    //append at the end some space to fill up to leader length
+                    pendingAreas.addElement( new InlineSpace(leaderLength -
+                                             dotsFactor * leaderPatternWidth));
+                }
+                break;
+                //leader pattern use-content not implemented.
+            case LeaderPattern.USECONTENT:
+                MessageHandler.errorln("leader-pattern=\"use-content\" not "
+                + "supported by this version of Fop");
+                return;
+        }
+        //adds leader length to length of pending inline areas
+        pendingWidth += leaderLength;
+        //sets prev to TEXT and makes so sure, that also blocks only
+        //containing leaders are processed
+        prev = TEXT;
+    }
+
+    /**
+      * adds pending inline areas to the line area
+      * normally done,if the line area is filled and
+      * added as child to the parent block area
+      */
     public void addPending() {
         if (spaceWidth > 0) {
             addChild(new InlineSpace(spaceWidth));
@@ -415,9 +532,10 @@ public class LineArea extends Area {
 
         Enumeration e = pendingAreas.elements();
         while (e.hasMoreElements()) {
-            InlineArea inlineArea = (InlineArea) e.nextElement();
-            addChild(inlineArea);
+            Box box = (Box) e.nextElement();
+            addChild(box);
         }
+
         finalWidth += pendingWidth;
 
         // reset pending areas array
@@ -425,6 +543,10 @@ public class LineArea extends Area {
         pendingAreas = new Vector();
     }
 
+    /**
+      * aligns line area
+      *
+      */
     public void align(int type) {
         int padding = 0;
 
@@ -451,8 +573,10 @@ public class LineArea extends Area {
                     Box b = (Box) e.nextElement();
                     if (b instanceof InlineSpace) {
                         InlineSpace space = (InlineSpace) b;
-                        spaceList.addElement(space);
-                        spaceCount++;
+                        if (space.getResizeable()) {
+                          spaceList.addElement(space);
+                          spaceCount++;
+                        }
                     }
                 }
                 if (spaceCount > 0) {
@@ -523,5 +647,52 @@ public class LineArea extends Area {
     public void setPendingWidth(int width) {
         pendingWidth = width;
     }
+
+    /**
+      * creates a leader as String out of the given char and the leader length
+      * and wraps it in an InlineArea which is returned
+      */
+    private InlineArea buildSimpleLeader(int charNumber,int leaderLength) {
+      int factor = (int) Math.floor (leaderLength /
+                                    this.currentFontState.width(charNumber));
+      char [] leaderChars = new char [factor];
+      char fillChar = (char) charNumber;
+      for (int i = 0; i < factor; i ++) {
+          leaderChars[i] = fillChar;
+      }
+      InlineArea leaderPatternArea = new InlineArea(currentFontState, this.red,
+                                  this.green, this.blue, new String (leaderChars),
+                                  leaderLength);
+      return leaderPatternArea;
+    }
+
+    /**
+      * calculates the width of space which has to be inserted before the
+      * start of the leader, so that all leader characters are aligned.
+      * is used if property leader-align is set. At the moment only the value
+      * for leader-align="reference-area" is supported.
+      *
+      */
+    private int getLeaderAlignIndent (int leaderLength,
+            int leaderPatternWidth ) {
+        //calculate position of used space in line area
+        double position = getCurrentXPosition();
+        //calculate factor of next leader pattern cycle
+        double nextRepeatedLeaderPatternCycle =
+          Math.ceil(position / leaderPatternWidth);
+        //calculate difference between start of next leader
+        //pattern cycle and already used space
+        double difference = (leaderPatternWidth *
+                             nextRepeatedLeaderPatternCycle) - position;
+        return (int) difference;
+    }
+
+    /**
+      * calculates the used space in this line area
+      */
+    private int getCurrentXPosition() {
+      return finalWidth + spaceWidth + startIndent + pendingWidth;
+    }
+
 
 }

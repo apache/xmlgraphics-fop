@@ -753,7 +753,32 @@
         <datatype>Length</datatype>
       </subproperty>
     </compound>
+<!--    <percent-ok base="CONTAINING-BOX"></percent-ok>
+    <datatype-conversion type="Length" varname="lenval">
+       new LengthRange(lenval)</datatype-conversion> -->
    </property>
+
+  <property>
+    <name>leader-pattern-width</name>
+    <class-name>LeaderPatternWidth</class-name>
+    <inherited>true</inherited>
+    <datatype>Length</datatype>
+    <default contextdep="true">use-font-metrics</default>
+    <keyword-equiv match="use-font-metrics" eval="true">0pt</keyword-equiv>
+    <percent-ok base="CONTAINING-BOX"/>
+   </property>
+
+  <property>
+    <name>leader-alignment</name>
+    <inherited>true</inherited>
+    <datatype>Enum</datatype>
+      <enumeration>
+        <value const="NONE">none</value>
+        <value const="REFERENCE_AREA">reference-area</value>
+        <value const="PAGE">page</value>
+      </enumeration>
+    <default>none</default>
+  </property>
 
   <property>
     <name>scaling</name>

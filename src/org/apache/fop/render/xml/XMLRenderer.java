@@ -59,6 +59,7 @@ import org.apache.fop.render.Renderer;
 import org.apache.fop.image.ImageArea;
 import org.apache.fop.layout.*;
 import org.apache.fop.pdf.*;
+import org.apache.fop.fo.properties.LeaderPattern;
 
 // Java
 import java.io.IOException;
@@ -317,20 +318,32 @@ public class XMLRenderer implements Renderer {
     }
 
     /**
-     * render a rule area to XML
-     *
-     * @param area the area to render
-     */
-    public void renderRuleArea(RuleArea area) {
-	writeEmptyElementTag("<Rule start-indent=\""
-			     + area.getStartIndent()
-			     + "\" end-indent=\""
-			     + area.getEndIndent()
-			     + "\" rule-thickness=\""
-			     + area.getRuleThickness()
-			     + "\" red=\"" + area.getRed()
-			     + "\" green=\"" + area.getGreen()
-			     + "\" blue = \"" + area.getBlue()
-			     + "\"/>");
+      * render a leader area to XML
+      *
+      * @param area the area to render
+      */
+    public void renderLeaderArea(LeaderArea area) {
+      String leaderPattern = "";
+      switch (area.getLeaderPattern()) {
+      case LeaderPattern.SPACE:
+        leaderPattern = "space";
+        break;
+      case LeaderPattern.RULE:
+        leaderPattern = "rule";
+        break;
+      case LeaderPattern.DOTS:
+        leaderPattern = "dots";
+        break;
+      case LeaderPattern.USECONTENT:
+        leaderPattern = "use-content";
+        break;
+      }
+
+        writeEmptyElementTag("<Leader leader-pattern=\"" + leaderPattern +
+                             " leader-length=\"" + area.getLeaderLength()+
+                             "\" rule-thickness=\"" + area.getRuleThickness() +
+                             "\" rule-style=\"" + area.getRuleStyle() +
+                             "\" red=\"" + area.getRed() + "\" green=\"" + area.getGreen() +
+                             "\" blue = \"" + area.getBlue() + "\"/>");
     }
 }

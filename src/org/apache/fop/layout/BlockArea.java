@@ -56,6 +56,7 @@ import org.apache.fop.render.Renderer;
 // Java
 import java.util.Vector;
 import java.util.Enumeration;
+import org.apache.fop.messaging.MessageHandler;
 
 public class BlockArea extends Area {
 
@@ -189,6 +190,78 @@ public class BlockArea extends Area {
         }
         return -1;
     }
+
+
+    /**
+      * adds a leader to current line area of containing block area
+      * the actual leader area is created in the line area
+      *
+      * @return int +1 for success and -1 for none
+      */
+    public int addLeader(FontState fontState, float red, float green,
+                         float blue, int leaderPattern, int leaderLengthMinimum,
+                         int leaderLengthOptimum, int leaderLengthMaximum,
+                         int ruleThickness, int ruleStyle, int leaderPatternWidth,
+                         int leaderAlignment) {
+
+        //this should start a new page
+        if (currentHeight + currentLineArea.getHeight() > maxHeight) {
+            return -1;
+        }
+
+        this.currentLineArea.changeFont(fontState);
+        this.currentLineArea.changeColor(red, green, blue);
+
+        //check whether leader fits into the (rest of the) line
+        //if leader is longer then create a new LineArea and put leader there
+        if (leaderLengthMinimum <= (this.getContentWidth() -
+                                    this.currentLineArea.finalWidth -
+                                    this.currentLineArea.pendingWidth)) {
+            this.currentLineArea.addLeader(leaderPattern,
+                                           leaderLengthMinimum, leaderLengthOptimum,
+                                           leaderLengthMaximum, ruleStyle, ruleThickness,
+                                           leaderPatternWidth, leaderAlignment);
+        } else {
+            //finish current line area and put it into children vector
+            this.currentLineArea.align(this.align);
+            this.addLineArea(this.currentLineArea);
+
+            //create new line area
+            this.currentLineArea =
+              new LineArea(fontState, lineHeight, halfLeading,
+                           allocationWidth, startIndent, endIndent,
+                           currentLineArea);
+            this.currentLineArea.changeFont(fontState);
+            this.currentLineArea.changeColor(red, green, blue);
+
+            if (currentHeight + currentLineArea.getHeight() >
+                    this.maxHeight) {
+                return -1;
+            }
+
+            //check whether leader fits into LineArea at all, otherwise
+            //clip it (should honor the clip option of containing area)
+            if (leaderLengthMinimum <=
+                      this.currentLineArea.getContentWidth()) {
+                this.currentLineArea.addLeader(leaderPattern,
+                                               leaderLengthMinimum, leaderLengthOptimum,
+                                               leaderLengthMaximum, ruleStyle, ruleThickness,
+                                               leaderPatternWidth, leaderAlignment);
+            } else {
+                MessageHandler.errorln("Leader doesn't fit into line, it will be clipped to fit.");
+                this.currentLineArea.addLeader(leaderPattern,
+                                               this.currentLineArea.getContentWidth() -
+                                               this.currentLineArea.finalWidth -
+                                               this.currentLineArea.pendingWidth,
+                                               leaderLengthOptimum, leaderLengthMaximum,
+                                               ruleStyle, ruleThickness, leaderPatternWidth,
+                                               leaderAlignment);
+            }
+        }
+        this.hasLines = true;
+        return 1;
+    }
+
 
     public void end() {
         if (this.hasLines) {

@@ -54,8 +54,14 @@ import org.apache.fop.render.Renderer;
 
 public class InlineSpace extends Space {
     private int size; // in millipoints
+    private boolean resizeable = true; //to disallow size changes during justification of a line
     
     public InlineSpace(int amount) {
+	this.size = amount;
+    }
+
+    public InlineSpace(int amount, boolean resizeable) {
+    this.resizeable = resizeable;
 	this.size = amount;
     }
 
@@ -65,6 +71,14 @@ public class InlineSpace extends Space {
 
     public void setSize(int amount) {
 	this.size = amount;
+    }
+
+    public boolean getResizeable() {
+      return resizeable;
+    }
+
+    public void setResizeable(boolean resizeable) {
+      this.resizeable = resizeable;
     }
 
     public void render(Renderer renderer) {

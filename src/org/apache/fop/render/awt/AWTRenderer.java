@@ -613,29 +613,31 @@ public class AWTRenderer implements Renderer, Printable, Pageable {
         this.currentYPosition = ry - h;
     }
 
-    /**
-      * render rule area into PDF
-      *
-      * @param area area to render
-      */
-    public void renderRuleArea(RuleArea area) {
-        int rx = this.currentAreaContainerXPosition + area.getStartIndent();
-        int ry = this.currentYPosition;
-        int w = area.getContentWidth();
-        int h = area.getHeight();
-        int th = area.getRuleThickness();
-        float r = area.getRed();
-        float g = area.getGreen();
-        float b = area.getBlue();
-        Color oldColor = graphics.getColor();
+  /**
+   * render leader area into AWT
+   *
+   * @param area area to render
+   */
+  public void renderLeaderArea(LeaderArea area) {
 
-        graphics.setColor(new Color(r, g, b));
-        graphics.fillRect((int)(rx / 1000f),
-                          (int)(pageHeight - ry / 1000f), (int)(w / 1000f),
-                          (int)(th / 1000f));
-        graphics.setColor(oldColor);
+  	int rx = this.currentXPosition;
+	int ry = this.currentYPosition;
+	int w = area.getLeaderLength();
+	int h = area.getHeight();
+	int th = area.getRuleThickness();
+        int st = area.getRuleStyle();   //not used at the moment
+	float r = area.getRed();
+	float g = area.getGreen();
+	float b = area.getBlue();
+	Color oldColor = graphics.getColor();
 
-    }
+	graphics.setColor(new Color(r, g, b));
+	graphics.fillRect((int)(rx / 1000f), (int)(pageHeight - ry / 1000f),
+					  (int)(w / 1000f), (int)(th / 1000f));
+	graphics.setColor(oldColor);
+	this.currentXPosition += area.getContentWidth();
+  }
+
 
     public void renderSVGArea(SVGArea area) {
 

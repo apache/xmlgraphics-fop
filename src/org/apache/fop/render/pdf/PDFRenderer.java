@@ -665,19 +665,20 @@ public class PDFRenderer implements Renderer {
 	}
 
 	/**
-	 * render rule area into PDF
+	 * render leader area into PDF
 	 *
 	 * @param area area to render
 	 */
-	public void renderRuleArea(RuleArea area) {
-	int rx = this.currentAreaContainerXPosition
-		+ area.getStartIndent();
+	public void renderLeaderArea(LeaderArea area) {
+	int rx = this.currentXPosition;;
 	int ry = this.currentYPosition;
 	int w = area.getContentWidth();
 	int h = area.getHeight();
 	int th = area.getRuleThickness();
-	
+        int st = area.getRuleStyle();   //not used at the moment
+
 	addLine(rx, ry, rx+w, ry, th, new PDFColor(area.getRed(), area.getGreen(),area.getBlue()));
+	this.currentXPosition += area.getContentWidth();
 	}
 
 	/**

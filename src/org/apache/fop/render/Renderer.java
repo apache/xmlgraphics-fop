@@ -107,6 +107,7 @@ public interface Renderer {
     /** render the given page */
     public void renderPage(Page page);
 
-    /** render the given rule area */
-    public void renderRuleArea(RuleArea area);
+    /** render the given leader area */
+    public void renderLeaderArea(LeaderArea area);
+
 }

@@ -56,128 +56,113 @@ import org.apache.fop.fo.properties.*;
 import org.apache.fop.datatypes.*;
 import org.apache.fop.layout.Area;
 import org.apache.fop.layout.BlockArea;
-import org.apache.fop.layout.RuleArea;
+import org.apache.fop.layout.LeaderArea;
 import org.apache.fop.layout.FontState;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.messaging.MessageHandler;
 
 /**
- * This is just a basic implementation mostly based on the code of display-rule
- * It only supports the property leader-pattern="rule", nothing else, not even 
- * leader-pattern="space"
- *
+ * Implements fo:leader; main property of leader leader-pattern.
+ * The following patterns are treated: rule, space, dots.
+ * The pattern use-content is ignored, i.e. it still must be implemented.
  */
 
-public class Leader extends FObj {
+public class Leader extends FObjMixed {
 
-  public static class Maker extends FObj.Maker {
-    public FObj make(FObj parent, PropertyList propertyList)
-        throws FOPException {
-        return new Leader(parent, propertyList);
-    }
-  }
-
-  public static FObj.Maker maker() {
-    return new Leader.Maker();
-  }
-
-  public Leader(FObj parent, PropertyList propertyList) {
-    super(parent, propertyList);
-    this.name = "fo:leader";
-  }
-
-  public Status layout(Area area) throws FOPException {
-
-    String fontFamily = this.properties.get("font-family").getString();
-    String fontStyle = this.properties.get("font-style").getString();
-    String fontWeight = this.properties.get("font-weight").getString();
-    int fontSize = this.properties.get("font-size").getLength().mvalue();
-
-    FontState fs = new FontState(area.getFontInfo(), fontFamily,
-                           fontStyle, fontWeight, fontSize);
-
-    int align = this.properties.get("text-align").getEnum();
-    int startIndent =
-        this.properties.get("start-indent").getLength().mvalue();
-    int endIndent =
-        this.properties.get("end-indent").getLength().mvalue();
-    int spaceBefore =
-        this.properties.get("space-before.optimum").getLength().mvalue();
-    int spaceAfter =
-        this.properties.get("space-after.optimum").getLength().mvalue();
-    int ruleThickness =
-        this.properties.get("rule-thickness").getLength().mvalue();
-    int ruleLength = this.properties.get("leader-length").getLength().mvalue();
-    int leaderPattern = this.properties.get("leader-pattern").getEnum();
-
-
-    ColorType c = this.properties.get("color").getColorType();
-    float red = c.red();
-    float green = c.green();
-    float blue = c.blue();
-
-    if (area instanceof BlockArea) {
-        area.end();
+    public static class Maker extends FObj.Maker {
+        public FObj make(FObj parent,
+                         PropertyList propertyList) throws FOPException {
+            return new Leader(parent, propertyList);
+        }
     }
 
-    if (spaceBefore != 0) {
-        area.addDisplaySpace(spaceBefore);
+    public static FObj.Maker maker() {
+        return new Leader.Maker();
     }
 
-    if (this.isInLabel) {
-        startIndent += bodyIndent;
-        endIndent += (area.getAllocationWidth() -
-                  distanceBetweenStarts - startIndent) +
-          labelSeparation;
+    public Leader(FObj parent, PropertyList propertyList) {
+        super(parent, propertyList);
+        this.name = "fo:leader";
     }
 
-    if (this.isInListBody) {
-        startIndent += bodyIndent + distanceBetweenStarts;
+    public Status layout(Area area) throws FOPException {
+        BlockArea blockArea;
+        //restriction in this version
+        if (!(area instanceof BlockArea)) {
+            MessageHandler.errorln("WARNING: in this version of Fop fo:leader must be a direct child of fo:block ");
+            return new Status(Status.OK);
+        } else {
+            blockArea = (BlockArea) area;
+        }
+
+        //retrieving font property information for fo:leader
+        String fontFamily = this.properties.get("font-family").getString();
+        String fontStyle = this.properties.get("font-style").getString();
+        String fontWeight = this.properties.get("font-weight").getString();
+        int fontSize =
+          this.properties.get("font-size").getLength().mvalue();
+        //wrapping it up into Fontstate
+        FontState fontstate = new FontState(area.getFontInfo(), fontFamily,
+                                            fontStyle, fontWeight, fontSize);
+        //color properties
+        ColorType c = this.properties.get("color").getColorType();
+        float red = c.red();
+        float green = c.green();
+        float blue = c.blue();
+
+        //fo:leader specific properties
+        //determines the pattern of leader; allowed values: space, rule,dots, use-content
+        int leaderPattern = this.properties.get("leader-pattern").getEnum();
+        //length of the leader
+        int leaderLengthOptimum = this.properties.get(
+                                    "leader-length.optimum").getLength().mvalue();
+        int leaderLengthMinimum = this.properties.get(
+                                    "leader-length.minimum").getLength().mvalue();
+        //brute force method to set default, because default values cannot be set
+        //in the properties classes for all subtypes
+        if (leaderLengthMinimum == 12000) {
+            leaderLengthMinimum = 0;
+        }
+        int leaderLengthMaximum = this.properties.get(
+                                    "leader-length.maximum").getLength().mvalue();
+        //here too
+        if (leaderLengthMaximum == 12000) {
+            leaderLengthMaximum = 24000;
+        }
+        //the following properties only apply for leader-pattern = "rule"
+        int ruleThickness = this.properties.get(
+                              "rule-thickness").getLength().mvalue();
+        int ruleStyle = this.properties.get("rule-style").getEnum();
+        // if leaderPatternWidth = 0 = default = use-font-metric
+        int leaderPatternWidth = this.properties.get(
+                                   "leader-pattern-width").getLength().mvalue();
+        int leaderAlignment =
+          this.properties.get("leader-alignment").getEnum();
+
+        // initialize id
+        String id = this.properties.get("id").getString();
+        blockArea.getIDReferences().initializeID(id, blockArea);
+
+        //adds leader to blockarea, there the leaderArea is generated
+        int succeeded = blockArea.addLeader(fontstate, red, green, blue,
+                                            leaderPattern, leaderLengthMinimum,
+                                            leaderLengthOptimum, leaderLengthMaximum,
+                                            ruleThickness, ruleStyle, leaderPatternWidth,
+                                            leaderAlignment);
+        if (succeeded == 1) {
+            return new Status(Status.OK);
+        } else {
+            //not sure that this is the correct Status here
+            return new Status(Status.AREA_FULL_SOME);
+        }
     }
 
-    if (this.isInTableCell) {
-        startIndent += forcedStartOffset;
-        endIndent += area.getAllocationWidth() - forcedWidth -
-          forcedStartOffset;
-    }
+    /* //should only be necessary for use-content
+        protected void addCharacters(char data[], int start, int length) {
+            FOText textNode = new FOText(data,start,length, this);
+            children.addElement(textNode);
+        }
+      */
 
-    // initialize id
-    String id = this.properties.get("id").getString();
-    area.getIDReferences().initializeID(id,area);
 
-    switch (leaderPattern)  {
-      case LeaderPattern.SPACE:
-        ruleThickness = 0;
-        MessageHandler.errorln("leader-pattern=\"space\" not supported by this version of Fop");
-        break;
-      case LeaderPattern.RULE:
-        break;
-      case LeaderPattern.DOTS:
-        MessageHandler.errorln("leader-pattern=\"dots\" not supported by this version of Fop");
-        break;
-      case LeaderPattern.USECONTENT:
-        MessageHandler.errorln("leader-pattern=\"use-content\" not supported by this version of Fop");
-        break;
-    }
-    RuleArea ruleArea = new RuleArea(fs,
-                         area.getAllocationWidth(),
-                         area.spaceLeft(),
-                         startIndent, endIndent,
-                         align, ruleThickness,
-                         ruleLength, red, green,
-                         blue);
-
-    area.addChild(ruleArea);
-    area.increaseHeight(ruleArea.getHeight());
-
-    if (spaceAfter != 0) {
-        area.addDisplaySpace(spaceAfter);
-    }
-
-    if (area instanceof BlockArea) {
-        area.start();
-    }
-
-    return new Status(Status.OK);
-  }
 }
