@@ -90,6 +90,9 @@ import java.util.Hashtable;
  */
 public class PDFRenderer implements Renderer {
 
+    private static final boolean OPTIMIZE_TEXT = true;
+    
+
     /** the PDF Document being created */
     protected PDFDocument pdfDoc;
 
@@ -155,6 +158,28 @@ public class PDFRenderer implements Renderer {
     int prevLineThroughSize;
     PDFColor prevLineThroughColor;
 
+    /** true if a TJ command is left to be written */
+    boolean textOpen = false;
+    /** the previous Y coordinate of the last word written.
+      Used to decide if we can draw the next word on the same line. */
+    int prevWordY = 0;
+    /** the previous X coordinate of the last word written.
+     used to calculate how much space between two words */
+    int prevWordX = 0;
+    /** The  width of the previous word. Used to calculate space between */
+    int prevWordWidth = 0;
+    /** a number formatter to trim off extra precision we don't need*/
+    static java.text.NumberFormat numFormat;
+    
+    // initialize the static number formatter
+    static {
+	numFormat = java.text.NumberFormat.getNumberInstance();
+	numFormat.setMaximumFractionDigits(2);
+	numFormat.setGroupingUsed(false);
+	
+    }
+    
+	
     /**
      * create the PDF renderer
      */
@@ -213,6 +238,8 @@ public class PDFRenderer implements Renderer {
        */
     protected void addLine(int x1, int y1, int x2, int y2, int th,
                            PDFPathPaint stroke) {
+	closeText();
+	
         currentStream.add("ET\nq\n" + stroke.getColorSpaceOut(false) +
                           (x1 / 1000f) + " "+ (y1 / 1000f) + " m " +
                           (x2 / 1000f) + " "+ (y2 / 1000f) + " l " +
@@ -234,6 +261,7 @@ public class PDFRenderer implements Renderer {
       */
     protected void addLine(int x1, int y1, int x2, int y2, int th,
                            String rs, PDFPathPaint stroke) {
+	closeText();
         currentStream.add("ET\nq\n" + stroke.getColorSpaceOut(false) +
                           rs + (x1 / 1000f) + " "+ (y1 / 1000f) + " m " +
                           (x2 / 1000f) + " "+ (y2 / 1000f) + " l " +
@@ -251,6 +279,7 @@ public class PDFRenderer implements Renderer {
        */
     protected void addRect(int x, int y, int w, int h,
                            PDFPathPaint stroke) {
+	closeText();
         currentStream.add("ET\nq\n" + stroke.getColorSpaceOut(false) +
                           (x / 1000f) + " " + (y / 1000f) + " " + (w / 1000f) +
                           " " + (h / 1000f) + " re s\n" + "Q\nBT\n");
@@ -268,6 +297,7 @@ public class PDFRenderer implements Renderer {
        */
     protected void addRect(int x, int y, int w, int h,
                            PDFPathPaint stroke, PDFPathPaint fill) {
+	closeText();
         currentStream.add("ET\nq\n" + fill.getColorSpaceOut(true) +
                           stroke.getColorSpaceOut(false) + (x / 1000f) + " " +
                           (y / 1000f) + " " + (w / 1000f) + " " + (h / 1000f) +
@@ -456,6 +486,8 @@ public class PDFRenderer implements Renderer {
         FopImage img = area.getImage();
         if (img instanceof SVGImage) {
             try {
+		closeText();
+		
                 SVGSVGElement svg =
                   ((SVGImage) img).getSVGDocument().getRootElement();
                 currentStream.add("ET\nq\n" + (((float) w) / 1000f) +
@@ -468,7 +500,8 @@ public class PDFRenderer implements Renderer {
             }
         } else {
             int xObjectNum = this.pdfDoc.addImage(img);
-
+	    closeText();
+	    
             currentStream.add("ET\nq\n" + (((float) w) / 1000f) +
                               " 0 0 " + (((float) h) / 1000f) + " " +
                               (((float) x) / 1000f) + " " +
@@ -509,6 +542,8 @@ public class PDFRenderer implements Renderer {
             case VerticalAlign.BOTTOM:
                 break;
         }
+	closeText();
+	
         // in general the content will not be text
         currentStream.add("ET\n");
         // align and scale
@@ -596,58 +631,22 @@ public class PDFRenderer implements Renderer {
 
         if ((!name.equals(this.currentFontName)) ||
                 (size != this.currentFontSize)) {
+	    closeText();
+	    
             this.currentFontName = name;
             this.currentFontSize = size;
             pdf = pdf.append("/" + name + " " + (size / 1000) + " Tf\n");
         }
 
-        //if (theAreaColor.isEquivalent(this.currentFill)) {
-        this.currentFill = theAreaColor;
-
-        pdf = pdf.append(this.currentFill.getColorSpaceOut(true));
-        //}
+        if (!(theAreaColor.equals(this.currentFill))) {
+	    closeText();
+	    this.currentFill = theAreaColor;
+	    pdf.append(this.currentFill.getColorSpaceOut(true));
+        }
 
         int rx = this.currentXPosition;
         int bl = this.currentYPosition;
 
-        pdf = pdf.append("1 0 0 1 " +(rx / 1000f) + " " + (bl / 1000f) +
-                         " Tm (");
-
-        String s;
-        if (area.getPageNumberID() != null) { // this text is a page number, so resolve it
-            s = idReferences.getPageNumber(area.getPageNumberID());
-            if (s == null) {
-                s = "";
-            }
-        } else {
-            s = area.getText();
-        }
-
-        int l = s.length();
-
-        for (int i = 0; i < l; i++) {
-            ch = s.charAt(i);
-            if (ch > 127) {
-                pdf = pdf.append("\\");
-                pdf = pdf.append(Integer.toOctalString((int) ch));
-            } else {
-                switch (ch) {
-                    case '(' :
-                        pdf = pdf.append("\\(");
-                        break;
-                    case ')' :
-                        pdf = pdf.append("\\)");
-                        break;
-                    case '\\' :
-                        pdf = pdf.append("\\\\");
-                        break;
-                    default :
-                        pdf = pdf.append(ch);
-                        break;
-                }
-            }
-        }
-        pdf = pdf.append(") Tj\n");
 
         if (area.getUnderlined()) {
             int yPos = bl - size/10;
@@ -680,10 +679,94 @@ public class PDFRenderer implements Renderer {
             prevLineThroughColor = theAreaColor;
         }
 
+
+	if (OPTIMIZE_TEXT) {
+	    if (!textOpen || bl != prevWordY) {
+		closeText();
+		
+		pdf.append("1 0 0 1 " +numFormat.format(rx / 1000f) + " " + 
+			   numFormat.format(bl / 1000f) + " Tm [(");
+		prevWordY = bl;
+		textOpen = true;
+	    }
+	    else {
+		// express the space between words in thousandths of an em
+		int space = prevWordX - rx + prevWordWidth;
+		float emDiff = (float)space / (float)currentFontSize * 1000f;
+		pdf.append(numFormat.format(emDiff) + " (");
+	    }
+	    prevWordWidth = area.getContentWidth();
+	    prevWordX = rx;
+
+	}
+	else {
+	    // original text render code sets the text transformation matrix
+	    // for every word.
+	    pdf.append("1 0 0 1 " +(rx / 1000f) + " " + (bl / 1000f) +
+		       " Tm (");
+	}
+	
+        String s;
+        if (area.getPageNumberID() != null) { // this text is a page number, so resolve it
+            s = idReferences.getPageNumber(area.getPageNumberID());
+            if (s == null) {
+                s = "";
+            }
+        } else {
+            s = area.getText();
+        }
+
+        int l = s.length();
+
+        for (int i = 0; i < l; i++) {
+            ch = s.charAt(i);
+            if (ch > 127) {
+		pdf.append("\\");
+                pdf.append(Integer.toOctalString((int) ch));
+            } else {
+                switch (ch) {
+                    case '(' :
+                        pdf.append("\\(");
+                        break;
+                    case ')' :
+                        pdf.append("\\)");
+                        break;
+                    case '\\' :
+                        pdf.append("\\\\");
+                        break;
+                    default :
+                        pdf.append(ch);
+                        break;
+                }
+            }
+        }
+	pdf.append(") ");
+	if (!OPTIMIZE_TEXT) {
+	    pdf.append("Tj\n");
+	}
+	
+
+
         currentStream.add(pdf.toString());
 
         this.currentXPosition += area.getContentWidth();
+	
     }
+
+    /** Checks to see if we have some text rendering commands open
+     * still and writes out the TJ command to the stream if we do
+     */
+    private void closeText() 
+    {
+	if (OPTIMIZE_TEXT && textOpen) {
+	    currentStream.add("] TJ\n");
+	    textOpen = false;
+	    prevWordX = 0;
+	    prevWordY = 0;
+	}
+    }
+    
+	
 
     /**
        * render inline space to PDF
@@ -765,7 +848,7 @@ public class PDFRenderer implements Renderer {
         this.currentFontName = "";
         this.currentFontSize = 0;
 
-        currentStream.add("BT\n");
+	currentStream.add("BT\n");
 
         renderBodyAreaContainer(body);
 
@@ -776,11 +859,13 @@ public class PDFRenderer implements Renderer {
         if (after != null) {
             renderAreaContainer(after);
         }
-
+	closeText();
+	
         currentStream.add("ET\n");
 
         currentPage = this.pdfDoc.makePage(this.pdfResources, currentStream,
-                                           page.getWidth() / 1000, page.getHeight() / 1000, page);
+                                           page.getWidth() / 1000,
+					   page.getHeight() / 1000, page);
 
         if (page.hasLinks()) {
             currentAnnotList = this.pdfDoc.makeAnnotList();
