@@ -13,6 +13,7 @@ import org.apache.fop.layout.Area;
 import org.apache.fop.layout.FontState;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.layout.inline.*;
+import org.apache.fop.configuration.Configuration;
 
 import org.apache.batik.dom.svg.*;
 import org.w3c.dom.*;
@@ -23,6 +24,7 @@ import org.w3c.dom.DOMImplementation;
 import org.apache.batik.dom.svg.SVGDOMImplementation;
 
 import java.io.File;
+import java.net.URL;
 
 /**
  * class representing svg:svg pseudo flow object.
@@ -99,7 +101,8 @@ public class SVGElement extends Svg {
         Element svgRoot = doc.getDocumentElement();
 
         try {
-            ((SVGOMDocument)doc).setURLObject(new File(".").toURL());
+            String baseDir = Configuration.getStringValue("baseDir");
+            ((SVGOMDocument)doc).setURLObject(new URL(baseDir));
         } catch (Exception e) {
         }
 
