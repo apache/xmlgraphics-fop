@@ -598,7 +598,7 @@ See <link href="#usercfg">loading the user configuration file</link> for further
     </faq>
   </part>
   <part id="part-svg">
-    <title>Batik/SVG specific questions</title>
+    <title>SVG specific questions</title>
     <faq id="svg-text">
       <question>The rendering of SVG text in my PDF is of poor quality.
 Can I control this?</question>
@@ -691,6 +691,12 @@ Can I control this?</question>
           semantics of this kind of references in embedded SVG clearer.
         </p>
         <p>See also <link href="#MalformedURL">MalformedURLException</link></p>
+      </answer>
+    </faq>
+    <faq id="svg-scaling">
+      <question>Why is my SVG rendered at a size different from that specified in my fo:external-graphic element?</question>
+      <answer>
+        <p>See <link href="graphics.html#svg-scaling">SVG Scaling</link>.</p>
       </answer>
     </faq>
   </part>
