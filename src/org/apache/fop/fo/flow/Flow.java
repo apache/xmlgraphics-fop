@@ -96,8 +96,8 @@ public class Flow extends FObj {
     protected void setFlowName(String name) throws FOPException {
         if (name == null || name.equals("")) {
             log.warn("A 'flow-name' is required for "
-                                   + getElementName()
-                                   + ". This constraint will be enforced in future versions of FOP");
+                     + getElementName()
+                     + ". This constraint will be enforced in future versions of FOP");
             _flowName = "xsl-region-body";
         } else {
             _flowName = name;

@@ -11,10 +11,12 @@ package org.apache.fop.fo;
 import org.apache.fop.layout.Area;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.datatypes.IDReferences;
+import org.apache.fop.fo.flow.Marker;
 
 // Java
 import java.util.Hashtable;
 import java.util.Enumeration;
+import java.util.Vector;
 
 /**
  * base class for representation of formatting objects and their processing
@@ -36,6 +38,9 @@ public class FObj extends FONode {
     // protected PropertyList properties;
     public PropertyList properties;
     protected PropertyManager propMgr;
+
+    // markers
+    private Hashtable markers;
 
     protected String name;
 
@@ -158,5 +163,36 @@ public class FObj extends FONode {
         this.properties.setWritingMode(p.getProperty("writing-mode").getEnum());
     }
 
+
+    public void addMarker(Marker marker) throws FOPException {
+        String mcname = marker.getMarkerClassName();
+        if (!children.isEmpty()) {
+            throw new FOPException("A fo:marker must be an initial child of '"
+                                   + getName());
+        }
+        if (markers==null) {
+            markers = new Hashtable();
+            markers.put(mcname, marker);
+        } else if (!markers.containsKey(mcname) ) {
+            markers.put(mcname, marker);
+        } else {
+            throw new FOPException("marker-class-name '"
+                                   + mcname
+                                   + "' already exists for this parent");
+        }
+    }
+
+    public boolean hasMarkers() {
+        return markers!=null;
+    }
+
+    public Vector getMarkers() {
+        if (markers==null) {
+            log.debug("GetMarkers failed (no markers). Should not happen.");
+            return null;
+        } else {
+            return new Vector(markers.values());
+        }
+    }
 }
 
