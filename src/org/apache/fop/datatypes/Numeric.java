@@ -14,6 +14,7 @@ import java.lang.Number;
 
 import org.apache.fop.datatypes.AbstractPropertyValue;
 import org.apache.fop.fo.expr.PropertyException;
+import org.apache.fop.fo.PropNames;
 import org.apache.fop.fo.PropertyConsts;
 import org.apache.fop.fo.Properties;
 import org.apache.fop.datatypes.PropertyValue;
@@ -287,14 +288,6 @@ public class Numeric extends AbstractPropertyValue implements Cloneable {
     }
 
     /**
-     * Set the power.  A complement to the <i>setValue</i> method.
-     * @param power - the <tt>int</tt> power.
-     */
-    protected void setPower(int power) {
-        this.power = power;
-    }
-
-    /**
      * @return <tt>int</tt> current baseunit of this <i>Numeric</i>.
      */
     public int getBaseunit() {
@@ -371,6 +364,14 @@ public class Numeric extends AbstractPropertyValue implements Cloneable {
      */
     public boolean isNumber() {
         return (baseunit == NUMBER);
+    }
+
+    /**
+     * This object is an integer if it is a number and the
+     * rounded value is equal to the value.
+     */
+    public boolean isInteger() {
+        return (isNumber() && (double)(Math.round(value)) == value);
     }
 
     /**
@@ -499,6 +500,21 @@ public class Numeric extends AbstractPropertyValue implements Cloneable {
     }
 
     /**
+     * Subtract a <tt>double</tt> from the current value.
+     * @param op - the value to subtract.
+     * @return <i>Numeric</i>; this object.
+     * @throws PropertyException if this is not a number.
+     */
+    public Numeric subtract(double op) throws PropertyException {
+        // Check of same dimension
+        if (power != 0 || baseunit != NUMBER)
+            throw new PropertyException
+                    ("Can't subtract number from length.");
+        value -= op;
+        return this;
+    }
+
+    /**
      * Add the operand to the current value.
      * @param op The value to add.
      * @return <i>Numeric</i>; this object.
@@ -523,6 +539,21 @@ public class Numeric extends AbstractPropertyValue implements Cloneable {
 
         // Add each type of value
         value += op.value;
+        return this;
+    }
+
+    /**
+     * Add a <tt>double</tt> to the current value.
+     * @param op - the value to add.
+     * @return <i>Numeric</i>; this object.
+     * @throws PropertyException if this is not a number.
+     */
+    public Numeric add(double op) throws PropertyException {
+        // Check of same dimension
+        if (power != 0 || baseunit != NUMBER)
+            throw new PropertyException
+                    ("Can't add number to length.");
+        value += op;
         return this;
     }
 
