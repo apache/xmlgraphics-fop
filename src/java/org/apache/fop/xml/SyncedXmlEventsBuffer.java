@@ -135,6 +135,16 @@ implements XmlEventSource {
     }
 
     /**
+     * Push back an event into the buffer; generally this will be an
+     * evnet previously obtained by a <tt>get</tt> from the buffer.
+     * This implementation supports a single entry pushback buffer.
+     * @param event to push back
+     */
+    public void pushBack (XmlEvent event) {
+        super.pushBack(event);
+    }
+    
+    /**
      * Get the next event of the given type from the buffer.  Discard
      * intervening events.
      * @param eventType - the <tt>int</tt> event type.
