@@ -245,7 +245,7 @@ public class ExternalGraphic extends FObj {
      * @see org.apache.fop.fo.FONode#addLayoutManager(List)
      */
     public void addLayoutManager(List list) {
-        if (getPropString(PR_SRC) != null) {
+        if (!src.equals("")) {
             ExternalGraphicLayoutManager lm = new ExternalGraphicLayoutManager(this);
             list.add(lm);
         }

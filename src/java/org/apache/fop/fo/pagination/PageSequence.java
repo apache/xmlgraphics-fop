@@ -251,7 +251,7 @@ public class PageSequence extends FObj {
             super.addChildNode(child); // For getChildren
         } else if (childId == FO_STATIC_CONTENT) {
             addFlow((StaticContent) child);
-            String flowName = ((StaticContent) child).getPropString(PR_FLOW_NAME);
+            String flowName = ((StaticContent) child).getFlowName();
             flowMap.put(flowName, child);
             startStructuredPageSequence();
         }
@@ -264,7 +264,7 @@ public class PageSequence extends FObj {
      * used to generate that page.
      */
      private void addFlow(Flow flow) throws SAXParseException {
-        String flowName = flow.getPropString(PR_FLOW_NAME);
+        String flowName = flow.getFlowName();
 
         if (hasFlowName(flowName)) {
             throw new SAXParseException ("duplicate flow-name \""

@@ -150,8 +150,7 @@ public class InstreamForeignObject extends FObj {
 
     public int computeXOffset (int ipd, int cwidth) {
         int xoffset = 0;
-        int ta = getPropEnum(PR_TEXT_ALIGN);
-        switch (ta) {
+        switch (textAlign) {
             case TextAlign.CENTER:
                 xoffset = (ipd - cwidth) / 2;
                 break;
@@ -169,8 +168,7 @@ public class InstreamForeignObject extends FObj {
 
     public int computeYOffset(int bpd, int cheight) {
         int yoffset = 0;
-        int da = getPropEnum(PR_DISPLAY_ALIGN);
-        switch (da) {
+        switch (displayAlign) {
             case DisplayAlign.BEFORE:
                 break;
             case DisplayAlign.AFTER:

@@ -23,7 +23,6 @@ import java.io.IOException;
 import java.io.OutputStream;
 
 import org.apache.fop.apps.FOUserAgent;
-import org.apache.fop.fo.Constants;
 import org.apache.fop.fo.FOEventHandler;
 import org.apache.fop.fo.flow.BasicLink;
 import org.apache.fop.fo.flow.Block;
@@ -114,7 +113,7 @@ public class MIFHandler extends FOEventHandler {
     public void startPageSequence(PageSequence pageSeq) {
         // get the layout master set
         // setup the pages for this sequence
-        String name = pageSeq.getPropString(Constants.PR_MASTER_REFERENCE);
+        String name = pageSeq.getMasterReference();
         SimplePageMaster spm = pageSeq.getRoot().getLayoutMasterSet().getSimplePageMaster(name);
         if (spm == null) {
             PageSequenceMaster psm = pageSeq.getRoot().getLayoutMasterSet().getPageSequenceMaster(name);

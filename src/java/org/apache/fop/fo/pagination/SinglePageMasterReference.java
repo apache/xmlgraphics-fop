@@ -88,7 +88,7 @@ public class SinglePageMasterReference extends FObj
                                         boolean isEmptyPage) {
         if (this.state == FIRST) {
             this.state = DONE;
-            return getPropString(PR_MASTER_REFERENCE);
+            return masterReference;
         } else {
             return null;
         }

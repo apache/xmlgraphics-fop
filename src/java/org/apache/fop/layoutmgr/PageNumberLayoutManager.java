@@ -28,7 +28,7 @@ import org.apache.fop.fonts.Font;
  * LayoutManager for the fo:page-number formatting object
  */
 public class PageNumberLayoutManager extends LeafNodeLayoutManager {
-
+    private PageNumber fobj;
     Font font = null;
     
     /**
@@ -39,6 +39,7 @@ public class PageNumberLayoutManager extends LeafNodeLayoutManager {
      */
     public PageNumberLayoutManager(PageNumber node) {
         super(node);
+        fobj = node;
         font = node.getFontState();
     }
 
@@ -63,6 +64,10 @@ public class PageNumberLayoutManager extends LeafNodeLayoutManager {
     
     protected void offsetArea(LayoutContext context) {
         curArea.setOffset(context.getBaseline());
+    }
+    
+    protected void addId() {
+        addID(fobj.getId());
     }
 }
 

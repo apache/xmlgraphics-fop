@@ -79,14 +79,14 @@ public abstract class RegionBA extends Region {
      */
     protected void adjustIPD(Rectangle vpRefRect, int wm) {
         int offset = 0;
-        Region start = getSiblingRegion(FO_REGION_START);
+        RegionStart start = (RegionStart) getSiblingRegion(FO_REGION_START);
         if (start != null) {
-            offset = start.getPropLength(PR_EXTENT);
+            offset = start.getExtent().getValue();
             vpRefRect.translate(offset, 0);  // move (x, y) units
         }
-        Region end = getSiblingRegion(FO_REGION_END);
+        RegionEnd end = (RegionEnd) getSiblingRegion(FO_REGION_END);
         if (end != null) {
-            offset += end.getPropLength(PR_EXTENT);
+            offset += end.getExtent().getValue();
         }
         if (offset > 0) {
             if (wm == WritingMode.LR_TB || wm == WritingMode.RL_TB) {

@@ -145,7 +145,7 @@ public class LayoutMasterSet extends FObj {
                 throws SAXParseException {
 
         // check for duplication of master-name
-        String masterName = sPM.getPropString(PR_MASTER_NAME);
+        String masterName = sPM.getMasterName();
         if (existsName(masterName)) {
             throw new SAXParseException("'master-name' ("
                + masterName

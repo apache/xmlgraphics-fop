@@ -18,6 +18,7 @@
  
 package org.apache.fop.layoutmgr.table;
 
+import org.apache.fop.fo.flow.TableAndCaption;
 import org.apache.fop.layoutmgr.BlockStackingLayoutManager;
 import org.apache.fop.layoutmgr.LayoutManager;
 import org.apache.fop.layoutmgr.LeafPosition;
@@ -41,7 +42,8 @@ import java.util.List;
  * The caption blocks have an implicit keep with the table.
  */
 public class TableAndCaptionLayoutManager extends BlockStackingLayoutManager {
-
+    private TableAndCaption fobj;
+    
     private Block curBlockArea;
 
     private List childBreaks = new ArrayList();
@@ -50,7 +52,9 @@ public class TableAndCaptionLayoutManager extends BlockStackingLayoutManager {
      * Create a new table and caption layout manager.
      *
      */
-    public TableAndCaptionLayoutManager() {
+    public TableAndCaptionLayoutManager(TableAndCaption node) {
+        super(node);
+        fobj = node;
     }
 
     /**
@@ -135,7 +139,7 @@ public class TableAndCaptionLayoutManager extends BlockStackingLayoutManager {
     public void addAreas(PositionIterator parentIter,
                          LayoutContext layoutContext) {
         getParentArea(null);
-        addID();
+        addID(fobj.getId());
 
         LayoutManager childLM;
         int iStartPos = 0;

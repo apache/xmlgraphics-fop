@@ -114,5 +114,9 @@ public class PageNumberCitationLayoutManager extends LeafNodeLayoutManager {
         }
         return width;
     }
+    
+    protected void addId() {
+        addID(fobj.getId());
+    }
 }
 

@@ -267,7 +267,7 @@ public class Row extends BlockStackingLayoutManager {
     public void addAreas(PositionIterator parentIter,
                          LayoutContext layoutContext) {
         getParentArea(null);
-        addID();
+        addID(fobj.getId());
 
         Cell childLM;
         int iStartPos = 0;

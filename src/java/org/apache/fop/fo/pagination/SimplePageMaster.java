@@ -237,7 +237,7 @@ public class SimplePageMaster extends FObj {
      * Return "master-name" property.
      */
     public String getMasterName() {
-        return getPropString(PR_MASTER_NAME);
+        return masterName;
     }
 
     /**

@@ -30,6 +30,8 @@ import org.apache.fop.fo.flow.RetrieveMarker;
  * LayoutManager for a block FO.
  */
 public class RetrieveMarkerLayoutManager extends AbstractLayoutManager {
+    private RetrieveMarker fobj;
+    
     private LayoutManager replaceLM = null;
     private boolean loaded = false;
     private String name;
@@ -42,6 +44,7 @@ public class RetrieveMarkerLayoutManager extends AbstractLayoutManager {
      */
     public RetrieveMarkerLayoutManager(RetrieveMarker node) {
         super(node);
+        fobj = node;
         name = node.getRetrieveClassName();
         position = node.getRetrievePosition();
         boundary = node.getRetrieveBoundary();
@@ -76,7 +79,6 @@ public class RetrieveMarkerLayoutManager extends AbstractLayoutManager {
                          LayoutContext layoutContext) {
 
         loadLM();
-        addID();
         replaceLM.addAreas(parentIter, layoutContext);
 
     }

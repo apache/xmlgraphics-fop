@@ -20,7 +20,7 @@ package org.apache.fop.fo.expr;
 
 import org.apache.fop.datatypes.Numeric;
 import org.apache.fop.fo.Constants;
-import org.apache.fop.fo.FONode;
+import org.apache.fop.fo.PropertyList;
 import org.apache.fop.fo.flow.ListItem;
 import org.apache.fop.fo.properties.Property;
 
@@ -49,16 +49,15 @@ public class BodyStartFunction extends FunctionBase {
         Numeric distance =
             pInfo.getPropertyList().get(Constants.PR_PROVISIONAL_DISTANCE_BETWEEN_STARTS).getNumeric();
 
-        FONode item = pInfo.getFO();
-        while (item != null && !(item instanceof ListItem)) {
-            item = item.getParent();
+        PropertyList pList = pInfo.getPropertyList();
+        while (pList != null && !(pList.getFObj() instanceof ListItem)) {
+            pList = pList.getParentPropertyList();
         }
-        if (item == null) {
+        if (pList == null) {
             throw new PropertyException("body-start() called from outside an fo:list-item");
         }
 
-        Numeric startIndent =
-            ((ListItem)item).getProperty(Constants.PR_START_INDENT).getNumeric();
+        Numeric startIndent = pList.get(Constants.PR_START_INDENT).getNumeric();
 
         return (Property) NumericOp.addition(distance, startIndent);
     }

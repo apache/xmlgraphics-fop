@@ -73,12 +73,12 @@ public abstract class RegionSE extends Region {
         int offset = 0;
         RegionBefore before = (RegionBefore) getSiblingRegion(FO_REGION_BEFORE);
         if (before != null && before.getPrecedence() == TRUE) {
-            offset = before.getPropLength(PR_EXTENT);
+            offset = before.getExtent().getValue();
             vpRefRect.translate(0, offset);
         }
         RegionAfter after = (RegionAfter) getSiblingRegion(FO_REGION_AFTER);
         if (after != null && after.getPrecedence() == TRUE) {
-            offset += after.getPropLength(PR_EXTENT);
+            offset += after.getExtent().getValue();
         }
         if (offset > 0) {
             if (wm == WritingMode.LR_TB || wm == WritingMode.RL_TB) {

@@ -18,6 +18,7 @@
  
 package org.apache.fop.layoutmgr.table;
 
+import org.apache.fop.fo.flow.TableCaption;
 import org.apache.fop.layoutmgr.BlockStackingLayoutManager;
 import org.apache.fop.layoutmgr.LayoutManager;
 import org.apache.fop.layoutmgr.LeafPosition;
@@ -39,6 +40,7 @@ import java.util.List;
  * table.
  */
 public class Caption extends BlockStackingLayoutManager {
+    private TableCaption fobj;
 
     private Block curBlockArea;
 
@@ -48,7 +50,9 @@ public class Caption extends BlockStackingLayoutManager {
      * Create a new Caption layout manager.
      *
      */
-    public Caption() {
+    public Caption(TableCaption node) {
+        super(node);
+        fobj = node;
     }
 
     /**
@@ -134,7 +138,7 @@ public class Caption extends BlockStackingLayoutManager {
     public void addAreas(PositionIterator parentIter,
                          LayoutContext layoutContext) {
         getParentArea(null);
-        addID();
+        addID(fobj.getId());
 
         LayoutManager childLM;
         int iStartPos = 0;

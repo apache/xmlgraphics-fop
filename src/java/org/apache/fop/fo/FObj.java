@@ -316,7 +316,7 @@ public class FObj extends FONode implements Constants {
      * @param marker Marker to add.
      */
     protected void addMarker(Marker marker) {
-        String mcname = marker.getPropString(PR_MARKER_CLASS_NAME);
+        String mcname = marker.getMarkerClassName();
         if (childNodes != null) {
             // check for empty childNodes
             for (Iterator iter = childNodes.iterator(); iter.hasNext();) {

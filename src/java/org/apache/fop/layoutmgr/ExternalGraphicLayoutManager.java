@@ -62,7 +62,7 @@ public class ExternalGraphicLayoutManager extends LeafNodeLayoutManager {
         setup();
         InlineArea area = getExternalGraphicInlineArea();
         setCurrentArea(area);
-        setAlignment(graphic.getPropEnum(PR_VERTICAL_ALIGN));
+        setAlignment(graphic.getVerticalAlign());
         setLead(viewHeight);
     }
 
@@ -72,7 +72,7 @@ public class ExternalGraphicLayoutManager extends LeafNodeLayoutManager {
      * @todo see if can simplify property handling logic
      */
     private void setup() {
-        url = ImageFactory.getURL(graphic.getPropString(PR_SRC));
+        url = ImageFactory.getURL(graphic.getSrc());
 
         // assume lr-tb for now and just use the .optimum value of the range
         Length ipd = graphic.getPropertyList().get(PR_INLINE_PROGRESSION_DIMENSION).
@@ -119,7 +119,7 @@ public class ExternalGraphicLayoutManager extends LeafNodeLayoutManager {
             cwidth = cw.getValue();
         }
 
-        int scaling = graphic.getPropEnum(PR_SCALING);
+        int scaling = graphic.getScaling();
         if ((scaling == Scaling.UNIFORM) || (cwidth == -1) || cheight == -1) {
             ImageFactory fact = ImageFactory.getInstance();
             fopimage = fact.getImage(url, graphic.getUserAgent());
@@ -162,7 +162,7 @@ public class ExternalGraphicLayoutManager extends LeafNodeLayoutManager {
         }
 
         if (cwidth > viewWidth || cheight > viewHeight) {
-            int overflow = graphic.getPropEnum(PR_OVERFLOW);
+            int overflow = graphic.getOverflow();
             if (overflow == Overflow.HIDDEN) {
                 clip = true;
             } else if (overflow == Overflow.ERROR_IF_OVERFLOW) {
@@ -174,8 +174,7 @@ public class ExternalGraphicLayoutManager extends LeafNodeLayoutManager {
 
         int xoffset = 0;
         int yoffset = 0;
-        int da = graphic.getPropEnum(PR_DISPLAY_ALIGN);
-        switch(da) {
+        switch(graphic.getDisplayAlign()) {
             case DisplayAlign.BEFORE:
             break;
             case DisplayAlign.AFTER:
@@ -189,8 +188,7 @@ public class ExternalGraphicLayoutManager extends LeafNodeLayoutManager {
             break;
         }
 
-        int ta = graphic.getPropEnum(PR_TEXT_ALIGN);
-        switch(ta) {
+        switch(graphic.getTextAlign()) {
             case TextAlign.CENTER:
                 xoffset = (viewWidth - cwidth) / 2;
             break;
@@ -213,7 +211,7 @@ public class ExternalGraphicLayoutManager extends LeafNodeLayoutManager {
       * @return the viewport containing the image area
       */
      public InlineArea getExternalGraphicInlineArea() {
-         Image imArea = new Image(graphic.getPropString(PR_SRC));
+         Image imArea = new Image(graphic.getSrc());
          Viewport vp = new Viewport(imArea);
          vp.setIPD(viewWidth);
          vp.setBPD(viewHeight);
@@ -226,6 +224,10 @@ public class ExternalGraphicLayoutManager extends LeafNodeLayoutManager {
          TraitSetter.addBackground(vp, graphic.getCommonBorderPaddingBackground());
 
          return vp;
+     }
+     
+     protected void addId() {
+         addID(graphic.getId());
      }
 }
 

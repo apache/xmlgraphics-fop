@@ -45,7 +45,7 @@ public class InstreamForeignObjectLM extends LeafNodeLayoutManager {
         ifoNode = node;
         Viewport areaCurrent = getInlineArea();
         setCurrentArea(areaCurrent);
-        setAlignment(node.getPropEnum(PR_VERTICAL_ALIGN));
+        setAlignment(node.getVerticalAlign());
         setLead(areaCurrent.getBPD());
     }
 
@@ -72,27 +72,27 @@ public class InstreamForeignObjectLM extends LeafNodeLayoutManager {
         int ipd = -1;
         boolean bpdauto = false;
         if (hasLH) {
-            bpd = ifoNode.getPropLength(PR_LINE_HEIGHT);
+            bpd = ifoNode.getLineHeight().getValue();
         } else {
             // this property does not apply when the line-height applies
             // isn't the block-progression-dimension always in the same
             // direction as the line height?
-            len = ifoNode.getProperty(PR_BLOCK_PROGRESSION_DIMENSION).getLengthRange().getOptimum().getLength();
+            len = ifoNode.getBlockProgressionDimension().getOptimum().getLength();
             if (!len.isAuto()) {
                 bpd = len.getValue();
             } else {
-                len = ifoNode.getProperty(PR_HEIGHT).getLength();
+                len = ifoNode.getHeight();
                 if (!len.isAuto()) {
                     bpd = len.getValue();
                 }
             }
         }
 
-        len = ifoNode.getProperty(PR_INLINE_PROGRESSION_DIMENSION).getLengthRange().getOptimum().getLength();
+        len = ifoNode.getInlineProgressionDimension().getOptimum().getLength();
         if (!len.isAuto()) {
             ipd = len.getValue();
         } else {
-            len = ifoNode.getProperty(PR_WIDTH).getLength();
+            len = ifoNode.getWidth();
             if (!len.isAuto()) {
                 ipd = len.getValue();
             }
@@ -102,7 +102,7 @@ public class InstreamForeignObjectLM extends LeafNodeLayoutManager {
         // to the content-height and content-width
         int cwidth = -1;
         int cheight = -1;
-        len = ifoNode.getProperty(PR_CONTENT_WIDTH).getLength();
+        len = ifoNode.getContentWidth();
         if (!len.isAuto()) {
             /*if(len.scaleToFit()) {
                 if(ipd != -1) {
@@ -111,7 +111,7 @@ public class InstreamForeignObjectLM extends LeafNodeLayoutManager {
             } else {*/
             cwidth = len.getValue();
         }
-        len = ifoNode.getProperty(PR_CONTENT_HEIGHT).getLength();
+        len = ifoNode.getContentHeight();
         if (!len.isAuto()) {
             /*if(len.scaleToFit()) {
                 if(bpd != -1) {
@@ -134,7 +134,7 @@ public class InstreamForeignObjectLM extends LeafNodeLayoutManager {
         if (cheight == -1) {
             cheight = (int)size.getY() * 1000;
         }
-        int scaling = ifoNode.getPropEnum(PR_SCALING);
+        int scaling = ifoNode.getScaling();
         if (scaling == Scaling.UNIFORM) {
             // adjust the larger
             double rat1 = cwidth / (size.getX() * 1000f);
@@ -156,7 +156,7 @@ public class InstreamForeignObjectLM extends LeafNodeLayoutManager {
 
         boolean clip = false;
         if (cwidth > ipd || cheight > bpd) {
-            int overflow = ifoNode.getPropEnum(PR_OVERFLOW);
+            int overflow = ifoNode.getOverflow();
             if (overflow == Overflow.HIDDEN) {
                 clip = true;
             } else if (overflow == Overflow.ERROR_IF_OVERFLOW) {
@@ -184,6 +184,10 @@ public class InstreamForeignObjectLM extends LeafNodeLayoutManager {
         areaCurrent.setOffset(0);
 
         return areaCurrent;
+    }
+    
+    protected void addId() {
+        addID(ifoNode.getId());
     }
 }
 

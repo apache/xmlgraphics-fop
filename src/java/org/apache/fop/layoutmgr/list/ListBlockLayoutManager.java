@@ -145,7 +145,7 @@ public class ListBlockLayoutManager extends BlockStackingLayoutManager {
     public void addAreas(PositionIterator parentIter,
                          LayoutContext layoutContext) {
         getParentArea(null);
-        addID();
+        addID(fobj.getId());
 
         // the list block contains areas stacked from each list item
 

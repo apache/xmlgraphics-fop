@@ -225,7 +225,7 @@ public class LeafNodeLayoutManager extends AbstractLayoutManager {
      * @param context the layout context for adding the area
      */
     public void addAreas(PositionIterator posIter, LayoutContext context) {
-        addID();
+        addId();
 
         offsetArea(context);
         widthAdjustArea(context);
@@ -236,6 +236,10 @@ public class LeafNodeLayoutManager extends AbstractLayoutManager {
         }
     }
 
+    protected void addId() {
+        // Do nothing here, overriden in subclasses that has a 'id' property.
+    }
+    
     /**
      * Offset this area.
      * Offset the inline area in the bpd direction when adding the

@@ -42,7 +42,6 @@ public abstract class AbstractLayoutManager implements LayoutManager, Constants 
     protected LayoutManager parentLM = null;
     protected List childLMs = new ArrayList(10);
     protected FObj fobj;
-    protected String foID = null;
     protected ListIterator fobjIter = null;
     protected Map markers = null;
 
@@ -84,7 +83,6 @@ public abstract class AbstractLayoutManager implements LayoutManager, Constants 
      */
     public void setFObj(FObj fo) {
         this.fobj = fo;
-        foID = fobj.getPropString(PR_ID);
         markers = fobj.getMarkers();
         fobjIter = fobj.getChildNodes();
         childLMiter = new LMiter(this);
@@ -342,16 +340,6 @@ public abstract class AbstractLayoutManager implements LayoutManager, Constants 
      */
     public PageViewport resolveRefID(String ref) {
         return parentLM.resolveRefID(ref);
-    }
-
-    /**
-     * Add the id to the page.
-     * If the id string is not null then add the id to the current page.
-     */
-    protected void addID() {
-        if (foID != null) {
-            addIDToPage(foID);
-        }
     }
 
     /**
