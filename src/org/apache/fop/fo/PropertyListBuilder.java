@@ -172,6 +172,8 @@ public class PropertyListBuilder {
 	propertyTable.put("page-position",PagePosition.maker());
 	propertyTable.put("odd-or-even",OddOrEven.maker());
 	propertyTable.put("blank-or-not-blank",BlankOrNotBlank.maker());
+	propertyTable.put("content-width",ContentWidth.maker());
+	propertyTable.put("content-height",ContentHeight.maker());
 
 		// should split up name space properties into separate files
 		spaceTable = new Hashtable();
