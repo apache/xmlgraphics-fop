@@ -105,17 +105,18 @@ public class FoTitle extends FONode {
         do {
             try {
                 ev = xmlevents.expectOutOfLinePcdataOrInline();
+                if (ev != null) {
+                    // Generate the flow object
+                    FObjects.fobjects.makeFlowObject
+                                (foTree, this, ev, FONode.TITLE_SET);
+                    if (ev.getFoType() != FObjectNames.PCDATA)
+                        ev = xmlevents.getEndElement(ev);
+                }
             } catch(UnexpectedStartElementException e) {
                 MessageHandler.logln
                         ("Ignoring unexpected Start Element: "
                                                          + ev.getQName());
                 ev = xmlevents.getStartElement();
-                ev = xmlevents.getEndElement(ev);
-            }
-            if (ev != null) {
-                // Generate the flow object
-                FObjects.fobjects.makeFlowObject
-                            (foTree, this, ev, FONode.TITLE_SET);
                 ev = xmlevents.getEndElement(ev);
             }
         } while (ev != null);
