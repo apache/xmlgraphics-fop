@@ -13,7 +13,9 @@ import java.awt.geom.Rectangle2D;
 // FOP
 
 import org.apache.fop.fo.FONode;
+import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.PropertyList;
+import org.apache.fop.fo.Property;
 import org.apache.fop.fo.properties.Overflow;
 import org.apache.fop.datatypes.ColorType;
 import org.apache.fop.datatypes.FODimension;
@@ -32,22 +34,35 @@ public class RegionBody extends Region {
 
     protected Rectangle getViewportRectangle (FODimension reldims)
     {
-        // Common Margin Properties-Block
-	// Need these in writing-mode relative coordinates
-	// Or shall we get absolute and transform to relative using writing mode?
+	/*
+	 * Use space-before and space-after which will use corresponding
+	 * absolute margin properties if specified. For indents:
+	 * try to get corresponding absolute margin property using the
+	 * writing-mode on the page (not on the region-body!). If that's not
+	 * set but indent is explicitly set, it will return that.
+	 */
         MarginProps mProps = propMgr.getMarginProps();
-	/**
-	System.err.println("BodyRegion margin props=" + mProps.startIndent + ","
-			   + mProps.spaceBefore + "," + mProps.endIndent + ","
-			   + mProps.spaceAfter);
+	int start = getRelMargin(PropertyList.START, "start-indent");
+	return new Rectangle( start, mProps.spaceBefore,
+			      reldims.ipd - start -
+			      getRelMargin(PropertyList.END, "end-indent"),
+			      reldims.bpd - mProps.spaceBefore -
+			      mProps.spaceAfter);
+    }
 
-        return new Rectangle( mProps.startIndent, mProps.spaceBefore,
-			      reldims.ipd - mProps.startIndent - mProps.endIndent,
-			      reldims.bpd - mProps.spaceBefore - mProps.spaceAfter);
-	**/
-	return new Rectangle( mProps.marginLeft, mProps.marginTop,
-			      reldims.ipd - mProps.marginLeft - mProps.marginRight,
-			      reldims.bpd - mProps.marginTop - mProps.marginBottom);
+    /**
+     * Get the relative margin using parent's writing mode, not own
+     * writing mode.
+     */
+    private int getRelMargin(int reldir, String sRelPropName) {
+	FObj parent = (FObj) getParent();
+	String sPropName = "margin-" +
+	    parent.properties.wmRelToAbs(reldir);
+	Property prop = properties.getExplicitBaseProp(sPropName);
+	if (prop == null) {
+	   prop = properties.getExplicitBaseProp(sRelPropName);
+	}
+	return ((prop != null)? prop.getLength().mvalue() : 0);
     }
 
     protected void setRegionTraits(RegionReference r, Rectangle2D absRegVPRect) {
