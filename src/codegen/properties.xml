@@ -1008,6 +1008,13 @@
   </datatype>
 	<default>default</default> 
   </property>
+  <property>
+    <name>viewBox</name>
+    <class-name>ViewBox</class-name>
+    <inherited>false</inherited>
+    <datatype>String</datatype>
+    <default></default>
+  </property>
 
 </property-list>
 
