@@ -4,7 +4,7 @@
 <!-- How to get Help -->
 <document>
     <header>
-        <title>How to get Help</title>
+        <title>How to Get Help</title>
         <subtitle>Solving problems</subtitle>
         <authors>
         </authors>
@@ -15,7 +15,7 @@
 	<ol>
 		<li>
 			<p>Have a look at the documentation pages on this site. You can find information on how to run FOP, 
-			how to embedd it, how to add custom fonts etc.</p>
+			how to embed it, how to add custom fonts etc.</p>
 		</li>
 		<li>
 			<p>Consult the <jump href="faq.html">FAQ</jump> to see if your question has already been answered before.</p>
@@ -34,6 +34,10 @@
 			don't forget to supply the version you're using, detailed error messages etc. This makes it easier to help you. 
 			The instructions on how to subscribe can be found in the <jump href="resources.html">Resources</jump></p>
 		</li>
+    <li>
+<p>You should probably read ESR's
+<jump href="http://www.tuxedo.org/~esr/faqs/smart-questions.html">"How to Ask Questions the Smart Way"</jump></p>
+    </li>
 		<note>
 			<p>Please don't use Bugzilla to post questions and please ask on the user mailing list first, if you think you've 
 			found a bug.</p>
