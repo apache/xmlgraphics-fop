@@ -167,13 +167,14 @@ public class ExternalGraphic extends FObj {
                 url = null;
                 return;
             }
-            if (cwidth == -1) {
+            if (cwidth == -1 && cheight == -1) {
                 cwidth = (int)(fopimage.getWidth() * 1000);
-            }
-            if (cheight == -1) {
                 cheight = (int)(fopimage.getHeight() * 1000);
-            }
-            if (scaling == Scaling.UNIFORM) {
+            } else if (cwidth == -1) {
+                cwidth = (int)(fopimage.getWidth() * cheight) / fopimage.getHeight();
+            } else if (cheight == -1) {
+                cheight = (int)(fopimage.getHeight() * cwidth) / fopimage.getWidth();
+            } else {
                 // adjust the larger
                 double rat1 = cwidth / (fopimage.getWidth() * 1000f);
                 double rat2 = cheight / (fopimage.getHeight() * 1000f);
