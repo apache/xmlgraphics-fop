@@ -196,7 +196,8 @@ public class EPSReader extends AbstractImageReader {
         int nidx = idx;
 
         while (nidx < epsFile.length &&
-            (epsFile[nidx] >= 48 && epsFile[nidx] <= 57))
+            ((epsFile[nidx] >= 48 && epsFile[nidx] <= 57) ||
+            (epsFile[nidx] == 45)))
             nidx++;
 
         byte[] num = new byte[nidx - idx];
