@@ -108,6 +108,8 @@ public class PSRenderer extends AbstractRenderer {
 
     private FontInfo fontInfo;
 
+    protected IDReferences idReferences;
+
     protected Hashtable options;
 
 
@@ -611,8 +613,18 @@ public class PSRenderer extends AbstractRenderer {
         FontState fs = area.getFontState();
         String fontWeight = fs.getFontWeight();
         StringBuffer sb = new StringBuffer();
-        String s = area.getText();
+        String s;
+        if (area.getPageNumberID()
+                != null) {    // this text is a page number, so resolve it
+            s = idReferences.getPageNumber(area.getPageNumberID());
+            if (s == null) {
+                s = "";
+            }
+        } else {
+            s = area.getText();
+        }
         int l = s.length();
+        
         for (int i = 0; i < l; i++) {
             char ch = s.charAt(i);
             char mch = fs.mapChar(ch);
@@ -709,6 +721,8 @@ public class PSRenderer extends AbstractRenderer {
      * @param page the page to render
      */
     public void renderPage(Page page) {
+        this.idReferences = page.getIDReferences();
+
         BodyAreaContainer body;
         AreaContainer before, after;
         write("%%Page: " + page.getNumber() + " " + page.getNumber());
