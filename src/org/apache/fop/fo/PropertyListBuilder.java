@@ -162,6 +162,7 @@ public class PropertyListBuilder {
 	propertyTable.put("right",Right.maker());
 	propertyTable.put("top",Top.maker());
 	propertyTable.put("width",Width.maker());
+	propertyTable.put("initial-page-number",InitialPageNumber.maker());
     }
 
     public Property computeProperty(PropertyList propertyList, String propertyName) {
