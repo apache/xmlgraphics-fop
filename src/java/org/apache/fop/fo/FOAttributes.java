@@ -210,7 +210,7 @@ public class FOAttributes {
      * <tt>PropNames</tt>.
      */
     public Map getFixedFoAttrMap() {
-        return Collections.unmodifiableMap((Map)foAttrMap);
+        return Collections.unmodifiableMap(foAttrMap);
     }
 
     /**
@@ -274,7 +274,7 @@ public class FOAttributes {
      */
     public Map getAttrMap(int uriIndex) {
         if (uriIndex == XMLNamespaces.DefAttrNSIndex)
-            return Collections.unmodifiableMap((Map)foAttrMap);
+            return Collections.unmodifiableMap(foAttrMap);
         if (nSpaceAttrMaps != null) {
             if (uriIndex >= nSpaceAttrMaps.size()) return null;
             return Collections.unmodifiableMap

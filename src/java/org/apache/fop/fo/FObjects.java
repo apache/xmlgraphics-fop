@@ -187,7 +187,7 @@ public class FObjects {
 
             // Set up the foToIndex Hashmap with the name of the
             // flow object as a key, and the integer index as a value
-            if (foToIndex.put((Object) foName,
+            if (foToIndex.put(foName,
                                         Ints.consts.get(i)) != null) {
                 throw new RuntimeException(
                     "Duplicate values in propertyToIndex for key " +
@@ -197,7 +197,7 @@ public class FObjects {
             // Set up the foClassToIndex Hashmap with the name of the
             // fo class as a key, and the integer index as a value
             
-            if (foClassToIndex.put((Object) foClassNames[i],
+            if (foClassToIndex.put(foClassNames[i],
                                     Ints.consts.get(i)) != null) {
                 throw new RuntimeException(
                     "Duplicate values in foClassToIndex for key " +
