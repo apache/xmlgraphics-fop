@@ -149,7 +149,11 @@ A quick look at the Abstract <link href="http://cvs.apache.org/viewcvs.cgi/xml-f
               <th>RTF Control Word</th>
             </tr>
             <tr>
-              <th colspan="4">Alignment</th>
+              <td colspan="4">.</td>
+            </tr>
+            <tr>
+              <th>Alignment</th>
+              <th colspan="3">.</th>
             </tr>
             <tr>
               <td>Align Left</td>
@@ -193,11 +197,111 @@ A quick look at the Abstract <link href="http://cvs.apache.org/viewcvs.cgi/xml-f
               <td>N/A (boolean)</td>
               <td>\qt</td>
             </tr>
+            <tr>
+              <th>Indentation</th>
+              <th colspan="3">.</th>
+            </tr>
+            <tr>
+              <td>Left indent body</td>
+              <td>RtfText.LEFT_INDENT_BODY</td>
+              <td>(int) "hundredths of a character unit" (?)</td>
+              <td>\li</td>
+            </tr>
+            <tr>
+              <td>Left indent first</td>
+              <td>RtfText.LEFT_INDENT_FIRST</td>
+              <td>(int) "hundredths of a character unit" (?)</td>
+              <td>\fi</td>
+            </tr>
+            <tr>
+              <th>Borders</th>
+              <th colspan="3">.</th>
+            </tr>
+            <tr>
+              <td>Bottom single border</td>
+              <td>RtfText.BDR_BOTTOM_SINGLE</td>
+              <td>Boolean?</td>
+              <td>brdrb\\brsp40\\brdrs</td>
+            </tr>
+            <tr>
+              <td>Bottom double border</td>
+              <td>RtfText.BDR_BOTTOM_DOUBLE</td>
+              <td>Boolean?</td>
+              <td>brdrb\\brsp40\\brdrdb</td>
+            </tr>
+            <tr>
+              <td>Bottom embossed border</td>
+              <td>RtfText.BDR_BOTTOM_EMBOSS</td>
+              <td>Boolean?</td>
+              <td>brdrb\\brsp40\\brdremboss</td>
+            </tr>
+            <tr>
+              <td>bottom dotted border</td>
+              <td>RtfText.BDR_BOTTOM_DOTTED</td>
+              <td>Boolean?</td>
+              <td>brdrb\\brsp40\\brdrdot</td>
+            </tr>
+            <tr>
+              <td>bottom dashed border</td>
+              <td>RtfText.BDR_BOTTOM_DASH</td>
+              <td>Boolean?</td>
+              <td>brdrb\\brsp40\\brdrdash</td>
+            </tr>
           </table>
         </section>
         <section id="userdoc-attr-cf">
           <title>Character Formatting</title>
           <p>These attributes are set when creating a Paragraph, or Text.</p>
+          <table>
+            <tr>
+              <th>Description</th>
+              <th>Attribute Name</th>
+              <th>Attribute Value</th>
+              <th>RTF Control Word</th>
+            </tr>
+            <tr>
+              <td>Bold</td>
+              <td>RtfText.ATTR_BOLD</td>
+              <td>N/A (boolean)</td>
+              <td>\b</td>
+            </tr>
+            <tr>
+              <td>Italic</td>
+              <td>RtfText.ATTR_ITALIC</td>
+              <td>N/A (boolean)</td>
+              <td>\i</td>
+            </tr>
+            <tr>
+              <td>Underline</td>
+              <td>RtfText.ATTR_UNDERLINE</td>
+              <td>N/A (boolean), or (int) 0 to turn underling off</td>
+              <td>\ul</td>
+            </tr>
+            <tr>
+              <td>Font Size</td>
+              <td>RtfText.ATTR_FONT_SIZE</td>
+              <td>(int) font size in half-points</td>
+              <td>\fs</td>
+            </tr>
+            <tr>
+              <td>Font Family</td>
+              <td>RtfText.ATTR_FONT_FAMILY</td>
+              <td>(int) entry in document font-table</td>
+              <td>\f</td>
+            </tr>
+            <tr>
+              <td>Font Color</td>
+              <td>RtfText.ATTR_FONT_COLOR</td>
+              <td>(int) entry in document color-table</td>
+              <td>\cf</td>
+            </tr>
+            <tr>
+              <td>Background Color</td>
+              <td>RtfText.ATTR_BACKGROUND_COLOR</td>
+              <td>(int) entry in document color-table</td>
+              <td>\chcbpat</td>
+            </tr>
+          </table>
         </section>
       </section>
     </section>
