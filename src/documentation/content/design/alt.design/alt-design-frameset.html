@@ -1,0 +1,119 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Frameset//EN">
+<html>
+  <head>
+    <title>Alt Design Frameset</title>
+    <META http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+    <style>
+      body {
+          font-family: Verdana, Helvetica, sans-serif;
+      }
+      frame.logo {align=right;}
+
+      .note { border: solid 1px #7099C5; background-color: #f0f0ff; }
+      .note .label { background-color: #7099C5; color: #ffffff; }
+      .content {
+          padding: 5px 5px 5px 10px;
+          font : Verdana, Helvetica, sans-serif;  font-size : 90%;
+      }
+    </style>
+    <script type="application/x-javascript">
+      <!--
+      var isWide = false;
+      var isHigh = true;
+      
+      function widenCol() {
+        if (isWide) { return; }
+        fset = document.getElementById("altDesignFramesetCols");
+        fset.setAttribute("cols", "60%,*");
+        logowin = top.frames[0];
+        logodoc = logowin.document;
+        wbutton = logodoc.getElementById("widenButton");
+        //tnode = document.createTextNode("<");
+        //tchild = wbutton.firstChild;
+        wbutton.setAttribute("value", "<");
+        isWide = true;
+      }
+      
+      function narrowCol() {
+        if ( ! isWide) { return; }
+        fset = document.getElementById("altDesignFramesetCols");
+        fset.setAttribute("cols", "200,*");
+        logowin = top.frames[0];
+        logodoc = logowin.document;
+        wbutton = logodoc.getElementById("widenButton");
+        //tnode = document.createTextNode(">");
+        //tchild = wbutton.firstChild;
+        //wbutton.replaceChild(tnode, tchild);
+        wbutton.setAttribute("value", ">");
+        isWide = false;
+      }
+      
+      function toggleColWidths() {
+        if (isWide) {
+          narrowCol();
+        } else {
+          widenCol()
+        }
+      }
+      
+      function lengthenCol() {
+        if (isHigh) { return; }
+        fset = document.getElementById("altDesignFramesetRows");
+        fset.setAttribute("rows", "75%,*");
+        logowin = top.frames[0];
+        logodoc = logowin.document;
+        lbutton = logodoc.getElementById("lengthenButton");
+        //tnode = document.createTextNode("^");
+        //tchild = lbutton.firstChild;
+        //lbutton.replaceChild(tnode, tchild);
+        lbutton.setAttribute("value", "^");
+        isHigh = true;
+      }
+      
+      function shortenCol() {
+        if ( ! isHigh) { return; }
+        fset = document.getElementById("altDesignFramesetRows");
+        fset.setAttribute("rows", "100,*");
+        logowin = top.frames[0];
+        logodoc = logowin.document;
+        lbutton = logodoc.getElementById("lengthenButton");
+        //tnode = document.createTextNode("v");
+        //tchild = lbutton.firstChild;
+        //lbutton.replaceChild(tnode, tchild);
+        lbutton.setAttribute("value", "v");
+        isHigh = false;
+      }
+      
+      function toggleColHeights() {
+        if (isHigh) {
+          shortenCol();
+        } else {
+          lengthenCol()
+        }
+      }
+
+      function displayCode(src) {
+          top.frames[1].location = src;
+          widenCol();
+          shortenCol();
+      }
+
+      function displayHtml(src) {
+          top.frames[2].location = src;
+          narrowCol();
+          lengthenCol();
+      }
+      -->
+    </script>
+  </head>
+  <frameset id="altDesignFramesetCols" cols="200,*">
+    <frameset id="altDesignFramesetRows" rows="75%,*">
+      <frame id="logoFrame" class="logo" style="padding: 0px; margin: 0px:
+             border: 0px;" src="logo.html" scrolling="no">
+      <frame id= "codeDisplayFrame"
+             class= "codeDisplay"
+             src= "codeframe.html" >
+    </frameset>
+    <frame id="contents" src="properties/introduction.html">
+  </frameset>
+</html>
