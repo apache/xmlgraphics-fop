@@ -8,6 +8,7 @@ Arved Sandstrom (release coordinator)
 James Tauber (started it all and wrote most of the code) 
 
 Steven Coffman 
+Stanislav Gorkhover
 Fotis Jannidis 
 Keiron Liddle
 Jordan Naftolin
@@ -39,24 +40,15 @@ Support XSL Working Draft 27 March 2000
   There are 6  such objects: 
 
   fo:character 
-  fo:leader 
+  fo:leader [at the moment only partially]
   fo:table-and-caption 
   fo:table-header 
   fo:multi-case 
   fo:wrapper 
 
-2.A second category of tasks will be to update existing objects. 
-  This typically entails renaming modifications. There are at least 3 of these: 
+2. [Has been done]
 
-  fo:page-sequence-master 
-  fo:single-page-master-reference 
-  fo:repeatable-page-master-reference 
-
-3.A third category of tasks is to retire obsolescent objects. The primary issue 
-  here seems to be the migration of FOP from officially supporting 
-  DisplayGraphic and InlineGraphic FO's to officially supporting at least an 
-  ExternalGraphic FO, and ideally also the InstreamForeignObject FO, the latter 
-  aimed at SVG support. 
+3. [Has been done]
 
 4.A fourth, and not insignificant, category of tasks is to decide upon and 
   implement all reasonable properties required by the specification. This 
@@ -98,10 +90,18 @@ Support XSL Working Draft 27 March 2000
 5.A fifth category of tasks is the ongoing effort to promote maintainability, 
 write 
   more and better documentation, and to refine the build process. 
-  a) Don't use 'make' any longer and make sure that build.sh and build.bat work 
-  b) Add the property files to the source code (how is the vote on this?) 
-  c) update the examples to the new spec 
-  d) add examples so that all the FOs supported are used in some example 
+  a) Add the property files to the source code (how is the vote on this?) 
+  b) add examples so that all the FOs supported are used in some example 
+
+6. Redo or work on the classes/properties which have been fixed only in a superficial way 
+   to conform to the latest working draft
+    -  "white-space-treatment" doesn't work at the moment
+    - leader is just a renamed display-rule and must be rewritten: 
+      it is now (wd 3.2000) generating inline-areas and not block areas 
+      and has a more complex function
+    - inline is just a renamed inline-sequence and must be worked on: 
+      it is now (wd 3.2000) generating an inline-area itself
+
 
 **** Bugs ****
 
@@ -109,7 +109,6 @@ write
 - colour not continued onto subsequent pages if coloured block goes over page 
 - no SVG support in AWTCommandLine 
 - keep-next doesn't work and doubles the text lines which should be moved to the next page
-- pdf files created with Fop don't print correctly on postscript printers
 - lists containing list do not keep their indentation correctly over a page boundary
 
 with AWT Previewer: 
@@ -117,14 +116,18 @@ with AWT Previewer:
 - currently the layout process uses PDF fonts. This gives sometimes 
   trouble with java.awt.Font 
 - we need some progress messages even if the process itself is fast 
-- GIF format is supported by the viewer, but disabled in FOP. BMP is 
-  not done, because there are no standard libraries. 
 - more comments/english comments 
 - first preview is painted twice (flashing screen) 
 - should "preview" be an option when calling FOP instead of having 
   it's own main method? 
 
 **** HISTORY **** 
+
+Done since 0.14 release
+- added: a new package for image support and analysis [Pankaj Narula]
+- added large test suite for svg [Keiron Liddle]
+- fixed: inline-sequence renamed to inline for xsl wd 3.2000 conformance [Fotis Jannidis]
+
 
 Done since 0.13 release
 - pagination updated to 03/27/2000 XSL WD [Arved Sandstrom]
@@ -141,7 +144,7 @@ Done since 0.13 release
 - added XalanCommandLine  [Fotis Jannidis]
 - added: fo:instream-foreign-object [Keiron Liddle]
 - added: goto button in AWT viewer [Stanislav Gorkhover]
-- updated: AWT viewer now works again and support - with some restrictions - the new SVG support [Stanislav Gorkhover]
+- updated: AWT viewer now works again and supports - with some restrictions - the new SVG support [Stanislav Gorkhover]
 
 Done since 0.12.1 release 
 - using Ant to build Fop instead of make [Giacomo Pati] 
