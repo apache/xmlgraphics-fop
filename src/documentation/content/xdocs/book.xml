@@ -29,6 +29,7 @@
           <menu-item label="PDF encryption" href="pdfencryption.html"/>
           <menu-item label="Graphics" href="graphics.html"/>
           <menu-item label="Fonts" href="fonts.html"/>
+          <menu-item label="Hyphenation" href="hyphenation.html"/>
           <menu-item label="Extensions" href="extensions.html"/>
         </menu>
 
