@@ -147,7 +147,7 @@ public class Block extends FObjMixed {
 
         setupID();
 
-        structHandler.startBlock(this);
+        foInputHandler.startBlock(this);
     }
 
     private void setup() {
@@ -286,7 +286,7 @@ public class Block extends FObjMixed {
      */
     public void end() {
         handleWhiteSpace();
-        structHandler.endBlock(this);
+        foInputHandler.endBlock(this);
     }
 
     private void handleWhiteSpace() {

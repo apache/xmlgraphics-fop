@@ -74,11 +74,11 @@ public class FObjMixed extends FObj {
     }
 
     /**
-     * @param st StructureHandler to set
+     * @param foih FOInputHandler to set
      */
-    public void setStructHandler(StructureHandler st) {
-        super.setStructHandler(st);
-        fontInfo = st.getFontInfo();
+    public void setFOInputHandler(FOInputHandler foih) {
+        super.setFOInputHandler(foih);
+        fontInfo = foih.getFontInfo();
     }
 
     /**
@@ -110,7 +110,7 @@ public class FObjMixed extends FObj {
 
         FOText ft = new FOText(data, start, length, textInfo, this);
         ft.setUserAgent(userAgent);
-        ft.setStructHandler(structHandler);
+        ft.setFOInputHandler(foInputHandler);
         addChild(ft);
     }
 

@@ -82,7 +82,7 @@ public class FObj extends FONode {
      * Structure handler used to notify structure events
      * such as start end element.
      */
-    protected StructureHandler structHandler;
+    protected FOInputHandler foInputHandler;
 
     /**
      * Formatting properties for this fo element.
@@ -256,8 +256,8 @@ public class FObj extends FONode {
      *
      * @param st the structure handler
      */
-    public void setStructHandler(StructureHandler st) {
-        structHandler = st;
+    public void setFOInputHandler(FOInputHandler foih) {
+        foInputHandler = foih;
     }
 
     /**
@@ -281,7 +281,7 @@ public class FObj extends FONode {
         if (prop != null) {
             String str = prop.getString();
             if (str != null && !str.equals("")) {
-                Set idrefs = structHandler.getIDReferences();
+                Set idrefs = foInputHandler.getIDReferences();
                 if (!idrefs.contains(str)) {
                     id = str;
                     idrefs.add(id);

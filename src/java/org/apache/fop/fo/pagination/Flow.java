@@ -127,14 +127,14 @@ public class Flow extends FObj {
         // Now done in addChild of page-sequence
         //pageSequence.addFlow(this);
 
-        structHandler.startFlow(this);
+        foInputHandler.startFlow(this);
     }
 
     /**
      * Tell the StructureRenderer that we are at the end of the flow.
      */
     public void end() {
-        structHandler.endFlow(this);
+        foInputHandler.endFlow(this);
     }
 
     /**

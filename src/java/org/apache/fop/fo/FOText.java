@@ -133,9 +133,9 @@ public class FOText extends FObj {
         textTransform();
     }
 
-    public void setStructHandler(StructureHandler st) {
-        super.setStructHandler(st);
-        structHandler.characters(ca, start, length);
+    public void setFOInputHandler(FOInputHandler foih) {
+        super.setFOInputHandler(foih);
+        foInputHandler.characters(ca, start, length);
     }
 
     /**

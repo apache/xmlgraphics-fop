@@ -58,7 +58,7 @@ import java.io.OutputStream;
 import org.xml.sax.SAXException;
 
 // FOP
-import org.apache.fop.fo.StructureHandler;
+import org.apache.fop.fo.FOInputHandler;
 import org.apache.fop.fo.flow.Block;
 import org.apache.fop.fo.pagination.Flow;
 import org.apache.fop.fo.pagination.PageSequence;
@@ -84,7 +84,7 @@ import org.apache.fop.fo.flow.TableRow;
  * the FO Tree sent to this structure handler.
  * This builds an MIF file and writes it to the output.
  */
-public class MIFHandler extends StructureHandler {
+public class MIFHandler extends FOInputHandler {
 
     /** the MIFFile instance */
     protected MIFFile mifFile;
@@ -107,14 +107,14 @@ public class MIFHandler extends StructureHandler {
     }
 
     /**
-     * @see org.apache.fop.fo.StructureHandler#getFontInfo()
+     * @see org.apache.fop.fo.FOInputHandler#getFontInfo()
      */
     public FontInfo getFontInfo() {
         return fontInfo;
     }
 
     /**
-     * @see org.apache.fop.fo.StructureHandler#startDocument()
+     * @see org.apache.fop.fo.FOInputHandler#startDocument()
      */
     public void startDocument() throws SAXException {
         mifFile = new MIFFile();
@@ -126,7 +126,7 @@ public class MIFHandler extends StructureHandler {
     }
 
     /**
-     * @see org.apache.fop.fo.StructureHandler#endDocument()
+     * @see org.apache.fop.fo.FOInputHandler#endDocument()
      */
     public void endDocument() throws SAXException {
         // finish all open elements
@@ -143,7 +143,7 @@ public class MIFHandler extends StructureHandler {
      * Start the page sequence.
      * This creates the pages in the MIF document that will be used
      * by the following flows and static areas.
-     * @see org.apache.fop.fo.StructureHandler
+     * @see org.apache.fop.fo.FOInputHandler
      */
     public void startPageSequence(PageSequence pageSeq) {
         // get the layout master set
@@ -190,14 +190,14 @@ public class MIFHandler extends StructureHandler {
     }
 
     /**
-     * @see org.apache.fop.fo.StructureHandler#endPageSequence(PageSequence)
+     * @see org.apache.fop.fo.FOInputHandler#endPageSequence(PageSequence)
      */
     public void endPageSequence(PageSequence pageSeq) throws FOPException {
 
     }
 
     /**
-     * @see org.apache.fop.fo.StructureHandler#startFlow(Flow)
+     * @see org.apache.fop.fo.FOInputHandler#startFlow(Flow)
      */
     public void startFlow(Flow fl) {
         // start text flow in body region
@@ -205,7 +205,7 @@ public class MIFHandler extends StructureHandler {
     }
 
     /**
-     * @see org.apache.fop.fo.StructureHandler#endFlow(Flow)
+     * @see org.apache.fop.fo.FOInputHandler#endFlow(Flow)
      */
     public void endFlow(Flow fl) {
         textFlow.finish(true);
@@ -214,7 +214,7 @@ public class MIFHandler extends StructureHandler {
     }
 
     /**
-     * @see org.apache.fop.fo.StructureHandler#startBlock(Block)
+     * @see org.apache.fop.fo.FOInputHandler#startBlock(Block)
      */
     public void startBlock(Block bl) {
         para = new MIFElement("Para");
@@ -223,7 +223,7 @@ public class MIFHandler extends StructureHandler {
     }
 
     /**
-     * @see org.apache.fop.fo.StructureHandler#endBlock(Block)
+     * @see org.apache.fop.fo.FOInputHandler#endBlock(Block)
      */
     public void endBlock(Block bl) {
         para.finish(true);
@@ -231,195 +231,195 @@ public class MIFHandler extends StructureHandler {
     }
 
     /**
-     * @see org.apache.fop.fo.StructureHandler#startTable(Table)
+     * @see org.apache.fop.fo.FOInputHandler#startTable(Table)
      */
     public void startTable(Table tbl) {
     }
 
     /**
-     * @see org.apache.fop.fo.StructureHandler#endTable(Table)
+     * @see org.apache.fop.fo.FOInputHandler#endTable(Table)
      */
     public void endTable(Table tbl) {
     }
 
     /**
-     * @see org.apache.fop.fo.StructureHandler#startHeader(TableBody)
+     * @see org.apache.fop.fo.FOInputHandler#startHeader(TableBody)
      */
     public void startHeader(TableBody th) {
     }
 
     /**
-     * @see org.apache.fop.fo.StructureHandler#endHeader(TableBody)
+     * @see org.apache.fop.fo.FOInputHandler#endHeader(TableBody)
      */
     public void endHeader(TableBody th) {
     }
 
     /**
-     * @see org.apache.fop.fo.StructureHandler#startFooter(TableBody)
+     * @see org.apache.fop.fo.FOInputHandler#startFooter(TableBody)
      */
     public void startFooter(TableBody tf) {
     }
 
     /**
-     * @see org.apache.fop.fo.StructureHandler#endFooter(TableBody)
+     * @see org.apache.fop.fo.FOInputHandler#endFooter(TableBody)
      */
     public void endFooter(TableBody tf) {
     }
 
     /**
-     * @see org.apache.fop.fo.StructureHandler#startBody(TableBody)
+     * @see org.apache.fop.fo.FOInputHandler#startBody(TableBody)
      */
     public void startBody(TableBody tb) {
     }
 
     /**
-     * @see org.apache.fop.fo.StructureHandler#endBody(TableBody)
+     * @see org.apache.fop.fo.FOInputHandler#endBody(TableBody)
      */
     public void endBody(TableBody tb) {
     }
 
     /**
-     * @see org.apache.fop.fo.StructureHandler#startRow(TableRow)
+     * @see org.apache.fop.fo.FOInputHandler#startRow(TableRow)
      */
     public void startRow(TableRow tr) {
     }
 
     /**
-     * @see org.apache.fop.fo.StructureHandler#endRow(TableRow)
+     * @see org.apache.fop.fo.FOInputHandler#endRow(TableRow)
      */
     public void endRow(TableRow tr) {
     }
 
     /**
-     * @see org.apache.fop.fo.StructureHandler#startCell(TableCell)
+     * @see org.apache.fop.fo.FOInputHandler#startCell(TableCell)
      */
     public void startCell(TableCell tc) {
     }
 
     /**
-     * @see org.apache.fop.fo.StructureHandler#endCell(TableCell)
+     * @see org.apache.fop.fo.FOInputHandler#endCell(TableCell)
      */
     public void endCell(TableCell tc) {
     }
 
     // Lists
     /**
-     * @see org.apache.fop.fo.StructureHandler#startList(ListBlock)
+     * @see org.apache.fop.fo.FOInputHandler#startList(ListBlock)
      */
     public void startList(ListBlock lb) {
     }
 
     /**
-     * @see org.apache.fop.fo.StructureHandler#endList(ListBlock)
+     * @see org.apache.fop.fo.FOInputHandler#endList(ListBlock)
      */
     public void endList(ListBlock lb) {
     }
 
     /**
-     * @see org.apache.fop.fo.StructureHandler#startListItem(ListItem)
+     * @see org.apache.fop.fo.FOInputHandler#startListItem(ListItem)
      */
     public void startListItem(ListItem li) {
     }
 
     /**
-     * @see org.apache.fop.fo.StructureHandler#endListItem(ListItem)
+     * @see org.apache.fop.fo.FOInputHandler#endListItem(ListItem)
      */
     public void endListItem(ListItem li) {
     }
 
     /**
-     * @see org.apache.fop.fo.StructureHandler#startListLabel()
+     * @see org.apache.fop.fo.FOInputHandler#startListLabel()
      */
     public void startListLabel() {
     }
 
     /**
-     * @see org.apache.fop.fo.StructureHandler#endListLabel()
+     * @see org.apache.fop.fo.FOInputHandler#endListLabel()
      */
     public void endListLabel() {
     }
 
     /**
-     * @see org.apache.fop.fo.StructureHandler#startListBody()
+     * @see org.apache.fop.fo.FOInputHandler#startListBody()
      */
     public void startListBody() {
     }
 
     /**
-     * @see org.apache.fop.fo.StructureHandler#endListBody()
+     * @see org.apache.fop.fo.FOInputHandler#endListBody()
      */
     public void endListBody() {
     }
 
     // Static Regions
     /**
-     * @see org.apache.fop.fo.StructureHandler#startStatic()
+     * @see org.apache.fop.fo.FOInputHandler#startStatic()
      */
     public void startStatic() {
     }
 
     /**
-     * @see org.apache.fop.fo.StructureHandler#endStatic()
+     * @see org.apache.fop.fo.FOInputHandler#endStatic()
      */
     public void endStatic() {
     }
 
     /**
-     * @see org.apache.fop.fo.StructureHandler#startMarkup()
+     * @see org.apache.fop.fo.FOInputHandler#startMarkup()
      */
     public void startMarkup() {
     }
 
     /**
-     * @see org.apache.fop.fo.StructureHandler#endMarkup()
+     * @see org.apache.fop.fo.FOInputHandler#endMarkup()
      */
     public void endMarkup() {
     }
 
     /**
-     * @see org.apache.fop.fo.StructureHandler#startLink()
+     * @see org.apache.fop.fo.FOInputHandler#startLink()
      */
     public void startLink() {
     }
 
     /**
-     * @see org.apache.fop.fo.StructureHandler#endLink()
+     * @see org.apache.fop.fo.FOInputHandler#endLink()
      */
     public void endLink() {
     }
 
     /**
-     * @see org.apache.fop.fo.StructureHandler#image(ExternalGraphic)
+     * @see org.apache.fop.fo.FOInputHandler#image(ExternalGraphic)
      */
     public void image(ExternalGraphic eg) {
     }
 
     /**
-     * @see org.apache.fop.fo.StructureHandler#pageRef()
+     * @see org.apache.fop.fo.FOInputHandler#pageRef()
      */
     public void pageRef() {
     }
 
     /**
-     * @see org.apache.fop.fo.StructureHandler#foreignObject(InstreamForeignObject)
+     * @see org.apache.fop.fo.FOInputHandler#foreignObject(InstreamForeignObject)
      */
     public void foreignObject(InstreamForeignObject ifo) {
     }
 
     /**
-     * @see org.apache.fop.fo.StructureHandler#footnote()
+     * @see org.apache.fop.fo.FOInputHandler#footnote()
      */
     public void footnote() {
     }
 
     /**
-     * @see org.apache.fop.fo.StructureHandler#leader(Leader)
+     * @see org.apache.fop.fo.FOInputHandler#leader(Leader)
      */
     public void leader(Leader l) {
     }
 
     /**
-     * @see org.apache.fop.fo.StructureHandler#characters(char[], int, int)
+     * @see org.apache.fop.fo.FOInputHandler#characters(char[], int, int)
      */
     public void characters(char data[], int start, int length) {
         if (para != null) {
