@@ -69,9 +69,6 @@ public class Inline extends FObjMixed {
         // this.properties.get("visibility");
         // this.properties.get("z-index");
 
-        // Text Decoration Properties
-        ts = propMgr.getTextDecoration(parent);
-
     }
 
     public String getName() {

@@ -31,7 +31,8 @@ public class Marker extends FObjMixed {
         return new Marker.Maker();
     }
 
-    public Marker(FObj parent, PropertyList propertyList) {
+    public Marker(FObj parent, PropertyList propertyList)
+      throws FOPException {
         super(parent, propertyList);
 
         // do check to see that 'this' is under fo:flow
@@ -41,13 +42,7 @@ public class Marker extends FObjMixed {
 
         // check to ensure that no other marker with same parent
         // has this 'marker-class-name' is in addMarker() method
-        try {
-            parent.addMarker(this);
-        } catch (FOPException fopex) {
-            // log is null in constructor
-            //log.error("marker cannot be added to '" + parent
-            //                     + "'");
-        }
+        parent.addMarker(this);
     }
 
     public String getName() {
@@ -89,4 +84,7 @@ public class Marker extends FObjMixed {
         return registryArea;
     }
 
+    public boolean mayPrecedeMarker() {
+        return true;
+    }  
 }

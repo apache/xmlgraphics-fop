@@ -22,53 +22,38 @@ import org.apache.fop.apps.FOPException;
  */
 public class FOText extends FONode {
 
-    protected char[] ca;
-    protected int length;
+    private char[] ca;
 
-    FontState fs;
-    float red;
-    float green;
-    float blue;
-    int wrapOption;
-    int whiteSpaceCollapse;
-    int verticalAlign;
+    private FontState fs;
+    private float red;
+    private float green;
+    private float blue;
+    private int wrapOption;
+    private int whiteSpaceCollapse;
+    private int verticalAlign;
 
     // Textdecoration
-    protected boolean underlined = false;
-    protected boolean overlined = false;
-    protected boolean lineThrough = false;
-
-    TextState ts;
+    private TextState ts;
 
     public FOText(StringBuffer b, FObj parent) {
         super(parent);
-        this.length = b.length();
-        this.ca = new char[this.length];
-        b.getChars(0,length,ca,0);
+        this.ca = new char[b.length()];
+        b.getChars(0,b.length(),ca,0);
     }
 
-    public void setUnderlined(boolean ul) {
-        this.underlined = ul;
+    public void setTextState(TextState ts) {
+        this.ts = ts;
     }
-
-    public void setOverlined(boolean ol) {
-        this.overlined = ol;
-    }
-
-    public void setLineThrough(boolean lt) {
-        this.lineThrough = lt;
-    }
-
 
     public boolean willCreateArea() {
         this.whiteSpaceCollapse =
             this.parent.properties.get("white-space-collapse").getEnum();
         if (this.whiteSpaceCollapse == WhiteSpaceCollapse.FALSE
-                && length > 0) {
+                && ca.length > 0) {
             return true;
         }
 
-        for (int i = 0; i < length; i++) {
+        for (int i = 0; i < ca.length; i++) {
             char ch = ca[i];
             if (!((ch == ' ') || (ch == '\n') || (ch == '\r')
                     || (ch == '\t'))) {    // whitespace
@@ -78,10 +63,21 @@ public class FOText extends FONode {
         return false;
     }
 
+    public boolean mayPrecedeMarker() {
+        for (int i = 0; i < ca.length; i++) {
+            char ch = ca[i];
+            if ((ch != ' ') || (ch != '\n') || (ch != '\r')
+                    || (ch != '\t')) {    // whitespace
+                return true;
+            }
+        }
+        return false;
+    }
+  
     public Status layout(Area area) throws FOPException {
         if (!(area instanceof BlockArea)) {
             log.error("text outside block area"
-                                   + new String(ca, 0, length));
+                                   + new String(ca, 0, ca.length));
             return new Status(Status.OK);
         }
         if (this.marker == START) {
@@ -116,17 +112,12 @@ public class FOText extends FONode {
                 this.parent.properties.get("wrap-option").getEnum();
             this.whiteSpaceCollapse =
                 this.parent.properties.get("white-space-collapse").getEnum();
-            this.ts = new TextState();
-            ts.setUnderlined(underlined);
-            ts.setOverlined(overlined);
-            ts.setLineThrough(lineThrough);
-
             this.marker = 0;
         }
         int orig_start = this.marker;
         this.marker = addText((BlockArea)area, fs, red, green, blue,
                               wrapOption, this.getLinkSet(),
-                              whiteSpaceCollapse, ca, this.marker, length,
+                              whiteSpaceCollapse, ca, this.marker, ca.length,
                               ts, verticalAlign);
         if (this.marker == -1) {
 

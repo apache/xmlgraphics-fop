@@ -202,4 +202,9 @@ abstract public class FONode {
         ((FONode)children.get(this.marker)).rollback(snapshot);
     }
 
+
+    public boolean mayPrecedeMarker() {
+        return false;
+    }  
+
 }
