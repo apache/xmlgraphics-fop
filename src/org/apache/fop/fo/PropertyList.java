@@ -59,10 +59,12 @@ public class PropertyList extends Hashtable {
   private PropertyListBuilder builder;
   private PropertyList parentPropertyList = null;
   String namespace = "";
+  String element = "";
 
-  public PropertyList(PropertyList parentPropertyList, String space) {
+  public PropertyList(PropertyList parentPropertyList, String space, String el) {
     this.parentPropertyList = parentPropertyList;
     this.namespace = space;
+    this.element = el;
   }
 
   public Property get(String propertyName) {
@@ -70,15 +72,15 @@ public class PropertyList extends Hashtable {
     if (builder == null)
       MessageHandler.errorln("OH OH, builder has not been set");
     Property p = (Property)super.get(propertyName);
-		
+
     if (p == null) { // if not explicit
-      p = this.builder.computeProperty(this,propertyName);
+      p = this.builder.computeProperty(this,namespace, element, propertyName);
       if (p == null) { // else inherit
-        if ((this.parentPropertyList != null)&&(this.builder.isInherited(propertyName))) { // check for parent
+        if ((this.parentPropertyList != null)&&(this.builder.isInherited(namespace, element, propertyName))) { // check for parent
           p = this.parentPropertyList.get(propertyName); // retrieve parent's value
         } else { // default
           try {
-            p = this.builder.makeProperty(this,propertyName);
+            p = this.builder.makeProperty(this,namespace, element,propertyName);
           } catch (FOPException e) {
             // don't know what to do here
           }
