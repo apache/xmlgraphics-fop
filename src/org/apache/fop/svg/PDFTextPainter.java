@@ -101,7 +101,7 @@ public class PDFTextPainter implements TextPainter {
             for (Enumeration e = gvtFonts.elements(); e.hasMoreElements(); ) {
                 GVTFontFamily fam = (GVTFontFamily)e.nextElement();
                 String name = fam.getFamilyName();
-                if (fi.hasFont(name, weight, style)) {
+                if (fi.hasFont(name, style, weight)) {
                     try {
                         int fsize = (int)size.floatValue();
                         fontState = new FontState(fontState.getFontInfo(),
