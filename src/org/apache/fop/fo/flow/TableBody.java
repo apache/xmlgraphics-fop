@@ -190,7 +190,11 @@ public class TableBody extends FObj {
 				TableRow lastRow = null;
 				boolean endKeepGroup = true;
 				for (int i = this.marker; i < numChildren; i++) {
-						TableRow row = (TableRow) children.elementAt(i);
+						Object child = children.elementAt(i);
+						if(!(child instanceof TableRow)) {
+						    throw new FOPException("Currently only Table Rows are supported in table body, header and footer");
+						}
+						TableRow row = (TableRow) child;
 
 						row.setColumns(columns);
 						row.doSetup(areaContainer);
