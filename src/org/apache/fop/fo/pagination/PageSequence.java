@@ -83,8 +83,10 @@ public class PageSequence extends FObj {
 
     private Page currentPage;
 
+	// page number and elated formatting variables
     private int currentPageNumber = 0;
-
+	private PageNumberGenerator pageNumberGenerator;
+	
     /** specifies page numbering type (auto|auto-even|auto-odd|explicit) */
     private int pageNumberType;
 
@@ -145,7 +147,13 @@ public class PageSequence extends FObj {
 
         masterName = this.properties.get("master-name").getString();
 
-
+		// get the 'format' properties
+		this.pageNumberGenerator =
+		new PageNumberGenerator( this.properties.get("format").getString(),
+			this.properties.get("grouping-separator").getCharacter(),
+			this.properties.get("grouping-size").getNumber().intValue(),
+			this.properties.get("letter-value").getEnum()
+		);
     }
 
     public void addFlow(Flow flow) throws FOPException {
@@ -219,6 +227,9 @@ public class PageSequence extends FObj {
                                    tempIsFirstPage, isEmptyPage);
 
             currentPage.setNumber(this.currentPageNumber);
+			String formattedPageNumber =
+				pageNumberGenerator.makeFormattedPageNumber(this.currentPageNumber);
+			currentPage.setFormattedNumber(formattedPageNumber);
             this.root.setRunningPageNumberCounter(this.currentPageNumber);
 
             MessageHandler.log(" [" + currentPageNumber);
