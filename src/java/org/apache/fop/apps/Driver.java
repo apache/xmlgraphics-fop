@@ -310,7 +310,8 @@ public class Driver {
             setRenderer("org.apache.fop.render.pdf.PDFRenderer");
             break;
         case RENDER_AWT:
-            throw new IllegalArgumentException("Use renderer form of setRenderer() for AWT");
+            setRenderer("org.apache.fop.render.awt.AWTRenderer");
+            break;
         case RENDER_PRINT:
             setRenderer("org.apache.fop.render.awt.AWTPrintRenderer");
             break;
@@ -353,14 +354,6 @@ public class Driver {
         renderer.setUserAgent(getUserAgent());
         userAgent.setProducer("FOP Version" + Fop.getVersion());
         this.renderer = renderer;
-    }
-
-    /**
-     * Returns the currently active renderer.
-     * @return the renderer
-     */
-    public Renderer getRenderer() {
-        return renderer;
     }
 
     /**

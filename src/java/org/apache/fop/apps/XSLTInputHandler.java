@@ -54,7 +54,7 @@ public class XSLTInputHandler extends InputHandler {
      *      name, value, ...) for XSL stylesheet
      * @throws FOPException if initializing the Transformer fails
      */
-    public XSLTInputHandler(File xmlfile, File xsltfile, Vector params) throws FOPException {
+    public XSLTInputHandler(File xmlfile, File xsltfile, Vector params) {
         this.xmlSource  = new StreamSource(xmlfile);
         this.xsltSource = new StreamSource(xsltfile);
         try {
@@ -71,9 +71,8 @@ public class XSLTInputHandler extends InputHandler {
      * @param xmlfile XML file
      * @param xsltfile XSLT file
      * @throws FOPException if initializing the Transformer fails
-     * @deprecated Use JAXP instead.
      */
-    public XSLTInputHandler(File xmlfile, File xsltfile) throws FOPException {
+    public XSLTInputHandler(File xmlfile, File xsltfile) {
         this.xmlSource  = new StreamSource(xmlfile);
         this.xsltSource = new StreamSource(xsltfile);
         try {
@@ -89,9 +88,8 @@ public class XSLTInputHandler extends InputHandler {
      * @param xmlURL XML URL
      * @param xsltURL XSLT URL
      * @throws FOPException if initializing the Transformer fails
-     * @deprecated Use JAXP instead.
      */
-    public XSLTInputHandler(String xmlURL, String xsltURL) throws FOPException {
+    public XSLTInputHandler(String xmlURL, String xsltURL) {
         this.xmlSource  = new StreamSource(xmlURL);
         this.xsltSource = new StreamSource(xsltURL);
     }
@@ -101,10 +99,8 @@ public class XSLTInputHandler extends InputHandler {
      * @param xmlSource XML InputSource
      * @param xsltSource XSLT InputSource
      * @throws FOPException if initializing the Transformer fails
-     * @deprecated Use JAXP instead.
      */
-    public XSLTInputHandler(InputSource xmlSource, InputSource xsltSource)
-                throws FOPException {
+    public XSLTInputHandler(InputSource xmlSource, InputSource xsltSource) {
         this.xmlSource  = new StreamSource(xmlSource.getByteStream(),
                                            xmlSource.getSystemId());
         this.xsltSource = new StreamSource(xsltSource.getByteStream(),

@@ -23,7 +23,6 @@ import java.awt.Rectangle;
 
 // XML
 import org.xml.sax.Attributes;
-import org.xml.sax.Locator;
 
 // FOP
 import org.apache.fop.datatypes.ColorType;
@@ -48,14 +47,6 @@ public class RegionBody extends Region {
      */
     public RegionBody(FONode parent) {
         super(parent, Region.BODY_CODE);
-    }
-
-    /**
-     * @see org.apache.fop.fo.FONode#validateChildNode(Locator, String, String)
-     * XSL/FOP Content Model: empty
-     */
-    protected void validateChildNode(Locator loc, String nsURI, String localName) {
-       invalidChildError(loc, nsURI, localName);
     }
 
     /**

@@ -20,12 +20,15 @@ package org.apache.fop.fo.pagination;
 
 import java.awt.Rectangle;
 
+// XML
+import org.xml.sax.Attributes;
+import org.xml.sax.Locator;
+
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.datatypes.FODimension;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FOTreeVisitor;
 import org.apache.fop.fo.FObj;
-import org.xml.sax.Attributes;
 
 /**
  * This is an abstract base class for pagination regions
@@ -59,6 +62,14 @@ public abstract class Region extends FObj {
     protected Region(FONode parent, int id) {
         super(parent);
         regionId = id;
+    }
+
+    /**
+     * @see org.apache.fop.fo.FONode#validateChildNode(Locator, String, String)
+     * XSL/FOP Content Model: empty
+     */
+    protected void validateChildNode(Locator loc, String nsURI, String localName) {
+       invalidChildError(loc, nsURI, localName);
     }
 
     /**

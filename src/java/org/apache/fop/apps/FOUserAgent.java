@@ -58,7 +58,9 @@ public class FOUserAgent {
     private PDFEncryptionParams pdfEncryptionParams;
     private float px2mm = 0.35277777777777777778f; //72dpi (=25.4/dpi)
     private HashMap rendererOptions = new java.util.HashMap();
-
+    private InputHandler inputHandler = null;
+    
+    
     /** Producer:  Metadata element for the system/software that produces
      * the document. (Some renderers can store this in the document.)
      */
@@ -74,6 +76,23 @@ public class FOUserAgent {
      */
     protected Date creationDate = null;
     
+    /**
+     * Sets the InputHandler object for this process
+     * @param inputHandler holding input file name information
+     */
+    public void setInputHandler(InputHandler inputHandler) {
+        this.inputHandler = inputHandler;
+    }
+
+    /**
+     * Returns the apps.InputHandler object created during command-line
+     * processing
+     * @return InputHandler object
+     */
+    public InputHandler getInputHandler() {
+        return inputHandler;
+    }
+
     /**
      * Sets the producer of the document.  
      * @param producer source of document

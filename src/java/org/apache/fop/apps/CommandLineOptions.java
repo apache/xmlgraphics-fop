@@ -114,6 +114,8 @@ public class CommandLineOptions {
             printUsage();
             throw e;
         }
+        
+        foUserAgent.setInputHandler(createInputHandler());
     }
 
     /**
@@ -386,6 +388,11 @@ public class CommandLineOptions {
             throw new FOPException("No output file specified");
         }
 
+        if ((outputmode == AWT_OUTPUT || outputmode == PRINT_OUTPUT) && outfile != null) {
+            throw new FOPException("Output file may not be specified " +
+                "for AWT or PRINT output");
+        }
+
         if (inputmode == XSLT_INPUT) {
             // check whether xml *and* xslt file have been set
             if (xmlfile == null) {
@@ -466,18 +473,18 @@ public class CommandLineOptions {
     }
 
     /**
-     * Get the input handler.
-     * @return the input handler
-     * @throws FOPException if creating the InputHandler fails
+     * Create an InputHandler object based on command-line parameters
+     * @return a new InputHandler instance
+     * @throws IllegalStateException if invalid/missing parameters
      */
-    public InputHandler getInputHandler() throws FOPException {
+    private InputHandler createInputHandler() throws IllegalArgumentException {
         switch (inputmode) {
-        case FO_INPUT:
-            return new FOFileHandler(fofile);
-        case XSLT_INPUT:
-            return new XSLTInputHandler(xmlfile, xsltfile, xsltParams);
-        default:
-            throw new FOPException("Invalid inputmode setting!");
+            case FO_INPUT:
+                return new FOFileHandler(fofile);
+            case XSLT_INPUT:
+                return new XSLTInputHandler(xmlfile, xsltfile, xsltParams);
+            default:
+                throw new IllegalArgumentException("Error creating InputHandler object.");
         }
     }
 

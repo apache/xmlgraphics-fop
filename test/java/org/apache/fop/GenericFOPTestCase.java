@@ -31,6 +31,7 @@ import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
 import org.apache.fop.apps.Driver;
+import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.render.pdf.PDFRenderer;
 import org.apache.fop.util.DigestFilter;
 import org.xml.sax.InputSource;
@@ -112,7 +113,9 @@ public final class GenericFOPTestCase extends TestCase {
     private void renderPDF(String fo, String digestIn, String digestOut)
         throws Exception {
         PDFRenderer renderer = new PDFRenderer();
-        renderer.setCreationDate(new Date(10000));
+        FOUserAgent foUserAgent = new FOUserAgent();
+        foUserAgent.setCreationDate(new Date(10000));
+        renderer.setUserAgent(foUserAgent);
         MessageDigest outDigest = MessageDigest.getInstance("MD5");
         ByteArrayOutputStream outBytes = new ByteArrayOutputStream();
         DigestOutputStream out =

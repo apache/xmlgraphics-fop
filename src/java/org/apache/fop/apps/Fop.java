@@ -37,35 +37,29 @@ public class Fop {
      */
     public static void main(String[] args) {
         CommandLineOptions options = null;
-        InputHandler inputHandler = null;
+        FOUserAgent foUserAgent = null;
         BufferedOutputStream bos = null;
 
         try {
             Driver driver = new Driver();
             options = new CommandLineOptions(args);
 
-            driver.setUserAgent(options.getFOUserAgent());
-            inputHandler = options.getInputHandler();
+            foUserAgent = options.getFOUserAgent();
+            driver.setUserAgent(foUserAgent);
+            driver.setRenderer(options.getRenderer());
 
             try {
-                if (options.getOutputMode() == CommandLineOptions.AWT_OUTPUT) {
-                    driver.setRenderer(new AWTRenderer(inputHandler));
-                } else {
-                    driver.setRenderer(options.getRenderer());
-
-                    if (options.getOutputFile() != null) {
-                        bos = new BufferedOutputStream(new FileOutputStream(
-                            options.getOutputFile()));
-                        driver.setOutputStream(bos);
-                    }
+                if (options.getOutputFile() != null) {
+                    bos = new BufferedOutputStream(new FileOutputStream(
+                        options.getOutputFile()));
+                    driver.setOutputStream(bos);
                 }
-
-                driver.render(inputHandler);
-            } finally {
-                if (bos != null) {
-                    bos.close();
-                }
-            }
+                driver.render(foUserAgent.getInputHandler());
+             } finally {
+                 if (bos != null) {
+                     bos.close();
+                 }
+             }
 
             // System.exit(0) called to close AWT/SVG-created threads, if any.
             // AWTRenderer closes with window shutdown, so exit() should not
