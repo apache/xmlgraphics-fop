@@ -120,6 +120,7 @@ public class Footnote extends FObj {
         try {
             BodyAreaContainer bac = p.getBody();
             AreaContainer footArea = bac.getFootnoteReferenceArea();
+            footArea.setIDReferences(bac.getIDReferences());
             int basePos = footArea.getCurrentYPosition() - footArea.getHeight();
             int oldHeight = footArea.getHeight();
             if(area != null) {
