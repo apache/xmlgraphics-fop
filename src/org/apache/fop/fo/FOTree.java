@@ -3,6 +3,7 @@ package org.apache.fop.fo;
 import org.apache.fop.datastructs.Tree;
 import org.apache.fop.datatypes.Ints;
 import org.apache.fop.datatypes.Numeric;
+import org.apache.fop.datatypes.Inherit;
 import org.apache.fop.datatypes.Auto;
 import org.apache.fop.datatypes.None;
 import org.apache.fop.datatypes.TextDecorations;
@@ -86,24 +87,6 @@ public class FOTree extends Tree implements Runnable {
     protected LinkedList[] propertyStacks;
 
     /**
-     * An FONode identifier.  This is available to be incremented for
-     * each FONode created.  The only requirement is that active FONodes
-     * have a unique identifier.  An accessor function is defined.
-     */
-    private int nodeID = 0;
-
-    /**
-     * Get the next node identifier.  There is no need to synchronize this
-     * as FONodes are created within a single thread.
-     * N.B. If more than one thread gains the ability to create new nodes,
-     * this method will have to be synchronized.
-     * @return the next node identifier
-     */
-    public int nextNodeID() {
-        return ++nodeID;
-    }
-
-    /**
      * @param xmlevents the buffer from which <tt>XMLEvent</tt>s from the
      * parser are read.
      */
@@ -117,55 +100,38 @@ public class FOTree extends Tree implements Runnable {
 
         // Initialise the propertyStacks
         propertyStacks = new LinkedList[PropNames.LAST_PROPERTY_INDEX + 1];
+        PropertyValue prop;
         for (int i = 0; i <= PropNames.LAST_PROPERTY_INDEX; i++)
             propertyStacks[i] = new LinkedList();
         // Initialize the FontSize first.  Any lengths defined in ems must
         // be resolved relative to the current font size.  This may happen
         // during setup of initial values.
-        try {
-            // Set the initial value
-            propertyStacks[PropNames.FONT_SIZE].addLast
-                    (new PropertyTriplet
-                     (PropNames.FONT_SIZE,
-                      PropertyConsts.getInitialValue(PropNames.FONT_SIZE)));
-            PropertyValue prop =
-                    getInitialSpecifiedValue(PropNames.FONT_SIZE);
-            if ( ! (prop instanceof Numeric)
-                 || ! ((Numeric)prop).isLength())
-                throw new RuntimeException(
-                        "Initial font-size is not a Length");
-            propertyStacks[PropNames.FONT_SIZE].addLast
-                    (new PropertyTriplet(PropNames.FONT_SIZE, prop, prop));
-        } catch (PropertyException e) {
-            throw new RuntimeException
-                ("PropertyException: " + e.getMessage());
-        }
+        // Set the initial value
+        prop = PropertyConsts.getInitialValue(PropNames.FONT_SIZE);
+        if ( ! (prop instanceof Numeric) || ! ((Numeric)prop).isLength())
+            throw new PropertyException("Initial font-size is not a Length");
+        propertyStacks[PropNames.FONT_SIZE].addFirst
+                (new PropertyTriplet(PropNames.FONT_SIZE, prop, prop));
 
 
         for (int i = 0; i <= PropNames.LAST_PROPERTY_INDEX; i++) {
             String cname = "";
             if (i == PropNames.FONT_SIZE) continue;
-            try {
-                // Set up the initial values for each property
-                propertyStacks[i].addLast
-                        (new PropertyTriplet
-                         (i, PropertyConsts.getInitialValue(i)));
-            }
-            catch (PropertyException e) {
-                throw new RuntimeException
-                    ("PropertyException: " + e.getMessage());
-            }
+            // Set up the initial values for each property
+            prop = PropertyConsts.getInitialValue(i);
+            propertyStacks[i].addFirst(new PropertyTriplet(i, prop, prop));
         }
 
     }
 
     /**
-     * Get the font size from the <i>font-size</i> property stack.
+     * Clone the font size from the <i>font-size</i> property stack.
      * @return a <tt>Numeric</tt> containing the current font size
      * @exception PropertyException if current font size is not defined,
-     * or is not expressed as a <tt>Numeric</tt>.
+     * or is not expressed as a <tt>Numeric</tt>, or if cloning is not
+     * supported.
      */
-    public Numeric currentFontSize() throws PropertyException {
+    public Numeric cloneCurrentFontSize() throws PropertyException {
         Numeric tmpval = (Numeric)
             (((PropertyTriplet)propertyStacks[PropNames.FONT_SIZE].getLast())
                 .getComputed());
@@ -179,6 +145,22 @@ public class FOTree extends Tree implements Runnable {
     }
 
     /**
+     * Get the font size from the <i>font-size</i> property stack.  This is
+     * a reference to the value on the stack.
+     * @return a <tt>Numeric</tt> containing the current font size
+     * @exception PropertyException if current font size is not defined,
+     * or is not expressed as a <tt>Numeric</tt>.
+     */
+    public Numeric currentFontSize() throws PropertyException {
+        Numeric tmpval = (Numeric)
+            (((PropertyTriplet)propertyStacks[PropNames.FONT_SIZE].getLast())
+                .getComputed());
+        if (tmpval == null)
+            throw new PropertyException("'font-size' not computed.");
+        return (Numeric)tmpval;
+    }
+
+    /**
      * Set the initial value of a particular property.
      * @param value <tt>PropertyValue</tt> to set
      * @exception <tt>PropertyException</tt>
@@ -187,8 +169,8 @@ public class FOTree extends Tree implements Runnable {
         throws PropertyException
     {
         int property = value.getProperty();
-        propertyStacks[property].addLast
-                (new PropertyTriplet(property, value));
+        propertyStacks[property].addFirst
+                (new PropertyTriplet(property, value, value));
     }
 
     /**
@@ -291,31 +273,6 @@ public class FOTree extends Tree implements Runnable {
     {
         return getCurrentPropertyTriplet(index).getComputed();
     }
-
-    /**
-     * Get the inherited value from the top of stack for a given property.
-     * This is the <tt>PropertyTriplet</tt> containing the value.  The
-     * calling method must decide what to do when there is no computed
-     * value in the triplet.  Note that in the case of <tt>line-height</tt>
-     * and possibly others, where the value has been specified as a
-     * &lt;number&gt;, it is the specified value that is inherited.
-     * @param index - the property index.
-     * @return a <tt>PropertyTriplet</tt> containing the inherited
-     * property value for the indexed property.
-     */
-    public PropertyTriplet getInheritedTriplet(int index)
-            throws PropertyException
-    {
-        return getCurrentPropertyTriplet(index);
-    }
-
-    /**
-    public PropertyValue fromNearestSpecified(int property)
-        throws PropertyException
-    {
-        
-    }
-     */
 
     /**
      * Parser thread notifies itself to FO tree builder by this call.  The
