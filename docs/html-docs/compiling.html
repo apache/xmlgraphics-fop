@@ -12,6 +12,7 @@
   <IMG alt="Compiling" border="0" height="12" hspace="0" src="graphics/compiling-label-1.jpg" vspace="0" width="120"><BR>
   <A href="embedding.html" onMouseOut="rolloverOff('side-embedding');" onMouseOver="rolloverOn('side-embedding');"><IMG alt="Embedding" border="0" height="12" hspace="0" name="side-embedding" onLoad="rolloverLoad('side-embedding','graphics/embedding-label-2.jpg','graphics/embedding-label-3.jpg');" src="graphics/embedding-label-3.jpg" vspace="0" width="120"></A><BR>
   <A href="involved.html" onMouseOut="rolloverOff('side-involved');" onMouseOver="rolloverOn('side-involved');"><IMG alt="Getting involved" border="0" height="12" hspace="0" name="side-involved" onLoad="rolloverLoad('side-involved','graphics/involved-label-2.jpg','graphics/involved-label-3.jpg');" src="graphics/involved-label-3.jpg" vspace="0" width="120"></A><BR>
+  
   <IMG border="0" height="6" hspace="0" src="resources/separator.gif" vspace="0" width="120"><BR>
   <A href="faqs.html" onMouseOut="rolloverOff('side-faqs');" onMouseOver="rolloverOn('side-faqs');"><IMG alt="FAQs" border="0" height="12" hspace="0" name="side-faqs" onLoad="rolloverLoad('side-faqs','graphics/faqs-label-2.jpg','graphics/faqs-label-3.jpg');" src="graphics/faqs-label-3.jpg" vspace="0" width="120"></A><BR>
   <A href="specs.html" onMouseOut="rolloverOff('side-specs');" onMouseOver="rolloverOn('side-specs');"><IMG alt="Specifications" border="0" height="12" hspace="0" name="side-specs" onLoad="rolloverLoad('side-specs','graphics/specs-label-2.jpg','graphics/specs-label-3.jpg');" src="graphics/specs-label-3.jpg" vspace="0" width="120"></A><BR>
@@ -35,7 +36,7 @@
       <P>Some of the Java source code in FOP is generated from XML using
          XSLT. Xalan must be used to generate this code.</P>
       <P>Xalan is an XSL stylesheet processor written in java. At the moment you
-         can't use any other processor, because the make file makes use of some
+         can't use any other processor, because the make process makes use of some
          proprietary features of Xalan which allow to write output in more
          then one document. You can find Xalan also at <A href="http://xml.apache.org/xalan/overview.html">
         xml.apache.org</A>. You have to use Xalan version 0.19.5 or later.
@@ -46,11 +47,21 @@
       root directory. This is true, even if you use JDK 1.2 or above, which don't need this 
       setting. It is used by the compilation software.</P>
     </FONT></TD></TR></TABLE><BR>
+    <TABLE border="0" cellpadding="0" cellspacing="0" width="484"><TR><TD bgcolor="666699" colspan="2" width="484"><TABLE border="0" cellpadding="0" cellspacing="0" width="484"><TR><TD bgcolor="#039acc" height="1" width="1"><IMG border="0" height="1" hspace="0" src="resources/void.gif" vspace="0" width="1"></TD><TD bgcolor="#039acc" height="1" width="482"><IMG border="0" height="1" hspace="0" src="resources/void.gif" vspace="0" width="482"></TD><TD bgcolor="#0086b2" height="1" width="1"><IMG border="0" height="1" hspace="0" src="resources/void.gif" vspace="0" width="1"></TD></TR><TR><TD bgcolor="#039acc" width="1"><IMG border="0" height="1" hspace="0" src="resources/void.gif" vspace="0" width="1"></TD><TD bgcolor="#0086b2" width="482"><FONT color="#ffffff" face="arial,helvetica,sanserif"><IMG border="0" height="2" hspace="0" src="resources/void.gif" vspace="0" width="2"><B>Settings in your classpath</B></FONT></TD><TD bgcolor="#017299" width="1"><IMG border="0" height="1" hspace="0" src="resources/void.gif" vspace="0" width="1"></TD></TR><TR><TD bgcolor="#0086b2" height="1" width="1"><IMG border="0" height="1" hspace="0" src="resources/void.gif" vspace="0" width="1"></TD><TD bgcolor="#017299" height="1" width="482"><IMG border="0" height="1" hspace="0" src="resources/void.gif" vspace="0" width="482"></TD><TD bgcolor="#017299" height="1" width="1"><IMG border="0" height="1" hspace="0" src="resources/void.gif" vspace="0" width="1"></TD></TR></TABLE></TD></TR><TR><TD width="10">&nbsp;</TD><TD width="474"><FONT color="#000000" face="arial,helvetica,sanserif" size="-1">
+      <P>If you want Fop to use the image library jimi, it should be in your classpath during 
+         compilation. 
+      </P>
+      <P>A CLASSPATH for a complete compilation of Fop could look like this, if all these jar files are in 
+         a directory called jars (example uses windows syntax):
+      </P>
+      <P><CODE><FONT face="courier, monospaced">set CLASSPATH=\jars\xalan.jar;\jars\xerces.jar;\jars\bsf.jar;\jars\jimi.jar;
+      </FONT></CODE></P>
+    </FONT></TD></TR></TABLE><BR>
     </FONT></TD></TR></TABLE><BR>
   <TABLE border="0" cellpadding="0" cellspacing="0" width="494"><TR><TD bgcolor="666699" colspan="2" width="494"><TABLE border="0" cellpadding="0" cellspacing="0" width="494"><TR><TD bgcolor="#039acc" height="1" width="1"><IMG border="0" height="1" hspace="0" src="resources/void.gif" vspace="0" width="1"></TD><TD bgcolor="#039acc" height="1" width="492"><IMG border="0" height="1" hspace="0" src="resources/void.gif" vspace="0" width="492"></TD><TD bgcolor="#0086b2" height="1" width="1"><IMG border="0" height="1" hspace="0" src="resources/void.gif" vspace="0" width="1"></TD></TR><TR><TD bgcolor="#039acc" width="1"><IMG border="0" height="1" hspace="0" src="resources/void.gif" vspace="0" width="1"></TD><TD bgcolor="#0086b2" width="492"><FONT color="#ffffff" face="arial,helvetica,sanserif" size="+1"><IMG border="0" height="2" hspace="0" src="resources/void.gif" vspace="0" width="2"><B>Compiling</B></FONT></TD><TD bgcolor="#017299" width="1"><IMG border="0" height="1" hspace="0" src="resources/void.gif" vspace="0" width="1"></TD></TR><TR><TD bgcolor="#0086b2" height="1" width="1"><IMG border="0" height="1" hspace="0" src="resources/void.gif" vspace="0" width="1"></TD><TD bgcolor="#017299" height="1" width="492"><IMG border="0" height="1" hspace="0" src="resources/void.gif" vspace="0" width="492"></TD><TD bgcolor="#017299" height="1" width="1"><IMG border="0" height="1" hspace="0" src="resources/void.gif" vspace="0" width="1"></TD></TR></TABLE></TD></TR><TR><TD width="10">&nbsp;</TD><TD width="484"><FONT color="#000000" face="arial,helvetica,sanserif">
-    <P>Compilation is started by executing build, a batch file on win32 or a shell script on unix. The compilation uses Ant, 
+    <P>Compilation is started by executing build, either as a batch file on win32 (build.bat) or as a shell script on unix. The compilation uses Ant, 
        a replacement of make (you can find more information about Ant at 
-       <A href="http://jakarte.apache.org">jakarte.apache.org</A>).
+       <A href="http://jakarta.apache.org/ant/">jakarte.apache.org</A>).
         build.xml is the replacement of makefile. Look there for further information. </P>
        <P>A help screen is shown by calling &quot;build usage&quot;.
     </P>
