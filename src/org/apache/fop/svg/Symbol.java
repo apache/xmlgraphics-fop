@@ -59,6 +59,11 @@ import org.apache.fop.apps.FOPException;
 
 import org.apache.fop.dom.svg.*;
 import org.apache.fop.dom.svg.SVGArea;
+
+import org.w3c.dom.svg.*;
+
+import java.util.StringTokenizer;
+
 /**
  *
  */
@@ -101,5 +106,51 @@ public class Symbol extends SVGObj {
 	protected Symbol(FObj parent, PropertyList propertyList) {
 		super(parent, propertyList);
 		this.name = "svg:symbol";
+	}
+
+	public SVGElement createGraphic()
+	{
+		String box = this.properties.get("viewBox").getString();
+		StringTokenizer st = new StringTokenizer(box, " ");
+		float x = 0;
+		float y = 0;
+		float width = 0;
+		float height = 0;
+		try {
+			if(st.hasMoreTokens()) {
+				x = Float.parseFloat(st.nextToken());
+			}
+			if(st.hasMoreTokens()) {
+				y = Float.parseFloat(st.nextToken());
+			}
+			if(st.hasMoreTokens()) {
+				width = Float.parseFloat(st.nextToken());
+			}
+			if(st.hasMoreTokens()) {
+				height = Float.parseFloat(st.nextToken());
+			}
+		} catch(Exception e) {
+		}
+		SVGRect rect = new SVGRectImpl();
+		rect.setX(x);
+		rect.setY(y);
+		rect.setWidth(width);
+		rect.setHeight(height);
+		SVGSymbolElementImpl graphic;
+		graphic = new SVGSymbolElementImpl();
+		String id = this.properties.get("id").getString();
+		graphic.setId(id);
+		graphic.setViewBox(new SVGAnimatedRectImpl(rect));
+
+		int numChildren = this.children.size();
+		for (int i = 0; i < numChildren; i++) {
+			FONode child = (FONode) children.elementAt(i);
+			if(child instanceof GraphicsCreator) {
+				SVGElement impl = ((GraphicsCreator)child).createGraphic();
+				graphic.appendChild(impl);
+			}
+		}
+
+		return graphic;
 	}
 }
