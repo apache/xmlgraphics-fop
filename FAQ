@@ -1,19 +1,49 @@
-FOP Frequently Asked Questions
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
 
-$Id$
-Contributed by
-Fotis Jannidis
 
-1. Running FOP I get the following messages or something similar: 
-"WARNING: Unknown formatting object http://www.w3.org/XSL/Format/1.0^root"
-and then a FATAL Error "Root element must be root, not default FO".
-
-A.: Make sure that you have specified as the namespace for fo the
-following string:
-"http://www.w3.org/1999/XSL/Format"
-It is analogous to the xslt namespace "http://www.w3.org/1999/XSL/Transform"
+   FOP - Frequently Asked Questions
+   
+   
 
 
 
+
+1) FAQ - Running FOP
+
+  1) FAQ - Running FOP
+
+
+   Q: Running FOP I get the following messages or something similar: 
+      "WARNING: Unknown formatting object http://www.w3.org/XSL/Format/1.0^root"
+      and then a FATAL Error "Root element must be root, not default FO".
+   
+      A: Make sure that you have specified as the namespace for fo the
+         following string: "http://www.w3.org/1999/XSL/Format". It is analogous 
+         to the xslt namespace "http://www.w3.org/1999/XSL/Transform"
+      
+   
+
+
+
+   Q: The char "&gt;" is inserted into the page number display like this 
+      "formatting FOs into areas [1] [2] [3&gt;&gt;&gt;&gt;]". Is this a bug?
+   A: No, a feature. It simply means that on that page an area 
+         overflowed (ie there was not enough room to fit the text in).
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Version: 1.0.1 1999/11/29  - 
+Contact: James Tauber (jtauber@jtauber.com)
 
 
