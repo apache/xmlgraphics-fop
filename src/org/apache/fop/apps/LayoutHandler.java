@@ -96,10 +96,21 @@ public class LayoutHandler extends StructureHandler {
         areaTree.setTreeModel(atModel);
     }
 
+    /**
+     * Get the area tree for this layout handler.
+     *
+     * @return the area tree for this document
+     */
     public AreaTree getAreaTree() {
         return areaTree;
     }
 
+    /**
+     * Start the document.
+     * This starts the document in the renderer.
+     *
+     * @throws SAXException if there is an error
+     */
     public void startDocument() throws SAXException {
         pageCount = 0;
 
@@ -122,6 +133,11 @@ public class LayoutHandler extends StructureHandler {
         }
     }
 
+    /**
+     * End the document.
+     *
+     * @throws SAXException if there is some error
+     */
     public void endDocument() throws SAXException {
         try {
             //processAreaTree(atModel);
@@ -131,14 +147,14 @@ public class LayoutHandler extends StructureHandler {
             throw new SAXException(e);
         }
 
-        if (MEM_PROFILE_WITH_GC) {
-            System.gc(); // This takes time but gives better results
-        }
-
-        long memoryNow = runtime.totalMemory() - runtime.freeMemory();
-        long memoryUsed = (memoryNow - initialMemory) / 1024L;
-
         if (getLogger().isDebugEnabled()) {
+            if (MEM_PROFILE_WITH_GC) {
+                // This takes time but gives better results
+                System.gc();
+            }
+
+            long memoryNow = runtime.totalMemory() - runtime.freeMemory();
+            long memoryUsed = (memoryNow - initialMemory) / 1024L;
             getLogger().debug("Initial heap size: " + (initialMemory / 1024L) + "Kb");
             getLogger().debug("Current heap size: " + (memoryNow / 1024L) + "Kb");
             getLogger().debug("Total memory used: " + memoryUsed + "Kb");
@@ -149,9 +165,8 @@ public class LayoutHandler extends StructureHandler {
             }
         }
 
-        long timeUsed = System.currentTimeMillis() - startTime;
-
         if (getLogger().isDebugEnabled()) {
+            long timeUsed = System.currentTimeMillis() - startTime;
             getLogger().debug("Total time used: " + timeUsed + "ms");
             getLogger().debug("Pages rendered: " + pageCount);
             if (pageCount > 0) {
@@ -160,6 +175,15 @@ public class LayoutHandler extends StructureHandler {
         }
     }
 
+    /**
+     * Start a page sequence.
+     * At the start of a page sequence it can start the page sequence
+     * on the area tree with the page sequence title.
+     *
+     * @param pageSeq the page sequence starting
+     * @param seqTitle the title of the page sequence
+     * @param lms the layout master set
+     */
     public void startPageSequence(PageSequence pageSeq, org.apache.fop.fo.Title seqTitle, LayoutMasterSet lms) {
         Title title = null;
         if (seqTitle != null) {
@@ -169,24 +193,38 @@ public class LayoutHandler extends StructureHandler {
     }
 
     /**
-       Format the PageSequence. The PageSequence
-       formats Pages and adds them to the AreaTree,
-       which subsequently calls the StreamRenderer
-       instance (this) again to render the page.
-       At this time the page might be printed
-       or it might be queued. A page might not
-       be renderable immediately if the IDReferences
-       are not all valid. In this case we defer
-       the rendering until they are all valid.
+     * End the PageSequence.
+     * The PageSequence formats Pages and adds them to the AreaTree.
+     * The area tree then handles what happens with the pages.
+     *
+     * @param pageSequence the page sequence ending
+     * @throws FOPException if there is an error formatting the pages
      */
     public void endPageSequence(PageSequence pageSequence)
     throws FOPException {
         //areaTree.setFontInfo(fontInfo);
 
+        if (getLogger().isDebugEnabled()) {
+            if (MEM_PROFILE_WITH_GC) {
+                // This takes time but gives better results
+                System.gc(); 
+            }
+
+            long memoryNow = runtime.totalMemory() - runtime.freeMemory();
+            getLogger().debug("Current heap size: " + (memoryNow / 1024L) + "Kb");
+        }
+
         pageSequence.format(areaTree);
     }
 
-
+    /**
+     * Process an area tree.
+     * If a store pages model is used this can read and send all the
+     * pages to the renderer.
+     *
+     * @param model the store pages model
+     * @throws FOPException if there is an error
+     */
     private void processAreaTree(AreaTree.StorePagesModel model) throws FOPException {
         int count = 0;
         int seqc = model.getPageSequenceCount();
@@ -211,6 +249,11 @@ public class LayoutHandler extends StructureHandler {
         }
     }
 
+    /**
+     * Get the font information for the layout handler.
+     *
+     * @return the font information
+     */
     public FontInfo getFontInfo() {
         return this.fontInfo;
     }
