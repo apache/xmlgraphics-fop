@@ -24,12 +24,10 @@ import java.util.LinkedList;
 import java.util.ListIterator;
 
 import org.apache.fop.fo.FOText;
-import org.apache.fop.fo.Constants;
 import org.apache.fop.traits.SpaceVal;
 import org.apache.fop.area.Trait;
 import org.apache.fop.area.inline.InlineArea;
 import org.apache.fop.area.inline.TextArea;
-import org.apache.fop.area.inline.Space;
 import org.apache.fop.util.CharUtilities;
 import org.apache.fop.traits.MinOptMax;
 

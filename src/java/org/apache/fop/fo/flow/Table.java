@@ -34,12 +34,6 @@ import org.apache.fop.fo.FObj;
 import org.apache.fop.layoutmgr.table.TableLayoutManager;
 import org.apache.fop.layoutmgr.table.Body;
 import org.apache.fop.layoutmgr.table.Column;
-import org.apache.fop.fo.properties.CommonAccessibility;
-import org.apache.fop.fo.properties.CommonAural;
-import org.apache.fop.fo.properties.CommonBackground;
-import org.apache.fop.fo.properties.CommonBorderAndPadding;
-import org.apache.fop.fo.properties.CommonMarginBlock;
-import org.apache.fop.fo.properties.CommonRelativePosition;
 import org.apache.fop.fo.properties.LengthRangeProperty;
 
 /**

@@ -22,7 +22,6 @@ package org.apache.fop.fo.flow;
 import java.util.List;
 
 // XML
-import org.xml.sax.Attributes;
 import org.xml.sax.Locator;
 import org.xml.sax.SAXParseException;
 

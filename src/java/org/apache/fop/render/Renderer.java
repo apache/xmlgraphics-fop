@@ -21,8 +21,6 @@ package org.apache.fop.render;
 // Java
 import java.io.OutputStream;
 import java.io.IOException;
-import java.util.Date;
-import java.util.Map;
 
 // FOP
 import org.apache.fop.apps.FOPException;
@@ -30,14 +28,8 @@ import org.apache.fop.area.PageViewport;
 import org.apache.fop.area.Title;
 import org.apache.fop.area.TreeExt;
 import org.apache.fop.area.inline.Container;
-import org.apache.fop.area.inline.InlineParent;
-import org.apache.fop.area.inline.Leader;
-import org.apache.fop.area.inline.Space;
-import org.apache.fop.area.inline.Viewport;
-import org.apache.fop.area.inline.TextArea;
 import org.apache.fop.fonts.FontInfo;
 import org.apache.fop.apps.FOUserAgent;
-import org.apache.commons.logging.Log;
 
 
 /**

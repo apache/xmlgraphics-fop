@@ -42,7 +42,6 @@ import org.apache.fop.fo.properties.NumberProperty;
 import org.apache.fop.fo.properties.PositionShorthandParser;
 import org.apache.fop.fo.properties.Property;
 import org.apache.fop.fo.properties.PropertyMaker;
-import org.apache.fop.fo.properties.ShorthandParser;
 import org.apache.fop.fo.properties.SpaceProperty;
 import org.apache.fop.fo.properties.SpacingPropertyMaker;
 import org.apache.fop.fo.properties.StringProperty;

@@ -29,7 +29,6 @@ import org.apache.fop.fo.PropertyManager;
 import org.apache.fop.fo.properties.CommonAbsolutePosition;
 import org.apache.fop.fo.properties.CommonBorderAndPadding;
 import org.apache.fop.fo.properties.CommonMarginBlock;
-import org.apache.fop.fo.PropertyList;
 import org.apache.fop.area.CTM;
 import org.apache.fop.datatypes.FODimension;
 import org.apache.fop.datatypes.Length;

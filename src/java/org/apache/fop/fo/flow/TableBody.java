@@ -23,7 +23,6 @@ import java.util.List;
 
 // XML
 import org.xml.sax.Attributes;
-import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
 
 // FOP

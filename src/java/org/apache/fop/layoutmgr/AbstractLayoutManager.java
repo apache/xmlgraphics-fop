@@ -26,7 +26,6 @@ import org.apache.fop.area.Resolveable;
 import org.apache.fop.area.PageViewport;
 import org.apache.fop.fo.Constants;
 import org.apache.fop.fo.flow.Marker;
-import org.apache.fop.fo.PropertyManager;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;

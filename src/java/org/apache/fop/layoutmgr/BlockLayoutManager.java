@@ -23,7 +23,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.fop.datatypes.PercentBase;
-import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.TextInfo;
 import org.apache.fop.fo.PropertyManager;
 import org.apache.fop.area.Area;

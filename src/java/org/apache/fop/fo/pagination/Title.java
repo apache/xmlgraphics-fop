@@ -19,7 +19,6 @@
 package org.apache.fop.fo.pagination;
 
 // XML
-import org.xml.sax.Attributes;
 import org.xml.sax.Locator;
 import org.xml.sax.SAXParseException;
 

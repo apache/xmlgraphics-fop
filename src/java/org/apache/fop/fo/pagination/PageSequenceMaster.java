@@ -27,7 +27,6 @@ import org.xml.sax.Locator;
 import org.xml.sax.SAXParseException;
 
 // FOP
-import org.apache.fop.fo.Constants;
 import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.apps.FOPException;

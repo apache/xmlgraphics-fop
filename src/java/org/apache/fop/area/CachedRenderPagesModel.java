@@ -21,7 +21,6 @@ package org.apache.fop.area;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.fonts.FontInfo;
-import org.apache.fop.render.Renderer;
 
 import java.util.Map;
 import java.util.HashMap;

@@ -39,18 +39,11 @@ import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.extensions.Outline;
 import org.apache.fop.fo.extensions.Bookmarks;
 import org.apache.fop.fo.pagination.PageSequence;
-import org.apache.fop.fonts.FontInfo;
 import org.apache.fop.layoutmgr.ContentLayoutManager;
 import org.apache.fop.layoutmgr.InlineStackingLayoutManager;
-import org.apache.fop.layoutmgr.LMiter;
 import org.apache.fop.layoutmgr.PageLayoutManager;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
-// Java
-import java.io.OutputStream;
-import java.util.HashSet;
-import java.util.Iterator;
 
 /**
  * Area tree handler for formatting objects.

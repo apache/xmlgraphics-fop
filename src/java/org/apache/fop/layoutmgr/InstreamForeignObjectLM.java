@@ -27,7 +27,6 @@ import org.apache.fop.datatypes.Length;
 import org.apache.fop.fo.XMLObj;
 import org.apache.fop.fo.flow.InstreamForeignObject;
 import org.apache.fop.area.inline.ForeignObject;
-import org.apache.fop.area.inline.InlineArea;
 import org.apache.fop.area.inline.Viewport;
 
 /**

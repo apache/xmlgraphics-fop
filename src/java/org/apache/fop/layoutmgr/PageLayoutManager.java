@@ -52,8 +52,6 @@ import org.apache.fop.fo.properties.CommonBackground;
 import org.apache.fop.fo.properties.CommonBorderAndPadding;
 import org.apache.fop.fo.properties.CommonMarginBlock;
 
-import org.apache.commons.logging.Log;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;

@@ -24,7 +24,6 @@ import java.util.Map;
 import java.util.Iterator;
 
 // XML
-import org.xml.sax.Attributes;
 import org.xml.sax.Locator;
 import org.xml.sax.SAXParseException;
 
