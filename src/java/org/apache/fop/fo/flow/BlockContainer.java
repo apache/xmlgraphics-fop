@@ -143,6 +143,11 @@ public class BlockContainer extends FObj {
         return blockProgressionDimension;
     }
 
+    /** @return the display-align property. */
+    public int getDisplayAlign() {
+        return displayAlign;
+    }
+    
     /**
      * Return the "id" property.
      */
