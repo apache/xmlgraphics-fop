@@ -21,9 +21,9 @@ package org.apache.fop.area;
 import java.util.List;
 
 /**
- * Resolvable Interface.
- * Classes that implement this can be resolved when
- * an id is added to the area tree.
+ * Resolvable Interface.  Classes that implement this interface contain
+ * idrefs (see Section 5.11 of spec for definition of <idref> datatype)
+ * that are resolved when their target IDs are added to the area tree.
  */
 public interface Resolvable {
 
@@ -35,9 +35,9 @@ public interface Resolvable {
     boolean isResolved();
 
     /**
-     * Get the array of id references of this resolvable object.
+     * Get the array of idrefs of this resolvable object.
      * If this object contains child resolvables that are
-     * resolved through this then it should return the id's of
+     * resolved through this then it should return the idref's of
      * the child also.
      *
      * @return the id references for resolving this object

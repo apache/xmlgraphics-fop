@@ -46,8 +46,6 @@ import org.apache.fop.fo.flow.TableRow;
 import org.apache.fop.fo.pagination.Flow;
 import org.apache.fop.fo.pagination.PageSequence;
 import org.apache.fop.fonts.FontInfo;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 
 
 /**
@@ -72,9 +70,6 @@ public abstract class FOEventHandler {
      * The Font information relevant for this document
      */
     protected FontInfo fontInfo;
-
-    /** Logger for FOEventHandler-related messages **/
-    protected static Log logger = LogFactory.getLog(FOEventHandler.class);
 
     /**
      * The current set of id's in the FO tree.
@@ -102,14 +97,6 @@ public abstract class FOEventHandler {
      */
     public Set getIDReferences() {
         return idReferences;
-    }
-
-    /**
-     * Returns the Commons-Logging instance for this class
-     * @return  The Commons-Logging instance
-     */
-    protected Log getLogger(Log logger) {
-        return logger;
     }
 
     /**

@@ -60,8 +60,9 @@ import org.apache.commons.logging.LogFactory;
  */
 public class AreaTreeHandler extends FOEventHandler {
 
-    // TODO: Collecting of statistics should be configurable
-    private final boolean collectStatistics = true;
+    // show statistics after document complete?
+    private boolean outputStatistics;
+
     private static final boolean MEM_PROFILE_WITH_GC = false;
     
     // for statistics gathering
@@ -82,8 +83,9 @@ public class AreaTreeHandler extends FOEventHandler {
     // hashmap of arraylists containing pages with id area
     private Map idLocations = new HashMap();
 
-    // list of id's yet to be resolved and arraylists of pages
-    private Map resolve = new HashMap();
+    // idref's whose corresponding id's have yet to be found
+    // Each idref has a HashSet of Resolvable objects containing that idref
+    private Map unresolvedIDRefs = new HashMap();
 
     private static Log log = LogFactory.getLog(AreaTreeHandler.class);
 
@@ -98,12 +100,12 @@ public class AreaTreeHandler extends FOEventHandler {
         OutputStream stream) throws FOPException {
         super(userAgent);
 
-        // model = new CachedRenderPagesModel(userAgent, renderType,
-        //  fontInfo, stream);
         model = new RenderPagesModel(userAgent, renderType, fontInfo,
             stream);
             
-        if (collectStatistics) {
+        outputStatistics = log.isDebugEnabled();
+
+        if (outputStatistics) {
             runtime = Runtime.getRuntime();
         }
     }
@@ -130,13 +132,13 @@ public class AreaTreeHandler extends FOEventHandler {
         }
         list.add(pv);
 
-        Set todo = (Set)resolve.get(id);
+        Set todo = (Set) unresolvedIDRefs.get(id);
         if (todo != null) {
             for (Iterator iter = todo.iterator(); iter.hasNext();) {
                 Resolvable res = (Resolvable)iter.next();
                 res.resolve(id, list);
             }
-            resolve.remove(id);
+            unresolvedIDRefs.remove(id);
         }
     }
 
@@ -150,16 +152,17 @@ public class AreaTreeHandler extends FOEventHandler {
     }
 
     /**
-     * Add an unresolved object with a given id.
-     * @param id the id reference that needs resolving
-     * @param res the Resolvable object to resolve
+     * Add an Resolvable object with an unresolved idref
+     * @param idref the idref whose target id has not yet been located
+     * @param res the Resolvable object with the unresolved idref
      */
-    public void addUnresolvedID(String id, Resolvable res) {
-        Set todo = (Set)resolve.get(id);
+    public void addUnresolvedIDRef(String idref, Resolvable res) {
+        Set todo = (Set) unresolvedIDRefs.get(idref);
         if (todo == null) {
             todo = new HashSet();
-            resolve.put(id, todo);
+            unresolvedIDRefs.put(idref, todo);
         }
+        // add Resolvable object to this HashSet
         todo.add(res);
     }
 
@@ -171,7 +174,7 @@ public class AreaTreeHandler extends FOEventHandler {
      */
     public void startDocument() throws SAXException {
         //Initialize statistics
-        if (collectStatistics) {
+        if (outputStatistics) {
             pageCount = 0;
             if (MEM_PROFILE_WITH_GC) {
                 System.gc(); // This takes time but gives better results
@@ -189,9 +192,10 @@ public class AreaTreeHandler extends FOEventHandler {
      */
     public void endDocument() throws SAXException {
         // deal with unresolved references
-        for (Iterator iter = resolve.keySet().iterator(); iter.hasNext();) {
+        for (Iterator iter = unresolvedIDRefs.keySet().iterator(); 
+                iter.hasNext();) {
             String id = (String)iter.next();
-            Set list = (Set)resolve.get(id);
+            Set list = (Set) unresolvedIDRefs.get(id);
             for (Iterator resIter = list.iterator(); resIter.hasNext();) {
                 Resolvable res = (Resolvable)resIter.next();
                 if (!res.isResolved()) {
@@ -201,7 +205,7 @@ public class AreaTreeHandler extends FOEventHandler {
         }
         model.endDocument();
 
-        if (collectStatistics) {
+        if (outputStatistics) {
             if (MEM_PROFILE_WITH_GC) {
                 // This takes time but gives better results
                 System.gc();
@@ -209,18 +213,18 @@ public class AreaTreeHandler extends FOEventHandler {
             long memoryNow = runtime.totalMemory() - runtime.freeMemory();
             long memoryUsed = (memoryNow - initialMemory) / 1024L;
             long timeUsed = System.currentTimeMillis() - startTime;
-            if (logger != null && logger.isDebugEnabled()) {
-                logger.debug("Initial heap size: " + (initialMemory / 1024L) + "Kb");
-                logger.debug("Current heap size: " + (memoryNow / 1024L) + "Kb");
-                logger.debug("Total memory used: " + memoryUsed + "Kb");
+            if (log != null && log.isDebugEnabled()) {
+                log.debug("Initial heap size: " + (initialMemory / 1024L) + "Kb");
+                log.debug("Current heap size: " + (memoryNow / 1024L) + "Kb");
+                log.debug("Total memory used: " + memoryUsed + "Kb");
                 if (!MEM_PROFILE_WITH_GC) {
-                    logger.debug("  Memory use is indicative; no GC was performed");
-                    logger.debug("  These figures should not be used comparatively");
+                    log.debug("  Memory use is indicative; no GC was performed");
+                    log.debug("  These figures should not be used comparatively");
                 }
-                logger.debug("Total time used: " + timeUsed + "ms");
-                logger.debug("Pages rendered: " + pageCount);
+                log.debug("Total time used: " + timeUsed + "ms");
+                log.debug("Pages rendered: " + pageCount);
                 if (pageCount > 0) {
-                    logger.debug("Avg render time: " + (timeUsed / pageCount) + "ms/page");
+                    log.debug("Avg render time: " + (timeUsed / pageCount) + "ms/page");
                 }
             }
         }
@@ -235,14 +239,14 @@ public class AreaTreeHandler extends FOEventHandler {
      */
     public void endPageSequence(PageSequence pageSequence) {
 
-        if (collectStatistics) {
+        if (outputStatistics) {
             if (MEM_PROFILE_WITH_GC) {
                 // This takes time but gives better results
                 System.gc();
             }
             long memoryNow = runtime.totalMemory() - runtime.freeMemory();
-            if (logger != null) {
-                logger.debug("Current heap size: " + (memoryNow / 1024L) + "Kb");
+            if (log != null) {
+                log.debug("Current heap size: " + (memoryNow / 1024L) + "Kb");
             }
         }
 
@@ -307,10 +311,10 @@ public class AreaTreeHandler extends FOEventHandler {
                 if (idLocations.containsKey(ids[count])) {
                     res.resolve(ids[count], (List)idLocations.get(ids[count]));
                 } else {
-                    Set todo = (Set)resolve.get(ids[count]);
+                    Set todo = (Set) unresolvedIDRefs.get(ids[count]);
                     if (todo == null) {
                         todo = new HashSet();
-                        resolve.put(ids[count], todo);
+                        unresolvedIDRefs.put(ids[count], todo);
                     }
                     todo.add(ext);
                 }
