@@ -80,7 +80,6 @@ public class FoStaticContent extends FONode {
     {
         super(foTree, FObjectNames.STATIC_CONTENT, parent, event,
               FONode.STATIC_SET, sparsePropsMap, sparseIndices);
-        xmlevents = foTree.getXmlevents();
         FoXMLEvent ev;
         try {
             // Get at least one %block;

@@ -100,7 +100,6 @@ public class FoTitle extends FONode {
     {
         super(foTree, FObjectNames.TITLE, parent, event,
               FONode.TITLE_SET, sparsePropsMap, sparseIndices);
-        xmlevents = foTree.getXmlevents();
         FoXMLEvent ev = null;
         do {
             try {

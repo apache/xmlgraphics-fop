@@ -125,7 +125,6 @@ public class FoBlock extends FONode {
     {
         super(foTree, FObjectNames.BLOCK, parent, event,
                           stateFlags, sparsePropsMap, sparseIndices);
-        xmlevents = foTree.getXmlevents();
         FoXMLEvent ev = null;
         do {
             try {

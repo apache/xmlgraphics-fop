@@ -93,7 +93,6 @@ public class FoMultiToggle extends FONode {
     {
         super(foTree, FObjectNames.MULTI_TOGGLE, parent, event,
                           stateFlags, sparsePropsMap, sparseIndices);
-        xmlevents = foTree.getXmlevents();
         FoXMLEvent ev = null;
         if ((stateFlags & FONode.MC_MULTI_CASE) != 0)
         do {

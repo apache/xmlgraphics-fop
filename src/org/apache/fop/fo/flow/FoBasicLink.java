@@ -113,7 +113,6 @@ public class FoBasicLink extends FONode {
     {
         super(foTree, FObjectNames.BASIC_LINK, parent, event,
                           stateFlags, sparsePropsMap, sparseIndices);
-        xmlevents = foTree.getXmlevents();
         FoXMLEvent ev = null;
         do {
             try {

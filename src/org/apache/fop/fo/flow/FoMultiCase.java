@@ -97,7 +97,6 @@ public class FoMultiCase extends FONode {
         super(foTree, FObjectNames.MULTI_CASE, parent, event,
                           stateFlags, sparsePropsMap, sparseIndices);
         stateFlags |= FONode.MC_MULTI_CASE;
-        xmlevents = foTree.getXmlevents();
         FoXMLEvent ev = null;
         do {
             try {

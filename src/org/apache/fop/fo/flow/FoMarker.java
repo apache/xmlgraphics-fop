@@ -85,7 +85,6 @@ public class FoMarker extends FONode {
         if ((stateFlags & FONode.FLOW) == 0)
             throw new FOPException
                     ("fo:marker must be descendent of fo:flow.");
-        xmlevents = foTree.getXmlevents();
         FoXMLEvent ev = null;
         do {
             try {

@@ -82,7 +82,6 @@ public class FoWrapper extends FONode {
     {
         super(foTree, FObjectNames.WRAPPER, parent, event,
                           stateFlags, sparsePropsMap, sparseIndices);
-        xmlevents = foTree.getXmlevents();
         FoXMLEvent ev = null;
         do {
             try {

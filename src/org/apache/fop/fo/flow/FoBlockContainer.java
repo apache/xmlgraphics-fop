@@ -116,7 +116,6 @@ public class FoBlockContainer extends FONode {
         // absolutely positioned areas.  They are not allowed as descendents
         // of fo:title, fo:float or fo:footnote.  They are not allowed to
         // have any fo:marker children.
-        xmlevents = foTree.getXmlevents();
         FoXMLEvent ev = null;
         try {
             // Get at least one %block;

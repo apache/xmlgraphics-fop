@@ -94,7 +94,6 @@ public class FoMultiSwitch extends FONode {
         super(foTree, FObjectNames.MULTI_SWITCH, parent, event,
                           stateFlags, sparsePropsMap, sparseIndices);
         FoXMLEvent ev;
-        xmlevents = foTree.getXmlevents();
         try {
             // Look for one or more multi-case
             while ((ev = xmlevents.expectStartElement
