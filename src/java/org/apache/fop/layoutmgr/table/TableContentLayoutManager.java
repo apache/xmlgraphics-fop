@@ -52,6 +52,7 @@ public class TableContentLayoutManager {
     private TableLayoutManager tableLM;
     private TableRowIterator trIter;
 
+    private int usedBPD;
     
     public TableContentLayoutManager(TableLayoutManager parent) {
         this.tableLM = parent;
@@ -311,6 +312,7 @@ public class TableContentLayoutManager {
     }
     
     public void addAreas(PositionIterator parentIter, LayoutContext layoutContext) {
+        this.usedBPD = 0;
         int colCount = getColumns().getColumnCount();
         TableRowIterator.EffRow lastRow = null;
         int lastRowHeight = 0;
@@ -333,6 +335,7 @@ public class TableContentLayoutManager {
                 if (lastRow != tcpos.row && lastRow != null) {
                     //yoffset += lastRow.getHeight().opt;
                     yoffset += lastRowHeight;
+                    this.usedBPD += lastRowHeight;
                 }
                 lastRow = tcpos.row;
                 Iterator iter = tcpos.gridUnitParts.iterator();
@@ -397,7 +400,7 @@ public class TableContentLayoutManager {
                         layoutContext, lastRow, yoffset, partLength[i], maxLen);
             }
         }
-        
+        this.usedBPD += lastRowHeight; //for last row
     }
     
     private int getExplicitCellHeight(PrimaryGridUnit pgu) {
@@ -425,6 +428,10 @@ public class TableContentLayoutManager {
         //cellLM.setRowHeight(row.getHeight().opt);
         cellLM.addAreas(new KnuthPossPosIter(gu.getElements(), 
                 start, end + 1), layoutContext);
+    }
+    
+    public int getUsedBPD() {
+        return this.usedBPD;
     }
     
     private class GridUnitPart {
