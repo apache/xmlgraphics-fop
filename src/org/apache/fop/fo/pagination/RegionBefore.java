@@ -8,14 +8,12 @@
 package org.apache.fop.fo.pagination;
 
 // FOP
-
 import org.apache.fop.datatypes.FODimension;
 import org.apache.fop.fo.*;
-import org.apache.fop.apps.FOPException;
 import org.apache.fop.area.RegionReference;
 
+// Java
 import java.awt.Rectangle;
-import org.xml.sax.Attributes;
 
 public class RegionBefore extends RegionBA {
 

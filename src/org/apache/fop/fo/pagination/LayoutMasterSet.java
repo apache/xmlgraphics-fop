@@ -9,13 +9,12 @@ package org.apache.fop.fo.pagination;
 
 // FOP
 import org.apache.fop.fo.*;
-import org.apache.fop.fo.properties.*;
 import org.apache.fop.apps.FOPException;
-import org.apache.fop.layout.PageMaster;
 
 // Java
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
 
 import org.xml.sax.Attributes;
 
@@ -29,8 +28,8 @@ import org.xml.sax.Attributes;
  * information for a page sequence.
  */
 public class LayoutMasterSet extends FObj {
-    private HashMap simplePageMasters;
-    private HashMap pageSequenceMasters;
+    private Map simplePageMasters;
+    private Map pageSequenceMasters;
 
     public LayoutMasterSet(FONode parent) {
         super(parent);
@@ -110,12 +109,12 @@ public class LayoutMasterSet extends FObj {
     protected void checkRegionNames() throws FOPException {
         // Section 7.33.15 check to see that if a region-name is a
         // duplicate, that it maps to the same region-class.
-        HashMap allRegions = new HashMap();
+        Map allRegions = new HashMap();
         for (Iterator spm = simplePageMasters.values().iterator();
                 spm.hasNext(); ) {
             SimplePageMaster simplePageMaster =
                 (SimplePageMaster)spm.next();
-            HashMap spmRegions = simplePageMaster.getRegions();
+            Map spmRegions = simplePageMaster.getRegions();
             for (Iterator e = spmRegions.values().iterator();
                     e.hasNext(); ) {
                 Region region = (Region)e.next();
@@ -140,7 +139,7 @@ public class LayoutMasterSet extends FObj {
 
     /**
      * Checks whether or not a region name exists in this master set
-     * @returns true when the region name specified has a region in this LayoutMasterSet
+     * @return true when the region name specified has a region in this LayoutMasterSet
      */
     protected boolean regionNameExists(String regionName) {
         for (Iterator e = simplePageMasters.values().iterator();

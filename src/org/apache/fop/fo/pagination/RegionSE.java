@@ -7,10 +7,10 @@
 
 package org.apache.fop.fo.pagination;
 
-
+// FOP
 import org.apache.fop.fo.*;
-import org.apache.fop.apps.FOPException;
 
+// Java
 import java.awt.Rectangle;
 
 public abstract class RegionSE extends RegionBASE {

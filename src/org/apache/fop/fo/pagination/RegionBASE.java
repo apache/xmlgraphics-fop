@@ -9,8 +9,6 @@ package org.apache.fop.fo.pagination;
 
 // FOP
 import org.apache.fop.fo.FONode;
-import org.apache.fop.fo.PropertyList;
-import org.apache.fop.apps.FOPException;
 
 /**
  * Base class for Before, After, Start and End regions (BASE).

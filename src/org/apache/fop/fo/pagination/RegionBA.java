@@ -9,9 +9,9 @@ package org.apache.fop.fo.pagination;
 
 // FOP
 import org.apache.fop.fo.*;
-import org.apache.fop.apps.FOPException;
 import org.apache.fop.fo.properties.Precedence;
 
+// Java
 import java.awt.Rectangle;
 
 public abstract class RegionBA extends RegionBASE {
