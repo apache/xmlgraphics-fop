@@ -28,16 +28,6 @@ This can result in several differences, including actually using different fonts
 The net effect is that the layout of a given FO document can be quite different between renderers that do not use the same font information.
     </p>
   </section>
-  <section id="general-resolution">
-    <title>Graphics Resolution</title>
-      <p>
-This is an important issue when creating output for printing.
-The dpi is used to convert measurements into points. For example 1in
-= 2.54cm = 72 points. It is also used when determining the size of
-images and the rendering of certain graphics in the output. Currently
-FOP uses a value of 72dpi.
-    </p>
-  </section>
   <section id="general-direct-output">
     <title>Output to a Printer or Other Device</title>
         <p>
