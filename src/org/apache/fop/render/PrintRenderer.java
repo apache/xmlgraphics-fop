@@ -165,10 +165,8 @@ public abstract class PrintRenderer implements Renderer
         int saveX = this.currentAreaContainerXPosition;
 
         if (area.getPosition() == Position.ABSOLUTE) {
-            // Y position is computed assuming positive Y axis, adjust for negative postscript one
-            this.currentYPosition =
-              area.getYPosition() - 2 * area.getPaddingTop() -
-              2 * area.getBorderTopWidth();
+	    // XPosition and YPosition give the content rectangle position
+            this.currentYPosition = area.getYPosition() ;
             this.currentAreaContainerXPosition = area.getXPosition();
         } else if (area.getPosition() == Position.RELATIVE) {
             this.currentYPosition -= area.getYPosition();
