@@ -15,10 +15,6 @@ import org.xml.sax.XMLReader;
 import java.net.URL;
 import java.io.File;
 
-// FOP
-import org.apache.fop.configuration.Configuration;
-
-
 abstract public class InputHandler {
 
 
