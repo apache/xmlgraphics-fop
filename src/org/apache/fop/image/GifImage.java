@@ -12,6 +12,9 @@ import java.awt.image.ImageProducer;
 import java.awt.image.ColorModel;
 import java.awt.image.IndexColorModel;
 import java.awt.color.ColorSpace;
+import java.io.InputStream;
+import java.io.IOException;
+import java.net.URLConnection;
 
 // FOP
 import org.apache.fop.pdf.PDFColor;
@@ -26,25 +29,35 @@ import org.apache.fop.fo.FOUserAgent;
  * @see FopImage
  */
 public class GifImage extends AbstractFopImage {
-    public GifImage(FopImage.ImageInfo imgReader) {
-        super(imgReader);
+    /**
+     * Create a new gif image.
+     *
+     * @param imgInfo the image info for this gif image
+     */
+    public GifImage(FopImage.ImageInfo imgInfo) {
+        super(imgInfo);
     }
 
+    /**
+     * Load the bitmap for this gif image.
+     * This loads the data and creates a bitmap byte array
+     * of the image data.
+     * To decode the image a dummy URLConnection is used that
+     * will do the conversion.
+     *
+     * @param ua the user agent for loading
+     */
     protected boolean loadBitmap(FOUserAgent ua) {
         int[] tmpMap = null;
-
         try {
-            ImageProducer ip = null;
-            // todo: how to load gif image from stream
-            //ip = (ImageProducer) inputStream.getContent();
-            inputStream.close();
-            inputStream = null;
+            URLConnection con = new DummyConnection(inputStream);
+
+            ImageProducer ip = (ImageProducer) con.getContent();
             if (ip == null) {
                 return false;
             }
             FopImageConsumer consumer = new FopImageConsumer(ip);
             ip.startProduction(consumer);
-
 
             //Load the image into memory
             while (!consumer.isImageReady()) {
@@ -61,6 +74,9 @@ public class GifImage extends AbstractFopImage {
                                              + ex.getMessage(), ex);
                 return false;
             }
+
+            inputStream.close();
+            inputStream = null;
 
             ColorModel cm = consumer.getColorModel();
             this.bitsPerPixel = 8;
@@ -144,5 +160,37 @@ public class GifImage extends AbstractFopImage {
         return true;
     }
 
+    /**
+     * A dummy url connection for a gif image in an input stream.
+     */
+    protected static class DummyConnection extends URLConnection {
+        InputStream inputStream;
+        DummyConnection(InputStream is) {
+            super(null);
+            inputStream = is;
+        }
+
+        public InputStream getInputStream() throws IOException {
+            return inputStream;
+        }
+
+        public void connect() throws IOException {
+            // do nothing
+        }
+
+        public String getContentType() {
+            return "image/gif";
+        }
+
+        public int getContentLength() {
+            try {
+                return inputStream.available();
+            } catch (IOException e) {
+
+            }
+            return -1;
+        }
+
+    }
 }
 
