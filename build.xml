@@ -144,17 +144,18 @@ list of possible build targets.
     <property name="textfontencoding" value="WinAnsiEncoding"/>
 
     <property name="src.dir" value="./src"/>
-    <property name="src.codegen" value="./src/codegen"/>
+    <property name="src.java" value="${src.dir}/java"/>
+    <property name="src.codegen" value="${src.dir}/codegen"/>
     <property name="docs.dir" value="./docs"/>
-    <property name="xdocs.dir" value="./src/documentation/content/xdocs"/>
+    <property name="xdocs.dir" value="${src.dir}/documentation/content/xdocs"/>
     <property name="fo.examples.dir" value="./examples/fo/basic"/>
     <property name="lib.dir" value="./lib"/>
-    <property name="hyph.dir" value="./src/hyph"/>
+    <property name="hyph.dir" value="${src.dir}/hyph"/>
     <property name="conf.dir" value="./conf"/>
     <property name="packages" value="org.apache.fop.*"/>
 
-    <property name="viewer.resources.src.dir" value="./src/org/apache/fop/viewer/resources"/>
-    <property name="viewer.images.src.dir" value="./src/org/apache/fop/viewer/Images"/>
+    <property name="viewer.resources.src.dir" value="${src.java}/org/apache/fop/viewer/resources"/>
+    <property name="viewer.images.src.dir" value="${src.java}/org/apache/fop/viewer/Images"/>
 
     <property name="build.dir" value="./build"/>
     <property name="build.src" value="./build/src"/>
@@ -368,7 +369,7 @@ list of possible build targets.
     <!-- prepare JDK dependant files -->
     <copy todir="${build.gensrc}" filtering="on">
       <mapper type="glob" from="*.javat" to="*.java"/>
-      <fileset dir="${src.dir}">
+      <fileset dir="${src.java}">
         <include name="**/*.javat"/>
       </fileset>
     </copy>
@@ -394,7 +395,7 @@ list of possible build targets.
 
     <javac destdir="${build.dest}" debug="${debug}" deprecation="${deprecation}" optimize="${optimize}">
       <src path="${build.gensrc}"/>
-      <src path="${src.dir}"/>
+      <src path="${src.java}"/>
       <classpath refid="libs-build-classpath"/>
       <patternset refid="base-sources"/>
     </javac>
@@ -403,7 +404,7 @@ list of possible build targets.
   <target name="compile-jimi" depends="compile-src" if="jimi.present">
     <echo message="Jimi library is present. Fop installs jimi support."/>
     <javac destdir="${build.dest}" debug="${debug}" deprecation="${deprecation}" optimize="${optimize}">
-      <src path="${src.dir}"/>
+      <src path="${src.java}"/>
       <classpath refid="libs-build-classpath"/>
       <include name="**/${jimi}"/>
     </javac>
@@ -412,7 +413,7 @@ list of possible build targets.
   <target name="compile-jai" depends="compile-src" if="jai.present">
     <echo message="JAI library is present. Fop installs JAI support."/>
     <javac destdir="${build.dest}" debug="${debug}" deprecation="${deprecation}" optimize="${optimize}">
-      <src path="${src.dir}"/>
+      <src path="${src.java}"/>
       <classpath refid="libs-build-classpath"/>
       <include name="**/${jai}"/>
     </javac>
@@ -563,7 +564,7 @@ list of possible build targets.
         overview="${src.dir}/overview.html"
         failonerror="true">
       <sourcepath>
-        <pathelement path="${src.dir}"/>
+        <pathelement path="${src.java}"/>
         <pathelement path="${build.gensrc}"/>
       </sourcepath>
     </javadoc>
@@ -625,7 +626,7 @@ list of possible build targets.
     <taskdef name="checkstyle" classname="com.puppycrawl.tools.checkstyle.CheckStyleTask" classpathref="checkstylepath"/>
 
     <checkstyle properties="checkstyle.cfg" failonviolation="false">
-      <fileset dir="${src.dir}" includes="org/apache/fop/**/*.java"/>
+      <fileset dir="${src.java}" includes="org/apache/fop/**/*.java"/>
       <formatter type="plain" toFile="${build.dir}/checkstyle_report.txt"/>
       <formatter type="xml" toFile="${build.dir}/checkstyle_report.xml"/>
     </checkstyle>
