@@ -59,7 +59,17 @@ public static final String PDF_YPOS = "ypos";
 
     public void handleXML(RendererContext context, Document doc,
                           String ns) throws Exception {
-        PDFDocument pdfDoc = (PDFDocument) context.getProperty(PDF_DOCUMENT);
+        PDFInfo pdfi = getPDFInfo(context);
+
+        String svg = "http://www.w3.org/2000/svg";
+        if (svg.equals(ns)) {
+            SVGHandler svghandler = new SVGHandler();
+            svghandler.renderSVGDocument(context, doc, pdfi);
+        } else {
+        }
+    }
+
+    public static PDFInfo getPDFInfo(RendererContext context) {
         PDFInfo pdfi = new PDFInfo();
         pdfi.pdfDoc = (PDFDocument)context.getProperty(PDF_DOCUMENT);
         pdfi.currentStream = (PDFStream)context.getProperty(PDF_STREAM);
@@ -70,18 +80,12 @@ public static final String PDF_YPOS = "ypos";
         pdfi.currentFontSize = ((Integer)context.getProperty(PDF_FONT_SIZE)).intValue();
         pdfi.currentXPosition = ((Integer)context.getProperty(PDF_XPOS)).intValue();
         pdfi.currentYPosition = ((Integer)context.getProperty(PDF_YPOS)).intValue();
-
-        String svg = "http://www.w3.org/2000/svg";
-        if (svg.equals(ns)) {
-            SVGHandler svghandler = new SVGHandler();
-            svghandler.renderSVGDocument(context, doc, pdfi);
-        } else {
-        }
+        return pdfi;
     }
 
-    class PDFInfo {
+    public static class PDFInfo {
         PDFDocument pdfDoc;
-        PDFStream currentStream;
+        public PDFStream currentStream;
         int x;
         int y;
         FontState fs;
@@ -91,6 +95,10 @@ public static final String PDF_YPOS = "ypos";
         int currentYPosition;
     }
 
+    /**
+     * This method is placed in an inner class so that we don't get class
+     * loading errors if batik is not present.
+     */
     protected class SVGHandler {
         protected void renderSVGDocument(RendererContext context, Document doc, PDFInfo pdfInfo) {
             float sx = 1, sy = 1;
