@@ -91,6 +91,8 @@ public class FontSetup {
 	fontInfo.addMetrics("F10", new CourierOblique());
 	fontInfo.addMetrics("F11", new CourierBold());
 	fontInfo.addMetrics("F12", new CourierBoldOblique());
+	fontInfo.addMetrics("F13", new Symbol());
+	fontInfo.addMetrics("F14", new ZapfDingbats());
 		
 	/* any is treated as serif */
 	fontInfo.addFontProperties("F5", "any", "normal", "normal");
@@ -163,6 +165,10 @@ public class FontSetup {
 				   "bold"); 
 	fontInfo.addFontProperties("F12", "Courier", "italic",
 				   "bold"); 
+	fontInfo.addFontProperties("F13", "Symbol", "normal",
+				   "normal"); 
+	fontInfo.addFontProperties("F14", "ZapfDingbats", "normal",
+				   "normal"); 
 
 	/* for compatibility with PassiveTex */
 	fontInfo.addFontProperties("F5", "Times-Roman", "normal",
