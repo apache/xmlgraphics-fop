@@ -28,7 +28,7 @@ This can result in several differences, including actually using different fonts
 The net effect is that the layout of a given FO document can be quite different between renderers that do not use the same font information.
     </p>
   </section>
-  <section>
+  <section id="general-resolution">
     <title>Graphics Resolution</title>
       <p>
 This is an important issue when creating output for printing.
@@ -38,7 +38,7 @@ images and the rendering of certain graphics in the output. Currently
 FOP uses a value of 72dpi.
     </p>
   </section>
-  <section>
+  <section id="general-direct-output">
     <title>Output to a Printer or Other Device</title>
         <p>
 The most obvious way to print your document is to use the FOP <link href="">print renderer</link>, which uses the Java API (AWT).
