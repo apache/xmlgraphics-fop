@@ -94,11 +94,16 @@ public class Area extends AreaNode implements Cloneable  {
         return content;
     }
 
-    protected void setMargins(
-    		double before, double after, double start, double end) {
+    protected void setBeforeMargin(double before) {
         spaces.setBefore(before);
+    }
+    protected void setAfterMargin(double after) {
         spaces.setAfter(after);
+    }
+    protected void setStartMargin(double start) {
         spaces.setStart(start);
+    }
+    protected void setEndMargin(double end) {
         spaces.setEnd(end);
     }
     /** Translates this area into position in its parent area */
