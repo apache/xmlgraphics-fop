@@ -169,6 +169,12 @@ Sometimes ant gives out this warnings, but the build is finished without any pro
       <include name="fop.jar"/>
     </fileset>
   </path>
+  
+  <path id="checkstylepath">
+  	<fileset dir="lib">
+  		<include name="checkstyle-all-*.jar"/>
+  	</fileset>
+  </path>
 
   <!-- =================================================================== -->
   <!-- Initialization target                                               -->
@@ -681,6 +687,25 @@ Sometimes ant gives out this warnings, but the build is finished without any pro
     </java>
   </target>
 
+  <!-- =================================================================== -->
+  <!-- Checkstyle                                            -->
+  <!-- =================================================================== -->
+  <target name="checkstyle" depends="prepare" description="Runs Checkstyle for a code quality report">
+  	<available property="checkstyle.available" classname="com.puppycrawl.tools.checkstyle.CheckStyleTask" classpathref="checkstylepath"/>
+  	<fail message="Please put checkstyle-all-*.jar in the lib directory. Get it from http://checkstyle.sourceforge.net" unless="checkstyle.available"/>
+  	<taskdef name="checkstyle" classname="com.puppycrawl.tools.checkstyle.CheckStyleTask" classpathref="checkstylepath"/>
+	<checkstyle properties="checkstyle.cfg" failonviolation="false">
+		<fileset dir="${src.dir}" includes="org/apache/fop/**/*.java"/>
+		<formatter type="plain" toFile="${build.dir}/checkstyle_report.txt"/>
+		<formatter type="xml" toFile="${build.dir}/checkstyle_report.xml"/>
+	</checkstyle>
+	<available property="checkstyle.stylesheet.available" file="checkstyle-noframes.xsl"/>
+	<antcall target="checkstyle-html"/>
+  </target>
+  <target name="checkstyle-html" if="checkstyle.stylesheet.available">
+	<style in="${build.dir}/checkstyle_report.xml" out="${build.dir}/checkstyle_report.html" style="checkstyle-noframes.xsl"/>
+  </target>
+  
   <!-- =================================================================== -->
   <!-- Creates the distribution                                            -->
   <!-- =================================================================== -->
