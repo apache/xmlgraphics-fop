@@ -60,7 +60,6 @@ package org.apache.fop.rtf.rtflib.rtfdoc;
 
 import java.io.IOException;
 
-public interface IRtfBeforeContainer
-{
-    public RtfBefore newBefore(RtfAttributes attrs) throws IOException;
+public interface IRtfBeforeContainer {
+    RtfBefore newBefore(RtfAttributes attrs) throws IOException;
 }

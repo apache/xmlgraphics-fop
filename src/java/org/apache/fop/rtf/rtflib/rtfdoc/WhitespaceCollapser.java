@@ -66,21 +66,21 @@ import java.util.StringTokenizer;
  */
 
 class WhitespaceCollapser {
-    private final static String SPACE = " ";
-    private boolean m_lastEndSpace = true;
+    private static final String SPACE = " ";
+    private boolean lastEndSpace = true;
 
     /** remove extra whitespace in RtfText elements that are inside c */
     WhitespaceCollapser(RtfContainer c) {
         // process all texts
-        for(Iterator it = c.getChildren().iterator(); it.hasNext(); ) {
+        for (Iterator it = c.getChildren().iterator(); it.hasNext();) {
             RtfText current = null;
             final Object kid = it.next();
-            if(kid instanceof RtfText) {
+            if (kid instanceof RtfText) {
                 current = (RtfText)kid;
                 processText(current);
             } else {
                 // if there is something between two texts, it counts for a space
-                m_lastEndSpace = true;
+                lastEndSpace = true;
             }
         }
     }
@@ -91,35 +91,38 @@ class WhitespaceCollapser {
 
         // tokenize the text based on whitespace and regenerate it so as
         // to collapse multiple spaces into one
-        if(orig != null && orig.length() > 0) {
+        if (orig != null && orig.length() > 0) {
             final boolean allSpaces = orig.trim().length() == 0;
-            final boolean endSpace = allSpaces || Character.isWhitespace(orig.charAt(orig.length() - 1));
+            final boolean endSpace = allSpaces
+                                     || Character.isWhitespace(orig.charAt(orig.length() - 1));
             final boolean beginSpace = Character.isWhitespace(orig.charAt(0));
             final StringBuffer sb = new StringBuffer(orig.length());
 
             // if text contains spaces only, keep at most one
-            if(allSpaces) {
-                if(!m_lastEndSpace) sb.append(SPACE);
+            if (allSpaces) {
+                if (!lastEndSpace) {
+                    sb.append(SPACE);
+                }
             } else {
                 // TODO to be compatible with different Locales, should use Character.isWhitespace
                 // instead of this limited list
                 boolean first = true;
-                final StringTokenizer stk = new StringTokenizer(txt.getText()," \t\n\r");
-                while(stk.hasMoreTokens()) {
-                    if(first && beginSpace && !m_lastEndSpace) {
+                final StringTokenizer stk = new StringTokenizer(txt.getText(), " \t\n\r");
+                while (stk.hasMoreTokens()) {
+                    if (first && beginSpace && !lastEndSpace) {
                         sb.append(SPACE);
                     }
                     first = false;
 
                     sb.append(stk.nextToken());
-                    if(stk.hasMoreTokens() || endSpace) {
+                    if (stk.hasMoreTokens() || endSpace) {
                         sb.append(SPACE);
                     }
                 }
             }
 
             txt.setText(sb.toString());
-            m_lastEndSpace = endSpace;
+            lastEndSpace = endSpace;
         }
     }
 }

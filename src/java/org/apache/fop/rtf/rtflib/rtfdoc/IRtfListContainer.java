@@ -64,8 +64,7 @@ import java.io.IOException;
  *  @author Bertrand Delacretaz bdelacretaz@codeconsult.ch
  */
 
-public interface IRtfListContainer
-{
+public interface IRtfListContainer {
     /** close current list if any and start a new one */
-    public RtfList newList(RtfAttributes attrs) throws IOException;
+    RtfList newList(RtfAttributes attrs) throws IOException;
 }

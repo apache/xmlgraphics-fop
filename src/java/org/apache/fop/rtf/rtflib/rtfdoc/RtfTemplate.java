@@ -58,10 +58,7 @@
 
 package org.apache.fop.rtf.rtflib.rtfdoc;
 
-import java.util.*;
-import java.io.Writer;
 import java.io.IOException;
-import java.io.File;
 
 /**
  * Singelton of the RTF style template
@@ -78,8 +75,7 @@ public class RtfTemplate  {
     /**
      * Constructor.
      */
-    private RtfTemplate ()
-    {
+    private RtfTemplate () {
 
     }
 
@@ -89,8 +85,7 @@ public class RtfTemplate  {
      *
      * @return The instance of RtfTemplate
      */
-    public static RtfTemplate getInstance ()
-    {
+    public static RtfTemplate getInstance () {
         if (instance == null) {
             instance = new RtfTemplate();
         }
@@ -106,7 +101,7 @@ public class RtfTemplate  {
      **/
     public void setTemplateFilePath(String templateFilePath) throws IOException {
         // no validity checks here - leave this to the RTF client
-        if(templateFilePath == null) {
+        if (templateFilePath == null) {
             this.templateFilePath = null;
         } else {
             this.templateFilePath = templateFilePath.trim();
@@ -118,9 +113,10 @@ public class RtfTemplate  {
      * @param header Rtf header is the parent
      * @throws IOException On write error
      */
-    public void writeTemplate (RtfHeader header) throws IOException
-    {
-        if (templateFilePath == null || templateFilePath.length() == 0) return;
+    public void writeTemplate (RtfHeader header) throws IOException {
+        if (templateFilePath == null || templateFilePath.length() == 0) {
+            return;
+        }
 
         header.writeGroupMark (true);
         header.writeControlWord ("template");

@@ -64,12 +64,12 @@ public interface IBorderAttributes {
 
     String BORDER_SINGLE_THICKNESS = "brdrs";
     String BORDER_DOUBLE_THICKNESS = "brdrth";
-    String BORDER_SHADOWED ="brdrsh";
-    String BORDER_DOUBLE ="brdrdb";
-    String BORDER_DOTTED ="brdrdot";
-    String BORDER_DASH ="brdrdash";
-    String BORDER_HAIRLINE ="brdrhair";
-    String BORDER_DASH_SMALL ="brdrdashsm";
+    String BORDER_SHADOWED = "brdrsh";
+    String BORDER_DOUBLE = "brdrdb";
+    String BORDER_DOTTED = "brdrdot";
+    String BORDER_DASH = "brdrdash";
+    String BORDER_HAIRLINE = "brdrhair";
+    String BORDER_DASH_SMALL = "brdrdashsm";
     String BORDER_DOT_DASH = "brdrdashd";
     String BORDER_DOT_DOT_DASH = "brdrdashdd";
     String BORDER_TRIPLE = "brdrtriple";

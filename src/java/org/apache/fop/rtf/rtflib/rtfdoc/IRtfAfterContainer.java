@@ -61,7 +61,6 @@ package org.apache.fop.rtf.rtflib.rtfdoc;
 import java.io.IOException;
 
 /** interface for RTF objects that can contain footers */
-public interface IRtfAfterContainer
-{
-    public RtfAfter newAfter(RtfAttributes attrs) throws IOException;
+public interface IRtfAfterContainer {
+    RtfAfter newAfter(RtfAttributes attrs) throws IOException;
 }

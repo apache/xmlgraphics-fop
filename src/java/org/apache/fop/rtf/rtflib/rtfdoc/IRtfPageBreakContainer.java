@@ -64,8 +64,7 @@ import java.io.IOException;
  *  @author Bertrand Delacretaz bdelacretaz@codeconsult.ch
  */
 
-public interface IRtfPageBreakContainer
-{
+public interface IRtfPageBreakContainer {
     /** add a page break */
-    public void newPageBreak() throws IOException;
+    void newPageBreak() throws IOException;
 }

@@ -58,8 +58,9 @@
 
 package org.apache.fop.rtf.rtflib.rtfdoc;
 
-import java.io.*;
-import java.util.*;
+import java.io.Writer;
+import java.io.IOException;
+import java.util.Iterator;
 import org.apache.fop.rtf.rtflib.interfaces.ITableColumnsInfo;
 
 /**  A cell in an RTF table, container for paragraphs, lists, etc.
@@ -68,7 +69,8 @@ import org.apache.fop.rtf.rtflib.interfaces.ITableColumnsInfo;
 
 public class RtfTableCell
 extends RtfContainer
-implements IRtfParagraphContainer,IRtfListContainer,IRtfTableContainer,IRtfExternalGraphicContainer {
+implements IRtfParagraphContainer, IRtfListContainer, IRtfTableContainer,
+       IRtfExternalGraphicContainer {
     private RtfParagraph m_paragraph;
     private RtfList m_list;
     private RtfTable m_table;
@@ -89,17 +91,17 @@ implements IRtfParagraphContainer,IRtfListContainer,IRtfTableContainer,IRtfExter
     private int m_hMerge = NO_MERGE;
 
     /** cell merging: this cell is not merged */
-    public final static int NO_MERGE = 0;
+    public static final int NO_MERGE = 0;
 
     /** cell merging: this cell is the start of a range of merged cells */
-    public final static int MERGE_START = 1;
+    public static final int MERGE_START = 1;
 
     /** cell merging: this cell is part of (but not the start of) a range of merged cells */
-    public final static int MERGE_WITH_PREVIOUS = 2;
+    public static final int MERGE_WITH_PREVIOUS = 2;
 
     /** Create an RTF element as a child of given container */
-    RtfTableCell(RtfTableRow parent, Writer w,int cellWidth, int idNum) throws IOException {
-        super(parent,w);
+    RtfTableCell(RtfTableRow parent, Writer w, int cellWidth, int idNum) throws IOException {
+        super(parent, w);
         id = idNum;
         m_parentRow = parent;
         m_cellWidth = cellWidth;
@@ -108,44 +110,47 @@ implements IRtfParagraphContainer,IRtfListContainer,IRtfTableContainer,IRtfExter
     }
 
     /** Create an RTF element as a child of given container */
-    RtfTableCell(RtfTableRow parent, Writer w,int cellWidth, RtfAttributes attrs, int idNum) throws IOException {
-        super(parent,w,attrs);
+    RtfTableCell(RtfTableRow parent, Writer w, int cellWidth, RtfAttributes attrs,
+            int idNum) throws IOException {
+        super(parent, w, attrs);
         id = idNum;
         m_parentRow = parent;
         m_cellWidth = cellWidth;
 
-    /** Added by Boris Poudérous on 07/22/2002 in order to process number-columns-spanned attribute */
+    /** Added by Boris Poudérous on 07/22/2002 in order to process
+     *  number-columns-spanned attribute */
     // If the cell is spanned horizontally
-    if (attrs.getValue("number-columns-spanned") != null)
-      {
+    if (attrs.getValue("number-columns-spanned") != null) {
         // Start horizontal merge
         this.setHMerge(MERGE_START);
 
         // Get the number of columns spanned
         int nbMergedCells = ((Integer)attrs.getValue("number-columns-spanned")).intValue();
 
-        if (parent.m_parent instanceof RtfTable)
-          {
+        if (parent.m_parent instanceof RtfTable) {
             // Get the context of the current table in order to get the width of each column
-            ITableColumnsInfo ITableColumnsInfo = ((RtfTable)parent.m_parent).getITableColumnsInfo();
+            ITableColumnsInfo ITableColumnsInfo =
+                    ((RtfTable)parent.m_parent).getITableColumnsInfo();
             ITableColumnsInfo.selectFirstColumn();
 
             // Reach the column index in table context corresponding to the current column cell
             // id is the index of the current cell (it begins at 1)
             // getColumnIndex() is the index of the current column in table context (it begins at 0)
             //  => so we must widthdraw 1 when comparing these two variables.
-            while ((this.id-1) != ITableColumnsInfo.getColumnIndex())
+            while ((this.id - 1) != ITableColumnsInfo.getColumnIndex()) {
                ITableColumnsInfo.selectNextColumn();
+            }
 
-            // We widthdraw one cell because the first cell is already created (it's the current cell) !
+            // We widthdraw one cell because the first cell is already created
+            // (it's the current cell) !
             int i = nbMergedCells - 1;
-            while (i > 0)
-              {
+            while (i > 0) {
                 ITableColumnsInfo.selectNextColumn();
                 // Added by Normand Masse
                 // Pass in the current cell's attributes so the 'merged' cell has the
                 // same display attributes.
-                parent.newTableCellMergedHorizontally((int)ITableColumnsInfo.getColumnWidth(), attrs);
+                parent.newTableCellMergedHorizontally((int)ITableColumnsInfo.getColumnWidth(),
+                        attrs);
 
                 i--;
               }
@@ -159,23 +164,20 @@ implements IRtfParagraphContainer,IRtfListContainer,IRtfTableContainer,IRtfExter
         closeAll();
 
         // in tables, RtfParagraph must have the intbl attribute
-        if(attrs==null) attrs = new RtfAttributes();
+        if (attrs == null) {
+            attrs = new RtfAttributes();
+        }
         attrs.set("intbl");
 
-        m_paragraph = new RtfParagraph(this,m_writer,attrs);
+        m_paragraph = new RtfParagraph(this, m_writer, attrs);
 
-        if(m_paragraph.m_attrib.isSet("qc"))
-        {
-            set_center=true;
+        if (m_paragraph.m_attrib.isSet("qc")) {
+            set_center = true;
             attrs.set("qc");
-        }
-        else if(m_paragraph.m_attrib.isSet("qr"))
-        {
-            set_right=true;
+        } else if (m_paragraph.m_attrib.isSet("qr")) {
+            set_right = true;
             attrs.set("qr");
-        }
-        else
-        {
+        } else {
             attrs.set("ql");
         }
         attrs.set("intbl");
@@ -188,7 +190,7 @@ implements IRtfParagraphContainer,IRtfListContainer,IRtfTableContainer,IRtfExter
     /** start a new external graphic after closing current paragraph, list and table */
     public RtfExternalGraphic newImage() throws IOException {
         closeAll();
-        m_externalGraphic = new RtfExternalGraphic(this,m_writer);
+        m_externalGraphic = new RtfExternalGraphic(this, m_writer);
         return m_externalGraphic;
     }
 
@@ -200,18 +202,19 @@ implements IRtfParagraphContainer,IRtfListContainer,IRtfTableContainer,IRtfExter
     /** start a new list after closing current paragraph, list and table */
     public RtfList newList(RtfAttributes attrib) throws IOException {
         closeAll();
-        m_list = new RtfList(this,m_writer,attrib);
+        m_list = new RtfList(this, m_writer, attrib);
         return m_list;
     }
 
     /** start a new nested table after closing current paragraph, list and table */
     public RtfTable newTable(ITableColumnsInfo tc) throws IOException {
         closeAll();
-        m_table = new RtfTable(this,m_writer,tc);
+        m_table = new RtfTable(this, m_writer, tc);
         return m_table;
     }
 
-    /** start a new nested table after closing current paragraph, list and table */  // Modified by Boris Poudérous on 07/22/2002
+    /** start a new nested table after closing current paragraph, list and table */
+    // Modified by Boris Poudérous on 07/22/2002
     public RtfTable newTable(RtfAttributes attrs, ITableColumnsInfo tc) throws IOException
     {
         closeAll();
@@ -227,16 +230,16 @@ implements IRtfParagraphContainer,IRtfListContainer,IRtfTableContainer,IRtfExter
         m_widthOffset = widthOffset;
 
         // vertical cell merge codes
-        if(m_vMerge == MERGE_START) {
+        if (m_vMerge == MERGE_START) {
             writeControlWord("clvmgf");
-        } else if(m_vMerge == MERGE_WITH_PREVIOUS) {
+        } else if (m_vMerge == MERGE_WITH_PREVIOUS) {
             writeControlWord("clvmrg");
         }
 
         // horizontal cell merge codes
-        if(m_hMerge == MERGE_START) {
+        if (m_hMerge == MERGE_START) {
             writeControlWord("clmgf");
-        } else if(m_hMerge == MERGE_WITH_PREVIOUS) {
+        } else if (m_hMerge == MERGE_WITH_PREVIOUS) {
             writeControlWord("clmrg");
         }
 
@@ -256,22 +259,17 @@ implements IRtfParagraphContainer,IRtfListContainer,IRtfTableContainer,IRtfExter
 
         //these lines added by Chris Scott, Westinghouse
         //some attributes need to be writting before opening block
-        if(set_center)
-        {
+        if (set_center) {
             writeControlWord("qc");
-        }
-        else if (set_right)
-        {
+        } else if (set_right) {
             writeControlWord("qr");
-        }
-        else
-        {
+        } else {
             writeControlWord("ql");
         }
 
         writeControlWord("cellx" + xPos);
 
-        writeControlWord( "ql" );
+        writeControlWord("ql");
 
         return xPos;
 
@@ -280,25 +278,21 @@ implements IRtfParagraphContainer,IRtfListContainer,IRtfTableContainer,IRtfExter
     /** the "cell" control word marks the end of a cell */
     protected void writeRtfSuffix() throws IOException {
         // word97 hangs if cell does not contain at least one "par" control word
-        // TODO this is what causes the extra spaces in nested table of test 004-spacing-in-tables.fo,
+        // TODO this is what causes the extra spaces in nested table of test
+        //      004-spacing-in-tables.fo,
         // but if is not here we generate invalid RTF for word97
 
-        if(set_center)
-        {
+        if (set_center) {
             writeControlWord("qc");
-        }
-        else if (set_right)
-        {
+        } else if (set_right) {
             writeControlWord("qr");
-        }
-        else
-        {
+        } else {
             writeControlWord("ql");
         }
 
 
 
-        if(!containsText()) {
+        if (!containsText()) {
             writeControlWord("intbl");
 
             //R.Marra this create useless paragraph
@@ -312,22 +306,27 @@ implements IRtfParagraphContainer,IRtfListContainer,IRtfTableContainer,IRtfExter
 
     //modified by Chris Scott, Westinghouse
     private void closeCurrentParagraph() throws IOException {
-        if(m_paragraph!=null)
-        {
+        if (m_paragraph != null) {
             m_paragraph.close();
         }
     }
 
     private void closeCurrentList() throws IOException {
-        if(m_list!=null) m_list.close();
+        if (m_list != null) {
+            m_list.close();
+        }
     }
 
     private void closeCurrentTable() throws IOException {
-        if(m_table!=null) m_table.close();
+        if (m_table != null) {
+            m_table.close();
+        }
     }
 
     private void closeCurrentExternalGraphic() throws IOException {
-        if(m_externalGraphic!=null) m_externalGraphic.close();
+        if (m_externalGraphic != null) {
+            m_externalGraphic.close();
+        }
     }
 
     private void closeAll()
@@ -358,19 +357,23 @@ implements IRtfParagraphContainer,IRtfListContainer,IRtfTableContainer,IRtfExter
         int extraRowIndex = 0;
         RtfTableCell extraCell = null;
 
-        for(Iterator it = getChildren().iterator(); it.hasNext(); ) {
+        for (Iterator it = getChildren().iterator(); it.hasNext();) {
             final RtfElement e = (RtfElement)it.next();
-            if(e instanceof RtfTable) {
+            if (e instanceof RtfTable) {
                 // nested table - render its cells in supplementary rows after current row,
                 // and put the remaining content of this cell in a new cell after nested table
                 // Line added by Boris Poudérous
         m_parentRow.getExtraRowSet().setParentITableColumnsInfo(((RtfTable)this.getParentOfClass(e.getClass())).getITableColumnsInfo());
-        extraRowIndex = m_parentRow.getExtraRowSet().addTable((RtfTable)e,extraRowIndex,m_widthOffset);
-                // Boris Poudérous added the passing of the current cell attributes to the new cells (in order not to have cell without border for example)
-        extraCell = m_parentRow.getExtraRowSet().createExtraCell(extraRowIndex,m_widthOffset,this.getCellWidth(), m_attrib);
+        extraRowIndex = m_parentRow.getExtraRowSet().addTable((RtfTable)e,
+                extraRowIndex, m_widthOffset);
+                // Boris Poudérous added the passing of the current cell
+                // attributes to the new cells (in order not to have cell without
+                // border for example)
+        extraCell = m_parentRow.getExtraRowSet().createExtraCell(extraRowIndex,
+                m_widthOffset, this.getCellWidth(), m_attrib);
                 extraRowIndex++;
 
-            } else if(extraCell!=null) {
+            } else if (extraCell != null) {
                 // we are after a nested table, add elements to the extra cell created for them
                 extraCell.addChild(e);
 
@@ -386,34 +389,31 @@ implements IRtfParagraphContainer,IRtfListContainer,IRtfTableContainer,IRtfExter
      *  Use containsText() to find out if there is really some useful content in the cell.
      *  TODO: containsText could use the original isEmpty implementation?
      */
-    public boolean isEmpty()
-    {
+    public boolean isEmpty() {
         return false;
     }
 
     /** true if the "par" control word must be written for given RtfParagraph
      *  (which is not the case for the last non-empty paragraph of the cell)
      */
-    boolean paragraphNeedsPar(RtfParagraph p)
-    {
+    boolean paragraphNeedsPar(RtfParagraph p) {
         // true if there is at least one non-empty paragraph after p in our children
         boolean pFound = false;
         boolean result = false;
-        for(Iterator it = getChildren().iterator(); it.hasNext(); ) {
+        for (Iterator it = getChildren().iterator(); it.hasNext();) {
             final Object o = it.next();
-            if(!pFound) {
+            if (!pFound) {
                 // set pFound when p is found in the list
                 pFound =  (o == p);
             } else {
                 if (o instanceof RtfParagraph) {
                     final RtfParagraph p2 = (RtfParagraph)o;
-                    if(!p2.isEmpty()) {
+                    if (!p2.isEmpty()) {
                         // found a non-empty paragraph after p
                         result = true;
                         break;
                     }
-                }
-                else if (o instanceof RtfTable) {
+                } else if (o instanceof RtfTable) {
                     break;
                 }
             }

@@ -64,8 +64,7 @@ import java.io.IOException;
  * RTF Bookmark container interface.
  * @author <a href="mailto:a.putz@skynamics.com">Andreas Putz</a>
  */
-public interface IRtfBookmarkContainer
-{
+public interface IRtfBookmarkContainer {
 
     /**
      * Create a new RTF bookmark.

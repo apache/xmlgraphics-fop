@@ -63,10 +63,8 @@ package org.apache.fop.rtf.rtflib.exceptions;
  */
 
 public class RtfStructureException
-extends RtfException
-{
-    public RtfStructureException(String reason)
-    {
+extends RtfException {
+    public RtfStructureException(String reason) {
         super(reason);
     }
 }
