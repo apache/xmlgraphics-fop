@@ -1,5 +1,5 @@
 #! /bin/sh
-
+#This file should be executable. -Steve
 # Args: DIR command
 cd $1
 CMD=$2
