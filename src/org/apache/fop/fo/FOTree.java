@@ -115,10 +115,6 @@ public class FOTree extends Tree implements Runnable {
         FoRoot foRoot;
         FoXMLEvent event;
         try {
-            // Dummy only - check the language and country setup
-            System.out.println(CountryLanguageScript.getCountryName("AU"));
-            System.out.println(CountryLanguageScript.getEnglishName("EN"));
-            System.out.println(CountryLanguageScript.getScriptName("pk"));
             // Let the parser look after STARTDOCUMENT and the correct
             // positioning of the root element
             event = xmlevents.getStartElement(FObjectNames.ROOT);
