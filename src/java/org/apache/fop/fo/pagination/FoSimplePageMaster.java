@@ -67,8 +67,7 @@ import org.apache.fop.fo.FObjectNames;
 import org.apache.fop.fo.PropNames;
 import org.apache.fop.fo.PropertySets;
 import org.apache.fop.fo.expr.PropertyException;
-import org.apache.fop.xml.FoXMLEvent;
-import org.apache.fop.xml.SyncedFoXmlEventsBuffer;
+import org.apache.fop.xml.SyncedXmlEventsBuffer;
 import org.apache.fop.xml.XMLEvent;
 
 /**
@@ -132,13 +131,13 @@ public class FoSimplePageMaster extends FONode {
      * @param event the <tt>XMLEvent</tt> that triggered the creation of
      * this node
      */
-    public FoSimplePageMaster(FOTree foTree, FONode parent, FoXMLEvent event)
+    public FoSimplePageMaster(FOTree foTree, FONode parent, XMLEvent event)
         throws TreeException, FOPException
     {
         super(foTree, FObjectNames.SIMPLE_PAGE_MASTER, parent, event,
               FONode.LAYOUT_SET, sparsePropsMap, sparseIndices);
         // Process regions here
-        FoXMLEvent regionEv;
+        XMLEvent regionEv;
         if ((regionEv = xmlevents.expectStartElement
                 (FObjectNames.REGION_BODY, XMLEvent.DISCARD_W_SPACE)) == null)
             throw new FOPException
@@ -147,7 +146,7 @@ public class FoSimplePageMaster extends FONode {
         // Process region-body
         regionBody = new FoRegionBody(foTree, this, regionEv);
         regionEv = xmlevents.getEndElement
-                                (SyncedFoXmlEventsBuffer.DISCARD_EV, regionEv);
+                                (SyncedXmlEventsBuffer.DISCARD_EV, regionEv);
         namespaces.surrenderEvent(regionEv);
 
         // Remaining regions are optional
@@ -157,7 +156,7 @@ public class FoSimplePageMaster extends FONode {
         {
             regionBefore = new FoRegionBefore(foTree, this, regionEv);
             regionEv = xmlevents.getEndElement
-                                (SyncedFoXmlEventsBuffer.DISCARD_EV, regionEv);
+                                (SyncedXmlEventsBuffer.DISCARD_EV, regionEv);
             namespaces.surrenderEvent(regionEv);
         }
 
@@ -167,7 +166,7 @@ public class FoSimplePageMaster extends FONode {
         {
             regionAfter = new FoRegionAfter(foTree, this, regionEv);
             regionEv = xmlevents.getEndElement
-                            (SyncedFoXmlEventsBuffer.DISCARD_EV, regionEv);
+                            (SyncedXmlEventsBuffer.DISCARD_EV, regionEv);
             namespaces.surrenderEvent(regionEv);
         }
 
@@ -177,7 +176,7 @@ public class FoSimplePageMaster extends FONode {
         {
             regionStart = new FoRegionStart(foTree, this, regionEv);
             regionEv = xmlevents.getEndElement
-                            (SyncedFoXmlEventsBuffer.DISCARD_EV, regionEv);
+                            (SyncedXmlEventsBuffer.DISCARD_EV, regionEv);
             namespaces.surrenderEvent(regionEv);
         }
 
@@ -187,7 +186,7 @@ public class FoSimplePageMaster extends FONode {
         {
             regionEnd = new FoRegionEnd(foTree, this, regionEv);
             regionEv = xmlevents.getEndElement
-                            (SyncedFoXmlEventsBuffer.DISCARD_EV, regionEv);
+                            (SyncedXmlEventsBuffer.DISCARD_EV, regionEv);
             namespaces.surrenderEvent(regionEv);
         }
 

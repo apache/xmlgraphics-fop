@@ -67,8 +67,7 @@ import org.apache.fop.fo.FOTree;
 import org.apache.fop.fo.FObjectNames;
 import org.apache.fop.fo.PropNames;
 import org.apache.fop.fo.expr.PropertyException;
-import org.apache.fop.xml.FoXMLEvent;
-import org.apache.fop.xml.SyncedFoXmlEventsBuffer;
+import org.apache.fop.xml.SyncedXmlEventsBuffer;
 import org.apache.fop.xml.XMLEvent;
 
 /**
@@ -224,7 +223,7 @@ public class FoPageSequenceMaster extends FONode {
         FObjectNames.REPEATABLE_PAGE_MASTER_ALTERNATIVES
     };
 
-    public FoPageSequenceMaster(FOTree foTree, FONode parent, FoXMLEvent event)
+    public FoPageSequenceMaster(FOTree foTree, FONode parent, XMLEvent event)
         throws TreeException, FOPException, PropertyException
     {
         super(foTree, FObjectNames.PAGE_SEQUENCE_MASTER, parent, event,
@@ -232,7 +231,7 @@ public class FoPageSequenceMaster extends FONode {
         // Process sequence members here
         try {
             do {
-                FoXMLEvent ev = xmlevents.expectStartElement
+                XMLEvent ev = xmlevents.expectStartElement
                     (singleOrRepeatableMasterRefs, XMLEvent.DISCARD_W_SPACE);
                 if (ev == null) break;  // page-sequence-masters exhausted
                 int foType = ev.getFoType();
@@ -253,7 +252,7 @@ public class FoPageSequenceMaster extends FONode {
                     throw new FOPException
                             ("Aargh! expectStartElement(events, list)");
                 ev = xmlevents.getEndElement
-                                    (SyncedFoXmlEventsBuffer.DISCARD_EV, ev);
+                                    (SyncedXmlEventsBuffer.DISCARD_EV, ev);
                 namespaces.surrenderEvent(ev);
             } while (true);
         } catch (NoSuchElementException e) {
@@ -278,7 +277,7 @@ public class FoPageSequenceMaster extends FONode {
     public class FoSinglePageMasterReference extends FONode {
 
         public FoSinglePageMasterReference
-                            (FOTree foTree, FONode parent, FoXMLEvent event)
+                            (FOTree foTree, FONode parent, XMLEvent event)
             throws TreeException, FOPException, PropertyException
         {
             super(foTree, FObjectNames.SINGLE_PAGE_MASTER_REFERENCE, parent,
@@ -300,7 +299,7 @@ public class FoPageSequenceMaster extends FONode {
     public class FoRepeatablePageMasterReference extends FONode {
 
         public FoRepeatablePageMasterReference
-                            (FOTree foTree, FONode parent, FoXMLEvent event)
+                            (FOTree foTree, FONode parent, XMLEvent event)
             throws TreeException, FOPException, PropertyException
         {
             super(foTree, FObjectNames.REPEATABLE_PAGE_MASTER_REFERENCE,
@@ -326,7 +325,7 @@ public class FoPageSequenceMaster extends FONode {
     public class FoRepeatablePageMasterAlternatives extends FONode {
 
         public FoRepeatablePageMasterAlternatives
-                            (FOTree foTree, FONode parent, FoXMLEvent event)
+                            (FOTree foTree, FONode parent, XMLEvent event)
             throws TreeException, FOPException, PropertyException
         {
             super(foTree, FObjectNames.REPEATABLE_PAGE_MASTER_ALTERNATIVES,
@@ -336,7 +335,7 @@ public class FoPageSequenceMaster extends FONode {
             // Process conditional-page-master-references here
             try {
                 do {
-                    FoXMLEvent ev = this.xmlevents.expectStartElement
+                    XMLEvent ev = this.xmlevents.expectStartElement
                             (FObjectNames.CONDITIONAL_PAGE_MASTER_REFERENCE,
                                                     XMLEvent.DISCARD_W_SPACE);
                     if (ev == null) break; // Sub-sequences exhausted
@@ -344,7 +343,7 @@ public class FoPageSequenceMaster extends FONode {
                     //    ("Found conditional-page-master-reference");
                     new FoConditionalPageMasterReference(foTree, this, ev);
                     ev = this.xmlevents.getEndElement
-                                    (SyncedFoXmlEventsBuffer.DISCARD_EV, ev);
+                                    (SyncedXmlEventsBuffer.DISCARD_EV, ev);
                     this.namespaces.surrenderEvent(ev);
                 } while (true);
             } catch (NoSuchElementException e) {
@@ -361,7 +360,7 @@ public class FoPageSequenceMaster extends FONode {
         public class FoConditionalPageMasterReference extends FONode {
 
             public FoConditionalPageMasterReference
-                            (FOTree foTree, FONode parent, FoXMLEvent event)
+                            (FOTree foTree, FONode parent, XMLEvent event)
             throws TreeException, FOPException, PropertyException
             {
                 super(foTree, FObjectNames.CONDITIONAL_PAGE_MASTER_REFERENCE,
