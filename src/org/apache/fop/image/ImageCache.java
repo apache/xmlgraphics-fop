@@ -10,8 +10,6 @@ package org.apache.fop.image;
 // FOP
 import org.apache.fop.fo.FOUserAgent;
 
-import org.apache.log.Logger;
-
 public interface ImageCache {
     public FopImage getImage(String url, FOUserAgent context);
     public void releaseImage(String url, FOUserAgent context);

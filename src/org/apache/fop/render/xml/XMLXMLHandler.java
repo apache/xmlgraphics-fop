@@ -11,8 +11,6 @@ import org.apache.fop.fo.FOUserAgent;
 import org.apache.fop.render.XMLHandler;
 import org.apache.fop.render.RendererContext;
 
-import org.apache.log.Logger;
-
 import org.apache.batik.dom.util.DOMUtilities;
 
 import org.w3c.dom.Document;

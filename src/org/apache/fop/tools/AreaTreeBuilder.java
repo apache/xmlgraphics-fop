@@ -20,10 +20,8 @@ import org.apache.fop.layout.FontInfo;
 import org.apache.fop.layout.FontState;
 import org.apache.fop.fo.FOUserAgent;
 
-import org.apache.log.*;
-import org.apache.log.format.*;
-import org.apache.log.output.io.*;
-import org.apache.log.output.*;
+import org.apache.avalon.framework.logger.ConsoleLogger;
+import org.apache.avalon.framework.logger.Logger;
 
 import java.io.*;
 import java.util.*;
@@ -51,7 +49,7 @@ import org.apache.batik.dom.util.DOMUtilities;
  * out of order rendering
  */
 public class AreaTreeBuilder {
-    private Logger log;
+    private Logger log = new ConsoleLogger(ConsoleLogger.LEVEL_DEBUG);
 
     /**
      */
@@ -60,22 +58,6 @@ public class AreaTreeBuilder {
 
         atb.runTests(args[0], args[1], args[2]);
         System.exit(0);
-    }
-
-    public AreaTreeBuilder() {
-        setupLogging();
-    }
-
-    private void setupLogging() {
-        Hierarchy hierarchy = Hierarchy.getDefaultHierarchy();
-        PatternFormatter formatter = new PatternFormatter("[%{priority}]: %{message}\n%{throwable}");
-
-        LogTarget target = null;
-        target = new StreamTarget(System.out, formatter);
-
-        hierarchy.setDefaultLogTarget(target);
-        log = hierarchy.getLoggerFor("test");
-        log.setPriority(Priority.DEBUG);
     }
 
     /**

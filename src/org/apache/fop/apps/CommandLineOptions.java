@@ -16,10 +16,9 @@ import java.io.FileNotFoundException;
 import org.apache.fop.configuration.Configuration;
 import org.apache.fop.apps.FOPException;
 
-import org.apache.log.*;
-import org.apache.log.format.*;
-import org.apache.log.output.io.*;
-import org.apache.log.output.*;
+// Avalon
+import org.apache.avalon.framework.logger.ConsoleLogger;
+import org.apache.avalon.framework.logger.Logger;
 
 import java.io.*;
 
@@ -93,24 +92,7 @@ public class CommandLineOptions {
     public CommandLineOptions(String[] args)
             throws FOPException, FileNotFoundException {
 
-        Hierarchy hierarchy = Hierarchy.getDefaultHierarchy();
-        PatternFormatter formatter = new PatternFormatter(
-           "[%{priority}]: %{message}\n%{throwable}" );
-
-        LogTarget target = null;
-        boolean doConsoleLogging = true;
-        if (doConsoleLogging) {
-            target = new StreamTarget(System.out, formatter);
-        } else {
-            try {
-                File f = new File("fop.log");
-                target = new FileTarget(f, false, formatter);
-            } catch (IOException e) {}
-        }
-
-        hierarchy.setDefaultLogTarget(target);
-        log = hierarchy.getLoggerFor("fop");
-        log.setPriority(Priority.INFO);
+        log = new ConsoleLogger(ConsoleLogger.LEVEL_INFO);
 
         boolean optionsParsed = true;
         rendererOptions = new java.util.HashMap();
@@ -141,13 +123,13 @@ public class CommandLineOptions {
         for (int i = 0; i < args.length; i++) {
             if (args[i].equals("-d") || args[i].equals("--full-error-dump")) {
                 errorDump = new Boolean(true);
-                log.setPriority(Priority.DEBUG);
+                log = new ConsoleLogger(ConsoleLogger.LEVEL_DEBUG);
             } else if (args[i].equals("-x")
                        || args[i].equals("--dump-config")) {
                 dumpConfiguration = new Boolean(true);
             } else if (args[i].equals("-q") || args[i].equals("--quiet")) {
                 quiet = new Boolean(true);
-                log.setPriority(Priority.ERROR);
+                log = new ConsoleLogger(ConsoleLogger.LEVEL_ERROR);
             } else if (args[i].equals("-c")) {
                 if ((i + 1 == args.length)
                         || (args[i + 1].charAt(0) == '-')) {

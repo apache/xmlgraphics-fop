@@ -9,7 +9,8 @@ package org.apache.fop.fo;
 
 import org.apache.fop.render.XMLHandler;
 import org.apache.fop.render.RendererContext;
-import org.apache.log.Logger;
+
+import org.apache.avalon.framework.logger.Logger;
 
 import org.w3c.dom.*;
 

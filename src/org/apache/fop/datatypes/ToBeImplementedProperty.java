@@ -9,8 +9,6 @@ package org.apache.fop.datatypes;
 
 import org.apache.fop.fo.*;
 
-import org.apache.log.*;
-
 public class ToBeImplementedProperty extends Property {
 
     public static class Maker extends Property.Maker {
@@ -31,9 +29,17 @@ public class ToBeImplementedProperty extends Property {
     }
 
     public ToBeImplementedProperty(String propName) {
-        Logger log = Hierarchy.getDefaultHierarchy().getLoggerFor("fop");
-        log.warn("property - \"" + propName
-                               + "\" is not implemented yet.");
+
+	// XXX: (mjg@recalldesign.com) This is a bit of a kluge, perhaps an
+	// UnimplementedPropertyException or something similar should
+	// get thrown here instead.
+	//
+	// This was solved on the maintenance branch by using
+	// MessageHandler, btu that doesn't exist on the trunk
+
+//         Logger log = Hierarchy.getDefaultHierarchy().getLoggerFor("fop");
+//         log.warn("property - \"" + propName
+//                                + "\" is not implemented yet.");
     }
 
 }

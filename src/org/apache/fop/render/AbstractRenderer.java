@@ -16,7 +16,8 @@ import org.apache.fop.area.inline.Character;
 import org.apache.fop.area.inline.Space;
 import org.apache.fop.fo.FOUserAgent;
 
-import org.apache.log.Logger;
+// Avalon
+import org.apache.avalon.framework.logger.Logger;
 
 // Java
 import java.awt.geom.Rectangle2D;

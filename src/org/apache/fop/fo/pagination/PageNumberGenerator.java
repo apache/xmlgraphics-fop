@@ -7,9 +7,11 @@
 
 package org.apache.fop.fo.pagination;
 
+// FOP
 import org.apache.fop.fo.properties.*;
 
-import org.apache.log.*;
+// Avalon
+import org.apache.avalon.framework.logger.Logger;
 
 // Java
 import java.util.*;

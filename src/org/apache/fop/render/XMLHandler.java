@@ -7,8 +7,6 @@
 
 package org.apache.fop.render;
 
-import org.apache.log.Logger;
-
 import org.w3c.dom.Document;
 
 /**

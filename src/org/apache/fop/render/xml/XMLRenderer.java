@@ -21,7 +21,8 @@ import org.apache.fop.fo.FOUserAgent;
 import org.apache.fop.layout.FontInfo;
 import org.apache.fop.apps.FOPException;
 
-import org.apache.log.Logger;
+// Avalon
+import org.apache.avalon.framework.logger.Logger;
 
 // Java
 import java.io.IOException;

@@ -27,7 +27,8 @@ import org.apache.fop.image.analyser.ImageReaderFactory;
 import org.apache.fop.image.analyser.ImageReader;
 import org.apache.fop.fo.FOUserAgent;
 
-import org.apache.log.Logger;
+// Avalon
+import org.apache.avalon.framework.logger.Logger;
 
 /*
 handle context: base dir, logger, caching

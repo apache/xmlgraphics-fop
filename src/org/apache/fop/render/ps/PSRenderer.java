@@ -26,8 +26,6 @@ import org.apache.batik.gvt.renderer.*;
 import org.apache.batik.gvt.filter.*;
 import org.apache.batik.gvt.event.*;
 
-import org.apache.log.Logger;
-
 // SVG
 import org.w3c.dom.svg.SVGSVGElement;
 import org.w3c.dom.svg.SVGDocument;
