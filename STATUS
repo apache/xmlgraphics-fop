@@ -1,140 +1,157 @@
 $Id$
 
-STATUS
+STATUS 
 
-Things worked on:
+**** COMMITTERS **** 
 
-rewrite of the org.apache.fop.layout in a new package (implements xsl 2000) [James Tauber]
-image support [Eric Schaeffer, Pankaj Narula]
-simple-links [Arved Sandstrom]
-SVG support [Keiron Liddle][Torsten Friebe]
-more borders, padding and absolute positioning [Jon Smirl]
-smooth shading in PDF [Steve Coffman]
+Arved Sandstrom (release coordinator) 
+James Tauber (started it all and wrote most of the code) 
 
+Steven Coffman 
+Fotis Jannidis 
+Eric Schaeffer 
+Jon Smirl 
 
-Things to do:
+**** THINGS WORKED ON ***** 
 
-Get images working
-[PARTIAL] Get padding working
-[DONE] Incorporate Arved Sandstrom's simple-link implementation
-[PARTIAL] Implement basic keeps
-[PARTIAL] Incorporate Eric Schaeffer's further table fixes
-Implement MessageHandler (or similar)
-Support XSL Working Draft 12 January 2000
+rewrite of the org.apache.fop.layout in a new package (implements xsl 2000) [James Tauber] 
+image support [Eric Schaeffer, Pankaj Narula, Andreas Rueckert] 
+simple-links [Arved Sandstrom] 
+SVG support [Keiron Liddle][Torsten Friebe] 
+more borders, padding and absolute positioning [Jon Smirl] 
+smooth shading in PDF [Steven Coffman] 
+tables: fo: table-header, table-and-caption, 
+        properties: 
+             column-number, 
+             number-columns-repeated 
+             number-columns-spanned 
+             number-rows-spanned 
+         general properties wrt tables 
+            [Karen Lease] 
+docs, message handler [Fotis Jannidis] 
 
-Other Bugs to fix:
+**** THINGS TO DO **** 
 
-colour not continued onto subsequent pages if coloured block goes over page
-simple-link doesn't seem to work (I think I, JKT, broke it)
+Support XSL Working Draft 27 March 2000 
 
-with AWT Previewer:
+1.One category of tasks will be to implement missing formatting objects. 
+  There are 6 (7) such objects: 
 
-- currently the layout process uses PDF fonts. This gives sometimes
+  fo:character (?) 
+  fo:external-graphic 
+  fo:leader 
+  fo:table-and-caption 
+  fo:table-header 
+  fo:multi-case 
+  fo:wrapper 
+
+2.A second category of tasks will be to update existing objects. 
+  This typically entails renaming modifications. There are at least 3 of these: 
+
+  fo:page-sequence-master 
+  fo:single-page-master-reference 
+  fo:repeatable-page-master-reference 
+
+3.A third category of tasks is to retire obsolescent objects. The primary issue 
+  here seems to be the migration of FOP from officially supporting 
+  DisplayGraphic and InlineGraphic FO's to officially supporting at least an 
+  ExternalGraphic FO, and ideally also the InstreamForeignObject FO, the latter 
+  aimed at SVG support. 
+
+4.A fourth, and not insignificant, category of tasks is to decide upon and 
+  implement all reasonable properties required by the specification. This 
+  also means that at this point, until further review, no FO can be considered 
+  to be compliant. 
+
+  a) CHANGED 
+   11.href (Dropped/Changed) 
+   14.page-master-even (Dropped/Changed) 
+   15.page-master-first (Dropped/Changed) 
+   16.page-master-name (Dropped/Changed) 
+   17.page-master-odd (Dropped/Changed) 
+   18.page-master-repeating (Dropped/Changed) 
+   21.space-after.optimum (Incomplete) 
+   22.space-before.optimum (Incomplete) 
+   25.white-space-treatment (Dropped/Changed) 
+
+  b) NEW 
+    1.alignment-adjust 26.min-width 
+    2.baseline-identifier 27.number-columns-repeated 
+    3.baseline-shift 28.number-columns-spanned 
+    4.block-progression-dimension 29.number-rows-spanned 
+    5.character 30.orphans 
+    6.clip 31.overflow 
+    7.column-number 32.page-break-after 
+    8.content-type 33.page-break-before 
+    9.direction 34.precedence 
+   10.display-align 35.ref-id 
+   11.dominant-baseline 36.reference-orientation 
+   12.font-variant 37.region-name 
+   13.format 38.relative-align 
+   14.grouping-separator 39.role 
+   15.grouping-size 40.rule-style 
+   16.inline-progression-dimension 41.source-document 
+   17.keep-with-previous 42.space-after 
+   18.leader-length 43.space-before 
+   19.leader-pattern 44.space-end 
+   20.letter-value 45.space-start 
+   21.line-stacking-strategy 46.src 
+   22.master-name 47.visibility 
+   23.max-height 48.widows 
+   24.max-width 49.writing-mode 
+   25.min-height 50.z-index 
+
+5.A fifth category of tasks is the ongoing effort to promote maintainability, 
+write 
+  more and better documentation, and to refine the build process. 
+  a) Don't use 'make' any longer and make sure that build.sh and build.bat work 
+  b) Add the property files to the source code (how is the vote on this?) 
+  c) update the examples to the new spec 
+  d) add examples so that all the FOs supported are used in some example 
+
+Get images working 
+[PARTIAL] Get padding working 
+[DONE] Incorporate Arved Sandstrom's simple-link implementation 
+[PARTIAL] Implement basic keeps 
+[PARTIAL] Incorporate Eric Schaeffer's further table fixes 
+
+Other Bugs to fix: 
+
+- colour not continued onto subsequent pages if coloured block goes over page 
+- simple-link doesn't work properly 
+- no SVG support in AWTCommandLine 
+
+with AWT Previewer: 
+
+- currently the layout process uses PDF fonts. This gives sometimes 
   trouble with java.awt.Font 
-- we need some progress messages even if the process itself is fast
-- GIF format is supported by the viewer, but disabled in FOP. BMP is
-  not done, because there are no standard libraries.
-- more comments/english comments
-- first preview is painted twice (flashing screen)
-- should "preview" be an option when calling FOP instead of having
-  it's own main method?
+- we need some progress messages even if the process itself is fast 
+- GIF format is supported by the viewer, but disabled in FOP. BMP is 
+  not done, because there are no standard libraries. 
+- more comments/english comments 
+- first preview is painted twice (flashing screen) 
+- should "preview" be an option when calling FOP instead of having 
+  it's own main method? 
 
-History
+**** HISTORY **** 
 
-Done since 0.12.1 release
-- using Ant to build Fop instead of make [Giacomo Pati]
-- borders, padding and absolute positioning [Jon Smirl]
+Done since 0.12.1 release 
+- using Ant to build Fop instead of make [Giacomo Pati] 
+- borders, padding and absolute positioning [Jon Smirl] 
 
-0.12.1 release
-to make the bug fix on XTCommandLine available to non developers
-basic support for padding-{top,left,bottom,right} on blocks.
-implemented simple-link (don't think it works, though)
-XTCommandLine now works again
-background color works on list-block
-list-blocks can now be in table-cell
+0.12.1 release 
+to make the bug fix on XTCommandLine available to non developers 
+basic support for padding-{top,left,bottom,right} on blocks. 
+implemented simple-link (don't think it works, though) 
+XTCommandLine now works again 
+background color works on list-block 
+list-blocks can now be in table-cell 
 
-Done for 0.12.0 release:
+Done for 0.12.0 release: 
 
-Make sure Makefiles work
-Switch to using Status object as return from layout()
-Incorporate Eric Schaeffer's fix to tables in static-content
-Incorporate Kelly Campell's fixes to GifJpegImage
-Incorporate Eric Schaeffer's background colour implementation
-  (actually used different approach with background colour as trait)
-
-
-A list of changes to the fo and properties implemented in FOP in the WD XSL 2000
-(contributed by Pankaj Narula)
-
-Formatting Objects
-root                                           Yes
-layout-master-set                              Yes
-simple-page-master                             Yes
-region-body                                    Yes
-region-before                                  Yes
-region-after                                   Yes
-page-sequence                                  Yes
-sequence-specification                         changed to page-sequence-master
-sequence-specifier-single                      changed to single-page-master-reference 
-sequence-specifier-repeating                   changed to repeatable-page-master-reference 
-sequence-specifier-alternating                 changed to repeatable-page-master-alternatives 
-flow                                           Yes 
-static-content                                 Yes 
-block                                          Yes 
-list-block                                     Yes 
-list-item                                      Yes 
-list-item-label                                Yes 
-list-item-body                                 Yes 
-page-number                                    Yes 
-display-sequence                               nuked tbd the equivalent tag is block-container
-inline-sequence                                nuked tbd the equivalent tag is inline-container 
-display-rule                                   nuked tbd the equivalent thing 
-display-graphic                                nuked now two tags external-graphic instream-graphic 
-table (minimal support)                        Yes 
-table-column (minimal support)                 Yes 
-table-body (minimal support)                   Yes 
-table-row (minimal support)                    Yes 
-table-cell (minimal support)                   Yes
-
-Properties
-end-indent                                     Yes
-page-master-name                               nuked replaced with master-name
-page-master-first                              implemented using conditional page reference object 
-page-master-repeating                          do
-page-master-odd                                do 
-page-master-even                               do 
-margin-top (only on pages and regions)         Yes
-margin-bottom (only on pages and regions)      Yes 
-margin-left (only on pages and regions)        Yes 
-margin-right (only on pages and regions)       Yes
-extent                                         Yes 
-page-width                                     Yes 
-page-height                                    Yes 
-flow-name                                      Yes 
-font-family                                    Yes 
-font-style                                     Yes 
-font-weight                                    Yes 
-font-size                                      Yes 
-line-height                                    Yes 
-text-align                                     Yes 
-text-align-last                                Yes
-space-before.optimum                           Yes 
-space-after.optimum                            Yes 
-start-indent                                   Yes
-end-indent                                     Yes
-provisional-distance-between-starts            Yes 
-provisional-label-separation                   Yes 
-rule-thickness                                 Yes 
-color                                          Yes 
-wrap-option                                    Yes 
-white-space-treatment                          Yes 
-break-before                                   Yes 
-break-after                                    Yes 
-text-indent                                    Yes 
-href                                           Yes 
-column-width                                   Yes
-background-color                               Yes 
-padding-top (in conjunction with bgcolor)      Yes 
-padding-left (in conjunction with bgcolor)     Yes
-padding-bottom (in conjunction with bgcolor)   Yes 
-padding-right (in conjunction with bgcolor)    Yes
+Make sure Makefiles work 
+Switch to using Status object as return from layout() 
+Incorporate Eric Schaeffer's fix to tables in static-content 
+Incorporate Kelly Campell's fixes to GifJpegImage 
+Incorporate Eric Schaeffer's background colour implementation 
+  (actually used different approach with background colour as trait) 
