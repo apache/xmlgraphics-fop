@@ -68,6 +68,7 @@ import org.apache.batik.gvt.text.Mark;
 import org.apache.batik.gvt.TextPainter;
 import org.apache.batik.gvt.TextNode;
 import org.apache.batik.gvt.text.GVTAttributedCharacterIterator;
+import org.apache.batik.gvt.text.TextPaintInfo;
 import org.apache.batik.gvt.font.GVTFontFamily;
 import org.apache.batik.bridge.SVGFontFamily;
 import org.apache.batik.gvt.renderer.StrokingTextPainter;
@@ -118,7 +119,7 @@ public class PDFTextPainter implements TextPainter {
         // System.out.println("PDFText paint");
         String txt = node.getText();
         Point2D loc = node.getLocation();
-
+        
         AttributedCharacterIterator aci =
           node.getAttributedCharacterIterator();
         // reset position to start of char iterator
@@ -135,17 +136,22 @@ public class PDFTextPainter implements TextPainter {
 
         List gvtFonts;
         gvtFonts = (List) aci.getAttribute(
-                      GVTAttributedCharacterIterator.TextAttribute.GVT_FONT_FAMILIES);
+            GVTAttributedCharacterIterator.TextAttribute.GVT_FONT_FAMILIES);
+
         Paint forg = (Paint) aci.getAttribute(TextAttribute.FOREGROUND);
-        Paint strokePaint;
-        strokePaint = (Paint) aci.getAttribute(
-                     GVTAttributedCharacterIterator.TextAttribute.STROKE_PAINT);
+        TextPaintInfo tpi = (TextPaintInfo) aci.getAttribute(
+            GVTAttributedCharacterIterator.TextAttribute.PAINT_INFO);
+        
+        if (tpi == null) {
+            return;
+        }        
+        
+        Paint strokePaint = tpi.strokePaint;
         Float size = (Float) aci.getAttribute(TextAttribute.SIZE);
         if (size == null) {
             return;
         }
-        Stroke stroke = (Stroke) aci.getAttribute(
-                          GVTAttributedCharacterIterator.TextAttribute.STROKE);
+        Stroke stroke = tpi.strokeStroke;
         /*
         Float xpos = (Float) aci.getAttribute(
                        GVTAttributedCharacterIterator.TextAttribute.X);
