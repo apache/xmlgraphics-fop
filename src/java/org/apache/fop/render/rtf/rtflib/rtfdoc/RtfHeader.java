@@ -47,6 +47,7 @@ class RtfHeader extends RtfContainer {
     RtfHeader(RtfFile f, Writer w) throws IOException {
         super(f, w);
         new RtfFontTable(this, w);
+        new RtfGenerator(this, w);
 //        m_userProperties.put("jforVersion",JForVersionInfo.getLongVersionInfo());
     }
 
@@ -59,6 +60,7 @@ class RtfHeader extends RtfContainer {
         RtfTemplate.getInstance().writeTemplate(this);
         RtfStyleSheetTable.getInstance().writeStyleSheet(this);
         writeFootnoteProperties();
+        
     }
 
     /** write user properties if any */
