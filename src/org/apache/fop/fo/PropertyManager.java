@@ -74,38 +74,6 @@ public class PropertyManager {
       initBorderInfo(BorderAndPadding.BOTTOM, saBottom);
       initBorderInfo(BorderAndPadding.LEFT, saLeft);
       initBorderInfo(BorderAndPadding.RIGHT, saRight);
-
-      /****
-      // Border color
-      this.borderAndPadding.borderTopColor =
-	properties.get(msgFmt.format(saTop)).getColorType();
-      this.borderAndPadding.borderBottomColor =
-	properties.get(msgFmt.format(saBottom)).getColorType();
-      this.borderAndPadding.borderLeftColor =
-	properties.get(msgFmt.format(saLeft)).getColorType();
-      this.borderAndPadding.borderRightColor =
-	properties.get(msgFmt.format(saRight)).getColorType();
-
-      // Border style
-      this.borderAndPadding.borderTopStyle =
-	properties.get(msgFmt.format(saTop)).getEnum();
-      this.borderAndPadding.borderBottomStyle =
-	properties.get(msgFmt.format(saBottom)).getEnum();
-      this.borderAndPadding.borderLeftStyle =
-	properties.get(msgFmt.format(saLeft)).getEnum();
-      this.borderAndPadding.borderRightStyle =
-	properties.get(msgFmt.format(saRight)).getEnum();
-
-      // Border width
-      this.borderAndPadding.borderTopWidth =
-	properties.get(msgFmt.format(saTop)).getCondLength();
-      this.borderAndPadding.borderBottomWidth =
-	properties.get(msgFmt.format(saBottom)).getCondLength();
-      this.borderAndPadding.borderLeftWidth =
-	properties.get(msgFmt.format(saLeft)).getCondLength();
-      this.borderAndPadding.borderRightWidth =
-	properties.get(msgFmt.format(saRight)).getCondLength();
-      ****/
     }
     return borderAndPadding;
   }
