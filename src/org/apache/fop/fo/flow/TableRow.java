@@ -314,26 +314,29 @@ public class TableRow extends FObj {
 						}
 				}
 
+				/**
 				if ((spaceBefore != 0) && (this.marker == 0)) {
 						spacer = new DisplaySpace(spaceBefore);
 						area.increaseHeight(spaceBefore);
 				}
-
+				***/
 				if (marker == 0 && configID) {
 						// configure id
 						area.getIDReferences().configureID(id, area);
 				}
 
 				int spaceLeft = area.spaceLeft();
-				this.areaContainer = new AreaContainer(propMgr.getFontState(area.getFontInfo()),
-																							 -area.getBorderLeftWidth(),
-																							 -area.getBorderTopWidth(), area.getAllocationWidth(),
-																							 area.spaceLeft(), Position.RELATIVE);
+				this.areaContainer =
+						new AreaContainer(propMgr.getFontState(area.getFontInfo()),
+															0,0,
+															area.getContentWidth(),
+															area.spaceLeft(),
+															Position.RELATIVE);
 				areaContainer.foCreator=this;	// G Seshadri
 				areaContainer.setPage(area.getPage());
 
 				areaContainer.setBackgroundColor(backgroundColor);
-				areaContainer.setBorderAndPadding(propMgr.getBorderAndPadding());
+				// areaContainer.setBorderAndPadding(propMgr.getBorderAndPadding());
 				areaContainer.start();
 
 				areaContainer.setAbsoluteHeight(area.getAbsoluteHeight());

@@ -144,11 +144,19 @@ public class TableBody extends FObj {
 				}
 
 				int spaceLeft = area.spaceLeft();
-				this.areaContainer = new AreaContainer(propMgr.getFontState(area.getFontInfo()),
-																							 -area.getBorderLeftWidth(),
-																							 -area.getBorderTopWidth() + area.getHeight(),
-																							 area.getAllocationWidth(), area.spaceLeft(),
-																							 Position.RELATIVE);
+
+				/* Note: the parent FO must be a Table. The parent Area is the Block
+				 * type area created by the Table, which is also a reference area.
+				 * The content "width" (IPD) of the TableBody is the same as that
+				 * of the containing table area, and its relative position is 0,0.
+				 * Strictly speaking (CR), this FO should generate no areas!
+				 */
+				this.areaContainer =
+						new AreaContainer(propMgr.getFontState(area.getFontInfo()),
+															0,area.getHeight(),
+															area.getContentWidth(), // IPD
+															area.spaceLeft(),
+															Position.RELATIVE);
 				areaContainer.foCreator=this;	// G Seshadri
 				areaContainer.setPage(area.getPage());
 				areaContainer.setBackgroundColor(backgroundColor);
