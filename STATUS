@@ -10,7 +10,7 @@ Incorporate Arved Sandstrom's simple-link implementation
 Switch to using Status object as return from layout()
 Implement basic keeps
 Incorporate Eric Schaeffer's fix to tables in static-content
-Incorporate Kelly Campell's fixes to GifJpegImage
+[DONE] Incorporate Kelly Campell's fixes to GifJpegImage
 
 Other Bugs to fix:
 
