@@ -241,7 +241,7 @@
 		<datatype>String</datatype>
 		<default></default>
 	</property>
-	<property>
+<!--	<property>
 		<name>page-master-first</name>
 		<inherited>false</inherited>
 		<datatype>String</datatype>
@@ -252,7 +252,7 @@
 		<inherited>false</inherited>
 		<datatype>String</datatype>
 		<default></default>
-	</property>
+	</property>-->
 	<property>
 		<name>extent</name>
 		<inherited>true</inherited>
@@ -287,12 +287,12 @@
 		<datatype>String</datatype>
 		<default>sans-serif</default>
 	</property>
-	<property>
+<!--	<property>
 		<name>page-master-even</name>
 		<inherited>false</inherited>
 		<datatype>String</datatype>
 		<default></default>
-	</property>
+	</property>-->
 	<property>
 		<name>margin-top</name>
 		<inherited>false</inherited>
@@ -385,12 +385,12 @@
 		<auto-ok/>
 		<default>auto</default>
 	</property>
-	<property>
+<!--	<property>
 		<name>page-master-repeating</name>
 		<inherited>false</inherited>
 		<datatype>String</datatype>
 		<default></default>
-	</property>
+	</property>-->
 	<property>
 		<name>provisional-distance-between-starts</name>
 		<inherited>true</inherited>
@@ -1363,6 +1363,784 @@
 			</enumeration>
 		<default>before</default>
 	</property>
+
+  <property>
+    <name>absolute-position</name>
+    <inherited>false</inherited>
+    <datatype>Enum</datatype>
+      <enumeration>
+        <value const="AUTO">auto</value>
+        <value const="FIXED">fixed</value>
+        <value const="ABSOLUTE">absolute</value>
+        <value const="INHERIT">inherit</value>
+      </enumeration>
+    <default>auto</default>
+  </property>
+
+  <property>
+    <name>active-state</name>
+    <inherited>true</inherited>
+    <datatype>String</datatype>
+    <default>none</default>
+  </property>
+
+  <property>
+    <name>alignment-adjust</name>
+    <inherited>true</inherited>
+    <datatype>String</datatype>
+    <default>none</default>
+  </property>
+
+  <property>
+    <name>alignment-baseline</name>
+    <inherited>true</inherited>
+    <datatype>String</datatype>
+    <default>none</default>
+  </property>
+
+  <property>
+    <name>auto-restore</name>
+    <inherited>true</inherited>
+    <datatype>String</datatype>
+    <default>none</default>
+  </property>
+
+  <property>
+    <name>azimuth</name>
+    <inherited>true</inherited>
+    <datatype>String</datatype>
+    <default>none</default>
+  </property>
+
+  <property>
+    <name>background</name>
+    <inherited>true</inherited>
+    <datatype>String</datatype>
+    <default>none</default>
+  </property>
+
+  <property>
+    <name>background-attachment</name>
+    <inherited>true</inherited>
+    <datatype>String</datatype>
+    <default>none</default>
+  </property>
+
+  <property>
+    <name>background-image</name>
+    <inherited>true</inherited>
+    <datatype>String</datatype>
+    <default>none</default>
+  </property>
+
+  <property>
+    <name>background-position</name>
+    <inherited>true</inherited>
+    <datatype>String</datatype>
+    <default>none</default>
+  </property>
+
+  <property>
+    <name>background-position-horizontal</name>
+    <inherited>true</inherited>
+    <datatype>String</datatype>
+    <default>none</default>
+  </property>
+
+  <property>
+    <name>background-position-vertical</name>
+    <inherited>true</inherited>
+    <datatype>String</datatype>
+    <default>none</default>
+  </property>
+
+  <property>
+    <name>background-repeat</name>
+    <inherited>true</inherited>
+    <datatype>String</datatype>
+    <default>none</default>
+  </property>
+
+  <property>
+    <name>baseline-shift</name>
+    <inherited>true</inherited>
+    <datatype>String</datatype>
+    <default>none</default>
+  </property>
+
+  <property>
+    <name>border-before-precedence</name>
+    <inherited>true</inherited>
+    <datatype>String</datatype>
+    <default>none</default>
+  </property>
+
+  <property>
+    <name>border-end-precedence</name>
+    <inherited>true</inherited>
+    <datatype>String</datatype>
+    <default>none</default>
+  </property>
+
+  <property>
+    <name>border-spacing</name>
+    <inherited>true</inherited>
+    <datatype>String</datatype>
+    <default>none</default>
+  </property>
+
+  <property>
+    <name>border-start-precedence</name>
+    <inherited>true</inherited>
+    <datatype>String</datatype>
+    <default>none</default>
+  </property>
+
+  <property>
+    <name>caption-side</name>
+    <inherited>true</inherited>
+    <datatype>String</datatype>
+    <default>none</default>
+  </property>
+
+  <property>
+    <name>case-name</name>
+    <inherited>true</inherited>
+    <datatype>String</datatype>
+    <default>none</default>
+  </property>
+
+  <property>
+    <name>case-title</name>
+    <inherited>true</inherited>
+    <datatype>String</datatype>
+    <default>none</default>
+  </property>
+
+  <property>
+    <name>clear</name>
+    <inherited>true</inherited>
+    <datatype>String</datatype>
+    <default>none</default>
+  </property>
+
+  <property>
+    <name>clip</name>
+    <inherited>true</inherited>
+    <datatype>String</datatype>
+    <default>none</default>
+  </property>
+
+  <property>
+    <name>color-profile-name</name>
+    <inherited>true</inherited>
+    <datatype>String</datatype>
+    <default>none</default>
+  </property>
+
+  <property>
+    <name>content-type</name>
+    <inherited>true</inherited>
+    <datatype>String</datatype>
+    <default>none</default>
+  </property>
+
+  <property>
+    <name>cue</name>
+    <inherited>true</inherited>
+    <datatype>String</datatype>
+    <default>none</default>
+  </property>
+
+  <property>
+    <name>cue-after</name>
+    <inherited>true</inherited>
+    <datatype>String</datatype>
+    <default>none</default>
+  </property>
+
+  <property>
+    <name>cue-before</name>
+    <inherited>true</inherited>
+    <datatype>String</datatype>
+    <default>none</default>
+  </property>
+
+  <property>
+    <name>destination-placement-offset</name>
+    <inherited>true</inherited>
+    <datatype>String</datatype>
+    <default>none</default>
+  </property>
+
+  <property>
+    <name>direction</name>
+    <inherited>true</inherited>
+    <datatype>String</datatype>
+    <default>none</default>
+  </property>
+
+  <property>
+    <name>dominant-baseline</name>
+    <inherited>true</inherited>
+    <datatype>String</datatype>
+    <default>none</default>
+  </property>
+
+  <property>
+    <name>elevation</name>
+    <inherited>true</inherited>
+    <datatype>String</datatype>
+    <default>none</default>
+  </property>
+
+  <property>
+    <name>empty-cells</name>
+    <inherited>true</inherited>
+    <datatype>String</datatype>
+    <default>none</default>
+  </property>
+
+  <property>
+    <name>ends-row</name>
+    <inherited>true</inherited>
+    <datatype>String</datatype>
+    <default>none</default>
+  </property>
+
+  <property>
+    <name>float</name>
+    <inherited>true</inherited>
+    <datatype>String</datatype>
+    <default>none</default>
+  </property>
+
+  <property>
+    <name>font</name>
+    <inherited>true</inherited>
+    <datatype>String</datatype>
+    <default>none</default>
+  </property>
+
+  <property>
+    <name>font-selection-strategy</name>
+    <inherited>true</inherited>
+    <datatype>String</datatype>
+    <default>none</default>
+  </property>
+
+  <property>
+    <name>font-size-adjust</name>
+    <inherited>true</inherited>
+    <datatype>String</datatype>
+    <default>none</default>
+  </property>
+
+  <property>
+    <name>font-stretch</name>
+    <inherited>true</inherited>
+    <datatype>String</datatype>
+    <default>none</default>
+  </property>
+
+  <property>
+    <name>glyph-orientation-horizontal</name>
+    <inherited>true</inherited>
+    <datatype>String</datatype>
+    <default>none</default>
+  </property>
+
+  <property>
+    <name>glyph-orientation-vertical</name>
+    <inherited>true</inherited>
+    <datatype>String</datatype>
+    <default>none</default>
+  </property>
+
+  <property>
+    <name>hyphenation-ladder-count</name>
+    <inherited>true</inherited>
+    <datatype>String</datatype>
+    <default>none</default>
+  </property>
+
+  <property>
+    <name>hyphenation-keep</name>
+    <inherited>true</inherited>
+    <datatype>String</datatype>
+    <default>none</default>
+  </property>
+
+  <property>
+    <name>indicate-destination</name>
+    <inherited>true</inherited>
+    <datatype>String</datatype>
+    <default>none</default>
+  </property>
+
+  <property>
+    <name>inline-progression-dimension</name>
+    <inherited>true</inherited>
+    <datatype>String</datatype>
+    <default>none</default>
+  </property>
+
+  <property>
+    <name>last-line-end-indent</name>
+    <inherited>true</inherited>
+    <datatype>String</datatype>
+    <default>none</default>
+  </property>
+
+  <property>
+    <name>letter-spacing</name>
+    <inherited>true</inherited>
+    <datatype>String</datatype>
+    <default>none</default>
+  </property>
+
+  <property>
+    <name>linefeed-treatment</name>
+    <inherited>true</inherited>
+    <datatype>String</datatype>
+    <default>none</default>
+  </property>
+
+  <property>
+    <name>line-height-shift-adjustment</name>
+    <inherited>true</inherited>
+    <datatype>String</datatype>
+    <default>none</default>
+  </property>
+
+  <property>
+    <name>line-stacking-strategy</name>
+    <inherited>true</inherited>
+    <datatype>String</datatype>
+    <default>none</default>
+  </property>
+
+  <property>
+    <name>margin</name>
+    <inherited>true</inherited>
+    <datatype>String</datatype>
+    <default>none</default>
+  </property>
+
+  <property>
+    <name>marker-class-name</name>
+    <inherited>true</inherited>
+    <datatype>String</datatype>
+    <default>none</default>
+  </property>
+
+  <property>
+    <name>max-height</name>
+    <inherited>true</inherited>
+    <datatype>String</datatype>
+    <default>none</default>
+  </property>
+
+  <property>
+    <name>max-width</name>
+    <inherited>true</inherited>
+    <datatype>String</datatype>
+    <default>none</default>
+  </property>
+
+  <property>
+    <name>media-usage</name>
+    <inherited>true</inherited>
+    <datatype>String</datatype>
+    <default>none</default>
+  </property>
+
+  <property>
+    <name>min-height</name>
+    <inherited>true</inherited>
+    <datatype>String</datatype>
+    <default>none</default>
+  </property>
+
+  <property>
+    <name>min-width</name>
+    <inherited>true</inherited>
+    <datatype>String</datatype>
+    <default>none</default>
+  </property>
+
+  <property>
+    <name>page-break-after</name>
+    <inherited>true</inherited>
+    <datatype>String</datatype>
+    <default>none</default>
+  </property>
+
+  <property>
+    <name>page-break-before</name>
+    <inherited>true</inherited>
+    <datatype>String</datatype>
+    <default>none</default>
+  </property>
+
+  <property>
+    <name>page-break-inside</name>
+    <inherited>true</inherited>
+    <datatype>String</datatype>
+    <default>none</default>
+  </property>
+
+  <property>
+    <name>pause</name>
+    <inherited>true</inherited>
+    <datatype>String</datatype>
+    <default>none</default>
+  </property>
+
+  <property>
+    <name>pause-after</name>
+    <inherited>true</inherited>
+    <datatype>String</datatype>
+    <default>none</default>
+  </property>
+
+  <property>
+    <name>pause-before</name>
+    <inherited>true</inherited>
+    <datatype>String</datatype>
+    <default>none</default>
+  </property>
+
+  <property>
+    <name>pitch</name>
+    <inherited>true</inherited>
+    <datatype>String</datatype>
+    <default>none</default>
+  </property>
+
+  <property>
+    <name>pitch-range</name>
+    <inherited>true</inherited>
+    <datatype>String</datatype>
+    <default>none</default>
+  </property>
+
+  <property>
+    <name>play-during</name>
+    <inherited>true</inherited>
+    <datatype>String</datatype>
+    <default>none</default>
+  </property>
+
+  <property>
+    <name>reference-orientation</name>
+    <inherited>true</inherited>
+    <datatype>String</datatype>
+    <default>none</default>
+  </property>
+
+  <property>
+    <name>relative-position</name>
+    <inherited>true</inherited>
+    <datatype>String</datatype>
+    <default>none</default>
+  </property>
+
+  <property>
+    <name>rendering-intent</name>
+    <inherited>true</inherited>
+    <datatype>String</datatype>
+    <default>none</default>
+  </property>
+
+  <property>
+    <name>retrieve-boundary</name>
+    <inherited>true</inherited>
+    <datatype>String</datatype>
+    <default>none</default>
+  </property>
+
+  <property>
+    <name>retrieve-class-name</name>
+    <inherited>true</inherited>
+    <datatype>String</datatype>
+    <default>none</default>
+  </property>
+
+  <property>
+    <name>retrieve-position</name>
+    <inherited>true</inherited>
+    <datatype>String</datatype>
+    <default>none</default>
+  </property>
+
+  <property>
+    <name>richness</name>
+    <inherited>true</inherited>
+    <datatype>String</datatype>
+    <default>none</default>
+  </property>
+
+  <property>
+    <name>role</name>
+    <inherited>true</inherited>
+    <datatype>String</datatype>
+    <default>none</default>
+  </property>
+
+  <property>
+    <name>scaling-method</name>
+    <inherited>true</inherited>
+    <datatype>String</datatype>
+    <default>none</default>
+  </property>
+
+  <property>
+    <name>score-spaces</name>
+    <inherited>true</inherited>
+    <datatype>String</datatype>
+    <default>none</default>
+  </property>
+
+  <property>
+    <name>script</name>
+    <inherited>true</inherited>
+    <datatype>String</datatype>
+    <default>none</default>
+  </property>
+
+  <property>
+    <name>show-destination</name>
+    <inherited>true</inherited>
+    <datatype>String</datatype>
+    <default>none</default>
+  </property>
+
+  <property>
+    <name>size</name>
+    <inherited>true</inherited>
+    <datatype>String</datatype>
+    <default>none</default>
+  </property>
+
+  <property>
+    <name>source-document</name>
+    <inherited>true</inherited>
+    <datatype>String</datatype>
+    <default>none</default>
+  </property>
+
+  <property>
+    <name>space-end</name>
+    <inherited>true</inherited>
+    <datatype>String</datatype>
+    <default>none</default>
+  </property>
+
+  <property>
+    <name>space-start</name>
+    <inherited>true</inherited>
+    <datatype>String</datatype>
+    <default>none</default>
+  </property>
+
+  <property>
+    <name>space-treatment</name>
+    <inherited>true</inherited>
+    <datatype>String</datatype>
+    <default>none</default>
+  </property>
+
+  <property>
+    <name>speak</name>
+    <inherited>true</inherited>
+    <datatype>String</datatype>
+    <default>none</default>
+  </property>
+
+  <property>
+    <name>speak-header</name>
+    <inherited>true</inherited>
+    <datatype>String</datatype>
+    <default>none</default>
+  </property>
+
+  <property>
+    <name>speak-numeral</name>
+    <inherited>true</inherited>
+    <datatype>String</datatype>
+    <default>none</default>
+  </property>
+
+  <property>
+    <name>speak-punctuation</name>
+    <inherited>true</inherited>
+    <datatype>String</datatype>
+    <default>none</default>
+  </property>
+
+  <property>
+    <name>speech-rate</name>
+    <inherited>true</inherited>
+    <datatype>String</datatype>
+    <default>none</default>
+  </property>
+
+  <property>
+    <name>starting-state</name>
+    <inherited>true</inherited>
+    <datatype>String</datatype>
+    <default>none</default>
+  </property>
+
+  <property>
+    <name>starts-row</name>
+    <inherited>true</inherited>
+    <datatype>String</datatype>
+    <default>none</default>
+  </property>
+
+  <property>
+    <name>stress</name>
+    <inherited>true</inherited>
+    <datatype>String</datatype>
+    <default>none</default>
+  </property>
+
+  <property>
+    <name>suppress-at-line-break</name>
+    <inherited>true</inherited>
+    <datatype>String</datatype>
+    <default>none</default>
+  </property>
+
+  <property>
+    <name>switch-to</name>
+    <inherited>true</inherited>
+    <datatype>String</datatype>
+    <default>none</default>
+  </property>
+
+  <property>
+    <name>table-layout</name>
+    <inherited>true</inherited>
+    <datatype>String</datatype>
+    <default>none</default>
+  </property>
+
+  <property>
+    <name>target-presentation-context</name>
+    <inherited>true</inherited>
+    <datatype>String</datatype>
+    <default>none</default>
+  </property>
+
+  <property>
+    <name>target-processing-context</name>
+    <inherited>true</inherited>
+    <datatype>String</datatype>
+    <default>none</default>
+  </property>
+
+  <property>
+    <name>target-stylesheet</name>
+    <inherited>true</inherited>
+    <datatype>String</datatype>
+    <default>none</default>
+  </property>
+
+  <property>
+    <name>text-altitude</name>
+    <inherited>true</inherited>
+    <datatype>String</datatype>
+    <default>none</default>
+  </property>
+
+  <property>
+    <name>text-depth</name>
+    <inherited>true</inherited>
+    <datatype>String</datatype>
+    <default>none</default>
+  </property>
+
+  <property>
+    <name>text-shadow</name>
+    <inherited>true</inherited>
+    <datatype>String</datatype>
+    <default>none</default>
+  </property>
+
+  <property>
+    <name>text-transform</name>
+    <inherited>true</inherited>
+    <datatype>String</datatype>
+    <default>none</default>
+  </property>
+
+  <property>
+    <name>treat-as-word-space</name>
+    <inherited>true</inherited>
+    <datatype>String</datatype>
+    <default>none</default>
+  </property>
+
+  <property>
+    <name>unicode-bidi</name>
+    <inherited>true</inherited>
+    <datatype>String</datatype>
+    <default>none</default>
+  </property>
+
+  <property>
+    <name>visibility</name>
+    <inherited>true</inherited>
+    <datatype>String</datatype>
+    <default>none</default>
+  </property>
+
+  <property>
+    <name>voice-family</name>
+    <inherited>true</inherited>
+    <datatype>String</datatype>
+    <default>none</default>
+  </property>
+
+  <property>
+    <name>volume</name>
+    <inherited>true</inherited>
+    <datatype>String</datatype>
+    <default>none</default>
+  </property>
+
+  <property>
+    <name>white-space</name>
+    <inherited>true</inherited>
+    <datatype>String</datatype>
+    <default>none</default>
+  </property>
+
+  <property>
+    <name>word-spacing</name>
+    <inherited>true</inherited>
+    <datatype>String</datatype>
+    <default>none</default>
+  </property>
+
+  <property>
+    <name>xml:lang</name>
+    <class-name>XMLLang</class-name>
+    <inherited>true</inherited>
+    <datatype>String</datatype>
+    <default>none</default>
+  </property>
+
+  <property>
+    <name>z-index</name>
+    <inherited>true</inherited>
+    <datatype>String</datatype>
+    <default>none</default>
+  </property>
+
 	<property>
 		<name>format</name>
 		<inherited>false</inherited>
