@@ -27,9 +27,15 @@ import org.apache.fop.apps.FOPException;
   Modified by Mark Lillywhite mark-fop@inomial.com. Added
   getInvalidElements() so that StreamRenderer cna tell what
   hasn't been determined yet.
+
+  Modified by lmckenzi@ca.ibm.com
+  Sometimes IDs are created, but not validated. This code fixes
+  the incorrect complaint that the ID already exists which prevents
+  basic-links from working (sometimes).
+   
   */
 public class IDReferences {
-    private Hashtable idReferences, idValidation;
+    private Hashtable idReferences, idValidation, idUnvalidated;
 
     final static int ID_PADDING = 5000;    // space to add before id y position
 
@@ -39,6 +45,7 @@ public class IDReferences {
     public IDReferences() {
         idReferences = new Hashtable();
         idValidation = new Hashtable();
+        idUnvalidated = new Hashtable();
     }
 
 
@@ -64,7 +71,12 @@ public class IDReferences {
      */
     public void createID(String id) throws FOPException {
         if (id != null &&!id.equals("")) {
-            if (doesIDExist(id)) {
+            if (doesUnvalidatedIDExist(id)) {
+                removeFromUnvalidatedIDList(id);
+                //Steve's (gears@apache.org) comment: Is this right? 
+                removeFromIdValidationList(id);
+            }
+            else if (doesIDExist(id)) {
                 throw new FOPException("The id \"" + id
                                        + "\" already exists in this document");
             } else {
@@ -75,6 +87,53 @@ public class IDReferences {
         }
     }
 
+    /**
+     * Creates id entry that hasn't been validated
+     *
+     * @param id     The id to create
+     * @exception FOPException
+     */
+    public void createUnvalidatedID(String id) {
+        if (id != null &&!id.equals("")) {
+            if (!doesIDExist(id)) {
+                createNewId(id);
+                addToUnvalidatedIdList(id);
+            } 
+        }
+    }
+
+    /**
+     * Adds created id list of unvalidated ids that have already 
+     * been created. This should be used if it is unsure whether
+     * the id is valid but it must be anyhow.
+     *
+     * @param id     The id to create
+     */
+    public void addToUnvalidatedIdList(String id) {
+        idUnvalidated.put(id,"");
+    }
+
+    /**
+     * Removes id from list of unvalidated ids.
+     * This should be used if the id has been determined 
+     * to be valid. 
+     *
+     * @param id     The id to remove
+     */
+    public void removeFromUnvalidatedIDList(String id) {
+        idUnvalidated.remove(id);
+    }
+
+    /**
+     * Determines whether specified id already exists in
+     * idUnvalidated
+     *
+     * @param id     The id to search for
+     * @return true if ID was found, false otherwise
+     */
+    public boolean doesUnvalidatedIDExist(String id) {
+        return idUnvalidated.containsKey(id);
+    }
 
     /**
      * Configures this id
