@@ -77,7 +77,7 @@ public class ConditionalPageMasterReference extends FObj {
                 return false;
             } else if (pagePosition==PagePosition.LAST) {
                 // how the hell do you know at this point?
-                log.debug("LAST PagePosition NYI");
+                log.warn("conditional-page-master-reference: page-position='last' is not yet implemented (NYI)");
                 return false;
             }
         } else {
@@ -85,7 +85,7 @@ public class ConditionalPageMasterReference extends FObj {
                 return false;
             } else if (pagePosition==PagePosition.LAST) {
                 // how the hell do you know at this point?
-                log.debug("LAST PagePosition NYI");
+                log.warn("conditional-page-master-reference: page-position='last' is not yet implemented (NYI)");
                 // potentially valid, don't return
             }
         }
