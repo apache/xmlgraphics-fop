@@ -67,39 +67,7 @@ public class Inline extends FObjMixed {
                                    + " be directly under flow", locator);
         }
 
-        // Common Accessibility Properties
-        CommonAccessibility mAccProps = propMgr.getAccessibilityProps();
-
-        // Common Aural Properties
-        CommonAural mAurProps = propMgr.getAuralProps();
-
-        // Common Border, Padding, and Background Properties
-        CommonBorderAndPadding bap = propMgr.getBorderAndPadding();
-        CommonBackground bProps = propMgr.getBackgroundProps();
-
-        // Common Font Properties
-        //this.fontState = propMgr.getFontState(area.getFontInfo());
-
-        // Common Margin Properties-Inline
-        CommonMarginInline mProps = propMgr.getMarginInlineProps();
-
-        // Common Relative Position Properties
-        CommonRelativePosition mRelProps = propMgr.getRelativePositionProps();
-
-        // this.propertyList.get("alignment-adjust");
-        // this.propertyList.get("alignment-baseline");
-        // this.propertyList.get("baseline-shift");
-        // this.propertyList.get("color");
-        // this.propertyList.get("dominant-baseline");
         setupID();
-        // this.propertyList.get("keep-together");
-        // this.propertyList.get("keep-with-next");
-        // this.propertyList.get("keep-with-previous");
-        // this.propertyList.get("line-height");
-        // this.propertyList.get("line-height-shift-adjustment");
-        // this.propertyList.get("text-devoration");
-        // this.propertyList.get("visibility");
-        // this.propertyList.get("z-index");
 
         int textDecoration = this.propertyList.get(PR_TEXT_DECORATION).getEnum();
 
@@ -119,6 +87,13 @@ public class Inline extends FObjMixed {
     }
 
     /**
+     * @see org.apache.fop.fo.FONode#end
+     */
+    protected void endOfNode() throws SAXParseException {
+        getFOInputHandler().endInline(this);
+    }
+
+    /**
      * @return true (Inline can contain Markers)
      */
     protected boolean containsMarkers() {
@@ -134,13 +109,6 @@ public class Inline extends FObjMixed {
 
     public void acceptVisitor(AddLMVisitor aLMV) {
         aLMV.serveInline(this);
-    }
-
-    /**
-     * @see org.apache.fop.fo.FONode#end
-     */
-    protected void endOfNode() throws SAXParseException {
-        getFOInputHandler().endInline(this);
     }
 
     public String getName() {

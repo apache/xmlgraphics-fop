@@ -366,7 +366,7 @@ public class FObj extends FONode implements Constants {
 
     /**
      * Return an iterator over the object's childNodes starting
-     * at the pased node.
+     * at the passed-in node.
      * @param childNode First node in the iterator
      * @return A ListIterator or null if childNode isn't a child of
      * this FObj.
@@ -528,6 +528,26 @@ public class FObj extends FONode implements Constants {
             || lName.equals("wrapper") 
             || (!isOutOfLineFODescendant && lName.equals("float"))
             || lName.equals("retrieve-marker")));
+    }
+    
+    /**
+     * Convenience method for validity checking.  Checks if the
+     * current node has an ancestor of a given name.
+     * @param ancestorName -- node name to check for (e.g., "fo:root")
+     * @return number of levels above FO where ancestor exists, 
+     *    -1 if not found
+     */
+    protected int findAncestor(String ancestorName) {
+        int found = 1;
+        FONode temp = getParent();
+        while (temp != null) {
+            if (temp.getName().equals(ancestorName)) {
+                return found;
+            }
+            found += 1;
+            temp = temp.getParent();
+        }
+        return -1;
     }
 }
 
