@@ -104,6 +104,7 @@ NOTE: The ISO 639/ISO 3166 convention is that language names are written in lowe
   <section id="patterns">
     <title>Hyphenation Patterns</title>
     <p>If you would like to build your own hyphenation pattern files, or modify existing ones, this section will help you understand how to do so. Even when creating a pattern file from scratch, it may be beneficial to start with an existing file and modify it. See <link href="#std">Standard Hyphenation Support</link> or the source distribution (src/hyph) for examples. Here is a brief explanation of the contents of FOP's hyphenation patterns:</p>
+    <warning>The remaining content of this section should be considered "draft" quality. It was drafted from theoretical literature, and has not been tested against actual FOP behavior. It may contain errors or omissions. Do not rely on these instructions without testing everything stated here. If you use these instructions, please provide feedback on the <link href="maillist.html#fop-user">FOP User mailing list</link>, either confirming their accuracy, or raising specific problems that we can address.</warning>
     <ul>
       <li>The root of the pattern file is the &lt;hyphenation-info> element.</li>
       <li>&lt;hyphen-char> is self-explanatory: its attribute "value" contains the default character to be used for hyphenating this language. For English, this is the hyphen "-".</li>
