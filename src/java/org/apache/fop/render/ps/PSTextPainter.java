@@ -77,7 +77,6 @@ import org.apache.batik.gvt.renderer.StrokingTextPainter;
 
 import org.apache.fop.fonts.FontMetrics;
 import org.apache.fop.fonts.Font;
-import org.apache.fop.svg.ACIUtils;
 import org.apache.fop.apps.Document;
 
 /**
