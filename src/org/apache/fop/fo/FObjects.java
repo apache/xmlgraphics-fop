@@ -20,6 +20,7 @@ import java.util.StringTokenizer;
 import java.util.BitSet;
 import java.util.Iterator;
 
+import org.apache.fop.apps.FOPException;
 import org.apache.fop.fo.FObjectNames;
 import org.apache.fop.fo.PropertySets;
 import org.apache.fop.fo.PropNames;
@@ -41,6 +42,44 @@ public class FObjects {
 
     public static final String packageNamePrefix = "org.apache.fop";
 
+    /**
+     * Constants for the set of attributes of interest with FONodes
+     */
+    public static final int
+              NO_SET = 0
+           ,ROOT_SET = 1
+   ,DECLARATIONS_SET = 2
+         ,LAYOUT_SET = 3
+        ,PAGESEQ_SET = 4
+           ,FLOW_SET = 5
+         ,STATIC_SET = 6
+         ,MARKER_SET = 7
+
+           ,LAST_SET = MARKER_SET
+                     ;
+
+    public static ROBitSet getAttrROBitSet(int attrSet)
+            throws FOPException
+    {
+        switch (attrSet) {
+        case ROOT_SET:
+            return allProps;
+        case DECLARATIONS_SET:
+            return declarationsAll;
+        case LAYOUT_SET:
+            return layoutMasterSet;
+        case PAGESEQ_SET:
+            return pageSeqSet;
+        case FLOW_SET:
+            return flowAllSet;
+        case STATIC_SET:
+            return staticAllSet;
+        case MARKER_SET:
+            return flowAllSet;
+        }
+        throw new FOPException("Invalid attribute set: " + attrSet);
+    }
+
     public static int getFoIndex(String name) {
         return ((Integer)(foToIndex.get(name))).intValue();
     }
@@ -51,14 +90,6 @@ public class FObjects {
 
     public static Class getClass(int foIndex) {
         return foClasses[foIndex];
-    }
-
-    public static BitSet getLayoutMasterSet() {
-        return (BitSet)(layoutMasterSet.clone());
-    }
-
-    public static BitSet getPageFlowSet() {
-        return (BitSet)(pageSeqSet.clone());
     }
 
     /**
@@ -80,7 +111,7 @@ public class FObjects {
      * the package name from the common package prefix set in the field
      * <tt>packageNamePrefix</tt>, the package name suffix associated with
      * the fo local names in the <tt>FObjectNames.foLocalNames</tt> array,
-     * the the class name whcih has been constructed in the
+     * the the class name which has been constructed in the
      * <tt>foClassNames</tt> array here.
      *  It can be indexed by the fo name constants defined in the
      * <tt>FObjectNames</tt> class.
@@ -1827,6 +1858,12 @@ public class FObjects {
     public static final ROBitSet flowAllSet;
 
     /**
+     * set of all fo:marker subtree properties - properties which are
+     * usable <i>within</i> the fo:marker subtree.
+     */
+    public static final ROBitSet markerAllSet;
+
+    /**
      * set of all fo:static-content subtree properties - properties which are
      * usable within the fo:static-content subtree.
      */
@@ -1838,10 +1875,7 @@ public class FObjects {
         Iterator propertySet;
         // fill the BitSet of all properties
         BitSet allprops = new BitSet(PropNames.LAST_PROPERTY_INDEX + 1);
-        for (int i = 0; i <= PropNames.LAST_PROPERTY_INDEX; i++) {
-            allprops.set(i);
-        }
-        allprops.clear(PropNames.NO_PROPERTY);
+        allprops.set(1, PropNames.LAST_PROPERTY_INDEX);
 
         allProps = new ROBitSet(allprops);
 
@@ -1930,26 +1964,33 @@ public class FObjects {
         staticonlyset.set(PropNames.RETRIEVE_POSITION);
         staticonlyset.set(PropNames.RETRIEVE_BOUNDARY);
 
+        // pageseqset may contain any of the exclusive elements of the
+        // flow set or the static-content set, which may be accessed by
+        // the from-nearest-specified-property() function.
         BitSet pageseqset = new BitSet(PropNames.LAST_PROPERTY_INDEX + 1);
         pageseqset.or(allprops);
         pageseqset.andNot(rootonly);
         pageseqset.andNot(declarationsonly);
         pageseqset.andNot(layoutmasteronly);
-        pageseqset.andNot(flowonlyset);
-        pageseqset.andNot(staticonlyset);
         pageSeqSet = new ROBitSet(pageseqset);
 
         BitSet flowallset = new BitSet(PropNames.LAST_PROPERTY_INDEX + 1);
         flowallset.or(pageseqset);
-        flowallset.or(flowonlyset);
+        flowallset.andNot(staticonlyset);
 
         flowAllSet = new ROBitSet(flowallset);
 
         BitSet staticallset = new BitSet(PropNames.LAST_PROPERTY_INDEX + 1);
         staticallset.or(pageseqset);
-        staticallset.or(staticonlyset);
+        staticallset.andNot(flowonlyset);
 
         staticAllSet = new ROBitSet(staticallset);
+
+        BitSet markerallset = new BitSet(PropNames.LAST_PROPERTY_INDEX + 1);
+        markerallset.or(flowallset);
+        markerallset.clear(PropNames.MARKER_CLASS_NAME);
+
+        markerAllSet = new ROBitSet(markerallset);
     }
 
     /**
