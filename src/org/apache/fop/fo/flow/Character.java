@@ -66,7 +66,6 @@ import org.apache.fop.fo.FObj;
 import org.apache.fop.layout.LineArea;
 import org.apache.fop.apps.FOPException;
 
-
 /**
  * this class represents the flow object 'fo:character'. Its use is defined by
  * the spec: "The fo:character flow object represents a character that is mapped to
@@ -123,9 +122,6 @@ public class Character extends FObj {
 
         // Common Font Properties
         //this.fontState = propMgr.getFontState(area.getFontInfo());
-
-        // Common Hyphenation Properties
-        HyphenationProps mHyphProps = propMgr.getHyphenationProps();
 
         // Common Margin Properties-Inline
         MarginInlineProps mProps = propMgr.getMarginInlineProps();
