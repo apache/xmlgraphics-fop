@@ -131,13 +131,16 @@ public class FoFlow extends FOPageSeqNode {
         // it is normal-flow reference-area; for other regions it is the
         // region-reference-area.  See
         // 7.3 Reference Rectangle for Percentage Computations
+        // The difficulty is that there may be multiple attempts to layout the
+        // flow.  Each attempt will generate its own page set, only the first
+        // of which contains a region-body-reference-area which qualifies as
+        // the reference rectangle for percentages defined on the flow.
         throw new FOPException("Called from FoFlow");
     }
 
     public Area getLayoutContext() {
         // The layout context for fo:flow is is the region-body-reference-area.
-        // TODO - the real version
-        Area context = null;
-        return context;
+        return pageSequence.getPage().getRegionBodyRefArea();
     }
+
 }
