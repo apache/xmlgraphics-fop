@@ -17,6 +17,8 @@ import org.apache.fop.layout.inline.*;
 import org.apache.fop.pdf.*;
 import org.apache.fop.fo.properties.LeaderPattern;
 
+import org.apache.log.Logger;
+
 // Java
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -30,7 +32,13 @@ import java.util.Hashtable;
  * Modified by Mark Lillywhite mark-fop@inomial.com to use the
  * new renderer interface. Not 100% certain that this is correct.
  */
-public class XMLRenderer extends AbstractRenderer {
+public class XMLRenderer implements Renderer {
+
+    protected Logger log;
+
+    public void setLogger(Logger logger) {
+        log = logger;
+    }
 
     /**
      * indentation to use for pretty-printing the XML
@@ -54,8 +62,6 @@ public class XMLRenderer extends AbstractRenderer {
     private boolean consistentOutput = false;
 
     public XMLRenderer() {}
-
-    protected void doFrame(Area area) {}
 
     /**
      * set up renderer options
@@ -444,7 +450,7 @@ public class XMLRenderer extends AbstractRenderer {
     */
     public void startRenderer(OutputStream outputStream)
     throws IOException {
-        log.info("rendering areas to XML");
+        log.debug("rendering areas to XML");
         this.writer = new PrintWriter(outputStream);
         this.writer.write( "<?xml version=\"1.0\"?>\n<!-- produced by " +
                            this.producer + " -->\n");
@@ -459,6 +465,6 @@ public class XMLRenderer extends AbstractRenderer {
     throws IOException {
         writeEndTag("</AreaTree>");
         this.writer.flush();
-        log.error("written out XML");
+        log.debug("written out XML");
     }
 }

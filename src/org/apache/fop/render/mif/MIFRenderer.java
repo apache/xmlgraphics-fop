@@ -149,93 +149,11 @@ public class MIFRenderer extends AbstractRenderer {
             this.mifDoc.endTable();
 
         }
-        int saveY = this.currentYPosition;
-        int saveX = this.currentAreaContainerXPosition;
-
-        if (area.getPosition() == Position.ABSOLUTE) {
-            // Y position is computed assuming positive Y axis, adjust for negative postscript one
-            this.currentYPosition = area.getYPosition()
-                                    - 2 * area.getPaddingTop()
-                                    - 2 * area.getBorderTopWidth();
-
-            this.currentAreaContainerXPosition = area.getXPosition();
-        } else if (area.getPosition() == Position.RELATIVE) {
-
-            this.currentYPosition -= area.getYPosition();
-            this.currentAreaContainerXPosition += area.getXPosition();
-
-        } else if (area.getPosition() == Position.STATIC) {
-
-            this.currentYPosition -= area.getPaddingTop()
-                                     + area.getBorderTopWidth();
-            this.currentAreaContainerXPosition += area.getPaddingLeft()
-                                                  + area.getBorderLeftWidth();
-        }
-
-        this.currentXPosition = this.currentAreaContainerXPosition;
-        doFrame(area);
-
-        Enumeration e = area.getChildren().elements();
-        while (e.hasMoreElements()) {
-            Box b = (Box)e.nextElement();
-            b.render(this);
-        }
-        if (area.getPosition() != Position.STATIC) {
-            this.currentYPosition = saveY;
-            this.currentAreaContainerXPosition = saveX;
-        } else
-            this.currentYPosition -= area.getHeight();
+        super.renderAreaContainer(area);
     }
 
-    public void renderBodyAreaContainer(BodyAreaContainer area) {
-
-
-        int saveY = this.currentYPosition;
-        int saveX = this.currentAreaContainerXPosition;
-
-        if (area.getPosition() == Position.ABSOLUTE) {
-            // Y position is computed assuming positive Y axis, adjust for negative postscript one
-            this.currentYPosition = area.getYPosition();
-            this.currentAreaContainerXPosition = area.getXPosition();
-        } else if (area.getPosition() == Position.RELATIVE) {
-            this.currentYPosition -= area.getYPosition();
-            this.currentAreaContainerXPosition += area.getXPosition();
-        }
-
-        this.currentXPosition = this.currentAreaContainerXPosition;
-        int w, h;
-        int rx = this.currentAreaContainerXPosition;
-        w = area.getContentWidth();
-        h = area.getContentHeight();
-        int ry = this.currentYPosition;
-        ColorType bg = area.getBackgroundColor();
-
-        /*
-         * // I'm not sure I should have to check for bg being null
-         * // but I do
-         * if ((bg != null) && (bg.alpha() == 0)) {
-         * this.addRect(rx, ry, w, -h, new PDFColor(bg), new PDFColor(bg));
-         * }
-         */
-        /*
-         * // floats & footnotes stuff
-         * renderAreaContainer(area.getBeforeFloatReferenceArea());
-         * renderAreaContainer(area.getFootnoteReferenceArea());
-         */
-        // main reference area
-        Enumeration e = area.getMainReferenceArea().getChildren().elements();
-        while (e.hasMoreElements()) {
-            Box b = (Box)e.nextElement();
-            b.render(this);    // span areas
-        }
-
-
-        if (area.getPosition() != Position.STATIC) {
-            this.currentYPosition = saveY;
-            this.currentAreaContainerXPosition = saveX;
-        } else
-            this.currentYPosition -= area.getHeight();
-
+    protected void addFilledRect(int x, int y, int w, int h,
+                                 ColorType col) {
     }
 
     protected void doFrame(Area area) {
@@ -293,42 +211,25 @@ public class MIFRenderer extends AbstractRenderer {
     }
 
     public void renderSpanArea(SpanArea area) {
-
         // A span maps to a textframe
-
-
         this.mifDoc.createTextRect(area.getColumnCount());
-
-        Enumeration e = area.getChildren().elements();
-        while (e.hasMoreElements()) {
-            Box b = (Box)e.nextElement();
-            b.render(this);    // column areas
-        }
-
+        super.renderSpanArea(area);
     }
 
     /**
      * render the given block area
      */
     public void renderBlockArea(BlockArea area) {
-
         this.mifDoc.setBlockProp(area.getStartIndent(), area.getEndIndent());
-        Enumeration e = area.getChildren().elements();
-        while (e.hasMoreElements()) {
-            Box b = (Box)e.nextElement();
-            b.render(this);
-        }
-
+        super.renderBlockArea(area);
     }
 
     /**
      * render the given display space
      */
     public void renderDisplaySpace(DisplaySpace space) {
-
         int d = space.getSize();
         this.currentYPosition -= d;
-
     }
 
     /**
@@ -340,7 +241,6 @@ public class MIFRenderer extends AbstractRenderer {
      * render a foreign object area
      */
     public void renderForeignObjectArea(ForeignObjectArea area) {}
-
 
     public void renderWordArea(WordArea area) {
         String s;
@@ -407,32 +307,9 @@ public class MIFRenderer extends AbstractRenderer {
      * render the given line area
      */
     public void renderLineArea(LineArea area) {
-
-        int rx = this.currentAreaContainerXPosition + area.getStartIndent();
-        int ry = this.currentYPosition;
-        int w = area.getContentWidth();
-        int h = area.getHeight();
-
-        this.currentYPosition -= area.getPlacementOffset();
-        this.currentXPosition = rx;
-
-        int bl = this.currentYPosition;
-
         // The start of a new linearea corresponds to a new para in FM
-
         this.mifDoc.startLine();
-
-        Enumeration e = area.getChildren().elements();
-        while (e.hasMoreElements()) {
-
-            Box b = (Box)e.nextElement();
-            this.currentYPosition = ry - area.getPlacementOffset();
-            b.render(this);
-
-        }
-        this.currentYPosition = ry - h;
-        this.currentXPosition = rx;
-
+        super.renderLineArea(area);
     }
 
     /**

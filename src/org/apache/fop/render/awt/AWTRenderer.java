@@ -219,11 +219,8 @@ public class AWTRenderer extends AbstractRenderer implements Printable, Pageable
      * @param g the green component
      * @param b the blue component
      */
-
     // changed by aml/rlc to use helper function that
     // corrects for integer roundoff, and to remove 3D effect
-
-
     protected void addRect(int x, int y, int w, int h, float r, float g,
                            float b) {
         graphics.setColor(new Color(r, g, b));
@@ -278,6 +275,14 @@ public class AWTRenderer extends AbstractRenderer implements Printable, Pageable
             graphics.drawRect(startx, starty, endx - startx, endy - starty);
         else
             graphics.fillRect(startx, starty, endx - startx, endy - starty);
+    }
+
+    protected void addFilledRect(int x, int y, int w, int h,
+                                 ColorType col) {
+        float r = col.red();
+        float g = col.green();
+        float b = col.blue();
+        addRect(x, y, w, h, r, g, b, r, g, b);
     }
 
     /**
@@ -390,20 +395,6 @@ public class AWTRenderer extends AbstractRenderer implements Printable, Pageable
          * ....
          * }
          */
-    }
-
-    public void renderBodyAreaContainer(BodyAreaContainer area) {
-        renderAreaContainer(area.getBeforeFloatReferenceArea());
-        renderAreaContainer(area.getFootnoteReferenceArea());
-
-        // main reference area
-        Enumeration e = area.getMainReferenceArea().getChildren().elements();
-        while (e.hasMoreElements()) {
-            org.apache.fop.layout.Box b =
-                (org.apache.fop.layout.Box)e.nextElement();
-            b.render(this);    // span areas
-        }
-
     }
 
     protected void doFrame(org.apache.fop.layout.Area area) {
