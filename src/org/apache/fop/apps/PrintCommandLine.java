@@ -72,6 +72,8 @@ public class PrintCommandLine extends CommandLine {
       driver.setRenderer(renderer);
       driver.addElementMapping("org.apache.fop.fo.StandardElementMapping");
       driver.addElementMapping("org.apache.fop.svg.SVGElementMapping");
+	    driver.addPropertyList("org.apache.fop.fo.StandardPropertyListMapping");
+	    driver.addPropertyList("org.apache.fop.svg.SVGPropertyListMapping");
       driver.buildFOTree(parser, fileInputSource(args[0]));
       driver.format();
       driver.render();
