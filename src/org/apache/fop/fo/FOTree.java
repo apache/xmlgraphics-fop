@@ -1,13 +1,14 @@
 package org.apache.fop.fo;
 
 import org.apache.fop.datastructs.Tree;
-import org.apache.fop.datastructs.SyncedCircularBuffer;
 import org.apache.fop.datatypes.Ints;
 import org.apache.fop.datatypes.Numeric;
 import org.apache.fop.datatypes.Auto;
 import org.apache.fop.datatypes.None;
 import org.apache.fop.datatypes.TextDecorations;
 import org.apache.fop.xml.XMLEvent;
+import org.apache.fop.xml.XMLNamespaces;
+import org.apache.fop.xml.SyncedXmlEventsBuffer;
 import org.apache.fop.apps.Driver;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.configuration.Configuration;
@@ -55,7 +56,7 @@ public class FOTree extends Tree implements Runnable {
      * The buffer from which the <tt>XMLEvent</tt>s from the parser will
      * be read.  <tt>protected</tt> so that FONode can access it.
      */
-    SyncedCircularBuffer xmlevents;
+    SyncedXmlEventsBuffer xmlevents;
     private Thread parserThread;
     private boolean errorDump;
 
@@ -106,7 +107,7 @@ public class FOTree extends Tree implements Runnable {
      * @param xmlevents the buffer from which <tt>XMLEvent</tt>s from the
      * parser are read.
      */
-    public FOTree(SyncedCircularBuffer xmlevents)
+    public FOTree(SyncedXmlEventsBuffer xmlevents)
         throws PropertyException
     {
         super();
@@ -344,15 +345,15 @@ public class FOTree extends Tree implements Runnable {
                                ("scriptsMap","Pk"));
             // Let the parser look after STARTDOCUMENT and the correct
             // positioning of the root element
-            event = XMLEvent.getStartElement
-                    (xmlevents, XMLEvent.XSLNSpaceIndex, "root");
+            event = xmlevents.getStartElement
+                                    (XMLNamespaces.XSLNSpaceIndex, "root");
             //if (event != null) {
                 //System.out.println("FOTree:" + event);
             //}
             foRoot = new FoRoot(this, event);
             foRoot.buildFoTree();
             System.out.println("Back from buildFoTree");
-            XMLEvent.getEndDocument(xmlevents);
+            xmlevents.getEndDocument();
         } catch (Exception e) {
             if (errorDump) Driver.dumpError(e);
             if (parserThread != null) {
