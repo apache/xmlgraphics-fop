@@ -35,7 +35,11 @@ import org.apache.fop.datastructs.ROIntArray;
 import org.apache.fop.datatypes.Ints;
 import org.apache.fop.datatypes.StringType;
 import org.apache.fop.datatypes.NCName;
+import org.apache.fop.datatypes.CountryType;
+import org.apache.fop.datatypes.LanguageType;
+import org.apache.fop.datatypes.ScriptType;
 import org.apache.fop.datatypes.UriType;
+import org.apache.fop.datatypes.MimeType;
 import org.apache.fop.datatypes.Length;
 import org.apache.fop.datatypes.Ems;
 import org.apache.fop.datatypes.Percentage;
@@ -129,7 +133,7 @@ public abstract class Properties {
 
     // A number of questions are unresolved about the interaction of
     // complex parsing, property expression parsing & property validation.
-    // At this time (2002/07/03) it looks as though the complex() method
+    // At this time (2002/07/03) it looks as though the verifyParsing() method
     // will take full validation responsibility, so it will not be
     // necessary to specify any individual datatypes besides COMPLEX in the
     // property dataTypes field.  This renders some such specifications
@@ -270,6 +274,104 @@ public abstract class Properties {
                 ,VALUE_SPECIFIC = 5
                               ;
 
+
+    /**
+     * The final stage of parsing:<br>
+     * 1) PropertyTokenizer<br>
+     * 2) PropertyParser - returns context-free <tt>PropertyValue</tt>s
+     *    recognizable by the parser<br>
+     * 3) verifyParsing - verifies results from parser, translates
+     *    property types like NCName into more specific value types,
+     *    resolves enumeration types, etc.<br>
+     *
+     * <p>This method is shadowed by individual property classes which
+     * require specific processing.
+     * @param property <tt>int</tt> property index
+     * @param value <tt>PropertyValue</tt> returned by the parser
+     * @foTree the <tt>FOTree</tt> being built
+     */
+    public static PropertyValue verifyParsing
+                                        (PropertyValue value, FOTree foTree)
+            throws PropertyException
+    {
+        int property = value.getProperty();
+        String propName = PropNames.getPropertyName(property);
+        int datatype = PropertyConsts.dataTypes.get(property);
+        testing_valuetypes: do {
+            if (value instanceof Numeric) {
+                // Can be any of
+                // INTEGER, FLOAT, LENGTH, PERCENTAGE, ANGLE, FREQUENCY or TIME
+                if ((datatype & (INTEGER | FLOAT | LENGTH | PERCENTAGE
+                                    | ANGLE | FREQUENCY | TIME)) != 0)
+                    return value;
+            }
+            if (value instanceof NCName) {
+                String ncname = ((NCName)value).getNCName();
+                // Can by any of
+                // NAME, COUNTRY_T, LANGUAGE_T, SCRIPT_T, ID_T, IDREF, ENUM
+                // MAPPED_NUMERIC or CHARACTER_T
+                if ((datatype & (NAME | ID_T | IDREF | CHARACTER_T)) != 0)
+                    return value;
+                if ((datatype & COUNTRY_T) != 0)
+                    return new CountryType(property, ncname);
+                if ((datatype & LANGUAGE_T) != 0)
+                    return new LanguageType(property, ncname);
+                if ((datatype & SCRIPT_T) != 0)
+                    return new ScriptType(property, ncname);
+                if ((datatype & ENUM) != 0)
+                    return new EnumType(property, ncname);
+                if ((datatype & MAPPED_NUMERIC) != 0)
+                    return (new MappedNumeric(property, ncname, foTree))
+                                    .getMappedNumValue();
+            }
+            if (value instanceof Literal) {
+                // Can be LITERAL or CHARACTER_T
+                if ((datatype & (LITERAL | CHARACTER_T)) != 0) return value;
+                throw new PropertyException
+                                ("Literal value invalid  for " + propName);
+            }
+            if (value instanceof Auto) {
+                if ((datatype & AUTO) != 0) return value;
+                throw new PropertyException("'auto' invalid  for " + propName);
+            }
+            if (value instanceof Bool) {
+                if ((datatype & BOOL) != 0) return value;
+                throw new PropertyException
+                                    ("Boolean value invalid for " + propName);
+            }
+            if (value instanceof ColorType) {
+                // Can be COLOR_T or COLOR_TRANS
+                if ((datatype & (COLOR_T | COLOR_TRANS)) != 0) return value;
+                throw new PropertyException("'none' invalid  for " + propName);
+            }
+            if (value instanceof None) {
+                // Some instances of 'none' are part of an enumeration, but
+                // the parser will find and return 'none' as a None
+                // PropertyValue.
+                // In these cases, the individual property's verifyParsing
+                // method must shadow this method.
+                if ((datatype & NONE) != 0) return value;
+                throw new PropertyException("'none' invalid  for " + propName);
+            }
+            if (value instanceof Inherit) {
+                if ((datatype & INHERIT) != 0) return value;
+                throw new PropertyException
+                                        ("'inherit' invalid for " + propName);
+            }
+            if (value instanceof UriType) {
+                if ((datatype & URI_SPECIFICATION) != 0) return value;
+                throw new PropertyException("uri invalid for " + propName);
+            }
+            if (value instanceof MimeType) {
+                if ((datatype & MIMETYPE) != 0) return value;
+                throw new PropertyException
+                            ("mimetype invalid for " + propName);
+            }
+            throw new PropertyException
+                ("Inappropriate datatype passed to Properties.verifyParsing: "
+                    + value.getClass().getName());
+        } while (false);
+    }
 
     /**
      * Check the PropertyValueList passed as an argument, to determine
@@ -891,7 +993,8 @@ public abstract class Properties {
          *   a BackgroundPositionHorizontal Numeric or Inherit value
          *   a BackgroundPositionVertical Numeric or Inherit value
          */
-        public static PropertyValue complex(FOTree foTree, PropertyValue value)
+        public static PropertyValue verifyParsing
+                (FOTree foTree, PropertyValue value)
                         throws PropertyException
         {
             if ( ! (value instanceof PropertyValueList)) {
@@ -987,7 +1090,8 @@ public abstract class Properties {
                     if (position != null)
                             MessageHandler.log("background: duplicate" +
                             "position overrides previous position");
-                    position = BackgroundPosition.complex(foTree, posnList);
+                    position =
+                        BackgroundPosition.verifyParsing(foTree, posnList);
                     continue scanning_elements;
                 }
 
@@ -1064,7 +1168,7 @@ public abstract class Properties {
                                 MessageHandler.log("background: duplicate" +
                                 "position overrides previous position");
                         position =
-                                BackgroundPosition.complex(foTree, posnList);
+                            BackgroundPosition.verifyParsing(foTree, posnList);
                         continue scanning_elements;
                     }
                     throw new PropertyException
@@ -1208,7 +1312,8 @@ public abstract class Properties {
          * element is a value for BackgroundPositionHorizontal, and the
          * second is for BackgroundPositionVertical.
          */
-        public static PropertyValue complex(FOTree foTree, PropertyValue value)
+        public static PropertyValue verifyParsing
+                (FOTree foTree, PropertyValue value)
                         throws PropertyException
         {
             if ( ! (value instanceof PropertyValueList)) {
@@ -1871,7 +1976,8 @@ public abstract class Properties {
          *  N.B. this is the order of elements defined in
          *       PropertySets.borderRightExpansion
          */
-        public static PropertyValue complex(FOTree foTree, PropertyValue value)
+        public static PropertyValue verifyParsing
+                (FOTree foTree, PropertyValue value)
                     throws PropertyException
         {
             return Properties.borderEdge(foTree, value,
@@ -1986,7 +2092,8 @@ public abstract class Properties {
          * the third element is a value for border-bottom-color,
          * the fourth element is a value for border-left-color.
          */
-        public static PropertyValue complex(FOTree foTree, PropertyValue value)
+        public static PropertyValue verifyParsing
+                (FOTree foTree, PropertyValue value)
                     throws PropertyException
         {
             if ( ! (value instanceof PropertyValueList)) {
@@ -2196,7 +2303,8 @@ public abstract class Properties {
          *  N.B. this is the order of elements defined in
          *       PropertySets.borderRightExpansion
          */
-        public static PropertyValue complex(FOTree foTree, PropertyValue value)
+        public static PropertyValue verifyParsing
+                (FOTree foTree, PropertyValue value)
                     throws PropertyException
         {
             return Properties.borderEdge(foTree, value,
@@ -2278,7 +2386,8 @@ public abstract class Properties {
          *  N.B. this is the order of elements defined in
          *       PropertySets.borderRightExpansion
          */
-        public static PropertyValue complex(FOTree foTree, PropertyValue value)
+        public static PropertyValue verifyParsing
+                (FOTree foTree, PropertyValue value)
                     throws PropertyException
         {
             return Properties.borderEdge(foTree, value,
@@ -2392,7 +2501,8 @@ public abstract class Properties {
          *   Note: the Lengths cannot be percentages (what about relative
          *         lengths?)
          */
-        public static PropertyValue complex(FOTree foTree, PropertyValue value)
+        public static PropertyValue verifyParsing
+                (FOTree foTree, PropertyValue value)
                     throws PropertyException
         {
             if ( ! (value instanceof PropertyValueList)) {
@@ -2549,7 +2659,8 @@ public abstract class Properties {
          * the third element is a value for border-bottom-style,
          * the fourth element is a value for border-left-style.
          */
-        public static PropertyValue complex(FOTree foTree, PropertyValue value)
+        public static PropertyValue verifyParsing
+                (FOTree foTree, PropertyValue value)
                     throws PropertyException
         {
             if ( ! (value instanceof PropertyValueList)) {
@@ -2642,7 +2753,8 @@ public abstract class Properties {
          *  N.B. this is the order of elements defined in
          *       PropertySets.borderRightExpansion
          */
-        public static PropertyValue complex(FOTree foTree, PropertyValue value)
+        public static PropertyValue verifyParsing
+                (FOTree foTree, PropertyValue value)
                     throws PropertyException
         {
             return Properties.borderEdge(foTree, value,
@@ -2735,7 +2847,8 @@ public abstract class Properties {
          * the third element is a value for border-bottom-width,
          * the fourth element is a value for border-left-width.
          */
-        public static PropertyValue complex(FOTree foTree, PropertyValue value)
+        public static PropertyValue verifyParsing
+                (FOTree foTree, PropertyValue value)
                     throws PropertyException
         {
             if ( ! (value instanceof PropertyValueList)) {
@@ -2985,7 +3098,8 @@ public abstract class Properties {
         public static final int initialValueType = AUTO_IT;
         public static final int inherited = NO;
 
-        public static PropertyValue complex(FOTree foTree, PropertyValue value)
+        public static PropertyValue verifyParsing
+                (FOTree foTree, PropertyValue value)
                         throws PropertyException
         {
             // AUTO and INHERIT will have been normally processed
@@ -3141,7 +3255,8 @@ public abstract class Properties {
          * The first element is a value for cue-before,
          * the second element is a value for cue-after.
          */
-        public static PropertyValue complex(FOTree foTree, PropertyValue value)
+        public static PropertyValue verifyParsing
+                (FOTree foTree, PropertyValue value)
                     throws PropertyException
         {
             if ( ! (value instanceof PropertyValueList)) {
@@ -3462,17 +3577,18 @@ public abstract class Properties {
          * If a top-level list occurs, i.e. if 'value' is a PropertyValueList
          * which contains multiple elements, it represents a comma-separated
          * list, which can only legitimately contain a <em>font-family</em>
-         * specification.
+         * specification.  However, a <em>font-family</em> cannot occur
+         * without a preceding space-separated <em>font-size</em>, at a
+         * minimum, so such a list is an error.
          *
          * 'value' can contain a parsed Inherit value or
-         * a parsed NCName value containing one of the system font
-         *  enumeration tokens listed in rwEnums, above, or
-         *  a <em>single</em> element from those noted below in the discussion
-         *  of font specification elements.
+         *  a parsed NCName value containing one of the system font
+         *  enumeration tokens listed in rwEnums, above.
          *
          * If 'value' is a space-separated list, it may contain:
-         *   A trailing <em>font-family</em> specification, possibly
-         *   preceded by an optional initial detailed font specification.
+         *   A trailing <em>font-family</em> specification, preceded by
+         *   a dimension specification, possibly
+         *   preceded by an initial detailed font specification.
          *   The font-family specification may be comprised of a single
          *   element or a comma-separated list of specific or generic font
          *   names.  A single font name may be a space-separated name.
@@ -3482,8 +3598,8 @@ public abstract class Properties {
          *    by an optional set of font descriptor elements.
          *
          *   The dimension specifier is comprised of a <em>font-size</em>
-         *    specifier, possibly followed by an optional line height
-         *    specifier.  The line height specifier is made up of a slash
+         *    specifier, possibly followed by a height
+         *    specifier.  The height specifier is made up of a slash
          *    character followed by a <em>line-height</em> specifier proper.
          *
          *   The optional set of font descriptor elements may include,
@@ -3493,8 +3609,7 @@ public abstract class Properties {
          *    a font-weight element
          *
          * [ [&lt;font-style&gt;||&lt;font-variant&gt;||&lt;font-weight&gt;]?
-         *    &lt;font-size&gt; [ / &lt;line-height&gt; ]?
-         *    &lt;font-family&gt; ]
+         *    &lt;font-size&gt; [/ &lt;line-height&gt;]? &lt;font-family&gt; ]
          *    |caption|icon|menu|message-box|small-caption|status-bar
          *    |inherit
          *
@@ -3506,7 +3621,8 @@ public abstract class Properties {
          * value will be present.
          *
          */
-        public static PropertyValue complex(FOTree foTree, PropertyValue value)
+        public static PropertyValue verifyParsing
+                (FOTree foTree, PropertyValue value)
                         throws PropertyException
         {
             if ( ! (value instanceof PropertyValueList)) {
@@ -3515,15 +3631,12 @@ public abstract class Properties {
                 PropertyValueList list = null;
                 try {
                     list = spaceSeparatedList((PropertyValueList)value);
-                } catch (PropertyException e) {}
-                if (list == null) {
-                    // Must be a comma-separated list
-                    // i.e. a font-family list
-                    return processCommaSepList
-                                        (foTree, (PropertyValueList)value);
-                } else {
-                    return processSpaceSepList(foTree, list);
+                } catch (PropertyException e) {
+                    throw new PropertyException
+                        ("Isolated comma-separated list (possibly a "
+                        + "font-family) found in font expression");
                 }
+                return processSpaceSepList(foTree, list);
             }
         }
 
@@ -3547,59 +3660,16 @@ public abstract class Properties {
                 String ncname = ((NCName)value).getNCName();
                 try {
                     enum = new EnumType(value.getProperty(), ncname);
-                } catch (PropertyException e) {}
-                if (enum != null) {
-                    // A system font enum
-                    return SystemFontFunction.expandFontSHand
-                                            (PropNames.FONT, ncname);
-                } else {
-                    // Not a system font enum
-                    // Can only be a single-element font-family spec
-                    // i.e. anything is possible
-                    // Try for a FontFamilySet
-                    family =
-                        (FontFamilySet)(FontFamily.complex(foTree, value));
-                }
-            } else {
-                // Not an NCName; is it a Literal?
-                if (value instanceof StringType) {
-                    family =
-                        (FontFamilySet)(FontFamily.complex(foTree, value));
-                } else {
-                    // Not an NCName, not a StringType
+                } catch (PropertyException e) {
                     throw new PropertyException
-                        ("Invalid single element " +
-                            value.getClass().getName() +
-                                " for font shorthand");
+                        ("Unrecognized NCName in font expression: " + ncname);
                 }
+                // A system font enum
+                return SystemFontFunction.expandFontSHand
+                                                (PropNames.FONT, ncname);
             }
-            // Out of here we can only have a FontFamilySet
-            PropertyValueList list =
-                PropertySets.initialValueExpansion(foTree, PropNames.FONT);
-            return PropertySets.overrideSHandElement(list, family);
-        }
-
-
-        /**
-         * @param value a <tt>PropertyValueList</tt> containing the
-         * comma-separated list; i.e. the top-level list returned by the
-         * parser.  In this instance, this can only be a <em>font-family</em>
-         * specification.
-         * @return <tt>PropertyValueList</tt> containing a
-         * <tt>PropertyValue</tt> for each property in the expansion of the
-         * shorthand.
-         * @exception PropertyValueException
-         */
-        private static PropertyValueList
-                processCommaSepList(FOTree foTree, PropertyValueList value)
-                        throws PropertyException
-        {
-            // Prepare a font shorthand expansion list
-            PropertyValueList list =
-                PropertySets.initialValueExpansion(foTree, PropNames.FONT);
-            FontFamilySet family =
-                        (FontFamilySet)(FontFamily.complex(foTree, value));
-            return PropertySets.overrideSHandElement(list, family);
+            throw new PropertyException("Unrecognized element in font " +
+                                        "expression: " + value);
         }
 
         /**
@@ -3614,14 +3684,14 @@ public abstract class Properties {
          * end of the list are part of the font-family value.  In addition,
          * however, some preceding elements may be part of an initial
          * font name containing spaces.
-         * <p>The optional elements preceding the font-family are
-         * font-size [ / line-height ], so searching backwards for a slash
+         * <p>The font-family is preceded by a compulsory size/height element;
+         * font-size [ / line-height ]?, so searching backwards for a slash
          * character will locate the penultimate and utlimate elements
          * preceding the first component of the font-family.
          * <p>If no slash is found, the preceding element must be a font-size,
          * which may be specfied as a Length, a Percentage, or with an
          * enumeration token.
-         * <p>If a font-size[/line-height] is found, any preceding elements
+         * <p>Any elements preceding a font-size[/line-height]
          * must be from the specification
          * [font-style||font-variant||font-weight]?
          *
@@ -3644,6 +3714,7 @@ public abstract class Properties {
             int slash = -1;
             int firstcomma = -1;
             int familyStart = -1;
+            int fontsize = -1;
 
             PropertyValue style = null;
             PropertyValue variant = null;
@@ -3666,22 +3737,48 @@ public abstract class Properties {
                 // know where slash and line-height are
                 // font-family begins at slash + 2
                 familyStart = slash + 2;
+                fontsize = slash - 1;
+                // derive the line-height
             } else {
                 // Don''t know where slash is.  If anything precedes the
                 // font-family, it must be a font-size.  Look for that.
                 if (firstcomma == -1) firstcomma = props.length - 1;
-                for (int fs = firstcomma - 1; fs >= 0; fs--) {
-                    if (props[fs] instanceof NCName) {
+                for (fontsize = firstcomma - 1; fontsize >= 0; fontsize--) {
+                    if (props[fontsize] instanceof NCName) {
                         // try for a font-size enumeration
-                        String name = ((NCName)props[fs]).getNCName();
-                        /*
+                        String name = ((NCName)props[fontsize]).getNCName();
                         try {
-                            ;
+                            size = (new MappedNumeric
+                                        (PropNames.FONT_SIZE, name, foTree)
+                                    ).getMappedNumValue();
                         } catch (PropertyException e) {
+                            // Attempt to derive mapped numeric failed
+                            continue;
                         }
-                        */
+                        // Presumably we have a mapped numeric
+                        break;
                     }
+                    if (props[fontsize] instanceof Numeric) {
+                        // Length (incl. Ems) or Percentage allowed
+                        if (((Numeric)(props[fontsize])).isDistance()) {
+                            size = (Numeric)(props[fontsize]);
+                            break;
+                        }
+                        // else don't know what this Numeric is doing here -
+                        // spit the dummy
+                        throw new PropertyException("Non-distance Numeric"
+                            + " found in 'font' expression while looking "
+                            + "for font-size");
+                    }
+                    // Not an NCName, not a Numeric.  What the ... ?
+                    throw new PropertyException
+                        (props[fontsize].getClass().getName() +
+                        " found in 'font' "
+                        + "expression while looking for font-size");
                 }
+                // Indicate start of font-family.
+                if (size != null) familyStart = fontsize + 1;
+                else /* no font-size found */ familyStart = 0;
             }
                 
             return newlist;
@@ -3720,7 +3817,8 @@ public abstract class Properties {
                 Collections.unmodifiableMap((Map)rwEnumValues);
         }
 
-        public static PropertyValue complex(FOTree foTree, PropertyValue value)
+        public static PropertyValue verifyParsing
+                (FOTree foTree, PropertyValue value)
                         throws PropertyException
         {
             // There is no point in attempting to validate the enumeration
@@ -4569,12 +4667,6 @@ public abstract class Properties {
         public static final ROStringArray enums = new ROStringArray(rwEnums);
         public static final ROStringArray enumValues = enums;
 
-        // If this value changes, change the corresponding initialValue.
-        private static final String[] rwEnumMappings = {
-            null
-            ,"1.2em"
-        };
-
         public static Numeric[] getMappedNumArray()
             throws PropertyException
         {
@@ -4585,8 +4677,6 @@ public abstract class Properties {
             return numarray;
         }
 
-        public static final ROStringArray enumMappings
-                                        = new ROStringArray(rwEnumMappings);
     }
 
     public static class LineHeightMinimum extends Properties {
@@ -5781,7 +5871,8 @@ public abstract class Properties {
         public static final int initialValueType = NONE_IT;
         public static final int inherited = NO;
 
-        public static PropertyValue complex(FOTree foTree, PropertyValue list)
+        public static PropertyValue verifyParsing
+                (FOTree foTree, PropertyValue list)
                         throws PropertyException
         {
             // Confirm that the list contains only UriType elements
@@ -6250,7 +6341,8 @@ public abstract class Properties {
         public static final ROStringArray enums = new ROStringArray(rwEnums);
         public static final ROStringArray enumValues = enums;
 
-        public static PropertyValue complex(FOTree foTree, PropertyValue list)
+        public static PropertyValue verifyParsing
+                (FOTree foTree, PropertyValue list)
                         throws PropertyException
         {
             // Assume that the enumeration has been checked for.  Look for
@@ -6521,7 +6613,8 @@ public abstract class Properties {
                                     ,BLINK
                             });
 
-        public static PropertyValue complex(FOTree foTree, PropertyValue list)
+        public static PropertyValue verifyParsing
+                (FOTree foTree, PropertyValue list)
                         throws PropertyException
         {
             byte onMask = NO_DECORATION;
@@ -6622,7 +6715,8 @@ public abstract class Properties {
          * <tt>Length</tt>s may be preceded or followed by a color
          * specifier.
          */
-        public static PropertyValue complex(FOTree foTree, PropertyValue list)
+        public static PropertyValue verifyParsing
+                (FOTree foTree, PropertyValue list)
                         throws PropertyException
         {
             int property = list.getProperty();
