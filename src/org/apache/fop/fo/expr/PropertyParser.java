@@ -11,6 +11,7 @@ import org.apache.fop.fo.PropertyConsts;
 import org.apache.fop.fo.Properties;
 import org.apache.fop.fo.PropNames;
 import org.apache.fop.fo.FOTree;
+import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.expr.SystemFontFunction;
 
 import org.apache.fop.datatypes.PropertyValue;
@@ -56,6 +57,8 @@ public class PropertyParser extends PropertyTokenizer {
 
     /** The FO tree which has initiated this parser */
     private FOTree foTree;
+    /** The FONode which has initiated this parser */
+    private FONode node;
 
     public PropertyParser(FOTree foTree) {
         super();
@@ -112,14 +115,16 @@ public class PropertyParser extends PropertyTokenizer {
      *
      * <p>Note: If the property expression String is empty, a StringProperty
      * object holding an empty String is returned.
-     * @param property an <tt>int</tt> containing the property index.
+     * @param node - the <tt>FONode</tt> for which the property expression
+     * is being resolved.
+     * @param property - an <tt>int</tt> containing the property index.
      * which the property expression is to be evaluated.
-     * @param expr The specified value (attribute on the xml element).
-     * @return A PropertyValue holding the parsed result.
-     * @throws PropertyException If the "expr" cannot be parsed as a
+     * @param expr - the specified value (attribute on the xml element).
+     * @return a PropertyValue holding the parsed result.
+     * @throws PropertyException if the "expr" cannot be parsed as a
      * PropertyValue.
      */
-    public PropertyValue parse(int property, String expr)
+    public PropertyValue parse(FONode node, int property, String expr)
         throws PropertyException
     {
         synchronized (this) {
@@ -128,6 +133,7 @@ public class PropertyParser extends PropertyTokenizer {
                 throw new PropertyException
                         ("PropertyParser is currently active.");
             initialize(property, expr);
+            this.node = node;
         }
 
         next();
@@ -167,8 +173,8 @@ public class PropertyParser extends PropertyTokenizer {
     /**
      * <p>Parse a property values sublist - a list of whitespace separated
      * <tt>PropertyValue</tt>s.
-     * </p><p>
-     * Property value expressions for various properties may contaiin lists
+     * <p>
+     * Property value expressions for various properties may contain lists
      * of values, which may be separated by whitespace or by commas.  See,
      * e.g., 7.6.17 "voice-family" and 7.8.2 "font-family".  The shorthands
      * may also contain lists of elements, generally (or exclusively)
@@ -404,164 +410,203 @@ public class PropertyParser extends PropertyTokenizer {
             // processing, so, like LPAR processing, next() is not called
             // and the return from this method must be premature
             prop = null;
-            // Numeric functions
-            if (currentTokenValue.equals("floor")) {
-                PropertyValue[] args = parseArgs(1);
-                prop = new Numeric
-                        (property, ((Numeric)args[0]).floor());
-            }
-            else if (currentTokenValue.equals("ceiling")) {
-                PropertyValue[] args = parseArgs(1);
-                prop = new Numeric
-                        (property, ((Numeric)args[0]).ceiling());
-            }
-            else if (currentTokenValue.equals("round")) {
-                PropertyValue[] args = parseArgs(1);
-                prop = new Numeric
-                        (property, ((Numeric)args[0]).round());
-            }
-            else if (currentTokenValue.equals("min")) {
-                PropertyValue[] args = parseArgs(2);
-                prop = new Numeric
+            int funcType = PropertyValue.NO_TYPE;
+            do {
+                // Numeric functions
+                if (currentTokenValue.equals("floor")) {
+                    PropertyValue[] args = parseArgs(1);
+                    prop = new Numeric
+                            (property, ((Numeric)args[0]).floor());
+                    break;
+                }
+                if (currentTokenValue.equals("ceiling")) {
+                    PropertyValue[] args = parseArgs(1);
+                    prop = new Numeric
+                            (property, ((Numeric)args[0]).ceiling());
+                    break;
+                }
+                if (currentTokenValue.equals("round")) {
+                    PropertyValue[] args = parseArgs(1);
+                    prop = new Numeric
+                            (property, ((Numeric)args[0]).round());
+                    break;
+                }
+                if (currentTokenValue.equals("min")) {
+                    PropertyValue[] args = parseArgs(2);
+                    prop = new Numeric
                         (property, ((Numeric)args[0]).min((Numeric)args[1]));
-            }
-            else if (currentTokenValue.equals("max")) {
-                PropertyValue[] args = parseArgs(2);
-                prop = new Numeric
+                    break;
+                }
+                if (currentTokenValue.equals("max")) {
+                    PropertyValue[] args = parseArgs(2);
+                    prop = new Numeric
                         (property, ((Numeric)args[0]).max((Numeric)args[1]));
-            }
-            else if (currentTokenValue.equals("abs")) {
-                PropertyValue[] args = parseArgs(1);
-                prop = new Numeric
-                        (property, ((Numeric)args[0]).abs());
-            }
-
-            // Color functions
-            else if (currentTokenValue.equals("rgb")) {
-                PropertyValue[] args = parseArgs(3);
-                prop = new ColorType
-                        (property, ((Numeric)args[0]).asInt(),
-                         ((Numeric)args[1]).asInt(),
-                         ((Numeric)args[2]).asInt());
-            }
-            else if (currentTokenValue.equals("rgb-icc")) {
-                PropertyValue[] args = parseArgs(6);
-                throw new FunctionNotImplementedException("rgb-icc");
-            }
-            else if (currentTokenValue.equals("system-color")) {
-                PropertyValue[] args = parseArgs(1);
-                prop = new ColorType
-                        (property, ((StringType)args[0]).getString());
-            }
-
-            // Font function
-            else if (currentTokenValue.equals("system-font")) {
-                PropertyValue[] args = parseArgs(1, 2);
-                if (args.length == 1) {
-                    prop = SystemFontFunction.systemFontCharacteristic
-                            (property,
-                             ((StringType)args[0]).getString());
-                } else {
-                    // 2 args
-                    prop = SystemFontFunction.systemFontCharacteristic
-                            (property,
-                             ((StringType)args[0]).getString(),
-                             ((StringType)args[1]).getString());
+                    break;
                 }
-            }
+                if (currentTokenValue.equals("abs")) {
+                    PropertyValue[] args = parseArgs(1);
+                    prop = new Numeric
+                            (property, ((Numeric)args[0]).abs());
+                    break;
+                }
 
-            // Property value functions
-            else if (currentTokenValue.equals("inherited-property-value")) {
-                int propindex = property;
-                PropertyValue[] args = parseArgs(0, 1);
-                if (args.length != 0)
-                    propindex = PropertyConsts.getPropertyIndex(
-                            ((StringType)args[0]).getString());
-                if (PropertyConsts.inheritance(propindex) == Properties.NO)
-                    throw new PropertyException
-                            ("inherited-property-value: "
-                             + PropNames.getPropertyName(propindex)
-                             + " is not inherited.");
-                prop = new InheritedValue(property, propindex);
-            }
-            else if (currentTokenValue.equals("label-end")) {
-                PropertyValue[] args = parseArgs(0);
-                throw new FunctionNotImplementedException("label-end");
-            }
-            else if (currentTokenValue.equals("body-start")) {
-                PropertyValue[] args = parseArgs(0);
-                throw new FunctionNotImplementedException("body-start");
-            }
-            // N.B. see comments on classes FromNearestSpecified and
-            // FromParent for explanation of this section
-            else if (currentTokenValue.equals("from-parent") ||
-                     currentTokenValue.equals("from-nearest-specified-value"))
-            {
-                // Preset the return value in case of a shorthand property
-                if (currentTokenValue.equals("from-parent"))
-                    prop = new FromParent(property);
-                else
-                    prop = new FromNearestSpecified(property);
+                // Color functions
+                if (currentTokenValue.equals("rgb")) {
+                    PropertyValue[] args = parseArgs(3);
+                    prop = new ColorType
+                            (property, ((Numeric)args[0]).asInt(),
+                             ((Numeric)args[1]).asInt(),
+                             ((Numeric)args[2]).asInt());
+                    break;
+                }
+                if (currentTokenValue.equals("rgb-icc")) {
+                    PropertyValue[] args = parseArgs(6);
+                    throw new FunctionNotImplementedException("rgb-icc");
+                    //break;
+                }
+                if (currentTokenValue.equals("system-color")) {
+                    PropertyValue[] args = parseArgs(1);
+                    prop = new ColorType
+                            (property, ((StringType)args[0]).getString());
+                    break;
+                }
 
-                PropertyValue[] args = parseArgs(0, 1);
-                if (args.length == 0) {
-                    if (! PropertyConsts.isShorthand(property)) {
-                        // develop the function value and return it as
-                        // a property.
-                        throw new FunctionNotImplementedException
-                                                         (currentTokenValue);
+                // Font function
+                if (currentTokenValue.equals("system-font")) {
+                    PropertyValue[] args = parseArgs(1, 2);
+                    if (args.length == 1) {
+                        prop = SystemFontFunction.systemFontCharacteristic
+                                (property,
+                                 ((StringType)args[0]).getString());
+                    } else {
+                        // 2 args
+                        prop = SystemFontFunction.systemFontCharacteristic
+                                (property,
+                                 ((StringType)args[0]).getString(),
+                                 ((StringType)args[1]).getString());
                     }
-                    // else a shorthand - do nothing; prop has been set
-                    // to the appropriate pseudo-propertyValue
-                } else { // one argument - it must be a property name
-                    if ( ! (args[0] instanceof NCName))
+                    break;
+                }
+
+                // Property value functions
+                if (currentTokenValue.equals("inherited-property-value")) {
+                    int propindex = property;
+                    PropertyValue[] args = parseArgs(0, 1);
+                    if (args.length != 0)
+                        propindex = PropertyConsts.getPropertyIndex(
+                                ((StringType)args[0]).getString());
+                    if (PropertyConsts.inheritance(propindex) == Properties.NO)
                         throw new PropertyException
-                                (currentTokenValue + " function requires"
-                                     + " property name arg.");
-                    // else arg[0] is an NCName
-                    NCName ncname = (NCName)args[0];
-                    String propname = ncname.getNCName();
-                    int nameindex = PropertyConsts.getPropertyIndex(propname);
-                    if (PropertyConsts.isShorthand(nameindex)) {
-                        // the argument is a shorthand property -
-                        // it must be the same as the property being
-                        // assigned to.
-                        // see 5.10.4 Property Value Functions
-                        if ( ! (nameindex == property))
-                            throw new PropertyException
-                                    (currentTokenValue +
-                                     " argument " + propname +
-                                     " does not match property " +
-                                     PropNames.getPropertyName(property));
-                        // else perform shorthand processing
-                        // i.e. do nothing; prop has been set to the correct
-                        // pseudo-propertyValue
-                    }
-                    else {   // An NCName but not a shorthand
-                        // Perform normal from-? processing
-                        throw new FunctionNotImplementedException
-                                                         (currentTokenValue);
-                    }
+                                ("inherited-property-value: "
+                                 + PropNames.getPropertyName(propindex)
+                                 + " is not inherited.");
+                    prop = new InheritedValue(property, propindex);
+                    break;
                 }
-            }
-            else if (currentTokenValue.equals("from-table-column")) {
-                PropertyValue[] args = parseArgs(0, 1);
-                throw new FunctionNotImplementedException
-                                                       ("from-table-column");
-            }
-            else if (currentTokenValue.equals("proportional-column-width")) {
-                PropertyValue[] args = parseArgs(1);
-                throw new FunctionNotImplementedException
-                                               ("proportional-column-width");
-            }
-            else if (currentTokenValue.equals("merge-property-values")) {
-                PropertyValue[] args = parseArgs(0, 1);
-                throw new FunctionNotImplementedException
-                                                    ("merge-property-values");
-            }
-            else
+                if (currentTokenValue.equals("label-end")) {
+                    PropertyValue[] args = parseArgs(0);
+                    throw new FunctionNotImplementedException("label-end");
+                    //break;
+                }
+                if (currentTokenValue.equals("body-start")) {
+                    PropertyValue[] args = parseArgs(0);
+                    throw new FunctionNotImplementedException("body-start");
+                    //break;
+                }
+                // N.B. see comments on classes FromNearestSpecified and
+                // FromParent for explanation of this section
+                if (currentTokenValue.equals("from-parent"))
+                    funcType = PropertyValue.FROM_PARENT;
+                if (currentTokenValue.equals("from-nearest-specified-value"))
+                    funcType = PropertyValue.FROM_NEAREST_SPECIFIED;
+                if (funcType == PropertyValue.FROM_PARENT
+                    || funcType == PropertyValue.FROM_NEAREST_SPECIFIED)
+                {
+                    // Preset the return value in case of a shorthand property
+                    switch (funcType) {
+                    case PropertyValue.FROM_PARENT:
+                        prop = new FromParent(property);
+                    case PropertyValue.FROM_NEAREST_SPECIFIED:
+                        prop = new FromNearestSpecified(property);
+                    }
+
+                    PropertyValue[] args = parseArgs(0, 1);
+                    if (args.length == 0) {
+                        if (! (PropertyConsts.isShorthand(property)
+                               || PropertyConsts.isCompound(property))) {
+                            // develop the function value and return it as
+                            // a property.
+                            switch (funcType) {
+                            case PropertyValue.FROM_PARENT:
+                                prop = node.fromParent(property);
+                            case PropertyValue.FROM_NEAREST_SPECIFIED:
+                                prop = node.fromNearestSpecified(property);
+                            }
+                        }
+                        // else a shorthand/compound - do nothing;
+                        // prop has been
+                        // set to the appropriate pseudo-propertyValue
+                    } else { // one argument - it must be a property name
+                        if ( ! (args[0] instanceof NCName))
+                            throw new PropertyException
+                                    (currentTokenValue + " function requires"
+                                     + " property name arg.");
+                        // else arg[0] is an NCName
+                        NCName ncname = (NCName)args[0];
+                        String propname = ncname.getNCName();
+                        int nameindex =
+                                PropertyConsts.getPropertyIndex(propname);
+                        if (PropertyConsts.isShorthand(nameindex)
+                            || PropertyConsts.isCompound(nameindex)) {
+                            // the argument is a shorthand/compound property -
+                            // it must be the same as the property being
+                            // assigned to.
+                            // see 5.10.4 Property Value Functions
+                            if ( ! (nameindex == property))
+                                throw new PropertyException
+                                        (currentTokenValue +
+                                         " argument " + propname +
+                                         " does not match property " +
+                                         PropNames.getPropertyName(property));
+                            // else perform shorthand/compound processing
+                            // i.e. do nothing;
+                            // prop has been set to the correct
+                            // pseudo-propertyValue
+                        }
+                        else {   // An NCName but not a shorthand/compound
+                            // Perform normal from-? processing
+                            switch (funcType) {
+                            case PropertyValue.FROM_PARENT:
+                                prop = node.fromParent(property, nameindex);
+                            case PropertyValue.FROM_NEAREST_SPECIFIED:
+                                prop = node.fromNearestSpecified
+                                                        (property, nameindex);
+                            }
+                        }
+                    }
+                    break;
+                }
+                if (currentTokenValue.equals("from-table-column")) {
+                    PropertyValue[] args = parseArgs(0, 1);
+                    throw new FunctionNotImplementedException
+                            ("from-table-column");
+                    //break;
+                }
+                if (currentTokenValue.equals("proportional-column-width")) {
+                    PropertyValue[] args = parseArgs(1);
+                    throw new FunctionNotImplementedException
+                            ("proportional-column-width");
+                    //break;
+                }
+                if (currentTokenValue.equals("merge-property-values")) {
+                    PropertyValue[] args = parseArgs(0, 1);
+                    throw new FunctionNotImplementedException
+                            ("merge-property-values");
+                    //break;
+                }
                 throw new PropertyException("no such function: "
-                                            + currentTokenValue);
+                                                        + currentTokenValue);
+            } while (false);
             return prop;
         }
         default:
