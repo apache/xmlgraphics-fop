@@ -115,6 +115,11 @@ inactive??
 
   <changes>
    <release version="?" date="2002">
+    <action context="code" dev="JM" type="update">
+      Moved all Adobe Type 1 font related classes to 
+      org.apache.fop.fonts.type1. Added a PFB parser for proper decoding of
+      PFB files.
+    </action>
     <action context="build" dev="JM" type="update">
       Updated to Xerces 2.2.1 and Xalan 2.4.1. Updated all the related files
       and made sure all contrib builds work again. Removed necessity for a
