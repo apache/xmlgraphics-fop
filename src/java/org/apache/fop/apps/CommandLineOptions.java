@@ -29,7 +29,6 @@ import org.apache.fop.fo.Constants;
 // commons logging
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.commons.logging.impl.SimpleLog;
 
 // SAX
 import org.xml.sax.XMLReader;

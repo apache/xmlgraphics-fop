@@ -23,7 +23,6 @@ import java.io.IOException;
 import java.io.OutputStream;
 
 import org.apache.fop.apps.FOUserAgent;
-import org.apache.fop.apps.FOPException;
 import org.apache.fop.fo.Constants;
 import org.apache.fop.fo.FOEventHandler;
 import org.apache.fop.fo.flow.BasicLink;

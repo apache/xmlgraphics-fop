@@ -27,8 +27,6 @@ import java.awt.geom.AffineTransform;
 import org.w3c.dom.Element;
 import org.w3c.dom.svg.SVGDocument;
 
-import org.apache.commons.logging.Log;
-
 // Batik
 import org.apache.batik.dom.svg.SAXSVGDocumentFactory;
 import org.apache.batik.dom.svg.SVGOMDocument;

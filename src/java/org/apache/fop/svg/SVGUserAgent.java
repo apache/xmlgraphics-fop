@@ -20,7 +20,6 @@ package org.apache.fop.svg;
 
 import javax.xml.parsers.SAXParserFactory;
 import org.apache.batik.bridge.UserAgentAdapter;
-import org.apache.commons.logging.Log;
 
 // Java
 import java.awt.geom.AffineTransform;

@@ -28,8 +28,6 @@ import java.awt.Color;
 // Jimi
 import com.sun.jimi.core.Jimi;
 
-import org.apache.commons.logging.Log;
-
 /**
  * FopImage object for several images types, using Jimi.
  * See Jimi documentation for supported image types.

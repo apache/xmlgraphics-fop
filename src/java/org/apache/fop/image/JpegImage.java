@@ -24,7 +24,6 @@ import java.awt.color.ColorSpace;
 import java.awt.color.ICC_Profile;
 
 // FOP
-import org.apache.commons.logging.Log;
 import org.apache.fop.util.CMYKColorSpace;
 
 /**
