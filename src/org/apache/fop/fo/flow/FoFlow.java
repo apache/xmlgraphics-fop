@@ -14,10 +14,12 @@ import org.apache.fop.fo.PropNames;
 import org.apache.fop.fo.FOPropertySets;
 import org.apache.fop.fo.PropertySets;
 import org.apache.fop.fo.FObjectNames;
+import org.apache.fop.fo.FObjects;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FOTree;
 import org.apache.fop.fo.expr.PropertyException;
 import org.apache.fop.xml.FoXMLEvent;
+import org.apache.fop.xml.UnexpectedStartElementException;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.datastructs.TreeException;
 import org.apache.fop.datatypes.PropertyValue;
@@ -66,6 +68,8 @@ public class FoFlow extends FONode {
     }
 
     /**
+     * Construct an fo:flow node, and build the fo:flow subtree.
+     * <p>Content model for fo:flow (%block;)+
      * @param foTree the FO tree being built
      * @param parent the parent FONode of this node
      * @param event the <tt>FoXMLEvent</tt> that triggered the creation of
@@ -77,9 +81,33 @@ public class FoFlow extends FONode {
         super(foTree, FObjectNames.FLOW, parent, event,
               FOPropertySets.FLOW_SET, sparsePropsMap, sparseIndices,
               numProps);
+        xmlevents = foTree.getXmlevents();
         FoXMLEvent ev;
-        String nowProcessing;
+        try {
+            // Get at least one %block;
+            if ((ev = xmlevents.expectBlock()) == null)
+                throw new FOPException("%block; not found in fo:flow");
+            // Generate the flow object
+            System.out.println("Generating first block for flow.");
+            FObjects.fobjects.makeFlowObject
+                            (foTree, this, ev, FOPropertySets.FLOW_SET);
+            // Get the rest of the %block;s
+            do {
+                ev = xmlevents.expectBlock();
+                if (ev != null) {
+                    // Generate the flow object
+                    System.out.println
+                        ("Generating subsequent block for flow.");
+                    FObjects.fobjects.makeFlowObject
+                            (foTree, this, ev, FOPropertySets.FLOW_SET);
+                }
+            } while (ev != null);
+        } catch(UnexpectedStartElementException e) {
+            throw new FOPException
+                    ("Block not found or unexpected non-block in fo:flow");
+        }
 
+        System.out.println("Making sparsePropsSet for flow.");
         makeSparsePropsSet();
     }
 
