@@ -1,0 +1,52 @@
+<?xml version="1.0" standalone="no"?>
+<!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V1.1//EN"
+    "http://cvs.apache.org/viewcvs.cgi/*checkout*/xml-forrest/src/resources/schema/dtd/document-v11.dtd">
+
+<document>
+  <header>
+    <title>FOP: Development Team</title>
+  </header>
+  <body>
+    <p>All lists on this page are in alphabetical order. Some of them may be incomplete. If you know of an error or omission, please send a message to the <link href="mailto:fop-dev@xml.apache.org">fop-dev</link> mailing list.</p>
+    <section id="commit-active">
+      <title>Active Committers</title>
+      <ul>
+        <li id="bd"><link href="mailto:bdelacretaz@apache.org">Bertrand Delacretaz</link> (BD)</li>
+        <li id="cg"><link href="mailto:chrisg@apache.org">Christian Geisert</link> (CG)</li>
+        <li id="kl"><link href="mailto:klease@apache.org">Karen Lease</link> (KL)</li>
+        <li id="kll"><link href="mailto:keiron@apache.org">Keiron Liddle</link> (KLL)</li>
+        <li id="jm"><link href="mailto:jeremias@apache.org">Jeremias M&#x00E4;rki</link> (JM)</li>
+        <li id="wvm"><link href="mailto:vmote@apache.org">Victor Mote</link> (WVM)</li>
+        <li id="jp"><link href="mailto:pietsch@apache.org">J&#x00F6;rg Pietschmann</link> (JP)</li>
+        <li id="as"><link href="mailto:arved@apache.org">Arved Sandstrom</link> (AS)</li>
+        <li id="ot"><link href="mailto:olegt@apache.org">Oleg Tkachenko</link> (OT)</li>
+        <li id="pbw"><link href="mailto:pbwest@apache.org">Peter B. West</link> (PBW)</li>
+      </ul>
+    </section>
+    <section id="contribute-active">
+      <title>Active Contributors</title>
+      <ul>
+        <li><link href="jaccoud@petrobras.com.br">Marcelo Jaccoud Amaral</link></li>
+        <li><link href="mailto:Raultman@fcci-group.com">Rhett Aultman</link></li>
+        <li><link href="cleeds@medata.com">Clay Leeds</link></li>
+        <li><link href="glenmazza@yahoo.com">Glen Mazza</link></li>
+        <li><link href="mailto:atagunov@mail.cnt.ru">Anton Tagunov</link></li>
+        <li><link href="mailto:yidaomao@yahoo.com">Zhong (George) Yi</link></li>
+      </ul>
+    </section>
+    <section id="commit-former">
+      <title>Former Committers</title>
+      <ul>
+        <li id="kc"><link href="mailto:kellyc@apache.org">Kelly Campbell</link></li>
+        <li id="sc"><link href="mailto:gears@apache.org">Steven Coffman</link></li>
+        <li id="te"><link href="mailto:tore@apache.org">Tore Engvig</link></li>
+        <li id="sg"><link href="mailto:stanislav@apache.org">Stanislav Gorkhover</link></li>
+        <li id="fj"><link href="mailto:fotis@apache.org">Fotis Jannidis</link></li>
+        <li id="jn"><link href="mailto:jordan@apache.org">Jordan Naftolin</link></li>
+        <li id="es"><link href="mailto:eschaeffer@apache.org">Eric Schaeffer</link></li>
+        <li id="aw"><link href="mailto:artw@apache.org">Art Welch</link></li>
+      </ul>
+    </section>
+  </body>
+</document>
+

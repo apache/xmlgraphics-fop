@@ -49,6 +49,7 @@
           <menu-item label="Status" href="status.html"/>
           <menu-item label="Changes" href="changes.html"/>
           <menu-item label="Todo" href="todo.html"/>
+          <menu-item label="Team" href="team.xml"/>
         </menu>
 
     </book>
