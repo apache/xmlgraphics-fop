@@ -56,8 +56,8 @@ public class FopImageConsumer implements ImageConsumer {
          */
         synchronized (this.imageStatus) {
             // Need to stop status if image done
-            if (imageStatus.intValue() != ImageConsumer.STATICIMAGEDONE
-                && imageStatus.intValue() != ImageConsumer.SINGLEFRAMEDONE)
+            if (imageStatus.intValue() != ImageConsumer.STATICIMAGEDONE &&
+                    imageStatus.intValue() != ImageConsumer.SINGLEFRAMEDONE)
                 this.imageStatus = new Integer(status);
         }
     }
@@ -96,8 +96,8 @@ public class FopImageConsumer implements ImageConsumer {
             if (this.imageStatus.intValue() == ImageConsumer.IMAGEERROR)
                 throw new Exception("Image error");
 
-            if (imageStatus.intValue() == ImageConsumer.STATICIMAGEDONE
-                || imageStatus.intValue() == ImageConsumer.SINGLEFRAMEDONE)
+            if (imageStatus.intValue() == ImageConsumer.STATICIMAGEDONE ||
+                    imageStatus.intValue() == ImageConsumer.SINGLEFRAMEDONE)
                 return true;
 
             return false;
@@ -119,8 +119,7 @@ public class FopImageConsumer implements ImageConsumer {
     public int[] getImage() throws Exception {
         int tmpMap[] = new int[this.width * this.height];
         PixelGrabber pg = new PixelGrabber(this.ip, 0, 0, this.width,
-                                           this.height, tmpMap, 0,
-                                           this.width);
+                                           this.height, tmpMap, 0, this.width);
         pg.setDimensions(this.width, this.height);
         pg.setColorModel(this.cm);
         pg.setHints(this.hints);
@@ -128,8 +127,8 @@ public class FopImageConsumer implements ImageConsumer {
         try {
             pg.grabPixels();
         } catch (InterruptedException intex) {
-            throw new Exception("Image grabbing interrupted : "
-                                + intex.getMessage());
+            throw new Exception("Image grabbing interrupted : " +
+                                intex.getMessage());
         }
         return tmpMap;
     }

@@ -10,6 +10,8 @@ package org.apache.fop.area.inline;
 import org.apache.fop.render.Renderer;
 
 public class Space extends Stretch {
+    public boolean collapse = true;
+    public boolean fixed = false;
 
     public void render(Renderer renderer) {
         renderer.renderInlineSpace(this);

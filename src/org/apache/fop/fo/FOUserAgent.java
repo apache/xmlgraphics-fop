@@ -9,6 +9,7 @@ package org.apache.fop.fo;
 
 import org.apache.fop.render.XMLHandler;
 import org.apache.fop.render.RendererContext;
+import org.apache.log.Logger;
 
 import org.w3c.dom.*;
 
@@ -32,6 +33,15 @@ import java.util.HashMap;
 public class FOUserAgent {
     HashMap defaults = new HashMap();
     HashMap handlers = new HashMap();
+    Logger log;
+
+    public void setLogger(Logger logger) {
+        log = logger;
+    }
+
+    public Logger getLogger() {
+        return log;
+    }
 
     /**
      * Set the default xml handler for the given mime type.

@@ -13,12 +13,9 @@ import org.w3c.dom.svg.SVGDocument;
 
 // FOP
 import org.apache.fop.apps.Driver;
-import org.apache.fop.datatypes.ColorSpace;
-import org.apache.fop.pdf.PDFColor;
 import org.apache.fop.image.analyser.ImageReader;
-
-import org.xml.sax.InputSource;
-import org.xml.sax.XMLReader;
+import org.apache.fop.image.analyser.SVGReader;
+import org.apache.fop.fo.FOUserAgent;
 
 import org.apache.batik.dom.svg.SAXSVGDocumentFactory;
 
@@ -29,13 +26,11 @@ import org.apache.batik.dom.svg.SAXSVGDocumentFactory;
 public class SVGImage extends AbstractFopImage {
     SVGDocument doc;
 
-    public SVGImage(URL href) throws FopImageException {
-        super(href);
-    }
-
-    public SVGImage(URL href,
-                    ImageReader imgReader) throws FopImageException {
+    public SVGImage(URL href, ImageReader imgReader) {
         super(href, imgReader);
+        if(imgReader instanceof SVGReader) {
+            doc = ((SVGReader)imgReader).getDocument();
+        }
     }
 
     /**
@@ -49,20 +44,20 @@ public class SVGImage extends AbstractFopImage {
         return parserClassName;
     }
 
-    protected void loadImage() throws FopImageException {
+    protected boolean loadData(FOUserAgent ua) {
         try {
             SAXSVGDocumentFactory factory =
-                new SAXSVGDocumentFactory(SVGImage.getParserName());
+              new SAXSVGDocumentFactory(SVGImage.getParserName());
             doc = factory.createDocument(this.m_href.toExternalForm());
         } catch (Exception e) {
-            //log.error("Could not load external SVG: "
-            //                       + e.getMessage());
+            ua.getLogger().error("Could not load external SVG: "
+                                   + e.getMessage(), e);
+            return false;
         }
+        return true;
     }
 
-    public SVGDocument getSVGDocument() throws FopImageException {
-        if (doc == null)
-            this.loadImage();
+    public SVGDocument getSVGDocument() {
         return doc;
     }
 

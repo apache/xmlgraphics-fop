@@ -11,12 +11,15 @@ package org.apache.fop.fo.flow;
 import org.apache.fop.fo.*;
 import org.apache.fop.fo.properties.*;
 import org.apache.fop.datatypes.*;
+import org.apache.fop.area.inline.InlineArea;
 import org.apache.fop.layout.*;
 import org.apache.fop.layout.BlockArea;
 import org.apache.fop.layout.inline.LeaderArea;
 import org.apache.fop.layout.LineArea;
 import org.apache.fop.layout.FontState;
 import org.apache.fop.apps.FOPException;
+import org.apache.fop.layoutmgr.LayoutManager;
+import org.apache.fop.layoutmgr.LeafNodeLayoutManager;
 
 /**
  * Implements fo:leader; main property of leader leader-pattern.
@@ -27,6 +30,16 @@ public class Leader extends FObjMixed {
 
     public Leader(FONode parent) {
         super(parent);
+    }
+
+    public LayoutManager getLayoutManager() {
+        LeafNodeLayoutManager lm = new LeafNodeLayoutManager(this);
+        lm.setCurrentArea(getInlineArea());
+        return lm;
+    }
+
+    protected InlineArea getInlineArea() {
+        return null;
     }
 
     public Status layout(Area area) throws FOPException {

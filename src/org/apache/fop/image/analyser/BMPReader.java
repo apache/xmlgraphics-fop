@@ -11,6 +11,8 @@ package org.apache.fop.image.analyser;
 import java.io.BufferedInputStream;
 import java.io.IOException;
 
+import org.apache.fop.fo.FOUserAgent;
+
 /**
  * ImageReader object for BMP image type.
  * @author Pankaj Narula
@@ -21,12 +23,12 @@ public class BMPReader extends AbstractImageReader {
 
     protected byte[] header;
 
-    public boolean verifySignature(String uri, BufferedInputStream fis)
-            throws IOException {
+    public boolean verifySignature(String uri, BufferedInputStream fis,
+                                   FOUserAgent ua) throws IOException {
         this.imageStream = fis;
         this.setDefaultHeader();
-        boolean supported = ((header[0] == (byte)0x42)
-                             && (header[1] == (byte)0x4d));
+        boolean supported = ((header[0] == (byte) 0x42) &&
+                             (header[1] == (byte) 0x4d));
         if (supported) {
             setDimension();
             return true;
@@ -44,7 +46,8 @@ public class BMPReader extends AbstractImageReader {
         int byte2 = header[19] & 0xff;
         int byte3 = header[20] & 0xff;
         int byte4 = header[21] & 0xff;
-        long l = (long)((byte4 << 24) | (byte3 << 16) | (byte2 << 8) | byte1);
+        long l = (long)((byte4 << 24) | (byte3 << 16) |
+                        (byte2 << 8) | byte1);
         this.width = (int)(l & 0xffffffff);
 
         byte1 = header[22] & 0xff;

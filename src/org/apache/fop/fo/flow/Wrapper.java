@@ -25,7 +25,6 @@ public class Wrapper extends FObjMixed {
 
     public Wrapper(FONode parent) {
         super(parent);
-        // check that this occurs inside an fo:flow
     }
 
 }

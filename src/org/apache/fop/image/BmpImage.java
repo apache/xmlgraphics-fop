@@ -23,20 +23,16 @@ import java.io.IOException;
 import org.apache.fop.datatypes.ColorSpace;
 import org.apache.fop.pdf.PDFColor;
 import org.apache.fop.image.analyser.ImageReader;
+import org.apache.fop.fo.FOUserAgent;
 
 public class BmpImage extends AbstractFopImage {
-    public BmpImage(URL href) throws FopImageException {
-        super(href);
-    }
-
-    public BmpImage(URL href,
-                    ImageReader imgReader) throws FopImageException {
+    public BmpImage(URL href, ImageReader imgReader) {
         super(href, imgReader);
     }
 
-    protected void loadImage() throws FopImageException {
+    protected boolean loadBitmap(FOUserAgent ua) {
         int wpos = 18;
-        int hpos = 22;    // offset positioning for w and height in  bmp files
+        int hpos = 22; // offset positioning for w and height in  bmp files
         int[] headermap = new int[54];
         int filepos = 0;
         InputStream file = null;
@@ -63,8 +59,8 @@ public class BmpImage extends AbstractFopImage {
                         if (input == -1)
                             eof = true;
                         else if (count2 >= 0) {
-                            palette[countr * 3 + count2] = (byte)(input
-                                                                  & 0xFF);
+                            palette[countr * 3 + count2] =
+                              (byte)(input & 0xFF);
                         }
                         count2--;
                         filepos++;
@@ -73,35 +69,37 @@ public class BmpImage extends AbstractFopImage {
                 }
             }
         } catch (IOException e) {
-            throw new FopImageException("Error while loading image "
-                                        + this.m_href.toString() + " : "
-                                        + e.getClass() + " - "
-                                        + e.getMessage());
+            ua.getLogger().error("Error while loading image "
+                                         + this.m_href.toString() + " : "
+                                         + e.getClass() + " - "
+                                         + e.getMessage(), e);
+            return false;
         }
         // gets h & w from headermap
-        this.m_width = headermap[wpos] + headermap[wpos + 1] * 256
-                       + headermap[wpos + 2] * 256 * 256
-                       + headermap[wpos + 3] * 256 * 256 * 256;
-        this.m_height = headermap[hpos] + headermap[hpos + 1] * 256
-                        + headermap[hpos + 2] * 256 * 256
-                        + headermap[hpos + 3] * 256 * 256 * 256;
+        this.m_width = headermap[wpos] + headermap[wpos + 1] * 256 +
+                       headermap[wpos + 2] * 256 * 256 +
+                       headermap[wpos + 3] * 256 * 256 * 256;
+        this.m_height = headermap[hpos] + headermap[hpos + 1] * 256 +
+                        headermap[hpos + 2] * 256 * 256 +
+                        headermap[hpos + 3] * 256 * 256 * 256;
 
-        int imagestart = headermap[10] + headermap[11] * 256
-                         + headermap[12] * 256 * 256
-                         + headermap[13] * 256 * 256 * 256;
+        int imagestart = headermap[10] + headermap[11] * 256 +
+                         headermap[12] * 256 * 256 + headermap[13] * 256 * 256 * 256;
         this.m_bitsPerPixel = headermap[28];
         this.m_colorSpace = new ColorSpace(ColorSpace.DEVICE_RGB);
-        int bytes;
+        int bytes = 0;
         if (this.m_bitsPerPixel == 1)
             bytes = (this.m_width + 7) / 8;
         else if (this.m_bitsPerPixel == 24)
             bytes = this.m_width * 3;
         else if (this.m_bitsPerPixel == 4 || this.m_bitsPerPixel == 8)
             bytes = this.m_width / (8 / this.m_bitsPerPixel);
-        else
-            throw new FopImageException("Image (" + this.m_href.toString()
-                                        + ") has " + this.m_bitsPerPixel
-                                        + " which is not a supported BMP format.");
+        else {
+            ua.getLogger().error("Image (" + this.m_href.toString()
+                                         + ") has " + this.m_bitsPerPixel
+                                         + " which is not a supported BMP format.");
+            return false;
+        }
         if ((bytes & 0x03) != 0) {
             bytes |= 0x03;
             bytes++;
@@ -120,10 +118,11 @@ public class BmpImage extends AbstractFopImage {
                 temp[count++] = input;
             file.close();
         } catch (IOException e) {
-            throw new FopImageException("Error while loading image "
-                                        + this.m_href.toString() + " : "
-                                        + e.getClass() + " - "
-                                        + e.getMessage());
+            ua.getLogger().error("Error while loading image "
+                                         + this.m_href.toString() + " : "
+                                         + e.getClass() + " - "
+                                         + e.getMessage(), e);
+            return false;
         }
 
         for (int i = 0; i < this.m_height; i++) {
@@ -135,44 +134,46 @@ public class BmpImage extends AbstractFopImage {
                 if (this.m_bitsPerPixel == 24 && x < this.m_width) {
                     int countr = 2;
                     do {
-                        this.m_bitmaps[3 * (i * this.m_width + x) + countr] =
-                            (byte)(temp[(this.m_height - i - 1) * bytes + j]
-                                   & 0xFF);
+                        this.m_bitmaps[3 * (i * this.m_width + x) +
+                                       countr] =
+                                         (byte)(temp[(this.m_height - i - 1) *
+                                                     bytes + j] & 0xFF);
                         j++;
-                    } while (--countr >= 0);
+                    } while (--countr >= 0)
+                        ;
                     x++;
                 } else if (this.m_bitsPerPixel == 1) {
-                    for (int countr = 0; countr < 8 && x < this.m_width;
-                            countr++) {
+                    for (int countr = 0;
+                            countr < 8 && x < this.m_width; countr++) {
                         if ((p & 0x80) != 0) {
-                            this.m_bitmaps[3 * (i * this.m_width + x)] =
-                                (byte)0xFF;
-                            this.m_bitmaps[3 * (i * this.m_width + x) + 1] =
-                                (byte)0xFF;
-                            this.m_bitmaps[3 * (i * this.m_width + x) + 2] =
-                                (byte)0xFF;
+                            this.m_bitmaps[3 *
+                                           (i * this.m_width + x)] = (byte) 0xFF;
+                            this.m_bitmaps[3 * (i * this.m_width + x) +
+                                           1] = (byte) 0xFF;
+                            this.m_bitmaps[3 * (i * this.m_width + x) +
+                                           2] = (byte) 0xFF;
                         } else {
-                            this.m_bitmaps[3 * (i * this.m_width + x)] =
-                                (byte)0;
-                            this.m_bitmaps[3 * (i * this.m_width + x) + 1] =
-                                (byte)0;
-                            this.m_bitmaps[3 * (i * this.m_width + x) + 2] =
-                                (byte)0;
+                            this.m_bitmaps[3 *
+                                           (i * this.m_width + x)] = (byte) 0;
+                            this.m_bitmaps[3 * (i * this.m_width + x) +
+                                           1] = (byte) 0;
+                            this.m_bitmaps[3 * (i * this.m_width + x) +
+                                           2] = (byte) 0;
                         }
                         p <<= 1;
                         x++;
                     }
                     j++;
                 } else if (this.m_bitsPerPixel == 4) {
-                    for (int countr = 0; countr < 2 && x < this.m_width;
-                            countr++) {
+                    for (int countr = 0;
+                            countr < 2 && x < this.m_width; countr++) {
                         int pal = ((p & 0xF0) >> 4) * 3;
                         this.m_bitmaps[3 * (i * this.m_width + x)] =
-                            palette[pal];
-                        this.m_bitmaps[3 * (i * this.m_width + x) + 1] =
-                            palette[pal + 1];
-                        this.m_bitmaps[3 * (i * this.m_width + x) + 2] =
-                            palette[pal + 2];
+                          palette[pal];
+                        this.m_bitmaps[3 * (i * this.m_width + x) +
+                                       1] = palette[pal + 1];
+                        this.m_bitmaps[3 * (i * this.m_width + x) +
+                                       2] = palette[pal + 2];
                         p <<= 4;
                         x++;
                     }
@@ -181,11 +182,11 @@ public class BmpImage extends AbstractFopImage {
                     if (x < this.m_width) {
                         p *= 3;
                         this.m_bitmaps[3 * (i * this.m_width + x)] =
-                            palette[p];
-                        this.m_bitmaps[3 * (i * this.m_width + x) + 1] =
-                            palette[p + 1];
-                        this.m_bitmaps[3 * (i * this.m_width + x) + 2] =
-                            palette[p + 2];
+                          palette[p];
+                        this.m_bitmaps[3 * (i * this.m_width + x) +
+                                       1] = palette[p + 1];
+                        this.m_bitmaps[3 * (i * this.m_width + x) +
+                                       2] = palette[p + 2];
                         j++;
                         x++;
                     } else
@@ -199,6 +200,8 @@ public class BmpImage extends AbstractFopImage {
         // m_bitsPerPixel to 8. If I do not do this Acrobat is unable to read the resultant PDF,
         // so we will hardcode this...
         this.m_bitsPerPixel = 8;
+
+        return true;
     }
 
 }

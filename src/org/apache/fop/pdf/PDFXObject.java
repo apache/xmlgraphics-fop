@@ -21,7 +21,6 @@ import org.apache.fop.pdf.PDFICCStream;
 import org.apache.fop.image.FopImage;
 import org.apache.fop.image.EPSImage;
 import org.apache.fop.image.JpegImage;
-import org.apache.fop.image.FopImageException;
 
 /**
  * PDF XObject
@@ -50,8 +49,9 @@ public class PDFXObject extends PDFObject {
         super(number);
         isPS = false;
         this.Xnum = Xnumber;
-        if (img == null)
+        if (img == null) {
             //log.error("FISH");
+        }
         fopimage = img;
         this.pdfDoc = pdfdoc;
         pdfICCStream = null;
@@ -142,8 +142,6 @@ public class PDFXObject extends PDFObject {
                 p = p + "/Subtype /PS\n";
                 p = p + "/Length " + imgStream.getDataLength();
                 
-	            // don't know if it's the good place (other objects can have references to it)
-                fopimage.close();
                 p = p + dictEntries;
                 p = p + ">>\n";
                 
@@ -208,9 +206,6 @@ public class PDFXObject extends PDFObject {
                 p = p + dictEntries;
                 p = p + ">>\n";
                 
-	            // don't know if it's the good place (other objects can have references to it)
-                fopimage.close();
-                
 	            // push the pdf dictionary on the writer
                 byte[] pdfBytes = p.getBytes();
                 stream.write(pdfBytes);
@@ -222,7 +217,7 @@ public class PDFXObject extends PDFObject {
                 stream.write(pdfBytes);
                 length += pdfBytes.length;
             }
-        } catch (FopImageException imgex) {
+        } catch (Exception imgex) {
             //log.error("Error in XObject : "
             //                       + imgex.getMessage());
         }

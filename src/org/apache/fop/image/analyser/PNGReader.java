@@ -11,6 +11,8 @@ package org.apache.fop.image.analyser;
 import java.io.BufferedInputStream;
 import java.io.IOException;
 
+import org.apache.fop.fo.FOUserAgent;
+
 /**
  * ImageReader object for PNG image type.
  * @author Pankaj Narula
@@ -20,18 +22,15 @@ public class PNGReader extends AbstractImageReader {
     static protected final int PNG_SIG_LENGTH = 24;
     protected byte[] header;
 
-    public boolean verifySignature(String uri, BufferedInputStream fis)
-            throws IOException {
+    public boolean verifySignature(String uri, BufferedInputStream fis,
+                                   FOUserAgent ua) throws IOException {
         this.imageStream = fis;
         this.setDefaultHeader();
-        boolean supported = ((header[0] == (byte)0x89)
-                             && (header[1] == (byte)0x50)
-                             && (header[2] == (byte)0x4e)
-                             && (header[3] == (byte)0x47)
-                             && (header[4] == (byte)0x0d)
-                             && (header[5] == (byte)0x0a)
-                             && (header[6] == (byte)0x1a)
-                             && (header[7] == (byte)0x0a));
+        boolean supported = ((header[0] == (byte) 0x89) &&
+                             (header[1] == (byte) 0x50) && (header[2] == (byte) 0x4e) &&
+                             (header[3] == (byte) 0x47) && (header[4] == (byte) 0x0d) &&
+                             (header[5] == (byte) 0x0a) &&
+                             (header[6] == (byte) 0x1a) && (header[7] == (byte) 0x0a));
         if (supported) {
             setDimension();
             return true;
@@ -49,7 +48,8 @@ public class PNGReader extends AbstractImageReader {
         int byte2 = header[17] & 0xff;
         int byte3 = header[18] & 0xff;
         int byte4 = header[19] & 0xff;
-        long l = (long)((byte1 << 24) | (byte2 << 16) | (byte3 << 8) | byte4);
+        long l = (long)((byte1 << 24) | (byte2 << 16) |
+                        (byte3 << 8) | byte4);
         this.width = (int)(l);
 
         byte1 = header[20] & 0xff;

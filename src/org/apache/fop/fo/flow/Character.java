@@ -11,13 +11,18 @@ package org.apache.fop.fo.flow;
 import org.apache.fop.fo.*;
 import org.apache.fop.fo.properties.*;
 import org.apache.fop.datatypes.ColorType;
-import org.apache.fop.layout.BlockArea;
-import org.apache.fop.layout.*;
-import org.apache.fop.layout.inline.InlineArea;
 import org.apache.fop.fo.FObj;
 import org.apache.fop.layout.FontState;
-import org.apache.fop.layout.LineArea;
+import org.apache.fop.layout.AuralProps;
+import org.apache.fop.layout.BorderAndPadding;
+import org.apache.fop.layout.BackgroundProps;
+import org.apache.fop.layout.HyphenationProps;
+import org.apache.fop.layout.MarginInlineProps;
+import org.apache.fop.layout.RelativePositionProps;
 import org.apache.fop.apps.FOPException;
+import org.apache.fop.area.inline.InlineArea;
+import org.apache.fop.layoutmgr.LayoutManager;
+import org.apache.fop.layoutmgr.LeafNodeLayoutManager;
 
 
 /**
@@ -43,14 +48,17 @@ public class Character extends FObj {
         super(parent);
     }
 
-    public Status layout(Area area) throws FOPException {
-        BlockArea blockArea;
-        if (!(area instanceof BlockArea)) {
-            log.warn("currently Character can only be in a BlockArea");
-            return new Status(Status.OK);
-        }
-        blockArea = (BlockArea)area;
-        boolean textDecoration;
+    public LayoutManager getLayoutManager() {
+        LeafNodeLayoutManager lm = new LeafNodeLayoutManager(this);
+        lm.setCurrentArea(getInlineArea());
+        return lm;
+    }
+
+    protected InlineArea getInlineArea() {
+        return null;
+    }
+
+    public void setup() throws FOPException {
 
         // Common Aural Properties
         AuralProps mAurProps = propMgr.getAuralProps();
@@ -94,58 +102,6 @@ public class Character extends FObj {
         // this.properties.get("text-shadow");
         // this.properties.get("text-transform");
         // this.properties.get("word-spacing");
-
-        // color properties
-        ColorType c = this.properties.get("color").getColorType();
-        float red = c.red();
-        float green = c.green();
-        float blue = c.blue();
-
-        int whiteSpaceCollapse =
-            this.properties.get("white-space-collapse").getEnum();
-        int wrapOption = ((FObj)this.parent).properties.get("wrap-option").getEnum();
-
-        int tmp = this.properties.get("text-decoration").getEnum();
-        if (tmp == org.apache.fop.fo.properties.TextDecoration.UNDERLINE) {
-            textDecoration = true;
-        } else {
-            textDecoration = false;
-        }
-
-        // Character specific properties
-        characterValue = this.properties.get("character").getCharacter();
-
-
-        // initialize id
-        String id = this.properties.get("id").getString();
-        blockArea.getIDReferences().initializeID(id, blockArea);
-
-        LineArea la = blockArea.getCurrentLineArea();
-        if (la == null) {
-            return new Status(Status.AREA_FULL_NONE);
-        }
-        la.changeFont(propMgr.getFontState(area.getFontInfo()));
-        la.changeColor(red, green, blue);
-        la.changeWrapOption(wrapOption);
-        la.changeWhiteSpaceCollapse(whiteSpaceCollapse);
-        blockArea.setupLinkSet(this.getLinkSet());
-        int result = la.addCharacter(characterValue, this.getLinkSet(),
-                                     textDecoration);
-        if (result == Character.DOESNOT_FIT) {
-            la = blockArea.createNextLineArea();
-            if (la == null) {
-                return new Status(Status.AREA_FULL_NONE);
-            }
-            la.changeFont(propMgr.getFontState(area.getFontInfo()));
-            la.changeColor(red, green, blue);
-            la.changeWrapOption(wrapOption);
-            la.changeWhiteSpaceCollapse(whiteSpaceCollapse);
-            blockArea.setupLinkSet(this.getLinkSet());
-            la.addCharacter(characterValue, this.getLinkSet(),
-                            textDecoration);
-        }
-        return new Status(Status.OK);
-
     }
 
     public CharIterator charIterator() {

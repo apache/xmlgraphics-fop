@@ -11,6 +11,8 @@ package org.apache.fop.image.analyser;
 import java.io.BufferedInputStream;
 import java.io.IOException;
 
+import org.apache.fop.fo.FOUserAgent;
+
 /**
  * ImageReader objects read image headers to determine the image size.
  * @author Pankaj Narula
@@ -24,8 +26,8 @@ public interface ImageReader {
      * @return true if image type is the handled one
      * @exception IOException io error
      */
-    public boolean verifySignature(String uri, BufferedInputStream bis)
-            throws IOException;
+    public boolean verifySignature(String uri, BufferedInputStream bis,
+                                   FOUserAgent ua) throws IOException;
 
     /**
      * Return the used InputStream.
