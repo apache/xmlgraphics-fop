@@ -128,5 +128,10 @@ public class FlowLayoutManager extends BlockStackingLayoutManager {
         return parentArea;
     }
 
+    public void resetPosition(Position resetPos) {
+        if (resetPos == null) {
+            reset(null);
+        }
+    }
 }
 
