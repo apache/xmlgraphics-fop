@@ -46,6 +46,12 @@
          </li>
         </ul>
       </section>
+      <section id="specs-unicode">
+        <title>Unicode</title>
+        <ul>
+          <li><jump href="http://www.unicode.org/reports/tr14">UTR-14 (Unicode Standard Annex #14: Line Breaking Properties)</jump></li>
+        </ul>
+      </section>
       <section id="specs-other">
         <title>Other</title>
         <ul>
