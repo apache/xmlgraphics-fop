@@ -59,6 +59,7 @@ import org.apache.fop.fo.FOTreeHandler;
 import org.apache.fop.mif.MIFHandler;
 import org.apache.fop.render.Renderer;
 import org.apache.fop.render.awt.AWTPrintRenderer;
+import org.apache.fop.render.awt.AWTRenderer;
 import org.apache.fop.rtf.renderer.RTFHandler;
 import org.apache.fop.tools.DocumentInputSource;
 import org.apache.fop.tools.DocumentReader;
@@ -321,7 +322,9 @@ public class Driver implements LogEnabled {
         source = null;
         stream = null;
         reader = null;
-        treeBuilder.reset();
+        if (treeBuilder != null) {
+            treeBuilder.reset();
+        }
     }
 
     /**
@@ -424,6 +427,10 @@ public class Driver implements LogEnabled {
      * @param renderer the renderer instance to use (Note: Logger must be set at this point)
      */
     public void setRenderer(Renderer renderer) {
+        // AWTStarter calls this function directly
+        if (renderer instanceof AWTRenderer) {
+            rendererType = RENDER_AWT;
+        }
         renderer.setProducer(Version.getVersion());
         renderer.setUserAgent(getUserAgent());
         this.renderer = renderer;
