@@ -1190,6 +1190,18 @@
 	</property>
 
 	<property>
+		<name>precedence</name>
+		<class-name>Precedence</class-name>
+		<inherited>false</inherited>
+		<datatype>Enum</datatype>
+			<enumeration>
+				<value const="TRUE">true</value>
+				<value const="FALSE">false</value>
+			</enumeration>
+		<default>false</default>
+	</property>
+
+	<property>
 		<name>hyphenation-character</name>
 		<class-name>HyphenationCharacter</class-name>
 		<inherited>true</inherited>
