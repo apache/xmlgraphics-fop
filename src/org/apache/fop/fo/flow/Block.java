@@ -123,7 +123,7 @@ public class Block extends FObjMixed {
             // this.properties.get("line-height-shift-adjustment");
             // this.properties.get("line-stacking-strategy");
             // this.properties.get("orphans");
-            // this.properties.get("space-treatment");
+            // this.properties.get("white-space-treatment");
             // this.properties.get("span");
             // this.properties.get("text-align");
             // this.properties.get("text-align-last");

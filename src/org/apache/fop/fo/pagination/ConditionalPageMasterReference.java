@@ -38,8 +38,8 @@ public class ConditionalPageMasterReference extends FObj {
         super(parent, propertyList);
 
         this.name = getElementName();
-        if (getProperty("master-name") != null) {
-            setMasterName(getProperty("master-name").getString());
+        if (getProperty("master-reference") != null) {
+            setMasterName(getProperty("master-reference").getString());
         }
 
         validateParent(parent);
@@ -56,7 +56,7 @@ public class ConditionalPageMasterReference extends FObj {
     }
 
     /**
-     * Returns the "master-name" attribute of this page master reference
+     * Returns the "master-reference" attribute of this page master reference
      */
     public String getMasterName() {
         return masterName;
@@ -148,7 +148,7 @@ public class ConditionalPageMasterReference extends FObj {
 
             if (getMasterName() == null) {
                 log.warn("single-page-master-reference"
-                                       + "does not have a master-name and so is being ignored");
+                                       + "does not have a master-reference and so is being ignored");
             } else {
                 this.repeatablePageMasterAlternatives.addConditionalPageMasterReference(this);
             }

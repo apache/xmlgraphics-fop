@@ -82,7 +82,9 @@ public class PageSequence extends FObj {
     private Hashtable _flowMap;
 
     /**
-     * the "master-name" attribute
+     * the "master-reference" attribute,
+     * which specifies the name of the page-sequence-master or
+     * page-master to be used to create pages in the sequence
      */
     private String masterName;
 
@@ -176,7 +178,7 @@ public class PageSequence extends FObj {
             }
         }
 
-        masterName = this.properties.get("master-name").getString();
+        masterName = this.properties.get("master-reference").getString();
 
         // get the 'format' properties
         this.pageNumberGenerator =
@@ -527,7 +529,7 @@ public class PageSequence extends FObj {
             SimplePageMaster simpleMaster =
                 this.layoutMasterSet.getSimplePageMaster(pageSequenceName);
             if (simpleMaster == null) {
-                throw new FOPException("'master-name' for 'fo:page-sequence'"
+                throw new FOPException("'master-reference' for 'fo:page-sequence'"
                                        + "matches no 'simple-page-master' or 'page-sequence-master'");
             }
             currentPageMasterName = pageSequenceName;

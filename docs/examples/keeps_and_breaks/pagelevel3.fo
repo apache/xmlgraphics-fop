@@ -21,7 +21,7 @@ This file addresses break-before's in page context.
     </fo:simple-page-master>
   </fo:layout-master-set>
 
-  <fo:page-sequence master-name="all">
+  <fo:page-sequence master-reference="all">
     <fo:static-content flow-name="xsl-region-after">
 	  <fo:block font-size="10pt" text-align="start"
 	    border-style="solid" border-color="blue" border-width="0.5pt"

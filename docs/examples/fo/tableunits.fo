@@ -19,7 +19,7 @@
   </fo:layout-master-set>
 
   <!-- starts actual layout -->
-  <fo:page-sequence master-name="first">
+  <fo:page-sequence master-reference="first">
 
   <fo:flow flow-name="xsl-region-body">
 
