@@ -63,7 +63,7 @@ public class ExternalGraphic extends FObj {
      */
     protected void addProperties(Attributes attlist) throws FOPException {
         super.addProperties(attlist);
-        getDocument().getFOInputHandler().image(this);
+        getFOInputHandler().image(this);
     }
 
     /**

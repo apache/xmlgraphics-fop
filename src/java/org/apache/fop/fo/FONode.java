@@ -28,7 +28,6 @@ import org.xml.sax.Locator;
 import org.apache.commons.logging.Log;
 
 // FOP
-import org.apache.fop.apps.Document;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.util.CharUtilities;
@@ -60,7 +59,7 @@ public abstract class FONode {
      * @return FOUserAgent
      */
     public FOUserAgent getUserAgent() {
-        return getDocument().getDriver().getUserAgent();
+        return getFOInputHandler().getDriver().getUserAgent();
     }
 
     /**
@@ -68,7 +67,7 @@ public abstract class FONode {
      * @return the logger
      */
     public Log getLogger() {
-        return getDocument().getDriver().getLogger();
+        return getFOInputHandler().getDriver().getLogger();
     }
 
     /**
@@ -101,7 +100,7 @@ public abstract class FONode {
      * @param localName (e.g. "table" for "fo:table")
      * @throws IllegalArgumentException if incoming node not valid for parent
      */
-    protected void validateChildNode(String namespaceURI, String localName) {}
+    protected void validateChildNode(Locator loc, String namespaceURI, String localName) {}
 
     /**
      * Adds characters (does nothing here)
@@ -180,12 +179,12 @@ public abstract class FONode {
     }
 
     /**
-     * Recursively goes up the FOTree hierarchy until the FONode is found,
-     * which returns the parent Document.
-     * @return the Document object that is the parent of this node.
+     * Recursively goes up the FOTree hierarchy until the fo:root is found,
+     * which returns the parent FOInputHandler.
+     * @return the FOInputHandler object that is the parent of the FO Tree
      */
-    public Document getDocument() {
-        return parent.getDocument();
+    public FOInputHandler getFOInputHandler() {
+        return parent.getFOInputHandler();
     }
 
     /**
@@ -226,9 +225,9 @@ public abstract class FONode {
      * (e.g., two fo:declarations within fo:root)
      * @param offendingNode incoming node that would cause a duplication.
      */
-    protected void tooManyNodesError(String offendingNode) {
+    protected void tooManyNodesError(Locator loc, String offendingNode) {
         throw new IllegalArgumentException(
-            "Error: for " + getName() + ", only one " 
+            errorText(loc) + getName() + ", only one " 
             + offendingNode + " may be declared.");
     }
 
@@ -238,9 +237,10 @@ public abstract class FONode {
      * @param tooLateNode string name of node that should be earlier in document
      * @param tooEarlyNode string name of node that should be later in document
      */
-    protected void nodesOutOfOrderError(String tooLateNode, String tooEarlyNode) {
+    protected void nodesOutOfOrderError(Locator loc, String tooLateNode, 
+        String tooEarlyNode) {
         throw new IllegalArgumentException(
-            "Error: for " + getName() + ", " + tooLateNode 
+            errorText(loc) + getName() + ", " + tooLateNode 
             + " must be declared before " + tooEarlyNode + ".");
     }
     
@@ -250,11 +250,19 @@ public abstract class FONode {
      * @param nsURI namespace URI of incoming invalid node
      * @param lName local name (i.e., no prefix) of incoming node 
      */
-    protected void invalidChildError(String nsURI, String lName) {
+    protected void invalidChildError(Locator loc, String nsURI, String lName) {
         throw new IllegalArgumentException(
-            "Error: " + getNodeString(nsURI, lName) + 
+            errorText(loc) + getNodeString(nsURI, lName) + 
             " is not valid child element of " + getName() + ".");
     }
     
+    /**
+     * Helper function to return "Error (line#/column#)" string for
+     * above exception messages
+     * @param loc org.xml.sax.Locator object
+     */
+    protected static String errorText(Locator loc) {
+        return "Error(" + loc.getLineNumber() + "/" + loc.getColumnNumber() + "): ";
+    }
 }
 

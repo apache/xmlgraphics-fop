@@ -54,7 +54,7 @@ public class BasicLink extends Inline {
      */
     protected void addProperties(Attributes attlist) throws FOPException {
         super.addProperties(attlist);
-        getDocument().getFOInputHandler().startLink(this);
+        getFOInputHandler().startLink(this);
     }
 
     public void setup() {
@@ -142,8 +142,7 @@ public class BasicLink extends Inline {
      */
     public void end() {
         super.end();
-        
-        getDocument().getFOInputHandler().endLink();
+        getFOInputHandler().endLink();
     }
     
     public String getName() {

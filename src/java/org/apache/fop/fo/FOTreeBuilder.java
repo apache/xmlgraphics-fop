@@ -234,7 +234,7 @@ public class FOTreeBuilder extends DefaultHandler {
             }
         } else { // check that incoming node is valid for currentFObj
             try {
-                currentFObj.validateChildNode(namespaceURI, localName);
+                currentFObj.validateChildNode(locator, namespaceURI, localName);
             } catch (IllegalArgumentException e) {
                 throw new SAXException(e);
             }
@@ -254,7 +254,7 @@ public class FOTreeBuilder extends DefaultHandler {
 
         if (rootFObj == null) {
             rootFObj = (Root) foNode;
-            rootFObj.setDocument(document);
+            rootFObj.setFOInputHandler(document.getFOInputHandler());
         } else {
             currentFObj.addChild(foNode);
         }

@@ -52,7 +52,7 @@ public class FootnoteBody extends FObj {
      */
     protected void addProperties(Attributes attlist) throws FOPException {
         super.addProperties(attlist);
-        getDocument().getFOInputHandler().startFootnoteBody(this);
+        getFOInputHandler().startFootnoteBody(this);
     }
 
     public void acceptVisitor(FOTreeVisitor fotv) {
@@ -61,8 +61,7 @@ public class FootnoteBody extends FObj {
 
     protected void end() {
         super.end();
-        
-        getDocument().getFOInputHandler().endFootnoteBody(this);
+        getFOInputHandler().endFootnoteBody(this);
     }
     
     public String getName() {

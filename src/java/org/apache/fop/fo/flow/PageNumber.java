@@ -61,7 +61,7 @@ public class PageNumber extends FObj {
     protected void addProperties(Attributes attlist) throws FOPException {
         super.addProperties(attlist);
         setup();
-        getDocument().getFOInputHandler().startPageNumber(this);
+        getFOInputHandler().startPageNumber(this);
     }
 
     public void setup() {
@@ -77,7 +77,7 @@ public class PageNumber extends FObj {
         CommonBackground bProps = propMgr.getBackgroundProps();
 
         // Common Font Properties
-        this.fontState = propMgr.getFontState(getDocument());
+        this.fontState = propMgr.getFontState(getFOInputHandler().getDocument());
 
         // Common Margin Properties-Inline
         CommonMarginInline mProps = propMgr.getMarginInlineProps();
@@ -129,7 +129,7 @@ public class PageNumber extends FObj {
     }
 
     protected void end() {
-        getDocument().getFOInputHandler().endPageNumber(this);
+        getFOInputHandler().endPageNumber(this);
     }
     
     public String getName() {

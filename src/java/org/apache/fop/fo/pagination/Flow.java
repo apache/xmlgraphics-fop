@@ -92,14 +92,14 @@ public class Flow extends FObj {
         // Now done in addChild of page-sequence
         //pageSequence.addFlow(this);
 
-        getDocument().getFOInputHandler().startFlow(this);
+        getFOInputHandler().startFlow(this);
     }
 
     /**
      * Tell the StructureRenderer that we are at the end of the flow.
      */
     public void end() {
-        getDocument().getFOInputHandler().endFlow(this);
+        getFOInputHandler().endFlow(this);
     }
 
     /**
