@@ -4,3 +4,4 @@ build-local.properties
 checkstyle-noframes.xsl
 .classpath
 .project
+.checkstyle
