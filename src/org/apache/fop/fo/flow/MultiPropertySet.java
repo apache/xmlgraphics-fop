@@ -51,8 +51,10 @@
 package org.apache.fop.fo.flow;
 
 // FOP
-import org.apache.fop.fo.*;
-import org.apache.fop.layout.*;
+import org.apache.fop.fo.ToBeImplementedElement;
+import org.apache.fop.fo.FObj;
+import org.apache.fop.fo.PropertyList;
+import org.apache.fop.layout.Area;
 import org.apache.fop.apps.FOPException;
 
 /**
