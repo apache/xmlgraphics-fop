@@ -239,6 +239,70 @@ public abstract class Properties {
 
 
     /**
+     * Return the EnumType derived from the argument.
+     * The argument must be an NCName whose string value is a
+     * valid Enum for the property associated with the NCName.
+     * @param value <tt>PropertyValue</tt>
+     * @param property <tt>int</tt> the target property index
+     * @param type <tt>String</tt> type of expected enum - for
+     * exception messages only
+     * @return <tt>EnumValue</tt> equivalent of the argument
+     * @exception <tt>PropertyException</tt>
+     */
+    private static EnumType getEnum(PropertyValue value,
+                                            int property, String type)
+            throws PropertyException
+    {
+        if ( ! (value instanceof NCName))
+            throw new PropertyException
+                (value.getClass().getName()
+                                + " instead of " + type + " for "
+                                + PropNames.getPropertyName(property));
+
+        NCName ncname = (NCName)value;
+        try {
+            return new EnumType(property, ncname.getNCName());
+        } catch (PropertyException e) {
+            throw new PropertyException
+                        (ncname.getNCName()
+                                + " instead of " + type + " for "
+                                + PropNames.getPropertyName(property));
+        }
+    }
+
+    /**
+     * Return the MappedEnumType derived from the argument.
+     * The argument must be an NCName whose string value is a
+     * valid MappedEnum for the property associated with the NCName.
+     * @param value <tt>PropertyValue</tt>
+     * @param property <tt>int</tt> the target property index
+     * @param type <tt>String</tt> type of expected enum - for
+     * exception messages only
+     * @return <tt>MappedEnumValue</tt> equivalent of the argument
+     * @exception <tt>PropertyException</tt>
+     */
+    private static MappedEnumType getMappedEnum(PropertyValue value,
+                                                int property, String type)
+            throws PropertyException
+    {
+        if ( ! (value instanceof NCName))
+            throw new PropertyException
+                (value.getClass().getName()
+                                + " instead of " + type + " for "
+                                + PropNames.getPropertyName(property));
+
+        NCName ncname = (NCName)value;
+        try {
+            return new MappedEnumType(property, ncname.getNCName());
+        } catch (PropertyException e) {
+            throw new PropertyException
+                        (ncname.getNCName()
+                                + " instead of " + type + " for "
+                                + PropNames.getPropertyName(property));
+        }
+    }
+
+    /**
      * Pseudo-property class for common border style values occurring in a
      * number of classes.
      */
@@ -628,11 +692,12 @@ public abstract class Properties {
             // NCName (i.e. enum token)
             if (value instanceof Inherit |
                     value instanceof FromParent |
-                        value instanceof FromNearestSpecified) {
+                        value instanceof FromNearestSpecified)
+            {
                 // Construct a list of Inherit values
                 return PropertySets.expandAndCopySHand(value);
             } else  {
-                // Make a list an pass to processList
+                // Make a list and pass to processList
                 PropertyValueList tmpList
                         = new PropertyValueList(value.getProperty());
                 tmpList.add(value);
@@ -660,21 +725,21 @@ public abstract class Properties {
             scanning_elements: while (elements.hasNext()) {
                 PropertyValue pval = (PropertyValue)(elements.next());
                 if (pval instanceof ColorType) {
-                    if (color != null) MessageHandler.log("Background: " +
+                    if (color != null) MessageHandler.log("background: " +
                                 "duplicate color overrides previous color");
                     color = pval;
                     continue scanning_elements;
                 }
 
                 if (pval instanceof UriType) {
-                    if (image != null) MessageHandler.log("Background: " +
+                    if (image != null) MessageHandler.log("background: " +
                         "duplicate image uri overrides previous image spec");
                     image = pval;
                     continue scanning_elements;
                 }
 
                 if (pval instanceof None) {
-                    if (image != null) MessageHandler.log("Background: " +
+                    if (image != null) MessageHandler.log("background: " +
                         "duplicate image spec overrides previous image spec");
                     image = pval;
                     continue scanning_elements;
@@ -702,7 +767,7 @@ public abstract class Properties {
                     }
                     // Now send one or two Numerics to BackgroundPosition
                     if (position != null)
-                            MessageHandler.log("Background: duplicate" +
+                            MessageHandler.log("background: duplicate" +
                             "position overrides previous position");
                     position = BackgroundPosition.complex(posnList);
                     continue scanning_elements;
@@ -720,7 +785,7 @@ public abstract class Properties {
                                         (PropNames.BACKGROUND_COLOR, ncname);
                     } catch (PropertyException e) {};
                     if (colorval != null) {
-                        if (color != null) MessageHandler.log("Background: " +
+                        if (color != null) MessageHandler.log("background: " +
                                 "duplicate color overrides previous color");
                         color = colorval;
                         continue scanning_elements;
@@ -734,7 +799,7 @@ public abstract class Properties {
                     } catch (PropertyException e) {};
                     if (enum != null) {
                         if (attachment != null)
-                                MessageHandler.log("Background: duplicate" +
+                                MessageHandler.log("background: duplicate" +
                                 "attachment overrides previous attachment");
                         attachment = enum;
                         continue scanning_elements;
@@ -778,18 +843,18 @@ public abstract class Properties {
                         if (pos2ok) posnList.add(tmpval);
                         // Now send one or two NCNames to BackgroundPosition
                         if (position != null)
-                                MessageHandler.log("Background: duplicate" +
+                                MessageHandler.log("background: duplicate" +
                                 "position overrides previous position");
                         position = BackgroundPosition.complex(posnList);
                         continue scanning_elements;
                     }
                     throw new PropertyException
-                        ("Unknown NCName value for Background: " + ncname);
+                        ("Unknown NCName value for background: " + ncname);
                 }
 
                 throw new PropertyException
                     ("Invalid " + pval.getClass().getName() +
-                        " property value for Background");
+                        " property value for background");
             }
 
             // Now construct the list of PropertyValues with their
@@ -2333,26 +2398,26 @@ public abstract class Properties {
                 Iterator styles = list.iterator();
 
                 // There must be at least two
-                top = getEnum((PropertyValue)(styles.next()));
-                left = getEnum((PropertyValue)(styles.next()));
+                top = Properties.getEnum((PropertyValue)(styles.next()),
+                                    PropNames.BORDER_TOP_STYLE , "style");
+                left = Properties.getEnum((PropertyValue)(styles.next()),
+                                    PropNames.BORDER_LEFT_STYLE, "style");
                 try {
                     bottom = (EnumType)(top.clone());
+                    bottom.setProperty(PropNames.BORDER_BOTTOM_STYLE);
                     right = (EnumType)(left.clone());
+                    right.setProperty(PropNames.BORDER_RIGHT_STYLE);
                 } catch (CloneNotSupportedException cnse) {
                     throw new PropertyException
                                 ("clone() not supported on EnumType");
                 }
 
                 if (styles.hasNext()) bottom
-                            = getEnum((PropertyValue)(styles.next()));
+                        = Properties.getEnum((PropertyValue)(styles.next()),
+                                    PropNames.BORDER_BOTTOM_STYLE, "style");
                 if (styles.hasNext()) right
-                            = getEnum((PropertyValue)(styles.next()));
-
-                // Set the properties for each
-                top.setProperty(PropNames.BORDER_TOP_STYLE);
-                left.setProperty(PropNames.BORDER_LEFT_STYLE);
-                bottom.setProperty(PropNames.BORDER_BOTTOM_STYLE);
-                right.setProperty(PropNames.BORDER_RIGHT_STYLE);
+                        = Properties.getEnum((PropertyValue)(styles.next()),
+                                    PropNames.BORDER_RIGHT_STYLE, "style");
 
                 list = new PropertyValueList(PropNames.BORDER_STYLE);
                 list.add(top);
@@ -2365,34 +2430,6 @@ public abstract class Properties {
                 return list;
             }
         }
-
-        /**
-         * Return the EnumType derived from the argument.
-         * The argument must be an NCName whose string value is a
-         * standard style.
-         * @param value <tt>PropertyValue</tt>
-         * @return <tt>EnumValue</tt> equivalent of the argument
-         * @exception <tt>PropertyException</tt>
-         */
-        private static EnumType getEnum(PropertyValue value)
-                throws PropertyException
-        {
-            int property = value.getProperty();
-            // Must be a style enum
-            if ( ! (value instanceof NCName))
-                throw new PropertyException
-                    (value.getClass().getName() + " instead of style for "
-                                    + PropNames.getPropertyName(property));
-            // We have an NCName - hope it''s a style
-            NCName ncname = (NCName)value;
-            try {
-                return new EnumType(property, ncname.getNCName());
-            } catch (PropertyException e) {
-                throw new PropertyException
-                            (ncname.getNCName() + " instead of style for "
-                                    + PropNames.getPropertyName(property));
-            }
-        }
     }
 
     public static class BorderTop extends Properties {
@@ -2400,6 +2437,139 @@ public abstract class Properties {
         public static final int traitMapping = SHORTHAND_MAP;
         public static final int initialValueType = NOTYPE_IT;
         public static final int inherited = NO;
+
+        /**
+         * 'value' is a PropertyValueList or an individual PropertyValue.
+         *
+         * 'value' can contain a parsed Inherit value,
+         *  parsed FromParent value, parsed FromNearestSpecified value,
+         *  or, in any order;
+         * border-width
+         *     a parsed NCName value containing a standard border width
+         * border-style
+         *     a parsed NCName value containing a standard border style
+         * border-color
+         *     a parsed ColorType value, or an NCName containing one of
+         *     the standard colors
+         *
+         * <p>The value(s) provided, if valid, are converted into a list
+         * containing the expansion of the shorthand.  The elements may
+         * be in any order.  A minimum of one value will be present.
+         *
+         *   a border-top-color ColorType or inheritance value
+         *   a border-top-style EnumType or inheritance value
+         *   a border-top-width MappedEnumType or inheritance value
+         *
+         *  N.B. this is the order of elements defined in
+         *       PropertySets.borderTopExpansion
+         */
+        public static PropertyValue complex(PropertyValue value)
+                    throws PropertyException
+        {
+            if ( ! (value instanceof PropertyValueList)) {
+                return processValue(value);
+            } else {
+                return processList((PropertyValueList)value);
+            }
+        }
+
+        private static PropertyValueList processValue
+            (PropertyValue value) throws PropertyException
+        {
+            if (value instanceof Inherit |
+                    value instanceof FromParent |
+                        value instanceof FromNearestSpecified)
+            {
+                // Construct a list of Inherit values
+                return PropertySets.expandAndCopySHand(value);
+            } else  {
+                // Make a list and pass to processList
+                PropertyValueList tmpList
+                        = new PropertyValueList(value.getProperty());
+                tmpList.add(value);
+                return processList(tmpList);
+            }
+        }
+
+        private static PropertyValueList processList(PropertyValueList value)
+                        throws PropertyException
+        {
+            int property = value.getProperty();
+            PropertyValue   color= null,
+                            style = null,
+                            width = null;
+
+            PropertyValueList newlist = new PropertyValueList(property);
+            // This is a list
+            if (value.size() == 0)
+                throw new PropertyException
+                                ("Empty list for BorderTop");
+            Iterator elements = ((PropertyValueList)value).iterator();
+
+            scanning_elements: while (elements.hasNext()) {
+                PropertyValue pval = (PropertyValue)(elements.next());
+                if (pval instanceof ColorType) {
+                    if (color != null) MessageHandler.log("border-top: " +
+                                "duplicate color overrides previous color");
+                    color = pval;
+                    continue scanning_elements;
+                }
+                if (pval instanceof NCName) {
+                    // Could be standard color, style Enum or width MappedEnum
+                    PropertyValue colorFound = null;
+                    PropertyValue styleFound = null;
+                    PropertyValue widthFound = null;
+
+                    String ncname = ((NCName)pval).getNCName();
+                    try {
+                        styleFound = new EnumType
+                                        (PropNames.BORDER_TOP_STYLE, ncname);
+                    } catch (PropertyException e) {}
+                    if (styleFound != null) {
+                        if (style != null) MessageHandler.log("border-top: " +
+                                "duplicate style overrides previous style");
+                        style = styleFound;
+                        continue scanning_elements;
+                    }
+
+                    try {
+                        widthFound = new MappedEnumType
+                                        (PropNames.BORDER_TOP_WIDTH, ncname);
+                    } catch (PropertyException e) {}
+                    if (widthFound != null) {
+                        if (width != null) MessageHandler.log("border-top: " +
+                                "duplicate width overrides previous width");
+                        width = widthFound;
+                        continue scanning_elements;
+                    }
+
+                    try {
+                        colorFound = new ColorType
+                                        (PropNames.BORDER_TOP_COLOR, ncname);
+                    } catch (PropertyException e) {};
+                    if (colorFound != null) {
+                        if (color != null) MessageHandler.log("border-top: " +
+                                "duplicate color overrides previous color");
+                        color = colorFound;
+                        continue scanning_elements;
+                    }
+
+                    throw new PropertyException
+                        ("Unknown NCName value for border-top: " + ncname);
+                }
+                throw new PropertyException
+                    ("Invalid " + pval.getClass().getName() +
+                        " property value for border-top");
+            }
+
+            // Now construct the list of PropertyValues with their
+            // associated property indices, as expanded from the
+            // border-top shorthand.
+            if (style != null) newlist.add(style);
+            if (color != null) newlist.add(style);
+            if (width != null) newlist.add(width);
+            return newlist;
+        }
     }
 
     public static class BorderTopColor extends Properties {
@@ -2430,8 +2600,7 @@ public abstract class Properties {
         public static final int inherited = NO;
 
         public static final ROStringArray enums = BorderCommonStyle.enums;
-        private static final HashMap rwEnumValues
-                                            = BorderCommonStyle.rwEnumValues;
+        public static final Map enumValues = BorderCommonStyle.enumValues;
     }
 
     public static class BorderTopWidth extends Properties {
@@ -2528,26 +2697,29 @@ public abstract class Properties {
                 Iterator widths = list.iterator();
 
                 // There must be at least two
-                top = getMappedEnum((PropertyValue)(widths.next()));
-                left = getMappedEnum((PropertyValue)(widths.next()));
+                top = Properties.getMappedEnum
+                        ((PropertyValue)(widths.next()),
+                                        PropNames.BORDER_TOP_WIDTH, "width");
+                left = Properties.getMappedEnum
+                        ((PropertyValue)(widths.next()),
+                                        PropNames.BORDER_LEFT_WIDTH, "width");
                 try {
                     bottom = (MappedEnumType)(top.clone());
+                    bottom.setProperty(PropNames.BORDER_BOTTOM_WIDTH);
                     right = (MappedEnumType)(left.clone());
+                    right.setProperty(PropNames.BORDER_RIGHT_WIDTH);
                 } catch (CloneNotSupportedException cnse) {
                     throw new PropertyException
                                 ("clone() not supported on MappedEnumType");
                 }
 
-                if (widths.hasNext()) bottom
-                            = getMappedEnum((PropertyValue)(widths.next()));
-                if (widths.hasNext()) right
-                            = getMappedEnum((PropertyValue)(widths.next()));
-
-                // Set the properties for each
-                top.setProperty(PropNames.BORDER_TOP_WIDTH);
-                left.setProperty(PropNames.BORDER_LEFT_WIDTH);
-                bottom.setProperty(PropNames.BORDER_BOTTOM_WIDTH);
-                right.setProperty(PropNames.BORDER_RIGHT_WIDTH);
+                if (widths.hasNext()) bottom = Properties.getMappedEnum
+                        ((PropertyValue)(widths.next()),
+                                    PropNames.BORDER_BOTTOM_WIDTH, "width");
+                if (widths.hasNext())
+                    right = Properties.getMappedEnum
+                    ((PropertyValue)(widths.next()),
+                                    PropNames.BORDER_RIGHT_WIDTH, "width");
 
                 list = new PropertyValueList(PropNames.BORDER_WIDTH);
                 list.add(top);
@@ -2558,34 +2730,6 @@ public abstract class Properties {
                 // the shorthand, what border-?-width properties, if any,
                 // have been specified?
                 return list;
-            }
-        }
-
-        /**
-         * Return the MappedEnumType derived from the argument.
-         * The argument must be an NCName whose string value is a
-         * standard width.
-         * @param value <tt>PropertyValue</tt>
-         * @return <tt>MappedEnumValue</tt> equivalent of the argument
-         * @exception <tt>PropertyException</tt>
-         */
-        private static MappedEnumType getMappedEnum(PropertyValue value)
-                throws PropertyException
-        {
-            int property = value.getProperty();
-            // Must be a width enum
-            if ( ! (value instanceof NCName))
-                throw new PropertyException
-                    (value.getClass().getName() + " instead of width for "
-                                    + PropNames.getPropertyName(property));
-            // We have an NCName - hope it''s a width
-            NCName ncname = (NCName)value;
-            try {
-                return new MappedEnumType(property, ncname.getNCName());
-            } catch (PropertyException e) {
-                throw new PropertyException
-                            (ncname.getNCName() + " instead of width for "
-                                    + PropNames.getPropertyName(property));
             }
         }
     }
