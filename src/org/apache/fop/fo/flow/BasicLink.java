@@ -117,7 +117,7 @@ public class BasicLink extends FObjMixed {
 
 	Page p = area.getPage();
 
-	AreaContainer ac = area.getNearestAncestorAreaContainer();
+	AreaContainer ac = p.getBody().getCurrentColumnArea();
 	if (ac == null)
 	{
 		throw new FOPException("Couldn't get ancestor AreaContainer when processing basic-link");
