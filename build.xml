@@ -920,6 +920,8 @@ list of possible build targets.
   <target name="xsltToJava" >
     <style in="src\codegen\constants.xml" style="src\codegen\constants.xsl"
         out="Constants.java"/>
+    <style in="src/codegen/foelements.xml" style="src/codegen/property-sets.xsl"
+        out="PropertySets.java"/>
   </target>
 
   <!-- =================================================================== -->
