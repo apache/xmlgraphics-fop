@@ -20,6 +20,7 @@ package org.apache.fop.fo.pagination;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.datatypes.EnumType;
 import org.apache.fop.datatypes.IntegerType;
@@ -31,6 +32,7 @@ import org.apache.fop.fo.FObjectNames;
 import org.apache.fop.fo.PropNames;
 import org.apache.fop.fo.expr.PropertyException;
 import org.apache.fop.fo.pagination.FoPageSequenceMaster.FoRepeatablePageMasterAlternatives.FoConditionalPageMasterReference;
+import org.apache.fop.fo.pagination.PageSequenceMaster.PageMasterAlternatives.PageCondition;
 import org.apache.fop.fo.properties.BlankOrNotBlank;
 import org.apache.fop.fo.properties.MaximumRepeats;
 import org.apache.fop.fo.properties.OddOrEven;
@@ -307,11 +309,6 @@ public class PageSequenceMaster {
         public final int minRepeats;
         /** The maximum-repeats value for this set of alternatives. */
         public final int maxRepeats;
-        
-        /**
-         * Number of times this set of alternatives has been used
-         */
-        private int usageCount = 0;
 
         /**
          * List of alternative condition sets/simple page masters
@@ -373,34 +370,6 @@ public class PageSequenceMaster {
                 }
             }
             return null;
-        }
-        
-        /**
-         * Use the simple page master from the first <code>PageCondition</code>
-         * matching the argument.
-         * The usage count for this <code>PageMasterAlternatives</code>
-         * object is incremented.
-         * @param blankOrNot blank or not blank page test condition
-         * @param oddOrEven odd or even page numbered page test condition
-         * @param pagePosition position on sequence test condition
-         * @return the simple page master or null if the usage count has been
-         * exceeded or there is no matching set of conditions. 
-         */
-        public FoSimplePageMaster useConditionalMaster(
-                int blankOrNot, int oddOrEven, int pagePosition) {
-            if (maxRepeats == NO_LIMIT || usageCount < maxRepeats) {
-                PageCondition pageCond = conditionMatch(
-                        blankOrNot, oddOrEven, pagePosition);
-                if (pageCond != null) {
-                    usageCount++;
-                    return pageCond.getSimplePM();
-                }
-            }
-            return null;
-        }
-        
-        public boolean isExhausted() {
-            return (maxRepeats != NO_LIMIT && usageCount >= maxRepeats);
         }
         
         /**
@@ -481,9 +450,10 @@ public class PageSequenceMaster {
                 }
                 return null;
             }
-        }
 
-    }
+        } // End of PageCondition
+
+    } // End of PageMasterAlternatives
 
     /**
      * Provides an iterator across the sequence of page masters in the
@@ -492,36 +462,69 @@ public class PageSequenceMaster {
      * @author pbw
      * @version $Revision$ $Name$
      */
-    public class PageMasterIterator {
+    public class PageMasterIterator implements Cloneable {
 
         /**
          * Effectively, the iterator across <code>masters</code>
          */
-        private int currentMasterIndex = 0;
-        
-        private PageMasterAlternatives altMaster =
-            (PageMasterAlternatives)(masters.get(currentMasterIndex));
+        private int currentMasterIndex = -1;
         
         /**
-         * Array of flags for completed masters
+         * Number of times this set of alternatives has been used
          */
-        private boolean[] finished = new boolean[masters.size()];
+        private int usageCount = 0;
+        
+        private PageMasterAlternatives altMaster;
         
         /**
          * Returns a new iterator across <code>masters</code>
          */
-        public PageMasterIterator() {
-        }
+        public PageMasterIterator() {}
 
         /**
-         * @return true if any repetitions on any masters remian in the
+         * @return true if any repetitions on any masters remain in the
          * sequence
          */
         public boolean hasNext() {
             if (currentMasterIndex >= masters.size()) return false;
+            if (currentMasterIndex == masters.size() - 1
+                    && currentExhausted()) return false;
             return true;
         }
-
+        
+        /**
+         * Use the simple page master from the first <code>PageCondition</code>
+         * matching the argument.
+         * The usage count for this <code>PageMasterAlternatives</code>
+         * object is incremented.
+         * @param blankOrNot blank or not blank page test condition
+         * @param oddOrEven odd or even page numbered page test condition
+         * @param pagePosition position on sequence test condition
+         * @return the simple page master or null if the usage count has been
+         * exceeded or there is no matching set of conditions. 
+         */
+        public FoSimplePageMaster useConditionalMaster(
+                int blankOrNot, int oddOrEven, int pagePosition) {
+            if (altMaster.maxRepeats == NO_LIMIT
+                    || usageCount < altMaster.maxRepeats) {
+                PageCondition pageCond = altMaster.conditionMatch(
+                        blankOrNot, oddOrEven, pagePosition);
+                if (pageCond != null) {
+                    synchronized (this) {
+                        usageCount++;
+                    }
+                    return pageCond.getSimplePM();
+                }
+            }
+            return null;
+        }
+        
+        public boolean currentExhausted() {
+            return (currentMasterIndex < 0 || 
+                    (altMaster.maxRepeats != NO_LIMIT
+                            && usageCount >= altMaster.maxRepeats));
+        }
+        
         /**
          * Gets the next simple page master matching the given conditions.
          * @param blankOrNot blank or not blank page test condition
@@ -534,12 +537,19 @@ public class PageSequenceMaster {
             PageMasterAlternatives masterAlt;
             FoSimplePageMaster simplePM;
             while (hasNext()) {
-                simplePM = altMaster.useConditionalMaster(
+                if (currentExhausted()) {
+                    synchronized (this) {
+                    // Iterate to next altMaster
+                        altMaster = (PageMasterAlternatives)(
+                                masters.get(++currentMasterIndex));
+                        usageCount = 0;
+                    }
+                }
+                simplePM = useConditionalMaster(
                         blankOrNot, oddOrEven, pagePosition);
                 if (simplePM != null) {
                     return simplePM;
                 }
-                finished[currentMasterIndex++] = true;
             }
             return null;
         }
@@ -553,6 +563,6 @@ public class PageSequenceMaster {
                     BlankOrNotBlank.ANY, OddOrEven.ANY, PagePosition.ANY);
         }
 
-    }
+    } // End of PageMasterIterator
     
 }
