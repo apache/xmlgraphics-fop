@@ -56,6 +56,8 @@ import org.apache.avalon.framework.logger.ConsoleLogger;
 //FOP
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.fo.Constants;
+import org.apache.fop.fo.pagination.Region;
+import org.apache.fop.fo.pagination.SimplePageMaster;
 import org.apache.fop.fo.Property;
 import org.apache.fop.fo.PropertyList;
 import org.apache.fop.render.rtf.rtflib.rtfdoc.RtfAttributes;
@@ -72,48 +74,110 @@ class PageAttributesConverter {
     private static Logger log = new ConsoleLogger();
 
     /** convert xsl:fo attributes to RTF text attributes */
-    static RtfAttributes convertPageAttributes(PropertyList props, PropertyList defProps) {
-        RtfAttributes attrib = null;
-
+    static RtfAttributes convertPageAttributes(SimplePageMaster pagemaster) {
+        RtfAttributes attrib = new RtfAttributes();
+        
         try {
-            Property p;
-
-            if (defProps != null) {
-                attrib = convertPageAttributes(defProps, null);
-            } else {
-                attrib = new RtfAttributes();
-            }
-
+            FoUnitsConverter converter = FoUnitsConverter.getInstance();
+            
+            float fPageTop = 0;
+            float fPageBottom = 0;
+            PropertyList props = null;                        
+            Property p = null;
+            Float f = null;
+            
+            Region before = pagemaster.getRegion("before");
+            Region body   = pagemaster.getRegion("body");
+            Region after  = pagemaster.getRegion("after");
+            
+            //page attributes
+            props = pagemaster.propertyList;
+            
             if ((p = props.get(Constants.PR_PAGE_WIDTH)) != null) {
-                Float f = new Float(p.getLength().getValue() / 1000f);
+                f = new Float(p.getLength().getValue() / 1000f);
                 attrib.set(RtfPage.PAGE_WIDTH,
-                    (int)FoUnitsConverter.getInstance().convertToTwips(f.toString() + "pt"));
+                    (int)converter.convertToTwips(f.toString() + "pt"));
             }
+            
             if ((p = props.get(Constants.PR_PAGE_HEIGHT)) != null) {
-                Float f = new Float(p.getLength().getValue() / 1000f);
+                f = new Float(p.getLength().getValue() / 1000f);
                 attrib.set(RtfPage.PAGE_HEIGHT,
-                    (int)FoUnitsConverter.getInstance().convertToTwips(f.toString() + "pt"));
+                    (int)converter.convertToTwips(f.toString() + "pt"));
             }
+         
             if ((p = props.get(Constants.PR_MARGIN_TOP)) != null) {
-                Float f = new Float(p.getLength().getValue() / 1000f);
-                attrib.set(RtfPage.MARGIN_TOP,
-                    (int)FoUnitsConverter.getInstance().convertToTwips(f.toString() + "pt"));
+                fPageTop = p.getLength().getValue() / 1000f;
             }
+
             if ((p = props.get(Constants.PR_MARGIN_BOTTOM)) != null) {
-                Float f = new Float(p.getLength().getValue() / 1000f);
-                attrib.set(RtfPage.MARGIN_BOTTOM,
-                    (int)FoUnitsConverter.getInstance().convertToTwips(f.toString() + "pt"));
+                fPageBottom = p.getLength().getValue() / 1000f;
             }
+
             if ((p = props.get(Constants.PR_MARGIN_LEFT)) != null) {
-                Float f = new Float(p.getLength().getValue() / 1000f);
+                f = new Float(p.getLength().getValue() / 1000f);
                 attrib.set(RtfPage.MARGIN_LEFT,
-                    (int)FoUnitsConverter.getInstance().convertToTwips(f.toString() + "pt"));
+                    (int)converter.convertToTwips(f.toString() + "pt"));
             }
             if ((p = props.get(Constants.PR_MARGIN_RIGHT)) != null) {
-                Float f = new Float(p.getLength().getValue() / 1000f);
+                f = new Float(p.getLength().getValue() / 1000f);
                 attrib.set(RtfPage.MARGIN_RIGHT,
-                    (int)FoUnitsConverter.getInstance().convertToTwips(f.toString() + "pt"));
+                    (int)converter.convertToTwips(f.toString() + "pt"));
             }
+            
+            //region-body attributes
+            float fBodyTop = fPageTop;
+            float fBodyBottom = fPageBottom;
+            
+            if (body != null) {
+                props = body.propertyList;
+            
+                if ((p = props.get(Constants.PR_MARGIN_TOP)) != null) {
+                    fBodyTop += p.getLength().getValue() / 1000f;
+                }
+            
+                if ((p = props.get(Constants.PR_MARGIN_BOTTOM)) != null) {
+                    fBodyBottom += p.getLength().getValue() / 1000f;
+                }
+            }
+            
+            f = new Float(fBodyTop);
+            attrib.set(RtfPage.MARGIN_TOP,
+                    (int)converter.convertToTwips(f.toString() + "pt"));
+
+            f = new Float(fBodyBottom);
+            attrib.set(RtfPage.MARGIN_BOTTOM,
+                    (int)converter.convertToTwips(f.toString() + "pt"));
+            
+            //region-before attributes
+            float fBeforeTop = fPageTop;
+                        
+            if (before != null) {
+                props = before.propertyList;
+            
+                if ((p = props.get(Constants.PR_MARGIN_TOP)) != null) {
+                    fBeforeTop += p.getLength().getValue() / 1000f;
+                }
+            }
+
+            f = new Float(fBeforeTop);
+            attrib.set(RtfPage.HEADERY,
+                    (int)converter.convertToTwips(f.toString() + "pt"));
+
+            //region-after attributes
+            float fAfterBottom = fPageBottom;
+            
+            if (after != null) {
+                props = after.propertyList;
+                
+                if ((p = props.get(Constants.PR_MARGIN_BOTTOM)) != null) {
+                    fAfterBottom += p.getLength().getValue() / 1000f;
+                }             
+            }
+            
+            f = new Float(fAfterBottom);
+            attrib.set(RtfPage.FOOTERY,
+                    (int)converter.convertToTwips(f.toString() + "pt"));
+
         } catch (FOPException e) {
             log.error("Exception in convertPageAttributes: " 
                 + e.getMessage() + "- page attributes ignored");
