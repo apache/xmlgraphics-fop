@@ -5,7 +5,8 @@
 
 <s1 title="Examples">
     <p>Examples for the use of xsl:fo can be found in the Fop distribution in 
-       the subdirectory /docs/examples/fo. 
+       the subdirectory xml-fop/docs/examples/fo. You can start transformation of all fo files into pdf
+       files by starting xml-fop/docs/examples/runtests. 
     </p>
     <p>At the moment the following files are part of the distribution:</p>
     <ul>
@@ -23,5 +24,8 @@
           A good candidate to test your bugfix or new Fop code. 
       </li>
     </ul>
+      <p>Developers will find the first steps to a test suite for all implemented formatting objects and 
+       properties in xml-fop/docs/bugtests.</p>
+
 </s1>
 
