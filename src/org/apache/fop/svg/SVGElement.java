@@ -1,6 +1,6 @@
 /*
  * $Id$
- * Copyright (C) 2001 The Apache Software Foundation. All rights reserved.
+ * Copyright (C) 2001-2002 The Apache Software Foundation. All rights reserved.
  * For details on use and redistribution please refer to the
  * LICENSE file included with these sources.
  */
@@ -147,9 +147,9 @@ public class SVGElement extends SVGObj {
         ((SVGOMElement)svgRoot).setSVGContext(dc);
 
         try {
-            String baseDir = Configuration.getStringValue("baseDir");
-            if(baseDir != null) {
-                ((SVGOMDocument)doc).setURLObject(new URL(baseDir));
+            URL baseURL = Configuration.getBaseURL();
+            if (baseURL != null) {
+                ((SVGOMDocument)doc).setURLObject(baseURL);
             }
         } catch (Exception e) {
             log.error("Could not set base URL for svg", e);
