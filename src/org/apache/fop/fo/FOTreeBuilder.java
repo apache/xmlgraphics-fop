@@ -25,7 +25,7 @@ import org.xml.sax.InputSource;
 import org.xml.sax.Attributes;
 
 // Java
-import java.util.Hashtable;
+import java.util.HashMap;
 import java.util.Stack;
 import java.util.Vector;
 import java.io.IOException;
@@ -47,14 +47,14 @@ public class FOTreeBuilder extends DefaultHandler implements TreeBuilder {
      * table mapping element names to the makers of objects
      * representing formatting objects
      */
-    protected Hashtable fobjTable = new Hashtable();
+    protected HashMap fobjTable = new HashMap();
 
     protected Vector namespaces = new Vector();
 
     /**
      * class that builds a property list for each formatting object
      */
-    protected Hashtable propertylistTable = new Hashtable();
+    protected HashMap propertylistTable = new HashMap();
 
     /**
      * current formatting object being handled
@@ -71,7 +71,7 @@ public class FOTreeBuilder extends DefaultHandler implements TreeBuilder {
     /**
      * set of names of formatting objects encountered but unknown
      */
-    protected Hashtable unknownFOs = new Hashtable();
+    protected HashMap unknownFOs = new HashMap();
 
     /**
      *
@@ -99,9 +99,8 @@ public class FOTreeBuilder extends DefaultHandler implements TreeBuilder {
      * @param localName local name of formatting object element
      * @param maker Maker for class representing formatting object
      */
-    public void addMapping(String namespaceURI, String localName,
-                           FObj.Maker maker) {
-        this.fobjTable.put(namespaceURI + "^" + localName, maker);
+    public void addMapping(String namespaceURI, HashMap table) {
+        this.fobjTable.put(namespaceURI, table);
         this.namespaces.addElement(namespaceURI.intern());
     }
 
@@ -112,7 +111,7 @@ public class FOTreeBuilder extends DefaultHandler implements TreeBuilder {
      * @param localName local name of formatting object element
      * @param maker Maker for class representing formatting object
      */
-    public void addPropertyList(String namespaceURI, Hashtable list) {
+    public void addPropertyList(String namespaceURI, HashMap list) {
         PropertyListBuilder plb;
         plb = (PropertyListBuilder)this.propertylistTable.get(namespaceURI);
         if (plb == null) {
@@ -132,7 +131,7 @@ public class FOTreeBuilder extends DefaultHandler implements TreeBuilder {
      * @param maker Maker for class representing formatting object
      */
     public void addElementPropertyList(String namespaceURI, String localName,
-                                       Hashtable list) {
+                                       HashMap list) {
         PropertyListBuilder plb;
         plb = (PropertyListBuilder)this.propertylistTable.get(namespaceURI);
         if (plb == null) {
@@ -214,13 +213,15 @@ public class FOTreeBuilder extends DefaultHandler implements TreeBuilder {
         FObj.Maker fobjMaker;
 
         // String fullName = mapName(rawName);
-        String fullName = uri + "^" + localName;
-        fobjMaker = (FObj.Maker)fobjTable.get(fullName);
+        //String fullName = uri + "^" + localName;
+        HashMap table = (HashMap)fobjTable.get(uri);
+        fobjMaker = (FObj.Maker)table.get(localName);
         PropertyListBuilder currentListBuilder =
             (PropertyListBuilder)this.propertylistTable.get(uri);
 
         boolean foreignXML = false;
         if (fobjMaker == null) {
+            String fullName = uri + "^" + localName;
             if (!this.unknownFOs.containsKey(fullName)) {
                 this.unknownFOs.put(fullName, "");
                 log.error("Unknown formatting object "
@@ -239,7 +240,7 @@ public class FOTreeBuilder extends DefaultHandler implements TreeBuilder {
             PropertyList list = null;
             if (currentListBuilder != null) {
                 list =
-                    currentListBuilder.makeList(fullName, attlist,
+                    currentListBuilder.makeList(uri, localName, attlist,
                                                 (currentFObj == null) ? null
                                                 : currentFObj.properties, currentFObj);
             } else if(foreignXML) {

@@ -28,7 +28,7 @@ public class DirectPropertyListBuilder extends PropertyListBuilder {
     public DirectPropertyListBuilder() {
     }
 
-    public PropertyList makeList(String elementName, Attributes attributes,
+    public PropertyList makeList(String uri, String elementName, Attributes attributes,
                                  PropertyList parentPropertyList,
                                  FObj parentFO) throws FOPException {
         AttrPropertyList ret = new AttrPropertyList(attributes);

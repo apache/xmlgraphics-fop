@@ -8,6 +8,7 @@
 package org.apache.fop.svg;
 
 import java.util.Enumeration;
+import java.util.HashMap;
 
 import org.apache.fop.fo.DirectPropertyListBuilder;
 import org.apache.fop.fo.TreeBuilder;
@@ -16,60 +17,68 @@ import org.apache.fop.fo.ElementMapping;
 
 public class SVGElementMapping implements ElementMapping {
 
-    public void addToBuilder(TreeBuilder builder) {
+    private static HashMap foObjs = null;    
+    
+    public synchronized void addToBuilder(TreeBuilder builder) {
+
+        if(foObjs == null) {
+            foObjs = new HashMap();
+            foObjs.put("svg", SVGElement.maker());
+            foObjs.put("rect", SVGObj.maker("rect"));
+            foObjs.put("line", SVGObj.maker("line"));
+            foObjs.put("text", SVGObj.maker("text"));
+
+            foObjs.put("desc", SVGObj.maker("desc"));
+            foObjs.put("title", SVGObj.maker("title"));
+            foObjs.put("circle", SVGObj.maker("circle"));
+            foObjs.put("ellipse", SVGObj.maker("ellipse"));
+            foObjs.put("g", SVGObj.maker("g"));
+            foObjs.put("polyline", SVGObj.maker("polyline"));
+            foObjs.put("polygon", SVGObj.maker("polygon"));
+            foObjs.put("defs", SVGObj.maker("defs"));
+            foObjs.put("path", SVGObj.maker("path"));
+            foObjs.put("use", SVGObj.maker("use"));
+            foObjs.put("tspan", SVGObj.maker("tspan"));
+            foObjs.put("tref", SVGObj.maker("tref"));
+            foObjs.put("image", SVGObj.maker("image"));
+            foObjs.put("style", SVGObj.maker("style"));
+
+            foObjs.put("textPath", SVGObj.maker("textPath"));
+            foObjs.put("clipPath", SVGObj.maker("clipPath"));
+            foObjs.put("mask", SVGObj.maker("mask"));
+            foObjs.put("linearGradient", SVGObj.maker("linearGradient"));
+            foObjs.put("radialGradient", SVGObj.maker("radialGradient"));
+            foObjs.put("stop", SVGObj.maker("stop"));
+            foObjs.put("a", SVGObj.maker("a"));
+            foObjs.put("switch", SVGObj.maker("switch"));
+            foObjs.put("symbol", SVGObj.maker("symbol"));
+
+            foObjs.put("pattern", SVGObj.maker("pattern"));
+
+            foObjs.put("marker", SVGObj.maker("marker"));
+            foObjs.put("animate", SVGObj.maker("animate"));
+            foObjs.put("altGlyph", SVGObj.maker("altGlyph"));
+            foObjs.put("font", SVGObj.maker("font"));
+            foObjs.put("glyph", SVGObj.maker("glyph"));
+            foObjs.put("missing-glyph", SVGObj.maker("missing-glyph"));
+            foObjs.put("hkern", SVGObj.maker("hkern"));
+            foObjs.put("vkern", SVGObj.maker("vkern"));
+            foObjs.put("set", SVGObj.maker("set"));
+            foObjs.put("animateMotion", SVGObj.maker("animateMotion"));
+            foObjs.put("animateColor", SVGObj.maker("animateColor"));
+            foObjs.put("animateTransform", SVGObj.maker("animateTransform"));
+            foObjs.put("cursor", SVGObj.maker("cursor"));
+            foObjs.put("filter", SVGObj.maker("filter"));
+
+            foObjs.put("feFlood", SVGObj.maker("feFlood"));
+            foObjs.put("feGaussianBlur", SVGObj.maker("feGaussianBlur"));
+            foObjs.put("feOffset", SVGObj.maker("feOffset"));
+            foObjs.put("feMerge", SVGObj.maker("feMerge"));
+            foObjs.put("feMergeNode", SVGObj.maker("feMergeNode"));
+        }
+
         String uri = "http://www.w3.org/2000/svg";
-        builder.addMapping(uri, "svg", SVGElement.maker());
-        builder.addMapping(uri, "rect", SVGObj.maker("rect"));
-        builder.addMapping(uri, "line", SVGObj.maker("line"));
-        builder.addMapping(uri, "text", SVGObj.maker("text"));
-
-        builder.addMapping(uri, "desc", SVGObj.maker("desc"));
-        builder.addMapping(uri, "title", SVGObj.maker("title"));
-        builder.addMapping(uri, "circle", SVGObj.maker("circle"));
-        builder.addMapping(uri, "ellipse", SVGObj.maker("ellipse"));
-        builder.addMapping(uri, "g", SVGObj.maker("g"));
-        builder.addMapping(uri, "polyline", SVGObj.maker("polyline"));
-        builder.addMapping(uri, "polygon", SVGObj.maker("polygon"));
-        builder.addMapping(uri, "defs", SVGObj.maker("defs"));
-        builder.addMapping(uri, "path", SVGObj.maker("path"));
-        builder.addMapping(uri, "use", SVGObj.maker("use"));
-        builder.addMapping(uri, "tspan", SVGObj.maker("tspan"));
-        builder.addMapping(uri, "tref", SVGObj.maker("tref"));
-        builder.addMapping(uri, "image", SVGObj.maker("image"));
-        builder.addMapping(uri, "style", SVGObj.maker("style"));
-
-        builder.addMapping(uri, "textPath", SVGObj.maker("textPath"));
-        builder.addMapping(uri, "clipPath", SVGObj.maker("clipPath"));
-        builder.addMapping(uri, "mask", SVGObj.maker("mask"));
-        builder.addMapping(uri, "linearGradient", SVGObj.maker("linearGradient"));
-        builder.addMapping(uri, "radialGradient", SVGObj.maker("radialGradient"));
-        builder.addMapping(uri, "stop", SVGObj.maker("stop"));
-        builder.addMapping(uri, "a", SVGObj.maker("a"));
-        builder.addMapping(uri, "switch", SVGObj.maker("switch"));
-        builder.addMapping(uri, "symbol", SVGObj.maker("symbol"));
-
-        builder.addMapping(uri, "pattern", SVGObj.maker("pattern"));
-
-        builder.addMapping(uri, "marker", SVGObj.maker("marker"));
-        builder.addMapping(uri, "animate", SVGObj.maker("animate"));
-        builder.addMapping(uri, "altGlyph", SVGObj.maker("altGlyph"));
-        builder.addMapping(uri, "font", SVGObj.maker("font"));
-        builder.addMapping(uri, "glyph", SVGObj.maker("glyph"));
-        builder.addMapping(uri, "missing-glyph", SVGObj.maker("missing-glyph"));
-        builder.addMapping(uri, "hkern", SVGObj.maker("hkern"));
-        builder.addMapping(uri, "vkern", SVGObj.maker("vkern"));
-        builder.addMapping(uri, "set", SVGObj.maker("set"));
-        builder.addMapping(uri, "animateMotion", SVGObj.maker("animateMotion"));
-        builder.addMapping(uri, "animateColor", SVGObj.maker("animateColor"));
-        builder.addMapping(uri, "animateTransform", SVGObj.maker("animateTransform"));
-        builder.addMapping(uri, "cursor", SVGObj.maker("cursor"));
-        builder.addMapping(uri, "filter", SVGObj.maker("filter"));
-
-        builder.addMapping(uri, "feFlood", SVGObj.maker("feFlood"));
-        builder.addMapping(uri, "feGaussianBlur", SVGObj.maker("feGaussianBlur"));
-        builder.addMapping(uri, "feOffset", SVGObj.maker("feOffset"));
-        builder.addMapping(uri, "feMerge", SVGObj.maker("feMerge"));
-        builder.addMapping(uri, "feMergeNode", SVGObj.maker("feMergeNode"));
+        builder.addMapping(uri, foObjs);
 
         builder.addPropertyListBuilder(uri, new DirectPropertyListBuilder());
     }

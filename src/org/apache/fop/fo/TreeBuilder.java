@@ -8,7 +8,7 @@
 package org.apache.fop.fo;
 
 // Java
-import java.util.Hashtable;
+import java.util.HashMap;
 
 /**
  */
@@ -22,8 +22,7 @@ public interface TreeBuilder {
      * @param localName local name of formatting object element
      * @param maker Maker for class representing formatting object
      */
-    public void addMapping(String namespaceURI, String localName,
-                           FObj.Maker maker);
+    public void addMapping(String namespaceURI, HashMap table);
 
     /**
      * add a mapping from element name to maker.
@@ -32,7 +31,7 @@ public interface TreeBuilder {
      * @param localName local name of formatting object element
      * @param maker Maker for class representing formatting object
      */
-    public void addPropertyList(String namespaceURI, Hashtable list);
+    public void addPropertyList(String namespaceURI, HashMap list);
 
     public void addPropertyListBuilder(String namespaceURI, PropertyListBuilder list);
 
@@ -44,6 +43,6 @@ public interface TreeBuilder {
      * @param maker Maker for class representing formatting object
      */
     public void addElementPropertyList(String namespaceURI, String localName,
-                                       Hashtable list);
+                                       HashMap list);
 
 }

@@ -622,8 +622,6 @@ public class PDFRenderer extends PrintRenderer {
         }
     }
 
-
-
     /**
      * Convert a char to a multibyte hex representation
      */
@@ -656,7 +654,6 @@ public class PDFRenderer extends PrintRenderer {
         return buf.toString();
 
     }
-
 
     /**
      * Checks to see if we have some text rendering commands open
@@ -813,7 +810,6 @@ public class PDFRenderer extends PrintRenderer {
                 }
             }
         }
-
     }
 
     private void renderOutline(Outline outline) {

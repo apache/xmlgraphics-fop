@@ -16,7 +16,7 @@ import org.apache.fop.apps.FOPException;
 
 import org.xml.sax.Attributes;
 
-import java.util.Hashtable;
+import java.util.HashMap;
 
 public class PropertyListBuilder {
 
@@ -25,19 +25,19 @@ public class PropertyListBuilder {
      */
     private static final String FONTSIZEATTR = "font-size";
 
-    private Hashtable propertyListTable;
-    private Hashtable elementTable;
+    private HashMap propertyListTable;
+    private HashMap elementTable;
 
     public PropertyListBuilder() {
-        this.propertyListTable = new Hashtable();
-        this.elementTable = new Hashtable();
+        this.propertyListTable = new HashMap();
+        this.elementTable = new HashMap();
     }
 
-    public void addList(Hashtable list) {
-        propertyListTable = list;    // should add all
+    public void addList(HashMap list) {
+        propertyListTable.putAll(list);
     }
 
-    public void addElementList(String element, Hashtable list) {
+    public void addElementList(String element, HashMap list) {
         elementTable.put(element, list);
     }
 
@@ -78,13 +78,12 @@ public class PropertyListBuilder {
         return b;
     }
 
-    public PropertyList makeList(String elementName, Attributes attributes,
+    public PropertyList makeList(String ns, String elementName, Attributes attributes,
                                  PropertyList parentPropertyList,
                                  FObj parentFO) throws FOPException {
-        int index = elementName.indexOf("^");
         String space = "http://www.w3.org/TR/1999/XSL/Format";
-        if (index != -1) {
-            space = elementName.substring(0, index);
+        if (ns != null) {
+            space = ns;
         }
 
         PropertyList par = null;
@@ -92,12 +91,11 @@ public class PropertyListBuilder {
                 && space.equals(parentPropertyList.getNameSpace())) {
             par = parentPropertyList;
         }
-        // System.out.println(elementName.substring(index + 1));
         PropertyList p = new PropertyList(par, space,
-                                          elementName.substring(index + 1));
+                                          elementName);
         p.setBuilder(this);
-        Hashtable table;
-        table = (Hashtable)elementTable.get(elementName.substring(index + 1));
+        HashMap table;
+        table = (HashMap)elementTable.get(elementName);
 
         /* Store names of properties already set. */
         StringBuffer propsDone = new StringBuffer(256);
@@ -235,19 +233,19 @@ public class PropertyListBuilder {
 
     protected Property.Maker findMaker(String space, String elementName,
                                        String propertyName) {
-        return findMaker((Hashtable)elementTable.get(elementName),
+        return findMaker((HashMap)elementTable.get(elementName),
                          propertyName);
     }
 
     /**
      * Convenience function to return the Maker for a given property
-     * given the Hashtable containing properties specific to this element.
+     * given the HashMap containing properties specific to this element.
      * If table is non-null and
      * @param elemTable Element-specific properties or null if none.
      * @param propertyName Name of property.
      * @return A Maker for this property.
      */
-    private Property.Maker findMaker(Hashtable elemTable,
+    private Property.Maker findMaker(HashMap elemTable,
                                      String propertyName) {
         Property.Maker propertyMaker = null;
         if (elemTable != null) {

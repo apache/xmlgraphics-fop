@@ -256,8 +256,9 @@ public class TestConverter {
             if (outname.endsWith(".xml")) {
                 outname = outname.substring(0, outname.length() - 4);
             }
-            driver.setOutputStream(new FileOutputStream(new File(destdir,
-                                   outname + (outputPDF ? ".pdf" : ".at.xml"))));
+            driver.setOutputStream(new BufferedOutputStream(
+                                       new FileOutputStream(new File(destdir,
+                                       outname + (outputPDF ? ".pdf" : ".at.xml")))));
             log.debug("ddir:" + destdir + " on:" + outname + ".pdf");
             driver.render(parser, inputHandler.getInputSource());
 
