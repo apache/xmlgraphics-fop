@@ -24,6 +24,7 @@ import java.awt.geom.Point2D;
 
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.fo.FONode;
+import org.apache.fop.fo.PropertyList;
 import org.w3c.dom.DOMImplementation;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -58,9 +59,11 @@ public class MathMLElement extends MathMLObj {
     /**
      * @see org.apache.fop.fo.FONode#processNode
      */
-    public void processNode(String elementName, Locator locator, 
-                            Attributes attlist) throws FOPException {
-        super.processNode(elementName, locator, attlist);
+    public void processNode(String elementName, 
+                            Locator locator, 
+                            Attributes attlist, 
+                            PropertyList propertyList) throws FOPException {
+        super.processNode(elementName, locator, attlist, propertyList);
         createBasicDocument();
     }
 
@@ -73,7 +76,7 @@ public class MathMLElement extends MathMLObj {
                 converted = true;
                 String fontname = "Helvetica";
                 int fontstyle = 0;
-                int inlinefontstyle = 0;
+                //int inlinefontstyle = 0;
                 int displayfontsize = 12;
                 int inlinefontsize = 12;
 
