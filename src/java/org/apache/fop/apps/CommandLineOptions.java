@@ -34,6 +34,7 @@ import org.apache.commons.logging.impl.SimpleLog;
 // SAX
 import org.xml.sax.XMLReader;
 import org.xml.sax.SAXException;
+import javax.xml.parsers.SAXParserFactory;
 
 // avalon configuration
 import org.apache.avalon.framework.configuration.DefaultConfigurationBuilder;
@@ -434,7 +435,7 @@ public class CommandLineOptions implements Constants {
         if (userConfigFile == null) {
             return;
         }
-        XMLReader parser = FOFileHandler.createParser();
+        XMLReader parser = createParser();
         DefaultConfigurationBuilder configBuilder
             = new DefaultConfigurationBuilder(parser);
         Configuration userConfig = null;
@@ -719,5 +720,20 @@ public class CommandLineOptions implements Constants {
         }
     }
 
+    /**
+     * Creates <code>XMLReader</code> object using default
+     * <code>SAXParserFactory</code>
+     * @return the created <code>XMLReader</code>
+     * @throws FOPException if the parser couldn't be created or configured for proper operation.
+     */
+    private XMLReader createParser() throws FOPException {
+        try {
+            SAXParserFactory factory = SAXParserFactory.newInstance();
+            factory.setNamespaceAware(true);
+            return factory.newSAXParser().getXMLReader();
+        } catch (Exception e) {
+            throw new FOPException("Couldn't create XMLReader", e);
+        }
+    }
 }
 

@@ -18,7 +18,7 @@
  
 package org.apache.fop.svg;
 
-import org.apache.fop.apps.FOFileHandler;
+import javax.xml.parsers.SAXParserFactory;
 import org.apache.batik.bridge.UserAgentAdapter;
 import org.apache.commons.logging.Log;
 
@@ -135,7 +135,12 @@ public class SVGUserAgent extends UserAgentAdapter {
      * @return the XML parser class name
      */
     public String getXMLParserClassName() {
-        return FOFileHandler.getParserClassName();
+        try {
+            SAXParserFactory factory = SAXParserFactory.newInstance();
+            return factory.newSAXParser().getXMLReader().getClass().getName();
+        } catch (Exception e) {
+            return null;
+        }
     }
 
     /**

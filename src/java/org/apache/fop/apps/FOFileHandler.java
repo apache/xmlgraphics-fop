@@ -27,9 +27,7 @@ import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
 
-//JAXP
-import javax.xml.parsers.SAXParserFactory;
-import javax.xml.parsers.ParserConfigurationException;
+// JAXP
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.Source;
@@ -103,37 +101,6 @@ public class FOFileHandler extends InputHandler {
 
         } catch (Exception e) {
             throw new FOPException(e);
-        }
-    }
-    
-    /**
-     * Creates <code>XMLReader</code> object using default
-     * <code>SAXParserFactory</code>
-     * @return the created <code>XMLReader</code>
-     * @throws FOPException if the parser couldn't be created or configured for proper operation.
-     */
-    protected static XMLReader createParser() throws FOPException {
-        try {
-            SAXParserFactory factory = SAXParserFactory.newInstance();
-            factory.setNamespaceAware(true);
-            return factory.newSAXParser().getXMLReader();
-        } catch (SAXException se) {
-            throw new FOPException("Couldn't create XMLReader", se);
-        } catch (ParserConfigurationException pce) {
-            throw new FOPException("Couldn't create XMLReader", pce);
-        }
-    }
-
-    /**
-     * Returns the fully qualified classname of the standard XML parser for FOP
-     * to use.
-     * @return the XML parser classname
-     */
-    public static final String getParserClassName() {
-        try {
-            return createParser().getClass().getName();
-        } catch (FOPException e) {
-            return null;
         }
     }
 }

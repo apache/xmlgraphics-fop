@@ -20,9 +20,7 @@ package org.apache.fop.image;
 
 // Java
 import org.w3c.dom.Document;
-
-// FOP
-import org.apache.fop.apps.FOFileHandler;
+import javax.xml.parsers.SAXParserFactory;
 
 /**
  * This is an implementation for XML-based images such as SVG.
@@ -48,14 +46,17 @@ public class XMLImage extends AbstractFopImage {
     }
 
     /**
-     * creates a SAX parser, using the value of org.xml.sax.parser
-     * defaulting to org.apache.xerces.parsers.SAXParser
-     *
-     * @return the created SAX parser
+     * Returns the fully qualified classname of an XML parser for
+     * Batik classes that apparently need it (error messages, perhaps)
+     * @return an XML parser classname
      */
     public static String getParserName() {
-        String parserClassName = FOFileHandler.getParserClassName();
-        return parserClassName;
+        try {
+            SAXParserFactory factory = SAXParserFactory.newInstance();
+            return factory.newSAXParser().getXMLReader().getClass().getName();
+        } catch (Exception e) {
+            return null;
+        }
     }
 
     /**
