@@ -36,7 +36,7 @@ import org.apache.fop.apps.Fop;
  */
 public class Configuration {
 
-    protected static final Logger logger = Logger.getLogger(Fop.fopPackage);
+    protected final Logger logger = Logger.getLogger(Fop.fopPackage);
     /**
      * defines role types
      */
@@ -47,25 +47,45 @@ public class Configuration {
     /**
      * stores the configuration information
      */
-    private static HashMap standardConfiguration = new HashMap(30);
-    private static HashMap pdfConfiguration = new HashMap(20);
-    private static HashMap awtConfiguration = new HashMap(20);
+    private HashMap standardConfiguration = new HashMap();
+    private HashMap pdfConfiguration = new HashMap();
+    private HashMap awtConfiguration = new HashMap();
 
     /**
      * contains a HashMap of existing HashMaps
      */
-    private static HashMap configuration = new HashMap(3);
-
-    /**
-     * loads the configuration types into the configuration HashMap
-     */
-    static {
+    private HashMap configuration = new HashMap(3);
+    
+    public Configuration() {
         configuration.put("standard", standardConfiguration);
         configuration.put("pdf", pdfConfiguration);
         configuration.put("awt", awtConfiguration);
     }
 
-    public static HashMap getConfiguration() {
+    public Configuration(int role, HashMap config) {
+        this();
+        setRole(role, config);
+    }
+    
+    public void setRole(int role, HashMap config) {
+        switch (role) {
+            case Configuration.STANDARD:
+                standardConfiguration = config;
+                break;
+            case Configuration.PDF:
+                pdfConfiguration = config;
+                break;
+            case Configuration.AWT:
+                awtConfiguration = config;
+                break;
+            default:
+                logger.warning(
+                "Can't setup configuration. Unknown configuration role/target"
+                );
+            }
+    }
+    
+    public HashMap getConfiguration() {
         return configuration;
     }
 
@@ -78,7 +98,7 @@ public class Configuration {
      * convenience methods, which return the correct form.
      * null   if the key is not defined.
      */
-    public static Object getValue(String key, int role) {
+    public Object getValue(String key, int role) {
         switch (role) {
         case Configuration.STANDARD:
             return standardConfiguration.get(key);
@@ -99,8 +119,8 @@ public class Configuration {
      * @return String a string containing the value
      * null   if the key is not defined.
      */
-    public static String getStringValue(String key, int role) {
-        Object obj = Configuration.getValue(key, role);
+    public String getStringValue(String key, int role) {
+        Object obj = getValue(key, role);
         if (obj instanceof String) {
             return (String)obj;
         } else {
@@ -116,8 +136,8 @@ public class Configuration {
      * @return int a int containing the value
      * -1   if the key is not defined.
      */
-    public static int getIntValue(String key, int role) {
-        Object obj = Configuration.getValue(key, role);
+    public int getIntValue(String key, int role) {
+        Object obj = getValue(key, role);
         if (obj instanceof String) {
             return Integer.parseInt((String)obj);
         } else if (obj instanceof Integer) {
@@ -129,14 +149,14 @@ public class Configuration {
 
 
     /**
-     * convenience methods to access boolean values in the configuration
+     * convenience methods to access Boolean values in the configuration
      * @param key a string containing the key for the configuration value
      * role determines the configuration target
      * @return Boolean true or false as value
      * null   if the key is not defined.
      */
-    public static Boolean getBooleanValue(String key, int role) {
-        Object obj = Configuration.getValue(key, role);
+    public Boolean getBooleanObject(String key, int role) {
+        Object obj = getValue(key, role);
         if (obj instanceof String) {
             return new Boolean((String)obj);
         } else if (obj instanceof Boolean) {
@@ -146,6 +166,17 @@ public class Configuration {
         }
     }
 
+    /**
+     * Convenience method for accessing boolean values in the configuration
+     * @param key the key for the configuration entry
+     * @param role the configuration target
+     * @return the boolean value of the key value if defined, or false
+     */
+    public boolean isTrue(String key, int role) {
+        Boolean bval = getBooleanObject(key, role);
+        if (bval == null) return false;
+        return bval.booleanValue();
+    }
 
     /**
      * convenience methods to access list values in the configuration
@@ -154,8 +185,8 @@ public class Configuration {
      * @return ArrayList a ArrayList containing the values
      * null   if the key is not defined.
      */
-    public static ArrayList getListValue(String key, int role) {
-        Object obj = Configuration.getValue(key, role);
+    public ArrayList getListValue(String key, int role) {
+        Object obj = getValue(key, role);
         if (obj instanceof ArrayList) {
             return (ArrayList)obj;
         } else {
@@ -171,8 +202,8 @@ public class Configuration {
      * @return HashMap a HashMap containing the values
      * null   if the key is not defined.
      */
-    public static HashMap getHashMapValue(String key, int role) {
-        Object obj = Configuration.getValue(key, role);
+    public HashMap getHashMapValue(String key, int role) {
+        Object obj = getValue(key, role);
         if (obj instanceof HashMap) {
             return (HashMap)obj;
         } else {
@@ -194,7 +225,7 @@ public class Configuration {
      * if the map is not defined, the <i>key</i>entry is not defined,
      * or the <i>key</i>entry is itself <tt>null</tt>.
      */
-    public static Object getHashMapEntry(String map, Object key, int role) {
+    public Object getHashMapEntry(String map, Object key, int role) {
         Object obj = getValue(map, role);
         if (obj instanceof HashMap) {
             return ((HashMap)obj).get(key);
@@ -213,8 +244,8 @@ public class Configuration {
      * convenience methods, which return the correct form.
      * null   if the key is not defined.
      */
-    public static Object getValue(String key) {
-        return Configuration.getValue(key, Configuration.STANDARD);
+    public Object getValue(String key) {
+        return getValue(key, Configuration.STANDARD);
     }
 
     /**
@@ -225,8 +256,8 @@ public class Configuration {
      * @return String a string containing the value
      * null   if the key is not defined.
      */
-    public static String getStringValue(String key) {
-        return Configuration.getStringValue(key, Configuration.STANDARD);
+    public String getStringValue(String key) {
+        return getStringValue(key, Configuration.STANDARD);
     }
 
     /**
@@ -236,19 +267,30 @@ public class Configuration {
      * @return int a int containing the value
      * -1   if the key is not defined.
      */
-    public static int getIntValue(String key) {
-        return Configuration.getIntValue(key, Configuration.STANDARD);
+    public int getIntValue(String key) {
+        return getIntValue(key, Configuration.STANDARD);
     }
 
     /**
-     * convenience methods to access boolean values in the configuration
+     * convenience methods to access Boolean values in the configuration
      *
      * @param key a string containing the key for the configuration value
      * @return boolean true or false as value
      * null   if the key is not defined.
      */
-    public static Boolean getBooleanValue(String key) {
-        return Configuration.getBooleanValue(key, Configuration.STANDARD);
+    public Boolean getBooleanObject(String key) {
+        return getBooleanObject(key, Configuration.STANDARD);
+    }
+
+    /**
+     * Convenience method for accessing boolean values in the configuration
+     * @param key the key for the configuration entry
+     * @return the boolean value of the key value if defined, or false
+     */
+    public boolean isTrue(String key) {
+        Boolean bval = getBooleanObject(key);
+        if (bval == null) return false;
+        return bval.booleanValue();
     }
 
     /**
@@ -258,8 +300,8 @@ public class Configuration {
      * @return ArrayList a ArrayList containing the values
      * null   if the key is not defined.
      */
-    public static ArrayList getListValue(String key) {
-        return Configuration.getListValue(key, Configuration.STANDARD);
+    public ArrayList getListValue(String key) {
+        return getListValue(key, Configuration.STANDARD);
     }
 
     /**
@@ -270,8 +312,8 @@ public class Configuration {
      * @return HashMap a HashMap containing the values
      * null   if the key is not defined.
      */
-    public static HashMap getHashMapValue(String key) {
-        return Configuration.getHashMapValue(key, Configuration.STANDARD);
+    public HashMap getHashMapValue(String key) {
+        return getHashMapValue(key, Configuration.STANDARD);
     }
 
 
@@ -287,8 +329,8 @@ public class Configuration {
      * if the map is not defined, the <i>key</i>entry is not defined,
      * or the <i>key</i>entry is itself <tt>null</tt>.
      */
-    public static Object getHashMapEntry(String map, Object key) {
-        return Configuration.getHashMapEntry(map, key, STANDARD);
+    public Object getHashMapEntry(String map, Object key) {
+        return getHashMapEntry(map, key, STANDARD);
     }
 
 
@@ -298,8 +340,8 @@ public class Configuration {
      * @return HashMap a HashMap containing the values
      * null   if the key is not defined.
      */
-    public static ArrayList getFonts() {
-        return (ArrayList)Configuration.getValue("fonts",
+    public ArrayList getFonts() {
+        return (ArrayList)getValue("fonts",
                                               Configuration.STANDARD);
     }
 
@@ -307,22 +349,7 @@ public class Configuration {
      * initializes this configuration
      * @param config contains the configuration information
      */
-    public static void setup(int role, HashMap config) {
-        switch (role) {
-        case Configuration.STANDARD:
-            standardConfiguration = config;
-            break;
-        case Configuration.PDF:
-            pdfConfiguration = config;
-            break;
-        case Configuration.AWT:
-            awtConfiguration = config;
-            break;
-        default:
-            logger.warning(
-            "Can't setup configuration. Unknown configuration role/target"
-            );
-        }
+    public void setup(int role, HashMap config) {
     }
 
     /**
@@ -333,7 +360,7 @@ public class Configuration {
      * @param value an Object containing the value;
      * can be a String, a Boolean, and Integer, an ArrayList or a HashMap
      */
-    public static void put(String key, Object value, int role) {
+    public void put(String key, Object value, int role) {
         switch (role) {
         case Configuration.STANDARD:
             standardConfiguration.put(key, value);
@@ -362,14 +389,14 @@ public class Configuration {
      * can be a String, a Boolean, an Integer, an ArrayList or a HashMap
      */
 
-    public static void put(String key, Object value) {
-        Configuration.put(key, value, Configuration.STANDARD);
+    public void put(String key, Object value) {
+        put(key, value, Configuration.STANDARD);
     }
 
     /**
      * debug methods, which writes out all information in this configuration
      */
-    public static void dumpConfiguration() {
+    public void dumpConfiguration() {
         String key;
         Object value;
         ArrayList list;
