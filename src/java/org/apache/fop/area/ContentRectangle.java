@@ -120,4 +120,25 @@ public class ContentRectangle extends AreaGeometry {
             return super.getFrameRelativeDimensions();
         }
     }
+
+    /**
+     * {@inheritDoc}
+     * <p>Any registered listeners are notified of the change in the
+     * dimension.
+     */
+    public void setIPDimPts(double pts) {
+        super.setIPDimPts(pts);
+        area.notifyListeners();
+    }
+
+    /**
+     * {@inheritDoc}
+     * <p>Any registered listeners are notified of the change in the
+     * dimension.
+     */
+    public void setBPDimPts(double pts) {
+        super.setBPDimPts(pts);
+        area.notifyListeners();
+    }
+
 }
