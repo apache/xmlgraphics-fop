@@ -48,7 +48,7 @@
  * James Tauber <jtauber@jtauber.com>. For more information on the Apache
  * Software Foundation, please see <http://www.apache.org/>.
  */
-package org.apache.fop.layoutmgr;
+package org.apache.fop.fo;
 
 // Java
 import java.io.IOException;
@@ -86,7 +86,7 @@ import org.apache.fop.render.Renderer;
  * This initiates layout processes and corresponding
  * rendering processes such as start/end.
  */
-public class LayoutHandler extends FOInputHandler {
+public class FOTreeHandler extends FOInputHandler {
 
     // TODO: Collecting of statistics should be configurable
     private final boolean collectStatistics = true;
@@ -144,7 +144,7 @@ public class LayoutHandler extends FOInputHandler {
      * @param store if true then use the store pages model and keep the
      *              area tree in memory
      */
-    public LayoutHandler(OutputStream outputStream, Renderer renderer,
+    public FOTreeHandler(OutputStream outputStream, Renderer renderer,
                          boolean store) {
         if (collectStatistics) {
             runtime = Runtime.getRuntime();

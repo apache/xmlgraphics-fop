@@ -50,7 +50,7 @@
  */
 package org.apache.fop.extensions;
 
-import org.apache.fop.layoutmgr.LayoutHandler;
+import org.apache.fop.fo.FOTreeHandler;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.area.AreaTree;
 
@@ -108,8 +108,8 @@ public class Bookmarks extends ExtensionObj {
             data.addSubData(out.getData());
         }
         // add data to area tree for resolving and handling
-        if (foInputHandler instanceof LayoutHandler) {
-            AreaTree at = ((LayoutHandler)foInputHandler).getAreaTree();
+        if (foInputHandler instanceof FOTreeHandler) {
+            AreaTree at = ((FOTreeHandler)foInputHandler).getAreaTree();
             at.addTreeExtension(data);
             data.setAreaTree(at);
         }
