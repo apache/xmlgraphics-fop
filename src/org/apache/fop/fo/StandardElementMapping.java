@@ -110,5 +110,6 @@ public class StandardElementMapping implements ElementMapping {
 	builder.addMapping(uri, "character", org.apache.fop.fo.flow.Character.maker());
 	builder.addMapping(uri, "footnote", Footnote.maker());
 	builder.addMapping(uri, "footnote-body", FootnoteBody.maker());
+	builder.addMapping(uri, "wrapper", Wrapper.maker());
     }
 }
