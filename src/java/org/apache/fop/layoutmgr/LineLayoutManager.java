@@ -295,9 +295,9 @@ public class LineLayoutManager extends InlineStackingLayoutManager
                     : fobj.getOrphans();
         }
 
-        public void updateData1(int number, double demerits) {
-            lineLayouts.addPossibility(number, demerits);
-            //System.out.println("Possibilita' di layout in " + number + " linee; break alle posizioni:");
+        public void updateData1(int lineCount, double demerits) {
+            lineLayouts.addPossibility(lineCount, demerits);
+            log.trace("Layout possibility in " + lineCount + " lines; break at position:");
         }
 
         public void updateData2(KnuthNode bestActiveNode,
