@@ -14,16 +14,12 @@
     <body>
 <s1 title="Introduction">
 <p>
-The information here describes the design and architecture details for FOP.
-Currently this is part of a redesign process for some of the core parts of
-FOP.
+This is the design for the external interface when FOP is to be embedded
+inside another java application.
   </p>
   <p>
-The redesign is mainly focusing on some particular process involved
-with the layout process when converting the FO tree into the Area Tree.
-  </p>
-  <p>
-
+Common places where FOP is embedded is in a report production application
+of a server side application such as <jump href="http://xml.apache.org/cocoon/index.html">Cocoon</jump>.
    </p>
   </s1>
 
