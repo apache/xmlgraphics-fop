@@ -1,5 +1,8 @@
 ==============================================================================
 Done since 0.20.4 release
+- Added PDF encryption. Available options: no printing, no copy, no
+  edit, no annotations.
+  Submitted by Patrick C. Lankswert <PLankswert@InsightBB.COM>
 - Fixed text alingment for lines containing forward pointing page number
   citations. This should greatly improve TOC layout. (J.Pietschmann)
 - Fixed repeatedly laid out small caps text (for example in static
