@@ -37,7 +37,7 @@ remaining for content. (Karen Lease)
   fo:single-page-master-reference, fo:repeatable-page-master-reference and 
   fo:conditional-page-master-reference to comply with the latest XSL recommendation.
   Also changed the unimplemented property space-treatment to white-space-treatment and 
-  updated examples to use the new syntax.
+  updated examples and tests to use the new syntax.
   Submitted by: Christian Geisert [Christian.Geisert@isu-gmbh.de]
 - Add support for inline-progression-dimension and table-layout. (Karen)
 - Add support for letter-spacing.
