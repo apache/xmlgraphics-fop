@@ -104,11 +104,15 @@
     <section id="custom">
       <title>Custom Fonts</title>
       <p>Support for custom fonts is added by creating font metric files (written in XML) from the actual font files, and registering them with FOP. Currently only Type 1 and TrueType fonts can be added.
-More information about font types can be found at the <link href="http://partners.adobe.com/asn/developer/type/ftypes.html"> Adobe font types</link>.
-There is also lots more font information on this <link href="http://partners.adobe.com/asn/developer/technotes/fonts.html">Adobe Font Technote</link>.</p>
+More information about fonts can be found at:</p>
+      <ul>
+        <li><link href="http://partners.adobe.com/asn/developer/type/ftypes.html">Adobe font types</link></li>
+        <li><link href="http://partners.adobe.com/asn/developer/technotes/fonts.html">Adobe Font Technote</link>
+</li>
+      </ul>
       <section id="type1-metrics">
-        <title>Create Type 1 Font Metrics</title>
-        <p>FOP includes a tool that can generate an appropriate font metrics file from the PFM file that normally comes with the Type 1 font file.
+        <title>Type 1 Font Metrics</title>
+        <p>FOP includes PFMReader, which reads the PFM file that normally comes with a Type 1 font, and generates an appropriate font metrics file for it.
 To use it, run the class org.apache.fop.fonts.apps.PFMReader:</p>
         <p>Windows:</p>
         <source>java -cp build\fop.jar;lib\avalon-framework.jar;lib\xml-apis.jar;
@@ -127,22 +131,8 @@ FontBBox and Italic Angle can be found in the human-readable part of the PFB fil
 The PFMReader tool does not yet interpret PFB or AFM files, so if you want to be correct, you may have to adjust the values in the XML file manually.
 The constructed values however appear to have no visible influence.</note>
       </section>
-      <section id="type1-register">
-        <title>Register Type 1 Font Metrics with FOP</title>
-        <p>Edit conf/userconfig.xml and add entries for the font in the fonts section, e.g.:</p>
-        <source><![CDATA[<font metrics-file="FTL_____.xml" kerning="yes"
-      embed-file="C:\myfonts\FTL_____.pfb">
-  <font-triplet name="FrutigerLight" style="normal" weight="normal"/>
-</font>]]></source>
-        <note>Starting with FOP version 0.20.5 you can use URLs for the paths to the font files.
-Relative URLs are resolved relative to the fontBaseDir property (or baseDir) if available.</note>
-        <note>Make sure you specify the PFB file in the embed-file attribute  and not the PFM you used to generate the XML font metrics file.</note>
-        <note>If you do not want the font embedded in the PDF then remove the "embed-file" attribute. 
-The PDF will then contain text using the font with the font metrics and to view it properly the font will need to be installed where it is being viewed.</note>
-        <note>Cocoon users will need to setup the config, see FOPSerializer for more information.</note>
-      </section>
       <section id="truetype-metrics">
-        <title>Creating TrueType Font Metrics</title>
+        <title>TrueType Font Metrics</title>
         <p>FOP includes a tool that can generate an appropriate font metrics file from your TrueType font file. To create such a file in Windows from the TrueType font at c:\myfonts\cmr10.ttf:</p>
         <source>java -cp build\fop.jar;lib\avalon-framework.jar;lib\xml-apis.jar;
          lib\xercesImpl.jar;lib\xalan.jar
@@ -150,26 +140,32 @@ The PDF will then contain text using the font with the font metrics and to view 
              C:\myfonts\cmr10.ttf ttfcm.xml</source>
       </section>
       <section id="truetype-collections-metrics">
-        <title>Creating TrueType Collections Font Metrics</title>
+        <title>TrueType Collections Font Metrics</title>
         <p>TrueType collections (.ttc files) contains more than one font.
-To create metrics files for these fonts, you must specify which font in the collection should be generated, by using the "-ttcname" option with the TTFReader:</p>
+To create metrics files for these fonts, you must specify which font in the collection should be generated, by using the "-ttcname" option with the TTFReader.</p>
         <p>To get a list of the fonts in a collection, just start the TTFReader as if it were a normal TrueType file (without the -ttcname option).
 It will display all of the font names and exit with an Exception.</p>
-        <p>Example on generating metrics for a .ttc file:</p>
+        <p>Here is an example of generating a metrics file for a .ttc file:</p>
         <source>java -cp build\fop.jar;lib\avalon-framework.jar;lib\xml-apis.jar;
          lib\xercesImpl.jar;lib\xalan.jar
            org.apache.fop.fonts.apps.TTFReader -ttcname "MS Mincho"
              msmincho.ttc msminch.xml</source>
       </section>
-      <section id="truetype-register">
-        <title>Register the fonts within FOP</title>
-        <p>
-          Similiar to Type 1 fonts.
-        </p>
-        <source><![CDATA[<font metrics-file="cyberbit.xml" kerning="yes"
-      embed-file="C:\WINNT\Fonts\Cyberbit.ttf">
-  <font-triplet name="Cyberbit" style="normal" weight="normal"/>
+      <section id="register">
+        <title>Register Fonts with FOP</title>
+        <p>You must tell FOP how to find and use the font metrics files by registering them in the <link href="configuration.html">FOP Configuration</link>. Add entries for your custom fonts, regardless of font type, to the configuration file in a manner similar to the following:</p>
+        <source><![CDATA[<font metrics-file="FTL_____.xml" kerning="yes"
+      embed-file="C:\myfonts\FTL_____.pfb">
+  <font-triplet name="FrutigerLight" style="normal" weight="normal"/>
 </font>]]></source>
+        <note>Review the documentation for <link href="configuration.html">FOP Configuration</link> for instructions on making the FOP configuration available to FOP when it runs. Otherwise, FOP has no way of finding your custom font information.</note>
+        <ul>
+          <li>Starting with FOP version 0.20.5 you can use URLs for the paths to the font files.
+Relative URLs are resolved relative to the fontBaseDir property (or baseDir) if available. See <link href="configuration.html">FOP: Configuration</link> for more information.</li>
+          <li>The "kerning" and "embed-file" attributes are optional. Kerning is currently not used at all. If embedding is off, the output will position the text correctly (from the metrics file), but it will not be displayed or printed correctly unless the viewer has the applicable font available to their local system.</li>
+          <li>When setting the embed-file attribute for Type 1 fonts, be sure to specify the PFB (actual font data), not PFM (font metrics) file that you used to generate the XML font metrics file.</li>
+        </ul>
+        <note>Cocoon users will need to setup the config, see FOPSerializer for more information.</note>
       </section>
     </section>
     <section id="embedding">
@@ -189,6 +185,5 @@ While the document will be displayed correctly, the net effect of this is that s
 This will cause the whole font to be embedded in the pdf document.
 Characters will be WinAnsi encoded (as specified in the PDF spec), so you lose the ability to use characters from other character sets.</p>
     </section>
-    <note>Be sure to start FOP with the option to find the config file ("-c conf/userconfig.xml" from the command line). Otherwise, it has no way of finding your custom font information.</note>
   </body>
 </document>
