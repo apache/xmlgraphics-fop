@@ -129,5 +129,13 @@ public abstract class InputHandler {
             throw new FOPException("Coudn't create XMLReader", pce);
         }
     }
+    
+    /**
+     * Runs this InputHandler through the Driver.
+     * @param driver Driver instance to use
+     * @throws FOPException if processing this InputHandler fails
+     */
+    public abstract void run(Driver driver) throws FOPException;
+    
 }
 
