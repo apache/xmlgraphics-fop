@@ -35,6 +35,7 @@ public class SyncedCircularBuffer {
     private int getptr = 0;
     private int putptr = 0;
     private boolean flush = false;
+    private boolean producerFinished = false;
     private Object pushBackBuf = null;
 
     /**
@@ -101,6 +102,9 @@ public class SyncedCircularBuffer {
             if (Thread.interrupted()) {
                 throw new InterruptedException("Consumer interrupted");
             }
+            if (producerFinished && isEmpty()) {
+                throw new NoSuchElementException("Producer is finished.");
+            }
             if (pushBackBuf != null) {
                 obj = pushBackBuf;
                 pushBackBuf = null;
@@ -109,6 +113,11 @@ public class SyncedCircularBuffer {
 
             while (isEmpty()) {
                 // wait for the producer
+                // N.B. InterruptedException is propagated
+                // N.B. Because of synchronisation, producerFinished cannot
+                // become true while isEmpty() remains true, so just check for
+                // isEmpty().  In other circumstances, the
+                // InterruptedException will be propagated
                 this.wait();
             }
             
@@ -141,6 +150,10 @@ public class SyncedCircularBuffer {
                 throw new NoSuchElementException(
                         "SyncedCircularBuffer is full.");
             }
+            if (producerFinished) {
+                throw new RuntimeException(
+                        "SyncedCircularBuffer is finished.");
+            }
             if (Thread.interrupted()) {
                 throw new InterruptedException("Producer interrupted");
             }
@@ -153,6 +166,7 @@ public class SyncedCircularBuffer {
                 notifyAll();
                 while (! isEmpty()) {
                     // Wait for the consumer
+                    // N.B. InterruptedException is propagated
                     this.wait();
                 }
                 flush = false;
@@ -168,6 +182,20 @@ public class SyncedCircularBuffer {
         synchronized (this) {
             if (! isEmpty()) {
                 flush = true;
+                notifyAll();
+            }
+        }
+    }
+
+    /**
+     * Notifies the consumer that the producer has terminated.
+     * The <tt>notifyAll()</tt> call allows for processing of the buffer before it fills.
+     */
+    public void producerExhausted() {
+        synchronized (this) {
+            if (! isEmpty()) {
+                flush = true;
+                producerFinished = true;
                 notifyAll();
             }
         }
