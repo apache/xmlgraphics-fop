@@ -52,7 +52,7 @@ package org.apache.fop.fo;
 
 /**
  * Interface used to provide parsing capabilities to Properties with shorthand
- * characteristics (i.e. those with multiple components).
+ * characteristics (those with multiple components).
  */
 public interface ShorthandParser {
 
