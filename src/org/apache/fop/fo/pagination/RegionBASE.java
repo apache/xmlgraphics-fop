@@ -60,16 +60,25 @@ public abstract class RegionBASE extends Region {
 
     private int extent;
 
+    /**
+     * @see org.apache.fop.fo.FONode#FONode(FONode)
+     */
     protected RegionBASE(FONode parent) {
         super(parent);
     }
 
+    /**
+     * @see org.apache.fop.fo.FONode#end()
+     */
     public void end() {
         // The problem with this is that it might not be known yet....
         // Supposing extent is calculated in terms of percentage
         this.extent = this.properties.get("extent").getLength().getValue();
     }
 
+    /**
+     * @see org.apache.fop.fo.pagination.Region#getExtent()
+     */
     public int getExtent() {
         return this.extent;
     }
