@@ -158,10 +158,10 @@ public class SVGReader implements ImageReader {
                 fis.mark(length + 1);
                 SAXSVGDocumentFactory factory = new SAXSVGDocumentFactory(
                                                   XMLImage.getParserName());
-                SVGDocument doc = factory.createDocument(uri, fis);
+                SVGDocument doc = (SVGDocument)factory.createDocument(uri, fis);
                 info.data = doc;
 
-                Element e = ((SVGDocument) doc).getRootElement();
+                Element e = doc.getRootElement();
                 String s;
                 SVGUserAgent userAg =
                   new SVGUserAgent(ua, new AffineTransform());
