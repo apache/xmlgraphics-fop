@@ -529,8 +529,7 @@ public class LineArea extends Area {
         int whitespaceWidth =
             currentFontState.width(currentFontState.mapChar(whitespaceIndex));
 
-        int remainingWidth = this.getContentWidth()
-                             - this.getCurrentXPosition();
+        int remainingWidth = this.getRemainingWidth();
 
         /**
          * checks whether leaderLenghtOptimum fits into rest of line;
@@ -1030,7 +1029,7 @@ public class LineArea extends Area {
     }
 
     public int getRemainingWidth() {
-        return this.getContentWidth() - this.getCurrentXPosition();
+        return this.getContentWidth() + startIndent - this.getCurrentXPosition();
     }
 
     public void setLinkSet(LinkSet ls) {}
@@ -1053,8 +1052,7 @@ public class LineArea extends Area {
      */
     public int addCharacter(char data, LinkSet ls, boolean ul) {
         WordArea ia = null;
-        int remainingWidth = this.getContentWidth()
-                             - this.getCurrentXPosition();
+        int remainingWidth = this.getRemainingWidth();
         int width =
             this.currentFontState.width(currentFontState.mapChar(data));
         // if it doesn't fit, return
