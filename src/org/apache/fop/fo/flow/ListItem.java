@@ -131,6 +131,12 @@ public class ListItem extends FObj {
 	    area.addDisplaySpace(spaceBefore);
 	}
 
+        if ( marker==0 ) {
+            // initialize id                       
+            String id = this.properties.get("id").getString();            
+            area.getIDReferences().initializeID(id,area);                        
+        }
+
 	startIndent += this.bodyIndent;
 
 	BlockArea blockArea =
@@ -141,6 +147,7 @@ public class ListItem extends FObj {
 	blockArea.start();
 
         blockArea.setAbsoluteHeight(area.getAbsoluteHeight());
+        blockArea.setIDReferences(area.getIDReferences());
 
 	int numChildren = this.children.size();
 	if (numChildren != 2) {

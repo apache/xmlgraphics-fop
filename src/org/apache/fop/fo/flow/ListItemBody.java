@@ -82,7 +82,11 @@ public class ListItemBody extends FObj {
     public Status layout(Area area) throws FOPException {
 	if (this.marker == START) {
 	    this.marker = 0;
+            // initialize id                       
+            String id = this.properties.get("id").getString();            
+            area.getIDReferences().initializeID(id,area);   
 	}
+
 	int numChildren = this.children.size();
 	for (int i = this.marker; i < numChildren; i++) {
 	    FObj fo = (FObj) children.elementAt(i);

@@ -85,6 +85,11 @@ public class ListItemLabel extends FObj {
 	if (numChildren != 1) {
 	    throw new FOPException("list-item-label must have exactly one block in this version of FOP");
 	}
+        
+        // initialize id                       
+        String id = this.properties.get("id").getString();            
+        area.getIDReferences().initializeID(id,area);                        
+        
 	Block block = (Block) children.elementAt(0);
 
 	block.setIsInLabel();

@@ -165,6 +165,12 @@ public class TableCell extends FObj {
 	    area.addDisplaySpace(spaceBefore);
 	}
 
+        if ( marker==0 ) {
+            // initialize id                       
+            String id = this.properties.get("id").getString();            
+            area.getIDReferences().initializeID(id,area);                        
+        }
+
 	this.areaContainer =
 	    new AreaContainer(fs, startOffset - area.borderWidthLeft,
                               - area.borderWidthTop,
@@ -179,6 +185,7 @@ public class TableCell extends FObj {
 	areaContainer.start();
 
         areaContainer.setAbsoluteHeight(area.getAbsoluteHeight());
+        areaContainer.setIDReferences(area.getIDReferences());
         areaContainer.setTableCellXOffset(startOffset);
 	int numChildren = this.children.size();
 	for (int i = this.marker; i < numChildren; i++) {

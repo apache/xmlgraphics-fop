@@ -151,7 +151,11 @@ public class ListBlock extends FObj {
 		endIndent += area.getAllocationWidth() - forcedWidth -
 		    forcedStartOffset;
 	    }
-	}
+
+             // initialize id                       
+            String id = this.properties.get("id").getString();            
+            area.getIDReferences().initializeID(id,area); 
+	}        
 
 	BlockArea blockArea =
 	    new BlockArea(fs, area.getAllocationWidth(),
@@ -162,6 +166,7 @@ public class ListBlock extends FObj {
 	blockArea.start();
         
         blockArea.setAbsoluteHeight(area.getAbsoluteHeight());
+        blockArea.setIDReferences(area.getIDReferences());
 
 	int numChildren = this.children.size();
 	for (int i = this.marker; i < numChildren; i++) {
