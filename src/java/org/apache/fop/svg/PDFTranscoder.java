@@ -63,6 +63,11 @@ import java.net.URL;
 
 import java.io.IOException;
 
+import org.apache.avalon.framework.configuration.Configurable;
+import org.apache.avalon.framework.configuration.Configuration;
+import org.apache.avalon.framework.configuration.ConfigurationException;
+import org.apache.avalon.framework.container.ContainerUtil;
+import org.apache.avalon.framework.logger.AbstractLogEnabled;
 import org.apache.batik.bridge.BridgeContext;
 import org.apache.batik.bridge.BridgeException;
 import org.apache.batik.bridge.GVTBuilder;
@@ -77,6 +82,7 @@ import org.apache.batik.dom.util.DocumentFactory;
 
 import org.apache.batik.gvt.GraphicsNode;
 
+import org.apache.batik.transcoder.ErrorHandler;
 import org.apache.batik.transcoder.TranscoderException;
 import org.apache.batik.transcoder.TranscoderOutput;
 import org.apache.batik.transcoder.XMLAbstractTranscoder;
@@ -122,26 +128,25 @@ import org.w3c.dom.svg.SVGSVGElement;
  * @author <a href="mailto:keiron@aftexsw.com">Keiron Liddle</a>
  * @version $Id: PDFTranscoder.java,v 1.24 2003/03/07 09:51:26 jeremias Exp $
  */
-public class PDFTranscoder extends XMLAbstractTranscoder {
-    /*
-    public static final TranscodingHints.Key KEY_STROKE_TEXT =
-        new BooleanKey();
-    */
+public class PDFTranscoder extends AbstractFOPTranscoder 
+        implements Configurable {
 
-    /**
-     * The user agent dedicated to an <tt>ImageTranscoder</tt>.
-     */
-    protected UserAgent userAgent = new ImageTranscoderUserAgent();
+    private Configuration cfg;
 
     /**
      * Constructs a new <tt>ImageTranscoder</tt>.
      */
     public PDFTranscoder() {
-        hints.put(KEY_DOCUMENT_ELEMENT_NAMESPACE_URI,
-                  SVGConstants.SVG_NAMESPACE_URI);
-        hints.put(KEY_DOCUMENT_ELEMENT, SVGConstants.SVG_SVG_TAG);
-        hints.put(KEY_DOM_IMPLEMENTATION,
-                  SVGDOMImplementation.getDOMImplementation());
+        super();
+        this.handler = new FOPErrorHandler();
+        
+    }
+
+    /**
+     * @see org.apache.avalon.framework.configuration.Configurable#configure(Configuration)
+     */
+    public void configure(Configuration cfg) throws ConfigurationException {
+        this.cfg = cfg;
     }
 
     /**
@@ -168,7 +173,17 @@ public class PDFTranscoder extends XMLAbstractTranscoder {
         if (hints.containsKey(KEY_STROKE_TEXT)) {
             stroke = ((Boolean)hints.get(KEY_STROKE_TEXT)).booleanValue();
         }*/
-        PDFDocumentGraphics2D graphics = new PDFDocumentGraphics2D(false);
+        PDFDocumentGraphics2D graphics = new PDFDocumentGraphics2D();
+        ContainerUtil.enableLogging(graphics, getLogger());
+        try {
+            if (this.cfg != null) {
+                ContainerUtil.configure(graphics, this.cfg);
+            }
+            ContainerUtil.initialize(graphics);
+        } catch (Exception e) {
+            throw new TranscoderException(
+                "Error while setting up PDFDocumentGraphics2D", e);
+        }
 
         // build the GVT tree
         GVTBuilder builder = new GVTBuilder();
@@ -293,147 +308,4 @@ public class PDFTranscoder extends XMLAbstractTranscoder {
         }
     }
 
-    /**
-     * Creates a <tt>DocumentFactory</tt> that is used to create an SVG DOM
-     * tree. The specified DOM Implementation is ignored and the Batik
-     * SVG DOM Implementation is automatically used.
-     *
-     * @param domImpl the DOM Implementation (not used)
-     * @param parserClassname the XML parser classname
-     * @return the document factory
-     */
-    protected DocumentFactory createDocumentFactory(DOMImplementation domImpl,
-            String parserClassname) {
-        return new SAXSVGDocumentFactory(parserClassname);
-    }
-
-    // --------------------------------------------------------------------
-    // UserAgent implementation
-    // --------------------------------------------------------------------
-
-    /**
-     * A user agent implementation for <tt>ImageTranscoder</tt>.
-     */
-    protected class ImageTranscoderUserAgent extends UserAgentAdapter {
-
-        /**
-         * Returns the default size of this user agent (400x400).
-         * @return the default viewport size
-         */
-        public Dimension2D getViewportSize() {
-            return new Dimension(400, 400);
-        }
-
-        /**
-         * Displays the specified error message using the <tt>ErrorHandler</tt>.
-         * @param message the message to display
-         */
-        public void displayError(String message) {
-            try {
-                getErrorHandler().error(new TranscoderException(message));
-            } catch (TranscoderException ex) {
-                throw new RuntimeException();
-            }
-        }
-
-        /**
-         * Displays the specified error using the <tt>ErrorHandler</tt>.
-         * @param e the exception to display
-         */
-        public void displayError(Exception e) {
-            try {
-                getErrorHandler().error(new TranscoderException(e));
-            } catch (TranscoderException ex) {
-                throw new RuntimeException();
-            }
-        }
-
-        /**
-         * Displays the specified message using the <tt>ErrorHandler</tt>.
-         * @param message the message to display
-         */
-        public void displayMessage(String message) {
-            try {
-                getErrorHandler().warning(new TranscoderException(message));
-            } catch (TranscoderException ex) {
-                throw new RuntimeException();
-            }
-        }
-
-        /**
-         * Returns the pixel to millimeter conversion factor specified in the
-         * <tt>TranscodingHints</tt> or 0.3528 if any.
-         * @return the pixel unit to millimeter factor
-         */
-        public float getPixelUnitToMillimeter() {
-            Object key = ImageTranscoder.KEY_PIXEL_UNIT_TO_MILLIMETER;
-            if (getTranscodingHints().containsKey(key)) {
-                return ((Float)getTranscodingHints().get(key)).floatValue();
-            } else {
-                // return 0.3528f; // 72 dpi
-                return 0.26458333333333333333333333333333f;    // 96dpi
-            }
-        }
-
-        /**
-         * Returns the user language specified in the
-         * <tt>TranscodingHints</tt> or "en" (english) if any.
-         * @return the languages for the transcoder
-         */
-        public String getLanguages() {
-            Object key = ImageTranscoder.KEY_LANGUAGE;
-            if (getTranscodingHints().containsKey(key)) {
-                return (String)getTranscodingHints().get(key);
-            } else {
-                return "en";
-            }
-        }
-
-        /**
-         * Get the media for this transcoder. Which is always print.
-         * @return PDF media is "print"
-         */
-        public String getMedia() {
-            return "print";
-        }
-
-        /**
-         * Returns the user stylesheet specified in the
-         * <tt>TranscodingHints</tt> or null if any.
-         * @return the user style sheet URI specified in the hints
-         */
-        public String getUserStyleSheetURI() {
-            return (String)getTranscodingHints()
-                        .get(ImageTranscoder.KEY_USER_STYLESHEET_URI);
-        }
-
-        /**
-         * Returns the XML parser to use from the TranscodingHints.
-         * @return the XML parser class name
-         */
-        public String getXMLParserClassName() {
-            Object key = KEY_XML_PARSER_CLASSNAME;
-            if (getTranscodingHints().containsKey(key)) {
-                return (String)getTranscodingHints().get(key);
-            } else {
-                return XMLResourceDescriptor.getXMLParserClassName();
-            }
-        }
-
-        /**
-         * Check if the XML parser is validating.
-         * @return true if the XML parser is validating
-         */
-        public boolean isXMLParserValidating() {
-            return false;
-        }
-
-        /**
-         * Unsupported operation.
-         * @return null since this is unsupported
-         */
-        public AffineTransform getTransform() {
-            return null;
-        }
-    }
 }
