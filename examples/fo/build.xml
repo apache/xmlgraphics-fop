@@ -69,6 +69,11 @@
         <include name="**/*.fo"/>
       </fileset>
     </fop>
+    <fop format="${mimetype}" outdir="${outDir}" messagelevel="${msglevel}" basedir="advanced">
+      <fileset dir="advanced">
+        <include name="**/giro.fo"/>
+      </fileset>
+    </fop>
   </target>
   <!-- =================================================================== -->
   <!-- Produces new test PDF files                                         -->
