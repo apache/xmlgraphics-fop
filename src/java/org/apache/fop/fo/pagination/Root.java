@@ -120,15 +120,15 @@ public class Root extends FObj {
         this.foEventHandler = foEventHandler;
     }
 
-    /** 	 
-     * This method overrides the FONode version. The FONode version calls the 	 
-     * method by the same name for the parent object. Since Root is at the top 	 
-     * of the tree, it returns the actual FOEventHandler object. Thus, any FONode 	 
-     * can use this chain to find which FOEventHandler it is being built for. 	 
-     * @return the FOEventHandler implementation that this Root is attached to 	 
-     */ 	 
-    public FOEventHandler getFOEventHandler() { 	 
-        return foEventHandler; 	 
+    /**      
+     * This method overrides the FONode version. The FONode version calls the    
+     * method by the same name for the parent object. Since Root is at the top   
+     * of the tree, it returns the actual FOEventHandler object. Thus, any FONode    
+     * can use this chain to find which FOEventHandler it is being built for.    
+     * @return the FOEventHandler implementation that this Root is attached to   
+     */      
+    public FOEventHandler getFOEventHandler() {      
+        return foEventHandler;   
     }
 
      /**
