@@ -192,15 +192,19 @@ public class Driver {
      */
     public Driver() {
         _stream = null;
-        _treeBuilder = new FOTreeBuilder();
-        _treeBuilder.setUserAgent(getUserAgent());
-        setupDefaultMappings();
     }
 
     public Driver(InputSource source, OutputStream stream) {
         this();
         _source = source;
         _stream = stream;
+    }
+
+    public void initialize() {
+        _stream = null;
+        _treeBuilder = new FOTreeBuilder(); 
+        _treeBuilder.setUserAgent(getUserAgent());
+        setupDefaultMappings();
     }
 
     public void setUserAgent(FOUserAgent agent) {
@@ -210,7 +214,9 @@ public class Driver {
     private FOUserAgent getUserAgent() {
         if(userAgent == null) {
             userAgent = new FOUserAgent();
-            userAgent.setLogger(log);
+            userAgent.setLogger(getLogger());
+            String base = org.apache.fop.configuration.Configuration.getStringValue("baseDir");
+            userAgent.setBaseURL(base);
         }
         return userAgent;
     }
