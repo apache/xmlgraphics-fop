@@ -675,6 +675,11 @@ public class PDFRenderer extends PrintRenderer {
         String saveFontName = currentFontName;
 
         CTM ctm = bv.getCTM();
+        int borderPaddingStart = bv.getBorderAndPaddingWidthStart();
+        int borderPaddingBefore = bv.getBorderAndPaddingWidthBefore();
+        float x,y;
+        x = (float)(bv.getXOffset() + containingIPPosition) / 1000f;
+        y = (float)(bv.getYOffset() + containingBPPosition) / 1000f;
 
         if (bv.getPositioning() == Block.ABSOLUTE
                 || bv.getPositioning() == Block.FIXED) {
@@ -684,28 +689,30 @@ public class PDFRenderer extends PrintRenderer {
             ctm = tempctm.multiply(ctm);
             getLogger().debug("tempctm=" + tempctm + " ctm=" + ctm);
 
-            float x,y;
-            x = (float)(bv.getXOffset() + containingIPPosition) / 1000f;
-            y = (float)(bv.getYOffset() + containingBPPosition) / 1000f;
+            //This is the content-rect
             float width = (float)bv.getIPD() / 1000f;
             float height = (float)bv.getBPD() / 1000f;
             getLogger().debug("renderBlockViewport: x=" + x + " y=" + y + " width=" + width + " height=" + height);
             
-            int borderPaddingStart = bv.getBorderAndPaddingWidthStart();
-            int borderPaddingBefore = bv.getBorderAndPaddingWidthBefore();
-
+            //Adjust for spaces (from margin or indirectly by start-indent etc.
             Integer spaceStart = (Integer) bv.getTrait(Trait.SPACE_START);
             if (spaceStart != null) {
                 x += spaceStart.floatValue() / 1000;
             }
+            Integer spaceBefore = (Integer) bv.getTrait(Trait.SPACE_BEFORE);
+            if (spaceBefore != null) {
+                y += spaceBefore.floatValue() / 1000;
+            }
 
-            width += borderPaddingStart / 1000f;
-            width += bv.getBorderAndPaddingWidthEnd() / 1000f;
-            height += borderPaddingBefore / 1000f;
-            height += bv.getBorderAndPaddingWidthAfter() / 1000f;
+            float bpwidth = (borderPaddingStart + bv.getBorderAndPaddingWidthEnd()) / 1000f;
+            float bpheight = (borderPaddingBefore + bv.getBorderAndPaddingWidthAfter()) / 1000f;
 
-            drawBackAndBorders(bv, x, y, width, height);
+            drawBackAndBorders(bv, x, y, width + bpwidth, height + bpheight);
 
+            //Now adjust for border/padding
+            x += borderPaddingStart / 1000f;
+            y += borderPaddingBefore / 1000f;
+            
             if (bv.getClip()) {
                 saveGraphicsState();
                 clip(x, y, width, height);
@@ -729,6 +736,17 @@ public class PDFRenderer extends PrintRenderer {
             currentBPPosition = saveBP;
         } else {
 
+            Integer spaceBefore = (Integer)bv.getTrait(Trait.SPACE_BEFORE);
+            if (spaceBefore != null) {
+                currentBPPosition += spaceBefore.intValue();
+            }
+
+            //borders and background in the old coordinate system
+            handleBlockTraits(bv);
+
+            CTM tempctm = new CTM(containingIPPosition, currentBPPosition + containingBPPosition);
+            ctm = tempctm.multiply(ctm);
+            /*
             if (ctm != null) {
                 double[] vals = ctm.toArray();
                 //boolean aclock = vals[2] == 1.0;
@@ -737,21 +755,25 @@ public class PDFRenderer extends PrintRenderer {
                 } else if (vals[0] == -1.0) {
                     ctm = ctm.translate(-saveIP - bv.getIPD(), -saveBP - bv.getBPD());
                 } else {
-                    ctm = ctm.translate(saveBP, saveIP - bv.getIPD());
+                    //ctm = ctm.translate(saveBP, saveIP - bv.getIPD());
+                    //ctm = ctm.translate(saveIP, saveBP);
                 }
             }
+            ctm = new CTM().translate(saveIP, saveBP).multiply(ctm);
+            */
+            
+            //Now adjust for border/padding
+            x += borderPaddingStart / 1000f;
+            y += borderPaddingBefore / 1000f;
 
             // clip if necessary
             if (bv.getClip()) {
                 saveGraphicsState();
-                float x = (float)bv.getXOffset() / 1000f;
-                float y = (float)bv.getYOffset() / 1000f;
                 float width = (float)bv.getIPD() / 1000f;
                 float height = (float)bv.getBPD() / 1000f;
                 clip(x, y, width, height);
             }
 
-            handleBlockTraits(bv);
             if (ctm != null) {
                 startVParea(ctm);
                 currentIPPosition = 0;

@@ -76,13 +76,14 @@ public class CorrespondingPropertyMaker {
         }
         
         PropertyList pList = getWMPropertyList(propertyList);
-        int correspondingId = pList.getWritingMode(lr_tb, rl_tb, tb_rl);
+        if (pList != null) {
+            int correspondingId = pList.getWritingMode(lr_tb, rl_tb, tb_rl);
         
-        if (pList.getExplicit(correspondingId) != null) {
-            return true;
-        } else {
-            return false;
-        }
+            if (pList.getExplicit(correspondingId) != null) {
+                return true;
+            }
+        } 
+        return false;
     }
     
     /**

@@ -69,6 +69,9 @@ public class IndentPropertyMaker extends CorrespondingPropertyMaker {
      */
     public Property compute(PropertyList propertyList) throws PropertyException {
         PropertyList pList = getWMPropertyList(propertyList);
+        if (pList == null) {
+            return null;
+        }
         // Calculate the values as described in 5.3.2.
 
         Numeric padding = getCorresponding(paddingCorresponding, propertyList).getNumeric();
@@ -80,7 +83,14 @@ public class IndentPropertyMaker extends CorrespondingPropertyMaker {
         if (propertyList.getExplicitOrShorthand(marginProp) == null) {
             Property indent = propertyList.getExplicit(baseMaker.propId);
             if (indent == null) {
-                margin = new FixedLength(0);
+                //Neither start-indent nor margin is specified, use inherited
+                //margin = new FixedLength(0);
+                /*
+                Numeric v = new FixedLength(0);
+                v = NumericOp.addition(v, propertyList.getInherited(baseMaker.propId).getNumeric());
+                return (Property)v;
+                */
+                return null;
             } else {
                 margin = propertyList.getExplicit(baseMaker.propId).getNumeric();
                 margin = NumericOp.subtraction(margin, 
@@ -95,7 +105,9 @@ public class IndentPropertyMaker extends CorrespondingPropertyMaker {
         Numeric v = new FixedLength(0);
         if (!propertyList.getFObj().generatesReferenceAreas()) {
             // The inherited_value_of([start|end]-indent)
-            v = NumericOp.addition(v, propertyList.getInherited(baseMaker.propId).getNumeric());
+            //if (!propertyList.getParentFObj().generatesReferenceAreas()) {
+                v = NumericOp.addition(v, propertyList.getInherited(baseMaker.propId).getNumeric());
+            //}
         }
         // The corresponding absolute margin-[right|left}.
         v = NumericOp.addition(v, margin);
@@ -107,7 +119,11 @@ public class IndentPropertyMaker extends CorrespondingPropertyMaker {
     private Property getCorresponding(int[] corresponding, PropertyList propertyList)
                 throws PropertyException {
         PropertyList pList = getWMPropertyList(propertyList);
-        int wmcorr = pList.getWritingMode(corresponding[0], corresponding[1], corresponding[2]);
-        return propertyList.get(wmcorr);
+        if (pList != null) {
+            int wmcorr = pList.getWritingMode(corresponding[0], corresponding[1], corresponding[2]);
+            return propertyList.get(wmcorr);
+        } else {
+            return null;
+        }
     }
 }
