@@ -110,7 +110,7 @@ public class FopPrintServlet extends HttpServlet {
 
             if (foParam != null) {
                 InputStream file = new java.io.FileInputStream(foParam);
-                renderFO(new InputSource(file), response);
+                renderFO(file, response);
             } else if ((xmlParam != null) && (xsltParam != null)) {
                 renderXML(new File(xmlParam), new File(xsltParam), response);
             } else {
@@ -135,13 +135,25 @@ public class FopPrintServlet extends HttpServlet {
      * @param response Response to write to
      * @throws ServletException In case of a problem
      */
-    public void renderFO(InputSource foFile,
+    public void renderFO(InputStream foFile,
                          HttpServletResponse response) throws ServletException {
         try {
-            Driver driver = new Driver(foFile, null);
+            Driver driver = new Driver();
             driver.setRenderer(Driver.RENDER_PRINT);
-            driver.run();
 
+            // Setup JAXP
+            TransformerFactory factory = TransformerFactory.newInstance();
+            Transformer transformer = factory.newTransformer(); //identity transformer
+            
+            // Setup input for XSLT transformation
+            Source src = new StreamSource(foFile);
+            
+            // Resulting SAX events (the generated FO) must be piped through to FOP
+            Result res = new SAXResult(driver.getContentHandler());
+            
+            // Start XSLT transformation and FOP processing
+            transformer.transform(src, res);
+            
             reportOK (response);
         } catch (Exception ex) {
             throw new ServletException(ex);

@@ -54,38 +54,6 @@ public class BasicDriverTestCase extends AbstractFOPTestCase {
         super(name);
     }
 
-    /**
-     * Tests Driver with its special constructor for FO-->PDF conversion.
-     * @throws Exception if anything fails
-     */
-    public void testFO2PDFWithConstructorSetup() throws Exception {
-        File foFile = new File(getBaseDir(), "test/xml/bugtests/block.fo");
-        ByteArrayOutputStream baout = new ByteArrayOutputStream();
-        Driver driver = new Driver(
-            new InputSource(foFile.toURL().toExternalForm()),
-            baout);
-
-        driver.setRenderer(Driver.RENDER_PDF);
-        driver.run();
-        assertTrue("Generated PDF has zero length", baout.size() > 0);
-    }
-
-    /**
-     * Tests Driver with InputSource and OutputStream.
-     * @throws Exception if anything fails
-     */
-    public void testFO2PDFWithInputSource() throws Exception {
-        File foFile = new File(getBaseDir(), "test/xml/bugtests/block.fo");
-        ByteArrayOutputStream baout = new ByteArrayOutputStream();
-        Driver driver = new Driver();
-
-        driver.setInputSource(new InputSource(foFile.toURL().toExternalForm()));
-        driver.setOutputStream(baout);
-        driver.setRenderer(Driver.RENDER_PDF);
-        driver.run();
-        assertTrue("Generated PDF has zero length", baout.size() > 0);
-    }
-
     private Document loadDocument(File foFile) 
                 throws TransformerException {
         TransformerFactory factory = TransformerFactory.newInstance();

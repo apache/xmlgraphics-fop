@@ -37,18 +37,11 @@ import org.apache.fop.render.awt.AWTRenderer;
 /**
  * Primary class that drives overall FOP process.
  * <P>
- * The simplest way to use this is to instantiate it with the
- * InputSource and OutputStream, then set the renderer desired, and
- * calling run();
+ * JAXP is the standard method of embedding FOP in Java programs.
+ * Please check our embedding page (http://xml.apache.org/fop/embedding.html)
+ * for samples (these are also available within the distribution in 
+ * FOP_DIR\examples\embedding)
  * <P>
- * Here is an example use of Driver which outputs PDF:
- *
- * <PRE>
- * Driver driver = new Driver(new InputSource (args[0]),
- * new FileOutputStream(args[1]));
- * driver.setRenderer(RENDER_PDF);
- * driver.run();
- * </PRE>
  * If necessary, calling classes can call into the lower level
  * methods to setup and
  * render. Methods within FOUserAgent can be called to set the
@@ -63,15 +56,6 @@ import org.apache.fop.render.awt.AWTRenderer;
  * Once the Driver is set up, the render method
  * is called. The invocation of the method is 
  * render(Parser, InputSource).
- * <P>
- * A third possibility may be used to build the FO Tree, namely
- * calling getContentHandler() and firing the SAX events yourself.
- * This will work either for DOM Tree input or SAX.  See the embed
- * examples on the FOP web page for more details or in the 
- * examples\embedding directory of the main distribution for more details.
- * <P>
- * Once the FO Tree is built, the format() and render() methods may be
- * called in that order.
  * <P>
  * Here is an example use of Driver which outputs to AWT:
  *
@@ -92,11 +76,6 @@ public class Driver implements Constants {
      * the render type code given by setRender
      */
     private int renderType = NOT_SET;
-
-    /**
-     * the source of the FO file
-     */
-    private InputSource source;
 
     /**
      * the stream to use to output the results of the renderer
@@ -130,9 +109,8 @@ public class Driver implements Constants {
      * @param source InputSource to take the XSL-FO input from
      * @param stream Target output stream
      */
-    public Driver(InputSource source, OutputStream stream) {
+    public Driver(OutputStream stream) {
         this();
-        this.source = source;
         this.stream = stream;
     }
 
@@ -159,7 +137,6 @@ public class Driver implements Constants {
      * The output stream is cleared. The renderer is cleared.
      */
     public synchronized void reset() {
-        source = null;
         stream = null;
         if (treeBuilder != null) {
             treeBuilder.reset();
@@ -203,15 +180,6 @@ public class Driver implements Constants {
         if (this.stream == null) {
             throw new IllegalStateException("OutputStream has not been set");
         }
-    }
-
-    /**
-     * Set the source for the FO document. This can be a normal SAX
-     * InputSource, or an DocumentInputSource containing a DOM document.
-     * @see DocumentInputSource
-     */
-    public void setInputSource(InputSource source) {
-        this.source = source;
     }
 
     /**
@@ -329,28 +297,5 @@ public class Driver implements Constants {
         } catch (IOException e) {
             throw new FOPException(e);
         }
-    }
-
-    /**
-     * Runs the formatting and rendering process using the previously set
-     * parser, input source, renderer and output stream.
-     * If no parser was set, get a default SAX parser.
-     * @throws IOException in case of IO errors.
-     * @throws FOPException if anything else goes wrong.
-     */
-    public synchronized void run() throws IOException, FOPException {
-        if (!isInitialized()) {
-            initialize();
-        }
-
-        if (renderType == NOT_SET) {
-            renderType = RENDER_PDF;
-        }
-
-        if (source == null) {
-            throw new FOPException("InputSource is not set.");
-        }
-
-        render(FOFileHandler.createParser(), source);
     }
 }
