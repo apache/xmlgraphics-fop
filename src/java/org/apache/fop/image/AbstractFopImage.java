@@ -1,5 +1,5 @@
 /*
- * Copyright 1999-2004 The Apache Software Foundation.
+ * Copyright 1999-2005 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -55,6 +55,12 @@ public abstract class AbstractFopImage implements FopImage {
      * Image height (in pixel).
      */
     protected int height = 0;
+    
+    /** Horizontal bitmap resolution (in dpi) */
+    protected double dpiHorizontal = 72.0f;
+
+    /** Vertical bitmap resolution (in dpi) */
+    protected double dpiVertical = 72.0f;
 
     /**
      * Image input stream.
@@ -112,6 +118,8 @@ public abstract class AbstractFopImage implements FopImage {
         if (this.imageInfo.width != -1) {
             width = imageInfo.width;
             height = imageInfo.height;
+            dpiHorizontal = imageInfo.dpiHorizontal;
+            dpiVertical = imageInfo.dpiVertical;
             loaded = loaded | DIMENSIONS;
         }
     }
@@ -197,21 +205,39 @@ public abstract class AbstractFopImage implements FopImage {
     }
 
     /**
-     * Return the image width.
-     * @return the image width
+     * @return the image width (in pixels)
      */
     public int getWidth() {
         return this.width;
     }
-
+    
     /**
-     * Return the image height.
-     * @return the image height
+     * @return the image height (in pixels)
      */
     public int getHeight() {
         return this.height;
     }
 
+    /** @see org.apache.fop.image.FopImage#getIntrinsicWidth() */
+    public int getIntrinsicWidth() {
+        return (int)(getWidth() * 72000 / getHorizontalResolution());
+    }
+
+    /** @see org.apache.fop.image.FopImage#getIntrinsicHeight() */
+    public int getIntrinsicHeight() {
+        return (int)(getHeight() * 72000 / getVerticalResolution());
+    }
+
+    /** @see org.apache.fop.image.FopImage#getHorizontalResolution() */
+    public double getHorizontalResolution() {
+        return this.dpiHorizontal;
+    }
+    
+    /** @see org.apache.fop.image.FopImage#getVerticalResolution() */
+    public double getVerticalResolution() {
+        return this.dpiVertical;
+    }
+    
     /**
      * Return the image color space.
      * @return the image color space (java.awt.color.ColorSpace)

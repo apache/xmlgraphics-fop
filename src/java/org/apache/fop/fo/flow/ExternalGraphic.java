@@ -306,7 +306,7 @@ public class ExternalGraphic extends FObj {
     public int getIntrinsicWidth() {
         prepareIntrinsicSize();
         if (fopimage != null) {
-            return fopimage.getWidth() * 1000;
+            return fopimage.getIntrinsicWidth();
         } else {
             return 0;
         }
@@ -318,7 +318,7 @@ public class ExternalGraphic extends FObj {
     public int getIntrinsicHeight() {
         prepareIntrinsicSize();
         if (fopimage != null) {
-            return fopimage.getHeight() * 1000;
+            return fopimage.getIntrinsicHeight();
         } else {
             return 0;
         }

@@ -1,5 +1,5 @@
 /*
- * Copyright 1999-2004 The Apache Software Foundation.
+ * Copyright 1999-2005 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -74,6 +74,26 @@ public interface FopImage {
      * @return the height in pixels
      */
     int getHeight();
+    
+    /** 
+     * @return the intrinsic image width (in millipoints) 
+     */
+    int getIntrinsicWidth();
+
+    /**
+     *  @return the intrinsic image width (in millipoints) 
+     */
+    int getIntrinsicHeight();
+
+    /**
+     * @return the horizontal bitmap resolution (in dpi)
+     */
+    double getHorizontalResolution();
+    
+    /**
+     * @return the vertical bitmap resolution (in dpi)
+     */
+    double getVerticalResolution();
 
     /**
      * Returns the color space of the image.
@@ -151,6 +171,8 @@ public interface FopImage {
         public InputStream inputStream;
         public int width;
         public int height;
+        public double dpiHorizontal = 72.0f;
+        public double dpiVertical = 72.0f;
         public Object data;
         public String mimeType;
         public String str;
