@@ -188,7 +188,9 @@ public class RtfListTable extends RtfContainer {
         writeOneAttributeNS(LIST_INDENT, attrib.getValue(LIST_INDENT));
         
         RtfListItem item = (RtfListItem)list.getChildren().get(0);
-        item.getRtfListStyle().writeLevelGroup(this);
+        if (item != null) {
+            item.getRtfListStyle().writeLevelGroup(this);
+        }
         
         writeGroupMark(false);
         
