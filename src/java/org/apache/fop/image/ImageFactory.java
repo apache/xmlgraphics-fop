@@ -219,6 +219,7 @@ public class ImageFactory {
         // Get the absolute URL
         URL absoluteURL = null;
         InputStream in = null;
+
         try {
             in = ua.getStream(href);
         } catch (IOException ioe) {

@@ -39,6 +39,16 @@ public abstract class InputHandler {
      */
     public abstract InputSource getInputSource();
 
+    protected String baseURL = null;
+    
+    /**
+     * Get the base URL associated with this input source
+     * @return the input source
+     */
+    public String getBaseURL() {
+        return baseURL;
+    }
+
     /**
      * Get the SAX parser associated with this input handler.
      * @return the SAX parser
