@@ -159,7 +159,7 @@ public class PropertyListBuilder {
     {
         Hashtable propertyTable;
 	    Property.Maker propertyMaker = null;
-        propertyTable = (Hashtable)elementTable.get(propertyName);
+        propertyTable = (Hashtable)elementTable.get(elementName);
 	    if(propertyTable != null) {
 	        propertyMaker = (Property.Maker)propertyTable.get(propertyName);
 	    }
