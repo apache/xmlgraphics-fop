@@ -16,6 +16,7 @@ STATUS
 Arved Sandstrom (release coordinator) 
 James Tauber (started it all and wrote most of the code) 
 
+Kelly Campbell
 Steven Coffman 
 Stanislav Gorkhover
 Fotis Jannidis 
@@ -30,8 +31,11 @@ Jon Smirl
 
 Done since 0.15 release
 
+- added: support for multi-column and column spanning (column-count, column-gap, span)[Arved Sandstrom]
+- added: compression for pdf files, changed output format to OutputStream [Kelly Campbell]
+- added: improved handling of compound properties [Karen Lease]
 - added: fo:character and property 'character' [Fotis Jannidis]
-         (limitation: not included into hyphenation)
+         (limitation: not included into hyphenation, no Common Margin and Padding support)
 - added vertical alignment for table cell contents [Keiron Liddle]
 - added: Finnish hyphenation patterns [Jarno Elovirta]
 - added: hyphenation package (Carlos Villegas), integration into Fop [Fotis Jannidis]
@@ -43,7 +47,7 @@ Done since 0.15 release
 - updated: svg stuff for the latest java bindings [Keiron Liddle]
 - fixed: enhanced error messages for page layout (region names, master) [Norm Walsh]
 - fixed: infinite looping bug when TableCell or TableRow is larger than a page [Hani Elabed]
-- fixed: corrected the size of the "-" char [Marcus Crafter]
+- fixed: corrected the size of the "-" char [Keiron Liddle]
 - fixed: check for unnecessary whitespace at end of line [Marcus Crafter]
 - fixed: moves table completely to next page if first row doesn't fit into last page [Keiron Liddle]
 - fixed: problem where id's where being setup twice for
@@ -55,7 +59,7 @@ Done since 0.15 release
 - fix: NullPointerException in FopImageFactory [Kelly Campbell] 
 - fixed: space after's where not being removed if table row was being removed [Keiron Liddle]
 - fixed problem with keep-with not storing the correct rows [Keiron Liddle]
-
+- fixed: extra space after was left behind for rows going over a page [Keiron Liddle]
 
 Done since 0.14 release
 - added region-name support, refactoring of region, PageSequence, 
@@ -196,7 +200,6 @@ extended
    border-end-precedence
    border-start-precedence
    clip                                                   
-   column-number                                          
    content-type                                           
    direction                                              
    display-align                                          
