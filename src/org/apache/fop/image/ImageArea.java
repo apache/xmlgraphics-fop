@@ -52,6 +52,7 @@
 
 package org.apache.fop.image;
 
+import org.apache.fop.fo.properties.TextAlign;
 import org.apache.fop.layout.*;
 import org.apache.fop.render.Renderer;
 
@@ -72,16 +73,18 @@ public class ImageArea extends Area {
 	this.image = img;
 
 	switch (align) {
-	case 1: // should be TextAlign.START
+	case TextAlign.START:
 	    xOffset = startIndent;
 	    break;
-	case 2: //should be TextAlign.END
+	case TextAlign.END:
 	    if (endIndent == 0)
 		endIndent = AllocationWidth;
 	    xOffset = (endIndent - width);
 	    break;
-	case 3: //should be TextAlign.CENTER
-	case 4: //should be TextAlign.JUSTIFY
+	case TextAlign.JUSTIFY:
+	    xOffset = startIndent;
+	    break;
+	case TextAlign.CENTER:
 	    if (endIndent == 0)
 		endIndent = AllocationWidth;
 	    xOffset = startIndent + ((endIndent - startIndent) - width)/2;
