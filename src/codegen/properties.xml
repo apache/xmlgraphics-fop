@@ -311,5 +311,17 @@
     <datatype>Length</datatype>
     <default>0pt</default>
   </property>
+  <property>
+    <name>keep-with-next</name>
+    <class-name>KeepWithNext</class-name>
+    <inherited>false</inherited>
+    <datatype>
+      <enumeration>
+        <value const="TRUE">true</value>
+        <value const="FALSE">false</value>
+      </enumeration>
+    </datatype>
+    <default>false</default>
+  </property>
 </property-list>
 

@@ -22,7 +22,7 @@
     Alternately, this  acknowledgment may  appear in the software itself,  if
     and wherever such third-party acknowledgments normally appear.
  
- 4. The names "Fop" and  "Apache Software Foundation"  must not be used to
+ 4. The names "FOP" and  "Apache Software Foundation"  must not be used to
     endorse  or promote  products derived  from this  software without  prior
     written permission. For written permission, please contact
     apache@apache.org.
@@ -48,6 +48,7 @@
  Software Foundation, please see <http://www.apache.org/>.
  
  */
+
 package org.apache.fop.fo.flow;
 
 // FOP
@@ -91,9 +92,9 @@ public class TableBody extends FObj {
 	this.columns = columns;
     }
 
-    public int layout(Area area) throws FOPException {
+    public Status layout(Area area) throws FOPException {
 	if (this.marker == BREAK_AFTER) {
-	    return OK;
+	    return new Status(Status.OK);
 	}
 
 	if (this.marker == START) {
@@ -151,11 +152,11 @@ public class TableBody extends FObj {
 
 	    row.setColumns(columns);
 
-	    int status;
-	    if ((status = row.layout(blockArea)) != OK) {
+	    Status status;
+	    if ((status = row.layout(blockArea)).isIncomplete()) {
 		this.marker = i;
-		if ((i != 0) && (status == AREA_FULL_NONE)) {
-		    status = AREA_FULL_SOME;
+		if ((i != 0) && (status.getCode() == Status.AREA_FULL_NONE)) {
+		    status = new Status(Status.AREA_FULL_SOME);
 		}
 		//blockArea.end();
 		area.addChild(blockArea);
@@ -178,7 +179,7 @@ public class TableBody extends FObj {
 	    area.start();
 	}
 
-	return OK;
+	return new Status(Status.OK);
     }
 
     public int getAreaHeight() {

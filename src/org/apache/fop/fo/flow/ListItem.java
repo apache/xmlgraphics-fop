@@ -22,7 +22,7 @@
     Alternately, this  acknowledgment may  appear in the software itself,  if
     and wherever such third-party acknowledgments normally appear.
  
- 4. The names "Fop" and  "Apache Software Foundation"  must not be used to
+ 4. The names "FOP" and  "Apache Software Foundation"  must not be used to
     endorse  or promote  products derived  from this  software without  prior
     written permission. For written permission, please contact
     apache@apache.org.
@@ -48,6 +48,7 @@
  Software Foundation, please see <http://www.apache.org/>.
  
  */
+
 package org.apache.fop.fo.flow;
 
 // FOP
@@ -90,7 +91,7 @@ public class ListItem extends FObj {
 	this.name = "fo:list-item";
     }
 
-    public int layout(Area area) throws FOPException {
+    public Status layout(Area area) throws FOPException {
 	if (this.marker == START) {
 	    String fontFamily =
 		this.properties.get("font-family").getString(); 
@@ -156,20 +157,20 @@ public class ListItem extends FObj {
 	/* this doesn't actually do anything */
 	body.setLabelSeparation(this.labelSeparation);
 
-	int status;
+	Status status;
 
 	// what follows doesn't yet take into account whether the
 	// body failed completely or only got some text in
 
 	if (this.marker == 0) {
 	    status = label.layout(blockArea);
-	    if (status != OK) {
+	    if (status.isIncomplete()) {
 		return status;
 	    }
 	}
 
 	status = body.layout(blockArea);
-	if (status != OK) {
+	if (status.isIncomplete()) {
 	    blockArea.end();
 	    area.addChild(blockArea);
 	    area.increaseHeight(blockArea.getHeight());
@@ -189,6 +190,6 @@ public class ListItem extends FObj {
 	if (area instanceof BlockArea) {
 	    area.start();
 	}
-	return OK;
+	return new Status(Status.OK);
     }
 }

@@ -22,7 +22,7 @@
     Alternately, this  acknowledgment may  appear in the software itself,  if
     and wherever such third-party acknowledgments normally appear.
  
- 4. The names "Fop" and  "Apache Software Foundation"  must not be used to
+ 4. The names "FOP" and  "Apache Software Foundation"  must not be used to
     endorse  or promote  products derived  from this  software without  prior
     written permission. For written permission, please contact
     apache@apache.org.
@@ -78,7 +78,7 @@ public class DisplayRule extends FObj {
 	this.name = "fo:display-rule";
     }
 
-    public int layout(Area area) throws FOPException {
+    public Status layout(Area area) throws FOPException {
 	// FIXME: doesn't check to see if it will fit
 
 	String fontFamily = this.properties.get("font-family").getString();
@@ -133,6 +133,6 @@ public class DisplayRule extends FObj {
 	    area.start();
 	}
 
-	return OK;
+	return new Status(Status.OK);
     }
 }

@@ -22,7 +22,7 @@
     Alternately, this  acknowledgment may  appear in the software itself,  if
     and wherever such third-party acknowledgments normally appear.
  
- 4. The names "Fop" and  "Apache Software Foundation"  must not be used to
+ 4. The names "FOP" and  "Apache Software Foundation"  must not be used to
     endorse  or promote  products derived  from this  software without  prior
     written permission. For written permission, please contact
     apache@apache.org.
@@ -48,6 +48,7 @@
  Software Foundation, please see <http://www.apache.org/>.
  
  */
+
 package org.apache.fop.fo.pagination;
 
 // FOP
@@ -136,7 +137,7 @@ public class PageSequence extends FObj {
     }
 
     public void format(AreaTree areaTree) throws FOPException {
-	int status = OK;
+	Status status = new Status(Status.OK);
 
 	do {
 	    currentPage = makePage(areaTree);
@@ -152,9 +153,9 @@ public class PageSequence extends FObj {
 		AreaContainer afterArea = currentPage.getAfter();
 		this.staticAfter.layout(afterArea);
 	    }
-	    if ((status == FORCE_PAGE_BREAK_EVEN) &&
+	    if ((status.getCode() == Status.FORCE_PAGE_BREAK_EVEN) &&
 		((currentPageNumber % 2) == 1)) {
-	    } else if ((status == FORCE_PAGE_BREAK_ODD) &&
+	    } else if ((status.getCode() == Status.FORCE_PAGE_BREAK_ODD) &&
 		       ((currentPageNumber % 2) == 0)) {
 	    } else {
 		AreaContainer bodyArea = currentPage.getBody();
@@ -162,7 +163,7 @@ public class PageSequence extends FObj {
 	    }
 	    System.err.print("]");
 	    areaTree.addPage(currentPage);
-	} while (status != OK);
+	} while (status.isIncomplete());
 	System.err.println();
     }
 

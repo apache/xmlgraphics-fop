@@ -22,7 +22,7 @@
     Alternately, this  acknowledgment may  appear in the software itself,  if
     and wherever such third-party acknowledgments normally appear.
  
- 4. The names "Fop" and  "Apache Software Foundation"  must not be used to
+ 4. The names "FOP" and  "Apache Software Foundation"  must not be used to
     endorse  or promote  products derived  from this  software without  prior
     written permission. For written permission, please contact
     apache@apache.org.
@@ -48,6 +48,7 @@
  Software Foundation, please see <http://www.apache.org/>.
  
  */
+
 package org.apache.fop.fo.flow;
 
 // FOP
@@ -80,6 +81,7 @@ public class Block extends FObjMixed {
     int spaceBefore;
     int spaceAfter;
     int textIndent;
+    int keepWithNext;
 
     BlockArea blockArea;
 
@@ -91,11 +93,11 @@ public class Block extends FObjMixed {
 	this.name = "fo:block";
     }
 
-    public int layout(Area area) throws FOPException {
+    public Status layout(Area area) throws FOPException {
 	// System.err.print(" b:LAY[" + marker + "] ");
 
 	if (this.marker == BREAK_AFTER) {
-	    return OK;
+	    return new Status(Status.OK);
 	}
 
 	if (this.marker == START) {
@@ -129,6 +131,8 @@ public class Block extends FObjMixed {
 		this.properties.get("space-after.optimum").getLength().mvalue(); 
 	    this.textIndent =
 		this.properties.get("text-indent").getLength().mvalue(); 
+	    this.keepWithNext = 
+		this.properties.get("keep-with-next").getEnum();
 
 	    if (area instanceof BlockArea) {
 		area.end();
@@ -153,15 +157,15 @@ public class Block extends FObjMixed {
 	    this.marker = 0;
 
 	    if (breakBefore == BreakBefore.PAGE) {
-		return FORCE_PAGE_BREAK;
+		return new Status(Status.FORCE_PAGE_BREAK);
 	    }
 
 	    if (breakBefore == BreakBefore.ODD_PAGE) {
-		return FORCE_PAGE_BREAK_ODD;
+		return new Status(Status.FORCE_PAGE_BREAK_ODD);
 	    }
 	
 	    if (breakBefore == BreakBefore.EVEN_PAGE) {
-		return FORCE_PAGE_BREAK_EVEN;
+		return new Status(Status.FORCE_PAGE_BREAK_EVEN);
 	    }
 	}
 
@@ -188,11 +192,11 @@ public class Block extends FObjMixed {
 		fo.setDistanceBetweenStarts(this.distanceBetweenStarts);
 		fo.setBodyIndent(this.bodyIndent);
 	    }
-	    int status;
-	    if ((status = fo.layout(blockArea)) != OK) {
+	    Status status;
+	    if ((status = fo.layout(blockArea)).isIncomplete()) {
 		this.marker = i;
-		if ((i != 0) && (status == AREA_FULL_NONE)) {
-		    status = AREA_FULL_SOME;
+		if ((i != 0) && (status.getCode() == Status.AREA_FULL_NONE)) {
+		    status = new Status(Status.AREA_FULL_SOME);
 		}
 		//blockArea.end();
 		area.addChild(blockArea);
@@ -219,21 +223,25 @@ public class Block extends FObjMixed {
 
 	if (breakAfter == BreakAfter.PAGE) {
 	    this.marker = BREAK_AFTER;
-	    return FORCE_PAGE_BREAK;
+	    return new Status(Status.FORCE_PAGE_BREAK);
 	}
 
 	if (breakAfter == BreakAfter.ODD_PAGE) {
 	    this.marker = BREAK_AFTER;
-	    return FORCE_PAGE_BREAK_ODD;
+	    return new Status(Status.FORCE_PAGE_BREAK_ODD);
 	}
 	
 	if (breakAfter == BreakAfter.EVEN_PAGE) {
 	    this.marker = BREAK_AFTER;
-	    return FORCE_PAGE_BREAK_EVEN;
+	    return new Status(Status.FORCE_PAGE_BREAK_EVEN);
+	}
+
+	if (keepWithNext == KeepWithNext.TRUE) {
+	    return new Status(Status.KEEP_WITH_NEXT);
 	}
 
 	//System.err.print(" b:OK" + marker + " ");
-	return OK;
+	return new Status(Status.OK);
     }
 
     public int getAreaHeight() {
