@@ -110,7 +110,7 @@ public class DocumentReader implements XMLReader {
      * <p>The feature name is any fully-qualified URI.  It is
      * possible for an XMLReader to recognize a feature name but
      * to be unable to set its value; this is especially true
-     * in the case of an adapter for a SAX1 {@link org.xml.sax.Parser Parser},
+     * in the case of an adapter for a SAX1 Parser,
      * which has no way of affecting whether the underlying parser is
      * validating, for example.</p>
      *
@@ -152,8 +152,7 @@ public class DocumentReader implements XMLReader {
      * <p>The property name is any fully-qualified URI.  It is
      * possible for an XMLReader to recognize a property name but
      * to be unable to return its state; this is especially true
-     * in the case of an adapter for a SAX1 {@link org.xml.sax.Parser
-     * Parser}.</p>
+     * in the case of an adapter for a SAX1 Parser.</p>
      *
      * <p>XMLReaders are not required to recognize any specific
      * property names, though an initial core set is documented for
@@ -188,8 +187,7 @@ public class DocumentReader implements XMLReader {
      * <p>The property name is any fully-qualified URI.  It is
      * possible for an XMLReader to recognize a property name but
      * to be unable to set its value; this is especially true
-     * in the case of an adapter for a SAX1 {@link org.xml.sax.Parser
-     * Parser}.</p>
+     * in the case of an adapter for a SAX1 Parser.</p>
      *
      * <p>XMLReaders are not required to recognize setting
      * any specific property names, though a core set is provided with

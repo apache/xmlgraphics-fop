@@ -1,6 +1,6 @@
 /*
  * $Id$
- * Copyright (C) 2001 The Apache Software Foundation. All rights reserved.
+ * Copyright (C) 2001-2002 The Apache Software Foundation. All rights reserved.
  * For details on use and redistribution please refer to the
  * LICENSE file included with these sources.
  */
@@ -147,7 +147,7 @@ abstract public class FONode {
      * first used by PageNumberCitation to find the "id" property
      * returns null by default, overide this function when there is a property list
      * @param name - the name of the desired property to obtain
-     * @returns the property
+     * @return the property
      */
     public Property getProperty(String name) {
         return (null);
@@ -158,7 +158,7 @@ abstract public class FONode {
      * nested FO, and balancing requires rollback to this known point.
      * The snapshot records exactly where layout is at.
      * @param snapshot a ArrayList of markers (Integer)
-     * @returns the updated ArrayList of markers (Integers)
+     * @return the updated ArrayList of markers (Integers)
      */
     public ArrayList getMarkerSnapshot(ArrayList snapshot) {
         snapshot.add(new Integer(this.marker));
@@ -205,6 +205,6 @@ abstract public class FONode {
 
     public boolean mayPrecedeMarker() {
         return false;
-    }  
+    }
 
 }

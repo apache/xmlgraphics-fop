@@ -1,6 +1,6 @@
 /*
  * $Id$
- * Copyright (C) 2001 The Apache Software Foundation. All rights reserved.
+ * Copyright (C) 2001-2002 The Apache Software Foundation. All rights reserved.
  * For details on use and redistribution please refer to the
  * LICENSE file included with these sources.
  */
@@ -95,7 +95,6 @@ public abstract class AbstractFopImage implements FopImage {
      * </UL>
      * The image data isn't kept in memory.
      * @param href image URL
-     * @return a new FopImage object
      * @exception FopImageException an error occured during initialization
      */
     public AbstractFopImage(URL href) throws FopImageException {
@@ -121,7 +120,6 @@ public abstract class AbstractFopImage implements FopImage {
      * The image data isn't kept in memory.
      * @param href image URL
      * imgReader ImageReader object
-     * @return a new FopImage object
      * @exception FopImageException an error occured during initialization
      */
     public AbstractFopImage(URL href,

@@ -1,6 +1,6 @@
 /*
  * $Id$
- * Copyright (C) 2001 The Apache Software Foundation. All rights reserved.
+ * Copyright (C) 2001-2002 The Apache Software Foundation. All rights reserved.
  * For details on use and redistribution please refer to the
  * LICENSE file included with these sources.
  */
@@ -135,7 +135,7 @@ public class LayoutMasterSet extends FObj {
 
     /**
      * Checks whether or not a region name exists in this master set
-     * @returns true when the region name specified has a region in this LayoutMasterSet
+     * @return true when the region name specified has a region in this LayoutMasterSet
      */
     protected boolean regionNameExists(String regionName) {
         for (Iterator i = simplePageMasters.values().iterator(); i.hasNext(); ) {
