@@ -112,11 +112,14 @@ public class BodyAreaContainer extends Area {
 	mainRefAreaHeight = maxHeight - beforeFloatRefAreaHeight - footnoteRefAreaHeight;
 	beforeFloatReferenceArea = new AreaContainer(fontState, xPosition, yPosition,
 		allocationWidth, beforeFloatRefAreaHeight, Position.ABSOLUTE);
+	this.addChild(beforeFloatReferenceArea);
+	mainReferenceArea = new AreaContainer(fontState, xPosition, yPosition,
+		allocationWidth, mainRefAreaHeight, Position.ABSOLUTE);
+	this.addChild(mainReferenceArea);
 	int footnoteRefAreaYPosition = yPosition - mainRefAreaHeight;
 	footnoteReferenceArea = new AreaContainer(fontState, xPosition, footnoteRefAreaYPosition,
 		allocationWidth, footnoteRefAreaHeight, Position.ABSOLUTE);
-	mainReferenceArea = new AreaContainer(fontState, xPosition, yPosition,
-		allocationWidth, mainRefAreaHeight, Position.ABSOLUTE);
+	this.addChild(footnoteReferenceArea);
 	
 	// all padding and border-width must be 0
     setPadding(0, 0, 0, 0);
