@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-/* $Id: PageLayoutManager.java,v 1.38 2004/05/22 21:44:38 gmazza Exp $ */
+/* $Id$ */
 
 package org.apache.fop.layoutmgr;
 
@@ -26,6 +26,7 @@ import org.apache.fop.area.AreaTreeModel;
 import org.apache.fop.area.Area;
 import org.apache.fop.area.PageViewport;
 import org.apache.fop.area.Flow;
+import org.apache.fop.area.LineArea;
 import org.apache.fop.area.Page;
 import org.apache.fop.area.RegionViewport;
 import org.apache.fop.area.RegionReference;
@@ -48,6 +49,7 @@ import org.apache.fop.fo.pagination.PageSequence;
 import org.apache.fop.fo.pagination.Region;
 import org.apache.fop.fo.pagination.SimplePageMaster;
 import org.apache.fop.fo.pagination.StaticContent;
+import org.apache.fop.fo.pagination.Title;
 import org.apache.fop.fo.properties.CommonBackground;
 import org.apache.fop.fo.properties.CommonBorderAndPadding;
 import org.apache.fop.fo.properties.CommonMarginBlock;
@@ -65,7 +67,7 @@ import org.apache.fop.traits.MinOptMax;
  * LayoutManager for a PageSequence and its flow.
  * It manages all page-related layout.
  */
-public class PageLayoutManager extends AbstractLayoutManager implements Runnable {
+public class PageSequenceLayoutManager extends AbstractLayoutManager implements Runnable {
 
     private static class BlockBreakPosition extends LeafPosition {
         protected BreakPoss breakps;
@@ -129,10 +131,13 @@ public class PageLayoutManager extends AbstractLayoutManager implements Runnable
      * @param areaTree the area tree to add pages to
      * @param pageseq the page sequence fo
      */
-    public PageLayoutManager(AreaTreeHandler areaTreeHandler, PageSequence pageseq) {
+    public PageSequenceLayoutManager(AreaTreeHandler areaTreeHandler, PageSequence pageseq) {
         super(pageseq);
         this.areaTreeHandler = areaTreeHandler;
         pageSequence = pageseq;
+        if (pageSequence.getPageSequenceMaster() != null) {
+            pageSequence.getPageSequenceMaster().reset();
+        }
     }
 
     /**
@@ -142,10 +147,34 @@ public class PageLayoutManager extends AbstractLayoutManager implements Runnable
      * @param pc the starting page number
      * @param generator the page number generator
      */
-    public void setPageCounting(int pc, PageNumberGenerator generator) {
+    private void setPageCounting(int pc, PageNumberGenerator generator) {
+        pageSequence.initPageNumber();
         pageCount = pc;
         pageNumberGenerator = generator;
         pageNumberString = pageNumberGenerator.makeFormattedPageNumber(pageCount);
+    }
+
+    /**
+     * The layout process is designed to be able to be run in a thread.
+     * In theory it can run at the same
+     * time as FO tree generation, once the layout-master-set has been read.
+     * We can arrange it so that the iterator over the fobj children waits
+     * until the next child is available.
+     * As it produces pages, it adds them to the AreaTree, where the
+     * rendering process can also run in a parallel thread.
+     */
+    public void run() {
+        setPageCounting(pageSequence.getCurrentPageNumber(),
+            pageSequence.getPageNumberGenerator());
+
+        LineArea title = null;
+        if (pageSequence.getTitleFO() != null) {
+            title = getTitleArea(pageSequence.getTitleFO());
+        }
+
+        areaTreeHandler.startPageSequence(title);
+        doLayout();
+        flush();
     }
 
     /**
@@ -160,17 +189,24 @@ public class PageLayoutManager extends AbstractLayoutManager implements Runnable
     }
 
     /**
-     * The layout process is designed to be able to be run in a thread.
-     * In theory it can run at the same
-     * time as FO tree generation, once the layout-master-set has been read.
-     * We can arrange it so that the iterator over the fobj children waits
-     * until the next child is available.
-     * As it produces pages, it adds them to the AreaTree, where the
-     * rendering process can also run in a parallel thread.
+     * @return the Title area
      */
-    public void run() {
-        doLayout();
-        flush();
+    private LineArea getTitleArea(Title foTitle) {
+        // get breaks then add areas to title
+        LineArea title = new LineArea();
+
+        ContentLayoutManager clm = new ContentLayoutManager(title);
+        clm.setUserAgent(foTitle.getUserAgent());
+
+        // use special layout manager to add the inline areas
+        // to the Title.
+        InlineStackingLayoutManager lm;
+        lm = new InlineStackingLayoutManager(foTitle);
+        clm.addChildLM(lm);
+
+        clm.fillArea(lm);
+
+        return title;
     }
 
     /**

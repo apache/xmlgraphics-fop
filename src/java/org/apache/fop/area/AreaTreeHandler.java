@@ -39,10 +39,7 @@ import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.extensions.Outline;
 import org.apache.fop.fo.extensions.Bookmarks;
 import org.apache.fop.fo.pagination.PageSequence;
-import org.apache.fop.fo.pagination.Title;
-import org.apache.fop.layoutmgr.ContentLayoutManager;
-import org.apache.fop.layoutmgr.InlineStackingLayoutManager;
-import org.apache.fop.layoutmgr.PageLayoutManager;
+import org.apache.fop.layoutmgr.PageSequenceLayoutManager;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -126,14 +123,6 @@ public class AreaTreeHandler extends FOEventHandler {
      */
     public AreaTreeModel getAreaTreeModel() {
         return model;
-    }
-
-    /**
-     * Add a new page to the area tree.
-     * @param page the page to add
-     */
-    public void addPage(PageViewport page) {
-        model.addPage(page);
     }
 
     /**
@@ -343,10 +332,8 @@ public class AreaTreeHandler extends FOEventHandler {
      * The area tree then handles what happens with the pages.
      *
      * @param pageSequence the page sequence ending
-     * @throws FOPException if there is an error formatting the pages
      */
     public void endPageSequence(PageSequence pageSequence) {
-        //areaTree.setFontInfo(fontInfo);
 
         if (collectStatistics) {
             if (MEM_PROFILE_WITH_GC) {
@@ -359,88 +346,32 @@ public class AreaTreeHandler extends FOEventHandler {
             }
         }
 
-        addBookmarks(pageSequence.getRoot().getBookmarks());
-        formatPageSequence(pageSequence);
-    }
-
-    /**
-     * Runs the formatting of this page sequence into the given area tree
-     *
-     * @param pageSeq the PageSequence to be formatted
-     * @param areaTree the area tree to format this page sequence into
-     * @throws FOPException if there is an error formatting the contents
-     */
-    private void formatPageSequence(PageSequence pageSeq) {
-        LineArea title = null;
-        if (pageSeq.getTitleFO() != null) {
-            title = getTitleArea(pageSeq.getTitleFO());
-        }
-        
-        model.startPageSequence(title);
-
-        // Make a new PageLayoutManager and a FlowLayoutManager
-        // Run the PLM in a thread
-        // Wait for them to finish.
-
         // If no main flow, nothing to layout!
-        if (pageSeq.getMainFlow() == null) {
-            return;
+        if (pageSequence.getMainFlow() != null) {
+            addBookmarks(pageSequence.getRoot().getBookmarks());
+            PageSequenceLayoutManager pageSLM 
+                = new PageSequenceLayoutManager(this, pageSequence);
+            pageSLM.run();
+            pageSequence.setCurrentPageNumber(pageSLM.getPageCount());
         }
-
-        // Initialize if already used?
-        //    this.layoutMasterSet.resetPageMasters();
-        if (pageSeq.getPageSequenceMaster() != null) {
-            pageSeq.getPageSequenceMaster().reset();
-        }
-
-        pageSeq.initPageNumber();
-
-        // This will layout pages and add them to the area tree
-        PageLayoutManager pageLM = new PageLayoutManager(this, pageSeq);
-        pageLM.setPageCounting(pageSeq.getCurrentPageNumber(),
-                               pageSeq.getPageNumberGenerator());
-
-        // For now, skip the threading and just call run directly.
-        pageLM.run();
-
-        // Thread layoutThread = new Thread(pageLM);
-        //  layoutThread.start();
-        // log.debug("Layout thread started");
-        
-        // // wait on both managers
-        // try {
-        //     layoutThread.join();
-        //     log.debug("Layout thread done");
-        // } catch (InterruptedException ie) {
-        //     log.error("PageSequence.format() interrupted waiting on layout");
-        // }
-        
-        pageSeq.setCurrentPageNumber(pageLM.getPageCount());
-        // Tell the root the last page number we created.
-        pageSeq.getRoot().setRunningPageNumberCounter(pageSeq.getCurrentPageNumber());
     }
 
     /**
-     * @return the Title area
+     * Add a new page to the area tree.
+     * @param page the page to add
      */
-    private LineArea getTitleArea(Title foTitle) {
-        // get breaks then add areas to title
-        LineArea title = new LineArea();
-
-        ContentLayoutManager clm = new ContentLayoutManager(title);
-        clm.setUserAgent(foTitle.getUserAgent());
-
-        // use special layout manager to add the inline areas
-        // to the Title.
-        InlineStackingLayoutManager lm;
-        lm = new InlineStackingLayoutManager(foTitle);
-        clm.addChildLM(lm);
-
-        clm.fillArea(lm);
-
-        return title;
+    public void startPageSequence(LineArea title) {
+        model.startPageSequence(title);
     }
-    
+
+    /**
+     * Add a new page to the area tree.
+     * @param page the page to add
+     */
+    public void addPage(PageViewport page) {
+        model.addPage(page);
+    }
+
     /**
      * Accessor for the currentLMList.
      * @return the currentLMList.

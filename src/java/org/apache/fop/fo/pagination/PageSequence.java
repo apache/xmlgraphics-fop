@@ -673,6 +673,9 @@ public class PageSequence extends FObj {
      */
     public void setCurrentPageNumber(int currentPageNumber) {
         this.currentPageNumber = currentPageNumber;
+
+        // Tell the root the last page number we created.
+        root.setRunningPageNumberCounter(currentPageNumber);
     }
 
     /**
