@@ -137,6 +137,7 @@ public abstract class AbstractFopImage implements FopImage {
      */
     abstract protected void loadImage() throws FopImageException;
 
+
     /**
     * If true, image data are inverted
     */
@@ -158,8 +159,10 @@ public abstract class AbstractFopImage implements FopImage {
      * @exception FopImageException an error occured during property retriaval
      */
     public int getWidth() throws FopImageException {
-        if (this.m_width == 0)
-            this.loadImage();
+        synchronized(this) {
+            if (this.m_width == 0)
+                this.loadImage();
+        }
 
         return this.m_width;
     }
@@ -170,8 +173,10 @@ public abstract class AbstractFopImage implements FopImage {
      * @exception FopImageException an error occured during property retriaval
      */
     public int getHeight() throws FopImageException {
-        if (this.m_height == 0)
-            this.loadImage();
+        synchronized(this) {
+            if (this.m_height == 0)
+                this.loadImage();
+        }
 
         return this.m_height;
     }
@@ -182,8 +187,10 @@ public abstract class AbstractFopImage implements FopImage {
      * @exception FopImageException an error occured during property retriaval
      */
     public ColorSpace getColorSpace() throws FopImageException {
-        if (this.m_colorSpace == null)
-            this.loadImage();
+        synchronized(this) {
+            if (this.m_colorSpace == null)
+                this.loadImage();
+        }
 
         return this.m_colorSpace;
     }
@@ -194,8 +201,10 @@ public abstract class AbstractFopImage implements FopImage {
      * @exception FopImageException an error occured during property retriaval
      */
     public int getBitsPerPixel() throws FopImageException {
-        if (this.m_bitsPerPixel == 0)
-            this.loadImage();
+        synchronized(this) {
+            if (this.m_bitsPerPixel == 0)
+                this.loadImage();
+        }
 
         return this.m_bitsPerPixel;
     }
@@ -224,8 +233,10 @@ public abstract class AbstractFopImage implements FopImage {
      * @exception FopImageException an error occured during loading
      */
     public byte[] getBitmaps() throws FopImageException {
-        if (this.m_bitmaps == null)
-            this.loadImage();
+        synchronized(this) {
+            if (this.m_bitmaps == null)
+                this.loadImage();
+        }
 
         return this.m_bitmaps;
     }
@@ -236,8 +247,10 @@ public abstract class AbstractFopImage implements FopImage {
      * @exception FopImageException an error occured during loading
      */
     public int getBitmapsSize() throws FopImageException {
-        if (this.m_bitmapsSize == 0)
-            this.loadImage();
+        synchronized(this) {
+            if (this.m_bitmapsSize == 0)
+                this.loadImage();
+        }
 
         return this.m_bitmapsSize;
     }
@@ -272,8 +285,10 @@ public abstract class AbstractFopImage implements FopImage {
          * Using the bitsPerPixel var as our flag since many imges will
          * have a null m_compressionType even after being loaded
          */
-        if (this.m_bitsPerPixel == 0)
-            this.loadImage();
+        synchronized(this) {
+            if (this.m_bitsPerPixel == 0)
+                this.loadImage();
+        }
 
         return m_compressionType;
     }
@@ -282,21 +297,24 @@ public abstract class AbstractFopImage implements FopImage {
      * Free all ressource.
      */
     public void close() {
+        //org.apache.fop.messaging.MessageHandler.debug(getClass().getName()+".close(): "+this.m_href);
         /*
          * For the moment, only release the bitmaps (image areas
          * can share the same FopImage object)
          * Thus, even if it had been called, other properties
          * are still available.
          */
-        // this.m_width = 0;
-        // this.m_height = 0;
-        // this.m_href = null;
-        // this.m_colorSpace = null;
-        // this.m_bitsPerPixel = 0;
-        this.m_bitmaps = null;
-        this.m_bitmapsSize = 0;
-        // this.m_isTransparent = false;
-        // this.m_transparentColor = null;
+        synchronized(this) {
+            // this.m_width = 0;
+            // this.m_height = 0;
+            // this.m_href = null;
+            // this.m_colorSpace = null;
+            // this.m_bitsPerPixel = 0;
+            this.m_bitmaps = null;
+            this.m_bitmapsSize = 0;
+            // this.m_isTransparent = false;
+            // this.m_transparentColor = null;
+        }
     }
 
 }
