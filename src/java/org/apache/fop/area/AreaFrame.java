@@ -42,7 +42,10 @@ public class AreaFrame extends AreaGeometry {
     protected Point2D contentOffset = null;
 
     /**
-     * @param writingMode
+     * Instantiates an <code>AreaFrame</code> with zero dimensions and offset,
+     * whose contents and contentOffset are null
+     * @param area the <code>Area</code> on which this <code>AreaFrame</code>
+     * is being defined
      */
     public AreaFrame(Area area) {
         area.super(area.frameWritingMode);
@@ -58,7 +61,8 @@ public class AreaFrame extends AreaGeometry {
     }
 
     /**
-     * Instantiates a frame with 0-width edges.
+     * Instantiates a frame with 0-width edges around the given
+     * <code>AreaGeometry</code> contents
      * @param contents the contained rectangle
      */
     public AreaFrame(Area area, AreaGeometry contents) {
@@ -110,10 +114,6 @@ public class AreaFrame extends AreaGeometry {
         this.contentOffset = contentOffset;
     }
 
-    public int getWritingMode() {
-        return writingMode;
-    }
-
     /**
      * Sets the contents rectangle.  The dimensions of <code>this</code> are
      * adjusted to the difference between the current framed contents and
@@ -145,6 +145,11 @@ public class AreaFrame extends AreaGeometry {
         contentOffset = offset;
     }
 
+    /**
+     * Gets the offset of the <i>contents</i> rectangle's Java2D origin point
+     * from the Java2D origin point of the <code>AreaFrame</code>.
+     * @return the offset as a <code>Point2D</code>.
+     */
     public Point2D getContentOffset() {
         return contentOffset;
     }
@@ -163,6 +168,20 @@ public class AreaFrame extends AreaGeometry {
             setAbsoluteEdgeWidth(
                     WritingMode.getCorrespondingAbsoluteEdge(
                     writingMode, WritingMode.BEFORE), before);
+        } catch (PropertyException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    /**
+     * Gets the width of the before edge of the <code>AreaFrame</code>
+     * @return the width in user co-ordinate units (points)
+     */
+    public double getBefore() {
+        try {
+            return getAbsoluteEdgeWidth(
+                    WritingMode.getCorrespondingAbsoluteEdge(
+                            writingMode, WritingMode.BEFORE));
         } catch (PropertyException e) {
             throw new RuntimeException(e);
         }
@@ -188,6 +207,20 @@ public class AreaFrame extends AreaGeometry {
     }
 
     /**
+     * Gets the width of the start edge of the <code>AreaFrame</code>
+     * @return the width in user co-ordinate units (points)
+     */
+    public double getStart() {
+        try {
+            return getAbsoluteEdgeWidth(
+                    WritingMode.getCorrespondingAbsoluteEdge(
+                            writingMode, WritingMode.START));
+        } catch (PropertyException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    /**
      * Sets the after edge width of the frame.  The <code>contents</code> size
      * and the <code>contentOffset</code> are unaffected, but the size of the
      * frame (<code>this</code>) will change.  The height will vary by the
@@ -200,6 +233,20 @@ public class AreaFrame extends AreaGeometry {
             setAbsoluteEdgeWidth(
                     WritingMode.getCorrespondingAbsoluteEdge(
                     writingMode, WritingMode.AFTER), after);
+        } catch (PropertyException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    /**
+     * Gets the width of the after edge of the <code>AreaFrame</code>
+     * @return the width in user co-ordinate units (points)
+     */
+    public double getAfter() {
+        try {
+            return getAbsoluteEdgeWidth(
+                    WritingMode.getCorrespondingAbsoluteEdge(
+                            writingMode, WritingMode.AFTER));
         } catch (PropertyException e) {
             throw new RuntimeException(e);
         }
@@ -223,6 +270,26 @@ public class AreaFrame extends AreaGeometry {
         }
     }
 
+    /**
+     * Gets the width of the end edge of the <code>AreaFrame</code>
+     * @return the width in user co-ordinate units (points)
+     */
+    public double getEnd() {
+        try {
+            return getAbsoluteEdgeWidth(
+                    WritingMode.getCorrespondingAbsoluteEdge(
+                            writingMode, WritingMode.END));
+        } catch (PropertyException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    /**
+     * Sets an absolute edge width between the <code>AreaFrame</code> and the
+     * <code>contents</code> rectangle.
+     * @param edge absolute edge as defined in <code>WritingMode</code>.
+     * @param width to set in user co-ordinate units (points).
+     */
     public void setAbsoluteEdgeWidth(int edge, double width) {
         switch (edge) {
         case WritingMode.TOP:
@@ -260,6 +327,14 @@ public class AreaFrame extends AreaGeometry {
     }
 
     /**
+     * Gets the width of the top edge of the <code>AreaFrame</code>
+     * @return the width in user co-ordinate units (points)
+     */
+    public double getTop() {
+        return contentOffset.getY();
+    }
+
+    /**
      * Sets the left edge width of the frame.  The <code>contents</code> size
      * is unaffected, but the size of the frame (<code>this</code>) will
      * change.  The width will vary by the difference between the previous and
@@ -276,6 +351,14 @@ public class AreaFrame extends AreaGeometry {
     }
 
     /**
+     * Gets the width of the left edge of the <code>AreaFrame</code>
+     * @return the width in user co-ordinate units (points)
+     */
+    public double getLeft() {
+        return contentOffset.getX();
+    }
+
+    /**
      * Sets the bottom edge width of the frame.  The <code>contents</code> size
      * and the <code>contentOffset</code> are unaffected, but the size of the
      * frame (<code>this</code>) will change.  The height will vary by the
@@ -289,6 +372,14 @@ public class AreaFrame extends AreaGeometry {
     }
 
     /**
+     * Gets the width of the bottom edge of the <code>AreaFrame</code>
+     * @return the width in user co-ordinate units (points)
+     */
+    public double getBottom() {
+        return getHeight() - contentOffset.getY() - contents.getHeight(); 
+    }
+
+    /**
      * Sets the right edge width of the frame.  The <code>contents</code> size
      * and the <code>contentOffset</code> are unaffected, but the size of the
      * frame (<code>this</code>) will change.  The width will vary by the
@@ -299,6 +390,14 @@ public class AreaFrame extends AreaGeometry {
     public void setRight(double right) {
         double diff = right - (getX() - contentOffset.getX() - contents.getX());
         setRect(getX(), getY(), getWidth() + diff, getHeight());
+    }
+
+    /**
+     * Gets the width of the right edge of the <code>AreaFrame</code>
+     * @return the width in user co-ordinate units (points)
+     */
+    public double getRight() {
+        return getWidth() - contentOffset.getX() - contents.getWidth();
     }
 
     public double getAbsoluteEdgeWidth(int edge) {
@@ -315,22 +414,6 @@ public class AreaFrame extends AreaGeometry {
             throw new RuntimeException(
                     "Invalid absolute writing mode: " + edge);
         }
-    }
-
-    public double getTop() {
-        return contentOffset.getY();
-    }
-
-    public double getLeft() {
-        return contentOffset.getX();
-    }
-
-    public double getBottom() {
-        return getHeight() - contentOffset.getY() - contents.getHeight(); 
-    }
-
-    public double getRight() {
-        return getWidth() - contentOffset.getX() - contents.getWidth();
     }
 
 }
