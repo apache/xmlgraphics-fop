@@ -58,8 +58,9 @@
 
 package org.apache.fop.render.rtf.rtflib.rtfdoc;
 
-import java.util.Date;
-import java.util.Random;
+import java.util.LinkedList;
+import java.util.Iterator;
+import java.util.LinkedList;
 import java.io.Writer;
 import java.io.IOException;
 //import org.apache.fop.render.rtf.rtflib.jfor.main.JForVersionInfo;
@@ -71,13 +72,9 @@ import java.io.IOException;
  * @author Christopher Scott, scottc@westinghouse.com
  */
 public class RtfListTable extends RtfContainer {
+    private LinkedList lists;
+    private LinkedList styles;
 
-    /** number of list in document */
-    private Integer listNum;
-    /** id of list */
-    private Integer listId;
-    private Integer listTemplateId;
-    private RtfList parentList;
 //static data members
     /** constant for a list table */
     public static final String LIST_TABLE = "listtable";
@@ -140,49 +137,22 @@ public class RtfListTable extends RtfContainer {
     public RtfListTable(RtfContainer parent, Writer w, Integer num, RtfAttributes attrs)
     throws IOException {
         super(parent, w, attrs);
-        listNum = new Integer(num.intValue());
-        //random number generator for ids
-        Date runTime = new Date();
-        Random listIdGenerator = new Random(runTime.getTime());
-        listId = new Integer(listIdGenerator.nextInt());
-        attrib.set(LIST_ID, listId.toString());
-        listTemplateId = new Integer(listIdGenerator.nextInt());
-        attrib.set(LIST_NUMBER_TYPE, 0);
+
+        styles=new LinkedList();
     }
 
     /**
-     * Set parentList
-     * @param parent parentList to set
+     * Add List
+     * @param list RtfList to add
      */
-    public void setParentList(RtfList parent) {
-        parentList = parent;
-    }
-
-    /**
-     * Accessor for listNum
-     * @return listNum
-     */
-    public Integer getListNumber() {
-        return listNum;
-    }
-
-    /** Set whether the list is a bulleted list not, and set attributes
-     * accordingly */
-    private void setListType() {
-        if (parentList.isBulletedList()) {
-            // bullet definition for bulleted lists
-            // Chris Scott's version was "\\\'01\\u-3913 ?;"
-            // 'b7 is what was used in jfor V0.5.2
-            attrib.set(LIST_TEXT_FORM, "\\\'01\\'b7 ?;");
-            attrib.set(LIST_NUM_POSITION);
-            attrib.set(LIST_NUMBER_TYPE, 23);
-            attrib.set(LIST_FONT_TYPE, 2);
-        } else {
-            attrib.set(LIST_TEXT_FORM, "\\\'03\\\'00. ;");
-            attrib.set(LIST_NUM_POSITION, "\\\'01;");
-            attrib.set(LIST_NUMBER_TYPE, 0);
-            attrib.set(LIST_FONT_TYPE, 0);
+    public int addList(RtfList list) {
+        if(lists == null) {
+            lists=new LinkedList();
         }
+
+        lists.add(list);
+        
+        return lists.size();
     }
 
     /**
@@ -190,45 +160,38 @@ public class RtfListTable extends RtfContainer {
      * @throws IOException for I/O problems
      */
     public void writeRtfContent() throws IOException {
-        setListType();
+        if(lists!=null) {
+            //write '\listtable'
         writeGroupMark(true);
         writeStarControlWordNS(LIST_TABLE);
+            for (Iterator it = lists.iterator(); it.hasNext();) {
+                final RtfList list = (RtfList)it.next();
+                writeListTableEntry(list);
+            }
+            writeGroupMark(false);
+                
+            //write '\listoveridetable'
         writeGroupMark(true);
+            writeStarControlWordNS(LIST_OVR_TABLE);
+            int z=1;
+            
+            for (Iterator it = styles.iterator(); it.hasNext();) {
+                final RtfListStyle style = (RtfListStyle)it.next();
+                        
+                writeGroupMark(true);
+                writeStarControlWordNS(LIST_OVR);
+                writeGroupMark(true);
+        
+                writeOneAttributeNS(LIST_ID, style.getRtfList().getListId().toString());
+                writeOneAttributeNS(LIST_OVR_COUNT, new Integer(0));
+                writeOneAttributeNS(LIST_NUMBER, new Integer(z++));
 
-        writeControlWordNS(LIST);
-        writeOneAttributeNS(LIST_TEMPLATE_ID, listTemplateId.toString());
-        writeOneAttributeNS(LIST, attrib.getValue(LIST));
-        writeGroupMark(true);
-        writeControlWordNS(LIST_LEVEL);
-        writeOneAttributeNS(LIST_NUMBER_TYPE, attrib.getValue(LIST_NUMBER_TYPE));
-        writeOneAttributeNS(LIST_JUSTIFICATION, attrib.getValue(LIST_JUSTIFICATION));
-        writeOneAttributeNS(LIST_FOLLOWING_CHAR, attrib.getValue(LIST_FOLLOWING_CHAR));
-        writeOneAttributeNS(LIST_START_AT, attrib.getValue(LIST_START_AT));
-        writeOneAttributeNS(LIST_SPACE, new Integer(0));
-        writeOneAttributeNS(LIST_INDENT, attrib.getValue(LIST_INDENT));
-        writeGroupMark(true);
-        writeOneAttributeNS(LIST_TEXT_FORM, attrib.getValue(LIST_TEXT_FORM));
-        writeGroupMark(false);
-        writeGroupMark(true);
-        writeOneAttributeNS(LIST_NUM_POSITION, attrib.getValue(LIST_NUM_POSITION));
-        writeGroupMark(false);
-        writeOneAttributeNS(LIST_FONT_TYPE, attrib.getValue(LIST_FONT_TYPE));
-        writeGroupMark(false);
-        writeGroupMark(true);
-        writeControlWordNS(LIST_NAME);
-        writeGroupMark(false);
-        writeOneAttributeNS(LIST_ID, listId.toString());
-        writeGroupMark(false);
-        writeGroupMark(false);
-        writeGroupMark(true);
-        writeStarControlWordNS(LIST_OVR_TABLE);
-        writeGroupMark(true);
-        writeControlWordNS(LIST_OVR);
-        writeOneAttributeNS(LIST_ID, listId.toString());
-        writeOneAttributeNS(LIST_OVR_COUNT, new Integer(0));
-        writeOneAttributeNS(LIST_NUMBER, listNum.toString());
-        writeGroupMark(false);
-        writeGroupMark(false);
+                writeGroupMark(false);
+                writeGroupMark(false);
+            }
+            
+            writeGroupMark(false);
+        }
     }
 
     /**
@@ -239,6 +202,44 @@ public class RtfListTable extends RtfContainer {
     public boolean isEmpty() {
         return false;
     }
+    
+    private void writeListTableEntry(RtfList list)
+    throws IOException {
+        //write list-specific attributes
+        writeGroupMark(true);
+        writeControlWordNS(LIST);
+        writeOneAttributeNS(LIST_TEMPLATE_ID, list.getListTemplateId().toString());
+        writeOneAttributeNS(LIST, attrib.getValue(LIST));
+        
+        // write level-specific attributes
+        writeGroupMark(true);
+        writeControlWordNS(LIST_LEVEL);
+        
+        writeOneAttributeNS(LIST_JUSTIFICATION, attrib.getValue(LIST_JUSTIFICATION));
+        writeOneAttributeNS(LIST_FOLLOWING_CHAR, attrib.getValue(LIST_FOLLOWING_CHAR));
+        writeOneAttributeNS(LIST_SPACE, new Integer(0));
+        writeOneAttributeNS(LIST_INDENT, attrib.getValue(LIST_INDENT));
+        
+        RtfListItem item=(RtfListItem)list.getChildren().get(0);
+        item.getRtfListStyle().writeLevelGroup(this);
+        
+        writeGroupMark(false);
+        
+        writeGroupMark(true);
+        writeControlWordNS(LIST_NAME);
+        writeGroupMark(false);
+        
+        writeOneAttributeNS(LIST_ID, list.getListId().toString());
+                
+        writeGroupMark(false);
+    }
 
-
+    /**
+     * Change list style
+     * @param ls ListStyle to set
+     */
+    public int addRtfListStyle(RtfListStyle ls) {
+        styles.add(ls);
+        return styles.size();
+    }
 }

@@ -1,5 +1,4 @@
 /*
- * $Id$
  * ============================================================================
  *                    The Apache Software License, Version 1.1
  * ============================================================================
@@ -48,91 +47,83 @@
  * James Tauber <jtauber@jtauber.com>. For more information on the Apache
  * Software Foundation, please see <http://www.apache.org/>.
  */
+package org.apache.fop.render.rtf;
 
-/*
- * This file is part of the RTF library of the FOP project, which was originally
- * created by Bertrand Delacretaz <bdelacretaz@codeconsult.ch> and by other
- * contributors to the jfor project (www.jfor.org), who agreed to donate jfor to
- * the FOP project.
- */
+//FOP
+import org.apache.fop.apps.FOPException;
+import org.apache.fop.fo.Property;
+import org.apache.fop.fo.LengthProperty;
+import org.apache.fop.fo.PropertyList;
 
-package org.apache.fop.render.rtf.rtflib.rtfdoc;
+//RTF
+import org.apache.fop.render.rtf.rtflib.rtfdoc.RtfAttributes;
+import org.apache.fop.render.rtf.rtflib.rtfdoc.RtfListTable;
+import org.apache.fop.render.rtf.rtflib.rtfdoc.RtfText;
 
-import java.io.Writer;
-import java.io.IOException;
-import java.util.Date;
-import java.util.Random;
+ /**
+  * @autor bdelacretaz, bdelacretaz@codeconsult.ch
+  * @autor Christopher Scott, scottc@westinghouse.com
+  * Portions created by Christopher Scott are Coypright (C) 2001
+  * Westinghouse Electric Company. All Rights Reserved.
+  * @autor Peter Herweg, pherweg@web.de
+  */
 
 /**
- * Model of an RTF list, which can contain RTF list items
- * @author Bertrand Delacretaz bdelacretaz@codeconsult.ch
- * @author Christopher Scott, scottc@westinghouse.com
- * @author Peter Herweg, pherweg@web.de
+ * Provides methods to convert list attributes to RtfAttributes.
  */
-public class RtfList extends RtfContainer {
-    private RtfListItem item;
-    private RtfListTable listTable;
-    private final boolean hasTableParent;
-    private RtfListStyle defaultListStyle;
-    private Integer listTemplateId = null;
-    private Integer listId = null;
+public class ListAttributesConverter {
+    
+    
+    static RtfAttributes convertAttributes(PropertyList properties)
+    throws FOPException{
+        
+        RtfAttributes attrib = new RtfAttributes();
+        
+        Property prop=null;
+        int iStartIndentInTwips=0;
+        
+        //start-indent
+        if ((prop = properties.get("start-indent")) != null) {
+            LengthProperty lengthprop = (LengthProperty)prop;
 
-    /** Create an RTF list as a child of given container with given attributes */
-    RtfList(RtfContainer parent, Writer w, RtfAttributes attr) throws IOException {
-        super((RtfContainer)parent, w, attr);
-
-        //random number generator for ids
-        Date runTime = new Date();
-        Random listIdGenerator = new Random(runTime.getTime());
-        listId = new Integer(listIdGenerator.nextInt());
-        listTemplateId = new Integer(listIdGenerator.nextInt());
-
-        //create a new list table entry for the list
-        listTable = getRtfFile().startListTable(attr);
-        listTable.addList(this);
-
-        // find out if we are nested in a table
-        hasTableParent = this.getParentOfClass(RtfTable.class) != null;
-    }
-
-    /**
-     * Close current list item and start a new one
-     * @return new RtfListItem
-     * @throws IOException for I/O problems
-     */
-    public RtfListItem newListItem() throws IOException {
-        if (item != null) {
-            item.close();
+            Float f = new Float(lengthprop.getLength().getValue() / 1000f);
+            String sValue = f.toString() + "pt";
+            
+            iStartIndentInTwips = (int) FoUnitsConverter.getInstance().convertToTwips(sValue);
+        } else {
+            //set default 
+            iStartIndentInTwips = 360;
         }
-        item = new RtfListItem(this, writer);
-        return item;
-    }
+        attrib.set(RtfListTable.LIST_INDENT, iStartIndentInTwips);
+        
+        //end-indent
+        if ((prop = properties.get("end-indent")) != null) {
+            LengthProperty lengthprop = (LengthProperty)prop;
 
-    public Integer getListId() {
-        return listId;
-    }
-    
-    public Integer getListTemplateId() {
-        return listTemplateId;
-    }
-    
-    /**
-     * Change list style
-     * @param ls ListStyle to set
-     */
-    public void setRtfListStyle(RtfListStyle ls) {
-        defaultListStyle = ls;
-    }
+            Float f = new Float(lengthprop.getLength().getValue() / 1000f);
+            String sValue = f.toString() + "pt";
 
-    /**
-     * Get list style
-     * @return ListSytle of the List
-     */
-    public RtfListStyle getRtfListStyle() {
-        return defaultListStyle;
-    }
-    
-    public boolean getHasTableParent() {
-        return hasTableParent;
+            attrib.set(RtfText.LEFT_INDENT_BODY,
+                    (int) FoUnitsConverter.getInstance().convertToTwips(sValue));
+        } else {
+            if(iStartIndentInTwips >= 360) {
+                //if the start indent is greater than default, set to the start indent
+                attrib.set(RtfText.LEFT_INDENT_BODY, iStartIndentInTwips);
+            } else {
+                //else set to default 
+                attrib.set(RtfText.LEFT_INDENT_BODY, 360);
+            }
+        }
+        
+        /*
+         * set list table defaults
+         */
+
+        //set a simple list type
+        attrib.set(RtfListTable.LIST, "simple");
+        //set following char as tab
+        attrib.set(RtfListTable.LIST_FOLLOWING_CHAR, 0);
+        
+        return attrib;
     }
 }

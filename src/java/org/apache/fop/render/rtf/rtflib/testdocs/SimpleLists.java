@@ -64,6 +64,8 @@ import org.apache.fop.render.rtf.rtflib.rtfdoc.RtfDocumentArea;
 import org.apache.fop.render.rtf.rtflib.rtfdoc.RtfSection;
 import org.apache.fop.render.rtf.rtflib.rtfdoc.RtfList;
 import org.apache.fop.render.rtf.rtflib.rtfdoc.RtfListItem;
+import org.apache.fop.render.rtf.rtflib.rtfdoc.RtfListStyle;
+import org.apache.fop.render.rtf.rtflib.rtfdoc.RtfListStyleNumber;
 import org.apache.fop.render.rtf.rtflib.rtfdoc.RtfParagraph;
 
 /**  Generates a simple RTF test document for the jfor rtflib package.
@@ -82,16 +84,14 @@ class SimpleLists extends TestDocument {
         sect.newParagraph().newText("Normal paragraph after list 2.");
 
         sect.newParagraph().newText("Now a numbered list (4 items):");
-        final RtfList.NumberingStyle nn = new RtfList.NumberingStyle();
-        nn.setIsBulletedList(false);
-        makeList(sect, 3, 4, nn);
+        makeList(sect, 3, 4, new RtfListStyleNumber());
     }
 
-    private void makeList(RtfSection sect, int listIndex, int nItems, RtfList.NumberingStyle ns)
+    private void makeList(RtfSection sect, int listIndex, int nItems, RtfListStyle ls)
     throws IOException {
         final RtfList list = sect.newList(null);
-        if (ns != null) {
-            list.setNumberingStyle(ns);
+        if (ls != null) {
+            list.setRtfListStyle(ls);
         }
         for (int i = 0; i < nItems; i++) {
             final RtfListItem item = list.newListItem();

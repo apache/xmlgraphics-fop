@@ -132,8 +132,21 @@ extends RtfContainer {
     public RtfListTable startListTable(RtfAttributes attr)
     throws IOException {
         listNum++;
+        if(listTable != null) {
+            return listTable;
+        } else {
         listTable = new RtfListTable(this, writer, new Integer(listNum), attr);
         listTableContainer.addChild(listTable);
+        }
+
+        return listTable;
+    }
+    
+    /**
+     * Get the list table.
+     * @return the RtfListTable
+     */
+    public RtfListTable getListTable() {
         return listTable;
     }
 
