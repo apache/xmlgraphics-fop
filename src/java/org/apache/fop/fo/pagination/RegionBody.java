@@ -25,7 +25,6 @@ import java.awt.Rectangle;
 import org.xml.sax.SAXParseException;
 
 // FOP
-import org.apache.fop.datatypes.ColorType;
 import org.apache.fop.datatypes.FODimension;
 import org.apache.fop.datatypes.Length;
 import org.apache.fop.datatypes.Numeric;
@@ -42,8 +41,6 @@ public class RegionBody extends Region {
     private Numeric columnCount;
     private Length columnGap;
     // End of property values
-
-    private ColorType backgroundColor;
 
     /**
      * @see org.apache.fop.fo.FONode#FONode(FONode)

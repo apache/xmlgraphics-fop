@@ -43,13 +43,13 @@ public class RegionAfter extends RegionBA {
     public Rectangle getViewportRectangle (FODimension reldims) {
         // Depends on extent, precedence ans writing mode
         Rectangle vpRect;
-        if (this.getWritingMode() == WritingMode.LR_TB || this.getWritingMode() == WritingMode.RL_TB) {
+        if (getWritingMode() == WritingMode.LR_TB || getWritingMode() == WritingMode.RL_TB) {
             vpRect = new Rectangle(0, reldims.bpd - getExtent().getValue(), reldims.ipd, getExtent().getValue());
         } else {
             vpRect = new Rectangle(0, reldims.bpd - getExtent().getValue(), getExtent().getValue(), reldims.ipd);
         }
         if (getPrecedence() == FALSE) {
-            adjustIPD(vpRect, this.getWritingMode());
+            adjustIPD(vpRect, getWritingMode());
         }
         return vpRect;
     }

@@ -40,7 +40,6 @@ import org.apache.fop.fo.properties.KeepProperty;
 import org.apache.fop.fo.properties.LengthRangeProperty;
 import org.apache.fop.fo.properties.SpaceProperty;
 import org.apache.fop.fo.properties.PercentLength;
-import org.apache.fop.fonts.Font;
 import org.apache.fop.layoutmgr.LeaderLayoutManager;
 
 /**
@@ -153,10 +152,6 @@ public class Leader extends FObjMixed {
             length = maxlength.getValue();
         }
         return length;
-    }
-
-    public Font getFontState() {
-        return commonFont.getFontState(getFOEventHandler().getFontInfo());
     }
 
     /**

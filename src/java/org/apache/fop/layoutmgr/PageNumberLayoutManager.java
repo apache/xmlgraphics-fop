@@ -40,7 +40,7 @@ public class PageNumberLayoutManager extends LeafNodeLayoutManager {
     public PageNumberLayoutManager(PageNumber node) {
         super(node);
         fobj = node;
-        font = node.getFontState();
+        font = fobj.getCommonFont().getFontState(fobj.getFOEventHandler().getFontInfo());
     }
 
     public InlineArea get(LayoutContext context) {

@@ -45,11 +45,6 @@ public class RepeatablePageMasterAlternatives extends FObj
     
     private static final int INFINITE = -1;
 
-    /**
-     * Max times this page master can be repeated.
-     * INFINITE is used for the unbounded case
-     */
-    private int _maximumRepeats;
     private int numberConsumed = 0;
 
     private ArrayList conditionalPageMasterRefs;
@@ -130,8 +125,8 @@ public class RepeatablePageMasterAlternatives extends FObj
     public String getNextPageMasterName(boolean isOddPage,
                                         boolean isFirstPage,
                                         boolean isBlankPage) {
-        if (_maximumRepeats != INFINITE) {
-            if (numberConsumed < _maximumRepeats) {
+        if (getMaximumRepeats() != INFINITE) {
+            if (numberConsumed < getMaximumRepeats()) {
                 numberConsumed++;
             } else {
                 return null;

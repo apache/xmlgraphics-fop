@@ -85,16 +85,16 @@ public class Declarations extends FObj {
                 FONode node = (FONode)iter.next();
                 if (node.getName().equals("fo:color-profile")) {
                     ColorProfile cp = (ColorProfile)node;
-                    if (!"".equals(cp.getProfileName())) {
+                    if (!"".equals(cp.getColorProfileName())) {
                         if (colorProfiles == null) {
                             colorProfiles = new java.util.HashMap();
                         }
-                        if (colorProfiles.get(cp.getProfileName()) != null) {
+                        if (colorProfiles.get(cp.getColorProfileName()) != null) {
                             // duplicate names
                             getLogger().warn("Duplicate fo:color-profile profile name : "
-                                    + cp.getProfileName());
+                                    + cp.getColorProfileName());
                         }
-                        colorProfiles.put(cp.getProfileName(), cp);
+                        colorProfiles.put(cp.getColorProfileName(), cp);
                     } else {
                         getLogger().warn("color-profile-name required for color profile");
                     }

@@ -42,7 +42,7 @@ public class RegionEnd extends RegionSE {
     public Rectangle getViewportRectangle (FODimension reldims) {
         // Depends on extent, precedence and writing mode
         Rectangle vpRect;
-        if (this.getWritingMode() == WritingMode.LR_TB || this.getWritingMode() == WritingMode.RL_TB) {
+        if (getWritingMode() == WritingMode.LR_TB || getWritingMode() == WritingMode.RL_TB) {
             // Rectangle:  x , y (of top left point), width, height
             vpRect = new Rectangle(reldims.ipd - getExtent().getValue(), 0,
                     getExtent().getValue(), reldims.bpd);
@@ -51,7 +51,7 @@ public class RegionEnd extends RegionSE {
             vpRect = new Rectangle(reldims.ipd - getExtent().getValue(), 0,
                     reldims.bpd, getExtent().getValue());
         }
-        adjustIPD(vpRect, this.getWritingMode());
+        adjustIPD(vpRect, getWritingMode());
         return vpRect;
     }
 

@@ -46,8 +46,6 @@ public class ColorProfile extends FObj {
     private int renderingIntent;
     // End of property values
     
-    private int intent;
-    private String profileName;
     private ICC_ColorSpace colorSpace = null;
 
     /**
@@ -76,10 +74,10 @@ public class ColorProfile extends FObj {
     }
 
     /**
-     * @return the name of this color profile.
+     * Return the "color-profile-name" property.
      */
-    public String getProfileName() {
-        return profileName;
+    public String getColorProfileName() {
+        return colorProfileName;
     }
 
     /**

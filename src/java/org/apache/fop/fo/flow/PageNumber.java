@@ -38,7 +38,6 @@ import org.apache.fop.fo.properties.CommonMarginInline;
 import org.apache.fop.fo.properties.CommonRelativePosition;
 import org.apache.fop.fo.properties.KeepProperty;
 import org.apache.fop.fo.properties.SpaceProperty;
-import org.apache.fop.fonts.Font;
 import org.apache.fop.layoutmgr.PageNumberLayoutManager;
 
 /**
@@ -131,14 +130,6 @@ public class PageNumber extends FObj {
     protected void validateChildNode(Locator loc, String nsURI, String localName) 
         throws SAXParseException {
             invalidChildError(loc, nsURI, localName);
-    }
-
-    /**
-     * @return the FontState object for this PageNumber
-     */
-    public Font getFontState() {
-        return commonFont.getFontState(getFOEventHandler().getFontInfo());
-
     }
 
     /**

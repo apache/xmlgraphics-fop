@@ -69,12 +69,9 @@ public abstract class Region extends FObj {
         writingMode = pList.getWritingMode();
         
         // regions may have name, or default
-        if (null == regionName) {
-            setRegionName(getDefaultRegionName());
-        } else if (regionName.equals("")) {
-            setRegionName(getDefaultRegionName());
+        if (regionName.equals("")) {
+            regionName = getDefaultRegionName();
         } else {
-            setRegionName(regionName);
             // check that name is OK. Not very pretty.
             if (isReserved(getRegionName())
                     && !getRegionName().equals(getDefaultRegionName())) {
@@ -102,14 +99,6 @@ public abstract class Region extends FObj {
      * @return the default region name
      */
     protected abstract String getDefaultRegionName();
-
-     /**
-     * Sets the name of the region.
-     * @param name the name
-     */
-    private void setRegionName(String name) {
-        this.regionName = name;
-    }
 
     /**
      * Checks to see if a given region name is one of the reserved names
@@ -154,7 +143,7 @@ public abstract class Region extends FObj {
      * Return the "region-name" property.
      */
     public String getRegionName() {
-        return this.regionName;
+        return regionName;
     }
 
     /**
