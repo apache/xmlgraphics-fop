@@ -122,6 +122,8 @@ Sometimes ant gives out this warnings, but the build is finished without any pro
        <include name="LICENSE"/>
        <include name="README"/>
        <include name="STATUS"/>
+       <include name="fop.bat"/>
+       <include name="fop.sh"/>
        <exclude name="src/**"/>
        <exclude name="dist/**"/>
        <exclude name="build/**"/>
@@ -162,7 +164,7 @@ Sometimes ant gives out this warnings, but the build is finished without any pro
     <tstamp/>
     <property name="Name" value="Fop"/>
     <property name="name" value="fop"/>
-    <property name="version" value="0.19.0-CVS"/>
+    <property name="version" value="0.20.0"/>
     <filter  token="version" value="${version}"/>
     <property name="year" value="1999-2001"/>
 
@@ -638,7 +640,8 @@ Sometimes ant gives out this warnings, but the build is finished without any pro
       <fileset refid="dist.bin"/>
       <fileset refid="dist.bin.lib"/>
     </copy>
-    <copy todir="${dist.bin.result.dir}" file="build/fop.jar"/>
+    <mkdir dir="${dist.bin.result.dir}/build"/>
+    <copy todir="${dist.bin.result.dir}/build" file="build/fop.jar"/>
       
     <zip zipfile="${Name}-${version}-bin.zip" basedir="${dist.bin.dir}" includes="**"/>
     <tar tarfile="${Name}-${version}-bin.tar" basedir="${dist.bin.dir}" includes="**"/>
@@ -657,7 +660,8 @@ Sometimes ant gives out this warnings, but the build is finished without any pro
     <copy todir="${dist.src.result.dir}/javadocs">
       <fileset dir="${build.javadocs}"/>
     </copy>
-    <copy todir="${dist.src.result.dir}" file="build/fop.jar"/>
+    <mkdir dir="${dist.src.result.dir}/build"/>
+    <copy todir="${dist.src.result.dir}/build" file="build/fop.jar"/>
     <chmod file="${dist.src.result.dir}/build.sh" perm="ugo+rx" />
 
     <zip zipfile="${Name}-${version}-src.zip" basedir="${dist.src.dir}" includes="**"/>
