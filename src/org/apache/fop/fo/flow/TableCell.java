@@ -253,6 +253,9 @@ public class TableCell extends FObj {
 		if ((i == 0) && (status.getCode() == Status.AREA_FULL_NONE)) {
 		    return new Status(Status.AREA_FULL_NONE);
 		} else {
+					// hani Elabed 11/21/2000
+			 area.addChild(areaContainer);
+
 		    return new Status(Status.AREA_FULL_SOME);
 		}
 	    }

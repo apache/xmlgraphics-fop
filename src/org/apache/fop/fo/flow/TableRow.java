@@ -104,7 +104,127 @@ public class TableRow extends FObj {
     Vector columns;
 
     AreaContainer areaContainer;
+
+		// added by Dresdner Bank, Germany
     DisplaySpace spacer = null;
+
+
+
+	/** 
+   	* The list of cell states for this row. This is the location of
+   	* where I will be storing the state of each cell so that I can
+   	* spread a cell over multiple pages if I have to. This is part
+   	* of fixing the TableRow larger than a single page bug. 
+   	* Hani Elabed, 11/22/2000. 
+   	*/
+	public Vector cells = null;
+
+   /**
+	* CellState<BR>
+	*
+	* <B>Copyright @ 2000 Circuit Court Automation Program.
+	* state of Wisconsin. 
+	* All Rights Reserved.</B>
+	* <p>
+	* This class is a container class for encapsulating a the
+	* state of a cell
+	* <TABLE>
+	* <TR><TD><B>Name:</B></TD>        <TD>CellState</TD></TR>
+	*
+	* <TR><TD><B>Purpose:</B></TD>     <TD>a helpful container class</TD></TR>
+	*
+	* <TR><TD><B>Description:</B></TD> <TD>This class is a container class for 
+	*                                      encapsulating the state of a
+	*									   cell belonging to a TableRow class
+	*                                  </TD></TR> 
+	*
+	* </TABLE> 
+	* 
+	* @author      Hani Elabed
+	* @version     0.14.0, 11/22/2000
+	* @since       JDK1.1
+	*/
+	public final class CellState
+   {
+	  /** the cell location or index starting at 0.*/
+	  private 	int 	location;
+	  
+	  /** true if the layout of the cell was complete, false otherwise.*/
+	  private 	boolean layoutCompleted;
+	  
+	  /** the width of the cell so far.*/
+	  private 	int     widthOfCellSoFar;
+
+
+	  /**
+	  * simple no args constructor.
+	  */
+	  public CellState()
+	  { 
+		 this( 0, false, 0 );
+	  }
+	  
+	  /**
+	  * three argument fill everything constructor.
+	  * @param int the location(index) of the cell.
+	  * @param boolean flag of wether the cell was completely laid out or not.
+	  * @param int the horizontal offset(width so far) of the cell.
+	  */
+	  public CellState( int aLocation, boolean completed, int aWidth )
+	  {
+	   
+	     location = aLocation;
+		 layoutCompleted = completed;
+		 widthOfCellSoFar = aWidth;
+	  }
+	  
+	  /**
+	  * returns the index of the cell starting at 0.
+	  * @return int the location of the cell.
+	  */
+	  public final int getLocation() 
+	  { return location; }
+	  
+	  /**
+	  * sets the location of the cell.
+	  * @param int, the location of the cell.
+	  */
+	  public final void   setLocation(int aLocation) 
+	  { location = aLocation; }
+
+	  
+	  /**
+	  * returns true if the cell was completely laid out.
+	  * @return false if cell was partially laid out.
+	  */
+	  public final boolean isLayoutComplete() 
+	  { return layoutCompleted; }
+	  
+	  /**
+	  * sets the layoutCompleted flag.
+	  * @param boolean, the layout Complete state of the cell.
+	  */
+	  public final void  setLayoutComplete(boolean completed ) 
+	  { layoutCompleted = completed; }
+
+	  
+	  /**
+	  * returns the horizontal offset of the cell.
+	  * @return int the horizontal offset of the cell, also known as width
+	  * of the cell so far.
+	  */
+	  public final int getWidthOfCellSoFar() 
+	  { return widthOfCellSoFar; }
+	  
+	  /**
+	  * sets the width of the Cell So Far, i.e the cell's offset.
+	  * @param int, the horizontal offset of the cell.
+	  */
+	  public final void setWidthOfCellSoFar(int aWidth) 
+	  { widthOfCellSoFar = aWidth; }
+
+   } 
+
 
     public TableRow(FObj parent, PropertyList propertyList) {
 	super(parent, propertyList);
@@ -209,6 +329,34 @@ public class TableRow extends FObj {
 
 	    this.marker = 0;
 
+
+   		// cells is The list of cell states for this row. This is the location of
+   		// where I will be storing the state of each cell so that I can
+   		// spread a cell over multiple pages if I have to. This is part
+   		// of fixing the TableRow larger than a single page bug. 
+   		// Hani Elabed, 11/22/2000. 
+		if( cells == null ) // do it once..
+		{
+			int numOfCols = columns.size();
+			cells = new Vector( numOfCols );
+			int cumulativeWidth = 0;
+				// populating the cells vector with initial states.
+			for (int i = 0; i < numOfCols; i++)
+			{
+				int width = ((TableColumn) columns.elementAt(i)).getColumnWidth();
+					
+				CellState state = new CellState( i, false, cumulativeWidth );
+					// add the state of a cell.
+				cells.add( i, state );
+					// cumulative width, i.e start offset of cell
+					// also known as widthOfCellSoFar...
+				cumulativeWidth += width;
+			}
+
+		}
+
+
+
 	}
 
 	if ((spaceBefore != 0) && (this.marker ==0)) {
@@ -247,8 +395,16 @@ public class TableRow extends FObj {
 	widthOfCellsSoFar = 0;
 	largestCellHeight = 0;
 
+		// added by Hani Elabed 11/27/2000
+	boolean someCellDidNotLayoutCompletely = false;
+	
+	
 	for (int i = this.marker; i < numChildren; i++) {
 	    TableCell cell = (TableCell) children.elementAt(i);
+
+			// added by Hani Elabed 11/22/2000
+		CellState cellState = (CellState) cells.elementAt( i );
+
 
 	    //if (this.isInListBody) {
 	    //fo.setIsInListBody();
@@ -256,40 +412,92 @@ public class TableRow extends FObj {
 	    //fo.setBodyIndent(this.bodyIndent);
 	    //}
 
-	    cell.setStartOffset(widthOfCellsSoFar);
+
+			//--- this is modified to preserve the state of start
+			//--- offset of the cell.
+			//--- change by Hani Elabed 11/22/2000
+		//cell.setStartOffset(widthOfCellsSoFar);
+		cell.setStartOffset( cellState.getWidthOfCellSoFar() );
+
 	    int width = ((TableColumn) columns.elementAt(i)).getColumnWidth();
 
 	    cell.setWidth(width);
 	    widthOfCellsSoFar += width;
 
 	    Status status;
-	    if ((status = cell.layout(areaContainer)).isIncomplete()) {
-		this.marker = i;
-		if ((i != 0) && (status.getCode() == Status.AREA_FULL_NONE)) {
-		    status = new Status(Status.AREA_FULL_SOME);
-		}
-    	        
+	    if ((status = cell.layout(areaContainer)).isIncomplete()) 
+	    {
+			this.marker = i;
+			if ((i != 0) && (status.getCode() == Status.AREA_FULL_NONE)) 
+			{
+			    status = new Status(Status.AREA_FULL_SOME);
+			}
+
+
+			if( status.getCode() == Status.AREA_FULL_SOME )
+			{
+					// this whole block added by 
+					// Hani Elabed 11/27/2000			
+				
+				cellState.setLayoutComplete( false );
+
+					// locate the first cell
+					// that need to be laid out further
+				
+				for (int j = 0; j < numChildren; j++)
+				{
+					CellState state = (CellState) cells.elementAt( j );
+
+					if( ! state.isLayoutComplete() )
+					{
+						this.marker = j;
+						break; // out of for loop
+					}
+				}
+			}
+			else
+			{
+					// added on 11/28/2000, by Dresdner Bank, Germany    	        
     	        if(spacer != null)
         	        area.removeChild(spacer);
+
+					// removing something that was added by succession
+					// of cell.layout()
+					// just to keep my sanity here, Hani
     	        area.removeChild(areaContainer);
                 this.resetMarker();                
                 this.removeID(area.getIDReferences());
                                 
-		return status;
+					// hani elabed 11/27/2000
+				cellState.setLayoutComplete( false );
+	                                
+				return status;
+			}
 	    }
+		else	// layout was complete for a particular cell
+		{		// Hani Elabed
+			cellState.setLayoutComplete( true );
+		}
+	    
+
 
 	    int h = cell.getHeight();
-	    if (h > largestCellHeight) {
-		largestCellHeight = h;
+	    if (h > largestCellHeight) 
+	    {
+			largestCellHeight = h;
 	    }
 	}
-	for (int i = 0; i < numChildren; i++) {
+
+	for (int i = 0; i < numChildren; i++) 
+	{
 	    TableCell cell = (TableCell)children.elementAt(i);
-            cell.setHeight(largestCellHeight);
+        cell.setHeight(largestCellHeight);
 	}
 
+		// added by Dresdner Bank, Germany
     if(spacer != null)
         area.addChild(spacer);
+
 	area.addChild(areaContainer);
 	areaContainer.end();
         area.addDisplaySpace(largestCellHeight
@@ -309,7 +517,36 @@ public class TableRow extends FObj {
 	    area.start();
 	}
 
-	return new Status(Status.OK);
+
+		// test to see if some cells are not
+		// completely laid out.
+		// Hani Elabed 11/22/2000
+	for (int i = 0; i < numChildren; i++)
+	{
+		CellState cellState = (CellState) cells.elementAt( i );
+
+		if( ! cellState.isLayoutComplete() )
+		{
+			someCellDidNotLayoutCompletely = true;
+			break; // out of for loop
+		}
+	}
+	
+	
+	
+	
+		// replaced by Hani Elabed 11/27/2000
+	//return new Status(Status.OK);
+	
+	if( someCellDidNotLayoutCompletely )
+	{
+		return new Status(Status.AREA_FULL_SOME);
+	}
+	else
+	{
+		return new Status(Status.OK);
+	}
+	
     }   
 
     public int getAreaHeight() {

@@ -132,7 +132,18 @@ public class FOText extends FONode {
                       wrapOption, this.getLinkSet(), whiteSpaceCollapse, ca,
                       this.marker, length, underlined);
         if (this.marker == -1) {
-            this.marker = 0;
+
+			
+				// commented out by Hani Elabed, 11/28/2000
+				// if this object has been laid out
+				// successfully, leave it alone....
+				// Now, to prevent the array index out of
+				// bound of LineArea.addText(), I have added
+				// the following test at the beginning of that method.
+				// if( start == -1 ) return -1;
+				// see LineArea.addText()
+
+			//this.marker = 0;
             return new Status(Status.OK);
         } else if (this.marker != orig_start) {
             return new Status(Status.AREA_FULL_SOME);
