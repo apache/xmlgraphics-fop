@@ -14,12 +14,12 @@
   <p>Important changes since the last release (0.20.4):</p>
   <ul>
     <li>Some hyphenation patterns (cs, da, de, de_DR, el, en, en_US, fr, nl,
-        no, pt, ru, sk, tr) have been removed due to licensing reasons.
+        no, pt, ru, sk, tr) have been removed due to licensing reasons
+        (en_GB hyphenation has been renamed to en).
         We hope to resolve this issue before the final release.
-        (English hyphenation is still available as en_GB)
     </li>
     <li>Documentation is now built with <link href="http://xml.apache.org/forrest/">
-        Forrest</link> (version 0.3). You need to install Forrest if you want build the docs
+        Forrest</link> (version 0.4). You need to install Forrest if you want build the docs
         yourself. (See
         <link href="http://xml.apache.org/forrest/your-project.html">Using Forrest</link>)
     </li>
