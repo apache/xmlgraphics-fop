@@ -28,15 +28,17 @@ import java.util.Iterator;
  * See fo:region-body definition in the XSL Rec for more information.
  */
 public class MainReference extends Area {
+
+    private BodyRegion parent;
     private List spanAreas = new java.util.ArrayList();
-    private int columnGap;
     private int width;
     private boolean isEmpty = true;
 
     /**
      * Constructor
      */
-    public MainReference() {
+    public MainReference(BodyRegion parent) {
+        this.parent = parent;
         addTrait(Trait.IS_REFERENCE_AREA, Boolean.TRUE);
     }
       
@@ -86,13 +88,14 @@ public class MainReference extends Area {
         return isEmpty;
     }
 
-    /**
-     * Get the column gap in millipoints.
-     *
-     * @return the column gap in millipoints
-     */
+    /** @return the number of columns */
+    public int getColumnCount() {
+        return parent.getColumnCount();
+    }
+
+    /** @return the column gap in millipoints */
     public int getColumnGap() {
-        return columnGap;
+        return parent.getColumnGap();
     }
 
     /**

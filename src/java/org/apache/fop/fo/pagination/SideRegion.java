@@ -13,46 +13,37 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
+/* $Id$ */
+
 package org.apache.fop.fo.pagination;
 
-import java.awt.Rectangle;
-
 import org.apache.fop.apps.FOPException;
-import org.apache.fop.datatypes.FODimension;
 import org.apache.fop.datatypes.Length;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.PropertyList;
 
 /**
- * @author Jeremias Maerki
+ * Common base class for side regions (before, after, start, end).
  */
-public abstract class RegionOuter extends Region {
+public abstract class SideRegion extends Region {
 
     private Length extent;
     
-    /**
-     * @see org.apache.fop.fo.FONode#FONode(FONode)
-     */
-    protected RegionOuter(FONode parent) {
+    /** @see org.apache.fop.fo.FONode#FONode(FONode) */
+    protected SideRegion(FONode parent) {
         super(parent);
     }
 
-    /**
-     * @see org.apache.fop.fo.FObj#bind(PropertyList)
-     */
+    /** @see org.apache.fop.fo.FObj#bind(PropertyList) */
     public void bind(PropertyList pList) throws FOPException {
         super.bind(pList);
         extent = pList.get(PR_EXTENT).getLength();
     }
     
-    /**
-     * @return the "extent" property.
-     */
+    /** @return the "extent" property. */
     public Length getExtent() {
         return extent;
     }
-
-    
-
     
 }

@@ -54,7 +54,7 @@ public class Span extends Area {
      * @return the newly made NormalFlow object
      */
     public NormalFlow addAdditionalNormalFlow() {
-        if (flowAreas.size() >= columnCount) { // internal error
+        if (!hasMoreAvailableFlows()) { // internal error
             throw new IllegalStateException("Maximum number of flow areas (" +
                     columnCount + ") for this span reached.");
         }
@@ -98,7 +98,18 @@ public class Span extends Area {
      * @return the flow area for the requested column
      */
     public NormalFlow getNormalFlow(int columnNumber) {
-        return (NormalFlow) flowAreas.get(columnNumber);
+        if (columnNumber < flowAreas.size()) {
+            return (NormalFlow) flowAreas.get(columnNumber);
+        } else {
+            return null;
+        }
+    }
+
+    /**
+     * @return true if this span can provide additional flow areas.
+     */
+    public boolean hasMoreAvailableFlows() {
+        return (getNormalFlowCount() < getColumnCount());
     }
 
 }

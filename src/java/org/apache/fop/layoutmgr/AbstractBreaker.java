@@ -48,16 +48,17 @@ public abstract class AbstractBreaker {
         }
     }
 
-    private class BlockSequence extends KnuthSequence {
-        static final int ANY_PAGE = 0;
-        static final int ODD_PAGE = 1;
-        static final int EVEN_PAGE = 2;
+    public class BlockSequence extends KnuthSequence {
 
         private int startOn;
 
         public BlockSequence(int iStartOn) {
             super();
             startOn = iStartOn;
+        }
+        
+        public int getStartOn() {
+            return this.startOn;
         }
 
         public BlockSequence endBlockSequence() {
@@ -88,18 +89,26 @@ public abstract class AbstractBreaker {
     protected abstract void addAreas(PositionIterator posIter, LayoutContext context);
     protected abstract LayoutManager getTopLevelLM();
     protected abstract LayoutManager getCurrentChildLM();
+    protected abstract LinkedList getNextKnuthElements(LayoutContext context, int alignment);
 
     /** @return true if there's no content that could be handled. */
     public boolean isEmpty() {
         return (blockLists.size() == 0);
     }
     
+    protected void startPart(BlockSequence list) {
+        //nop
+    }
+    
+    protected abstract void finishPart();
+
     protected LayoutContext createLayoutContext() {
         return new LayoutContext(0);
     }
     
     public void doLayout(int flowBPD) {
         LayoutContext childLC = createLayoutContext();
+        childLC.setStackLimit(new MinOptMax(flowBPD));
 
         //System.err.println("Vertical alignment: " +
         // currentSimplePageMaster.getRegion(FO_REGION_BODY).getDisplayAlign());
@@ -117,7 +126,7 @@ public abstract class AbstractBreaker {
         System.out.println("PLM> flow BPD =" + flowBPD);
         
         //*** Phase 1: Get Knuth elements ***
-        int nextSequenceStartsOn = BlockSequence.ANY_PAGE;
+        int nextSequenceStartsOn = Constants.EN_ANY;
         while (hasMoreContent()) {
             nextSequenceStartsOn = getNextBlockList(childLC, nextSequenceStartsOn, blockLists);
         }
@@ -129,8 +138,8 @@ public abstract class AbstractBreaker {
             
             //debug code start
             System.err.println("  blockListIndex = " + blockListIndex);
-            String pagina = (blockList.startOn == BlockSequence.ANY_PAGE) ? "any page"
-                    : (blockList.startOn == BlockSequence.ODD_PAGE) ? "odd page"
+            String pagina = (blockList.startOn == Constants.EN_ANY) ? "any page"
+                    : (blockList.startOn == Constants.EN_ODD_PAGE) ? "odd page"
                             : "even page";
             System.err.println("  sequence starts on " + pagina);
             logBlocklist(blockList);
@@ -142,7 +151,7 @@ public abstract class AbstractBreaker {
                     alignment, alignmentLast);
             int iOptPageNumber;
 
-            KnuthSequence effectiveList;
+            BlockSequence effectiveList;
             if (alignment == Constants.EN_JUSTIFY) {
                 /* justification */
                 effectiveList = justifyBoxes(blockList, alg, flowBPD);
@@ -171,7 +180,7 @@ public abstract class AbstractBreaker {
      * @param effectiveList effective Knuth element list (after adjustments)
      */
     protected abstract void doPhase3(PageBreakingAlgorithm alg, int partCount, 
-            KnuthSequence originalList, KnuthSequence effectiveList);
+            BlockSequence originalList, BlockSequence effectiveList);
     
     /**
      * Phase 3 of Knuth algorithm: Adds the areas 
@@ -181,20 +190,22 @@ public abstract class AbstractBreaker {
      * @param effectiveList effective Knuth element list (after adjustments)
      */
     protected void addAreas(PageBreakingAlgorithm alg, int partCount, 
-            KnuthSequence originalList, KnuthSequence effectiveList) {
+            BlockSequence originalList, BlockSequence effectiveList) {
         LayoutContext childLC;
         // add areas
         ListIterator effectiveListIterator = effectiveList.listIterator();
         int startElementIndex = 0;
         int endElementIndex = 0;
         for (int p = 0; p < partCount; p++) {
-            int displayAlign = getCurrentDisplayAlign();
-            
             PageBreakPosition pbp = (PageBreakPosition) alg.getPageBreaks().get(p);
             endElementIndex = pbp.getLeafPos();
-            System.out.println("PLM> page: " + (p + 1)
+            System.out.println("PLM> part: " + (p + 1)
                     + ", break at position " + endElementIndex);
 
+            startPart(effectiveList);
+            
+            int displayAlign = getCurrentDisplayAlign();
+            
             // ignore the first elements added by the
             // PageSequenceLayoutManager
             startElementIndex += (startElementIndex == 0) 
@@ -271,9 +282,6 @@ public abstract class AbstractBreaker {
             startElementIndex = pbp.getLeafPos() + 1;
         }
     }
-    protected abstract void finishPart();
-    
-    protected abstract LinkedList getNextKnuthElements(LayoutContext context, int alignment);
     
     /**
      * Gets the next block list (sequence) and adds it to a list of block lists if it's not empty.
@@ -297,15 +305,20 @@ public abstract class AbstractBreaker {
                 switch (breakPenalty.getBreakClass()) {
                 case Constants.EN_PAGE:
                     System.err.println("PLM> break - PAGE");
-                    nextSequenceStartsOn = BlockSequence.ANY_PAGE;
+                    nextSequenceStartsOn = Constants.EN_ANY;
+                    break;
+                case Constants.EN_COLUMN:
+                    System.err.println("PLM> break - COLUMN");
+                    //TODO Fix this when implementing multi-column layout
+                    nextSequenceStartsOn = Constants.EN_COLUMN;
                     break;
                 case Constants.EN_ODD_PAGE:
                     System.err.println("PLM> break - ODD PAGE");
-                    nextSequenceStartsOn = BlockSequence.ODD_PAGE;
+                    nextSequenceStartsOn = Constants.EN_ODD_PAGE;
                     break;
                 case Constants.EN_EVEN_PAGE:
                     System.err.println("PLM> break - EVEN PAGE");
-                    nextSequenceStartsOn = BlockSequence.EVEN_PAGE;
+                    nextSequenceStartsOn = Constants.EN_EVEN_PAGE;
                     break;
                 default:
                     throw new IllegalStateException("Invalid break class: " 
@@ -375,7 +388,7 @@ public abstract class AbstractBreaker {
      * @param availableBPD the available BPD 
      * @return the effective list
      */
-    private KnuthSequence justifyBoxes(BlockSequence blockList, PageBreakingAlgorithm alg, int availableBPD) {
+    private BlockSequence justifyBoxes(BlockSequence blockList, PageBreakingAlgorithm alg, int availableBPD) {
         int iOptPageNumber;
         iOptPageNumber = alg.findBreakingPoints(blockList, availableBPD, 1,
                 true, true);
@@ -532,7 +545,7 @@ public abstract class AbstractBreaker {
         // create a new sequence: the new elements will contain the
         // Positions
         // which will be used in the addAreas() phase
-        KnuthSequence effectiveList = new KnuthSequence();
+        BlockSequence effectiveList = new BlockSequence(blockList.getStartOn());
         effectiveList.addAll(getCurrentChildLM().getChangedKnuthElements(
                 blockList.subList(0, blockList.size() - blockList.ignoreAtEnd),
                 /* 0, */0));

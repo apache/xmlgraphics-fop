@@ -1310,6 +1310,9 @@ public class BlockLayoutManager extends BlockStackingLayoutManager
         if (curBlockArea == null) {
             curBlockArea = new Block();
 
+            TraitSetter.addBreaks(curBlockArea, 
+                    fobj.getBreakBefore(), fobj.getBreakAfter());
+
             // Must get dimensions from parent area
             //Don't optimize this line away. It can have ugly side-effects.
             /*Area parentArea =*/ parentLM.getParentArea(curBlockArea);
@@ -1322,8 +1325,6 @@ public class BlockLayoutManager extends BlockStackingLayoutManager
             TraitSetter.addMargins(curBlockArea,
                     fobj.getCommonBorderPaddingBackground(), 
                     fobj.getCommonMarginBlock());
-            TraitSetter.addBreaks(curBlockArea, 
-                    fobj.getBreakBefore(), fobj.getBreakAfter());
 
             // Set up dimensions
             // Get reference IPD from parentArea

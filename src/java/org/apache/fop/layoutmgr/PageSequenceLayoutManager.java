@@ -46,7 +46,7 @@ import org.apache.fop.fo.flow.Marker;
 import org.apache.fop.fo.pagination.PageSequence;
 import org.apache.fop.fo.pagination.Region;
 import org.apache.fop.fo.pagination.RegionBody;
-import org.apache.fop.fo.pagination.RegionOuter;
+import org.apache.fop.fo.pagination.SideRegion;
 import org.apache.fop.fo.pagination.SimplePageMaster;
 import org.apache.fop.fo.pagination.StaticContent;
 import org.apache.fop.fo.properties.CommonMarginBlock;
@@ -65,6 +65,7 @@ import org.apache.fop.traits.MinOptMax;
 public class PageSequenceLayoutManager extends AbstractLayoutManager {
     private PageSequence pageSeq;
 
+    /*
     private static class BlockBreakPosition extends LeafPosition {
         protected BreakPoss breakps;
 
@@ -72,7 +73,7 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
             super(lm, 0);
             breakps = bp;
         }
-    }
+    }*/
 
 
     private int startPageNum = 0;
@@ -117,7 +118,7 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
     //private HashMap staticContentLMs = new HashMap(4);
 
     private FlowLayoutManager childFLM = null;
-
+    
     /**
      * Constructor - activated by AreaTreeHandler for each
      * fo:page-sequence in the input FO stream
@@ -153,7 +154,7 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
      */
     public void activateLayout() {
         startPageNum = pageSeq.getStartingPageNumber();
-        currentPageNum = startPageNum;
+        currentPageNum = startPageNum - 1;
         pageNumberString = pageSeq.makeFormattedPageNumber(currentPageNum);
 
         LineArea title = null;
@@ -185,9 +186,16 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
     private class PageBreaker extends AbstractBreaker {
         
         private PageSequenceLayoutManager pslm;
+        private boolean firstPart = true;
         
         public PageBreaker(PageSequenceLayoutManager pslm) {
             this.pslm = pslm;
+        }
+        
+        protected LayoutContext createLayoutContext() {
+            LayoutContext lc = new LayoutContext(0);
+            lc.setRefIPD(flowIPD);
+            return lc;
         }
         
         protected LayoutManager getTopLevelLM() {
@@ -211,18 +219,32 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
         }
         
         protected void doPhase3(PageBreakingAlgorithm alg, int partCount, 
-                KnuthSequence originalList, KnuthSequence effectiveList) {
+                BlockSequence originalList, BlockSequence effectiveList) {
             //Directly add areas after finding the breaks
             addAreas(alg, partCount, originalList, effectiveList);
         }
         
-        protected void finishPart() {
+        protected void startPart(BlockSequence list) {
+            if (curPage == null) {
+                throw new IllegalStateException("curPage must not be null");
+            } else {
+                //firstPart is necessary because we need the first page before we start the 
+                //algorithm so we have a BPD and IPD. This may subject to change later when we
+                //start handling more complex cases.
+                if (!firstPart) {
+                    if (curSpan.hasMoreAvailableFlows()) {
+                        curFlow = curSpan.addAdditionalNormalFlow();
+                    } else {
+                        handleBreak(list.getStartOn());
+                    }
+                }
+            }
             // add static areas and resolve any new id areas
             // finish page and add to area tree
-            finishPage();
-            currentPageNum++;
-            pageNumberString = pageSeq
-                    .makeFormattedPageNumber(currentPageNum);
+            firstPart = false;
+        }
+        
+        protected void finishPart() {
         }
         
         protected LayoutManager getCurrentChildLM() {
@@ -259,8 +281,8 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
 /*LF*/      }
 
             LayoutContext childLC = new LayoutContext(0);
-            childLC.setStackLimit(new MinOptMax(flowBPD));
-            childLC.setRefIPD(flowIPD);
+            childLC.setStackLimit(context.getStackLimit());
+            childLC.setRefIPD(context.getRefIPD());
 
             if (!curLM.isFinished()) {
                 pageSeq.setLayoutDimension(PercentBase.REFERENCE_AREA_IPD, flowIPD);
@@ -419,6 +441,9 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
     private PageViewport makeNewPage(boolean bIsBlank, boolean bIsLast) {
         finishPage();
 
+        currentPageNum++;
+        pageNumberString = pageSeq.makeFormattedPageNumber(currentPageNum);
+
         try {
             // create a new page
             currentSimplePageMaster = pageSeq.getSimplePageMasterToUse(
@@ -437,22 +462,34 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
 
         curPage.setPageNumberString(pageNumberString);
         if (log.isDebugEnabled()) {
-            log.debug("[" + curPage.getPageNumberString() + "]");
+            log.debug("[" + curPage.getPageNumberString() + (bIsBlank ? "*" : "") + "]");
         }
 
         flowBPD = (int) curPage.getBodyRegion().getBPD();
-        createSpan(curPage.getBodyRegion().getColumnCount());
+        createSpan(curPage.getBodyRegion(), false);
         return curPage;
     }
 
-    private void createSpan(int numCols) {
+    /**
+     * Creates a new span reference area.
+     * @param bodyRegion The region-body to create the span for
+     * @param spanned true if a spanned region should be created
+     */
+    private void createSpan(BodyRegion bodyRegion, boolean spanned) {
         // get Width or Height as IPD for span
         RegionViewport rv = curPage.getPage().getRegionViewport(FO_REGION_BODY);
         int ipdWidth = (int) rv.getRegion().getIPD() -
             rv.getBorderAndPaddingWidthStart() - rv.getBorderAndPaddingWidthEnd();
 
-        // currently hardcoding to one column, replace with numCols when ready
-        curSpan = new Span(1 /* numCols */, ipdWidth);
+        //TODO currently hardcoding to one column, replace with numCols when ready
+        if (spanned) {
+            curSpan = new Span(1, ipdWidth);
+        } else {
+            int colWidth 
+                = (ipdWidth - (bodyRegion.getColumnCount() - 1) * bodyRegion.getColumnGap()) 
+                    / bodyRegion.getColumnCount();
+            curSpan = new Span(bodyRegion.getColumnCount(), colWidth);
+        }
 
         //curSpan.setPosition(BPD, newpos);
         curPage.getBodyRegion().getMainReference().addSpan(curSpan);
@@ -460,7 +497,7 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
     }
 
     private void layoutStaticContent(int regionID) {
-        RegionOuter reg = (RegionOuter)currentSimplePageMaster.getRegion(regionID);
+        SideRegion reg = (SideRegion)currentSimplePageMaster.getRegion(regionID);
         if (reg == null) {
             return;
         }
@@ -526,11 +563,61 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
         layoutStaticContent(FO_REGION_END);
         // Queue for ID resolution and rendering
         areaTreeModel.addPage(curPage);
+        log.debug("page finished: " + curPage.getPageNumberString() + ", current num: " + currentPageNum);
         curPage = null;
         curSpan = null;
         curFlow = null;
     }
 
+    private void prepareNormalFlowArea(Area childArea) {
+        // Need span, break
+        int breakVal = Constants.EN_AUTO;
+        Integer breakBefore = (Integer)childArea.getTrait(Trait.BREAK_BEFORE);
+        if (breakBefore != null) {
+            breakVal = breakBefore.intValue();
+        }
+        if (breakVal != Constants.EN_AUTO) {
+            // We may be forced to make new page
+            handleBreak(breakVal);
+        } else if (curPage == null) {
+            log.debug("curPage is null. Making new page");
+            makeNewPage(false, false);
+        }
+        // Now we should be on the right kind of page
+        boolean bNeedNewSpan = false;
+        /* Determine if a new span is needed.  From the XSL
+         * fo:region-body definition, if an fo:block has a span="ALL"
+         * (i.e., span all columns defined for the region-body), it
+         * must be placed in a span-reference-area whose 
+         * column-count = 1.  If its span-value is "NONE", 
+         * place in a normal Span whose column-count is what
+         * is defined for the region-body. 
+         */  // temporarily hardcoded to EN_NONE.
+        int span = Constants.EN_NONE; // childArea.getSpan()
+        int numColsNeeded;
+        if (span == Constants.EN_ALL) {
+            numColsNeeded = 1;
+        } else { // EN_NONE
+            numColsNeeded = curPage.getBodyRegion().getColumnCount();
+        }
+        if (curSpan == null) {  // should never happen, remove?
+            bNeedNewSpan = true;
+        } else if (numColsNeeded != curSpan.getColumnCount()) {
+            // need a new Span, with numColsNeeded columns
+            if (curSpan.getColumnCount() > 1) {
+                // finished with current span, so balance 
+                // its columns to make them the same "height"
+                // balanceColumns();  // TODO: implement
+            }
+            bNeedNewSpan = true;
+        }
+        if (bNeedNewSpan) {
+            createSpan(curPage.getBodyRegion(), (span == Constants.EN_ALL));
+        } else if (curFlow == null) {  // should not happen
+            curFlow = curSpan.addAdditionalNormalFlow();
+        }
+    }
+    
     /**
      * This is called from FlowLayoutManager when it needs to start
      * a new flow container (while generating areas).
@@ -543,53 +630,8 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
     public Area getParentArea(Area childArea) {
         int aclass = childArea.getAreaClass();
         if (aclass == Area.CLASS_NORMAL) {
-            // todo: how to get properties from the Area???
-            // Need span, break
-            int breakVal = Constants.EN_AUTO;
-            Integer breakBefore = (Integer)childArea.getTrait(Trait.BREAK_BEFORE);
-            if (breakBefore != null) {
-                breakVal = breakBefore.intValue();
-            }
-            if (breakVal != Constants.EN_AUTO) {
-                // We may be forced to make new page
-                handleBreak(breakVal);
-            } else if (curPage == null) {
-                log.debug("curPage is null. Making new page");
-                makeNewPage(false, false);
-            }
-            // Now we should be on the right kind of page
-            boolean bNeedNewSpan = false;
-            /* Determine if a new span is needed.  From the XSL
-             * fo:region-body definition, if an fo:block has a span="ALL"
-             * (i.e., span all columns defined for the region-body), it
-             * must be placed in a span-reference-area whose 
-             * column-count = 1.  If its span-value is "NONE", 
-             * place in a normal Span whose column-count is what
-             * is defined for the region-body. 
-             */  // temporarily hardcoded to EN_NONE.
-            int span = Constants.EN_NONE; // childArea.getSpan()
-            int numColsNeeded;
-            if (span == Constants.EN_ALL) {
-                numColsNeeded = 1;
-            } else { // EN_NONE
-                numColsNeeded = curPage.getBodyRegion().getColumnCount();
-            }
-            if (curSpan == null) {  // should never happen, remove?
-                bNeedNewSpan = true;
-            } else if (numColsNeeded != curSpan.getColumnCount()) {
-                // need a new Span, with numColsNeeded columns
-                if (curSpan.getColumnCount() > 1) {
-                    // finished with current span, so balance 
-                    // its columns to make them the same "height"
-                    // balanceColumns();  // TODO: implement
-                }
-                bNeedNewSpan = true;
-            }
-            if (bNeedNewSpan) {
-                createSpan(numColsNeeded);
-            } else if (curFlow == null) {  // should not happen
-                curFlow = curSpan.addAdditionalNormalFlow();
-            }
+            //We now do this in PageBreaker
+            //prepareNormalFlowArea(childArea);
             return curFlow;
         } else {
             if (curPage == null) {
@@ -625,8 +667,7 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
      */
     private void handleBreak(int breakVal) {
         if (breakVal == Constants.EN_COLUMN) {
-            if (curSpan != null
-                    && curSpan.getNormalFlowCount() < curSpan.getColumnCount()) {
+            if (curSpan != null && curSpan.hasMoreAvailableFlows()) {
                 // Move to next column
                 curFlow = curSpan.addAdditionalNormalFlow();
                 return;
@@ -634,6 +675,7 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
             // else need new page
             breakVal = Constants.EN_PAGE;
         }
+        log.debug("handling break after page " + currentPageNum + " breakVal=" + breakVal);
         if (needEmptyPage(breakVal)) {
             curPage = makeNewPage(true, false);
         }
@@ -652,17 +694,15 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
      */
     private boolean needEmptyPage(int breakValue) {
 
-        if (breakValue == Constants.EN_PAGE || curPage.getPage().isEmpty()) {
+        if (breakValue == Constants.EN_PAGE || ((curPage != null) && curPage.getPage().isEmpty())) {
             // any page is OK or we already have an empty page
             return false;
-        }
-        else {
+        } else {
             /* IF we are on the kind of page we need, we'll need a new page. */
             if (currentPageNum % 2 != 0) {
                 // Current page is odd
                 return (breakValue == Constants.EN_ODD_PAGE);
-            }
-            else {
+            } else {
                 return (breakValue == Constants.EN_EVEN_PAGE);
             }
         }
@@ -676,7 +716,7 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
             if (breakValue == Constants.EN_PAGE) {
                 return false;
             }
-            else if (currentPageNum%2 != 0) {
+            else if (currentPageNum % 2 != 0) {
                 // Current page is odd
                 return (breakValue == Constants.EN_EVEN_PAGE);
             }
