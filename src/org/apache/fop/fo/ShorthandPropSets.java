@@ -13,6 +13,7 @@ package org.apache.fop.fo;
 import java.lang.CloneNotSupportedException;
 
 import java.util.Set;
+import java.util.BitSet;
 import java.util.HashSet;
 import java.util.HashMap;
 import java.util.List;
@@ -26,6 +27,7 @@ import org.apache.fop.datatypes.PropertyValue;
 import org.apache.fop.datatypes.PropertyValueList;
 import org.apache.fop.fo.PropNames;
 import org.apache.fop.datastructs.ROIntArray;
+import org.apache.fop.datastructs.ROBitSet;
 import org.apache.fop.datatypes.Ints;
 
 /**
@@ -291,6 +293,18 @@ public class ShorthandPropSets {
      */
     public static final ROIntArray roShorthands =
         new ROIntArray(shorthands);
+
+    /**
+     * A <tt>ROBitSet</tt> of the shorthand properties.
+     */
+    public static final ROBitSet shorthandPropSet;
+    private static final BitSet shorthandpropset;
+    static {
+        shorthandpropset = new BitSet(PropNames.LAST_PROPERTY_INDEX + 1);
+        for (int i = 0; i < shorthands.length; i++)
+            shorthandpropset.set(shorthands[i]);
+        shorthandPropSet = new ROBitSet(shorthandpropset);
+    }
 
     /**
      * Array of <i>ROIntArray</i><b> in same order as <i>shorthands</i></b>
@@ -774,6 +788,29 @@ public class ShorthandPropSets {
     public static final ROIntArray roCompounds;
     static {
         roCompounds = new ROIntArray(compounds);
+    }
+
+    /**
+     * A <tt>ROBitSet</tt> of the compound properties.
+     */
+    public static final ROBitSet compoundPropSet;
+    private static final BitSet compoundpropset;
+
+    /**
+     * a <tt>ROBitSet of shorthand and compound properties.
+     */
+    public static final ROBitSet shorthandCompoundProps;
+    private static final BitSet shorthandcompoundprops;
+
+    static {
+        compoundpropset = new BitSet(PropNames.LAST_PROPERTY_INDEX + 1);
+        for (int i = 0; i < compounds.length; i++)
+            compoundpropset.set(compounds[i]);
+        compoundPropSet = new ROBitSet(compoundpropset);
+        shorthandcompoundprops = new BitSet();
+        shorthandcompoundprops.or(compoundpropset);
+        shorthandcompoundprops.or(shorthandpropset);
+        shorthandCompoundProps = new ROBitSet(shorthandcompoundprops);
     }
 
     /**
