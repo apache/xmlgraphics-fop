@@ -154,6 +154,20 @@ public class Font {
 
         return c;
     }
+    
+    /**
+     * Determines whether this font contains a particular character/glyph.
+     * @param c character to check
+     * @return True if the character is supported, Falso otherwise
+     */
+    public boolean hasChar(char c) {
+        if (metric instanceof org.apache.fop.fonts.Typeface) {
+            return ((org.apache.fop.fonts.Typeface)metric).hasChar(c);
+        } else {
+            // Use default CodePointMapping
+            return (CodePointMapping.getMapping("WinAnsiEncoding").mapChar(c) > 0);
+        }
+    }
 
     /**
      * @see java.lang.Object#toString()
@@ -182,7 +196,6 @@ public class Font {
      * This also performs some guessing on widths on various
      * versions of space that might not exists in the font.
      * @param c character to inspect
-     * @param fs FontState to use
      * @return the width of the character
      */
     public int getCharWidth(char c) {
@@ -257,10 +270,13 @@ public class Font {
 
     /**
      * Calculates the word width.
+     * @param word text to get width for
+     * @return the width of the text
      */
     public int getWordWidth(String word) {
-        if (word == null)
+        if (word == null) {
             return 0;
+        }
         int wordLength = word.length();
         int width = 0;
         char[] characters = new char[wordLength];

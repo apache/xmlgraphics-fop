@@ -40,6 +40,13 @@ public abstract class Typeface implements FontMetrics {
     public abstract char mapChar(char c);
 
     /**
+     * Determines whether this font contains a particular character/glyph.
+     * @param c character to check
+     * @return True if the character is supported, Falso otherwise
+     */
+    public abstract boolean hasChar(char c);
+    
+    /**
      * Determines whether the font is a multibyte font.
      * @return True if it is multibyte
      */

@@ -67,7 +67,7 @@ public class SingleByteFont extends CustomFont {
     }
 
     /**
-     * @see org.apache.fop.fonts.Font#mapChar(char)
+     * @see org.apache.fop.fonts.Typeface#mapChar(char)
      */
     public char mapChar(char c) {
         char d = mapping.mapChar(c);
@@ -76,6 +76,13 @@ public class SingleByteFont extends CustomFont {
         } else {
             return '#';
         }
+    }
+    
+    /**
+     * @see org.apache.fop.fonts.Typeface#hasChar(char)
+     */
+    public boolean hasChar(char c) {
+        return (mapping.mapChar(c) > 0);
     }
 
     /* ---- single byte font specific setters --- */

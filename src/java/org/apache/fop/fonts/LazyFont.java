@@ -92,11 +92,19 @@ public class LazyFont extends Typeface implements FontDescriptor {
     }
 
     /**
-     * @see org.apache.fop.fonts.Font#mapChar(char)
+     * @see org.apache.fop.fonts.Typeface#mapChar(char)
      */
     public char mapChar(char c) {
         load();
         return realFont.mapChar(c);
+    }
+
+    /**
+     * @see org.apache.fop.fonts.Typeface#hasChar(char)
+     */
+    public boolean hasChar(char c) {
+        load();
+        return realFont.hasChar(c);
     }
 
     /**

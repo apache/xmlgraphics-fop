@@ -125,12 +125,7 @@ public class MultiByteFont extends CIDFont {
      * @see org.apache.fop.fonts.FontDescriptor#isEmbeddable()
      */
     public boolean isEmbeddable() {
-        if (getEmbedFileName() == null
-            && embedResourceName == null) {
-            return false;
-        } else {
-            return true;
-            }
+        return !(getEmbedFileName() == null && embedResourceName == null); 
     }
 
     /**
@@ -196,20 +191,27 @@ public class MultiByteFont extends CIDFont {
     }
 */
 
-    /**
-     * @see org.apache.fop.fonts.Font#mapChar(char)
-     */
-    public char mapChar(char c) {
+    private int findGlyphIndex(char c) {
         int idx = (int)c;
         int retIdx = 0;
 
         for (int i = 0; (i < bfentries.length) && retIdx == 0; i++) {
             if (bfentries[i].getUnicodeStart() <= idx
                     && bfentries[i].getUnicodeEnd() >= idx) {
-                retIdx = bfentries[i].getGlyphStartIndex() + idx
-                         - bfentries[i].getUnicodeStart();
+                        
+                retIdx = bfentries[i].getGlyphStartIndex() 
+                    + idx
+                    - bfentries[i].getUnicodeStart();
             }
         }
+        return retIdx;
+    }
+
+    /**
+     * @see org.apache.fop.fonts.Typeface#mapChar(char)
+     */
+    public char mapChar(char c) {
+        int retIdx = findGlyphIndex(c);
 
         if (isEmbeddable()) {
             // Reencode to a new subset font or get
@@ -230,6 +232,14 @@ public class MultiByteFont extends CIDFont {
 
         return (char)retIdx;
     }
+
+    /**
+     * @see org.apache.fop.fonts.Typeface#hasChar(char)
+     */
+    public boolean hasChar(char c) {
+        return (findGlyphIndex(c) > 0);
+    }
+
 
     /**
      * Sets the bfentries.

@@ -121,6 +121,10 @@ public class <xsl:value-of select="class-name"/> extends Typeface {
         }
     }
 
+    public boolean hasChar(char c) {
+        return (mapping.mapChar(c) > 0);
+    }
+
 }
   </xsl:template>
 
