@@ -18,6 +18,8 @@
  
 package org.apache.fop.layoutmgr.table;
 
+import org.apache.fop.fo.FONode;
+import org.apache.fop.fo.flow.Table;
 import org.apache.fop.fo.flow.TableCell;
 import org.apache.fop.fo.properties.LengthRangeProperty;
 import org.apache.fop.layoutmgr.BlockStackingLayoutManager;
@@ -74,6 +76,17 @@ public class Cell extends BlockStackingLayoutManager {
         return this.fobj;
     }
     
+    /**
+     * @return the table owning this cell
+     */
+    public Table getTable() {
+        FONode node = fobj.getParent();
+        while (!(node instanceof Table)) {
+            node = node.getParent();
+        }
+        return (Table)node;
+    }
+    
     private int getIPIndents() {
         int iIndents = 0;
         iIndents += fobj.getCommonBorderPaddingBackground().getIPPaddingAndBorder(false);
@@ -102,6 +115,11 @@ public class Cell extends BlockStackingLayoutManager {
         referenceIPD = context.getRefIPD(); 
         cellIPD = referenceIPD;
         cellIPD -= getIPIndents();
+        if (getTable().getBorderCollapse() == EN_SEPARATE) {
+            int borderSep = getTable().getBorderSeparation().getLengthPair()
+                    .getIPD().getLength().getValue();
+            cellIPD -= borderSep;
+        }
 
         while ((curLM = getChildLM()) != null) {
             if (curLM.generatesInlineAreas()) {
@@ -294,7 +312,12 @@ public class Cell extends BlockStackingLayoutManager {
             indent += fobj.getCommonBorderPaddingBackground().getBorderStartWidth(false);
             indent += fobj.getCommonBorderPaddingBackground().getPaddingStart(false);
             // set position
-            curBlockArea.setXOffset(xoffset + inRowIPDOffset + indent);
+            int halfBorderSep = 0;
+            if (getTable().getBorderCollapse() == EN_SEPARATE) {
+                halfBorderSep = getTable().getBorderSeparation().getLengthPair()
+                        .getIPD().getLength().getValue() / 2;
+            }
+            curBlockArea.setXOffset(xoffset + inRowIPDOffset + halfBorderSep + indent);
             curBlockArea.setYOffset(yoffset);
             curBlockArea.setIPD(cellIPD);
             //curBlockArea.setHeight();
