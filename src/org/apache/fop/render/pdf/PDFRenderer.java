@@ -582,18 +582,58 @@ public class PDFRenderer implements Renderer {
        * @param area the SVG area to render
        */
     public void renderSVGArea(SVGArea area) {
-        int x = this.currentXPosition;
+	// Buggy: Will align to the beginning of the last text
+        //int x = this.currentXPosition;
+	// Buggy: Will always left align
+        int x = this.currentAreaContainerXPosition;
+	// Buggy: Method getXOffset() not found in class org.apache.fop.dom.svg.SVGArea
+        //int x = this.currentAreaContainerXPosition + area.getXOffset();
         int y = this.currentYPosition;
         SVGSVGElement svg = area.getSVGDocument().getRootElement();
         int w = (int)(svg.getWidth().getBaseVal().getValue() * 1000);
         int h = (int)(svg.getHeight().getBaseVal().getValue() * 1000);
+	float sx = 1, sy = -1;
+	int xOffset = x, yOffset = y;
 
+	// translate and scale according to viewbox.
+	if (svg.getViewBox () != null) {
+	    SVGRect view = svg.getViewBox().getBaseVal();
+        /*
+	    System.out.println ("viewbox=\""+
+		view.getX()+" "+
+		view.getY()+" "+
+		view.getWidth()+" "+
+		view.getHeight()+"\"");
+	    */
+
+	    // TODO take aspect constraints (attribute preserveAspectRatio)
+	    // into account.
+	    // Viewbox coordinates are all relative to the viewport
+	    // (ie. the x,y,w and h values calculated above).
+	    sx = svg.getWidth().getBaseVal().getValue() / view.getWidth ();
+	    sy = svg.getHeight().getBaseVal().getValue() / view.getHeight ();
+
+	    // move the origin
+	    xOffset -= (int)(sx * view.getX () * 1000f);
+	    yOffset -= (int)(sy * view.getY () * 1000f);
+
+	    sy = -sy;
+	}
+
+	System.out.println ("viewBox: offsets="+
+	    xOffset+" (x="+x+") "+
+	    yOffset+" (y="+y+") scale="+
+	    sx+" "+
+	    sy+" w="+w+" h="+h
+	);
+	
         /*
          * Clip to the svg area.
          * Note: To have the svg overlay (under) a text area then use
          * an fo:block-container
          */
         currentStream.add("q\n");
+	if (w != 0 && h != 0) {
         currentStream.add(x / 1000f + " " + y / 1000f + " m\n");
         currentStream.add((x + w) / 1000f + " " + y / 1000f + " l\n");
         currentStream.add((x + w) / 1000f + " " + (y - h) / 1000f + " l\n");
@@ -601,18 +641,18 @@ public class PDFRenderer implements Renderer {
         currentStream.add("h\n");
         currentStream.add("W\n");
         currentStream.add("n\n");
+	}
         // transform so that the coordinates (0,0) is from the top left
-        // and positive is down and to the right
-        currentStream.add(1 + " " + 0 + " " + 0 + " " + (-1) + " " +
-                          x / 1000f + " " + y / 1000f + " cm\n");
-
-        // TODO - translate and clip to viewbox
+        // and positive is down and to the right. (0,0) is where the
+	// viewBox puts it.
+        currentStream.add(sx + " 0 0 " + sy + " " +
+                          xOffset / 1000f + " " + yOffset / 1000f + " cm\n");
 
         SVGRenderer svgRenderer =
           new SVGRenderer(area.getFontState(), pdfDoc,
                           currentFontName, currentFontSize, currentXPosition,
                           currentYPosition);
-        svgRenderer.renderSVG(svg, x, y);
+        svgRenderer.renderSVG(svg, 0, 0);
         currentStream.add(svgRenderer.getString());
 
         currentStream.add("Q\n");

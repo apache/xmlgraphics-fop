@@ -58,6 +58,7 @@ import org.apache.fop.layout.Area;
 import org.apache.fop.layout.FontState;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.fo.properties.XMLSpace;
+import org.apache.fop.fo.properties.TextAnchor;
 
 import java.util.*;
 
@@ -169,6 +170,7 @@ public class Text extends SVGObj {
         textGraph.x = prop == null ? 0 : prop.getValue();
         prop = ((SVGLengthProperty) this.properties.get("y")).getSVGLength();
         textGraph.y = prop == null ? 0 : prop.getValue();
+	textGraph.anchor = ((EnumProperty) this.properties.get("text-anchor"));
         //		textGraph.textList = textList;
         textGraph.setStyle(
           ((SVGStyle) this.properties.get("style")).getStyle());

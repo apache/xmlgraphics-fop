@@ -51,10 +51,14 @@
 
 package org.apache.fop.dom.svg;
 
+import org.apache.fop.datatypes.*;
+
+import org.w3c.dom.svg.*;
+
 /**
  *
  */
-public class SVGImageElementImpl extends SVGElementImpl {
+public class SVGImageElementImpl extends GraphicElement implements SVGTransformable {
 	public String link;
 	public float x;
 	public float y;

@@ -2144,15 +2144,6 @@ public class SVGRenderer {
 		public void renderText(SVGTextElementImpl tg, float x, float y,
 													 DrawingInstruction di) {
 				SVGTextRenderer str = new SVGTextRenderer(fontState, tg, x, y);
-				if (di.fill) {
-						if (di.stroke) {
-								currentStream.write("2 Tr\n");
-						} else {
-								currentStream.write("0 Tr\n");
-						}
-				} else if (di.stroke) {
-						currentStream.write("1 Tr\n");
-				}
 				str.renderText(tg);
 		}
 
@@ -2300,6 +2291,32 @@ public class SVGRenderer {
 				}
 
 				void renderText(SVGTextElementImpl te) {
+						float xoffset = 0;
+
+						if (te.anchor.getEnum() != TextAnchor.START) {
+								// This is a bit of a hack: The code below will update
+								// the current position, so all I have to do is to
+								// prevent that the code will write anything to the
+								// PDF stream...
+								StringWriter oldStream = currentStream;
+								currentStream = new StringWriter ();
+								
+								_renderText (te, 0f, true);
+
+								float width = currentX - te.x;
+								currentStream = oldStream;
+
+								if (te.anchor.getEnum() == TextAnchor.END) {
+										xoffset = -width;
+								} else if (te.anchor.getEnum() == TextAnchor.MIDDLE) {
+										xoffset = -width/2;
+								}
+						}
+
+						_renderText (te, xoffset, false);
+				}
+
+				void _renderText(SVGTextElementImpl te, float xoffset, boolean getWidthOnly) {
 						DrawingInstruction di = applyStyle(te, te);
 						if (di.fill) {
 								if (di.stroke) {
@@ -2314,7 +2331,7 @@ public class SVGRenderer {
 
 						float tx = te.x;
 						float ty = te.y;
-						currentX = x + tx;
+						currentX = x + tx + xoffset;
 						currentY = y + ty;
 						baseX = currentX;
 						baseY = currentY;
