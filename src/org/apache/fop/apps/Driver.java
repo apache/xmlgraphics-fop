@@ -107,6 +107,8 @@ import java.io.IOException;
  *   driver.setRenderer("org.apache.fop.render.pdf.PDFRenderer", version);
  *   driver.addElementMapping("org.apache.fop.fo.StandardElementMapping");
  *   driver.addElementMapping("org.apache.fop.svg.SVGElementMapping");
+ *   driver.addPropertyList("org.apache.fop.fo.StandardPropertyListMapping");
+ *   driver.addPropertyList("org.apache.fop.svg.SVGPropertyListMapping");
  *   driver.setWriter(new PrintWriter(new FileWriter(args[1])));
  *   driver.buildFOTree(parser, fileInputSource(args[0]));
  *   driver.format();
