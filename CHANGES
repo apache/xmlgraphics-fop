@@ -1,5 +1,7 @@
 ==============================================================================
 Done since 0.20.4 release
+- Fixed repeatedly laid out small caps text (for example in static
+  content or due ot keeps). (J.Pietschmann)
 - Fixed marker handling thouroughly. All retrieving boundaries and
   retrieve-position first-starting-within-page and last-starting-within-page
   should work now, as well as multiline/multiblock marker contents.
