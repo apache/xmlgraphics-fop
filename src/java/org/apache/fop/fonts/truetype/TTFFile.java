@@ -441,7 +441,14 @@ public class TTFFile extends AbstractLogEnabled {
          * exists in the collection
          */
         if (!checkTTC(in, name)) {
-            throw new IOException("Failed to read font");
+            if (name == null) {
+                throw new IllegalArgumentException(
+                    "For TrueType collection you must specify which font "
+                    + "to select (-ttcname)");
+            } else {
+                throw new IOException(
+                    "Name does not exist in the TrueType collection: " + name);
+            }
         }
 
         readDirTabs(in);
@@ -1000,18 +1007,21 @@ public class TTFFile extends AbstractLogEnabled {
             in.seekSet(i);
             final int platformID = in.readTTFUShort();
             final int encodingID = in.readTTFUShort();
-            /*final int language_id =*/ in.readTTFUShort(); //Skip language id
+            final int languageID = in.readTTFUShort();
 
             int k = in.readTTFUShort();
             int l = in.readTTFUShort();
 
-            if (((platformID == 1 || platformID == 3) && (encodingID == 0 || encodingID == 1))
+            if (((platformID == 1 || platformID == 3) 
+                    && (encodingID == 0 || encodingID == 1))
                     && (k == 1 || k == 2 || k == 0 || k == 4 || k == 6)) {
-                // if (k==1 || k==2 || k==0 || k==4 || k==6) {
                 in.seekSet(j + in.readTTFUShort());
                 String txt = in.readTTFString(l);
-                // getLogger().debug(platform_id + " " + encoding_id
-                //     + " " + k + " " + txt);
+                
+                getLogger().debug(platformID + " " 
+                    + encodingID + " "
+                    + languageID + " "
+                    + k + " " + txt);
                 switch (k) {
                 case 0:
                     notice = txt;
@@ -1190,9 +1200,9 @@ public class TTFFile extends AbstractLogEnabled {
                 dirOffsets[i] = in.readTTFULong();
             }
 
-            getLogger().debug("This is a TrueType collection file with"
+            getLogger().info("This is a TrueType collection file with "
                                    + numDirectories + " fonts");
-            getLogger().debug("Containing the following fonts: ");
+            getLogger().info("Containing the following fonts: ");
             // Read all the directories and name tables to check
             // If the font exists - this is a bit ugly, but...
             boolean found = false;
@@ -1209,9 +1219,9 @@ public class TTFFile extends AbstractLogEnabled {
                 if (fullName.equals(name)) {
                     found = true;
                     dirTabOffset = dirOffsets[i];
-                    getLogger().debug("* " + fullName);
+                    getLogger().info(fullName + " <-- selected");
                 } else {
-                    getLogger().debug(fullName);
+                    getLogger().info(fullName);
                 }
 
                 // Reset names
