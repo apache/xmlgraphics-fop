@@ -77,7 +77,7 @@ public class ROBitSet extends BitSet {
     /**
      * Unsupported operation. Overrides <tt>BitSet</tt> method.
      * @param set <tt>BitSet</tt>
-     * @exception <tt>UnsupportedOperationException</tt>
+     * @exception UnsupportedOperationException
      */
     public void and(BitSet set) {
         throw new UnsupportedOperationException("and invalid in ROBitSet");
@@ -86,7 +86,7 @@ public class ROBitSet extends BitSet {
     /**
      * Unsupported operation. Overrides <tt>BitSet</tt> method.
      * @param set <tt>BitSet</tt>
-     * @exception <tt>UnsupportedOperationException</tt>
+     * @exception UnsupportedOperationException
      */
     public void andNot(BitSet set) {
         throw new UnsupportedOperationException("andNot invalid in ROBitSet");
@@ -94,7 +94,7 @@ public class ROBitSet extends BitSet {
 
     /**
      * Unsupported operation. Overrides <tt>BitSet</tt> method.
-     * @exception <tt>UnsupportedOperationException</tt>
+     * @exception UnsupportedOperationException
      */
     public void clear() {
         throw new UnsupportedOperationException("clear invalid in ROBitSet");
@@ -103,7 +103,7 @@ public class ROBitSet extends BitSet {
     /**
      * Unsupported operation. Overrides <tt>BitSet</tt> method.
      * @param bitIndex <tt>int</tt>
-     * @exception <tt>UnsupportedOperationException</tt>
+     * @exception UnsupportedOperationException
      */
     public void clear(int bitIndex) {
         throw new UnsupportedOperationException("clear invalid in ROBitSet");
@@ -113,7 +113,7 @@ public class ROBitSet extends BitSet {
      * Unsupported operation. Overrides <tt>BitSet</tt> method.
      * @param fromIndex <tt>int</tt>
      * @param toIndex <tt>int</tt>
-     * @exception <tt>UnsupportedOperationException</tt>
+     * @exception UnsupportedOperationException
      */
     public void clear(int fromIndex, int toIndex) {
         throw new UnsupportedOperationException("clear invalid in ROBitSet");
@@ -122,7 +122,7 @@ public class ROBitSet extends BitSet {
     /**
      * Unsupported operation. Overrides <tt>BitSet</tt> method.
      * @param bitIndex <tt>int</tt>
-     * @exception <tt>UnsupportedOperationException</tt>
+     * @exception UnsupportedOperationException
      */
     public void flip(int bitIndex) {
         throw new UnsupportedOperationException("flip invalid in ROBitSet");
@@ -132,7 +132,7 @@ public class ROBitSet extends BitSet {
      * Unsupported operation. Overrides <tt>BitSet</tt> method.
      * @param fromIndex <tt>int</tt>
      * @param toIndex <tt>int</tt>
-     * @exception <tt>UnsupportedOperationException</tt>
+     * @exception UnsupportedOperationException
      */
     public void flip(int fromIndex, int toIndex) {
         throw new UnsupportedOperationException("flip invalid in ROBitSet");
@@ -141,7 +141,7 @@ public class ROBitSet extends BitSet {
     /**
      * Unsupported operation. Overrides <tt>BitSet</tt> method.
      * @param set <tt>BitSet</tt>
-     * @exception <tt>UnsupportedOperationException</tt>
+     * @exception UnsupportedOperationException
      */
     public void or(BitSet set) {
         throw new UnsupportedOperationException("or invalid in ROBitSet");
@@ -150,7 +150,7 @@ public class ROBitSet extends BitSet {
     /**
      * Unsupported operation. Overrides <tt>BitSet</tt> method.
      * @param bitIndex <tt>int</tt>
-     * @exception <tt>UnsupportedOperationException</tt>
+     * @exception UnsupportedOperationException
      */
     public void set(int bitIndex) {
         throw new UnsupportedOperationException("set invalid in ROBitSet");
@@ -160,7 +160,7 @@ public class ROBitSet extends BitSet {
      * Unsupported operation. Overrides <tt>BitSet</tt> method.
      * @param bitIndex <tt>int</tt>
      * @param value <tt>boolean</tt>
-     * @exception <tt>UnsupportedOperationException</tt>
+     * @exception UnsupportedOperationException
      */
     public void set(int bitIndex, boolean value) {
         throw new UnsupportedOperationException("set invalid in ROBitSet");
@@ -170,7 +170,7 @@ public class ROBitSet extends BitSet {
      * Unsupported operation. Overrides <tt>BitSet</tt> method.
      * @param fromIndex <tt>int</tt>
      * @param toIndex <tt>int</tt>
-     * @exception <tt>UnsupportedOperationException</tt>
+     * @exception UnsupportedOperationException
      */
     public void set(int fromIndex, int toIndex) {
         throw new UnsupportedOperationException("set invalid in ROBitSet");
@@ -181,7 +181,7 @@ public class ROBitSet extends BitSet {
      * @param fromIndex <tt>int</tt>
      * @param toIndex <tt>int</tt>
      * @param value <tt>boolean</tt>
-     * @exception <tt>UnsupportedOperationException</tt>
+     * @exception UnsupportedOperationException
      */
     public void set(int fromIndex, int toIndex, boolean value) {
         throw new UnsupportedOperationException("set invalid in ROBitSet");
@@ -190,7 +190,7 @@ public class ROBitSet extends BitSet {
     /**
      * Unsupported operation. Overrides <tt>BitSet</tt> method.
      * @param set <tt>BitSet</tt>
-     * @exception <tt>UnsupportedOperationException</tt>
+     * @exception UnsupportedOperationException
      */
     public void xor(BitSet set) {
         throw new UnsupportedOperationException("xor invalid in ROBitSet");

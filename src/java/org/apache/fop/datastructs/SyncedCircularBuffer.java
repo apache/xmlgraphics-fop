@@ -181,7 +181,7 @@ public class SyncedCircularBuffer {
      * Then while the <tt>consumer</tt> thread is still alive and the
      * buffer has not emptied, <tt>wait()</tt> for the consumer.
      *
-     * @param the Object to append to the buffer
+     * @param thing the Object to append to the buffer
      * @exception NoSuchElementException if the buffer is full.
      * @exception InterruptedException if the wait() is interrupted.
      */
