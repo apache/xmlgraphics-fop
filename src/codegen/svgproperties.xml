@@ -4,112 +4,112 @@
   <!-- SVG Properties. All use generic maker and have no overrides! -->
   <property>
     <name>width</name>
-    <use-generic ispropclass="true">SVGLengthProperty</use-generic>
+    <use-generic ispropclass="true">SVGStringProperty</use-generic>
   </property>
   <property>
     <name>height</name>
-    <use-generic ispropclass="true">SVGLengthProperty</use-generic>
+    <use-generic ispropclass="true">SVGStringProperty</use-generic>
   </property>
   <property>
     <name>x</name>
-    <use-generic ispropclass="true">SVGLengthProperty</use-generic>
+    <use-generic ispropclass="true">SVGStringProperty</use-generic>
   </property>
   <property>
     <name>y</name>
-    <use-generic ispropclass="true">SVGLengthProperty</use-generic>
+    <use-generic ispropclass="true">SVGStringProperty</use-generic>
   </property>
   <property>
     <name>x1</name>
-    <use-generic ispropclass="true">SVGLengthProperty</use-generic>
+    <use-generic ispropclass="true">SVGStringProperty</use-generic>
   </property>
   <property>
     <name>y1</name>
-    <use-generic ispropclass="true">SVGLengthProperty</use-generic>
+    <use-generic ispropclass="true">SVGStringProperty</use-generic>
   </property>
   <property>
     <name>x2</name>
-    <use-generic ispropclass="true">SVGLengthProperty</use-generic>
+    <use-generic ispropclass="true">SVGStringProperty</use-generic>
   </property>
   <property>
     <name>y2</name>
-    <use-generic ispropclass="true">SVGLengthProperty</use-generic>
+    <use-generic ispropclass="true">SVGStringProperty</use-generic>
   </property>
   <property>
     <name>rx</name>
-    <use-generic ispropclass="true">SVGLengthProperty</use-generic>
+    <use-generic ispropclass="true">SVGStringProperty</use-generic>
   </property>
   <property>
     <name>ry</name>
-    <use-generic ispropclass="true">SVGLengthProperty</use-generic>
+    <use-generic ispropclass="true">SVGStringProperty</use-generic>
   </property>
   <property>
     <name>dx</name>
-    <use-generic ispropclass="true">SVGLengthProperty</use-generic>
+    <use-generic ispropclass="true">SVGStringProperty</use-generic>
   </property>
   <property>
     <name>dy</name>
-    <use-generic ispropclass="true">SVGLengthProperty</use-generic>
+    <use-generic ispropclass="true">SVGStringProperty</use-generic>
   </property>
   <property>
     <name>cx</name>
-    <use-generic ispropclass="true">SVGLengthProperty</use-generic>
+    <use-generic ispropclass="true">SVGStringProperty</use-generic>
   </property>
   <property>
     <name>cy</name>
-    <use-generic ispropclass="true">SVGLengthProperty</use-generic>
+    <use-generic ispropclass="true">SVGStringProperty</use-generic>
   </property>
   <property>
     <name>r</name>
-    <use-generic ispropclass="true">SVGLengthProperty</use-generic>
+    <use-generic ispropclass="true">SVGStringProperty</use-generic>
   </property>
   <property>
     <name>fx</name>
-    <use-generic ispropclass="true">SVGLengthProperty</use-generic>
+    <use-generic ispropclass="true">SVGStringProperty</use-generic>
   </property>
   <property>
     <name>fy</name>
-    <use-generic ispropclass="true">SVGLengthProperty</use-generic>
+    <use-generic ispropclass="true">SVGStringProperty</use-generic>
   </property>
   <property>
     <name>refX</name>
-    <use-generic ispropclass="true">SVGLengthProperty</use-generic>
+    <use-generic ispropclass="true">SVGStringProperty</use-generic>
   </property>
   <property>
     <name>refY</name>
-    <use-generic ispropclass="true">SVGLengthProperty</use-generic>
+    <use-generic ispropclass="true">SVGStringProperty</use-generic>
   </property>
   <property>
     <name>markerWidth</name>
-    <use-generic ispropclass="true">SVGLengthProperty</use-generic>
+    <use-generic ispropclass="true">SVGStringProperty</use-generic>
   </property>
   <property>
     <name>markerHeight</name>
-    <use-generic ispropclass="true">SVGLengthProperty</use-generic>
+    <use-generic ispropclass="true">SVGStringProperty</use-generic>
   </property>
   <property>
     <name>offset</name>
-    <use-generic ispropclass="true">SVGLengthProperty</use-generic>
+    <use-generic ispropclass="true">SVGStringProperty</use-generic>
   </property>
 
   <property>
     <name>style</name>
-    <use-generic ispropclass="true">SVGStyle</use-generic>
+    <use-generic ispropclass="true">SVGStringProperty</use-generic>
   </property>
   <property>
     <name>transform</name>
-    <use-generic ispropclass="true">SVGTransform</use-generic>
+    <use-generic ispropclass="true">SVGStringProperty</use-generic>
   </property>
   <property>
     <name>gradientTransform</name>
-    <use-generic ispropclass="true">SVGTransform</use-generic>
+    <use-generic ispropclass="true">SVGStringProperty</use-generic>
   </property>
   <property>
     <name>d</name>
-    <use-generic ispropclass="true">SVGD</use-generic>
+    <use-generic ispropclass="true">SVGStringProperty</use-generic>
   </property>
   <property>
     <name>points</name>
-    <use-generic ispropclass="true">SVGPoints</use-generic>
+    <use-generic ispropclass="true">SVGStringProperty</use-generic>
   </property>
 
   <property type="ref" family="fo">
@@ -130,160 +130,59 @@
 
   <property>
     <name>xlink:href</name>
-    <class-name>HRef</class-name>
-    <inherited>false</inherited>
-    <datatype>String</datatype>
-    <default></default> 
+    <use-generic ispropclass="true">SVGStringProperty</use-generic>
   </property>
   <property>
     <name>requiredFeatures</name>
-    <class-name>RequiredFeatures</class-name>
-    <inherited>false</inherited>
-    <datatype>String</datatype>
-    <default>notpresent</default>
+    <use-generic ispropclass="true">SVGStringProperty</use-generic>
   </property>
   <property>
     <name>requiredExtensions</name>
-    <class-name>RequiredExtensions</class-name>
-    <inherited>false</inherited>
-    <datatype>String</datatype>
-    <default>notpresent</default>
+    <use-generic ispropclass="true">SVGStringProperty</use-generic>
   </property>
   <property>
     <name>systemLanguage</name>
-    <class-name>SystemLanguage</class-name>
-    <inherited>false</inherited>
-    <datatype>String</datatype>
-    <default>notpresent</default>
+    <use-generic ispropclass="true">SVGStringProperty</use-generic>
   </property>
   <property>
     <name>class</name>
-    <class-name>ElementClass</class-name>
-    <inherited>false</inherited>
-    <datatype>String</datatype>
-    <default></default>
+    <use-generic ispropclass="true">SVGStringProperty</use-generic>
   </property>
   <property>
 	<name>xml:space</name>
-	<class-name>XMLSpace</class-name>
-	<inherited>true</inherited>
-	<datatype>Enum</datatype>
-      <enumeration>
-        <value const="PRESERVE">preserve</value>
-        <value const="DEFAULT">default</value>
-      </enumeration>
-	<default>default</default> 
+    <use-generic ispropclass="true">SVGStringProperty</use-generic>
   </property>
   <property>
 	<name>spreadMethod</name>
-	<class-name>SpreadMethod</class-name>
-	<inherited>false</inherited>
-	<datatype>Enum</datatype>
-      <enumeration>
-        <value const="PAD">pad</value>
-        <value const="REFLECT">reflect</value>
-        <value const="REPEAT">repeat</value>
-      </enumeration>
-	<default>pad</default> 
+    <use-generic ispropclass="true">SVGStringProperty</use-generic>
   </property>
   <property>
     <name>gradientUnits</name>
-    <use-generic>GenericUnits</use-generic>
+    <use-generic ispropclass="true">SVGStringProperty</use-generic>
   </property>
   <property>
     <name>patternUnits</name>
-    <use-generic>GenericUnits</use-generic>
+    <use-generic ispropclass="true">SVGStringProperty</use-generic>
   </property>
   <property>
     <name>patternContentUnits</name>
-    <use-generic>GenericUnits</use-generic>
+    <use-generic ispropclass="true">SVGStringProperty</use-generic>
   </property>
   <property>
     <name>clipPathUnits</name>
-    <use-generic>GenericUnits</use-generic>
-  </property>
-  <property type="generic">
-	<name>GenericUnits</name>
-	<class-name>GenericUnits</class-name>
-	<inherited>false</inherited>
-	<datatype>Enum</datatype>
-      <enumeration>
-        <value const="USER_SPACE_ON_USE">userSpaceOnUse</value>
-        <value const="OBJECT_BOUNDING_BOX">objectBoundingBox</value>
-      </enumeration>
-	<default>userSpaceOnUse</default> 
+    <use-generic ispropclass="true">SVGStringProperty</use-generic>
   </property>
   <property>
     <name>viewBox</name>
-    <class-name>ViewBox</class-name>
-    <inherited>false</inherited>
-    <datatype>String</datatype>
-    <default></default>
-  </property>
- </generic-property-list>
-
- <element-property-list>
-   <localname>tref</localname>
-   <localname>tspan</localname>
-  <property>
-    <name>x</name>
-    <use-generic ispropclass="true">SVGLengthListProperty</use-generic>
-  </property>
-  <property>
-    <name>y</name>
-    <use-generic ispropclass="true">SVGLengthListProperty</use-generic>
-  </property>
-  <property>
-    <name>dx</name>
-    <use-generic ispropclass="true">SVGLengthListProperty</use-generic>
-  </property>
-  <property>
-    <name>dy</name>
-    <use-generic ispropclass="true">SVGLengthListProperty</use-generic>
-  </property>
- </element-property-list>
-
- <element-property-list>
-   <localname>text</localname>
-  <property>
-    <name>x</name>
-    <use-generic ispropclass="true">SVGLengthProperty</use-generic>
-  </property>
-  <property>
-    <name>y</name>
-    <use-generic ispropclass="true">SVGLengthProperty</use-generic>
-  </property>
-  <property>
-    <name>style</name>
-    <use-generic ispropclass="true">SVGStyle</use-generic>
-  </property>
-  <property>
-    <name>transform</name>
-    <use-generic ispropclass="true">SVGTransform</use-generic>
+    <use-generic ispropclass="true">SVGStringProperty</use-generic>
   </property>
   <property>
 	<name>text-anchor</name>
-	<class-name>TextAnchor</class-name>
-	<inherited>true</inherited>
-	<datatype>Enum</datatype>
-      <enumeration>
-        <value const="START">start</value>
-        <value const="MIDDLE">middle</value>
-        <value const="END">end</value>
-        <value const="INHERIT">inherit</value>
-      </enumeration>
-	<default>start</default> 
+    <use-generic ispropclass="true">SVGStringProperty</use-generic>
   </property>
   <property>
 	<name>xml:space</name>
-	<class-name>XMLSpace</class-name>
-	<inherited>true</inherited>
-	<datatype>Enum</datatype>
-      <enumeration>
-        <value const="PRESERVE">preserve</value>
-        <value const="DEFAULT">default</value>
-      </enumeration>
-	<default>default</default> 
+    <use-generic ispropclass="true">SVGStringProperty</use-generic>
   </property>
- </element-property-list>
+ </generic-property-list>
 </property-list>
