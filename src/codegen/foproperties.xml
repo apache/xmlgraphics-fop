@@ -5,7 +5,7 @@
     <name>generic-color</name>
     <class-name>GenericColor</class-name>
     <datatype>ColorType</datatype>
-    <datatype-conversion type="String" varname="strval">
+    <datatype-conversion from-type="String" varname="strval">
        new ColorType(strval)</datatype-conversion>
   </property>
   <property type="generic">
@@ -23,7 +23,7 @@
     <datatype>Number</datatype>
     <keyword-equiv match="auto" eval="true">0</keyword-equiv>
     <keyword-equiv match="always" eval="true">-1</keyword-equiv>
-<!--    <compound>
+<!--      <compound>
       <subproperty>
         <name>within-page</name>
         <datatype>Number</datatype>
@@ -43,7 +43,7 @@
     <class-name>GenericCondLength</class-name>
     <datatype>CondLength</datatype>
     <compound>
-      <subproperty>
+      <subproperty set-by-shorthand="true">
         <name>length</name>
         <datatype>Length</datatype>
       </subproperty>
@@ -58,7 +58,7 @@
     <class-name>GenericCondPadding</class-name>
     <use-generic>GenericCondLength</use-generic>
     <inherited>false</inherited>
-    <default>0pt</default>
+    <default subproperty="length">0pt</default>
   </property>
   <property type="generic">
     <name>padding-template</name>
@@ -67,18 +67,36 @@
     <inherited>false</inherited>
     <default>0pt</default>
   </property>
-<!-- Before and After border width props -->
+
+<!-- Before, After, Start, End border width props -->
+<!-- CondLength, but adds keyword values both to the "shorthand" setting
+     and to the length component. So we redefine the components here,
+     rather than doing a "use-generic" on GenericCondLength.
+-->
   <property type="generic">
     <name>border-cond-width-template</name>
     <class-name>GenericCondBorderWidth</class-name>
-    <use-generic>GenericCondLength</use-generic>
     <keyword-equiv match="thin" eval="true">0.5pt</keyword-equiv>
     <keyword-equiv match="medium" eval="true">1pt</keyword-equiv>
     <keyword-equiv match="thick" eval="true">2pt</keyword-equiv>
     <inherited>false</inherited>
-    <default>0pt</default>
+    <datatype>CondLength</datatype>
+    <compound>
+      <subproperty set-by-shorthand="true">
+        <name>length</name>
+        <datatype>Length</datatype>
+        <keyword-equiv match="thin" eval="true">0.5pt</keyword-equiv>
+        <keyword-equiv match="medium" eval="true">1pt</keyword-equiv>
+        <keyword-equiv match="thick" eval="true">2pt</keyword-equiv>
+        <default>medium</default>
+      </subproperty>
+      <subproperty>
+        <name>conditionality</name>
+        <datatype>String</datatype>  <!-- NCName or Enum ??? -->
+      </subproperty>
+    </compound>
   </property>
-<!-- Start and End border width, all "absolute" borderwidth props -->
+<!-- Left, Right, Top, Bottom borderwidth props -->
   <property type="generic">
     <name>border-width-template</name>
     <class-name>GenericBorderWidth</class-name>
@@ -127,27 +145,31 @@
     <class-name>GenericSpace</class-name>
     <inherited>false</inherited>
     <datatype>Space</datatype>
-    <default>0pt</default>
     <compound>
-      <subproperty>
+      <subproperty set-by-shorthand="true">
         <name>minimum</name>
         <datatype>Length</datatype>
+        <default>0pt</default>
       </subproperty>
-      <subproperty>
+      <subproperty set-by-shorthand="true">
         <name>optimum</name>
         <datatype>Length</datatype>
+        <default>0pt</default>
       </subproperty>
-      <subproperty>
+      <subproperty set-by-shorthand="true">
         <name>maximum</name>
         <datatype>Length</datatype>
+        <default>0pt</default>
       </subproperty>
       <subproperty>
         <name>precedence</name>
         <datatype>Number</datatype>
+        <default>0</default>
       </subproperty>
       <subproperty>
         <name>conditionality</name>
         <datatype>String</datatype>  <!-- NCName or Enum ??? -->
+        <default>discard</default>
       </subproperty>
     </compound>
   </property>
@@ -157,7 +179,7 @@
     <datatype>Length</datatype>
     <default>12pt</default>
     <!-- percent refers to inherited font size -->
-    <percent-ok base="INH-FONTSIZE"></percent-ok>
+    <percent-ok base="INH_FONTSIZE"/>
   </property>
   <property>
     <name>start-indent</name>
@@ -375,11 +397,11 @@
     <datatype>Length</datatype>
     <default contextdep="true">normal</default>
     <keyword-equiv match="normal" eval="true">1.2em</keyword-equiv>
-    <datatype-conversion type="Number" varname="numval">
+    <datatype-conversion from-type="Number" varname="numval">
     new PercentLength(numval.doubleValue(),
          getPercentBase(fo,propertyList))</datatype-conversion>
     <!-- percent refers to font size -->
-    <percent-ok base="FONTSIZE"></percent-ok>
+    <percent-ok base="FONTSIZE"/>
   </property>
   <property>
     <name>text-indent</name>
@@ -433,18 +455,22 @@
   <property>
     <name>padding-before</name>
     <use-generic>GenericCondPadding</use-generic>
+    <default subproperty="conditionality">retain</default>
   </property>
   <property>
     <name>padding-after</name>
     <use-generic>GenericCondPadding</use-generic>
+    <default subproperty="conditionality">retain</default>
   </property>
   <property>
     <name>padding-start</name>
-    <use-generic>GenericPadding</use-generic>
+    <use-generic>GenericCondPadding</use-generic>
+    <default subproperty="conditionality">discard</default>
   </property>
   <property>
     <name>padding-end</name>
-    <use-generic>GenericPadding</use-generic>
+    <use-generic>GenericCondPadding</use-generic>
+    <default subproperty="conditionality">discard</default>
   </property>
   <property>
     <name>padding-top</name>
@@ -487,6 +513,7 @@
   <property>
     <name>border-before-width</name>
     <use-generic>GenericCondBorderWidth</use-generic>
+    <default subproperty="conditionality">retain</default>
   </property>
   <property>
     <name>border-after-color</name>
@@ -501,6 +528,7 @@
   <property>
     <name>border-after-width</name>
     <use-generic>GenericCondBorderWidth</use-generic>
+    <default subproperty="conditionality">retain</default>
   </property>
   <property>
     <name>border-start-color</name>
@@ -514,7 +542,8 @@
   </property>
   <property>
     <name>border-start-width</name>
-    <use-generic>GenericBorderWidth</use-generic>
+    <use-generic>GenericCondBorderWidth</use-generic>
+    <default subproperty="conditionality">discard</default>
   </property>
   <property>
     <name>border-end-color</name>
@@ -528,7 +557,8 @@
   </property>
   <property>
     <name>border-end-width</name>
-    <use-generic>GenericBorderWidth</use-generic>
+    <use-generic>GenericCondBorderWidth</use-generic>
+    <default subproperty="conditionality">discard</default>
   </property>
   <property>
     <name>border-top-color</name>
@@ -671,7 +701,7 @@
     <inherited>false</inherited>
     <datatype>Length</datatype>
     <auto-ok/>
-    <percent-ok base="CONTAINING-BOX"></percent-ok>
+    <percent-ok base="CONTAINING_BOX"/>
     <default>auto</default>
   </property>
   <property>
@@ -769,27 +799,29 @@
 
   <property>
 	<name>leader-length</name>
-	<class-name>LeaderLength</class-name>
 	<inherited>true</inherited>
 	<datatype>LengthRange</datatype>
-	<default>12.0pt</default> 
+	<percent-ok base="CONTAINING_BOX"/>
     <compound>
-      <subproperty>
+      <subproperty set-by-shorthand="true">
         <name>minimum</name>
         <datatype>Length</datatype>
+	<default>0pt</default>
+	<percent-ok base="CONTAINING_BOX"/>
       </subproperty>
-      <subproperty>
+      <subproperty set-by-shorthand="true">
         <name>optimum</name>
         <datatype>Length</datatype>
+	<default>12.0pt</default> 
+	<percent-ok base="CONTAINING_BOX"/>
       </subproperty>
-      <subproperty>
+      <subproperty set-by-shorthand="true">
         <name>maximum</name>
         <datatype>Length</datatype>
+	<default contextdep="true">100%</default>
+	<percent-ok base="CONTAINING_BOX"/>
       </subproperty>
     </compound>
-<!--    <percent-ok base="CONTAINING-BOX"></percent-ok>
-    <datatype-conversion type="Length" varname="lenval">
-       new LengthRange(lenval)</datatype-conversion> -->
    </property>
 
   <property>
@@ -799,7 +831,8 @@
     <datatype>Length</datatype>
     <default contextdep="true">use-font-metrics</default>
     <keyword-equiv match="use-font-metrics" eval="true">0pt</keyword-equiv>
-    <percent-ok base="CONTAINING-BOX"/>
+    <percent-ok base="CONTAINING_BOX"/>
+      
    </property>
 
   <property>
@@ -892,7 +925,6 @@
     <default>1</default>
   </property>
 
-
   <property>
     <name>region-name</name>
     <class-name>RegionName</class-name>
@@ -901,7 +933,6 @@
     <default></default>
   </property>
 
-  
   <property>
     <name>hyphenate</name>
     <class-name>Hyphenate</class-name>
