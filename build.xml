@@ -153,6 +153,7 @@ Sometimes ant gives out this warnings, but the build is finished without any pro
 
     <property name="properties.dir" value="org/apache/fop/fo/properties"/>
     <property name="fonts.dir" value="org/apache/fop/render/pdf/fonts"/>
+    <property name="svg.dir" value="org/apache/fop/svg"/>
     <property name="replacestring" value="org/apache/fop"/>
     <property name="ignore_this" value="ignore_this.java"/>
     <property name="jimi" value="JimiImage.java"/>
@@ -171,6 +172,9 @@ Sometimes ant gives out this warnings, but the build is finished without any pro
     <property name="foproperties.xml" value="${build.codegen}/foproperties.xml"/>
     <property name="svgproperties.xml" value="${build.codegen}/svgproperties.xml"/>
     <property name="extproperties.xml" value="${build.codegen}/extproperties.xml"/>
+
+    <property name="svgelements.xml" value="${build.codegen}/svgelements.xml"/>
+    <property name="elements.xsl" value="${build.codegen}/elements.xsl"/>
 
     <property name="properties.xsl" value="${build.codegen}/properties.xsl"/>
     <property name="propmap.xsl" value="${build.codegen}/propmap.xsl"/>
@@ -258,6 +262,7 @@ Sometimes ant gives out this warnings, but the build is finished without any pro
     <mkdir dir="${build.src}"/>
     <mkdir dir="${build.src}/${properties.dir}"/>
     <mkdir dir="${build.src}/${fonts.dir}"/>
+    <mkdir dir="${build.src}/${svg.dir}"/>
     <mkdir dir="${build.dest}/conf"/>
     <mkdir dir="${build.dest}/hyph"/>
     <copydir src="./conf" dest="${build.dest}/conf" />
@@ -374,6 +379,9 @@ Sometimes ant gives out this warnings, but the build is finished without any pro
         dependent="${propinc.xsl}"
         outfile="${build.src}/${replacestring}/fo/properties/extenums_${ignore_this}" smart="yes"/>
 
+
+    <xslt infile="${svgelements.xml}" xsltfile="${elements.xsl}"
+        outfile="${build.src}/${replacestring}/svg/ele_${ignore_this}" smart="yes"/>
 
 
     <xslt infile="${charlist.xml}" xsltfile="${charlist.xsl}" 
