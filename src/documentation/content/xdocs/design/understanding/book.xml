@@ -29,7 +29,6 @@ PARENT DIRECTORY!
     <menu label="Understanding">
       <menu-item label="Introduction" href="index.html"/>
       <menu-item label="XML Parsing" href="xml_parsing.html"/>
-      <menu-item label="FO Tree" href="fo_tree.html"/>
     </menu>
     <menu label="Extras">
       <menu-item label="Images" href="images.html"/>
