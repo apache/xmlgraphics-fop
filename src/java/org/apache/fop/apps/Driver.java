@@ -590,7 +590,7 @@ public class Driver implements LogEnabled {
             if (foInputHandler instanceof FOTreeHandler) {
                 FOTreeHandler foTreeHandler = (FOTreeHandler)foInputHandler;
                 foTreeHandler.addFOTreeListener(currentDocument);
-                currentDocument.areaTree = new AreaTree();
+                currentDocument.areaTree = new AreaTree(currentDocument);
                 currentDocument.atModel = new RenderPagesModel(renderer);
                 //this.atModel = new CachedRenderPagesModel(renderer);
                 currentDocument.areaTree.setTreeModel(currentDocument.atModel);

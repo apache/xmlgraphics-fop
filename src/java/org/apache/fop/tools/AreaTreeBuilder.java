@@ -273,7 +273,7 @@ class TreeLoader extends AbstractLogEnabled {
         Element root = null;
         root = doc.getDocumentElement();
 
-        areaTree = new AreaTree();
+        areaTree = new AreaTree(fontInfo);
         areaTree.setTreeModel(model);
 
         readAreaTree(root);

@@ -61,6 +61,7 @@ import java.util.HashSet;
 import org.apache.fop.apps.FOUserAgent;
 
 import org.apache.fop.area.AreaTree;
+import org.apache.fop.area.AreaTreeControl;
 import org.apache.fop.area.AreaTreeModel;
 
 import org.apache.fop.fo.extensions.Bookmarks;
@@ -83,7 +84,8 @@ import org.apache.avalon.framework.logger.Logger;
  * Class storing information for the FOP Document being processed, and managing
  * the processing of it.
  */
-public class Document implements FOTreeControl, FOTreeListener {
+public class Document implements FOTreeControl, FOTreeListener,
+        AreaTreeControl {
 
     /** The parent Driver object */
     private Driver driver;
