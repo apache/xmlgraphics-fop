@@ -62,7 +62,6 @@ import org.xml.sax.Attributes;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.FOTreeVisitor;
-import org.apache.fop.layout.PageMaster;
 import org.apache.fop.apps.FOPException;
 
 /**
@@ -76,7 +75,6 @@ public class SimplePageMaster extends FObj {
      */
     private Map regions;
 
-    private PageMaster pageMaster;
     private String masterName;
 
     /**
@@ -115,18 +113,6 @@ public class SimplePageMaster extends FObj {
      */
     public boolean generatesReferenceAreas() {
         return true;
-    }
-
-    /**
-     * Returns the page master.
-     * @return the page master
-     */
-    public PageMaster getPageMaster() {
-        return this.pageMaster;
-    }
-
-    public void setPageMaster(PageMaster pageMaster) {
-        this.pageMaster = pageMaster;
     }
 
     /**

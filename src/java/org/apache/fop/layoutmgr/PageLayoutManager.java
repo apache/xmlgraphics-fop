@@ -82,8 +82,6 @@ import org.apache.fop.fo.pagination.StaticContent;
 import org.apache.fop.fo.properties.CommonMarginBlock;
 import org.apache.fop.fo.properties.Constants;
 
-import org.apache.fop.layout.PageMaster;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
