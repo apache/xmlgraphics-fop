@@ -92,7 +92,8 @@ public class LineArea extends Area {
     protected ArrayList pendingAreas = new ArrayList();
 
     /* the width of the pendingAreas */
-    protected int pendingWidth = 0;
+    /* public for problem check in AbstractRenderer */
+    public int pendingWidth = 0;
 
     /* text-decoration of the previous text */
     protected boolean prevUlState = false;
