@@ -25,7 +25,7 @@ import org.apache.fop.messaging.MessageHandler;
 import org.apache.fop.fo.PropertyConsts;
 import org.apache.fop.fo.ShorthandPropSets;
 import org.apache.fop.fo.FOTree;
-import org.apache.fop.fo.FObjects;
+import org.apache.fop.fo.FOPropertySets;
 import org.apache.fop.datatypes.PropertyValue;
 import org.apache.fop.datatypes.AbstractPropertyValue;
 import org.apache.fop.datatypes.PropertyValueList;

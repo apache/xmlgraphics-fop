@@ -2,7 +2,7 @@ package org.apache.fop.fo;
 
 import org.apache.fop.fo.FOTree;
 import org.apache.fop.fo.FOAttributes;
-import org.apache.fop.fo.FObjects;
+import org.apache.fop.fo.FOPropertySets;
 import org.apache.fop.fo.expr.PropertyException;
 import org.apache.fop.fo.expr.PropertyParser;
 import org.apache.fop.datatypes.PropertyValue;
@@ -100,15 +100,16 @@ public class FONode extends FOTree.Node{
         this.parent = parent;
         this.event = event;
         this.attrSet = attrSet;
-        nodeAttrBitSet = FObjects.getAttrROBitSet(attrSet);
+        nodeAttrBitSet = FOPropertySets.getAttrROBitSet(attrSet);
         xmlevents = foTree.xmlevents;
         namespaces = xmlevents.getNamespaces();
         exprParser = foTree.exprParser;
         propertySet = new PropertyValue[PropNames.LAST_PROPERTY_INDEX + 1];
         foAttributes = new FOAttributes(event, this);
-        if ( ! (attrSet == FObjects.MARKER_SET)) {
+        if ( ! (attrSet == FOPropertySets.MARKER_SET)) {
             processAttributes();
         }
+        // Set up the remaining properties.
     }
 
     private void processAttributes() throws FOPException, PropertyException {
@@ -133,7 +134,7 @@ public class FONode extends FOTree.Node{
                     MessageHandler.log("Ignoring property "
                                        + PropNames.getPropertyName(property)
                                        + " for attribute set "
-                                       + FObjects.getAttrSetName(attrSet)
+                                       + FOPropertySets.getAttrSetName(attrSet)
                                        + ".");
                 } else {
                     stackValue(props);
@@ -151,7 +152,7 @@ public class FONode extends FOTree.Node{
                         MessageHandler.log("Ignoring property "
                                        + PropNames.getPropertyName(property)
                                        + " for attribute set "
-                                       + FObjects.getAttrSetName(attrSet)
+                                       + FOPropertySets.getAttrSetName(attrSet)
                                            + ".");
                     } else {
                         stackValue(value);
