@@ -22,7 +22,7 @@
     Alternately, this  acknowledgment may  appear in the software itself,  if
     and wherever such third-party acknowledgments normally appear.
  
- 4. The names "Fop" and  "Apache Software Foundation"  must not be used to
+ 4. The names "FOP" and  "Apache Software Foundation"  must not be used to
     endorse  or promote  products derived  from this  software without  prior
     written permission. For written permission, please contact
     apache@apache.org.
@@ -48,6 +48,7 @@
  Software Foundation, please see <http://www.apache.org/>.
  
  */
+
 /* image support modified from work of BoBoGi */
 
 package org.apache.fop.pdf;
@@ -60,6 +61,7 @@ import org.apache.fop.image.FopImage;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Vector;
+import java.awt.Rectangle;
 							   
 /**
  * class representing a PDF document. 
@@ -103,7 +105,10 @@ public class PDFDocument {
     /** the /Resources object */
     protected PDFResources resources;
     
+    /** the counter for XObject numbering */
     protected int xObjectCount = 0;
+
+    /** the XObjects */
     protected Vector xObjects = new Vector();
 
     /**
@@ -211,6 +216,7 @@ public class PDFDocument {
      * @param contents stream object with content
      * @param pagewidth width of the page in points
      * @param pageheight height of the page in points
+     *
      * @return the created /Page object
      */
     public PDFPage makePage(PDFResources resources,
@@ -229,6 +235,30 @@ public class PDFDocument {
 	this.root.addPage(page);
 
 	return page;
+    }
+
+    /**
+     * make a link object
+     *
+     * @param rect the clickable rectangle
+     * @param destination the destination file
+     * 
+     * @return the PDFLink object created
+     */
+    public PDFLink makeLink(Rectangle rect, String destination) {
+	PDFLink link = new PDFLink(++this.objectcount, destination, rect);
+	this.objects.addElement(link);
+
+	PDFFileSpec fileSpec = new PDFFileSpec(++this.objectcount,
+					       link.destination);
+	this.objects.addElement(fileSpec);
+
+	PDFAction action = new PDFAction(++this.objectcount,
+					 fileSpec);
+	this.objects.addElement(action);
+	link.setAction(action);
+
+	return link;
     }
 
     /**

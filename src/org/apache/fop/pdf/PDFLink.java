@@ -48,101 +48,77 @@
  Software Foundation, please see <http://www.apache.org/>.
  
  */
+
 package org.apache.fop.pdf;
 
+// Java
+import java.awt.Rectangle;
+
 /**
- * class representing a /Page object.
- *
- * There is one of these for every page in a PDF document. The object
- * specifies the dimensions of the page and references a /Resources
- * object, a contents stream and the page's parent in the page
- * hierarchy.
+ * class representing an /Annot object of /Subtype /Link
  */
-public class PDFPage extends PDFObject {
+public class PDFLink extends PDFObject {
 
-    /** the page's parent, a /Pages object */
-    protected PDFPages parent;
-
-    /** the page's /Resource object */
-    protected PDFResources resources;
-
-    /** the contents stream */
-    protected PDFStream contents;
-
-    /** the width of the page in points */
-    protected int pagewidth;
-
-    /** the height of the page in points */
-    protected int pageheight;
-
-    /** the list of annotation objects for this page */
-    protected PDFAnnotList annotList;
-
+    float ulx;
+    float uly;
+    float brx;
+    float bry;
+    String destination;
+    String color;
+    PDFAction action;
+	
     /**
-     * create a /Page object
+     * create objects associated with a link annotation (GoToR)
      *
      * @param number the object's number
-     * @param resources the /Resources object
-     * @param contents the content stream
-     * @param pagewidth the page's width in points
-     * @param pageheight the page's height in points
+     * @param producer the application producing the PDF
      */
-    public PDFPage(int number, PDFResources resources,
-		   PDFStream contents, int pagewidth,
-		   int pageheight) {
-
-	/* generic creation of object */
+    public PDFLink(int number, String destName, Rectangle r) {
+	/* generic creation of PDF object */
 	super(number);
-
-	/* set fields using parameters */
-	this.resources = resources;
-	this.contents = contents;
-	this.pagewidth = pagewidth;
-	this.pageheight = pageheight;
-
-	this.annotList = null;
+		
+	this.ulx = r.x;
+	this.uly = r.y;
+	this.brx = r.x + r.width;
+	this.bry = r.y - r.height;
+	this.destination = destName; // what is this for?
+	this.color = "0 0 0.7";	// just for now
+		
     }
 
-    /**
-     * set this page's parent
-     *
-     * @param parent the /Pages object that is this page's parent
-     */
-    public void setParent(PDFPages parent) {
-	this.parent = parent;
+    public void setAction(PDFAction action) {
+	this.action = action;
     }
-
+	
     /**
-     * set this page's annotation list
+     * produce the PDF representation of the object
      *
-     * @param annotList a PDFAnnotList list of annotations
-     */
-    public void setAnnotList(PDFAnnotList annotList) {
-	this.annotList = annotList;
-    }
-
-    /**
-     * represent this object as PDF
-     *
-     * @return the PDF string
+     * @return the PDF
      */
     public String toPDF() {
-	StringBuffer sb = new StringBuffer();
-
-	sb = sb.append(this.number + " " + this.generation + " obj\n" +
-		"<< / Type /Page\n" +
-		"/Parent " + this.parent.referencePDF() + "\n" +
-		"/MediaBox [ 0 0 " + this.pagewidth + " " +
-		this.pageheight + " ]\n" + 
-		"/Resources " + this.resources.referencePDF() + "\n" + 
-		"/Contents " + this.contents.referencePDF() + "\n");
-	if (this.annotList != null) {
-	    sb = sb.append("/Annots " +
-			   this.annotList.referencePDF() + "\n");
-	}
-
-	sb = sb.append(">>\nendobj\n");
-
-	return sb.toString();
+	String p = this.number + " " + this.generation + " obj\n" +
+	    "<< /Type /Annot\n" +
+	    "/Subtype /Link\n" +
+	    "/Rect [ " + (ulx/1000f) + " " + (uly/1000f) + " " +
+	    (brx/1000f) + " " + (bry/1000f) + " ]\n"
+	    + "/C [ " + color + " ]\n" + 
+	    "/Border [ 0 0 1 ]\n" +
+	    "/A " + action.referencePDF() + "\n" +
+	    "/H /I\n>>\nendobj\n";
+	return p;
     }
+
+    /* example
+       19 0 obj
+       << 
+       /Type /Annot 
+       /Subtype /Link 
+       /Rect [ 176.032 678.48412 228.73579 692.356 ] 
+       /C [ 0.86491 0.03421 0.02591 ] 
+       /Border [ 0 0 1 ] 
+       /A 28 0 R 
+       /H /I 
+       >> 
+       endobj
+    */
 }
