@@ -67,6 +67,9 @@ public class XMLEvent {
     protected AttributesImpl attributes;
     protected XMLNamespaces namespaces;
 
+    /** Sequence id for this <i>XMLEvent</i>. */
+    public final int id;
+
     /**
      * The one-argument constructor uses the default initialization values:
      * NOEVENT for the event <i>type</i>, and null references for all others
@@ -74,6 +77,7 @@ public class XMLEvent {
      */
     public XMLEvent (XMLNamespaces namespaces) {
         this.namespaces = namespaces;
+        id = namespaces.getSequence();
     }
 
     /**
@@ -84,13 +88,14 @@ public class XMLEvent {
                     String localName, String qName,
                     AttributesImpl attributes, XMLNamespaces namespaces)
     {
+        this.namespaces = namespaces;
+        id = namespaces.getSequence();
         this.type = type;
         this.chars = chars;
         this.uriIndex = uriIndex;
         this.localName = localName;
         this.qName = qName;
         this.attributes = attributes;
-        this.namespaces = namespaces;
     }
 
     /**
@@ -98,24 +103,26 @@ public class XMLEvent {
      * <tt>XMLEvent</tt> object.
      */
     public XMLEvent(XMLEvent ev) {
+        namespaces = ev.namespaces;
+        id = namespaces.getSequence();
         type = ev.type;
         chars = ev.chars;
         uriIndex = ev.uriIndex;
         localName = ev.localName;
         qName = ev.qName;
         attributes = ev.attributes;
-        namespaces = ev.namespaces;
     }
 
     public XMLEvent(int type, String chars, XMLNamespaces namespaces) {
+        this.namespaces = namespaces;
+        id = namespaces.getSequence();
         this.type = type;
         this.chars = chars;
-        this.namespaces = namespaces;
     }
 
     /**
      * Clear the fields of this event.  Provided for pool operations.
-     * The <i>namespaces</i> field is not cleared.
+     * Neither the <i>namespaces</i> nor the <i>id</i> field is cleared.
      * @return the cleared event.
      */
     public XMLEvent clear() {
@@ -225,6 +232,8 @@ public class XMLEvent {
     public String toString() {
         String tstr;
         tstr = eventTypeName(type);
+        tstr = tstr + "\nSeq " + id;
+        tstr = tstr + "\nNamespaces " + namespaces.hashCode();
         tstr = tstr + "\nURI "
                 + uriIndex + " " + namespaces.getIndexURI(uriIndex);
         tstr = tstr + "\n" + "Local Name " + localName;
