@@ -29,6 +29,7 @@ import java.text.AttributedString;
 import java.text.BreakIterator;
 import java.util.Map;
 
+import org.apache.fop.apps.FOPException;
 import org.apache.fop.datastructs.Node;
 import org.apache.fop.datatypes.TextDecorations;
 import org.apache.fop.fo.FOPageSeqNode;
@@ -64,17 +65,12 @@ public class LineArea extends BlockArea {
      * @param sync the synchronization object of this node
      */
     public LineArea(String text, FoPageSequence pageSeq,
-            FOPageSeqNode generatedBy, Node parent, Object sync) {
+            FOPageSeqNode generatedBy, Node parent, Object sync) 
+    throws PropertyException, FOPException {
         super(pageSeq, generatedBy, parent, sync);
         generator = generatedBy;
         this.text = text;
-        try {
-            preprocessText();
-        } catch (PropertyException e) {
-            throw new RuntimeException(e);
-        } catch (FontException e) {
-            throw new RuntimeException(e);
-        }
+        preprocessText();
     }
 
     /** <code>generatedBy</code> as an <code>FOPageSeqNode</code> */
@@ -134,6 +130,40 @@ public class LineArea extends BlockArea {
      * attributes of the text are applied.
      */
     private void preprocessText() throws PropertyException, FontException {
+        setupMeasurement();
+        // Find minima and maxima for this text
+        // Text dimensions based on baseline-to-baseline leading and the
+        // descent of the TextLayout
+        // Maximum BPDim for text is dependent on the descent of the
+        // previous line.  (See diagram in class description).  As an
+        // approximation, the larger of the leading and ascent + descent is
+        // used.
+        // The maximum IPDim is the advance of the complete text.
+        // To determine the minima, the shortest length of text is determined,
+        // a TextLayout is formed from that, and the corresponding BPDim and
+        // IPDim values are determined.
+        pageSpaceRange.setIPDimMax(layout.getVisibleAdvance());
+        pageSpaceRange.setBPDimMax(Math.max(
+                    layout.getLeading(),
+                    (layout.getAscent() + layout.getDescent())));
+        // Find the longest fragment of the text
+        BreakIterator words =
+            BreakIterator.getWordInstance(generatedBy.getLocale());
+        words.setText(text);
+        int begin = 0;
+        float maxWordWidth = 0;
+        int boundary = 0;
+        while ((boundary = words.next()) != BreakIterator.DONE) {
+            float width = measurer.getAdvanceBetween(begin, boundary);
+            maxWordWidth = Math.max(maxWordWidth, width);
+            begin = boundary;
+        }
+        pageSpaceRange.setIPDimMin(maxWordWidth);
+        // For now, set bPDimMin = bPDimMax.
+        pageSpaceRange.setBPDimMin(maxWordWidth);
+    }
+
+    private void setupMeasurement() throws PropertyException, FontException {
         // Get the font, size, style and weight attributes
         attributes = generator.getFontAttributes();
         font = generator.getFopFont(attributes);
@@ -158,38 +188,7 @@ public class LineArea extends BlockArea {
                     null, IS_ANTI_ALIASED, USES_FRACTIONAL_METRICS);
         measurer = new TextMeasurer(iter, identityFRC);
         layout = new TextLayout(iter, identityFRC);
-        // Find minima and maxima for this text
-        // Text dimensions based on baseline-to-baseline leading and the
-        // descent of the TextLayout
-        // Maximum BPDim for text is dependent on the descent of the
-        // previous line.  (See diagram in class description).  As an
-        // approximation, the larger of the leading and ascent + descent is
-        // used.
-        // The maximum IPDim is the advance of the complete text.
-        // To determine the minima, the shortest length of text is determined,
-        // a TextLayout is formed from that, and the corresponding BPDim and
-        // IPDim values are determined.
-        iPDimMax = new Float(layout.getVisibleAdvance());
-        bPDimMax =
-            new Float(Math.max(
-                    layout.getLeading(),
-                    (layout.getAscent() + layout.getDescent())));
-        // Find the longest fragment of the text
-        BreakIterator words =
-            BreakIterator.getWordInstance(generatedBy.getLocale());
-        words.setText(text);
-        int begin = 0;
-        float maxWordWidth = 0;
-        int boundary = 0;
-        while ((boundary = words.next()) != BreakIterator.DONE) {
-            float width = measurer.getAdvanceBetween(begin, boundary);
-            maxWordWidth = Math.max(maxWordWidth, width);
-            begin = boundary;
-        }
-        iPDimMin = new Float(maxWordWidth);
-        // For now, set bPDimMin = bPDimMax.
-        bPDimMin = bPDimMax;
+        
     }
-
 
 }
