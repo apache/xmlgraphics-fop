@@ -94,11 +94,26 @@
        </td> 
        <td>No, default is <code>false</code></td> 
       </tr> 
-      <!--tr  Commented out; attribute is currently unimplemented according to the code> 
+      <tr> 
        <td>basedir</td> 
-       <td>Directory to work from</td> 
-       <td>Yes</td> 
-      </tr--> 
+       <td>Base directory to resolve relative references (e.g., graphics files) within the 
+            FO document.
+       </td> 
+       <td>No, for single FO File entry, default is to use the location 
+            of that FO file.
+       </td> 
+      </tr> 
+      <tr> 
+       <td>relativebase</td> 
+       <td>For fileset usage only.  A value of <code>true</code> specifies using the location
+        of each .fo file as the base directory for resolving relative file references located
+        within that .fo file.  A value of <code>false</code> specifies using the value of 
+        basedir for all files within the fileset, or just the current working directory
+        if basedir is not specified.
+       </td> 
+       <td>No, default is <code>false</code>.
+       </td> 
+      </tr> 
       <tr> 
        <td>userconfig</td> 
        <td>User configuration file (same as the FOP "-c" command line option)</td> 
