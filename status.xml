@@ -104,6 +104,9 @@ inactive??
 
   <changes>
    <release version="2003" date="2003">
+   	<action context="code" dev="JM" type="add">
+   		PS renderer got a configurable setting to do auto-landscape rotation.
+   	</action>
    	<action context="code" dev="JM" type="fix">
    		Fixed TrueType embedding. Width array now reflects the subset again.
    	</action>
