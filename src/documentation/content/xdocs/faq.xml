@@ -601,23 +601,8 @@
     <faq id="servlet">
       <question>How do I use FOP in a servlet?</question>
       <answer>
-        <p>Look at the servlet example.</p>
         <p>
-          A rather minimal code snippet to demonstrate the basics:
-        </p>
-        <source>response.setContentType("application/pdf");
-Driver driver=new Driver( new InputSource("foo.fo"),
-                          response.getOutputStream());
-driver.setRenderer(Driver.RENDER_PDF);
-driver.run();</source>
-        <p>
-          Caveat: Internet Explorer will not automatically show the PDF. Thats a
-          well known IEx problem, not with the servlet. You can download the PDF
-          with IEx and view it later. There are other problems with this code.
-        </p>
-        <p>
-          Please look into <link href="embedding.html">Embedding FOP</link>
-          for all kinds of details.
+          See <link href="embedding.html#servlet">Using FOP in a Servlet</link>.
         </p>
       </answer>
     </faq>
@@ -626,54 +611,7 @@ driver.run();</source>
       transformation?</question>
       <answer>
         <p>
-          Use the TraxInputHandler if both the source XML and XSL are read from
-          files.
-        </p>
-        <p>
-          A demonstration:
-        </p>
-        <source>response.setContentType("application/pdf");
-XSLTInputHandler input
-  =new XSLTInputHandler(new File("foo.xml"), new File("foo.xsl"));
-Driver driver=new Driver();
-driver.setOutputStream(response.getOutputStream());
-driver.setRenderer(Driver.RENDER_PDF);
-driver.render(input.getParser(), input.getInputSource());</source>
-        <p>
-          This minimal code snippet has the same problems as the one from the
-          question above. Please inform yourself about the details.
-        </p>
-        <p>
-          If your source XML is generated on the fly, for example from a
-          database, a web service, or another servlet, you have to create a
-          transformer object explicitely and use a SAX event stream to feed the
-          transformation result into FOP.
-        </p>
-        <p>
-          A demonstration:
-        </p>
-        <source>response.setContentType("application/pdf");
-Driver driver =new Driver();
-driver.setOutputStream(response.getOutputStream());
-driver.setRenderer(Driver.RENDER_PDF);
-Transformer transformer=TransformerFactory.newInstance()
-        .newTransformer(new StreamSource("foo.xsl"));
-transformer.transform(xmlsource, new SAXResult(driver.getContentHandler()));</source>
-        <p>
-         You don't have to call run() or render() on the driver object.
-        </p>
-        <p>
-          The <code>xmlsource</code> is a placeholder for your actual XML
-          source. You can supply a <code>new StreamSource( new
-          StringReader(xmlstring))</code> if you have to read the XML from a
-          string. Constructing an XML string and reparse it is not always a
-          good idea, consider to use a SAXSource if you generate your XML. You
-          can, of course, supply a DOMSource or whatever you like. You can also
-          use dynamically generated XSL if you want to.
-        </p>
-        <p>
-          Because you have an explicit transformer object, you can set
-          parameters for the transformation run too.
+          See <link href="embedding.html#servlet-transform">Using FOP in a Servlet with XSLT Transformation</link>.
         </p>
       </answer>
     </faq>
@@ -690,9 +628,8 @@ transformer.transform(xmlsource, new SAXResult(driver.getContentHandler()));</so
       servlet?</question>
       <answer>
         <p>
-          Declare the fonts in the <code>userconfig.xml</code> file as
-          usual. See <link href="#usercfg">loading the user configuration
-          file</link> for further steps.
+          Declare the fonts in the <code>userconfig.xml</code> file as usual.
+See <link href="#usercfg">loading the user configuration file</link> for further details.
         </p>
       </answer>
     </faq>
