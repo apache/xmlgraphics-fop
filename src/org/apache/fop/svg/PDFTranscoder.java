@@ -49,7 +49,6 @@ import org.apache.batik.dom.util.DocumentFactory;
 import org.apache.batik.ext.awt.image.GraphicsUtil;
 
 import org.apache.batik.gvt.GraphicsNode;
-import org.apache.batik.gvt.GraphicsNodeRenderContext;
 import org.apache.batik.gvt.event.EventDispatcher;
 import org.apache.batik.gvt.renderer.ImageRenderer;
 import org.apache.batik.gvt.renderer.ImageRendererFactory;
@@ -178,8 +177,11 @@ public class PDFTranscoder extends XMLAbstractTranscoder {
         // build the GVT tree
         GVTBuilder builder = new GVTBuilder();
         ImageRendererFactory rendFactory = new StaticRendererFactory();
-        GraphicsNodeRenderContext rc = getRenderContext(stroke);
-        BridgeContext ctx = new BridgeContext(userAgent, rc);
+        BridgeContext ctx = new BridgeContext(userAgent);
+        TextPainter textPainter = null;
+        textPainter = new StrokingTextPainter();
+        ctx.setTextPainter(textPainter);
+        
         PDFAElementBridge pdfAElementBridge = new PDFAElementBridge();
         AffineTransform currentTransform = new AffineTransform(1, 0, 0, 1, 0, 0);
         pdfAElementBridge.setCurrentTransform(currentTransform);
@@ -269,18 +271,16 @@ public class PDFTranscoder extends XMLAbstractTranscoder {
         graphics.setSVGDimension(docWidth, docHeight);
         currentTransform.setTransform(1, 0, 0, -1, 0, height);
         if (!stroke) {
-            TextPainter textPainter = null;
             textPainter = new PDFTextPainter(graphics.getFontState());
-            rc.setTextPainter(textPainter);
+            ctx.setTextPainter(textPainter);
         }
 
         if (hints.containsKey(ImageTranscoder.KEY_BACKGROUND_COLOR)) {
             graphics.setBackgroundColor((Color)hints.get(ImageTranscoder.KEY_BACKGROUND_COLOR));
         }
         graphics.setGraphicContext(new org.apache.batik.ext.awt.g2d.GraphicContext());
-        graphics.setRenderingHints(rc.getRenderingHints());
 
-        gvtRoot.paint(graphics, rc);
+        gvtRoot.paint(graphics);
 
         try {
             graphics.finish();
@@ -288,34 +288,6 @@ public class PDFTranscoder extends XMLAbstractTranscoder {
             ex.printStackTrace();
             throw new TranscoderException(ex);
         }
-    }
-
-    public GraphicsNodeRenderContext getRenderContext(boolean stroke) {
-        GraphicsNodeRenderContext nodeRenderContext = null;
-        if (nodeRenderContext == null) {
-            RenderingHints hints = new RenderingHints(null);
-            hints.put(RenderingHints.KEY_ANTIALIASING,
-                      RenderingHints.VALUE_ANTIALIAS_ON);
-
-            hints.put(RenderingHints.KEY_INTERPOLATION,
-                      RenderingHints.VALUE_INTERPOLATION_BILINEAR);
-
-            FontRenderContext fontRenderContext =
-                new FontRenderContext(new AffineTransform(), true, true);
-
-            TextPainter textPainter = null;
-            textPainter = new StrokingTextPainter();
-
-            GraphicsNodeRableFactory gnrFactory =
-                new ConcreteGraphicsNodeRableFactory();
-
-            nodeRenderContext =
-                new GraphicsNodeRenderContext(new AffineTransform(), null,
-                                              hints, fontRenderContext,
-                                              textPainter, gnrFactory);
-        }
-
-        return nodeRenderContext;
     }
 
     /**

@@ -20,6 +20,13 @@ import org.apache.batik.dom.svg.*;
 import org.w3c.dom.*;
 import org.w3c.dom.svg.*;
 import org.w3c.dom.svg.SVGLength;
+import org.apache.batik.bridge.*;
+import org.apache.batik.swing.svg.*;
+import org.apache.batik.swing.gvt.*;
+import org.apache.batik.gvt.*;
+import org.apache.batik.gvt.renderer.*;
+import org.apache.batik.gvt.filter.*;
+import org.apache.batik.gvt.event.*;
 
 import org.w3c.dom.DOMImplementation;
 import org.apache.batik.dom.svg.SVGDOMImplementation;
@@ -28,6 +35,7 @@ import java.io.File;
 import java.net.URL;
 import java.util.List;
 import java.util.ArrayList;
+import java.awt.geom.AffineTransform;
 
 /**
  * class representing svg:svg pseudo flow object.
@@ -51,7 +59,6 @@ public class SVGElement extends SVGObj {
                          PropertyList propertyList) throws FOPException {
             return new SVGElement(parent, propertyList);
         }
-
     }
 
     /**
@@ -131,10 +138,20 @@ public class SVGElement extends SVGObj {
         };
         ((SVGOMDocument)doc).setSVGContext(dc);
 
-        float width =
-            ((SVGSVGElement)element).getWidth().getBaseVal().getValue();
-        float height =
-            ((SVGSVGElement)element).getHeight().getBaseVal().getValue();
+        // this is ugly preprocessing to get the width and height
+        SVGUserAgent userAgent = new SVGUserAgent(new AffineTransform());
+        userAgent.setLogger(log);
+        GVTBuilder builder = new GVTBuilder();
+        BridgeContext ctx = new BridgeContext(userAgent);
+        GraphicsNode root;
+        root = builder.build(ctx, doc);
+        // get the 'width' and 'height' attributes of the SVG document
+        float width = (float)ctx.getDocumentSize().getWidth();
+        float height = (float)ctx.getDocumentSize().getHeight();
+        ctx = null;
+        builder = null;
+        ///////
+
         SVGArea svg = new SVGArea(fs, width, height);
         svg.setSVGDocument(doc);
         svg.start();

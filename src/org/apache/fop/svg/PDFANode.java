@@ -50,13 +50,13 @@ public class PDFANode extends CompositeGraphicsNode {
      * @param g2d the Graphics2D to use
      * @param rc the GraphicsNodeRenderContext to use
      */
-    public void paint(Graphics2D g2d, GraphicsNodeRenderContext rc) {
+    public void paint(Graphics2D g2d) {
         if (isVisible) {
-            super.paint(g2d, rc);
+            super.paint(g2d);
             if(g2d instanceof PDFGraphics2D) {
                 PDFGraphics2D pdfg = (PDFGraphics2D)g2d;
                 int type = org.apache.fop.layout.LinkSet.EXTERNAL;
-                Shape outline = getOutline(rc);
+                Shape outline = getOutline();
                 if(destination.startsWith("#svgView(viewBox(")) {
                     String nums = destination.substring(18, destination.length() - 2);
                     float x = 0;
