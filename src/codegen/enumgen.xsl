@@ -32,7 +32,7 @@
    </xsl:variable>
 
    <xsl:if test="$bEnum='true' or contains($bSubpropEnum, 'true')">
-<redirect:write select="concat('@org/apache/fop@/fo/properties/', $classname, '.java')">
+<redirect:write select="concat($classname, '.java')">
 package org.apache.fop.fo.properties;
 
 <!-- Handle enumeration values -->

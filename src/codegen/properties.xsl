@@ -204,7 +204,7 @@
   <xsl:text> implements </xsl:text><xsl:value-of select="$eclassname"/></xsl:if>
 </xsl:variable>
 
-<redirect:write select="concat('@org/apache/fop@/fo/properties/', $classname, '.java')">
+<redirect:write select="concat($classname, '.java')">
 package org.apache.fop.fo.properties;
 
 import java.util.Hashtable;
