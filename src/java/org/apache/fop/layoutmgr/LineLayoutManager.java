@@ -178,6 +178,10 @@ public class LineLayoutManager extends InlineStackingLayoutManager {
         clearPrevIPD();
         int iPrevLineEnd = vecInlineBreaks.size();
 
+        // Adjust available line length by text-indent. 
+        if (iPrevLineEnd == 0 && bTextAlignment == TextAlign.START) {
+            availIPD.subtract(new MinOptMax(iTextIndent));
+        }        
         prevBP = null;
 
         while ((curLM = getChildLM()) != null) {
@@ -618,7 +622,9 @@ public class LineLayoutManager extends InlineStackingLayoutManager {
                 }
             break;
             case TextAlign.START:
-                //indent = 0;
+                if (prevLineEnd == 0) {
+                    indent = iTextIndent;
+                }
             break;
             case TextAlign.CENTER:
                 indent = (targetWith - realWidth) / 2;
