@@ -26,7 +26,6 @@ import org.xml.sax.Locator;
 import org.xml.sax.SAXParseException;
 
 // FOP
-import org.apache.fop.apps.FOPException;
 import org.apache.fop.datatypes.FODimension;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.layoutmgr.AddLMVisitor;
@@ -78,7 +77,7 @@ public abstract class Region extends FObj {
     /**
      * @see org.apache.fop.fo.FObj#addProperties
      */
-    protected void addProperties(Attributes attlist) throws FOPException {
+    protected void addProperties(Attributes attlist) throws SAXParseException {
         super.addProperties(attlist);
 
         // regions may have name, or default
@@ -91,18 +90,18 @@ public abstract class Region extends FObj {
             // check that name is OK. Not very pretty.
             if (isReserved(getRegionName())
                     && !getRegionName().equals(getDefaultRegionName())) {
-                throw new FOPException("region-name '" + regionName
+                throw new SAXParseException("region-name '" + regionName
                         + "' for " + this.getName()
-                        + " not permitted.");
+                        + " not permitted.", locator);
             }
         }
 
         if (parent instanceof SimplePageMaster) {
             layoutMaster = (SimplePageMaster)parent;
         } else {
-            throw new FOPException(this.getName() + " must be child "
+            throw new SAXParseException(this.getName() + " must be child "
                     + "of simple-page-master, not "
-                    + parent.getName());
+                    + parent.getName(), locator);
         }
         this.wm = this.propertyList.get(PR_WRITING_MODE).getEnum();
 

@@ -24,7 +24,6 @@ import org.xml.sax.Locator;
 import org.xml.sax.SAXParseException;
 
 // FOP
-import org.apache.fop.apps.FOPException;
 import org.apache.fop.fo.FOElementMapping;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.layoutmgr.AddLMVisitor;
@@ -57,8 +56,25 @@ public class BasicLink extends Inline {
     /**
      * @see org.apache.fop.fo.FObj#addProperties
      */
-    protected void addProperties(Attributes attlist) throws FOPException {
+    protected void addProperties(Attributes attlist) throws SAXParseException {
         super.addProperties(attlist);
+
+        setupID();
+        String ext =  propertyList.get(PR_EXTERNAL_DESTINATION).getString();
+        String internal = propertyList.get(PR_INTERNAL_DESTINATION).getString();
+
+        // per spec, internal takes precedence if both specified
+        if (internal.length() > 0) {
+            link = internal;
+        } else if (ext.length() > 0) {
+            link = ext;
+            external = true;
+        } else {
+            // slightly stronger than spec "should be specified"
+            attributeError("Missing attribute:  Either external-destination or " +
+                "internal-destination must be specified.");
+        }
+        
         getFOInputHandler().startLink(this);
     }
 
@@ -106,44 +122,6 @@ public class BasicLink extends Inline {
     }
 
     /**
-     * @todo check if needed; not being called currently
-     */
-    private void setup() {
-        String destination;
-        int linkType;
-
-        // Common Accessibility Properties
-        CommonAccessibility mAccProps = propMgr.getAccessibilityProps();
-
-        // Common Aural Properties
-        CommonAural mAurProps = propMgr.getAuralProps();
-
-        // Common Border, Padding, and Background Properties
-        CommonBorderAndPadding bap = propMgr.getBorderAndPadding();
-        CommonBackground bProps = propMgr.getBackgroundProps();
-
-        // Common Margin Properties-Inline
-        CommonMarginInline mProps = propMgr.getMarginInlineProps();
-
-        // Common Relative Position Properties
-        CommonRelativePosition mRelProps = propMgr.getRelativePositionProps();
-
-        String ext =  propertyList.get(PR_EXTERNAL_DESTINATION).getString();
-        setupID();
-
-        String internal = propertyList.get(PR_INTERNAL_DESTINATION).getString();
-
-        if (ext.length() > 0) {
-            link = ext;
-            external = true;
-        } else if (internal.length() > 0) {
-            link = internal;
-        } else {
-            getLogger().error("basic-link requires an internal or external destination");
-        }
-    }
-
-    /**
      * @return true (BasicLink can contain Markers)
     */
     protected boolean containsMarkers() {
@@ -156,7 +134,6 @@ public class BasicLink extends Inline {
      * @param aLMV the AddLMVisitor object that can access this object.
      */
     public void acceptVisitor(AddLMVisitor aLMV) {
-        setup();
         aLMV.serveBasicLink(this);
     }
 }

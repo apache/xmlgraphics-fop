@@ -24,7 +24,6 @@ import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
 
 // FOP
-import org.apache.fop.apps.FOPException;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FObj;
 import org.apache.fop.layoutmgr.AddLMVisitor;
@@ -52,7 +51,7 @@ public class FootnoteBody extends FObj {
     /**
      * @see org.apache.fop.fo.FObj#addProperties
      */
-    protected void addProperties(Attributes attlist) throws FOPException {
+    protected void addProperties(Attributes attlist) throws SAXParseException {
         super.addProperties(attlist);
         getFOInputHandler().startFootnoteBody(this);
     }

@@ -26,10 +26,10 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.xml.sax.Attributes;
 import org.xml.sax.Locator;
+import org.xml.sax.SAXParseException;
 import javax.xml.parsers.DocumentBuilderFactory;
 
 // FOP
-import org.apache.fop.apps.FOPException;
 import org.apache.fop.layoutmgr.AddLMVisitor;
 
 /**
@@ -61,10 +61,11 @@ public abstract class XMLObj extends FONode {
     /**
      * @see org.apache.fop.fo.FONode#processNode
      */
-    public void processNode(String elementName, Locator locator, Attributes attlist) throws FOPException {
-        setLocation(locator);
-        name = elementName;
-        attr = attlist;
+    public void processNode(String elementName, Locator locator, 
+        Attributes attlist) throws SAXParseException {
+            setLocation(locator);
+            name = elementName;
+            attr = attlist;
     }
 
     /**

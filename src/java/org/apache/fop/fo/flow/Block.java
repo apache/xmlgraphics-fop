@@ -24,7 +24,6 @@ import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
 
 // FOP
-import org.apache.fop.apps.FOPException;
 import org.apache.fop.datatypes.ColorType;
 import org.apache.fop.fo.CharIterator;
 import org.apache.fop.fo.FONode;
@@ -100,7 +99,7 @@ public class Block extends FObjMixed {
     /**
      * @see org.apache.fop.fo.FObj#addProperties
      */
-    protected void addProperties(Attributes attlist) throws FOPException {
+    protected void addProperties(Attributes attlist) throws SAXParseException {
         super.addProperties(attlist);
         this.span = this.propertyList.get(PR_SPAN).getEnum();
         this.wsTreatment =
@@ -112,87 +111,31 @@ public class Block extends FObjMixed {
           this.propertyList.get(PR_LINEFEED_TREATMENT).getEnum();
 
         setupID();
+        this.align = this.propertyList.get(PR_TEXT_ALIGN).getEnum();
+        this.alignLast =
+          this.propertyList.get(PR_TEXT_ALIGN_LAST).getEnum();
+        this.breakAfter = this.propertyList.get(PR_BREAK_AFTER).getEnum();
+        this.lineHeight = this.propertyList.get(
+                            PR_LINE_HEIGHT).getLength().getValue();
+        this.startIndent = this.propertyList.get(
+                             PR_START_INDENT).getLength().getValue();
+        this.endIndent = this.propertyList.get(
+                           PR_END_INDENT).getLength().getValue();
+        this.spaceBefore = this.propertyList.get(
+                             PR_SPACE_BEFORE | CP_OPTIMUM).getLength().getValue();
+        this.spaceAfter = this.propertyList.get(
+                            PR_SPACE_AFTER | CP_OPTIMUM).getLength().getValue();
+        this.textIndent = this.propertyList.get(
+                            PR_TEXT_INDENT).getLength().getValue();
+        this.keepWithNext =
+          this.propertyList.get(PR_KEEP_WITH_NEXT).getEnum();
+
+        this.blockWidows =
+          this.propertyList.get(PR_WIDOWS).getNumber().intValue();
+        this.blockOrphans =
+          this.propertyList.get(PR_ORPHANS).getNumber().intValue();
 
         getFOInputHandler().startBlock(this);
-    }
-
-    private void setup() {
-
-            // Common Accessibility Properties
-            CommonAccessibility mAccProps = propMgr.getAccessibilityProps();
-
-            // Common Aural Properties
-            CommonAural mAurProps = propMgr.getAuralProps();
-
-            // Common Border, Padding, and Background Properties
-            CommonBorderAndPadding bap = propMgr.getBorderAndPadding();
-            CommonBackground bProps = propMgr.getBackgroundProps();
-
-            // Common Font Properties
-            //this.fontState = propMgr.getFontState(area.getFontInfo());
-
-            // Common Hyphenation Properties
-            CommonHyphenation mHyphProps = propMgr.getHyphenationProps();
-
-            // Common Margin Properties-Block
-            CommonMarginBlock mProps = propMgr.getMarginProps();
-
-            // Common Relative Position Properties
-            CommonRelativePosition mRelProps =
-              propMgr.getRelativePositionProps();
-
-            // this.propertyList.get("break-after");
-            // this.propertyList.get("break-before");
-            // this.propertyList.get("color");
-            // this.propertyList.get("text-depth");
-            // this.propertyList.get("text-altitude");
-            // this.propertyList.get("hyphenation-keep");
-            // this.propertyList.get("hyphenation-ladder-count");
-            setupID();
-            // this.propertyList.get("keep-together");
-            // this.propertyList.get("keep-with-next");
-            // this.propertyList.get("keep-with-previous");
-            // this.propertyList.get("last-line-end-indent");
-            // this.propertyList.get("linefeed-treatment");
-            // this.propertyList.get("line-height");
-            // this.propertyList.get("line-height-shift-adjustment");
-            // this.propertyList.get("line-stacking-strategy");
-            // this.propertyList.get("orphans");
-            // this.propertyList.get("white-space-treatment");
-            // this.propertyList.get("span");
-            // this.propertyList.get("text-align");
-            // this.propertyList.get("text-align-last");
-            // this.propertyList.get("text-indent");
-            // this.propertyList.get("visibility");
-            // this.propertyList.get("white-space-collapse");
-            // this.propertyList.get("widows");
-            // this.propertyList.get("wrap-option");
-            // this.propertyList.get("z-index");
-
-            this.align = this.propertyList.get(PR_TEXT_ALIGN).getEnum();
-            this.alignLast =
-              this.propertyList.get(PR_TEXT_ALIGN_LAST).getEnum();
-            this.breakAfter = this.propertyList.get(PR_BREAK_AFTER).getEnum();
-            this.lineHeight = this.propertyList.get(
-                                PR_LINE_HEIGHT).getLength().getValue();
-            this.startIndent = this.propertyList.get(
-                                 PR_START_INDENT).getLength().getValue();
-            this.endIndent = this.propertyList.get(
-                               PR_END_INDENT).getLength().getValue();
-            this.spaceBefore = this.propertyList.get(
-                                 PR_SPACE_BEFORE | CP_OPTIMUM).getLength().getValue();
-            this.spaceAfter = this.propertyList.get(
-                                PR_SPACE_AFTER | CP_OPTIMUM).getLength().getValue();
-            this.textIndent = this.propertyList.get(
-                                PR_TEXT_INDENT).getLength().getValue();
-            this.keepWithNext =
-              this.propertyList.get(PR_KEEP_WITH_NEXT).getEnum();
-
-            this.blockWidows =
-              this.propertyList.get(PR_WIDOWS).getNumber().intValue();
-            this.blockOrphans =
-              this.propertyList.get(PR_ORPHANS).getNumber().intValue();
-
     }
 
     /**

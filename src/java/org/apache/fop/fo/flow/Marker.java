@@ -20,9 +20,9 @@ package org.apache.fop.fo.flow;
 
 // XML
 import org.xml.sax.Attributes;
+import org.xml.sax.SAXParseException;
 
 // FOP
-import org.apache.fop.apps.FOPException;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FObjMixed;
 import org.apache.fop.layoutmgr.AddLMVisitor;
@@ -48,7 +48,7 @@ public class Marker extends FObjMixed {
     /**
      * @see org.apache.fop.fo.FObj#addProperties
      */
-    protected void addProperties(Attributes attlist) throws FOPException {
+    protected void addProperties(Attributes attlist) throws SAXParseException {
         super.addProperties(attlist);
         this.markerClassName =
             this.propertyList.get(PR_MARKER_CLASS_NAME).getString();

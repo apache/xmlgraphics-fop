@@ -23,7 +23,6 @@ import org.xml.sax.Attributes;
 import org.xml.sax.SAXParseException;
 
 // FOP
-import org.apache.fop.apps.FOPException;
 import org.apache.fop.datatypes.ColorType;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FObj;
@@ -63,54 +62,26 @@ public class ListBlock extends FObj {
     /**
      * @see org.apache.fop.fo.FObj#addProperties
      */
-    protected void addProperties(Attributes attlist) throws FOPException {
+    protected void addProperties(Attributes attlist) throws SAXParseException {
         super.addProperties(attlist);
+        setupID();
+
+        this.align = this.propertyList.get(PR_TEXT_ALIGN).getEnum();
+        this.alignLast = this.propertyList.get(PR_TEXT_ALIGN_LAST).getEnum();
+        this.lineHeight =
+            this.propertyList.get(PR_LINE_HEIGHT).getLength().getValue();
+        this.startIndent =
+            this.propertyList.get(PR_START_INDENT).getLength().getValue();
+        this.endIndent =
+            this.propertyList.get(PR_END_INDENT).getLength().getValue();
+        this.spaceBefore =
+            this.propertyList.get(PR_SPACE_BEFORE | CP_OPTIMUM).getLength().getValue();
+        this.spaceAfter =
+            this.propertyList.get(PR_SPACE_AFTER | CP_OPTIMUM).getLength().getValue();
+        this.spaceBetweenListRows = 0;    // not used at present
+        this.backgroundColor =
+            this.propertyList.get(PR_BACKGROUND_COLOR).getColorType();
         getFOInputHandler().startList(this);
-    }
-
-    private void setup() throws FOPException {
-
-            // Common Accessibility Properties
-            CommonAccessibility mAccProps = propMgr.getAccessibilityProps();
-
-            // Common Aural Properties
-            CommonAural mAurProps = propMgr.getAuralProps();
-
-            // Common Border, Padding, and Background Properties
-            CommonBorderAndPadding bap = propMgr.getBorderAndPadding();
-            CommonBackground bProps = propMgr.getBackgroundProps();
-
-            // Common Margin Properties-Block
-            CommonMarginBlock mProps = propMgr.getMarginProps();
-
-            // Common Relative Position Properties
-            CommonRelativePosition mRelProps = propMgr.getRelativePositionProps();
-
-            // this.propertyList.get("break-after");
-            // this.propertyList.get("break-before");
-            setupID();
-            // this.propertyList.get("keep-together");
-            // this.propertyList.get("keep-with-next");
-            // this.propertyList.get("keep-with-previous");
-            // this.propertyList.get("provisional-distance-between-starts");
-            // this.propertyList.get("provisional-label-separation");
-
-            this.align = this.propertyList.get(PR_TEXT_ALIGN).getEnum();
-            this.alignLast = this.propertyList.get(PR_TEXT_ALIGN_LAST).getEnum();
-            this.lineHeight =
-                this.propertyList.get(PR_LINE_HEIGHT).getLength().getValue();
-            this.startIndent =
-                this.propertyList.get(PR_START_INDENT).getLength().getValue();
-            this.endIndent =
-                this.propertyList.get(PR_END_INDENT).getLength().getValue();
-            this.spaceBefore =
-                this.propertyList.get(PR_SPACE_BEFORE | CP_OPTIMUM).getLength().getValue();
-            this.spaceAfter =
-                this.propertyList.get(PR_SPACE_AFTER | CP_OPTIMUM).getLength().getValue();
-            this.spaceBetweenListRows = 0;    // not used at present
-            this.backgroundColor =
-                this.propertyList.get(PR_BACKGROUND_COLOR).getColorType();
-
     }
 
     /**

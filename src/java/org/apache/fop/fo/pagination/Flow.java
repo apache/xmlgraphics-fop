@@ -31,7 +31,6 @@ import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.FOElementMapping;
 import org.apache.fop.layoutmgr.AddLMVisitor;
-import org.apache.fop.apps.FOPException;
 
 /**
  * Class modelling the fo:flow object. See Sec. 6.4.18 in the XSL-FO Standard.
@@ -100,13 +99,13 @@ public class Flow extends FObj {
     /**
      * @see org.apache.fop.fo.FObj#addProperties
      */
-    protected void addProperties(Attributes attlist) throws FOPException {
+    protected void addProperties(Attributes attlist) throws SAXParseException {
         super.addProperties(attlist);
         if (parent.getName().equals("fo:page-sequence")) {
             this.pageSequence = (PageSequence) parent;
         } else {
-            throw new FOPException("flow must be child of "
-                                 + "page-sequence, not " + parent.getName());
+            throw new SAXParseException("flow must be child of "
+                                 + "page-sequence, not " + parent.getName(), locator);
         }
         // according to communication from Paul Grosso (XSL-List,
         // 001228, Number 406), confusion in spec section 6.4.5 about
@@ -134,10 +133,10 @@ public class Flow extends FObj {
      * @param name the name of the flow to set
      * @throws FOPException for an empty name
      */
-    protected void setFlowName(String name) throws FOPException {
+    protected void setFlowName(String name) throws SAXParseException {
         if (name == null || name.equals("")) {
-            throw new FOPException("A 'flow-name' is required for "
-                         + getName());
+            throw new SAXParseException("A 'flow-name' is required for "
+                         + getName(), locator);
         } else {
             flowName = name;
         }

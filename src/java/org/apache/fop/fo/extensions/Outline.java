@@ -20,11 +20,11 @@ package org.apache.fop.fo.extensions;
 
 import org.apache.fop.fo.FONode;
 import org.apache.fop.layoutmgr.AddLMVisitor;
-import org.apache.fop.apps.FOPException;
 
 import java.util.ArrayList;
 
 import org.xml.sax.Attributes;
+import org.xml.sax.SAXParseException;
 
 
 /**
@@ -53,7 +53,7 @@ public class Outline extends ExtensionObj {
      *
      * @see org.apache.fop.fo.FObj#addProperties
      */
-    protected void addProperties(Attributes attlist) throws FOPException {
+    protected void addProperties(Attributes attlist) throws SAXParseException {
         internalDestination =
             attlist.getValue("internal-destination");
         externalDestination =

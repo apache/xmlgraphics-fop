@@ -24,7 +24,6 @@ import org.xml.sax.Locator;
 import org.xml.sax.SAXParseException;
 
 // FOP
-import org.apache.fop.apps.FOPException;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FObjMixed;
 import org.apache.fop.layoutmgr.AddLMVisitor;
@@ -61,7 +60,7 @@ public class RetrieveMarker extends FObjMixed {
     /**
      * @see org.apache.fop.fo.FObj#addProperties
      */
-    protected void addProperties(Attributes attlist) throws FOPException {
+    protected void addProperties(Attributes attlist) throws SAXParseException {
         super.addProperties(attlist);
         this.retrieveClassName =
             this.propertyList.get(PR_RETRIEVE_CLASS_NAME).getString();

@@ -25,12 +25,12 @@ import java.util.Map;
 
 // XML
 import org.xml.sax.Attributes;
+import org.xml.sax.SAXParseException;
 
 // FOP
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FObj;
 import org.apache.fop.layoutmgr.AddLMVisitor;
-import org.apache.fop.apps.FOPException;
 
 /**
  * A simple-page-master formatting object.
@@ -55,7 +55,7 @@ public class SimplePageMaster extends FObj {
     /**
      * @see org.apache.fop.fo.FObj#addProperties
      */
-    protected void addProperties(Attributes attlist) throws FOPException {
+    protected void addProperties(Attributes attlist) throws SAXParseException {
         super.addProperties(attlist);
 
         if (parent.getName().equals("fo:layout-master-set")) {
@@ -65,12 +65,17 @@ public class SimplePageMaster extends FObj {
                 getLogger().warn("simple-page-master does not have "
                         + "a master-name and so is being ignored");
             } else {
-                layoutMasterSet.addSimplePageMaster(this);
+                try {
+                    layoutMasterSet.addSimplePageMaster(this);
+                } catch (Exception e) {
+                    throw new SAXParseException("Error with adding Page Sequence Master: " 
+                        + e.getMessage(), locator);
+                }
             }
         } else {
-            throw new FOPException("fo:simple-page-master must be child "
+            throw new SAXParseException("fo:simple-page-master must be child "
                     + "of fo:layout-master-set, not "
-                    + parent.getName());
+                    + parent.getName(), locator);
         }
         //Well, there are only 5 regions so we can save a bit of memory here
         regions = new HashMap(5);

@@ -20,11 +20,11 @@ package org.apache.fop.fo.pagination;
 
 // SAX
 import org.xml.sax.Attributes;
+import org.xml.sax.SAXParseException;
 
 // FOP
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FObj;
-import org.apache.fop.apps.FOPException;
 import org.apache.fop.layoutmgr.AddLMVisitor;
 
 /**
@@ -46,7 +46,7 @@ public abstract class PageMasterReference extends FObj
     /**
      * @see org.apache.fop.fo.FObj#addProperties
      */
-    protected void addProperties(Attributes attlist) throws FOPException {
+    protected void addProperties(Attributes attlist) throws SAXParseException {
         super.addProperties(attlist);
         if (getProperty(PR_MASTER_REFERENCE) != null) {
             this.masterName = getProperty(PR_MASTER_REFERENCE).getString();
@@ -69,7 +69,7 @@ public abstract class PageMasterReference extends FObj
      * @param parent parent node
      * @throws FOPException If the parent is invalid.
      */
-    protected void validateParent(FONode parent) throws FOPException {
+    protected void validateParent(FONode parent) throws SAXParseException {
         if (parent.getName().equals("fo:page-sequence-master")) {
             PageSequenceMaster pageSequenceMaster = (PageSequenceMaster)parent;
 
@@ -80,9 +80,9 @@ public abstract class PageMasterReference extends FObj
                 pageSequenceMaster.addSubsequenceSpecifier(this);
             }
         } else {
-            throw new FOPException(getName() + " must be"
+            throw new SAXParseException(getName() + " must be"
                                    + "child of fo:page-sequence-master, not "
-                                   + parent.getName());
+                                   + parent.getName(), locator);
         }
     }
 

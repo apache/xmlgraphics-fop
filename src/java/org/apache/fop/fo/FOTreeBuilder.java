@@ -268,8 +268,6 @@ public class FOTreeBuilder extends DefaultHandler {
             foNode.processNode(localName, locator, attlist);
         } catch (IllegalArgumentException e) {
             throw new SAXException(e);
-        } catch (FOPException e) {
-            throw new SAXException(e);
         }
 
         if (rootFObj == null) {

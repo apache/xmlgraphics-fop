@@ -26,7 +26,6 @@ import org.xml.sax.SAXParseException;
 // FOP
 import org.apache.fop.fo.FONode;
 import org.apache.fop.layoutmgr.AddLMVisitor;
-import org.apache.fop.apps.FOPException;
 
 /**
  * A repeatable-page-master-reference formatting object.
@@ -62,7 +61,7 @@ public class RepeatablePageMasterReference extends PageMasterReference
     /**
      * @see org.apache.fop.fo.FObj#addProperties
      */
-    protected void addProperties(Attributes attlist) throws FOPException {
+    protected void addProperties(Attributes attlist) throws SAXParseException {
         super.addProperties(attlist);
         String mr = getProperty(PR_MAXIMUM_REPEATS).getString();
         if (mr.equals("no-limit")) {
@@ -76,8 +75,8 @@ public class RepeatablePageMasterReference extends PageMasterReference
                     this.maximumRepeats = 0;
                 }
             } catch (NumberFormatException nfe) {
-                throw new FOPException("Invalid number for "
-                                       + "'maximum-repeats' property");
+                throw new SAXParseException("Invalid number for "
+                                       + "'maximum-repeats' property", locator);
             }
         }
     }

@@ -83,15 +83,15 @@ public class LayoutMasterSet extends FObj {
     /**
      * @see org.apache.fop.fo.FObj#addProperties
      */
-    protected void addProperties(Attributes attlist) throws FOPException {
+    protected void addProperties(Attributes attlist) throws SAXParseException {
         super.addProperties(attlist);
 
         if (parent.getName().equals("fo:root")) {
             Root root = (Root)parent;
             root.setLayoutMasterSet(this);
         } else {
-            throw new FOPException("fo:layout-master-set must be child of fo:root, not "
-                                   + parent.getName());
+            throw new SAXParseException("fo:layout-master-set must be child of fo:root, not "
+                                   + parent.getName(), locator);
         }
 
         this.simplePageMasters = new java.util.HashMap();
@@ -170,9 +170,9 @@ public class LayoutMasterSet extends FObj {
     /**
      * Section 7.25.7: check to see that if a region-name is a
      * duplicate, that it maps to the same fo region-class.
-     * @throws FOPException if there's a name duplication
+     * @throws SAXParseException if there's a name duplication
      */
-    public void checkRegionNames() throws FOPException {
+    public void checkRegionNames() throws SAXParseException {
         // (user-entered) region-name to default region map.
         Map allRegions = new java.util.HashMap();
         for (Iterator spm = simplePageMasters.values().iterator();
@@ -187,13 +187,13 @@ public class LayoutMasterSet extends FObj {
                     String defaultRegionName =
                         (String) allRegions.get(region.getRegionName());
                     if (!defaultRegionName.equals(region.getDefaultRegionName())) {
-                        throw new FOPException("Region-name ("
+                        throw new SAXParseException("Region-name ("
                                                + region.getRegionName()
                                                + ") is being mapped to multiple "
                                                + "region-classes ("
                                                + defaultRegionName + " and "
                                                + region.getDefaultRegionName()
-                                               + ")");
+                                               + ")", locator);
                     }
                 }
                 allRegions.put(region.getRegionName(),

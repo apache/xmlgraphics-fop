@@ -25,13 +25,14 @@ import java.util.ListIterator;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.fop.apps.FOPException;
 import org.apache.fop.fo.flow.Marker;
 import org.apache.fop.fo.properties.Property;
 import org.apache.fop.fo.properties.PropertyMaker;
 import org.apache.fop.layoutmgr.AddLMVisitor;
+
 import org.xml.sax.Attributes;
 import org.xml.sax.Locator;
+import org.xml.sax.SAXParseException;
 
 /**
  * Base class for representation of formatting objects and their processing.
@@ -98,7 +99,7 @@ public class FObj extends FONode implements Constants {
      * @see org.apache.fop.fo.FONode#processNode
      */
     public void processNode(String elementName, Locator locator, 
-                            Attributes attlist) throws FOPException {
+                            Attributes attlist) throws SAXParseException {
         setLocation(locator);
         addProperties(attlist);
     }
@@ -107,7 +108,7 @@ public class FObj extends FONode implements Constants {
      * Set properties for this FO based on node attributes
      * @param attlist Collection of attributes passed to us from the parser.
      */
-    protected void addProperties(Attributes attlist) throws FOPException {
+    protected void addProperties(Attributes attlist) throws SAXParseException {
         FObj parentFO = findNearestAncestorFObj();
         PropertyList parentPL = null;
 
