@@ -39,6 +39,8 @@ public class LanguageType extends NCName {
     private static final String tag = "$Name$";
     private static final String revision = "$Revision$";
 
+    private String iso639_1Code = null;
+
     public LanguageType(int property, String languageCode)
         throws PropertyException
     {
@@ -50,6 +52,7 @@ public class LanguageType extends NCName {
             throw new PropertyException
                              ("Invalid language code: " + languageCode);
         setString(code);
+        iso639_1Code = CountryLanguageScript.canonical639_1Code(code);
     }
 
     public LanguageType(String propertyName, String languageCode)
@@ -66,10 +69,14 @@ public class LanguageType extends NCName {
     }
 
     /**
-     * @return the <tt>String</tt> language code.
+     * Gets the ISO 639-2T language code
+     * @return the code.
      */
     public String getLanguage() {
         return string;
     }
 
+    public String getISO639_1Language() {
+        return iso639_1Code;
+    }
 }
