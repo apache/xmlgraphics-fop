@@ -14,6 +14,7 @@ import org.apache.fop.image.*;
 import org.apache.fop.datatypes.ColorSpace;
 
 import org.apache.batik.ext.awt.g2d.*;
+import org.apache.batik.ext.awt.image.GraphicsUtil;
 
 import java.text.AttributedCharacterIterator;
 import java.text.CharacterIterator;
@@ -170,22 +171,32 @@ public class PDFGraphics2D extends AbstractGraphics2D {
 
         int count = 0;
         int maskpos = 0;
+        int [] iarray;
+        int i, j, val, alpha, add, mult;
         switch (bd.getDataType()) {
             case DataBuffer.TYPE_INT:
                 int[][] idata = ((DataBufferInt) bd).getBankData();
-                for (int i = 0; i < idata.length; i++) {
-                    for (int j = 0; j < idata[i].length; j++) {
+                for (i = 0; i < idata.length; i++) {
+                    iarray = idata[i];
+                    for (j = 0; j < iarray.length; j++) {
+                        val = iarray[j];
+                        alpha = val >>> 24;
                         //mask[maskpos++] = (byte)((idata[i][j] >> 24) & 0xFF);
-                        if (((idata[i][j] >> 24) & 0xFF) != 255) {
-                            result[count++] = (byte) 0xFF;
-                            result[count++] = (byte) 0xFF;
-                            result[count++] = (byte) 0xFF;
+                        if (alpha != 255) {
+                            // System.out.println("Alpha: " + alpha);
+                            // Composite with opaque white...
+                            add = (255 - alpha);
+                            mult = (alpha << 16) / 255;
+                            result[count++] = (byte)(add +
+                                                     ((((val >> 16) & 0xFF) * mult) >> 16));
+                            result[count++] = (byte)(add +
+                                                     ((((val >> 8) & 0xFF) * mult) >> 16));
+                            result[count++] = (byte)(add +
+                                                     ((((val) & 0xFF) * mult) >>16));
                         } else {
-                            result[count++] =
-                              (byte)((idata[i][j] >> 16) & 0xFF);
-                            result[count++] =
-                              (byte)((idata[i][j] >> 8) & 0xFF);
-                            result[count++] = (byte)((idata[i][j]) & 0xFF);
+                            result[count++] = (byte)((val >> 16) & 0xFF);
+                            result[count++] = (byte)((val >> 8) & 0xFF);
+                            result[count++] = (byte)((val) & 0xFF);
                         }
                     }
                 }
@@ -905,12 +916,12 @@ public class PDFGraphics2D extends AbstractGraphics2D {
                              boolean nonzero) {
         if (fill) {
             if (stroke) {
-                if (!nonzero)
+                if (nonzero)
                     currentStream.write("B*\n");
                 else
                     currentStream.write("B\n");
             } else {
-                if (!nonzero)
+                if (nonzero)
                     currentStream.write("f*\n");
                 else
                     currentStream.write("f\n");
@@ -926,9 +937,143 @@ public class PDFGraphics2D extends AbstractGraphics2D {
      * <code>Graphics2D</code>.
      */
     public GraphicsConfiguration getDeviceConfiguration() {
-        //System.out.println("getDeviceConviguration");
-        return GraphicsEnvironment.getLocalGraphicsEnvironment().
-               getDefaultScreenDevice().getDefaultConfiguration();
+        return new PDFGraphicsConfiguration();
+    }
+
+    /**
+     * Our implementation of the class that returns information about
+     * roughly what we can handle and want to see (alpha for example).
+     */
+    static class PDFGraphicsConfiguration extends GraphicsConfiguration {
+        // We use this to get a good colormodel..
+        static BufferedImage BIWithAlpha =
+            new BufferedImage (1, 1, BufferedImage.TYPE_INT_ARGB);
+        // We use this to get a good colormodel..
+        static BufferedImage BIWithOutAlpha =
+            new BufferedImage (1, 1, BufferedImage.TYPE_INT_RGB);
+
+        /**
+         * Construct a buffered image with an alpha channel, unless
+         * transparencty is OPAQUE (no alpha at all).
+         */
+        public BufferedImage createCompatibleImage(int width,
+                int height, int transparency) {
+            if (transparency == Transparency.OPAQUE)
+                return new BufferedImage(width, height,
+                                         BufferedImage.TYPE_INT_RGB);
+            else
+                return new BufferedImage(width, height,
+                                         BufferedImage.TYPE_INT_ARGB);
+        }
+
+        /**
+         * Construct a buffered image with an alpha channel.
+         */
+        public BufferedImage createCompatibleImage(int width, int height) {
+            return new BufferedImage(width, height,
+                                     BufferedImage.TYPE_INT_ARGB);
+        }
+
+        /**
+         * FIXX ME: This should return the page bounds in Pts,
+         * I couldn't figure out how to get this for the current
+         * page from the PDFDocument (this still works for now,
+         * but it should be fixed...).
+         */
+        public Rectangle getBounds() {
+            return null;
+        }
+
+        /**
+         * Return a good default color model for this 'device'.
+         */
+        public ColorModel getColorModel() {
+            return BIWithAlpha.getColorModel();
+        }
+
+        /**
+         * Return a good color model given <tt>transparency</tt>
+         */
+        public ColorModel getColorModel(int transparency) {
+            if (transparency == Transparency.OPAQUE)
+                return BIWithOutAlpha.getColorModel();
+            else
+                return BIWithAlpha.getColorModel();
+        }
+
+        /**
+         * The default transform (1:1).
+         */
+        public AffineTransform getDefaultTransform() {
+            return new AffineTransform();
+        }
+
+        /**
+         * The normalizing transform (1:1) (since we currently
+         * render images at 72dpi, which we might want to change
+         * in the future).
+         */
+        public AffineTransform getNormalizingTransform() {
+            return new AffineTransform();
+        }
+
+        /**
+         * Return our dummy instance of GraphicsDevice
+         */
+        public GraphicsDevice getDevice() {
+            return new PDFGraphicsDevice(this);
+        }
+    }
+
+    /**
+     * This implements the GraphicsDevice interface as appropriate for
+     * a PDFGraphics2D.  This is quite simple since we only have one
+     * GraphicsConfiguration for now (this might change in the future
+     * I suppose).
+     */
+    static class PDFGraphicsDevice extends GraphicsDevice {
+        /** The Graphics Config that created us...
+         */
+        GraphicsConfiguration gc;
+
+        /**
+         * @param The gc we should reference
+         */
+        PDFGraphicsDevice(PDFGraphicsConfiguration gc) {
+            this.gc = gc;
+        }
+
+        /**
+         * Ignore template and return the only config we have
+         */
+        public GraphicsConfiguration getBestConfiguration (
+          GraphicsConfigTemplate gct) {
+            return gc;
+        }
+        /**
+         * Return an array of our one GraphicsConfig
+         */
+        public GraphicsConfiguration[] getConfigurations() {
+            return new GraphicsConfiguration[]{ gc };
+        }
+        /**
+         * Return out sole GraphicsConfig.
+         */
+        public GraphicsConfiguration getDefaultConfiguration() {
+            return gc;
+        }
+        /**
+         * Generate an IdString..
+         */
+        public String getIDstring() {
+            return toString();
+        }
+        /**
+         * Let the caller know that we are "a printer"
+         */
+        public int getType() {
+            return GraphicsDevice.TYPE_PRINTER;
+        }
     }
 
     /**
