@@ -45,6 +45,7 @@
         <menu label="Resources">
           <menu-item label="Getting Help" href="gethelp.html"/>
           <menu-item label="FAQs" href="faq.html"/>
+          <menu-item label="XSL-FO" href="fo.html"/>
           <menu-item label="Examples" href="examples.html"/>
           <menu-item label="Bugs" href="bugs.html"/>
           <menu-item label="License" href="license.html"/>

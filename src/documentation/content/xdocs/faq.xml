@@ -3,9 +3,9 @@
     "http://cvs.apache.org/viewcvs.cgi/*checkout*/xml-forrest/src/resources/schema/dtd/faq-v11.dtd">
 
 <faqs title="FOP FAQ">
-  <part id="part_general">
+  <part id="part-general">
     <title>General questions</title>
-    <faq id="fop_general">
+    <faq id="fop-general">
       <question>What is FOP?</question>
       <answer>
       <p>
@@ -19,7 +19,7 @@
       </p>
       </answer>
     </faq>
-    <faq id="fop_functions">
+    <faq id="fop-functions">
       <question>What can I do with FOP?</question>
       <answer>
         <p>
@@ -36,7 +36,7 @@
         </p>
       </answer>
     </faq>
-    <faq id="fop_acronym">
+    <faq id="fop-acronym">
       <question>What does "FOP" stand for?</question>
       <answer>
         <p>
@@ -45,7 +45,7 @@
         </p>
       </answer>
     </faq>
-    <faq id="fop_other_apache">
+    <faq id="fop-other-apache">
       <question>How does FOP interact with other Apache Projects?</question>
       <answer>
         <p>
@@ -61,7 +61,7 @@
         </p>
       </answer>
     </faq>
-    <faq id="xsl_def">
+    <faq id="xsl-def">
       <question>What is XSL?</question>
       <answer>
         <p>
@@ -73,8 +73,8 @@
         </p>
       </answer>
     </faq>
-    <faq id="XSLFO">
-      <question>What is XSLFO?</question>
+    <faq id="xslfo">
+      <question>What is XSL-FO?</question>
       <answer>
         <p>
           XSLFO is an XML vocabulary that is used to specify a pagination and
@@ -119,9 +119,9 @@
       </answer>
     </faq>
   </part>
-  <part id="part_running">
+  <part id="part-running">
     <title>Problems running FOP</title>
-    <faq id="no_page_master">
+    <faq id="no-page-master">
       <question>I get the error: [ERROR]: 'master-reference' for
       'fo:page-sequence'matches no 'simple-page-master' or
       'page-sequence-master'</question>
@@ -327,7 +327,7 @@
         <p>See the article "<link href="gethelp.html#compliance">Review FOP's Standards Compliance</link>".</p>
       </answer>
     </faq>
-    <faq id="fop_hangs">
+    <faq id="fop-hangs">
       <question>FOP hangs. FOP does not exit.</question>
       <answer>
         <p>
@@ -367,7 +367,7 @@
         </p>
       </answer>
     </faq>
-    <faq id="cannot_find_external-graphics">
+    <faq id="cannot-find-external-graphics">
       <question>FOP cannot find a file for fo:external-graphics.</question>
       <answer>
         <p>
@@ -388,7 +388,7 @@
         </p-->
       </answer>
     </faq>
-    <faq id="fonts_not_found">
+    <faq id="fonts-not-found">
       <question>FOP does not find my fonts.</question>
       <answer>
         <p>
@@ -405,9 +405,9 @@
       </answer>
     </faq>
   </part>
-  <part id="part_output">
+  <part id="part-output">
     <title>Problems with FOP output</title>
-    <faq id="blank_page_between_page_sequences">
+    <faq id="blank-page-between-page-sequences">
       <question>Why does FOP insert a blank page between my page sequences?</question>
       <answer>
         <p>
@@ -432,7 +432,7 @@
         </p>
       </answer>
     </faq>
-    <faq id="png_fails">
+    <faq id="png-fails">
       <question>My PNG images don't work.</question>
       <answer>
         <p>
@@ -486,7 +486,7 @@
 </fo:table>]]></source>
       </answer>
     </faq>
-    <faq id="table_missing">
+    <faq id="table-missing">
       <question>My tables are missing, or missing their content.</question>
       <answer>
         <p>
@@ -502,7 +502,7 @@
         </p>
       </answer>
     </faq>
-    <faq id="cells_overflow">
+    <faq id="cells-overflow">
       <question>Text overflowing table cells and the like is not clipped. Long
         text flows into adjacent cells/block, obscuring stuff there.</question>
       <answer>
@@ -532,7 +532,7 @@
         </p>
       </answer>
     </faq>
-    <faq id="page_number_align">
+    <faq id="page-number-align">
       <question>Page numbers are not properly right aligned.</question>
       <answer>
         <p>
@@ -549,7 +549,7 @@
         </p>
       </answer>
     </faq>
-    <faq id="graphic_not_displayed">
+    <faq id="graphic-not-displayed">
       <question>A graphic is not displayed.</question>
       <answer>
         <p>
@@ -585,7 +585,7 @@
         </p -->
       </answer>
     </faq>
-    <faq id="hypenation_fails">
+    <faq id="hypenation-fails">
       <question>Hyphenation does not work.</question>
       <answer>
         <p>
@@ -596,7 +596,7 @@
       </answer>
     </faq>
   </part>
-  <part id="part_embedding">
+  <part id="part-embedding">
     <title>Embedding FOP. Using FOP in a servlet.</title>
     <faq id="servlet">
       <question>How do I use FOP in a servlet?</question>
@@ -606,7 +606,7 @@
         </p>
       </answer>
     </faq>
-    <faq id="servlet_with_xslt">
+    <faq id="servlet-with-xslt">
       <question>How do I use FOP in a servlet with an XSLT
       transformation?</question>
       <answer>
@@ -615,7 +615,7 @@
         </p>
       </answer>
     </faq>
-    <faq id="servlet_xslt_params">
+    <faq id="servlet-xslt-params">
       <question>How do I pass parameters to the XSLT transformation?</question>
       <answer>
         <p>
@@ -623,7 +623,7 @@
         </p>
       </answer>
     </faq>
-    <faq id="servlet_nonstd_fonts">
+    <faq id="servlet-nonstd-fonts">
       <question>How do I use my own fonts when running FOP from a
       servlet?</question>
       <answer>
@@ -633,7 +633,7 @@ See <link href="#usercfg">loading the user configuration file</link> for further
         </p>
       </answer>
     </faq>
-    <faq id="servlet_baseDir">
+    <faq id="servlet-baseDir">
       <question>How do I set the baseDir property in a servlet environment?</question>
       <answer>
         <p>
@@ -649,7 +649,7 @@ See <link href="#usercfg">loading the user configuration file</link> for further
         </p>
       </answer>
     </faq>
-    <faq id="servlet_NoClassDefFound">
+    <faq id="servlet-NoClassDefFound">
       <question>I keep getting NoClassDefFound and other exceptions. How do I
         get FOP working for various servlet engines?</question>
       <answer>
@@ -665,16 +665,16 @@ See <link href="#usercfg">loading the user configuration file</link> for further
       </answer>
     </faq>
   </part>
-  <part id="part_svg">
+  <part id="part-svg">
     <title>Batik/SVG specific questions</title>
-    <faq id="svg_text">
+    <faq id="svg-text">
       <question>The rendering of SVG text in my PDF is of poor quality.
 Can I control this?</question>
       <answer>
         <p>See <link href="svg.html#pdf_text">Placing SVG Text into PDF</link>.</p>
       </answer>
     </faq>
-    <faq id="svg_headless">
+    <faq id="svg-headless">
       <question>How do I use FOP with SVG on headless servers?</question>
       <answer>
         <p>
@@ -714,7 +714,7 @@ Can I control this?</question>
         </p>
       </answer>
     </faq>
-    <faq id="svg_url">
+    <faq id="svg-url">
       <question>I have problems with SVG referring to gradients etc. using
         "uri(#stuff)". I get a MalformedURLException.</question>
       <answer>
@@ -762,9 +762,9 @@ Can I control this?</question>
       </answer>
     </faq>
   </part>
-  <part id="part_pdf">
+  <part id="part-pdf">
     <title>PDF specific (includes Acrobat peculiarities)</title>
-    <faq id="pdf_embed_font">
+    <faq id="pdf-embed-font">
       <question>How do I embed fonts in PDF?</question>
       <answer>
         <p>
@@ -773,7 +773,7 @@ Can I control this?</question>
         </p>
       </answer>
     </faq>
-    <faq id="pdf_characters">
+    <faq id="pdf-characters">
       <question>Some characters are not displayed, or displayed incorrectly, or
       displayed as &#8220;#&#8221;.</question>
       <answer>
@@ -799,7 +799,7 @@ Can I control this?</question>
         <source><![CDATA[<fo:inline font-family="Helvetica">&#x2205;</fo:inline>]]></source>
       </answer>
     </faq>
-    <faq id="PDF-postprocess">
+    <faq id="pdf-postprocess">
       <question>What tools are available for post-processing my PDF document?</question>
       <answer>
         <ul>
@@ -881,7 +881,7 @@ Can I control this?</question>
         </p>
       </answer>
     </faq>
-    <faq id="pdf_doc_properties">
+    <faq id="pdf-doc-properties">
       <question>How do I add document properties (title, author, etc.) to my
       PDF document?</question>
       <answer>
@@ -890,7 +890,7 @@ Can I control this?</question>
         Post-Processing FAQ</link>.</p>
       </answer>
     </faq>
-    <faq id="pdf_watermark">
+    <faq id="pdf-watermark">
       <question>How do I add watermarks to my PDF document?</question>
       <answer>
         <p>FOP does not currently support this feature. Possible
@@ -915,7 +915,7 @@ Can I control this?</question>
         </ul>
       </answer>
     </faq>
-    <faq id="pdf_print_contortion">
+    <faq id="pdf-print-contortion">
       <question>The PDF is printed contorted!</question>
       <answer>
         <p>
@@ -927,7 +927,7 @@ Can I control this?</question>
         </p>
       </answer>
     </faq>
-    <faq id="pdf_bookmark_display">
+    <faq id="pdf-bookmark-display">
       <question>How do I control the Acrobat bookmark display?</question>
       <answer>
         <p>
@@ -938,9 +938,9 @@ Can I control this?</question>
       </answer>
     </faq>
   </part>
-  <part id="part_iex">
+  <part id="part-iex">
     <title>IEx specific stuff</title>
-    <faq id="iex_servlet_multiple">
+    <faq id="iex-servlet-multiple">
       <question>The FOP servlet is called multiple times!</question>
       <answer>
         <p>
@@ -972,7 +972,7 @@ Can I control this?</question>
         </ul>
       </answer>
     </faq>
-    <faq id="iex_pdf_print_from_browser">
+    <faq id="iex-pdf-print-from-browser">
       <question>How do I print PDF directly from the browser?</question>
       <answer>
         <p>
@@ -996,89 +996,31 @@ Can I control this?</question>
       </answer>
     </faq>
   </part>
-  <part id="part_input">
-    <title>More general questions regarding XSLT and XSLFO and basic XML</title>
-    <faq id="fo_center">
+  <part id="part-input">
+    <title>General questions regarding XSLT, XSLFO, and basic XML</title>
+    <faq id="fo-center">
       <question>(FO) How do I vertically center an image or a table (or
       whatever)?</question>
       <answer>
         <p>
-          Use display-align="center". FOP implements this for block containers
-          and table cell. A small self-contained document centering an image on
-          a page:
+          See <link href="fo.html#fo-center-vertical">XSL-FO Vertical Centering</link>.
         </p>
-        <source><![CDATA[<?xml version="1.0"?>
-<fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format">
-  <fo:layout-master-set>
-    <fo:simple-page-master master-name="content"
-      page-width="210mm" page-height="297mm">
-      <fo:region-body/>
-    </fo:simple-page-master>
-  </fo:layout-master-set>
-  <fo:page-sequence master-reference="content">
-    <fo:flow flow-name="xsl-region-body">
-      <fo:table table-layout="fixed" width="100%">
-        <fo:table-column column-width="proportional-column-width(1)"/>
-        <fo:table-body>
-          <fo:table-row height="297mm">
-            <fo:table-cell display-align="center">
-              <fo:block text-align="center">
-                <fo:external-graphic src="fop.jpg"/>
-              </fo:block>
-            </fo:table-cell>
-          </fo:table-row>
-        </fo:table-body>
-      </fo:table>
-    </fo:flow>
-  </fo:page-sequence>
-</fo:root>]]></source>
       </answer>
     </faq>
-    <faq id="fo_center_table_horizon">
+    <faq id="fo-center-table-horizon">
       <question>(FO) How do I center a table horizontally?</question>
       <answer>
         <p>
-          You can add a column left and right wich pad the table so that the visible part is centered.
-        </p>
-        <source><![CDATA[<?xml version="1.0"?>
-<fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format">
-  <fo:layout-master-set>
-    <fo:simple-page-master master-name="content"
-      page-width="210mm" page-height="297mm">
-      <fo:region-body/>
-    </fo:simple-page-master>
-  </fo:layout-master-set>
-  <fo:page-sequence master-reference="content">
-    <fo:flow flow-name="xsl-region-body">
-      <fo:table table-layout="fixed" width="100%">
-        <fo:table-column column-width="proportional-column-width(1)"/>
-        <fo:table-column column-width="100mm"/>
-        <fo:table-column column-width="proportional-column-width(1)"/>
-        <fo:table-body>
-          <fo:table-row>
-            <fo:table-cell/>
-            <fo:table-cell>
-              <fo:block>foo</fo:block>
-            </fo:table-cell>
-            <fo:table-cell/>
-          </fo:table-row>
-        </fo:table-body>
-      </fo:table>
-    </fo:flow>
-  </fo:page-sequence>
-</fo:root>]]></source>
-        <p>
-          If your table is more complicated, or if defining borders on individual cells becomes too much work, use the code above and nest your table within the moddle cell.
+          See <link href="fo.html#fo-center-table-horizon">XSL-FO Horizontal Centering (Tables)</link>.
         </p>
       </answer>
     </faq>
-    <faq id="fo_page_outer">
+    <faq id="fo-page-outer">
       <question>(FO) How to get page numbers printed on the "outer side" of the
         page (for books, for example)?</question>
       <answer>
         <p>
-          Place different static content on <link href="#oddeven">odd and even
-          pages</link>.
+          See <link href="fo.html#fo-oddeven">Recto/Verso Static Content Differences</link>.
         </p>
       </answer>
     </faq>
@@ -1087,419 +1029,116 @@ Can I control this?</question>
       pages?</question>
       <answer>
         <p>
-          There are examples in the FO distribution and in the <link
-          href="http://www.dpawson.co.uk/xsl/sect3/index.html">XSL FAQ FO
-          section</link>.
+          See <link href="fo.html#fo-oddeven">Recto/Verso Static Content Differences</link>.
         </p>
-        <p>
-          Define a page master with alternating pages masters for odd and even
-          pages, specify appropriate regions in these page masters, and be sure
-          to give them different names. You use these names to put different
-          static content in these regions. A self contained document
-          demonstrating this:
-        </p>
-        <source><![CDATA[<?xml version="1.0"?>
-<fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format">
-  <fo:layout-master-set>
-    <fo:simple-page-master master-name="even"
-      page-height="297mm" page-width="210mm"
-      margin-top="20mm" margin-bottom="20mm"
-      margin-left="25mm" margin-right="25mm">
-      <fo:region-body margin-bottom="20mm"/>
-      <fo:region-after region-name="footer-even" extent="20mm"/>
-    </fo:simple-page-master>
-    <fo:simple-page-master master-name="odd"
-      page-height="297mm" page-width="210mm"
-      margin-top="20mm" margin-bottom="20mm"
-      margin-left="25mm" margin-right="25mm">
-      <fo:region-body margin-bottom="20mm"/>
-      <fo:region-after region-name="footer-odd" extent="20mm"/>
-    </fo:simple-page-master>
-    <fo:page-sequence-master master-name="document">
-      <fo:repeatable-page-master-alternatives>
-        <fo:conditional-page-master-reference odd-or-even="even"
-          master-reference="even"/>
-        <fo:conditional-page-master-reference odd-or-even="odd"
-          master-reference="odd"/>
-      </fo:repeatable-page-master-alternatives>
-    </fo:page-sequence-master>
-  </fo:layout-master-set>
-  <fo:page-sequence master-reference="document">
-    <fo:static-content flow-name="footer-even">
-      <fo:block text-align="start"><fo:page-number/></fo:block>
-    </fo:static-content>
-    <fo:static-content flow-name="footer-odd">
-      <fo:block text-align-last="end"><fo:page-number/></fo:block>
-    </fo:static-content>
-    <fo:flow flow-name="xsl-region-body">
-      <fo:block/>
-      <fo:block break-before="page"/>
-    </fo:flow>
-  </fo:page-sequence>
-</fo:root>]]></source>
       </answer>
     </faq>
-    <faq id="fo_first_page_header">
+    <faq id="fo-first-page-header">
       <question>(FO) How do I get a special header on the first page?</question>
       <answer>
         <p>
-          You can insert it into the flow instead of the static content.
-          Alternatively, use a page master referring to different page masters
-          for the first page and the rest. It is quite similar to the odd/even
-          page mechanism. A code sample:
+          See <link href="fo.html#fo-first-page">Making the First Page Special</link>.
         </p>
-        <source><![CDATA[<?xml version="1.0"?>
-<fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format">
-  <fo:layout-master-set>
-    <fo:simple-page-master master-name="first"
-      page-height="297mm" page-width="210mm"
-      margin-top="20mm" margin-bottom="20mm"
-      margin-left="25mm" margin-right="25mm">
-      <fo:region-body margin-bottom="20mm"/>
-      <fo:region-after region-name="footer-first" extent="20mm"/>
-    </fo:simple-page-master>
-    <fo:simple-page-master master-name="rest"
-      page-height="297mm" page-width="210mm"
-      margin-top="20mm" margin-bottom="20mm"
-      margin-left="25mm" margin-right="25mm">
-      <fo:region-body margin-bottom="20mm"/>
-      <fo:region-after region-name="footer-rest" extent="20mm"/>
-    </fo:simple-page-master>
-    <fo:page-sequence-master master-name="document">
-      <fo:repeatable-page-master-alternatives>
-        <fo:conditional-page-master-reference page-position="first"
-          master-reference="first"/>
-        <fo:conditional-page-master-reference page-position="rest"
-          master-reference="rest"/>
-      </fo:repeatable-page-master-alternatives>
-    </fo:page-sequence-master>
-  </fo:layout-master-set>
-  <fo:page-sequence master-reference="document">
-    <fo:static-content flow-name="footer-first">
-      <fo:block text-align="center">First page.</fo:block>
-    </fo:static-content>
-    <fo:static-content flow-name="footer-rest">
-      <fo:block text-align-last="center">Other page.</fo:block>
-    </fo:static-content>
-    <fo:flow flow-name="xsl-region-body">
-      <fo:block/>
-      <fo:block break-before="page"/>
-      <fo:block break-before="page"/>
-    </fo:flow>
-  </fo:page-sequence>
-</fo:root>]]></source>
       </answer>
     </faq>
-    <faq id="fo_omit_headers">
+    <faq id="fo-omit-headers">
       <question>(FO) How do I omit my headers on a blank page? How do I write
       "This page is left blank" on an intentionally blank page?</question>
       <answer>
         <p>
-          A blank page can be forced by a <code>break-before="page-even"</code>
-          or similar properties, or by a force-page-count="end-on-odd" on a page
-          sequence, which ensures a new chapter or something starts on the
-          preferred page.
+          See <link href="fo.html#fo-blank-pages">Blank Pages</link>.
         </p>
-        <p>
-          You can define a conditional page master with a page master specific
-          for blank pages. This allows you to specify static content for blank
-          pages (by definition, a page is blank if no content from a flow is
-          rendered on the page). You can omit your normal headers and footers,
-          and use for example an extended header to print the "..left blank"
-          statement.
-        </p>
-        <source><![CDATA[<?xml version="1.0"?>
-<fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format">
-  <fo:layout-master-set>
-    <fo:simple-page-master master-name="normal"
-      page-height="297mm" page-width="210mm"
-      margin-top="20mm" margin-bottom="20mm"
-      margin-left="25mm" margin-right="25mm">
-      <fo:region-body margin-bottom="20mm"/>
-      <fo:region-after region-name="footer-normal" extent="20mm"/>
-    </fo:simple-page-master>
-    <fo:simple-page-master master-name="blank"
-      page-height="297mm" page-width="210mm"
-      margin-top="20mm" margin-bottom="20mm"
-      margin-left="25mm" margin-right="25mm">
-      <fo:region-body/>
-      <fo:region-before region-name="header-blank" extent="297mm"/>
-    </fo:simple-page-master>
-    <fo:page-sequence-master master-name="document">
-      <fo:repeatable-page-master-alternatives>
-        <fo:conditional-page-master-reference blank-or-not-blank="not-blank"
-          master-reference="normal"/>
-        <fo:conditional-page-master-reference blank-or-not-blank="blank"
-          master-reference="blank"/>
-      </fo:repeatable-page-master-alternatives>
-    </fo:page-sequence-master>
-  </fo:layout-master-set>
-  <fo:page-sequence master-reference="document" force-page-count="end-on-even">
-    <fo:static-content flow-name="footer-normal">
-      <fo:block text-align="center">Normal footer</fo:block>
-    </fo:static-content>
-    <fo:static-content flow-name="header-blank">
-      <fo:block space-before="100mm" text-align-last="center">
-        Intentionally left blank.</fo:block>
-    </fo:static-content>
-    <fo:flow flow-name="xsl-region-body">
-      <fo:block/>
-    </fo:flow>
-  </fo:page-sequence>
-</fo:root>]]></source>
       </answer>
     </faq>
-    <faq id="fo_special_symbols">
+    <faq id="fo-special-symbols">
       <question>(FO) How do I print an Euro sign, a checkbox or other some other
       special symbols?</question>
       <answer>
         <p>
-          Try to look the character up in the Unicode reference at the <link
-            href="http://www.unicode.org">Unicode Consortium</link>, in
-            particular search the <link
-            href="http://www.unicode.org/charts/charindex.html">reference by
-            name</link>.
-        </p>
-        <p>
-          Use <link
-            href="http://www.w3.org/TR/2000/REC-xml-20001006#sec-references">XML
-            character references</link> to put the character into your source
-          XML, XSLT or FO.
-        </p>
-        <p>
-          For example, the following will result in an Euro sign:
-        </p>
-        <source><![CDATA[&#x20AC;]]></source>
-        <p>
-          The selected font family must have a glyph for the character you want
-          to show. This is actually a somewhat tricky issue, especially for
-          symbol characters.
-        </p>
-        <p>
-          Some environments provide also a character table utility (like Win2K
-          or WinXP), which can also help you to get an idea what glyphs are
-          available in a certain font.
-        </p>
-        <p>
-          Alternative: Use an embedded graphic: GIF, PNG, SVG, whatever.
+          See <link href="fo.html#xml-special-chars">Special Characters</link>.
         </p>
       </answer>
     </faq>
-    <faq id="fo_preformat">
+    <faq id="fo-preformat">
       <question>(FO) How do I keep linebreaks and hard spaces? How do I get
         preformatted text displayed as expected?</question>
       <answer>
         <p>
-          The specification provides some properties for this: <link
-          href="http://www.w3.org/TR/xsl/slice7.html#white-space-collapse">white
-          space collapsing</link> and <link
-          href="http://www.w3.org/TR/xsl/slice7.html#linefeed-treatment">line
-          feed treatment</link>. In FOP, use white-space-collapse="false" on an
-          enclosing block. This will also preserve line breaks (which is
-          actually a bug, expect this to be changed).
+          See <link href="fo.html#fo-preformat">Preformatting Content</link>.
         </p>
       </answer>
     </faq>
-    <faq id="fo_total_pages">
-      <question>(FO) How do I print the total number of pages, like in "page 1
+    <faq id="fo-total-pages">
+      <question>(FO) How do I print the total number of pages, for example "page 1
       of 12"</question>
       <answer>
-        <anchor id="pagenum"/>
         <p>
-          This is an XSL FAQ.
-        </p>
-        <p>
-          Put an empty block with an id at the end of the flow:
-        </p>
-        <source><![CDATA[<fo:flow ...>
-    ...
-  <fo:block id="last-page"/>
-</fo:flow>]]></source>
-        <p>
-          Get the number of the last page as follows:
-        </p>
-        <source><![CDATA[ <fo:page-nuber-citation ref-id="last-page"/>]]></source>
-        <p>
-          This does not work for all problems, for example if you have multiple
-          page sequences, an initial page number different from 1, or if you
-          force a certain page count, thereby producing blank pages at the end.
-        </p>
-        <p>
-          There is no reliable way to get the real total page count with FO
-          mechanisms, you can only get <em>page numbers</em>.
-        </p>
-        <p>
-          The FOP library provides a method to get the total page count after a
-          FO document has been rendered. You can implement your own wrapper to
-          do a dummy rendering, inquire the total page count and the perform the
-          real rendering, passing the total page count to the XSLT processor to
-          splice it into the generated FO. A sample code:
-        </p>
-        <source><![CDATA[import org.apache.fop.apps.*;
-import org.xml.sax.*;
-import java.io.*;
-import javax.xml.transform.*;
-import javax.xml.transform.sax.*;
-import javax.xml.transform.stream.*;
-
-class rendtest {
-
-  public static void main(String args[]) {
-    try {
-      Driver driver=new Driver();
-      driver.setOutputStream(new FileOutputStream(args[2]));
-      driver.setRenderer(Driver.RENDER_PDF);
-      Transformer transformer=TransformerFactory.newInstance()
-        .newTransformer(new StreamSource(new File(args[1])));
-      transformer.setParameter("page-count","#");
-      transformer.transform(new StreamSource(new File(args[0])),
-        new SAXResult(driver.getContentHandler()));
-      String pageCount=Integer.toString(driver.getResults().getPageCount());
-      driver=new Driver();
-      driver.setOutputStream(new FileOutputStream(args[2]));
-      driver.setRenderer(Driver.RENDER_PDF);
-      transformer=TransformerFactory.newInstance()
-        .newTransformer(new StreamSource(new File(args[1])));
-      transformer.setParameter("page-count",pageCount);
-      transformer.transform(new StreamSource(new File(args[0])),
-        new SAXResult(driver.getContentHandler()));
-    }
-    catch( Exception e) {
-      e.printStackTrace();
-    }
-  }
-}]]></source>
-        <p>
-          Declare and use the parameter "page-count" in your XSLT. Be aware you
-          may run into convergence problems: replacing the "#" placeholder from
-          the first run by the actual page count may change it.
+          See <link href="fo.html#fo-total-pages">Total Document Pages</link>.
         </p>
       </answer>
     </faq>
-    <faq id="fo_region_overlap">
+    <faq id="fo-region-overlap">
       <question>(FO) The header overlaps body content. The body extends into
       the footer.</question>
       <answer>
         <p>
-          Contrary to popular opinion, the regions on a page may overlap.
-          Defining a certain body region does not automatically constrain other
-          regions, this has to be done explicitely.
-        </p>
-        <p>
-          If you have a header region with an extent of 20mm, you should define
-          a margin for the body region of at least 20mm too, otherwise the
-          header content may overwrite some stuff in the body region. This
-          applies similarly to the extent of the after region and the bottom
-          margin of the body region.
-        </p>
-        <p>
-          The overlap effect can be used creatively for some purposes.
+          See <link href="fo.html#fo-region-align">Aligning Regions</link>.
         </p>
       </answer>
     </faq>
-    <faq id="fo_lines">
+    <faq id="fo-lines">
       <question>(FO) How do I get lines in the document, as separators, side
       bars or folding marks?</question>
       <answer>
         <p>
-          Several possibilities:
+          See <link href="fo.html#fo-lines">Drawing Lines</link>.
         </p>
-        <ul>
-          <li>
-            Use fo:leader (look up the details in the <link
-            href="http://www.w3.org/TR/xsl/slice6.html#fo_leader">XSLFO
-            specification</link>, or use a book). For horizontal lines only.
-          </li>
-          <li>
-            Use a solid border on a suitable fo:block. Horizontal and vertical
-            lines only.
-          </li>
-          <li>
-            Insert a graphic. GIF, PNG SVG, whatever.
-          </li>
-        </ul>
       </answer>
     </faq>
-    <faq id="FO-validate">
+    <faq id="fo-validate">
       <question>(FO) How do I validate my FO document?</question>
       <answer>
         <p>
-          <link href="http://www.renderx.com">RenderX</link> has provided an
-          <link
-            href="http://www.renderx.com/Tests/validator/fo.dtd.html">Unofficial
-            DTD for FO Documents</link>. This document may be helpful in
-          validating general FO issues.
-        </p>
-        <p>
-          FOP also maintains an <link
-            href="http://cvs.apache.org/viewcvs.cgi/*checkout*/xml-fop/docs/foschema/fop.xsd?rev=HEAD&amp;content-type=text/plain">Unofficial
-            FOP Schema</link> in the FOP CVS Repository. This document can be
-          used either to validate against the FO standard, or against the
-          actual FOP implementation. See the notes near the beginning of the
-          document for instructions on how to use it.
+          See <link href="fo.html#fo-validate">Validating XSL-FO</link>.
         </p>
       </answer>
     </faq>
-    <faq id="xml_non-breaking_space">
-      <question>(XML) There are complaints about <code>&amp;nbsp;</code>. How
-        do I get a non-breaking space in FO?</question>
+    <faq id="xml-non-breaking-space">
+      <question>(XML) How do I get a non-breaking space in FO? There are complaints about <code>&amp;nbsp;</code>.</question>
       <answer>
         <p>
-          Use &amp;#160; everywhere. In your own XML, you could also use a DTD
-          which declares the entity.
+          See <link href="fo.html#xml-special-chars">XML Special Characters</link>.
         </p>
       </answer>
     </faq>
-    <faq id="xml_undefined_entities">
-      <question>(XML) There are complaints about undefined entities, for example
-        about <code>&amp;uuml;</code> which used to work in HTML. How do I enter
-        special characters like in HTML?</question>
+    <faq id="xml-undefined-entities">
+      <question>(XML) How do I enter special characters in XML? There are complaints about undefined entities, such as <code>&amp;uuml;</code>, which work in HTML. </question>
       <answer>
         <p>
-          Don't use names as in HTML, use numbers (unless you have a DTD which
-          declares the entities). For predefined HTML entities and their Unicode
-          codepoints see <link
-          href="http://www.w3.org/TR/html4/sgml/entities.html">Character entity
-          references in HTML 4</link>
+          See <link href="fo.html#xml-special-chars">XML Special Characters</link>.
         </p>
       </answer>
     </faq>
-    <faq id="xml_illegal_entities">
+    <faq id="xml-illegal-entities">
       <question>(XML) There are complaints about illegal characters and entities
       in the input.</question>
       <answer>
         <p>
-          Make sure ampersands in text and attributes are written as &amp;amp;,
-          "&lt;" is written as &amp;lt; and ">" as &amp;gt;. It's not necessary
-          everywhere but do it just to be sure.
-        </p>
-        <p>
-          The XML parser should give the proper line and possibly column for
-          offending characters.
-        </p>
-        <p>
-          Refer to the <link href="http://www.w3.org/XML/">XML
-            specification</link> or to a good tutorial for details of the XML
-            file format.
+          See <link href="fo.html#xml-entity-chars">XML Entity Characters</link>.
         </p>
       </answer>
     </faq>
-    <faq id="xml_illegal_chars">
+    <faq id="xml-illegal-chars">
       <question>(XML) There are complaints about illegal bytes or characters in
       the input. There are odd characters in the result.</question>
       <answer>
         <p>
-          Usually, this is a character encoding problem. See <link
-          href="http://www.dpawson.co.uk/xsl">XSL FAQ</link>. Many software
-          packages producing XML, in particular most XSLT processors, produce by
-          default UTF-8 encoded files. If you view them with something not aware
-          of the encoding, like Notepad for Win95/98/ME/NT, funny characters are
-          displayed. A &#197; is a giveaway.
+          See <link href="fo.html#xml-encoding">XML Encoding Issues</link>.
         </p>
       </answer>
     </faq>
   </part>
-  <part id="part_help">
+  <part id="part-help">
     <title>General suggestions. How to solve problems.</title>
     <faq id="bugs">
       <question>I think I have found a bug in FOP. What should I do?</question>
@@ -1520,7 +1159,7 @@ class rendtest {
             If you have a runtime exception or other runtime problem:
             <ul>
               <li>
-                double-check the <link href="#part_running">Runtime FAQs</link>.
+                double-check the <link href="#part-running">Runtime FAQs</link>.
               </li>
               <li>
                 ClassNotFoundException, NoSuchMethodException and
