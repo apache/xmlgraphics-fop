@@ -43,19 +43,25 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ============================================================================
  *
- * The RTF library of the FOP project consists of voluntary contributions made by
- * many individuals on behalf of the Apache Software Foundation and was originally
- * created by Bertrand Delacretaz <bdelacretaz@codeconsult.ch> and contributors of
- * the jfor project (www.jfor.org), who agreed to donate jfor to the FOP project.
- * For more information on the Apache Software Foundation, please
- * see <http://www.apache.org/>.
+ * This software consists of voluntary contributions made by many individuals
+ * on behalf of the Apache Software Foundation and was originally created by
+ * James Tauber <jtauber@jtauber.com>. For more information on the Apache
+ * Software Foundation, please see <http://www.apache.org/>.
  */
+
+/*
+ * This file is part of the RTF library of the FOP project, which was originally
+ * created by Bertrand Delacretaz <bdelacretaz@codeconsult.ch> and by other
+ * contributors to the jfor project (www.jfor.org), who agreed to donate jfor to
+ * the FOP project.
+ */
+
 package org.apache.fop.rtf.rtflib.rtfdoc;
 
 /**
- *	
+ *
  * 	This context is used to manage the "keepn" RTF attribute
- *  Used by ParagraphBuilder and JforCmd 
+ *  Used by ParagraphBuilder and JforCmd
  *
  */
 
@@ -64,11 +70,11 @@ public class ParagraphKeeptogetherContext {
     private static int m_paraKeepTogetherOpen=0;
     private static boolean m_paraResetProperties=false;
 	private static ParagraphKeeptogetherContext m_instance = null;
-	
+
 	ParagraphKeeptogetherContext() {
 	}
-	
-	
+
+
 	/**
 	 * Singelton.
 	 *
@@ -78,7 +84,7 @@ public class ParagraphKeeptogetherContext {
 		if (m_instance==null) m_instance = new 	ParagraphKeeptogetherContext();
 		return m_instance;
 	}
-	
+
 	/** Return the level of current "keep whith next" paragraph */
 	public static int getKeepTogetherOpenValue() {
 		return m_paraKeepTogetherOpen;
@@ -86,28 +92,28 @@ public class ParagraphKeeptogetherContext {
 
 	/** Open a new "keep whith next" paragraph */
 	public static void KeepTogetherOpen() {
-		m_paraKeepTogetherOpen++;	
+		m_paraKeepTogetherOpen++;
 	}
 
 	/** Close a "keep whith next" paragraph */
 	public static void KeepTogetherClose() {
 		if(m_paraKeepTogetherOpen > 0) {
 			m_paraKeepTogetherOpen--;
-			
-			//If the \pard control word is not present, the current paragraph inherits all paragraph properties. 
+
+			//If the \pard control word is not present, the current paragraph inherits all paragraph properties.
 			//Also the next paragraph must reset the properties otherwise the \keepn don't stop.
 			m_paraResetProperties= (m_paraKeepTogetherOpen==0);
 		}
 	}
-	
+
 	/** Determine if the next paragraph must reset the properites */
 	public static boolean paragraphResetProperties() {
-		return m_paraResetProperties;	
+		return m_paraResetProperties;
 	}
-	
+
 	/** Reset the flag if the paragraph properties have been resested */
 	public static void setParagraphResetPropertiesUsed() {
 		m_paraResetProperties=false;
 	}
-	
+
 }

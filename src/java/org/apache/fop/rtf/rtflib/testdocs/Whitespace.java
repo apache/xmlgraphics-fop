@@ -43,13 +43,19 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ============================================================================
  *
- * The RTF library of the FOP project consists of voluntary contributions made by
- * many individuals on behalf of the Apache Software Foundation and was originally
- * created by Bertrand Delacretaz <bdelacretaz@codeconsult.ch> and contributors of
- * the jfor project (www.jfor.org), who agreed to donate jfor to the FOP project.
- * For more information on the Apache Software Foundation, please
- * see <http://www.apache.org/>.
+ * This software consists of voluntary contributions made by many individuals
+ * on behalf of the Apache Software Foundation and was originally created by
+ * James Tauber <jtauber@jtauber.com>. For more information on the Apache
+ * Software Foundation, please see <http://www.apache.org/>.
  */
+
+/*
+ * This file is part of the RTF library of the FOP project, which was originally
+ * created by Bertrand Delacretaz <bdelacretaz@codeconsult.ch> and by other
+ * contributors to the jfor project (www.jfor.org), who agreed to donate jfor to
+ * the FOP project.
+ */
+
 package org.apache.fop.rtf.rtflib.testdocs;
 
 import java.util.Date;
@@ -68,7 +74,7 @@ class Whitespace extends TestDocument
         final RtfParagraph p1 = sect.newParagraph();
         p1.newText("\t  Each word  of this paragraph must   be separated\tfrom\t\n\tthe next word with exactly\t \tone");
         p1.newText("   space.");
-        
+
         final RtfParagraph p2 = sect.newParagraph();
         p2.newText("");
         p2.newText("In this");
@@ -78,7 +84,7 @@ class Whitespace extends TestDocument
         p2.newText("exactly");
         p2.newText(" one space   ");
         p2.newText("between  each\tword and the  next, and no spaces at the beginning or end of the paragraph.");
-        
+
         final RtfParagraph p3 = sect.newParagraph();
         p3.newText("The word 'boomerang' must be written after this with no funny spacing: ");
         p3.newText("boo");

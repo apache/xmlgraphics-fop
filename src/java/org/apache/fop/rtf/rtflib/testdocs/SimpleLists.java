@@ -43,13 +43,19 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ============================================================================
  *
- * The RTF library of the FOP project consists of voluntary contributions made by
- * many individuals on behalf of the Apache Software Foundation and was originally
- * created by Bertrand Delacretaz <bdelacretaz@codeconsult.ch> and contributors of
- * the jfor project (www.jfor.org), who agreed to donate jfor to the FOP project.
- * For more information on the Apache Software Foundation, please
- * see <http://www.apache.org/>.
+ * This software consists of voluntary contributions made by many individuals
+ * on behalf of the Apache Software Foundation and was originally created by
+ * James Tauber <jtauber@jtauber.com>. For more information on the Apache
+ * Software Foundation, please see <http://www.apache.org/>.
  */
+
+/*
+ * This file is part of the RTF library of the FOP project, which was originally
+ * created by Bertrand Delacretaz <bdelacretaz@codeconsult.ch> and by other
+ * contributors to the jfor project (www.jfor.org), who agreed to donate jfor to
+ * the FOP project.
+ */
+
 package org.apache.fop.rtf.rtflib.testdocs;
 
 import java.util.Date;
@@ -71,13 +77,13 @@ class SimpleLists extends TestDocument
         sect.newParagraph().newText("Normal paragraph between lists 1 and 2.");
         makeList(sect,2,3,null);
         sect.newParagraph().newText("Normal paragraph after list 2.");
-        
+
         sect.newParagraph().newText("Now a numbered list (4 items):");
         final RtfList.NumberingStyle nn = new RtfList.NumberingStyle();
         nn.isBulletedList = false;
         makeList(sect,3,4,nn);
     }
-    
+
     private void makeList(RtfSection sect,int listIndex,int nItems,RtfList.NumberingStyle ns)
     throws IOException
     {

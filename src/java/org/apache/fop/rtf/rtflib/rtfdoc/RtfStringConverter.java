@@ -43,12 +43,17 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ============================================================================
  *
- * The RTF library of the FOP project consists of voluntary contributions made by
- * many individuals on behalf of the Apache Software Foundation and was originally
- * created by Bertrand Delacretaz <bdelacretaz@codeconsult.ch> and contributors of
- * the jfor project (www.jfor.org), who agreed to donate jfor to the FOP project.
- * For more information on the Apache Software Foundation, please
- * see <http://www.apache.org/>.
+ * This software consists of voluntary contributions made by many individuals
+ * on behalf of the Apache Software Foundation and was originally created by
+ * James Tauber <jtauber@jtauber.com>. For more information on the Apache
+ * Software Foundation, please see <http://www.apache.org/>.
+ */
+
+/*
+ * This file is part of the RTF library of the FOP project, which was originally
+ * created by Bertrand Delacretaz <bdelacretaz@codeconsult.ch> and by other
+ * contributors to the jfor project (www.jfor.org), who agreed to donate jfor to
+ * the FOP project.
  */
 
 package org.apache.fop.rtf.rtflib.rtfdoc;
@@ -63,12 +68,12 @@ import java.io.Writer;
 
 public class RtfStringConverter {
     private static final RtfStringConverter m_instance = new RtfStringConverter();
-    
+
     private static final Map m_specialChars;
     private static final Character DBLQUOTE = new Character('\"');
     private static final Character QUOTE = new Character('\'');
     private static final Character SPACE = new Character(' ');
-    
+
     /** List of characters to escape with corresponding replacement strings */
     static {
         m_specialChars = new HashMap();
@@ -80,20 +85,20 @@ public class RtfStringConverter {
         m_specialChars.put(new Character('{'),"{");
         m_specialChars.put(new Character('}'),"}");
     }
-    
+
     /** singleton pattern */
     private RtfStringConverter() {
     }
-    
+
     /** use this to get an object of this class */
     public static RtfStringConverter getInstance() {
         return m_instance;
     }
-    
+
     /** write given String to given Writer, converting characters as required by RTF spec */
     public void writeRtfString(Writer w,String str) throws IOException {
         if(str == null) return;
-        
+
         // TODO: could be made more efficient (binary lookup, etc.)
         for(int i=0; i < str.length(); i++) {
             final Character c = new Character(str.charAt(i));
@@ -104,7 +109,7 @@ public class RtfStringConverter {
             } else {
                 d=new Character(str.charAt(i));
             }
-            
+
             //This section modified by Chris Scott
             //add "smart" quote recognition
             if(c.equals((Object)DBLQUOTE) && d.equals((Object)SPACE)) {
@@ -114,7 +119,7 @@ public class RtfStringConverter {
             } else {
                 replacement = (String)m_specialChars.get(c);
             }
-            
+
             if(replacement != null) {
                 // RTF-escaped char
                 w.write('\\');
@@ -131,5 +136,5 @@ public class RtfStringConverter {
             }
         }
     }
-    
+
 }

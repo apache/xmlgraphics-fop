@@ -43,13 +43,19 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ============================================================================
  *
- * The RTF library of the FOP project consists of voluntary contributions made by
- * many individuals on behalf of the Apache Software Foundation and was originally
- * created by Bertrand Delacretaz <bdelacretaz@codeconsult.ch> and contributors of
- * the jfor project (www.jfor.org), who agreed to donate jfor to the FOP project.
- * For more information on the Apache Software Foundation, please
- * see <http://www.apache.org/>.
+ * This software consists of voluntary contributions made by many individuals
+ * on behalf of the Apache Software Foundation and was originally created by
+ * James Tauber <jtauber@jtauber.com>. For more information on the Apache
+ * Software Foundation, please see <http://www.apache.org/>.
  */
+
+/*
+ * This file is part of the RTF library of the FOP project, which was originally
+ * created by Bertrand Delacretaz <bdelacretaz@codeconsult.ch> and by other
+ * contributors to the jfor project (www.jfor.org), who agreed to donate jfor to
+ * the FOP project.
+ */
+
 package org.apache.fop.rtf.rtflib.testdocs;
 
 import java.util.Date;
@@ -60,14 +66,14 @@ import org.apache.fop.rtf.rtflib.rtfdoc.*;
  *  @author Bertrand Delacretaz bdelacretaz@codeconsult.ch
  */
 
-class SimpleDocument 
+class SimpleDocument
 extends TestDocument
 {
     /** generate the body of the test document */
     protected void generateDocument(RtfDocumentArea rda,RtfSection sect)
     throws IOException {
         sect.newParagraph().newText("First paragraph of the simple RTF test document.");
-        
+
         final RtfParagraph para = sect.newParagraph();
         para.newText("Second paragraph of simple RTF test document.\n");
         for(int i=0; i < 242; i++) {

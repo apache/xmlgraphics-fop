@@ -43,13 +43,19 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ============================================================================
  *
- * The RTF library of the FOP project consists of voluntary contributions made by
- * many individuals on behalf of the Apache Software Foundation and was originally
- * created by Bertrand Delacretaz <bdelacretaz@codeconsult.ch> and contributors of
- * the jfor project (www.jfor.org), who agreed to donate jfor to the FOP project.
- * For more information on the Apache Software Foundation, please
- * see <http://www.apache.org/>.
+ * This software consists of voluntary contributions made by many individuals
+ * on behalf of the Apache Software Foundation and was originally created by
+ * James Tauber <jtauber@jtauber.com>. For more information on the Apache
+ * Software Foundation, please see <http://www.apache.org/>.
  */
+
+/*
+ * This file is part of the RTF library of the FOP project, which was originally
+ * created by Bertrand Delacretaz <bdelacretaz@codeconsult.ch> and by other
+ * contributors to the jfor project (www.jfor.org), who agreed to donate jfor to
+ * the FOP project.
+ */
+
 package org.apache.fop.rtf.rtflib.testdocs;
 
 import java.util.Date;
@@ -70,21 +76,21 @@ class TextAttributes extends TestDocument
         para.newText("This is bold\n",new RtfAttributes().set(RtfText.ATTR_BOLD));
         para.newText("This is italic\n",new RtfAttributes().set(RtfText.ATTR_ITALIC));
         para.newText("This is underline\n",new RtfAttributes().set(RtfText.ATTR_UNDERLINE));
-        
+
         // RTF font sizes are in half-points
         para.newText("This is size 48\n",new RtfAttributes().set(RtfText.ATTR_FONT_SIZE,96));
-        
+
         para.newText(
             "This is bold and italic\n",
             new RtfAttributes().set(RtfText.ATTR_BOLD).set(RtfText.ATTR_ITALIC)
           );
-        
+
         final RtfAttributes attr = new RtfAttributes();
         attr.set(RtfText.ATTR_BOLD).set(RtfText.ATTR_ITALIC);
         attr.set(RtfText.ATTR_UNDERLINE);
         attr.set(RtfText.ATTR_FONT_SIZE,72);
         para.newText("This is bold, italic, underline and size 36\n",attr);
-        
+
         para.newText("This is back to normal\n");
     }
 }

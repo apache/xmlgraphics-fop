@@ -43,13 +43,19 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ============================================================================
  *
- * The RTF library of the FOP project consists of voluntary contributions made by
- * many individuals on behalf of the Apache Software Foundation and was originally
- * created by Bertrand Delacretaz <bdelacretaz@codeconsult.ch> and contributors of
- * the jfor project (www.jfor.org), who agreed to donate jfor to the FOP project.
- * For more information on the Apache Software Foundation, please
- * see <http://www.apache.org/>.
+ * This software consists of voluntary contributions made by many individuals
+ * on behalf of the Apache Software Foundation and was originally created by
+ * James Tauber <jtauber@jtauber.com>. For more information on the Apache
+ * Software Foundation, please see <http://www.apache.org/>.
  */
+
+/*
+ * This file is part of the RTF library of the FOP project, which was originally
+ * created by Bertrand Delacretaz <bdelacretaz@codeconsult.ch> and by other
+ * contributors to the jfor project (www.jfor.org), who agreed to donate jfor to
+ * the FOP project.
+ */
+
 package org.apache.fop.rtf.rtflib.testdocs;
 
 import java.util.Date;
@@ -66,7 +72,7 @@ class MergedTableCells extends TestDocument
     protected void generateDocument(RtfDocumentArea rda,RtfSection sect)
     throws IOException {
         sect.newParagraph().newText("This document contains a table with some merged cells.");
-        
+
         final RtfTable tbl = sect.newTable(new DummyTableColumnsInfo());
         final int MM_TO_TWIPS = (int)(1440f / 25.4f);
 
@@ -76,58 +82,58 @@ class MergedTableCells extends TestDocument
             RtfTableCell c = r.newTableCell(80 * MM_TO_TWIPS);
             c.setHMerge(c.MERGE_START);
             c.newParagraph().newText("cell 0,0, width 80mm, merge start, followed by two merged cells totalling 80mm width.");
-            
+
             c = r.newTableCell(40 * MM_TO_TWIPS);
             c.setHMerge(c.MERGE_WITH_PREVIOUS);
             c.newParagraph().newText("THIS IS IN AN HMERGED CELL, MUST NOT APPEAR IN RTF DOCUMENT");
-        
+
             c = r.newTableCell(40 * MM_TO_TWIPS);
             c.setHMerge(c.MERGE_WITH_PREVIOUS);
             c.newParagraph().newText("THIS IS IN AN HMERGED CELL, MUST NOT APPEAR IN RTF DOCUMENT");
         }
-        
+
         // second row, start vertical merging in column 1
         {
             RtfTableRow r = tbl.newTableRow();
             RtfTableCell c = r.newTableCell(40 * MM_TO_TWIPS);
             c.setVMerge(c.MERGE_START);
             c.newParagraph().newText("cell 1,0, vertical merge start, 40mm, spans three rows.");
-            
+
             r.newTableCell(80 * MM_TO_TWIPS).newParagraph().newText("cell 1,1, no merge, 80mm");
-            
+
             c = r.newTableCell(40 * MM_TO_TWIPS);
             c.setVMerge(c.MERGE_START);
             c.newParagraph().newText("cell 1,2, vertical merge start, 40mm, spans two rows.");
         }
-        
+
         // third row, column 1 merged with previous row
         {
             RtfTableRow r = tbl.newTableRow();
             RtfTableCell c = r.newTableCell(40 * MM_TO_TWIPS);
             c.setVMerge(c.MERGE_WITH_PREVIOUS);
             c.newParagraph().newText("cell 2,0, VMERGED CELL, MUST NOT APPEAR IN RTF DOCUMENT");
-            
+
             r.newTableCell(40 * MM_TO_TWIPS).newParagraph().newText("cell 2,1, no merge, 40mm");
             r.newTableCell(40 * MM_TO_TWIPS).newParagraph().newText("cell 2,2, no merge, 40mm");
-            
+
             c = r.newTableCell(40 * MM_TO_TWIPS);
             c.setVMerge(c.MERGE_WITH_PREVIOUS);
             c.newParagraph().newText("cell 2,3, VMERGED CELL, MUST NOT APPEAR IN RTF DOCUMENT");
         }
-        
+
         // fourth row, column 1 merged with previous row
         {
             RtfTableRow r = tbl.newTableRow();
             RtfTableCell c = r.newTableCell(40 * MM_TO_TWIPS);
             c.setVMerge(c.MERGE_WITH_PREVIOUS);
             c.newParagraph().newText("cell 3,0, VMERGED CELL, MUST NOT APPEAR IN RTF DOCUMENT");
-            
+
             r.newTableCell(10 * MM_TO_TWIPS).newParagraph().newText("cell 3,1, no merge, 10mm");
             r.newTableCell(30 * MM_TO_TWIPS).newParagraph().newText("cell 3,2, no merge, 30mm");
             r.newTableCell(40 * MM_TO_TWIPS).newParagraph().newText("cell 3,3, no merge, 40mm");
             r.newTableCell(40 * MM_TO_TWIPS).newParagraph().newText("cell 3,4, no merge, 40mm");
         }
-        
+
         // fifth row, just one cell
         {
             RtfTableRow r = tbl.newTableRow();
