@@ -146,7 +146,7 @@ public class PSDocumentGraphics2D extends PSGraphics2D {
         gen.writeDSCComment(DSCConstants.BEGIN_SETUP);
         PSProcSets.writeFOPStdProcSet(gen);
         PSProcSets.writeFOPEPSProcSet(gen);
-        PSRenderer.writeFontDict(gen, fontInfo);
+        PSProcSets.writeFontDict(gen, fontInfo);
         gen.writeDSCComment(DSCConstants.END_SETUP);
 
         //Start page
