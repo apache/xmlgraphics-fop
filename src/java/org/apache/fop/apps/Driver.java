@@ -65,6 +65,7 @@ import org.apache.fop.render.mif.MIFHandler;
 import org.apache.fop.render.rtf.RTFHandler;
 import org.apache.fop.tools.DocumentInputSource;
 import org.apache.fop.tools.DocumentReader;
+import org.apache.fop.tools.ProxyContentHandler;
 import org.apache.fop.layoutmgr.LayoutManagerLS;
 
 // Avalon
@@ -467,8 +468,7 @@ public class Driver implements LogEnabled {
     public void setRenderer(String rendererClassName)
                 throws IllegalArgumentException {
         try {
-            renderer =
-                (Renderer)Class.forName(rendererClassName).newInstance();
+            renderer = (Renderer)Class.forName(rendererClassName).newInstance();
             if (renderer instanceof LogEnabled) {
                 ((LogEnabled)renderer).enableLogging(getLogger());
             }
@@ -574,7 +574,26 @@ public class Driver implements LogEnabled {
         treeBuilder.setFOInputHandler(foInputHandler);
         treeBuilder.foTreeControl = currentDocument;
 
-        return treeBuilder;
+
+        return new ProxyContentHandler(treeBuilder) {
+            
+            public void startDocument() throws SAXException {
+                if (foInputHandler instanceof FOTreeHandler) {
+                    FOTreeHandler foTreeHandler = (FOTreeHandler)foInputHandler;
+                    foTreeHandler.addFOTreeListener(currentDocument);
+                }
+                super.startDocument();
+            }
+                
+            public void endDocument() throws SAXException {
+                super.endDocument();
+                if (foInputHandler instanceof FOTreeHandler) {
+                    FOTreeHandler foTreeHandler = (FOTreeHandler)foInputHandler;
+                    foTreeHandler.removeFOTreeListener(currentDocument);
+                }
+            }
+                
+        };
     }
 
     /**
@@ -608,7 +627,7 @@ public class Driver implements LogEnabled {
          * system.
          */
         if (currentDocument.getLayoutStrategy() != null) {
-            if (currentDocument.getLayoutStrategy().foTreeNeeded() != true) {
+            if (!currentDocument.getLayoutStrategy().foTreeNeeded()) {
                 currentDocument.getLayoutStrategy().format(null, null);
                 return;
             }
@@ -618,10 +637,6 @@ public class Driver implements LogEnabled {
          * For all other cases, we wish to parse normally.
          */
         try {
-            if (foInputHandler instanceof FOTreeHandler) {
-                FOTreeHandler foTreeHandler = (FOTreeHandler)foInputHandler;
-                foTreeHandler.addFOTreeListener(currentDocument);
-            }
             /**
              The following statement triggers virtually all of the processing
              for this document. The SAX parser fires events that are handled by
@@ -636,10 +651,6 @@ public class Driver implements LogEnabled {
              where this level of control is implemented.
              */
             parser.parse(source);
-            if (foInputHandler instanceof FOTreeHandler) {
-                FOTreeHandler foTreeHandler = (FOTreeHandler)foInputHandler;
-                foTreeHandler.removeFOTreeListener(currentDocument);
-            }
         } catch (SAXException e) {
             if (e.getException() instanceof FOPException) {
                 // Undo exception tunneling.
