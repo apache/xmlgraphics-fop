@@ -240,9 +240,9 @@ public class FONode extends Node{
      * @param stateFlags - the set of states relevant at this point in the
      * tree.  Includes the state information necessaryto select an attribute
      * set for this node.
-     * @param sparsePropsMap - an <tt>int[]</tt> mapping the property indices
+     * @param sparsePropsMap  maps the property indices
      * to their offsets in the set of properties applicable to this node.
-     * @param sparseindices - an <tt>int[]</tt> holding the set of property
+     * @param sparseIndices  holds the set of property
      * indices applicable to this node, in ascending order.
      * <i>sparsePropsMap</i> maps property indices to a position in this array.
      * Together they provide a sparse array facility for this node's
@@ -350,9 +350,9 @@ public class FONode extends Node{
      * properties are no longer required.  The property set for the node can
      * be reduced to the minimum required for this formatting object.
      * This minimal set is maintained in a sparse array.
-     * @see sparsePropsSet
-     * @see sparsePropsMap
-     * @see sparseIndices
+     * @see #sparsePropsSet
+     * @see #sparsePropsMap
+     * @see #sparseIndices
      */
     public void makeSparsePropsSet() throws PropertyException {
         sparsePropsSet = new PropertyValue[numProps];
@@ -401,7 +401,7 @@ public class FONode extends Node{
     /**
      * Get the adjusted <tt>PropertyValue</tt> of the property
      * on the nearest ancestor with a specified value for that property.
-     * @see #fromNearestSpecified(init,int)
+     * @see #fromNearestSpecified(int,int)
      * @see #getNearestSpecifiedValue(int)
      * @param property - the index of both target and source properties.
      * to the PropertyTriplet.
@@ -475,7 +475,7 @@ public class FONode extends Node{
 
     /**
      * Get the adjusted value from the parent FO of the source property.
-     * @see #fromParent(init,int)
+     * @see #fromParent(int,int)
      * @see #getPropertyValue(int)
      * @param property - the index of both target and source properties.
      * @return - the adjusted value from the parent FO node, if it exists.
@@ -534,10 +534,10 @@ public class FONode extends Node{
      * <pre>
      * <p>The <b>adjusted value</b> is either the value itself, or, if the
      * value is an unresolved relative length, an <tt>IndirectValue</tt>
-     * referring to that unresolved length.
-     * @param index - the property index.
+     * referring to that unresolved length
+     * @param property  the property index
      * @return a <tt>PropertyValue</tt> containing the adjusted property
-     * value for the indexed property.
+     * value for the indexed property
      */
     public PropertyValue getPropertyValue(int property)
                 throws PropertyException
