@@ -204,16 +204,46 @@ public class PDFRenderer extends PrintRenderer {
             pageReferences.put(page, currentPage.referencePDF());
         }
         currentStream = this.pdfDoc.makeStream();
-        currentStream.add("BT\n");
+	// Transform origin at top left to origin at bottom left
+	currentStream.add("1 0 0 -1 0 " +
+			  (int) Math.round(pageHeight / 1000) + " cm\n");
+        //currentStream.add("BT\n");
 
         Page p = page.getPage();
         renderPageAreas(p);
 
-        currentStream.add("ET\n");
+        //currentStream.add("ET\n");
 
         currentPage.setContents(currentStream);
         this.pdfDoc.addPage(currentPage);
         this.pdfDoc.output(ostream);
+    }
+
+
+    protected void startVParea(CTM ctm) {
+	// Set the given CTM in the graphics state
+	currentStream.add("q\n");
+	// multiply with current CTM
+	currentStream.add(ctm.toPDFctm() + " cm\n");
+	// Set clip?
+    }
+
+    protected void endVParea() {
+	currentStream.add("Q\n");
+    }
+
+    protected void renderRegion(RegionReference region) {
+	// Draw a rectangle so we can see it!
+	// x=0,y=0,w=ipd,h=bpd
+	currentStream.add("BT\n");
+	super.renderRegion(region);
+	currentStream.add("ET\n");
+    }
+
+
+    protected void renderLineArea(LineArea line) {
+	super.renderLineArea(line);
+	closeText();
     }
 
     public void renderCharacter(Character ch) {
@@ -248,7 +278,8 @@ public class PDFRenderer extends PrintRenderer {
             updateColor(true, pdf);
 
             int rx = currentBlockIPPosition;
-            int bl = pageHeight - currentBPPosition;
+            // int bl = pageHeight - currentBPPosition;
+            int bl = currentBPPosition;
 
             // Set letterSpacing
             //float ls = fs.getLetterSpacing() / this.currentFontSize;
@@ -257,7 +288,7 @@ public class PDFRenderer extends PrintRenderer {
             if (!textOpen || bl != prevWordY) {
                 closeText();
 
-                pdf.append("1 0 0 1 " + (rx / 1000f) + " " + (bl / 1000f)
+                pdf.append("1 0 0 -1 " + (rx / 1000f) + " " + (bl / 1000f)
                            + " Tm [" + startText);
                 prevWordY = bl;
                 textOpen = true;
