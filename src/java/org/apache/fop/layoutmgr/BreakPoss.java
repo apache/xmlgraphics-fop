@@ -187,6 +187,13 @@ public class BreakPoss {
         return ((flags & ALL_ARE_SUPPRESS_AT_LB) != 0);
     }
 
+    /**
+     * @return true if the BreakPoss results in an area being created.
+     */
+    public boolean generatesAreas() {
+        return !(nextBreakOverflows() && getStackingSize().opt <= 0);
+    }
+    
     public SpaceSpecifier getLeadingSpace() {
         return spaceSpecLeading;
     }

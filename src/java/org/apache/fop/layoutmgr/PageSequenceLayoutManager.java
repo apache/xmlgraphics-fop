@@ -227,6 +227,11 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
         pageSeq.setCurrentPageNumber(getPageCount());
     }
 
+    /** @see org.apache.fop.layoutmgr.LayoutManager#isBogus() */
+    public boolean isBogus() {
+        return false;
+    }
+    
     /**
      * Get the next break possibility.
      * This finds the next break for a page which is always at the end
@@ -484,8 +489,9 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
         RegionViewport rv = curPage.getPage().getRegionViewport(
                     FO_REGION_BODY);
         curBody = (BodyRegion) rv.getRegion();
-        flowBPD = (int) curBody.getBPD() -
-            rv.getBorderAndPaddingWidthBefore() - rv.getBorderAndPaddingWidthAfter();
+        flowBPD = (int) curBody.getBPD()
+            - rv.getBorderAndPaddingWidthBefore() 
+            - rv.getBorderAndPaddingWidthAfter();
 
         return curPage;
     }

@@ -19,17 +19,20 @@
 package org.apache.fop.layoutmgr.table;
 
 import org.apache.fop.fo.flow.TableRow;
+import org.apache.fop.fo.properties.LengthRangeProperty;
 import org.apache.fop.layoutmgr.BlockStackingLayoutManager;
 import org.apache.fop.layoutmgr.LayoutManager;
 import org.apache.fop.layoutmgr.LeafPosition;
 import org.apache.fop.layoutmgr.BreakPoss;
 import org.apache.fop.layoutmgr.LayoutContext;
+import org.apache.fop.layoutmgr.MinOptMaxUtil;
 import org.apache.fop.layoutmgr.PositionIterator;
 import org.apache.fop.layoutmgr.BreakPossPosIter;
 import org.apache.fop.layoutmgr.Position;
 import org.apache.fop.layoutmgr.TraitSetter;
 import org.apache.fop.area.Area;
 import org.apache.fop.area.Block;
+import org.apache.fop.area.Trait;
 import org.apache.fop.traits.MinOptMax;
 
 import java.util.Iterator;
@@ -48,6 +51,7 @@ public class Row extends BlockStackingLayoutManager {
     
     private List cellList = null;
     private List columns = null;
+    private int referenceIPD;
     private int rowHeight;
     private int xoffset;
     private int yoffset;
@@ -133,7 +137,7 @@ public class Row extends BlockStackingLayoutManager {
 
             // Set up a LayoutContext
             // the ipd is from the current column
-            int ipd = context.getRefIPD();
+            referenceIPD = context.getRefIPD();
             BreakPoss bp;
 
             LayoutContext childLC = new LayoutContext(0);
@@ -194,9 +198,17 @@ public class Row extends BlockStackingLayoutManager {
 
             breakList.add(childBreaks);
         }
-        rowHeight = opt;
-
         MinOptMax rowSize = new MinOptMax(min, opt, max);
+        LengthRangeProperty specifiedBPD = fobj.getBlockProgressionDimension();
+        if (specifiedBPD.getEnum() != EN_AUTO) {
+            if ((specifiedBPD.getMaximum().getEnum() != EN_AUTO)
+                    && (specifiedBPD.getMaximum().getLength().getValue() < rowSize.min)) {
+                log.warn("maximum height of row is smaller than the minimum "
+                        + "height of its contents");
+            }
+            MinOptMaxUtil.restrict(rowSize, specifiedBPD);
+        }
+        rowHeight = rowSize.opt;
 
         boolean fin = true;
         cellcount = 0;
@@ -278,14 +290,27 @@ public class Row extends BlockStackingLayoutManager {
     public void addAreas(PositionIterator parentIter,
                          LayoutContext layoutContext) {
         getParentArea(null);
-        addID(fobj.getId());
+        BreakPoss bp1 = (BreakPoss)parentIter.peekNext();
+        bBogus = !bp1.generatesAreas();
+        if (!isBogus()) {
+            addID(fobj.getId());
+        }
 
         Cell childLM;
         int iStartPos = 0;
         LayoutContext lc = new LayoutContext(0);
         while (parentIter.hasNext()) {
             RowPosition lfp = (RowPosition) parentIter.next();
-            // Add the block areas to Area
+            
+            //area exclusively for painting the row background
+            Block rowArea = getRowArea();
+            if (rowArea != null) {
+                rowArea.setBPD(rowHeight);
+                rowArea.setIPD(referenceIPD);
+                rowArea.setXOffset(xoffset);
+                rowArea.setYOffset(yoffset);
+                parentLM.addChild(rowArea);
+            }
 
             int cellcount = 0;
             int x = this.xoffset;
@@ -316,7 +341,6 @@ public class Row extends BlockStackingLayoutManager {
         }
 
         flush();
-
     }
 
     /**
@@ -374,10 +398,16 @@ public class Row extends BlockStackingLayoutManager {
      *
      * @return the row area
      */
-    public Area getRowArea() {
-        Area block = new Block();
-        TraitSetter.addBackground(block, fobj.getCommonBorderPaddingBackground());
-        return block;
+    public Block getRowArea() {
+        if (fobj.getCommonBorderPaddingBackground().hasBackground()) {
+            Block block = new Block();
+            block.addTrait(Trait.IS_REFERENCE_AREA, Boolean.TRUE);
+            block.setPositioning(Block.ABSOLUTE);
+            TraitSetter.addBackground(block, fobj.getCommonBorderPaddingBackground());
+            return block;
+        } else {
+            return null;
+        }
     }
 
 }
