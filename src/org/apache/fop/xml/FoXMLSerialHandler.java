@@ -3,6 +3,7 @@ package org.apache.fop.xml;
 import org.apache.fop.fo.FObjectNames;
 import org.apache.fop.xml.XMLNamespaces;
 import org.apache.fop.xml.SyncedFoXmlEventsBuffer;
+import org.apache.fop.xml.FoXMLEventPool;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.apps.Driver;
 import org.apache.fop.configuration.Configuration;
@@ -43,6 +44,9 @@ public class FoXMLSerialHandler extends DefaultHandler implements Runnable {
     private Thread foThread;
     private boolean errorDump;
 
+    /** The pool associated with the buffer. */
+    private FoXMLEventPool pool;
+
     /**
      * @param events the events buffer.
      * @param parser the xml parser.
@@ -57,6 +61,7 @@ public class FoXMLSerialHandler extends DefaultHandler implements Runnable {
         namespaces = events.getNamespaces();
         parser.setContentHandler(this);
         errorDump = Configuration.getBooleanValue("debugMode").booleanValue();
+        pool = events.getPool();
     }
 
     public void setFoThread(Thread foThread) {

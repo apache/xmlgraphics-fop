@@ -73,8 +73,25 @@ public class FoXMLEvent extends XMLEvent {
         this.foType = foType;
     }
 
+    /**
+     * Clear the fields of this event.  Provided for pool operations.
+     * The <i>namespaces</i> field is not cleared.
+     */
+    public void clear() {
+        super.clear();
+        foType = FObjectNames.NO_FO;
+    }
+
+    /**
+     * Get the FO type of this <i>FoXMLEvent</i>.
+     * @returns the FO type.
+     */
     public int getFoType() { return foType; }
 
+    /**
+     * Set the FO type of this <i>FoXMLEvent</i>.
+     * @param foType -the FO type.
+     */
     public void setFoType(int foType) { this.foType = foType; }
 
     public String toString() {

@@ -113,6 +113,19 @@ public class XMLEvent {
         this.namespaces = namespaces;
     }
 
+    /**
+     * Clear the fields of this event.  Provided for pool operations.
+     * The <i>namespaces</i> field is not cleared.
+     */
+    public void clear() {
+        type = NOEVENT;
+        chars = null;
+        uriIndex = 0;
+        localName = null;
+        qName = null;
+        attributes = null;
+    }
+
     public int getType() { return type; }
     public void setType(int type) {
         if (type < MIN_XML_EV_TYPE || type > MAX_XML_EV_TYPE) {
@@ -191,6 +204,14 @@ public class XMLEvent {
      */
     public void setAttributes(AttributesImpl attributes) {
         this.attributes = attributes;
+    }
+
+    /**
+     * Set the <tt>XMLNamespaces</tt> object associated with this event.
+     * @param the <tt>XMLNamespaces</tt> object.
+     */
+    public void setNamespaces(XMLNamespaces namespaces) {
+        this.namespaces = namespaces;
     }
 
     /**
