@@ -52,7 +52,7 @@
  * <http://www.apache.org/>.
  */
 
-package org.apache.fop.tools.anttasks;
+package org.apache.fop.tools.xslt;
 
 import org.apache.xalan.xslt.*;
 
@@ -69,10 +69,11 @@ public class Xalan1Transform
     /** Cache of compiled stylesheets (filename, StylesheetRoot) */
     private static Hashtable _stylesheetCache = new Hashtable();
 
-    public static StylesheetRoot getStylesheet(String xsltFilename)
+    public static StylesheetRoot getStylesheet(String xsltFilename, 
+					       boolean cache)
 	throws org.xml.sax.SAXException
     {
-	if (_stylesheetCache.containsKey(xsltFilename)) {
+	if (cache && _stylesheetCache.containsKey(xsltFilename)) {
 	    return (StylesheetRoot)_stylesheetCache.get(xsltFilename);
 	}
 	
@@ -86,14 +87,16 @@ public class Xalan1Transform
 	    new org.apache.xalan.xslt.XSLTInputSource (xsltFilename);
 
 	// Perform the transformation.
+	/*
 	System.out.println("****************************");
 	System.out.println("new xslt compile \nin: " + xsltFilename);
 	System.out.println("****************************");
-
+	*/
 	StylesheetRoot compiledSheet =
 	    processor.processStylesheet(xslSheet);
-
-	_stylesheetCache.put(xsltFilename, compiledSheet);
+	if (cache) {
+	    _stylesheetCache.put(xsltFilename, compiledSheet);
+	}
 	return compiledSheet;
     }
 
@@ -116,9 +119,12 @@ public class Xalan1Transform
 
     }
     
-    public static void transform(Document xmlSource, String xslURL,
-                           String outputFile) throws java.io.IOException,
-			   java.net.MalformedURLException, org.xml.sax.SAXException
+    public static void transform(Document xmlSource, 
+				 String xslURL,
+				 String outputFile) 
+	throws java.io.IOException,
+	       java.net.MalformedURLException, 
+	       org.xml.sax.SAXException
     {
 	// Create the 3 objects the XSLTProcessor needs to perform the transformation.
         org.apache.xalan.xslt.XSLTInputSource source =
@@ -126,7 +132,7 @@ public class Xalan1Transform
         org.apache.xalan.xslt.XSLTResultTarget xmlResult =
           new org.apache.xalan.xslt.XSLTResultTarget (outputFile);
 
-	StylesheetRoot stylesheet = getStylesheet(xslURL);
+	StylesheetRoot stylesheet = getStylesheet(xslURL,true);
 	
         // Perform the transformation.
         stylesheet.process(XSLTProcessorFactory.getProcessor

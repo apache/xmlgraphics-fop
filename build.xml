@@ -121,8 +121,8 @@ Sometimes ant gives out this warnings, but the build is finished without any pro
     <tstamp/>
     <property name="Name" value="Fop"/>
     <property name="name" value="fop"/>
-    <property name="version" value="0.15cvs"/>
-    <property name="year" value="1999-2000"/>
+    <property name="version" value="0.17cvs"/>
+    <property name="year" value="1999-2001"/>
 
     <echo message="------------------- ${Name} ${version} [${year}] ----------------"/>
 
@@ -192,16 +192,27 @@ Sometimes ant gives out this warnings, but the build is finished without any pro
     <property name="ZapfDingbats.xml" value="${build.codegen}/ZapfDingbats.xml"/>
     <property name="Symbol.xml" value="${build.codegen}/Symbol.xml"/>
 
+    <property name="xalan1" value="Xalan1Transform.java"/>
+    <property name="trax" value="TraxTransform.java"/>
+    <property name="xsltransform" value="XSLTransform.java"/>
+    <property name="pfmreader" value="PFMReader.java"/>
+
+    <property name="tools.pkg" value="org/apache/fop/tools"/>
+
+
     <!-- insert custom font information here (step 1 of 2) -->
     <!-- use this as a template 
     <property name="myfont.xml" value="${build.codegen}/myfont.xml"/>
     -->
 
-    <taskdef name="serHyph" classname="SerializeHyphPattern"/> 
-    <taskdef name="xslt" classname="Xslt"/>
+    <taskdef name="serHyph" classname="org.apache.fop.tools.anttasks.SerializeHyphPattern"/> 
+    <taskdef name="xslt" classname="org.apache.fop.tools.anttasks.Xslt"/>
     <available property="xt.present" classname="com.jclark.xsl.sax.XSLProcessor"/>
     <available property="jimi.present" classname="com.sun.jimi.core.Jimi"/>
     <available property="jai.present" classname="javax.media.jai.JAI"/>
+
+    <available property="trax.present" classname="javax.xml.transform.Transformer"/>
+    <available property="xalan1.present" classname="org.apache.xalan.xslt.XSLTProcessor"/>
 
     <filter token="${replacestring}" value="${build.src}/${replacestring}"/>
   </target>
@@ -290,14 +301,29 @@ Sometimes ant gives out this warnings, but the build is finished without any pro
   </target>
 
 
+  <target name="prepare-xalan1" if="xalan1.present">
+      <echo message="Xalan1 is present. Installing Xalan1 support"/>
+      <copydir src="${src.dir}"
+ 	      dest="${build.src}"
+ 	      includes="**/${xsltransform},**/${xalan1},**/${pfmreader}"/>
+  </target>
+ 
+  <target name="prepare-trax" if="trax.present">
+      <echo message="JAXP1.1 transforms is present. Installing TRaX support"/>
+      <copydir src="${src.dir}"
+ 	      dest="${build.src}"
+ 	      includes="**/${xsltransform},**/${trax}"/>
+  </target>
+
+
   <!-- =================================================================== -->
   <!-- Prepares the source code                                            -->
   <!-- =================================================================== -->
-  <target name="prepare-src" depends="prepare, prepare-xt, prepare-jimi, prepare-jai">
+  <target name="prepare-src" depends="prepare, prepare-xt, prepare-jimi, prepare-jai, prepare-xalan1, prepare-trax">
     <!-- copy src files -->
     <copydir src="${src.dir}"
              dest="${build.src}"
-             excludes="**/Makefile*, **/package.html, **/XT*,**/PDFOutputHandler.java,**/${jimi},**/${jai}"/>
+             excludes="**/Makefile*, **/package.html, **/XT*,**/PDFOutputHandler.java,**/${jimi},**/${jai},**/${pfmreader}"/>
   </target>
 
   <!-- =================================================================== -->
@@ -422,7 +448,7 @@ Sometimes ant gives out this warnings, but the build is finished without any pro
   <target name="prepare-docs" depends="init">
     <mkdir dir="${build.docs}"/>
     <!-- sets exec permission for antRun on Unix systems. necessary for javadoc-->
-    <chmod src="${lib.dir}/bin/antRun" perm="ugo+rx" />
+    <chmod file="${lib.dir}/bin/antRun" perm="ugo+rx" />
   </target>
 
   <!-- =================================================================== -->
@@ -463,7 +489,7 @@ Sometimes ant gives out this warnings, but the build is finished without any pro
     <echo message="Building the distribution files (zip,tar)"/>
     <mkdir dir="${dist.dir}"/>
     <copyfile src="${basedir}/build.sh" dest="${dist.dir}/build.sh" />
-    <chmod src="${dist.dir}/build.sh" perm="ugo+rx" />
+    <chmod file="${dist.dir}/build.sh" perm="ugo+rx" />
     <copyfile src="${basedir}/build.bat" dest="${dist.dir}/build.bat" />
     <copydir src="${build.dir}" dest="${dist.dir}" 
         excludes="**/classes/**, **/${ignore_this}"/>

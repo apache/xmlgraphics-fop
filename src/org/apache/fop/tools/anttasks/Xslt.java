@@ -209,13 +209,18 @@ public class Xslt extends Task {
 			       xsltfile + "\nout: " + outfile);
 	    System.out.println("============================");
 	
+	    /*
 	    if (isTraxAvailable()) {
 		TraxTransform.transform(source, xsltfile, outfile);
 	    }
 	    else {
 		Xalan1Transform.transform(source, xsltfile, outfile);
 	    }
-	} catch (org.xml.sax.SAXException saxerror) {
+	    */
+	    org.apache.fop.tools.xslt.XSLTransform.transform(source,xsltfile,outfile);
+	    
+	
+    } catch (org.xml.sax.SAXException saxerror) {
             System.out.println("Task xslt - SAX ERROR:\n      " + saxerror);
         }
         catch (MalformedURLException urlerror) {
@@ -224,11 +229,17 @@ public class Xslt extends Task {
         catch (IOException ioerror) {
             System.out.println("Task xslt - IO ERROR:\n      " + ioerror);
         }
-
+	
+	catch (Exception ex) {
+	    ex.printStackTrace();
+	}
+    
     } //end transform
 
+    /*
     private boolean isTraxAvailable() 
     {
+	
 	try {
 	    // check for trax
 	    Class transformer = Class.forName("javax.xml.transform.Transformer");
@@ -241,6 +252,7 @@ public class Xslt extends Task {
 	}	
 	return false;
     }
+    */
     
     /**
      *  Checks for existence of output file and compares
