@@ -51,7 +51,7 @@
 package org.apache.fop.render;
 
 // FOP
-import org.apache.fop.svg.SVGArea;
+import org.apache.fop.dom.svg.SVGArea;
 import org.apache.fop.image.ImageArea;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.layout.*;
