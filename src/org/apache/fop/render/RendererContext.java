@@ -6,6 +6,8 @@
  */
 package org.apache.fop.render;
 
+import org.apache.log.Logger;
+
 import java.util.HashMap;
 
 /**
@@ -15,6 +17,7 @@ import java.util.HashMap;
  */
 public class RendererContext {
     String mime;
+    Logger log;
     HashMap props = new HashMap();
 
     public RendererContext(String m) {
@@ -23,6 +26,14 @@ public class RendererContext {
 
     public String getMimeType() {
         return mime;
+    }
+
+    public void setLogger(Logger logger) {
+        log = logger;
+    }
+
+    public Logger getLogger() {
+        return log;
     }
 
     public void setProperty(String name, Object val) {

@@ -87,14 +87,11 @@ public class Flow extends FObj {
 
     protected void setFlowName(String name) throws FOPException {
         if (name == null || name.equals("")) {
-            log.warn("A 'flow-name' is required for "
-                                   + getName()
-                                   + ". This constraint will be enforced in future versions of FOP");
-            _flowName = "xsl-region-body";
+            throw new FOPException("A 'flow-name' is required for "
+                                   + getName());
         } else {
             _flowName = name;
         }
-
     }
 
     public String getFlowName() {

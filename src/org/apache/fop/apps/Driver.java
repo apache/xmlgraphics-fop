@@ -8,6 +8,7 @@
 package org.apache.fop.apps;
 
 // FOP
+import org.apache.fop.fo.FOUserAgent;
 import org.apache.fop.fo.FOTreeBuilder;
 import org.apache.fop.fo.ElementMapping;
 import org.apache.fop.layout.AreaTree;
@@ -200,6 +201,13 @@ public class Driver {
         _stream = stream;
     }
 
+    public void setUserAgent(FOUserAgent agent) {
+    }
+
+    private FOUserAgent getUserAgent() {
+        return new FOUserAgent();
+    }
+
     public void setLogger(Logger logger) {
         log = logger;
     }
@@ -349,6 +357,7 @@ public class Driver {
      */
     public void setRenderer(Renderer renderer) {
         renderer.setLogger(getLogger());
+        renderer.setUserAgent(getUserAgent());
         _renderer = renderer;
     }
 

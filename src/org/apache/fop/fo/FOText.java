@@ -38,18 +38,18 @@ public class FOText extends FObj {
     TextInfo textInfo;
 
     public static class TextInfo {
-        FontState fs;
-        float red;
-        float green;
-        float blue;
-        int wrapOption;
-        int whiteSpaceCollapse;
-        int verticalAlign;
+        public FontState fs;
+        public float red;
+        public float green;
+        public float blue;
+        public int wrapOption;
+        public int whiteSpaceCollapse;
+        public int verticalAlign;
 
         // Textdecoration
-        protected boolean underlined = false;
-        protected boolean overlined = false;
-        protected boolean lineThrough = false;
+        public boolean underlined = false;
+        public boolean overlined = false;
+        public boolean lineThrough = false;
     }
 
     TextState ts;

@@ -16,8 +16,8 @@ public class SplitContext {
     MinOptMax targetBPD;
 
     public SplitContext(MinOptMax targetBPD) {
-	this.targetBPD = targetBPD;
-	nextArea = null;
+        this.targetBPD = targetBPD;
+        nextArea = null;
     }
 
 }

@@ -26,6 +26,6 @@ public class SpaceSpecifier {
     }
 
     public MinOptMax resolve() {
-	return new MinOptMax();
+        return new MinOptMax();
     }
 }

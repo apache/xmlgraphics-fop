@@ -28,7 +28,7 @@ public class FlowLayoutManager extends BlockStackingLayoutManager {
      * It is created by the PageSequence FO.
      */
     public FlowLayoutManager(FObj fobj) {
-	super(fobj);
+        super(fobj);
     }
 
 
@@ -39,17 +39,17 @@ public class FlowLayoutManager extends BlockStackingLayoutManager {
      * at any one time. The actual work is done by BlockStackingLM.
      */
     public void addChild(Area childArea) {
-	addChildToArea(childArea,
-		       this.currentAreas[childArea.getAreaClass()]);
+        addChildToArea(childArea,
+                       this.currentAreas[childArea.getAreaClass()]);
     }
 
     public Area getParentArea(Area childArea) {
-	// Get an area from the Page
-	BlockParent parentArea =
-	    (BlockParent)parentLM.getParentArea(childArea);
-	this.currentAreas[parentArea.getAreaClass()] = parentArea;
-	setCurrentArea(parentArea);
-	return parentArea;
+        // Get an area from the Page
+        BlockParent parentArea =
+          (BlockParent) parentLM.getParentArea(childArea);
+        this.currentAreas[parentArea.getAreaClass()] = parentArea;
+        setCurrentArea(parentArea);
+        return parentArea;
     }
 
 

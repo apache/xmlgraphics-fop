@@ -15,7 +15,6 @@ import java.io.*;
  * Die Klasse <code>SecureResourceBundle</code> ist ein Resourceundle, das im Falle eines fehlenden
  * Eintrages keinen Absturz verursacht, sondern die Meldung
  * <strong>Key <i>key</i> not found</strong> zurückgibt.
- * @see PropertyResourceBundle
  *
  * @author Stanislav.Gorkhover@jCatalog.com
  * @version 1.0 18.03.1999
@@ -48,13 +47,9 @@ public class SecureResourceBundle extends ResourceBundle
         }
     }
 
-
-
     public Enumeration getKeys() {
         return lookup.keys();
     }
-
-
 
     /**
      * Händelt den abgefragten Key, liefert entweder den zugehörigen Wert oder eine Meldung.
@@ -101,5 +96,5 @@ public class SecureResourceBundle extends ResourceBundle
     public boolean isSourceFound() {
         return isSourceFound;
     }
-
 }
+

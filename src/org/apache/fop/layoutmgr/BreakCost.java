@@ -19,15 +19,15 @@ public class BreakCost {
     private int cost; // Will be more complicated than this!
 
     public BreakCost(Area breakArea, int cost) {
-	this.breakArea = breakArea;
-	this.cost = cost;
+        this.breakArea = breakArea;
+        this.cost = cost;
     }
 
     Area getArea() {
-	return breakArea;
+        return breakArea;
     }
 
     public BreakCost chooseLowest(BreakCost otherCost) {
-	return this;
+        return this;
     }
 }

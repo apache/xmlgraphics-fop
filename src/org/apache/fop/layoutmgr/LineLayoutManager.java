@@ -31,10 +31,9 @@ public class LineLayoutManager extends AbstractLayoutManager {
     private MinOptMax remainingIPD;
 
     public LineLayoutManager(ListIterator fobjIter) {
-	super(null);
-	this.fobjIter = fobjIter;
+        super(null);
+        this.fobjIter = fobjIter;
     }
-
 
     /**
      * Call child layout managers to generate content as long as they
@@ -42,68 +41,65 @@ public class LineLayoutManager extends AbstractLayoutManager {
      * finish any line being filled and return to the parent LM.
      */
     public void generateAreas() {
-	this.bFirstLine = true;
-	while (fobjIter.hasNext()) {
-	    FObj childFO = (FObj)fobjIter.next();
-	    if (childFO.generatesInlineAreas()==false) {
-		// It generates blocks, pass back to parent
-		// Back up one
-		fobjIter.previous();
-		break;
-	    }
-	    else { // generates inline area
-		curLM = childFO.getLayoutManager();
-		if (curLM != null) {
-		    curLM.setParentLM(this);
-		    curLM.generateAreas();
-		}
-	    }
-	}
-	flush(); // Add last area to parent
+        this.bFirstLine = true;
+        while (fobjIter.hasNext()) {
+            FObj childFO = (FObj) fobjIter.next();
+            if (childFO.generatesInlineAreas() == false) {
+                // It generates blocks, pass back to parent
+                // Back up one
+                fobjIter.previous();
+                break;
+            } else { // generates inline area
+                curLM = childFO.getLayoutManager();
+                if (curLM != null) {
+                    curLM.setParentLM(this);
+                    curLM.generateAreas();
+                }
+            }
+        }
+        flush(); // Add last area to parent
     }
-
 
     /**
      * Align and position curLine and add it to parentContainer.
      * Set curLine to null.
      */
     public void flush() {
-	if (lineArea != null) {
-	    // Adjust spacing as necessary
-	    // Calculate height, based on content (or does the Area do this?)
-	    parentLM.addChild(lineArea);
-	    lineArea = null;
-	}
+        if (lineArea != null) {
+            // Adjust spacing as necessary
+            // Calculate height, based on content (or does the Area do this?)
+            lineArea.setHeight(14000);
+            parentLM.addChild(lineArea);
+            lineArea = null;
+        }
     }
-
 
     /**
      * Return current lineArea or generate a new one if necessary.
      */
     public Area getParentArea(Area childArea) {
-	if (lineArea == null) {
-	    createLine();
-	}
-	return lineArea;
+        if (lineArea == null) {
+            createLine();
+        }
+        return lineArea;
     }
 
     private void createLine() {
-	lineArea = new LineArea();
-	/* Set line IPD from parentArea
-	 * This accounts for indents. What about first line indent?
-	 * Should we set an "isFirst" flag on the lineArea to signal
-	 * that to the parent (Block) LM? That's where indent property
-	 * information will be managed.
-	 */
-	Area parent = parentLM.getParentArea(lineArea);
-	// lineArea.setContentIPD(parent.getContentIPD());
-	// remainingIPD = parent.getContentIPD();
-	// OR???
-	// remainingIPD = parentLM.getContentIPD();
-	remainingIPD = new MinOptMax(100000);  // TESTING!!!
-	this.bFirstLine = false;
+        lineArea = new LineArea();
+        /* Set line IPD from parentArea
+         * This accounts for indents. What about first line indent?
+         * Should we set an "isFirst" flag on the lineArea to signal
+         * that to the parent (Block) LM? That's where indent property
+         * information will be managed.
+         */
+        Area parent = parentLM.getParentArea(lineArea);
+        // lineArea.setContentIPD(parent.getContentIPD());
+        // remainingIPD = parent.getContentIPD();
+        // OR???
+        // remainingIPD = parentLM.getContentIPD();
+        remainingIPD = new MinOptMax(300000); // TESTING!!!
+        this.bFirstLine = false;
     }
-
 
     /**
      * Called by child LayoutManager when it has filled one of its areas.
@@ -113,49 +109,54 @@ public class LineLayoutManager extends AbstractLayoutManager {
      * @param childArea the area to add: should be an InlineArea subclass!
      */
     public void addChild(Area childArea) {
-	if ((childArea instanceof InlineArea)==false) {
-	    // SIGNAL AN ERROR!!!
-	    return;
-	}
-	InlineArea inlineArea = (InlineArea)childArea;
-	if (lineArea == null) {
-	    createLine();
-	}
-	if (inlineArea.getAllocationIPD().min < remainingIPD.max) {
-	    lineArea.addInlineArea(inlineArea);
-	    remainingIPD.subtract(inlineArea.getAllocationIPD());
-	    // Calculate number of spaces
-	    // Forced line break after this area (ex. ends with LF in nowrap)
-	    /* NOTYET!
-	    if (inlineArea.breakAfter()) {
-		flush();
-	    }
-	    */
-	    /* Check if line could end after this area (potential line-break
-	     * character. If not, it must be joined with following inline
-	     * area to make a word. Otherwise, if the line could break here
-	     * and if it is "full", add it to the parent area.
-	     */
-	    if (remainingIPD.min<=0) {
-		flush();
-	    }
-	}
-
-	else {
-	    /* The inline area won't entirely fit in this line. Ask its
-	     * layout manager to split it (by hyphenation for example),
-	     * in order to fit part of it in the line.
-	     * Note: only the current child LM could have generated this
-	     * area, so we ask it to do the split.
-	     */
-	    SplitContext splitContext = new SplitContext(remainingIPD);
-	    if (curLM.splitArea(inlineArea, splitContext)) {
-		// inlineArea should now fit
-		lineArea.addInlineArea(inlineArea);
-		flush();
-	    }
-	    addChild(splitContext.nextArea);
-	}
+        if ((childArea instanceof InlineArea) == false) {
+            // SIGNAL AN ERROR!!!
+            return;
+        }
+        InlineArea inlineArea = (InlineArea) childArea;
+        if (lineArea == null) {
+            createLine();
+        }
+        if (inlineArea.getAllocationIPD().min < remainingIPD.max) {
+            lineArea.addInlineArea(inlineArea);
+            remainingIPD.subtract(inlineArea.getAllocationIPD());
+            // Calculate number of spaces
+            // Forced line break after this area (ex. ends with LF in nowrap)
+            /* NOTYET!
+            if (inlineArea.breakAfter()) {
+                flush();
+            }
+             */
+            /* Check if line could end after this area (potential line-break
+             * character. If not, it must be joined with following inline
+             * area to make a word. Otherwise, if the line could break here
+             * and if it is "full", add it to the parent area.
+             */
+            if (remainingIPD.min <= 0) {
+                flush();
+            }
+        }
+        else {
+            /* The inline area won't entirely fit in this line. Ask its
+             * layout manager to split it (by hyphenation for example),
+             * in order to fit part of it in the line.
+             * Note: only the current child LM could have generated this
+             * area, so we ask it to do the split.
+             */
+            SplitContext splitContext = new SplitContext(remainingIPD);
+            if (curLM.splitArea(inlineArea, splitContext)) {
+                // inlineArea should now fit
+                lineArea.addInlineArea(inlineArea);
+            flush(); 
+            addChild(splitContext.nextArea);
+            } else {
+                lineArea.addInlineArea((InlineArea)splitContext.nextArea);
+            remainingIPD.subtract(inlineArea.getAllocationIPD());
+            if (remainingIPD.min <= 0) {
+                flush();
+            }
+            }
+        }
     }
 
 }
