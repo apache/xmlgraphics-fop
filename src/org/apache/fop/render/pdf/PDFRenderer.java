@@ -61,7 +61,7 @@ import org.apache.fop.fo.properties.*;
 import org.apache.fop.layout.*;
 import org.apache.fop.layout.inline.*;
 import org.apache.fop.datatypes.*;
-import org.apache.fop.svg.PathPoint;
+import org.apache.fop.svg.*;
 import org.apache.fop.pdf.*;
 import org.apache.fop.layout.*;
 import org.apache.fop.image.*;
@@ -73,12 +73,6 @@ import org.w3c.dom.*;
 import org.w3c.dom.svg.*;
 import org.w3c.dom.css.*;
 import org.w3c.dom.svg.SVGLength;
-
-import org.apache.fop.dom.svg.*;
-import org.apache.fop.dom.svg.SVGRectElementImpl;
-import org.apache.fop.dom.svg.SVGTextElementImpl;
-import org.apache.fop.dom.svg.SVGLineElementImpl;
-import org.apache.fop.dom.svg.SVGArea;
 
 // Java
 import java.io.IOException;
@@ -592,7 +586,7 @@ public class PDFRenderer implements Renderer {
 	int xOffset = x, yOffset = y;
 
 	// translate and scale according to viewbox.
-	if (svg.getViewBox () != null) {
+/*	if (svg.getViewBox () != null) {
 	    SVGRect view = svg.getViewBox().getBaseVal();
 
 	    // TODO take aspect constraints (attribute preserveAspectRatio)
@@ -608,7 +602,7 @@ public class PDFRenderer implements Renderer {
 
 	    sy = -sy;
 	}
-
+*/
         /*
          * Clip to the svg area.
          * Note: To have the svg overlay (under) a text area then use

@@ -52,7 +52,7 @@ package org.apache.fop.fo;
 
 // FOP
 import org.apache.fop.fo.*;
-import org.apache.fop.dom.svg.*;
+import org.apache.fop.svg.*;
 import org.apache.fop.layout.AreaTree;
 import org.apache.fop.messaging.MessageHandler;
 import org.apache.fop.apps.FOPException;
@@ -297,9 +297,10 @@ public class SVGTreeBuilder extends DefaultHandler implements TreeBuilder {
      */
     public SVGDocument getSVGDocument()
     {
-    	SVGDocumentImpl doc = new SVGDocumentImpl();
+    	SVGDocument doc = null;
+/*    	doc = new SVGDocumentImpl();
         SVGSVGElement svg = (SVGSVGElement)((org.apache.fop.svg.SVG)rootFObj).createGraphic();
-        doc.appendChild(svg);
+        doc.appendChild(svg);*/
     	return doc;
     }
 }
