@@ -12,6 +12,7 @@ import org.apache.fop.fo.*;
 import org.apache.fop.fo.properties.*;
 import org.apache.fop.fo.pagination.*;
 import org.apache.fop.apps.FOPException;
+import org.apache.fop.layoutmgr.StaticContentLayoutManager;
 
 public class StaticContent extends Flow {
 
@@ -32,6 +33,15 @@ public class StaticContent extends Flow {
             super.setFlowName(name);
         }
 
+    }
+
+    private StaticContentLayoutManager lm;
+
+    public StaticContentLayoutManager getLayoutManager() {
+        if (lm == null) {
+            lm = new StaticContentLayoutManager(this);
+        }
+        return lm;
     }
 
 }

@@ -66,16 +66,11 @@ public class PageSequence extends FObj {
      */
     private HashMap _flowMap;
 
-    /**
-     * the "master-reference" attribute
-     */
-    private String masterName;
-
     // according to communication from Paul Grosso (XSL-List,
     // 001228, Number 406), confusion in spec section 6.4.5 about
     // multiplicity of fo:flow in XSL 1.0 is cleared up - one (1)
     // fo:flow per fo:page-sequence only.
-    private boolean isFlowSet = false;
+//    private boolean isFlowSet = false;
 
     // for structure handler
     private boolean sequenceStarted = false;
@@ -108,20 +103,14 @@ public class PageSequence extends FObj {
     private boolean thisIsFirstPage;
 
     /**
-     * the current subsequence while formatting a given page sequence
+     * The currentSimplePageMaster is either the page master for the
+     * whole page sequence if master-reference refers to a simple-page-master,
+     * or the simple page master produced by the page sequence mster otherwise.
+     * The pageSequenceMaster is null if master-reference refers to a
+     * simple-page-master.
      */
-    private SubSequenceSpecifier currentSubsequence;
-
-    /**
-     * the current index in the subsequence list
-     */
-    private int currentSubsequenceNumber =
-        -1;    // starting case is -1 so that first getNext increments to 0
-
-    /**
-     * the name of the current page master
-     */
-    private String currentPageMasterName;
+    private SimplePageMaster currentSimplePageMaster;
+    private PageSequenceMaster pageSequenceMaster;
 
     /**
      * The main content flow for this page-sequence.
@@ -179,10 +168,17 @@ public class PageSequence extends FObj {
         }
 
 
-        masterName = this.properties.get("master-reference").getString();
-    // TODO: Add code here to set a reference to the PageSequenceMaster
-    // if the masterName names a page-sequence-master, else get a
-    // reference to the SimplePageMaster. Throw an exception if neither?
+        String masterName = this.properties.get("master-reference").getString();
+        this.currentSimplePageMaster =
+          this.layoutMasterSet.getSimplePageMaster(masterName);
+        if (this.currentSimplePageMaster==null) {
+            this.pageSequenceMaster =
+              this.layoutMasterSet.getPageSequenceMaster(masterName);
+            if (this.pageSequenceMaster==null) {
+                throw new FOPException("master-reference '" + masterName
+                                       + "' for fo:page-sequence matches no simple-page-master or page-sequence-master");
+            }
+        }
 
         // get the 'format' properties
         this.pageNumberGenerator =
@@ -207,18 +203,18 @@ public class PageSequence extends FObj {
      * based on the names given to the regions in the page-master used to
      * generate that page.
      */
-    private void addFlow(Flow flow) throws FOPException {
-        if (_flowMap.containsKey(flow.getFlowName())) {
-            throw new FOPException("flow-names must be unique within an fo:page-sequence");
-        }
-        if (!this.layoutMasterSet.regionNameExists(flow.getFlowName())) {
-            getLogger().error("region-name '"
-                                   + flow.getFlowName()
-                                   + "' doesn't exist in the layout-master-set.");
-        }
-        _flowMap.put(flow.getFlowName(), flow);
-        //setIsFlowSet(true);
-    }
+//      private void addFlow(Flow flow) throws FOPException {
+//          if (_flowMap.containsKey(flow.getFlowName())) {
+//              throw new FOPException("flow-names must be unique within an fo:page-sequence");
+//          }
+//          if (!this.layoutMasterSet.regionNameExists(flow.getFlowName())) {
+//              getLogger().error("region-name '"
+//                                     + flow.getFlowName()
+//                                     + "' doesn't exist in the layout-master-set.");
+//          }
+//          _flowMap.put(flow.getFlowName(), flow);
+//          //setIsFlowSet(true);
+//      }
 
 
     /**
@@ -242,26 +238,47 @@ public class PageSequence extends FObj {
             } else if (childName.equals("fo:flow")) {
                 if (this.mainFlow != null) {
                     throw new FOPException("Only a single fo:flow permitted"
-                        + " per fo:page-sequence");
+                                           + " per fo:page-sequence");
                 } else {
+                    this.mainFlow = (Flow)child;
+                    String flowName = this.mainFlow.getFlowName();
+                    if (_flowMap.containsKey(flowName)) {
+                        throw new FOPException("flow-name "
+                                               + flowName
+                                               + " is not unique within an fo:page-sequence");
+                    }
+                    if (!this.layoutMasterSet.regionNameExists(flowName)) {
+                        getLogger().error("region-name '"
+                                          + flowName
+                                          + "' doesn't exist in the layout-master-set.");
+                    }
+                    // Don't add main flow to the flow map
+//                    addFlow(mainFlow);
                     if(!sequenceStarted) {
                         structHandler.startPageSequence(this, titleFO, layoutMasterSet);
                         sequenceStarted = true;
                     }
-                    this.mainFlow = (Flow)child;
-                    addFlow(mainFlow);
                     super.addChild(child); // For getChildren
                 }
             } else if (childName.equals("fo:static-content")) {
                 if (this.mainFlow != null) {
-                    throw new FOPException(childName +
-                            " must precede fo:flow; ignoring");
-                } else {
-                    if(!sequenceStarted) {
-                        structHandler.startPageSequence(this, titleFO, layoutMasterSet);
-                        sequenceStarted = true;
-                    }
-                    addFlow((Flow)child);
+                  throw new FOPException(childName +
+                                         " must precede fo:flow; ignoring");
+                }
+                String flowName = ((StaticContent)child).getFlowName();
+                if (_flowMap.containsKey(flowName)) {
+                  throw new FOPException("flow-name " + flowName
+                                         + " is not unique within an fo:page-sequence");
+                }
+                if (!this.layoutMasterSet.regionNameExists(flowName)) {
+                    getLogger().error("region-name '" + flowName
+                                      + "' doesn't exist in the layout-master-set.");
+                }
+                _flowMap.put(flowName, child);
+//                    addFlow((Flow)child);
+                if(!sequenceStarted) {
+                  structHandler.startPageSequence(this, titleFO, layoutMasterSet);
+                  sequenceStarted = true;
                 }
             } else {
                 // Ignore it!
@@ -284,51 +301,33 @@ public class PageSequence extends FObj {
         }
     }
 
-
-//     /**
-//      * Return children for layout. Only the main flow is laid out directly.
-//      */
-//     public ListIterator getChildren() {
-// 	return new ListIterator() {
-// 		boolean bFirst=true;
-// 		public boolean hasNext() {
-// 		    return (bFirst==true && mainFlow != null);
-// 		}
-// 		public Object next() {
-// 		    if (bFirst==true && mainFlow != null) {
-// 			bFirst=false;
-// 			return mainFlow;
-// 		    }
-// 		    else throw new NoSuchElementException();
-// 		}
-// 		public void remove() {
-// 		    throw new UnsupportedOperationException();
-// 		}
-// 	    };
-//     }
-
     /**
      * Runs the formatting of this page sequence into the given area tree
      */
     public void format(AreaTree areaTree) throws FOPException {
-    // Make a new PageLayoutManager and a FlowLayoutManager
-    // Run the PLM in a thread
-    // Wait for them to finish.
+        // Make a new PageLayoutManager and a FlowLayoutManager
+        // Run the PLM in a thread
+        // Wait for them to finish.
 
-    // If no main flow, nothing to layout!
-    if (this.mainFlow == null) return;
+        // If no main flow, nothing to layout!
+        if (this.mainFlow == null) {
+            return;
+        }
 
-    // Initialize if already used?
-        this.layoutMasterSet.resetPageMasters();
+        // Initialize if already used?
+        //    this.layoutMasterSet.resetPageMasters();
+        if (pageSequenceMaster != null ) {
+            pageSequenceMaster.reset();
+        }
 
         int firstAvailPageNumber = 0;
 
-    // This will layout pages and add them to the area tree
-    PageLayoutManager pageLM = new PageLayoutManager(areaTree, this);
-    // For now, skip the threading and just call run directly.
-    pageLM.run();
+        // This will layout pages and add them to the area tree
+        PageLayoutManager pageLM = new PageLayoutManager(areaTree, this);
+        // For now, skip the threading and just call run directly.
+        pageLM.run();
 
-// 	Thread layoutThread = new Thread(pageLM);
+        // Thread layoutThread = new Thread(pageLM);
 //  	layoutThread.start();
 // 	log.debug("Layout thread started");
 
@@ -339,8 +338,8 @@ public class PageSequence extends FObj {
 // 	} catch (InterruptedException ie) {
 // 	    log.error("PageSequence.format() interrupted waiting on layout");
 // 	}
-    // Tell the root the last page number we created.
-    this.root.setRunningPageNumberCounter(this.currentPageNumber);
+        // Tell the root the last page number we created.
+        this.root.setRunningPageNumberCounter(this.currentPageNumber);
     }
 
     private void initPageNumber() {
@@ -352,7 +351,7 @@ public class PageSequence extends FObj {
         // Use force-page-count=auto
         // on preceding page-sequence to make sure that there is no gap!
         if (currentPageNumber % 2 == 0) {
-        this.currentPageNumber++;
+            this.currentPageNumber++;
         }
     } else if (pageNumberType == AUTO_EVEN) {
         if (currentPageNumber % 2 == 1) {
@@ -373,17 +372,26 @@ public class PageSequence extends FObj {
      * @param bIsLast If true, use the master for the last page in the sequence.
      */
     public PageViewport createPage(boolean bIsBlank, boolean bIsLast)
-    throws FOPException
-    {
-
-        // Set even/odd flag and first flag based on current state
-    // Should do it this way, but fix it later....
-    /*boolean bEvenPage = ((this.currentPageNumber %2)==0);
-      currentPage = makePage(bEvenPage, */
-    currentPage = makePage(this.currentPageNumber,
-                   this.currentPageNumber==this.firstPageNumber,
-                   bIsLast, bIsBlank);
-    return currentPage;
+      throws FOPException {
+        if (this.pageSequenceMaster!=null) {
+            this.currentSimplePageMaster = this.pageSequenceMaster
+              .getNextSimplePageMaster(((this.currentPageNumber % 2)==1),
+                                       thisIsFirstPage,
+                                       bIsBlank);
+        }
+        Region body = currentSimplePageMaster.getRegion(Region.BODY);
+        if (!this.mainFlow.getFlowName().equals(body.getRegionName())) {
+          throw new FOPException("Flow '" + this.mainFlow.getFlowName()
+                                 + "' does not map to the region-body in page-master '"
+                                 + currentSimplePageMaster.getMasterName() + "'");
+        }
+        PageMaster pageMaster = this.currentSimplePageMaster.getPageMaster();
+        PageViewport p = pageMaster.makePage();
+//         if (currentPage != null) {
+//             Vector foots = currentPage.getPendingFootnotes();
+//             p.setPendingFootnotes(foots);
+//         }
+        return p;
         // The page will have a viewport/reference area pair defined
         // for each region in the master.
         // Set up the page itself
@@ -422,32 +430,32 @@ public class PageSequence extends FObj {
      * from the params
      * TODO: modify the other methods to use even/odd flag and bIsLast
      */
-    private PageViewport makePage(int firstAvailPageNumber,
-              boolean isFirstPage, boolean bIsLast,
-              boolean isEmptyPage) throws FOPException {
-        // layout this page sequence
+//      private PageViewport makePage(int firstAvailPageNumber,
+//                boolean isFirstPage, boolean bIsLast,
+//                boolean isEmptyPage) throws FOPException {
+//          // layout this page sequence
 
-        // while there is still stuff in the flow, ask the
-        // layoutMasterSet for a new page
+//          // while there is still stuff in the flow, ask the
+//          // layoutMasterSet for a new page
 
-        // page number is 0-indexed
-        PageMaster pageMaster = getNextPageMaster(masterName,
-                                firstAvailPageNumber,
-                                isFirstPage, isEmptyPage);
+//          // page number is 0-indexed
+//          PageMaster pageMaster = getNextPageMaster(masterName,
+//                                  firstAvailPageNumber,
+//                                  isFirstPage, isEmptyPage);
 
-        // a legal alternative is to use the last sub-sequence
-        // specification which should be handled in getNextSubsequence.
-    // That's not done here.
-        if (pageMaster == null) {
-            throw new FOPException("page masters exhausted. Cannot recover.");
-        }
-        PageViewport p = pageMaster.makePage();
-//         if (currentPage != null) {
-//             Vector foots = currentPage.getPendingFootnotes();
-//             p.setPendingFootnotes(foots);
-//         }
-        return p;
-    }
+//          // a legal alternative is to use the last sub-sequence
+//          // specification which should be handled in getNextSubsequence.
+//      // That's not done here.
+//          if (pageMaster == null) {
+//              throw new FOPException("page masters exhausted. Cannot recover.");
+//          }
+//          PageViewport p = pageMaster.makePage();
+//  //         if (currentPage != null) {
+//  //             Vector foots = currentPage.getPendingFootnotes();
+//  //             p.setPendingFootnotes(foots);
+//  //         }
+//          return p;
+//      }
 
     /**
      * Formats the static content of the current page
@@ -525,37 +533,37 @@ public class PageSequence extends FObj {
      * Returns the next SubSequenceSpecifier for the given page sequence master.
      * The result is bassed on the current state of this page sequence.
      */
-    private SubSequenceSpecifier getNextSubsequence(PageSequenceMaster master) {
-        if (master.getSubSequenceSpecifierCount()
-                > currentSubsequenceNumber + 1) {
+//      private SubSequenceSpecifier getNextSubsequence(PageSequenceMaster master) {
+//          if (master.getSubSequenceSpecifierCount()
+//                  > currentSubsequenceNumber + 1) {
 
-            currentSubsequence =
-                master.getSubSequenceSpecifier(currentSubsequenceNumber + 1);
-            currentSubsequenceNumber++;
-            return currentSubsequence;
-        } else {
-            return null;
-        }
-    }
+//              currentSubsequence =
+//                  master.getSubSequenceSpecifier(currentSubsequenceNumber + 1);
+//              currentSubsequenceNumber++;
+//              return currentSubsequence;
+//          } else {
+//              return null;
+//          }
+//      }
 
     /**
      * Returns the next simple page master for the given sequence master, page number and
      * other state information
      */
-    private SimplePageMaster getNextSimplePageMaster(PageSequenceMaster sequenceMaster,
-            int currentPageNumber, boolean thisIsFirstPage,
-            boolean isEmptyPage) {
-        // handle forcing
-        if (isForcing) {
-            String nextPageMaster = getNextPageMasterName(sequenceMaster,
-                                    currentPageNumber, false, true);
-            return this.layoutMasterSet.getSimplePageMaster(nextPageMaster);
-        }
-        String nextPageMaster = getNextPageMasterName(sequenceMaster,
-                                currentPageNumber, thisIsFirstPage, isEmptyPage);
-        return this.layoutMasterSet.getSimplePageMaster(nextPageMaster);
+//      private SimplePageMaster getNextSimplePageMaster(PageSequenceMaster sequenceMaster,
+//              int currentPageNumber, boolean thisIsFirstPage,
+//              boolean isEmptyPage) {
+//          // handle forcing
+//          if (isForcing) {
+//              String nextPageMaster = getNextPageMasterName(sequenceMaster,
+//                                      currentPageNumber, false, true);
+//              return this.layoutMasterSet.getSimplePageMaster(nextPageMaster);
+//          }
+//          String nextPageMaster = getNextPageMasterName(sequenceMaster,
+//                                  currentPageNumber, thisIsFirstPage, isEmptyPage);
+//          return this.layoutMasterSet.getSimplePageMaster(nextPageMaster);
 
-    }
+//      }
 
     /**
      * Get the next page master name.
@@ -563,86 +571,86 @@ public class PageSequence extends FObj {
      * is exhausted then an error is indicated and the last page
      * master name is used.
      */
-    private String getNextPageMasterName(PageSequenceMaster sequenceMaster,
-                                         int currentPageNumber,
-                                         boolean thisIsFirstPage,
-                                         boolean isEmptyPage) {
+//      private String getNextPageMasterName(PageSequenceMaster sequenceMaster,
+//                                           int currentPageNumber,
+//                                           boolean thisIsFirstPage,
+//                                           boolean isEmptyPage) {
 
-        if (null == currentSubsequence) {
-            currentSubsequence = getNextSubsequence(sequenceMaster);
-        }
+//          if (null == currentSubsequence) {
+//              currentSubsequence = getNextSubsequence(sequenceMaster);
+//          }
 
-        String nextPageMaster =
-            currentSubsequence.getNextPageMaster(currentPageNumber,
-                                                 thisIsFirstPage,
-                                                 isEmptyPage);
+//          String nextPageMaster =
+//              currentSubsequence.getNextPageMaster(currentPageNumber,
+//                                                   thisIsFirstPage,
+//                                                   isEmptyPage);
 
 
-        if (null == nextPageMaster
-                || isFlowForMasterNameDone(currentPageMasterName)) {
-            SubSequenceSpecifier nextSubsequence =
-                getNextSubsequence(sequenceMaster);
-            if (nextSubsequence == null) {
-                getLogger().error("Page subsequences exhausted. Using previous subsequence.");
-                thisIsFirstPage =
-                    true;    // this becomes the first page in the new (old really) page master
-                currentSubsequence.reset();
+//          if (null == nextPageMaster
+//                  || isFlowForMasterNameDone(currentPageMasterName)) {
+//              SubSequenceSpecifier nextSubsequence =
+//                  getNextSubsequence(sequenceMaster);
+//              if (nextSubsequence == null) {
+//                  getLogger().error("Page subsequences exhausted. Using previous subsequence.");
+//                  thisIsFirstPage =
+//                      true;    // this becomes the first page in the new (old really) page master
+//                  currentSubsequence.reset();
 
-                // we leave currentSubsequence alone
-            }
-            else {
-                currentSubsequence = nextSubsequence;
-            }
+//                  // we leave currentSubsequence alone
+//              }
+//              else {
+//                  currentSubsequence = nextSubsequence;
+//              }
 
-            nextPageMaster =
-                currentSubsequence.getNextPageMaster(currentPageNumber,
-                                                     thisIsFirstPage,
-                                                     isEmptyPage);
-        }
-        currentPageMasterName = nextPageMaster;
+//              nextPageMaster =
+//                  currentSubsequence.getNextPageMaster(currentPageNumber,
+//                                                       thisIsFirstPage,
+//                                                       isEmptyPage);
+//          }
+//          currentPageMasterName = nextPageMaster;
 
-        return nextPageMaster;
+//          return nextPageMaster;
 
-    }
+//      }
 
-    private SimplePageMaster getCurrentSimplePageMaster() {
-        return this.layoutMasterSet.getSimplePageMaster(currentPageMasterName);
-    }
+//      private SimplePageMaster getCurrentSimplePageMaster() {
+//          return this.layoutMasterSet.getSimplePageMaster(currentPageMasterName);
+//      }
 
-    private String getCurrentPageMasterName() {
-        return currentPageMasterName;
-    }
+//      private String getCurrentPageMasterName() {
+//          return currentPageMasterName;
+//      }
 
     // refactored from LayoutMasterSet
-    private PageMaster getNextPageMaster(String pageSequenceName,
-                                         int currentPageNumber,
-                                         boolean thisIsFirstPage,
-                                         boolean isEmptyPage) throws FOPException {
-        PageMaster pageMaster = null;
+//      private PageMaster getNextPageMaster(String pageSequenceName,
+//                                           int currentPageNumber,
+//                                           boolean thisIsFirstPage,
+//                                           boolean isEmptyPage) throws FOPException {
+//          PageMaster pageMaster = null;
 
-        // see if there is a page master sequence for this master name
-        PageSequenceMaster sequenceMaster =
-            this.layoutMasterSet.getPageSequenceMaster(pageSequenceName);
+//          // see if there is a page master sequence for this master name
+//          PageSequenceMaster sequenceMaster =
+//              this.layoutMasterSet.getPageSequenceMaster(pageSequenceName);
 
-        if (sequenceMaster != null) {
-            pageMaster = getNextSimplePageMaster(sequenceMaster,
-                                                 currentPageNumber,
-                                                 thisIsFirstPage,
-                                                 isEmptyPage).getPageMaster();
+//          if (sequenceMaster != null) {
+//              pageMaster = getNextSimplePageMaster(sequenceMaster,
+//                                                   currentPageNumber,
+//                                                   thisIsFirstPage,
+//                                                   isEmptyPage).getPageMaster();
 
-        } else {    // otherwise see if there's a simple master by the given name
-            SimplePageMaster simpleMaster =
-                this.layoutMasterSet.getSimplePageMaster(pageSequenceName);
-            if (simpleMaster == null) {
-                throw new FOPException("'master-reference' for 'fo:page-sequence'"
-                                       + "matches no 'simple-page-master' or 'page-sequence-master'");
-            }
-            currentPageMasterName = pageSequenceName;
+//          } else {    // otherwise see if there's a simple master by the given name
+//              SimplePageMaster simpleMaster =
+//                  this.layoutMasterSet.getSimplePageMaster(pageSequenceName);
+//              if (simpleMaster == null) {
+//                  throw new FOPException("'master-reference' for 'fo:page-sequence'"
+//                                         + "matches no 'simple-page-master' or 'page-sequence-master'");
+//              }
+//              currentPageMasterName = pageSequenceName;
 
-            pageMaster = simpleMaster.getNextPageMaster();
-        }
-        return pageMaster;
-    }
+//              pageMaster = simpleMaster.getNextPageMaster();
+//          }
+//          return pageMaster;
+//      }
 
 
 //     /**
@@ -684,34 +692,34 @@ public class PageSequence extends FObj {
 
 //     }
 
-    private boolean isFlowForMasterNameDone(String masterName) {
-        // parameter is master-name of PMR; we need to locate PM
-        // referenced by this, and determine whether flow(s) are OK
-        if (isForcing)
-            return false;
-        if (masterName != null) {
+//      private boolean isFlowForMasterNameDone(String masterName) {
+//          // parameter is master-name of PMR; we need to locate PM
+//          // referenced by this, and determine whether flow(s) are OK
+//          if (isForcing)
+//              return false;
+//          if (masterName != null) {
 
-            SimplePageMaster spm =
-                this.layoutMasterSet.getSimplePageMaster(masterName);
-            Region region = spm.getRegion(Region.BODY);
+//              SimplePageMaster spm =
+//                  this.layoutMasterSet.getSimplePageMaster(masterName);
+//              Region region = spm.getRegion(Region.BODY);
 
 
-            Flow flow = (Flow)_flowMap.get(region.getRegionName());
-            /*if ((null == flow) || flow.getStatus().isIncomplete())
-                return false;
-            else
-                return true;*/
-        }
-        return false;
-    }
+//              Flow flow = (Flow)_flowMap.get(region.getRegionName());
+//              /*if ((null == flow) || flow.getStatus().isIncomplete())
+//                  return false;
+//              else
+//                  return true;*/
+//          }
+//          return false;
+//      }
 
-    public boolean isFlowSet() {
-        return isFlowSet;
-    }
+//      public boolean isFlowSet() {
+//          return isFlowSet;
+//      }
 
-    public void setIsFlowSet(boolean isFlowSet) {
-        this.isFlowSet = isFlowSet;
-    }
+//      public void setIsFlowSet(boolean isFlowSet) {
+//          this.isFlowSet = isFlowSet;
+//      }
 
     public String getIpnValue() {
         return ipnValue;
@@ -788,4 +796,10 @@ public class PageSequence extends FObj {
 //         }
 //     }
 
+    public SimplePageMaster getCurrentSimplePageMaster() {
+        return currentSimplePageMaster;
+    }
+    public StaticContent getStaticContent(String name) {
+        return (StaticContent)_flowMap.get(name);
+    }
 }

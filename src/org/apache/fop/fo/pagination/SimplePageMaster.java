@@ -154,8 +154,8 @@ public class SimplePageMaster extends FObj {
         String key = region.getRegionClass();
         if (_regions.containsKey(key)) {
             getLogger().error("Only one region of class "
-                                   + key
-                                   + " allowed within a simple-page-master.");
+                              + key
+                              + " allowed within a simple-page-master.");
             // throw new FOPException("Only one region of class "
 //                                    + key
 //                                    + " allowed within a simple-page-master.");
@@ -164,7 +164,7 @@ public class SimplePageMaster extends FObj {
         }
     }
 
-    protected Region getRegion(String regionClass) {
+    public Region getRegion(String regionClass) {
         return (Region)_regions.get(regionClass);
     }
 

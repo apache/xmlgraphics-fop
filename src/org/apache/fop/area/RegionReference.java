@@ -39,7 +39,6 @@ public class RegionReference extends Area implements Serializable, Cloneable {
         return this.ctm;
     }
 
-
     // the list of block areas from the static flow
     ArrayList blocks = new ArrayList();
 
@@ -61,4 +60,5 @@ public class RegionReference extends Area implements Serializable, Cloneable {
         rr.setIPD(getIPD());
         return rr;
     }
+
 }

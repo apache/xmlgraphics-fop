@@ -31,7 +31,6 @@ import org.xml.sax.Attributes;
 public class LayoutMasterSet extends FObj {
     private HashMap simplePageMasters;
     private HashMap pageSequenceMasters;
-    private HashMap allRegions;
 
     public LayoutMasterSet(FONode parent) {
         super(parent);
@@ -50,7 +49,6 @@ public class LayoutMasterSet extends FObj {
 
         this.simplePageMasters = new HashMap();
         this.pageSequenceMasters = new HashMap();
-        allRegions = new HashMap();
     }
 
     /**
@@ -109,20 +107,10 @@ public class LayoutMasterSet extends FObj {
             return false;
     }
 
-    /**
-     * Reset the state of the page sequence masters.
-     * Use when starting a new page sequence.
-     */
-    protected void resetPageMasters() {
-        for (Iterator e = pageSequenceMasters.values().iterator();
-                e.hasNext(); ) {
-            ((PageSequenceMaster)e.next()).reset();
-        }
-    }
-
     protected void checkRegionNames() throws FOPException {
         // Section 7.33.15 check to see that if a region-name is a
         // duplicate, that it maps to the same region-class.
+        HashMap allRegions = new HashMap();
         for (Iterator spm = simplePageMasters.values().iterator();
                 spm.hasNext(); ) {
             SimplePageMaster simplePageMaster =
@@ -155,16 +143,13 @@ public class LayoutMasterSet extends FObj {
      * @returns true when the region name specified has a region in this LayoutMasterSet
      */
     protected boolean regionNameExists(String regionName) {
-        boolean result = false;
         for (Iterator e = simplePageMasters.values().iterator();
                 e.hasNext(); ) {
-            result =
-                ((SimplePageMaster)e.next()).regionNameExists(regionName);
-            if (result) {
-                return result;
+            if (((SimplePageMaster)e.next()).regionNameExists(regionName)) {
+                return true;
             }
         }
-        return result;
+        return false;
     }
 }
 

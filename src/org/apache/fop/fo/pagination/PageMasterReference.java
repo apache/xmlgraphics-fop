@@ -20,8 +20,7 @@ import org.xml.sax.Attributes;
 public abstract class PageMasterReference extends FObj
     implements SubSequenceSpecifier {
 
-    private String _masterName;
-    private PageSequenceMaster _pageSequenceMaster;
+    private String masterName;
 
     public PageMasterReference(FONode parent) {
         super(parent);
@@ -30,34 +29,18 @@ public abstract class PageMasterReference extends FObj
     public void handleAttrs(Attributes attlist) throws FOPException {
         super.handleAttrs(attlist);
         if (getProperty("master-reference") != null) {
-            setMasterName(getProperty("master-reference").getString());
+            this.masterName = getProperty("master-reference").getString();
         }
         validateParent(parent);
-
     }
 
-    protected void setMasterName(String masterName) {
-        _masterName = masterName;
-    }
 
     /**
      * Returns the "master-reference" attribute of this page master reference
      */
     public String getMasterName() {
-        return _masterName;
+        return masterName;
     }
-
-    protected void setPageSequenceMaster(PageSequenceMaster pageSequenceMaster) {
-        _pageSequenceMaster = pageSequenceMaster;
-    }
-
-    protected PageSequenceMaster getPageSequenceMaster() {
-        return _pageSequenceMaster;
-    }
-
-    public abstract String getNextPageMaster(int currentPageNumber,
-                                             boolean thisIsFirstPage,
-                                             boolean isEmptyPage);
 
     /**
      * Checks that the parent is the right element. The default implementation
@@ -65,13 +48,13 @@ public abstract class PageMasterReference extends FObj
      */
     protected void validateParent(FONode parent) throws FOPException {
         if (parent.getName().equals("fo:page-sequence-master")) {
-            _pageSequenceMaster = (PageSequenceMaster)parent;
+            PageSequenceMaster pageSequenceMaster = (PageSequenceMaster)parent;
 
             if (getMasterName() == null) {
                 getLogger().warn("" + getName()
                                        + " does not have a master-reference and so is being ignored");
             } else {
-                _pageSequenceMaster.addSubsequenceSpecifier(this);
+                pageSequenceMaster.addSubsequenceSpecifier(this);
             }
         } else {
             throw new FOPException(getName() + " must be"
@@ -79,7 +62,5 @@ public abstract class PageMasterReference extends FObj
                                    + parent.getName());
         }
     }
-
-    public abstract void reset();
 
 }

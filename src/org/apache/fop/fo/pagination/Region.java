@@ -31,11 +31,11 @@ import org.xml.sax.Attributes;
 public abstract class Region extends FObj {
     public static final String PROP_REGION_NAME = "region-name";
 
-    final static String BEFORE = "before";
-    final static String START =  "start";
-    final static String END =    "end";
-    final static String AFTER =  "after";
-    final static String BODY =   "body";
+    public final static String BEFORE = "before";
+    public final static String START =  "start";
+    public final static String END =    "end";
+    public final static String AFTER =  "after";
+    public final static String BODY =   "body";
 
     private SimplePageMaster _layoutMaster;
     private String _regionName;

@@ -26,8 +26,6 @@ public class RepeatablePageMasterAlternatives extends FObj
 
     private static final int INFINITE = -1;
 
-    private PageSequenceMaster pageSequenceMaster;
-
     /**
      * Max times this page master can be repeated.
      * INFINITE is used for the unbounded case
@@ -47,20 +45,25 @@ public class RepeatablePageMasterAlternatives extends FObj
         conditionalPageMasterRefs = new ArrayList();
 
         if (parent.getName().equals("fo:page-sequence-master")) {
-            this.pageSequenceMaster = (PageSequenceMaster)parent;
-            this.pageSequenceMaster.addSubsequenceSpecifier(this);
+            PageSequenceMaster pageSequenceMaster = (PageSequenceMaster)parent;
+            pageSequenceMaster.addSubsequenceSpecifier(this);
         } else {
-            throw new FOPException("fo:repeatable-page-master-alternatives"
+            throw new FOPException("fo:repeatable-page-master-alternatives "
                                    + "must be child of fo:page-sequence-master, not "
                                    + parent.getName());
         }
 
         String mr = getProperty("maximum-repeats").getString();
         if (mr.equals("no-limit")) {
-            setMaximumRepeats(INFINITE);
+            this.maximumRepeats=INFINITE;
         } else {
             try {
-                setMaximumRepeats(Integer.parseInt(mr));
+                this.maximumRepeats = Integer.parseInt(mr);
+                if (this.maximumRepeats < 0) {
+                    getLogger().debug("negative maximum-repeats: "
+                                      + this.maximumRepeats);
+                    this.maximumRepeats = 0;
+                }
             } catch (NumberFormatException nfe) {
                 throw new FOPException("Invalid number for "
                                        + "'maximum-repeats' property");
@@ -72,13 +75,11 @@ public class RepeatablePageMasterAlternatives extends FObj
      * Get the next matching page master from the conditional
      * page master references.
      */
-    public String getNextPageMaster(int currentPageNumber,
-                                    boolean thisIsFirstPage,
-                                    boolean isEmptyPage) {
-        String pm = null;
-
-        if (getMaximumRepeats() != INFINITE) {
-            if (numberConsumed < getMaximumRepeats()) {
+    public String getNextPageMasterName(boolean isOddPage,
+                                        boolean isFirstPage,
+                                        boolean isEmptyPage) {
+        if (maximumRepeats != INFINITE) {
+            if (numberConsumed < maximumRepeats) {
                 numberConsumed++;
             } else {
                 return null;
@@ -88,28 +89,13 @@ public class RepeatablePageMasterAlternatives extends FObj
         for (int i = 0; i < conditionalPageMasterRefs.size(); i++) {
             ConditionalPageMasterReference cpmr =
                 (ConditionalPageMasterReference)conditionalPageMasterRefs.get(i);
-
-            // 0-indexed page number
-            if (cpmr.isValid(currentPageNumber + 1, thisIsFirstPage,
-                             isEmptyPage)) {
-                pm = cpmr.getMasterName();
-                break;
+            if (cpmr.isValid(isOddPage, isFirstPage, isEmptyPage)) {
+                return cpmr.getMasterName();
             }
         }
-        return pm;
+        return null;
     }
 
-    private void setMaximumRepeats(int maximumRepeats) {
-        if (maximumRepeats == INFINITE) {
-            this.maximumRepeats = maximumRepeats;
-        } else {
-            this.maximumRepeats = (maximumRepeats < 0) ? 0 : maximumRepeats;
-        }
-    }
-
-    private int getMaximumRepeats() {
-        return this.maximumRepeats;
-    }
 
     public void addConditionalPageMasterReference(ConditionalPageMasterReference cpmr) {
         this.conditionalPageMasterRefs.add(cpmr);
@@ -117,10 +103,6 @@ public class RepeatablePageMasterAlternatives extends FObj
 
     public void reset() {
         this.numberConsumed = 0;
-    }
-
-    protected PageSequenceMaster getPageSequenceMaster() {
-        return pageSequenceMaster;
     }
 
 }
