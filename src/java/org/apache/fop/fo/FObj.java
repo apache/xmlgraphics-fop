@@ -42,9 +42,6 @@ public class FObj extends FONode implements Constants {
     /** Formatting properties for this fo element. */
     protected PropertyList propertyList;
 
-    /** Property manager for providing refined properties/traits. */
-    protected PropertyManager propMgr;
-
     /** The immediate child nodes of this node. */
     public ArrayList childNodes = null;
 
@@ -102,7 +99,6 @@ public class FObj extends FONode implements Constants {
         propertyList.addAttributesToList(attlist);
         propertyList.setWritingMode();
         bind(propertyList);
-        propMgr = new PropertyManager(propertyList);
     }
 
     /**
@@ -149,15 +145,6 @@ public class FObj extends FONode implements Constants {
      */
     public boolean getIsOutOfLineFODescendant() {
         return isOutOfLineFODescendant;
-    }
-
-    /**
-     * Return the PropertyManager object for this FO.  PropertyManager
-     * tends to hold the traits for this FO, and is primarily used in layout.
-     * @return the property manager for this FO
-     */
-    public PropertyManager getPropertyManager() {
-        return propMgr;
     }
 
     /**
