@@ -1,6 +1,6 @@
 /*
  * $Id$
- * Copyright (C) 2001 The Apache Software Foundation. All rights reserved.
+ * Copyright (C) 2001-2003 The Apache Software Foundation. All rights reserved.
  * For details on use and redistribution please refer to the
  * LICENSE file included with these sources.
  */
@@ -12,8 +12,7 @@ package org.apache.fop.pdf;
  */
 public class PDFInternalLink extends PDFAction {
 
-
-    String goToReference;
+    private String goToReference;
 
     /**
      * create an internal link instance.

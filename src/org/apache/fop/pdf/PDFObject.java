@@ -1,6 +1,6 @@
 /*
  * $Id$
- * Copyright (C) 2001 The Apache Software Foundation. All rights reserved.
+ * Copyright (C) 2001-2003 The Apache Software Foundation. All rights reserved.
  * For details on use and redistribution please refer to the
  * LICENSE file included with these sources.
  */
@@ -39,6 +39,9 @@ public abstract class PDFObject {
         this.number = number;
     }
 
+    /**
+     * Create a PDFObject
+     */
     public PDFObject() {
         // do nothing
     }
@@ -54,6 +57,7 @@ public abstract class PDFObject {
      * write the PDF represention of this object
      *
      * @param stream the stream to write the PDF to
+     * @throws IOException if there is an error writing to the stream
      * @return the number of bytes written
      */
     protected int output(OutputStream stream) throws IOException {

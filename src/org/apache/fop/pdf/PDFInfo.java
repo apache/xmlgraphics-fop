@@ -1,6 +1,6 @@
 /*
  * $Id$
- * Copyright (C) 2001 The Apache Software Foundation. All rights reserved.
+ * Copyright (C) 2001-2003 The Apache Software Foundation. All rights reserved.
  * For details on use and redistribution please refer to the
  * LICENSE file included with these sources.
  */
@@ -18,16 +18,16 @@ public class PDFInfo extends PDFObject {
     /**
      * the application producing the PDF
      */
-    protected String producer;
+    private String producer;
 
-    protected String title = null;
-    protected String author = null;
-    protected String subject = null;
-    protected String keywords = null;
+    private String title = null;
+    private String author = null;
+    private String subject = null;
+    private String keywords = null;
 
     // the name of the application that created the
     // original document before converting to PDF
-    protected String creator;
+    private String creator;
 
     /**
      * create an Info object
@@ -56,18 +56,38 @@ public class PDFInfo extends PDFObject {
         this.creator = creator;
     }
 
+    /**
+     * set the title string
+     *
+     * @param t the document title
+     */
     public void setTitle(String t) {
         this.title = t;
     }
 
+    /**
+     * set the author string
+     *
+     * @param a the document author
+     */
     public void setAuthor(String a) {
         this.author = a;
     }
 
+    /**
+     * set the subject string
+     *
+     * @param s the document subject
+     */
     public void setSubject(String s) {
         this.subject = s;
     }
 
+    /**
+     * set the keywords string
+     *
+     * @param k the keywords for this document
+     */
     public void setKeywords(String k) {
         this.keywords = k;
     }

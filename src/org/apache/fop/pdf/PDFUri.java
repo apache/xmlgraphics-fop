@@ -1,6 +1,6 @@
 /*
  * $Id$
- * Copyright (C) 2001 The Apache Software Foundation. All rights reserved.
+ * Copyright (C) 2001-2003 The Apache Software Foundation. All rights reserved.
  * For details on use and redistribution please refer to the
  * LICENSE file included with these sources.
  */
@@ -12,8 +12,7 @@ package org.apache.fop.pdf;
  */
 public class PDFUri extends PDFAction {
 
-
-    String uri;
+    private String uri;
 
     /**
      * create a Uri instance.
@@ -21,7 +20,6 @@ public class PDFUri extends PDFAction {
      * @param uri the uri to which the link should point
      */
     public PDFUri(String uri) {
-
         this.uri = uri;
     }
 
@@ -35,9 +33,10 @@ public class PDFUri extends PDFAction {
     }
 
     /**
-     * there is nothing to return for the toPDF method, as it should not be called
+     * There is nothing to return for the toPDF method
+     * as it should not be called.
      *
-     * @return an empty string
+     * @return an empty array
      */
     public byte[] toPDF() {
         return new byte[0];

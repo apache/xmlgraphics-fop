@@ -1,15 +1,11 @@
 /*
  * $Id$
- * Copyright (C) 2001 The Apache Software Foundation. All rights reserved.
+ * Copyright (C) 2001-2003 The Apache Software Foundation. All rights reserved.
  * For details on use and redistribution please refer to the
  * LICENSE file included with these sources.
  */
 
 package org.apache.fop.pdf;
-
-// Java
-import java.io.IOException;
-import java.io.PrintWriter;
 
 /**
  * class representing a Root (/Catalog) object
@@ -34,6 +30,7 @@ public class PDFRoot extends PDFObject {
      * table as part of the trsailer). (mark-fop@inomial.com)
      *
      * @param number the object's number
+     * @param pages the PDFPages object
      */
     public PDFRoot(int number, PDFPages pages) {
         super(number);
@@ -45,9 +42,9 @@ public class PDFRoot extends PDFObject {
      * make sure it's object number is set. Package-private access
      * only; outsiders should not be fiddling with this stuff.
      */
-    void setNumber(int number) {
+    /*void setNumber(int number) {
         this.number = number;
-    }
+    }*/
 
     /**
      * add a /Page object to the root /Pages object
@@ -67,10 +64,20 @@ public class PDFRoot extends PDFObject {
         this.rootPages = pages;
     }
 
+    /**
+     * Set the root outline for the PDF document.
+     *
+     * @param out the root PDF Outline
+     */
     public void setRootOutline(PDFOutline out) {
         outline = out;
     }
 
+    /**
+     * Get the root PDF outline for the document.
+     *
+     * @return the root PDF Outline
+     */
     public PDFOutline getRootOutline() {
         return outline;
     }
@@ -78,13 +85,9 @@ public class PDFRoot extends PDFObject {
     /**
      * represent the object as PDF.
      *
-     * @throws IllegalStateException if the setNumber() method has
-     * not been called.
-     *
      * @return the PDF string
      */
-    public byte[] toPDF()
-    throws IllegalStateException {
+    public byte[] toPDF() {
         StringBuffer p = new StringBuffer(this.number + " " + this.generation
                                           + " obj\n<< /Type /Catalog\n/Pages "
                                           + this.rootPages.referencePDF()
@@ -93,6 +96,7 @@ public class PDFRoot extends PDFObject {
             p.append(" /Outlines " + outline.referencePDF() + "\n");
             p.append(" /PageMode /UseOutlines\n");
         }
+        p.append(" /PageMode /FullScreen\n");
         p.append(" >>\nendobj\n");
         return p.toString().getBytes();
     }

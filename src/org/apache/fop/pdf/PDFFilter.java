@@ -1,18 +1,23 @@
 /*
  * $Id$
- * Copyright (C) 2001 The Apache Software Foundation. All rights reserved.
+ * Copyright (C) 2001-2003 The Apache Software Foundation. All rights reserved.
  * For details on use and redistribution please refer to the
  * LICENSE file included with these sources.
  */
 
-
-// Author:       Eric SCHAEFFER, Kelly A. Campbell
-// Description:  represent a PDF filter object
-
 package org.apache.fop.pdf;
 
-import java.io.*;
+import java.io.InputStream;
+import java.io.OutputStream; 
+import java.io.IOException;
 
+/**
+ * PDF Filter class.
+ * This represents a PDF filter object.
+ * Filter implementations should extend this class.
+ *
+ * @author Eric SCHAEFFER, Kelly A. Campbell
+ */
 public abstract class PDFFilter {
     /*
      * These are no longer needed, but are here as a reminder about what
@@ -29,10 +34,15 @@ public abstract class PDFFilter {
     /**
      * Marker to know if this filter has already been applied to the data
      */
-    private boolean _applied = false;
+    private boolean applied = false;
 
+    /**
+     * Check if this filter has been applied.
+     *
+     * @return true if this filter has been applied
+     */
     public boolean isApplied() {
-        return _applied;
+        return applied;
     }
 
     /**
@@ -43,24 +53,34 @@ public abstract class PDFFilter {
      * out of an image file in it's compressed format, then this
      * should be set to true and the filter options should be set to
      * those which the raw data was encoded with.
+     *
+     * @param b set the applied value to this
      */
     public void setApplied(boolean b) {
-        _applied = b;
+        applied = b;
     }
-
 
     /**
      * return a PDF string representation of the filter, e.g. /FlateDecode
+     *
+     * @return the filter PDF name
      */
     public abstract String getName();
 
     /**
      * return a parameter dictionary for this filter, or null
+     *
+     * @return the decode params for the filter
      */
     public abstract String getDecodeParms();
 
     /**
      * encode the given data with the filter
+     *
+     * @param in the input data stream to encode
+     * @param out the output stream to write the result
+     * @param length the length of data to read from the input stream
+     * @throws IOException if there is an error reading or writing the data
      */
     public abstract void encode(InputStream in, OutputStream out, int length) throws IOException;
 

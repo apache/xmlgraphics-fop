@@ -1,6 +1,6 @@
 /*
  * $Id$
- * Copyright (C) 2001 The Apache Software Foundation. All rights reserved.
+ * Copyright (C) 2001-2003 The Apache Software Foundation. All rights reserved.
  * For details on use and redistribution please refer to the
  * LICENSE file included with these sources.
  */
@@ -16,7 +16,14 @@ package org.apache.fop.pdf;
  */
 public class PDFCIDFontDescriptor extends PDFFontDescriptor {
 
+    /**
+     * The language for the font
+     */
     protected String lang;
+
+    /**
+     * The cid set stream
+     */
     protected PDFStream cidSet;
 
     /**
@@ -41,10 +48,19 @@ public class PDFCIDFontDescriptor extends PDFFontDescriptor {
         this.lang = lang;
     }
 
+    /**
+     * Set the CID set stream.
+     * @param cidSet the pdf stream cotnaining the CID set
+     */
     public void setCIDSet(PDFStream cidSet) {
         this.cidSet = cidSet;
     }
 
+    /**
+     * Fill in the pdf data for this font descriptor.
+     * The charset specific dictionary entries are output.
+     * @param p the string buffer to append the data
+     */
     protected void fillInPDF(StringBuffer p) {
         p.append("\n/MissingWidth 500\n");
         if (lang != null) {
@@ -53,7 +69,7 @@ public class PDFCIDFontDescriptor extends PDFFontDescriptor {
         }
         if (cidSet != null) {
             p.append("\n/CIDSet /");
-            this.cidSet.referencePDF();
+            p.append(this.cidSet.referencePDF());
         }
     }
 

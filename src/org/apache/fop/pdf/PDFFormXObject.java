@@ -28,6 +28,7 @@ public class PDFFormXObject extends PDFXObject {
      * @param number the pdf object number
      * @param xnumber the pdf object X number
      * @param cont the pdf stream contents
+     * @param ref the resource PDF reference
      */
     public PDFFormXObject(int number, int xnumber, PDFStream cont, String ref) {
         super(number, xnumber, null);

@@ -1,14 +1,14 @@
 /*
  * $Id$
- * Copyright (C) 2001 The Apache Software Foundation. All rights reserved.
+ * Copyright (C) 2001-2003 The Apache Software Foundation. All rights reserved.
  * For details on use and redistribution please refer to the
  * LICENSE file included with these sources.
  */
 
 package org.apache.fop.pdf;
 
-import java.util.Vector;
-
+import java.util.List;
+import java.util.ArrayList;
 
 /**
  * This represents a single Outline object in a PDF, including the root Outlines
@@ -18,125 +18,133 @@ import java.util.Vector;
  * @author Kelly A. Campbell
  *
  */
-
 public class PDFOutline extends PDFObject {
 
     /**
      * list of sub-entries (outline objects)
      */
-    private Vector _subentries;
+    private List subentries;
 
     /**
      * parent outline object. Root Outlines parent is null
      */
-    private PDFOutline _parent;
+    private PDFOutline parent;
 
-    private PDFOutline _prev;
-    private PDFOutline _next;
+    private PDFOutline prev;
+    private PDFOutline next;
 
-    private PDFOutline _first;
-    private PDFOutline _last;
+    private PDFOutline first;
+    private PDFOutline last;
 
-    private int _count;
-
+    private int count;
 
     /**
      * title to display for the bookmark entry
      */
-    private String _title;
+    private String title;
 
-    String _actionRef;
-
-
+    private String actionRef;
 
     /**
+     * Create a PDF outline with the title and action.
+     *
      * @param number the object id number
      * @param title the title of the outline entry (can only be null for root Outlines obj)
-     * @param page the page which this outline refers to.
+     * @param action the action for this outline
      */
     public PDFOutline(int number, String title, String action) {
         super(number);
-        _subentries = new Vector();
-        _count = 0;
-        _parent = null;
-        _prev = null;
-        _next = null;
-        _first = null;
-        _last = null;
-        _title = title;
-        _actionRef = action;
-
-
-    }
-
-    public void setTitle(String title) {
-        _title = title;
+        subentries = new ArrayList();
+        count = 0;
+        parent = null;
+        prev = null;
+        next = null;
+        first = null;
+        last = null;
+        title = title;
+        actionRef = action;
     }
 
     /**
-     * Add a sub element to this outline
+     * Set the title of this Outline object.
+     *
+     * @param t the title of the outline
+     */
+    public void setTitle(String t) {
+        title = t;
+    }
+
+    /**
+     * Add a sub element to this outline.
+     *
+     * @param outline a sub outline
      */
     public void addOutline(PDFOutline outline) {
-        if (_subentries.size() > 0) {
-            outline._prev =
-                (PDFOutline)_subentries.elementAt(_subentries.size() - 1);
-            outline._prev._next = outline;
+        if (subentries.size() > 0) {
+            outline.prev =
+                (PDFOutline)subentries.get(subentries.size() - 1);
+            outline.prev.next = outline;
         } else {
-            _first = outline;
+            first = outline;
         }
 
-        _subentries.addElement(outline);
-        outline._parent = this;
+        subentries.add(outline);
+        outline.parent = this;
 
-        incrementCount();    // note: count is not just the immediate children
+        // note: count is not just the immediate children
+        incrementCount();
 
-        _last = outline;
-
+        last = outline;
     }
 
+    /**
+     * Increment the number of subentries and descendants.
+     */
     private void incrementCount() {
-        // count is a total of our immediate subentries and all descendent subentries
-        _count++;
-        if (_parent != null) {
-            _parent.incrementCount();
+        // count is a total of our immediate subentries
+        // and all descendent subentries
+        count++;
+        if (parent != null) {
+            parent.incrementCount();
         }
     }
-
 
     /**
      * represent the object in PDF
+     *
+     * @return the PDF for this outline
      */
     protected byte[] toPDF() {
         StringBuffer result = new StringBuffer(this.number + " "
                                                + this.generation
                                                + " obj\n<<\n");
-        if (_parent == null) {
+        if (parent == null) {
             // root Outlines object
-            if (_first != null && _last != null) {
-                result.append(" /First " + _first.referencePDF() + "\n");
-                result.append(" /Last " + _last.referencePDF() + "\n");
+            if (first != null && last != null) {
+                result.append(" /First " + first.referencePDF() + "\n");
+                result.append(" /Last " + last.referencePDF() + "\n");
                 // no count... we start with the outline completely closed for now
             }
         } else {
             // subentry Outline object
-            result.append(" /Title (" + escapeString(_title) + ")\n");
-            result.append(" /Parent " + _parent.referencePDF() + "\n");
-            if (_first != null && _last != null) {
-                result.append(" /First " + _first.referencePDF() + "\n");
-                result.append(" /Last " + _last.referencePDF() + "\n");
+            result.append(" /Title (" + escapeString(title) + ")\n");
+            result.append(" /Parent " + parent.referencePDF() + "\n");
+            if (first != null && last != null) {
+                result.append(" /First " + first.referencePDF() + "\n");
+                result.append(" /Last " + last.referencePDF() + "\n");
             }
-            if (_prev != null) {
-                result.append(" /Prev " + _prev.referencePDF() + "\n");
+            if (prev != null) {
+                result.append(" /Prev " + prev.referencePDF() + "\n");
             }
-            if (_next != null) {
-                result.append(" /Next " + _next.referencePDF() + "\n");
+            if (next != null) {
+                result.append(" /Next " + next.referencePDF() + "\n");
             }
-            if (_count > 0) {
-                result.append(" /Count -" + _count + "\n");
+            if (count > 0) {
+                result.append(" /Count -" + count + "\n");
             }
 
-            if (_actionRef != null) {
-                result.append(" /A " + _actionRef + "\n");
+            if (actionRef != null) {
+                result.append(" /A " + actionRef + "\n");
             }
 
 

@@ -1,6 +1,6 @@
 /*
  * $Id$
- * Copyright (C) 2001-2002 The Apache Software Foundation. All rights reserved.
+ * Copyright (C) 2001-2003 The Apache Software Foundation. All rights reserved.
  * For details on use and redistribution please refer to the
  * LICENSE file included with these sources.
  */
@@ -36,7 +36,6 @@ public class PDFShading extends PDFObject {
     /**
      * A ColorSpace representing the colorspace. "DeviceRGB" is an example.
      */
-    // protected StringBuffer colorSpace = null;
     protected PDFColorSpace colorSpace = null;
 
     /**
@@ -57,11 +56,13 @@ public class PDFShading extends PDFObject {
     protected boolean antiAlias = false;
 
     /**
-     * Optional for Type 1: Array of four numbers, xmin, xmax, ymin, ymax. Default is [0 1 0 1]
-     * Optional for Type 2: An array of two numbers between which the blend varies between start and end points. Default is 0, 1.
-     * Optional for Type 3: An array of two numbers between which the blend varies between start and end points. Default is 0, 1.
+     * Optional for Type 1: Array of four numbers, xmin, xmax, ymin, ymax.
+     *                      Default is [0 1 0 1]
+     * Optional for Type 2: An array of two numbers between which the blend
+     *                      varies between start and end points. Default is 0, 1.
+     * Optional for Type 3: An array of two numbers between which the blend
+     *                      varies between start and end points. Default is 0, 1.
      */
-
     protected List domain = null;
 
     /**
@@ -77,46 +78,56 @@ public class PDFShading extends PDFObject {
     protected PDFFunction function = null;
 
     /**
-     * Required for Type 2: An Array of four numbers specifying the starting and ending coordinate pairs
-     * Required for Type 3: An Array of six numbers [x0,y0,r0,x1,y1,r1] specifying the centers and radii of
-     * the starting and ending circles.
+     * Required for Type 2: An Array of four numbers specifying
+     *                      the starting and ending coordinate pairs
+     * Required for Type 3: An Array of six numbers [x0,y0,r0,x1,y1,r1]
+     *                      specifying the centers and radii of
+     *                      the starting and ending circles.
      */
     protected List coords = null;
 
     /**
-     * Required for Type 2+3: An Array of two boolean values specifying whether to extend the
-     * start and end colors past the start and end points,
-     * respectively. Default is false, false.
+     * Required for Type 2+3: An Array of two boolean values specifying
+     * whether to extend the start and end colors past the start
+     * and end points, respectively.
+     * Default is false, false.
      */
     protected List extend = null;
 
     /**
-     * Required for Type 4,5,6, and 7: Specifies the number of bits used to represent each vertex coordinate.
+     * Required for Type 4,5,6, and 7: Specifies the number of bits used
+     * to represent each vertex coordinate.
      * Allowed to be 1,2,4,8,12,16,24, or 32.
      */
     protected int bitsPerCoordinate = 0;
 
     /**
-     * Required for Type 4,5,6, and 7: Specifies the number of bits used to represent the edge flag for each vertex.
-     * Allowed to be 2,4,or 8, while the Edge flag itself is allowed to be 0,1 or 2.
+     * Required for Type 4,5,6, and 7: Specifies the number of bits used
+     * to represent the edge flag for each vertex.
+     * Allowed to be 2,4,or 8, while the Edge flag itself is allowed to
+     * be 0,1 or 2.
      */
     protected int bitsPerFlag = 0;
 
     /**
-     * Required for Type 4,5,6, and 7: Array of Doubles which specifies how to decode coordinate and color component values.
-     * Each type has a differing number of decode array members, so check the spec.
+     * Required for Type 4,5,6, and 7: Array of Doubles which specifies
+     * how to decode coordinate and color component values.
+     * Each type has a differing number of decode array members, so check
+     * the spec.
      * Page 303 in PDF Spec 1.3
      */
     protected List decode = null;
 
     /**
-     * Required for Type 4,5,6, and 7: Specifies the number of bits used to represent each color coordinate.
+     * Required for Type 4,5,6, and 7: Specifies the number of bits used
+     * to represent each color coordinate.
      * Allowed to be 1,2,4,8,12, or 16
      */
     protected int bitsPerComponent = 0;
 
     /**
-     * Required for Type 5:The number of vertices in each "row" of the lattice; it must be greater than or equal to 2.
+     * Required for Type 5:The number of vertices in each "row" of
+     * the lattice; it must be greater than or equal to 2.
      */
     protected int verticesPerRow = 0;
 
@@ -181,8 +192,10 @@ public class PDFShading extends PDFObject {
      * @param theAntiAlias Default is false
      * @param theCoords List of four (type 2) or 6 (type 3) Double
      * @param theDomain List of Doubles specifying the domain
-     * @param theFunction the Stitching (PDFfunction type 3) function, even if it's stitching a single function
-     * @param theExtend List of Booleans of whether to extend teh start and end colors past the start and end points
+     * @param theFunction the Stitching (PDFfunction type 3) function,
+     *                    even if it's stitching a single function
+     * @param theExtend List of Booleans of whether to extend the start
+     *                  and end colors past the start and end points
      * The default is [false, false]
      */
     public PDFShading(int theNumber, String theShadingName,
@@ -295,6 +308,11 @@ public class PDFShading extends PDFObject {
 
     }
 
+    /**
+     * Get the name of this shading.
+     *
+     * @return the name of the shading
+     */
     public String getName() {
         return (this.shadingName);
     }
@@ -505,6 +523,13 @@ public class PDFShading extends PDFObject {
         return (p.toString().getBytes());
     }
 
+    /**
+     * Check if this shading is equal to another shading.
+     * This is used to check if a shading already exists.
+     *
+     * @param obj the object to compare against
+     * @return true if the shadings are equal
+     */
     public boolean equals(Object obj) {
         if (obj == null) {
             return false;

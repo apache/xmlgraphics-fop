@@ -1,13 +1,14 @@
 /*
  * $Id$
- * Copyright (C) 2001 The Apache Software Foundation. All rights reserved.
+ * Copyright (C) 2001-2003 The Apache Software Foundation. All rights reserved.
  * For details on use and redistribution please refer to the
  * LICENSE file included with these sources.
  */
 
 package org.apache.fop.pdf;
 
-import java.util.Hashtable;
+import java.util.Map;
+import java.util.HashMap;     
 
 /**
  * class representing a /CharProcs dictionary for Type3 fonts.
@@ -23,10 +24,13 @@ public class PDFCharProcs extends PDFObject {
     /**
      * the (character name, drawing stream) pairs for a Type3 font
      */
-    protected Hashtable keys;
+    protected Map keys;
 
+    /**
+     * Create a new PDF char proc store.
+     */
     public PDFCharProcs() {
-        keys = new Hashtable();
+        keys = new HashMap();
     }
 
     /**
@@ -41,9 +45,10 @@ public class PDFCharProcs extends PDFObject {
 
     /**
      * not done yet
+     * @return the pdf byte array
      */
     public byte[] toPDF() {
-        // TODO: implement this org.apache.fop.pdf.PDFObject abstract method
+        // todo implement this org.apache.fop.pdf.PDFObject abstract method
         return new byte[0];
     }
 

@@ -1,6 +1,6 @@
 /*
  * $Id$
- * Copyright (C) 2001 The Apache Software Foundation. All rights reserved.
+ * Copyright (C) 2001-2003 The Apache Software Foundation. All rights reserved.
  * For details on use and redistribution please refer to the
  * LICENSE file included with these sources.
  */
@@ -15,18 +15,17 @@ public class PDFGoToRemote extends PDFAction {
     /**
      * the file specification
      */
-    protected PDFFileSpec pdfFileSpec;
-    protected int pageReference = 0;
-    protected String destination = null;
+    private PDFFileSpec pdfFileSpec;
+    private int pageReference = 0;
+    private String destination = null;
 
     /**
      * create an GoToR object.
      *
      * @param number the object's number
-     * @param fileSpec the fileSpec associated with the action
+     * @param pdfFileSpec the fileSpec associated with the action
      */
     public PDFGoToRemote(int number, PDFFileSpec pdfFileSpec) {
-
         /* generic creation of object */
         super(number);
 
@@ -37,11 +36,10 @@ public class PDFGoToRemote extends PDFAction {
      * create an GoToR object.
      *
      * @param number the object's number
-     * @param fileSpec the fileSpec associated with the action
+     * @param pdfFileSpec the fileSpec associated with the action
      * @param page a page reference within the remote document
      */
     public PDFGoToRemote(int number, PDFFileSpec pdfFileSpec, int page) {
-
         /* generic creation of object */
         super(number);
 
@@ -53,11 +51,10 @@ public class PDFGoToRemote extends PDFAction {
      * create an GoToR object.
      *
      * @param number the object's number
-     * @param fileSpec the fileSpec associated with the action
+     * @param pdfFileSpec the fileSpec associated with the action
      * @param dest a named destination within the remote document
      */
     public PDFGoToRemote(int number, PDFFileSpec pdfFileSpec, String dest) {
-
         /* generic creation of object */
         super(number);
 

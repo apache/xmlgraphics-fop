@@ -273,6 +273,15 @@ public class PDFDocument {
     }
 
     /**
+     * Get the PDF root object.
+     *
+     * @return the PDFRoot object
+     */
+    public PDFRoot getRoot() {
+        return this.root;
+    }
+
+    /**
      * Make a /Pages object. This object is written in the trailer.
      *
      * @return a new PDF Pages object for adding pages to
@@ -375,9 +384,9 @@ public class PDFDocument {
      * This is not documented in the Function section of the PDF 1.3 spec,
      * it was deduced from samples that this is sometimes used, even if we may never
      * use it in FOP. It is added for completeness sake.
-     * @param theNumber The object number of this PDF object.
      * @param theFunctionType This is the type of function (0,2,3, or 4).
      * It should be 0 as this is the constructor for sampled functions.
+     * @return the PDF function that was created
      */
     public PDFFunction makeFunction(int theFunctionType, List theDomain,
                                     List theRange, List theSize,
@@ -430,6 +439,7 @@ public class PDFDocument {
      * This attribute is required.
      * PDF Spec page 268
      * @param theFunctionType The type of the function, which should be 2.
+     * @return the PDF function that was created
      */
     public PDFFunction makeFunction(int theFunctionType, List theDomain,
                                     List theRange, List theCZero,
@@ -513,6 +523,7 @@ public class PDFDocument {
      * See page 270 in the PDF 1.3 spec.
      * @param theFunctionType This is the function type. It should be 3,
      * for a stitching function.
+     * @return the PDF function that was created
      */
     public PDFFunction makeFunction(int theFunctionType, List theDomain,
                                     List theRange, List theFunctions,
@@ -540,15 +551,17 @@ public class PDFDocument {
     /**
      * make a postscript calculator function
      *
-     * @param theNumber
-     * @param theFunctionType
-     * @param theDomain
-     * @param theRange
-     * @param theFunctionDataStream
+     * @param theNumber the PDF object number
+     * @param theFunctionType the type of function to make
+     * @param theDomain the domain values
+     * @param theRange the range values of the function
+     * @param theFunctionDataStream a string containing the pdf drawing
+     * @return the PDF function that was created
      */
     public PDFFunction makeFunction(int theNumber, int theFunctionType,
                                     List theDomain, List theRange,
-                                    StringBuffer theFunctionDataStream) {    // Type 4
+                                    StringBuffer theFunctionDataStream) {
+        // Type 4
         PDFFunction function = new PDFFunction(++this.objectcount,
                                                theFunctionType, theDomain,
                                                theRange,
@@ -570,6 +583,7 @@ public class PDFDocument {
     /**
      * make a function based shading object
      *
+     * @param res the PDF resource context to add the shading, may be null
      * @param theShadingType The type of shading object, which should be 1 for function
      * based shading.
      * @param theColorSpace The colorspace is 'DeviceRGB' or something similar.
@@ -587,6 +601,7 @@ public class PDFDocument {
      * If it's a shading, then it maps it to current user space.
      * It's optional, the default is the identity matrix
      * @param theFunction The PDF Function that maps an (x,y) location to a color
+     * @return the PDF shading that was created
      */
     public PDFShading makeShading(PDFResourceContext res, int theShadingType,
                                   PDFColorSpace theColorSpace,
@@ -626,6 +641,7 @@ public class PDFDocument {
     /**
      * Make an axial or radial shading object.
      *
+     * @param res the PDF resource context to add the shading, may be null
      * @param theShadingType 2 or 3 for axial or radial shading
      * @param theColorSpace "DeviceRGB" or similar.
      * @param theBackground theBackground An array of color components appropriate to the
@@ -643,6 +659,7 @@ public class PDFDocument {
      * @param theExtend List of Booleans of whether to extend the
      *                  start and end colors past the start and end points
      * The default is [false, false]
+     * @return the PDF shading that was created
      */
     public PDFShading makeShading(PDFResourceContext res, int theShadingType,
                                   PDFColorSpace theColorSpace,
@@ -683,6 +700,7 @@ public class PDFDocument {
      * Make a free-form gouraud shaded triangle mesh, coons patch mesh, or tensor patch mesh
      * shading object
      *
+     * @param res the PDF resource context to add the shading, may be null
      * @param theShadingType 4, 6, or 7 depending on whether it's
      * Free-form gouraud-shaded triangle meshes, coons patch meshes,
      * or tensor product patch meshes, respectively.
@@ -700,6 +718,7 @@ public class PDFDocument {
      * @param theBitsPerFlag 2,4,8.
      * @param theDecode List of Doubles see PDF 1.3 spec pages 303 to 312.
      * @param theFunction the PDFFunction
+     * @return the PDF shading that was created
      */
     public PDFShading makeShading(PDFResourceContext res, int theShadingType,
                                   PDFColorSpace theColorSpace,
@@ -743,6 +762,7 @@ public class PDFDocument {
     /**
      * make a Lattice-Form Gouraud mesh shading object
      *
+     * @param res the PDF resource context to add the shading, may be null
      * @param theShadingType 5 for lattice-Form Gouraud shaded-triangle mesh
      * without spaces. "Shading1" or "Sh1" are good examples.
      * @param theColorSpace "DeviceRGB" or similar.
@@ -759,6 +779,7 @@ public class PDFDocument {
      * @param theDecode List of Doubles. See page 305 in PDF 1.3 spec.
      * @param theVerticesPerRow number of vertices in each "row" of the lattice.
      * @param theFunction The PDFFunction that's mapped on to this shape
+     * @return the PDF shading that was created
      */
     public PDFShading makeShading(PDFResourceContext res, int theShadingType,
                                   PDFColorSpace theColorSpace,
@@ -801,6 +822,7 @@ public class PDFDocument {
     /**
      * Make a tiling pattern
      *
+     * @param res the PDF resource context to add the shading, may be null
      * @param thePatternType the type of pattern, which is 1 for tiling.
      * @param theResources the resources associated with this pattern
      * @param thePaintType 1 or 2, colored or uncolored.
@@ -811,6 +833,7 @@ public class PDFDocument {
      * @param theMatrix Optional List of Doubles transformation matrix
      * @param theXUID Optional vector of Integers that uniquely identify the pattern
      * @param thePatternDataStream The stream of pattern data to be tiled.
+     * @return the PDF pattern that was created
      */
     public PDFPattern makePattern(PDFResourceContext res, int thePatternType,    // 1
                                   PDFResources theResources, int thePaintType, int theTilingType,
@@ -849,11 +872,13 @@ public class PDFDocument {
     /**
      * Make a smooth shading pattern
      *
+     * @param res the PDF resource context to add the shading, may be null
      * @param thePatternType the type of the pattern, which is 2, smooth shading
      * @param theShading the PDF Shading object that comprises this pattern
      * @param theXUID optional:the extended unique Identifier if used.
      * @param theExtGState optional: the extended graphics state, if used.
      * @param theMatrix Optional:List of Doubles that specify the matrix.
+     * @return the PDF pattern that was created       
      */
     public PDFPattern makePattern(PDFResourceContext res,
                                   int thePatternType, PDFShading theShading,
@@ -884,15 +909,37 @@ public class PDFDocument {
         return (pattern);
     }
 
+    /**
+     * Get the color space.
+     *
+     * @return the color space
+     */
     public int getColorSpace() {
         return (this.colorspace.getColorSpace());
     }
 
+    /**
+     * Set the color space.
+     * This is used when creating gradients.
+     *
+     * @param theColorspace the new color space
+     */
     public void setColorSpace(int theColorspace) {
         this.colorspace.setColorSpace(theColorspace);
         return;
     }
 
+    /**
+     * Make a gradient
+     *  
+     * @param res the PDF resource context to add the shading, may be null
+     * @param radial if true a radial gradient will be created
+     * @param theColorspace the colorspace of the gradient
+     * @param theColors the list of colors for the gradient
+     * @param theBounds the list of bounds associated with the colors
+     * @param theCoords the coordinates for the gradient
+     * @return the PDF pattern that was created
+     */
     public PDFPattern createGradient(PDFResourceContext res, boolean radial,
                                      PDFColorSpace theColorspace,
                                      List theColors, List theBounds,
@@ -995,12 +1042,13 @@ public class PDFDocument {
         return encoding;
     }
 
-        /**
-         * Create a PDFICCStream
-         @see PDFXObject
-         @see org.apache.fop.image.JpegImage
-         @see org.apache.fop.pdf.PDFColorSpace
-        */
+    /**
+     * Create a PDFICCStream
+     * @see PDFXObject
+     * @see org.apache.fop.image.JpegImage
+     * @see org.apache.fop.pdf.PDFColorSpace
+     * @return the new PDF ICC stream object
+     */
     public PDFICCStream makePDFICCStream() {
         PDFICCStream iccStream = new PDFICCStream(++this.objectcount);
         this.objects.add(iccStream);
@@ -1119,6 +1167,9 @@ public class PDFDocument {
 
     /**
      * make a /FontDescriptor object
+     *
+     * @param desc the font descriptor
+     * @return the new PDF font descriptor
      */
     public PDFFontDescriptor makeFontDescriptor(FontDescriptor desc) {
         PDFFontDescriptor font = null;
@@ -1156,6 +1207,13 @@ public class PDFDocument {
         return font;
     }
 
+    /**
+     * Resolve a URI.
+     *
+     * @param uri the uri to resolve
+     * @throws java.io.FileNotFoundException if the URI could not be resolved
+     * @return the InputStream from the URI.
+     */
     protected InputStream resolveURI(String uri) 
                 throws java.io.FileNotFoundException {
         try {
@@ -1175,10 +1233,13 @@ public class PDFDocument {
      */
     public PDFStream makeFontFile(int obj, FontDescriptor desc) {
         if (desc.getFontType() == FontType.OTHER) {
-            throw new IllegalArgumentException("Trying to embed unsupported font type: " + desc.getFontType());
+            throw new IllegalArgumentException("Trying to embed unsupported font type: "
+                                                + desc.getFontType());
         } 
         if (!(desc instanceof CustomFont)) {
-            throw new IllegalArgumentException("FontDescriptor must be instance of CustomFont, but is a " + desc.getClass().getName());
+            throw new IllegalArgumentException(
+                      "FontDescriptor must be instance of CustomFont, but is a "
+                       + desc.getClass().getName());
         }
         
         CustomFont font = (CustomFont)desc;
@@ -1186,52 +1247,59 @@ public class PDFDocument {
         InputStream in = null;
         try {
             // Get file first
-            if (font.getEmbedFileName() != null) try {
-                in = resolveURI(font.getEmbedFileName());
-            } catch (Exception e) {
-                System.out.println("Failed to embed fontfile: "
-                                   + font.getEmbedFileName());
+            if (font.getEmbedFileName() != null) {
+                try {
+                    in = resolveURI(font.getEmbedFileName());
+                } catch (Exception e) {
+                    System.out.println("Failed to embed fontfile: "
+                                       + font.getEmbedFileName());
+                }
             }
     
             // Get resource
-            if (in == null && font.getEmbedResourceName() != null) try {
-                in = new java.io.BufferedInputStream(
-                        this.getClass().getResourceAsStream(font.getEmbedResourceName()));
-            } catch (Exception e) {
-                System.out.println("Failed to embed fontresource: "
-                                   + font.getEmbedResourceName());
+            if (in == null && font.getEmbedResourceName() != null) {
+                try {
+                    in = new java.io.BufferedInputStream(
+                            this.getClass().getResourceAsStream(font.getEmbedResourceName()));
+                } catch (Exception e) {
+                    System.out.println("Failed to embed fontresource: "
+                                       + font.getEmbedResourceName());
+                }
             }
     
             if (in == null) {
                 return null;
-            } else try {
-                PDFStream embeddedFont;
-                if (desc.getFontType() == FontType.TYPE0) {
-                    MultiByteFont mbfont = (MultiByteFont)font;
-                    FontFileReader reader = new FontFileReader(in);
-                
-                    TTFSubSetFile subset = new TTFSubSetFile();
+            } else {
+                try {
+                    PDFStream embeddedFont;
+                    if (desc.getFontType() == FontType.TYPE0) {
+                        MultiByteFont mbfont = (MultiByteFont)font;
+                        FontFileReader reader = new FontFileReader(in);
+
+                        TTFSubSetFile subset = new TTFSubSetFile();
         
-                    byte[] subsetFont = subset.readFont(reader, mbfont.getTTCName(), mbfont.getUsedGlyphs());
-                    // Only TrueType CID fonts are supported now
-        
-                    embeddedFont = new PDFTTFStream(obj, subsetFont.length);
-                    ((PDFTTFStream)embeddedFont).setData(subsetFont, subsetFont.length);
-                } else if (desc.getFontType() == FontType.TYPE1) {
-                    PFBParser parser = new PFBParser();
-                    PFBData pfb = parser.parsePFB(in);
-                    embeddedFont = new PDFT1Stream(obj);
-                    ((PDFT1Stream)embeddedFont).setData(pfb);
-                } else {
-                    byte[] file = StreamUtilities.toByteArray(in, 128000);
-                    embeddedFont = new PDFTTFStream(obj, file.length);
-                    ((PDFTTFStream)embeddedFont).setData(file, file.length);
+                        byte[] subsetFont = subset.readFont(reader,
+                                             mbfont.getTTCName(), mbfont.getUsedGlyphs());
+                        // Only TrueType CID fonts are supported now
+
+                        embeddedFont = new PDFTTFStream(obj, subsetFont.length);
+                        ((PDFTTFStream)embeddedFont).setData(subsetFont, subsetFont.length);
+                    } else if (desc.getFontType() == FontType.TYPE1) {
+                        PFBParser parser = new PFBParser();
+                        PFBData pfb = parser.parsePFB(in);
+                        embeddedFont = new PDFT1Stream(obj);
+                        ((PDFT1Stream)embeddedFont).setData(pfb);
+                    } else {
+                        byte[] file = StreamUtilities.toByteArray(in, 128000);
+                        embeddedFont = new PDFTTFStream(obj, file.length);
+                        ((PDFTTFStream)embeddedFont).setData(file, file.length);
+                    }
+                    embeddedFont.addFilter("flate");
+                    embeddedFont.addFilter("ascii-85");
+                    return embeddedFont;
+                } finally {
+                    in.close();
                 }
-                embeddedFont.addFilter("flate");
-                embeddedFont.addFilter("ascii-85");
-                return embeddedFont;
-            } finally {
-                in.close();
             }
         } catch (IOException ioe) {
             //log.error("Failed to embed font [" + obj + "] "
@@ -1239,8 +1307,6 @@ public class PDFDocument {
             return (PDFStream) null;
         }
     }
-    
-
 
 /*
     public PDFStream getFontFile(int i) {
@@ -1259,9 +1325,11 @@ public class PDFDocument {
 
     /**
      * make an Array object (ex. Widths array for a font)
+     *
+     * @param values the int array values
+     * @return the PDF Array with the int values
      */
     public PDFArray makeArray(int[] values) {
-
         PDFArray array = new PDFArray(++this.objectcount, values);
         this.objects.add(array);
         return array;
@@ -1269,6 +1337,13 @@ public class PDFDocument {
 
     /**
      * make an ExtGState for extra graphics options
+     * This tries to find a GState that will setup the correct values
+     * for the current context. If there is no suitable GState it will
+     * create a new one.
+     *
+     * @param settings the settings required by the caller
+     * @param current the current GState of the current PDF context
+     * @return a PDF GState, either an existing GState or a new one
      */
     public PDFGState makeGState(Map settings, PDFGState current) {
 
@@ -1298,11 +1373,27 @@ public class PDFDocument {
         return gstate;
     }
 
+    /**
+     * Get an image from the image map.
+     *
+     * @param key the image key to look for
+     * @return the image or PDFXObject for the key if found
+     */
     public PDFXObject getImage(String key) {
         PDFXObject xObject = (PDFXObject)xObjectsMap.get(key);
         return xObject;
     }
 
+    /**
+     * Add an image to the PDF document.
+     * This adds an image to the PDF objects.
+     * If an image with the same key already exists it will return the
+     * old PDFXObject.
+     *
+     * @param res the PDF resource context to add to, may be null
+     * @param img the PDF image to add
+     * @return the PDF XObject that references the PDF image data
+     */
     public PDFXObject addImage(PDFResourceContext res, PDFImage img) {
         // check if already created
         String key = img.getKey();
@@ -1328,7 +1419,20 @@ public class PDFDocument {
         return xObject;
     }
 
-    public PDFFormXObject addFormXObject(PDFResourceContext res, PDFStream cont, PDFResources formres, String key) {
+    /** 
+     * Add a form XObject to the PDF document.
+     * This adds a Form XObject to the PDF objects.
+     * If a Form XObject with the same key already exists it will return the
+     * old PDFFormXObject.
+     *  
+     * @param res the PDF resource context to add to, may be null
+     * @param cont the PDF Stream contents of the Form XObject
+     * @param formres the PDF Resources for the Form XObject data
+     * @param key the key for the object
+     * @return the PDF Form XObject that references the PDF data
+     */
+    public PDFFormXObject addFormXObject(PDFResourceContext res, PDFStream cont,
+                                         PDFResources formres, String key) {
         PDFFormXObject xObject;
         xObject = new PDFFormXObject(++this.objectcount, ++this.xObjectCount,
                                  cont, formres.referencePDF());
@@ -1338,14 +1442,12 @@ public class PDFDocument {
             res.getPDFResources().addXObject(xObject);
         }
         return xObject;
-
     }
 
     /**
      * make a /Page object
      *
      * @param resources resources object to use
-     * @param contents stream object with content
      * @param pagewidth width of the page in points
      * @param pageheight height of the page in points
      *
@@ -1366,6 +1468,12 @@ public class PDFDocument {
         return page;
     }
 
+    /**
+     * Add a completed page to the PDF document.
+     * The page is added to the object list.
+     *
+     * @param page the page to add
+     */
     public void addPage(PDFPage page) {
         /* add it to the list of objects */
         this.objects.add(page);
@@ -1393,6 +1501,7 @@ public class PDFDocument {
      * @param rect   the clickable rectangle
      * @param destination  the destination file
      * @param linkType the link type
+     * @param yoffset the yoffset on the page for an internal link
      * @return the PDFLink object created
      */
     public PDFLink makeLink(Rectangle2D rect, String destination,
@@ -1502,10 +1611,24 @@ public class PDFDocument {
         return goToReference;
     }
 
+    /**
+     * Add trailer object.
+     * Adds an object to the list of trailer objects.
+     *
+     * @param object the PDF object to add
+     */
     public void addTrailerObject(PDFObject object) {
         this.trailerObjects.add(object);
     }
 
+    /**
+     * Make an internal link.
+     *
+     * @param rect the hotspot position in absolute coordinates
+     * @param page the target page reference value
+     * @param dest the position destination
+     * @return the new PDF link object
+     */
     public PDFLink makeLink(Rectangle2D rect, String page, String dest) {
         PDFLink link = new PDFLink(++this.objectcount, rect);
         this.objects.add(link);
@@ -1520,8 +1643,8 @@ public class PDFDocument {
     }
 
     /**
-      Ensure there is room in the locations xref for the number of
-      objects that have been created.
+     * Ensure there is room in the locations xref for the number of
+     * objects that have been created.
      */
     private void prepareLocations() {
         while (location.size() < objectcount) {
@@ -1532,6 +1655,8 @@ public class PDFDocument {
     /**
      * make a stream object
      *
+     * @param type the type of stream to be created
+     * @param add if true then the stream will be added immediately
      * @return the stream object created
      */
     public PDFStream makeStream(String type, boolean add) {
@@ -1607,6 +1732,7 @@ public class PDFDocument {
      * @param parent parent PDFOutline object which may be null
      * @param label the title for the new outline object
      * @param destination the reference string for the action to go to
+     * @param yoffset the yoffset on the destination page
      * @return the new PDF outline object
      */
     public PDFOutline makeOutline(PDFOutline parent, String label,
