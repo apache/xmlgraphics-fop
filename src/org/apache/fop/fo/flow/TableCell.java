@@ -213,7 +213,7 @@ public class TableCell extends FObj {
     }
 
     public int getHeight() {
-	return areaContainer.getHeight();;
+	return areaContainer.getHeight();
     }
     
     public void setHeight(int height) {

@@ -192,7 +192,7 @@ public class IDReferences {
         {
             list.append("\n\"").append(enum.nextElement().toString()).append("\" ")  ;
         }
-        return list.toString();;                
+        return list.toString();                
     }
 
 
