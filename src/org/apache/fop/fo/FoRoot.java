@@ -20,6 +20,7 @@ import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.expr.PropertyException;
 import org.apache.fop.fo.pagination.FoLayoutMasterSet;
 import org.apache.fop.fo.declarations.FoDeclarations;
+import org.apache.fop.fo.flow.FoPageSequence;
 import org.apache.fop.xml.FoXMLEvent;
 import org.apache.fop.xml.XMLEvent;
 import org.apache.fop.xml.XMLNamespaces;
@@ -43,8 +44,6 @@ public class FoRoot extends FONode {
 
     private static final String tag = "$Name$";
     private static final String revision = "$Revision$";
-
-    private HashMap pageSequenceMasters;
 
     /** Map of <tt>Integer</tt> indices of <i>sparsePropsSet</i> array.
         It is indexed by the FO index of the FO associated with a given
@@ -71,6 +70,18 @@ public class FoRoot extends FONode {
         sparsePropsMap.put
             (Ints.consts.get(PropNames.MEDIA_USAGE), Ints.consts.get(0));
     }
+
+    /** 
+     * The HashMap of PageSequenceMaster objects produced from the
+     * layout-master-set.
+     */
+    private HashMap pageSequenceMasters;
+
+    /** Offset of declarations child node. */
+    private int declarations = -1;
+
+    /** Offset of first page-sequence child node. */
+    private int firstPageSeq = -1;
 
     /**
      * @param foTree the FO tree being built
@@ -112,42 +123,57 @@ public class FoRoot extends FONode {
      */
     public void buildFoTree() throws FOPException{
         FoXMLEvent ev;
+        String nowProcessing;
         //System.out.println("buildFoTree: " + event);
-        // Look for layout-master-set
+        nowProcessing = "layout-master-set";
         try {
+            // Look for layout-master-set.  Must be one.
             ev = xmlevents.expectStartElement
                 (FObjectNames.LAYOUT_MASTER_SET, XMLEvent.DISCARD_W_SPACE);
-        } catch (NoSuchElementException e) {
-            throw new FOPException
-                        ("buildFoTree: Unexpected EOF in layout-master-set.");
-        }
-        // Process the layout-master-set
-        try {
+            // Process the layout-master-set
             FoLayoutMasterSet layoutMasters =
                                 new FoLayoutMasterSet(getFOTree(), this, ev);
             // Clean up the fo:layout-master-set event
             pageSequenceMasters = layoutMasters.getPageSequenceMasters();
             xmlevents.getEndElement(ev);
             layoutMasters.deleteSubTree();
+
+            // Look for optional declarations
+            nowProcessing = "declarations";
+            ev = xmlevents.expectStartElement
+                        (FObjectNames.DECLARATIONS, XMLEvent.DISCARD_W_SPACE);
+            if (ev != null) {
+                // process the declarations
+                declarations = numChildren();
+                new FoDeclarations(getFOTree(), this, ev);
+                xmlevents.getEndElement(FObjectNames.DECLARATIONS);
+            }
+
+            // Process page-sequences here
+            // must have at least one
+            nowProcessing = "page-sequence";
+            ev = xmlevents.expectStartElement
+                        (FObjectNames.PAGE_SEQUENCE, XMLEvent.DISCARD_W_SPACE);
+            if (ev == null)
+                throw new FOPException("No page-sequence found.");
+            firstPageSeq = numChildren();
+            new FoPageSequence(getFOTree(), this, ev);
+            xmlevents.getEndElement(FObjectNames.PAGE_SEQUENCE);
+            while ((ev = xmlevents.expectStartElement
+                    (FObjectNames.PAGE_SEQUENCE, XMLEvent.DISCARD_W_SPACE))
+                   != null) {
+                // Loop over remaining fo:page-sequences
+                new FoPageSequence(getFOTree(), this, ev);
+                xmlevents.getEndElement(FObjectNames.PAGE_SEQUENCE);
+            }
+        } catch (NoSuchElementException e) {
+            throw new FOPException
+                ("Unexpected EOF while processing " + nowProcessing + ".");
         } catch(TreeException e) {
             throw new FOPException("TreeException: " + e.getMessage());
         } catch(PropertyException e) {
             throw new FOPException("PropertyException: " + e.getMessage());
         }
-        // Look for optional declarations
-        try {
-            ev = xmlevents.expectStartElement
-                        (FObjectNames.DECLARATIONS, XMLEvent.DISCARD_W_SPACE);
-            if (ev != null) {
-                // process the declarations
-                new FoDeclarations(getFOTree(), this, ev);
-                xmlevents.getEndElement(FObjectNames.DECLARATIONS);
-            }
-        } catch (NoSuchElementException e) {
-            throw new FOPException
-                ("Unexpected EOF while processing declarations.");
-        }
-        // Process page-sequences here
         // Clean up root's FO tree build environment
         makeSparsePropsSet();
     }
