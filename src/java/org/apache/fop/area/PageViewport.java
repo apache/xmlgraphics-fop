@@ -31,6 +31,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import org.apache.fop.fo.Constants;
+import org.apache.fop.fo.pagination.SimplePageMaster;
 
 /**
  * Page viewport that specifies the viewport area and holds the page contents.
@@ -46,6 +47,7 @@ public class PageViewport implements Resolvable, Cloneable {
     private Rectangle2D viewArea;
     private boolean clip = false;
     private String pageNumberString = null;
+    private SimplePageMaster spm = null;
 
     // list of id references and the rectangle on the page
     private Map idReferences = null;
@@ -75,8 +77,9 @@ public class PageViewport implements Resolvable, Cloneable {
      * @param p the page reference area that holds the contents
      * @param bounds the bounds of this viewport
      */
-    public PageViewport(Page p, Rectangle2D bounds) {
+    public PageViewport(SimplePageMaster spm, Page p, Rectangle2D bounds) {
         page = p;
+        this.spm = spm;
         viewArea = bounds;
     }
 
@@ -396,7 +399,7 @@ public class PageViewport implements Resolvable, Cloneable {
      */
     public Object clone() {
         Page p = (Page)page.clone();
-        PageViewport ret = new PageViewport(p, (Rectangle2D)viewArea.clone());
+        PageViewport ret = new PageViewport(spm, p, (Rectangle2D)viewArea.clone());
         return ret;
     }
 
@@ -417,5 +420,11 @@ public class PageViewport implements Resolvable, Cloneable {
         sb.append("PageViewport: page=");
         sb.append(getPageNumberString());
         return sb.toString();
+    }
+    /**
+     * @return Returns the spm.
+     */
+    public SimplePageMaster getSPM() {
+        return spm;
     }
 }
