@@ -77,12 +77,11 @@ public class IndentPropertyMaker extends CorrespondingPropertyMaker {
         // Calculate the values as described in 5.3.2.
         try {
             Numeric v = new FixedLength(0);
-            /*
-            if (!propertyList.getFObj().generatesInlineAreas()) {
-                String propName = FOPropertyMapping.getPropertyName(this.propId);
-                v = v.add(propertyList.getInherited(propName).getNumeric());
+            if (!propertyList.getFObj().generatesReferenceAreas()) {
+                // The inherited_value_of([start|end]-indent)
+                v = NumericOp.addition(v, propertyList.getInherited(this.baseMaker.propId).getNumeric());
             }
-            */
+            // The corresponding absolute margin-[right|left}.
             v = NumericOp.addition(v, propertyList.get(propertyList.getWritingMode(lr_tb, rl_tb, tb_rl)).getNumeric());
             v = NumericOp.addition(v, getCorresponding(paddingCorresponding, propertyList).getNumeric());
             v = NumericOp.addition(v, getCorresponding(borderWidthCorresponding, propertyList).getNumeric());
