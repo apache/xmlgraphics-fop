@@ -150,6 +150,13 @@ class SVGDocumentImpl extends SVGElementImpl implements SVGDocument {
 		return null;
 	}
 
+    public Attr createAttributeNS(String namespaceURI, 
+                                  String qualifiedName)
+                                  throws DOMException
+    {
+		return null;
+    }
+
 	public Element getDocumentElement()
 	{
 		return null;
