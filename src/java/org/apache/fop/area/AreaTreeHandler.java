@@ -39,6 +39,7 @@ import org.apache.fop.fo.FOEventHandler;
 import org.apache.fop.fo.extensions.Outline;
 import org.apache.fop.fo.extensions.Bookmarks;
 import org.apache.fop.fo.pagination.PageSequence;
+import org.apache.fop.fo.pagination.Root;
 import org.apache.fop.layoutmgr.PageSequenceLayoutManager;
 
 /**
@@ -77,6 +78,9 @@ public class AreaTreeHandler extends FOEventHandler {
 
     // AreaTreeModel in use
     private AreaTreeModel model;
+
+    // The fo:root node of the document
+    private Root rootFObj;
 
     // HashMap of ID's whose area is located on one or more PageViewports
     // Each ID has an arraylist of PageViewports sharing the area with this ID
@@ -193,6 +197,8 @@ public class AreaTreeHandler extends FOEventHandler {
      * @throws SAXException if there is some error
      */
     public void endDocument() throws SAXException {
+        addBookmarks(rootFObj.getBookmarks());
+
         model.endDocument();
 
         if (outputStatistics) {
@@ -224,9 +230,10 @@ public class AreaTreeHandler extends FOEventHandler {
             log.debug("Current heap size: " + (memoryNow / 1024L) + "Kb");
         }
 
+        rootFObj = pageSequence.getRoot();
+
         // If no main flow, nothing to layout!
         if (pageSequence.getMainFlow() != null) {
-            addBookmarks(pageSequence.getRoot().getBookmarks());
             PageSequenceLayoutManager pageSLM 
                 = new PageSequenceLayoutManager(this, pageSequence);
             pageSLM.run();
