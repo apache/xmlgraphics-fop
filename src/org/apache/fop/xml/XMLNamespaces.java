@@ -36,7 +36,7 @@ public class XMLNamespaces {
     public static final int DefAttrNSIndex = 0;
     public static final int XSLNSpaceIndex = 1;
     public static final int SVGNSpaceIndex = 2;
-    public static final int XLinkNSpaceIndex = 1;
+    public static final int XLinkNSpaceIndex = 3;
 
     /**
      * A <tt>HashMap</tt> mapping a namespace URI to an <tt>int</tt>
@@ -99,7 +99,9 @@ public class XMLNamespaces {
         if (intg == null) {
             // update the indices
             i = uris.size();
+            //System.out.println("****Adding namespace " + uri + " " + i);
             uriIndices.put(uri, Ints.consts.get(i));
+            uris.add(i, uri);
             return i;
         }
         // not null - found the integer
