@@ -109,12 +109,13 @@ public class PageSequenceMaster extends FObj {
     
     protected void addSubsequenceSpecifier( SubSequenceSpecifier pageMasterReference )
     {
-		subSequenceSpecifiers.add( pageMasterReference );
+		subSequenceSpecifiers.addElement( pageMasterReference );
     }
 
     protected SubSequenceSpecifier getNextSubsequenceSpecifier()
     {
-		currentPmr = (SubSequenceSpecifier)subSequenceSpecifiers.remove( 0 );
+		currentPmr = (SubSequenceSpecifier)subSequenceSpecifiers.elementAt( 0 );
+		subSequenceSpecifiers.removeElementAt(0);
 		return currentPmr;
     }
 

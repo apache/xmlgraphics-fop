@@ -92,7 +92,7 @@ public class Compare {
     StringTokenizer tokens = new StringTokenizer(filenames,",");
     Vector filenameListTmp = new Vector(20);
     while (tokens.hasMoreTokens()) {
-      filenameListTmp.add(tokens.nextToken());
+      filenameListTmp.addElement(tokens.nextToken());
     }
     filenameList = new String [filenameListTmp.size()] ;
     filenameListTmp.copyInto((String[]) filenameList);

@@ -124,7 +124,7 @@ if (i % 75 == 0) buffer.append("\n");
 			throw new PDFFilterException("filter not supported");
 		}
 
-		this.m_filters.add(filter);
+		this.m_filters.addElement(filter);
 	}
 
 	public String toPDF() {
@@ -135,7 +135,7 @@ if (i % 75 == 0) buffer.append("\n");
 		buffer.append("\n");
 		buffer.append("/Filter [");
 		for (int i = this.m_filters.size(); i > 0; i--) {
-			PDFFilter filter = (PDFFilter) this.m_filters.get(i - 1);
+			PDFFilter filter = (PDFFilter) this.m_filters.elementAt(i - 1);
 			buffer.append(filter.toPDF());
 			if (i > 1) buffer.append(" ");
 		}
@@ -161,7 +161,7 @@ if (i % 75 == 0) buffer.append("\n");
 		if (this.m_filters.size() > 0) {
 			buffer.append("/Filter [");
 			for (int i = this.m_filters.size(); i > 0; i--) {
-				PDFFilter filter = (PDFFilter) this.m_filters.get(i - 1);
+				PDFFilter filter = (PDFFilter) this.m_filters.elementAt(i - 1);
 				buffer.append(filter.toPDF());
 				if (i > 1) buffer.append(" ");
 			}
