@@ -11,7 +11,7 @@ public class PaddingBefore extends Property  {
                                 COMPOUND |PERCENTAGE | LENGTH | INHERIT;
     public static final int traitMapping = FORMATTING | RENDERING;
     public static final int initialValueType = LENGTH_IT;
-    public /**/static/**/ PropertyValue getInitialValue(int property)
+    public /*static*/ PropertyValue getInitialValue(int property)
         throws PropertyException
     {
         return Length.makeLength(PropNames.PADDING_BEFORE,

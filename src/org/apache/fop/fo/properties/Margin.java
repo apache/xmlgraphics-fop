@@ -43,12 +43,13 @@ public class Margin extends Property  {
      * the third element is a value for margin-bottom,
      * the fourth element is a value for margin-left.
      *
+     * @param propindex - the <tt>int</tt> property index.
      * @param foNode - the <tt>FONode</tt> being built
      * @param value <tt>PropertyValue</tt> returned by the parser
      * @return <tt>PropertyValue</tt> the verified value
      */
-    public /**/static/**/ PropertyValue refineParsing
-                                    (FONode foNode, PropertyValue value)
+    public /*static*/ PropertyValue refineParsing
+                        (int propindex, FONode foNode, PropertyValue value)
                 throws PropertyException
     {
         if ( ! (value instanceof PropertyValueList)) {
@@ -56,12 +57,12 @@ public class Margin extends Property  {
                 || value instanceof FromParent
                 || value instanceof FromNearestSpecified
                 )
-                return refineExpansionList
-                    (foNode, ShorthandPropSets.expandAndCopySHand(value));
+                return refineExpansionList(PropNames.MARGIN, foNode,
+                                ShorthandPropSets.expandAndCopySHand(value));
             // N.B.  Does this require further refinement?
             // Where is Auto expanded?
-            return refineExpansionList
-                (foNode, ShorthandPropSets.expandAndCopySHand
+            return refineExpansionList(PropNames.MARGIN, foNode,
+                        ShorthandPropSets.expandAndCopySHand
                                                 (autoOrDistance(value)));
         } else {
             PropertyValueList list =

@@ -17,12 +17,13 @@ public class Clip extends Property  {
     public static final int inherited = NO;
 
     /*
+     * @param propindex - the <tt>int</tt> property index.
      * @param foNode - the <tt>FONode</tt> being built
      * @param value <tt>PropertyValue</tt> returned by the parser
      * @return <tt>PropertyValue</tt> the verified value
      */
-    public /**/static/**/ PropertyValue refineParsing
-                                    (FONode foNode, PropertyValue value)
+    public /*static*/ PropertyValue refineParsing
+                        (int propindex, FONode foNode, PropertyValue value)
                     throws PropertyException
     {
         int type = value.getType();

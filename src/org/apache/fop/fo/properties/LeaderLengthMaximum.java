@@ -10,7 +10,7 @@ public class LeaderLengthMaximum extends Property  {
     public static final int dataTypes = LENGTH | PERCENTAGE;
     public static final int traitMapping = FORMATTING;
     public static final int initialValueType = PERCENTAGE_IT;
-    public /**/static/**/ PropertyValue getInitialValue(int property)
+    public /*static*/ PropertyValue getInitialValue(int property)
         throws PropertyException
     {
         return Percentage.makePercentage

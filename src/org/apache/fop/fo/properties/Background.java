@@ -54,21 +54,30 @@ public class Background extends Property  {
      *   a BackgroundAttachment EnumType or Inherit value
      *   a BackgroundPositionHorizontal Numeric or Inherit value
      *   a BackgroundPositionVertical Numeric or Inherit value
+     *
+     * @param propindex - the <tt>int</tt> property index.
+     * @param foNode - the <tt>FONode</tt> on which this expression is being
+     * parsed.
+     * @value - the <tt>PropertyValue</tt> passed from
+     * <i>PropertyParser.parse()</i>.
+     * @return the refined <tt>PropertyValue</tt>.
+     * @throws <tt>PropertyException</tt>.
      */
-    public /**/static/**/ PropertyValue refineParsing
-				    (FONode foNode, PropertyValue value)
+    public /*static*/ PropertyValue refineParsing
+                        (int propindex, FONode foNode, PropertyValue value)
 		    throws PropertyException
     {
 	if ( ! (value instanceof PropertyValueList)) {
-	    return processValue(foNode, value);
+	    return processValue(propindex, foNode, value);
 	} else {
-	    return processList
-		(foNode, spaceSeparatedList((PropertyValueList)value));
+	    return processList(propindex,
+                    foNode, spaceSeparatedList((PropertyValueList)value));
 	}
     }
 
-    private /**/static/**/ PropertyValueList processValue
-	(FONode foNode, PropertyValue value) throws PropertyException
+    private /*static*/ PropertyValueList processValue
+	(int propindex, FONode foNode, PropertyValue value)
+            throws PropertyException
     {
 	// Can be Inherit, ColorType, UriType, None, Numeric, or an
 	// NCName (i.e. enum token)
@@ -78,22 +87,23 @@ public class Background extends Property  {
 		    type == PropertyValue.FROM_NEAREST_SPECIFIED)
 	{
 	    // Copy the value to each member of the shorthand expansion
-	    return refineExpansionList
-		(foNode, ShorthandPropSets.expandAndCopySHand(value));
+	    return refineExpansionList(PropNames.BACKGROUND, foNode,
+                                ShorthandPropSets.expandAndCopySHand(value));
 	} else  {
 	    // Make a list and pass to processList
 	    PropertyValueList tmpList
-		    = new PropertyValueList(value.getProperty());
+		    = new PropertyValueList(propindex);
+		    //= new PropertyValueList(value.getProperty());
 	    tmpList.add(value);
-	    return processList(foNode, tmpList);
+	    return processList(propindex, foNode, tmpList);
 	}
     }
 
-    private /**/static/**/ PropertyValueList processList
-				(FONode foNode, PropertyValueList value)
+    private /*static*/ PropertyValueList processList
+                    (int property, FONode foNode, PropertyValueList value)
 		    throws PropertyException
     {
-	int property = value.getProperty();
+	//int property = value.getProperty();
 	PropertyValue color= null,
 			image = null,
 			repeat = null,
@@ -155,19 +165,17 @@ public class Background extends Property  {
 			MessageHandler.log("background: duplicate" +
 			"position overrides previous position");
 		if (tmpval == null)
-                    // Only for testing the effect of statics on speed
-                    // FIXME NOW
-		    position = (new BackgroundPosition()).refineParsing
-					    (foNode, pval, IS_NESTED);
+                    position = PropertyConsts.pconsts.refineParsing
+                                (PropNames.BACKGROUND_POSITION,
+                                                foNode, pval, IS_NESTED);
 		else { // 2 elements
 		    // make a space-separated list
 		    PropertyValueList ssList = new PropertyValueList
 					(PropNames.BACKGROUND_POSITION);
 		    ssList.add(posnList);
-                    // Only for testing the effect of statics on speed
-                    // FIXME NOW
-		    position = (new BackgroundPosition()).refineParsing
-					    (foNode, ssList, IS_NESTED);
+                    position = PropertyConsts.pconsts.refineParsing
+                                (PropNames.BACKGROUND_POSITION,
+                                                foNode, ssList, IS_NESTED);
 		}
 		continue scanning_elements;
 	    }  // end of case NUMERIC
@@ -219,13 +227,15 @@ public class Background extends Property  {
 		// Is the current NCName a position token?
 		boolean pos1ok = false, pos2ok = false;
 		try {
-		    BackgroundPosition.getEnumIndex(ncname);
+		    PropertyConsts.pconsts.getEnumIndex
+                                    (PropNames.BACKGROUND_POSITION, ncname);
 		    pos1ok = true;
 		    if (elements.hasNext()) {
 			tmpval = (PropertyValue)(elements.next());
 			if (tmpval instanceof NCName) {
 			    String ncname2 = ((NCName)tmpval).getString();
-                            BackgroundPosition.getEnumIndex(ncname2);
+                            PropertyConsts.pconsts.getEnumIndex
+                                    (PropNames.BACKGROUND_POSITION, ncname2);
 			    pos2ok = true;
 			} else {
 			    // Restore the listIterator cursor
@@ -247,15 +257,14 @@ public class Background extends Property  {
 			PropertyValueList ssList = new PropertyValueList
 					(PropNames.BACKGROUND_POSITION);
 			ssList.add(posnList);
-			position = BackgroundPosition.refineParsing
-                                                (foNode, ssList, IS_NESTED);
+			position = PropertyConsts.pconsts.refineParsing
+                                (PropNames.BACKGROUND_POSITION,
+                                                foNode, ssList, IS_NESTED);
 		    } else { // one only
 		    // Now send one NCName to BackgroundPosition
-                        // Only for testing the effect of statics on
-                        // constructor speed.
-                        // FIXME NOW!!!!!!
-			position = BackgroundPosition.refineParsing
-                                                    (foNode, pval, IS_NESTED);
+			position = PropertyConsts.pconsts.refineParsing
+                                (PropNames.BACKGROUND_POSITION,
+                                                    foNode, pval, IS_NESTED);
 		    }
 		    continue scanning_elements;
 		}

@@ -20,7 +20,7 @@ public class WhiteSpaceTreatment extends Property  {
     public static final int IGNORE_IF_BEFORE_LINEFEED = 3;
     public static final int IGNORE_IF_AFTER_LINEFEED = 4;
     public static final int IGNORE_IF_SURROUNDING_LINEFEED = 5;
-    public /**/static/**/ PropertyValue getInitialValue(int property)
+    public /*static*/ PropertyValue getInitialValue(int property)
         throws PropertyException
     {
         return new EnumType (PropNames.WHITE_SPACE_TREATMENT, PRESERVE);
@@ -43,10 +43,10 @@ public class WhiteSpaceTreatment extends Property  {
                                 (Object) Ints.consts.get(i));
         }
     }
-    public /**/static/**/ int getEnumIndex(String enum) {
+    public /*static*/ int getEnumIndex(String enum) {
         return ((Integer)(rwEnumHash.get(enum))).intValue();
     }
-    public /**/static/**/ String getEnumText(int index) {
+    public /*static*/ String getEnumText(int index) {
         return rwEnums[index];
     }
 }

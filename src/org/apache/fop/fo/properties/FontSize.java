@@ -31,9 +31,10 @@ public class FontSize extends Property  {
     public static final int SMALLER = 9;
 
     // N.B. This foundational value MUST be an absolute length
-    public /**/static/**/ PropertyValue getInitialValue(int property)
+    public /*static*/ PropertyValue getInitialValue(int property)
         throws PropertyException
     {
+        System.out.println("font-size initial size"); //DEBUG
         return getMappedLength(MEDIUM);
     }
 
@@ -66,9 +67,11 @@ public class FontSize extends Property  {
         ,0.83d      // smaller
     };
 
-    public static Numeric getMappedLength(int enum)
+    public /*static*/ Numeric getMappedLength(int enum)
         throws PropertyException
     {
+        System.out.println("font-size getMappedLength " + enum + " "
+                            + mappedLengths[enum]);
         if (enum == LARGER || enum == SMALLER)
             return Ems.makeEms(PropNames.FONT_SIZE, mappedLengths[enum]);
         return

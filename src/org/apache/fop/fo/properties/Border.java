@@ -6,6 +6,7 @@ import org.apache.fop.datatypes.PropertyValue;
 import org.apache.fop.datatypes.Ints;
 import org.apache.fop.datatypes.ColorType;
 import org.apache.fop.fo.PropNames;
+import org.apache.fop.fo.PropertyConsts;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.ShorthandPropSets;
 import org.apache.fop.fo.properties.Property;
@@ -21,8 +22,8 @@ public class Border extends Property  {
     public static final int initialValueType = NOTYPE_IT;
     public static final int inherited = NO;
 
-    public /**/static/**/ PropertyValue refineParsing
-                                    (FONode foNode, PropertyValue value)
+    public /*static*/ PropertyValue refineParsing
+                        (int propindex, FONode foNode, PropertyValue value)
         throws PropertyException
     {
         int type = value.getType();
@@ -30,8 +31,8 @@ public class Border extends Property  {
                 type == PropertyValue.FROM_PARENT ||
                     type == PropertyValue.FROM_NEAREST_SPECIFIED)
             // Copy the value to each member of the shorthand expansion
-            return refineExpansionList
-                (foNode, ShorthandPropSets.expandAndCopySHand(value));
+            return refineExpansionList(PropNames.BORDER, foNode,
+                                ShorthandPropSets.expandAndCopySHand(value));
 
         PropertyValueList ssList = null;
         // Must be a space-separated list or a single value from the
@@ -58,8 +59,8 @@ public class Border extends Property  {
             PropertyValue val = (PropertyValue)(values.next());
             PropertyValue pv = null;
             try {
-                // FIXME NOW
-                pv = (new BorderWidth()).refineParsing(foNode, val, IS_NESTED);
+                pv = PropertyConsts.pconsts.refineParsing
+                        (PropNames.BORDER_WIDTH, foNode, val, IS_NESTED);
                 if (width != null)
                     MessageHandler.log("border: duplicate" +
                     "width overrides previous width");
@@ -67,8 +68,8 @@ public class Border extends Property  {
                 continue;
             } catch (PropertyException e) {}
             try {
-                // FIXME NOW
-                pv = (new BorderStyle()).refineParsing(foNode, val, IS_NESTED);
+                pv = PropertyConsts.pconsts.refineParsing
+                            (PropNames.BORDER_STYLE, foNode, val, IS_NESTED);
                 if (style != null)
                     MessageHandler.log("border: duplicate" +
                     "style overrides previous style");
@@ -76,8 +77,8 @@ public class Border extends Property  {
                 continue;
             } catch (PropertyException e) {}
             try {
-                // FIXME NOW
-                pv = (new BorderColor()).refineParsing(foNode, val, IS_NESTED);
+                pv = PropertyConsts.pconsts.refineParsing
+                            (PropNames.BORDER_COLOR, foNode, val, IS_NESTED);
                 if (color != null)
                     MessageHandler.log("border: duplicate" +
                     "color overrides previous color");

@@ -10,7 +10,7 @@ public class IndicateDestination extends Property  {
     public static final int dataTypes = BOOL;
     public static final int traitMapping = ACTION;
     public static final int initialValueType = BOOL_IT;
-    public /**/static/**/ PropertyValue getInitialValue(int property)
+    public /*static*/ PropertyValue getInitialValue(int property)
         throws PropertyException
     {
         return new Bool(PropNames.INDICATE_DESTINATION, false);

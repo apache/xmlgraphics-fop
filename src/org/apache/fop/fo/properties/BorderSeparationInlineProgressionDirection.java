@@ -11,7 +11,7 @@ public class BorderSeparationInlineProgressionDirection
     public static final int dataTypes = LENGTH;
     public static final int traitMapping = FORMATTING;
     public static final int initialValueType = LENGTH_IT;
-    public /**/static/**/ PropertyValue getInitialValue(int property)
+    public /*static*/ PropertyValue getInitialValue(int property)
         throws PropertyException
     {
         return Length.makeLength

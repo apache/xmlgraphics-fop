@@ -20,7 +20,7 @@ public class TextDecoration extends Property  {
     public static final int dataTypes = COMPLEX | NONE | INHERIT;
     public static final int traitMapping = NEW_TRAIT;
     public static final int initialValueType = TEXT_DECORATION_IT;
-    public /**/static/**/ PropertyValue getInitialValue(int property)
+    public /*static*/ PropertyValue getInitialValue(int property)
         throws PropertyException
     {
         return new TextDecorations
@@ -56,8 +56,8 @@ public class TextDecoration extends Property  {
                                 ,BLINK
                             };
 
-    public /**/static/**/ PropertyValue refineParsing
-                                    (FONode foNode, PropertyValue list)
+    public /*static*/ PropertyValue refineParsing
+                        (int propindex, FONode foNode, PropertyValue list)
                     throws PropertyException
     {
         byte onMask = NO_DECORATION;

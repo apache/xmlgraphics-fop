@@ -10,7 +10,7 @@ public class DestinationPlacementOffset extends Property  {
     public static final int dataTypes = LENGTH;
     public static final int traitMapping = ACTION;
     public static final int initialValueType = LENGTH_IT;
-    public /**/static/**/ PropertyValue getInitialValue(int property)
+    public /*static*/ PropertyValue getInitialValue(int property)
         throws PropertyException
     {
         return Length.makeLength

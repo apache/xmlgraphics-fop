@@ -10,7 +10,7 @@ public class FlowName extends Property  {
     public static final int dataTypes = NCNAME;
     public static final int traitMapping = REFERENCE;
     public static final int initialValueType = NCNAME_IT;
-    public /**/static/**/ PropertyValue getInitialValue(int property)
+    public /*static*/ PropertyValue getInitialValue(int property)
         throws PropertyException
     {
         return new NCName(PropNames.FLOW_NAME, "");

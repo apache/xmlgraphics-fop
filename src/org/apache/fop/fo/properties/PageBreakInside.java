@@ -28,12 +28,13 @@ public class PageBreakInside extends Property  {
     };
 
     /*
+     * @param propindex - the <tt>int</tt> property index.
      * @param foNode - the <tt>FONode</tt> being built
      * @param value <tt>PropertyValue</tt> returned by the parser
      * @return <tt>PropertyValue</tt> the verified value
      */
-    public /**/static/**/ PropertyValue refineParsing
-                                    (FONode foNode, PropertyValue value)
+    public /*static*/ PropertyValue refineParsing
+                        (int propindex, FONode foNode, PropertyValue value)
                     throws PropertyException
     {
         if (value instanceof Inherit |
@@ -41,26 +42,22 @@ public class PageBreakInside extends Property  {
                     value instanceof FromNearestSpecified |
                         value instanceof Auto)
         {
-            return refineExpansionList
-                (foNode, ShorthandPropSets.expandAndCopySHand(value));
+            return refineExpansionList(PropNames.PAGE_BREAK_INSIDE, foNode,
+                                ShorthandPropSets.expandAndCopySHand(value));
         }
         if (value instanceof NCName) {
             EnumType enum = null;
             String ncname = ((NCName)value).getNCName();
-            try {
-                enum = new EnumType(value.getProperty(), ncname);
-            } catch (PropertyException e) {
+            //PropertyValueList list =
+                    //new PropertyValueList(PropNames.PAGE_BREAK_INSIDE);
+            if (ncname.equals("avoid")) {
+                //list.add
+                    //(new EnumType(PropNames.KEEP_TOGETHER, "always"));
+                //return list;
+                return new EnumType(PropNames.KEEP_TOGETHER, "always");
+            } else
                 throw new PropertyException
                 ("Unrecognized NCName in page-break-inside: " + ncname);
-            }
-            PropertyValueList list =
-                    new PropertyValueList(PropNames.PAGE_BREAK_INSIDE);
-            switch (enum.getEnumValue()) {
-            case AVOID:
-                list.add
-                    (new EnumType(PropNames.KEEP_TOGETHER, "always"));
-                return list;
-            }
         }
 
         throw new PropertyException
@@ -68,10 +65,10 @@ public class PageBreakInside extends Property  {
                 + value.getClass().getName());
     }
 
-    public /**/static/**/ int getEnumIndex(String enum) throws PropertyException {
+    public /*static*/ int getEnumIndex(String enum) throws PropertyException {
         return enumValueToIndex(enum, rwEnums);
     }
-    public /**/static/**/ String getEnumText(int index) {
+    public /*static*/ String getEnumText(int index) {
         return rwEnums[index];
     }
 }

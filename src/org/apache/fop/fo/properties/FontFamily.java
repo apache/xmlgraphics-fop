@@ -44,8 +44,8 @@ public class FontFamily extends Property  {
         }
     }
 
-    public /**/static/**/ PropertyValue refineParsing
-                                    (FONode foNode, PropertyValue value)
+    public /*static*/ PropertyValue refineParsing
+                        (int propindex, FONode foNode, PropertyValue value)
                     throws PropertyException
     {
         // There is no point in attempting to validate the enumeration
@@ -61,14 +61,14 @@ public class FontFamily extends Property  {
         // be at the top level, and any font family names
         // that contained spaces will be in PropertyValueLists.
 
-        return refineParsing(foNode, value, NOT_NESTED);
+        return refineParsing(propindex, foNode, value, NOT_NESTED);
     }
 
-    public /**/static/**/ PropertyValue refineParsing
-                    (FONode foNode, PropertyValue value, boolean nested)
+    public /*static*/ PropertyValue refineParsing
+        (int property, FONode foNode, PropertyValue value, boolean nested)
                     throws PropertyException
     {
-        int property = value.getProperty();
+        //int property = value.getProperty();
         int type = value.getType();
         // First, check that we have a list
         if (type != PropertyValue.LIST) {

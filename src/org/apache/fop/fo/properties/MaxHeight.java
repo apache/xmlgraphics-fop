@@ -11,7 +11,7 @@ public class MaxHeight extends Property  {
                                     PERCENTAGE | LENGTH | NONE | INHERIT;
     public static final int traitMapping = SHORTHAND_MAP;
     public static final int initialValueType = LENGTH_IT;
-    public /**/static/**/ PropertyValue getInitialValue(int property)
+    public /*static*/ PropertyValue getInitialValue(int property)
         throws PropertyException
     {
         return Length.makeLength (PropNames.MAX_HEIGHT, 0.0d, Length.PT);

@@ -2,6 +2,7 @@ package org.apache.fop.fo.properties;
 
 import org.apache.fop.fo.expr.PropertyException;
 import org.apache.fop.fo.FONode;
+import org.apache.fop.fo.PropNames;
 import org.apache.fop.datatypes.PropertyValue;
 import org.apache.fop.datatypes.PropertyValueList;
 import org.apache.fop.datatypes.UriType;
@@ -17,16 +18,18 @@ public class SourceDocument extends Property  {
     public static final int inherited = NO;
 
     /*
+     * @param propindex - the <tt>int</tt> property index.
      * @param foNode - the <tt>FONode</tt> being built
      * @param list <tt>PropertyValue</tt> returned by the parser
      * @return <tt>PropertyValue</tt> the verified value
      */
-    public /**/static/**/ PropertyValue refineParsing
-                                    (FONode foNode, PropertyValue list)
+    public /*static*/ PropertyValue refineParsing
+                        (int propindex, FONode foNode, PropertyValue list)
                     throws PropertyException
     {
         if ( ! (list instanceof PropertyValueList))
-                            return Property.refineParsing(foNode, list);
+                return super.refineParsing
+                                (PropNames.SOURCE_DOCUMENT, foNode, list);
         // Confirm that the list contains only UriType elements
         Iterator iter = ((PropertyValueList)list).iterator();
         while (iter.hasNext()) {

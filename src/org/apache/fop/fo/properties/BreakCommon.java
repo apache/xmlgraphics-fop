@@ -29,10 +29,10 @@ public class BreakCommon extends Property  {
         }
     }
 
-    public /**/static/**/ int getEnumIndex(String enum) {
+    public /*static*/ int getEnumIndex(String enum) {
         return ((Integer)(rwEnumHash.get(enum))).intValue();
     }
-    public /**/static/**/ String getEnumText(int index) {
+    public /*static*/ String getEnumText(int index) {
         return rwEnums[index];
     }
 

@@ -14,7 +14,7 @@ public class BlankOrNotBlank extends Property  {
     public static final int BLANK = 1;
     public static final int NOT_BLANK = 2;
     public static final int ANY = 3;
-    public /**/static/**/ PropertyValue getInitialValue(int property)
+    public /*static*/ PropertyValue getInitialValue(int property)
         throws PropertyException
     {
         return new EnumType (PropNames.BLANK_OR_NOT_BLANK, ANY);
@@ -28,10 +28,10 @@ public class BlankOrNotBlank extends Property  {
         ,"not-blank"
         ,"any"
     };
-    public /**/static/**/ int getEnumIndex(String enum) throws PropertyException {
+    public /*static*/ int getEnumIndex(String enum) throws PropertyException {
         return enumValueToIndex(enum, rwEnums);
     }
-    public /**/static/**/ String getEnumText(int index) {
+    public /*static*/ String getEnumText(int index) {
         return rwEnums[index];
     }
 }

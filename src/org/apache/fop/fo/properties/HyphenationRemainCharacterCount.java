@@ -10,7 +10,7 @@ public class HyphenationRemainCharacterCount extends Property  {
     public static final int dataTypes = NUMBER | INHERIT;
     public static final int traitMapping = FORMATTING;
     public static final int initialValueType = NUMBER_IT;
-    public /**/static/**/ PropertyValue getInitialValue(int property)
+    public /*static*/ PropertyValue getInitialValue(int property)
         throws PropertyException
     {
         return new Numeric (PropNames.HYPHENATION_REMAIN_CHARACTER_COUNT, 2d);
