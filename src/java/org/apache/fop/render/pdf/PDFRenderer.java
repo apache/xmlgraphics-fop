@@ -578,16 +578,16 @@ public class PDFRenderer extends PrintRenderer {
             endTextObject();
 
             //Calculate padding rectangle
-            float x = startx;
-            float y = starty;
+            float sx = startx;
+            float sy = starty;
             float paddRectWidth = width;
             float paddRectHeight = height;
             if (bpsStart != null) {
-                x += bpsStart.width / 1000f;
+                sx += bpsStart.width / 1000f;
                 paddRectWidth -= bpsStart.width / 1000f;
             }
             if (bpsBefore != null) {
-                y += bpsBefore.width / 1000f;
+                sy += bpsBefore.width / 1000f;
                 paddRectHeight -= bpsBefore.width / 1000f;
             }
             if (bpsEnd != null) {
@@ -599,7 +599,7 @@ public class PDFRenderer extends PrintRenderer {
 
             if (back.getColor() != null) {
                 updateColor(back.getColor(), true, null);
-                currentStream.add(x + " " + y + " "
+                currentStream.add(sx + " " + sy + " "
                                   + paddRectWidth + " " + paddRectHeight + " re\n");
                 currentStream.add("f\n");
             }
@@ -609,17 +609,39 @@ public class PDFRenderer extends PrintRenderer {
                 if (fopimage != null && fopimage.load(FopImage.DIMENSIONS)) {
                     saveGraphicsState();
                     clip(startx, starty, width, height);
-                    if (back.getRepeat() == EN_REPEAT) {
-                        // create a pattern for the image
-                    } else {
-                        // place once
-                        Rectangle2D pos;
-                        pos = new Rectangle2D.Float((x * 1000) + back.getHoriz(),
-                                                    (y * 1000) + back.getVertical(),
-                                                    fopimage.getIntrinsicWidth(),
-                                                    fopimage.getIntrinsicHeight());
-                        putImage(back.getURL(), pos);
+                    int horzCount = (int)((paddRectWidth 
+                            * 1000 / fopimage.getIntrinsicWidth()) + 1.0f); 
+                    int vertCount = (int)((paddRectHeight 
+                            * 1000 / fopimage.getIntrinsicHeight()) + 1.0f); 
+                    if (back.getRepeat() == EN_NOREPEAT) {
+                        horzCount = 1;
+                        vertCount = 1;
+                    } else if (back.getRepeat() == EN_REPEATX) {
+                        vertCount = 1;
+                    } else if (back.getRepeat() == EN_REPEATY) {
+                        horzCount = 1;
                     }
+                    //change from points to millipoints
+                    sx *= 1000;
+                    sy *= 1000;
+                    if (horzCount == 1) {
+                        sx += back.getHoriz();
+                    }
+                    if (vertCount == 1) {
+                        sy += back.getVertical();
+                    }
+                    for (int x = 0; x < horzCount; x++) {
+                        for (int y = 0; y < vertCount; y++) {
+                            // place once
+                            Rectangle2D pos;
+                            pos = new Rectangle2D.Float(sx + (x * fopimage.getIntrinsicWidth()),
+                                                        sy + (y * fopimage.getIntrinsicHeight()),
+                                                        fopimage.getIntrinsicWidth(),
+                                                        fopimage.getIntrinsicHeight());
+                            putImage(back.getURL(), pos);
+                        }
+                    }
+                    
                     restoreGraphicsState();
                 } else {
                     getLogger().warn("Can't find background image: " + back.getURL());
