@@ -85,6 +85,7 @@ import org.apache.fop.fo.flow.BlockContainer;
 import org.apache.fop.fo.flow.Footnote;
 import org.apache.fop.fo.flow.ListBlock;
 import org.apache.fop.fo.flow.ListItemBody;
+import org.apache.fop.fo.flow.ListItemLabel;
 import org.apache.fop.fo.flow.InstreamForeignObject;
 import org.apache.fop.fo.flow.InlineContainer;
 import org.apache.fop.fo.flow.ListItem;
@@ -638,12 +639,22 @@ public class AddLMVisitor extends FOTreeVisitor {
              ListItemLayoutManager blm = new ListItemLayoutManager();
              blm.setUserAgent(node.getUserAgent());
              blm.setFObj(node);
-             blm.setLabel(node.getLabel().getItemLayoutManager());
+             blm.setLabel(getListItemLabelLayoutManager(node.getLabel()));
              blm.setBody(getListItemBodyLayoutManager(node.getBody()));
              currentLMList.add(blm);
          } else {
              node.getLogger().error("list-item requires list-item-label and list-item-body");
          }
+     }
+
+     /**
+      * @return this object's Item layout manager
+      */
+     public Item getListItemLabelLayoutManager(ListItemLabel node) {
+         Item itemLabel = new Item();
+         itemLabel.setUserAgent(node.getUserAgent());
+         itemLabel.setFObj(node);
+         return itemLabel;
      }
 
      /**
