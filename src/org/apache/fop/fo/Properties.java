@@ -346,6 +346,9 @@ public abstract class Properties {
         int datatype = PropertyConsts.dataTypes.get(property);
         int proptype = value.getType();
         PropertyValue pv;
+        if ((datatype & AURAL) != 0)
+            throw new PropertyNotImplementedException
+                ("AURAL properties are not supported");
         switch (proptype) {
         case PropertyValue.NUMERIC:
             // Can be any of
@@ -544,10 +547,8 @@ public abstract class Properties {
     public static PropertyValue getInitialValue(int property)
             throws PropertyException
     {
-        System.out.println("Invoking default getInitialValue("+property+")");
         Method method = null;
         int initialValueType = PropertyConsts.getInitialValueType(property);
-        System.out.println("initialValueType:" + initialValueType);
         if ((initialValueType & Properties.USE_GET_IT_FUNCTION) != 0)
              throw new PropertyException
                  ("Properties.getInitialValue() called for property with "
@@ -561,12 +562,7 @@ public abstract class Properties {
         case NONE_IT:
             return new None(property);
         case AURAL_IT:
-            System.out.println("In AURAL_IT");
-            System.out.println
-                ("Aural properties not implemented: "
-                + PropNames.getPropertyName(property));
-            //throw new PropertyNotImplementedException
-            throw new PropertyException
+            throw new PropertyNotImplementedException
                 ("Aural properties not implemented: "
                 + PropNames.getPropertyName(property));
         default:
@@ -1077,7 +1073,7 @@ public abstract class Properties {
     public static class Azimuth extends Properties {
         public static final int dataTypes = AURAL;
         public static final int traitMapping = RENDERING;
-        public static final int initialValueType = AURAL_IT;
+        public static final int initialValueType = NOTYPE_IT;
         public static final int inherited = COMPUTED;
     }
 
@@ -3666,7 +3662,7 @@ public abstract class Properties {
     public static class Cue extends Properties {
         public static final int dataTypes = SHORTHAND;
         public static final int traitMapping = SHORTHAND_MAP;
-        public static final int initialValueType = AURAL_IT;
+        public static final int initialValueType = NOTYPE_IT;
         public static final int inherited = NO;
 
         /**
@@ -3735,14 +3731,14 @@ public abstract class Properties {
     public static class CueAfter extends Properties {
         public static final int dataTypes = AURAL;
         public static final int traitMapping = RENDERING;
-        public static final int initialValueType = AURAL_IT;
+        public static final int initialValueType = NOTYPE_IT;
         public static final int inherited = NO;
     }
 
     public static class CueBefore extends Properties {
         public static final int dataTypes = AURAL;
         public static final int traitMapping = RENDERING;
-        public static final int initialValueType = AURAL_IT;
+        public static final int initialValueType = NOTYPE_IT;
         public static final int inherited = NO;
     }
 
@@ -3847,7 +3843,7 @@ public abstract class Properties {
     public static class Elevation extends Properties {
         public static final int dataTypes = AURAL;
         public static final int traitMapping = RENDERING;
-        public static final int initialValueType = AURAL_IT;
+        public static final int initialValueType = NOTYPE_IT;
         public static final int inherited = COMPUTED;
     }
 
@@ -5474,7 +5470,7 @@ public abstract class Properties {
         public static final int dataTypes =
             COMPOUND| PERCENTAGE | LENGTH | NUMBER | MAPPED_LENGTH | INHERIT;
         public static final int traitMapping = FORMATTING;
-        public static final int initialValueType = LENGTH_IT;
+        public static final int initialValueType = NOTYPE_IT;
         public static final int NORMAL = 1;
         public static final int inherited = NO;
 
@@ -6580,42 +6576,42 @@ public abstract class Properties {
     public static class Pause extends Properties {
         public static final int dataTypes = AURAL;
         public static final int traitMapping = SHORTHAND_MAP;
-        public static final int initialValueType = AURAL_IT;
+        public static final int initialValueType = NOTYPE_IT;
         public static final int inherited = NO;
     }
 
     public static class PauseAfter extends Properties {
         public static final int dataTypes = AURAL;
         public static final int traitMapping = RENDERING;
-        public static final int initialValueType = AURAL_IT;
+        public static final int initialValueType = NOTYPE_IT;
         public static final int inherited = NO;
     }
 
     public static class PauseBefore extends Properties {
         public static final int dataTypes = AURAL;
         public static final int traitMapping = RENDERING;
-        public static final int initialValueType = AURAL_IT;
+        public static final int initialValueType = NOTYPE_IT;
         public static final int inherited = NO;
     }
 
     public static class Pitch extends Properties {
         public static final int dataTypes = AURAL;
         public static final int traitMapping = RENDERING;
-        public static final int initialValueType = AURAL_IT;
+        public static final int initialValueType = NOTYPE_IT;
         public static final int inherited = COMPUTED;
     }
 
     public static class PitchRange extends Properties {
         public static final int dataTypes = AURAL;
         public static final int traitMapping = RENDERING;
-        public static final int initialValueType = AURAL_IT;
+        public static final int initialValueType = NOTYPE_IT;
         public static final int inherited = COMPUTED;
     }
 
     public static class PlayDuring extends Properties {
         public static final int dataTypes = AURAL;
         public static final int traitMapping = RENDERING;
-        public static final int initialValueType = AURAL_IT;
+        public static final int initialValueType = NOTYPE_IT;
         public static final int inherited = NO;
     }
 
@@ -6946,7 +6942,7 @@ public abstract class Properties {
     public static class Richness extends Properties {
         public static final int dataTypes = AURAL;
         public static final int traitMapping = RENDERING;
-        public static final int initialValueType = AURAL_IT;
+        public static final int initialValueType = NOTYPE_IT;
         public static final int inherited = COMPUTED;
     }
 
@@ -7506,35 +7502,35 @@ public abstract class Properties {
     public static class Speak extends Properties {
         public static final int dataTypes = AURAL;
         public static final int traitMapping = RENDERING;
-        public static final int initialValueType = AURAL_IT;
+        public static final int initialValueType = NOTYPE_IT;
         public static final int inherited = COMPUTED;
     }
 
     public static class SpeakHeader extends Properties {
         public static final int dataTypes = AURAL;
         public static final int traitMapping = RENDERING;
-        public static final int initialValueType = AURAL_IT;
+        public static final int initialValueType = NOTYPE_IT;
         public static final int inherited = COMPUTED;
     }
 
     public static class SpeakNumeral extends Properties {
         public static final int dataTypes = AURAL;
         public static final int traitMapping = RENDERING;
-        public static final int initialValueType = AURAL_IT;
+        public static final int initialValueType = NOTYPE_IT;
         public static final int inherited = COMPUTED;
     }
 
     public static class SpeakPunctuation extends Properties {
         public static final int dataTypes = AURAL;
         public static final int traitMapping = RENDERING;
-        public static final int initialValueType = AURAL_IT;
+        public static final int initialValueType = NOTYPE_IT;
         public static final int inherited = COMPUTED;
     }
 
     public static class SpeechRate extends Properties {
         public static final int dataTypes = AURAL;
         public static final int traitMapping = RENDERING;
-        public static final int initialValueType = AURAL_IT;
+        public static final int initialValueType = NOTYPE_IT;
         public static final int inherited = COMPUTED;
     }
 
@@ -7594,7 +7590,7 @@ public abstract class Properties {
     public static class Stress extends Properties {
         public static final int dataTypes = AURAL;
         public static final int traitMapping = RENDERING;
-        public static final int initialValueType = AURAL_IT;
+        public static final int initialValueType = NOTYPE_IT;
         public static final int inherited = COMPUTED;
     }
 
@@ -8172,14 +8168,14 @@ public abstract class Properties {
     public static class VoiceFamily extends Properties {
         public static final int dataTypes = AURAL;
         public static final int traitMapping = RENDERING;
-        public static final int initialValueType = AURAL_IT;
+        public static final int initialValueType = NOTYPE_IT;
         public static final int inherited = COMPUTED;
     }
 
     public static class Volume extends Properties {
         public static final int dataTypes = AURAL;
         public static final int traitMapping = RENDERING;
-        public static final int initialValueType = AURAL_IT;
+        public static final int initialValueType = NOTYPE_IT;
         public static final int inherited = COMPUTED;
     }
 
