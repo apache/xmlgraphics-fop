@@ -144,7 +144,12 @@ public class FopImageFactory {
         } else if ("image/eps".equals(imgMimeType)) {
             imgClassName = "org.apache.fop.image.EPSImage";
         } else if ("image/tiff".equals(imgMimeType)) {
-            imgClassName = getGenericImageClassName();
+            try {
+                imgClassName = "org.apache.fop.image.TiffImage";
+                Class.forName(imgClassName);
+            } catch (Exception ex) {
+                imgClassName = getGenericImageClassName();
+            }
         } else if ("image/svg+xml".equals(imgMimeType)) {
             imgClassName = "org.apache.fop.image.SVGImage";
         }
