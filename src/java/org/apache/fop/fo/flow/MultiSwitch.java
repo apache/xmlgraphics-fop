@@ -18,13 +18,18 @@
 
 package org.apache.fop.fo.flow;
 
+// XML
+import org.xml.sax.Attributes;
+import org.xml.sax.Locator;
+import org.xml.sax.SAXParseException;
+
 // FOP
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FObj;
 
 /**
  * Class modelling the fo:multi-switch object.
- * @todo implement validateChildNode()
+ * @todo needs implementation
  */
 public class MultiSwitch extends FObj {
 
@@ -39,6 +44,28 @@ public class MultiSwitch extends FObj {
         if (!notImplementedWarningGiven) {
             getLogger().warn("fo:multi-switch is not yet implemented.");
             notImplementedWarningGiven = true;
+        }
+    }
+
+    /**
+     * @see org.apache.fop.fo.FONode#validateChildNode(Locator, String, String)
+     * XSL Content Model: (multi-case+)
+     */
+    protected void validateChildNode(Locator loc, String nsURI, String localName) 
+        throws SAXParseException {
+        if (!(nsURI == FO_URI && localName.equals("multi-case"))) {
+            invalidChildError(loc, nsURI, localName);
+        }
+    }
+
+    /**
+     * Make sure content model satisfied, if so then tell the
+     * FOInputHandler that we are at the end of the flow.
+     * @see org.apache.fop.fo.FONode#end
+     */
+    protected void endOfNode() throws SAXParseException {
+        if (childNodes == null) {
+            missingChildElementError("(multi-case+)");
         }
     }
 

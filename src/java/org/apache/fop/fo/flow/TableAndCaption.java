@@ -18,17 +18,26 @@
 
 package org.apache.fop.fo.flow;
 
+// XML
+import org.xml.sax.Attributes;
+import org.xml.sax.Locator;
+import org.xml.sax.SAXParseException;
+
 // FOP
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FObj;
 
 /**
  * Class modelling the fo:table-and-caption property.
- * @todo implement validateChildNode()
+ * @todo needs implementation
  */
 public class TableAndCaption extends FObj {
 
     static boolean notImplementedWarningGiven = false;
+
+    /** used for FO validation */
+    private boolean tableCaptionFound = false;
+    private boolean tableFound = false;
 
     /**
      * @param parent FONode that is the parent of this object
@@ -39,6 +48,49 @@ public class TableAndCaption extends FObj {
         if (!notImplementedWarningGiven) {
             getLogger().warn("fo:table-and-caption is not yet implemented.");
             notImplementedWarningGiven = true;
+        }
+    }
+
+    /**
+     * @see org.apache.fop.fo.FONode#validateChildNode(Locator, String, String)
+     * XSL Content Model: marker* table-caption? table
+     */
+    protected void validateChildNode(Locator loc, String nsURI, String localName) 
+        throws SAXParseException {
+
+            if (nsURI == FO_URI && localName.equals("marker")) {
+                if (tableCaptionFound) {
+                    nodesOutOfOrderError(loc, "fo:marker", "fo:table-caption");
+                } else if (tableFound) {
+                    nodesOutOfOrderError(loc, "fo:marker", "fo:table");
+                }
+            } else if (nsURI == FO_URI && localName.equals("table-caption")) {
+                if (tableCaptionFound) {
+                    tooManyNodesError(loc, "fo:table-caption");
+                } else if (tableFound) {
+                    nodesOutOfOrderError(loc, "fo:table-caption", "fo:table");
+                } else {
+                    tableCaptionFound = true;
+                }
+            } else if (nsURI == FO_URI && localName.equals("table")) {
+                if (tableFound) {
+                    tooManyNodesError(loc, "fo:table");
+                } else {
+                    tableFound = true;
+                }
+            } else {
+                invalidChildError(loc, nsURI, localName);
+            }
+    }
+
+    /**
+     * Make sure content model satisfied, if so then tell the
+     * FOInputHandler that we are at the end of the flow.
+     * @see org.apache.fop.fo.FONode#end
+     */
+    protected void endOfNode() throws SAXParseException {
+        if (!tableFound) {
+            missingChildElementError("marker* table-caption? table");
         }
     }
 
