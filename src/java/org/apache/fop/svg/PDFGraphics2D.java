@@ -152,6 +152,12 @@ public class PDFGraphics2D extends AbstractGraphics2D {
     protected int baseLevel = 0;
 
     /**
+     * The count of JPEG images added to document so they recieve
+     * unique keys.
+     */
+    protected int jpegCount = 0;
+
+    /**
      * The current font information.
      */
     protected Document fontInfo;
@@ -340,9 +346,13 @@ public class PDFGraphics2D extends AbstractGraphics2D {
      * @param width the width to draw the image
      * @param height the height to draw the image
      */
-    public void addJpegImage(JpegImage jpeg, float x, float y, float width, float height) {
-        FopPDFImage fopimage = new FopPDFImage(jpeg, "");
-        int xObjectNum = this.pdfDoc.addImage(resourceContext, fopimage).getXNumber();
+    public void addJpegImage(JpegImage jpeg, float x, float y, 
+                             float width, float height) {
+        String key = "__AddJPEG_"+jpegCount;
+        jpegCount++;
+        FopPDFImage fopimage = new FopPDFImage(jpeg, key);
+        int xObjectNum = this.pdfDoc.addImage(resourceContext, 
+                                              fopimage).getXNumber();
 
         AffineTransform at = getTransform();
         double[] matrix = new double[6];

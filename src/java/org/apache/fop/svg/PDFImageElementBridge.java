@@ -97,6 +97,7 @@ public class PDFImageElementBridge extends SVGImageElementBridge {
                 (purl.toString(), purl.openStream(), null);
             if (ii.mimeType.toLowerCase() == "image/jpeg") {
                 JpegImage jpeg = new JpegImage(ii);
+                jpeg.load(FopImage.ORIGINAL_DATA, null);
                 PDFJpegNode node = new PDFJpegNode(jpeg, origGN);
 
                 Rectangle2D imgBounds = getImageBounds(ctx, e);
@@ -154,7 +155,6 @@ public class PDFImageElementBridge extends SVGImageElementBridge {
         public void primitivePaint(Graphics2D g2d) {
             if (g2d instanceof PDFGraphics2D) {
                 PDFGraphics2D pdfg = (PDFGraphics2D) g2d;
-                pdfg.setTransform(getTransform());
                 float x = 0;
                 float y = 0;
                 try {

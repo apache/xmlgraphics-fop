@@ -520,7 +520,10 @@ list of possible build targets.
         <!--include name="org/apache/fop/layout/Font*.class"/-->
         <include name="org/apache/fop/image/FopImag*.class"/>
         <include name="org/apache/fop/image/Jpeg*"/>
+        <include name="org/apache/fop/image/EPS*"/>
         <include name="org/apache/fop/image/Abstract*"/>
+        <include name="org/apache/fop/image/analyser/*.class"/>
+        <include name="org/apache/fop/util/CMYKColorSpace*.class"/>
         <include name="org/apache/fop/util/StreamUtilities.class"/>
         <include name="org/apache/fop/util/*OutputStream.class"/>
         <include name="org/apache/fop/util/Finalizable.class"/>
@@ -580,7 +583,7 @@ list of possible build targets.
       <fileset dir="${build.dest}">
         <patternset refid="transcoder-classes"/>
       </fileset>
-      <fileset dir="${build.dir}/transcoder-dependencies"/>
+      <fileset dir="${transcoder-deps}"/>
       <manifest>
         <attribute name="Implementation-Title" value="${fop-transcoder.name}"/>
         <attribute name="Implementation-Version" value="${fop-transcoder.version}"/>
