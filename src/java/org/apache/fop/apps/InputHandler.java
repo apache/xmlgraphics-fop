@@ -33,12 +33,6 @@ import java.io.File;
  */
 public abstract class InputHandler {
 
-    /**
-     * Get the input source associated with this input handler.
-     * @return the input source
-     */
-    public abstract InputSource getInputSource();
-
     protected String baseURL = null;
     
     /**
@@ -50,11 +44,11 @@ public abstract class InputHandler {
     }
 
     /**
-     * Get the SAX parser associated with this input handler.
-     * @return the SAX parser
-     * @throws FOPException in case of an error determining the SAX parser
+     * Generate a document, given an initialized Driver object
+     * @param driver -- Driver object
+     * @throws FOPException in case of an error during processing
      */
-    public abstract XMLReader getParser() throws FOPException;
+    public void render(Driver driver) throws FOPException {}
 
     /**
      * Creates an InputSource from a URL.
@@ -86,6 +80,4 @@ public abstract class InputHandler {
             throw new RuntimeException("unexpected MalformedURLException");
         }
     }
-
 }
-

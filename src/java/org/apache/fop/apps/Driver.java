@@ -19,13 +19,9 @@
 package org.apache.fop.apps;
 
 // Java
-import java.io.IOException;
 import java.io.OutputStream;
 
 // XML
-import org.xml.sax.InputSource;
-import org.xml.sax.SAXException;
-import org.xml.sax.XMLReader;
 import org.xml.sax.helpers.DefaultHandler;
    
 // FOP
@@ -137,55 +133,5 @@ public class Driver implements Constants {
      */
     public DefaultHandler getDefaultHandler() throws FOPException {
         return new FOTreeBuilder(renderType, foUserAgent, stream);
-    }
-
-    /**
-     * Render the FO document read by a SAX Parser from an InputHandler
-     * @param inputHandler the input handler containing the source and
-     * parser information.
-     * @throws FOPException if anything goes wrong.
-     */
-    public synchronized void render(InputHandler inputHandler)
-                throws FOPException {
-        XMLReader parser = inputHandler.getParser();
-        foUserAgent.setBaseURL(inputHandler.getBaseURL());
-        render(parser, inputHandler.getInputSource());
-    }
-
-    /**
-     * This is the main render() method. The other render() methods are for
-     * convenience, and normalize to this form, then run this.
-     * Renders the FO document read by a SAX Parser from an InputSource.
-     * For versions not needing an FO Tree (e.g., Alt-Design), override this.
-     *
-     * @param parser the SAX parser.
-     * @param source the input source the parser reads from.
-     * @throws FOPException if anything goes wrong.
-     */
-    public synchronized void render(XMLReader parser, InputSource source)
-                throws FOPException {
-        parser.setContentHandler(getDefaultHandler());
-
-        try {
-            /**
-             The following statement triggers virtually all of the processing
-             for this document. The SAX parser fires events that are handled by
-             the appropriate InputHandler object, which means that you will need
-             to look in those objects to see where FOP picks up control of
-             processing again. For Structure Renderers (e.g. MIF & RTF), the SAX
-             events are handled directly. For Layout Renderers (e.g. PDF &
-             PostScript), an Area Tree is managed by the AreaTreeHandler.
-             */
-            parser.parse(source);
-        } catch (SAXException e) {
-            if (e.getException() instanceof FOPException) {
-                // Undo exception tunneling.
-                throw (FOPException)e.getException();
-            } else {
-                throw new FOPException(e);
-            }
-        } catch (IOException e) {
-            throw new FOPException(e);
-        }
     }
 }

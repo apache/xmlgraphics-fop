@@ -394,7 +394,7 @@ public class PreviewDialog extends JFrame {
 
             try {
                 setStatus(translator.getString("Status.Build.FO.tree"));
-                driver.render(foUserAgent.getInputHandler());
+                foUserAgent.getInputHandler().render(driver);
                 setStatus(translator.getString("Status.Show"));
             } catch (FOPException e) {
                 reportException(e);

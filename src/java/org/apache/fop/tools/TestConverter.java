@@ -326,7 +326,7 @@ public class TestConverter {
             driver.setOutputStream(outStream);
             logger.debug("ddir:" + destdir + " on:" + 
                               outputFile.getName());
-            driver.render(inputHandler);
+            inputHandler.render(driver);
             outStream.close();
 
             // check difference

@@ -84,25 +84,6 @@ public class BasicDriverTestCase extends AbstractFOPTestCase {
     }
 
     /**
-     * Tests Driver with XMLReader, InputSource and OutputStream.
-     * @throws Exception if anything fails
-     */
-    public void testFO2PDFWithXMLReader() throws Exception {
-        File foFile = new File(getBaseDir(), "test/xml/bugtests/block.fo");
-        ByteArrayOutputStream baout = new ByteArrayOutputStream();
-        Driver driver = new Driver(Driver.RENDER_PDF);
-
-        driver.setOutputStream(baout);
-        SAXParserFactory factory = SAXParserFactory.newInstance();
-        factory.setNamespaceAware(true);
-        factory.setValidating(false);
-        SAXParser parser = factory.newSAXParser();
-        driver.render(parser.getXMLReader(),
-            new InputSource(foFile.toURL().toExternalForm()));
-        assertTrue("Generated PDF has zero length", baout.size() > 0);
-    }
-
-    /**
      * Tests Driver with JAXP and OutputStream generating PDF.
      * @throws Exception if anything fails
      */
@@ -171,7 +152,7 @@ public class BasicDriverTestCase extends AbstractFOPTestCase {
         driver.setOutputStream(baout);
         
         InputHandler handler = new XSLTInputHandler(xmlFile, xsltFile);
-        driver.render(handler);
+        handler.render(driver);
         
         assertTrue("Generated PDF has zero length", baout.size() > 0);
     }

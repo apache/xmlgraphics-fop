@@ -52,7 +52,7 @@ public class Fop {
                         options.getOutputFile()));
                     driver.setOutputStream(bos);
                 }
-                driver.render(foUserAgent.getInputHandler());
+                foUserAgent.getInputHandler().render(driver);
              } finally {
                  if (bos != null) {
                      bos.close();

@@ -28,23 +28,20 @@ import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.stream.StreamSource;
 import javax.xml.transform.sax.SAXResult;
-import javax.xml.transform.sax.SAXSource;
-import javax.xml.transform.sax.SAXTransformerFactory;
+import javax.xml.transform.stream.StreamSource;
+import javax.xml.transform.Result;
 
 // Imported SAX classes
 import org.xml.sax.InputSource;
-import org.xml.sax.XMLReader;
-import org.xml.sax.XMLFilter;
 
 /**
  * XSLTInputHandler basically takes an XML file and transforms it with an XSLT
  * file and the resulting XSL-FO document is input for FOP.
  */
 public class XSLTInputHandler extends InputHandler {
-
     private StreamSource xmlSource;
     private Source xsltSource;
-    private Vector xsltParams = null; // not yet implemented
+    private Vector xsltParams = null;
     
     /**
      * Constructor for files as input
@@ -108,80 +105,37 @@ public class XSLTInputHandler extends InputHandler {
     }
 
     /**
-     * @see org.apache.fop.apps.InputHandler#getInputSource()
+     * @see org.apache.fop.apps.InputHandler#render(Driver)
      */
-    public InputSource getInputSource() {
-        InputSource is = new InputSource();
-        is.setByteStream(xmlSource.getInputStream());
-        is.setSystemId(xmlSource.getSystemId());
-        return is;
-    }
+    public void render(Driver driver) 
+        throws FOPException {
 
-    /**
-     * Overwrites this method of the super class and returns an XMLFilter 
-     * instead of a simple XMLReader which allows chaining of transformations.
-     * @see org.apache.fop.apps.InputHandler#getParser()
-     */
-    public XMLReader getParser() throws FOPException {
-        return getXMLFilter(xsltSource, xsltParams);
-    }
+        // temporary until baseURL removed from inputHandler objects
+        if (driver.getUserAgent().getBaseURL() == null) {
+            driver.getUserAgent().setBaseURL(getBaseURL());
+        }
 
-    /**
-     * Creates from the transformer an instance of an XMLFilter which
-     * then can be used in a chain with the XMLReader passed to Driver. This way
-     * during the conversion of the xml file + xslt stylesheet the resulting
-     * data is fed into Fop. This should help to avoid memory problems
-     * @param xsltSource An xslt stylesheet
-     * @return an XMLFilter which can be chained together with other 
-     * XMLReaders or XMLFilters
-     * @throws FOPException if setting up the XMLFilter fails
-     */
-    public static XMLFilter getXMLFilter(Source xsltSource, Vector inParams) throws FOPException {
         try {
-            // Instantiate  a TransformerFactory.
-            TransformerFactory tFactory = TransformerFactory.newInstance();
-            // Determine whether the TransformerFactory supports The use of SAXSource
-            // and SAXResult
-            if (tFactory.getFeature(SAXSource.FEATURE)
-                    && tFactory.getFeature(SAXResult.FEATURE)) {
-                // Cast the TransformerFactory to SAXTransformerFactory.
-                SAXTransformerFactory saxTFactory =
-                    ((SAXTransformerFactory)tFactory);
-                // Create an XMLFilter for each stylesheet.
-                XMLFilter xmlfilter =
-                    saxTFactory.newXMLFilter(xsltSource);
-                    
-/*              if (inParams != null) { 
-                    // parameters currently not settable with an XMLFilter
-                    for (int i = 0; i < nParams; i += 2) {
-                        // setParameter() method doesn't exist
-                        xmlfilter.setParameter((String) inParams.elementAt(i),
-                            (String) inParams.elementAt(i + 1));
-                    }
+            // Setup XSLT
+            TransformerFactory factory = TransformerFactory.newInstance();
+            Transformer transformer = factory.newTransformer(xsltSource);
+            
+            // Set the value of parameters, if any, defined for stylesheet
+            if (xsltParams != null) { 
+                for (int i = 0; i < xsltParams.size(); i += 2) {
+                    transformer.setParameter((String) xsltParams.elementAt(i),
+                        (String) xsltParams.elementAt(i + 1));
                 }
-*/                  
-                
-                // Create an XMLReader.
-                XMLReader parser = FOFileHandler.createParser();
-                if (parser == null) {
-                    throw new FOPException("Unable to create SAX parser");
-                }
-
-                // xmlFilter1 uses the XMLReader as its reader.
-                xmlfilter.setParent(parser);
-                return xmlfilter;
-            } else {
-                throw new FOPException("Your parser doesn't support the "
-                        + "features SAXSource and SAXResult."
-                        + "\nMake sure you are using an XSLT engine which "
-                        + "supports TrAX");
             }
-        } catch (FOPException fe) {
-            throw fe;
-        } catch (Exception ex) {
-            throw new FOPException(ex);
+
+            // Resulting SAX events (the generated FO) must be piped through to FOP
+            Result res = new SAXResult(driver.getDefaultHandler());
+
+            // Start XSLT transformation and FOP processing
+            transformer.transform(xmlSource, res);
+
+        } catch (Exception e) {
+            throw new FOPException(e);
         }
     }
-
 }
-

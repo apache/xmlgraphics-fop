@@ -15,21 +15,27 @@
  */
 
 /* $Id$ */
- 
+
 package org.apache.fop.apps;
 
-// Imported SAX classes
-import org.xml.sax.InputSource;
-import org.xml.sax.XMLReader;
-import org.xml.sax.SAXException;
-import org.xml.sax.SAXNotSupportedException;
-
-// java
-import javax.xml.parsers.SAXParserFactory;
-import javax.xml.parsers.ParserConfigurationException;
+// Java
 import java.io.File;
 import java.net.URL;
 
+// Imported SAX classes
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
+import org.xml.sax.XMLReader;
+
+//JAXP
+import javax.xml.parsers.SAXParserFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.Source;
+import javax.xml.transform.Result;
+import javax.xml.transform.sax.SAXSource;
+import javax.xml.transform.sax.SAXResult;
 
 /**
  * Manages input if it is an XSL-FO file.
@@ -72,12 +78,34 @@ public class FOFileHandler extends InputHandler {
     }
 
     /**
-     * @see org.apache.fop.apps.InputHandler#getParser()
+     * @see org.apache.fop.apps.InputHandler#render(Driver)
      */
-    public XMLReader getParser() throws FOPException {
-        return createParser();
-    }
+    public void render(Driver driver) throws FOPException {
 
+        // temporary until baseURL removed from inputHandler objects
+        if (driver.getUserAgent().getBaseURL() == null) {
+            driver.getUserAgent().setBaseURL(getBaseURL());
+        }
+
+        try {
+            // Setup JAXP using identity transformer (no stylesheet here)
+            TransformerFactory factory = TransformerFactory.newInstance();
+            Transformer transformer = factory.newTransformer();
+            
+            // Setup input stream
+            Source src = new SAXSource(getInputSource());
+
+            // Resulting SAX events (the generated FO) must be piped through to FOP
+            Result res = new SAXResult(driver.getDefaultHandler());
+            
+            // Start XSLT transformation and FOP processing
+            transformer.transform(src, res);
+
+        } catch (Exception e) {
+            throw new FOPException(e);
+        }
+    }
+    
     /**
      * Creates <code>XMLReader</code> object using default
      * <code>SAXParserFactory</code>
@@ -109,4 +137,3 @@ public class FOFileHandler extends InputHandler {
         }
     }
 }
-
