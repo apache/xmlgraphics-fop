@@ -250,8 +250,9 @@ public class HyphenationTree extends TernaryTree
                      values = getValues(eq[q]);
                      int j=index;
                      for(int k=0; k<values.length; k++) {
-                        if ( values[k] > il[j] )
+                         if (j < il.length && values[k] > il[j] ) {
                            il[j] = values[k];
+                         }
                         j++;
                      }
                      break;
@@ -330,14 +331,14 @@ public class HyphenationTree extends TernaryTree
                }
             }
          } else {
-            
             // use algorithm to get hyphenation points
             word[0] = '.';  // word start marker            
             word[len+1] = '.'; // word end marker
             word[len+2] = 0;  // null terminated
             byte[] il = new byte[len+3]; // initialized to zero
-            for(i=0; i<len+1; i++)
+             for(i=0; i<len+1; i++) {
                searchPatterns(word, i, il);
+             }
 
             // hyphenation points are located where interletter value is odd
             for(i=0; i<len; i++) {
@@ -347,6 +348,7 @@ public class HyphenationTree extends TernaryTree
                }
             }
          }
+         
 
          if ( k > 0 ) {
             // trim result array
