@@ -94,6 +94,7 @@ public class InstreamForeignObject extends FObj {
 	FontState fs;
 	int breakBefore;
 	int breakAfter;
+	int scaling;
 	int width;
 	int height;
 	int contwidth;
@@ -105,7 +106,7 @@ public class InstreamForeignObject extends FObj {
 	int spaceBefore;
 	int spaceAfter;
 
-    Area areaCurrent;
+    ForeignObjectArea areaCurrent;
 
 	/**
 	 * constructs an instream-foreign-object object (called by Maker).
@@ -138,6 +139,9 @@ public class InstreamForeignObject extends FObj {
 		String fontStyle = this.properties.get("font-style").getString();
 		String fontWeight = this.properties.get("font-weight").getString();
 		int fontSize = this.properties.get("font-size").getLength().mvalue();
+	    int align = this.properties.get("text-align").getEnum();
+	    int valign = this.properties.get("vertical-align").getEnum();
+	    int overflow = this.properties.get("overflow").getEnum();
 		
 		this.fs = new FontState(area.getFontInfo(), fontFamily,
 					 fontStyle, fontWeight, fontSize);
@@ -158,6 +162,8 @@ public class InstreamForeignObject extends FObj {
 		this.spaceAfter =
 		this.properties.get("space-after.optimum").getLength().mvalue();
 
+		this.scaling = this.properties.get("scaling").getEnum();
+
 	    area.getIDReferences().createID(id);                        
 		/* if is embedded in a block area */
 		if (area instanceof BlockArea) {
@@ -166,18 +172,28 @@ public class InstreamForeignObject extends FObj {
 		}
 		if(this.areaCurrent == null) {
 		this.areaCurrent =
-		    new ForeignObjectArea(fs, area.getAllocationWidth(), 
-	                          area.spaceLeft(), 0);
+		    new ForeignObjectArea(fs, area.getAllocationWidth(), area.spaceLeft());
 
 		this.areaCurrent.start();
+		areaCurrent.setWidth(this.width);
+		areaCurrent.setHeight(this.height);
+		areaCurrent.setContentWidth(this.contwidth);
+		areaCurrent.setContentHeight(this.contheight);
+		areaCurrent.setScaling(this.scaling);
+		areaCurrent.setAlign(align);
+		areaCurrent.setVerticalAlign(valign);
+		areaCurrent.setOverflow(overflow);
+		areaCurrent.setSizeAuto(wauto, hauto);
+		areaCurrent.setContentSizeAuto(cwauto, chauto);
+
+		// this means that children can get the fontstate
 		areaCurrent.setPage(area.getPage());
 
-		/* iterate over the child formatting objects and lay them out
-		   into the SVG area */
 		int numChildren = this.children.size();
 		if(numChildren > 1) {
 		    throw new FOPException("Only one child element is allowed in an instream-foreign-object");
 		}
+		/* layout foreign object */
 		if(this.children.size() > 0) {
 			FONode fo = (FONode) children.elementAt(0);
 			Status status;
@@ -193,14 +209,8 @@ public class InstreamForeignObject extends FObj {
 
 		this.marker = 0;
 
-		if(this.hauto) {
-			if (breakBefore == BreakBefore.PAGE || ((spaceBefore + areaCurrent.getHeight()) > area.spaceLeft())) {
-				return new Status(Status.FORCE_PAGE_BREAK);
-			}
-		} else {
-			if (breakBefore == BreakBefore.PAGE || (this.height > area.spaceLeft())) {
-				return new Status(Status.FORCE_PAGE_BREAK);
-			}
+		if (breakBefore == BreakBefore.PAGE || ((spaceBefore + areaCurrent.getEffectiveHeight()) > area.spaceLeft())) {
+			return new Status(Status.FORCE_PAGE_BREAK);
 		}
 
 		if (breakBefore == BreakBefore.ODD_PAGE) {
@@ -222,11 +232,9 @@ public class InstreamForeignObject extends FObj {
 	area.addChild(areaCurrent);
 
 	areaCurrent.setPage(area.getPage());
-	/* layout foreign object */
-//	svg.start();
 
 	/* increase the height of the containing area accordingly */
-	area.increaseHeight(areaCurrent.getHeight());
+	area.increaseHeight(areaCurrent.getEffectiveHeight());
 
 	/* if there is a space-after */
 	if (spaceAfter != 0) {
