@@ -55,7 +55,7 @@ import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.XMLObj;
 
 /**
- * Catch all MathML object as default element.
+ * Catch all MathML objects as default element.
  */
 public class MathMLObj extends XMLObj {
 
@@ -70,7 +70,7 @@ public class MathMLObj extends XMLObj {
      * @see org.apache.fop.fo.XMLObj#getNameSpace()
      */
     public String getNameSpace() {
-        return MathMLElementMapping.URI;
+        return MathMLElementMapping.NAMESPACE;
     }
 }
 

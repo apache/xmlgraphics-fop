@@ -66,8 +66,11 @@ import net.sourceforge.jeuclid.DOMMathBuilder;
  */
 public class MathMLElementMapping extends ElementMapping {
 
+    /** MathML Namespace */
+    public static final String NAMESPACE = "http://www.w3.org/1998/Math/MathML"; 
+
     public MathMLElementMapping() {
-        URI = "http://www.w3.org/1998/Math/MathML";
+        this.namespaceURI = NAMESPACE;
     }
 
     protected void initialize() {
@@ -76,7 +79,7 @@ public class MathMLElementMapping extends ElementMapping {
             foObjs.put("math", new ME());
             foObjs.put(DEFAULT, new MathMLMaker());
 
-            XMLReader.setConverter(URI, new MathMLConverter());
+            XMLReader.setConverter(this.namespaceURI, new MathMLConverter());
         }
     }
 

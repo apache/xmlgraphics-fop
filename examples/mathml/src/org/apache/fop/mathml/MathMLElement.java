@@ -123,7 +123,7 @@ public class MathMLElement extends MathMLObj {
                 doc = svgDoc;
             }
         } catch (Throwable t) {
-            userAgent.getLogger().error("Could not convert MathML to SVG", t);
+            getLogger().error("Could not convert MathML to SVG", t);
             width = 0;
             height = 0;
         }
@@ -181,7 +181,7 @@ public class MathMLElement extends MathMLObj {
      */
     public String getDocumentNamespace() {
         if (svgDoc == null) {
-            return MathMLElementMapping.URI;
+            return MathMLElementMapping.NAMESPACE;
         }
         return "http://www.w3.org/2000/svg";
     }
