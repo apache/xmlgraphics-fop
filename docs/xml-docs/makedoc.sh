@@ -1,5 +1,5 @@
 #!/bin/sh
-
+#This file should be executable
 echo
 echo "Converting Fop's xml documentation into a pdf file"
 echo "----------------"
