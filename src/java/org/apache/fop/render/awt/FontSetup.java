@@ -51,7 +51,7 @@
 package org.apache.fop.render.awt;
 
 // FOP
-import org.apache.fop.control.Document;
+import org.apache.fop.apps.Document;
 import org.apache.fop.fonts.Font;
 
 // Java

@@ -58,7 +58,7 @@ import org.apache.fop.fonts.Typeface;
 import org.apache.fop.fonts.FontDescriptor;
 import org.apache.fop.fonts.FontUtil;
 import org.apache.fop.fonts.LazyFont;
-import org.apache.fop.control.Document;
+import org.apache.fop.apps.Document;
 import org.apache.fop.pdf.PDFDocument;
 import org.apache.fop.pdf.PDFResources;
 // FOP (base 14 fonts)

@@ -48,7 +48,7 @@
  * James Tauber <jtauber@jtauber.com>. For more information on the Apache
  * Software Foundation, please see <http://www.apache.org/>.
  */
-package org.apache.fop.control;
+package org.apache.fop.apps;
 
 // Java
 import java.util.Map;
@@ -57,8 +57,8 @@ import java.io.IOException;
 // FOP
 import org.apache.fop.area.AreaTree;
 import org.apache.fop.area.AreaTreeModel;
-import org.apache.fop.apps.Driver;
-import org.apache.fop.apps.FOPException;
+
+
 import org.apache.fop.fo.FOTreeControl;
 import org.apache.fop.fo.FOTreeEvent;
 import org.apache.fop.fo.FOTreeListener;

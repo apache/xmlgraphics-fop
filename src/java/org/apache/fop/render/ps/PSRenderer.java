@@ -73,7 +73,7 @@ import org.apache.fop.area.inline.Word;
 import org.apache.fop.datatypes.ColorType;
 import org.apache.fop.fo.FOUserAgent;
 import org.apache.fop.fonts.Typeface;
-import org.apache.fop.control.Document;
+import org.apache.fop.apps.Document;
 import org.apache.fop.render.AbstractRenderer;
 import org.apache.fop.render.RendererContext;
 import org.apache.fop.fo.FOTreeControl;

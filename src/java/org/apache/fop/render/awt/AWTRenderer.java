@@ -77,7 +77,7 @@ import java.util.Map;
 
 // FOP
 import org.apache.fop.apps.InputHandler;
-import org.apache.fop.control.Document;
+import org.apache.fop.apps.Document;
 import org.apache.fop.fo.FOTreeControl;
 import org.apache.fop.render.AbstractRenderer;
 import org.apache.fop.viewer.PreviewDialog;

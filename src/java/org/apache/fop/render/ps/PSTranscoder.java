@@ -85,6 +85,7 @@ import org.apache.batik.gvt.renderer.StrokingTextPainter;
 import org.w3c.dom.Document;
 import org.w3c.dom.svg.SVGDocument;
 import org.w3c.dom.svg.SVGSVGElement;
+import org.apache.fop.apps.*;
 
 /**
  * This class enables to transcode an input to a PostScript document.

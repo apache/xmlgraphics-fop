@@ -52,7 +52,7 @@ package org.apache.fop.apps;
 
 // FOP
 import org.apache.fop.area.AreaTree;
-import org.apache.fop.control.Document;
+
 import org.apache.fop.fo.ElementMapping;
 import org.apache.fop.fo.FOTreeBuilder;
 import org.apache.fop.fo.FOUserAgent;

@@ -52,7 +52,7 @@ package org.apache.fop.render;
 
 // FOP
 import org.apache.fop.render.pdf.FontSetup;
-import org.apache.fop.control.Document;
+import org.apache.fop.apps.Document;
 import org.apache.fop.fo.FOTreeControl;
 
 // Java

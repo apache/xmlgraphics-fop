@@ -72,7 +72,7 @@ import org.apache.fop.fo.flow.TableRow;
 import org.apache.fop.fo.pagination.Flow;
 import org.apache.fop.fo.pagination.PageSequence;
 import org.apache.fop.fo.properties.Constants;
-import org.apache.fop.control.Document;
+import org.apache.fop.apps.Document;
 import org.apache.fop.rtf.rtflib.rtfdoc.RtfAttributes;
 import org.apache.fop.rtf.rtflib.rtfdoc.RtfColorTable;
 import org.apache.fop.rtf.rtflib.rtfdoc.RtfDocumentArea;

@@ -75,7 +75,7 @@ import org.apache.batik.gvt.renderer.StrokingTextPainter;
 
 import org.apache.fop.fonts.FontMetrics;
 import org.apache.fop.fonts.Font;
-import org.apache.fop.control.Document;
+import org.apache.fop.apps.Document;
 
 /**
  * Renders the attributed character iterator of a <tt>TextNode</tt>.
