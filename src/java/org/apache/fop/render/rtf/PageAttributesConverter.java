@@ -23,11 +23,11 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.impl.SimpleLog;
 
 //FOP
-import org.apache.fop.apps.FOPException;
+import org.apache.fop.datatypes.Length;
 import org.apache.fop.fo.Constants;
 import org.apache.fop.fo.pagination.Region;
 import org.apache.fop.fo.pagination.SimplePageMaster;
-import org.apache.fop.fo.properties.Property;
+import org.apache.fop.fo.expr.NumericOp;
 import org.apache.fop.render.rtf.rtflib.rtfdoc.RtfAttributes;
 import org.apache.fop.render.rtf.rtflib.rtfdoc.RtfPage;
 
@@ -43,103 +43,56 @@ class PageAttributesConverter {
 
     /** convert xsl:fo attributes to RTF text attributes */
     static RtfAttributes convertPageAttributes(SimplePageMaster pagemaster) {
-        RtfAttributes attrib = new RtfAttributes();
+        FOPRtfAttributes attrib = new FOPRtfAttributes();
         
         try {
-            FoUnitsConverter converter = FoUnitsConverter.getInstance();
-            
-            float fPageTop = 0;
-            float fPageBottom = 0;
-            Property p = null;
-            Float f = null;
-            
             Region before = pagemaster.getRegion(Constants.FO_REGION_BEFORE);
             Region body   = pagemaster.getRegion(Constants.FO_REGION_BODY);
             Region after  = pagemaster.getRegion(Constants.FO_REGION_AFTER);
             
-            if ((p = pagemaster.getProperty(Constants.PR_PAGE_WIDTH)) != null) {
-                f = new Float(p.getLength().getValue() / 1000f);
-                attrib.set(RtfPage.PAGE_WIDTH,
-                    (int)converter.convertToTwips(f.toString() + "pt"));
-            }
+            attrib.set(RtfPage.PAGE_WIDTH, pagemaster.getProperty(Constants.PR_PAGE_WIDTH).getLength());
+            attrib.set(RtfPage.PAGE_HEIGHT, pagemaster.getProperty(Constants.PR_PAGE_HEIGHT).getLength());
             
-            if ((p = pagemaster.getProperty(Constants.PR_PAGE_HEIGHT)) != null) {
-                f = new Float(p.getLength().getValue() / 1000f);
-                attrib.set(RtfPage.PAGE_HEIGHT,
-                    (int)converter.convertToTwips(f.toString() + "pt"));
-            }
-         
-            if ((p = pagemaster.getProperty(Constants.PR_MARGIN_TOP)) != null) {
-                fPageTop = p.getLength().getValue() / 1000f;
-            }
+            Length pageTop = pagemaster.getProperty(Constants.PR_MARGIN_TOP).getLength();
+            Length pageBottom = pagemaster.getProperty(Constants.PR_MARGIN_BOTTOM).getLength();
+            Length pageLeft = pagemaster.getProperty(Constants.PR_MARGIN_LEFT).getLength();
+            Length pageRight = pagemaster.getProperty(Constants.PR_MARGIN_RIGHT).getLength();
 
-            if ((p = pagemaster.getProperty(Constants.PR_MARGIN_BOTTOM)) != null) {
-                fPageBottom = p.getLength().getValue() / 1000f;
-            }
+            Length bodyTop = pageTop;
+            Length bodyBottom = pageBottom;
+            Length bodyLeft = pageLeft;
+            Length bodyRight = pageRight;
 
-            if ((p = pagemaster.getProperty(Constants.PR_MARGIN_LEFT)) != null) {
-                f = new Float(p.getLength().getValue() / 1000f);
-                attrib.set(RtfPage.MARGIN_LEFT,
-                    (int)converter.convertToTwips(f.toString() + "pt"));
-            }
-            if ((p = pagemaster.getProperty(Constants.PR_MARGIN_RIGHT)) != null) {
-                f = new Float(p.getLength().getValue() / 1000f);
-                attrib.set(RtfPage.MARGIN_RIGHT,
-                    (int)converter.convertToTwips(f.toString() + "pt"));
-            }
-            
-            //region-body attributes
-            float fBodyTop = fPageTop;
-            float fBodyBottom = fPageBottom;
-            
             if (body != null) {
-                if ((p = body.getProperty(Constants.PR_MARGIN_TOP)) != null) {
-                    fBodyTop += p.getLength().getValue() / 1000f;
-                }
-            
-                if ((p = body.getProperty(Constants.PR_MARGIN_BOTTOM)) != null) {
-                    fBodyBottom += p.getLength().getValue() / 1000f;
-                }
+                // Should perhaps be replaced by full reference-area handling.
+                bodyTop = (Length) NumericOp.addition(pageTop, body.getProperty(Constants.PR_MARGIN_TOP).getLength());
+                bodyBottom = (Length) NumericOp.addition(pageBottom, body.getProperty(Constants.PR_MARGIN_BOTTOM).getLength());
+                bodyLeft = (Length) NumericOp.addition(pageLeft, body.getProperty(Constants.PR_MARGIN_LEFT).getLength());
+                bodyRight = (Length) NumericOp.addition(pageRight, body.getProperty(Constants.PR_MARGIN_RIGHT).getLength());
             }
             
-            f = new Float(fBodyTop);
-            attrib.set(RtfPage.MARGIN_TOP,
-                    (int)converter.convertToTwips(f.toString() + "pt"));
+            attrib.set(RtfPage.MARGIN_TOP, bodyTop);
+            attrib.set(RtfPage.MARGIN_BOTTOM, bodyBottom);
+            attrib.set(RtfPage.MARGIN_LEFT, bodyLeft);
+            attrib.set(RtfPage.MARGIN_RIGHT, bodyRight);
 
-            f = new Float(fBodyBottom);
-            attrib.set(RtfPage.MARGIN_BOTTOM,
-                    (int)converter.convertToTwips(f.toString() + "pt"));
-            
             //region-before attributes
-            float fBeforeTop = fPageTop;
-                        
+            Length beforeTop = pageTop;
             if (before != null) {
-                if ((p = before.getProperty(Constants.PR_MARGIN_TOP)) != null) {
-                    fBeforeTop += p.getLength().getValue() / 1000f;
-                }
+                beforeTop = (Length) NumericOp.addition(pageTop, before.getProperty(Constants.PR_MARGIN_TOP).getLength());
             }
-
-            f = new Float(fBeforeTop);
-            attrib.set(RtfPage.HEADERY,
-                    (int)converter.convertToTwips(f.toString() + "pt"));
+            attrib.set(RtfPage.HEADERY, beforeTop);
 
             //region-after attributes
-            float fAfterBottom = fPageBottom;
-            
+            Length afterBottom = pageBottom;
             if (after != null) {
-                if ((p = after.getProperty(Constants.PR_MARGIN_BOTTOM)) != null) {
-                    fAfterBottom += p.getLength().getValue() / 1000f;
-                }             
+                afterBottom = (Length) NumericOp.addition(pageBottom, after.getProperty(Constants.PR_MARGIN_BOTTOM).getLength());
             }
-            
-            f = new Float(fAfterBottom);
-            attrib.set(RtfPage.FOOTERY,
-                    (int)converter.convertToTwips(f.toString() + "pt"));
-
-        } catch (FOPException e) {
+            attrib.set(RtfPage.FOOTERY, beforeTop);
+        } catch (Exception e) {
             log.error("Exception in convertPageAttributes: " 
                 + e.getMessage() + "- page attributes ignored");
-            attrib = new RtfAttributes();
+            attrib = new FOPRtfAttributes();
         }
 
         return attrib;
