@@ -55,6 +55,7 @@ import org.apache.fop.render.Renderer;
 public class InlineArea extends Area {
 
     private String text;
+    protected String pageNumberId=null;
     private float red, green, blue;
 
     public InlineArea(FontState fontState, float red, float green, float blue, String text, int width) {
@@ -84,5 +85,9 @@ public class InlineArea extends Area {
 
     public String getText() {
 	return this.text;
+    }
+
+    public String getPageNumberID() {
+        return pageNumberId;
     }
 }

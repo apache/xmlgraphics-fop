@@ -74,12 +74,15 @@ import java.util.Vector;
  * Renderer that renders areas to PDF
  */
 public class PDFRenderer implements Renderer {
-	
+			
 	/** the PDF Document being created */
 	protected PDFDocument pdfDoc;
 
 	/** the /Resources object of the PDF document being created */
 	protected PDFResources pdfResources;
+
+	/** the IDReferences for this document */
+	protected IDReferences idReferences;
 
 	/** the current stream to add PDF commands to */
 	PDFStream currentStream;
@@ -145,7 +148,7 @@ public class PDFRenderer implements Renderer {
         public void render(AreaTree areaTree, PrintWriter writer)
         throws IOException, FOPException {      
             MessageHandler.logln("rendering areas to PDF");
-            IDReferences idReferences=areaTree.getIDReferences();           
+            idReferences=areaTree.getIDReferences();           
             this.pdfResources = this.pdfDoc.getResources();            
             this.pdfDoc.setIDReferences(idReferences);
             Enumeration e = areaTree.getPages().elements(); 
@@ -431,7 +434,14 @@ public class PDFRenderer implements Renderer {
 			 +(rx/1000f) + " " + (bl/1000f)
 			 + " Tm (");
 
-	String s = area.getText();
+	String s;
+	if ( area.getPageNumberID()!=null ) { // this text is a page number, so resolve it
+            s = idReferences.getPageNumber(area.getPageNumberID());            
+        }
+        else {
+            s = area.getText();
+        }
+	
 	int l = s.length();
 
 	for (int i=0; i < l; i++) {

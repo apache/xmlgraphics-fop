@@ -67,6 +67,8 @@ import org.apache.fop.fo.properties.TextAlign; // for enumerated
 import org.apache.fop.fo.properties.TextAlignLast; // for enumerated
 // values 
 
+import org.apache.fop.datatypes.IDNode;
+
 public class LineArea extends Area {
 	
     protected int lineHeight;
@@ -148,6 +150,29 @@ public class LineArea extends Area {
     public void render(Renderer renderer) {
 	renderer.renderLineArea(this);
     }
+
+    public int addPageNumberCitation(String refid, LinkSet ls)
+    {
+       
+	/* We should add code here to handle the case where the page number doesn't fit on the current line
+	*/
+
+        //Space must be alloted to the page number, so currently we give it 3 spaces 
+        int width= currentFontState.width(32) * 3;
+        
+        PageNumberInlineArea pia = new PageNumberInlineArea(currentFontState,
+        this.red, this.green,
+        this.blue,
+        refid,
+        width);                        
+                
+        pendingAreas.addElement(pia);
+        pendingWidth += width;
+        wordWidth = 0;
+
+        return -1;
+    }
+
 
     public int addText(char odata[], int start, int end, LinkSet ls) {
 	boolean overrun = false;

@@ -52,6 +52,7 @@
 package org.apache.fop.datatypes;
 
 import org.apache.fop.pdf.PDFGoTo;
+import org.apache.fop.layout.AreaContainer;
 
 
 // Java
@@ -125,7 +126,7 @@ public class IDReferences {
     public void configureID(String id, Area area)
     {
         if ( id!=null && !id.equals("") ) {
-            setPosition(id,area.getPage().getBody().getXPosition()-ID_PADDING,area.getPage().getBody().getYPosition() - area.getAbsoluteHeight()+ID_PADDING);                                                
+            setPosition(id,area.getPage().getBody().getXPosition()+area.getTableCellXOffset()-ID_PADDING,area.getPage().getBody().getYPosition() - area.getAbsoluteHeight()+ID_PADDING);                                                
             setPageNumber(id,area.getPage().getNumber());
                 area.getPage().addToIDList(id);                                    
             }

@@ -96,7 +96,7 @@ public class IDNode
      * 
      * @return page number of this node
      */
-    protected String getPageNumber()
+    public String getPageNumber()
     {             
         return(pageNumber != -1)?new Integer(pageNumber).toString():null;
     }
