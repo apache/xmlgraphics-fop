@@ -121,7 +121,6 @@ public class FopImageFactory {
                     href = href.substring(scheme.length());
                 }
                 absoluteURL = new URL(baseURL, href);
-                System.out.println("baseURL=" + baseURL.toString() + " href=" + href + " absoluteURL=" + absoluteURL.toString());
             } catch (MalformedURLException e_context) {
                 throw new FopImageException("Invalid Image URL - error on relative URL : "
                                             + e_context.getMessage());
