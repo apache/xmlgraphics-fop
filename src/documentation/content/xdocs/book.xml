@@ -12,11 +12,6 @@
           <menu-item label="Home" href="index.html"/>
           <menu-item label="News" href="news.html"/>
           <menu-item label="Logo contest" href="logocontest.html"/>
-          <menu-item label="FAQs" href="faq.html"/>
-          <menu-item label="Download" href="download.html"/>
-          <menu-item label="Release Notes" href="relnotes.html"/>
-          <menu-item label="Getting Help" href="gethelp.html"/>
-          <menu-item label="Examples" href="examples.html"/>
         </menu>
 
         <menu label="Project">
@@ -26,12 +21,17 @@
         </menu>
 
         <menu label="Using FOP">
+          <menu-item label="Release Notes" href="relnotes.html"/>
+          <menu-item label="Download" href="download.html"/>
           <menu-item label="Compiling" href="compiling.html"/>
           <menu-item label="Running" href="running.html"/>
           <menu-item label="Embedding" href="embedding.html"/>
           <menu-item label="Ant task" href="anttask.html"/>
-          <menu-item label="Output Formats" href="output.html"/>
+        </menu>
+
+        <menu label="Features">
           <menu-item label="Compliance" href="compliance.html"/>
+          <menu-item label="Output Formats" href="output.html"/>
         </menu>
 
         <menu label="Extras">
@@ -48,8 +48,11 @@
         </menu>
 
         <menu label="Resources">
+          <menu-item label="Getting Help" href="gethelp.html"/>
+          <menu-item label="FAQs" href="faq.html"/>
+          <menu-item label="Examples" href="examples.html"/>
           <menu-item label="Bugs" href="bugs.html"/>
-          <menu-item label="Resources" href="resources.html"/>
           <menu-item label="License" href="license.html"/>
+          <menu-item label="Other" href="resources.html"/>
         </menu>
     </book>
