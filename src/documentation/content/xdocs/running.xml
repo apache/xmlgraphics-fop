@@ -38,7 +38,7 @@
     <title>Starting FOP as a standalone application</title>
     <p>Review the batch file fop.bat or the shell script fop.sh to see how FOP is invoked.</p>
     <p>The standard scripts for starting FOP require that the environment variable JAVA_HOME be set to a path pointing to the appropriate Java installation on your system. Macintosh OSX includes a Java environment as part of its distribution. We are told by Mac OSX users that the path to use in this case is <code>/Library/Java/Home</code>. <strong>Caveat: </strong>We suspect that, as Apple releases new Java environments and as FOP upgrades the minimum Java requirements, the two will inevitably not match on some systems. Please see <jump href="http://developer.apple.com/java/faq">Java on Mac OSX FAQ</jump> for information as it becomes available.</p>
-    <p><code>Fop [options] [-fo|-xml] infile [-xsl file] [-awt|-pdf|-mif|-pcl|-txt|-svg|-at|-print] &lt;outfile></code></p>
+    <p><code>fop [options] [-fo|-xml] infile [-xsl file] [-awt|-pdf|-mif|-pcl|-ps|-txt|-svg|-at|-print] &lt;outfile></code></p>
      <p>[OPTIONS]</p>
      <source>
       -d          debug mode<br/>
@@ -60,18 +60,20 @@
       -awt              input will be displayed on screen<br/>
       -mif outfile      input will be rendered as mif file (outfile req'd)<br/>
       -pcl outfile      input will be rendered as pcl file (outfile req'd)<br/>
-      -txt outfile      input will be rendered as text file (outfile req'd)<br/>      -svg outfile      input will be rendered as an svg slides file (outfile req'd)
+      -ps outfile       input will be rendered as PostScript file (outfile req'd)<br/>
+      -txt outfile      input will be rendered as text file (outfile req'd)<br/>
+      -svg outfile      input will be rendered as an svg slides file (outfile req'd)
       -at outfile       representation of area tree as XML (outfile req'd)
       -print            input file will be rendered and sent to the printer<br/>                        see options with "-print help"<br/></source>
 
     <p>[Examples]</p>
     <source>
-      Fop foo.fo foo.pdf<br/>
-      Fop -fo foo.fo -pdf foo.pdf (does the same as the previous line)<br/>
-      Fop -xsl foo.xsl -xml foo.xml -pdf foo.pdf<br/>
-      Fop foo.fo -mif foo.mif<br/>
-      Fop foo.fo -print or Fop -print foo.fo<br/>
-      Fop foo.fo -awt<br/></source>
+      fop foo.fo foo.pdf<br/>
+      fop -fo foo.fo -pdf foo.pdf (does the same as the previous line)<br/>
+      fop -xsl foo.xsl -xml foo.xml -pdf foo.pdf<br/>
+      fop foo.fo -mif foo.mif<br/>
+      fop foo.fo -print or Fop -print foo.fo<br/>
+      fop foo.fo -awt<br/></source>
   </section>
 
   <section>
