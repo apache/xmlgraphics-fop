@@ -9,7 +9,6 @@ package org.apache.fop.render.awt;
   Stanislav Gorkhover: Stanislav.Gorkhover@af-software.de
  */
 
-
 import org.apache.fop.layout.*;
 import org.apache.fop.datatypes.*;
 import org.apache.fop.image.*;
@@ -17,9 +16,6 @@ import org.apache.fop.svg.*;
 import org.apache.fop.render.pdf.*;
 import org.apache.fop.viewer.*;
 import org.apache.fop.apps.*;
-
-
-
 
 import java.awt.*;
 import java.awt.image.*;
@@ -45,16 +41,15 @@ public class AWTRenderer implements org.apache.fop.render.Renderer, Printable, P
 
   protected Hashtable fontNames = new Hashtable();
   protected Hashtable fontStyles = new Hashtable();
+  protected Color saveColor;
 
 
   // Key - Font name, Value - java Font name.
   protected static Hashtable JAVA_FONT_NAMES;
 
-
   protected Graphics2D graphics = null;
 
   protected DocumentPanel documentPanel = null;
-
 
   /** the current (internal) font name */
   protected String currentFontName;
@@ -83,7 +78,6 @@ public class AWTRenderer implements org.apache.fop.render.Renderer, Printable, P
 
   // String oldFontName = null;
 
-
   static {
     JAVA_FONT_NAMES = new Hashtable();
     JAVA_FONT_NAMES.put("Times", "serif");
@@ -92,7 +86,6 @@ public class AWTRenderer implements org.apache.fop.render.Renderer, Printable, P
     JAVA_FONT_NAMES.put("Helvetica", "sansserif");
     // JAVA_FONT_NAMES.put("Serif", "sansserif");
   }
-
 
   public AWTRenderer(Translator aRes) {
     res = aRes;
@@ -130,6 +123,63 @@ public class AWTRenderer implements org.apache.fop.render.Renderer, Printable, P
   }
 
 
+    /**
+     * add a line to the current stream
+     *
+     * @param x1 the start x location in millipoints
+     * @param y1 the start y location in millipoints
+     * @param x2 the end x location in millipoints
+     * @param y2 the end y location in millipoints
+     * @param th the thickness in millipoints
+     * @param r the red component
+     * @param g the green component
+     * @param b the blue component
+     */
+    protected void addLine(int x1, int y1, int x2, int y2, int th,
+      float r, float g, float b) {
+      graphics.setColor(new Color (r,g,b));
+      graphics.drawLine((int)(x1/1000f), pageHeight - (int)(y1/1000f), (int)(x2/1000f), pageHeight - (int)(y2/1000f));
+    }
+
+
+    /**
+     * draw a filled rectangle
+     *
+     * @param x the x position of left edge in millipoints
+     * @param y the y position of top edge in millipoints
+     * @param w the width in millipoints
+     * @param h the height in millipoints
+     * @param r the red component
+     * @param g the green component
+     * @param b the blue component
+     */
+    protected void addRect(int x, int y, int w, int h,
+         float r, float g, float b) {
+      graphics.setColor(new Color (r,g,b));
+      graphics.fill3DRect((int) (x/1000f),pageHeight - (int) (y/1000f),(int) (w/1000f),-(int) (h/1000f),false);
+    }
+
+    /**
+     * draw a filled rectangle
+     *
+     * @param x the x position of left edge in millipoints
+     * @param y the y position of top edge in millipoints
+     * @param w the width in millipoints
+     * @param h the height in millipoints
+     * @param r the red component of edges
+     * @param g the green component of edges
+     * @param b the blue component of edges
+     * @param fr the red component of the fill
+     * @param fg the green component of the fill
+     * @param fb the blue component of the fill
+     */
+    protected void addRect(int x, int y, int w, int h,
+         float r, float g, float b,
+         float fr, float fg, float fb) {
+      graphics.setColor(new Color (r,g,b));
+      graphics.fill3DRect((int) (x/1000f),pageHeight - (int) (y/1000f),(int) (w/1000f),-(int) (h/1000f),true);
+    }
+
   /**
    * Vor dem Druck einzustellen:
    *
@@ -158,7 +208,6 @@ public class AWTRenderer implements org.apache.fop.render.Renderer, Printable, P
 
     graphics.drawLine(0, height+2, width+2, height+2);
     graphics.drawLine(1, height+3, width+3, height+3);
-
   }
 
 
@@ -184,74 +233,122 @@ public class AWTRenderer implements org.apache.fop.render.Renderer, Printable, P
   }
 
   public void renderPage(Page page) {
-	AreaContainer body, before, after;
+    AreaContainer body, before, after;
 
-	body = page.getBody();
-	before = page.getBefore();
-	after = page.getAfter();
+    body = page.getBody();
+    before = page.getBefore();
+    after = page.getAfter();
 
-	this.currentFontName = "";
-	this.currentFontSize = 0;
+    this.currentFontName = "";
+    this.currentFontSize = 0;
 
-	renderAreaContainer(body);
+    renderAreaContainer(body);
 
-	if (before != null) {
-	    renderAreaContainer(before);
-	}
+    if (before != null) {
+        renderAreaContainer(before);
+    }
 
-	if (after != null) {
-	    renderAreaContainer(after);
-	}
-
+    if (after != null) {
+        renderAreaContainer(after);
+    }
   }
-
 
   public void renderAreaContainer(AreaContainer area) {
 
+    int saveY = this.currentYPosition;
+    int saveX = this.currentAreaContainerXPosition;
 
-	this.currentYPosition = area.getYPosition();
-	this.currentAreaContainerXPosition = area.getXPosition();
+    if (area.getPosition() == org.apache.fop.fo.properties.Position.ABSOLUTE) {
+        // Y position is computed assuming positive Y axis, adjust for negative postscript one
+      this.currentYPosition = area.getYPosition() - 2 * area.getPaddingTop() - 2 * area.borderWidthTop;
+      this.currentAreaContainerXPosition = area.getXPosition();
+    } else if (area.getPosition() == org.apache.fop.fo.properties.Position.RELATIVE) {
+      this.currentYPosition -= area.getYPosition();
+       this.currentAreaContainerXPosition += area.getXPosition();
+    } else if (area.getPosition() == org.apache.fop.fo.properties.Position.STATIC) {
+      this.currentYPosition -= area.getPaddingTop() + area.borderWidthTop;
+      this.currentAreaContainerXPosition += area.getPaddingLeft() + area.borderWidthLeft;
+    }
 
-	Enumeration e = area.getChildren().elements();
-	while (e.hasMoreElements()) {
-	    org.apache.fop.layout.Box b = (org.apache.fop.layout.Box) e.nextElement();
-	    b.render(this);
-	}
+    doFrame(area);
+
+    Enumeration e = area.getChildren().elements();
+    while (e.hasMoreElements()) {
+     org.apache.fop.layout.Box b = (org.apache.fop.layout.Box) e.nextElement();
+     b.render(this);
+    }
+
+    if (area.getPosition() != org.apache.fop.fo.properties.Position.STATIC) {
+      this.currentYPosition = saveY;
+      this.currentAreaContainerXPosition = saveX;
+    } else {
+      this.currentYPosition -= area.getHeight();
+    }
+  }
+
+  private void doFrame(org.apache.fop.layout.Area area) {
+    int w, h;
+    int rx = this.currentAreaContainerXPosition;
+    w = area.getContentWidth();
+    if (area instanceof BlockArea)
+    rx += ((BlockArea)area).getStartIndent();
+    h = area.getContentHeight();
+    int ry = this.currentYPosition;
+    ColorType bg = area.getBackgroundColor();
+
+    rx = rx - area.getPaddingLeft();
+    ry = ry + area.getPaddingTop();
+    w = w + area.getPaddingLeft() + area.getPaddingRight();
+    h = h + area.getPaddingTop() + area.getPaddingBottom();
+
+    // I'm not sure I should have to check for bg being null
+    // but I do
+    if ((bg != null) && (bg.alpha() == 0)) {
+      this.addRect(rx, ry, w, -h,
+      bg.red(), bg.green(), bg.blue(),
+      bg.red(), bg.green(), bg.blue());
+    }
+
+    rx = rx - area.borderWidthLeft;
+    ry = ry + area.borderWidthTop;
+    w = w + area.borderWidthLeft + area.borderWidthRight;
+    h = h + area.borderWidthTop + area.borderWidthBottom;
+
+    if (area.borderWidthTop != 0)
+      addLine(rx, ry, rx + w, ry,
+          area.borderWidthTop,
+          area.borderColorTop.red(), area.borderColorTop.green(), area.borderColorTop.blue());
+    if (area.borderWidthLeft != 0)
+      addLine(rx, ry, rx, ry - h,
+          area.borderWidthLeft,
+          area.borderColorLeft.red(), area.borderColorLeft.green(), area.borderColorLeft.blue());
+    if (area.borderWidthRight != 0)
+      addLine(rx + w, ry, rx + w, ry - h,
+          area.borderWidthRight,
+          area.borderColorRight.red(), area.borderColorRight.green(), area.borderColorRight.blue());
+    if (area.borderWidthBottom != 0)
+      addLine(rx, ry - h, rx + w, ry - h,
+          area.borderWidthBottom,
+          area.borderColorBottom.red(), area.borderColorBottom.green(), area.borderColorBottom.blue());
   }
 
 
 
   protected Rectangle2D getBounds(org.apache.fop.layout.Area a) {
     return new Rectangle2D.Double(currentAreaContainerXPosition,
-                                  currentYPosition,
-                                  a.getAllocationWidth(),
-                                  a.getHeight());
+                            currentYPosition,
+                            a.getAllocationWidth(),
+                            a.getHeight());
   }
 
-    public void renderBlockArea(BlockArea area) {
-	int rx = this.currentAreaContainerXPosition
-	    + area.getStartIndent();
-	int ry = this.currentYPosition;
-	int w = area.getContentWidth();
-	int h = area.getHeight();
-    ColorType bg = area.getBackgroundColor();
-  	if ((bg != null) && (bg.alpha() == 0)) {
-      Color oldColor = graphics.getColor();
-      // Color bgColor = new Color(bg.red(), bg.green(), bg.blue());
-      Color bgColor = colorType2Color(bg);
-      graphics.setColor(bgColor);
-      graphics.fillRect((int)(rx / 1000f), (int)(pageHeight - ry/ 1000f),
-                        (int)(w / 1000f), (int)(h / 1000f));
-      graphics.setColor(oldColor);
+  public void renderBlockArea(BlockArea area) {
+    doFrame(area);
+    Enumeration e = area.getChildren().elements();
+    while (e.hasMoreElements()) {
+      org.apache.fop.layout.Box b = (org.apache.fop.layout.Box) e.nextElement();
+      b.render(this);
     }
-
-	Enumeration e = area.getChildren().elements();
-	while (e.hasMoreElements()) {
-	    org.apache.fop.layout.Box b = (org.apache.fop.layout.Box) e.nextElement();
-	    b.render(this);
-	}
-    }
-
+  }
 
   public void setupFontInfo(FontInfo fontInfo) {
     FontSetup.setup(fontInfo);
@@ -286,77 +383,76 @@ public class AWTRenderer implements org.apache.fop.render.Renderer, Printable, P
 
 
 
-    public void renderDisplaySpace(DisplaySpace space) {
-	int d = space.getSize();
-	this.currentYPosition -= d;
-    }
+  public void renderDisplaySpace(DisplaySpace space) {
+    int d = space.getSize();
+    this.currentYPosition -= d;
+  }
 
 
-    public void renderImageArea(ImageArea area) {
-	int x = this.currentAreaContainerXPosition +
-	    area.getXOffset();
-	int y = this.currentYPosition;
-	int w = area.getContentWidth();
-	int h = area.getHeight();
+  public void renderImageArea(ImageArea area) {
+    int x = this.currentAreaContainerXPosition +
+        area.getXOffset();
+    int y = this.currentYPosition;
+    int w = area.getContentWidth();
+    int h = area.getHeight();
 
+    FopImage img = area.getImage();
 
-	FopImage img = area.getImage();
+      if (img == null) {
+        System.out.println("area.getImage() is null");
+      }
 
-    if (img == null) {
-      System.out.println("area.getImage() is null");
-    }
+      int[] map = img.getimagemap();
 
-    int[] map = img.getimagemap();
+      String path = img.gethref();
+      // path = "c:/any.gif";
 
-    String path = img.gethref();
-    // path = "c:/any.gif";
+      ImageIcon icon = new ImageIcon(path);
 
-    ImageIcon icon = new ImageIcon(path);
+      Image imgage = icon.getImage();
 
-    Image imgage = icon.getImage();
+      graphics.drawImage(imgage, currentXPosition / 1000,
+                         pageHeight - y / 1000,
+                         img.getWidth() / 1000,
+                         img.getHeight() / 1000,
+                         null);
 
-    graphics.drawImage(imgage, currentXPosition / 1000,
-                       pageHeight - y / 1000,
-                       img.getWidth() / 1000,
-                       img.getHeight() / 1000,
-                       null);
-
-	currentYPosition -= h;
-    }
+    currentYPosition -= h;
+  }
 
 
 
 
   public void renderInlineArea(InlineArea area) {
-	char ch;
-	StringBuffer pdf = new StringBuffer();
+    char ch;
+    StringBuffer pdf = new StringBuffer();
 
-	String name = area.getFontState().getFontName();
-	int size = area.getFontState().getFontSize();
+    String name = area.getFontState().getFontName();
+    int size = area.getFontState().getFontSize();
 
-	float red = area.getRed();
-	float green = area.getGreen();
-	float blue = area.getBlue();
+    float red = area.getRed();
+    float green = area.getGreen();
+    float blue = area.getBlue();
 
-	if ((!name.equals(this.currentFontName))
-	    || (size != this.currentFontSize)) {
-	    this.currentFontName = name;
-	    this.currentFontSize = size;
-	}
+    if ((!name.equals(this.currentFontName))
+        || (size != this.currentFontSize)) {
+        this.currentFontName = name;
+        this.currentFontSize = size;
+    }
 
-	if ((red != this.currentRed)
-	    || (green != this.currentGreen)
-	    || (blue != this.currentBlue)) {
-	    this.currentRed = red;
-	    this.currentGreen = green;
-	    this.currentBlue = blue;
-	}
+    if ((red != this.currentRed)
+        || (green != this.currentGreen)
+        || (blue != this.currentBlue)) {
+        this.currentRed = red;
+        this.currentGreen = green;
+        this.currentBlue = blue;
+    }
 
-	int rx = this.currentXPosition;
-	int bl = this.currentYPosition;
+    int rx = this.currentXPosition;
+    int bl = this.currentYPosition;
 
 
-	String s = area.getText();
+    String s = area.getText();
     Color oldColor = graphics.getColor();
     java.awt.Font oldFont = graphics.getFont();
     String aFontName = fontNames.get(name).toString();
@@ -390,50 +486,51 @@ public class AWTRenderer implements org.apache.fop.render.Renderer, Printable, P
     graphics.setColor(oldColor);
 
 
-	this.currentXPosition += area.getContentWidth();
+    this.currentXPosition += area.getContentWidth();
+  }
+
+
+  public void renderInlineSpace(InlineSpace space) {
+    this.currentXPosition += space.getSize();
+  }
+
+
+  public void renderLineArea(LineArea area) {
+    int rx = this.currentAreaContainerXPosition
+        + area.getStartIndent();
+    int ry = this.currentYPosition;
+    int w = area.getContentWidth();
+    int h = area.getHeight();
+
+    this.currentYPosition -= area.getPlacementOffset();
+    this.currentXPosition = rx;
+
+    int bl = this.currentYPosition;
+
+    Enumeration e = area.getChildren().elements();
+    while (e.hasMoreElements()) {
+        org.apache.fop.layout.Box b = (org.apache.fop.layout.Box) e.nextElement();
+        b.render(this);
     }
 
-    public void renderInlineSpace(InlineSpace space) {
-	this.currentXPosition += space.getSize();
-    }
+    this.currentYPosition = ry-h;
+  }
 
-
-    public void renderLineArea(LineArea area) {
-	int rx = this.currentAreaContainerXPosition
-	    + area.getStartIndent();
-	int ry = this.currentYPosition;
-	int w = area.getContentWidth();
-	int h = area.getHeight();
-
-	this.currentYPosition -= area.getPlacementOffset();
-	this.currentXPosition = rx;
-
-	int bl = this.currentYPosition;
-
-	Enumeration e = area.getChildren().elements();
-	while (e.hasMoreElements()) {
-	    org.apache.fop.layout.Box b = (org.apache.fop.layout.Box) e.nextElement();
-	    b.render(this);
-	}
-
-	this.currentYPosition = ry-h;
-    }
-
-    /**
-     * render rule area into PDF
-     *
-     * @param area area to render
-     */
-    public void renderRuleArea(RuleArea area) {
-	int rx = this.currentAreaContainerXPosition
-	    + area.getStartIndent();
-	int ry = this.currentYPosition;
-	int w = area.getContentWidth();
-	int h = area.getHeight();
-	int th = area.getRuleThickness();
-	float r = area.getRed();
-	float g = area.getGreen();
-	float b = area.getBlue();
+  /**
+   * render rule area into PDF
+   *
+   * @param area area to render
+   */
+  public void renderRuleArea(RuleArea area) {
+    int rx = this.currentAreaContainerXPosition
+        + area.getStartIndent();
+    int ry = this.currentYPosition;
+    int w = area.getContentWidth();
+    int h = area.getHeight();
+    int th = area.getRuleThickness();
+    float r = area.getRed();
+    float g = area.getGreen();
+    float b = area.getBlue();
 
 
     Color oldColor = graphics.getColor();
@@ -444,42 +541,42 @@ public class AWTRenderer implements org.apache.fop.render.Renderer, Printable, P
                       (int)(w / 1000f), (int)(th / 1000f));
     graphics.setColor(oldColor);
 
-    }
+  }
 
 
-    public void renderSVGArea(SVGArea area) {
-	int x = this.currentAreaContainerXPosition;
-	int y = this.currentYPosition;
-	int w = area.getContentWidth();
-	int h = area.getHeight();
-	this.currentYPosition -= h;
-  /*
-	Enumeration e = area.getChildren().elements();
-	while (e.hasMoreElements()) {
-	    Object o = e.nextElement();
-	    if (o instanceof RectGraphic) {
-		int rx = ((RectGraphic)o).x;
-		int ry = ((RectGraphic)o).y;
-		int rw = ((RectGraphic)o).width;
-		int rh = ((RectGraphic)o).height;
-		addRect(x+rx,y-ry,rw,-rh,0,0,0);
-	    } else if (o instanceof LineGraphic) {
-		int x1 = ((LineGraphic)o).x1;
-		int y1 = ((LineGraphic)o).y1;
-		int x2 = ((LineGraphic)o).x2;
-		int y2 = ((LineGraphic)o).y2;
-		addLine(x+x1,y-y1,x+x2,y-y2,0,0,0,0);
-	    } else if (o instanceof TextGraphic) {
-		int tx = ((TextGraphic)o).x;
-		int ty = ((TextGraphic)o).y;
-		String s = ((TextGraphic)o).s;
-		currentStream.add("1 0 0 1 "
-				  + ((x+tx)/1000f) + " "
-				  + ((y-ty)/1000f) + " Tm "
-				  + "(" + s + ") Tj\n");
-	    }
-	} */
-    }
+  public void renderSVGArea(SVGArea area) {
+    int x = this.currentAreaContainerXPosition;
+    int y = this.currentYPosition;
+    int w = area.getContentWidth();
+    int h = area.getHeight();
+    this.currentYPosition -= h;
+    /*
+    Enumeration e = area.getChildren().elements();
+    while (e.hasMoreElements()) {
+        Object o = e.nextElement();
+        if (o instanceof RectGraphic) {
+          int rx = ((RectGraphic)o).x;
+          int ry = ((RectGraphic)o).y;
+          int rw = ((RectGraphic)o).width;
+          int rh = ((RectGraphic)o).height;
+          addRect(x+rx,y-ry,rw,-rh,0,0,0);
+        } else if (o instanceof LineGraphic) {
+          int x1 = ((LineGraphic)o).x1;
+          int y1 = ((LineGraphic)o).y1;
+          int x2 = ((LineGraphic)o).x2;
+          int y2 = ((LineGraphic)o).y2;
+          addLine(x+x1,y-y1,x+x2,y-y2,0,0,0,0);
+        } else if (o instanceof TextGraphic) {
+          int tx = ((TextGraphic)o).x;
+          int ty = ((TextGraphic)o).y;
+          String s = ((TextGraphic)o).s;
+          currentStream.add("1 0 0 1 "
+                + ((x+tx)/1000f) + " "
+                + ((y-ty)/1000f) + " Tm "
+                + "(" + s + ") Tj\n");
+        }
+    } */
+  }
 
 
 
@@ -543,14 +640,11 @@ public class AWTRenderer implements org.apache.fop.render.Renderer, Printable, P
   }
 
   public static Color colorType2Color(ColorType ct) {
-    if (ct == null)
+    if (ct == null) {
       return null;
+    }
     return new Color(ct.red(), ct.green(), ct.blue());
   }
 
 }
-
-
-
-
 
