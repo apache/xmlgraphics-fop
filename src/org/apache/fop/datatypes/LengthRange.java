@@ -51,23 +51,45 @@
 package org.apache.fop.datatypes;
 
 import org.apache.fop.messaging.MessageHandler;
+import org.apache.fop.fo.Property;
 
 /**
  * a "progression-dimension" quantity
  * ex. block-progression-dimension, inline-progression-dimension
  * corresponds to the triplet min-height, height, max-height (or width)
  */
-public class LengthRange {
+public class LengthRange implements CompoundDatatype {
 
-    private Length minimum;
-    private Length optimum;
-    private Length maximum;
+    private Property minimum;
+    private Property optimum;
+    private Property maximum;
   private static final int MINSET=1;
   private static final int OPTSET=2;
   private static final int MAXSET=4;
   private int bfSet = 0; // bit field
   private boolean bChecked = false;
 
+  // From CompoundDatatype
+    public void setComponent(String sCmpnName, Property cmpnValue,
+			     boolean bIsDefault) {
+      if (sCmpnName.equals("minimum"))
+	setMinimum(cmpnValue, bIsDefault);
+      else if (sCmpnName.equals("optimum"))
+	setOptimum(cmpnValue, bIsDefault);
+      else if (sCmpnName.equals("maximum"))
+	setMaximum(cmpnValue, bIsDefault);
+    }
+
+  // From CompoundDatatype
+  public Property getComponent(String sCmpnName) {
+      if (sCmpnName.equals("minimum"))
+	return getMinimum();
+      else if (sCmpnName.equals("optimum"))
+	return getOptimum();
+      else if (sCmpnName.equals("maximum"))
+	return getMaximum();
+      else return null; // SHOULDN'T HAPPEN
+    }
 
     /**
      * Set minimum value to min.
@@ -76,10 +98,11 @@ public class LengthRange {
      * @param bIsDefault If true, this is set as a "default" value
      * and not a user-specified explicit value.
      */
-    public void setMinimum(Length min, boolean bIsDefault) {
-	minimum = min;
+    protected void setMinimum(Property minimum, boolean bIsDefault) {
+      this.minimum = minimum;
 	if (!bIsDefault) bfSet |= MINSET;
     }
+
 
     /**
      * Set maximum value to max if it is >= optimum or optimum isn't set.
@@ -87,7 +110,7 @@ public class LengthRange {
      * @param bIsDefault If true, this is set as a "default" value
      * and not a user-specified explicit value.
      */
-    public void setMaximum(Length max, boolean bIsDefault) {
+    protected void setMaximum(Property max, boolean bIsDefault) {
 	maximum = max;
 	if (!bIsDefault) bfSet |= MAXSET;
     }
@@ -99,7 +122,7 @@ public class LengthRange {
      * @param bIsDefault If true, this is set as a "default" value
      * and not a user-specified explicit value.
      */
-    public void setOptimum(Length opt, boolean bIsDefault) {
+    protected void setOptimum(Property opt, boolean bIsDefault) {
       optimum = opt;
       if (!bIsDefault) bfSet |= OPTSET;
     }
@@ -108,6 +131,8 @@ public class LengthRange {
   private void checkConsistency() {
     if (bChecked) return;
     // Make sure max >= min
+    // Must also control if have any allowed enum values!
+    /*********************
     if (minimum.mvalue() > maximum.mvalue()) {
       if ((bfSet&MINSET)!=0) {
 	// if minimum is explicit, force max to min
@@ -150,20 +175,21 @@ public class LengthRange {
 	minimum = optimum; // minimum was default value
       }
     }
+    ********$*********/
     bChecked = true;
   }
 
-    public Length getMinimum() {
+    public Property getMinimum() {
       checkConsistency();
       return this.minimum;
     }
 
-    public Length getMaximum() {
+    public Property getMaximum() {
       checkConsistency();
       return this.maximum;
     }
 
-    public Length getOptimum() {
+    public Property getOptimum() {
       checkConsistency();
       return this.optimum;
     }

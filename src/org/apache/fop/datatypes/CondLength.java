@@ -50,46 +50,37 @@
  */
 package org.apache.fop.datatypes;
 
+import org.apache.fop.fo.Property;
 /**
  * a space quantity in XSL (space-before, space-after)
  */
-public class CondLength extends Length {
+public class CondLength implements CompoundDatatype {
 
-    /** Values for conditionality. Specified as a string value. */
-    public static final int DISCARD = 0;
-    public static final int RETAIN = 1;
+  private Property length;
+  private Property conditionality;
 
-    private int conditionality=DISCARD ;
+  // From CompoundDatatype
+    public void setComponent(String sCmpnName, Property cmpnValue,
+			     boolean bIsDefault) {
+      if (sCmpnName.equals("length"))
+	length = cmpnValue;
+      else if (sCmpnName.equals("conditionality"))
+	conditionality = cmpnValue;
+    }	
 
-  public CondLength () {
-    super(0);
-  }
+  public Property getComponent(String sCmpnName) {
+      if (sCmpnName.equals("length"))
+	return length;
+      else if (sCmpnName.equals("conditionality"))
+	return conditionality ;
+      else return null;
+    }	
 
-  public CondLength (Length l) {
-    super(l.mvalue());
-  }
-
-  public void setLength(Length l, boolean bIsDefault) {
-    setValue(l.mvalue());
-  }
-
-    public void setConditionality(String conditionality, boolean bIsDefault) {
-	if (conditionality.equals("retain"))
-	    this.conditionality = Space.RETAIN;
-	else if (conditionality.equals("discard"))
-	    this.conditionality = Space.DISCARD;
-	// else unrecognized value
+  public Property getConditionality() {
+      return this.conditionality ;
     }
 
-    public String getConditionality() {
-	return ((this.conditionality == DISCARD)? "discard" : "retain");
-    }
-
-  public Length getLength() {
-    return this;
-  }
-
-  public boolean isDiscard() {
-    return (conditionality==DISCARD);
+  public Property getLength() {
+    return this.length;
   }
 }
