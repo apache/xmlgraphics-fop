@@ -33,7 +33,6 @@ import org.apache.avalon.framework.activity.Initializable;
 import org.apache.avalon.framework.configuration.Configurable;
 import org.apache.avalon.framework.configuration.Configuration;
 import org.apache.avalon.framework.configuration.ConfigurationException;
-import org.apache.avalon.framework.container.ContainerUtil;
 import org.apache.commons.logging.impl.SimpleLog;
 import org.apache.commons.logging.Log;
 import org.apache.fop.apps.Document;
@@ -168,7 +167,6 @@ public class PDFDocumentGraphics2D extends PDFGraphics2D
         }
 
         this.pdfDoc = new PDFDocument("Apache FOP: SVG to PDF Transcoder");
-        this.pdfDoc.setLogger(getLogger());
 
         if (this.cfg != null) {
             this.pdfDoc.setFilterMap(

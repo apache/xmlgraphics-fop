@@ -249,7 +249,6 @@ public class PDFRenderer extends PrintRenderer {
         ostream = stream;
         producer = "FOP " + Version.getVersion();
         this.pdfDoc = new PDFDocument(producer);
-        this.pdfDoc.setLogger(logger);
         this.pdfDoc.setCreator(creator);
         this.pdfDoc.setCreationDate(creationDate);
         this.pdfDoc.setFilterMap(filterMap);
@@ -517,7 +516,7 @@ public class PDFRenderer extends PrintRenderer {
         currentFontName = "";
         Rectangle2D viewArea = region.getViewArea();
         float startx = (float)(viewArea.getX() / 1000f);
-        float starty = (float)(viewArea.getY() / 1000f);;
+        float starty = (float)(viewArea.getY() / 1000f);
         float width = (float)(viewArea.getWidth() / 1000f);
         float height = (float)(viewArea.getHeight() / 1000f);
 
