@@ -54,7 +54,8 @@ public class FOPropertySets {
         ,PAGESEQ_SET = 5
            ,FLOW_SET = 6
          ,STATIC_SET = 7
-         ,MARKER_SET = 8
+          ,TITLE_SET = 8
+         ,MARKER_SET = 9
 
            ,LAST_SET = MARKER_SET
                      ;
@@ -75,6 +76,8 @@ public class FOPropertySets {
             return "FLOW";
         case STATIC_SET:
             return "STATIC";
+        case TITLE_SET:
+            return "TITLE";
         case MARKER_SET:
             return "MARKER";
         }
@@ -99,6 +102,8 @@ public class FOPropertySets {
             return flowAllSet;
         case STATIC_SET:
             return staticAllSet;
+        case TITLE_SET:
+            return titleAllSet;
         case MARKER_SET:
             return markerAllSet;
         }
@@ -222,6 +227,12 @@ public class FOPropertySets {
      */
     public static final ROBitSet staticAllSet;
 
+    /**
+     * set of all properties which are
+     * usable within the fo:title subtree.
+     */
+    public static final ROBitSet titleAllSet;
+
     static {
 
         // fill the BitSet of all properties
@@ -341,6 +352,9 @@ public class FOPropertySets {
         markerallset.clear(PropNames.MARKER_CLASS_NAME);
 
         markerAllSet = new ROBitSet(markerallset);
+
+        // markers are not allowed within fo:title
+        titleAllSet = markerAllSet;
     }
 
     /**
