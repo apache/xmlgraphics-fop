@@ -76,6 +76,10 @@ inactive??
 
   <changes>
    <release version="?" date="2002">
+    <action dev="JM" type="update" context="code">
+      First batch of changes in preparation for adoption of Avalon patterns. 
+      Only changes on logging for now. Mostly usage of LogEnabled contract interface.
+    </action>
     <action dev="JM" type="update" context="build">
       Improve build process for more flexibility when external jars change.
       Changed to use -projecthelp option from Ant 1.5 instead of "usage" target.
