@@ -65,8 +65,10 @@ import org.apache.batik.dom.svg.SVGDOMImplementation;
 import org.apache.batik.dom.util.DocumentFactory;
 import org.apache.batik.transcoder.ErrorHandler;
 import org.apache.batik.transcoder.TranscoderException;
+import org.apache.batik.transcoder.TranscodingHints;
 import org.apache.batik.transcoder.SVGAbstractTranscoder;
 import org.apache.batik.transcoder.image.ImageTranscoder;
+import org.apache.batik.transcoder.keys.BooleanKey;
 import org.apache.batik.util.SVGConstants;
 import org.apache.batik.util.XMLResourceDescriptor;
 import org.w3c.dom.DOMImplementation;
@@ -76,6 +78,18 @@ import org.w3c.dom.DOMImplementation;
  */
 public abstract class AbstractFOPTranscoder extends SVGAbstractTranscoder
             implements LogEnabled {
+
+    /**
+     * The key to specify whether to stroke text instead of using text 
+     * operations.
+     */
+    public static final TranscodingHints.Key KEY_STROKE_TEXT = new BooleanKey();
+
+    /** The value to turn on text stroking. */
+    public static final Boolean VALUE_FORMAT_ON = Boolean.TRUE;
+
+    /** The value to turn off text stroking. */
+    public static final Boolean VALUE_FORMAT_OFF = Boolean.FALSE;
 
     /**
      * The user agent dedicated to this Transcoder.
@@ -143,8 +157,8 @@ public abstract class AbstractFOPTranscoder extends SVGAbstractTranscoder
      */
     protected DocumentFactory createDocumentFactory(DOMImplementation domImpl,
             String parserClassname) {
-        final FOPSAXSVGDocumentFactory factory = 
-                new FOPSAXSVGDocumentFactory(parserClassname);
+        final FOPSAXSVGDocumentFactory factory 
+                = new FOPSAXSVGDocumentFactory(parserClassname);
         if (this.resolver != null) {
             factory.setAdditionalEntityResolver(this.resolver);
         }
@@ -195,15 +209,7 @@ public abstract class AbstractFOPTranscoder extends SVGAbstractTranscoder
     /**
      * A user agent implementation for FOP's Transcoders.
      */
-    protected class FOPTranscoderUserAgent extends UserAgentAdapter {
-
-        /**
-         * Returns the default size of this user agent (400x400).
-         * @return the default viewport size
-         */
-        public Dimension2D getViewportSize() {
-            return new Dimension(400, 400);
-        }
+    protected class FOPTranscoderUserAgent extends SVGAbstractTranscoderUserAgent {
 
         /**
          * Displays the specified error message using the <tt>ErrorHandler</tt>.
@@ -253,20 +259,6 @@ public abstract class AbstractFOPTranscoder extends SVGAbstractTranscoder
         }
 
         /**
-         * Returns the user language specified in the
-         * <tt>TranscodingHints</tt> or "en" (english) if any.
-         * @return the languages for the transcoder
-         */
-        public String getLanguages() {
-            Object key = ImageTranscoder.KEY_LANGUAGE;
-            if (getTranscodingHints().containsKey(key)) {
-                return (String)getTranscodingHints().get(key);
-            } else {
-                return "en";
-            }
-        }
-
-        /**
          * Get the media for this transcoder. Which is always print.
          * @return PDF media is "print"
          */
@@ -274,44 +266,6 @@ public abstract class AbstractFOPTranscoder extends SVGAbstractTranscoder
             return "print";
         }
 
-        /**
-         * Returns the user stylesheet specified in the
-         * <tt>TranscodingHints</tt> or null if any.
-         * @return the user style sheet URI specified in the hints
-         */
-        public String getUserStyleSheetURI() {
-            return (String)getTranscodingHints()
-                        .get(ImageTranscoder.KEY_USER_STYLESHEET_URI);
-        }
-
-        /**
-         * Returns the XML parser to use from the TranscodingHints.
-         * @return the XML parser class name
-         */
-        public String getXMLParserClassName() {
-            Object key = KEY_XML_PARSER_CLASSNAME;
-            if (getTranscodingHints().containsKey(key)) {
-                return (String)getTranscodingHints().get(key);
-            } else {
-                return XMLResourceDescriptor.getXMLParserClassName();
-            }
-        }
-
-        /**
-         * Check if the XML parser is validating.
-         * @return true if the XML parser is validating
-         */
-        public boolean isXMLParserValidating() {
-            return false;
-        }
-
-        /**
-         * Unsupported operation.
-         * @return null since this is unsupported
-         */
-        public AffineTransform getTransform() {
-            return null;
-        }
     }
     
 }
