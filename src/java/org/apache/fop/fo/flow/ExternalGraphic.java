@@ -37,7 +37,6 @@ import org.apache.fop.layoutmgr.ExternalGraphicLayoutManager;
  * inline area that can be added to the area tree.
  */
 public class ExternalGraphic extends FObj {
-    private String url;
 
     /**
      * Create a new External graphic node.
@@ -63,19 +62,14 @@ public class ExternalGraphic extends FObj {
      */
     protected void addProperties(Attributes attlist) throws SAXParseException {
         super.addProperties(attlist);
-        url = this.propertyList.get(PR_SRC).getString();
         getFOInputHandler().image(this);
-    }
-
-    public String getURL() {
-        return url;
     }
 
     /**
      * @see org.apache.fop.fo.FObj#addLayoutManager(List)
      */
     public void addLayoutManager(List list) {
-        if (getURL() != null) {
+        if (getPropString(PR_SRC) != null) {
             ExternalGraphicLayoutManager lm = new ExternalGraphicLayoutManager(this);
             list.add(lm);
         }

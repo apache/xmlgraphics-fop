@@ -62,7 +62,7 @@ public class RepeatablePageMasterReference extends PageMasterReference
      */
     protected void addProperties(Attributes attlist) throws SAXParseException {
         super.addProperties(attlist);
-        String mr = getProperty(PR_MAXIMUM_REPEATS).getString();
+        String mr = getPropString(PR_MAXIMUM_REPEATS);
         if (mr.equals("no-limit")) {
             this.maximumRepeats = INFINITE;
         } else {

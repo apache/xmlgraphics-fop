@@ -95,7 +95,7 @@ public class PageSequenceMaster extends FObj {
         subSequenceSpecifiers = new java.util.ArrayList();
         if (parent.getName().equals("fo:layout-master-set")) {
             this.layoutMasterSet = (LayoutMasterSet)parent;
-            masterName = this.propertyList.get(Constants.PR_MASTER_NAME).getString();
+            masterName = getPropString(PR_MASTER_NAME);
             if (masterName == null) {
                 getLogger().warn("page-sequence-master does not have "
                                        + "a master-name and so is being ignored");

@@ -115,7 +115,7 @@ public class MIFHandler extends FOInputHandler {
     public void startPageSequence(PageSequence pageSeq) {
         // get the layout master set
         // setup the pages for this sequence
-        String name = pageSeq.getProperty(Constants.PR_MASTER_REFERENCE).getString();
+        String name = pageSeq.getPropString(Constants.PR_MASTER_REFERENCE);
         SimplePageMaster spm = pageSeq.getLayoutMasterSet().getSimplePageMaster(name);
         if (spm == null) {
             PageSequenceMaster psm = pageSeq.getLayoutMasterSet().getPageSequenceMaster(name);
