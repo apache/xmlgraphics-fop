@@ -68,10 +68,16 @@ public class LeaderArea extends InlineArea {
                       int leaderPattern, int ruleThickness, int ruleStyle) {
         super(fontState, red, green, blue, text, leaderLengthOptimum);
 
-        this.ruleThickness = ruleThickness;
         this.leaderPattern = leaderPattern;
         this.leaderLengthOptimum = leaderLengthOptimum;
         this.ruleStyle = ruleStyle;
+        //following the xsl spec rule: if rule-style="none" set thickness to 0;
+        //actually in pdf this doesn't work, because a very thin line is still shown
+        //this is handled in the pdf renderer
+        if (ruleStyle == org.apache.fop.fo.properties.RuleStyle.NONE) {
+            ruleThickness = 0;
+        }
+        this.ruleThickness = ruleThickness;
     }
 
     public void render(Renderer renderer) {
