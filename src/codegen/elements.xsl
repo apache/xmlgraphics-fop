@@ -6,12 +6,24 @@
 
 <xsl:output method="text" />
 
+<xsl:variable name="prefixVal">  
+<xsl:value-of select="//elements/@prefix"/>  
+</xsl:variable>  
+
 <xsl:template name="capfirst">
   <xsl:param name="str"/>
   <xsl:variable name="lcletters" select="'abcdefghijklmnopqrstuvwxyz'" />
   <xsl:variable name="ucletters" select="'ABCDEFGHIJKLMNOPQRSTUVWXYZ'" />
      <xsl:value-of select="concat(translate(substring($str, 1, 1),
 	            $lcletters, $ucletters), substring($str, 2))"/>
+</xsl:template>
+
+<xsl:template name="capall">
+  <xsl:param name="str"/>
+  <xsl:variable name="lcletters" select="'abcdefghijklmnopqrstuvwxyz'" />
+  <xsl:variable name="ucletters" select="'ABCDEFGHIJKLMNOPQRSTUVWXYZ'" />
+     <xsl:value-of select="translate($str,
+              $lcletters, $ucletters)"/>
 </xsl:template>
 
 <xsl:template name="makeClassName">
@@ -77,21 +89,17 @@
   </xsl:choose>
 </xsl:variable>
 
-<redirect:write select="concat('@org/apache/fop@/svg/', $classname, '.java')">
-package org.apache.fop.svg;
+<redirect:write select="concat('@org/apache/fop@/{$prefixVal}/', $classname, '.java')">
+package org.apache.fop.<xsl:value-of select="$prefixVal"/>;
 
 import org.apache.fop.fo.*;
 import org.apache.fop.layout.Area;
 import org.apache.fop.layout.FontState;
 import org.apache.fop.apps.FOPException;
 
-import org.apache.batik.dom.svg.*;
-
-import org.w3c.dom.svg.SVGElement;
-import org.w3c.dom.svg.SVGDocument;
 import org.w3c.dom.Element;
 
-public class <xsl:value-of select="$classname"/> extends SVGObj {
+public class <xsl:value-of select="$classname"/> extends <xsl:call-template name="capall"><xsl:with-param name="str" select="$prefixVal"/></xsl:call-template>Obj {
 
     /**
      * inner class for making <xsl:apply-templates select="tagname"/> objects.
