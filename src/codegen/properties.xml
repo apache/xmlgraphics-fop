@@ -996,6 +996,18 @@
     <datatype>String</datatype>
     <default></default>
   </property>
+  <property>
+	<name>xml:space</name>
+	<class-name>XMLSpace</class-name>
+	<inherited>true</inherited>
+	<datatype>
+      <enumeration>
+        <value const="PRESERVE">preserve</value>
+        <value const="DEFAULT">default</value>
+      </enumeration>
+  </datatype>
+	<default>default</default> 
+  </property>
 
 </property-list>
 
