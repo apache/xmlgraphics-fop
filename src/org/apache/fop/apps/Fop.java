@@ -37,20 +37,30 @@ public class Fop {
 	    System.out.println("Elapsed time: " +
 				(System.currentTimeMillis() - startTime));
 	    endtotal = runtime.totalMemory();
-	    System.out.println("Total memory: " + endtotal);
-	    System.out.println("Total diff  : " + (endtotal - startTotal));
 	    endfree = runtime.freeMemory();
-	    System.out.println("Free  memory: " + endfree);
-	    System.out.println("Free  diff  : " + (endfree - startFree ));
 	    System.gc();
 	    gctotal = runtime.totalMemory();
-	    System.out.println("Total memory: " + gctotal);
-	    System.out.println("Total diff  : " + (gctotal - startTotal));
 	    gcfree = runtime.freeMemory();
-	    System.out.println("Free  memory: " + gcfree);
-	    System.out.println("Free  diff  : " + (gcfree - startFree ));
+	    System.out.println("Total memory before run : " + startTotal);
+	    System.out.println("Total memory after run  : " + endtotal);
+	    System.out.println("Total memory after GC   : " + gctotal);
+	    System.out.println("Diff before/after total : "
+                                                   + (endtotal - startTotal));
+	    System.out.println("Diff before/GC total    : "
+                                                   + (gctotal - startTotal));
+	    System.out.println("Diff after/GC total     : "
+                                                   + (gctotal - endtotal));
+	    System.out.println("Free memory before run : " + startFree);
+	    System.out.println("Free memory after run  : " + endfree);
+	    System.out.println("Free memory after GC   : " + gcfree);
+	    System.out.println("Diff before/after free : "
+                                                   + (endfree - startFree));
+	    System.out.println("Diff before/GC free    : "
+                                                   + (gcfree - startFree));
+	    System.out.println("Diff after/GC free     : "
+                                                   + (gcfree - endfree));
 	    System.out.println("cg() freed  : " + (gcfree - endfree));
-	    System.out.println("PC time     : " + (endPCi - startPCi));
+	    //System.out.println("PC time     : " + (endPCi - startPCi));
             
         } catch (FOPException e) {
             MessageHandler.errorln("ERROR: " + e.getMessage());
