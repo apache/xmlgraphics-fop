@@ -348,7 +348,7 @@ public class TableCell extends FObj {
         fotv.serveTableCell(this);
     }
 
-    protected void end() {
+    protected void endOfNode() {
         getFOInputHandler().endCell(this);
     }
     

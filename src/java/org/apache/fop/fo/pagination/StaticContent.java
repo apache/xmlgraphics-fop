@@ -59,7 +59,7 @@ public class StaticContent extends Flow {
      * StructureRenderer that we are at the end of the flow.
      * @see org.apache.fop.fo.FONode#end
      */
-    protected void end() {
+    protected void endOfNode() {
         if (childNodes == null) {
             missingChildElementError("(%block;)+");
         }

@@ -90,7 +90,7 @@ public class Flow extends FObj {
      * StructureRenderer that we are at the end of the flow.
      * @see org.apache.fop.fo.FONode#end
      */
-    protected void end() {
+    protected void endOfNode() {
         if (!blockItemFound) {
             missingChildElementError("marker* (%block;)+");
         }

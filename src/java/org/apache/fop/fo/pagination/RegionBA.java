@@ -48,10 +48,10 @@ public abstract class RegionBA extends RegionBASE {
     }
 
     /**
-     * @see org.apache.fop.fo.FONode#end()
+     * @see org.apache.fop.fo.FONode#endOfNode()
      */
-    protected void end() {
-        super.end();
+    protected void endOfNode() {
+        super.endOfNode();
         bPrecedence =
             (this.propertyList.get(PR_PRECEDENCE).getEnum() == Precedence.TRUE);
     }

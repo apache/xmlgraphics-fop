@@ -123,7 +123,7 @@ public class TableColumn extends FObj {
         fotv.serveTableColumn(this);
     }
 
-    protected void end() {
+    protected void endOfNode() {
         getFOInputHandler().endColumn(this);
     }
     

@@ -138,7 +138,7 @@ public class Inline extends FObjMixed {
     /**
      * @see org.apache.fop.fo.FONode#end
      */
-    protected void end() {
+    protected void endOfNode() {
         getFOInputHandler().endInline(this);
     }
 

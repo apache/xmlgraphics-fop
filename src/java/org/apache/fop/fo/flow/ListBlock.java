@@ -136,8 +136,8 @@ public class ListBlock extends FObj {
         fotv.serveListBlock(this);
     }
 
-    protected void end() {
-        super.end();
+    protected void endOfNode() {
+        super.endOfNode();
         getFOInputHandler().endList(this);
     }
     

@@ -144,7 +144,7 @@ public class TableRow extends FObj {
         fotv.serveTableRow(this);
     }
 
-    protected void end() {
+    protected void endOfNode() {
         getFOInputHandler().endRow(this);
     }
     

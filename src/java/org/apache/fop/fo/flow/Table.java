@@ -201,7 +201,7 @@ public class Table extends FObj {
         fotv.serveTable(this);
     }
 
-    protected void end() {
+    protected void endOfNode() {
         getFOInputHandler().endTable(this);
     }
 

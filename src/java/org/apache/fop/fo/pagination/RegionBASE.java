@@ -41,9 +41,9 @@ public abstract class RegionBASE extends Region {
     }
 
     /**
-     * @see org.apache.fop.fo.FONode#end()
+     * @see org.apache.fop.fo.FONode#endOfNode()
      */
-    protected void end() {
+    protected void endOfNode() {
         // The problem with this is that it might not be known yet....
         // Supposing extent is calculated in terms of percentage
         this.extent = this.propertyList.get(PR_EXTENT).getLength().getValue();

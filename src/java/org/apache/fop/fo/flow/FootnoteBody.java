@@ -60,8 +60,8 @@ public class FootnoteBody extends FObj {
         fotv.serveFootnoteBody(this);
     }
 
-    protected void end() {
-        super.end();
+    protected void endOfNode() {
+        super.endOfNode();
         getFOInputHandler().endFootnoteBody(this);
     }
     
