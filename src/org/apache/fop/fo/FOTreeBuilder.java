@@ -14,6 +14,7 @@ import org.apache.fop.apps.StreamRenderer;
 import org.apache.fop.fo.pagination.Root;
 import org.apache.fop.system.BufferManager;
 import org.apache.fop.fo.pagination.PageSequence;
+import org.apache.fop.extensions.ExtensionObj;
 
 import org.apache.log.Logger;
 
@@ -159,8 +160,13 @@ public class FOTreeBuilder extends DefaultHandler implements TreeBuilder {
         // mark-fop@inomial.com - tell the stream renderer to render
         // this page-sequence
         //
-        if(currentFObj instanceof PageSequence)
+        if(currentFObj instanceof PageSequence) {
             streamRenderer.render((PageSequence) currentFObj);
+        } else if(currentFObj instanceof ExtensionObj) {
+            if(!(currentFObj.getParent() instanceof ExtensionObj)) {
+                streamRenderer.addExtension((ExtensionObj)currentFObj);
+            }
+        }
 
         currentFObj = (FObj)currentFObj.getParent();
     }
@@ -246,12 +252,12 @@ public class FOTreeBuilder extends DefaultHandler implements TreeBuilder {
      *
      * @param areaTree the area tree to format into
      */
-    public void format(AreaTree areaTree) throws FOPException {
+/*    public void format(AreaTree areaTree) throws FOPException {
         log.info("formatting FOs into areas");
         this.bufferManager.readComplete();
         ((Root)this.rootFObj).format(areaTree);
     }
-
+*/
     public void reset() {
         currentFObj = null;
         rootFObj = null;

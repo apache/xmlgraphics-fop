@@ -122,6 +122,8 @@ public class PDFRenderer extends PrintRenderer {
      */
     protected Hashtable options;
 
+    protected Vector extensions = null;
+
     /**
      * create the PDF renderer
      */
@@ -152,6 +154,7 @@ public class PDFRenderer extends PrintRenderer {
 
     public void stopRenderer(OutputStream stream)
     throws IOException {
+        renderRootExtensions(extensions);
         FontSetup.addToResources(this.pdfDoc, fontInfo);
         pdfDoc.outputTrailer(stream);
     }
@@ -686,10 +689,10 @@ public class PDFRenderer extends PrintRenderer {
         this.pdfDoc.setIDReferences(idReferences);
         this.renderPage(page);
 
-        //FontSetup.addToResources(this.pdfDoc, fontInfo);
-
-        // TODO: this needs to be implemented
-        renderRootExtensions(page);
+        Vector exts = page.getExtensions();
+        if(exts != null) {
+            extensions = exts;
+        }
 
         // log.debug("writing out PDF");
         this.pdfDoc.output(outputStream);
@@ -797,10 +800,9 @@ public class PDFRenderer extends PrintRenderer {
         return rs;
     }
 
-    protected void renderRootExtensions(Page page) {
-        Vector v = page.getExtensions();
-        if (v != null) {
-            Enumeration e = v.elements();
+    protected void renderRootExtensions(Vector exts) {
+        if (exts != null) {
+            Enumeration e = exts.elements();
             while (e.hasMoreElements()) {
                 ExtensionObj ext = (ExtensionObj)e.nextElement();
                 if (ext instanceof Outline) {

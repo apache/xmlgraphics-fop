@@ -82,6 +82,11 @@ public class StreamRenderer {
     */
     private IDReferences idReferences = new IDReferences();
 
+    /**
+     * The list of extensions.
+     */
+    private Vector extensions = new Vector();
+
     private Logger log;
 
     public StreamRenderer(OutputStream outputStream, Renderer renderer) {
@@ -95,6 +100,10 @@ public class StreamRenderer {
 
     public IDReferences getIDReferences() {
         return idReferences;
+    }
+
+    public void addExtension(ExtensionObj ext) {
+        extensions.addElement(ext);
     }
 
     public void startRenderer()
@@ -168,6 +177,15 @@ public class StreamRenderer {
     throws SAXException {
         AreaTree a = new AreaTree(this);
         a.setFontInfo(fontInfo);
+
+        for(Enumeration e = extensions.elements(); e.hasMoreElements(); ) {
+            ExtensionObj ext = (ExtensionObj)e.nextElement();
+            try {
+                ext.format(a);
+            } catch (FOPException fope) {
+                throw new SAXException(fope);
+            }
+        }
 
         try {
             pageSequence.format(a);
