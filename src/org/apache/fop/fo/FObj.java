@@ -149,7 +149,7 @@ public class FObj extends FONode {
      * reference areas and use the value of its writing-mode property.
      * If no such ancestor is found, use the value on the root FO.
      */
-    private void setWritingMode() {
+    protected void setWritingMode() {
         FObj p;
         FObj parent;
         for (p = this;

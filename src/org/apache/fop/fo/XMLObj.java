@@ -168,5 +168,6 @@ public abstract class XMLObj extends FObj {
 
     public void rollback(Vector snapshot) {}
 
+    protected void setWritingMode() {}
 }
 
