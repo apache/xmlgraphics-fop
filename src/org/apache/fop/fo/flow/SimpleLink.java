@@ -99,7 +99,7 @@ public class SimpleLink extends FObjMixed {
 	}
 	
 	// new LinkedArea to gather up inlines
-	LinkSet ls = new LinkSet(externalDest);
+	LinkSet ls = new LinkSet(externalDest, area);
 		
 	Page p = area.getPage();
 
@@ -111,7 +111,7 @@ public class SimpleLink extends FObjMixed {
 	for (int i = this.marker; i < numChildren; i++) {
 	    FONode fo = (FONode) children.elementAt(i);
 	    fo.setLinkSet(ls);
-		    
+	    
 	    Status status;
 	    if ((status = fo.layout(area)).isIncomplete()) {
 		this.marker = i;
@@ -121,8 +121,11 @@ public class SimpleLink extends FObjMixed {
 		
 	ls.applyAreaContainerOffsets(ac);
 		
-	// comment this out to see individual words linked
-	ls.mergeLinks();
+	// pass on command line
+	String mergeLinks = System.getProperty( "links.merge" );
+	if ((null != mergeLinks) && !mergeLinks.equalsIgnoreCase("no")) {
+	    ls.mergeLinks();
+	}
 		
 	p.addLinkSet(ls);
 
