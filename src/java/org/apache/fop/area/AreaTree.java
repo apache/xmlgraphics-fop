@@ -239,9 +239,7 @@ public class AreaTree {
     }
 
     /**
-     * When this element is finished then it can create
-     * the bookmark data from the child elements and add
-     * the extension to the area tree.
+     * Create the bookmark data in the area tree.
      */
     public void addBookmarksToAreaTree(Document document) {
         if (document.getBookmarks() == null) {
@@ -253,10 +251,8 @@ public class AreaTree {
             Outline out = (Outline)(document.getBookmarks().getOutlines()).get(count);
             data.addSubData(createBookmarkData(out));
         }
-        // add data to area tree for resolving and handling
-        AreaTree at = document.getAreaTree();
-        at.addTreeExtension(data);
-        data.setAreaTree(at);
+        addTreeExtension(data);
+        data.setAreaTree(this);
     }
 
     /**
@@ -264,6 +260,8 @@ public class AreaTree {
      * This creates a bookmark data with the destination
      * and adds all the data from child outlines.
      *
+     * @param outline the Outline object for which a bookmark entry should be
+     * created
      * @return the new bookmark data
      */
     public BookmarkData createBookmarkData(Outline outline) {
