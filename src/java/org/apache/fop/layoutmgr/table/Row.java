@@ -387,7 +387,7 @@ public class Row extends BlockStackingLayoutManager {
     protected void reset(Position pos) {
         //LayoutManager curLM; // currently active LM
         CellInfo curCellInfo;
-        int cellIndex = 0;
+        int cellIndex = 1;
 
         if (pos == null) {
             while ((curCellInfo = getCellInfo(cellIndex)) != null) {
