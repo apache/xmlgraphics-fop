@@ -15,6 +15,8 @@
      instantiate the class itself. The advantage of the latter is it
      enables runtime determination of Renderer and ElementMapping(s).
   </p>
+  </s2>
+  <s2 title="Examples">
   <p>The simplest way to use Driver is to instantiate it with the 
      InputSource and OutputStream, then set the renderer desired and 
      call the run method.
@@ -25,15 +27,30 @@
    Driver driver = new Driver(new InputSource (args[0]), 
                               new FileOutputStream(args[1]));
    driver.setRenderer(RENDER_PDF);
-   driver.run();
-]]></source>
+   driver.run();]]></source>
+
+  <p>You also need to set the Logger for logging messages, see
+     <jump href="http://jakarta.apache.org/avalon/logkit/index.html">Jakarta Logkit</jump>
+     for more information.
+  </p>
+    <source><![CDATA[
+    Hierarchy hierarchy = Hierarchy.getDefaultHierarchy();
+    PatternFormatter formatter = new PatternFormatter(
+       "[%{priority}]: %{message}\n%{throwable}" );
+
+    LogTarget target = null;
+    target = new StreamTarget(System.out, formatter);
+
+    hierarchy.setDefaultLogTarget(target);
+    log = hierarchy.getLoggerFor("fop");
+    log.setPriority(Priority.INFO);
+    driver.setLogger(log);]]></source>
 
   <p>To setup the user config file you can do the following
   </p>
     <source><![CDATA[
    userConfigFile = new File(userConfig);
-   options = new Options(userConfigFile);
-]]></source>
+   options = new Options(userConfigFile);]]></source>
 
   <p>Once the Driver is set up, the render method
      is called. Depending on whether DOM or SAX is being used, the
@@ -52,8 +69,7 @@
   driver.setRenderer(Driver.RENDER_PDF);
   driver.setInputSource(new FileInputSource(args[0]));
   driver.setOutputStream(new FileOutputStream(args[1]));
-  driver.run();
-]]></source>
+  driver.run();]]></source>
   <p>You can also specify an xml and xsl file for the input.
   </p>
   <p>Here is an example use of Driver with the XSLTInputHandler:</p>
@@ -63,9 +79,21 @@
   InputHandler inputHandler = new XSLTInputHandler(xmlFile, xslFile);
   XMLReader parser = inputHandler.getParser();
   driver.setOutputStream(new FileOutputStream(outFile));
-  driver.render(parser, inputHandler.getInputSource());
-]]></source>
+  driver.render(parser, inputHandler.getInputSource());]]></source>
   <p>Have a look at the classes CommandLineStarter or FopServlet for complete examples.</p>
+  </s2>
+  <s2 title="Hints">
+     <p>
+If FOP is going to be used multiple times within your application
+it may be useful to reuse certain objects to save time.
+     </p>
+     <p>
+The renderers and the driver can both be reused. A renderer is reusable
+once the previous render has been completed. The driver is reuseable
+after the rendering is complete and the reset method is called.
+You will need to setup the driver again with a new OutputStream,
+IntputStream and renderer.
+     </p>
   </s2>
   <s2 title="Using Fop in a servlet">  
      <p>In the directory xml-fop/docs/examples/embedding you can find a working example how to use

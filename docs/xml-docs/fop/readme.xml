@@ -2,7 +2,7 @@
 
 <!-- Overview -->
 
-<s1 title="Fop">
+<s1 title="FOP">
   <s2 title="What is FOP?">
     <p>FOP is the world's first print formatter driven by XSL formatting
        objects. It is a Java application that reads a formatting object
@@ -15,7 +15,7 @@
        You can <jump href="download.html">download</jump> 
        Fop including a precompiled version, the source code and many example files to 
        get you started. Pointers to introductions into xsl:fo can be found in the
-       section <jump href="specs.html">specifications</jump>. Please be aware, that 
+       <jump href="resources.html">resources</jump> section. Please be aware, that 
        Fop is at the moment not a full implementation of the basic conformance level
        of the xsl:fo standard. You can find a list of supported flow objects and properties
        in the section <jump href="implemented.html">Features</jump> and in section 

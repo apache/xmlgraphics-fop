@@ -33,8 +33,7 @@ Please see the <jump href="svg.html">SVG page</jump> for more details.
       <fox:label>Prerequisites</fox:label>
     </fox:outline>
   <fox:outline>
-</fo:root>
-]]></source>
+</fo:root>]]></source>
     <p>It works similarly to a basic-link. There is also an external-destination 
        property, but it isn't supported currently. See the pdfoutline.fo file in 
       docs/examples/fo for a more complete example.</p>

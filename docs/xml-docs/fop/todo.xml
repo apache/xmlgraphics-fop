@@ -64,15 +64,10 @@ there are no invalid children. Should help process the layout better.
 </s3>
 </s2>
   <s2 title="Processing Improvements">
-<s3 title="Logging">
-    <p>
-Support for proper logging with logKit.
-    </p>
-</s3>
 <s3 title="Image Handling">
     <p>
-Needs to be a bit more solid and allow for direct insertion of images
-(jpeg) into the pdf.
+Needs to be a bit more solid.
+Allow for direct insertion of jpeg images in svg into the pdf.
     </p>
 </s3>
 <s3 title="Configuration">
@@ -99,9 +94,15 @@ no dependancies on any specific renderers.
 </s3>
 </s2>
   <s2 title="Enhancements">
-<s3 title="linking support in svg">
+<s3 title="font handling">
     <p>
-support the a link rendering for the svg output.
+Need better handling of font names, since a font can have several names.
+    </p>
+</s3>
+<s3 title="user agent">
+    <p>
+A user agent (or some similar thing) is needed to handle adjustable
+values, such as setting dpi resolution.
     </p>
 </s3>
 <s3 title="input from url">
@@ -126,15 +127,20 @@ suggested by Vincent Hardy.
     <p>
 Support for different encoding on different types of streams
 in pdf document.
-For example images.
+For example images and text.
+    </p>
+</s3>
+<s3 title="PDF Graphic State">
+    <p>
+Add support for the pdf graphic state for use with transparency
+in pdf 1.4.
     </p>
 </s3>
 <s3 title="svg features">
     <p>
-currently patterns and gradients are not generated properly
+Currently patterns and gradients are not generated properly
     </p>
 </s3>
-
   </s2>
 
 
