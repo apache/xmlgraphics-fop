@@ -324,7 +324,7 @@ public class PDFState {
     public class Data implements Cloneable, Serializable {
         
         public Color color = Color.black;
-        public Color backcolor = Color.white;
+        public Color backcolor = Color.black;
         public Paint paint = null;
         public Paint backPaint = null;
         public int lineCap = 0;
