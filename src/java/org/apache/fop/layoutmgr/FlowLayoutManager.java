@@ -18,6 +18,7 @@
 
 package org.apache.fop.layoutmgr;
 
+import org.apache.fop.datatypes.PercentBase;
 import org.apache.fop.fo.flow.Marker;
 import org.apache.fop.fo.pagination.Flow;
 import org.apache.fop.area.Area;
@@ -68,6 +69,9 @@ public class FlowLayoutManager extends BlockStackingLayoutManager {
         // currently active LM
         LayoutManager curLM;
         MinOptMax stackSize = new MinOptMax();
+
+        fobj.setLayoutDimension(PercentBase.BLOCK_IPD, context.getRefIPD());
+        fobj.setLayoutDimension(PercentBase.BLOCK_BPD, context.getStackLimit().opt);
 
         while ((curLM = getChildLM()) != null) {
             if (curLM.generatesInlineAreas()) {
