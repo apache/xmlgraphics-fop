@@ -19,8 +19,6 @@
  */
 package org.apache.fop.fo.properties;
 
-import org.apache.fop.datatypes.EnumType;
-import org.apache.fop.datatypes.PropertyValue;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.PropNames;
 import org.apache.fop.fo.expr.PropertyException;
@@ -32,29 +30,8 @@ import org.apache.fop.fo.expr.PropertyException;
  * @author pbw
  * @version $Revision$ $Name$
  */
-public class BorderCommonStyleAbsolute
-extends BorderCommonStyle
-implements AbsoluteCorrespondingProperty {
-    /* (non-Javadoc)
-     * @see org.apache.fop.fo.properties.AbsoluteCorrespondingProperty#getWritingMode()
-     */
-    public int getWritingMode(FONode foNode)
-    throws PropertyException {
-        PropertyValue wm = foNode.getPropertyValue(PropNames.WRITING_MODE);
-        return EnumType.getEnumValue(wm);
-    }
-
-    public int getCorrespondingProperty(FONode foNode)
-    throws PropertyException {
-        return getCorrespondingRelativeProperty(foNode);
-    }
-    /* (non-Javadoc)
-     * @see org.apache.fop.fo.properties.AbsoluteCorrespondingProperty#getCorrespondingRelativeProperty()
-     */
-    public int getCorrespondingRelativeProperty(FONode foNode)
-    throws PropertyException {
-        throw new PropertyException("Called from superclass");
-    }
+public abstract class BorderCommonStyleAbsolute
+extends BorderCommonStyle {
 
     /** Array of relative border style properties,
      * indexed by relative edge constants */
@@ -74,7 +51,7 @@ implements AbsoluteCorrespondingProperty {
      * @return the relative border style property index
      * @throws PropertyException
      */
-    protected int getCorrespondingRelativeStyleProperty(
+    protected int getCorrespondingStyleProperty(
             FONode foNode, int absoluteEdge)
     throws PropertyException {
         int relEdge = WritingMode.getCorrespondingRelativeEdge(
@@ -82,17 +59,4 @@ implements AbsoluteCorrespondingProperty {
         return relBorderStyleProps[relEdge];
     }
 
-    /* (non-Javadoc)
-     * @see org.apache.fop.fo.properties.AbsoluteCorrespondingProperty#overridesCorresponding()
-     */
-    public boolean overridesCorresponding(FONode foNode) {
-        return false;
-    }
-
-    /* (non-Javadoc)
-     * @see org.apache.fop.fo.properties.Property#isCorrespondingAbsolute()
-     */
-    public static boolean isCorrespondingAbsolute() {
-        return true;
-    }
 }

@@ -30,7 +30,8 @@ import org.apache.fop.fo.expr.PropertyException;
  * Pseudo-property class for common border style values occurring in a
  * number of classes.
  */
-public class BorderCommonStyle extends AbstractCorrespondingProperty  {
+public abstract class BorderCommonStyle
+extends AbstractCorrespondingProperty  {
     public static final int HIDDEN = 1;
     public static final int DOTTED = 2;
     public static final int DASHED = 3;
@@ -79,10 +80,9 @@ public class BorderCommonStyle extends AbstractCorrespondingProperty  {
         return rwEnums[index];
     }
 
-    public int getCorrespondingProperty(FONode foNode)
+    public boolean overridesCorresponding(FONode foNode)
     throws PropertyException {
-        throw new PropertyException("Called from superclass");
+        throw new PropertyException("Called within superclass");
     }
-
 }
 
