@@ -271,6 +271,7 @@ public class PDFRenderer extends PrintRenderer {
         this.pdfDoc = new PDFDocument(producer);
         setupLogger(this.pdfDoc);
         this.pdfDoc.setCreator(creator);
+        this.pdfDoc.setCreationDate(creationDate);
         this.pdfDoc.setFilterMap(filterMap);
         this.pdfDoc.outputHeader(stream);
 
