@@ -28,8 +28,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.xml.transform.TransformerFactory;
 
-import org.apache.avalon.framework.logger.ConsoleLogger;
-import org.apache.avalon.framework.logger.Logger;
+import org.apache.commons.logging.impl.SimpleLog;
+import org.apache.commons.logging.Log;
 import org.apache.fop.apps.Driver;
 import org.apache.fop.apps.XSLTInputHandler;
 import org.apache.fop.render.awt.AWTPrintRenderer;
@@ -69,7 +69,8 @@ public class FopPrintServlet extends HttpServlet {
     protected static final String XSLT_REQUEST_PARAM = "xslt";
 
     /** Logger to give to FOP */
-    protected Logger log = null;
+    protected SimpleLog log = null;
+    
     /** The TransformerFactory to use to create Transformer instances */
     protected TransformerFactory transFactory = null;
 
@@ -77,7 +78,8 @@ public class FopPrintServlet extends HttpServlet {
      * @see javax.servlet.GenericServlet#init()
      */
     public void init() throws ServletException {
-        this.log = new ConsoleLogger(ConsoleLogger.LEVEL_WARN);
+        this.log = new SimpleLog("FOP/Print Servlet");
+        log.setLevel(SimpleLog.LOG_LEVEL_WARN);
         this.transFactory = TransformerFactory.newInstance();
     }
 
@@ -87,7 +89,8 @@ public class FopPrintServlet extends HttpServlet {
     public void doGet(HttpServletRequest request,
                       HttpServletResponse response) throws ServletException {
         if (log == null) {
-            log = new ConsoleLogger(ConsoleLogger.LEVEL_WARN);
+            log = new SimpleLog("FOP/Print Servlet");
+            log.setLevel(SimpleLog.LOG_LEVEL_WARN);
         }
 
         try {
@@ -131,7 +134,7 @@ public class FopPrintServlet extends HttpServlet {
             Driver driver = new Driver(foFile, null);
             AWTPrintRenderer renderer = new AWTPrintRenderer();
 
-            driver.enableLogging(log);
+            driver.setLogger(log);
             driver.setRenderer(renderer);
             driver.run();
 
@@ -153,7 +156,7 @@ public class FopPrintServlet extends HttpServlet {
             Driver driver = new Driver();
             AWTPrintRenderer renderer = new AWTPrintRenderer();
 
-            driver.enableLogging(log);
+            driver.setLogger(log);
             driver.setRenderer(renderer);
             driver.render(input.getParser(), input.getInputSource());
 

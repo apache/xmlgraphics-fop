@@ -105,7 +105,7 @@ public abstract class AbstractPSTranscoder extends AbstractFOPTranscoder {
         throws TranscoderException {
 
         graphics = createDocumentGraphics2D();
-        ContainerUtil.enableLogging(graphics, getLogger());
+        
         try {
             if (this.cfg != null) {
                 ContainerUtil.configure(graphics, this.cfg);

@@ -27,8 +27,7 @@ import java.awt.geom.AffineTransform;
 import org.w3c.dom.Element;
 import org.w3c.dom.svg.SVGDocument;
 
-// Avalon
-import org.apache.avalon.framework.logger.Logger;
+import org.apache.commons.logging.Log;
 
 // Batik
 import org.apache.batik.dom.svg.SAXSVGDocumentFactory;
@@ -108,7 +107,7 @@ public class SVGReader implements ImageReader {
      */
     class Loader {
         private FopImage.ImageInfo getImage(String uri, InputStream fis,
-                Logger logger, float pixelUnitToMM) {
+                Log logger, float pixelUnitToMM) {
             // parse document and get the size attributes of the svg element
 
             try {

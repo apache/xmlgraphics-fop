@@ -23,7 +23,7 @@ import java.lang.reflect.Method;
 import java.security.Provider;
 import java.security.Security;
 
-import org.apache.avalon.framework.logger.Logger;
+import org.apache.commons.logging.Log;
 import org.apache.fop.apps.FOUserAgent;
 
 /**
@@ -77,7 +77,7 @@ public class PDFEncryptionManager {
      */
     public static void setupPDFEncryption(FOUserAgent userAgent, 
                                           PDFDocument pdf,
-                                          Logger log) {
+                                          Log log) {
         if (userAgent == null) {
             throw new NullPointerException("User agent must not be null");
         }

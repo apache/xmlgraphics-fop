@@ -45,8 +45,7 @@ import org.apache.fop.layout.LayoutStrategy;
 // SAX
 import org.xml.sax.SAXException;
 
-// Avalon
-import org.apache.avalon.framework.logger.Logger;
+import org.apache.commons.logging.Log;
 
 /**
  * Class storing information for the FOP Document being processed, and managing
@@ -376,7 +375,7 @@ public class Document implements FOTreeControl, FOTreeListener,
     /**
      * @return the Logger to be used for processing this Document
      */
-    public Logger getLogger() {
+    public Log getLogger() {
         return getDriver().getLogger();
     }
 

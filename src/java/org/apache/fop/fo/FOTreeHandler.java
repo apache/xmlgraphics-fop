@@ -135,18 +135,18 @@ public class FOTreeHandler extends FOInputHandler {
             long memoryNow = runtime.totalMemory() - runtime.freeMemory();
             long memoryUsed = (memoryNow - initialMemory) / 1024L;
             long timeUsed = System.currentTimeMillis() - startTime;
-            if (getLogger().isDebugEnabled()) {
-                getLogger().debug("Initial heap size: " + (initialMemory / 1024L) + "Kb");
-                getLogger().debug("Current heap size: " + (memoryNow / 1024L) + "Kb");
-                getLogger().debug("Total memory used: " + memoryUsed + "Kb");
+            if (logger != null && logger.isDebugEnabled()) {
+                logger.debug("Initial heap size: " + (initialMemory / 1024L) + "Kb");
+                logger.debug("Current heap size: " + (memoryNow / 1024L) + "Kb");
+                logger.debug("Total memory used: " + memoryUsed + "Kb");
                 if (!MEM_PROFILE_WITH_GC) {
-                    getLogger().debug("  Memory use is indicative; no GC was performed");
-                    getLogger().debug("  These figures should not be used comparatively");
+                    logger.debug("  Memory use is indicative; no GC was performed");
+                    logger.debug("  These figures should not be used comparatively");
                 }
-                getLogger().debug("Total time used: " + timeUsed + "ms");
-                getLogger().debug("Pages rendered: " + pageCount);
+                logger.debug("Total time used: " + timeUsed + "ms");
+                logger.debug("Pages rendered: " + pageCount);
                 if (pageCount > 0) {
-                    getLogger().debug("Avg render time: " + (timeUsed / pageCount) + "ms/page");
+                    logger.debug("Avg render time: " + (timeUsed / pageCount) + "ms/page");
                 }
             }
         }
@@ -180,8 +180,8 @@ public class FOTreeHandler extends FOInputHandler {
                 System.gc();
             }
             long memoryNow = runtime.totalMemory() - runtime.freeMemory();
-            if (getLogger().isDebugEnabled()) {
-                getLogger().debug("Current heap size: " + (memoryNow / 1024L) + "Kb");
+            if (logger != null) {
+                logger.debug("Current heap size: " + (memoryNow / 1024L) + "Kb");
             }
         }
         notifyPageSequenceComplete(pageSequence);

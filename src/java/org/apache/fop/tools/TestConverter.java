@@ -26,8 +26,6 @@ import java.util.Map;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
-import org.apache.avalon.framework.logger.AbstractLogEnabled;
-import org.apache.avalon.framework.logger.ConsoleLogger;
 import org.apache.fop.apps.Driver;
 import org.apache.fop.apps.FOFileHandler;
 import org.apache.fop.apps.FOUserAgent;
@@ -36,6 +34,10 @@ import org.apache.fop.apps.XSLTInputHandler;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.impl.SimpleLog;
+
 
 /**
  * TestConverter is used to process a set of tests specified in
@@ -50,7 +52,7 @@ import org.w3c.dom.NodeList;
  * Modified by Mark Lillywhite mark-fop@inomial.com to use the new Driver
  * interface.
  */
-public class TestConverter extends AbstractLogEnabled {
+public class TestConverter {
     
     private boolean failOnly = false;
     private boolean outputPDF = false;
@@ -58,6 +60,28 @@ public class TestConverter extends AbstractLogEnabled {
     private File compare = null;
     private String baseDir = "./";
     private Map differ = new java.util.HashMap();
+
+    /**
+     * logging instance
+     */
+    protected Log logger = null;
+
+
+    /**
+     * Sets the Commons-Logging instance for this class
+     * @param logger The Commons-Logging instance
+     */
+    public void setLogger(Log logger) {
+        this.logger = logger;
+    }
+
+    /**
+     * Returns the Commons-Logging instance for this class
+     * @return  The Commons-Logging instance
+     */
+    protected Log getLogger() {
+        return logger;
+    }
 
     /**
      * This main method can be used to run the test converter from
@@ -104,7 +128,9 @@ public class TestConverter extends AbstractLogEnabled {
      * Construct a new TestConverter
      */
     public TestConverter() {
-        enableLogging(new ConsoleLogger(ConsoleLogger.LEVEL_ERROR));
+        SimpleLog log = new SimpleLog("FOP/Test");
+        log.setLevel(SimpleLog.LOG_LEVEL_ERROR);
+        setLogger(log);
     }
 
     /**
@@ -138,7 +164,9 @@ public class TestConverter extends AbstractLogEnabled {
      */
     public void setDebug(boolean debug) {
         if (debug) {
-            enableLogging(new ConsoleLogger(ConsoleLogger.LEVEL_DEBUG));
+            SimpleLog log = new SimpleLog("FOP/Test");
+            log.setLevel(SimpleLog.LOG_LEVEL_DEBUG);
+            setLogger(log);
         }
     }
 
@@ -152,7 +180,7 @@ public class TestConverter extends AbstractLogEnabled {
      * @return Map a Map containing differences
      */
     public Map runTests(String fname, String dest, String compDir) {
-        getLogger().debug("running tests in file:" + fname);
+        logger.debug("running tests in file:" + fname);
         try {
             if (compDir != null) {
                 compare = new File(baseDir + "/" + compDir);
@@ -176,7 +204,7 @@ public class TestConverter extends AbstractLogEnabled {
             if (testsuite.hasAttributes()) {
                 String profile =
                     testsuite.getAttributes().getNamedItem("profile").getNodeValue();
-                getLogger().debug("testing test suite:" + profile);
+                logger.debug("testing test suite:" + profile);
             }
 
             NodeList testcases = testsuite.getChildNodes();
@@ -187,7 +215,7 @@ public class TestConverter extends AbstractLogEnabled {
                 }
             }
         } catch (Exception e) {
-            getLogger().error("Error while running tests", e);
+            logger.error("Error while running tests", e);
         }
         return differ;
     }
@@ -203,7 +231,7 @@ public class TestConverter extends AbstractLogEnabled {
         if (tcase.hasAttributes()) {
             String profile =
                 tcase.getAttributes().getNamedItem("profile").getNodeValue();
-            getLogger().debug("testing profile:" + profile);
+            logger.debug("testing profile:" + profile);
         }
 
         NodeList cases = tcase.getChildNodes();
@@ -251,7 +279,7 @@ public class TestConverter extends AbstractLogEnabled {
         if (xslNode != null) {
             xsl = xslNode.getNodeValue();
         }
-        getLogger().debug("converting xml:" + xml + " and xsl:" 
+        logger.debug("converting xml:" + xml + " and xsl:" 
                   + xsl + " to area tree");
 
         String res = xml;
@@ -265,7 +293,7 @@ public class TestConverter extends AbstractLogEnabled {
             try {
                 baseURL = xmlFile.getParentFile().toURL().toExternalForm();
             } catch (Exception e) {
-                getLogger().error("Error setting base directory");
+                logger.error("Error setting base directory");
             }
 
             InputHandler inputHandler = null;
@@ -279,7 +307,7 @@ public class TestConverter extends AbstractLogEnabled {
 
             Driver driver = new Driver();
             FOUserAgent userAgent = new FOUserAgent();
-            setupLogger(userAgent, "fop");
+            userAgent.setLogger(getLogger());
             userAgent.setBaseURL(baseURL);
             driver.setUserAgent(userAgent);
             if (outputPDF) {
@@ -305,7 +333,7 @@ public class TestConverter extends AbstractLogEnabled {
             OutputStream outStream = new java.io.BufferedOutputStream(
                                  new java.io.FileOutputStream(outputFile));
             driver.setOutputStream(outStream);
-            getLogger().debug("ddir:" + destdir + " on:" + 
+            logger.debug("ddir:" + destdir + " on:" + 
                               outputFile.getName());
             driver.render(inputHandler);
             outStream.close();
@@ -348,7 +376,7 @@ public class TestConverter extends AbstractLogEnabled {
                 }
             }
         } catch (Exception e) {
-            getLogger().error("Error while comparing files", e);
+            logger.error("Error while comparing files", e);
         }
 
         return false;

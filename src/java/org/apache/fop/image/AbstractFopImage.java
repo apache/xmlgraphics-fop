@@ -25,7 +25,7 @@ import java.io.InputStream;
 import java.awt.Color;
 
 // FOP
-import org.apache.avalon.framework.logger.Logger;
+import org.apache.commons.logging.Log;
 
 /**
  * Base class to implement the FopImage interface.
@@ -125,7 +125,7 @@ public abstract class AbstractFopImage implements FopImage {
      * @param ua the user agent for handling logging etc.
      * @return true if the loading was successful
      */
-    public synchronized boolean load(int type, Logger logger) {
+    public synchronized boolean load(int type, Log logger) {
         if ((loaded & type) != 0) {
             return true;
         }
@@ -161,7 +161,7 @@ public abstract class AbstractFopImage implements FopImage {
      * @param ua the user agent
      * @return true if the loading was successful
      */
-    protected boolean loadDimensions(Logger logger) {
+    protected boolean loadDimensions(Log logger) {
         return false;
     }
 
@@ -173,7 +173,7 @@ public abstract class AbstractFopImage implements FopImage {
      * @param ua the user agent
      * @return true if the loading was successful
      */
-    protected boolean loadBitmap(Logger logger) {
+    protected boolean loadBitmap(Log logger) {
         return false;
     }
 
@@ -185,7 +185,7 @@ public abstract class AbstractFopImage implements FopImage {
      * @param ua the user agent
      * @return true if the loading was successful
      */
-    protected boolean loadOriginalData(Logger logger) {
+    protected boolean loadOriginalData(Log logger) {
         return false;
     }
 

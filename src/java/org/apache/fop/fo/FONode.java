@@ -25,8 +25,7 @@ import java.util.ListIterator;
 import org.xml.sax.Attributes;
 import org.xml.sax.Locator;
 
-// Avalon
-import org.apache.avalon.framework.logger.Logger;
+import org.apache.commons.logging.Log;
 
 // FOP
 import org.apache.fop.apps.FOPException;
@@ -71,7 +70,7 @@ public abstract class FONode {
      * Returns the logger for the node.
      * @return the logger
      */
-    public Logger getLogger() {
+    public Log getLogger() {
         return getFOTreeControl().getLogger();
     }
 

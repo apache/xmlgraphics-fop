@@ -36,10 +36,8 @@ import org.apache.fop.tools.DocumentReader;
 import org.apache.fop.tools.ProxyContentHandler;
 import org.apache.fop.layoutmgr.LayoutManagerLS;
 
-// Avalon
-import org.apache.avalon.framework.logger.ConsoleLogger;
-import org.apache.avalon.framework.logger.LogEnabled;
-import org.apache.avalon.framework.logger.Logger;
+import org.apache.commons.logging.impl.SimpleLog;
+import org.apache.commons.logging.Log;
 
 // DOM
 /* org.w3c.dom.Document is not imported to reduce confusion with
@@ -67,7 +65,7 @@ import java.io.OutputStream;
  * <PRE>
  * Driver driver = new Driver(new InputSource (args[0]),
  * new FileOutputStream(args[1]));
- * driver.enableLogging(myLogger); //optional
+ * driver.setLogger(myLogger); //optional
  * driver.setRenderer(RENDER_PDF);
  * driver.run();
  * </PRE>
@@ -97,12 +95,12 @@ import java.io.OutputStream;
  *
  * <PRE>
  * Driver driver = new Driver();
- * driver.enableLogging(myLogger); //optional
+ * driver.setLogger(myLogger); //optional
  * driver.setRenderer(new org.apache.fop.render.awt.AWTRenderer(translator));
  * driver.render(parser, fileInputSource(args[0]));
  * </PRE>
  */
-public class Driver implements LogEnabled {
+public class Driver {
 
     /**
      * private constant to indicate renderer was not defined.
@@ -197,7 +195,7 @@ public class Driver implements LogEnabled {
     /**
      * the system resources that FOP will use
      */
-    private Logger log = null;
+    private Log log = null;
     private FOUserAgent userAgent = null;
 
     private Document currentDocument = null;
@@ -247,20 +245,16 @@ public class Driver implements LogEnabled {
     protected FOUserAgent getUserAgent() {
         if (userAgent == null) {
             userAgent = new FOUserAgent();
-            userAgent.enableLogging(getLogger());
+            userAgent.setLogger(getLogger());
         }
         return userAgent;
     }
 
     /**
-     * Provide the Driver instance with a logger. More information on Avalon
-     * logging can be found at the
-     * <a href="http://avalon.apache.org">Avalon site</a>.
-     *
+     * Provide the Driver instance with a logger.
      * @param log the logger. Must not be <code>null</code>.
-     * @see org.apache.avalon.framework.logger.LogEnabled#enableLogging(Logger)
      */
-    public void enableLogging(Logger log) {
+    public void setLogger(Log log) {
         if (this.log == null) {
             this.log = log;
         } else {
@@ -268,25 +262,16 @@ public class Driver implements LogEnabled {
         }
     }
 
-    /**
-     * Provide the Driver instance with a logger.
-     * @param log the logger. Must not be <code>null</code>.
-     * @deprecated Use #enableLogging(Logger) instead.
-     */
-    public void setLogger(Logger log) {
-        enableLogging(log);
-    }
-
 
     /**
      * Returns the logger for use by FOP.
      * @return the logger
-     * @see #enableLogging(Logger)
      */
-    public Logger getLogger() {
+    public Log getLogger() {
         if (this.log == null) {
-            // use ConsoleLogger as default when logger not explicitly set
-            this.log = new ConsoleLogger(ConsoleLogger.LEVEL_INFO);
+            // use SimpleLog as default when logger not explicitly set
+            log = new SimpleLog("FOP");
+            ((SimpleLog) log).setLevel(SimpleLog.LOG_LEVEL_INFO);
         }
 
         return this.log;
@@ -436,9 +421,7 @@ public class Driver implements LogEnabled {
                 throws IllegalArgumentException {
         try {
             renderer = (Renderer)Class.forName(rendererClassName).newInstance();
-            if (renderer instanceof LogEnabled) {
-                ((LogEnabled)renderer).enableLogging(getLogger());
-            }
+            renderer.setLogger(getLogger());
             renderer.setProducer(Version.getVersion());
             renderer.setUserAgent(getUserAgent());
         } catch (ClassNotFoundException e) {
@@ -535,7 +518,7 @@ public class Driver implements LogEnabled {
             }
         }
 
-        foInputHandler.enableLogging(getLogger());
+        foInputHandler.setLogger(getLogger());
 
         treeBuilder.setUserAgent(getUserAgent());
         treeBuilder.setFOInputHandler(foInputHandler);

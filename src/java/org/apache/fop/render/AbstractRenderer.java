@@ -63,9 +63,9 @@ import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.fo.Constants;
 import org.apache.fop.fo.FOTreeControl;
 import org.apache.fop.fo.pagination.Region;
+import org.apache.commons.logging.Log;
 
 // Avalon
-import org.apache.avalon.framework.logger.AbstractLogEnabled;
 import org.apache.avalon.framework.configuration.Configurable;
 import org.apache.avalon.framework.configuration.Configuration;
 import org.apache.avalon.framework.configuration.ConfigurationException;
@@ -75,13 +75,18 @@ import org.apache.avalon.framework.configuration.ConfigurationException;
  * top level processing of the area tree and adds some abstract methods to
  * handle viewports. This keeps track of the current block and inline position.
  */
-public abstract class AbstractRenderer extends AbstractLogEnabled
+public abstract class AbstractRenderer 
          implements Renderer, Configurable, Constants {
 
     /**
      * user agent
      */
     protected FOUserAgent userAgent;
+
+    /**
+     * logging instance
+     */
+    protected Log logger = null;
 
     /**
      * producer (usually "FOP")
@@ -134,6 +139,22 @@ public abstract class AbstractRenderer extends AbstractLogEnabled
      * @see org.apache.avalon.framework.configuration.Configurable#configure(Configuration)
      */
     public void configure(Configuration conf) throws ConfigurationException {
+    }
+
+    /**
+     * Sets the Commons-Logging instance for this class
+     * @param logger The Commons-Logging instance
+     */
+    public void setLogger(Log logger) {
+        this.logger = logger;
+    }
+
+    /**
+     * Returns the Commons-Logging instance for this class
+     * @return  The Commons-Logging instance
+     */
+    protected Log getLogger() {
+        return logger;
     }
 
     /** @see org.apache.fop.render.Renderer */

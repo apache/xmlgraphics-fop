@@ -79,6 +79,7 @@ list of possible build targets.
     <include name="lib/xml-apis.jar"/>
     <include name="lib/batik.jar"/>
     <include name="lib/avalon-framework*.jar"/>
+    <include name="lib/commons-logging*.jar"/>
   </fileset>
 
   <fileset dir="${basedir}" id="dist.src">
@@ -503,6 +504,7 @@ list of possible build targets.
     <war warfile="${build.dir}/fop.war" webxml="${src.dir}/conf/web.xml">
       <lib dir="${lib.dir}">
         <include name="avalon-framework*.jar"/>
+        <include name="commons-logging*.jar"/>
         <include name="batik*.jar"/>
         <include name="commons-io*.jar"/>
       </lib>
@@ -575,6 +577,7 @@ list of possible build targets.
     <unjar dest="${transcoder-deps}">
       <patternset>
         <include name="org/apache/avalon/framework/*"/>
+        <include name="org/apache/commons/logging/*"/>
         <include name="org/apache/commons/io/CopyUtils.class"/>
         <include name="org/apache/commons/io/IOUtils.class"/>
         <include name="org/apache/commons/io/output/ProxyOutputStream.class"/>
@@ -584,13 +587,15 @@ list of possible build targets.
       <fileset dir="${lib.dir}">
         <include name="commons-io*.jar"/>
         <include name="avalon-framework*.jar"/>
-      </fileset>
+        <include name="commons-logging*.jar"/>
+       </fileset>
     </unjar>
     <mkdir dir="${transcoder-deps}/legal"/>
     <copy todir="${transcoder-deps}/legal">
       <fileset dir="${lib.dir}">
         <include name="avalon.LICENSE.txt"/>
         <include name="commons-io.LICENSE.txt"/>
+        <include name="commons-logging.LICENSE.txt"/>
       </fileset>
     </copy>
     <jar jarfile="${build.dir}/fop-transcoder-allinone.jar">

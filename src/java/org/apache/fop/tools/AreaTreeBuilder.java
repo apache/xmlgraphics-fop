@@ -79,9 +79,8 @@ import org.apache.fop.fo.Constants;
 import org.apache.fop.fo.pagination.Region;
 import org.apache.fop.fonts.FontMetrics;
 
-// Avalon
-import org.apache.avalon.framework.logger.ConsoleLogger;
-import org.apache.avalon.framework.logger.AbstractLogEnabled;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.impl.SimpleLog;
 
 
 /**
@@ -96,7 +95,28 @@ import org.apache.avalon.framework.logger.AbstractLogEnabled;
  * Tests: different renderers, saving and loading pages with serialization
  * out of order rendering
  */
-public class AreaTreeBuilder extends AbstractLogEnabled {
+public class AreaTreeBuilder {
+
+    /**
+     * logging instance
+     */
+    protected Log logger = null;
+
+    /**
+     * Sets the Commons-Logging instance for this class
+     * @param logger The Commons-Logging instance
+     */
+    public void setLogger(Log logger) {
+        this.logger = logger;
+    }
+
+    /**
+     * Returns the Commons-Logging instance for this class
+     * @return  The Commons-Logging instance
+     */
+    protected Log getLogger() {
+        return logger;
+    }
 
     /**
      * Main method
@@ -104,7 +124,9 @@ public class AreaTreeBuilder extends AbstractLogEnabled {
      */
     public static void main(String[] args) {
         AreaTreeBuilder atb = new AreaTreeBuilder();
-        atb.enableLogging(new ConsoleLogger(ConsoleLogger.LEVEL_DEBUG));
+        SimpleLog logger = new SimpleLog("FOP");
+        logger.setLevel(SimpleLog.LOG_LEVEL_DEBUG);
+        atb.setLogger(logger);
 
         atb.runTests(args[0], args[1], args[2]);
         System.exit(0);
@@ -117,9 +139,9 @@ public class AreaTreeBuilder extends AbstractLogEnabled {
      * @param out output filename
      */
     protected void runTests(String in, String type, String out) {
-        getLogger().debug("Starting tests");
+        logger.debug("Starting tests");
         runTest(in, type, out);
-        getLogger().debug("Finished");
+        logger.debug("Finished");
     }
 
     /**
@@ -137,16 +159,17 @@ public class AreaTreeBuilder extends AbstractLogEnabled {
         } else if ("svg".equals(type)) {
             rend = new SVGRenderer();
         }
-        setupLogger(rend);
+
+        rend.setLogger(logger);
         Document fi = new Document(null);
         rend.setupFontInfo(fi);
         FOUserAgent ua = new FOUserAgent();
-        setupLogger(ua);
+        ua.setLogger(logger);
         rend.setUserAgent(ua);
 
         StorePagesModel sm = AreaTree.createStorePagesModel();
         TreeLoader tl = new TreeLoader(fi);
-        setupLogger(tl);
+        tl.setLogger(logger);
         tl.setTreeModel(sm);
         try {
             InputStream is =
@@ -154,7 +177,7 @@ public class AreaTreeBuilder extends AbstractLogEnabled {
             tl.buildAreaTree(is);
             renderAreaTree(sm, rend, out);
         } catch (IOException e) {
-            getLogger().error("error reading file" + e.getMessage(), e);
+            logger.error("error reading file" + e.getMessage(), e);
         }
     }
 
@@ -205,7 +228,7 @@ public class AreaTreeBuilder extends AbstractLogEnabled {
             rend.stopRenderer();
             os.close();
         } catch (Exception e) {
-            getLogger().error("error rendering output", e);
+            logger.error("error rendering output", e);
         }
     }
 
@@ -214,14 +237,23 @@ public class AreaTreeBuilder extends AbstractLogEnabled {
 
 // this loads an area tree from an xml file
 // the xml format is the same as the xml renderer output
-class TreeLoader extends AbstractLogEnabled {
+class TreeLoader {
     private AreaTree areaTree;
     private AreaTreeModel model;
     private Document fontInfo;
     private Font currentFontState;
+    private Log logger = null;
 
     TreeLoader(Document fi) {
         fontInfo = fi;
+    }
+
+    /**
+     * Sets the Commons-Logging instance for this class
+     * @param logger The Commons-Logging instance
+     */
+    public void setLogger(Log logger) {
+        this.logger = logger;
     }
 
     public void setTreeModel(AreaTreeModel mo) {
@@ -720,7 +752,7 @@ class TreeLoader extends AbstractLogEnabled {
                       Trait.makeTraitValue(traitCode,
                                tok.substring(index + 1)));
             } else {
-                getLogger().error("Unknown trait: " + id);
+                logger.error("Unknown trait: " + id);
             }
         }
     }

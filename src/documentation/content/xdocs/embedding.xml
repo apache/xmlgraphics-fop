@@ -71,7 +71,7 @@ args[1] contains a path for the target PDF file.
       You also need to set up logging. Global logging for all FOP
       processes is managed by MessageHandler. Per-instance logging
       is handled by Driver. You want to set both using an implementation
-      of org.apache.avalon.framework.logger.Logger. See 
+      of org.apache.commons.logging.Log. See 
       <jump href="#logging">below</jump> for more information.
     </p>
     <p>
@@ -79,13 +79,13 @@ args[1] contains a path for the target PDF file.
       instantiating the Driver object. See here:
     </p>
     <source><![CDATA[
-import org.apache.avalon.framework.logger.Logger; 
-import org.apache.avalon.framework.logger.ConsoleLogger; 
+import org.apache.commons.logging.Log; 
+import org.apache.commons.logging.impl.SimpleLog; 
 
 /*..*/
 
 Driver driver = new Driver();
-Logger logger = new ConsoleLogger(ConsoleLogger.LEVEL_INFO);
+Log logger = new SimpleLog(SimpleLog.LOG_LEVEL_INFO);
 MessageHandler.setScreenLogger(logger);
 driver.setLogger(logger);]]></source>
   </section>
@@ -167,7 +167,7 @@ transformer.transform(src, res);]]></source>
       for more information.
     </p>
     <p>
-      Per default FOP uses the ConsoleLogger which logs to System.out. If you want to do logging using a
+      Per default FOP uses the SimpleLog which logs to System.out. If you want to do logging using a
       logging framework (such as LogKit, Log4J or JDK 1.4 Logging) you can set a
       different Logger implementation on the Driver object. Here's an example how you would use LogKit:
     </p>

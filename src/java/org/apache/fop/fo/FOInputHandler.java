@@ -18,9 +18,6 @@
 
 package org.apache.fop.fo;
 
-// Avalon
-import org.apache.avalon.framework.logger.AbstractLogEnabled;
-
 // FOP
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.fo.flow.BasicLink;
@@ -41,6 +38,7 @@ import org.apache.fop.fo.flow.TableCell;
 import org.apache.fop.fo.flow.TableRow;
 import org.apache.fop.fo.pagination.Flow;
 import org.apache.fop.fo.pagination.PageSequence;
+import org.apache.commons.logging.Log;
 
 import org.xml.sax.SAXException;
 
@@ -55,11 +53,16 @@ import org.xml.sax.SAXException;
  * handler that builds a structured (as opposed to formatted) document, such
  * as our MIF and RTF output targets.
  */
-public abstract class FOInputHandler extends AbstractLogEnabled {
+public abstract class FOInputHandler {
     /**
      * The FOTreeControl object that is controlling the FO Tree being built
      */
     public FOTreeControl foTreeControl = null;
+
+    /**
+     * logging instance
+     */
+    protected Log logger = null;
 
     /**
      * Main constructor
@@ -68,6 +71,22 @@ public abstract class FOInputHandler extends AbstractLogEnabled {
      */
     public FOInputHandler(FOTreeControl foTreeControl) {
         this.foTreeControl = foTreeControl;
+    }
+
+    /**
+     * Sets the Commons-Logging instance for this class
+     * @param logger The Commons-Logging instance
+     */
+    public void setLogger(Log logger) {
+        this.logger = logger;
+    }
+
+    /**
+     * Returns the Commons-Logging instance for this class
+     * @return  The Commons-Logging instance
+     */
+    protected Log getLogger(Log logger) {
+        return logger;
     }
 
     /**

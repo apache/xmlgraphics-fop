@@ -22,8 +22,7 @@ package org.apache.fop.apps;
 import java.io.BufferedOutputStream;
 import java.io.FileOutputStream;
 
-// Avalon
-import org.apache.avalon.framework.logger.ConsoleLogger;
+import org.apache.commons.logging.impl.SimpleLog;
 
 // FOP
 import org.apache.fop.render.awt.AWTRenderer;
@@ -46,7 +45,10 @@ public class Fop {
 
         try {
             Driver driver = new Driver();
-            driver.enableLogging(new ConsoleLogger(ConsoleLogger.LEVEL_INFO));
+            SimpleLog log = new SimpleLog("FOP");
+            log.setLevel(SimpleLog.LOG_LEVEL_INFO);
+            driver.setLogger(log);
+            
             driver.getLogger().info(version);
             options = new CommandLineOptions(args);
             inputHandler = options.getInputHandler();

@@ -29,8 +29,7 @@ import java.util.Set;
 import java.util.Collections;
 import java.util.Iterator;
 
-// Avalon
-import org.apache.avalon.framework.logger.Logger;
+import org.apache.commons.logging.Log;
 
 // FOP
 import org.apache.fop.image.analyser.ImageReaderFactory;
@@ -130,7 +129,7 @@ public class ImageFactory {
      * @return the fop image instance
      */
     public static FopImage loadImage(String href, FOUserAgent ua) {
-        Logger log = ua.getLogger();
+        Log log = ua.getLogger();
 
         InputStream in = openStream(href, ua);
 
@@ -215,7 +214,7 @@ public class ImageFactory {
      * @return a new FopImage object
      */
     protected static InputStream openStream(String href, FOUserAgent ua) {
-        Logger log = ua.getLogger();
+        Log log = ua.getLogger();
         // Get the absolute URL
         URL absoluteURL = null;
         InputStream in = null;

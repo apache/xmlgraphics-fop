@@ -29,7 +29,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.avalon.framework.logger.Logger;
+import org.apache.commons.logging.Log;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.fo.ElementMapping.Maker;
@@ -89,7 +89,7 @@ public class FOTreeBuilder extends DefaultHandler {
         setupDefaultMappings();
     }
 
-    private Logger getLogger() {
+    private Log getLogger() {
         return userAgent.getLogger();
     }
 

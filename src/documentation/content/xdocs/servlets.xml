@@ -89,7 +89,7 @@ protected Logger log;
 protected TransformerFactory transformerFactory;
 
 public void init() throws ServletException {
-    this.log = new ConsoleLogger(ConsoleLogger.LEVEL_WARN);
+    this.log = new SimpleLog(SimpleLog.LOG_LEVEL_WARN);
     this.transformerFactory = TransformerFactory.newInstance();
 }
 

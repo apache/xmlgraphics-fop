@@ -37,6 +37,8 @@ import org.apache.fop.area.inline.Viewport;
 import org.apache.fop.area.inline.TextArea;
 import org.apache.fop.fo.FOTreeControl;
 import org.apache.fop.apps.FOUserAgent;
+import org.apache.commons.logging.Log;
+
 
 /**
  * Interface implemented by all renderers. This interface is used to control
@@ -185,6 +187,13 @@ public interface Renderer {
      * @param cont  The inline container area
      */
     void renderContainer(Container cont);
+    
+    /**
+     * Tells the renderer to render an inline container.
+     *
+     * @param cont  The inline container area
+     */
+    void setLogger(Log logger);
 
 }
 

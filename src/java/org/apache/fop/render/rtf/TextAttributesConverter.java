@@ -20,8 +20,8 @@
 package org.apache.fop.render.rtf;
 
 //FOP
-import org.apache.avalon.framework.logger.Logger;
-import org.apache.avalon.framework.logger.ConsoleLogger;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.impl.SimpleLog;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.fo.Constants;
 import org.apache.fop.fo.PropertyList;
@@ -49,7 +49,7 @@ import org.apache.fop.render.rtf.rtflib.rtfdoc.RtfText;
  */
 
 class TextAttributesConverter {
-    private static Logger log = new ConsoleLogger();
+    private static Log log = new SimpleLog("FOP/RTF");
 
     /**
      * Converts all known text FO properties to RtfAttributes

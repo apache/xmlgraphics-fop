@@ -108,7 +108,8 @@ public class PDFTranscoder extends AbstractFOPTranscoder
         throws TranscoderException {
 
         graphics = new PDFDocumentGraphics2D();
-        ContainerUtil.enableLogging(graphics, getLogger());
+        graphics.setLogger(getLogger());
+        
         try {
             if (this.cfg != null) {
                 ContainerUtil.configure(graphics, this.cfg);

@@ -20,7 +20,7 @@ package org.apache.fop.svg;
 
 import org.apache.fop.apps.FOFileHandler;
 import org.apache.batik.bridge.UserAgentAdapter;
-import org.apache.avalon.framework.logger.Logger;
+import org.apache.commons.logging.Log;
 
 // Java
 import java.awt.geom.AffineTransform;
@@ -34,17 +34,17 @@ import java.awt.Dimension;
  */
 public class SVGUserAgent extends UserAgentAdapter {
     private AffineTransform currentTransform = null;
-    private Logger logger;
+    private Log logger;
     private float pixelUnitToMillimeter = 0.0f;
 
     /**
      * Creates a new SVGUserAgent.
-     * @param log an Avalon logging instance
+     * @param log an Commons logging instance
      * @param pixelUnitToMM The pixel to millimeter conversion factor 
      *                  currently in effect
      * @param at the current transform
      */
-    public SVGUserAgent(Logger log, float pixelUnitToMM, AffineTransform at) {
+    public SVGUserAgent(Log log, float pixelUnitToMM, AffineTransform at) {
         logger = log;
         pixelUnitToMillimeter = pixelUnitToMM;
         currentTransform = at;
@@ -54,7 +54,7 @@ public class SVGUserAgent extends UserAgentAdapter {
      * Returns the logger associated with this user agent.
      * @return Logger the logger
      */
-    protected final Logger getLogger() {
+    protected final Log getLogger() {
         return logger;
     }
 

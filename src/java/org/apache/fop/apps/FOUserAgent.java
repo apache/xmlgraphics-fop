@@ -23,9 +23,7 @@ import java.util.Map;
 import java.io.IOException;
 import java.io.InputStream;
 
-// Avalon
-import org.apache.avalon.framework.logger.LogEnabled;
-import org.apache.avalon.framework.logger.Logger;
+import org.apache.commons.logging.Log;
 
 // FOP
 import org.apache.fop.pdf.PDFEncryptionParams;
@@ -50,9 +48,9 @@ import org.apache.fop.pdf.PDFEncryptionParams;
  * These areas may contain resolveable areas that will be processed
  * with other resolveable areas
  */
-public class FOUserAgent implements LogEnabled {
+public class FOUserAgent {
 
-    private Logger log;
+    private Log log;
     /** Map containing various default values */
     public Map defaults = new java.util.HashMap();
     /** Map containing XML handlers for various document types */
@@ -64,18 +62,16 @@ public class FOUserAgent implements LogEnabled {
     /**
      * Sets the logger.
      * @param log Logger to use
-     * @see org.apache.avalon.framework.logger.LogEnabled#enableLogging(Logger)
      */
-    public void enableLogging(Logger log) {
+    public void setLogger(Log log) {
         this.log = log;
     }
 
     /**
      * Returns the logger to use.
-     * @see org.apache.avalon.framework.logger.AbstractLogEnabled#getLogger()
      * (todo) This breaks IoC/SoC. Should be improved.
      */
-    public Logger getLogger() {
+    public Log getLogger() {
         return this.log;
     }
 

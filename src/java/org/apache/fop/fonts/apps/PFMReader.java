@@ -32,10 +32,8 @@ import javax.xml.transform.TransformerFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
-//Avalon
-import org.apache.avalon.framework.logger.AbstractLogEnabled;
-import org.apache.avalon.framework.logger.Logger;
-import org.apache.avalon.framework.logger.ConsoleLogger;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.impl.SimpleLog;
 
 //FOP
 import org.apache.fop.fonts.type1.PFMFile;
@@ -44,8 +42,29 @@ import org.apache.fop.fonts.type1.PFMFile;
  * A tool which reads PFM files from Adobe Type 1 fonts and creates
  * XML font metrics file for use in FOP.
  */
-public class PFMReader extends AbstractLogEnabled {
+public class PFMReader {
     
+    /**
+     * logging instance
+     */
+    protected Log logger = null;
+
+    /**
+     * Sets the Commons-Logging instance for this class
+     * @param logger The Commons-Logging instance
+     */
+    public void setLogger(Log logger) {
+        this.logger = logger;
+    }
+
+    /**
+     * Returns the Commons-Logging instance for this class
+     * @return  The Commons-Logging instance
+     */
+    protected Log getLogger(Log logger) {
+        return logger;
+    }
+
     /**
      * Parse commandline arguments. put options in the HashMap and return
      * arguments in the String array
@@ -72,15 +91,17 @@ public class PFMReader extends AbstractLogEnabled {
     }
 
     private void displayUsage() {
-        getLogger().info(
-            " java org.apache.fop.fonts.apps.PFMReader [options] metricfile.pfm xmlfile.xml");
-        getLogger().info(" where options can be:");
-        getLogger().info(" -fn <fontname>");
-        getLogger().info("     default is to use the fontname in the .pfm file, but");
-        getLogger().info("     you can override that name to make sure that the");
-        getLogger().info("     embedded font is used (if you're embedding fonts)");
-        getLogger().info("     instead of installed fonts when viewing documents ");
-        getLogger().info("     with Acrobat Reader.");
+        if (logger != null && logger.isInfoEnabled()) {
+            logger.info(
+                " java org.apache.fop.fonts.apps.PFMReader [options] metricfile.pfm xmlfile.xml");
+            logger.info(" where options can be:");
+            logger.info(" -fn <fontname>");
+            logger.info("     default is to use the fontname in the .pfm file, but");
+            logger.info("     you can override that name to make sure that the");
+            logger.info("     embedded font is used (if you're embedding fonts)");
+            logger.info("     instead of installed fonts when viewing documents ");
+            logger.info("     with Acrobat Reader.");
+        }
     }
 
 
@@ -113,13 +134,15 @@ public class PFMReader extends AbstractLogEnabled {
         String[] arguments = parseArguments(options, args);
 
         PFMReader app = new PFMReader();
-        Logger log;
+        Log log;
         if (options.get("-d") != null) {
-            log = new ConsoleLogger(ConsoleLogger.LEVEL_DEBUG);
+            log = new SimpleLog("FOP/Fonts");
+            ((SimpleLog) log).setLevel(SimpleLog.LOG_LEVEL_DEBUG);
         } else {
-            log = new ConsoleLogger(ConsoleLogger.LEVEL_INFO);
+            log = new SimpleLog("FOP/Fonts");
+            ((SimpleLog) log).setLevel(SimpleLog.LOG_LEVEL_INFO);
         }
-        app.enableLogging(log);
+        app.setLogger(log);
 
         log.info("PFM Reader v1.1a");
         log.info("");
@@ -170,12 +193,12 @@ public class PFMReader extends AbstractLogEnabled {
      * @throws IOException In case of an I/O problem
      */
     public PFMFile loadPFM(String filename) throws IOException {
-        getLogger().info("Reading " + filename + "...");
-        getLogger().info("");
+        logger.info("Reading " + filename + "...");
+        logger.info("");
         InputStream in = new java.io.FileInputStream(filename);
         try {
             PFMFile pfm = new PFMFile();
-            setupLogger(pfm);
+            pfm.setLogger(logger);
             pfm.load(in);
             return pfm;
         } finally {
@@ -189,19 +212,21 @@ public class PFMReader extends AbstractLogEnabled {
      * @param   pfm The PFM file to preview.
      */
     public void preview(PFMFile pfm) {
-        getLogger().info("Font: " + pfm.getWindowsName());
-        getLogger().info("Name: " + pfm.getPostscriptName());
-        getLogger().info("CharSet: " + pfm.getCharSetName());
-        getLogger().info("CapHeight: " + pfm.getCapHeight());
-        getLogger().info("XHeight: " + pfm.getXHeight());
-        getLogger().info("LowerCaseAscent: " + pfm.getLowerCaseAscent());
-        getLogger().info("LowerCaseDescent: " + pfm.getLowerCaseDescent());
-        getLogger().info("Having widths for " + (pfm.getLastChar() - pfm.getFirstChar()) 
-                    + " characters (" + pfm.getFirstChar()
-                    + "-" + pfm.getLastChar() + ").");
-        getLogger().info("for example: Char " + pfm.getFirstChar()
-                    + " has a width of " + pfm.getCharWidth(pfm.getFirstChar()));
-        getLogger().info("");
+        if (logger != null & logger.isInfoEnabled()) {
+            logger.info("Font: " + pfm.getWindowsName());
+            logger.info("Name: " + pfm.getPostscriptName());
+            logger.info("CharSet: " + pfm.getCharSetName());
+            logger.info("CapHeight: " + pfm.getCapHeight());
+            logger.info("XHeight: " + pfm.getXHeight());
+            logger.info("LowerCaseAscent: " + pfm.getLowerCaseAscent());
+            logger.info("LowerCaseDescent: " + pfm.getLowerCaseDescent());
+            logger.info("Having widths for " + (pfm.getLastChar() - pfm.getFirstChar()) 
+                        + " characters (" + pfm.getFirstChar()
+                        + "-" + pfm.getLastChar() + ").");
+            logger.info("for example: Char " + pfm.getFirstChar()
+                        + " has a width of " + pfm.getCharWidth(pfm.getFirstChar()));
+            logger.info("");
+       }
     }
 
     /**
@@ -213,8 +238,8 @@ public class PFMReader extends AbstractLogEnabled {
      */
     public void writeFontXML(org.w3c.dom.Document doc, String target) 
                 throws TransformerException {
-        getLogger().info("Writing xml font file " + target + "...");
-        getLogger().info("");
+        logger.info("Writing xml font file " + target + "...");
+        logger.info("");
 
         TransformerFactory factory = TransformerFactory.newInstance();
         Transformer transformer = factory.newTransformer();
@@ -235,15 +260,15 @@ public class PFMReader extends AbstractLogEnabled {
      */
     public org.w3c.dom.Document constructFontXML(PFMFile pfm,
             String fontName, String className, String resource, String file) {
-        getLogger().info("Creating xml font file...");
-        getLogger().info("");
+        logger.info("Creating xml font file...");
+        logger.info("");
 
         Document doc;
         try {
             DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
             doc = factory.newDocumentBuilder().newDocument();
         } catch (javax.xml.parsers.ParserConfigurationException e) {
-            getLogger().error("Can't create DOM implementation", e);
+            logger.error("Can't create DOM implementation", e);
             return null;
         }
         Element root = doc.createElement("font-metrics");

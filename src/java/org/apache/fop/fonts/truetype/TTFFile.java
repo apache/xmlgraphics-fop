@@ -23,9 +23,8 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.List;
 
-import org.apache.avalon.framework.logger.AbstractLogEnabled;
-import org.apache.avalon.framework.logger.ConsoleLogger;
-import org.apache.avalon.framework.logger.Logger;
+import org.apache.commons.logging.impl.SimpleLog;
+import org.apache.commons.logging.Log;
 import org.apache.fop.fonts.Glyphs;
 
 /**
@@ -33,7 +32,7 @@ import org.apache.fop.fonts.Glyphs;
  * The TrueType spec can be found at the Microsoft.
  * Typography site: http://www.microsoft.com/truetype/
  */
-public class TTFFile extends AbstractLogEnabled {
+public class TTFFile {
 
     static final byte NTABS = 24;
     static final int NMACGLYPHS = 258;
@@ -101,6 +100,27 @@ public class TTFFile extends AbstractLogEnabled {
     private TTFDirTabEntry currentDirTab;
 
     /**
+     * logging instance
+     */
+    protected Log logger = null;
+
+    /**
+     * Sets the Commons-Logging instance for this class
+     * @param logger The Commons-Logging instance
+     */
+    public void setLogger(Log logger) {
+        this.logger = logger;
+    }
+
+    /**
+     * Returns the Commons-Logging instance for this class
+     * @return  The Commons-Logging instance
+     */
+    protected Log getLogger() {
+        return logger;
+    }
+
+    /**
      * Position inputstream to position indicated
      * in the dirtab offset + offset
      */
@@ -108,7 +128,9 @@ public class TTFFile extends AbstractLogEnabled {
                   long offset) throws IOException {
         TTFDirTabEntry dt = (TTFDirTabEntry)dirTabs.get(name);
         if (dt == null) {
-            getLogger().error("Dirtab " + name + " not found.");
+            if (logger != null) {
+                logger.error("Dirtab " + name + " not found.");
+            }
         } else {
             in.seekSet(dt.getOffset() + offset);
             this.currentDirTab = dt;
@@ -153,7 +175,9 @@ public class TTFFile extends AbstractLogEnabled {
         int numCMap = in.readTTFUShort();    // Number of cmap subtables
         long cmapUniOffset = 0;
 
-        getLogger().info(numCMap + " cmap tables");
+        if (logger != null) {
+            logger.info(numCMap + " cmap tables");
+        }
 
         //Read offset for all tables. We are only interested in the unicode table
         for (int i = 0; i < numCMap; i++) {
@@ -161,8 +185,10 @@ public class TTFFile extends AbstractLogEnabled {
             int cmapEID = in.readTTFUShort();
             long cmapOffset = in.readTTFULong();
 
-            getLogger().debug("Platform ID: " + cmapPID
-                + " Encoding: " + cmapEID);
+            if (logger != null) {
+                logger.debug("Platform ID: " + cmapPID
+                    + " Encoding: " + cmapEID);
+            }
 
             if (cmapPID == 3 && cmapEID == 1) {
                 cmapUniOffset = cmapOffset;
@@ -170,8 +196,10 @@ public class TTFFile extends AbstractLogEnabled {
         }
 
         if (cmapUniOffset <= 0) {
-            getLogger().fatalError("Unicode cmap table not present");
-            getLogger().fatalError("Unsupported format: Aborting");
+            if (logger != null) {
+                logger.fatal("Unicode cmap table not present");
+                logger.fatal("Unsupported format: Aborting");
+            }
             return false;
         }
 
@@ -180,7 +208,10 @@ public class TTFFile extends AbstractLogEnabled {
         int cmapFormat = in.readTTFUShort();
         /*int cmap_length =*/ in.readTTFUShort(); //skip cmap length
 
-        getLogger().info("CMAP format: " + cmapFormat);
+        if (logger != null) {
+            logger.info("CMAP format: " + cmapFormat);
+        }
+
         if (cmapFormat == 4) {
             in.skip(2);    // Skip version number
             int cmapSegCountX2 = in.readTTFUShort();
@@ -188,11 +219,11 @@ public class TTFFile extends AbstractLogEnabled {
             int cmapEntrySelector = in.readTTFUShort();
             int cmapRangeShift = in.readTTFUShort();
 
-            if (getLogger().isDebugEnabled()) {
-                getLogger().debug("segCountX2   : " + cmapSegCountX2);
-                getLogger().debug("searchRange  : " + cmapSearchRange);
-                getLogger().debug("entrySelector: " + cmapEntrySelector);
-                getLogger().debug("rangeShift   : " + cmapRangeShift);
+            if (logger != null & logger.isDebugEnabled()) {
+                logger.debug("segCountX2   : " + cmapSegCountX2);
+                logger.debug("searchRange  : " + cmapSearchRange);
+                logger.debug("entrySelector: " + cmapEntrySelector);
+                logger.debug("rangeShift   : " + cmapRangeShift);
             }
 
 
@@ -228,8 +259,10 @@ public class TTFFile extends AbstractLogEnabled {
 
             for (int i = 0; i < cmapStartCounts.length; i++) {
 
-                getLogger().debug(i + ": " + cmapStartCounts[i]
-                    + " - " + cmapEndCounts[i]);
+                if (logger != null) {
+                    logger.debug(i + ": " + cmapStartCounts[i]
+                        + " - " + cmapEndCounts[i]);
+                }
 
                 for (int j = cmapStartCounts[i]; j <= cmapEndCounts[i]; j++) {
 
@@ -265,8 +298,8 @@ public class TTFFile extends AbstractLogEnabled {
                                     ansiWidth[aIdx.intValue()] =
                                         mtxTab[glyphIdx].getWx();
 
-                                    if (getLogger().isDebugEnabled()) {
-                                        getLogger().debug("Added width "
+                                    if (logger != null) {
+                                        logger.debug("Added width "
                                             + mtxTab[glyphIdx].getWx()
                                             + " uni: " + j
                                             + " ansi: " + aIdx.intValue());
@@ -274,8 +307,8 @@ public class TTFFile extends AbstractLogEnabled {
                                 }
                             }
 
-                            if (getLogger().isDebugEnabled()) {
-                                getLogger().debug("Idx: "
+                            if (logger != null) {
+                                logger.debug("Idx: "
                                     + glyphIdx
                                     + " Delta: " + cmapDeltas[i]
                                     + " Unicode: " + j
@@ -1256,11 +1289,12 @@ public class TTFFile extends AbstractLogEnabled {
      * @param args The command line arguments
      */
     public static void main(String[] args) {
-        int level = ConsoleLogger.LEVEL_WARN;
-        Logger log = new ConsoleLogger(level);
+        SimpleLog log = new SimpleLog("FOP/Fonts");
+        log.setLevel(SimpleLog.LOG_LEVEL_WARN);
+        
         try {
             TTFFile ttfFile = new TTFFile();
-            ttfFile.enableLogging(log);
+            ttfFile.setLogger(log);
 
             FontFileReader reader = new FontFileReader(args[0]);
 

@@ -28,8 +28,7 @@ import java.awt.Color;
 // Jimi
 import com.sun.jimi.core.Jimi;
 
-// Avalon
-import org.apache.avalon.framework.logger.Logger;
+import org.apache.commons.logging.Log;
 
 /**
  * FopImage object for several images types, using Jimi.
@@ -49,7 +48,7 @@ public class JimiImage extends AbstractFopImage {
         }
     }
 
-    protected boolean loadDimensions(Logger logger) {
+    protected boolean loadDimensions(Log logger) {
         if (this.bitmaps == null) {
             loadImage(logger);
         }
@@ -60,7 +59,7 @@ public class JimiImage extends AbstractFopImage {
     /**
      * @see org.apache.fop.image.AbstractFopImage#loadBitmap(Logger)
      */
-    protected boolean loadBitmap(Logger logger) {
+    protected boolean loadBitmap(Log logger) {
         if (this.bitmaps == null) {
             loadImage(logger);
         }
@@ -68,7 +67,7 @@ public class JimiImage extends AbstractFopImage {
         return this.bitmaps != null;
     }
 
-    protected void loadImage(Logger log) {
+    protected void loadImage(Log log) {
         int[] tmpMap = null;
         try {
             ImageProducer ip =
