@@ -62,8 +62,7 @@ public class BorderWidthPropertyMaker extends LengthProperty.Maker {
         // Calculate the values as described in 7.7.20.
         Property style = propertyList.get(borderStyleId);
         if (style.getEnum() == Constants.NONE) {
-            // TODO: bckfnn reenable
-            return p; // new LengthProperty(new FixedLength(0));
+            return new FixedLength(0);
         }
         return p;
     }
