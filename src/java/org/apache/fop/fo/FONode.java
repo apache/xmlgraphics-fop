@@ -24,7 +24,6 @@ import java.util.Iterator;
 import java.util.logging.Logger;
 
 import org.apache.fop.apps.FOPException;
-import org.apache.fop.apps.Fop;
 import org.apache.fop.datastructs.ROBitSet;
 import org.apache.fop.datastructs.SyncedNode;
 import org.apache.fop.datastructs.TreeException;
@@ -53,7 +52,6 @@ public class FONode extends SyncedNode{
     private static final String tag = "$Name:  $";
     private static final String revision = "$Revision: 1.19.2.33 $";
 
-    protected Logger log = Logger.getLogger(Fop.fopPackage);
     /**
      * State flags: a bit set of states applicable during FO tree build.
      * N.B. States must be powers of 2.
@@ -111,7 +109,9 @@ public class FONode extends SyncedNode{
      * The FO Tree
      */
     protected final FOTree foTree;
-    
+
+    protected final Logger log;
+
     /** The buffer from which parser events are drawn. */
     protected final XmlEventReader xmlevents;
 
@@ -207,6 +207,7 @@ public class FONode extends SyncedNode{
     {
         super(parent, foTree);
         this.foTree = foTree;
+        this.log = foTree.getLogger();
         this.type = type;
         this.stateFlags = stateFlags;
         this.sparsePropsMap = sparsePropsMap;
