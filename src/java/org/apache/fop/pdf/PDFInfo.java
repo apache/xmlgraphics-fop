@@ -51,6 +51,8 @@
 package org.apache.fop.pdf;
 
 import java.util.Date;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 
 /**
@@ -68,18 +70,11 @@ public class PDFInfo extends PDFObject {
     private String subject = null;
     private String keywords = null;
 
-    // the name of the application that created the
-    // original document before converting to PDF
-    private String creator;
-
     /**
-     * create an Info object
-     *
-     * @param number the object's number
+     * the name of the application that created the
+     * original document before converting to PDF
      */
-    public PDFInfo(int number) {
-        super(number);
-    }
+    private String creator;
 
     /**
      * set the producer string
@@ -136,39 +131,55 @@ public class PDFInfo extends PDFObject {
     }
 
     /**
-     * produce the PDF representation of the object
-     *
-     * @return the PDF
+     * @see org.apache.fop.pdf.PDFObject#toPDF()
      */
     public byte[] toPDF() {
-        String p = this.number + " " + this.generation
-                   + " obj\n<< /Type /Info\n";
-        if (title != null) {
-            p += "/Title (" + this.title + ")\n";
+        ByteArrayOutputStream bout = new ByteArrayOutputStream(128);
+        try {
+            bout.write(encode(getObjectID()));
+            bout.write(encode("<< /Type /Info\n"));
+            if (title != null) {
+                bout.write(encode("/Title "));
+                bout.write(encodeText(this.title));
+                bout.write(encode("\n"));
+            }
+            if (author != null) {
+                bout.write(encode("/Author "));
+                bout.write(encodeText(this.author));
+                bout.write(encode("\n"));
+            }
+            if (subject != null) {
+                bout.write(encode("/Subject "));
+                bout.write(encodeText(this.subject));
+                bout.write(encode("\n"));
+            }
+            if (keywords != null) {
+                bout.write(encode("/Keywords "));
+                bout.write(encodeText(this.keywords));
+                bout.write(encode("\n"));
+            }
+    
+            if (creator != null) {
+                bout.write(encode("/Creator "));
+                bout.write(encodeText(this.creator));
+                bout.write(encode("\n"));
+            }
+    
+            bout.write(encode("/Producer "));
+            bout.write(encodeText(this.producer));
+            bout.write(encode("\n"));
+    
+            // creation date in form (D:YYYYMMDDHHmmSSOHH'mm')
+            final Date date = new Date();
+            final SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmss");
+            final String str = sdf.format(date) + "+00'00'";
+            bout.write(encode("/CreationDate "));
+            bout.write(encodeString("D:" + str));
+            bout.write(encode("\n>>\nendobj\n"));
+        } catch (IOException ioe) {
+            getDocumentSafely().getLogger().error("Ignored I/O exception", ioe);
         }
-        if (author != null) {
-            p += "/Author (" + this.author + ")\n";
-        }
-        if (subject != null) {
-            p += "/Subject (" + this.subject + ")\n";
-        }
-        if (keywords != null) {
-            p += "/Keywords (" + this.keywords + ")\n";
-        }
-
-        if (creator != null) {
-            p += "/Creator (" + this.creator + ")\n";
-        }
-
-        p += "/Producer (" + this.producer + ")\n";
-
-        // creation date in form (D:YYYYMMDDHHmmSSOHH'mm')
-        Date date = new Date();
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddhhmmss");
-        String str = sdf.format(date) + "+00'00'";
-        p += "/CreationDate (D:" + str + ")";
-        p += " >>\nendobj\n";
-        return p.getBytes();
+        return bout.toByteArray();
     }
 }
 
