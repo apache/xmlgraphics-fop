@@ -37,6 +37,16 @@ public class TestConverter {
     String baseDir = "./";
     Hashtable differ = new Hashtable();
 
+    /**
+     * This main method can be used to run the test converter from
+     * the command line.
+     * This will take a specified testsuite xml and process all
+     * tests in it.
+     * The command line options are:
+     * -b to set the base directory for where the testsuite and associated files are
+     * -failOnly to process only the tests which are specified as fail in the test results
+     * -pdf to output the result as pdf
+     */
     public static void main(String[] args) {
         if (args == null || args.length == 0) {
             System.out.println("test suite file name required");
@@ -194,6 +204,10 @@ public class TestConverter {
             } else {
                 driver.setRenderer(Driver.RENDER_XML);
             }
+
+            Hashtable rendererOptions = new Hashtable();
+            rendererOptions.put("fineDetail", new Boolean(false));
+            driver.getRenderer().setOptions(rendererOptions);
 
             driver.buildFOTree(parser, inputHandler.getInputSource());
             driver.format();
