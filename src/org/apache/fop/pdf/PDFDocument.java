@@ -638,7 +638,7 @@ public class PDFDocument {
         Vector theFunctions = new Vector();
 
         int currentPosition;
-        int lastPosition = theColors.size()-2;
+        int lastPosition = theColors.size()-1;
 
 
         //if 5 elements, the penultimate element is 3.
