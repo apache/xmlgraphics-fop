@@ -220,7 +220,7 @@ abstract public class Area extends Box {
         this.absoluteHeight += amount;
     }
 
-    protected void removeChild(Area area) {
+    public void removeChild(Area area) {
 	this.currentHeight -= area.getHeight();
         this.absoluteHeight -= area.getHeight();
 	this.children.removeElement(area);
