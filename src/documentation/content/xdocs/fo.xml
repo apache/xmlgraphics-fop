@@ -12,7 +12,8 @@
       <p>
         FOP uses XSL-FO as input.
 It is the responsibility of the user to make sure that the XSL-FO submitted to FOP is correct.
-The tutorial items presented here are not comprehensive, but are of the FAQ variety.
+The tutorial items presented here are not comprehensive, but are of the FAQ variety. Another 
+good FAQ is <fork href="http://www.dpawson.co.uk/xsl/xslfaq.html">Dave Pawson's XSL FAQ</fork>.
       </p>
     </section>
     <section id="xml">
@@ -325,7 +326,7 @@ To accomplish this, place an empty block with an id at the end of the flow:
         <p>
           Get the number of the last page as follows:
         </p>
-        <source><![CDATA[ <fo:page-nuber-citation ref-id="last-page"/>]]></source>
+        <source><![CDATA[ <fo:page-number-citation ref-id="last-page"/>]]></source>
         <p>
           This does not work in certain situations: multiple page sequences, an initial page number other than 1, or forcing a certain page count, thereby producing blank pages at the end.
         </p>
@@ -420,6 +421,28 @@ This applies similarly to the extent of the after region and the bottom margin o
 This document can be used either to validate against the FO standard, or against the actual FOP implementation.
 See the notes near the beginning of the document for instructions on how to use it.
           </p>
+      </section>
+      <section id="landscape">
+        <title>Producing landscape pages</title>
+        <p>
+          Pages in landscape format can easily be produced by exchanging the page-height and page-width values of a simple-page-master element.
+        </p>
+        <source><![CDATA[<fo:layout-master-set>
+  <fo:simple-page-master master-name="A4-portrait" page-height="29.7cm" page-width="21cm" [..]>
+    <fo:region-body/>
+  </fo:simple-page-master>
+  <fo:simple-page-master master-name="A4-landscape" page-height="21cm" page-width="29.7cm" [..]>
+    <fo:region-body/>
+  </fo:simple-page-master>
+</fo:layout-master-set>]]></source>
+      </section>
+      <section id="external-resources">
+        <title>External Resources</title>
+        <p>Resources needed by an XSL-FO file that are external to it (graphics, for example), are defined in the XSL-FO standard as being of type "uri-specification". This is defined in the standard at <jump href="http://www.w3.org/TR/2001/REC-xsl-20011015/slice5.html#section-N8794-Property-Datatypes">Section 5.11 Property Datatypes</jump>, which includes a link to the URI standard itself. Refer to the XSL-FO and URI standards themselves for more detailed instructions.</p>
+        <p>URIs may be either absolute or relative to a base URI. (See <link href="configuration.html">FOP: Configuration</link> for information on setting the base URI for a FOP session). Here is an example referencing an external-graphic that is relative to the base URI:</p>
+        <source><![CDATA[<fo:external-graphic src="url('images/logo.jpg')"/>]]></source>
+        <p>Here is an example referencing an external-graphic that is an absolute URI on a local filesystem:</p>
+        <source><![CDATA[fo:external-graphic src="url('file:d:///images/logo.jpg')"/>]]></source>
       </section>
     </section>
   </body>
