@@ -116,6 +116,10 @@ inactive??
   <changes>
    <release version="?" date="2003">
     <action context="code" dev="JM" type="fix">
+      Fixed bug #16257: Get ascender/descender from OS/2 table if the ones in
+      hhea are zero (TrueType fonts).
+    </action>
+    <action context="code" dev="JM" type="fix">
       Fixed bug #15877: ArrayIndexOutOfBoundException with certain TrueType
       fonts. Reserved name indexes were not ignored.
     </action>
