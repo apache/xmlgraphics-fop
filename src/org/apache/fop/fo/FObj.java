@@ -65,76 +65,102 @@ import java.util.Enumeration;
  */
 public class FObj extends FONode {
 
-    public static class Maker {
-	public FObj make(FObj parent, PropertyList propertyList)
-	    throws FOPException {
-	    return new FObj(parent, propertyList);
-	}
+  public static class Maker {
+    public FObj make(FObj parent, PropertyList propertyList)
+        throws FOPException {
+        return new FObj(parent, propertyList);
     }
+  }
 
-    public static Maker maker() {
-	return new Maker();
-    }
+  public static Maker maker() {
+    return new Maker();
+  }
 
 //    protected PropertyList properties;
-    public PropertyList properties;
+  public PropertyList properties;
 
-    protected String name;
+  protected String name;
 
-    protected FObj(FObj parent, PropertyList propertyList) {
-	super(parent);
-	this.properties = propertyList;
-	this.name = "default FO";
+  protected FObj(FObj parent, PropertyList propertyList) {
+    super(parent);
+    this.properties = propertyList;
+    this.name = "default FO";
+  }
+
+  /**
+   *  adds characters (does nothing here) 
+   *  @param data text
+   *  @param start start position
+   *  @param length length of the text 
+   */
+  protected void addCharacters(char data[], int start, int length) {
+    // ignore
+  }
+
+  /**
+   *  generates the area or areas for this formatting object 
+   *  and adds these to the area. This method should always be 
+   *  overridden by all sub classes
+   *  
+   *  @param area 
+   */
+  public Status layout(Area area) throws FOPException {
+    // should always be overridden
+    return new Status(Status.OK);
+  }
+
+  /**
+   *  returns the name of the formatting object
+   *  @return the name of this formatting objects 
+   */
+  public String getName() {
+    return this.name;
+  }
+
+  /**
+   * 
+   */
+  protected void start() {
+    // do nothing by default
+  }
+
+  /**
+   *
+   */
+  protected void end() {
+    // do nothing by default
+  }
+  
+  /**
+   * lets outside sources access the property list
+   * first used by PageNumberCitation to find the "id" property
+   * @param name - the name of the desired property to obtain
+   * @return the property 
+   */
+  public Property getProperty(String name)
+  {
+        return(properties.get(name));
+  }
+
+  
+
+  /**
+   * removes property id 
+   * @param idReferences the id to remove
+   */
+  public void removeID(IDReferences idReferences)
+  {
+      idReferences.removeID( ((FObj)this).properties.get("id").getString());                            
+      int numChildren = this.children.size();
+    for (int i = 0; i < numChildren; i++) 
+      {            
+          FONode child= (FONode)children.elementAt(i);
+          if ((child instanceof FObj))   
+          {
+              ((FObj)child).removeID(idReferences);            
+          }      
     }
-
-    protected void addCharacters(char data[], int start, int length) {
-	// ignore
-    }
-
-    public Status layout(Area area) throws FOPException {
-	// should always be overridden
-	return new Status(Status.OK);
-    }
-
-    public String getName() {
-	return this.name;
-    }
-
-    protected void start() {
-	// do nothing by default
-    }
-
-    protected void end() {
-	// do nothing by default
-    }
-    
-    /**
-    * lets outside sources access the property list
-    * first used by PageNumberCitation to find the "id" property
-    *@param name - the name of the desired property to obtain
-    * @returns the property 
-    */
-    public Property getProperty(String name)
-    {
-    	return(properties.get(name));
-    }
-
-    
-
-    public void removeID(IDReferences idReferences)
-    {
-        idReferences.removeID( ((FObj)this).properties.get("id").getString());                            
-        int numChildren = this.children.size();
-	for (int i = 0; i < numChildren; i++) 
-        {            
-            FONode child= (FONode)children.elementAt(i);
-            if ((child instanceof FObj))   
-            {
-                ((FObj)child).removeID(idReferences);            
-            }	
-	}
-    }
-
+  }
 
 }
 
