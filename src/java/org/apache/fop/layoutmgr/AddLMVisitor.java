@@ -983,9 +983,15 @@ public class AddLMVisitor implements FOTreeVisitor {
      * @param node Wrapper object to process
      */
     public void serveWrapper(Wrapper node) {
-        serveFObjMixed((FObjMixed)node);
+        ListIterator baseIter;
+        baseIter = node.getChildren();
+        if (baseIter == null) return;
+        while (baseIter.hasNext()) {
+            FObj child = (FObj) baseIter.next();
+            child.acceptVisitor(this);
+        }
     }
-
+    
     /**
      * @param node FootnoteBody object to process
      */
