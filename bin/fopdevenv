@@ -4,7 +4,7 @@ unset CLASSPATH
 # N.B. If FOPDEV is unset, it defaults to the current directory.
 #  This will work from the xml-fop base directory if you
 #  . bin/fopdevenv
-FOPDEV=${FOPDEV:-.}; export FOPDEV
+FOPDEV=${FOPDEV:-"`pwd`"}; export FOPDEV
 JAVA_HOME=${JAVA_HOME:?"Set JAVA_HOME and try again"}
 FOPDEVJARS=`find $FOPDEV -follow -name '*.jar'`
 pre_vpath CLASSPATH $FOPDEVJARS $FOPDEV/build/classes $FOPDEV/build/fop.jar $JAVA_HOME/jre/lib/rt.jar
