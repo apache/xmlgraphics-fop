@@ -83,7 +83,6 @@ public class PDFTextPainter implements TextPainter {
             (Float)aci.getAttribute(GVTAttributedCharacterIterator.TextAttribute.X);
         Float ypos =
             (Float)aci.getAttribute(GVTAttributedCharacterIterator.TextAttribute.Y);
-System.out.println("data:" + size + ":" + forg + ":" + xpos + ":" + ypos);
 
         Float posture = (Float)aci.getAttribute(TextAttribute.POSTURE);
         Float taWeight = (Float)aci.getAttribute(TextAttribute.WEIGHT);
