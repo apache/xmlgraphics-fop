@@ -35,6 +35,11 @@ public class RegionReference extends Area implements Serializable {
         this.ctm = ctm;
     }
 
+    public CTM getCTM() {
+        return this.ctm;
+    }
+
+
     // the list of block areas from the static flow
     ArrayList blocks = new ArrayList();
 
