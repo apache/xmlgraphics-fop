@@ -60,23 +60,14 @@ public class Space extends LengthRange {
     public static final int RETAIN = 1;
 
   //private Precedence precedence;
-    private int precedence=0;
+    private Number precedence;
     private int conditionality=DISCARD ;
-
-    /**
-     * set the space values, and make sure that min <= opt <= max
-     */
-  public Space (Length l) {
-	super(l);
+ 
+    public void setPrecedence(Number precedence, boolean bIsDefault) {
+      this.precedence = precedence;
     }
 
-
-  //    public void setPrecedence(Precedence precedence) {
-    public void setPrecedence(Number precedence) {
-	this.precedence = precedence.intValue();
-    }
-
-    public void setConditionality(String conditionality) {
+    public void setConditionality(String conditionality, boolean bIsDefault) {
 	if (conditionality.equals("retain"))
 	    this.conditionality = Space.RETAIN;
 	else if (conditionality.equals("discard"))
@@ -84,8 +75,7 @@ public class Space extends LengthRange {
 	// else unrecognized value
     }
 
-  // public Precedence getPrecedence() {
-    public int getPrecedence() {
+    public Number getPrecedence() {
 	return this.precedence ;
     }
 
