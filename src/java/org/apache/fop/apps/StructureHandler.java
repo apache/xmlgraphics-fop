@@ -122,7 +122,7 @@ abstract public class StructureHandler extends AbstractLogEnabled {
      */
     abstract public void endDocument() throws SAXException;
 
-    abstract public void startPageSequence(PageSequence pageSeq, Title seqTitle, LayoutMasterSet lms);
+    abstract public void startPageSequence(PageSequence pageSeq);
 
     abstract public void endPageSequence(PageSequence pageSeq) throws FOPException;
 

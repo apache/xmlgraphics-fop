@@ -340,7 +340,7 @@ public class PageSequence extends FObj {
      */
     private void startStructuredPageSequence() {
         if (!sequenceStarted) {
-            structHandler.startPageSequence(this, titleFO, layoutMasterSet);
+            structHandler.startPageSequence(this);
             sequenceStarted = true;
         }
     }
@@ -807,5 +807,14 @@ public class PageSequence extends FObj {
     public StaticContent getStaticContent(String name) {
         return (StaticContent)flowMap.get(name);
     }
+
+    public LayoutMasterSet getLayoutMasterSet() {
+        return layoutMasterSet;
+    }
+
+    public Title getTitleFO() {
+        return titleFO;
+    }
+
 }
 

@@ -147,13 +147,13 @@ public class MIFHandler extends StructureHandler {
      * by the following flows and static areas.
      * @see org.apache.fop.apps.StructureHandler
      */
-    public void startPageSequence(PageSequence pageSeq, Title seqTitle, LayoutMasterSet lms) {
+    public void startPageSequence(PageSequence pageSeq) {
         // get the layout master set
         // setup the pages for this sequence
         String name = pageSeq.getProperty("master-reference").getString();
-        SimplePageMaster spm = lms.getSimplePageMaster(name);
+        SimplePageMaster spm = pageSeq.getLayoutMasterSet().getSimplePageMaster(name);
         if (spm == null) {
-            PageSequenceMaster psm = lms.getPageSequenceMaster(name);
+            PageSequenceMaster psm = pageSeq.getLayoutMasterSet().getPageSequenceMaster(name);
         } else {
             // create simple master with regions
             MIFElement prop = new MIFElement("PageType");
