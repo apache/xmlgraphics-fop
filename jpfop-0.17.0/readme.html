@@ -1,0 +1,276 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+<meta HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=iso-8859-1">
+<title>JAPANIZED PATCH for FOP-0.16.0</title>
+</head>
+
+<body>
+<h1>JAPANIZED PATCH for FOP-0.16.0</h1>
+
+
+
+<br><br><br>
+<h1>1. Introduction</h1>
+<p>This patch supports the Type0 fonts for FOP-0.16.0 that is provided <a href="http://xml.apache.org/fop">http://xml.apache.org/fop</a> . When you have patched , you can use following family font name:</p>
+<ul>
+<li>MS-Mincho</li>
+<li>MS-Gothic</li>
+<li>Ryumin-Light</li>
+<li>GothicBBB-Medium</li>
+<li>Osaka</li>
+</ul>
+<p>This patch is tested for compile and create PDF file following environments :</p>
+<ul>
+<li>WindowsNT4.0+SP6a ( Japanese version ) , SUN J2SE,v1.3.0_01</li>
+<li>Solaris2.6 , SUN J2SE,v1.3.0</li>
+</ul>
+
+<p><b>NOTE: </b>It is not possible that this patch works fine for other than Internationalized ( or Localized ) JDK . And if your machine does not support the japanese fonts , this patch can't create the PDF File that written in japanese .</p>
+
+<br><br><br>
+<h1>2. Installation</h1>
+
+<ol>
+<li>Access <a href="http://xml.apache.org/dist/fop/">http://xml.apache.org/dist/fop/</a> , and download <a href="http://xml.apache.org/dist/fop/fop-0_16_0.zip">fop-0_16_0.zip</a> ( or <a href="http://xml.apache.org/dist/fop/fop-0_16_0.tar.gz">fop-0_16_0.tar.gz</a> ) .</li>
+<li>Uncompress and extract fop-0_16_0.zip ( or .tar.gz ) .</li>
+<dl><dl><dt>This will create a directory named fop-0_16_0 .</dt></dl></dl>
+<li>Access <a href="http://www.sourceforge.net/projects/jpfop/">http://www.sourceforge.net/projects/jpfop/</a> , and download jpfop_0_16_0.zip ( or jpfop_0_16_0.tar.gz ) .</li>
+<li>Uncompress and extract jpfop-0.16.0.zip ( or .tar.gz ) under fop-0_16_0 directory .</li>
+<dl><dl><dt>This will create a directory named jpfop-0.16.0 under fop-0_16_0 directory .</dt></dl></dl>
+<li>Access <a href="http://xml.apache.org/dist/xalan-j/">http://xml.apache.org/dist/xalan-j/</a> , and download <a href="http://xml.apache.org/dist/xalan-j/xalan-j_1_2_2.zip">xalan-j_1_2_2.zip</a> ( or <a href="http://xml.apache.org/dist/xalan-j/xalan-j_1_2_2.zip">xalan-j_1_2_2.tar.gz</a> ) .
+<li>Bundle xerces.jar , xalan.jar and bsf.jar in xalan-j_1_2_2.zip ( or .tar.gz ) .
+<dl><dl><dt>This patch can conveniently bundle xerces.jar , xalan.jar andbsf.jar, if you copy them to fop-0_16_0/lib directory .</dt></dl></dl></li>
+<li><dl>
+<dt>Run following command :</dt>
+<dd>&gt; cd fop-0_16_0</dd>
+<dd>&gt; build-jpfop ( ./build-jpfop.sh )</dd>
+</dl></li>
+<li>The JAPANIZED Fop that named fop-0.16.0-jp.jar will be created after the Ant prints out <b>BUILD SUCCESSED</b> .</li>
+<li><dl>
+<dt>Test JAPANIZED Fop following way :</dt>
+<dd>&gt; cd jpfop</dd>
+<dd>&gt; makesample_jpfop ( or ./makesample_jpfop.sh )</dd>
+<dt>When no exception is thrown , following sample_jpfop.pdf file is created .</dt>
+</dl></li>
+</ol>
+<center>
+<p><img src="./images/jppdf.gif" border="3"></p>
+<b>Figure. sample_jpfop.pdf</b>
+</center>
+
+<p><b>Note:</b> This patch only provides Japanese Font , but it is easy to support Chinese or Korea . If you want to use the other CJKFont that does not include in this patch , you can use them to create font information in fop-0_16_0/src/codegen/cidfont and fop-0_16_0/src/codegen/cmp and to added it to FontSetup.java and build-jpfop.xml .</p>
+
+<p></p>
+
+
+<br><br><br>
+<h1>3. Sources</h1>
+
+<h2>3.1 Updated sources</h2>
+
+<p>This patch have updated following classes .</p>
+<blockquote><dl>
+<dt>org.apache.fop.layout.LineArea</dt>
+<dt>org.apache.fop.pdf.PDFFontDescriptor</dt>
+<dt>org.apache.fop.pdf.PDFDocument</dt>
+<dt>org.apache.fop.render.pdf.PDFRenderer</dt>
+<dt>org.apache.fop.render.pdf.FontSetup</dt>
+</dl></blockquote>
+
+
+<h3>3.1.1 org.apache.fop.layout.LineArea</h3>
+<blockquote>
+<p>The addText() method is updated . A Type0 composit font uses single-byte or multi-byte character codes that range is from 0 to 65535 . In FOP-0.16.0 , the character code is automatically transrated to &quot;#&quot , if it is higher than 127 . I commented out that codes .</p>
+<p>And I added new line code . In japanese , the words is not separated by whitespace , but currently fop only supports the new line algorithm that judges at every words . In this patch , when a line contains japanese , it breaks if overrun .</p>
+</blockquote>
+
+
+<h3>3.1.2 org.apache.fop.pdf.PDFFontDescriptor</h3>
+<blockquote>
+<p>The toPDF() method is updated . A type of return value for Rectangle.toPDF() was byte[] , so A PDF Rectangle format was not exactly . I think that this is FOP's BUG .</p>
+<dl>
+<dt>previous codes:</dt>
+<dd><code>
+p.append("\n/FontBBox ");    p.append(fontBBox.toPDF());
+</code></dd>
+<dt>updated codes:</dt>
+<dd><code>
+p.append("\n/FontBBox ");    p.append(new String(fontBBox.toPDF()));
+</code></dd>
+</dl>
+</blockquote>
+
+
+<h3>3.1.3 org.apache.fop.pdf.PDFDocument</h3>
+<blockquote>
+<p>The makeFont() and makeFontDescriptor() methods is updated .</p>
+
+<p><b>makeFont() method: </b>When the implemented Font object does not have FontDescriptor object and that Font object is the instance of CIDFont , create Type0 font object .</p>
+
+<p><b>makeFontDescriptor() method: </b>I added the algorithm of OptionalFontDescriptor instance creation . And , in the original code of PDFFontDescriptor instance creation , the position of ItalicAngle and StemV was swapped . I think that this is FOP's BUG .</p>
+</blockquote>
+
+
+<h3>3.1.4 org.apache.fop.render.pdf.PDFRenderer</h3>
+<blockquote>
+<p>The renderInlineArea() method is updated . The code of Type0 font ( CIDFont ) is added . The UTF-8 strings is encoded to by specified file encoding in CIDFont . If the CIDType in CIDFont is CIDFontType2 , encoded string is written because it's code poing is TrueType .</p>
+
+<p>If the CIDType in CIDFont is CIDFontType0 , that cocoded strings is mapped to Adobe Type1 by CMap . When the font-style attribute in FO is specified Italic , Tm is written in PDF File . And/or if the font-weigth attribute is BOLD , TD is used .</p>
+</blockquote>
+
+
+<h3>3.1.5 org.apache.fop.render.pdf.FontSetup</h3>
+<blockquote>
+<p>The setup() method is updated . I added the japanese font informations .</p>
+</blockquote>
+
+
+<br><br>
+<h2>3.2 Added classes and interfaces</h2>
+
+<p>This patch have updated following classes or interfaces .</p>
+<blockquote><dl>
+<dt>org.apache.fop.layout.OptionalFontDescriptor</dt>
+<dt>org.apache.fop.pdf.PDFCIDFont</dt>
+<dt>org.apache.fop.pdf.PDFOptionalFontDescriptor</dt>
+<dt>org.apache.fop.pdf.PDFFontType0</dt>
+<dt>org.apache.fop.render.pdf.CIDFont</dt>
+<dt>org.apache.fop.render.pdf.CMap</dt>
+</dl></blockquote>
+
+
+<h3>3.2.1 org.apache.fop.layout.OptionalFontDescriptor</h3>
+<blockquote>
+<p>This interface is a FontDescriptor with optional attributes . For more details of FontDescriptor , see <i>PDF1.3 Reference Manual</i> [<a href="#references_1">1</a>] 7.11 Font descriptors page on 222 .</p>
+</blockquote>
+
+
+<h3>3.2.2 org.apache.fop.pdf.PDFCIDFont</h3>
+<blockquote>
+<p>This class is a CIDFont in a PDF file . For more details of CIDFont , see <i>PDF1.3 Reference Manual</i> [<a href="#references_1">1</a>] 7.8 CIDFonts page on 210 and <i>Adobe CMap and CID Font Files Specification Version 1.0</i> [<a href="#references_2">2</a>] .</p>
+</blockquote>
+
+
+<h3>3.2.3 org.apache.fop.pdf.PDFOptionalFontDescriptor</h3>
+<blockquote>
+<p>This class is a FontDescriptor with optional attributes in a PDF file .</p>
+</blockquote>
+
+
+<h3>3.2.4 org.apache.fop.pdf.PDFFontType0</h3>
+<blockquote>
+<p>This class is a Type0 Font in a PDF file . For more details of Type0 Font , see <i>PDF1.3 Reference Manual</i> [<a href="#references_1">1</a>] 7.7.7 Type0 Fonts page on 207 .</p>
+</blockquote>
+
+
+<h3>3.2.5 org.apache.fop.render.pdf.CIDFont</h3>
+<blockquote>
+<p>This abstract class represents a CIDFont .</p>
+</blockquote>
+
+
+<h3>3.2.6 org.apache.fop.render.pdf.CIDFontWidthsEntry</h3>
+<blockquote>
+<p>This class is an entry of Width in a CIDFont . In CIDFonts , following two formats is used to specify the width of glyphs:</p>
+<ul>
+<li>C [ W1 W2 ... Wn ]</li>
+<li>C<sub>first</sub> C<sub>last</sub> W</li>
+</ul>
+<p>For more details of the width of CIDFont , see <i>PDF1.3 Reference Manual</i> [<a href="#references_1">1</a>] 7.8.3 Character widths in CIDFonts page on 213 .</p>
+</blockquote>
+</blockquote>
+
+
+<h3>3.2.7 org.apache.fop.render.pdf.CMap</h3>
+<blockquote>
+<p>The CMap classes must implement this interface . The mapping() methods in the implemtend classes maps code points to a font number . For more details of Japanese CMaps , see <i>Adobe CMap and CID Font Files Specification Version 1.0</i> [<a href="#references_2">2</a>] and <i>Adobe-Japan1-4 Character Collection for CID-Keyed Fonts</i> [<a href="#references_3">3</a>] .</p>
+</blockquote>
+
+<h3>3.2.8 org.apache.fop.render.pdf.Widths</h3>
+<blockquote>
+<p>This class is Width . This class can use Type1 , TruType , etc. , too .</p>
+</blockquote>
+
+
+<br><br>
+<h2>3.3 codegens</h2>
+
+<p>This patch automatically generates the following codes .</p>
+<blockquote><dl>
+<dt>org.apache.fop.render.pdf.cmap._90ms_RKSJ_H</dt>
+<dt>org.apache.fop.render.pdf.fonts.jp.GothicBBBMedium</dt>
+<dt>org.apache.fop.render.pdf.fonts.jp.MSGothic</dt>
+<dt>org.apache.fop.render.pdf.fonts.jp.MSGothicAlias</dt>
+<dt>org.apache.fop.render.pdf.fonts.jp.MSGothicBold</dt>
+<dt>org.apache.fop.render.pdf.fonts.jp.MSGothicBoldAlias</dt>
+<dt>org.apache.fop.render.pdf.fonts.jp.MSGothicBoldItalic</dt>
+<dt>org.apache.fop.render.pdf.fonts.jp.MSGothicBoldItalicAlias</dt>
+<dt>org.apache.fop.render.pdf.fonts.jp.MSGothicItalic</dt>
+<dt>org.apache.fop.render.pdf.fonts.jp.MSGothicItalicAlias</dt>
+<dt>org.apache.fop.render.pdf.fonts.jp.MSMincho</dt>
+<dt>org.apache.fop.render.pdf.fonts.jp.MSMinchoAlias</dt>
+<dt>org.apache.fop.render.pdf.fonts.jp.MSMinchoBold</dt>
+<dt>org.apache.fop.render.pdf.fonts.jp.MSMinchoBoldAlias</dt>
+<dt>org.apache.fop.render.pdf.fonts.jp.MSMinchoBoldItalic</dt>
+<dt>org.apache.fop.render.pdf.fonts.jp.MSMinchoBoldItalicAlias</dt>
+<dt>org.apache.fop.render.pdf.fonts.jp.MSMinchoItalic</dt>
+<dt>org.apache.fop.render.pdf.fonts.jp.MSMinchoItalicAlias</dt>
+<dt>org.apache.fop.render.pdf.fonts.jp.Osaka</dt>
+<dt>org.apache.fop.render.pdf.fonts.jp.RyuminLight</dt>
+</dl></blockquote>
+
+
+<br><br><br>
+<h1>4. Known problems</h1>
+
+<p>In this section , I write the known problems for this pathc . If you want to know about FOP's problems , see fop-dev@xml.apache.org and fop-cvs@xml.apache.org .</p>
+
+<ul>
+<li><b>Japanese in SVG</b>
+<blockquote>
+In svg namespace tags , Japanese can currently not use .
+</blockquote></li>
+
+<li><b>Hyphenations</b>
+<blockquote>
+The mixed line that contains Japanese and other words can't do hyphenations , if the last words in a line terminates a non-Japanese word . This is because there is no customs of hypenation in Japanese .
+</blockquote></li>
+
+<li><b>Unicode</b>
+<blockquote>
+The Type0 fonts can use ToUnicde to embedding Unicode code points in the PDF file ( see , <i>PDF1.3 Reference Manual</i> [<a href="#references_1">1</a>] Section 7.7 Fonts page on 199 and Section 7.10.1 ToUnicode CMaps page on 219 ) . This patch does not support this feature . I think that this is the problem for FOP other then this patch .
+</blockquote></li>
+
+<li><b>CMaps</b>
+<blockquote>
+The CMap informations can embed in PDF file ( see , <i>PDF1.3 Reference Manual</i> [<a href="#references_1">1</a>] Section 7.10 CMaps page on 117 ) . This patch does not support this feature .
+</blockquote></li>
+
+<li><b>Embedded Font</b>
+<blockquote>
+It is possible to embed font files in PDF file by specifing FontDescriptor ( see , <i>PDF1.3 Reference Manual</i> [<a href="#references_1">1</a>] Section 7.11 Font descriptors page on 223 ) . This patch does not support this feature . I think that this is the problem for FOP other then this patch .
+</blockquote></li>
+
+<li><b>Font Subsets</b>
+<blockquote>
+The value of the font's BaseFont key and the font descriptor's FontName key use the <i>pseudoUniqueTag+PostScriptName</i> format ( see , <i>PDF1.3 Reference Manual</i> [<a href="#references_1">1</a>] Section 7.7.4 Font Subsets page on 204 ) . This patch does not add six uppercase alphabetic characters to before PostScriptName .
+</blockquote></li>
+</ul>
+
+
+<br><br><a name="references"><br></a>
+<h1>5. References</h1>
+<ol>
+<a name="references_1"><li></a>Portable Document Format Reference Manual Version 1.3:<br>
+<a href="http://partners.adobe.com/asn/developer/acrosdk/DOCS/PDFRef.pdf">http://partners.adobe.com/asn/developer/acrosdk/DOCS/PDFRef.pdf</a></li>
+<a name="references_2"><li></a>Adobe CMap and CID Font Files Specification Version 1.0:<br>
+<a href="http://partners.adobe.com/asn/developer/PDFS/TN/5014.CMap_CIDFont_Spec.pdf">http://partners.adobe.com/asn/developer/PDFS/TN/5014.CMap_CIDFont_Spec.pdf</a></li>
+<a name="references_3"><li></a>Adobe-Japan1-4 Character Collection for CID-Keyed Fonts:<br>
+<a href="http://partners.adobe.com/asn/developer/PDFS/TN/5078.Adobe-Japan1-4.pdf">http://partners.adobe.com/asn/developer/PDFS/TN/5078.Adobe-Japan1-4.pdf</a></li>
+<a name="references_4"><li></a>Adobe Font Metrics File Format Specification Version 4.1:<br>
+<a href="http://partners.adobe.com/asn/developer/PDFS/TN/5004.AFM_Spec.pdf">http://partners.adobe.com/asn/developer/PDFS/TN/5004.AFM_Spec.pdf</a></li>
+</ol>
+
+</body>
+</html>

@@ -1,0 +1,292 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+<meta HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=iso-2022-jp">
+<title>FOP-0.16.0 日本語化パッチ</title>
+</head>
+
+<body>
+<h1>FOP-0.16.0 日本語化パッチ</h1>
+
+
+
+<br><br><br>
+<h1>1. はじめに</h1>
+<p>本パッチは、<a href="http://xml.apache.org/fop">http://xml.apache.org/fop</a> が提供している FOP-0.16.0 で日本語 ( Type0 フォント ) を表示可能にするためのパッチです。本パッチにより、以下のファミリフォント名が使用可能となります。</p>
+<ul>
+<li>ＭＳ明朝 or MS-Mincho</li>
+<li>ＭＳゴシック or MS-Gothic</li>
+<li>Ryumin-Light</li>
+<li>GothicBBB-Medium</li>
+<li>Osaka</li>
+</ul>
+<p>本パッチは、以下の環境でコンパイルと PDF 作成の動作確認をしております。</p>
+<ul>
+<li>WindowsNT4.0+SP6a ( 日本語版 ) , SUN J2SE,v1.3.0_01</li>
+<li>Solaris2.6 , SUN J2SE,v1.3.0</li>
+</ul>
+
+<p><b>注意：</b>本パッチは、国際化対応版 JDK でなければ、正しく実行する事ができないかもしれません。また、日本語フォント表示可能なマシン環境でなければ、本パッチで生成された PDF ファイルを正しく表示できないかもしれません。</p>
+
+<br><br><br>
+<h1>2. インストール</h1>
+
+<ol>
+<li><a href="http://xml.apache.org/dist/fop/">http://xml.apache.org/dist/fop/</a> より <a href="http://xml.apache.org/dist/fop/fop-0_16_0.zip">fop-0_16_0.zip</a> ( or <a href="http://xml.apache.org/dist/fop/fop-0_16_0.tar.gz">fop-0_16_0.tar.gz</a> ) をダウンロード</li>
+<li>fop-0_16_0.zip ( or .tar.gz ) を解凍</li>
+<li><a href="http://www.sourceforge.net/projects/jpfop/">http://www.sourceforge.net/projects/jpfop/</a> より jpfop_0_16_0.zip ( or jpfop_0_16_0.tar.gz ) をダウンロード</li>
+<li>fop-0_16_0 ディレクトリ配下に jpfop_0_16_0.zip ( or .tar.gz ) を解凍</li>
+<li><a href="http://xml.apache.org/dist/xalan-j/">http://xml.apache.org/dist/xalan-j/</a> より <a href="http://xml.apache.org/dist/xalan-j/xalan-j_1_2_2.zip">xalan-j_1_2_2.zip</a> ( or <a href="http://xml.apache.org/dist/xalan-j/xalan-j_1_2_2.zip">xalan-j_1_2_2.tar.gz</a> ) をダウンロード
+<li>xalan-j_1_2_2.zip ( or .tar.gz ) 内の xerces.jar、xalan.jar、bsf.jar をクラスパスに含める。
+<dl><dl><dt>本パッチでは、簡易的に、xerces.jar、xalan.jar、bsf.jar を fop-0_16_0/lib ディレクトリにコピーすることにより、自動的にこれら jar ファイルがクラスパスに含まれます。もし、それ以外の場所に jar ファイルがある場合には、build-jpfop.bat 内の変数 XERCES、XALAN、BSF に jar ファイルの場所を指定して下さい。</dt></dl></dl></li>
+<li><dl>
+<dt>コマンドラインより</dt>
+<dd>&gt; cd fop-0_16_0</dd>
+<dd>&gt; build-jpfop ( or ./build-jpfop.sh )</dd>
+<dt>を実行。</dt>
+</dl></li>
+<li><b>BUILD SUCCESSED</b> と表示されれば、日本語対応版 fop-0.16.0-jp.jar 完成</li>
+<li><dl>
+<dt>続けて、コマンドラインより</dt>
+<dd>&gt; cd jpfop</dd>
+<dd>&gt; makesample_jpfop ( or ./makesample_jpfop.sh )</dd>
+<dt>と実行することにより、日本語対応版 FOP により、sample_jpfop.pdf が生成</dt>
+</dl></li>
+</ol>
+<center>
+<p><img src="./images/jppdf.gif" border="3"></p>
+<b>図．sample_jpfop.pdf</b>
+</center>
+
+<p><b>注意：</b>本パッチは、日本語フォントしか提供していませんが、韓国語、中国語への拡張も容易に出来るはずです。もし、本パッチが提供している以外のフォントを使用したい場合、fop-0_16_0/src/codegen/cidfont や fop-0_16_0/src/codegen/cmp 配下に情報を作成し、FontSetup.java と build-jpfop.xml にその情報を追加して下さい。</p>
+
+<br><br><br>
+<h2>3.1 日本人開発者の方へ</h2>
+<p>強制ではありませんが、以下について、<a href="mailto:jpfop-develop@lists.sourceforge.net">jpfop-develop@lists.sourceforge.net</a> へ報告をしていただけると非常に助かります。本メーリングリストの詳細は、<a href="http://lists.sourceforge.net/lists/listinfo/jpfop-develop">http://lists.sourceforge.net/lists/listinfo/jpfop-develop</a> を参照して下さい。</p>
+<dl>
+<dt><b>コンパイルについて</b></dt>
+<dd>あなたの環境 ( OS , JDK など ) で、本パッチを用いて fop-0.16.0-jp.jar が作成できたか否か。特に、Linux、BSD、Machintosh、HP-UX 等の環境での報告は非常に助かります。作成できなかった場合、発生例外も報告していただけると助かります。</dd>
+<dt><br></dt>
+<dt><b>実行について</b></dt>
+<dd>あなたの環境で日本語 PDF を作成した際、問題があるか否か。本パッチは、様々な環境でのテストが不十分なため、あなたの環境では問題があるかもしれません。例えば、Windows と Machintosh では、シフト JIS の 0x8740 付近のコードポイントが異なっています。
+<blockquote><img src="./images/cp8740.gif"></blockquote>
+これらの文字を使用した際、文字化け等の問題があるかもしれません。しかし、私の手元に Machintosh 環境がないため、これらの確認を行うことができていません。</dd>
+<dt><br></dt>
+<dt><b>閲覧について</b></dt>
+<dd>本パッチの閲覧は、現在、Windows 用 Adobe Acrobat Reader 4.0/4.05a でのみしか行っていません。Machintosh 用 Acrobat Reader や UNIX 用 Acrobat Reader ( acroread ) での閲覧が正常に行われるかを報告して頂けると非常に助かります。また、問題報告の際にどのプラットフォームで作成した PDF を閲覧出来なかったのかも書いていただけると助かります。</dd></dl>
+
+<br><br><br>
+<h1>3. ソース</h1>
+
+<h2>3.1 修正したクラス</h2>
+
+<p>本パッチでは、fop-0.16.0 の以下のクラスを修正しています。</p>
+<blockquote><dl>
+<dt>org.apache.fop.layout.LineArea</dt>
+<dt>org.apache.fop.pdf.PDFFontDescriptor</dt>
+<dt>org.apache.fop.pdf.PDFDocument</dt>
+<dt>org.apache.fop.render.pdf.PDFRenderer</dt>
+<dt>org.apache.fop.render.pdf.FontSetup</dt>
+</dl></blockquote>
+
+
+<h3>3.1.1 org.apache.fop.layout.LineArea</h3>
+<blockquote>
+<p>修正したのは addText() メソッドです。日本語は 2 バイト文字なので、範囲は 0 から 65535 です。従来、127 以上の値をとる文字があった場合、自動的に &quot;#&quot; に変換していたので、そのコードをコメントアウトしました。</p>
+<p>また、従来、単語ごとに改行の判定を行っていましたが、日本語では単語を半角スペースで区切らないため、正しく改行が行われませんでした。そのため、日本語の場合、1 行に表示できる文字数をオーバーした際に改行するコードを追加しました。</p>
+</blockquote>
+
+
+<h3>3.1.2 org.apache.fop.pdf.PDFFontDescriptor</h3>
+<blockquote>
+<p>修正したのは toPDF() メソッドです。Rectangle.toPDF() の戻り値は、byte[] なので、既存のコードでは Rectangle に配列を正しく表示していない。これは、おそらく toPDF() メソッドの BUG でしょう。</p>
+<dl>
+<dt>修正前：</dt>
+<dd><code>
+p.append("\n/FontBBox ");    p.append(fontBBox.toPDF());
+</code></dd>
+<dt>修正後：</dt>
+<dd><code>
+p.append("\n/FontBBox ");    p.append(new String(fontBBox.toPDF()));
+</code></dd>
+</dl>
+</blockquote>
+
+
+<h3>3.1.3 org.apache.fop.pdf.PDFDocument</h3>
+<blockquote>
+<p>修正したのは makeFont() メソッドと makeFontDescriptor() メソッドです。</p>
+
+<p><b>makeFont() メソッド : </b>FontDescriptor が指定されていない際、CIDFont なのか判定し、CIDFont の場合、Type0 フォントと認識するように修正しました。</p>
+
+<p><b>makeFontDescriptor() メソッド : </b>オプションの属性を提供した OptionalFontDescriptor クラスが引数で渡された場合とそうでない場合の処理を分けました。また、PDFFontDescriptor オブジェクトをインスタンス化する際、ItalicAngle と StemV の位置が逆になっていました。これは、おそらく BUG でしょう。</p>
+</blockquote>
+
+
+<h3>3.1.4 org.apache.fop.render.pdf.PDFRenderer</h3>
+<blockquote>
+<p>修正したのは renderInlineArea() メソッドです。Type0 フォント ( CIDFont ) の場合の処理を追加しました。まず、UTF-8 の文字列を CIDFont で指定したエンコーディングで変換します。CIDFontType2 の場合、コードポイントは TrueType なのでそのまま書き出します。</p>
+
+<p>CIDFontType0 の場合、コードポイントは Adobe Type1 なので、CIDFont で指定した CMap に基づいてマッピングを行います。そして、Italic の場合、文字を斜めにします。BOLD の場合、位置をずらしながら 4 回書く処理をします。</p>
+</blockquote>
+
+
+<h3>3.1.5 org.apache.fop.render.pdf.FontSetup</h3>
+<blockquote>
+<p>修正したのは setup() メソッドです。日本語 Font を追加しました。</p>
+</blockquote>
+
+
+<br><br>
+<h2>3.2 新規に追加されるクラスとインタフェイス</h2>
+
+<p>本パッチでは、fop-0.16.0 に対して以下のクラスとインタフェイスを新規に追加します。</p>
+<blockquote><dl>
+<dt>org.apache.fop.layout.OptionalFontDescriptor</dt>
+<dt>org.apache.fop.pdf.PDFCIDFont</dt>
+<dt>org.apache.fop.pdf.PDFOptionalFontDescriptor</dt>
+<dt>org.apache.fop.pdf.PDFFontType0</dt>
+<dt>org.apache.fop.render.pdf.CIDFont</dt>
+<dt>org.apache.fop.render.pdf.CMap</dt>
+</dl></blockquote>
+
+
+<h3>3.2.1 org.apache.fop.layout.OptionalFontDescriptor</h3>
+<blockquote>
+<p>オプションの属性を提供した FontDescriptor インタフェイスです。FontDescriptor の詳細については、PDF1.3 Reference Manual [<a href="#references_1">1</a>] 7.11 Font descriptors p.222 を参照して下さい。</p>
+</blockquote>
+
+
+<h3>3.2.2 org.apache.fop.pdf.PDFCIDFont</h3>
+<blockquote>
+<p>PDF 中の CIDFont オブジェクトを表すクラスです。CIDFont の詳細については、PDF1.3 Reference Manual [<a href="#references_1">1</a>] 7.8 CIDFonts p.210 や Adobe CMap and CID Font Files Specification Version 1.0 [<a href="#references_2">2</a>] を参照して下さい。</p>
+</blockquote>
+
+
+<h3>3.2.3 org.apache.fop.pdf.PDFOptionalFontDescriptor</h3>
+<blockquote>
+<p>PDF 中の FontDescriptor のオプションの属性を表すクラスです。</p>
+</blockquote>
+
+
+<h3>3.2.4 org.apache.fop.pdf.PDFFontType0</h3>
+<blockquote>
+<p>PDF 中の Type0 フォントを表すクラスです。Type0 フォントの詳細については、PDF1.3 Reference Manual [<a href="#references_1">1</a>] 7.7.7 Type0 Fonts p.207 を参照して下さい。</p>
+</blockquote>
+
+
+<h3>3.2.5 org.apache.fop.render.pdf.CIDFont</h3>
+<blockquote>
+<p>CIDFont を表すクラスです。</p>
+</blockquote>
+
+
+<h3>3.2.6 org.apache.fop.render.pdf.CIDFontWidthsEntry</h3>
+<blockquote>
+<p>CIDFont の Width に含まれるエントリを表すクラスです。CIDFont では、</p>
+<ul>
+<li>C [ W1 W2 ... Wn ]</li>
+<li>C<sub>first</sub> C<sub>last</sub> W</li>
+</ul>
+<p>の 2 種類のフォーマットがあります。詳細は、PDF1.3 Reference Manual [<a href="#references_1">1</a>] 7.8.3 Character widths in CIDFonts p.213 を参照して下さい。</p>
+</blockquote>
+</blockquote>
+
+
+<h3>3.2.7 org.apache.fop.render.pdf.CMap</h3>
+<blockquote>
+<p>コードポイントを表すインタフェイスです。指定されたコードポイントを CMap に従ってマッピングします。日本語の Adobe コードポイントについては、Adobe-Japan1-4 Character Collection for CID-Keyed Fonts [<a href="#references_3">3</a>] を参照して下さい。</p>
+</blockquote>
+
+<h3>3.2.8 org.apache.fop.render.pdf.Widths</h3>
+<blockquote>
+<p>Width 属性を表すクラスです。</p>
+</blockquote>
+
+
+<br><br>
+<h2>3.3 新規に作成されるクラス</h2>
+
+<p>本パッチでは、fop-0.16.0 に対して、codegen を利用して以下のクラスが XML ファイルから自動的に生成されます。</p>
+<blockquote><dl>
+<dt>org.apache.fop.render.pdf.cmap._90ms_RKSJ_H</dt>
+<dt>org.apache.fop.render.pdf.fonts.jp.GothicBBBMedium</dt>
+<dt>org.apache.fop.render.pdf.fonts.jp.MSGothic</dt>
+<dt>org.apache.fop.render.pdf.fonts.jp.MSGothicAlias</dt>
+<dt>org.apache.fop.render.pdf.fonts.jp.MSGothicBold</dt>
+<dt>org.apache.fop.render.pdf.fonts.jp.MSGothicBoldAlias</dt>
+<dt>org.apache.fop.render.pdf.fonts.jp.MSGothicBoldItalic</dt>
+<dt>org.apache.fop.render.pdf.fonts.jp.MSGothicBoldItalicAlias</dt>
+<dt>org.apache.fop.render.pdf.fonts.jp.MSGothicItalic</dt>
+<dt>org.apache.fop.render.pdf.fonts.jp.MSGothicItalicAlias</dt>
+<dt>org.apache.fop.render.pdf.fonts.jp.MSMincho</dt>
+<dt>org.apache.fop.render.pdf.fonts.jp.MSMinchoAlias</dt>
+<dt>org.apache.fop.render.pdf.fonts.jp.MSMinchoBold</dt>
+<dt>org.apache.fop.render.pdf.fonts.jp.MSMinchoBoldAlias</dt>
+<dt>org.apache.fop.render.pdf.fonts.jp.MSMinchoBoldItalic</dt>
+<dt>org.apache.fop.render.pdf.fonts.jp.MSMinchoBoldItalicAlias</dt>
+<dt>org.apache.fop.render.pdf.fonts.jp.MSMinchoItalic</dt>
+<dt>org.apache.fop.render.pdf.fonts.jp.MSMinchoItalicAlias</dt>
+<dt>org.apache.fop.render.pdf.fonts.jp.Osaka</dt>
+<dt>org.apache.fop.render.pdf.fonts.jp.RyuminLight</dt>
+</dl></blockquote>
+
+
+<br><br><br>
+<h1>4. 既知の日本語対応パッチの問題</h1>
+
+<p>本ドキュメントでは、一部を除き、日本語対応における既知の問題のみ書かれています。FOP の問題については、fop-dev@xml.apache.org や fop-cvs@xml.apache.org を参照して下さい。</p>
+
+<ul>
+<li><b>SVG での日本語</b>
+<blockquote>
+本パッチでは SVG での日本語表示をサポートしていません。
+</blockquote></li>
+
+<li><b>ハイフネーション</b>
+<blockquote>
+日本語と日本語以外が含まれる文書で、日本語以外の単語が行の最後で分割される際、ハイフネーションを指定してもハイフネーションその単語がハイフネーションされません。これは、日本語文書ではハイフネーションを使用しないからです。
+</blockquote></li>
+
+<li><b>Unicode 未サポート</b>
+<blockquote>
+PDF1.3 Reference Manual [<a href="#references_1">1</a>] 7.7 Fonts p.199 や 7.10.1 ToUnicode CMaps p.219 によると、Type0 フォントでも ToUnicode 属性を用いることにより文字コードを Unicode にマッピング可能となっています。しかし、本パッチではこの機能をサポートしていません。これは、日本語化パッチというよりも FOP の問題かもしれません。
+</blockquote></li>
+
+<li><b>埋め込み CMap 未サポート</b>
+<blockquote>
+PDF1.3 Reference Manual [<a href="#references_1">1</a>] 7.10 CMaps p.117 によると、PDF 文書内に CMap の情報を埋め込むことができます。しかし、本パッチでは CMap 情報を PDF 文書内に埋め込むことはできません。
+</blockquote></li>
+
+<li><b>埋め込みフォント未サポート</b>
+<blockquote>
+PDF1.3 Reference Manual [<a href="#references_1">1</a>] の 7.11 Font descriptors p.223 によると、FontDescriptor で PDF 文書内にフォントを埋め込むことが可能となっています。しかし、本パッチでは日本語フォントを PDF 文書内に埋め込むことはできません。これは、日本語化パッチというよりも FOP の問題かもしれません。
+</blockquote></li>
+
+<li><b>フォントサブセット未サポート</b>
+<blockquote>
+PDF1.3 Reference Manual [<a href="#references_1">1</a>] の 7.7.4 Font Subsets p.204 によると、Font の BaseFont や FontDescriptor の FontName の値の形式は、Postscript 前にユニークな 6 大文字を付けるとなっています。しかし、本パッチではユニークな 6 大文字が付きません。
+</blockquote></li>
+
+<li><b>下線</b>
+<blockquote>
+半角スペースで区切られた複数の単語に下線を引くと、単語毎に下線が途切れてしまします。これは、FOP のバグであり、時期バージョンでは改修されます。詳細は、fop-dev@apache.org を参照して下さい。
+</blockquote></li>
+</ul>
+
+
+<br><br><a name="references"><br></a>
+<h1>5. リファレンス</h1>
+<ol>
+<a name="references_1"><li></a>Portable Document Format Reference Manual Version 1.3：<br>
+<a href="http://partners.adobe.com/asn/developer/acrosdk/DOCS/PDFRef.pdf">http://partners.adobe.com/asn/developer/acrosdk/DOCS/PDFRef.pdf</a></li>
+<a name="references_2"><li></a>Adobe CMap and CID Font Files Specification Version 1.0：<br>
+<a href="http://partners.adobe.com/asn/developer/PDFS/TN/5014.CMap_CIDFont_Spec.pdf">http://partners.adobe.com/asn/developer/PDFS/TN/5014.CMap_CIDFont_Spec.pdf</a></li>
+<a name="references_3"><li></a>Adobe-Japan1-4 Character Collection for CID-Keyed Fonts：<br>
+<a href="http://partners.adobe.com/asn/developer/PDFS/TN/5078.Adobe-Japan1-4.pdf">http://partners.adobe.com/asn/developer/PDFS/TN/5078.Adobe-Japan1-4.pdf</a></li>
+<a name="references_4"><li></a>Adobe Font Metrics File Format Specification Version 4.1:<br>
+<a href="http://partners.adobe.com/asn/developer/PDFS/TN/5004.AFM_Spec.pdf">http://partners.adobe.com/asn/developer/PDFS/TN/5004.AFM_Spec.pdf</a></li>
+</ol>
+
+</body>
+</html>
