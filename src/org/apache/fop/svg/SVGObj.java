@@ -72,9 +72,11 @@ public class SVGObj extends XMLObj {
          *
          * @return the svg object
          */
-        public FObj make(FObj parent,
-                         PropertyList propertyList) throws FOPException {
-            return new SVGObj(parent, propertyList, tag);
+        public FObj make(FObj parent, PropertyList propertyList,
+                         String systemId, int line, int column)
+            throws FOPException {
+            return new SVGObj(parent, propertyList, tag,
+                              systemId, line, column);
         }
     }
 
@@ -93,8 +95,9 @@ public class SVGObj extends XMLObj {
      * @param parent the parent formatting object
      * @param propertyList the explicit properties of this object
      */
-    protected SVGObj(FObj parent, PropertyList propertyList, String tag) {
-        super(parent, propertyList, tag);
+    protected SVGObj(FObj parent, PropertyList propertyList, String tag,
+                     String systemId, int line, int column) {
+        super(parent, propertyList, tag, systemId, line, column);
     }
 
     public String getName() {

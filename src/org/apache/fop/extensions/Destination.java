@@ -50,8 +50,10 @@
  */ 
 package org.apache.fop.extensions;
 
+import org.apache.fop.apps.FOPException;
 import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.PropertyList;
+
 /** 
  * Provides support for PDF destinations, which allow external
  * files to link into a particular place within the generated
@@ -59,25 +61,35 @@ import org.apache.fop.fo.PropertyList;
  *
  * @author Stefan Wachter (based on work by Lloyd McKenzie)
  */
+
 public class Destination extends ExtensionObj {
+
     private String internalDestination;
     private String destinationName;
+
     public static class Maker extends FObj.Maker {
-        public FObj make(FObj parent, PropertyList propertyList) {
-            return new Destination(parent, propertyList);
+        public FObj make(FObj parent, PropertyList propertyList,
+                         String systemId, int line, int column)
+            throws FOPException {
+            return new Destination(parent, propertyList,
+                                   systemId, line, column);
         }
     }
+
     public static FObj.Maker maker() {
         return new Destination.Maker();
     }
-    public Destination(FObj parent, PropertyList propertyList) {
-        super(parent, propertyList);
+
+    public Destination(FObj parent, PropertyList propertyList,
+                        String systemId, int line, int column) {
+        super(parent, propertyList, systemId, line, column);
         internalDestination = properties.get("internal-destination").getString();
         if (internalDestination.equals("")) {
             log.warn("fox:destination requires an internal-destination.");
         }
         destinationName = properties.get("destination-name").getString();
     }
+
     /**
      * Gets the name under which the destination may be referenced.
      */

@@ -67,9 +67,11 @@ import org.apache.fop.apps.FOPException;
 public class RegionStart extends Region {
 
     public static class Maker extends FObj.Maker {
-        public FObj make(FObj parent,
-                         PropertyList propertyList) throws FOPException {
-            return new RegionStart(parent, propertyList);
+        public FObj make(FObj parent, PropertyList propertyList,
+                        String systemId, int line, int column)
+            throws FOPException {
+            return new RegionStart(parent, propertyList,
+                                   systemId, line, column);
         }
 
     }
@@ -81,9 +83,10 @@ public class RegionStart extends Region {
     public static final String REGION_CLASS = "start";
 
 
-    protected RegionStart(FObj parent,
-                          PropertyList propertyList) throws FOPException {
-        super(parent, propertyList);
+    protected RegionStart(FObj parent, PropertyList propertyList,
+                          String systemId, int line, int column)
+        throws FOPException {
+        super(parent, propertyList, systemId, line, column);
     }
 
     public String getName() {

@@ -56,9 +56,10 @@ import org.apache.fop.apps.FOPException;
 public class Declarations extends FObj {
 
     public static class Maker extends FObj.Maker {
-        public FObj make(FObj parent,
-                         PropertyList propertyList) throws FOPException {
-            return new Declarations(parent, propertyList);
+        public FObj make(FObj parent, PropertyList propertyList,
+                         String systemId, int line, int column)
+            throws FOPException {
+            return new Declarations(parent, propertyList, systemId, line, column);
         }
     }
 
@@ -66,9 +67,9 @@ public class Declarations extends FObj {
         return new Declarations.Maker();
     }
 
-    protected Declarations(FObj parent,
-                           PropertyList propertyList) throws FOPException {
-        super(parent, propertyList);
+    protected Declarations(FObj parent, PropertyList propertyList,
+                           String systemId, int line, int column) throws FOPException {
+        super(parent, propertyList, systemId, line, column);
         log.warn("declarations not implemented");
     }
 

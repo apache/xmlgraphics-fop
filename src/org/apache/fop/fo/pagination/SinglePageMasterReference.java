@@ -63,9 +63,11 @@ import org.apache.fop.apps.FOPException;
 public class SinglePageMasterReference extends PageMasterReference {
 
     public static class Maker extends FObj.Maker {
-        public FObj make(FObj parent,
-                         PropertyList propertyList) throws FOPException {
-            return new SinglePageMasterReference(parent, propertyList);
+        public FObj make(FObj parent, PropertyList propertyList,
+                        String systemId, int line, int column)
+            throws FOPException {
+            return new SinglePageMasterReference(parent, propertyList,
+                                                 systemId, line, column);
         }
 
     }
@@ -79,9 +81,10 @@ public class SinglePageMasterReference extends PageMasterReference {
 
     private int state;
 
-    public SinglePageMasterReference(FObj parent, PropertyList propertyList)
-            throws FOPException {
-        super(parent, propertyList);
+    public SinglePageMasterReference(FObj parent, PropertyList propertyList,
+                                     String systemId, int line, int column)
+        throws FOPException {
+        super(parent, propertyList, systemId, line, column);
         if (getProperty("master-reference") != null) {
             this.masterName = getProperty("master-reference").getString();
             if (parent.getName().equals("fo:page-sequence-master")) {
@@ -89,7 +92,7 @@ public class SinglePageMasterReference extends PageMasterReference {
                 pageSequenceMaster.addSubsequenceSpecifier(this);
             } else {
                 throw new FOPException("A fo:single-page-master-reference must be child of fo:page-sequence-master, not "
-                                       + parent.getName());
+                                       + parent.getName(), systemId, line, column);
             }
         } else {
           log.warn("A fo:single-page-master-reference does not have a master-reference and so is being ignored");

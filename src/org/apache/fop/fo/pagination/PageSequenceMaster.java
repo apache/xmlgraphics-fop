@@ -67,9 +67,11 @@ import java.util.ArrayList;
 public class PageSequenceMaster extends FObj {
 
     public static class Maker extends FObj.Maker {
-        public FObj make(FObj parent,
-                         PropertyList propertyList) throws FOPException {
-            return new PageSequenceMaster(parent, propertyList);
+        public FObj make(FObj parent, PropertyList propertyList,
+                        String systemId, int line, int column)
+            throws FOPException {
+            return new PageSequenceMaster(parent, propertyList,
+                                          systemId, line, column);
         }
 
     }
@@ -90,9 +92,10 @@ public class PageSequenceMaster extends FObj {
     // references to page-masters. So the methods use the former
     // terminology ('sub-sequence-specifiers', or SSS),
     // but the actual FO's are MasterReferences.
-    protected PageSequenceMaster(FObj parent, PropertyList propertyList)
+    protected PageSequenceMaster(FObj parent, PropertyList propertyList,
+                                 String systemId, int line, int column)
             throws FOPException {
-        super(parent, propertyList);
+        super(parent, propertyList, systemId, line, column);
 
         if (parent.getName().equals("fo:layout-master-set")) {
             this.layoutMasterSet = (LayoutMasterSet)parent;
@@ -106,7 +109,7 @@ public class PageSequenceMaster extends FObj {
         } else {
             throw new FOPException("fo:page-sequence-master must be child "
                                    + "of fo:layout-master-set, not "
-                                   + parent.getName());
+                                   + parent.getName(), systemId, line, column);
         }
         subSequenceSpecifiers = new ArrayList();
         currentSubSequenceNumber = -1;
@@ -143,7 +146,7 @@ public class PageSequenceMaster extends FObj {
             currentSubSequence = getNextSubSequence();
             if (currentSubSequence==null) {
                 throw new FOPException("no subsequences in page-sequence-master '"
-                                       + masterName + "'");
+                                       + masterName + "'", systemId, line, column);
             }
             firstPage = true;
         }
@@ -157,7 +160,7 @@ public class PageSequenceMaster extends FObj {
                 if (!canRecover) {
                     throw new FOPException("subsequences exhausted in page-sequence-master '"
                                            + masterName
-                                           + "', cannot recover");
+                                           + "', cannot recover", systemId, line, column);
                 }
                 log.warn("subsequences exhausted in page-sequence-master '"
                          + masterName
@@ -175,7 +178,7 @@ public class PageSequenceMaster extends FObj {
         if (pageMaster==null) {
             throw new FOPException("No simple-page-master matching '"
                                    + pageMasterName + "' in page-sequence-master '"
-                                   + masterName +"'");
+                                   + masterName +"'", systemId, line, column);
         }
         return pageMaster;
     }

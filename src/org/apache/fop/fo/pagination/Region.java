@@ -65,9 +65,10 @@ public abstract class Region extends FObj {
     private SimplePageMaster _layoutMaster;
     private String _regionName;
 
-    protected Region(FObj parent,
-                     PropertyList propertyList) throws FOPException {
-        super(parent, propertyList);
+    protected Region(FObj parent, PropertyList propertyList,
+                     String systemId, int line, int column)
+        throws FOPException {
+        super(parent, propertyList, systemId, line, column);
 
         // regions may have name, or default
         if (null == this.properties.get(PROP_REGION_NAME)) {
@@ -81,7 +82,7 @@ public abstract class Region extends FObj {
                     &&!getRegionName().equals(getDefaultRegionName())) {
                 throw new FOPException(PROP_REGION_NAME + " '" + _regionName
                                        + "' for " + this.getName()
-                                       + " not permitted.");
+                                       + " not permitted.", systemId, line, column);
             }
         }
 
@@ -91,7 +92,7 @@ public abstract class Region extends FObj {
         } else {
             throw new FOPException(getName() + " must be child "
                                    + "of simple-page-master, not "
-                                   + parent.getName());
+                                   + parent.getName(), systemId, line, column);
         }
     }
 

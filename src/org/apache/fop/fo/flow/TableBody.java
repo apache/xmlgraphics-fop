@@ -57,9 +57,10 @@ import org.apache.fop.apps.FOPException;
 public class TableBody extends AbstractTableBody {
 
     public static class Maker extends FObj.Maker {
-        public FObj make(FObj parent,
-                         PropertyList propertyList) throws FOPException {
-            return new TableBody(parent, propertyList);
+        public FObj make(FObj parent, PropertyList propertyList,
+                         String systemId, int line, int column)
+            throws FOPException {
+            return new TableBody(parent, propertyList, systemId, line, column);
         }
 
     }
@@ -68,9 +69,10 @@ public class TableBody extends AbstractTableBody {
         return new TableBody.Maker();
     }
 
-    public TableBody(FObj parent, PropertyList propertyList) 
+    public TableBody(FObj parent, PropertyList propertyList,
+                     String systemId, int line, int column) 
       throws FOPException {
-        super(parent, propertyList);
+        super(parent, propertyList, systemId, line, column);
     }
 
     public String getName() {

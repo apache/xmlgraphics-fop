@@ -59,9 +59,11 @@ import org.apache.fop.apps.FOPException;
 public class ListBlock extends FObj {
 
     public static class Maker extends FObj.Maker {
-        public FObj make(FObj parent,
-                         PropertyList propertyList) throws FOPException {
-            return new ListBlock(parent, propertyList);
+        public FObj make(FObj parent, PropertyList propertyList,
+                         String systemId, int line, int column)
+            throws FOPException {
+            return new ListBlock(parent, propertyList,
+                                 systemId, line, column);
         }
 
     }
@@ -81,8 +83,9 @@ public class ListBlock extends FObj {
     int spaceAfter;
     int spaceBetweenListRows = 0;
 
-    public ListBlock(FObj parent, PropertyList propertyList) {
-        super(parent, propertyList);
+    public ListBlock(FObj parent, PropertyList propertyList,
+                     String systemId, int line, int column) {
+        super(parent, propertyList, systemId, line, column);
     }
 
     public String getName() {
@@ -149,7 +152,15 @@ public class ListBlock extends FObj {
 
             // initialize id
             String id = this.properties.get("id").getString();
-            area.getIDReferences().initializeID(id, area);
+            try {
+                area.getIDReferences().initializeID(id, area);
+            }
+            catch(FOPException e) {
+                if (!e.isLocationSet()) {
+                    e.setLocation(systemId, line, column);
+                }
+                throw e;
+            }
         }
 
         BlockArea blockArea =

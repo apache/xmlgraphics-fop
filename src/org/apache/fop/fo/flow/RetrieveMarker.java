@@ -73,9 +73,11 @@ public class RetrieveMarker extends FObj {
     private Marker bestMarker;
 
     public static class Maker extends FObj.Maker {
-        public FObj make(FObj parent,
-                         PropertyList propertyList) throws FOPException {
-            return new RetrieveMarker(parent, propertyList);
+        public FObj make(FObj parent, PropertyList propertyList,
+                         String systemId, int line, int column)
+            throws FOPException {
+            return new RetrieveMarker(parent, propertyList,
+                                      systemId, line, column);
         }
 
     }
@@ -84,8 +86,9 @@ public class RetrieveMarker extends FObj {
         return new RetrieveMarker.Maker();
     }
 
-    public RetrieveMarker(FObj parent, PropertyList propertyList) {
-        super(parent, propertyList);
+    public RetrieveMarker(FObj parent, PropertyList propertyList,
+                          String systemId, int line, int column) {
+        super(parent, propertyList, systemId, line, column);
 
         this.retrieveClassName =
             this.properties.get("retrieve-class-name").getString();
@@ -123,7 +126,7 @@ public class RetrieveMarker extends FObj {
             } else if (retrieveBoundary == RetrieveBoundary.DOCUMENT) {
                 return layoutBestMarker(areaTree.getDocumentMarkers(),area);
             } else if (retrieveBoundary != RetrieveBoundary.PAGE) {
-                throw new FOPException("Illegal 'retrieve-boundary' value");
+                throw new FOPException("Illegal 'retrieve-boundary' value", systemId, line, column);
             }
         } else if (bestMarker != null) {
             return bestMarker.layoutMarker(area);
@@ -191,7 +194,7 @@ public class RetrieveMarker extends FObj {
             }
 
         } else {
-            throw new FOPException("Illegal 'retrieve-position' value");
+            throw new FOPException("Illegal 'retrieve-position' value", systemId, line, column);
         }
         return null;
     }

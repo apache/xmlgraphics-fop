@@ -60,9 +60,11 @@ import org.apache.fop.apps.FOPException;
 public class MultiPropertySet extends ToBeImplementedElement {
 
     public static class Maker extends FObj.Maker {
-        public FObj make(FObj parent,
-                         PropertyList propertyList) throws FOPException {
-            return new MultiPropertySet(parent, propertyList);
+        public FObj make(FObj parent, PropertyList propertyList,
+                         String systemId, int line, int column)
+            throws FOPException {
+            return new MultiPropertySet(parent, propertyList,
+                                        systemId, line, column);
         }
 
     }
@@ -71,8 +73,9 @@ public class MultiPropertySet extends ToBeImplementedElement {
         return new MultiPropertySet.Maker();
     }
 
-    protected MultiPropertySet(FObj parent, PropertyList propertyList)
-            throws FOPException {
+    protected MultiPropertySet(FObj parent, PropertyList propertyList,
+                               String systemId, int line, int column)
+        throws FOPException {
         super(parent, propertyList);
     }
 

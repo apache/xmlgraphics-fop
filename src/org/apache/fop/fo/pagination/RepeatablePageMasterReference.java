@@ -66,9 +66,11 @@ public class RepeatablePageMasterReference extends PageMasterReference
     private static final int INFINITE = -1;
 
     public static class Maker extends FObj.Maker {
-        public FObj make(FObj parent,
-                         PropertyList propertyList) throws FOPException {
-            return new RepeatablePageMasterReference(parent, propertyList);
+        public FObj make(FObj parent, PropertyList propertyList,
+                        String systemId, int line, int column)
+            throws FOPException {
+            return new RepeatablePageMasterReference(parent, propertyList,
+                                                     systemId, line, column);
         }
 
     }
@@ -80,9 +82,10 @@ public class RepeatablePageMasterReference extends PageMasterReference
     private int maximumRepeats;
     private int numberConsumed = 0;
 
-    public RepeatablePageMasterReference(FObj parent, PropertyList propertyList)
-            throws FOPException {
-        super(parent, propertyList);
+    public RepeatablePageMasterReference(FObj parent, PropertyList propertyList,
+                                         String systemId, int line, int column)
+        throws FOPException {
+        super(parent, propertyList, systemId, line, column);
         if (getProperty("master-reference") != null) {
             this.masterName = getProperty("master-reference").getString();
             if (parent.getName().equals("fo:page-sequence-master")) {
@@ -90,7 +93,7 @@ public class RepeatablePageMasterReference extends PageMasterReference
                 pageSequenceMaster.addSubsequenceSpecifier(this);
             } else {
                 throw new FOPException("A fo:repeatable-page-master-reference must be child of fo:page-sequence-master, not "
-                                       + parent.getName());
+                                       + parent.getName(), systemId, line, column);
             }
         } else {
           log.warn("A fo:repeatable-page-master-reference does not have a master-reference and so is being ignored");
@@ -107,7 +110,8 @@ public class RepeatablePageMasterReference extends PageMasterReference
                 }
             } catch (NumberFormatException nfe) {
                 throw new FOPException("Invalid number '" + mr
-                                       + "'for 'maximum-repeats' property");
+                                       + "'for 'maximum-repeats' property",
+                                       systemId, line, column);
             }
         }
     }

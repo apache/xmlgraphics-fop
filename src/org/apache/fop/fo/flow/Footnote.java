@@ -61,9 +61,10 @@ import java.util.ArrayList;
 public class Footnote extends FObj {
 
     public static class Maker extends FObj.Maker {
-        public FObj make(FObj parent,
-                         PropertyList propertyList) throws FOPException {
-            return new Footnote(parent, propertyList);
+        public FObj make(FObj parent, PropertyList propertyList,
+                         String systemId, int line, int column)
+            throws FOPException {
+            return new Footnote(parent, propertyList, systemId, line, column);
         }
 
     }
@@ -72,9 +73,9 @@ public class Footnote extends FObj {
         return new Footnote.Maker();
     }
 
-    public Footnote(FObj parent,
-                    PropertyList propertyList) throws FOPException {
-        super(parent, propertyList);
+    public Footnote(FObj parent, PropertyList propertyList,
+                    String systemId, int line, int column) throws FOPException {
+        super(parent, propertyList, systemId, line, column);
     }
 
     public String getName() {

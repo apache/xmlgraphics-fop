@@ -61,9 +61,10 @@ import org.apache.fop.apps.FOPException;
 public class Title extends ToBeImplementedElement {
 
     public static class Maker extends FObj.Maker {
-        public FObj make(FObj parent,
-                         PropertyList propertyList) throws FOPException {
-            return new Title(parent, propertyList);
+        public FObj make(FObj parent, PropertyList propertyList,
+                        String systemId, int line, int column)
+            throws FOPException {
+            return new Title(parent, propertyList, systemId, line, column);
         }
 
     }
@@ -72,9 +73,10 @@ public class Title extends ToBeImplementedElement {
         return new Title.Maker();
     }
 
-    protected Title(FObj parent,
-                    PropertyList propertyList) throws FOPException {
-        super(parent, propertyList);
+    protected Title(FObj parent, PropertyList propertyList,
+                        String systemId, int line, int column)
+        throws FOPException {
+        super(parent, propertyList, systemId, line, column);
     }
 
     public String getName() {

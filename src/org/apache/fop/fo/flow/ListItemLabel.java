@@ -58,9 +58,11 @@ import org.apache.fop.apps.FOPException;
 public class ListItemLabel extends FObj {
 
     public static class Maker extends FObj.Maker {
-        public FObj make(FObj parent,
-                         PropertyList propertyList) throws FOPException {
-            return new ListItemLabel(parent, propertyList);
+        public FObj make(FObj parent, PropertyList propertyList,
+                         String systemId, int line, int column)
+            throws FOPException {
+            return new ListItemLabel(parent, propertyList,
+                                     systemId, line, column);
         }
 
     }
@@ -69,8 +71,9 @@ public class ListItemLabel extends FObj {
         return new ListItemLabel.Maker();
     }
 
-    public ListItemLabel(FObj parent, PropertyList propertyList) {
-        super(parent, propertyList);
+    public ListItemLabel(FObj parent, PropertyList propertyList,
+                         String systemId, int line, int column) {
+        super(parent, propertyList, systemId, line, column);
     }
 
     public String getName() {
@@ -81,7 +84,7 @@ public class ListItemLabel extends FObj {
         int numChildren = this.children.size();
 
         if (numChildren != 1) {
-            throw new FOPException("list-item-label must have exactly one block in this version of FOP");
+            throw new FOPException("list-item-label must have exactly one block in this version of FOP", systemId, line, column);
         }
 
         // Common Accessibility Properties
@@ -92,7 +95,15 @@ public class ListItemLabel extends FObj {
 
         // initialize id
         String id = this.properties.get("id").getString();
-        area.getIDReferences().initializeID(id, area);
+        try {
+            area.getIDReferences().initializeID(id, area);
+        }
+        catch(FOPException e) {
+            if (!e.isLocationSet()) {
+                e.setLocation(systemId, line, column);
+            }
+            throw e;
+        }
 
         Block block = (Block)children.get(0);
 

@@ -77,9 +77,11 @@ public class ExternalGraphic extends FObj {
     ImageArea imageArea;
 
     public static class Maker extends FObj.Maker {
-        public FObj make(FObj parent,
-                         PropertyList propertyList) throws FOPException {
-            return new ExternalGraphic(parent, propertyList);
+        public FObj make(FObj parent, PropertyList propertyList,
+                         String systemId, int line, int column)
+            throws FOPException {
+            return new ExternalGraphic(parent, propertyList,
+                                       systemId, line, column);
         }
     }
 
@@ -87,8 +89,9 @@ public class ExternalGraphic extends FObj {
         return new ExternalGraphic.Maker();
     }
 
-    public ExternalGraphic(FObj parent, PropertyList propertyList) {
-        super(parent, propertyList);
+    public ExternalGraphic(FObj parent, PropertyList propertyList,
+                           String systemId, int line, int column) {
+        super(parent, propertyList, systemId, line, column);
     }
 
     public String getName() {
@@ -159,7 +162,15 @@ public class ExternalGraphic extends FObj {
 
             this.id = this.properties.get("id").getString();
 
-            area.getIDReferences().createID(id);
+            try {
+                area.getIDReferences().createID(id);
+            }
+            catch(FOPException e) {
+                if (!e.isLocationSet()) {
+                    e.setLocation(systemId, line, column);
+                }
+                throw e;
+            }
             /*
              * if (area instanceof BlockArea) {
              * area.end();

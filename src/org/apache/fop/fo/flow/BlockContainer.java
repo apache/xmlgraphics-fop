@@ -73,9 +73,11 @@ public class BlockContainer extends FObj {
     AreaContainer areaContainer;
 
     public static class Maker extends FObj.Maker {
-        public FObj make(FObj parent,
-                         PropertyList propertyList) throws FOPException {
-            return new BlockContainer(parent, propertyList);
+        public FObj make(FObj parent, PropertyList propertyList,
+                         String systemId, int line, int column)
+            throws FOPException {
+            return new BlockContainer(parent, propertyList,
+                                      systemId, line, column);
         }
 
     }
@@ -86,9 +88,10 @@ public class BlockContainer extends FObj {
 
     PageSequence pageSequence;
 
-    protected BlockContainer(FObj parent,
-                             PropertyList propertyList) throws FOPException {
-        super(parent, propertyList);
+    protected BlockContainer(FObj parent, PropertyList propertyList,
+                             String systemId, int line, int column)
+        throws FOPException {
+        super(parent, propertyList, systemId, line, column);
         this.span = this.properties.get("span").getEnum();
     }
 
@@ -138,7 +141,15 @@ public class BlockContainer extends FObj {
 
             // initialize id
             String id = this.properties.get("id").getString();
-            area.getIDReferences().initializeID(id, area);
+            try {
+                area.getIDReferences().initializeID(id, area);
+            }
+            catch(FOPException e) {
+                if (!e.isLocationSet()) {
+                    e.setLocation(systemId, line, column);
+                }
+                throw e;
+            }
         }
 
         boolean prevChildMustKeepWithNext = false;

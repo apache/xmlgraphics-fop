@@ -63,6 +63,7 @@ import org.apache.avalon.framework.logger.Logger;
 import org.xml.sax.helpers.DefaultHandler;
 import org.xml.sax.SAXException;
 import org.xml.sax.Attributes;
+import org.xml.sax.Locator;
 
 // Java
 import java.util.HashMap;
@@ -118,12 +119,16 @@ public class FOTreeBuilder extends DefaultHandler implements TreeBuilder {
 
     private Logger log;
 
+    private Locator locator;
+
     public FOTreeBuilder() {}
 
     public void setLogger(Logger logger) {
         log = logger;
     }
 
+    
+    
     public void setStreamRenderer(StreamRenderer streamRenderer) {
         this.streamRenderer = streamRenderer;
     }
@@ -239,6 +244,9 @@ public class FOTreeBuilder extends DefaultHandler implements TreeBuilder {
         streamRenderer.stopRenderer();
     }
 
+    public void setDocumentLocator(Locator locator) {
+        this.locator = locator;
+    }
     /**
      * SAX Handler for the start of an element
      */
@@ -260,6 +268,14 @@ public class FOTreeBuilder extends DefaultHandler implements TreeBuilder {
             (PropertyListBuilder)this.propertylistTable.get(uri);
 
         boolean foreignXML = false;
+        String systemId=null;
+        int line = -1;
+        int column = -1;
+        if (locator!=null) {
+            systemId = locator.getSystemId();
+            line = locator.getLineNumber();
+            column = locator.getColumnNumber();
+        }
         if (fobjMaker == null) {
             String fullName = uri + "^" + localName;
             if (!this.unknownFOs.containsKey(fullName)) {
@@ -287,11 +303,12 @@ public class FOTreeBuilder extends DefaultHandler implements TreeBuilder {
                 list = new DirectPropertyListBuilder.AttrPropertyList(attlist);
             } else {
                 if(currentFObj == null) {
-                    throw new FOPException("Invalid XML or missing namespace");
+                    throw new FOPException("Invalid XML or missing namespace",
+                                           systemId, line, column);
                 }
                 list = currentFObj.properties;
             }
-            fobj = fobjMaker.make(currentFObj, list);
+            fobj = fobjMaker.make(currentFObj, list, systemId, line, column);
             fobj.setLogger(log);
         } catch (FOPException e) {
             throw new SAXException(e);
@@ -302,7 +319,8 @@ public class FOTreeBuilder extends DefaultHandler implements TreeBuilder {
             if (!fobj.getName().equals("fo:root")) {
                 throw new SAXException(new FOPException("Root element must"
                                                         + " be root, not "
-                                                        + fobj.getName()));
+                                                        + fobj.getName(),
+                                                        systemId, line, column));
             }
         } else if(!(fobj instanceof org.apache.fop.fo.pagination.PageSequence)) {
             currentFObj.addChild(fobj);

@@ -65,9 +65,10 @@ import org.apache.fop.apps.FOPException;
 public class Wrapper extends FObjMixed {
 
     public static class Maker extends FObj.Maker {
-        public FObj make(FObj parent,
-                         PropertyList propertyList) throws FOPException {
-            return new Wrapper(parent, propertyList);
+        public FObj make(FObj parent, PropertyList propertyList,
+                        String systemId, int line, int column)
+            throws FOPException {
+            return new Wrapper(parent, propertyList, systemId, line, column);
         }
     }
 
@@ -79,9 +80,10 @@ public class Wrapper extends FObjMixed {
         return "fo:wrapper";
     }
 
-    public Wrapper(FObj parent, PropertyList propertyList)
+    public Wrapper(FObj parent, PropertyList propertyList,
+                        String systemId, int line, int column)
        throws FOPException {
-        super(parent, propertyList);
+        super(parent, propertyList, systemId, line, column);
         // check that this occurs inside an fo:flow
     }
 

@@ -57,9 +57,10 @@ import org.apache.fop.apps.FOPException;
 public class Flow extends AbstractFlow {
 
     public static class Maker extends FObj.Maker {
-        public FObj make(FObj parent,
-                         PropertyList propertyList) throws FOPException {
-            return new Flow(parent, propertyList);
+        public FObj make(FObj parent, PropertyList propertyList,
+                         String systemId, int line, int column)
+            throws FOPException {
+            return new Flow(parent, propertyList, systemId, line, column);
         }
     }
 
@@ -67,9 +68,9 @@ public class Flow extends AbstractFlow {
         return new Flow.Maker();
     }
 
-    protected Flow(FObj parent,
-                   PropertyList propertyList) throws FOPException {
-        super(parent, propertyList);
+    protected Flow(FObj parent, PropertyList propertyList,
+                   String systemId, int line, int column) throws FOPException {
+        super(parent, propertyList, systemId, line, column);
         setFlowName(getProperty("flow-name").getString());
         pageSequence.addFlow(this);
     }

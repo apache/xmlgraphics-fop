@@ -63,9 +63,10 @@ public abstract class PageMasterReference extends FObj
 
     protected String masterName;
 
-    public PageMasterReference(FObj parent, PropertyList propertyList)
+    public PageMasterReference(FObj parent, PropertyList propertyList,
+                               String systemId, int line, int column)
             throws FOPException {
-        super(parent, propertyList);
+        super(parent, propertyList, systemId, line, column);
     }
 
     public String getMasterName() {

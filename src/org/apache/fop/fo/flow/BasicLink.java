@@ -59,9 +59,10 @@ import org.apache.fop.layout.*;
 public class BasicLink extends Inline {
 
     public static class Maker extends FObj.Maker {
-        public FObj make(FObj parent,
-                         PropertyList propertyList) throws FOPException {
-            return new BasicLink(parent, propertyList);
+        public FObj make(FObj parent, PropertyList propertyList,
+                         String systemId, int line, int column)
+            throws FOPException {
+            return new BasicLink(parent, propertyList, systemId, line, column);
         }
     }
 
@@ -69,9 +70,9 @@ public class BasicLink extends Inline {
         return new BasicLink.Maker();
     }
 
-    public BasicLink(FObj parent,
-                     PropertyList propertyList) throws FOPException {
-        super(parent, propertyList);
+    public BasicLink(FObj parent, PropertyList propertyList,
+                     String systemId, int line, int column) throws FOPException {
+        super(parent, propertyList, systemId, line, column);
     }
 
     public String getName() {
@@ -132,13 +133,21 @@ public class BasicLink extends Inline {
                 }
             }            
         } else {
-            throw new FOPException("internal-destination or external-destination must be specified in basic-link");
+            throw new FOPException("internal-destination or external-destination must be specified in basic-link", systemId, line, column);
         }
 
         if (this.marker == START) {
             // initialize id
             String id = this.properties.get("id").getString();
-            area.getIDReferences().initializeID(id, area);
+            try {
+                area.getIDReferences().initializeID(id, area);
+            }
+            catch(FOPException e) {
+                if (!e.isLocationSet()) {
+                    e.setLocation(systemId, line, column);
+                }
+                throw e;
+            }
             this.marker = 0;
         }
 
@@ -157,7 +166,7 @@ public class BasicLink extends Inline {
             //System.err.println("Using currentColumnArea as AC for link");
         }
         if (ac == null) {
-            throw new FOPException("Couldn't get ancestor AreaContainer when processing basic-link");
+            throw new FOPException("Couldn't get ancestor AreaContainer when processing basic-link", systemId, line, column);
         }
 
         int numChildren = this.children.size();

@@ -90,15 +90,15 @@ public abstract class AbstractFlow extends FObj {
     private int _status = Status.AREA_FULL_NONE;
 
 
-    protected AbstractFlow(FObj parent,
-                           PropertyList propertyList) throws FOPException {
-        super(parent, propertyList);
+    protected AbstractFlow(FObj parent, PropertyList propertyList,
+                           String systemId, int line, int column) throws FOPException {
+        super(parent, propertyList, systemId, line, column);
 
         if (parent.getName().equals("fo:page-sequence")) {
             this.pageSequence = (PageSequence)parent;
         } else {
             throw new FOPException("flow must be child of page-sequence, not "
-                                   + parent.getName());
+                                   + parent.getName(), systemId, line, column);
         }
     }
 
@@ -124,7 +124,8 @@ public abstract class AbstractFlow extends FObj {
 
         int numChildren = this.children.size();
         if (numChildren == 0) {
-            throw new FOPException("fo:flow must contain block-level children");
+            throw new FOPException("fo:flow must contain block-level children",
+                                   systemId, line, column);
         }
         for (int i = this.marker; i < numChildren; i++) {
             FObj fo = (FObj)children.get(i);

@@ -50,6 +50,7 @@
  */ 
 package org.apache.fop.extensions;
 
+import org.apache.fop.apps.FOPException;
 import org.apache.fop.fo.*;
 
 import java.util.*;
@@ -77,8 +78,10 @@ public class Outline extends ExtensionObj {
 
 
     public static class Maker extends FObj.Maker {
-        public FObj make(FObj parent, PropertyList propertyList) {
-            return new Outline(parent, propertyList);
+        public FObj make(FObj parent, PropertyList propertyList,
+                         String systemId, int line, int column)
+            throws FOPException {
+            return new Outline(parent, propertyList, systemId, line, column);
         }
 
     }
@@ -87,8 +90,9 @@ public class Outline extends ExtensionObj {
         return new Outline.Maker();
     }
 
-    public Outline(FObj parent, PropertyList propertyList) {
-        super(parent, propertyList);
+    public Outline(FObj parent, PropertyList propertyList,
+                   String systemId, int line, int column) {
+        super(parent, propertyList, systemId, line, column);
 
         _internalDestination =
             this.properties.get("internal-destination").getString();
@@ -135,7 +139,9 @@ public class Outline extends ExtensionObj {
     }
 
     public Label getLabel() {
-        return _label == null ? new Label(this, this.properties) : _label;
+        return _label == null ? new Label(this, this.properties,
+                                          systemId, line, column)
+            : _label;
     }
 
     public ArrayList getOutlines() {
