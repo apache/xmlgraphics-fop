@@ -1,3 +1,9 @@
+/* $Id$
+ * Copyright (C) 2001 The Apache Software Foundation. All rights reserved.
+ * For details on use and redistribution please refer to the
+ * LICENSE file included with these sources.
+ */
+
 package org.apache.fop.viewer;
 /*
   Juergen Verwohlt: Juergen.Verwohlt@jcatalog.com,
@@ -24,38 +30,35 @@ import java.net.*;
  */
 public class Command extends AbstractAction {
 
-  public static String IMAGE_DIR = "/org/apache/fop/viewer/Images/";
+    public static String IMAGE_DIR = "/org/apache/fop/viewer/Images/";
 
-  public Command(String name) {
-    this(name, (ImageIcon)null);
-  }
-
-  public Command(String name, ImageIcon anIcon) {
-    super(name, anIcon);
-  }
-
-
-  public Command(String name, String iconName) {
-    super(name);
-    String path = IMAGE_DIR + iconName + ".gif";
-    URL url = getClass().getResource(path);
-    if (url == null) {
-      MessageHandler.errorln("Icon not found: " + path);
+    public Command(String name) {
+        this(name, (ImageIcon) null);
     }
-    else
-      putValue(SMALL_ICON, new ImageIcon(url));
-  }
 
+    public Command(String name, ImageIcon anIcon) {
+        super(name, anIcon);
+    }
 
-  public void actionPerformed(ActionEvent e) {
-    doit();
-  }
+    public Command(String name, String iconName) {
+        super(name);
+        String path = IMAGE_DIR + iconName + ".gif";
+        URL url = getClass().getResource(path);
+        if (url == null) {
+            MessageHandler.errorln("Icon not found: " + path);
+        } else
+            putValue(SMALL_ICON, new ImageIcon(url));
+    }
 
-  public void doit() {
-    MessageHandler.errorln("Not implemented.");
-  }
+    public void actionPerformed(ActionEvent e) {
+        doit();
+    }
 
-  public void undoit() {
-    MessageHandler.errorln("Not implemented.");
-  }
+    public void doit() {
+        MessageHandler.errorln("Not implemented.");
+    }
+
+    public void undoit() {
+        MessageHandler.errorln("Not implemented.");
+    }
 }
