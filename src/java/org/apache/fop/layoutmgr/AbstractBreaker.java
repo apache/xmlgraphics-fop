@@ -89,6 +89,11 @@ public abstract class AbstractBreaker {
     protected abstract LayoutManager getTopLevelLM();
     protected abstract LayoutManager getCurrentChildLM();
 
+    /** @return true if there's no content that could be handled. */
+    public boolean isEmpty() {
+        return (blockLists.size() == 0);
+    }
+    
     protected LayoutContext createLayoutContext() {
         return new LayoutContext(0);
     }
@@ -139,10 +144,10 @@ public abstract class AbstractBreaker {
 
             KnuthSequence effectiveList;
             if (alignment == Constants.EN_JUSTIFY) {
-                /* ALLINEAMENTO GIUSTIFICATO */
+                /* justification */
                 effectiveList = justifyBoxes(blockList, alg, flowBPD);
             } else {
-                /* ALLINEAMENTO NON GIUSTIFICATO */
+                /* no justification */
                 effectiveList = blockList;
             }
 
@@ -187,8 +192,8 @@ public abstract class AbstractBreaker {
             
             PageBreakPosition pbp = (PageBreakPosition) alg.getPageBreaks().get(p);
             endElementIndex = pbp.getLeafPos();
-            System.out.println("PLM> pagina: " + (p + 1)
-                    + ", break alla posizione " + endElementIndex);
+            System.out.println("PLM> page: " + (p + 1)
+                    + ", break at position " + endElementIndex);
 
             // ignore the first elements added by the
             // PageSequenceLayoutManager
@@ -281,6 +286,9 @@ public abstract class AbstractBreaker {
         LinkedList returnedList;
         BlockSequence blockList;
         if ((returnedList = getNextKnuthElements(childLC, alignment)) != null) {
+            if (returnedList.size() == 0) {
+                return nextSequenceStartsOn;
+            }
             blockList = new BlockSequence(nextSequenceStartsOn);
             if (((KnuthElement) returnedList.getLast()).isPenalty()
                     && ((KnuthPenalty) returnedList.getLast()).getP() == -KnuthElement.INFINITE) {
@@ -335,9 +343,7 @@ public abstract class AbstractBreaker {
             if (tempEl instanceof KnuthBlockBox) {
                 KnuthBlockBox blockBox = (KnuthBlockBox) tempEl;
                 if (blockBox.getBPD() > 0) {
-                    log
-                            .debug("PSLM> lunghezza grezza della riga = "
-                                    + blockBox.getBPD());
+                    log.debug("PSLM> nominal length of line = " + blockBox.getBPD());
                     log.debug("      range = "
                             + blockBox.getIPDRange());
                     boxCount++;
@@ -402,8 +408,8 @@ public abstract class AbstractBreaker {
             while (!(firstElement = (KnuthElement) sequenceIterator
                     .next()).isBox()) {
                 // 
-                System.out
-                        .println("PLM> ignoring glue or penalty element at the beginning of the sequence");
+                System.out.println("PLM> ignoring glue or penalty element "
+                        + "at the beginning of the sequence");
                 if (firstElement.isGlue()) {
                     ((BlockLevelLayoutManager) firstElement
                             .getLayoutManager())
@@ -483,7 +489,7 @@ public abstract class AbstractBreaker {
 
             if (thisElement.isPenalty() && thisElement.getW() > 0) {
                 System.out
-                        .println("  variazione obbligatoria al numero di righe!");
+                        .println("  mandatory variation to the number of lines!");
                 ((BlockLevelLayoutManager) thisElement
                         .getLayoutManager()).negotiateBPDAdjustment(
                         thisElement.getW(), thisElement);
@@ -500,10 +506,10 @@ public abstract class AbstractBreaker {
                         thisBreak.difference,
                         (thisBreak.difference > 0 ? spaceMaxAdjustment.max
                                 : -spaceMaxAdjustment.min));
-                System.out.println("solo spazi: "
+                System.out.println("single space: "
                         + (adjustedDiff == thisBreak.difference
                                 || thisBreak.bpdAdjust == 0 ? "ok"
-                                : "ERRORE"));
+                                : "ERROR"));
             } else if (thisBreak.bpdAdjust != 0) {
                 adjustedDiff += adjustLineNumbers(
                         adjustableLinesList,
@@ -515,10 +521,10 @@ public abstract class AbstractBreaker {
                         thisBreak.difference - adjustedDiff,
                         ((thisBreak.difference - adjustedDiff) > 0 ? spaceMaxAdjustment.max
                                 : -spaceMaxAdjustment.min));
-                System.out.println("linee e spazi: "
+                System.out.println("lines and space: "
                         + (adjustedDiff == thisBreak.difference
                                 || thisBreak.bpdAdjust == 0 ? "ok"
-                                : "ERRORE"));
+                                : "ERROR"));
 
             }
         }
@@ -580,7 +586,7 @@ public abstract class AbstractBreaker {
     private void logEffectiveList(KnuthSequence effectiveList) {
         ListIterator tempIter;
         KnuthElement temp;
-        System.out.println("Lista effettiva");
+        System.out.println("Effective list");
         System.out.println(" ");
         tempIter = effectiveList.listIterator();
         System.out.println(" ");
@@ -615,14 +621,14 @@ public abstract class AbstractBreaker {
     }
 
     private int adjustBlockSpaces(LinkedList spaceList, int difference, int total) {
-    /*LF*/  System.out.println("AdjustBlockSpaces: ripartire " + difference + " / " + total + " su " + spaceList.size() + " spazi fra blocchi");
+    /*LF*/  System.out.println("AdjustBlockSpaces: difference " + difference + " / " + total + " on " + spaceList.size() + " spaces in block");
             ListIterator spaceListIterator = spaceList.listIterator();
             int adjustedDiff = 0;
             int partial = 0;
             while (spaceListIterator.hasNext()) {
                 KnuthGlue blockSpace = (KnuthGlue)spaceListIterator.next();
                 partial += (difference > 0 ? blockSpace.getY() : blockSpace.getZ());
-                System.out.println("disponibile = " + partial +  " / " + total);
+                System.out.println("available = " + partial +  " / " + total);
                 System.out.println("competenza  = " + (((int) ((float) partial * difference / total)) - adjustedDiff) + " / " + difference);
                 int newAdjust = ((BlockLevelLayoutManager) blockSpace.getLayoutManager()).negotiateBPDAdjustment(((int) ((float) partial * difference / total)) - adjustedDiff, blockSpace);
                 adjustedDiff += newAdjust;
@@ -631,7 +637,7 @@ public abstract class AbstractBreaker {
         }
 
     private int adjustLineNumbers(LinkedList lineList, int difference, int total) {
-    /*LF*/  System.out.println("AdjustLineNumbers: ripartire " + difference + " / " + total + " su " + lineList.size() + " elementi");
+    /*LF*/  System.out.println("AdjustLineNumbers: difference " + difference + " / " + total + " on " + lineList.size() + " elements");
 
 //            int adjustedDiff = 0;
 //            int partial = 0;
