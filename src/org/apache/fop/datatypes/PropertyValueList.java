@@ -1,5 +1,7 @@
 package org.apache.fop.datatypes;
 
+import java.lang.reflect.InvocationTargetException;
+
 import java.util.LinkedList;
 import java.util.Collection;
 import java.util.Iterator;
@@ -37,11 +39,6 @@ public class PropertyValueList extends LinkedList implements PropertyValue {
      * An integer property type.
      */
     public final int type;
-
-    /**
-     * The <tt>FONode</tt> that stacked this value.
-     */
-    private FONode stackedBy = null;
 
     /**
      * @param property <tt>int</tt> index of the property.
@@ -184,21 +181,6 @@ public class PropertyValueList extends LinkedList implements PropertyValue {
     }
 
     /**
-     * Set the node that stacked this value.
-     * @param node - the <tt>FONode</tt> that stacked this value.
-     */
-    public void setStackedBy(FONode node) {
-        stackedBy = node;
-    }
-
-    /**
-     * Get the node that stacked this value.
-     */
-    public FONode getStackedBy() {
-        return stackedBy;
-    }
-
-    /**
      * In some circumstances, the property against which a type is to be
      * validated may not be the same as the property against which this
      * <i>AbstractPropertyValue</i> is defined.
@@ -248,9 +230,20 @@ public class PropertyValueList extends LinkedList implements PropertyValue {
             Iterator contents = iterator();
             while (contents.hasNext()) {
                 int i = 0, j = 0;
-                cstr = contents.next().toString();
+                Object obj = contents.next();
+                try {
+                    cstr = (String)(obj.getClass()
+                                .getMethod("toString", null)
+                                .invoke(obj, null));
+                } catch (IllegalAccessException e) {
+                    throw new PropertyException (e);
+                } catch (NoSuchMethodException e) {
+                    throw new PropertyException (e);
+                } catch (InvocationTargetException e) {
+                    throw new PropertyException (e);
+                }
                 while (i < cstr.length() && j >= 0) {
-                    j = cstr.indexOf('\n');
+                    j = cstr.indexOf('\n', j);
                     if (j >= 0) {
                         str = str + ">" + cstr.substring(i, ++j);
                         i = j;
