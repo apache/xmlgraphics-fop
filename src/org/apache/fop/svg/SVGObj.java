@@ -57,9 +57,10 @@ import org.apache.fop.layout.Area;
 import org.apache.fop.layout.FontState;
 import org.apache.fop.apps.FOPException;
 
-import org.apache.fop.dom.svg.*;
+import org.apache.batik.dom.svg.*;
 
-import org.w3c.dom.svg.SVGElement;
+import org.w3c.dom.svg.*;
+import org.w3c.dom.*;
 
 /**
  * Since SVG objects are not layed out then this class checks
@@ -68,6 +69,8 @@ import org.w3c.dom.svg.SVGElement;
  */
 public abstract class SVGObj extends FObj implements GraphicsCreator {
 
+	String tagName = "";
+	String[] props = {};
 	/**
 	 *
 	 * @param parent the parent formatting object
@@ -77,10 +80,25 @@ public abstract class SVGObj extends FObj implements GraphicsCreator {
 		super(parent, propertyList);
 	}
 
-	public SVGElement createGraphic()
-	{
-		return null;
-	}
+    public void addGraphic(Document doc, Element parent) {
+        Element element = doc.createElementNS("http://www.w3.org/2000/svg", tagName);
+//        Element element = doc.createElement(tagName);
+        for(int count = 0; count < props.length; count++) {
+            String rf = this.properties.get(props[count]).getString();
+            element.setAttribute(props[count], rf);
+        }
+        parent.appendChild(element);
+        int numChildren = this.children.size();
+        for (int i = 0; i < numChildren; i++) {
+            Object child = children.elementAt(i);
+            if (child instanceof GraphicsCreator) {
+                ((GraphicsCreator)child).addGraphic(doc, element);
+            } else if (child instanceof String) {
+                org.w3c.dom.Text text = doc.createTextNode((String)child);
+                element.appendChild(text);
+            }
+        }
+    }
 
 	/**
 	 * layout this formatting object.
@@ -90,11 +108,11 @@ public abstract class SVGObj extends FObj implements GraphicsCreator {
 	 */
 	public Status layout(Area area) throws FOPException
 	{
-		if (area instanceof SVGArea) {
-		} else {
+//		if (area instanceof SVGArea) {
+//		} else {
 			/* otherwise generate a warning */
 			System.err.println("WARNING: " + this.name + " outside svg:svg");
-		}
+//		}
 
 		/* return status */
 		return new Status(Status.OK);

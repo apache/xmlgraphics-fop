@@ -59,15 +59,15 @@ import org.apache.fop.layout.FontState;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.layout.inline.*;
 
-import org.apache.fop.dom.svg.*;
+import org.apache.batik.dom.svg.*;
+import org.w3c.dom.*;
 import org.w3c.dom.svg.*;
 import org.w3c.dom.svg.SVGLength;
 
-import org.apache.fop.dom.svg.SVGArea;
 /**
  * class representing svg:svg pseudo flow object.
  */
-public class SVG extends FObj implements GraphicsCreator {
+public class SVG extends SVGObj implements GraphicsCreator {
 
 		/**
 		 * inner class for making SVG objects.
@@ -98,8 +98,6 @@ public class SVG extends FObj implements GraphicsCreator {
 		}
 
 		FontState fs;
-		float width;
-		float height;
 
 		/**
 		 * constructs an SVG object (called by Maker).
@@ -110,9 +108,30 @@ public class SVG extends FObj implements GraphicsCreator {
 		public SVG(FObj parent, PropertyList propertyList) {
 				super(parent, propertyList);
 				this.name = "svg:svg";
+	tagName = "svg";
+	props = new String[] {"width", "height", "x", "y", "id", "style"};
 		}
 
-		public SVGElement createGraphic() {
+/*    public void addGraphic(Document doc, Element parent) {
+        Element element = doc.createElement(tagName);
+        for(int count = 0; count < props.length; count++) {
+            String rf = this.properties.get(props[count]).getString();
+            element.setAttribute(props[count], rf);
+        }
+        parent.appendChild(element);
+        int numChildren = this.children.size();
+        for (int i = 0; i < numChildren; i++) {
+            Object child = children.elementAt(i);
+            if (child instanceof GraphicsCreator) {
+                ((GraphicsCreator)child).addGraphic(doc, element);
+            } else if (child instanceof String) {
+                org.w3c.dom.Text text = doc.createTextNode((String)child);
+                element.appendChild(text);
+            }
+        }
+    }*/
+
+/*		public SVGElement createGraphic() {
 				SVGSVGElementImpl svgArea = null;
 				SVGLength w = ((SVGLengthProperty) this.properties.get("width")).
 											getSVGLength();
@@ -169,7 +188,7 @@ public class SVG extends FObj implements GraphicsCreator {
 						Status status;
 				}
 				return svgArea;
-		}
+		}*/
 
 		/**
 		 * layout this formatting object.
@@ -205,37 +224,61 @@ public class SVG extends FObj implements GraphicsCreator {
 						this.fs = new FontState(area.getFontInfo(), fontFamily,
 																		fontStyle, fontWeight, fontSize, FontVariant.NORMAL);
 
-						SVGLength length;
-						length = ((SVGLengthProperty) this.properties.get("width")).getSVGLength();
-						if (length == null)
-								length = new SVGLengthImpl();
-						this.width = length.getValue();
-						length = ((SVGLengthProperty) this.properties.get("height")).
-										 getSVGLength();
-						if (length == null)
-								length = new SVGLengthImpl();
-						this.height = length.getValue();
+//						this.width = this.properties.get("width").getString();
+//						this.height = this.properties.get("height").getString();
 
 						this.marker = 0;
 				}
 
 				/* create an SVG area */
 				/* if width and height are zero, may want to get the bounds of the content. */
+				SVGOMDocument doc = new SVGOMDocument(null, SVGDOMImplementation.getDOMImplementation());
+
+                DefaultSVGContext dc = new DefaultSVGContext() {
+                        public float getPixelToMM() {
+                            return 12;
+                        }
+                        public float getViewportWidth() {
+                            return 100;
+                        }
+                        public float getViewportHeight() {
+                            return 100;
+                        }
+                    };
+                doc.setSVGContext(dc);
+
+                System.out.println("tag:" + tagName);
+                Element topLevel = doc.createElementNS("http://www.w3.org/2000/svg", tagName);
+                for(int count = 0; count < props.length; count++) {
+                    String rf = this.properties.get(props[count]).getString();
+                    topLevel.setAttribute(props[count], rf);
+                }
+				doc.appendChild(topLevel);
+                int numChildren = this.children.size();
+                for (int i = 0; i < numChildren; i++) {
+                    Object child = children.elementAt(i);
+                    if (child instanceof GraphicsCreator) {
+                        ((GraphicsCreator)child).addGraphic(doc, topLevel);
+                    } else if (child instanceof String) {
+                        org.w3c.dom.Text text = doc.createTextNode((String)child);
+                        topLevel.appendChild(text);
+                    }
+                }
+
+		        float width = ((SVGSVGElement)topLevel).getWidth().getBaseVal().getValue();
+        		float height = ((SVGSVGElement)topLevel).getHeight().getBaseVal().getValue();
 				SVGArea svg = new SVGArea(fs, width, height);
-				SVGDocument doc = new SVGDocumentImpl();
 				svg.setSVGDocument(doc);
 				svg.start();
+
+				/* finish off the SVG area */
+				svg.end();
 
 				/* add the SVG area to the containing area */
 				ForeignObjectArea foa = (ForeignObjectArea) area;
 				foa.setObject(svg);
 				foa.setIntrinsicWidth(svg.getWidth());
 				foa.setIntrinsicHeight(svg.getHeight());
-
-				doc.appendChild((SVGSVGElement) createGraphic());
-
-				/* finish off the SVG area */
-				svg.end();
 
 				/* return status */
 				return new Status(Status.OK);

@@ -54,7 +54,6 @@ package org.apache.fop.svg;
 // FOP
 import org.apache.fop.fo.*;
 import org.apache.fop.apps.*;
-import org.apache.fop.dom.svg.*;
 import org.apache.fop.fo.FOTreeBuilder;
 import org.apache.fop.fo.ElementMapping;
 import org.apache.fop.fo.PropertyListMapping;

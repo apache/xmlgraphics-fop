@@ -53,12 +53,11 @@ package org.apache.fop.svg;
 import org.apache.fop.fo.TreeBuilder;
 import org.apache.fop.fo.FOTreeBuilder;
 import org.apache.fop.fo.ElementMapping;
-import org.apache.fop.dom.svg.SVGDocumentImpl;
 
 public class SVGElementMapping implements ElementMapping {
 
 	public void addToBuilder(TreeBuilder builder) {
-		String uri = SVGDocumentImpl.namespaceURI;
+		String uri = "http://www.w3.org/2000/svg";
 		builder.addMapping(uri, "svg", SVG.maker());
 		builder.addMapping(uri, "rect", Rect.maker());
 		builder.addMapping(uri, "line", Line.maker());
@@ -74,8 +73,8 @@ public class SVGElementMapping implements ElementMapping {
 		builder.addMapping(uri, "defs", Defs.maker());
 		builder.addMapping(uri, "path", Path.maker());
 		builder.addMapping(uri, "use", Use.maker());
-		builder.addMapping(uri, "tspan", TSpan.maker());
-		builder.addMapping(uri, "tref", TRef.maker());
+		builder.addMapping(uri, "tspan", Tspan.maker());
+		builder.addMapping(uri, "tref", Tref.maker());
 		builder.addMapping(uri, "image", Image.maker());
 		builder.addMapping(uri, "style", Style.maker());
 
@@ -99,8 +98,8 @@ public class SVGElementMapping implements ElementMapping {
 		builder.addMapping(uri, "font", Font.maker());
 		builder.addMapping(uri, "glyph", Glyph.maker());
 		builder.addMapping(uri, "missing-glyph", MissingGlyph.maker());
-		builder.addMapping(uri, "hkern", HKern.maker());
-		builder.addMapping(uri, "vkern", VKern.maker());
+		builder.addMapping(uri, "hkern", Hkern.maker());
+		builder.addMapping(uri, "vkern", Vkern.maker());
 		builder.addMapping(uri, "set", Set.maker());
 		builder.addMapping(uri, "animateMotion", AnimateMotion.maker());
 		builder.addMapping(uri, "animateColor", AnimateColor.maker());
