@@ -17,8 +17,6 @@
  */
 package org.apache.fop.area;
 
-import java.awt.geom.Rectangle2D;
-
 import org.apache.fop.datastructs.Node;
 import org.apache.fop.fo.flow.FoPageSequence;
 
@@ -53,30 +51,6 @@ implements ReferenceArea {
             Object sync) {
         // the page-sequence is the generated-by node
         super(pageSeq, pageSeq, parent, sync);
-    }
-
-    /**
-     * Creates a new body region area with the given rectangular area, column
-     * count and gap
-     * This sets the region reference area class to BODY.
-     * @param columnCount
-     * @param columnGap
-     * @param area the rectangular area
-     * @param pageSeq the generating <code>page-sequence</code>
-     * @param parent the page-reference-area
-     * @param sync
-     */
-    public RegionBodyRefArea(
-            int columnCount,
-            int columnGap,
-            Rectangle2D area,
-            FoPageSequence pageSeq,
-            Node parent,
-            Object sync) {
-        // the page-sequence is the generated-by node
-        super(area, pageSeq, pageSeq, parent, sync);
-        this.columnCount = columnCount;
-        this.columnGap = columnGap;
     }
 
     /**
