@@ -18,9 +18,8 @@
 
 package org.apache.fop.render;
 
-import java.io.IOException;
 import java.io.OutputStream;
-import java.util.Date;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Logger;
 // XML
@@ -33,87 +32,56 @@ import org.apache.fop.area.RegionViewport;
 import org.apache.fop.apps.Fop;
 import org.apache.fop.configuration.FOUserAgent;
 
-import org.apache.avalon.framework.configuration.Configurable;
-import org.apache.avalon.framework.configuration.Configuration;
-import org.apache.avalon.framework.configuration.ConfigurationException;
-
 /**
  * Abstract base class for all renderers. The Abstract renderer does all the
  * top level processing of the area tree and adds some abstract methods to
  * handle viewports. This keeps track of the current block and inline position.
  */
 public abstract class AbstractRenderer
-         implements Renderer, Configurable {
+         implements Renderer {
 
-    /**
-     * user agent
-     */
+    protected OutputStream output;
+    /** user agent */
     protected FOUserAgent userAgent;
 
-    /**
-     * producer (usually "FOP")
-     */
-    protected String producer = "FOP";
+    /** renderer configuration */
+    protected Map options = new HashMap();
 
-    /**
-     * creator of document
-     */
-    protected String creator = null;
-
-    /**
-     * creation time
-     */
-    protected Date creationDate = null;
-
-    /**
-     * renderer configuration
-     */
-    protected Map options;
-
-    /**
-     * block progression position
-     */
-    protected int currentBPPosition = 0;
-
-    /**
-     * inline progression position
-     */
-    protected int currentIPPosition = 0;
-
-    /**
-     * current inline progression position in block
-     */
-    protected int currentBlockIPPosition = 0;
-
-    /**
-     * the block progression position of the containing block used for
-     * absolutely positioned blocks
-     */
-    protected int containingBPPosition = 0;
-
-    /**
-     * the inline progression position of the containing block used for
-     * absolutely positioned blocks
-     */
-    protected int containingIPPosition = 0;
+//    /** block progression position  */
+//    protected int currentBPPosition = 0;
+//
+//    /** inline progression position */
+//    protected int currentIPPosition = 0;
+//
+//    /** current inline progression position in block */
+//    protected int currentBlockIPPosition = 0;
+//
+//    /**
+//     * the block progression position of the containing block used for
+//     * absolutely positioned blocks
+//     */
+//    protected int containingBPPosition = 0;
+//
+//    /**
+//     * the inline progression position of the containing block used for
+//     * absolutely positioned blocks
+//     */
+//    protected int containingIPPosition = 0;
 
 
     protected Logger log = Logger.getLogger(Fop.fopPackage);
-    
+
     /**
-     * @see org.apache.avalon.framework.configuration.Configurable#configure(Configuration)
+     * Implements Runnable.run() so that this thread can be started.
+     * Set up the fonts and perform other initialization.
+     * Respond to requests from layout thread for information
+     * Wait for requests from layout thread for layout.
      */
-    public void configure(Configuration conf) throws ConfigurationException {
+    public void run() {
     }
 
-    /** @see org.apache.fop.render.Renderer */
-    public void setProducer(String inProducer) {
-        producer = inProducer;
-    }
-
-    /** @see org.apache.fop.render.Renderer */
-    public void setCreator(String inCreator) {
-        creator = inCreator;
+    public synchronized void setOutputStream(OutputStream output) {
+        this.output = output;
     }
 
 //    /**
@@ -121,32 +89,14 @@ public abstract class AbstractRenderer
 //     */
 //    public abstract void setupFontInfo(FOTreeControl foTreeControl);
 
-    /**
-     *  @see org.apache.fop.render.Renderer
-     */
-    public void setUserAgent(FOUserAgent agent) {
+    /**  @see org.apache.fop.render.Renderer */
+    public synchronized void setUserAgent(FOUserAgent agent) {
         userAgent = agent;
     }
 
-    /**
-     * @param date
-     */
-    public void setCreationDate(Date date) {
-        creationDate = date;
+    public synchronized void setOption(String key, Object value) {
+        options.put(key, value);
     }
-
-    /** @see org.apache.fop.render.Renderer */
-    public void setOptions(Map opt) {
-        options = opt;
-    }
-
-    /** @see org.apache.fop.render.Renderer */
-    public void startRenderer(OutputStream outputStream)
-        throws IOException { }
-
-    /** @see org.apache.fop.render.Renderer */
-    public void stopRenderer()
-        throws IOException { }
 
     /**
      * Check if this renderer supports out of order rendering. If this renderer
