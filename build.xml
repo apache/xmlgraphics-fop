@@ -574,6 +574,9 @@ Sometimes ant gives out this warnings, but the build is finished without any pro
   </target>
 
   <target name="hyphenation-jar" depends="hyphenation">
+    <tstamp>
+      <format property="ts" pattern="yyyyMMdd-HHmmss-z"/>
+    </tstamp>
     <jar jarfile="${build.dir}/fop-hyph.jar"
          basedir="${build.dest}"
          includes="hyph/**">
