@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- $Id$ -->
 <!ELEMENT compliance (head, body)>
-<!ELEMENT head (title)>
+<!ELEMENT head (title, subtitle?)>
 <!ELEMENT title (#PCDATA)>
+<!ELEMENT subtitle (#PCDATA)>
 <!ELEMENT body (standard)>
 <!ELEMENT standard (explanatory?, level-1+)>
 <!ATTLIST standard
