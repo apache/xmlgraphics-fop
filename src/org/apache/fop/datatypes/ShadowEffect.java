@@ -1,5 +1,6 @@
 package org.apache.fop.datatypes;
 
+import org.apache.fop.fo.expr.PropertyValue;
 import org.apache.fop.fo.expr.AbstractPropertyValue;
 import org.apache.fop.fo.expr.PropertyValueList;
 import org.apache.fop.fo.expr.PropertyException;
@@ -65,7 +66,7 @@ public class ShadowEffect extends AbstractPropertyValue {
     public ShadowEffect(int property, PropertyValueList list)
         throws PropertyException
     {
-        super(property);
+        super(property, PropertyValue.SHADOW_EFFECT);
         Object entry;
         Iterator entries = list.iterator();
         switch (list.size()) {

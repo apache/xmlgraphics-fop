@@ -1,5 +1,6 @@
 package org.apache.fop.datatypes;
 
+import org.apache.fop.fo.expr.PropertyValue;
 import org.apache.fop.fo.expr.AbstractPropertyValue;
 import org.apache.fop.fo.expr.PropertyException;
 import org.apache.fop.fo.Properties;
@@ -44,7 +45,7 @@ public class TextDecorations
     public TextDecorations(int property, byte decorations)
         throws PropertyException
     {
-        super(property);
+        super(property, PropertyValue.TEXT_DECORATIONS);
         this.decorations = decorations;
     }
 
@@ -56,7 +57,7 @@ public class TextDecorations
     public TextDecorations(String propertyName)
         throws PropertyException
     {
-        super(propertyName);
+        super(propertyName, PropertyValue.TEXT_DECORATIONS);
         this.decorations = decorations;
     }
 

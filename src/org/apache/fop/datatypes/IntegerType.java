@@ -3,6 +3,7 @@ package org.apache.fop.datatypes;
 
 import org.apache.fop.fo.expr.PropertyException;
 import org.apache.fop.fo.expr.AbstractPropertyValue;
+import org.apache.fop.fo.expr.PropertyValue;
 import org.apache.fop.fo.Properties;
 
 /*
@@ -34,7 +35,7 @@ public class IntegerType extends AbstractPropertyValue {
     public IntegerType (int property, int value)
         throws PropertyException
     {
-        super(property);
+        super(property, PropertyValue.INTEGER);
         intval = value;
     }
 
@@ -47,7 +48,7 @@ public class IntegerType extends AbstractPropertyValue {
     public IntegerType (String propertyName, int value)
         throws PropertyException
     {
-        super(propertyName);
+        super(propertyName, PropertyValue.INTEGER);
         intval = value;
     }
 

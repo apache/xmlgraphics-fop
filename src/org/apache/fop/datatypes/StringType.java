@@ -2,6 +2,7 @@
 package org.apache.fop.datatypes;
 
 import org.apache.fop.fo.expr.PropertyException;
+import org.apache.fop.fo.expr.PropertyValue;
 import org.apache.fop.fo.expr.AbstractPropertyValue;
 import org.apache.fop.fo.Properties;
 
@@ -17,7 +18,9 @@ import org.apache.fop.fo.Properties;
  * @version $Revision$ $Name$
  */
 /**
- * The base class for most datatypes which resolve to a <tt>String</tt>.
+ * <tt>StringType</tt> is not intended to be instantiated directly. It
+ * is a base class for the two basic types of <tt>String</tt>
+ * properties: <tt>NCName</tt> and <tt>Literal</tt>.
  */
 
 public class StringType extends AbstractPropertyValue {
@@ -31,12 +34,13 @@ public class StringType extends AbstractPropertyValue {
      * @param property the <tt>int</tt> index of the property on which
      * this value is being defined.
      * @param string the <tt>String</tt>.
+     * @param type the type of <tt>PropertyValue</tt> being instantiated.
      * @exception PropertyException
      */
-    public StringType (int property, String string)
+    public StringType (int property, String string, int type)
         throws PropertyException
     {
-        super(property);
+        super(property, type);
         this.string = string;
     }
 
@@ -44,12 +48,13 @@ public class StringType extends AbstractPropertyValue {
      * @param propertyName the <tt>String</tt< name of the property on which
      * this value is being defined.
      * @param string the <tt>String</tt>.
+     * @param type the type of <tt>PropertyValue</tt> being instantiated.
      * @exception PropertyException
      */
-    public StringType (String propertyName, String string)
+    public StringType (String propertyName, String string, int type)
         throws PropertyException
     {
-        super(propertyName);
+        super(propertyName, type);
         this.string = string;
     }
 

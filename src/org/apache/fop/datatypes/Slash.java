@@ -2,6 +2,7 @@
 package org.apache.fop.datatypes;
 
 import org.apache.fop.fo.expr.PropertyException;
+import org.apache.fop.fo.expr.PropertyValue;
 import org.apache.fop.fo.expr.AbstractPropertyValue;
 import org.apache.fop.fo.Properties;
 
@@ -35,7 +36,7 @@ public class Slash extends AbstractPropertyValue {
     public Slash (int property)
         throws PropertyException
     {
-        super(property);
+        super(property, PropertyValue.SLASH);
     }
 
     /**
@@ -46,7 +47,7 @@ public class Slash extends AbstractPropertyValue {
     public Slash (String propertyName)
         throws PropertyException
     {
-        super(propertyName);
+        super(propertyName, PropertyValue.SLASH);
     }
 
     public String toString() {

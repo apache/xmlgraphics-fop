@@ -1,6 +1,7 @@
 package org.apache.fop.datatypes;
 
 import org.apache.fop.fo.expr.AbstractPropertyValue;
+import org.apache.fop.fo.expr.PropertyValue;
 import org.apache.fop.fo.expr.PropertyException;
 import org.apache.fop.fo.Properties;
 
@@ -66,7 +67,7 @@ public class FromNearestSpecified extends AbstractPropertyValue {
     public FromNearestSpecified(int property)
         throws PropertyException
     {
-        super(property);
+        super(property, PropertyValue.FROM_NEAREST_SPECIFIED);
     }
 
     /**
@@ -77,7 +78,7 @@ public class FromNearestSpecified extends AbstractPropertyValue {
     public FromNearestSpecified(String propertyName)
         throws PropertyException
     {
-        super(propertyName);
+        super(propertyName, PropertyValue.FROM_NEAREST_SPECIFIED);
     }
 
     /**

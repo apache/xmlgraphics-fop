@@ -5,6 +5,7 @@ import org.apache.fop.fo.expr.PropertyException;
 import org.apache.fop.fo.PropertyConsts;
 import org.apache.fop.fo.Properties;
 import org.apache.fop.configuration.Configuration;
+import org.apache.fop.fo.expr.PropertyValue;
 
 /*
  * $Id$
@@ -26,7 +27,7 @@ public class CountryType extends NCName {
     public CountryType(int property, String countryCode)
         throws PropertyException
     {
-        super(property, countryCode);
+        super(property, countryCode, PropertyValue.COUNTRY);
         // Validate the code
         if (Configuration.getHashMapEntry("countriesMap", countryCode)
             == null) throw new PropertyException

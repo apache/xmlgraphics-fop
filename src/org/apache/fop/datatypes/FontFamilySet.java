@@ -8,6 +8,7 @@ import org.apache.fop.fo.expr.PropertyException;
 import org.apache.fop.fo.PropertyConsts;
 import org.apache.fop.fo.Properties;
 import org.apache.fop.fo.expr.AbstractPropertyValue;
+import org.apache.fop.fo.expr.PropertyValue;
 
 /*
  * FontFamilySet.java
@@ -46,7 +47,7 @@ public class FontFamilySet extends AbstractPropertyValue {
     public FontFamilySet(int property, String[] fontFamilyNames)
         throws PropertyException
     {
-        super(property);
+        super(property, PropertyValue.FONT_FAMILY);
         this.fontFamilyNames = fontFamilyNames;
     }
 

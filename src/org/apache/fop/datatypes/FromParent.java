@@ -1,6 +1,7 @@
 package org.apache.fop.datatypes;
 
 import org.apache.fop.fo.expr.AbstractPropertyValue;
+import org.apache.fop.fo.expr.PropertyValue;
 import org.apache.fop.fo.expr.PropertyException;
 import org.apache.fop.fo.Properties;
 
@@ -65,7 +66,7 @@ public class FromParent extends AbstractPropertyValue {
     public FromParent(int property)
         throws PropertyException
     {
-        super(property);
+        super(property, PropertyValue.FROM_PARENT);
     }
 
     /**
@@ -76,7 +77,7 @@ public class FromParent extends AbstractPropertyValue {
     public FromParent(String propertyName)
         throws PropertyException
     {
-        super(propertyName);
+        super(propertyName, PropertyValue.FROM_PARENT);
     }
 
     /**

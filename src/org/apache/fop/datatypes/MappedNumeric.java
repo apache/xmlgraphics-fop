@@ -2,6 +2,7 @@ package org.apache.fop.datatypes;
 
 import org.apache.fop.datatypes.EnumType;
 import org.apache.fop.fo.expr.PropertyException;
+import org.apache.fop.fo.expr.PropertyValue;
 import org.apache.fop.fo.PropertyConsts;
 import org.apache.fop.fo.Properties;
 import org.apache.fop.fo.FOTree;
@@ -45,8 +46,8 @@ public class MappedNumeric extends EnumType {
     {
         // Set property index in AbstractPropertyValue
         // and enumValue enum constant in EnumType
-        super(property, enumText);
-        mappedNum = foTree.getMappedNumArrayValue(property, enumValue);
+        super(property, enumText, PropertyValue.MAPPED_NUMERIC);
+        mappedNum = PropertyConsts.getMappedNumeric(property, enumValue);
     }
 
     /**
@@ -62,8 +63,8 @@ public class MappedNumeric extends EnumType {
     {
         // Set property index in AbstractPropertyValue
         // and enumValue enum constant in EnumType
-        super(propertyName, enumText);
-        mappedNum = foTree.getMappedNumArrayValue(property, enumValue);
+        super(propertyName, enumText, PropertyValue.MAPPED_NUMERIC);
+        mappedNum = PropertyConsts.getMappedNumeric(property, enumValue);
     }
 
     /**
@@ -78,7 +79,7 @@ public class MappedNumeric extends EnumType {
      * validate the <i>MappedNumeric</i> against the associated property.
      */
     public void validate() throws PropertyException {
-        super.validate(Properties.MAPPED_NUMERIC);
+        super.validate(Properties.MAPPED_LENGTH);
     }
 
     public String toString() {

@@ -1,5 +1,6 @@
 package org.apache.fop.datatypes;
 
+import org.apache.fop.fo.expr.PropertyValue;
 import org.apache.fop.fo.expr.AbstractPropertyValue;
 import org.apache.fop.fo.expr.PropertyException;
 import org.apache.fop.fo.Properties;
@@ -32,7 +33,7 @@ public class None extends AbstractPropertyValue {
     public None(int property)
         throws PropertyException
     {
-        super(property);
+        super(property, PropertyValue.NONE);
     }
 
     /**
@@ -43,7 +44,7 @@ public class None extends AbstractPropertyValue {
     public None(String propertyName)
         throws PropertyException
     {
-        super(propertyName);
+        super(propertyName, PropertyValue.NONE);
     }
 
     /**

@@ -2,6 +2,7 @@ package org.apache.fop.datatypes;
 
 import org.apache.fop.fo.expr.PropertyException;
 import org.apache.fop.fo.expr.AbstractPropertyValue;
+import org.apache.fop.fo.expr.PropertyValue;
 import org.apache.fop.fo.Properties;
 
 /*
@@ -51,7 +52,7 @@ public class Frequency extends AbstractPropertyValue {
     public Frequency(int property, int unit, double value)
         throws PropertyException
     {
-        super(property);
+        super(property, PropertyValue.FREQUENCY);
         units = unit;
         frequency = value * hzPerUnit[unit];
     }
@@ -67,7 +68,7 @@ public class Frequency extends AbstractPropertyValue {
     public Frequency(String propertyName, int unit, double value)
         throws PropertyException
     {
-        super(propertyName);
+        super(propertyName, PropertyValue.FREQUENCY);
         units = unit;
         frequency = value * hzPerUnit[unit];
     }
