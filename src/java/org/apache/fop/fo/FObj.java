@@ -132,9 +132,11 @@ public class FObj extends FONode implements Constants {
     }
 
     public void setLocation(Locator locator) {
-        line = locator.getLineNumber();
-        column = locator.getColumnNumber();
-        systemId = locator.getSystemId();
+        if (locator != null) {
+            line = locator.getLineNumber();
+            column = locator.getColumnNumber();
+            systemId = locator.getSystemId();
+        }
     }
     
     /**
