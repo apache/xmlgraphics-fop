@@ -474,13 +474,9 @@ public class LineArea extends Area {
 
         switch (leaderPattern) {
             case LeaderPattern.SPACE:
-                //whitespace setting must be false for this
-                int whiteSpaceSetting = this.whiteSpaceCollapse;
-                this.changeWhiteSpaceCollapse(WhiteSpaceCollapse.FALSE);
-                pendingAreas.addElement(
-                  this.buildSimpleLeader(whitespaceIndex,
-                                         leaderLength));
-                this.changeWhiteSpaceCollapse(whiteSpaceSetting);
+                InlineSpace spaceArea =
+                  new InlineSpace(leaderLength);
+                pendingAreas.addElement(spaceArea);
                 break;
             case LeaderPattern.RULE:
                 LeaderArea leaderArea =
@@ -751,19 +747,17 @@ public class LineArea extends Area {
        * creates a leader as String out of the given char and the leader length
        * and wraps it in an InlineArea which is returned
        */
-    private InlineArea buildSimpleLeader(int charNumber, int leaderLength) {
-		int width = this.currentFontState.width(charNumber);
-		if (width == 0)	{
-			char c = (char) charNumber;
-			MessageHandler.errorln("char " + c + " has width 0. Using width 100 instead.");
-			width = 100;
-		}
+    private InlineArea buildSimpleLeader(char c, int leaderLength) {
+        int width = this.currentFontState.width(currentFontState.mapChar(c));
+        if (width == 0)	{
+            MessageHandler.errorln("char " + c + " has width 0. Using width 100 instead.");
+            width = 100;
+        }
         int factor = (int) Math.floor (leaderLength /
                                        width);
         char [] leaderChars = new char [factor];
-        char fillChar = (char) charNumber;
         for (int i = 0; i < factor; i ++) {
-            leaderChars[i] = fillChar;
+            leaderChars[i] = c;//currentFontState.mapChar(c);
         }
         WordArea leaderPatternArea =
           new WordArea(currentFontState, this.red, this.green,
