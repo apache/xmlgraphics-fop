@@ -3,6 +3,7 @@
 <Document>
 	<Title>SVG in FOP Design</Title>
 	<Description>The design for implementing SVG rendering inside FOP. This is out of date.</Description>
+	<ExternalChapter file="Todo.xml"/>
 	<Chapter>
 		<Title>SVG Elements</Title>
 		<Section>

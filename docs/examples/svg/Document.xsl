@@ -262,6 +262,25 @@
         </fo:list-item>
 	</xsl:template>
 
+	<xsl:template match="ol">
+      <fo:list-block>
+		<xsl:apply-templates/>
+      </fo:list-block>
+	</xsl:template>
+
+	<xsl:template match="ol/li">
+        <fo:list-item>
+          <fo:list-item-label>
+            <fo:block><xsl:number level="multiple" count="li" format="1. "/></fo:block>
+          </fo:list-item-label>
+          <fo:list-item-body>
+            <fo:block space-after.optimum="4pt">
+        		<xsl:apply-templates/>
+            </fo:block>
+          </fo:list-item-body>
+        </fo:list-item>
+	</xsl:template>
+
 	<xsl:template match="Appendix//Title" priority="1">
 		<xsl:number level="multiple" count="Appendix|Section|SubSection" format="A.1 "/>
 		<xsl:apply-templates/>
