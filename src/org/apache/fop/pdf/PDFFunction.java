@@ -208,7 +208,6 @@ public class PDFFunction extends PDFObject {
 		super(theNumber);
 		
 		this.functionType = 0; //dang well better be 0;
-		
 		this.size = theSize;
 		this.bitsPerSample = theBitsPerSample; 
 		this.order = theOrder; //int
@@ -403,6 +402,8 @@ public class PDFFunction extends PDFObject {
 		}
 		return(p.toString());
 	}
+	
+				
 
 	 /**
 	  * represent as PDF. Whatever the FunctionType is, the correct
@@ -440,7 +441,11 @@ public class PDFFunction extends PDFObject {
 				
 				p.append("] \n");
 			}			
-			
+			else
+			{
+				p.append("/Domain [ 0 1 ] \n");
+			}
+
 			//SIZE
 			if(this.size != null)
 			{
@@ -464,6 +469,17 @@ public class PDFFunction extends PDFObject {
 					(Double)this.encode.elementAt(tempInt)) +" ");
 				}
 				p.append("] \n");
+			}
+			else
+			{
+				p.append("/Encode [ ");
+				vectorSize = this.functions.size();
+				for(tempInt=0; tempInt < vectorSize; tempInt++)
+				{
+					p.append("0 1 ");
+				}
+				p.append("] \n");
+				
 			}
 			
 			//BITSPERSAMPLE
@@ -555,6 +571,11 @@ public class PDFFunction extends PDFObject {
 				
 				p.append("] \n");
 			}
+			else
+			{
+				p.append("/Domain [ 0 1 ] \n");
+			}
+
 			
 			//RANGE
 			if(this.range != null)
@@ -621,7 +642,11 @@ public class PDFFunction extends PDFObject {
 				}
 				p.append("] \n");
 			}
-			
+			else
+			{
+				p.append("/Domain [ 0 1 ] \n");
+			}
+
 			//RANGE
 			if(this.range != null)
 			{
@@ -663,6 +688,18 @@ public class PDFFunction extends PDFObject {
 								
 				p.append("] \n");
 			}
+			else
+			{
+				p.append("/Encode [ ");
+				vectorSize = this.functions.size();
+				for(tempInt=0; tempInt < vectorSize; tempInt++)
+				{
+					p.append("0 1 ");
+				}
+				p.append("] \n");
+				
+			}
+			
 			
 			//BOUNDS, required, but can be empty
 			p.append("/Bounds [ ");
@@ -720,7 +757,11 @@ public class PDFFunction extends PDFObject {
 				
 				p.append("] \n");
 			}
-			
+			else
+			{
+				p.append("/Domain [ 0 1 ] \n");
+			}
+
 			//RANGE
 			if(this.range != null)
 			{
