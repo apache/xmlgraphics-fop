@@ -260,7 +260,7 @@ public class PageSequence extends FObj
         else
         {
             MessageHandler.errorln("WARNING: this version of FOP only supports "
-            + "static-content in region-before and region-after"); 
+            + "static-content in xsl-region-before and xsl-region-after"); 
         }
     }
 }
