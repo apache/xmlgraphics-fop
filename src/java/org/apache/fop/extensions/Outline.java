@@ -57,6 +57,7 @@ import org.apache.fop.apps.FOPException;
 import java.util.ArrayList;
 
 import org.xml.sax.Attributes;
+import org.apache.fop.area.extensions.BookmarkData;
 
 /**
  * The outline object for the pdf bookmark extension.

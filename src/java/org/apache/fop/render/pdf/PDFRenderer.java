@@ -94,7 +94,7 @@ import org.apache.fop.pdf.PDFLink;
 import org.apache.fop.pdf.PDFOutline;
 import org.apache.fop.pdf.PDFAnnotList;
 import org.apache.fop.pdf.PDFColor;
-import org.apache.fop.extensions.BookmarkData;
+import org.apache.fop.area.extensions.BookmarkData;
 
 import org.apache.fop.area.Trait;
 import org.apache.fop.area.TreeExt;
