@@ -250,7 +250,9 @@ public class SyncedCircularBuffer {
      * has been processed, and the buffer is empty.
      */
     public boolean isExhausted() {
-        return producerFinished && isEmpty(); 
+        synchronized (this) {
+            return producerFinished && isEmpty(); 
+        }
     }
 
 }
