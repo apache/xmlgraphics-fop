@@ -66,6 +66,7 @@ import java.io.StringWriter;
 import java.io.StringReader;
 import java.io.FileWriter;
 import java.io.PrintWriter;
+import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.FileNotFoundException;
 import java.net.URL;
@@ -244,7 +245,8 @@ public class XalanCommandLine {
             driver.addElementMapping("org.apache.fop.svg.SVGElementMapping");
             driver.addPropertyList("org.apache.fop.fo.StandardPropertyListMapping");
             driver.addPropertyList("org.apache.fop.svg.SVGPropertyListMapping");
-            driver.setWriter(new PrintWriter(new FileWriter(args[2])));
+		    PrintWriter pwriter = new PrintWriter(new BufferedWriter(new FileWriter(args[2])));
+		    driver.setWriter(pwriter);
             driver.buildFOTree(parser, new InputSource(reader));
             reader.close();
             driver.format();
@@ -252,6 +254,8 @@ public class XalanCommandLine {
             if (usefile) {
                 new File (args[2] + ".tmp").delete();
             }
+			pwriter.flush();
+			pwriter.close();
         }
         catch (Exception e) {
             MessageHandler.errorln("FATAL ERROR: " + e.getMessage());
