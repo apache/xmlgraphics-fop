@@ -15,7 +15,7 @@ Introduction
 ============
 
 FOP is the world's first print formatter driven by XSL formatting objects. It 
-is a Java 1.1 application that reads a formatting object tree and then turns 
+is a Java 1.2 application that reads a formatting object tree and then turns 
 it into a PDF document. The formatting object tree, can be in the form of an 
 XML document (output by an XSLT engine like XT or Xalan) or can be passed in 
 memory as a DOM Document or (in the case of XT) SAX events.
@@ -166,9 +166,9 @@ Sometimes ant gives out this warnings, but the build is finished without any pro
     <tstamp/>
     <property name="Name" value="Fop"/>
     <property name="name" value="fop"/>
-    <property name="version" value="0.20.1"/>
+    <property name="version" value="0.20.2"/>
     <filter  token="version" value="${version}"/>
-    <property name="year" value="1999-2001"/>
+    <property name="year" value="1999-2002"/>
 
     <echo message="------------------- ${Name} ${version} [${year}] ----------------"/>
 
@@ -214,14 +214,6 @@ Sometimes ant gives out this warnings, but the build is finished without any pro
     <property name="ignore_this" value="ignore_this.java"/>
     <property name="jimi" value="JimiImage.java"/>
     <property name="jai" value="JAIImage.java"/>
-
-    <property name="ignore_jdk11"
-              value="org/apache/fop/render/awt/**
-                     ,org/apache/fop/viewer/**
-                     ,**/GifJpegImage.java
-                     ,**/JimiImage.java
-                     ,**/PrintStarter.java
-                     ,**/AWTStarter.java"/>
 
     <property name="xslt" value="org.apache.xalan.xslt.Process"/>
     <property name="src.properties.xsl" value="${src.codegen}/properties.xsl"/>
@@ -522,19 +514,6 @@ Sometimes ant gives out this warnings, but the build is finished without any pro
            excludes="**/*${ignore_this},${jimi}"/>
   </target>
 
-  <target name="compile-jdk11" depends="codegen, prepare-src">
-    <echo message="Compiling the sources for JDK1.1"/>
-    <!-- create directories -->
-    <mkdir dir="${build.dest}"/>
-
-    <javac srcdir="${build.src}"
-           destdir="${build.dest}"
-           debug="${debug}"
-           deprecation="${deprecation}"
-           optimize="${optimize}"
-           excludes="**/${ignore_this},${Jimi},${ignore_jdk11}"/>
-  </target>
-
   <!-- =================================================================== -->
   <!-- Creates the class package                                           -->
   <!-- =================================================================== -->
@@ -571,13 +550,6 @@ Sometimes ant gives out this warnings, but the build is finished without any pro
   </target>
 
   <target name="all" depends="package"/> <!-- "all" target for us Makefile converts ;-) -->
-
-  <target name="package-jdk11" depends="compile-jdk11,hyphenation">
-    <echo message="Creating the jar file ${build.dir}/${name}11.jar"/>
-    <jar jarfile="${build.dir}/${name}-jdk11.jar"
-         basedir="${build.dest}"
-         includes="org/**,conf/**,hyph/**"/>
-  </target>
 
   <!-- =================================================================== -->
   <!-- Prepares the docs                                                   -->
