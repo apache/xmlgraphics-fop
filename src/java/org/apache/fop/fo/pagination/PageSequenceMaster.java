@@ -63,8 +63,13 @@ public class PageSequenceMaster {
     private ArrayList masters = new ArrayList(1);
 
     /**
-     * Create a <i>PageSequenceMaster</i> from an
-     * <tt>FoSimplePageMaster</tt>.
+     * Creates a <i>PageSequenceMaster</i> from an
+     * <tt>FoSimplePageMaster</tt>.  The <code>PageMasterAlternatives</code>
+     * is created with default minimum and maximum repeats of 1 and
+     * <code>NO_LIMIT</code> respectively.  It is assigned a
+     * <code>PageCondition</code> with deafault values of <code>ANY</code> for
+     * <code>BlankOrNotBlank, OddOrEven</code> and <code>PagePosition</code>.
+     * 
      * @param simplePM - the <tt>FoSimplePageMaster</tt> from which this
      * <i>PageSequenceMaster</i> is derived.
      */
