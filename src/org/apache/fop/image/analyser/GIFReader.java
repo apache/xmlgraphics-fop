@@ -1,47 +1,58 @@
 /*
  * $Id$
- * Copyright (C) 2001 The Apache Software Foundation. All rights reserved.
+ * Copyright (C) 2001-2002 The Apache Software Foundation. All rights reserved.
  * For details on use and redistribution please refer to the
  * LICENSE file included with these sources.
  */
-
 package org.apache.fop.image.analyser;
 
 // Java
 import java.io.BufferedInputStream;
 import java.io.IOException;
 
+// FOP
 import org.apache.fop.image.FopImage;
 import org.apache.fop.fo.FOUserAgent;
 
 /**
  * ImageReader object for GIF image type.
- * @author Pankaj Narula
- * @version 1.0
+ *
+ * @author    Pankaj Narula
+ * @version   $Id$
  */
 public class GIFReader implements ImageReader {
-    static protected final int GIF_SIG_LENGTH = 10;
 
-    public FopImage.ImageInfo verifySignature(String uri, BufferedInputStream fis,
-                                   FOUserAgent ua) throws IOException {
-        byte[] header = getDefaultHeader(fis);
-        boolean supported = ((header[0] == 'G') && (header[1] == 'I') &&
-                             (header[2] == 'F') && (header[3] == '8') &&
-                             (header[4] == '7' || header[4] == '9') &&
-                             (header[5] == 'a'));
+    private static final int GIF_SIG_LENGTH = 10;
+
+    /** @see org.apache.fop.image.analyser.ImageReader */
+    public FopImage.ImageInfo verifySignature(String uri, BufferedInputStream bis,
+                FOUserAgent ua) throws IOException {
+        byte[] header = getDefaultHeader(bis);
+        boolean supported = ((header[0] == 'G')
+                && (header[1] == 'I')
+                && (header[2] == 'F')
+                && (header[3] == '8')
+                && (header[4] == '7' || header[4] == '9')
+                && (header[5] == 'a'));
         if (supported) {
             FopImage.ImageInfo info = getDimension(header);
             info.mimeType = getMimeType();
             return info;
-        } else
+        } else {
             return null;
+        }
     }
 
+    /**
+     * Returns the MIME type supported by this implementation.
+     *
+     * @return   The MIME type
+     */
     public String getMimeType() {
         return "image/gif";
     }
 
-    protected FopImage.ImageInfo getDimension(byte[] header) {
+    private FopImage.ImageInfo getDimension(byte[] header) {
         FopImage.ImageInfo info = new FopImage.ImageInfo();
         // little endian notation
         int byte1 = header[6] & 0xff;
@@ -54,7 +65,8 @@ public class GIFReader implements ImageReader {
         return info;
     }
 
-    protected byte[] getDefaultHeader(BufferedInputStream imageStream) throws IOException {
+    private byte[] getDefaultHeader(BufferedInputStream imageStream)
+                throws IOException {
         byte[] header = new byte[GIF_SIG_LENGTH];
         try {
             imageStream.mark(GIF_SIG_LENGTH + 1);
@@ -63,11 +75,12 @@ public class GIFReader implements ImageReader {
         } catch (IOException ex) {
             try {
                 imageStream.reset();
-            } catch (IOException exbis) {}
+            } catch (IOException exbis) {
+                // throw the original exception, not this one
+            }
             throw ex;
         }
         return header;
     }
 
 }
-

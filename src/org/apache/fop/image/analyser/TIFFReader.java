@@ -1,44 +1,51 @@
 /*
  * $Id$
- * Copyright (C) 2001 The Apache Software Foundation. All rights reserved.
+ * Copyright (C) 2001-2002 The Apache Software Foundation. All rights reserved.
  * For details on use and redistribution please refer to the
  * LICENSE file included with these sources.
  */
-
 package org.apache.fop.image.analyser;
 
 // Java
 import java.io.BufferedInputStream;
 import java.io.IOException;
 
+// FOP
 import org.apache.fop.image.FopImage;
 import org.apache.fop.fo.FOUserAgent;
 
 /**
  * ImageReader object for TIFF image type.
- * @author Pankaj Narula, Michael Lee
- * @version 1.0
+ *
+ * @author    Pankaj Narula, Michael Lee
+ * @version   $Id$
  */
 public class TIFFReader implements ImageReader {
-    static protected final int TIFF_SIG_LENGTH = 8;
 
-    public FopImage.ImageInfo verifySignature(String uri, BufferedInputStream fis,
-                                   FOUserAgent ua) throws IOException {
-        byte[] header = getDefaultHeader(fis);
+    private static final int TIFF_SIG_LENGTH = 8;
+
+    /** @see org.apache.fop.image.analyser.ImageReader */
+    public FopImage.ImageInfo verifySignature(String uri, BufferedInputStream bis,
+                FOUserAgent ua) throws IOException {
+        byte[] header = getDefaultHeader(bis);
         boolean supported = false;
 
-        if (header[0] == (byte) 0x49 && header[1] == (byte) 0x49)// first 2 bytes = II (little endian encoding)
-        {
+        // first 2 bytes = II (little endian encoding)
+        if (header[0] == (byte) 0x49 && header[1] == (byte) 0x49) {
+
             // look for '42' in byte 3 and '0' in byte 4
-            if (header[2] == 42 && header[3] == 0)
+            if (header[2] == 42 && header[3] == 0) {
                 supported = true;
+            }
         }
 
-        if (header[0] == (byte) 0x4D && header[1] == (byte) 0x4D)// first 2 bytes == MM (big endian encoding)
-        {
+        // first 2 bytes == MM (big endian encoding)
+        if (header[0] == (byte) 0x4D && header[1] == (byte) 0x4D) {
+
             // look for '42' in byte 4 and '0' in byte 3
-            if (header[2] == 0 && header[3] == 42)
+            if (header[2] == 0 && header[3] == 42) {
                 supported = true;
+            }
         }
 
         if (supported) {
@@ -50,11 +57,16 @@ public class TIFFReader implements ImageReader {
         }
     }
 
+    /**
+     * Returns the MIME type supported by this implementation.
+     *
+     * @return   The MIME type
+     */
     public String getMimeType() {
         return "image/tiff";
     }
 
-    protected FopImage.ImageInfo getDimension(byte[] header) {
+    private FopImage.ImageInfo getDimension(byte[] header) {
         // currently not setting the width and height
         // these are set again by the Jimi image reader.
         // I suppose I'll do it one day to be complete.  Or
@@ -77,13 +89,14 @@ public class TIFFReader implements ImageReader {
          * byte4 );
          * this.height = ( int ) ( l );
          */
-         FopImage.ImageInfo info = new FopImage.ImageInfo();
-         info.width = -1;
-         info.height = -1;
-         return info;
+        FopImage.ImageInfo info = new FopImage.ImageInfo();
+        info.width = -1;
+        info.height = -1;
+        return info;
     }
 
-    protected byte[] getDefaultHeader(BufferedInputStream imageStream) throws IOException {
+    private byte[] getDefaultHeader(BufferedInputStream imageStream)
+        throws IOException {
         byte[] header = new byte[TIFF_SIG_LENGTH];
         try {
             imageStream.mark(TIFF_SIG_LENGTH + 1);
@@ -92,7 +105,9 @@ public class TIFFReader implements ImageReader {
         } catch (IOException ex) {
             try {
                 imageStream.reset();
-            } catch (IOException exbis) {}
+            } catch (IOException exbis) {
+                // throw the original exception, not this one
+            }
             throw ex;
         }
         return header;
