@@ -53,9 +53,19 @@ package org.apache.fop.apps;
 // Imported java.io classes
 import java.io.File;
 
+// Imported TraX classes
+import javax.xml.transform.Source;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.stream.StreamSource;
+import javax.xml.transform.sax.SAXResult;
+import javax.xml.transform.sax.SAXSource;
+import javax.xml.transform.sax.SAXTransformerFactory;
+
 // Imported SAX classes
 import org.xml.sax.InputSource;
 import org.xml.sax.XMLReader;
+import org.xml.sax.XMLFilter;
 
 /**
  * XSLTInputHandler basically takes an XML file and transforms it with an XSLT
@@ -63,7 +73,9 @@ import org.xml.sax.XMLReader;
  */
 public class XSLTInputHandler extends InputHandler {
 
-    private TraxInputHandler traxInputHandler;
+    private Transformer transformer;
+    private StreamSource xmlSource;
+    private Source xsltSource;
 
     /**
      * Constructor for files as input
@@ -72,7 +84,9 @@ public class XSLTInputHandler extends InputHandler {
      * @throws FOPException if initializing the Transformer fails
      */
     public XSLTInputHandler(File xmlfile, File xsltfile) throws FOPException {
-        this.traxInputHandler = new TraxInputHandler(xmlfile, xsltfile);
+        this.xmlSource  = new StreamSource(xmlfile);
+        this.xsltSource = new StreamSource(xsltfile);
+        initTransformer();
     }
 
     /**
@@ -82,7 +96,9 @@ public class XSLTInputHandler extends InputHandler {
      * @throws FOPException if initializing the Transformer fails
      */
     public XSLTInputHandler(String xmlURL, String xsltURL) throws FOPException {
-        traxInputHandler = new TraxInputHandler(xmlURL, xsltURL);
+        this.xmlSource  = new StreamSource(xmlURL);
+        this.xsltSource = new StreamSource(xsltURL);
+        initTransformer();
     }
 
     /**
@@ -93,32 +109,98 @@ public class XSLTInputHandler extends InputHandler {
      */
     public XSLTInputHandler(InputSource xmlSource, InputSource xsltSource)
                 throws FOPException {
-        traxInputHandler = new TraxInputHandler(xmlSource, xsltSource);
+        this.xmlSource  = new StreamSource(xmlSource.getByteStream(),
+                                           xmlSource.getSystemId());
+        this.xsltSource = new StreamSource(xsltSource.getByteStream(),
+                                           xsltSource.getSystemId());
+        initTransformer();
+    }
+
+    private void initTransformer() throws FOPException {
+        try {
+            this.transformer = 
+                TransformerFactory.newInstance().newTransformer(xsltSource);
+        } catch (Exception ex) {
+            throw new FOPException(ex);
+        }
     }
 
     /**
-     * Get the InputSource.
-     * @return the InputSource
-     * @deprecated Use TraxInputHandler run(Driver driver) instead.
+     * @see org.apache.fop.apps.InputHandler#getInputSource()
      */
     public InputSource getInputSource() {
-        return traxInputHandler.getInputSource();
+        InputSource is = new InputSource();
+        is.setByteStream(xmlSource.getInputStream());
+        is.setSystemId(xmlSource.getSystemId());
+        return is;
     }
 
     /**
-     * Get the parser, actually an XML filter.
+     * Overwrites this method of the super class and returns an XMLFilter 
+     * instead of a simple XMLReader which allows chaining of transformations.
      * @see org.apache.fop.apps.InputHandler#getParser()
-     * @deprecated Use TraxInputHandler run(Driver driver) instead.
      */
     public XMLReader getParser() throws FOPException {
-        return traxInputHandler.getParser();
+        return getXMLFilter(xsltSource);
+    }
+
+    /**
+     * Creates from the transformer an instance of an XMLFilter which
+     * then can be used in a chain with the XMLReader passed to Driver. This way
+     * during the conversion of the xml file + xslt stylesheet the resulting
+     * data is fed into Fop. This should help to avoid memory problems
+     * @param xsltSource An xslt stylesheet
+     * @return an XMLFilter which can be chained together with other 
+     * XMLReaders or XMLFilters
+     * @throws FOPException if setting up the XMLFilter fails
+     */
+    public static XMLFilter getXMLFilter(Source xsltSource) throws FOPException {
+        try {
+            // Instantiate  a TransformerFactory.
+            TransformerFactory tFactory = TransformerFactory.newInstance();
+            // Determine whether the TransformerFactory supports The use uf SAXSource
+            // and SAXResult
+            if (tFactory.getFeature(SAXSource.FEATURE)
+                    && tFactory.getFeature(SAXResult.FEATURE)) {
+                // Cast the TransformerFactory to SAXTransformerFactory.
+                SAXTransformerFactory saxTFactory =
+                    ((SAXTransformerFactory)tFactory);
+                // Create an XMLFilter for each stylesheet.
+                XMLFilter xmlfilter =
+                    saxTFactory.newXMLFilter(xsltSource);
+
+                // Create an XMLReader.
+                XMLReader parser = createParser();
+                if (parser == null) {
+                    throw new FOPException("Unable to create SAX parser");
+                }
+
+                // xmlFilter1 uses the XMLReader as its reader.
+                xmlfilter.setParent(parser);
+                return xmlfilter;
+            } else {
+                throw new FOPException("Your parser doesn't support the "
+                        + "features SAXSource and SAXResult."
+                        + "\nMake sure you are using an XSLT engine which "
+                        + "supports TrAX");
+            }
+        } catch (FOPException fe) {
+            throw fe;
+        } catch (Exception ex) {
+            throw new FOPException(ex);
+        }
     }
 
     /**
      * @see org.apache.fop.apps.InputHandler#run(Driver)
      */
     public void run(Driver driver) throws FOPException {
-        traxInputHandler.run(driver);
+        try {
+            transformer.transform(xmlSource,
+                                  new SAXResult(driver.getContentHandler()));
+        } catch (Exception ex) {
+            throw new FOPException(ex);
+        }
     }
 
     /**
@@ -127,9 +209,8 @@ public class XSLTInputHandler extends InputHandler {
      * @param value the value of the parameter
      */
     public void setParameter(String name, Object value) {
-        traxInputHandler.setParameter(name, value);
+        transformer.setParameter(name, value);
     }
 
 }
-
 
