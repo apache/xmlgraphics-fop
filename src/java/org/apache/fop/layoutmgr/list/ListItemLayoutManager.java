@@ -1,5 +1,5 @@
 /*
- * Copyright 1999-2004 The Apache Software Foundation.
+ * Copyright 1999-2005 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -128,11 +128,8 @@ public class ListItemLayoutManager extends BlockStackingLayoutManager {
             childLC.setStackLimit(
                   MinOptMax.subtract(context.getStackLimit(),
                                      stackSize));
-            if (stage == 0) {
-                childLC.setRefIPD(24000);
-            } else if (stage == 1) {
-                childLC.setRefIPD(context.getRefIPD());
-            }
+            childLC.setRefIPD(context.getRefIPD());
+            
             stage++;
             while (!curLM.isFinished()) {
                 if ((bp = curLM.getNextBreakPoss(childLC)) != null) {
