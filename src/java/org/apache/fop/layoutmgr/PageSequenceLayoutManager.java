@@ -484,7 +484,7 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager implements 
         return curPage;
     }
 
-    private void layoutStaticContent(Region region, int regionClass) {
+    private void layoutStaticContent(Region region) {
         if (region == null) {
             return;
         }
@@ -492,7 +492,8 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager implements 
         if (flow == null) {
             return;
         }
-        RegionViewport reg = curPage.getPage().getRegionViewport(regionClass);
+        
+        RegionViewport reg = curPage.getPage().getRegionViewport(region.getNameId());
         if (reg == null) {
             log.error("no region viewport: shouldn't happen");
         }
@@ -511,7 +512,7 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager implements 
                 lm.addAreas(new BreakPossPosIter(vecBreakPoss, 0,
                                                   vecBreakPoss.size()), null);
             } else {
-              log.error("bp==null  cls=" + regionClass);
+              log.error("bp==null  cls=" + region.getRegionName());
             }
         }
         //lm.flush();
@@ -524,14 +525,10 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager implements 
         }
         // Layout static content into the regions
         // Need help from pageseq for this
-        layoutStaticContent(currentSimplePageMaster.getRegion(FO_REGION_BEFORE),
-                            FO_REGION_BEFORE);
-        layoutStaticContent(currentSimplePageMaster.getRegion(FO_REGION_AFTER),
-                            FO_REGION_AFTER);
-        layoutStaticContent(currentSimplePageMaster.getRegion(FO_REGION_START),
-                            FO_REGION_START);
-        layoutStaticContent(currentSimplePageMaster.getRegion(FO_REGION_END),
-                            FO_REGION_END);
+        layoutStaticContent(currentSimplePageMaster.getRegion(FO_REGION_BEFORE));
+        layoutStaticContent(currentSimplePageMaster.getRegion(FO_REGION_AFTER));
+        layoutStaticContent(currentSimplePageMaster.getRegion(FO_REGION_START));
+        layoutStaticContent(currentSimplePageMaster.getRegion(FO_REGION_END));
         // Queue for ID resolution and rendering
         areaTreeModel.addPage(curPage);
         curPage = null;
