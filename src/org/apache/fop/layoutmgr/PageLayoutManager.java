@@ -239,6 +239,8 @@ public class PageLayoutManager extends AbstractBPLayoutManager implements Runnab
                 lm.setParentLM(this);
                 LayoutContext childLC = new LayoutContext(0);
                 childLC.setStackLimit(new MinOptMax((int)curPage.getViewArea().getHeight()));
+                childLC.setRefIPD((int)reg.getViewArea().getWidth());
+
                 while (!lm.isFinished()) {
                     BreakPoss bp = lm.getNextBreakPoss(childLC, null);
                     if (bp != null) {

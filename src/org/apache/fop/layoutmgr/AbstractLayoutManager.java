@@ -91,10 +91,5 @@ public abstract class AbstractLayoutManager implements LayoutManager {
      */
     abstract public boolean addChild(Area childArea);
 
-    /** Do nothing */
-    public boolean splitArea(Area areaToSplit, SplitContext context) {
-        context.nextArea = areaToSplit;
-        return false;
-    }
 }
 
