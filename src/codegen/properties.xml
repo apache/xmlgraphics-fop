@@ -922,6 +922,18 @@
 	<default>12.0pt</default> 
    </property>
 
+  <property>
+    <name>scaling</name>
+    <class-name>Scaling</class-name>
+    <inherited>true</inherited>
+    <datatype>
+      <enumeration>
+        <value const="UNIFORM">uniform</value>
+        <value const="NON_UNIFORM">non-uniform</value>
+      </enumeration>
+    </datatype>
+    <default>uniform</default>
+  </property>
 
 </property-list>
 
