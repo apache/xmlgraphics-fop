@@ -51,12 +51,10 @@
 package org.apache.fop.fo.pagination;
 
 // FOP
-import org.apache.fop.fo.FObj;
-import org.apache.fop.fo.FONode;
-import org.apache.fop.fo.FOText;
-
-// Java
 import java.util.List;
+
+import org.apache.fop.fo.FONode;
+import org.apache.fop.fo.FObj;
 
 /**
  * The fo:root formatting object. Contains page masters, page-sequences.
