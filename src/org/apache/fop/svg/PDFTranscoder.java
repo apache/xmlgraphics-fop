@@ -88,7 +88,7 @@ import org.w3c.dom.svg.*;
 import org.w3c.dom.css.*;
 import org.w3c.dom.svg.SVGLength;
 
-import org.apache.fop.svg.*;
+//import org.apache.fop.layout.FontInfo;
 import org.apache.fop.pdf.*;
 
 import org.w3c.dom.DOMException;
@@ -180,7 +180,7 @@ public class PDFTranscoder extends XMLAbstractTranscoder {
         textPainter = new StrokingTextPainter();
         ctx.setTextPainter(textPainter);
 
-        PDFTextElementBridge pdfTextElementBridge = new PDFTextElementBridge(graphics.getFontState());
+        PDFTextElementBridge pdfTextElementBridge = new PDFTextElementBridge(graphics.getFontInfo());
         ctx.putBridge(pdfTextElementBridge);
 
         PDFAElementBridge pdfAElementBridge = new PDFAElementBridge();
@@ -276,7 +276,7 @@ public class PDFTranscoder extends XMLAbstractTranscoder {
         graphics.setSVGDimension(docWidth, docHeight);
         currentTransform.setTransform(1, 0, 0, -1, 0, height);
         /*if (!stroke) {
-            textPainter = new PDFTextPainter(graphics.getFontState());
+            textPainter = new PDFTextPainter(graphics.getFontInfo());
             ctx.setTextPainter(textPainter);
         }*/
 

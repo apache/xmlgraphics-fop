@@ -65,8 +65,9 @@ public class PDFGraphics2D extends AbstractGraphics2D {
      * the current state of the pdf graphics
      */
     PDFState graphicsState;
+    int baseLevel = 0;
 
-    protected FontState fontState;
+    protected FontInfo fontInfo;
     protected FontState ovFontState = null;
 
     /**
@@ -107,7 +108,7 @@ public class PDFGraphics2D extends AbstractGraphics2D {
      * This is used to create a Graphics object for use inside an already
      * existing document.
      */
-    public PDFGraphics2D(boolean textAsShapes, FontState fs, PDFDocument doc,
+    public PDFGraphics2D(boolean textAsShapes, FontInfo fi, PDFDocument doc,
                          PDFResourceContext page, String pref, String font, float size, int xpos, int ypos) {
         super(textAsShapes);
         pdfDoc = doc;
@@ -116,7 +117,7 @@ public class PDFGraphics2D extends AbstractGraphics2D {
         currentFontSize = size;
         currentYPosition = ypos;
         currentXPosition = xpos;
-        fontState = fs;
+        fontInfo = fi;
         pageRef = pref;
         graphicsState = new PDFState();
     }
@@ -127,6 +128,7 @@ public class PDFGraphics2D extends AbstractGraphics2D {
 
     public void setPDFState(PDFState state) {
         graphicsState = state;
+        baseLevel = graphicsState.getStackLevel();
     }
 
     public void setOutputStream(OutputStream os) {
@@ -162,6 +164,13 @@ public class PDFGraphics2D extends AbstractGraphics2D {
         return new PDFGraphics2D(this);
     }
 
+    public void restorePDFState() {
+        for(int count = graphicsState.getStackLevel(); count > baseLevel; count--) {
+            currentStream.write("Q\n");
+        }
+        graphicsState.restoreLevel(baseLevel);
+    }
+
     /**
      * This is a pdf specific method used to add a link to the
      * pdf document.
@@ -192,9 +201,11 @@ public class PDFGraphics2D extends AbstractGraphics2D {
         currentStream.write("q\n");
         Shape imclip = getClip();
         writeClip(imclip);
-        currentStream.write("" + matrix[0] + " " + matrix[1] + " "
-                            + matrix[2] + " " + matrix[3] + " "
-                            + matrix[4] + " " + matrix[5] + " cm\n");
+        if(!at.isIdentity()) {
+            currentStream.write("" + matrix[0] + " " + matrix[1] + " "
+                                + matrix[2] + " " + matrix[3] + " "
+                                + matrix[4] + " " + matrix[5] + " cm\n");
+        }
 
         currentStream.write("" + width + " 0 0 "
                           + (-height) + " "
@@ -365,9 +376,11 @@ public class PDFGraphics2D extends AbstractGraphics2D {
         currentStream.write("q\n");
         Shape imclip = getClip();
         writeClip(imclip);
-        currentStream.write("" + matrix[0] + " " + matrix[1] + " "
-                            + matrix[2] + " " + matrix[3] + " "
-                            + matrix[4] + " " + matrix[5] + " cm\n");
+        if(!at.isIdentity()) {
+            currentStream.write("" + matrix[0] + " " + matrix[1] + " "
+                                + matrix[2] + " " + matrix[3] + " "
+                                + matrix[4] + " " + matrix[5] + " cm\n");
+        }
         currentStream.write("" + width + " 0 0 " + (-height) + " " + x
                             + " " + (y + height) + " cm\n" + "/Im"
                             + imageInfo.getXNumber() + " Do\nQ\n");
@@ -448,7 +461,7 @@ public class PDFGraphics2D extends AbstractGraphics2D {
     public void dispose() {
         // System.out.println("dispose");
         pdfDoc = null;
-        fontState = null;
+        fontInfo = null;
         currentStream = null;
         currentFontName = null;
     }
@@ -558,6 +571,43 @@ public class PDFGraphics2D extends AbstractGraphics2D {
         }
     }
 
+/*
+    // in theory we could set the clip using these methods
+    // it doesn't seem to improve the file sizes much
+    // and makes everything more complicated
+
+    Shape lastClip = null;
+
+    public void clip(Shape cl) {
+        super.clip(cl);
+        Shape newClip = getClip();
+        if(newClip == null || lastClip == null || !(new Area(newClip).equals(new Area(lastClip)))) {
+        graphicsState.setClip(newClip);
+        writeClip(newClip);
+        }
+
+        lastClip = newClip;
+    }
+
+    public void setClip(Shape cl) {
+        super.setClip(cl);
+        Shape newClip = getClip();
+        if(newClip == null || lastClip == null || !(new Area(newClip).equals(new Area(lastClip)))) {
+        for(int count = graphicsState.getStackLevel(); count > baseLevel; count--) {
+            currentStream.write("Q\n");
+        }
+        graphicsState.restoreLevel(baseLevel);
+        currentStream.write("q\n");
+        graphicsState.push();
+        if(newClip != null) {
+            graphicsState.setClip(newClip);
+        }
+        writeClip(newClip);
+        }
+
+        lastClip = newClip;
+    }
+*/
     protected void writeClip(Shape s) {
         if (s == null) {
             return;
@@ -742,16 +792,10 @@ public class PDFGraphics2D extends AbstractGraphics2D {
 
             FontInfo fi = new FontInfo();
             FontSetup.setup(fi);
-            FontState fs = null;
-            try {
-                fs = new FontState(fi, "sans-serif", "normal",
-                                          "normal", 1, 0);
-            } catch (org.apache.fop.apps.FOPException fope) {
-                fope.printStackTrace();
-            }
+
             PDFResources res = pdfDoc.makeResources();
             PDFResourceContext context = new PDFResourceContext(0, pdfDoc, res);
-            PDFGraphics2D pattGraphic = new PDFGraphics2D(textAsShapes, fs,
+            PDFGraphics2D pattGraphic = new PDFGraphics2D(textAsShapes, fi,
                                             pdfDoc, context, pageRef,
                                             currentFontName, currentFontSize,
                                             currentYPosition, currentXPosition);
@@ -950,6 +994,7 @@ public class PDFGraphics2D extends AbstractGraphics2D {
     public void drawString(String s, float x, float y) {
         // System.out.println("drawString(String)");
 
+        FontState fontState;
         if(ovFontState == null) {
             Font gFont = getFont();
             String n = gFont.getFamily();
@@ -958,13 +1003,10 @@ public class PDFGraphics2D extends AbstractGraphics2D {
             }
             int siz = gFont.getSize();
             String style = gFont.isItalic() ? "italic" : "normal";
-            String weight = gFont.isBold() ? "bold" : "normal";
-            try {
-                fontState = new FontState(fontState.getFontInfo(), n, style,
-                                          weight, siz * 1000, 0);
-            } catch (org.apache.fop.apps.FOPException fope) {
-                fope.printStackTrace();
-            }
+            int weight = gFont.isBold() ? FontInfo.BOLD : FontInfo.NORMAL;
+            String fname = fontInfo.fontLookup(n, style, weight);
+            FontMetric metrics = fontInfo.getMetricsFor(fname);
+            fontState = new FontState(fname, metrics, siz * 1000);
         } else {
             fontState = ovFontState;
             ovFontState = null;
@@ -990,12 +1032,9 @@ public class PDFGraphics2D extends AbstractGraphics2D {
         applyColor(c, true);
         int salpha = c.getAlpha();
 
-        c = getBackground();
-        applyColor(c, false);
-        if(salpha != 255/* || c.getAlpha() != 255*/) {
+        if(salpha != 255) {
             HashMap vals = new HashMap();
             vals.put(PDFGState.ca, new Float(salpha / 255f));
-            //vals.put(PDFGState.CA, new Float(c.getAlpha() / 255f));
             PDFGState gstate = pdfDoc.makeGState(vals, graphicsState.getGState());
             resourceContext.addGState(gstate); 
             currentStream.write("/" + gstate.getName() + " gs\n");
@@ -1014,7 +1053,7 @@ public class PDFGraphics2D extends AbstractGraphics2D {
         // This assumes that *all* CIDFonts use a /ToUnicode mapping
         boolean useMultiByte = false;
         org.apache.fop.render.pdf.Font f =
-            (org.apache.fop.render.pdf.Font)fontState.getFontInfo().getFonts().get(name);
+            (org.apache.fop.render.pdf.Font)fontInfo.getFonts().get(name);
         if (f instanceof LazyFont){
             if(((LazyFont) f).getRealFont() instanceof CIDFont){
                 useMultiByte = true;
@@ -1149,14 +1188,33 @@ public class PDFGraphics2D extends AbstractGraphics2D {
                            float y) {
         System.err.println("drawString(AttributedCharacterIterator)");
 
+        FontState fontState = null;
+
         Shape imclip = getClip();
         writeClip(imclip);
         Color c = getColor();
         applyColor(c, true);
-        c = getBackground();
-        applyColor(c, false);
+
+        boolean fill = true;
+        boolean stroke = false;
+        if(true) {
+            Stroke currentStroke = getStroke();
+            stroke = true;
+            applyStroke(currentStroke);
+            applyColor(c, false);
+        }
 
         currentStream.write("BT\n");
+
+        // set text rendering mode:
+        // 0 - fill, 1 - stroke, 2 - fill then stroke
+        int textr = 0;
+        if(fill && stroke) {
+            textr = 2;
+        } else if(stroke) {
+            textr = 1;
+        }
+        currentStream.write(textr + " Tr\n");
 
         AffineTransform trans = getTransform();
         trans.translate(x, y);
@@ -1314,160 +1372,6 @@ public class PDFGraphics2D extends AbstractGraphics2D {
      */
     public GraphicsConfiguration getDeviceConfiguration() {
         return new PDFGraphicsConfiguration();
-    }
-
-    /**
-     * Our implementation of the class that returns information about
-     * roughly what we can handle and want to see (alpha for example).
-     */
-    static class PDFGraphicsConfiguration extends GraphicsConfiguration {
-        // We use this to get a good colormodel..
-        static BufferedImage BIWithAlpha = new BufferedImage(1, 1,
-                BufferedImage.TYPE_INT_ARGB);
-        // We use this to get a good colormodel..
-        static BufferedImage BIWithOutAlpha = new BufferedImage(1, 1,
-                BufferedImage.TYPE_INT_RGB);
-
-        /**
-         * Construct a buffered image with an alpha channel, unless
-         * transparencty is OPAQUE (no alpha at all).
-         */
-        public BufferedImage createCompatibleImage(int width, int height,
-                                                   int transparency) {
-            if (transparency == Transparency.OPAQUE)
-                return new BufferedImage(width, height,
-                                         BufferedImage.TYPE_INT_RGB);
-            else
-                return new BufferedImage(width, height,
-                                         BufferedImage.TYPE_INT_ARGB);
-        }
-
-        /**
-         * Construct a buffered image with an alpha channel.
-         */
-        public BufferedImage createCompatibleImage(int width, int height) {
-            return new BufferedImage(width, height,
-                                     BufferedImage.TYPE_INT_ARGB);
-        }
-
-        /**
-         * FIXX ME: This should return the page bounds in Pts,
-         * I couldn't figure out how to get this for the current
-         * page from the PDFDocument (this still works for now,
-         * but it should be fixed...).
-         */
-        public Rectangle getBounds() {
-System.out.println("getting getBounds");
-            return null;
-        }
-
-        /**
-         * Return a good default color model for this 'device'.
-         */
-        public ColorModel getColorModel() {
-            return BIWithAlpha.getColorModel();
-        }
-
-        /**
-         * Return a good color model given <tt>transparency</tt>
-         */
-        public ColorModel getColorModel(int transparency) {
-            if (transparency == Transparency.OPAQUE)
-                return BIWithOutAlpha.getColorModel();
-            else
-                return BIWithAlpha.getColorModel();
-        }
-
-        /**
-         * The default transform (1:1).
-         */
-        public AffineTransform getDefaultTransform() {
-System.out.println("getting getDefaultTransform");
-            return new AffineTransform();
-        }
-
-        /**
-         * The normalizing transform (1:1) (since we currently
-         * render images at 72dpi, which we might want to change
-         * in the future).
-         */
-        public AffineTransform getNormalizingTransform() {
-System.out.println("getting getNormalizingTransform");
-            return new AffineTransform(2, 0, 0, 2, 0, 0);
-        }
-
-        /**
-         * Return our dummy instance of GraphicsDevice
-         */
-        public GraphicsDevice getDevice() {
-            return new PDFGraphicsDevice(this);
-        }
-
-/*
-// for jdk1.4
-public java.awt.image.VolatileImage createCompatibleVolatileImage(int width, int height) {
-return null;
-}
-*/
-    }
-
-    /**
-     * This implements the GraphicsDevice interface as appropriate for
-     * a PDFGraphics2D.  This is quite simple since we only have one
-     * GraphicsConfiguration for now (this might change in the future
-     * I suppose).
-     */
-    static class PDFGraphicsDevice extends GraphicsDevice {
-
-        /**
-         * The Graphics Config that created us...
-         */
-        GraphicsConfiguration gc;
-
-        /**
-         * @param The gc we should reference
-         */
-        PDFGraphicsDevice(PDFGraphicsConfiguration gc) {
-            this.gc = gc;
-        }
-
-        /**
-         * Ignore template and return the only config we have
-         */
-        public GraphicsConfiguration getBestConfiguration(GraphicsConfigTemplate gct) {
-            return gc;
-        }
-
-        /**
-         * Return an array of our one GraphicsConfig
-         */
-        public GraphicsConfiguration[] getConfigurations() {
-            return new GraphicsConfiguration[] {
-                gc
-            };
-        }
-
-        /**
-         * Return out sole GraphicsConfig.
-         */
-        public GraphicsConfiguration getDefaultConfiguration() {
-            return gc;
-        }
-
-        /**
-         * Generate an IdString..
-         */
-        public String getIDstring() {
-            return toString();
-        }
-
-        /**
-         * Let the caller know that we are "a printer"
-         */
-        public int getType() {
-            return GraphicsDevice.TYPE_PRINTER;
-        }
-
     }
 
     /**
