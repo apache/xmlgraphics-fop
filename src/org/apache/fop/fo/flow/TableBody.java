@@ -188,7 +188,7 @@ public class TableBody extends FObj {
 
             row.setColumns(columns);
             row.doSetup(areaContainer);
-            if (row.getKeepWithPrevious() != 0 && lastRow != null &&
+            if (row.getKeepWithPrevious().getType() != KeepValue.KEEP_WITH_AUTO && lastRow != null &&
                     keepWith.indexOf(lastRow) == -1) {
                 keepWith.addElement(lastRow);
             }
@@ -250,7 +250,7 @@ public class TableBody extends FObj {
             } else if (status.getCode() == Status.KEEP_WITH_NEXT) {
                 keepWith.addElement(row);
             } else {
-                if (keepWith.size() > 0 && row.getKeepWithPrevious() == 0) {
+                if (keepWith.size() > 0 && row.getKeepWithPrevious().getType() == KeepValue.KEEP_WITH_AUTO) {
                     keepWith = new Vector();
                 }
             }

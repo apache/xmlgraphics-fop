@@ -99,8 +99,8 @@ public class TableRow extends FObj {
     int paddingBottom;
     int paddingLeft;
     int paddingRight;
-    int keepWithNext;
-    int keepWithPrevious;
+    KeepValue keepWithNext;
+    KeepValue keepWithPrevious;
 
     int widthOfCellsSoFar = 0;
     int largestCellHeight = 0;
@@ -251,7 +251,7 @@ public class TableRow extends FObj {
         this.columns = columns;
     }
 
-    public int getKeepWithPrevious() {
+    public KeepValue getKeepWithPrevious() {
         return keepWithPrevious;
     }
 
@@ -335,12 +335,20 @@ public class TableRow extends FObj {
         setup = true;
     }
 
-    private int getKeepValue(String sPropName) {
+    private KeepValue getKeepValue(String sPropName) {
         Property p= this.properties.get(sPropName);
         Number n = p.getNumber();
         if (n != null)
-            return n.intValue();
-        else return p.getEnum();
+            return new KeepValue(KeepValue.KEEP_WITH_VALUE, n.intValue());
+        switch(p.getEnum()) {
+            case 2:
+                return new KeepValue(KeepValue.KEEP_WITH_ALWAYS, 0);
+            //break;
+            case 1:
+            default:
+                return new KeepValue(KeepValue.KEEP_WITH_AUTO, 0);
+            //break;
+        }
     }
 
     public Status layout(Area area) throws FOPException {
@@ -573,7 +581,7 @@ public class TableRow extends FObj {
         if (someCellDidNotLayoutCompletely) {
             return new Status(Status.AREA_FULL_SOME);
         } else {
-            if (keepWithNext != 0) {
+            if (keepWithNext.getType() != KeepValue.KEEP_WITH_AUTO) {
                 return new Status(Status.KEEP_WITH_NEXT);
             }
             return new Status(Status.OK);
