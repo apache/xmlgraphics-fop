@@ -64,31 +64,31 @@
   <checks>
     
     <!-- cell 1 -->
-    <eval expected="cell1" xpath="//flow/block[1]/block[1]/block[1]/lineArea/text"/>
+    <eval expected="cell1" xpath="//flow/block[1]/block[1]/block[1]/lineArea"/>
     <eval expected="144000" xpath="//flow/block[1]/block[1]/@ipd"/>
 
     <!-- cell 2 -->
-    <eval expected="cell2" xpath="//flow/block[1]/block[2]/block[1]/lineArea/text"/>
+    <eval expected="cell2" xpath="//flow/block[1]/block[2]/block[1]/lineArea"/>
     <eval expected="36000" xpath="//flow/block[1]/block[2]/@ipd"/>
     <eval expected="144000" xpath="//flow/block[1]/block[2]/@left-offset"/>
 
     <!-- cell 3 -->
-    <eval expected="cell3" xpath="//flow/block[1]/block[3]/block[1]/lineArea/text"/>
+    <eval expected="cell3" xpath="//flow/block[1]/block[3]/block[1]/lineArea"/>
     <eval expected="36000" xpath="//flow/block[1]/block[3]/@ipd"/>
     <eval expected="180000" xpath="//flow/block[1]/block[3]/@left-offset"/>
 
     <!-- cell 4 -->
-    <eval expected="cell4" xpath="//flow/block[1]/block[4]/block[1]/lineArea/text"/>
+    <eval expected="cell4" xpath="//flow/block[1]/block[4]/block[1]/lineArea"/>
     <eval expected="36000" xpath="//flow/block[1]/block[4]/@ipd"/>
     <eval expected="216000" xpath="//flow/block[1]/block[4]/@left-offset"/>
 
     <!-- cell 5 -->
-    <eval expected="cell5" xpath="//flow/block[1]/block[5]/block[1]/lineArea/text"/>
+    <eval expected="cell5" xpath="//flow/block[1]/block[5]/block[1]/lineArea"/>
     <eval expected="36000" xpath="//flow/block[1]/block[5]/@ipd"/>
     <eval expected="252000" xpath="//flow/block[1]/block[5]/@left-offset"/>
 
     <!-- cell 6 -->
-    <eval expected="cell6" xpath="//flow/block[1]/block[6]/block[1]/lineArea/text"/>
+    <eval expected="cell6" xpath="//flow/block[1]/block[6]/block[1]/lineArea"/>
     <eval expected="72000" xpath="//flow/block[1]/block[6]/@ipd"/>
     <eval expected="288000" xpath="//flow/block[1]/block[6]/@left-offset"/>
   </checks>

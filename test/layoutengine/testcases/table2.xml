@@ -80,7 +80,7 @@
     <eval expected="14400" xpath="//flow/block[3]/block[1]/@bpd"/>
     <eval expected="144000" xpath="//flow/block[3]/block[1]/block[1]/@ipd"/>
     <eval expected="14400" xpath="//flow/block[3]/block[1]/block[1]/@bpd"/>
-    <eval expected="cell1" xpath="//flow/block[3]/block[1]/block[1]/lineArea/text"/>
+    <eval expected="cell1" xpath="//flow/block[3]/block[1]/block[1]/lineArea"/>
 
     <!-- cell 2 -->
     <true xpath="//flow/block[3]/block[2]/@is-reference-area"/>
@@ -90,7 +90,7 @@
     <eval expected="14400" xpath="//flow/block[3]/block[2]/@bpd"/>
     <eval expected="144000" xpath="//flow/block[3]/block[2]/block[1]/@ipd"/>
     <eval expected="14400" xpath="//flow/block[3]/block[2]/block[1]/@bpd"/>
-    <eval expected="cell2" xpath="//flow/block[3]/block[2]/block[1]/lineArea/text"/>
+    <eval expected="cell2" xpath="//flow/block[3]/block[2]/block[1]/lineArea"/>
     <eval expected="color=#ffff00,repeat=0,horiz=0,vertical=0" xpath="//flow/block[3]/block[2]/@background"/>
 
     <!-- cell 3 -->
@@ -101,7 +101,7 @@
     <eval expected="14400" xpath="//flow/block[3]/block[3]/@bpd"/>
     <eval expected="144000" xpath="//flow/block[3]/block[3]/block[1]/@ipd"/>
     <eval expected="14400" xpath="//flow/block[3]/block[3]/block[1]/@bpd"/>
-    <eval expected="cell3" xpath="//flow/block[3]/block[3]/block[1]/lineArea/text"/>
+    <eval expected="cell3" xpath="//flow/block[3]/block[3]/block[1]/lineArea"/>
     <eval expected="color=#ffa500,repeat=0,horiz=0,vertical=0" xpath="//flow/block[3]/block[3]/@background"/>
 
     <!-- cell 4 -->
@@ -112,6 +112,6 @@
     <eval expected="14400" xpath="//flow/block[3]/block[4]/@bpd"/>
     <eval expected="144000" xpath="//flow/block[3]/block[4]/block[1]/@ipd"/>
     <eval expected="14400" xpath="//flow/block[3]/block[4]/block[1]/@bpd"/>
-    <eval expected="cell4" xpath="//flow/block[3]/block[4]/block[1]/lineArea/text"/>
+    <eval expected="cell4" xpath="//flow/block[3]/block[4]/block[1]/lineArea"/>
   </checks>
 </testcase>

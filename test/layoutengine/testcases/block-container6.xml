@@ -52,14 +52,14 @@
     </fo:root>
   </fo>
   <checks>
-    <true xpath="starts-with(//pageViewport[1]/page/regionViewport/regionBody/mainReference/span/flow/block[1]/block/block[1]/lineArea/text, 'block1')"/>
-    <eval expected="outside block-container" xpath="//pageViewport[1]/page/regionViewport/regionBody/mainReference/span/flow/block[2]/lineArea/text"/>
-    <true xpath="starts-with(//pageViewport[1]/page/regionViewport/regionBody/mainReference/span/flow/block[3]/block/block[1]/lineArea/text, 'block2')"/>
+    <true xpath="starts-with(//pageViewport[1]/page/regionViewport/regionBody/mainReference/span/flow/block[1]/block/block[1]/lineArea, 'block1')"/>
+    <eval expected="outside block-container" xpath="//pageViewport[1]/page/regionViewport/regionBody/mainReference/span/flow/block[2]/lineArea"/>
+    <true xpath="starts-with(//pageViewport[1]/page/regionViewport/regionBody/mainReference/span/flow/block[3]/block/block[1]/lineArea, 'block2')"/>
 
-    <true xpath="starts-with(//pageViewport[2]/page/regionViewport/regionBody/mainReference/span/flow/block[1]/block/block[1]/lineArea/text, 'block3')"/>
-    <true xpath="starts-with(//pageViewport[2]/page/regionViewport/regionBody/mainReference/span/flow/block[2]/block/block[1]/lineArea/text, 'block4')"/>
-    <eval expected="outside block-container" xpath="//pageViewport[2]/page/regionViewport/regionBody/mainReference/span/flow/block[3]/lineArea/text"/>
+    <true xpath="starts-with(//pageViewport[2]/page/regionViewport/regionBody/mainReference/span/flow/block[1]/block/block[1]/lineArea, 'block3')"/>
+    <true xpath="starts-with(//pageViewport[2]/page/regionViewport/regionBody/mainReference/span/flow/block[2]/block/block[1]/lineArea, 'block4')"/>
+    <eval expected="outside block-container" xpath="//pageViewport[2]/page/regionViewport/regionBody/mainReference/span/flow/block[3]/lineArea"/>
 
-    <true xpath="starts-with(//pageViewport[3]/page/regionViewport/regionBody/mainReference/span/flow/block[1]/block/block[1]/lineArea/text, 'block5')"/>
+    <true xpath="starts-with(//pageViewport[3]/page/regionViewport/regionBody/mainReference/span/flow/block[1]/block/block[1]/lineArea, 'block5')"/>
   </checks>
 </testcase>
