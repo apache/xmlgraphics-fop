@@ -65,10 +65,6 @@ import org.apache.fop.fo.properties.CommonBackground;
 import org.apache.fop.fo.properties.CommonBorderAndPadding;
 import org.apache.fop.fonts.Font;
 import org.apache.fop.fo.properties.CommonMarginInline;
-import org.apache.fop.layoutmgr.ContentLayoutManager;
-import org.apache.fop.layoutmgr.InlineStackingLayoutManager;
-import org.apache.fop.layoutmgr.LMiter;
-import org.apache.fop.apps.*;
 
 /**
  * Class modelling the fo:title object. See Sec. 6.4.20 in the XSL-FO Standard.
@@ -80,33 +76,6 @@ public class Title extends FObjMixed {
      */
     public Title(FONode parent) {
         super(parent);
-    }
-
-    /**
-     * TODO: shouldn't this code be in Layout??
-     * @return the Title area
-     */
-    public org.apache.fop.area.Title getTitleArea() {
-        org.apache.fop.area.Title title =
-                 new org.apache.fop.area.Title();
-        // use special layout manager to add the inline areas
-        // to the Title.
-        InlineStackingLayoutManager lm;
-        lm = new InlineStackingLayoutManager();
-        lm.setUserAgent(getUserAgent());
-        lm.setFObj(this);
-        lm.setLMiter(new LMiter(children.listIterator()));
-        lm.init();
-
-        // get breaks then add areas to title
-
-        ContentLayoutManager clm = new ContentLayoutManager(title);
-        clm.setUserAgent(getUserAgent());
-        lm.setParent(clm);
-
-        clm.fillArea(lm);
-
-        return title;
     }
 
     private void setup() {
