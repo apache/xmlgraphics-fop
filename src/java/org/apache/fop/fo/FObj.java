@@ -135,7 +135,7 @@ public class FObj extends FONode implements Constants {
      * This methods checks that the id isn't already used by another
      * fo and sets the id attribute of this object.
      */
-    private void setupID() {
+    private void setupID() throws SAXParseException {
         Property prop = this.propertyList.get(PR_ID);
         if (prop != null) {
             String str = prop.getString();
@@ -145,7 +145,9 @@ public class FObj extends FONode implements Constants {
                     id = str;
                     idrefs.add(id);
                 } else {
-                    getLogger().warn("duplicate id:" + str + " ignored");
+                    throw new SAXParseException("Property id \"" + str + 
+                        "\" previously used; id values must be unique" +
+                        " in document.", locator);
                 }
             }
         }
