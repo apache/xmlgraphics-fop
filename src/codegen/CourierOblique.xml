@@ -2,7 +2,7 @@
 <font-metrics>
    <font-name>Courier-Oblique</font-name>
    <class-name>CourierOblique</class-name>
-   <encoding>WinAnsiEncoding</encoding>
+   <encoding>StandardEncoding</encoding>
    <cap-height>562</cap-height>
    <x-height>426</x-height>
    <ascender>629</ascender>

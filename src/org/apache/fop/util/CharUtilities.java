@@ -47,51 +47,53 @@ public class CharUtilities {
      * versions of space that might not exists in the font.
      */
     public static int getCharWidth(char c, FontState fs) {
-        int width = fs.width(fs.mapChar(c));
-        if (width <= 0) {
-            // Estimate the width of spaces not represented in
-            // the font
-            int em = fs.width(fs.mapChar('m'));
-            int en = fs.width(fs.mapChar('n'));
-            if (em <= 0)
-                em = 500 * fs.getFontSize();
-            if (en <= 0)
-                en = em - 10;
+        int width;
 
-            if (c == ' ')
-                width = em;
-            if (c == '\u2000')
-                width = en;
-            if (c == '\u2001')
-                width = em;
-            if (c == '\u2002')
-                width = em / 2;
-            if (c == '\u2003')
-                width = fs.getFontSize();
-            if (c == '\u2004')
-                width = em / 3;
-            if (c == '\u2005')
-                width = em / 4;
-            if (c == '\u2006')
-                width = em / 6;
-            if (c == '\u2007')
-                width = getCharWidth(' ', fs);
-            if (c == '\u2008')
-                width = getCharWidth('.', fs);
-            if (c == '\u2009')
-                width = em / 5;
-            if (c == '\u200A')
-                width = 5;
-            if (c == '\u200B')
-                width = 100;
-            if (c == '\u00A0')
-                width = getCharWidth(' ', fs);
-            if (c == '\u202F')
-                width = getCharWidth(' ', fs) / 2;
-            if (c == '\u3000')
-                width = getCharWidth(' ', fs) * 2;
-            if ((c == '\n') || (c == '\r') || (c == '\t'))
-                width = getCharWidth(' ', fs);
+        if ((c == '\n') || (c == '\r') || (c == '\t') || (c == '\u00A0')) {
+            width = getCharWidth(' ', fs);
+        } else {
+            width = fs.width(fs.mapChar(c));
+            if (width <= 0) {
+                // Estimate the width of spaces not represented in
+                // the font
+                int em = fs.width(fs.mapChar('m'));
+                int en = fs.width(fs.mapChar('n'));
+                if (em <= 0)
+                    em = 500 * fs.getFontSize();
+                if (en <= 0)
+                    en = em - 10;
+
+                if (c == ' ')
+                    width = em;
+                if (c == '\u2000')
+                    width = en;
+                if (c == '\u2001')
+                    width = em;
+                if (c == '\u2002')
+                    width = em / 2;
+                if (c == '\u2003')
+                    width = fs.getFontSize();
+                if (c == '\u2004')
+                    width = em / 3;
+                if (c == '\u2005')
+                    width = em / 4;
+                if (c == '\u2006')
+                    width = em / 6;
+                if (c == '\u2007')
+                    width = getCharWidth(' ', fs);
+                if (c == '\u2008')
+                    width = getCharWidth('.', fs);
+                if (c == '\u2009')
+                    width = em / 5;
+                if (c == '\u200A')
+                    width = 5;
+                if (c == '\u200B')
+                    width = 100;
+                if (c == '\u202F')
+                    width = getCharWidth(' ', fs) / 2;
+                if (c == '\u3000')
+                    width = getCharWidth(' ', fs) * 2;
+            }
         }
 
         return width;

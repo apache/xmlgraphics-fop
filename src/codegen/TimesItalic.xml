@@ -2,7 +2,7 @@
 <font-metrics>
    <font-name>Times-Italic</font-name>
    <class-name>TimesItalic</class-name>
-   <encoding>WinAnsiEncoding</encoding>
+   <encoding>StandardEncoding</encoding>
    <cap-height>653</cap-height>
    <x-height>441</x-height>
    <ascender>683</ascender>

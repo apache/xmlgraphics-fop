@@ -186,6 +186,8 @@ Sometimes ant gives out this warnings, but the build is finished without any pro
     <property name="optimize" value="off"/>
     <property name="deprecation" value="off"/>
 
+    <property name="textfontencoding" value="WinAnsiEncoding"/>
+
     <property name="src.dir" value="./src"/>
     <property name="src.codegen" value="./src/codegen"/>
     <property name="docs.dir" value="./docs"/>
@@ -240,23 +242,11 @@ Sometimes ant gives out this warnings, but the build is finished without any pro
     <property name="propinc.xsl" value="${build.codegen}/propinc.xsl"/>
     <property name="genconst.xsl" value="${build.codegen}/genconst.xsl"/>
     <property name="src.charlist.xsl" value="${src.codegen}/code-point-mapping.xsl"/>
-    <property name="charlist.xml" value="${build.codegen}/charlist.xml"/>
+    <property name="encodings.xml" value="${build.codegen}/encodings.xml"/>
     <property name="charlist.xsl" value="${build.codegen}/code-point-mapping.xsl"/>  
     <property name="fontfile.xsl" value="${build.codegen}/font-file.xsl"/>  
     <property name="t1fontfile.xsl" value="${build.codegen}/t1font-file.xsl"/>
     <property name="ttffontfile.xsl" value="${build.codegen}/ttffontfile.xsl"/>
-    <property name="Courier.xml" value="${build.codegen}/Courier.xml"/>  
-    <property name="Courier-Oblique.xml" value="${build.codegen}/Courier-Oblique.xml"/>
-    <property name="Courier-Bold.xml" value="${build.codegen}/Courier-Bold.xml"/>  
-    <property name="Courier-BoldOblique.xml" value="${build.codegen}/Courier-BoldOblique.xml"/>
-    <property name="Helvetica.xml" value="${build.codegen}/Helvetica.xml"/>
-    <property name="Helvetica-Oblique.xml" value="${build.codegen}/Helvetica-Oblique.xml"/> 
-    <property name="Helvetica-Bold.xml" value="${build.codegen}/Helvetica-Bold.xml"/>
-    <property name="Helvetica-BoldOblique.xml" value="${build.codegen}/Helvetica-BoldOblique.xml"/>
-    <property name="Times-Roman.xml" value="${build.codegen}/Times-Roman.xml"/>
-    <property name="Times-Italic.xml" value="${build.codegen}/Times-Italic.xml"/>  
-    <property name="Times-Bold.xml" value="${build.codegen}/Times-Bold.xml"/>  
-    <property name="Times-BoldItalic.xml" value="${build.codegen}/Times-BoldItalic.xml"/>
     <property name="ZapfDingbats.xml" value="${build.codegen}/ZapfDingbats.xml"/>
     <property name="Symbol.xml" value="${build.codegen}/Symbol.xml"/>
 
@@ -423,12 +413,20 @@ Sometimes ant gives out this warnings, but the build is finished without any pro
     <style in="${foproperties.xml}" style="${enumgen.xsl}"
         out="${build.src}/${replacestring}/fo/properties/foenums_${ignore_this}"/>
 
-    <style in="${charlist.xml}" style="${charlist.xsl}" 
+    <style in="${encodings.xml}" style="${charlist.xsl}" 
         out="${build.src}/${replacestring}/render/pdf/CodePointMapping.java"/>
 
-    <style basedir="src/codegen" includes="*.xml"
-        excludes="allprops.xml,charlist.xml,colorkw.xml,*prop*" style="${fontfile.xsl}"
-        destdir="${build.src}/${replacestring}/render/pdf/fonts/" extension=".java"/>
+    <style basedir="src/codegen" includes="Helvetica*.xml,Times*.xml,Courier*.xml"
+        style="${fontfile.xsl}"
+        destdir="${build.src}/${replacestring}/render/pdf/fonts" extension=".java">
+        <param name="encoding" expression="${textfontencoding}"/>
+    </style>
+    <style
+        in="${Symbol.xml}" style="${fontfile.xsl}"
+        out="${build.src}/${replacestring}/render/pdf/fonts/Symbol.java"/>
+    <style
+        in="${ZapfDingbats.xml}" style="${fontfile.xsl}"
+        out="${build.src}/${replacestring}/render/pdf/fonts/ZapfDingbats.java"/>
 
     <!-- custom fonts (Use t1fontfile.xsl instead of fontfile.xsl for Type 1 fonts!) step 2/2 -->
     <!-- use this as a template for type 1 fonts: 
