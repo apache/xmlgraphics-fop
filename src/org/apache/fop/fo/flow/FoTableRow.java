@@ -120,7 +120,8 @@ public class FoTableRow extends FONode {
                    != null) {
                 new FoTableCell(getFOTree(), this, ev, stateFlags);
                 numCells++;
-                xmlevents.getEndElement(ev);
+                ev = xmlevents.getEndElement(xmlevents.DISCARD_EV, ev);
+                pool.surrenderEvent(ev);
             }
             if (numCells == 0)
                 throw new FOPException

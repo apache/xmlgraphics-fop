@@ -120,7 +120,8 @@ public class FoListBlock extends FONode {
                    != null) {
                 new FoMarker(getFOTree(), this, ev, stateFlags);
                 numMarkers++;
-                xmlevents.getEndElement(ev);
+                ev = xmlevents.getEndElement(xmlevents.DISCARD_EV, ev);
+                pool.surrenderEvent(ev);
             }
 
             // Look for one or more table-rows
@@ -130,7 +131,8 @@ public class FoListBlock extends FONode {
                    != null) {
                 new FoListItem(getFOTree(), this, ev, stateFlags);
                 numItems++;
-                xmlevents.getEndElement(ev);
+                ev = xmlevents.getEndElement(xmlevents.DISCARD_EV, ev);
+                pool.surrenderEvent(ev);
             }
 
             if (numItems > 0) {

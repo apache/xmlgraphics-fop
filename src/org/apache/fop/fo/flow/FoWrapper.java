@@ -95,14 +95,16 @@ public class FoWrapper extends FONode {
                     FObjects.fobjects.makeFlowObject
                                 (foTree, this, ev, stateFlags);
                     if (ev.getFoType() != FObjectNames.PCDATA)
-                        ev = xmlevents.getEndElement(ev);
+                        ev = xmlevents.getEndElement(xmlevents.DISCARD_EV, ev);
+                        pool.surrenderEvent(ev);
                 }
             } catch(UnexpectedStartElementException e) {
                 ev = xmlevents.getStartElement();
                 MessageHandler.logln
                         ("Ignoring unexpected Start Element: "
                                                          + ev.getQName());
-                ev = xmlevents.getEndElement(ev);
+                ev = xmlevents.getEndElement(xmlevents.DISCARD_EV, ev);
+                pool.surrenderEvent(ev);
             }
         } while (ev != null);
 

@@ -101,7 +101,8 @@ public class FoMultiProperties extends FONode {
                    != null) {
                 new FoMultiPropertySet(getFOTree(), this, ev, stateFlags);
                 numSets++;
-                xmlevents.getEndElement(ev);
+                ev = xmlevents.getEndElement(xmlevents.DISCARD_EV, ev);
+                pool.surrenderEvent(ev);
             }
 
             if (numSets == 0)
@@ -115,7 +116,8 @@ public class FoMultiProperties extends FONode {
                 throw new FOPException
                         ("No wrapper in multi-properties.");
             new FoWrapper(getFOTree(), this, ev, stateFlags);
-            xmlevents.getEndElement(ev);
+            ev = xmlevents.getEndElement(xmlevents.DISCARD_EV, ev);
+            pool.surrenderEvent(ev);
 
             /*
         } catch (NoSuchElementException e) {

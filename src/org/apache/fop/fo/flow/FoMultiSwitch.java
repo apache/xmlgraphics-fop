@@ -101,7 +101,8 @@ public class FoMultiSwitch extends FONode {
                    != null) {
                 new FoMultiCase(getFOTree(), this, ev, stateFlags);
                 numCases++;
-                xmlevents.getEndElement(ev);
+                ev = xmlevents.getEndElement(xmlevents.DISCARD_EV, ev);
+                pool.surrenderEvent(ev);
             }
 
             if (numCases == 0)
