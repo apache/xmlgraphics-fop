@@ -107,7 +107,7 @@ public class PageSequence extends FObj {
 	layoutMasterSet = root.getLayoutMasterSet();
 
 	InitialPageNumber ipn = (InitialPageNumber) this.properties.get("initial-page-number");
-	this.currentPageNumber = ipn.getInitialPageNumber() - 1;
+	this.currentPageNumber = ipn.getInteger().intValue() - 1;
     }
 
     protected Page makePage(AreaTree areaTree) throws FOPException {
