@@ -8,9 +8,9 @@
   </header>
 
   <body>
-    <section>
+    <section id="install">
       <title>Installation</title>
-      <section>
+      <section id="install-overview">
         <title>Overview</title>
         <p>The following software must be installed:</p>
         <ul>
@@ -24,18 +24,19 @@
           <li>Optional Libraries</li>
         </ul>
       </section>
-      <section>
+      <section id="install-instruct">
         <title>Instructions</title>
         <p>Basic FOP installation consists of first unzipping the <code>.gz</code> file that is the distribution medium, then unarchiving the resulting <code>.tar</code> file in a directory/folder that is convenient on your system. Please consult your operating system documentation or Zip application software documentation for instructions specific to your site.</p>
       </section>
-      <section>
+      <section id="install-problems">
         <title>Problems</title>
         <p>Some Mac OSX users have experienced filename truncation problems using Stuffit to unzip and unarchive their distribution media. This is a legacy of older Mac operating systems, which had a 31-character pathname limit. Several Mac OSX users have recommended that Mac OSX users use the shell command <code>tar -xzf</code> instead.</p>
       </section>
     </section>
-    <section>
-      <title>Starting FOP as a standalone application</title>
-      <p>Review the batch file fop.bat or the shell script fop.sh to see how FOP is invoked.</p>
+    <section id="standalone-start">
+      <title>Starting FOP as a Standalone Application</title>
+      <p>The usual and recommended practice for starting FOP from the command line is to run the batch file fop.bat (Windows) or the shell script fop.sh (Unix/Linux).
+If you write your own scripts, be sure to review these standard scripts to make sure that you get your environment properly configured.</p>
       <p>The standard scripts for starting FOP require that the environment variable JAVA_HOME be set to a path pointing to the appropriate Java installation on your system. Macintosh OSX includes a Java environment as part of its distribution. We are told by Mac OSX users that the path to use in this case is <code>/Library/Java/Home</code>. <strong>Caveat: </strong>We suspect that, as Apple releases new Java environments and as FOP upgrades the minimum Java requirements, the two will inevitably not match on some systems. Please see <jump href="http://developer.apple.com/java/faq">Java on Mac OSX FAQ</jump> for information as it becomes available.</p>
       <p><code>fop [options] [-fo|-xml] infile [-xsl file] [-awt|-pdf|-mif|-pcl|-ps|-txt|-svg|-at|-print] &lt;outfile></code></p>
       <p>[OPTIONS]</p>
@@ -81,24 +82,26 @@
       fop foo.fo -awt</source>
       <p>PDF encryption is only available if FOP was compiled with encryption support <strong>and</strong> if compatible encryption support is availabe at run time. Currently, only the JCE is supported. Check the <link href="pdfencryption.html">Details</link>.</p>
     </section>
-    <section id="running_xalan">
-      <title>Running Xalan</title>
+    <section id="check-input">
+      <title>Using Xalan to Check XSL-FO Input</title>
+      <p>FOP sessions that use -xml and -xsl input instead of -fo input are actually controlling two distinct conversions: Tranforming XML to XSL-FO, then formatting the XSL-FO to PDF (or another FOP output format).
+Although FOP controls both of these processes, the first is included merely as a convenience and for performance reasons.
+Only the second is part of FOP's core processing.
+If a user has a problem running FOP, it is important to determine which of these two processes is causing the problem.
+If the problem is in the first process, the user's stylesheet is likely the cause.
+The FOP development team does not have resources to help with stylesheet issues, although we have included links to some useful <link href="resources.html#specs">Specifications</link> and <link href="resources.html#articles">Books/Articles</link>.
+If the problem is in the second process, FOP may have a bug or an unimplemented feature that does require attention from the FOP development team.</p>
+      <note>The user is always responsible to provide correct XSL-FO code to FOP.</note>
+      <p>In the case of using -xml and -xsl input, although the user is responsible for the XSL-FO code that is FOP's input, it is not visible to the user. To make the intermediate FO file visible, the FOP distribution includes xalan.bat (Windows batch file) and xalan.sh (Unix/Linux script), which run only the first (transformation) step, and write the results to a file.</p>
+      <note>When asking for help on the FOP mailing lists, <em>never</em> attach XML and XSL to illustrate the issue. Always run the xalan script and send the resulting XSL-FO file instead. Of course, be sure that the XSL-FO file is correct before sending it.</note>
       <p>
-        The FOP distribution provicdes a Xalan.bat and a Xalan.sh
-        script for conveniently running an XSL transformation without
-        formatting. This can be useful for tracking down problems
-        introduced during transformation and for preparing FO files
-        for all kinds of purposes, including for inquiring help on the
-        mailing lists.
-      </p>
-      <p>
-        The scripts are invoked the same way <link href="http://xml.apache.org/xalan-j/commandline.html">Xalan</link> is, in short:
+        The scripts are invoked the same way that <link href="http://xml.apache.org/xalan-j/commandline.html">Xalan</link> is:
       </p>
       <p>
         <code>xalan -in xmlfile -xsl file -out outfile</code>
       </p>
       <p>
-        Note that there are subtle differences to the FOP command line.
+        Note that there are some subtle differences between the "fop" and "xalan" command lines.
       </p>
     </section>
     <section id="memory">
@@ -156,9 +159,9 @@ One of FOP's stated design goals is to be able to process input of arbitrary siz
 Addressing this goal is one of the prime motivations behind the <link href="dev/index.html">FOP Redesign</link>.
       </p>
     </section>
-    <section>
+    <section id="problems">
       <title>Problems</title>
-      <p>If you have problems running FOP, please have a look at the <jump href="gethelp.html">"How to get Help" page</jump>.</p>
+      <p>If you have problems running FOP, please see the <jump href="gethelp.html">"How to get Help" page</jump>.</p>
     </section>
   </body>
 </document>
