@@ -83,6 +83,11 @@ public class AreaContainer extends Area {
         return xPosition + this.paddingLeft + this.borderWidthLeft;
     }
 
+    public void setXPosition(int value)
+    {
+        xPosition=value;
+    }
+
     public int getYPosition() {
       return yPosition + this.paddingTop + this.borderWidthTop;
     }

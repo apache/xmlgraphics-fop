@@ -787,20 +787,29 @@ public class PDFDocument {
 	 */
 	public PDFLink makeLink(Rectangle rect, String destination) {
 
-	PDFLink link = new PDFLink(++this.objectcount, rect);
-	this.objects.addElement(link);
+        PDFLink linkObject;
+        PDFAction action;
 
-	PDFFileSpec fileSpec = new PDFFileSpec(++this.objectcount,
-						   destination);
-	this.objects.addElement(fileSpec);
-
-	PDFAction action = new PDFAction(++this.objectcount,
-					 fileSpec);
-	this.objects.addElement(action);
-	link.setAction(action);
-
-	return link;
-	}
+        PDFLink link = new PDFLink(++this.objectcount, rect);
+        this.objects.addElement(link);               
+        
+        //check destination
+        if ( destination.endsWith(".pdf") ) //FileSpec
+        {                        
+            PDFFileSpec fileSpec = new PDFFileSpec(++this.objectcount,destination);
+            this.objects.addElement(fileSpec);
+            action = new PDFGoToRemote(++this.objectcount,fileSpec);
+            this.objects.addElement(action);
+            link.setAction(action);                    
+        }
+        else //URI
+        {            
+            PDFUri uri = new PDFUri(destination);    
+            link.setAction(uri);    
+        }
+             
+        return link;
+    }
 
 	/**
 	 * make a stream object

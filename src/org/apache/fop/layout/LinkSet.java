@@ -83,6 +83,9 @@ public class LinkSet {
     private int xoffset = 0;
     private int yoffset = 0;
     
+    /* the maximum Y offset value encountered for this LinkSet*/
+    private int maxY = 0;
+
     protected int startIndent;
     protected int endIndent;
 
@@ -100,6 +103,10 @@ public class LinkSet {
 	LinkedRectangle linkedRectangle =
 	    new LinkedRectangle(r, lineArea);
 	linkedRectangle.setY(this.yoffset);
+        if(this.yoffset>maxY)
+        {
+            maxY=this.yoffset;
+        }
 	rects.addElement(linkedRectangle);
     }
 	
@@ -115,13 +122,15 @@ public class LinkSet {
 	this.contentRectangleWidth = contentRectangleWidth;
     }
 	
-    public void applyAreaContainerOffsets(AreaContainer ac) {
-	Enumeration re = rects.elements();
-	while (re.hasMoreElements()) {
+    public void applyAreaContainerOffsets(AreaContainer ac, Area area) {        
+	int height=area.getAbsoluteHeight();
+        BlockArea ba = (BlockArea)area;
+        Enumeration re = rects.elements();                 
+        while (re.hasMoreElements()) {
 	    LinkedRectangle r = (LinkedRectangle)re.nextElement();
-	    r.setX( r.getX() + ac.getXPosition() );
-	    r.setY( ac.getYPosition() - ac.getHeight() - r.getY() );
-	}
+            r.setX(r.getX() + ac.getXPosition() + area.getTableCellXOffset() - ba.startIndent);             
+            r.setY( ac.getYPosition() - height +(maxY-r.getY()) - ba.getHalfLeading());                    
+         }
     }
 	
     // intermediate implementation for joining all sublinks on same line

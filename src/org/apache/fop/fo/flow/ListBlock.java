@@ -160,6 +160,8 @@ public class ListBlock extends FObj {
 	blockArea.setPage(area.getPage());
 	blockArea.setBackgroundColor(backgroundColor);
 	blockArea.start();
+        
+        blockArea.setAbsoluteHeight(area.getAbsoluteHeight());
 
 	int numChildren = this.children.size();
 	for (int i = this.marker; i < numChildren; i++) {
@@ -177,6 +179,7 @@ public class ListBlock extends FObj {
 		blockArea.end();
 		area.addChild(blockArea);
 		area.increaseHeight(blockArea.getHeight());
+                area.setAbsoluteHeight(blockArea.getAbsoluteHeight()); 
 		return status;
 	    }
 	}
@@ -184,6 +187,7 @@ public class ListBlock extends FObj {
 	blockArea.end();
 	area.addChild(blockArea);
 	area.increaseHeight(blockArea.getHeight());
+        area.setAbsoluteHeight(blockArea.getAbsoluteHeight());
 
 	if (spaceAfter != 0) {
 	    area.addDisplaySpace(spaceAfter);

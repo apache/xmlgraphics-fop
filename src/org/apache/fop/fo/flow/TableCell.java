@@ -178,6 +178,8 @@ public class TableCell extends FObj {
         areaContainer.setBorderColor(borderColor, borderColor, borderColor, borderColor); 
 	areaContainer.start();
 
+        areaContainer.setAbsoluteHeight(area.getAbsoluteHeight());
+        areaContainer.setTableCellXOffset(startOffset);
 	int numChildren = this.children.size();
 	for (int i = this.marker; i < numChildren; i++) {
 	    FObj fo = (FObj) children.elementAt(i);

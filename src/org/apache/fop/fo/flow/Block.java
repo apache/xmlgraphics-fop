@@ -219,6 +219,9 @@ public class Block extends FObjMixed {
         blockArea.setBorderColor(borderColor, borderColor, borderColor, borderColor); 
 	blockArea.start();
 
+        blockArea.setAbsoluteHeight(area.getAbsoluteHeight()); 
+
+        blockArea.setTableCellXOffset(area.getTableCellXOffset());
 	int numChildren = this.children.size();
 	for (int i = this.marker; i < numChildren; i++) {
 	    FONode fo = (FONode) children.elementAt(i);
@@ -236,6 +239,7 @@ public class Block extends FObjMixed {
 		//blockArea.end();
 		area.addChild(blockArea);
 		area.increaseHeight(blockArea.getHeight());
+                area.setAbsoluteHeight(blockArea.getAbsoluteHeight());
 		anythingLaidOut = true;
 		return status;
 	    }
@@ -247,6 +251,8 @@ public class Block extends FObjMixed {
 
 	/* should this be combined into above? */
 	area.increaseHeight(blockArea.getHeight());
+       
+        area.setAbsoluteHeight(blockArea.getAbsoluteHeight());       
 
 	if (spaceAfter != 0) {
 	    area.addDisplaySpace(spaceAfter);

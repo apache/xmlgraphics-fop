@@ -89,6 +89,9 @@ public class LineArea extends Area {
        area */
     protected int finalWidth = 0;
 
+    /* the position to shift a link rectangle in order to compensate for links embedded within a word*/
+    protected int embeddedLinkStart=0;
+
     /* the width of the current word so far */
     protected int wordWidth = 0;
 
@@ -224,7 +227,7 @@ public class LineArea extends Area {
 					      finalWidth,
 					      0,
 					      inlineArea.getContentWidth(),
-					      lineHeight);
+					      fontState.getFontSize());
 			    ls.addRect(lr, this);
 			}
 
@@ -252,7 +255,7 @@ public class LineArea extends Area {
 					      finalWidth,
 					      0,
 					      ia.getContentWidth(),
-					      lineHeight);
+					      fontState.getFontSize());                            
 			    ls.addRect(lr, this);
 			}
 			finalWidth += wordWidth;
@@ -265,6 +268,8 @@ public class LineArea extends Area {
 		    // word we just added
 
 		    prev = WHITESPACE;
+
+                    embeddedLinkStart=0; //reset embeddedLinkStart since a space was encountered                    
 		    
 		    if (this.whiteSpaceTreatment ==
 			WhiteSpaceTreatment.IGNORE) {
@@ -354,13 +359,14 @@ public class LineArea extends Area {
 	    
 	    if (ls != null) {
 		Rectangle lr =
-		    new Rectangle(startIndent + finalWidth + spaceWidth,
+		    new Rectangle(startIndent + finalWidth + spaceWidth + embeddedLinkStart,
 				  spaceWidth,
 				  pia.getContentWidth(),
-				  lineHeight);
+			          fontState.getFontSize());                		
 		ls.addRect(lr, this);
 	    }
 	    
+	    embeddedLinkStart += wordWidth;
 	    pendingAreas.addElement(pia);
 	    pendingWidth += wordWidth;
 	    wordWidth = 0;
