@@ -17,6 +17,7 @@ public class PDFGoTo extends PDFAction {
      * the pageReference
      */
     protected String pageReference;
+    protected String destination = null;
     protected float xPosition = 0, yPosition = 0;
 
     /**
@@ -55,7 +56,9 @@ public class PDFGoTo extends PDFAction {
         this.yPosition = (yPosition / 1000f);
     }
 
-
+    public void setDestination(String dest) {
+        destination = dest;
+    }
 
     /**
      * Sets the x Position to jump to
@@ -77,10 +80,16 @@ public class PDFGoTo extends PDFAction {
      * @return the PDF string
      */
     public byte[] toPDF() {
-        String p = new String(this.number + " " + this.generation
-                              + " obj\n<<\n/S /GoTo\n" + "/D ["
+        if(destination == null) {
+            destination = "/D ["
                               + this.pageReference + " /XYZ " + xPosition
-                              + " " + yPosition + " null]\n"
+                              + " " + yPosition + " null]\n";
+        } else {
+            destination = "/D ["
+                              + this.pageReference + " " + destination + "]\n";
+        }
+        String p = new String(this.number + " " + this.generation
+                              + " obj\n<<\n/S /GoTo\n" + destination
                               + ">>\nendobj\n");
         return p.getBytes();
     }

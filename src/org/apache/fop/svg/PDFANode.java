@@ -17,6 +17,8 @@ import java.awt.geom.Point2D;
 import java.awt.geom.Dimension2D;
 import java.awt.geom.AffineTransform;
 
+import java.util.StringTokenizer;
+
 /**
  * A graphics node that represents an image described as a graphics node.
  *
@@ -55,15 +57,45 @@ public class PDFANode extends CompositeGraphicsNode {
                 PDFGraphics2D pdfg = (PDFGraphics2D)g2d;
                 int type = org.apache.fop.layout.LinkSet.EXTERNAL;
                 Shape outline = getOutline(rc);
-                //Rectangle bounds = transform.createTransformedShape(outline).getBounds();
+                if(destination.startsWith("#svgView(viewBox(")) {
+                    String nums = destination.substring(18, destination.length() - 2);
+                    float x = 0;
+                    float y = 0;
+                    float width = 0;
+                    float height;
+                    int count = 0;
+                    try {
+                        StringTokenizer st = new StringTokenizer(nums, ",");
+                        while(st.hasMoreTokens()) {
+                            String tok = st.nextToken();
+                            count++;
+                            switch(count) {
+                            case 1:
+                                x = Float.parseFloat(tok);
+                            break;
+                            case 2:
+                                y = Float.parseFloat(tok);
+                            break;
+                            case 3:
+                                width = Float.parseFloat(tok);
+                            break;
+                            case 4:
+                                height = Float.parseFloat(tok);
+                            break;
+                            default:
+                            break;
+                            }
+                        }
+                    } catch(Exception e) {
+                    }
+                    // these numbers need conversion to current
+                    // svg position and scaled for the page
+                    destination = "" + x + " " + y + " " + 200 / width;
+                }
                 pdfg.addLink(outline, transform, destination, type);           
             }
         }
     }
-
-    //
-    // Properties methods
-    //
 
 }
 

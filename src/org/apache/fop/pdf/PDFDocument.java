@@ -150,6 +150,11 @@ public class PDFDocument {
     protected Hashtable xObjectsMap = new Hashtable();
 
     /**
+     * the objects themselves
+     */
+    protected Vector pendingLinks = null;
+
+    /**
      * creates an empty PDF document <p>
      * 
      * The constructor creates a /Root and /Pages object to
@@ -941,6 +946,20 @@ public class PDFDocument {
         PDFPage page = new PDFPage(++this.objectcount, resources, contents,
                                    pagewidth, pageheight);
 
+        if(pendingLinks != null) {
+            for(Enumeration e = pendingLinks.elements(); e.hasMoreElements(); ) {
+                PendingLink pl = (PendingLink)e.nextElement();
+                PDFGoTo gt = new PDFGoTo(++this.objectcount,
+                                         page.referencePDF());
+                gt.setDestination(pl.dest);
+                addTrailerObject(gt);
+                PDFInternalLink internalLink =
+                                 new PDFInternalLink(gt.referencePDF());
+                pl.link.setAction(internalLink);
+            }
+            pendingLinks = null;
+        }
+
         if (currentPage != null) {
             Enumeration enum = currentPage.getIDList().elements();
             while (enum.hasMoreElements()) {
@@ -1026,6 +1045,38 @@ public class PDFDocument {
 
     public void addTrailerObject(PDFObject object) {
         this.trailerObjects.addElement(object);
+    }
+
+    class PendingLink {
+        PDFLink link;
+        String dest;
+    }
+
+    public PDFLink makeLinkCurrentPage(Rectangle rect, String dest) {
+        PDFLink link = new PDFLink(++this.objectcount, rect);
+        this.objects.addElement(link);
+        PendingLink pl = new PendingLink();
+        pl.link = link;
+        pl.dest = dest;
+        if(pendingLinks == null) {
+            pendingLinks = new Vector();
+        }
+        pendingLinks.addElement(pl);
+
+        return link;
+    }
+
+    public PDFLink makeLink(Rectangle rect, String page, String dest) {
+        PDFLink link = new PDFLink(++this.objectcount, rect);
+        this.objects.addElement(link);
+
+        PDFGoTo gt = new PDFGoTo(++this.objectcount, page);
+        gt.setDestination(dest);
+        addTrailerObject(gt);
+        PDFInternalLink internalLink = new PDFInternalLink(gt.referencePDF());
+        link.setAction(internalLink);
+
+        return link;
     }
 
     /**
