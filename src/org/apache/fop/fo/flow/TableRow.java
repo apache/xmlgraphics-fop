@@ -43,7 +43,7 @@ public class TableRow extends FObj {
 
     int widthOfCellsSoFar = 0;
     int largestCellHeight = 0;
-
+    int minHeight = 0; // force row height
     Vector columns;
 
     AreaContainer areaContainer;
@@ -81,8 +81,8 @@ public class TableRow extends FObj {
         * Otherwise return value >= input value.
         */
         int getNextFreeCell(int colNum) {
-            for (int i=colNum-1; i<cells.length; i++) {
-                if (cells[i] == null) return i+1;
+            for (int i=colNum-1; i<states.length; i++) {
+                if (states[i] == EMPTY) return i+1;
             }
             return -1;
         }
@@ -194,6 +194,7 @@ public class TableRow extends FObj {
 	this.keepWithPrevious = getKeepValue("keep-with-previous.within-column");
 
 	this.id = this.properties.get("id").getString();
+	this.minHeight = this.properties.get("height").getLength().mvalue();
 	setup = true;
     }
 
@@ -264,7 +265,7 @@ public class TableRow extends FObj {
 	areaContainer.setAbsoluteHeight(area.getAbsoluteHeight());
 	areaContainer.setIDReferences(area.getIDReferences());
 
-	largestCellHeight = 0;
+	largestCellHeight = minHeight;
 
 	// Flag indicaing whether any cell didn't fit in available space
 	boolean someCellDidNotLayoutCompletely = false;
