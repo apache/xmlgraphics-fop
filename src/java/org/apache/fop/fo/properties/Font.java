@@ -67,7 +67,6 @@ import org.apache.fop.fo.PropertyConsts;
 import org.apache.fop.fo.ShorthandPropSets;
 import org.apache.fop.fo.expr.PropertyException;
 import org.apache.fop.fo.expr.SystemFontFunction;
-import org.apache.fop.messaging.MessageHandler;
 
 public class Font extends Property  {
     public static final int dataTypes = SHORTHAND;
@@ -476,7 +475,7 @@ public class Font extends Property  {
                                 (PropNames.FONT_STYLE, foNode,
                                                     propvals[i], IS_NESTED);
                 if (style != null)
-                    MessageHandler.log("font: duplicate" +
+                    logger.info("font: duplicate" +
                     "style overrides previous style");
                 style = pv;
                 continue;
@@ -487,7 +486,7 @@ public class Font extends Property  {
                                 (PropNames.FONT_VARIANT, foNode,
                                                     propvals[i], IS_NESTED);
                 if (variant != null)
-                    MessageHandler.log("font: duplicate" +
+                    logger.info("font: duplicate" +
                     "variant overrides previous variant");
                 variant = pv;
                 continue;
@@ -498,7 +497,7 @@ public class Font extends Property  {
                                 (PropNames.FONT_WEIGHT, foNode,
                                                     propvals[i], IS_NESTED);
                 if (weight != null)
-                    MessageHandler.log("font: duplicate" +
+                    logger.info("font: duplicate" +
                     "weight overrides previous weight");
                 weight = pv;
                 continue;

@@ -58,7 +58,6 @@ import org.apache.fop.datatypes.PropertyValue;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.PropNames;
 import org.apache.fop.fo.expr.PropertyException;
-import org.apache.fop.messaging.MessageHandler;
 
 /**
  * Pseudo-property class for common color values occurring in a
@@ -136,7 +135,7 @@ public class ColorCommon extends Property  {
                 enum = new EnumType(property, name);
             } catch (PropertyException e) {
                 System.out.println("PropertyException: " + e.getMessage());
-                MessageHandler.logln(name +
+                logger.warning(name +
                          " is not a standard color for '"
                                 + PropNames.getPropertyName(property)
                                          + "'. Trying as a system-color.");

@@ -57,6 +57,7 @@ package org.apache.fop.fo.properties;
 
 import java.util.Iterator;
 import java.util.Map;
+import java.util.logging.Logger;
 
 import org.apache.fop.datatypes.Auto;
 import org.apache.fop.datatypes.ColorType;
@@ -81,7 +82,6 @@ import org.apache.fop.fo.PropertyConsts;
 import org.apache.fop.fo.ShorthandPropSets;
 import org.apache.fop.fo.expr.PropertyException;
 import org.apache.fop.fo.expr.PropertyNotImplementedException;
-import org.apache.fop.messaging.MessageHandler;
 
 /**
  * Parent class for all of the individual property classes.  It also contains
@@ -92,6 +92,8 @@ public /*abstract*/ class Property {
 
     private static final String tag = "$Name$";
     private static final String revision = "$Revision$";
+    
+    protected static final Logger logger = Logger.getLogger("org.apache.fop");
 
     /*
      * The list of property data types.  These are used to form a bitmap of
@@ -806,13 +808,13 @@ public /*abstract*/ class Property {
             int type = pval.getType();
             switch (type) {
             case PropertyValue.COLOR_TYPE:
-                if (color != null) MessageHandler.logln(propName +
+                if (color != null) logger.info(propName +
                             ": duplicate color overrides previous color");
                 color = pval;
                 color.setProperty(colorProp);
                 continue scanning_elements;
             case PropertyValue.NUMERIC:
-                if (width != null) MessageHandler.logln(propName +
+                if (width != null) logger.info(propName +
                             ": duplicate width overrides previous width");
                 width = pval;
                 width.setProperty(widthProp);
@@ -828,7 +830,7 @@ public /*abstract*/ class Property {
                     styleFound = new EnumType(styleProp, ncname);
                 } catch (PropertyException e) {}
                 if (styleFound != null) {
-                    if (style != null) MessageHandler.logln(propName +
+                    if (style != null) logger.info(propName +
                             ": duplicate style overrides previous style");
                     style = styleFound;
                     continue scanning_elements;
@@ -840,7 +842,7 @@ public /*abstract*/ class Property {
                             (foNode, widthProp, ncname)).getMappedNumValue();
                 } catch (PropertyException e) {}
                 if (widthFound != null) {
-                    if (width != null) MessageHandler.logln(propName +
+                    if (width != null) logger.info(propName +
                             ": duplicate width overrides previous width");
                     width = widthFound;
                     continue scanning_elements;
@@ -850,7 +852,7 @@ public /*abstract*/ class Property {
                     colorFound = new ColorType(colorProp, ncname);
                 } catch (PropertyException e) {}
                 if (colorFound != null) {
-                    if (color != null) MessageHandler.logln(propName +
+                    if (color != null) logger.info(propName +
                             ": duplicate color overrides previous color");
                     color = colorFound;
                     continue scanning_elements;

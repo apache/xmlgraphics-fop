@@ -57,7 +57,6 @@ package org.apache.fop.fo.flow;
 // FOP
 import java.util.Arrays;
 import java.util.BitSet;
-
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.datastructs.TreeException;
 import org.apache.fop.fo.FONode;
@@ -66,7 +65,6 @@ import org.apache.fop.fo.FObjectNames;
 import org.apache.fop.fo.FObjects;
 import org.apache.fop.fo.PropNames;
 import org.apache.fop.fo.PropertySets;
-import org.apache.fop.messaging.MessageHandler;
 import org.apache.fop.xml.FoXmlEvent;
 import org.apache.fop.xml.XmlEvent;
 import org.apache.fop.xml.XmlEventReader;
@@ -161,7 +159,7 @@ public class FoTitle extends FONode {
                 }
             } catch(UnexpectedStartElementException e) {
                 ev = xmlevents.getStartElement();
-                MessageHandler.logln
+                logger.warning
                         ("Ignoring unexpected Start Element: "
                                                          + ev.getQName());
                 ev = xmlevents.getEndElement(
