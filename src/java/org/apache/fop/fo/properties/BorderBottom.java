@@ -25,7 +25,7 @@ import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.PropNames;
 import org.apache.fop.fo.expr.PropertyException;
 
-public class BorderBottom extends Property  {
+public class BorderBottom extends BorderAbsoluteShorthand  {
     public static final int dataTypes = SHORTHAND;
 
     public int getDataTypes() {
@@ -57,18 +57,20 @@ public class BorderBottom extends Property  {
      * <p>The value(s) provided, if valid, are converted into a list
      * containing the expansion of the shorthand.  The elements may
      * be in any order.  A minimum of one value will be present.
+     * <ul>
+     * <li>a border-EDGE-color <code>ColorType</code> or inheritance value</li>
+     * <li>a border-EDGE-style <code>EnumType</code> or inheritance value</li>
+     * <li>a border-EDGE-width <code>MappedNumeric</code> or inheritance
+     * value</li>
+     * </ul>
+     *  <p>N.B. this is the order of elements defined in
+     *       <code>ShorthandPropSets.borderRightExpansion</code>
      *
-     *   a border-EDGE-color ColorType or inheritance value
-     *   a border-EDGE-style EnumType or inheritance value
-     *   a border-EDGE-width MappedNumeric or inheritance value
-     *
-     *  N.B. this is the order of elements defined in
-     *       ShorthandPropSets.borderRightExpansion
-     *
-     * @param propindex - the <tt>int</tt> proeprty index.
-     * @param foNode - the <tt>FONode</tt> being built
-     * @param value <tt>PropertyValue</tt> returned by the parser
-     * @return <tt>PropertyValue</tt> the verified value
+     * @param propindex index of the property
+     * @param foNode on which this property value is expressed
+     * @param value of the property expression parsed in the previous stages
+     * of property expression evaluation
+     * @return the refined and expanded value
      */
     public PropertyValue refineParsing
                         (int propindex, FONode foNode, PropertyValue value)
