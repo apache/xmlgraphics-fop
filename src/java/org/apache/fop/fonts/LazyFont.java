@@ -96,6 +96,7 @@ public class LazyFont extends Font implements FontDescriptor {
                 }
                 // System.out.println("Metrics " + metricsFileName + " loaded.");
             } catch (Exception ex) {
+                ex.printStackTrace();
                 /**@todo Log this exception */
                 //log.error("Failed to read font metrics file "
                 //                     + metricsFileName
