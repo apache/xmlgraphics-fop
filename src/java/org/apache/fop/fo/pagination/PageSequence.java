@@ -54,8 +54,6 @@ package org.apache.fop.fo.pagination;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.FOTreeVisitor;
-import org.apache.fop.layout.PageMaster;
-import org.apache.fop.area.PageViewport;
 import org.apache.fop.apps.FOPException;
 
 // Java
@@ -112,8 +110,6 @@ public class PageSequence extends FObj {
     //
     // state attributes used during layout
     //
-
-    private PageViewport currentPage;
 
     // page number and related formatting variables
     private String ipnValue;
@@ -376,48 +372,6 @@ public class PageSequence extends FObj {
             this.currentPageNumber = this.explicitFirstNumber;
         }
         this.firstPageNumber = this.currentPageNumber;
-    }
-
-    /**
-     * Called by PageLayoutManager when it needs a new page on which to
-     * place content. The PageSequence manages the page number (odd/even),
-     * but the PLM tells it if the page is blank or is the last page.
-     *
-     * @param pageNumber the page number to create page for
-     * @param bIsBlank If true, use a master for a blank page.
-     * @param firstPage true if this is the first page
-     * @param bIsLast If true, use the master for the last page in the sequence.
-     * @return the page viewport created for the page number
-     * @throws FOPException if there is an error creating page
-     */
-    public PageViewport createPage(int pageNumber, boolean bIsBlank,
-                                   boolean firstPage, boolean bIsLast)
-                                       throws FOPException {
-        if (this.pageSequenceMaster != null) {
-            this.currentSimplePageMaster = this.pageSequenceMaster
-              .getNextSimplePageMaster(((pageNumber % 2) == 1),
-                                       firstPage,
-                                       bIsBlank);
-        }
-        Region body = currentSimplePageMaster.getRegion(Region.BODY);
-        if (!this.mainFlow.getFlowName().equals(body.getRegionName())) {
-          throw new FOPException("Flow '" + this.mainFlow.getFlowName()
-                                 + "' does not map to the region-body in page-master '"
-                                 + currentSimplePageMaster.getMasterName() + "'");
-        }
-        PageMaster pageMaster = this.currentSimplePageMaster.getPageMaster();
-        PageViewport p = pageMaster.makePage();
-        return p;
-        // The page will have a viewport/reference area pair defined
-        // for each region in the master.
-        // Set up the page itself
-// SKIP ALL THIS FOR NOW!!!
-//             //this.root.setRunningPageNumberCounter(this.currentPageNumber);
-
-//             this.pageCount++;    // used for 'force-page-count' calculations
-
-        // handle the 'force-page-count'
-        //forcePage(areaTree, firstAvailPageNumber);
     }
 
     /**
@@ -742,6 +696,10 @@ public class PageSequence extends FObj {
         return currentSimplePageMaster;
     }
 
+    public void setCurrentSimplePageMaster(SimplePageMaster simplePageMaster) {
+        this.currentSimplePageMaster = simplePageMaster;
+    }
+
     /**
      * Get the static content FO node from the flow map.
      * This gets the static content flow for the given flow name.
@@ -819,4 +777,5 @@ public class PageSequence extends FObj {
     public Root getRoot() {
         return root;
     }
+
 }
