@@ -108,17 +108,29 @@ public class Leader extends FObjMixed {
         // determines the pattern of leader; allowed values: space, rule,dots, use-content
         int leaderPattern = this.properties.get("leader-pattern").getEnum();
         // length of the leader
-        int leaderLengthOptimum =
-            this.properties.get("leader-length.optimum").getLength().mvalue();
-        int leaderLengthMinimum =
-            this.properties.get("leader-length.minimum").getLength().mvalue();
-        Length maxlength = this.properties.get("leader-length.maximum").getLength();
-        int leaderLengthMaximum;
-        if(maxlength instanceof PercentLength) {
-            leaderLengthMaximum = (int)(((PercentLength)maxlength).value()
+        Length length = this.properties.get("leader-length.minimum").getLength();
+        int leaderLengthMinimum;
+        if (length instanceof PercentLength) {
+            leaderLengthMinimum = (int)(((PercentLength)length).value()
+                                        * area.getAllocationWidth());
+        } else {
+            leaderLengthMinimum = length.mvalue();
+        }
+        length = this.properties.get("leader-length.optimum").getLength();
+        int leaderLengthOptimum;
+        if (length instanceof PercentLength) {
+            leaderLengthOptimum = (int)(((PercentLength)length).value()
                                       * area.getAllocationWidth());
         } else {
-            leaderLengthMaximum = maxlength.mvalue();
+            leaderLengthOptimum = length.mvalue();
+        }
+        length = this.properties.get("leader-length.maximum").getLength();
+        int leaderLengthMaximum;
+        if (length instanceof PercentLength) {
+            leaderLengthMaximum = (int)(((PercentLength)length).value()
+                                      * area.getAllocationWidth());
+        } else {
+            leaderLengthMaximum = length.mvalue();
         }
         // the following properties only apply for leader-pattern = "rule"
         int ruleThickness =
@@ -177,7 +189,7 @@ public class Leader extends FObjMixed {
         // in the xsl:fo spec: "User agents may choose to use the value of 'leader-length.optimum'
         // to determine where to break the line" (7.20.4)
         // if leader is longer then create a new LineArea and put leader there
-        if (leaderLengthOptimum <= (la.getRemainingWidth())) {
+        if (leaderLengthOptimum <= la.getRemainingWidth()) {
             la.addLeader(leaderPattern, leaderLengthMinimum,
                          leaderLengthOptimum, leaderLengthMaximum, ruleStyle,
                          ruleThickness, leaderPatternWidth, leaderAlignment);
@@ -200,12 +212,11 @@ public class Leader extends FObjMixed {
             } else {
                 log.error("Leader doesn't fit into line, it will be clipped to fit.");
                 la.addLeader(leaderPattern, la.getRemainingWidth(),
-                             leaderLengthOptimum, leaderLengthMaximum,
+                             la.getRemainingWidth(), la.getRemainingWidth(),
                              ruleStyle, ruleThickness, leaderPatternWidth,
                              leaderAlignment);
             }
         }
-        // this.hasLines = true;
         return 1;
     }
 

@@ -230,7 +230,6 @@ public class FOText extends FONode {
         ba.setupLinkSet(ls);
 
         start = la.addText(data, start, end, ls, textState);
-        // this.hasLines = true;
 
         while ( start != -1) {
             la = ba.createNextLineArea();
