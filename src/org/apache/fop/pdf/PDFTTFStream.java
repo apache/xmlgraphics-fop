@@ -23,7 +23,7 @@ public class PDFTTFStream extends PDFStream {
         String filterEntry = applyFilters();
         String preData = new String(this.number + " " + this.generation
                                     + " obj\n<< /Length "
-                                    + (_data.size() + 1) + " " + filterEntry
+                                    + (_data.getSize() + 1) + " " + filterEntry
                                     + " " + "/Length1 " + origLength
                                     + " >>\n");
 
@@ -41,7 +41,7 @@ public class PDFTTFStream extends PDFStream {
     public void setData(byte[] data, int size) throws java.io.IOException {
         _data.reset();
         System.out.println("Writing " + size + " bytes of font data");
-        _data.write(data, 0, size);
+        _data.getOutputStream().write(data, 0, size);
     }
 
 }

@@ -117,7 +117,7 @@ public class AreaTreeBuilder {
                     PageViewport page = sm.getPage(count, c);
                     c++;
                     // save the page to a stream for testing
-                    ObjectOutputStream tempstream = new ObjectOutputStream(
+                    /*ObjectOutputStream tempstream = new ObjectOutputStream(
                                                       new BufferedOutputStream(
                                                         new FileOutputStream("temp.ser")));
                     page.savePage(tempstream);
@@ -129,7 +129,7 @@ public class AreaTreeBuilder {
                                              new BufferedInputStream(
                                                new FileInputStream("temp.ser")));
                     page.loadPage(in);
-                    in.close();
+                    in.close();*/
 
                     rend.renderPage(page);
                 }
@@ -331,6 +331,7 @@ class TreeLoader {
                 reg.addBlock(obj);
             }
         }
+        reg.setCTM(new CTM());
         return reg;
     }
 

@@ -80,7 +80,7 @@ public class PDFT1Stream extends PDFStream {
         String filterEntry = applyFilters();
         String preData = new String(this.number + " " + this.generation
                                     + " obj\n<< /Length "
-                                    + (_data.size() + 1) + " " + filterEntry
+                                    + (_data.getSize() + 1) + " " + filterEntry
                                     + " " + "/Length1 " + len1 + " /Length2 "
                                     + (origLength - len3 - len1)
                                     + " /Length3 " + len3 + " >>\n");
@@ -101,7 +101,7 @@ public class PDFT1Stream extends PDFStream {
         calcLengths(data);
         _data.reset();
         // System.out.println("Writing " + size + " bytes of font data");
-        _data.write(data, 0, size);
+        _data.getOutputStream().write(data, 0, size);
     }
 
 }

@@ -7,9 +7,12 @@
 
 package org.apache.fop.pdf;
 
+import org.apache.fop.util.StreamUtilities;
+
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.zip.DeflaterOutputStream;
+import java.io.*;
 
 /**
  * A filter to deflate a stream. Note that the attributes for
@@ -66,13 +69,12 @@ public class FlateFilter extends PDFFilter {
      * because these attributes are not supported. So the DecodeParms
      * should be retrieved after calling this method.
      */
-    public byte[] encode(byte[] data) {
-        ByteArrayOutputStream outArrayStream = new ByteArrayOutputStream();
+    public void encode(InputStream in, OutputStream out, int length) throws IOException {
         _predictor = PREDICTION_NONE;
         try {
             DeflaterOutputStream compressedStream =
-                new DeflaterOutputStream(outArrayStream);
-            compressedStream.write(data, 0, data.length);
+                new DeflaterOutputStream(out);
+            StreamUtilities.streamCopy(in, compressedStream, length);
             compressedStream.flush();
             compressedStream.close();
         } catch (IOException e) {
@@ -80,7 +82,6 @@ public class FlateFilter extends PDFFilter {
             //        + e.getMessage(), e);
         }
 
-        return outArrayStream.toByteArray();
     }
 
     public void setPredictor(int predictor) throws PDFFilterException {
