@@ -8,6 +8,16 @@
   </header>
   <body>
     <p>This page documents items that may be helpful to other developers, especially to those who are new to FOP. Exhaustive treatment of these topics is better suited to other fora, but the information presented here is intended to deal with FOP-specific issues related to these tools, especially "gotchas", and to help developers get jump-started.</p>
+    <section id="checklist">
+      <title>Developer Checklist</title>
+      <p>Here is a (probably not comprehensive) list of tools you will need to be a successful FOP developer:</p>
+      <ul>
+        <li>A java IDE (see <link href="#ide">IDE</link>).</li>
+        <li>Ant (see <link href="../compiling.html">Building FOP</link>).</li>
+        <li>checkstyle (see <link href="conventions.html#java-checkstyle">Checkstyle</link> on the conventions page).</li>
+        <li>JUnit (see <link href="testing.html#basic">Basic Testing</link>).</li>
+      </ul>
+    </section>
     <section id="general">
       <title>General Developer Information</title>
     <p>See <link href="http://www.apache.org/dev/contributors.html">the Apache Contributors Tech Guide</link> for useful information and links for Apache developers, including help with tools and procedures.</p>
