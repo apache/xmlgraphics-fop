@@ -270,25 +270,29 @@ public abstract class PrintRenderer implements Renderer
             this.addRect(rx, ry, w, -h, new PDFColor(bg), new PDFColor(bg));
         }
 
-        rx = rx - area.getBorderLeftWidth();
-        ry = ry + area.getBorderTopWidth();
-        w = w + area.getBorderLeftWidth() + area.getBorderRightWidth();
-        h = h + area.getBorderTopWidth() + area.getBorderBottomWidth();
+        //rx = rx - area.getBorderLeftWidth();
+        //ry = ry + area.getBorderTopWidth();
+        //w = w + area.getBorderLeftWidth() + area.getBorderRightWidth();
+        //h = h + area.getBorderTopWidth() + area.getBorderBottomWidth();
 
 	// Handle line style
 	// Offset for haft the line width!
-				BorderAndPadding bp = area.getBorderAndPadding();
+	BorderAndPadding bp = area.getBorderAndPadding();
+	int left = rx - area.getBorderLeftWidth() / 2;
+	int right = rx + w + area.getBorderRightWidth() / 2;
+	int top = ry + area.getBorderTopWidth() / 2;
+	int bottom = ry - h - area.getBorderBottomWidth() / 2;
         if (area.getBorderTopWidth() != 0)
-            addLine(rx, ry, rx + w, ry, area.getBorderTopWidth(),
+            addLine(left, top, right, top, area.getBorderTopWidth(),
                     new PDFColor(bp.getBorderColor(BorderAndPadding.TOP)));
         if (area.getBorderLeftWidth() != 0)
-            addLine(rx, ry, rx, ry - h, area.getBorderLeftWidth(),
+            addLine(left, ry + area.getBorderTopWidth(), left, bottom, area.getBorderLeftWidth(),
                     new PDFColor(bp.getBorderColor(BorderAndPadding.LEFT)));
         if (area.getBorderRightWidth() != 0)
-            addLine(rx + w, ry, rx + w, ry - h, area.getBorderRightWidth(),
+            addLine(right, ry + area.getBorderTopWidth(), right, bottom, area.getBorderRightWidth(),
                     new PDFColor(bp.getBorderColor(BorderAndPadding.RIGHT)));
         if (area.getBorderBottomWidth() != 0)
-            addLine(rx, ry - h, rx + w, ry - h, area.getBorderBottomWidth(),
+            addLine(rx - area.getBorderLeftWidth(), bottom, rx + w + area.getBorderRightWidth(), bottom, area.getBorderBottomWidth(),
                     new PDFColor(bp.getBorderColor(BorderAndPadding.BOTTOM)));
 
     }
