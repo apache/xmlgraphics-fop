@@ -49,6 +49,7 @@ public class ForcePageCount extends Property  {
     public static final int END_ON_EVEN = 3;
     public static final int END_ON_ODD = 4;
     public static final int NO_FORCE = 5;
+    public static final int FORCE_AUTO = 6;
 
     public static final int inherited = NO;
 
@@ -64,6 +65,7 @@ public class ForcePageCount extends Property  {
         ,"end-on-even"
         ,"end-on-odd"
         ,"no-force"
+        ,"auto"
     };
     private static final HashMap rwEnumHash;
     static {
