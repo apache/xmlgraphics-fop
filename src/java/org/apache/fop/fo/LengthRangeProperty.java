@@ -50,14 +50,22 @@
  */
 package org.apache.fop.fo;
 
-import org.apache.fop.datatypes.LengthRange;
-import org.apache.fop.fo.properties.CompoundPropertyMaker;
 import org.apache.fop.apps.FOPException;
+import org.apache.fop.datatypes.CompoundDatatype;
+import org.apache.fop.fo.properties.CompoundPropertyMaker;
 
 /**
  * Superclass for properties that contain LengthRange values
  */
-public class LengthRangeProperty extends Property {
+public class LengthRangeProperty extends Property implements CompoundDatatype {
+    private Property minimum;
+    private Property optimum;
+    private Property maximum;
+    private static final int MINSET = 1;
+    private static final int OPTSET = 2;
+    private static final int MAXSET = 4;
+    private int bfSet = 0;    // bit field
+    private boolean bChecked = false;
 
     /**
      * Inner class for a Maker for LengthProperty objects
@@ -76,7 +84,7 @@ public class LengthRangeProperty extends Property {
          * @return the new instance. 
          */
         public Property makeNewProperty() {
-            return new LengthRangeProperty(new LengthRange());
+            return new LengthRangeProperty();
         }
 
         /**
@@ -92,27 +100,179 @@ public class LengthRangeProperty extends Property {
         }
     }
 
-    private LengthRange lengthRange;
+
 
     /**
-     * @param lengthRange LengthRange object to wrap in this
+     * @see org.apache.fop.datatypes.CompoundDatatype#setComponent(int, Property, boolean)
      */
-    public LengthRangeProperty(LengthRange lengthRange) {
-        this.lengthRange = lengthRange;
+    public void setComponent(int cmpId, Property cmpnValue,
+                             boolean bIsDefault) {
+        if (cmpId == CP_MINIMUM) {
+            setMinimum(cmpnValue, bIsDefault);
+        } else if (cmpId == CP_OPTIMUM) {
+            setOptimum(cmpnValue, bIsDefault);
+        } else if (cmpId == CP_MAXIMUM) {
+            setMaximum(cmpnValue, bIsDefault);
+        }
+    }
+
+    /**
+     * @see org.apache.fop.datatypes.CompoundDatatype#getComponent(int)
+     */
+    public Property getComponent(int cmpId) {
+        if (cmpId == CP_MINIMUM) {
+            return getMinimum();
+        } else if (cmpId == CP_OPTIMUM) {
+            return getOptimum();
+        } else if (cmpId == CP_MAXIMUM) {
+            return getMaximum();
+        } else {
+            return null;    // SHOULDN'T HAPPEN
+        }
+    }
+
+    /**
+     * Set minimum value to min.
+     * @param minimum A Length value specifying the minimum value for this
+     * LengthRange.
+     * @param bIsDefault If true, this is set as a "default" value
+     * and not a user-specified explicit value.
+     */
+    protected void setMinimum(Property minimum, boolean bIsDefault) {
+        this.minimum = minimum;
+        if (!bIsDefault) {
+            bfSet |= MINSET;
+        }
+    }
+
+
+    /**
+     * Set maximum value to max if it is >= optimum or optimum isn't set.
+     * @param max A Length value specifying the maximum value for this
+     * @param bIsDefault If true, this is set as a "default" value
+     * and not a user-specified explicit value.
+     */
+    protected void setMaximum(Property max, boolean bIsDefault) {
+        maximum = max;
+        if (!bIsDefault) {
+            bfSet |= MAXSET;
+        }
+    }
+
+
+    /**
+     * Set the optimum value.
+     * @param opt A Length value specifying the optimum value for this
+     * @param bIsDefault If true, this is set as a "default" value
+     * and not a user-specified explicit value.
+     */
+    protected void setOptimum(Property opt, boolean bIsDefault) {
+        optimum = opt;
+        if (!bIsDefault) {
+            bfSet |= OPTSET;
+        }
+    }
+
+    // Minimum is prioritaire, if explicit
+    private void checkConsistency() {
+        if (bChecked) {
+            return;
+        }
+        // Make sure max >= min
+        // Must also control if have any allowed enum values!
+
+        /**
+         * *******************
+         * if (minimum.mvalue() > maximum.mvalue()) {
+         * if ((bfSet&MINSET)!=0) {
+         * // if minimum is explicit, force max to min
+         * if ((bfSet&MAXSET)!=0) {
+         * // Warning: min>max, resetting max to min
+         * log.error("forcing max to min in LengthRange");
+         * }
+         * maximum = minimum ;
+         * }
+         * else {
+         * minimum = maximum; // minimum was default value
+         * }
+         * }
+         * // Now make sure opt <= max and opt >= min
+         * if (optimum.mvalue() > maximum.mvalue()) {
+         * if ((bfSet&OPTSET)!=0) {
+         * if ((bfSet&MAXSET)!=0) {
+         * // Warning: opt > max, resetting opt to max
+         * log.error("forcing opt to max in LengthRange");
+         * optimum = maximum ;
+         * }
+         * else {
+         * maximum = optimum; // maximum was default value
+         * }
+         * }
+         * else {
+         * // opt is default and max is explicit or default
+         * optimum = maximum ;
+         * }
+         * }
+         * else if (optimum.mvalue() < minimum.mvalue()) {
+         * if ((bfSet&MINSET)!=0) {
+         * // if minimum is explicit, force opt to min
+         * if ((bfSet&OPTSET)!=0) {
+         * log.error("forcing opt to min in LengthRange");
+         * }
+         * optimum = minimum ;
+         * }
+         * else {
+         * minimum = optimum; // minimum was default value
+         * }
+         * }
+         * *******$*******
+         */
+        bChecked = true;
+    }
+
+    /**
+     * @return minimum length
+     */
+    public Property getMinimum() {
+        checkConsistency();
+        return this.minimum;
+    }
+
+    /**
+     * @return maximum length
+     */
+    public Property getMaximum() {
+        checkConsistency();
+        return this.maximum;
+    }
+
+    /**
+     * @return optimum length
+     */
+    public Property getOptimum() {
+        checkConsistency();
+        return this.optimum;
+    }
+
+    public String toString() {
+        return "LengthRange[" +
+        "min:" + getMinimum().getObject() + 
+        ", max:" + getMaximum().getObject() + 
+        ", opt:" + getOptimum().getObject() + "]";
     }
 
     /**
      * @return this.lengthRange
      */
-    public LengthRange getLengthRange() {
-        return this.lengthRange;
+    public LengthRangeProperty getLengthRange() {
+        return this;
     }
 
     /**
      * @return this.lengthRange cast as an Object
      */
     public Object getObject() {
-        return this.lengthRange;
+        return this;
     }
 
 }

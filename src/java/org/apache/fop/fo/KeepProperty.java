@@ -51,13 +51,16 @@
 package org.apache.fop.fo;
 
 import org.apache.fop.apps.FOPException;
-import org.apache.fop.datatypes.Keep;
+import org.apache.fop.datatypes.CompoundDatatype;
 import org.apache.fop.fo.properties.CompoundPropertyMaker;
 
 /**
  * Superclass for properties that wrap Keep values
  */
-public class KeepProperty extends Property {
+public class KeepProperty extends Property implements CompoundDatatype {
+    private Property withinLine;
+    private Property withinColumn;
+    private Property withinPage;
 
     /**
      * Inner class for creating instances of KeepProperty
@@ -76,7 +79,7 @@ public class KeepProperty extends Property {
          * @return the new instance. 
          */
         public Property makeNewProperty() {
-            return new KeepProperty(new Keep());
+            return new KeepProperty();
         }
 
         /**
@@ -92,27 +95,104 @@ public class KeepProperty extends Property {
         }
     }
 
-    private Keep keep;
+    /**
+     * @see org.apache.fop.datatypes.CompoundDatatype#setComponent(int, Property, boolean)
+     */
+    public void setComponent(int cmpId, Property cmpnValue,
+                             boolean bIsDefault) {
+        if (cmpId == CP_WITHIN_LINE) {
+            setWithinLine(cmpnValue, bIsDefault);
+        } else if (cmpId == CP_WITHIN_COLUMN) {
+            setWithinColumn(cmpnValue, bIsDefault);
+        } else if (cmpId == CP_WITHIN_PAGE) {
+            setWithinPage(cmpnValue, bIsDefault);
+        }
+    }
 
     /**
-     * @param keep Keep value to wrap in this Property
+     * @see org.apache.fop.datatypes.CompoundDatatype#getComponent(int)
      */
-    public KeepProperty(Keep keep) {
-        this.keep = keep;
+    public Property getComponent(int cmpId) {
+        if (cmpId == CP_WITHIN_LINE) {
+            return getWithinLine();
+        } else if (cmpId == CP_WITHIN_COLUMN) {
+            return getWithinColumn();
+        } else if (cmpId == CP_WITHIN_PAGE) {
+            return getWithinPage();
+        } else {
+            return null;
+        }
+    }
+
+    /**
+     * @param withinLine withinLine property to set
+     * @param bIsDefault not used (??)
+     */
+    public void setWithinLine(Property withinLine, boolean bIsDefault) {
+        this.withinLine = withinLine;
+    }
+
+    /**
+     * @param withinColumn withinColumn property to set
+     * @param bIsDefault not used (??)
+     */
+    protected void setWithinColumn(Property withinColumn,
+                                   boolean bIsDefault) {
+        this.withinColumn = withinColumn;
+    }
+
+    /**
+     * @param withinPage withinPage property to set
+     * @param bIsDefault not used (??)
+     */
+    public void setWithinPage(Property withinPage, boolean bIsDefault) {
+        this.withinPage = withinPage;
+    }
+
+    /**
+     * @return the withinLine property
+     */
+    public Property getWithinLine() {
+        return this.withinLine;
+    }
+
+    /**
+     * @return the withinColumn property
+     */
+    public Property getWithinColumn() {
+        return this.withinColumn;
+    }
+
+    /**
+     * @return the withinPage property
+     */
+    public Property getWithinPage() {
+        return this.withinPage;
+    }
+
+    /**
+     * Not sure what to do here. There isn't really a meaningful single value.
+     * @return String representation
+     */
+    public String toString() {
+        return "Keep[" + 
+            "withinLine:" + getWithinLine().getObject() + 
+            ", withinColumn:" + getWithinColumn().getObject() + 
+            ", withinPage:" + getWithinPage().getObject() + "]";
     }
 
     /**
      * @return this.keep
      */
-    public Keep getKeep() {
-        return this.keep;
+    public KeepProperty getKeep() {
+        return this;
     }
 
     /**
      * @return this.keep cast as Object
      */
     public Object getObject() {
-        return this.keep;
+        return this;
     }
 
 }

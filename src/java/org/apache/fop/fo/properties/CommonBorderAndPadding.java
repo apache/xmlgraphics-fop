@@ -50,9 +50,9 @@
  */
 package org.apache.fop.fo.properties;
 
-import org.apache.fop.fo.Constants;
 import org.apache.fop.datatypes.ColorType;
-import org.apache.fop.datatypes.CondLength;
+import org.apache.fop.fo.Constants;
+import org.apache.fop.fo.CondLengthProperty;
 
 /**
  * Stores all common border and padding properties.
@@ -78,7 +78,7 @@ public class CommonBorderAndPadding implements Cloneable {
         private int iLength; // Resolved length value
         private boolean bDiscard;
 
-        public ResolvedCondLength(CondLength length) {
+        public ResolvedCondLength(CondLengthProperty length) {
             bDiscard = length.isDiscard();
             iLength = length.getLengthValue();
         }
@@ -114,7 +114,7 @@ public class CommonBorderAndPadding implements Cloneable {
         private ColorType mColor; // Border color
         private ResolvedCondLength mWidth;
 
-        BorderInfo(int style, CondLength width, ColorType color) {
+        BorderInfo(int style, CondLengthProperty width, ColorType color) {
             mStyle = style;
             mWidth = new ResolvedCondLength(width);
             mColor = color;
@@ -131,12 +131,12 @@ public class CommonBorderAndPadding implements Cloneable {
     private BorderInfo[] borderInfo = new BorderInfo[4];
     private ResolvedCondLength[] padding = new ResolvedCondLength[4];
 
-    public void setBorder(int side, int style, CondLength width,
+    public void setBorder(int side, int style, CondLengthProperty width,
                           ColorType color) {
         borderInfo[side] = new BorderInfo(style, width, color);
     }
 
-    public void setPadding(int side, CondLength width) {
+    public void setPadding(int side, CondLengthProperty width) {
         padding[side] = new ResolvedCondLength(width);
     }
 

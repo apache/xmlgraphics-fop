@@ -51,8 +51,6 @@
 package org.apache.fop.fo;
 
 import org.apache.fop.apps.FOPException;
-import org.apache.fop.datatypes.LengthRange;
-import org.apache.fop.datatypes.Space;
 import org.apache.fop.fo.properties.CompoundPropertyMaker;
 
 /**
@@ -60,7 +58,9 @@ import org.apache.fop.fo.properties.CompoundPropertyMaker;
  * fo:space-after variety. It is extended by org.apache.fop.fo.properties.GenericSpace,
  * which is extended by many other properties.
  */
-public class SpaceProperty extends Property {
+public class SpaceProperty extends LengthRangeProperty {
+    private Property precedence;
+    private Property conditionality;
 
     /**
      * Inner class used to create new instances of SpaceProperty
@@ -79,7 +79,7 @@ public class SpaceProperty extends Property {
          * @return the new instance. 
          */
         public Property makeNewProperty() {
-            return new SpaceProperty(new Space());
+            return new SpaceProperty();
         }
 
         /**
@@ -95,35 +95,97 @@ public class SpaceProperty extends Property {
         }
     }
 
-    private Space space;
+
 
     /**
-     * @param space the Space object (datatype) to be stored here
+     * @see org.apache.fop.datatypes.CompoundDatatype#setComponent(int, Property, boolean)
      */
-    public SpaceProperty(Space space) {
-        this.space = space;
+    public void setComponent(int cmpId, Property cmpnValue,
+                             boolean bIsDefault) {
+        if (cmpId == CP_PRECEDENCE) {
+            setPrecedence(cmpnValue, bIsDefault);
+        } else if (cmpId == CP_CONDITIONALITY) {
+            setConditionality(cmpnValue, bIsDefault);
+        } else {
+            super.setComponent(cmpId, cmpnValue, bIsDefault);
+        }
+    }
+
+    /**
+     * @see org.apache.fop.datatypes.CompoundDatatype#getComponent(int)
+     */
+    public Property getComponent(int cmpId) {
+        if (cmpId == CP_PRECEDENCE) {
+            return getPrecedence();
+        } else if (cmpId == CP_CONDITIONALITY) {
+            return getConditionality();
+        } else {
+            return super.getComponent(cmpId);
+        }
+    }
+
+    /**
+     *
+     * @param precedence precedence Property to set
+     * @param bIsDefault (is not used anywhere)
+     */
+    protected void setPrecedence(Property precedence, boolean bIsDefault) {
+        this.precedence = precedence;
+    }
+
+    /**
+     *
+     * @param conditionality conditionality Property to set
+     * @param bIsDefault (is not used anywhere)
+     */
+    protected void setConditionality(Property conditionality,
+                                     boolean bIsDefault) {
+        this.conditionality = conditionality;
+    }
+
+    /**
+     * @return precedence Property
+     */
+    public Property getPrecedence() {
+        return this.precedence;
+    }
+
+    /**
+     * @return conditionality Property
+     */
+    public Property getConditionality() {
+        return this.conditionality;
+    }
+
+    public String toString() {
+        return "Space[" +
+        "min:" + getMinimum().getObject() + 
+        ", max:" + getMaximum().getObject() + 
+        ", opt:" + getOptimum().getObject() + 
+        ", precedence:" + precedence.getObject() + 
+        ", conditionality:" + conditionality.getObject() + "]";
     }
 
     /**
      * @return the Space (datatype) object contained here
      */
-    public Space getSpace() {
-        return this.space;
+    public SpaceProperty getSpace() {
+        return this;
     }
 
     /**
      * Space extends LengthRange.
      * @return the Space (datatype) object contained here
      */
-    public LengthRange getLengthRange() {
-        return this.space;
+    public LengthRangeProperty getLengthRange() {
+        return this;
     }
 
     /**
      * @return the Space (datatype) object contained here
      */
     public Object getObject() {
-        return this.space;
+        return this;
     }
 
 }

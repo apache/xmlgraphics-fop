@@ -53,10 +53,10 @@ package org.apache.fop.fo;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.fop.datatypes.ColorType;
 import org.apache.fop.datatypes.LengthBase;
 import org.apache.fop.datatypes.ToBeImplementedProperty;
 import org.apache.fop.fo.properties.BorderWidthPropertyMaker;
+import org.apache.fop.fo.properties.CharacterProperty;
 import org.apache.fop.fo.properties.CorrespondingPropertyMaker;
 import org.apache.fop.fo.properties.DimensionPropertyMaker;
 import org.apache.fop.fo.properties.IndentPropertyMaker;
@@ -686,7 +686,7 @@ public class FOPropertyMapping implements Constants {
                     Property p, PropertyList propertyList, FObj fo) {
                 String nameval = p.getNCname();
                 if (nameval != null) {
-                    return new ColorTypeProperty(new ColorType(nameval));
+                    return new ColorTypeProperty(nameval);
                 }
                 return super.convertPropertyDatatype(p, propertyList, fo);
             }

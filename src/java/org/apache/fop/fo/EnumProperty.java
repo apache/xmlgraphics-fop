@@ -66,7 +66,7 @@ public class EnumProperty extends Property {
         /**
          * @param propName name of property for which a Maker should be created
          */
-        protected Maker(int propId) {
+        public Maker(int propId) {
             super(propId);
         }
 

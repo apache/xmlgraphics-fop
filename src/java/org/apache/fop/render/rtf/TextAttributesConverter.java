@@ -327,9 +327,9 @@ class TextAttributesConverter {
     * @return integer pointing into the RTF color table
     */
    public static int convertFOPColorToRTF(ColorType fopColor) {
-       int redComponent = ColorType.convertChannelToInteger (fopColor.getRed());
-       int greenComponent = ColorType.convertChannelToInteger (fopColor.getGreen());
-       int blueComponent = ColorType.convertChannelToInteger (fopColor.getBlue());
+       int redComponent = ColorTypeProperty.convertChannelToInteger (fopColor.getRed());
+       int greenComponent = ColorTypeProperty.convertChannelToInteger (fopColor.getGreen());
+       int blueComponent = ColorTypeProperty.convertChannelToInteger (fopColor.getBlue());
        return RtfColorTable.getInstance().getColorNumber(redComponent,
                greenComponent, blueComponent).intValue();
    }

@@ -50,12 +50,13 @@
  */
 package org.apache.fop.datatypes;
 
-import org.apache.fop.fo.expr.Numeric;
+import org.apache.fop.fo.LengthProperty;
+import org.apache.fop.fo.expr.NumericProperty;
 
 /**
  * a length quantity in XSL
  */
-public class FixedLength extends Length {
+public class FixedLength extends LengthProperty {
 
     /**
      * Set the length given
@@ -120,8 +121,8 @@ public class FixedLength extends Length {
     /**
      * @return Numeric equivalent of this
      */
-    public Numeric asNumeric() {
-        return new Numeric(this);
+    public NumericProperty asNumeric() {
+        return new NumericProperty(this);
     }
 }
 

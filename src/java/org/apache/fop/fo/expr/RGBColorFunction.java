@@ -53,7 +53,6 @@ package org.apache.fop.fo.expr;
 
 import org.apache.fop.fo.Property;
 import org.apache.fop.fo.ColorTypeProperty;
-import org.apache.fop.datatypes.ColorType;
 import org.apache.fop.datatypes.PercentBase;
 
 class RGBColorFunction extends FunctionBase {
@@ -88,8 +87,7 @@ class RGBColorFunction extends FunctionBase {
             }
             cfvals[i] = colorVal;
         }
-        return new ColorTypeProperty(new ColorType(cfvals[0], cfvals[1],
-                                                   cfvals[2]));
+        return new ColorTypeProperty(cfvals[0], cfvals[1], cfvals[2]);
 
     }
 

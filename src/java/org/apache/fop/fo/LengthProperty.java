@@ -50,16 +50,20 @@
  */
 package org.apache.fop.fo;
 
-import org.apache.fop.datatypes.Length;
-import org.apache.fop.datatypes.AutoLength;
-import org.apache.fop.fo.expr.Numeric;
-import org.apache.fop.fo.properties.PropertyMaker;
 import org.apache.fop.apps.FOPException;
+import org.apache.fop.datatypes.AutoLength;
+import org.apache.fop.datatypes.Length;
+import org.apache.fop.fo.expr.NumericProperty;
+import org.apache.fop.fo.properties.PropertyMaker;
 
 /**
  * Superclass for properties wrapping a Length value.
  */
-public class LengthProperty extends Property {
+public class LengthProperty extends Property implements Length {
+    /** Holds the length in millipoints. */
+    protected int millipoints = 0;
+    /** Indicates if the value has been computed, or not. */
+    protected boolean bIsComputed = false;
 
     /**
      * Inner class for making instances of LengthProperty
@@ -111,60 +115,127 @@ public class LengthProperty extends Property {
             if (isAutoLengthAllowed()) {
                 String pval = p.getString();
                 if (pval != null && pval.equals("auto")) {
-                    return new LengthProperty(new AutoLength());
+                    return new AutoLength();
                 }
             }
             if (p instanceof LengthProperty) {
                 return p;
             }
-            Length val = p.getLength();
+            LengthProperty val = p.getLength();
             if (val != null) {
-                return new LengthProperty(val);
+                return val;
             }
             return convertPropertyDatatype(p, propertyList, fo);
         }
 
     }
 
-    /*
-     * public static Property.Maker maker(String prop) {
-     * return new Maker(prop);
-     * }
-     */
 
     /**
-     * This object may be also be a subclass of Length, such
-     * as PercentLength, TableColLength.
+     * Returns the length in 1/1000ths of a point (millipoints)
+     * @return the length in millipoints
      */
-    private Length length;
+    public int getValue() {
+        if (!bIsComputed) {
+            computeValue();
+        }
+        return millipoints;
+    }
 
     /**
-     * @param length Length object to wrap in this
+     * Computes the value.
      */
-    public LengthProperty(Length length) {
-        this.length = length;
-        // System.err.println("Set LengthProperty: " + length.toString());
+    protected void computeValue() {
+    }
+
+
+    /**
+     * Sets the computed value.
+     * @param millipoints the length in millipoints
+     */
+    protected void setComputedValue(int millipoints) {
+        setComputedValue(millipoints, true);
+    }
+
+    /**
+     * Sets the computed value.
+     * @param millipoints the length in millipoints
+     * @param bSetComputed True if the isComputed flag should be set.
+     */
+    protected void setComputedValue(int millipoints, boolean bSetComputed) {
+        this.millipoints = millipoints;
+        this.bIsComputed = bSetComputed;
+    }
+
+    /**
+     * Indicates if the length has the "auto" value.
+     * @return True if the length is set to "auto"
+     */
+    public boolean isAuto() {
+        return false;
+    }
+
+    /**
+     * Indicates if the length has been computed.
+     * @return True if the length has been computed
+     */
+    public boolean isComputed() {
+        return this.bIsComputed;
+    }
+
+    /**
+     * Return the number of table units which are included in this
+     * length specification.
+     * This will always be 0 unless the property specification used
+     * the proportional-column-width() function (only only table
+     * column FOs).
+     * <p>If this value is not 0, the actual value of the Length cannot
+     * be known without looking at all of the columns in the table to
+     * determine the value of a "table-unit".
+     * @return The number of table units which are included in this
+     * length specification.
+     */
+    public double getTableUnits() {
+        return 0.0;
+    }
+
+    public void resolveTableUnit(double dTableUnit) {
+    }
+
+    /**
+     * @return null (cannot be converted to a Numeric ??)
+     */
+    public NumericProperty asNumeric() {
+        return null;
+    }
+
+    /**
+     * @see java.lang.Object#toString()
+     */
+    public String toString() {
+        String s = millipoints + "mpt";
+        return s;
     }
 
     /**
      * @return this.lenght cast as a Numeric
      */
-    public Numeric getNumeric() {
-        return length.asNumeric() ;
+    public NumericProperty getNumeric() {
+        return asNumeric() ;
     }
 
     /**
      * @return this.length
      */
-    public Length getLength() {
-        return this.length;
+    public LengthProperty getLength() {
+        return this;
     }
 
     /**
      * @return this.length cast as an Object
      */
     public Object getObject() {
-        return this.length;
+        return this;
     }
 
 }

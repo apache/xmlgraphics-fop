@@ -50,14 +50,7 @@
  */
 package org.apache.fop.fo;
 
-import org.apache.fop.datatypes.ColorType;
-import org.apache.fop.datatypes.CondLength;
-import org.apache.fop.datatypes.Keep;
-import org.apache.fop.datatypes.Length;
-import org.apache.fop.datatypes.LengthPair;
-import org.apache.fop.datatypes.LengthRange;
-import org.apache.fop.datatypes.Space;
-import org.apache.fop.fo.expr.Numeric;
+import org.apache.fop.fo.expr.NumericProperty;
 import java.util.Vector;
 
 /**
@@ -97,7 +90,7 @@ public class Property {
      * This method expects to be overridden by subclasses
      * @return Length property value
      */
-    public Length getLength() {
+    public LengthProperty getLength() {
         return null;
     }
 
@@ -105,7 +98,7 @@ public class Property {
      * This method expects to be overridden by subclasses
      * @return ColorType property value
      */
-    public ColorType getColorType() {
+    public ColorTypeProperty getColorType() {
         return null;
     }
 
@@ -113,7 +106,7 @@ public class Property {
      * This method expects to be overridden by subclasses
      * @return CondLength property value
      */
-    public CondLength getCondLength() {
+    public CondLengthProperty getCondLength() {
         return null;
     }
 
@@ -121,7 +114,7 @@ public class Property {
      * This method expects to be overridden by subclasses
      * @return LenghtRange property value
      */
-    public LengthRange getLengthRange() {
+    public LengthRangeProperty getLengthRange() {
         return null;
     }
 
@@ -129,7 +122,7 @@ public class Property {
      * This method expects to be overridden by subclasses
      * @return LengthPair property value
      */
-    public LengthPair getLengthPair() {
+    public LengthPairProperty getLengthPair() {
         return null;
     }
 
@@ -137,7 +130,7 @@ public class Property {
      * This method expects to be overridden by subclasses
      * @return Space property value
      */
-    public Space getSpace() {
+    public SpaceProperty getSpace() {
         return null;
     }
 
@@ -145,7 +138,7 @@ public class Property {
      * This method expects to be overridden by subclasses
      * @return Keep property value
      */
-    public Keep getKeep() {
+    public KeepProperty getKeep() {
         return null;
     }
 
@@ -185,7 +178,7 @@ public class Property {
      * This method expects to be overridden by subclasses
      * @return Numeric property value
      */
-    public Numeric getNumeric() {
+    public NumericProperty getNumeric() {
         return null;
     }
 
@@ -210,8 +203,7 @@ public class Property {
      * @return String property value
      */
     public String getString() {
-        Object o = getObject();
-        return (o == null) ? null : o.toString();
+        return null;
     }
 
     /**

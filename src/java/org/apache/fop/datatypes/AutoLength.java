@@ -50,10 +50,12 @@
  */ 
 package org.apache.fop.datatypes;
 
+import org.apache.fop.fo.LengthProperty;
+
 /**
  * A length quantity in XSL which is specified as "auto".
  */
-public class AutoLength extends Length {
+public class AutoLength extends LengthProperty {
 
     /**
      * @see org.apache.fop.datatypes.Length#isAuto()
@@ -68,9 +70,9 @@ public class AutoLength extends Length {
     //    }
 
     /**
-     * @see java.lang.Object#toString()
+     * @see org.apache.fop.fo.Property#getString()
      */
-    public String toString() {
+    public String getString() {
         return "auto";
     }
 

@@ -58,9 +58,9 @@ import org.apache.fop.apps.FOPException;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.FOTreeVisitor;
+import org.apache.fop.fo.LengthProperty;
 import org.apache.fop.image.ImageFactory;
 import org.apache.fop.image.FopImage;
-import org.apache.fop.datatypes.Length;
 // Java
 import java.awt.geom.Rectangle2D;
 
@@ -104,7 +104,7 @@ public class ExternalGraphic extends FObj {
         url = ImageFactory.getURL(url);
 
         // assume lr-tb for now and just use the .optimum value of the range
-        Length ipd = propertyList.get(PR_INLINE_PROGRESSION_DIMENSION).
+        LengthProperty ipd = propertyList.get(PR_INLINE_PROGRESSION_DIMENSION).
                                     getLengthRange().getOptimum().getLength();
         if (!ipd.isAuto()) {
             viewWidth = ipd.getValue();
@@ -114,7 +114,7 @@ public class ExternalGraphic extends FObj {
                 viewWidth = ipd.getValue();
             }
         }
-        Length bpd = propertyList.get(PR_BLOCK_PROGRESSION_DIMENSION | CP_OPTIMUM).getLength();
+        LengthProperty bpd = propertyList.get(PR_BLOCK_PROGRESSION_DIMENSION | CP_OPTIMUM).getLength();
         if (!bpd.isAuto()) {
             viewHeight = bpd.getValue();
         } else {
@@ -129,7 +129,7 @@ public class ExternalGraphic extends FObj {
 
         int cwidth = -1;
         int cheight = -1;
-        Length ch = propertyList.get(PR_CONTENT_HEIGHT).getLength();
+        LengthProperty ch = propertyList.get(PR_CONTENT_HEIGHT).getLength();
         if (!ch.isAuto()) {
             /*if (ch.scaleToFit()) {
                 if (viewHeight != -1) {
@@ -138,7 +138,7 @@ public class ExternalGraphic extends FObj {
             } else {*/
             cheight = ch.getValue();
         }
-        Length cw = propertyList.get(PR_CONTENT_WIDTH).getLength();
+        LengthProperty cw = propertyList.get(PR_CONTENT_WIDTH).getLength();
         if (!cw.isAuto()) {
             /*if (cw.scaleToFit()) {
                 if (viewWidth != -1) {
