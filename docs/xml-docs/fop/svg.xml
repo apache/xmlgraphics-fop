@@ -1,0 +1,45 @@
+<?xml version="1.0" standalone="no"?>
+
+<!-- SVG in FOP -->
+
+<s1 title="SVG in FOP">
+  <s2 title="Introduction">
+    <p>
+FOP uses the SVG library from <jump href="http://xml.apache.org/batik/">Batik</jump> to handle SVG.
+This format can be handled as an <code>fo:instream-foreign-object</code> or in a separate
+file referenced with <code>fo:external-graphic</code>. Either way the SVG document will be
+read in and converted into a DOM in Batik. This DOM will then be used by the renderer to
+create the graphical image.
+    </p>
+    <p>
+The AWT and Print renderers simply use batik to draw the SVG into a graphic.
+    </p>
+    <p>
+In the case of the PDF renderer there is a PDFGraphics2D class that Batik uses
+to render the image into. This class converts the drawing instructions into
+PDF markup which is placed into the current PDF document.
+    </p>
+  </s2>
+
+  <s2 title="Converting SVG to a PDF Document">
+    <p>
+It is possible to convert a standalone SVG document directly into a simple page PDF document.
+This is possible through the use of Batik's transcoder mechanism.<br/>
+<code>java org.apache.batik.apps.rasterizer.Main -m application/pdf document.svg</code>
+<br/>
+This will output the svg document as "document.pdf" containing a PDF rendering of
+the SVG file.
+    </p>
+    <p>
+It is also possible to specify the width and/or height of the PDF document.
+Currently the SVG image is simply scaled in PDF so the result my not be the best possible.
+    </p>
+    <p>
+For more information see <jump href="http://xml.apache.org/batik/">Batik</jump> for
+how transocders work.
+    </p>
+  </s2>
+
+
+</s1>
+

@@ -49,9 +49,10 @@
        identified as such. 
     </p>
 
-    <p>Another secondary goal is to promote the conversion of SVG into PDF. The most natural mechanism for doing so is within
-       fo:instream-foreign-object FO's. The powerful graphics offered by both SVG and PDF are a natural fit, and it is
-       desirable that FOP natively supports an SVG content processor for the fo:instream-foreign-object. 
+    <p>Another secondary goal is to improve the conversion of SVG into PDF.
+       This includes the use of FOP to work as a transcoder for Batik to convert
+       an SVG document into a PDF document and the fully support embedding SVG inside
+       fo documents in an fo:instream-foreign-object. 
     </p>
 
    <p>A final secondary goal is the continued refinement of the FOP design and implementation. In particular, maintaining the
