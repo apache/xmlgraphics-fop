@@ -9,12 +9,11 @@ package org.apache.fop.fo.pagination;
 
 // FOP
 import org.apache.fop.fo.*;
-import org.apache.fop.fo.properties.*;
 import org.apache.fop.layout.PageMaster;
-import org.apache.fop.layout.RegionArea;
 import org.apache.fop.layout.BodyRegionArea;
 import org.apache.fop.layout.MarginProps;
 import org.apache.fop.apps.FOPException;
+import org.apache.fop.datatypes.Length;
 
 import java.util.HashMap;
 import java.util.Iterator;
@@ -27,6 +26,9 @@ import java.util.Iterator;
  *     &para;6.4.12</a>
  */
 public class SimplePageMaster extends FObj {
+    // Fallback values for "auto" page size: 8x11in
+    private final static int FALLBACK_PAGE_HEIGHT = 792000;
+    private final static int FALLBACK_PAGE_WIDTH = 576000;
 
     public static class Maker extends FObj.Maker {
         public FObj make(FObj parent,
@@ -82,10 +84,10 @@ public class SimplePageMaster extends FObj {
     }
 
     protected void end() {
-        int pageWidth =
-            this.properties.get("page-width").getLength().mvalue();
-        int pageHeight =
-            this.properties.get("page-height").getLength().mvalue();
+        Length pageWidthLen = this.properties.get("page-width").getLength();
+        int pageWidth = pageWidthLen.isAuto() ? FALLBACK_PAGE_WIDTH : pageWidthLen.mvalue();
+        Length pageHeightLen = this.properties.get("page-height").getLength();
+        int pageHeight = pageHeightLen.isAuto() ? FALLBACK_PAGE_HEIGHT : pageHeightLen.mvalue();
         // this.properties.get("reference-orientation");
         // this.properties.get("writing-mode");
 

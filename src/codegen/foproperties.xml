@@ -1592,7 +1592,7 @@
       <datatype>Length</datatype>
       <default>1.0pt</default>
     </property>
-    
+
     <!-- Properties for Dynamic Effects Formatting Objects -->
 
     <property>
@@ -1849,7 +1849,7 @@
       <inherited>false</inherited>
       <datatype>Length</datatype>
       <auto-ok/>
-      <default>11in</default>
+      <default>auto</default>
     </property>
     <property>
       <name>page-position</name>
@@ -1868,7 +1868,7 @@
       <inherited>false</inherited>
       <datatype>Length</datatype>
       <auto-ok/>
-      <default>8in</default>
+      <default>auto</default>
     </property>
     <property>
       <name>precedence</name>
