@@ -50,10 +50,11 @@
  */
 package org.apache.fop.datatypes;
 
-import java.util.Vector;
 import java.util.Enumeration;
+import java.util.Vector;
 
-import org.apache.fop.fo.expr.Numeric;
+import org.apache.fop.fo.LengthProperty;
+import org.apache.fop.fo.expr.NumericProperty;
 import org.apache.fop.fo.expr.PropertyException;
 
 /**
@@ -61,7 +62,7 @@ import org.apache.fop.fo.expr.PropertyException;
  * of absolute and relative and/or percent components.
  * The actual value may not be computable before layout is done.
  */
-public class MixedLength extends Length {
+public class MixedLength extends LengthProperty {
 
     /** The collection of Length objects comprising this MixedLength object */
     private Vector lengths ;
@@ -84,7 +85,7 @@ public class MixedLength extends Length {
         boolean bAllComputed = true;
         Enumeration e = lengths.elements();
         while (e.hasMoreElements()) {
-            Length l = (Length) e.nextElement();
+            LengthProperty l = (LengthProperty) e.nextElement();
             computedValue += l.getValue();
             if (!l.isComputed()) {
                 bAllComputed = false;
@@ -98,7 +99,7 @@ public class MixedLength extends Length {
         double tableUnits = 0.0;
         Enumeration e = lengths.elements();
         while (e.hasMoreElements()) {
-            tableUnits += ((Length) e.nextElement()).getTableUnits();
+            tableUnits += ((LengthProperty) e.nextElement()).getTableUnits();
         }
         return tableUnits;
     }
@@ -106,7 +107,7 @@ public class MixedLength extends Length {
     public void resolveTableUnit(double dTableUnit) {
         Enumeration e = lengths.elements();
         while (e.hasMoreElements()) {
-            ((Length) e.nextElement()).resolveTableUnit(dTableUnit);
+            ((LengthProperty) e.nextElement()).resolveTableUnit(dTableUnit);
         }
     }
 
@@ -128,15 +129,15 @@ public class MixedLength extends Length {
     /**
      * @return Numeric equivalent of this
      */
-    public Numeric asNumeric() {
-        Numeric numeric = null;
+    public NumericProperty asNumeric() {
+        NumericProperty numeric = null;
         for (Enumeration e = lengths.elements(); e.hasMoreElements();) {
-            Length l = (Length) e.nextElement();
+            LengthProperty l = (LengthProperty) e.nextElement();
             if (numeric == null) {
                 numeric = l.asNumeric();
             } else {
                 try {
-                    Numeric sum = numeric.add(l.asNumeric());
+                    NumericProperty sum = numeric.add(l.asNumeric());
                     numeric = sum;
                 } catch (PropertyException pe) {
                     System.err.println(

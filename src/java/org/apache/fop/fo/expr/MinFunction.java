@@ -74,12 +74,12 @@ public class MinFunction extends FunctionBase {
      */
     public Property eval(Property[] args,
                          PropertyInfo pInfo) throws PropertyException {
-        Numeric n1 = args[0].getNumeric();
-        Numeric n2 = args[1].getNumeric();
+        NumericProperty n1 = args[0].getNumeric();
+        NumericProperty n2 = args[1].getNumeric();
         if (n1 == null || n2 == null) {
             throw new PropertyException("Non numeric operands to min function");
         }
-        return new NumericProperty(n1.min(n2));
+        return n1.min(n2);
     }
 
 }

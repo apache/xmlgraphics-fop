@@ -53,10 +53,9 @@ package org.apache.fop.fo.properties;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.datatypes.FixedLength;
 import org.apache.fop.fo.FOPropertyMapping;
-import org.apache.fop.fo.LengthProperty;
 import org.apache.fop.fo.Property;
 import org.apache.fop.fo.PropertyList;
-import org.apache.fop.fo.expr.Numeric;
+import org.apache.fop.fo.expr.NumericProperty;
 
 /**
  * This property maker handles the calculations described in 5.3.2 which
@@ -109,7 +108,7 @@ public class IndentPropertyMaker extends CorrespondingPropertyMaker {
         }
         // Calculate the values as described in 5.3.2.
         try {
-            Numeric v = new Numeric(new FixedLength(0));
+            NumericProperty v = new NumericProperty(new FixedLength(0));
             /*
             if (!propertyList.getFObj().generatesInlineAreas()) {
                 String propName = FOPropertyMapping.getPropertyName(this.propId);
@@ -119,7 +118,7 @@ public class IndentPropertyMaker extends CorrespondingPropertyMaker {
             v = v.add(propertyList.get(propertyList.wmMap(lr_tb, rl_tb, tb_rl)).getNumeric());
             v = v.add(getCorresponding(paddingCorresponding, propertyList).getNumeric());
             v = v.add(getCorresponding(borderWidthCorresponding, propertyList).getNumeric());
-            return new LengthProperty(v.asLength());
+            return v.asLength();
         } catch (org.apache.fop.fo.expr.PropertyException propEx) {
            String propName = FOPropertyMapping.getPropertyName(baseMaker.getPropId());
            throw new FOPException("Error in " + propName 

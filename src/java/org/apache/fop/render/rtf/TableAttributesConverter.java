@@ -178,7 +178,7 @@ public class TableAttributesConverter {
             ListProperty listprop = (ListProperty) p;
             ColorType color = null;
             if (listprop.getList().get(0) instanceof NCnameProperty) {
-                color = new ColorType(((NCnameProperty)listprop.getList().get(0)).getNCname());
+                color = new ColorTypeProperty(((NCnameProperty)listprop.getList().get(0)).getNCname());
             } else if (listprop.getList().get(0) instanceof ColorTypeProperty) {
                 color = ((ColorTypeProperty)listprop.getList().get(0)).getColorType();
             }

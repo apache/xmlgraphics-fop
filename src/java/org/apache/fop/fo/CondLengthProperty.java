@@ -51,14 +51,15 @@
 package org.apache.fop.fo;
 
 import org.apache.fop.apps.FOPException;
-import org.apache.fop.datatypes.CondLength;
-import org.apache.fop.datatypes.Length;
+import org.apache.fop.datatypes.CompoundDatatype;
 import org.apache.fop.fo.properties.CompoundPropertyMaker;
 
 /**
  * Superclass for properties that have conditional lengths
  */
-public class CondLengthProperty extends Property {
+public class CondLengthProperty extends Property implements CompoundDatatype {
+    private Property length;
+    private Property conditionality;
 
     /**
      * Inner class for creating instances of CondLengthProperty
@@ -77,7 +78,7 @@ public class CondLengthProperty extends Property {
          * @return the new instance. 
          */
         public Property makeNewProperty() {
-            return new CondLengthProperty(new CondLength());
+            return new CondLengthProperty();
         }
 
         /**
@@ -93,36 +94,89 @@ public class CondLengthProperty extends Property {
         }
     }
 
-    private CondLength condLength = null;
+    /**
+     * @see org.apache.fop.datatypes.CompoundDatatype#setComponent(int, Property, boolean)
+     */
+    public void setComponent(int cmpId, Property cmpnValue,
+                             boolean bIsDefault) {
+        if (cmpId == CP_LENGTH) {
+            length = cmpnValue;
+        } else if (cmpId == CP_CONDITIONALITY) {
+            conditionality = cmpnValue;
+        }
+    }
 
     /**
-     * @param condLength conditional length object which is to be wrapped in
-     * this property
+     * @see org.apache.fop.datatypes.CompoundDatatype#getComponent(int)
      */
-    public CondLengthProperty(CondLength condLength) {
-        this.condLength = condLength;
+    public Property getComponent(int cmpId) {
+        if (cmpId == CP_LENGTH) {
+            return length;
+        } else if (cmpId == CP_CONDITIONALITY) {
+            return conditionality;
+        } else {
+            return null;
+        }
     }
+
+    /**
+     * Returns the conditionality.
+     * @return the conditionality
+     */
+    public Property getConditionality() {
+        return this.conditionality;
+    }
+
+    /**
+     * Returns the length.
+     * @return the length
+     */
+    public Property getLengthComponent() {
+        return this.length;
+    }
+
+    /**
+     * Indicates if the length can be discarded on certain conditions.
+     * @return true if the length can be discarded.
+     */
+    public boolean isDiscard() {
+        return this.conditionality.getEnum() == Constants.DISCARD;
+    }
+
+    /**
+     * Returns the computed length value.
+     * @return the length in millipoints
+     */
+    public int getLengthValue() {
+        return this.length.getLength().getValue();
+    }
+
+    public String toString() {
+        return "CondLength[" + (isDiscard() ? "discard, " : "") +
+        length.getObject().toString() + "]";
+    }    
+
 
     /**
      * @return this.condLength
      */
-    public CondLength getCondLength() {
-        return this.condLength;
+    public CondLengthProperty getCondLength() {
+        return this;
     }
 
     /**
      * TODO: Should we allow this?
      * @return this.condLength cast as a Length
      */
-    public Length getLength() {
-        return this.condLength.getLength().getLength();
+    public LengthProperty getLength() {
+        return length.getLength();
     }
 
     /**
      * @return this.condLength cast as an Object
      */
     public Object getObject() {
-        return this.condLength;
+        return this;
     }
 
 }

@@ -52,10 +52,12 @@ package org.apache.fop.datatypes;
 
 import java.util.Vector;
 
+import org.apache.fop.fo.LengthProperty;
+
 /**
  * Class modelling lengths that are build up by combining other lengths
  */
-public class LinearCombinationLength extends Length {
+public class LinearCombinationLength extends LengthProperty {
 
     /** Collection of factors (1-1 correspondence with {@link #lengths} */
     protected Vector factors;
@@ -75,7 +77,7 @@ public class LinearCombinationLength extends Length {
      * @param factor the factor to be added
      * @param length the Length to be added
      */
-    public void addTerm(double factor, Length length) {
+    public void addTerm(double factor, LengthProperty length) {
         factors.addElement(new Double(factor));
         lengths.addElement(length);
     }

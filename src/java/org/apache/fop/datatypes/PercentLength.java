@@ -50,12 +50,13 @@
  */
 package org.apache.fop.datatypes;
 
-import org.apache.fop.fo.expr.Numeric;
+import org.apache.fop.fo.LengthProperty;
+import org.apache.fop.fo.expr.NumericProperty;
 
 /**
  * a percent specified length quantity in XSL
  */
-public class PercentLength extends Length {
+public class PercentLength extends LengthProperty {
 
     /**
      * The percentage itself, expressed as a decimal value, e.g. for 95%, set
@@ -132,8 +133,8 @@ public class PercentLength extends Length {
     /**
      * @return new Numeric object that is equivalent to this
      */
-    public Numeric asNumeric() {
-        return new Numeric(this);
+    public NumericProperty asNumeric() {
+        return new NumericProperty(this);
     }
 
 }

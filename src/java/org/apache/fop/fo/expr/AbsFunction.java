@@ -73,12 +73,12 @@ public class AbsFunction extends FunctionBase {
      */
     public Property eval(Property[] args,
                          PropertyInfo propInfo) throws PropertyException {
-        Numeric num = args[0].getNumeric();
+        NumericProperty num = args[0].getNumeric();
         if (num == null) {
             throw new PropertyException("Non numeric operand to abs function");
         }
         // TODO: What if it has relative components (percent, table-col units)?
-        return new NumericProperty(num.abs());
+        return num.abs();
     }
 
 }

@@ -55,7 +55,6 @@ import org.apache.fop.fo.Constants;
 import org.apache.fop.fo.LengthProperty;
 import org.apache.fop.fo.Property;
 import org.apache.fop.fo.PropertyList;
-import org.apache.fop.fo.LengthProperty.Maker;
 
 /**
  * This subclass of LengthProperty.Maker handles the special treatment of 

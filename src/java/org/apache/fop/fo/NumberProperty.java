@@ -50,8 +50,7 @@
  */
 package org.apache.fop.fo;
 
-import org.apache.fop.datatypes.ColorType;
-import org.apache.fop.fo.expr.Numeric;
+import org.apache.fop.fo.expr.NumericProperty;
 import org.apache.fop.fo.properties.PropertyMaker;
 
 /**
@@ -142,18 +141,18 @@ public class NumberProperty extends Property {
      * Convert NumberProperty to Numeric object
      * @return Numeric object corresponding to this
      */
-    public Numeric getNumeric() {
-        return new Numeric(this.number);
+    public NumericProperty getNumeric() {
+        return new NumericProperty(this.number);
     }
 
     /**
      * Convert NumberProperty to a ColorType. Not sure why this is needed.
      * @return ColorType that corresponds to black
      */
-    public ColorType getColorType() {
+    public ColorTypeProperty getColorType() {
         // Convert numeric value to color ???
         // Convert to hexadecimal and then try to make it into a color?
-        return new ColorType((float)0.0, (float)0.0, (float)0.0);
+        return new ColorTypeProperty((float)0.0, (float)0.0, (float)0.0);
     }
 
 }

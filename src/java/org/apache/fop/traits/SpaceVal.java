@@ -50,9 +50,8 @@
  */ 
 package org.apache.fop.traits;
 
-import org.apache.fop.datatypes.Space;
-
 import org.apache.fop.fo.Property;
+import org.apache.fop.fo.SpaceProperty;
 import org.apache.fop.fo.Constants;
 
 /**
@@ -70,7 +69,7 @@ public class SpaceVal {
      * Constructor for SpaceVal objects based on Space objects.
      * @param spaceprop Space object to use
      */
-    public SpaceVal(Space spaceprop) {
+    public SpaceVal(SpaceProperty spaceprop) {
         space = new MinOptMax(spaceprop.getMinimum().getLength().getValue(),
                               spaceprop.getOptimum().getLength().getValue(),
                               spaceprop.getMaximum().getLength().getValue());

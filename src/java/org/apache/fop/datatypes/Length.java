@@ -50,102 +50,15 @@
  */
 package org.apache.fop.datatypes;
 
-import org.apache.fop.fo.expr.Numeric;
-
 /**
  * A length quantity in XSL
  */
-public class Length {
-
-    /** Holds the length in millipoints. */
-    protected int millipoints = 0;
-    /** Indicates if the value has been computed, or not. */
-    protected boolean bIsComputed = false;
+public interface Length {
 
     /**
      * Returns the length in 1/1000ths of a point (millipoints)
      * @return the length in millipoints
      */
-    public int getValue() {
-        if (!bIsComputed) {
-            computeValue();
-        }
-        return millipoints;
-    }
-
-    /**
-     * Computes the value.
-     */
-    protected void computeValue() {
-    }
-
-
-    /**
-     * Sets the computed value.
-     * @param millipoints the length in millipoints
-     */
-    protected void setComputedValue(int millipoints) {
-        setComputedValue(millipoints, true);
-    }
-
-    /**
-     * Sets the computed value.
-     * @param millipoints the length in millipoints
-     * @param bSetComputed True if the isComputed flag should be set.
-     */
-    protected void setComputedValue(int millipoints, boolean bSetComputed) {
-        this.millipoints = millipoints;
-        this.bIsComputed = bSetComputed;
-    }
-
-    /**
-     * Indicates if the length has the "auto" value.
-     * @return True if the length is set to "auto"
-     */
-    public boolean isAuto() {
-        return false;
-    }
-
-    /**
-     * Indicates if the length has been computed.
-     * @return True if the length has been computed
-     */
-    public boolean isComputed() {
-        return this.bIsComputed;
-    }
-
-    /**
-     * Return the number of table units which are included in this
-     * length specification.
-     * This will always be 0 unless the property specification used
-     * the proportional-column-width() function (only only table
-     * column FOs).
-     * <p>If this value is not 0, the actual value of the Length cannot
-     * be known without looking at all of the columns in the table to
-     * determine the value of a "table-unit".
-     * @return The number of table units which are included in this
-     * length specification.
-     */
-    public double getTableUnits() {
-        return 0.0;
-    }
-
-    public void resolveTableUnit(double dTableUnit) {
-    }
-
-    /**
-     * @return null (cannot be converted to a Numeric ??)
-     */
-    public Numeric asNumeric() {
-        return null;
-    }
-
-    /**
-     * @see java.lang.Object#toString()
-     */
-    public String toString() {
-        String s = millipoints + "mpt";
-        return s;
-    }
-
+    public int getValue();
+    public boolean isAuto();
 }

@@ -51,13 +51,15 @@
 package org.apache.fop.fo;
 
 import org.apache.fop.apps.FOPException;
-import org.apache.fop.datatypes.LengthPair;
+import org.apache.fop.datatypes.CompoundDatatype;
 import org.apache.fop.fo.properties.CompoundPropertyMaker;
 
 /**
  * Superclass for properties wrapping a LengthPair value
  */
-public class LengthPairProperty extends Property {
+public class LengthPairProperty extends Property implements CompoundDatatype {
+    private Property ipd;
+    private Property bpd;
 
     /**
      * Inner class for creating instances of LengthPairProperty
@@ -76,7 +78,7 @@ public class LengthPairProperty extends Property {
          * @return the new instance. 
          */
         public Property makeNewProperty() {
-            return new LengthPairProperty(new LengthPair());
+            return new LengthPairProperty();
         }
 
         /**
@@ -92,27 +94,63 @@ public class LengthPairProperty extends Property {
         }
     }
 
-    private LengthPair lengthPair;
+    /**
+     * @see org.apache.fop.datatypes.CompoundDatatype#setComponent(int, Property, boolean)
+     */
+    public void setComponent(int cmpId, Property cmpnValue,
+                             boolean bIsDefault) {
+        if (cmpId == CP_BLOCK_PROGRESSION_DIRECTION) {
+            bpd = cmpnValue;
+        } else if (cmpId == CP_INLINE_PROGRESSION_DIRECTION) {
+            ipd = cmpnValue;
+        }
+    }
 
     /**
-     * @param lengthPair the LengthPair object to be wrapped in this Property
+     * @see org.apache.fop.datatypes.CompoundDatatype#getComponent(int)
      */
-    public LengthPairProperty(LengthPair lengthPair) {
-        this.lengthPair = lengthPair;
+    public Property getComponent(int cmpId) {
+        if (cmpId == CP_BLOCK_PROGRESSION_DIRECTION) {
+            return getBPD();
+        } else if (cmpId == CP_INLINE_PROGRESSION_DIRECTION) {
+            return getIPD();
+        } else {
+            return null;    // SHOULDN'T HAPPEN
+        }
+    }
+
+    /**
+     * @return Property holding the ipd length
+     */
+    public Property getIPD() {
+        return this.ipd;
+    }
+
+    /**
+     * @return Property holding the bpd length
+     */
+    public Property getBPD() {
+        return this.bpd;
+    }
+
+    public String toString() {
+        return "LengthPair[" + 
+        "ipd:" + getIPD().getObject() + 
+        ", bpd:" + getBPD().getObject() + "]";
     }
 
     /**
      * @return this.lengthPair
      */
-    public LengthPair getLengthPair() {
-        return this.lengthPair;
+    public LengthPairProperty getLengthPair() {
+        return this;
     }
 
     /**
      * @return this.lengthPair cast as an Object
      */
     public Object getObject() {
-        return this.lengthPair;
+        return this;
     }
 
 }

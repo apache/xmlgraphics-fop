@@ -77,7 +77,7 @@ public class BodyStartFunction extends FunctionBase {
      */
     public Property eval(Property[] args,
                          PropertyInfo pInfo) throws PropertyException {
-        Numeric distance =
+        NumericProperty distance =
             pInfo.getPropertyList().get(Constants.PR_PROVISIONAL_DISTANCE_BETWEEN_STARTS).getNumeric();
 
         FONode item = pInfo.getFO();
@@ -88,10 +88,10 @@ public class BodyStartFunction extends FunctionBase {
             throw new PropertyException("body-start() called from outside an fo:list-item");
         }
 
-        Numeric startIndent =
+        NumericProperty startIndent =
             ((ListItem)item).propertyList.get(Constants.PR_START_INDENT).getNumeric();
 
-        return new NumericProperty(distance.add(startIndent));
+        return distance.add(startIndent);
     }
 
 }

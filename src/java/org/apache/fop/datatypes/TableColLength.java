@@ -50,7 +50,8 @@
  */
 package org.apache.fop.datatypes;
 
-import org.apache.fop.fo.expr.Numeric;
+import org.apache.fop.fo.LengthProperty;
+import org.apache.fop.fo.expr.NumericProperty;
 
 /**
  * A table-column width specification, possibly including some
@@ -63,7 +64,7 @@ import org.apache.fop.fo.expr.Numeric;
  * during layout.
  * NOTE: this is only supposed to be allowed if table-layout=fixed.
  */
-public class TableColLength extends Length {
+public class TableColLength extends LengthProperty {
 
     /**
      * Number of table-column proportional units
@@ -114,8 +115,8 @@ public class TableColLength extends Length {
      * Converts this to a new Numeric object
      * @return the Numeric object
      */
-    public Numeric asNumeric() {
-        return new Numeric(this);
+    public NumericProperty asNumeric() {
+        return new NumericProperty(this);
     }
 }
 

@@ -50,17 +50,15 @@
  */
 package org.apache.fop.fo.expr;
 
-import org.apache.fop.datatypes.ColorType;
 import org.apache.fop.datatypes.FixedLength;
-import org.apache.fop.datatypes.Length;
 import org.apache.fop.datatypes.PercentBase;
 import org.apache.fop.datatypes.PercentLength;
 import org.apache.fop.fo.Property;
+import org.apache.fop.fo.ColorTypeProperty;
 import org.apache.fop.fo.ListProperty;
 import org.apache.fop.fo.LengthProperty;
 import org.apache.fop.fo.NumberProperty;
 import org.apache.fop.fo.StringProperty;
-import org.apache.fop.fo.ColorTypeProperty;
 
 import java.util.HashMap;
 
@@ -73,7 +71,7 @@ public class PropertyParser extends PropertyTokenizer {
     private PropertyInfo propInfo;    // Maker and propertyList related info
 
     private static final String RELUNIT = "em";
-    private static final Numeric NEGATIVE_ONE = new Numeric(new Double(-1.0));
+    private static final NumericProperty NEGATIVE_ONE = new NumericProperty(new Double(-1.0));
     private static final HashMap FUNCTION_TABLE = new HashMap();
 
     static {
@@ -299,8 +297,7 @@ public class PropertyParser extends PropertyTokenizer {
                 if (pcBase.getDimension() == 0) {
                     prop = new NumberProperty(pcval * pcBase.getBaseValue());
                 } else if (pcBase.getDimension() == 1) {
-                    prop = new LengthProperty(new PercentLength(pcval,
-                                                                pcBase));
+                    prop = new PercentLength(pcval, pcBase);
                 } else {
                     throw new PropertyException("Illegal percent dimension value");
                 }
@@ -316,7 +313,7 @@ public class PropertyParser extends PropertyTokenizer {
             String unitPart = currentTokenValue.substring(numLen);
             Double numPart = new Double(currentTokenValue.substring(0,
                     numLen));
-            Length length = null;
+            LengthProperty length = null;
             if (unitPart.equals(RELUNIT)) {
                 length = new FixedLength(numPart.doubleValue(),
                                     propInfo.currentFontSize());
@@ -327,12 +324,12 @@ public class PropertyParser extends PropertyTokenizer {
                 throw new PropertyException("unrecognized unit name: "
                                             + currentTokenValue);
             } else {
-                prop = new LengthProperty(length);
+                prop = length;
             }
             break;
 
         case TOK_COLORSPEC:
-            prop = new ColorTypeProperty(new ColorType(currentTokenValue));
+            prop = new ColorTypeProperty(currentTokenValue);
             break;
 
         case TOK_FUNCTION_LPAR: {
@@ -404,12 +401,12 @@ public class PropertyParser extends PropertyTokenizer {
      * the sum of the two operands.
      * @throws PropertyException If either operand is null.
      */
-    private Property evalAddition(Numeric op1,
-                                  Numeric op2) throws PropertyException {
+    private Property evalAddition(NumericProperty op1,
+                                  NumericProperty op2) throws PropertyException {
         if (op1 == null || op2 == null) {
             throw new PropertyException("Non numeric operand in addition");
         }
-        return new NumericProperty(op1.add(op2));
+        return op1.add(op2);
     }
 
     /**
@@ -421,12 +418,12 @@ public class PropertyParser extends PropertyTokenizer {
      * the difference of the two operands.
      * @throws PropertyException If either operand is null.
      */
-    private Property evalSubtraction(Numeric op1,
-                                     Numeric op2) throws PropertyException {
+    private Property evalSubtraction(NumericProperty op1,
+                                     NumericProperty op2) throws PropertyException {
         if (op1 == null || op2 == null) {
             throw new PropertyException("Non numeric operand in subtraction");
         }
-        return new NumericProperty(op1.subtract(op2));
+        return op1.subtract(op2);
     }
 
     /**
@@ -437,11 +434,11 @@ public class PropertyParser extends PropertyTokenizer {
      * the negative of the operand (multiplication by *1).
      * @throws PropertyException If the operand is null.
      */
-    private Property evalNegate(Numeric op) throws PropertyException {
+    private Property evalNegate(NumericProperty op) throws PropertyException {
         if (op == null) {
             throw new PropertyException("Non numeric operand to unary minus");
         }
-        return new NumericProperty(op.multiply(NEGATIVE_ONE));
+        return op.multiply(NEGATIVE_ONE);
     }
 
     /**
@@ -453,12 +450,12 @@ public class PropertyParser extends PropertyTokenizer {
      * the product of the two operands.
      * @throws PropertyException If either operand is null.
      */
-    private Property evalMultiply(Numeric op1,
-                                  Numeric op2) throws PropertyException {
+    private Property evalMultiply(NumericProperty op1,
+                                  NumericProperty op2) throws PropertyException {
         if (op1 == null || op2 == null) {
             throw new PropertyException("Non numeric operand in multiplication");
         }
-        return new NumericProperty(op1.multiply(op2));
+        return op1.multiply(op2);
     }
 
 
@@ -471,12 +468,12 @@ public class PropertyParser extends PropertyTokenizer {
      * op1 divided by op2.
      * @throws PropertyException If either operand is null.
      */
-    private Property evalDivide(Numeric op1,
-                                Numeric op2) throws PropertyException {
+    private Property evalDivide(NumericProperty op1,
+                                NumericProperty op2) throws PropertyException {
         if (op1 == null || op2 == null) {
             throw new PropertyException("Non numeric operand in division");
         }
-        return new NumericProperty(op1.divide(op2));
+        return op1.divide(op2);
     }
 
     /**

@@ -59,7 +59,7 @@ import org.xml.sax.Attributes;
 // FOP
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.datatypes.ColorType;
-import org.apache.fop.datatypes.LengthRange;
+import org.apache.fop.fo.LengthRangeProperty;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.FOTreeVisitor;
@@ -88,7 +88,7 @@ public class Table extends FObj {
     private int spaceBefore;
     private int spaceAfter;
     private ColorType backgroundColor;
-    private LengthRange ipd;
+    private LengthRangeProperty ipd;
     private int height;
 
     private boolean bAutoLayout = false;

@@ -50,7 +50,6 @@
  */
 package org.apache.fop.fo.expr;
 
-import org.apache.fop.datatypes.Length;
 import org.apache.fop.datatypes.LengthBase;
 import org.apache.fop.datatypes.LinearCombinationLength;
 import org.apache.fop.datatypes.PercentLength;
@@ -84,9 +83,9 @@ public class LabelEndFunction extends FunctionBase {
     public Property eval(Property[] args,
                          PropertyInfo pInfo) throws PropertyException {
 
-        Length distance =
+        LengthProperty distance =
             pInfo.getPropertyList().get(Constants.PR_PROVISIONAL_DISTANCE_BETWEEN_STARTS).getLength();
-        Length separation =
+        LengthProperty separation =
             pInfo.getPropertyList().getNearestSpecified(Constants.PR_PROVISIONAL_LABEL_SEPARATION).getLength();
 
         FONode item = pInfo.getFO();
@@ -96,7 +95,7 @@ public class LabelEndFunction extends FunctionBase {
         if (item == null) {
             throw new PropertyException("label-end() called from outside an fo:list-item");
         }
-        Length startIndent = ((ListItem)item).propertyList.get(Constants.PR_START_INDENT).getLength();
+        LengthProperty startIndent = ((ListItem)item).propertyList.get(Constants.PR_START_INDENT).getLength();
 
         LinearCombinationLength labelEnd = new LinearCombinationLength();
 
@@ -110,7 +109,7 @@ public class LabelEndFunction extends FunctionBase {
         labelEnd.addTerm(-1.0, startIndent);
         labelEnd.addTerm(1.0, separation);
 
-        return new LengthProperty(labelEnd);
+        return labelEnd;
     }
 
 }

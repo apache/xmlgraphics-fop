@@ -117,8 +117,7 @@ public class LineHeightPropertyMaker extends LengthProperty.Maker {
                                                FObj fo) {
         Number numval = p.getNumber();
         if (numval != null) {
-            return new LengthProperty(
-                    new PercentLength(numval.doubleValue(), getPercentBase(fo,propertyList)));
+            return new PercentLength(numval.doubleValue(), getPercentBase(fo,propertyList));
         }
         return super.convertPropertyDatatype(p, propertyList, fo);
     }

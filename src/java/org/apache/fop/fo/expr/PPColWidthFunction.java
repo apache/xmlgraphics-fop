@@ -52,7 +52,6 @@ package org.apache.fop.fo.expr;
 
 
 import org.apache.fop.fo.Property;
-import org.apache.fop.fo.LengthProperty;
 import org.apache.fop.datatypes.TableColLength;
 
 /**
@@ -90,7 +89,7 @@ public class PPColWidthFunction extends FunctionBase {
                     + "may only be used on table-column FO");
         }
         // Check if table-layout is "fixed"...
-        return new LengthProperty(new TableColLength(d.doubleValue()));
+        return new TableColLength(d.doubleValue());
     }
 
 }
