@@ -351,9 +351,9 @@ public class TTFFile extends AbstractLogEnabled {
         // Can't just index the winAnsiEncoding when inserting widths
         // same char (eg bullet) is repeated more than one place
         ansiIndex = new java.util.HashMap();
-        for (int i = 32; i < Glyphs.winAnsiEncoding.length; i++) {
+        for (int i = 32; i < Glyphs.WINANSI_ENCODING.length; i++) {
             Integer ansi = new Integer(i);
-            Integer uni = new Integer((int)Glyphs.winAnsiEncoding[i]);
+            Integer uni = new Integer((int)Glyphs.WINANSI_ENCODING[i]);
 
             List v = (List)ansiIndex.get(uni);
             if (v == null) {
@@ -761,8 +761,8 @@ public class TTFFile extends AbstractLogEnabled {
         switch (postFormat) {
         case 0x00010000:
             getLogger().debug("Postscript format 1");
-            for (i = 0; i < Glyphs.mac_glyph_names.length; i++) {
-                mtxTab[i].setName(Glyphs.mac_glyph_names[i]);
+            for (i = 0; i < Glyphs.MAC_GLYPH_NAMES.length; i++) {
+                mtxTab[i].setName(Glyphs.MAC_GLYPH_NAMES[i]);
             }
             break;
         case 0x00020000:
@@ -791,7 +791,7 @@ public class TTFFile extends AbstractLogEnabled {
 
             for (i = 0; i < l; i++) {
                 if (mtxTab[i].getIndex() < NMACGLYPHS) {
-                    mtxTab[i].setName(Glyphs.mac_glyph_names[mtxTab[i].getIndex()]);
+                    mtxTab[i].setName(Glyphs.MAC_GLYPH_NAMES[mtxTab[i].getIndex()]);
                 } else {
                     k = mtxTab[i].getIndex() - NMACGLYPHS;
 
@@ -1150,8 +1150,8 @@ public class TTFFile extends AbstractLogEnabled {
      */
     private Integer[] unicodeToWinAnsi(int unicode) {
         List ret = new java.util.ArrayList();
-        for (int i = 32; i < Glyphs.winAnsiEncoding.length; i++) {
-            if (unicode == Glyphs.winAnsiEncoding[i]) {
+        for (int i = 32; i < Glyphs.WINANSI_ENCODING.length; i++) {
+            if (unicode == Glyphs.WINANSI_ENCODING[i]) {
                 ret.add(new Integer(i));
             }
         }

@@ -1,18 +1,28 @@
 /*
  * $Id$
- * Copyright (C) 2001 The Apache Software Foundation. All rights reserved.
+ * Copyright (C) 2001-2002 The Apache Software Foundation. All rights reserved.
  * For details on use and redistribution please refer to the
  * LICENSE file included with these sources.
  */
 
 package org.apache.fop.fonts;
 
+/**
+ * This class provides a number of constants for glyph management.
+ */
 public class Glyphs {
-    static String notdef = ".notdef";
 
-    static String mac_glyph_names[] = {
+    /**
+     * Glyph name for the "notdef" glyph
+     */
+    public static final String NOTDEF = ".notdef";
+
+    /**
+     * Glyph names for Mac encoding
+     */
+    public static final String MAC_GLYPH_NAMES[] = {
         /* 0x00 */
-        notdef, ".null", "CR", "space", "exclam", "quotedbl", "numbersign",
+        NOTDEF, ".null", "CR", "space", "exclam", "quotedbl", "numbersign",
                 "dollar", "percent", "ampersand", "quotesingle", "parenleft",
                 "parenright", "asterisk", "plus", "comma", /* 0x10 */
         "hyphen", "period", "slash", "zero", "one", "two", "three", "four",
@@ -68,9 +78,12 @@ public class Glyphs {
         "ccaron", "dmacron"
     };
 
-    static String[] tex8r = {
+    /**
+     * Glyph names for tex8r encoding
+     */
+    public static final String[] TEX8R_GLYPH_NAMES = {
         // 0x00
-        ".notdef", "dotaccent", "fi", "fl", "fraction", "hungarumlaut",
+        NOTDEF, "dotaccent", "fi", "fl", "fraction", "hungarumlaut",
                    "Lslash", "lslash", "ogonek", "ring", ".notdef", "breve",
                    "minus", ".notdef", "Zcaron", "zcaron", // 0x10
         "caron", "dotlessi", "dotlessj", "ff", "ffi", "ffl", ".notdef",
@@ -127,7 +140,7 @@ public class Glyphs {
     /**
      * The characters in WinAnsiEncoding
      */
-    public static char[] winAnsiEncoding = {
+    public static final char[] WINANSI_ENCODING = {
         // not used until char 32
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
            0, 0, 0, 0, 0, 0, 0, 0, 0, // 0x20
@@ -143,7 +156,8 @@ public class Glyphs {
              'n', 'o', // 0x70
         'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z', '\u007b', '\u007c', '\u007d',
              '\u007e', '\u2022', // 0x80
-        '\u20ac', '\u2022', '\u201a', '\u0192', '\u201e', '\u2026', '\u2020', '\u2021', '\u02c6', '\u2030', '\u0160', '\u2039', '\u0152', '\u2022',
+        '\u20ac', '\u2022', '\u201a', '\u0192', '\u201e', '\u2026', '\u2020',
+             '\u2021', '\u02c6', '\u2030', '\u0160', '\u2039', '\u0152', '\u2022',
              '\u017d', '\u2022', // 0x90
         '\u2022', '\u2018',                             // quoteleft
         '\u2019',                                       // quoteright
@@ -158,8 +172,8 @@ public class Glyphs {
              '\u00a6', '\u00a7', '\u00a8', '\u00a9', '\u00aa', '\u00ab',
              '\u00ac', '\u00ad',  '\u00ae', '\u00af', // 0xb0
         '\u00b0', '\u00b1', '\u00b2', '\u00b3', '\u00b4',
-             '\u00b5',                                  // This is hand-coded, the rest is assumption
-        '\u00b6',                                       // and *might* not be correct...
+             '\u00b5',                      // This is hand-coded, the rest is assumption
+        '\u00b6',                           // and *might* not be correct...
         '\u00b7', '\u00b8', '\u00b9', '\u00ba', '\u00bb', '\u00bc', '\u00bd',
              '\u00be', '\u00bf', // 0xc0
         '\u00c0', '\u00c1', '\u00c2', '\u00c3', '\u00c4', '\u00c5', // Aring
@@ -179,8 +193,11 @@ public class Glyphs {
              '\u00fc', '\u00fd', '\u00fe', '\u00ff'
     };
 
-    static String[] unicode_glyphs = {
-              "\u0041", "A",
+    /**
+     * List of unicode glyphs
+     */
+    public static final String[] UNICODE_GLYPHS = {
+        "\u0041", "A",
         "\u00C6", "AE",
         "\u01FC", "AEacute",
         "\uF7E6", "AEsmall",
@@ -1233,39 +1250,38 @@ public class Glyphs {
         "\uF730", "zerooldstyle",
         "\u2070", "zerosuperior",
         "\u03B6", "zeta"
-
     };
 
     /**
      * Return the glyphname from a string,
      * eg, glyphToString("\\") returns "backslash"
+     *
+     * @param name glyph to evaluate
+     * @return the name of the glyph
      */
-    public static String glyphToString(String name) {
-        String ret = "";
-        int i = unicode_glyphs.length;
-        for (int j = 0; j < i; j += 2) {
-            if (unicode_glyphs[j + 1].equals(name)) {
-                ret = unicode_glyphs[j];
-                j = i;
+    public static final String glyphToString(String name) {
+        for (int i = 0; i < UNICODE_GLYPHS.length; i += 2) {
+            if (UNICODE_GLYPHS[i + 1].equals(name)) {
+                return UNICODE_GLYPHS[i];
             }
         }
-        return ret;
+        return "";
     }
 
     /**
      * Return the string representation of a glyphname,
      * eg stringToGlyph("backslash") returns "\\"
+     *
+     * @param name name of the glyph
+     * @return the string representation
      */
     public static String stringToGlyph(String name) {
-        String ret = "";
-        int i = unicode_glyphs.length;
-        for (int j = 0; j < i; j += 2) {
-            if (unicode_glyphs[j].equals(name)) {
-                ret = unicode_glyphs[j + 1];
-                j = i;
+        for (int i = 0; i < UNICODE_GLYPHS.length; i += 2) {
+            if (UNICODE_GLYPHS[i].equals(name)) {
+                return UNICODE_GLYPHS[i + 1];
             }
         }
-        return ret;
+        return "";
     }
 
 }
