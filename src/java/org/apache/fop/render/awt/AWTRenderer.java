@@ -37,7 +37,6 @@ import java.awt.print.PageFormat;
 import java.awt.print.Pageable;
 import java.awt.print.Printable;
 import java.io.IOException;
-import java.io.OutputStream;
 import java.util.Map;
 import java.util.Vector;
 
@@ -52,7 +51,9 @@ import org.apache.fop.render.awt.viewer.Translator;
 /**
  * This is FOP's AWT renderer.
  */
-public class AWTRenderer extends AbstractRenderer implements Printable, Pageable {
+public class AWTRenderer
+extends AbstractRenderer
+implements Printable, Pageable {
 
     protected double scaleFactor = 100.0;
     protected int pageNumber = 0;
@@ -134,20 +135,20 @@ public class AWTRenderer extends AbstractRenderer implements Printable, Pageable
         return scaleFactor;
     }
 
-    public void startRenderer(OutputStream out)
-    throws IOException {
-        // empty pageViewportList, in case of a reload from PreviewDialog
-        pageViewportList.removeAllElements();
-        pageList.removeAllElements();
-        bufferedImageList.removeAllElements();
-        System.out.println("\nRegion Types: 0-Before/Top, 1-Start/Left, 2-Body, 3-End/Right, 4-After/Bottom");
-    }
-
-    public void stopRenderer()
-    throws IOException {
-        frame.setStatus(translator.getString("Status.Show"));
-        frame.showPage();
-    }
+//    public void startRenderer(OutputStream out)
+//    throws IOException {
+//        // empty pageViewportList, in case of a reload from PreviewDialog
+//        pageViewportList.removeAllElements();
+//        pageList.removeAllElements();
+//        bufferedImageList.removeAllElements();
+//        System.out.println("\nRegion Types: 0-Before/Top, 1-Start/Left, 2-Body, 3-End/Right, 4-After/Bottom");
+//    }
+//
+//    public void stopRenderer()
+//    throws IOException {
+//        frame.setStatus(translator.getString("Status.Show"));
+//        frame.showPage();
+//    }
 
     // Printable Interface
     public PageFormat getPageFormat(int pos) {
