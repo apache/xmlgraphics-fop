@@ -1,6 +1,4 @@
 /*
- * $Id$
- * 
  * ============================================================================
  *                   The Apache Software License, Version 1.1
  * ============================================================================
@@ -47,17 +45,16 @@
  * on  behalf of the Apache Software  Foundation and was  originally created by
  * James Tauber <jtauber@jtauber.com>. For more  information on the Apache 
  * Software Foundation, please see <http://www.apache.org/>.
- *  
- *
- * @author <a href="mailto:pbwest@powerup.com.au">Peter B. West</a>
+ * 
+ * $Id$
  */
 
 package org.apache.fop.fo.flow;
 
-// FOP
 import java.util.Arrays;
 import java.util.BitSet;
 
+// FOP
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.datastructs.TreeException;
 import org.apache.fop.fo.FONode;
@@ -74,6 +71,7 @@ import org.apache.fop.xml.UnexpectedStartElementException;
 
 /**
  * Implements the fo:leader flow object.
+ * @author <a href="mailto:pbwest@powerup.com.au">Peter B. West</a>
  */
 public class FoLeader extends FONode {
 
@@ -162,6 +160,15 @@ public class FoLeader extends FONode {
         super(foTree, FObjectNames.LEADER, parent, event,
                           stateFlags, sparsePropsMap, sparseIndices);
         XmlEvent ev = null;
+        if ((stateFlags & FONode.MC_LEADER) != 0) {
+            // fo:leader cannot be nested
+            throw new FOPException(
+                    "fo:leader found as descendent of fo:leader");
+        }
+        if (getMarkers() != 0) {
+            throw new FOPException(
+                    "fo:marker illegal as child of fo:leader");
+        }
         do {
             try {
                 if ((stateFlags & FONode.MC_OUT_OF_LINE) == 0)
@@ -170,9 +177,8 @@ public class FoLeader extends FONode {
                     ev = xmlevents.expectOutOfLinePcdataOrInline();
                 if (ev != null) {
                     // Generate the flow object
-                    //System.out.println("Generating flow object for " + ev);
                     FObjects.fobjects.makeFlowObject(
-                            foTree, this, ev, stateFlags);
+                            foTree, this, ev, stateFlags | FONode.MC_LEADER);
                     if (ev.getType() != XmlEvent.CHARACTERS) {
                         ev = xmlevents.getEndElement(
                                 SyncedXmlEventsBuffer.DISCARD_EV, ev);
