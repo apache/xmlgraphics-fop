@@ -64,7 +64,7 @@ import org.apache.fop.apps.FOPException;
 
 /**
  * entry class for reading configuration from file and creating a configuration
- * class. typical use looks like that: <br>
+ * class. Typical use looks like: <br>
  *
  * <code>ConfigurationReader reader = new ConfigurationReader ("config.xml","standard");
  * try {
