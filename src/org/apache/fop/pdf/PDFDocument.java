@@ -138,6 +138,7 @@ public class PDFDocument {
     protected HashMap filterMap = new HashMap();
 
     protected ArrayList gstates = new ArrayList();
+    protected ArrayList functions = new ArrayList();
 
     /**
      * creates an empty PDF document <p>
@@ -302,7 +303,15 @@ public class PDFDocument {
                                                theFunctionDataStream,
                                                theFilter);
 
-        this.objects.add(function);
+        PDFFunction oldfunc = findFunction(function);
+        if(oldfunc == null) {
+            functions.add(function);
+            this.objects.add(function);
+        } else {
+            this.objectcount--;
+            function = oldfunc;
+        }
+
         return (function);
     }
 
@@ -339,9 +348,26 @@ public class PDFDocument {
                                                theFunctionType, theDomain,
                                                theRange, theCZero, theCOne,
                                                theInterpolationExponentN);
+        PDFFunction oldfunc = findFunction(function);
+        if(oldfunc == null) {
+            functions.add(function);
+            this.objects.add(function);
+        } else {
+            this.objectcount--;
+            function = oldfunc;
+        }
 
-        this.objects.add(function);
         return (function);
+    }
+
+    private PDFFunction findFunction(PDFFunction compare) {
+        for(Iterator iter = functions.iterator(); iter.hasNext(); ) {
+            Object func = iter.next();
+            if(compare.equals(func)) {
+                return (PDFFunction)func;
+            }
+        }
+        return null;
     }
 
     /**
@@ -386,7 +412,15 @@ public class PDFDocument {
                                                theRange, theFunctions,
                                                theBounds, theEncode);
 
-        this.objects.add(function);
+        PDFFunction oldfunc = findFunction(function);
+        if(oldfunc == null) {
+            functions.add(function);
+            this.objects.add(function);
+        } else {
+            this.objectcount--;
+            function = oldfunc;
+        }
+
         return (function);
     }
 
@@ -407,7 +441,15 @@ public class PDFDocument {
                                                theRange,
                                                theFunctionDataStream);
 
-        this.objects.add(function);
+        PDFFunction oldfunc = findFunction(function);
+        if(oldfunc == null) {
+            functions.add(function);
+            this.objects.add(function);
+        } else {
+            this.objectcount--;
+            function = oldfunc;
+        }
+
         return (function);
 
     }
