@@ -106,6 +106,9 @@ public abstract class BlockStackingLayoutManager extends AbstractLayoutManager {
      * @param minoptmax the min/opt/max value of the spacing
      */
     public void addBlockSpacing(double adjust, MinOptMax minoptmax) {
+        if (minoptmax == null) {
+            return;
+        }
         int sp = minoptmax.opt;
         if (adjust > 0) {
             sp = sp + (int)(adjust * (minoptmax.max - minoptmax.opt));
