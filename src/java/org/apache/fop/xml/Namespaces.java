@@ -58,7 +58,7 @@ import org.apache.fop.pool.*;
  * One instance of <i>Namespaces</i> is maintained across all documents
  * that may be processed in a single invocation of <tt>XMLSerialhandler</tt>.
  * A reference to that instance is kept with every instance of <tt>XmlEvent</tt>.
- * An <code>XMLEventPool</code> pool of event objects is maintained for every
+ * An <code>XmlEventPool</code> pool of event objects is maintained for every
  * namesapce encountered in parsing. The pool for the
  * http://www.w3.org/1999/XSL/Format (XSL_FO) namespace is created immediately;
  * other pools are created only as elements from a particular namespace are
@@ -120,12 +120,12 @@ public class Namespaces {
         { DefAttrNSpace, XSLNamespace, FOXNamespace, SVGNamespace };
 
     /**
-     * An array of <code>XMLEventPool</code>s. This ArrayList is indexed by
+     * An array of <code>XmlEventPool</code>s. This ArrayList is indexed by
      * the namespace index used in this <code>Namespaces</code> object.
      * This allows for the maintenance of individual event pools for each
      * namespace active in the current document.
      */
-    private XMLEventPool[] pools = new XMLEventPool[LAST_NS_INDEX + 1];
+    private XmlEventPool[] pools = new XmlEventPool[LAST_NS_INDEX + 1];
     
     /**
      * The pool for <code>UriLocalName</code> objects.
@@ -182,13 +182,13 @@ public class Namespaces {
             nsSequences[i] = 0;
         }
         pools[DefAttrNSIndex] =
-            new XMLEventPool(INITIAL_DEF_ATTR_NS_POOL_SIZE);
+            new XmlEventPool(INITIAL_DEF_ATTR_NS_POOL_SIZE);
         pools[XSLNSpaceIndex] =
-            new XMLEventPool(INITIAL_XSL_NS_POOL_SIZE);
+            new XmlEventPool(INITIAL_XSL_NS_POOL_SIZE);
         pools[FOXNSpaceIndex] =
-            new XMLEventPool(INITIAL_FOX_NS_POOL_SIZE);
+            new XmlEventPool(INITIAL_FOX_NS_POOL_SIZE);
         pools[SVGNSpaceIndex] =
-            new XMLEventPool(INITIAL_SVG_NS_POOL_SIZE);
+            new XmlEventPool(INITIAL_SVG_NS_POOL_SIZE);
         uriLocalNamePool = new UriLocalNamePool(BUFFER_SIZE);
     }
     

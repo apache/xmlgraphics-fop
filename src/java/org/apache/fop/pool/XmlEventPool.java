@@ -59,7 +59,7 @@ import org.apache.fop.xml.XmlEvent;
  * This class provides a pool of <tt>XmlEvent</tt> objects.
  */
 
-public class XMLEventPool extends FopPool {
+public class XmlEventPool extends FopPool {
 
     private static final String tag = "$Name$";
     private static final String revision = "$Revision$";
@@ -69,14 +69,14 @@ public class XMLEventPool extends FopPool {
     /**
      * The zero-argument constructor
      */
-    public XMLEventPool() {
+    public XmlEventPool() {
     }
     
     /**
      * Construct a pool with a given initial size.
      * @param initialSize - the initial size of the pool.
      */
-    public XMLEventPool(int initialSize) {
+    public XmlEventPool(int initialSize) {
         super(initialSize);
     }
 
