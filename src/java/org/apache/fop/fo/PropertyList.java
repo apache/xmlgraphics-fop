@@ -216,7 +216,7 @@ public class PropertyList extends HashMap {
      * @return The value if the property is explicitly set, otherwise null.
      */
     public Property getExplicitBaseProp(String propertyName) {
-        return (Property)super.get(propertyName);
+        return (Property) super.get(propertyName);
     }
 
     /**
@@ -516,9 +516,18 @@ public class PropertyList extends HashMap {
         }
         try {
             Property prop = null;
-            if (subPropertyName == null) {
+            if (subPropertyName == null) { // base attribute only found
+                /* Do nothing if the base property has already been created.
+                 * This is e.g. the case when a compound attribute was
+                 * specified before the base attribute; in these cases
+                 * the base attribute was already created in 
+                 * findBaseProperty()
+                 */
+                if (getExplicitBaseProp(basePropertyName) != null) {
+                    return;
+                }
                 prop = propertyMaker.make(this, attributeValue, parentFO);
-            } else {
+            } else { // e.g. "leader-length.maximum"
                 Property baseProperty = findBaseProperty(attributes,
                         parentFO, basePropertyName, propertyMaker);
                 prop = propertyMaker.make(baseProperty, subPropertyName,
@@ -538,25 +547,30 @@ public class PropertyList extends HashMap {
                                       String basePropName,
                                       Maker propertyMaker)
             throws FOPException {
-        // If the baseProperty has already been created, return it
+
+        /* If the baseProperty has already been created, return it
+         * e.g. <fo:leader xxxx="120pt" xxxx.maximum="200pt"... />
+         */
         Property baseProperty = getExplicitBaseProp(basePropName);
         if (baseProperty != null) {
             return baseProperty;
         }
-        // If it is specified later in this list of Attributes, create it
+
+        /* Otherwise If it is specified later in this list of Attributes, create it now
+         * e.g. <fo:leader xxxx.maximum="200pt" xxxx="200pt"... />
+         */
         String basePropertyValue = attributes.getValue(basePropName);
         
         if (basePropertyValue != null) {
-            int propertyId = FOPropertyMapping.getPropertyId(basePropertyValue);
+            int propertyId = FOPropertyMapping.getPropertyId(basePropName);
             if (propertyId != -1) {
                 baseProperty = propertyMaker.make(this, basePropertyValue,
                     parentFO);
                 return baseProperty;
             }
         }
-        // Otherwise it is a compound property ??
-        // baseProperty = propertyMaker.makeCompound(propertyList, parentFO);
-        return baseProperty;
+        
+        return null;  // could not find base property
     }
 
     private void handleInvalidProperty(String attributeName) {
