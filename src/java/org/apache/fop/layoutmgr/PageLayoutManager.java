@@ -92,7 +92,7 @@ import java.util.HashMap;
 import java.awt.Rectangle;
 import java.util.Iterator;
 import java.awt.geom.Rectangle2D;
-import org.apache.fop.traits.*;
+import org.apache.fop.traits.MinOptMax;
 
 /**
  * LayoutManager for a PageSequence and its flow.
@@ -610,7 +610,7 @@ public class PageLayoutManager extends AbstractLayoutManager implements Runnable
      *
      * @param breakVal the break value to handle
      */
-    protected void handleBreak(int breakVal) {
+    private void handleBreak(int breakVal) {
         if (breakVal == Constants.COLUMN) {
             if (curSpan != null
                     && curSpan.getColumnCount() != curSpanColumns) {
@@ -727,7 +727,7 @@ public class PageLayoutManager extends AbstractLayoutManager implements Runnable
      * @return the page viewport created for the page number
      * @throws FOPException if there is an error creating page
      */
-    public PageViewport createPage(boolean bIsBlank, boolean bIsLast)
+    private PageViewport createPage(boolean bIsBlank, boolean bIsLast)
                                    throws FOPException {
         currentSimplePageMaster = getSimplePageMasterToUse(bIsBlank);
         Region body = currentSimplePageMaster.getRegion(Region.BODY);
@@ -760,7 +760,7 @@ public class PageLayoutManager extends AbstractLayoutManager implements Runnable
               .getNextSimplePageMaster(isOddPage, isFirstPage, bIsBlank);
     }
 
-    public PageViewport createPageAreas(SimplePageMaster spm) {
+    private PageViewport createPageAreas(SimplePageMaster spm) {
         int pageWidth =
                 spm.properties.get("page-width").getLength().getValue();
         int pageHeight =
@@ -819,8 +819,8 @@ public class PageLayoutManager extends AbstractLayoutManager implements Runnable
      * @param pageCTM page coordinate transformation matrix
      * @return the new region viewport
      */
-    public RegionViewport makeRegionViewport(Region r, FODimension reldims, CTM pageCTM) {
-        Rectangle2D relRegionRect = r. getViewportRectangle(reldims);
+    private RegionViewport makeRegionViewport(Region r, FODimension reldims, CTM pageCTM) {
+        Rectangle2D relRegionRect = r.getViewportRectangle(reldims);
         Rectangle2D absRegionRect = pageCTM.transform(relRegionRect);
         // Get the region viewport rectangle in absolute coords by
         // transforming it using the page CTM
@@ -836,7 +836,7 @@ public class PageLayoutManager extends AbstractLayoutManager implements Runnable
      *
      * @param r the region viewport
      */
-    protected void setRegionViewportTraits(Region r, RegionViewport rv) {
+    private void setRegionViewportTraits(Region r, RegionViewport rv) {
         // Common Border, Padding, and Background Properties
         CommonBorderAndPadding bap = r.getPropertyManager().getBorderAndPadding();
         CommonBackground bProps = r.getPropertyManager().getBackgroundProps();
@@ -844,11 +844,7 @@ public class PageLayoutManager extends AbstractLayoutManager implements Runnable
         TraitSetter.addBackground(rv, bProps);
     }
 
-    /**
-     * Override the inherited method.
-     * @see org.apache.fop.fo.pagination.Region#makeRegionReferenceArea(Rectangle2D)
-     */
-    public RegionReference makeRegionBodyReferenceArea(Region r,
+    private RegionReference makeRegionBodyReferenceArea(Region r,
             Rectangle2D absRegVPRect) {
         // Should set some column stuff here I think, or put it elsewhere
         BodyRegion body = new BodyRegion();
@@ -877,7 +873,7 @@ public class PageLayoutManager extends AbstractLayoutManager implements Runnable
      * height=top-bottom
      * @return a new region reference area
      */
-    public RegionReference makeRegionReferenceArea(Region r,
+    private RegionReference makeRegionReferenceArea(Region r,
             Rectangle2D absRegVPRect) {
         RegionReference rr = new RegionReference(r.getRegionClassCode());
         setRegionPosition(r, rr, absRegVPRect);
@@ -892,7 +888,7 @@ public class PageLayoutManager extends AbstractLayoutManager implements Runnable
      * @param r the region reference area
      * @param absRegVPRect the rectangle to place the region contents
      */
-    public void setRegionPosition(Region r, RegionReference rr,
+    private void setRegionPosition(Region r, RegionReference rr,
                                   Rectangle2D absRegVPRect) {
         FODimension reldims = new FODimension(0, 0);
         rr.setCTM(CTM.getCTMandRelDims(r.getPropertyManager().getAbsRefOrient(),
@@ -902,7 +898,7 @@ public class PageLayoutManager extends AbstractLayoutManager implements Runnable
     /**
      * @return a StaticContent layout manager
      */
-    public StaticContentLayoutManager getStaticContentLayoutManager(StaticContent sc) {
+    private StaticContentLayoutManager getStaticContentLayoutManager(StaticContent sc) {
         StaticContentLayoutManager lm =
                 (StaticContentLayoutManager)staticContentLMs.get(sc.getFlowName());
         if (lm != null) {
