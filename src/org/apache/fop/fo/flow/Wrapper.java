@@ -38,9 +38,11 @@ public class Wrapper extends FObjMixed {
         return "fo:wrapper";
     }
 
-    public Wrapper(FObj parent, PropertyList propertyList) {
+    public Wrapper(FObj parent, PropertyList propertyList)
+       throws FOPException {
         super(parent, propertyList);
         // check that this occurs inside an fo:flow
+        ts = propMgr.getTextDecoration(parent);
     }
 
 }
