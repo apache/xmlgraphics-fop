@@ -25,13 +25,15 @@ import org.xml.sax.SAXParseException;
 
 // FOP
 import org.apache.fop.fo.FONode;
+import org.apache.fop.fo.FObj;
 
 /**
  * A single-page-master-reference formatting object.
  * This is a reference for a single page. It returns the
  * master name only once until reset.
  */
-public class SinglePageMasterReference extends PageMasterReference {
+public class SinglePageMasterReference extends FObj 
+    implements SubSequenceSpecifier {
 
     private static final int FIRST = 0;
     private static final int DONE = 1;
@@ -44,6 +46,20 @@ public class SinglePageMasterReference extends PageMasterReference {
     public SinglePageMasterReference(FONode parent) {
         super(parent);
         this.state = FIRST;
+    }
+
+    /**
+     * @see org.apache.fop.fo.FObj#addProperties
+     */
+    protected void addProperties(Attributes attlist) throws SAXParseException {
+        super.addProperties(attlist);
+
+        PageSequenceMaster pageSequenceMaster = (PageSequenceMaster) parent;
+        if (getPropString(PR_MASTER_REFERENCE) == null) {
+            missingPropertyError("master-reference");
+        } else {
+            pageSequenceMaster.addSubsequenceSpecifier(this);
+        }
     }
 
     /**
@@ -63,7 +79,7 @@ public class SinglePageMasterReference extends PageMasterReference {
                                         boolean isEmptyPage) {
         if (this.state == FIRST) {
             this.state = DONE;
-            return getMasterName();
+            return getPropString(PR_MASTER_REFERENCE);
         } else {
             return null;
         }
