@@ -39,11 +39,11 @@
     <key>stream-filter-list</key>
     <list>
       <!-- provides compression using zlib flate (default is on)-->
-      <!-- <value>flate</value> -->
+      <value>flate</value>
       
       <!-- encodes binary data into printable ascii characters (default off)
            This provides about a 4:5 expansion of data size -->
-      <!--  <value>ascii-85</value> -->
+      <value>ascii-85</value>
 
       <!-- encodes binary data with hex representation (default off)
            This filter is not recommended as it doubles the data size -->
