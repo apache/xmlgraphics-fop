@@ -66,7 +66,6 @@ import java.net.MalformedURLException;
 import java.util.List;
 
 // FOP
-import org.apache.fop.apps.Starter;
 import org.apache.fop.apps.InputHandler;
 import org.apache.fop.apps.FOFileHandler;
 import org.apache.fop.apps.Driver;
@@ -74,6 +73,7 @@ import org.apache.fop.apps.FOPException;
 import org.apache.fop.fo.FOUserAgent;
 
 // Avalon
+import org.apache.avalon.framework.logger.AbstractLogEnabled;
 import org.apache.avalon.framework.logger.ConsoleLogger;
 import org.apache.avalon.framework.logger.Logger;
 
@@ -299,7 +299,7 @@ public class Fop extends Task {
         }
         Logger log = new ConsoleLogger(logLevel);
         try {
-            Starter starter = new FOPTaskStarter(this);
+            FOPTaskStarter starter = new FOPTaskStarter(this);
             starter.enableLogging(log);
             starter.run();
         } catch (FOPException ex) {
@@ -310,7 +310,7 @@ public class Fop extends Task {
 
 }
 
-class FOPTaskStarter extends Starter {
+class FOPTaskStarter extends AbstractLogEnabled {
 
     private Fop task;
     private String baseURL = null;

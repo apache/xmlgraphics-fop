@@ -63,7 +63,7 @@ public class Fop {
      */
     public static void main(String[] args) {
         CommandLineOptions options = null;
-        Starter starter = null;
+        CommandLineStarter starter = null;
 
         try {
             options = new CommandLineOptions(args);
