@@ -7,6 +7,7 @@ import org.apache.fop.fo.FObjectNames;
 import java.util.NoSuchElementException;
 import java.util.LinkedList;
 import java.util.Iterator;
+import java.util.BitSet;
 
 /*
  * $Id$
@@ -749,6 +750,71 @@ public class SyncedFoXmlEventsBuffer extends SyncedCircularBuffer {
             // Found it!
             if (ev != null) return ev;
         }
+        return null;
+    }
+
+    /**
+     * Get one of a <tt>BitSet</tt> of possible STARTELEMENT events.  Scan
+     * and discard events until a STARTELEMENT event is found which is in
+     * the fo: namespace and whose FO type matches one of those in the
+     * argument <tt>BitSet</tt>.
+     * @param set a <tt>BitSet</tt> containing FO types one of which is
+     * required.
+     * @param discardWhiteSpace - if true, discard any <tt>characters</tt>
+     * events which contain only whitespace.
+     * @return the next matching STARTELEMENT event from the buffer.
+     * @exception FOPException if buffer errors or interrupts occur
+     * @exception NoSuchElementException if the event is not found
+     */
+    public FoXMLEvent getStartElement(BitSet set, boolean discardWhiteSpace)
+        throws FOPException
+    {
+        FoXMLEvent ev;
+        do {
+            ev = expectStartElement(set, discardWhiteSpace);
+            if (ev != null) return ev;
+            // The non-matching event has been pushed back.
+            // Get it and discard.  Note that if the first attempt to
+            // getEvent() returns null, the expectStartElement() calls
+            // will throw a NoSuchElementException
+            ev = getEvent();
+        } while (ev != null);
+        // Exit from this while loop is only by discovery of null event
+        throw new NoSuchElementException
+                    ("StartElement from BitSet not found.");
+    }
+
+    /**
+     * Expect one of an <tt>BitSet</tt> of possible STARTELEMENT events.
+     * The next STARTELEMENT must be in the fo: namespace, and must have an
+     * FO type which matches one of those in the argument <tt>BitSet</tt>.
+     * <p>TODO:<br>
+     * This method should be retro-fitted to list and array versions.
+     *
+     * @param set a <tt>BitSet</tt> containing the FO types
+     * of possible events, one of which must be the next returned.
+     * @param discardWhiteSpace - if true, discard any <tt>characters</tt>
+     * events which contain only whitespace.
+     * @return the matching STARTELEMENT event.If the next
+     * event detected is not of the required type, <tt>null</tt> is returned.
+     * The erroneous event is pushed back.
+     * @exception FOPException if buffer errors or interrupts occur
+     * @exception NoSuchElementException if end of buffer detected.
+     */
+    public FoXMLEvent expectStartElement
+                                    (BitSet set, boolean discardWhiteSpace)
+        throws FOPException
+    {
+        FoXMLEvent ev;
+        ev = expectTypedEvent(XMLEvent.STARTELEMENT, discardWhiteSpace);
+        if (ev == null) return ev;
+
+        for (int i = set.nextSetBit(0); i >= 0; i = set.nextSetBit(++i)) {
+            if (ev.foType == i)
+                return ev; // Found it!
+        }
+        // Not found - push the STARTELEMENT event back
+        pushBack(ev);
         return null;
     }
 
