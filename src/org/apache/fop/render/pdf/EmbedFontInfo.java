@@ -5,21 +5,19 @@
  * LICENSE file included with these sources.
  */
 
-
-package org.apache.fop.configuration;
+package org.apache.fop.render.pdf;
 
 import java.util.ArrayList;
 
 /**
  * FontInfo contains meta information on fonts (where is the metrics file etc.)
  */
-
-public class FontInfo {
+public class EmbedFontInfo {
     private String metricsFile, embedFile, name;
     private boolean kerning;
     private ArrayList fontTriplets;
 
-    public FontInfo(String name, String metricsFile, boolean kerning,
+    public EmbedFontInfo(String name, String metricsFile, boolean kerning,
                     ArrayList fontTriplets, String embedFile) {
         this.name = name;
         this.metricsFile = metricsFile;

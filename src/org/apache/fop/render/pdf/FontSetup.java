@@ -13,8 +13,6 @@ import org.apache.fop.layout.FontInfo;
 import org.apache.fop.layout.FontDescriptor;
 import org.apache.fop.pdf.PDFDocument;
 import org.apache.fop.pdf.PDFResources;
-import org.apache.fop.configuration.Configuration;
-import org.apache.fop.configuration.FontTriplet;
 
 // Java
 import java.util.HashMap;
@@ -37,7 +35,7 @@ public class FontSetup {
      *
      * @param fontInfo the font info object to set up
      */
-    public static void setup(FontInfo fontInfo) {
+    public static void setup(FontInfo fontInfo, ArrayList embedList) {
 
         fontInfo.addMetrics("F1", new Helvetica());
         fontInfo.addMetrics("F2", new HelveticaOblique());
@@ -129,27 +127,24 @@ public class FontSetup {
                                    "normal", FontInfo.NORMAL);
 
         /* Add configured fonts */
-        addConfiguredFonts(fontInfo, 15);
+        addConfiguredFonts(fontInfo, embedList, 15);
     }
 
     /**
      * Add fonts from configuration file starting with
      * internalnames F<num>
      */
-    public static void addConfiguredFonts(FontInfo fontInfo, int num) {
+    public static void addConfiguredFonts(FontInfo fontInfo, ArrayList fontInfos, int num) {
+        if (fontInfos == null)
+            return;
 
         String internalName = null;
         FontReader reader = null;
 
-        ArrayList fontInfos = Configuration.getFonts();
-        if (fontInfos == null)
-            return;
-
         for (int count = 0; count < fontInfos.size(); count++) {
-            org.apache.fop.configuration.FontInfo configFontInfo =
-                (org.apache.fop.configuration.FontInfo)fontInfos.get(count);
+            EmbedFontInfo configFontInfo =
+                (EmbedFontInfo)fontInfos.get(count);
 
-            try {
                 String metricsFile = configFontInfo.getMetricsFile();
                 if (metricsFile != null) {
                     internalName = "F" + num;
@@ -184,11 +179,6 @@ public class FontSetup {
                                                    weight);
                     }
                 }
-            } catch (Exception ex) {
-                //log.error("Failed to read font metrics file "
-                //                     + configFontInfo.getMetricsFile()
-                //                     + " : " + ex.getMessage());
-            }
         }
     }
 
@@ -212,5 +202,5 @@ public class FontSetup {
                                            font.encoding(), font, desc));
         }
     }
-
 }
+

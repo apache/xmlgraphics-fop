@@ -791,7 +791,7 @@ public class PDFGraphics2D extends AbstractGraphics2D {
             Rectangle2D rect = pp.getPatternRect();
 
             FontInfo fi = new FontInfo();
-            FontSetup.setup(fi);
+            FontSetup.setup(fi, null);
 
             PDFResources res = pdfDoc.makeResources();
             PDFResourceContext context = new PDFResourceContext(0, pdfDoc, res);

@@ -59,14 +59,13 @@ public class PDFDocumentGraphics2D extends PDFGraphics2D {
     
         if(!textAsShapes) {
             fontInfo = new FontInfo();
-            FontSetup.setup(fontInfo);
+            FontSetup.setup(fontInfo, null);
             //FontState fontState = new FontState("Helvetica", "normal",
             //                          FontInfo.NORMAL, 12, 0);
         }
 
         standalone = true;
-        this.pdfDoc = new PDFDocument();
-        this.pdfDoc.setProducer("FOP SVG Renderer");
+        this.pdfDoc = new PDFDocument("FOP SVG Renderer");
 
         graphicsState = new PDFState();
 

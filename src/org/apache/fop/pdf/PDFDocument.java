@@ -154,7 +154,7 @@ public class PDFDocument {
      * time to work out, and is so obvious now. Sigh.
      * mark-fop@inomial.com. Maybe I should do a PDF course.
      */
-    public PDFDocument() {
+    public PDFDocument(String prod) {
 
         /* create the /Root, /Info and /Resources objects */
         this.pages = makePages();
@@ -166,7 +166,7 @@ public class PDFDocument {
         this.resources = makeResources();
 
         // Make the /Info record
-        this.info = makeInfo();
+        this.info = makeInfo(prod);
     }
 
     /**
@@ -225,7 +225,7 @@ public class PDFDocument {
      * @param producer string indicating application producing the PDF
      * @return the created /Info object
      */
-    protected PDFInfo makeInfo() {
+    protected PDFInfo makeInfo(String prod) {
 
         /*
          * create a PDFInfo with the next object number and add to
@@ -233,7 +233,7 @@ public class PDFDocument {
          */
         PDFInfo pdfInfo = new PDFInfo(++this.objectcount);
         // set the default producer
-        pdfInfo.setProducer(org.apache.fop.apps.Version.getVersion());
+        pdfInfo.setProducer(prod);
         this.objects.add(pdfInfo);
         return pdfInfo;
     }
@@ -904,7 +904,7 @@ public class PDFDocument {
          * Create a PDFICCStream
          @see PDFXObject
          @see org.apache.fop.image.JpegImage
-         @see org.apache.fop.datatypes.ColorSpace
+         @see org.apache.fop.pdf.PDFColorSpace
         */
     public PDFICCStream makePDFICCStream() {
         PDFICCStream iccStream = new PDFICCStream(++this.objectcount);

@@ -35,7 +35,7 @@ public abstract class PrintRenderer extends AbstractRenderer {
      */
     public void setupFontInfo(FontInfo fontInfo) {
         this.fontInfo = fontInfo;
-        FontSetup.setup(fontInfo);
+        FontSetup.setup(fontInfo, org.apache.fop.configuration.Configuration.getFonts());
     }
 
     /**

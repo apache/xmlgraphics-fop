@@ -42,7 +42,7 @@ public class MIFHandler extends StructureHandler {
     public MIFHandler(OutputStream os) {
         outStream = os;
         // use pdf fonts for now, this is only for resolving names
-        org.apache.fop.render.pdf.FontSetup.setup(fontInfo);
+        org.apache.fop.render.pdf.FontSetup.setup(fontInfo, org.apache.fop.configuration.Configuration.getFonts());
     }
 
     public FontInfo getFontInfo() {

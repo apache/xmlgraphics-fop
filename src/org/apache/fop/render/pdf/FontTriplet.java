@@ -5,14 +5,11 @@
  * LICENSE file included with these sources.
  */
 
-
-package org.apache.fop.configuration;
+package org.apache.fop.render.pdf;
 
 /**
  * FontTriplet contains information on name, weight, style of one font
  */
-
-
 public class FontTriplet {
     private String name, weight, style;
     public FontTriplet(String name, String weight, String style) {
@@ -32,9 +29,5 @@ public class FontTriplet {
     public String getStyle() {
         return style;
     }
-
 }
-
-
-
 
