@@ -60,15 +60,16 @@ import java.util.BitSet;
 
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.datastructs.TreeException;
+import org.apache.fop.datatypes.NCName;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FOTree;
 import org.apache.fop.fo.FObjectNames;
-import org.apache.fop.fo.FObjects;
 import org.apache.fop.fo.PropNames;
+import org.apache.fop.fo.expr.PropertyException;
 import org.apache.fop.xml.FoXmlEvent;
 import org.apache.fop.xml.XmlEvent;
 import org.apache.fop.xml.XmlEventReader;
-import org.apache.fop.xml.UnexpectedStartElementException;
+import org.apache.fop.xml.XmlEventsArrayBuffer;
 
 /**
  * Implements the fo:simple-page-master flow object
@@ -92,7 +93,17 @@ public class FoStaticContent extends FONode {
     /** The number of applicable properties.  This is the size of the
         <i>sparsePropsSet</i> array. */
     private static final int numProps;
-
+    
+    /**
+     * The flow-name for this fo:static-content
+     */
+    public final String flowName;
+    
+    /**
+     * The buffer which will hold the contents of the fo:static-content subtree
+     */
+    private XmlEventsArrayBuffer buffer;
+    
     static {
         // Collect the sets of properties that apply
         BitSet propsets = new BitSet();
@@ -110,7 +121,8 @@ public class FoStaticContent extends FONode {
     }
 
     /**
-     * Construct an fo:static-content node, and build the fo:static-content
+     * Construct an fo:static-content node, and buffer the contents for later
+* parsing
      * subtree.
      * <p>Content model for fo:static-content: (%block;)+
      * @param foTree the FO tree being built
@@ -123,36 +135,38 @@ public class FoStaticContent extends FONode {
     {
         super(foTree, FObjectNames.STATIC_CONTENT, parent, event,
               FONode.STATIC_SET, sparsePropsMap, sparseIndices);
-        XmlEvent ev;
+        NCName ncName;
         try {
-            // Get at least one %block;
-            if ((ev = xmlevents.expectBlock()) == null)
-                throw new FOPException
-                        ("%block; not found in fo:static-content");
-            // Generate the flow object
-            //System.out.println("Generating first block for static-content.");
-            FObjects.fobjects.makeFlowObject(
-                    foTree, this, (FoXmlEvent)ev, FONode.STATIC_SET);
-            // Clear the blockage
-            ev = xmlevents.getEndElement(XmlEventReader.DISCARD_EV, ev);
-            namespaces.relinquishEvent(ev);
-            // Get the rest of the %block;s
-            while ((ev = xmlevents.expectBlock()) != null) {
-                // Generate the flow object
-                //System.out.println
-                    //("Generating subsequent block for static-content.");
-                FObjects.fobjects.makeFlowObject(
-                        foTree, this, (FoXmlEvent)ev, FONode.STATIC_SET);
-                ev = xmlevents.getEndElement(XmlEventReader.DISCARD_EV, ev);
-                namespaces.relinquishEvent(ev);
-            }
-        } catch(UnexpectedStartElementException e) {
-            throw new FOPException
-            ("Block not found or unexpected non-block in fo:static-content");
+            ncName = (NCName)(getPropertyValue(PropNames.FLOW_NAME));
+        } catch (PropertyException e) {
+            throw new FOPException("Cannot find marker-class-name in fo:marker", e);
+        } catch (ClassCastException e) {
+            throw new FOPException("Wrong PropertyValue type in fo:marker", e);
         }
-
-        System.out.println("Making sparsePropsSet for static-content.");
-        makeSparsePropsSet();
+        flowName = ncName.getNCName();
+        
+        // sparsePropsSet cannot be made for static content, because the full
+        // ancestor tree of properties must be available for the later
+        // resolution of properties in the static-content subtree and any
+        // markers which are later attached to the subtree.
+        // makeSparsePropsSet();
+        
+        // Collect the contents of fo:static-content for future processing
+        buffer = new XmlEventsArrayBuffer(namespaces);
+        XmlEvent ev = xmlevents.getEndElement(
+                buffer, XmlEventReader.RETAIN_EV, event);
+        // The original START_ELEMENT event is still known to the parent
+        // page-sequence, which will arrange to relinquish it.  Relinquish
+        // the just-returned END_ELEMENT event
+        namespaces.relinquishEvent(ev);
+    }
+    
+    /**
+     * @return the static-content subtree buffer
+     */
+    public XmlEventsArrayBuffer getEventBuffer() {
+        return buffer;
     }
 
+    
 }
