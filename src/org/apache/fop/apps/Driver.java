@@ -132,7 +132,9 @@ public class Driver {
 
     /** create a new Driver */
     public Driver() {
-        reset();
+ 	_stream = null;
+	_treeBuilder = new FOTreeBuilder();
+	setupDefaultMappings();
     }
 
     public Driver(InputSource source, OutputStream stream) {
@@ -142,14 +144,19 @@ public class Driver {
     }
 
     /**
-     * Resets the Driver so it can be reused. Property and element mappings are reset to defaults.
+     * Resets the Driver so it can be reused. Property and element 
+     * mappings are reset to defaults.
      * The output stream is cleared. The renderer is cleared.
      */
     public synchronized void reset() 
     {
-	_stream = null;
-	_treeBuilder = new FOTreeBuilder();
-	setupDefaultMappings();
+	_areaTree = null;
+	_treeBuilder.reset();
+    }
+    
+    public boolean hasData()
+    {
+	return(_treeBuilder.hasData());
     }
     
     /** 
