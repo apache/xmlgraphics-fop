@@ -113,9 +113,9 @@ public class RegionBody extends Region {
         String sPropName = "margin-"
                 + parent.propertyList.wmRelToAbs(reldir);
         int propId = FOPropertyMapping.getPropertyId(sPropName);
-        Property prop = propertyList.getExplicitBaseProp(propId);
+        Property prop = propertyList.getExplicitOrShorthand(propId);
         if (prop == null) {
-            prop = propertyList.getExplicitBaseProp(relPropId);
+            prop = propertyList.getExplicitOrShorthand(relPropId);
         }
         return ((prop != null) ? prop.getLength().getValue() : 0);
     }
