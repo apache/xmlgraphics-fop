@@ -20,6 +20,7 @@ package org.apache.fop.fo;
 
 import java.util.List;
 import org.xml.sax.Locator;
+import org.xml.sax.SAXParseException;
 import org.apache.fop.layoutmgr.LMiter;
 import org.apache.fop.layoutmgr.InlineStackingLayoutManager;
 
@@ -46,7 +47,7 @@ public class FObjMixed extends FObj {
      * @param locator location in fo source file. 
      */
     protected void addCharacters(char data[], int start, int length,
-                                 Locator locator) {
+                                 Locator locator) throws SAXParseException {
         if (textInfo == null) {
             // Really only need one of these, but need to get fontInfo
             // stored in propMgr for later use.
@@ -55,7 +56,7 @@ public class FObjMixed extends FObj {
         }
 
         FOText ft = new FOText(data, start, length, textInfo, this);
-        ft.setLocation(locator);
+        ft.setLocator(locator);
         
         getFOInputHandler().characters(ft.ca, ft.startIndex, ft.endIndex);
         addChildNode(ft);

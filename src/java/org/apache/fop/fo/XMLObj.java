@@ -70,7 +70,7 @@ public abstract class XMLObj extends FONode {
      */
     public void processNode(String elementName, Locator locator, 
         Attributes attlist) throws SAXParseException {
-            setLocation(locator);
+            setLocator(locator);
             name = elementName;
             attr = attlist;
     }

@@ -50,7 +50,6 @@ public class RepeatablePageMasterReference extends FObj
 
     /**
      * @see org.apache.fop.fo.FObj#addProperties
-     * @todo need to 
      */
     protected void addProperties(Attributes attlist) throws SAXParseException {
         super.addProperties(attlist);

@@ -102,7 +102,7 @@ public class FObj extends FONode implements Constants {
      */
     public void processNode(String elementName, Locator locator, 
                             Attributes attlist) throws SAXParseException {
-        setLocation(locator);
+        setLocator(locator);
         addProperties(attlist);
     }
 
@@ -225,7 +225,7 @@ public class FObj extends FONode implements Constants {
     /**
      * @see org.apache.fop.fo.FONode#addChildNode(FONode)
      */
-    protected void addChildNode(FONode child) {
+    protected void addChildNode(FONode child) throws SAXParseException {
         if (PropertySets.canHaveMarkers(getNameId()) && 
             child.getNameId() == FO_MARKER) {
                 addMarker((Marker) child);

@@ -27,7 +27,6 @@ import org.xml.sax.Locator;
 import org.xml.sax.SAXParseException;
 
 // FOP
-import org.apache.fop.apps.FOPException;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FObj;
 
@@ -38,16 +37,13 @@ import org.apache.fop.fo.FObj;
  */
 public class PageSequence extends FObj {
     //
-    // intial-page-number types
+    // initial-page-number types
     //
     public static final int EXPLICIT = 0;
     public static final int AUTO = 1;
     public static final int AUTO_EVEN = 2;
     public static final int AUTO_ODD = 3;
 
-    //
-    // associations
-    //
     /**
      * The parent root object
      */
@@ -68,11 +64,7 @@ public class PageSequence extends FObj {
      */
     public HashMap flowMap;
 
-    // according to communication from Paul Grosso (XSL-List,
-    // 001228, Number 406), confusion in spec section 6.4.5 about
-    // multiplicity of fo:flow in XSL 1.0 is cleared up - one (1)
-    // fo:flow per fo:page-sequence only.
-//    private boolean isFlowSet = false;
+//  private boolean isFlowSet = false;
 
     // for structure handler
     private boolean sequenceStarted = false;
@@ -113,14 +105,14 @@ public class PageSequence extends FObj {
     public PageSequenceMaster pageSequenceMaster;
 
     /**
-     * The main content flow for this page-sequence.
-     */
-    private Flow mainFlow = null;
-
-    /**
      * The fo:title object for this page-sequence.
      */
     private Title titleFO;
+
+    /**
+     * The fo:flow object for this page-sequence.
+     */
+    private Flow mainFlow = null;
 
     /**
      * Create a page sequence FO node.
@@ -129,6 +121,66 @@ public class PageSequence extends FObj {
      */
     public PageSequence(FONode parent) {
         super(parent);
+    }
+
+    /**
+     * @see org.apache.fop.fo.FObj#addProperties
+     */
+    protected void addProperties(Attributes attlist) throws SAXParseException {
+        super.addProperties(attlist);
+        this.root = (Root) parent;
+        layoutMasterSet = root.getLayoutMasterSet();
+        flowMap = new HashMap();
+
+        // we are now on the first page of the page sequence
+        thisIsFirstPage = true;
+        ipnValue = getPropString(PR_INITIAL_PAGE_NUMBER);
+
+        if (ipnValue.equals("auto")) {
+            pageNumberType = AUTO;
+        } else if (ipnValue.equals("auto-even")) {
+            pageNumberType = AUTO_EVEN;
+        } else if (ipnValue.equals("auto-odd")) {
+            pageNumberType = AUTO_ODD;
+        } else {
+            pageNumberType = EXPLICIT;
+            try {
+                int pageStart = new Integer(ipnValue).intValue();
+                this.explicitFirstNumber = (pageStart > 0) ? pageStart : 1;
+            } catch (NumberFormatException nfe) {
+                throw new SAXParseException("\"" + ipnValue
+                    + "\" is not a valid value for initial-page-number", locator);
+            }
+        }
+
+        String masterName = getPropString(PR_MASTER_REFERENCE);
+        this.simplePageMaster =
+                this.layoutMasterSet.getSimplePageMaster(masterName);
+        if (this.simplePageMaster == null) {
+            this.pageSequenceMaster =
+                    this.layoutMasterSet.getPageSequenceMaster(masterName);
+            if (this.pageSequenceMaster == null) {
+                throw new SAXParseException("master-reference '" + masterName
+                    + "' for fo:page-sequence matches no"
+                    + " simple-page-master or page-sequence-master", locator);
+            }
+        }
+
+        // get the 'format' properties
+        this.pageNumberGenerator =
+            new PageNumberGenerator(getPropString(PR_FORMAT),
+                this.propertyList.get(PR_GROUPING_SEPARATOR).getCharacter(),
+                this.propertyList.get(PR_GROUPING_SIZE).getNumber().intValue(),
+                getPropEnum(PR_LETTER_VALUE));
+
+        this.forcePageCount = getPropEnum(PR_FORCE_PAGE_COUNT);
+
+        // this.propertyList.get("country");
+        // this.propertyList.get("language");
+
+        //call startStructuredPageSequence to ensure, that startPageSequence is called
+        //before startFlow.
+        startStructuredPageSequence();
     }
 
     /**
@@ -163,6 +215,27 @@ public class PageSequence extends FObj {
     }
 
     /**
+     * @see org.apache.fop.fo.FONode#addChildNode(FONode)
+     * @todo see if addChildNode() should also be called for fo's other than
+     *  fo:flow.
+     */
+    public void addChildNode(FONode child) throws SAXParseException {
+        int childId = child.getNameId();
+
+        if (childId == FO_TITLE) {
+            this.titleFO = (Title) child;
+        } else if (childId == FO_FLOW) {
+            this.mainFlow = (Flow) child;
+            addFlow(mainFlow);
+            startStructuredPageSequence();
+            super.addChildNode(child); // For getChildren
+        } else if (childId == FO_STATIC_CONTENT) {
+            addFlow((StaticContent) child);
+            startStructuredPageSequence();
+        }
+    }
+
+    /**
      * Signal end of this xml element.
      * This passes the end page sequence to the structure handler
      * so it can act upon that.
@@ -171,146 +244,34 @@ public class PageSequence extends FObj {
         if (mainFlow == null) {
            missingChildElementError("(title?,static-content*,flow)");
         }
-        try {
-            getFOInputHandler().endPageSequence(this);
-        } catch (FOPException fopex) {
-            getLogger().error("Error in PageSequence.endOfNode(): "
-              + fopex.getMessage(), fopex);
-        }
+
+        getFOInputHandler().endPageSequence(this);
     }
-
-    /**
-     * @see org.apache.fop.fo.FONode#addChildNode(FONode)
-     */
-    public void addChildNode(FONode child) {
-        try {
-            String childName = child.getName();
-            if (childName.equals("fo:title")) {
-               this.titleFO = (Title)child;
-            } else if (childName.equals("fo:flow")) {
-                this.mainFlow = (Flow)child;
-                String flowName = this.mainFlow.getPropString(PR_FLOW_NAME);
-                if (flowMap.containsKey(flowName)) {
-                    throw new FOPException("flow-name "
-                        + flowName
-                        + " is not unique within an fo:page-sequence");
-                }
-                if (!this.layoutMasterSet.regionNameExists(flowName)) {
-                    getLogger().error("region-name '"
-                        + flowName
-                        + "' doesn't exist in the layout-master-set.");
-                }
-                // Don't add main flow to the flow map
-//              addFlow(mainFlow);
-                startStructuredPageSequence();
-                super.addChildNode(child); // For getChildren
-            } else if (childName.equals("fo:static-content")) {
-                String flowName = ((StaticContent)child).getPropString(PR_FLOW_NAME);
-                if (flowMap.containsKey(flowName)) {
-                    throw new FOPException("flow-name " + flowName
-                              + " is not unique within an fo:page-sequence");
-                }
-                if (!this.layoutMasterSet.regionNameExists(flowName)) {
-                    throw new FOPException("region-name '" + flowName
-                              + "' doesn't exist in the layout-master-set.");
-                }
-                flowMap.put(flowName, child);
-//              addFlow((Flow)child);
-                startStructuredPageSequence();
-            } 
-        } catch (FOPException fopex) {
-            getLogger().error("Error in PageSequence.addChildNode(): "
-                + fopex.getMessage(), fopex);
-        }
-    }
-
-
-    /**
-     * @see org.apache.fop.fo.FObj#addProperties
-     */
-    protected void addProperties(Attributes attlist) throws SAXParseException {
-        super.addProperties(attlist);
-
-        this.root = (Root) parent;
-//      this.root.addPageSequence(this);
-        layoutMasterSet = root.getLayoutMasterSet();
-        
-        // best time to run some checks on LayoutMasterSet
-        layoutMasterSet.checkRegionNames();
-
-        flowMap = new HashMap();
-
-        // we are now on the first page of the page sequence
-        thisIsFirstPage = true;
-        ipnValue = getPropString(PR_INITIAL_PAGE_NUMBER);
-
-        if (ipnValue.equals("auto")) {
-            pageNumberType = AUTO;
-        } else if (ipnValue.equals("auto-even")) {
-            pageNumberType = AUTO_EVEN;
-        } else if (ipnValue.equals("auto-odd")) {
-            pageNumberType = AUTO_ODD;
-        } else {
-            pageNumberType = EXPLICIT;
-            try {
-                int pageStart = new Integer(ipnValue).intValue();
-                this.explicitFirstNumber = (pageStart > 0) ? pageStart : 1;
-            } catch (NumberFormatException nfe) {
-                throw new SAXParseException("\"" + ipnValue
-                                       + "\" is not a valid value for initial-page-number", locator);
-            }
-        }
-
-        String masterName = getPropString(PR_MASTER_REFERENCE);
-        this.simplePageMaster =
-                this.layoutMasterSet.getSimplePageMaster(masterName);
-        if (this.simplePageMaster == null) {
-            this.pageSequenceMaster =
-                    this.layoutMasterSet.getPageSequenceMaster(masterName);
-            if (this.pageSequenceMaster == null) {
-                throw new SAXParseException("master-reference '" + masterName
-                                       + "' for fo:page-sequence matches no"
-                                       + " simple-page-master or page-sequence-master", locator);
-            }
-        }
-
-        // get the 'format' properties
-        this.pageNumberGenerator =
-            new PageNumberGenerator(getPropString(PR_FORMAT),
-                                    this.propertyList.get(PR_GROUPING_SEPARATOR).getCharacter(),
-                                    this.propertyList.get(PR_GROUPING_SIZE).getNumber().intValue(),
-                                    getPropEnum(PR_LETTER_VALUE));
-
-        this.forcePageCount = getPropEnum(PR_FORCE_PAGE_COUNT);
-
-        // this.propertyList.get("country");
-        // this.propertyList.get("language");
-
-        //call startStructuredPageSequence to ensure, that startPageSequence is called
-        //before startFlow.
-        startStructuredPageSequence();
-    }
-
 
     /**
      * Add a flow or static content, mapped by its flow-name.
      * The flow-name is used to associate the flow with a region on a page,
-     * based on the names given to the regions in the page-master used to
-     * generate that page.
+     * based on the region-names given to the regions in the page-master
+     * used to generate that page.
      */
-//      private void addFlow(Flow flow) throws FOPException {
-//          if (flowMap.containsKey(flow.getFlowName())) {
-//              throw new FOPException("flow-names must be unique within an fo:page-sequence");
-//          }
-//          if (!this.layoutMasterSet.regionNameExists(flow.getFlowName())) {
-//              getLogger().error("region-name '"
-//                                     + flow.getFlowName()
-//                                     + "' doesn't exist in the layout-master-set.");
-//          }
-//          flowMap.put(flow.getFlowName(), flow);
-//          //setIsFlowSet(true);
-//      }
+     private void addFlow(Flow flow) throws SAXParseException {
+        String flowName = flow.getPropString(PR_FLOW_NAME);
 
+        if (hasFlowName(flowName)) {
+            throw new SAXParseException ("duplicate flow-name \""
+                + flowName
+                + "\" found within fo:page-sequence", flow.locator);
+        }
+
+        if (!layoutMasterSet.regionNameExists(flowName) 
+            && !flowName.equals("xsl-before-float-separator") 
+            && !flowName.equals("xsl-footnote-separator")) {
+                throw new SAXParseException ("flow-name \""
+                    + flowName
+                    + "\" could not be mapped to a region-name in the"
+                    + " layout-master-set", flow.locator);
+        }
+    }
 
     /**
      * Start the page-sequence logic in the Structured Handler
@@ -321,7 +282,6 @@ public class PageSequence extends FObj {
             sequenceStarted = true;
         }
     }
-
 
     /**
      * Initialize the current page number for the start of the page sequence.
@@ -667,15 +627,7 @@ public class PageSequence extends FObj {
      * @return the static content FO node
      */
     public StaticContent getStaticContent(String name) {
-        return (StaticContent)flowMap.get(name);
-    }
-
-    /**
-     * Accessor method for layoutMasterSet
-     * @return layoutMasterSet for this object
-     */
-    public LayoutMasterSet getLayoutMasterSet() {
-        return layoutMasterSet;
+        return (StaticContent) flowMap.get(name);
     }
 
     /**
@@ -693,6 +645,17 @@ public class PageSequence extends FObj {
      */
     public Flow getMainFlow() {
         return mainFlow;
+    }
+
+    /**
+     * Determine if this PageSequence already has a flow with the given flow-name
+     * Used for validation of incoming fo:flow or fo:static-content objects
+     * @param flowName The flow-name to search for
+     * @return true if flow-name already defined within this page sequence, 
+     *    false otherwise
+     */
+    public boolean hasFlowName(String flowName) {
+        return flowMap.containsKey(flowName);
     }
 
     /**

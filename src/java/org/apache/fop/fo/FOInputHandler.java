@@ -144,11 +144,9 @@ public abstract class FOInputHandler {
     }
 
     /**
-     *
      * @param pageSeq PageSequence that is ending.
-     * @throws FOPException For errors encountered.
      */
-    public void endPageSequence(PageSequence pageSeq) throws FOPException {
+    public void endPageSequence(PageSequence pageSeq) {
     }
 
     /**

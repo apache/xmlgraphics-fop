@@ -58,9 +58,11 @@ public class RegionEnd extends RegionSE {
         // Depends on extent, precedence and writing mode
         Rectangle vpRect;
         if (this.wm == WritingMode.LR_TB || this.wm == WritingMode.RL_TB) {
+            // Rectangle:  x , y (of top left point), width, height
             vpRect = new Rectangle(reldims.ipd - extent, 0,
                     extent, reldims.bpd);
         } else {
+            // Rectangle:  x , y (of top left point), width, height
             vpRect = new Rectangle(reldims.ipd - extent, 0,
                     reldims.bpd, extent);
         }

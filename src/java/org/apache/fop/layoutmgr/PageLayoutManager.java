@@ -768,9 +768,6 @@ public class PageLayoutManager extends AbstractLayoutManager implements Runnable
                spm.getPropertyManager().getWritingMode(), pageRefRect, reldims);
 
        // Create a RegionViewport/ reference area pair for each page region
-
-       boolean bHasBody = false;
-
        for (Iterator regenum = spm.getRegions().values().iterator();
             regenum.hasNext();) {
            Region r = (Region)regenum.next();
@@ -783,17 +780,9 @@ public class PageLayoutManager extends AbstractLayoutManager implements Runnable
                rvp.setRegion(makeRegionReferenceArea(r, rvp.getViewArea()));
            }
            page.setRegionViewport(r.getNameId(), rvp);
-           if (r.getNameId() == FO_REGION_BODY) {
-               bHasBody = true;
-           }
-       }
-
-       if (!bHasBody) {
-           spm.getLogger().error("simple-page-master has no region-body");
        }
 
        return new PageViewport(page, new Rectangle(0, 0, pageWidth, pageHeight));
-
     }
 
     /**

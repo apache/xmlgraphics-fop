@@ -61,7 +61,7 @@ public abstract class RegionBA extends Region {
         Region start = getSiblingRegion(FO_REGION_START);
         if (start != null) {
             offset = start.getPropLength(PR_EXTENT);
-            vpRefRect.translate(offset, 0);
+            vpRefRect.translate(offset, 0);  // move (x, y) units
         }
         Region end = getSiblingRegion(FO_REGION_END);
         if (end != null) {

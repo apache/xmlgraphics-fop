@@ -66,7 +66,7 @@ public abstract class FONode {
      * Set the location information for this element
      * @param locator the org.xml.sax.Locator object
      */
-    public void setLocation(Locator locator) {
+    public void setLocator(Locator locator) {
         if (locator != null) {
             this.locator = locator;
         }
@@ -130,7 +130,7 @@ public abstract class FONode {
      * @param locator location in fo source file. 
      */
     protected void addCharacters(char data[], int start, int length,
-                                 Locator locator) {
+                                 Locator locator) throws SAXParseException {
         // ignore
     }
 
@@ -151,7 +151,7 @@ public abstract class FONode {
     /**
      * @param child child node to be added to the childNodes of this node
      */
-    protected void addChildNode(FONode child) {
+    protected void addChildNode(FONode child) throws SAXParseException {
     }
 
     /**

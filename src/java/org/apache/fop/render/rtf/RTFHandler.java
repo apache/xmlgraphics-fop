@@ -178,7 +178,7 @@ public class RTFHandler extends FOInputHandler {
                 String reference = prop.getString();
 
                 SimplePageMaster pagemaster 
-                    = pageSeq.getLayoutMasterSet().getSimplePageMaster(reference);
+                    = pageSeq.getRoot().getLayoutMasterSet().getSimplePageMaster(reference);
 
                 //only simple-page-master supported, so pagemaster may be null
                 if (pagemaster != null) {
@@ -202,7 +202,7 @@ public class RTFHandler extends FOInputHandler {
     /**
      * @see org.apache.fop.fo.FOInputHandler#endPageSequence(PageSequence)
      */
-    public void endPageSequence(PageSequence pageSeq) throws FOPException {
+    public void endPageSequence(PageSequence pageSeq) {
         if (bDefer) {
             return;
         }
