@@ -127,6 +127,9 @@ public class Property {
          * box.
          * Overridden by subclasses which allow percent specifications. See
          * the documentation on properties.xsl for details.
+         * @param fo the FObj containing the PercentBase
+         * @param pl the PropertyList containing the property. (TODO: explain
+         * what this is used for, or remove it from the signature.)
          * @return an object implementing the PercentBase interface.
          */
         public PercentBase getPercentBase(FObj fo, PropertyList pl) {
@@ -141,6 +144,7 @@ public class Property {
          * @param subprop The name of the component for which a Maker is to
          * returned, for example "optimum", if the FO attribute is
          * space.optimum='10pt'.
+         * @return the Maker object specified
          */
         protected Maker getSubpropMaker(String subprop) {
             return null;
@@ -159,6 +163,7 @@ public class Property {
          * get("space").getOptimum().
          * Overridden by property maker subclasses which handle
          * compound properties.
+         * @return the Property containing the subproperty
          */
         public Property getSubpropValue(Property p, String subprop) {
             return null;
@@ -168,11 +173,14 @@ public class Property {
          * Return a property value for a compound property. If the property
          * value is already partially initialized, this method will modify it.
          * @param baseProp The Property object representing the compound property,
-         * such as SpaceProperty.
+         * for example: SpaceProperty.
          * @param partName The name of the component whose value is specified.
          * @param propertyList The propertyList being built.
          * @param fo The FO whose properties are being set.
-         * @return A compound property object.
+         * @param value the value of the
+         * @return baseProp (or if null, a new compound property object) with
+         * the new subproperty added
+         * @throws FOPException for invalid or inconsistent FO input
          */
         public Property make(Property baseProp, String partName,
                              PropertyList propertyList, String value,
@@ -218,6 +226,7 @@ public class Property {
          * @param value The attribute value.
          * @param fo The current FO whose properties are being set.
          * @return The initialized Property object.
+         * @throws FOPException for invalid or inconsistent FO input
          */
         public Property make(PropertyList propertyList, String value,
                              FObj fo) throws FOPException {
@@ -293,10 +302,23 @@ public class Property {
             return pret;
         }
 
+        /**
+         * Each property is either compound or not, with the default being not.
+         * This method should be overridden by subclasses that are Makers of
+         * compound properties.
+         * @return true if this Maker makes instances of compound properties
+         */
         protected boolean isCompoundMaker() {
             return false;
         }
 
+        /**
+         * For properties that contain enumerated values.
+         * This method should be overridden by subclasses.
+         * @param value the string containing the property value
+         * @return the Property encapsulating the enumerated equivalent of the
+         * input value
+         */
         public Property checkEnumValues(String value) {
             return null;
         }
@@ -329,6 +351,7 @@ public class Property {
          * @param fo The current FO whose properties are being set.
          * @return A Property of the correct type or null if the parsed value
          * can't be converted to the correct type.
+         * @throws FOPException for invalid or inconsistent FO input
          */
         public Property convertProperty(Property p,
                                         PropertyList propertyList,
@@ -336,6 +359,18 @@ public class Property {
             return null;
         }
 
+        /**
+         * For properties that have more than one legal way to be specified,
+         * this routine should be overridden to attempt to set them based upon
+         * the other methods. For example, colors may be specified using an RGB
+         * model, or they may be specified using an NCname.
+         * @param p property whose datatype should be converted
+         * @param propertyList collection of properties. (TODO: explain why
+         * this is needed, or remove it from the signature.)
+         * @param fo the FObj to which this property is attached. (TODO: explain
+         * why this is needed, or remove it from the signature).
+         * @return an Property with the appropriate datatype used
+         */
         protected Property convertPropertyDatatype(Property p,
                                                    PropertyList propertyList,
                                                    FObj fo) {
@@ -343,19 +378,23 @@ public class Property {
         }
 
         /**
-         * Return a Property object representing the initial value.
+         * This method expects to be overridden by its subclasses.
          * @param propertyList The PropertyList object being built for this FO.
+         * @return the Property object corresponding to the parameters
+         * @throws FOPException for invalid or inconsisten FO input
          */
         public Property make(PropertyList propertyList) throws FOPException {
             return null;
         }
 
         /**
-         * Return a Property object representing the initial value.
+         * Return a Property object representing the parameters.
+         * This method expects to be overridden by its subclasses.
          * @param propertyList The PropertyList object being built for this FO.
          * @param parentFO The parent FO for the FO whose property is being made.
          * @return a Property subclass object holding a "compound" property object
          * initialized to the default values for each component.
+         * @throws FOPException for invalid or inconsistent FO input
          */
         protected Property makeCompound(PropertyList propertyList,
                                         FObj parentFO) throws FOPException {
@@ -370,6 +409,7 @@ public class Property {
          * @param propertyList The PropertyList for the FO.
          * @return Property A computed Property value or null if no rules
          * are specified (in foproperties.xml) to compute the value.
+         * @throws FOPException for invalid or inconsistent FO input
          */
         public Property compute(PropertyList propertyList)
                 throws FOPException {
@@ -398,10 +438,39 @@ public class Property {
             return null;    // standard
         }
 
+        /**
+         * For properties that operate on a relative direction (before, after,
+         * start, end) instead of an absolute direction (top, bottom, left,
+         * right), this method determines whether a corresponding property
+         * is specified on the corresponding absolute direction. For example,
+         * the border-start-color property in a lr-tb writing-mode specifies
+         * the same thing that the border-left-color property specifies. In this
+         * example, if the Maker for the border-start-color property is testing,
+         * and if the border-left-color is specified in the properties,
+         * this method should return true.
+         * @param propertyList collection of properties to be tested
+         * @return true iff 1) the property operates on a relative direction,
+         * AND 2) the property has a corresponding property on an absolute
+         * direction, AND 3) the corresponding property on that absolute
+         * direction has been specified in the input properties
+         */
         public boolean isCorrespondingForced(PropertyList propertyList) {
             return false;
         }
 
+        /**
+         * For properties that can be set by shorthand properties, this method
+         * should return the Property, if any, that is parsed from any
+         * shorthand properties that affect this property.
+         * This method expects to be overridden by subclasses.
+         * For example, the border-right-width property could be set implicitly
+         * from the border shorthand property, the border-width shorthand
+         * property, or the border-right shorthand property. This method should
+         * be overridden in the appropriate subclass to check each of these, and
+         * return an appropriate border-right-width Property object.
+         * @param propertyList the collection of properties to be considered
+         * @return the Property, if found, the correspons, otherwise, null
+         */
         public Property getShorthand(PropertyList propertyList) {
             return null;
         }
@@ -430,66 +499,127 @@ public class Property {
         return specVal;
     }
 
+/*
+ * This section contains accessor functions for all possible Property datatypes
+ */
+
+
     /**
-     * Accessor functions for all possible Property datatypes
+     * This method expects to be overridden by subclasses
+     * @return Length property value
      */
     public Length getLength() {
         return null;
     }
 
+    /**
+     * This method expects to be overridden by subclasses
+     * @return ColorType property value
+     */
     public ColorType getColorType() {
         return null;
     }
 
+    /**
+     * This method expects to be overridden by subclasses
+     * @return CondLength property value
+     */
     public CondLength getCondLength() {
         return null;
     }
 
+    /**
+     * This method expects to be overridden by subclasses
+     * @return LenghtRange property value
+     */
     public LengthRange getLengthRange() {
         return null;
     }
 
+    /**
+     * This method expects to be overridden by subclasses
+     * @return LengthPair property value
+     */
     public LengthPair getLengthPair() {
         return null;
     }
 
+    /**
+     * This method expects to be overridden by subclasses
+     * @return Space property value
+     */
     public Space getSpace() {
         return null;
     }
 
+    /**
+     * This method expects to be overridden by subclasses
+     * @return Keep property value
+     */
     public Keep getKeep() {
         return null;
     }
 
+    /**
+     * This method expects to be overridden by subclasses
+     * @return integer equivalent of enumerated property value
+     */
     public int getEnum() {
         return 0;
     }
 
+    /**
+     * This method expects to be overridden by subclasses
+     * @return char property value
+     */
     public char getCharacter() {
         return 0;
     }
 
+    /**
+     * This method expects to be overridden by subclasses
+     * @return collection of other property (sub-property) objects
+     */
     public Vector getList() {
         return null;
-    }    // List of Property objects
+    }
 
+    /**
+     * This method expects to be overridden by subclasses
+     * @return Number property value
+     */
     public Number getNumber() {
         return null;
     }
 
-    // Classes used when evaluating property expressions
+    /**
+     * This method expects to be overridden by subclasses
+     * @return Numeric property value
+     */
     public Numeric getNumeric() {
         return null;
     }
 
+    /**
+     * This method expects to be overridden by subclasses
+     * @return NCname property value
+     */
     public String getNCname() {
         return null;
     }
 
+    /**
+     * This method expects to be overridden by subclasses
+     * @return Object property value
+     */
     public Object getObject() {
         return null;
     }
 
+    /**
+     * This method expects to be overridden by subclasses.
+     * @return String property value
+     */
     public String getString() {
         Object o = getObject();
         return (o == null) ? null : o.toString();
