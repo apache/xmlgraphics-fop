@@ -196,9 +196,9 @@ class TextAttributesConverter {
     }
     */
 
-    private static void attrBlockTextAlign(int enum, RtfAttributes rtfAttr) {
+    private static void attrBlockTextAlign(int alignment, RtfAttributes rtfAttr) {
         String rtfValue = null;
-        switch (enum) {
+        switch (alignment) {
             case Constants.CENTER:
                 rtfValue = RtfText.ALIGN_CENTER;
                 break;
