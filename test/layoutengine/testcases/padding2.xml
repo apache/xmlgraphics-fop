@@ -33,7 +33,7 @@
           <fo:block margin="0pt" padding="5pt" background-color="yellow">all</fo:block>
           <fo:block margin="0pt" padding="0pt 5pt" background-color="orange">leftright</fo:block>
           <fo:block margin="0pt" padding="5pt 0pt" background-color="red">topbottom</fo:block>
-          <fo:block margin="0pt" padding="1pt 2pt 3pt" background-color="brown">leftrightbottom</fo:block>
+          <fo:block margin="0pt" padding="1pt 2pt 3pt" background-color="brown">three values</fo:block>
         </fo:flow>
       </fo:page-sequence>
     </fo:root>
@@ -70,14 +70,14 @@
     <eval expected="14400" xpath="/areaTree/pageSequence/pageViewport/page[1]/regionViewport/regionBody/mainReference/span/flow/block[3]/@bpd"/>
     <eval expected="24400" xpath="/areaTree/pageSequence/pageViewport/page[1]/regionViewport/regionBody/mainReference/span/flow/block[3]/@bpda"/>
     <!-- leftrightbottom -->
-    <eval expected="1000" xpath="/areaTree/pageSequence/pageViewport/page[1]/regionViewport/regionBody/mainReference/span/flow/block[4]/@padding-start"/>
+    <eval expected="2000" xpath="/areaTree/pageSequence/pageViewport/page[1]/regionViewport/regionBody/mainReference/span/flow/block[4]/@padding-start"/>
     <eval expected="2000" xpath="/areaTree/pageSequence/pageViewport/page[1]/regionViewport/regionBody/mainReference/span/flow/block[4]/@padding-end"/>
-    <true xpath="not(/areaTree/pageSequence/pageViewport/page[1]/regionViewport/regionBody/mainReference/span/flow/block[4]/@padding-before)"/>
+    <eval expected="1000" xpath="/areaTree/pageSequence/pageViewport/page[1]/regionViewport/regionBody/mainReference/span/flow/block[4]/@padding-before"/>
     <eval expected="3000" xpath="/areaTree/pageSequence/pageViewport/page[1]/regionViewport/regionBody/mainReference/span/flow/block[4]/@padding-after"/>
-    <eval expected="1000 2000 0 3000" xpath="/areaTree/pageSequence/pageViewport/page[1]/regionViewport/regionBody/mainReference/span/flow/block[4]/@bap" desc="border and padding check"/>
-    <eval expected="357000" xpath="/areaTree/pageSequence/pageViewport/page[1]/regionViewport/regionBody/mainReference/span/flow/block[4]/@ipd"/>
+    <eval expected="2000 2000 1000 3000" xpath="/areaTree/pageSequence/pageViewport/page[1]/regionViewport/regionBody/mainReference/span/flow/block[4]/@bap" desc="border and padding check"/>
+    <eval expected="356000" xpath="/areaTree/pageSequence/pageViewport/page[1]/regionViewport/regionBody/mainReference/span/flow/block[4]/@ipd"/>
     <eval expected="360000" xpath="/areaTree/pageSequence/pageViewport/page[1]/regionViewport/regionBody/mainReference/span/flow/block[4]/@ipda"/>
     <eval expected="14400" xpath="/areaTree/pageSequence/pageViewport/page[1]/regionViewport/regionBody/mainReference/span/flow/block[4]/@bpd"/>
-    <eval expected="17400" xpath="/areaTree/pageSequence/pageViewport/page[1]/regionViewport/regionBody/mainReference/span/flow/block[4]/@bpda"/>
+    <eval expected="18400" xpath="/areaTree/pageSequence/pageViewport/page[1]/regionViewport/regionBody/mainReference/span/flow/block[4]/@bpda"/>
   </checks>
 </testcase>
