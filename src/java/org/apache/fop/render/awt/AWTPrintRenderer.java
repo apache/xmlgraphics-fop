@@ -96,7 +96,7 @@ public class AWTPrintRenderer extends AWTRenderer {
         super.stopRenderer();
 
         if (endNumber == -1) {
-            endNumber = getPageCount();
+            endNumber = getNumberOfPages();
         }
 
         Vector numbers = getInvalidPageNumbers();
@@ -129,7 +129,7 @@ public class AWTPrintRenderer extends AWTRenderer {
 
     private Vector getInvalidPageNumbers() {
         Vector vec = new Vector();
-        int max = getPageCount();
+        int max = getNumberOfPages();
         boolean isValid;
         for (int i = 0; i < max; i++) {
             isValid = true;

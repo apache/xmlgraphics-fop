@@ -425,9 +425,7 @@ public class PreviewDialog extends JFrame {
             pageLabel.setIcon(null);
             infoStatus.setText("");
             currentPage = 0;
-            //Cleans up renderer - to be done
-            //while (renderer.getPageCount() != 0)
-            //    renderer.removePage(0);
+
             try {
                 setStatus(translator.getString("Status.Build.FO.tree"));
                 driver.render(inputHandler);
@@ -499,7 +497,9 @@ public class PreviewDialog extends JFrame {
             scale.setSelectedIndex(5);
         }
         renderer.setScaleFactor(scaleFactor);
-        showPage();
+        if (renderer.getNumberOfPages() != 0) {
+            showPage();
+        }
     }
 
     private void scaleActionPerformed(ActionEvent e) {
@@ -558,25 +558,28 @@ public class PreviewDialog extends JFrame {
          * The run method that does the actual updating
          */
         public void run() {
-            BufferedImage pageImage = null;
-            Graphics graphics = null;
-
-//          renderer.render(currentPage);
-            pageImage = renderer.getLastRenderedPage();
-            if (pageImage == null)
-                return;
-            graphics = pageImage.getGraphics();
-            graphics.setColor(Color.black);
-            graphics.drawRect(0, 0, pageImage.getWidth() - 1,
-                              pageImage.getHeight() - 1);
-
-            pageLabel.setIcon(new ImageIcon(pageImage));
-            pageCount = renderer.getPageCount();
-
-            //Updates status bar
-            infoStatus.setText(translator.getString("Status.Page") + " "
-                + (currentPage + 1) + " "
-                + translator.getString("Status.of") + " " + pageCount);
+            try {
+                BufferedImage pageImage = null;
+                Graphics graphics = null;
+    
+                pageImage = renderer.getPageImage(currentPage);
+                if (pageImage == null)
+                    return;
+                graphics = pageImage.getGraphics();
+                graphics.setColor(Color.black);
+                graphics.drawRect(0, 0, pageImage.getWidth() - 1,
+                                  pageImage.getHeight() - 1);
+    
+                pageLabel.setIcon(new ImageIcon(pageImage));
+                pageCount = renderer.getNumberOfPages();
+    
+                // Update status bar
+                infoStatus.setText(translator.getString("Status.Page") + " "
+                    + (currentPage + 1) + " "
+                    + translator.getString("Status.of") + " " + pageCount);
+            } catch (FOPException e) {
+                reportException(e);
+            }
         }
     }
 
