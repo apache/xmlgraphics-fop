@@ -484,7 +484,6 @@ Sometimes ant gives out this warnings, but the build is finished without any pro
     <copyfile src="${basedir}/README" dest="${build.dir}/README" />
     <copyfile src="${basedir}/STATUS" dest="${build.dir}/STATUS" />
     <copyfile src="${basedir}/LICENSE" dest="${build.dir}/LICENSE" />
-    <copyfile src="${basedir}/FAQ" dest="${build.dir}/FAQ" />
   </target>
 
   <!-- =================================================================== -->
