@@ -50,14 +50,48 @@
  */ 
 package org.apache.fop.fo;
 
+import java.util.HashMap;
+
 /**
  * Interface for adding supported element and property mappings to
  * the given builder.
  */
-public interface ElementMapping {
-    final String DEFAULT = "<default>";
+/** Abstract base class of FO Element Mappings.  */
+public abstract class ElementMapping {
+    public static final String DEFAULT = "<default>";
 
-    void addToBuilder(FOTreeBuilder builder);
+    /** The HashMap table of formatting objects defined by the ElementMapping */
+    protected HashMap foObjs = null;
+
+    /** The namespace for the ElementMapping */
+    protected String URI = null;
+
+    /**
+     * Returns a HashMap of maker objects for this element mapping
+     *
+     * @return Table of Maker objects for this ElementMapping
+     */
+    public HashMap getTable() {
+        if (foObjs == null) {
+            initialize();
+        }
+        return foObjs;
+    }
+
+    /**
+     * Returns the namespace URI for this element mapping
+     *
+     * @return Namespace URI for this element mapping
+    */
+    public String getNamespaceURI() {
+        return URI;
+    }
+
+    /**
+     * Initializes the set of maker objects associated with this ElementMapping
+     *
+    */
+    protected abstract void initialize();
 
     public static class Maker {
         public FONode make(FONode parent) {

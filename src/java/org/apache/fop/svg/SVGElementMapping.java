@@ -53,7 +53,6 @@ package org.apache.fop.svg;
 import java.util.HashMap;
 
 import org.apache.fop.fo.FONode;
-import org.apache.fop.fo.FOTreeBuilder;
 import org.apache.fop.fo.ElementMapping;
 import org.apache.fop.apps.Driver;
 
@@ -65,34 +64,25 @@ import org.apache.batik.dom.svg.SVGDOMImplementation;
  * This adds the svg element mappings used to create the objects
  * that create the SVG Document.
  */
-public class SVGElementMapping implements ElementMapping {
-    private static HashMap foObjs = null;
-    private static boolean batik = true;
+public class SVGElementMapping extends ElementMapping {
+    private boolean batik = true;
 
-    private static synchronized void setupSVG() {
-        if (foObjs == null) {
+    public SVGElementMapping() {
+        URI = SVGDOMImplementation.SVG_NAMESPACE_URI;
+    }
+
+    protected void initialize() {
+        if (foObjs == null && batik == true) {
             // this sets the parser that will be used
             // by default (SVGBrokenLinkProvider)
             // normally the user agent value is used
-            XMLResourceDescriptor.setXMLParserClassName(
-              Driver.getParserClassName());
-
-            foObjs = new HashMap();
-            foObjs.put("svg", new SE());
-            foObjs.put(DEFAULT, new SVGMaker());
-        }
-    }
-
-    /**
-     * Add the SVG element mappings to the tree builder.
-     * @param builder the FOTreeBuilder to add the mappings to
-     */
-    public void addToBuilder(FOTreeBuilder builder) {
-        if (batik) {
             try {
-                setupSVG();
-                String svgNS = SVGDOMImplementation.SVG_NAMESPACE_URI;
-                builder.addMapping(svgNS, foObjs);
+                XMLResourceDescriptor.setXMLParserClassName(
+                  Driver.getParserClassName());
+    
+                foObjs = new HashMap();
+                foObjs.put("svg", new SE());
+                foObjs.put(DEFAULT, new SVGMaker());
             } catch (Throwable t) {
                 // if the classes are not available
                 // the DISPLAY is not checked

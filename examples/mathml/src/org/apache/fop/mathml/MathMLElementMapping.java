@@ -50,7 +50,6 @@
  */ 
 package org.apache.fop.mathml;
 
-import org.apache.fop.fo.FOTreeBuilder;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.ElementMapping;
 import org.apache.fop.image.analyser.XMLReader;
@@ -65,14 +64,13 @@ import net.sourceforge.jeuclid.DOMMathBuilder;
 /**
  * This class provides the element mapping for FOP.
  */
-public class MathMLElementMapping implements ElementMapping {
+public class MathMLElementMapping extends ElementMapping {
 
-    /** MathML namespace */
-    public static final String URI = "http://www.w3.org/1998/Math/MathML";
+    public MathMLElementMapping() {
+        URI = "http://www.w3.org/1998/Math/MathML";
+    }
 
-    private static HashMap foObjs = null;
-
-    private static synchronized void setupMathML() {
+    protected void initialize() {
         if (foObjs == null) {
             foObjs = new HashMap();
             foObjs.put("math", new ME());
@@ -80,14 +78,6 @@ public class MathMLElementMapping implements ElementMapping {
 
             XMLReader.setConverter(URI, new MathMLConverter());
         }
-    }
-
-    /**
-     * @see org.apache.fop.fo.ElementMapping#addToBuilder(FOTreeBuilder)
-     */
-    public void addToBuilder(FOTreeBuilder builder) {
-        setupMathML();
-        builder.addMapping(URI, foObjs);
     }
 
     static class MathMLMaker extends ElementMapping.Maker {
