@@ -407,6 +407,10 @@ public class PropNames {
                                         Z_INDEX = 323,
         
                             LAST_PROPERTY_INDEX = Z_INDEX;
+    // TODO specify last corresponding accurately and possibly re-organize to
+    // group all corresponding properties early in the list
+    public static final int
+                       LAST_CORRESPONDING_INDEX = Z_INDEX;
 
 
     /**

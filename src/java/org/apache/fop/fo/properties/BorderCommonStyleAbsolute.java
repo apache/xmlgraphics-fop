@@ -59,4 +59,7 @@ extends BorderCommonStyle {
         return relBorderStyleProps[relEdge];
     }
 
+    public boolean isCorrespondingAbsolute() {
+        return true;
+    }
 }

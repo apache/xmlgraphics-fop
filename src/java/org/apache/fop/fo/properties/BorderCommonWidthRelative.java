@@ -59,4 +59,7 @@ public abstract class BorderCommonWidthRelative extends BorderCommonWidth {
         return false;
     }
 
+    public boolean isCorrespondingRelative() {
+        return true;
+    }
 }

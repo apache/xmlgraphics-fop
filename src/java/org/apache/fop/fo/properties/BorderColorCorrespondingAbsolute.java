@@ -55,4 +55,7 @@ public class BorderColorCorrespondingAbsolute extends BorderColorCorresponding {
         return relBorderColorProps[relEdge];
     }
 
+    public boolean isCorrespondingAbsolute() {
+        return true;
+    }
 }
