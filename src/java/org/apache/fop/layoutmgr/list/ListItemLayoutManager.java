@@ -236,7 +236,7 @@ public class ListItemLayoutManager extends BlockStackingLayoutManager {
             }
         }
 
-        curBlockArea.setHeight(listItemHeight);
+        curBlockArea.setBPD(listItemHeight);
 
         flush();
 
@@ -274,7 +274,6 @@ public class ListItemLayoutManager extends BlockStackingLayoutManager {
             Area parentArea = parentLM.getParentArea(curBlockArea);
             int referenceIPD = parentArea.getIPD();
             curBlockArea.setIPD(referenceIPD);
-            curBlockArea.setWidth(referenceIPD);
             // Get reference IPD from parentArea
             setCurrentArea(curBlockArea); // ??? for generic operations
         }

@@ -1416,7 +1416,7 @@ public class LineLayoutManager extends InlineStackingLayoutManager {
             LineBreakPosition lbp = (LineBreakPosition) parentIter.next();
             LineArea lineArea = new LineArea();
             lineArea.setStartIndent(lbp.startIndent);
-            lineArea.setHeight(lbp.lineHeight);
+            lineArea.setBPD(lbp.lineHeight);
             lc.setBaseline(lbp.baseline);
             lc.setLineHeight(lbp.lineHeight);
             setCurrentArea(lineArea);

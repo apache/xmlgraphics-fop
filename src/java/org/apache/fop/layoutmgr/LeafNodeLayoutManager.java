@@ -171,10 +171,10 @@ public class LeafNodeLayoutManager extends AbstractLayoutManager {
                                      | BreakPoss.ISLAST);
         ipd = getAllocationIPD(context.getRefIPD());
         bp.setStackingSize(ipd);
-        bp.setNonStackingSize(new MinOptMax(curArea.getHeight()));
+        bp.setNonStackingSize(new MinOptMax(curArea.getBPD()));
         bp.setTrailingSpace(new SpaceSpecifier(false));
 
-        int bpd = curArea.getHeight();
+        int bpd = curArea.getBPD();
         switch (alignment) {
             case VerticalAlign.MIDDLE:
                 bp.setMiddle(bpd / 2 /* - fontLead/2 */);
@@ -245,7 +245,7 @@ public class LeafNodeLayoutManager extends AbstractLayoutManager {
      * @param context the layout context used for adding the area
      */
     protected void offsetArea(LayoutContext context) {
-        int bpd = curArea.getHeight();
+        int bpd = curArea.getBPD();
         switch (alignment) {
             case VerticalAlign.MIDDLE:
                 curArea.setOffset(context.getBaseline() - bpd / 2 /* - fontLead/2 */);
@@ -279,7 +279,7 @@ public class LeafNodeLayoutManager extends AbstractLayoutManager {
             width = (int) (width + dAdjust * (areaInfo.ipdArea.max
                                              - areaInfo.ipdArea.opt));
         }
-        curArea.setWidth(width);
+        curArea.setIPD(width);
     }
 
     /**
@@ -303,7 +303,7 @@ public class LeafNodeLayoutManager extends AbstractLayoutManager {
         }
         ipd = getAllocationIPD(context.getRefIPD());
 
-        int bpd = curArea.getHeight();
+        int bpd = curArea.getBPD();
         int lead = 0;
         int total = 0;
         int middle = 0;

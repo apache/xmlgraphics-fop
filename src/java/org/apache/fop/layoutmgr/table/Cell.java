@@ -211,7 +211,7 @@ public class Cell extends BlockStackingLayoutManager {
             TraitSetter.addBackground(curBlockArea, backgroundProps);
         }
 
-        curBlockArea.setHeight(height);
+        curBlockArea.setBPD(height);
 
         flush();
 
@@ -239,13 +239,13 @@ public class Cell extends BlockStackingLayoutManager {
             // set position
             curBlockArea.setXOffset(xoffset);
             curBlockArea.setYOffset(yoffset);
-            curBlockArea.setWidth(cellIPD);
+            curBlockArea.setIPD(cellIPD);
             //curBlockArea.setHeight();
 
             // Set up dimensions
             Area parentArea = parentLM.getParentArea(curBlockArea);
             int referenceIPD = parentArea.getIPD();
-            curBlockArea.setIPD(referenceIPD);
+            //curBlockArea.setIPD(referenceIPD);
             // Get reference IPD from parentArea
             setCurrentArea(curBlockArea); // ??? for generic operations
         }

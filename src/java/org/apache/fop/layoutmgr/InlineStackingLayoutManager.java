@@ -447,7 +447,7 @@ public class InlineStackingLayoutManager extends AbstractLayoutManager {
     public void addAreas(PositionIterator parentIter,
                          LayoutContext context) {
         InlineParent parent = createArea();
-        parent.setHeight(context.getLineHeight());
+        parent.setBPD(context.getLineHeight());
         parent.setOffset(0);
         setCurrentArea(parent);
 
@@ -583,7 +583,7 @@ public class InlineStackingLayoutManager extends AbstractLayoutManager {
             if (iAdjust != 0) {
                 //getLogger().debug("Add leading space: " + iAdjust);
                 Space ls = new Space();
-                ls.setWidth(iAdjust);
+                ls.setIPD(iAdjust);
                 parentArea.addChild(ls);
             }
         }

@@ -90,7 +90,7 @@ public abstract class BlockStackingLayoutManager extends AbstractLayoutManager {
         }
         if (sp != 0) {
             Block spacer = new Block();
-            spacer.setHeight(sp);
+            spacer.setBPD(sp);
             parentLM.addChild(spacer);
         }
     }

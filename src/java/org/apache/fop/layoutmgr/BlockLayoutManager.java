@@ -303,7 +303,6 @@ public class BlockLayoutManager extends BlockStackingLayoutManager {
         }
 
         int bIndents = borderProps.getBPPaddingAndBorder(false);
-        curBlockArea.setHeight(curBlockArea.getHeight() + bIndents);
 
         addMarkers(false, true);
 
@@ -348,12 +347,13 @@ public class BlockLayoutManager extends BlockStackingLayoutManager {
             // Need to be careful though, if parent is BC then width may not be set
             int parentwidth = 0;
             if (parentArea instanceof BlockParent) {
-                parentwidth = ((BlockParent) parentArea).getWidth();
+                parentwidth = ((BlockParent) parentArea).getIPD();
             }
             if (parentwidth == 0) {
                 parentwidth = referenceIPD;
             }
-            curBlockArea.setWidth(parentwidth);
+            parentwidth -= marginProps.startIndent + marginProps.endIndent;
+            curBlockArea.setIPD(parentwidth);
             setCurrentArea(curBlockArea); // ??? for generic operations
         }
         return curBlockArea;

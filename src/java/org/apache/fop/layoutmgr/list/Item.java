@@ -216,7 +216,7 @@ public class Item extends BlockStackingLayoutManager {
             curBlockArea.setPositioning(Block.ABSOLUTE);
             // set position
             curBlockArea.setXOffset(xoffset);
-            curBlockArea.setWidth(itemIPD);
+            curBlockArea.setIPD(itemIPD);
             //curBlockArea.setHeight();
 
             // Set up dimensions
