@@ -90,7 +90,12 @@ public class PropertyListBuilder {
 	Property p = null;
 	Property.Maker propertyMaker = findMaker(space, element, propertyName);
 	if (propertyMaker != null) {
+	  try {
 	    p = propertyMaker.compute(propertyList);
+          } catch (FOPException e) {
+    	     MessageHandler.errorln("ERROR: exception occurred while computing" +
+    	         " value of property '" + propertyName +"': " + e.getMessage());
+          }
 	} else {
 	    MessageHandler.errorln("WARNING: property " + propertyName + " ignored");
 	}
@@ -209,6 +214,19 @@ public class PropertyListBuilder {
     }
     else return null;
   }
+    
+  
+    public boolean isCorrespondingForced(PropertyList propertyList, String space,
+    	 String element, String propertyName) {
+	Property.Maker propertyMaker = findMaker(space, element, propertyName);
+	if (propertyMaker != null) {
+	    return propertyMaker.isCorrespondingForced(propertyList);
+	} else {
+	    MessageHandler.errorln("WARNING: no Maker for " + propertyName);
+	}
+	return false;
+    }
+    
 
     public Property makeProperty(PropertyList propertyList, String space, String element, String propertyName) throws FOPException {
 	

@@ -86,6 +86,7 @@ public class FObj extends FONode {
     this.properties = propertyList;
     propertyList.setFObj(this);
     this.name = "default FO";
+    setWritingMode();
   }
 
   /**
@@ -179,6 +180,24 @@ public class FObj extends FONode {
   public boolean generatesReferenceAreas() {
 	return false;
   }
+
+    /**
+     * Set writing mode for this FO.
+     * Find nearest ancestor, including self, which generates
+     * reference areas and use the value of its writing-mode property.
+     */
+  private void setWritingMode() {
+    FObj p = this;
+    while (p!= null && !p.generatesReferenceAreas())
+      p = p.getParent();
+    if (p != null) {
+      this.properties.setWritingMode(p.getProperty("writing-mode").getEnum());
+    }
+    else {
+      // shouldn't happen!!!
+    }
+  }
+
 
 }
 

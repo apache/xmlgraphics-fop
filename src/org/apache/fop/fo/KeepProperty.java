@@ -50,47 +50,25 @@
  */
 package org.apache.fop.fo;
 
-import org.apache.fop.apps.FOPException;
-import org.apache.fop.messaging.MessageHandler;
+import org.apache.fop.datatypes.Keep;
 
-public class EnumProperty extends Property {
+public class KeepProperty extends Property {
 
   public static class Maker extends Property.Maker {
 
-    protected Maker(String propName) {
-      super(propName);
+    protected Maker(String name) {
+	super(name);
     }
-
-
-    /**
-     * Called by subclass if no match found.
-     */
-    public Property checkEnumValues(String value) {
-	MessageHandler.errorln("WARNING: Unknown enumerated value for property '" +
-			       getPropName() + "': " + value);
-	return null;
-    }
-
-    protected Property findConstant(String value) {
-      return null;
-    }
-
   }
 
-    private int value;
+  private Keep keep ;
 
-    public EnumProperty(int explicitValue) {
-	this.value = explicitValue;
-    }
+  public KeepProperty(Keep keep) {
+    this.keep = keep;
+  }
 
-    public int getEnum() {
-	return this.value;
-    }
+  public Keep getKeep() { return this.keep; }
 
-    public Object getObject() {
-	// FIXME: return String value: property must reference maker
-	// return maker.getEnumValue(this.value);
-	return new Integer(this.value);
-    }
+  public Object getObject() { return this.keep; }
 
 }

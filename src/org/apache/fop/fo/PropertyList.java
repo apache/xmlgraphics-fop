@@ -52,10 +52,43 @@ package org.apache.fop.fo;
 
 import java.util.Hashtable;
 import org.apache.fop.messaging.MessageHandler;
-
+import org.apache.fop.fo.properties.WritingMode;
 import org.apache.fop.apps.FOPException;
 
 public class PropertyList extends Hashtable {
+
+  private byte[] wmtable=null; // writing-mode values
+  public static final int LEFT=0;
+  public static final int RIGHT=1;
+  public static final int TOP=2;
+  public static final int BOTTOM=3;
+  public static final int HEIGHT=4;
+  public static final int WIDTH=5;
+
+  public static final int START=0;
+  public static final int END=1;
+  public static final int BEFORE=2;
+  public static final int AFTER=3;
+  public static final int BLOCKPROGDIM=4;
+  public static final int INLINEPROGDIM=5;
+
+  private static final String[] sAbsNames= new String[]
+        {"left", "right", "top", "bottom", "height", "width"};
+
+  private static final String[] sRelNames= new String[]
+        {"start", "end", "before", "after",
+         "block-progression-dimension", "inline-progression-dimension"};
+
+  static private final Hashtable wmtables = new Hashtable(4);
+  {
+      wmtables.put(new Integer(WritingMode.LR_TB),   /* lr-tb */
+		   new byte[]{START, END, BEFORE, AFTER, BLOCKPROGDIM, INLINEPROGDIM });
+      wmtables.put(new Integer(WritingMode.RL_TB),   /* rl-tb */
+		   new byte[]{END, START, BEFORE, AFTER, BLOCKPROGDIM, INLINEPROGDIM });
+      wmtables.put(new Integer(WritingMode.TB_RL),   /* tb-rl */
+		   new byte[]{AFTER, BEFORE, START, END, INLINEPROGDIM, BLOCKPROGDIM });
+  }
+
   private PropertyListBuilder builder;
   private PropertyList parentPropertyList = null;
   String namespace = "";
@@ -118,20 +151,33 @@ public class PropertyList extends Hashtable {
     return null; // No builder or exception in makeProperty!
   }
 
+    /* If the property is a relative property with a corresponding absolute
+     * value specified, the absolute value is used. This is also true of
+     * the inheritance priority (I think...)
+     * If the property is an "absolute" property and it isn't specified, then
+     * we try to compute it from the corresponding relative property: this
+     * happends in computeProperty.
+     */
   private Property findProperty(String propertyName) {
-    Property p = getExplicit(propertyName);
-    if (p == null) {
-      p = this.builder.computeProperty(this,namespace, element, propertyName);
+    Property p = null;
+    if (builder.isCorrespondingForced(this, namespace, element, propertyName)) {
+      p = builder.computeProperty(this,namespace, element, propertyName);
     }
-    if (p == null) { // else inherit (if has parent and is inheritable)
-        if (this.parentPropertyList != null &&
-	    builder.isInherited(namespace, element, propertyName)) {
-          p = parentPropertyList.findProperty(propertyName);
+    else {
+        p = getExplicit(propertyName);
+        if (p == null) {
+          p = this.builder.computeProperty(this,namespace, element, propertyName);
+        }
+        if (p == null) { // else inherit (if has parent and is inheritable)
+            if (this.parentPropertyList != null &&
+    	    builder.isInherited(namespace, element, propertyName)) {
+              p = parentPropertyList.findProperty(propertyName);
+            }
         }
     }
     return p;
   }
-
+  
 
   /**
    * Return the property on the current FlowObject. If it isn't set explicitly,
@@ -228,6 +274,36 @@ public class PropertyList extends Hashtable {
     }
     return null; // No builder or exception in makeProperty!
   }
+
+      /** Given an absolute direction (top, bottom, left, right),
+     * return the corresponding writing model relative direction name
+     * for the flow object. Uses the stored writingMode.
+     */
+    public String wmAbsToRel(int absdir) {
+	if (wmtable != null) {
+          return sRelNames[wmtable[absdir]];
+	}
+	else return "";
+    }
+
+    /** Given a writing mode relative direction (start, end, before, after)
+     * return the corresponding absolute direction name
+     * for the flow object. Uses the stored writingMode.
+     */
+    public String wmRelToAbs(int reldir) {
+	if (wmtable != null) {
+	    for (int i=0; i < wmtable.length; i++) {
+		if (wmtable[i]==reldir)
+		    return sAbsNames[i];
+	    }
+	}
+	return "";
+    }
+
+    /** Set the writing mode traits for the FO with this property list. */
+    public void setWritingMode(int writingMode) {
+	this.wmtable = (byte[])wmtables.get(new Integer(writingMode));
+    }
 
 }
 

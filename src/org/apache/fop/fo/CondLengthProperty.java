@@ -53,22 +53,28 @@ package org.apache.fop.fo;
 import org.apache.fop.datatypes.Length;
 import org.apache.fop.datatypes.CondLength;
 
-public class CondLengthProperty extends LengthProperty {
+public class CondLengthProperty extends Property {
 
-  public static class Maker extends LengthProperty.Maker {
+  public static class Maker extends Property.Maker {
 
-    public /* protected*/ Maker(String name) {
+    public Maker(String name) {
 	super(name);
     }
   }
 
-  public CondLengthProperty(CondLength length) {
-    super(length);
-  }
+  private CondLength condLength= null;
 
+  public CondLengthProperty(CondLength condLength) {
+    this.condLength = condLength;
+  }
 
   public CondLength getCondLength() {
-    return (CondLength)super.getLength();
+    return this.condLength;
   }
+
+  /* Question, should we allow this? */
+  public Length getLength() { return this.condLength.getLength().getLength(); }
+
+  public Object getObject() { return this.condLength; }
 
 }
