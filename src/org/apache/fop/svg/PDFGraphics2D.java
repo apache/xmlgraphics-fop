@@ -548,12 +548,12 @@ public class PDFGraphics2D extends AbstractGraphics2D {
         AffineTransform trans = getTransform();
         double[] tranvals = new double[6];
         trans.getMatrix(tranvals);
-        currentStream.write(PDFNumber.doubleOut(tranvals[0]) + " "
-                            + PDFNumber.doubleOut(tranvals[1]) + " "
-                            + PDFNumber.doubleOut(tranvals[2]) + " "
-                            + PDFNumber.doubleOut(tranvals[3]) + " "
-                            + PDFNumber.doubleOut(tranvals[4]) + " "
-                            + PDFNumber.doubleOut(tranvals[5]) + " cm\n");
+        currentStream.write(PDFNumber.doubleOut(tranvals[0], 8) + " "
+                            + PDFNumber.doubleOut(tranvals[1], 8) + " "
+                            + PDFNumber.doubleOut(tranvals[2], 8) + " "
+                            + PDFNumber.doubleOut(tranvals[3], 8) + " "
+                            + PDFNumber.doubleOut(tranvals[4], 8) + " "
+                            + PDFNumber.doubleOut(tranvals[5], 8) + " cm\n");
 
         PathIterator iter = s.getPathIterator(new AffineTransform());
         while (!iter.isDone()) {
@@ -938,12 +938,12 @@ public class PDFGraphics2D extends AbstractGraphics2D {
         double[] vals = new double[6];
         trans.getMatrix(vals);
 
-        currentStream.write(PDFNumber.doubleOut(vals[0]) + " "
-                            + PDFNumber.doubleOut(vals[1]) + " "
-                            + PDFNumber.doubleOut(vals[2]) + " "
-                            + PDFNumber.doubleOut(vals[3]) + " "
-                            + PDFNumber.doubleOut(vals[4]) + " "
-                            + PDFNumber.doubleOut(vals[5]) + " cm\n");
+        currentStream.write(PDFNumber.doubleOut(vals[0], 8) + " "
+                            + PDFNumber.doubleOut(vals[1], 8) + " "
+                            + PDFNumber.doubleOut(vals[2], 8) + " "
+                            + PDFNumber.doubleOut(vals[3], 8) + " "
+                            + PDFNumber.doubleOut(vals[4], 8) + " "
+                            + PDFNumber.doubleOut(vals[5], 8) + " cm\n");
         currentStream.write("1 0 0 -1 0 0 Tm [" + startText);
 
         int l = s.length();
@@ -1084,12 +1084,12 @@ public class PDFGraphics2D extends AbstractGraphics2D {
 
             }
 
-            currentStream.write(PDFNumber.doubleOut(vals[0]) + " "
-                                + PDFNumber.doubleOut(vals[1]) + " "
-                                + PDFNumber.doubleOut(vals[2]) + " "
-                                + PDFNumber.doubleOut(vals[3]) + " "
-                                + PDFNumber.doubleOut(vals[4]) + " "
-                                + PDFNumber.doubleOut(vals[5]) + " Tm (" + ch
+            currentStream.write(PDFNumber.doubleOut(vals[0], 8) + " "
+                                + PDFNumber.doubleOut(vals[1], 8) + " "
+                                + PDFNumber.doubleOut(vals[2], 8) + " "
+                                + PDFNumber.doubleOut(vals[3], 8) + " "
+                                + PDFNumber.doubleOut(vals[4], 8) + " "
+                                + PDFNumber.doubleOut(vals[5], 8) + " Tm (" + ch
                                 + ") Tj\n");
         }
 
@@ -1285,11 +1285,9 @@ System.out.println("getting getNormalizingTransform");
         }
 
         // needed for compiling under jdk1.4
-        @jdk14codestart@
         public java.awt.image.VolatileImage createCompatibleVolatileImage(int width, int height) {
             return null;
         }
-        @jdk14codeend@
     }
 
     /**

@@ -550,12 +550,12 @@ public class PDFRenderer extends PrintRenderer {
         if (!at.isIdentity()) {
             double[] vals = new double[6];
             at.getMatrix(vals);
-            currentStream.add(PDFNumber.doubleOut(vals[0]) + " "
-                    + PDFNumber.doubleOut(vals[1]) + " "
-                    + PDFNumber.doubleOut(vals[2]) + " "
-                    + PDFNumber.doubleOut(vals[3]) + " "
-                    + PDFNumber.doubleOut(vals[4]) + " "
-                    + PDFNumber.doubleOut(vals[5]) + " cm\n");
+            currentStream.add(PDFNumber.doubleOut(vals[0], 8) + " "
+                    + PDFNumber.doubleOut(vals[1], 8) + " "
+                    + PDFNumber.doubleOut(vals[2], 8) + " "
+                    + PDFNumber.doubleOut(vals[3], 8) + " "
+                    + PDFNumber.doubleOut(vals[4], 8) + " "
+                    + PDFNumber.doubleOut(vals[5], 8) + " cm\n");
         }
 
         PDFGraphics2D graphics = new PDFGraphics2D(true, fs, pdfDoc,
