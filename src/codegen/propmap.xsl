@@ -35,29 +35,29 @@
 <xsl:template match="property-list">
 package org.apache.fop.fo.properties;
 
-import java.util.Hashtable;
-import java.util.Enumeration;
-import org.apache.fop.svg.*;
+import java.util.HashMap;
+import java.util.Set;
+//import org.apache.fop.svg.*;
 
 public class <xsl:value-of select="@family"/>PropertyMapping {
 
-  private static Hashtable s_htGeneric = new Hashtable(200);
-  private static Hashtable s_htElementLists = new Hashtable(10);
+  private static HashMap s_htGeneric = new HashMap();
+  private static HashMap s_htElementLists = new HashMap();
   <xsl:for-each select="element-property-list">
-  private static Hashtable s_ht<xsl:value-of select="localname[1]"/>;</xsl:for-each>
+  private static HashMap s_ht<xsl:value-of select="localname[1]"/>;</xsl:for-each>
 
   <xsl:apply-templates/>
 
-  public static Hashtable getGenericMappings() {
+  public static HashMap getGenericMappings() {
     return s_htGeneric;
   }
 
-  public static Enumeration getElementMappings() {
-    return s_htElementLists.keys();
+  public static Set getElementMappings() {
+    return s_htElementLists.keySet();
   }
 
-  public static Hashtable getElementMapping(String elemName) {
-    return (Hashtable)s_htElementLists.get(elemName);
+  public static HashMap getElementMapping(String elemName) {
+    return (HashMap)s_htElementLists.get(elemName);
   }
 }
 </xsl:template>
@@ -74,7 +74,7 @@ public class <xsl:value-of select="@family"/>PropertyMapping {
 <xsl:template match="element-property-list">
   <xsl:variable name="ename" select="localname[1]"/>
   static {
-    s_ht<xsl:value-of select="$ename"/> = new Hashtable();
+    s_ht<xsl:value-of select="$ename"/> = new HashMap();
    <xsl:for-each select="localname">
     s_htElementLists.put("<xsl:value-of select='.'/>", s_ht<xsl:value-of select='$ename'/>);
    </xsl:for-each>

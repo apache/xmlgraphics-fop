@@ -12,23 +12,30 @@ import org.apache.fop.fo.properties.ExtensionPropertyMapping;
 import org.apache.fop.fo.TreeBuilder;
 
 import java.util.Enumeration;
-import java.util.Hashtable;
+import java.util.HashMap;
+import java.util.Iterator;
 
 public class ExtensionElementMapping implements ElementMapping {
 
     public static final String URI = "http://xml.apache.org/fop/extensions";
 
-    public void addToBuilder(TreeBuilder builder) {
-        builder.addMapping(URI, "outline", Outline.maker());
-        builder.addMapping(URI, "label", Label.maker());
+    private static HashMap foObjs = null;
+
+    public synchronized void addToBuilder(TreeBuilder builder) {
+        if(foObjs == null) {
+            foObjs = new HashMap();    
+            foObjs.put("outline", Outline.maker());
+            foObjs.put("label", Label.maker());
+        }
+        builder.addMapping(URI, foObjs);
 
 
         builder.addPropertyList(ExtensionElementMapping.URI,
                                 ExtensionPropertyMapping.getGenericMappings());
         /* Add any element mappings */
-        for (Enumeration e = ExtensionPropertyMapping.getElementMappings();
-                e.hasMoreElements(); ) {
-            String elem = (String)e.nextElement();
+        for (Iterator iter = ExtensionPropertyMapping.getElementMappings().iterator();
+                iter.hasNext(); ) {
+            String elem = (String)iter.next();
             builder.addElementPropertyList(ExtensionElementMapping.URI, elem,
                                            ExtensionPropertyMapping.getElementMapping(elem));
         }
