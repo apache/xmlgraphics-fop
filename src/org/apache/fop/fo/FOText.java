@@ -209,6 +209,7 @@ public class FOText extends FONode {
 
             // parse text for upper/lower case and call addRealText
             char c;
+            char newdata[] = new char[end];
             boolean isLowerCase;
             int caseStart;
             FontState fontStateToUse;
@@ -221,7 +222,9 @@ public class FOText extends FONode {
                         == (java.lang.Character.isLetter(c)
                             && java.lang.Character.isLowerCase(c))) {
                     if (isLowerCase) {
-                        data[i] = java.lang.Character.toUpperCase(c);
+                        newdata[i] = java.lang.Character.toUpperCase(c);
+                    } else {
+                        newdata[i] = c;
                     }
                     i++;
                     if (i == end)
@@ -235,7 +238,7 @@ public class FOText extends FONode {
                 }
                 int index = addRealText(ba, fontStateToUse, red, green, blue,
                                         wrapOption, ls, whiteSpaceCollapse,
-                                        data, caseStart, i, textState,
+                                        newdata, caseStart, i, textState,
                                         vAlign);
                 if (index != -1) {
                     return index;
