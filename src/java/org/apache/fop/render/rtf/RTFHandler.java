@@ -282,10 +282,10 @@ public class RTFHandler extends FOInputHandler {
             }
         } catch (IOException ioe) {
             log.error("startFlow: " + ioe.getMessage());
-            throw new Error(ioe.getMessage());
+            throw new RuntimeException(ioe.getMessage());
         } catch (Exception e) {
             log.error("startFlow: " + e.getMessage());
-            throw new Error(e.getMessage());
+            throw new RuntimeException(e.getMessage());
         }
     }
 
@@ -307,7 +307,7 @@ public class RTFHandler extends FOInputHandler {
             }
         } catch (Exception e) {
             log.error("endFlow: " + e.getMessage());
-            throw new Error(e.getMessage());
+            throw new RuntimeException(e.getMessage());
         }
     }
 
@@ -344,10 +344,10 @@ public class RTFHandler extends FOInputHandler {
         } catch (IOException ioe) {
             // TODO could we throw Exception in all FOInputHandler events?
             log.error("startBlock: " + ioe.getMessage());
-            throw new Error("IOException: " + ioe);
+            throw new RuntimeException("IOException: " + ioe);
         } catch (Exception e) {
             log.error("startBlock: " + e.getMessage());
-            throw new Error("Exception: " + e);
+            throw new RuntimeException("Exception: " + e);
         }
     }
 
@@ -390,10 +390,10 @@ public class RTFHandler extends FOInputHandler {
             
         } catch (IOException ioe) {
             log.error("startBlock:" + ioe.getMessage());
-            throw new Error(ioe.getMessage());
+            throw new RuntimeException(ioe.getMessage());
         } catch (Exception e) {
             log.error("startBlock:" + e.getMessage());
-            throw new Error(e.getMessage());
+            throw new RuntimeException(e.getMessage());
         }
     }
 
@@ -418,7 +418,7 @@ public class RTFHandler extends FOInputHandler {
             builderContext.pushContainer(tc.newTable(atts, tableContext));
         } catch (Exception e) {
             log.error("startTable:" + e.getMessage());
-            throw new Error(e.getMessage());
+            throw new RuntimeException(e.getMessage());
         }
 
         builderContext.pushTableContext(tableContext);
@@ -452,7 +452,7 @@ public class RTFHandler extends FOInputHandler {
             builderContext.getTableContext().setNextColumnRowSpanning(new Integer(0), null);
         } catch (Exception e) {
             log.error("startColumn: " + e.getMessage());
-            throw new Error(e.getMessage());
+            throw new RuntimeException(e.getMessage());
         }
 
     }
@@ -513,13 +513,13 @@ public class RTFHandler extends FOInputHandler {
             textrun.pushAttributes(rtfAttr);
         } catch (IOException ioe) {
             log.error("startInline:" + ioe.getMessage());
-            throw new Error(ioe.getMessage());
+            throw new RuntimeException(ioe.getMessage());
         } catch (FOPException fe) {
             log.error("startInline:" + fe.getMessage());
-            throw new Error(fe.getMessage());
+            throw new RuntimeException(fe.getMessage());
         } catch (Exception e) {
             log.error("startInline:" + e.getMessage());
-            throw new Error(e.getMessage());
+            throw new RuntimeException(e.getMessage());
         }
     }
 
@@ -541,10 +541,10 @@ public class RTFHandler extends FOInputHandler {
             textrun.popAttributes();
         } catch (IOException ioe) {
             log.error("startInline:" + ioe.getMessage());
-            throw new Error(ioe.getMessage());
+            throw new RuntimeException(ioe.getMessage());
         } catch (Exception e) {
             log.error("startInline:" + e.getMessage());
-            throw new Error(e.getMessage());
+            throw new RuntimeException(e.getMessage());
         }
     }
 
@@ -564,7 +564,7 @@ public class RTFHandler extends FOInputHandler {
             tbl.setHeaderAttribs(atts);
         } catch (Exception e) {
             log.error("startBody: " + e.getMessage());
-            throw new Error(e.getMessage());
+            throw new RuntimeException(e.getMessage());
         }
     }
 
@@ -581,7 +581,7 @@ public class RTFHandler extends FOInputHandler {
             tbl.setHeaderAttribs(null);
         } catch (Exception e) {
             log.error("endBody: " + e.getMessage());
-            throw new Error(e.getMessage());
+            throw new RuntimeException(e.getMessage());
         }
     }
 
@@ -611,7 +611,7 @@ public class RTFHandler extends FOInputHandler {
             builderContext.getTableContext().selectFirstColumn();
         } catch (Exception e) {
             log.error("startRow: " + e.getMessage());
-            throw new Error(e.getMessage());
+            throw new RuntimeException(e.getMessage());
         }
     }
 
@@ -673,7 +673,7 @@ public class RTFHandler extends FOInputHandler {
             builderContext.pushContainer(cell);
         } catch (Exception e) {
             log.error("startCell: " + e.getMessage());
-            throw new Error(e.getMessage());
+            throw new RuntimeException(e.getMessage());
         }
     }
 
@@ -708,13 +708,13 @@ public class RTFHandler extends FOInputHandler {
             builderContext.pushContainer(newList);
         } catch (IOException ioe) {
             log.error("startList: " + ioe.getMessage());
-            throw new Error(ioe.getMessage());
+            throw new RuntimeException(ioe.getMessage());
         } catch (FOPException fe) {
             log.error("startList: " + fe.getMessage());
-            throw new Error(fe.getMessage());
+            throw new RuntimeException(fe.getMessage());
         } catch (Exception e) {
             log.error("startList: " + e.getMessage());
-            throw new Error(e.getMessage());
+            throw new RuntimeException(e.getMessage());
         }
     }
 
@@ -744,13 +744,13 @@ public class RTFHandler extends FOInputHandler {
             builderContext.pushContainer(list.newListItem());
         } catch (IOException ioe) {
             log.error("startList: " + ioe.getMessage());
-            throw new Error(ioe.getMessage());
+            throw new RuntimeException(ioe.getMessage());
         } catch (FOPException fe) {
             log.error("startList: " + fe.getMessage());
-            throw new Error(fe.getMessage());
+            throw new RuntimeException(fe.getMessage());
         } catch (Exception e) {
             log.error("startList: " + e.getMessage());
-            throw new Error(e.getMessage());
+            throw new RuntimeException(e.getMessage());
         }
     }
 
@@ -781,10 +781,10 @@ public class RTFHandler extends FOInputHandler {
             builderContext.pushContainer(label);
         } catch (IOException ioe) {
             log.error("startPageNumber:" + ioe.getMessage());
-            throw new Error(ioe.getMessage());
+            throw new RuntimeException(ioe.getMessage());
         } catch (Exception e) {
             log.error("startPageNumber: " + e.getMessage());
-            throw new Error(e.getMessage());
+            throw new RuntimeException(e.getMessage());
         }
     }
 
@@ -868,10 +868,10 @@ public class RTFHandler extends FOInputHandler {
             
         } catch (IOException ioe) {
             log.error("startLink:" + ioe.getMessage());
-            throw new Error(ioe.getMessage());
+            throw new RuntimeException(ioe.getMessage());
         } catch (Exception e) {
             log.error("startLink: " + e.getMessage());
-            throw new Error(e.getMessage());
+            throw new RuntimeException(e.getMessage());
         }
     }
 
@@ -992,10 +992,10 @@ public class RTFHandler extends FOInputHandler {
         } catch (IOException ioe) {
             // TODO could we throw Exception in all FOInputHandler events?
             log.error("startFootnote: " + ioe.getMessage());
-            throw new Error("IOException: " + ioe);
+            throw new RuntimeException("IOException: " + ioe);
         } catch (Exception e) {
             log.error("startFootnote: " + e.getMessage());
-            throw new Error("Exception: " + e);
+            throw new RuntimeException("Exception: " + e);
         }
     }
     
@@ -1028,10 +1028,10 @@ public class RTFHandler extends FOInputHandler {
         } catch (IOException ioe) {
             // TODO could we throw Exception in all FOInputHandler events?
             log.error("startFootnoteBody: " + ioe.getMessage());
-            throw new Error("IOException: " + ioe);
+            throw new RuntimeException("IOException: " + ioe);
         } catch (Exception e) {
             log.error("startFootnoteBody: " + e.getMessage());
-            throw new Error("Exception: " + e);
+            throw new RuntimeException("Exception: " + e);
         }
     }
     
@@ -1053,10 +1053,10 @@ public class RTFHandler extends FOInputHandler {
         } catch (IOException ioe) {
             // TODO could we throw Exception in all FOInputHandler events?
             log.error("endFootnoteBody: " + ioe.getMessage());
-            throw new Error("IOException: " + ioe);
+            throw new RuntimeException("IOException: " + ioe);
         } catch (Exception e) {
             log.error("endFootnoteBody: " + e.getMessage());
-            throw new Error("Exception: " + e);
+            throw new RuntimeException("Exception: " + e);
         }
     }
 
@@ -1084,10 +1084,10 @@ public class RTFHandler extends FOInputHandler {
          } catch (IOException ioe) {
             // FIXME could we throw Exception in all FOInputHandler events?
             log.error("characters: " + ioe.getMessage());
-            throw new Error(ioe.getMessage());
+            throw new RuntimeException(ioe.getMessage());
         } catch (Exception e) {
             log.error("characters:" + e.getMessage());
-            throw new Error(e.getMessage());
+            throw new RuntimeException(e.getMessage());
         }
     }
 
@@ -1113,10 +1113,10 @@ public class RTFHandler extends FOInputHandler {
             textrun.addPageNumber(rtfAttr);
         } catch (IOException ioe) {
             log.error("startPageNumber:" + ioe.getMessage());
-            throw new Error(ioe.getMessage());
+            throw new RuntimeException(ioe.getMessage());
         } catch (Exception e) {
             log.error("startPageNumber: " + e.getMessage());
-            throw new Error(e.getMessage());
+            throw new RuntimeException(e.getMessage());
         }
     }
 
