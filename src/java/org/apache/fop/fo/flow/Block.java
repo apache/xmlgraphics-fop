@@ -116,18 +116,12 @@ public class Block extends FObjMixed {
         this.alignLast =
           this.propertyList.get(PR_TEXT_ALIGN_LAST).getEnum();
         this.breakAfter = this.propertyList.get(PR_BREAK_AFTER).getEnum();
-        this.lineHeight = this.propertyList.get(
-                            PR_LINE_HEIGHT).getLength().getValue();
-        this.startIndent = this.propertyList.get(
-                             PR_START_INDENT).getLength().getValue();
-        this.endIndent = this.propertyList.get(
-                           PR_END_INDENT).getLength().getValue();
-        this.spaceBefore = this.propertyList.get(
-                             PR_SPACE_BEFORE | CP_OPTIMUM).getLength().getValue();
-        this.spaceAfter = this.propertyList.get(
-                            PR_SPACE_AFTER | CP_OPTIMUM).getLength().getValue();
-        this.textIndent = this.propertyList.get(
-                            PR_TEXT_INDENT).getLength().getValue();
+        this.lineHeight = getPropLength(PR_LINE_HEIGHT);
+        this.startIndent = getPropLength(PR_START_INDENT);
+        this.endIndent = getPropLength(PR_END_INDENT);
+        this.spaceBefore = getPropLength(PR_SPACE_BEFORE | CP_OPTIMUM);
+        this.spaceAfter = getPropLength(PR_SPACE_AFTER | CP_OPTIMUM);
+        this.textIndent = getPropLength(PR_TEXT_INDENT);
         this.keepWithNext =
           this.propertyList.get(PR_KEEP_WITH_NEXT).getEnum();
 

@@ -89,7 +89,7 @@ public class TableRow extends FObj {
         this.keepWithPrevious =
             getKeepValue(PR_KEEP_WITH_PREVIOUS | CP_WITHIN_COLUMN);
 
-        this.minHeight = this.propertyList.get(PR_HEIGHT).getLength().getValue();
+        this.minHeight = getPropLength(PR_HEIGHT);
         setup = true;
     }
 

@@ -73,7 +73,7 @@ public class InstreamForeignObjectLM extends LeafNodeLayoutManager {
         int ipd = -1;
         boolean bpdauto = false;
         if (hasLH) {
-            bpd = ifoNode.getProperty(PR_LINE_HEIGHT).getLength().getValue();
+            bpd = ifoNode.getPropLength(PR_LINE_HEIGHT);
         } else {
             // this property does not apply when the line-height applies
             // isn't the block-progression-dimension always in the same

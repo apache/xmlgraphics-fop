@@ -739,10 +739,9 @@ public class PageLayoutManager extends AbstractLayoutManager implements Runnable
     }
 
     private PageViewport createPageAreas(SimplePageMaster spm) {
-        int pageWidth =
-                spm.getProperty(PR_PAGE_WIDTH).getLength().getValue();
-        int pageHeight =
-                spm.getProperty(PR_PAGE_HEIGHT).getLength().getValue();
+        int pageWidth = spm.getPropLength(PR_PAGE_WIDTH);
+        int pageHeight = spm.getPropLength(PR_PAGE_HEIGHT);
+
         // Set the page dimension as the toplevel containing block for margin.
         ((FObj) fobj.getParent()).setLayoutDimension(PercentBase.BLOCK_IPD, pageWidth);
         ((FObj) fobj.getParent()).setLayoutDimension(PercentBase.BLOCK_BPD, pageHeight);
@@ -844,8 +843,7 @@ public class PageLayoutManager extends AbstractLayoutManager implements Runnable
         }
         body.setColumnCount(columnCount);
 
-        int columnGap =
-                r.getProperty(PR_COLUMN_GAP).getLength().getValue();
+        int columnGap = r.getPropLength(PR_COLUMN_GAP);
         body.setColumnGap(columnGap);
         return body;
     }

@@ -54,10 +54,8 @@ public class TableBody extends FObj {
      */
     protected void addProperties(Attributes attlist) throws SAXParseException {
         super.addProperties(attlist);
-        this.spaceBefore = this.propertyList.get(
-                             PR_SPACE_BEFORE | CP_OPTIMUM).getLength().getValue();
-        this.spaceAfter = this.propertyList.get(
-                            PR_SPACE_AFTER | CP_OPTIMUM).getLength().getValue();
+        this.spaceBefore = getPropLength(PR_SPACE_BEFORE | CP_OPTIMUM);
+        this.spaceAfter = getPropLength(PR_SPACE_AFTER | CP_OPTIMUM);
         this.backgroundColor =
           this.propertyList.get(PR_BACKGROUND_COLOR).getColorType();
         getFOInputHandler().startBody(this);

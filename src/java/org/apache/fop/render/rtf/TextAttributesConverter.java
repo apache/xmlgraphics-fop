@@ -103,7 +103,7 @@ class TextAttributesConverter {
     }
 
     private static void attrBlockFontSize(FObj fobj, RtfAttributes rtfAttr) {
-        int fopValue = fobj.getProperty(Constants.PR_FONT_SIZE).getLength().getValue() / 500;
+        int fopValue = fobj.getPropLength(Constants.PR_FONT_SIZE) / 500;
         rtfAttr.set("fs", fopValue);
     }
 

@@ -48,7 +48,7 @@ public abstract class RegionBA extends Region {
         bPrecedence =
             (this.propertyList.get(PR_PRECEDENCE).getEnum() == Precedence.TRUE);
 
-        this.extent = this.propertyList.get(PR_EXTENT).getLength().getValue();
+        this.extent = getPropLength(PR_EXTENT);
     }
 
     /**
