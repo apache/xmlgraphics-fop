@@ -94,20 +94,6 @@ public class FObj extends FONode {
 	// should always be overridden
 	return new Status(Status.OK);
     }
-    
-
-	/**
-	* performs layout tasks which are global to all layout objects
-	* all subclasses of FObj which override layout should call layoutStart
-	* @param area - the current area being layed out
-	*/
-	public Status layoutStart(Area area)
-	{
-	
- 		pageNumber = area.getPage().getNumber();
-		return new Status(Status.OK);
- 	}
-
 
     public String getName() {
 	return this.name;
@@ -132,11 +118,5 @@ public class FObj extends FONode {
     	return(properties.get(name));
     }
 
-    protected int pageNumber = -1;
-    
-    public int getPageNumber()
-    {
-    	return(pageNumber);
-    }
 }
 
