@@ -309,7 +309,12 @@ class NodeListImpl implements NodeList
 	}
 }
 
-public abstract class SVGElementImpl extends ElementImpl implements GraphicImpl, SVGElement {
+/*
+I want to use
+org.apache.xerces.dom.ElementImpl
+but it causes an null pointer exception in appendChild
+*/
+public abstract class SVGElementImpl extends ElementImpl/*org.apache.xerces.dom.ElementImpl*/ implements GraphicImpl, SVGElement {
 	String idString = "";
 
 	public String getId()
