@@ -396,7 +396,7 @@ want it to.</comment>
           <level-3 name="media-usage" citation="§7.25.11" extURL="slice7.html#media-usage" compliance-level="2" comply="no"/>
           <level-3 name="odd-or-even" citation="§7.25.12" extURL="slice7.html#odd-or-even" compliance-level="2" comply="yes"/>
           <level-3 name="page-height" citation="§7.25.13" extURL="slice7.html#page-height" compliance-level="1" comply="yes"/>
-          <level-3 name="page-position" citation="§7.25.14" extURL="slice7.html#page-position" compliance-level="2" comply="yes">
+          <level-3 name="page-position" citation="§7.25.14" extURL="slice7.html#page-position" compliance-level="2" comply="partial">
           	<comment>"last" isn't implemented!</comment>
           </level-3>
           <level-3 name="page-width" citation="§7.25.15" extURL="slice7.html#page-width" compliance-level="1" comply="yes"/>
