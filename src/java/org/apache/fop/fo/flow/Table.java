@@ -130,13 +130,6 @@ public class Table extends FObj {
         }
     }
 
-    /**
-     * @return false (Table does not generate inline areas)
-     */
-    public boolean generatesInlineAreas() {
-        return false;
-    }
-
     private ArrayList getColumns() {
         return columns;
     }

@@ -38,18 +38,6 @@ import org.apache.fop.layoutmgr.list.ListBlockLayoutManager;
  */
 public class ListBlock extends FObj {
 
-    private int align;
-    private int alignLast;
-    private int breakBefore;
-    private int breakAfter;
-    private int lineHeight;
-    private int startIndent;
-    private int endIndent;
-    private int spaceBefore;
-    private int spaceAfter;
-    private int spaceBetweenListRows = 0;
-    private ColorType backgroundColor;
-    
     // used for child node validation
     private boolean hasListItem = false;
 
@@ -65,22 +53,6 @@ public class ListBlock extends FObj {
      */
     protected void addProperties(Attributes attlist) throws SAXParseException {
         super.addProperties(attlist);
-
-        this.align = this.propertyList.get(PR_TEXT_ALIGN).getEnum();
-        this.alignLast = this.propertyList.get(PR_TEXT_ALIGN_LAST).getEnum();
-        this.lineHeight =
-            this.propertyList.get(PR_LINE_HEIGHT).getLength().getValue();
-        this.startIndent =
-            this.propertyList.get(PR_START_INDENT).getLength().getValue();
-        this.endIndent =
-            this.propertyList.get(PR_END_INDENT).getLength().getValue();
-        this.spaceBefore =
-            this.propertyList.get(PR_SPACE_BEFORE | CP_OPTIMUM).getLength().getValue();
-        this.spaceAfter =
-            this.propertyList.get(PR_SPACE_AFTER | CP_OPTIMUM).getLength().getValue();
-        this.spaceBetweenListRows = 0;    // not used at present
-        this.backgroundColor =
-            this.propertyList.get(PR_BACKGROUND_COLOR).getColorType();
         getFOInputHandler().startList(this);
     }
 
@@ -114,13 +86,6 @@ public class ListBlock extends FObj {
     }
 
     /**
-     * @return false (ListBlock does not generate inline areas)
-     */
-    public boolean generatesInlineAreas() {
-        return false;
-    }
-
-    /**
      * @see org.apache.fop.fo.FObj#addLayoutManager(List)
      */
     public void addLayoutManager(List list) { 	 
@@ -128,6 +93,9 @@ public class ListBlock extends FObj {
         list.add(lm); 	 
     }
 
+    /**
+     * @see org.apache.fop.fo.FObj#getName()
+     */
     public String getName() {
         return "fo:list-block";
     }

@@ -68,7 +68,7 @@ public class StaticContent extends Flow {
     /**
      * flowname checking is more stringient for static content currently
      * @param name the flow-name to set
-     * @throws FOPException for a missing flow name
+     * @throws SAXParseException for a missing flow name
      */
     protected void setFlowName(String name) throws SAXParseException {
         if (name == null || name.equals("")) {

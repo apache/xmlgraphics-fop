@@ -19,7 +19,6 @@
 package org.apache.fop.fo;
 
 // FOP
-import org.apache.fop.apps.FOPException;
 import org.apache.fop.fonts.Font;
 import org.apache.fop.fonts.FontInfo;
 import org.apache.fop.fo.properties.Property;

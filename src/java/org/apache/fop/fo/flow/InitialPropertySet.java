@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-/* $Id$ */
+/* $Id:$ */
 
 package org.apache.fop.fo.flow;
 
@@ -25,13 +25,12 @@ import org.xml.sax.SAXParseException;
 
 // FOP
 import org.apache.fop.fo.FONode;
-import org.apache.fop.fo.ToBeImplementedElement;
+import org.apache.fop.fo.FObj;
 
 /**
- * Class modelling the fo:initial-property-set object. See Sec. 6.6.4 of the
- * XSL-FO Standard.
+ * Class modelling the fo:initial-property-set object.
  */
-public class InitialPropertySet extends ToBeImplementedElement {
+public class InitialPropertySet extends FObj {
 
     /**
      * @param parent FONode that is the parent of this object
@@ -49,6 +48,9 @@ public class InitialPropertySet extends ToBeImplementedElement {
             invalidChildError(loc, nsURI, localName);
     }
 
+    /**
+     * @see org.apache.fop.fo.FObj#getName()
+     */
     public String getName() {
         return "fo:initial-property-set";
     }
