@@ -61,11 +61,11 @@ The following svg document is obtained from an external file using the fo:extern
       </fo:block>
 
       <fo:block>
-<fo:external-graphic src="file:boxes.svg"/>
+<fo:external-graphic src="url(boxes.svg)"/>
       </fo:block>
 
       <fo:block>
-This svg document (<fo:external-graphic src="file:multi.svg"/>) is also obtained from
+This svg document (<fo:external-graphic src="url(multi.svg)"/>) is also obtained from
 an external file using the fo:external-graphic. It has another svg image inside and references
 part of another svg image.
       </fo:block>
@@ -122,7 +122,7 @@ and
 
       <fo:block space-before.optimum="10pt">
 This example is an svg from an external image:
-<fo:external-graphic src="file:view.svg"/>
+<fo:external-graphic src="url(view.svg)"/>
 it has a viewbox that resizes the contents.
       </fo:block>
 
