@@ -49,7 +49,7 @@ public abstract class AbstractFopImage implements FopImage {
     protected FopImage.ImageInfo imageInfo = null;
 
     /**
-     * Image color space (org.apache.fop.datatypes.ColorSpace).
+     * Image color space (java.awt.color.ColorSpace).
      */
     protected ColorSpace m_colorSpace = null;
 
@@ -163,7 +163,7 @@ public abstract class AbstractFopImage implements FopImage {
 
     /**
      * Return the image color space.
-     * @return the image color space (org.apache.fop.datatypes.ColorSpace)
+     * @return the image color space (java.awt.color.ColorSpace)
      */
     public ColorSpace getColorSpace() {
         return this.m_colorSpace;

@@ -20,6 +20,9 @@ import com.sun.jimi.core.*;
 // FOP
 import org.apache.fop.pdf.PDFColor;
 import org.apache.fop.image.analyser.ImageReader;
+import org.apache.fop.fo.FOUserAgent;
+
+import org.apache.avalon.framework.logger.Logger;
 
 /**
  * FopImage object for several images types, using Jimi.
@@ -38,7 +41,23 @@ public class JimiImage extends AbstractFopImage {
         }
     }
 
-    protected void loadImage() {
+    protected boolean loadDimensions(FOUserAgent ua) {
+        if(this.m_bitmaps == null) {
+            loadImage(ua.getLogger());
+        }
+
+        return this.m_bitmaps != null;
+    }
+
+    protected boolean loadBitmap(FOUserAgent ua) {
+        if(this.m_bitmaps == null) {
+            loadImage(ua.getLogger());
+        }
+
+        return this.m_bitmaps != null;
+    }
+
+    protected void loadImage(Logger log) {
         int[] tmpMap = null;
         try {
             ImageProducer ip =
@@ -56,9 +75,9 @@ public class JimiImage extends AbstractFopImage {
             try {
                 tmpMap = consumer.getImage();
             } catch (Exception ex) {
-                /*throw new FopImageException("Image grabbing interrupted : "
-                                             + ex.getMessage());
-                 */}
+                log.error("Image grabbing interrupted", ex);
+                return;
+            }
 
             ColorModel cm = consumer.getColorModel();
             this.m_bitsPerPixel = 8;
@@ -118,11 +137,10 @@ public class JimiImage extends AbstractFopImage {
                 this.m_isTransparent = false;
             }
         } catch (Exception ex) {
-            /*throw new FopImageException("Error while loading image "
-                                         + this.m_href.toString() + " : "
-                                         + ex.getClass() + " - "
-                                         + ex.getMessage());
-             */}
+            log.error("Error while loading image "
+                               + this.m_href.toString(), ex);
+            return;
+        }
 
 
         // Should take care of the ColorSpace and bitsPerPixel

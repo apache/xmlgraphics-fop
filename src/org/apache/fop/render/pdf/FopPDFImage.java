@@ -162,14 +162,16 @@ public class FopPDFImage implements PDFImage {
 
         byte[] preBytes = preamble.toString().getBytes();
         byte[] postBytes = post.toString().getBytes();
+        byte[] epsBytes = ((EPSImage)fopImage).getEPSImage();
+        int epsLength = epsBytes.length;
         byte[] imgData = new byte[preBytes.length + postBytes.length +
-                                  fopImage.getBitmaps().length];
+                                  epsLength];
 
         System.arraycopy (preBytes, 0, imgData, 0, preBytes.length);
-        System.arraycopy (fopImage.getBitmaps(), 0, imgData,
-                          preBytes.length, fopImage.getBitmaps().length);
+        System.arraycopy (epsBytes, 0, imgData,
+                          preBytes.length, epsBytes.length);
         System.arraycopy (postBytes, 0, imgData,
-                          preBytes.length + fopImage.getBitmaps().length,
+                          preBytes.length + epsBytes.length,
                           postBytes.length);
 
 
