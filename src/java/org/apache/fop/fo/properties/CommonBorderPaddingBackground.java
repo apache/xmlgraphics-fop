@@ -21,8 +21,11 @@ package org.apache.fop.fo.properties;
 import org.apache.fop.datatypes.ColorType;
 import org.apache.fop.datatypes.Length;
 import org.apache.fop.fo.Constants;
+import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.PropertyList;
 import org.apache.fop.fo.expr.PropertyException;
+import org.apache.fop.image.FopImage;
+import org.apache.fop.image.ImageFactory;
 
 /**
  * Stores all common border and padding properties.
@@ -59,9 +62,17 @@ public class CommonBorderPaddingBackground implements Cloneable {
      */
     public Length backgroundPositionVertical;
     
+    
+    private FopImage fopimage;
+    
+    
+    /** the "before" edge */ 
     public static final int BEFORE = 0;
+    /** the "after" edge */ 
     public static final int AFTER = 1;
+    /** the "start" edge */ 
     public static final int START = 2;
+    /** the "end" edge */ 
     public static final int END = 3;
 
     private static class BorderInfo implements Cloneable {
@@ -82,8 +93,10 @@ public class CommonBorderPaddingBackground implements Cloneable {
     /**
      * Construct a CommonBorderPaddingBackground object.
      * @param pList The PropertyList to get properties from.
+     * @param fobj The FO to create this instance for.
+     * @throws PropertyException if there's an error while binding the properties
      */
-    public CommonBorderPaddingBackground(PropertyList pList) throws PropertyException {
+    public CommonBorderPaddingBackground(PropertyList pList, FObj fobj) throws PropertyException {
         backgroundAttachment = pList.get(Constants.PR_BACKGROUND_ATTACHMENT).getEnum();
         backgroundColor = pList.get(Constants.PR_BACKGROUND_COLOR).getColorType();
         if (backgroundColor.getAlpha() == 0) {
@@ -95,8 +108,25 @@ public class CommonBorderPaddingBackground implements Cloneable {
             backgroundImage = null;
         } else {
             backgroundRepeat = pList.get(Constants.PR_BACKGROUND_REPEAT).getEnum();
-            backgroundPositionHorizontal = pList.get(Constants.PR_BACKGROUND_POSITION_HORIZONTAL).getLength();
-            backgroundPositionVertical = pList.get(Constants.PR_BACKGROUND_POSITION_VERTICAL).getLength();
+            backgroundPositionHorizontal = pList.get(
+                    Constants.PR_BACKGROUND_POSITION_HORIZONTAL).getLength();
+            backgroundPositionVertical = pList.get(
+                    Constants.PR_BACKGROUND_POSITION_VERTICAL).getLength();
+            
+            //Additional processing: preload image
+            String url = ImageFactory.getURL(backgroundImage);
+            ImageFactory fact = ImageFactory.getInstance();
+            fopimage = fact.getImage(url, fobj.getUserAgent());
+            if (fopimage == null) {
+                fobj.getLogger().error("Background image not available: " + backgroundImage);
+            } else {
+                // load dimensions
+                if (!fopimage.load(FopImage.DIMENSIONS)) {
+                    fobj.getLogger().error("Cannot read background image dimensions: " 
+                            + backgroundImage);
+                }
+            }
+            //TODO Report to caller so he can decide to throw an exception
         }
 
         initBorderInfo(pList, BEFORE, 
@@ -123,9 +153,8 @@ public class CommonBorderPaddingBackground implements Cloneable {
     }
 
     private void initBorderInfo(PropertyList pList, int side, 
-            int colorProp, int styleProp, int widthProp, int paddingProp)
-        throws PropertyException
-    {
+                    int colorProp, int styleProp, int widthProp, int paddingProp)
+                throws PropertyException {
         padding[side] = pList.get(paddingProp).getCondLength();
         // If style = none, force width to 0, don't get Color (spec 7.7.20)
         int style = pList.get(styleProp).getEnum();
@@ -134,6 +163,14 @@ public class CommonBorderPaddingBackground implements Cloneable {
                     pList.get(widthProp).getCondLength(), 
                     pList.get(colorProp).getColorType());
         }
+    }
+    
+    /**
+     * @return the background image as a preloaded FopImage, null if there is
+     *     no background image.
+     */
+    public FopImage getFopImage() {
+        return this.fopimage;
     }
     
     public int getBorderStartWidth(boolean bDiscard) {

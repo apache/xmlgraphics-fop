@@ -121,8 +121,19 @@ public class ExternalGraphic extends FObj {
         verticalAlign = pList.get(PR_VERTICAL_ALIGN).getEnum();
         width = pList.get(PR_WIDTH).getLength();
         
-        //Additional processing
+        //Additional processing: preload image
         url = ImageFactory.getURL(getSrc());
+        ImageFactory fact = ImageFactory.getInstance();
+        fopimage = fact.getImage(url, getUserAgent());
+        if (fopimage == null) {
+            getLogger().error("Image not available: " + getSrc());
+        } else {
+            // load dimensions
+            if (!fopimage.load(FopImage.DIMENSIONS)) {
+                getLogger().error("Cannot read image dimensions: " + getSrc());
+            }
+        }
+        //TODO Report to caller so he can decide to throw an exception
     }
 
     /**
@@ -143,84 +154,84 @@ public class ExternalGraphic extends FObj {
     }
 
     /**
-     * Return the Common Border, Padding, and Background Properties.
+     * @return the Common Border, Padding, and Background Properties.
      */
     public CommonBorderPaddingBackground getCommonBorderPaddingBackground() {
         return commonBorderPaddingBackground;
     }
 
     /**
-     * Return the Common Margin Properties-Inline.
+     * @return the Common Margin Properties-Inline.
      */
     public CommonMarginInline getCommonMarginInline() {
         return commonMarginInline;
     }
 
     /**
-     * Return the "block-progression-dimension" property.
+     * @return the "block-progression-dimension" property.
      */
     public LengthRangeProperty getBlockProgressionDimension() {
         return blockProgressionDimension;
     }
 
     /**
-     * Return the "content-height" property.
+     * @return the "content-height" property.
      */
     public Length getContentHeight() {
         return contentHeight;
     }
 
     /**
-     * Return the "content-width" property.
+     * @return the "content-width" property.
      */
     public Length getContentWidth() {
         return contentWidth;
     }
 
     /**
-     * Return the "display-align" property.
+     * @return the "display-align" property.
      */
     public int getDisplayAlign() {
         return displayAlign;
     }
 
     /**
-     * Return the "height" property.
+     * @return the "height" property.
      */
     public Length getHeight() {
         return height;
     }
 
     /**
-     * Return the "id" property.
+     * @return the "id" property.
      */
     public String getId() {
         return id;
     }
 
     /**
-     * Return the "inline-progression-dimension" property.
+     * @return the "inline-progression-dimension" property.
      */
     public LengthRangeProperty getInlineProgressionDimension() {
         return inlineProgressionDimension;
     }
 
     /**
-     * Return the "overflow" property.
+     * @return the "overflow" property.
      */
     public int getOverflow() {
         return overflow;
     }
     
     /**
-     * Return the "scaling" property.
+     * @return the "scaling" property.
      */
     public int getScaling() {
         return scaling;
     }
 
     /**
-     * Return the "src" property.
+     * @return the "src" property.
      */
     public String getSrc() {
         return src;
@@ -234,21 +245,21 @@ public class ExternalGraphic extends FObj {
     }
 
     /**
-     * Return the "text-align" property.
+     * @return the "text-align" property.
      */
     public int getTextAlign() {
         return textAlign;
     }
 
     /**
-     * Return the "width" property.
+     * @return the "width" property.
      */
     public Length getWidth() {
         return width;
     }
 
     /**
-     * Return the "vertical-align" property.
+     * @return the "vertical-align" property.
      */
     public int getVerticalAlign() {
         return verticalAlign;
@@ -282,29 +293,9 @@ public class ExternalGraphic extends FObj {
     }
     
     /**
-     * Preloads the image so the intrinsic size is available.
-     */
-    private void prepareIntrinsicSize() {
-        if (fopimage == null) {
-            ImageFactory fact = ImageFactory.getInstance();
-            fopimage = fact.getImage(getURL(), getUserAgent());
-            if (fopimage == null) {
-                getLogger().error("Image not available: " + getURL());
-            } else {
-                // load dimensions
-                if (!fopimage.load(FopImage.DIMENSIONS)) {
-                    getLogger().error("Cannot read image dimensions: " + getURL());
-                }
-            }
-            //TODO Report to caller so he can decide to throw an exception
-        }
-    }
-    
-    /**
      * @see org.apache.fop.fo.IntrinsicSizeAccess#getIntrinsicWidth()
      */
     public int getIntrinsicWidth() {
-        prepareIntrinsicSize();
         if (fopimage != null) {
             return fopimage.getIntrinsicWidth();
         } else {
@@ -316,7 +307,6 @@ public class ExternalGraphic extends FObj {
      * @see org.apache.fop.fo.IntrinsicSizeAccess#getIntrinsicHeight()
      */
     public int getIntrinsicHeight() {
-        prepareIntrinsicSize();
         if (fopimage != null) {
             return fopimage.getIntrinsicHeight();
         } else {

@@ -19,6 +19,7 @@
 package org.apache.fop.area;
 
 import org.apache.fop.datatypes.ColorType;
+import org.apache.fop.image.FopImage;
 import org.apache.fop.traits.BorderProps;
 
 import java.io.Serializable;
@@ -410,6 +411,9 @@ public class Trait implements Serializable {
 
         /** The background image url if any. */
         private String url = null;
+        
+        /** The background image if any. */
+        private FopImage fopimage = null;
 
         /** Background repeat enum for images. */
         private int repeat;
@@ -453,6 +457,14 @@ public class Trait implements Serializable {
         }
 
         /**
+         * Returns the FopImage representing the background image
+         * @return the background image, null if n/a
+         */
+        public FopImage getFopImage() {
+            return fopimage;
+        }
+
+        /**
          * Returns the vertical offset for images.
          * @return the vertical offset
          */
@@ -490,6 +502,14 @@ public class Trait implements Serializable {
          */
         public void setURL(String url) {
             this.url = url;
+        }
+
+        /**
+         * Sets the FopImage to use as the background image.
+         * @param fopimage The FopImage to use
+         */
+        public void setFopImage(FopImage fopimage) {
+            this.fopimage = fopimage;
         }
 
         /**

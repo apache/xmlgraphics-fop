@@ -83,6 +83,7 @@ import org.apache.fop.render.PrintRenderer;
 import org.apache.fop.render.RendererContext;
 import org.apache.fop.traits.BorderProps;
 import org.apache.fop.fo.Constants;
+import org.apache.fop.fo.properties.ColorTypeProperty;
 
 
 /*
@@ -603,12 +604,11 @@ public class PDFRenderer extends PrintRenderer {
                                   + paddRectWidth + " " + paddRectHeight + " re\n");
                 currentStream.add("f\n");
             }
-            if (back.getURL() != null) {
-                ImageFactory fact = ImageFactory.getInstance();
-                FopImage fopimage = fact.getImage(back.getURL(), userAgent);
+            if (back.getFopImage() != null) {
+                FopImage fopimage = back.getFopImage();
                 if (fopimage != null && fopimage.load(FopImage.DIMENSIONS)) {
                     saveGraphicsState();
-                    clip(startx, starty, width, height);
+                    clip(sx, sy, paddRectWidth, paddRectHeight);
                     int horzCount = (int)((paddRectWidth 
                             * 1000 / fopimage.getIntrinsicWidth()) + 1.0f); 
                     int vertCount = (int)((paddRectHeight 
@@ -1244,10 +1244,10 @@ public class PDFRenderer extends PrintRenderer {
     protected void putImage(String url, Rectangle2D pos) {
         PDFXObject xobject = pdfDoc.getImage(url);
         if (xobject != null) {
-            int w = (int) pos.getWidth() / 1000;
-            int h = (int) pos.getHeight() / 1000;
-            placeImage((int) pos.getX() / 1000,
-                       (int) pos.getY() / 1000, w, h, xobject.getXNumber());
+            float w = (float) pos.getWidth() / 1000f;
+            float h = (float) pos.getHeight() / 1000f;
+            placeImage((float)pos.getX() / 1000f,
+                       (float)pos.getY() / 1000f, w, h, xobject.getXNumber());
             return;
         }
 
@@ -1292,10 +1292,10 @@ public class PDFRenderer extends PrintRenderer {
             int xobj = pdfDoc.addImage(currentContext, pdfimage).getXNumber();
             fact.releaseImage(url, userAgent);
 
-            int w = (int) pos.getWidth() / 1000;
-            int h = (int) pos.getHeight() / 1000;
-            placeImage((int) pos.getX() / 1000,
-                       (int) pos.getY() / 1000, w, h, xobj);
+            float w = (float)pos.getWidth() / 1000f;
+            float h = (float)pos.getHeight() / 1000f;
+            placeImage((float) pos.getX() / 1000,
+                       (float) pos.getY() / 1000, w, h, xobj);
         } else {
             if (!fopimage.load(FopImage.BITMAP)) {
                 return;
@@ -1304,10 +1304,10 @@ public class PDFRenderer extends PrintRenderer {
             int xobj = pdfDoc.addImage(currentContext, pdfimage).getXNumber();
             fact.releaseImage(url, userAgent);
 
-            int w = (int) pos.getWidth() / 1000;
-            int h = (int) pos.getHeight() / 1000;
-            placeImage((int) pos.getX() / 1000,
-                       (int) pos.getY() / 1000, w, h, xobj);
+            float w = (float) pos.getWidth() / 1000f;
+            float h = (float) pos.getHeight() / 1000f;
+            placeImage((float) pos.getX() / 1000f,
+                       (float) pos.getY() / 1000f, w, h, xobj);
         }
 
         // output new data
@@ -1326,13 +1326,13 @@ public class PDFRenderer extends PrintRenderer {
      * @param h height for image
      * @param xobj object number of the referenced image
      */
-    protected void placeImage(int x, int y, int w, int h, int xobj) {
+    protected void placeImage(float x, float y, float w, float h, int xobj) {
         saveGraphicsState();
-        currentStream.add(((float) w) + " 0 0 "
-                          + ((float) -h) + " "
-                          + (((float) currentIPPosition) / 1000f + x) + " "
-                          + (((float)(currentBPPosition + 1000 * h)) / 1000f
-                          + y) + " cm\n" + "/Im" + xobj + " Do\n");
+        currentStream.add(w + " 0 0 "
+                          + -h + " "
+                          + (currentIPPosition / 1000f + x) + " "
+                          + (currentBPPosition / 1000f + h + y) 
+                          + " cm\n" + "/Im" + xobj + " Do\n");
         restoreGraphicsState();
     }
 

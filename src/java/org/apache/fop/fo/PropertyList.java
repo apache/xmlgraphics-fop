@@ -459,7 +459,7 @@ abstract public class PropertyList {
      * @return a BorderAndPadding object
      */
     public CommonBorderPaddingBackground getBorderPaddingBackgroundProps() throws PropertyException {
-        return new CommonBorderPaddingBackground(this);
+        return new CommonBorderPaddingBackground(this, getFObj());
     }
     
 
