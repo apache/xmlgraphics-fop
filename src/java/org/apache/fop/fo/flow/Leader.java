@@ -67,7 +67,7 @@ public class Leader extends FObjMixed {
 
         // fo:leader specific properties
         // determines the pattern of leader; allowed values: space, rule,dots, use-content
-        leaderPattern = this.propertyList.get(PR_LEADER_PATTERN).getEnum();
+        leaderPattern = getPropEnum(PR_LEADER_PATTERN);
         switch(leaderPattern) {
             case LeaderPattern.SPACE:
                 // use Space
@@ -76,7 +76,7 @@ public class Leader extends FObjMixed {
                 // the following properties only apply
                 // for leader-pattern = "rule"
                 ruleThickness = getPropLength(PR_RULE_THICKNESS);
-                ruleStyle = propertyList.get(PR_RULE_STYLE).getEnum();
+                ruleStyle = getPropEnum(PR_RULE_STYLE);
             break;
             case LeaderPattern.DOTS:
             break;

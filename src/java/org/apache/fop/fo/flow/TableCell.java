@@ -187,17 +187,16 @@ public class TableCell extends FObj {
         this.backgroundColor =
             this.propertyList.get(PR_BACKGROUND_COLOR).getColorType();
 
-        bSepBorders = (this.propertyList.get(PR_BORDER_COLLAPSE).getEnum()
-                       == BorderCollapse.SEPARATE);
+        bSepBorders = (getPropEnum(PR_BORDER_COLLAPSE) == BorderCollapse.SEPARATE);
 
         calcBorders(propMgr.getBorderAndPadding());
 
         // Vertical cell alignment
-        verticalAlign = this.propertyList.get(PR_DISPLAY_ALIGN).getEnum();
+        verticalAlign = getPropEnum(PR_DISPLAY_ALIGN);
         if (verticalAlign == DisplayAlign.AUTO) {
             // Depends on all cells starting in row
             bRelativeAlign = true;
-            verticalAlign = this.propertyList.get(PR_RELATIVE_ALIGN).getEnum();
+            verticalAlign = getPropEnum(PR_RELATIVE_ALIGN);
         } else {
             bRelativeAlign = false;    // Align on a per-cell basis
         }

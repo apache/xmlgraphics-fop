@@ -48,7 +48,7 @@ public class LeaderLayoutManager extends LeafNodeLayoutManager {
         super(node);
         ldrNode = node;
         font = node.getFontState();
-        setAlignment(node.getProperty(PR_LEADER_ALIGNMENT).getEnum());
+        setAlignment(node.getPropEnum(PR_LEADER_ALIGNMENT));
     }
 
     public InlineArea get(LayoutContext context) {

@@ -60,7 +60,7 @@ public class BlockContainer extends FObj {
      */
     protected void addProperties(Attributes attlist) throws SAXParseException {
         super.addProperties(attlist);
-        this.span = this.propertyList.get(PR_SPAN).getEnum();
+        this.span = getPropEnum(PR_SPAN);
         this.backgroundColor =
             this.propertyList.get(PR_BACKGROUND_COLOR).getColorType();
 
@@ -87,7 +87,7 @@ public class BlockContainer extends FObj {
      */
     public void addLayoutManager(List list) { 	 
         BlockContainerLayoutManager blm = new BlockContainerLayoutManager(this);
-        blm.setOverflow(getProperty(PR_OVERFLOW).getEnum());
+        blm.setOverflow(getPropEnum(PR_OVERFLOW));
         list.add(blm);
     }
 

@@ -21,6 +21,10 @@ package org.apache.fop.fo.pagination;
 // Java
 import java.awt.Rectangle;
 
+// XML
+import org.xml.sax.Attributes;
+import org.xml.sax.SAXParseException;
+
 // FOP
 import org.apache.fop.datatypes.FODimension;
 import org.apache.fop.fo.FONode;
@@ -30,11 +34,31 @@ import org.apache.fop.fo.FONode;
  */
 public class RegionBefore extends RegionBA {
 
+    private int extent = 0;
+    private boolean precedence = false;
+
     /**
      * @see org.apache.fop.fo.FONode#FONode(FONode)
      */
     public RegionBefore(FONode parent) {
         super(parent);
+    }
+
+    /**
+     * @see org.apache.fop.fo.FObj#addProperties
+     */
+    protected void addProperties(Attributes attlist) throws SAXParseException {
+        super.addProperties(attlist);
+        extent = getPropLength(PR_EXTENT);
+        precedence = (getPropEnum(PR_PRECEDENCE) == Precedence.TRUE);
+    }
+
+    /**
+     * Indicates if this region gets precedence.
+     * @return True if it gets precedence
+     */
+    public boolean getPrecedence() {
+        return precedence;
     }
 
     /**
@@ -56,11 +80,11 @@ public class RegionBefore extends RegionBA {
         // ipd depends on precedence, bpd=extent
         Rectangle vpRect;
         if (this.wm == WritingMode.LR_TB || this.wm == WritingMode.RL_TB) {
-            vpRect = new Rectangle(0, 0, reldims.ipd, getExtent());
+            vpRect = new Rectangle(0, 0, reldims.ipd, extent);
         } else {
-            vpRect = new Rectangle(0, 0, getExtent(), reldims.ipd);
+            vpRect = new Rectangle(0, 0, extent, reldims.ipd);
         }
-        if (getPrecedence() == false) {
+        if (precedence == false) {
             adjustIPD(vpRect, this.wm);
         }
         return vpRect;

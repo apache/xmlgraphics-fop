@@ -46,7 +46,7 @@ public class InstreamForeignObjectLM extends LeafNodeLayoutManager {
         ifoNode = node;
         Viewport areaCurrent = getInlineArea();
         setCurrentArea(areaCurrent);
-        setAlignment(node.getProperty(PR_VERTICAL_ALIGN).getEnum());
+        setAlignment(node.getPropEnum(PR_VERTICAL_ALIGN));
         setLead(areaCurrent.getHeight());
     }
 
@@ -135,7 +135,7 @@ public class InstreamForeignObjectLM extends LeafNodeLayoutManager {
         if (cheight == -1) {
             cheight = (int)size.getY() * 1000;
         }
-        int scaling = ifoNode.getProperty(PR_SCALING).getEnum();
+        int scaling = ifoNode.getPropEnum(PR_SCALING);
         if (scaling == Scaling.UNIFORM) {
             // adjust the larger
             double rat1 = cwidth / (size.getX() * 1000f);
@@ -157,7 +157,7 @@ public class InstreamForeignObjectLM extends LeafNodeLayoutManager {
 
         boolean clip = false;
         if (cwidth > ipd || cheight > bpd) {
-            int overflow = ifoNode.getProperty(PR_OVERFLOW).getEnum();
+            int overflow = ifoNode.getPropEnum(PR_OVERFLOW);
             if (overflow == Overflow.HIDDEN) {
                 clip = true;
             } else if (overflow == Overflow.ERROR_IF_OVERFLOW) {

@@ -210,6 +210,17 @@ public class FObj extends FONode implements Constants {
     }
 
     /**
+     * Convenience method to quickly obtain the Constants class enumeration
+     * value of a property for this FO.  Meaningful only for properties
+     * having an enumeration representation
+     * @param propId - the Constants ID of the desired property to obtain
+     * @return the enumeration value of the property value
+     */
+    public int getPropEnum(int propId) {
+        return propertyList.get(propId).getEnum();
+    }
+
+    /**
      * @see org.apache.fop.fo.FONode#addChildNode(FONode)
      */
     protected void addChildNode(FONode child) {
@@ -362,7 +373,7 @@ public class FObj extends FONode implements Constants {
     protected void setWritingMode() {
         FObj p = findNearestAncestorGeneratingRAs(true, true);
         this.propertyList.setWritingMode(
-          p.getProperty(PR_WRITING_MODE).getEnum());
+          p.getPropEnum(PR_WRITING_MODE));
     }
 
     /**

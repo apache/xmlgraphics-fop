@@ -80,7 +80,7 @@ public class TableRow extends FObj {
     }
 
     private void doSetup() {
-        this.breakAfter = this.propertyList.get(PR_BREAK_AFTER).getEnum();
+        this.breakAfter = getPropEnum(PR_BREAK_AFTER);
         this.backgroundColor =
             this.propertyList.get(PR_BACKGROUND_COLOR).getColorType();
 

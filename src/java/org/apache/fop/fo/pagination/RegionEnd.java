@@ -21,6 +21,10 @@ package org.apache.fop.fo.pagination;
 // Java
 import java.awt.Rectangle;
 
+// XML
+import org.xml.sax.Attributes;
+import org.xml.sax.SAXParseException;
+
 // FOP
 import org.apache.fop.fo.FONode;
 import org.apache.fop.datatypes.FODimension;
@@ -30,6 +34,7 @@ import org.apache.fop.datatypes.FODimension;
  */
 public class RegionEnd extends RegionSE {
 
+    private int extent = 0;
 
     /**
      * @see org.apache.fop.fo.FONode#FONode(FONode)
@@ -39,17 +44,25 @@ public class RegionEnd extends RegionSE {
     }
 
     /**
+     * @see org.apache.fop.fo.FObj#addProperties
+     */
+    protected void addProperties(Attributes attlist) throws SAXParseException {
+        super.addProperties(attlist);
+        extent = getPropLength(PR_EXTENT);
+    }
+
+    /**
      * @see org.apache.fop.fo.pagination.Region#getViewportRectangle(FODimension)
      */
     public Rectangle getViewportRectangle (FODimension reldims) {
         // Depends on extent, precedence and writing mode
         Rectangle vpRect;
         if (this.wm == WritingMode.LR_TB || this.wm == WritingMode.RL_TB) {
-            vpRect = new Rectangle(reldims.ipd - getExtent(), 0,
-                    getExtent(), reldims.bpd);
+            vpRect = new Rectangle(reldims.ipd - extent, 0,
+                    extent, reldims.bpd);
         } else {
-            vpRect = new Rectangle(reldims.ipd - getExtent(), 0,
-                    reldims.bpd, getExtent());
+            vpRect = new Rectangle(reldims.ipd - extent, 0,
+                    reldims.bpd, extent);
         }
         adjustIPD(vpRect, this.wm);
         return vpRect;
