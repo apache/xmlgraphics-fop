@@ -94,8 +94,8 @@ public class BlockLayoutManager extends BlockStackingLayoutManager {
 
         private ListIterator proxy;
 
-        public BlockLMiter(ListIterator pr) {
-            super(null);
+        public BlockLMiter(LayoutProcessor lp, ListIterator pr) {
+            super(lp, null);
             proxy = pr;
         }
 
@@ -152,7 +152,7 @@ public class BlockLayoutManager extends BlockStackingLayoutManager {
      */
     public void setFObj(FObj fo) {
         super.setFObj(fo);
-        childLMiter = new BlockLMiter(childLMiter);
+        childLMiter = new BlockLMiter(this, childLMiter);
     }
 
     public void setBlockTextInfo(TextInfo ti) {

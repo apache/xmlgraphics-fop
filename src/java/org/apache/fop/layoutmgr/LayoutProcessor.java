@@ -74,6 +74,18 @@ public interface LayoutProcessor extends LayoutManager {
     void setParent(LayoutProcessor lm);
 
     /**
+     * Get the parent layout manager.
+     * @return the parent layout manager.
+     */
+    LayoutProcessor getParent();
+
+    /**
+     * Get the LayoutManagerLS object that is at the top of the LM Tree
+     * @return the LayoutManagerLS object that is at the top of the LM Tree
+     */
+    LayoutManagerLS getLayoutManagerLS();
+
+    /**
      * Initialise this layout manager.
      */
     void init();

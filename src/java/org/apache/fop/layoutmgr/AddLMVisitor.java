@@ -159,6 +159,22 @@ public class AddLMVisitor extends FOTreeVisitor {
         fobj.acceptVisitor(this);
     }
 
+    /**
+     * Accessor for the currentLMList.
+     * @return the currentLMList.
+     */
+    public List getCurrentLMList() {
+        return currentLMList;
+    }
+
+    /**
+     * Accessor for the saveLMList.
+     * @return the saveLMList.
+     */
+    public List getSaveLMList() {
+        return saveLMList;
+    }
+
     public void serveVisitor(FOText node) {
         if (node.length == 0) {
             return;
@@ -180,7 +196,7 @@ public class AddLMVisitor extends FOTreeVisitor {
             Document doc = (Document)node.getFOTreeControl();
             lm.setUserAgent(node.getUserAgent());
             lm.setFObj(node);
-            lm.setLMiter(new LMiter(node.getChildren()));
+            lm.setLMiter(new LMiter(lm, node.getChildren()));
             currentLMList.add(lm);
         }
     }
@@ -249,7 +265,7 @@ public class AddLMVisitor extends FOTreeVisitor {
         };
         lm.setUserAgent(node.getUserAgent());
         lm.setFObj(node);
-        lm.setLMiter(new LMiter(node.getChildren()));
+        lm.setLMiter(new LMiter(lm, node.getChildren()));
         currentLMList.add(lm);
     }
 
@@ -357,7 +373,7 @@ public class AddLMVisitor extends FOTreeVisitor {
              lm = new InlineStackingLayoutManager();
              lm.setUserAgent(node.getUserAgent());
              lm.setFObj(node);
-             lm.setLMiter(new LMiter(node.getChildren()));
+             lm.setLMiter(new LMiter(lm, node.getChildren()));
              lm.init();
 
              // get breaks then add areas to FilledArea

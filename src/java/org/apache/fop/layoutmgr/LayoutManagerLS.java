@@ -67,6 +67,9 @@ import org.apache.fop.fo.FOTreeHandler;
 public class LayoutManagerLS extends LayoutStrategy {
 
     private static String name = "layoutmgr";
+    /** Useful only for allowing subclasses of AddLMVisitor to be set by those
+     extending FOP **/
+    private AddLMVisitor addLMVisitor = null;
 
     public LayoutManagerLS(Document document) {
         super(document);
@@ -106,7 +109,7 @@ public class LayoutManagerLS extends LayoutStrategy {
         pageSeq.initPageNumber();
 
         // This will layout pages and add them to the area tree
-        PageLayoutManager pageLM = new PageLayoutManager(areaTree, pageSeq);
+        PageLayoutManager pageLM = new PageLayoutManager(areaTree, pageSeq, this);
         pageLM.setUserAgent(pageSeq.getUserAgent());
         pageLM.setFObj(pageSeq);
         pageLM.setPageCounting(pageSeq.getCurrentPageNumber(),
@@ -181,7 +184,7 @@ public class LayoutManagerLS extends LayoutStrategy {
         lm = new InlineStackingLayoutManager();
         lm.setUserAgent(foTitle.getUserAgent());
         lm.setFObj(foTitle);
-        lm.setLMiter(new LMiter(foTitle.children.listIterator()));
+        lm.setLMiter(new LMiter(lm, foTitle.children.listIterator()));
         lm.init();
 
         // get breaks then add areas to title
@@ -193,6 +196,27 @@ public class LayoutManagerLS extends LayoutStrategy {
         clm.fillArea(lm);
 
         return title;
+    }
+
+    /**
+     * Public accessor to set the AddLMVisitor object that should be used.
+     * This allows subclasses of AddLMVisitor to be used, which can be useful
+     * for extensions to the FO Tree.
+     * @param addLMVisitor the AddLMVisitor object that should be used.
+     */
+    public void setAddLMVisitor(AddLMVisitor addLMVisitor) {
+        this.addLMVisitor = addLMVisitor;
+    }
+
+    /**
+     * Public accessor to get the AddLMVisitor object that should be used.
+     * @return the AddLMVisitor object that should be used.
+     */
+    public AddLMVisitor getAddLMVisitor() {
+        if (this.addLMVisitor == null) {
+            this.addLMVisitor = new AddLMVisitor();
+        }
+        return this.addLMVisitor;
     }
 
 }
