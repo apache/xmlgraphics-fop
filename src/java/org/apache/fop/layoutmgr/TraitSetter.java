@@ -26,6 +26,7 @@ import org.apache.fop.area.Trait;
 import org.apache.fop.fo.Constants;
 import org.apache.fop.fo.properties.CommonMarginBlock;
 import org.apache.fop.fo.properties.CommonBorderPaddingBackground;
+import org.apache.fop.fo.properties.CommonTextDecoration;
 import org.apache.fop.fo.properties.PercentLength;
 
 /**
@@ -261,5 +262,28 @@ public class TraitSetter {
     public static void addBreaks(Area area,  int breakBefore, int breakAfter) {
         area.addTrait(Trait.BREAK_AFTER, new Integer(breakAfter));
         area.addTrait(Trait.BREAK_BEFORE, new Integer(breakBefore));
+    }
+    
+    /**
+     * Adds the text-decoration traits to the area.
+     * @param area the area to set the traits on
+     * @param deco the text decorations
+     */
+    public static void addTextDecoration(Area area, CommonTextDecoration deco) {
+        //TODO Finish text-decoration
+        if (deco != null) {
+            if (deco.hasUnderline()) {
+                area.addTrait(Trait.UNDERLINE, Boolean.TRUE);
+            }
+            if (deco.hasOverline()) {
+                area.addTrait(Trait.OVERLINE, Boolean.TRUE);
+            }
+            if (deco.hasLineThrough()) {
+                area.addTrait(Trait.LINETHROUGH, Boolean.TRUE);
+            }
+            if (deco.isBlinking()) {
+                area.addTrait(Trait.BLINK, Boolean.TRUE);
+            }
+        }
     }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 1999-2004 The Apache Software Foundation.
+ * Copyright 1999-2005 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,6 +19,7 @@
 package org.apache.fop.area.inline;
 
 import org.apache.fop.area.Area;
+import org.apache.fop.area.Trait;
 
 /**
  * Inline Area
@@ -65,5 +66,22 @@ public class InlineArea extends Area {
     public int getOffset() {
         return verticalPosition;
     }
+    
+    public boolean hasUnderline() {
+        return getBooleanTrait(Trait.UNDERLINE);
+    }
+
+    public boolean hasOverline() {
+        return getBooleanTrait(Trait.OVERLINE);
+    }
+    
+    public boolean hasLineThrough() {
+        return getBooleanTrait(Trait.LINETHROUGH);
+    }
+    
+    public boolean isBlinking() {
+        return getBooleanTrait(Trait.BLINK);
+    }
+    
 }
 
