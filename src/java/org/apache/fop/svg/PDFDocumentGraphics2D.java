@@ -34,9 +34,8 @@ import org.apache.avalon.framework.configuration.Configurable;
 import org.apache.avalon.framework.configuration.Configuration;
 import org.apache.avalon.framework.configuration.ConfigurationException;
 import org.apache.avalon.framework.container.ContainerUtil;
-import org.apache.avalon.framework.logger.ConsoleLogger;
-import org.apache.avalon.framework.logger.LogEnabled;
-import org.apache.avalon.framework.logger.Logger;
+import org.apache.commons.logging.impl.SimpleLog;
+import org.apache.commons.logging.Log;
 import org.apache.fop.apps.Document;
 
 import java.awt.Graphics;
@@ -60,7 +59,7 @@ import java.util.List;
  * @see org.apache.fop.svg.PDFGraphics2D
  */
 public class PDFDocumentGraphics2D extends PDFGraphics2D
-            implements LogEnabled, Configurable, Initializable {
+            implements Configurable, Initializable {
 
     private PDFPage currentPage;
     private PDFStream pdfStream;
@@ -68,8 +67,9 @@ public class PDFDocumentGraphics2D extends PDFGraphics2D
     private int height;
     private List fontList;
 
-    //Avalon-dependent stuff
-    private Logger logger;
+    private Log logger;
+
+    //Avalon component
     private Configuration cfg;
 
     /**
@@ -132,10 +132,7 @@ public class PDFDocumentGraphics2D extends PDFGraphics2D
         super(false);
     }
 
-    /**
-     * @see org.apache.avalon.framework.logger.LogEnabled#enableLogging(Logger)
-     */
-    public void enableLogging(Logger logger) {
+    public void setLogger(Log logger) {
         this.logger = logger;
     }
 
@@ -143,9 +140,10 @@ public class PDFDocumentGraphics2D extends PDFGraphics2D
      * Returns the logger.
      * @return Logger the logger
      */
-    protected final Logger getLogger() {
+    protected final Log getLogger() {
         if (this.logger == null) {
-            this.logger = new ConsoleLogger(ConsoleLogger.LEVEL_INFO);
+            this.logger = new SimpleLog("FOP/PDF");
+            ((SimpleLog) logger).setLevel(SimpleLog.LOG_LEVEL_INFO);
         }
         return this.logger;
     }
@@ -170,7 +168,8 @@ public class PDFDocumentGraphics2D extends PDFGraphics2D
         }
 
         this.pdfDoc = new PDFDocument("Apache FOP: SVG to PDF Transcoder");
-        ContainerUtil.enableLogging(this.pdfDoc, getLogger().getChildLogger("pdf"));
+        this.pdfDoc.setLogger(getLogger());
+
         if (this.cfg != null) {
             this.pdfDoc.setFilterMap(
                 PDFFilterList.buildFilterMapFromConfiguration(cfg));

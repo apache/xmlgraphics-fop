@@ -29,7 +29,7 @@ import java.io.IOException;
 import java.net.URLConnection;
 
 // FOP
-import org.apache.avalon.framework.logger.Logger;
+import org.apache.commons.logging.Log;
 
 /**
  * FopImage object for GIF images, using Java native classes.
@@ -58,7 +58,7 @@ public class GifImage extends AbstractFopImage {
      * @param ua the user agent for loading
      * @return True if the load process succeeded
      */
-    protected boolean loadBitmap(Logger logger) {
+    protected boolean loadBitmap(Log logger) {
         int[] tmpMap = null;
         try {
             URLConnection con = new DummyConnection(inputStream);

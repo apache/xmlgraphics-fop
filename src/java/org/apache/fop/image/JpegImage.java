@@ -24,7 +24,7 @@ import java.awt.color.ColorSpace;
 import java.awt.color.ICC_Profile;
 
 // FOP
-import org.apache.avalon.framework.logger.Logger;
+import org.apache.commons.logging.Log;
 import org.apache.fop.util.CMYKColorSpace;
 
 /**
@@ -55,7 +55,7 @@ public class JpegImage extends AbstractFopImage {
      * @param ua the user agent
      * @return true if loaded false for any error
      */
-    protected boolean loadOriginalData(Logger logger) {
+    protected boolean loadOriginalData(Log logger) {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         ByteArrayOutputStream iccStream = new ByteArrayOutputStream();
         int index = 0;

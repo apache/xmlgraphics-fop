@@ -22,8 +22,8 @@ package org.apache.fop.render.rtf;
 import org.apache.fop.render.rtf.rtflib.rtfdoc.BorderAttributesConverter;
 
 //FOP
-import org.apache.avalon.framework.logger.Logger;
-import org.apache.avalon.framework.logger.ConsoleLogger;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.impl.SimpleLog;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.fo.expr.NCnameProperty;
 import org.apache.fop.fo.properties.ColorTypeProperty;
@@ -57,7 +57,7 @@ import org.apache.fop.render.rtf.rtflib.rtfdoc.RtfColorTable;
 
 public class TableAttributesConverter {
 
-    private static Logger log = new ConsoleLogger();
+    private static Log log = new SimpleLog("FOP/RTF");
 
     //////////////////////////////////////////////////
     // @@ Construction

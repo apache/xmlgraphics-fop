@@ -27,7 +27,7 @@ import org.apache.fop.area.PageViewport;
 import org.apache.fop.fo.Constants;
 import org.apache.fop.fo.PropertyManager;
 
-import org.apache.avalon.framework.logger.Logger;
+import org.apache.commons.logging.Log;
 
 import java.util.ListIterator;
 import java.util.Map;
@@ -93,7 +93,7 @@ public abstract class AbstractLayoutManager implements LayoutManager, Constants 
         return userAgent;
     }
 
-    protected Logger getLogger() {
+    protected Log getLogger() {
         return userAgent.getLogger();
     }
 

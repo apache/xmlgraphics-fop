@@ -249,7 +249,7 @@ public class PDFRenderer extends PrintRenderer {
         ostream = stream;
         producer = "FOP " + Version.getVersion();
         this.pdfDoc = new PDFDocument(producer);
-        setupLogger(this.pdfDoc);
+        this.pdfDoc.setLogger(logger);
         this.pdfDoc.setCreator(creator);
         this.pdfDoc.setCreationDate(creationDate);
         this.pdfDoc.setFilterMap(filterMap);

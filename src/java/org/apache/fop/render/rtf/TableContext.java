@@ -20,8 +20,8 @@ package org.apache.fop.render.rtf;
 
 import java.util.List;
 
-import org.apache.avalon.framework.logger.ConsoleLogger;
-import org.apache.avalon.framework.logger.Logger;
+import org.apache.commons.logging.impl.SimpleLog;
+import org.apache.commons.logging.Log;
 import org.apache.fop.render.rtf.rtflib.rtfdoc.RtfAttributes;
 import org.apache.fop.render.rtf.rtflib.interfaces.ITableColumnsInfo;
 
@@ -39,7 +39,7 @@ import org.apache.fop.render.rtf.rtflib.interfaces.ITableColumnsInfo;
  */
 
 class TableContext implements ITableColumnsInfo {
-    private final Logger log = new ConsoleLogger();
+    private final Log log = new SimpleLog("FOP/RTF");
     private final BuilderContext context;
     private final List colWidths = new java.util.ArrayList();
     private int colIndex;

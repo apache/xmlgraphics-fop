@@ -23,7 +23,7 @@ import java.awt.color.ColorSpace;
 import java.awt.color.ICC_Profile;
 import java.awt.Color;
 
-import org.apache.avalon.framework.logger.Logger;
+import org.apache.commons.logging.Log;
 
 /**
  * Fop image interface for loading images.
@@ -61,10 +61,10 @@ public interface FopImage {
      * the information.
      *
      * @param type the type of loading required
-     * @param logger the Avalon logger
+     * @param logger the Commons-logging component
      * @return boolean true if the information could be loaded
      */
-    boolean load(int type, Logger logger);
+    boolean load(int type, Log logger);
 
     /**
      * Returns the image width.

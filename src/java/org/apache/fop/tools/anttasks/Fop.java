@@ -40,10 +40,8 @@ import org.apache.fop.apps.Driver;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.apps.FOUserAgent;
 
-// Avalon
-import org.apache.avalon.framework.logger.AbstractLogEnabled;
-import org.apache.avalon.framework.logger.ConsoleLogger;
-import org.apache.avalon.framework.logger.Logger;
+import org.apache.commons.logging.impl.SimpleLog;
+import org.apache.commons.logging.Log;
 
 /**
  * Wrapper for FOP which allows it to be accessed from within an Ant task.
@@ -279,18 +277,19 @@ public class Fop extends Task {
      * @see org.apache.tools.ant.Task#execute()
      */
     public void execute() throws BuildException {
-        int logLevel = ConsoleLogger.LEVEL_INFO;
+        int logLevel = SimpleLog.LOG_LEVEL_INFO;
         switch (getMessageType()) {
-            case Project.MSG_DEBUG  : logLevel = ConsoleLogger.LEVEL_DEBUG; break;
-            case Project.MSG_INFO   : logLevel = ConsoleLogger.LEVEL_INFO; break;
-            case Project.MSG_WARN   : logLevel = ConsoleLogger.LEVEL_WARN; break;
-            case Project.MSG_ERR    : logLevel = ConsoleLogger.LEVEL_ERROR; break;
-            case Project.MSG_VERBOSE: logLevel = ConsoleLogger.LEVEL_DEBUG; break;
+            case Project.MSG_DEBUG  : logLevel = SimpleLog.LOG_LEVEL_DEBUG; break;
+            case Project.MSG_INFO   : logLevel = SimpleLog.LOG_LEVEL_INFO; break;
+            case Project.MSG_WARN   : logLevel = SimpleLog.LOG_LEVEL_WARN; break;
+            case Project.MSG_ERR    : logLevel = SimpleLog.LOG_LEVEL_ERROR; break;
+            case Project.MSG_VERBOSE: logLevel = SimpleLog.LOG_LEVEL_DEBUG; break;
         }
-        Logger log = new ConsoleLogger(logLevel);
+        SimpleLog logger = new SimpleLog("FOP/Anttask");
+        logger.setLevel(logLevel);
         try {
             FOPTaskStarter starter = new FOPTaskStarter(this);
-            starter.enableLogging(log);
+            starter.setLogger(logger);
             starter.run();
         } catch (FOPException ex) {
             throw new BuildException(ex);
@@ -300,10 +299,32 @@ public class Fop extends Task {
 
 }
 
-class FOPTaskStarter extends AbstractLogEnabled {
+class FOPTaskStarter {
 
     private Fop task;
     private String baseURL = null;
+
+    /**
+     * logging instance
+     */
+    protected Log logger = null;
+
+
+    /**
+     * Sets the Commons-Logging instance for this class
+     * @param logger The Commons-Logging instance
+     */
+    public void setLogger(Log logger) {
+        this.logger = logger;
+    }
+
+    /**
+     * Returns the Commons-Logging instance for this class
+     * @return  The Commons-Logging instance
+     */
+    protected Log getLogger() {
+        return logger;
+    }
 
     FOPTaskStarter(Fop task) throws FOPException {
         this.task = task;
@@ -386,7 +407,7 @@ class FOPTaskStarter extends AbstractLogEnabled {
             try {
                 this.baseURL = task.getBasedir().toURL().toExternalForm();
             } catch (MalformedURLException mfue) {
-                getLogger().error("Error creating base URL from base directory", mfue);
+                logger.error("Error creating base URL from base directory", mfue);
             }
         } else {
             try {
@@ -395,7 +416,7 @@ class FOPTaskStarter extends AbstractLogEnabled {
                                       toExternalForm();
                 }
             } catch (MalformedURLException mfue) {
-                getLogger().error("Error creating base URL from XSL-FO input file", mfue);
+                logger.error("Error creating base URL from XSL-FO input file", mfue);
             }
         }
 
@@ -511,10 +532,10 @@ class FOPTaskStarter extends AbstractLogEnabled {
 
         try {
             Driver driver = new Driver();
-            setupLogger(driver);
+            driver.setLogger(getLogger());
             FOUserAgent userAgent = new FOUserAgent();
             userAgent.setBaseURL(this.baseURL);
-            userAgent.enableLogging(getLogger());
+            userAgent.setLogger(getLogger());
             driver.setUserAgent(userAgent);
             driver.setRenderer(renderer);
             driver.setOutputStream(out);
@@ -525,7 +546,7 @@ class FOPTaskStarter extends AbstractLogEnabled {
             try {
                 out.close();
             } catch (IOException ioe) {
-                getLogger().error("Error closing output file", ioe);
+                logger.error("Error closing output file", ioe);
             }
         }
     }

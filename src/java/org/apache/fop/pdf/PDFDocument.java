@@ -28,9 +28,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Iterator;
 
-// Avalon
-import org.apache.avalon.framework.logger.LogEnabled;
-import org.apache.avalon.framework.logger.Logger;
+import org.apache.commons.logging.Log;
 
 /* image support modified from work of BoBoGi */
 /* font support based on work by Takayuki Takeuchi */
@@ -56,7 +54,7 @@ import org.apache.avalon.framework.logger.Logger;
  * the object list; enhanced trailer output; cleanups.
  *
  */
-public class PDFDocument implements LogEnabled {
+public class PDFDocument {
 
     private static final Integer LOCATION_PLACEHOLDER = new Integer(0);
     /**
@@ -69,7 +67,7 @@ public class PDFDocument implements LogEnabled {
      */
     public static final String ENCODING = "ISO-8859-1";
 
-    private Logger logger;
+    private Log logger;
 
     /**
      * the current character position
@@ -236,6 +234,14 @@ public class PDFDocument implements LogEnabled {
     }
 
     /**
+     * Sets the Commons-Logging instance for this class
+     * @param logger The Commons-Logging instance
+     */
+    public void setLogger(Log logger) {
+        this.logger = logger;
+    }
+
+    /**
      * Returns the factory for PDF objects.
      * @return PDFFactory the factory
      */
@@ -254,20 +260,13 @@ public class PDFDocument implements LogEnabled {
     }
 
     /**
-     * @see org.apache.avalon.framework.logger.LogEnabled#enableLogging(Logger)
-     */
-    public void enableLogging(Logger logger) {
-        this.logger = logger;
-    }
-
-    /**
      * Helper method to allow sub-classes to aquire logger.
      *
      * <p>There is no performance penalty as this is a final method
      * and will be inlined by the JVM.</p>
      * @return the Logger
      */
-    protected final Logger getLogger() {
+    protected final Log getLogger() {
         return this.logger;
     }
 

@@ -22,8 +22,7 @@ package org.apache.fop.area;
 // FOP
 import org.apache.fop.fo.extensions.Bookmarks;
 
-// Avalon
-import org.apache.avalon.framework.logger.Logger;
+import org.apache.commons.logging.Log;
 
 // Java
 import java.util.Set;
@@ -45,7 +44,7 @@ public interface AreaTreeControl {
     /**
      * @return the Logger being used with this FO Tree
      */
-    Logger getLogger();
+    Log getLogger();
 
     /**
      * The current set of IDs in the document.

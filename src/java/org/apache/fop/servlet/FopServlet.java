@@ -34,9 +34,8 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.sax.SAXResult;
 import javax.xml.transform.stream.StreamSource;
 
-// Avalon
-import org.apache.avalon.framework.logger.ConsoleLogger;
-import org.apache.avalon.framework.logger.Logger;
+import org.apache.commons.logging.impl.SimpleLog;
+import org.apache.commons.logging.Log;
 
 //FOP
 import org.apache.fop.apps.Driver;
@@ -76,7 +75,7 @@ public class FopServlet extends HttpServlet {
     protected static final String XSLT_REQUEST_PARAM = "xslt";
 
     /** Logger to give to FOP */
-    protected Logger log = null;
+    protected SimpleLog log = null;
     /** The TransformerFactory to use to create Transformer instances */
     protected TransformerFactory transFactory = null;
 
@@ -84,7 +83,8 @@ public class FopServlet extends HttpServlet {
      * @see javax.servlet.GenericServlet#init()
      */
     public void init() throws ServletException {
-        this.log = new ConsoleLogger(ConsoleLogger.LEVEL_WARN);
+        this.log = new SimpleLog("FOP/Servlet");
+        log.setLevel(SimpleLog.LOG_LEVEL_WARN);
         this.transFactory = TransformerFactory.newInstance();
     }
 
@@ -202,7 +202,7 @@ public class FopServlet extends HttpServlet {
 
         //Setup FOP
         Driver driver = new Driver();
-        driver.enableLogging(this.log);
+        driver.setLogger(this.log);
         driver.setRenderer(Driver.RENDER_PDF);
         driver.initialize();
 

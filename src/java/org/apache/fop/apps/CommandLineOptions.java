@@ -24,9 +24,7 @@ import java.io.FileNotFoundException;
 import java.util.Locale;
 import java.util.Vector;
 
-// Avalon
-import org.apache.avalon.framework.logger.ConsoleLogger;
-import org.apache.avalon.framework.logger.Logger;
+import org.apache.commons.logging.impl.SimpleLog;
 
 /**
  * Options parses the commandline arguments
@@ -83,7 +81,7 @@ public class CommandLineOptions {
 
     private java.util.HashMap rendererOptions;
 
-    private Logger log;
+    private SimpleLog log;
 
     private Vector xsltParams = null;
     
@@ -96,7 +94,8 @@ public class CommandLineOptions {
     public CommandLineOptions(String[] args)
             throws FOPException, FileNotFoundException {
 
-        log = new ConsoleLogger(ConsoleLogger.LEVEL_INFO);
+        log = new SimpleLog("FOP");
+        log.setLevel(SimpleLog.LOG_LEVEL_INFO);
 
         boolean optionsParsed = true;
         rendererOptions = new java.util.HashMap();
@@ -118,7 +117,7 @@ public class CommandLineOptions {
      * Get the logger.
      * @return the logger
      */
-    public Logger getLogger() {
+    public SimpleLog getLogger() {
         return log;
     }
 
@@ -131,13 +130,15 @@ public class CommandLineOptions {
     private boolean parseOptions(String[] args) throws FOPException {
         for (int i = 0; i < args.length; i++) {
             if (args[i].equals("-d") || args[i].equals("--full-error-dump")) {
-                log = new ConsoleLogger(ConsoleLogger.LEVEL_DEBUG);
+                log = new SimpleLog("FOP");
+                log.setLevel(SimpleLog.LOG_LEVEL_DEBUG);
             } else if (args[i].equals("-x")
                        || args[i].equals("--dump-config")) {
                 dumpConfiguration = Boolean.TRUE;
             } else if (args[i].equals("-q") || args[i].equals("--quiet")) {
                 quiet = Boolean.TRUE;
-                log = new ConsoleLogger(ConsoleLogger.LEVEL_ERROR);
+                log = new SimpleLog("FOP");
+                log.setLevel(SimpleLog.LOG_LEVEL_ERROR);
             } else if (args[i].equals("-c")) {
                 i = i + parseConfigurationOption(args, i);
             } else if (args[i].equals("-l")) {

@@ -23,7 +23,7 @@ import java.io.IOException;
 import java.awt.color.ColorSpace;
 
 // FOP
-import org.apache.avalon.framework.logger.Logger;
+import org.apache.commons.logging.Log;
 
 /**
  * Bitmap image.
@@ -50,7 +50,7 @@ public class BmpImage extends AbstractFopImage {
      * @param ua the user agent
      * @return true if it was loaded successfully
      */
-    protected boolean loadBitmap(Logger logger) {
+    protected boolean loadBitmap(Log logger) {
         int wpos = 18;
         int hpos = 22; // offset positioning for w and height in  bmp files
         int[] headermap = new int[54];

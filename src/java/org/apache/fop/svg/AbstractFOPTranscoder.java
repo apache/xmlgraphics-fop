@@ -20,9 +20,8 @@ package org.apache.fop.svg;
 
 import org.xml.sax.EntityResolver;
 
-import org.apache.avalon.framework.logger.ConsoleLogger;
-import org.apache.avalon.framework.logger.LogEnabled;
-import org.apache.avalon.framework.logger.Logger;
+import org.apache.commons.logging.impl.SimpleLog;
+import org.apache.commons.logging.Log;
 import org.apache.batik.bridge.UserAgent;
 import org.apache.batik.dom.svg.SVGDOMImplementation;
 import org.apache.batik.dom.util.DocumentFactory;
@@ -39,7 +38,7 @@ import org.w3c.dom.DOMImplementation;
  * This is the common base class of all of FOP's transcoders.
  */
 public abstract class AbstractFOPTranscoder extends SVGAbstractTranscoder
-            implements LogEnabled {
+            {
 
     /**
      * The key to specify whether to stroke text instead of using text 
@@ -58,7 +57,7 @@ public abstract class AbstractFOPTranscoder extends SVGAbstractTranscoder
      */
     protected UserAgent userAgent = createUserAgent();
 
-    private Logger logger;
+    private Log logger;
     private EntityResolver resolver;
 
     /**
@@ -81,10 +80,7 @@ public abstract class AbstractFOPTranscoder extends SVGAbstractTranscoder
         return new FOPTranscoderUserAgent();
     }
     
-    /**
-     * @see org.apache.avalon.framework.logger.LogEnabled#enableLogging(Logger)
-     */
-    public void enableLogging(Logger logger) {
+    public void setLogger(Log logger) {
         this.logger = logger;
     }
 
@@ -98,12 +94,13 @@ public abstract class AbstractFOPTranscoder extends SVGAbstractTranscoder
     
     /**
      * Returns the logger associated with this transcoder. It returns a 
-     * ConsoleLogger if no logger has been explicitly set.
+     * SimpleLog if no logger has been explicitly set.
      * @return Logger the logger for the transcoder.
      */
-    protected final Logger getLogger() {
+    protected final Log getLogger() {
         if (this.logger == null) {
-            this.logger = new ConsoleLogger(ConsoleLogger.LEVEL_INFO);
+            this.logger = new SimpleLog("FOP/Transcoder");
+            ((SimpleLog) logger).setLevel(SimpleLog.LOG_LEVEL_INFO);
         }
         return this.logger;
     }
@@ -133,7 +130,7 @@ public abstract class AbstractFOPTranscoder extends SVGAbstractTranscoder
 
     /**
      * This is the default transcoder error handler for FOP. It logs error
-     * to an Avalon Logger instead of to System.out. The remaining behaviour 
+     * to an Commons Logger instead of to System.out. The remaining behaviour 
      * is the same as Batik's DefaultErrorHandler.
      */    
     protected class FOPErrorHandler implements ErrorHandler {

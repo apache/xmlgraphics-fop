@@ -1133,8 +1133,7 @@ public class PDFFactory {
                         FontFileReader reader = new FontFileReader(in);
 
                         TTFSubSetFile subset = new TTFSubSetFile();
-                        ContainerUtil.enableLogging(subset,
-                            getDocument().getLogger().getChildLogger("fonts"));
+                        subset.setLogger(getDocument().getLogger());
 
                         byte[] subsetFont = subset.readFont(reader,
                                              mbfont.getTTCName(), mbfont.getUsedGlyphs());

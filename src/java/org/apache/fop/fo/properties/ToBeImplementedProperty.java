@@ -51,7 +51,7 @@ public class ToBeImplementedProperty extends Property {
         //UnimplementedPropertyException or something similar should
         //get thrown here instead.
 
-//         Logger log = Hierarchy.getDefaultHierarchy().getLoggerFor("fop");
+//         Log log = Hierarchy.getDefaultHierarchy().getLoggerFor("fop");
 //         log.warn("property - \"" + propName
 //                                + "\" is not implemented yet.");
     }

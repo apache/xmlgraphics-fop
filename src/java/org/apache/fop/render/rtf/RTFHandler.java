@@ -24,8 +24,8 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.util.Iterator;
 
-import org.apache.avalon.framework.logger.ConsoleLogger;
-import org.apache.avalon.framework.logger.Logger;
+import org.apache.commons.logging.impl.SimpleLog;
+import org.apache.commons.logging.Log;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.fo.FOInputHandler;
 import org.apache.fop.fo.FObj;
@@ -98,7 +98,7 @@ public class RTFHandler extends FOInputHandler {
 
     private RtfFile rtfFile;
     private final OutputStream os;
-    private final Logger log = new ConsoleLogger();
+    private final Log log = new SimpleLog("FOP/RTF");
     private RtfSection sect;
     private RtfDocumentArea docArea;
     private int iNestCount;

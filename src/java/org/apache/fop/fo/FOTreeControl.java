@@ -28,8 +28,7 @@ import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.fo.extensions.Bookmarks;
 import org.apache.fop.fonts.FontMetrics;
 
-// Avalon
-import org.apache.avalon.framework.logger.Logger;
+import org.apache.commons.logging.Log;
 
 /**
  * An interface for classes that are conceptually the parent class of the
@@ -94,7 +93,7 @@ public interface FOTreeControl {
     /**
      * @return the Logger being used with this FO Tree
      */
-    Logger getLogger();
+    Log getLogger();
 
     /**
      * @return the FOUserAgent used for processing this FO Tree
