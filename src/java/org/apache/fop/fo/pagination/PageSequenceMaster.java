@@ -20,7 +20,6 @@ package org.apache.fop.fo.pagination;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.datatypes.EnumType;
 import org.apache.fop.datatypes.IntegerType;
@@ -50,7 +49,7 @@ import org.apache.fop.fo.properties.PagePosition;
  * @version $Revision$ $Name$
  */
 public class PageSequenceMaster {
-
+    
     private static final String tag = "$Name:  $";
     private static final String revision = "$Revision: 1.4.2.8 $";
 
@@ -60,7 +59,10 @@ public class PageSequenceMaster {
 
     private String masterName;
 
-    private ArrayList masters = new ArrayList(1);
+    /**
+     * Comment for <code>masters</code>
+     */
+    protected ArrayList masters = new ArrayList(1);
 
     /**
      * Creates a <i>PageSequenceMaster</i> from an
@@ -305,7 +307,15 @@ public class PageSequenceMaster {
         public final int minRepeats;
         /** The maximum-repeats value for this set of alternatives. */
         public final int maxRepeats;
+        
+        /**
+         * Number of times this set of alternatives has been used
+         */
+        private int usageCount = 0;
 
+        /**
+         * List of alternative condition sets/simple page masters
+         */
         private ArrayList alternatives = new ArrayList(1);
 
         /**
@@ -344,7 +354,55 @@ public class PageSequenceMaster {
         public PageCondition getAlternative(int i) {
             return (PageCondition)(alternatives.get(i));
         }
-
+        
+        /**
+         * Gets the <code>PageCondition</code> object matching the
+         * arguments
+         * @param blankOrNot blank or not blank page test condition
+         * @param oddOrEven odd or even page numbered page test condition
+         * @param pagePosition position on sequence test condition
+         * @return the matching <code>PageCondition</code> or null if
+         * conditions match no object
+         */
+        public PageCondition conditionMatch(
+                int blankOrNot, int oddOrEven, int pagePosition) {
+            for (int i = 0; i < alternatives.size(); i++) {
+                PageCondition pageCond = (PageCondition)(alternatives.get(i));
+                if (pageCond.isMatch(blankOrNot, oddOrEven, pagePosition)) {
+                    return pageCond;
+                }
+            }
+            return null;
+        }
+        
+        /**
+         * Use the simple page master from the first <code>PageCondition</code>
+         * matching the argument.
+         * The usage count for this <code>PageMasterAlternatives</code>
+         * object is incremented.
+         * @param blankOrNot blank or not blank page test condition
+         * @param oddOrEven odd or even page numbered page test condition
+         * @param pagePosition position on sequence test condition
+         * @return the simple page master or null if the usage count has been
+         * exceeded or there is no matching set of conditions. 
+         */
+        public FoSimplePageMaster useConditionalMaster(
+                int blankOrNot, int oddOrEven, int pagePosition) {
+            if (maxRepeats == NO_LIMIT || usageCount < maxRepeats) {
+                PageCondition pageCond = conditionMatch(
+                        blankOrNot, oddOrEven, pagePosition);
+                if (pageCond != null) {
+                    usageCount++;
+                    return pageCond.getSimplePM();
+                }
+            }
+            return null;
+        }
+        
+        public boolean isExhausted() {
+            return (maxRepeats != NO_LIMIT && usageCount >= maxRepeats);
+        }
+        
         /**
          * Encodes a condition set from an FoConditionalPageReferenceMaster.
          */
@@ -376,17 +434,125 @@ public class PageSequenceMaster {
              * condition.
              */
             public PageCondition(FoSimplePageMaster master,
-                            int blankOrNot, int oddOrEven, int pagePosition) {
+                            int blankOrNot, int oddOrEven, int pagePosition)
+            {
                 this.master       = master;
                 this.blankOrNot   = blankOrNot;
                 this.oddOrEven    = oddOrEven;
                 this.pagePosition = pagePosition;
-                //System.out.println("New condition: "
-                //                   + blankOrNot
-                //                   + " "+ oddOrEven + " " + pagePosition);
+            }
+            
+            /**
+             * Does this <code>PageCondition</code> match the arguments?
+             * @param blankOrNot blank or not blank page test condition
+             * @param oddOrEven odd or even page numbered page test condition
+             * @param pagePosition position on sequence test condition
+             * @return true if all tests match
+             */
+            public boolean isMatch(
+                    int blankOrNot, int oddOrEven, int pagePosition) {
+                return (this.blankOrNot == blankOrNot &&
+                         this.oddOrEven == oddOrEven &&
+                         this.pagePosition == pagePosition);
+            }
+            
+            /**
+             * Gets the simple page master associated with this set of
+             * alternative conditions
+             * @return the simple page master
+             */
+            public FoSimplePageMaster getSimplePM() {
+                return master;
+            }
+            
+            /**
+             * Gets the simple page master associated with this set of page
+             * test condition if the conditions match the arguments
+             * @param blankOrNot blank or not blank page test condition
+             * @param oddOrEven odd or even page numbered page test condition
+             * @param pagePosition position on sequence test condition
+             * @return the simple page master or null if the conditions do
+             * not match
+             */
+            public FoSimplePageMaster getSimplePM(
+                    int blankOrNot, int oddOrEven, int pagePosition) {
+                if (isMatch(blankOrNot, oddOrEven, pagePosition)) {
+                    return master;
+                }
+                return null;
             }
         }
 
     }
 
+    /**
+     * Provides an iterator across the sequence of page masters in the
+     * containing <code>PageSequenceMaster</code>.
+     * 
+     * @author pbw
+     * @version $Revision$ $Name$
+     */
+    public class PageMasterIterator {
+
+        /**
+         * Effectively, the iterator across <code>masters</code>
+         */
+        private int currentMasterIndex = 0;
+        
+        private PageMasterAlternatives altMaster =
+            (PageMasterAlternatives)(masters.get(currentMasterIndex));
+        
+        /**
+         * Array of flags for completed masters
+         */
+        private boolean[] finished = new boolean[masters.size()];
+        
+        /**
+         * Returns a new iterator across <code>masters</code>
+         */
+        public PageMasterIterator() {
+        }
+
+        /**
+         * @return true if any repetitions on any masters remian in the
+         * sequence
+         */
+        public boolean hasNext() {
+            if (currentMasterIndex >= masters.size()) return false;
+            return true;
+        }
+
+        /**
+         * Gets the next simple page master matching the given conditions.
+         * @param blankOrNot blank or not blank page test condition
+         * @param oddOrEven odd or even page numbered page test condition
+         * @param pagePosition position on sequence test condition
+         * @return the matching page master or null if none can be found
+         */
+        public FoSimplePageMaster next(
+                int blankOrNot, int oddOrEven, int pagePosition) {
+            PageMasterAlternatives masterAlt;
+            FoSimplePageMaster simplePM;
+            while (hasNext()) {
+                simplePM = altMaster.useConditionalMaster(
+                        blankOrNot, oddOrEven, pagePosition);
+                if (simplePM != null) {
+                    return simplePM;
+                }
+                finished[currentMasterIndex++] = true;
+            }
+            return null;
+        }
+        
+        /**
+         * Gets the next simple page master matching the default conditions
+         * @return the matching page master or null if none can be found
+         */
+        public FoSimplePageMaster next() {
+            return next(
+                    BlankOrNotBlank.ANY, OddOrEven.ANY, PagePosition.ANY);
+        }
+
+    }
+    
 }
