@@ -1,5 +1,5 @@
 /*
- * Copyright 1999-2004 The Apache Software Foundation.
+ * Copyright 1999-2005 The Apache Software Foundation.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -33,6 +33,8 @@ public class TraitSetter {
      * Sets border and padding traits on areas.
      * @param area area to set the traits on
      * @param bpProps border and padding properties
+     * @param bNotFirst True if the area is not the first area
+     * @param bNotLast True if the area is not the last area
      */
     public static void setBorderPaddingTraits(Area area,
             CommonBorderPaddingBackground bpProps, boolean bNotFirst, boolean bNotLast) {
@@ -96,45 +98,45 @@ public class TraitSetter {
      * Add borders to an area.
      * Layout managers that create areas with borders can use this to
      * add the borders to the area.
-     * @param curBlock area to set the traits on
+     * @param area the area to set the traits on.
      * @param bordProps border properties
      */
-    public static void addBorders(Area curBlock, CommonBorderPaddingBackground bordProps) {
+    public static void addBorders(Area area, CommonBorderPaddingBackground bordProps) {
         BorderProps bps = getBorderProps(bordProps, CommonBorderPaddingBackground.BEFORE);
         if (bps.width != 0) {
-            curBlock.addTrait(Trait.BORDER_BEFORE, bps);
+            area.addTrait(Trait.BORDER_BEFORE, bps);
         }
         bps = getBorderProps(bordProps, CommonBorderPaddingBackground.AFTER);
         if (bps.width != 0) {
-            curBlock.addTrait(Trait.BORDER_AFTER, bps);
+            area.addTrait(Trait.BORDER_AFTER, bps);
         }
         bps = getBorderProps(bordProps, CommonBorderPaddingBackground.START);
         if (bps.width != 0) {
-            curBlock.addTrait(Trait.BORDER_START, bps);
+            area.addTrait(Trait.BORDER_START, bps);
         }
         bps = getBorderProps(bordProps, CommonBorderPaddingBackground.END);
         if (bps.width != 0) {
-            curBlock.addTrait(Trait.BORDER_END, bps);
+            area.addTrait(Trait.BORDER_END, bps);
         }
 
         int padding = bordProps.getPadding(CommonBorderPaddingBackground.START, false);
         if (padding != 0) {
-            curBlock.addTrait(Trait.PADDING_START, new java.lang.Integer(padding));
+            area.addTrait(Trait.PADDING_START, new java.lang.Integer(padding));
         }
 
         padding = bordProps.getPadding(CommonBorderPaddingBackground.END, false);
         if (padding != 0) {
-            curBlock.addTrait(Trait.PADDING_END, new java.lang.Integer(padding));
+            area.addTrait(Trait.PADDING_END, new java.lang.Integer(padding));
         }
 
         padding = bordProps.getPadding(CommonBorderPaddingBackground.BEFORE, false);
         if (padding != 0) {
-            curBlock.addTrait(Trait.PADDING_BEFORE, new java.lang.Integer(padding));
+            area.addTrait(Trait.PADDING_BEFORE, new java.lang.Integer(padding));
         }
 
         padding = bordProps.getPadding(CommonBorderPaddingBackground.AFTER, false);
         if (padding != 0) {
-            curBlock.addTrait(Trait.PADDING_AFTER, new java.lang.Integer(padding));
+            area.addTrait(Trait.PADDING_AFTER, new java.lang.Integer(padding));
         }
     }
 
@@ -150,10 +152,10 @@ public class TraitSetter {
      * Add background to an area.
      * Layout managers that create areas with a background can use this to
      * add the background to the area.
-     * @param curBlock the current block
+     * @param area the area to set the traits on
      * @param backProps the background properties
      */
-    public static void addBackground(Area curBlock, CommonBorderPaddingBackground backProps) {
+    public static void addBackground(Area area, CommonBorderPaddingBackground backProps) {
         Trait.Background back = new Trait.Background();
         back.setColor(backProps.backgroundColor);
 
@@ -169,7 +171,7 @@ public class TraitSetter {
         }
 
         if (back.getColor() != null || back.getURL() != null) {
-            curBlock.addTrait(Trait.BACKGROUND, back);
+            area.addTrait(Trait.BACKGROUND, back);
         }
     }
 
@@ -177,29 +179,38 @@ public class TraitSetter {
      * Add space to a block area.
      * Layout managers that create block areas can use this to add space
      * outside of the border rectangle to the area.
-     * @param curBlock the current block.
+     * @param area the area to set the traits on.
+     * @param bpProps the border, padding and background properties
      * @param marginProps the margin properties.
      */
-    public static void addMargins(Area curBlock,
+    public static void addMargins(Area area,
                                   CommonBorderPaddingBackground bpProps,
                                   CommonMarginBlock marginProps) {
-        int spaceStart = marginProps.startIndent.getValue() 
+        int spaceStart = marginProps.startIndent.getValue()
+                            - marginProps.inheritedStartIndent.getValue()
                             - bpProps.getBorderStartWidth(false)
                             - bpProps.getPaddingStart(false);
         if (spaceStart != 0) {
-            curBlock.addTrait(Trait.SPACE_START, new Integer(spaceStart));
+            area.addTrait(Trait.SPACE_START, new Integer(spaceStart));
         }
 
         int spaceEnd = marginProps.endIndent.getValue()
+                            - marginProps.inheritedEndIndent.getValue()
                             - bpProps.getBorderEndWidth(false)
                             - bpProps.getPaddingEnd(false);
         if (spaceEnd != 0) {
-            curBlock.addTrait(Trait.SPACE_END, new Integer(spaceEnd));
+            area.addTrait(Trait.SPACE_END, new Integer(spaceEnd));
         }
     }
 
-    public static void addBreaks(Area curArea,  int breakBefore, int breakAfter) {
-        curArea.addTrait(Trait.BREAK_AFTER, new Integer(breakAfter));
-        curArea.addTrait(Trait.BREAK_BEFORE, new Integer(breakBefore));
+    /**
+     * Sets the traits for breaks on an area.
+     * @param area the area to set the traits on.
+     * @param breakBefore the value for break-before
+     * @param breakAfter the value for break-after
+     */
+    public static void addBreaks(Area area,  int breakBefore, int breakAfter) {
+        area.addTrait(Trait.BREAK_AFTER, new Integer(breakAfter));
+        area.addTrait(Trait.BREAK_BEFORE, new Integer(breakBefore));
     }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 1999-2004 The Apache Software Foundation.
+ * Copyright 1999-2005 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -70,6 +70,16 @@ public class CommonMarginBlock {
     public Length endIndent;
 
     /**
+     * The inherited "start-indent" property.
+     */
+    public Length inheritedStartIndent;
+
+    /**
+     * The inherited "end-indent" property.
+     */
+    public Length inheritedEndIndent;
+
+    /**
      * Create a CommonMarginBlock object.
      * @param pList The PropertyList with propery values.
      */
@@ -84,5 +94,27 @@ public class CommonMarginBlock {
 
         startIndent = pList.get(Constants.PR_START_INDENT).getLength();
         endIndent = pList.get(Constants.PR_END_INDENT).getLength();
+        
+        if (!pList.getFObj().generatesReferenceAreas()) {
+            inheritedStartIndent = pList.getParentPropertyList()
+                    .get(Constants.PR_START_INDENT).getLength();
+            inheritedEndIndent = pList.getParentPropertyList()
+                    .get(Constants.PR_END_INDENT).getLength();
+        }
     }
+    
+    /** @see java.lang.Object#toString() */
+    public String toString() {
+        return "CommonMarginBlock:\n" 
+            + "Margins (top, bottom, left, right): (" 
+            + marginTop + ", " + marginBottom + ", " 
+            + marginLeft + ", " + marginRight + ")\n"
+            + "Space (before, after): (" 
+            + spaceBefore + ", " + spaceAfter + ")\n" 
+            + "Indents (start, end): ("
+            + startIndent + ", " + endIndent + ")\n"
+            + "Indents inherited (start, end): (" 
+            + inheritedStartIndent + ", " + inheritedEndIndent + ")\n";
+    }
+    
 }
