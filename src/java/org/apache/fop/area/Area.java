@@ -135,7 +135,7 @@ public class Area extends AreaNode implements Cloneable  {
     protected boolean frameLeftToRight = true;
 
 
-    private void setup() {
+    protected void setup() {
         try {
             contentWritingMode = generatedBy.getWritingMode();
             contentIsHorizontal = WritingMode.isHorizontal(contentWritingMode);
