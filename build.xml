@@ -91,7 +91,6 @@ list of possible build targets.
       <include name="*.jar"/>
       <exclude name="ant.jar"/>
       <exclude name="buildtools.jar"/>
-      <exclude name="stylebook.jar"/>
     </fileset>
     <fileset dir="build">
       <include name="fop.jar"/>
@@ -147,13 +146,7 @@ list of possible build targets.
     <property name="hyph.dir" value="./hyph"/>
     <property name="conf.dir" value="./conf"/>
     <property name="packages" value="org.apache.fop.*"/>
-    
-    <property name="docs" value="docs/html-docs"/>
-    <property name="xdocs" value="docs/xml-docs"/>
-    <property name="skins" value="docs/xml-docs/skins/xml.apache.org/"/>
-    <property name="doc.generator" value="org.apache.stylebook.StyleBook"/>
-    <property name="doc.generator.package" value="${lib.dir}/stylebook-1.0-b2.jar"/>
-    
+
     <property name="viewer.resources.src.dir" value="./src/org/apache/fop/viewer/resources"/>
     <property name="viewer.images.src.dir" value="./src/org/apache/fop/viewer/Images"/>
     
@@ -169,19 +162,19 @@ list of possible build targets.
 
     <property name="viewer.resources.dest.dir" value="${build.dest}/org/apache/fop/viewer/resources"/>
     <property name="viewer.images.dest.dir" value="${build.dest}/org/apache/fop/viewer/Images"/>
-    
+
     <property name="dist.bin.dir" value="./dist-bin"/>
     <property name="dist.src.dir" value="./dist-src"/>
     <property name="dist.bin.result.dir" value="${dist.bin.dir}/${Name}-${version}"/>
     <property name="dist.src.result.dir" value="${dist.src.dir}/${Name}-${version}"/>
-    
+
     <property name="properties.dir" value="org/apache/fop/fo/properties"/>
     <property name="fonts.dir" value="org/apache/fop/render/pdf/fonts"/>
     <property name="replacestring" value="org/apache/fop"/>
     <property name="ignore_this" value="ignore_this.dummy"/>
     <property name="jimi" value="JimiImage.java"/>
     <property name="jai" value="JAIImage.java"/>
-    
+
     <property name="xslt" value="org.apache.xalan.xslt.Process"/>
     <property name="src.properties.xsl" value="${src.codegen}/properties.xsl"/>
     <property name="src.propmaker.xsl" value="${src.codegen}/propmaker.xsl"/>
@@ -220,12 +213,7 @@ list of possible build targets.
     <property name="xsltransform" value="XSLTransform.java"/>
     
     <property name="tools.pkg" value="org/apache/fop/tools"/>
-    
-    <!-- insert custom font information here (step 1 of 2) -->
-    <!-- use this as a template 
-    <property name="myfont.xml" value="${build.codegen}/myfont.xml"/>
-    -->
-    
+
     <taskdef name="serHyph" classname="org.apache.fop.tools.anttasks.SerializeHyphPattern"/>
     <taskdef name="runTest" classname="org.apache.fop.tools.anttasks.RunTest"/>
     
@@ -392,16 +380,6 @@ list of possible build targets.
         in="${ZapfDingbats.xml}" style="${fontfile.xsl}" 
         out="${build.gensrc}/${replacestring}/render/pdf/fonts/ZapfDingbats.java"/>
         
-    <!-- custom fonts (Use t1fontfile.xsl instead of fontfile.xsl for Type 1 fonts!) step 2/2 -->
-    <!-- use this as a template for type 1 fonts: 
-    <style in="${myfont.xml}" style="${t1fontfile.xsl}"
-        out="${build.gensrc}/${replacestring}/render/pdf/fonts/myfont.java"/>
-    -->
-    <!-- use this as a template for truetype fonts 
-    <style in="${myfont.xml}" style="${ttffontfile.xsl}" 
-        out="${build.gensrc}/${replacestring}/render/pdf/fonts/myfont.java"/>
-    -->
-    
     <!-- prepare JDK dependant files -->
     <copy todir="${build.gensrc}" filtering="on">
       <mapper type="glob" from="*.javat" to="*.java"/>
@@ -522,19 +500,22 @@ list of possible build targets.
   <!-- =================================================================== -->
   <target name="test" depends="package" description="Runs the test suite">
     <echo message="Testing build in jar file ${build.dir}/${name}.jar against reference"/>
-    <runTest testSuite="basictests.xml" basedir="test/" reference="test/reference/fop.jar" refVersion="FOP 1.0dev"/>
-    <runTest testSuite="bugtests.xml" basedir="test/" reference="test/reference/fop.jar" refVersion="FOP 1.0dev"/>
-    <!--
+    <property name="ref-version" value="FOP 1.0dev"/>
+    <runTest testSuite="basictests.xml" basedir="test/" reference="test/reference/fop.jar"
+         refVersion="${ref-version}"/>
+    <runTest testSuite="bugtests.xml" basedir="test/" reference="test/reference/fop.jar"
+         refVersion="${ref-version}"/>
+<!--
     <runTest testSuite="testsuite.xml" basedir="TestSuite/NIST/" reference="test/reference/fop.jar"
-         refVersion="FOP 1.0dev"/>
+         refVersion="${ref-version}"/>
     <runTest testSuite="testsuite.xml" basedir="TestSuite/contrib/IBM/" reference="test/reference/fop.jar"
-         refVersion="FOP 1.0dev"/>
+         refVersion="${ref-version}"/>
     <runTest testSuite="testsuite.xml" basedir="TestSuite/contrib/FOP/" reference="test/reference/fop.jar"
-         refVersion="FOP 1.0dev"/>
+         refVersion="${ref-version}"/>
     <runTest testSuite="testsuite.xml" basedir="TestSuite/contrib/XEP/" reference="test/reference/fop.jar"
-         refVersion="FOP 1.0dev"/>
+         refVersion="${ref-version}"/>
     <runTest testSuite="testsuite.xml" basedir="TestSuite/contrib/XSLFormatter/" reference="test/reference/fop.jar"
-         refVersion="FOP 1.0dev"/>
+         refVersion="${ref-version}"/>
 -->
   </target>
   
