@@ -1152,7 +1152,7 @@ public class RTFHandler extends FOInputHandler {
         } else if (fobj instanceof FOText) {
             if (bStart) {
                 FOText text = (FOText) fobj;
-                characters(text.ca, text.start, text.ca.length);
+                characters(text.ca, text.startIndex, text.endIndex);
             }
         } else if (fobj instanceof BasicLink) {
             if (bStart) {
