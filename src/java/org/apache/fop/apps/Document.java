@@ -58,7 +58,7 @@ import java.io.IOException;
 import org.apache.fop.area.AreaTree;
 import org.apache.fop.area.AreaTreeModel;
 
-import org.apache.fop.extensions.Bookmarks;
+import org.apache.fop.fo.extensions.Bookmarks;
 import org.apache.fop.fo.FOTreeControl;
 import org.apache.fop.fo.FOTreeEvent;
 import org.apache.fop.fo.FOTreeListener;

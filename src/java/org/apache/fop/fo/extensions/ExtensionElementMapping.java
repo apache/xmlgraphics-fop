@@ -1,5 +1,5 @@
 /*
- * $Id: Label.java,v 1.7 2003/03/05 20:40:18 jeremias Exp $
+ * $Id$
  * ============================================================================
  *                    The Apache Software License, Version 1.1
  * ============================================================================
@@ -48,50 +48,56 @@
  * James Tauber <jtauber@jtauber.com>. For more information on the Apache
  * Software Foundation, please see <http://www.apache.org/>.
  */
-package org.apache.fop.extensions;
+package org.apache.fop.fo.extensions;
 
 import org.apache.fop.fo.FONode;
-import org.apache.fop.fo.FOTreeVisitor;
+import org.apache.fop.fo.ElementMapping;
+
+import java.util.HashMap;
+
+import org.apache.fop.extensions.*;
 
 /**
- * Labal for PDF bookmark extension.
- * This element contains the label for the bookmark object.
+ * Element mapping for the pdf bookmark extension.
+ * This sets up the mapping for the classes that handle the
+ * pdf bookmark extension.
  */
-public class Label extends ExtensionObj {
-    private String label = "";
+public class ExtensionElementMapping extends ElementMapping {
 
     /**
-     * Create a new label object.
-     *
-     * @param parent the fo node parent
+     * Constructor.
      */
-    public Label(FONode parent) {
-        super(parent);
+    public ExtensionElementMapping() {
+        namespaceURI = "http://xml.apache.org/fop/extensions";
     }
 
     /**
-     * Add the characters to this label.
-     * The text data inside the label xml element is used for the label string.
-     *
-     * @param data the character data
-     * @param start the start position in the data array
-     * @param end the end position in the character array
+     * Initialize the data structures.
      */
-    protected void addCharacters(char data[], int start, int end) {
-        label += new String(data, start, end - start);
+    protected void initialize() {
+        if (foObjs == null) {
+            foObjs = new HashMap();
+            foObjs.put("bookmarks", new B());
+            foObjs.put("outline", new O());
+            foObjs.put("label", new L());
+        }
     }
 
-    /**
-     * Get the string for this label.
-     *
-     * @return the label string
-     */
-    public String toString() {
-        return label;
+    static class B extends ElementMapping.Maker {
+        public FONode make(FONode parent) {
+            return new Bookmarks(parent);
+        }
     }
 
-    public void acceptVisitor(FOTreeVisitor fotv) {
-        fotv.serveVisitor(this);
+    static class O extends ElementMapping.Maker {
+        public FONode make(FONode parent) {
+            return new Outline(parent);
+        }
     }
 
+    static class L extends ElementMapping.Maker {
+        public FONode make(FONode parent) {
+            return new Label(parent);
+        }
+    }
 }

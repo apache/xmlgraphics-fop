@@ -55,7 +55,7 @@ package org.apache.fop.fo;
 import java.util.Map;
 
 // FOP
-import org.apache.fop.extensions.Bookmarks;
+import org.apache.fop.fo.extensions.Bookmarks;
 import org.apache.fop.fonts.FontMetrics;
 
 /**

@@ -51,7 +51,7 @@
 package org.apache.fop.layoutmgr;
 
 import org.apache.fop.area.extensions.BookmarkData;
-import org.apache.fop.extensions.Outline;
+import org.apache.fop.fo.extensions.Outline;
 import org.apache.fop.apps.Document;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.layout.LayoutStrategy;
@@ -60,6 +60,7 @@ import org.apache.fop.area.Title;
 import org.apache.fop.fo.pagination.PageSequence;
 import org.apache.fop.fo.FOTreeHandler;
 import org.apache.fop.apps.*;
+import org.apache.fop.fo.extensions.*;
 
 /**
  * The implementation of LayoutStrategy for the "redesign" or second generation
