@@ -110,6 +110,13 @@ public class FObj extends FONode {
         super(parent);
     }
 
+    /** Marks input file containing this object **/
+    public String systemId;
+    /** Marks line number of this object in the input file **/
+    public int line;
+    /** Marks column number of this object in the input file **/
+    public int column;
+
     /**
      * Set the name of this element.
      * The prepends "fo:" to the name to indicate it is in the fo namespace.
