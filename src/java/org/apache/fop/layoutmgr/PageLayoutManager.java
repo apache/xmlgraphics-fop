@@ -88,6 +88,7 @@ import org.apache.fop.fo.properties.Overflow;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.HashMap;
 import java.awt.Rectangle;
 import java.util.Iterator;
 import java.awt.geom.Rectangle2D;
@@ -147,6 +148,12 @@ public class PageLayoutManager extends AbstractLayoutManager implements Runnable
      * exists instead.
      */
     private SimplePageMaster currentSimplePageMaster;
+
+    /**
+     * The collection of StaticContentLayoutManager objects that are associated
+     * with this Page Sequence, keyed by flow-name.
+     */
+    private HashMap staticContentLMs = new HashMap(4);
 
     /**
      * This is the top level layout manager.
@@ -896,9 +903,15 @@ public class PageLayoutManager extends AbstractLayoutManager implements Runnable
      * @return a StaticContent layout manager
      */
     public StaticContentLayoutManager getStaticContentLayoutManager(StaticContent sc) {
-        StaticContentLayoutManager lm = new StaticContentLayoutManager();
+        StaticContentLayoutManager lm =
+                (StaticContentLayoutManager)staticContentLMs.get(sc.getFlowName());
+        if (lm != null) {
+            return lm;
+        }
+        lm = new StaticContentLayoutManager();
         lm.setUserAgent(getUserAgent());
         lm.setFObj(sc);
+        staticContentLMs.put(sc.getFlowName(), lm);
         return lm;
     }
 
