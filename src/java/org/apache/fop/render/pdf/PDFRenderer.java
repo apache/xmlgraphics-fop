@@ -311,10 +311,10 @@ public class PDFRenderer extends PrintRenderer {
             if (parentBookmarkItem == null) {
                 PDFOutline outlineRoot = pdfDoc.getOutlineRoot();
                 pdfOutline = pdfDoc.getFactory().makeOutline(outlineRoot,
-                                        bookmarkItem.getLabel(), intDest, yoffset);
+                                        bookmarkItem.getBookmarkTitle(), intDest, yoffset);
             } else {
                 pdfOutline = pdfDoc.getFactory().makeOutline(parentBookmarkItem,
-                                        bookmarkItem.getLabel(), intDest, yoffset);
+                                        bookmarkItem.getBookmarkTitle(), intDest, yoffset);
             }
         }
 
