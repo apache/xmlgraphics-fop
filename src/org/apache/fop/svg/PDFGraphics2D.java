@@ -656,7 +656,6 @@ public class PDFGraphics2D extends AbstractGraphics2D {
                     color1.getVector(), color2.getVector(), 1.0);
 
             PDFColorSpace aColorSpace = new PDFColorSpace(PDFColorSpace.DEVICE_RGB);
-            PDFResources res = pdfDoc.makeResources();
             PDFPattern myPat = this.pdfDoc.createGradient(resourceContext, false, aColorSpace,
                     someColors, null, theCoords);
             currentStream.write(myPat.getColorSpaceOut(fill));
@@ -685,10 +684,11 @@ public class PDFGraphics2D extends AbstractGraphics2D {
             float[] fractions = rgp.getFractions();
             ArrayList theBounds = new ArrayList();
             float lastoffset = 0;
-            for(int count = 0; count < fractions.length; count++) {
+            for(int count = 1; count < fractions.length - 1; count++) {
                 float offset = fractions[count];
                 // create bounds from last to offset
                 lastoffset = offset;
+                theBounds.add(new Double(offset));
             }
             PDFColorSpace colSpace = new PDFColorSpace(PDFColorSpace.DEVICE_RGB);
             PDFPattern myPat = pdfDoc.createGradient(resourceContext, true, colSpace,
