@@ -35,7 +35,7 @@ import org.apache.fop.fo.FOTreeBuilder;
 import org.apache.fop.render.awt.AWTRenderer;
 
 /**
- * Primary class that drives overall FOP process.
+ * Primary class that drives the overall FOP process.
  * <P>
  * JAXP is the standard method of embedding FOP in Java programs.
  * Please check our embedding page (http://xml.apache.org/fop/embedding.html)
@@ -106,7 +106,6 @@ public class Driver implements Constants {
 
     /**
      * Convenience constructor for directly setting input and output.
-     * @param source InputSource to take the XSL-FO input from
      * @param stream Target output stream
      */
     public Driver(OutputStream stream) {
