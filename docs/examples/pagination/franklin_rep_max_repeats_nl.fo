@@ -2,40 +2,40 @@
 
 <fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format">
 
-	<!-- defines page layout -->
-	<fo:layout-master-set>
+  <!-- defines page layout -->
+  <fo:layout-master-set>
 
-		<!-- layout for the first page -->
-  	  <fo:simple-page-master master-name="repeating"
-			page-height="21.7cm"
-        	page-width="16cm"
-        	margin-top="1cm"
-        	margin-bottom="1cm"
-        	margin-left="2.5cm"
-        	margin-right="2.5cm">
-			<fo:region-body margin-top="2cm" margin-bottom="2cm"/>
-			<fo:region-before extent="2cm"/>
-			<fo:region-after extent="2cm"/>
-		</fo:simple-page-master>
+    <!-- layout for the first page -->
+      <fo:simple-page-master master-name="repeating"
+      page-height="21.7cm"
+          page-width="16cm"
+          margin-top="1cm"
+          margin-bottom="1cm"
+          margin-left="2.5cm"
+          margin-right="2.5cm">
+      <fo:region-body margin-top="2cm" margin-bottom="2cm"/>
+      <fo:region-before extent="2cm"/>
+      <fo:region-after extent="2cm"/>
+    </fo:simple-page-master>
 
-		<fo:page-sequence-master master-name="repeating_pm">
-			<fo:repeatable-page-master-reference master-reference="repeating"
-				maximum-repeats="no-limit"/>
-			<fo:single-page-master-reference master-reference="repeating"/>
-		</fo:page-sequence-master>
-	</fo:layout-master-set>
-	<!-- end: defines page layout -->
+    <fo:page-sequence-master master-name="repeating_pm">
+      <fo:repeatable-page-master-reference master-reference="repeating"
+        maximum-repeats="no-limit"/>
+      <fo:single-page-master-reference master-reference="repeating"/>
+    </fo:page-sequence-master>
+  </fo:layout-master-set>
+  <!-- end: defines page layout -->
 
-	<!-- actual layout -->
-	<fo:page-sequence master-reference="repeating_pm" initial-page-number="1">
+  <!-- actual layout -->
+  <fo:page-sequence master-reference="repeating_pm" initial-page-number="1">
 
     <!-- header -->
-	<fo:static-content flow-name="xsl-region-before">
-		<fo:block text-align="start" font-size="10pt"
+  <fo:static-content flow-name="xsl-region-before">
+    <fo:block text-align="start" font-size="10pt"
             font-family="sans-serif"
-			line-height="10pt" >
-			John Franklin - Journey to the Shores of the Polar Sea
-		</fo:block>
+      line-height="10pt" >
+      John Franklin - Journey to the Shores of the Polar Sea
+    </fo:block>
     </fo:static-content>
 
     <fo:static-content flow-name="xsl-region-after">
@@ -73,9 +73,9 @@ Conclusion.
                 text-align="start">1821. August 17.
       </fo:block>
 
-		<!-- Normal text -->
-		<fo:block font-size="11pt"
-        	font-family="serif"
+    <!-- Normal text -->
+    <fo:block font-size="11pt"
+            font-family="serif"
             line-height="12pt"
             space-after.optimum="0pt"
             text-align="start">
@@ -99,18 +99,18 @@ materials of the larger ones, which could be carried in crossing the
 barren grounds to Fort Enterprise.
         </fo:block>
 
-		<fo:block font-size="8pt"
-        	font-family="serif"
+    <fo:block font-size="8pt"
+            font-family="serif"
             font-style="italic"
             line-height="10pt"
             space-before.optimum="3pt"
-			space-after.optimum="3pt"
+      space-after.optimum="3pt"
             text-align="start">August 19.
-    	</fo:block>
+      </fo:block>
 
-		<!-- Normal text -->
-		<fo:block font-size="11pt"
-        	font-family="serif"
+    <!-- Normal text -->
+    <fo:block font-size="11pt"
+            font-family="serif"
             line-height="12pt"
             space-after.optimum="0pt"
             text-align="start">
@@ -142,9 +142,9 @@ meal off a handful of pemmican, after which only half a bag
 remained.
         </fo:block>
 
-		<!-- Normal text -->
-		<fo:block font-size="11pt"
-        	font-family="serif"
+    <!-- Normal text -->
+    <fo:block font-size="11pt"
+            font-family="serif"
             line-height="12pt"
             space-after.optimum="0pt"
             text-align="start">
@@ -173,9 +173,9 @@ stock of pemmican did not admit of serving out two meals, we went
 dinnerless to bed.
         </fo:block>
 
-		<!-- Normal text -->
-		<fo:block font-size="11pt"
-        	font-family="serif"
+    <!-- Normal text -->
+    <fo:block font-size="11pt"
+            font-family="serif"
             line-height="12pt"
             space-after.optimum="0pt"
             text-align="start">
@@ -191,18 +191,18 @@ brings down the wood we have found along the shores, to set to the
 eastward.
         </fo:block>
 
-		<fo:block font-size="8pt"
-        	font-family="serif"
+    <fo:block font-size="8pt"
+            font-family="serif"
             font-style="italic"
             line-height="10pt"
             space-before.optimum="3pt"
-			space-after.optimum="3pt"
+      space-after.optimum="3pt"
             text-align="start">August 23.
-    	</fo:block>
+      </fo:block>
 
-		<!-- Normal text -->
-		<fo:block font-size="11pt"
-        	font-family="serif"
+    <!-- Normal text -->
+    <fo:block font-size="11pt"
+            font-family="serif"
             line-height="12pt"
             space-after.optimum="0pt"
             text-align="start">
@@ -222,9 +222,9 @@ within hail. The annexed plate, from Mr. Back's sketch, will convey
 to the reader an accurate idea of the peril of our situation.
         </fo:block>
 
-		<!-- Normal text -->
-		<fo:block font-size="11pt"
-        	font-family="serif"
+    <!-- Normal text -->
+    <fo:block font-size="11pt"
+            font-family="serif"
             line-height="12pt"
             space-after.optimum="0pt"
             text-align="start">
@@ -241,9 +241,9 @@ without further injury than the splitting of the head of
 the second canoe, which was easily repaired.
         </fo:block>
 
-		<!-- Normal text -->
-		<fo:block font-size="11pt"
-        	font-family="serif"
+    <!-- Normal text -->
+    <fo:block font-size="11pt"
+            font-family="serif"
             line-height="12pt"
             space-after.optimum="0pt"
             text-align="start">
@@ -258,18 +258,18 @@ remarked that the mosquitoes disappeared when the late gales
 commenced.
         </fo:block>
 
-		<fo:block font-size="8pt"
-        	font-family="serif"
+    <fo:block font-size="8pt"
+            font-family="serif"
             font-style="italic"
             line-height="10pt"
             space-before.optimum="3pt"
             space-after.optimum="3pt"
             text-align="start">August 25.
-    	</fo:block>
+      </fo:block>
 
-		<!-- Normal text -->
-		<fo:block font-size="11pt"
-        	font-family="serif"
+    <!-- Normal text -->
+    <fo:block font-size="11pt"
+            font-family="serif"
             line-height="12pt"
             space-after.optimum="0pt"
             text-align="start">
@@ -286,9 +286,9 @@ of these islands. Some specimens of variegated pebbles and jasper
 were found here imbedded in the amygdaloidal rock.
         </fo:block>
 
-		<!-- Normal text -->
-		<fo:block font-size="11pt"
-        	font-family="serif"
+    <!-- Normal text -->
+    <fo:block font-size="11pt"
+            font-family="serif"
             line-height="12pt"
             space-after.optimum="0pt"
             text-align="start">
@@ -302,9 +302,9 @@ heavy rain, and we encamped at seven P.M., having advanced
 eighteen miles.
         </fo:block>
 
-		<!-- Normal text -->
-		<fo:block font-size="11pt"
-        	font-family="serif"
+    <!-- Normal text -->
+    <fo:block font-size="11pt"
+            font-family="serif"
             line-height="12pt"
             space-after.optimum="0pt"
             text-align="start">
@@ -319,9 +319,9 @@ on the islands nearest to the coast. Those we saw were generally
 females with their young, and all of them very lean.
         </fo:block>
 
-		<!-- Normal text -->
-		<fo:block font-size="11pt"
-        	font-family="serif"
+    <!-- Normal text -->
+    <fo:block font-size="11pt"
+            font-family="serif"
             line-height="12pt"
             space-after.optimum="0pt"
             text-align="start">
@@ -341,9 +341,9 @@ in encountering the dangers of the sea, magnified to them by their
 novelty.
         </fo:block>
 
-		<!-- Normal text -->
-		<fo:block font-size="11pt"
-        	font-family="serif"
+    <!-- Normal text -->
+    <fo:block font-size="11pt"
+            font-family="serif"
             line-height="12pt"
             space-after.optimum="0pt"
             text-align="start">
@@ -357,9 +357,9 @@ fringe the coast from Copper-Mine River to Point Turnagain, I have
 named in honour of His Royal Highness the Duke of York.
         </fo:block>
 
-		<!-- Normal text -->
-		<fo:block font-size="11pt"
-        	font-family="serif"
+    <!-- Normal text -->
+    <fo:block font-size="11pt"
+            font-family="serif"
             line-height="12pt"
             space-after.optimum="0pt"
             text-align="start">
@@ -371,18 +371,18 @@ above marks left at our former encampments. This may, perhaps,
 be attributed to the north-west gales.
         </fo:block>
 
-		<fo:block font-size="8pt"
-        	font-family="serif"
+    <fo:block font-size="8pt"
+            font-family="serif"
             font-style="italic"
             line-height="10pt"
             space-before.optimum="3pt"
             space-after.optimum="3pt"
             text-align="start">August 26.
-    	</fo:block>
+      </fo:block>
 
-		<!-- Normal text -->
-		<fo:block font-size="11pt"
-        	font-family="serif"
+    <!-- Normal text -->
+    <fo:block font-size="11pt"
+            font-family="serif"
             line-height="12pt"
             space-after.optimum="0pt"
             text-align="start">
@@ -396,9 +396,9 @@ latitude and longitude of the principal places, and the course we
 intended to pursue towards Slave Lake.
         </fo:block>
 
-		<!-- Normal text -->
-		<fo:block font-size="11pt"
-        	font-family="serif"
+    <!-- Normal text -->
+    <fo:block font-size="11pt"
+            font-family="serif"
             line-height="12pt"
             space-after.optimum="0pt"
             text-align="start">
@@ -419,9 +419,9 @@ made their appearance, but not in any great numbers. Our distance
 made to-day was not more than six miles.
         </fo:block>
 
-		<!-- Normal text -->
-		<fo:block font-size="11pt"
-        	font-family="serif"
+    <!-- Normal text -->
+    <fo:block font-size="11pt"
+            font-family="serif"
             line-height="12pt"
             space-after.optimum="0pt"
             text-align="start">
@@ -452,9 +452,9 @@ Hood took beautiful sketches of this majestic scene, which are
 combined in the annexed plate.
         </fo:block>
 
-		<!-- Normal text -->
-		<fo:block font-size="11pt"
-        	font-family="serif"
+    <!-- Normal text -->
+    <fo:block font-size="11pt"
+            font-family="serif"
             line-height="12pt"
             space-after.optimum="0pt"
             text-align="start">
@@ -468,9 +468,9 @@ accordingly commenced, and by the 31st both the canoes being
 finished, we prepared for our departure on the following day.
         </fo:block>
 
-		<!-- Normal text -->
-		<fo:block font-size="11pt"
-        	font-family="serif"
+    <!-- Normal text -->
+    <fo:block font-size="11pt"
+            font-family="serif"
             line-height="12pt"
             space-after.optimum="0pt"
             text-align="start">
@@ -490,9 +490,9 @@ left en cache here, in order that the men's burdens might be as light
 as possible.
         </fo:block>
 
-		<!-- Normal text -->
-		<fo:block font-size="11pt"
-        	font-family="serif"
+    <!-- Normal text -->
+    <fo:block font-size="11pt"
+            font-family="serif"
             line-height="12pt"
             space-after.optimum="0pt"
             text-align="start">
@@ -517,9 +517,9 @@ down by a squall, and we were completely drenched with rain before
 it could be re-pitched.
         </fo:block>
 
-		<!-- Normal text -->
-		<fo:block font-size="11pt"
-        	font-family="serif"
+    <!-- Normal text -->
+    <fo:block font-size="11pt"
+            font-family="serif"
             line-height="12pt"
             space-after.optimum="0pt"
             text-align="start">
@@ -546,9 +546,9 @@ lower and more round-backed than those we passed yesterday, and
 exhibited but little naked rock; they were covered with lichens.
         </fo:block>
 
-		<!-- Normal text -->
-		<fo:block font-size="11pt"
-        	font-family="serif"
+    <!-- Normal text -->
+    <fo:block font-size="11pt"
+            font-family="serif"
             line-height="12pt"
             space-after.optimum="0pt"
             text-align="start">
@@ -576,9 +576,9 @@ surface of the earth being thinly covered in the moister places with
 a few grasses, and on the drier spots with lichens.
         </fo:block>
 
-		<!-- Normal text -->
-		<fo:block font-size="11pt"
-        	font-family="serif"
+    <!-- Normal text -->
+    <fo:block font-size="11pt"
+            font-family="serif"
             line-height="12pt"
             space-after.optimum="0pt"
             text-align="start">
@@ -605,9 +605,9 @@ will easily be imagined;it was, however, less than that which we
 felt from hunger.
         </fo:block>
 
-		<!-- Normal text -->
-		<fo:block font-size="11pt"
-        	font-family="serif"
+    <!-- Normal text -->
+    <fo:block font-size="11pt"
+            font-family="serif"
             line-height="12pt"
             space-after.optimum="0pt"
             text-align="start">
@@ -625,9 +625,9 @@ the wind blowing so strong that no one could keep his hands long
 out of his mittens.
         </fo:block>
 
-		<!-- Normal text -->
-		<fo:block font-size="11pt"
-        	font-family="serif"
+    <!-- Normal text -->
+    <fo:block font-size="11pt"
+            font-family="serif"
             line-height="12pt"
             space-after.optimum="0pt"
             text-align="start">
@@ -680,9 +680,9 @@ here observed, that we proceeded in this manner throughout our
 route across the barren grounds.
         </fo:block>
 
-		<!-- Normal text -->
-		<fo:block font-size="11pt"
-        	font-family="serif"
+    <!-- Normal text -->
+    <fo:block font-size="11pt"
+            font-family="serif"
             line-height="12pt"
             space-after.optimum="0pt"
             text-align="start">
@@ -698,9 +698,9 @@ our socks and shoes to prevent them from freezing. This plan was
 afterwards adopted throughout the journey.
         </fo:block>
 
-		<!-- Normal text -->
-		<fo:block font-size="11pt"
-        	font-family="serif"
+    <!-- Normal text -->
+    <fo:block font-size="11pt"
+            font-family="serif"
             line-height="12pt"
             space-after.optimum="0pt"
             text-align="start">
@@ -734,9 +734,9 @@ roots to make a fire, which prevented their suffering much from the
 cold, though the thermometer was at 17 deg.
         </fo:block>
 
-		<!-- Normal text -->
-		<fo:block font-size="11pt"
-        	font-family="serif"
+    <!-- Normal text -->
+    <fo:block font-size="11pt"
+            font-family="serif"
             line-height="12pt"
             space-after.optimum="0pt"
             text-align="start">
@@ -792,18 +792,18 @@ the coast which was hid from our view by Goulburn's or Elliot's
 Islands.
         </fo:block>
 
-		<fo:block font-size="8pt"
-        	font-family="serif"
+    <fo:block font-size="8pt"
+            font-family="serif"
             font-style="italic"
             line-height="10pt"
             space-before.optimum="3pt"
             space-after.optimum="3pt"
             text-align="start">September 10.
-    	</fo:block>
+      </fo:block>
 
-		<!-- Normal text -->
-		<fo:block font-size="11pt"
-        	font-family="serif"
+    <!-- Normal text -->
+    <fo:block font-size="11pt"
+            font-family="serif"
             line-height="12pt"
             space-after.optimum="0pt"
             text-align="start">
@@ -848,9 +848,9 @@ After supper, two of the hunters went in pursuit of the herd, but
 could not get near them.
         </fo:block>
 
-		<!-- Normal text -->
-		<fo:block font-size="11pt"
-        	font-family="serif"
+    <!-- Normal text -->
+    <fo:block font-size="11pt"
+            font-family="serif"
             line-height="12pt"
             space-after.optimum="0pt"
             text-align="start">
@@ -861,9 +861,9 @@ temperature was 20 deg. The average for the last ten days about
 rest, and there was only meat remaining sufficient for the next day.
         </fo:block>
 
-		<!-- Normal text -->
-		<fo:block font-size="11pt"
-        	font-family="serif"
+    <!-- Normal text -->
+    <fo:block font-size="11pt"
+            font-family="serif"
             line-height="12pt"
             space-after.optimum="0pt"
             text-align="start">
@@ -882,9 +882,9 @@ and encamped at six P. M., having come eleven miles. Our supper
 consumed the last of our meat.
         </fo:block>
 
-		<!-- Normal text -->
-		<fo:block font-size="11pt"
-        	font-family="serif"
+    <!-- Normal text -->
+    <fo:block font-size="11pt"
+            font-family="serif"
             line-height="12pt"
             space-after.optimum="0pt"
             text-align="start">
@@ -926,18 +926,18 @@ Mr. Hood, on this occasion, lent his gun to Michel, the Iroquois,
 who was very eager in the chase, and often successful.
         </fo:block>
 
-		<fo:block font-size="8pt"
-        	font-family="serif"
+    <fo:block font-size="8pt"
+            font-family="serif"
             font-style="italic"
             line-height="10pt"
             space-before.optimum="3pt"
             space-after.optimum="3pt"
             text-align="start">September 14.
-    	</fo:block>
+      </fo:block>
 
-		<!-- Normal text -->
-		<fo:block font-size="11pt"
-        	font-family="serif"
+    <!-- Normal text -->
+    <fo:block font-size="11pt"
+            font-family="serif"
             line-height="12pt"
             space-after.optimum="0pt"
             text-align="start">
@@ -1019,6 +1019,6 @@ thanksgivings, in a civilized land, for the signal deliverances we then
 and afterwards experienced.
         </fo:block>
 
-		</fo:flow>
-	</fo:page-sequence>
+    </fo:flow>
+  </fo:page-sequence>
 </fo:root>
