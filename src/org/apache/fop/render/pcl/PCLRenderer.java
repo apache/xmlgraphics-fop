@@ -166,14 +166,16 @@ public class PCLRenderer extends PrintRenderer {
      * @param stroke the stroke color/gradient
      */
     protected void addRect(int x, int y, int w, int h, PDFPathPaint stroke) {
-        if (h < 0)
-            h *= -1;
+        //if (h < 0)
+        //    h *= -1;
 
-        if (h < 720 || w < 720) {
+        if ((h >= 0 && h < 720) || (h < 0 && h > -720) || w < 720) {
             if (w < 720)
                 w = 720;
-            if (h < 720)
+            if (h > 0 && h < 720)
                 h = 720;
+            else if (h < 0 && h > -720)
+                h = -720;
             addRect(x, y, w, h, stroke, stroke);
         } else {
             addRect(x, y, w, 720, stroke, stroke);
@@ -199,6 +201,9 @@ public class PCLRenderer extends PrintRenderer {
             return;
         if (h < 0)
             h *= -1;
+        else
+            y += h;
+
 
         PDFColor sc = (PDFColor)stroke;
         PDFColor fc = (PDFColor)fill;
