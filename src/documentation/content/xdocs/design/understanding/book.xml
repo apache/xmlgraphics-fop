@@ -19,7 +19,8 @@ PARENT DIRECTORY!
     <menu label="About">
       <menu-item label="Introduction" href="../index.html"/>
     </menu>
-    <menu label="Sections">
+    <menu label="Compliance">
+      <menu-item label="XML Parsing" href="xml_parsing.html"/>
       <menu-item label="FO Tree" href="../fotree.html"/>
       <menu-item label="Properties" href="../properties.html"/>
       <menu-item label="Layout" href="../layout.html"/>
@@ -28,7 +29,6 @@ PARENT DIRECTORY!
     </menu>
     <menu label="Understanding">
       <menu-item label="Introduction" href="index.html"/>
-      <menu-item label="XML Parsing" href="xml_parsing.html"/>
     </menu>
     <menu label="Extras">
       <menu-item label="Images" href="images.html"/>
