@@ -84,7 +84,7 @@ public class BreakPoss {
 	this(lm,position,0);
     }
 
-    public BreakPoss(BPLayoutManager lm, Position position, int flags) {
+    public BreakPoss(BPLayoutManager lm, Position position, long flags) {
         m_lm = lm;
         m_position = position;
 	m_flags = flags;
@@ -126,6 +126,10 @@ public class BreakPoss {
 
     public MinOptMax getNonStackingSize() {
 	return this.m_nonStackSize ;
+    }
+
+    public long getFlags() {
+	return m_flags;
     }
 
     public void setFlag(int flagBit) {

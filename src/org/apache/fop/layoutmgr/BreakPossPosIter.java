@@ -21,7 +21,13 @@ public class BreakPossPosIter extends PositionIterator {
     // Check position < endPos
 
     protected boolean checkNext() {
-	return (m_iterCount > 0 && super.checkNext());
+	if (m_iterCount > 0) {
+	    return super.checkNext();
+	}
+	else {
+	    endIter();
+	    return false;
+	}
     }
 
     public Object next() {

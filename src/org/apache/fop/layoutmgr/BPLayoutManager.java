@@ -64,4 +64,8 @@ public interface BPLayoutManager extends LayoutManager {
      */
     public void addAreas(PositionIterator posIter) ;
 
+    public void init() ;
+
+    public void resetPosition(BreakPoss.Position position);
+
 }

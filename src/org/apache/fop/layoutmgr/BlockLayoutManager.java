@@ -83,13 +83,13 @@ public class BlockLayoutManager extends BlockStackingLayoutManager {
                         break;
                     }
                 }
+		/*
                 lm = new LineLayoutManager(curFobj, inlines, lineHeight, lead,
                                            follow);
+		*/
 		// !!!! To test BreakPoss Line LayoutManager, uncomment!
-		/*
                 lm = new LineBPLayoutManager(curFobj, inlines, lineHeight,
 		                                lead, follow);
-		*/
                 lms.set(count, lm);
             }
             lm.setParentLM(this);
