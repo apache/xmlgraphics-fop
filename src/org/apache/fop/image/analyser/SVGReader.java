@@ -66,7 +66,7 @@ public class SVGReader extends AbstractImageReader {
   }
 
   public String getMimeType() {
-    return "image/svg";
+    return "image/svg-xml";
   }
 
   /**

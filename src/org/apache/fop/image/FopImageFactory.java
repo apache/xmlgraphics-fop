@@ -136,7 +136,7 @@ public class FopImageFactory {
       imgClassName = "org.apache.fop.image.JimiImage";
     } else if ("image/tiff".equals(imgMimeType)) {
       imgClassName = "org.apache.fop.image.JimiImage";
-    } else if ("image/svg".equals(imgMimeType)) {
+    } else if ("image/svg-xml".equals(imgMimeType)) {
       imgClassName = "org.apache.fop.image.SVGImage";
     }
     if (imgClassName == null)
