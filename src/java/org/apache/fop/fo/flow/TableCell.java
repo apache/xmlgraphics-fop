@@ -286,23 +286,19 @@ public class TableCell extends FObj {
              */
             int iSep = properties.get(
                     "border-separation.inline-progression-direction").getLength().getValue();
-            this.startAdjust = iSep / 2 + bp.getBorderLeftWidth(false)
-                               + bp.getPaddingLeft(false);
-            /*
-             * int contentOffset = iSep + bp.getBorderStartWidth(false) +
-             * bp.getPaddingStart(false);
-             */
+            this.startAdjust = iSep / 2 + bp.getBorderStartWidth(false)
+                               + bp.getPaddingStart(false);
+
             this.widthAdjust = startAdjust + iSep - iSep / 2
-                               + bp.getBorderRightWidth(false)
-                               + bp.getPaddingRight(false);
-            // bp.getBorderEndWidth(false) + bp.getPaddingEnd(false);
+                               + bp.getBorderEndWidth(false)
+                               + bp.getPaddingEnd(false);
+
             // Offset of content rectangle in the block-progression direction
             borderSeparation = properties.get(
                     "border-separation.block-progression-direction").getLength().getValue();
             this.beforeOffset = borderSeparation / 2
-                                + bp.getBorderTopWidth(false)
-                                + bp.getPaddingTop(false);
-            // bp.getBorderBeforeWidth(false) + bp.getPaddingBefore(false);
+                                + bp.getBorderBeforeWidth(false)
+                                + bp.getPaddingBefore(false);
 
         } else {
             // System.err.println("Collapse borders");
@@ -355,16 +351,16 @@ public class TableCell extends FObj {
 
 
             /* ivan demakov */
-            int borderStart = bp.getBorderLeftWidth(false);
-            int borderEnd = bp.getBorderRightWidth(false);
-            int borderBefore = bp.getBorderTopWidth(false);
-            int borderAfter = bp.getBorderBottomWidth(false);
+            int borderStart = bp.getBorderStartWidth(false);
+            int borderEnd = bp.getBorderEndWidth(false);
+            int borderBefore = bp.getBorderBeforeWidth(false);
+            int borderAfter = bp.getBorderAfterWidth(false);
 
-            this.startAdjust = borderStart / 2 + bp.getPaddingLeft(false);
+            this.startAdjust = borderStart / 2 + bp.getPaddingStart(false);
 
             this.widthAdjust = startAdjust + borderEnd / 2
-                               + bp.getPaddingRight(false);
-            this.beforeOffset = borderBefore / 2 + bp.getPaddingTop(false);
+                               + bp.getPaddingEnd(false);
+            this.beforeOffset = borderBefore / 2 + bp.getPaddingBefore(false);
             // Half border height to fix overestimate of area size!
             this.borderHeight = (borderBefore + borderAfter) / 2;
         }

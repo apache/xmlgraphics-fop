@@ -475,6 +475,82 @@ public abstract class AbstractRenderer extends AbstractLogEnabled
     }
 
     /**
+     * Handle block traits.
+     * This method is called when the correct ip and bp posiiton is
+     * set. This should be overridden to draw border and background
+     * traits for the block area.
+     *
+     * @param block the block area
+     */
+    protected void handleBlockTraits(Block block) {
+        // draw border and background
+    }
+
+    /**
+     * Renders a block viewport.
+     *
+     * @param bv        The block viewport
+     * @param children  The children to render within the block viewport
+     */
+    protected void renderBlockViewport(BlockViewport bv, List children) {
+        // clip and position viewport if necessary
+        if (bv.getPositioning() == Block.ABSOLUTE) {
+            // save positions
+            int saveIP = currentIPPosition;
+            int saveBP = currentBPPosition;
+
+            CTM ctm = bv.getCTM();
+            currentIPPosition = 0;
+            currentBPPosition = 0;
+
+            startVParea(ctm);
+            handleBlockTraits(bv);
+            renderBlocks(children);
+            endVParea();
+
+            // clip if necessary
+
+            currentIPPosition = saveIP;
+            currentBPPosition = saveBP;
+        } else {
+            renderBlocks(children);
+        }
+    }
+
+    /**
+     * Renders a list of block areas.
+     *
+     * @param blocks  The block areas
+     */
+    protected void renderBlocks(List blocks) {
+        // the position of the containing block is used for
+        // absolutely positioned areas
+        int contBP = currentBPPosition;
+        int contIP = currentIPPosition;
+        containingBPPosition = contBP;
+        containingIPPosition = contIP;
+
+        for (int count = 0; count < blocks.size(); count++) {
+            Object obj = blocks.get(count);
+            if (obj instanceof Block) {
+                containingBPPosition = contBP;
+                containingIPPosition = contIP;
+                renderBlock((Block) obj);
+                containingBPPosition = contBP;
+                containingIPPosition = contIP;
+            } else {
+                // a line area is rendered from the top left position
+                // of the line, each inline object is offset from there
+                LineArea line = (LineArea) obj;
+                currentBlockIPPosition =
+                        currentIPPosition + line.getStartIndent();
+                renderLineArea(line);
+                currentBPPosition += line.getHeight();
+            }
+        }
+    }
+
+    /**
      * Renders a block area.
      *
      * @param block  The block area
@@ -515,49 +591,6 @@ public abstract class AbstractRenderer extends AbstractLogEnabled
                 currentBPPosition = saveBP + block.getHeight();
             }
             currentIPPosition = saveIP;
-        }
-    }
-
-    /**
-     * Handle block traits.
-     * This method is called when the correct ip and bp posiiton is
-     * set. This should be overridden to draw border and background
-     * traits for the block area.
-     *
-     * @param block the block area
-     */
-    protected void handleBlockTraits(Block block) {
-        // draw border and background
-    }
-
-    /**
-     * Renders a block viewport.
-     *
-     * @param bv        The block viewport
-     * @param children  The children to render within the block viewport
-     */
-    protected void renderBlockViewport(BlockViewport bv, List children) {
-        // clip and position viewport if necessary
-        if (bv.getPositioning() == Block.ABSOLUTE) {
-            // save positions
-            int saveIP = currentIPPosition;
-            int saveBP = currentBPPosition;
-
-            CTM ctm = bv.getCTM();
-            currentIPPosition = 0;
-            currentBPPosition = 0;
-
-            startVParea(ctm);
-            handleBlockTraits(bv);
-            renderBlocks(children);
-            endVParea();
-
-            // clip if necessary
-
-            currentIPPosition = saveIP;
-            currentBPPosition = saveBP;
-        } else {
-            renderBlocks(children);
         }
     }
 
@@ -665,39 +698,6 @@ public abstract class AbstractRenderer extends AbstractLogEnabled
             ((InlineArea) iter.next()).acceptVisitor(this);
         }
         currentBlockIPPosition = saveIP + ip.getWidth();
-    }
-
-    /**
-     * Renders a list of block areas.
-     *
-     * @param blocks  The block areas
-     */
-    protected void renderBlocks(List blocks) {
-        // the position of the containing block is used for
-        // absolutely positioned areas
-        int contBP = currentBPPosition;
-        int contIP = currentIPPosition;
-        containingBPPosition = contBP;
-        containingIPPosition = contIP;
-
-        for (int count = 0; count < blocks.size(); count++) {
-            Object obj = blocks.get(count);
-            if (obj instanceof Block) {
-                containingBPPosition = contBP;
-                containingIPPosition = contIP;
-                renderBlock((Block) obj);
-                containingBPPosition = contBP;
-                containingIPPosition = contIP;
-            } else {
-                // a line area is rendered from the top left position
-                // of the line, each inline object is offset from there
-                LineArea line = (LineArea) obj;
-                currentBlockIPPosition =
-                        currentIPPosition + line.getStartIndent();
-                renderLineArea(line);
-                currentBPPosition += line.getHeight();
-            }
-        }
     }
 
     /**

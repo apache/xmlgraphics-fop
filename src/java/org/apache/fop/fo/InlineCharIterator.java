@@ -71,11 +71,10 @@ public class InlineCharIterator extends RecursiveCharIterator {
 
 
     private void checkBoundaries(CommonBorderAndPadding bap) {
-        // TODO! use start and end in BAP!!
-        bStartBoundary = (bap.getBorderLeftWidth(false) > 0
-                       || bap.getPaddingLeft(false) > 0);
-        bEndBoundary = (bap.getBorderRightWidth(false) > 0
-                     || bap.getPaddingRight(false) > 0);
+        bStartBoundary = (bap.getBorderStartWidth(false) > 0
+                       || bap.getPaddingStart(false) > 0);
+        bEndBoundary = (bap.getBorderEndWidth(false) > 0
+                     || bap.getPaddingEnd(false) > 0);
     }
 
     /**

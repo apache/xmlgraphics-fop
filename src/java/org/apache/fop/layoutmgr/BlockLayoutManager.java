@@ -190,6 +190,9 @@ public class BlockLayoutManager extends BlockStackingLayoutManager {
         LayoutProcessor curLM; // currently active LM
 
         int ipd = context.getRefIPD();
+        int iIndents = borderProps.getPaddingStart(false) 
+            + borderProps.getPaddingEnd(false);
+        ipd -= iIndents;
 
         MinOptMax stackSize = new MinOptMax();
 
