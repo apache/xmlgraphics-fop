@@ -132,19 +132,19 @@ public class TraitSetter {
      * @param bordProps border properties
      */
     public static void addBorders(Area curBlock, CommonBorderAndPadding bordProps) {
-        BorderProps bps = getBorderProps(bordProps, CommonBorderAndPadding.TOP);
+        BorderProps bps = getBorderProps(bordProps, CommonBorderAndPadding.BEFORE);
         if (bps.width != 0) {
             curBlock.addTrait(Trait.BORDER_BEFORE, bps);
         }
-        bps = getBorderProps(bordProps, CommonBorderAndPadding.BOTTOM);
+        bps = getBorderProps(bordProps, CommonBorderAndPadding.AFTER);
         if (bps.width != 0) {
             curBlock.addTrait(Trait.BORDER_AFTER, bps);
         }
-        bps = getBorderProps(bordProps, CommonBorderAndPadding.LEFT);
+        bps = getBorderProps(bordProps, CommonBorderAndPadding.START);
         if (bps.width != 0) {
             curBlock.addTrait(Trait.BORDER_START, bps);
         }
-        bps = getBorderProps(bordProps, CommonBorderAndPadding.RIGHT);
+        bps = getBorderProps(bordProps, CommonBorderAndPadding.END);
         if (bps.width != 0) {
             curBlock.addTrait(Trait.BORDER_END, bps);
         }

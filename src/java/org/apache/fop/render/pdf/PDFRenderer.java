@@ -227,12 +227,14 @@ public class PDFRenderer extends PrintRenderer {
     private StringBuffer wordAreaPDF = new StringBuffer();
 
     /**
-     * Offset for rendering text, taking into account borders and padding
+     * Offset for rendering text, taking into account borders and padding for
+     * both region and block.
      */
     protected int BPMarginOffset = 0;
 
     /**
-     * Offset for rendering text, taking into account borders and padding
+     * Offset for rendering text, taking into account borders and padding for 
+     * both the region and block.
      */
     protected int IPMarginOffset = 0;
 
@@ -503,19 +505,15 @@ public class PDFRenderer extends PrintRenderer {
     }
 
     /**
-     * Handle block traits.
-     * The block could be any sort of block with any positioning
-     * so this should render the traits such as border and background
-     * in its position.
-     *
-     * @param block the block to render the traits
+     * @see org.apache.fop.render.AbstractRenderer#renderBlock(Block)
      */
-    protected void handleBlockTraits(Block block) {
-        float startx = (currentIPPosition + IPMarginOffset)/ 1000f;
-        float starty = (currentBPPosition + BPMarginOffset)/ 1000f;
-        drawBackAndBorders(block, startx, starty,
-            block.getWidth() / 1000f, block.getHeight() / 1000f);
-    }
+    protected void renderBlock(Block block) {
+        int marginOffset = IPMarginOffset;
+        super.renderBlock(block);
+        // super.renderBlock() may render child blocks (with their own offsets)
+        // so need to restore (this parent's) IPMarginOffset when finished.
+        IPMarginOffset = marginOffset;
+	}
 
     /**
      * Handle the traits for a region
@@ -531,14 +529,37 @@ public class PDFRenderer extends PrintRenderer {
         float width = (float)(viewArea.getWidth() / 1000f);
         float height = (float)(viewArea.getHeight() / 1000f);
 
-        if (region.getRegion().getRegionClass() 
+        if (region.getRegion().getRegionClass()
             == org.apache.fop.fo.pagination.Region.BODY_CODE)
-        {   
+        {
             BPMarginOffset = region.getBorderAndPaddingWidthBefore();
             IPMarginOffset = region.getBorderAndPaddingWidthStart();
         }
 
         drawBackAndBorders(region, startx, starty, width, height);
+    }
+
+    /**
+     * Handle block traits.
+     * The block could be any sort of block with any positioning
+     * so this should render the traits such as border and background
+     * in its position.
+     *
+     * @param block the block to render the traits
+     */
+    protected void handleBlockTraits(Block block) {
+		/*  IPMarginOffset for a particular block = region border + 
+         *  region padding + parent block padding + current block padding
+         */
+        Integer paddingStart = (Integer) block.getTrait(Trait.PADDING_START);
+        if (paddingStart != null) {
+            IPMarginOffset += paddingStart.intValue();
+        }
+
+        float startx = (currentIPPosition + IPMarginOffset) / 1000f;
+        float starty = (currentBPPosition + BPMarginOffset) / 1000f;
+        drawBackAndBorders(block, startx, starty,
+            block.getWidth() / 1000f, block.getHeight() / 1000f);
     }
 
     /**
@@ -888,7 +909,7 @@ public class PDFRenderer extends PrintRenderer {
         }
 
         // word.getOffset() = only height of text itself
-        // currentBlockIPPosition: 0 for beginning of line; nonzero 
+        // currentBlockIPPosition: 0 for beginning of line; nonzero
         //  where previous line area failed to take up entire allocated space
         int rx = currentBlockIPPosition + IPMarginOffset;
         int bl = currentBPPosition + BPMarginOffset + text.getOffset();

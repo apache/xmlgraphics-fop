@@ -64,11 +64,15 @@ public class CommonBorderAndPadding implements Cloneable {
     public static final int START = 2;
     public static final int END = 3;
 
+/*  TODO: need new definitions (below relations not always the same, 
+    also unsure if direct access of absolute properties needed; 
+    resolution of absolute & relative properties--Spec 5.3.1--can 
+    possibly be done within this class alone)
     public static final int TOP = BEFORE;
     public static final int BOTTOM = AFTER;
     public static final int LEFT = START;
     public static final int RIGHT = END;
-
+*/
     private static class ResolvedCondLength implements Cloneable {
         private int iLength; // Resolved length value
         private boolean bDiscard;
@@ -143,36 +147,36 @@ public class CommonBorderAndPadding implements Cloneable {
         borderInfo[side].mWidth.iLength = iLength;
     }
 
-    public int getBorderLeftWidth(boolean bDiscard) {
-        return getBorderWidth(LEFT, bDiscard);
+    public int getBorderStartWidth(boolean bDiscard) {
+        return getBorderWidth(START, bDiscard);
     }
 
-    public int getBorderRightWidth(boolean bDiscard) {
-        return getBorderWidth(RIGHT, bDiscard);
+    public int getBorderEndWidth(boolean bDiscard) {
+        return getBorderWidth(END, bDiscard);
     }
 
-    public int getBorderTopWidth(boolean bDiscard) {
-        return getBorderWidth(TOP, bDiscard);
+    public int getBorderBeforeWidth(boolean bDiscard) {
+        return getBorderWidth(BEFORE, bDiscard);
     }
 
-    public int getBorderBottomWidth(boolean bDiscard) {
-        return getBorderWidth(BOTTOM, bDiscard);
+    public int getBorderAfterWidth(boolean bDiscard) {
+        return getBorderWidth(AFTER, bDiscard);
     }
 
-    public int getPaddingLeft(boolean bDiscard) {
-        return getPadding(LEFT, bDiscard);
+    public int getPaddingStart(boolean bDiscard) {
+        return getPadding(START, bDiscard);
     }
 
-    public int getPaddingRight(boolean bDiscard) {
-        return getPadding(RIGHT, bDiscard);
+    public int getPaddingEnd(boolean bDiscard) {
+        return getPadding(END, bDiscard);
     }
 
-    public int getPaddingBottom(boolean bDiscard) {
-        return getPadding(BOTTOM, bDiscard);
+    public int getPaddingBefore(boolean bDiscard) {
+        return getPadding(BEFORE, bDiscard);
     }
 
-    public int getPaddingTop(boolean bDiscard) {
-        return getPadding(TOP, bDiscard);
+    public int getPaddingAfter(boolean bDiscard) {
+        return getPadding(AFTER, bDiscard);
     }
 
     public int getBorderWidth(int side, boolean bDiscard) {
@@ -211,11 +215,11 @@ public class CommonBorderAndPadding implements Cloneable {
     
     public String toString() {
         return "CommonBordersAndPadding (Before, After, Start, End):\n" +
-        "Borders: (" + getBorderTopWidth(false) + ", " + getBorderBottomWidth(false) + ", " +
-        getBorderLeftWidth(false) + ", " + getBorderRightWidth(false) + ")\n" +
+        "Borders: (" + getBorderBeforeWidth(false) + ", " + getBorderAfterWidth(false) + ", " +
+        getBorderStartWidth(false) + ", " + getBorderEndWidth(false) + ")\n" +
         "Border Colors: (" + getBorderColor(BEFORE) + ", " + getBorderColor(AFTER) + ", " +
         getBorderColor(START) + ", " + getBorderColor(END) + ")\n" +
-        "Padding: (" + getPaddingTop(false) + ", " + getPaddingBottom(false) + ", " +
-        getPaddingLeft(false) + ", " + getPaddingRight(false) + ")\n";
+        "Padding: (" + getPaddingBefore(false) + ", " + getPaddingAfter(false) + ", " +
+        getPaddingStart(false) + ", " + getPaddingEnd(false) + ")\n";
     }
 }
