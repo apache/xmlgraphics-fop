@@ -1,5 +1,5 @@
 /*
- * Copyright 1999-2004 The Apache Software Foundation.
+ * Copyright 1999-2005 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -108,6 +108,10 @@ public class PageSequence extends FObj {
         initialPageNumber = pList.get(PR_INITIAL_PAGE_NUMBER).getNumeric();
         forcePageCount = pList.get(PR_FORCE_PAGE_COUNT).getEnum();
         masterReference = pList.get(PR_MASTER_REFERENCE).getString();
+        
+        if (masterReference == null || masterReference.equals("")) {
+            missingPropertyError("master-reference");
+        }        
     }
 
     /**
@@ -124,8 +128,8 @@ public class PageSequence extends FObj {
                     root.getLayoutMasterSet().getPageSequenceMaster(masterReference);
             if (this.pageSequenceMaster == null) {
                 throw new ValidationException("master-reference '" + masterReference
-                                       + "' for fo:page-sequence matches no"
-                                       + " simple-page-master or page-sequence-master", locator);
+                   + "' for fo:page-sequence matches no"
+                   + " simple-page-master or page-sequence-master", locator);
             } else {
                 pageSequenceMaster.reset();
             }

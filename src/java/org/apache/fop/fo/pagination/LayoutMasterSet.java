@@ -1,5 +1,5 @@
 /*
- * Copyright 1999-2004 The Apache Software Foundation.
+ * Copyright 1999-2005 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -65,10 +65,8 @@ public class LayoutMasterSet extends FObj {
         if (parent.getName().equals("fo:root")) {
             Root root = (Root)parent;
             root.setLayoutMasterSet(this);
-        } else {
-            throw new ValidationException("fo:layout-master-set must be child of fo:root, not "
-                                   + parent.getName(), locator);
         }
+
         simplePageMasters = new java.util.HashMap();
         pageSequenceMasters = new java.util.HashMap();
     }

@@ -31,6 +31,7 @@ import org.apache.fop.apps.FOPException;
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.fo.extensions.ExtensionElementMapping;
 import org.apache.fop.fo.extensions.svg.SVGElementMapping;
+import org.apache.fop.fo.pagination.Root;
 import org.apache.fop.util.CharUtilities;
 
 /**
@@ -404,6 +405,14 @@ public abstract class FONode implements Cloneable {
         } else {
             return "Warning(" + loc.getLineNumber() + "/" + loc.getColumnNumber() + "): ";
         }
+    }
+
+    /**
+     * Returns the root node of this tree
+     * @return the root node
+     */
+    public Root getRoot() {
+        return parent.getRoot();
     }
 
     /**
