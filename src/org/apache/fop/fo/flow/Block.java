@@ -392,7 +392,7 @@ public class Block extends FObjMixed {
         // Handle whitespace based on values of properties
         // Handle a sequence of inline-producing children in
         // one pass
-        if (((FObj) child).generatesInlineAreas()) {
+        if (child instanceof FObj && ((FObj) child).generatesInlineAreas()) {
             if (firstInlineChild == null) {
                 firstInlineChild = child;
             }
