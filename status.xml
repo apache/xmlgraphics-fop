@@ -42,10 +42,60 @@ inactive??
     </action>
 
     <action context="code" dev="open">
+      Add static areas to page 
+      The static areas will need to be handled in a similar way to the flow
+      except the bpd is unlimited and it will need to reset and repeat for
+      each page. 
+    </action>
+    <action context="code" dev="open">
+      Add id areas to page when area added.
+      When the layout managers add an area to the page it can also add the id
+      information. 
+    </action>
+    <action context="code" dev="open">
+      Resolve id references on other pages, extensions.
+      When an id is added to a page this will allow id references to be
+      resolved.
+    </action>
+    <action context="code" dev="open">
+      Add markers to page when areas added.
+      When an area is added that is created by an FO that contains markers
+      then the markers can also be added. There are four types of positions
+      for markers.
+    </action>
+    <action context="code" dev="open">
+      Retrieve markers from page.
+      When doing the static areas the markers wil need to be available for
+      retrieving. The marker can then be layed out as normal.
+    </action>
+    <action context="code" dev="open">
+      Calculate line height.
+      The line height needs to be calculated while finding breaks. This needs
+      to include all the alignment and height details of the inline areas.
+    </action>
+    <action context="code" dev="open">
       implement the caching mechanism to store pages
       when a page contains a forward reference that has not been
       resolved then we need to be able to save the page contents to
       disk to save memory
+    </action>
+    <action context="code" dev="open">
+      Implement table layout.
+      The table layout will use the same technique as the block layout. It
+      will locate suitable breaks between rows or inside rows until table
+      finished or end of bpd reached. 
+    </action>
+    <action context="code" dev="open">
+      Implement list layout.
+      The list layout like the table layout will be looking for suitable
+      breaks from the child objects. The it will add the appropriate areas to
+      the area tree. 
+    </action>
+    <action context="code" dev="open">
+      Get bookmark extension working.
+      Make sure the extension id references are resolved. Once the data is
+      fully resolved then implement a way for the pdf renderer to add the
+      bookmarks. See branch for code how to add bookmarks. 
     </action>
 
    </actions>
@@ -76,6 +126,10 @@ inactive??
 
   <changes>
    <release version="?" date="2002">
+    <action dev="KLL" type="update" context="code">
+      Updated batik with change to TextPainter interface and UserAgent.
+      Improved PDFTextPainter to handle more types of text.
+    </action>
     <action dev="JM" type="update" context="code"
             due-to="Stephen Wolke" due-to-email="smwolke@geistig.com">
       Added a RunLengthEncode filter for the PostScript renderer.
