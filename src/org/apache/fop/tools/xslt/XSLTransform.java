@@ -8,26 +8,34 @@
 package org.apache.fop.tools.xslt;
 
 import java.io.*;
-import java.lang.reflect.*;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.stream.StreamSource;
+import javax.xml.transform.stream.StreamResult;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.dom.DOMResult;
+//import java.lang.reflect.*;
 
 
 public class XSLTransform {
 
     public static void transform(String xmlSource, String xslURL,
                                  String outputFile) throws Exception {
-        Class[] argTypes = {
+/*        Class[] argTypes = {
             String.class, String.class, String.class
         };
         Object[] params = {
             xmlSource, xslURL, outputFile
         };
-        transform(params, argTypes);
+        transform(params, argTypes);*/
+      TransformerFactory.newInstance().newTransformer(
+        new StreamSource(xslURL)).transform(
+          new StreamSource(xmlSource),new StreamResult(new File(outputFile)));
     }
 
     public static void transform(org.w3c.dom.Document xmlSource,
                                  String xslURL,
                                  String outputFile) throws Exception {
-        Class[] argTypes = {
+/*        Class[] argTypes = {
             org.w3c.dom.Document.class, String.class, String.class
         };
 
@@ -35,25 +43,31 @@ public class XSLTransform {
             xmlSource, xslURL, outputFile
         };
         transform(params, argTypes);
-
+*/
+      TransformerFactory.newInstance().newTransformer(
+        new StreamSource(xslURL)).transform(
+          new DOMSource(xmlSource),new StreamResult(new File(outputFile)));
     }
 
     public static void transform(String xmlSource, String xslURL,
                                  Writer outputWriter) throws Exception {
-        Class[] argTypes = {
+/*        Class[] argTypes = {
             String.class, String.class, Writer.class
         };
         Object[] params = {
             xmlSource, xslURL, outputWriter
         };
         transform(params, argTypes);
-
+*/
+      TransformerFactory.newInstance().newTransformer(
+        new StreamSource(xslURL)).transform(
+          new StreamSource(xmlSource),new StreamResult(outputWriter));
     }
 
     public static void transform(org.w3c.dom.Document xmlSource,
                                  InputStream xsl,
                                  org.w3c.dom.Document outputDoc) throws Exception {
-        Class[] argTypes = {
+/*        Class[] argTypes = {
             org.w3c.dom.Document.class, InputStream.class,
             org.w3c.dom.Document.class
         };
@@ -61,10 +75,13 @@ public class XSLTransform {
             xmlSource, xsl, outputDoc
         };
         transform(params, argTypes);
-
+*/
+      TransformerFactory.newInstance().newTransformer(
+        new StreamSource(xsl)).transform(
+          new DOMSource(xmlSource),new DOMResult(outputDoc));
     }
 
-
+/*
     private static void transform(Object[] args,
                                   Class[] argTypes) throws Exception {
         Class transformer = getTransformClass();
@@ -132,5 +149,5 @@ public class XSLTransform {
         }
         return null;
     }
-
+*/
 }

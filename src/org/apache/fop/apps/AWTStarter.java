@@ -106,8 +106,6 @@ public class AWTStarter extends CommandLineStarter {
             throw new FOPException("Unable to create SAX parser");
         }
 
-        setParserFeatures(parser);
-
         try {
             driver.setRenderer(renderer);
 

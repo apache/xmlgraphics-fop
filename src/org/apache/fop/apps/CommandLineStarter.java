@@ -51,7 +51,6 @@ public class CommandLineStarter extends Starter {
         log.info(version);
 
         XMLReader parser = inputHandler.getParser();
-        setParserFeatures(parser);
 
         Driver driver = new Driver();
         driver.setLogger(log);

@@ -8,9 +8,6 @@ package org.apache.fop.fonts.apps;
 
 import java.io.*;
 import org.w3c.dom.*;
-import org.apache.xerces.dom.*;
-import org.apache.xml.serialize.*;
-import org.apache.xalan.xslt.*;
 import org.apache.fop.fonts.*;
 import java.util.Hashtable;
 import java.util.Vector;
@@ -198,13 +195,19 @@ public class TTFReader {
         System.out.println();
 
         try {
-            OutputFormat format = new OutputFormat(doc);    // Serialize DOM
+          javax.xml.transform.TransformerFactory.newInstance()
+            .newTransformer().transform(
+              new javax.xml.transform.dom.DOMSource(doc),
+              new javax.xml.transform.stream.StreamResult(new File(target)));
+
+/*            OutputFormat format = new OutputFormat(doc);    // Serialize DOM
             FileWriter out = new FileWriter(target);    // Writer will be a String
             XMLSerializer serial = new XMLSerializer(out, format);
             serial.asDOMSerializer();                       // As a DOM Serializer
 
             serial.serialize(doc.getDocumentElement());
             out.close();
+*/
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -222,7 +225,15 @@ public class TTFReader {
         System.out.println("Creating xml font file...");
         System.out.println();
 
-        Document doc = new DocumentImpl();
+//        Document doc = new DocumentImpl();
+        Document doc;
+        try {
+          doc = javax.xml.parsers.DocumentBuilderFactory.newInstance().newDocumentBuilder().newDocument();
+        }
+        catch (javax.xml.parsers.ParserConfigurationException e) {
+          System.out.println("Can't create DOM implementation "+e.getMessage());
+          return null;
+        }
         Element root = doc.createElement("font-metrics");
         doc.appendChild(root);
         if (isCid)

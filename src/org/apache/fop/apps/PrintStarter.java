@@ -64,8 +64,6 @@ public class PrintStarter extends CommandLineStarter {
 
         XMLReader parser = inputHandler.getParser();
 
-        setParserFeatures(parser);
-
         PrinterJob pj = PrinterJob.getPrinterJob();
         if(System.getProperty("dialog") != null)
             if(!pj.printDialog())

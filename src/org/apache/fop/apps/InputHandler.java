@@ -14,6 +14,7 @@ import org.xml.sax.XMLReader;
 // Java
 import java.net.URL;
 import java.io.File;
+import javax.xml.parsers.*;
 
 // FOP
 import org.apache.fop.messaging.MessageHandler;
@@ -53,27 +54,21 @@ abstract public class InputHandler {
     }
 
     /**
-     * creates a SAX parser, using the value of org.xml.sax.parser
-     * defaulting to org.apache.xerces.parsers.SAXParser
+     * creates a SAX parser
      *
      * @return the created SAX parser
      */
     protected static XMLReader createParser() throws FOPException {
-        String parserClassName = Driver.getParserClassName();
-        MessageHandler.logln("using SAX parser " + parserClassName);
-
         try {
-            return (XMLReader)Class.forName(parserClassName).newInstance();
-        } catch (ClassNotFoundException e) {
-            throw new FOPException(e);
-        } catch (InstantiationException e) {
-            throw new FOPException("Could not instantiate "
-                                   + parserClassName, e);
-        } catch (IllegalAccessException e) {
-            throw new FOPException("Could not access " + parserClassName, e);
-        } catch (ClassCastException e) {
-            throw new FOPException(parserClassName + " is not a SAX driver",
-                                   e);
+            SAXParserFactory spf = javax.xml.parsers.SAXParserFactory.newInstance();
+            spf.setNamespaceAware(true);
+            XMLReader xmlReader = spf.newSAXParser().getXMLReader();
+            MessageHandler.logln("Using " + xmlReader.getClass().getName() + " as SAX2 Parser"); 
+            return xmlReader;
+        } catch (javax.xml.parsers.ParserConfigurationException e) {
+          throw new FOPException(e);
+        } catch (org.xml.sax.SAXException e) {
+          throw new FOPException( e);
         }
     }
 

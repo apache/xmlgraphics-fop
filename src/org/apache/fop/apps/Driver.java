@@ -177,15 +177,13 @@ public class Driver {
     private Logger log;
 
     public static final String getParserClassName() {
-        String parserClassName = null;
         try {
-            parserClassName = System.getProperty("org.xml.sax.parser");
-        } catch (SecurityException se) {}
-
-        if (parserClassName == null) {
-            parserClassName = "org.apache.xerces.parsers.SAXParser";
+            return javax.xml.parsers.SAXParserFactory.newInstance().newSAXParser().getXMLReader().getClass().getName();
+        } catch (javax.xml.parsers.ParserConfigurationException e) {
+            return null;
+        } catch (org.xml.sax.SAXException e) {
+            return null;
         }
-        return parserClassName;
     }
 
     /**
