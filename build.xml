@@ -479,6 +479,7 @@ list of possible build targets.
         <exclude name="org/apache/fop/render/pdf/PDFXMLHandler*"/>
       </fileset>
       <fileset dir="${build.dest}">
+        <include name="org/apache/fop/fonts/**"/>
         <include name="org/apache/fop/layout/Font*.class"/>
         <include name="org/apache/fop/image/FopImag*.class"/>
         <include name="org/apache/fop/image/Jpeg*"/>
