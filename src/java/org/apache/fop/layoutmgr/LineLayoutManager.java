@@ -394,15 +394,15 @@ public class LineLayoutManager extends InlineStackingLayoutManager {
         }
         prevBP = null;
 
-        // here starts Knuth's algorithm
-        KnuthElement thisElement = null;
-        LinkedList returnedList = null;
-        LineBreakPosition lbp = null;
-
+        //PHASE 1: Create Knuth elements
+        
         if (knuthParagraphs == null) {
             // it's the first time this method is called
             knuthParagraphs = new ArrayList();
-            breakpoints = new ArrayList();
+
+            // here starts Knuth's algorithm
+            KnuthElement thisElement = null;
+            LinkedList returnedList = null;
 
             // convert all the text in a sequence of paragraphs made
             // of KnuthBox, KnuthGlue and KnuthPenalty objects
@@ -490,14 +490,23 @@ public class LineLayoutManager extends InlineStackingLayoutManager {
                 }
             }
             knuthPar.endParagraph();
+        } else {
+            // this method has been called before
+            // all line breaks are already calculated
+        }
 
-            // emergency patch
-            if (knuthParagraphs.size() == 0) {
-                setFinished(true);
-                return null;
-            }
+        // return finished when there's no content
+        if (knuthParagraphs.size() == 0) {
+            setFinished(true);
+            return null;
+        }
 
+        //PHASE 2: Create line breaks
+
+        LineBreakPosition lbp = null;
+        if (breakpoints == null) {
             // find the optimal line breaking points for each paragraph
+            breakpoints = new ArrayList();
             ListIterator paragraphsIterator
                 = knuthParagraphs.listIterator(knuthParagraphs.size());
             Paragraph currPar = null;
@@ -505,10 +514,9 @@ public class LineLayoutManager extends InlineStackingLayoutManager {
                 currPar = (Paragraph) paragraphsIterator.previous();
                 findBreakingPoints(currPar, context.getStackLimit().opt);
             }
-        } else {
-            // this method has been called before
-            // all line breaks are already calculated
         }
+
+        //PHASE 3: Return lines
 
         // get a break point from the list
         lbp = (LineBreakPosition) breakpoints.get(iReturnedLBP ++);
@@ -1364,9 +1372,9 @@ public class LineLayoutManager extends InlineStackingLayoutManager {
             }
             while ((LineBreakPosition) breakpoints.get(iReturnedLBP)
                    != (LineBreakPosition) resetPos) {
-                iReturnedLBP --;
+                iReturnedLBP--;
             }
-            iReturnedLBP ++;
+            iReturnedLBP++;
         }
     }
 
