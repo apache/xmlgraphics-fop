@@ -14,7 +14,8 @@ import org.apache.fop.datatypes.Numeric;
 import org.apache.fop.datatypes.TextDecorations;
 import org.apache.fop.datatypes.indirect.Inherit;
 import org.apache.fop.datatypes.indirect.IndirectValue;
-import org.apache.fop.datastructs.Tree;
+import org.apache.fop.datastructs.Node;
+import org.apache.fop.datastructs.TreeException;
 import org.apache.fop.datastructs.ROBitSet;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.xml.FoXMLEvent;
@@ -46,7 +47,7 @@ import java.lang.reflect.InvocationTargetException;
  * Class for nodes in the FO tree.
  */
 
-public class FONode extends FOTree.Node{
+public class FONode extends Node{
 
     private static final String tag = "$Name$";
     private static final String revision = "$Revision$";
@@ -135,9 +136,9 @@ public class FONode extends FOTree.Node{
     public FONode
         (FOTree foTree, int type, FONode parent, FoXMLEvent event, int attrSet,
             HashMap sparsePropsMap, int[] sparseIndices, int numProps)
-        throws Tree.TreeException, FOPException, PropertyException
+        throws TreeException, FOPException, PropertyException
     {
-        foTree.super(parent);
+        super(foTree, parent);
         this.foTree = foTree;
         this.type = type;
         this.parent = parent;
