@@ -1,5 +1,5 @@
 /*
- * Copyright 1999-2004 The Apache Software Foundation.
+ * Copyright 1999-2005 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -51,10 +51,10 @@ public class LabelEndFunction extends FunctionBase {
     public Property eval(Property[] args,
                          PropertyInfo pInfo) throws PropertyException {
 
-        Length distance =
-            pInfo.getPropertyList().get(Constants.PR_PROVISIONAL_DISTANCE_BETWEEN_STARTS).getLength();
-        Length separation =
-            pInfo.getPropertyList().getNearestSpecified(Constants.PR_PROVISIONAL_LABEL_SEPARATION).getLength();
+        Length distance = pInfo.getPropertyList().get(
+                Constants.PR_PROVISIONAL_DISTANCE_BETWEEN_STARTS).getLength();
+        Length separation = pInfo.getPropertyList().getNearestSpecified(
+                Constants.PR_PROVISIONAL_LABEL_SEPARATION).getLength();
 
         PropertyList pList = pInfo.getPropertyList();
         while (pList != null && !(pList.getFObj() instanceof ListItem)) {
@@ -65,16 +65,17 @@ public class LabelEndFunction extends FunctionBase {
         }
         Length startIndent = pList.get(Constants.PR_START_INDENT).getLength();
 
-        // Should be CONTAINING_REFAREA but that doesn't work
         LengthBase base = new LengthBase(pList.getFObj(), pInfo.getPropertyList(),
-                                         LengthBase.CONTAINING_BOX);
+                                         LengthBase.CONTAINING_REFAREA);
         PercentLength refWidth = new PercentLength(1.0, base);
 
-        Numeric labelEnd = refWidth; 
-        labelEnd = NumericOp.addition(labelEnd, NumericOp.negate(distance));
-        labelEnd = NumericOp.addition(labelEnd, NumericOp.negate(startIndent));
-        labelEnd = NumericOp.addition(labelEnd, separation);
-
+        Numeric labelEnd = distance; 
+        labelEnd = NumericOp.addition(labelEnd, startIndent);
+        //TODO add start-intrusion-adjustment
+        labelEnd = NumericOp.subtraction(labelEnd, separation);
+        
+        labelEnd = NumericOp.subtraction(refWidth, labelEnd);
+        
         return (Property) labelEnd;
     }
 
