@@ -166,6 +166,7 @@ public class PropertyListBuilder {
                         p.put(propName, propVal);
                     }
                 } catch (FOPException e) { /* Do other props. */
+                    MessageHandler.errorln(e.getMessage());
                 }
             } else {
                 if (!attributeName.startsWith("xmlns"))
