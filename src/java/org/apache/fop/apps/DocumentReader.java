@@ -16,7 +16,7 @@
 
 /* $Id$ */
  
-package org.apache.fop.tools;
+package org.apache.fop.apps;
 
 import java.io.IOException;
 
@@ -46,7 +46,7 @@ import org.xml.sax.helpers.AttributesImpl;
  *
  */
 
-public class DocumentReader implements XMLReader {
+class DocumentReader implements XMLReader {
 
     // //////////////////////////////////////////////////////////////////
     // Configuration.
