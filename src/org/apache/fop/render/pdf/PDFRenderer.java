@@ -264,6 +264,7 @@ public class PDFRenderer extends PrintRenderer {
     protected void renderRegion(RegionReference region) {
         // Draw a rectangle so we can see it!
         // x=0,y=0,w=ipd,h=bpd
+        currentFontName = "";
         super.renderRegion(region);
     }
 
