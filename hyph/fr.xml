@@ -75,7 +75,7 @@ zZ
 <!--
 % f7hyph.tex % French hyphenation patterns (7-bit OT1 encoding)
 % f7hyph.tex is ONLY for people having a MlTeX engine and CMR fonts.
-% \message{f7hyph.tex french hyphenation patterns. 7-bit OT1 encoding 
+% \message{f7hyph.tex french hyphenation patterns. 7-bit OT1 encoding
 %         (V2.0) 05/20/94}
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -87,7 +87,7 @@ zZ
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%      checksum        = "20125 1319 2460 29960"
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%%%%%% The most famous good guys who worked hard to obtain something usable. 
+%%%%%%%% The most famous good guys who worked hard to obtain something usable.
 % Jacques Desarmenien, Universite de Strasbourg :
 %          -  << how to run TeX in a French environment: hyphenation, fonts,
 %             typography. >> in Tugboat, 5 (1984) 91-102. and TeX85 conference
@@ -562,7 +562,7 @@ g1s2
                     i1arthr
                     i1è2dre
 <!-- % ill patterns missing from nb list -->
-    il2l 
+    il2l
    cil3l
   rcil4l
   ucil4l

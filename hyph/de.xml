@@ -7,17 +7,17 @@
   Constructed by Carlos Villegas from TeX's dehypht.tex file
   obtained from http://www.ctan.org/tex-archive/language/hyphenation
 
-  This file may be used, distributed and modified only according to 
-  LaTeX Project Public License: 
+  This file may be used, distributed and modified only according to
+  LaTeX Project Public License:
 
   ftp://ctan.tug.org/tex-archive/fonts/mathpazo/lppl.txt
 
-  Please report errors in this file to the following address: 
-  fop-dev@xml.apache.org [or yours] and not to the address of the 
-  original authors. You are not allowed to distribute this file under its 
-  original name in the TeX distribution." 
+  Please report errors in this file to the following address:
+  fop-dev@xml.apache.org [or yours] and not to the address of the
+  original authors. You are not allowed to distribute this file under its
+  original name in the TeX distribution."
 
-  
+
   Original comments preserved:
 
 % This is `dehypht.tex' as of 03 March 1999.
@@ -242,11 +242,11 @@ zZ
 </classes>
 
 <exceptions>
-<!-- The <hyphen> element is equivalent to TeX's 
+<!-- The <hyphen> element is equivalent to TeX's
      \discretionary{pre-break text}{post-break text}{no-break text}
      which handles words that change spelling when they are split
      between lines. The hyphenation algorithm doesn't handle
-     those cases, but they can be processed as exceptions. 
+     those cases, but they can be processed as exceptions.
      The following are some examples taken from the TeXbook.
 -->
 ba<hyphen pre="k" no="c"/>ken
@@ -685,7 +685,7 @@ sa1la 4s3alpi 6salter salz3a 1sam s5anb san2c 1sand s5angeh 6sanl
 s1arm sa5ro 2s1art 6s1arz 1sas 1sat sat8a 2s1atl sa8tom 3s8aue s5auff
 sau5i s6aur 2s1aus 5s6ause 2s1b2 2sca s4ce 8sch.  3scha.  5schade
 3schaf 3schal sch5ame 8schanc 8schb 1sche 6schef 8schex 2schf 2schg
-2schh 1schi 2schk 5schlag 5schlu 6schmäß 
+2schh 1schi 2schk 5schlag 5schlu 6schmäß
 6schnaß  1scho 6schord 6schp 3schri 8schric 8schrig
 8schrou 6schs 2scht sch3ta sch3tr 1schu 8schunt 6schv 2schz 5schö
 5schü 2sco scre6 6scu 2s1d 1se se5an se1ap se6ben se5ec see5i6g
@@ -715,7 +715,7 @@ sta3la 6stale 4stalg 8stalk 8stamt 6st5anf 4stans 6stanw 6starb sta4te
 6stz 1stä 8stäg 1stö 1stü 8stüch 4stür.
 1su su2b1 3suc su1e su2fe su8mar 6sumfa 8sumk 2s1unt sup1p2 6s5u6ran
 6surte 2s1v 2s1w 1sy 8syl.  sy5la syn1 sy2na syne4 s1z s4zend 5s6zene.
-8szu 1sä 6s5änd 6säugi 6säuß 
+8szu 1sä 6s5änd 6säugi 6säuß
 5söm 2s1ü2b 1süc sü8di 1sün 5süß
  taats3 4tab.  taba6k ta8ban tab2l ta6bre 4tabs t3absc
 8tabz 6t3acht ta6der 6tadr tad6s tad2t 1tafe4 1tag ta6ga6 ta8gei
@@ -839,13 +839,13 @@ zu1b4 zu1f2 6z5uhr zun2a 8zunem zunf8 8zungl zu1o zup8fi zu1s8 zu1z
 ü1ri ü1ro ür8sta ür8ster ü1ru üse8n
 ü8sta ü8stes ü6s5tete ü3ta ü1te ü1ti
 üt8tr ü1tu üt8zei ü1v ß1a8  5ßa.
- ß8as  ß1b8  ß1c  ß1d 
-1ße  ß5ec  8ße8g  8ße8h 
+ ß8as  ß1b8  ß1c  ß1d
+1ße  ß5ec  8ße8g  8ße8h
 2ß1ei  8ßem  ß1f8  ß1g  ß1h
- 1ßi  ß1k  ß1l  ß1m 
+ 1ßi  ß1k  ß1l  ß1m
 ßmana8  ß1n  ß1o  ß1p8  ß5q
- ß1r  ß1s2  ßst8  ß1ta 
-ß1te  ßt3hei  ß1ti  ß5to 
+ ß1r  ß1s2  ßst8  ß1ta
+ß1te  ßt3hei  ß1ti  ß5to
 ß1tr  1ßu8  6ß5um  ß1v  ß1w
  ß1z
 <!--
@@ -900,7 +900,7 @@ zu1b4 zu1f2 6z5uhr zun2a 8zunem zunf8 8zungl zu1o zup8fi zu1s8 zu1z
 % of a set of the internal TeX parameters including the trie memory
 % size parameter specifying the used memory for the hyphenation
 % patterns.
-% 
+%
 % Web2c 7.x (Source), teTeX 0.9 (Unix, Amiga), fpTeX (Win32)
 % and newer:
 %   The used memory size of the true is usually set high enough.
@@ -963,7 +963,7 @@ zu1b4 zu1f2 6z5uhr zun2a 8zunem zunf8 8zungl zu1o zup8fi zu1s8 zu1z
 %%   Right brace   \}     Tilde         \~}
 %%
 \endinput
-%% 
+%%
 %% End of file `dehypht.tex'.
 -->
 </patterns>

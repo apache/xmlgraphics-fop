@@ -3,7 +3,7 @@
 <!--
 Converted from pthyph.tex to XML by Paulo Soares (psoares@consiste.pt). Added accented characters
 support. Original comments follow.
- 
+
 % Tabela TeX de separacao de silabas para portugues.
 % The Portuguese TeX hyphenation table.
 % (C) 1987 by Pedro J. de Rezende
@@ -20,7 +20,7 @@ support. Original comments follow.
 %
 % Permission is hereby granted to copy and distribute this material provided
 % that the copies are not made or  distributed for  commercial or  lucrative
-% purpose. 
+% purpose.
 %
 % FURTHERMORE, THE CONTENTS OF THIS TABLE ARE NOT TO BE CHANGED IN ANY WAY!
 %
@@ -91,7 +91,7 @@ ec-le-si-as-ti-cos
 terp-si-core
 </exceptions>
 
-<patterns> 
+<patterns>
 <!-- % The Plain TeX hyphenation tables [NOT TO BE CHANGED IN ANY WAY!] -->
 1ba
 1be

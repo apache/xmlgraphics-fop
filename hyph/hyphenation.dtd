@@ -12,7 +12,7 @@
 <!-- Default minimun length in characters of hyphenated word fragments
      before and after the line break. For some languages this is not
      only for aesthetic purposes, wrong hyphens may be generated if this
-     is not accounted for. 
+     is not accounted for.
 -->
 <!ELEMENT hyphen-min EMPTY>
 <!ATTLIST hyphen-min before CDATA #REQUIRED>
@@ -42,7 +42,7 @@
      of words. -->
 <!ELEMENT patterns (#PCDATA)>
 
-<!-- A "full hyphen" equivalent to TeX's \discretionary 
+<!-- A "full hyphen" equivalent to TeX's \discretionary
      with pre-break, post-break and no-break attributes.
      To be used in the exceptions list, the hyphen character is not
      automatically added -->

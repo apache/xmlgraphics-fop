@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="US-ASCII"?>
 <!DOCTYPE hyphenation-info SYSTEM "hyphenation.dtd">
-<!-- 
+<!--
     Hyphenation information for US English
-    Created by Carlos Villegas from TeX's original (Liang's) hyphenation 
+    Created by Carlos Villegas from TeX's original (Liang's) hyphenation
     patterns.
 -->
 <hyphenation-info>
 
-<hyphen-char value="-"/> 
+<hyphen-char value="-"/>
 <hyphen-min before="3" after="2"/>
 
 <classes>
@@ -57,7 +57,7 @@ ret-ri-bu-tion
 ta-ble
 </exceptions>
 
-<patterns> 
+<patterns>
 <!-- % The Plain TeX hyphenation tables [NOT TO BE CHANGED IN ANY WAY!] -->
 .ach4
 .ad4der
