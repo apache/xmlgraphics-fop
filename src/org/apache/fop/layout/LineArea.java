@@ -217,11 +217,11 @@ public class LineArea extends Area {
             /* get the character */
             char c = data[i];
             if (!(isSpace(c) || (c == '\n') || (c == '\r') || (c == '\t')
-                    || (c == '?'))) {
+                    || (c == '\u2028'))) {
                 charWidth = getCharWidth(c);
                 isText = true;
                 // Add support for zero-width spaces
-                if (charWidth <= 0 && c != '?' && c != '?')
+                if (charWidth <= 0 && c != '\u200B' && c != '\uFEFF')
                     charWidth = whitespaceWidth;
             } else {
                 if ((c == '\n') || (c == '\r') || (c == '\t'))
@@ -238,7 +238,7 @@ public class LineArea extends Area {
                     if (this.whiteSpaceCollapse == WhiteSpaceCollapse.FALSE) {
                         if (isSpace(c)) {
                             spaceWidth += getCharWidth(c);
-                        } else if (c == '\n' || c == '?') {
+                        } else if (c == '\n' || c == '\u2028') {
                             // force line break
                             if (spaceWidth > 0) {
                                 InlineSpace is = new InlineSpace(spaceWidth);
@@ -253,7 +253,7 @@ public class LineArea extends Area {
                         } else if (c == '\t') {
                             spaceWidth += 8 * whitespaceWidth;
                         }
-                    } else if (c == '?') {
+                    } else if (c == '\u2028') {
                         // Line separator
                         // Breaks line even if WhiteSpaceCollapse = True
                         if (spaceWidth > 0) {
@@ -350,13 +350,13 @@ public class LineArea extends Area {
 
 
                     if (this.whiteSpaceCollapse == WhiteSpaceCollapse.FALSE) {
-                        if (c == '\n' || c == '?') {
+                        if (c == '\n' || c == '\u2028') {
                             // force a line break
                             return i + 1;
                         } else if (c == '\t') {
                             spaceWidth = whitespaceWidth;
                         }
-                    } else if (c == '?') {
+                    } else if (c == '\u2028') {
                         return i + 1;
                     }
                 } else {
@@ -1178,35 +1178,35 @@ public class LineArea extends Area {
 
             if (c == ' ')
                 width = em;
-            if (c == '?')
+            if (c == '\u2000')
                 width = en;
-            if (c == '?')
+            if (c == '\u2001')
                 width = em;
-            if (c == '?')
+            if (c == '\u2002')
                 width = em / 2;
-            if (c == '?')
+            if (c == '\u2003')
                 width = currentFontState.getFontSize();
-            if (c == '?')
+            if (c == '\u2004')
                 width = em / 3;
-            if (c == '?')
+            if (c == '\u2005')
                 width = em / 4;
-            if (c == '?')
+            if (c == '\u2006')
                 width = em / 6;
-            if (c == '?')
+            if (c == '\u2007')
                 width = getCharWidth(' ');
-            if (c == '?')
+            if (c == '\u2008')
                 width = getCharWidth('.');
-            if (c == '?')
+            if (c == '\u2009')
                 width = em / 5;
-            if (c == '?')
+            if (c == '\u200A')
                 width = 5;
-            if (c == '?')
+            if (c == '\u200B')
                 width = 100;
-            if (c == ' ')
+            if (c == '\u00A0')
                 width = getCharWidth(' ');
-            if (c == '?')
+            if (c == '\u202F')
                 width = getCharWidth(' ') / 2;
-            if (c == '?')
+            if (c == '\u3000')
                 width = getCharWidth(' ') * 2;
             if ((c == '\n') || (c == '\r') || (c == '\t'))
                 width = getCharWidth(' ');
@@ -1222,18 +1222,18 @@ public class LineArea extends Area {
      * it's not non-breaking
      */
     private boolean isSpace(char c) {
-        if (c == ' ' || c == '?' ||    // en quad
-        c == '?' ||                    // em quad
-        c == '?' ||                    // en space
-        c == '?' ||                    // em space
-        c == '?' ||                    // three-per-em space
-        c == '?' ||                    // four--per-em space
-        c == '?' ||                    // six-per-em space
-        c == '?' ||                    // figure space
-        c == '?' ||                    // punctuation space
-        c == '?' ||                    // thin space
-        c == '?' ||                    // hair space
-        c == '?')                      // zero width space
+        if (c == ' ' || c == '\u2000' ||    // en quad
+        c == '\u2001' ||                    // em quad
+        c == '\u2002' ||                    // en space
+        c == '\u2003' ||                    // em space
+        c == '\u2004' ||                    // three-per-em space
+        c == '\u2005' ||                    // four--per-em space
+        c == '\u2006' ||                    // six-per-em space
+        c == '\u2007' ||                    // figure space
+        c == '\u2008' ||                    // punctuation space
+        c == '\u2009' ||                    // thin space
+        c == '\u200A' ||                    // hair space
+        c == '\u200B')                      // zero width space
             return true;
         else
             return false;
@@ -1245,9 +1245,9 @@ public class LineArea extends Area {
      * space.
      */
     private boolean isNBSP(char c) {
-        if (c == ' ' || c == '?' ||    // narrow no-break space
-        c == '?' ||                    // ideographic space
-        c == '?') {                    // zero width no-break space
+        if (c == '\u00A0' || c == '\u202F' ||    // narrow no-break space
+        c == '\u3000' ||                    // ideographic space
+        c == '\uFEFF') {                    // zero width no-break space
             return true;
         } else
             return false;
@@ -1269,7 +1269,7 @@ public class LineArea extends Area {
     private void addSpacedWord(String word, LinkSet ls, int startw,
                                int spacew, TextState textState,
                                boolean addToPending) {
-        StringTokenizer st = new StringTokenizer(word, " ???", true);
+        StringTokenizer st = new StringTokenizer(word, "\u00A0\u202F\u3000\uFEFF", true);
         int extraw = 0;
         while (st.hasMoreTokens()) {
             String currentWord = st.nextToken();

@@ -568,7 +568,7 @@ public class TernaryTree implements Cloneable, Serializable {
                         leaf = true;
                         break;
                     }
-                    ns.push(new Item((char)cur, ' '));
+                    ns.push(new Item((char)cur, '\u0000'));
                     if (sc[cur] == 0) {
                         leaf = true;
                         break;
