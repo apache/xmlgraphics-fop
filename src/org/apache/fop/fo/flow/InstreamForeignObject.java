@@ -92,7 +92,6 @@ public class InstreamForeignObject extends FObj {
 	return new InstreamForeignObject.Maker();
 	}
 
-	FontState fs;
 	int breakBefore;
 	int breakAfter;
 	int scaling;
@@ -138,18 +137,6 @@ public class InstreamForeignObject extends FObj {
 	if (this.marker == START) {
 		/* retrieve properties */
 		String id = this.properties.get("id").getString();
-		String fontFamily = this.properties.get("font-family").getString();
-		String fontStyle = this.properties.get("font-style").getString();
-		String fontWeight = this.properties.get("font-weight").getString();
-		int fontSize = this.properties.get("font-size").getLength().mvalue();
-		// font-variant support
-		// added by Eric SCHAEFFER
-		int fontVariant =
-			this.properties.get("font-variant").getEnum();
-
-		this.fs = new FontState(area.getFontInfo(), fontFamily,
-														fontStyle, fontWeight, fontSize, fontVariant);
-
 			int align = this.properties.get("text-align").getEnum();
 			int valign = this.properties.get("vertical-align").getEnum();
 			int overflow = this.properties.get("overflow").getEnum();
@@ -184,7 +171,7 @@ public class InstreamForeignObject extends FObj {
 		}
 		if(this.areaCurrent == null) {
 		this.areaCurrent =
-				new ForeignObjectArea(fs, area.getAllocationWidth());
+				new ForeignObjectArea( propMgr.getFontState(area.getFontInfo()), area.getAllocationWidth());
 
 		this.areaCurrent.start();
 		areaCurrent.setWidth(this.width);

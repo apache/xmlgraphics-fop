@@ -75,7 +75,6 @@ public class ListItem extends FObj {
 				return new ListItem.Maker();
     }
 
-    FontState fs;
     int align;
     int alignLast;
     int breakBefore;
@@ -95,21 +94,6 @@ public class ListItem extends FObj {
 
     public Status layout(Area area) throws FOPException {
 				if (this.marker == START) {
-						String fontFamily =
-								this.properties.get("font-family").getString();
-						String fontStyle =
-								this.properties.get("font-style").getString();
-						String fontWeight =
-								this.properties.get("font-weight").getString();
-						int fontSize =
-								this.properties.get("font-size").getLength().mvalue();
-						// font-variant support
-						// added by Eric SCHAEFFER
-						int fontVariant =
-								this.properties.get("font-variant").getEnum();
-						
-						this.fs = new FontState(area.getFontInfo(), fontFamily,
-																		fontStyle, fontWeight, fontSize, fontVariant);
 						
 						this.align = this.properties.get("text-align").getEnum();
 						this.alignLast =
@@ -138,7 +122,7 @@ public class ListItem extends FObj {
 				}
 
 				this.blockArea =
-						new BlockArea(fs, area.getAllocationWidth(),
+						new BlockArea(propMgr.getFontState(area.getFontInfo()), area.getAllocationWidth(),
 													area.spaceLeft(), 0, 0,
 													0, align, alignLast, lineHeight);
 				blockArea.setPage(area.getPage());

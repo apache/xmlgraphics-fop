@@ -105,20 +105,6 @@ public class Character  extends FObj {
 				blockArea = (BlockArea) area;
 				boolean textDecoration;
 
-				//retrieving font property information for fo:leader
-				String fontFamily = this.properties.get("font-family").getString();
-				String fontStyle = this.properties.get("font-style").getString();
-				String fontWeight = this.properties.get("font-weight").getString();
-				int fontSize =
-					this.properties.get("font-size").getLength().mvalue();
-				// font-variant support
-				// added by Eric SCHAEFFER
-				int fontVariant =
-					this.properties.get("font-variant").getEnum();
-
-				FontState fontstate = new FontState(area.getFontInfo(), fontFamily,
-																fontStyle, fontWeight, fontSize, fontVariant);
-
 				//color properties
 				ColorType c = this.properties.get("color").getColorType();
 				float red = c.red();
@@ -148,7 +134,7 @@ public class Character  extends FObj {
         if(la == null) {
             return new Status(Status.AREA_FULL_NONE);
         }
-        la.changeFont(fontstate);
+        la.changeFont(propMgr.getFontState(area.getFontInfo()));
         la.changeColor(red, green, blue);
         la.changeWrapOption(wrapOption);
         la.changeWhiteSpaceCollapse(whiteSpaceCollapse);
@@ -159,7 +145,7 @@ public class Character  extends FObj {
             if(la == null) {
                 return new Status(Status.AREA_FULL_NONE);
             }
-            la.changeFont(fontstate);
+            la.changeFont(propMgr.getFontState(area.getFontInfo()));
             la.changeColor(red, green, blue);
             la.changeWrapOption(wrapOption);
             la.changeWhiteSpaceCollapse(whiteSpaceCollapse);

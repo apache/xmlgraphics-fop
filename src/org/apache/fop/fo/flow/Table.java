@@ -75,7 +75,6 @@ public class Table extends FObj {
 				return new Table.Maker();
 		}
 
-		FontState fs;
 		int breakBefore;
 		int breakAfter;
 		int spaceBefore;
@@ -83,9 +82,6 @@ public class Table extends FObj {
 		ColorType backgroundColor;
 		int width;
 		int height;
-		ColorType borderColor;
-		int borderWidth;
-		int borderStyle;
 		String id;
 		TableHeader tableHeader = null;
 		TableFooter tableFooter = null;
@@ -109,22 +105,6 @@ public class Table extends FObj {
 				}
 
 				if (this.marker == START) {
-						String fontFamily =
-							this.properties.get("font-family").getString();
-						String fontStyle =
-							this.properties.get("font-style").getString();
-						String fontWeight =
-							this.properties.get("font-weight").getString();
-						int fontSize =
-							this.properties.get("font-size").getLength().mvalue();
-						// font-variant support
-						// added by Eric SCHAEFFER
-						int fontVariant =
-							this.properties.get("font-variant").getEnum();
-
-						this.fs = new FontState(area.getFontInfo(), fontFamily,
-																		fontStyle, fontWeight, fontSize, fontVariant);
-
 						this.breakBefore =
 							this.properties.get("break-before").getEnum();
 						this.breakAfter = this.properties.get("break-after").getEnum();
@@ -138,12 +118,6 @@ public class Table extends FObj {
 						this.height =
 							this.properties.get("height").getLength().mvalue();
 
-						this.borderColor =
-							this.properties.get("border-color").getColorType();
-						this.borderWidth = this.properties.get(
-																 "border-width").getLength().mvalue();
-						this.borderStyle =
-							this.properties.get("border-style").getEnum();
 						this. id = this.properties.get("id").getString();
 
 						this.omitHeaderAtBreak = this.properties.get("table-omit-header-at-break").getEnum() == TableOmitHeaderAtBreak.TRUE;
@@ -182,17 +156,12 @@ public class Table extends FObj {
 				}
 
 				this.areaContainer =
-					new AreaContainer(fs, 0, 0, area.getAllocationWidth(),
+					new AreaContainer(propMgr.getFontState(area.getFontInfo()), 0, 0, area.getAllocationWidth(),
 														area.spaceLeft(), Position.STATIC);
 				areaContainer.foCreator=this;	// G Seshadri
 				areaContainer.setPage(area.getPage());
 				areaContainer.setBackgroundColor(backgroundColor);
-				areaContainer.setBorderStyle(borderStyle, borderStyle,
-																		 borderStyle, borderStyle);
-				areaContainer.setBorderWidth(borderWidth, borderWidth,
-																		 borderWidth, borderWidth);
-				areaContainer.setBorderColor(borderColor, borderColor,
-																		 borderColor, borderColor);
+				areaContainer.setBorderAndPadding(propMgr.getBorderAndPadding());
 				areaContainer.start();
 
 				areaContainer.setAbsoluteHeight(area.getAbsoluteHeight());

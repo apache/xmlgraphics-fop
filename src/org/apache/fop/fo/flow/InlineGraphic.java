@@ -81,7 +81,6 @@ public class InlineGraphic extends FObj {
 	return new InlineGraphic.Maker();
 		}
 
-		FontState fs;
 		int align;
 		int startIndent;
 		int endIndent;
@@ -102,22 +101,6 @@ public class InlineGraphic extends FObj {
 		public Status layout(Area area) throws FOPException {
 
 	if (this.marker == START) {
-			String fontFamily =
-		this.properties.get("font-family").getString();
-			String fontStyle =
-		this.properties.get("font-style").getString();
-			String fontWeight =
-		this.properties.get("font-weight").getString();
-			int fontSize =
-		this.properties.get("font-size").getLength().mvalue();
-		// font-variant support
-		// added by Eric SCHAEFFER
-		int fontVariant =
-			this.properties.get("font-variant").getEnum();
-
-		this.fs = new FontState(area.getFontInfo(), fontFamily,
-														fontStyle, fontWeight, fontSize, fontVariant);
-
 			// FIXME
 			this.align = this.properties.get("text-align").getEnum();
 
@@ -178,8 +161,8 @@ public class InlineGraphic extends FObj {
 		}
 
 		this.imageArea = new ImageArea(
-										fs,
-										img,
+					       propMgr.getFontState(area.getFontInfo()),
+					       img,
 										area.getAllocationWidth(),
 										width,
 										height,

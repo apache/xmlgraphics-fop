@@ -74,23 +74,6 @@ public class TableCell extends FObj {
 		int spaceAfter;
 		ColorType backgroundColor;
 
-		FontState fs;
-		ColorType borderTopColor;
-		int borderTopWidth;
-		int borderTopStyle;
-		ColorType borderBottomColor;
-		int borderBottomWidth;
-		int borderBottomStyle;
-		ColorType borderLeftColor;
-		int borderLeftWidth;
-		int borderLeftStyle;
-		ColorType borderRightColor;
-		int borderRightWidth;
-		int borderRightStyle;
-		int paddingTop;
-		int paddingBottom;
-		int paddingLeft;
-		int paddingRight;
 		int position;
 		String id;
 		int numColumnsSpanned;
@@ -136,82 +119,6 @@ public class TableCell extends FObj {
 		this.properties.get("number-columns-spanned").getNumber().intValue();
 			this.numRowsSpanned =
 		this.properties.get("number-rows-spanned").getNumber().intValue();
-			String fontFamily =
-		this.properties.get("font-family").getString();
-			String fontStyle =
-		this.properties.get("font-style").getString();
-			String fontWeight =
-		this.properties.get("font-weight").getString();
-			int fontSize =
-		this.properties.get("font-size").getLength().mvalue();
-		// font-variant support
-		// added by Eric SCHAEFFER
-		int fontVariant =
-			this.properties.get("font-variant").getEnum();
-
-		this.fs = new FontState(area.getFontInfo(), fontFamily,
-														fontStyle, fontWeight, fontSize, fontVariant);
-
-			this.borderTopColor =
-		this.properties.get("border-color").getColorType();
-			this.borderBottomColor = this.borderTopColor;
-			this.borderLeftColor = this.borderTopColor;
-			this.borderRightColor = this.borderTopColor;
-			if (this.borderTopColor == null) {
-		this.borderTopColor =
-				this.properties.get("border-top-color").getColorType();
-		this.borderBottomColor =
-				this.properties.get("border-bottom-color").getColorType();
-		this.borderLeftColor =
-				this.properties.get("border-left-color").getColorType();
-		this.borderRightColor =
-				this.properties.get("border-right-color").getColorType();
-			}
-			this.borderTopWidth =
-		this.properties.get("border-width").getLength().mvalue();
-			this.borderBottomWidth = this.borderTopWidth;
-			this.borderLeftWidth = this.borderTopWidth;
-			this.borderRightWidth = this.borderTopWidth;
-			if (this.borderTopWidth == 0) {
-		this.borderTopWidth =
-				this.properties.get("border-top-width").getLength().mvalue();
-		this.borderBottomWidth =
-				this.properties.get("border-bottom-width").getLength().mvalue();
-		this.borderLeftWidth =
-				this.properties.get("border-left-width").getLength().mvalue();
-		this.borderRightWidth =
-				this.properties.get("border-right-width").getLength().mvalue();
-			}
-			this.borderTopStyle =
-		this.properties.get("border-style").getEnum();
-			this.borderBottomStyle = this.borderTopStyle;
-			this.borderLeftStyle = this.borderTopStyle;
-			this.borderRightStyle = this.borderTopStyle;
-			if (this.borderTopStyle == 0) {
-		this.borderTopStyle =
-				this.properties.get("border-top-style").getEnum();
-		this.borderBottomStyle =
-				this.properties.get("border-bottom-style").getEnum();
-		this.borderLeftStyle =
-				this.properties.get("border-left-style").getEnum();
-		this.borderRightStyle =
-				this.properties.get("border-right-style").getEnum();
-			}
-			this.paddingTop =
-		this.properties.get("padding").getLength().mvalue();
-						this.paddingLeft = this.paddingTop;
-						this.paddingRight = this.paddingTop;
-						this.paddingBottom = this.paddingTop;
-						if (this.paddingTop == 0) {
-				this.paddingTop =
-			this.properties.get("padding-top").getLength().mvalue();
-				this.paddingLeft =
-			this.properties.get("padding-left").getLength().mvalue();
-				this.paddingBottom =
-			this.properties.get("padding-bottom").getLength().mvalue();
-				this.paddingRight =
-			this.properties.get("padding-right").getLength().mvalue();
-						}
 
 			this.spaceBefore =
 		this.properties.get("space-before.optimum").getLength().mvalue();
@@ -257,20 +164,13 @@ public class TableCell extends FObj {
 				}
 
 	this.areaContainer =
-			new AreaContainer(fs, startOffset - area.borderWidthLeft,
-															- area.borderWidthTop + ((this.marker ==0) ? spaceBefore : 0),
+			new AreaContainer(propMgr.getFontState(area.getFontInfo()),
+												startOffset - area.getBorderLeftWidth(),
+												- area.getBorderTopWidth() + ((this.marker ==0) ? spaceBefore : 0),
 													width, area.spaceLeft(), Position.RELATIVE);
 	areaContainer.foCreator=this;	// G Seshadri
 	areaContainer.setPage(area.getPage());
-	areaContainer.setPadding(paddingTop, paddingLeft, paddingBottom,
-					 paddingRight);
-	areaContainer.setBackgroundColor(backgroundColor);
-				areaContainer.setBorderStyle(borderTopStyle, borderLeftStyle,
-						 borderBottomStyle, borderRightStyle);
-				areaContainer.setBorderWidth(borderTopWidth, borderLeftWidth,
-						 borderBottomWidth, borderRightWidth);
-				areaContainer.setBorderColor(borderTopColor, borderLeftColor,
-						 borderBottomColor, borderRightColor);
+	areaContainer.setBorderAndPadding(propMgr.getBorderAndPadding());
 	areaContainer.start();
 
 				areaContainer.setAbsoluteHeight(area.getAbsoluteHeight());
