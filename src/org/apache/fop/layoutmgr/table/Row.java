@@ -60,6 +60,11 @@ public class Row extends BlockStackingLayoutManager {
         super(fobj);
     }
 
+    /**
+     * Initialize properties for this layout manager.
+     *
+     * @param propMgr the property manager for the fo
+     */
     protected void initProperties(PropertyManager propMgr) {
         borderProps = propMgr.getBorderAndPadding();
         backgroundProps = propMgr.getBackgroundProps();
@@ -167,7 +172,7 @@ public class Row extends BlockStackingLayoutManager {
             if (stackSize.min > min) {
                 min = stackSize.min;
             }
-            // the optimum is the minimum of all optimums
+            // the optimum is the maximum of all optimums
             if (stackSize.opt > opt) {
                 opt = stackSize.opt;
             }   
@@ -238,6 +243,7 @@ public class Row extends BlockStackingLayoutManager {
                 while ((childLM = (Cell)breakPosIter.getNextChildLM()) != null) {
                     childLM.setXOffset(xoffset);
                     childLM.setYOffset(yoffset);
+                    childLM.setRowHeight(rowHeight);
                     childLM.addAreas(breakPosIter, lc);
                 }
                 xoffset += col.getWidth();
