@@ -13,7 +13,8 @@ import org.apache.fop.apps.FOPException;
 import org.apache.fop.layout.*;
 import org.apache.fop.layout.inline.*;
 
-import org.apache.log.Logger;
+// Avalon
+import org.apache.avalon.framework.logger.Logger;
 
 // Java
 import java.io.OutputStream;

@@ -7,7 +7,8 @@
 
 package org.apache.fop.apps;
 
-import org.apache.log.*;
+// Avalon
+import org.apache.avalon.framework.logger.Logger;
 
 // SAX
 import org.xml.sax.XMLReader;
@@ -32,8 +33,8 @@ public abstract class Starter {
         options = new Options();
     }
 
-    public void setLogger(Logger logger) {
-        log = logger;
+    public void setLogger(Logger handler) {
+        log = handler;
     }
 
     public void setInputHandler(InputHandler inputHandler) {

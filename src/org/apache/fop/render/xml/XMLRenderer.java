@@ -17,7 +17,8 @@ import org.apache.fop.layout.inline.*;
 import org.apache.fop.pdf.*;
 import org.apache.fop.fo.properties.LeaderPattern;
 
-import org.apache.log.Logger;
+// Avalon
+import org.apache.avalon.framework.logger.Logger;
 
 // Java
 import java.io.IOException;
