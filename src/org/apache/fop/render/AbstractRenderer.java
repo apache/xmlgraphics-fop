@@ -87,6 +87,8 @@ public abstract class AbstractRenderer implements Renderer {
      */
     protected int currentAreaContainerXPosition = 0;
 
+    protected IDReferences idReferences;
+
     public void setLogger(Logger logger) {
         log = logger;
     }
@@ -492,14 +494,6 @@ public abstract class AbstractRenderer implements Renderer {
      * @param area area to render
      */
     public void renderLineArea(LineArea area) {
-        if (area.pendingWidth > 0) {
-            final String pageNumber = (area.getPage() != null 
-                    ? area.getPage().getFormattedNumber()
-                    : "<unknown>");
-            log.error("Areas pending, text probably lost. Check Page " +
-                      pageNumber +
-                      " and following page.");
-        }
         int rx = this.currentAreaContainerXPosition + area.getStartIndent();
         int ry = this.currentYPosition;
         int w = area.getContentWidth();
@@ -541,5 +535,9 @@ public abstract class AbstractRenderer implements Renderer {
             page.getStart().render(this);
         if (page.getEnd() != null)
             page.getEnd().render(this);
+    }
+
+    public IDReferences getIDReferences() {
+        return idReferences;
     }
 }

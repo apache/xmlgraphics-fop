@@ -56,6 +56,7 @@ import org.apache.fop.image.ImageArea;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.layout.*;
 import org.apache.fop.layout.inline.*;
+import org.apache.fop.datatypes.IDReferences;
 
 // Avalon
 import org.apache.avalon.framework.logger.Logger;
@@ -175,4 +176,5 @@ public interface Renderer {
     void stopRenderer(OutputStream outputStream)
         throws IOException;
 
+    IDReferences getIDReferences();
 }

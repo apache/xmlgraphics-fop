@@ -106,8 +106,6 @@ public class AWTRenderer extends AbstractRenderer implements Printable, Pageable
     protected Map fontStyles = new java.util.HashMap();
     protected Color saveColor = null;
 
-    protected IDReferences idReferences = null;
-
     /**
      * Image Object and Graphics Object. The Graphics Object is the Graphics
      * object that is contained withing the Image Object.
@@ -667,16 +665,7 @@ public class AWTRenderer extends AbstractRenderer implements Printable, Pageable
         int bl = this.currentYPosition;
 
 
-        String s;
-        if (area.getPageNumberID()
-                != null) {    // this text is a page number, so resolve it
-            s = idReferences.getPageNumber(area.getPageNumberID());
-            if (s == null) {
-                s = "";
-            }
-        } else {
-            s = area.getText();
-        }
+        String s = area.getText();
 
         Color oldColor = graphics.getColor();
         java.awt.Font oldFont = graphics.getFont();

@@ -55,7 +55,7 @@ import org.apache.fop.layout.FontState;
 
 public class WordArea extends InlineArea {
 
-    private String text;
+    protected String text;
 
     public WordArea(FontState fontState, float red, float green, float blue,
                     String text, int width) {

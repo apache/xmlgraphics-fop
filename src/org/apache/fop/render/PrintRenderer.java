@@ -135,11 +135,6 @@ public abstract class PrintRenderer extends AbstractRenderer {
     protected FontInfo fontInfo;
 
     /**
-     * the IDReferences for this document
-     */
-    protected IDReferences idReferences;
-
-    /**
      * set the document's producer
      * 
      * @param producer string indicating application producing PDF
@@ -474,7 +469,6 @@ public abstract class PrintRenderer extends AbstractRenderer {
         prevOverlineColor = null;
         prevLineThroughColor = null;
         fontInfo = null;
-        this.idReferences = null;
     }
 
 }

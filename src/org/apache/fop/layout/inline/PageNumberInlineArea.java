@@ -50,10 +50,12 @@
  */ 
 package org.apache.fop.layout.inline;
 
-import org.apache.fop.layout.*;
+import org.apache.fop.layout.inline.WordArea;
+import org.apache.fop.layout.FontState;
+import org.apache.fop.datatypes.IDReferences;
 
 public class PageNumberInlineArea extends WordArea {
-
+    private String pageNumberId = null;
 
     public PageNumberInlineArea(FontState fontState, float red, float green,
                                 float blue, String refid, int width) {
@@ -61,4 +63,10 @@ public class PageNumberInlineArea extends WordArea {
         this.pageNumberId = refid;
     }
 
+    public void resolve(IDReferences idReferences) {
+        text = idReferences.getPageNumber(pageNumberId);
+        if (text == null) {
+            text = "";
+        }
+    }
 }

@@ -1608,15 +1608,7 @@ public class TXTRenderer extends PrintRenderer {
         int rx = this.currentXPosition;
         int bl = this.currentYPosition;
 
-        String s;
-        if (area.getPageNumberID() != null) {
-            // this text is a page number, so resolve it
-            s = idReferences.getPageNumber(area.getPageNumberID());
-            if (s == null)
-                s = "";
-        } else {
-            s = area.getText();
-        }
+        String s = area.getText();
 
         if (debug)
             System.out.println("TXTRenderer.renderInlineArea: rx=" + rx

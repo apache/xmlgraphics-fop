@@ -716,17 +716,7 @@ public class PDFRenderer extends PrintRenderer {
             prevWordWidth = area.getContentWidth();
             prevWordX = rx;
 
-            String s;
-            if (area.getPageNumberID()
-                    != null) {// this text is a page number, so resolve it
-                s = idReferences.getPageNumber(area.getPageNumberID());
-                if (s == null) {
-                    s = "";
-                }
-            } else {
-                s = area.getText();
-            }
-
+            String s = area.getText();
             int l = s.length();
 
             for (int i = 0; i < l; i++) {
