@@ -231,5 +231,9 @@ public abstract class XMLObj extends FONode {
         element.appendChild(text);
     }
 
+    public void acceptVisitor(FOTreeVisitor fotv) {
+        fotv.serveVisitor(this);
+    }
+
 }
 

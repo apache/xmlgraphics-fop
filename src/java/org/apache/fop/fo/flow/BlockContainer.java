@@ -55,6 +55,7 @@ import org.apache.fop.apps.FOPException;
 import org.apache.fop.datatypes.ColorType;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FObj;
+import org.apache.fop.fo.FOTreeVisitor;
 import org.apache.fop.fo.properties.CommonAbsolutePosition;
 import org.apache.fop.fo.properties.CommonBackground;
 import org.apache.fop.fo.properties.CommonBorderAndPadding;
@@ -97,17 +98,6 @@ public class BlockContainer extends FObj {
         super.handleAttrs(attlist);
         this.span = this.properties.get("span").getEnum();
         setupID();
-    }
-
-    /**
-     * @see org.apache.fop.fo.FObj#addLayoutManager
-     */
-    public void addLayoutManager(List list) {
-        BlockContainerLayoutManager blm = new BlockContainerLayoutManager();
-        blm.setUserAgent(getUserAgent());
-        blm.setFObj(this);
-        blm.setOverflow(properties.get("overflow").getEnum());
-        list.add(blm);
     }
 
     private void setup() {
@@ -173,6 +163,10 @@ public class BlockContainer extends FObj {
      */
     public int getSpan() {
         return this.span;
+    }
+
+    public void acceptVisitor(FOTreeVisitor fotv) {
+        fotv.serveVisitor(this);
     }
 
 }

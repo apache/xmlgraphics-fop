@@ -1,5 +1,5 @@
 /*
- * $Id: Float.java,v 1.8 2003/03/06 11:36:31 jeremias Exp $
+ * $Id$
  * ============================================================================
  *                    The Apache Software License, Version 1.1
  * ============================================================================
@@ -48,35 +48,29 @@
  * James Tauber <jtauber@jtauber.com>. For more information on the Apache
  * Software Foundation, please see <http://www.apache.org/>.
  */
-package org.apache.fop.fo.flow;
+package org.apache.fop.layoutmgr;
+
+// Java
+import java.util.List;
 
 // FOP
-import org.apache.fop.fo.FONode;
-import org.apache.fop.fo.ToBeImplementedElement;
-import org.apache.fop.fo.FOTreeVisitor;
+import org.apache.fop.area.inline.InlineArea;
 
 /**
- * fo:float element.
+ * This creates a single inline container area after
+ * laying out the child block areas. All footnotes, floats
+ * and id areas are maintained for later retrieval.
  */
-public class Float extends ToBeImplementedElement {
+public class ICLayoutManager extends LeafNodeLayoutManager {
 
-    /**
-     * @see org.apache.fop.fo.FONode#FONode(FONode)
-     */
-    public Float(FONode parent) {
-        super(parent);
-        this.name = "fo:float";
+    private List childrenLM;
+
+    ICLayoutManager(List childLM) {
+        childrenLM = childLM;
     }
 
-    private void setup() {
-
-        // this.properties.get("float");
-        // this.properties.get("clear");
-
-    }
-
-    public void acceptVisitor(FOTreeVisitor fotv) {
-        fotv.serveVisitor(this);
+    public InlineArea get(int index) {
+        return null;
     }
 
 }

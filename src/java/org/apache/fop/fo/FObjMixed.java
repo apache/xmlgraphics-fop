@@ -82,20 +82,6 @@ public class FObjMixed extends FObj {
     }
 
     /**
-     * @param lms the list to which the layout manager(s) should be added
-     */
-    public void addLayoutManager(List lms) {
-        if (children != null) {
-            InlineStackingLayoutManager lm;
-            lm = new InlineStackingLayoutManager();
-            lm.setUserAgent(getUserAgent());
-            lm.setFObj(this);
-            lm.setLMiter(new LMiter(children.listIterator()));
-            lms.add(lm);
-        }
-    }
-
-    /**
      * @param data array of characters containing text to be added
      * @param start starting array element to add
      * @param length number of characters to add
@@ -127,5 +113,8 @@ public class FObjMixed extends FObj {
         return new RecursiveCharIterator(this);
     }
 
+    public void acceptVisitor(FOTreeVisitor fotv) {
+        fotv.serveVisitor(this);
+    }
 }
 

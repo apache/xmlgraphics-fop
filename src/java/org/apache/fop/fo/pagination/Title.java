@@ -58,6 +58,7 @@ import org.apache.fop.fo.FObjMixed;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.LengthProperty;
 import org.apache.fop.fo.Property;
+import org.apache.fop.fo.FOTreeVisitor;
 import org.apache.fop.fo.properties.CommonAccessibility;
 import org.apache.fop.fo.properties.CommonAural;
 import org.apache.fop.fo.properties.CommonBackground;
@@ -140,5 +141,10 @@ public class Title extends FObjMixed {
         Length zIndex = this.properties.get("z-index").getLength();
 
     }
+
+    public void acceptVisitor(FOTreeVisitor fotv) {
+        fotv.serveVisitor(this);
+    }
+
 }
 

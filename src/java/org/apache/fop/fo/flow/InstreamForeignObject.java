@@ -60,6 +60,7 @@ import org.apache.fop.area.inline.Viewport;
 import org.apache.fop.datatypes.Length;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FObj;
+import org.apache.fop.fo.FOTreeVisitor;
 import org.apache.fop.fo.XMLObj;
 import org.apache.fop.fo.properties.DisplayAlign;
 import org.apache.fop.fo.properties.Overflow;
@@ -75,7 +76,7 @@ import org.w3c.dom.Document;
  */
 public class InstreamForeignObject extends FObj {
 
-    private Viewport areaCurrent;
+    public Viewport areaCurrent;
 
     /**
      * constructs an instream-foreign-object object (called by Maker).
@@ -87,28 +88,11 @@ public class InstreamForeignObject extends FObj {
     }
 
     /**
-     * Add the layout manager for this into the list.
-     * @see org.apache.fop.fo.FObj#addLayoutManager(List)
-     */
-    public void addLayoutManager(List list) {
-        areaCurrent = getInlineArea();
-        if (areaCurrent != null) {
-            LeafNodeLayoutManager lm = new LeafNodeLayoutManager();
-            lm.setUserAgent(getUserAgent());
-            lm.setFObj(this);
-            lm.setCurrentArea(areaCurrent);
-            lm.setAlignment(properties.get("vertical-align").getEnum());
-            lm.setLead(areaCurrent.getHeight());
-            list.add(lm);
-        }
-    }
-
-    /**
      * Get the inline area created by this element.
      *
      * @return the viewport inline area
      */
-    protected Viewport getInlineArea() {
+    public Viewport getInlineArea() {
         if (children == null) {
             return areaCurrent;
         }
@@ -372,4 +356,9 @@ public class InstreamForeignObject extends FObj {
             this.scaling = this.properties.get("scaling").getEnum();
 
 */
+
+    public void acceptVisitor(FOTreeVisitor fotv) {
+        fotv.serveVisitor(this);
+    }
+
 }

@@ -56,6 +56,7 @@ import java.util.List;
 // FOP
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FObj;
+import org.apache.fop.fo.FOTreeVisitor;
 
 /**
  * Class modelling the fo:footnote object. See Sec. 6.10.3 of the XSL-FO
@@ -74,18 +75,6 @@ public class Footnote extends FObj {
     }
 
     /**
-     * @see org.apache.fop.fo.FObj#addLayoutManager
-     */
-    public void addLayoutManager(List lms) {
-        // add inlines layout manager
-        if (inlineFO == null) {
-            getLogger().error("inline required in footnote");
-            return;
-        }
-        inlineFO.addLayoutManager(lms);
-    }
-
-    /**
      * @param child child FONode to be added to this object
      */
     public void addChild(FONode child) {
@@ -98,5 +87,18 @@ public class Footnote extends FObj {
             getLogger().error("invalid child of footnote: " + name);
         }
     }
+
+    /**
+     * Public accessor for inline FO
+     * @return the Inline object stored as inline FO
+     */
+    public Inline getInlineFO() {
+        return inlineFO;
+    }
+
+    public void acceptVisitor(FOTreeVisitor fotv) {
+        fotv.serveVisitor(this);
+    }
+
 }
 

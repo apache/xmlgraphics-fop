@@ -58,6 +58,7 @@ import org.apache.fop.fo.CharIterator;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.OneCharIterator;
+import org.apache.fop.fo.FOTreeVisitor;
 import org.apache.fop.fo.properties.CommonAural;
 import org.apache.fop.fo.properties.CommonBorderAndPadding;
 import org.apache.fop.fo.properties.CommonBackground;
@@ -97,21 +98,7 @@ public class Character extends FObj {
         super(parent);
     }
 
-    /**
-     * @see org.apache.fop.fo.FObj#addLayoutManager
-     */
-    public void addLayoutManager(List list) {
-        InlineArea inline = getInlineArea();
-        if (inline != null) {
-            LeafNodeLayoutManager lm = new LeafNodeLayoutManager();
-            lm.setUserAgent(getUserAgent());
-            lm.setFObj(this);
-            lm.setCurrentArea(inline);
-            list.add(lm);
-        }
-    }
-
-    protected InlineArea getInlineArea() {
+    public InlineArea getInlineArea() {
         String str = this.properties.get("character").getString();
         if (str.length() == 1) {
             org.apache.fop.area.inline.Character ch =
@@ -177,5 +164,8 @@ public class Character extends FObj {
         // But what it the character is ignored due to white space handling?
     }
 
+    public void acceptVisitor(FOTreeVisitor fotv) {
+        fotv.serveVisitor(this);
+    }
 
 }

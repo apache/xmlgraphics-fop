@@ -52,6 +52,7 @@ package org.apache.fop.fo.flow;
 
 // FOP
 import org.apache.fop.fo.FONode;
+import org.apache.fop.fo.FOTreeVisitor;
 
 /**
  * Class modelling the fo:table-header object. See Sec. 6.7.6 of the XSL-FO
@@ -64,6 +65,10 @@ public class TableHeader extends TableBody {
      */
     public TableHeader(FONode parent) {
         super(parent);
+    }
+
+    public void acceptVisitor(FOTreeVisitor fotv) {
+        fotv.serveVisitor(this);
     }
 
 }

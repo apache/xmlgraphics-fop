@@ -58,6 +58,7 @@ import org.apache.fop.fo.CharIterator;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FObjMixed;
 import org.apache.fop.fo.InlineCharIterator;
+import org.apache.fop.fo.FOTreeVisitor;
 import org.apache.fop.fo.properties.TextDecoration;
 import org.apache.fop.fo.properties.CommonAccessibility;
 import org.apache.fop.fo.properties.CommonAural;
@@ -159,6 +160,10 @@ public class Inline extends FObjMixed {
      */
     public CharIterator charIterator() {
         return new InlineCharIterator(this, propMgr.getBorderAndPadding());
+    }
+
+    public void acceptVisitor(FOTreeVisitor fotv) {
+        fotv.serveVisitor(this);
     }
 
 }

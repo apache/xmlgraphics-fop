@@ -56,6 +56,7 @@ import java.io.Serializable;
 
 // FOP
 import org.apache.fop.fo.FONode;
+import org.apache.fop.fo.FOTreeVisitor;
 import org.apache.fop.fo.properties.CommonAccessibility;
 import org.apache.fop.fo.properties.CommonAural;
 import org.apache.fop.fo.properties.CommonBorderAndPadding;
@@ -88,44 +89,7 @@ public class BasicLink extends Inline {
         super(parent);
     }
 
-    /**
-     * Add start and end properties for the link
-     * @see org.apache.fop.fo.FObj#addLayoutManager
-     */
-    public void addLayoutManager(List lms) {
-        setup();
-        InlineStackingLayoutManager lm;
-        lm = new InlineStackingLayoutManager() {
-                    protected InlineParent createArea() {
-                        InlineParent area = super.createArea();
-                        setupLinkArea(parentLM, area);
-                        return area;
-                    }
-                };
-        lm.setUserAgent(getUserAgent());
-        lm.setFObj(this);
-        lm.setLMiter(new LMiter(children.listIterator()));
-        lms.add(lm);
-    }
-
-    protected void setupLinkArea(LayoutProcessor parentLM, InlineParent area) {
-        if (link == null) {
-            return;
-        }
-        if (external) {
-            area.addTrait(Trait.EXTERNAL_LINK, link);
-        } else {
-            PageViewport page = parentLM.resolveRefID(link);
-            if (page != null) {
-                area.addTrait(Trait.INTERNAL_LINK, page.getKey());
-            } else {
-                LinkResolver res = new LinkResolver(link, area);
-                parentLM.addUnresolvedArea(link, res);
-            }
-        }
-    }
-
-    private void setup() {
+    public void setup() {
         String destination;
         int linkType;
 
@@ -181,48 +145,16 @@ public class BasicLink extends Inline {
         return true;
     }
 
-    /**
-     * Link resolving for resolving internal links.
-     * This is static since it is independant of the link fo.
-     */
-    protected static class LinkResolver implements Resolveable, Serializable {
-        private boolean resolved = false;
-        private String idRef;
-        private Area area;
+    public String getLink() {
+        return link;
+    }
 
-        /**
-         * Create a new link resolver.
-         *
-         * @param id the id to resolve
-         * @param a the area that will have the link attribute
-         */
-        public LinkResolver(String id, Area a) {
-            idRef = id;
-            area = a;
-        }
+    public boolean getExternal() {
+        return external;
+    }
 
-        /**
-         * @return true if this link is resolved
-         */
-        public boolean isResolved() {
-            return resolved;
-        }
-
-        public String[] getIDs() {
-            return new String[] {idRef};
-        }
-
-        /**
-         * Resolve by adding an internal link.
-         */
-        public void resolve(String id, List pages) {
-            resolved = true;
-            if (idRef.equals(id) && pages != null) {
-                PageViewport page = (PageViewport)pages.get(0);
-                area.addTrait(Trait.INTERNAL_LINK, page.getKey());
-            }
-        }
+    public void acceptVisitor(FOTreeVisitor fotv) {
+        fotv.serveVisitor(this);
     }
 
 }
-

@@ -58,6 +58,7 @@ import org.apache.fop.apps.FOPException;
 import org.apache.fop.datatypes.ColorType;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FObj;
+import org.apache.fop.fo.FOTreeVisitor;
 import org.apache.fop.fo.properties.CommonAccessibility;
 import org.apache.fop.fo.properties.CommonAural;
 import org.apache.fop.fo.properties.CommonBackground;
@@ -89,17 +90,6 @@ public class ListBlock extends FObj {
      */
     public ListBlock(FONode parent) {
         super(parent);
-    }
-
-    /**
-     *
-     * @param list the list to which the layout manager(s) should be added
-     */
-    public void addLayoutManager(List list) {
-        ListBlockLayoutManager blm = new ListBlockLayoutManager();
-        blm.setUserAgent(getUserAgent());
-        blm.setFObj(this);
-        list.add(blm);
     }
 
     private void setup() throws FOPException {
@@ -159,6 +149,10 @@ public class ListBlock extends FObj {
      */
     protected boolean containsMarkers() {
         return true;
+    }
+
+    public void acceptVisitor(FOTreeVisitor fotv) {
+        fotv.serveVisitor(this);
     }
 
 }

@@ -59,6 +59,7 @@ import org.apache.fop.datatypes.ColorType;
 import org.apache.fop.datatypes.LengthRange;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FObj;
+import org.apache.fop.fo.FOTreeVisitor;
 import org.apache.fop.fo.properties.TableLayout;
 import org.apache.fop.fo.properties.TableOmitFooterAtBreak;
 import org.apache.fop.fo.properties.TableOmitHeaderAtBreak;
@@ -125,25 +126,6 @@ public class Table extends FObj {
             // add bodies
             super.addChild(child);
         }
-    }
-
-    /**
-     * Return a LayoutManager responsible for laying out this FObj's content.
-     * Must override in subclasses if their content can be laid out.
-     * @param list the list to which the layout manager(s) should be added
-     */
-    public void addLayoutManager(List list) {
-        TableLayoutManager tlm = new TableLayoutManager();
-        tlm.setUserAgent(getUserAgent());
-        tlm.setFObj(this);
-        tlm.setColumns(columns);
-        if (tableHeader != null) {
-            tlm.setTableHeader(tableHeader.getLayoutManager());
-        }
-        if (tableFooter != null) {
-            tlm.setTableFooter(tableFooter.getLayoutManager());
-        }
-        list.add(tlm);
     }
 
     private void setup() {
@@ -220,6 +202,22 @@ public class Table extends FObj {
      */
     protected boolean containsMarkers() {
         return true;
+    }
+
+    public ArrayList getColumns() {
+        return columns;
+    }
+
+    public TableBody getTableHeader() {
+        return tableHeader;
+    }
+
+    public TableBody getTableFooter() {
+        return tableFooter;
+    }
+
+    public void acceptVisitor(FOTreeVisitor fotv) {
+        fotv.serveVisitor(this);
     }
 
 }

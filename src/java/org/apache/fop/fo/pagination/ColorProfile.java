@@ -61,6 +61,7 @@ import java.io.InputStream;
 import org.apache.fop.datatypes.ColorType;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FObj;
+import org.apache.fop.fo.FOTreeVisitor;
 
 /**
  * The fo:color-profile formatting object.
@@ -129,4 +130,9 @@ public class ColorProfile extends FObj {
             getLogger().error("Color Profile src not an ICC Profile", iae);
         }
     }
+
+    public void acceptVisitor(FOTreeVisitor fotv) {
+        fotv.serveVisitor(this);
+    }
+
 }

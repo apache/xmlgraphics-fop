@@ -55,6 +55,7 @@ import org.apache.fop.datatypes.ColorType;
 import org.apache.fop.datatypes.Length;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FObj;
+import org.apache.fop.fo.FOTreeVisitor;
 import org.apache.fop.fo.Property;
 
 import org.apache.fop.fo.properties.CommonBackground;
@@ -165,6 +166,10 @@ public class TableColumn extends FObj {
         setupID();
 
         setup = true;
+    }
+
+    public void acceptVisitor(FOTreeVisitor fotv) {
+        fotv.serveVisitor(this);
     }
 
 }

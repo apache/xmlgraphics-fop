@@ -1,5 +1,5 @@
 /*
- * $Id: Float.java,v 1.8 2003/03/06 11:36:31 jeremias Exp $
+ * $Id$
  * ============================================================================
  *                    The Apache Software License, Version 1.1
  * ============================================================================
@@ -48,35 +48,56 @@
  * James Tauber <jtauber@jtauber.com>. For more information on the Apache
  * Software Foundation, please see <http://www.apache.org/>.
  */
-package org.apache.fop.fo.flow;
+package org.apache.fop.area;
+
+// Java
+import java.util.List;
+import java.io.Serializable;
 
 // FOP
-import org.apache.fop.fo.FONode;
-import org.apache.fop.fo.ToBeImplementedElement;
-import org.apache.fop.fo.FOTreeVisitor;
+import org.apache.fop.area.Trait;
+import org.apache.fop.area.Resolveable;
+import org.apache.fop.area.PageViewport;
+import org.apache.fop.area.Area;
 
 /**
- * fo:float element.
+ * Link resolving for resolving internal links.
  */
-public class Float extends ToBeImplementedElement {
+public class LinkResolver implements Resolveable, Serializable {
+    private boolean resolved = false;
+    private String idRef;
+    private Area area;
 
     /**
-     * @see org.apache.fop.fo.FONode#FONode(FONode)
+     * Create a new link resolver.
+     *
+     * @param id the id to resolve
+     * @param a the area that will have the link attribute
      */
-    public Float(FONode parent) {
-        super(parent);
-        this.name = "fo:float";
+    public LinkResolver(String id, Area a) {
+        idRef = id;
+        area = a;
     }
 
-    private void setup() {
-
-        // this.properties.get("float");
-        // this.properties.get("clear");
-
+    /**
+     * @return true if this link is resolved
+     */
+    public boolean isResolved() {
+        return resolved;
     }
 
-    public void acceptVisitor(FOTreeVisitor fotv) {
-        fotv.serveVisitor(this);
+    public String[] getIDs() {
+        return new String[] {idRef};
     }
 
+    /**
+     * Resolve by adding an internal link.
+     */
+    public void resolve(String id, List pages) {
+        resolved = true;
+        if (idRef.equals(id) && pages != null) {
+            PageViewport page = (PageViewport)pages.get(0);
+            area.addTrait(Trait.INTERNAL_LINK, page.getKey());
+        }
+    }
 }

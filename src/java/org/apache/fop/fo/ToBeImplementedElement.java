@@ -67,4 +67,8 @@ public class ToBeImplementedElement extends FObj {
                              + "\" is not yet implemented.");
     }
 
+    public void acceptVisitor(FOTreeVisitor fotv) {
+        fotv.serveVisitor(this);
+    }
+
 }

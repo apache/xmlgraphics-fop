@@ -59,6 +59,7 @@ import org.apache.fop.datatypes.KeepValue;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.Property;
+import org.apache.fop.fo.FOTreeVisitor;
 import org.apache.fop.fo.properties.Constants;
 
 import org.apache.fop.fo.properties.CommonAccessibility;
@@ -90,16 +91,6 @@ public class TableRow extends FObj {
      */
     public TableRow(FONode parent) {
         super(parent);
-    }
-
-    /**
-     * @param list the list to which the layout manager(s) should be added
-     */
-    public void addLayoutManager(List list) {
-        Row rlm = new Row();
-        rlm.setUserAgent(getUserAgent());
-        rlm.setFObj(this);
-        list.add(rlm);
     }
 
     /**
@@ -164,5 +155,10 @@ public class TableRow extends FObj {
             return new KeepValue(KeepValue.KEEP_WITH_AUTO, 0);
         }
     }
+
+    public void acceptVisitor(FOTreeVisitor fotv) {
+        fotv.serveVisitor(this);
+    }
+
 }
 

@@ -48,17 +48,53 @@
  * James Tauber <jtauber@jtauber.com>. For more information on the Apache
  * Software Foundation, please see <http://www.apache.org/>.
  */
-
 package org.apache.fop.layoutmgr;
 
-import org.apache.fop.fo.FOTreeExternal;
-/**
- * Implementation of FOTreeExternal for LayoutStrategy-specific calls while the
- * FO Tree is being built.
- * @see org.apache.fop.fo.FOTreeExternal
- */
+// FOP
+import org.apache.fop.fo.FONode;
+import org.apache.fop.fo.FObjMixed;
+import org.apache.fop.fo.properties.CommonAural;
+import org.apache.fop.fo.properties.CommonRelativePosition;
 
-public class LMFOTreeExternal extends FOTreeExternal {
+import org.apache.fop.layoutmgr.LeafNodeLayoutManager;
+import org.apache.fop.layoutmgr.LayoutProcessor;
+import org.apache.fop.area.inline.InlineArea;
+
+import java.util.List;
+import java.util.ArrayList;
+
+
+/**
+ * If this bidi has a different writing mode direction
+ * ltr or rtl than its parent writing mode then this
+ * reverses the inline areas (at the character level).
+ */
+class BidiLayoutManager extends LeafNodeLayoutManager {
+
+    private List children;
+
+    BidiLayoutManager(LeafNodeLayoutManager cLM) {
+        children = new ArrayList();
+/*
+        for (int count = cLM.size() - 1; count >= 0; count--) {
+            InlineArea ia = cLM.get(count);
+            if (ia instanceof Word) {
+                // reverse word
+                Word word = (Word) ia;
+                StringBuffer sb = new StringBuffer(word.getWord());
+                word.setWord(sb.reverse().toString());
+            }
+            children.add(ia);
+        }
+*/
+    }
+
+    public int size() {
+        return children.size();
+    }
+
+    public InlineArea get(int index) {
+        return (InlineArea) children.get(index);
+    }
 
 }
-

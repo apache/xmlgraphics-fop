@@ -50,7 +50,6 @@
  */
 package org.apache.fop.layoutmgr;
 
-import org.apache.fop.fo.FOTreeExternal;
 import org.apache.fop.layout.LayoutStrategy;
 
 /**
@@ -60,13 +59,5 @@ import org.apache.fop.layout.LayoutStrategy;
 public class LayoutManagerLS extends LayoutStrategy {
 
     private static String name = "layoutmgr";
-    private FOTreeExternal fote = null;
-
-    public FOTreeExternal getFOTreeExternal() {
-        if (fote  == null) {
-            fote = new LMFOTreeExternal();
-        }
-        return fote;
-    }
 
 }

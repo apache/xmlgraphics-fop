@@ -53,6 +53,7 @@ package org.apache.fop.fo.flow;
 // FOP
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FObjMixed;
+import org.apache.fop.fo.FOTreeVisitor;
 
 /**
  * Implementation for fo:wrapper formatting object.
@@ -76,6 +77,10 @@ public class Wrapper extends FObjMixed {
      */
     protected boolean containsMarkers() {
         return true;
+    }
+
+    public void acceptVisitor(FOTreeVisitor fotv) {
+        fotv.serveVisitor(this);
     }
 
 }

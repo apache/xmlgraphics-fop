@@ -53,6 +53,7 @@ package org.apache.fop.fo.flow;
 // FOP
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FObj;
+import org.apache.fop.fo.FOTreeVisitor;
 import org.apache.fop.fo.properties.CommonBorderAndPadding;
 import org.apache.fop.fo.properties.CommonBackground;
 import org.apache.fop.fo.properties.TextAlign;
@@ -101,33 +102,12 @@ public class ExternalGraphic extends FObj {
     }
 
     /**
-     * Add the layout manager for this to the list.
-     * This adds a leafnode layout manager that deals with the
-     * created viewport/image area.
-     *
-     * @param list the list to add the layout manager to
-     */
-    public void addLayoutManager(List list) {
-        InlineArea area = getInlineArea();
-        if (area != null) {
-            setupID();
-            LeafNodeLayoutManager lm = new LeafNodeLayoutManager();
-            lm.setUserAgent(getUserAgent());
-            lm.setFObj(this);
-            lm.setCurrentArea(area);
-            lm.setAlignment(properties.get("vertical-align").getEnum());
-            lm.setLead(viewHeight);
-            list.add(lm);
-        }
-    }
-
-    /**
      * Get the inline area for this external grpahic.
      * This creates the image area and puts it inside a viewport.
      *
      * @return the viewport containing the image area
      */
-    protected InlineArea getInlineArea() {
+    public InlineArea getInlineArea() {
         setup();
         if (url == null) {
             return null;
@@ -288,6 +268,14 @@ public class ExternalGraphic extends FObj {
             break;
         }
         placement = new Rectangle2D.Float(xoffset, yoffset, cwidth, cheight);
+    }
+
+    public int getViewHeight() {
+        return viewHeight;
+    }
+
+    public void acceptVisitor(FOTreeVisitor fotv) {
+        fotv.serveVisitor(this);
     }
 
 }

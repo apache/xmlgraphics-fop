@@ -65,6 +65,7 @@ import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.FObjMixed;
 import org.apache.fop.fo.RecursiveCharIterator;
 import org.apache.fop.fo.TextInfo;
+import org.apache.fop.fo.FOTreeVisitor;
 import org.apache.fop.fo.properties.Constants;
 import org.apache.fop.fo.properties.CommonAccessibility;
 import org.apache.fop.fo.properties.CommonAural;
@@ -244,18 +245,6 @@ public class Block extends FObjMixed {
     }
 
     /**
-     * @see org.apache.fop.fo.FObj#addLayoutManager
-     */
-    public void addLayoutManager(List list) {
-        BlockLayoutManager blm = new BlockLayoutManager();
-        blm.setUserAgent(getUserAgent());
-        blm.setFObj(this);
-        TextInfo ti = propMgr.getTextLayoutProps(fontInfo);
-        blm.setBlockTextInfo(ti);
-        list.add(blm);
-    }
-
-    /**
      * @return false (Block cannot generate inline areas)
      */
     public boolean generatesInlineAreas() {
@@ -408,5 +397,9 @@ public class Block extends FObjMixed {
             bNextIsLF = false;
         }
     }
-}
 
+    public void acceptVisitor(FOTreeVisitor fotv) {
+        fotv.serveVisitor(this);
+    }
+
+}

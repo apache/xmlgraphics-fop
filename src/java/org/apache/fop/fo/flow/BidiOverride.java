@@ -53,6 +53,7 @@ package org.apache.fop.fo.flow;
 // FOP
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FObjMixed;
+import org.apache.fop.fo.FOTreeVisitor;
 import org.apache.fop.fo.properties.CommonAural;
 import org.apache.fop.fo.properties.CommonRelativePosition;
 
@@ -73,28 +74,6 @@ public class BidiOverride extends FObjMixed {
      */
     public BidiOverride(FONode parent) {
         super(parent);
-    }
-
-    /**
-     * @see org.apache.fop.fo.FObj#addLayoutManager
-     */
-    public void addLayoutManager(List list) {
-        if (false) {
-            super.addLayoutManager(list);
-        } else {
-            ArrayList childList = new ArrayList();
-            super.addLayoutManager(childList);
-            for (int count = childList.size() - 1; count >= 0; count--) {
-                LayoutProcessor lm = (LayoutProcessor) childList.get(count);
-                if (lm.generatesInlineAreas()) {
-                    LayoutProcessor blm = new BidiLayoutManager((LeafNodeLayoutManager) lm);
-                    blm.setFObj(this);
-                    list.add(blm);
-                } else {
-                    list.add(lm);
-                }
-            }
-        }
     }
 
     private void setup() {
@@ -129,35 +108,8 @@ public class BidiOverride extends FObjMixed {
         return true;
     }
 
-    /**
-     * If this bidi has a different writing mode direction
-     * ltr or rtl than its parent writing mode then this
-     * reverses the inline areas (at the character level).
-     */
-    class BidiLayoutManager extends LeafNodeLayoutManager {
-
-        private List children;
-
-        BidiLayoutManager(LeafNodeLayoutManager cLM) {
-            children = new ArrayList();
-/*            for (int count = cLM.size() - 1; count >= 0; count--) {
-                InlineArea ia = cLM.get(count);
-                if (ia instanceof Word) {
-                    // reverse word
-                    Word word = (Word) ia;
-                    StringBuffer sb = new StringBuffer(word.getWord());
-                    word.setWord(sb.reverse().toString());
-                }
-                children.add(ia);
-            }
-*/        }
-
-        public int size() {
-            return children.size();
-        }
-
-        public InlineArea get(int index) {
-            return (InlineArea) children.get(index);
-        }
+    public void acceptVisitor(FOTreeVisitor fotv) {
+        fotv.serveVisitor(this);
     }
+
 }

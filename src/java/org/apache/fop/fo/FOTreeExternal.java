@@ -50,6 +50,8 @@
  */
 package org.apache.fop.fo;
 
+import org.apache.fop.fo.FONode;
+
 /**
  * Default class for handling external calls as an FO Tree is being built.
  * "External calls" are processes that are not directly related to building
@@ -63,6 +65,12 @@ package org.apache.fop.fo;
  */
 
 public class FOTreeExternal {
+
+    public void extFONode(FONode foNode) {
+    }
+
+    public void extFObj(FObj fobj) {
+    }
 
 }
 
