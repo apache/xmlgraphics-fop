@@ -48,6 +48,8 @@
  Software Foundation, please see <http://www.apache.org/>.
  
  */
+
+
 package org.apache.fop.apps;
 
 // SAX
@@ -155,13 +157,22 @@ public class CommandLine {
 	}
 		
 	XMLReader parser = createParser();
-		
+  
 	if (parser == null) {
 	    MessageHandler.errorln("ERROR: Unable to create SAX parser");
 	    System.exit(1);
 	}
 	
-	try {
+  // setting the parser features
+  try {
+    parser.setFeature("http://xml.org/sax/features/namespace-prefixes", true);
+  } catch (SAXException e) {
+    MessageHandler.errorln("Error in setting up parser feature namespace-prefixes");
+    MessageHandler.errorln("You need a parser which supports SAX version 2");  
+    System.exit(1);  
+  }
+
+  try {
 	    Driver driver = new Driver();
 	    driver.setRenderer("org.apache.fop.render.pdf.PDFRenderer", version);
 	    driver.addElementMapping("org.apache.fop.fo.StandardElementMapping");
