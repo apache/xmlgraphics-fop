@@ -138,7 +138,6 @@ public class PDFTextPainter implements TextPainter {
         gvtFonts = (List) aci.getAttribute(
             GVTAttributedCharacterIterator.TextAttribute.GVT_FONT_FAMILIES);
 
-        Paint forg = (Paint) aci.getAttribute(TextAttribute.FOREGROUND);
         TextPaintInfo tpi = (TextPaintInfo) aci.getAttribute(
             GVTAttributedCharacterIterator.TextAttribute.PAINT_INFO);
         
@@ -146,6 +145,7 @@ public class PDFTextPainter implements TextPainter {
             return;
         }        
         
+        Paint forg = tpi.fillPaint;
         Paint strokePaint = tpi.strokePaint;
         Float size = (Float) aci.getAttribute(TextAttribute.SIZE);
         if (size == null) {

@@ -146,7 +146,7 @@ public class PSTextPainter implements TextPainter {
         List gvtFonts;
         gvtFonts = (List) aci.getAttribute(
                       GVTAttributedCharacterIterator.TextAttribute.GVT_FONT_FAMILIES);
-        Paint forg = (Paint) aci.getAttribute(TextAttribute.FOREGROUND);
+        Paint forg = tpi.fillPaint;
         Paint strokePaint = tpi.strokePaint;
         Float size = (Float) aci.getAttribute(TextAttribute.SIZE);
         if (size == null) {
