@@ -1,5 +1,14 @@
 ==============================================================================
 Done since 0.20.4 release
+- Fixed many (not all) problems with link hotspot positioning and made
+  the default behavior to create a single hotspot over all words in each
+  line (Karen Lease)
+- Added continued-label extension which works in table-header or table-footer
+  to add text in non-first occurences of those areas (Karen Lease)
+- Fixed a bug in the TTF font inclusion which was showing up when using
+  non-stroked text in SVG (Karen Lease)
+- Improved table behavior in some cases where keeps properties are used on
+  rows (Karen Lease)
 - Fixed NullPointerException in Label.java experienced by certain DocBook
   users.
   Submitted by: Stephan Wiesner <stephan@stephan-wiesner.de>
