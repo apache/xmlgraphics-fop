@@ -1,4 +1,20 @@
 <?xml version="1.0"?>
+<!--
+  Copyright 1999-2004 The Apache Software Foundation
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<!-- $Id$ -->
 <html>
   <body marginheight="0" marginwidth="0" topmargin="0" leftmargin="0" text="#000000" bgcolor="#FFFFFF">
     <script type="text/javascript" src="codedisplay.js" />
@@ -18,7 +34,7 @@
           <a href="#N10075">Accessing property Data Constants</a>
         </li>
       </ul>
-      
+
       <a name="N10014"></a>
       <h3>Introduction</h3>
       <!-- N.B. height for toggleCode changed from 50% to 400 because
@@ -37,11 +53,11 @@
         ><span class="codefrag">PropertyConsts</span></a> class and
         its singleton object.
       </p>
-      
+
       <a name="N10026"></a>
       <h3>Common data</h3>
       <p>
-        
+
         <span id = "span01" ></span ><a href= "javascript:toggleCode(
         'span01', 'Character.html', '400', '100%' )" ><span
         class="codefrag">org.apache.fop.fo.properties.Character</span></a>
@@ -49,13 +65,13 @@
         common to all properties are:
       </p>
       <dl>
-        
+
         <dt>
-          
+
           <span class="codefrag">final int dataTypes</span>
-          
+
         </dt>
-        
+
         <dd>
           This field defines the allowable data types which may be
           assigned to the property.  The value is chosen from the data
@@ -66,13 +82,13 @@
           and may consist of more than one of those constants,
           bit-ORed together.
         </dd>
-        
+
         <dt>
-          
+
           <span class="codefrag">final int traitMapping</span>
-          
+
         </dt>
-        
+
         <dd>
           This field defines the mapping of properties to traits in
           the <span class="codefrag">Area tree</span>. The value is
@@ -83,13 +99,13 @@
           and may consist of more than one of those constants,
           bit-ORed together.
         </dd>
-        
+
         <dt>
-          
+
           <span class="codefrag">final int initialValueType</span>
-          
+
         </dt>
-        
+
         <dd>
           This field defines the data type of the initial value
           assigned to the property.  The value is chosen from the
@@ -101,13 +117,13 @@
           class="codefrag">Character</span>, there is no defined
           initial value type.
         </dd>
-        
+
         <dt>
-          
+
           <span class="codefrag">final int inherited</span>
-          
+
         </dt>
-        
+
         <dd>
           This field defines the kind of inheritance applicable to the
           property.  The value is chosen from the inheritance
@@ -116,9 +132,9 @@
           '100%' )" ><span
           class="codefrag">org.apache.fop.fo.properties.Property</span></a>.
         </dd>
-        
+
       </dl>
-      
+
       <a name="N10075"></a>
       <h3>Accessing property Data Constants</h3>
       <p>
@@ -150,84 +166,84 @@
         ><span class="codefrag">pconsts</span></a>.
       </p>
       <p>
-        
+
         <em>Reflection</em> methods are then used, via the same <span
         class="codefrag">Class</span> instance, to extract and store
         the static data fields.  These arrays and associated access
         methods are:
       </p>
       <dl>
-        
+
         <dt>
-          
+
           <span id = "span12" ></span ><a href=
           "javascript:toggleCode( 'span12',
           'PropertyConsts.html#datatypes', '400', '100%' )" ><span
           class="codefrag">int[] datatypes</span></a>
-          
+
         </dt>
-        
+
         <dd>
-          
+
           <span id = "span13" ></span ><a href=
           "javascript:toggleCode( 'span13',
           'PropertyConsts.html#getDataTypes', '400', '100%' )" ><span
           class="codefrag">int getDataTypes(int)</span></a>
-          
+
         </dd>
-        
+
         <dt>
-          
+
           <span id = "span14" ></span ><a href=
           "javascript:toggleCode( 'span14',
           'PropertyConsts.html#traitMappings', '400', '100%' )" ><span
           class="codefrag">int[] traitMappings</span></a>
-          
+
         </dt>
-        
+
         <dd>
-          
+
           <em>No access method yet defined.</em>
-          
+
         </dd>
-        
+
         <dt>
-          
+
           <span id = "span15" ></span ><a href=
           "javascript:toggleCode( 'span15',
           'PropertyConsts.html#initialValueTypes', '400', '100%' )"
           ><span class="codefrag">int[] initialValueTypes</span></a>
-          
+
         </dt>
-        
+
         <dd>
-          
+
           <span id = "span16" ></span ><a href=
           "javascript:toggleCode( 'span16',
           'PropertyConsts.html#getInitialValueType', '400', '100%' )"
           ><span class="codefrag">int
           getInitialValueType(int)</span></a>
-          
+
         </dd>
-        
+
         <dt>
-          
+
           <span id = "span17" ></span ><a href=
           "javascript:toggleCode( 'span17',
           'PropertyConsts.html#inherited', '400', '100%' )" ><span
           class="codefrag">int[] inherited</span></a>
-          
+
         </dt>
-        
+
         <dd>
-          
+
           <span id = "span18" ></span ><a href=
           "javascript:toggleCode( 'span18',
           'PropertyConsts.html#inheritance', '400', '100%' )" ><span
           class="codefrag">int inheritance(int)</span></a>
-          
+
         </dd>
-        
+
       </dl>
 
       <p>
@@ -238,7 +254,7 @@
         <strong>Next:</strong> <a href= "getInitialValue.html"
                                   >getInitialValue()</a>
       </p>
-      
+
     </div>
   </body>
 </html>

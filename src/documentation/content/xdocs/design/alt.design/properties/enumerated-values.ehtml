@@ -1,4 +1,20 @@
 <?xml version="1.0"?>
+<!--
+  Copyright 1999-2004 The Apache Software Foundation
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<!-- $Id$ -->
 <html>
   <body marginheight="0" marginwidth="0" topmargin="0" leftmargin="0" text="#000000" bgcolor="#FFFFFF">
     <script type="text/javascript" src="codedisplay.js" />
@@ -25,7 +41,7 @@
           </ul>
         </li>
       </ul>
-      
+
       <a name="N1000C"></a>
       <h3>Enumerated Data Values</h3>
       <p>
@@ -54,7 +70,7 @@
           table elements.
       -->
       <p>
-        
+
         <span id = "span00" ></span ><a href= "javascript:toggleCode(
         'span00', 'Direction.html#DirectionClass', '400', '100%' )"
         ><span
@@ -98,7 +114,7 @@
       <a name="N1005C"></a>
       <h4>HashMap representation</h4>
       <p>
-        
+
         <span id = "span06" ></span ><a href= "javascript:toggleCode(
         'span06', 'RenderingIntent.html#RenderingIntentClass', '400',
         '100%' )" ><span class="codefrag"
@@ -253,7 +269,7 @@
         int)</span></a> method.
       </p>
       <p>
-        
+
         <span id = "span29" ></span ><a href= "javascript:toggleCode(
         'span29', 'BorderLeftWidth.html#BorderLeftWidthClass', '400',
         '100%' )" ><span class="codefrag">BorderLeftWidth</span></a>
@@ -302,7 +318,7 @@
                                   >getInitialValue()</a>
       </p>
 -->
-      
+
     </div>
   </body>
 </html>
