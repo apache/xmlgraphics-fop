@@ -44,6 +44,7 @@ public class FObjectSets {
     /** The set of FOs comprising the inline entity.
      *    See 6.14 Formatting Object Content. */
     private static final BitSet inline;
+
     /** The publicly accessible inline entity set.
      *    See 6.14 Formatting Object Content. */
     public static final ROBitSet inlineEntity;
@@ -63,25 +64,42 @@ public class FObjectSets {
         inlineEntity = new ROBitSet(inline);
     }
 
+    /** The set of FOs available wherever %block; is allowed
+     * including within descendents of out-of-line FOs.
+     *    See 6.14 Formatting Object Content. */
+    private static final BitSet outOfLineBlock;
+
+    /** The publicly accessible set of FOs available wherever
+     * %block; is allowed, including within descendents from
+     * out-of-line FOs.
+     *    See 6.14 Formatting Object Content. */
+    public static final ROBitSet outOfLineBlockSet;
+    static {
+        outOfLineBlock = (BitSet)(block.clone());
+        outOfLineBlock.set(FObjectNames.FLOAT);
+        outOfLineBlockSet = new ROBitSet(outOfLineBlock);
+    }
+
     /** The set of FOs available wherever #PCDATA|%block;|%inline; is allowed
      * including within descendents of out-of-line FOs.
      *    See 6.14 Formatting Object Content. */
-    private static final BitSet pcdataBlockInline;
+    private static final BitSet outOfLinePcdataBlockInline;
 
     /** The publicly accessible set of FOs available wherever
      * #PCDATA|%block;|%inline; is allowed, including within descendents from
      * out-of-line FOs.
      *    See 6.14 Formatting Object Content. */
-    public static final ROBitSet pcdataBlockInlineSet;
+    public static final ROBitSet outOfLinePcdataBlockInlineSet;
     static {
-        pcdataBlockInline = new BitSet();
-        pcdataBlockInline.set(FObjectNames.WRAPPER);;
-        pcdataBlockInline.set(FObjectNames.RETRIEVE_MARKER);;
-        pcdataBlockInline.set(FObjectNames.MULTI_SWITCH);;
-        pcdataBlockInline.set(FObjectNames.MULTI_PROPERTIES);;
-        pcdataBlockInline.or(block);;
-        pcdataBlockInline.or(inline);;
-        pcdataBlockInlineSet = new ROBitSet(pcdataBlockInline);
+        outOfLinePcdataBlockInline = new BitSet();
+        outOfLinePcdataBlockInline.set(FObjectNames.WRAPPER);
+        outOfLinePcdataBlockInline.set(FObjectNames.RETRIEVE_MARKER);
+        outOfLinePcdataBlockInline.set(FObjectNames.MULTI_SWITCH);
+        outOfLinePcdataBlockInline.set(FObjectNames.MULTI_PROPERTIES);
+        outOfLinePcdataBlockInline.or(block);
+        outOfLinePcdataBlockInline.or(inline);
+        outOfLinePcdataBlockInlineSet =
+                                    new ROBitSet(outOfLinePcdataBlockInline);
     }
 
     /**
@@ -96,9 +114,10 @@ public class FObjectSets {
     public static final ROBitSet normalPcdataBlockInlineSet;
     static {
         normalPcdataBlockInline = new BitSet();
-        normalPcdataBlockInline.or(pcdataBlockInline);
+        normalPcdataBlockInline.or(outOfLinePcdataBlockInline);
         normalPcdataBlockInline.set(FObjectNames.FLOAT);
-        normalPcdataBlockInlineSet = new ROBitSet(normalPcdataBlockInline);
+        normalPcdataBlockInlineSet =
+                                    new ROBitSet(normalPcdataBlockInline);
     }
 
     /**
