@@ -29,18 +29,18 @@
         </fo:simple-page-master>
       </fo:layout-master-set>
       <fo:page-sequence master-reference="normal" white-space-collapse="true">
-        <fo:flow flow-name="xsl-region-body">
+        <fo:flow flow-name="xsl-region-body" orphans="0" widows="0">
           <fo:block-container overflow="auto" left="30pt" top="30pt" width="100pt" height="20pt" absolute-position="absolute" border="solid 5pt" padding="5pt" background-color="orange">
-            <fo:block margin="0pt" background-color="yellow">auto overflow overflow overflow</fo:block>
+            <fo:block margin="0pt" background-color="yellow">auto overflow overflow overflow overflow overflow</fo:block>
           </fo:block-container>
           <fo:block-container overflow="visible" left="30pt" top="90pt" width="100pt" height="20pt" absolute-position="absolute" border="solid 5pt" padding="5pt" background-color="orange">
-            <fo:block margin="0pt" background-color="yellow">visible overflow overflow overflow</fo:block>
+            <fo:block margin="0pt" background-color="yellow">visible overflow overflow overflow overflow overflow</fo:block>
           </fo:block-container>
           <fo:block-container overflow="scroll" left="30pt" top="150pt" width="100pt" height="20pt" absolute-position="absolute" border="solid 5pt" padding="5pt" background-color="orange">
-            <fo:block margin="0pt" background-color="yellow">scroll overflow overflow overflow</fo:block>
+            <fo:block margin="0pt" background-color="yellow">scroll overflow overflow overflow overflow overflow</fo:block>
           </fo:block-container>
           <fo:block-container overflow="hidden" left="30pt" top="210pt" width="100pt" height="20pt" absolute-position="absolute" border="solid 5pt" padding="5pt" background-color="orange">
-            <fo:block margin="0pt" background-color="yellow">hidden overflow overflow overflow</fo:block>
+            <fo:block margin="0pt" background-color="yellow">hidden overflow overflow overflow overflow overflow</fo:block>
           </fo:block-container>
           <!-- Note: error-if-overflow will be tested separately. -->
         </fo:flow>
