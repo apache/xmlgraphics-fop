@@ -5,8 +5,6 @@
  * LICENSE file included with these sources.
  */
 
-package org.apache.fop.tools.servlet;
-
 import java.io.*;
 
 import javax.servlet.*;
@@ -17,7 +15,9 @@ import org.xml.sax.XMLReader;
 
 import org.apache.fop.apps.Driver;
 import org.apache.fop.apps.Version;
+import org.apache.fop.apps.XSLTInputHandler;
 
+import org.apache.log.*;
 
 /**
  * Example servlet to generate a PDF from a servlet.
@@ -26,23 +26,45 @@ import org.apache.fop.apps.Version;
  *   <li>fo: the path to a formatting object file to render
  * </ul>
  *
- * Example URL: http://servername/servlet/FopServlet?fo=/home/fop/example/readme.fo
+ * Example URL: http://servername/servlet/FopServlet?fo=readme.fo
+ * Example URL: http://servername/servlet/FopServlet?xml=data.xml&xsl=format.xsl
  * Compiling: you will need 
  * - servlet_2_2.jar
  * - fop.jar
  * - sax api
+ * - logkit jar
+ *
+ * Running: you will need in the WEB-INF/lib/ directory:
+ * - fop.jar
+ * - batik.jar
+ * - avalon-framework-4.0.jar
+ * - logkit-1.0b4.jar
+ * - xalan-2.0.0.jar
  */
-
 public class FopServlet extends HttpServlet {
     public static final String FO_REQUEST_PARAM = "fo";
+    public static final String XML_REQUEST_PARAM = "xml";
+    public static final String XSL_REQUEST_PARAM = "xsl";
+    Logger log = null;
 
     public void doGet(HttpServletRequest request,
                       HttpServletResponse response) throws ServletException {
+        if(log == null) {
+            Hierarchy hierarchy = Hierarchy.getDefaultHierarchy();
+            log = hierarchy.getLoggerFor("fop");
+            log.setPriority(Priority.WARN);
+        }
         try {
-            if (request.getParameter(FO_REQUEST_PARAM) != null) {
-                FileInputStream file = new FileInputStream(
-                                         request.getParameter(FO_REQUEST_PARAM));
+            String foParam = request.getParameter(FO_REQUEST_PARAM);
+            String xmlParam = request.getParameter(XML_REQUEST_PARAM);
+            String xslParam = request.getParameter(XSL_REQUEST_PARAM);
+
+            if (foParam != null) {
+                FileInputStream file = new FileInputStream(foParam);
                 renderFO(new InputSource(file), response);
+            } else if((xmlParam != null) && (xslParam != null)) {
+                XSLTInputHandler input = new XSLTInputHandler(new File(xmlParam), new File(xslParam));
+                renderXML(input, response);
             } else {
                 PrintWriter out = response.getWriter();
                 out.println("<html><head><title>Error</title></head>\n"+
@@ -69,17 +91,39 @@ public class FopServlet extends HttpServlet {
             response.setContentType("application/pdf");
 
             Driver driver = new Driver(foFile, out);
+            driver.setLogger(log);
+            driver.setRenderer(Driver.RENDER_PDF);
             driver.run();
 
             byte[] content = out.toByteArray();
             response.setContentLength(content.length);
             response.getOutputStream().write(content);
             response.getOutputStream().flush();
-
         } catch (Exception ex) {
             throw new ServletException(ex);
         }
+    }
 
+    public void renderXML(XSLTInputHandler input,
+                         HttpServletResponse response) throws ServletException {
+        try {
+            ByteArrayOutputStream out = new ByteArrayOutputStream();
+
+            response.setContentType("application/pdf");
+
+            Driver driver = new Driver();
+            driver.setLogger(log);
+            driver.setRenderer(Driver.RENDER_PDF);
+            driver.setOutputStream(out);
+            driver.render(input.getParser(), input.getInputSource());
+
+            byte[] content = out.toByteArray();
+            response.setContentLength(content.length);
+            response.getOutputStream().write(content);
+            response.getOutputStream().flush();
+        } catch (Exception ex) {
+            throw new ServletException(ex);
+        }
     }
 
     /**
