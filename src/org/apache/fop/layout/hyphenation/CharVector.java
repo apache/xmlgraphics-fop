@@ -1,4 +1,4 @@
-/*-- $Id$ --
+/** -- $Id$ --
 
  ============================================================================
                    The Apache Software License, Version 1.1
@@ -48,62 +48,121 @@
  Software Foundation, please see <http://www.apache.org/>.
 
  */
-package org.apache.fop.layout;
 
-import org.apache.fop.render.Renderer;
+package org.apache.fop.layout.hyphenation;
 
-public class InlineArea extends Area {
+import java.io.Serializable;
 
-    private String text;
-    protected String pageNumberId = null;
-    private float red, green, blue;
+/**
+ * This class implements a simple char vector with access to the
+ * underlying array.
+ *
+ * @author Carlos Villegas <cav@uniscope.co.jp>
+ */
+public class CharVector implements Cloneable, Serializable
 
-    // Textdecoration
-    protected boolean underlined = false;
-    protected boolean overlined = false;
-    protected boolean lineThrough = false;
+{
+      /** Capacity increment size */
+      private final static int DEFAULT_BLOCK_SIZE=2048;
+      private int BLOCK_SIZE;
 
+      /** The encapsulated array */
+      private char[] array;
 
-    public InlineArea(FontState fontState, float red, float green,
-                      float blue, String text, int width) {
-        super(fontState);
-        this.red = red;
-        this.green = green;
-        this.blue = blue;
-        this.text = text;
-        this.contentRectangleWidth = width;
-    }
+      /** Points to next free item */
+      private int n;
+      
+      public CharVector()
+      {
+         this(DEFAULT_BLOCK_SIZE);
+      }
 
-    public void render(Renderer renderer) {
-        renderer.renderInlineArea(this);
-    }
+      public CharVector(int capacity)
+      {
+         if ( capacity > 0 )
+            BLOCK_SIZE = capacity;
+         else
+            BLOCK_SIZE = DEFAULT_BLOCK_SIZE;
+         array = new char[BLOCK_SIZE];
+         n = 0;
+      }
 
-    public float getBlue() {
-        return this.blue;
-    }
+      public CharVector(char[] a)
+      {
+         BLOCK_SIZE = DEFAULT_BLOCK_SIZE;
+         array = a;
+         n = a.length;
+      }
 
-    public float getGreen() {
-        return this.green;
-    }
+      public CharVector(char[] a, int capacity)
+      {
+         if ( capacity > 0 )
+            BLOCK_SIZE = capacity;
+         else
+            BLOCK_SIZE = DEFAULT_BLOCK_SIZE;
+         array = a;
+         n = a.length;
+      }         
 
-    public float getRed() {
-        return this.red;
-    }
+      /** Reset Vector but don't resize or clear elements */
+      public void clear()
+      {
+         n = 0;
+      }
+      
+      public Object clone()
+      {
+         CharVector cv = new CharVector((char[])array.clone(), BLOCK_SIZE);
+         cv.n = this.n;
+         return cv;
+      }
+      
+      public char[] getArray()
+      {
+         return array;
+      }
 
-    public String getText() {
-        return this.text;
-    }
+      /** return number of items in array */
+      public int length()
+      {
+         return n;
+      }
 
-    public String getPageNumberID() {
-        return pageNumberId;
-    }
+      /** returns current capacity of array */
+      public int capacity()
+      {
+         return array.length;
+      }
+      
+      public void put(int index, char val)
+      {
+         array[index] = val;
+      }
 
-    public void setUnderlined(boolean ul) {
-        this.underlined = ul;
-    }
+      public char get(int index)
+      {
+         return array[index];
+      }
+      
+      public int alloc(int size)
+      {
+         int index = n;
+         int len = array.length;         
+         if ( n+size >= len ) {
+            char[] aux = new char[len+BLOCK_SIZE];
+            System.arraycopy(array, 0, aux, 0, len);
+            array = aux;
+         }
+         n += size;
+         return index;
+      }
 
-    public boolean getUnderlined() {
-        return this.underlined;
-    }
-
+      public void trimToSize()
+      {
+         if ( n < array.length ) {
+            char[] aux = new char[n];
+            System.arraycopy(array, 0, aux, 0, n);
+            array = aux;
+         }
+      }
 }

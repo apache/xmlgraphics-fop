@@ -84,6 +84,14 @@ public class BlockArea extends Area {
     /* have any line areas been used? */
     protected boolean hasLines = false;
 
+    /*hyphenation*/
+    protected int hyphenate;
+    protected char hyphenationChar;
+    protected int hyphenationPushCharacterCount;
+    protected int hyphenationRemainCharacterCount;
+    protected String language;
+    protected String country;
+
     public BlockArea(FontState fontState, int allocationWidth,
                      int maxHeight, int startIndent, int endIndent,
                      int textIndent, int align, int alignLastLine, int lineHeight) {
@@ -124,6 +132,10 @@ public class BlockArea extends Area {
         this.currentLineArea.changeColor(red, green, blue);
         this.currentLineArea.changeWrapOption(wrapOption);
         this.currentLineArea.changeWhiteSpaceCollapse(whiteSpaceCollapse);
+        this.currentLineArea.changeHyphenation(language, country, hyphenate,
+                                 hyphenationChar, hyphenationPushCharacterCount,
+                                 hyphenationRemainCharacterCount);
+
 
         if (ls != null) {
             this.currentLinkSet = ls;
@@ -156,7 +168,9 @@ public class BlockArea extends Area {
         this.currentLineArea.changeColor(red, green, blue);
         this.currentLineArea.changeWrapOption(wrapOption);
         this.currentLineArea.changeWhiteSpaceCollapse(whiteSpaceCollapse);
-
+        this.currentLineArea.changeHyphenation(language, country, hyphenate,
+                                 hyphenationChar, hyphenationPushCharacterCount,
+                                 hyphenationRemainCharacterCount);
         if (ls != null) {
             this.currentLinkSet = ls;
             ls.setYOffset(currentHeight);
@@ -182,6 +196,9 @@ public class BlockArea extends Area {
             this.currentLineArea.changeWrapOption(wrapOption);
             this.currentLineArea.changeWhiteSpaceCollapse(
               whiteSpaceCollapse);
+            this.currentLineArea.changeHyphenation(language, country, hyphenate,
+                                     hyphenationChar, hyphenationPushCharacterCount,
+                                     hyphenationRemainCharacterCount);
             if (ls != null) {
                 ls.setYOffset(currentHeight);
             }
@@ -297,6 +314,17 @@ public class BlockArea extends Area {
 
     public int getHalfLeading() {
         return halfLeading;
+    }
+
+    public void setHyphenation(String language, String country, int hyphenate, char hyphenationChar,
+                                 int hyphenationPushCharacterCount,
+                                 int hyphenationRemainCharacterCount) {
+      this.language = language;
+      this.country = country;
+      this.hyphenate =  hyphenate;
+      this.hyphenationChar = hyphenationChar;
+      this.hyphenationPushCharacterCount = hyphenationPushCharacterCount;
+      this.hyphenationRemainCharacterCount = hyphenationRemainCharacterCount;
     }
 
 }

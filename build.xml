@@ -197,6 +197,7 @@ Sometimes ant gives out this warnings, but the build is finished without any pro
     <property name="myfont.xml" value="${build.codegen}/myfont.xml"/>
     -->
 
+    <taskdef name="serHyph" classname="SerializeHyphPattern"/> 
     <taskdef name="xslt" classname="Xslt"/>
     <available property="xt.present" classname="com.jclark.xsl.sax.XSLProcessor"/>
     <available property="jimi.present" classname="com.sun.jimi.core.Jimi"/>
@@ -242,7 +243,22 @@ Sometimes ant gives out this warnings, but the build is finished without any pro
     <mkdir dir="${build.src}"/>
     <mkdir dir="${build.src}/${properties.dir}"/>
     <mkdir dir="${build.src}/${fonts.dir}"/>
+    <mkdir dir="${build.dest}/conf"/>
+    <mkdir dir="${build.dest}/hyph"/>
+    <copydir src="./conf" dest="${build.dest}/conf" />
   </target>
+
+
+  <!-- =================================================================== -->
+  <!-- compiles hyphenation patterns                                       -->
+  <!-- =================================================================== -->
+
+  <target name="hyphenation" depends="prepare,compile" >
+    <serHyph includes="*.xml" 
+             sourceDir="./hyph" 
+             targetDir="${build.dest}/hyph" /> 
+  </target>
+
 
   <!-- =================================================================== -->
   <!-- copies some source files if xt is present                           -->
@@ -263,6 +279,7 @@ Sometimes ant gives out this warnings, but the build is finished without any pro
              includes="**/${jimi}"/>
   </target>
 
+  <!-- =================================================================== -->
   <!-- copies special image class only if JAI library is present          -->
   <!-- =================================================================== -->
   <target name="prepare-jai" depends="prepare" if="jai.present">
@@ -385,18 +402,18 @@ Sometimes ant gives out this warnings, but the build is finished without any pro
   <!-- =================================================================== -->
   <!-- Creates the class package                                           -->
   <!-- =================================================================== -->
-  <target name="package" depends="compile">
+  <target name="package" depends="compile,hyphenation">
     <echo message="Creating the jar file ${build.dir}/${name}.jar"/>
     <jar jarfile="${build.dir}/${name}.jar"
          basedir="${build.dest}"
-         includes="org/**"/>
+         includes="org/**,conf/**,hyph/**"/>
   </target>
 
-  <target name="package-jdk11" depends="compile-jdk11">
+  <target name="package-jdk11" depends="compile-jdk11,hyphenation">
     <echo message="Creating the jar file ${build.dir}/${name}11.jar"/>
     <jar jarfile="${build.dir}/${name}-jdk11.jar"
          basedir="${build.dest}"
-         includes="org/**"/>
+         includes="org/**,conf/**,hyph/**"/>
   </target>
 
   <!-- =================================================================== -->

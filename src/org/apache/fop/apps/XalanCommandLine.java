@@ -68,6 +68,7 @@ import java.io.FileWriter;
 import java.io.PrintWriter;
 import java.io.BufferedWriter;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.FileNotFoundException;
 import java.net.URL;
 
@@ -80,7 +81,7 @@ import org.apache.xalan.xslt.XSLTResultTarget;
 
 // FOP
 import org.apache.fop.messaging.MessageHandler;
-
+import org.apache.fop.configuration.ConfigurationReader;
 
 /**
  * mainline class.
@@ -90,6 +91,11 @@ import org.apache.fop.messaging.MessageHandler;
  *
  */
 public class XalanCommandLine {
+
+    private String userConfigFile = null;
+
+    /** show a full dump on error */  //this should be implemented here too
+    private static boolean errorDump = false;
 
     /**
      * creates a SAX parser, using the value of org.xml.sax.parser
@@ -150,6 +156,7 @@ public class XalanCommandLine {
         }
     }
 
+
     /**
       * mainline method
       *
@@ -160,15 +167,25 @@ public class XalanCommandLine {
       * @param command line arguments
       */
     public static void main(String[] args) {
-        String version = Version.getVersion();
-        MessageHandler.logln(version);
-
-
         if (args.length != 3) {
             MessageHandler.errorln("usage: java " +
                                    "org.apache.fop.apps.XalanCommandLine " + "xml-file xslt-file pdf-file");
             System.exit(1);
         }
+
+        Driver driver  = new Driver();
+        driver.loadStandardConfiguration("standard");
+//must be redone like CommandLine
+/*        if (userConfigFile != null)  {
+            driver.loadUserconfiguration(userConfigFile,"standard");
+        }
+*/
+        driver.setBaseDir(args[0]);
+
+        String version = Version.getVersion();
+        MessageHandler.logln(version);
+
+
 
         XMLReader parser = createParser();
 
@@ -238,7 +255,6 @@ public class XalanCommandLine {
             writer.close();
 
             //set Driver methods to start Fop processing
-            Driver driver = new Driver();
             driver.setRenderer("org.apache.fop.render.pdf.PDFRenderer",
                                version);
             driver.addElementMapping("org.apache.fop.fo.StandardElementMapping");

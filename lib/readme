@@ -9,3 +9,4 @@ w3c.jar                  the svg library from the w3 consortium
 Compare.java             a ant task which compares files
 Fop.java                 a ant task which allows calling Fop from Ant 
 Xslt.java                a ant task which allows calling Xalan from Ant
+SerializeHyphPattern     a ant task which serializes hyphenation patterns for quicker access

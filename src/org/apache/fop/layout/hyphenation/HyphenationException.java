@@ -1,4 +1,4 @@
-/*-- $Id$ --
+/** -- $Id$ --
 
  ============================================================================
                    The Apache Software License, Version 1.1
@@ -48,62 +48,16 @@
  Software Foundation, please see <http://www.apache.org/>.
 
  */
-package org.apache.fop.layout;
 
-import org.apache.fop.render.Renderer;
+package org.apache.fop.layout.hyphenation;
 
-public class InlineArea extends Area {
+/**
+ * @author Carlos Villegas <cav@uniscope.co.jp>
+ */
+public class HyphenationException extends Exception {
 
-    private String text;
-    protected String pageNumberId = null;
-    private float red, green, blue;
-
-    // Textdecoration
-    protected boolean underlined = false;
-    protected boolean overlined = false;
-    protected boolean lineThrough = false;
-
-
-    public InlineArea(FontState fontState, float red, float green,
-                      float blue, String text, int width) {
-        super(fontState);
-        this.red = red;
-        this.green = green;
-        this.blue = blue;
-        this.text = text;
-        this.contentRectangleWidth = width;
-    }
-
-    public void render(Renderer renderer) {
-        renderer.renderInlineArea(this);
-    }
-
-    public float getBlue() {
-        return this.blue;
-    }
-
-    public float getGreen() {
-        return this.green;
-    }
-
-    public float getRed() {
-        return this.red;
-    }
-
-    public String getText() {
-        return this.text;
-    }
-
-    public String getPageNumberID() {
-        return pageNumberId;
-    }
-
-    public void setUnderlined(boolean ul) {
-        this.underlined = ul;
-    }
-
-    public boolean getUnderlined() {
-        return this.underlined;
-    }
-
+      public HyphenationException(String msg)
+      {
+         super(msg);
+      }
 }

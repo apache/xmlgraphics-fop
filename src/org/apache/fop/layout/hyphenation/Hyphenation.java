@@ -1,4 +1,4 @@
-/*-- $Id$ --
+/** -- $Id$ --
 
  ============================================================================
                    The Apache Software License, Version 1.1
@@ -48,62 +48,59 @@
  Software Foundation, please see <http://www.apache.org/>.
 
  */
-package org.apache.fop.layout;
 
-import org.apache.fop.render.Renderer;
+package org.apache.fop.layout.hyphenation;
 
-public class InlineArea extends Area {
+import java.util.Vector;
 
-    private String text;
-    protected String pageNumberId = null;
-    private float red, green, blue;
+/**
+ * This class represents a hyphenated word.
+ *
+ * @author Carlos Villegas <cav@uniscope.co.jp>
+ */
+public class Hyphenation {
+    int[] hyphenPoints;
+    String word;
 
-    // Textdecoration
-    protected boolean underlined = false;
-    protected boolean overlined = false;
-    protected boolean lineThrough = false;
+    /** number of hyphenation points in word */
+    int len;
 
-
-    public InlineArea(FontState fontState, float red, float green,
-                      float blue, String text, int width) {
-        super(fontState);
-        this.red = red;
-        this.green = green;
-        this.blue = blue;
-        this.text = text;
-        this.contentRectangleWidth = width;
+    /** rawWord as made of alternating strings and {@link Hyphen Hyphen}
+     *  instances */
+    Hyphenation(String word, int[] points) {
+        this.word = word;
+        hyphenPoints = points;
+        len = points.length;
     }
 
-    public void render(Renderer renderer) {
-        renderer.renderInlineArea(this);
+    /** @return the number of hyphenation points in the word */
+    public int length() {
+        return len;
     }
 
-    public float getBlue() {
-        return this.blue;
+    /** @return the pre-break text, not including the hyphen character */
+    public String getPreHyphenText(int index) {
+        return word.substring(0, hyphenPoints[index]);
     }
 
-    public float getGreen() {
-        return this.green;
+    /** @return the post-break text */
+    public String getPostHyphenText(int index) {
+        return word.substring(hyphenPoints[index]);
     }
 
-    public float getRed() {
-        return this.red;
+    /** @return the hyphenation points */
+    public int [] getHyphenationPoints() {
+        return hyphenPoints;
     }
 
-    public String getText() {
-        return this.text;
+    public String toString() {
+        StringBuffer str = new StringBuffer();
+        int start = 0;
+        for (int i = 0; i < len; i++) {
+            str.append(word.substring(start, hyphenPoints[i]) + "-");
+            start = hyphenPoints[i];
+        }
+        str.append(word.substring(start));
+        return str.toString();
     }
-
-    public String getPageNumberID() {
-        return pageNumberId;
-    }
-
-    public void setUnderlined(boolean ul) {
-        this.underlined = ul;
-    }
-
-    public boolean getUnderlined() {
-        return this.underlined;
-    }
-
 }

@@ -1,0 +1,11 @@
+<!--<!DOCTYPE configuration SYSTEM "config.dtd">-->
+<!-- to developers: have a look at the config.dtd to 
+     see how to structure your config entries -->
+
+<configuration>
+  <entry>
+    <key>version</key>
+    <value>Fop 0.16.0 dev</value>
+  </entry>
+
+</configuration>
