@@ -493,7 +493,7 @@ public class FOText extends FObj {
     }
 
     /**
-     * @param list the list to which the layout manager(s) should be added
+     * @see org.apache.fop.fo.FObj#addLayoutManager(List)
      */
     public void addLayoutManager(List list) { 	 
         if (endIndex - startIndex > 0) {

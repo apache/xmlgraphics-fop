@@ -18,29 +18,38 @@
 
 package org.apache.fop.fo.flow;
 
+// Java
+import java.util.List;
+
 // XML
 import org.xml.sax.Attributes;
 import org.xml.sax.Locator;
 import org.xml.sax.SAXParseException;
 
 // FOP
+import org.apache.fop.area.inline.InlineArea;
+import org.apache.fop.area.inline.InlineParent;
+import org.apache.fop.area.LinkResolver;
+import org.apache.fop.area.PageViewport;
+import org.apache.fop.area.Trait;
 import org.apache.fop.fo.FOElementMapping;
 import org.apache.fop.fo.FONode;
-import org.apache.fop.layoutmgr.AddLMVisitor;
+import org.apache.fop.layoutmgr.LayoutManager;
+import org.apache.fop.layoutmgr.LMiter;
+import org.apache.fop.layoutmgr.InlineStackingLayoutManager;
 import org.apache.fop.fo.properties.CommonAccessibility;
 import org.apache.fop.fo.properties.CommonAural;
 import org.apache.fop.fo.properties.CommonBorderAndPadding;
 import org.apache.fop.fo.properties.CommonBackground;
 import org.apache.fop.fo.properties.CommonMarginInline;
 import org.apache.fop.fo.properties.CommonRelativePosition;
-import org.apache.fop.fo.LMVisited;
 
 /**
  * The basic link.
  * This sets the basic link trait on the inline parent areas
  * that are created by the fo element.
  */
-public class BasicLink extends Inline implements LMVisited {
+public class BasicLink extends Inline {
     private String link = null;
     private boolean external = false;
 
@@ -105,24 +114,6 @@ public class BasicLink extends Inline implements LMVisited {
     }
 
     /**
-     * @return the String value of the link
-     */
-    public String getLink() {
-        return link;
-    }
-
-    /**
-     * @return true if the link is external, false otherwise
-     */
-    public boolean getExternal() {
-        return external;
-    }
-
-    public String getName() {
-        return "fo:basic-link";
-    }
-
-    /**
      * @return true (BasicLink can contain Markers)
     */
     protected boolean containsMarkers() {
@@ -130,11 +121,42 @@ public class BasicLink extends Inline implements LMVisited {
     }
 
     /**
-     * This is a hook for the AddLMVisitor class to be able to access
-     * this object.
-     * @param aLMV the AddLMVisitor object that can access this object.
-     */
-    public void acceptVisitor(AddLMVisitor aLMV) {
-        aLMV.serveBasicLink(this);
+     * @see org.apache.fop.fo.FObj#addLayoutManager(List)
+     * @todo create a subclass for InlineStackingLayoutManager, moving the formatting
+     *  logic to the layoutmgr package
+    */
+    public void addLayoutManager(List list) { 	 
+        InlineStackingLayoutManager lm;
+        lm = new InlineStackingLayoutManager(this) {
+            protected InlineParent createArea() {
+                InlineParent area = super.createArea();
+                setupBasicLinkArea(parentLM, area);
+                return area;
+            }
+        };
+        lm.setLMiter(new LMiter(lm, getChildNodes()));
+        list.add(lm);
+    }
+     
+    protected void setupBasicLinkArea(LayoutManager parentLM,
+                                      InlineParent area) {
+         if (link == null) {
+             return;
+         }
+         if (external) {
+             area.addTrait(Trait.EXTERNAL_LINK, link);
+         } else {
+             PageViewport page = parentLM.resolveRefID(link);
+             if (page != null) {
+                 area.addTrait(Trait.INTERNAL_LINK, page.getKey());
+             } else {
+                 LinkResolver res = new LinkResolver(link, area);
+                 parentLM.addUnresolvedArea(link, res);
+             }
+         }
+     }
+     
+    public String getName() {
+        return "fo:basic-link";
     }
 }
