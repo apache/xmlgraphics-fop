@@ -3,18 +3,7 @@
   <head>
     <META http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
     <title>Property Expression Parsing</title>
-    <style type= "text/css" >
-      body {
-      font-family: Verdana, Helvetica, sans-serif;
-      }
-
-      .note { border: solid 1px #7099C5; background-color: #f0f0ff; }
-      .note .label { background-color: #7099C5; color: #ffffff; }
-      .content {
-      padding: 5px 5px 5px 10px;
-      font : Verdana, Helvetica, sans-serif;  font-size : 90%;
-      }
-    </style>
+    <link type="text/css" href="../../../page.css" rel="stylesheet">
   </head>
   <body marginheight="0" marginwidth="0" topmargin="0" leftmargin="0" text="#000000" bgcolor="#FFFFFF">
     <div class="content">
@@ -46,19 +35,19 @@
         closely related classes: <a href=
         "javascript:parent.displayCode(
         'PropertyTokenizer.html#PropertyTokenizerClass' )" ><span
-        class="codefrag">org.apache.fop.fo.expr.PropertyTokenizer</span></a>
+        class= "codefrag" >org.apache.fop.fo.expr.PropertyTokenizer</span></a>
         and its subclass, <a href= "javascript:parent.displayCode(
         'PropertyParser.html#PropertyParserClass' )" ><span
-        class="codefrag">org.apache.fop.fo.expr.PropertyParser</span></a>,
+        class= "codefrag" >org.apache.fop.fo.expr.PropertyParser</span></a>,
         and by <span class= "codefrag" >refineParsing(int, FONode,
         PropertyValue)</span> methods in the individual property
-        classes.  <span class="codefrag">PropertyTokenizer</span>, as
+        classes.  <span class= "codefrag" >PropertyTokenizer</span>, as
         the name suggests, handles the tokenizing of the expression,
         handing <a href= "javascript:parent.displayCode(
         'PropertyTokenizer.html#EOF' )" ><em>tokens</em></a> back to
         its subclass, <span
-        class="codefrag">PropertyParser</span>. <span
-        class="codefrag">PropertyParser</span>, in turn, returns a <a
+        class= "codefrag" >PropertyParser</span>. <span
+        class= "codefrag" >PropertyParser</span>, in turn, returns a <a
         href= "javascript:parent.displayCode(
         'PropertyValueList.html#PropertyValueListClass' )" ><span
         class= "codefrag">PropertyValueList</span></a>, a list of <a
@@ -69,7 +58,7 @@
       <p>
         The tokenizer and parser rely in turn on the datatype
         definitions from the <span
-        class="codefrag">org.apache.fop.datatypes</span> package,
+        class= "codefrag" >org.apache.fop.datatypes</span> package,
         which include the <a href= "javascript:parent.displayCode(
         'PropertyValue.html#NO_TYPE' )" ><span class= "codefrag"
         >PropertyValue</span> datatype constant definitions</a>.
@@ -78,7 +67,7 @@
       <h4>Data types</h4>
       <p>
         The data types currently defined in
-        <span class="codefrag">org.apache.fop.datatypes</span> include:
+        <span class= "codefrag" >org.apache.fop.datatypes</span> include:
       </p>
       <table class="ForrestTable" cellspacing="1" cellpadding="4">
         
@@ -236,13 +225,13 @@
           
           <tr>
             <td colspan="1" rowspan="1"></td>
-            <th colspan="1" rowspan="1">MappedEnumType</th>
+            <th colspan="1" rowspan="1">MappedNumeric</th>
             <td colspan="2" rowspan="1">
               A subclass of <em>EnumType</em>.  Maintains a
-              <em>String</em> with the value to which the associated
+              <em>Numeric</em> with the value to which the associated
               "raw" enumeration token maps.  E.g., the
               <em>font-size</em> enumeration value "medium" maps to
-              the <em>String</em> "12pt".
+              the <em>Numeric</em> "12pt".
             </td>
           </tr>
           
@@ -334,57 +323,23 @@
       <a name="N10252"></a>
       <h4>Tokenizer</h4>
       <p>
-        The tokenizer returns one of the following token
-        values:
-      </p>
-      <pre class="code">
-          static final int
-          EOF = 0
-          ,NCNAME = 1
-          ,MULTIPLY = 2
-          ,LPAR = 3
-          ,RPAR = 4
-          ,LITERAL = 5
-          ,FUNCTION_LPAR = 6
-          ,PLUS = 7
-          ,MINUS = 8
-          ,MOD = 9
-          ,DIV = 10
-          ,COMMA = 11
-          ,PERCENT = 12
-          ,COLORSPEC = 13
-          ,FLOAT = 14
-          ,INTEGER = 15
-          ,ABSOLUTE_LENGTH = 16
-          ,RELATIVE_LENGTH = 17
-          ,TIME = 18
-          ,FREQ = 19
-          ,ANGLE = 20
-          ,INHERIT = 21
-          ,AUTO = 22
-          ,NONE = 23
-          ,BOOL = 24
-          ,URI = 25
-          ,MIMETYPE = 26
-          // NO_UNIT is a transient token for internal use only.  It is
-          // never set as the end result of parsing a token.
-          ,NO_UNIT = 27
-          ;
-      </pre>
-      <p>
-        Most of these tokens are self-explanatory, but a few need
-        further comment.
+        As mentioned above, the <span class= "codefrag"
+        >PropertyTokenizer</span> hands <a href=
+        "javascript:parent.displayCode( 'PropertyTokenizer.html#EOF'
+        )" ><em>tokens</em></a> back to its subclass, <span class=
+        "codefrag" >PropertyParser</span>.  Most of these tokens are
+        self-explanatory, but a few need further comment.
       </p>
       <dl>
         
         <dt>AUTO</dt>
         
         <dd>
-          Because of its frequency of occurrence, and the fact that
-          it is always the <em>initial value</em> for any property
-          which supports it, AUTO has been promoted into a
-          pseudo-type with its on datatype class.  Therefore, it is
-          also reported as a token.
+          Because of its frequency of occurrence, and the fact that it
+          is always the <em>initial value</em> for any property which
+          supports it, AUTO has been promoted into a pseudo-type with
+          its on datatype class.  Therefore, it is also reported as a
+          token.
         </dd>
         
         <dt>NONE</dt>
@@ -405,54 +360,58 @@
         <dt>MIMETYPE</dt>
         
         <dd>
-          The property <span class="codefrag">content-type</span>
+          The property <span class= "codefrag" >content-type</span>
           introduces this complication.  It can have two values of the
           form <strong>content-type:</strong><em>mime-type</em>
-          (e.g. <span
-          class="codefrag">content-type="content-type:xml/svg"</span>)
-          or <strong>namespace-prefix:</strong><em>prefix</em>
-          (e.g. <span
-          class="codefrag">content-type="namespace-prefix:svg"</span>).
-          The experimental code reduces these options to the payload
-          in each case: an <span class="codefrag">NCName</span> in the
+          (e.g. <span class= "codefrag"
+          >content-type="content-type:xml/svg"</span>) or
+          <strong>namespace-prefix:</strong><em>prefix</em>
+          (e.g. <span class= "codefrag"
+          >content-type="namespace-prefix:svg"</span>).  The
+          experimental code reduces these options to the payload in
+          each case: an <span class= "codefrag" >NCName</span> in the
           case of a namespace prefix, and a MIMETYPE in the case of a
-          content-type specification.  <span
-          class="codefrag">NCName</span>s cannot contain a "/".
+          content-type specification.  <span class= "codefrag"
+          >NCName</span>s cannot contain a "/".
         </dd>
         
       </dl>
       <a name="N1029C"></a>
       <h4>Parser</h4>
       <p>
-        The parser returns a <span
-        class="codefrag">PropertyValueList</span>, necessary because
-        of the possibility that a list of <span
-        class="codefrag">PropertyValue</span> elements may be returned
+        The parser returns a <a href= "javascript:parent.displayCode(
+        'PropertyValueList.html#PropertyValueListClass' )" ><span
+        class= "codefrag" >PropertyValueList</span ></a>, necessary
+        because of the possibility that a list of <a href=
+        "javascript:parent.displayCode(
+        'PropertyValue.html#PropertyValueInterface' )" ><span class=
+        "codefrag" >PropertyValue</span ></a> elements may be returned
         from the expressions of some properties.
       </p>
       <p>
         
-        <span class="codefrag">PropertyValueList</span>s may contain
-        <span class="codefrag">PropertyValue</span>s or other <span
-        class="codefrag">PropertyValueList</span>s.  This latter
-        provision is necessitated for the peculiar case of of
-        <em>text-shadow</em>, which may contain whitespace separated
-        sublists of either two or three elements, separated from one
-        another by commas.  To accommodate this peculiarity, comma
-        separated elements are added to the top-level list, while
-        whitespace separated values are always collected into sublists
-        to be added to the top-level list.
+        <span class= "codefrag" >PropertyValueList</span>s may contain
+        <span class= "codefrag" >PropertyValue</span>s or other <span
+        class= "codefrag" >PropertyValueList</span>s.  This latter
+        provision is necessitated by some of the more peculiar
+        expression possibilities, <em>e.g.</em> <em>font</em> and
+        <em>text-shadow</em>.  <em>text-shadow</em> may contain whitespace
+        separated sublists of either two or three elements, separated
+        from one another by commas.  To accommodate this peculiarity,
+        comma separated elements are added to the top-level list,
+        while whitespace separated values are always collected into
+        sublists to be added to the top-level list.
       </p>
       <p>
         Other special cases include the processing of the core
-        functions <span class="codefrag">from-parent()</span> and
-        <span class="codefrag">from-nearest-specified-value()</span>
+        functions <span class= "codefrag" >from-parent()</span> and
+        <span class= "codefrag" >from-nearest-specified-value()</span>
         when these function calls are assigned to a shorthand
         property, or used with a shorthand property name as an
         argument.  In these cases, the function call must be the sole
         component of the expression.  The pseudo-element classes <span
-        class="codefrag">FromParent</span> and <span
-        class="codefrag">FromNearestSpecified</span> are generated in
+        class= "codefrag" >FromParent</span> and <span
+        class= "codefrag" >FromNearestSpecified</span> are generated in
         these circumstances so that an exception will be thrown if
         they are involved in expression evaluation with other
         components. (See Rec. Section 5.10.4 Property Value
