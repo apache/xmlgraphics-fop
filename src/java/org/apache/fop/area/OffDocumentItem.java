@@ -54,4 +54,10 @@ public abstract class OffDocumentItem {
     public int getWhenToProcess() {
         return whenToProcess;
     }
+
+    /**
+     * Return a human-readable name for this ODI (for error messages, etc.)
+     * @return String name of ODI
+     */
+    public abstract String getName();
 }

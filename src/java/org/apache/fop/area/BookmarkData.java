@@ -23,29 +23,32 @@ import java.util.List;
 import java.util.HashMap;
 
 /**
- * This class holds the PDF bookmark OffDocumentItem
+ * An instance of this class is either a PDF bookmark OffDocumentItem and
+ * its child bookmarks.
  */
 public class BookmarkData extends OffDocumentItem implements Resolvable {
     private ArrayList subData = new ArrayList();
-    private HashMap idRefs = new HashMap();
 
-    // area tree model for the top level object to activate when resolved
-    private AreaTreeModel areaTreeModel = null;
-
-    private String idRef;
-    private PageViewport pageRef = null;
+    // bookmark label
     private String label = null;
+
+    // ID Reference for this bookmark
+    private String idRef;
+
+    // PageViewport that the idRef item refers to
+    private PageViewport pageRef = null;
+
+    // unresolved idrefs by this bookmark and child bookmarks below it
+    private HashMap unresolvedIDRefs = new HashMap();
 
     /**
      * Create a new bookmark data object.
      * This should only be call by the top level element as its
      * idref will be null.
      *
-     * @param model the AreaTreeModel for this object
      */
-    public BookmarkData(AreaTreeModel model) {
+    public BookmarkData() {
         idRef = null;
-        areaTreeModel = model;
         whenToProcess = END_OF_DOC;
     }
 
@@ -58,7 +61,7 @@ public class BookmarkData extends OffDocumentItem implements Resolvable {
      */
     public BookmarkData(String id) {
         idRef = id;
-        idRefs.put(idRef, this);
+        unresolvedIDRefs.put(idRef, this);
     }
 
     /**
@@ -78,10 +81,10 @@ public class BookmarkData extends OffDocumentItem implements Resolvable {
      */
     public void addSubData(BookmarkData sub) {
         subData.add(sub);
-        idRefs.put(sub.getID(), sub);
+        unresolvedIDRefs.put(sub.getID(), sub);
         String[] ids = sub.getIDs();
         for (int count = 0; count < ids.length; count++) {
-            idRefs.put(ids[count], sub);
+            unresolvedIDRefs.put(ids[count], sub);
         }
     }
 
@@ -138,7 +141,7 @@ public class BookmarkData extends OffDocumentItem implements Resolvable {
      * @return true if this has been resolved
      */
     public boolean isResolved() {
-        return idRefs == null;
+        return unresolvedIDRefs == null;
     }
 
     /**
@@ -148,7 +151,7 @@ public class BookmarkData extends OffDocumentItem implements Resolvable {
      * @return the array of id references
      */
     public String[] getIDs() {
-        return (String[])idRefs.keySet().toArray(new String[] {});
+        return (String[])unresolvedIDRefs.keySet().toArray(new String[] {});
     }
 
     /**
@@ -164,8 +167,8 @@ public class BookmarkData extends OffDocumentItem implements Resolvable {
     public void resolveIDRef(String id, List pages) {
         // this method is buggy
         if (!id.equals(idRef)) {
-            BookmarkData bd = (BookmarkData)idRefs.get(id);
-            idRefs.remove(id);
+            BookmarkData bd = (BookmarkData)unresolvedIDRefs.get(id);
+            unresolvedIDRefs.remove(id);
             if (bd != null) {
                 bd.resolveIDRef(id, pages);
                 if (bd.isResolved()) {
@@ -179,18 +182,22 @@ public class BookmarkData extends OffDocumentItem implements Resolvable {
                 pageRef = (PageViewport)pages.get(0);
             }
             // TODO get rect area of id on page
-            idRefs.remove(idRef);
+            unresolvedIDRefs.remove(idRef);
             checkFinish();
         }
     }
 
     private void checkFinish() {
-        if (idRefs.size() == 0) {
-            idRefs = null;
-            if (areaTreeModel != null) {
-                areaTreeModel.handleOffDocumentItem(this);
-            }
+        if (unresolvedIDRefs.size() == 0) {
+            unresolvedIDRefs = null;
         }
+    }
+    
+    /**
+     * @see org.apache.fop.area.OffDocumentItem#getName()
+     */
+    public String getName() {
+        return "Bookmarks";
     }
 }
 
