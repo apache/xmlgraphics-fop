@@ -20,6 +20,7 @@ import org.apache.fop.viewer.*;
 import org.apache.fop.apps.*;
 
 import org.w3c.dom.svg.*;
+import org.w3c.dom.Document;
 
 import org.apache.batik.bridge.*;
 import org.apache.batik.swing.svg.*;
@@ -682,7 +683,7 @@ public class AWTRenderer implements Renderer, Printable, Pageable {
 
 //        this.currentYPosition -= h;
 
-        SVGDocument doc = area.getSVGDocument();
+        Document doc = area.getSVGDocument();
 
         UserAgent userAgent = new MUserAgent(new AffineTransform());
 

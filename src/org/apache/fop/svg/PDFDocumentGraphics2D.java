@@ -1,10 +1,8 @@
-/*****************************************************************************
- * Copyright (C) The Apache Software Foundation. All rights reserved.        *
- * ------------------------------------------------------------------------- *
- * This software is published under the terms of the Apache Software License *
- * version 1.1, a copy of which has been included with this distribution in  *
- * the LICENSE file.                                                         *
- *****************************************************************************/
+/* $Id$
+ * Copyright (C) 2001 The Apache Software Foundation. All rights reserved.
+ * For details on use and redistribution please refer to the
+ * LICENSE file included with these sources."
+ */
 
 package org.apache.fop.svg;
 
