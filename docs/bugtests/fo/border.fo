@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format">
+	<fo:layout-master-set>
+	    <fo:simple-page-master master-name="simplePM"
+	                  page-height="25cm" 
+	                  page-width="20cm"
+	                  margin-top="1cm" 
+	                  margin-bottom="1cm" 
+	                  margin-left="1.5cm" 
+	                  margin-right="1.5cm">
+	      <fo:region-before extent="2.5cm"/>
+	      <fo:region-body margin-top="3cm" margin-bottom="3cm"/>
+	      <fo:region-after extent="2.5cm"/>
+	    </fo:simple-page-master>
+	</fo:layout-master-set>
+
+	<fo:page-sequence master-name="simplePM">
+	    <fo:flow flow-name="xsl-region-body">
+			<fo:block>
+				This is a simple fo block.
+			</fo:block>
+
+			<fo:block space-before.optimum="1cm" border-color="blue" border-style="solid" border-width="2pt">
+				This is a simple fo block with borders.
+			</fo:block>
+
+			<fo:block space-before.optimum="1cm" 
+					border-left-color="blue" border-left-style="solid" border-left-width="2pt"
+					border-right-color="blue" border-right-style="solid" border-right-width="2pt"
+					border-top-color="blue" border-top-style="solid" border-top-width="2pt"
+					border-bottom-color="blue" border-bottom-style="solid" border-bottom-width="2pt">
+				This is a simple fo block with borders.
+			</fo:block>
+
+			<fo:block space-before.optimum="1cm" border-left-color="black" border-left-style="solid" border-left-width="2pt"
+					border-right-color="black" border-right-style="dotted" border-right-width="1cm"
+					border-top-color="black" border-top-style="dashed" border-top-width="5pt"
+					border-bottom-color="black" border-bottom-style="double" border-bottom-width="1in">
+				This is a simple fo block with different borders viz;
+				border-left-color="black" 
+				border-left-style="solid" 
+				border-left-width="2pt"
+				border-right-color="black" 
+				border-right-style="dotted" 
+				border-right-width="1cm"
+				border-top-color="black" 
+				border-top-style="dashed" 
+				border-top-width="5pt"
+				border-bottom-color="black" 
+				border-bottom-style="double" 
+				border-bottom-width="1in"
+			</fo:block>
+
+			<fo:block space-before.optimum="1cm" 
+				border-top="2pt solid blue"
+				border-bottom="2pt solid blue"
+				border-left="2pt solid blue"
+				border-right="2pt solid blue">
+				This is a simple fo block with borders.
+			</fo:block>
+
+			<fo:block space-before.optimum="1cm" 
+				border-top="2pt || solid || blue"
+				border-bottom="2pt || solid || blue"
+				border-left="2pt || solid || blue"
+				border-right="2pt || solid || blue">
+				This is a simple fo block with borders.
+			</fo:block>
+		</fo:flow>
+	</fo:page-sequence>
+</fo:root>
