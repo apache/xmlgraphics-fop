@@ -190,8 +190,7 @@ public class TextBPLayoutManager extends AbstractBPLayoutManager {
      */
     public boolean canBreakBefore(LayoutContext context) {
 	char c = chars[m_iNextStart];
-	return ((c == NEWLINE) ||
-		((context.flags & LayoutContext.LINEBREAK_AT_LF_ONLY)==0 &&
+	return ((c == NEWLINE) || (textInfo.bWrap &&
 		 (CharUtilities.isSpace(c) || s_breakChars.indexOf(c)>=0)));
     }
 
@@ -245,17 +244,19 @@ public class TextBPLayoutManager extends AbstractBPLayoutManager {
 
 	int iFlags = 0;
 
-	if ((context.flags & LayoutContext.START_AREA)!=0) {
+	if (context.startsNewArea()) {
 	    /* This could be first call on this LM, or the first call
 	     * in a new (possible) LineArea.
 	     */
 	    m_ipdTotal = new MinOptMax(0);
 	    iFlags |= BreakPoss.ISFIRST;
+	    // May have leading space too which can combine with a
+	    // leading word-space or letter-space
 	}
 
 
         // HANDLE SUPPRESSED LEADING SPACES
-	if ((context.flags & LayoutContext.SUPPRESS_LEADING_SPACE)!=0) {
+	if (context.suppressLeadingSpace()) {
 	    /* If any leading space characters, ignore them. */ 
 	    // NOTE: Skips word-space chars only, not other white-space!
 	    for (; m_iNextStart < chars.length &&
