@@ -1,7 +1,7 @@
 <?xml version="1.0" standalone="yes"?>
 
 <svg:svg width="300px" height="200px"
-     viewBox="0 0 1500 1000" preserveAspectRatio="none"  xmlns:svg="http://www.w3.org/TR/2000/WD-SVG-20000629/DTD/svg-20000629.dtd">
+     viewBox="0 0 1500 1000" preserveAspectRatio="none"  xmlns:svg="http://www.w3.org/TR/2000/CR-SVG-20000802/DTD/svg-20000802.dtd">
   <svg:title>ViewBox1</svg:title>
   <svg:desc>Example ViewBox1 - uses the viewBox
         attribute to automatically create an initial user coordinate

@@ -1,6 +1,6 @@
 <?xml version="1.0" standalone="yes"?>
 
-<svg:svg width="4in" height="3in" xmlns:svg="http://www.w3.org/TR/2000/WD-SVG-20000629/DTD/svg-20000629.dtd">
+<svg:svg width="4in" height="3in" xmlns:svg="http://www.w3.org/TR/2000/CR-SVG-20000802/DTD/svg-20000802.dtd">
   <svg:title>Units</svg:title>
   <svg:desc>Demonstration of coordinate transforms
   </svg:desc>

@@ -1,5 +1,5 @@
 <svg:svg width="300pt" height="300"
-    xmlns:svg="http://www.w3.org/TR/2000/WD-SVG-20000629/DTD/svg-20000629.dtd">
+    xmlns:svg="http://www.w3.org/TR/2000/CR-SVG-20000802/DTD/svg-20000802.dtd">
   <svg:g transform="matrix(1 0 0 1 100 100)">
     <svg:line x1="2.5354700cm" y1="0.1193636cm" x2="1.4331060cm" y2="0.5915131cm"/>
     <svg:line style="fill:#0d0; stroke-width:0.1cm" x1="3.2414132cm" y1="-0.9916716cm" x2="2.5354700cm" y2="0.1193636cm"/>
