@@ -21,6 +21,7 @@ package org.apache.fop.xml;
 
 import java.util.NoSuchElementException;
 import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
@@ -53,6 +54,7 @@ implements Runnable {
     private Namespaces namespaces;
     private InputSource source;
     private Thread foThread;
+    protected Logger log = Logger.getLogger(Fop.fopPackage);
     private boolean errorDump;
 
     /**
@@ -68,7 +70,7 @@ implements Runnable {
         this.source = source;
         namespaces = events.getNamespaces();
         parser.setContentHandler(this);
-        Level level = Fop.logger.getLevel();
+        Level level = log.getLevel();
         if (level.intValue() <= Level.FINE.intValue()) {
             errorDump = true;
         }
