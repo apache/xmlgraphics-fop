@@ -30,7 +30,6 @@ import org.xml.sax.XMLReader;
 
 // FOP
 import org.apache.fop.fo.Constants;
-import org.apache.fop.fo.ElementMapping;
 import org.apache.fop.fo.FOTreeBuilder;
 import org.apache.fop.render.awt.AWTRenderer;
 
@@ -47,11 +46,7 @@ import org.apache.fop.render.awt.AWTRenderer;
  * render. Methods within FOUserAgent can be called to set the
  * Renderer to use, the (possibly multiple) ElementMapping(s) to
  * use and the OutputStream to use to output the results of the
- * rendering (where applicable). In the case of 
- * ElementMapping(s), the Driver may be supplied either with the
- * object itself, or the name of the class, in which case Driver will
- * instantiate the class itself. The advantage of the latter is it
- * enables runtime determination of ElementMapping(s).
+ * rendering (where applicable).
  * <P>
  * Once the Driver is set up, the render method
  * is called. The invocation of the method is 
@@ -66,11 +61,6 @@ import org.apache.fop.render.awt.AWTRenderer;
  * </PRE>
  */
 public class Driver implements Constants {
-
-    /**
-     * the FO tree builder
-     */
-    private FOTreeBuilder treeBuilder;
 
     /**
      * the render type code given by setRender
@@ -91,6 +81,7 @@ public class Driver implements Constants {
      * Main constructor for the Driver class.
      */
     public Driver() {
+        foUserAgent = new FOUserAgent();
         stream = null;
     }
 
@@ -113,23 +104,6 @@ public class Driver implements Constants {
         this.stream = stream;
     }
 
-    private boolean isInitialized() {
-        return (treeBuilder != null);
-    }
-
-    /**
-     * Initializes the Driver object.
-     */
-    private void initialize() {
-        if (isInitialized()) {
-            throw new IllegalStateException("Driver already initialized");
-        }
-        treeBuilder = new FOTreeBuilder();
-        if (foUserAgent == null) {
-            foUserAgent = new FOUserAgent();
-        }
-    }
-
     /**
      * Resets the Driver so it can be reused. Property and element
      * mappings are reset to defaults.
@@ -137,9 +111,6 @@ public class Driver implements Constants {
      */
     public synchronized void reset() {
         stream = null;
-        if (treeBuilder != null) {
-            treeBuilder.reset();
-        }
     }
 
     /**
@@ -148,10 +119,6 @@ public class Driver implements Constants {
      * @param agent FOUserAgent to use
      */
     public void setUserAgent(FOUserAgent agent) throws FOPException {
-        if (foUserAgent != null) {
-            throw new IllegalStateException("FOUserAgent " +
-                "instance already set.");
-        }
         foUserAgent = agent;
     }
 
@@ -160,9 +127,6 @@ public class Driver implements Constants {
      * @return the user agent
      */
     public FOUserAgent getUserAgent() {
-        if (foUserAgent == null) {
-            foUserAgent = new FOUserAgent();
-        }
         return foUserAgent;
     }
 
@@ -209,24 +173,6 @@ public class Driver implements Constants {
     }
 
     /**
-     * Add the given element mapping.
-     * An element mapping maps element names to Java classes.
-     *
-     * @param mapping the element mappingto add
-     */
-    public void addElementMapping(ElementMapping mapping) {
-        treeBuilder.addElementMapping(mapping);
-    }
-
-    /**
-     * Add the element mapping with the given class name.
-     * @param mappingClassName the class name representing the element mapping.
-     */
-    public void addElementMapping(String mappingClassName) {
-        treeBuilder.addElementMapping(mappingClassName);
-    }
-
-    /**
      * Determines which SAX ContentHandler is appropriate for the renderType.
      * Structure renderers (e.g. MIF & RTF) each have a specialized
      * ContentHandler that directly place data into the output stream. Layout
@@ -236,16 +182,12 @@ public class Driver implements Constants {
      * @throws FOPException if setting up the ContentHandler fails
      */
     public ContentHandler getContentHandler() throws FOPException {
-        if (!isInitialized()) {
-            initialize();
-        }
 
         if (renderType != RENDER_PRINT && renderType != RENDER_AWT) {
            validateOutputStream();
         }
 
-        treeBuilder.initialize(renderType, foUserAgent, stream);
-        return treeBuilder;
+        return new FOTreeBuilder(renderType, foUserAgent, stream);
     }
 
     /**

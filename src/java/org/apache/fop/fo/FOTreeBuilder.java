@@ -24,6 +24,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.Reader;
+import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.List;
@@ -88,17 +89,12 @@ public class FOTreeBuilder extends DefaultHandler {
     private Locator locator; 
     
     /**
-     * Default constructor
+     * FOTreeBuilder constructor
+     * @param render type as defined in Constants class
+     * @param foUserAgent in effect for this process
+     * @param stream OutputStream to direct results
      */
-    public FOTreeBuilder() {
-        setupDefaultMappings();
-    }
-
-    /**
-     * Creates the FOInputHandler object based on passed-in render type
-     * @param render type
-     */
-    public void initialize(int renderType, FOUserAgent foUserAgent, 
+    public FOTreeBuilder(int renderType, FOUserAgent foUserAgent, 
         OutputStream stream) throws FOPException {
         if (renderType == Constants.RENDER_MIF) {
             foInputHandler = new MIFHandler(foUserAgent, stream);
@@ -112,6 +108,18 @@ public class FOTreeBuilder extends DefaultHandler {
 
             foInputHandler = new AreaTreeHandler(foUserAgent, renderType, 
                 stream);
+        }
+        
+        // Add standard element mappings
+        setupDefaultMappings();
+
+        // add additional ElementMappings defined within FOUserAgent
+        ArrayList addlEMs = foUserAgent.getAdditionalElementMappings();
+
+        if (addlEMs != null) {
+            for (int i = 0; i < addlEMs.size(); i++) {
+                addElementMapping((String) addlEMs.get(i));
+            }
         }
     }
 
@@ -142,23 +150,13 @@ public class FOTreeBuilder extends DefaultHandler {
     }
 
     /**
-     * Add the given element mapping.
-     * An element mapping maps element names to Java classes.
-     *
-     * @param mapping the element mappingto add
-     */
-    public void addElementMapping(ElementMapping mapping) {
-        this.fobjTable.put(mapping.getNamespaceURI(), mapping.getTable());
-        this.namespaces.add(mapping.getNamespaceURI().intern());
-    }
-
-    /**
      * Add the element mapping with the given class name.
      * @param mappingClassName the class name representing the element mapping.
      * @throws IllegalArgumentException if there was not such element mapping.
      */
     public void addElementMapping(String mappingClassName)
                 throws IllegalArgumentException {
+
         try {
             ElementMapping mapping =
                 (ElementMapping)Class.forName(mappingClassName).newInstance();
@@ -176,6 +174,11 @@ public class FOTreeBuilder extends DefaultHandler {
             throw new IllegalArgumentException(mappingClassName
                                                + " is not an ElementMapping");
         }
+    }
+
+    private void addElementMapping(ElementMapping mapping) {
+        this.fobjTable.put(mapping.getNamespaceURI(), mapping.getTable());
+        this.namespaces.add(mapping.getNamespaceURI().intern());
     }
 
     /**

@@ -19,6 +19,7 @@
 package org.apache.fop.apps;
 
 // Java
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -73,6 +74,9 @@ public class FOUserAgent {
     private Configuration userConfig = null;
     private Log log = LogFactory.getLog("FOP");
 
+    /* Additional fo.ElementMapping subclasses set by user */
+    private ArrayList additionalElementMappings = null;
+
     /** Producer:  Metadata element for the system/software that produces
      * the document. (Some renderers can store this in the document.)
      */
@@ -103,6 +107,25 @@ public class FOUserAgent {
      */
     public InputHandler getInputHandler() {
         return inputHandler;
+    }
+
+    /**
+     * Add the element mapping with the given class name.
+     * @param mappingClassName the class name representing the element mapping.
+     */
+    public void addElementMapping(String mappingClassName) {
+        if (additionalElementMappings == null) {
+            additionalElementMappings = new ArrayList();
+        }
+        additionalElementMappings.add(mappingClassName);
+    }
+
+    /**
+     * Returns the ArrayList of user-added ElementMapping class names
+     * @return ArrayList of Strings holding ElementMapping names.
+     */
+    public ArrayList getAdditionalElementMappings() {
+        return additionalElementMappings;
     }
 
     /**
