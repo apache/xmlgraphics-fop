@@ -50,8 +50,6 @@
  */
 package org.apache.fop.util;
 
-import org.apache.fop.fonts.Font;
-
 /**
  * This class provides utilities to distinguish various kinds of Unicode
  * whitespace and to get character widths in a given FontState.
