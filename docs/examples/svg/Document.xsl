@@ -19,9 +19,11 @@
 				<fo:flow font-size="14pt" line-height="14pt">
 		            <fo:block-container height="20cm" width="6cm" top="2cm" left="-1cm" position="absolute">
 						<fo:block>
-						    <svg:svg width="20" height="19.5cm">
-						        <svg:line style="stroke-width:1.5" x1="10" y1="0" x2="10" y2="20cm"/>
-						    </svg:svg>
+							<fo:instream-foreign-object>
+							    <svg:svg width="20" height="19.5cm">
+							        <svg:line style="stroke-width:1.5" x1="10" y1="0" x2="10" y2="20cm"/>
+							    </svg:svg>
+							</fo:instream-foreign-object>
 						</fo:block>
 		            </fo:block-container>
 
@@ -99,11 +101,13 @@
 		<xsl:variable name="name" select="."/>
 
 		<fo:block text-align="start" font-size="11pt" line-height="11pt">
-			<xsl:for-each select="document(@file)/Diagrams/Diagram">
-				<xsl:if test="$name=@entry">
-					<xsl:apply-templates/>
-				</xsl:if>
-			</xsl:for-each>
+			<fo:instream-foreign-object>
+				<xsl:for-each select="document(@file)/Diagrams/Diagram">
+					<xsl:if test="$name=@entry">
+						<xsl:apply-templates/>
+					</xsl:if>
+				</xsl:for-each>
+			</fo:instream-foreign-object>
 		</fo:block>
 
 		<xsl:if test="@showcode='true'">
@@ -130,7 +134,9 @@
 
 	<xsl:template match="ExternalSVG">
 		<fo:block text-align="start" font-size="11pt" line-height="11pt">
-			<xsl:apply-templates select="document(@file)/svg:svg" mode="svg"/>
+			<fo:instream-foreign-object>
+				<xsl:apply-templates select="document(@file)/svg:svg" mode="svg"/>
+			</fo:instream-foreign-object>
 		</fo:block>
 	</xsl:template>
 
