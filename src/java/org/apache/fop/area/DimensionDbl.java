@@ -28,6 +28,9 @@ import java.awt.geom.Dimension2D;
  */
 public class DimensionDbl extends Dimension2D {
 
+    private static final String tag = "$Name$";
+    private static final String revision = "$Revision$";
+
     private double width = 0.0;
     private double height = 0.0;
 

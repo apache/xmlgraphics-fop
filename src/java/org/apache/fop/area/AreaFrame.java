@@ -35,30 +35,41 @@ import org.apache.fop.fo.properties.WritingMode;
  */
 public class AreaFrame extends AreaGeometry {
 
+    private static final String tag = "$Name$";
+    private static final String revision = "$Revision$";
+
+
     /** The framed rectangle */
-    protected AreaGeometry contents = null;
+    protected AreaGeometry contents;
     /** The offset from <code>this</code> origin to the origin of the framed
      * rectangle */
-    protected Point2D contentOffset = null;
+    protected Point2D contentOffset = new Point2D.Double();
+//
+//    /**
+//     * Instantiates an <code>AreaFrame</code> with zero dimensions and offset,
+//     * with <code>contents</code> of zero dimensions and contentOffsets of
+//     * zero.  The <i>writing-mode</i> and <i>reference-orientation</i> are
+//     * assumed to be the same as the containing frame.
+//     * @param area the <code>Area</code> on which this <code>AreaFrame</code>
+//     * is being defined
+//     */
+//    public AreaFrame(Area area) {
+//        area.super(area.frameWritingMode);
+//        contents = area.new AreaGeometry(area.frameWritingMode);
+//        contentOffset = new Point2D.Double();
+//    }
 
-    /**
-     * Instantiates an <code>AreaFrame</code> with zero dimensions and offset,
-     * whose contents and contentOffset are null
-     * @param area the <code>Area</code> on which this <code>AreaFrame</code>
-     * is being defined
-     */
-    public AreaFrame(Area area) {
-        area.super(area.frameWritingMode);
-        // contents and contentOffset remain null
-    }
-
-    /**
-     * Contents and offset remain null
-     */
-    public AreaFrame(Area area,
-            double ipOrigin, double bpOrigin, double ipDim, double bpDim) {
-        area.super(area.frameWritingMode, ipOrigin, bpOrigin, ipDim, bpDim);
-    }
+//    /**
+//     * Instantiates an <code>AreaFrame</code> with the given relative
+//     * origin and dimensions, with 
+//     * Contents and offset remain null
+//     */
+//    public AreaFrame(Area area,
+//            double ipOrigin, double bpOrigin, double ipDim, double bpDim) {
+//        area.super(area.frameWritingMode, ipOrigin, bpOrigin, ipDim, bpDim);
+//        contents = area.new AreaGeometry(area.frameWritingMode);
+//        contentOffset = new Point2D.Double();
+//    }
 
     /**
      * Instantiates a frame with 0-width edges around the given
@@ -67,8 +78,9 @@ public class AreaFrame extends AreaGeometry {
      */
     public AreaFrame(Area area, AreaGeometry contents) {
         area.super(area.frameWritingMode);
-        setRect(contents);
-        this.contents = contents;
+        // TODO - check that this can be eliminated
+        //setRect(contents);
+        setContents(contents);
         this.contentOffset = new Point2D.Double();
     }
 
@@ -91,7 +103,9 @@ public class AreaFrame extends AreaGeometry {
             double ipOrigin, double bpOrigin, double ipDim, double bpDim,
             AreaGeometry contents, Point2D contentOffset) {
         area.super(area.frameWritingMode, ipOrigin, bpOrigin, ipDim,  bpDim);
-        this.contents = contents;
+        // TODO check this against the handling of the contents rectangle
+        // Should this initialize with the contents and then set the edges? 
+        setContents(contents);
         this.contentOffset = contentOffset;
     }
 
@@ -110,21 +124,31 @@ public class AreaFrame extends AreaGeometry {
             Rectangle2D rect, AreaGeometry contents,
             Point2D contentOffset) {
         area.super(area.frameWritingMode, rect);
-        this.contents = contents;
+        setContents(contents);
         this.contentOffset = contentOffset;
     }
 
     /**
-     * Sets the contents rectangle.  The dimensions of <code>this</code> are
+     * Sets the contents rectangle to the given <code>AreaFrame</code>.
+     * The dimensions of <code>this</code> are
      * adjusted to the difference between the current framed contents and
      * the new framed contents.  The offset is not affected.
      * @param contents the new framed contents
      */
     public void setContents(AreaGeometry contents) {
+        if (this.contents == null) {
+            setRect(getX(), getY(),
+                    getWidth() + contents.getFrameRelativeWidth(),
+                    getHeight() + contents.getFrameRelativeHeight());
+        }
         setRect(getX(), getY(),
-                getWidth() + (contents.getWidth() - this.contents.getWidth()),
-                getHeight() + (contents.getWidth() - this.contents.getWidth()));
-        contents = this.contents;
+                getWidth() + (
+                        contents.getFrameRelativeWidth() -
+                        this.contents.getFrameRelativeWidth()),
+                getHeight() + (
+                        contents.getFrameRelativeHeight() -
+                        this.contents.getFrameRelativeHeight()));
+        this.contents = contents;
     }
 
     public Rectangle2D getContents() {
@@ -136,7 +160,8 @@ public class AreaFrame extends AreaGeometry {
      * the framed contents rectangle.  The dimensions of the framed contents
      * are not affected, but the dimensions of <code>this</code> are changed
      * by the difference between the current offset and the new offset in the
-     * X and Y axes.
+     * X and Y axes.  Note that this is a frame-centric view.  The offset is
+     * expressed in the frame's frame-of-reference. 
      * @param offset the new offset to the framed rectangle
      */
     public void setContentOffset(Point2D offset) {

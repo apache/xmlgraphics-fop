@@ -28,6 +28,10 @@ import java.awt.geom.Rectangle2D;
  */
 public class PaddingRectangle extends AreaFrame {
 
+    private static final String tag = "$Name$";
+    private static final String revision = "$Revision$";
+
+
     public PaddingRectangle(Area area, Area.AreaGeometry content) {
         super(area, content);
         borders = new BorderRectangle(area, this);

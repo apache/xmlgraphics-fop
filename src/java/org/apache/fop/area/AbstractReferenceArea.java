@@ -34,6 +34,9 @@ public abstract class AbstractReferenceArea
     extends Area
     implements ReferenceArea {
 
+    private static final String tag = "$Name$";
+    private static final String revision = "$Revision$";
+
     // Set up as identity matrix
     protected AffineTransform transformer = new AffineTransform();
 
