@@ -37,8 +37,8 @@ import org.apache.fop.fonts.FontMetrics;
  */
 public class Document {
 
-    /** The parent Driver object */
-    private Driver driver;
+    /** The parent Fop object */
+    private Fop fop;
 
     /** Map containing fonts that have been used */
     private Map usedFonts;
@@ -58,10 +58,10 @@ public class Document {
     private Logger log;
     /**
      * Main constructor
-     * @param driver the Driver object that is the "parent" of this Document
+     * @param fop the Fop object that is the "parent" of this Document
      */
-    public Document(Driver driver) {
-        this.driver = driver;
+    public Document(Fop fop) {
+        this.fop = fop;
         this.triplets = new java.util.HashMap();
         this.fonts = new java.util.HashMap();
         this.usedFonts = new java.util.HashMap();
@@ -246,11 +246,11 @@ public class Document {
     }
 
     /**
-     * Public accessor for the parent Driver of this Document
-     * @return the parent Driver for this Document
+     * Public accessor for the parent Fop of this Document
+     * @return the parent Fop for this Document
      */
-    public Driver getDriver() {
-        return driver;
+    public Fop getFop() {
+        return fop;
     }
 
     /**
@@ -272,7 +272,7 @@ public class Document {
      * @return the FOUserAgent used for processing this document
      */
     public FOUserAgent getUserAgent() {
-        return getDriver().getUserAgent();
+        return getFop().getUserAgent();
     }
 
 }

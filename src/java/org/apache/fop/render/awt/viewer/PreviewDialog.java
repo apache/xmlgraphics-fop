@@ -48,7 +48,7 @@ import java.awt.print.PrinterJob;
 import java.awt.print.PrinterException;
 
 //FOP
-import org.apache.fop.apps.Driver;
+import org.apache.fop.apps.Fop;
 import org.apache.fop.apps.InputHandler;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.render.awt.AWTRenderer;
@@ -68,8 +68,8 @@ public class PreviewDialog extends JFrame {
     protected AWTRenderer renderer;
     /** The InputHandler associated with this window */
     protected InputHandler inputHandler;
-    /** The Driver used for refreshing/reloading the view */
-    protected Driver driver;
+    /** The Fop used for refreshing/reloading the view */
+    protected Fop fop;
 
     private int currentPage = 0;
     private int pageCount = 0;
@@ -383,11 +383,11 @@ public class PreviewDialog extends JFrame {
      */
     private class Reloader extends Thread {
         public void run() {
-            if (driver == null) {
-                driver = new Driver();
-                driver.setRenderer(renderer);
+            if (fop == null) {
+                fop = new Fop();
+                fop.setRenderer(renderer);
             } else {
-                driver.reset();
+                fop.reset();
             }
             
             pageLabel.setIcon(null);
@@ -396,7 +396,7 @@ public class PreviewDialog extends JFrame {
 
             try {
                 setStatus(translator.getString("Status.Build.FO.tree"));
-                driver.render(inputHandler);
+                fop.render(inputHandler);
                 setStatus(translator.getString("Status.Show"));
             } catch (FOPException e) {
                 reportException(e);
