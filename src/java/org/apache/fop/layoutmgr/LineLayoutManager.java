@@ -321,7 +321,7 @@ public class LineLayoutManager extends InlineStackingLayoutManager {
             prevBP = getBestBP(vecPossEnd);
         }
         // Backup child LM if necessary
-        if (bp != prevBP && !bp.couldEndLine()) {
+        if (bp != prevBP && !prevBP.couldEndLine()) {
             reset();
         }
 
