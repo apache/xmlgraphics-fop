@@ -19,7 +19,15 @@ import java.util.NoSuchElementException;
 import org.apache.fop.layout.Area;
 import org.apache.fop.apps.FOPException;
 
-
+/**
+  IDReferences contains a map of IDs and the objects to which
+  they refer. It also contains a list of references to IDs which
+  have yet to be encountered.
+  
+  Modified by Mark Lillywhite mark-fop@inomial.com. Added
+  getInvalidElements() so that StreamRenderer cna tell what
+  hasn't been determined yet.
+  */
 public class IDReferences {
     private Hashtable idReferences, idValidation;
 
@@ -278,4 +286,8 @@ public class IDReferences {
         node.setPosition(x, y);
     }
 
+    public Enumeration getInvalidElements()
+    {
+      return idValidation.keys();
+    }
 }

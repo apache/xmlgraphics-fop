@@ -20,10 +20,16 @@ import org.apache.fop.system.BufferManager;
 
 /**
  * a text node in the formatting object tree
+ *
+ * Modified by Mark Lillywhite, mark-fop@inomial.com.
+ * Unfortunately the BufferManager implementatation holds
+ * onto references to the character data in this object
+ * longer than the lifetime of the object itself, causing
+ * excessive memory consumption and OOM errors.
  */
 public class FOText extends FONode {
 
-    // protected char[] ca;
+    protected char[] ca;
     protected int start;
     protected int length;
 
@@ -46,10 +52,12 @@ public class FOText extends FONode {
     public FOText(char[] chars, int s, int e, FObj parent) {
         super(parent);
         this.start = 0;
-        char ca[] = new char[e - s];
+        this.ca = new char[e - s];
         for (int i = s; i < e; i++)
             ca[i - s] = chars[i];
         this.length = e - s;
+        
+        /* ML - remove refs to BufferManager
         this.bufferManager = parent.bufferManager;
         if (this.bufferManager != null) {
             bufferManager.writeBuffer((Object)this, ca);
@@ -57,6 +65,7 @@ public class FOText extends FONode {
             System.out.println("abnormal exit");
             System.exit(0);
         }
+        */
     }
 
     public void setUnderlined(boolean ul) {
@@ -73,7 +82,9 @@ public class FOText extends FONode {
 
 
     public boolean willCreateArea() {
-        char ca[] = this.bufferManager.readBuffer((Object)this);
+        // ML - remove refs to BufferManager
+        //char ca[] = this.bufferManager.readBuffer((Object)this);
+        
         this.whiteSpaceCollapse =
             this.parent.properties.get("white-space-collapse").getEnum();
         if (this.whiteSpaceCollapse == WhiteSpaceCollapse.FALSE
@@ -92,7 +103,8 @@ public class FOText extends FONode {
     }
 
     public Status layout(Area area) throws FOPException {
-        char ca[] = this.bufferManager.readBuffer((Object)this);
+        // ML - remove refs to BufferManager
+        // char ca[] = this.bufferManager.readBuffer((Object)this);
         if (!(area instanceof BlockArea)) {
             MessageHandler.errorln("WARNING: text outside block area"
                                    + new String(ca, start, length));

@@ -30,6 +30,9 @@ import org.xml.sax.SAXParseException;
  * The area tree can be used for automatic comparisons between different
  * versions of FOP or the pdf can be view for manual checking and
  * pdf rendering.
+ *
+ * Modified by Mark Lillywhite mark-fop@inomial.com to use the new Driver
+ * interface.
  */
 public class TestConverter {
     boolean failOnly = false;
@@ -221,9 +224,7 @@ public class TestConverter {
             rendererOptions.put("fineDetail", new Boolean(false));
             driver.getRenderer().setOptions(rendererOptions);
             driver.getRenderer().setProducer("Testsuite Converter");
-
-            driver.buildFOTree(parser, inputHandler.getInputSource());
-            driver.format();
+            
             String outname = xmlFile.getName();
             if (outname.endsWith(".xml")) {
                 outname = outname.substring(0, outname.length() - 4);
@@ -231,7 +232,7 @@ public class TestConverter {
             driver.setOutputStream(new FileOutputStream(new File(destdir,
                     outname + (outputPDF ? ".pdf" : ".at.xml"))));
             // System.out.println("ddir:" + destdir + " on:" + outname + ".pdf");
-            driver.render();
+            driver.render(parser, inputHandler.getInputSource());
 
             // check difference
             if (compare != null) {

@@ -51,6 +51,15 @@ import java.awt.Dimension;
 
 /**
  * Renderer that renders areas to PDF
+ *
+ * Modified by Mark Lillywhite, mark-fop@inomial.com to use the
+ * new Renderer interface. The PDF renderer is by far the trickiest
+ * renderer and the best supported by FOP. It also required some
+ * reworking in the way that Pages, Catalogs and the Root object
+ * were written to the stream. The output document should now still
+ * be a 100% compatible PDF document, but hte order of the document
+ * writing is significantly different. See also the changes
+ * to PDFPage, PDFPages and PDFRoot.
  */
 public class PDFRenderer extends PrintRenderer {
 
@@ -103,8 +112,6 @@ public class PDFRenderer extends PrintRenderer {
      */
     int prevWordWidth = 0;
 
-    private PDFOutline rootOutline;
-
     /**
      * reusable word area string buffer to reduce memory usage
      */
@@ -138,37 +145,18 @@ public class PDFRenderer extends PrintRenderer {
         this.pdfDoc.setProducer(producer);
     }
 
-    /**
-     * render the areas into PDF
-     *
-     * @param areaTree the laid-out area tree
-     * @param stream the OutputStream to write the PDF to
-     */
-    public void render(AreaTree areaTree,
-                       OutputStream stream) throws IOException, FOPException {
-        MessageHandler.logln("rendering areas to PDF");
-        idReferences = areaTree.getIDReferences();
-        this.pdfResources = this.pdfDoc.getResources();
-        this.pdfDoc.setIDReferences(idReferences);
-        Enumeration e = areaTree.getPages().elements();
-        while (e.hasMoreElements()) {
-            this.renderPage((Page)e.nextElement());
-        }
-
-        if (!idReferences.isEveryIdValid()) {
-            // throw new FOPException("The following id's were referenced but not found: "+idReferences.getInvalidIds()+"\n");
-            MessageHandler.errorln("WARNING: The following id's were referenced but not found: "
-                                   + idReferences.getInvalidIds() + "\n");
-
-        }
-        renderRootExtensions(areaTree);
-
-        FontSetup.addToResources(this.pdfDoc, fontInfo);
-
-        MessageHandler.logln("writing out PDF");
-        this.pdfDoc.output(stream);
+    public void startRenderer(OutputStream stream)
+      throws IOException
+    {
+    	pdfDoc.outputHeader(stream);
     }
 
+    public void stopRenderer(OutputStream stream)
+      throws IOException
+    {
+    	pdfDoc.outputTrailer(stream);
+    }
+    
     /**
      * add a line to the current stream
      *
@@ -622,6 +610,7 @@ public class PDFRenderer extends PrintRenderer {
     }
 
 
+
     /**
      * Convert a char to a multibyte hex representation
      */
@@ -679,6 +668,24 @@ public class PDFRenderer extends PrintRenderer {
                 buf.append(endText).append(-(width.intValue())).append(' ').append(startText);
             }
         }
+    }
+
+    public void render(Page page, OutputStream outputStream)
+      throws FOPException, IOException
+    {
+      // MessageHandler.logln("rendering single page to PDF");
+      this.idReferences = page.getIDReferences();
+      this.pdfResources = this.pdfDoc.getResources();
+      this.pdfDoc.setIDReferences(idReferences);
+      this.renderPage(page);
+
+      FontSetup.addToResources(this.pdfDoc, fontInfo);
+
+      // TODO: this needs to be implemented
+      renderRootExtensions(page);
+
+      // MessageHandler.logln("writing out PDF");
+      this.pdfDoc.output(outputStream);
     }
 
     /**
@@ -778,8 +785,8 @@ public class PDFRenderer extends PrintRenderer {
         return rs;
     }
 
-    protected void renderRootExtensions(AreaTree areaTree) {
-        Vector v = areaTree.getExtensions();
+    protected void renderRootExtensions(Page page) {
+        Vector v = page.getExtensions();
         if (v != null) {
             Enumeration e = v.elements();
             while (e.hasMoreElements()) {
@@ -793,14 +800,12 @@ public class PDFRenderer extends PrintRenderer {
     }
 
     private void renderOutline(Outline outline) {
-        if (rootOutline == null) {
-            rootOutline = this.pdfDoc.makeOutlineRoot();
-        }
+        PDFOutline outlineRoot = pdfDoc.getOutlineRoot();
         PDFOutline pdfOutline = null;
         Outline parent = outline.getParentOutline();
         if (parent == null) {
             pdfOutline =
-                this.pdfDoc.makeOutline(rootOutline,
+                this.pdfDoc.makeOutline(outlineRoot,
                                         outline.getLabel().toString(),
                                         outline.getInternalDestination());
         } else {

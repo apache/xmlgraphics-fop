@@ -11,6 +11,7 @@ package org.apache.fop.apps;
  * Juergen Verwohlt: Juergen.Verwohlt@jCatalog.com,
  * Rainer Steinkuhle: Rainer.Steinkuhle@jCatalog.com,
  * Stanislav Gorkhover: Stanislav.Gorkhover@jCatalog.com
+ * Modified to use streaming API by Mark Lillywhite, mark-fop@inomial.com
  */
 import org.apache.fop.messaging.MessageHandler;
 import org.apache.fop.viewer.*;
@@ -111,15 +112,7 @@ public class AWTStarter extends CommandLineStarter {
 
             // build FO tree: time
             frame.progress(resource.getString("Build FO tree") + " ...");
-            driver.buildFOTree(parser, inputHandler.getInputSource());
-
-            // layout FO tree: time
-            frame.progress(resource.getString("Layout FO tree") + " ...");
-            driver.format();
-
-            // render: time
-            frame.progress(resource.getString("Render") + " ...");
-            driver.render();
+            driver.render(parser, inputHandler.getInputSource());
 
             frame.progress(resource.getString("Show"));
             frame.showPage();

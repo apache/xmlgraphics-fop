@@ -35,6 +35,8 @@ import java.util.Enumeration;
  * Renderer that renders areas to PCL
  * Created by Arthur E Welch III while at M&I EastPoint Technology
  * Donated by EastPoint to the Apache FOP project March 2, 2001.
+ * Modified by Mark Lillywhite mark-fop@inomial.com to use the
+ * new Renderer interface.
  */
 public class PCLRenderer extends PrintRenderer {
 
@@ -79,50 +81,7 @@ public class PCLRenderer extends PrintRenderer {
      * @param producer string indicating application producing PCL
      */
     public void setProducer(String producer) {}
-
-    /**
-     * render the areas into PCL
-     *
-     * @param areaTree the laid-out area tree
-     * @param stream the Outputstream to write the PCL to
-     */
-    public void render(AreaTree areaTree,
-                       OutputStream stream) throws IOException, FOPException {
-        MessageHandler.logln("rendering areas to PCL");
-        idReferences = areaTree.getIDReferences();
-        // this.pdfResources = this.pdfDoc.getResources();
-        // this.pdfDoc.setIDReferences(idReferences);
-        Enumeration e = areaTree.getPages().elements();
-
-        currentStream = new PCLStream(stream);
-
-        // Set orientation.
-        if (orientation > -1)
-            currentStream.add("\033&l" + orientation + "O");
-        else
-            currentStream.add("\033&l0O");
-        if (orientation == 1 || orientation == 3)
-            xoffset = -144;
-        else
-            xoffset = -180;
-
-        // Reset the margins.
-        currentStream.add("\033" + "9\033&l0E");
-
-
-        while (e.hasMoreElements()) {
-            this.renderPage((Page)e.nextElement());
-        }
-        if (!idReferences.isEveryIdValid()) {
-            // throw new FOPException("The following id's were referenced but not found: "+idReferences.getInvalidIds()+"\n");
-            MessageHandler.errorln("Warning: The following id's were referenced but not found: "
-                                   + idReferences.getInvalidIds() + "\n");
-        }
-
-        MessageHandler.logln("writing out PCL");
-        stream.flush();
-    }
-
+ 
     /**
      * add a line to the current stream
      *
@@ -748,6 +707,38 @@ public class PCLRenderer extends PrintRenderer {
          * currentAnnotList = null;
          * }
          */
+    }
+    public void startRenderer(OutputStream outputStream)
+      throws IOException
+    {        MessageHandler.logln("rendering areas to PCL");
+        currentStream = new PCLStream(outputStream);
+
+        // Set orientation.
+        if (orientation > -1)
+            currentStream.add("\033&l" + orientation + "O");
+        else
+            currentStream.add("\033&l0O");
+        if (orientation == 1 || orientation == 3)
+            xoffset = -144;
+        else
+            xoffset = -180;
+
+        // Reset the margins.
+        currentStream.add("\033" + "9\033&l0E");
+    }
+    
+    public void stopRenderer(OutputStream outputStream)
+      throws IOException
+    {
+        MessageHandler.logln("writing out PCL");
+        outputStream.flush();
+    }
+
+    public void render(Page page, OutputStream outputStream)
+      throws IOException
+    {
+        idReferences = page.getIDReferences();
+	    this.renderPage(page);
     }
 
 }

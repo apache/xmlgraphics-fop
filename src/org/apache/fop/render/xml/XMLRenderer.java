@@ -26,6 +26,9 @@ import java.util.Hashtable;
 
 /**
  * Renderer that renders areas to XML for debugging purposes.
+ *
+ * Modified by Mark Lillywhite mark-fop@inomial.com to use the
+ * new renderer interface. Not 100% certain that this is correct.
  */
 public class XMLRenderer implements Renderer {
 
@@ -67,27 +70,12 @@ public class XMLRenderer implements Renderer {
         this.producer = producer;
     }
 
-    /**
-     * render the areas into XML
-     *
-     * @param areaTree the laid-out area tree
-     * @param stream the OutputStream to give the XML to
-     */
-    public void render(AreaTree areaTree,
-                       OutputStream stream) throws IOException {
-        MessageHandler.logln("rendering areas to XML");
-        this.writer = new PrintWriter(stream);
-        this.writer.write("<?xml version=\"1.0\"?>\n<!-- produced by "
-                          + this.producer + " -->\n");
-        writeStartTag("<AreaTree>");
-        Enumeration e = areaTree.getPages().elements();
-        while (e.hasMoreElements()) {
-            this.renderPage((Page)e.nextElement());
-        }
-        writeEndTag("</AreaTree>");
-        this.writer.flush();
-        MessageHandler.errorln("written out XML");
-    }
+    
+    public void render(Page page, OutputStream outputStream)
+      throws IOException
+    {
+      this.renderPage(page);
+     }
 
     /**
      * write out spaces to make indent
@@ -439,5 +427,30 @@ public class XMLRenderer implements Renderer {
     private boolean isCoarseXml() {
         return ((Boolean)options.get("fineDetail")).booleanValue();
     }
-
+    
+    /**
+      Default start renderer method. This would
+      normally be overridden. (mark-fop@inomial.com).
+    */
+    public void startRenderer(OutputStream outputStream)
+      throws IOException
+    {
+        MessageHandler.logln("rendering areas to XML");
+        this.writer = new PrintWriter(outputStream);
+        this.writer.write( "<?xml version=\"1.0\"?>\n<!-- produced by " +
+                           this.producer + " -->\n");
+        writeStartTag("<AreaTree>");
+    }
+    
+    /**
+      Default stop renderer method. This would
+      normally be overridden. (mark-fop@inomial.com).
+    */
+    public void stopRenderer(OutputStream outputStream)
+      throws IOException
+    {
+        writeEndTag("</AreaTree>");
+        this.writer.flush();
+        MessageHandler.errorln("written out XML");
+     }
 }

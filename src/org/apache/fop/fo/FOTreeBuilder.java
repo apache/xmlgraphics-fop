@@ -11,9 +11,10 @@ package org.apache.fop.fo;
 import org.apache.fop.layout.AreaTree;
 import org.apache.fop.messaging.MessageHandler;
 import org.apache.fop.apps.FOPException;
+import org.apache.fop.apps.StreamRenderer;
 import org.apache.fop.fo.pagination.Root;
 import org.apache.fop.system.BufferManager;
-
+import org.apache.fop.fo.pagination.PageSequence;
 
 // SAX
 import org.xml.sax.helpers.DefaultHandler;
@@ -28,6 +29,14 @@ import java.io.IOException;
 
 /**
  * SAX Handler that builds the formatting object tree.
+ * 
+ * Modified by Mark Lillywhite mark-fop@inomial.com. Now uses
+ * StreamRenderer to automagically render the document as
+ * soon as it receives a page-sequence end-tag. Also,
+ * calls methods to set up and shut down the renderer at
+ * the beginning and end of the FO document. Finally,
+ * supresses adding the PageSequence object to the Root,
+ * since it is parsed immediately.
  */
 public class FOTreeBuilder extends DefaultHandler implements TreeBuilder {
 
@@ -59,6 +68,22 @@ public class FOTreeBuilder extends DefaultHandler implements TreeBuilder {
      */
     protected Hashtable unknownFOs = new Hashtable();
 
+    /**
+     *
+     * The class that handles formatting and rendering to a stream
+     * (mark-fop@inomial.com)
+     */
+     private StreamRenderer streamRenderer;
+     
+     public FOTreeBuilder()
+     {
+     }
+     
+     public void setStreamRenderer(StreamRenderer streamRenderer)
+     {
+       this.streamRenderer = streamRenderer;
+     }
+      
     /**
      * add a mapping from element name to maker.
      *
@@ -120,19 +145,39 @@ public class FOTreeBuilder extends DefaultHandler implements TreeBuilder {
     /**
      * SAX Handler for the end of an element
      */
-    public void endElement(String uri, String localName, String rawName) {
+    public void endElement(String uri, String localName, String rawName)
+      throws SAXException
+    {
         currentFObj.end();
-        currentFObj = (FObj)currentFObj.getParent();
+        
+        //
+        // mark-fop@inomial.com - tell the stream renderer to render
+        // this page-sequence
+        //
+        if(currentFObj instanceof PageSequence)
+          streamRenderer.render((PageSequence) currentFObj);
+        
+          currentFObj = (FObj)currentFObj.getParent();
     }
 
     /**
      * SAX Handler for the start of the document
      */
-    public void startDocument() {
+    public void startDocument()
+      throws SAXException
+    {
         rootFObj = null;    // allows FOTreeBuilder to be reused
         MessageHandler.logln("building formatting object tree");
+        streamRenderer.startRenderer();
     }
 
+    public void endDocument()
+      throws SAXException
+    {
+      MessageHandler.logln("Parsing of document complete, stopping renderer");
+      streamRenderer.stopRenderer();
+    }
+      
     /**
      * SAX Handler for the start of an element
      */
@@ -182,7 +227,7 @@ public class FOTreeBuilder extends DefaultHandler implements TreeBuilder {
                                                         + " be root, not "
                                                         + fobj.getName()));
             }
-        } else {
+        } else if(!(fobj instanceof org.apache.fop.fo.pagination.PageSequence)){
             currentFObj.addChild(fobj);
         }
 
@@ -203,6 +248,7 @@ public class FOTreeBuilder extends DefaultHandler implements TreeBuilder {
     public void reset() {
         currentFObj = null;
         rootFObj = null;
+        streamRenderer = null;
     }
 
     public boolean hasData() {

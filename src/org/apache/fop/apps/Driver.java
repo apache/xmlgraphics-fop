@@ -11,13 +11,14 @@ package org.apache.fop.apps;
 import org.apache.fop.fo.FOTreeBuilder;
 import org.apache.fop.fo.ElementMapping;
 import org.apache.fop.layout.AreaTree;
-import org.apache.fop.layout.FontInfo;
 import org.apache.fop.render.Renderer;
 import org.apache.fop.messaging.MessageHandler;
 import org.apache.fop.configuration.ConfigurationReader;
 import org.apache.fop.configuration.Configuration;
 import org.apache.fop.tools.DocumentInputSource;
 import org.apache.fop.tools.DocumentReader;
+
+import org.apache.fop.render.pdf.PDFRenderer;
 
 import org.apache.fop.system.BufferManager;
 
@@ -64,9 +65,9 @@ import java.util.*;
  * instantiate the class itself. The advantage of the latter is it
  * enables runtime determination of Renderer and ElementMapping(s).
  * <P>
- * Once the Driver is set up, the buildFOTree method
+ * Once the Driver is set up, the render method
  * is called. Depending on whether DOM or SAX is being used, the
- * invocation of the method is either buildFOTree(Document) or
+ * invocation of the method is either render(Document) or
  * buildFOTree(Parser, InputSource) respectively.
  * <P>
  * A third possibility may be used to build the FO Tree, namely
@@ -80,9 +81,7 @@ import java.util.*;
  * <PRE>
  * Driver driver = new Driver();
  * driver.setRenderer(new org.apache.fop.render.awt.AWTRenderer(translator));
- * driver.buildFOTree(parser, fileInputSource(args[0]));
- * driver.format();
- * driver.render();
+ * driver.render(parser, fileInputSource(args[0]));
  * </PRE>
  */
 public class Driver {
@@ -408,9 +407,10 @@ public class Driver {
      * Build the formatting object tree using the given SAX Parser and
      * SAX InputSource
      */
-    public synchronized void buildFOTree(XMLReader parser, InputSource source)
+    public synchronized void render(XMLReader parser, InputSource source)
             throws FOPException {
-
+        StreamRenderer streamRenderer = new StreamRenderer(_stream, _renderer);
+        _treeBuilder.setStreamRenderer(streamRenderer);
         parser.setContentHandler(_treeBuilder);
         try {
             parser.parse(source);
@@ -428,8 +428,11 @@ public class Driver {
     /**
      * Build the formatting object tree using the given DOM Document
      */
-    public synchronized void buildFOTree(Document document)
+    public synchronized void render(Document document)
             throws FOPException {
+        StreamRenderer streamRenderer = new StreamRenderer(_stream, _renderer);
+        _treeBuilder.setStreamRenderer(streamRenderer);
+        
         try {
             DocumentInputSource source = new DocumentInputSource(document);
             DocumentReader reader = new DocumentReader();
@@ -470,27 +473,7 @@ public class Driver {
         this._bufferManager.addBufferFile(bufferFile);
     }
 
-    /**
-     * format the formatting object tree into an area tree
-     */
-    public synchronized void format() throws FOPException {
-        FontInfo fontInfo = new FontInfo();
-        _renderer.setupFontInfo(fontInfo);
-
-        _areaTree = new AreaTree();
-        _areaTree.setFontInfo(fontInfo);
-
-        _treeBuilder.format(_areaTree);
-    }
-
-    /**
-     * render the area tree to the output form
-     */
-    public synchronized void render() throws IOException, FOPException {
-        _renderer.render(_areaTree, _stream);
-    }
-
-    /**
+    /** 
      * Runs the formatting and renderering process using the previously set
      * inputsource and outputstream
      */
@@ -498,21 +481,22 @@ public class Driver {
         if (_renderer == null) {
             setRenderer(RENDER_PDF);
         }
+        
         if (_source == null) {
             throw new FOPException("InputSource is not set.");
         }
+        
         if (_reader == null) {
             if (!(_source instanceof DocumentInputSource)) {
                 _reader = ConfigurationReader.createParser();
             }
         }
+        
         if (_source instanceof DocumentInputSource) {
-            buildFOTree(((DocumentInputSource)_source).getDocument());
+            render(((DocumentInputSource)_source).getDocument());
         } else {
-            buildFOTree(_reader, _source);
+            render(_reader, _source);
         }
-        format();
-        render();
     }
 
 }

@@ -4,6 +4,11 @@
  * For details on use and redistribution please refer to the
  * LICENSE file included with these sources.
  */
+/*
+ Modified by Mark Lillywhite mark-fop@inomial.com. Does not add
+ itself to the root any more. Does not hang onto currentPage
+ pointer, which caused GC issues.
+ */
 
 package org.apache.fop.fo.pagination;
 
@@ -137,7 +142,7 @@ public class PageSequence extends FObj {
 
         if (parent.getName().equals("fo:root")) {
             this.root = (Root)parent;
-            this.root.addPageSequence(this);
+            // this.root.addPageSequence(this);
         } else {
             throw new FOPException("page-sequence must be child of root, not "
                                    + parent.getName());
@@ -206,6 +211,7 @@ public class PageSequence extends FObj {
      * Runs the formatting of this page sequence into the given area tree
      */
     public void format(AreaTree areaTree) throws FOPException {
+
         Status status = new Status(Status.OK);
 
         this.layoutMasterSet.resetPageMasters();
@@ -301,6 +307,8 @@ public class PageSequence extends FObj {
         // handle the 'force-page-count'
         forcePage(areaTree, firstAvailPageNumber);
 
+        currentPage = null;
+        
         MessageHandler.logln("");
     }
 

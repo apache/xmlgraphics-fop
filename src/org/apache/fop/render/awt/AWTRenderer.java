@@ -52,13 +52,20 @@ import java.text.*;
 
 import org.apache.fop.render.Renderer;
 
+/**
+  Modified by Mark Lillywhite mark-fop@inomial.com. Did lots of
+  cleaning up and made the class implement the new Renderer
+  interface. This class could also do with a general audit,
+  and I suspect it's not swing-thread-safe either.
+*/
+
 public class AWTRenderer implements Renderer, Printable, Pageable {
 
     protected int pageWidth = 0;
     protected int pageHeight = 0;
     protected double scaleFactor = 100.0;
     protected int pageNumber = 0;
-    protected AreaTree tree;
+    protected Vector pageList = new Vector();
     protected ProgressListener progressListener = null;
     protected Translator res = null;
 
@@ -66,6 +73,8 @@ public class AWTRenderer implements Renderer, Printable, Pageable {
     protected Hashtable fontStyles = new Hashtable();
     protected Color saveColor = null;
 
+    protected IDReferences idReferences = null;
+    
     /**
      * Image Object and Graphics Object. The Graphics Object is the Graphics
      * object that is contained withing the Image Object.
@@ -322,35 +331,37 @@ public class AWTRenderer implements Renderer, Printable, Pageable {
      * @return the number of pages
      */
     public int getPageCount() {
-        if (tree == null) {
-            return 0;
-        }
-
-        return tree.getPages().size();
+        return pageList.size();
     }
 
-    public void render(int aPageNumber) {
-        if (tree != null) {
-            try {
-                render(tree, aPageNumber);
-            } catch (IOException e) {
-                e.printStackTrace();
-                // This exception can't occur because we are not dealing with
-                // any files.
-            }
-        }
+    public void removePage(int page) {
+      pageList.removeElementAt(page);
     }
 
-    public void render(AreaTree areaTree,
-                       OutputStream stream) throws IOException {
-        tree = areaTree;
-        render(areaTree, 0);
+    public void render(int aPageNumber)
+    {
+      if(aPageNumber >= pageList.size())
+        return;
+        
+      try{
+      	render((Page) pageList.elementAt(aPageNumber));
+      } catch(IOException e){
+        e.printStackTrace();
+        // This exception can't occur because we are not dealing with
+        // any files
+      }      
     }
 
-    public void render(AreaTree areaTree,
-                       int aPageNumber) throws IOException {
-        tree = areaTree;
-        Page page = (Page)areaTree.getPages().elementAt(aPageNumber);
+    public void render(Page page, OutputStream stream)
+      throws IOException
+    {
+      pageList.addElement(page);
+    }
+
+    public void render(Page page)
+      throws IOException
+    {
+        idReferences = page.getIDReferences();   
 
         pageWidth = (int)((float)page.getWidth() / 1000f + .5);
         pageHeight = (int)((float)page.getHeight() / 1000f + .5);
@@ -693,7 +704,7 @@ public class AWTRenderer implements Renderer, Printable, Pageable {
         String s;    // = area.getText();
         if (area.getPageNumberID()
                 != null) {    // this text is a page number, so resolve it
-            s = tree.getIDReferences().getPageNumber(area.getPageNumberID());
+            s = idReferences.getPageNumber(area.getPageNumberID());
             if (s == null) {
                 s = "";
             }
@@ -872,14 +883,14 @@ public class AWTRenderer implements Renderer, Printable, Pageable {
 
     public int print(Graphics g, PageFormat pageFormat,
                      int pageIndex) throws PrinterException {
-        if (pageIndex >= tree.getPages().size())
+        if (pageIndex >= pageList.size())
             return NO_SUCH_PAGE;
 
         Graphics2D oldGraphics = graphics;
         int oldPageNumber = pageNumber;
 
         graphics = (Graphics2D)g;
-        Page aPage = (Page)tree.getPages().elementAt(pageIndex);
+        Page aPage = (Page)pageList.elementAt(pageIndex);
         renderPage(aPage);
         graphics = oldGraphics;
 
@@ -887,15 +898,15 @@ public class AWTRenderer implements Renderer, Printable, Pageable {
     }
 
     public int getNumberOfPages() {
-        return tree.getPages().size();
+        return pageList.size();
     }
 
     public PageFormat getPageFormat(int pageIndex)
             throws IndexOutOfBoundsException {
-        if (pageIndex >= tree.getPages().size())
+        if (pageIndex >= pageList.size())
             return null;
 
-        Page page = (Page)tree.getPages().elementAt(pageIndex);
+        Page page = (Page)pageList.elementAt(pageIndex);
         PageFormat pageFormat = new PageFormat();
         Paper paper = new Paper();
 
@@ -1078,4 +1089,16 @@ public class AWTRenderer implements Renderer, Printable, Pageable {
         public void registerExtension(BridgeExtension be) {}
 
     }
+    
+    public void startRenderer(OutputStream outputStream)
+      throws IOException
+    {
+    }
+    
+    public void stopRenderer(OutputStream outputStream)
+      throws IOException
+    {
+    	render(0);
+    }
+    
 }

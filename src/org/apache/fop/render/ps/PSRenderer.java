@@ -68,7 +68,11 @@ import java.awt.Dimension;
  * DocumentProcessColors stuff (probably needs to be configurable, then maybe
  * add a color to grayscale conversion for bitmaps to make output smaller (See
  * PCLRenderer), font embedding, support different character encodings, try to
- * implement image transparency, positioning of images is wrong etc.
+ * implement image transparency, positioning of images is wrong etc. <P>
+ *
+ * Modified by Mark Lillywhite mark-fop@inomial.com, to use the new
+ * Renderer interface. This PostScript renderer appears to be the
+ * most efficient at producing output.
  *
  * @author Jeremias Märki
  */
@@ -100,6 +104,8 @@ public class PSRenderer implements Renderer {
     private float currGreen;
     private float currBlue;
 
+    private FontInfo fontInfo;
+
     protected Hashtable options;
 
 
@@ -119,45 +125,6 @@ public class PSRenderer implements Renderer {
     public void setOptions(Hashtable options) {
         this.options = options;
     }
-
-
-    /**
-     * render the areas into PostScript
-     *
-     * @param areaTree the laid-out area tree
-     * @param stream the OutputStream to give the PostScript to
-     */
-    public void render(AreaTree areaTree,
-                       OutputStream stream) throws IOException {
-        MessageHandler.logln("rendering areas to PostScript");
-        this.out = new PSStream(stream);
-        write("%!PS-Adobe-3.0");
-        write("%%Creator: " + this.producer);
-        write("%%Pages: " + areaTree.getPages().size());
-        write("%%DocumentProcessColors: Black");
-        write("%%DocumentSuppliedResources: procset FOPFonts");
-        write("%%EndComments");
-        write("%%BeginDefaults");
-        write("%%EndDefaults");
-        write("%%BeginProlog");
-        write("%%EndProlog");
-        write("%%BeginSetup");
-        writeFontDict(areaTree.getFontInfo());
-        write("%%EndSetup");
-        write("FOPFonts begin");
-
-        comment("% --- AreaTree begin");
-        Enumeration e = areaTree.getPages().elements();
-        while (e.hasMoreElements()) {
-            this.renderPage((Page)e.nextElement());
-        }
-        comment("% --- AreaTree end");
-        write("%%Trailer");
-        write("%%EOF");
-        this.out.flush();
-        MessageHandler.logln("written out PostScript");
-    }
-
 
     /**
      * write out a command
@@ -285,6 +252,7 @@ public class PSRenderer implements Renderer {
     public void setupFontInfo(FontInfo fontInfo) {
         /* use PDF's font setup to get PDF metrics */
         org.apache.fop.render.pdf.FontSetup.setup(fontInfo);
+        this.fontInfo = fontInfo;
     }
 
     /**
@@ -1054,4 +1022,46 @@ public class PSRenderer implements Renderer {
         public void registerExtension(BridgeExtension be) {}
 
     }
+
+    /**
+      Default start renderer method. This would
+      normally be overridden. (mark-fop@inomial.com).
+    */ 
+    public void startRenderer(OutputStream outputStream)
+      throws IOException
+    {
+        MessageHandler.logln("rendering areas to PostScript");
+     
+        this.out = new PSStream(outputStream);
+        write("%!PS-Adobe-3.0");
+        write("%%Creator: "+this.producer);
+        write("%%DocumentProcessColors: Black");
+        write("%%DocumentSuppliedResources: procset FOPFonts");
+        write("%%EndComments");
+        write("%%BeginDefaults");
+        write("%%EndDefaults");
+        write("%%BeginProlog");
+        write("%%EndProlog");
+        write("%%BeginSetup");
+        writeFontDict(fontInfo);
+        write("%%EndSetup");
+        write("FOPFonts begin");
+    }
+    
+    /**
+      Default stop renderer method. This would
+      normally be overridden. (mark-fop@inomial.com).
+    */
+    public void stopRenderer(OutputStream outputStream)
+      throws IOException
+    {
+        write("%%Trailer");
+        write("%%EOF");
+        this.out.flush();
+        MessageHandler.logln("written out PostScript");
+    }
+
+    public void render(Page page, OutputStream outputStream) {
+      this.renderPage(page);
+     }
 }

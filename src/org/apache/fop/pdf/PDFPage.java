@@ -14,13 +14,19 @@ package org.apache.fop.pdf;
  * specifies the dimensions of the page and references a /Resources
  * object, a contents stream and the page's parent in the page
  * hierarchy.
+ * 
+ * Modified by Mark Lillywhite, mark-fop@inomial.com. The Parent
+ * object was being referred to by reference, but all that we
+ * ever used from the Parent was it's PDF object ID, and according
+ * to the memory profile this was causing OOM issues. So, we store
+ * only the object ID of the parent, rather than the parent itself.
  */
 public class PDFPage extends PDFObject {
 
     /**
-     * the page's parent, a /Pages object
+     * the page's parent, a PDF reference object
      */
-    protected PDFPages parent;
+    protected String parent;
 
     /**
      * the page's /Resource object
@@ -77,7 +83,7 @@ public class PDFPage extends PDFObject {
      * @param parent the /Pages object that is this page's parent
      */
     public void setParent(PDFPages parent) {
-        this.parent = parent;
+        this.parent = parent.referencePDF();
     }
 
     /**
@@ -112,7 +118,7 @@ public class PDFPage extends PDFObject {
 
         sb = sb.append(this.number + " " + this.generation + " obj\n"
                        + "<< /Type /Page\n" + "/Parent "
-                       + this.parent.referencePDF() + "\n"
+                       + this.parent + "\n"
                        + "/MediaBox [ 0 0 " + this.pagewidth + " "
                        + this.pageheight + " ]\n" + "/Resources "
                        + this.resources.referencePDF() + "\n" + "/Contents "
