@@ -106,4 +106,11 @@ public class RepeatablePageMasterReference extends PageMasterReference
     public String getName() {
         return "fo:repeatable-page-master-reference";
     }
+
+    /**
+     * @see org.apache.fop.fo.FObj#getNameId()
+     */
+    public int getNameId() {
+        return FO_REPEATABLE_PAGE_MASTER_REFERENCE;
+    }
 }

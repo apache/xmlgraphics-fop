@@ -49,4 +49,11 @@ public class MultiToggle extends ToBeImplementedElement {
     public String getName() {
         return "fo:multi-toggle";
     }
+    
+    /**
+     * @see org.apache.fop.fo.FObj#getNameId()
+     */
+    public int getNameId() {
+        return FO_MULTI_TOGGLE;
+    }
 }

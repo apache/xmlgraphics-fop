@@ -172,7 +172,17 @@ public class ConditionalPageMasterReference extends FObj {
         }
     }
 
+    /**
+     * @see org.apache.fop.fo.FObj#getName()
+     */
     public String getName() {
         return "fo:conditional-page-master-reference";
+    }
+    
+    /**
+     * @see org.apache.fop.fo.FObj#getNameId()
+     */
+    public int getNameId() {
+        return FO_CONDITIONAL_PAGE_MASTER_REFERENCE;
     }
 }

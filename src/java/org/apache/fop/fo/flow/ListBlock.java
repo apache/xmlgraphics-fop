@@ -117,5 +117,12 @@ public class ListBlock extends FObj {
     public String getName() {
         return "fo:list-block";
     }
+    
+    /**
+     * @see org.apache.fop.fo.FObj#getNameId()
+     */
+    public int getNameId() {
+        return FO_LIST_BLOCK;
+    }
 }
 

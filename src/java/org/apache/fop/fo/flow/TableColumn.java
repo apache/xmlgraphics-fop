@@ -129,5 +129,12 @@ public class TableColumn extends FObj {
     public String getName() {
         return "fo:table-column";
     }
+
+    /**
+     * @see org.apache.fop.fo.FObj#getNameId()
+     */
+    public int getNameId() {
+        return FO_TABLE_COLUMN;
+    }
 }
 

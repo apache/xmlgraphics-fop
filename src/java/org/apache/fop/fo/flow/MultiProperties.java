@@ -48,4 +48,11 @@ public class MultiProperties extends ToBeImplementedElement {
     public String getName() {
         return "fo:multi-properties";
     }
+
+    /**
+     * @see org.apache.fop.fo.FObj#getNameId()
+     */
+    public int getNameId() {
+        return FO_MULTI_PROPERTIES;
+    }
 }

@@ -187,10 +187,10 @@ public class PropertySets {
         elem = elements[Constants.FO_ROOT];
         elem.addProperty(Constants.PR_MEDIA_USAGE);
         elem.addContent(Constants.FO_LAYOUT_MASTER_SET);
-        elem.addContent(Constants.FO_DECLARATION);
+        elem.addContent(Constants.FO_DECLARATIONS);
         elem.addContent(Constants.FO_PAGE_SEQUENCE);
 
-        elem = elements[Constants.FO_DECLARATION];
+        elem = elements[Constants.FO_DECLARATIONS];
         elem.addContent(Constants.FO_COLOR_PROFILE);
 
         elem = elements[Constants.FO_COLOR_PROFILE];

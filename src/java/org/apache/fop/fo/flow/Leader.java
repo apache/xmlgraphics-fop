@@ -176,4 +176,11 @@ public class Leader extends FObjMixed implements LMVisited {
         setup();
         aLMV.serveLeader(this);
     }
+    
+    /**
+     * @see org.apache.fop.fo.FObj#getNameId()
+     */
+    public int getNameId() {
+        return FO_LEADER;
+    }
 }

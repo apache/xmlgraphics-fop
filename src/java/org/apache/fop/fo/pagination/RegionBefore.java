@@ -76,5 +76,12 @@ public class RegionBefore extends RegionBA {
     public String getName() {
         return "fo:region-before";
     }
+
+    /**
+     * @see org.apache.fop.fo.FObj#getNameId()
+     */
+    public int getNameId() {
+        return FO_REGION_BEFORE;
+    }
 }
 

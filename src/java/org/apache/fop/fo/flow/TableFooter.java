@@ -43,4 +43,11 @@ public class TableFooter extends TableBody implements LMVisited {
     public String getName() {
         return "fo:table-footer";
     }
+
+    /**
+     * @see org.apache.fop.fo.FObj#getNameId()
+     */
+    public int getNameId() {
+        return FO_TABLE_FOOTER;
+    }
 }

@@ -57,4 +57,11 @@ public class MultiPropertySet extends ToBeImplementedElement {
     public String getName() {
         return "fo:multi-property-set";
     }
+    
+    /**
+     * @see org.apache.fop.fo.FObj#getNameId()
+     */
+    public int getNameId() {
+        return FO_MULTI_PROPERTY_SET;
+    }
 }

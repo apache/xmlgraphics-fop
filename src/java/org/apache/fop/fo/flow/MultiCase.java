@@ -51,4 +51,11 @@ public class MultiCase extends ToBeImplementedElement {
     public String getName() {
         return "fo:multi-case";
     }
+
+    /**
+     * @see org.apache.fop.fo.FObj#getNameId()
+     */
+    public int getNameId() {
+        return FO_MULTI_CASE;
+    }
 }

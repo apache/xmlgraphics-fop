@@ -56,5 +56,11 @@ public class Wrapper extends FObjMixed implements LMVisited {
         return "fo:wrapper";
     }
 
+    /**
+     * @see org.apache.fop.fo.FObj#getNameId()
+     */
+    public int getNameId() {
+        return FO_WRAPPER;
+    }
 }
 

@@ -106,4 +106,11 @@ public class InlineContainer extends FObj {
     public String getName() {
         return "fo:inline-container";
     }
+    
+    /**
+     * @see org.apache.fop.fo.FObj#getNameId()
+     */
+    public int getNameId() {
+        return FO_INLINE_CONTAINER;
+    }
 }

@@ -298,5 +298,11 @@ public class ExternalGraphic extends FObj {
 
          return vp;
      }
-    
+
+    /**
+     * @see org.apache.fop.fo.FObj#getNameId()
+     */
+    public int getNameId() {
+        return FO_EXTERNAL_GRAPHIC;
+    }
 }

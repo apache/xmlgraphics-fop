@@ -223,4 +223,11 @@ public class PageNumberCitation extends FObj {
          }
          return inline;
      }
+     
+    /**
+     * @see org.apache.fop.fo.FObj#getNameId()
+     */
+    public int getNameId() {
+        return FO_PAGE_NUMBER_CITATION;
+    }
 }

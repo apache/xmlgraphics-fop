@@ -56,6 +56,7 @@ public interface Constants {
     int RENDER_RTF = 10;
     
     // element constants
+    int FO_UNKNOWN = 0;  // FObj base class
     int FO_BASIC_LINK = 1;
     int FO_BIDI_OVERRIDE = 2;
     int FO_BLOCK = 3;
@@ -63,7 +64,7 @@ public interface Constants {
     int FO_CHARACTER = 5;
     int FO_COLOR_PROFILE = 6;
     int FO_CONDITIONAL_PAGE_MASTER_REFERENCE = 7;
-    int FO_DECLARATION = 8;
+    int FO_DECLARATIONS = 8;
     int FO_EXTERNAL_GRAPHIC = 9;
     int FO_FLOAT = 10;
     int FO_FLOW = 11;

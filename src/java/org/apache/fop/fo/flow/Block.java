@@ -345,6 +345,13 @@ public class Block extends FObjMixed {
     }
 
     /**
+     * @see org.apache.fop.fo.FObj#getNameId()
+     */
+    public int getNameId() {
+        return FO_BLOCK;
+    }
+
+    /**
      * @return true (Block can contain Markers)
      */
     protected boolean containsMarkers() {

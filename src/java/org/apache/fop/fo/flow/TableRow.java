@@ -153,4 +153,10 @@ public class TableRow extends FObj {
         return "fo:table-row";
     }
 
+    /**
+     * @see org.apache.fop.fo.FObj#getNameId()
+     */
+    public int getNameId() {
+        return FO_TABLE_ROW;
+    }
 }

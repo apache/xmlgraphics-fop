@@ -226,4 +226,12 @@ public class Root extends FObj {
     public String getName() {
         return "fo:root";
     }
+
+    /**
+     * @see org.apache.fop.fo.FObj#getNameId()
+     */
+    public int getNameId() {
+        return FO_ROOT;
+    }
+
 }

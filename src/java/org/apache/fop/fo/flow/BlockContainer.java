@@ -145,5 +145,12 @@ public class BlockContainer extends FObj {
     public String getName() {
         return "fo:block-container";
     }
+    
+    /**
+     * @see org.apache.fop.fo.FObj#getNameId()
+     */
+    public int getNameId() {
+        return FO_BLOCK_CONTAINER;
+    }
 }
 

@@ -88,4 +88,11 @@ public class InitialPropertySet extends ToBeImplementedElement {
     public String getName() {
         return "fo:initial-property-set";
     }
+    
+    /**
+     * @see org.apache.fop.fo.FObj#getNameId()
+     */
+    public int getNameId() {
+        return FO_INITIAL_PROPERTY_SET;
+    }
 }
