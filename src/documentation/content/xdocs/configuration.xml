@@ -58,66 +58,6 @@ Also, since the configuration file is XML, be sure to keep it well-formed.</p>
       </tr>
     </table>
   </section>
-  <section id="hyphenation">
-    <title>Setting up hyphenation</title>
-    <p>
-      FOP comes already with some hyphenation patterns. If you need a hyphenation pattern
-      which isn't included in the distribution, do the following:
-    </p>
-    <ol>
-      <li>
-Get the TeX hyphenation pattern file and turn it into an xml file which
-conforms to the hyphenation.dtd in the subdirectory {fop-dir}/src/hyph.
-      </li>
-      <li>
-Name this new file following this schema: <code>languageCode_countryCode.xml</code>. If
-you don't need a country code, leave it out, e.g. the file name for an American
-english hyphenation pattern would look like this: <code>en_US.xml</code>. For an Italian 
-file: <code>it.xml</code>. Language and country codes must be the same as in XSL-FO, that
-is follow
-<link href="http://www.ics.uci.edu/pub/ietf/http/related/iso639.txt">ISO 639</link>
-and
-<link href="http://www.ics.uci.edu/pub/ietf/http/related/iso3166.txt">ISO 3166</link>
-respectively. NOTE: The ISO 639/ISO 3166 convention is that language names are
-written in lower case, while country codes are written in upper case.
-      </li>
-      <li>
-If you have built your new hyphenation pattern file successfully there are
-two ways to make it accessible to FOP.
-        <ul>
-          <li>
-Put this new file into the directory {fop-dir}/src/hyph and rebuild FOP. The file will
-be picked up and added to fop.jar.
-          </li>
-          <li>
-Put the file into a directory of your choice and specify this directory
-in the userconfig.xml in the entry &lt;hyphenation-dir&gt;.
-          </li>
-        </ul>
-      </li>
-    </ol>
-    <section id="hyphenation-sources">
-      <title>Places to find TeX hyphenation pattern files</title>
-      <p>
-        The most important place to find hyphenation pattern file is the CTAN TeX Archive:
-      </p>
-      <ul>
-        <li><fork href="http://www.ctan.org/tex-archive/language/hyphenation/">CTAN TeX Archive</fork></li>
-      </ul>
-    </section>
-    <warning>
-      You have to carefully check license issues when using hyphenation
-      pattern files from other places. The licenses of the files found
-      on the Internet are not always clear.
-    </warning>
-    <note>
-      Most of the files published in the CTAN Archive are licenced under the 
-      <fork href="http://www.latex-project.org/lppl.html">LaTeX Project Public License (LPPL)</fork>.
-      The Apache Foundation can't redistribute files under this license. If you want to use such
-      a file you have to decide for yourself if you can use (and possibly distribute) the file under 
-      these conditions.
-    </note>
-  </section>
   <section id="svg">
     <title>SVG</title>
     <section id="svg-strokeSVGText">
