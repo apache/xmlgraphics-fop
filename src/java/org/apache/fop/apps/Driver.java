@@ -600,6 +600,23 @@ public class Driver implements LogEnabled {
     public synchronized void render(XMLReader parser, InputSource source)
                 throws FOPException {
         parser.setContentHandler(getContentHandler());
+
+        /**
+         * The following statement handles the case of a LayoutStrategy that
+         * does not wish to build an FO Tree, but wishes to parse the incoming
+         * document some other way. This applies primarily to the alt-design
+         * system.
+         */
+        if (currentDocument.getLayoutStrategy() != null) {
+            if (currentDocument.getLayoutStrategy().foTreeNeeded() != true) {
+                currentDocument.getLayoutStrategy().format(null, null);
+                return;
+            }
+        }
+
+        /**
+         * For all other cases, we wish to parse normally.
+         */
         try {
             if (foInputHandler instanceof FOTreeHandler) {
                 FOTreeHandler foTreeHandler = (FOTreeHandler)foInputHandler;
