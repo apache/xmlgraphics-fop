@@ -1,5 +1,5 @@
 /*
- * $Id: Word.java,v 1.10 2003/03/05 16:45:42 jeremias Exp $
+ * $Id$
  * ============================================================================
  *                    The Apache Software License, Version 1.1
  * ============================================================================
@@ -51,67 +51,53 @@
 package org.apache.fop.area.inline;
 
 /**
- * A word inline area.
- * This is really a collection character inline areas collected together
- * into a single word.
+ * <p>Implements the GoF Visitor design pattern to allow access to inline areas
+ * without knowing what subclass of InlineArea is being accessed. This is used
+ * primarily to keep the area tree classes isolated from any classes (typically
+ * renderers) that might need access to them.</p>
  */
-public class Word extends InlineArea {
-    /**
-     * The word for this word area.
-     */
-    protected String word;
-    private int iWSadjust = 0;
+public interface InlineAreaVisitor {
 
     /**
-     * Create a word area.
-     */
-    public Word() {
-    }
-
-    /**
-     * Handle InlineAreaVisitor request by passing this back to it.
+     * Handle a visitor request to process an inline viewport.
      *
-     * @param visitor the InlineAreaVisitor wishing to process this.
-     * @see org.apache.fop.area.inline.InlineAreaVisitor
+     * @param viewport  The viewport area
      */
-    public void acceptVisitor(InlineAreaVisitor visitor) {
-        visitor.serveVisitor(this);
-    }
+    void serveVisitor(Viewport viewport);
 
     /**
-     * Set the word.
+     * Handle a visitor request to process an inline word.
      *
-     * @param w the word string
+     * @param area  The word area
      */
-    public void setWord(String w) {
-        word = w;
-    }
+    void serveVisitor(Word area);
 
     /**
-     * Get the word string.
+     * Handle a visitor request to process an inline parent area.
      *
-     * @return the word string
+     * @param ip  The inline parent area
      */
-    public String getWord() {
-        return word;
-    }
+    void serveVisitor(InlineParent ip);
 
     /**
-     * Get word space adjust.
+     * Handle a visitor request to process an inline character.
      *
-     * @return the word space adjustment
+     * @param ch  The inline character
      */
-    public int getWSadjust() {
-        return iWSadjust;
-    }
+    void serveVisitor(org.apache.fop.area.inline.Character ch);
 
     /**
-     * Set word space adjust.
+     * Handle a visitor request to process an inline space.
      *
-     * @param iWSadjust the word space adjustment
+     * @param space  The inline space
      */
-    public void setWSadjust(int iWSadjust) {
-        this.iWSadjust = iWSadjust;
-    }
+    void serveVisitor(Space space);
+
+    /**
+     * Handle a visitor request to process an inline leader area.
+     *
+     * @param area  The inline leader area.
+     */
+    void serveVisitor(Leader area);
+
 }
-
