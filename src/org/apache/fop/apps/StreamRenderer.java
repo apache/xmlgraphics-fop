@@ -187,11 +187,11 @@ public class StreamRenderer {
             }
         }
 
-        try {
-            pageSequence.format(a);
-        } catch (FOPException e) {
-            throw new SAXException(e);
-        }
+//         try {
+//             pageSequence.format(a);
+//         } catch (FOPException e) {
+//             throw new SAXException(e);
+//         }
     }
 
     public synchronized void queuePage(Page page)
