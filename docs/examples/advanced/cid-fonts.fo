@@ -75,55 +75,55 @@
   <fo:flow flow-name="xsl-region-body">
    <fo:wrapper  font-family="Times" font-size="12pt" text-align="justify">
    <fo:block id="sec0"
-             text-align="center" 
+             text-align="center"
              font-family="Helvetica"
-             font-weight="bold" 
-             font-size="18pt" 
+             font-weight="bold"
+             font-size="18pt"
              color="#0050B2" space-after.optimum="6pt">
        Adding Fonts to FOP
    </fo:block>
 
    <fo:block space-after.optimum="6pt">
-     When building PDF files, FOP normally supports only the base 14 font 
-     package defined in the Adobe PDF specification. That includes the 
+     When building PDF files, FOP normally supports only the base 14 font
+     package defined in the Adobe PDF specification. That includes the
      following fonts: Helvetica, Times, Courier, Symbol and ZapfDingbats.
    </fo:block>
 
    <fo:block space-after.optimum="6pt">
-     Font support in FOP can be extended by the addition of font metric 
-     files (written in XML) created from Adobe Type 1 fonts and Truetype 
+     Font support in FOP can be extended by the addition of font metric
+     files (written in XML) created from Adobe Type 1 fonts and Truetype
      fonts. No other font types (Type 3, etc.) are supported at this time.
    </fo:block>
 
    <fo:block id="sec1"
              font-family="Helvetica"
-             font-weight="bold" 
-             font-size="14pt" 
+             font-weight="bold"
+             font-size="14pt"
              color="#0050B2"
-             space-after.optimum="6pt" 
+             space-after.optimum="6pt"
              space-before.optimum="12pt">
      Adding additional Type 1 fonts
    </fo:block>
- 
+
    <fo:block space-after.optimum="6pt" >
      As mentioned above you need an XML file containing font metrics to
      be able to use an additional font. FOP contains a tool that can generate
-     such a font metrics file from a PFM file, which normally comes with the 
+     such a font metrics file from a PFM file, which normally comes with the
      font file.
    </fo:block>
 
    <fo:block id="sec1-1"
              font-family="Helvetica"
-             font-weight="bold" 
-             space-after.optimum="6pt" 
+             font-weight="bold"
+             space-after.optimum="6pt"
              space-before.optimum="12pt" >
      Generating a font metrics file
    </fo:block>
- 
+
    <fo:block space-after.optimum="6pt" >
       Run the class <fo:inline font-family="Courier">org.apache.fop.fonts.apps.PFMReader</fo:inline>
        to generate the XML file.
-      <fo:block font-family="Courier" font-size="10pt" 
+      <fo:block font-family="Courier" font-size="10pt"
                 space-before.optimum="6pt" space-after.optimum="6pt" margin-left="6pt" text-align="start">
         java org.apache.fop.fonts.apps.PFMReader pfm-file xml-file
       </fo:block>
@@ -141,15 +141,15 @@
 
    <fo:block id="sec1-2"
              font-family="Helvetica"
-             font-weight="bold" 
-             space-after.optimum="6pt" 
+             font-weight="bold"
+             space-after.optimum="6pt"
              space-before.optimum="12pt" >
       Register the fonts within FOP
    </fo:block>
- 
+
    <fo:block space-after.optimum="6pt">
      Edit conf/userconfig.xml and add entries for the font if the fonts section, ie:
-     <fo:block font-family="Courier" font-size="10pt" 
+     <fo:block font-family="Courier" font-size="10pt"
       space-before.optimum="6pt"
       white-space-collapse="false" margin-left="6pt" text-align="start">
 <![CDATA[
@@ -161,10 +161,10 @@
 
    <fo:block id="sec2"
              font-family="Helvetica"
-             font-weight="bold" 
-             font-size="14pt" 
+             font-weight="bold"
+             font-size="14pt"
              color="#0050B2"
-             space-after.optimum="6pt" 
+             space-after.optimum="6pt"
              space-before.optimum="12pt">
      Adding additional TrueType fonts
    </fo:block>
@@ -176,10 +176,10 @@
 
    <fo:block id="sec2-1"
              font-family="Helvetica"
-             font-weight="bold" 
-             space-after.optimum="6pt" 
+             font-weight="bold"
+             space-after.optimum="6pt"
              space-before.optimum="12pt" >
-     Generating a font metrics file 
+     Generating a font metrics file
    </fo:block>
 
    <fo:block space-after.optimum="6pt">
@@ -191,7 +191,7 @@
    <fo:block space-after.optimum="6pt">
      Create metrics for the fontfile. We'll use MS Gothic as an example:
 
-      <fo:block  font-family="Courier" font-size="10pt" 
+      <fo:block  font-family="Courier" font-size="10pt"
                 space-before.optimum="6pt" space-after.optimum="6pt" margin-left="6pt" text-align="start">
         java org.apache.fop.fonts.apps.TTFReader C:\WINNT\Fonts\msgothic.ttf msgothic.xml
       </fo:block>
@@ -199,10 +199,10 @@
 
    <fo:block id="sec2-2"
              font-family="Helvetica"
-             font-weight="bold" 
-             space-after.optimum="6pt" 
+             font-weight="bold"
+             space-after.optimum="6pt"
              space-before.optimum="12pt" >
-     TrueType collections 
+     TrueType collections
    </fo:block>
 
    <fo:block space-after.optimum="6pt">
@@ -219,7 +219,7 @@
 
    <fo:block space-after.optimum="6pt">
      Example on generating metrics for a .ttc file:
-      <fo:block font-family="Courier" font-size="10pt" 
+      <fo:block font-family="Courier" font-size="10pt"
                 space-before.optimum="6pt" space-after.optimum="6pt" margin-left="6pt" text-align="start">
         java org.apache.fop.fonts.apps.TTFReader -ttcname "MS Mincho" msmincho.ttc msminch.xml
       </fo:block>
@@ -227,10 +227,10 @@
 
    <fo:block id="sec2-3"
              font-family="Helvetica"
-             font-weight="bold" 
-             space-after.optimum="6pt" 
+             font-weight="bold"
+             space-after.optimum="6pt"
              space-before.optimum="12pt" >
-     Register the fonts within FOP 
+     Register the fonts within FOP
    </fo:block>
 
    <fo:block space-after.optimum="6pt">
@@ -241,12 +241,12 @@
 
    <fo:block id="sec3"
              font-family="Helvetica"
-             font-weight="bold" 
-             font-size="14pt" 
+             font-weight="bold"
+             font-size="14pt"
              color="#0050B2"
-             space-after.optimum="6pt" 
+             space-after.optimum="6pt"
              space-before.optimum="12pt">
-     Embedding fonts 
+     Embedding fonts
    </fo:block>
 
    <fo:block space-after.optimum="6pt">
@@ -256,16 +256,16 @@
 
    <fo:block id="sec4"
              font-family="Helvetica"
-             font-weight="bold" 
-             font-size="14pt" 
+             font-weight="bold"
+             font-size="14pt"
              color="#0050B2"
-             space-after.optimum="6pt" 
+             space-after.optimum="6pt"
              space-before.optimum="12pt">
-     Example embedding MSGothic 
+     Example embedding MSGothic
    </fo:block>
 
   <fo:block space-after.optimum="6pt">
-    This example will use the Microsoft Gothic TrueType font. This is the font used to render this examples 
+    This example will use the Microsoft Gothic TrueType font. This is the font used to render this examples
     given in the last section of this file. If you don't have it installed,
     you can download an installer at <fo:basic-link color="blue"
       external-destination="ftp://ftp.cc.monash.edu.au/pub/nihongo/ie3lpkja.exe">
@@ -275,12 +275,12 @@
 
    <fo:block id="sec4-1"
              font-family="Helvetica"
-             font-weight="bold" 
-             space-after.optimum="6pt" 
+             font-weight="bold"
+             space-after.optimum="6pt"
              space-before.optimum="12pt">
     Setup your classpath to run FOP:
    </fo:block>
-     <fo:block font-family="Courier" font-size="10pt" 
+     <fo:block font-family="Courier" font-size="10pt"
       space-before.optimum="6pt"
       white-space-collapse="false" margin-left="6pt" text-align="start">
 C:\Fop-0.18.1> set CLASSPATH=fop.jar;lib\xerces-1.2.3.jar;lib\xalan-2.0.0.jar;lib\batik.jar
@@ -289,13 +289,13 @@ C:\Fop-0.18.1> set CLASSPATH=fop.jar;lib\xerces-1.2.3.jar;lib\xalan-2.0.0.jar;li
 
    <fo:block id="sec4-2"
              font-family="Helvetica"
-             font-weight="bold" 
-             space-after.optimum="6pt" 
+             font-weight="bold"
+             space-after.optimum="6pt"
              space-before.optimum="12pt">
     Create the metrics file:
 </fo:block>
 
-     <fo:block font-family="Courier" font-size="10pt" 
+     <fo:block font-family="Courier" font-size="10pt"
       space-before.optimum="6pt"
       white-space-collapse="false" margin-left="6pt" text-align="start">
 C:\Fop-0.18.1> java org.apache.fop.fonts.apps.TTFReader c:\WINNT\Fonts\msgothic.ttf msgothic.xml
@@ -317,8 +317,8 @@ This font contains no embedding license restrictions
 
    <fo:block id="sec4-3"
              font-family="Helvetica"
-             font-weight="bold" 
-             space-after.optimum="6pt" 
+             font-weight="bold"
+             space-after.optimum="6pt"
              space-before.optimum="12pt">
     Edit the msgothic.xml file and set the <fo:inline font-family="Courier">font-name</fo:inline>
     to "MSGothic".
@@ -326,13 +326,13 @@ This font contains no embedding license restrictions
 
    <fo:block id="sec4-4"
              font-family="Helvetica"
-             font-weight="bold" 
-             space-after.optimum="6pt" 
+             font-weight="bold"
+             space-after.optimum="6pt"
              space-before.optimum="12pt">
       Edit conf/userconfig.xml and add the following to the &lt;fonts&gt; section:
    </fo:block>
-   
-   <fo:block font-family="Courier" font-size="10pt" 
+
+   <fo:block font-family="Courier" font-size="10pt"
       space-before.optimum="6pt"
       white-space-collapse="false" margin-left="6pt" text-align="start">
 <![CDATA[
@@ -342,11 +342,11 @@ This font contains no embedding license restrictions
 </font>
 ]]>
     </fo:block>
- 
+
   <fo:block space-after.optimum="6pt">
     Now you can use MSGothic in your .fo files by setting font-family="MSGothic". You'll need to
     start FOP specifying the config file as in this example:
-     <fo:block font-family="Courier" font-size="10pt" 
+     <fo:block font-family="Courier" font-size="10pt"
       space-before.optimum="6pt"
       white-space-collapse="false" margin-left="6pt" text-align="start"
 >java -jar fop.jar -c conf/userconfig.xml -fo myfo.fo -pdf mypdf.pdf</fo:block>
@@ -354,10 +354,10 @@ This font contains no embedding license restrictions
 
    <fo:block id="sec5"
              font-family="Helvetica"
-             font-weight="bold" 
-             font-size="14pt" 
+             font-weight="bold"
+             font-size="14pt"
              color="#0050B2"
-             space-after.optimum="6pt" 
+             space-after.optimum="6pt"
              space-before.optimum="12pt">
       Examples from <fo:basic-link color="blue" external-destination="http://www.csse.monash.edu.au/~jwb/j_jmdict.html">
        <fo:inline text-decoration="underline">JMDict</fo:inline></fo:basic-link> Japanese glossary:

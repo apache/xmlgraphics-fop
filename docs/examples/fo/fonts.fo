@@ -4,12 +4,12 @@
 
   <!-- defines the layout master -->
   <fo:layout-master-set>
-    <fo:simple-page-master master-name="first" 
-                           page-height="29.7cm" 
-                           page-width="21cm" 
-                           margin-top="1cm" 
-                           margin-bottom="2cm" 
-                           margin-left="2.5cm" 
+    <fo:simple-page-master master-name="first"
+                           page-height="29.7cm"
+                           page-width="21cm"
+                           margin-top="1cm"
+                           margin-bottom="2cm"
+                           margin-left="2.5cm"
                            margin-right="2.5cm">
       <fo:region-body margin-top="3cm"/>
       <fo:region-before extent="3cm"/>
@@ -111,7 +111,7 @@ Courier
   </fo:block>
 
   <fo:block font-family="Helvetica"  font-size="14pt">
- ZapfDingbats:   
+ ZapfDingbats:
   </fo:block>
   <fo:block space-after.optimum="10pt" font-family="ZapfDingbats">
 &#x2701; &#x2702; &#x2703; &#x2704; &#x260E; &#x2706; &#x2707;
@@ -178,12 +178,12 @@ Courier
   </fo:block>
 
   <fo:block font-family="Helvetica"  font-size="12pt">
- Some special characters: 
+ Some special characters:
   </fo:block>
   <fo:block space-after.optimum="10pt" font-family="Helvetica">
 Euro ( dec 8364, hex 20AC): &#x20AC;
   </fo:block>
-  
+
 
   <fo:block space-after.optimum="10pt" font-family="Helvetica">
 

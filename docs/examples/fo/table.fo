@@ -5,12 +5,12 @@
 
   <!-- defines the layout master -->
   <fo:layout-master-set>
-    <fo:simple-page-master master-name="first" 
-                           page-height="29.7cm" 
-                           page-width="21cm" 
-                           margin-top="1cm" 
-                           margin-bottom="2cm" 
-                           margin-left="2.5cm" 
+    <fo:simple-page-master master-name="first"
+                           page-height="29.7cm"
+                           page-width="21cm"
+                           margin-top="1cm"
+                           margin-bottom="2cm"
+                           margin-left="2.5cm"
                            margin-right="2.5cm">
       <fo:region-body margin-top="3cm"/>
       <fo:region-before extent="3cm"/>
@@ -24,8 +24,8 @@
   <fo:flow flow-name="xsl-region-body">
 
       <!-- this defines a title level 1-->
-      <fo:block font-size="18pt" 
-            font-family="sans-serif" 
+      <fo:block font-size="18pt"
+            font-family="sans-serif"
             line-height="24pt"
             space-after.optimum="15pt"
             background-color="blue"
@@ -36,18 +36,18 @@
       </fo:block>
 
       <!-- this defines a title level 2-->
-      <fo:block font-size="16pt" 
-            font-family="sans-serif" 
+      <fo:block font-size="16pt"
+            font-family="sans-serif"
             space-after.optimum="15pt"
             text-align="center">
         A simple table, 3 columns, 4 rows
       </fo:block>
 
     <!-- normal text -->
-    <fo:block text-align="start">this is normal text. this is normal text. this is normal text. 
-                                 this is normal text. this is normal text. this is normal text.  
+    <fo:block text-align="start">this is normal text. this is normal text. this is normal text.
+                                 this is normal text. this is normal text. this is normal text.
     </fo:block>
-    
+
     <!-- table start -->
     <fo:table>
       <fo:table-column column-width="50mm"/>
@@ -79,28 +79,28 @@
     <!-- table end -->
 
     <!-- normal text -->
-    <fo:block text-align="start">this is normal text. this is normal text. this is normal text. 
-                                 this is normal text. this is normal text. this is normal text.  
+    <fo:block text-align="start">this is normal text. this is normal text. this is normal text.
+                                 this is normal text. this is normal text. this is normal text.
     </fo:block>
 
 <!-- **************************** NEW PAGE ************************************* -->
 
       <!-- this defines a title level 2-->
-      <fo:block font-size="16pt" 
-            font-family="sans-serif" 
+      <fo:block font-size="16pt"
+            font-family="sans-serif"
             space-after.optimum="15pt"
             text-align="center"
             break-before="page">
-        A table with borders 
+        A table with borders
       </fo:block>
 
 
     <!-- normal text -->
-    <fo:block text-align="start">this is normal text. this is normal text. this is normal text. 
-                                 this is normal text. this is normal text. this is normal text.  
+    <fo:block text-align="start">this is normal text. this is normal text. this is normal text.
+                                 this is normal text. this is normal text. this is normal text.
     </fo:block>
-    
-    
+
+
     <!-- table start -->
     <fo:table border-width="0.5mm" border-style="solid" background-color="yellow">
       <fo:table-column column-width="50mm"/>
@@ -132,29 +132,29 @@
     <!-- table end -->
 
     <!-- normal text -->
-    <fo:block text-align="start">this is normal text. this is normal text. this is normal text. 
-                                 this is normal text. this is normal text. this is normal text.  
+    <fo:block text-align="start">this is normal text. this is normal text. this is normal text.
+                                 this is normal text. this is normal text. this is normal text.
     </fo:block>
-    
+
 
 <!-- **************************** NEW PAGE ************************************* -->
 
       <!-- this defines a title level 2-->
-      <fo:block font-size="16pt" 
-            font-family="sans-serif" 
+      <fo:block font-size="16pt"
+            font-family="sans-serif"
             space-after.optimum="15pt"
             text-align="center"
             break-before="page">
-        A table with thick borders 
+        A table with thick borders
       </fo:block>
 
 
     <!-- normal text -->
-    <fo:block text-align="start">this is normal text. this is normal text. this is normal text. 
-                                 this is normal text. this is normal text. this is normal text.  
+    <fo:block text-align="start">this is normal text. this is normal text. this is normal text.
+                                 this is normal text. this is normal text. this is normal text.
     </fo:block>
-    
-    
+
+
     <!-- table start -->
     <fo:table border-width="3mm" border-style="solid" background-color="yellow">
       <fo:table-column column-width="50mm"/>
@@ -186,16 +186,16 @@
     <!-- table end -->
 
     <!-- normal text -->
-    <fo:block text-align="start" start-indent="-3mm">this is normal text. this is normal text. this is normal text. 
-                                 this is normal text. this is normal text. this is normal text.  
+    <fo:block text-align="start" start-indent="-3mm">this is normal text. this is normal text. this is normal text.
+                                 this is normal text. this is normal text. this is normal text.
     </fo:block>
-    
+
 
 <!-- **************************** NEW PAGE ************************************* -->
 
       <!-- this defines a title level 2-->
-      <fo:block font-size="16pt" 
-            font-family="sans-serif" 
+      <fo:block font-size="16pt"
+            font-family="sans-serif"
             space-after.optimum="15pt"
             text-align="center"
             break-before="page">
@@ -204,11 +204,11 @@
 
 
     <!-- normal text -->
-    <fo:block text-align="start">this is normal text. this is normal text. this is normal text. 
-                                 this is normal text. this is normal text. this is normal text.  
+    <fo:block text-align="start">this is normal text. this is normal text. this is normal text.
+                                 this is normal text. this is normal text. this is normal text.
     </fo:block>
-    
-    
+
+
     <!-- table start -->
     <fo:table border-collapse="separate">
       <fo:table-column column-width="50mm"/>
@@ -240,15 +240,15 @@
     <!-- table end -->
 
     <!-- normal text -->
-    <fo:block text-align="start">this is normal text. this is normal text. this is normal text. 
-                                 this is normal text. this is normal text. this is normal text.  
+    <fo:block text-align="start">this is normal text. this is normal text. this is normal text.
+                                 this is normal text. this is normal text. this is normal text.
     </fo:block>
 
 <!-- **************************** NEW PAGE ************************************* -->
 
       <!-- this defines a title level 2-->
-      <fo:block font-size="16pt" 
-            font-family="sans-serif" 
+      <fo:block font-size="16pt"
+            font-family="sans-serif"
             space-after.optimum="15pt"
             text-align="center"
             break-before="page">
@@ -257,45 +257,10 @@
 
 
     <!-- normal text -->
-    <fo:block text-align="start">this is normal text. this is normal text. this is normal text. 
-                                 this is normal text. this is normal text. this is normal text.  
+    <fo:block text-align="start">this is normal text. this is normal text. this is normal text.
+                                 this is normal text. this is normal text. this is normal text.
     </fo:block>
-    
-    
-    <!-- table start -->
-    <fo:table border-collapse="separate">
-      <fo:table-column column-width="50mm"/>
-      <fo:table-column column-width="50mm"/>
-      <fo:table-column column-width="50mm"/>
-      <fo:table-body>
-        <fo:table-row>
-          <fo:table-cell border-width="2mm" border-style="solid" background-color="yellow"><fo:block>good</fo:block></fo:table-cell>
-          <fo:table-cell border-width="2mm" border-style="solid" background-color="yellow"><fo:block>bad</fo:block></fo:table-cell>
-          <fo:table-cell border-width="2mm" border-style="solid" background-color="yellow"><fo:block>ugly</fo:block></fo:table-cell>
-        </fo:table-row>
-        <fo:table-row>
-          <fo:table-cell border-width="2mm" border-style="solid" background-color="yellow"><fo:block>nice</fo:block></fo:table-cell>
-          <fo:table-cell border-width="2mm" border-style="solid" background-color="yellow"><fo:block>dice</fo:block></fo:table-cell>
-          <fo:table-cell border-width="2mm" border-style="solid" background-color="yellow"><fo:block>vice</fo:block></fo:table-cell>
-        </fo:table-row>
-        <fo:table-row>
-          <fo:table-cell border-width="2mm" border-style="solid" background-color="yellow"><fo:block>literature</fo:block></fo:table-cell>
-          <fo:table-cell border-width="2mm" border-style="solid" background-color="yellow"><fo:block>music</fo:block></fo:table-cell>
-          <fo:table-cell border-width="2mm" border-style="solid" background-color="yellow"><fo:block>art</fo:block></fo:table-cell>
-        </fo:table-row>
-        <fo:table-row>
-          <fo:table-cell border-width="2mm" border-style="solid" background-color="yellow"><fo:block>java</fo:block></fo:table-cell>
-          <fo:table-cell border-width="2mm" border-style="solid" background-color="yellow"><fo:block>perl</fo:block></fo:table-cell>
-          <fo:table-cell border-width="2mm" border-style="solid" background-color="yellow"><fo:block>python</fo:block></fo:table-cell>
-        </fo:table-row>
-      </fo:table-body>
-    </fo:table>
-    <!-- table end -->
 
-    <!-- normal text -->
-    <fo:block text-align="start">this is normal text. this is normal text. this is normal text. 
-                                 this is normal text. this is normal text. this is normal text.  
-    </fo:block>
 
     <!-- table start -->
     <fo:table border-collapse="separate">
@@ -328,27 +293,62 @@
     <!-- table end -->
 
     <!-- normal text -->
-    <fo:block text-align="start">this is normal text. this is normal text. this is normal text. 
-                                 this is normal text. this is normal text. this is normal text.  
+    <fo:block text-align="start">this is normal text. this is normal text. this is normal text.
+                                 this is normal text. this is normal text. this is normal text.
+    </fo:block>
+
+    <!-- table start -->
+    <fo:table border-collapse="separate">
+      <fo:table-column column-width="50mm"/>
+      <fo:table-column column-width="50mm"/>
+      <fo:table-column column-width="50mm"/>
+      <fo:table-body>
+        <fo:table-row>
+          <fo:table-cell border-width="2mm" border-style="solid" background-color="yellow"><fo:block>good</fo:block></fo:table-cell>
+          <fo:table-cell border-width="2mm" border-style="solid" background-color="yellow"><fo:block>bad</fo:block></fo:table-cell>
+          <fo:table-cell border-width="2mm" border-style="solid" background-color="yellow"><fo:block>ugly</fo:block></fo:table-cell>
+        </fo:table-row>
+        <fo:table-row>
+          <fo:table-cell border-width="2mm" border-style="solid" background-color="yellow"><fo:block>nice</fo:block></fo:table-cell>
+          <fo:table-cell border-width="2mm" border-style="solid" background-color="yellow"><fo:block>dice</fo:block></fo:table-cell>
+          <fo:table-cell border-width="2mm" border-style="solid" background-color="yellow"><fo:block>vice</fo:block></fo:table-cell>
+        </fo:table-row>
+        <fo:table-row>
+          <fo:table-cell border-width="2mm" border-style="solid" background-color="yellow"><fo:block>literature</fo:block></fo:table-cell>
+          <fo:table-cell border-width="2mm" border-style="solid" background-color="yellow"><fo:block>music</fo:block></fo:table-cell>
+          <fo:table-cell border-width="2mm" border-style="solid" background-color="yellow"><fo:block>art</fo:block></fo:table-cell>
+        </fo:table-row>
+        <fo:table-row>
+          <fo:table-cell border-width="2mm" border-style="solid" background-color="yellow"><fo:block>java</fo:block></fo:table-cell>
+          <fo:table-cell border-width="2mm" border-style="solid" background-color="yellow"><fo:block>perl</fo:block></fo:table-cell>
+          <fo:table-cell border-width="2mm" border-style="solid" background-color="yellow"><fo:block>python</fo:block></fo:table-cell>
+        </fo:table-row>
+      </fo:table-body>
+    </fo:table>
+    <!-- table end -->
+
+    <!-- normal text -->
+    <fo:block text-align="start">this is normal text. this is normal text. this is normal text.
+                                 this is normal text. this is normal text. this is normal text.
     </fo:block>
 
 <!-- **************************** NEW PAGE ************************************* -->
 
       <!-- this defines a title level 2-->
-      <fo:block font-size="16pt" 
-            font-family="sans-serif" 
+      <fo:block font-size="16pt"
+            font-family="sans-serif"
             space-after.optimum="15pt"
             text-align="center"
             break-before="page">
-        5 tables with borders 
+        5 tables with borders
       </fo:block>
 
 
     <!-- normal text -->
-    <fo:block text-align="start">this is normal text. this is normal text. this is normal text. 
-                                 this is normal text. this is normal text. this is normal text.  
+    <fo:block text-align="start">this is normal text. this is normal text. this is normal text.
+                                 this is normal text. this is normal text. this is normal text.
     </fo:block>
-    
+
 
       <fo:table border-width="1.5mm" border-style="solid" background-color="rgb(100,210,250)">
         <fo:table-column column-width="150mm"/>
@@ -369,7 +369,7 @@
         </fo:table-body>
       </fo:table>
 
-    
+
       <fo:table border-width="1.5mm" border-style="solid" background-color="rgb(100,210,250)" >
         <fo:table-column column-width="150mm"/>
         <fo:table-body>
@@ -389,16 +389,16 @@
       </fo:table>
 
     <!-- normal text -->
-    <fo:block text-align="start">this is normal text. this is normal text. this is normal text. 
-                                 this is normal text. this is normal text. this is normal text.  
+    <fo:block text-align="start">this is normal text. this is normal text. this is normal text.
+                                 this is normal text. this is normal text. this is normal text.
     </fo:block>
 
 
 <!-- **************************** NEW PAGE ************************************* -->
-      <fo:block font-size="16pt" 
-                font-family="sans-serif" 
-                line-height="20pt" 
-                space-after.optimum="3pt" 
+      <fo:block font-size="16pt"
+                font-family="sans-serif"
+                line-height="20pt"
+                space-after.optimum="3pt"
                 break-before="page"
                 text-align="justify">
           A Contents table

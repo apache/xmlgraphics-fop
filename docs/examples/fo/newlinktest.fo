@@ -3,9 +3,9 @@
 
     <!-- layout for the first page -->
     <fo:simple-page-master master-name="first"
-                  margin-top="1in" 
-                  margin-bottom="1in" 
-                  margin-left="1in" 
+                  margin-top="1in"
+                  margin-bottom="1in"
+                  margin-left="1in"
                   margin-right="1in">
       <fo:region-body margin-top="2.5cm" margin-bottom="1.5cm"/>
       <fo:region-before extent="2.5cm"/>
@@ -44,7 +44,7 @@
      the case of XT) SAX events.
   </fo:block>
 
-  <fo:block space-after.optimum="12pt" font-family="serif">FOP is part of Apache's XML project. The homepage of FOP is 
+  <fo:block space-after.optimum="12pt" font-family="serif">FOP is part of Apache's XML project. The homepage of FOP is
      <fo:inline font-style="italic" font-family="serif"><fo:basic-link color="blue" external-destination="http://xml.apache.org/fop">http://xml.apache.org/fop</fo:basic-link></fo:inline>
   </fo:block>
 

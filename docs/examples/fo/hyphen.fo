@@ -1,29 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<!-- example for a simple fo file. At the beginning the page layout is set. 
-  Below fo:root there is always 
+<!-- example for a simple fo file. At the beginning the page layout is set.
+  Below fo:root there is always
 - a single fo:layout-master-set which defines one or more page layouts
-- an optional fo:declarations 
-- and a sequence of one or more fo:page-sequences containing the text and formatting instructions 
+- an optional fo:declarations
+- and a sequence of one or more fo:page-sequences containing the text and formatting instructions
 -->
 
 <fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format">
 
   <fo:layout-master-set>
-  <!-- fo:layout-master-set defines in its children the page layout: 
+  <!-- fo:layout-master-set defines in its children the page layout:
        the pagination and layout specifications
-      - page-masters: have the role of describing the intended subdivisions 
-                       of a page and the geometry of these subdivisions 
-                      In this case there is only a simple-page-master which defines the 
+      - page-masters: have the role of describing the intended subdivisions
+                       of a page and the geometry of these subdivisions
+                      In this case there is only a simple-page-master which defines the
                       layout for all pages of the text
   -->
     <!-- layout information -->
     <fo:simple-page-master master-name="simple"
-                  page-height="29.7cm" 
+                  page-height="29.7cm"
                   page-width="21cm"
-                  margin-top="1cm" 
-                  margin-bottom="2cm" 
-                  margin-left="7cm" 
+                  margin-top="1cm"
+                  margin-bottom="2cm"
+                  margin-left="7cm"
                   margin-right="3cm">
       <fo:region-body margin-top="3cm"/>
       <fo:region-before extent="3cm"/>
@@ -35,25 +35,25 @@
 
   <!-- start page-sequence
        here comes the text (contained in flow objects)
-       the page-sequence can contain different fo:flows 
+       the page-sequence can contain different fo:flows
        the attribute value of master-name refers to the page layout
        which is to be used to layout the text contained in this
        page-sequence-->
   <fo:page-sequence master-reference="simple">
 
       <!-- start fo:flow
-           each flow is targeted 
+           each flow is targeted
            at one (and only one) of the following:
            xsl-region-body (usually: normal text)
            xsl-region-before (usually: header)
            xsl-region-after  (usually: footer)
-           xsl-region-start  (usually: left margin) 
+           xsl-region-start  (usually: left margin)
            xsl-region-end    (usually: right margin)
-           ['usually' applies here to languages with left-right and top-down 
+           ['usually' applies here to languages with left-right and top-down
             writing direction like English]
            in this case there is only one target: xsl-region-body
         -->
-    <fo:flow flow-name="xsl-region-body" 
+    <fo:flow flow-name="xsl-region-body"
                 text-align="justify">
 
       <!-- each paragraph is encapsulated in a block element
@@ -61,20 +61,20 @@
            font-family and size, line-heigth etc. -->
 
       <!-- this defines a title -->
-      <fo:block font-size="18pt" 
-            font-family="sans-serif" 
+      <fo:block font-size="18pt"
+            font-family="sans-serif"
             line-height="24pt"
             space-after.optimum="15pt"
             background-color="blue"
             color="white"
             text-align="center"
             padding-top="3pt">
-        Hyphenation tests 
+        Hyphenation tests
       </fo:block>
 
       <!-- this defines a title -->
-      <fo:block font-size="12pt" 
-            font-family="sans-serif" 
+      <fo:block font-size="12pt"
+            font-family="sans-serif"
             line-height="12pt"
             background-color="blue"
             color="white"
@@ -83,8 +83,8 @@
       </fo:block>
 
       <!-- Normal text -->
-      <fo:block font-size="12pt" 
-                font-family="sans-serif" 
+      <fo:block font-size="12pt"
+                font-family="sans-serif"
                 line-height="15pt"
                 space-after.optimum="3pt"
                 text-align="justify"
@@ -100,8 +100,8 @@
       </fo:block>
 
       <!-- Normal text -->
-      <fo:block font-size="12pt" 
-                font-family="sans-serif" 
+      <fo:block font-size="12pt"
+                font-family="sans-serif"
                 line-height="15pt"
                 space-after.optimum="3pt"
                 text-align="justify"
@@ -113,13 +113,13 @@
         This document specifies a syntax created by subsetting an existing, widely used international text processing standard
         (Standard Generalized Markup Language, ISO 8879:1986(E) as amended and corrected) for use on the World Wide Web. It
         is a product of the W3C XML Activity, details of which can be found at the w3c website. A list of current W3C
-        Recommendations and other technical documents can be found there too. 
+        Recommendations and other technical documents can be found there too.
       </fo:block>
 
 
       <!-- this defines a title -->
-      <fo:block font-size="12pt" 
-            font-family="sans-serif" 
+      <fo:block font-size="12pt"
+            font-family="sans-serif"
             line-height="12pt"
             background-color="blue"
             color="white"
@@ -128,8 +128,8 @@
       </fo:block>
 
       <!-- this defines normal text -->
-      <fo:block font-size="12pt" 
-                font-family="sans-serif" 
+      <fo:block font-size="12pt"
+                font-family="sans-serif"
                 line-height="15pt"
                 space-after.optimum="3pt"
                 language="de"
@@ -137,64 +137,64 @@
                 hyphenation-push-character-count="2"
                 hyphenation-remain-character-count="2"                >
         1. Warum TEI?
-        Die Verwendungszeit elektronischer Editionen wird von mehreren 
-        Faktoren verkürzt: der kurzen Lebensdauer der Programme, die zu 
-        ihrer Darstellung verwendet werden, der etwas längeren der 
-        Betriebssysteme, unter denen die Darstellungsprogramme laufen, 
-        der logischen Einrichtung des Datenträgers, auf dem sich die 
-        Edition befindet, und dessen physischer Dauer. Um die besonders 
-        unangenehme Abhängigkeit elektronischer Texte von bestimmten 
-        Programmen und Betriebssystemen zu vermeiden, haben 
-        Wissenschaftler ein Textauszeichnungssystem für philologische 
-        Belange entwickelt, das nach dem Entwicklerteam "Text Encoding 
-        Initiative" (TEI) genannt wird (1). 
+        Die Verwendungszeit elektronischer Editionen wird von mehreren
+        Faktoren verkürzt: der kurzen Lebensdauer der Programme, die zu
+        ihrer Darstellung verwendet werden, der etwas längeren der
+        Betriebssysteme, unter denen die Darstellungsprogramme laufen,
+        der logischen Einrichtung des Datenträgers, auf dem sich die
+        Edition befindet, und dessen physischer Dauer. Um die besonders
+        unangenehme Abhängigkeit elektronischer Texte von bestimmten
+        Programmen und Betriebssystemen zu vermeiden, haben
+        Wissenschaftler ein Textauszeichnungssystem für philologische
+        Belange entwickelt, das nach dem Entwicklerteam "Text Encoding
+        Initiative" (TEI) genannt wird (1).
       </fo:block>
 
-      <fo:block font-size="12pt" 
-                font-family="sans-serif" 
+      <fo:block font-size="12pt"
+                font-family="sans-serif"
                 line-height="15pt"
                 space-after.optimum="3pt"
                 language="de"
                 hyphenate="true">
-        Das Auszeichnungssystem TEI ist eine Anwendung der Metasprache 
-        zur Beschreibung programmunabhängiger Auszeichnungssysteme SGML 
-        (Standard Generalized Markup Language), so wie auch HTML, mit 
-        dem die meisten Texte des Internets zur Zeit ausgezeichnet 
-        sind, eine Anwendung von SGML ist. Daten, die entsprechend den 
-        TEI-Richtlinien ausgezeichnet worden sind, können also mit 
-        jedem Programm, das SGML-Daten verarbeiten kann, dargestellt, 
+        Das Auszeichnungssystem TEI ist eine Anwendung der Metasprache
+        zur Beschreibung programmunabhängiger Auszeichnungssysteme SGML
+        (Standard Generalized Markup Language), so wie auch HTML, mit
+        dem die meisten Texte des Internets zur Zeit ausgezeichnet
+        sind, eine Anwendung von SGML ist. Daten, die entsprechend den
+        TEI-Richtlinien ausgezeichnet worden sind, können also mit
+        jedem Programm, das SGML-Daten verarbeiten kann, dargestellt,
         umgewandelt oder durchsucht werden. (2)
       </fo:block>
 
       <!-- this defines normal text -->
-      <fo:block font-size="12pt" 
-                font-family="sans-serif" 
+      <fo:block font-size="12pt"
+                font-family="sans-serif"
                 line-height="15pt"
                 space-after.optimum="3pt"
                 language="de"
                 hyphenate="true">
-                
-        Verwendet wurde für die Auszeichnung 'teilite', das eine 
-        Teilmenge des gesamten Auszeichnungssystems TEI bietet, aber 
-        auf einige der komplexeren Merkmale verzichtet und deshalb auch 
-        eine einfache Konvertierung der Daten zu neueren Metasprachen 
-        für Auszeichnungssysteme wie XML, einer Teilmenge von SGML, 
+
+        Verwendet wurde für die Auszeichnung 'teilite', das eine
+        Teilmenge des gesamten Auszeichnungssystems TEI bietet, aber
+        auf einige der komplexeren Merkmale verzichtet und deshalb auch
+        eine einfache Konvertierung der Daten zu neueren Metasprachen
+        für Auszeichnungssysteme wie XML, einer Teilmenge von SGML,
         ermöglicht.
-        SGML-Programme mit der Leistungsfähigkeit von Folio Views sind 
-        z.Zt. noch relativ teuer, daher wurde für die vorliegende 
-        Edition der Weg gewählt, den Text doppelt auf die CD zu legen: 
-        Einmal für die sofortige Nutzung mit einer komfortablen 
-        Oberfläche und einmal ohne Software in einem Format, das seine 
-        langfristige Verwendbarkeit garantiert. 
+        SGML-Programme mit der Leistungsfähigkeit von Folio Views sind
+        z.Zt. noch relativ teuer, daher wurde für die vorliegende
+        Edition der Weg gewählt, den Text doppelt auf die CD zu legen:
+        Einmal für die sofortige Nutzung mit einer komfortablen
+        Oberfläche und einmal ohne Software in einem Format, das seine
+        langfristige Verwendbarkeit garantiert.
         Das Nachstehende soll einige Hinweise zur Einrichtung der TEI-
-        Dateien geben, um deren weitere Verwendung zu erleichtern. 
+        Dateien geben, um deren weitere Verwendung zu erleichtern.
       </fo:block>
 
 
 
       <!-- Finnish example sent in by Jarno  Elovirta -->
-      <fo:block font-size="12pt" 
-            font-family="sans-serif" 
+      <fo:block font-size="12pt"
+            font-family="sans-serif"
             line-height="12pt"
             background-color="blue"
             color="white"
@@ -243,17 +243,17 @@
           markkaa. Uuden yhdistyneen yrityksen nimenä säilyy Macromedia ja sen johdossa
           jatkaa Macromedian nykyinen toimitusjohtaja Rob Burgess. Yrityksen tuotteisiin
           lukeutuvat mm. Macromedia Dreamweaver, Macromedia Flash, Allaire ColdFusion ja
-          Allaire JRun. Lue juttu.</fo:block> 
+          Allaire JRun. Lue juttu.</fo:block>
         </fo:block>
 
       <!-- Italian example sent in by Stéphane Bline-->
-      <fo:block font-size="12pt" 
-            font-family="sans-serif" 
+      <fo:block font-size="12pt"
+            font-family="sans-serif"
             line-height="12pt"
             background-color="blue"
             color="white"
             text-align="start">
-        Italian 
+        Italian
       </fo:block>
 
         <fo:block language="it"
@@ -286,12 +286,12 @@
         contratto d'abbonamento a un'applicazione di servizio perfettamente adattata. Le
         società e B scambiano informazioni relative all'utilizzo online di questa
         applicazione, come il costo del servizio, le modalitàdi pagamento e la gestione
-        degli account utente come i profili.</fo:block> </fo:block> 
+        degli account utente come i profili.</fo:block> </fo:block>
 
 
       <!-- this defines a title -->
-      <fo:block font-size="12pt" 
-            font-family="sans-serif" 
+      <fo:block font-size="12pt"
+            font-family="sans-serif"
             line-height="12pt"
             background-color="blue"
             color="white"
@@ -307,7 +307,7 @@
         Rådets direktiv 89/677/EØF (EF-tidende L 398 s. 19).
         </fo:block>
 
-        <fo:block language="da" 
+        <fo:block language="da"
                   hyphenate="true">
         Bekendtgørelsens regler hindrer
         ikke import, salg og anvendelse af produkter, der på tidspunktet for
@@ -316,11 +316,11 @@
         bl.a. bekendtgørelse nr. 807 af 2. december 1986 om
         begrænsning af motorbenzins indhold af blyforbindelser og benzen.
         </fo:block>
-        <fo:block language="da" 
+        <fo:block language="da"
                   hyphenate="true">
         Import og salg af produkter, der
         indeholder kemiske forbindelser af bly, er forbudt fra 1. marts 2001.
-        Uanset forbudet i stk. 
+        Uanset forbudet i stk.
         1 er import og salg af produkter, der indeholder kemiske forbindelser af
         bly, fortsat tilladt for de produktkategorier, som er nævnt i bilag
         1 til denne bekendtgørelse, indtil de i bilaget anførte
@@ -329,8 +329,8 @@
 
 
       <!-- this defines a title -->
-      <fo:block font-size="12pt" 
-            font-family="Palatino" 
+      <fo:block font-size="12pt"
+            font-family="Palatino"
             line-height="12pt"
             background-color="blue"
             color="white"
@@ -339,13 +339,13 @@
       </fo:block>
 
       <!-- this defines normal text -->
-      <fo:block font-size="12pt" 
-                font-family="sans-serif" 
+      <fo:block font-size="12pt"
+                font-family="sans-serif"
                 line-height="15pt"
                 space-after.optimum="3pt"
                 language="no"
                 hyphenate="true">
-       
+
        <fo:block>
 Av forståelige grunner har året 1814 vært av de mest omdiskuterte i norsk historieforskning.
 Med denne bibliografien vil man for første gang få en samlet oversikt over den viktigste
@@ -358,16 +358,16 @@ historieinteressert publikum. I denne korte historiografien vil det bli gjort re
 hvordan dette spennende året er blitt forstått og fortolket av norske og nordiske
 historikere gjennom fem ulike tidsepoker.
        </fo:block>
-	<fo:block>
+  <fo:block>
 Litteraturen om 1814 kan klassifiseres på flere måter. Grovt sett går det et skille mellom
 tre genrer: historiske oversiktsverker, historiske spesialstudier, erindringer og dagbøker
 og kilde- og dokumentutgivelser. Av oversiktsverker peker de store Norgeshistoriene seg ut
-med sin relativt omfattende behandling av 1814: Nevnes kan 
+med sin relativt omfattende behandling av 1814: Nevnes kan
 <fo:inline font-style="italic">Norges historie fremstillet for
-det norske folk</fo:inline>, bd. VI.1 (1913), 
-<fo:inline font-style="italic">Det norske folks liv og historie</fo:inline> bd. VII (1933), 
-<fo:inline font-style="italic">Vårt folks historie</fo:inline> bd. 6 (1964), 
-<fo:inline font-style="italic">Cappelens Norges historie</fo:inline> bd. 9 (1978) og 
+det norske folk</fo:inline>, bd. VI.1 (1913),
+<fo:inline font-style="italic">Det norske folks liv og historie</fo:inline> bd. VII (1933),
+<fo:inline font-style="italic">Vårt folks historie</fo:inline> bd. 6 (1964),
+<fo:inline font-style="italic">Cappelens Norges historie</fo:inline> bd. 9 (1978) og
 <fo:inline font-style="italic">Aschehougs Norgeshistorie</fo:inline> bd. 7 (1996). Disse oversiktene er i vesentlig grad bygd på den omfattende
 spesiallitteraturen i bok- eller artikkelform som har et meget vidt spenn, fra biografier
 over lokale Eidsvollsmenn til krigshistoriske analyser av felttoget. Mye tidligere skjult
@@ -375,10 +375,10 @@ kunnskap er dessuten blitt hentet ut fra dagbøkene til sentrale aktører. Endel
 lange rekken av kildeutgivelser hatt stor betydning for forskningen omkring 1814 og bidratt
 til å endre forskningsbildet flere ganger.
        </fo:block>
-	<fo:block font-weight="bold">
-1814-1864 
+  <fo:block font-weight="bold">
+1814-1864
        </fo:block>
-	<fo:block>
+  <fo:block>
 Det norske samfunnet etter 1814 ble rekonstruert på den nye Grunnlovens grunn, og vernet om
 den stod sentralt i den politiske kampen de neste 25 årene. Til tross for dette må man kunne
 si at dokumentasjonen av hva som egentlig hadde skjedd i 1814 i mange år forble temmelig
@@ -391,7 +391,7 @@ aksept av union og svenskekonge i et høstlig og tåketungt Christiania. Det var
 Grunnloven av 4. november 1814 som gjaldt og regulerte det norske samfunnet, supplert av
 Riksakten av 1815.
        </fo:block>
-	<fo:block>
+  <fo:block>
 Riksforsamlingens forhandlinger i 1814 ble utgitt i 6 hefter allerede samme år av de valgte
 redaktører, professor Georg Sverdrup, professor Ludvig Stoud Platou og tollprokurør
 Christopher Omsen. At de ikke ble reprodusert i de følgende år, hadde sammenheng med den
@@ -401,22 +401,22 @@ Grunnloven som en indirekte underkjenning av unionsverket og kongens politiske a
 Etter påtrykk fra ham prøvde norske myndigheter å sette en stopper for offentlig feiring av
 17. mai helt frem til midten av 1830-årene.
        </fo:block>
-	<fo:block>
+  <fo:block>
 Rimeligvis ble da forholdet til Danmark snarere enn forholdet til Sverige ett av de første
 alvorlige stridsspørsmål i perioden. Presten og Eidsvollsmannen Nicolai Wergeland ble
-beryktet for den danskfiendtlige og unionsvennlige posisjon han inntok i boken 
+beryktet for den danskfiendtlige og unionsvennlige posisjon han inntok i boken
 <fo:inline font-style="italic">En sandfærdig Beretning om Danmarks politiske Forbrydelser imod Kongeriget Norge
 </fo:inline> (anonymt, 1816) som
 fulgte nasjonalhistorien helt opp til Kielfreden. Skriftet vakte debatt og kraftige
 reaksjoner ikke minst blant det gamle selvstendighetsparti. Blant annet publiserte Christian
 Magnus Falsen to motskrifter i 1817. Falsen prøvde også å popularisere Grunnlovens innhold
-for den mindre "oplyste" borgerklasse og allmue gjennom skriftet 
+for den mindre "oplyste" borgerklasse og allmue gjennom skriftet
 <fo:inline font-style="italic">Norges Grundlov gjennemgaaet i Spørgs-maal og Svar
 </fo:inline> (1818, forkortet versjon 1825). Men det må kunne påstås
 at den mer detaljerte historien om grunnlovsverkets tilblivelse og første fase lenge ble
 stående i noe av et halvmørke både for det alminnelige folk og for de nye generasjoner, og
 at dette skyldtes den politiske situasjonen. Det var Nicolai Wergeland som leverte selve
-pionerarbeidet blant de personlige kildesamlingene, 
+pionerarbeidet blant de personlige kildesamlingene,
 <fo:inline font-style="italic">Fortrolige Breve til en Ven, Skrevne fra
 Eidsvold i Aaret 1814</fo:inline> (anonymt, 1830). Men det var først da det unionspolitiske klimaet
 mildnet etter 1837 at det ble åpnet for en grundigere historisk analyse av Grunnlovens

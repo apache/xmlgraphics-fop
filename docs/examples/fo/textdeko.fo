@@ -8,11 +8,11 @@
 
     <!-- layout for the first page -->
     <fo:simple-page-master master-name="first"
-                  page-height="29.7cm" 
+                  page-height="29.7cm"
                   page-width="21cm"
-                  margin-top="1cm" 
-                  margin-bottom="2cm" 
-                  margin-left="2.5cm" 
+                  margin-top="1cm"
+                  margin-bottom="2cm"
+                  margin-left="2.5cm"
                   margin-right="2.5cm">
       <fo:region-body margin-top="3cm"/>
       <fo:region-before extent="3cm"/>
@@ -21,11 +21,11 @@
 
     <!-- layout for the other pages -->
     <fo:simple-page-master master-name="rest"
-                  page-height="29.7cm" 
+                  page-height="29.7cm"
                   page-width="21cm"
-                  margin-top="1cm" 
-                  margin-bottom="2cm" 
-                  margin-left="2.5cm" 
+                  margin-top="1cm"
+                  margin-bottom="2cm"
+                  margin-left="2.5cm"
                   margin-right="2.5cm">
       <fo:region-body margin-top="2.5cm"/>
       <fo:region-before extent="2.5cm"/>
@@ -33,14 +33,14 @@
     </fo:simple-page-master>
 
 <fo:page-sequence-master master-name="basicPSM" >
-	<fo:repeatable-page-master-alternatives>
-		<fo:conditional-page-master-reference master-reference="first"
-			page-position="first" />
-		<fo:conditional-page-master-reference master-reference="rest"
-			page-position="rest" />
-		<!-- recommended fallback procedure -->
-		<fo:conditional-page-master-reference master-reference="rest" />
-	</fo:repeatable-page-master-alternatives>
+  <fo:repeatable-page-master-alternatives>
+    <fo:conditional-page-master-reference master-reference="first"
+      page-position="first" />
+    <fo:conditional-page-master-reference master-reference="rest"
+      page-position="rest" />
+    <!-- recommended fallback procedure -->
+    <fo:conditional-page-master-reference master-reference="rest" />
+  </fo:repeatable-page-master-alternatives>
 </fo:page-sequence-master>
 
   </fo:layout-master-set>
@@ -72,22 +72,22 @@
       <fo:inline font-family="monospace"><![CDATA[<fo:inline text-decoration="underline">underline</fo:inline>]]></fo:inline>
       </fo:block>
 
-      <fo:block font-size="12pt" 
-                font-family="serif" 
+      <fo:block font-size="12pt"
+                font-family="serif"
                 line-height="15pt"
                 space-after.optimum="10pt"
                 text-align="start">
         This is simple test of the text-decoration<fo:inline text-decoration="underline">underline</fo:inline>.
       </fo:block>
-      <fo:block font-size="22pt" 
-                font-family="sans-serif" 
+      <fo:block font-size="22pt"
+                font-family="sans-serif"
                 line-height="15pt"
                 space-after.optimum="10pt"
                 text-align="start">
         This is simple test with a <fo:inline text-decoration="underline">bigger</fo:inline> font-size.
       </fo:block>
-      <fo:block font-size="12pt" 
-                font-family="monospace" 
+      <fo:block font-size="12pt"
+                font-family="monospace"
                 line-height="15pt"
                 space-after.optimum="20pt"
                 text-align="start">
@@ -224,22 +224,22 @@
       </fo:inline>
       </fo:block>
 
-      <fo:block font-size="22pt" 
-                font-family="sans-serif" 
+      <fo:block font-size="22pt"
+                font-family="sans-serif"
                 line-height="22pt"
                 space-after.optimum="10pt"
                 text-align="start">
         This is simple test with a <fo:inline text-decoration="overline">bigger font-size</fo:inline>.
       </fo:block>
-      <fo:block font-size="15pt" 
-                font-family="monospace" 
+      <fo:block font-size="15pt"
+                font-family="monospace"
                 line-height="15pt"
                 space-after.optimum="10pt"
                 text-align="start">
         This is simple test with a <fo:inline text-decoration="line-through">monospaced font</fo:inline>.
       </fo:block>
 
-      <fo:block font-size="15pt" 
+      <fo:block font-size="15pt"
                 line-height="15pt"
                 space-after.optimum="10pt"
                 text-align="start">
