@@ -52,29 +52,53 @@ package org.apache.fop.svg;
 
 // FOP
 import org.apache.fop.fo.FObj;
+
 import org.apache.fop.fo.PropertyList;
+
 import org.apache.fop.fo.Status;
+
 import org.apache.fop.layout.Area;
+
 import org.apache.fop.layout.FontState;
+
 import org.apache.fop.apps.FOPException;
+
 import org.apache.fop.layout.inline.ForeignObjectArea;
+
 import org.apache.fop.configuration.Configuration;
 
+
+
 import org.apache.batik.dom.svg.SVGContext;
+
 import org.apache.batik.dom.svg.SVGOMElement;
+
 import org.apache.batik.dom.svg.SVGOMDocument;
+
 import org.apache.batik.dom.util.XMLSupport;
+
 import org.w3c.dom.Element;
+
 import org.w3c.dom.svg.SVGDocument;
+
 import org.apache.batik.bridge.BridgeContext;
+
 import org.apache.batik.bridge.UnitProcessor;
 
+
+
 import org.w3c.dom.DOMImplementation;
+
 import org.apache.batik.dom.svg.SVGDOMImplementation;
 
+
+
 import java.net.URL;
+
 import java.awt.geom.AffineTransform;
+
 import java.awt.geom.Rectangle2D;
+
 
 /**
  * class representing svg:svg pseudo flow object.
@@ -197,6 +221,9 @@ public class SVGElement extends SVGObj {
 
             public float getFontSize(){
                 return fs.getFontSize() / 1000f;
+            }
+            
+            public void deselectAll() {
             }
         };
         ((SVGOMElement)svgRoot).setSVGContext(dc);
