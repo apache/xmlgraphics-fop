@@ -321,8 +321,7 @@ that requires further analysis.</td>
           <tr>
             <td>Get Markers Working</td>
             <td>High</td>
-            <td>Currently #### is displayed in place of fo:marker, and also when marker is retrieved, 
-with actual value offset to right</td>
+            <td>Main Problem is markers can be added to wrong page. LEWP is returning first on Next page!</td>
           </tr>
           <tr>
             <td>Absolutely positioned block containers</td>
