@@ -139,9 +139,10 @@ public class RetrieveMarker extends FObjMixed {
 
     /**
      * Clone the subtree of marker,
-     * attach the new subtree to this node,
-     * reparent the property lists of the direct children
-     * to the property list of this node.
+     * and attach the new subtree to this node.
+     * The property lists are not cloned;
+     * the existing property lists of the direct children
+     * are reparented to the property list of this node.
      * @param marker the marker that is to be cloned
      * @param descPLists the map of the new nodes to property lists
      */
@@ -185,7 +186,12 @@ public class RetrieveMarker extends FObjMixed {
 
     /**
      * Clone the subtree of marker
-     * and bind the nodes to the property values in this context
+     * and bind the nodes to the property values in this context.
+     * The property lists are not cloned,
+     * but the subtree is attached to the property list of this node.
+     * This is only needed for the binding of the FO nodes.
+     * After that a subsequent retrieve-marker
+     * may reparent the property lists.
      * @param marker the marker that is to be cloned
      */
     public void bindMarker(Marker marker) {
