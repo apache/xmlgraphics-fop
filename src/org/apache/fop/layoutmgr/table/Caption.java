@@ -37,10 +37,8 @@ public class Caption extends BlockStackingLayoutManager {
     /**
      * Create a new Caption layout manager.
      *
-     * @param fobj the formatting object that created this manager
      */
-    public Caption(FObj fobj) {
-        super(fobj);
+    public Caption() {
     }
 
     /**

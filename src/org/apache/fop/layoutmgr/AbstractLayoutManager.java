@@ -1,6 +1,6 @@
 /*
  * $Id$
- * Copyright (C) 2001 The Apache Software Foundation. All rights reserved.
+ * Copyright (C) 2001-2003 The Apache Software Foundation. All rights reserved.
  * For details on use and redistribution please refer to the
  * LICENSE file included with these sources.
  */
@@ -27,7 +27,7 @@ import java.util.ListIterator;
  */
 public abstract class AbstractLayoutManager implements LayoutManager {
     protected FOUserAgent userAgent;
-    protected LayoutManager parentLM;
+    protected LayoutManager parentLM = null;
     protected FObj fobj;
     protected String foID = null;
 
@@ -37,22 +37,22 @@ public abstract class AbstractLayoutManager implements LayoutManager {
     protected ListIterator childLMiter;
     protected boolean bInited = false;
 
-    protected LayoutPos curPos = new LayoutPos();
 
-    static class LayoutPos {
-        int lmIndex = 0;
-        int subIndex = 0;
+    /**
+     * Abstract layout manager.
+     */
+    public AbstractLayoutManager() {
     }
 
-    public AbstractLayoutManager(FObj fobj) {
-        this(fobj, new LMiter(fobj.getChildren()));
-    }
-
-    public AbstractLayoutManager(FObj fobj, ListIterator lmIter) {
-        this.fobj = fobj;
+    /**
+     * Set the FO object for this layout manager
+     *
+     * @param fo the fo for this layout manager
+     */
+    public void setFObj(FObj fo) {
+        this.fobj = fo;
         foID = fobj.getID();
-        this.parentLM = null;
-        childLMiter = lmIter;
+        childLMiter = new LMiter(fobj.getChildren());
     }
 
     /**

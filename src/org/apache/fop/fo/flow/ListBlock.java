@@ -39,7 +39,9 @@ public class ListBlock extends FObj {
     }
 
     public void addLayoutManager(List list) {
-        ListBlockLayoutManager blm = new ListBlockLayoutManager(this);
+        ListBlockLayoutManager blm = new ListBlockLayoutManager();
+        blm.setUserAgent(getUserAgent());
+        blm.setFObj(this);
         list.add(blm);
     }
 

@@ -175,8 +175,9 @@ public class Block extends FObjMixed {
     }
 
     public void addLayoutManager(List list) {
-        BlockLayoutManager blm = new BlockLayoutManager(this);
+        BlockLayoutManager blm = new BlockLayoutManager();
         blm.setUserAgent(getUserAgent());
+        blm.setFObj(this);
         TextInfo ti = propMgr.getTextLayoutProps(fontInfo);
         blm.setBlockTextInfo(ti);
         list.add(blm);

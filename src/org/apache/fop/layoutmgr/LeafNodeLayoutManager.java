@@ -32,8 +32,7 @@ public class LeafNodeLayoutManager extends AbstractLayoutManager {
      * Create a Leaf node layout mananger.
      * @param fobj the fo object that created this manager
      */
-    public LeafNodeLayoutManager(FObj fobj) {
-        super(fobj);
+    public LeafNodeLayoutManager() {
     }
 
     /**

@@ -72,7 +72,9 @@ public class ExternalGraphic extends FObj {
         InlineArea area = getInlineArea();
         if (area != null) {
             setupID();
-            LeafNodeLayoutManager lm = new LeafNodeLayoutManager(this);
+            LeafNodeLayoutManager lm = new LeafNodeLayoutManager();
+            lm.setUserAgent(getUserAgent());
+            lm.setFObj(this);
             lm.setCurrentArea(area);
             lm.setAlignment(properties.get("vertical-align").getEnum());
             lm.setLead(viewHeight);

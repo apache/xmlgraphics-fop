@@ -50,10 +50,8 @@ public class ListBlockLayoutManager extends BlockStackingLayoutManager {
     /**
      * Create a new table layout manager.
      *
-     * @param fobj the table formatting object
      */
-    public ListBlockLayoutManager(FObj fobj) {
-        super(fobj);
+    public ListBlockLayoutManager() {
     }
 
     protected void initProperties(PropertyManager propMgr) {

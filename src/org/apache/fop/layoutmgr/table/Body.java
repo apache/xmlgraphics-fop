@@ -50,8 +50,7 @@ public class Body extends BlockStackingLayoutManager {
      *
      * @param fobj the formatting object that created this manager
      */
-    public Body(FObj fobj) {
-        super(fobj);
+    public Body() {
     }
 
     /**

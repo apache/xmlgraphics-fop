@@ -79,9 +79,27 @@ public class InlineStackingLayoutManager extends AbstractLayoutManager {
      * @param fobj the formatting object that creates the area
      * @param childLMiter the iterator for child areas
      */
-    public InlineStackingLayoutManager(FObj fobj,
-                                         ListIterator childLMiter) {
-        super(fobj, childLMiter);
+    public InlineStackingLayoutManager() {
+    }
+
+    /**
+     * Set the FO object for this layout manager
+     *
+     * @param fo the fo for this layout manager
+     */
+    public void setFObj(FObj fo) {
+        this.fobj = fo;
+        foID = fobj.getID();
+        childLMiter = null;
+    }
+
+    /**
+     * Set the iterator.
+     *
+     * @param iter the iterator for this LM
+     */
+    public void setLMiter(ListIterator iter) {
+        childLMiter = iter;
     }
 
     /**

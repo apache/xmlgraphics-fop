@@ -6,6 +6,7 @@
  */
 package org.apache.fop.layoutmgr;
 
+import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.FOUserAgent;
 import org.apache.fop.area.Area;
 import org.apache.fop.area.Resolveable;
@@ -35,6 +36,14 @@ public class ContentLayoutManager implements LayoutManager {
      */
     public ContentLayoutManager(Area area) {
         holder = area;
+    }
+
+    /**
+     * Set the FO object for this layout manager
+     *
+     * @param fo the fo for this layout manager
+     */
+    public void setFObj(FObj fo) {
     }
 
     public void fillArea(LayoutManager curLM) {

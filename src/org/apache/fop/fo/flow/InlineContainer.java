@@ -13,6 +13,7 @@ import org.apache.fop.fo.flow.*;
 import org.apache.fop.fo.properties.*;
 import org.apache.fop.layout.*;
 import org.apache.fop.apps.FOPException;
+import org.apache.fop.layoutmgr.LayoutManager;
 import org.apache.fop.layoutmgr.LeafNodeLayoutManager;
 import org.apache.fop.area.inline.InlineArea;
 
@@ -32,7 +33,10 @@ public class InlineContainer extends FObj {
     public void addLayoutManager(List lms) {
         ArrayList childList = new ArrayList();
         super.addLayoutManager(childList);
-        lms.add(new ICLayoutManager(this, childList));
+        LayoutManager lm = new ICLayoutManager(childList);
+        lm.setUserAgent(getUserAgent());
+        lm.setFObj(this);
+        lms.add(lm);
     }
 
     public void handleAttrs(Attributes attlist) throws FOPException {
@@ -81,8 +85,7 @@ public class InlineContainer extends FObj {
     class ICLayoutManager extends LeafNodeLayoutManager {
         List childrenLM;
 
-        ICLayoutManager(FObj obj, List childLM) {
-            super(obj);
+        ICLayoutManager(List childLM) {
             childrenLM = childLM;
         }
 

@@ -7,6 +7,7 @@
 
 package org.apache.fop.layoutmgr.table;
 
+import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.PropertyManager;
 import org.apache.fop.layoutmgr.AbstractLayoutManager;
 import org.apache.fop.layoutmgr.BreakPoss;
@@ -34,9 +35,12 @@ public class Column extends AbstractLayoutManager {
      *
      * @param fobj the table-column formatting object
      */
-    public Column(TableColumn fobj) {
-        super(fobj);
-        columnWidth = fobj.getColumnWidth();
+    public Column() {
+    }
+
+    public void setFObj(FObj fobj) {
+        super.setFObj(fobj);
+        columnWidth = ((TableColumn)fobj).getColumnWidth();
     }
 
     protected void initProperties(PropertyManager propMgr) {

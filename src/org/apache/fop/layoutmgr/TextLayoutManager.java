@@ -92,8 +92,7 @@ public class TextLayoutManager extends AbstractLayoutManager {
      * @param chars the characters
      * @param textInfo the text information for doing layout
      */
-    public TextLayoutManager(FObj fobj, char[] chars, TextInfo textInfo) {
-        super(fobj);
+    public TextLayoutManager(char[] chars, TextInfo textInfo) {
         this.chars = chars;
         this.textInfo = textInfo;
         this.vecAreaInfo = new ArrayList();

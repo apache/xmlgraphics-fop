@@ -111,8 +111,9 @@ public class Flow extends FObj {
     }
 
     public void addLayoutManager(List list) {
-        FlowLayoutManager lm = new FlowLayoutManager(this);
+        FlowLayoutManager lm = new FlowLayoutManager();
         lm.setUserAgent(getUserAgent());
+        lm.setFObj(this);
         list.add(lm);
     }
 

@@ -52,7 +52,9 @@ public class Character extends FObj {
     public void addLayoutManager(List list) {
         InlineArea inline = getInlineArea();
         if (inline != null) {
-            LeafNodeLayoutManager lm = new LeafNodeLayoutManager(this);
+            LeafNodeLayoutManager lm = new LeafNodeLayoutManager();
+            lm.setUserAgent(getUserAgent());
+            lm.setFObj(this);
             lm.setCurrentArea(inline);
             list.add(lm);
         }

@@ -98,8 +98,7 @@ public class LineLayoutManager extends InlineStackingLayoutManager {
      * @param l the default lead, from top to baseline
      * @param f the default follow, from baseline to bottom
      */
-    public LineLayoutManager(FObj fobj, List lms, int lh, int l, int f) {
-        super(fobj, lms.listIterator());
+    public LineLayoutManager(int lh, int l, int f) {
         lineHeight = lh;
         lead = l;
         follow = f;

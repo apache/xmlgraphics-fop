@@ -85,7 +85,9 @@ public class FOText extends FObj {
             ca = new char[length];
             System.arraycopy(tmp, 0, ca, 0, length);
         }
-        list.add(new TextLayoutManager(this, ca, textInfo));
+        LayoutManager lm = new TextLayoutManager(ca, textInfo);
+        lm.setFObj(this);
+        list.add(lm);
     }
 
     public CharIterator charIterator() {

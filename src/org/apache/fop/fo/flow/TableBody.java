@@ -40,7 +40,9 @@ public class TableBody extends FObj {
     }
 
     public Body getLayoutManager() {
-        Body blm = new Body(this);
+        Body blm = new Body();
+        blm.setUserAgent(getUserAgent());
+        blm.setFObj(this);
         return blm;
     }
 

@@ -51,7 +51,7 @@ public class Leader extends FObjMixed {
     }
 
     public void addLayoutManager(List list) {
-        LeafNodeLayoutManager lm = new LeafNodeLayoutManager(this) {
+        LeafNodeLayoutManager lm = new LeafNodeLayoutManager() {
                 public InlineArea get(LayoutContext context) {
                     return getInlineArea();
                 }
@@ -66,6 +66,8 @@ public class Leader extends FObjMixed {
                     }
                 }*/
             };
+        lm.setUserAgent(getUserAgent());
+        lm.setFObj(this);
         lm.setAlignment(properties.get("leader-alignment").getEnum());
         list.add(lm);
     }
@@ -121,9 +123,10 @@ public class Leader extends FObjMixed {
                 return;
             }
             InlineStackingLayoutManager lm;
-            lm = new InlineStackingLayoutManager(this,
-                     new LMiter(children.listIterator()));
+            lm = new InlineStackingLayoutManager();
             lm.setUserAgent(getUserAgent());
+            lm.setFObj(this);
+            lm.setLMiter(new LMiter(children.listIterator()));
             lm.init();
 
             // get breaks then add areas to FilledArea

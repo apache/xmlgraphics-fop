@@ -45,7 +45,9 @@ public class BlockContainer extends FObj {
     }
 
     public void addLayoutManager(List list) {
-        BlockContainerLayoutManager blm = new BlockContainerLayoutManager(this);
+        BlockContainerLayoutManager blm = new BlockContainerLayoutManager();
+        blm.setUserAgent(getUserAgent());
+        blm.setFObj(this);
         blm.setOverflow(properties.get("overflow").getEnum());
         list.add(blm);
     }

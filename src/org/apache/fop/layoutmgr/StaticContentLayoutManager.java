@@ -26,8 +26,7 @@ public class StaticContentLayoutManager extends BlockStackingLayoutManager {
     private RegionReference region;
     private List blockBreaks = new ArrayList();
 
-    public StaticContentLayoutManager(FObj fobj) {
-        super(fobj);
+    public StaticContentLayoutManager() {
     }
 
     public void setRegionReference(RegionReference region) {

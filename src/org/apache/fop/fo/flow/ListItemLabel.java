@@ -25,7 +25,9 @@ public class ListItemLabel extends FObj {
     }
 
     public Item getItemLayoutManager() {
-        Item itemLabel = new Item(this);
+        Item itemLabel = new Item();
+        itemLabel.setUserAgent(getUserAgent());
+        itemLabel.setFObj(this);
         return itemLabel;
     }
 
