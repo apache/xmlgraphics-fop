@@ -9,11 +9,12 @@
 <!ELEMENT Document				(Title, Description, Summary?, (Chapter | ExternalChapter)*, Appendix*)>
 <!ATTLIST Document				version CDATA #FIXED "1.0">
 <!ELEMENT Summary				(Title, ExternalDiagram?, Body)>
-<!ELEMENT Appendix				(Title, ExternalDiagram?, Body, Section*)>
-<!ELEMENT Chapter				(Title, ExternalDiagram?, Body, Section*)>
-<!ELEMENT Section				(Title, ExternalDiagram?, Body, SubSection*)>
+<!ELEMENT Appendix				(Title, ExternalDiagram?, Body?, Section*)>
+<!ELEMENT Chapter				(Title, ExternalDiagram?, Body?, Section*)>
+<!ELEMENT Section				(Title, ExternalDiagram?, Body?, SubSection*)>
 <!ELEMENT SubSection			(Title, ExternalDiagram?, Body)>
 <!ELEMENT Title					(#PCDATA)>
+<!ELEMENT Description			(#PCDATA)>
 <!ELEMENT Body					(ExternalDiagram | p)*>
 <!ELEMENT p						ANY>
 <!ELEMENT ExternalDiagram		(#PCDATA)>
