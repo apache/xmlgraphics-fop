@@ -136,15 +136,15 @@ Sometimes ant gives out this warnings, but the build is finished without any pro
   </fileset>
   
   <fileset dir="${basedir}" id="dist.bin.lib">
-    <include name="lib/xercesImpl-2.0.1.jar"/>
+    <include name="lib/xerces*.jar"/>
     <include name="lib/xerces.LICENSE.txt"/>
     <include name="lib/xml-apis.jar"/>
     <include name="lib/xml-apis.README.txt"/>
-    <include name="lib/xalan-2.3.1.jar"/>
+    <include name="lib/xalan*.jar"/>
     <include name="lib/xalan.LICENSE.txt"/>
     <include name="lib/batik.jar"/>
     <include name="lib/batik.LICENSE.txt"/>
-    <include name="lib/avalon-framework-cvs-20020806.jar"/>
+    <include name="lib/avalon-framework*.jar"/>
     <include name="lib/avalon.LICENSE.txt"/>
     <include name="lib/readme"/>
   </fileset>
@@ -172,7 +172,11 @@ Sometimes ant gives out this warnings, but the build is finished without any pro
       <!--include name="stylebook*.jar"/-->
       <include name="xalan*.jar"/>
       <include name="xerces*.jar"/>
-      <include name="xml-apis*.jar"/>
+      <include name="xml-apis.jar"/>
+      <include name="avalon-framework*.jar"/>
+      <include name="batik*.jar"/>
+      <include name="jimi*.jar"/>
+      <include name="jai*.jar"/>
     </fileset>
   </path>
   
@@ -295,10 +299,10 @@ Sometimes ant gives out this warnings, but the build is finished without any pro
   </target>
 
   <target name="init-avail">
-    <available property="jimi.present" classname="com.sun.jimi.core.Jimi"/>
-    <available property="jai.present" classname="javax.media.jai.JAI"/>
+    <available property="jimi.present" classname="com.sun.jimi.core.Jimi" classpathref="libs-build-classpath"/>
+    <available property="jai.present" classname="javax.media.jai.JAI" classpathref="libs-build-classpath"/>
 
-    <available property="trax.present" classname="javax.xml.transform.Transformer"/>
+    <available property="trax.present" classname="javax.xml.transform.Transformer" classpathref="libs-build-classpath"/>
     <available property="jdk14.present" classname="java.lang.CharSequence"/>
 
   </target>
@@ -539,7 +543,9 @@ Sometimes ant gives out this warnings, but the build is finished without any pro
            debug="${debug}"
            deprecation="${deprecation}"
            optimize="${optimize}"
-           excludes="**/*${ignore_this},${jimi}"/>
+           excludes="**/*${ignore_this},${jimi}">
+      <classpath refid="libs-build-classpath"/>
+    </javac>
   </target>
 
   <!-- =================================================================== -->
@@ -553,7 +559,7 @@ Sometimes ant gives out this warnings, but the build is finished without any pro
     </path>
     <taskdef name="serHyph" classname="org.apache.fop.tools.anttasks.SerializeHyphPattern" classpathref="hyph-classpath"/> 
     <serHyph includes="*.xml" 
-             sourceDir="./hyph" 
+             sourceDir="${hyph.dir}" 
              targetDir="${build.dest}/hyph" /> 
   </target>
 
