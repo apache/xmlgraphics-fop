@@ -28,6 +28,11 @@
           <td><link href="#jimi">JIMI</link></td>
         </tr>
         <tr>
+          <td>EPS (Encapsulated PostScript)</td>
+          <td>metafile (both bitmap and vector), probably most frequently used for vector drawings</td>
+          <td>FOP native (limited support)</td>
+        </tr>
+        <tr>
           <td>GIF (Graphics Interchange Format)</td>
           <td>bitmap</td>
           <td><link href="#native">FOP native</link></td>
@@ -131,6 +136,14 @@ JAI is much faster than JIMI, but is not available for all platforms. See <link 
         <title>Batik</title>
         <p>Current FOP distributions include a distribution of the Apache Software Foundation's <jump href="http://xml.apache.org/batik">Batik</jump> version 1.5beta4. No installation is required. Because Batik's API changes frequently, it is highly recommended that you use this version with FOP.</p>
       </section>
+    </section>
+    <section id="eps">
+      <title>EPS</title>
+      <p>FOP provides support for two output targets:</p>
+      <ul>
+        <li>PostScript (full support).</li>
+        <li>PDF (partial support). FOP embeds the EPS file into the PDF, but currently does not do so completely correctly. PostScript devices (including ghostscript) will render the EPS correctly, but Acrobat Reader will not currently display it.</li>
+      </ul>
     </section>
     <section id="jpeg">
       <title>JPEG</title>
