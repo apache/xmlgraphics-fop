@@ -35,11 +35,11 @@ import org.apache.fop.apps.FOPException;
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.area.extensions.BookmarkData;
 import org.apache.fop.fo.FOInputHandler;
+import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.extensions.Outline;
 import org.apache.fop.fo.extensions.Bookmarks;
 import org.apache.fop.fo.pagination.PageSequence;
 import org.apache.fop.fonts.FontInfo;
-import org.apache.fop.layoutmgr.AddLMVisitor;
 import org.apache.fop.layoutmgr.ContentLayoutManager;
 import org.apache.fop.layoutmgr.InlineStackingLayoutManager;
 import org.apache.fop.layoutmgr.LMiter;
@@ -88,9 +88,8 @@ public class AreaTreeHandler extends FOInputHandler {
     // count of number of pages rendered
     private int pageCount;
 
-    /** Useful only for allowing subclasses of AddLMVisitor to be set by those
-     extending FOP **/
-    private AddLMVisitor addLMVisitor = null;
+    /** The List object to which FO's should add Layout Managers */
+    protected List currentLMList;
 
     // AreaTreeModel in use
     private AreaTreeModel model;
@@ -452,16 +451,25 @@ public class AreaTreeHandler extends FOInputHandler {
 
         return title;
     }
+    
+    /**
+     * Accessor for the currentLMList.
+     * @return the currentLMList.
+     * @todo see if should have initialization of LM list occur here
+     */
+    public List getCurrentLMList() {
+        return currentLMList;
+    }
 
     /**
-     * Public accessor to get the AddLMVisitor object that should be used.
-     * @return the AddLMVisitor object that should be used.
+     *
+     * @param fobj the FObj object for which a layout manager should be created
+     * @param lmList the list to which the newly created layout manager(s)
+     * should be added
      */
-    public AddLMVisitor getAddLMVisitor() {
-        if (this.addLMVisitor == null) {
-            this.addLMVisitor = new AddLMVisitor();
-        }
-        return this.addLMVisitor;
+    public void addLayoutManager(FObj fobj, List lmList) {
+        currentLMList = lmList;
+        fobj.addLayoutManager(currentLMList);
     }
-    
 }
+

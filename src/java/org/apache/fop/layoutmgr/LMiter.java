@@ -18,6 +18,7 @@
 
 package org.apache.fop.layoutmgr;
 
+import org.apache.fop.area.AreaTreeHandler;
 import org.apache.fop.fo.FObj;
 
 import java.util.ArrayList;
@@ -46,14 +47,14 @@ public class LMiter implements ListIterator {
     }
 
     protected boolean preLoadNext() {
-        AddLMVisitor addLMVisitor = lp.getAreaTreeHandler().getAddLMVisitor();
+        AreaTreeHandler areaTreeHandler = lp.getAreaTreeHandler();
         // skip over child FObj's that don't add lms
         while (baseIter != null && baseIter.hasNext()) {
             Object theobj = baseIter.next();
             if (theobj instanceof FObj) {
                 FObj fobj = (FObj) theobj;
                 //listLMs.add(fobj.getLayoutManager());
-                addLMVisitor.addLayoutManager(fobj, listLMs);
+                areaTreeHandler.addLayoutManager(fobj, listLMs);
                 if (curPos < listLMs.size()) {
                     return true;
                 }

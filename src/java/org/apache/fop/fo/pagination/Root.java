@@ -31,7 +31,6 @@ import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.extensions.ExtensionElementMapping;
 import org.apache.fop.fo.extensions.Bookmarks;
 import org.apache.fop.fo.FOInputHandler;
-import org.apache.fop.layoutmgr.AddLMVisitor;
 
 /**
  * The fo:root formatting object. Contains page masters, page-sequences.

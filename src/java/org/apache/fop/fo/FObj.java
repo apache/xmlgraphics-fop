@@ -29,7 +29,6 @@ import java.util.Set;
 import org.apache.fop.fo.flow.Marker;
 import org.apache.fop.fo.properties.Property;
 import org.apache.fop.fo.properties.PropertyMaker;
-import org.apache.fop.layoutmgr.AddLMVisitor;
 
 import org.xml.sax.Attributes;
 import org.xml.sax.Locator;
