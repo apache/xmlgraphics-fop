@@ -17,9 +17,7 @@ import org.xml.sax.SAXException;
 
 // FOP
 import org.apache.fop.layout.FontInfo;
-import org.apache.fop.area.AreaTree;
-import org.apache.fop.area.Title;
-import org.apache.fop.area.TreeExt;
+import org.apache.fop.area.*;
 import org.apache.fop.render.Renderer;
 import org.apache.fop.fo.pagination.PageSequence;
 import org.apache.fop.fo.pagination.LayoutMasterSet;
@@ -78,7 +76,7 @@ public class LayoutHandler extends StructureHandler {
      * The current AreaTree for the PageSequence being rendered.
      */
     private AreaTree areaTree;
-    private AreaTree.AreaTreeModel atModel;
+    private AreaTreeModel atModel;
 
     /**
      * @param outputStream the stream that the result is rendered to
@@ -225,7 +223,7 @@ public class LayoutHandler extends StructureHandler {
      * @param model the store pages model
      * @throws FOPException if there is an error
      */
-    private void processAreaTree(AreaTree.StorePagesModel model) throws FOPException {
+    private void processAreaTree(StorePagesModel model) throws FOPException {
         int count = 0;
         int seqc = model.getPageSequenceCount();
         while (count < seqc) {
