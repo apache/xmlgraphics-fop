@@ -1,5 +1,5 @@
 /*
- * Copyright 1999-2004 The Apache Software Foundation.
+ * Copyright 1999-2005 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -54,6 +54,21 @@ public class PDFColor extends PDFPathPaint {
         this.blue = theBlue;
     }
 
+    /**
+     * Create a PDF color from a java.awt.Color object.
+     *
+     * @param col the sRGB color
+     */
+    public PDFColor(java.awt.Color col) {
+        this.colorSpace = new PDFColorSpace(PDFColorSpace.DEVICE_RGB);
+        float[] comps = new float[3];
+        comps = col.getColorComponents(comps);
+
+        this.red = comps[0];
+        this.green = comps[1];
+        this.blue = comps[2];
+    }
+    
     /**
      * Create a PDF color with int values ranging from 0 to 255
      *

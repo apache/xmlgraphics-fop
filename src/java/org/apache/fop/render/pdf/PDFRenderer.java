@@ -651,48 +651,265 @@ public class PDFRenderer extends PrintRenderer {
             }
         }
 
+        boolean b[] = new boolean[] {
+            (bpsBefore != null), (bpsEnd != null), 
+            (bpsAfter != null), (bpsStart != null)};
+        float bw[] = new float[] {
+            (b[0] ? bpsBefore.width / 1000f : 0.0f),
+            (b[1] ? bpsEnd.width / 1000f : 0.0f),
+            (b[2] ? bpsAfter.width / 1000f : 0.0f),
+            (b[3] ? bpsStart.width / 1000f : 0.0f)};
+        boolean slant[] = new boolean[] {
+            (b[3] && b[0]), (b[0] && b[1]), (b[1] && b[2]), (b[2] && b[3])};
         if (bpsBefore != null) {
             endTextObject();
 
-            float bwidth = bpsBefore.width / 1000f;
-            updateColor(bpsBefore.color, false, null);
-            updateLineStyle(bpsBefore.style);
-            updateLineWidth(bwidth);
-            float y1 = starty + bwidth / 2;
-            drawLine(startx, y1, startx + width, y1);
-        }
-        if (bpsAfter != null) {
-            endTextObject();
+            float sx1 = startx;
+            float sx2 = (slant[0] ? sx1 + bw[3] : sx1);
+            float ex1 = startx + width;
+            float ex2 = (slant[1] ? ex1 - bw[1] : ex1);
+            float outery = starty;
+            float innery = outery + bw[0];
 
-            float bwidth = bpsAfter.width / 1000f;
-            updateColor(bpsAfter.color, false, null);
-            updateLineStyle(bpsAfter.style);
-            updateLineWidth(bwidth);
-            float y1 = starty - bwidth / 2;
-            drawLine(startx, y1 + height, startx + width, y1 + height);
-        }
-        if (bpsStart != null) {
-            endTextObject();
-
-            float bwidth = bpsStart.width / 1000f;
-            updateColor(bpsStart.color, false, null);
-            updateLineStyle(bpsStart.style);
-            updateLineWidth(bwidth);
-            float x1 = startx + bwidth / 2;
-            drawLine(x1, starty, x1, starty + height);
+            saveGraphicsState();
+            moveTo(sx1, outery);
+            lineTo(ex1, outery);
+            lineTo(ex2, innery);
+            lineTo(sx2, innery);
+            closePath();
+            clip();
+            drawBorderLine(sx1, outery, ex1, innery, true, true, bpsBefore.style, bpsBefore.color);
+            restoreGraphicsState();
         }
         if (bpsEnd != null) {
             endTextObject();
 
-            float bwidth = bpsEnd.width / 1000f;
-            updateColor(bpsEnd.color, false, null);
-            updateLineStyle(bpsEnd.style);
-            updateLineWidth(bwidth);
-            float x1 = startx - bwidth / 2;
-            drawLine(x1 + width, starty, x1 + width, starty + height);
+            float sy1 = starty;
+            float sy2 = (slant[1] ? sy1 + bw[0] : sy1);
+            float ey1 = starty + height;
+            float ey2 = (slant[2] ? ey1 - bw[2] : ey1);
+            float outerx = startx + width;
+            float innerx = outerx - bw[1];
+            
+            saveGraphicsState();
+            moveTo(outerx, sy1);
+            lineTo(outerx, ey1);
+            lineTo(innerx, ey2);
+            lineTo(innerx, sy2);
+            closePath();
+            clip();
+            drawBorderLine(innerx, sy1, outerx, ey1, false, false, bpsEnd.style, bpsEnd.color);
+            restoreGraphicsState();
+        }
+        if (bpsAfter != null) {
+            endTextObject();
+
+            float sx1 = startx;
+            float sx2 = (slant[3] ? sx1 + bw[3] : sx1);
+            float ex1 = startx + width;
+            float ex2 = (slant[2] ? ex1 - bw[1] : ex1);
+            float outery = starty + height;
+            float innery = outery - bw[2];
+
+            saveGraphicsState();
+            moveTo(ex1, outery);
+            lineTo(sx1, outery);
+            lineTo(sx2, innery);
+            lineTo(ex2, innery);
+            closePath();
+            clip();
+            drawBorderLine(sx1, innery, ex1, outery, true, false, bpsAfter.style, bpsAfter.color);
+            restoreGraphicsState();
+        }
+        if (bpsStart != null) {
+            endTextObject();
+
+            float sy1 = starty;
+            float sy2 = (slant[0] ? sy1 + bw[0] : sy1);
+            float ey1 = sy1 + height;
+            float ey2 = (slant[3] ? ey1 - bw[2] : ey1);
+            float outerx = startx;
+            float innerx = outerx + bw[3];
+
+            saveGraphicsState();
+            moveTo(outerx, ey1);
+            lineTo(outerx, sy1);
+            lineTo(innerx, sy2);
+            lineTo(innerx, ey2);
+            closePath();
+            clip();
+            drawBorderLine(outerx, sy1, innerx, ey1, false, true, bpsStart.style, bpsStart.color);
+            restoreGraphicsState();
         }
     }
+    
+    private Color lightenColor(Color col, float factor) {
+        float[] cols = new float[3];
+        cols = col.getColorComponents(cols);
+        if (factor > 0) {
+            cols[0] += (1.0 - cols[0]) * factor;
+            cols[1] += (1.0 - cols[1]) * factor;
+            cols[2] += (1.0 - cols[2]) * factor;
+        } else {
+            cols[0] -= cols[0] * -factor;
+            cols[1] -= cols[1] * -factor;
+            cols[2] -= cols[2] * -factor;
+        }
+        return new Color(cols[0], cols[1], cols[2]);
+    }
 
+    private void drawBorderLine(float x1, float y1, float x2, float y2, 
+            boolean horz, boolean startOrBefore, int style, ColorType col) {
+        float w = x2 - x1;
+        float h = y2 - y1;
+        if ((w < 0) || (h < 0)) {
+            getLogger().error("Negative extent received. Border won't be painted.");
+            return;
+        }
+        switch (style) {
+            case Constants.EN_DASHED: 
+                setColor(toColor(col), false, null);
+                if (horz) {
+                    float unit = Math.abs(2 * h);
+                    int rep = (int)(w / unit);
+                    if (rep % 2 == 0) {
+                        rep++;
+                    }
+                    unit = w / rep;
+                    currentStream.add("[" + unit + "] 0 d ");
+                    currentStream.add(h + " w\n");
+                    float ym = y1 + (h / 2);
+                    currentStream.add(x1 + " " + ym + " m " + x2 + " " + ym + " l S\n");
+                } else {
+                    float unit = Math.abs(2 * w);
+                    int rep = (int)(h / unit);
+                    if (rep % 2 == 0) {
+                        rep++;
+                    }
+                    unit = h / rep;
+                    currentStream.add("[" + unit + "] 0 d ");
+                    currentStream.add(w + " w\n");
+                    float xm = x1 + (w / 2);
+                    currentStream.add(xm + " " + y1 + " m " + xm + " " + y2 + " l S\n");
+                }
+                break;
+            case Constants.EN_DOTTED:
+                setColor(toColor(col), false, null);
+                currentStream.add("1 J ");
+                if (horz) {
+                    float unit = Math.abs(2 * h);
+                    int rep = (int)(w / unit);
+                    if (rep % 2 == 0) {
+                        rep++;
+                    }
+                    unit = w / rep;
+                    currentStream.add("[0 " + unit + "] 0 d ");
+                    currentStream.add(h + " w\n");
+                    float ym = y1 + (h / 2);
+                    currentStream.add(x1 + " " + ym + " m " + x2 + " " + ym + " l S\n");
+                } else {
+                    float unit = Math.abs(2 * w);
+                    int rep = (int)(h / unit);
+                    if (rep % 2 == 0) {
+                        rep++;
+                    }
+                    unit = h / rep;
+                    currentStream.add("[0 " + unit + " ] 0 d ");
+                    currentStream.add(w + " w\n");
+                    float xm = x1 + (w / 2);
+                    currentStream.add(xm + " " + y1 + " m " + xm + " " + y2 + " l S\n");
+                }
+                break;
+            case Constants.EN_DOUBLE:
+                setColor(toColor(col), false, null);
+                currentStream.add("[] 0 d ");
+                if (horz) {
+                    float h3 = h / 3;
+                    currentStream.add(h3 + " w\n");
+                    float ym1 = y1 + (h3 / 2);
+                    float ym2 = ym1 + h3 + h3;
+                    currentStream.add(x1 + " " + ym1 + " m " + x2 + " " + ym1 + " l S\n");
+                    currentStream.add(x1 + " " + ym2 + " m " + x2 + " " + ym2 + " l S\n");
+                } else {
+                    float w3 = w / 3;
+                    currentStream.add(w3 + " w\n");
+                    float xm1 = x1 + (w3 / 2);
+                    float xm2 = xm1 + w3 + w3;
+                    currentStream.add(xm1 + " " + y1 + " m " + xm1 + " " + y2 + " l S\n");
+                    currentStream.add(xm2 + " " + y1 + " m " + xm2 + " " + y2 + " l S\n");
+                }
+                break;
+            case Constants.EN_GROOVE:
+            case Constants.EN_RIDGE:
+            {
+                float colFactor = (style == EN_GROOVE ? 0.4f : -0.4f);
+                currentStream.add("[] 0 d ");
+                Color c = toColor(col);
+                if (horz) {
+                    Color uppercol = lightenColor(c, -colFactor);
+                    Color lowercol = lightenColor(c, colFactor);
+                    float h3 = h / 3;
+                    currentStream.add(h3 + " w\n");
+                    float ym1 = y1 + (h3 / 2);
+                    setColor(uppercol, false, null);
+                    currentStream.add(x1 + " " + ym1 + " m " + x2 + " " + ym1 + " l S\n");
+                    setColor(c, false, null);
+                    currentStream.add(x1 + " " + (ym1 + h3) + " m " + x2 + " " + (ym1 + h3) + " l S\n");
+                    setColor(lowercol, false, null);
+                    currentStream.add(x1 + " " + (ym1 + h3 + h3) + " m " + x2 + " " + (ym1 + h3 + h3) + " l S\n");
+                } else {
+                    Color leftcol = lightenColor(c, -colFactor);
+                    Color rightcol = lightenColor(c, colFactor);
+                    float w3 = w / 3;
+                    currentStream.add(w3 + " w\n");
+                    float xm1 = x1 + (w3 / 2);
+                    setColor(leftcol, false, null);
+                    currentStream.add(xm1 + " " + y1 + " m " + xm1 + " " + y2 + " l S\n");
+                    setColor(c, false, null);
+                    currentStream.add((xm1 + w3) + " " + y1 + " m " + (xm1 + w3) + " " + y2 + " l S\n");
+                    setColor(rightcol, false, null);
+                    currentStream.add((xm1 + w3 + w3) + " " + y1 + " m " + (xm1 + w3 + w3) + " " + y2 + " l S\n");
+                }
+                break;
+            }
+            case Constants.EN_INSET:
+            case Constants.EN_OUTSET:
+            {
+                float colFactor = (style == EN_OUTSET ? 0.4f : -0.4f);
+                currentStream.add("[] 0 d ");
+                Color c = toColor(col);
+                if (horz) {
+                    c = lightenColor(c, (startOrBefore ? 1 : -1) * colFactor);
+                    currentStream.add(h + " w\n");
+                    float ym1 = y1 + (h / 2);
+                    setColor(c, false, null);
+                    currentStream.add(x1 + " " + ym1 + " m " + x2 + " " + ym1 + " l S\n");
+                } else {
+                    c = lightenColor(c, (startOrBefore ? 1 : -1) * colFactor);
+                    currentStream.add(w + " w\n");
+                    float xm1 = x1 + (w / 2);
+                    setColor(c, false, null);
+                    currentStream.add(xm1 + " " + y1 + " m " + xm1 + " " + y2 + " l S\n");
+                }
+                break;
+            }
+            case Constants.EN_HIDDEN:
+                break;
+            default:
+                setColor(toColor(col), false, null);
+                currentStream.add("[] 0 d ");
+                if (horz) {
+                    currentStream.add(h + " w\n");
+                    float ym = y1 + (h / 2);
+                    currentStream.add(x1 + " " + ym + " m " + x2 + " " + ym + " l S\n");
+                } else {
+                    currentStream.add(w + " w\n");
+                    float xm = x1 + (w / 2);
+                    currentStream.add(xm + " " + y1 + " m " + xm + " " + y2 + " l S\n");
+                }
+        }
+    }
+    
     /**
      * Sets the current line width in points.
      * @param width line width in points
@@ -719,6 +936,33 @@ public class PDFRenderer extends PrintRenderer {
         }
     }
 
+    /**
+     * Moves the current point to (x, y), omitting any connecting line segment. 
+     * @param x x coordinate
+     * @param y y coordinate
+     */
+    private void moveTo(float x, float y) {
+        currentStream.add(x + " " + y + " m ");
+    }
+    
+    /**
+     * Appends a straight line segment from the current point to (x, y). The 
+     * new current point is (x, y). 
+     * @param x x coordinate
+     * @param y y coordinate
+     */
+    private void lineTo(float x, float y) {
+        currentStream.add(x + " " + y + " l ");
+    }
+    
+    /**
+     * Closes the current subpath by appending a straight line segment from 
+     * the current point to the starting point of the subpath.
+     */
+    private void closePath() {
+        currentStream.add("h ");
+    }
+    
     /**
      * Draw a line.
      *
@@ -915,7 +1159,15 @@ public class PDFRenderer extends PrintRenderer {
      * @param height the height of the area
      */
     protected void clip(float x, float y, float width, float height) {
-        currentStream.add(x + " " + y + " " + width + " " + height + " re W\n");
+        currentStream.add(x + " " + y + " " + width + " " + height + " re ");
+        clip();
+    }
+
+    /**
+     * Clip an area.
+     */
+    protected void clip() {
+        currentStream.add("W\n");
         currentStream.add("n\n");
     }
 
@@ -1234,6 +1486,35 @@ public class PDFRenderer extends PrintRenderer {
     }
 
     /**
+     * Establishes a new foreground or fill color. In contrast to updateColor
+     * this method does not check the PDFState for optimization possibilities.
+     * @param col the color to apply 
+     * @param fill true to set the fill color, false for the foreground color
+     * @param pdf StringBuffer to write the PDF code to, if null, the code is
+     *     written to the current stream.
+     */
+    private void setColor(Color col, boolean fill, StringBuffer pdf) {
+        PDFColor color = new PDFColor(col);
+
+        closeText();
+        
+        if (pdf != null) {
+            pdf.append(color.getColorSpaceOut(fill));
+        } else {
+            currentStream.add(color.getColorSpaceOut(fill));
+        }
+    }
+    
+    /**
+     * Converts a ColorType to a java.awt.Color (sRGB).
+     * @param col the color
+     * @return the converted color
+     */
+    private Color toColor(ColorType col) {
+        return new Color(col.getRed(), col.getGreen(), col.getBlue());
+    }
+    
+    /**
      * Establishes a new foreground or fill color.
      * @param col the color to apply (null skips this operation)
      * @param fill true to set the fill color, false for the foreground color
@@ -1244,7 +1525,7 @@ public class PDFRenderer extends PrintRenderer {
         if (col == null) {
             return;
         }
-        Color newCol = new Color(col.getRed(), col.getGreen(), col.getBlue());
+        Color newCol = toColor(col);
         boolean update = false;
         if (fill) {
             update = currentState.setBackColor(newCol);
@@ -1253,17 +1534,7 @@ public class PDFRenderer extends PrintRenderer {
         }
 
         if (update) {
-            PDFColor color = new PDFColor((double)col.getRed(),
-                                     (double)col.getGreen(),
-                                     (double)col.getBlue());
-
-            closeText();
-
-            if (pdf != null) {
-                pdf.append(color.getColorSpaceOut(fill));
-            } else {
-                currentStream.add(color.getColorSpaceOut(fill));
-            }
+            setColor(newCol, fill, pdf);
         }
     }
 
