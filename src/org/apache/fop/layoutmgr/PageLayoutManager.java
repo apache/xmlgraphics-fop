@@ -8,13 +8,26 @@
 package org.apache.fop.layoutmgr;
 
 import org.apache.fop.apps.FOPException;
-import org.apache.fop.area.*;
+import org.apache.fop.area.AreaTree;
+import org.apache.fop.area.Area;
+import org.apache.fop.area.PageViewport;
+import org.apache.fop.area.Flow;
+import org.apache.fop.area.RegionViewport;
+import org.apache.fop.area.RegionReference;
+import org.apache.fop.area.BodyRegion;
+import org.apache.fop.area.MainReference;
+import org.apache.fop.area.Span;
+import org.apache.fop.area.BeforeFloat;
+import org.apache.fop.area.Footnote;
+import org.apache.fop.area.Resolveable;
 import org.apache.fop.fo.flow.StaticContent;
 import org.apache.fop.fo.pagination.PageSequence;
 import org.apache.fop.fo.pagination.Region;
 import org.apache.fop.fo.pagination.SimplePageMaster;
 import org.apache.fop.fo.pagination.PageNumberGenerator;
 import org.apache.fop.fo.properties.Constants;
+
+import org.apache.fop.area.MinOptMax;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,9 +39,9 @@ import java.util.List;
 public class PageLayoutManager extends AbstractLayoutManager implements Runnable {
 
     private static class BlockBreakPosition extends LeafPosition {
-        BreakPoss breakps;
+        protected BreakPoss breakps;
 
-        BlockBreakPosition(LayoutManager lm, BreakPoss bp) {
+        protected BlockBreakPosition(LayoutManager lm, BreakPoss bp) {
             super(lm, 0);
             breakps = bp;
         }
@@ -37,6 +50,7 @@ public class PageLayoutManager extends AbstractLayoutManager implements Runnable
     private PageNumberGenerator pageNumberGenerator;
     private int pageCount = 1;
     private String pageNumberString;
+    private boolean isFirstPage = true;
 
     /** True if haven't yet laid out any pages.*/
     private boolean bFirstPage;
@@ -68,6 +82,9 @@ public class PageLayoutManager extends AbstractLayoutManager implements Runnable
     /**
      * This is the top level layout manager.
      * It is created by the PageSequence FO.
+     *
+     * @param areaTree the area tree to add pages to
+     * @param pageseq the page sequence fo
      */
     public PageLayoutManager(AreaTree areaTree, PageSequence pageseq) {
         super(pageseq);
@@ -75,12 +92,26 @@ public class PageLayoutManager extends AbstractLayoutManager implements Runnable
         pageSequence = pageseq;
     }
 
+    /**
+     * Set the page counting for this page sequence.
+     * This sets the initial page number and the page number formatter.
+     *
+     * @param pc the starting page number
+     * @param generator the page number generator
+     */
     public void setPageCounting(int pc, PageNumberGenerator generator) {
         pageCount = pc;
         pageNumberGenerator = generator;
         pageNumberString = pageNumberGenerator.makeFormattedPageNumber(pageCount);
     }
 
+    /**
+     * Get the page count.
+     * Used to get the last page number for reference for
+     * the next page sequence.
+     *
+     * @return the page number
+     */
     public int getPageCount() {
         return pageCount;
     }
@@ -99,7 +130,12 @@ public class PageLayoutManager extends AbstractLayoutManager implements Runnable
         flush();
     }
 
-    public void doLayout() {
+    /**
+     * Do the layout of this page sequence.
+     * This completes the layout of the page sequence
+     * which creates and adds all the pages to the area tree.
+     */
+    protected void doLayout() {
 
         // this should be done another way
         makeNewPage(false, false);
@@ -123,7 +159,14 @@ public class PageLayoutManager extends AbstractLayoutManager implements Runnable
         pageCount--;
     }
 
-
+    /**
+     * Get the next break possibility.
+     * This finds the next break for a page which is always at the end
+     * of the page.
+     *
+     * @param context the layout context for finding breaks
+     * @return the break for the page
+     */
     public BreakPoss getNextBreakPoss(LayoutContext context) {
 
         LayoutManager curLM ; // currently active LM
@@ -147,10 +190,24 @@ public class PageLayoutManager extends AbstractLayoutManager implements Runnable
         return null;
     }
 
+    /**
+     * Get the current page number string.
+     * This returns the formatted string for the current page.
+     *
+     * @return the formatted page number string
+     */
     public String getCurrentPageNumber() {
         return pageNumberString;
     }
 
+    /**
+     * Resolve a reference ID.
+     * This resolves a reference ID and returns the first PageViewport
+     * that contains the reference ID or null if reference not found.
+     *
+     * @param ref the reference ID to lookup
+     * @return the first page viewport that contains the reference
+     */
     public PageViewport resolveRefID(String ref) {
         List list = areaTree.getIDReferences(ref);
         if (list != null && list.size() > 0) {
@@ -159,17 +216,43 @@ public class PageLayoutManager extends AbstractLayoutManager implements Runnable
         return null;
     }
 
+    /**
+     * Add the areas to the current page.
+     * Given the page break position this adds the areas to the current
+     * page.
+     *
+     * @param bbp the block break position
+     */
     public void addAreas(BlockBreakPosition bbp) {
         List list = new ArrayList();
         list.add(bbp.breakps);
-        bbp.getLM().addAreas( new BreakPossPosIter(list, 0,
+        bbp.getLM().addAreas(new BreakPossPosIter(list, 0,
                               1), null);
     }
 
+    /**
+     * Add an ID reference to the current page.
+     * When adding areas the area adds its ID reference.
+     * For the page layout manager it adds the id reference
+     * with the current page to the area tree.
+     *
+     * @param id the ID reference to add
+     */
     public void addIDToPage(String id) {
         areaTree.addIDRef(id, curPage);
     }
 
+    /**
+     * Add an unresolved area to the layout manager.
+     * The Page layout manager handles the unresolved ID
+     * reference by adding to the current page and then adding
+     * the page as a resolveable to the area tree.
+     * This is so that the area tree can resolve the reference
+     * and the page can serialize the resolvers if required.
+     *
+     * @param id the ID reference to add
+     * @param res the resolveable object that needs resolving
+     */
     public void addUnresolvedArea(String id, Resolveable res) {
         // add unresolved to tree
         // adds to the page viewport so it can serialize
@@ -177,14 +260,29 @@ public class PageLayoutManager extends AbstractLayoutManager implements Runnable
         areaTree.addUnresolvedID(id, curPage);
     }
 
+    /**
+     * Add the marker to the page layout manager.
+     *
+     * @param name the marker class name
+     * @param lm the layout manager for the marker contents
+     * @param start true if starting marker area, false for ending
+     */
     public void addMarker(String name, LayoutManager lm, boolean start) {
-        if(start) {
+        if (start) {
             // add marker to page on area tree
         } else {
             // add end marker to page on area tree
         }
     }
 
+    /**
+     * Retrieve a marker from this layout manager.
+     *
+     * @param name the marker class name to lookup
+     * @param pos the position to locate the marker
+     * @param boundary the boundary for locating the marker
+     * @return the layout manager for the marker contents
+     */
     public LayoutManager retrieveMarker(String name, int pos, int boundary) {
         // get marker from the current markers on area tree
         return null;
@@ -192,15 +290,17 @@ public class PageLayoutManager extends AbstractLayoutManager implements Runnable
 
     /**
      * For now, only handle normal flow areas.
+     *
+     * @param childArea the child area to add
      */
     public boolean addChild(Area childArea) {
         if (childArea == null) {
             return false;
         }
         if (childArea.getAreaClass() == Area.CLASS_NORMAL) {
-            return placeFlowRefArea(childArea);
+            placeFlowRefArea(childArea);
         } else {
-            ; // TODO: all the others!
+            ; // todo: all the others!
         }
         return false;
     }
@@ -211,8 +311,10 @@ public class PageLayoutManager extends AbstractLayoutManager implements Runnable
      * current span area. In fact the area has already been added to the
      * current span, so we are just checking to see if the span is "full",
      * possibly moving to the next column or to the next page.
+     *
+     * @param area the area to place
      */
-    protected boolean placeFlowRefArea(Area area) {
+    protected void placeFlowRefArea(Area area) {
         // assert (curSpan != null);
         // assert (area == curFlow);
         // assert (curFlow == curSpan.getFlow(curSpan.getColumnCount()-1));
@@ -233,13 +335,10 @@ public class PageLayoutManager extends AbstractLayoutManager implements Runnable
             // Consider it filled
             if (curSpan.getColumnCount() == curSpanColumns) {
                 finishPage();
-                return true;
             } else
                 curFlow = null; // Create new flow on next getParentArea()
         }*/
-        return false;
     }
-
 
     protected void placeAbsoluteArea(Area area) {
     }
@@ -264,7 +363,8 @@ public class PageLayoutManager extends AbstractLayoutManager implements Runnable
     private PageViewport makeNewPage(boolean bIsBlank, boolean bIsLast) {
         finishPage();
         try {
-            curPage = pageSequence.createPage(pageCount, bIsBlank, bIsLast);
+            curPage = pageSequence.createPage(pageCount, bIsBlank, isFirstPage, bIsLast);
+            isFirstPage = false;
         } catch (FOPException fopex) { /* ???? */
             fopex.printStackTrace();
         }
@@ -278,14 +378,14 @@ public class PageLayoutManager extends AbstractLayoutManager implements Runnable
     }
 
     private void layoutStaticContent(Region region, int regionClass) {
-        if (region != null ) {
+        if (region != null) {
             StaticContent flow = pageSequence
               .getStaticContent(region.getRegionName());
             if (flow != null) {
                 RegionViewport reg = curPage.getPage()
                   .getRegion(regionClass);
                 reg.getRegion().setIPD((int)reg.getViewArea().getWidth());
-                if (reg == null ) {
+                if (reg == null) {
                     System.out.println("no region viewport: shouldn't happen");
                 }
                 StaticContentLayoutManager lm = flow.getLayoutManager();
@@ -301,10 +401,10 @@ public class PageLayoutManager extends AbstractLayoutManager implements Runnable
                     if (bp != null) {
                         ArrayList vecBreakPoss = new ArrayList();
                         vecBreakPoss.add(bp);
-                        lm.addAreas( new BreakPossPosIter(vecBreakPoss, 0,
+                        lm.addAreas(new BreakPossPosIter(vecBreakPoss, 0,
                                                           vecBreakPoss.size()), null);
                     } else {
-                      System.out.println("bp==null  cls="+regionClass);
+                      System.out.println("bp==null  cls=" + regionClass);
                     }
                 }
                 //lm.flush();
@@ -334,14 +434,16 @@ public class PageLayoutManager extends AbstractLayoutManager implements Runnable
     /**
      * This is called from FlowLayoutManager when it needs to start
      * a new flow container (while generating areas).
-     * @param area The area for which a container is needed. It must be
+     *
+     * @param childArea The area for which a container is needed. It must be
      * some kind of block-level area. It must have area-class, break-before
      * and span properties set.
+     * @return the parent area
      */
     public Area getParentArea(Area childArea) {
         int aclass = childArea.getAreaClass();
         if (aclass == Area.CLASS_NORMAL) {
-            // TODO: how to get properties from the Area???
+            // todo: how to get properties from the Area???
             // Need span, break
             int breakVal = Constants.AUTO; // childArea.getBreakBefore();
             if (breakVal != Constants.AUTO) {
@@ -362,7 +464,7 @@ public class PageLayoutManager extends AbstractLayoutManager implements Runnable
                 createBodyMainReferenceArea();
                 bNeedSpan = true;
             } else if (numCols != curSpanColumns) {
-                // TODO: BALANCE EXISTING COLUMNS
+                // todo: BALANCE EXISTING COLUMNS
                 if (curSpanColumns > 1) {
                     // balanceColumns();
                 }
@@ -395,16 +497,17 @@ public class PageLayoutManager extends AbstractLayoutManager implements Runnable
                 }
                 return fn;
             }
-            // TODO!!! other area classes (side-float, absolute, fixed)
+            // todo!!! other area classes (side-float, absolute, fixed)
             return null;
         }
     }
-
 
     /**
      * Depending on the kind of break condition, make new column
      * or page. May need to make an empty page if next page would
      * not have the desired "handedness".
+     *
+     * @param breakVal the break value to handle
      */
     protected void handleBreak(int breakVal) {
         if (breakVal == Constants.COLUMN) {
@@ -424,7 +527,6 @@ public class PageLayoutManager extends AbstractLayoutManager implements Runnable
             curPage = makeNewPage(false, false);
         }
     }
-
 
     /**
      * If we have already started to layout content on a page,
@@ -454,7 +556,7 @@ public class PageLayoutManager extends AbstractLayoutManager implements Runnable
 
     /**
      * See if need to generate a new page for a forced break condition.
-     * TODO: methods to see if the current page is empty and to get
+     * todo: methods to see if the current page is empty and to get
      * its number.
      */
     private boolean needNewPage(int breakValue) {
@@ -475,7 +577,6 @@ public class PageLayoutManager extends AbstractLayoutManager implements Runnable
         //    return true;
         //}
     }
-
 
     private void createBodyMainReferenceArea() {
         curBody.setMainReference(new MainReference());
@@ -519,3 +620,4 @@ public class PageLayoutManager extends AbstractLayoutManager implements Runnable
     }
 
 }
+
