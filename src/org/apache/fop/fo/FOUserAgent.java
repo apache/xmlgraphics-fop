@@ -92,7 +92,7 @@ public class FOUserAgent implements LogEnabled {
      * @throws IOException in case of an I/O problem
      */
     public InputStream getStream(String uri) throws IOException {
-        throw new UnsupportedOperationException("NYI");
+        return null;
     }
 
     /**
