@@ -4,7 +4,7 @@
 
 <document>
     <header>
-        <title>Layout Managers</title>
+        <title>FOP Design: Layout Managers</title>
         <subtitle>Break Possibility Proposal</subtitle>
         <authors>
             <person name="Karen Lease" email="klease@club-internet.fr"/>
@@ -12,7 +12,7 @@
     </header>
 
     <body>
-<section>
+<section id="intro">
   <title>Introduction</title>
 <p>
 As explained in <link href="layout.html">Layout</link>,

@@ -4,16 +4,17 @@
 
 <document>
     <header>
-        <title>PDF Library</title>
+        <title>FOP Design: PDF Library</title>
     </header>
 
     <body>
-<section>
-  <title>PDF Library</title>
+<section id="intro">
+  <title>Introduction</title>
 
 <p>The PDF Library is an independant package of classes in FOP. These class
 provide a simple way to construct documents and add the contents. The
 classes are found in <code>org.apache.fop.pdf.*</code>.</p>
+</section>
 
 <section>
   <title>PDF Document</title>
@@ -68,8 +69,6 @@ The method is: byte[] toPDF().</p>
 
 <p>The are a number of other features for handling pdf markup relevent to creating PDF files for FOP.</p>
 </section>
-
-  </section>
 
     </body>
 </document>

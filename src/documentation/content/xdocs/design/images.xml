@@ -4,12 +4,12 @@
 
 <document>
     <header>
-        <title>Images</title>
+        <title>FOP Design: Images</title>
     </header>
     <body>
 
-  <section>
-    <title>Images in FOP</title>
+  <section id="intro">
+    <title>Introduction</title>
 
     <p>Images may only be needed to be loaded when the image is rendered to the
 output or to find the dimensions.<br/>
@@ -22,6 +22,7 @@ not include any sort of resolving such as relative -> absolute. The
 external graphic in the FO Tree and the image area in the Area Tree only
 have the url as a reference.
 The images are handled through a static interface in ImageFactory.</p>
+</section>
 
 <section>
   <title>Threading</title>
@@ -127,7 +128,6 @@ then load the required data depending on the image mime type. If the
 renderer can insert the image into the document and use that data for all
 future references of the same image then it can cache the reference in the
 renderer and the image can be released from the image cache.</p>
-</section>
 </section>
 
     </body>

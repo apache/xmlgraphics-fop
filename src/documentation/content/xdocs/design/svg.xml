@@ -4,11 +4,11 @@
 
 <document>
     <header>
-        <title>SVG</title>
+        <title>FOP Design: SVG</title>
     </header>
     <body>
-<section>
-  <title>SVG</title>
+<section id="intro">
+  <title>Introduction</title>
     <p>SVG is rendered through Batik.</p><p>The XML from the XSL:FO document
       is converted into an SVG DOM with batik. This DOM is then set as the Document
       on the Foreign Object area in the Area Tree.</p><p>This DOM is then available to
@@ -19,6 +19,7 @@
       create the SVG image in the PDF document.</p><p>Most of the work is done in the
       PDFGraphics2D class. There are also a few bridges that are plugged into batik
       to provide different behaviour for some SVG elements.</p>
+</section>
 <section>
   <title>Text Drawing</title>
 <p>Normally batik converts text into a set of curved
@@ -65,8 +66,6 @@
        awt canvas using batik.</p><p>The PS Renderer uses a similar technique as the
        PDF Renderer.</p><p>The SVG Renderer simply embeds the SVG inside an svg
        element.</p>
-</section>
-
 </section>
 
     </body>
