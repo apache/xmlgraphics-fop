@@ -27,11 +27,11 @@ Users can help or get issues resolved by contributing information and examples t
       </p>
       <section>
         <title>Get familiar with the Fop related standards</title>
-        <p>At the moment Fop is mainly a tool to render XSL:FO files to pdf. Therefore if you want to contribute to Fop you should become familiar with these standards. You can find links under <link href="resources.html">Resources</link>.</p>
+        <p>At the moment Fop is mainly a tool to render XSL-FO files to pdf. Therefore if you want to contribute to Fop you should become familiar with these standards. You can find links at <link href="../resources.html#specs">Specifications</link>.</p>
       </section>
       <section>
         <title>Fop's Design</title>
-        <p>The design for FOP is specified under the <link href="design/index.html">Design</link> section. This is where the information on how FOP is developed and designed
+        <p>The design for FOP is specified under the <link href="../design/index.html">Design</link> section. This is where the information on how FOP is developed and designed
 internally will be kept.
     </p>
       </section>
