@@ -57,6 +57,7 @@ Software Foundation, please see <http://www.apache.org/>.
 <xsl:include href="./propinc.xsl"/>
 
 <xsl:output method="text" />
+<xsl:param name="reldir" select="'.'"/>
 
 <xsl:template match="extfile">
 <!--<xsl:message>Do <xsl:value-of select="@href"/></xsl:message>-->
@@ -254,7 +255,7 @@ Software Foundation, please see <http://www.apache.org/>.
   <xsl:text> implements </xsl:text><xsl:value-of select="$eclassname"/></xsl:if>
 </xsl:variable>
 
-<redirect:write select="concat('./', $classname, '.java')">
+<redirect:write select="concat('./', $reldir, '/', $classname, '.java')">
 package org.apache.fop.fo.properties;
 
 import java.util.Hashtable;

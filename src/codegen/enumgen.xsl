@@ -57,6 +57,7 @@ Software Foundation, please see <http://www.apache.org/>.
 <xsl:include href="./propinc.xsl"/>
 
 <xsl:output method="text" />
+<xsl:param name="reldir" select="'.'"/>
 
 <!-- zap text content -->
 <xsl:template match="text()"/>
@@ -82,7 +83,7 @@ Software Foundation, please see <http://www.apache.org/>.
    </xsl:variable>
 
    <xsl:if test="$bEnum='true' or contains($bSubpropEnum, 'true')">
-      <redirect:write select="concat('./', $classname, '.java')">
+      <redirect:write select="concat('./', $reldir, '/', $classname, '.java')">
 package org.apache.fop.fo.properties;
 
 <!-- Handle enumeration values -->
