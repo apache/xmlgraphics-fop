@@ -137,6 +137,9 @@ public class SVGElement extends SVGObj {
             public float getFontSize() {
                 return 12;
             }
+
+            public void deselectAll() {
+            }
         };
         ((SVGOMElement)e).setSVGContext(dc);
 
@@ -190,7 +193,7 @@ public class SVGElement extends SVGObj {
 
     /**
      * This class is the default context for a particular
-     * element. Informations not available on the element are get from
+     * element. Information not available on the element are obtained from
      * the bridge context (such as the viewport or the pixel to
      * millimeter factor.
      */
