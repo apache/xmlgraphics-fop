@@ -63,7 +63,7 @@ public class BasicLink extends Inline {
         } else {
             PageViewport page = parentLM.resolveRefID(link);
             if (page != null) {
-                area.addTrait(Trait.INTERNAL_LINK, page);
+                area.addTrait(Trait.INTERNAL_LINK, page.getKey());
             } else {
                 LinkResolver res = new LinkResolver(link, area);
                 parentLM.addUnresolvedArea(link, res);
@@ -148,7 +148,7 @@ public class BasicLink extends Inline {
             resolved = true;
             if (idRef.equals(id) && pages != null) {
                 PageViewport page = (PageViewport)pages.get(0);
-                area.addTrait(Trait.INTERNAL_LINK, page);
+                area.addTrait(Trait.INTERNAL_LINK, page.getKey());
             }
         }
     }

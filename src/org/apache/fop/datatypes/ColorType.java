@@ -8,11 +8,12 @@
 package org.apache.fop.datatypes;
 
 import java.util.*;
+import java.io.Serializable;
 
 /**
  * a colour quantity in XSL
  */
-public class ColorType {
+public class ColorType implements Serializable {
 
     /**
      * the red component

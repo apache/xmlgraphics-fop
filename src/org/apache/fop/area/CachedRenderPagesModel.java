@@ -45,30 +45,33 @@ public class CachedRenderPagesModel extends AreaTree.RenderPagesModel {
      *         false if the renderer doesn't support out of order
      *         rendering and there are pending pages
      */
-    protected boolean checkPreparedPages() {
+    protected boolean checkPreparedPages(PageViewport newpage) {
         for (Iterator iter = prepared.iterator(); iter.hasNext();) {
             PageViewport p = (PageViewport)iter.next();
             if (p.isResolved()) {
-                try {
-                    // load page from cache
-                    String name = (String)pageMap.get(p);
-                    File temp = new File(name);
-                    System.out.println("page serialized to: " + temp.length());
-                    ObjectInputStream in = new ObjectInputStream(
-                                         new BufferedInputStream(
-                                           new FileInputStream(temp)));
-                    p.loadPage(in);
-                    in.close();
-                    temp.delete();
-                    pageMap.remove(p);
-                } catch (Exception e) {
-                    e.printStackTrace();
+                if(p != newpage) {
+                    try {
+                        // load page from cache
+                        String name = (String)pageMap.get(p);
+                        File temp = new File(name);
+                        System.out.println("page serialized to: " + temp.length());
+                        ObjectInputStream in = new ObjectInputStream(
+                                             new BufferedInputStream(
+                                               new FileInputStream(temp)));
+                        p.loadPage(in);
+                        in.close();
+                        temp.delete();
+                        pageMap.remove(p);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
                 }
 
                 try {
                     renderer.renderPage(p);
                 } catch (Exception e) {
                     // use error handler to handle this FOP or IO Exception
+                    e.printStackTrace();
                 }
                 p.clear();
                 iter.remove();
@@ -78,18 +81,19 @@ public class CachedRenderPagesModel extends AreaTree.RenderPagesModel {
                 }
             }
         }
+        if(newpage != null && newpage.getPage() != null) {
+            savePage(newpage);
+        }
         return renderer.supportsOutOfOrder() || prepared.isEmpty();
     }
 
     /**
-     * Prepare a page.
-     * This uses the parent to prepare the page.
-     * It then saves the contents of the page to a file.
+     * Save a page.
+     * It saves the contents of the page to a file.
+     *
      * @param page the page to prepare
      */
-    protected void preparePage(PageViewport page) {
-        super.preparePage(page);
-
+    protected void savePage(PageViewport page) {
         try {
             // save page to cache
             ObjectOutputStream tempstream;

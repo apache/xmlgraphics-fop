@@ -117,7 +117,7 @@ public class Trait implements Serializable {
         shmTraitInfo = new HashMap();
         shmTraitInfo.put(ID_LINK, new TraitInfo("id-link", String.class));
         shmTraitInfo.put(INTERNAL_LINK,
-                          new TraitInfo("internal-link", PageViewport.class));
+                          new TraitInfo("internal-link", String.class));
         shmTraitInfo.put(EXTERNAL_LINK,
                           new TraitInfo("external-link", String.class));
         shmTraitInfo.put(FONT_NAME,
@@ -229,7 +229,7 @@ public class Trait implements Serializable {
         return null;
     }
 
-    public static class Background {
+    public static class Background implements Serializable {
         public ColorType color = null;
         public String url = null;
         public int repeat;

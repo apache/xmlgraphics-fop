@@ -52,8 +52,8 @@ public class PDFGoTo extends PDFAction {
      *
      * @param yPosition y position
      */
-    public void setYPosition(int yPosition) {
-        this.yPosition = (yPosition / 1000f);
+    public void setYPosition(float yPosition) {
+        this.yPosition = yPosition;
     }
 
     public void setDestination(String dest) {
