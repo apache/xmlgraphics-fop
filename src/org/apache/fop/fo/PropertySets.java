@@ -15,6 +15,9 @@ import java.lang.CloneNotSupportedException;
 import java.util.Set;
 import java.util.HashSet;
 import java.util.HashMap;
+import java.util.List;
+import java.util.ListIterator;
+import java.util.Arrays;
 import java.util.Collections;
 
 import org.apache.fop.fo.expr.PropertyException;
@@ -637,8 +640,8 @@ public class PropertySets {
     /**
      * Array of <i>ROIntArray</i> <b>in same order as <i>shorthands</></b>
      * <i>ROIntArray</i>.
-     * <p><b>TODO:</b> Full paranoia mode requires that this array
-     * be expressed in a new data type <i>ROIntROArray</i>.
+     * If a public view of this is required, use
+     * Collections.unmodifiableList(Arrays.asList(shorthandExpansions))
      */
     private static final ROIntArray[] shorthandExpansions = {
         backgroundExpansion
@@ -668,6 +671,29 @@ public class PropertySets {
     };
 
     /**
+     * @param property <tt>int</tt> property index
+     * @return <tt>ROIntArray</tt> containing the expansion list for
+     * this shorthand.
+     * @exception <tt>PropertyException</tt> if this is not a valid
+     * shorthand property
+     */
+    public static ROIntArray getSHandExpansionSet(int property)
+        throws PropertyException
+    {
+        // Is the property of the argument a shorthand?
+        Integer sHIndex =
+                (Integer)(shorthandMap.get(Ints.consts.get(property)));
+        if (sHIndex == null) {
+            String propname = PropNames.getPropertyName(property);
+            throw new PropertyException
+                    (propname + " not a shorthand property");
+        }
+        // Get the array of indices of the properties in the
+        // expansion of this shorthand
+        return shorthandExpansions[property];
+    }
+
+    /**
      * Expand the shorthand property associated with the
      * <tt>PropertyValue</tt> argument by copying the given value for each
      * property in the expansion.  The <em>property</em> field of each
@@ -685,18 +711,7 @@ public class PropertySets {
     {
         // The property associated with this PropertyValue
         int property = value.getProperty();
-        // Is the property of the argument a shorthand?
-        Integer sHIndex =
-                (Integer)(shorthandMap.get(Ints.consts.get(property)));
-        if (sHIndex == null) {
-            String propname = PropNames.getPropertyName(property);
-            throw new PropertyException
-                    (propname + " not a shorthand property");
-        }
-
-        // Get the array of indices of the properties in the
-        // expansion of this shorthand
-        ROIntArray expansion = shorthandExpansions[property];
+        ROIntArray expansion = getSHandExpansionSet(property);
         PropertyValueList list = new PropertyValueList(property);
         for (int i = 0; i < expansion.length; i++) {
             int expandedProp = expansion.get(i);
@@ -712,6 +727,66 @@ public class PropertySets {
             list.add(expandedPropValue);
         }
         return list;
+    }
+
+    /**
+     * Generate a list of the intial values of each property in a
+     * shorthand expansion
+     * @param foTree the <tt>FOTree</tt> for which properties are being
+     * processed
+     * @param property <tt>int</tt> property index
+     * @return <tt>PropertyValueList</tt> containing the intial value
+     * expansions for the (shorthand) property
+     * @exception <tt>PropertyException</tt>
+     */
+    public static PropertyValueList initialValueExpansion
+        (FOTree foTree, int property)
+        throws PropertyException
+    {
+        ROIntArray expansion = getSHandExpansionSet(property);
+        PropertyValueList list = new PropertyValueList(property);
+        for (int i = 0; i < expansion.length; i++) {
+            int expandedProp = expansion.get(i);
+            PropertyValue expandedPropValue;
+            PropertyValue specified =
+                    foTree.getInitialValue(expandedProp).getSpecified();
+            //   The PropertyValue must be cloneable
+            try {
+                expandedPropValue = (PropertyValue)(specified.clone());
+            } catch (CloneNotSupportedException e) {
+                throw new PropertyException(e.getMessage());
+            }
+
+            list.add(expandedPropValue);
+        }
+        return list;
+    }
+
+    /**
+     * Given a shorthand expansion list and a <tt>PropertyValue</tt>,
+     * override the list element corresponding to the <tt>PropertyValue</tt>.
+     * Correspondence is based on the <em>property</em> field of the
+     * <tt>PropertyValue</tt>.
+     * @param list the expansion <tt>PropertyValueList</tt>
+     * @param value the overriding <tt>PropertyValue</tt>
+     * @return <tt>PropertyValueList</tt> the new list
+     */
+    public static PropertyValueList overrideSHandElement
+        (PropertyValueList expansionList, PropertyValue element)
+        throws PropertyException
+    {
+        int elementProp = element.getProperty();
+        ListIterator elements = expansionList.listIterator();
+        while (elements.hasNext()) {
+            PropertyValue next = (PropertyValue)(elements.next());
+            if (next.getProperty() == elementProp) {
+                elements.set(element);
+                return expansionList;
+            }
+        }
+        throw new PropertyException
+                ("Unmatched property " + elementProp +
+                 " in expansion list for " + expansionList.getProperty());
     }
 
     private PropertySets (){}
