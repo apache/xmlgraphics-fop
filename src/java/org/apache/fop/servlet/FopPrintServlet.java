@@ -246,7 +246,7 @@ public class FopPrintServlet extends HttpServlet {
             super(null);
 
             this.printerJob = printerJob;
-            startNumber = 0 ;
+            startNumber = 0;
             endNumber = -1;
 
             printerJob.setPageable(this);
