@@ -158,12 +158,12 @@ class PropertyTokenizer {
 	currentToken = TOK_LITERAL;
 	return;
       case '*':
-	if (currentMaybeOperator) {
-	  recognizeOperator = false;
+	/*if (currentMaybeOperator) {
+	  recognizeOperator = false;*/
 	  currentToken = TOK_MULTIPLY;
-	}
+	  /*}
 	else
-	  throw new PropertyException("illegal operator *");
+	throw new PropertyException("illegal operator *");*/
 	return;
       case '0':
       case '1':
@@ -243,22 +243,28 @@ class PropertyTokenizer {
 	  throw new PropertyException("illegal character");
 	currentTokenValue = expr.substring(currentTokenStartIndex,
 					   exprIndex);
-	if (currentMaybeOperator) {
-	  if (currentTokenValue.equals("mod"))
+	//	if (currentMaybeOperator) {
+	if (currentTokenValue.equals("mod")) {
 	    currentToken = TOK_MOD;
-	  else if (currentTokenValue.equals("div"))
+	    return;
+	}
+	else if (currentTokenValue.equals("div")) {
 	    currentToken = TOK_DIV;
-	  else
+	    return;
+	}
+	  /*else
 	    throw new PropertyException("unrecognized operator name");
 	  recognizeOperator = false;
 	  return;
-	}
+	  }*/
 	if (followingParen()) {
           currentToken = TOK_FUNCTION_LPAR;
 	  recognizeOperator = false;
 	}
-	else
+	else {
 	  currentToken = TOK_NCNAME;
+	  recognizeOperator = false;
+	}
 	return;
       }
     }
