@@ -59,7 +59,7 @@ import java.io.InputStream;
 /**
  * Die Klasse <code>SecureResourceBundle</code> ist ein Resourceundle, das im Falle eines fehlenden
  * Eintrages keinen Absturz verursacht, sondern die Meldung
- * <strong>Key <i>key</i> not found</strong> zurückgibt.
+ * <strong>Key <i>key</i> not found</strong> zurÃ¼ckgibt.
  *
  * @author Stanislav.Gorkhover@jCatalog.com
  * @version 1.0 18.03.1999
@@ -67,7 +67,7 @@ import java.io.InputStream;
 public class SecureResourceBundle extends ResourceBundle
     implements Translator {
 
-    // Fehlende keys mit einer Meldung zurückgeben.
+    // Fehlende keys mit einer Meldung zurÃ¼ckgeben.
     private boolean isMissingEmphasized = false;
 
     // private Properties lookup = new Properties();
@@ -101,14 +101,14 @@ public class SecureResourceBundle extends ResourceBundle
 
 
     /**
-     * Händelt den abgefragten Key, liefert entweder den zugehörigen Wert oder eine Meldung.
-     * Die <strong>null</strong> wird nie zurückgegeben.
-     * Schreibt die fehlenden Suchschlüssel in die Protokoll-Datei.
+     * HÃ¤ndelt den abgefragten Key, liefert entweder den zugehÃ¶rigen Wert oder eine Meldung.
+     * Die <strong>null</strong> wird nie zurÃ¼ckgegeben.
+     * Schreibt die fehlenden SuchschlÃ¼ssel in die Protokoll-Datei.
      * @return <code>Object</code><UL>
-     * <LI>den zu dem Suchschlüssel <strong>key</strong> gefundenen Wert, falls vorhanden, <br>
-     * <LI>Meldung <strong>Key <i>key</i> not found</strong>, falls der Suchschlüssel fehlt
+     * <LI>den zu dem SuchschlÃ¼ssel <strong>key</strong> gefundenen Wert, falls vorhanden, <br>
+     * <LI>Meldung <strong>Key <i>key</i> not found</strong>, falls der SuchschlÃ¼ssel fehlt
      * und die Eigenschaft "jCatalog.DevelopmentStartModus" in der ini-Datei aus true gesetzt ist.
-     * <LI>Meldung <strong>Key is null</strong>, falls der Suchschlüssel <code>null</code> ist.
+     * <LI>Meldung <strong>Key is null</strong>, falls der SuchschlÃ¼ssel <code>null</code> ist.
      * </UL>
      *
      */
