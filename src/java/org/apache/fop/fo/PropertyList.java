@@ -69,6 +69,7 @@ public class PropertyList extends HashMap {
     // writing-mode values
     private byte[] wmtable = null;
     private int writingMode;
+    private static boolean[] inheritableProperty;
 
     // absolute directions and dimensions
     /** constant for direction "left" */
@@ -678,14 +679,16 @@ public class PropertyList extends HashMap {
      * @return isInherited value from the requested Property.Maker
      */
     private boolean isInherited(int propId) {
-        boolean b = true;
-
-        Property.Maker propertyMaker = findMaker(propId);
-        if (propertyMaker != null) {
-            b = propertyMaker.isInherited();
+        if (inheritableProperty == null) {
+            inheritableProperty = new boolean[Constants.PROPERTY_COUNT + 1];
+            Property.Maker maker = null;
+            for (int prop = 1; prop <= Constants.PROPERTY_COUNT; prop++) {
+                maker = findMaker(prop);
+                inheritableProperty[prop] = (maker != null && maker.isInherited());
+            }    
         }
-        
-        return b;
+
+        return inheritableProperty[propId];
     }    
 
     /**
