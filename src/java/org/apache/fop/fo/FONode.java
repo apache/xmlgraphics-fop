@@ -606,17 +606,21 @@ public class FONode extends Node{
         }
     }
 
+    /**
+     * Gets the fo:marker elements (if any) defined in the this node.  Any
+     * fo:marker events found are relinquished.
+     * @return the number of markers found
+     * @throws FOPException
+     */
     public int getMarkers() throws FOPException {
         XmlEvent ev;
-        
         try {
             while ((ev = xmlevents.expectStartElement
                     (FObjectNames.MARKER, XmlEvent.DISCARD_W_SPACE))
             != null) {
                 new FoMarker(getFOTree(), this, (FoXmlEvent)ev, stateFlags);
                 numMarkers++;
-                ev = xmlevents.getEndElement(
-                        XmlEventReader.DISCARD_EV, ev);
+                // Relinquish the original event
                 namespaces.relinquishEvent(ev);
             }
         } catch (TreeException e) {
