@@ -207,7 +207,7 @@ Sometimes ant gives out this warnings, but the build is finished without any pro
     <property name="src.dir" value="./src"/>
     <property name="src.codegen" value="./src/codegen"/>
     <property name="lib.dir" value="./lib"/>
-    <property name="hyph.dir" value="./src/hyph"/>
+    <property name="hyph.dir" value="./hyph"/>
     <property name="conf.dir" value="./conf"/>
     <property name="packages" value="org.apache.fop.*"/>
 
@@ -573,11 +573,23 @@ Sometimes ant gives out this warnings, but the build is finished without any pro
              targetDir="${build.dest}/hyph" /> 
   </target>
 
+  <target name="hyphenation-jar" depends="hyphenation">
+    <jar jarfile="${build.dir}/fop-hyph.jar"
+         basedir="${build.dest}"
+         includes="hyph/**">
+      <manifest>
+          <attribute name="Implementation-Title" value="${Name}"/>
+          <attribute name="Implementation-Version" value="${version}"/>
+          <attribute name="Implementation-Vendor" value="Apache Software Foundation (http://xml.apache.org/fop/)"/>
+          <attribute name="Build-Id" value="${ts} (${user.name} [${os.name} ${os.version} ${os.arch}])"/>
+      </manifest>
+    </jar>  
+  </target>
 
   <!-- =================================================================== -->
   <!-- Creates the class package                                           -->
   <!-- =================================================================== -->
-  <target name="package" depends="compile,hyphenation" description="Generates the jar files (default target)">
+  <target name="package" depends="compile,hyphenation-jar" description="Generates the jar files (default target)">
     <echo message="Creating the jar file ${build.dir}/${name}.jar"/>
 
     <tstamp>
@@ -585,7 +597,7 @@ Sometimes ant gives out this warnings, but the build is finished without any pro
     </tstamp>
     <jar jarfile="${build.dir}/${name}.jar"
          basedir="${build.dest}"
-         includes="org/**,conf/**,hyph/**">
+         includes="org/**,conf/**">
     <manifest>
         <attribute name="Main-Class" value="${main.class}"/>
         <attribute name="Class-Path" value="${runtime.classpath}"/>

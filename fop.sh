@@ -46,6 +46,8 @@ fi
 if $cygwin ; then
   [ -n "$FOP_HOME" ] &&
     FOP_HOME=`cygpath --unix "$FOP_HOME"`
+  [ -n "$FOP_HYPHENATION_PATH" ] &&
+    FOP_HYPHENATION_PATH=`cygpath --unix "$FOP_HYPHENATION_PATH"`
   [ -n "$JAVA_HOME" ] &&
     JAVA_HOME=`cygpath --unix "$JAVA_HOME"`
   [ -n "$CLASSPATH" ] &&
@@ -92,6 +94,11 @@ do
       fi
     fi
 done
+
+# add in user-defined hyphenation JARs
+if [ -n "$FOP_HYPHENATION_PATH" ] ; then
+  LOCALCLASSPATH=$LOCALCLASSPATH:$FOP_HYPHENATION_PATH
+fi
 
 # For Cygwin, switch paths to Windows format before running java
 if $cygwin; then
