@@ -139,17 +139,21 @@ public class PageViewport implements Resolveable, Cloneable {
             }
             pendingResolved.put(id, pages);
         } else {
-            List todo = (List)unresolved.get(id);
-            if (todo != null) {
-                for (int count = 0; count < todo.size(); count++) {
-                    Resolveable res = (Resolveable)todo.get(count);
-                    res.resolve(id, pages);
+            if (unresolved != null) {
+                List todo = (List)unresolved.get(id);
+                if (todo != null) {
+                    for (int count = 0; count < todo.size(); count++) {
+                        Resolveable res = (Resolveable)todo.get(count);
+                        res.resolve(id, pages);
+                    }
                 }
             }
         }
-        unresolved.remove(id);
-        if (unresolved.isEmpty()) {
-            unresolved = null;
+        if (unresolved != null) {
+            unresolved.remove(id);
+            if (unresolved.isEmpty()) {
+                unresolved = null;
+            }
         }
     }
 
