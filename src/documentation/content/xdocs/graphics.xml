@@ -20,7 +20,7 @@
         <tr>
           <td>BMP (Microsoft Windows Bitmap)</td>
           <td>bitmap</td>
-          <td><link href="#jimi">JIMI</link> or <link href="#jai">JAI</link></td>
+          <td><link href="#native">FOP native</link></td>
         </tr>
         <tr>
           <td>CUR</td>
@@ -93,9 +93,9 @@
           <td><link href="#jimi">JIMI</link></td>
         </tr>
         <tr>
-          <td>TIFF (Tag Image Format File)</td>
+          <td><link href="#tiff">TIFF</link> (Tag Image Format File)</td>
           <td>bitmap</td>
-          <td><link href="#jimi">JIMI</link> or <link href="#jai">JAI</link></td>
+          <td><link href="#native">FOP native</link> or <link href="#jai">JAI</link>, depending on the subformat. See <link href="#tiff">TIFF</link> for more details.(JIMI also supports TIFF, but this has not been implemented within FOP).</td>
         </tr>
         <tr>
           <td>XBM (X BitMap)</td>
@@ -276,6 +276,10 @@ into a raster graphic are not drawn properly in PDF. The image is opaque.
           </li>
         </ul>
       </section>
+    </section>
+    <section id="tiff">
+      <title>TIFF</title>
+      <p>TIFF images with JPEG or CCITT content are passed through by FOP natively. Other TIFF subformats are handled by JAI.</p>
     </section>
     <section id="resolution">
       <title>Graphics Resolution</title>
