@@ -32,6 +32,8 @@ import java.net.URL;
 import java.util.HashSet;
 import java.util.Set;
 
+import java.io.IOException;
+
 import org.apache.batik.transcoder.*;
 
 import org.apache.batik.bridge.BridgeContext;
@@ -266,7 +268,11 @@ public class PDFTranscoder extends XMLAbstractTranscoder {
         int w = (int)width;
         int h = (int)height;
 
-        graphics.setupDocument(output.getOutputStream(), w, h);
+        try {
+            graphics.setupDocument(output.getOutputStream(), w, h);
+        } catch (IOException ex) {
+            throw new TranscoderException(ex);
+        }
         graphics.setSVGDimension(docWidth, docHeight);
         currentTransform.setTransform(1, 0, 0, -1, 0, height);
         /*if (!stroke) {
@@ -283,8 +289,7 @@ public class PDFTranscoder extends XMLAbstractTranscoder {
 
         try {
             graphics.finish();
-        } catch (Exception ex) {
-            ex.printStackTrace();
+        } catch (IOException ex) {
             throw new TranscoderException(ex);
         }
     }

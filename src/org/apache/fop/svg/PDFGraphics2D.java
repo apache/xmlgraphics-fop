@@ -59,6 +59,7 @@ public class PDFGraphics2D extends AbstractGraphics2D {
      */
     protected PDFDocument pdfDoc;
     protected PDFResourceContext resourceContext;
+    protected String pageRef;
 
     /**
      * the current state of the pdf graphics
@@ -94,6 +95,14 @@ public class PDFGraphics2D extends AbstractGraphics2D {
     protected int currentXPosition = 0;
 
     /**
+     * The output stream for the pdf document.
+     * If this is set then it can progressively output
+     * the pdf document objects to reduce memory.
+     * Especially with images.
+     */
+    protected OutputStream outputStream = null;
+
+    /**
      * A registry of images that have already been drawn. They are mapped to 
      * a structure with the PDF xObjectNum, width and height. This
      * prevents multiple copies from being stored, which can greatly
@@ -113,7 +122,7 @@ public class PDFGraphics2D extends AbstractGraphics2D {
      * existing document.
      */
     public PDFGraphics2D(boolean textAsShapes, FontState fs, PDFDocument doc,
-                         PDFResourceContext page, String font, float size, int xpos, int ypos) {
+                         PDFResourceContext page, String pref, String font, float size, int xpos, int ypos) {
         super(textAsShapes);
         pdfDoc = doc;
         resourceContext = page;
@@ -122,6 +131,7 @@ public class PDFGraphics2D extends AbstractGraphics2D {
         currentYPosition = ypos;
         currentXPosition = xpos;
         fontState = fs;
+        pageRef = pref;
         graphicsState = new PDFState();
     }
 
@@ -131,6 +141,10 @@ public class PDFGraphics2D extends AbstractGraphics2D {
 
     public void setPDFState(PDFState state) {
         graphicsState = state;
+    }
+
+    public void setOutputStream(OutputStream os) {
+        outputStream = os;
     }
 
     public String getString() {
@@ -175,8 +189,7 @@ public class PDFGraphics2D extends AbstractGraphics2D {
 
         if(linkType != PDFLink.EXTERNAL) {
             String pdfdest = "/FitR " + dest;
-            // TODO use page ref instead
-            resourceContext.addAnnotation(pdfDoc.makeLinkCurrentPage(rect, pdfdest));
+            resourceContext.addAnnotation(pdfDoc.makeLink(rect, pageRef, pdfdest));
         } else {
             resourceContext.addAnnotation(pdfDoc.makeLink(rect,
                                                  dest, linkType));
@@ -202,6 +215,13 @@ public class PDFGraphics2D extends AbstractGraphics2D {
                           + x + " "
                           + (y + height) + " cm\n" + "/Im"
                           + xObjectNum + " Do\nQ\n");
+
+        if(outputStream != null) {
+            try {
+                this.pdfDoc.output(outputStream);
+            } catch(IOException ioe) {
+            }
+        }
     }
 
     /**
@@ -319,6 +339,13 @@ public class PDFGraphics2D extends AbstractGraphics2D {
                 fopimg.setColorSpace(new PDFColorSpace(PDFColorSpace.DEVICE_GRAY));
                 PDFXObject xobj = pdfDoc.addImage(resourceContext, fopimg);
                 ref = xobj.referencePDF();
+
+                if(outputStream != null) {
+                    try {
+                        this.pdfDoc.output(outputStream);
+                    } catch(IOException ioe) {
+                    }
+                }
             } else {
                 mask = null;
             }
@@ -327,6 +354,13 @@ public class PDFGraphics2D extends AbstractGraphics2D {
             fopimg.setTransparent(new PDFColor(255, 255, 255));
             imageInfo.xObjectNum = pdfDoc.addImage(resourceContext, fopimg).getXNumber();
             imageInfos.put(img, imageInfo);
+
+            if(outputStream != null) {
+                try {
+                    this.pdfDoc.output(outputStream);
+                } catch(IOException ioe) {
+                }
+            }
         }
 
         // now do any transformation required and add the actual image
@@ -712,11 +746,12 @@ public class PDFGraphics2D extends AbstractGraphics2D {
             PDFResources res = pdfDoc.makeResources();
             PDFResourceContext context = new PDFResourceContext(0, pdfDoc, res);
             PDFGraphics2D pattGraphic = new PDFGraphics2D(textAsShapes, fs,
-                                            pdfDoc, context,
+                                            pdfDoc, context, pageRef,
                                             currentFontName, currentFontSize,
                                             currentYPosition, currentXPosition);
             pattGraphic.gc = (GraphicContext)this.gc.clone();
             pattGraphic.gc.validateTransformStack();
+            pattGraphic.setOutputStream(outputStream);
 
             GraphicsNode gn = pp.getGraphicsNode();
             gn.paint(pattGraphic);
@@ -753,6 +788,13 @@ public class PDFGraphics2D extends AbstractGraphics2D {
                                     translate, null, pattStream.getBuffer());
 
             currentStream.write(myPat.getColorSpaceOut(fill));
+
+            if(outputStream != null) {
+                try {
+                    this.pdfDoc.output(outputStream);
+                } catch(IOException ioe) {
+                } 
+            }
 
         }
     }

@@ -140,11 +140,6 @@ public class PDFDocument {
      */
     protected HashMap fontMap = new HashMap();
 
-    /**
-     * the objects themselves
-     */
-    protected ArrayList pendingLinks = null;
-
     protected HashMap filterMap = new HashMap();
 
     /**
@@ -1015,20 +1010,6 @@ public class PDFDocument {
     public void addPage(PDFPage page) {
         /* add it to the list of objects */
         this.objects.add(page);
-
-        if(pendingLinks != null) {
-            for(Iterator iter = pendingLinks.iterator(); iter.hasNext(); ) {
-                PendingLink pl = (PendingLink)iter.next();
-                PDFGoTo gt = new PDFGoTo(++this.objectcount,
-                                         page.referencePDF());
-                gt.setDestination(pl.dest);
-                addTrailerObject(gt);
-                PDFInternalLink internalLink =
-                                 new PDFInternalLink(gt.referencePDF());
-                pl.link.setAction(internalLink);
-            }
-            pendingLinks = null;
-        }
     }
 
     /**
@@ -1096,25 +1077,6 @@ public class PDFDocument {
         this.trailerObjects.add(object);
     }
 
-    class PendingLink {
-        PDFLink link;
-        String dest;
-    }
-
-    public PDFLink makeLinkCurrentPage(Rectangle rect, String dest) {
-        PDFLink link = new PDFLink(++this.objectcount, rect);
-        this.objects.add(link);
-        PendingLink pl = new PendingLink();
-        pl.link = link;
-        pl.dest = dest;
-        if(pendingLinks == null) {
-            pendingLinks = new ArrayList();
-        }
-        pendingLinks.add(pl);
-
-        return link;
-    }
-
     public PDFLink makeLink(Rectangle rect, String page, String dest) {
         PDFLink link = new PDFLink(++this.objectcount, rect);
         this.objects.add(link);
@@ -1142,7 +1104,7 @@ public class PDFDocument {
      *
      * @return the stream object created
      */
-    public PDFStream makeStream(String type) {
+    public PDFStream makeStream(String type, boolean add) {
 
         /*
          * create a PDFStream with the next object number and add it
@@ -1152,10 +1114,18 @@ public class PDFDocument {
         PDFStream obj = new PDFStream(++this.objectcount);
         obj.addDefaultFilters(filterMap, type);
 
-        this.objects.add(obj);
+        if(add) {
+            this.objects.add(obj);
+        }
         return obj;
     }
 
+    /**
+     * add a stream object
+     */
+    public void addStream(PDFStream obj) {
+        this.objects.add(obj);
+    }
 
     /**
      * make an annotation list object

@@ -217,7 +217,7 @@ public class PDFRenderer extends PrintRenderer {
                                            (int) Math.round(w / 1000), (int) Math.round(h / 1000));
             pageReferences.put(page, currentPage.referencePDF());
         }
-        currentStream = this.pdfDoc.makeStream(PDFStream.CONTENT_FILTER);
+        currentStream = this.pdfDoc.makeStream(PDFStream.CONTENT_FILTER, false);
 
         currentState = new PDFState();
         currentState.setTransform(new AffineTransform(1, 0, 0, -1, 0, (int) Math.round(pageHeight / 1000)));
@@ -231,6 +231,7 @@ public class PDFRenderer extends PrintRenderer {
 
         //currentStream.add("ET\n");
 
+        this.pdfDoc.addStream(currentStream);
         currentPage.setContents(currentStream);
         this.pdfDoc.addPage(currentPage);
         this.pdfDoc.output(ostream);
@@ -526,6 +527,12 @@ public class PDFRenderer extends PrintRenderer {
                               + xobj + " Do\nQ\nBT\n");
         }
 
+        // output new data
+        try {
+            this.pdfDoc.output(ostream);
+        } catch(IOException ioe) {
+
+        }
     }
 
     public void renderForeignObject(ForeignObject fo) {
@@ -540,6 +547,7 @@ public class PDFRenderer extends PrintRenderer {
         context.setUserAgent(userAgent);
 
         context.setProperty(PDFXMLHandler.PDF_DOCUMENT, pdfDoc);
+        context.setProperty(PDFXMLHandler.OUTPUT_STREAM, ostream);
         context.setProperty(PDFXMLHandler.PDF_STATE, currentState);
         context.setProperty(PDFXMLHandler.PDF_PAGE, currentPage);
         context.setProperty(PDFXMLHandler.PDF_STREAM, currentStream);
