@@ -22,7 +22,7 @@
     Alternately, this  acknowledgment may  appear in the software itself,  if
     and wherever such third-party acknowledgments normally appear.
 
- 4. The names "Fop" and  "Apache Software Foundation"  must not be used to
+ 4. The names "FOP" and  "Apache Software Foundation"  must not be used to
     endorse  or promote  products derived  from this  software without  prior
     written permission. For written permission, please contact
     apache@apache.org.
@@ -48,56 +48,22 @@
  Software Foundation, please see <http://www.apache.org/>.
 
  */
+
 package org.apache.fop.layout;
 
-// FOP
-import org.apache.fop.render.Renderer;
-import org.apache.fop.fo.properties.*;
 
-// Java
-import java.util.Vector;
-import java.util.Enumeration;
+/**
+ * Store all hyphenation related properties on an FO.
+ * Public "structure" allows direct member access.
+ */
+public class HyphenationProps {
+    public int hyphenate; // Enum true or false: store as boolean!
+    public char hyphenationChar;
+    public int hyphenationPushCharacterCount;
+    public int hyphenationRemainCharacterCount;
+    public String language; // Language code or enum "NONE"
+    public String country; // Country code or enum "NONE"
 
-public class AreaContainer extends Area {
-
-    private int xPosition; // should be able to take value 'left' and 'right' too
-    private int yPosition; // should be able to take value 'top' and 'bottom' too
-    private int position;
-
-    public AreaContainer(FontState fontState, int xPosition,
-                         int yPosition, int allocationWidth, int maxHeight,
-                         int position) {
-        super(fontState, allocationWidth, maxHeight);
-        this.xPosition = xPosition;
-        this.yPosition = yPosition;
-        this.position = position;
-    }
-
-    public void render(Renderer renderer) {
-        renderer.renderAreaContainer(this);
-    }
-
-    public int getPosition() {
-        return position;
-    }
-
-    public int getXPosition() {
-        return xPosition + getPaddingLeft() + getBorderLeftWidth();
-    }
-
-    public void setXPosition(int value) {
-        xPosition = value;
-    }
-
-    public int getYPosition() {
-        return yPosition + getPaddingTop() + getBorderTopWidth();
-    }
-
-    public int getCurrentYPosition() {
-        return yPosition;
-    }
-
-    public void setYPosition(int value) {
-        yPosition = value;
-    }
+  public HyphenationProps() {
+  }
 }
