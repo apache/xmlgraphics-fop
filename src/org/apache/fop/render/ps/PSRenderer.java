@@ -1,6 +1,6 @@
 /*
  * $Id$
- * Copyright (C) 2001 The Apache Software Foundation. All rights reserved.
+ * Copyright (C) 2001-2002 The Apache Software Foundation. All rights reserved.
  * For details on use and redistribution please refer to the
  * LICENSE file included with these sources.
  */
@@ -51,29 +51,42 @@ import java.awt.Point;
 import java.awt.RenderingHints;
 import java.awt.Dimension;
 
+/*
+PostScript renderer
+
+Remarks:
+- If anyone modifies this renderer please make sure to also follow the DSC to
+  make it simpler to programmatically modify the generated Postscript files
+  (ex. extract pages etc.).
+- The filters in use are hardcoded at the moment.
+- Modified by Mark Lillywhite mark-fop@inomial.com, to use the new
+  Renderer interface. This PostScript renderer appears to be the
+  most efficient at producing output.
+
+TODO-List:
+- Character size/spacing
+- SVG Transcoder for Batik
+- configuration
+- move to PrintRenderer
+- maybe improve filters (I'm not very proud of them)
+- add a RunLengthEncode filter (useful for Level 2 Postscript)
+- Improve DocumentProcessColors stuff (probably needs to be configurable, then maybe
+  add a color to grayscale conversion for bitmaps to make output smaller (See
+  PCLRenderer)
+- enhanced font support and font embedding
+- support different character encodings
+- try to implement image transparency
+- Add PPD support
+- fix border painting (see table.fo)
+
+*/
+
 /**
  * Renderer that renders to PostScript.
  * <br>
  * This class currently generates PostScript Level 2 code. The only exception
- * is the FlateEncode filter which is a Level 3 feature. The filters in use
- * are hardcoded at the moment.
- * <br>
- * This class follows the Document Structuring Conventions (DSC) version 3.0
- * (If I did everything right). If anyone modifies this renderer please make
- * sure to also follow the DSC to make it simpler to programmatically modify
- * the generated Postscript files (ex. extract pages etc.).
- * <br>
- * TODO: Character size/spacing, SVG Transcoder for Batik, configuration, move
- * to PrintRenderer, maybe improve filters (I'm not very proud of them), add a
- * RunLengthEncode filter (useful for Level 2 Postscript), Improve
- * DocumentProcessColors stuff (probably needs to be configurable, then maybe
- * add a color to grayscale conversion for bitmaps to make output smaller (See
- * PCLRenderer), font embedding, support different character encodings, try to
- * implement image transparency, positioning of images is wrong etc. <P>
- *
- * Modified by Mark Lillywhite mark-fop@inomial.com, to use the new
- * Renderer interface. This PostScript renderer appears to be the
- * most efficient at producing output.
+ * is the FlateEncode filter which is a Level 3 feature. The PostScript code
+ * generated follows the Document Structuring Conventions (DSC) version 3.0.
  *
  * @author Jeremias Märki
  */
@@ -85,6 +98,7 @@ public class PSRenderer extends AbstractRenderer {
     protected String producer;
 
     int imagecount = 0;    // DEBUG
+    int pagecount = 0;
 
     private boolean enableComments = true;
 
@@ -147,21 +161,25 @@ public class PSRenderer extends AbstractRenderer {
             write(comment);
     }
 
-    protected void writeFontDict(FontInfo fontInfo) {
-        write("%%BeginResource: procset FOPFonts");
-        write("%%Title: Font setup (shortcuts) for this file");
-        write("/FOPFonts 100 dict dup begin");
+    protected void writeProcs() {
+        write("%%BeginResource: procset FOPprocs");
+        write("%%Title: Utility procedures");
+        write("/FOPprocs 20 dict dup begin");
         write("/bd{bind def}bind def");
         write("/ld{load def}bd");
         write("/M/moveto ld");
         write("/RM/rmoveto ld");
         write("/t/show ld");
         write("/A/ashow ld");
+        write("/cp/closepath ld");
+        write("/re {4 2 roll M"); //define rectangle
+        write("1 index 0 rlineto");
+        write("0 exch rlineto");
+        write("neg 0 rlineto");
+        write("cp } bd");
 
         write("/ux 0.0 def");
         write("/uy 0.0 def");
-        // write("/cf /Helvetica def");
-        // write("/cs 12000 def");
 
         // <font> <size> F
         write("/F {");
@@ -211,9 +229,14 @@ public class PSRenderer extends AbstractRenderer {
         write("  Tt setlinewidth stroke");
         write("  grestore");
         write("} bd");
+        write("end def");
+        write("%%EndResource");
+    }
 
-
-
+    protected void writeFontDict(FontInfo fontInfo) {
+        write("%%BeginResource: procset FOPFonts");
+        write("%%Title: Font setup (shortcuts) for this file");
+        write("/FOPFonts 100 dict dup begin");
         // write("/gfF1{/Helvetica findfont} bd");
         // write("/gfF3{/Helvetica-Bold findfont} bd");
         Hashtable fonts = fontInfo.getFonts();
@@ -225,6 +248,8 @@ public class PSRenderer extends AbstractRenderer {
         }
         write("end def");
         write("%%EndResource");
+
+        //Rewrite font encodings
         enum = fonts.keys();
         while (enum.hasMoreElements()) {
             String key = (String)enum.nextElement();
@@ -257,18 +282,21 @@ public class PSRenderer extends AbstractRenderer {
 
     protected void addFilledRect(int x, int y, int w, int h,
                                  ColorType col) {
-	    // XXX: cater for braindead, legacy -ve heights
-	    if (h < 0) {
-	       h = -h;
-	    }
+        // XXX: cater for braindead, legacy -ve heights
+        if (h < 0) {
+           h = -h;
+        }
 
             write("newpath");
+            write(x + " " + y + " " + w + " " + -h + " re");
+            /*
             write(x + " " + y + " M");
             write(w + " 0 rlineto");
             write("0 " + (-h) + " rlineto");
             write((-w) + " 0 rlineto");
             write("0 " + h + " rlineto");
             write("closepath");
+            */
             useColor(col);
             write("fill");
     }
@@ -289,7 +317,17 @@ public class PSRenderer extends AbstractRenderer {
      */
     public void renderForeignObjectArea(ForeignObjectArea area) {
         // if necessary need to scale and align the content
+        this.currentXPosition = this.currentXPosition + area.getXOffset();
+        int plOffset = 0;
+        Area parent = area.getParent();
+        if (parent instanceof LineArea) {
+            plOffset = ((LineArea)parent).getPlacementOffset();
+        }
+        this.currentYPosition += plOffset;
         area.getObject().render(this);
+        this.currentXPosition += area.getEffectiveWidth();
+        this.currentYPosition -= plOffset;
+        movetoCurrPosition();
     }
 
     /**
@@ -300,8 +338,20 @@ public class PSRenderer extends AbstractRenderer {
     public void renderSVGArea(SVGArea area) {
         int x = this.currentXPosition;
         int y = this.currentYPosition;
-        Document doc = area.getSVGDocument();
+        renderSVGDocument(area.getSVGDocument(), x, y, area.getFontState());
+    }
 
+
+    /**
+     * render SVG document to PostScript
+     *
+     * @param doc  the document to render
+     * @param x    the x offset
+     * @param y    the y offset
+     * @param fs   the fontstate to use
+     */
+    protected void renderSVGDocument(Document doc, int x, int y,
+            FontState fs) {
         org.apache.fop.svg.SVGUserAgent userAgent
             = new org.apache.fop.svg.SVGUserAgent(new AffineTransform());
         userAgent.setLogger(log);
@@ -320,6 +370,9 @@ public class PSRenderer extends AbstractRenderer {
         // get the 'width' and 'height' attributes of the SVG document
         float w = (float)ctx.getDocumentSize().getWidth() * 1000f;
         float h = (float)ctx.getDocumentSize().getHeight() * 1000f;
+
+        //log.debug("drawing SVG image: "+x+"/"+y+" "+w+"/"+h);
+
         ctx = null;
         builder = null;
 
@@ -343,7 +396,7 @@ public class PSRenderer extends AbstractRenderer {
         write(xOffset + " " + yOffset + " translate");
         write(sx + " " + sy + " scale");
 
-        PSGraphics2D graphics = new PSGraphics2D(false, area.getFontState(),
+        PSGraphics2D graphics = new PSGraphics2D(false, fs,
                                 this, currentFontName,
                                 currentFontSize,
                                 currentXPosition,
@@ -359,14 +412,13 @@ public class PSRenderer extends AbstractRenderer {
         write("grestore");
 
         comment("% --- SVG Area end");
-        movetoCurrPosition();
     }
 
     /**
      * Renders an image, scaling it to the given width and height.
      * If the scaled width and height is the same intrinsic size
      * of the image, the image is not scaled.
-     * 
+     *
      * @param x the x position of left edge in millipoints
      * @param y the y position of top edge in millipoints
      * @param w the width in millipoints
@@ -376,30 +428,54 @@ public class PSRenderer extends AbstractRenderer {
      *           in non-bitmapped images.
      */
     protected void drawImageScaled(int x, int y, int w, int h,
-				   FopImage image,
-				   FontState fs) {
-	// XXX: implement this
+                   FopImage image,
+                   FontState fs) {
+        //log.debug("drawing scaled image: "+x+"/"+y+" "+w+"/"+h);
+        if (image instanceof SVGImage) {
+            try {
+                renderSVGDocument(((SVGImage)image).getSVGDocument(), x, y, fs);
+            } catch (FopImageException e) {
+                log.error("Error rendering SVG image", e);
+            }
+        } else if (image instanceof EPSImage) {
+            renderEPS(image, x, y, w, h);
+        } else {
+            renderBitmap(image, x, y, w, h);
+        }
     }
-    
+
     /**
-     * Renders an image, clipping it as specified. 
-     * 
+     * Renders an image, clipping it as specified.
+     *
      * @param x the x position of left edge in millipoints.
      * @param y the y position of top edge in millipoints.
      * @param clipX the left edge of the clip in millipoints
      * @param clipY the top edge of the clip in millipoints
      * @param clipW the clip width in millipoints
      * @param clipH the clip height in millipoints
-     * @param fill the image to be rendered
+     * @param image the image to be rendered
      * @param fs the font state to use when rendering text
      *           in non-bitmapped images.
      */
     protected void drawImageClipped(int x, int y,
-				    int clipX, int clipY,
-				    int clipW, int clipH,
-				    FopImage image,
-				    FontState fs) {
-	// XXX: implement this
+                    int clipX, int clipY,
+                    int clipW, int clipH,
+                    FopImage image,
+                    FontState fs) {
+        //log.debug("drawing clipped image: "+x+"/"+y+" "+clipX+"/"+clipY+" "+clipW+"/"+clipH);
+        write("gsave");
+        write(clipX + " " + clipY + " " + clipW + " " + clipH + " re");
+        write("clippath");
+
+        try {
+            int w = image.getWidth() * 1000;
+            int h = image.getHeight() * 1000;
+
+            drawImageScaled(x, y, w, h, image, fs);
+        } catch (FopImageException e) {
+            log.error("Error getting image extents", e);
+        }
+        write("grestore");
     }
 
     public void renderEPS(FopImage img, int x, int y, int w, int h) {
@@ -493,15 +569,13 @@ public class PSRenderer extends AbstractRenderer {
              */
             try {
                 // imgmap[0] = 1;
-                InputStream bain = new ByteArrayInputStream(imgmap);
-                InputStream in;
-                in = bain;
-                if (!(img instanceof JpegImage))
-                    in = FlateEncodeFilter.filter(in);
-                // in = RunLengthEncodeFilter.filter(in);
-                // in = ASCIIHexEncodeFilter.filter(in);
-                in = ASCII85EncodeFilter.filter(in);
-                copyStream(in, this.out);
+                OutputStream out = this.out;
+                out = new ASCII85OutputStream(out);
+                if (!(img instanceof JpegImage)) {
+                    out = new FlateEncodeOutputStream(out);
+                }
+                out.write(imgmap);
+                ((Finalizable)out).finalizeStream();
             } catch (IOException e) {
                 if (!ioTrouble)
                     e.printStackTrace();
@@ -517,13 +591,48 @@ public class PSRenderer extends AbstractRenderer {
     }
 
     /**
+     * Render an image area.
+     *
+     * @param area the image area to render
+     */
+    public void renderImageArea(ImageArea area) {
+        // adapted from contribution by BoBoGi
+        int x = this.currentXPosition + area.getXOffset();
+        int ploffset = 0;
+        if (area.getParent() instanceof LineArea) {
+            ploffset = ((LineArea)area.getParent()).getPlacementOffset();
+        }
+        int y = this.currentYPosition + ploffset;
+        int w = area.getContentWidth();
+        int h = area.getHeight();
+
+        //this.currentYPosition -= h;
+        this.currentXPosition += w;
+
+        FopImage img = area.getImage();
+
+        if (img == null) {
+            log.error("Error while loading image: area.getImage() is null");
+        } else {
+            drawImageScaled(x, y, w, h, img, area.getFontState());
+        }
+        movetoCurrPosition();
+    }
+
+
+    /**
      * render an image area to PostScript
      *
      * @param area the area to render
      */
+     /*
     public void renderImageArea(ImageArea area) {
-        int x = this.currentAreaContainerXPosition + area.getXOffset();
-        int y = this.currentYPosition;
+        int x = this.currentXPosition + area.getXOffset();
+        int ploffset = 0;
+        if (area.getParent() instanceof LineArea) {
+            ploffset = ((LineArea)area.getParent()).getPlacementOffset();
+        }
+        int y = this.currentYPosition + ploffset;
         int w = area.getContentWidth();
         int h = area.getHeight();
         this.currentYPosition -= area.getHeight();
@@ -531,33 +640,16 @@ public class PSRenderer extends AbstractRenderer {
         imagecount++;
         // if (imagecount!=4) return;
 
-                comment("% --- ImageArea");
-        if (area.getImage() instanceof SVGImage) {}
-        else if (area.getImage() instanceof EPSImage) {
+        comment("% --- ImageArea");
+        if (area.getImage() instanceof SVGImage) {
+            renderSVGDocument(((SVGImage)area.getImage()).getSVGDocument(), x, y, area.getFontState());
+        } else if (area.getImage() instanceof EPSImage) {
             renderEPS(area.getImage(), x, y, w, h);
         } else {
             renderBitmap(area.getImage(), x, y, w, h);
         }
         comment("% --- ImageArea end");
-    }
-
-    private long copyStream(InputStream in, OutputStream out,
-                            int bufferSize) throws IOException {
-        long bytes_total = 0;
-        byte[] buf = new byte[bufferSize];
-        int bytes_read;
-        while ((bytes_read = in.read(buf)) != -1) {
-            bytes_total += bytes_read;
-            out.write(buf, 0, bytes_read);
-        }
-        return bytes_total;
-    }
-
-
-    private long copyStream(InputStream in,
-                            OutputStream out) throws IOException {
-        return copyStream(in, out, 4096);
-    }
+    }*/
 
     /**
      * render an inline area to PostScript
@@ -565,6 +657,7 @@ public class PSRenderer extends AbstractRenderer {
      * @param area the area to render
      */
     public void renderWordArea(WordArea area) {
+        movetoCurrPosition();
         FontState fs = area.getFontState();
         String fontWeight = fs.getFontWeight();
         StringBuffer sb = new StringBuffer();
@@ -596,7 +689,8 @@ public class PSRenderer extends AbstractRenderer {
 
         String psString = null;
         if (area.getFontState().getLetterSpacing() > 0) {
-            float f = area.getFontState().getLetterSpacing() * 1000 / this.currentFontSize;
+            //float f = area.getFontState().getLetterSpacing() * 1000 / this.currentFontSize;
+            float f = area.getFontState().getLetterSpacing();
             psString = (new StringBuffer().append(f).append(" 0.0 (").append(sb).
                         append(") A")).toString();
         } else {
@@ -637,17 +731,23 @@ public class PSRenderer extends AbstractRenderer {
      */
     public void renderInlineSpace(InlineSpace space) {
         // write("% --- InlineSpace size="+space.getSize());
-        this.currentXPosition += space.getSize();
         if (space.getUnderlined() || space.getLineThrough()
-                || space.getOverlined())
+                || space.getOverlined()) {
+            //start textdeko
+            movetoCurrPosition();
             write("ULS");
-        write(space.getSize() + " 0 RM");
-        if (space.getUnderlined())
-            write("ULE");
-        if (space.getLineThrough())
-            write("SOE");
-        if (space.getOverlined())
-            write("OLE");
+
+            write(space.getSize() + " 0 RM");
+
+            //end textdeko
+            if (space.getUnderlined())
+                write("ULE");
+            if (space.getLineThrough())
+                write("SOE");
+            if (space.getOverlined())
+                write("OLE");
+        }
+        this.currentXPosition += space.getSize();
     }
 
     /**
@@ -669,14 +769,14 @@ public class PSRenderer extends AbstractRenderer {
         movetoCurrPosition();
 
         String fontWeight = area.getFontState().getFontWeight();
-        // comment("% --- LineArea begin font-weight="+fontWeight);
+        //comment("% --- LineArea begin font-weight="+fontWeight);
         Enumeration e = area.getChildren().elements();
         while (e.hasMoreElements()) {
             Box b = (Box)e.nextElement();
             this.currentYPosition = ry - area.getPlacementOffset();
             b.render(this);
         }
-        // comment("% --- LineArea end");
+        //comment("% --- LineArea end");
 
         this.currentYPosition = ry - h;
         this.currentXPosition = rx;
@@ -688,12 +788,17 @@ public class PSRenderer extends AbstractRenderer {
      * @param page the page to render
      */
     public void renderPage(Page page) {
+        this.pagecount++;
         this.idReferences = page.getIDReferences();
 
         BodyAreaContainer body;
         AreaContainer before, after;
         write("%%Page: " + page.getNumber() + " " + page.getNumber());
+        write("%%PageBoundingBox: 0 0 " +
+                Math.round(page.getWidth() / 1000f) + " " +
+                Math.round(page.getHeight() / 1000f));
         write("%%BeginPageSetup");
+        write("FOPprocs begin");
         write("FOPFonts begin");
         write("0.001 0.001 scale");
         write("%%EndPageSetup");
@@ -709,7 +814,7 @@ public class PSRenderer extends AbstractRenderer {
         }
         write("showpage");
         write("%%PageTrailer");
-        write("%%EndPage");
+        write("%%EndPage"); //This is non-standard, but used by Adobe.
     }
 
     /**
@@ -838,7 +943,7 @@ public class PSRenderer extends AbstractRenderer {
         w = w + area.getBorderLeftWidth() + area.getBorderRightWidth();
         h = h + area.getBorderTopWidth() + area.getBorderBottomWidth();
 
-	doBackground(area, rx, ry, w, h);
+        doBackground(area, rx, ry, w, h);
 
         if (area.getBorderTopWidth() != 0) {
             write("newpath");
@@ -899,9 +1004,14 @@ public class PSRenderer extends AbstractRenderer {
     throws IOException {
         log.debug("rendering areas to PostScript");
 
+        this.pagecount = 0;
         this.out = new PSStream(outputStream);
         write("%!PS-Adobe-3.0");
+        if (this.producer == null) {
+            this.producer = org.apache.fop.apps.Version.getVersion();
+        }
         write("%%Creator: "+this.producer);
+        write("%%Pages: (atend)");
         write("%%DocumentProcessColors: Black");
         write("%%DocumentSuppliedResources: procset FOPFonts");
         write("%%EndComments");
@@ -910,6 +1020,7 @@ public class PSRenderer extends AbstractRenderer {
         write("%%BeginProlog");
         write("%%EndProlog");
         write("%%BeginSetup");
+        writeProcs();
         writeFontDict(fontInfo);
 
         /* Write proc for including EPS */
@@ -941,7 +1052,6 @@ public class PSRenderer extends AbstractRenderer {
         write("%%EndResource");
 
         write("%%EndSetup");
-        write("FOPFonts begin");
     }
 
     /**
@@ -951,6 +1061,7 @@ public class PSRenderer extends AbstractRenderer {
     public void stopRenderer(OutputStream outputStream)
     throws IOException {
         write("%%Trailer");
+        write("%%Pages: "+this.pagecount);
         write("%%EOF");
         this.out.flush();
         log.debug("written out PostScript");
