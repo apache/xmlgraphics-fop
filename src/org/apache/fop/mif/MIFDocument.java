@@ -348,6 +348,12 @@ public class MIFDocument {
 
         public TextRect curTextRect() {
 
+            //temporary fix for NoSuchElementException
+            if (textRects.isEmpty()) {
+                TextRect textRect = new TextRect(1);
+                this.textRects.addElement(textRect);
+            }
+
             return (TextRect)textRects.lastElement();
 
         }
