@@ -129,9 +129,9 @@ public class PCLRenderer extends PrintRenderer
                            PDFPathPaint stroke)
     {
 		if ( x1 == x2 )
-			addRect(x1, y1, th, y2 - y1 + 1, stroke, stroke);
+			addRect(x1 - (th/2), y1, th, y2 - y1 + 1, stroke, stroke);
 		else if ( y1 == y2 )
-			addRect(x1, y1, x2 - x1 + 1, th, stroke, stroke);
+			addRect(x1, y1 + (th/2), x2 - x1 + 1, th, stroke, stroke);
     }
 
     /**
@@ -176,12 +176,12 @@ public class PCLRenderer extends PrintRenderer
 				{
 					if ( start + len > y2 )
 						len = y2 - start;
-					addRect(x1, start, th, len, stroke, stroke);
+					addRect(x1 - (th/2), start, th, len, stroke, stroke);
 					start += (len + dashoff * th);
 				}
 			}
 			else
-				addRect(x1, y1, th, y2 - y1 + 1, stroke, stroke);
+				addRect(x1 - (th/2), y1, th, y2 - y1 + 1, stroke, stroke);
 		}
 		else if ( y1 == y2 )
 		{
@@ -193,12 +193,12 @@ public class PCLRenderer extends PrintRenderer
 				{
 					if ( start + len > x2 )
 						len = x2 - start;
-					addRect(start, y1, len, th, stroke, stroke);
+					addRect(start, y1 + (th/2), len, th, stroke, stroke);
 					start += (len + dashoff * th);
 				}
 			}
 			else
-				addRect(x1, y1, x2 - x1 + 1, th, stroke, stroke);
+				addRect(x1, y1 + (th/2), x2 - x1 + 1, th, stroke, stroke);
 		}
     }
 
