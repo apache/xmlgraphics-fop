@@ -45,12 +45,17 @@ public class CommandLineOptions {
 	/* System buffers */
 	private static final int BUFFER_FILE = 7;
 	
+	/* System buffers */
+	private static final int AREA_OUTPUT = 8;
+	
     /* use debug mode*/
     Boolean errorDump = new Boolean(false);
     /* show configuration information */
     Boolean dumpConfiguration = new Boolean(false);
     /*suppress any progress information */
     Boolean quiet = new Boolean(false);
+	/* for area tree XML output, only down to block area level */
+	Boolean suppressLowLevelAreas = new Boolean(false);
     /* name of user configuration file*/
     File userConfigFile = null;
     /* name of input fo file  */
@@ -72,11 +77,13 @@ public class CommandLineOptions {
     /* language for user information */
     String language = null;
 
-
+	private java.util.Hashtable rendererOptions;
+	
     public CommandLineOptions (String [] args) 
 	throws FOPException, FileNotFoundException
     {
 	boolean optionsParsed = true;
+	rendererOptions = new java.util.Hashtable();
 	try {
 	    optionsParsed = parseOptions(args);
 	    if (optionsParsed) {
@@ -129,7 +136,9 @@ public class CommandLineOptions {
                     language = args[i + 1];
                     i++;
                 }
-            } else if (args[i].equals("-fo")) {
+            } else if (args[i].equals("-s")) {
+                suppressLowLevelAreas = new Boolean(true);
+            }  else if (args[i].equals("-fo")) {
                 inputmode = FO_INPUT;
                 if ((i + 1 == args.length) ||
                         (args[i + 1].charAt(0) == '-')) {
@@ -228,6 +237,15 @@ public class CommandLineOptions {
                     bufferFile = new File (args[i + 1]);
                     i++;
                 }
+            } else if (args[i].equals("-at")) {
+		setOutputMode(AREA_OUTPUT);
+                if ((i + 1 == args.length) ||
+                        (args[i + 1].charAt(0) == '-')) {
+                    throw new FOPException("you must specify the area-tree output file");
+                } else {
+                    outfile = new File (args[i + 1]);
+                    i++;
+                }
             } else {
                 printUsage();
 		return false;
@@ -322,6 +340,9 @@ public class CommandLineOptions {
                 return Driver.RENDER_PCL;
             case TXT_OUTPUT:
                 return Driver.RENDER_TXT;
+			case AREA_OUTPUT:
+				rendererOptions.put("fineDetail", isCoarseAreaXml());
+				return Driver.RENDER_XML;
             default:
                 throw new FOPException("Invalid Renderer setting!");
         }
@@ -341,7 +362,10 @@ public class CommandLineOptions {
         }
     }
 
-
+	public java.util.Hashtable getRendererOptions() {
+		return rendererOptions;
+	}
+	
     public Starter getStarter() 
 	throws FOPException
     {
@@ -377,6 +401,8 @@ public class CommandLineOptions {
 		    throw new FOPException("PrintStarter could not be loaded.",e);
                 }
 
+            case AREA_OUTPUT:
+                return new CommandLineStarter(this);
             default:
                 return new CommandLineStarter(this);
         }
@@ -430,7 +456,10 @@ public class CommandLineOptions {
         return errorDump;
     }
 
-
+	public Boolean isCoarseAreaXml() {
+		return suppressLowLevelAreas;
+	}
+	
     /**
        * return either the fofile or the xmlfile
        */
@@ -451,12 +480,13 @@ public class CommandLineOptions {
        */
     public static void printUsage() {
         MessageHandler.errorln(
-          "\nUSAGE\nFop [options] [-fo|-xml] infile [-xsl file] [-awt|-pdf|-mif|-pcl|-txt|-print] <outfile>\n" +
+          "\nUSAGE\nFop [options] [-fo|-xml] infile [-xsl file] [-awt|-pdf|-mif|-pcl|-txt|-at|-print] <outfile>\n" +
           " [OPTIONS]  \n" + "  -d          debug mode   \n" +
           "  -x          dump configuration settings  \n" +
           "  -q          quiet mode  \n" +
           "  -c cfg.xml  use additional configuration file cfg.xml\n" +
-          "  -l lang     the language to use for user information \n\n" +
+          "  -l lang     the language to use for user information \n" +
+		  "  -s          for area tree XML, down to block areas only\n\n" +
           " [INPUT]  \n" +
           "  infile            xsl:fo input file (the same as the next) \n" +
           "  -fo  infile       xsl:fo input file  \n" +
@@ -469,6 +499,7 @@ public class CommandLineOptions {
           "  -mif outfile      input will be rendered as mif file (outfile req'd)\n" +
           "  -pcl outfile      input will be rendered as pcl file (outfile req'd) \n" +
           "  -txt outfile      input will be rendered as text file (outfile req'd) \n" +
+          "  -at outfile       representation of area tree as XML (outfile req'd) \n" +
           "  -print            input file will be rendered and sent to the printer \n" +
           "                    see options with \"-print help\" \n\n" +
           " [Examples]\n" + "  Fop foo.fo foo.pdf \n" +

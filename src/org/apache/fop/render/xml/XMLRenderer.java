@@ -65,6 +65,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.OutputStream;
 import java.util.Enumeration;
+import java.util.Hashtable;
 
 /**
  * Renderer that renders areas to XML for debugging purposes.
@@ -80,6 +81,17 @@ public class XMLRenderer implements Renderer {
     /** the writer used to output the XML */
     protected PrintWriter writer;
 
+	/** options */
+	protected Hashtable options;
+	
+	public XMLRenderer() {
+	}
+
+	/** set up renderer options */
+	public void setOptions(Hashtable options) {
+		this.options = options;
+	}
+	
     /**
      * set the document's producer
      *
@@ -244,7 +256,8 @@ public class XMLRenderer implements Renderer {
      * @param space the space to render
      */
     public void renderDisplaySpace(DisplaySpace space) {
-	writeEmptyElementTag("<DisplaySpace size=\""
+		if (!isCoarseXml())
+			writeEmptyElementTag("<DisplaySpace size=\""
 			     + space.getSize() +"\"/>");
     }
 
@@ -290,13 +303,17 @@ public class XMLRenderer implements Renderer {
 	    else
 		sb = sb.append(ch);
 	}
-	writeElement("<InlineArea font-weight=\""
+	if (!isCoarseXml()) {
+	writeElement("<WordArea font-weight=\""
 		     + fontWeight + "\" red=\""
 		     + area.getRed() + "\" green=\""
 		     + area.getGreen() + "\" blue = \""
 		     + area.getBlue() + "\" width = \""
 		     + area.getContentWidth() + "\">" + sb.toString()
-		     + "</InlineArea>");
+		     + "</WordArea>");
+	} else {
+		this.writer.write(sb.toString());
+	}
     }
 
     /**
@@ -305,8 +322,11 @@ public class XMLRenderer implements Renderer {
      * @param space the space to render
      */
     public void renderInlineSpace(InlineSpace space) {
-	writeEmptyElementTag("<InlineSpace size=\""
+		if (!isCoarseXml())
+			writeEmptyElementTag("<InlineSpace size=\""
 			     + space.getSize() +"\"/>");
+		else
+			this.writer.write(" ");
     }
 
     /**
@@ -315,15 +335,20 @@ public class XMLRenderer implements Renderer {
      * @param area the area to render
      */
     public void renderLineArea(LineArea area) {
-	String fontWeight = area.getFontState().getFontWeight();
-	writeStartTag("<LineArea font-weight=\""
+		if (!isCoarseXml()) {
+			String fontWeight = area.getFontState().getFontWeight();
+			writeStartTag("<LineArea font-weight=\""
 		      + fontWeight + "\">");
-	Enumeration e = area.getChildren().elements();
-	while (e.hasMoreElements()) {
-	    Box b = (Box)e.nextElement();
-	    b.render(this);
-	}
-	writeEndTag("</LineArea>");
+		}
+		Enumeration e = area.getChildren().elements();
+		while (e.hasMoreElements()) {
+			Box b = (Box)e.nextElement();
+			b.render(this);
+		}
+		if (!isCoarseXml())
+			writeEndTag("</LineArea>");
+		else
+			this.writer.write("\n");
     }
 
     /**
@@ -334,7 +359,7 @@ public class XMLRenderer implements Renderer {
     public void renderPage(Page page) {
 	BodyAreaContainer body;
 	AreaContainer before, after;
-	writeStartTag("<Page>");
+	writeStartTag("<Page number=\"" + page.getNumber() + "\">");
 	body = page.getBody();
 	before = page.getBefore();
 	after = page.getAfter();
@@ -354,6 +379,7 @@ public class XMLRenderer implements Renderer {
       * @param area the area to render
       */
     public void renderLeaderArea(LeaderArea area) {
+		if (isCoarseXml()) return;
       String leaderPattern = "";
       switch (area.getLeaderPattern()) {
       case LeaderPattern.SPACE:
@@ -377,4 +403,8 @@ public class XMLRenderer implements Renderer {
                              "\" red=\"" + area.getRed() + "\" green=\"" + area.getGreen() +
                              "\" blue = \"" + area.getBlue() + "\"/>");
     }
+	
+	private boolean isCoarseXml() {
+		return ((Boolean)options.get("fineDetail")).booleanValue();
+	}
 }

@@ -55,7 +55,7 @@ public class CommandLineStarter extends Starter {
 			
         try {
             driver.setRenderer(commandLineOptions.getRenderer());
-
+			driver.getRenderer().setOptions(commandLineOptions.getRendererOptions());
             driver.buildFOTree(parser, inputHandler.getInputSource());
             driver.format();
             driver.setOutputStream(new FileOutputStream(commandLineOptions.getOutputFile()));

@@ -89,6 +89,9 @@ public class PDFRenderer extends PrintRenderer {
     /** reusable word area string buffer to reduce memory usage */
     private StringBuffer _wordAreaPDF = new StringBuffer();
 
+	/** options */
+	protected Hashtable options;
+
     /**
      * create the PDF renderer
      */
@@ -96,6 +99,11 @@ public class PDFRenderer extends PrintRenderer {
         this.pdfDoc = new PDFDocument();
     }
 
+	/** set up renderer options */
+	public void setOptions(Hashtable options) {
+		this.options = options;
+	}
+	
     /**
      * set the PDF document's producer
      *

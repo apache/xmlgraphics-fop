@@ -30,6 +30,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Enumeration;
 import java.util.Vector;
+import java.util.Hashtable;
 
 /**
  * Renderer that renders areas to plain text
@@ -64,13 +65,17 @@ public class TXTRenderer extends PrintRenderer
  	public String pageEnding = "\f"; // Every page except the last one will end with this string.
  	public boolean suppressGraphics = false; // If true then graphics/decorations will not be rendered - text only.
 
-    /**
-     * create the TXT renderer
-     */
-    public TXTRenderer()
-    {
-    }
+	/** options */
+	protected Hashtable options;
+	
+	public TXTRenderer() {
+	}
 
+	/** set up renderer options */
+	public void setOptions(Hashtable options) {
+		this.options = options;
+	}
+	
     /**
      * set the TXT document's producer
      *
