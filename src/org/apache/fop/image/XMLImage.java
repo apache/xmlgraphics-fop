@@ -29,6 +29,7 @@ public class XMLImage extends AbstractFopImage {
         super(href, imgInfo);
         if(imgInfo.data instanceof Document) {
             doc = (Document)imgInfo.data;
+            loaded = loaded | ORIGINAL_DATA;
         }
         ns = imgInfo.str;
     }

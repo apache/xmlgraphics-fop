@@ -126,6 +126,12 @@ public abstract class AbstractFopImage implements FopImage {
                 loaded = loaded | BITMAP;
             }
         }
+        if(((type & ORIGINAL_DATA) != 0) && ((loaded & ORIGINAL_DATA) == 0)) {
+            success = success && loadOriginalData(ua);
+            if(success) {
+                loaded = loaded | ORIGINAL_DATA;
+            }
+        }
         return success;
     }
 
@@ -134,6 +140,10 @@ public abstract class AbstractFopImage implements FopImage {
     }
 
     protected boolean loadBitmap(FOUserAgent ua) {
+        return false;
+    }
+
+    protected boolean loadOriginalData(FOUserAgent ua) {
         return false;
     }
 

@@ -71,6 +71,7 @@ public class EPSImage extends AbstractFopImage {
             bbox[2] = (int) epsData.bbox[2];
             bbox[3] = (int) epsData.bbox[3];
 
+            loaded = loaded | ORIGINAL_DATA;
         }
     }
 
