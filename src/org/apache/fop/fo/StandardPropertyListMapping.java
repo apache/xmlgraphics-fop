@@ -162,6 +162,9 @@ public class StandardPropertyListMapping implements PropertyListMapping {
 	propertyTable.put("leader-pattern",LeaderPattern.maker());
 	propertyTable.put("leader-length",LeaderLength.maker());
   propertyTable.put("rule-style",RuleStyle.maker());
+	propertyTable.put("scaling",Scaling.maker());
+	propertyTable.put("vertical-align",Scaling.maker());
+	propertyTable.put("overflow",Scaling.maker());
 	builder.addPropertyList(uri, propertyTable); 
     }
 }
