@@ -176,6 +176,18 @@ public class PDFImageElementBridge extends SVGImageElementBridge {
             }
             return null;
         }
+
+        /**
+         * Returns the bounds of the sensitive area covered by this node,
+         * This includes the stroked area but does not include the effects
+         * of clipping, masking or filtering.
+         * @return the bounds of the sensitive area
+         */
+        public Rectangle2D getSensitiveBounds() {
+            //No interactive features, just return primitive bounds
+            return getPrimitiveBounds();
+        }
+
     }
 
 }
