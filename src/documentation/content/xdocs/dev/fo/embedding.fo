@@ -795,8 +795,8 @@ XML Syntax
 Here we have some examples of how the XML can be specified in the fo document.
       <fo:block>
           <fo:table>
-              <fo:table-column column-width="500pt"/>
-              <fo:table-column column-width="100pt"/>
+              <fo:table-column column-width="350pt"/>
+              <fo:table-column column-width="150pt"/>
   <fo:table-body>
     <fo:table-row>
       <fo:table-cell number-columns-spanned="2">
