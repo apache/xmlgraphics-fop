@@ -288,6 +288,14 @@ public class FONode extends SyncedNode{
             PropertyConsts.pconsts.getProperty(property);
         specifiedProps.set(property);
         // Handle corresponding properties here
+        // Note that the resolution of corresponding properties, like
+        // shorthands and compounds, relies on the ordering imposed by the
+        // property indices.  Each property, in increasing index order, is
+        // processed as if it were the only relevant assignment.  The lowest
+        // priority properties (among shorthands and their expansions,
+        // compounds and their expansions, and corresponding properties and
+        // their correspondents) are processed first, then higher priority
+        // assignments simply overwrite the earlier value assignments.
         if (tempP instanceof CorrespondingProperty) {
             // Update the propertySet
             propertySet[property] = propval;
