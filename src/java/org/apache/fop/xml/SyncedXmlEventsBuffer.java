@@ -48,10 +48,6 @@
  * on  behalf of the Apache Software  Foundation and was  originally created by
  * James Tauber <jtauber@jtauber.com>. For more  information on the Apache 
  * Software Foundation, please see <http://www.apache.org/>.
- *  
- *
- * @author <a href="mailto:pbwest@powerup.com.au">Peter B. West</a>
- * @version $Revision$ $Name$
  */
 package org.apache.fop.xml;
 
@@ -67,9 +63,16 @@ import org.apache.fop.fo.FObjectSets;
 
 /**
  * A synchronized circular buffer for XMLEvents.
+ * Extends SyncedCircularBuffer and implements XmlEventSource.
+ * 
  * @see org.apache.fop.datastructs.SyncedCircularBuffer
+ * @see XmlEventSource
+ * @author <a href="mailto:pbwest@powerup.com.au">Peter B. West</a>
+ * @version $Revision$ $Name$
  */
-public class SyncedXmlEventsBuffer extends SyncedCircularBuffer {
+public class SyncedXmlEventsBuffer
+extends SyncedCircularBuffer
+implements XmlEventSource {
 
     /**
      * Constant for <i>discardEvent</i> field of
@@ -310,46 +313,6 @@ public class SyncedXmlEventsBuffer extends SyncedCircularBuffer {
 
     /**
      * Return the next element if it is of the required type and has the
-     * required <tt>QName</tt>.  If the next
-     * element is not of the required type, push it back onto the buffer.
-     * @param eventType - the <tt>int</tt> event type.
-     * @param qName a <tt>String</tt> with the <tt>QName</tt> of the
-     * required element.
-     * @param discardWhiteSpace - if true, discard any <tt>characters</tt>
-     * events which contain only whitespace.
-     * @return an event of the required type.  If the next
-     * event detected is not of the required type, <tt>null</tt> is returned.
-     * The erroneous event is pushed back.
-     * @exception FOPException if buffer errors or interrupts occur.
-     * @exception NoSuchElementException if the event is not found.
-     */
-    /*
-    public XmlEvent expectSaxQNameEvent
-                    (int eventType, String qName, boolean discardWhiteSpace)
-                throws FOPException
-    {
-        XmlEvent ev = getEvent();
-        if (discardWhiteSpace) {
-            while (ev != null && ev.type == XmlEvent.CHARACTERS
-                   && ev.chars.trim().equals("")) {
-                namespaces.surrenderEvent(ev);
-                ev = getEvent();
-            }
-        }
-        if (ev != null && ev.type == eventType && ev.qName.equals(qName)) {
-            return ev;
-        }
-        if (ev == null)
-            throw new NoSuchElementException
-                        (XmlEvent.eventTypeName(eventType)
-                                           + " not found: end of buffer.");
-        pushBack(ev);
-        return null;
-    }
-    */
-
-    /**
-     * Return the next element if it is of the required type and has the
      * required URI index and local name.  If the next
      * element is not of the required type, push it back onto the buffer.
      * @param eventType - the <tt>int</tt> event type.
@@ -531,47 +494,6 @@ public class SyncedXmlEventsBuffer extends SyncedCircularBuffer {
     {
         return expectSaxEvent(XmlEvent.STARTELEMENT, discardWhiteSpace);
     }
-
-    /**
-     * Get the next STARTELEMENT event with the given <tt>QName</tt>
-     * from the buffer.  Discard any other events preceding the
-     * STARTELEMENT event.
-     * @param qName a <tt>String</tt> with the <tt>QName</tt> of the
-     * required STARTELEMENT
-     * @return a STARTELEMENT event
-     * @exception FOPException if buffer errors or interrupts occur
-     * @exception NoSuchElementException if the event is not found
-     */
-    /*
-    public XmlEvent getStartElement(String qName) throws FOPException
-    {
-        return getSaxQNameEvent(XmlEvent.STARTELEMENT, qName);
-    }
-    */
-
-    /**
-     * Return the next element if it is a STARTELEMENT with the given
-     * <tt>QName</tt>.  If the next
-     * element is not of the required type, push it back onto the buffer.
-     * @param qName a <tt>String</tt> with the <tt>QName</tt> of the
-     * required STARTELEMENT
-     * @param discardWhiteSpace - if true, discard any <tt>characters</tt>
-     * events which contain only whitespace.
-     * @return a STARTELEMENT event.  If the next
-     * event detected is not of the required type, <tt>null</tt> is returned.
-     * The erroneous event is pushed back.
-     * @exception FOPException if buffer errors or interrupts occur
-     * @exception NoSuchElementException if end of buffer detected.
-     */
-    /*
-    public XmlEvent expectStartElement
-                                (String qName, boolean discardWhiteSpace)
-        throws FOPException
-    {
-        return expectSaxQNameEvent
-                        (XmlEvent.STARTELEMENT, qName, discardWhiteSpace);
-    }
-    */
 
     /**
      * Get the next STARTELEMENT event with the given URI index and local name
@@ -839,68 +761,6 @@ public class SyncedXmlEventsBuffer extends SyncedCircularBuffer {
         }
         return null;
     }
-
-    /**
-     * Get one of a array of possible STARTELEMENT events.  Scan and discard
-     * events until a STARTELEMENT event is found whose <tt>QName</tt>
-     * matches one of those in the argument <tt>String[]</tt> array.
-     * @param list a <tt>String[]</tt> array containing <tt>QName</tt>s,
-     * one of which is required.
-     * @param discardWhiteSpace - if true, discard any <tt>characters</tt>
-     * events which contain only whitespace.
-     * @return the next matching STARTELEMENT event from the buffer.
-     * @exception FOPException if buffer errors or interrupts occur
-     * @exception NoSuchElementException if the event is not found
-     */
-    /*
-    public XmlEvent getStartElement(String[] list, boolean discardWhiteSpace)
-        throws FOPException
-    {
-        XmlEvent ev;
-        do {
-            ev = expectStartElement(list, discardWhiteSpace);
-            if (ev != null) return ev;
-            // The non-matching event has been pushed back.
-            // Get it and discard.  Note that if the first attempt to
-            // getEvent() returns null, the expectStartElement() calls
-            // will throw a NoSuchElementException
-            ev = getEvent();
-            namespaces.surrenderEvent(ev);
-        } while (ev != null);
-        // Exit from this while loop is only by discovery of null event
-        throw new NoSuchElementException
-                    ("StartElement from array not found.");
-    }
-    */
-
-    /**
-     * Expect one of an array of possible STARTELEMENT events.  The next
-     * STARTELEMENT must have a <tt>QName</tt> which matches an element
-     * of the argument <tt>String[]</tt> list.
-     * @param list a <tt>String[]</tt> array containing <tt>QName</tt>s
-     * of possible events, one of which must be the next returned.
-     * @param discardWhiteSpace - if true, discard any <tt>characters</tt>
-     * events which contain only whitespace.
-     * @return the matching STARTELEMENT event.If the next
-     * event detected is not of the required type, <tt>null</tt> is returned.
-     * The erroneous event is pushed back.
-     * @exception FOPException if buffer errors or interrupts occur
-     * @exception NoSuchElementException if end of buffer detected.
-     */
-    /*
-    public XmlEvent expectStartElement
-                                    (String[] list, boolean discardWhiteSpace)
-        throws FOPException
-    {
-        XmlEvent ev;
-        for (int i = 0; i < list.length; i++) {
-            ev = expectStartElement(list[i], discardWhiteSpace);
-            // Found it!
-            if (ev != null) return ev;
-        }
-        return null;
-    }
-    */
 
     /**
      * Get one of a array of possible STARTELEMENT events.  Scan and discard
@@ -1190,28 +1050,6 @@ public class SyncedXmlEventsBuffer extends SyncedCircularBuffer {
     {
         return getSaxQNameEvent(XmlEvent.ENDELEMENT, qName);
     }
-
-    /**
-     * Return the next element if it is an ENDELEMENT with the given
-     * <tt>QName</tt>.  If the next
-     * element is not of the required type, push it back onto the buffer.
-     * @param qName a <tt>String</tt> with the <tt>QName</tt> of the
-     * required ENDELEMENT
-     * @param discardWhiteSpace - if true, discard any <tt>characters</tt>
-     * events which contain only whitespace.
-     * @return an ENDELEMENT with the given qname.  If the next
-     * event detected is not an ENDELEMENT, <tt>null</tt> is returned.
-     * The erroneous event is pushed back.
-     * @exception FOPException if buffer errors or interrupts occur
-     * @exception NoSuchElementException if end of buffer detected.
-     */
-    /*
-    public XmlEvent expectEndElement(String qName, boolean discardWhiteSpace)
-        throws FOPException
-    {
-        return expectSaxQNameEvent(XmlEvent.ENDELEMENT, qName, discardWhiteSpace);
-    }
-    */
 
     /**
      * Get the next ENDELEMENT event with the given URI index and local name
