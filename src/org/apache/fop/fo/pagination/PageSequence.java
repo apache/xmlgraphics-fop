@@ -121,7 +121,6 @@ public class PageSequence extends FObj {
     protected PageSequence(FObj parent,
                            PropertyList propertyList) throws FOPException {
         super(parent, propertyList);
-        this.name = "fo:page-sequence";
 
         if (parent.getName().equals("fo:root")) {
             this.root = (Root)parent;
@@ -177,6 +176,9 @@ public class PageSequence extends FObj {
         // this.properties.get("id");
     }
 
+    public String getName() {
+        return "fo:page-sequence";
+    }
 
     public void addFlow(Flow flow) throws FOPException {
         if (_flowMap.containsKey(flow.getFlowName())) {

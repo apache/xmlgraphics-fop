@@ -17,7 +17,7 @@ import org.apache.fop.apps.FOPException;
 // Java
 import java.util.Vector;
 
-public class RetrieveMarker extends FObjMixed {
+public class RetrieveMarker extends FObj {
 
     private String retrieveClassName;
     private int retrievePosition;
@@ -37,7 +37,6 @@ public class RetrieveMarker extends FObjMixed {
 
     public RetrieveMarker(FObj parent, PropertyList propertyList) {
         super(parent, propertyList);
-        this.name = "fo:retrieve-marker";
 
         this.retrieveClassName =
             this.properties.get("retrieve-class-name").getString();
@@ -45,6 +44,10 @@ public class RetrieveMarker extends FObjMixed {
             this.properties.get("retrieve-position").getEnum();
         this.retrieveBoundary =
             this.properties.get("retrieve-boundary").getEnum();
+    }
+
+    public String getName() {
+        return "fo:retrieve-marker";
     }
 
     public Status layout(Area area) throws FOPException {

@@ -63,6 +63,10 @@ public class XMLElement extends XMLObj {
         init();
     }
 
+    public String getName() {
+        return tagName;
+    }
+
     /**
      * layout this formatting object.
      *

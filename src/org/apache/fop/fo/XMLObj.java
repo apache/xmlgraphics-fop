@@ -27,7 +27,7 @@ import java.util.*;
  */
 public abstract class XMLObj extends FObj {
 
-    protected String tagName = "";
+    protected String tagName;
 
     protected Element element;
     protected Document doc;
@@ -141,7 +141,7 @@ public abstract class XMLObj extends FObj {
      */
     public Status layout(Area area) throws FOPException {
         /* generate a warning */
-        log.error("" + this.name + " outside foreign xml");
+        log.error("" + this.tagName + " outside foreign xml");
 
         /* return status */
         return new Status(Status.OK);

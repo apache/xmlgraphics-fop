@@ -36,12 +36,24 @@ public class ExternalGraphic extends FObj {
 
     ImageArea imageArea;
 
+    public static class Maker extends FObj.Maker {
+        public FObj make(FObj parent,
+                         PropertyList propertyList) throws FOPException {
+            return new ExternalGraphic(parent, propertyList);
+        }
+    }
+
+    public static FObj.Maker maker() {
+        return new ExternalGraphic.Maker();
+    }
 
     public ExternalGraphic(FObj parent, PropertyList propertyList) {
         super(parent, propertyList);
-        this.name = "fo:external-graphic";
     }
 
+    public String getName() {
+        return "fo:external-graphic";
+    }
 
     public Status layout(Area area) throws FOPException {
 
@@ -251,18 +263,5 @@ public class ExternalGraphic extends FObj {
         return new Status(Status.OK);
     }
 
-
-    public static FObj.Maker maker() {
-        return new ExternalGraphic.Maker();
-    }
-
-
-    public static class Maker extends FObj.Maker {
-        public FObj make(FObj parent,
-                         PropertyList propertyList) throws FOPException {
-            return new ExternalGraphic(parent, propertyList);
-        }
-
-    }
 }
 

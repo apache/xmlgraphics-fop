@@ -51,8 +51,11 @@ public class BlockContainer extends FObj {
     protected BlockContainer(FObj parent,
                              PropertyList propertyList) throws FOPException {
         super(parent, propertyList);
-        this.name = "fo:block-container";
         this.span = this.properties.get("span").getEnum();
+    }
+
+    public String getName() {
+        return "fo:block-container";
     }
 
     public Status layout(Area area) throws FOPException {

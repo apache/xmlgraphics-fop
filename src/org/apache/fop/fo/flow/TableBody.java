@@ -35,7 +35,10 @@ public class TableBody extends AbstractTableBody {
     public TableBody(FObj parent, PropertyList propertyList) 
       throws FOPException {
         super(parent, propertyList);
-        this.name = "fo:table-body";
+    }
+
+    public String getName() {
+        return "fo:table-body";
     }
 
 }

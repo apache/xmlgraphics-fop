@@ -11,21 +11,15 @@ package org.apache.fop.fo;
 import org.apache.fop.fo.*;
 import org.apache.fop.fo.flow.*;
 import org.apache.fop.fo.properties.*;
-import org.apache.fop.layout.AreaTree;
 import org.apache.fop.apps.FOPException;
 
-/**
- * The fo:root formatting object. Contains page masters, root extensions,
- * page-sequences.
- */
-public class ColorProfile extends ToBeImplementedElement {
+public class ColorProfile extends FObj {
 
     public static class Maker extends FObj.Maker {
         public FObj make(FObj parent,
                          PropertyList propertyList) throws FOPException {
             return new ColorProfile(parent, propertyList);
         }
-
     }
 
     public static FObj.Maker maker() {
@@ -35,11 +29,13 @@ public class ColorProfile extends ToBeImplementedElement {
     protected ColorProfile(FObj parent,
                            PropertyList propertyList) throws FOPException {
         super(parent, propertyList);
-        this.name = "fo:color-profile";
-
+        log.warn("color profile not implemented");
         // this.properties.get("src");
         // this.properties.get("color-profile-name");
         // this.properties.get("rendering-intent");
     }
 
+    public String getName() {
+        return "fo:color-profile";
+    }
 }

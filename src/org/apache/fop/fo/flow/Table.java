@@ -60,7 +60,10 @@ public class Table extends FObj {
 
     public Table(FObj parent, PropertyList propertyList) {
         super(parent, propertyList);
-        this.name = "fo:table";
+    }
+
+    public String getName() {
+        return "fo:table";
     }
 
     public Status layout(Area area) throws FOPException {

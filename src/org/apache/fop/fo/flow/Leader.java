@@ -40,7 +40,10 @@ public class Leader extends FObjMixed {
 
     public Leader(FObj parent, PropertyList propertyList) {
         super(parent, propertyList);
-        this.name = "fo:leader";
+    }
+
+    public String getName() {
+        return "fo:leader";
     }
 
     public Status layout(Area area) throws FOPException {

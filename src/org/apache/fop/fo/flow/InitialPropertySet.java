@@ -34,7 +34,10 @@ public class InitialPropertySet extends ToBeImplementedElement {
     protected InitialPropertySet(FObj parent, PropertyList propertyList)
             throws FOPException {
         super(parent, propertyList);
-        this.name = "fo:initial-property-set";
+    }
+
+    public String getName() {
+        return "fo:initial-property-set";
     }
 
     public Status layout(Area area) throws FOPException {

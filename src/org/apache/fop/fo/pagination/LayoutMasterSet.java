@@ -23,7 +23,6 @@ public class LayoutMasterSet extends FObj {
                          PropertyList propertyList) throws FOPException {
             return new LayoutMasterSet(parent, propertyList);
         }
-
     }
 
     public static FObj.Maker maker() {
@@ -39,7 +38,6 @@ public class LayoutMasterSet extends FObj {
     protected LayoutMasterSet(FObj parent,
                               PropertyList propertyList) throws FOPException {
         super(parent, propertyList);
-        this.name = "fo:layout-master-set";
 
         this.simplePageMasters = new Hashtable();
         this.pageSequenceMasters = new Hashtable();
@@ -53,6 +51,10 @@ public class LayoutMasterSet extends FObj {
         }
         allRegions = new Hashtable();
 
+    }
+
+    public String getName() {
+        return "fo:layout-master-set";
     }
 
     protected void addSimplePageMaster(SimplePageMaster simplePageMaster)
@@ -147,6 +149,5 @@ public class LayoutMasterSet extends FObj {
         }
         return result;
     }
-
 
 }

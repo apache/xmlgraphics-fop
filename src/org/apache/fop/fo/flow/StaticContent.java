@@ -37,6 +37,10 @@ public class StaticContent extends Flow {
         ((PageSequence)parent).setIsFlowSet(false);    // hacquery of sorts
     }
 
+    public String getName() {
+        return "fo:static-content";
+    }
+
     public Status layout(Area area) throws FOPException {
         return layout(area, null);
     }
@@ -90,15 +94,11 @@ public class StaticContent extends Flow {
         return new Status(Status.OK);
     }
 
-    protected String getElementName() {
-        return "fo:static-content";
-    }
-
     // flowname checking is more stringient for static content currently
     protected void setFlowName(String name) throws FOPException {
         if (name == null || name.equals("")) {
             throw new FOPException("A 'flow-name' is required for "
-                                   + getElementName() + ".");
+                                   + getName() + ".");
         } else {
             super.setFlowName(name);
         }

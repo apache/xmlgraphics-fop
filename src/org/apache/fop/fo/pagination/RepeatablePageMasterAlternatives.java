@@ -45,7 +45,6 @@ public class RepeatablePageMasterAlternatives extends FObj
     public RepeatablePageMasterAlternatives(FObj parent, PropertyList propertyList)
             throws FOPException {
         super(parent, propertyList);
-        this.name = "fo:repeatable-page-master-alternatives";
 
         if (parent.getName().equals("fo:page-sequence-master")) {
             this.pageSequenceMaster = (PageSequenceMaster)parent;
@@ -72,6 +71,10 @@ public class RepeatablePageMasterAlternatives extends FObj
             }
         }
         conditionalPageMasterRefs = new Vector();
+    }
+
+    public String getName() {
+        return "fo:repeatable-page-master-alternatives";
     }
 
     public void addConditionalPageMasterReference(ConditionalPageMasterReference cpmr) {

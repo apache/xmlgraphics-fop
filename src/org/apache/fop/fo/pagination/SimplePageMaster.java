@@ -50,7 +50,6 @@ public class SimplePageMaster extends FObj {
     protected SimplePageMaster(FObj parent, PropertyList propertyList)
             throws FOPException {
         super(parent, propertyList);
-        this.name = "fo:simple-page-master";
 
         if (parent.getName().equals("fo:layout-master-set")) {
             this.layoutMasterSet = (LayoutMasterSet)parent;
@@ -68,6 +67,10 @@ public class SimplePageMaster extends FObj {
         }
         _regions = new Hashtable();
 
+    }
+
+    public String getName() {
+        return "fo:simple-page-master";
     }
 
     protected void end() {

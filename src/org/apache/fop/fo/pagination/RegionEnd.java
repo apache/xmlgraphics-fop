@@ -37,6 +37,9 @@ public class RegionEnd extends Region {
         super(parent, propertyList);
     }
 
+    public String getName() {
+        return "fo:region-end";
+    }
 
     RegionArea makeRegionArea(int allocationRectangleXPosition,
                               int allocationRectangleYPosition,
@@ -88,10 +91,6 @@ public class RegionEnd extends Region {
 
     protected String getDefaultRegionName() {
         return "xsl-region-end";
-    }
-
-    protected String getElementName() {
-        return "fo:region-end";
     }
 
     public String getRegionClass() {

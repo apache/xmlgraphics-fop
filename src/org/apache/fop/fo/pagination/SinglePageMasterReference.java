@@ -31,7 +31,6 @@ public class SinglePageMasterReference extends PageMasterReference {
     public SinglePageMasterReference(FObj parent, PropertyList propertyList)
             throws FOPException {
         super(parent, propertyList);
-        this.name = "fo:single-page-master-reference";
         if (getProperty("master-reference") != null) {
             this.masterName = getProperty("master-reference").getString();
             if (parent.getName().equals("fo:page-sequence-master")) {
@@ -45,6 +44,10 @@ public class SinglePageMasterReference extends PageMasterReference {
           log.warn("A fo:single-page-master-reference does not have a master-reference and so is being ignored");
         }
         this.state = FIRST;
+    }
+
+    public String getName() {
+        return "fo:single-page-master-reference";
     }
 
     public String getNextPageMasterName(boolean isOddPage,

@@ -41,7 +41,10 @@ public class PageNumber extends FObj {
 
     public PageNumber(FObj parent, PropertyList propertyList) {
         super(parent, propertyList);
-        this.name = "fo:page-number";
+    }
+
+    public String getName() {
+        return "fo:page-number";
     }
 
     public Status layout(Area area) throws FOPException {

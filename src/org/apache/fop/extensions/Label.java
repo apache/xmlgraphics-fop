@@ -39,5 +39,8 @@ public class Label extends ExtensionObj {
         return textBuffer.toString();
     }
 
+    public String getName() {
+        return "fop:label";
+    }
 
 }

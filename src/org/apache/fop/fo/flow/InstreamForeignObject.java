@@ -76,7 +76,10 @@ public class InstreamForeignObject extends FObj {
      */
     public InstreamForeignObject(FObj parent, PropertyList propertyList) {
         super(parent, propertyList);
-        this.name = "fo:instream-foreign-object";
+    }
+
+    public String getName() {
+        return "fo:instream-foreign-object";
     }
 
     /**

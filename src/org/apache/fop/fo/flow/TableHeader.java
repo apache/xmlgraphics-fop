@@ -35,7 +35,10 @@ public class TableHeader extends AbstractTableBody {
     public TableHeader(FObj parent, PropertyList propertyList)
         throws FOPException {
         super(parent, propertyList);
-        this.name = "fo:table-header";
+    }
+
+    public String getName() {
+        return "fo:table-header";
     }
 
 }

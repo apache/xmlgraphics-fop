@@ -35,7 +35,10 @@ public class TableFooter extends AbstractTableBody {
     public TableFooter(FObj parent, PropertyList propertyList)
         throws FOPException {
         super(parent, propertyList);
-        this.name = "fo:table-footer";
+    }
+
+    public String getName() {
+        return "fo:table-footer";
     }
 
     public int getYPosition() {

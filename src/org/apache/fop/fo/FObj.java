@@ -21,19 +21,16 @@ import java.util.Vector;
 /**
  * base class for representation of formatting objects and their processing
  */
-public class FObj extends FONode {
+public abstract class FObj extends FONode {
 
-    public static class Maker {
-        public FObj make(FObj parent,
-                         PropertyList propertyList) throws FOPException {
-            return new FObj(parent, propertyList);
-        }
-
+    public abstract static class Maker {
+        abstract public FObj make(FObj parent,
+                                  PropertyList propertyList) throws FOPException;
     }
 
-    public static Maker maker() {
-        return new Maker();
-    }
+//      public static Maker maker() {
+//          return new Maker();
+//      }
 
     // protected PropertyList properties;
     public PropertyList properties;
@@ -42,14 +39,13 @@ public class FObj extends FONode {
     // markers
     private Hashtable markers;
 
-    protected String name;
+//    protected String name;
 
     protected FObj(FObj parent, PropertyList propertyList) {
         super(parent);
         this.properties = propertyList;    // TO BE REMOVED!!!
         propertyList.setFObj(this);
         this.propMgr = makePropertyManager(propertyList);
-        this.name = "default FO";
         setWritingMode();
     }
 
@@ -83,16 +79,14 @@ public class FObj extends FONode {
      * returns the name of the formatting object
      * @return the name of this formatting objects
      */
-    public String getName() {
-        return this.name;
-    }
+    abstract public String getName();
 
     /**
      *
      */
-    protected void start() {
-        // do nothing by default
-    }
+//      protected void start() {
+//          // do nothing by default
+//      }
 
     /**
      *

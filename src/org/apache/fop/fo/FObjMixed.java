@@ -15,23 +15,12 @@ import org.apache.fop.apps.FOPException;
  * base class for representation of mixed content formatting objects
  * and their processing
  */
-public class FObjMixed extends FObj {
+public abstract class FObjMixed extends FObj {
 
     // Textdecoration
     protected TextState ts;
 
     private StringBuffer textBuffer;
-
-    public static class Maker extends FObj.Maker {
-        public FObj make(FObj parent,
-                         PropertyList propertyList) throws FOPException {
-            return new FObjMixed(parent, propertyList);
-        }
-    }
-
-    public static FObj.Maker maker() {
-        return new FObjMixed.Maker();
-    }
 
     protected FObjMixed(FObj parent, PropertyList propertyList) {
         super(parent, propertyList);

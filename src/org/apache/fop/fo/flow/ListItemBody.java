@@ -33,7 +33,10 @@ public class ListItemBody extends FObj {
 
     public ListItemBody(FObj parent, PropertyList propertyList) {
         super(parent, propertyList);
-        this.name = "fo:list-item-body";
+    }
+
+    public String getName() {
+        return "fo:list-item-body";
     }
 
     public Status layout(Area area) throws FOPException {

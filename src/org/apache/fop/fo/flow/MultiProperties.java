@@ -33,7 +33,10 @@ public class MultiProperties extends ToBeImplementedElement {
     protected MultiProperties(FObj parent,
                               PropertyList propertyList) throws FOPException {
         super(parent, propertyList);
-        this.name = "fo:multi-properties";
+    }
+
+    public String getName() {
+        return "fo:multi-properties";
     }
 
     public Status layout(Area area) throws FOPException {

@@ -40,6 +40,10 @@ public class RegionBefore extends Region {
     }
 
 
+    public String getName() {
+        return "fo:region-before";
+    }
+
     RegionArea makeRegionArea(int allocationRectangleXPosition,
                               int allocationRectangleYPosition,
                               int allocationRectangleWidth,
@@ -82,10 +86,6 @@ public class RegionBefore extends Region {
 
     protected String getDefaultRegionName() {
         return "xsl-region-before";
-    }
-
-    protected String getElementName() {
-        return "fo:region-before";
     }
 
     public String getRegionClass() {
