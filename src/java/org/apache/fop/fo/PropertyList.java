@@ -188,7 +188,7 @@ public class PropertyList extends HashMap {
         if (p == null) {
             p = getShorthand(propId & Constants.PROPERTY_MASK);
         }
-        if (p != null && (propId & Constants.PROPERTY_MASK) != 0) {
+        if (p != null && (propId & Constants.COMPOUND_MASK) != 0) {
             return getSubpropValue(p, propId);
         }
         return p;
