@@ -26,7 +26,7 @@ import java.util.NoSuchElementException;
  * @author pbw
  * @version $Revision$ $Name$
  */
-public class SyncedNode extends Node {
+public class SyncedNode extends Node implements Cloneable {
     
     public final Object sync;
     
