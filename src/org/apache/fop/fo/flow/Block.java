@@ -14,7 +14,7 @@ import org.apache.fop.layout.*;
 import org.apache.fop.datatypes.*;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.layoutmgr.LayoutManager;
-//import org.apache.fop.layoutmgr.BlockLayoutManager;
+import org.apache.fop.layoutmgr.BlockLayoutManager;
 
 import org.xml.sax.Attributes;
 
@@ -353,8 +353,7 @@ public class Block extends FObjMixed {
     }
 
     public LayoutManager getLayoutManager() {
-	//return new BlockLayoutManager(this);
-	return null;
+	return new BlockLayoutManager(this);
     }
 
 }

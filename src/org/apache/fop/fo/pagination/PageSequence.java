@@ -242,6 +242,7 @@ public class PageSequence extends FObj {
 		else {
 		    this.mainFlow = (Flow)child;
 		    addFlow(mainFlow);
+		    super.addChild(child); // For getChildren
 		}
 	    } 
 	    else if (childName.equals("fo:static-content")) {
@@ -267,7 +268,10 @@ public class PageSequence extends FObj {
 
     public void end() {
 	try {
-	    format(null);
+	    AreaTree at = new AreaTree();
+	    at.setTreeModel(AreaTree.createStorePagesModel());
+	    at.startPageSequence(null);
+	    format(at);
 	} catch (FOPException fopex) {
 	    log.error("Error in PageSequence.end(): " +
 		      fopex.getMessage());
@@ -277,27 +281,27 @@ public class PageSequence extends FObj {
 
 
 
-    /**
-     * Return children for layout. Only the main flow is laid out directly.
-     */
-    public Iterator getChildren() {
-	return new Iterator() {
-		boolean bFirst=true;
-		public boolean hasNext() {
-		    return (bFirst==true && mainFlow != null);
-		}
-		public Object next() {
-		    if (bFirst==true && mainFlow != null) {
-			bFirst=false;
-			return mainFlow;
-		    }
-		    else throw new NoSuchElementException();
-		}
-		public void remove() {
-		    throw new UnsupportedOperationException();
-		}
-	    };
-    }
+//     /**
+//      * Return children for layout. Only the main flow is laid out directly.
+//      */
+//     public ListIterator getChildren() {
+// 	return new ListIterator() {
+// 		boolean bFirst=true;
+// 		public boolean hasNext() {
+// 		    return (bFirst==true && mainFlow != null);
+// 		}
+// 		public Object next() {
+// 		    if (bFirst==true && mainFlow != null) {
+// 			bFirst=false;
+// 			return mainFlow;
+// 		    }
+// 		    else throw new NoSuchElementException();
+// 		}
+// 		public void remove() {
+// 		    throw new UnsupportedOperationException();
+// 		}
+// 	    };
+//     }
 
     /**
      * Runs the formatting of this page sequence into the given area tree

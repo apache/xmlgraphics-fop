@@ -25,6 +25,7 @@ import java.util.Iterator;
 import org.xml.sax.Attributes;
 
 import java.util.Iterator;
+import java.util.ListIterator;
 import java.util.Vector;
 import java.util.Hashtable;
 
@@ -199,8 +200,8 @@ public class FObj extends FONode {
     }
 
     
-    public Iterator getChildren() {
-	return children.iterator();
+    public ListIterator getChildren() {
+	return children.listIterator();
     }
 
     public void setIsInTableCell() {
