@@ -7,7 +7,6 @@
 
 package org.apache.fop.image;
 
-import org.apache.fop.configuration.Configuration;
 import org.apache.fop.fo.FOUserAgent;
 
 /**
