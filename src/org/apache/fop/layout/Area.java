@@ -85,6 +85,7 @@ abstract public class Area extends Box {
 
     protected ColorType backgroundColor;
 
+    private IDReferences idReferences;
     protected int paddingTop;
     protected int paddingLeft;
     protected int paddingBottom;
@@ -288,4 +289,13 @@ abstract public class Area extends Box {
     public Area getParent() {
       return this.parent;
     }
+
+    public void setIDReferences(IDReferences idReferences) {
+      this.idReferences = idReferences;
+    }
+
+    public IDReferences getIDReferences() {
+      return idReferences;
+    }
+
 }
