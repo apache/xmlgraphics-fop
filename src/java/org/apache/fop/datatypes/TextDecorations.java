@@ -123,7 +123,7 @@ public class TextDecorations
 
     /**
      * Set the color associated with this set of decorations.
-     * @param the color.
+     * @param color the color.
      */
     public void setColor(ColorType color) {
         this.color = color;
@@ -132,7 +132,7 @@ public class TextDecorations
     /**
      * Apply the decoration masks of a <tt>TextDecorator</tt> object to
      * these decorations.
-     * @param the <tt>TextDecorator</tt>.
+     * @param decorator the <tt>TextDecorator</tt>.
      */
     public byte maskDecorations(TextDecorator decorator) {
         decorations |= decorator.onMask;

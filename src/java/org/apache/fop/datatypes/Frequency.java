@@ -124,7 +124,7 @@ public class Frequency extends AbstractPropertyValue {
     }
 
     /**
-     * @param <tt>int</tt> unit as per constants defined in this class
+     * @param unit type of unit as per constants defined in this class
      * @return <tt>double</tt> frequency value
      */
     public double getFrequency(int unit) {
@@ -132,8 +132,8 @@ public class Frequency extends AbstractPropertyValue {
     }
 
     /**
-     * @param <tt>int</tt> unit as per constants defined in this class
-     * @param <tt>double</tt> frequency in specified units
+     * @param unit type of unit as per constants defined in this class
+     * @param value  frequency in specified units
      */
     public void setFrequency(int unit, double value) {
         units = unit;
@@ -141,7 +141,7 @@ public class Frequency extends AbstractPropertyValue {
     }
 
     /**
-     * @param <tt>double</tt> frequency in hertz
+     * @param frequency  in hertz
      */
     public void setFrequency(double frequency) {
         units = HZ;

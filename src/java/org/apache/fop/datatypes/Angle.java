@@ -125,7 +125,7 @@ public class Angle extends AbstractPropertyValue {
     }
 
     /**
-     * @param <tt>int</tt> unit as per constants defined in this class
+     * @param unit type of unit as per constants defined in this class
      * @return <tt>double</tt> degrees value
      */
     public double getAngle(int unit) {
@@ -133,8 +133,8 @@ public class Angle extends AbstractPropertyValue {
     }
 
     /**
-     * @param <tt>int</tt> unit as per constants defined in this class
-     * @param <tt>double</tt> angle in specified units
+     * @param unit  type of unit as per constants defined in this class
+     * @param value  angle in specified units
      */
     public void setAngle(int unit, double value) {
         units = unit;
@@ -142,7 +142,7 @@ public class Angle extends AbstractPropertyValue {
     }
 
     /**
-     * @param <tt>double</tt> angle in degrees
+     * @param degrees  angle in degrees
      */
     public void setAngle(double degrees) {
         units = DEG;

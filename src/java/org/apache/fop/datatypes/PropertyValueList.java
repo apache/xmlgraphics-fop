@@ -199,7 +199,6 @@ public class PropertyValueList extends LinkedList implements PropertyValue {
      * Append a PropertyValue to the end of the list.
      * @param o a <tt>PropertyValue</tt>; the element to add.  Defined as an
      * <tt>Object</tt> to override the definition in <tt>LinkedList</tt>.
-     * @return a <tt>boolean</tt> success or failure(?).
      * @exception IllegalArgumentException if the object is not a
      * <tt>PropertyValue</tt>.
      */
