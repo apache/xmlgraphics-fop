@@ -308,6 +308,11 @@ The areas are then placed on a last page.</p>
             <th>Notes</th>
           </tr>
           <tr>
+            <td>Keep Properties</td>
+            <td>High</td>
+            <td>Need to get keep-* properties working on block level constructs</td>
+          </tr>
+          <tr>
             <td>Justified Text</td>
             <td>High</td>
             <td>This has been completed, thanks largely to Luca Furini. Although there is still issue 28706
