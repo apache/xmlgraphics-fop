@@ -492,7 +492,7 @@ public class PDFRenderer extends PrintRenderer {
             Document doc = ((XMLImage)fopimage).getDocument();
             String ns = ((XMLImage)fopimage).getNameSpace();
 
-            renderDocument(doc, ns);
+            renderDocument(doc, ns, pos);
         } else if("image/svg+xml".equals(mime)) {
             if(!fopimage.load(FopImage.ORIGINAL_DATA, userAgent)) {
                 return;
@@ -500,7 +500,7 @@ public class PDFRenderer extends PrintRenderer {
             Document doc = ((XMLImage)fopimage).getDocument();
             String ns = ((XMLImage)fopimage).getNameSpace();
 
-            renderDocument(doc, ns);
+            renderDocument(doc, ns, pos);
         } else if("image/eps".equals(mime)) {
             if(!fopimage.load(FopImage.ORIGINAL_DATA, userAgent)) {
                 return;
@@ -552,10 +552,10 @@ public class PDFRenderer extends PrintRenderer {
     public void renderForeignObject(ForeignObject fo, Rectangle2D pos) {
         Document doc = fo.getDocument();
         String ns = fo.getNameSpace();
-        renderDocument(doc, ns);
+        renderDocument(doc, ns, pos);
     }
 
-    public void renderDocument(Document doc, String ns) {
+    public void renderDocument(Document doc, String ns, Rectangle2D pos) {
         RendererContext context;
         context = new RendererContext(mimeType);
         context.setUserAgent(userAgent);
@@ -565,8 +565,8 @@ public class PDFRenderer extends PrintRenderer {
         context.setProperty(PDFXMLHandler.PDF_STATE, currentState);
         context.setProperty(PDFXMLHandler.PDF_PAGE, currentPage);
         context.setProperty(PDFXMLHandler.PDF_STREAM, currentStream);
-        context.setProperty(PDFXMLHandler.PDF_X, new Integer(currentBlockIPPosition));
-        context.setProperty(PDFXMLHandler.PDF_Y, new Integer(currentBPPosition));
+        context.setProperty(PDFXMLHandler.PDF_XPOS, new Integer(currentBlockIPPosition + (int)pos.getX()));
+        context.setProperty(PDFXMLHandler.PDF_YPOS, new Integer(currentBPPosition + (int)pos.getY()));
         FontState fs = null;
             try {
                 fs = new FontState(fontInfo, "Helvetica", "",
@@ -578,8 +578,8 @@ public class PDFRenderer extends PrintRenderer {
         context.setProperty(PDFXMLHandler.PDF_FONT_STATE, fs);
         context.setProperty(PDFXMLHandler.PDF_FONT_NAME, currentFontName);
         context.setProperty(PDFXMLHandler.PDF_FONT_SIZE, new Integer(currentFontSize));
-        context.setProperty(PDFXMLHandler.PDF_XPOS, new Integer(currentBlockIPPosition));
-        context.setProperty(PDFXMLHandler.PDF_YPOS, new Integer(currentBPPosition));
+        context.setProperty(PDFXMLHandler.PDF_WIDTH, new Integer((int)pos.getWidth()));
+        context.setProperty(PDFXMLHandler.PDF_HEIGHT, new Integer((int)pos.getHeight()));
         userAgent.renderXML(context, doc, ns);
 
     }
