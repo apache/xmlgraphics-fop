@@ -60,14 +60,6 @@ public class LengthRangeProperty extends Property {
     protected Maker(String name) {
 	super(name);
     }
-
-    protected Property convertProperty(Property p, PropertyList propertyList,
-				       FObj fo) {
-      Length val = p.getLength();
-      if (val != null)
-	return new LengthRangeProperty(new LengthRange(val));
-      return convertPropertyDatatype(p, propertyList, fo);
-    }
   }
 
   private LengthRange lengthRange ;

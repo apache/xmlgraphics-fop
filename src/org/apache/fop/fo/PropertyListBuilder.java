@@ -110,7 +110,7 @@ public class PropertyListBuilder {
 	return b;
     }
     
-    public PropertyList makeList(String elementName, Attributes attributes, PropertyList parentPropertyList, FObj fo) throws FOPException {
+    public PropertyList makeList(String elementName, Attributes attributes, PropertyList parentPropertyList, FObj parentFO) throws FOPException {
 	int index = elementName.indexOf("^");
 	String space = "http://www.w3.org/TR/1999/XSL/Format";
 	if(index != -1) {
@@ -141,7 +141,7 @@ public class PropertyListBuilder {
 	  Property.Maker propertyMaker = findMaker(table, FONTSIZEATTR);
 	  if (propertyMaker != null) {
 	    try {
-	      p.put(FONTSIZEATTR, propertyMaker.make(p,fontsizeval,fo));
+	      p.put(FONTSIZEATTR, propertyMaker.make(p,fontsizeval,parentFO));
 	    } catch (FOPException e) { }
 	  }
 	  // Put in the "done" list even if error or no Maker.
@@ -175,16 +175,16 @@ public class PropertyListBuilder {
 			// See if it is specified later in this list
 			String baseValue = attributes.getValue(propName);
 			if (baseValue != null) {
-			    baseProp = propertyMaker.make(p, baseValue,fo);
+			    baseProp = propertyMaker.make(p, baseValue, parentFO);
 			    propsDone.append(propName + ' ');
 			}
-			else baseProp = propertyMaker.make(p, true); //default
+			//else baseProp = propertyMaker.makeCompound(p, parentFO);
 		    }
 		    propVal = propertyMaker.make(baseProp, subpropName, p,
-						 attributes.getValue(i),fo);
+						 attributes.getValue(i),parentFO);
 		}
 		else {
-		    propVal = propertyMaker.make(p,attributes.getValue(i),fo);
+		    propVal = propertyMaker.make(p,attributes.getValue(i),parentFO);
 		}
 		if (propVal != null) {
 		    p.put(propName,propVal);
