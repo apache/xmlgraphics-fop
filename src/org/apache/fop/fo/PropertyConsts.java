@@ -24,6 +24,7 @@ import java.util.BitSet;
 import java.util.StringTokenizer;
 
 import org.apache.fop.fo.FOTree;
+import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.PropNames;
 import org.apache.fop.fo.Properties;
 import org.apache.fop.fo.expr.PropertyException;
@@ -64,6 +65,26 @@ public class PropertyConsts {
     private static final String packageName = "org.apache.fop.fo";
 
     /**
+     * Single element <tt>Class</tt> array for serial use by static methods.
+     */
+    private static final Class[] oneClass = new Class[1];
+    /**
+     * Two element <tt>Class</tt> array for serial use by static methods.
+     */
+    private static final Class[] twoClasses = new Class[2];
+    /**
+     * Single element <tt>Object</tt> array for serial use by static methods.
+     */
+    private static final Object[] oneObject = new Object[1];
+    /**
+     * Two element <tt>Object</tt> array for serial use by static methods.
+     */
+    private static final Object[] twoObjects = new Object[2];
+    private static final Class intClass = int.class;
+    private static final Class integerClass = Integer.class;
+
+    /**
+     * Get the property index of a property name.
      * @param property <tt>String</tt> name of the FO property
      * @return <tt>int</tt> index of the named FO property in the array of
      * property names.
@@ -72,7 +93,7 @@ public class PropertyConsts {
     public static int getPropertyIndex(String property)
                 throws PropertyException
     {
-        Integer integer = (Integer)toIndex.get((Object)property);
+        Integer integer = (Integer)toIndex.get(property);
         if (integer == null)
             throw new PropertyException
                                     ("Property " + property + " not found.");
@@ -80,6 +101,7 @@ public class PropertyConsts {
     }
 
     /**
+     * Get the property index of a property class name.
      * @param propertyClassName String name of the FO property class
      * @return int index of the named FO property class in the array of
      * property class names.
@@ -89,7 +111,7 @@ public class PropertyConsts {
                 throws PropertyException
     {
         Integer integer =
-                    (Integer)classToIndex.get((Object)propertyClass);
+                    (Integer)classToIndex.get(propertyClass);
         if (integer == null)
             throw new PropertyException
                         ("Property class " + propertyClass + " not found.");
@@ -97,6 +119,7 @@ public class PropertyConsts {
     }
 
     /**
+     * Get the initial value type for a property name.
      * @param property String name of the FO property
      * @return int enumerated initialValueType.  These constants are defined
      * as static final ints in this class.  Note that an undefined property
@@ -110,6 +133,7 @@ public class PropertyConsts {
     }
 
     /**
+     * get the initial value type for a property index.
      * @param propertyIndex int index of the FO property
      * @return int enumerated initialValueType.  These constants are defined
      * as static final ints in this class.  Note that an undefined property
@@ -120,6 +144,7 @@ public class PropertyConsts {
     }
 
     /**
+     * Get the initial value for a property index.
      * @param property <tt>int</tt> index of the property
      * @return <tt>PropertyValue</tt> from property's <i>getInitialValue</i>
      * method
@@ -130,15 +155,38 @@ public class PropertyConsts {
     {
         Method method = null;
         try {
-            method = classes[property].getMethod
-                    ("getInitialValue", new Class[] {int.class});
-            return (PropertyValue)
-                    (method.invoke
-                     (null, new Object[] {Ints.consts.get(property)}));
+            oneClass[0] = intClass;
+            method = classes[property].getMethod("getInitialValue", oneClass);
+            oneObject[0] = Ints.consts.get(property);
+            return (PropertyValue)(method.invoke(null, oneObject));
         } catch (NoSuchMethodException nsme) {
             throw new PropertyException
                     ("No getInitialValue method in "
                      + classes[property].getName() + ": " + nsme.getMessage());
+        } catch (IllegalAccessException iae) {
+            throw new PropertyException(iae.getMessage());
+        } catch (InvocationTargetException ite) {
+            throw new PropertyException(ite.getMessage());
+        }
+    }
+
+    /**
+     * @param foNode the node whose properties are being constructed.
+     * @param value the <tt>PropertyValue</tt> being refined.
+     * @return <tt>PropertyValue</tt> constructed by the property's
+     * <i>refineParsing</i> method
+     * @exception <tt>PropertyException</tt>
+     */
+    public static PropertyValue refineParsing
+                                        (FONode foNode, PropertyValue value)
+        throws PropertyException
+    {
+        int property = value.getProperty();
+        try {
+            twoObjects[0] = foNode;
+            twoObjects[1] = value;
+            return (PropertyValue)
+                    (refineparsingmethods[property].invoke(null, twoObjects));
         } catch (IllegalAccessException iae) {
             throw new PropertyException(iae.getMessage());
         } catch (InvocationTargetException ite) {
@@ -156,9 +204,8 @@ public class PropertyConsts {
             throw new PropertyException("No mappedLength method in "
                                              + classes[property].getName());
         try {
-            return (Numeric)
-                    (method.invoke
-                     (null, new Object[] {Ints.consts.get(enum)}));
+            oneObject[0] = Ints.consts.get(enum);
+            return (Numeric)(method.invoke(null, oneObject));
         } catch (IllegalAccessException iae) {
             throw new PropertyException(iae.getMessage());
         } catch (InvocationTargetException ite) {
@@ -493,6 +540,10 @@ public class PropertyConsts {
         refineparsingmethods = new Method[PropNames.LAST_PROPERTY_INDEX + 1];
         mappednummethods     = new HashMap();
 
+        oneClass[0] = Integer.class;
+        twoClasses[0] = FONode.class;
+        twoClasses[1] = PropertyValue.class;
+
         for (int i = 0; i <= PropNames.LAST_PROPERTY_INDEX; i++) {
             cname = "";
 
@@ -528,7 +579,7 @@ public class PropertyConsts {
             // property as a key, and the integer index as a value
             
             try {
-                if (toIndex.put((Object) PropNames.getPropertyName(i),
+                if (toIndex.put(PropNames.getPropertyName(i),
                                         Ints.consts.get(i)) != null) {
                     throw new RuntimeException(
                         "Duplicate values in toIndex for key " +
@@ -541,7 +592,7 @@ public class PropertyConsts {
             // Set up the classToIndex Hashmap with the name of the
             // property class as a key, and the integer index as a value
             
-            if (classToIndex.put((Object) classNames[i],
+            if (classToIndex.put(classNames[i],
                                     Ints.consts.get(i)) != null) {
                 throw new RuntimeException(
                     "Duplicate values in classToIndex for key " +
@@ -559,15 +610,10 @@ public class PropertyConsts {
                 classes[i].getField("traitMapping").getInt(null);
                 datatypes[i] = classes[i].getField("dataTypes").getInt(null);
                 refineparsingmethods[i] =
-                            classes[i].getMethod
-                                        ("refineParsing", new Class[]
-                                            {org.apache.fop.fo.FOTree.class,
-                                                     PropertyValue.class});
+                            classes[i].getMethod("refineParsing", twoClasses);
                 if ((datatypes[i] & Properties.MAPPED_LENGTH) != 0)
                     mappednummethods.put(Ints.consts.get(i),
-                                     classes[i].getMethod
-                                     ("getMappedLength", new Class[]
-                                         {Integer.class}));
+                            classes[i].getMethod("getMappedLength", oneClass));
             }
             catch (NoSuchFieldException e) {
                 throw new RuntimeException(
