@@ -1,11 +1,10 @@
 package org.apache.fop.datatypes;
 
 import org.apache.fop.fo.expr.PropertyException;
-import org.apache.fop.fo.expr.AbstractPropertyValue;
 import org.apache.fop.fo.expr.PropertyValue;
 import org.apache.fop.fo.expr.PropertyTriplet;
 import org.apache.fop.fo.Properties;
-import org.apache.fop.fo.PropertyConsts;
+import org.apache.fop.datatypes.IndirectValue;
 
 /*
  * Inherit.java
@@ -19,36 +18,31 @@ import org.apache.fop.fo.PropertyConsts;
  * @version $Revision$ $Name$
  */
 /**
- * A class representing the <tt>inherit</tt> keyword.
+ * A class representing the <tt>inherit</tt> keyword.  This keyword is
+ * regarded as a property value which is always equivalent to the computed
+ * value of the parent.  It cannot refer to a value defined on any other
+ * property.
  */
 
-public class Inherit extends AbstractPropertyValue {
+public class Inherit extends IndirectValue {
 
     private static final String tag = "$Name$";
     private static final String revision = "$Revision$";
 
     /**
-     * The property from which the inherited value is to be derived.  This
-     * may be different from the target property.
-     */
-    private int sourceProperty;
-
-    /**
-     */
-    private PropertyTriplet inheritedPercentage = null;
-
-    /**
+     * Override the dual-property constructor of <tt>IndirectValue</tt>.
+     * <i>'inherit'</i> cannot draw a value from a different property from
+     * the one on which it was defined, so this constructor is private.
      * @param property the <tt>int</tt> index of the property on which
      * this value is being defined.
      * @param sourceProperty the <tt>int</tt> index of the property from
      * which the inherited value is derived.
      * @exception PropertyException
      */
-    public Inherit(int property, int sourceProperty)
+    private Inherit(int property, int sourceProperty)
         throws PropertyException
     {
-        super(property, PropertyValue.INHERIT);
-        this.sourceProperty = sourceProperty;
+        super(property, PropertyValue.INHERIT, sourceProperty);
     }
 
     /**
@@ -63,18 +57,19 @@ public class Inherit extends AbstractPropertyValue {
     }
 
     /**
+     * Override the dual-property constructor of <tt>IndirectValue</tt>.
+     * <i>'inherit'</i> cannot draw a value from a different property from
+     * the one on which it was defined, so this constructor is private.
      * @param propertyName the <tt>String</tt> name of the property on which
      * this value is being defined.
      * @param sourcePropertyName the <tt>String</tt> name of the property
      * from which the inherited value is derived.
      * @exception PropertyException
      */
-    public Inherit(String propertyName, String sourcePropertyName)
+    private Inherit(String propertyName, String sourcePropertyName)
         throws PropertyException
     {
-        super(propertyName, PropertyValue.INHERIT);
-        property = PropertyConsts.getPropertyIndex(propertyName);
-        sourceProperty = PropertyConsts.getPropertyIndex(sourcePropertyName);
+        super(propertyName, PropertyValue.INHERIT, sourcePropertyName);
     }
 
     /**
@@ -89,36 +84,10 @@ public class Inherit extends AbstractPropertyValue {
     }
 
     /**
-     * @return <tt>int</tt> containing the source property index.
-     */
-    public int getSourceProperty() {
-        return sourceProperty;
-    }
-
-    /**
-     * @return <tt>PropertyTriplet</tt> which contains or will contain the
-     * the computed value of the percentage being inherited.  This field
-     * will be null except when a percentage is being inherited.  If so,
-     * a null value will be returned.
-     */
-    public PropertyTriplet getInheritedPercentage() {
-        return inheritedPercentage;
-    }
-
-    /**
-     * @param percentageTriplet the <tt>PropertyTriplet</tt> which contains
-     * or will contain the the computed value of the percentage being
-     * inherited.
-     */
-    public void setInheritedPercentage(PropertyTriplet percentage) {
-        inheritedPercentage = percentage;
-    }
-
-    /**
      * validate the <i>Inherit</i> against the associated property.
      */
     public void validate() throws PropertyException {
-        super.validate(sourceProperty, Properties.INHERIT);
+        super.validate(getSourceProperty(), Properties.INHERIT);
     }
 
 }
