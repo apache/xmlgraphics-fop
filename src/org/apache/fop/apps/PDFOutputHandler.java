@@ -110,7 +110,7 @@ public class PDFOutputHandler extends FOTreeBuilder implements OutputDocumentHan
    * render the area tree to the output form
    */
   public void doRender()
-    throws IOException {
+    throws IOException,FOPException {
     this.renderer.render(areaTree, this.writer);
   }
   
