@@ -76,15 +76,18 @@ import org.apache.fop.fo.properties.TextTransform;
  */
 public class FOText extends FObj {
 
-    protected char[] ca;
-    protected int start;
-    protected int length;
-    TextInfo textInfo;
-    TextState ts;
+    private char[] ca;
+    private int start;
+    private int length;
+    private TextInfo textInfo;
+    private TextState ts;
 
     /**
      * Keeps track of the last FOText object created within the current
      * block. This is used to create pointers between such objects.
+     * TODO: As soon as the control hierarchy is straightened out, this static
+     * variable needs to become an instance variable in some parent object,
+     * probably the page-sequence.
      */
     private static FOText lastFOTextProcessed = null;
 
@@ -106,10 +109,19 @@ public class FOText extends FObj {
      */
     private Block ancestorBlock = null;
 
-    public static final int IS_WORD_CHAR_FALSE = 0;
-    public static final int IS_WORD_CHAR_TRUE = 1;
-    public static final int IS_WORD_CHAR_MAYBE = 2;
+    private static final int IS_WORD_CHAR_FALSE = 0;
+    private static final int IS_WORD_CHAR_TRUE = 1;
+    private static final int IS_WORD_CHAR_MAYBE = 2;
 
+    /**
+     *
+     * @param chars array of chars which contains the text in this object (may
+     * be a superset of the text in this object
+     * @param s starting index into char[] for the text in this object
+     * @param e ending index into char[] for the text in this object
+     * @param ti TextInfo object for the text in this object
+     * @param parent FONode that is the parent of this object
+     */
     public FOText(char[] chars, int s, int e, TextInfo ti, FONode parent) {
         super(parent);
         this.start = 0;
@@ -169,6 +181,9 @@ public class FOText extends FObj {
         list.add(lm);
     }
 
+    /**
+     * @return a new TextCharIterator
+     */
     public CharIterator charIterator() {
         return new TextCharIterator();
     }
@@ -231,12 +246,11 @@ public class FOText extends FObj {
             }
         }
         // if the last FOText is a sibling, point to it, and have it point here
-        if ( lastFOTextProcessed != null) {
+        if (lastFOTextProcessed != null) {
             if (lastFOTextProcessed.ancestorBlock == this.ancestorBlock) {
                 prevFOTextThisBlock = lastFOTextProcessed;
                 prevFOTextThisBlock.nextFOTextThisBlock = this;
-            }
-            else {
+            } else {
                 prevFOTextThisBlock = null;
             }
         }
@@ -266,7 +280,7 @@ public class FOText extends FObj {
      * well, such as word-spacing. The definition of "word" is somewhat ambiguous
      * and appears to be definable by the user agent.
      *
-     * @param (int i) with index to ca[]
+     * @param i index into ca[]
      *
      * @return True if the character at this location is the start of a new
      * word.
@@ -309,13 +323,13 @@ public class FOText extends FObj {
      * block as one unit, allowing text in adjoining FOText objects to be
      * returned if the parameters are outside of the current object.
      *
-     * @param (int i) with the index for ca[]
-     * @param (int offset) signed integer with relative position within the
+     * @param i index into ca[]
+     * @param offset signed integer with relative position within the
      *   block of the character to return. To return the character immediately
      *   preceding i, pass -1. To return the character immediately after i,
      *   pass 1.
-     * @return char the character in the offset position within the block.
-     * @return \u0000 if the offset points to an area outside of the block.
+     * @return the character in the offset position within the block; \u0000 if
+     * the offset points to an area outside of the block.
      */
     public char getRelativeCharInBlock(int i, int offset) {
         // The easy case is where the desired character is in the same FOText
@@ -331,7 +345,7 @@ public class FOText extends FObj {
         char charToReturn = '\u0000';
         FOText nodeToTest = this;
         int remainingOffset = offset + i;
-        while (! foundChar) {
+        while (!foundChar) {
             if (nodeToTest.prevFOTextThisBlock == null) {
                 foundChar = true;
                 break;
@@ -340,8 +354,7 @@ public class FOText extends FObj {
             if ((nodeToTest.ca.length + remainingOffset) >= 0) {
                 charToReturn = nodeToTest.ca[nodeToTest.ca.length + remainingOffset];
                 foundChar = true;
-            }
-            else {
+            } else {
                 remainingOffset = remainingOffset + nodeToTest.ca.length;
             }
         }
@@ -349,17 +362,17 @@ public class FOText extends FObj {
     }
 
     /**
-     * @return The previous FOText node in this Block.
-     * @return null, if this is the first FOText in this Block.
+     * @return The previous FOText node in this Block; null, if this is the
+     * first FOText in this Block.
      */
     public FOText getPrevFOTextThisBlock () {
         return prevFOTextThisBlock;
     }
 
     /**
-     * @return The next FOText node in this Block.
-     * @return null, if this is the last FOText in this Block, or if subsequent
-     * FOText nodes have not yet been processed.
+     * @return The next FOText node in this Block; null if this is the last
+     * FOText in this Block; null if subsequent FOText nodes have not yet been
+     * processed.
      */
     public FOText getNextFOTextThisBlock () {
         return nextFOTextThisBlock;
@@ -375,7 +388,7 @@ public class FOText extends FObj {
     /**
      * Transforms one character in ca[] using the text-transform property.
      *
-     * @param int with index for ca[]
+     * @param i the index into ca[]
      * @return char with transformed value
      */
     public char charTransform(int i) {
@@ -396,8 +409,7 @@ public class FOText extends FObj {
                  are capitalized. We will try to let Java handle this.
                 */
                 return Character.toTitleCase(ca[i]);
-            }
-            else {
+            } else {
                 return Character.toLowerCase(ca[i]);
             }
         default:
@@ -414,7 +426,7 @@ public class FOText extends FObj {
      * We have not found a definition of "word" in the standard (1.0), so the
      * logic used here is based on the programmer's best guess.
      *
-     * @param char inputChar: the character to be tested.
+     * @param inputChar the character to be tested.
      * @return int IS_WORD_CHAR_TRUE, IS_WORD_CHAR_FALSE, or IS_WORD_CHAR_MAYBE,
      * depending on whether the character should be considered part of a word
      * or not.
@@ -430,14 +442,18 @@ public class FOText extends FObj {
         case Character.CURRENCY_SYMBOL:
             return IS_WORD_CHAR_TRUE;
         case Character.DASH_PUNCTUATION:
-            if (inputChar == '-') return IS_WORD_CHAR_TRUE; //hyphen
+            if (inputChar == '-') {
+                return IS_WORD_CHAR_TRUE; //hyphen
+            }
             return IS_WORD_CHAR_FALSE;
         case Character.DECIMAL_DIGIT_NUMBER:
             return IS_WORD_CHAR_TRUE;
         case Character.ENCLOSING_MARK:
             return IS_WORD_CHAR_FALSE;
         case Character.END_PUNCTUATION:
-            if (inputChar == '\u2019') return IS_WORD_CHAR_MAYBE; //apostrophe, right single quote
+            if (inputChar == '\u2019') {
+                return IS_WORD_CHAR_MAYBE; //apostrophe, right single quote
+            }
             return IS_WORD_CHAR_FALSE;
         case Character.FORMAT:
             return IS_WORD_CHAR_FALSE;
@@ -460,7 +476,9 @@ public class FOText extends FObj {
         case Character.OTHER_NUMBER:
             return IS_WORD_CHAR_TRUE;
         case Character.OTHER_PUNCTUATION:
-            if (inputChar == '\'') return IS_WORD_CHAR_MAYBE; //ASCII apostrophe
+            if (inputChar == '\'') {
+                return IS_WORD_CHAR_MAYBE; //ASCII apostrophe
+            }
             return IS_WORD_CHAR_FALSE;
         case Character.OTHER_SYMBOL:
             return IS_WORD_CHAR_TRUE;
