@@ -18,9 +18,6 @@
 
 package org.apache.fop.fo.flow;
 
-// Java
-import java.util.List;
-
 import org.xml.sax.Locator;
 
 import org.apache.commons.logging.Log;
@@ -32,7 +29,6 @@ import org.apache.fop.fo.FObjMixed;
 import org.apache.fop.fo.PropertyList;
 import org.apache.fop.fo.StaticPropertyList;
 import org.apache.fop.fo.ValidationException;
-import org.apache.fop.layoutmgr.LayoutManager;
 
 
 /**

@@ -27,7 +27,6 @@ import org.apache.fop.apps.FOPException;
 import org.apache.fop.area.PageViewport;
 import org.apache.fop.area.LineArea;
 import org.apache.fop.area.OffDocumentItem;
-import org.apache.fop.area.inline.Container;
 import org.apache.fop.fonts.FontInfo;
 import org.apache.fop.apps.FOUserAgent;
 
