@@ -346,7 +346,7 @@ public class Font extends Property  {
                     String name = ((NCName)propvals[fontsize]).getNCName();
                     try {
                         size = new MappedNumeric
-                            (PropNames.FONT_SIZE, name, foNode.getFOTree());
+                                        (foNode, PropNames.FONT_SIZE, name);
                     } catch (PropertyException e) {
                         // Attempt to derive mapped numeric failed
                         continue;
