@@ -18,7 +18,7 @@ import org.apache.fop.datatypes.ColorType;
 import java.util.Enumeration;
 import java.awt.Rectangle;
 
-public class BasicLink extends FObjMixed {
+public class BasicLink extends Inline {
 
     public static class Maker extends FObj.Maker {
         public FObj make(FObj parent,
@@ -36,11 +36,6 @@ public class BasicLink extends FObjMixed {
                      PropertyList propertyList) throws FOPException {
         super(parent, propertyList);
         this.name = "fo:basic-link";
-
-        if (parent.getName().equals("fo:flow")) {
-            throw new FOPException("basic-link can't be directly"
-                                   + " under flow");
-        }
     }
 
     public Status layout(Area area) throws FOPException {
