@@ -1,6 +1,6 @@
 /*
  * $Id$
- * Copyright (C) 2001-2002 The Apache Software Foundation. All rights reserved.
+ * Copyright (C) 2001-2003 The Apache Software Foundation. All rights reserved.
  * For details on use and redistribution please refer to the
  * LICENSE file included with these sources.
  */
@@ -10,19 +10,26 @@
 
 package org.apache.fop.pdf;
 
-import org.apache.fop.render.pdf.CIDFont;
-import org.apache.fop.render.pdf.fonts.LazyFont;
+import org.apache.fop.util.StreamUtilities;
 
-import org.apache.fop.layout.FontMetric;
-import org.apache.fop.layout.FontDescriptor;
+import org.apache.fop.fonts.CIDFont;
+import org.apache.fop.fonts.CustomFont;
+import org.apache.fop.fonts.FontDescriptor;
+import org.apache.fop.fonts.FontMetrics;
+import org.apache.fop.fonts.FontType;
+import org.apache.fop.fonts.LazyFont;
+import org.apache.fop.fonts.MultiByteFont;
+import org.apache.fop.fonts.truetype.FontFileReader;
+import org.apache.fop.fonts.truetype.TTFSubSetFile;
+import org.apache.fop.fonts.type1.PFBData;
+import org.apache.fop.fonts.type1.PFBParser;
 
 // Java
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.List;
 import java.util.Map;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.awt.geom.Rectangle2D;
 
@@ -55,6 +62,11 @@ public class PDFDocument {
     protected static final String PDF_VERSION = "1.4";
 
     /**
+     * the encoding to use when converting strings to PDF commandos.
+     */
+    public static final String ENCODING = "ISO-8859-1";
+
+    /**
      * the current character position
      */
     protected int position = 0;
@@ -62,10 +74,10 @@ public class PDFDocument {
     /**
      * the character position of each object
      */
-    protected List location = new ArrayList();
+    protected List location = new java.util.ArrayList();
 
     /** List of objects to write in the trailer */
-    private List trailerObjects = new ArrayList();
+    private List trailerObjects = new java.util.ArrayList();
 
     /**
      * the counter for object numbering
@@ -75,7 +87,7 @@ public class PDFDocument {
     /**
      * the objects themselves
      */
-    protected List objects = new ArrayList();
+    protected List objects = new java.util.ArrayList();
 
     /**
      * character position of xref table
@@ -127,57 +139,57 @@ public class PDFDocument {
      * the XObjects Map.
      * Should be modified (works only for image subtype)
      */
-    protected Map xObjectsMap = new HashMap();
+    protected Map xObjectsMap = new java.util.HashMap();
 
     /**
      * the Font Map.
      */
-    protected Map fontMap = new HashMap();
+    protected Map fontMap = new java.util.HashMap();
 
     /**
      * The filter map.
      */
-    protected Map filterMap = new HashMap();
+    protected Map filterMap = new java.util.HashMap();
 
     /**
      * List of PDFGState objects.
      */
-    protected List gstates = new ArrayList();
+    protected List gstates = new java.util.ArrayList();
 
     /**
      * List of functions.
      */
-    protected List functions = new ArrayList();
+    protected List functions = new java.util.ArrayList();
 
     /**
      * List of shadings.
      */
-    protected List shadings = new ArrayList();
+    protected List shadings = new java.util.ArrayList();
 
     /**
      * List of patterns.
      */
-    protected List patterns = new ArrayList();
+    protected List patterns = new java.util.ArrayList();
 
     /**
      * List of Links.
      */
-    protected List links = new ArrayList();
+    protected List links = new java.util.ArrayList();
 
     /**
      * List of FileSpecs.
      */
-    protected List filespecs = new ArrayList();
+    protected List filespecs = new java.util.ArrayList();
 
     /**
      * List of GoToRemotes.
      */
-    protected List gotoremotes = new ArrayList();
+    protected List gotoremotes = new java.util.ArrayList();
 
     /**
      * List of GoTos.
      */
-    protected List gotos = new ArrayList();
+    protected List gotos = new java.util.ArrayList();
 
 
     /**
@@ -230,7 +242,7 @@ public class PDFDocument {
      *
      * @param map the map of filter lists for each stream type
      */
-    public void setFilterMap(HashMap map) {
+    public void setFilterMap(Map map) {
         filterMap = map;
     }
 
@@ -891,9 +903,9 @@ public class PDFDocument {
         List theCzero;
         List theCone;
         PDFPattern myPattern;
-        PDFColorSpace theColorSpace;
+        //PDFColorSpace theColorSpace;
         double interpolation = (double)1.000;
-        List theFunctions = new ArrayList();
+        List theFunctions = new java.util.ArrayList();
 
         int currentPosition;
         int lastPosition = theColors.size() - 1;
@@ -940,7 +952,7 @@ public class PDFDocument {
             } else {    // if the center x, center y, and radius specifiy
                 // the gradient, then assume the same center x, center y,
                 // and radius of zero for the other necessary component
-                List newCoords = new ArrayList();
+                List newCoords = new java.util.ArrayList();
                 newCoords.add(theCoords.get(0));
                 newCoords.add(theCoords.get(1));
                 newCoords.add(theCoords.get(2));
@@ -1015,7 +1027,7 @@ public class PDFDocument {
      * @return the created /Font object
      */
     public PDFFont makeFont(String fontname, String basefont,
-                            String encoding, FontMetric metrics,
+                            String encoding, FontMetrics metrics,
                             FontDescriptor descriptor) {
         if (fontMap.containsKey(fontname)) {
             return (PDFFont)fontMap.get(fontname);
@@ -1027,22 +1039,17 @@ public class PDFDocument {
          */
         if (descriptor == null) {
             PDFFont font = new PDFFont(++this.objectcount, fontname,
-                                       PDFFont.TYPE1, basefont, encoding);
+                                       FontType.TYPE1, basefont, encoding);
             this.objects.add(font);
             fontMap.put(fontname, font);
             return font;
         } else {
-            byte subtype = PDFFont.TYPE1;
-            if (metrics instanceof org.apache.fop.render.pdf.Font) {
-                subtype =
-                    ((org.apache.fop.render.pdf.Font)metrics).getSubType();
-            }
+            FontType fonttype = metrics.getFontType();
 
-            PDFFontDescriptor pdfdesc = makeFontDescriptor(descriptor,
-                                        subtype);
+            PDFFontDescriptor pdfdesc = makeFontDescriptor(descriptor);
 
             PDFFontNonBase14 font = null;
-            if (subtype == PDFFont.TYPE0) {
+            if (fonttype == FontType.TYPE0) {
                 /*
                  * Temporary commented out - customized CMaps
                  * isn't needed until /ToUnicode support is added
@@ -1056,24 +1063,24 @@ public class PDFDocument {
                  */
                 font =
                     (PDFFontNonBase14)PDFFont.createFont(++this.objectcount,
-                                                         fontname, subtype,
+                                                         fontname, fonttype,
                                                          basefont,
                                                          "Identity-H");
             } else {
 
                 font =
                     (PDFFontNonBase14)PDFFont.createFont(++this.objectcount,
-                                                         fontname, subtype,
+                                                         fontname, fonttype,
                                                          basefont, encoding);
             }
             this.objects.add(font);
 
             font.setDescriptor(pdfdesc);
 
-            if (subtype == PDFFont.TYPE0) {
+            if (fonttype == FontType.TYPE0) {
                 CIDFont cidMetrics;
                 if (metrics instanceof LazyFont) {
-                    cidMetrics = (CIDFont) ((LazyFont) metrics).getRealFont();
+                    cidMetrics = (CIDFont)((LazyFont) metrics).getRealFont();
                 } else {
                     cidMetrics = (CIDFont)metrics;
                 }
@@ -1083,7 +1090,7 @@ public class PDFDocument {
                                          cidMetrics.getSupplement());
                 PDFCIDFont cidFont =
                     new PDFCIDFont(++this.objectcount, basefont,
-                                   cidMetrics.getCidType(),
+                                   cidMetrics.getCIDType(),
                                    cidMetrics.getDefaultWidth(),
                                    cidMetrics.getWidths(), sysInfo,
                                    (PDFCIDFontDescriptor)pdfdesc);
@@ -1091,9 +1098,16 @@ public class PDFDocument {
 
                 ((PDFFontType0)font).setDescendantFonts(cidFont);
             } else {
-                font.setWidthMetrics(metrics.getFirstChar(),
-                                     metrics.getLastChar(),
-                                     makeArray(metrics.getWidths(1)));
+                int firstChar = 0;
+                int lastChar = 255;
+                if (metrics instanceof CustomFont) {
+                    CustomFont cf = (CustomFont)metrics;
+                    firstChar = cf.getFirstChar();
+                    lastChar = cf.getLastChar();
+                }
+                font.setWidthMetrics(firstChar,
+                                     lastChar,
+                                     makeArray(metrics.getWidths()));
             }
 
             fontMap.put(fontname, font);
@@ -1106,21 +1120,20 @@ public class PDFDocument {
     /**
      * make a /FontDescriptor object
      */
-    public PDFFontDescriptor makeFontDescriptor(FontDescriptor desc,
-            byte subtype) {
+    public PDFFontDescriptor makeFontDescriptor(FontDescriptor desc) {
         PDFFontDescriptor font = null;
 
-        if (subtype == PDFFont.TYPE0) {
+        if (desc.getFontType() == FontType.TYPE0) {
             // CID Font
             font = new PDFCIDFontDescriptor(++this.objectcount,
-                                            desc.fontName(),
+                                            desc.getFontName(),
                                             desc.getFontBBox(),
                                             desc.getCapHeight(), desc.getFlags(),
                                             desc.getItalicAngle(),
                                             desc.getStemV(), null);
         } else {
             // Create normal FontDescriptor
-            font = new PDFFontDescriptor(++this.objectcount, desc.fontName(),
+            font = new PDFFontDescriptor(++this.objectcount, desc.getFontName(),
                                          desc.getAscender(),
                                          desc.getDescender(),
                                          desc.getCapHeight(),
@@ -1133,16 +1146,116 @@ public class PDFDocument {
 
         // Check if the font is embeddable
         if (desc.isEmbeddable()) {
-            PDFStream stream = desc.getFontFile(this.objectcount + 1);
+            PDFStream stream = makeFontFile(this.objectcount + 1, desc);
             if (stream != null) {
                 this.objectcount++;
-                font.setFontFile(desc.getSubType(), stream);
+                font.setFontFile(desc.getFontType(), stream);
                 this.objects.add(stream);
             }
         }
         return font;
     }
 
+    protected InputStream resolveURI(String uri) 
+                throws java.io.FileNotFoundException {
+        try {
+            /**@todo Temporary hack to compile, improve later */
+            return new java.net.URL(uri).openStream();
+        } catch (Exception e) {
+            throw new java.io.FileNotFoundException(
+                "URI could not be resolved (" + e.getMessage() + "): " + uri);
+        }
+    }
+
+    /**
+     * Embeds a font.
+     * @param obj PDF object number to use
+     * @param desc FontDescriptor of the font.
+     * @return PDFStream The embedded font file
+     */
+    public PDFStream makeFontFile(int obj, FontDescriptor desc) {
+        if (desc.getFontType() == FontType.OTHER) {
+            throw new IllegalArgumentException("Trying to embed unsupported font type: " + desc.getFontType());
+        } 
+        if (!(desc instanceof CustomFont)) {
+            throw new IllegalArgumentException("FontDescriptor must be instance of CustomFont, but is a " + desc.getClass().getName());
+        }
+        
+        CustomFont font = (CustomFont)desc;
+        
+        InputStream in = null;
+        try {
+            // Get file first
+            if (font.getEmbedFileName() != null) try {
+                in = resolveURI(font.getEmbedFileName());
+            } catch (Exception e) {
+                System.out.println("Failed to embed fontfile: "
+                                   + font.getEmbedFileName());
+            }
+    
+            // Get resource
+            if (in == null && font.getEmbedResourceName() != null) try {
+                in = new java.io.BufferedInputStream(
+                        this.getClass().getResourceAsStream(font.getEmbedResourceName()));
+            } catch (Exception e) {
+                System.out.println("Failed to embed fontresource: "
+                                   + font.getEmbedResourceName());
+            }
+    
+            if (in == null) {
+                return null;
+            } else try {
+                PDFStream embeddedFont;
+                if (desc.getFontType() == FontType.TYPE0) {
+                    MultiByteFont mbfont = (MultiByteFont)font;
+                    FontFileReader reader = new FontFileReader(in);
+                
+                    TTFSubSetFile subset = new TTFSubSetFile();
+        
+                    byte[] subsetFont = subset.readFont(reader, mbfont.getTTCName(), mbfont.getUsedGlyphs());
+                    // Only TrueType CID fonts are supported now
+        
+                    embeddedFont = new PDFTTFStream(obj, subsetFont.length);
+                    ((PDFTTFStream)embeddedFont).setData(subsetFont, subsetFont.length);
+                } else if (desc.getFontType() == FontType.TYPE1) {
+                    PFBParser parser = new PFBParser();
+                    PFBData pfb = parser.parsePFB(in);
+                    embeddedFont = new PDFT1Stream(obj);
+                    ((PDFT1Stream)embeddedFont).setData(pfb);
+                } else {
+                    byte[] file = StreamUtilities.toByteArray(in, 128000);
+                    embeddedFont = new PDFTTFStream(obj, file.length);
+                    ((PDFTTFStream)embeddedFont).setData(file, file.length);
+                }
+                embeddedFont.addFilter("flate");
+                embeddedFont.addFilter("ascii-85");
+                return embeddedFont;
+            } finally {
+                in.close();
+            }
+        } catch (IOException ioe) {
+            //log.error("Failed to embed font [" + obj + "] "
+            //                       + fontName + ": " + ioe.getMessage());
+            return (PDFStream) null;
+        }
+    }
+    
+
+
+/*
+    public PDFStream getFontFile(int i) {
+        PDFStream embeddedFont = null;
+
+
+        return (PDFStream)embeddedFont;
+    }
+
+
+    public PDFStream getFontFile(int i) {
+    }
+
+*/
+    
 
     /**
      * make an Array object (ex. Widths array for a font)
@@ -1157,7 +1270,7 @@ public class PDFDocument {
     /**
      * make an ExtGState for extra graphics options
      */
-    public PDFGState makeGState(HashMap settings, PDFGState current) {
+    public PDFGState makeGState(Map settings, PDFGState current) {
 
         // try to locate a gstate that has all the settings
         // or will inherit from the current gstate
@@ -1285,7 +1398,7 @@ public class PDFDocument {
     public PDFLink makeLink(Rectangle2D rect, String destination,
                             int linkType, float yoffset) {
 
-        PDFLink linkObject;
+        //PDFLink linkObject;
         int index;
 
         PDFLink link = new PDFLink(++this.objectcount, rect);
@@ -1299,12 +1412,12 @@ public class PDFDocument {
                 PDFGoToRemote remote = getGoToPDFAction(destination, null, -1);
                 link.setAction(remote);
             } else if ((index = destination.indexOf(".pdf#page=")) > 0) {
-                String file = destination.substring(0, index + 4);
+                //String file = destination.substring(0, index + 4);
                 int page = Integer.parseInt(destination.substring(index + 10));
                 PDFGoToRemote remote = getGoToPDFAction(destination, null, page);
                 link.setAction(remote);
             } else if ((index = destination.indexOf(".pdf#dest=")) > 0) {
-                String file = destination.substring(0, index + 4);
+                //String file = destination.substring(0, index + 4);
                 String dest = destination.substring(index + 10);
                 PDFGoToRemote remote = getGoToPDFAction(destination, dest, -1);
                 link.setAction(remote);

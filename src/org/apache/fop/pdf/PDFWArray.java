@@ -1,30 +1,40 @@
 /*
  * $Id$
- * Copyright (C) 2001 The Apache Software Foundation. All rights reserved.
+ * Copyright (C) 2001-2003 The Apache Software Foundation. All rights reserved.
  * For details on use and redistribution please refer to the
  * LICENSE file included with these sources.
  */
 
 package org.apache.fop.pdf;
 
-import java.util.ArrayList;
+import java.util.List;
 
 /**
- * class representing a <b>W</b> array for CID fonts.
+ * Class representing a <b>W</b> array for CID fonts.
  */
 public class PDFWArray {
 
     /**
-     * the metrics
+     * The metrics
      */
-    private ArrayList entries;
+    private List entries = new java.util.ArrayList();
 
+    /** 
+     * Default constructor 
+     */
     public PDFWArray() {
-        entries = new ArrayList();
+    }
+    
+    /**
+     * Convenience constructor
+     * @param metrics the metrics array to initially add
+     */
+    public PDFWArray(int[] metrics) {
+        addEntry(0, metrics);
     }
 
     /**
-     * add an entry for single starting CID.
+     * Add an entry for single starting CID.
      * i.e. in the form "c [w ...]"
      *
      * @param start the starting CID value.
@@ -35,7 +45,7 @@ public class PDFWArray {
     }
 
     /**
-     * add an entry for a range of CIDs (/W element on p 213)
+     * Add an entry for a range of CIDs (/W element on p 213)
      *
      * @param first the first CID in the range
      * @param last the last CID in the range
@@ -48,7 +58,7 @@ public class PDFWArray {
     }
 
     /**
-     * add an entry for a range of CIDs (/W2 element on p 210)
+     * Add an entry for a range of CIDs (/W2 element on p 210)
      *
      * @param first the first CID in the range
      * @param last the last CID in the range
@@ -62,10 +72,18 @@ public class PDFWArray {
         });
     }
 
+    /**
+     * Convert this object to PDF code.
+     * @return byte[] the PDF code
+     */
     public byte[] toPDF() {
         return toPDFString().getBytes();
     }
 
+    /**
+     * Convert this object to PDF code.
+     * @return String the PDF code
+     */
     public String toPDFString() {
         StringBuffer p = new StringBuffer();
         p.append("[ ");
@@ -87,7 +105,7 @@ public class PDFWArray {
     }
 
     /**
-     * inner class for entries in the form "c [w ...]"
+     * Inner class for entries in the form "c [w ...]"
      */
     private static class Entry {
         private int start;

@@ -1,42 +1,44 @@
 /*
  * $Id$
- * Copyright (C) 2001 The Apache Software Foundation. All rights reserved.
+ * Copyright (C) 2001-2003 The Apache Software Foundation. All rights reserved.
  * For details on use and redistribution please refer to the
  * LICENSE file included with these sources.
  */
 
 package org.apache.fop.pdf;
 
+import org.apache.fop.fonts.FontType;
+
 /**
- * class representing a font descriptor.
- *
+ * Class representing a font descriptor (/FontDescriptor object).
+ * <p>
  * Font descriptors are specified on page 222 and onwards of the PDF 1.3 spec.
  */
 public class PDFFontDescriptor extends PDFObject {
 
     // Required fields
-    protected int ascent;
-    protected int capHeight;
-    protected int descent;
-    protected int flags;
-    protected PDFRectangle fontBBox;
-    protected String basefont;    // PDF-spec: FontName
-    protected int italicAngle;
-    protected int stemV;
+    private int ascent;
+    private int capHeight;
+    private int descent;
+    private int flags;
+    private PDFRectangle fontBBox;
+    private String basefont;    // PDF-spec: FontName
+    private int italicAngle;
+    private int stemV;
     // Optional fields
-    protected int stemH = 0;
-    protected int xHeight = 0;
-    protected int leading = 0;
-    protected int avgWidth = 0;
-    protected int maxWidth = 0;
-    protected int missingWidth = 0;
-    protected PDFStream fontfile;
-    // protected String charSet = null;
+    private int stemH = 0;
+    private int xHeight = 0;
+    private int leading = 0;
+    private int avgWidth = 0;
+    private int maxWidth = 0;
+    private int missingWidth = 0;
+    private PDFStream fontfile;
+    // private String charSet = null;
 
-    protected byte subtype;
+    private FontType subtype;
 
     /**
-     * create the /FontDescriptor object
+     * Create the /FontDescriptor object
      *
      * @param number the object's number
      * @param ascent the maximum height above the baseline
@@ -68,7 +70,18 @@ public class PDFFontDescriptor extends PDFObject {
     }
 
     /**
-     * set the optional metrics
+     * Set the optional metrics.
+     * @param avgWidth The average width of characters in this font. 
+     * The default value is 0.
+     * @param maxWidth The maximum width of characters in this font. 
+     * The default value is 0.
+     * @param missingWidth missing width
+     * @param leading the desired spacing between lines of text. 
+     * The default value is 0.
+     * @param stemH The vertical width of the dominant horizontal stems of 
+     * glyphs in the font. The default value is 0.
+     * @param xHeight The y-coordinate of the top of flat non-ascending 
+     * lowercase letters, measured from the baseline. The default value is 0.
      */
     public void setMetrics(int avgWidth, int maxWidth, int missingWidth,
                            int leading, int stemH, int xHeight) {
@@ -81,12 +94,12 @@ public class PDFFontDescriptor extends PDFObject {
     }
 
     /**
-     * set the optional font file stream
+     * Set the optional font file stream
      *
      * @param subtype the font type defined in the font stream
      * @param fontfile the stream containing an embedded font
      */
-    public void setFontFile(byte subtype, PDFStream fontfile) {
+    public void setFontFile(FontType subtype, PDFStream fontfile) {
         this.subtype = subtype;
         this.fontfile = fontfile;
     }
@@ -94,7 +107,7 @@ public class PDFFontDescriptor extends PDFObject {
     // public void setCharSet(){}//for subset fonts
 
     /**
-     * produce the PDF representation for the object
+     * Produce the PDF representation for the object
      *
      * @return the PDF
      */
@@ -143,17 +156,9 @@ public class PDFFontDescriptor extends PDFObject {
             p.append(leading);
         }
         if (fontfile != null) {
-            switch (subtype) {
-            case PDFFont.TYPE1:
+            if (subtype == FontType.TYPE1) {
                 p.append("\n/FontFile ");
-                break;
-            case PDFFont.TRUETYPE:
-                p.append("\n/FontFile2 ");
-                break;
-            case PDFFont.TYPE0:
-                p.append("\n/FontFile2 ");
-                break;
-            default:
+            } else {
                 p.append("\n/FontFile2 ");
             }
             p.append(fontfile.referencePDF());
@@ -166,12 +171,14 @@ public class PDFFontDescriptor extends PDFObject {
     }
 
     /**
-     * fill in the specifics for the font's descriptor.
-     *
-     * the given buffer already contains the fields common to all descriptors.
+     * Fill in the specifics for the font's descriptor.
+     * <p>
+     * The given buffer already contains the fields common to all descriptors.
      *
      * @param begin the buffer to be completed with the specific fields
      */
-    protected void fillInPDF(StringBuffer begin) {}
+    protected void fillInPDF(StringBuffer begin) {
+        //nop
+    }
 
 }
