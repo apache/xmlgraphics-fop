@@ -58,7 +58,6 @@
 
 package org.apache.fop.rtf.rtflib.rtfdoc;
 
-//import java.util.*;
 import java.util.Map;
 import java.util.HashMap;
 import java.util.Iterator;

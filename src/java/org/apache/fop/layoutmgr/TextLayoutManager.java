@@ -3,34 +3,34 @@
  * ============================================================================
  *                    The Apache Software License, Version 1.1
  * ============================================================================
- * 
+ *
  * Copyright (C) 1999-2003 The Apache Software Foundation. All rights reserved.
- * 
+ *
  * Redistribution and use in source and binary forms, with or without modifica-
  * tion, are permitted provided that the following conditions are met:
- * 
+ *
  * 1. Redistributions of source code must retain the above copyright notice,
  *    this list of conditions and the following disclaimer.
- * 
+ *
  * 2. Redistributions in binary form must reproduce the above copyright notice,
  *    this list of conditions and the following disclaimer in the documentation
  *    and/or other materials provided with the distribution.
- * 
+ *
  * 3. The end-user documentation included with the redistribution, if any, must
  *    include the following acknowledgment: "This product includes software
  *    developed by the Apache Software Foundation (http://www.apache.org/)."
  *    Alternately, this acknowledgment may appear in the software itself, if
  *    and wherever such third-party acknowledgments normally appear.
- * 
+ *
  * 4. The names "FOP" and "Apache Software Foundation" must not be used to
  *    endorse or promote products derived from this software without prior
  *    written permission. For written permission, please contact
  *    apache@apache.org.
- * 
+ *
  * 5. Products derived from this software may not be called "Apache", nor may
  *    "Apache" appear in their name, without prior written permission of the
  *    Apache Software Foundation.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESSED OR IMPLIED WARRANTIES,
  * INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND
  * FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
@@ -42,12 +42,12 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ============================================================================
- * 
+ *
  * This software consists of voluntary contributions made by many individuals
  * on behalf of the Apache Software Foundation and was originally created by
  * James Tauber <jtauber@jtauber.com>. For more information on the Apache
  * Software Foundation, please see <http://www.apache.org/>.
- */ 
+ */
 package org.apache.fop.layoutmgr;
 
 import java.util.ArrayList;
@@ -59,8 +59,7 @@ import org.apache.fop.area.inline.InlineArea;
 import org.apache.fop.area.inline.Word;
 import org.apache.fop.area.inline.Space;
 import org.apache.fop.util.CharUtilities;
-import org.apache.fop.fonts.*;
-import org.apache.fop.traits.*;
+import org.apache.fop.traits.MinOptMax;
 
 /**
  * LayoutManager for text (a sequence of characters) which generates one
@@ -168,7 +167,7 @@ public class TextLayoutManager extends AbstractLayoutManager {
           (AreaInfo) vecAreaInfo.get(endPos.getLeafPos());
         // Skip all leading spaces for hyphenation
         int i;
-        for (i = ai.iStartIndex; 
+        for (i = ai.iStartIndex;
                 i < ai.iBreakIndex && CharUtilities.isAnySpace(chars[i]) == true;
                 i++) {
             //nop
@@ -187,8 +186,8 @@ public class TextLayoutManager extends AbstractLayoutManager {
      */
     public boolean canBreakBefore(LayoutContext context) {
         char c = chars[iNextStart];
-        return ((c == NEWLINE) 
-                || (textInfo.bWrap && (CharUtilities.isSpace(c) 
+        return ((c == NEWLINE)
+                || (textInfo.bWrap && (CharUtilities.isSpace(c)
                 || BREAK_CHARS.indexOf(c) >= 0)));
     }
 
@@ -376,7 +375,7 @@ public class TextLayoutManager extends AbstractLayoutManager {
                 char c = chars[iNextStart];
                 if ((c == NEWLINE) || // Include any breakable white-space as break char
                         //  even if fixed width
-                        (textInfo.bWrap && (CharUtilities.isSpace(c) 
+                        (textInfo.bWrap && (CharUtilities.isSpace(c)
                                             || BREAK_CHARS.indexOf(c) >= 0))) {
                     iFlags |= BreakPoss.CAN_BREAK_AFTER;
                     if (c != SPACE) {
@@ -392,7 +391,7 @@ public class TextLayoutManager extends AbstractLayoutManager {
                     // line-end, set a flag for parent LM.
                     int iLastChar;
                     for (iLastChar = iNextStart;
-                            iLastChar < chars.length 
+                            iLastChar < chars.length
                             && chars[iLastChar] == SPACE; iLastChar++) {
                         //nop
                     }
@@ -535,7 +534,7 @@ public class TextLayoutManager extends AbstractLayoutManager {
             }
             word = w;
         }
-        if ((chars[iStart] == SPACE || chars[iStart] == NBSPACE) 
+        if ((chars[iStart] == SPACE || chars[iStart] == NBSPACE)
                 && context.getLeadingSpace().hasSpaces()) {
             context.getLeadingSpace().addSpace(halfWS);
         }
@@ -551,7 +550,7 @@ public class TextLayoutManager extends AbstractLayoutManager {
 
         // Can we have any trailing space? Yes, if last char was a space!
         context.setTrailingSpace(new SpaceSpecifier(false));
-        if (chars[ai.iBreakIndex - 1] == SPACE 
+        if (chars[ai.iBreakIndex - 1] == SPACE
                 || chars[ai.iBreakIndex - 1] == NBSPACE) {
             context.getTrailingSpace().addSpace(halfWS);
         }

@@ -76,7 +76,6 @@ import org.apache.batik.transcoder.image.resources.Messages;
 import org.w3c.dom.Document;
 import org.w3c.dom.svg.SVGDocument;
 import org.w3c.dom.svg.SVGSVGElement;
-import org.apache.fop.apps.*;
 
 /**
  * This class enables to transcode an input to a pdf document.

@@ -51,6 +51,8 @@
 
 package org.apache.fop.layoutmgr;
 
+import org.apache.fop.apps.Document;
+
 import org.apache.fop.area.LinkResolver;
 import org.apache.fop.area.PageViewport;
 import org.apache.fop.area.Resolveable;
@@ -116,6 +118,8 @@ import org.apache.fop.layoutmgr.table.TableLayoutManager;
 import org.apache.fop.layoutmgr.list.Item;
 import org.apache.fop.layoutmgr.list.ListBlockLayoutManager;
 import org.apache.fop.layoutmgr.list.ListItemLayoutManager;
+
+import org.apache.fop.traits.MinOptMax;
 import org.apache.fop.util.CharUtilities;
 
 import java.util.List;
@@ -123,9 +127,6 @@ import java.util.ListIterator;
 import java.util.ArrayList;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
-
-import org.apache.fop.apps.*;
-import org.apache.fop.traits.*;
 
 /**
  * Concrete implementation of FOTreeVisitor for the purpose of adding
