@@ -50,18 +50,13 @@
  */
 package org.apache.fop.fo.pagination;
 
-// Java
 import java.awt.Rectangle;
-import java.awt.geom.Rectangle2D;
 
-// FOP
+import org.apache.fop.apps.FOPException;
 import org.apache.fop.datatypes.FODimension;
-import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FOTreeVisitor;
-import org.apache.fop.apps.FOPException;
-
-// SAX
+import org.apache.fop.fo.FObj;
 import org.xml.sax.Attributes;
 
 /**

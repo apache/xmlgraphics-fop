@@ -50,18 +50,10 @@
  */
 package org.apache.fop.layoutmgr;
 
-// FOP
-import org.apache.fop.fo.FONode;
-import org.apache.fop.fo.FObjMixed;
-import org.apache.fop.fo.properties.CommonAural;
-import org.apache.fop.fo.properties.CommonRelativePosition;
-
-import org.apache.fop.layoutmgr.LeafNodeLayoutManager;
-import org.apache.fop.layoutmgr.LayoutProcessor;
-import org.apache.fop.area.inline.InlineArea;
-
-import java.util.List;
 import java.util.ArrayList;
+import java.util.List;
+
+import org.apache.fop.area.inline.InlineArea;
 
 
 /**

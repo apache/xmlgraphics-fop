@@ -50,13 +50,9 @@
  */
 package org.apache.fop.fo.flow;
 
-// Java
-import java.util.List;
-
-// FOP
 import org.apache.fop.fo.FONode;
-import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.FOTreeVisitor;
+import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.properties.CommonAccessibility;
 import org.apache.fop.fo.properties.CommonAural;
 import org.apache.fop.fo.properties.CommonBackground;

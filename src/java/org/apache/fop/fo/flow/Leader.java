@@ -50,23 +50,20 @@
  */
 package org.apache.fop.fo.flow;
 
-// FOP
 import org.apache.fop.datatypes.ColorType;
 import org.apache.fop.datatypes.Length;
 import org.apache.fop.datatypes.PercentLength;
 import org.apache.fop.fo.FONode;
-import org.apache.fop.fo.FObjMixed;
-import org.apache.fop.fo.FOInputHandler;
 import org.apache.fop.fo.FOTreeVisitor;
-import org.apache.fop.fo.properties.LeaderPattern;
+import org.apache.fop.fo.FObjMixed;
 import org.apache.fop.fo.properties.CommonAccessibility;
 import org.apache.fop.fo.properties.CommonAural;
 import org.apache.fop.fo.properties.CommonBackground;
 import org.apache.fop.fo.properties.CommonBorderAndPadding;
-import org.apache.fop.fo.FOTreeControl;
-import org.apache.fop.fonts.Font;
 import org.apache.fop.fo.properties.CommonMarginInline;
 import org.apache.fop.fo.properties.CommonRelativePosition;
+import org.apache.fop.fo.properties.LeaderPattern;
+import org.apache.fop.fonts.Font;
 
 /**
  * Class modelling fo:leader object. See Sec. 6.6.9 of the XSL-FO Standard.
