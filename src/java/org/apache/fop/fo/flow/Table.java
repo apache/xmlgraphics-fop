@@ -179,6 +179,16 @@ public class Table extends FObj {
     public TableBody getTableFooter() {
         return tableFooter;
     }
+    
+    /** @return true if the table-header should be omitted at breaks */
+    public boolean omitHeaderAtBreak() {
+        return (this.tableOmitHeaderAtBreak == EN_TRUE);
+    }
+
+    /** @return true if the table-footer should be omitted at breaks */
+    public boolean omitFooterAtBreak() {
+        return (this.tableOmitFooterAtBreak == EN_TRUE);
+    }
 
     /**
      * @return the "inline-progression-dimension" property.

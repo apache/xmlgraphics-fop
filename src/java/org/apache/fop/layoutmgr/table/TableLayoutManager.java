@@ -57,6 +57,7 @@ public class TableLayoutManager extends BlockStackingLayoutManager {
     private List bodyBreaks = new java.util.ArrayList();
     private BreakPoss headerBreak;
     private BreakPoss footerBreak;
+    private boolean firstRowHandled = false;
     
     private int referenceIPD;
     private boolean autoLayout = true;
@@ -185,13 +186,17 @@ public class TableLayoutManager extends BlockStackingLayoutManager {
                 //Calculate the headers and footers only when needed
                 MinOptMax headerSize = null;
                 if (getTable().getTableHeader() != null) {
-                    Body tableHeader = new Body(getTable().getTableHeader());
-                    tableHeader.setParent(this);
-                    headerBreak = getHeight(tableHeader, context);
-                    headerSize = headerBreak.getStackingSize();
-                    stackSize.add(headerSize);
+                    if (!getTable().omitHeaderAtBreak() || !firstRowHandled) {
+                        Body tableHeader = new Body(getTable().getTableHeader());
+                        tableHeader.setParent(this);
+                        headerBreak = getHeight(tableHeader, context);
+                        headerSize = headerBreak.getStackingSize();
+                        stackSize.add(headerSize);
+                    }
                 }
 
+                //TODO Implement table-omit-footer-at-break once the page breaking
+                //is improved, so we don't have to do this twice
                 MinOptMax footerSize = null;
                 if (getTable().getTableFooter() != null) {
                     Body tableFooter = new Body(getTable().getTableFooter());
@@ -244,6 +249,7 @@ public class TableLayoutManager extends BlockStackingLayoutManager {
                     stackSize.add(bp.getStackingSize());
                     lastPos = bp;
                     bodyBreaks.add(bp);
+                    firstRowHandled = true;
 
                     if (bp.nextBreakOverflows()) {
                         over = true;
