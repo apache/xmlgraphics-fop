@@ -506,11 +506,11 @@ public class TextLayoutManager extends AbstractLayoutManager {
             LeafPosition tbpNext = (LeafPosition) posIter.next();
             //
             if (tbpNext.getLeafPos() != -1) {
-            ai = (AreaInfo) vecAreaInfo.get(tbpNext.getLeafPos());
-            if (iStart == -1) {
-                iStart = ai.iStartIndex;
-            }
-            iWScount += ai.iWScount;
+                ai = (AreaInfo) vecAreaInfo.get(tbpNext.getLeafPos());
+                if (iStart == -1) {
+                    iStart = ai.iStartIndex;
+                }
+                iWScount += ai.iWScount;
                 iLScount += ai.iLScount;
                 realWidth.add(ai.ipdArea);
             }
