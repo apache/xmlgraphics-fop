@@ -95,6 +95,10 @@ public class ImageUtil {
         for (int i = 0; i < len; i++) {
             if (Character.isDigit (s.charAt (i))) {
                 retString += s.charAt (i);
+            } else {
+                //for example "600.0pt" has to be exited,
+                //when the dot is reached.
+                break; 
             }
         }
 
