@@ -164,7 +164,21 @@ public class LayoutMasterSet extends FObj {
 	}
     }
 	
-
+    /**
+     * Checks whether or not a region name exists in this master set
+     * @returns true when the region name specified has a region in this LayoutMasterSet
+     */
+    protected boolean regionNameExists(String regionName)
+    {
+	boolean result = false;
+	for (Enumeration e = simplePageMasters.elements(); e.hasMoreElements() ;) {
+	    result = ((SimplePageMaster)e.nextElement()).regionNameExists(regionName);
+	    if (result) {
+		return result;
+	    }
+	}
+	return result;
+    }
 
 
 }

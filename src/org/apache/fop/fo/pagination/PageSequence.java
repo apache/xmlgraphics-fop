@@ -210,6 +210,9 @@ public class PageSequence extends FObj
 	if (_flowMap.containsKey(flow.getFlowName())) {
 	    throw new FOPException("flow-names must be unique within an fo:page-sequence");
 	}
+	if (!this.layoutMasterSet.regionNameExists(flow.getFlowName())) {
+	    MessageHandler.errorln("WARNING: region-name '"+flow.getFlowName()+"' doesn't exist in the layout-master-set.");
+	}
 	_flowMap.put(flow.getFlowName(), flow);
 
     }

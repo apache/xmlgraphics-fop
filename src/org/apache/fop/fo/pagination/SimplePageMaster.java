@@ -57,8 +57,7 @@ import org.apache.fop.fo.properties.*;
 import org.apache.fop.layout.PageMaster;
 import org.apache.fop.apps.FOPException;				   
 
-import java.util.Hashtable;
-
+import java.util.*;
 
 public class SimplePageMaster extends FObj {
 	
@@ -171,6 +170,16 @@ public class SimplePageMaster extends FObj {
 	return _regions;
     }
     
-
+    protected boolean regionNameExists(String regionName) 
+    {
+	for (Enumeration regenum = _regions.elements(); regenum.hasMoreElements() ;) {
+	    Region r = (Region)regenum.nextElement();
+	    if (r.getRegionName().equals(regionName)) {
+		return true;
+	    }
+	}
+	return false;
+	
+    }
     
 }
