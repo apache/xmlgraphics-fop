@@ -120,13 +120,6 @@ public class BlockContainer extends FObj {
     }
 
     /**
-     * @return true (BlockContainer can contain Markers)
-     */
-    protected boolean containsMarkers() {
-        return true;
-    }
-
-    /**
      * @return the span for this object
      */
     public int getSpan() {

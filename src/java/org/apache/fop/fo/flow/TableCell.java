@@ -334,14 +334,6 @@ public class TableCell extends FObj {
     }
 
     /**
-     *
-     * @return true (TableCell can contain Markers)
-     */
-    protected boolean containsMarkers() {
-        return true;
-    }
-
-    /**
      * @see org.apache.fop.fo.FObj#addLayoutManager(List)
      */
     public void addLayoutManager(List list) { 	 

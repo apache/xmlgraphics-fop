@@ -90,13 +90,6 @@ public class TableBody extends FObj implements LMVisited {
     }
 
     /**
-     * @return true (TableBody contains Markers)
-     */
-    protected boolean containsMarkers() {
-        return true;
-    }
-
-    /**
      * This is a hook for the AddLMVisitor class to be able to access
      * this object.
      * @param aLMV the AddLMVisitor object that can access this object.

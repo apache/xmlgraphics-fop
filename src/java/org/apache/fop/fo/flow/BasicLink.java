@@ -141,12 +141,4 @@ public class BasicLink extends Inline {
     public int getNameId() {
         return FO_BASIC_LINK;
     }
-
-    /**
-     * @return true (BasicLink can contain Markers)
-     * @todo see if can remove in favor of a BitSet for all FO's
-     */
-    protected boolean containsMarkers() {
-        return true;
-    }
 }

@@ -41,13 +41,6 @@ public class Wrapper extends FObjMixed implements LMVisited {
         super(parent);
     }
 
-    /**
-     * @return true (Wrapper contains Markers)
-     */
-    protected boolean containsMarkers() {
-        return true;
-    }
-
     public void acceptVisitor(AddLMVisitor aLMV) {
         aLMV.serveWrapper(this);
     }

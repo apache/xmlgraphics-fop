@@ -67,13 +67,6 @@ public class TableCaption extends ToBeImplementedElement {
 
     }
 
-    /**
-     * @return true (TableCaption contains Markers)
-     */
-    protected boolean containsMarkers() {
-        return true;
-    }
-
     public String getName() {
         return "fo:table-caption";
     }

@@ -99,13 +99,6 @@ public class ListItem extends FObj {
     }
 
     /**
-     * @return true (ListItem can contain Markers)
-     */
-    protected boolean containsMarkers() {
-        return true;
-    }
-
-    /**
      * @see org.apache.fop.fo.FObj#addLayoutManager(List)
      * @todo remove checks for non-nulls after validateChildNode() added
      */
