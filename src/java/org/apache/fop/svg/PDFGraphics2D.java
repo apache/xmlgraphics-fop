@@ -57,6 +57,7 @@ import org.apache.fop.pdf.PDFColorSpace;
 import org.apache.fop.pdf.PDFColor;
 import org.apache.fop.pdf.PDFState;
 import org.apache.fop.pdf.PDFNumber;
+import org.apache.fop.pdf.PDFText;
 import org.apache.fop.pdf.PDFXObject;
 import org.apache.fop.pdf.PDFPattern;
 import org.apache.fop.pdf.PDFDocument;
@@ -317,10 +318,11 @@ public class PDFGraphics2D extends AbstractGraphics2D {
     
             if (linkType != PDFLink.EXTERNAL) {
                 String pdfdest = "/FitR " + dest;
-                resourceContext.addAnnotation(pdfDoc.makeLink(rect, pageRef, pdfdest));
+                resourceContext.addAnnotation(
+                    pdfDoc.getFactory().makeLink(rect, pageRef, pdfdest));
             } else {
-                resourceContext.addAnnotation(pdfDoc.makeLink(rect,
-                                                     dest, linkType, 0));
+                resourceContext.addAnnotation(
+                    pdfDoc.getFactory().makeLink(rect, dest, linkType, 0));
             }
         }
     }
@@ -673,7 +675,8 @@ public class PDFGraphics2D extends AbstractGraphics2D {
         if (c.getAlpha() != 255) {
             Map vals = new java.util.HashMap();
             vals.put(PDFGState.GSTATE_ALPHA_STROKE, new Float(c.getAlpha() / 255f));
-            PDFGState gstate = pdfDoc.makeGState(vals, graphicsState.getGState());
+            PDFGState gstate = pdfDoc.getFactory().makeGState(
+                    vals, graphicsState.getGState());
             //gstate.setAlpha(c.getAlpha() / 255f, false);
             resourceContext.addGState(gstate);
             currentStream.write("/" + gstate.getName() + " gs\n");
@@ -917,7 +920,8 @@ public class PDFGraphics2D extends AbstractGraphics2D {
             }
 
             PDFColorSpace aColorSpace = new PDFColorSpace(PDFColorSpace.DEVICE_RGB);
-            PDFPattern myPat = pdfDoc.createGradient(resourceContext, false, aColorSpace,
+            PDFPattern myPat = pdfDoc.getFactory().makeGradient(
+                    resourceContext, false, aColorSpace,
                     someColors, theBounds, theCoords);
             currentStream.write(myPat.getColorSpaceOut(fill));
 
@@ -964,7 +968,8 @@ public class PDFGraphics2D extends AbstractGraphics2D {
                 theBounds.add(new Double(offset));
             }
             PDFColorSpace colSpace = new PDFColorSpace(PDFColorSpace.DEVICE_RGB);
-            PDFPattern myPat = pdfDoc.createGradient(resourceContext, true, colSpace,
+            PDFPattern myPat = pdfDoc.getFactory().makeGradient(
+                                    resourceContext, true, colSpace,
                                     someColors, theBounds, theCoords);
 
             currentStream.write(myPat.getColorSpaceOut(fill));
@@ -981,8 +986,8 @@ public class PDFGraphics2D extends AbstractGraphics2D {
         FontInfo fi = new FontInfo();
         FontSetup.setup(fi, null);
 
-        PDFResources res = pdfDoc.makeResources();
-        PDFResourceContext context = new PDFResourceContext(0, pdfDoc, res);
+        PDFResources res = pdfDoc.getFactory().makeResources();
+        PDFResourceContext context = new PDFResourceContext(res);
         PDFGraphics2D pattGraphic = new PDFGraphics2D(textAsShapes, fi,
                                         pdfDoc, context, pageRef,
                                         "", 0);
@@ -1024,7 +1029,8 @@ public class PDFGraphics2D extends AbstractGraphics2D {
 
         FontSetup.addToResources(pdfDoc, res, fi);
 
-        PDFPattern myPat = pdfDoc.makePattern(resourceContext, 1, res, 1, 1, bbox,
+        PDFPattern myPat = pdfDoc.getFactory().makePattern(
+                                resourceContext, 1, res, 1, 1, bbox,
                                 rect.getWidth(), rect.getHeight(),
                                 translate, null, pattStream.getBuffer());
 
@@ -1032,7 +1038,7 @@ public class PDFGraphics2D extends AbstractGraphics2D {
 
         PDFAnnotList annots = context.getAnnotations();
         if (annots != null) {
-            this.pdfDoc.addAnnotList(annots);
+            this.pdfDoc.addObject(annots);
         }
 
         if (outputStream != null) {
@@ -1236,7 +1242,8 @@ public class PDFGraphics2D extends AbstractGraphics2D {
         if (salpha != 255) {
             Map vals = new java.util.HashMap();
             vals.put(PDFGState.GSTATE_ALPHA_NONSTROKE, new Float(salpha / 255f));
-            PDFGState gstate = pdfDoc.makeGState(vals, graphicsState.getGState());
+            PDFGState gstate = pdfDoc.getFactory().makeGState(
+                    vals, graphicsState.getGState());
             resourceContext.addGState(gstate);
             currentStream.write("/" + gstate.getName() + " gs\n");
         }
@@ -1300,7 +1307,7 @@ public class PDFGraphics2D extends AbstractGraphics2D {
                     currentStream.write(ch);
                 }
             } else {
-                currentStream.write(getUnicodeString(ch));
+                currentStream.write(PDFText.toUnicodeHex(ch));
             }
 
             if (kerningAvailable && (i + 1) < l) {
@@ -1330,37 +1337,6 @@ public class PDFGraphics2D extends AbstractGraphics2D {
                 currentStream.write(endText + (-width.intValue()) + " " + startText);
             }
         }
-    }
-
-    /**
-     * Convert a char to a multibyte hex representation
-     */
-    private String getUnicodeString(char c) {
-
-        StringBuffer buf = new StringBuffer(4);
-        byte[] uniBytes = null;
-        try {
-            char[] a = {
-                c
-            };
-            uniBytes = new String(a).getBytes("UnicodeBigUnmarked");
-        } catch (Exception e) {
-            // This should never fail
-        }
-
-        for (int i = 0; i < uniBytes.length; i++) {
-            int b = (uniBytes[i] < 0) ? (int)(256 + uniBytes[i])
-                    : (int)uniBytes[i];
-
-            String hexString = Integer.toHexString(b);
-            if (hexString.length() == 1) {
-                buf = buf.append("0" + hexString);
-            } else {
-                buf = buf.append(hexString);
-            }
-        }
-
-        return buf.toString();
     }
 
     /**
@@ -1489,7 +1465,8 @@ public class PDFGraphics2D extends AbstractGraphics2D {
         if (c.getAlpha() != 255) {
             Map vals = new java.util.HashMap();
             vals.put(PDFGState.GSTATE_ALPHA_NONSTROKE, new Float(c.getAlpha() / 255f));
-            PDFGState gstate = pdfDoc.makeGState(vals, graphicsState.getGState());
+            PDFGState gstate = pdfDoc.getFactory().makeGState(
+                        vals, graphicsState.getGState());
             resourceContext.addGState(gstate);
             currentStream.write("/" + gstate.getName() + " gs\n");
         }
