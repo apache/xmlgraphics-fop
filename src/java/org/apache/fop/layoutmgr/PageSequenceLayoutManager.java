@@ -229,7 +229,7 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
                 //algorithm so we have a BPD and IPD. This may subject to change later when we
                 //start handling more complex cases.
                 if (!firstPart) {
-                    if (curFlowIdx < curSpan.getColumnCount()) {
+                    if (curFlowIdx < curSpan.getColumnCount()-1) {
                         curFlowIdx++;
                     } else {
                         handleBreak(list.getStartOn());
@@ -466,28 +466,9 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
         }
 
         flowBPD = (int) curPage.getBodyRegion().getBPD();
-        createSpan(curPage.getBodyRegion().getColumnCount());
-        return curPage;
-    }
-
-    /**
-     * Creates a new span reference area.
-     * @param numCols number of columns needed for new span
-     */
-    private void createSpan(int numCols) {
-        // get Width or Height as IPD for span
-        BodyRegion bodyRegion = curPage.getBodyRegion();
-        
-        RegionViewport rv = curPage.getPage().getRegionViewport(FO_REGION_BODY);
-        int ipdWidth = (int) rv.getRegion().getIPD() -
-            rv.getBorderAndPaddingWidthStart() - rv.getBorderAndPaddingWidthEnd();
-
-        //TODO currently hardcoding to one column, replace with numCols when ready
-        curSpan = new Span(numCols, bodyRegion.getColumnGap(), ipdWidth);
-
-        //curSpan.setPosition(BPD, newpos);
-        curPage.getBodyRegion().getMainReference().addSpan(curSpan);
+        curSpan = curPage.createSpan(false);
         curFlowIdx = 0;
+        return curPage;
     }
 
     private void layoutSideRegion(int regionID) {
@@ -511,7 +492,7 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
                 + "for flow " + sc.getFlowName());
         }
         lm.initialize();
-        lm.setRegionReference(rv.getRegion());
+        lm.setRegionReference(rv.getRegionReference());
         lm.setParent(this);
         /*
         LayoutContext childLC = new LayoutContext(0);
@@ -519,7 +500,7 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
         childLC.setRefIPD(rv.getRegion().getIPD());
         */
         
-        MinOptMax range = new MinOptMax(rv.getRegion().getIPD());
+        MinOptMax range = new MinOptMax(rv.getRegionReference().getIPD());
         lm.doLayout(reg, lm, range);
         
         
@@ -601,7 +582,8 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
             bNeedNewSpan = true;
         }
         if (bNeedNewSpan) {
-            createSpan(numColsNeeded);
+            curSpan = curPage.createSpan(span == Constants.EN_ALL);
+            curFlowIdx = 0;
         }
     }
     
@@ -753,12 +735,14 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
            r.setLayoutDimension(PercentBase.BLOCK_IPD, rvp.getIPD());
            r.setLayoutDimension(PercentBase.BLOCK_BPD, rvp.getBPD());
            if (r.getNameId() == FO_REGION_BODY) {
-               rr = new BodyRegion((RegionBody) r);
+               RegionBody rb = (RegionBody) r;
+               rr = new BodyRegion(rb.getColumnCount(), rb.getColumnGap(),
+                       rvp);
            } else {
-               rr = new RegionReference(r.getNameId());
+               rr = new RegionReference(r.getNameId(), rvp);
            }
-           setRegionPosition(r, rr, rvp.getViewArea());
-           rvp.setRegion(rr);
+           setRegionReferencePosition(rr, r, rvp.getViewArea());
+           rvp.setRegionReference(rr);
            page.setRegionViewport(r.getNameId(), rvp);
        }
 
@@ -785,16 +769,17 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
     }
    
     /**
-     * Set the region position inside the region viewport.
+     * Set the region reference position within the region viewport.
      * This sets the transform that is used to place the contents of
-     * the region.
+     * the region reference.
      *
-     * @param r the region reference area
+     * @param rr the region reference area
+     * @param r the region-xxx formatting object
      * @param absRegVPRect The region viewport rectangle in "absolute" coordinates
      * where x=distance from left, y=distance from bottom, width=right-left
      * height=top-bottom
      */
-    private void setRegionPosition(Region r, RegionReference rr,
+    private void setRegionReferencePosition(RegionReference rr, Region r, 
                                   Rectangle2D absRegVPRect) {
         FODimension reldims = new FODimension(0, 0);
         rr.setCTM(CTM.getCTMandRelDims(r.getReferenceOrientation(),

@@ -85,8 +85,19 @@ public class PageViewport implements Resolvable, Cloneable {
      * @return BodyRegion object
      */
     public BodyRegion getBodyRegion() {
-        return (BodyRegion)
-            getPage().getRegionViewport(Constants.FO_REGION_BODY).getRegion();
+        return (BodyRegion) getPage().getRegionViewport(
+                Constants.FO_REGION_BODY).getRegionReference();
+    }    
+
+    /**
+     * Convenience method to create a new Span for this
+     * this PageViewport.
+     * 
+     * @param spanAll whether this is a single-column span
+     * @return Span object created
+     */
+    public Span createSpan(boolean spanAll) {
+        return getBodyRegion().getMainReference().createSpan(spanAll);
     }    
 
     /**

@@ -97,7 +97,7 @@ public class Page implements Serializable, Cloneable {
             return true;
         }
         else {
-            BodyRegion body = (BodyRegion)regionBody.getRegion();
+            BodyRegion body = (BodyRegion)regionBody.getRegionReference();
             return body.isEmpty();
         }
     }
