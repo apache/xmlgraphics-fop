@@ -142,7 +142,7 @@ public class TableAttributesConverter {
                         || color.getBlue() != 0) {
                     attrib.set(
                         ITableAttributes.CELL_COLOR_BACKGROUND,
-                        RTFHandler.convertFOPColorToRTF(color));
+                        TextAttributesConverter.convertFOPColorToRTF(color));
                 }
             } else {
                 log.warn("Named color '" + p.toString() + "' not found. ");

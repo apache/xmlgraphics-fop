@@ -78,11 +78,13 @@ import org.apache.fop.fo.pagination.PageSequence;
 import org.apache.fop.fo.pagination.SimplePageMaster;
 import org.apache.fop.fo.properties.Constants;
 import org.apache.fop.fo.Property;
+import org.apache.fop.fo.PropertyList;
 import org.apache.fop.apps.Document;
 import org.apache.fop.rtf.rtflib.rtfdoc.IRtfAfterContainer;
 import org.apache.fop.rtf.rtflib.rtfdoc.IRtfBeforeContainer;
 import org.apache.fop.rtf.rtflib.rtfdoc.IRtfPageNumberContainer;
 import org.apache.fop.rtf.rtflib.rtfdoc.IRtfParagraphContainer;
+import org.apache.fop.rtf.rtflib.rtfdoc.IRtfTextrunContainer;
 import org.apache.fop.rtf.rtflib.rtfdoc.RtfAfter;
 import org.apache.fop.rtf.rtflib.rtfdoc.RtfAttributes;
 import org.apache.fop.rtf.rtflib.rtfdoc.RtfBefore;
@@ -90,9 +92,11 @@ import org.apache.fop.rtf.rtflib.rtfdoc.RtfColorTable;
 import org.apache.fop.rtf.rtflib.rtfdoc.RtfDocumentArea;
 import org.apache.fop.rtf.rtflib.rtfdoc.RtfElement;
 import org.apache.fop.rtf.rtflib.rtfdoc.RtfFile;
+import org.apache.fop.rtf.rtflib.rtfdoc.RtfFontManager;
 import org.apache.fop.rtf.rtflib.rtfdoc.RtfParagraph;
 import org.apache.fop.rtf.rtflib.rtfdoc.RtfSection;
 import org.apache.fop.rtf.rtflib.rtfdoc.RtfText;
+import org.apache.fop.rtf.rtflib.rtfdoc.RtfTextrun;
 import org.apache.fop.rtf.rtflib.rtfdoc.RtfTable;
 import org.apache.fop.rtf.rtflib.rtfdoc.RtfTableRow;
 import org.apache.fop.rtf.rtflib.rtfdoc.RtfTableCell;
@@ -129,12 +133,6 @@ public class RTFHandler extends FOInputHandler {
 
     private static final String ALPHA_WARNING = "WARNING: RTF renderer is "
         + "veryveryalpha at this time, see class org.apache.fop.rtf.renderer.RTFHandler";
-
-    /**
-     * Tracks current background color. BG color is not reset automatically
-     * anywhere, so we need a persistent way to see whether it has changed.
-     */
-    private int currentRTFBackgroundColor = -1;
 
     /**
      * Creates a new RTF structure handler.
@@ -317,18 +315,17 @@ public class RTFHandler extends FOInputHandler {
      */
     public void startBlock(Block bl) {
         try {
-            RtfAttributes rtfAttr = new RtfAttributes();
-            attrBlockTextAlign(bl, rtfAttr);
-            attrBlockBackgroundColor(bl, rtfAttr);
-            attrBlockFontSize(bl, rtfAttr);
-            attrBlockFontWeight(bl, rtfAttr);
+            RtfAttributes rtfAttr = 
+                    TextAttributesConverter.convertAttributes(bl.properties, null);
+                    
+            IRtfTextrunContainer container =
+                    (IRtfTextrunContainer)builderContext.getContainer(IRtfTextrunContainer.class,
+                    true,this);
 
-            IRtfParagraphContainer pc =
-                    (IRtfParagraphContainer)builderContext.getContainer
-                        (IRtfParagraphContainer.class, true, null);
-            para = pc.newParagraph(rtfAttr);
-
-            builderContext.pushContainer(para);
+            RtfTextrun textrun=container.getTextrun();
+            
+            textrun.addParagraphBreak();
+            textrun.pushAttributes(rtfAttr);
         } catch (IOException ioe) {
             // TODO could we throw Exception in all FOInputHandler events?
             log.error("startBlock: " + ioe.getMessage());
@@ -344,7 +341,23 @@ public class RTFHandler extends FOInputHandler {
      * @see org.apache.fop.fo.FOInputHandler#endBlock(Block)
      */
     public void endBlock(Block bl) {
-        builderContext.popContainer();
+        try {
+            IRtfTextrunContainer container =
+                    (IRtfTextrunContainer)builderContext.getContainer(IRtfTextrunContainer.class,
+                    true,this);
+                    
+            RtfTextrun textrun=container.getTextrun();
+            
+            textrun.addParagraphBreak();
+            textrun.popAttributes();
+            
+        } catch (IOException ioe) {
+            log.error("startBlock:" + ioe.getMessage());
+            throw new Error(ioe.getMessage());
+        } catch (Exception e) {
+            log.error("startBlock:" + e.getMessage());
+            throw new Error(e.getMessage());
+        }
     }
 
     /**
@@ -426,15 +439,52 @@ public class RTFHandler extends FOInputHandler {
     }
 
     /**
-     * @see org.apache.fop.fo.FOInputHandler#startInline(Inline)
+     *
+     * @param inl Inline that is starting.
      */
     public void startInline(Inline inl){
+
+        try {
+            RtfAttributes rtfAttr = 
+                    TextAttributesConverter.convertCharacterAttributes(inl.properties, null);
+                    
+            IRtfTextrunContainer container =
+                    (IRtfTextrunContainer)builderContext.getContainer(IRtfTextrunContainer.class,
+                    true,this);
+                    
+            RtfTextrun textrun=container.getTextrun();
+            textrun.pushAttributes(rtfAttr);
+        } catch (IOException ioe) {
+            log.error("startInline:" + ioe.getMessage());
+            throw new Error(ioe.getMessage());
+        } catch (FOPException fe) {
+            log.error("startInline:" + fe.getMessage());
+            throw new Error(fe.getMessage());
+        } catch (Exception e) {
+            log.error("startInline:" + e.getMessage());
+            throw new Error(e.getMessage());
+        }
     }
 
     /**
-     * @see org.apache.fop.fo.FOInputHandler#endInline(Inline)
+     *
+     * @param inl Inline that is ending.
      */
     public void endInline(Inline inl){
+        try {
+            IRtfTextrunContainer container =
+                    (IRtfTextrunContainer)builderContext.getContainer(IRtfTextrunContainer.class,
+                    true,this);
+                    
+            RtfTextrun textrun=container.getTextrun();
+            textrun.popAttributes();
+        } catch (IOException ioe) {
+            log.error("startInline:" + ioe.getMessage());
+            throw new Error(ioe.getMessage());
+        } catch (Exception e) {
+            log.error("startInline:" + e.getMessage());
+            throw new Error(e.getMessage());
+        }
     }
 
      /**
@@ -674,90 +724,20 @@ public class RTFHandler extends FOInputHandler {
      */
     public void characters(char data[], int start, int length) {
         try {
-            para.newText(new String(data, start, length));
+            IRtfTextrunContainer container =
+                    (IRtfTextrunContainer)builderContext.getContainer(IRtfTextrunContainer.class,
+                    true,this);
+                    
+            RtfTextrun textrun=container.getTextrun();
+            textrun.addString(new String(data, start, length));
          } catch (IOException ioe) {
             // FIXME could we throw Exception in all FOInputHandler events?
             log.error("characters: " + ioe.getMessage());
-            throw new Error("IOException: " + ioe);
+            throw new Error(ioe.getMessage());
+        } catch (Exception e) {
+            log.error("characters:" + e.getMessage());
+            throw new Error(e.getMessage());
         }
-    }
-
-    private void attrBlockFontSize(Block bl, RtfAttributes rtfAttr) {
-        int fopValue = bl.properties.get("font-size").getLength().getValue() / 500;
-        rtfAttr.set("fs", fopValue);
-    }
-
-    private void attrBlockFontWeight(Block bl, RtfAttributes rtfAttr) {
-        String fopValue = bl.properties.get("font-weight").getString();
-        if (fopValue == "bold" || fopValue == "700") {
-            rtfAttr.set("b", 1);
-        } else {
-            rtfAttr.set("b", 0);
-        }
-    }
-
-    private void attrBlockTextAlign(Block bl, RtfAttributes rtfAttr) {
-        int fopValue = bl.properties.get("text-align").getEnum();
-        String rtfValue = null;
-        switch (fopValue) {
-            case Constants.CENTER: {
-                rtfValue = RtfText.ALIGN_CENTER;
-                break;
-            }
-            case Constants.END: {
-                rtfValue = RtfText.ALIGN_RIGHT;
-                break;
-            }
-            case Constants.JUSTIFY: {
-                rtfValue = RtfText.ALIGN_JUSTIFIED;
-                break;
-            }
-            default: {
-                rtfValue = RtfText.ALIGN_LEFT;
-                break;
-            }
-        }
-        rtfAttr.set(rtfValue);
-    }
-
-    /**
-     * Reads background-color from bl and writes it to rtfAttr.
-     *
-     * @param bl the Block object the properties are read from
-     * @param rtfAttr the RtfAttributes object the attributes are written to
-     */
-    private void attrBlockBackgroundColor(Block bl, RtfAttributes rtfAttr) {
-        ColorType fopValue = bl.properties.get("background-color").getColorType();
-        int rtfColor = 0;
-        /* FOP uses a default background color of "transparent", which is
-           actually a transparent black, which is generally not suitable as a
-           default here. Changing FOP's default to "white" causes problems in
-           PDF output, so we will look for the default here & change it to
-           "auto". */
-        if ((fopValue.getRed() == 0) && (fopValue.getGreen() == 0)
-                && (fopValue.getBlue() == 0) && (fopValue.getAlpha() == 0)) {
-            rtfColor = 0; //=auto
-            currentRTFBackgroundColor = -1;
-        } else {
-            rtfColor = convertFOPColorToRTF(fopValue);
-        }
-        if (rtfColor != currentRTFBackgroundColor) {
-            rtfAttr.set(RtfText.ATTR_BACKGROUND_COLOR, rtfColor);
-            currentRTFBackgroundColor = rtfColor;
-        }
-    }
-
-    /**
-     * Converts a FOP ColorType to the integer pointing into the RTF color table
-     * @param fopColor the ColorType object to be converted
-     * @return integer pointing into the RTF color table
-     */
-    public static int convertFOPColorToRTF(ColorType fopColor) {
-        int redComponent = ColorType.convertChannelToInteger (fopColor.getRed());
-        int greenComponent = ColorType.convertChannelToInteger (fopColor.getGreen());
-        int blueComponent = ColorType.convertChannelToInteger (fopColor.getBlue());
-        return RtfColorTable.getInstance().getColorNumber(redComponent,
-                greenComponent, blueComponent).intValue();
     }
 
     /**
@@ -766,18 +746,18 @@ public class RTFHandler extends FOInputHandler {
      */
     public void startPageNumber(PageNumber pagenum) {
         try {
-            //insert page number
-            IRtfPageNumberContainer pageNumberContainer =
-                    (IRtfPageNumberContainer)builderContext.getContainer
-                        (IRtfPageNumberContainer.class, true, this);
-            builderContext.pushContainer(pageNumberContainer.newPageNumber());
-
-            //set Attribute "WhiteSpaceFalse" in order to prevent the rtf library from
-            //stripping the whitespaces. This applies to whole paragraph.
-            if (pageNumberContainer instanceof RtfParagraph) {
-                RtfParagraph para = (RtfParagraph)pageNumberContainer;
-                para.getRtfAttributes().set("WhiteSpaceFalse");
-            }
+            RtfAttributes rtfAttr = 
+                    TextAttributesConverter.convertCharacterAttributes(pagenum.properties, null);
+                    
+            IRtfTextrunContainer container =
+                    (IRtfTextrunContainer)builderContext.getContainer(IRtfTextrunContainer.class,
+                    true,this);
+                    
+            RtfTextrun textrun=container.getTextrun();
+            textrun.addPageNumber(rtfAttr);
+        } catch (IOException ioe) {
+            log.error("startPageNumber:" + ioe.getMessage());
+            throw new Error(ioe.getMessage());
         } catch (Exception e) {
             log.error("startPageNumber: " + e.getMessage());
             throw new Error(e.getMessage());
@@ -789,6 +769,5 @@ public class RTFHandler extends FOInputHandler {
      * @param pagenum PageNumber that is ending.
      */
     public void endPageNumber(PageNumber pagenum) {
-        builderContext.popContainer();
     }
 }
