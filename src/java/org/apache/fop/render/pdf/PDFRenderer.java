@@ -658,91 +658,158 @@ public class PDFRenderer extends PrintRenderer {
         boolean b[] = new boolean[] {
             (bpsBefore != null), (bpsEnd != null), 
             (bpsAfter != null), (bpsStart != null)};
+        if (!b[0] && !b[1] && !b[2] && !b[3]) {
+            return;
+        }
         float bw[] = new float[] {
             (b[0] ? bpsBefore.width / 1000f : 0.0f),
             (b[1] ? bpsEnd.width / 1000f : 0.0f),
             (b[2] ? bpsAfter.width / 1000f : 0.0f),
             (b[3] ? bpsStart.width / 1000f : 0.0f)};
+        float clipw[] = new float[] {
+            BorderProps.getClippedWidth(bpsBefore) / 1000f,    
+            BorderProps.getClippedWidth(bpsEnd) / 1000f,    
+            BorderProps.getClippedWidth(bpsAfter) / 1000f,    
+            BorderProps.getClippedWidth(bpsStart) / 1000f};
+        starty += clipw[0];
+        height -= clipw[0];
+        height -= clipw[2];
+        startx += clipw[3];
+        width -= clipw[3];
+        width -= clipw[1];
+        
         boolean slant[] = new boolean[] {
             (b[3] && b[0]), (b[0] && b[1]), (b[1] && b[2]), (b[2] && b[3])};
         if (bpsBefore != null) {
             endTextObject();
 
             float sx1 = startx;
-            float sx2 = (slant[0] ? sx1 + bw[3] : sx1);
+            float sx2 = (slant[0] ? sx1 + bw[3] - clipw[3] : sx1);
             float ex1 = startx + width;
-            float ex2 = (slant[1] ? ex1 - bw[1] : ex1);
-            float outery = starty;
+            float ex2 = (slant[1] ? ex1 - bw[1] + clipw[1] : ex1);
+            float outery = starty - clipw[0];
+            float clipy = outery + clipw[0];
             float innery = outery + bw[0];
 
             saveGraphicsState();
-            moveTo(sx1, outery);
-            lineTo(ex1, outery);
+            moveTo(sx1, clipy);
+            float sx1a = sx1;
+            float ex1a = ex1;
+            if (bpsBefore.mode == BorderProps.COLLAPSE_OUTER) {
+                if (bpsStart != null && bpsStart.mode == BorderProps.COLLAPSE_OUTER) {
+                    sx1a -= clipw[3];
+                }
+                if (bpsEnd != null && bpsEnd.mode == BorderProps.COLLAPSE_OUTER) {
+                    ex1a += clipw[1];
+                }
+                lineTo(sx1a, outery);
+                lineTo(ex1a, outery);
+            }
+            lineTo(ex1, clipy);
             lineTo(ex2, innery);
             lineTo(sx2, innery);
             closePath();
             clip();
-            drawBorderLine(sx1, outery, ex1, innery, true, true, bpsBefore.style, bpsBefore.color);
+            drawBorderLine(sx1a, outery, ex1a, innery, true, true, bpsBefore.style, bpsBefore.color);
             restoreGraphicsState();
         }
         if (bpsEnd != null) {
             endTextObject();
 
             float sy1 = starty;
-            float sy2 = (slant[1] ? sy1 + bw[0] : sy1);
+            float sy2 = (slant[1] ? sy1 + bw[0] - clipw[0] : sy1);
             float ey1 = starty + height;
-            float ey2 = (slant[2] ? ey1 - bw[2] : ey1);
-            float outerx = startx + width;
+            float ey2 = (slant[2] ? ey1 - bw[2] + clipw[2] : ey1);
+            float outerx = startx + width + clipw[1];
+            float clipx = outerx - clipw[1];
             float innerx = outerx - bw[1];
             
             saveGraphicsState();
-            moveTo(outerx, sy1);
-            lineTo(outerx, ey1);
+            moveTo(clipx, sy1);
+            float sy1a = sy1;
+            float ey1a = ey1;
+            if (bpsEnd.mode == BorderProps.COLLAPSE_OUTER) {
+                if (bpsBefore != null && bpsBefore.mode == BorderProps.COLLAPSE_OUTER) {
+                    sy1a -= clipw[0];
+                }
+                if (bpsAfter != null && bpsAfter.mode == BorderProps.COLLAPSE_OUTER) {
+                    ey1a += clipw[2];
+                }
+                lineTo(outerx, sy1a);
+                lineTo(outerx, ey1a);
+            }
+            lineTo(clipx, ey1);
             lineTo(innerx, ey2);
             lineTo(innerx, sy2);
             closePath();
             clip();
-            drawBorderLine(innerx, sy1, outerx, ey1, false, false, bpsEnd.style, bpsEnd.color);
+            drawBorderLine(innerx, sy1a, outerx, ey1a, false, false, bpsEnd.style, bpsEnd.color);
             restoreGraphicsState();
         }
         if (bpsAfter != null) {
             endTextObject();
 
             float sx1 = startx;
-            float sx2 = (slant[3] ? sx1 + bw[3] : sx1);
+            float sx2 = (slant[3] ? sx1 + bw[3] - clipw[3] : sx1);
             float ex1 = startx + width;
-            float ex2 = (slant[2] ? ex1 - bw[1] : ex1);
-            float outery = starty + height;
+            float ex2 = (slant[2] ? ex1 - bw[1] + clipw[1] : ex1);
+            float outery = starty + height + clipw[2];
+            float clipy = outery - clipw[2];
             float innery = outery - bw[2];
 
             saveGraphicsState();
-            moveTo(ex1, outery);
-            lineTo(sx1, outery);
+            moveTo(ex1, clipy);
+            float sx1a = sx1;
+            float ex1a = ex1;
+            if (bpsAfter.mode == BorderProps.COLLAPSE_OUTER) {
+                if (bpsStart != null && bpsStart.mode == BorderProps.COLLAPSE_OUTER) {
+                    sx1a -= clipw[3];
+                }
+                if (bpsStart != null && bpsStart.mode == BorderProps.COLLAPSE_OUTER) {
+                    ex1a += clipw[1];
+                }
+                lineTo(ex1a, outery);
+                lineTo(sx1a, outery);
+            }
+            lineTo(sx1, clipy);
             lineTo(sx2, innery);
             lineTo(ex2, innery);
             closePath();
             clip();
-            drawBorderLine(sx1, innery, ex1, outery, true, false, bpsAfter.style, bpsAfter.color);
+            drawBorderLine(sx1a, innery, ex1a, outery, true, false, bpsAfter.style, bpsAfter.color);
             restoreGraphicsState();
         }
         if (bpsStart != null) {
             endTextObject();
 
             float sy1 = starty;
-            float sy2 = (slant[0] ? sy1 + bw[0] : sy1);
+            float sy2 = (slant[0] ? sy1 + bw[0] - clipw[0] : sy1);
             float ey1 = sy1 + height;
-            float ey2 = (slant[3] ? ey1 - bw[2] : ey1);
-            float outerx = startx;
+            float ey2 = (slant[3] ? ey1 - bw[2] + clipw[2]: ey1);
+            float outerx = startx - clipw[3];
+            float clipx = outerx + clipw[3];
             float innerx = outerx + bw[3];
 
             saveGraphicsState();
-            moveTo(outerx, ey1);
-            lineTo(outerx, sy1);
+            moveTo(clipx, ey1);
+            float sy1a = sy1;
+            float ey1a = ey1;
+            if (bpsStart.mode == BorderProps.COLLAPSE_OUTER) {
+                if (bpsBefore != null && bpsBefore.mode == BorderProps.COLLAPSE_OUTER) {
+                    sy1a -= clipw[0];
+                }
+                if (bpsAfter != null && bpsAfter.mode == BorderProps.COLLAPSE_OUTER) {
+                    ey1a += clipw[2];
+                }
+                lineTo(outerx, sy1a);
+                lineTo(outerx, ey1a);
+            }
+            lineTo(clipx, sy1);
             lineTo(innerx, sy2);
             lineTo(innerx, ey2);
             closePath();
             clip();
-            drawBorderLine(outerx, sy1, innerx, ey1, false, true, bpsStart.style, bpsStart.color);
+            drawBorderLine(outerx, sy1a, innerx, ey1a, false, true, bpsStart.style, bpsStart.color);
             restoreGraphicsState();
         }
     }
