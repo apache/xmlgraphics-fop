@@ -654,14 +654,6 @@ public class Options {
         }
     }
 
-    public static CommandLineStarter getStarter() {
-        switch (outputmode) {
-
-        default:
-            return new CommandLineStarter();
-        }
-    }
-
     public static String getInputMode() {
         return Configuration.getStringValue("inputMode");
     }
