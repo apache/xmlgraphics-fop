@@ -29,7 +29,7 @@ import org.apache.fop.fo.expr.PropertyException;
  * Pseudo-property class for common border width values occurring in a
  * number of classes.
  */
-public class BorderCommonWidth extends Property  {
+public abstract class BorderCommonWidth extends AbstractCorrespondingProperty  {
     public static final int THIN = 1;
     public static final int MEDIUM = 2;
     public static final int THICK = 3;
@@ -70,6 +70,11 @@ public class BorderCommonWidth extends Property  {
     }
     public String getEnumText(int index) {
         return rwEnums[index];
+    }
+
+    public boolean overridesCorresponding(FONode foNode)
+    throws PropertyException {
+        throw new PropertyException("Called within superclass");
     }
 
 }

@@ -22,10 +22,11 @@ package org.apache.fop.fo.properties;
 
 import org.apache.fop.datatypes.ColorType;
 import org.apache.fop.datatypes.PropertyValue;
+import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.PropNames;
 import org.apache.fop.fo.expr.PropertyException;
 
-public class BorderTopColor extends ColorTransparent {
+public class BorderTopColor extends BorderColorCorrespondingAbsolute {
     public static final int dataTypes = ENUM | COLOR_T | INHERIT;
 
     public int getDataTypes() {
@@ -54,6 +55,16 @@ public class BorderTopColor extends ColorTransparent {
         throws PropertyException
     {
         return new ColorType (PropNames.BACKGROUND_COLOR, BLACK);
+    }
+
+    public int getCorrespondingProperty(FONode foNode)
+    throws PropertyException {
+        return getCorrespondingColorProperty(
+                foNode, WritingMode.TOP);
+    }
+
+    public boolean overridesCorresponding(FONode foNode) {
+        return false;
     }
 
 }

@@ -26,7 +26,7 @@ import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.PropNames;
 import org.apache.fop.fo.expr.PropertyException;
 
-public class BorderAfterWidth extends BorderCommonWidth {
+public class BorderAfterWidth extends BorderCommonWidthRelative {
     public static final int dataTypes =
                             COMPOUND | MAPPED_LENGTH | LENGTH | INHERIT;
 
@@ -47,7 +47,7 @@ public class BorderAfterWidth extends BorderCommonWidth {
     }
 
 
-    // Initial value for BorderAfterWidth is tne mapped enumerated value
+    // Initial value for BorderAfterWidth is the mapped enumerated value
     // "medium".  This maps to 1pt.  There is no way at present to
     // automatically update the following initial Length PropertyValue
     // if the mapping changes.
@@ -70,7 +70,11 @@ public class BorderAfterWidth extends BorderCommonWidth {
         return inherited;
     }
 
-    
+    public int getCorrespondingProperty(FONode foNode)
+    throws PropertyException {
+        return getCorrespondingWidthProperty(
+                foNode, WritingMode.AFTER);
+    }
 
 }
 
