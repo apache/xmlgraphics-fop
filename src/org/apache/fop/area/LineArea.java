@@ -8,8 +8,6 @@
 package org.apache.fop.area;
 
 import org.apache.fop.area.inline.InlineArea;
-import org.apache.fop.layoutmgr.LayoutInfo;
-import org.apache.fop.fo.properties.VerticalAlign;
 
 import java.util.ArrayList;
 import java.util.List;

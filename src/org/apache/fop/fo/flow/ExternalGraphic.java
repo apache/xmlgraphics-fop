@@ -16,7 +16,6 @@ import org.apache.fop.image.*;
 import org.apache.fop.area.inline.InlineArea;
 import org.apache.fop.layoutmgr.LayoutManager;
 import org.apache.fop.layoutmgr.LeafNodeLayoutManager;
-import org.apache.fop.layoutmgr.LayoutInfo;
 import org.apache.fop.area.inline.Image;
 import org.apache.fop.area.inline.Viewport;
 import org.apache.fop.datatypes.*;

@@ -25,7 +25,6 @@ import org.apache.fop.layout.RelativePositionProps;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.layoutmgr.LayoutManager;
 import org.apache.fop.layoutmgr.LeafNodeLayoutManager;
-import org.apache.fop.layoutmgr.LayoutInfo;
 
 import org.w3c.dom.Document;
 

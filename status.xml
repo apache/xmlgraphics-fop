@@ -69,11 +69,6 @@ inactive??
       retrieving. The marker can then be layed out as normal.
     </action>
     <action context="code" dev="open">
-      Calculate line height.
-      The line height needs to be calculated while finding breaks. This needs
-      to include all the alignment and height details of the inline areas.
-    </action>
-    <action context="code" dev="open">
       implement the caching mechanism to store pages
       when a page contains a forward reference that has not been
       resolved then we need to be able to save the page contents to
@@ -126,6 +121,11 @@ inactive??
 
   <changes>
    <release version="?" date="2002">
+    <action dev="KLL" type="update" context="code">
+      Calculate line height.
+      The line height is calculated while finding breaks.
+      Improved alignment to use the breaks and context.
+    </action>
     <action dev="KLL" type="update" context="code">
       Updated batik with change to TextPainter interface and UserAgent.
       Improved PDFTextPainter to handle more types of text.
@@ -282,6 +282,10 @@ inactive??
     </action>
     <action dev="KL" type="add" context="code">
       New layout system using layout managers
+    </action>
+    <action dev="KL" type="add" context="code">
+      Implemented handlers for whitespace handling that collapse whitespace
+      better in various places
     </action>
     <action dev="KLL" type="update" context="code">
      Changed area tree xml format to match the area tree hierarchy
