@@ -46,7 +46,7 @@ After "basic" conformance is achieved, it is probable that higher levels of conf
       </section>
       <section id="pri-goal-unlimited-size">
         <title>Process Files of Arbitrary Size</title>
-        <p>Except for user storage limitations, the design goal is to be able to process files of any size.</p>
+        <p>Except for user storage limitations, the design goal is to be able to process files of any size. In a separate but related issue, the design goal is to be able to process page-sequence elements of any size. (See <link href="fotree.html#recycle">Recycling FO Tree Memory</link> for a discussion of the use of page-sequence as a logical subdivided "chunk" on an FO document).</p>
       </section>
     </section>
     <section id="secondary-goals">
