@@ -27,6 +27,7 @@ import org.apache.fop.apps.FOPException;
 import org.apache.fop.datatypes.Length;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FObj;
+import org.apache.fop.fo.IntrinsicSizeAccess;
 import org.apache.fop.fo.PropertyList;
 import org.apache.fop.fo.ValidationException;
 import org.apache.fop.fo.properties.CommonAccessibility;
@@ -36,6 +37,8 @@ import org.apache.fop.fo.properties.CommonMarginInline;
 import org.apache.fop.fo.properties.CommonRelativePosition;
 import org.apache.fop.fo.properties.KeepProperty;
 import org.apache.fop.fo.properties.LengthRangeProperty;
+import org.apache.fop.image.FopImage;
+import org.apache.fop.image.ImageFactory;
 import org.apache.fop.layoutmgr.ExternalGraphicLayoutManager;
 
 /**
@@ -43,7 +46,8 @@ import org.apache.fop.layoutmgr.ExternalGraphicLayoutManager;
  * This FO node handles the external graphic. It creates an image
  * inline area that can be added to the area tree.
  */
-public class ExternalGraphic extends FObj {
+public class ExternalGraphic extends FObj implements IntrinsicSizeAccess {
+    
     // The value of properties relevant for fo:external-graphic.
     private CommonAccessibility commonAccessibility;
     private CommonAural commonAural;
@@ -75,6 +79,10 @@ public class ExternalGraphic extends FObj {
     private Length width;
     // End of property values
 
+    //Additional values
+    private String url;
+    private FopImage fopimage;
+    
     /**
      * Create a new External graphic node.
      *
@@ -116,6 +124,9 @@ public class ExternalGraphic extends FObj {
         textAlign = pList.get(PR_TEXT_ALIGN).getEnum();
         verticalAlign = pList.get(PR_VERTICAL_ALIGN).getEnum();
         width = pList.get(PR_WIDTH).getLength();
+        
+        //Additional processing
+        url = ImageFactory.getURL(getSrc());
     }
 
     /**
@@ -220,6 +231,13 @@ public class ExternalGraphic extends FObj {
     }
 
     /**
+     * @return Get the resulting URL based on the src property.
+     */
+    public String getURL() {
+        return url;
+    }
+
+    /**
      * Return the "text-align" property.
      */
     public int getTextAlign() {
@@ -253,4 +271,48 @@ public class ExternalGraphic extends FObj {
     public int getNameId() {
         return FO_EXTERNAL_GRAPHIC;
     }
+
+    /**
+     * Preloads the image so the intrinsic size is available.
+     */
+    private void prepareIntrinsicSize() {
+        if (fopimage == null) {
+            ImageFactory fact = ImageFactory.getInstance();
+            fopimage = fact.getImage(getURL(), getUserAgent());
+            if (fopimage == null) {
+                getLogger().error("Image not available: " + getURL());
+            } else {
+                // load dimensions
+                if (!fopimage.load(FopImage.DIMENSIONS)) {
+                    getLogger().error("Cannot read image dimensions: " + getURL());
+                }
+            }
+            //TODO Report to caller so he can decide to throw an exception
+        }
+    }
+    
+    /**
+     * @see org.apache.fop.fo.IntrinsicSizeAccess#getIntrinsicWidth()
+     */
+    public int getIntrinsicWidth() {
+        prepareIntrinsicSize();
+        if (fopimage != null) {
+            return fopimage.getWidth() * 1000;
+        } else {
+            return 0;
+        }
+    }
+
+    /**
+     * @see org.apache.fop.fo.IntrinsicSizeAccess#getIntrinsicHeight()
+     */
+    public int getIntrinsicHeight() {
+        prepareIntrinsicSize();
+        if (fopimage != null) {
+            return fopimage.getHeight() * 1000;
+        } else {
+            return 0;
+        }
+    }
+    
 }

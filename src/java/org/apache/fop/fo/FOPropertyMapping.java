@@ -1418,6 +1418,7 @@ public class FOPropertyMapping implements Constants {
         l.addEnum("auto", makeEnumProperty(EN_AUTO, "AUTO"));
         l.addEnum("scale-to-fit", makeEnumProperty(EN_SCALE_TO_FIT, "SCALE_TO_FIT"));
         l.setDefault("auto");
+        l.setPercentBase(LengthBase.IMAGE_INTRINSIC_HEIGHT);
         addPropertyMaker("content-height", l);
 
         // content-width
@@ -1426,6 +1427,7 @@ public class FOPropertyMapping implements Constants {
         l.addEnum("auto", makeEnumProperty(EN_AUTO, "AUTO"));
         l.addEnum("scale-to-fit", makeEnumProperty(EN_SCALE_TO_FIT, "SCALE_TO_FIT"));
         l.setDefault("auto");
+        l.setPercentBase(LengthBase.IMAGE_INTRINSIC_WIDTH);
         addPropertyMaker("content-width", l);
 
         // height

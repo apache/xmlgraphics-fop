@@ -20,6 +20,7 @@ package org.apache.fop.datatypes;
 
 import org.apache.fop.fo.Constants;
 import org.apache.fop.fo.FObj;
+import org.apache.fop.fo.IntrinsicSizeAccess;
 import org.apache.fop.fo.PropertyList;
 import org.apache.fop.fo.expr.PropertyException;
 
@@ -43,11 +44,16 @@ public class LengthBase implements PercentBase {
     public static final int BLOCK_WIDTH = 5;
     /** constant for a containing block percent-based length */
     public static final int BLOCK_HEIGHT = 6;
+    /** constant for a image intrinsic percent-based length */
+    public static final int IMAGE_INTRINSIC_WIDTH = 7;
+    /** constant for a image intrinsic percent-based length */
+    public static final int IMAGE_INTRINSIC_HEIGHT = 8;
 
     /** array of valid percent-based length types */
     public static final int[] PERCENT_BASED_LENGTH_TYPES
-            = { CUSTOM_BASE, FONTSIZE, INH_FONTSIZE, CONTAINING_BOX,
-                CONTAINING_REFAREA } ;
+            = {CUSTOM_BASE, FONTSIZE, INH_FONTSIZE, CONTAINING_BOX,
+               CONTAINING_REFAREA, 
+               IMAGE_INTRINSIC_WIDTH, IMAGE_INTRINSIC_HEIGHT};
 
     /**
      * FO parent of the FO for which this property is to be calculated.
@@ -122,13 +128,15 @@ public class LengthBase implements PercentBase {
         case BLOCK_HEIGHT:
             return parentFO.getLayoutDimension(PercentBase.BLOCK_BPD).intValue();
         case CONTAINING_REFAREA:    // example: start-indent, end-indent
-         {
             //FONode fo;
             //for (fo = parentFO; fo != null && !fo.generatesReferenceAreas();
             //        fo = fo.getParent());
             //return (((fo != null) && (fo instanceof FObj)) ? ((FObj)fo).getContentWidth() : 0);
             return 0;
-        }
+        case IMAGE_INTRINSIC_WIDTH:
+            return ((IntrinsicSizeAccess)propertyList.getFObj()).getIntrinsicWidth();
+        case IMAGE_INTRINSIC_HEIGHT:
+            return ((IntrinsicSizeAccess)propertyList.getFObj()).getIntrinsicHeight();
         case CUSTOM_BASE:
             //log.debug("!!! LengthBase.getBaseLength() called on CUSTOM_BASE type !!!");
             return 0;
