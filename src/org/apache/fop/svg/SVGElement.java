@@ -17,6 +17,7 @@ import org.apache.fop.layout.inline.*;
 import org.apache.fop.configuration.Configuration;
 
 import org.apache.batik.dom.svg.*;
+import org.apache.batik.dom.util.XMLSupport;
 import org.w3c.dom.*;
 import org.w3c.dom.svg.*;
 import org.w3c.dom.svg.SVGLength;
@@ -146,6 +147,11 @@ public class SVGElement extends SVGObj {
         }
 
         Element e = ((SVGDocument)doc).getRootElement();
+
+        //if(!e.hasAttributeNS(XMLSupport.XMLNS_NAMESPACE_URI, "xmlns")) {
+            e.setAttributeNS(XMLSupport.XMLNS_NAMESPACE_URI, "xmlns", SVGDOMImplementation.SVG_NAMESPACE_URI);
+        //}
+
         String s;
         SVGUserAgent userAgent = new SVGUserAgent(new AffineTransform());
         userAgent.setLogger(log);
