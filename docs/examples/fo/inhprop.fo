@@ -94,6 +94,8 @@ Below fo:root there is always
             space-before.optimum="10pt"
             space-after.optimum="10pt"
             text-align="start"
+	    keep-with-next.within-page="always"
+	    keep-together.within-page="always"
             padding-top="3pt">
 	Function: object from-parent( <fo:inline font-weight='bold'>NCName</fo:inline>) 
       </fo:block>
@@ -103,6 +105,7 @@ Below fo:root there is always
                 font-family="sans-serif" 
                 line-height="1.25em"
                 space-after="3pt"
+	        keep-together="auto"
                 text-align="start">
 The from-parent function returns a computed value of the property
 whose name matches the argument specified. The value returned is that
