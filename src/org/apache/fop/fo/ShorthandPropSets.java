@@ -277,37 +277,6 @@ public class ShorthandPropSets {
         };
 
     /**
-     * Map property index to shorthand array index
-     */
-    private static final HashMap shorthandMap;
-    static {
-        shorthandMap = new HashMap(shorthands.length);
-        for (int i = 0; i < shorthands.length; i++) {
-            shorthandMap.put
-                    ((Object)(Ints.consts.get(shorthands[i])), 
-                     (Object)(Ints.consts.get(i)));
-        }
-    }
-
-    /**
-     * RO Shorthand properties.
-     */
-    public static final ROIntArray roShorthands =
-        new ROIntArray(shorthands);
-
-    /**
-     * A <tt>ROBitSet</tt> of the shorthand properties.
-     */
-    public static final ROBitSet shorthandPropSet;
-    private static final BitSet shorthandpropset;
-    static {
-        shorthandpropset = new BitSet(PropNames.LAST_PROPERTY_INDEX + 1);
-        for (int i = 0; i < shorthands.length; i++)
-            shorthandpropset.set(shorthands[i]);
-        shorthandPropSet = new ROBitSet(shorthandpropset);
-    }
-
-    /**
      * Array of <i>ROIntArray</i><b> in same order as <i>shorthands</i></b>
      * <i>ROIntArray</i>.
      * If a public view of this is required, use
@@ -341,6 +310,37 @@ public class ShorthandPropSets {
     };
 
     /**
+     * Map property index to shorthand array index
+     */
+    private static final HashMap shorthandMap;
+    static {
+        shorthandMap = new HashMap(shorthands.length);
+        for (int i = 0; i < shorthands.length; i++) {
+            shorthandMap.put
+                    ((Object)(Ints.consts.get(shorthands[i])), 
+                     (Object)(Ints.consts.get(i)));
+        }
+    }
+
+    /**
+     * RO Shorthand properties.
+     */
+    public static final ROIntArray roShorthands =
+        new ROIntArray(shorthands);
+
+    /**
+     * A <tt>ROBitSet</tt> of the shorthand properties.
+     */
+    public static final ROBitSet shorthandPropSet;
+    private static final BitSet shorthandpropset;
+    static {
+        shorthandpropset = new BitSet(PropNames.LAST_PROPERTY_INDEX + 1);
+        for (int i = 0; i < shorthands.length; i++)
+            shorthandpropset.set(shorthands[i]);
+        shorthandPropSet = new ROBitSet(shorthandpropset);
+    }
+
+    /**
      * @param property <tt>int</tt> property index
      * @return <tt>ROIntArray</tt> containing the expansion list for
      * this shorthand.
@@ -360,7 +360,7 @@ public class ShorthandPropSets {
         }
         // Get the array of indices of the properties in the
         // expansion of this shorthand
-        return shorthandExpansions[property];
+        return shorthandExpansions[sHIndex.intValue()];
     }
 
     /**
