@@ -151,6 +151,8 @@ Sometimes ant gives out this warnings, but the build is finished without any pro
        <include name="README"/>
        <include name="STATUS"/>
        <include name="build*"/>
+       <include name="fop.bat"/>
+       <include name="fop.sh"/>
     </fileset>
 
   <!-- =================================================================== -->
@@ -160,7 +162,7 @@ Sometimes ant gives out this warnings, but the build is finished without any pro
     <tstamp/>
     <property name="Name" value="Fop"/>
     <property name="name" value="fop"/>
-    <property name="version" value="0.18.0-DEV"/>
+    <property name="version" value="0.18.1-DEV"/>
     <filter  token="version" value="${version}"/>
     <property name="year" value="1999-2001"/>
 
@@ -182,6 +184,9 @@ Sometimes ant gives out this warnings, but the build is finished without any pro
     <property name="doc.generator" value="org.apache.stylebook.StyleBook"/>
     <property name="doc.generator.package" value="${lib.dir}/stylebook-1.0-b2.jar"/>
 
+	<property name="viewer.resources.src.dir" value="./src/org/apache/fop/viewer/resources"/>
+	<property name="viewer.images.src.dir" value="./src/org/apache/fop/viewer/Images"/>
+	
     <property name="build.dir" value="./build"/>
     <property name="build.src" value="./build/src"/>
     <property name="build.codegen" value="./build/src/codegen"/>
@@ -189,7 +194,10 @@ Sometimes ant gives out this warnings, but the build is finished without any pro
     <property name="build.docs" value="./build/docs"/>
     <property name="build.javadocs" value="./build/javadocs"/>
 
-   <!-- <property name="dist.dir" value="./dist"/> -->
+	<property name="viewer.resources.dest.dir" value="${build.dest}/org/apache/fop/viewer/resources"/>
+	<property name="viewer.images.dest.dir" value="${build.dest}/org/apache/fop/viewer/Images"/>
+
+	<!-- <property name="dist.dir" value="./dist"/> -->
     <property name="dist.bin.dir" value="./dist-bin"/>
     <property name="dist.src.dir" value="./dist-src"/>
     <property name="dist.bin.result.dir" value="${dist.bin.dir}/${Name}-${version}"/>
@@ -504,6 +512,15 @@ Sometimes ant gives out this warnings, but the build is finished without any pro
     <!-- create directories -->
     <mkdir dir="${build.dest}"/>
 
+	<mkdir dir="${viewer.resources.dest.dir}"/>
+    <copy todir="${viewer.resources.dest.dir}">
+      <fileset dir="${viewer.resources.src.dir}"/>
+    </copy>
+	<mkdir dir="${viewer.images.dest.dir}"/>
+    <copy todir="${viewer.images.dest.dir}">
+      <fileset dir="${viewer.images.src.dir}"/>
+    </copy>
+
     <javac srcdir="${build.src}"
            destdir="${build.dest}"
            debug="${debug}"
@@ -579,7 +596,7 @@ Sometimes ant gives out this warnings, but the build is finished without any pro
   <!-- =================================================================== -->
   <!-- Creates the distribution                                            -->
   <!-- =================================================================== -->
-  <target name="dist" depends="dist-src, dist-bin"/>
+  <target name="dist" depends="dist-src"/>
 
   <target name="dist-bin" depends="package, javadocs">
     <echo message="Building the binary distribution files (zip,tar)"/>
@@ -636,4 +653,3 @@ Sometimes ant gives out this warnings, but the build is finished without any pro
 
 </project>
 
-<!-- End of file -->
