@@ -1,0 +1,136 @@
+<?xml version="1.0" standalone="no"?>
+
+
+<!-- Output Formats: Renderers -->
+<document>
+    <header>
+        <title>Output</title>
+        <subtitle>Notes about Output Formats: Renderers</subtitle>
+        <authors>
+        </authors>
+    </header>
+
+    <body>
+<s1 title="Output Formats">
+    <p>
+FOP supports a number of different output formats. This is achieved by
+using different renderers that create the output.
+    </p>
+    <p>
+Here we will explain some information for uses to be able to understand
+what the renderers are doing and what difference there may be between
+different renderers.
+    </p>
+<s2 title="Common Information">
+    <p>
+Each renderer is given an area tree to render to its output format.
+The area tree is simply a representation of the pages and the placement
+of text and graphical objects on those pages.
+    </p>
+    <p>
+The renderer will be given each page as it is ready and an output stream
+to write the data out. The renderer is responsible for managing the
+output format and associated data and flow.
+    </p>
+    <p>
+Fonts and Layout - some formats (eg. PDF and AWT) rely on different
+font information. THe fonts for these outputs have different sizes
+for the same point size. This means that the layout can be quite
+different for the same fo document.
+    </p>
+    <p>
+DPI - This is an important issue when creating output for printing.
+The dpi is used to convert measurements into points. For example 1in
+= 2.54cm = 72 points. It is also used when determining the size of
+images and the rendering of certain graphics in the output. Currently
+FOP uses a value of 72dpi.
+    </p>
+    <p>
+You may want to send your output directly to a printer. The Print
+renderer uses the java api to print the document or you might be
+able to send the output stream directly to a printer. If your printer
+supports postscript you could send the postscript to the printer. If
+you have a printer that supports PCL you could stream the PCL document
+to your printer.
+    </p>
+</s2>
+<s2 title="PDF">
+    <p>
+PDF is the best supported output format. It is also the most accurate
+with text and layout. This creates a PDF document that is streamed out
+as each page is rendered. This means that the internal page index
+information is stored near the end of the document.
+The PDF version supported is 1.3 which is currently the most popular
+version for Acrobat Reader (4.0), PDF versions are forwards/backwards
+compatible.
+    </p>
+</s2>
+<s2 title="PCL">
+    <p>
+This format is for the Hewlett-Packard PCL printers.
+    </p>
+</s2>
+<s2 title="PS">
+    <p>
+The postscript format can be used to send to a printer or any other
+puspose you may have. It has good support for most text and
+layout. images and SVG are not fully supported due to some ps
+issues.
+    </p>
+</s2>
+<s2 title="RTF">
+    <p>
+This is currently not integrated with FOP but it will soon.
+This will create an rtf (rich text format) document that will
+attempt to contatin as much information from the fo document as
+possible.
+    </p>
+</s2>
+<s2 title="SVG">
+    <p>
+This format creates an SVG document that has links between the pages.
+This is primarily for slides and creating svg images of pages.
+Large documents will create SVG files that are far too large for
+and SVG viewer to handle. Since fo documents usually have text the
+SVG document will have a large number of text elements.
+    </p>
+</s2>
+<s2 title="XML">
+    <p>
+This is for testing and verification. The XML created is simply
+a representation of the internal area tree put into XML. It does
+not perform any other purpose.
+    </p>
+</s2>
+<s2 title="Print">
+    <p>
+It is possible to directly print the document from the command line.
+This is done with the same code that renders to the AWT renderer.
+    </p>
+</s2>
+<s2 title="AWT">
+    <p>
+The AWT viewer shows a window with the pages displayed inside a
+java graphic. It displays one page at a time.
+The fonts used for the formatting and viewing depend on the fonts
+available to your JRE.
+    </p>
+</s2>
+<s2 title="MIF">
+    <p>
+This format is the Maker Interchange Format which is used by
+Adobe Framemaker. This is currently not fully implemented.
+    </p>
+</s2>
+<s2 title="TXT">
+    <p>
+Text as you could imagine does not work very well. It is an output format
+that you should expect bad results. The main purpose of this is to get
+a quick and dirty view of the document and the text inside it.
+    </p>
+</s2>
+
+</s1>
+    </body>
+</document>
+
