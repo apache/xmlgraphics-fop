@@ -74,176 +74,206 @@ import org.apache.fop.messaging.MessageHandler;
  */
 public class BlockArea extends Area {
 
-  /* relative to area container */
-  protected int startIndent;
-  protected int endIndent;
+    /* relative to area container */
+    protected int startIndent;
+    protected int endIndent;
 
-		/* first line startIndent modifier */
-  protected int textIndent;
+    /* first line startIndent modifier */
+    protected int textIndent;
 
-  protected int lineHeight;
+    protected int lineHeight;
 
-  protected int halfLeading;
+    protected int halfLeading;
 
 
-		/* text-align of all but the last line */
-		protected int align;
+    /* text-align of all but the last line */
+    protected int align;
 
-		/* text-align of the last line */
-		protected int alignLastLine;
+    /* text-align of the last line */
+    protected int alignLastLine;
 
-		protected LineArea currentLineArea;
-		protected LinkSet currentLinkSet;
+    protected LineArea currentLineArea;
+    protected LinkSet currentLinkSet;
 
-		/* have any line areas been used? */
-		protected boolean hasLines = false;
+    /* have any line areas been used? */
+    protected boolean hasLines = false;
 
-		/*hyphenation*/
-		protected int hyphenate;
-		protected char hyphenationChar;
-		protected int hyphenationPushCharacterCount;
-		protected int hyphenationRemainCharacterCount;
-		protected String language;
-		protected String country;
+    /*hyphenation*/
+    protected int hyphenate;
+    protected char hyphenationChar;
+    protected int hyphenationPushCharacterCount;
+    protected int hyphenationRemainCharacterCount;
+    protected String language;
+    protected String country;
 
-		protected Vector pendingFootnotes = null;
+    protected Vector pendingFootnotes = null;
 
-		public BlockArea(FontState fontState, int allocationWidth,
-										 int maxHeight, int startIndent, int endIndent,
-										 int textIndent, int align, int alignLastLine, int lineHeight) {
-				super(fontState, allocationWidth, maxHeight);
+    public BlockArea(FontState fontState, int allocationWidth,
+                     int maxHeight, int startIndent, int endIndent,
+                     int textIndent, int align, int alignLastLine, int lineHeight) {
+        super(fontState, allocationWidth, maxHeight);
 
-				this.startIndent = startIndent;
-				this.endIndent = endIndent;
-				this.textIndent = textIndent;
-				this.contentRectangleWidth =
-					allocationWidth - startIndent - endIndent;
-				this.align = align;
-				this.alignLastLine = alignLastLine;
-				this.lineHeight = lineHeight;
+        this.startIndent = startIndent;
+        this.endIndent = endIndent;
+        this.textIndent = textIndent;
+        this.contentRectangleWidth =
+          allocationWidth - startIndent - endIndent;
+        this.align = align;
+        this.alignLastLine = alignLastLine;
+        this.lineHeight = lineHeight;
 
-				if (fontState != null)
-						this.halfLeading = (lineHeight - fontState.getFontSize()) / 2;
-		}
+        if (fontState != null)
+            this.halfLeading = (lineHeight - fontState.getFontSize()) / 2;
+    }
 
-		public void render(Renderer renderer) {
-				renderer.renderBlockArea(this);
-		}
+    public void render(Renderer renderer) {
+        renderer.renderBlockArea(this);
+    }
 
-		public void addLineArea(LineArea la) {
-				if (!la.isEmpty()) {
-						la.verticalAlign();
-						this.addDisplaySpace(this.halfLeading);
-						int size = la.getHeight();
-						this.addChild(la);
-						this.increaseHeight(size);
-						this.addDisplaySpace(this.halfLeading);
-				}
-				// add pending footnotes
-				if(pendingFootnotes != null) {
-						for(Enumeration e = pendingFootnotes.elements(); e.hasMoreElements(); ) {
-								FootnoteBody fb = (FootnoteBody)e.nextElement();
-								Page page = getPage();
-								if(!Footnote.layoutFootnote(page, fb, this)) {
-										page.addPendingFootnote(fb);
-								}
-						}
-						pendingFootnotes = null;
-				}
-		}
+    /**
+     * Add a Line Area to this block area.
+     * Used internally to add a completed line area to this block area
+     * when either a new line area is created or this block area is
+     * completed.
+     *
+     * @param la the LineArea to add
+     */
+    protected void addLineArea(LineArea la) {
+        if (!la.isEmpty()) {
+            la.verticalAlign();
+            this.addDisplaySpace(this.halfLeading);
+            int size = la.getHeight();
+            this.addChild(la);
+            this.increaseHeight(size);
+            this.addDisplaySpace(this.halfLeading);
+        }
+        // add pending footnotes
+        if (pendingFootnotes != null) {
+            for (Enumeration e = pendingFootnotes.elements();
+                    e.hasMoreElements();) {
+                FootnoteBody fb = (FootnoteBody) e.nextElement();
+                Page page = getPage();
+                if (!Footnote.layoutFootnote(page, fb, this)) {
+                    page.addPendingFootnote(fb);
+                }
+            }
+            pendingFootnotes = null;
+        }
+    }
 
-    public LineArea getCurrentLineArea()
-    {
-		if (currentHeight + this.currentLineArea.getHeight() > maxHeight) {
-				return null;
-		}
-				this.currentLineArea.changeHyphenation(language, country, hyphenate,
-																 hyphenationChar, hyphenationPushCharacterCount,
-																 hyphenationRemainCharacterCount);
-		this.hasLines = true;
+    /**
+     * Get the current line area in this block area.
+     * This is used to get the current line area for adding
+     * inline objects to.
+     * This will return null if there is not enough room left
+     * in the block area to accomodate the line area.
+     *
+     * @return the line area to be used to add inlie objects
+     */
+    public LineArea getCurrentLineArea() {
+        if (currentHeight + this.currentLineArea.getHeight() > maxHeight) {
+            return null;
+        }
+        this.currentLineArea.changeHyphenation(language, country,
+                                               hyphenate, hyphenationChar, hyphenationPushCharacterCount,
+                                               hyphenationRemainCharacterCount);
+        this.hasLines = true;
         return this.currentLineArea;
     }
 
-    public LineArea createNextLineArea()
-    {
-				if (this.hasLines) {
-//						this.currentLineArea.addPending();
-						this.currentLineArea.align(this.align);
-						this.addLineArea(this.currentLineArea);
-				}
-						this.currentLineArea =
-							new LineArea(fontState, lineHeight, halfLeading,
-													 allocationWidth, startIndent, endIndent,
-													 currentLineArea);
-				this.currentLineArea.changeHyphenation(language, country, hyphenate,
-																 hyphenationChar, hyphenationPushCharacterCount,
-																 hyphenationRemainCharacterCount);
-				if (currentHeight + lineHeight > maxHeight) {
-						return null;
-				}
+    /**
+     * Create a new line area to add inline objects.
+     * This should be called after getting the current line area
+     * and discovering that the inline object will not fit inside the current
+     * line. This method will create a new line area to place the inline
+     * object into.
+     * This will return null if the new line cannot fit into the block area.
+     *
+     * @return the new current line area, which will be empty.
+     */
+    public LineArea createNextLineArea() {
+        if (this.hasLines) {
+            this.currentLineArea.align(this.align);
+            this.addLineArea(this.currentLineArea);
+        }
+        this.currentLineArea =
+          new LineArea(fontState, lineHeight, halfLeading,
+                       allocationWidth, startIndent, endIndent, currentLineArea);
+        this.currentLineArea.changeHyphenation(language, country,
+                                               hyphenate, hyphenationChar, hyphenationPushCharacterCount,
+                                               hyphenationRemainCharacterCount);
+        if (currentHeight + lineHeight > maxHeight) {
+            return null;
+        }
         return this.currentLineArea;
     }
 
-    public void setupLinkSet(LinkSet ls)
-    {
-						if (ls != null) {
-								this.currentLinkSet = ls;
-								ls.setYOffset(currentHeight);
-						}
+    public void setupLinkSet(LinkSet ls) {
+        if (ls != null) {
+            this.currentLinkSet = ls;
+            ls.setYOffset(currentHeight);
+        }
     }
 
-		public void end() {
-				if (this.hasLines) {
-						this.currentLineArea.addPending();
-						this.currentLineArea.align(this.alignLastLine);
-						this.addLineArea(this.currentLineArea);
-				}
-		}
+    /**
+     * Notify this block that the area has completed layout.
+     * Indicates the the block has been fully laid out, this will
+     * add (if any) the current line area.
+     */
+    public void end() {
+        if (this.hasLines) {
+            this.currentLineArea.addPending();
+            this.currentLineArea.align(this.alignLastLine);
+            this.addLineArea(this.currentLineArea);
+        }
+    }
 
-		public void start() {
-				currentLineArea = new LineArea(fontState, lineHeight, halfLeading,
-																			 allocationWidth, startIndent + textIndent, endIndent, null);
-		}
+    public void start() {
+        currentLineArea = new LineArea(fontState, lineHeight, halfLeading,
+                                       allocationWidth, startIndent + textIndent, endIndent, null);
+    }
 
-		public int getEndIndent() {
-				return endIndent;
-		}
+    public int getEndIndent() {
+        return endIndent;
+    }
 
-// KL: I think we should just return startIndent here!
-		public int getStartIndent() {
-				return startIndent + paddingLeft + borderWidthLeft;
-		}
+    // KL: I think we should just return startIndent here!
+    public int getStartIndent() {
+        return startIndent + paddingLeft + borderWidthLeft;
+    }
 
-		public void setIndents(int startIndent, int endIndent) {
-				this.startIndent = startIndent;
-				this.endIndent = endIndent;
-				this.contentRectangleWidth =
-					allocationWidth - startIndent - endIndent;
-		}
+    public void setIndents(int startIndent, int endIndent) {
+        this.startIndent = startIndent;
+        this.endIndent = endIndent;
+        this.contentRectangleWidth =
+          allocationWidth - startIndent - endIndent;
+    }
 
-		public int spaceLeft() {
-				return maxHeight - currentHeight;
-		}
+    public int spaceLeft() {
+        return maxHeight - currentHeight;
+    }
 
-		public int getHalfLeading() {
-				return halfLeading;
-		}
+    public int getHalfLeading() {
+        return halfLeading;
+    }
 
-		public void setHyphenation(String language, String country, int hyphenate, char hyphenationChar,
-																 int hyphenationPushCharacterCount,
-																 int hyphenationRemainCharacterCount) {
-			this.language = language;
-			this.country = country;
-			this.hyphenate =  hyphenate;
-			this.hyphenationChar = hyphenationChar;
-			this.hyphenationPushCharacterCount = hyphenationPushCharacterCount;
-			this.hyphenationRemainCharacterCount = hyphenationRemainCharacterCount;
-		}
+    public void setHyphenation(String language, String country,
+                               int hyphenate, char hyphenationChar,
+                               int hyphenationPushCharacterCount,
+                               int hyphenationRemainCharacterCount) {
+        this.language = language;
+        this.country = country;
+        this.hyphenate = hyphenate;
+        this.hyphenationChar = hyphenationChar;
+        this.hyphenationPushCharacterCount = hyphenationPushCharacterCount;
+        this.hyphenationRemainCharacterCount =
+          hyphenationRemainCharacterCount;
+    }
 
-		public void addFootnote(FootnoteBody fb) {
-				if(pendingFootnotes == null) {
-						pendingFootnotes = new Vector();
-				}
-				pendingFootnotes.addElement(fb);
-		}
+    public void addFootnote(FootnoteBody fb) {
+        if (pendingFootnotes == null) {
+            pendingFootnotes = new Vector();
+        }
+        pendingFootnotes.addElement(fb);
+    }
 }
