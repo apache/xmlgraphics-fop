@@ -18,6 +18,7 @@
 
 package org.apache.fop.fo.properties;
 
+import org.apache.fop.fo.Constants;
 import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.PropertyList;
 import org.apache.fop.fo.expr.PropertyException;
@@ -124,6 +125,14 @@ public class SpaceProperty extends LengthRangeProperty {
      */
     public Property getConditionality() {
         return this.conditionality;
+    }
+
+    /**
+     * Indicates if the length can be discarded on certain conditions.
+     * @return true if the length can be discarded.
+     */
+    public boolean isDiscard() {
+        return this.conditionality.getEnum() == Constants.EN_DISCARD;
     }
 
     public String toString() {
