@@ -140,7 +140,7 @@ public class SimplePageMaster extends FObj {
 
     /**
      * Make sure content model satisfied.
-     * @see org.apache.fop.fo.FONode#end
+     * @see org.apache.fop.fo.FONode#endOfNode
      */
     protected void endOfNode() throws SAXParseException {
         if (!hasRegionBody) {

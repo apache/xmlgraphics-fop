@@ -157,7 +157,7 @@ public class Area implements Serializable {
      * for this area.
      *
      * @param i the new inline progression dimension
-     * @see http://www.w3.org/TR/xsl/slice4.html#area-common
+     * @see <a href="http://www.w3.org/TR/xsl/slice4.html#area-common">ipd</a>
      */
     public void setIPD(int i) {
         ipd = i;
@@ -168,7 +168,7 @@ public class Area implements Serializable {
      * for this area.
      * 
      * @return the inline progression dimension
-     * @see http://www.w3.org/TR/xsl/slice4.html#area-common
+     * @see <a href="http://www.w3.org/TR/xsl/slice4.html#area-common">ipd</a>
      */
     public int getIPD() {
         return ipd;
@@ -179,7 +179,7 @@ public class Area implements Serializable {
      * for this area.
      *
      * @param b the new block progression dimension
-     * @see http://www.w3.org/TR/xsl/slice4.html#area-common
+     * @see <a href="http://www.w3.org/TR/xsl/slice4.html#area-common">bpd</a>
      */
     public void setBPD(int b) {
         bpd = b;
@@ -190,7 +190,7 @@ public class Area implements Serializable {
      * for this area.
      *
      * @return the block progression dimension
-     * @see http://www.w3.org/TR/xsl/slice4.html#area-common
+     * @see <a href="http://www.w3.org/TR/xsl/slice4.html#area-common">bpd</a>
      */
     public int getBPD() {
         return bpd;
