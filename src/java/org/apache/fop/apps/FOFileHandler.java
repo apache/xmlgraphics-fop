@@ -20,59 +20,37 @@ package org.apache.fop.apps;
 
 // Java
 import java.io.File;
-import java.net.URL;
+
+// JAXP
+import javax.xml.transform.Result;
+import javax.xml.transform.Source;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.sax.SAXResult;
+import javax.xml.transform.stream.StreamSource;
 
 // Imported SAX classes
 import org.xml.sax.InputSource;
-import org.xml.sax.SAXException;
-import org.xml.sax.XMLReader;
-
-// JAXP
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.Source;
-import javax.xml.transform.Result;
-import javax.xml.transform.sax.SAXSource;
-import javax.xml.transform.sax.SAXResult;
 
 /**
  * Manages input if it is an XSL-FO file.
  */
 public class FOFileHandler extends InputHandler {
-    
-    private File fofile = null;
-    private URL foURL = null;
+    private StreamSource fofile = null;
 
     /**
      * Create a FOFileHandler for a file.
      * @param fofile the file to read the FO document.
      */
     public FOFileHandler(File fofile) {
-        this.fofile = fofile;
+        this.fofile  = new StreamSource(fofile);
+
         try {
             baseURL =
                 new File(fofile.getAbsolutePath()).getParentFile().toURL().toExternalForm();
         } catch (Exception e) {
             baseURL = "";
         }
-    }
-
-    /**
-     * Create a FOFileHandler for an URL.
-     * @param url the URL to read the FO document.
-     */
-    public FOFileHandler(URL url) {
-        this.foURL = url;
-    }
-
-    /**
-     * @see org.apache.fop.apps.InputHandler#getInputSource()
-     */
-    public InputSource getInputSource () {
-        if (fofile != null) {
-            return super.fileInputSource(fofile);
-        }
-        return super.urlInputSource(foURL);
     }
 
     /**
@@ -90,14 +68,11 @@ public class FOFileHandler extends InputHandler {
             TransformerFactory factory = TransformerFactory.newInstance();
             Transformer transformer = factory.newTransformer();
             
-            // Setup input stream
-            Source src = new SAXSource(getInputSource());
-
             // Resulting SAX events (the generated FO) must be piped through to FOP
             Result res = new SAXResult(fop.getDefaultHandler());
             
             // Start XSLT transformation and FOP processing
-            transformer.transform(src, res);
+            transformer.transform(fofile, res);
 
         } catch (Exception e) {
             throw new FOPException(e);

@@ -300,7 +300,7 @@ public class TestConverter {
             } else {
                 inputHandler = new XSLTInputHandler(xmlFile,
                                                     new File(baseDir + "/"
-                                                             + xsl));
+                                                             + xsl), null);
             }
 
             FOUserAgent userAgent = new FOUserAgent();
