@@ -50,10 +50,6 @@ public class EnumProperty extends Property {
             return super.checkEnumValues(value);
         }
 
-        protected Property findConstant(String value) {
-            return null;
-        }
-
         public Property convertProperty(Property p,
                                         PropertyList propertyList,
                                         FObj fo) throws FOPException {
