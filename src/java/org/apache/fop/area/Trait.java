@@ -171,6 +171,16 @@ public class Trait implements Serializable {
      */
     public static final Integer PADDING_AFTER = new Integer(22);
 
+    /**
+     * The space start.
+     */
+    public static final Integer SPACE_START = new Integer(23);
+
+    /**
+     * The space end.
+     */
+    public static final Integer SPACE_END  = new Integer(24);
+
     private static final Map TRAIT_INFO = new HashMap();
 
     private static class TraitInfo {
@@ -230,6 +240,10 @@ public class Trait implements Serializable {
                           new TraitInfo("padding-before", Integer.class));
         TRAIT_INFO.put(PADDING_AFTER,
                           new TraitInfo("padding-after", Integer.class));
+        TRAIT_INFO.put(SPACE_START,
+                          new TraitInfo("space-start", Integer.class));
+        TRAIT_INFO.put(SPACE_END,
+                          new TraitInfo("space-end", Integer.class));
     }
 
     /**
