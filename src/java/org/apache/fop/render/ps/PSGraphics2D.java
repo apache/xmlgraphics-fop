@@ -38,6 +38,7 @@ import java.awt.Shape;
 import java.awt.Stroke;
 import java.awt.TexturePaint;
 import java.awt.color.ColorSpace;
+import java.awt.color.ICC_Profile;
 import java.awt.font.FontRenderContext;
 import java.awt.font.GlyphVector;
 import java.awt.geom.AffineTransform;
@@ -54,9 +55,12 @@ import java.io.IOException;
 //Batik
 import org.apache.batik.ext.awt.g2d.AbstractGraphics2D;
 import org.apache.batik.ext.awt.g2d.GraphicContext;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 //FOP
 import org.apache.fop.fonts.Font;
+import org.apache.fop.image.FopImage;
 import org.apache.fop.apps.Document;
 
 /**
@@ -72,6 +76,9 @@ import org.apache.fop.apps.Document;
  * @see org.apache.batik.ext.awt.g2d.AbstractGraphics2D
  */
 public class PSGraphics2D extends AbstractGraphics2D {
+
+    /** the logger for this class */
+    protected Log log = LogFactory.getLog(PSTextPainter.class);
 
     /** the PostScript generator being created */
     protected PSGenerator gen;
@@ -196,7 +203,7 @@ public class PSGraphics2D extends AbstractGraphics2D {
     public boolean drawImage(Image img, int x, int y,
                              ImageObserver observer) {
         preparePainting();
-        System.out.println("drawImage: x, y  " + img.getClass().getName());
+        log.debug("drawImage: " + x + ", " + y + " " + img.getClass().getName());
 
         final int width = img.getWidth(observer);
         final int height = img.getHeight(observer);
@@ -249,24 +256,21 @@ public class PSGraphics2D extends AbstractGraphics2D {
             // error
             break;
         }
-/*
+
         try {
-            FopImage fopimg = new TempImage(width, height, result, mask);
+            FopImage fopimg = new TempImage(width, height, result, null);
             AffineTransform at = getTransform();
-            double[] matrix = new double[6];
-            at.getMatrix(matrix);
             gen.saveGraphicsState();
             Shape imclip = getClip();
             writeClip(imclip);
-            // psRenderer.write("" + matrix[0] + " " + matrix[1] +
-            // " " + matrix[2] + " " + matrix[3] + " " +
-            // matrix[4] + " " + matrix[5] + " cm\n");
-            //psRenderer.renderBitmap(fopimg, x, y, width, height);
+            gen.concatMatrix(at);
+            PSImageUtils.renderFopImage(fopimg, 
+                1000 * x, 1000 * y, 1000 * width, 1000 * height, gen);
             gen.restoreGraphicsState();
         } catch (IOException ioe) {
             handleIOException(ioe);
         }
-*/
+
         return true;
     }
 
@@ -280,40 +284,44 @@ public class PSGraphics2D extends AbstractGraphics2D {
                                  BufferedImage.TYPE_INT_ARGB);
     }
 
-/*
-    class TempImage implements FopImage {
-        int height;
-        int width;
-        int bitsPerPixel;
-        ColorSpace colorSpace;
-        int bitmapSiye;
-        byte[] bitmaps;
-        byte[] mask;
-        PDFColor transparent = new PDFColor(255, 255, 255);
 
-        TempImage(int width, int height, byte[] result,
+    class TempImage implements FopImage {
+        private int height;
+        private int width;
+        private int bitsPerPixel;
+        private ColorSpace colorSpace;
+        private int bitmapSiye;
+        private byte[] bitmaps;
+        private byte[] mask;
+        private Color transparentColor;
+
+        TempImage(int width, int height, byte[] bitmaps,
                   byte[] mask) {
             this.height = height;
             this.width = width;
             this.bitsPerPixel = 8;
-            this.colorSpace = ColorSpace.new PDFColorSpace(PDFColorSpace.DEVICE_RGB);
-            this.bitmaps = result;
+            this.colorSpace = ColorSpace.getInstance(ColorSpace.CS_sRGB);
+            this.bitmaps = bitmaps;
             this.mask = mask;
         }
 
-        public boolean load(int type, FOUserAgent ua) {
+        public String getMimeType() {
+            return "application/octet-stream";
+        }
+
+        /**
+         * @see org.apache.fop.image.FopImage#load(int, org.apache.commons.logging.Log)
+         */
+        public boolean load(int type, Log logger) {
+            switch (type) {
+                case FopImage.DIMENSIONS: break;
+                case FopImage.BITMAP: break;
+                case FopImage.ORIGINAL_DATA: break;
+                default: throw new RuntimeException("Unknown load type: " + type);
+            }
             return true;
         }
 
-        public String getMimeType() {
-            return "";
-        }
-
-        public String getURL() {
-            return "" + this.bitmaps;
-        }
-
-        // image size
         public int getWidth() {
             return this.width;
         }
@@ -322,23 +330,25 @@ public class PSGraphics2D extends AbstractGraphics2D {
             return this.height;
         }
 
-        // DeviceGray, DeviceRGB, or DeviceCMYK
         public ColorSpace getColorSpace() {
             return this.colorSpace;
         }
 
-        // bits per pixel
+        public ICC_Profile getICCProfile() {
+            return null;
+        }
+
         public int getBitsPerPixel() {
             return this.bitsPerPixel;
         }
 
         // For transparent images
         public boolean isTransparent() {
-            return this.transparent != null;
+            return getTransparentColor() != null;
         }
 
-        public PDFColor getTransparentColor() {
-            return this.transparent;
+        public Color getTransparentColor() {
+            return this.transparentColor;
         }
 
         public boolean hasSoftMask() {
@@ -349,9 +359,6 @@ public class PSGraphics2D extends AbstractGraphics2D {
             return this.mask;
         }
 
-        // get the image bytes, and bytes properties
-
-        // get uncompressed image bytes
         public byte[] getBitmaps() {
             return this.bitmaps;
         }
@@ -372,22 +379,8 @@ public class PSGraphics2D extends AbstractGraphics2D {
             return 0;
         }
 
-        // return null if no corresponding PDFFilter
-        public PDFFilter getPDFFilter() {
-            return null;
-        }
-
-        // release memory
-        public void close() {
-            //nop
-        }
-
-        public ICC_Profile getICCProfile() {
-            return null;
-        }
-
     }
-*/
+
 
     /**
      * Draws as much of the specified image as has already been scaled
@@ -426,7 +419,7 @@ public class PSGraphics2D extends AbstractGraphics2D {
     public boolean drawImage(Image img, int x, int y, int width, int height,
                              ImageObserver observer) {
         preparePainting();
-        System.out.println("drawImage");
+        log.warn("NYI: drawImage");
         return true;
     }
 
@@ -458,7 +451,6 @@ public class PSGraphics2D extends AbstractGraphics2D {
      * @see         java.awt.Graphics#create
      */
     public void dispose() {
-        // System.out.println("dispose");
         this.gen = null;
         this.font = null;
         this.currentColour = null;
@@ -529,7 +521,6 @@ public class PSGraphics2D extends AbstractGraphics2D {
     public void draw(Shape s) {
         preparePainting();
         try {
-            // System.out.println("draw(Shape)");
             gen.saveGraphicsState();
             Shape imclip = getClip();
             writeClip(imclip);
@@ -578,9 +569,9 @@ public class PSGraphics2D extends AbstractGraphics2D {
     protected void applyPaint(Paint paint, boolean fill) {
         preparePainting();
         if (paint instanceof GradientPaint) {
-            //NYI
+            log.warn("NYI: Gradient paint");
         } else if (paint instanceof TexturePaint) {
-            //NYI
+            log.warn("NYI: texture paint");
         }
     }
 
@@ -618,6 +609,7 @@ public class PSGraphics2D extends AbstractGraphics2D {
                 case BasicStroke.CAP_SQUARE:
                     gen.writeln("2 setlinecap");
                     break;
+                default: log.warn("Unsupported line cap: " + ec);
                 }
 
                 int lj = bs.getLineJoin();
@@ -631,6 +623,7 @@ public class PSGraphics2D extends AbstractGraphics2D {
                 case BasicStroke.JOIN_BEVEL:
                     gen.writeln("2 setlinejoin");
                     break;
+                default: log.warn("Unsupported line join: " + lj);
                 }
                 float lw = bs.getLineWidth();
                 gen.writeln(gen.formatDouble(1000 * lw) + " setlinewidth");
@@ -665,7 +658,7 @@ public class PSGraphics2D extends AbstractGraphics2D {
      */
     public void drawRenderedImage(RenderedImage img, AffineTransform xform) {
         preparePainting();
-        System.out.println("drawRenderedImage");
+        log.warn("NYI: drawRenderedImage");
     }
 
     /**
@@ -701,7 +694,7 @@ public class PSGraphics2D extends AbstractGraphics2D {
     public void drawRenderableImage(RenderableImage img,
                                     AffineTransform xform) {
         preparePainting();
-        System.out.println("drawRenderableImage");
+        log.warn("NYI: drawRenderableImage");
     }
 
     /**
@@ -807,7 +800,7 @@ public class PSGraphics2D extends AbstractGraphics2D {
      */
     public void drawStringAsText(String s, float x, float y) {
         preparePainting();
-        //System.out.println("drawString('" + s + "', " + x + ", " + y + ")");
+        log.trace("drawString('" + s + "', " + x + ", " + y + ")");
         try {
             if (this.overrideFont == null) {
                 java.awt.Font awtFont = getFont();
@@ -926,7 +919,7 @@ public class PSGraphics2D extends AbstractGraphics2D {
     public void drawString(AttributedCharacterIterator iterator, float x,
                            float y) {
         preparePainting();
-        System.err.println("drawString(AttributedCharacterIterator) NYI");
+        log.warn("NYI: drawString(AttributedCharacterIterator)");
         /*
         try {
             gen.writeln("BT");
@@ -974,7 +967,6 @@ public class PSGraphics2D extends AbstractGraphics2D {
      */
     public void fill(Shape s) {
         preparePainting();
-        // System.err.println("fill");
         try {
             gen.saveGraphicsState();
             Shape imclip = getClip();
@@ -1030,7 +1022,6 @@ public class PSGraphics2D extends AbstractGraphics2D {
      * @return the device configuration
      */
     public GraphicsConfiguration getDeviceConfiguration() {
-        // System.out.println("getDeviceConviguration");
         return GraphicsEnvironment.getLocalGraphicsEnvironment().
                 getDefaultScreenDevice().getDefaultConfiguration();
     }
@@ -1083,7 +1074,7 @@ public class PSGraphics2D extends AbstractGraphics2D {
      * @param     c1 the XOR alternation color
      */
     public void setXORMode(Color c1) {
-        System.out.println("setXORMode");
+        log.warn("NYI: setXORMode");
     }
 
 
@@ -1108,7 +1099,7 @@ public class PSGraphics2D extends AbstractGraphics2D {
      */
     public void copyArea(int x, int y, int width, int height, int dx,
                          int dy) {
-        System.out.println("copyArea");
+        log.warn("NYI: copyArea");
     }
 
     /* --- for debugging

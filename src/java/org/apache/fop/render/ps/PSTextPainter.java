@@ -42,6 +42,8 @@ import org.apache.batik.gvt.text.GVTAttributedCharacterIterator;
 import org.apache.batik.gvt.text.TextPaintInfo;
 import org.apache.batik.gvt.font.GVTFontFamily;
 import org.apache.batik.gvt.renderer.StrokingTextPainter;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import org.apache.fop.fonts.FontMetrics;
 import org.apache.fop.fonts.Font;
@@ -63,6 +65,9 @@ import org.apache.fop.apps.Document;
  * @version $Id: PSTextPainter.java,v 1.15 2003/01/08 14:03:55 jeremias Exp $
  */
 public class PSTextPainter implements TextPainter {
+    
+    /** the logger for this class */
+    protected Log log = LogFactory.getLog(PSTextPainter.class);
     
     private Document document;
 
@@ -117,6 +122,13 @@ public class PSTextPainter implements TextPainter {
     private boolean hasUnsupportedAttributes(AttributedCharacterIterator aci) {
         boolean hasunsupported = false;
         
+        String text = getText(aci);
+        Font font = makeFont(aci);
+        if (hasUnsupportedGlyphs(text, font)) {
+            log.trace("-> Unsupported glyphs found");
+            hasunsupported = true;
+        }
+        
         TextPaintInfo tpi = (TextPaintInfo) aci.getAttribute(
             GVTAttributedCharacterIterator.TextAttribute.PAINT_INFO);
         if ((tpi != null) 
@@ -124,6 +136,7 @@ public class PSTextPainter implements TextPainter {
                     || (tpi.strikethroughStroke != null)
                     || (tpi.underlineStroke != null)
                     || (tpi.overlineStroke != null))) {
+                        log.trace("-> under/overlines etc. found");
             hasunsupported = true;
         }
 
@@ -132,6 +145,7 @@ public class PSTextPainter implements TextPainter {
         if (foreground instanceof Color) {
             Color col = (Color)foreground;
             if (col.getAlpha() != 255) {
+                log.trace("-> transparency found");
                 hasunsupported = true;
             }
         }
@@ -139,18 +153,21 @@ public class PSTextPainter implements TextPainter {
         Object letSpace = aci.getAttribute(
                             GVTAttributedCharacterIterator.TextAttribute.LETTER_SPACING);
         if (letSpace != null) {
+            log.trace("-> letter spacing found");
             hasunsupported = true;
         }
 
         Object wordSpace = aci.getAttribute(
                              GVTAttributedCharacterIterator.TextAttribute.WORD_SPACING);
         if (wordSpace != null) {
+            log.trace("-> word spacing found");
             hasunsupported = true;
         }
         
         Object lengthAdjust = aci.getAttribute(
                             GVTAttributedCharacterIterator.TextAttribute.LENGTH_ADJUST);
         if (lengthAdjust != null) {
+            log.trace("-> length adjustments found");
             hasunsupported = true;
         }
 
@@ -159,6 +176,7 @@ public class PSTextPainter implements TextPainter {
         if (writeMod != null 
             && !GVTAttributedCharacterIterator.TextAttribute.WRITING_MODE_LTR.equals(
                   writeMod)) {
+            log.trace("-> Unsupported writing modes found");
             hasunsupported = true;
         }
 
@@ -166,15 +184,20 @@ public class PSTextPainter implements TextPainter {
                 GVTAttributedCharacterIterator.TextAttribute.VERTICAL_ORIENTATION);
         if (GVTAttributedCharacterIterator.TextAttribute.ORIENTATION_ANGLE.equals(
                   vertOr)) {
+            log.trace("-> vertical orientation found");
             hasunsupported = true;
         }
         
         Object rcDel = aci.getAttribute(
                 GVTAttributedCharacterIterator.TextAttribute.TEXT_COMPOUND_DELIMITER);
         if (!(rcDel instanceof SVGOMTextElement)) {
+            log.trace("-> spans found");
             hasunsupported = true; //Filter spans
         }
         
+        if (hasunsupported) {
+            log.trace("Unsupported attributes found in ACI, using StrokingTextPainter");
+        }
         return hasunsupported;
     }
 
@@ -343,6 +366,9 @@ public class PSTextPainter implements TextPainter {
 
     private Font makeFont(AttributedCharacterIterator aci) {
         Float fontSize = (Float)aci.getAttribute(TextAttribute.SIZE);
+        if (fontSize == null) {
+            fontSize = new Float(10.0f);
+        }
         String style = getStyle(aci);
         int weight = getWeight(aci);
 
@@ -408,6 +434,19 @@ public class PSTextPainter implements TextPainter {
             wordWidth += charWidth;
         }
         return wordWidth / 1000f;
+    }
+
+    private boolean hasUnsupportedGlyphs(String str, Font font) {
+        for (int i = 0; i < str.length(); i++) {
+            float charWidth;
+            char c = str.charAt(i);
+            if (!((c == ' ') || (c == '\n') || (c == '\r') || (c == '\t'))) {
+                if (!font.hasChar(c)) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     /**

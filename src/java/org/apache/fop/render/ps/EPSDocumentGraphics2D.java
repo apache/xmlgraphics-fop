@@ -20,6 +20,8 @@ package org.apache.fop.render.ps;
 
 import java.io.IOException;
 
+import org.apache.fop.apps.Version;
+
 /**
  * This class is a wrapper for the <tt>AbstractPSDocumentGraphics2D</tt> that
  * is used to create EPS (Encapsulated PostScript) files instead of PS file.
@@ -53,13 +55,14 @@ public class EPSDocumentGraphics2D extends AbstractPSDocumentGraphics2D {
         //PostScript Header
         gen.writeln(DSCConstants.PS_ADOBE_30 + " " + DSCConstants.EPSF_30);
         gen.writeDSCComment(DSCConstants.CREATOR, 
-                    new String[] {"FOP EPS Transcoder for SVG"});
+                    new String[] {"Apache FOP " + Version.getVersion() 
+                        + ": EPS Transcoder for SVG"});
         gen.writeDSCComment(DSCConstants.CREATION_DATE, 
                     new Object[] {new java.util.Date()});
         gen.writeDSCComment(DSCConstants.PAGES, new Integer(0));
         gen.writeDSCComment(DSCConstants.BBOX, new Object[]
                 {ZERO, ZERO, pagewidth, pageheight});
-        gen.writeDSCComment(DSCConstants.LANGUAGE_LEVEL, new Integer(2));
+        gen.writeDSCComment(DSCConstants.LANGUAGE_LEVEL, new Integer(gen.getPSLevel()));
         gen.writeDSCComment(DSCConstants.END_COMMENTS);
         
         //Prolog
