@@ -55,9 +55,8 @@ public class ExampleFO2PDF {
         OutputStream out = null;
         
         try {
-            // Construct driver and setup output format
-            Driver driver = new Driver();
-            driver.setRenderer(Driver.RENDER_PDF);
+            // Construct driver with desired output format
+            Driver driver = new Driver(Driver.RENDER_PDF);
     
             // Setup output stream.  Note: Using BufferedOutputStream
             // for performance reasons (helpful with FileOutputStreams).

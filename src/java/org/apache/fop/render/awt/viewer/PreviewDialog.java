@@ -385,8 +385,7 @@ public class PreviewDialog extends JFrame {
     private class Reloader extends Thread {
         public void run() {
             if (driver == null) {
-                driver = new Driver(foUserAgent);
-                driver.setRenderer(Constants.RENDER_AWT);
+                driver = new Driver(Constants.RENDER_AWT, foUserAgent);
             }
             
             pageLabel.setIcon(null);

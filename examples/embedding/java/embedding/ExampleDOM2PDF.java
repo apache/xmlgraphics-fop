@@ -61,11 +61,8 @@ public class ExampleDOM2PDF {
      */
     public void convertDOM2PDF(Document xslfoDoc, File pdf) {
         try {
-            // Construct driver
-            Driver driver = new Driver();
-            
-            // Setup Renderer (output format)        
-            driver.setRenderer(Driver.RENDER_PDF);
+            // Construct driver with desired output format
+            Driver driver = new Driver(Driver.RENDER_PDF);
             
             // Setup output
             OutputStream out = new java.io.FileOutputStream(pdf);
@@ -90,7 +87,6 @@ public class ExampleDOM2PDF {
                 out.close();
             }
             
-            System.out.println("Success!");
         } catch (Exception e) {
             e.printStackTrace(System.err);
             System.exit(-1);

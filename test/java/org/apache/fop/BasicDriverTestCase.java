@@ -71,9 +71,8 @@ public class BasicDriverTestCase extends AbstractFOPTestCase {
     public void testFO2PDFWithDOM() throws Exception {
         File foFile = new File(getBaseDir(), "test/xml/bugtests/block.fo");
         ByteArrayOutputStream baout = new ByteArrayOutputStream();
-        Driver driver = new Driver();
+        Driver driver = new Driver(Driver.RENDER_PDF);
         driver.setOutputStream(baout);
-        driver.setRenderer(Driver.RENDER_PDF);
         
         TransformerFactory factory = TransformerFactory.newInstance();
         Transformer transformer = factory.newTransformer(); //Identity transf.
@@ -91,10 +90,9 @@ public class BasicDriverTestCase extends AbstractFOPTestCase {
     public void testFO2PDFWithXMLReader() throws Exception {
         File foFile = new File(getBaseDir(), "test/xml/bugtests/block.fo");
         ByteArrayOutputStream baout = new ByteArrayOutputStream();
-        Driver driver = new Driver();
+        Driver driver = new Driver(Driver.RENDER_PDF);
 
         driver.setOutputStream(baout);
-        driver.setRenderer(Driver.RENDER_PDF);
         SAXParserFactory factory = SAXParserFactory.newInstance();
         factory.setNamespaceAware(true);
         factory.setValidating(false);
@@ -111,9 +109,8 @@ public class BasicDriverTestCase extends AbstractFOPTestCase {
     public void testFO2PDFWithJAXP() throws Exception {
         File foFile = new File(getBaseDir(), "test/xml/bugtests/block.fo");
         ByteArrayOutputStream baout = new ByteArrayOutputStream();
-        Driver driver = new Driver();
+        Driver driver = new Driver(Driver.RENDER_PDF);
         driver.setOutputStream(baout);
-        driver.setRenderer(Driver.RENDER_PDF);
         
         TransformerFactory factory = TransformerFactory.newInstance();
         Transformer transformer = factory.newTransformer(); //Identity transf.
@@ -131,9 +128,8 @@ public class BasicDriverTestCase extends AbstractFOPTestCase {
     public void testFO2PSWithJAXP() throws Exception {
         File foFile = new File(getBaseDir(), "test/xml/bugtests/block.fo");
         ByteArrayOutputStream baout = new ByteArrayOutputStream();
-        Driver driver = new Driver();
+        Driver driver = new Driver(Driver.RENDER_PS);
         driver.setOutputStream(baout);
-        driver.setRenderer(Driver.RENDER_PS);
         
         TransformerFactory factory = TransformerFactory.newInstance();
         Transformer transformer = factory.newTransformer(); //Identity transf.
@@ -151,9 +147,8 @@ public class BasicDriverTestCase extends AbstractFOPTestCase {
     public void testFO2RTFWithJAXP() throws Exception {
         File foFile = new File(getBaseDir(), "test/xml/bugtests/block.fo");
         ByteArrayOutputStream baout = new ByteArrayOutputStream();
-        Driver driver = new Driver();
+        Driver driver = new Driver(Driver.RENDER_RTF);
         driver.setOutputStream(baout);
-        driver.setRenderer(Driver.RENDER_RTF);
         
         TransformerFactory factory = TransformerFactory.newInstance();
         Transformer transformer = factory.newTransformer(); //Identity transf.
@@ -172,9 +167,8 @@ public class BasicDriverTestCase extends AbstractFOPTestCase {
         File xmlFile = new File(getBaseDir(), "test/xml/1.xml");
         File xsltFile = new File(getBaseDir(), "test/xsl/doc.xsl");
         ByteArrayOutputStream baout = new ByteArrayOutputStream();
-        Driver driver = new Driver();
+        Driver driver = new Driver(Driver.RENDER_PDF);
         driver.setOutputStream(baout);
-        driver.setRenderer(Driver.RENDER_PDF);
         
         InputHandler handler = new XSLTInputHandler(xmlFile, xsltFile);
         driver.render(handler);

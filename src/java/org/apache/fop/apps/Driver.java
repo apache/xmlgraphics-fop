@@ -28,7 +28,7 @@ import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
 import org.xml.sax.helpers.DefaultHandler;
-
+   
 // FOP
 import org.apache.fop.fo.Constants;
 import org.apache.fop.fo.FOTreeBuilder;
@@ -41,20 +41,9 @@ import org.apache.fop.fo.FOTreeBuilder;
  * for samples (these are also available within the distribution in 
  * FOP_DIR\examples\embedding)
  * <P>
- * If necessary, calling classes can call into the lower level
- * methods to setup and
- * render. Methods within FOUserAgent can be called to set the
- * Renderer to use, the (possibly multiple) ElementMapping(s) to
- * use and the OutputStream to use to output the results of the
- * rendering (where applicable).
- * <P>
- * Here is an example use of Driver which outputs to AWT:
- *
- * <PRE>
- * Driver driver = new Driver();
- * driver.setRenderer(RENDER_AWT);
- * driver.render(parser, fileInputSource(args[0]));
- * </PRE>
+ * Methods within FOUserAgent are available to customize portions of the
+ * process.  Specific Renderer object can be specified, also ElementMappings
+ * (which determine elements in the FO that can be processed) can be added.
  */
 public class Driver implements Constants {
 
@@ -74,27 +63,49 @@ public class Driver implements Constants {
     private FOUserAgent foUserAgent = null;
 
     /**
-     * Main constructor for the Driver class.
+     * Constructor for use with already-created FOUserAgents
+     * @param renderType the type of renderer to use.  Must be one of
+     * <ul>
+     * <li>Driver.RENDER_PDF</li>
+     * <li>Driver.RENDER_AWT</li>
+     * <li>Driver.RENDER_PRINT</li>
+     * <li>Driver.RENDER_MIF</li>
+     * <li>Driver.RENDER_XML</li>
+     * <li>Driver.RENDER_PCL</li>
+     * <li>Driver.RENDER_PS</li>
+     * <li>Driver.RENDER_TXT</li>
+     * <li>Driver.RENDER_SVG</li>
+     * <li>Driver.RENDER_RTF</li>
+     * </ul>
+     * @param ua FOUserAgent object
+     * @throws IllegalArgumentException if an unsupported renderer type was requested.
      */
-    public Driver() {
-        foUserAgent = new FOUserAgent();
-    }
+    public Driver(int renderType, FOUserAgent ua) {
+        if (renderType == Constants.NOT_SET) {
+            throw new IllegalArgumentException(
+                    "Desired render type not set.");
+        }
+        
+        if (renderType < Constants.RENDER_MIN_CONST 
+            || renderType > Constants.RENDER_MAX_CONST) {
+            throw new IllegalArgumentException(
+                "Invalid render type #" + renderType);
+        }
 
-    /**
-     * Constructor with FOUserAgent
-     * Used by CLI, AWTRenderer
-     */
-    public Driver(FOUserAgent ua) {
+        this.renderType = renderType;
+
         foUserAgent = ua;
+        if (foUserAgent == null) {
+            foUserAgent = new FOUserAgent();
+        }
     }
 
     /**
-     * Optionally sets the FOUserAgent instance for FOP to use. The Driver
-     * class sets up its own FOUserAgent if none is set through this method.
-     * @param agent FOUserAgent to use
+     * Constructor that creates a default FOUserAgent
+     * @see org.apache.fop.apps.Driver#(int, FOUserAgent)
      */
-    public void setUserAgent(FOUserAgent agent) throws FOPException {
-        foUserAgent = agent;
+    public Driver(int renderType) {
+        this(renderType, new FOUserAgent());
     }
 
     /**
@@ -112,33 +123,6 @@ public class Driver implements Constants {
      */
     public void setOutputStream(OutputStream stream) {
         this.stream = stream;
-    }
-
-    /**
-     * Method to set the rendering type desired. Must be one of
-     * <ul>
-     * <li>Driver.RENDER_PDF</li>
-     * <li>Driver.RENDER_AWT</li>
-     * <li>Driver.RENDER_PRINT</li>
-     * <li>Driver.RENDER_MIF</li>
-     * <li>Driver.RENDER_XML</li>
-     * <li>Driver.RENDER_PCL</li>
-     * <li>Driver.RENDER_PS</li>
-     * <li>Driver.RENDER_TXT</li>
-     * <li>Driver.RENDER_SVG</li>
-     * <li>Driver.RENDER_RTF</li>
-     * </ul>
-     * @param renderType the type of renderer to use
-     * @throws IllegalArgumentException if an unsupported renderer type was requested.
-     */
-    public void setRenderer(int renderType) throws IllegalArgumentException {
-        if (renderType < RENDER_MIN_CONST || renderType > RENDER_MAX_CONST) {
-            renderType = NOT_SET;
-            throw new IllegalArgumentException(
-                "Invalid render ID#" + renderType);
-        }
-
-        this.renderType = renderType;
     }
 
     /**

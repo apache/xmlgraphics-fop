@@ -201,8 +201,7 @@ public class FopServlet extends HttpServlet {
                 throws FOPException, TransformerException {
 
         //Setup FOP
-        Driver driver = new Driver();
-        driver.setRenderer(Driver.RENDER_PDF);
+        Driver driver = new Driver(Driver.RENDER_PDF);
 
         //Setup output
         ByteArrayOutputStream out = new ByteArrayOutputStream();
