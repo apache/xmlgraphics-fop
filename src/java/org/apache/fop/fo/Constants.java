@@ -494,7 +494,10 @@ public interface Constants {
     int USECONTENT = 104;
     int VISIBLE = 105;
     int WRAP = 106;
-    int ENUM_COUNT = 106;
+    int FONT_HEIGHT = 107;
+    int LINE_HEIGHT = 108;
+    int MAX_HEIGHT = 109;
+    int ENUM_COUNT = 109;
 
    // Enumeration Interfaces
    
@@ -676,6 +679,12 @@ public interface Constants {
         int PRESERVE = Constants.PRESERVE;
         int TREAT_AS_SPACE = Constants.TREAT_AS_SPACE;
         int TREAT_AS_ZERO_WIDTH_SPACE = Constants.TREAT_AS_ZERO_WIDTH_SPACE; }
+
+    public interface LineStackingStrategy {
+        int LINE_HEIGHT = Constants.LINE_HEIGHT;
+        int FONT_HEIGHT = Constants.FONT_HEIGHT;
+        int MAX_HEIGHT = Constants.MAX_HEIGHT;
+    }
 
     public interface OddOrEven {
         int ODD = Constants.ODD;
