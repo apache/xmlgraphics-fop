@@ -204,7 +204,13 @@ public class TableCell extends FObj {
 
         cellArea.foCreator = this;    // G Seshadri
         cellArea.setPage(area.getPage());
-        cellArea.setBorderAndPadding(propMgr.getBorderAndPadding());
+	try {
+	    cellArea.setBorderAndPadding((BorderAndPadding)
+				      propMgr.getBorderAndPadding().clone());
+	} catch (CloneNotSupportedException e) {
+            System.err.println("Can't clone BorderAndPadding: " + e) ;
+            cellArea.setBorderAndPadding(propMgr.getBorderAndPadding());
+        }
         cellArea.setBackgroundColor(this.backgroundColor);
         cellArea.start();
 
