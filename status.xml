@@ -61,8 +61,38 @@ inactive??
       the area tree. 
     </action>
     <action context="code" dev="open">
-      Implemented spacing between blocks and the adjustment to
+      Implement spacing between blocks and the adjustment to
       actual height when adding areas.
+    </action>
+    <action context="code" dev="open">
+      Implement force page breaks.
+    </action>
+    <action context="code" dev="open">
+      Implement page columns.
+      Each column will need to layout until the page is complete.
+      Need to improve the way that breaks are stored.
+    </action>
+    <action context="code" dev="open">
+      Implement footnote.
+      A footnote creates an inline parent and a block that is put into
+      the footnote area.
+    </action>
+    <action context="code" dev="open">
+      Implement border and background for block and inline areas.
+    </action>
+    <action context="code" dev="open">
+      Implement floats.
+      A float adds an anchor inline or block area to the parent
+      and a block is added to the nearest reference area. The
+      reference area layout manager needs to check it fits and
+      adjust ipd available to line areas.
+    </action>
+    <action context="code" dev="open">
+      Sort out writing directions and stacking.
+      All blocks and line areas can be stack in different directions
+      depending on writing mode and orientation.
+      Need to ensure that all areas can be stacked properly in the
+      correct direction.
     </action>
 
    </actions>
@@ -94,7 +124,13 @@ inactive??
   <changes>
    <release version="?" date="2002">
     <action context="code" dev="KLL" type="update">
-      Implemented link part of basic link. Internal desitnation
+      Started table layout managers.
+    </action>
+    <action context="code" dev="KLL" type="update">
+      Implemented render pages model.
+    </action>
+    <action context="code" dev="KLL" type="update">
+      Implemented link part of basic link. Internal destination
       is resolved. The link is a trait on the inline parent.
     </action>
     <action context="code" dev="KLL" type="update">
