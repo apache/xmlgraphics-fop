@@ -70,8 +70,6 @@ public class SpaceProperty extends Property {
 
   public Space getSpace() { return this.space; }
 
-  /* Question, should we allow this? */
-  public Length getLength() { return this.space.getOptimum(); }
   /* Space extends LengthRange */
   public LengthRange getLengthRange() { return this.space; }
   public Object getObject() { return this.space; }

@@ -77,7 +77,7 @@ public class LengthProperty extends Property {
       return false;
     }
 
-    protected Property convertProperty(Property p, PropertyList propertyList,
+    public Property convertProperty(Property p, PropertyList propertyList,
 				       FObj fo) throws FOPException {
       if (isAutoLengthAllowed()) {
 	String pval = p.getString();

@@ -70,8 +70,6 @@ public class LengthRangeProperty extends Property {
 
   public LengthRange getLengthRange() { return this.lengthRange; }
 
-  /* Question, should we allow this? */
-  public Length getLength() { return this.lengthRange.getOptimum(); }
   public Object getObject() { return this.lengthRange ; }
 
 }

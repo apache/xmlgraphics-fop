@@ -202,15 +202,21 @@ public class Property {
      */
     public Property make(PropertyList propertyList, String value, FObj fo)
       throws FOPException {
-      // skeleton for all Makers except for Enum properties
       try {
-	/* Check for keyword shorthand values to be substituted. */
 	Property pret=null;
-	String pvalue = checkValueKeywords(value);
-	// Override parsePropertyValue in each subclass of Property.Maker
-	Property p = PropertyParser.parse(pvalue,
-			        new PropertyInfo(this, propertyList, fo));
-	pret = convertProperty(p, propertyList, fo);
+	String pvalue=value;
+	pret = checkEnumValues(value);
+	if (pret == null) {
+	  /* Check for keyword shorthand values to be substituted. */
+	  pvalue = checkValueKeywords(value);
+	  // Override parsePropertyValue in each subclass of Property.Maker
+	  Property p = PropertyParser.parse(pvalue,
+			     new PropertyInfo(this, propertyList, fo));
+	  pret = convertProperty(p, propertyList, fo);
+	}
+	else if (isCompoundMaker()) {
+	  pret = convertProperty(pret, propertyList, fo);
+	}
 	if (pret == null) {
 	  throw new org.apache.fop.fo.expr.PropertyException("No conversion defined");
 	}
@@ -223,6 +229,14 @@ public class Property {
 			       + value + "': " + propEx);
 	throw new FOPException("Property error");
       }
+    }
+
+    protected boolean isCompoundMaker() {
+      return false;
+    }
+
+    public Property checkEnumValues(String value) {
+      return null;
     }
 
     /**
@@ -254,7 +268,7 @@ public class Property {
      * @return A Property of the correct type or null if the parsed value
      * can't be converted to the correct type.
      */
-    protected Property convertProperty(Property p,
+    public Property convertProperty(Property p,
 	PropertyList propertyList, FObj fo) throws FOPException {
       return null;
     }
@@ -292,7 +306,7 @@ public class Property {
      * @return Property A computed Property value or null if no rules
      * are specified (in foproperties.xml) to compute the value.
      */
-    public Property compute(PropertyList propertyList) {
+    public Property compute(PropertyList propertyList) throws FOPException {
       if (inheritsSpecified()) {
 	// recalculate based on last specified value
 	// Climb up propertylist and find last spec'd value
@@ -313,6 +327,10 @@ public class Property {
 	}
       }
       return null; // standard
+    }
+    
+    public boolean isCorrespondingForced(PropertyList propertyList) {
+    	return false;
     }
 
   } // end of nested Maker class
@@ -345,8 +363,8 @@ public class Property {
   public CondLength getCondLength() { return null; }
   public LengthRange getLengthRange() { return null; }
   public Space getSpace() { return null; }
-  /* KL: first decide which direction to go with this!
   public Keep getKeep() { return null; }
+  /* KL: first decide which direction to go with this!
   public KeepValue getKeepValue() { return null; }
   public Precedence getPrecedence() { return null; }
   */

@@ -61,7 +61,7 @@ public class NumberProperty extends Property {
       super(propName);
     }
 
-    protected Property convertProperty(Property p, PropertyList propertyList,
+    public Property convertProperty(Property p, PropertyList propertyList,
 				       FObj fo) {
       if (p instanceof NumberProperty)
 	return p;
