@@ -11,6 +11,7 @@
       <menu-item label="Introduction" href="index.html"/>
       <menu-item label="FAQs" href="faq.html"/>
       <menu-item label="Examples" href="examples.html"/>
+      <menu-item label="Walk-Thru" href="implement.html"/>
     </menu>
     <menu label="Using">
       <menu-item label="Extensions" href="extensions.html"/>
