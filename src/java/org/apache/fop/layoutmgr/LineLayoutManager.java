@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-/* $Id$ */
+/* $Id: LineLayoutManager.java,v 1.17 2004/04/02 10:38:29 cbowditch Exp $ */
 
 package org.apache.fop.layoutmgr;
 
@@ -129,7 +129,6 @@ public class LineLayoutManager extends InlineStackingLayoutManager {
     public BreakPoss getNextBreakPoss(LayoutContext context) {
         // Get a break from currently active child LM
         // Set up constraints for inline level managers
-
         LayoutManager curLM ; // currently active LM
         BreakPoss prev = null;
         BreakPoss bp = null; // proposed BreakPoss
@@ -243,8 +242,8 @@ public class LineLayoutManager extends InlineStackingLayoutManager {
                         /* If we are not in justified text, we can end the line at
                          * prevBP.
                          */
-                        if (prevBP == null) {
                             vecInlineBreaks.add(bp);
+                        if (prevBP == null) {
                             prevBP = bp;
                         }
                         break;
@@ -295,6 +294,7 @@ public class LineLayoutManager extends InlineStackingLayoutManager {
         if (bp == null) {
             return null;
         }
+
         if (prevBP == null) {
             BreakPoss prevLineEnd = (iPrevLineEnd == 0)
                 ? null
@@ -389,13 +389,22 @@ public class LineLayoutManager extends InlineStackingLayoutManager {
     /** Test whether all breakposs in vecInlineBreaks
         back to and including prev could end line */
     private boolean prevCouldEndLine(BreakPoss prev) {
+        if (!isFinished()) {
+            return false;
+        }
         ListIterator bpIter =
             vecInlineBreaks.listIterator(vecInlineBreaks.size());
         boolean couldEndLine = true;
         while (bpIter.hasPrevious()) {
             BreakPoss bp = (BreakPoss) bpIter.previous();
-            couldEndLine = bp.couldEndLine();
-            if (!couldEndLine || bp == prev) break;
+            if (bp == prev) {
+                break;
+            } else {
+                couldEndLine = bp.isSuppressible();
+                if (!couldEndLine) {
+                    break;
+                }
+            }
         }
         return couldEndLine;
     }
