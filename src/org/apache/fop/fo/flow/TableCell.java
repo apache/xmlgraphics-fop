@@ -47,6 +47,9 @@ public class TableCell extends FObj {
 		 */
 		protected int beforeOffset;
 
+		/* ivan demakov */
+		protected int borderHeight = 0;
+
 		protected int height = 0;
 		protected int top; // Ypos of cell ???
 		protected int verticalAlign ;
@@ -155,7 +158,7 @@ public class TableCell extends FObj {
 				this.cellArea =
 						new AreaContainer(propMgr.getFontState(area.getFontInfo()),
 															startOffset, beforeOffset,
-															width, area.spaceLeft()- m_borderSeparation/2,
+															width, area.spaceLeft()- m_borderSeparation/2 + borderHeight/2,
 															Position.RELATIVE);
 
 				cellArea.foCreator=this;	// G Seshadri
@@ -215,7 +218,7 @@ public class TableCell extends FObj {
 		// TableRow calls this. Anyone else?
 		public int getHeight() {
 				// return cellArea.getHeight() + spaceBefore + spaceAfter;
-				return cellArea.getHeight() + m_borderSeparation ;
+				return cellArea.getHeight() + m_borderSeparation - borderHeight / 2;
 		}
 
 		/** Called by TableRow to set final size of cell content rectangles and
@@ -230,7 +233,7 @@ public class TableCell extends FObj {
 				//	cellArea.setMaxHeight(h);
 				// Increase content height by difference of row content height
 				// and current cell allocation height (includes borders & padding)
-				cellArea.increaseHeight(h - cellArea.getHeight());
+				cellArea.increaseHeight(h + borderHeight/2 - cellArea.getHeight());
 				if (bRelativeAlign) {
 						// Must get info for all cells starting in row!
 						// verticalAlign can be BEFORE or BASELINE
@@ -316,6 +319,19 @@ public class TableCell extends FObj {
 							column. Look out for spanning columns.
 						*/
 
+						/* ivan demakov */
+						int borderStart  = bp.getBorderLeftWidth(false);
+						int borderEnd    = bp.getBorderRightWidth(false);
+						int borderBefore = bp.getBorderTopWidth(false);
+						int borderAfter  = bp.getBorderBottomWidth(false);
+
+						int contentOffset = borderStart/2 + bp.getPaddingLeft(false);
+
+						this.startOffset += contentOffset;
+						this.width -= (contentOffset + borderEnd/2 + bp.getPaddingRight(false));
+
+						this.beforeOffset = borderBefore/2 + bp.getPaddingTop(false);
+						this.borderHeight = borderBefore + borderAfter;
 				}
 		}
 }
