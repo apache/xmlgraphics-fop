@@ -155,16 +155,8 @@ public class Leader extends FObjMixed {
         return length;
     }
 
-    public int getRuleThickness() {
-        return ruleThickness.getValue();
-    }
-
     public Font getFontState() {
         return commonFont.getFontState(getFOEventHandler().getFontInfo());
-    }
-
-    public int getPatternWidth() {
-        return leaderPatternWidth.getValue();
     }
 
     /**
@@ -190,9 +182,8 @@ public class Leader extends FObjMixed {
 
     /**
      * Return the "rule-thickness" property.
-     * TODO: 31699
      */
-    public Length ___getRuleThickness() {
+    public Length getRuleThickness() {
         return ruleThickness;
     }
 

@@ -151,9 +151,8 @@ public class TableRow extends FObj {
 
     /**
      * Return the "keep-with-previous" property.
-     * TODO: 31699
      */
-    public KeepProperty ___getKeepWithPrevious() {
+    public KeepProperty getKeepWithPrevious() {
         return keepWithPrevious;
     }
 
