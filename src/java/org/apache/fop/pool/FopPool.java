@@ -55,8 +55,7 @@ package org.apache.fop.pool;
 
 import java.util.ArrayList;
 import java.util.BitSet;
-
-import org.apache.fop.messaging.MessageHandler;
+import java.util.logging.Logger;
 
 /**
  * This class provides a pool of <tt>Poolable</tt> objects.
@@ -66,6 +65,8 @@ public abstract class FopPool {
 
     private static final String tag = "$Name$";
     private static final String revision = "$Revision$";
+    
+    protected static final Logger logger = Logger.getLogger("org.apache.fop");
 
     /** The pool realized as a ArrayList. */
     protected final ArrayList pool;
@@ -122,7 +123,7 @@ public abstract class FopPool {
     public synchronized void relinquishPoolable(Poolable ev) {
         if (ev == null) return;
         if (eventSet.get(ev.id)) {
-            MessageHandler.logln
+            logger.warning
                     ("Event clash in Poolable pool. Id " + ev.id);
             return;
         }

@@ -60,7 +60,6 @@ import org.apache.fop.fo.PropNames;
 import org.apache.fop.fo.PropertyConsts;
 import org.apache.fop.fo.ShorthandPropSets;
 import org.apache.fop.fo.expr.PropertyException;
-import org.apache.fop.messaging.MessageHandler;
 
 public class Border extends Property  {
     public static final int dataTypes = SHORTHAND;
@@ -128,7 +127,7 @@ public class Border extends Property  {
                 pv = PropertyConsts.pconsts.refineParsing
                         (PropNames.BORDER_WIDTH, foNode, val, IS_NESTED);
                 if (width != null)
-                    MessageHandler.log("border: duplicate" +
+                    logger.info("border: duplicate" +
                     "width overrides previous width");
                 width = pv;
                 continue;
@@ -137,7 +136,7 @@ public class Border extends Property  {
                 pv = PropertyConsts.pconsts.refineParsing
                             (PropNames.BORDER_STYLE, foNode, val, IS_NESTED);
                 if (style != null)
-                    MessageHandler.log("border: duplicate" +
+                    logger.info("border: duplicate" +
                     "style overrides previous style");
                 style = pv;
                 continue;
@@ -146,7 +145,7 @@ public class Border extends Property  {
                 pv = PropertyConsts.pconsts.refineParsing
                             (PropNames.BORDER_COLOR, foNode, val, IS_NESTED);
                 if (color != null)
-                    MessageHandler.log("border: duplicate" +
+                    logger.info("border: duplicate" +
                     "color overrides previous color");
                 color = pv;
                 continue;

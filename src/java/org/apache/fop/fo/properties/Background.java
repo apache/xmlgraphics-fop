@@ -65,7 +65,6 @@ import org.apache.fop.fo.PropNames;
 import org.apache.fop.fo.PropertyConsts;
 import org.apache.fop.fo.ShorthandPropSets;
 import org.apache.fop.fo.expr.PropertyException;
-import org.apache.fop.messaging.MessageHandler;
 
 public class Background extends Property  {
     public static final int dataTypes = SHORTHAND | INHERIT;
@@ -190,19 +189,19 @@ public class Background extends Property  {
 	    int type = pval.getType();
 	    switch (type) {
 	    case PropertyValue.COLOR_TYPE:
-		if (color != null) MessageHandler.log("background: " +
+		if (color != null) logger.info("background: " +
 			    "duplicate color overrides previous color");
 		color = pval;
 		continue scanning_elements;
 
 	    case PropertyValue.URI_TYPE:
-		if (image != null) MessageHandler.log("background: " +
+		if (image != null) logger.info("background: " +
 		    "duplicate image uri overrides previous image spec");
 		image = pval;
 		continue scanning_elements;
 
 	    case PropertyValue.NONE:
-		if (image != null) MessageHandler.log("background: " +
+		if (image != null) logger.info("background: " +
 		    "duplicate image spec overrides previous image spec");
 		image = pval;
 		continue scanning_elements;
@@ -230,7 +229,7 @@ public class Background extends Property  {
 		}
 		// Now send one or two Numerics to BackgroundPosition
 		if (position != null)
-			MessageHandler.log("background: duplicate" +
+			logger.info("background: duplicate" +
 			"position overrides previous position");
 		if (tmpval == null)
                     position = PropertyConsts.pconsts.refineParsing
@@ -260,7 +259,7 @@ public class Background extends Property  {
 				    (PropNames.BACKGROUND_COLOR, ncname);
 		} catch (PropertyException e) {}
 		if (colorval != null) {
-		    if (color != null) MessageHandler.log("background: " +
+		    if (color != null) logger.info("background: " +
 			    "duplicate color overrides previous color");
 		    color = colorval;
 		    continue scanning_elements;
@@ -274,7 +273,7 @@ public class Background extends Property  {
 		} catch (PropertyException e) {}
 		if (enum != null) {
 		    if (attachment != null)
-			    MessageHandler.log("background: duplicate" +
+			    logger.info("background: duplicate" +
 			    "attachment overrides previous attachment");
 		    attachment = enum;
 		    continue scanning_elements;
@@ -314,7 +313,7 @@ public class Background extends Property  {
 
 		if (pos1ok) {
 		    if (position != null)
-			    MessageHandler.log("background: duplicate" +
+			    logger.info("background: duplicate" +
 			    "position overrides previous position");
 		    // Is it followed by another position NCName?
 		    if (pos2ok) {
