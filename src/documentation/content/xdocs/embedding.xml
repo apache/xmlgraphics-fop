@@ -13,7 +13,10 @@
     <body>
   <section id="overview">
     <title>Overview</title>
-  <p>Instantiate org.apache.fop.apps.Driver. Once this class is
+    <p>Review <link href="running.html">Running FOP</link> for important information that applies to embedded applications as well as command-line use, such as options and performance.
+    </p>
+  <p>To embed FOP in your application, instantiate org.apache.fop.apps.Driver.
+     Once this class is
      instantiated, methods are called to set the
      Renderer to use
      and the OutputStream to use to output the results of the
