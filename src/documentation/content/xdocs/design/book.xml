@@ -11,6 +11,7 @@
       <menu-item label="Introduction" href="index.html"/>
     </menu>
     <menu label="Core Process">
+      <menu-item label="Startup" href="startup.html"/>
       <menu-item label="XML Parsing" href="parsing.html"/>
       <menu-item label="FO Tree" href="fotree.html"/>
       <menu-item label="Properties" href="properties.html"/>

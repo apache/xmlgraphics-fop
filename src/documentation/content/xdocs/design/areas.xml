@@ -154,5 +154,21 @@ page as it is added.</p>
       <p>The Area Tree retains the concept of page sequences (this is not in the area tree in the spec) so that this information can be passed to the renderer.
 This is useful for setting the title and organising the groups of page sequences.</p>
     </section>
+    <section id="status">
+      <title>Status</title>
+      <section id="status-todo">
+        <title>To Do</title>
+      </section>
+      <section id="status-wip">
+        <title>Work in Progress</title>
+      </section>
+      <section id="status-complete">
+        <title>Completed</title>
+        <ul>
+          <li>new area tree model</li>
+          <li>changed area tree xml format to match the area tree hierarchy</li>
+        </ul>
+      </section>
+    </section>
   </body>
 </document>
