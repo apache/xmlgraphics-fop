@@ -29,7 +29,7 @@
         <li>http://localhost:8080/fop/fop?xml=/home/path/to/xmlfile.xml&amp;xsl=/home/path/to/xslfile.xsl</li>
       </ul>
       <p/>
-      <p>The source code for the servlet can be found under xml-fop/examples/servlet/src/FopServlet.java.</p>
+      <p>The source code for the servlet can be found under {fop-dir}/examples/servlet/src/FopServlet.java.</p>
     </section>
     <section id="servlet">
       <title>Create your own Servlet</title>
@@ -62,9 +62,10 @@
       <section id="xslt">
         <title>Adding XSL tranformation (XSLT)</title>
         <p>
-          A common requirement is the ability to do an XSL transformation to transform some 
-          XML source to XSL-FO. It is recommended that JAXP be used for this task. The following
-          snippet shows the basic code for doing this:
+          A common requirement is the to transform an XML source to
+          XSLFO using an XSL transformation. It is recommended to use
+          JAXP for this task. The following snippet shows the basic
+          code:
         </p>
         <source>
 protected Logger log;
@@ -108,15 +109,17 @@ public void init() throws ServletException {
     response.getOutputStream().flush();</source>
         <note>
           Buffering the generated PDF in a ByteArrayOutputStream is done to avoid potential 
-          problems with the Acrobat Reader Plug-in.
+          problems with the Acrobat Reader Plug-in in IEx.
         </note>
         <p>
-          The <code>Source</code> instance used above is simply an example.
-          If you have to read the XML from a string, supply a 
-          <code>new StreamSource(new StringReader(xmlstring))</code>. Constructing and reparsing 
-          an XML string is generally less desirable than using a SAXSource if you generate your XML.
-          You can alternatively supply a DOMSource as well. 
-          You may also use dynamically generated XSL if you like.
+          The <code>Source</code> instance used above is simply an
+          example.  If you have to read the XML from a string, supply
+          a <code>new StreamSource(new
+          StringReader(xmlstring))</code>. Constructing and reparsing
+          an XML string is generally less desirable than using a
+          SAXSource if you generate your XML.  You can alternatively
+          supply a DOMSource as well.  You may also use dynamically
+          generated XSL if you like.
         </p>
         <p>
           Because you have an explicit <code>Transformer</code> object, you can also use it to 
@@ -179,20 +182,23 @@ public void init() throws ServletException {
           effect may depend on IEx version.
         </li>
         <li>
-          Give IEx the opportunity to cache. In particular, ensure the server
-          does not set any headers causing IEx not to cache the content. This
-          may be a real problem if the document is sent over HTTPS. Consult
-          your server manual.
+          Give IEx the opportunity to cache. In particular, ensure the
+          server does not set any headers causing IEx not to cache the
+          content. This may be a real problem if the document is sent
+          over HTTPS, because most IEx installations will by default
+          <em>not</em> cache any content retrieved over HTTPS.
+          Setting the <code>Expires</code> header entry may help in
+          this case:<br/> <code>response.setDateHeader("Expires",
+          System.currentTimeMillis() + cacheExpiringDuration *
+          1000);</code><br/> Consult your server manual and the
+          relevant RFCs for further details on HTTP headers and
+          caching.
         </li>
         <li>
-          Setting the <code>Expires</code> header entry may help:
-          <code>response.setDateHeader("Expires", System.currentTimeMillis() + cacheExpiringDuration * 1000);</code>
-        </li>
-        <li>
-          Cache in the server. Including a parameter in the URL which has a
-          timestamp as the value may help you to decide whether a request is
-          repeated. IEx is reported to retrieve a document up to three times,
-          but never more often.
+          Cache in the server. It may help to include a parameter in
+          the URL which has a timestamp as the value min order to
+          decide whether a request is repeated. IEx is reported to
+          retrieve a document up to three times, but never more often.
         </li>
       </ul>
     </section>
