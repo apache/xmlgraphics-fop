@@ -3,7 +3,7 @@ package org.apache.fop.datatypes.indirect;
 import org.apache.fop.datatypes.indirect.IndirectValue;
 import org.apache.fop.datatypes.PropertyValue;
 import org.apache.fop.fo.expr.PropertyException;
-import org.apache.fop.fo.Properties;
+import org.apache.fop.fo.properties.Property;
 import org.apache.fop.fo.FONode;
 
 /*
@@ -100,7 +100,7 @@ public class FromNearestSpecified extends IndirectValue {
      * property.
      */
     public void validate() throws PropertyException {
-        super.validate(Properties.SHORTHAND);
+        super.validate(Property.SHORTHAND);
     }
 
 }

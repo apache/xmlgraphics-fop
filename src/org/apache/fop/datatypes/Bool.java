@@ -4,7 +4,7 @@ package org.apache.fop.datatypes;
 import org.apache.fop.fo.expr.PropertyException;
 import org.apache.fop.datatypes.PropertyValue;
 import org.apache.fop.datatypes.AbstractPropertyValue;
-import org.apache.fop.fo.Properties;
+import org.apache.fop.fo.properties.*;
 
 /*
  * Bool.java
@@ -102,7 +102,7 @@ public class Bool extends AbstractPropertyValue {
      * validate the <i>Bool</i> against the associated property.
      */
     public void validate() throws PropertyException {
-        super.validate(Properties.BOOL);
+        super.validate(Property.BOOL);
     }
 
     public String toString() {

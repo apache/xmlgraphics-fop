@@ -10,6 +10,7 @@ package org.apache.fop.datatypes;
 import java.util.HashMap;
 
 import org.apache.fop.fo.expr.PropertyException;
+import org.apache.fop.fo.PropNames;
 import org.apache.fop.fo.PropertyConsts;
 import org.apache.fop.datatypes.PropertyValue;
 import org.apache.fop.datatypes.AbstractPropertyValue;
@@ -67,7 +68,7 @@ public class ColorType extends AbstractPropertyValue {
     public ColorType(String propertyName, float red, float green, float blue)
         throws PropertyException
     {
-        this(PropertyConsts.getPropertyIndex(propertyName),
+        this(PropNames.getPropertyIndex(propertyName),
                 red, green, blue);
     }
 
@@ -107,7 +108,7 @@ public class ColorType extends AbstractPropertyValue {
     public ColorType(String propertyName, int red, int green, int blue)
         throws PropertyException
     {
-        this(PropertyConsts.getPropertyIndex(propertyName),
+        this(PropNames.getPropertyIndex(propertyName),
                 red, green, blue);
     }
 
@@ -132,7 +133,7 @@ public class ColorType extends AbstractPropertyValue {
     public ColorType(String propertyName, float[] color)
         throws PropertyException
     {
-        this(PropertyConsts.getPropertyIndex(propertyName), color);
+        this(PropNames.getPropertyIndex(propertyName), color);
     }
 
     /**
@@ -200,7 +201,7 @@ public class ColorType extends AbstractPropertyValue {
     public ColorType(String propertyName, String value)
         throws PropertyException
     {
-        this(PropertyConsts.getPropertyIndex(propertyName), value);
+        this(PropNames.getPropertyIndex(propertyName), value);
     }
 
     /**
@@ -211,7 +212,7 @@ public class ColorType extends AbstractPropertyValue {
      */
     public ColorType(int property, int colorEnum) throws PropertyException {
         super(property, PropertyValue.COLOR_TYPE);
-        String enumText = PropertyConsts.getEnumText(property, colorEnum);
+        String enumText = propertyConsts.getEnumText(property, colorEnum);
         color = (float[])(getStandardColor(enumText).clone());
     }
 
@@ -224,7 +225,7 @@ public class ColorType extends AbstractPropertyValue {
     public ColorType(String propertyName, int colorEnum)
         throws PropertyException
     {
-        this(PropertyConsts.getPropertyIndex(propertyName), colorEnum);
+        this(PropNames.getPropertyIndex(propertyName), colorEnum);
     }
 
     /**

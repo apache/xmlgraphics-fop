@@ -3,7 +3,7 @@ package org.apache.fop.datatypes;
 import org.apache.fop.datatypes.PropertyValue;
 import org.apache.fop.datatypes.AbstractPropertyValue;
 import org.apache.fop.fo.expr.PropertyException;
-import org.apache.fop.fo.Properties;
+import org.apache.fop.fo.properties.*;
 
 /*
  * Auto.java
@@ -51,7 +51,7 @@ public class Auto extends AbstractPropertyValue {
      * validate the <i>Auto</i> against the associated property.
      */
     public void validate() throws PropertyException {
-        super.validate(Properties.AUTO);
+        super.validate(Property.AUTO);
     }
 
 }

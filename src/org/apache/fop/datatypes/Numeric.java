@@ -16,7 +16,7 @@ import org.apache.fop.datatypes.AbstractPropertyValue;
 import org.apache.fop.fo.expr.PropertyException;
 import org.apache.fop.fo.PropNames;
 import org.apache.fop.fo.PropertyConsts;
-import org.apache.fop.fo.Properties;
+import org.apache.fop.fo.properties.*;
 import org.apache.fop.datatypes.PropertyValue;
 
 
@@ -196,7 +196,7 @@ public class Numeric extends AbstractPropertyValue implements Cloneable {
                        int power, int unit)
         throws PropertyException
     {
-        this(PropertyConsts.getPropertyIndex(propertyName),
+        this(PropNames.getPropertyIndex(propertyName),
              value, baseunit, power, unit);
     }
 
@@ -209,7 +209,7 @@ public class Numeric extends AbstractPropertyValue implements Cloneable {
     public Numeric(String propertyName, double value)
         throws PropertyException
     {
-         this(PropertyConsts.getPropertyIndex(propertyName), value);
+         this(PropNames.getPropertyIndex(propertyName), value);
     }
 
     /**
@@ -321,17 +321,17 @@ public class Numeric extends AbstractPropertyValue implements Cloneable {
                 throw new PropertyException
                         ("Attempt to validate Numeric with unit power of "
                          + power);
-            super.validate(Properties.NUMBER);
+            super.validate(Property.NUMBER);
             break;
         case PERCENTAGE:
             if (power != 0)
                 throw new PropertyException
                         ("Attempt to validate Percentage with unit power of "
                          + power);
-            super.validate(Properties.PERCENTAGE);
+            super.validate(Property.PERCENTAGE);
             break;
         case MILLIPOINTS:
-            super.validate(Properties.LENGTH);
+            super.validate(Property.LENGTH);
             if (power != 1)
                 throw new PropertyException
                         ("Length with unit power " + power);

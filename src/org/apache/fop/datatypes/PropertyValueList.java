@@ -6,7 +6,7 @@ import java.util.LinkedList;
 import java.util.Collection;
 import java.util.Iterator;
 
-import org.apache.fop.fo.Properties;
+import org.apache.fop.fo.properties.*;
 import org.apache.fop.fo.PropertyConsts;
 import org.apache.fop.fo.PropNames;
 import org.apache.fop.fo.FONode;
@@ -41,6 +41,11 @@ public class PropertyValueList extends LinkedList implements PropertyValue {
     public final int type;
 
     /**
+     * The PropertyConsts singleton.
+     */
+    public final PropertyConsts propertyConsts;
+
+    /**
      * @param property <tt>int</tt> index of the property.
      */
     public PropertyValueList(int property) throws PropertyException {
@@ -49,6 +54,7 @@ public class PropertyValueList extends LinkedList implements PropertyValue {
             throw new PropertyException("Invalid property index: " + property);
         this.property = property;
         type = PropertyValue.LIST;
+        propertyConsts = PropertyConsts.getPropertyConsts();
     }
 
     /**
@@ -58,10 +64,11 @@ public class PropertyValueList extends LinkedList implements PropertyValue {
         throws PropertyException
     {
         super();
-        property = PropertyConsts.getPropertyIndex(propertyName);
+        property = PropNames.getPropertyIndex(propertyName);
         if (property < 1 || property > PropNames.LAST_PROPERTY_INDEX)
             throw new PropertyException("Invalid property index: " + property);
         type = PropertyValue.LIST;
+        propertyConsts = PropertyConsts.getPropertyConsts();
     }
 
     /**
@@ -86,6 +93,7 @@ public class PropertyValueList extends LinkedList implements PropertyValue {
             throw new PropertyException("Invalid property index: " + property);
         this.property = property;
         type = PropertyValue.LIST;
+        propertyConsts = PropertyConsts.getPropertyConsts();
     }
 
     /**
@@ -106,10 +114,11 @@ public class PropertyValueList extends LinkedList implements PropertyValue {
         if (! (c instanceof PropertyValueList))
             throw new IllegalArgumentException
                     ("Collection is not a PropertyValueList.");
-        property = PropertyConsts.getPropertyIndex(propertyName);
+        property = PropNames.getPropertyIndex(propertyName);
         if (property < 1 || property > PropNames.LAST_PROPERTY_INDEX)
             throw new PropertyException("Invalid property index: " + property);
         type = PropertyValue.LIST;
+        propertyConsts = PropertyConsts.getPropertyConsts();
     }
 
     /**
@@ -200,14 +209,14 @@ public class PropertyValueList extends LinkedList implements PropertyValue {
         // unless the property is NOT inherited.
         // I can't remember why I put this
         // condition in here.  Removing it.  pbw 2002/02/18
-        //if (PropertyConsts.inherited.get(testProperty) == Properties.NO
-        //&& (PropertyConsts.dataTypes.get(testProperty) & type) == 0) {
+        //if (propertyConsts.inherited.get(testProperty) == Property.NO
+        //&& (propertyConsts.getDataTypes(testProperty) & type) == 0) {
 
-            if ((PropertyConsts.dataTypes.get(testProperty) & type) == 0) {
+            if ((propertyConsts.getDataTypes(testProperty) & type) == 0) {
             String pname = PropNames.getPropertyName(testProperty);
             throw new PropertyException
                     ("Datatype(s) " +
-                     Properties.listDataTypes(type) +
+                     Property.listDataTypes(type) +
                      " not defined on " + pname);
         }
     }

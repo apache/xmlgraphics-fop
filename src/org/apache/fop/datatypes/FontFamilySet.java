@@ -5,8 +5,9 @@ import java.util.Iterator;
 import java.util.NoSuchElementException;
 
 import org.apache.fop.fo.expr.PropertyException;
+import org.apache.fop.fo.PropNames;
 import org.apache.fop.fo.PropertyConsts;
-import org.apache.fop.fo.Properties;
+import org.apache.fop.fo.properties.*;
 import org.apache.fop.datatypes.AbstractPropertyValue;
 import org.apache.fop.datatypes.PropertyValue;
 
@@ -62,14 +63,14 @@ public class FontFamilySet extends AbstractPropertyValue {
     public FontFamilySet(String propertyName, String[] fontFamilyNames)
         throws PropertyException
     {
-        this(PropertyConsts.getPropertyIndex(propertyName), fontFamilyNames);
+        this(PropNames.getPropertyIndex(propertyName), fontFamilyNames);
     }
 
     /**
      * Validate the <i>FontFamilySet</i> against the associated property.
      */
     public void validate() throws PropertyException {
-        super.validate(Properties.FONTSET);
+        super.validate(Property.FONTSET);
     }
 
     /**

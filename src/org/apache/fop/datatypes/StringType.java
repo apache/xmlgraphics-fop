@@ -4,7 +4,7 @@ package org.apache.fop.datatypes;
 import org.apache.fop.fo.expr.PropertyException;
 import org.apache.fop.datatypes.PropertyValue;
 import org.apache.fop.datatypes.AbstractPropertyValue;
-import org.apache.fop.fo.Properties;
+import org.apache.fop.fo.properties.*;
 
 /*
  * StringType.java
@@ -69,7 +69,7 @@ public class StringType extends AbstractPropertyValue {
      * validate the <i>StringType</i> against the associated property.
      */
     public void validate() throws PropertyException {
-        super.validate(Properties.STRING_TYPE);
+        super.validate(Property.STRING_TYPE);
     }
 
     public String toString() {

@@ -2,8 +2,9 @@
 package org.apache.fop.datatypes;
 
 import org.apache.fop.fo.expr.PropertyException;
+import org.apache.fop.fo.PropNames;
 import org.apache.fop.fo.PropertyConsts;
-import org.apache.fop.fo.Properties;
+import org.apache.fop.fo.properties.*;
 import org.apache.fop.configuration.Configuration;
 import org.apache.fop.datatypes.PropertyValue;
 
@@ -39,7 +40,7 @@ public class ScriptType extends NCName {
     public ScriptType(String propertyName, String scriptCode)
         throws PropertyException
     {
-        this(PropertyConsts.getPropertyIndex(propertyName), scriptCode);
+        this(PropNames.getPropertyIndex(propertyName), scriptCode);
     }
 
     /**
@@ -53,7 +54,7 @@ public class ScriptType extends NCName {
      * Validate the <i>ScriptType</i> against the associated property.
      */
     public void validate() throws PropertyException {
-        super.validate(Properties.SCRIPT_T);
+        super.validate(Property.SCRIPT_T);
     }
 
 }

@@ -2,8 +2,9 @@ package org.apache.fop.datatypes;
 
 import org.apache.fop.fo.expr.PropertyException;
 import org.apache.fop.datatypes.AbstractPropertyValue;
+import org.apache.fop.fo.PropNames;
 import org.apache.fop.fo.PropertyConsts;
-import org.apache.fop.fo.Properties;
+import org.apache.fop.fo.properties.*;
 import org.apache.fop.messaging.MessageHandler;
 import org.apache.fop.datatypes.PropertyValue;
 
@@ -68,7 +69,7 @@ public class EnumType extends AbstractPropertyValue {
     public EnumType(String propertyName, String enumText)
         throws PropertyException
     {
-        this(PropertyConsts.getPropertyIndex(propertyName),
+        this(PropNames.getPropertyIndex(propertyName),
                                                 enumText, PropertyValue.ENUM);
     }
 
@@ -81,7 +82,7 @@ public class EnumType extends AbstractPropertyValue {
     public EnumType(String propertyName, int enum)
         throws PropertyException
     {
-        this(PropertyConsts.getPropertyIndex(propertyName),
+        this(PropNames.getPropertyIndex(propertyName),
                                                     enum, PropertyValue.ENUM);
     }
 
@@ -98,7 +99,7 @@ public class EnumType extends AbstractPropertyValue {
     {
         super(property, type);
         // Get the enum integer or mapped enum integer
-        enumValue = PropertyConsts.getEnumIndex(property, enumText);
+        enumValue = propertyConsts.getEnumIndex(property, enumText);
     }
 
     /**
@@ -115,7 +116,7 @@ public class EnumType extends AbstractPropertyValue {
         enumValue = enum;
         // Validate the text; getEnumText will throw a PropertyException
         // if the enum integer is invalid
-        String enumText = PropertyConsts.getEnumText(property, enum);
+        String enumText = propertyConsts.getEnumText(property, enum);
     }
 
     /**
@@ -129,7 +130,7 @@ public class EnumType extends AbstractPropertyValue {
     public EnumType(String propertyName, String enumText, int type)
         throws PropertyException
     {
-        this(PropertyConsts.getPropertyIndex(propertyName), enumText, type);
+        this(PropNames.getPropertyIndex(propertyName), enumText, type);
     }
 
     /**
@@ -142,7 +143,7 @@ public class EnumType extends AbstractPropertyValue {
     public EnumType(String propertyName, int enum, int type)
         throws PropertyException
     {
-        this(PropertyConsts.getPropertyIndex(propertyName), enum, type);
+        this(PropNames.getPropertyIndex(propertyName), enum, type);
     }
 
     /**
@@ -156,20 +157,20 @@ public class EnumType extends AbstractPropertyValue {
      * @return the <tt>String</tt> enumeration token.
      */
     public String getEnumToken() throws PropertyException {
-        return PropertyConsts.getEnumText(property, enumValue);
+        return propertyConsts.getEnumText(property, enumValue);
     }
 
     /**
      * validate the <i>EnumType</i> against the associated property.
      */
     public void validate() throws PropertyException {
-        super.validate(Properties.ENUM);
+        super.validate(Property.ENUM);
     }
 
     public String toString() {
         String enumText;
         try {
-            enumText = PropertyConsts.getEnumText(property, enumValue);
+            enumText = propertyConsts.getEnumText(property, enumValue);
         } catch (PropertyException e) {
             throw new RuntimeException(e.getMessage());
         }

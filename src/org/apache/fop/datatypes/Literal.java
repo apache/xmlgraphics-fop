@@ -2,7 +2,8 @@
 package org.apache.fop.datatypes;
 
 import org.apache.fop.fo.expr.PropertyException;
-import org.apache.fop.fo.Properties;
+import org.apache.fop.fo.properties.*;
+import org.apache.fop.fo.PropNames;
 import org.apache.fop.fo.PropertyConsts;
 import org.apache.fop.datatypes.PropertyValue;
 
@@ -46,7 +47,7 @@ public class Literal extends StringType {
     public Literal(String propertyName, String string)
         throws PropertyException
     {
-        this(PropertyConsts.getPropertyIndex(propertyName), string);
+        this(PropNames.getPropertyIndex(propertyName), string);
     }
 
     /**
@@ -57,10 +58,10 @@ public class Literal extends StringType {
      */
     public void validate() throws PropertyException {
         try {
-            super.validate(Properties.LITERAL);
+            super.validate(Property.LITERAL);
         } catch (PropertyException e) {
             if (string.length() == 1) {
-                super.validate(Properties.CHARACTER_T);
+                super.validate(Property.CHARACTER_T);
             } else {
                 throw new PropertyException(e.getMessage());
             }

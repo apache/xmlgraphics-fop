@@ -2,7 +2,7 @@ package org.apache.fop.datatypes;
 
 import org.apache.fop.fo.PropertyConsts;
 import org.apache.fop.fo.PropNames;
-import org.apache.fop.fo.Properties;
+import org.apache.fop.fo.properties.*;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.expr.PropertyException;
 import org.apache.fop.datatypes.PropertyValue;
@@ -34,6 +34,11 @@ public abstract class AbstractPropertyValue
      * An integer property type.
      */
     public final int type;
+
+    /**
+     * The PropertyConsts singleton.
+     */
+    public final PropertyConsts propertyConsts;
     
     /**
      * @param index index of the property in the property arrays.
@@ -48,6 +53,7 @@ public abstract class AbstractPropertyValue
             throw new PropertyException("Invalid property type: " + type);
         property = index;
         this.type = type;
+        propertyConsts = PropertyConsts.getPropertyConsts();
     }
 
     /**
@@ -56,7 +62,8 @@ public abstract class AbstractPropertyValue
     public AbstractPropertyValue(String propertyName, int type)
         throws PropertyException
     {
-        property = PropertyConsts.getPropertyIndex(propertyName);
+        propertyConsts = PropertyConsts.getPropertyConsts();
+        property = PropNames.getPropertyIndex(propertyName);
         if (property < 1 || property > PropNames.LAST_PROPERTY_INDEX)
             throw new PropertyException("Invalid property index: " + property);
         if (type < 0 || type > PropertyValue.LAST_PROPERTY_TYPE)
@@ -104,14 +111,14 @@ public abstract class AbstractPropertyValue
         // unless the property is NOT inherited.
         // I can't remember why I put this
         // condition in here.  Removing it.  pbw 2002/02/18
-        //if (PropertyConsts.inherited.get(testProperty) == Properties.NO
-        //&& (PropertyConsts.dataTypes.get(testProperty) & type) == 0) {
+        //if (propertyConsts.inherited.get(testProperty) == Property.NO
+        //&& (propertyConsts.getDataTypes(testProperty) & type) == 0) {
 
-            if ((PropertyConsts.dataTypes.get(testProperty) & type) == 0) {
+            if ((propertyConsts.getDataTypes(testProperty) & type) == 0) {
             String pname = PropNames.getPropertyName(testProperty);
             throw new PropertyException
                     ("Datatype(s) " +
-                     Properties.listDataTypes(type) +
+                     Property.listDataTypes(type) +
                      " not defined on " + pname);
         }
     }

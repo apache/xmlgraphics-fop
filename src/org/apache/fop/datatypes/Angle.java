@@ -3,7 +3,7 @@ package org.apache.fop.datatypes;
 import org.apache.fop.fo.expr.PropertyException;
 import org.apache.fop.datatypes.PropertyValue;
 import org.apache.fop.datatypes.AbstractPropertyValue;
-import org.apache.fop.fo.Properties;
+import org.apache.fop.fo.properties.*;
 
 /*
  * Angle.java
@@ -128,7 +128,7 @@ public class Angle extends AbstractPropertyValue {
      * validate the <i>Angle</i> against the associated property.
      */
     public void validate() throws PropertyException {
-        super.validate(Properties.ANGLE);
+        super.validate(Property.ANGLE);
     }
 
     public String toString() {
