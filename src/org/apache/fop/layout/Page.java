@@ -11,6 +11,7 @@ import org.apache.fop.render.Renderer;
 import org.apache.fop.fo.flow.*;
 import org.apache.fop.fo.*;
 import org.apache.fop.apps.*;
+import org.apache.fop.fo.pagination.PageSequence;
 
 // Java
 import java.util.Vector;
@@ -29,6 +30,8 @@ public class Page {
 	
     private AreaTree areaTree;
 
+	private PageSequence pageSequence;
+	
     protected int pageNumber = 0;
 	protected String formattedPageNumber;
 	
@@ -47,6 +50,18 @@ public class Page {
 	markers = new Vector();
     }
 
+	public void setPageSequence(PageSequence pageSequence) {
+		this.pageSequence = pageSequence;
+	}
+	
+	public PageSequence getPageSequence() {
+		return pageSequence;
+	}
+	
+	public AreaTree getAreaTree() {
+		return areaTree;
+	}
+	
     public void setNumber(int number) {
 	this.pageNumber = number;
     }
