@@ -52,26 +52,57 @@ public class FONode extends Node{
     private static final String tag = "$Name$";
     private static final String revision = "$Revision$";
 
+    /**
+     * State flags: a bit set of states applicable during FO tree build.
+     * N.B. States must be powers of 2.
+     */
+    public static final int
+             NOSTATE = 0
+        // These are used to select the attribute set for the node
+           ,ROOT_SET = 1
+   ,DECLARATIONS_SET = 2
+         ,LAYOUT_SET = 4
+     ,SEQ_MASTER_SET = 8
+        ,PAGESEQ_SET = 16
+           ,FLOW_SET = 32
+         ,STATIC_SET = 64
+          ,TITLE_SET = 128
+         ,MARKER_SET = 256
+        ,OUT_OF_LINE = 512
+            ;
+
+    /** The subset of <i>stateFlags</i> that select the relevant
+        atttribute set or the node. */
+    public static final int ATTRIBUTESETS = 
+        ROOT_SET | DECLARATIONS_SET | LAYOUT_SET | SEQ_MASTER_SET |
+        PAGESEQ_SET | FLOW_SET | STATIC_SET | TITLE_SET | MARKER_SET;
+
     /** The buffer from which parser events are drawn. */
     protected SyncedFoXmlEventsBuffer xmlevents;
+
     /** The namespaces object associated with <i>xmlevents</i>. */
     protected XMLNamespaces namespaces;
+
     /** The FO type. */
     public final int type;
 
     /** The attributes defined on this node. When the FO subtree of this
      * node has been constructed, it will be deleted. */
     public FOAttributes foAttributes;
+
     /** The map of properties specified on this node. N.B. This
       * <tt>HashMap</tt> starts life in FOAttributes.  It is modifiable, and
       * will be modified when is contains shorthands or compounds.
       * When the FO subtree of this node has been constructed, and the
       * <i>propertySet</i> is complete, it will be deleted. */
     public HashMap foProperties = null;
+
     /** The sorted keys of <i>foProperties</i>. */
     protected Integer[] foKeys = null;
+
     /** The size of <i>foKeys</i>. */
     private int numAttrs = 0;
+
     /** BitSet of properties which have been specified on this node. */
     private BitSet specifiedProps =
                                 new BitSet(PropNames.LAST_PROPERTY_INDEX + 1);
@@ -85,17 +116,21 @@ public class FONode extends Node{
         While <i>sparsePropsSet</i> is null,
         this variable will be a reference to the complete property set. */
     private PropertyValue[] propertySet;
+
     /** The set of properties directly applicable to this node.  Its size is
         determined by the <i>numProps</i> value passed in to the constructor.
         */
     private PropertyValue[] sparsePropsSet;
+
     /** Map of <tt>Integer</tt> indices of <i>sparsePropsSet</i> array.
         It is indexed by the FO index of the FO associated with a given
         position in the <i>propertySet</i> array. */
     private final HashMap sparsePropsMap;
+
     /** An array of of the applicable property indices, in property index
         order. */
     private final int[] sparseIndices;
+
     /** The number of applicable properties. Size of <i>sparsePropsSet</i>. */
     private final int numProps;
 
@@ -103,16 +138,13 @@ public class FONode extends Node{
     protected PropertyParser exprParser;
 
     /** The <i>attrSet</i> argument. */
-    public final int attrSet;
+    protected int attrSet;
+
     /** The <tt>ROBitSet</tt> of the <i>attrSet</i> argument. */
     protected ROBitSet attrBitSet;
 
-    /** The <tt>ROBitSet</tt> of inherited properties for the
-        <i>attrSet</i> argument. */
-    //protected ROBitSet inheritedBitSet;
-    /** The <tt>ROBitSet</tt> of non-inherited properties for the
-        <i>attrSet</i> argument. */
-    //protected ROBitSet nonInheritedBitSet;
+    /** The state flags passed to this node. */
+    protected int stateFlags;
 
     /** Ancestor reference area of this FONode. */
     protected FONode ancestorRefArea = null;
@@ -141,30 +173,42 @@ public class FONode extends Node{
      * @param parent an <tt>FONode</tt>, the parent node of this node in
      * <i>foTree</i>
      * @param event the <tt>XMLEvent</tt> that triggered the creation of this
-     * @param attrSet the set of attributes relevant at this point in the
-     * tree.
-     * node
+     * node.
+     * @param stateFlags - the set of states relevant at this point in the
+     * tree.  Includes the state information necessaryto select an attribute
+     * set for this node.
+     * @param sparsePropsMap - a <tt>HashMap</tt> mapping the property indices
+     * to their offsets in the set of properties applicable to this node.
+     * @param sparseindices - an <tt>int[]</tt> holding the set of property
+     * indices applicable to this node, in ascending order.
+     * <i>sparsePropsMap</i> maps property indices to a position in this array.
+     * Together they paovide a sparse array facility for this node's
+     * properties.
      */
     public FONode
-        (FOTree foTree, int type, FONode parent, FoXMLEvent event, int attrSet,
-            HashMap sparsePropsMap, int[] sparseIndices, int numProps)
+        (FOTree foTree, int type, FONode parent, FoXMLEvent event,
+             int stateFlags, HashMap sparsePropsMap, int[] sparseIndices)
         throws TreeException, FOPException, PropertyException
     {
         super(foTree, parent);
         if (type == FObjectNames.BLOCK)
             System.out.println("Constructing FONode for FoBlock");
         this.type = type;
-        this.attrSet = attrSet;
+        this.stateFlags = stateFlags;
+        attrSet = stateFlags & ATTRIBUTESETS;
+        if ((attrSet & (attrSet - 1)) != 0)
+            throw new PropertyException
+                    ("Invalid attribut set: " + attrSet);
         this.sparsePropsMap = sparsePropsMap;
         this.sparseIndices = sparseIndices;
-        this.numProps = numProps;
+        this.numProps = sparseIndices.length;
         attrBitSet = FOPropertySets.getAttrROBitSet(attrSet);
         xmlevents = foTree.xmlevents;
         namespaces = xmlevents.getNamespaces();
         exprParser = foTree.exprParser;
         propertySet = new PropertyValue[PropNames.LAST_PROPERTY_INDEX + 1];
         foAttributes = new FOAttributes(event, this);
-        if ( ! (attrSet == FOPropertySets.MARKER_SET)) {
+        if ( ! (attrSet == MARKER_SET)) {
             processAttributes();
         }
         // Do not set up the remaining properties now.
