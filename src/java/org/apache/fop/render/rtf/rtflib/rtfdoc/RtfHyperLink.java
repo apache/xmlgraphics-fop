@@ -68,7 +68,10 @@ import java.io.IOException;
  *
  * {\field {\*\fldinst HYPERLINK "http://www.test.de"   }{\fldrslt Joe Smith}}
  */
-public class RtfHyperLink extends RtfContainer implements IRtfTextContainer {
+public class RtfHyperLink
+extends RtfContainer
+implements IRtfTextContainer,
+           IRtfTextrunContainer {
 
     //////////////////////////////////////////////////
     // @@ Members
@@ -98,6 +101,11 @@ public class RtfHyperLink extends RtfContainer implements IRtfTextContainer {
         throws IOException {
         super ((RtfContainer) parent, writer, attr);
         new RtfText (this, writer, str, attr);
+    }
+    
+    public RtfHyperLink (RtfTextrun parent, Writer writer, RtfAttributes attr)
+        throws IOException {
+        super ((RtfContainer) parent, writer, attr);
     }
 
 
@@ -239,5 +247,11 @@ public class RtfHyperLink extends RtfContainer implements IRtfTextContainer {
      */
     public boolean isEmpty () {
         return false;
+    }
+    
+    public RtfTextrun getTextrun()
+    throws IOException {
+        RtfTextrun textrun = RtfTextrun.getTextrun(this, writer, null);
+        return textrun;
     }
 }

@@ -61,6 +61,7 @@ import org.apache.fop.apps.FOPException;
 import org.apache.fop.fo.EnumProperty;
 import org.apache.fop.fo.FOInputHandler;
 import org.apache.fop.datatypes.FixedLength;
+import org.apache.fop.fo.flow.BasicLink;
 import org.apache.fop.fo.flow.Block;
 import org.apache.fop.fo.flow.ExternalGraphic;
 import org.apache.fop.fo.flow.Inline;
@@ -81,6 +82,7 @@ import org.apache.fop.fo.pagination.SimplePageMaster;
 import org.apache.fop.fo.Constants;
 import org.apache.fop.fo.Property;
 import org.apache.fop.fo.LengthProperty;
+import org.apache.fop.fo.StringProperty;
 import org.apache.fop.apps.Document;
 import org.apache.fop.render.rtf.rtflib.rtfdoc.ITableAttributes;
 import org.apache.fop.render.rtf.rtflib.rtfdoc.IRtfAfterContainer;
@@ -94,6 +96,7 @@ import org.apache.fop.render.rtf.rtflib.rtfdoc.RtfDocumentArea;
 import org.apache.fop.render.rtf.rtflib.rtfdoc.RtfElement;
 import org.apache.fop.render.rtf.rtflib.rtfdoc.RtfExternalGraphic;
 import org.apache.fop.render.rtf.rtflib.rtfdoc.RtfFile;
+import org.apache.fop.render.rtf.rtflib.rtfdoc.RtfHyperLink;
 import org.apache.fop.render.rtf.rtflib.rtfdoc.RtfList;
 import org.apache.fop.render.rtf.rtflib.rtfdoc.RtfListItem;
 import org.apache.fop.render.rtf.rtflib.rtfdoc.RtfListItem.RtfListItemLabel;
@@ -730,15 +733,45 @@ public class RTFHandler extends FOInputHandler {
     }
 
     /**
-     * @see org.apache.fop.fo.FOInputHandler#startLink()
+     * @see org.apache.fop.fo.FOInputHandler#startLink(BasicLink basicLink)
      */
-    public void startLink() {
+    public void startLink(BasicLink basicLink) {
+        try {
+            IRtfTextrunContainer container
+                = (IRtfTextrunContainer)builderContext.getContainer(
+                    IRtfTextrunContainer.class, true, this);
+            
+            RtfTextrun textrun=container.getTextrun();
+            
+            RtfHyperLink link=textrun.addHyperlink(new RtfAttributes());
+            
+            StringProperty internal
+                = (StringProperty)basicLink.propertyList.get(Constants.PR_INTERNAL_DESTINATION);
+            StringProperty external
+                = (StringProperty)basicLink.propertyList.get(Constants.PR_EXTERNAL_DESTINATION);
+            
+            if(external != null) {
+                link.setExternalURL(external.getString());
+            } else if(internal != null) {
+                link.setInternalURL(internal.getString());
+            }
+            
+            builderContext.pushContainer(link);
+            
+        } catch (IOException ioe) {
+            log.error("startLink:" + ioe.getMessage());
+            throw new Error(ioe.getMessage());
+        } catch (Exception e) {
+            log.error("startLink: " + e.getMessage());
+            throw new Error(e.getMessage());
+        }
     }
 
     /**
      * @see org.apache.fop.fo.FOInputHandler#endLink()
      */
     public void endLink() {
+        builderContext.popContainer();
     }
 
     /**

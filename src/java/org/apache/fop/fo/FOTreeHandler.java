@@ -59,6 +59,7 @@ import org.xml.sax.SAXException;
 
 // FOP
 import org.apache.fop.apps.FOPException;
+import org.apache.fop.fo.flow.BasicLink;
 import org.apache.fop.fo.flow.Block;
 import org.apache.fop.fo.flow.ExternalGraphic;
 import org.apache.fop.fo.flow.InstreamForeignObject;
@@ -415,9 +416,9 @@ public class FOTreeHandler extends FOInputHandler {
     }
 
     /**
-     * @see org.apache.fop.fo.FOInputHandler#startLink()
+     * @see org.apache.fop.fo.FOInputHandler#startLink(BasicLink basicLink)
      */
-    public void startLink() {
+    public void startLink(BasicLink basicLink) {
     }
 
     /**

@@ -172,6 +172,10 @@ public class RtfTextrun extends RtfContainer {
         RtfPageNumber r = new RtfPageNumber(this, writer, attr);
     }
     
+    public RtfHyperLink addHyperlink(RtfAttributes attr) throws IOException {
+        return new RtfHyperLink(this, writer, attr);
+    }
+    
     public RtfExternalGraphic newImage() throws IOException {
         return new RtfExternalGraphic(this, writer);
     }
