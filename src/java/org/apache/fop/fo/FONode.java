@@ -18,7 +18,6 @@
  */
 package org.apache.fop.fo;
 
-import java.awt.Font;
 import java.awt.geom.Rectangle2D;
 import java.util.BitSet;
 import java.util.HashMap;
@@ -33,18 +32,15 @@ import org.apache.fop.datastructs.ROBitSet;
 import org.apache.fop.datastructs.SyncedNode;
 import org.apache.fop.datastructs.TreeException;
 import org.apache.fop.datatypes.EnumType;
-import org.apache.fop.datatypes.FontFamilySet;
 import org.apache.fop.datatypes.Numeric;
 import org.apache.fop.datatypes.PropertyValue;
 import org.apache.fop.datatypes.PropertyValueList;
-import org.apache.fop.datatypes.TextDecorations;
 import org.apache.fop.datatypes.indirect.IndirectValue;
 import org.apache.fop.fo.expr.FunctionNotImplementedException;
 import org.apache.fop.fo.expr.PropertyException;
 import org.apache.fop.fo.expr.PropertyParser;
 import org.apache.fop.fo.properties.CorrespondingProperty;
 import org.apache.fop.fo.properties.Property;
-import org.apache.fop.fonts.FontException;
 import org.apache.fop.render.FontData;
 import org.apache.fop.xml.XmlEvent;
 import org.apache.fop.xml.Namespaces;
@@ -624,87 +620,6 @@ public class FONode extends SyncedNode implements AreaListener {
         } catch (CloneNotSupportedException e) {
             throw new PropertyException(e);
         }
-    }
-
-    /**
-     * Clone the current <i>TextDecorations</i> property.
-     * @return a <tt>TextDecorations</tt> object containing the current
-     * text decorations
-     * @exception PropertyException if current text decorations are not
-     * defined, or are not expressed as <tt>TextDecorations</tt>.
-     */
-    public TextDecorations cloneCurrentTextDecorations()
-            throws PropertyException
-    {
-        PropertyValue textdec = getPropertyValue(PropNames.TEXT_DECORATION);
-        if (textdec.getType() != PropertyValue.TEXT_DECORATIONS)
-            throw new PropertyException
-                ("text-decoration value is not a TextDecorations object.");
-        try {
-            return (TextDecorations)(textdec.clone());
-        } catch (CloneNotSupportedException e) {
-            throw new PropertyException("Clone not supported.");
-        }
-    }
-
-    private FontFamilySet getFontSet() throws PropertyException {
-        PropertyValue fontSet = getPropertyValue(PropNames.FONT_FAMILY);
-        if (fontSet.getType() != PropertyValue.FONT_FAMILY) {
-            throw new PropertyException(
-                    "font-family value is not a FontFamilySet object.");
-        }
-        // TODO make the FO tree proeprty values immutable objects wherever
-        // possible
-        return (FontFamilySet)fontSet;
-    }
-
-    public Font getFont() throws PropertyException, FontException {
-        // Get the current font specifiers
-        int style = 0;
-        int weight = 0;
-        int variant = 0;
-        int stretch = 0;
-        int pvtype;
-        float size = 0;
-        Numeric fontSize = null;
-        PropertyValue pv = getPropertyValue(PropNames.FONT_STYLE);
-        if (pv.getType() != PropertyValue.ENUM) {
-            throw new PropertyException("font-style not resolved");
-        }
-        style = ((EnumType)pv).getEnumValue();
-        pv = getPropertyValue(PropNames.FONT_WEIGHT);
-        pvtype = pv.getType();
-        if (pvtype == PropertyValue.ENUM) {
-            weight = ((EnumType)pv).getEnumValue();
-        } else if (pvtype == PropertyValue.INTEGER) {
-            throw new PropertyException(
-                    "Integer values not supported for font-weight");
-        } else {
-            throw new PropertyException("font-weight not resolved");
-        }
-        pv = getPropertyValue(PropNames.FONT_VARIANT);
-        if (pv.getType() !=  PropertyValue.ENUM) {
-            throw new PropertyException("font-variant not resolved");
-        }
-        pv = getPropertyValue(PropNames.FONT_STRETCH);
-        if (pv.getType() !=  PropertyValue.ENUM) {
-            throw new PropertyException("font-stretch not resolved");
-        }
-        fontSize = currentFontSize();
-        if (fontSize.isLength()) size = (float)(fontSize.asDouble());
-        FontFamilySet fontSet = getFontSet();
-        FontFamilySet.Traverser fonts = fontSet.new Traverser();
-        while (fonts.hasNext()) {
-            try {
-                // TODO fix this or getFont to behave reasonably when a font
-                // cannot be matched
-                Font font = fontData.getFont(
-                        fonts.next(), style, variant, weight, stretch, size, 0);
-            } catch (FontException e) {
-                log.info(e.getMessage());
-            }
-        }
-        throw new FontException("No matching font found");
     }
     
     public Area getReferenceRectangle() throws FOPException {
