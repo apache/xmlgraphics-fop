@@ -199,6 +199,7 @@ Sometimes ant gives out this warnings, but the build is finished without any pro
     <property name="src.dir" value="./src"/>
     <property name="src.codegen" value="./src/codegen"/>
     <property name="docs.dir" value="./docs"/>
+    <property name="fo.examples.dir" value="./docs/examples/fo"/>
     <property name="lib.dir" value="./lib"/>
     <property name="hyph.dir" value="./hyph"/>
     <property name="conf.dir" value="./conf"/>
@@ -219,6 +220,7 @@ Sometimes ant gives out this warnings, but the build is finished without any pro
     <property name="build.dest" value="./build/classes"/>
     <property name="build.docs" value="./build/docs"/>
     <property name="build.javadocs" value="./build/javadocs"/>
+    <property name="build.examples.dir" value="${build.dir}/examples"/>
 
     <property name="viewer.resources.dest.dir" value="${build.dest}/org/apache/fop/viewer/resources"/>
     <property name="viewer.images.dest.dir" value="${build.dest}/org/apache/fop/viewer/Images"/>
@@ -748,6 +750,21 @@ Sometimes ant gives out this warnings, but the build is finished without any pro
     <gzip zipfile="${Name}-${version}-src.tar.gz" src="${Name}-${version}-src.tar" />
     <delete file="${Name}-${version}-src.tar"/>
 
+  </target>
+
+  <!-- =================================================================== -->
+  <!-- Generate example PDFs                                               -->
+  <!-- =================================================================== -->
+  <target name="examples" depends="package" description="Generates example PDF files">
+    <taskdef name="fop" classname="org.apache.fop.tools.anttasks.Fop"
+             classpathref="libs-run-classpath"/>
+    <mkdir dir="${build.examples.dir}"/>
+    <fop format="application/pdf" outdir="${build.examples.dir}"
+         messagelevel="debug" basedir="${fo.examples.dir}">
+      <fileset dir="${fo.examples.dir}">
+        <include name="**/*.fo"/>
+      </fileset>
+    </fop>
   </target>
 
   <!-- =================================================================== -->
