@@ -3,34 +3,34 @@
  * ============================================================================
  *                    The Apache Software License, Version 1.1
  * ============================================================================
- * 
+ *
  * Copyright (C) 1999-2003 The Apache Software Foundation. All rights reserved.
- * 
+ *
  * Redistribution and use in source and binary forms, with or without modifica-
  * tion, are permitted provided that the following conditions are met:
- * 
+ *
  * 1. Redistributions of source code must retain the above copyright notice,
  *    this list of conditions and the following disclaimer.
- * 
+ *
  * 2. Redistributions in binary form must reproduce the above copyright notice,
  *    this list of conditions and the following disclaimer in the documentation
  *    and/or other materials provided with the distribution.
- * 
+ *
  * 3. The end-user documentation included with the redistribution, if any, must
  *    include the following acknowledgment: "This product includes software
  *    developed by the Apache Software Foundation (http://www.apache.org/)."
  *    Alternately, this acknowledgment may appear in the software itself, if
  *    and wherever such third-party acknowledgments normally appear.
- * 
+ *
  * 4. The names "FOP" and "Apache Software Foundation" must not be used to
  *    endorse or promote products derived from this software without prior
  *    written permission. For written permission, please contact
  *    apache@apache.org.
- * 
+ *
  * 5. Products derived from this software may not be called "Apache", nor may
  *    "Apache" appear in their name, without prior written permission of the
  *    Apache Software Foundation.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESSED OR IMPLIED WARRANTIES,
  * INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND
  * FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
@@ -42,12 +42,12 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ============================================================================
- * 
+ *
  * This software consists of voluntary contributions made by many individuals
  * on behalf of the Apache Software Foundation and was originally created by
  * James Tauber <jtauber@jtauber.com>. For more information on the Apache
  * Software Foundation, please see <http://www.apache.org/>.
- */ 
+ */
 package org.apache.fop.fo.flow;
 
 // Java
@@ -64,8 +64,12 @@ import org.apache.fop.layout.MarginProps;
 import org.apache.fop.layout.RelativePositionProps;
 import org.apache.fop.layoutmgr.list.ListItemLayoutManager;
 
+/**
+ * Class modelling the fo:list-item object. See Sec. 6.8.3 of the XSL-FO
+ * Standard.
+ */
 public class ListItem extends FObj {
-    
+
     private ListItemLabel label = null;
     private ListItemBody body = null;
 
@@ -79,10 +83,16 @@ public class ListItem extends FObj {
     private int spaceBefore;
     private int spaceAfter;
 
+    /**
+     * @param parent FONode that is the parent of this object
+     */
     public ListItem(FONode parent) {
         super(parent);
     }
 
+    /**
+     * @param list the list to which the layout manager(s) should be added
+     */
     public void addLayoutManager(List list) {
         if (label != null && body != null) {
             ListItemLayoutManager blm = new ListItemLayoutManager();
@@ -96,7 +106,7 @@ public class ListItem extends FObj {
         }
     }
 
-    public void setup() {
+    private void setup() {
 
         // Common Accessibility Properties
         AccessibilityProps mAccProps = propMgr.getAccessibilityProps();
@@ -133,6 +143,10 @@ public class ListItem extends FObj {
 
     }
 
+    /**
+     * Overridden from FObj
+     * @param child the child object to be added
+     */
     public void addChild(FONode child) {
         if ("fo:list-item-label".equals(child.getName())) {
             label = (ListItemLabel)child;
@@ -145,10 +159,16 @@ public class ListItem extends FObj {
         }
     }
 
+    /**
+     * @return false (ListItem cannot generate inline areas)
+     */
     public boolean generatesInlineAreas() {
         return false;
     }
 
+    /**
+     * @return true (ListItem can contain Markers)
+     */
     protected boolean containsMarkers() {
         return true;
     }
