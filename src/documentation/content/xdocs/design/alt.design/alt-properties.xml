@@ -65,7 +65,7 @@
         </p>
       </section>
       <section>
-        <title>The Construction Hierarchy</title>
+        <title>The construction hierarchy</title>
         <p>
           Properties are resoved in the <strong>FO tree</strong> in a
           strictly hierarchical manner.  Nodes are detected in the
@@ -94,7 +94,7 @@
         </dl>
       </section>
       <section>
-        <title>Representing Properties: &lt;property&gt; Classes</title>
+        <title>Representing properties: &lt;property&gt; classes</title>
         <section>
           <title>Class vs instance</title>
           <p>
@@ -102,7 +102,7 @@
             More particularly, what information is particular to the
             &lt;property&gt; classes, and what to the instantiated
             objects?  The answer to this question depend largely on
-            how the &lt;poroperty&gt; objects are used in the context
+            how the &lt;property&gt; objects are used in the context
             of layout and Area tree construction.  The approach taken
             in this implementation is that properties are simply flags
             on certain data values associated with FOs.  The semantics
@@ -122,7 +122,7 @@
           </p>
           <ul>
             <li>
-              explicitly, the <strong>PropertyValue</strong> datum of
+              explicitly, the <code>PropertyValue</code> datum of
               the property, and
             </li>
             <li>

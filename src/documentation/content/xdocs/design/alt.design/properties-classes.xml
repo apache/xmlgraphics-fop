@@ -4,22 +4,25 @@
 
 <document>
   <header>
-    <title>Properties$classes</title>
+    <title>Properties classes</title>
     <authors>
       <person name="Peter B. West" email="pbwest@powerup.com.au"/>
     </authors>
   </header>
   <body>
     <section>
-      <title>fo.Properties and the nested properties classes</title>
-      <figure src= "images/design/alt.design/PropertyClasses.png" alt=
-      "Nested property and top-level classes"/>
+      <title>The <em>org.apache.fop.fo.properties</em> classes</title>
       <section>
-        <title>Nested property classes</title>
+        <title>Introduction</title>
         <p>
-          Given the intention that individual properties have only a
-          <em>virtual</em> instantiation in the arrays of
-          <code>PropertyConsts</code>, these classes are intended to
+          In respect of their fields and data structures, the
+          &lt;property&gt; classes have a <em>virtual</em>
+          instantiation in the arrays of the <em>singleton</em> <fork
+          href= "PropertyConsts.html"
+          ><code>PropertyConsts</code></fork> object, created during
+          the <fork href= "PropertyConsts.html#pconsts" >static
+          initialization</fork> of the class.  The methods of these
+          classes are accessed through these classes are intended to
           remain as repositories of static data and methods.  The name
           of each property is entered in the
           <code>PropNames.propertyNames</code> array of
