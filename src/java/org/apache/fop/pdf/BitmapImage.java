@@ -51,7 +51,8 @@
 package org.apache.fop.pdf;
 
 import java.io.IOException;
-import java.util.Map;
+import java.io.OutputStream;
+//import java.util.Map;
 
 /**
  * Bitmap image.
@@ -67,7 +68,7 @@ public class BitmapImage implements PDFImage {
     private String maskRef;
     private PDFColor transparent = null;
     private String key;
-    private Map filters;
+    private PDFDocument pdfDoc;
 
     /**
      * Create a bitmap image.
@@ -96,7 +97,7 @@ public class BitmapImage implements PDFImage {
      * @param doc the pdf document this will be inserted into
      */
     public void setup(PDFDocument doc) {
-        filters = doc.getFilterMap();
+        this.pdfDoc = doc;
     }
 
     /**
@@ -204,21 +205,12 @@ public class BitmapImage implements PDFImage {
     }
 
     /**
-     * Get the pdf data stream for the bitmap data.
-     *
-     * @return a pdf stream containing the filtered image data
-     * @throws IOException if there is an error handling the data
+     * @see org.apache.fop.pdf.PDFImage#outputContents(OutputStream)
      */
-    public PDFStream getDataStream() throws IOException {
-        // delegate the stream work to PDFStream
-        PDFStream imgStream = new PDFStream(0);
-
-        imgStream.setData(bitmaps);
-
-        imgStream.addDefaultFilters(filters, PDFStream.CONTENT_FILTER);
-        return imgStream;
+    public void outputContents(OutputStream out) throws IOException {
+        out.write(bitmaps);
     }
-
+    
     /**
      * Get the ICC stream.
      * @return always returns null since this has no icc color space
@@ -234,6 +226,21 @@ public class BitmapImage implements PDFImage {
     public boolean isPS() {
         return false;
     }
+
+    /**
+     * @see org.apache.fop.pdf.PDFImage#isDCT()
+     */
+    public boolean isDCT() {
+        return false;
+    }
+
+    /**
+     * @see org.apache.fop.pdf.PDFImage#getFilterHint()
+     */
+    public String getFilterHint() {
+        return PDFFilterList.IMAGE_FILTER;
+    }
+
 }
 
 
