@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!--
+  * Copyright 2004 The Apache Software Foundation.
+  * 
+  * Licensed under the Apache License, Version 2.0 (the "License");
+  * you may not use this file except in compliance with the License.
+  * You may obtain a copy of the License at
+  * 
+  *      http://www.apache.org/licenses/LICENSE-2.0
+  * 
+  * Unless required by applicable law or agreed to in writing, software
+  * distributed under the License is distributed on an "AS IS" BASIS,
+  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  * See the License for the specific language governing permissions and
+  * limitations under the License.
+  -->
+
+<!-- $Id$ -->
+
+<!--
+<!DOCTYPE chapter PUBLIC "-//OASIS//DTD DocBook XML V4.2//EN"
+                         "docbookx.dtd">
+  -->
+
+<chapter>
+  <title>Phase 3: Rendering the pages</title>
+
+  <para>It is the task of the rendering phase to describe the area
+tree in the target page description language, so that viewers for that
+language can render the pages. Rendering is done page by page. For
+each page the rendering system is handed a PageViewport, and it walks
+the area subtree below it. For each area it retrieves the traits and
+data, and generates the required output.</para>
+
+  <para>The layout of a page is not finished until all forward
+references on that page have been resolved. As a consequence pages are
+finished out of pagination order.  Some renderers support out of
+order rendering of pages,
+<literal>AbstractRenderer.supportsOutOfOrder()</literal>. If a
+renderer does, a finished page is handed over to it
+immediately. Otherwise, the layout system keeps finished pages until
+all preceding pages are also finished and have been handed over to the
+renderer. In principle, the PDF renderer supports out of order
+rendering. In current FOP (27 June 2004) this has been disabled
+because the support is broken.</para>
+
+  <para>This stack at a deep position, rendering a leader in a block
+in a flow in the body region, shows some details of rendering. Note
+how the hierarchy of the area tree can be recognized. The lower
+frames show how the rendering system is called by the layout system:
+
+<screen>
+main[1] where
+  [1] org.apache.fop.render.pdf.PDFRenderer.renderLeader (PDFRenderer.java:1,266)
+  [2] org.apache.fop.render.AbstractRenderer.serveVisitor (AbstractRenderer.java:832)
+  [3] org.apache.fop.area.inline.Leader.acceptVisitor (Leader.java:118)
+  [4] org.apache.fop.render.AbstractRenderer.renderLineArea (AbstractRenderer.java:610)
+  [5] org.apache.fop.render.pdf.PDFRenderer.renderLineArea (PDFRenderer.java:830)
+  [6] org.apache.fop.render.AbstractRenderer.renderBlocks (AbstractRenderer.java:547)
+  [7] org.apache.fop.render.AbstractRenderer.renderBlock (AbstractRenderer.java:588)
+  [8] org.apache.fop.render.pdf.PDFRenderer.renderBlock (PDFRenderer.java:513)
+  [9] org.apache.fop.render.AbstractRenderer.renderBlocks (AbstractRenderer.java:538)
+  [10] org.apache.fop.render.AbstractRenderer.renderFlow (AbstractRenderer.java:473)
+  [11] org.apache.fop.render.AbstractRenderer.renderMainReference (AbstractRenderer.java:456)
+  [12] org.apache.fop.render.AbstractRenderer.renderBodyRegion (AbstractRenderer.java:392)
+  [13] org.apache.fop.render.AbstractRenderer.renderRegionViewport (AbstractRenderer.java:338)
+  [14] org.apache.fop.render.AbstractRenderer.renderPageAreas (AbstractRenderer.java:310)
+  [15] org.apache.fop.render.pdf.PDFRenderer.renderPage (PDFRenderer.java:471)
+  [16] org.apache.fop.area.RenderPagesModel.addPage (RenderPagesModel.java:117)
+  [17] org.apache.fop.area.AreaTree.addPage (AreaTree.java:143)
+  [18] org.apache.fop.layoutmgr.PageLayoutManager.finishPage (PageLayoutManager.java:532)
+  [19] org.apache.fop.layoutmgr.PageLayoutManager.doLayout (PageLayoutManager.java:231)
+</screen></para>
+
+  <para>Obviously there is a lot to be documented about the rendering
+system, and about each renderer separately. Because I do not (yet)
+know much about the rendering system, I will have to leave that task
+to others. I only add the obvious: Rendering requires precise
+programming: spacing and progress calculations, saving and restoring
+dimensions, etc. It also requires tracking the state in the output
+format.</para>
+
+</chapter>
+
+<!-- Local Variables: --> 
+<!-- current-language-environment: UTF-8 -->
+<!-- coding: utf-8 --> 
+<!-- default-input-method: TeX --> 
+<!-- End: -->
