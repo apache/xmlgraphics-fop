@@ -143,9 +143,9 @@
   <property>
     <name>rule-thickness</name>
     <class-name>RuleThickness</class-name>
-    <inherited>false</inherited>
+    <inherited>true</inherited>
     <datatype>Length</datatype>
-    <default>1pt</default>
+    <default>1.0pt</default>
   </property>
   <property>
     <name>page-width</name>
@@ -306,15 +306,15 @@
     <default>0pt</default>
   </property>
   <property>
-    <name>src</name>
-    <class-name>Src</class-name>
+    <name>href</name>
+    <class-name>HRef</class-name>
     <inherited>false</inherited>
     <datatype>String</datatype>
     <default></default> 
   </property>
   <property>
-    <name>href</name>
-    <class-name>HRef</class-name>
+    <name>src</name>
+    <class-name>Src</class-name>
     <inherited>false</inherited>
     <datatype>String</datatype>
     <default></default> 
@@ -880,6 +880,46 @@
       </enumeration>
 	</datatype>
 	<default>any</default> 
+   </property>
+  <property>
+	<name>rule-style</name>
+	<class-name>RuleStyle</class-name>
+	<inherited>true</inherited>
+	<datatype>
+      <enumeration>
+        <value const="NONE">none</value>
+        <value const="DOTTED">dotted</value>
+        <value const="DASHED">dashed</value>
+        <value const="SOLID">solid</value>
+        <value const="DOUBLE">double</value>
+        <value const="GROOVE">groove</value>
+        <value const="RIDGE">ridge</value>
+      </enumeration>
+  </datatype>
+	<default>solid</default> 
+  </property>
+  <property>
+	<name>leader-pattern</name>
+	<class-name>LeaderPattern</class-name>
+	<inherited>true</inherited>
+	<datatype>
+      <enumeration>
+        <value const="SPACE">space</value>
+        <value const="RULE">rule</value>
+        <value const="DOTS">dots</value>
+        <value const="USECONTENT">use-content</value>
+      </enumeration>
+  </datatype>
+	<default>space</default> 
+  </property>
+
+  <!-- leader-length should have as datatype Length-Range, but it is not used anyway -->
+  <property>
+	<name>leader-length.optimum</name>
+	<class-name>LeaderLength</class-name>
+	<inherited>true</inherited>
+	<datatype>Length</datatype>
+	<default>12.0pt</default> 
    </property>
 
 
