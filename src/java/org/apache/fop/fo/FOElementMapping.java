@@ -160,13 +160,13 @@ public class FOElementMapping extends ElementMapping {
 
     static class Dec extends ElementMapping.Maker {
         public FONode make(FONode parent) {
-            return new Declarations(parent);
+            return new org.apache.fop.fo.pagination.Declarations(parent);
         }
     }
 
     static class CP extends ElementMapping.Maker {
         public FONode make(FONode parent) {
-            return new ColorProfile(parent);
+            return new org.apache.fop.fo.pagination.ColorProfile(parent);
         }
     }
 
@@ -250,19 +250,19 @@ public class FOElementMapping extends ElementMapping {
 
     static class Fl extends ElementMapping.Maker {
         public FONode make(FONode parent) {
-            return new org.apache.fop.fo.flow.Flow(parent);
+            return new org.apache.fop.fo.pagination.Flow(parent);
         }
     }
 
     static class SC extends ElementMapping.Maker {
         public FONode make(FONode parent) {
-            return new org.apache.fop.fo.flow.StaticContent(parent);
+            return new org.apache.fop.fo.pagination.StaticContent(parent);
         }
     }
 
     static class T extends ElementMapping.Maker {
         public FONode make(FONode parent) {
-            return new Title(parent);
+            return new org.apache.fop.fo.pagination.Title(parent);
         }
     }
 

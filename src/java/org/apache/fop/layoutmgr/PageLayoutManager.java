@@ -65,13 +65,13 @@ import org.apache.fop.area.BeforeFloat;
 import org.apache.fop.area.Footnote;
 import org.apache.fop.area.Resolveable;
 import org.apache.fop.fo.flow.Marker;
-import org.apache.fop.fo.flow.StaticContent;
+import org.apache.fop.fo.properties.Constants;
+import org.apache.fop.fo.pagination.PageNumberGenerator;
 import org.apache.fop.fo.pagination.PageSequence;
 import org.apache.fop.fo.pagination.Region;
-import org.apache.fop.fo.pagination.SimplePageMaster;
-import org.apache.fop.fo.pagination.PageNumberGenerator;
-import org.apache.fop.fo.properties.Constants;
 import org.apache.fop.fo.properties.RetrieveBoundary;
+import org.apache.fop.fo.pagination.SimplePageMaster;
+import org.apache.fop.fo.pagination.StaticContent;
 
 import java.util.ArrayList;
 import java.util.List;

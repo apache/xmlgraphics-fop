@@ -1,5 +1,5 @@
 /*
- * $Id: Declarations.java,v 1.8 2003/03/05 21:48:01 jeremias Exp $
+ * $Id$
  * ============================================================================
  *                    The Apache Software License, Version 1.1
  * ============================================================================
@@ -48,12 +48,18 @@
  * James Tauber <jtauber@jtauber.com>. For more information on the Apache
  * Software Foundation, please see <http://www.apache.org/>.
  */ 
-package org.apache.fop.fo;
+package org.apache.fop.fo.pagination;
 
 // Java
 import java.util.List;
 import java.util.Map;
 import java.util.Iterator;
+
+// FOP
+import org.apache.fop.fo.FONode;
+import org.apache.fop.fo.FObj;
+import org.apache.fop.fo.XMLObj;
+
 
 /**
  * Declarations formatting object.
@@ -67,7 +73,7 @@ public class Declarations extends FObj {
     private Map colorProfiles = null;
     private List external = null;
 
-    protected Declarations(FONode parent) {
+    public Declarations(FONode parent) {
         super(parent);
     }
 

@@ -60,7 +60,7 @@ import org.xml.sax.SAXException;
 // FOP
 import org.apache.fop.fo.StructureHandler;
 import org.apache.fop.fo.flow.Block;
-import org.apache.fop.fo.flow.Flow;
+import org.apache.fop.fo.pagination.Flow;
 import org.apache.fop.fo.pagination.PageSequence;
 import org.apache.fop.fo.pagination.PageSequenceMaster;
 import org.apache.fop.fo.pagination.SimplePageMaster;

@@ -1,5 +1,5 @@
 /*
- * $Id: StaticContent.java,v 1.26 2003/03/06 11:36:30 jeremias Exp $
+ * $Id$
  * ============================================================================
  *                    The Apache Software License, Version 1.1
  * ============================================================================
@@ -48,56 +48,97 @@
  * James Tauber <jtauber@jtauber.com>. For more information on the Apache
  * Software Foundation, please see <http://www.apache.org/>.
  */
-package org.apache.fop.fo.flow;
+package org.apache.fop.fo.pagination;
 
 // FOP
+import org.apache.fop.datatypes.ColorType;
+import org.apache.fop.datatypes.Length;
+import org.apache.fop.fo.EnumProperty;
+import org.apache.fop.fo.FObjMixed;
 import org.apache.fop.fo.FONode;
-import org.apache.fop.apps.FOPException;
-import org.apache.fop.layoutmgr.StaticContentLayoutManager;
+import org.apache.fop.fo.LengthProperty;
+import org.apache.fop.fo.Property;
+import org.apache.fop.layout.AccessibilityProps;
+import org.apache.fop.layout.AuralProps;
+import org.apache.fop.layout.BackgroundProps;
+import org.apache.fop.layout.BorderAndPadding;
+import org.apache.fop.layout.FontState;
+import org.apache.fop.layout.MarginInlineProps;
+import org.apache.fop.layoutmgr.ContentLayoutManager;
+import org.apache.fop.layoutmgr.InlineStackingLayoutManager;
+import org.apache.fop.layoutmgr.LMiter;
 
 /**
- * Class modelling the fo:static-content object. See Sec. 6.4.19 of the XSL-FO
- * Standard.
+ * Class modelling the fo:title object. See Sec. 6.4.20 in the XSL-FO Standard.
  */
-public class StaticContent extends Flow {
+public class Title extends FObjMixed {
 
     /**
      * @param parent FONode that is the parent of this object
      */
-    public StaticContent(FONode parent) {
+    public Title(FONode parent) {
         super(parent);
     }
 
+    /**
+     * TODO: shouldn't this code be in Layout??
+     * @return the Title area
+     */
+    public org.apache.fop.area.Title getTitleArea() {
+        org.apache.fop.area.Title title =
+                 new org.apache.fop.area.Title();
+        // use special layout manager to add the inline areas
+        // to the Title.
+        InlineStackingLayoutManager lm;
+        lm = new InlineStackingLayoutManager();
+        lm.setUserAgent(getUserAgent());
+        lm.setFObj(this);
+        lm.setLMiter(new LMiter(children.listIterator()));
+        lm.init();
+
+        // get breaks then add areas to title
+
+        ContentLayoutManager clm = new ContentLayoutManager(title);
+        clm.setUserAgent(getUserAgent());
+        lm.setParent(clm);
+
+        clm.fillArea(lm);
+
+        return title;
+    }
+
     private void setup() {
-    }
 
-    /**
-     * flowname checking is more stringient for static content currently
-     * @param name the flow-name to set
-     * @throws FOPException for a missing flow name
-     */
-    protected void setFlowName(String name) throws FOPException {
-        if (name == null || name.equals("")) {
-            throw new FOPException("A 'flow-name' is required for "
-                                   + getName() + ".");
-        } else {
-            super.setFlowName(name);
+        // Common Accessibility Properties
+        AccessibilityProps mAccProps = propMgr.getAccessibilityProps();
+
+        // Common Aural Properties
+        AuralProps mAurProps = propMgr.getAuralProps();
+
+        // Common Border, Padding, and Background Properties
+        BorderAndPadding bap = propMgr.getBorderAndPadding();
+        BackgroundProps bProps = propMgr.getBackgroundProps();
+
+        // Common Font Properties
+        FontState fontState = propMgr.getFontState(structHandler.getFontInfo());
+
+        // Common Margin Properties-Inline
+        MarginInlineProps mProps = propMgr.getMarginInlineProps();
+
+        Property prop;
+        prop = this.properties.get("baseline-shift");
+        if (prop instanceof LengthProperty) {
+            Length bShift = prop.getLength();
+        } else if (prop instanceof EnumProperty) {
+            int bShift = prop.getEnum();
         }
+        ColorType col = this.properties.get("color").getColorType();
+        Length lHeight = this.properties.get("line-height").getLength();
+        int lShiftAdj = this.properties.get(
+                          "line-height-shift-adjustment").getEnum();
+        int vis = this.properties.get("visibility").getEnum();
+        Length zIndex = this.properties.get("z-index").getLength();
 
     }
-
-    private StaticContentLayoutManager lm;
-
-    /**
-     * @return this object's layout manager
-     */
-    public StaticContentLayoutManager getLayoutManager() {
-        if (lm == null) {
-            lm = new StaticContentLayoutManager();
-            lm.setUserAgent(getUserAgent());
-            lm.setFObj(this);
-        }
-        return lm;
-    }
-
 }
+

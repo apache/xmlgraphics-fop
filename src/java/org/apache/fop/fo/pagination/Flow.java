@@ -1,5 +1,5 @@
 /*
- * $Id: Flow.java,v 1.37 2003/03/06 11:36:30 jeremias Exp $
+ * $Id$
  * ============================================================================
  *                    The Apache Software License, Version 1.1
  * ============================================================================
@@ -48,7 +48,7 @@
  * James Tauber <jtauber@jtauber.com>. For more information on the Apache
  * Software Foundation, please see <http://www.apache.org/>.
  */
-package org.apache.fop.fo.flow;
+package org.apache.fop.fo.pagination;
 
 // Java
 import java.util.ArrayList;
@@ -60,7 +60,6 @@ import org.xml.sax.Attributes;
 // FOP
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FObj;
-import org.apache.fop.fo.pagination.PageSequence;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.layoutmgr.FlowLayoutManager;
 
