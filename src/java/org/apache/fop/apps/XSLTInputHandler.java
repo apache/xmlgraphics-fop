@@ -52,6 +52,7 @@ package org.apache.fop.apps;
 
 // Imported java.io classes
 import java.io.File;
+import java.util.Vector;
 
 // Imported TraX classes
 import javax.xml.transform.Source;
@@ -73,20 +74,34 @@ import org.xml.sax.XMLFilter;
  */
 public class XSLTInputHandler extends InputHandler {
 
-    private Transformer transformer;
     private StreamSource xmlSource;
     private Source xsltSource;
+    private Vector xsltParams = null; // not yet implemented
+    
+    /**
+     * Constructor for files as input
+     * @param xmlfile XML file
+     * @param xsltfile XSLT file
+     * @param params Vector of command-line parameters (name, value, 
+     *      name, value, ...) for XSL stylesheet
+     * @throws FOPException if initializing the Transformer fails
+     */
+    public XSLTInputHandler(File xmlfile, File xsltfile, Vector params) throws FOPException {
+        this.xmlSource  = new StreamSource(xmlfile);
+        this.xsltSource = new StreamSource(xsltfile);
+        xsltParams = params;
+    }
 
     /**
      * Constructor for files as input
      * @param xmlfile XML file
      * @param xsltfile XSLT file
      * @throws FOPException if initializing the Transformer fails
+     * @deprecated Use JAXP instead.
      */
     public XSLTInputHandler(File xmlfile, File xsltfile) throws FOPException {
         this.xmlSource  = new StreamSource(xmlfile);
         this.xsltSource = new StreamSource(xsltfile);
-        initTransformer();
     }
 
     /**
@@ -94,11 +109,11 @@ public class XSLTInputHandler extends InputHandler {
      * @param xmlURL XML URL
      * @param xsltURL XSLT URL
      * @throws FOPException if initializing the Transformer fails
+     * @deprecated Use JAXP instead.
      */
     public XSLTInputHandler(String xmlURL, String xsltURL) throws FOPException {
         this.xmlSource  = new StreamSource(xmlURL);
         this.xsltSource = new StreamSource(xsltURL);
-        initTransformer();
     }
 
     /**
@@ -106,6 +121,7 @@ public class XSLTInputHandler extends InputHandler {
      * @param xmlSource XML InputSource
      * @param xsltSource XSLT InputSource
      * @throws FOPException if initializing the Transformer fails
+     * @deprecated Use JAXP instead.
      */
     public XSLTInputHandler(InputSource xmlSource, InputSource xsltSource)
                 throws FOPException {
@@ -113,16 +129,6 @@ public class XSLTInputHandler extends InputHandler {
                                            xmlSource.getSystemId());
         this.xsltSource = new StreamSource(xsltSource.getByteStream(),
                                            xsltSource.getSystemId());
-        initTransformer();
-    }
-
-    private void initTransformer() throws FOPException {
-        try {
-            this.transformer = 
-                TransformerFactory.newInstance().newTransformer(xsltSource);
-        } catch (Exception ex) {
-            throw new FOPException(ex);
-        }
     }
 
     /**
@@ -141,7 +147,7 @@ public class XSLTInputHandler extends InputHandler {
      * @see org.apache.fop.apps.InputHandler#getParser()
      */
     public XMLReader getParser() throws FOPException {
-        return getXMLFilter(xsltSource);
+        return getXMLFilter(xsltSource, xsltParams);
     }
 
     /**
@@ -154,11 +160,11 @@ public class XSLTInputHandler extends InputHandler {
      * XMLReaders or XMLFilters
      * @throws FOPException if setting up the XMLFilter fails
      */
-    public static XMLFilter getXMLFilter(Source xsltSource) throws FOPException {
+    public static XMLFilter getXMLFilter(Source xsltSource, Vector inParams) throws FOPException {
         try {
             // Instantiate  a TransformerFactory.
             TransformerFactory tFactory = TransformerFactory.newInstance();
-            // Determine whether the TransformerFactory supports The use uf SAXSource
+            // Determine whether the TransformerFactory supports The use of SAXSource
             // and SAXResult
             if (tFactory.getFeature(SAXSource.FEATURE)
                     && tFactory.getFeature(SAXResult.FEATURE)) {
@@ -168,7 +174,18 @@ public class XSLTInputHandler extends InputHandler {
                 // Create an XMLFilter for each stylesheet.
                 XMLFilter xmlfilter =
                     saxTFactory.newXMLFilter(xsltSource);
-
+                    
+/*              if (inParams != null) { 
+                    Transformer transformer = ??? how to obtain from an XMLFilter?
+                    int nParams = inParams.size();
+            
+                    for (int i = 0; i < nParams; i += 2) {
+                        transformer.setParameter((String) inParams.elementAt(i),
+                            (String) inParams.elementAt(i + 1));
+                    }
+                }
+*/                  
+                
                 // Create an XMLReader.
                 XMLReader parser = FOFileHandler.createParser();
                 if (parser == null) {

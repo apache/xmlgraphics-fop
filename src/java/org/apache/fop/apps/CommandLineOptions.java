@@ -54,6 +54,7 @@ package org.apache.fop.apps;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.Locale;
+import java.util.Vector;
 
 // Avalon
 import org.apache.avalon.framework.logger.ConsoleLogger;
@@ -116,6 +117,8 @@ public class CommandLineOptions {
 
     private Logger log;
 
+    private Vector xsltParams = null;
+    
     /**
      * Construct a command line option object from command line arguments
      * @param args command line parameters
@@ -208,6 +211,18 @@ public class CommandLineOptions {
                 i = i + parseUnknownOption(args, i);
             } else if (args[i].equals("-at")) {
                 i = i + parseAreaTreeOption(args, i);
+            } else if (args[i].equals("-param")) {
+                  if (i + 2 < args.length) {
+                      if (xsltParams == null) {
+                          xsltParams = new Vector();
+                      }
+                      String name = args[++i];
+                      xsltParams.addElement(name);
+                      String expression = args[++i];
+                      xsltParams.addElement(expression);
+                  } else {
+                    throw new FOPException("invalid param usage: use -param <name> <value>");
+                  }
             } else {
                 printUsage();
                 return false;
@@ -493,7 +508,7 @@ public class CommandLineOptions {
         case FO_INPUT:
             return new FOFileHandler(fofile);
         case XSLT_INPUT:
-            return new XSLTInputHandler(xmlfile, xsltfile);
+            return new XSLTInputHandler(xmlfile, xsltfile, xsltParams);
         default:
             throw new FOPException("Invalid inputmode setting!");
         }
@@ -621,6 +636,8 @@ public class CommandLineOptions {
             + "  -fo  infile       xsl:fo input file  \n"
             + "  -xml infile       xml input file, must be used together with -xsl \n"
             + "  -xsl stylesheet   xslt stylesheet \n \n"
+/*            + "  -param name value <value> to use for parameter <name> in xslt stylesheet\n"
+            + "                    (repeat '-param name value' for each parameter)\n \n" */
             + " [OUTPUT] \n"
             + "  outfile           input will be rendered as pdf file into outfile \n"
             + "  -pdf outfile      input will be rendered as pdf file (outfile req'd) \n"

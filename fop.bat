@@ -15,5 +15,7 @@ set LOCALCLASSPATH=%LOCALCLASSPATH%;%LIBDIR%\commons-io-dev-20040206.jar
 set LOCALCLASSPATH=%LOCALCLASSPATH%;%LIBDIR%\jimi-1.0.jar
 set LOCALCLASSPATH=%LOCALCLASSPATH%;%LIBDIR%\jai_core.jar
 set LOCALCLASSPATH=%LOCALCLASSPATH%;%LIBDIR%\jai_codec.jar
-java -cp "%LOCALCLASSPATH%" org.apache.fop.apps.Fop %1 %2 %3 %4 %5 %6 %7 %8
+rem 'shift' removes %0 (i.e., the fop.bat filename)
+shift
+java -cp "%LOCALCLASSPATH%" org.apache.fop.apps.Fop %*
 
