@@ -15,11 +15,9 @@
                 <jump href="http://xml.apache.org/xerces-j/index.html">Xerces-J</jump>. 
                 (Xerces is the default xml parser)
             </li>
-            <li>An XSLT processor 
+            <li>An XSLT processor (Xalan is included)
             </li>
             <li>The SVG library batik.jar is the library from the <jump href="http://xml.apache.org/batik/">batik project</jump> at xml.apache.org.
-            </li>
-            <li>The imaging library Jimi from Sun
             </li>
           </ul>
     </p>
