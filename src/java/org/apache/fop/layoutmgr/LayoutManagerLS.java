@@ -84,7 +84,7 @@ public class LayoutManagerLS extends LayoutStrategy {
     public void format(PageSequence pageSeq, AreaTree areaTree) throws FOPException {
         Title title = null;
         if (pageSeq.getTitleFO() != null) {
-            title = pageSeq.getTitleFO().getTitleArea();
+            title = getTitleArea(pageSeq.getTitleFO());
         }
         areaTree.startPageSequence(title);
         // Make a new PageLayoutManager and a FlowLayoutManager
@@ -173,6 +173,32 @@ public class LayoutManagerLS extends LayoutStrategy {
             data.addSubData(createBookmarkData(out));
         }
         return data;
+    }
+
+    /**
+     * @return the Title area
+     */
+    public org.apache.fop.area.Title getTitleArea(org.apache.fop.fo.pagination.Title foTitle) {
+        org.apache.fop.area.Title title =
+                 new org.apache.fop.area.Title();
+        // use special layout manager to add the inline areas
+        // to the Title.
+        InlineStackingLayoutManager lm;
+        lm = new InlineStackingLayoutManager();
+        lm.setUserAgent(foTitle.getUserAgent());
+        lm.setFObj(foTitle);
+        lm.setLMiter(new LMiter(foTitle.children.listIterator()));
+        lm.init();
+
+        // get breaks then add areas to title
+
+        ContentLayoutManager clm = new ContentLayoutManager(title);
+        clm.setUserAgent(foTitle.getUserAgent());
+        lm.setParent(clm);
+
+        clm.fillArea(lm);
+
+        return title;
     }
 
 }
