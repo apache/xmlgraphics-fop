@@ -43,6 +43,17 @@ public class FOTree extends Tree implements Runnable {
     private static final String tag = "$Name$";
     private static final String revision = "$Revision$";
 
+    /** Provides a monotonically increasing pageId */
+    private long nextPageId = 0;
+    /** Locking object for synchronizing <code>getNextPageId</code> method.
+     * The value is irrelevant. */
+    private Boolean lock = new Boolean(true);
+    public long getNextPageId() {
+        synchronized (lock) {
+            return ++nextPageId;
+        }
+    }
+
     /**
      * The buffer from which the <tt>XmlEvent</tt>s from the parser will
      * be read.  <tt>protected</tt> so that FONode can access it.
@@ -165,6 +176,14 @@ public class FOTree extends Tree implements Runnable {
             */
         }
         System.out.println("# of FONodes: " + nodecount);
+    }
+
+    /**
+     * Gets the <code>FOTree</code> logger
+     * @return the logger
+     */
+    public Logger getLogger() {
+        return log;
     }
 
 }// FOTree
