@@ -11,9 +11,8 @@
     <authors>
     </authors>
   </header>
-  
   <body>
-    <s1 title="13 Jun 2002 FOP 0.20.4 Release Candidate available">
+    <s1 title="7 Jul 2002 FOP 0.20.4 released">
       <p>
 	Changes since 0.20.3 include:
       </p>
@@ -41,16 +40,23 @@
 	<li>Russian and Czech messages for AWTViewer</li>
       </ul>
       <p>For details see CHANGES file:<br/><link href=
-      "http://cvs.apache.org/viewcvs.cgi/xml-fop/CHANGES?rev=1.10.2.19"
-      >http://cvs.apache.org/viewcvs.cgi/xml-fop/CHANGES?rev=1.10.2.19</link>
+      "http://cvs.apache.org/viewcvs.cgi/xml-fop/CHANGES?rev=1.10.2.21"
+      >http://cvs.apache.org/viewcvs.cgi/xml-fop/CHANGES?rev=1.10.2.21</link>
       </p>
       <p>
 	See also the full text of the <link href=
+	"http://marc.theaimsgroup.com/?l=fop-dev&amp;m=102607087326357&amp;w=4"
+	>announcement</link>.
+      </p>
+    </s1>
+    <s1 title="13 Jun 2002 FOP 0.20.4 Release Candidate available">
+      <p>
+	See the full text of the <link href=
 	"http://marc.theaimsgroup.com/?l=fop-dev&amp;m=102398470424177&amp;w=4"
 	>announcement</link>.
       </p>
     </s1>
-<s1 title="19 April 2002 - New Committers">
+    <s1 title="19 April 2002 - New Committers">
   <p>Welcome Jeremias Maerki, Joerg Pietschmann and Peter B. West!</p>
  </s1>
 <s1 title="11 March 2002 - Fop 0.20.3 released">
