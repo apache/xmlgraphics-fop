@@ -132,7 +132,7 @@ class PropertyTokenizer {
      * @throws PropertyException If un unrecognized token is encountered.
      */
     void next() throws PropertyException {
-        System.out.println("expr:" + expr + ":  exprIndex: " + exprIndex);
+        //System.out.println("expr:" + expr + ":  exprIndex: " + exprIndex);
         currentTokenValue = null;
         currentTokenStartIndex = exprIndex;
         boolean bSawDecimal;
@@ -281,7 +281,6 @@ class PropertyTokenizer {
                 }
                 if (currentTokenValue.equals("div")) {
                     currentToken = DIV;
-                    System.out.println("Returning DIV......");
                     return;
                 }
                 if (currentTokenValue.equals("inherit")) {
@@ -342,7 +341,6 @@ class PropertyTokenizer {
                 }
                 if (followingParen()) {
                     currentToken = FUNCTION_LPAR;
-                    System.out.println("FUNCTION_LPAR exprIndex:" + exprIndex);
                 } else {
                     currentToken = NCNAME;
                 }
