@@ -46,7 +46,9 @@ public interface ReferenceArea extends Cloneable {
      * Adobe 1st quadrant co-ordinates for PDF and Postscript rendering.
      *
      * @param matrix the transform to map the contents of this reference-area
-     * into statndard Java page co-ordinates. 
+     * into standard Java page co-ordinates. <i><b>N.B.</b></i> The
+     * <code>AffineTransform</code> should be null if no tranformation is
+     * required.
      */
     public void setCoordTransformer(AffineTransform matrix);
 
@@ -59,5 +61,6 @@ public interface ReferenceArea extends Cloneable {
     public AffineTransform getCoordTransformer();
     
     public Object clone();
-        
+    // TODO - methods to apply transformation to content-rectangle of the
+    // reference area wrt the allocation-rectangle
 }
