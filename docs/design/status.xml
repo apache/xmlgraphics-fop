@@ -1,6 +1,6 @@
 <?xml version="1.0" standalone="no"?>
 
-<!-- Overview -->
+<!-- Status of Design/Rewrite -->
 
 <document>
     <header>
@@ -19,6 +19,51 @@ properly without the problems that have been encountered and to make
 it possible to handle keeps/breaks and spacing better.
   </p>
 <p>
+A number of issues have been dealt with in the redesigned code.
+  </p>
+  </s1>
+<s1 title="Features TODO">
+<p>
+<ul>
+<li>avalon integration - logging, configuration, component management, caching, uri resolver</li>
+<li>improved interfaces
+<ul>
+  <li>no threading/static problems</li>
+  <li>simpler to use</li>
+</ul>
+</li>
+<li>better commandline handling</li>
+</ul>
+  </p>
+  </s1>
+<s1 title="Done/Started Features">
+<p>
+Many of these changes will make FOP much better to use and develop.
+So if you help out with the development you can get to use these
+things sooner.
+<ul>
+<li><strong>better layout design</strong> - that can handle keeps and
+spacing better</li>
+<li><strong>better area tree handling</strong> - means it can run in
+less memory</li>
+<li><strong>better image handling</strong> - redone so it can use a
+cache and synchronizes properly only on the current image while loading</li>
+<li>svg now in an xml handler, FOP can be used without batik</li>
+<li>bookmark extension improved a bit - changed bookmark extension,
+now requires a wrapping element bookmark</li>
+<li>new interface for structured documents, rtf and mif</li>
+<li>better handling of unknown xml and xml from an unknown namespace</li>
+<li>Changed extensions to allow for external xml</li>
+<li>Can have a default element mapping for extensions</li>
+<li>mathml extension</li>
+<li>another xml -> svg extension</li>
+<li>svg text normal text if that can be handled otherwise stroked
+this is done automatically</li>
+<li>new area tree model</li>
+<li>new renderer model</li>
+<li>added handlers for xml in renderer</li>
+<li>changed area tree xml format to match the area tree hierarchy</li>
+</ul>
 
   </p>
   </s1>

@@ -14,11 +14,6 @@
     <body>
 <s1 title="Introduction">
 <p>
-<note><p>
-The information here is still in the early stage, some information
-may be wrong or misleading. In general there is not a broad enough
-input and it is lacking in depth of information.
-</p></note>
 The information here describes the design and architecture details for FOP.
 Currently this is part of a redesign process for some of the core parts of
 FOP.
