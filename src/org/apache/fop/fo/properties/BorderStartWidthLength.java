@@ -13,7 +13,7 @@ public class BorderStartWidthLength extends BorderCommonWidth {
         throws PropertyException
     {
         return getMappedLength
-        (PropNames.BORDER_START_WIDTH_LENGTH, MEDIUM);
+        (null, PropNames.BORDER_START_WIDTH_LENGTH, MEDIUM);
     }
 
     public static final int inherited = NO;

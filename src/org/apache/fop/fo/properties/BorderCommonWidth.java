@@ -3,6 +3,7 @@ package org.apache.fop.fo.properties;
 import org.apache.fop.fo.properties.Property;
 import org.apache.fop.datatypes.Length;
 import org.apache.fop.datatypes.Numeric;
+import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.expr.PropertyException;
 
 /**
@@ -37,7 +38,7 @@ public class BorderCommonWidth extends Property  {
      * @return <tt>Numeric[]</tt> containing the values corresponding
      * to the MappedNumeric enumeration constants for border width
      */
-    public Numeric getMappedLength(int property, int enum)
+    public Numeric getMappedLength(FONode node, int property, int enum)
 	throws PropertyException
     {
 	return 

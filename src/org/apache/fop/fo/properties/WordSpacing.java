@@ -6,6 +6,7 @@ import org.apache.fop.datastructs.ROStringArray;
 import org.apache.fop.fo.expr.PropertyException;
 import org.apache.fop.datatypes.PropertyValue;
 import org.apache.fop.fo.PropNames;
+import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.properties.WordSpacingCommon;
 
 public class WordSpacing extends WordSpacingCommon  {
@@ -16,11 +17,11 @@ public class WordSpacing extends WordSpacingCommon  {
     public PropertyValue getInitialValue(int property)
         throws PropertyException
     {
-        return getMappedLength(NORMAL); //normal
+        return getMappedLength(null, NORMAL); //null imples initial value
     }
     public static final int inherited = NO;
 
-    public Numeric getMappedLength(int enum)
+    public Numeric getMappedLength(FONode node, int enum)
         throws PropertyException
     {
         if (enum != NORMAL)
