@@ -268,7 +268,7 @@
           </a>
         </xsl:when>
         <xsl:otherwise>
-          <xsl:value-of select="string('&nbsp;')"/>
+          <xsl:text>&#x00A0;</xsl:text>
         </xsl:otherwise>
       </xsl:choose>
     </td>
@@ -308,7 +308,7 @@
           <xsl:value-of select="@comply"/>
         </xsl:when>
         <xsl:otherwise>
-          <xsl:value-of select="string('&nbsp;')"/>
+          <xsl:text>&#x00A0;</xsl:text>
         </xsl:otherwise>
       </xsl:choose>
     </td>
@@ -348,7 +348,7 @@
           <xsl:value-of select="@comply"/>
         </xsl:when>
         <xsl:otherwise>
-          <xsl:value-of select="string('&nbsp;')"/>
+          <xsl:text>&#x00A0;</xsl:text>
         </xsl:otherwise>
       </xsl:choose>
     </td>
@@ -388,7 +388,7 @@
           <xsl:value-of select="@comply"/>
         </xsl:when>
         <xsl:otherwise>
-          <xsl:value-of select="string('&nbsp;')"/>
+          <xsl:text>&#x00A0;</xsl:text>
         </xsl:otherwise>
       </xsl:choose>
     </td>
@@ -406,7 +406,7 @@
       </xsl:when>
       <xsl:otherwise>
         <td align="center">
-          <xsl:value-of select="string('&nbsp;')"/>
+          <xsl:text>&#x00A0;</xsl:text>
         </td>
       </xsl:otherwise>
     </xsl:choose>
