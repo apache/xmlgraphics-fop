@@ -26,7 +26,17 @@ fi
 
 
 LIBDIR=../../lib
-LOCALCLASSPATH=$JAVA_HOME/lib/tools.jar:$JAVA_HOME/lib/classes.zip:$LIBDIR/ant-1.4.1.jar:$LIBDIR/batik.jar:$LIBDIR/buildtools.jar:$LIBDIR/xercesImpl-2.0.1.jar:$LIBDIR/xml-apis.jar:$LIBDIR/xalan-2.3.1.jar:$LIBDIR/bsf.jar:$LIBDIR/avalon-framework-cvs-20020806.jar:$LIBDIR/jimi-1.0.jar:$LIBDIR/../build/fop.jar
+LOCALCLASSPATH=$JAVA_HOME/lib/tools.jar:$JAVA_HOME/lib/classes.zip
+LOCALCLASSPATH=$LOCALCLASSPATH:$LIBDIR/ant-1.5.1.jar
+LOCALCLASSPATH=$LOCALCLASSPATH:$LIBDIR/xml-apis.jar
+LOCALCLASSPATH=$LOCALCLASSPATH:$LIBDIR/xercesImpl-2.2.0.jar
+LOCALCLASSPATH=$LOCALCLASSPATH:$LIBDIR/xalan-2.4.1.jar
+LOCALCLASSPATH=$LOCALCLASSPATH:$LIBDIR/batik.jar
+LOCALCLASSPATH=$LOCALCLASSPATH:$LIBDIR/avalon-framework-cvs-20020806.jar
+LOCALCLASSPATH=$LOCALCLASSPATH:$LIBDIR/bsf.jar
+LOCALCLASSPATH=$LOCALCLASSPATH:$LIBDIR/jimi-1.0.jar
+LOCALCLASSPATH=$LOCALCLASSPATH:$LIBDIR/../build/fop.jar
+
 ANT_HOME=$LIBDIR
 
 # For Cygwin, switch paths to Windows format before running java
