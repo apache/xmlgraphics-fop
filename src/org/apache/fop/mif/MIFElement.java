@@ -18,7 +18,7 @@ import java.util.*;
  */
 public class MIFElement {
     protected String name;
-    protected String valueStr;
+    protected String valueStr = null;
     protected ArrayList valueElements = null;
 
     protected boolean started = false;
@@ -51,6 +51,8 @@ public class MIFElement {
      */
     public boolean output(OutputStream os, int indent) throws IOException {
         if(finished) return true;
+        if(valueElements == null && valueStr == null) return false;
+
         String indentStr = "";
         for(int c = 0; c < indent; c++) indentStr += " ";
         if(!started) {
