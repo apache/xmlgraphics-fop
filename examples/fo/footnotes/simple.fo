@@ -1,12 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format">
 <fo:layout-master-set>
-<fo:simple-page-master margin-right="0.5cm" margin-left="1.5cm" margin-bottom="2cm" margin-top="0cm" page-width="21cm" page-height="20cm" master-name="one">
-<fo:region-body margin-bottom="2cm" margin-top="2cm"/>
-<fo:region-before extent="0.5cm"/>
-<fo:region-after extent="0.5cm"/>
-</fo:simple-page-master>
+    <fo:simple-page-master master-name="one"
+            margin-right="0.5cm"
+            margin-left="1.5cm"
+            margin-bottom="2cm"
+            margin-top="0cm"
+            page-width="21cm"
+            page-height="20cm">
+        <fo:region-body margin-bottom="2cm" margin-top="2cm"/>
+        <fo:region-before extent="0.5cm"/>
+        <fo:region-after extent="0.5cm"/>
+    </fo:simple-page-master>
 </fo:layout-master-set>
+
 <fo:page-sequence master-reference="one">
 <fo:flow flow-name="xsl-region-body">
 

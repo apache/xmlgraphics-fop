@@ -7,7 +7,7 @@
 
     <!-- layout for the first page -->
       <fo:simple-page-master master-name="noheaders_center"
-      page-height="21.7cm"
+          page-height="21.7cm"
           page-width="16cm"
           margin-top="1cm"
           margin-bottom="1cm"
@@ -17,7 +17,7 @@
     </fo:simple-page-master>
 
       <fo:simple-page-master master-name="headers_right"
-      page-height="21.7cm"
+          page-height="21.7cm"
           page-width="16cm"
           margin-top="1cm"
           margin-bottom="1cm"
@@ -29,7 +29,7 @@
     </fo:simple-page-master>
 
       <fo:simple-page-master master-name="headers_left"
-      page-height="21.7cm"
+          page-height="21.7cm"
           page-width="16cm"
           margin-top="1cm"
           margin-bottom="1cm"
@@ -41,7 +41,7 @@
     </fo:simple-page-master>
 
       <fo:simple-page-master master-name="headers_center"
-      page-height="21.7cm"
+          page-height="21.7cm"
           page-width="16cm"
           margin-top="1cm"
           margin-bottom="1cm"

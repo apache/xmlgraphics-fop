@@ -1,14 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format">
   <fo:layout-master-set>
-    <fo:simple-page-master
-  margin-right="1.5cm"
-  margin-left="1.5cm"
-  margin-bottom="2cm"
-  margin-top="1cm"
-  page-width="21cm"
-  page-height="29.7cm"
-  master-name="first">
+    <fo:simple-page-master master-name="first"
+          margin-right="1.5cm"
+          margin-left="1.5cm"
+          margin-bottom="2cm"
+          margin-top="1cm"
+          page-width="21cm"
+          page-height="29.7cm">
       <fo:region-before extent="7cm"/>
       <fo:region-body margin-top="7cm"/>
       <fo:region-after extent="1.5cm"/>

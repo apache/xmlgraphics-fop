@@ -1,11 +1,21 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format">
+
    <fo:layout-master-set>
-      <fo:simple-page-master page-width="21cm" page-height="29.7cm" master-name="first" margin-top="5mm">
+      <fo:simple-page-master master-name="first"
+            page-width="21cm"
+            page-height="29.7cm" 
+            margin-top="5mm">
          <fo:region-body margin-bottom="4.5in" margin-right="5mm" margin-left="5mm" margin-top="5mm"/>
          <fo:region-after extent="4in" border-top-color="silver" border-top-style="dotted" border-top-width="0.13mm"/>
       </fo:simple-page-master>
-      <fo:simple-page-master page-width="21cm" page-height="29.7cm" master-name="rest" margin-right="5mm" margin-left="5mm" margin-top="5mm" margin-bottom="5mm">
+      <fo:simple-page-master master-name="rest"
+            page-width="21cm"
+            page-height="29.7cm"
+            margin-right="5mm"
+            margin-left="5mm"
+            margin-top="5mm"
+            margin-bottom="5mm">
          <fo:region-body/>
       </fo:simple-page-master>
       <fo:page-sequence-master master-name="A4">
@@ -16,6 +26,7 @@
          </fo:repeatable-page-master-alternatives>
       </fo:page-sequence-master>
    </fo:layout-master-set>
+
    <fo:page-sequence master-reference="A4">
       <fo:static-content flow-name="xsl-region-after">
          <fo:table space-before.optimum="1in div 12" margin-left="2in div 12" margin-top="1in div 10" font-family="sans-serif" font-size="7pt" color="green">

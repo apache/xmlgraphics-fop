@@ -22,12 +22,12 @@ Below fo:root there is always
 
     <!-- layout for the first page -->
     <fo:simple-page-master master-name="first"
-                  page-height="21cm"
-                  page-width="29.7cm"
-                  margin-top="1cm"
-                  margin-bottom="2cm"
-                  margin-left="2.5cm"
-                  margin-right="2.5cm">
+          page-height="21cm"
+          page-width="29.7cm"
+          margin-top="1cm"
+          margin-bottom="2cm"
+          margin-left="2.5cm"
+          margin-right="2.5cm">
       <fo:region-body margin-top="3cm"/>
       <fo:region-before extent="3cm"/>
       <fo:region-after extent="1.5cm"/>

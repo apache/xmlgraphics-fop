@@ -14,8 +14,8 @@
                   margin-left="2.5cm"
                   margin-right="2.5cm">
       <fo:region-body
-      margin-top="3cm" margin-bottom="1.5cm"
-    margin-left="2cm" margin-right="2cm"/>
+            margin-top="3cm" margin-bottom="1.5cm"
+            margin-left="2cm" margin-right="2cm"/>
       <fo:region-before precedence="true" extent="3cm"/>
       <fo:region-after precedence="true" extent="1.5cm"/>
       <fo:region-start extent="1cm"/>

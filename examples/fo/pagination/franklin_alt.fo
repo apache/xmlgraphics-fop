@@ -7,36 +7,36 @@
 
     <!-- layout for the first page -->
       <fo:simple-page-master master-name="right"
-      page-height="21.7cm"
-          page-width="16cm"
-          margin-top="1cm"
-          margin-bottom="1cm"
-          margin-left="3.5cm"
-          margin-right="1.5cm">
+            page-height="21.7cm"
+            page-width="16cm"
+            margin-top="1cm"
+            margin-bottom="1cm"
+            margin-left="3.5cm"
+            margin-right="1.5cm">
       <fo:region-body margin-top="2cm" margin-bottom="2cm"/>
       <fo:region-before extent="2cm"/>
       <fo:region-after extent="2cm"/>
     </fo:simple-page-master>
 
       <fo:simple-page-master master-name="left"
-      page-height="21.7cm"
-          page-width="16cm"
-          margin-top="1cm"
-          margin-bottom="1cm"
-          margin-left="1.5cm"
-          margin-right="3.5cm">
+            page-height="21.7cm"
+            page-width="16cm"
+            margin-top="1cm"
+            margin-bottom="1cm"
+            margin-left="1.5cm"
+            margin-right="3.5cm">
       <fo:region-body margin-top="2cm" margin-bottom="2cm"/>
       <fo:region-before extent="2cm"/>
       <fo:region-after extent="2cm"/>
     </fo:simple-page-master>
 
       <fo:simple-page-master master-name="center"
-      page-height="21.7cm"
-          page-width="16cm"
-          margin-top="1cm"
-          margin-bottom="1cm"
-          margin-left="2.5cm"
-          margin-right="2.5cm">
+            page-height="21.7cm"
+            page-width="16cm"
+            margin-top="1cm"
+            margin-bottom="1cm"
+            margin-left="2.5cm"
+            margin-right="2.5cm">
       <fo:region-body margin-top="2cm" margin-bottom="2cm"/>
       <fo:region-before extent="2cm"/>
       <fo:region-after extent="2cm"/>

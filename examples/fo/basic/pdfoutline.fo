@@ -43,16 +43,16 @@ This files shows next to the trivial usage of fo:block and fo:inline examples of
       <fo:region-after extent="1.5cm"/>
     </fo:simple-page-master>
 
-<fo:page-sequence-master master-name="basicPSM" >
-  <fo:repeatable-page-master-alternatives>
-    <fo:conditional-page-master-reference master-reference="first"
-      page-position="first" />
-    <fo:conditional-page-master-reference master-reference="rest"
-      page-position="rest" />
-    <!-- recommended fallback procedure -->
-    <fo:conditional-page-master-reference master-reference="rest" />
-  </fo:repeatable-page-master-alternatives>
-</fo:page-sequence-master>
+    <fo:page-sequence-master master-name="basicPSM" >
+      <fo:repeatable-page-master-alternatives>
+        <fo:conditional-page-master-reference master-reference="first"
+          page-position="first" />
+        <fo:conditional-page-master-reference master-reference="rest"
+          page-position="rest" />
+        <!-- recommended fallback procedure -->
+        <fo:conditional-page-master-reference master-reference="rest" />
+      </fo:repeatable-page-master-alternatives>
+    </fo:page-sequence-master>
 
   </fo:layout-master-set>
   <!-- end: defines page layout -->
