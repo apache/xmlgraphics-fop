@@ -6,25 +6,7 @@
 </fo:layout-master-set>
 <fo:page-sequence master-name="one">
 <fo:flow flow-name="xsl-region-body">
-<fo:instream-foreign-object>
-<svg:svg width="250" height="50">
-  <svg:g style="fill:red; stroke:#000000">
-     <svg:rect x="0" y="0" width="15" height="15"/>
-     <svg:rect x="5" y="5" width="15" height="15"/>
-  </svg:g>
-    <svg:text x="10" y="30">SVG placed in flow before anything</svg:text>
-</svg:svg>
-</fo:instream-foreign-object>
       <fo:block>This is used to show how foreign objects are placed in a line area.</fo:block>
-<fo:instream-foreign-object>
-<svg:svg width="250" height="50">
-  <svg:g style="fill:red; stroke:#000000">
-     <svg:rect x="0" y="0" width="15" height="15"/>
-     <svg:rect x="5" y="5" width="15" height="15"/>
-  </svg:g>
-    <svg:text x="10" y="30">SVG placed in flow after a block</svg:text>
-</svg:svg>
-</fo:instream-foreign-object>
       <fo:block>
       	Some block text to separate instream objects.
       </fo:block>
