@@ -3,34 +3,34 @@
  * ============================================================================
  *                    The Apache Software License, Version 1.1
  * ============================================================================
- * 
+ *
  * Copyright (C) 1999-2003 The Apache Software Foundation. All rights reserved.
- * 
+ *
  * Redistribution and use in source and binary forms, with or without modifica-
  * tion, are permitted provided that the following conditions are met:
- * 
+ *
  * 1. Redistributions of source code must retain the above copyright notice,
  *    this list of conditions and the following disclaimer.
- * 
+ *
  * 2. Redistributions in binary form must reproduce the above copyright notice,
  *    this list of conditions and the following disclaimer in the documentation
  *    and/or other materials provided with the distribution.
- * 
+ *
  * 3. The end-user documentation included with the redistribution, if any, must
  *    include the following acknowledgment: "This product includes software
  *    developed by the Apache Software Foundation (http://www.apache.org/)."
  *    Alternately, this acknowledgment may appear in the software itself, if
  *    and wherever such third-party acknowledgments normally appear.
- * 
+ *
  * 4. The names "FOP" and "Apache Software Foundation" must not be used to
  *    endorse or promote products derived from this software without prior
  *    written permission. For written permission, please contact
  *    apache@apache.org.
- * 
+ *
  * 5. Products derived from this software may not be called "Apache", nor may
  *    "Apache" appear in their name, without prior written permission of the
  *    Apache Software Foundation.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESSED OR IMPLIED WARRANTIES,
  * INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND
  * FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
@@ -42,21 +42,29 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ============================================================================
- * 
+ *
  * This software consists of voluntary contributions made by many individuals
  * on behalf of the Apache Software Foundation and was originally created by
  * James Tauber <jtauber@jtauber.com>. For more information on the Apache
  * Software Foundation, please see <http://www.apache.org/>.
- */ 
+ */
 package org.apache.fop.render;
 
 // FOP
 import org.apache.fop.pdf.PDFPathPaint;
 import org.apache.fop.pdf.PDFColor;
 import org.apache.fop.apps.FOPException;
-import org.apache.fop.layout.*;
-import org.apache.fop.layout.inline.*;
-import org.apache.fop.datatypes.*;
+import org.apache.fop.layout.FontInfo;
+import org.apache.fop.layout.Area;
+import org.apache.fop.layout.DisplaySpace;
+import org.apache.fop.layout.Page;
+import org.apache.fop.layout.BlockArea;
+import org.apache.fop.layout.BorderAndPadding;
+import org.apache.fop.layout.inline.ForeignObjectArea;
+import org.apache.fop.layout.inline.WordArea;
+import org.apache.fop.layout.inline.InlineSpace;
+import org.apache.fop.layout.inline.LeaderArea;
+import org.apache.fop.datatypes.ColorType;
 import org.apache.fop.render.pdf.FontSetup;
 import org.apache.fop.apps.FOPException;
 
@@ -71,7 +79,7 @@ import java.io.OutputStream;
 
 /**
  * Abstract base class of "Print" type renderers.
- * 
+ *
  * Modified by Mark Lillywhite mark-fop@inomial.com. Removed
  * the render(AreaTree, OutputStream) method, and added
  * no-op concrete implementation of startRenderer() and
@@ -136,14 +144,14 @@ public abstract class PrintRenderer extends AbstractRenderer {
 
     /**
      * set the document's producer
-     * 
+     *
      * @param producer string indicating application producing PDF
      */
     public abstract void setProducer(String producer);
 
     /**
      * add a line to the current stream
-     * 
+     *
      * @param x1 the start x location in millipoints
      * @param y1 the start y location in millipoints
      * @param x2 the end x location in millipoints
@@ -158,7 +166,7 @@ public abstract class PrintRenderer extends AbstractRenderer {
 
     /**
      * add a line to the current stream
-     * 
+     *
      * @param x1 the start x location in millipoints
      * @param y1 the start y location in millipoints
      * @param x2 the end x location in millipoints
@@ -174,7 +182,7 @@ public abstract class PrintRenderer extends AbstractRenderer {
 
     /**
      * add a rectangle to the current stream
-     * 
+     *
      * @param x the x position of left edge in millipoints
      * @param y the y position of top edge in millipoints
      * @param w the width in millipoints
@@ -186,7 +194,7 @@ public abstract class PrintRenderer extends AbstractRenderer {
 
     /**
      * add a filled and stroked rectangle to the current stream
-     * 
+     *
      * @param x the x position of left edge in millipoints
      * @param y the y position of top edge in millipoints
      * @param w the width in millipoints
@@ -201,7 +209,7 @@ public abstract class PrintRenderer extends AbstractRenderer {
      * Add a filled rectangle to the current stream
      * This default implementation calls addRect
      * using the same color for fill and border.
-     * 
+     *
      * @param x the x position of left edge in millipoints
      * @param y the y position of top edge in millipoints
      * @param w the width in millipoints
@@ -282,7 +290,7 @@ public abstract class PrintRenderer extends AbstractRenderer {
 
     /**
      * render display space
-     * 
+     *
      * @param space the display space to render
      */
     public void renderDisplaySpace(DisplaySpace space) {
@@ -297,14 +305,14 @@ public abstract class PrintRenderer extends AbstractRenderer {
 
     /**
      * render SVG area
-     * 
+     *
      * @param area the SVG area to render
      */
     public abstract void renderSVGArea(SVGArea area);
 
     /**
      * render inline area
-     * 
+     *
      * @param area inline area to render
      */
     public abstract void renderWordArea(WordArea area);
@@ -345,7 +353,7 @@ public abstract class PrintRenderer extends AbstractRenderer {
 
     /**
      * render inline space
-     * 
+     *
      * @param space space to render
      */
     public void renderInlineSpace(InlineSpace space) {
@@ -382,14 +390,14 @@ public abstract class PrintRenderer extends AbstractRenderer {
 
     /**
      * render page
-     * 
+     *
      * @param page page to render
      */
     public abstract void renderPage(Page page);
 
     /**
      * render leader area
-     * 
+     *
      * @param area area to render
      */
     public void renderLeaderArea(LeaderArea area) {
@@ -439,7 +447,7 @@ public abstract class PrintRenderer extends AbstractRenderer {
 
     /**
      * set up the font info
-     * 
+     *
      * @param fontInfo font info to set up
      */
     public void setupFontInfo(FontInfo fontInfo) throws FOPException {

@@ -57,20 +57,36 @@ import org.apache.fop.image.ImageArea;
 import org.apache.fop.image.FopImage;
 import org.apache.fop.image.FopImageException;
 import org.apache.fop.image.JpegImage;
-import org.apache.fop.layout.*;
-import org.apache.fop.layout.inline.*;
-import org.apache.fop.datatypes.*;
-import org.apache.fop.fo.properties.*;
+import org.apache.fop.layout.FontInfo;
+import org.apache.fop.layout.DisplaySpace;
+import org.apache.fop.layout.FontState;
+import org.apache.fop.layout.LineArea;
+import org.apache.fop.layout.Page;
+import org.apache.fop.layout.Area;
+import org.apache.fop.layout.Box;
+import org.apache.fop.layout.BorderAndPadding;
+import org.apache.fop.layout.BlockArea;
+import org.apache.fop.layout.inline.ForeignObjectArea;
+import org.apache.fop.layout.inline.WordArea;
+import org.apache.fop.layout.inline.InlineSpace;
+import org.apache.fop.layout.inline.LeaderArea;
+import org.apache.fop.datatypes.ColorType;
+import org.apache.fop.datatypes.ColorSpace;
+import org.apache.fop.fo.properties.LeaderPattern;
+import org.apache.fop.fo.properties.RuleStyle;
 import org.apache.fop.fonts.Glyphs;
 import org.apache.fop.render.pdf.Font;
-import org.apache.fop.image.*;
+import org.apache.fop.image.SVGImage;
+import org.apache.fop.image.EPSImage;
 import org.apache.fop.apps.FOPException;
 
-import org.apache.batik.bridge.*;
-import org.apache.batik.gvt.*;
+import org.apache.batik.bridge.GVTBuilder;
+import org.apache.batik.bridge.BridgeContext;
+import org.apache.batik.bridge.ViewBox;
+import org.apache.batik.gvt.GraphicsNode;
 
 // SVG
-import org.w3c.dom.*;
+import org.w3c.dom.Document;
 import org.w3c.dom.svg.SVGDocument;
 import org.w3c.dom.svg.SVGSVGElement;
 
