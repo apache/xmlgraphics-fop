@@ -230,4 +230,50 @@ abstract public class FONode {
     	return(null);
     }
 
+	/**
+	 * At the start of a new span area layout may be partway through a
+	 * nested FO, and balancing requires rollback to this known point.
+	 * The snapshot records exactly where layout is at.
+	 * @param snapshot a Vector of markers (Integer)
+	 * @returns the updated Vector of markers (Integers)
+	 */
+	public Vector getMarkerSnapshot(Vector snapshot)
+	{
+		snapshot.addElement(new Integer(this.marker));
+		
+		// terminate if no kids or child not yet accessed
+		if (this.marker < 0)
+			return snapshot;
+		else if (children.isEmpty())
+			return snapshot;
+		else
+			return ((FONode) children.elementAt(this.marker)).getMarkerSnapshot(snapshot);
+	}
+	
+	/**
+	 * When balancing occurs, the flow layout() method restarts at the
+	 * point specified by the current marker snapshot, which is retrieved
+	 * and restored using this method.
+	 * @param snapshot the Vector of saved markers (Integers)
+	 */
+	public void rollback(Vector snapshot)
+	{
+		this.marker = ((Integer)snapshot.remove(0)).intValue();
+
+		if (this.marker == START)
+		{
+			// make sure all the children of this FO are also reset
+			resetMarker();
+			return;
+		}
+		else if ((this.marker == -1) || children.isEmpty())
+			return;
+			
+		int numChildren = this.children.size();
+		for (int i = this.marker + 1; i < numChildren; i++) {
+			FONode fo = (FONode) children.elementAt(i);
+			fo.resetMarker();
+		}
+		((FONode) children.elementAt(this.marker)).rollback(snapshot);
+	}
 }
