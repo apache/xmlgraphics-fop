@@ -49,14 +49,18 @@
  
  */
 /* modified by JKT to integrate with 0.12.0 */
+/* modified by Eric SCHAEFFER to integrate with 0.13.0 */
 
 package org.apache.fop.pdf;
 
+// Java
 import java.io.IOException;
 import java.io.PrintWriter;
 
-// shouldn't have to do this
-import org.apache.fop.image.*;
+// FOP
+import org.apache.fop.datatypes.ColorSpace;
+import org.apache.fop.image.FopImage;
+import org.apache.fop.image.FopImageException;
 
 /**
  * PDF XObject
@@ -68,7 +72,6 @@ import org.apache.fop.image.*;
 public class PDFXObject extends PDFObject {
 
     FopImage fopimage;
-    int[] map;
     int Xnum;
 
 
@@ -81,9 +84,15 @@ public class PDFXObject extends PDFObject {
 	this.Xnum=Xnumber;
 	if (img == null)
 	    System.err.println("FISH");
-	this.map = img.getimagemap();
 	fopimage=img;
     }
+
+	/**
+	 * @return the PDF XObject number
+	 */
+	public int getXNumber() {
+		return this.Xnum;
+	}
 
     /**
      * represent as PDF
@@ -92,46 +101,47 @@ public class PDFXObject extends PDFObject {
 	int length=0;
 	int i=0;
 	int x,y;
-	int ncc=(fopimage.getcolor()? 3 : 1);//Number of Color Channels
-	int size=(fopimage.getpixelwidth())*(fopimage.getpixelheight()*ncc);
-	String p;
-	String pdf = this.toPDF();
-	// push the pdf dictionary on the writer
-	writer.write(pdf);
-	length +=pdf.length();
-	p = (size*2+1) + " >>\n";
-	p = p + "stream\n";
-	writer.write(p);
-	length +=p.length();
-	// push all the image data on  the writer and takes care of length for trailer
-	for (y=fopimage.getpixelheight()-1;y>=0;y--)
-	    {
-		for (x=0;x<fopimage.getpixelwidth()*ncc;x++)
-		    {
-			i=y*fopimage.getpixelwidth()*ncc+x;
-			if (this.map[i]<16)
-			    {
-				writer.write("0");                         
-				writer.write(Integer.toHexString(this.map[i]));
-				length++;
-				length++;
-			    }else
-				{
-				    writer.write(Integer.toHexString(this.map[i]));
-				    length++;
-				    length++;
-				}
-		    }
-	    }
-	// close the object
-	p = ">";
-	p += "\nendstream\nendobj\n";
-	writer.write(p);
-	length +=p.length();
+
+	try {
+		PDFBinaryStream imgStream = new PDFBinaryStream();
+		imgStream.setData(fopimage.getBitmaps());
+		imgStream.encode(new PDFFilter(PDFFilter.FLATE_DECODE));
+		imgStream.encode(new PDFFilter(PDFFilter.ASCII_HEX_DECODE));
+
+		String p = this.number + " " + this.generation + " obj\n";
+		p = p + "<</Type /XObject\n";
+		p = p + "/Subtype /Image\n";
+		p = p + "/Name /Im" + Xnum + "\n";
+		p = p + "/Width " + fopimage.getWidth() + "\n";
+		p = p + "/Height " + fopimage.getHeight() + "\n";
+		p = p + "/BitsPerComponent " + fopimage.getBitsPerPixel() + "\n";
+		ColorSpace cs = fopimage.getColorSpace();
+		p = p + "/ColorSpace /" + cs.getColorSpacePDFString() + "\n";
+		p = p + imgStream.getPDFDictionary();
+		p = p + ">>\n";
+
+		// don't know if it's the good place (other objects can have references to it)
+		fopimage.close();
+
+		// push the pdf dictionary on the writer
+		writer.write(p);
+		length += p.length();
+		// push all the image data on  the writer and takes care of length for trailer
+		length += imgStream.outputPDFStream(writer);
+
+		p = "endobj\n";
+		writer.write(p);
+		length += p.length();
+	} catch (FopImageException imgex) {
+System.err.println("Error in XObject : " + imgex.getMessage());
+	} catch (PDFFilterException filterex) {
+System.err.println("Error in XObject : " + filterex.getMessage());
+	}
 	return length;
     }
     
     String toPDF() {
+/* Not used any more
 	String p = this.number + " " + this.generation + " obj\n";
 	p = p + "<</Type /XObject\n";
 	p = p + "/Subtype /Image\n";
@@ -146,5 +156,7 @@ public class PDFXObject extends PDFObject {
 	p = p + "/Filter /ASCIIHexDecode\n";
 	p = p + "/Length ";
 	return p;
+*/
+	return null;
     }
 }
