@@ -54,7 +54,7 @@ package org.apache.fop.layout;
 //fop
 import org.apache.fop.render.Renderer;
 import org.apache.fop.messaging.MessageHandler;
-import org.apache.fop.layout.LeaderArea;
+import org.apache.fop.layout.inline.*;
 import org.apache.fop.datatypes.IDNode;
 import org.apache.fop.fo.properties.WrapOption;
 import org.apache.fop.fo.properties.WhiteSpaceCollapse;
@@ -289,7 +289,7 @@ public class LineArea extends Area {
                     // add the current word
 
                     if (wordLength > 0) {
-                        InlineArea ia = new InlineArea(currentFontState,
+                        WordArea ia = new WordArea(currentFontState,
                                                        this.red, this.green, this.blue,
                                                        new String(data, wordStart,
                                                                   wordLength), wordWidth);
@@ -407,7 +407,7 @@ public class LineArea extends Area {
 
         if (prev == TEXT) {
 
-            InlineArea pia = new InlineArea(currentFontState, this.red,
+            WordArea pia = new WordArea(currentFontState, this.red,
                                             this.green, this.blue,
                                             new String(data, wordStart, wordLength), wordWidth);
 
@@ -441,7 +441,7 @@ public class LineArea extends Area {
                           int leaderLengthOptimum, int leaderLengthMaximum,
                           int ruleStyle, int ruleThickness, int leaderPatternWidth,
                           int leaderAlignment) {
-        InlineArea leaderPatternArea;
+        WordArea leaderPatternArea;
         int leaderLength;
         int remainingWidth =
           this.getContentWidth() - this.getCurrentXPosition();
@@ -504,7 +504,7 @@ public class LineArea extends Area {
                       new InlineSpace(leaderPatternWidth -
                                       this.currentFontState.width(46), false);
                     leaderPatternArea =
-                      new InlineArea(currentFontState, this.red,
+                      new WordArea(currentFontState, this.red,
                                      this.green, this.blue, new String ("."),
                                      this.currentFontState.width(46));
                     int dotsFactor = (int) Math.floor (
@@ -697,8 +697,8 @@ public class LineArea extends Area {
         for (int i = 0; i < factor; i ++) {
             leaderChars[i] = fillChar;
         }
-        InlineArea leaderPatternArea =
-          new InlineArea(currentFontState, this.red, this.green,
+        WordArea leaderPatternArea =
+          new WordArea(currentFontState, this.red, this.green,
                          this.blue, new String (leaderChars), leaderLength);
         return leaderPatternArea;
     }
@@ -861,7 +861,7 @@ public class LineArea extends Area {
 
     /** adds a single character to the line area tree*/ 
     public int addCharacter (char data, LinkSet ls, boolean ul) {
-        InlineArea ia = null;
+        WordArea ia = null;
         int remainingWidth =
           this.getContentWidth() - this.getCurrentXPosition();
         int width = this.currentFontState.width(data);
@@ -874,7 +874,7 @@ public class LineArea extends Area {
             return org.apache.fop.fo.flow.Character.OK;
           }
           //create new InlineArea
-          ia = new InlineArea(currentFontState,
+          ia = new WordArea(currentFontState,
                                          this.red, this.green, this.blue,
                                          new Character(data).toString(),width);
           ia.setUnderlined(ul);
@@ -894,18 +894,18 @@ public class LineArea extends Area {
     /** adds a InlineArea containing the String startChar+wordBuf to the line area children.  */
     private void addWord (char startChar, StringBuffer wordBuf) {
         String word = wordBuf.toString();
-        InlineArea hia;
+        WordArea hia;
         int startCharWidth = this.currentFontState.width(startChar);
         if (startChar == ' ') {
             this.addChild(new InlineSpace(startCharWidth));
         } else {
-            hia = new InlineArea(currentFontState,
+            hia = new WordArea(currentFontState,
                                  this.red, this.green, this.blue,
                                  new Character(startChar).toString(),1);
             this.addChild(hia);
         }
         int wordWidth = this.getWordWidth(word);
-        hia = new InlineArea(currentFontState,
+        hia = new WordArea(currentFontState,
                                  this.red, this.green, this.blue,
                                  word,word.length());
         this.addChild(hia);

@@ -55,6 +55,7 @@ package org.apache.fop.fo.flow;
 import org.apache.fop.fo.*;
 import org.apache.fop.fo.properties.*;
 import org.apache.fop.layout.*;
+import org.apache.fop.layout.inline.*;
 import org.apache.fop.layout.BlockArea;
 import org.apache.fop.layout.FontState;
 import org.apache.fop.apps.FOPException;

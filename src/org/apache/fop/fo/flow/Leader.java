@@ -56,7 +56,7 @@ import org.apache.fop.fo.properties.*;
 import org.apache.fop.datatypes.*;
 import org.apache.fop.layout.Area;
 import org.apache.fop.layout.BlockArea;
-import org.apache.fop.layout.LeaderArea;
+import org.apache.fop.layout.inline.LeaderArea;
 import org.apache.fop.layout.FontState;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.messaging.MessageHandler;

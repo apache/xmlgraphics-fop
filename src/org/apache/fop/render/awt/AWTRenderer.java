@@ -10,6 +10,7 @@ package org.apache.fop.render.awt;
  */
 
 import org.apache.fop.layout.*;
+import org.apache.fop.layout.inline.*;
 import org.apache.fop.messaging.MessageHandler;
 import org.apache.fop.datatypes.*;
 import org.apache.fop.image.*;
@@ -542,7 +543,7 @@ public class AWTRenderer implements Renderer, Printable, Pageable {
 
     }
 
-    public void renderInlineArea(InlineArea area) {
+    public void renderWordArea(WordArea area) {
         char ch;
         StringBuffer pdf = new StringBuffer();
 

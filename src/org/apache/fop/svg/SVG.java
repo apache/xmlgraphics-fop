@@ -55,9 +55,9 @@ package org.apache.fop.svg;
 import org.apache.fop.fo.*;
 import org.apache.fop.fo.properties.*;
 import org.apache.fop.layout.Area;
-import org.apache.fop.layout.ForeignObjectArea;
 import org.apache.fop.layout.FontState;
 import org.apache.fop.apps.FOPException;
+import org.apache.fop.layout.inline.*;
 
 import org.apache.fop.dom.svg.*;
 import org.w3c.dom.svg.*;
