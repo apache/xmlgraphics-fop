@@ -63,7 +63,9 @@ import org.apache.fop.apps.StructureHandler;
 import org.apache.fop.layout.FontInfo;
 import org.apache.fop.apps.FOPException;
 
+import org.apache.fop.fo.PropertyList;
 import org.apache.fop.fo.pagination.PageSequence;
+import org.apache.fop.fo.properties.Constants;
 import org.apache.fop.fo.flow.Block;
 import org.apache.fop.fo.flow.Flow;
 import org.apache.fop.fo.flow.ExternalGraphic;
@@ -77,8 +79,10 @@ import org.apache.fop.fo.flow.TableCell;
 import org.apache.fop.fo.flow.TableRow;
 
 // JFOR
+import org.jfor.jfor.rtflib.rtfdoc.RtfAttributes;
 import org.jfor.jfor.rtflib.rtfdoc.RtfFile;
 import org.jfor.jfor.rtflib.rtfdoc.RtfSection;
+import org.jfor.jfor.rtflib.rtfdoc.RtfText;
 import org.jfor.jfor.rtflib.rtfdoc.RtfParagraph;
 import org.jfor.jfor.rtflib.rtfdoc.RtfDocumentArea;
 
@@ -184,12 +188,15 @@ public class RTFHandler extends StructureHandler {
      */
     public void startBlock(Block bl) {
         try {
-            para = sect.newParagraph();
+            RtfAttributes rtfAttr = new RtfAttributes();
+            rtfAttr.set(mapBlockTextAlign(bl));
+            para = sect.newParagraph(rtfAttr);
         } catch (IOException ioe) {
             // FIXME could we throw Exception in all StructureHandler events?
             throw new Error("IOException: " + ioe);
         }
     }
+
 
     /**
      * @see org.apache.fop.apps.StructureHandler#endBlock(Block)
@@ -395,5 +402,30 @@ public class RTFHandler extends StructureHandler {
             // FIXME could we throw Exception in all StructureHandler events?
             throw new Error("IOException: " + ioe);
         }
-   }
+    }
+
+    private static String mapBlockTextAlign(Block bl) {
+        int fopValue = bl.properties.get("text-align").getEnum();
+        String rtfValue = null;
+        switch (fopValue) {
+            case Constants.CENTER: {
+                rtfValue = RtfText.ALIGN_CENTER;
+                break;
+            }
+            case Constants.END: {
+                rtfValue = RtfText.ALIGN_RIGHT;
+                break;
+            }
+            case Constants.JUSTIFY: {
+                rtfValue = RtfText.ALIGN_JUSTIFIED;
+                break;
+            }
+            default: {
+                rtfValue = RtfText.ALIGN_LEFT;
+                break;
+            }
+        }
+        return rtfValue;
+    }
+
 }
