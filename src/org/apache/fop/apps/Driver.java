@@ -581,14 +581,20 @@ class Service {
 
     public static synchronized Enumeration providers(Class cls) {
         ClassLoader cl = cls.getClassLoader();
+        // null if loaded by bootstrap class loader 
+        if(cl == null) { 
+           cl = ClassLoader.getSystemClassLoader(); 
+        } 
+        
         String serviceFile = "META-INF/services/" + cls.getName();
 
         // System.out.println("File: " + serviceFile);
 
         Vector v = (Vector)providerMap.get(serviceFile);
-        if (v != null)
+        if (v != null) {
             return v.elements();
-
+        }
+        
         v = new Vector();
         providerMap.put(serviceFile, v);
 
