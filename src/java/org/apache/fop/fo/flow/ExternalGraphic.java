@@ -242,4 +242,8 @@ public class ExternalGraphic extends FObj {
         return placement;
     }
 
+    public String getName() {
+        return "fo:external-graphic";
+    }
+
 }

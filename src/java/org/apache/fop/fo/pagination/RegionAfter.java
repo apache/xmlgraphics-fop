@@ -79,5 +79,8 @@ public class RegionAfter extends RegionBA {
         fotv.serveRegionAfter(this);
     }
 
+    public String getName() {
+        return "fo:region-after";
+    }
 }
 

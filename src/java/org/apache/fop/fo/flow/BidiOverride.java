@@ -79,4 +79,7 @@ public class BidiOverride extends FObjMixed {
         fotv.serveBidiOverride(this);
     }
 
+    public String getName() {
+        return "fo:bidi-override";
+    }
 }

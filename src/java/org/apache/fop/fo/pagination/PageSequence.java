@@ -134,19 +134,10 @@ public class PageSequence extends FObj {
      */
     protected void addProperties(Attributes attlist) throws FOPException {
         super.addProperties(attlist);
-        if (parent.getName().equals("fo:root")) {
-            this.root = (Root)parent;
-            // this.root.addPageSequence(this);
-        } else {
-            throw new FOPException("Error: page-sequence must be child of root, not "
-                                   + parent.getName());
-        }
 
+        this.root = (Root) parent;
+//      this.root.addPageSequence(this);
         layoutMasterSet = root.getLayoutMasterSet();
-        
-        if (layoutMasterSet == null) {
-            throw new FOPException("Error: fo:layout-master-set undefined for this document");
-        }
         
         // best time to run some checks on LayoutMasterSet
         layoutMasterSet.checkRegionNames();
@@ -173,7 +164,6 @@ public class PageSequence extends FObj {
                                        + "\" is not a valid value for initial-page-number");
             }
         }
-
 
         String masterName = this.propertyList.get(PR_MASTER_REFERENCE).getString();
         this.simplePageMaster =
@@ -745,4 +735,7 @@ public class PageSequence extends FObj {
         return root;
     }
 
+    public String getName() {
+        return "fo:page-sequence";
+    }
 }

@@ -98,4 +98,7 @@ public class RepeatablePageMasterReference extends PageMasterReference
         fotv.serveRepeatablePageMasterReference(this);
     }
 
+    public String getName() {
+        return "fo:repeatable-page-master-reference";
+    }
 }

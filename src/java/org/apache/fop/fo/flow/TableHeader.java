@@ -39,4 +39,7 @@ public class TableHeader extends TableBody {
         fotv.serveTableHeader(this);
     }
 
+    public String getName() {
+        return "fo:table-header";
+    }
 }

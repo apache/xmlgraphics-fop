@@ -142,4 +142,7 @@ public class Inline extends FObjMixed {
         getFOTreeControl().getFOInputHandler().endInline(this);
     }
 
+    public String getName() {
+        return "fo:inline";
+    }
 }

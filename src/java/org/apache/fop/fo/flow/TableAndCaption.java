@@ -86,5 +86,9 @@ public class TableAndCaption extends ToBeImplementedElement {
         fotv.serveTableAndCaption(this);
     }
 
+    public String getName() {
+        return "fo:table-and-caption";
+    }
+
 }
 

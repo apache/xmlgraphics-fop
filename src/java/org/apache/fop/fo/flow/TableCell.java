@@ -350,4 +350,9 @@ public class TableCell extends FObj {
     protected void end() {
         getFOTreeControl().getFOInputHandler().endCell(this);
     }
+    
+    public String getName() {
+        return "fo:table-cell";
+    }
+    
 }

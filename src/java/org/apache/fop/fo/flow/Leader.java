@@ -172,4 +172,7 @@ public class Leader extends FObjMixed {
         fotv.serveLeader(this);
     }
 
+    public String getName() {
+        return "fo:leader";
+    }
 }

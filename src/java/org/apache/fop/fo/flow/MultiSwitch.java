@@ -51,4 +51,7 @@ public class MultiSwitch extends ToBeImplementedElement {
         fotv.serveMultiSwitch(this);
     }
 
+    public String getName() {
+        return "fo:multi-switch";
+    }
 }

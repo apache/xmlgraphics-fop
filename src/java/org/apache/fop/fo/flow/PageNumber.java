@@ -131,4 +131,8 @@ public class PageNumber extends FObj {
     protected void end() {
         getFOTreeControl().getFOInputHandler().endPageNumber(this);
     }
+    
+    public String getName() {
+        return "fo:page-number";
+    }
 }

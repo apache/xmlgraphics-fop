@@ -126,4 +126,7 @@ public class Character extends FObj {
         fotv.serveCharacter(this);
     }
 
+    public String getName() {
+        return "fo:character";
+    }
 }

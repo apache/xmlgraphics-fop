@@ -98,4 +98,7 @@ public class InlineContainer extends FObj {
         fotv.serveInlineContainer(this);
     }
 
+    public String getName() {
+        return "fo:inline-container";
+    }
 }

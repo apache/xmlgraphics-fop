@@ -50,6 +50,10 @@ public class Wrapper extends FObjMixed {
     public void acceptVisitor(FOTreeVisitor fotv) {
         fotv.serveWrapper(this);
     }
+    
+    public String getName() {
+        return "fo:wrapper";
+    }
 
 }
 

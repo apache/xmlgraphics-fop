@@ -71,5 +71,8 @@ public class ListItemBody extends FObj {
         fotv.serveListItemBody(this);
     }
 
+    public String getName() {
+        return "fo:list-item-body";
+    }
 }
 

@@ -126,5 +126,9 @@ public class TableColumn extends FObj {
     protected void end() {
         getFOTreeControl().getFOInputHandler().endColumn(this);
     }
+    
+    public String getName() {
+        return "fo:table-column";
+    }
 }
 

@@ -39,4 +39,7 @@ public class TableFooter extends TableBody {
         fotv.serveTableFooter(this);
     }
 
+    public String getName() {
+        return "fo:table-footer";
+    }
 }

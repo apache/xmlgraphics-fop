@@ -47,4 +47,7 @@ public class Float extends ToBeImplementedElement {
         fotv.serveFloat(this);
     }
 
+    public String getName() {
+        return "fo:float";
+    }
 }

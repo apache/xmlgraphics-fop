@@ -90,4 +90,7 @@ public abstract class PageMasterReference extends FObj
         fotv.servePageMasterReference(this);
     }
 
+    public String getName() {
+        return "fo:page-master-reference";
+    }
 }

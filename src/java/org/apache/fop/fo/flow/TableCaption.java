@@ -79,5 +79,8 @@ public class TableCaption extends ToBeImplementedElement {
         fotv.serveTableCaption(this);
     }
 
+    public String getName() {
+        return "fo:table-caption";
+    }
 }
 

@@ -64,4 +64,7 @@ public class StaticContent extends Flow {
         fotv.serveStaticContent(this);
     }
 
+    public String getName() {
+        return "fo:static-content";
+    }
 }

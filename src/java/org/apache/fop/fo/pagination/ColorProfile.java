@@ -103,4 +103,7 @@ public class ColorProfile extends FObj {
         fotv.serveColorProfile(this);
     }
 
+    public String getName() {
+        return "fo:color-profile";
+    }
 }

@@ -150,5 +150,9 @@ public class ListItem extends FObj {
         super.end();
         getFOTreeControl().getFOInputHandler().endListItem(this);
     }
+
+    public String getName() {
+        return "fo:list-item";
+    }
 }
 

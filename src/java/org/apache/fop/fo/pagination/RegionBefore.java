@@ -84,5 +84,8 @@ public class RegionBefore extends RegionBA {
         fotv.serveRegionBefore(this);
     }
 
+    public String getName() {
+        return "fo:region-before";
+    }
 }
 

@@ -145,4 +145,8 @@ public class BasicLink extends Inline {
         
         getFOTreeControl().getFOInputHandler().endLink();
     }
+    
+    public String getName() {
+        return "fo:basic-link";
+    }
 }

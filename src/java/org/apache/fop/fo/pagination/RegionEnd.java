@@ -80,5 +80,8 @@ public class RegionEnd extends RegionSE {
         fotv.serveRegionEnd(this);
     }
 
+    public String getName() {
+        return "fo:region-end";
+    }
 }
 

@@ -168,5 +168,8 @@ public class PageSequenceMaster extends FObj {
         fotv.servePageSequenceMaster(this);
     }
 
+    public String getName() {
+        return "fo:page-sequence-master";
+    }
 }
 

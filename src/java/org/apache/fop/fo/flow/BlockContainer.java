@@ -140,5 +140,8 @@ public class BlockContainer extends FObj {
         fotv.serveBlockContainer(this);
     }
 
+    public String getName() {
+        return "fo:block-container";
+    }
 }
 

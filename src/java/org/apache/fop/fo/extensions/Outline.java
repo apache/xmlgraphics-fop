@@ -108,4 +108,7 @@ public class Outline extends ExtensionObj {
         return outlines;
     }
 
+    public String getName() {
+        return "(http://xml.apache.org/fop/extensions) outline";
+    }
 }

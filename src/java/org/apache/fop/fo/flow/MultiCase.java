@@ -53,4 +53,7 @@ public class MultiCase extends ToBeImplementedElement {
         fotv.serveMultiCase(this);
     }
 
+    public String getName() {
+        return "fo:multi-case";
+    }
 }
