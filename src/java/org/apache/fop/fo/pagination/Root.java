@@ -97,7 +97,7 @@ public class Root extends FObj {
      * Sets the overall page number counter.
      * @param count the new page count
      */
-    protected void setRunningPageNumberCounter(int count) {
+    public void setRunningPageNumberCounter(int count) {
         this.runningPageNumberCounter = count;
     }
 
