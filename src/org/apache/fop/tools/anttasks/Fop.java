@@ -48,11 +48,11 @@
  Software Foundation, please see <http://www.apache.org/>.
 
  */
+
 package org.apache.fop.tools.anttasks;
 
 // Ant
-import org.apache.tools.ant.Task;
-import org.apache.tools.ant.BuildException;
+import org.apache.tools.ant.*;
 
 
 // SAX
@@ -63,83 +63,238 @@ import org.xml.sax.SAXParseException;
 
 // Java
 import java.io.*;
-import java.net.URL;
+import java.util.*;
 
 // FOP
-import org.apache.fop.messaging.MessageHandler;
-import org.apache.fop.apps.*;
+import org.apache.fop.messaging.*;
+import org.apache.fop.apps.Starter;
+import org.apache.fop.apps.InputHandler;
+import org.apache.fop.apps.FOInputHandler;
+import org.apache.fop.apps.Driver;
 import org.apache.fop.configuration.Configuration;
 
 
 /**
- * extension to Ant which allows usage of Fop in the
- * same way as org.apache.fop.apps.CommandLine (the code is adapted from this class)
- * Gets input and output filenames from the script file <br/>
- * needed libraries: Sax 2 parser (defaults to Xerces-J), Jimi for images, w3c.jar
- * containing org.w3c.dom.svg etc. for svg support
+ * Wrapper for Fop which allows it to be accessed from within an Ant task.
+ * Accepts the inputs:
+ * <ul>
+ *   <li>fofile -> formatting objects file to be transformed</li>
+ *   <li>pdffile -> output filename</li>
+ *   <li>basedir -> directory to work from</li>
+ *   <li>messagelevel -> (info | verbose | debug) level to output non-error messages</li>
+ * </ul>
  */
 
-public class Fop extends Starter {
-    String fofile, pdffile;
+public class Fop extends Task {
+    File foFile;
+    File pdfFile;
+    File baseDir;
+    int messageType = Project.MSG_VERBOSE;
 
     /**
-     * sets the name of the input file
-     * @param String name of the input fo file
+     * Sets the input file
+     * @param File to input from
      */
-    public void setFofile(String fofile) {
-        this.fofile = fofile;
+    public void setFofile(File foFile) {
+        this.foFile = foFile;
     }
 
     /**
-      * sets the name of the output file
-      * @param String name of the output pdf file
-      */
-    public void setPdffile(String pdffile) {
-        this.pdffile = pdffile;
-    }
-
-
-    public void run () {
-	Options options = new Options();
-	boolean errors = false;
-        String version = Version.getVersion();
-	
-	File fofileF = new File (fofile);
-	Configuration.put("baseDir",new File(fofileF.getAbsolutePath()).getParent());
-	if (!fofileF.exists()) {
-            errors = true;
-            MessageHandler.errorln("Task Fop - ERROR: Formatting objects file " +
-				   fofile + " missing.");
-        }
-	
-	InputHandler inputHandler = new FOInputHandler(fofileF);
-        XMLReader parser = inputHandler.getParser();
-	super.setParserFeatures(parser);
-	
-        MessageHandler.logln("=======================\nTask " +
-                             version + "\nconverting file " + fofile + " to " + pdffile);
-	
-        if (!errors) {
-            try {
-		Driver driver = new Driver(inputHandler.fileInputSource(fofileF), new FileOutputStream(pdffile));
-                driver.setRenderer(Driver.RENDER_PDF);
-		driver.setXMLReader(parser);
-		driver.run();
-            } catch (Exception e) {
-                MessageHandler.errorln("Task Fop - FATAL ERROR: " +
-                                       e.getMessage());
-                System.exit(1);
-            }
-        }
-        MessageHandler.logln("=======================\n");
+     * Gets the input file
+     */
+    public File getFofile() {
+	if(foFile == null) {
+	    log("fofile attribute is not set", Project.MSG_ERR);
+	    throw new BuildException("fofile attribute is not set");
+	}
+	return foFile;
     }
 
     /**
-     * main method, starts execution of this task
-     *
+     * Sets the output file
+     * @param File to output to
+     */
+    public void setPdffile(File pdfFile) {
+        this.pdfFile = pdfFile;
+    }
+
+    /**
+     * Sets the output file
+     */
+    public File getPdffile() {
+	if(pdfFile == null) {
+	    log("pdffile attribute is not set", Project.MSG_ERR);
+	    throw new BuildException("pdffile attribute is not set");
+	}
+	return pdfFile;
+    }
+
+    /**
+     * Sets the message level to be used while processing.
+     * @param String (info | verbose | debug)
+     */
+    public void setMessagelevel(String messageLevel) {
+	if(messageLevel.equalsIgnoreCase("info")) {
+	    messageType = Project.MSG_INFO;
+	} else if(messageLevel.equalsIgnoreCase("verbose")) {
+	    messageType = Project.MSG_VERBOSE;
+	} else if(messageLevel.equalsIgnoreCase("debug")) {
+	    messageType = Project.MSG_DEBUG;
+	} else {
+	    log("messagelevel set to unknown value \"" + messageLevel + "\"", Project.MSG_ERR);
+	    throw new BuildException("unknown messagelevel");
+	}
+    }
+
+    /**
+     * Returns the message type corresponding to Property.MSG_(INFO | VERBOSE | DEBUG)
+     * representing the current message level.
+     */
+    public int getMessageType() {
+	return messageType;
+    }
+    
+    /**
+     * Sets the base directory; currently ignored
+     * @param File to use as a working directory
+     */
+    public void setBasedir(File baseDir) {
+	this.baseDir = baseDir;
+    }
+
+    /**
+     * Gets the base directory
+     */
+    public File getBasedir() {
+	return (baseDir != null) ? baseDir : project.resolveFile(".");
+    }
+
+    /**
+     * Starts execution of this task
      */
     public void execute () throws BuildException {
-		run();
-    } // end: execute
+	Starter starter = new FOPTaskStarter(this);
+	starter.run();
+    }
 }
 
+class FOPTaskStarter extends Starter {
+    Fop task;
+    MessageLogger logger;
+
+    FOPTaskStarter(Fop task) {
+	this.task = task;
+	MessageHandler.setOutputMethod(MessageHandler.EVENT);
+	logger = new MessageLogger(new MessageHandler(), task);
+	logger.setMessageLevel(task.getMessageType());
+    }
+
+    public void run () {
+	Configuration.put("basedir", task.getBasedir());
+
+	InputHandler inputHandler = new FOInputHandler(task.getFofile());
+	XMLReader parser = inputHandler.getParser();
+	setParserFeatures(parser);
+	
+	FileOutputStream pdfOut = null;
+	try {
+	    pdfOut = new FileOutputStream(task.getPdffile());
+	}catch(Exception ex) {
+	    MessageHandler.errorln("Failed to open " + task.getPdffile());
+	    throw new BuildException(ex);
+	}
+
+	task.log("Using base directory: " + Configuration.getValue("basedir"), Project.MSG_DEBUG);
+	task.log(task.getFofile().getName() + " -> " + task.getPdffile().getName(), Project.MSG_INFO);
+
+	try {
+	    Driver driver = new Driver(inputHandler.getInputSource(), pdfOut);
+	    driver.setRenderer(Driver.RENDER_PDF);
+	    driver.setXMLReader(parser);
+	    driver.run();
+	} catch (Exception ex) {
+	    MessageHandler.logln("Error: " + ex.getMessage());
+	    throw new BuildException(ex);
+	}
+	logger.die();
+    }
+}
+
+class MessageLogger implements MessageListener {
+    MessageHandler handler;
+    Task task;
+    int messageLevel = Project.MSG_VERBOSE;
+    int lastMessageLevel = Integer.MIN_VALUE;
+    StringBuffer cache = new StringBuffer();
+    String breakChars = "\n";
+    boolean performCaching = true;
+
+    MessageLogger(MessageHandler handler, Task task) {
+	this(handler, task, Project.MSG_VERBOSE);
+    }
+	
+    MessageLogger(MessageHandler handler, Task task, int messageLevel) {
+	this.handler = handler;
+	this.task = task;
+	setMessageLevel(messageLevel);
+	handler.addListener(this);
+    }
+
+    public void setMessageLevel(int messageLevel) {
+	this.messageLevel = messageLevel;
+    }
+   
+    public int getMessageLevel() {
+	return messageLevel;
+    }
+
+    public void processMessage(MessageEvent event) {
+	task.log("Logger got message: \"" + event.getMessage() + "\"", Project.MSG_DEBUG);
+
+	boolean flushed = false;
+	
+	if(!flushed) {
+	    int messageLevel;
+	    if(event.getMessageType() == MessageEvent.ERROR) {
+		messageLevel = Project.MSG_ERR;
+	    } else {
+		messageLevel = this.messageLevel;
+	    }
+	    if(messageLevel != lastMessageLevel) {
+		flush();
+		flushed = true;
+	    }
+	    lastMessageLevel = messageLevel;
+	}
+
+	cache.append(event.getMessage());
+
+	if(!performCaching) {
+	    flush();
+	    flushed = true;
+	}
+
+	for(int i = 0; !flushed && i < breakChars.length(); i++) {
+	    if(event.getMessage().lastIndexOf(breakChars.charAt(i)) != -1) {
+		flush();
+		flushed = true;
+	    }
+	}
+    }
+    
+    public void flush() {
+	StringTokenizer output = new StringTokenizer(cache.toString(), "\n", false);
+	while(output.hasMoreElements()) {
+	    task.log(output.nextElement().toString(), lastMessageLevel);
+	}
+	cache.setLength(0);
+    }
+
+    public void die() {
+	flush();
+	// because MessageHandler is static this has to be done
+	// or you can get duplicate messages if there are
+	// multiple <fop> tags in a buildfile
+	handler.removeListener(this);
+    }
+}
