@@ -7,29 +7,29 @@
 
     <!-- layout for the first page -->
     <fo:simple-page-master master-name="first"
-                  page-height="11in" 
+                  page-height="11in"
                   page-width="8.5in"
-                  margin-top="1in" 
-                  margin-bottom="1in" 
-                  margin-left="0.75in" 
+                  margin-top="1in"
+                  margin-bottom="1in"
+                  margin-left="0.75in"
                   margin-right="0.75in">
       <fo:region-body
-	  	margin-top="1in" margin-bottom="1in"
-		column-count="2" column-gap="0.25in"/>
+      margin-top="1in" margin-bottom="1in"
+    column-count="2" column-gap="0.25in"/>
       <fo:region-before extent="1in"/>
       <fo:region-after extent="1in"/>
     </fo:simple-page-master>
 
     <fo:simple-page-master master-name="next"
-                  page-height="11in" 
+                  page-height="11in"
                   page-width="8.5in"
-                  margin-top="1in" 
-                  margin-bottom="1in" 
-                  margin-left="0.75in" 
+                  margin-top="1in"
+                  margin-bottom="1in"
+                  margin-left="0.75in"
                   margin-right="0.75in">
       <fo:region-body
-	  	margin-top="1in" margin-bottom="1in"
-		column-count="4" column-gap="0.25in"/>
+      margin-top="1in" margin-bottom="1in"
+    column-count="4" column-gap="0.25in"/>
       <fo:region-before extent="1in"/>
       <fo:region-after extent="1in"/>
     </fo:simple-page-master>
@@ -39,22 +39,22 @@
   <!-- actual layout -->
   <fo:page-sequence master-reference="first">
     <fo:static-content flow-name="xsl-region-before">
-      <fo:block font-size="16pt" 
-                font-family="sans-serif" 
+      <fo:block font-size="16pt"
+                font-family="sans-serif"
                 line-height="normal"
                 text-align="start"
-				color="blue">Footnotes in Columns</fo:block>
-	</fo:static-content>
-	
+        color="blue">Footnotes in Columns</fo:block>
+  </fo:static-content>
+
     <fo:static-content flow-name="xsl-region-after">
-      <fo:block font-size="10pt" 
-                font-family="sans-serif" 
+      <fo:block font-size="10pt"
+                font-family="sans-serif"
                 line-height="12pt"
-				space-before.optimum="6pt"
+        space-before.optimum="6pt"
                 text-align="end"
-				color="blue">Page #</fo:block>
-	</fo:static-content>
-	
+        color="blue">Page #</fo:block>
+  </fo:static-content>
+
     <fo:flow flow-name="xsl-region-body">
       <fo:block color="grey">
 What shall we use to fill the empty spaces,
@@ -87,15 +87,15 @@ How shall I fill the final places?
 How shall I complete the wall?
       </fo:block>
 <fo:block color="red">
-	The <fo:footnote>
-	<fo:inline font-weight="bold">footnote<fo:inline font-size="6pt" vertical-align="super">1</fo:inline></fo:inline>
-	<fo:footnote-body>
-	    <fo:block color="maroon">
-	        1. A footnote is text placed at the bottom of the current page.
-	    </fo:block>
-	</fo:footnote-body>
-	</fo:footnote>
-	 at the bottom of the page.
+  The <fo:footnote>
+  <fo:inline font-weight="bold">footnote<fo:inline font-size="6pt" vertical-align="super">1</fo:inline></fo:inline>
+  <fo:footnote-body>
+      <fo:block color="maroon">
+          1. A footnote is text placed at the bottom of the current page.
+      </fo:block>
+  </fo:footnote-body>
+  </fo:footnote>
+   at the bottom of the page.
 </fo:block>
       <fo:block color="grey">
 What shall we use to fill the empty spaces,
@@ -128,38 +128,38 @@ How shall I fill the final places?
 How shall I complete the wall?
       </fo:block>
 <fo:block color="green">
-	The <fo:footnote>
-	<fo:inline font-weight="bold">second footnote<fo:inline font-size="6pt" vertical-align="super">2</fo:inline></fo:inline>
-	<fo:footnote-body>
-	    <fo:block color="darkgreen">
-	        2. Another footnote with a bit more text.
-	    </fo:block>
-	</fo:footnote-body>
-	</fo:footnote>
-	 at the bottom of the page after the other footnote.
+  The <fo:footnote>
+  <fo:inline font-weight="bold">second footnote<fo:inline font-size="6pt" vertical-align="super">2</fo:inline></fo:inline>
+  <fo:footnote-body>
+      <fo:block color="darkgreen">
+          2. Another footnote with a bit more text.
+      </fo:block>
+  </fo:footnote-body>
+  </fo:footnote>
+   at the bottom of the page after the other footnote.
 </fo:block>
 
-	  </fo:flow>
+    </fo:flow>
   </fo:page-sequence>
 
   <fo:page-sequence master-reference="next">
     <fo:static-content flow-name="xsl-region-before">
-      <fo:block font-size="16pt" 
-                font-family="sans-serif" 
+      <fo:block font-size="16pt"
+                font-family="sans-serif"
                 line-height="normal"
                 text-align="start"
-				color="blue">Footnotes in Columns</fo:block>
-	</fo:static-content>
-	
+        color="blue">Footnotes in Columns</fo:block>
+  </fo:static-content>
+
     <fo:static-content flow-name="xsl-region-after">
-      <fo:block font-size="10pt" 
-                font-family="sans-serif" 
+      <fo:block font-size="10pt"
+                font-family="sans-serif"
                 line-height="12pt"
-				space-before.optimum="6pt"
+        space-before.optimum="6pt"
                 text-align="end"
-				color="blue">Page #</fo:block>
-	</fo:static-content>
-	
+        color="blue">Page #</fo:block>
+  </fo:static-content>
+
     <fo:flow flow-name="xsl-region-body">
       <fo:block color="grey">
 What shall we use to fill the empty spaces,
@@ -192,15 +192,15 @@ How shall I fill the final places?
 How shall I complete the wall?
       </fo:block>
 <fo:block color="red">
-	The <fo:footnote>
-	<fo:inline font-weight="bold">footnote<fo:inline font-size="6pt" vertical-align="super">1</fo:inline></fo:inline>
-	<fo:footnote-body>
-	    <fo:block color="maroon">
-	        1. A footnote is text placed at the bottom of the current page.
-	    </fo:block>
-	</fo:footnote-body>
-	</fo:footnote>
-	 at the bottom of the page.
+  The <fo:footnote>
+  <fo:inline font-weight="bold">footnote<fo:inline font-size="6pt" vertical-align="super">1</fo:inline></fo:inline>
+  <fo:footnote-body>
+      <fo:block color="maroon">
+          1. A footnote is text placed at the bottom of the current page.
+      </fo:block>
+  </fo:footnote-body>
+  </fo:footnote>
+   at the bottom of the page.
 </fo:block>
       <fo:block color="grey">
 What shall we use to fill the empty spaces,
@@ -233,17 +233,17 @@ How shall I fill the final places?
 How shall I complete the wall?
       </fo:block>
 <fo:block color="green">
-	The <fo:footnote>
-	<fo:inline font-weight="bold">second footnote<fo:inline font-size="6pt" vertical-align="super">2</fo:inline></fo:inline>
-	<fo:footnote-body>
-	    <fo:block color="darkgreen">
-	        2. Another footnote with a bit more text.
-	    </fo:block>
-	</fo:footnote-body>
-	</fo:footnote>
-	 at the bottom of the page after the other footnote.
+  The <fo:footnote>
+  <fo:inline font-weight="bold">second footnote<fo:inline font-size="6pt" vertical-align="super">2</fo:inline></fo:inline>
+  <fo:footnote-body>
+      <fo:block color="darkgreen">
+          2. Another footnote with a bit more text.
+      </fo:block>
+  </fo:footnote-body>
+  </fo:footnote>
+   at the bottom of the page after the other footnote.
 </fo:block>
 
-	  </fo:flow>
+    </fo:flow>
   </fo:page-sequence>
 </fo:root>

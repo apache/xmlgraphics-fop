@@ -8,14 +8,14 @@ This file addresses breaks in page context.
   <fo:layout-master-set>
     <!-- layout for all pages -->
     <fo:simple-page-master master-name="all"
-                  page-height="29.7cm" 
+                  page-height="29.7cm"
                   page-width="21cm"
-                  margin-top="1cm" 
-                  margin-bottom="2cm" 
-                  margin-left="2.5cm" 
+                  margin-top="1cm"
+                  margin-bottom="2cm"
+                  margin-left="2.5cm"
                   margin-right="2.5cm">
       <fo:region-body
-	  	margin-top="3cm" margin-bottom="2cm"/>
+      margin-top="3cm" margin-bottom="2cm"/>
       <fo:region-before extent="3cm"/>
       <fo:region-after extent="2cm"/>
     </fo:simple-page-master>
@@ -23,16 +23,16 @@ This file addresses breaks in page context.
 
   <fo:page-sequence master-reference="all">
     <fo:static-content flow-name="xsl-region-after">
-	  <fo:block font-size="10pt" text-align="start"
-	    border-style="solid" border-color="blue" border-width="0.5pt">
-	  Text excerpt from XSL Candidate Recommendation, 21 Nov 2000.
-	  </fo:block>
-	</fo:static-content>
-	
+    <fo:block font-size="10pt" text-align="start"
+      border-style="solid" border-color="blue" border-width="0.5pt">
+    Text excerpt from XSL Candidate Recommendation, 21 Nov 2000.
+    </fo:block>
+  </fo:static-content>
+
     <fo:flow flow-name="xsl-region-body">
       <fo:block
-	    font-size="14pt" font-family="sans-serif"
-		line-height="18pt" space-after.optimum="15pt">
+      font-size="14pt" font-family="sans-serif"
+    line-height="18pt" space-after.optimum="15pt">
 Keep and break conditions apply to a class of areas, which are typically
 page-reference-areas, column-areas, and line-areas. The appropriate class
 for a given condition is referred to as a context and an area in this
@@ -44,8 +44,8 @@ of region-master.
       </fo:block>
 
       <fo:block
-	    font-size="14pt" font-family="sans-serif"
-		line-height="18pt" space-after.optimum="15pt">
+      font-size="14pt" font-family="sans-serif"
+    line-height="18pt" space-after.optimum="15pt">
 A keep or break condition is an open statement about a formatting object
 and the tree relationships of the areas it generates with the relevant
 context-areas. These tree relationships are defined mainly in terms of
@@ -57,12 +57,12 @@ a normal area, nor does any of its ancestor areas up to but not including P.
 For any given formatting object, the next formatting object in the flow is
 the first formatting object following (in the pre-order traversal order)
 which generates and returns normal areas.
-		</fo:block>
-	  
+    </fo:block>
+
       <fo:block
-	    font-size="14pt" font-family="sans-serif"
-		line-height="18pt" space-after.optimum="15pt"
-		break-after="page">
+      font-size="14pt" font-family="sans-serif"
+    line-height="18pt" space-after.optimum="15pt"
+    break-after="page">
 <fo:inline color="red">break-after="page"</fo:inline>
 Break conditions are either break-before or break-after conditions.
 A break-before condition is satisfied if the first area generated and
@@ -70,12 +70,12 @@ returned by the formatting object is leading within a context-area. A
 break-after condition depends on the next formatting object in the flow;
 it is satisfied if either there is no such next formatting object, or
 if the first normal area generated and returned by that formatting
-object is leading in a context-area.	  
+object is leading in a context-area.
       </fo:block>
-	  
+
       <fo:block
-	    font-size="14pt" font-family="sans-serif"
-		line-height="18pt" space-after.optimum="15pt">
+      font-size="14pt" font-family="sans-serif"
+    line-height="18pt" space-after.optimum="15pt">
 Break conditions are imposed by the break-before and break-after
 properties. A refined value of page for these traits imposes a break
 condition with a context consisting of the page-reference-areas; a
@@ -83,12 +83,12 @@ value of even-page or odd-page imposes a break condition with a
 context of even-numbered page-reference-areas or odd-numbered page
 reference-areas, respectively; a value of column imposes a break
 condition with a context of column-areas. A value of auto in a
-break-before or break-after trait imposes no break condition.	  
+break-before or break-after trait imposes no break condition.
       </fo:block>
-	  
+
       <fo:block
-	    font-size="14pt" font-family="sans-serif"
-		line-height="18pt" space-after.optimum="15pt">
+      font-size="14pt" font-family="sans-serif"
+    line-height="18pt" space-after.optimum="15pt">
 Keep conditions are either keep-with-previous, keep-with-next, or
 keep-together conditions. A keep-with-previous condition on an
 object is satisfied if the first area generated and returned by
@@ -99,12 +99,12 @@ area generated and returned by the formatting object is not
 trailing within a context-area, or if there are no following
 areas in a pre-order traversal of the area tree. A keep-together
 condition is satisfied if all areas generated and returned by
-the formatting object are descendants of a single context-area.	  
+the formatting object are descendants of a single context-area.
       </fo:block>
-	  
+
       <fo:block
-	    font-size="14pt" font-family="sans-serif"
-		line-height="18pt" space-after.optimum="15pt">
+      font-size="14pt" font-family="sans-serif"
+    line-height="18pt" space-after.optimum="15pt">
 Keep conditions are imposed by the "within-page", "within-column",
 and "within-line" components of the "keep-with-previous",
 "keep-with-next", and "keep-together" properties. The refined value
@@ -115,13 +115,13 @@ with value auto does not impose a keep condition. A "within-page"
 component imposes a keep-condition with context consisting of the
 page-reference-areas; "within-column", with context consisting of
 the column-areas; and "within-line" with context consisting of the
-line-areas.	  
+line-areas.
       </fo:block>
-	  
+
       <fo:block
-	    font-size="14pt" font-family="sans-serif"
-		line-height="18pt" space-after.optimum="15pt"
-		break-before="page">
+      font-size="14pt" font-family="sans-serif"
+    line-height="18pt" space-after.optimum="15pt"
+    break-before="page">
 <fo:inline color="red">break-before="page"</fo:inline>
 The area tree is constrained to satisfy all break conditions imposed.
 Each keep condition must also be satisfied, except when this would
@@ -129,9 +129,9 @@ cause a break condition or a stronger keep condition to fail to be
 satisfied. If not all of a set of keep conditions of equal strength
 can be satisfied, then some maximal satisfiable subset of conditions
 of that strength must be satisfied (together with all break conditions
-and maximal subsets of stronger keep conditions, if any).	  
+and maximal subsets of stronger keep conditions, if any).
       </fo:block>
-	  
+
     </fo:flow>
   </fo:page-sequence>
 </fo:root>
