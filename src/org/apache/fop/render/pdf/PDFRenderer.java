@@ -174,7 +174,9 @@ public class PDFRenderer implements Renderer {
 	}
     
             if ( !idReferences.isEveryIdValid() ) {                          
-                throw new FOPException("The following id's were referenced but not found: "+idReferences.getInvalidIds()+"\n");
+		//          throw new FOPException("The following id's were referenced but not found: "+idReferences.getInvalidIds()+"\n");
+		MessageHandler.errorln("WARNING: The following id's were referenced but not found: "+idReferences.getInvalidIds()+"\n");
+		
             }
     
             MessageHandler.logln("writing out PDF");

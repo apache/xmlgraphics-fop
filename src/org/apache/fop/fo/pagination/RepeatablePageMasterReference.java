@@ -56,6 +56,8 @@ import org.apache.fop.apps.FOPException;
 public class RepeatablePageMasterReference extends PageMasterReference
 	implements SubSequenceSpecifier {
 	
+  private static final int INFINITE = -1;
+
     public static class Maker extends FObj.Maker {
 	public FObj make(FObj parent, PropertyList propertyList)
 	    throws FOPException {
@@ -67,73 +69,56 @@ public class RepeatablePageMasterReference extends PageMasterReference
 	return new RepeatablePageMasterReference.Maker();
     }
 
-	private String masterName;
-	private PageSequenceMaster pageSequenceMaster;
+  
+    private PageSequenceMaster pageSequenceMaster;
 	
     private int maximumRepeats;
     private int numberConsumed = 0;
 
-    private int BOUNDED = 1;
-    private int UNBOUNDED = 0;
-
-    private int state;
-	
     public RepeatablePageMasterReference(FObj parent, PropertyList propertyList)
 		throws FOPException {
 	super(parent, propertyList);
-	this.name = "fo:repeatable-page-master-reference";
-
-	if (parent.getName().equals("fo:page-sequence-master")) {
-	    this.pageSequenceMaster = (PageSequenceMaster) parent;
-	    setMasterName( this.properties.get("master-name").getString() );
-	    if (getMasterName() == null) {
-		System.err.println("WARNING: repeatable-page-master-reference" +
-		    "does not have a master-name and so is being ignored");
-	    } else {
-		this.pageSequenceMaster.addSubsequenceSpecifier(this);
-	    }
-	} else {
-	    throw new FOPException("fo:repeatable-page-master-reference must be" +
-                "child of fo:page-sequence, not " 
-		+ parent.getName());
-	}
-
-	String mr = this.properties.get("maximum-repeats").getString();
-	if (!mr.equals("no-limit"))
+	
+	String mr = getProperty("maximum-repeats").getString();
+	if (mr.equals("no-limit"))
 	{
+	    setMaximumRepeats(INFINITE);
+	}
+	else {
 	    try {
-			setMaximumRepeats( Integer.parseInt( mr ) );
-			this.state = BOUNDED;
+		setMaximumRepeats( Integer.parseInt( mr ) );
 	    } catch (NumberFormatException nfe) {
-			throw new FOPException( "Invalid number for " +
-				"'maximum-repeats' property" );
+		throw new FOPException( "Invalid number for " +
+					"'maximum-repeats' property" );
 	    }
-
-	} else {
-	    this.state = UNBOUNDED;   // unbounded
 	}
 
     }
 	
     public String getNextPageMaster( int currentPageNumber,
-		boolean thisIsFirstPage ) {
+				     boolean thisIsFirstPage,
+				     boolean isEmptyPage ) {
 		String pm = getMasterName();
 		
-		if (this.state == BOUNDED)
-		{
-			if (numberConsumed < getMaximumRepeats()) {
-				numberConsumed++;
-			} else {
-				pm = null;
-			}
+		if (getMaximumRepeats() != INFINITE ) {
+		    if (numberConsumed < getMaximumRepeats()) {
+			numberConsumed++;
+		    } else {
+			pm = null;
+		    }
 		}
 		return pm;
 	}
 	
 	private void setMaximumRepeats( int maximumRepeats)
 	{
+	    if (maximumRepeats == INFINITE) {
+		this.maximumRepeats = maximumRepeats;
+	    }
+	    else {
 		this.maximumRepeats =
-			(maximumRepeats < 0) ? 0 : maximumRepeats;
+		    (maximumRepeats < 0) ? 0 : maximumRepeats;
+	    }
 	}
 	
 	private int getMaximumRepeats()
@@ -141,4 +126,14 @@ public class RepeatablePageMasterReference extends PageMasterReference
 		return this.maximumRepeats;
 	}
 
+    protected String getElementName() 
+    {
+	return "fo:repeatable-page-master-reference";
+    }
+    
+    public void reset() 
+    {
+	this.numberConsumed = 0;
+    }
+    
 }

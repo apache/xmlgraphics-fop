@@ -67,51 +67,42 @@ public class SinglePageMasterReference extends PageMasterReference
     public static FObj.Maker maker() {
 	return new SinglePageMasterReference.Maker();
     }
-
-	private String masterName;
-	private PageSequenceMaster pageSequenceMaster;
-	
+  
     private static final int FIRST = 0;
     private static final int DONE = 1;
 	
     private int state;
-	
+
     public SinglePageMasterReference(FObj parent, PropertyList propertyList)
 		throws FOPException {
-
 	super(parent, propertyList);
-	this.name = "fo:single-page-master-reference";
-
-	if (parent.getName().equals("fo:page-sequence-master")) {
-	    this.pageSequenceMaster = (PageSequenceMaster) parent;
-	    setMasterName( this.properties.get("master-name").getString() );
-
-	    if (getMasterName() == null) {
-		MessageHandler.error("WARNING: single-page-master-reference" +
-		    "does not have a master-name and so is being ignored");
-	    } else {
-		this.pageSequenceMaster.addSubsequenceSpecifier(this);
-	    }
-	} else {
-	    throw new FOPException("fo:page-sequence-master must be child "
-				   + "of fo:layout-master-set, not " 
-				   + parent.getName());
-	}
-
 	this.state = FIRST;
+	
     }
 	
-    public String getNextPageMaster( int currentPageNumber, boolean thisIsFirstPage ) {
-	return getMasterName();
+    public String getNextPageMaster( int currentPageNumber, 
+				     boolean thisIsFirstPage,
+				     boolean isEmptyPage) {
+	if (this.state == FIRST) {
+	    this.state = DONE;
+	    return getMasterName();
+	}
+	else {
+	    return null;
+	}
+	
     }
 
-    public void setMasterName( String masterName )
-	{
-		this.masterName = masterName;
-	}
+    public void reset() 
+    {
+	this.state = FIRST;
+    }
+    
 
-    public String getMasterName()
-	{
-		return this.masterName;
-	}
+    protected String getElementName()
+    {
+	return "fo:single-page-master-reference";
+    }
+    
+    
 }

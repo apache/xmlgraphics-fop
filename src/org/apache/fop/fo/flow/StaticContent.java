@@ -53,14 +53,14 @@ package org.apache.fop.fo.flow;
 // FOP
 import org.apache.fop.fo.*;
 import org.apache.fop.fo.properties.*;
-import org.apache.fop.fo.pagination.PageSequence;
+import org.apache.fop.fo.pagination.*;
 import org.apache.fop.layout.Area;
 import org.apache.fop.apps.FOPException;				   
 
 // Java
 import java.util.Enumeration;
 
-public class StaticContent extends FObj {
+public class StaticContent extends Flow {
 
     public static class Maker extends FObj.Maker {
 	public FObj make(FObj parent, PropertyList propertyList)
@@ -73,37 +73,39 @@ public class StaticContent extends FObj {
 	return new StaticContent.Maker();
     }
 
-    PageSequence pageSequence;
-
     protected StaticContent(FObj parent, PropertyList propertyList)
 	throws FOPException {
 	super(parent, propertyList);
-	this.name =  "fo:static-content";
-
-	if (parent.getName().equals("fo:page-sequence")) {
-	    this.pageSequence = (PageSequence) parent;
-	} else {
-	    throw new FOPException("static-content must be child of "
-				   + "fo:page-sequence, not "
-				   + parent.getName());  
-	}
-	String flowName = this.properties.get("flow-name").getString();
-
-	pageSequence.setStaticContent(flowName, this);
     }
     
     public Status layout(Area area) throws FOPException {
+	return layout(area, null);
+    }
+    
+
+    public Status layout(Area area, Region region) throws FOPException {
 
 	int numChildren = this.children.size();
 	// Set area absolute height so that link rectangles will be drawn correctly in xsl-before and xsl-after
-	String flowName = this.properties.get("flow-name").getString();
-	if(flowName.equals("xsl-region-before"))
-	{
-		area.setAbsoluteHeight(-area.getMaxHeight());
+	String regionClass = "none";
+	if (region != null) {
+	    regionClass = region.getRegionClass();
 	}
-	else if(flowName.equals("xsl-region-after"))
-	{
-		area.setAbsoluteHeight(area.getPage().getBody().getMaxHeight());
+	else {
+	    if(getFlowName().equals("xsl-region-before")) {
+		regionClass = RegionBefore.REGION_CLASS;
+	    }
+	    else if(getFlowName().equals("xsl-region-after")) {
+		regionClass = RegionAfter.REGION_CLASS;
+	    }
+	    
+	}
+	
+	if(regionClass.equals(RegionBefore.REGION_CLASS)) {
+	    area.setAbsoluteHeight(-area.getMaxHeight());
+	}
+	else if(regionClass.equals(RegionAfter.REGION_CLASS)) {
+	    area.setAbsoluteHeight(area.getPage().getBody().getMaxHeight());
 	}
        
 	for (int i = 0; i < numChildren; i++) {
@@ -117,9 +119,26 @@ public class StaticContent extends FObj {
 			}
 			return(status);
 		}
-//	    fo.layout(area);
 	}
 	resetMarker();
 	return new Status(Status.OK);
+    }
+
+    protected String getElementName() 
+    {
+	return "fo:static-content";
+    }
+
+    // flowname checking is more stringient for static content currently
+    protected void setFlowName(String name)
+	throws FOPException
+    {
+	if (name == null || name.equals("")) {
+	    throw new FOPException("A 'flow-name' is required for "+getElementName()+".");
+ 	}
+	else {
+	    super.setFlowName(name);
+	}
+	
     }
 }

@@ -56,6 +56,12 @@ package org.apache.fop.fo.pagination;
 public interface SubSequenceSpecifier
 {
     public String getNextPageMaster( int currentPageNumber,
-		boolean thisIsFirstPage );
+		boolean thisIsFirstPage, boolean isEmptyPage);
+    /**
+     * Called before a new page sequence is rendered so subsequences can reset 
+     * any state they keep during the formatting process.
+     */
+    public void reset();
+
 }
 

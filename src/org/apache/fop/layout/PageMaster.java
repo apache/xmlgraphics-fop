@@ -55,34 +55,34 @@ public class PageMaster {
     private int width;
     private int height;
 	
-    private Region body;
-    private Region before;
-    private Region after;
-    private Region start;
-    private Region end;
+    private RegionArea body;
+    private RegionArea before;
+    private RegionArea after;
+    private RegionArea start;
+    private RegionArea end;
 
     public PageMaster(int pageWidth, int pageHeight) {
 	this.width = pageWidth;
 	this.height = pageHeight;
     }
 
-    public void addAfter(Region region) {
+    public void addAfter(RegionArea region) {
 	this.after = region;
     }
 
-    public void addBefore(Region region) {
+    public void addBefore(RegionArea region) {
 	this.before = region;
     }
 
-    public void addBody(Region region) {
+    public void addBody(RegionArea region) {
 	this.body = region;
     }
 
-    public void addEnd(Region region) {
+    public void addEnd(RegionArea region) {
 	this.end = region;
     }
 	
-    public void addStart(Region region) {
+    public void addStart(RegionArea region) {
 	this.start = region;
     }
 

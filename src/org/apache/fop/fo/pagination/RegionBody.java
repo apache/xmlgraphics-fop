@@ -51,13 +51,14 @@
 package org.apache.fop.fo.pagination;
 
 // FOP
-import org.apache.fop.fo.*;
-import org.apache.fop.fo.properties.*;
-import org.apache.fop.layout.Region;
-import org.apache.fop.apps.FOPException;				   
+import org.apache.fop.fo.FObj;
+import org.apache.fop.fo.PropertyList;
+import org.apache.fop.apps.FOPException;
+import org.apache.fop.layout.RegionArea;
 
-public class RegionBody extends FObj {
-	
+public class RegionBody extends Region {
+
+ 
     public static class Maker extends FObj.Maker {
 	public FObj make(FObj parent, PropertyList propertyList) throws FOPException {
 	    return new RegionBody(parent, propertyList);
@@ -68,21 +69,17 @@ public class RegionBody extends FObj {
 	return new RegionBody.Maker();
     }	
     
+    public static final String REGION_CLASS = "body";
+    
+
     protected RegionBody(FObj parent, PropertyList propertyList)
-	throws FOPException {
+	throws FOPException
+    {
 	super(parent, propertyList);
-	this.name = "fo:region-body";
-
-	if (parent.getName().equals("fo:simple-page-master")) {
-	    ((SimplePageMaster) parent).setRegionBody(this);
-	} else {
-	    throw new FOPException("region-body must be child of "
-				   + "simple-page-master, not "
-				   + parent.getName());
-	}
     }
+    
 
-    Region makeRegion(int allocationRectangleXPosition,
+    RegionArea makeRegionArea(int allocationRectangleXPosition,
 		      int allocationRectangleYPosition,
 		      int allocationRectangleWidth,
 		      int allocationRectangleHeight) {
@@ -91,10 +88,26 @@ public class RegionBody extends FObj {
 	int marginLeft = this.properties.get("margin-left").getLength().mvalue();
 	int marginRight = this.properties.get("margin-right").getLength().mvalue();
 
-	return new Region(allocationRectangleXPosition + marginLeft,
+	return new RegionArea(allocationRectangleXPosition + marginLeft,
 			  allocationRectangleYPosition - marginTop,
 			  allocationRectangleWidth - marginLeft -
 			  marginRight, allocationRectangleHeight -
 			  marginTop - marginBottom); 
     }
+	
+    protected String getDefaultRegionName() 
+    {
+	return "xsl-region-body";
+    }
+    
+    protected String getElementName() 
+    {
+	return "fo:region-body";
+    }
+
+    public String getRegionClass() 
+    {
+	return REGION_CLASS;
+    }
+
 }
