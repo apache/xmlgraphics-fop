@@ -21,6 +21,7 @@
 package org.apache.fop.apps;
 
 //import java.util.logging.Handler;
+import java.awt.GraphicsEnvironment;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
@@ -82,6 +83,7 @@ public class Fop {
     private XmlEventReader eventReader;
     private FOTree foTree;
     private AreaTree areaTree = new AreaTree();
+    private GraphicsEnvironment gEnv = null;
 
     private Thread driverThread;
     private Thread parserThread;
@@ -190,8 +192,8 @@ public class Fop {
         logger = Logger.getLogger(fopPackage);
         logger.setLevel(Level.CONFIG);
         logger.config(version);
-        // Then restrict to WARNING
-        logger.setLevel(Level.WARNING);
+        // Then restrict to INFO
+        logger.setLevel(Level.INFO);
     }
 
     private void setupRunStats() {
@@ -256,12 +258,15 @@ public class Fop {
                     throw new FOPException(e2);
                 }
             }
-            setInputHandler(options.getInputHandler());
+            inputHandler = options.getInputHandler();
             parser = inputHandler.getParser();
             saxSource = inputHandler.getInputSource();
             // Setting of namespace-prefixes feature no longer required
             //setParserFeatures(parser);
 
+            rendererType = options.getRenderer();
+            setRenderer(rendererType);
+            gEnv = renderer.getGraphicsEnvironment();
             namespaces = new Namespaces();
             eventsBuffer = new SyncedXmlEventsBuffer(namespaces);
             eventReader = new XmlEventReader(eventsBuffer, namespaces);
@@ -299,15 +304,6 @@ public class Fop {
         printRunStats();
             
     }
-
-    /**
-     * Sets the InputHandler for XML imput as specified in FOPOptions.
-     * @param inputHandler the InputHandler
-     */
-    public void setInputHandler(InputHandler inputHandler) {
-        this.inputHandler = inputHandler;
-    }
-
 
     /**
      * Optionally sets the FOUserAgent instance for FOP to use. The Driver
@@ -351,7 +347,8 @@ public class Fop {
 //            setRenderer("org.apache.fop.render.pdf.PDFRenderer");
 //            break;
         case RENDER_AWT:
-            throw new IllegalArgumentException("Use renderer form of setRenderer() for AWT");
+            setRenderer("org.apache.fop.render.awt.AWTRenderer");
+            break;
 //        case RENDER_PRINT:
 //            setRenderer("org.apache.fop.render.awt.AWTPrintRenderer");
 //            break;
@@ -403,6 +400,10 @@ public class Fop {
      */
     public Renderer getRenderer() {
         return renderer;
+    }
+
+    public GraphicsEnvironment getGraphicsEnvironment() {
+        return gEnv;
     }
 
     /**
