@@ -3,7 +3,7 @@
 <!ENTITY svgimage SYSTEM "blocks.ent">
 ]>
 
-<fo:root font-family="Times Roman" font-size="12pt" text-align="center" xmlns:fo="http://www.w3.org/1999/XSL/Format">
+<fo:root font-family="Times Roman" font-size="12pt" xmlns:fo="http://www.w3.org/1999/XSL/Format">
 
 <fo:layout-master-set>
     <fo:simple-page-master
@@ -30,7 +30,7 @@
 </fo:static-content>
 
 <fo:flow flow-name="xsl-region-body">
-<fo:block font-size="18pt" font-weight="bold">Embedding SVG in Viewport</fo:block>
+<fo:block font-size="18pt" font-weight="bold" text-align="center">Embedding SVG in Viewport</fo:block>
 <fo:block>
   <fo:block font-size="16pt" font-weight="bold" space-before.minimum="1em" space-before.optimum="1.5em" space-before.maximum="2em">Align in Larger Viewport</fo:block>
 
@@ -78,9 +78,10 @@ Default align:
   <fo:block font-size="16pt" font-weight="bold" space-before.minimum="1em" space-before.optimum="1.5em" space-before.maximum="2em">Scaling</fo:block>
   <fo:block>
 Non-uniform
-(<fo:instream-foreign-object content-width="100pt" content-height="50pt" scaling="non-uniform" overflow="hidden" text-align="start">&svgimage;</fo:instream-foreign-object>), uniform
-(<fo:instream-foreign-object content-width="100pt" content-height="50pt" scaling="uniform" overflow="hidden" text-align="start">&svgimage;</fo:instream-foreign-object>), uniform
-(<fo:instream-foreign-object content-width="50pt" content-height="100pt" scaling="uniform" overflow="hidden" text-align="start">&svgimage;</fo:instream-foreign-object>).
+(<fo:instream-foreign-object content-width="100pt" content-height="50pt" scaling="non-uniform" overflow="hidden" text-align="start">&svgimage;</fo:instream-foreign-object>), non-uniform
+(<fo:instream-foreign-object content-width="50pt" content-height="100pt" scaling="non-uniform" overflow="hidden" text-align="start">&svgimage;</fo:instream-foreign-object>), uniform
+(<fo:instream-foreign-object content-width="100pt" content-height="75pt" scaling="uniform" overflow="hidden" text-align="start">&svgimage;</fo:instream-foreign-object>), uniform
+(<fo:instream-foreign-object content-width="75pt" content-height="100pt" scaling="uniform" overflow="hidden" text-align="start">&svgimage;</fo:instream-foreign-object>).
   </fo:block>
 
   <fo:block font-size="16pt" font-weight="bold" space-before.minimum="1em" space-before.optimum="1.5em" space-before.maximum="2em"/>
