@@ -766,7 +766,7 @@
       </fo:block>
 
       <fo:block text-align="center">
-Some examples of how to embed an SVG image inside you FO documents
+Some examples of how to embed an SVG image inside your FO documents
       </fo:block>
 
       <fo:block break-before="page" space-after.optimum="10pt" font-weight="bold" font-size="12pt">
@@ -936,7 +936,7 @@ Sizing
     <fo:table-row>
       <fo:table-cell number-columns-spanned="2">
         <fo:block space-before.optimum="5pt">
-Specify the size on the instream-foreign-object element.
+Specify the size on the instream-foreign-object element. <fo:inline color="red">Note: currently not functional, bug.</fo:inline>
         </fo:block>
       </fo:table-cell>
     </fo:table-row>
@@ -972,6 +972,84 @@ Specify the size on the instream-foreign-object element.
         </fo:block>
       </fo:table-cell>
     </fo:table-row>
+
+    <fo:table-row keep-with-next="always">
+      <fo:table-cell number-columns-spanned="2">
+        <fo:block space-before.optimum="5pt">
+Specify the size on the svg document element.
+        </fo:block>
+      </fo:table-cell>
+    </fo:table-row>
+
+    <fo:table-row>
+      <fo:table-cell>
+        <fo:block font-size="8pt" white-space-collapse="false" space-before.optimum="5pt">
+<![CDATA[
+<fo:instream-foreign-object>
+<svg:svg width="20pt" height="20pt">
+  <svg:g style="fill:red; stroke:#000000">
+     <svg:rect x="0" y="0" width="15" height="15"/>
+     <svg:rect x="5" y="5" width="15" height="15"/>
+  </svg:g>
+</svg:svg>
+</fo:instream-foreign-object>
+]]>
+
+        </fo:block>
+      </fo:table-cell>
+      <fo:table-cell>
+        <fo:block space-before.optimum="15pt">
+<fo:instream-foreign-object>
+<svg:svg width="20pt" height="20pt">
+  <svg:g style="fill:red; stroke:#000000">
+     <svg:rect x="0" y="0" width="15" height="15"/>
+     <svg:rect x="5" y="5" width="15" height="15"/>
+  </svg:g>
+</svg:svg>
+</fo:instream-foreign-object>
+        </fo:block>
+      </fo:table-cell>
+    </fo:table-row>
+
+    <fo:table-row keep-with-next="always">
+      <fo:table-cell number-columns-spanned="2">
+        <fo:block space-before.optimum="5pt">
+Specify the size on the svg document element and for the content size on the instream-foreign-object.
+        </fo:block>
+      </fo:table-cell>
+    </fo:table-row>
+
+    <fo:table-row>
+      <fo:table-cell>
+        <fo:block font-size="8pt" white-space-collapse="false" space-before.optimum="5pt">
+<![CDATA[
+<fo:instream-foreign-object content-width="40pt" content-height="40pt">
+<svg:svg width="20pt" height="20pt">
+  <svg:g style="fill:red; stroke:#000000">
+     <svg:rect x="0" y="0" width="15" height="15"/>
+     <svg:rect x="5" y="5" width="15" height="15"/>
+  </svg:g>
+</svg:svg>
+</fo:instream-foreign-object>
+]]>
+
+        </fo:block>
+      </fo:table-cell>
+      <fo:table-cell>
+        <fo:block space-before.optimum="15pt">
+<fo:instream-foreign-object content-width="40pt" content-height="40pt">
+<svg:svg width="20pt" height="20pt">
+  <svg:g style="fill:red; stroke:#000000">
+     <svg:rect x="0" y="0" width="15" height="15"/>
+     <svg:rect x="5" y="5" width="15" height="15"/>
+  </svg:g>
+</svg:svg>
+</fo:instream-foreign-object>
+        </fo:block>
+      </fo:table-cell>
+    </fo:table-row>
+
+
   </fo:table-body>
 
           </fo:table>
