@@ -1,5 +1,15 @@
 Done since 0.17 release
 
+- added: improved Fop task for Ant, added basedir attribute [Will Holcomb]
+- added: Driver can be reset now [Art Welch]
+- added: CID Font support to svg text [Claud Yu]
+- added: renders svg to the awt viewer using batik [Keiron Liddle]
+- added: start on the PDFGraphics2D for rendering the batik svg to pdf [Keiron Liddle]
+- added: a text renderer [Art Welch]
+- added: PCL renderer [Art Welch]
+- added: a bunch more properties on svg elements [Keiron Liddle]
+- added: subset fonts embedding [Tore Engvig]
+- added: Dutch hyphenation file [Reinout Verkerk]
 - added: Fop is now self-contained (all necessary jar files included) and 
          a runnable jar (can be started with java -jar fop.jar) [Kelly Campbell] 
 - added: support for border and padding shorthand properties [Karen Lease]
@@ -15,10 +25,13 @@ Done since 0.17 release
 - added: break before and break after for table rows [Keiron Liddle]
 - added: error is reported if the number of columns the cells are using is 
          different to the number of columns in the table [Keiron Liddle]
+- updated: better handling of svg properties using xsl conversion to svgproperties [Keiron Liddle]
 - updated: the FOP build to fix the problems of the output location for the 
-           property code generation. updated ant.jar to version 1.3, added all needed jar files [Kelly Campbell] 
+           property code generation. updated ant.jar to version 1.3, 
+           added all needed jar files [Kelly Campbell] 
 - changed: Driver to make embedding Fop easier [Kelly Campbell] 
 - changed: apps package and commandline usage of Fop [Fotis Jannidis]
+- changed: adding a PrintRenderer for all print oriented renderers [Art Welch] 
 - fixed: problems if calculated leader-length < 0 [Fotis Jannidis]
 - fixed: fixes problem with page break after last row of table body [Keiron Liddle]
 - fixed: fixed svg placement bug, now puts the image at the correct offset [Keiron Liddle]
@@ -26,6 +39,14 @@ Done since 0.17 release
 - fixed: xalan 1 support works again, was broken after changes in apps [Kelly Campbell]
 - fixed: properly adjusts the max height of table parts, when a footnote is added
          table will not overlap with the footnote [Keiron Liddle]  
+- fixed: hexadecimal escape sequences in dutch hyphenation file converted 
+         to iso-latin-1 [Carlos Villegas]
+- fixed: the typos in the fonts example in the userconfig.xml
+         and optimized conversions to String in TTFReader and use of StringBuffer [Alain Fagot]
+- fixed: added border style to relevant border so that borders show up [Keiron Liddle]
+- fixed:  put text-anchor in the correct place [Keiron Liddle]
+- fixed: InstreamForeignObject checks for no more room in block area [Keiron Liddle]
+- fixed: false border rendering for PCL renderer [Art Welch]
 
 
 
