@@ -192,18 +192,6 @@ public class XSLTInputHandler extends InputHandler {
     }
 
     /**
-     * @see org.apache.fop.apps.InputHandler#run(Driver)
-     */
-    public void run(Driver driver) throws FOPException {
-        try {
-            transformer.transform(xmlSource,
-                                  new SAXResult(driver.getContentHandler()));
-        } catch (Exception ex) {
-            throw new FOPException(ex);
-        }
-    }
-
-    /**
      * Sets an XSLT parameter.
      * @param name the name of the parameter
      * @param value the value of the parameter

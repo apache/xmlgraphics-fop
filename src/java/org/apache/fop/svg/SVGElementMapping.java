@@ -54,7 +54,7 @@ import java.util.HashMap;
 
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.ElementMapping;
-import org.apache.fop.apps.Driver;
+import org.apache.fop.apps.FOInputHandler;
 
 import org.apache.batik.util.XMLResourceDescriptor;
 import org.apache.batik.dom.svg.SVGDOMImplementation;
@@ -78,7 +78,7 @@ public class SVGElementMapping extends ElementMapping {
             // normally the user agent value is used
             try {
                 XMLResourceDescriptor.setXMLParserClassName(
-                  Driver.getParserClassName());
+                  FOInputHandler.getParserClassName());
     
                 foObjs = new HashMap();
                 foObjs.put("svg", new SE());
