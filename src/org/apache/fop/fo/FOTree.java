@@ -53,7 +53,6 @@ public class FOTree extends Tree implements Runnable {
     SyncedXmlEventsBuffer xmlevents;
     private Thread parserThread;
     private boolean errorDump;
-    public final PropertyConsts propConsts;
 
     /**
      * The <tt>PropertyParser</tt> which will be used by the FO tree
@@ -61,8 +60,6 @@ public class FOTree extends Tree implements Runnable {
      */
     protected PropertyParser exprParser;
 
-    protected PropertyValue[] initialValues
-                    = new PropertyValue[PropNames.LAST_PROPERTY_INDEX + 1];
 
     /**
      * @param xmlevents the buffer from which <tt>XMLEvent</tt>s from the
@@ -75,42 +72,27 @@ public class FOTree extends Tree implements Runnable {
         errorDump = Configuration.getBooleanValue("debugMode").booleanValue();
         this.xmlevents = xmlevents;
         exprParser = new PropertyParser(this);
-        propConsts = PropertyConsts.getPropertyConsts();
 
         // Initialize the FontSize first.  Any lengths defined in ems must
         // be resolved relative to the current font size.  This may happen
         // during setup of initial values.
         // Set the initial value
         PropertyValue prop =
-                    propConsts.getInitialValue(PropNames.FONT_SIZE);
+                PropertyConsts.pconsts.getInitialValue(PropNames.FONT_SIZE);
+        System.out.println("font-size property: " + prop);
         if ( ! (prop instanceof Numeric) || ! ((Numeric)prop).isLength())
             throw new PropertyException("Initial font-size is not a Length");
-        initialValues[PropNames.FONT_SIZE] = prop;
 
 
+        /*
         for (int i = 1; i <= PropNames.LAST_PROPERTY_INDEX; i++) {
             if (i == PropNames.FONT_SIZE) continue;
             // Set up the initial values for each property
-            prop = propConsts.getInitialValue(i);
-            //System.out.println("....Setting initial value: "
-            //                 + i + ((prop == null) ? " NULL" : " notNULL"));
-            initialValues[i] = prop;
+            PropertyConsts.pconsts.getInitialValue(i);
+            //System.out.println("....Setting initial value for " + i);
         }
+        */
 
-    }
-
-    /**
-     * Get the initial value <tt>PropertyValue</tt> for a given property.
-     * Note that this is a <b>raw</b> value; if it is
-     * an unresolved percentage that value will be returned.
-     * @param index - the property index.
-     * @return a <tt>PropertyValue</tt> containing the property
-     * value element at the bottom of the stack for the indexed property.
-     */
-    public PropertyValue getInitialValue(int index)
-            throws PropertyException
-    {
-        return initialValues[index];
     }
 
     /**
