@@ -45,6 +45,7 @@ import org.apache.fop.apps.FOPException;
 import org.apache.fop.area.Area;
 import org.apache.fop.area.BeforeFloat;
 import org.apache.fop.area.Block;
+import org.apache.fop.area.BlockViewport;
 import org.apache.fop.area.BodyRegion;
 import org.apache.fop.area.Flow;
 import org.apache.fop.area.Footnote;
@@ -453,6 +454,9 @@ public class XMLRenderer extends AbstractRenderer {
         atts.clear();
         addAreaAttributes(block);
         addTraitAttributes(block);
+        if (block instanceof BlockViewport) {
+            addAttribute("is-viewport", "true");
+        }
         startElement("block", atts);
         super.renderBlock(block);
         endElement("block");
@@ -474,7 +478,9 @@ public class XMLRenderer extends AbstractRenderer {
      * @see org.apache.fop.render.Renderer#renderViewport(Viewport)
      */
     protected void renderViewport(Viewport viewport) {
-        startElement("viewport");
+        atts.clear();
+        addAreaAttributes(viewport);
+        startElement("viewport", atts);
         super.renderViewport(viewport);
         endElement("viewport");
     }
@@ -504,7 +510,7 @@ public class XMLRenderer extends AbstractRenderer {
      * Renders an fo:foreing-object.
      * @param fo the foreign object
      */
-    public void renderForeignObject(ForeignObject fo) {
+    public void renderForeignObject(ForeignObject fo, Rectangle2D pos) {
         atts.clear();
         addAreaAttributes(fo);
         startElement("foreignObject", atts);
