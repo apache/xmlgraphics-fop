@@ -13,7 +13,7 @@
     </p>
     <p>c) Fop supports SVG (see <jump href="implemented.html">Features</jump> for further information) and
           needs the w3c.jar library. This library comes with Fop (xml-fop/lib) and must
-          be included in your classpath. The jar file w3c.jar is the compiled classes for the
+          be included in your classpath. The jar file w3c.jar contains the compiled classes for the
           java svg bindings with some other DOM classes that are used by the SVG DOM bindings.
           The source for the svg java binding classes can be found at - <jump href="http://www.w3.org/TR/2000/CR-SVG-20000802/java.html">
           SVG Java bindings</jump>, currently they correspond to the CR-SVG-20000802 specification document.

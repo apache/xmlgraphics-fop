@@ -6,7 +6,7 @@
 <s1 title="Features">
   <s2 title="What's Implemented?">
       <p>The following formatting objects and properties of the xsl-fo 
-         working draft (12 October 2000) are implemented.Please have also a look at the 
+         candidate recommendation are implemented.Please have also a look at the 
          section on <jump href="limitations.html">limitations</jump>
       </p>
   </s2>
@@ -46,7 +46,7 @@
         <li>external-graphic</li>
         <li>inline</li>
         <li>instream-foreign-object</li>
-        <li>leader, but see <jump href="limitations.html">limitations</jump></li>
+        <li>leader</li>
         <li>page-number </li>
         <li>page-number-citation, see <jump href="limitations.html">limitations</jump></li>
       </ul>
@@ -145,6 +145,10 @@
       <li>initial-page-number</li>
       <li>internal-destination</li>
       <li>keep-with-next (broken)</li>
+      <li>leader-alignment (not value "page")</li>
+      <li>leader-length (no percentage values)</li>
+      <li>leader-pattern (not value "use-content")</li>
+      <li>leader-pattern-width</li>
       <li>left</li>
       <li>line-height </li>
       <li>margin-bottom (only on pages and regions) </li>
@@ -170,18 +174,19 @@
       <li>provisional-distance-between-starts </li>
       <li>provisional-label-separation </li>
       <li>ref-id </li>
+      <li>region-name</li>
       <li>right</li>
       <li>rule-thickness </li>
       <li>space-after.optimum </li>
       <li>space-before.optimum </li>
       <li>src </li>
       <li>start-indent </li>
-      <li>textdecoration (only value 'underline' is supported)</li>
+      <li>textdecoration (only value "underline")</li>
       <li>text-align </li>
       <li>text-align-last </li>
       <li>text-indent </li>
       <li>top</li>
-      <li>white-space-treatment (broken)</li>
+      <li>white-space-collapse</li>
       <li>width</li>
       <li>wrap-option</li>
     </ul>

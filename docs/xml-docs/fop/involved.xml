@@ -22,7 +22,7 @@
   </s2>
   <s2 title="Look at the developer's code using cvs">
   <p>Between releases the newest code can be accessed via cvs. To do this you need to install a cvs 
-     client on your computer if it is not already there. An explanation how to connect to the 
+     client on your computer, if it is not already there. An explanation how to connect to the 
      Fop source repository can be found at <jump href="http://xml.apache.org/cvs.html">http://xml.apache.org/cvs.html</jump>. 
      An introduction into cvs and the cvs manual can be found in the 
      <jump href="http://xml.apache.org/library.html">reference library</jump>.</p>

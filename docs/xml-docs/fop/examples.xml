@@ -15,11 +15,9 @@
       </li>
       <li>normal.fo - a simple file showing the use of a 2 level of headings, normal text and a header.
       </li>
-      <li>table.fo - a simple table
+      <li>table.fo - some table examples 
       </li>
-      <li>list.fo - a simple list
-      </li>
-      <li>list2.fo - some list examples
+      <li>list.fo - a short tutorial how to use list fo's and properties
       </li>
       <li>images.fo - shows how to embed gif and jpg images into the xsl:fo file using external-graphic.
       </li>
@@ -28,7 +26,7 @@
       <li>extensive.fo - a longer test file containing a lot of different flow objects and properties. 
           A good candidate to test your bugfix or new Fop code. 
       </li>
-      <li>leader.fo - a very simple example of a rule
+      <li>leader.fo - shows different uses of fo:leader, p.e. as rule or in a table of content
       </li>
       <li>normalex.fo - shows the use of computed property values
       </li>
@@ -36,9 +34,9 @@
       </li>
       <li>instream.fo - shows the use of fo:instream-foreign-object together with svg 
       </li>
-      <li>inhprop.fo - shows the use of inherited property values
-      </li>
       <li>textdeko.fo - shows the use of the property textdecoration
+      </li>
+      <li>readme.fo - uses an old version of Fop documentation for a longer example
       </li>
       
       <li>Look also into the directory examples/svg. There you find some very extensive svg examples. 

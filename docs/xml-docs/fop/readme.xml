@@ -1,7 +1,6 @@
 <?xml version="1.0" standalone="no"?>
 
 
-<!-- $Id$ -->
 <!-- 
   Authors:
    James Tauber
@@ -21,16 +20,22 @@
        like XT or Xalan) or can be passed in memory as a DOM Document or (in
        the case of XT) SAX events.
     </p>
-    <p>The latest version of Fop is 0.14 and it supports partially the xsl:fo working draft 
-       from March 2000. You can <jump href="download.html">download</jump> 
-       Fop including a precompiled version the source code and many example files to 
+    <p>The latest version of Fop is 0.15 and it supports the xsl:fo candidate release.
+       You can <jump href="download.html">download</jump> 
+       Fop including a precompiled version, the source code and many example files to 
        get you started. Pointers to introductions into xsl:fo can be found in the
-       section <jump href="specs.html">specifications</jump>. 
+       section <jump href="specs.html">specifications</jump>. Please be aware, that 
+       Fop is at the moment not a full implementation of the basic conformance level
+       of the xsl:fo standard. You can find a list of supported flow objects and properties
+       in the section <jump href="implemented.html">Features</jump> and in section 
+       <jump href="limitations.html">Limitations</jump> in what way this support is 
+       limited.
     </p>
     <p>FOP is part of Apache's XML project. The homepage of FOP is 
        <jump href="http://xml.apache.org/fop">http://xml.apache.org/fop</jump>. A list
        of known bugs, the committers to this project and the tasks they are working on can be found 
-       in the file <jump href="http://xml.apache.org/websrc/cvsweb.cgi/xml-fop/">Status</jump>
+       in the file <jump href="http://xml.apache.org/websrc/cvsweb.cgi/xml-fop/">Status</jump> in the
+       root of your Fop distribution.
     </p>
   </s2>
 
