@@ -84,7 +84,11 @@ FOP readme
       java -Dorg.xml.sax.parser=org.apache.xerces.parsers.SAXParser
          -cp fop_bin_0_12_0.jar;xerces.jar
          org.apache.fop.apps.CommandLine fo-file pdf-file
-    
+
+      PLEASE NOTE: Starting with v 0.12.1 [dev] the standard parser for FOP is xerces-J. 
+                   Therefore if you use xerces, you don't need to 
+                   set -Dorg.xml.sax.parser=org.apache.xerces.parsers.SAXParser
+
     3.2.2. Method Two
       Rather than performing transformation with an XSLT before invoking FOP, it is 
       possible, if you use XT as your XSLT engine, to just call FOP and have it call 
@@ -98,8 +102,11 @@ FOP readme
 
       Again, if your SAX Parser is other than XP, you will need to set the property
       org.xml.sax.parser to the SAX Parser class to use.
-      
-    
+
+      PLEASE NOTE: Starting with v 0.12.1 [dev] the standard parser for FOP is xerces-J. 
+                   Therefore the example will only work, if you use xerces. Otherwise
+                   you have to set the sax parser
+
     3.2.3. Method Three
       If you already produced the FO file, you can preview the results of your 
       transformation without using any pdf viewer by invoking FOP with the viewer 
@@ -115,6 +122,7 @@ FOP readme
             FOP can be started without classpath: 
       
             java org.apache.fop.apps.CommandLine fo-file pdf-file
+
     
   
   3.3. Running FOP on MacOS  
