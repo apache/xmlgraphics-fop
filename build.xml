@@ -228,12 +228,8 @@ Sometimes ant gives out this warnings, but the build is finished without any pro
     <property name="src.propmaker.xsl" value="${src.codegen}/propmaker.xsl"/>
     <property name="foproperties.xml" value="${build.codegen}/foproperties.xml"/>
     <property name="colorkw.xml" value="${build.codegen}/colorkw.xml"/>
-    <property name="svgproperties.xml" value="${build.codegen}/svgproperties.xml"/>
     <property name="extproperties.xml" value="${build.codegen}/extproperties.xml"/>
     <property name="allprops.xml" value="${build.codegen}/allprops.xml"/>
-
-    <property name="svgelements.xml" value="${build.codegen}/svgelements.xml"/>
-    <property name="elements.xsl" value="${build.codegen}/elements.xsl"/>
 
     <property name="properties.xsl" value="${build.codegen}/properties.xsl"/>
     <property name="propmap.xsl" value="${build.codegen}/propmap.xsl"/>
@@ -433,13 +429,8 @@ Sometimes ant gives out this warnings, but the build is finished without any pro
 
     <!-- generate the java files from xml resources -->
     <echo message="Generating the java files from xml resources"/>
-
-    <xslt infile="${svgelements.xml}" xsltfile="${src.propmaker.xsl}"
-        dependent="${propinc.xsl}"
-        outfile="${svgproperties.xml}" smart="yes"/>
-
     <xslt infile="${allprops.xml}" xsltfile="${genconst.xsl}"
-        dependent="${foproperties.xml},${svgproperties.xml},${extproperties.xml},${colorkw.xml}"
+        dependent="${foproperties.xml},${extproperties.xml},${colorkw.xml}"
         outfile="${build.src}/${replacestring}/fo/properties/Constants.java" smart="yes"/>
 
     <xslt infile="${foproperties.xml}" xsltfile="${properties.xsl}"
@@ -452,16 +443,6 @@ Sometimes ant gives out this warnings, but the build is finished without any pro
         dependent="${propinc.xsl}"
         outfile="${build.src}/${replacestring}/fo/properties/foenums_${ignore_this}" smart="yes"/>
 
-    <xslt infile="${svgproperties.xml}" xsltfile="${properties.xsl}"
-        dependent="${propinc.xsl}"
-        outfile="${build.src}/${replacestring}/fo/properties/svg_${ignore_this}" smart="yes"/>
-    <xslt infile="${svgproperties.xml}" xsltfile="${propmap.xsl}"
-        dependent="${propinc.xsl}"
-        outfile="${build.src}/${replacestring}/fo/properties/SVGPropertyMapping.java" smart="yes"/>
-    <xslt infile="${svgproperties.xml}" xsltfile="${enumgen.xsl}"
-        dependent="${propinc.xsl}"
-        outfile="${build.src}/${replacestring}/fo/properties/svgenums_${ignore_this}" smart="yes"/>
-
     <xslt infile="${extproperties.xml}" xsltfile="${properties.xsl}"
         dependent="${propinc.xsl}"
         outfile="${build.src}/${replacestring}/fo/properties/ext_${ignore_this}" smart="yes"/>
@@ -471,11 +452,6 @@ Sometimes ant gives out this warnings, but the build is finished without any pro
     <xslt infile="${extproperties.xml}" xsltfile="${enumgen.xsl}"
         dependent="${propinc.xsl}"
         outfile="${build.src}/${replacestring}/fo/properties/extenums_${ignore_this}" smart="yes"/>
-
-
-    <xslt infile="${svgelements.xml}" xsltfile="${elements.xsl}"
-        outfile="${build.src}/${replacestring}/svg/ele_${ignore_this}" smart="yes"/>
-
 
     <xslt infile="${charlist.xml}" xsltfile="${charlist.xsl}" 
         outfile="${build.src}/${replacestring}/render/pdf/CodePointMapping.java" smart="yes"/>

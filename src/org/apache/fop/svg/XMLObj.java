@@ -15,6 +15,7 @@ import org.apache.fop.apps.FOPException;
 import org.apache.fop.layout.LinkSet;
 
 import org.w3c.dom.*;
+import org.xml.sax.Attributes;
 
 import java.util.*;
 
@@ -26,15 +27,18 @@ import java.util.*;
 public abstract class XMLObj extends FObj {
 
     protected String tagName = "";
-    protected String[] props = {};
+
+    protected Element element;
+    protected Document doc;
 
     /**
      *
      * @param parent the parent formatting object
      * @param propertyList the explicit properties of this object
      */
-    public XMLObj(FObj parent, PropertyList propertyList) {
+    public XMLObj(FObj parent, PropertyList propertyList, String tag) {
         super(parent, propertyList);
+        tagName = tag;
     }
 
     public abstract String getNameSpace();
@@ -42,68 +46,63 @@ public abstract class XMLObj extends FObj {
     protected static Hashtable ns = new Hashtable();
 
     public void addGraphic(Document doc, Element parent) {
-        Element element = doc.createElementNS(getNameSpace(), tagName);
-        // Element element = doc.createElement(tagName);
-        for (int count = 0; count < props.length; count++) {
-            if (this.properties.get(props[count]) != null) {
-                String rf = this.properties.get(props[count]).getString();
-                if (rf != null) {
-                    if (props[count].indexOf(":") == -1) {
-                        element.setAttribute(props[count], rf);
-                    } else {
-                        String pref =
-                            props[count].substring(0,
-                                                   props[count].indexOf(":"));
-                        if (pref.equals("xmlns")) {
-                            ns.put(props[count].substring(props[count].indexOf(":")
-                                                          + 1), rf);
-                        }
-                        ns.put("xlink", "http://www.w3.org/1999/xlink");
-                        element.setAttributeNS((String)ns.get(pref),
-                                               props[count], rf);
+        this.doc = doc;
+        element = doc.createElementNS(getNameSpace(), tagName);
+
+        if(this.properties instanceof DirectPropertyListBuilder.AttrPropertyList) {
+            Attributes attr = ((DirectPropertyListBuilder.AttrPropertyList)this.properties).getAttributes();
+            for (int count = 0; count < attr.getLength(); count++) {
+                String rf = attr.getValue(count);
+                String qname = attr.getQName(count);
+                if (qname.indexOf(":") == -1) {
+                    element.setAttribute(qname, rf);
+                } else {
+                    String pref =
+                        qname.substring(0, qname.indexOf(":"));
+                    if (pref.equals("xmlns")) {
+                        ns.put(qname.substring(qname.indexOf(":")
+                                                      + 1), rf);
                     }
+                    ns.put("xlink", "http://www.w3.org/1999/xlink");
+                    element.setAttributeNS((String)ns.get(pref),
+                                           qname, rf);
                 }
             }
+        } else {
         }
+
         parent.appendChild(element);
-        int numChildren = this.children.size();
-        for (int i = 0; i < numChildren; i++) {
-            Object child = children.elementAt(i);
-            if (child instanceof XMLObj) {
-                ((XMLObj)child).addGraphic(doc, element);
-            } else if (child instanceof String) {
-                org.w3c.dom.Text text = doc.createTextNode((String)child);
-                element.appendChild(text);
-            }
-        }
     }
 
     public void buildTopLevel(Document doc, Element svgRoot) {
         // build up the info for the top level element
-        for (int count = 0; count < props.length; count++) {
-            if (this.properties.get(props[count]) != null) {
-                String rf = this.properties.get(props[count]).getString();
-                if (rf != null)
-                    svgRoot.setAttributeNS(null, props[count], rf);
+        if(this.properties instanceof DirectPropertyListBuilder.AttrPropertyList) {
+            Attributes attr = ((DirectPropertyListBuilder.AttrPropertyList)this.properties).getAttributes();
+            for (int count = 0; count < attr.getLength(); count++) {
+                String rf = attr.getValue(count);
+                String qname = attr.getQName(count);
+                if (qname.indexOf(":") == -1) {
+                    element.setAttribute(qname, rf);
+                } else {
+                    String pref =
+                       qname.substring(0, qname.indexOf(":"));
+                    if (pref.equals("xmlns")) {
+                        ns.put(qname.substring(qname.indexOf(":")
+                                                      + 1), rf);
+                    }
+                    ns.put("xlink", "http://www.w3.org/1999/xlink");
+                    element.setAttributeNS((String)ns.get(pref),
+                                           qname, rf);
+                }
             }
-        }
-        // doc.appendChild(topLevel);
-        int numChildren = this.children.size();
-        for (int i = 0; i < numChildren; i++) {
-            Object child = children.elementAt(i);
-            if (child instanceof XMLObj) {
-                ((XMLObj)child).addGraphic(doc, svgRoot);
-            } else if (child instanceof String) {
-                org.w3c.dom.Text text = doc.createTextNode((String)child);
-                svgRoot.appendChild(text);
-            }
+        } else {
         }
     }
 
     public Document createBasicDocument() {
-        Document doc = null;
+        doc = null;
 
-        Element svgRoot = null;
+        element = null;
         try {
             // DOMImplementation impl = javax.xml.parsers.DocumentBuilderFactory.newInstance().newDocumentBuilder().getDOMImplementation();
             // String ns = GraphElementMapping.URI;
@@ -113,13 +112,24 @@ public abstract class XMLObj extends FObj {
             Element el = doc.createElement("graph");
             doc.appendChild(el);
 
-            svgRoot = doc.getDocumentElement();
-            buildTopLevel(doc, svgRoot);
-
+            element = doc.getDocumentElement();
+            buildTopLevel(doc, element);
         } catch (Exception e) {
             e.printStackTrace();
         }
         return doc;
+    }
+
+    protected void addChild(FONode child) {
+        if (child instanceof XMLObj) {
+            ((XMLObj)child).addGraphic(doc, element);
+        }
+    }
+
+    protected void addCharacters(char data[], int start, int length) {
+        String str = new String(data, start, length - start);
+        org.w3c.dom.Text text = doc.createTextNode(str);
+        element.appendChild(text);
     }
 
     /**
@@ -130,7 +140,7 @@ public abstract class XMLObj extends FObj {
      */
     public Status layout(Area area) throws FOPException {
         /* generate a warning */
-        System.err.println("WARNING: " + this.name + " outside foreign xml");
+        log.error("" + this.name + " outside foreign xml");
 
         /* return status */
         return new Status(Status.OK);
