@@ -34,11 +34,6 @@ public abstract class AbstractPropertyValue
      * An integer property type.
      */
     public final int type;
-
-    /**
-     * The <tt>FONode</tt> that stacked this value.
-     */
-    private FONode stackedBy = null;
     
     /**
      * @param index index of the property in the property arrays.
@@ -90,21 +85,6 @@ public abstract class AbstractPropertyValue
     }
 
     /**
-     * Set the node that stacked this value.
-     * @param node - the <tt>FONode</tt> that stacked this value.
-     */
-    public void setStackedBy(FONode node) {
-        stackedBy = node;
-    }
-
-    /**
-     * Get the node that stacked this value.
-     */
-    public FONode getStackedBy() {
-        return stackedBy;
-    }
-
-    /**
      * In some circumstances, the property against which a type is to be
      * validated may not be the same as the property against which this
      * <i>AbstractPropertyValue</i> is defined.
@@ -146,10 +126,17 @@ public abstract class AbstractPropertyValue
         validate(property, type);
     }
 
+    public static String typeString(int type) {
+        if (type < 0 || type >PropertyValue.LAST_PROPERTY_TYPE)
+            return "Property type out of range";
+        return PropertyValue.propertyTypes.get(type);
+    }
+
     public String toString() {
         try {
             return "Property: " + PropNames.getPropertyName(property)
-                    + " Index: " + property;
+                    + " Index: " + property + " Type: " +
+                    typeString(type);
         } catch (PropertyException e) {
             throw new RuntimeException(e.getMessage());
         }
