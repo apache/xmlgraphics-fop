@@ -5,12 +5,11 @@ include $(BASEDIR)/Makefile.rules
 
 SUBDIRS=
 
-SOURCES=BmpBwImage.java \
-	BmpColImage.java \
-	ImageArea.java \
+SOURCES=FopImageException.java \
 	FopImage.java \
+	ImageArea.java \
 	FopImageFactory.java \
-	GifJpegImage.java
+	JimiImage.java
 
 CLASSES=$(SOURCES:.java=.class)
 
