@@ -55,7 +55,7 @@ package org.apache.fop.svg;
 import org.apache.fop.fo.*;
 import org.apache.fop.fo.properties.*;
 import org.apache.fop.layout.Area;
-import org.apache.fop.layout.BlockArea;
+import org.apache.fop.layout.ForeignObjectArea;
 import org.apache.fop.layout.FontState;
 import org.apache.fop.apps.FOPException;
 
@@ -171,6 +171,11 @@ public class SVG extends FObj implements GraphicsCreator {
 		return new Status(Status.OK);
 	}
 
+	if (!(area instanceof ForeignObjectArea)) {
+	    // this is an error
+	    throw new FOPException("SVG not in fo:instream-foreign-object");
+	}
+
 	if (this.marker == BREAK_AFTER) {
 		return new Status(Status.OK);
 	}
@@ -189,29 +194,23 @@ public class SVG extends FObj implements GraphicsCreator {
 		this.breakBefore = this.properties.get("break-before").getEnum();
 		this.breakAfter = this.properties.get("break-after").getEnum();
 		Property prop = this.properties.get("width");
-//		if(prop instanceof SVGLengthProperty)
-			this.width = ((SVGLengthProperty)this.properties.get("width")).getSVGLength().getValue();
-//		else
-//			this.width = 0;
+		this.width = ((SVGLengthProperty)this.properties.get("width")).getSVGLength().getValue();
 		prop = this.properties.get("height");
-//		if(prop instanceof SVGLengthProperty)
-			this.height = ((SVGLengthProperty)this.properties.get("height")).getSVGLength().getValue();
-//		else
-//			this.height = 0;
+		this.height = ((SVGLengthProperty)this.properties.get("height")).getSVGLength().getValue();
 		
 		this.spaceBefore =
 		this.properties.get("space-before.optimum").getLength().mvalue();
 		this.spaceAfter =
 		this.properties.get("space-after.optimum").getLength().mvalue();
 		/* if the SVG is embedded in a block area */
-		if (area instanceof BlockArea) {
+//		if (area instanceof BlockArea) {
 		/* temporarily end the block area */
-		area.end();
-		}
+//		area.end();
+//		}
 		
 		this.marker = 0;
 
-		if (breakBefore == BreakBefore.PAGE || ((this.height * 1000 + area.getHeight()) > area.getMaxHeight())) {
+/*		if (breakBefore == BreakBefore.PAGE || ((this.height * 1000 + area.getHeight()) > area.getMaxHeight())) {
 		return new Status(Status.FORCE_PAGE_BREAK);
 		}
 
@@ -221,7 +220,7 @@ public class SVG extends FObj implements GraphicsCreator {
 
 		if (breakBefore == BreakBefore.EVEN_PAGE) {
 		return new Status(Status.FORCE_PAGE_BREAK_EVEN);
-		}
+		}*/
 	}
 	   
 	/* if there is a space-before */
@@ -237,7 +236,7 @@ public class SVG extends FObj implements GraphicsCreator {
 	svg.start();
 
 	/* add the SVG area to the containing area */
-	area.addChild(svg);
+	((ForeignObjectArea)area).setObject(svg);
 
 	/* iterate over the child formatting objects and lay them out
 	   into the SVG area */
@@ -254,21 +253,22 @@ public class SVG extends FObj implements GraphicsCreator {
 	svg.end();
 
 	/* increase the height of the containing area accordingly */
-	area.increaseHeight(svg.getHeight());
+	area.setHeight(svg.getHeight());
+//	area.setWidth(svg.getWidth());
 
 	/* if there is a space-after */
-	if (spaceAfter != 0) {
+//	if (spaceAfter != 0) {
 		/* add a display space */
-		area.addDisplaySpace(spaceAfter);
-	}
+//		area.addDisplaySpace(spaceAfter);
+//	}
 
 	/* if the SVG is embedded in a block area */
-	if (area instanceof BlockArea) {
+//	if (area instanceof BlockArea) {
 		/* re-start the block area */
-		area.start();
-	}
+//		area.start();
+//	}
 	
-	if (breakAfter == BreakAfter.PAGE) {
+/*	if (breakAfter == BreakAfter.PAGE) {
 		this.marker = BREAK_AFTER;
 		return new Status(Status.FORCE_PAGE_BREAK);
 	}
@@ -281,7 +281,7 @@ public class SVG extends FObj implements GraphicsCreator {
 	if (breakAfter == BreakAfter.EVEN_PAGE) {
 		this.marker = BREAK_AFTER;
 		return new Status(Status.FORCE_PAGE_BREAK_EVEN);
-	}
+	}*/
 
 	/* return status */
 	return new Status(Status.OK);
