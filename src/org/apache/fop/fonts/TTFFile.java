@@ -68,6 +68,8 @@ public class TTFFile {
     int ansiWidth[];
     HashMap ansiIndex;
 
+    private TTFDirTabEntry currentDirTab;
+
     /**
      * Position inputstream to position indicated
      * in the dirtab offset + offset
@@ -77,10 +79,10 @@ public class TTFFile {
         TTFDirTabEntry dt = (TTFDirTabEntry)dirTabs.get(name);
         if (dt == null) {
             System.out.println("Dirtab " + name + " not found.");
-            return;
+        } else {
+            in.seek_set(dt.offset + offset);
+            this.currentDirTab = dt;
         }
-
-        in.seek_set(dt.offset + offset);
     }
 
     /**
@@ -638,6 +640,15 @@ public class TTFFile {
         in.skip(2 + 2 + 3 * 2 + 8 * 2);
         nhmtx = in.readTTFUShort();
         // System.out.println("Number of horizontal metrics: " + nhmtx);
+
+        //Check OS/2 table for ascender/descender if necessary
+        if (ascender == 0 || descender == 0) {
+            seek_tab(in, "OS/2", 68);
+            if (this.currentDirTab.length >= 78) {
+                ascender = in.readTTFShort(); //sTypoAscender
+                descender = in.readTTFShort(); //sTypoDescender
+            }
+        }
     }
 
     /**
