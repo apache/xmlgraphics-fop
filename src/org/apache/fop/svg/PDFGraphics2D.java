@@ -16,6 +16,7 @@ import org.apache.fop.datatypes.ColorSpace;
 import org.apache.batik.ext.awt.g2d.*;
 
 import java.text.AttributedCharacterIterator;
+import java.text.CharacterIterator;
 import java.awt.*;
 import java.awt.Font;
 import java.awt.Image;
@@ -26,6 +27,7 @@ import java.awt.image.renderable.*;
 import java.io.*;
 
 import java.util.Map;
+import java.util.Vector;
 
 /**
  * This concrete implementation of <tt>AbstractGraphics2D</tt> is a
@@ -40,16 +42,12 @@ import java.util.Map;
  * @see org.apache.batik.ext.awt.g2d.AbstractGraphics2D
  */
 public class PDFGraphics2D extends AbstractGraphics2D {
-    protected PDFDocument pdfDoc;
-
-    protected FontState fontState;
-
     boolean standalone = false;
 
     /** the PDF Document being created */
-    //protected PDFDocument pdfDoc;
+    protected PDFDocument pdfDoc;
 
-    //protected FontState fontState;
+    protected FontState fontState;
 
     /** the current stream to add PDF commands to */
     StringWriter currentStream = new StringWriter();
@@ -167,23 +165,24 @@ public class PDFGraphics2D extends AbstractGraphics2D {
 
         final byte[] result =
           new byte[buf.getWidth() * buf.getHeight() * 3];
+        final byte[] mask =
+          new byte[buf.getWidth() * buf.getHeight()];
 
         Raster raster = buf.getData();
         DataBuffer bd = raster.getDataBuffer();
 
         int count = 0;
+        int maskpos = 0;
         switch (bd.getDataType()) {
             case DataBuffer.TYPE_INT:
                 int[][] idata = ((DataBufferInt) bd).getBankData();
                 for (int i = 0; i < idata.length; i++) {
                     for (int j = 0; j < idata[i].length; j++) {
-                        //System.out.println("data:" + ((idata[i][j] >> 24) & 0xFF));
-                        if (((idata[i][j] >> 24) & 0xFF) != 255) {
-                            System.out.println("data:" +
-                                               ((idata[i][j] >> 24) & 0xFF));
-                            result[count++] = (byte) 0xFF;
-                            result[count++] = (byte) 0xFF;
-                            result[count++] = (byte) 0xFF;
+                        //mask[maskpos++] = (byte)((idata[i][j] >> 24) & 0xFF);
+                        if(((idata[i][j] >> 24) & 0xFF) != 255) {
+                            result[count++] = (byte)0xFF;
+                            result[count++] = (byte)0xFF;
+                            result[count++] = (byte)0xFF;
                         } else {
                             result[count++] =
                               (byte)((idata[i][j] >> 16) & 0xFF);
@@ -200,7 +199,7 @@ public class PDFGraphics2D extends AbstractGraphics2D {
         }
 
         try {
-            FopImage fopimg = new TempImage(width, height, result);
+            FopImage fopimg = new TempImage(width, height, result, mask);
             int xObjectNum = this.pdfDoc.addImage(fopimg);
             /*currentStream.write("q\n" + (((float) width)) +
                                      " 0 0 " + (((float) height)) + " " +
@@ -237,10 +236,11 @@ public class PDFGraphics2D extends AbstractGraphics2D {
         ColorSpace m_colorSpace;
         int m_bitmapSiye;
         byte[] m_bitmaps;
+        byte[] m_mask;
         PDFColor transparent = new PDFColor(255, 255, 255);
 
         TempImage(int width, int height,
-                  byte[] result) throws FopImageException {
+                  byte[] result, byte[] mask) throws FopImageException {
             this.m_height = height;
             this.m_width = width;
             this.m_bitsPerPixel = 8;
@@ -248,6 +248,7 @@ public class PDFGraphics2D extends AbstractGraphics2D {
             //this.m_isTransparent = false;
             //this.m_bitmapsSize = this.m_width * this.m_height * 3;
             this.m_bitmaps = result;
+            this.m_mask = mask;
         }
 
         public String getURL() {
@@ -280,7 +281,9 @@ public class PDFGraphics2D extends AbstractGraphics2D {
         public PDFColor getTransparentColor() throws FopImageException {
             return transparent;
         }
-
+        public byte[] getMask()  throws FopImageException {
+            return m_mask;
+        }
         // get the image bytes, and bytes properties
 
         // get uncompressed image bytes
@@ -379,7 +382,13 @@ public class PDFGraphics2D extends AbstractGraphics2D {
      * @see         java.awt.Graphics#create
      */
     public void dispose() {
-        System.out.println("dispose");
+        //System.out.println("dispose");
+        pdfDoc = null;
+        fontState = null;
+        currentStream = null;
+        currentFontName = null;
+        currentColour = null;
+        fontInfo = null;
     }
 
     /**
@@ -411,6 +420,9 @@ public class PDFGraphics2D extends AbstractGraphics2D {
         currentStream.write(col.getColorSpaceOut(false));
 
         PDFNumber pdfNumber = new PDFNumber();
+
+        applyPaint(getPaint(), false);
+        applyStroke(getStroke());
 
         PathIterator iter = s.getPathIterator(getTransform());
         while (!iter.isDone()) {
@@ -492,6 +504,110 @@ public class PDFGraphics2D extends AbstractGraphics2D {
         // clip area
 		currentStream.write("W\n");
 		currentStream.write("n\n");
+    }
+
+    protected void applyPaint(Paint paint, boolean fill) {
+        if(paint instanceof GradientPaint) {
+            GradientPaint gp = (GradientPaint)paint;
+            Color c1 = gp.getColor1();
+            Color c2 = gp.getColor2();
+            Point2D p1 = gp.getPoint1();
+            Point2D p2 = gp.getPoint2();
+            boolean cyclic = gp.isCyclic();
+
+			Vector theCoords = new Vector();
+						theCoords.addElement( new Double(p1.getX()));
+            theCoords.addElement( new Double(p1.getY()));
+            theCoords.addElement( new Double(p2.getX()));
+            theCoords.addElement( new Double(p2.getY()));
+
+				Vector theExtend = new Vector();
+				theExtend.addElement(new Boolean(true));
+				theExtend.addElement(new Boolean(true));
+
+				Vector theDomain = new Vector();
+				theDomain.addElement(new Double(0));
+				theDomain.addElement(new Double(1));
+
+				Vector theEncode = new Vector();
+				theEncode.addElement(new Double(0));
+				theEncode.addElement(new Double(1));
+				theEncode.addElement(new Double(0));
+				theEncode.addElement(new Double(1));
+
+				Vector theBounds = new Vector();
+				theBounds.addElement(new Double(0));
+				theBounds.addElement(new Double(1));
+
+				Vector theFunctions = new Vector();
+
+            Vector someColors = new Vector();
+
+            PDFColor color1 = new PDFColor(c1.getRed(), c1.getGreen(), c1.getBlue());
+            someColors.addElement(color1);
+            PDFColor color2 = new PDFColor(c2.getRed(), c2.getGreen(), c2.getBlue());
+            someColors.addElement(color2);
+
+            PDFFunction myfunc = this.pdfDoc.makeFunction(2, theDomain, null, color1.getVector(), color2.getVector(), 1.0);
+
+            ColorSpace aColorSpace = new ColorSpace(ColorSpace.DEVICE_RGB);
+            PDFPattern myPat = this.pdfDoc.createGradient(false, aColorSpace,
+													 someColors, null, theCoords);
+				    currentStream.write(myPat.getColorSpaceOut(fill));
+
+        } else if(paint instanceof TexturePaint) {
+        }
+    }
+
+    protected void applyStroke(Stroke stroke) {
+        if(stroke instanceof BasicStroke) {
+            BasicStroke bs = (BasicStroke)stroke;
+            PDFNumber pdfNumber = new PDFNumber();
+
+            float[] da = bs.getDashArray();
+            if(da != null) {
+                currentStream.write("[");
+                for(int count = 0; count < da.length; count++) {
+                    currentStream.write("" + ((int)da[count]));
+                    if(count < da.length - 1) {
+                        currentStream.write(" ");
+                    }
+                }
+                currentStream.write("] ");
+                float offset = bs.getDashPhase();
+                currentStream.write(((int)offset) + " d\n");
+            }
+            int ec = bs.getEndCap();
+            switch(ec) {
+                case BasicStroke.CAP_BUTT:
+                    currentStream.write(0 + " J\n");
+                break;
+                case BasicStroke.CAP_ROUND:
+                    currentStream.write(1 + " J\n");
+                break;
+                case BasicStroke.CAP_SQUARE:
+                    currentStream.write(2 + " J\n");
+                break;
+            }
+
+            int lj = bs.getLineJoin();
+            switch(lj) {
+                case BasicStroke.JOIN_MITER:
+                    currentStream.write(0 + " j\n");
+                break;
+                case BasicStroke.JOIN_ROUND:
+                    currentStream.write(1 + " j\n");
+                break;
+                case BasicStroke.JOIN_BEVEL:
+                    currentStream.write(2 + " j\n");
+                break;
+            }
+            float lw = bs.getLineWidth();
+            currentStream.write(pdfNumber.doubleOut(lw) + " w\n");
+
+            float ml = bs.getMiterLimit();
+            currentStream.write(pdfNumber.doubleOut(ml) + " M\n");  
+        }
     }
 
     /**
@@ -579,6 +695,28 @@ public class PDFGraphics2D extends AbstractGraphics2D {
      */
     public void drawString(String s, float x, float y) {
         System.out.println("drawString(String)");
+        currentStream.write("BT\n");
+      Shape imclip = getClip();
+      writeClip(imclip);
+        Color c = getColor();
+        currentColour = new PDFColor(c.getRed(), c.getGreen(), c.getBlue());
+        currentStream.write(currentColour.getColorSpaceOut(true));
+        c = getBackground();
+        PDFColor col = new PDFColor(c.getRed(), c.getGreen(), c.getBlue());
+        currentStream.write(col.getColorSpaceOut(false));
+
+        AffineTransform trans = getTransform();
+        trans.translate(x, y);
+        double[] vals = new double[6];
+        trans.getMatrix(vals);
+        PDFNumber pdfNumber = new PDFNumber();
+
+        currentStream.write(pdfNumber.doubleOut(vals[0]) + " " + pdfNumber.doubleOut(vals[1]) + " "
++ pdfNumber.doubleOut(vals[2]) + " " + pdfNumber.doubleOut(vals[3]) + " " + pdfNumber.doubleOut(vals[4])
++ " " + pdfNumber.doubleOut(vals[5]) + " " +
+                           pdfNumber.doubleOut(vals[6]) + " Tm [" + s + "]");
+
+        currentStream.write("ET\n");
     }
 
     /**
@@ -607,6 +745,33 @@ public class PDFGraphics2D extends AbstractGraphics2D {
     public void drawString(AttributedCharacterIterator iterator,
                            float x, float y) {
         System.err.println("drawString(AttributedCharacterIterator)");
+
+        currentStream.write("BT\n");
+      Shape imclip = getClip();
+      writeClip(imclip);
+        Color c = getColor();
+        currentColour = new PDFColor(c.getRed(), c.getGreen(), c.getBlue());
+        currentStream.write(currentColour.getColorSpaceOut(true));
+        c = getBackground();
+        PDFColor col = new PDFColor(c.getRed(), c.getGreen(), c.getBlue());
+        currentStream.write(col.getColorSpaceOut(false));
+
+        AffineTransform trans = getTransform();
+        trans.translate(x, y);
+        double[] vals = new double[6];
+        trans.getMatrix(vals);
+        PDFNumber pdfNumber = new PDFNumber();
+
+        for(char ch = iterator.first(); ch != CharacterIterator.DONE; ch = iterator.next()) {
+            Map attr = iterator.getAttributes();
+
+            currentStream.write(pdfNumber.doubleOut(vals[0]) + " " + pdfNumber.doubleOut(vals[1]) + " "
++ pdfNumber.doubleOut(vals[2]) + " " + pdfNumber.doubleOut(vals[3]) + " " + pdfNumber.doubleOut(vals[4])
++ " " + pdfNumber.doubleOut(vals[5]) + " " +
+                           pdfNumber.doubleOut(vals[6]) + " Tm [" + ch + "]");
+        }
+
+        currentStream.write("ET\n");
     }
 
     /**
@@ -634,6 +799,8 @@ public class PDFGraphics2D extends AbstractGraphics2D {
         c = getBackground();
         PDFColor col = new PDFColor(c.getRed(), c.getGreen(), c.getBlue());
         currentStream.write(col.getColorSpaceOut(false));
+
+        applyPaint(getPaint(), true);
 
         PDFNumber pdfNumber = new PDFNumber();
 
