@@ -135,6 +135,8 @@ public class FoRoot extends FONode {
             // Clean up the fo:layout-master-set event
             pageSequenceMasters = layoutMasters.getPageSequenceMasters();
             xmlevents.getEndElement(ev);
+            //System.out.println("Surrendering layout-master-set ev");
+            pool.surrenderEvent(ev);
             layoutMasters.deleteSubTree();
 
             // Look for optional declarations
@@ -146,6 +148,8 @@ public class FoRoot extends FONode {
                 declarations = numChildren();
                 new FoDeclarations(getFOTree(), this, ev);
                 xmlevents.getEndElement(ev);
+                //System.out.println("Surrendering declarations ev");
+                pool.surrenderEvent(ev);
             }
 
             // Process page-sequences here
@@ -164,6 +168,7 @@ public class FoRoot extends FONode {
                 // Loop over remaining fo:page-sequences
                 new FoPageSequence(getFOTree(), this, ev);
                 xmlevents.getEndElement(ev);
+                pool.surrenderEvent(ev);
             }
         } catch (NoSuchElementException e) {
             throw new FOPException
