@@ -64,31 +64,31 @@ import org.apache.avalon.framework.logger.Logger;
  */
 public class CommandLineOptions {
 
-    /* input / output not set */
+    /** input / output not set */
     public static final int NOT_SET = 0;
-    /* input: fo file */
+    /** input: fo file */
     public static final int FO_INPUT = 1;
-    /* input: xml+xsl file */
+    /** input: xml+xsl file */
     public static final int XSLT_INPUT = 2;
-    /* output: pdf file */
+    /** output: pdf file */
     public static final int PDF_OUTPUT = 1;
-    /* output: screen using swing */
+    /** output: screen using swing */
     public static final int AWT_OUTPUT = 2;
-    /* output: mif file */
+    /** output: mif file */
     public static final int MIF_OUTPUT = 3;
-    /* output: sent swing rendered file to printer */
+    /** output: sent swing rendered file to printer */
     public static final int PRINT_OUTPUT = 4;
-    /* output: pcl file */
+    /** output: pcl file */
     public static final int PCL_OUTPUT = 5;
-    /* output: postscript file */
+    /** output: postscript file */
     public static final int PS_OUTPUT = 6;
-    /* output: text file */
+    /** output: text file */
     public static final int TXT_OUTPUT = 7;
-    /* output: svg file */
+    /** output: svg file */
     public static final int SVG_OUTPUT = 8;
-    /* output: XML area tree */
+    /** output: XML area tree */
     public static final int AREA_OUTPUT = 9;
-    /* output: RTF file */
+    /** output: RTF file */
     public static final int RTF_OUTPUT = 10;
 
     /* show configuration information */

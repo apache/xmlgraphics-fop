@@ -105,6 +105,10 @@ public class FOPException extends Exception {
         return exception;
     }
 
+    /**
+     * Attempts to recast the exception as other Throwable types.
+     * @return the exception recast as another type if possible, otherwise null.
+     */
     protected Throwable getRootException() {
         Throwable result = exception;
 
