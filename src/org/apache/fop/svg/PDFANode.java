@@ -58,6 +58,7 @@ public class PDFANode extends CompositeGraphicsNode {
                 int type = org.apache.fop.layout.LinkSet.EXTERNAL;
                 Shape outline = getOutline();
                 if(destination.startsWith("#svgView(viewBox(")) {
+                    type = org.apache.fop.layout.LinkSet.INTERNAL;
                     String nums = destination.substring(18, destination.length() - 2);
                     float x = 0;
                     float y = 0;
