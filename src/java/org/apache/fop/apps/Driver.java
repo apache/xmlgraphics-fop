@@ -635,7 +635,7 @@ public class Driver implements LogEnabled {
     /**
      * This method overloads the main render() method, adding the convenience
      * of using a DOM Document as input.
-     * @see render(XMLReader, InputSource)
+     * @see #render(XMLReader, InputSource)
      * @param document the DOM document to read from
      * @throws FOPException if anything goes wrong.
      */

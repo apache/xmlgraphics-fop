@@ -166,7 +166,7 @@ public class SVGRenderer extends AbstractRenderer implements XMLHandler {
     }
 
     /**
-     * @see org.apache.fop.render.Renderer#setupFontInfo(FontInfo)
+     * @see org.apache.fop.render.Renderer#setupFontInfo(FOTreeControl)
      */
     public void setupFontInfo(FOTreeControl foTreeControl) {
         // create a temp Image to test font metrics on
