@@ -183,6 +183,11 @@ public class PageNumberCitation extends FObj
         }
 
         String refId = this.properties.get("ref-id").getString();
+        
+        if(refId.equals(""))
+        {
+        	throw new FOPException("page-number-citation must contain \"ref-id\"");	
+        }
         IDReferences idReferences= area.getIDReferences();       
 
         String pageNumber=idReferences.getPageNumber(refId);                
