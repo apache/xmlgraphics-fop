@@ -11,6 +11,8 @@ import java.awt.Shape;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.awt.geom.GeneralPath;
+import java.awt.geom.Area;
 
 import java.awt.Color;
 import java.awt.Paint;
@@ -125,6 +127,16 @@ public class PDFState {
         return stateStack.size();
     }
 
+    public void restoreLevel(int stack) {
+        int pos = stack;
+        while(stateStack.size() > pos + 1) {
+            stateStack.remove(stateStack.size() - 1);
+        }
+        if(stateStack.size() > pos) {
+            pop();
+        }
+    }
+
     public boolean setLineDash(int[] array, int offset) {
         return false;
     }
@@ -158,19 +170,28 @@ public class PDFState {
         return false;
     }
 
+    /**
+     * For clips it can start a new state
+     */
     public boolean checkClip(Shape cl) {
         if(clip == null) {
             if(cl != null) {
                 return true;
             }
-        } else if(!clip.equals(cl)) {
+        } else if(!new Area(clip).equals(new Area(cl))) {
             return true;
         }
         return false;
     }
 
     public void setClip(Shape cl) {
-        clip = cl;
+        if (clip != null) {
+            Area newClip = new Area(clip);
+            newClip.intersect(new Area(cl));
+            clip = new GeneralPath(newClip);
+        } else {
+            clip = cl;
+        }
     }
 
     public boolean checkTransform(AffineTransform tf) {
