@@ -137,6 +137,8 @@ public class PDFRenderer implements Renderer {
 	/** the horizontal position of the current area container */
 	private int currentAreaContainerXPosition = 0;
 
+	private PDFColor currentColour = new PDFColor(0, 0, 0);
+
 	/**
 	 * create the PDF renderer
 	 */
@@ -262,6 +264,7 @@ public class PDFRenderer implements Renderer {
 		  this.currentAreaContainerXPosition += area.getPaddingLeft() + area.borderWidthLeft;
 		}
 
+		this.currentXPosition = this.currentAreaContainerXPosition;
 		doFrame(area);
 		
 	Enumeration e = area.getChildren().elements();
@@ -378,7 +381,8 @@ public class PDFRenderer implements Renderer {
     public void renderForeignObjectArea(ForeignObjectArea area)
     {
         // if necessary need to scale and align the content
-		int x = this.currentAreaContainerXPosition;
+		this.currentXPosition = this.currentXPosition + area.getXOffset();
+		this.currentYPosition = this.currentYPosition;
 		switch(area.getAlign()) {
 		    case TextAlign.START:
 		    break;
@@ -440,7 +444,7 @@ public class PDFRenderer implements Renderer {
      * @param area the SVG area to render
      */
 	public void renderSVGArea(SVGArea area) {
-		int x = this.currentAreaContainerXPosition;
+		int x = this.currentXPosition;
 		int y = this.currentYPosition;
 		SVGSVGElement svg = area.getSVGDocument().getRootElement();
 		int w = (int)(svg.getWidth().getBaseVal().getValue() * 1000);
@@ -571,10 +575,12 @@ public class PDFRenderer implements Renderer {
 	Enumeration e = area.getChildren().elements();
 	while (e.hasMoreElements()) {
 		Box b = (Box) e.nextElement();
+		this.currentYPosition = ry - area.getPlacementOffset();
 		b.render(this);
 	}
 
 	this.currentYPosition = ry-h;
+	this.currentXPosition = rx;
 	}
 
 	/**
@@ -594,6 +600,7 @@ public class PDFRenderer implements Renderer {
 	this.currentFontSize = 0;
 
 	currentStream.add("BT\n");
+
 	renderAreaContainer(body);
 
 	if (before != null) {
@@ -1227,209 +1234,42 @@ e.printStackTrace();
 			gi = locateDef(address, area);
 			if(gi instanceof SVGLinearGradientElement) {
 				SVGLinearGradientElement linear = (SVGLinearGradientElement)gi;
-				handleLinearGradient(linear, di, fill);
-
-/*				Vector theCoords = new Vector();
-				theCoords.addElement(new Double(linear.getX1().getBaseVal().getValue()));
-				theCoords.addElement(new Double(linear.getY1().getBaseVal().getValue()));
-				theCoords.addElement(new Double(linear.getX2().getBaseVal().getValue()));
-				theCoords.addElement(new Double(linear.getY2().getBaseVal().getValue()));
-
-				Vector theExtend = new Vector();
-				theExtend.addElement(new Boolean(true));
-				theExtend.addElement(new Boolean(true));
-
-				Vector theDomain = new Vector();
-				theDomain.addElement(new Double(0));
-				theDomain.addElement(new Double(1));
-
-				Vector theEncode = new Vector();
-				theEncode.addElement(new Double(0));
-				theEncode.addElement(new Double(1));
-				theEncode.addElement(new Double(0));
-				theEncode.addElement(new Double(1));
-
-				Vector theBounds = new Vector();
-				theBounds.addElement(new Double(0));
-				theBounds.addElement(new Double(1));
-
-				Vector theFunctions = new Vector();
-
-				NodeList nl = linear.getChildNodes();
-				Vector someColors = new Vector();
-				float lastoffset = 0;
-				Vector lastVector = null;
-				SVGStopElementImpl stop;
-				for(int count = 0; count < nl.getLength(); count++) {
-					stop = (SVGStopElementImpl)nl.item(count);
-					CSSValue cv = stop.getPresentationAttribute("stop-color");
-					if(cv == null) {
-						// maybe using color
-						cv = stop.getPresentationAttribute("color");
-					}
-					if(cv == null) {
-						// problems
-						System.err.println("no stop-color or color in stop element");
-						continue;
-					}
-					PDFColor color = new PDFColor(0, 0, 0);
-					if(cv != null && cv.getValueType() == CSSValue.CSS_PRIMITIVE_VALUE) {
-						if(((CSSPrimitiveValue)cv).getPrimitiveType() == CSSPrimitiveValue.CSS_RGBCOLOR) {
-							RGBColor col = ((CSSPrimitiveValue)cv).getRGBColorValue();
-							CSSPrimitiveValue val;
-							val = col.getRed();
-							float red = val.getFloatValue(CSSPrimitiveValue.CSS_NUMBER);
-					        val = col.getGreen();
-					        float green = val.getFloatValue(CSSPrimitiveValue.CSS_NUMBER);
-						        val = col.getBlue();
-					        float blue = val.getFloatValue(CSSPrimitiveValue.CSS_NUMBER);
-							color = new PDFColor(red, green, blue);
-						}
-					}
-					float offset = stop.getOffset().getBaseVal() / 100f;
-					Vector colVector = color.getVector();
-					// create bounds from last to offset
-					if(lastVector != null) {
-						Vector theCzero = lastVector;
-						Vector theCone = colVector;
-						PDFFunction myfunc = this.pdfDoc.makeFunction(2, theDomain, null,
-												theCzero, theCone, 1.0);
-						theFunctions.addElement(myfunc);
-					} else if(nl.getLength() == 1) {
-						Vector theCzero = colVector;
-						Vector theCone = colVector;
-						PDFFunction myfunc = this.pdfDoc.makeFunction(2, theDomain, null,
-												theCzero, theCone, 1.0);
-						theFunctions.addElement(myfunc);
-					}
-					lastoffset = offset;
-					lastVector = colVector;
-					someColors.addElement(color);
-				}
-				ColorSpace aColorSpace = new ColorSpace(ColorSpace.DEVICE_RGB);
-/*						PDFFunction myfunky = this.pdfDoc.makeFunction(3,
-					theDomain, null,
-					theFunctions, null,
-					theEncode);
-				PDFShading myShad = null;
-				myShad = this.pdfDoc.makeShading(
-					2, aColorSpace,
-					null, null, false,
-					theCoords, null, myfunky,theExtend);
-				PDFPattern myPat = this.pdfDoc.makePattern(2, myShad, null, null, null);*
-				PDFPattern myPat = this.pdfDoc.createGradient(false, aColorSpace, someColors,null,theCoords);
-				currentStream.add(myPat.getColorSpaceOut(fill));*/
+				handleLinearGradient(linear, di, fill, area);
 			} else if(gi instanceof SVGRadialGradientElement) {
 				SVGRadialGradientElement radial = (SVGRadialGradientElement)gi;
-				ColorSpace aColorSpace = new ColorSpace(ColorSpace.DEVICE_RGB);
-				org.w3c.dom.NodeList nl = radial.getChildNodes();
-				SVGStopElementImpl stop;
-				Hashtable table = null;
-				Vector someColors = new Vector();
-				Vector theCoords = new Vector();
-				Vector theBounds = new Vector();
-				// todo handle gradient units
-				SVGRect bbox = null;
-				if(area instanceof SVGRectElement) {
-					bbox = ((SVGRectElement)area).getBBox();
-				}
-				short units = radial.getGradientUnits().getBaseVal();
-				switch(units) {
-					case SVGUnitTypes.SVG_UNIT_TYPE_OBJECTBOUNDINGBOX:
-					break;
-					case SVGUnitTypes.SVG_UNIT_TYPE_UNKNOWN:
-					default:
-				}
-				// the coords should be relative to the current object
-				// check value types, eg. %
-				if(bbox != null) {
-					if(false) {
-						theCoords.addElement(new Double(bbox.getX() +
-							radial.getCx().getBaseVal().getValue() * bbox.getWidth()));
-						theCoords.addElement(new Double(bbox.getY() +
-							radial.getCy().getBaseVal().getValue() * bbox.getHeight()));
-						theCoords.addElement(new Double(radial.getR().getBaseVal().getValue() *
-							bbox.getHeight()));
-						theCoords.addElement(new Double(bbox.getX() +
-							radial.getFx().getBaseVal().getValue() * bbox.getWidth()));
-						theCoords.addElement(new Double(bbox.getY() +
-							radial.getFy().getBaseVal().getValue() * bbox.getHeight()));
-						theCoords.addElement(new Double(radial.getR().getBaseVal().getValue() *
-							bbox.getHeight()));
-					} else {
-						theCoords.addElement(new Double(-bbox.getX() + radial.getCx().getBaseVal().getValue()));
-						theCoords.addElement(new Double(-bbox.getY() + radial.getCy().getBaseVal().getValue()));
-						theCoords.addElement(new Double(radial.getR().getBaseVal().getValue()));
-						theCoords.addElement(new Double(-bbox.getX() + radial.getFx().getBaseVal().getValue())); // Fx
-						theCoords.addElement(new Double(-bbox.getY() + radial.getFy().getBaseVal().getValue())); // Fy
-						theCoords.addElement(new Double(radial.getR().getBaseVal().getValue()));
-/*						theCoords.addElement(new Double(bbox.getX() +
-							radial.getCx().getBaseVal().getValue()));
-						theCoords.addElement(new Double(bbox.getY() +
-							radial.getCy().getBaseVal().getValue()));
-						theCoords.addElement(new Double(radial.getR().getBaseVal().getValue()));
-						theCoords.addElement(new Double(bbox.getX() +
-							radial.getFx().getBaseVal().getValue()));
-						theCoords.addElement(new Double(bbox.getY() +
-							radial.getFy().getBaseVal().getValue()));
-						theCoords.addElement(new Double(radial.getR().getBaseVal().getValue()));*/
-					}
-				} else {
-					theCoords.addElement(new Double(radial.getCx().getBaseVal().getValue()));
-					theCoords.addElement(new Double(radial.getCy().getBaseVal().getValue()));
-					theCoords.addElement(new Double(radial.getR().getBaseVal().getValue()));
-					theCoords.addElement(new Double(radial.getFx().getBaseVal().getValue())); // Fx
-					theCoords.addElement(new Double(radial.getFy().getBaseVal().getValue())); // Fy
-					theCoords.addElement(new Double(radial.getR().getBaseVal().getValue()));
-				}
-				float lastoffset = 0;
-				for(int count = 0; count < nl.getLength(); count++) {
-					stop = (SVGStopElementImpl)nl.item(count);
-					CSSValue cv = stop.getPresentationAttribute("stop-color");
-					if(cv == null) {
-						// maybe using color
-						cv = stop.getPresentationAttribute("color");
-					}
-					if(cv == null) {
-						// problems
-						System.err.println("no stop-color or color in stop element");
-						continue;
-					}
-					PDFColor color = new PDFColor(0, 0, 0);
-					if(cv != null && cv.getValueType() == CSSValue.CSS_PRIMITIVE_VALUE) {
-						if(((CSSPrimitiveValue)cv).getPrimitiveType() == CSSPrimitiveValue.CSS_RGBCOLOR) {
-							RGBColor col = ((CSSPrimitiveValue)cv).getRGBColorValue();
-							CSSPrimitiveValue val;
-							val = col.getRed();
-							float red = val.getFloatValue(CSSPrimitiveValue.CSS_NUMBER);
-					        val = col.getGreen();
-					        float green = val.getFloatValue(CSSPrimitiveValue.CSS_NUMBER);
-						        val = col.getBlue();
-					        float blue = val.getFloatValue(CSSPrimitiveValue.CSS_NUMBER);
-							color = new PDFColor(red, green, blue);
-						}
-					}
-					float offset = stop.getOffset().getBaseVal();
-					// create bounds from last to offset
-					lastoffset = offset;
-					someColors.addElement(color);
-				}
-				PDFPattern myPat = this.pdfDoc.createGradient(true, aColorSpace, someColors,null,theCoords);
-
-				currentStream.add(myPat.getColorSpaceOut(fill));
+				handleRadialGradient(radial, di, fill, area);
 			} else {
 				System.err.println("WARNING Invalid fill reference :" + gi + ":" + address);
 			}
 		}
 	}
 
-	protected void handleLinearGradient(SVGLinearGradientElement linear, DrawingInstruction di, boolean fill)
+	protected void handleLinearGradient(SVGLinearGradientElement linear, DrawingInstruction di, boolean fill, SVGElement area)
 	{
-		Vector theCoords = new Vector();
-		theCoords.addElement(new Double(linear.getX1().getBaseVal().getValue()));
-		theCoords.addElement(new Double(linear.getY1().getBaseVal().getValue()));
-		theCoords.addElement(new Double(linear.getX2().getBaseVal().getValue()));
-		theCoords.addElement(new Double(linear.getY2().getBaseVal().getValue()));
+		Vector theCoords = null;
+//		if(area instanceof GraphicElement) {
+//			SVGRect rect = ((GraphicElement)area).getBBox();
+//			if(rect != null) {
+				theCoords = new Vector();
+				theCoords.addElement(new Double(currentXPosition / 1000f
+						+ linear.getX1().getBaseVal().getValue()));
+				theCoords.addElement(new Double(currentYPosition / 1000f
+						- linear.getY1().getBaseVal().getValue()));
+				theCoords.addElement(new Double(currentXPosition / 1000f
+						+ linear.getX2().getBaseVal().getValue()));
+				theCoords.addElement(new Double(currentYPosition / 1000f
+						- linear.getY2().getBaseVal().getValue()));
+System.out.println("coords:" + theCoords);
+System.out.println(1 + " " + 0 + " " + 0 + " " + (-1) + " " + currentXPosition / 1000f + " " + currentYPosition / 1000f + " cm\n");
+//			}
+//		}
+//		if(theCoords == null) {
+//			theCoords = new Vector();
+//			theCoords.addElement(new Double(linear.getX1().getBaseVal().getValue()));
+//			theCoords.addElement(new Double(linear.getY1().getBaseVal().getValue()));
+//			theCoords.addElement(new Double(linear.getX2().getBaseVal().getValue()));
+//			theCoords.addElement(new Double(linear.getY2().getBaseVal().getValue()));
+//		}
 
 		Vector theExtend = new Vector();
 		theExtend.addElement(new Boolean(true));
@@ -1520,9 +1360,10 @@ e.printStackTrace();
 			        val = col.getBlue();
 			        float blue = val.getFloatValue(CSSPrimitiveValue.CSS_NUMBER);
 					color = new PDFColor(red, green, blue);
+					currentColour = color;
 				}
 			}
-			float offset = stop.getOffset().getBaseVal() / 100f;
+			float offset = stop.getOffset().getBaseVal();
 			Vector colVector = color.getVector();
 			// create bounds from last to offset
 			if(lastVector != null) {
@@ -1549,6 +1390,154 @@ e.printStackTrace();
 		PDFPattern myPat = this.pdfDoc.makePattern(2, myShad, null, null, null);*/
 		PDFPattern myPat = this.pdfDoc.createGradient(false, aColorSpace, someColors,null,theCoords);
 		currentStream.add(myPat.getColorSpaceOut(fill));
+		if(fill)
+			di.fill = true;
+		else
+			di.stroke = true;
+	}
+
+	protected void handleRadialGradient(SVGRadialGradientElement radial, DrawingInstruction di, boolean fill, SVGElement area)
+	{
+		ColorSpace aColorSpace = new ColorSpace(ColorSpace.DEVICE_RGB);
+		org.w3c.dom.NodeList nl = radial.getChildNodes();
+		SVGStopElementImpl stop;
+		if(nl.getLength() == 0) {
+			// the color should be "none"
+    		if(fill)
+    			di.fill = false;
+    		else
+    			di.stroke = false;
+			return;
+		} else if(nl.getLength() == 1) {
+			stop = (SVGStopElementImpl)nl.item(0);
+			CSSValue cv = stop.getPresentationAttribute("stop-color");
+			if(cv == null) {
+				// maybe using color
+				cv = stop.getPresentationAttribute("color");
+			}
+			if(cv == null) {
+				// problems
+				System.err.println("no stop-color or color in stop element");
+				return;
+			}
+			PDFColor color = new PDFColor(0, 0, 0);
+			if(cv != null && cv.getValueType() == CSSValue.CSS_PRIMITIVE_VALUE) {
+				if(((CSSPrimitiveValue)cv).getPrimitiveType() == CSSPrimitiveValue.CSS_RGBCOLOR) {
+					RGBColor col = ((CSSPrimitiveValue)cv).getRGBColorValue();
+					CSSPrimitiveValue val;
+					val = col.getRed();
+					float red = val.getFloatValue(CSSPrimitiveValue.CSS_NUMBER);
+			        val = col.getGreen();
+			        float green = val.getFloatValue(CSSPrimitiveValue.CSS_NUMBER);
+			        val = col.getBlue();
+			        float blue = val.getFloatValue(CSSPrimitiveValue.CSS_NUMBER);
+					color = new PDFColor(red, green, blue);
+				}
+			}
+			currentStream.add(color.getColorSpaceOut(fill));
+    		if(fill)
+    			di.fill = true;
+    		else
+    			di.stroke = true;
+			return;
+		}
+		Hashtable table = null;
+		Vector someColors = new Vector();
+		Vector theCoords = new Vector();
+		Vector theBounds = new Vector();
+		// todo handle gradient units
+		SVGRect bbox = null;
+		if(area instanceof SVGRectElement) {
+			bbox = ((SVGRectElement)area).getBBox();
+		}
+		short units = radial.getGradientUnits().getBaseVal();
+		switch(units) {
+			case SVGUnitTypes.SVG_UNIT_TYPE_OBJECTBOUNDINGBOX:
+			break;
+			case SVGUnitTypes.SVG_UNIT_TYPE_UNKNOWN:
+			default:
+		}
+		// the coords should be relative to the current object
+		// check value types, eg. %
+		if(bbox != null) {
+			if(false) {
+				theCoords.addElement(new Double(bbox.getX() +
+					radial.getCx().getBaseVal().getValue() * bbox.getWidth()));
+				theCoords.addElement(new Double(bbox.getY() +
+					radial.getCy().getBaseVal().getValue() * bbox.getHeight()));
+				theCoords.addElement(new Double(radial.getR().getBaseVal().getValue() *
+					bbox.getHeight()));
+				theCoords.addElement(new Double(bbox.getX() +
+					radial.getFx().getBaseVal().getValue() * bbox.getWidth()));
+				theCoords.addElement(new Double(bbox.getY() +
+					radial.getFy().getBaseVal().getValue() * bbox.getHeight()));
+				theCoords.addElement(new Double(radial.getR().getBaseVal().getValue() *
+					bbox.getHeight()));
+			} else {
+				theCoords.addElement(new Double(-bbox.getX() + radial.getCx().getBaseVal().getValue()));
+				theCoords.addElement(new Double(-bbox.getY() + radial.getCy().getBaseVal().getValue()));
+				theCoords.addElement(new Double(radial.getR().getBaseVal().getValue()));
+				theCoords.addElement(new Double(-bbox.getX() + radial.getFx().getBaseVal().getValue())); // Fx
+				theCoords.addElement(new Double(-bbox.getY() + radial.getFy().getBaseVal().getValue())); // Fy
+				theCoords.addElement(new Double(radial.getR().getBaseVal().getValue()));
+/*				theCoords.addElement(new Double(bbox.getX() +
+					radial.getCx().getBaseVal().getValue()));
+				theCoords.addElement(new Double(bbox.getY() +
+					radial.getCy().getBaseVal().getValue()));
+				theCoords.addElement(new Double(radial.getR().getBaseVal().getValue()));
+				theCoords.addElement(new Double(bbox.getX() +
+					radial.getFx().getBaseVal().getValue()));
+				theCoords.addElement(new Double(bbox.getY() +
+					radial.getFy().getBaseVal().getValue()));
+				theCoords.addElement(new Double(radial.getR().getBaseVal().getValue()));*/
+			}
+		} else {
+			theCoords.addElement(new Double(radial.getCx().getBaseVal().getValue()));
+			theCoords.addElement(new Double(radial.getCy().getBaseVal().getValue()));
+			theCoords.addElement(new Double(radial.getR().getBaseVal().getValue()));
+			theCoords.addElement(new Double(radial.getFx().getBaseVal().getValue())); // Fx
+			theCoords.addElement(new Double(radial.getFy().getBaseVal().getValue())); // Fy
+			theCoords.addElement(new Double(radial.getR().getBaseVal().getValue()));
+		}
+		float lastoffset = 0;
+		for(int count = 0; count < nl.getLength(); count++) {
+			stop = (SVGStopElementImpl)nl.item(count);
+			CSSValue cv = stop.getPresentationAttribute("stop-color");
+			if(cv == null) {
+				// maybe using color
+				cv = stop.getPresentationAttribute("color");
+			}
+			if(cv == null) {
+				// problems
+				System.err.println("no stop-color or color in stop element");
+				continue;
+			}
+			PDFColor color = new PDFColor(0, 0, 0);
+			if(cv != null && cv.getValueType() == CSSValue.CSS_PRIMITIVE_VALUE) {
+				if(((CSSPrimitiveValue)cv).getPrimitiveType() == CSSPrimitiveValue.CSS_RGBCOLOR) {
+					RGBColor col = ((CSSPrimitiveValue)cv).getRGBColorValue();
+					CSSPrimitiveValue val;
+					val = col.getRed();
+					float red = val.getFloatValue(CSSPrimitiveValue.CSS_NUMBER);
+			        val = col.getGreen();
+			        float green = val.getFloatValue(CSSPrimitiveValue.CSS_NUMBER);
+			        val = col.getBlue();
+			        float blue = val.getFloatValue(CSSPrimitiveValue.CSS_NUMBER);
+					color = new PDFColor(red, green, blue);
+				}
+			}
+			float offset = stop.getOffset().getBaseVal();
+			// create bounds from last to offset
+			lastoffset = offset;
+			someColors.addElement(color);
+		}
+		PDFPattern myPat = this.pdfDoc.createGradient(true, aColorSpace, someColors,null,theCoords);
+
+		currentStream.add(myPat.getColorSpaceOut(fill));
+		if(fill)
+			di.fill = true;
+		else
+			di.stroke = true;
 	}
 
 	/*
@@ -1582,6 +1571,7 @@ e.printStackTrace();
 				        val = col.getBlue();
 			        float blue = val.getFloatValue(CSSPrimitiveValue.CSS_NUMBER);
 					PDFColor fillColour = new PDFColor(red, green, blue);
+					currentColour = fillColour;
 					currentStream.add(fillColour.getColorSpaceOut(true));
 					di.fill = true;
 			    } else if(((CSSPrimitiveValue)sp).getPrimitiveType() == CSSPrimitiveValue.CSS_URI) {
@@ -1592,6 +1582,9 @@ e.printStackTrace();
 			    	String str = ((CSSPrimitiveValue)sp).getCssText();
 			    	if(str.equals("none")) {
 			    		di.fill = false;
+			    	} else if(str.equals("currentColor")) {
+						currentStream.add(currentColour.getColorSpaceOut(true));
+						di.fill = true;
 //			    	} else {
 //				    	handleGradient(str, true, area);
 			    	}
@@ -1818,7 +1811,7 @@ e.printStackTrace();
 //			currentStream.add("q\n");
 //			currentStream.add(1 + " " + 0 + " " + 0 + " " + 1 + " " + 0 + " " + 0 + " cm\n");
 			currentStream.add("BT\n");
-			renderText(fontState, (SVGTextElementImpl)area, 0, 0/*, di*/);
+			renderText(fontState, (SVGTextElementImpl)area, 0, 0, di);
 			currentStream.add("ET\n");
 //			currentStream.add("Q\n");
 		} else if (area instanceof SVGCircleElement) {
@@ -1936,9 +1929,18 @@ e.printStackTrace();
 	/**
 	 * Todo: underline, linethrough, textpath, tref
 	 */
-	public void renderText(FontState fontState, SVGTextElementImpl tg, float x, float y)
+	public void renderText(FontState fontState, SVGTextElementImpl tg, float x, float y, DrawingInstruction di)
 	{
 		SVGTextRenderer str = new SVGTextRenderer(fontState, tg, x, y);
+		if(di.fill) {
+			if(di.stroke) {
+				currentStream.add("2 Tr\n");
+			} else {
+				currentStream.add("0 Tr\n");
+			}
+		} else if(di.stroke) {
+			currentStream.add("1 Tr\n");
+		}
 		str.renderText(tg);
 	}
 
@@ -2081,7 +2083,16 @@ e.printStackTrace();
 
 		void renderText(SVGTextElementImpl te)
 		{
-			applyStyle(te, te);
+			DrawingInstruction di = applyStyle(te, te);
+		if(di.fill) {
+			if(di.stroke) {
+				currentStream.add("2 Tr\n");
+			} else {
+				currentStream.add("0 Tr\n");
+			}
+		} else if(di.stroke) {
+			currentStream.add("1 Tr\n");
+		}
 			updateFont(te, fs);
 
 		float tx = te.x;
@@ -2328,6 +2339,12 @@ e.printStackTrace();
 			this.fs = fs;
 
 			currentStream.add("/" + fs.getFontName() + " " + newSize + " Tf\n");
+		} else {
+			if(!currentFontName.equals(fs.getFontName()) || currentFontSize != fs.getFontSize()) {
+//				currentFontName = fs.getFontName();
+//				currentFontSize = fs.getFontSize();
+				currentStream.add("/" + fs.getFontName() + " " + (fs.getFontSize()/1000) + " Tf\n");
+			}
 		}
 		return changed;
 	}
