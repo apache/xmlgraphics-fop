@@ -79,7 +79,7 @@ public class CommonBorderPaddingBackground implements Cloneable {
     private CondLengthProperty[] padding = new CondLengthProperty[4];
 
     /**
-     * Construct a CommonBorderAndPadding object.
+     * Construct a CommonBorderPaddingBackground object.
      * @param pList The PropertyList to get properties from.
      */
     public CommonBorderPaddingBackground(PropertyList pList) {

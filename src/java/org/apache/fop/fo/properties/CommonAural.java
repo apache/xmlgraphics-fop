@@ -18,30 +18,111 @@
 
 package org.apache.fop.fo.properties;
 
+import org.apache.fop.fo.PropertyList;
+
 /**
  * Stores all common aural properties.
  * See Sec. 7.6 of the XSL-FO Standard.
  * Public "structure" allows direct member access.
  */
 public class CommonAural {
-
+    /**
+     * The "azimuth" property.
+     */
     public int azimuth;
+
+    /**
+     * The "cueAfter" property.
+     */
     public String cueAfter;
+
+    /**
+     * The "cueBefore" property.
+     */
     public String cueBefore;
+
+    /**
+     * The "elevation" property.
+     */
     public int elevation;
+
+    /**
+     * The "pauseAfter" property.
+     */
     public int pauseAfter;
+
+    /**
+     * The "pauseBefore" property.
+     */
     public int pauseBefore;
+
+    /**
+     * The "pitch" property.
+     */
     public int pitch;
+
+    /**
+     * The "pitch-range" property.
+     */
     public int pitchRange;
+
+    /**
+     * The "playDuring" property.
+     */
     public int playDuring;
+
+    /**
+     * The "richness" property.
+     */
     public int richness;
+
+    /**
+     * The "speak" property.
+     */
     public int speak;
+
+    /**
+     * The "speak-header" property.
+     */
     public int speakHeader;
+
+    /**
+     * The "speak-numeral" property.
+     */
     public int speakNumeral;
+
+    /**
+     * The "speak-punctuation" property.
+     */
     public int speakPunctuation;
+
+    /**
+     * The "speech-rate" property.
+     */
     public int speechRate;
+
+    /**
+     * The "stress" property.
+     */
     public int stress;
+
+    /**
+     * The "voice-family" property.
+     */
     public int voiceFamily;
+
+    /**
+     * The "volume" property.
+     */
     public int volume;
 
+    public CommonAural() {
+    }
+
+    /**
+     * Create a CommonAbsolutePosition object.
+     * @param pList The PropertyList with propery values.
+     */
+    public CommonAural(PropertyList pList) {
+    }
 }
