@@ -38,59 +38,84 @@
  Software Foundation, please see <http://www.apache.org/>.
  */
 
-package org.apache.fop.image.analyser;
+package org.apache.fop.image;
 
 // Java
-import java.io.InputStream;
-import java.io.BufferedInputStream;
-import java.io.IOException;
-import java.util.Iterator;
-import java.util.ArrayList;
+import java.net.URL;
+import org.w3c.dom.svg.SVGDocument;
 
 // FOP
-import org.apache.fop.image.FopImageException;
+import org.apache.fop.svg.SVGDriver;
+import org.apache.fop.messaging.*;
+import org.apache.fop.datatypes.ColorSpace;
+import org.apache.fop.pdf.PDFColor;
+import org.apache.fop.image.analyser.ImageReader;
+
+import org.xml.sax.InputSource;
+import org.xml.sax.XMLReader;
 
 /**
- * Factory for ImageReader objects.
- * @author Pankaj Narula
- * @version 1.0
+ * @see AbstractFopImage
+ * @see FopImage
  */
-public class ImageReaderFactory {
-  static protected ArrayList formats = null;
+public class SVGImage extends AbstractFopImage {
+  SVGDocument doc;
 
-  /**
-    * ImageReader maker.
-    * @param in image input stream
-    * @return ImageReader object
-    * @exception FopImageException  an error occured during creation or 
-    *                               image type is not supported
-    */
-  static public ImageReader Make(InputStream in)
-    throws FopImageException {
+  public SVGImage(URL href) throws FopImageException {
+    super(href);
+  }
 
-    // need to use a config file and remove static methods
-    formats = new ArrayList();
-    formats.add(new JPEGReader());
-    formats.add(new BMPReader());
-    formats.add(new GIFReader());
-    formats.add(new PNGReader());
-    formats.add(new SVGReader());
-    //
+  public SVGImage(URL href, ImageReader imgReader) {
+    super(href, imgReader);
+  }
 
-    ImageReader reader;
-    BufferedInputStream bis = new BufferedInputStream(in);
-    Iterator itr = formats.iterator();
-    try {
-      while (itr.hasNext()) {
-        reader = (ImageReader) itr.next();
-        if (reader.verifySignature(bis)) {
-          return reader;
-        }
-      }
-    } catch (IOException ex) {
-      throw new FopImageException(ex.getMessage());
+    /**
+     * creates a SAX parser, using the value of org.xml.sax.parser
+     * defaulting to org.apache.xerces.parsers.SAXParser
+     *
+     * @return the created SAX parser
+     */
+    public static XMLReader createParser() {
+	String parserClassName =
+	    System.getProperty("org.xml.sax.parser");
+	if (parserClassName == null) {
+	    parserClassName = "org.apache.xerces.parsers.SAXParser";
+	}
+	MessageHandler.logln("using SAX parser " + parserClassName);
+
+	try {
+	    return (XMLReader)
+		Class.forName(parserClassName).newInstance();
+	} catch (ClassNotFoundException e) {
+	    MessageHandler.errorln("Could not find " + parserClassName);
+	} catch (InstantiationException e) {
+	    MessageHandler.errorln("Could not instantiate "
+			       + parserClassName);
+	} catch (IllegalAccessException e) {
+	    MessageHandler.errorln("Could not access " + parserClassName);
+	} catch (ClassCastException e) {
+	    MessageHandler.errorln(parserClassName + " is not a SAX driver"); 
+	}
+	return null;
     }
-    return null;
+
+  protected void loadImage() throws FopImageException {
+  try {
+	    SVGDriver driver = new SVGDriver();
+	    driver.addElementMapping("org.apache.fop.svg.SVGElementMapping");
+	    driver.addPropertyList("org.apache.fop.svg.SVGPropertyListMapping");
+		XMLReader parser = createParser();
+	    driver.buildSVGTree(parser, new InputSource(this.m_href.toString()));
+	    doc = driver.getSVGDocument();
+	} catch (Exception e) {
+	    MessageHandler.errorln("ERROR LOADING EXTERNAL SVG: " + e.getMessage());
+	}
+  }
+
+  public SVGDocument getSVGDocument() throws FopImageException
+  {
+    if(doc == null)
+        this.loadImage();
+    return doc;
   }
 }
-

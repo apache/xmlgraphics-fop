@@ -136,6 +136,8 @@ public class FopImageFactory {
       imgClassName = "org.apache.fop.image.JimiImage";
     } else if ("image/tiff".equals(imgMimeType)) {
       imgClassName = "org.apache.fop.image.JimiImage";
+    } else if ("image/svg".equals(imgMimeType)) {
+      imgClassName = "org.apache.fop.image.SVGImage";
     }
     if (imgClassName == null)
       throw new FopImageException("Unsupported image type (" +
