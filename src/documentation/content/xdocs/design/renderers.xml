@@ -159,6 +159,23 @@ rendering is used to draw the pages onto the printjob.</td>
 However, the AbstractRenderer does most of what is needed, including iterating through the tree parts, so it is probably better to extend this.
 This means that you only need to implement the basic functionality such as text, images, and lines.
 AbstractRenderer's methods can easily be overridden to handle things in a different way or do some extra processing.</p>
+      <p>The relevent AreaTree structures that will need to be rendered are:</p>
+      <ul>
+        <li>Page</li>
+        <li>Viewport</li>
+        <li>Region</li>
+        <li>Span</li>
+        <li>Block</li>
+        <li>Line</li>
+        <li>Inline</li>
+      </ul>
+      <p>A renderer implementation does the following:</p>
+      <ul>
+        <li>render each individual page</li>
+        <li>clip and align child areas to a viewport</li>
+        <li>handle all types of inline area, text, image etc.</li>
+        <li>draw various lines and rectangles</li>
+      </ul>
     </section>
     <section id="multiple">
       <title>Multiple Renderers</title>
