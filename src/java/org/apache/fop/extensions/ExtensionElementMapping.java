@@ -52,7 +52,6 @@ package org.apache.fop.extensions;
 
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.ElementMapping;
-import org.apache.fop.fo.FOTreeBuilder;
 
 import java.util.HashMap;
 
@@ -61,34 +60,19 @@ import java.util.HashMap;
  * This sets up the mapping for the classes that handle the
  * pdf bookmark extension.
  */
-public class ExtensionElementMapping implements ElementMapping {
-    /**
-     * The pdf bookmark extension uri
-     */
-    public static final String URI = "http://xml.apache.org/fop/extensions";
+public class ExtensionElementMapping extends ElementMapping {
 
-    // the mappings are only setup once and resued after that
-    private static HashMap foObjs = null;
+    public ExtensionElementMapping() {
+        URI = "http://xml.apache.org/fop/extensions";
+    }
 
-    private static synchronized void setupExt() {
+    protected void initialize() {
         if (foObjs == null) {
             foObjs = new HashMap();
             foObjs.put("bookmarks", new B());
             foObjs.put("outline", new O());
             foObjs.put("label", new L());
         }
-    }
-
-    /**
-     * Add the mappings to the fo tree builder.
-     *
-     * @param builder the fo tree builder to add the mappings
-     */
-    public void addToBuilder(FOTreeBuilder builder) {
-        if (foObjs == null) {
-            setupExt();
-        }
-        builder.addMapping(URI, foObjs);
     }
 
     static class B extends ElementMapping.Maker {

@@ -172,24 +172,14 @@ public class FOTreeBuilder extends DefaultHandler {
     }
 
     /**
-     * Adds a mapping from a namespace to a table of makers.
-     *
-     * @param namespaceURI namespace URI of formatting object elements
-     * @param table table of makers
-     */
-    public void addMapping(String namespaceURI, HashMap table) {
-        this.fobjTable.put(namespaceURI, table);
-        this.namespaces.add(namespaceURI.intern());
-    }
-
-    /**
      * Add the given element mapping.
      * An element mapping maps element names to Java classes.
      *
      * @param mapping the element mappingto add
      */
     public void addElementMapping(ElementMapping mapping) {
-        mapping.addToBuilder(this);
+        this.fobjTable.put(mapping.getNamespaceURI(), mapping.getTable());
+        this.namespaces.add(mapping.getNamespaceURI().intern());
     }
 
     /**

@@ -56,11 +56,13 @@ import java.util.HashMap;
 /**
  * Element mapping class for all XSL-FO elements.
  */
-public class FOElementMapping implements ElementMapping {
+public class FOElementMapping extends ElementMapping {
     
-    private static HashMap foObjs = null;
+    public FOElementMapping() {
+        URI = "http://www.w3.org/1999/XSL/Format";
+    }
 
-    private static synchronized void setupFO() {
+    protected void initialize() {
         if (foObjs == null) {
             foObjs = new HashMap();
 
@@ -148,16 +150,6 @@ public class FOElementMapping implements ElementMapping {
             foObjs.put("marker", new M());
             foObjs.put("retrieve-marker", new RM());
         }
-
-    }
-
-    /**
-     * @see org.apache.fop.fo.ElementMapping#addToBuilder(FOTreeBuilder)
-     */
-    public void addToBuilder(FOTreeBuilder builder) {
-        setupFO();
-        String uri = "http://www.w3.org/1999/XSL/Format";
-        builder.addMapping(uri, foObjs);
     }
 
     static class R extends ElementMapping.Maker {

@@ -50,7 +50,6 @@
  */ 
 package org.apache.fop.plan;
 
-import org.apache.fop.fo.FOTreeBuilder;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.ElementMapping;
 import org.apache.fop.image.analyser.XMLReader;
@@ -62,14 +61,13 @@ import java.util.HashMap;
 /**
  * This class provides the element mapping for FOP.
  */
-public class PlanElementMapping implements ElementMapping {
+public class PlanElementMapping extends ElementMapping {
 
-    /** The namespace for the plan extension */
-    public static final String URI = "http://xml.apache.org/fop/plan";
+    public PlanElementMapping() {
+        URI = "http://xml.apache.org/fop/plan";
+    }
 
-    private static HashMap foObjs = null;
-
-    private static synchronized void setupPlan() {
+    protected void initialize() {
         if (foObjs == null) {
             foObjs = new java.util.HashMap();
             foObjs.put("plan", new PE());
@@ -77,14 +75,6 @@ public class PlanElementMapping implements ElementMapping {
 
             XMLReader.setConverter(URI, new PlanConverter());
         }
-    }
-
-    /**
-     * @see org.apache.fop.fo.ElementMapping#addToBuilder(FOTreeBuilder)
-     */
-    public void addToBuilder(FOTreeBuilder builder) {
-        setupPlan();
-        builder.addMapping(URI, foObjs);
     }
 
     static class PlanMaker extends ElementMapping.Maker {
