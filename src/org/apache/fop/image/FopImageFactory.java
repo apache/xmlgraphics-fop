@@ -197,5 +197,11 @@ public class FopImageFactory {
         return (FopImage)imageInstance;
     }
 
+    /**
+     * Clear the image cache.
+     */
+    public static synchronized void resetCache() {
+        m_urlMap.clear();
+    }
 }
 
