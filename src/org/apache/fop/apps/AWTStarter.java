@@ -15,6 +15,8 @@ package org.apache.fop.apps;
  */
 import org.apache.fop.viewer.*;
 import org.apache.fop.render.awt.*;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 
 
 import javax.swing.UIManager;
@@ -129,6 +131,11 @@ public class AWTStarter extends CommandLineStarter {
             Translator res) {
         PreviewDialog frame = new PreviewDialog(renderer, res);
         frame.validate();
+        frame.addWindowListener(new WindowAdapter() {
+                public void windowClosed(WindowEvent we) {
+                    System.exit(0);
+                }
+            });
 
         // center window
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
