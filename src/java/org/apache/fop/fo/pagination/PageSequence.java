@@ -280,7 +280,6 @@ public class PageSequence extends FObj {
                                     this.propertyList.get(PR_GROUPING_SEPARATOR).getCharacter(),
                                     this.propertyList.get(PR_GROUPING_SIZE).getNumber().intValue(),
                                     this.propertyList.get(PR_LETTER_VALUE).getEnum());
-        this.pageNumberGenerator.setLogger(getLogger());
 
         this.forcePageCount =
             this.propertyList.get(PR_FORCE_PAGE_COUNT).getEnum();
