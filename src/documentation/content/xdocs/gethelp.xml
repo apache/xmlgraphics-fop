@@ -40,7 +40,7 @@ There is information about how to run FOP, how to embed it, how to add custom fo
     <section id="user-archive">
       <title>Review FOP User Mailing List Archive</title>
       <p>It is possible that your question has already been answered but has not yet found its way into the FAQ.
-Links to the FOP User mailing list archives are on the <link href="resources.html#mailing-lists-fop-user">Resources</link> page.
+Links to the FOP User mailing list archives are on the <link href="maillist.html#fop-user">Mailing List</link> page.
         </p>
     </section>
     <section id="existing-issue">
@@ -50,7 +50,7 @@ If so, please do not post a mailing list question or report another issue, as th
     </section>
     <section id="user-mailing-list">
       <title>Submit Question to FOP User Mailing List</title>
-      <p>See <link href="resources.html#mailing-lists-fop-user">FOP User Mailing List</link> for details.</p>
+      <p>See <link href="maillist.html#fop-user">FOP User Mailing List</link> for details.</p>
     </section>
     <section id="enter-issue">
       <title>Enter an Issue Report</title>

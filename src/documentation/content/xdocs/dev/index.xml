@@ -64,7 +64,7 @@ internally will be kept.
       <section id="mail-fop-dev">
         <title>Subscribe to the fop-dev Mailing List</title>
         <p>Use this forum to discuss topics related to FOP development, including patch submissions, bug reports, and design issues. Please <em>do not</em> use it for XML support, XSLT support, XSL-FO support, or even FOP support.
-Resources for these and other topics can be found on the <link href="../resources.html">FOP User Resources</link> page.
+Appropriate mailing lists for these topics can be found on the <link href="../maillist.html">FOP Mailing List</link> page.
         </p>
         <ul>
           <li>
@@ -80,7 +80,7 @@ The <link href="http://xml.apache.org/mail/fop-dev/">Apache Mailing List archive
               </li>
             </ul>
           </li>
-          <li>Before posting questions to any list, see "<link href="../resources.html#mailing-lists-general">General Information</link>".</li>
+          <li>Before posting questions to any list, see "<link href="../maillist.html#general">General Information</link>".</li>
           <li>
 See <link href="http://xml.apache.org/mail.html#fop-dev_fop-cvs">Apache XML Mailing Lists</link>
 for detailed subscription information.
