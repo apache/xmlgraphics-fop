@@ -15,6 +15,13 @@ import org.apache.fop.layout.BorderAndPadding;
 import org.apache.fop.layout.BackgroundProps;
 import org.apache.fop.apps.FOPException;
 
+/**
+ * Class modeling the fo:region-before object.
+ *
+ * @see <a href="@XSLFO-STD@#fo_region-before"
+       target="_xslfostd">@XSLFO-STDID@
+ *     &para;6.4.14</a>
+ */
 public class RegionBefore extends Region {
 
     public static class Maker extends FObj.Maker {

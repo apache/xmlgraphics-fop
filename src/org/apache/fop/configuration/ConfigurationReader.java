@@ -24,18 +24,21 @@ import org.apache.fop.apps.FOPException;
 import org.apache.fop.configuration.Configuration;
 
 /**
- * entry class for reading configuration from file and creating a configuration
- * class. typical use looks like that: <br>
+ * Entry class for reading configuration from file and creating a configuration
+ * class. Example of typical use:
  *
- * <code>ConfigurationReader reader = new ConfigurationReader ("config.xml","standard");
+ * <pre>ConfigurationReader reader = new ConfigurationReader ("config.xml","standard");
  * try {
- * reader.start();
- * } catch (org.apache.fop.apps.FOPException error) {
- * reader.dumpError(error);
+ *   reader.start();
  * }
- * </code>
+ * catch (org.apache.fop.apps.FOPException error) {
+ *   reader.dumpError(error);
+ * }</pre>
+ *
  * Once the configuration has been setup, the information can be accessed with
  * the methods of StandardConfiguration.
+ *
+ * @version $Revision$
  */
 public class ConfigurationReader {
 

@@ -18,6 +18,13 @@ import org.apache.fop.layout.BorderAndPadding;
 import org.apache.fop.layout.BackgroundProps;
 import org.apache.fop.layout.MarginProps;
 
+/**
+ * Class modeling the fo:region-body object.
+ *
+ * @see <a href="@XSLFO-STD@#fo_region-body"
+       target="_xslfostd">@XSLFO-STDID@
+ *     &para;6.4.13</a>
+ */
 public class RegionBody extends Region {
 
 

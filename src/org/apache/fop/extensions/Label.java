@@ -10,6 +10,11 @@ package org.apache.fop.extensions;
 import org.apache.fop.fo.*;
 
 
+/**
+ * Class representing destinations or targets within a document (/Dest
+ * objects in PDF, called "Destinations" in Adobe Acrobat). Used for the
+ * bookmark/outline extension.
+ */
 public class Label extends ExtensionObj {
     private StringBuffer textBuffer;
 

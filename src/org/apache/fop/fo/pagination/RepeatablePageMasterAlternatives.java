@@ -13,6 +13,13 @@ import org.apache.fop.apps.FOPException;
 // Java
 import java.util.ArrayList;
 
+/**
+ * Class modeling the fo:repeatable-page-master-alternatives object.
+ *
+ * @see <a href="@XSLFO-STD@#fo_repeatable-page-master-alternatives"
+ *      target="_xslfostd">@XSLFO-STDID@
+ *      &para;6.4.10</a>
+ */
 public class RepeatablePageMasterAlternatives extends FObj
     implements SubSequenceSpecifier {
 

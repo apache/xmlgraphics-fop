@@ -17,6 +17,13 @@ import org.apache.fop.layout.PageMaster;
 import java.util.HashMap;
 import java.util.Iterator;
 
+/**
+ * Class modeling the fo:layout-master-set object.
+ *
+ * @see <a href="@XSLFO-STD@#fo_layout-master-set"
+       target="_xslfostd">@XSLFO-STDID@
+ *     &para;6.4.6</a>
+ */
 public class LayoutMasterSet extends FObj {
 
     public static class Maker extends FObj.Maker {

@@ -9,6 +9,13 @@ package org.apache.fop.fo.pagination;
 import org.apache.fop.fo.*;
 import org.apache.fop.apps.FOPException;
 
+/**
+ * Class modeling the fo:single-page-master-reference object.
+ *
+ * @see <a href="@XSLFO-STD@#fo_single-page-master-reference"
+       target="_xslfostd">@XSLFO-STDID@
+ *     &para;6.4.8</a>
+ */
 public class SinglePageMasterReference extends PageMasterReference {
 
     public static class Maker extends FObj.Maker {

@@ -5,8 +5,6 @@
  * LICENSE file included with these sources.
  */
 
-// Author : Seshadri G
-
 package org.apache.fop.render.mif;
 
 // FOP
@@ -34,13 +32,11 @@ import java.io.OutputStream;
 import java.awt.Rectangle;
 
 /**
- * Renderer that renders areas to MIF
+ * Renders areas to MIF. Collects all the Pages and print them out at the end.
+ * This means that the MIF renderer does not stream.
  *
- * Modified by Mark Lillywhite mark-fop@inomial.com. Updated to
- * collect all the Pages and print them out at the end. This means
- * that the MIF renderer does not stream, but on the other hand
- * it should still work. I don't have an MIF view to test it with,
- * you see.
+ * @author Seshadri G
+ * @author <a href="mailto:mark-fop@inomial.com">Mark Lillywhite</a>
  */
 public class MIFRenderer extends AbstractRenderer {
 

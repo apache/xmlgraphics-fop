@@ -16,6 +16,13 @@ import org.apache.fop.apps.FOPException;
 // Java
 import java.util.ArrayList;
 
+/**
+ * Class modeling the fo:page-sequence-master object.
+ *
+ * @see <a href="@XSLFO-STD@#fo_page-sequence-master"
+       target="_xslfostd">@XSLFO-STDID@
+ *     &para;6.4.7</a>
+ */
 public class PageSequenceMaster extends FObj {
 
     public static class Maker extends FObj.Maker {

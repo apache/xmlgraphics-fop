@@ -14,7 +14,7 @@ import org.apache.fop.apps.FOPException;
 import org.apache.fop.layout.RegionArea;
 
 /**
- * This is an abstract base class for pagination regions
+ * Abstract base class for pagination regions.
  */
 public abstract class Region extends FObj {
     public static final String PROP_REGION_NAME = "region-name";

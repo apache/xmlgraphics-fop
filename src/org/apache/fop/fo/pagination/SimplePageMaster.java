@@ -19,6 +19,13 @@ import org.apache.fop.apps.FOPException;
 import java.util.HashMap;
 import java.util.Iterator;
 
+/**
+ * Class modeling the fo:simple-page-master object.
+ *
+ * @see <a href="@XSLFO-STD@#fo_simple-page-master"
+ *     target="_xslfostd">@XSLFO-STDID@
+ *     &para;6.4.12</a>
+ */
 public class SimplePageMaster extends FObj {
 
     public static class Maker extends FObj.Maker {

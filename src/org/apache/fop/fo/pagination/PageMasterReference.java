@@ -12,8 +12,9 @@ import org.apache.fop.fo.properties.*;
 import org.apache.fop.apps.FOPException;
 
 /**
- * Base PageMasterReference class. Provides implementation for handling the
- * master-reference attribute and containment within a PageSequenceMaster
+ * Abstract base class for PageMasterReference classes. Provides
+ * implementation for handling the master-reference attribute and
+ * containment within a PageSequenceMaster
  */
 public abstract class PageMasterReference extends FObj
     implements SubSequenceSpecifier {

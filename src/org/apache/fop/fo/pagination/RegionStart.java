@@ -15,6 +15,13 @@ import org.apache.fop.layout.BorderAndPadding;
 import org.apache.fop.layout.BackgroundProps;
 import org.apache.fop.apps.FOPException;
 
+/**
+ * Class modeling the fo:region-start object.
+ *
+ * @see <a href="@XSLFO-STD@#fo_region-start"
+       target="_xslfostd">@XSLFO-STDID@
+ *     &para;6.4.16</a>
+ */
 public class RegionStart extends Region {
 
     public static class Maker extends FObj.Maker {

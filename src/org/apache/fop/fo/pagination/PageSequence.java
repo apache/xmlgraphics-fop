@@ -25,8 +25,12 @@ import java.util.HashMap;
 import java.util.ArrayList;
 
 /**
- * This provides pagination of flows onto pages. Much of the logic for paginating
- * flows is contained in this class. The main entry point is the format method.
+ * Class modeling the fo:page-sequence object. Provides pagination of flows.
+ * Much of the logic for paginating flows is contained in this class. The main
+ * entry point is the format method.
+ *
+ * @see <a href="@XSLFO-STD@#fo_page-sequence" target="_xslfostd">@XSLFO-STDID@
+ *     &para;6.4.5</a>
  */
 public class PageSequence extends FObj {
     //

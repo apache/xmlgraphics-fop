@@ -10,6 +10,13 @@ package org.apache.fop.fo.pagination;
 import org.apache.fop.fo.*;
 import org.apache.fop.apps.FOPException;
 
+/**
+ * Class modeling the fo:repeatable-page-master-reference object.
+ *
+ * @see <a href="@XSLFO-STD@#fo_repeatable-page-master-reference"
+       target="_xslfostd">@XSLFO-STDID@
+ *     &para;6.4.9</a>
+ */
 public class RepeatablePageMasterReference extends PageMasterReference
     implements SubSequenceSpecifier {
 

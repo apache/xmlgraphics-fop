@@ -89,7 +89,7 @@
   </xsl:choose>
 </xsl:variable>
 
-<redirect:write select="concat('@org/apache/fop@/{$prefixVal}/', $classname, '.java')">
+<redirect:write select="concat('./{$prefixVal}/', $classname, '.java')">
 package org.apache.fop.<xsl:value-of select="$prefixVal"/>;
 
 import org.apache.fop.fo.*;
