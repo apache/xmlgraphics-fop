@@ -11,7 +11,6 @@ package org.apache.fop.render.txt;
 // FOP
 import org.apache.fop.render.PrintRenderer;
 import org.apache.fop.render.pcl.*;
-import org.apache.fop.messaging.MessageHandler;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.fo.properties.*;
 import org.apache.fop.layout.*;
@@ -784,8 +783,8 @@ public class TXTRenderer extends PrintRenderer {
             printBMP(img, x, y, w, h);
         } catch (FopImageException e) {
             // e.printStackTrace(System.out);
-            MessageHandler.errorln("TXTRenderer.renderImageArea() Error printing BMP ("
-                                   + e.toString() + ").");
+            log.error("TXTRenderer.renderImageArea() printing BMP ("
+                                   + e.toString() + ").", e);
         }
     }
 
@@ -805,7 +804,7 @@ public class TXTRenderer extends PrintRenderer {
                 }
             }
         } catch (Exception e) {
-            MessageHandler.errorln("could not add image to SVG: " + href);
+            log.error("could not add image to SVG: " + href, e);
         }
     }
 
@@ -1677,7 +1676,7 @@ public class TXTRenderer extends PrintRenderer {
     }
     public void startRenderer(OutputStream outputStream)
     throws IOException {
-        MessageHandler.logln("rendering areas to TEXT");
+        log.info("rendering areas to TEXT");
         currentStream = new PCLStream(outputStream);
         firstPage=true;
     }
@@ -1690,7 +1689,7 @@ public class TXTRenderer extends PrintRenderer {
 
     public void stopRenderer(OutputStream outputStream)
     throws IOException {
-        MessageHandler.logln("writing out TEXT");
+        log.info("writing out TEXT");
         outputStream.flush();
     }
 

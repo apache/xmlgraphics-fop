@@ -1,5 +1,3 @@
-/*--- formatted by Jindent 2.1, (www.c-lab.de/~jindent) ---*/
-
 /*
  * $Id$
  * Copyright (C) 2001 The Apache Software Foundation. All rights reserved.
@@ -15,8 +13,6 @@ package org.apache.fop.render;
 // FOP
 import org.apache.fop.pdf.PDFPathPaint;
 import org.apache.fop.pdf.PDFColor;
-// import org.apache.fop.render.Renderer;
-// import org.apache.fop.messaging.MessageHandler;
 import org.apache.fop.image.ImageArea;
 // import org.apache.fop.image.FopImage;
 import org.apache.fop.apps.FOPException;
@@ -46,7 +42,7 @@ import java.util.Enumeration;
  * is not mentioned in this class but it is inherited from
  * the Renderer interface.
  */
-public abstract class PrintRenderer implements Renderer {
+public abstract class PrintRenderer extends AbstractRenderer {
     // vvv These are not currently referenced by the PrintRenderer, but are common to PCL and PDF renderers - so declare here.
 
     /**

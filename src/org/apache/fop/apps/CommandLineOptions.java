@@ -13,7 +13,6 @@ import java.io.File;
 import java.io.FileNotFoundException;
 
 // FOP
-import org.apache.fop.messaging.MessageHandler;
 import org.apache.fop.configuration.Configuration;
 import org.apache.fop.apps.FOPException;
 

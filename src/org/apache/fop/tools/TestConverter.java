@@ -85,7 +85,7 @@ public class TestConverter {
     }
 
     private void setupLogging() {
-        log = Hierarchy.getDefaultHierarchy().getLoggerFor("testing");
+        log = Hierarchy.getDefaultHierarchy().getLoggerFor("test");
     }
 
     public void setOutputPDF(boolean pdf) {

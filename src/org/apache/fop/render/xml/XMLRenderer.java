@@ -9,8 +9,8 @@ package org.apache.fop.render.xml;
 
 // FOP
 import org.apache.fop.svg.*;
-import org.apache.fop.messaging.MessageHandler;
 import org.apache.fop.render.Renderer;
+import org.apache.fop.render.AbstractRenderer;
 import org.apache.fop.image.ImageArea;
 import org.apache.fop.layout.*;
 import org.apache.fop.layout.inline.*;
@@ -30,7 +30,7 @@ import java.util.Hashtable;
  * Modified by Mark Lillywhite mark-fop@inomial.com to use the
  * new renderer interface. Not 100% certain that this is correct.
  */
-public class XMLRenderer implements Renderer {
+public class XMLRenderer extends AbstractRenderer {
 
     /**
      * indentation to use for pretty-printing the XML
@@ -442,7 +442,7 @@ public class XMLRenderer implements Renderer {
     */
     public void startRenderer(OutputStream outputStream)
     throws IOException {
-        MessageHandler.logln("rendering areas to XML");
+        log.info("rendering areas to XML");
         this.writer = new PrintWriter(outputStream);
         this.writer.write( "<?xml version=\"1.0\"?>\n<!-- produced by " +
                            this.producer + " -->\n");
@@ -457,6 +457,6 @@ public class XMLRenderer implements Renderer {
     throws IOException {
         writeEndTag("</AreaTree>");
         this.writer.flush();
-        MessageHandler.errorln("written out XML");
+        log.error("written out XML");
     }
 }

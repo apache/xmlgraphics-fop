@@ -8,8 +8,8 @@
 package org.apache.fop.render.ps;
 
 // FOP
-import org.apache.fop.messaging.MessageHandler;
 import org.apache.fop.svg.SVGArea;
+import org.apache.fop.render.AbstractRenderer;
 import org.apache.fop.render.Renderer;
 import org.apache.fop.image.ImageArea;
 import org.apache.fop.image.FopImage;
@@ -28,6 +28,8 @@ import org.apache.batik.gvt.*;
 import org.apache.batik.gvt.renderer.*;
 import org.apache.batik.gvt.filter.*;
 import org.apache.batik.gvt.event.*;
+
+import org.apache.log.Logger;
 
 // SVG
 import org.w3c.dom.svg.SVGSVGElement;
@@ -76,7 +78,7 @@ import java.awt.Dimension;
  *
  * @author Jeremias Märki
  */
-public class PSRenderer implements Renderer {
+public class PSRenderer extends AbstractRenderer {
 
     /**
      * the application producing the PostScript
@@ -430,7 +432,7 @@ public class PSRenderer implements Renderer {
         write(sx + " " + sy + " " + " scale");
 
 
-        UserAgent userAgent = new MUserAgent(new AffineTransform());
+        UserAgent userAgent = new MUserAgent(new AffineTransform(), log);
 
         GVTBuilder builder = new GVTBuilder();
         GraphicsNodeRenderContext rc = getRenderContext();
@@ -447,9 +449,8 @@ public class PSRenderer implements Renderer {
             root = builder.build(ctx, doc);
             root.paint(graphics, rc);
         } catch (Exception e) {
-            MessageHandler.errorln("Error: svg graphic could not be rendered: "
-                                   + e.getMessage());
-            // e.printStackTrace();
+            log.error("svg graphic could not be rendered: "
+                                   + e.getMessage(), e);
         }
 
 
@@ -555,9 +556,8 @@ public class PSRenderer implements Renderer {
             write("");
             write("grestore");
         } catch (FopImageException e) {
-            e.printStackTrace();
-            MessageHandler.errorln("PSRenderer.renderImageArea(): Error rendering bitmap ("
-                                   + e.toString() + ")");
+            log.error("PSRenderer.renderImageArea(): Error rendering bitmap ("
+                                   + e.getMessage() + ")", e);
         }
     }
 
@@ -824,11 +824,11 @@ public class PSRenderer implements Renderer {
             break;
         case LeaderPattern.DOTS:
             comment("% --- Leader dots NYI");
-            MessageHandler.errorln("Leader dots: Not yet implemented");
+            log.error("Leader dots: Not yet implemented");
             break;
         case LeaderPattern.USECONTENT:
             comment("% --- Leader use-content NYI");
-            MessageHandler.errorln("Leader use-content: Not yet implemented");
+            log.error("Leader use-content: Not yet implemented");
             break;
         }
         this.currentXPosition += area.getContentWidth();
@@ -927,26 +927,27 @@ public class PSRenderer implements Renderer {
 
     protected class MUserAgent implements UserAgent {
         AffineTransform currentTransform = null;
-
+        Logger log;
         /**
          * Creates a new SVGUserAgent.
          */
-        protected MUserAgent(AffineTransform at) {
+        protected MUserAgent(AffineTransform at, Logger logger) {
             currentTransform = at;
+            log = logger;
         }
 
         /**
          * Displays an error message.
          */
         public void displayError(String message) {
-            System.err.println(message);
+            log.error(message);
         }
 
         /**
          * Displays an error resulting from the specified Exception.
          */
         public void displayError(Exception ex) {
-            ex.printStackTrace(System.err);
+            log.error("SVG Error" + ex.getMessage(), ex);
         }
 
         /**
@@ -954,7 +955,7 @@ public class PSRenderer implements Renderer {
          * The given message is typically displayed in a status bar.
          */
         public void displayMessage(String message) {
-            System.out.println(message);
+            log.info(message);
         }
 
         /**
@@ -1037,7 +1038,7 @@ public class PSRenderer implements Renderer {
     */
     public void startRenderer(OutputStream outputStream)
     throws IOException {
-        MessageHandler.logln("rendering areas to PostScript");
+        log.debug("rendering areas to PostScript");
 
         this.out = new PSStream(outputStream);
         write("%!PS-Adobe-3.0");
@@ -1064,7 +1065,7 @@ public class PSRenderer implements Renderer {
         write("%%Trailer");
         write("%%EOF");
         this.out.flush();
-        MessageHandler.logln("written out PostScript");
+        log.debug("written out PostScript");
     }
 
     public void render(Page page, OutputStream outputStream) {

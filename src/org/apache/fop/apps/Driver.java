@@ -207,6 +207,23 @@ public class Driver implements Loggable {
         _treeBuilder.setLogger(log);
     }
 
+    private Logger getLogger() {
+        if(log == null) {
+            Hierarchy hierarchy = Hierarchy.getDefaultHierarchy();
+            PatternFormatter formatter = new PatternFormatter(
+               "[%{priority}]: %{message}\n%{throwable}" );
+
+            LogTarget target = null;
+            target = new StreamTarget(System.out, formatter);
+
+            hierarchy.setDefaultLogTarget(target);
+            log = hierarchy.getLoggerFor("fop");
+            log.setPriority(Priority.INFO);
+            log.error("Logger not set");
+        }
+        return log;
+    }
+
     /**
      * Resets the Driver so it can be reused. Property and element
      * mappings are reset to defaults.
@@ -327,6 +344,7 @@ public class Driver implements Loggable {
      * @param renderer the renderer instance to use
      */
     public void setRenderer(Renderer renderer) {
+        renderer.setLogger(getLogger());
         _renderer = renderer;
     }
 
@@ -420,22 +438,8 @@ public class Driver implements Loggable {
      * events but isn't a SAX Parser itself.
      */
     public ContentHandler getContentHandler() {
-        if(log == null) {
-            Hierarchy hierarchy = Hierarchy.getDefaultHierarchy();
-            PatternFormatter formatter = new PatternFormatter(
-               "[%{priority}]: %{message}\n%{throwable}" );
-
-            LogTarget target = null;
-            target = new StreamTarget(System.out, formatter);
-
-            hierarchy.setDefaultLogTarget(target);
-            log = hierarchy.getLoggerFor("fop");
-            log.setPriority(Priority.INFO);
-            log.error("Logger not set");
-        }
-
         StreamRenderer streamRenderer = new StreamRenderer(_stream, _renderer);
-        streamRenderer.setLogger(log);
+        streamRenderer.setLogger(getLogger());
         _treeBuilder.setStreamRenderer(streamRenderer);
 
         return _treeBuilder;
@@ -487,6 +491,7 @@ public class Driver implements Loggable {
      */
     public void dumpError(Exception e) {
         if (_errorDump) {
+            Logger log = getLogger();
             if (e instanceof SAXException) {
                 log.error("", e);
                 if (((SAXException)e).getException() != null) {

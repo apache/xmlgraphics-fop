@@ -212,7 +212,7 @@ class FOPTaskStarter extends Starter {
     }
 
 }
-
+/*
 class MessageLogger implements MessageListener {
     MessageHandler handler;
     Task task;
@@ -294,3 +294,4 @@ class MessageLogger implements MessageListener {
     }
 
 }
+*/

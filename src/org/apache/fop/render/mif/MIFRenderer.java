@@ -11,7 +11,7 @@ package org.apache.fop.render.mif;
 
 // FOP
 import org.apache.fop.render.Renderer;
-import org.apache.fop.messaging.MessageHandler;
+import org.apache.fop.render.AbstractRenderer;
 import org.apache.fop.image.ImageArea;
 import org.apache.fop.image.FopImage;
 import org.apache.fop.apps.FOPException;
@@ -47,7 +47,7 @@ import java.util.Hashtable;
  * it should still work. I don't have an MIF view to test it with,
  * you see.
  */
-public class MIFRenderer implements Renderer {
+public class MIFRenderer extends AbstractRenderer {
 
     private String currentFontName;
     private String currentFontSize;
@@ -378,7 +378,7 @@ public class MIFRenderer implements Renderer {
              * }
              */
 
-            MessageHandler.logln("Warning: SVG images not supported in this version");
+            log.warn("SVG images not supported in this version");
         } else {
             String url = img.getURL();
             this.mifDoc.addImage(url, x, pageHeight - y, w, h);
@@ -487,7 +487,7 @@ public class MIFRenderer implements Renderer {
     */
     public void startRenderer(OutputStream outputStream)
     throws IOException {
-        MessageHandler.logln("rendering areas to MIF");
+        log.info("rendering areas to MIF");
     }
 
     /**
@@ -496,7 +496,7 @@ public class MIFRenderer implements Renderer {
     */
     public void stopRenderer(OutputStream outputStream)
     throws IOException {
-        MessageHandler.logln("writing out MIF");
+        log.info("writing out MIF");
         this.mifDoc.output(outputStream);
         outputStream.flush();
     }
