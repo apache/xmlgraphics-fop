@@ -22,7 +22,7 @@
     Alternately, this  acknowledgment may  appear in the software itself,  if
     and wherever such third-party acknowledgments normally appear.
  
- 4. The names "Fop" and  "Apache Software Foundation"  must not be used to
+ 4. The names "FOP" and  "Apache Software Foundation"  must not be used to
     endorse  or promote  products derived  from this  software without  prior
     written permission. For written permission, please contact
     apache@apache.org.
@@ -48,6 +48,7 @@
  Software Foundation, please see <http://www.apache.org/>.
  
  */
+
 package org.apache.fop.apps;
 
 import org.apache.fop.render.pdf.PDFRenderer;
@@ -117,7 +118,7 @@ public class XTCommandLine extends CommandLine {
 	    driver.addElementMapping("org.apache.fop.fo.StandardElementMapping");
 	    driver.addElementMapping("org.apache.fop.svg.SVGElementMapping");
 	    driver.setWriter(new PrintWriter(new FileWriter(args[2])));
-	    driver.buildFOTree(parser, fileInputSource(args[0]));
+	    driver.buildFOTree(xslProcessor, fileInputSource(args[0]));
 	    driver.format();
 	    driver.render();
 	} catch (Exception e) {

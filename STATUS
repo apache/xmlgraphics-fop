@@ -9,6 +9,7 @@ Get images working
 [DONE] Incorporate Arved Sandstrom's simple-link implementation
 [PARTIAL] Implement basic keeps
 [PARTIAL] Incorporate Eric Schaeffer's further table fixes
+Implement MessageHandler (or similar)
 
 Other Bugs to fix:
 
@@ -33,6 +34,8 @@ Todo's and problems with AWT Previewer:
 Done since 0.12.0 release:
 
 basic support for padding-{top,left,bottom,right} on blocks.
+implemented simple-link (don't think it works, though)
+XTCommandLine now works again
 
 Done for 0.12.0 release:
 
