@@ -55,11 +55,16 @@
         <li id="sg"><link href="mailto:stanislav@apache.org">Stanislav Gorkhover</link></li>
         <li id="fj"><link href="mailto:fotis@apache.org">Fotis Jannidis</link></li>
         <li id="kl"><link href="mailto:klease@apache.org">Karen Lease</link></li>
-        <li id="ml"><link href="mailto:mark-fop@inomial.com">Mark Lillywhite</link></li>
         <li id="jn"><link href="mailto:jordan@apache.org">Jordan Naftolin</link></li>
         <li id="as"><link href="mailto:arved@apache.org">Arved Sandstrom</link></li>
         <li id="es"><link href="mailto:eschaeffer@apache.org">Eric Schaeffer</link></li>
         <li id="aw"><link href="mailto:artw@apache.org">Art Welch</link></li>
+      </ul>
+    </section>
+    <section id="contribute-former">
+      <title>Former Contributors</title>
+      <ul>
+        <li id="ml"><link href="mailto:mark-fop@inomial.com">Mark Lillywhite</link></li>
       </ul>
     </section>
     <section id="expertise">
