@@ -61,8 +61,6 @@ public class CommandLineOptions {
 
     /* show configuration information */
     private Boolean showConfiguration = Boolean.FALSE;
-    /* suppress any progress information */
-    private Boolean quiet = Boolean.FALSE;
     /* for area tree XML output, only down to block area level */
     private Boolean suppressLowLevelAreas = Boolean.FALSE;
     /* user configuration file */
@@ -132,16 +130,9 @@ public class CommandLineOptions {
      */
     private boolean parseOptions(String[] args) throws FOPException {
         for (int i = 0; i < args.length; i++) {
-            if (args[i].equals("-d") || args[i].equals("--full-error-dump")) {
-                log = new SimpleLog("FOP");
-                ((SimpleLog) log).setLevel(SimpleLog.LOG_LEVEL_DEBUG);
-            } else if (args[i].equals("-x")
+            if (args[i].equals("-x")
                        || args[i].equals("--dump-config")) {
                 showConfiguration = Boolean.TRUE;
-            } else if (args[i].equals("-q") || args[i].equals("--quiet")) {
-                quiet = Boolean.TRUE;
-                log = new SimpleLog("FOP");
-                ((SimpleLog) log).setLevel(SimpleLog.LOG_LEVEL_ERROR);
             } else if (args[i].equals("-c")) {
                 i = i + parseConfigurationOption(args, i);
             } else if (args[i].equals("-l")) {
@@ -581,9 +572,7 @@ public class CommandLineOptions {
               "\nUSAGE\nFop [options] [-fo|-xml] infile [-xsl file] "
                     + "[-awt|-pdf|-mif|-rtf|-pcl|-ps|-txt|-at|-print] <outfile>\n"
             + " [OPTIONS]  \n"
-            + "  -d          debug mode   \n"
             + "  -x          dump configuration settings  \n"
-            + "  -q          quiet mode  \n"
             + "  -c cfg.xml  use additional configuration file cfg.xml\n"
             + "  -l lang     the language to use for user information \n"
             + "  -s          for area tree XML, down to block areas only\n\n"
@@ -628,90 +617,84 @@ public class CommandLineOptions {
 
 
     /**
-     * debug mode. outputs all commandline settings
+     * Outputs all commandline settings
      */
     private void dumpConfiguration() {
-        log.debug("Input mode: ");
+        log.info("Input mode: ");
         switch (inputmode) {
         case NOT_SET:
-            log.debug("not set");
+            log.info("not set");
             break;
         case FO_INPUT:
-            log.debug("FO ");
-            log.debug("fo input file: " + fofile.toString());
+            log.info("FO ");
+            log.info("fo input file: " + fofile.toString());
             break;
         case XSLT_INPUT:
-            log.debug("xslt transformation");
-            log.debug("xml input file: " + xmlfile.toString());
-            log.debug("xslt stylesheet: " + xsltfile.toString());
+            log.info("xslt transformation");
+            log.info("xml input file: " + xmlfile.toString());
+            log.info("xslt stylesheet: " + xsltfile.toString());
             break;
         default:
-            log.debug("unknown input type");
+            log.info("unknown input type");
         }
-        log.debug("Output mode: ");
+        log.info("Output mode: ");
         switch (outputmode) {
         case NOT_SET:
-            log.debug("not set");
+            log.info("not set");
             break;
         case PDF_OUTPUT:
-            log.debug("pdf");
-            log.debug("output file: " + outfile.toString());
+            log.info("pdf");
+            log.info("output file: " + outfile.toString());
             break;
         case AWT_OUTPUT:
-            log.debug("awt on screen");
+            log.info("awt on screen");
             if (outfile != null) {
                 log.error("awt mode, but outfile is set:");
-                log.debug("out file: " + outfile.toString());
+                log.info("out file: " + outfile.toString());
             }
             break;
         case MIF_OUTPUT:
-            log.debug("mif");
-            log.debug("output file: " + outfile.toString());
+            log.info("mif");
+            log.info("output file: " + outfile.toString());
             break;
         case RTF_OUTPUT:
-            log.debug("rtf");
-            log.debug("output file: " + outfile.toString());
+            log.info("rtf");
+            log.info("output file: " + outfile.toString());
             break;
         case PRINT_OUTPUT:
-            log.debug("print directly");
+            log.info("print directly");
             if (outfile != null) {
                 log.error("print mode, but outfile is set:");
                 log.error("out file: " + outfile.toString());
             }
             break;
         case PCL_OUTPUT:
-            log.debug("pcl");
-            log.debug("output file: " + outfile.toString());
+            log.info("pcl");
+            log.info("output file: " + outfile.toString());
             break;
         case PS_OUTPUT:
-            log.debug("PostScript");
-            log.debug("output file: " + outfile.toString());
+            log.info("PostScript");
+            log.info("output file: " + outfile.toString());
             break;
         case TXT_OUTPUT:
-            log.debug("txt");
-            log.debug("output file: " + outfile.toString());
+            log.info("txt");
+            log.info("output file: " + outfile.toString());
             break;
         case SVG_OUTPUT:
-            log.debug("svg");
-            log.debug("output file: " + outfile.toString());
+            log.info("svg");
+            log.info("output file: " + outfile.toString());
             break;
         default:
-            log.debug("unknown input type");
+            log.info("unknown input type");
         }
 
-        log.debug("OPTIONS");
+        log.info("OPTIONS");
         
         if (userConfigFile != null) {
-            log.debug("user configuration file: "
+            log.info("user configuration file: "
                                  + userConfigFile.toString());
         } else {
-            log.debug("no user configuration file is used [default]");
-        }
-
-        if (quiet == Boolean.TRUE) {
-            log.debug("quiet mode off [default]");
-        } else {
-            log.debug("quiet mode on");
+            log.info("no user configuration file is used [default]");
         }
     }
 
