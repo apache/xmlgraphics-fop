@@ -29,6 +29,10 @@ Jon Smirl
 **** HISTORY **** 
 Done since 0.16 release
 
+- added: support for PDF outlines (aka bookmarks). See the example in
+         docs/examples/fo/pdfoutline.fo [Kelly Campbell]
+- added: some text rendering optimizations for PDF [Kelly Campbell]
+- added: limited support for fo:wrapper [Kelly Campbell]
 - added: support in pdfrenderer for using TrueType fonts, and embedding of TrueType 
          and Type1 fonts, and support for kerning [Tore Engvig]
 - added: further support for complete font handling in pdf renderer [Alain Fagot]
