@@ -21,15 +21,13 @@ import org.apache.fop.render.pdf.CIDFont;
 import org.apache.fop.render.pdf.fonts.LazyFont;
 
 import org.apache.fop.datatypes.IDReferences;
-import org.apache.fop.layout.Page;
 import org.apache.fop.layout.FontMetric;
 import org.apache.fop.layout.FontDescriptor;
 // Java
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
-import java.util.Hashtable;
-import java.util.Enumeration;
+import java.util.HashMap;
 import java.awt.Rectangle;
 
 /**
@@ -147,7 +145,7 @@ public class PDFDocument {
      * the XObjects Map.
      * Should be modified (works only for image subtype)
      */
-    protected Hashtable xObjectsMap = new Hashtable();
+    protected HashMap xObjectsMap = new HashMap();
 
     /**
      * the objects themselves
@@ -936,46 +934,25 @@ public class PDFDocument {
      *
      * @return the created /Page object
      */
-    public PDFPage makePage(PDFResources resources, PDFStream contents,
+    public PDFPage makePage(PDFResources resources,
                             int pagewidth, int pageheight) {
 
         /*
          * create a PDFPage with the next object number, the given
          * resources, contents and dimensions
          */
-        PDFPage page = new PDFPage(++this.objectcount, resources, contents,
+        PDFPage page = new PDFPage(++this.objectcount, resources,
                                    pagewidth, pageheight);
 
-        if(pendingLinks != null) {
-            for(int count = 0; count < pendingLinks.size(); count++) {
-                PendingLink pl = (PendingLink)pendingLinks.get(count);
-                PDFGoTo gt = new PDFGoTo(++this.objectcount,
-                                         page.referencePDF());
-                gt.setDestination(pl.dest);
-                addTrailerObject(gt);
-                PDFInternalLink internalLink =
-                                 new PDFInternalLink(gt.referencePDF());
-                pl.link.setAction(internalLink);
-            }
-            pendingLinks = null;
-        }
-/*
-        if (currentPage != null) {
-            Enumeration enum = currentPage.getIDList().elements();
-            while (enum.hasMoreElements()) {
-                String id = enum.nextElement().toString();
-                idReferences.setInternalGoToPageReference(id,
-                        page.referencePDF());
-            }
-        }
-*/
         /* add it to the list of objects */
         this.objects.add(page);
 
-        /* add the page to the Root */
-        this.root.addPage(page);
-
         return page;
+    }
+
+    public void addPage(PDFPage page) {
+        /* add it to the list of objects */
+        this.objects.add(page);
     }
 
     /**

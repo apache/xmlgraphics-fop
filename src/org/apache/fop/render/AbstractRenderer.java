@@ -59,6 +59,27 @@ public abstract class AbstractRenderer implements Renderer {
     }
 
     /**
+     * Check if this renderer supports out of order rendering.
+     * If this renderer supports out of order rendering then it
+     * means that the pages that are not ready will be prepared
+     * and a future page will be rendered.
+     */
+    public boolean supportsOutOfOrder() {
+        return false;
+    }
+
+    /**
+     * Prepare a page for rendering.
+     * This is called if the renderer supports out of order rendering.
+     * The renderer should prepare the page so that a page further on
+     * in the set of pages can be rendered. The body of the page should
+     * not be rendered. The page will be rendered at a later time
+     * by the call to render page.
+     */
+    public void preparePage(PageViewport page) {
+    }
+
+    /**
      * Utility method to convert a page sequence title to a string.
      * Some renderers may only be able to use a string title.
      * A title is a sequence of inline areas that this method

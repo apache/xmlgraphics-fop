@@ -61,6 +61,10 @@ public interface Renderer {
      */
     public void setProducer(String producer);
 
+    public boolean supportsOutOfOrder();
+
+    public void preparePage(PageViewport page);
+
     public void startPageSequence(Title seqTitle);
 
     public void renderPage(PageViewport page) throws IOException, FOPException;

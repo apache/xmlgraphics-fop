@@ -54,4 +54,13 @@ public class PageViewport {
     public void loadPage(ObjectInputStream in) throws Exception {
         page = (Page) in.readObject();
     }
+
+    /**
+     * Clear the page contents to save memory.
+     * THis objects is kept for the life of the area tree since
+     * it holds id information and is used as a key.
+     */
+    public void clear() {
+        page = null;
+    }
 }
