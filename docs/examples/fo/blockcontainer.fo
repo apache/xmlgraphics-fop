@@ -70,7 +70,7 @@
         <fo:block-container reference-orientation="180" inline-progression-dimension="100pt">
           <fo:block>
               BC:B III
-          </fo:block> 
+          </fo:block>
           <fo:block>
               The areas are stacked normally but the orientation of the
               area is rotated 180 degrees clockwise.
@@ -81,7 +81,7 @@
               180 degrees.
           </fo:block>
         </fo:block-container>
-      </fo:block> 
+      </fo:block>
 
       <fo:block>
         different writing mode

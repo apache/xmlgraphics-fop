@@ -1,29 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<!-- example for a simple fo file. At the beginning the page layout is set. 
-  Below fo:root there is always 
+<!-- example for a simple fo file. At the beginning the page layout is set.
+  Below fo:root there is always
 - a single fo:layout-master-set which defines one or more page layouts
-- an optional fo:declarations 
-- and a sequence of one or more fo:page-sequences containing the text and formatting instructions 
+- an optional fo:declarations
+- and a sequence of one or more fo:page-sequences containing the text and formatting instructions
 -->
 
 <fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format">
 
   <fo:layout-master-set>
-  <!-- fo:layout-master-set defines in its children the page layout: 
+  <!-- fo:layout-master-set defines in its children the page layout:
        the pagination and layout specifications
-      - page-masters: have the role of describing the intended subdivisions 
-                       of a page and the geometry of these subdivisions 
-                      In this case there is only a simple-page-master which defines the 
+      - page-masters: have the role of describing the intended subdivisions
+                       of a page and the geometry of these subdivisions
+                      In this case there is only a simple-page-master which defines the
                       layout for all pages of the text
   -->
     <!-- layout information -->
     <fo:simple-page-master master-name="simple"
-                  page-height="29.7cm" 
+                  page-height="29.7cm"
                   page-width="21cm"
-                  margin-top="1cm" 
-                  margin-bottom="2cm" 
-                  margin-left="2.5cm" 
+                  margin-top="1cm"
+                  margin-bottom="2cm"
+                  margin-left="2.5cm"
                   margin-right="2.5cm">
       <fo:region-body margin-top="3cm"/>
       <fo:region-before extent="3cm"/>
@@ -35,21 +35,21 @@
 
   <!-- start page-sequence
        here comes the text (contained in flow objects)
-       the page-sequence can contain different fo:flows 
+       the page-sequence can contain different fo:flows
        the attribute value of master-name refers to the page layout
        which is to be used to layout the text contained in this
        page-sequence-->
   <fo:page-sequence master-reference="simple">
 
       <!-- start fo:flow
-           each flow is targeted 
+           each flow is targeted
            at one (and only one) of the following:
            xsl-region-body (usually: normal text)
            xsl-region-before (usually: header)
            xsl-region-after  (usually: footer)
-           xsl-region-start  (usually: left margin) 
+           xsl-region-start  (usually: left margin)
            xsl-region-end    (usually: right margin)
-           ['usually' applies here to languages with left-right and top-down 
+           ['usually' applies here to languages with left-right and top-down
             writing direction like English]
            in this case there is only one target: xsl-region-body
         -->
@@ -60,8 +60,8 @@
            font-family and size, line-heigth etc. -->
 
       <!-- this defines a title -->
-      <fo:block font-size="18pt" 
-            font-family="sans-serif" 
+      <fo:block font-size="18pt"
+            font-family="sans-serif"
             line-height="24pt"
             space-after.optimum="15pt"
             background-color="blue"
@@ -73,8 +73,8 @@
 
 
       <!-- this defines normal text -->
-      <fo:block font-size="12pt" 
-                font-family="sans-serif" 
+      <fo:block font-size="12pt"
+                font-family="sans-serif"
                 line-height="15pt"
                 space-after.optimum="3pt"
                 text-align="justify">
@@ -84,8 +84,8 @@
       </fo:block>
 
       <!-- this defines normal text -->
-      <fo:block font-size="12pt" 
-                font-family="sans-serif" 
+      <fo:block font-size="12pt"
+                font-family="sans-serif"
                 line-height="15pt"
                 space-after.optimum="3pt"
                 text-align="justify">
