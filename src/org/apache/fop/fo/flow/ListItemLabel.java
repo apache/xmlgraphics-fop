@@ -46,4 +46,9 @@ public class ListItemLabel extends FObj {
 
     }
 
+    protected boolean containsMarkers() {
+        return true;
+    }
+
 }
+

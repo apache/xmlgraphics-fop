@@ -51,4 +51,10 @@ public class TableAndCaption extends ToBeImplementedElement {
     public boolean generatesInlineAreas() {
         return false;
     }
+
+    protected boolean containsMarkers() {
+        return true;
+    }
+
 }
+

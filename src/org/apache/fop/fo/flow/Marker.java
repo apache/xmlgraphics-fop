@@ -16,31 +16,48 @@ import org.apache.fop.apps.FOPException;
 
 import org.xml.sax.Attributes;
 
+/**
+ * Marker formatting object.
+ * This is the marker formatting object that handles merkers.
+ * This attempts to add itself to the parent formatting object.
+ */
 public class Marker extends FObjMixed {
 
     private String markerClassName;
 
+    /**
+     * Create a marker fo.
+     *
+     * @param parent the parent fo node
+     */
     public Marker(FONode parent) {
         super(parent);
     }
 
+    /**
+     * Handle the attributes for this marker.
+     * This gets the marker-class-name and attempts to add itself
+     * to the parent formatting object.
+     *
+     * @param attlist the attribute list
+     * @throws FOPException if there is an exception
+     */
     public void handleAttrs(Attributes attlist) throws FOPException {
         super.handleAttrs(attlist);
-        // do check to see that 'this' is under fo:flow
 
         this.markerClassName =
             this.properties.get("marker-class-name").getString();
-
-        // check to ensure that no other marker with same parent
-        // has this 'marker-class-name' is in addMarker() method
-        try {
-            ((FObj)parent).addMarker(this);
-        } catch (FOPException fopex) {
-            getLogger().error("marker cannot be added to '" + parent
-                                 + "'");
-        }
     }
 
+    protected boolean isMarker() {
+        return true;
+    }
+
+    /**
+     * Get the marker class name for this marker.
+     *
+     * @return the marker class name
+     */
     public String getMarkerClassName() {
         return markerClassName;
     }

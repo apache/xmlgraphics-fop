@@ -116,6 +116,10 @@ public class Leader extends FObjMixed {
 
             leaderArea = fa;
         } else if(leaderPattern == LeaderPattern.USECONTENT) {
+            if (children == null) {
+                getLogger().error("Leader use-content with no content");
+                return;
+            }
             InlineStackingLayoutManager lm;
             lm = new InlineStackingLayoutManager(this,
                      new LMiter(children.listIterator()));

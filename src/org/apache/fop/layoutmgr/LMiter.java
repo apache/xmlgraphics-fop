@@ -33,7 +33,7 @@ public class LMiter implements ListIterator {
 
     protected boolean preLoadNext() {
         // skip over child FObj's that don't add lms
-        while (baseIter.hasNext()) {
+        while (baseIter != null && baseIter.hasNext()) {
             Object theobj = baseIter.next();
             if(theobj instanceof FObj) {
                 FObj fobj = (FObj) theobj;

@@ -78,8 +78,6 @@ public class BlockContainer extends FObj {
             // this.properties.get("width");
             // this.properties.get("writing-mode");
 
-            this.marker = 0;
-
             this.backgroundColor =
                 this.properties.get("background-color").getColorType();
 
@@ -95,6 +93,10 @@ public class BlockContainer extends FObj {
 
     public boolean generatesInlineAreas() {
         return false;
+    }
+
+    protected boolean containsMarkers() {
+        return true;
     }
 
     public int getSpan() {

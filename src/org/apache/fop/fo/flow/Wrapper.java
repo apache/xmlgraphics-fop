@@ -27,4 +27,9 @@ public class Wrapper extends FObjMixed {
         super(parent);
     }
 
+    protected boolean containsMarkers() {
+        return true;
+    }
+
 }
+

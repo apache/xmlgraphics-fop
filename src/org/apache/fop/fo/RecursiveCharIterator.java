@@ -54,7 +54,7 @@ public class RecursiveCharIterator extends AbstractCharIterator {
 
 
     private void getNextCharIter() {
-        if (childIter.hasNext()) {
+        if (childIter != null && childIter.hasNext()) {
             this.curChild = (FONode) childIter.next();
             this.curCharIter = curChild.charIterator();
         } else {

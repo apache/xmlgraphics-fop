@@ -24,64 +24,72 @@ import java.util.ListIterator;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.HashMap;
-import java.util.HashSet;
+import java.util.Set;
+import java.util.Map;
 
 /**
  * base class for representation of formatting objects and their processing
  */
 public class FObj extends FONode {
+    private final static String FO_URI = "http://www.w3.org/1999/XSL/Format";
+
+    /**
+     * Static property list builder that converts xml attributes
+     * into fo properties. This is static since the underlying
+     * property mappings for fo are also static.
+     */
+    protected static PropertyListBuilder plb = null;
+
+    /**
+     * Structure handler used to notify structure events
+     * such as start end element.
+     */
     protected StructureHandler structHandler;
+
+    /**
+     * Formatting properties for this fo element.
+     */
     public PropertyList properties;
+
+    /**
+     * Property manager for handler some common properties.
+     */
     protected PropertyManager propMgr;
-    protected String areaClass = AreaClass.UNASSIGNED;
+
+    /**
+     * Id of this fo element of null if no id.
+     */
     protected String id = null;
 
     /**
-     * value of marker before layout begins
+     * The children of this node.
      */
-    public static final int START = -1000;
+    protected ArrayList children = null;
 
     /**
-     * value of marker after break-after
+     * Markers added to this element.
      */
-    public static final int BREAK_AFTER = -1001;
+    protected Map markers = null;
 
     /**
-     * where the layout was up to.
-     * for FObjs it is the child number
-     * for FOText it is the character number
+     * Create a new formatting object.
+     * All formatting object classes extend this class.
+     *
+     * @param parent the parent node
      */
-    protected int marker = START;
-
-    protected ArrayList children = new ArrayList(); // made public for searching for id's
-
-    protected boolean isInTableCell = false;
-
-    protected int forcedStartOffset = 0;
-    protected int forcedWidth = 0;
-
-    protected int widows = 0;
-    protected int orphans = 0;
-
-    // count of areas generated-by/returned-by
-    public int areasGenerated = 0;
-
-    // markers
-    protected HashMap markers;
-
     public FObj(FONode parent) {
         super(parent);
-        markers = new HashMap();
-        if (parent instanceof FObj) {
-            this.areaClass = ((FObj) parent).areaClass;
-        }
     }
 
+    /**
+     * Set the name of this element.
+     * The prepends "fo:" to the name to indicate it is in the fo namespace.
+     *
+     * @param str the xml element name
+     */
     public void setName(String str) {
         name = "fo:" + str;
     }
-
-    protected static PropertyListBuilder plb = null;
 
     protected PropertyListBuilder getListBuilder() {
         if (plb == null) {
@@ -105,7 +113,6 @@ public class FObj extends FONode {
      * will be altered for the next element.
      */
     public void handleAttrs(Attributes attlist) throws FOPException {
-        String uri = "http://www.w3.org/1999/XSL/Format";
         FONode par = parent;
         while (par != null && !(par instanceof FObj)) {
             par = par.parent;
@@ -114,7 +121,7 @@ public class FObj extends FONode {
         if (par != null) {
             props = ((FObj) par).properties;
         }
-        properties = getListBuilder().makeList(uri, name, attlist, props,
+        properties = getListBuilder().makeList(FO_URI, name, attlist, props,
                                                (FObj) par);
         properties.setFObj(this);
         this.propMgr = makePropertyManager(properties);
@@ -126,10 +133,27 @@ public class FObj extends FONode {
         return new PropertyManager(propertyList);
     }
 
+    /**
+     * Add the child to this object.
+     *
+     * @param child the child node to add
+     */
     protected void addChild(FONode child) {
-        children.add(child);
+        if (containsMarkers() && child.isMarker()) {
+            addMarker((Marker)child);
+        } else {
+            if (children == null) {
+                children = new ArrayList();
+            }
+            children.add(child);
+        }
     }
 
+    /**
+     * Set the structure handler for handling structure events.
+     *
+     * @param st the structure handler
+     */
     public void setStructHandler(StructureHandler st) {
         structHandler = st;
     }
@@ -144,12 +168,18 @@ public class FObj extends FONode {
         return (properties.get(name));
     }
 
+    /**
+     * Setup the id for this formatting object.
+     * Most formatting objects can have an id that can be referenced.
+     * This methods checks that the id isn't already used by another
+     * fo and sets the id attribute of this object.
+     */
     protected void setupID() {
         Property prop = this.properties.get("id");
         if (prop != null) {
             String str = prop.getString();
             if (str != null && !str.equals("")) {
-                HashSet idrefs = structHandler.getIDReferences();
+                Set idrefs = structHandler.getIDReferences();
                 if (!idrefs.contains(str)) {
                     id = str;
                     idrefs.add(id);
@@ -160,31 +190,41 @@ public class FObj extends FONode {
         }
     }
 
+    /**
+     * Get the id string for this formatting object.
+     * This will be unique for the fo document.
+     *
+     * @return the id string or null if not set
+     */
     public String getID() {
         return id;
     }
 
     /**
-     * Return the "content width" of the areas generated by this FO.
-     * This is used by percent-based properties to get the dimension of
-     * the containing block.
-     * If an FO has a property with a percentage value, that value
-     * is usually calculated on the basis of the corresponding dimension
-     * of the area which contains areas generated by the FO.
-     * NOTE: subclasses of FObj should implement this to return a reasonable
-     * value!
+     * Check if this formatting object generates reference areas.
+     *
+     * @return true if generates reference areas
      */
-    public int getContentWidth() {
-        return 0;
-    }
-
     public boolean generatesReferenceAreas() {
         return false;
     }
 
-
+    /**
+     * Check if this formatting object generates inline areas.
+     *
+     * @return true if generates inline areas
+     */
     public boolean generatesInlineAreas() {
         return true;
+    }
+
+    /**
+     * Check if this formatting object may contain markers.
+     *
+     * @return true if this can contian markers
+     */
+    protected boolean containsMarkers() {
+        return false;
     }
 
     /**
@@ -231,147 +271,57 @@ public class FObj extends FONode {
      * this FObj.
      */
     public ListIterator getChildren(FONode childNode) {
-        int i = children.indexOf(childNode);
-        if (i >= 0) {
-            return children.listIterator(i);
-        } else {
-            return null;
-        }
-    }
-
-    public void setIsInTableCell() {
-        this.isInTableCell = true;
-        // made recursive by Eric Schaeffer
-        for (int i = 0; i < this.children.size(); i++) {
-            Object obj = this.children.get(i);
-            if (obj instanceof FObj) {
-                FObj child = (FObj) obj;
-                child.setIsInTableCell();
+        if (children != null) {
+            int i = children.indexOf(childNode);
+            if (i >= 0) {
+                return children.listIterator(i);
             }
         }
-    }
-
-    public void forceStartOffset(int offset) {
-        this.forcedStartOffset = offset;
-        // made recursive by Eric Schaeffer
-        for (int i = 0; i < this.children.size(); i++) {
-            Object obj = this.children.get(i);
-            if (obj instanceof FObj) {
-                FObj child = (FObj) obj;
-                child.forceStartOffset(offset);
-            }
-        }
-    }
-
-    public void forceWidth(int width) {
-        this.forcedWidth = width;
-        // made recursive by Eric Schaeffer
-        for (int i = 0; i < this.children.size(); i++) {
-            Object obj = this.children.get(i);
-            if (obj instanceof FObj) {
-                FObj child = (FObj) obj;
-                child.forceWidth(width);
-            }
-        }
-    }
-
-    public void resetMarker() {
-        this.marker = START;
-        int numChildren = this.children.size();
-        for (int i = 0; i < numChildren; i++) {
-            Object obj = this.children.get(i);
-            if (obj instanceof FObj) {
-                FObj child = (FObj) obj;
-                child.resetMarker();
-            }
-        }
-    }
-
-    public void setWidows(int wid) {
-        widows = wid;
-    }
-
-    public void setOrphans(int orph) {
-        orphans = orph;
-    }
-
-    public void removeAreas() {
-        // still to do
+        return null;
     }
 
     /**
-     * At the start of a new span area layout may be partway through a
-     * nested FO, and balancing requires rollback to this known point.
-     * The snapshot records exactly where layout is at.
-     * @param snapshot a ArrayList of markers (Integer)
-     * @returns the updated ArrayList of markers (Integers)
+     * Add the marker to this formatting object.
+     * If this object can contain markers it checks that the marker
+     * has a unique class-name for this object and that it is
+     * the first child.
      */
-    public ArrayList getMarkerSnapshot(ArrayList snapshot) {
-        snapshot.add(new Integer(this.marker));
-
-        // terminate if no kids or child not yet accessed
-        if (this.marker < 0) {
-            return snapshot;
-        } else if (children.isEmpty()) {
-            return snapshot;
-        } else {
-            return ( (FObj) children.get(this.marker)).getMarkerSnapshot(
-                     snapshot);
-        }
-    }
-
-    /**
-     * When balancing occurs, the flow layout() method restarts at the
-     * point specified by the current marker snapshot, which is retrieved
-     * and restored using this method.
-     * @param snapshot the ArrayList of saved markers (Integers)
-     */
-    public void rollback(ArrayList snapshot) {
-        this.marker = ((Integer) snapshot.get(0)).intValue();
-        snapshot.remove(0);
-
-        if (this.marker == START) {
-            // make sure all the children of this FO are also reset
-            resetMarker();
-            return;
-        } else if ((this.marker == -1) || children.isEmpty()) {
-            return;
-        }
-
-        int numChildren = this.children.size();
-
-        if (this.marker <= START) {
-            return;
-        }
-
-        for (int i = this.marker + 1; i < numChildren; i++) {
-            Object obj = this.children.get(i);
-            if (obj instanceof FObj) {
-                FObj child = (FObj) obj;
-                child.resetMarker();
-            }
-        }
-        ((FObj) children.get(this.marker)).rollback(snapshot);
-    }
-
-
-    public void addMarker(Marker marker) throws FOPException {
+    public void addMarker(Marker marker) {
         String mcname = marker.getMarkerClassName();
-        if (!markers.containsKey(mcname) && children.isEmpty()) {
+        if (children != null) {
+            // check for empty children
+            for (Iterator iter = children.iterator(); iter.hasNext();) {
+                FONode node = (FONode)iter.next();
+                if (node instanceof FOText) {
+                    FOText text = (FOText)node;
+                    if (text.willCreateArea()) {
+                        getLogger().error("fo:marker must be an initial child: " + mcname);
+                        return;
+                    } else {
+                        iter.remove();
+                    }
+                } else {
+                    getLogger().error("fo:marker must be an initial child: " + mcname);
+                    return;
+                }
+            }
+        }
+        if (markers == null) {
+            markers = new HashMap();
+        }
+        if (!markers.containsKey(mcname)) {
             markers.put(mcname, marker);
         } else {
-            getLogger().error("fo:marker must be an initial child," + "and 'marker-class-name' must be unique for same parent");
-            throw new FOPException(
-              "fo:marker must be an initial child," + "and 'marker-class-name' must be unique for same parent");
+            getLogger().error("fo:marker 'marker-class-name' must be unique for same parent: " + mcname);
         }
     }
 
     public boolean hasMarkers() {
-        return !markers.isEmpty();
+        return markers != null && !markers.isEmpty();
     }
 
-    public ArrayList getMarkers() {
-        return new ArrayList(markers.values());
+    public Map getMarkers() {
+        return markers;
     }
 
     /**

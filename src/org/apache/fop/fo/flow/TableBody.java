@@ -70,5 +70,9 @@ public class TableBody extends FObj {
 
     }
 
+    protected boolean containsMarkers() {
+        return true;
+    }
+
 }
 

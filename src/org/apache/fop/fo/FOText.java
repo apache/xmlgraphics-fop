@@ -51,6 +51,15 @@ public class FOText extends FObj {
         structHandler.characters(ca, start, length);
     }
 
+    /**
+     * Check if this text node will create an area.
+     * This means either there is non-whitespace or it is
+     * preserved whitespace.
+     * Maybe this just needs to check length > 0, since char iterators
+     * handle whitespace.
+     *
+     * @return true if this will create an area in the output
+     */
     public boolean willCreateArea() {
         if (textInfo.whiteSpaceCollapse == WhiteSpaceCollapse.FALSE &&
                 length > 0) {

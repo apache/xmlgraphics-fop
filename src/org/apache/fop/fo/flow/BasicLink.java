@@ -120,8 +120,13 @@ public class BasicLink extends Inline {
 
     }
 
+    protected boolean containsMarkers() {
+        return true;
+    }
+
     /**
      * Link resolving for resolving internal links.
+     * This is static since it is independant of the link fo.
      */
     protected static class LinkResolver implements Resolveable, Serializable {
         private boolean resolved = false;

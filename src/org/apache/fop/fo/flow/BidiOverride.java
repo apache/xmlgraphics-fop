@@ -74,6 +74,10 @@ public class BidiOverride extends FObjMixed {
 
     }
 
+    protected boolean containsMarkers() {
+        return true;
+    }
+
     /**
      * If this bidi has a different writing mode direction
      * ltr or rtl than its parent writing mode then this

@@ -296,5 +296,9 @@ public class TableCell extends FObj {
         }
     }
     
+    protected boolean containsMarkers() {
+        return true;
+    }
+
 }
 
