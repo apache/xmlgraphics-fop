@@ -71,6 +71,7 @@ public class LineArea extends Area {
     protected static final int NOTHING = 0;
     protected static final int WHITESPACE = 1;
     protected static final int TEXT = 2;
+    protected static final int MULTIBYTECHAR = 3;
 
     /* the character type of the previous character */
     protected int prev = NOTHING;
@@ -210,6 +211,7 @@ public class LineArea extends Area {
         System.arraycopy(odata, 0, dataCopy, 0, odata.length);
 
         boolean isText = false;
+        boolean isMultiByteChar = false;
 
         /* iterate over each character */
         for (int i = start; i < end; i++) {
@@ -220,6 +222,7 @@ public class LineArea extends Area {
                     || (c == '\u2028'))) {
                 charWidth = getCharWidth(c);
                 isText = true;
+                isMultiByteChar = (c > 127);
                 // Add support for zero-width spaces
                 if (charWidth <= 0 && c != '\u200B' && c != '\uFEFF')
                     charWidth = whitespaceWidth;
@@ -230,6 +233,7 @@ public class LineArea extends Area {
                     charWidth = getCharWidth(c);
 
                 isText = false;
+                isMultiByteChar = false;
 
                 if (prev == WHITESPACE) {
 
@@ -268,7 +272,7 @@ public class LineArea extends Area {
                         return i + 1;
                     }
 
-                } else if (prev == TEXT) {
+                } else if (prev == TEXT || prev == MULTIBYTECHAR ) {
 
                     // if current is WHITESPACE and previous TEXT
                     // the current word made it, so
@@ -388,6 +392,7 @@ public class LineArea extends Area {
 
             if (isText) {                        // current is TEXT
 
+                int curr = isMultiByteChar ? MULTIBYTECHAR : TEXT;
                 if (prev == WHITESPACE) {
 
                     // if current is TEXT and previous WHITESPACE
@@ -401,15 +406,74 @@ public class LineArea extends Area {
                             return i;
                         }
                     }
-                    prev = TEXT;
+                    prev = curr;
                     wordStart = i;
                     wordLength = 1;
-                } else if (prev == TEXT) {
-                    wordLength++;
-                    wordWidth += charWidth;
+                } else if (prev == TEXT || prev == MULTIBYTECHAR ) {
+					if ( prev == TEXT && curr == TEXT || ! canBreakMidWord()) {
+	                    wordLength++;
+    	                wordWidth += charWidth;
+					} else {
+
+//                    if (spaceWidth > 0) { // for text-align="justify"
+                        InlineSpace is = new InlineSpace(spaceWidth);
+                        if (prevUlState) {
+                            is.setUnderlined(textState.getUnderlined());
+                        }
+                        if (prevOlState) {
+                            is.setOverlined(textState.getOverlined());
+                        }
+                        if (prevLTState) {
+                            is.setLineThrough(textState.getLineThrough());
+                        }
+                        addChild(is);
+                        finalWidth += spaceWidth;
+                        spaceWidth = 0;
+//                    }
+
+                    // add any pending areas
+
+                    Enumeration e = pendingAreas.elements();
+                    while (e.hasMoreElements()) {
+                        Box box = (Box)e.nextElement();
+                        if (box instanceof InlineArea) {
+                            if (ls != null) {
+                                Rectangle lr =
+                                    new Rectangle(finalWidth, 0,
+                                                  ((InlineArea)box).getContentWidth(),
+                                                  fontState.getFontSize());
+                                ls.addRect(lr, this, (InlineArea)box);
+                            }
+                        }
+                        addChild(box);
+                    }
+
+                    finalWidth += pendingWidth;
+
+                    // reset pending areas array
+                    pendingWidth = 0;
+                    pendingAreas = new Vector();
+
+                    // add the current word
+
+                    if (wordLength > 0) {
+                        // The word might contain nonbreaking
+                        // spaces. Split the word and add InlineSpace
+                        // as necessary. All spaces inside the word
+                        // Have a fixed width.
+                        addSpacedWord(new String(data, wordStart, wordLength),
+                                      ls, finalWidth, 0, textState, false);
+                        finalWidth += wordWidth;
+					}
+						spaceWidth = 0;
+						wordStart = i;
+						wordLength = 1;
+	                    wordWidth = charWidth;
+					}
+					prev = curr;
                 } else {                         // nothing previous
 
-                    prev = TEXT;
+                    prev = curr;
                     wordStart = i;
                     wordLength = 1;
                     wordWidth = charWidth;
@@ -419,7 +483,7 @@ public class LineArea extends Area {
                         > this.getContentWidth()) {
 
                     // BREAK MID WORD
-                    if (canBreakMidWord()) {
+/*                    if (canBreakMidWord()) {
                         addSpacedWord(new String(data, wordStart, wordLength - 1),
                                       ls,
                                       finalWidth + spaceWidth
@@ -429,7 +493,7 @@ public class LineArea extends Area {
                         wordWidth = 0;
                         return i;
                     }
-
+*/
                     if (this.wrapOption == WrapOption.WRAP) {
 
                         if (hyphProps.hyphenate == Hyphenate.TRUE) {
@@ -476,7 +540,7 @@ public class LineArea extends Area {
             }
         } // end of iteration over text
 
-        if (prev == TEXT) {
+        if (prev == TEXT || prev == MULTIBYTECHAR) {
 
             if (spaceWidth > 0) {
                 InlineSpace pis = new InlineSpace(spaceWidth);
