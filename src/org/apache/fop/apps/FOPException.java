@@ -14,6 +14,8 @@ import org.xml.sax.SAXException;
  * Exception thrown when FOP has a problem
  */
 public class FOPException extends Exception {
+    private static final String tag = "$Name$";
+    private static final String revision = "$Revision$";
 
     private static final String EXCEPTION_SEPARATOR = "\n---------\n";
 

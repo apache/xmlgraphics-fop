@@ -8,6 +8,9 @@
 package org.apache.fop.datatypes;
 
 public class ColorSpace {
+
+    private static final String tag = "$Name$";
+    private static final String revision = "$Revision$";
 	private boolean hasICCProfile;
 	private byte[] iccProfile;
 	private int numComponents;
