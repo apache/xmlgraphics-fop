@@ -58,9 +58,7 @@ public class Flow extends FObj {
      */
     private int contentWidth;
 
-    /**
-     * Content-width of current column area during layout
-     */
+    /** used for FO validation */
     private boolean blockItemFound = false;
 
     /**
@@ -72,7 +70,7 @@ public class Flow extends FObj {
 
     /**
      * @see org.apache.fop.fo.FONode#validateChildNode(Locator, String, String)
-     * XSL/FOP Content Model: marker* (%block;)+
+     * XSL Content Model: marker* (%block;)+
      */
     protected void validateChildNode(Locator loc, String nsURI, String localName) 
         throws SAXParseException {

@@ -53,7 +53,7 @@ public class Leader extends FObjMixed {
         super(parent);
     }
 
-    public void setup() {
+    private void setup() {
 
         // Common Accessibility Properties
         CommonAccessibility mAccProps = propMgr.getAccessibilityProps();
@@ -162,16 +162,17 @@ public class Leader extends FObjMixed {
         return patternWidth;
     }
 
+    public String getName() {
+        return "fo:leader";
+    }
+    
     /**
      * This is a hook for the AddLMVisitor class to be able to access
      * this object.
      * @param aLMV the AddLMVisitor object that can access this object.
      */
     public void acceptVisitor(AddLMVisitor aLMV) {
+        setup();
         aLMV.serveLeader(this);
-    }
-
-    public String getName() {
-        return "fo:leader";
     }
 }

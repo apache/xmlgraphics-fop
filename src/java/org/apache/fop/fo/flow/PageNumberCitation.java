@@ -83,7 +83,7 @@ public class PageNumberCitation extends FObj {
         return width;
     }
 
-    public void setup() {
+    private void setup() {
 
         // Common Accessibility Properties
         CommonAccessibility mAccProps = propMgr.getAccessibilityProps();
@@ -148,15 +148,16 @@ public class PageNumberCitation extends FObj {
         unresolved = isUnresolved;
     }
 
-    public void acceptVisitor(AddLMVisitor aLMV) {
-        aLMV.servePageNumberCitation(this);
-    }
-
     public Font getFontState() {
         return fontState;
     }
 
     public String getName() {
         return "fo:page-number-citation";
+    }
+
+    public void acceptVisitor(AddLMVisitor aLMV) {
+       setup();
+       aLMV.servePageNumberCitation(this);
     }
 }

@@ -52,7 +52,7 @@ public class RepeatablePageMasterReference extends PageMasterReference
 
     /**
      * @see org.apache.fop.fo.FONode#validateChildNode(Locator, String, String)
-     * XSL/FOP Content Model: empty
+     * XSL Content Model: empty
      */
     protected void validateChildNode(Locator loc, String nsURI, String localName) 
         throws SAXParseException {

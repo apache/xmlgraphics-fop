@@ -20,10 +20,12 @@ package org.apache.fop.fo.flow;
 
 // XML
 import org.xml.sax.Attributes;
+import org.xml.sax.Locator;
 import org.xml.sax.SAXParseException;
 
 // FOP
 import org.apache.fop.apps.FOPException;
+import org.apache.fop.fo.FOElementMapping;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.layoutmgr.AddLMVisitor;
 import org.apache.fop.fo.properties.CommonAccessibility;
@@ -39,9 +41,11 @@ import org.apache.fop.fo.properties.CommonRelativePosition;
  * that are created by the fo element.
  */
 public class BasicLink extends Inline {
-
     private String link = null;
     private boolean external = false;
+
+    // used for FO validation
+    private boolean blockOrInlineItemFound = false;
 
     /**
      * @param parent FONode that is the parent of this object
@@ -58,7 +62,53 @@ public class BasicLink extends Inline {
         getFOInputHandler().startLink(this);
     }
 
-    public void setup() {
+    /**
+     * @see org.apache.fop.fo.FONode#validateChildNode(Locator, String, String)
+     * XSL Content Model: marker* (#PCDATA|%inline;|%block;)*
+     */
+    protected void validateChildNode(Locator loc, String nsURI, String localName) 
+        throws SAXParseException {
+        if (nsURI == FOElementMapping.URI && localName.equals("marker")) {
+            if (blockOrInlineItemFound) {
+               nodesOutOfOrderError(loc, "fo:marker", "(#PCDATA|%inline;|%block;)");
+            }
+        } else if (!isBlockOrInlineItem(nsURI, localName)) {
+            invalidChildError(loc, nsURI, localName);
+        } else {
+            blockOrInlineItemFound = true;
+        }
+    }
+
+    /**
+     * @see org.apache.fop.fo.FONode#end
+     */
+    protected void endOfNode() throws SAXParseException {
+        super.endOfNode();
+        getFOInputHandler().endLink();
+    }
+
+    /**
+     * @return the String value of the link
+     */
+    public String getLink() {
+        return link;
+    }
+
+    /**
+     * @return true if the link is external, false otherwise
+     */
+    public boolean getExternal() {
+        return external;
+    }
+
+    public String getName() {
+        return "fo:basic-link";
+    }
+
+    /**
+     * @todo check if needed; not being called currently
+     */
+    private void setup() {
         String destination;
         int linkType;
 
@@ -78,15 +128,11 @@ public class BasicLink extends Inline {
         // Common Relative Position Properties
         CommonRelativePosition mRelProps = propMgr.getRelativePositionProps();
 
-        // this.propertyList.get("alignment-adjust");
-        // this.propertyList.get("alignment-baseline");
-        // this.propertyList.get("baseline-shift");
-        // this.propertyList.get("destination-place-offset");
-        // this.propertyList.get("dominant-baseline");
         String ext =  propertyList.get(PR_EXTERNAL_DESTINATION).getString();
         setupID();
-        // this.propertyList.get("indicate-destination");
+
         String internal = propertyList.get(PR_INTERNAL_DESTINATION).getString();
+
         if (ext.length() > 0) {
             link = ext;
             external = true;
@@ -95,37 +141,13 @@ public class BasicLink extends Inline {
         } else {
             getLogger().error("basic-link requires an internal or external destination");
         }
-        // this.propertyList.get("keep-together");
-        // this.propertyList.get("keep-with-next");
-        // this.propertyList.get("keep-with-previous");
-        // this.propertyList.get("line-height");
-        // this.propertyList.get("line-height-shift-adjustment");
-        // this.propertyList.get("show-destination");
-        // this.propertyList.get("target-processing-context");
-        // this.propertyList.get("target-presentation-context");
-        // this.propertyList.get("target-stylesheet");
-
     }
 
     /**
      * @return true (BasicLink can contain Markers)
-     */
+    */
     protected boolean containsMarkers() {
         return true;
-    }
-
-    /**
-     * @return the String value of the link
-     */
-    public String getLink() {
-        return link;
-    }
-
-    /**
-     * @return true if the link is external, false otherwise
-     */
-    public boolean getExternal() {
-        return external;
     }
 
     /**
@@ -134,18 +156,7 @@ public class BasicLink extends Inline {
      * @param aLMV the AddLMVisitor object that can access this object.
      */
     public void acceptVisitor(AddLMVisitor aLMV) {
+        setup();
         aLMV.serveBasicLink(this);
-    }
-
-    /**
-     * @see org.apache.fop.fo.FONode#end
-     */
-    protected void endOfNode() throws SAXParseException {
-        super.endOfNode();
-        getFOInputHandler().endLink();
-    }
-    
-    public String getName() {
-        return "fo:basic-link";
     }
 }

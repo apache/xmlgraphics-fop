@@ -33,7 +33,6 @@ public class Float extends ToBeImplementedElement {
      */
     public Float(FONode parent) {
         super(parent);
-        this.name = "fo:float";
     }
 
     private void setup() {

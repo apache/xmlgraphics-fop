@@ -32,11 +32,6 @@ public class ToBeImplementedElement extends FObj {
         super(parent);
     }
 
-    private void setup() {
-        getLogger().debug("This element \"" + this.name
-                             + "\" is not yet implemented.");
-    }
-
     /**
      * This is a hook for the AddLMVisitor class to be able to access
      * this object.

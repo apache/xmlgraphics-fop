@@ -75,7 +75,7 @@ public class PageNumber extends FObj {
         getFOInputHandler().startPageNumber(this);
     }
 
-    public void setup() {
+    private void setup() {
 
         // Common Accessibility Properties
         CommonAccessibility mAccProps = propMgr.getAccessibilityProps();
@@ -129,20 +129,21 @@ public class PageNumber extends FObj {
         return fontState;
     }
 
-    /**
-     * This is a hook for the AddLMVisitor class to be able to access
-     * this object.
-     * @param aLMV the AddLMVisitor object that can access this object.
-     */
-    public void acceptVisitor(AddLMVisitor aLMV) {
-        aLMV.servePageNumber(this);
-    }
-
     protected void endOfNode() throws SAXParseException {
         getFOInputHandler().endPageNumber(this);
     }
     
     public String getName() {
         return "fo:page-number";
+    }
+    
+    /**
+     * This is a hook for the AddLMVisitor class to be able to access
+     * this object.
+     * @param aLMV the AddLMVisitor object that can access this object.
+     */
+    public void acceptVisitor(AddLMVisitor aLMV) {
+       setup();
+       aLMV.servePageNumber(this);
     }
 }

@@ -84,7 +84,7 @@ public class ExternalGraphic extends FObj {
      * Setup this image.
      * This gets the sizes for the image and the dimensions and clipping.
      */
-    public void setup() {
+    private void setup() {
         url = this.propertyList.get(PR_SRC).getString();
         if (url == null) {
             return;
@@ -230,15 +230,6 @@ public class ExternalGraphic extends FObj {
         return viewHeight;
     }
 
-    /**
-     * This is a hook for the AddLMVisitor class to be able to access
-     * this object.
-     * @param aLMV the AddLMVisitor object that can access this object.
-     */
-    public void acceptVisitor(AddLMVisitor aLMV) {
-        aLMV.serveExternalGraphic(this);
-    }
-
     public String getURL() {
         return url;
     }
@@ -259,4 +250,13 @@ public class ExternalGraphic extends FObj {
         return "fo:external-graphic";
     }
 
+    /**
+     * This is a hook for the AddLMVisitor class to be able to access
+     * this object.
+     * @param aLMV the AddLMVisitor object that can access this object.
+     */
+    public void acceptVisitor(AddLMVisitor aLMV) {
+       setup();
+       aLMV.serveExternalGraphic(this);
+    }
 }

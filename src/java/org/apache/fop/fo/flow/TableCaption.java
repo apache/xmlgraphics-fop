@@ -44,7 +44,7 @@ public class TableCaption extends ToBeImplementedElement {
     /**
      * Initialize property values.
      */
-    public void setup() {
+    private void setup() {
 
         // Common Accessibility Properties
         CommonAccessibility mAccProps = propMgr.getAccessibilityProps();

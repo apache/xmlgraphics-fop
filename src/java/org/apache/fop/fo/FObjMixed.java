@@ -53,7 +53,6 @@ public class FObjMixed extends FObj {
 
         FOText ft = new FOText(data, start, length, textInfo, this);
         ft.setLocation(locator);
-        ft.setName("text");
         
         /* characters() processing empty for FOTreeHandler, not empty for RTF & MIFHandlers */
         getFOInputHandler().characters(ft.ca, ft.startIndex, ft.endIndex);
