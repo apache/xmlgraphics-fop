@@ -349,7 +349,7 @@ class FOPTaskStarter extends Starter {
             driver.setLogger(log);
             driver.setRenderer(renderer);
 	    if (renderer == Driver.RENDER_XML) {
-		Hashtable rendererOptions = new Hashtable();
+		HashMap rendererOptions = new HashMap();
 		rendererOptions.put("fineDetail", new Boolean(true));
 		driver.getRenderer().setOptions(rendererOptions);
 	    }
