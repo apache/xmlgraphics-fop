@@ -53,6 +53,13 @@ public interface Renderer {
 
 
     /**
+     * Get the MIME type of the renderer.
+     * 
+     * @return The MIME type of the renderer, may return null if not applicable.
+     */
+    String getMimeType();
+
+        /**
      * Initiates the rendering phase.
      * This must only be called once for a rendering. If
      * stopRenderer is called then this may be called again
