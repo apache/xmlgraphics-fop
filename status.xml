@@ -105,6 +105,10 @@ inactive??
   <changes>
    <release version="2004" date="2004">
     <action context="code" dev="FB" type="update">
+      Rolled property datatypes classes into the property classes and
+      un-nested the Property.Maker inner-class.
+    </action>
+    <action context="code" dev="FB" type="update">
       Abandoned code-generated property maker classes.
     </action>
    </release>
