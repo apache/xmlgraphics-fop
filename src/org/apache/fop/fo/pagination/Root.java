@@ -38,12 +38,11 @@ public class Root extends FObj {
     }
 
     LayoutMasterSet layoutMasterSet;
-    Vector pageSequences;
-
     /**
-     * keeps count of page number from over PageSequence instances
+     * Store a page sequence over a sequence change. The next sequence will
+     * get the page number from this and also take care of forced pages.
      */
-    private int runningPageNumberCounter = 0;
+    PageSequence pageSequence;
 
     protected Root(FObj parent,
                    PropertyList propertyList) throws FOPException {
@@ -52,46 +51,17 @@ public class Root extends FObj {
 
         // this.properties.get("media-usage");
 
-        pageSequences = new Vector();
-
         if (parent != null) {
             throw new FOPException("root must be root element");
         }
     }
 
-    protected int getRunningPageNumberCounter() {
-        return this.runningPageNumberCounter;
+    public void setPageSequence(PageSequence pageSequence) {
+        this.pageSequence=pageSequence;
     }
 
-    protected void setRunningPageNumberCounter(int count) {
-        this.runningPageNumberCounter = count;
-    }
-
-    /**
-     * @deprecated handled by addChild now
-     */
-    public void addPageSequence(PageSequence pageSequence) {
-        this.pageSequences.addElement(pageSequence);
-    }
-
-    public int getPageSequenceCount() {
-        return pageSequences.size();
-    }
-
-    /**
-     * Some properties, such as 'force-page-count', require a
-     * page-sequence to know about some properties of the next.
-     * @returns succeeding PageSequence; null if none
-     */
-    public PageSequence getSucceedingPageSequence(PageSequence current) {
-        int currentIndex = pageSequences.indexOf(current);
-        if (currentIndex == -1)
-            return null;
-        if (currentIndex < (pageSequences.size() - 1)) {
-            return (PageSequence)pageSequences.elementAt(currentIndex + 1);
-        } else {
-            return null;
-        }
+    public PageSequence getPageSequence() {
+        return this.pageSequence;
     }
 
     public LayoutMasterSet getLayoutMasterSet() {
@@ -101,22 +71,4 @@ public class Root extends FObj {
     public void setLayoutMasterSet(LayoutMasterSet layoutMasterSet) {
         this.layoutMasterSet = layoutMasterSet;
     }
-/*
-    public void format(AreaTree areaTree) throws FOPException {
-        // log.debug(" Root[" + marker + "] ");
-        if (layoutMasterSet == null) {
-            throw new FOPException("No layout master set.");
-        }
-
-        Enumeration e = children.elements();
-        while (e.hasMoreElements()) {
-            Object o = e.nextElement();
-            if (o instanceof PageSequence) {
-                ((PageSequence)o).format(areaTree);
-            } else if (o instanceof ExtensionObj) {
-                ((ExtensionObj)o).format(areaTree);
-            }
-        }
-    }
-*/
 }

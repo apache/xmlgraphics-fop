@@ -101,9 +101,11 @@ public class PageSequence extends FObj {
     private Page currentPage;
 
     // page number and related formatting variables
-    private String ipnValue;
-    private int currentPageNumber = 0;
+//    private String ipnValue;
+    private int firstPageNumber = 0;
     private PageNumberGenerator pageNumberGenerator;
+
+    private int currentPageNumber = 0;
 
     private int forcePageCount = 0;
     private int pageCount = 0;
@@ -113,11 +115,6 @@ public class PageSequence extends FObj {
      * specifies page numbering type (auto|auto-even|auto-odd|explicit)
      */
     private int pageNumberType;
-
-    /**
-     * used to determine whether to calculate auto, auto-even, auto-odd
-     */
-    private boolean thisIsFirstPage;
 
     /**
      * the current subsequence while formatting a given page sequence
@@ -143,7 +140,6 @@ public class PageSequence extends FObj {
 
         if (parent.getName().equals("fo:root")) {
             this.root = (Root)parent;
-            // this.root.addPageSequence(this);
         }
         else {
             throw new FOPException("page-sequence must be child of root, not "
@@ -157,21 +153,22 @@ public class PageSequence extends FObj {
 
         _flowMap = new Hashtable();
 
-        thisIsFirstPage =
-            true;    // we are now on the first page of the page sequence
-        ipnValue = this.properties.get("initial-page-number").getString();
+        String ipnValue = this.properties.get("initial-page-number").getString();
 
         if (ipnValue.equals("auto")) {
             pageNumberType = AUTO;
+            this.firstPageNumber = 1;
         } else if (ipnValue.equals("auto-even")) {
             pageNumberType = AUTO_EVEN;
+            this.firstPageNumber = 2;
         } else if (ipnValue.equals("auto-odd")) {
             pageNumberType = AUTO_ODD;
+            this.firstPageNumber = 1;
         } else {
             pageNumberType = EXPLICIT;
             try {
                 int pageStart = new Integer(ipnValue).intValue();
-                this.currentPageNumber = (pageStart > 0) ? pageStart - 1 : 0;
+                this.firstPageNumber = (pageStart > 0) ? pageStart  : 1;
             } catch (NumberFormatException nfe) {
                 throw new FOPException("\"" + ipnValue
                                        + "\" is not a valid value for initial-page-number");
@@ -219,68 +216,71 @@ public class PageSequence extends FObj {
 
         this.layoutMasterSet.resetPageMasters();
 
-        int firstAvailPageNumber = 0;
-        do {
-            // makePage() moved to after the page-number computations,
-            // but store the page-number at this point for that method,
-            // since we want the 'current' current page-number...
-            firstAvailPageNumber = this.root.getRunningPageNumberCounter();
-            boolean tempIsFirstPage = false;
-
-            if (thisIsFirstPage) {
-                tempIsFirstPage = thisIsFirstPage;
-                if (pageNumberType == AUTO) {
-                    this.currentPageNumber =
-                        this.root.getRunningPageNumberCounter();
-                } else if (pageNumberType == AUTO_ODD) {
-                    this.currentPageNumber =
-                        this.root.getRunningPageNumberCounter();
-                    if (this.currentPageNumber % 2 == 1) {
-                        this.currentPageNumber++;
+        PageSequence previousPageSequence=this.root.getPageSequence();
+        if( previousPageSequence!=null ) {
+            currentPageNumber = previousPageSequence.currentPageNumber;
+            if (previousPageSequence.forcePageCount == ForcePageCount.AUTO) {
+                if (pageNumberType == AUTO_ODD) {
+                    if (currentPageNumber % 2 == 0) {
+                        makeBlankPage(areaTree);
                     }
                 } else if (pageNumberType == AUTO_EVEN) {
-                    this.currentPageNumber =
-                        this.root.getRunningPageNumberCounter();
-                    if (this.currentPageNumber % 2 == 0) {
-                        this.currentPageNumber++;
+                    if (currentPageNumber % 2 == 1) {
+                        makeBlankPage(areaTree);
                     }
+                } else if (pageNumberType == EXPLICIT){
+                    if ((currentPageNumber % 2)
+                        == (firstPageNumber % 2)) {
+                        makeBlankPage(areaTree);
+                    }
+                    currentPageNumber = firstPageNumber;
                 }
-                thisIsFirstPage = false;
+            } else {
+                if (pageNumberType == AUTO_ODD) {
+                    if (currentPageNumber % 2 == 0) {
+                      currentPageNumber++;
+                    }
+                } else if (pageNumberType == AUTO_EVEN) {
+                    if (currentPageNumber % 2 == 1) {
+                      currentPageNumber++;
+                    }
+                } else if (pageNumberType == EXPLICIT){
+                    currentPageNumber = firstPageNumber;
+                }
             }
-
-            this.currentPageNumber++;
-
-            // deliberately moved down here so page-number calculations
-            // are complete;
-            // compute flag for 'blank-or-not-blank'
+        } else {
+            currentPageNumber = firstPageNumber;
+        }
+        previousPageSequence = null;
+        this.root.setPageSequence(this);
+        boolean isFirstPage = true;
+        int pageCount = 0;
+        do {
             boolean isEmptyPage = false;
 
-            if ((status.getCode() == Status.FORCE_PAGE_BREAK_EVEN)
-                    && ((currentPageNumber % 2) == 1)) {
-                isEmptyPage = true;
-            } else if ((status.getCode() == Status.FORCE_PAGE_BREAK_ODD)
-                       && ((currentPageNumber % 2) == 0)) {
-                isEmptyPage = true;
-            } else {
-                isEmptyPage = false;
+            // for this calculation we are alreaddy on the
+            // blank page
+            if (status.getCode() == Status.FORCE_PAGE_BREAK_EVEN) {
+                if ((currentPageNumber % 2) == 1) {
+                   isEmptyPage = true;
+                } 
+            } else if (status.getCode() == Status.FORCE_PAGE_BREAK_ODD) {
+                if ((currentPageNumber % 2) == 0) {
+                   isEmptyPage = true;
+                } 
             }
 
-            currentPage = makePage(areaTree, firstAvailPageNumber,
-                                   tempIsFirstPage, isEmptyPage);
+            currentPage = makePage(areaTree, currentPageNumber,
+                                   isFirstPage, isEmptyPage);
 
             currentPage.setNumber(this.currentPageNumber);
             String formattedPageNumber =
                 pageNumberGenerator.makeFormattedPageNumber(this.currentPageNumber);
             currentPage.setFormattedNumber(formattedPageNumber);
-            this.root.setRunningPageNumberCounter(this.currentPageNumber);
 
             log.info("[" + currentPageNumber + "]");
 
-            if ((status.getCode() == Status.FORCE_PAGE_BREAK_EVEN)
-                && ((currentPageNumber % 2) == 1)) {}
-            else if ((status.getCode() == Status.FORCE_PAGE_BREAK_ODD)
-                 && ((currentPageNumber % 2) == 0)) {}
-            else {
+            if (!isEmptyPage) {
                 BodyAreaContainer bodyArea = currentPage.getBody();
                 bodyArea.setIDReferences(areaTree.getIDReferences());
 
@@ -291,26 +291,41 @@ public class PageSequence extends FObj {
                                            + "in page-master '"
                                            + currentPageMasterName + "'");
                     break;
-
                 } else {
                     status = flow.layout(bodyArea);
                 }
-
             }
 
             // because of markers, do after fo:flow (likely also
             // justifiable because of spec)
             currentPage.setPageSequence(this);
             formatStaticContent(areaTree);
-
-            //log.info("]");
             areaTree.addPage(currentPage);
-            this.pageCount++;    // used for 'force-page-count' calculations
+
+            this.currentPageNumber++;
+            pageCount++;    // used for 'force-page-count' calculations
+            isFirstPage = false;
         }
         while (flowsAreIncomplete());
-        // handle the 'force-page-count'
-        forcePage(areaTree, firstAvailPageNumber);
-
+        // handle cases of 'force-page-count' which do not depend
+        // on the presence of a following page sequence
+        if (this.forcePageCount == ForcePageCount.EVEN) {
+            if (pageCount % 2 != 0) {
+                makeBlankPage(areaTree);
+            }
+        } else if (this.forcePageCount == ForcePageCount.ODD) {
+            if (pageCount % 2 != 1) {
+                makeBlankPage(areaTree);
+            }
+        } else if (this.forcePageCount == ForcePageCount.END_ON_EVEN) {
+            if (currentPageNumber % 2 == 0) {
+                makeBlankPage(areaTree);
+            }
+        } else if (this.forcePageCount == ForcePageCount.END_ON_ODD) {
+            if (currentPageNumber % 2 == 1) {
+                makeBlankPage(areaTree);
+            }
+        }
         currentPage = null;
     }
 
@@ -608,10 +623,6 @@ public class PageSequence extends FObj {
         this.isFlowSet = isFlowSet;
     }
 
-    public String getIpnValue() {
-        return ipnValue;
-    }
-
     public int getCurrentPageNumber() {
         return currentPageNumber; 
     }
@@ -620,70 +631,22 @@ public class PageSequence extends FObj {
     	return this.pageCount;
     }
 
-    private void forcePage(AreaTree areaTree, int firstAvailPageNumber) {
-        boolean makePage = false;
-        if (this.forcePageCount == ForcePageCount.AUTO) {
-            PageSequence nextSequence =
-                this.root.getSucceedingPageSequence(this);
-            if (nextSequence != null) {
-                if (nextSequence.getIpnValue().equals("auto")) {
-                    // do nothing special
-                }
-                else if (nextSequence.getIpnValue().equals("auto-odd")) {
-                    if (firstAvailPageNumber % 2 == 0) {
-                        makePage = true;
-                    }
-                } else if (nextSequence.getIpnValue().equals("auto-even")) {
-                    if (firstAvailPageNumber % 2 != 0) {
-                        makePage = true;
-                    }
-                } else {
-                    int nextSequenceStartPageNumber =
-                        nextSequence.getCurrentPageNumber();
-                    if ((nextSequenceStartPageNumber % 2 == 0)
-                            && (firstAvailPageNumber % 2 == 0)) {
-                        makePage = true;
-                    } else if ((nextSequenceStartPageNumber % 2 != 0)
-                               && (firstAvailPageNumber % 2 != 0)) {
-                        makePage = true;
-                    }
-                }
-            }
-        } else if ((this.forcePageCount == ForcePageCount.EVEN)
-                   && (this.pageCount % 2 != 0)) {
-            makePage = true;
-        } else if ((this.forcePageCount == ForcePageCount.ODD)
-                   && (this.pageCount % 2 == 0)) {
-            makePage = true;
-        } else if ((this.forcePageCount == ForcePageCount.END_ON_EVEN)
-                   && (firstAvailPageNumber % 2 == 0)) {
-            makePage = true;
-        } else if ((this.forcePageCount == ForcePageCount.END_ON_ODD)
-                   && (firstAvailPageNumber % 2 != 0)) {
-            makePage = true;
-        } else if (this.forcePageCount == ForcePageCount.NO_FORCE) {
-            // do nothing
-        }
-
-        if (makePage) {
-            try {
-                this.isForcing = true;
-                this.currentPageNumber++;
-                firstAvailPageNumber = this.currentPageNumber;
-                currentPage = makePage(areaTree, firstAvailPageNumber, false,
-                                       true);
-                String formattedPageNumber =
-                    pageNumberGenerator.makeFormattedPageNumber(this.currentPageNumber);
-                currentPage.setFormattedNumber(formattedPageNumber);
-                currentPage.setPageSequence(this);
-                formatStaticContent(areaTree);
-                log.debug("[forced-" + firstAvailPageNumber + "]");
-                areaTree.addPage(currentPage);
-                this.root.setRunningPageNumberCounter(this.currentPageNumber);
-                this.isForcing = false;
-            } catch (FOPException fopex) {
-                log.debug("'force-page-count' failure");
-            }
+    private void makeBlankPage(AreaTree areaTree) {
+        try {
+            this.isForcing = true;
+            currentPage = makePage(areaTree, currentPageNumber, false,
+                                   true);
+            String formattedPageNumber =
+              pageNumberGenerator.makeFormattedPageNumber(this.currentPageNumber);
+            currentPage.setFormattedNumber(formattedPageNumber);
+            currentPage.setPageSequence(this);
+            formatStaticContent(areaTree);
+            log.debug("[forced-" + currentPageNumber + "]");
+            areaTree.addPage(currentPage);
+            this.isForcing = false;
+            this.currentPageNumber++;
+        } catch (FOPException fopex) {
+            log.debug("'force-page-count' failure");
         }
     }
 
