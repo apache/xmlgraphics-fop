@@ -63,21 +63,13 @@ public class FoPageSequenceMaster extends FONode {
 
     private String masterName;
 
-    private ArrayList subSequenceList = new ArrayList(1);
+    //private ArrayList subSequenceList = new ArrayList(1);
 
     public FoPageSequenceMaster(FOTree foTree, FONode parent, XMLEvent event)
         throws Tree.TreeException, FOPException, PropertyException
     {
         super(foTree, FObjectNames.PAGE_SEQUENCE_MASTER, parent, event,
                                               FOPropertySets.SEQ_MASTER_SET);
-        // Check that the property has been set
-        PropertyValue name = propertySet[PropNames.MASTER_NAME];
-        if (name == null)
-            throw new PropertyException("master-name property not set");
-        if (name.getType() != PropertyValue.NCNAME)
-            throw new PropertyException
-                                ("master-name property not an NCName.");
-        masterName = ((NCName)name).getNCName();
         // Process sequence members here
         try {
             do {
@@ -86,20 +78,23 @@ public class FoPageSequenceMaster extends FONode {
                 String localName = ev.getLocalName();
                 if (localName.equals("single-page-master-reference")) {
                     System.out.println("Found single-page-master-reference");
-		    subSequenceList.add(new FoSinglePageMasterReference
-							(foTree, this, ev));
+		    //subSequenceList.add(new FoSinglePageMasterReference
+							//(foTree, this, ev));
+		    new FoSinglePageMasterReference(foTree, this, ev);
                 } else if (localName.equals
                            ("repeatable-page-master-reference")) {
                     System.out.println
                             ("Found repeatable-page-master-reference");
-		    subSequenceList.add(new FoRepeatablePageMasterReference
-							(foTree, this, ev));
+		    //subSequenceList.add(new FoRepeatablePageMasterReference
+							//(foTree, this, ev));
+		    new FoRepeatablePageMasterReference(foTree, this, ev);
                 } else if (localName.equals
                            ("repeatable-page-master-alternatives")) {
                     System.out.println
                             ("Found repeatable-page-master-alternatives");
-		    subSequenceList.add(new FoRepeatablePageMasterAlternatives
-							(foTree, this, ev));
+		    //subSequenceList.add(new FoRepeatablePageMasterAlternatives
+							//(foTree, this, ev));
+		    new FoRepeatablePageMasterAlternatives(foTree, this, ev);
                 } else
                     throw new FOPException
                             ("Aargh! expectStartElement(events, list)");
@@ -113,8 +108,17 @@ public class FoPageSequenceMaster extends FONode {
     /**
      * @return a <tt>String</tt> with the "master-name" attribute value.
      */
-    public String getMasterName() {
-        return masterName;
+    public String getMasterName() throws PropertyException {
+	if (masterName == null) {
+	    PropertyValue name = propertySet[PropNames.MASTER_NAME];
+	    if (name == null)
+		throw new PropertyException("master-name property not set");
+	    if (name.getType() != PropertyValue.NCNAME)
+		throw new PropertyException
+				    ("master-name property not an NCName.");
+	    masterName = ((NCName)name).getNCName();
+	}
+	return masterName;
     }
 
     /**
@@ -208,6 +212,7 @@ public class FoPageSequenceMaster extends FONode {
 				parent, event, FOPropertySets.SEQ_MASTER_SET);
 	    }
 
+	    /*
 	    public PropertyValue getMasterReference() throws PropertyException
 	    {
 		return this.getPropertyValue(PropNames.MASTER_REFERENCE);
@@ -225,6 +230,7 @@ public class FoPageSequenceMaster extends FONode {
 	    {
 		return this.getPropertyValue(PropNames.BLANK_OR_NOT_BLANK);
 	    }
+	    */
 
 	} // FoConditionalPageMasterReference
 
