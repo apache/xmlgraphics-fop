@@ -18,11 +18,11 @@ public class ColorTransparent extends ColorCommon  {
      */
     private static final HashMap rwEnumHash;
     static {
-	rwEnumHash = new HashMap(rwEnums.length);
+	rwEnumHash = new HashMap(rwEnums.length + 1);
 	for (int i = 1; i < rwEnums.length; i++ ) {
-	    rwEnumHash.put((Object)rwEnums[i],
-				(Object) Ints.consts.get(i));
+	    rwEnumHash.put(rwEnums[i], Ints.consts.get(i));
 	}
+        rwEnumHash.put("grey", Ints.consts.get(ColorCommon.GRAY));
     }
 
     public int getEnumIndex(String enum)
