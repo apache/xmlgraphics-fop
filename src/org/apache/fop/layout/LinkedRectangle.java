@@ -57,6 +57,8 @@ package org.apache.fop.layout;
 // Java
 import java.awt.Rectangle;
 
+import org.apache.fop.layout.inline.InlineArea;
+
 /**
  * an object that stores a rectangle that is linked, and the LineArea
  * that it is logically associated with
@@ -69,14 +71,19 @@ public class LinkedRectangle {
     /** the associated LineArea */
     protected LineArea lineArea;
 
-    public LinkedRectangle(Rectangle link, LineArea lineArea) {
+    /** the associated InlineArea */
+    protected InlineArea inlineArea;
+
+    public LinkedRectangle(Rectangle link, LineArea lineArea, InlineArea inlineArea) {
 	this.link = link;
 	this.lineArea = lineArea;
+	this.inlineArea = inlineArea;
     }
     
     public LinkedRectangle(LinkedRectangle lr) {
 	this.link = new Rectangle( lr.getRectangle() );
 	this.lineArea = lr.getLineArea();
+	this.inlineArea = lr.getInlineArea();
     }
 
     public void setRectangle(Rectangle link) {
@@ -91,8 +98,16 @@ public class LinkedRectangle {
 	return this.lineArea;
     }
     
-    public void setLineArea() {
+    public void setLineArea(LineArea lineArea) {
 	this.lineArea = lineArea;
+    }
+
+    public InlineArea getInlineArea() {
+	return this.inlineArea;
+    }
+    
+    public void setLineArea(InlineArea inlineArea) {
+	this.inlineArea = inlineArea;
     }
     
     public void setX(int x) {

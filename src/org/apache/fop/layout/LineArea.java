@@ -244,7 +244,7 @@ public class LineArea extends Area {
                                                              ((InlineArea) box).
                                                              getContentWidth(),
                                                              fontState.getFontSize());
-                                ls.addRect(lr, this);
+                                ls.addRect(lr, this, (InlineArea)box);
                             }
                         }
                         addChild(box);
@@ -277,7 +277,7 @@ public class LineArea extends Area {
                             Rectangle lr = new Rectangle(finalWidth, 0,
                                                          ia.getContentWidth(),
                                                          fontState.getFontSize());
-                            ls.addRect(lr, this);
+                            ls.addRect(lr, this, ia);
                         }
                         finalWidth += wordWidth;
 
@@ -419,7 +419,7 @@ public class LineArea extends Area {
                 Rectangle lr = new Rectangle(finalWidth + spaceWidth +
                                              embeddedLinkStart, spaceWidth,
                                              pia.getContentWidth(), fontState.getFontSize());
-                ls.addRect(lr, this);
+                ls.addRect(lr, this, pia);
             }
 
             embeddedLinkStart += wordWidth;
@@ -606,8 +606,7 @@ public class LineArea extends Area {
                 endIndent += padding;
                 break;
             case TextAlign.JUSTIFY: // justify
-                Vector spaceList = new Vector();
-
+		// first pass - count the spaces
                 int spaceCount = 0;
                 Enumeration e = children.elements();
                 while (e.hasMoreElements()) {
@@ -615,7 +614,6 @@ public class LineArea extends Area {
                     if (b instanceof InlineSpace) {
                         InlineSpace space = (InlineSpace) b;
                         if (space.getResizeable()) {
-                            spaceList.addElement(space);
                             spaceCount++;
                         }
                     }
@@ -626,11 +624,22 @@ public class LineArea extends Area {
                 } else { // no spaces
                     padding = 0;
                 }
-                Enumeration f = spaceList.elements();
-                while (f.hasMoreElements()) {
-                    InlineSpace space2 = (InlineSpace) f.nextElement();
-                    int i = space2.getSize();
-                    space2.setSize(i + padding);
+		// second pass - add additional space
+		spaceCount = 0;
+		e = children.elements();
+		while (e.hasMoreElements()) {
+                    Box b = (Box) e.nextElement();
+                    if (b instanceof InlineSpace) {
+                        InlineSpace space = (InlineSpace) b;
+                        if (space.getResizeable()) {
+			    space.setSize(space.getSize() + padding);
+			    spaceCount++;
+                        }
+                    }
+		    else if (b instanceof InlineArea) {
+			((InlineArea)b).setXOffset(spaceCount * padding);
+		    }
+		    
                 }
         }
     }

@@ -59,6 +59,8 @@ import java.util.Vector;
 import java.util.Enumeration;
 import java.awt.Rectangle;
 
+import org.apache.fop.layout.inline.InlineArea;
+
 import org.apache.fop.fo.properties.WrapOption; // for enumerated
 // values
 // import org.apache.fop.fo.properties.WhiteSpaceCollapse; // for
@@ -105,8 +107,8 @@ public class LinkSet {
         this.linkType = linkType;
     }
 
-    public void addRect(Rectangle r, LineArea lineArea) {
-        LinkedRectangle linkedRectangle = new LinkedRectangle(r, lineArea);
+    public void addRect(Rectangle r, LineArea lineArea, InlineArea inlineArea) {
+        LinkedRectangle linkedRectangle = new LinkedRectangle(r, lineArea, inlineArea);
         linkedRectangle.setY(this.yoffset);
         if (this.yoffset > maxY) {
             maxY = this.yoffset;
@@ -171,7 +173,9 @@ public class LinkSet {
         Enumeration re = rects.elements();
         while (re.hasMoreElements()) {
             LinkedRectangle r = (LinkedRectangle) re.nextElement();
-            r.setX(r.getX() + r.getLineArea().getStartIndent());
+            r.setX(r.getX() + 
+		   r.getLineArea().getStartIndent() + 
+		   r.getInlineArea().getXOffset());
         }
     }
 

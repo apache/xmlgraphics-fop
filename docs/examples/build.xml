@@ -46,6 +46,7 @@
     <fop fofile="${foDir}/table.fo"  pdffile="${testDir}/table.pdf"/>
     <fop fofile="${foDir}/list.fo"   pdffile="${testDir}/list.pdf"/>
     <fop fofile="${foDir}/link.fo"   pdffile="${testDir}/link.pdf"/> 
+    <fop fofile="${foDir}/newlinktest.fo" pdffile="${testDir}/newlinktest.pdf"/>
     <fop fofile="${foDir}/border.fo"   pdffile="${testDir}/border.pdf"/> 
     <fop fofile="${foDir}/extensive.fo"   pdffile="${testDir}/extensive.pdf"/> 
     <fop fofile="${foDir}/images.fo"   pdffile="${testDir}/images.pdf"/> 
@@ -85,6 +86,7 @@
     <fop fofile="${foDir}/table.fo"  pdffile="${referenceDir}/table.pdf"/>
     <fop fofile="${foDir}/list.fo"   pdffile="${referenceDir}/list.pdf"/>
     <fop fofile="${foDir}/link.fo"   pdffile="${referenceDir}/link.pdf"/>
+    <fop fofile="${foDir}/newlinktest.fo"   pdffile="${referenceDir}/newlinktest.pdf"/>
     <fop fofile="${foDir}/border.fo"   pdffile="${referenceDir}/border.pdf"/>
     <fop fofile="${foDir}/extensive.fo"   pdffile="${referenceDir}/extensive.pdf"/>
     <fop fofile="${foDir}/images.fo"   pdffile="${referenceDir}/images.pdf"/>
