@@ -233,11 +233,24 @@ public class FontSetup {
                     try {
                         weight = Integer.parseInt(triplet.getWeight());
                         weight = ((int)weight / 100) * 100;
-                        weight = Math.min(weight, 100);
-                        weight = Math.max(weight, 900);
+                        weight = Math.max(weight, 100);
+                        weight = Math.min(weight, 900);
                     } catch (NumberFormatException nfe) {
-                        /**@todo log this exception */
+                        //weight is no number, so convert smybolic name to number
+                        if (triplet.getWeight().equals("normal")) {
+                            weight = 400;
+                        } else if (triplet.getWeight().equals("bold")) {
+                            weight = 700;
+                        } else {
+                            throw new IllegalArgumentException(
+                                "Illegal value for font weight: '" 
+                                + triplet.getWeight()
+                                + "'. Use one of: 100, 200, 300, "
+                                + "400, 500, 600, 700, 800, 900, "
+                                + "normal (=400), bold (=700)");
+                        }
                     }
+                    //System.out.println("Registering: "+triplet+" weight="+weight);
                     fontInfo.addFontProperties(internalName,
                                                triplet.getName(),
                                                triplet.getStyle(),
@@ -291,8 +304,8 @@ public class FontSetup {
 
             EmbedFontInfo efi;
             efi = new EmbedFontInfo(font[i].getAttribute("metrics-url"),
-                                    font[i].getAttributeAsBoolean("kerning"),
-                                    tripleList, font[i].getAttribute("embed-url"));
+                                    font[i].getAttributeAsBoolean("kerning", false),
+                                    tripleList, font[i].getAttribute("embed-url", null));
 
             fontList.add(efi);
         }
