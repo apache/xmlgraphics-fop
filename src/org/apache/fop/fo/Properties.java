@@ -34,6 +34,7 @@ import org.apache.fop.datatypes.StringType;
 import org.apache.fop.datatypes.NCName;
 import org.apache.fop.datatypes.UriType;
 import org.apache.fop.datatypes.Length;
+import org.apache.fop.datatypes.Ems;
 import org.apache.fop.datatypes.Percentage;
 import org.apache.fop.datatypes.Angle;
 import org.apache.fop.datatypes.EnumType;
@@ -52,6 +53,7 @@ import org.apache.fop.datatypes.TextDecorator;
 import org.apache.fop.datatypes.ShadowEffect;
 import org.apache.fop.datatypes.FromParent;
 import org.apache.fop.datatypes.FromNearestSpecified;
+import org.apache.fop.datatypes.Slash;
 
 /**
  * Parent class for all of the individual property classes.  It also contains
@@ -108,7 +110,7 @@ public abstract class Properties {
                           ,BOOL = 131072
                        ,INHERIT = 262144
                           ,ENUM = 524288
-                   ,MAPPED_ENUM = 1048576
+                ,MAPPED_NUMERIC = 1048576
                      ,SHORTHAND = 2097152
                        ,COMPLEX = 4194304
                           ,AUTO = 8388608
@@ -123,7 +125,7 @@ public abstract class Properties {
     //                   ,SPARE = -2147483648
 
                         ,NUMBER = FLOAT | INTEGER
-                     ,ENUM_TYPE = ENUM | MAPPED_ENUM
+                     ,ENUM_TYPE = ENUM | MAPPED_NUMERIC
                         ,STRING = LITERAL | ENUM_TYPE
                      ,HYPH_TYPE = COUNTRY_T | LANGUAGE_T | SCRIPT_T
                        ,ID_TYPE = ID_T | IDREF
@@ -164,7 +166,8 @@ public abstract class Properties {
         if ((datatypes & BOOL) != 0) typeNames += "<BOOL>|";
         if ((datatypes & INHERIT) != 0) typeNames += "<INHERIT>|";
         if ((datatypes & ENUM) != 0) typeNames += "<ENUM>|";
-        if ((datatypes & MAPPED_ENUM) != 0) typeNames += "<MAPPED_ENUM>|";
+        if ((datatypes & MAPPED_NUMERIC) != 0) typeNames
+                                                    += "<MAPPED_NUMERIC>|";
         if ((datatypes & SHORTHAND) != 0) typeNames += "<SHORTHAND>|";
         if ((datatypes & COMPLEX) != 0) typeNames += "<COMPLEX>|";
         if ((datatypes & AUTO) != 0) typeNames += "<AUTO>|";
@@ -531,15 +534,26 @@ public abstract class Properties {
 
         // N.B. If these values change, all initial values expressed in these
         // terms must be manually changed.
-        private static final String[] rwEnumMappings = {
-            null
-            ,"0.5pt"
-            ,"1pt"
-            ,"2pt"
-        };
 
-        public static final ROStringArray enumMappings
-                                        = new ROStringArray(rwEnumMappings);
+        /**
+         * @param <tt>int</tt> property index
+         * @return <tt>Numeric[]</tt> containing the values corresponding
+         * to the MappedNumeric enumeration constants for border width
+         */
+        public static Numeric[] borderWidthNumMap(int property)
+            throws PropertyException
+        {
+            Numeric[] numarray = new Numeric[4];
+            numarray[0] = null;
+            numarray[1] =
+                Length.makeLength(property, 0.5d, Length.PT); // thin
+            numarray[2] =
+                Length.makeLength(property, 1d, Length.PT); // medium
+            numarray[3] =
+                Length.makeLength(property, 2d, Length.PT); // thick // thick
+            return numarray;
+        }
+
     }
 
     /**
@@ -790,14 +804,10 @@ public abstract class Properties {
         public static final int dataTypes = BOOL;
         public static final int traitMapping = ACTION;
         public static final int initialValueType = BOOL_IT;
-        protected static Bool initialValue;
-        public static void setInitialValue(FOTree foTree) {
-            try {
-                initialValue = new Bool(PropNames.AUTO_RESTORE, true);
-            } catch (PropertyException e) {
-                throw new RuntimeException
-                                    ("PropertyException: " + e.getMessage());
-            }
+        public static PropertyValue getInitialValue(FOTree foTree)
+            throws PropertyException
+        {
+            return new Bool(PropNames.AUTO_RESTORE, true);
         }
         public static final int inherited = COMPUTED;
     }
@@ -1069,16 +1079,10 @@ public abstract class Properties {
         public static final int initialValueType = ENUM_IT;
         public static final int SCROLL = 1;
         public static final int FIXED = 2;
-        protected static EnumType initialValue;
-        public static void setInitialValue(FOTree foTree) {
-            try {
-                initialValue = new EnumType
-                            (PropNames.BACKGROUND_ATTACHMENT, SCROLL);
-            } catch (PropertyException e) {
-                System.out.println("EnumType exception: " + e.getMessage()); //DEBUG
-                throw new RuntimeException
-                                    ("PropertyException: " + e.getMessage());
-            }
+        public static PropertyValue getInitialValue(FOTree foTree)
+            throws PropertyException
+        {
+            return new EnumType (PropNames.BACKGROUND_ATTACHMENT, SCROLL);
         }
 
         public static final int inherited = NO;
@@ -1096,15 +1100,10 @@ public abstract class Properties {
         public static final int dataTypes = COLOR_TRANS | INHERIT;
         public static final int traitMapping = RENDERING;
         public static final int initialValueType = COLOR_IT;
-        protected static ColorType initialValue;
-        public static void setInitialValue(FOTree foTree) {
-            try {
-                initialValue = new ColorType
-                        (PropNames.BACKGROUND_COLOR, "transparent");
-            } catch (PropertyException e) {
-                throw new RuntimeException
-                                    ("PropertyException: " + e.getMessage());
-            }
+        public static PropertyValue getInitialValue(FOTree foTree)
+            throws PropertyException
+        {
+            return new ColorType (PropNames.BACKGROUND_COLOR, "transparent");
         }
 
         public static final int inherited = NO;
@@ -1470,15 +1469,10 @@ public abstract class Properties {
         public static final int LEFT = 1;
         public static final int CENTER = 2;
         public static final int RIGHT = 3;
-        protected static Numeric initialValue;
-        public static void setInitialValue(FOTree foTree) {
-            try {
-                initialValue = Percentage.makePercentage
-                            (PropNames.BACKGROUND_POSITION_HORIZONTAL, 0.0d);
-            } catch (PropertyException e) {
-                throw new RuntimeException
-                                    ("PropertyException: " + e.getMessage());
-            }
+        public static PropertyValue getInitialValue(FOTree foTree)
+            throws PropertyException
+        {
+            return Percentage.makePercentage (PropNames.BACKGROUND_POSITION_HORIZONTAL, 0.0d);
         }
         public static final int inherited = NO;
 
@@ -1501,15 +1495,10 @@ public abstract class Properties {
         public static final int TOP = 1;
         public static final int CENTER = 2;
         public static final int BOTTOM = 3;
-        protected static Numeric initialValue;
-        public static void setInitialValue(FOTree foTree) {
-            try {
-                initialValue = Percentage.makePercentage
-                            (PropNames.BACKGROUND_POSITION_VERTICAL, 0.0d);
-            } catch (PropertyException e) {
-                throw new RuntimeException
-                                    ("PropertyException: " + e.getMessage());
-            }
+        public static PropertyValue getInitialValue(FOTree foTree)
+            throws PropertyException
+        {
+            return Percentage.makePercentage (PropNames.BACKGROUND_POSITION_VERTICAL, 0.0d);
         }
         public static final int inherited = NO;
 
@@ -1531,15 +1520,10 @@ public abstract class Properties {
         public static final int REPEAT_X = 2;
         public static final int REPEAT_Y = 3;
         public static final int NO_REPEAT = 4;
-        protected static EnumType initialValue;
-        public static void setInitialValue(FOTree foTree) {
-            try {
-                initialValue = new EnumType
-                                (PropNames.BACKGROUND_REPEAT, REPEAT);
-            } catch (PropertyException e) {
-                throw new RuntimeException
-                                    ("PropertyException: " + e.getMessage());
-            }
+        public static PropertyValue getInitialValue(FOTree foTree)
+            throws PropertyException
+        {
+            return new EnumType (PropNames.BACKGROUND_REPEAT, REPEAT);
         }
 
         public static final int inherited = NO;
@@ -1564,15 +1548,10 @@ public abstract class Properties {
         public static final int BASELINE = 1;
         public static final int SUB = 2;
         public static final int SUPER = 3;
-        protected static EnumType initialValue;
-        public static void setInitialValue(FOTree foTree) {
-            try {
-                initialValue = new EnumType
-                                (PropNames.BASELINE_SHIFT, BASELINE);
-            } catch (PropertyException e) {
-                throw new RuntimeException
-                                    ("PropertyException: " + e.getMessage());
-            }
+        public static PropertyValue getInitialValue(FOTree foTree)
+            throws PropertyException
+        {
+            return new EnumType (PropNames.BASELINE_SHIFT, BASELINE);
         }
 
         public static final int inherited = NO;
@@ -1594,15 +1573,10 @@ public abstract class Properties {
         public static final int BLANK = 1;
         public static final int NOT_BLANK = 2;
         public static final int ANY = 3;
-        protected static EnumType initialValue;
-        public static void setInitialValue(FOTree foTree) {
-            try {
-                initialValue = new EnumType
-                                (PropNames.BLANK_OR_NOT_BLANK, ANY);
-            } catch (PropertyException e) {
-                throw new RuntimeException
-                                    ("PropertyException: " + e.getMessage());
-            }
+        public static PropertyValue getInitialValue(FOTree foTree)
+            throws PropertyException
+        {
+            return new EnumType (PropNames.BLANK_OR_NOT_BLANK, ANY);
         }
 
         public static final int inherited = NO;
@@ -1671,15 +1645,10 @@ public abstract class Properties {
         public static final int traitMapping = RENDERING;
         public static final int initialValueType = COLOR_IT;
         public static final int inherited = NO;
-        protected static ColorType initialValue;
-        public static void setInitialValue(FOTree foTree) {
-            try {
-                initialValue = new ColorType
-                        (PropNames.BACKGROUND_COLOR, ColorCommon.BLACK);
-            } catch (PropertyException e) {
-                throw new RuntimeException
-                                    ("PropertyException: " + e.getMessage());
-            }
+        public static PropertyValue getInitialValue(FOTree foTree)
+            throws PropertyException
+        {
+            return new ColorType (PropNames.BACKGROUND_COLOR, ColorCommon.BLACK);
         }
 
         public static final ROStringArray enums = ColorCommon.enums;
@@ -1714,18 +1683,20 @@ public abstract class Properties {
     // automatically update the following initial Length PropertyValue
     // if the mapping changes.
     public static class BorderAfterWidth extends Properties {
-        public static final int dataTypes = MAPPED_ENUM | LENGTH | INHERIT;
+        public static final int dataTypes = MAPPED_NUMERIC | LENGTH | INHERIT;
         public static final int traitMapping = FORMATTING | RENDERING;
         public static final int initialValueType = LENGTH_IT;
-        protected static Numeric initialValue;
-        public static void setInitialValue(FOTree foTree) {
-            try {
-                initialValue = Length.makeLength
-                                (PropNames.BORDER_AFTER_WIDTH, 1d, Length.PT);
-            } catch (PropertyException e) {
-                throw new RuntimeException
-                                    ("PropertyException: " + e.getMessage());
-            }
+        public static PropertyValue getInitialValue(FOTree foTree)
+            throws PropertyException
+        {
+            return Length.makeLength (PropNames.BORDER_AFTER_WIDTH, 1d, Length.PT);
+        }
+
+        public static Numeric[] getMappedNumMap()
+            throws PropertyException
+        {
+            return Properties.BorderCommonWidth.borderWidthNumMap
+                                            (PropNames.BORDER_AFTER_WIDTH);
         }
 
         public static final int inherited = NO;
@@ -1733,8 +1704,6 @@ public abstract class Properties {
         public static final ROStringArray enums = BorderCommonWidth.enums;
         public static final ROStringArray enumValues
                                             = BorderCommonWidth.enumValues;
-        public static final ROStringArray enumMappings
-                                            = BorderCommonWidth.enumMappings;
     }
 
     public static class BorderAfterWidthLength extends Properties {
@@ -1748,16 +1717,10 @@ public abstract class Properties {
         public static final int dataTypes = ENUM;
         public static final int traitMapping = FORMATTING | RENDERING;
         public static final int initialValueType = ENUM_IT;
-        protected static EnumType initialValue;
-        public static void setInitialValue(FOTree foTree) {
-            try {
-                initialValue =
-                    new EnumType(PropNames.BORDER_AFTER_WIDTH_CONDITIONALITY,
-                                            Conditionality.DISCARD);
-            } catch (PropertyException e) {
-                throw new RuntimeException
-                                    ("PropertyException: " + e.getMessage());
-            }
+        public static PropertyValue getInitialValue(FOTree foTree)
+            throws PropertyException
+        {
+            return  new EnumType(PropNames.BORDER_AFTER_WIDTH_CONDITIONALITY, Conditionality.DISCARD);
         }
         public static final int inherited = COMPOUND;
 
@@ -1771,15 +1734,10 @@ public abstract class Properties {
         public static final int traitMapping = RENDERING;
         public static final int initialValueType = COLOR_IT;
         public static final int inherited = NO;
-        protected static ColorType initialValue;
-        public static void setInitialValue(FOTree foTree) {
-            try {
-                initialValue = new ColorType
-                        (PropNames.BACKGROUND_COLOR, ColorCommon.BLACK);
-            } catch (PropertyException e) {
-                throw new RuntimeException
-                                    ("PropertyException: " + e.getMessage());
-            }
+        public static PropertyValue getInitialValue(FOTree foTree)
+            throws PropertyException
+        {
+            return new ColorType (PropNames.BACKGROUND_COLOR, ColorCommon.BLACK);
         }
 
         public static final ROStringArray enums = ColorCommon.enums;
@@ -1809,18 +1767,20 @@ public abstract class Properties {
     }
 
     public static class BorderBeforeWidth extends Properties {
-        public static final int dataTypes = MAPPED_ENUM | LENGTH | INHERIT;
+        public static final int dataTypes = MAPPED_NUMERIC | LENGTH | INHERIT;
         public static final int traitMapping = FORMATTING | RENDERING;
         public static final int initialValueType = LENGTH_IT;
-        protected static Numeric initialValue;
-        public static void setInitialValue(FOTree foTree) {
-            try {
-                initialValue = Length.makeLength
-                                (PropNames.BORDER_BEFORE_WIDTH, 1d, Length.PT);
-            } catch (PropertyException e) {
-                throw new RuntimeException
-                                    ("PropertyException: " + e.getMessage());
-            }
+        public static PropertyValue getInitialValue(FOTree foTree)
+            throws PropertyException
+        {
+            return Length.makeLength (PropNames.BORDER_BEFORE_WIDTH, 1d, Length.PT);
+        }
+
+        public static Numeric[] getMappedNumMap()
+            throws PropertyException
+        {
+            return Properties.BorderCommonWidth.borderWidthNumMap
+                                            (PropNames.BORDER_BEFORE_WIDTH);
         }
 
         public static final int inherited = NO;
@@ -1828,8 +1788,6 @@ public abstract class Properties {
         public static final ROStringArray enums = BorderCommonWidth.enums;
         public static final ROStringArray enumValues
                                             = BorderCommonWidth.enumValues;
-        public static final ROStringArray enumMappings
-                                            = BorderCommonWidth.enumMappings;
     }
 
     public static class BorderBeforeWidthLength extends Properties {
@@ -1843,16 +1801,10 @@ public abstract class Properties {
         public static final int dataTypes = ENUM;
         public static final int traitMapping = FORMATTING | RENDERING;
         public static final int initialValueType = ENUM_IT;
-        protected static EnumType initialValue;
-        public static void setInitialValue(FOTree foTree) {
-            try {
-                initialValue =
-                    new EnumType(PropNames.BORDER_BEFORE_WIDTH_CONDITIONALITY,
-                                            Conditionality.DISCARD);
-            } catch (PropertyException e) {
-                throw new RuntimeException
-                                    ("PropertyException: " + e.getMessage());
-            }
+        public static PropertyValue getInitialValue(FOTree foTree)
+            throws PropertyException
+        {
+            return  new EnumType(PropNames.BORDER_BEFORE_WIDTH_CONDITIONALITY, Conditionality.DISCARD);
         }
         public static final int inherited = COMPOUND;
 
@@ -1897,15 +1849,10 @@ public abstract class Properties {
         public static final int traitMapping = DISAPPEARS;
         public static final int initialValueType = COLOR_IT;
         public static final int inherited = NO;
-        protected static ColorType initialValue;
-        public static void setInitialValue(FOTree foTree) {
-            try {
-                initialValue = new ColorType
-                        (PropNames.BACKGROUND_COLOR, ColorCommon.BLACK);
-            } catch (PropertyException e) {
-                throw new RuntimeException
-                                    ("PropertyException: " + e.getMessage());
-            }
+        public static PropertyValue getInitialValue(FOTree foTree)
+            throws PropertyException
+        {
+            return new ColorType (PropNames.BACKGROUND_COLOR, ColorCommon.BLACK);
         }
 
         public static final ROStringArray enums = ColorCommon.enums;
@@ -1924,18 +1871,20 @@ public abstract class Properties {
     }
 
     public static class BorderBottomWidth extends Properties {
-        public static final int dataTypes = MAPPED_ENUM | INHERIT;
+        public static final int dataTypes = MAPPED_NUMERIC | INHERIT;
         public static final int traitMapping = DISAPPEARS;
         public static final int initialValueType = LENGTH_IT;
-        protected static Numeric initialValue;
-        public static void setInitialValue(FOTree foTree) {
-            try {
-                initialValue = Length.makeLength
-                                (PropNames.BORDER_BOTTOM_WIDTH, 1d, Length.PT);
-            } catch (PropertyException e) {
-                throw new RuntimeException
-                                    ("PropertyException: " + e.getMessage());
-            }
+        public static PropertyValue getInitialValue(FOTree foTree)
+            throws PropertyException
+        {
+            return Length.makeLength (PropNames.BORDER_BOTTOM_WIDTH, 1d, Length.PT);
+        }
+
+        public static Numeric[] getMappedNumMap()
+            throws PropertyException
+        {
+            return Properties.BorderCommonWidth.borderWidthNumMap
+                                            (PropNames.BORDER_BOTTOM_WIDTH);
         }
 
         public static final int inherited = NO;
@@ -1943,8 +1892,6 @@ public abstract class Properties {
         public static final ROStringArray enums = BorderCommonWidth.enums;
         public static final ROStringArray enumValues
                                             = BorderCommonWidth.enumValues;
-        public static final ROStringArray enumMappings
-                                            = BorderCommonWidth.enumMappings;
     }
 
     public static class BorderCollapse extends Properties {
@@ -1953,16 +1900,10 @@ public abstract class Properties {
         public static final int initialValueType = ENUM_IT;
         public static final int COLLAPSE = 1;
         public static final int SEPARATE = 2;
-        protected static EnumType initialValue;
-        public static void setInitialValue(FOTree foTree) {
-            try {
-                initialValue =
-                            new EnumType
-                                (PropNames.BORDER_COLLAPSE, COLLAPSE);
-            } catch (PropertyException e) {
-                throw new RuntimeException
-                                    ("PropertyException: " + e.getMessage());
-            }
+        public static PropertyValue getInitialValue(FOTree foTree)
+            throws PropertyException
+        {
+            return  new EnumType (PropNames.BORDER_COLLAPSE, COLLAPSE);
         }
 
         public static final int inherited = COMPUTED;
@@ -2116,15 +2057,10 @@ public abstract class Properties {
         public static final int traitMapping = RENDERING;
         public static final int initialValueType = COLOR_IT;
         public static final int inherited = NO;
-        protected static ColorType initialValue;
-        public static void setInitialValue(FOTree foTree) {
-            try {
-                initialValue = new ColorType
-                        (PropNames.BACKGROUND_COLOR, ColorCommon.BLACK);
-            } catch (PropertyException e) {
-                throw new RuntimeException
-                                    ("PropertyException: " + e.getMessage());
-            }
+        public static PropertyValue getInitialValue(FOTree foTree)
+            throws PropertyException
+        {
+            return new ColorType (PropNames.BACKGROUND_COLOR, ColorCommon.BLACK);
         }
 
         public static final ROStringArray enums = ColorCommon.enums;
@@ -2154,18 +2090,20 @@ public abstract class Properties {
     }
 
     public static class BorderEndWidth extends Properties {
-        public static final int dataTypes = MAPPED_ENUM | LENGTH | INHERIT;
+        public static final int dataTypes = MAPPED_NUMERIC | LENGTH | INHERIT;
         public static final int traitMapping = FORMATTING | RENDERING;
         public static final int initialValueType = LENGTH_IT;
-        protected static Numeric initialValue;
-        public static void setInitialValue(FOTree foTree) {
-            try {
-                initialValue = Length.makeLength
-                                (PropNames.BORDER_END_WIDTH, 1d, Length.PT);
-            } catch (PropertyException e) {
-                throw new RuntimeException
-                                    ("PropertyException: " + e.getMessage());
-            }
+        public static PropertyValue getInitialValue(FOTree foTree)
+            throws PropertyException
+        {
+            return Length.makeLength (PropNames.BORDER_END_WIDTH, 1d, Length.PT);
+        }
+
+        public static Numeric[] getMappedNumMap()
+            throws PropertyException
+        {
+            return Properties.BorderCommonWidth.borderWidthNumMap
+                                            (PropNames.BORDER_END_WIDTH);
         }
 
         public static final int inherited = NO;
@@ -2173,8 +2111,6 @@ public abstract class Properties {
         public static final ROStringArray enums = BorderCommonWidth.enums;
         public static final ROStringArray enumValues
                                             = BorderCommonWidth.enumValues;
-        public static final ROStringArray enumMappings
-                                            = BorderCommonWidth.enumMappings;
     }
 
     public static class BorderEndWidthLength extends Properties {
@@ -2188,16 +2124,10 @@ public abstract class Properties {
         public static final int dataTypes = ENUM;
         public static final int traitMapping = FORMATTING | RENDERING;
         public static final int initialValueType = ENUM_IT;
-        protected static EnumType initialValue;
-        public static void setInitialValue(FOTree foTree) {
-            try {
-                initialValue =
-                    new EnumType(PropNames.BORDER_END_WIDTH_CONDITIONALITY,
-                                            Conditionality.DISCARD);
-            } catch (PropertyException e) {
-                throw new RuntimeException
-                                    ("PropertyException: " + e.getMessage());
-            }
+        public static PropertyValue getInitialValue(FOTree foTree)
+            throws PropertyException
+        {
+            return  new EnumType(PropNames.BORDER_END_WIDTH_CONDITIONALITY, Conditionality.DISCARD);
         }
         public static final int inherited = COMPOUND;
 
@@ -2242,15 +2172,10 @@ public abstract class Properties {
         public static final int traitMapping = DISAPPEARS;
         public static final int initialValueType = COLOR_IT;
         public static final int inherited = NO;
-        protected static ColorType initialValue;
-        public static void setInitialValue(FOTree foTree) {
-            try {
-                initialValue = new ColorType
-                        (PropNames.BACKGROUND_COLOR, ColorCommon.BLACK);
-            } catch (PropertyException e) {
-                throw new RuntimeException
-                                    ("PropertyException: " + e.getMessage());
-            }
+        public static PropertyValue getInitialValue(FOTree foTree)
+            throws PropertyException
+        {
+            return new ColorType (PropNames.BACKGROUND_COLOR, ColorCommon.BLACK);
         }
 
         public static final ROStringArray enums = ColorCommon.enums;
@@ -2269,18 +2194,20 @@ public abstract class Properties {
     }
 
     public static class BorderLeftWidth extends Properties {
-        public static final int dataTypes = MAPPED_ENUM | INHERIT;
+        public static final int dataTypes = MAPPED_NUMERIC | INHERIT;
         public static final int traitMapping = DISAPPEARS;
         public static final int initialValueType = LENGTH_IT;
-        protected static Numeric initialValue;
-        public static void setInitialValue(FOTree foTree) {
-            try {
-                initialValue = Length.makeLength
-                                (PropNames.BORDER_LEFT_WIDTH, 1d, Length.PT);
-            } catch (PropertyException e) {
-                throw new RuntimeException
-                                    ("PropertyException: " + e.getMessage());
-            }
+        public static PropertyValue getInitialValue(FOTree foTree)
+            throws PropertyException
+        {
+            return Length.makeLength (PropNames.BORDER_LEFT_WIDTH, 1d, Length.PT);
+        }
+
+        public static Numeric[] getMappedNumMap()
+            throws PropertyException
+        {
+            return Properties.BorderCommonWidth.borderWidthNumMap
+                                            (PropNames.BORDER_LEFT_WIDTH);
         }
 
         public static final int inherited = NO;
@@ -2288,8 +2215,6 @@ public abstract class Properties {
         public static final ROStringArray enums = BorderCommonWidth.enums;
         public static final ROStringArray enumValues
                                             = BorderCommonWidth.enumValues;
-        public static final ROStringArray enumMappings
-                                            = BorderCommonWidth.enumMappings;
     }
 
     public static class BorderRight extends Properties {
@@ -2329,15 +2254,10 @@ public abstract class Properties {
         public static final int traitMapping = DISAPPEARS;
         public static final int initialValueType = COLOR_IT;
         public static final int inherited = NO;
-        protected static ColorType initialValue;
-        public static void setInitialValue(FOTree foTree) {
-            try {
-                initialValue = new ColorType
-                        (PropNames.BACKGROUND_COLOR, ColorCommon.BLACK);
-            } catch (PropertyException e) {
-                throw new RuntimeException
-                                    ("PropertyException: " + e.getMessage());
-            }
+        public static PropertyValue getInitialValue(FOTree foTree)
+            throws PropertyException
+        {
+            return new ColorType (PropNames.BACKGROUND_COLOR, ColorCommon.BLACK);
         }
 
         public static final ROStringArray enums = ColorCommon.enums;
@@ -2356,18 +2276,20 @@ public abstract class Properties {
     }
 
     public static class BorderRightWidth extends Properties {
-        public static final int dataTypes = MAPPED_ENUM | INHERIT;
+        public static final int dataTypes = MAPPED_NUMERIC | INHERIT;
         public static final int traitMapping = DISAPPEARS;
         public static final int initialValueType = LENGTH_IT;
-        protected static Numeric initialValue;
-        public static void setInitialValue(FOTree foTree) {
-            try {
-                initialValue = Length.makeLength
-                                (PropNames.BORDER_RIGHT_WIDTH, 1d, Length.PT);
-            } catch (PropertyException e) {
-                throw new RuntimeException
-                                    ("PropertyException: " + e.getMessage());
-            }
+        public static PropertyValue getInitialValue(FOTree foTree)
+            throws PropertyException
+        {
+            return Length.makeLength (PropNames.BORDER_RIGHT_WIDTH, 1d, Length.PT);
+        }
+
+        public static Numeric[] getMappedNumMap()
+            throws PropertyException
+        {
+            return Properties.BorderCommonWidth.borderWidthNumMap
+                                            (PropNames.BORDER_RIGHT_WIDTH);
         }
 
         public static final int inherited = NO;
@@ -2375,8 +2297,6 @@ public abstract class Properties {
         public static final ROStringArray enums = BorderCommonWidth.enums;
         public static final ROStringArray enumValues
                                             = BorderCommonWidth.enumValues;
-        public static final ROStringArray enumMappings
-                                            = BorderCommonWidth.enumMappings;
     }
 
     public static class BorderSeparation extends Properties {
@@ -2391,16 +2311,10 @@ public abstract class Properties {
         public static final int dataTypes = LENGTH;
         public static final int traitMapping = FORMATTING;
         public static final int initialValueType = LENGTH_IT;
-        protected static Numeric initialValue;
-        public static void setInitialValue(FOTree foTree) {
-            try {
-                initialValue = Length.makeLength
-                    (PropNames.BORDER_SEPARATION_BLOCK_PROGRESSION_DIRECTION,
-                                                            0.0d, Length.PT);
-            } catch (PropertyException e) {
-                throw new RuntimeException
-                                    ("PropertyException: " + e.getMessage());
-            }
+        public static PropertyValue getInitialValue(FOTree foTree)
+            throws PropertyException
+        {
+            return Length.makeLength (PropNames.BORDER_SEPARATION_BLOCK_PROGRESSION_DIRECTION, 0.0d, Length.PT);
         }
         public static final int inherited = COMPOUND;
     }
@@ -2410,16 +2324,10 @@ public abstract class Properties {
         public static final int dataTypes = LENGTH;
         public static final int traitMapping = FORMATTING;
         public static final int initialValueType = LENGTH_IT;
-        protected static Numeric initialValue;
-        public static void setInitialValue(FOTree foTree) {
-            try {
-                initialValue = Length.makeLength
-                    (PropNames.BORDER_SEPARATION_INLINE_PROGRESSION_DIRECTION,
-                    0.0d, Length.PT);
-            } catch (PropertyException e) {
-                throw new RuntimeException
-                                    ("PropertyException: " + e.getMessage());
-            }
+        public static PropertyValue getInitialValue(FOTree foTree)
+            throws PropertyException
+        {
+            return Length.makeLength (PropNames.BORDER_SEPARATION_INLINE_PROGRESSION_DIRECTION, 0.0d, Length.PT);
         }
         public static final int inherited = COMPOUND;
     }
@@ -2490,15 +2398,10 @@ public abstract class Properties {
         public static final int traitMapping = RENDERING;
         public static final int initialValueType = COLOR_IT;
         public static final int inherited = NO;
-        protected static ColorType initialValue;
-        public static void setInitialValue(FOTree foTree) {
-            try {
-                initialValue = new ColorType
-                        (PropNames.BACKGROUND_COLOR, ColorCommon.BLACK);
-            } catch (PropertyException e) {
-                throw new RuntimeException
-                                    ("PropertyException: " + e.getMessage());
-            }
+        public static PropertyValue getInitialValue(FOTree foTree)
+            throws PropertyException
+        {
+            return new ColorType (PropNames.BACKGROUND_COLOR, ColorCommon.BLACK);
         }
 
         public static final ROStringArray enums = ColorCommon.enums;
@@ -2528,18 +2431,20 @@ public abstract class Properties {
     }
 
     public static class BorderStartWidth extends Properties {
-        public static final int dataTypes = MAPPED_ENUM | LENGTH | INHERIT;
+        public static final int dataTypes = MAPPED_NUMERIC | LENGTH | INHERIT;
         public static final int traitMapping = FORMATTING | RENDERING;
         public static final int initialValueType = LENGTH_IT;
-        protected static Numeric initialValue;
-        public static void setInitialValue(FOTree foTree) {
-            try {
-                initialValue = Length.makeLength
-                                (PropNames.BORDER_START_WIDTH, 1d, Length.PT);
-            } catch (PropertyException e) {
-                throw new RuntimeException
-                                    ("PropertyException: " + e.getMessage());
-            }
+        public static PropertyValue getInitialValue(FOTree foTree)
+            throws PropertyException
+        {
+            return Length.makeLength (PropNames.BORDER_START_WIDTH, 1d, Length.PT);
+        }
+
+        public static Numeric[] getMappedNumMap()
+            throws PropertyException
+        {
+            return Properties.BorderCommonWidth.borderWidthNumMap
+                                            (PropNames.BORDER_START_WIDTH);
         }
 
         public static final int inherited = NO;
@@ -2547,8 +2452,6 @@ public abstract class Properties {
         public static final ROStringArray enums = BorderCommonWidth.enums;
         public static final ROStringArray enumValues
                                             = BorderCommonWidth.enumValues;
-        public static final ROStringArray enumMappings
-                                            = BorderCommonWidth.enumMappings;
     }
 
     public static class BorderStartWidthLength extends Properties {
@@ -2562,16 +2465,10 @@ public abstract class Properties {
         public static final int dataTypes = ENUM;
         public static final int traitMapping = FORMATTING | RENDERING;
         public static final int initialValueType = ENUM_IT;
-        protected static EnumType initialValue;
-        public static void setInitialValue(FOTree foTree) {
-            try {
-                initialValue =
-                    new EnumType(PropNames.BORDER_START_WIDTH_CONDITIONALITY,
-                                            Conditionality.DISCARD);
-            } catch (PropertyException e) {
-                throw new RuntimeException
-                                    ("PropertyException: " + e.getMessage());
-            }
+        public static PropertyValue getInitialValue(FOTree foTree)
+            throws PropertyException
+        {
+            return  new EnumType(PropNames.BORDER_START_WIDTH_CONDITIONALITY, Conditionality.DISCARD);
         }
         public static final int inherited = COMPOUND;
 
@@ -2718,15 +2615,10 @@ public abstract class Properties {
         public static final int traitMapping = DISAPPEARS;
         public static final int initialValueType = COLOR_IT;
         public static final int inherited = NO;
-        protected static ColorType initialValue;
-        public static void setInitialValue(FOTree foTree) {
-            try {
-                initialValue = new ColorType
-                        (PropNames.BACKGROUND_COLOR, ColorCommon.BLACK);
-            } catch (PropertyException e) {
-                throw new RuntimeException
-                                    ("PropertyException: " + e.getMessage());
-            }
+        public static PropertyValue getInitialValue(FOTree foTree)
+            throws PropertyException
+        {
+            return new ColorType (PropNames.BACKGROUND_COLOR, ColorCommon.BLACK);
         }
 
         public static final ROStringArray enums = ColorCommon.enums;
@@ -2745,18 +2637,20 @@ public abstract class Properties {
     }
 
     public static class BorderTopWidth extends Properties {
-        public static final int dataTypes = MAPPED_ENUM | INHERIT;
+        public static final int dataTypes = MAPPED_NUMERIC | INHERIT;
         public static final int traitMapping = DISAPPEARS;
         public static final int initialValueType = LENGTH_IT;
-        protected static Numeric initialValue;
-        public static void setInitialValue(FOTree foTree) {
-            try {
-                initialValue = Length.makeLength
-                                (PropNames.BORDER_TOP_WIDTH, 1d, Length.PT);
-            } catch (PropertyException e) {
-                throw new RuntimeException
-                                    ("PropertyException: " + e.getMessage());
-            }
+        public static PropertyValue getInitialValue(FOTree foTree)
+            throws PropertyException
+        {
+            return Length.makeLength (PropNames.BORDER_TOP_WIDTH, 1d, Length.PT);
+        }
+
+        public static Numeric[] getMappedNumMap()
+            throws PropertyException
+        {
+            return Properties.BorderCommonWidth.borderWidthNumMap
+                                            (PropNames.BORDER_TOP_WIDTH);
         }
 
         public static final int inherited = NO;
@@ -2764,8 +2658,6 @@ public abstract class Properties {
         public static final ROStringArray enums = BorderCommonWidth.enums;
         public static final ROStringArray enumValues
                                             = BorderCommonWidth.enumValues;
-        public static final ROStringArray enumMappings
-                                            = BorderCommonWidth.enumMappings;
     }
 
     public static class BorderWidth extends Properties {
@@ -2777,8 +2669,6 @@ public abstract class Properties {
         public static final ROStringArray enums = BorderCommonWidth.enums;
         public static final ROStringArray enumValues
                                             = BorderCommonWidth.enumValues;
-        public static final ROStringArray enumMappings
-                                            = BorderCommonWidth.enumMappings;
 
         /**
          * 'value' is a PropertyValueList or an individual PropertyValue.
@@ -2948,15 +2838,10 @@ public abstract class Properties {
         public static final int LEFT = 7;
         public static final int RIGHT = 8;
 
-        protected static EnumType initialValue;
-        public static void setInitialValue(FOTree foTree) {
-            try {
-                initialValue = new EnumType
-                                (PropNames.CAPTION_SIDE, BEFORE);
-            } catch (PropertyException e) {
-                throw new RuntimeException
-                                    ("PropertyException: " + e.getMessage());
-            }
+        public static PropertyValue getInitialValue(FOTree foTree)
+            throws PropertyException
+        {
+            return new EnumType (PropNames.CAPTION_SIDE, BEFORE);
         }
 
         public static final int inherited = COMPUTED;
@@ -3075,15 +2960,10 @@ public abstract class Properties {
         public static final int traitMapping = RENDERING;
         public static final int initialValueType = COLOR_IT;
         public static final int inherited = COMPUTED;
-        protected static ColorType initialValue;
-        public static void setInitialValue(FOTree foTree) {
-            try {
-                initialValue = new ColorType
-                        (PropNames.BACKGROUND_COLOR, ColorCommon.BLACK);
-            } catch (PropertyException e) {
-                throw new RuntimeException
-                                    ("PropertyException: " + e.getMessage());
-            }
+        public static PropertyValue getInitialValue(FOTree foTree)
+            throws PropertyException
+        {
+            return new ColorType (PropNames.BACKGROUND_COLOR, ColorCommon.BLACK);
         }
 
         public static final ROStringArray enums = ColorCommon.enums;
@@ -3101,14 +2981,10 @@ public abstract class Properties {
         public static final int dataTypes = NUMBER | INHERIT;
         public static final int traitMapping = SPECIFICATION;
         public static final int initialValueType = NUMBER_IT;
-        protected static Numeric initialValue;
-        public static void setInitialValue(FOTree foTree) {
-            try {
-                initialValue = new Numeric(PropNames.COLUMN_COUNT, 1d);
-            } catch (PropertyException e) {
-                throw new RuntimeException
-                                    ("PropertyException: " + e.getMessage());
-            }
+        public static PropertyValue getInitialValue(FOTree foTree)
+            throws PropertyException
+        {
+            return new Numeric(PropNames.COLUMN_COUNT, 1d);
         }
 
         public static final int inherited = NO;
@@ -3118,15 +2994,10 @@ public abstract class Properties {
         public static final int dataTypes = PERCENTAGE | LENGTH | INHERIT;
         public static final int traitMapping = SPECIFICATION;
         public static final int initialValueType = LENGTH_IT;
-        protected static Numeric initialValue;
-        public static void setInitialValue(FOTree foTree) {
-            try {
-                initialValue = Length.makeLength
-                                    (PropNames.COLUMN_GAP, 12.0d, Length.PT);
-            } catch (PropertyException e) {
-                throw new RuntimeException
-                                    ("PropertyException: " + e.getMessage());
-            }
+        public static PropertyValue getInitialValue(FOTree foTree)
+            throws PropertyException
+        {
+            return Length.makeLength (PropNames.COLUMN_GAP, 12.0d, Length.PT);
         }
         public static final int inherited = NO;
     }
@@ -3274,15 +3145,10 @@ public abstract class Properties {
         public static final int dataTypes = LENGTH;
         public static final int traitMapping = ACTION;
         public static final int initialValueType = LENGTH_IT;
-        protected static Numeric initialValue;
-        public static void setInitialValue(FOTree foTree) {
-            try {
-                initialValue = Length.makeLength
-                    (PropNames.DESTINATION_PLACEMENT_OFFSET, 0.0d, Length.PT);
-            } catch (PropertyException e) {
-                throw new RuntimeException
-                                    ("PropertyException: " + e.getMessage());
-            }
+        public static PropertyValue getInitialValue(FOTree foTree)
+            throws PropertyException
+        {
+            return Length.makeLength (PropNames.DESTINATION_PLACEMENT_OFFSET, 0.0d, Length.PT);
         }
         public static final int inherited = NO;
     }
@@ -3293,14 +3159,10 @@ public abstract class Properties {
         public static final int initialValueType = ENUM_IT;
         public static final int LTR = 1;
         public static final int RTL = 2;
-        protected static EnumType initialValue;
-        public static void setInitialValue(FOTree foTree) {
-            try {
-                initialValue = new EnumType(PropNames.DIRECTION, LTR);
-            } catch (PropertyException e) {
-                throw new RuntimeException
-                                    ("PropertyException: " + e.getMessage());
-            }
+        public static PropertyValue getInitialValue(FOTree foTree)
+            throws PropertyException
+        {
+            return new EnumType(PropNames.DIRECTION, LTR);
         }
         public static final int inherited = COMPUTED;
 
@@ -3390,15 +3252,10 @@ public abstract class Properties {
         public static final int initialValueType = ENUM_IT;
         public static final int SHOW = 1;
         public static final int HIDE = 2;
-        protected static EnumType initialValue;
-        public static void setInitialValue(FOTree foTree) {
-            try {
-                initialValue = new EnumType
-                                        (PropNames.EMPTY_CELLS, SHOW);
-            } catch (PropertyException e) {
-                throw new RuntimeException
-                                    ("PropertyException: " + e.getMessage());
-            }
+        public static PropertyValue getInitialValue(FOTree foTree)
+            throws PropertyException
+        {
+            return new EnumType (PropNames.EMPTY_CELLS, SHOW);
         }
         public static final int inherited = COMPUTED;
 
@@ -3415,15 +3272,10 @@ public abstract class Properties {
         public static final int dataTypes = LENGTH | INHERIT;
         public static final int traitMapping = FORMATTING;
         public static final int initialValueType = LENGTH_IT;
-        protected static Numeric initialValue;
-        public static void setInitialValue(FOTree foTree) {
-            try {
-                initialValue = Length.makeLength
-                                    (PropNames.END_INDENT, 0.0d, Length.PT);
-            } catch (PropertyException e) {
-                throw new RuntimeException
-                                    ("PropertyException: " + e.getMessage());
-            }
+        public static PropertyValue getInitialValue(FOTree foTree)
+            throws PropertyException
+        {
+            return Length.makeLength (PropNames.END_INDENT, 0.0d, Length.PT);
         }
         public static final int inherited = COMPUTED;
     }
@@ -3432,14 +3284,10 @@ public abstract class Properties {
         public static final int dataTypes = BOOL;
         public static final int traitMapping = FORMATTING;
         public static final int initialValueType = BOOL_IT;
-        protected static Bool initialValue;
-        public static void setInitialValue(FOTree foTree) {
-            try {
-                initialValue = new Bool(PropNames.ENDS_ROW, false);
-            } catch (PropertyException e) {
-                throw new RuntimeException
-                                    ("PropertyException: " + e.getMessage());
-            }
+        public static PropertyValue getInitialValue(FOTree foTree)
+            throws PropertyException
+        {
+            return new Bool(PropNames.ENDS_ROW, false);
         }
         public static final int inherited = NO;
     }
@@ -3448,15 +3296,10 @@ public abstract class Properties {
         public static final int dataTypes = PERCENTAGE | LENGTH | INHERIT;
         public static final int traitMapping = SPECIFICATION;
         public static final int initialValueType = LENGTH_IT;
-        protected static Numeric initialValue;
-        public static void setInitialValue(FOTree foTree) {
-            try {
-                initialValue = Length.makeLength
-                                        (PropNames.EXTENT, 0.0d, Length.PT);
-            } catch (PropertyException e) {
-                throw new RuntimeException
-                                    ("PropertyException: " + e.getMessage());
-            }
+        public static PropertyValue getInitialValue(FOTree foTree)
+            throws PropertyException
+        {
+            return Length.makeLength (PropNames.EXTENT, 0.0d, Length.PT);
         }
         public static final int inherited = NO;
     }
@@ -3465,14 +3308,10 @@ public abstract class Properties {
         public static final int dataTypes = URI_SPECIFICATION;
         public static final int traitMapping = ACTION;
         public static final int initialValueType = URI_SPECIFICATION_IT;
-        protected static UriType initialValue;
-        public static void setInitialValue(FOTree foTree) {
-            try {
-                initialValue = new UriType(PropNames.EXTERNAL_DESTINATION, "");
-            } catch (PropertyException e) {
-                throw new RuntimeException
-                                    ("PropertyException: " + e.getMessage());
-            }
+        public static PropertyValue getInitialValue(FOTree foTree)
+            throws PropertyException
+        {
+            return new UriType(PropNames.EXTERNAL_DESTINATION, "");
         }
         public static final int inherited = NO;
     }
@@ -3515,14 +3354,10 @@ public abstract class Properties {
         public static final int dataTypes = NAME;
         public static final int traitMapping = REFERENCE;
         public static final int initialValueType = NAME_IT;
-        protected static NCName initialValue;
-        public static void setInitialValue(FOTree foTree) {
-            try {
-                initialValue = new NCName(PropNames.FLOW_NAME, "");
-            } catch (PropertyException e) {
-                throw new RuntimeException
-                                    ("PropertyException: " + e.getMessage());
-            }
+        public static PropertyValue getInitialValue(FOTree foTree)
+            throws PropertyException
+        {
+            return new NCName(PropNames.FLOW_NAME, "");
         }
         public static final int inherited = NO;
     }
@@ -3633,7 +3468,8 @@ public abstract class Properties {
                 if (list == null) {
                     // Must be a comma-separated list
                     // i.e. a font-family list
-                    return processCommaSepList((PropertyValueList)value);
+                    return processCommaSepList
+                                        (foTree, (PropertyValueList)value);
                 } else {
                     return processSpaceSepList(foTree, list);
                 }
@@ -3704,15 +3540,41 @@ public abstract class Properties {
          * @exception PropertyValueException
          */
         private static PropertyValueList
-                            processCommaSepList(PropertyValueList value)
+                processCommaSepList(FOTree foTree, PropertyValueList value)
                         throws PropertyException
         {
-            // Pass this on to the procedure in the FontFamily property
-            return value;
+            // Prepare a font shorthand expansion list
+            PropertyValueList list =
+                PropertySets.initialValueExpansion(foTree, PropNames.FONT);
+            FontFamilySet family =
+                        (FontFamilySet)(FontFamily.complex(foTree, value));
+            return PropertySets.overrideSHandElement(list, family);
         }
 
         /**
-         * @param value a <tt>PropertyValueList</tt> containing the actual
+         * The space separated list must end with a font-family specifier.
+         * This may be a single font, in which case there will be no comma
+         * separated sublist(s) as the final element(s) of the list.
+         * <p>However, because font names may contain spaces and may be
+         * specified "raw", without enclosing quotes, the comma-separated
+         * sublists may be surrounded with space-separated elements which
+         * are also part of the font-family list.
+         * <p>I.e. all elements from the first comma-separated sublist to the
+         * end of the list are part of the font-family value.  In addition,
+         * however, some preceding elements may be part of an initial
+         * font name containing spaces.
+         * <p>The optional elements preceding the font-family are
+         * font-size [ / line-height ], so searching backwards for a slash
+         * character will locate the penultimate and utlimate elements
+         * preceding the first component of the font-family.
+         * <p>If no slash is found, the preceding element must be a font-size,
+         * which may be specfied as a Length, a Percentage, or with an
+         * enumeration token.
+         * <p>If a font-size[/line-height] is found, any preceding elements
+         * must be from the specification
+         * [font-style||font-variant||font-weight]?
+         *
+         * @param list a <tt>PropertyValueList</tt> containing the actual
          * space-separated list; i.e. the single inner list from the
          * outer list returned by the parser.
          * @return <tt>PropertyValueList</tt> containing a
@@ -3721,186 +3583,41 @@ public abstract class Properties {
          * @exception PropertyValueException
          */
         private static PropertyValueList
-                processSpaceSepList(FOTree foTree, PropertyValueList value)
+                processSpaceSepList(FOTree foTree, PropertyValueList list)
                         throws PropertyException
         {
-            int property = value.getProperty();
-            PropertyValue color= null,
-                            image = null,
-                            repeat = null,
-                            attachment = null,
-                            position = null;
+            PropertyValueList newlist = null;
 
-            PropertyValueList newlist = new PropertyValueList(property);
-            // This is a list
-            if (value.size() == 0)
+            // copy the list into an array for random access
+            Object[] props = list.toArray();
+            int slash = -1;
+            int firstcomma = -1;
+            int familyStart = -1;
+            for (int i = 0; i < props.length; i++) {
+                if (props[i] instanceof Slash)
+                    slash = i;
+                else if (props[i] instanceof PropertyValueList
+                            && firstcomma == -1)
+                    firstcomma = i;
+            }
+            if (slash != -1 && slash >= (props.length -2))
                 throw new PropertyException
-                                ("Empty list for Background");
-            ListIterator elements = ((PropertyValueList)value).listIterator();
-
-            scanning_elements: while (elements.hasNext()) {
-                PropertyValue pval = (PropertyValue)(elements.next());
-                if (pval instanceof ColorType) {
-                    if (color != null) MessageHandler.log("background: " +
-                                "duplicate color overrides previous color");
-                    color = pval;
-                    continue scanning_elements;
-                }
-
-                if (pval instanceof UriType) {
-                    if (image != null) MessageHandler.log("background: " +
-                        "duplicate image uri overrides previous image spec");
-                    image = pval;
-                    continue scanning_elements;
-                }
-
-                if (pval instanceof None) {
-                    if (image != null) MessageHandler.log("background: " +
-                        "duplicate image spec overrides previous image spec");
-                    image = pval;
-                    continue scanning_elements;
-                }
-
-                if (pval instanceof Numeric) {
-                    // Must be one of the position values
-                    // send it to BackgroundPosition.complex for processing
-                    // If it is followed by another Numeric, form a list from
-                    // the pair, else form a list from this element only
-                    PropertyValueList posnList = new PropertyValueList
-                                            (PropNames.BACKGROUND_POSITION);
-                    posnList.add(pval);
-                    // Is it followed by another Numeric?
-                    if (elements.hasNext()) {
-                        PropertyValue tmpval;
-                        if ((tmpval = (PropertyValue)(elements.next()))
-                                    instanceof Numeric) {
-                            posnList.add(tmpval);
-                        } else {
-                            // Not a following Numeric, so restore the list
-                            // cursor
-                            tmpval = (PropertyValue)(elements.previous());
-                        }
+                                    ("Invalid slash position in font list");
+            if (slash != -1) {
+                // know where slash and line-height are
+                // font-family begins at slash + 2
+                familyStart = slash + 2;
+            } else {
+                // Don''t know where slash is.  If anything precedes the
+                // font-family, it must be a font-size.  Look for that.
+                if (firstcomma == -1) firstcomma = props.length - 1;
+                for (int fs = firstcomma - 1; fs >= 0; fs--) {
+                    if (props[fs] instanceof NCName) {
+                        ;
                     }
-                    // Now send one or two Numerics to BackgroundPosition
-                    if (position != null)
-                            MessageHandler.log("background: duplicate" +
-                            "position overrides previous position");
-                    position = BackgroundPosition.complex(foTree, posnList);
-                    continue scanning_elements;
                 }
-
-                if (pval instanceof NCName) {
-                    // NCName can be:
-                    //  a standard color name
-                    //  a background attachment mode
-                    //  one or two position indicators
-                    String ncname = ((NCName)pval).getNCName();
-                    ColorType colorval = null;
-                    try {
-                        colorval = new ColorType
-                                        (PropNames.BACKGROUND_COLOR, ncname);
-                    } catch (PropertyException e) {};
-                    if (colorval != null) {
-                        if (color != null) MessageHandler.log("background: " +
-                                "duplicate color overrides previous color");
-                        color = colorval;
-                        continue scanning_elements;
-                    }
-
-                    // Is it an attachment mode?
-                    EnumType enum = null;
-                    try {
-                        enum = new EnumType
-                                (PropNames.BACKGROUND_ATTACHMENT, ncname);
-                    } catch (PropertyException e) {};
-                    if (enum != null) {
-                        if (attachment != null)
-                                MessageHandler.log("background: duplicate" +
-                                "attachment overrides previous attachment");
-                        attachment = enum;
-                        continue scanning_elements;
-                    }
-
-                    // Must be a position indicator
-                    // send it to BackgroundPosition.complex for processing
-                    // If it is followed by another NCName, form a list from
-                    // the pair, else form a list from this element only
-
-                    // This is made messy by the syntax of the Background
-                    // shorthand.  A following NCName need not be a second
-                    // position indicator.  So we have to test this element
-                    // and the following element individually.
-                    PropertyValueList posnList = new PropertyValueList
-                                            (PropNames.BACKGROUND_POSITION);
-                    PropertyValue tmpval = null;
-                    // Is the current NCName a position token?
-                    boolean pos1ok = false, pos2ok = false;
-                    try {
-                        PropertyConsts.enumValueToIndex
-                                        (ncname, BackgroundPosition.enums);
-                        pos1ok = true;
-                        if (elements.hasNext()) {
-                            tmpval = (PropertyValue)(elements.next());
-                            if (tmpval instanceof NCName) {
-                                String ncname2 = ((NCName)tmpval).getString();
-                                PropertyConsts.enumValueToIndex
-                                        (ncname2, BackgroundPosition.enums);
-                                pos2ok = true;
-                            } else {
-                                // Restore the listIterator cursor
-                                Object tmpo = elements.previous();
-                            }
-                        }
-                    } catch (PropertyException e) {};
-
-                    if (pos1ok) {
-                        posnList.add(pval);
-                        // Is it followed by another position NCName?
-                        if (pos2ok) posnList.add(tmpval);
-                        // Now send one or two NCNames to BackgroundPosition
-                        if (position != null)
-                                MessageHandler.log("background: duplicate" +
-                                "position overrides previous position");
-                        position =
-                                BackgroundPosition.complex(foTree, posnList);
-                        continue scanning_elements;
-                    }
-                    throw new PropertyException
-                        ("Unknown NCName value for background: " + ncname);
-                }
-
-                throw new PropertyException
-                    ("Invalid " + pval.getClass().getName() +
-                        " property value for background");
             }
-
-            // Now construct the list of PropertyValues with their
-            // associated property indices, as expanded from the
-            // Background shorthand.  Note that the position value is a list
-            // containing the expansion of the BackgroundPosition shorthand.
-
-            if (color != null) {
-                color.setProperty(PropNames.BACKGROUND_COLOR);
-                newlist.add(color);
-            }
-            if (image != null) {
-                image.setProperty(PropNames.BACKGROUND_IMAGE);
-                newlist.add(image);
-            }
-            if (repeat != null) {
-                repeat.setProperty(PropNames.BACKGROUND_REPEAT);
-                newlist.add(repeat);
-            }
-            if (attachment != null) {
-                attachment.setProperty(PropNames.BACKGROUND_ATTACHMENT);
-                newlist.add(attachment);
-            }
-            if (position != null) {
-                // position must have two elements
-                Iterator positions = ((PropertyValueList)position).iterator();
-                newlist.add(positions.next());
-                newlist.add(positions.next());
-            }
+                
             return newlist;
         }
     }
@@ -4008,7 +3725,7 @@ public abstract class Properties {
 
     public static class FontSize extends Properties {
         public static final int dataTypes =
-                                PERCENTAGE | LENGTH | MAPPED_ENUM | INHERIT;
+                            PERCENTAGE | LENGTH | MAPPED_NUMERIC | INHERIT;
         public static final int traitMapping = FORMATTING| RENDERING;
         public static final int initialValueType = LENGTH_IT;
         public static final int XX_SMALL = 1;
@@ -4021,19 +3738,11 @@ public abstract class Properties {
         public static final int LARGER = 8;
         public static final int SMALLER = 9;
 
-        protected static Numeric initialValue;
         // N.B. This foundational value MUST be an absolute length
-        public static void setInitialValue(FOTree foTree) {
-            try {
-                initialValue =
-                        Length.makeLength(PropNames.FONT_SIZE, 12d, Length.PT);
-            } catch (PropertyException e) {
-                throw new RuntimeException
-                                    ("PropertyException: " + e.getMessage());
-            }
-        }
-        public static Numeric getInitialValue() {
-            return initialValue;
+        public static PropertyValue getInitialValue(FOTree foTree)
+            throws PropertyException
+        {
+            return  Length.makeLength(PropNames.FONT_SIZE, 12d, Length.PT);
         }
 
         public static final int inherited = COMPUTED;
@@ -4050,6 +3759,32 @@ public abstract class Properties {
             ,"larger"
             ,"smaller"
         };
+
+        public static Numeric[] getMappedNumMap()
+            throws PropertyException
+        {
+            int property = PropNames.FONT_SIZE;
+            Numeric[] numarray = new Numeric[10];
+            numarray[0] = null;
+            numarray[1] =
+                Length.makeLength(property, 7d, Length.PT); // xx-small
+            numarray[2] =
+                Length.makeLength(property, 8.3d, Length.PT); // x-small
+            numarray[3] =
+                Length.makeLength(property, 10d, Length.PT); // small
+            numarray[4] =
+                Length.makeLength(property, 12d, Length.PT); // medium
+            numarray[5] =
+                Length.makeLength(property, 14.4d, Length.PT); // large
+            numarray[6] =
+                Length.makeLength(property, 17.3d, Length.PT); // x-large
+            numarray[7] =
+                Length.makeLength(property, 20.7d, Length.PT); // xx-large
+            numarray[8] = Ems.makeEms(property, 1.2d); // larger
+            numarray[9] = Ems.makeEms(property, 0.83d); // smaller
+            return numarray;
+        }
+
         public static final ROStringArray enums = new ROStringArray(rwEnums);
         private static final HashMap rwEnumValues;
         public static final Map enumValues;
@@ -4062,22 +3797,6 @@ public abstract class Properties {
             enumValues =
                 Collections.unmodifiableMap((Map)rwEnumValues);
         }
-
-        private static final String[] rwEnumMappings = {
-            null
-            ,"7pt"
-            ,"8.3pt"
-            ,"10pt"
-            ,"12pt"
-            ,"14.4pt"
-            ,"17.3pt"
-            ,"20.7pt"
-            ,"1.2em"
-            ,"0.83em"
-        };
-
-        public static final ROStringArray enumMappings
-                                        = new ROStringArray(rwEnumMappings);
 
     }
 
@@ -4104,15 +3823,10 @@ public abstract class Properties {
         public static final int EXTRA_EXPANDED = 10;
         public static final int ULTRA_EXPANDED = 11;
 
-        protected static EnumType initialValue;
-        public static void setInitialValue(FOTree foTree) {
-            try {
-                initialValue = new EnumType
-                                    (PropNames.FONT_STRETCH, NORMAL);
-            } catch (PropertyException e) {
-                throw new RuntimeException
-                                    ("PropertyException: " + e.getMessage());
-            }
+        public static PropertyValue getInitialValue(FOTree foTree)
+            throws PropertyException
+        {
+            return new EnumType (PropNames.FONT_STRETCH, NORMAL);
         }
 
         public static final int inherited = COMPUTED;
@@ -4153,15 +3867,10 @@ public abstract class Properties {
         public static final int ITALIC = 2;
         public static final int OBLIQUE = 3;
         public static final int BACKSLANT = 4;
-        protected static EnumType initialValue;
-        public static void setInitialValue(FOTree foTree) {
-            try {
-                initialValue = new EnumType
-                                    (PropNames.FONT_STYLE, NORMAL);
-            } catch (PropertyException e) {
-                throw new RuntimeException
-                                    ("PropertyException: " + e.getMessage());
-            }
+        public static PropertyValue getInitialValue(FOTree foTree)
+            throws PropertyException
+        {
+            return new EnumType (PropNames.FONT_STYLE, NORMAL);
         }
 
         public static final int inherited = COMPUTED;
@@ -4183,15 +3892,10 @@ public abstract class Properties {
         public static final int initialValueType = ENUM_IT;
         public static final int NORMAL = 1;
         public static final int SMALL_CAPS = 2;
-        protected static EnumType initialValue;
-        public static void setInitialValue(FOTree foTree) {
-            try {
-                initialValue = new EnumType
-                                    (PropNames.FONT_VARIANT, NORMAL);
-            } catch (PropertyException e) {
-                throw new RuntimeException
-                                    ("PropertyException: " + e.getMessage());
-            }
+        public static PropertyValue getInitialValue(FOTree foTree)
+            throws PropertyException
+        {
+            return new EnumType (PropNames.FONT_VARIANT, NORMAL);
         }
         public static final int inherited = COMPUTED;
 
@@ -4213,15 +3917,10 @@ public abstract class Properties {
         public static final int BOLDER = 3;
         public static final int LIGHTER = 4;
 
-        protected static Numeric initialValue;
-        public static void setInitialValue(FOTree foTree) {
-            try {
-                initialValue = IntegerType.makeInteger
-                                            (PropNames.FONT_WEIGHT, 400);
-            } catch (PropertyException e) {
-                throw new RuntimeException
-                                    ("PropertyException: " + e.getMessage());
-            }
+        public static PropertyValue getInitialValue(FOTree foTree)
+            throws PropertyException
+        {
+            return IntegerType.makeInteger (PropNames.FONT_WEIGHT, 400);
         }
 
         public static final int inherited = COMPUTED;
@@ -4275,14 +3974,10 @@ public abstract class Properties {
         public static final int dataTypes = STRING;
         public static final int traitMapping = FORMATTING;
         public static final int initialValueType = LITERAL_IT;
-        protected static Literal initialValue;
-        public static void setInitialValue(FOTree foTree) {
-            try {
-                initialValue = new Literal(PropNames.FORMAT, "1");
-            } catch (PropertyException e) {
-                throw new RuntimeException
-                                    ("PropertyException: " + e.getMessage());
-            }
+        public static PropertyValue getInitialValue(FOTree foTree)
+            throws PropertyException
+        {
+            return new Literal(PropNames.FORMAT, "1");
         }
         public static final int inherited = NO;
     }
@@ -4291,15 +3986,10 @@ public abstract class Properties {
         public static final int dataTypes = ANGLE | INHERIT;
         public static final int traitMapping = FORMATTING;
         public static final int initialValueType = ANGLE_IT;
-        protected static Numeric initialValue;
-        public static void setInitialValue(FOTree foTree) {
-            try {
-                initialValue = Angle.makeAngle
-                    (PropNames.GLYPH_ORIENTATION_HORIZONTAL, 0d, Angle.DEG);
-            } catch (PropertyException e) {
-                throw new RuntimeException
-                                    ("PropertyException: " + e.getMessage());
-            }
+        public static PropertyValue getInitialValue(FOTree foTree)
+            throws PropertyException
+        {
+            return Angle.makeAngle (PropNames.GLYPH_ORIENTATION_HORIZONTAL, 0d, Angle.DEG);
         }
         public static final int inherited = COMPUTED;
     }
@@ -4337,14 +4027,10 @@ public abstract class Properties {
         public static final int dataTypes = BOOL | INHERIT;
         public static final int traitMapping = FORMATTING;
         public static final int initialValueType = BOOL_IT;
-        protected static Bool initialValue;
-        public static void setInitialValue(FOTree foTree) {
-            try {
-                initialValue = new Bool(PropNames.HYPHENATE, false);
-            } catch (PropertyException e) {
-                throw new RuntimeException
-                                    ("PropertyException: " + e.getMessage());
-            }
+        public static PropertyValue getInitialValue(FOTree foTree)
+            throws PropertyException
+        {
+            return new Bool(PropNames.HYPHENATE, false);
         }
         public static final int inherited = COMPUTED;
     }
@@ -4353,15 +4039,10 @@ public abstract class Properties {
         public static final int dataTypes = CHARACTER_T | INHERIT;
         public static final int traitMapping = FORMATTING;
         public static final int initialValueType = LITERAL_IT;
-        protected static Literal initialValue;
-        public static void setInitialValue(FOTree foTree) {
-            try {
-                initialValue = new Literal
-                                (PropNames.HYPHENATION_CHARACTER, "\u2010");
-            } catch (PropertyException e) {
-                throw new RuntimeException
-                                    ("PropertyException: " + e.getMessage());
-            }
+        public static PropertyValue getInitialValue(FOTree foTree)
+            throws PropertyException
+        {
+            return new Literal (PropNames.HYPHENATION_CHARACTER, "\u2010");
         }
         public static final int inherited = COMPUTED;
     }
@@ -4388,15 +4069,10 @@ public abstract class Properties {
         public static final int traitMapping = FORMATTING;
         public static final int initialValueType = ENUM_IT;
         public static final int NO_LIMIT = 1;
-        protected static EnumType initialValue;
-        public static void setInitialValue(FOTree foTree) {
-            try {
-                initialValue = new EnumType
-                        (PropNames.HYPHENATION_LADDER_COUNT, NO_LIMIT);
-            } catch (PropertyException e) {
-                throw new RuntimeException
-                                    ("PropertyException: " + e.getMessage());
-            }
+        public static PropertyValue getInitialValue(FOTree foTree)
+            throws PropertyException
+        {
+            return new EnumType (PropNames.HYPHENATION_LADDER_COUNT, NO_LIMIT);
         }
         public static final int inherited = COMPUTED;
 
@@ -4412,15 +4088,10 @@ public abstract class Properties {
         public static final int dataTypes = NUMBER | INHERIT;
         public static final int traitMapping = FORMATTING;
         public static final int initialValueType = NUMBER_IT;
-        protected static Numeric initialValue;
-        public static void setInitialValue(FOTree foTree) {
-            try {
-                initialValue = new Numeric
-                            (PropNames.HYPHENATION_PUSH_CHARACTER_COUNT, 2d);
-            } catch (PropertyException e) {
-                throw new RuntimeException
-                                    ("PropertyException: " + e.getMessage());
-            }
+        public static PropertyValue getInitialValue(FOTree foTree)
+            throws PropertyException
+        {
+            return new Numeric (PropNames.HYPHENATION_PUSH_CHARACTER_COUNT, 2d);
         }
 
         public static final int inherited = COMPUTED;
@@ -4430,15 +4101,10 @@ public abstract class Properties {
         public static final int dataTypes = NUMBER | INHERIT;
         public static final int traitMapping = FORMATTING;
         public static final int initialValueType = NUMBER_IT;
-        protected static Numeric initialValue;
-        public static void setInitialValue(FOTree foTree) {
-            try {
-                initialValue = new Numeric
-                            (PropNames.HYPHENATION_REMAIN_CHARACTER_COUNT, 2d);
-            } catch (PropertyException e) {
-                throw new RuntimeException
-                                    ("PropertyException: " + e.getMessage());
-            }
+        public static PropertyValue getInitialValue(FOTree foTree)
+            throws PropertyException
+        {
+            return new Numeric (PropNames.HYPHENATION_REMAIN_CHARACTER_COUNT, 2d);
         }
 
         public static final int inherited = COMPUTED;
@@ -4455,14 +4121,10 @@ public abstract class Properties {
         public static final int dataTypes = BOOL;
         public static final int traitMapping = ACTION;
         public static final int initialValueType = BOOL_IT;
-        protected static Bool initialValue;
-        public static void setInitialValue(FOTree foTree) {
-            try {
-                initialValue = new Bool(PropNames.INDICATE_DESTINATION, false);
-            } catch (PropertyException e) {
-                throw new RuntimeException
-                                    ("PropertyException: " + e.getMessage());
-            }
+        public static PropertyValue getInitialValue(FOTree foTree)
+            throws PropertyException
+        {
+            return new Bool(PropNames.INDICATE_DESTINATION, false);
         }
         public static final int inherited = NO;
     }
@@ -4517,15 +4179,10 @@ public abstract class Properties {
         public static final int dataTypes = STRING | IDREF;
         public static final int traitMapping = ACTION;
         public static final int initialValueType = LITERAL_IT;
-        protected static Literal initialValue;
-        public static void setInitialValue(FOTree foTree) {
-            try {
-                initialValue = new Literal
-                                        (PropNames.INTERNAL_DESTINATION, "");
-            } catch (PropertyException e) {
-                throw new RuntimeException
-                                    ("PropertyException: " + e.getMessage());
-            }
+        public static PropertyValue getInitialValue(FOTree foTree)
+            throws PropertyException
+        {
+            return new Literal (PropNames.INTERNAL_DESTINATION, "");
         }
         public static final int inherited = NO;
     }
@@ -4644,15 +4301,10 @@ public abstract class Properties {
         public static final int dataTypes = PERCENTAGE | LENGTH | INHERIT;
         public static final int traitMapping = FORMATTING;
         public static final int initialValueType = LENGTH_IT;
-        protected static Numeric initialValue;
-        public static void setInitialValue(FOTree foTree) {
-            try {
-                initialValue = Length.makeLength
-                            (PropNames.LAST_LINE_END_INDENT, 0.0d, Length.PT);
-            } catch (PropertyException e) {
-                throw new RuntimeException
-                                    ("PropertyException: " + e.getMessage());
-            }
+        public static PropertyValue getInitialValue(FOTree foTree)
+            throws PropertyException
+        {
+            return Length.makeLength (PropNames.LAST_LINE_END_INDENT, 0.0d, Length.PT);
         }
         public static final int inherited = COMPUTED;
     }
@@ -4686,15 +4338,10 @@ public abstract class Properties {
         public static final int dataTypes = LENGTH | PERCENTAGE;
         public static final int traitMapping = FORMATTING;
         public static final int initialValueType = LENGTH_IT;
-        protected static Numeric initialValue;
-        public static void setInitialValue(FOTree foTree) {
-            try {
-                initialValue = Length.makeLength
-                            (PropNames.LEADER_LENGTH_MINIMUM, 0.0d, Length.PT);
-            } catch (PropertyException e) {
-                throw new RuntimeException
-                                    ("PropertyException: " + e.getMessage());
-            }
+        public static PropertyValue getInitialValue(FOTree foTree)
+            throws PropertyException
+        {
+            return Length.makeLength (PropNames.LEADER_LENGTH_MINIMUM, 0.0d, Length.PT);
         }
         public static final int inherited = COMPOUND;
     }
@@ -4703,15 +4350,10 @@ public abstract class Properties {
         public static final int dataTypes = LENGTH | PERCENTAGE;
         public static final int traitMapping = FORMATTING;
         public static final int initialValueType = LENGTH_IT;
-        protected static Numeric initialValue;
-        public static void setInitialValue(FOTree foTree) {
-            try {
-                initialValue = Length.makeLength
-                        (PropNames.LEADER_LENGTH_OPTIMUM, 12.0d, Length.PT);
-            } catch (PropertyException e) {
-                throw new RuntimeException
-                                    ("PropertyException: " + e.getMessage());
-            }
+        public static PropertyValue getInitialValue(FOTree foTree)
+            throws PropertyException
+        {
+            return Length.makeLength (PropNames.LEADER_LENGTH_OPTIMUM, 12.0d, Length.PT);
         }
         public static final int inherited = COMPOUND;
     }
@@ -4720,15 +4362,10 @@ public abstract class Properties {
         public static final int dataTypes = LENGTH | PERCENTAGE;
         public static final int traitMapping = FORMATTING;
         public static final int initialValueType = PERCENTAGE_IT;
-        protected static Numeric initialValue;
-        public static void setInitialValue(FOTree foTree) {
-            try {
-                initialValue = Percentage.makePercentage
-                                    (PropNames.LEADER_LENGTH_MAXIMUM, 100.0d);
-            } catch (PropertyException e) {
-                throw new RuntimeException
-                                    ("PropertyException: " + e.getMessage());
-            }
+        public static PropertyValue getInitialValue(FOTree foTree)
+            throws PropertyException
+        {
+            return Percentage.makePercentage (PropNames.LEADER_LENGTH_MAXIMUM, 100.0d);
         }
         public static final int inherited = COMPOUND;
     }
@@ -4741,15 +4378,10 @@ public abstract class Properties {
         public static final int RULE = 2;
         public static final int DOTS = 3;
         public static final int USE_CONTENT = 4;
-        protected static EnumType initialValue;
-        public static void setInitialValue(FOTree foTree) {
-            try {
-                initialValue = new EnumType
-                                    (PropNames.LEADER_PATTERN, SPACE);
-            } catch (PropertyException e) {
-                throw new RuntimeException
-                                    ("PropertyException: " + e.getMessage());
-            }
+        public static PropertyValue getInitialValue(FOTree foTree)
+            throws PropertyException
+        {
+            return new EnumType (PropNames.LEADER_PATTERN, SPACE);
         }
         public static final int inherited = COMPUTED;
 
@@ -4770,15 +4402,10 @@ public abstract class Properties {
         public static final int traitMapping = FORMATTING;
         public static final int initialValueType = ENUM_IT;
         public static final int USE_FONT_METRICS = 1;
-        protected static EnumType initialValue;
-        public static void setInitialValue(FOTree foTree) {
-            try {
-                initialValue = new EnumType
-                    (PropNames.LEADER_PATTERN_WIDTH, USE_FONT_METRICS);
-            } catch (PropertyException e) {
-                throw new RuntimeException
-                                    ("PropertyException: " + e.getMessage());
-            }
+        public static PropertyValue getInitialValue(FOTree foTree)
+            throws PropertyException
+        {
+            return new EnumType (PropNames.LEADER_PATTERN_WIDTH, USE_FONT_METRICS);
         }
         public static final int inherited = COMPUTED;
 
@@ -4803,15 +4430,10 @@ public abstract class Properties {
         public static final int traitMapping = DISAPPEARS;
         public static final int initialValueType = ENUM_IT;
         public static final int NORMAL = 1;
-        protected static EnumType initialValue;
-        public static void setInitialValue(FOTree foTree) {
-            try {
-                initialValue = new EnumType
-                                    (PropNames.LETTER_SPACING, NORMAL);
-            } catch (PropertyException e) {
-                throw new RuntimeException
-                                    ("PropertyException: " + e.getMessage());
-            }
+        public static PropertyValue getInitialValue(FOTree foTree)
+            throws PropertyException
+        {
+            return new EnumType (PropNames.LETTER_SPACING, NORMAL);
         }
         public static final int inherited = COMPUTED;
 
@@ -4848,15 +4470,10 @@ public abstract class Properties {
         public static final int PRESERVE = 2;
         public static final int TREAT_AS_SPACE = 3;
         public static final int TREAT_AS_ZERO_WIDTH_SPACE = 4;
-        protected static EnumType initialValue;
-        public static void setInitialValue(FOTree foTree) {
-            try {
-                initialValue = new EnumType
-                        (PropNames.LINEFEED_TREATMENT, TREAT_AS_SPACE);
-            } catch (PropertyException e) {
-                throw new RuntimeException
-                                    ("PropertyException: " + e.getMessage());
-            }
+        public static PropertyValue getInitialValue(FOTree foTree)
+            throws PropertyException
+        {
+            return new EnumType (PropNames.LINEFEED_TREATMENT, TREAT_AS_SPACE);
         }
         public static final int inherited = COMPUTED;
 
@@ -4873,11 +4490,10 @@ public abstract class Properties {
 
     public static class LineHeight extends Properties {
         public static final int dataTypes =
-                        PERCENTAGE | LENGTH | NUMBER | MAPPED_ENUM | INHERIT;
+                    PERCENTAGE | LENGTH | NUMBER | MAPPED_NUMERIC | INHERIT;
         public static final int traitMapping = FORMATTING;
         public static final int initialValueType = NOTYPE_IT;
         public static final int NORMAL = 1;
-        protected static Numeric initialValue;
         public static final int inherited = VALUE_SPECIFIC;
 
         private static final String[] rwEnums = {
@@ -4893,6 +4509,16 @@ public abstract class Properties {
             ,"1.2em"
         };
 
+        public static Numeric[] getMappedNumMap(FOTree foTree)
+            throws PropertyException
+        {
+            int property = PropNames.LINE_HEIGHT;
+            Numeric[] numarray = new Numeric[2];
+            numarray[0] = null;
+            numarray[1] = Ems.makeEms(property, 1.2d); // normal
+            return numarray;
+        }
+
         public static final ROStringArray enumMappings
                                         = new ROStringArray(rwEnumMappings);
     }
@@ -4901,15 +4527,10 @@ public abstract class Properties {
         public static final int dataTypes = LENGTH | PERCENTAGE;
         public static final int traitMapping = FORMATTING;
         public static final int initialValueType = LENGTH_IT;
-        protected static Numeric initialValue;
-        public static void setInitialValue(FOTree foTree) {
-            try {
-                initialValue = new Numeric(PropNames.LINE_HEIGHT, 1.2d);
-                initialValue.multiply(foTree.currentFontSize());
-            } catch (PropertyException e) {
-                throw new RuntimeException
-                                    ("PropertyException: " + e.getMessage());
-            }
+        public static PropertyValue getInitialValue(FOTree foTree)
+            throws PropertyException
+        {
+            return Ems.makeEms(PropNames.LINE_HEIGHT, 1.2d);
         }
         public static final int inherited = COMPOUND;
     }
@@ -4918,15 +4539,10 @@ public abstract class Properties {
         public static final int dataTypes = LENGTH | PERCENTAGE;
         public static final int traitMapping = FORMATTING;
         public static final int initialValueType = LENGTH_IT;
-        protected static Numeric initialValue;
-        public static void setInitialValue(FOTree foTree) {
-            try {
-                initialValue = new Numeric(PropNames.LINE_HEIGHT, 1.2d);
-                initialValue.multiply(foTree.currentFontSize());
-            } catch (PropertyException e) {
-                throw new RuntimeException
-                                    ("PropertyException: " + e.getMessage());
-            }
+        public static PropertyValue getInitialValue(FOTree foTree)
+            throws PropertyException
+        {
+            return Ems.makeEms(PropNames.LINE_HEIGHT, 1.2d);
         }
         public static final int inherited = COMPOUND;
     }
@@ -4935,15 +4551,10 @@ public abstract class Properties {
         public static final int dataTypes = LENGTH | PERCENTAGE;
         public static final int traitMapping = FORMATTING;
         public static final int initialValueType = LENGTH_IT;
-        protected static Numeric initialValue;
-        public static void setInitialValue(FOTree foTree) {
-            try {
-                initialValue = new Numeric(PropNames.LINE_HEIGHT, 1.2d);
-                initialValue.multiply(foTree.currentFontSize());
-            } catch (PropertyException e) {
-                throw new RuntimeException
-                                    ("PropertyException: " + e.getMessage());
-            }
+        public static PropertyValue getInitialValue(FOTree foTree)
+            throws PropertyException
+        {
+            return Ems.makeEms(PropNames.LINE_HEIGHT, 1.2d);
         }
         public static final int inherited = COMPOUND;
     }
@@ -4952,16 +4563,10 @@ public abstract class Properties {
         public static final int dataTypes = ENUM;
         public static final int traitMapping = FORMATTING;
         public static final int initialValueType = ENUM_IT;
-        protected static EnumType initialValue;
-        public static void setInitialValue(FOTree foTree) {
-            try {
-                initialValue = new EnumType
-                        (PropNames.SPACE_AFTER_CONDITIONALITY,
-                                            Conditionality.DISCARD);
-            } catch (PropertyException e) {
-                throw new RuntimeException
-                                    ("PropertyException: " + e.getMessage());
-            }
+        public static PropertyValue getInitialValue(FOTree foTree)
+            throws PropertyException
+        {
+            return new EnumType (PropNames.SPACE_AFTER_CONDITIONALITY, Conditionality.DISCARD);
         }
         public static final int inherited = COMPOUND;
 
@@ -4974,15 +4579,10 @@ public abstract class Properties {
         public static final int dataTypes = INTEGER | ENUM;
         public static final int traitMapping = FORMATTING;
         public static final int initialValueType = INTEGER_IT;
-        protected static Numeric initialValue;
-        public static void setInitialValue(FOTree foTree) {
-            try {
-                initialValue = IntegerType.makeInteger
-                                        (PropNames.LINE_HEIGHT_PRECEDENCE, 0);
-            } catch(PropertyException e) {
-                throw new RuntimeException
-                                    ("PropertyException: " + e.getMessage());
-            }
+        public static PropertyValue getInitialValue(FOTree foTree)
+            throws PropertyException
+        {
+            return IntegerType.makeInteger (PropNames.LINE_HEIGHT_PRECEDENCE, 0);
         }
 
         public static final int inherited = COMPOUND;
@@ -4998,16 +4598,10 @@ public abstract class Properties {
         public static final int initialValueType = ENUM_IT;
         public static final int CONSIDER_SHIFTS = 1;
         public static final int DISREGARD_SHIFTS = 2;
-        protected static EnumType initialValue;
-        public static void setInitialValue(FOTree foTree) {
-            try {
-                initialValue = new EnumType
-                    (PropNames.LINE_HEIGHT_SHIFT_ADJUSTMENT,
-                                                    CONSIDER_SHIFTS);
-            } catch (PropertyException e) {
-                throw new RuntimeException
-                                    ("PropertyException: " + e.getMessage());
-            }
+        public static PropertyValue getInitialValue(FOTree foTree)
+            throws PropertyException
+        {
+            return new EnumType (PropNames.LINE_HEIGHT_SHIFT_ADJUSTMENT, CONSIDER_SHIFTS);
         }
         public static final int inherited = COMPUTED;
 
@@ -5027,15 +4621,10 @@ public abstract class Properties {
         public static final int LINE_HEIGHT = 1;
         public static final int FONT_HEIGHT = 2;
         public static final int MAX_HEIGHT = 3;
-        protected static EnumType initialValue;
-        public static void setInitialValue(FOTree foTree) {
-            try {
-                initialValue = new EnumType
-                        (PropNames.LINE_STACKING_STRATEGY, LINE_HEIGHT);
-            } catch (PropertyException e) {
-                throw new RuntimeException
-                                    ("PropertyException: " + e.getMessage());
-            }
+        public static PropertyValue getInitialValue(FOTree foTree)
+            throws PropertyException
+        {
+            return new EnumType (PropNames.LINE_STACKING_STRATEGY, LINE_HEIGHT);
         }
         public static final int inherited = COMPUTED;
 
@@ -5061,15 +4650,10 @@ public abstract class Properties {
                                         PERCENTAGE | LENGTH | AUTO | INHERIT;
         public static final int traitMapping = DISAPPEARS;
         public static final int initialValueType = LENGTH_IT;
-        protected static Numeric initialValue;
-        public static void setInitialValue(FOTree foTree) {
-            try {
-                initialValue = Length.makeLength
-                                    (PropNames.MARGIN_BOTTOM, 0.0d, Length.PT);
-            } catch (PropertyException e) {
-                throw new RuntimeException
-                                    ("PropertyException: " + e.getMessage());
-            }
+        public static PropertyValue getInitialValue(FOTree foTree)
+            throws PropertyException
+        {
+            return Length.makeLength (PropNames.MARGIN_BOTTOM, 0.0d, Length.PT);
         }
         public static final int inherited = NO;
     }
@@ -5079,15 +4663,10 @@ public abstract class Properties {
                                         PERCENTAGE | LENGTH | AUTO | INHERIT;
         public static final int traitMapping = DISAPPEARS;
         public static final int initialValueType = LENGTH_IT;
-        protected static Numeric initialValue;
-        public static void setInitialValue(FOTree foTree) {
-            try {
-                initialValue = Length.makeLength
-                                    (PropNames.MARGIN_LEFT, 0.0d, Length.PT);
-            } catch (PropertyException e) {
-                throw new RuntimeException
-                                    ("PropertyException: " + e.getMessage());
-            }
+        public static PropertyValue getInitialValue(FOTree foTree)
+            throws PropertyException
+        {
+            return Length.makeLength (PropNames.MARGIN_LEFT, 0.0d, Length.PT);
         }
         public static final int inherited = NO;
     }
@@ -5097,15 +4676,10 @@ public abstract class Properties {
                                         PERCENTAGE | LENGTH | AUTO | INHERIT;
         public static final int traitMapping = DISAPPEARS;
         public static final int initialValueType = LENGTH_IT;
-        protected static Numeric initialValue;
-        public static void setInitialValue(FOTree foTree) {
-            try {
-                initialValue = Length.makeLength
-                                    (PropNames.MARGIN_RIGHT, 0.0d, Length.PT);
-            } catch (PropertyException e) {
-                throw new RuntimeException
-                                    ("PropertyException: " + e.getMessage());
-            }
+        public static PropertyValue getInitialValue(FOTree foTree)
+            throws PropertyException
+        {
+            return Length.makeLength (PropNames.MARGIN_RIGHT, 0.0d, Length.PT);
         }
         public static final int inherited = NO;
     }
@@ -5115,15 +4689,10 @@ public abstract class Properties {
                                         PERCENTAGE | LENGTH | AUTO | INHERIT;
         public static final int traitMapping = DISAPPEARS;
         public static final int initialValueType = LENGTH_IT;
-        protected static Numeric initialValue;
-        public static void setInitialValue(FOTree foTree) {
-            try {
-                initialValue = Length.makeLength
-                                    (PropNames.MARGIN_TOP, 0.0d, Length.PT);
-            } catch (PropertyException e) {
-                throw new RuntimeException
-                                    ("PropertyException: " + e.getMessage());
-            }
+        public static PropertyValue getInitialValue(FOTree foTree)
+            throws PropertyException
+        {
+            return Length.makeLength (PropNames.MARGIN_TOP, 0.0d, Length.PT);
         }
         public static final int inherited = NO;
     }
@@ -5132,14 +4701,10 @@ public abstract class Properties {
         public static final int dataTypes = NAME;
         public static final int traitMapping = FORMATTING;
         public static final int initialValueType = NAME_IT;
-        protected static NCName initialValue;
-        public static void setInitialValue(FOTree foTree) {
-            try {
-                initialValue = new NCName(PropNames.MARKER_CLASS_NAME, "");
-            } catch (PropertyException e) {
-                throw new RuntimeException
-                                    ("PropertyException: " + e.getMessage());
-            }
+        public static PropertyValue getInitialValue(FOTree foTree)
+            throws PropertyException
+        {
+            return new NCName(PropNames.MARKER_CLASS_NAME, "");
         }
         public static final int inherited = NO;
     }
@@ -5148,14 +4713,10 @@ public abstract class Properties {
         public static final int dataTypes = NAME;
         public static final int traitMapping = SPECIFICATION;
         public static final int initialValueType = NAME_IT;
-        protected static NCName initialValue;
-        public static void setInitialValue(FOTree foTree) {
-            try {
-                initialValue = new NCName(PropNames.MASTER_NAME, "");
-            } catch (PropertyException e) {
-                throw new RuntimeException
-                                    ("PropertyException: " + e.getMessage());
-            }
+        public static PropertyValue getInitialValue(FOTree foTree)
+            throws PropertyException
+        {
+            return new NCName(PropNames.MASTER_NAME, "");
         }
         public static final int inherited = NO;
     }
@@ -5164,14 +4725,10 @@ public abstract class Properties {
         public static final int dataTypes = NAME;
         public static final int traitMapping = SPECIFICATION;
         public static final int initialValueType = NAME_IT;
-        protected static NCName initialValue;
-        public static void setInitialValue(FOTree foTree) {
-            try {
-                initialValue = new NCName(PropNames.MASTER_REFERENCE, "");
-            } catch (PropertyException e) {
-                throw new RuntimeException
-                                    ("PropertyException: " + e.getMessage());
-            }
+        public static PropertyValue getInitialValue(FOTree foTree)
+            throws PropertyException
+        {
+            return new NCName(PropNames.MASTER_REFERENCE, "");
         }
         public static final int inherited = NO;
     }
@@ -5181,15 +4738,10 @@ public abstract class Properties {
                                         PERCENTAGE | LENGTH | NONE | INHERIT;
         public static final int traitMapping = SHORTHAND_MAP;
         public static final int initialValueType = LENGTH_IT;
-        protected static Numeric initialValue;
-        public static void setInitialValue(FOTree foTree) {
-            try {
-                initialValue = Length.makeLength
-                                    (PropNames.MAX_HEIGHT, 0.0d, Length.PT);
-            } catch (PropertyException e) {
-                throw new RuntimeException
-                                    ("PropertyException: " + e.getMessage());
-            }
+        public static PropertyValue getInitialValue(FOTree foTree)
+            throws PropertyException
+        {
+            return Length.makeLength (PropNames.MAX_HEIGHT, 0.0d, Length.PT);
         }
         public static final int inherited = NO;
     }
@@ -5199,15 +4751,10 @@ public abstract class Properties {
         public static final int traitMapping = SPECIFICATION;
         public static final int initialValueType = ENUM_IT;
         public static final int NO_LIMIT = 1;
-        protected static EnumType initialValue;
-        public static void setInitialValue(FOTree foTree) {
-            try {
-                initialValue = new EnumType
-                                (PropNames.MAXIMUM_REPEATS, NO_LIMIT);
-            } catch (PropertyException e) {
-                throw new RuntimeException
-                                    ("PropertyException: " + e.getMessage());
-            }
+        public static PropertyValue getInitialValue(FOTree foTree)
+            throws PropertyException
+        {
+            return new EnumType (PropNames.MAXIMUM_REPEATS, NO_LIMIT);
         }
         public static final int inherited = NO;
 
@@ -5251,15 +4798,10 @@ public abstract class Properties {
         public static final int dataTypes = PERCENTAGE | LENGTH | INHERIT;
         public static final int traitMapping = SHORTHAND_MAP;
         public static final int initialValueType = LENGTH_IT;
-        protected static Numeric initialValue;
-        public static void setInitialValue(FOTree foTree) {
-            try {
-                initialValue = Length.makeLength
-                                    (PropNames.MIN_HEIGHT, 0.0d, Length.PT);
-            } catch (PropertyException e) {
-                throw new RuntimeException
-                                    ("PropertyException: " + e.getMessage());
-            }
+        public static PropertyValue getInitialValue(FOTree foTree)
+            throws PropertyException
+        {
+            return Length.makeLength (PropNames.MIN_HEIGHT, 0.0d, Length.PT);
         }
         public static final int inherited = NO;
     }
@@ -5275,15 +4817,10 @@ public abstract class Properties {
         public static final int dataTypes = NUMBER;
         public static final int traitMapping = SPECIFICATION;
         public static final int initialValueType = NUMBER_IT;
-        protected static Numeric initialValue;
-        public static void setInitialValue(FOTree foTree) {
-            try {
-                initialValue = new Numeric
-                                    (PropNames.NUMBER_COLUMNS_REPEATED, 1d);
-            } catch (PropertyException e) {
-                throw new RuntimeException
-                                    ("PropertyException: " + e.getMessage());
-            }
+        public static PropertyValue getInitialValue(FOTree foTree)
+            throws PropertyException
+        {
+            return new Numeric (PropNames.NUMBER_COLUMNS_REPEATED, 1d);
         }
 
         public static final int inherited = NO;
@@ -5293,15 +4830,10 @@ public abstract class Properties {
         public static final int dataTypes = NUMBER;
         public static final int traitMapping = FORMATTING;
         public static final int initialValueType = NUMBER_IT;
-        protected static Numeric initialValue;
-        public static void setInitialValue(FOTree foTree) {
-            try {
-                initialValue = new Numeric
-                                    (PropNames.NUMBER_COLUMNS_SPANNED, 1d);
-            } catch (PropertyException e) {
-                throw new RuntimeException
-                                    ("PropertyException: " + e.getMessage());
-            }
+        public static PropertyValue getInitialValue(FOTree foTree)
+            throws PropertyException
+        {
+            return new Numeric (PropNames.NUMBER_COLUMNS_SPANNED, 1d);
         }
 
         public static final int inherited = NO;
@@ -5311,14 +4843,10 @@ public abstract class Properties {
         public static final int dataTypes = NUMBER;
         public static final int traitMapping = FORMATTING;
         public static final int initialValueType = NUMBER_IT;
-        protected static Numeric initialValue;
-        public static void setInitialValue(FOTree foTree) {
-            try {
-                initialValue = new Numeric(PropNames.NUMBER_ROWS_SPANNED, 1d);
-            } catch (PropertyException e) {
-                throw new RuntimeException
-                                    ("PropertyException: " + e.getMessage());
-            }
+        public static PropertyValue getInitialValue(FOTree foTree)
+            throws PropertyException
+        {
+            return new Numeric(PropNames.NUMBER_ROWS_SPANNED, 1d);
         }
 
         public static final int inherited = NO;
@@ -5331,14 +4859,10 @@ public abstract class Properties {
         public static final int ODD = 1;
         public static final int EVEN = 2;
         public static final int ANY = 3;
-        protected static EnumType initialValue;
-        public static void setInitialValue(FOTree foTree) {
-            try {
-                initialValue = new EnumType(PropNames.ODD_OR_EVEN, ANY);
-            } catch (PropertyException e) {
-                throw new RuntimeException
-                                    ("PropertyException: " + e.getMessage());
-            }
+        public static PropertyValue getInitialValue(FOTree foTree)
+            throws PropertyException
+        {
+            return new EnumType(PropNames.ODD_OR_EVEN, ANY);
         }
         public static final int inherited = NO;
 
@@ -5357,14 +4881,10 @@ public abstract class Properties {
         public static final int dataTypes = INTEGER | INHERIT;
         public static final int traitMapping = FORMATTING;
         public static final int initialValueType = INTEGER_IT;
-        protected static Numeric initialValue;
-        public static void setInitialValue(FOTree foTree) {
-            try {
-                initialValue = IntegerType.makeInteger(PropNames.ORPHANS, 2);
-            } catch(PropertyException e) {
-                throw new RuntimeException
-                                    ("PropertyException: " + e.getMessage());
-            }
+        public static PropertyValue getInitialValue(FOTree foTree)
+            throws PropertyException
+        {
+            return IntegerType.makeInteger(PropNames.ORPHANS, 2);
         }
 
         public static final int inherited = COMPUTED;
@@ -5403,15 +4923,10 @@ public abstract class Properties {
         public static final int dataTypes = PERCENTAGE | LENGTH | INHERIT;
         public static final int traitMapping = FORMATTING | RENDERING;
         public static final int initialValueType = LENGTH_IT;
-        protected static Numeric initialValue;
-        public static void setInitialValue(FOTree foTree) {
-            try {
-                initialValue = Length.makeLength
-                                    (PropNames.PADDING_AFTER, 0.0d, Length.PT);
-            } catch (PropertyException e) {
-                throw new RuntimeException
-                                    ("PropertyException: " + e.getMessage());
-            }
+        public static PropertyValue getInitialValue(FOTree foTree)
+            throws PropertyException
+        {
+            return Length.makeLength (PropNames.PADDING_AFTER, 0.0d, Length.PT);
         }
         public static final int inherited = NO;
     }
@@ -5420,15 +4935,10 @@ public abstract class Properties {
         public static final int dataTypes = LENGTH;
         public static final int traitMapping = FORMATTING | RENDERING;
         public static final int initialValueType = LENGTH_IT;
-        protected static Numeric initialValue;
-        public static void setInitialValue(FOTree foTree) {
-            try {
-                initialValue = Length.makeLength
-                            (PropNames.PADDING_AFTER_LENGTH, 0.0d, Length.PT);
-            } catch (PropertyException e) {
-                throw new RuntimeException
-                                    ("PropertyException: " + e.getMessage());
-            }
+        public static PropertyValue getInitialValue(FOTree foTree)
+            throws PropertyException
+        {
+            return Length.makeLength (PropNames.PADDING_AFTER_LENGTH, 0.0d, Length.PT);
         }
         public static final int inherited = COMPOUND;
     }
@@ -5437,16 +4947,10 @@ public abstract class Properties {
         public static final int dataTypes = ENUM;
         public static final int traitMapping = FORMATTING | RENDERING;
         public static final int initialValueType = ENUM_IT;
-        protected static EnumType initialValue;
-        public static void setInitialValue(FOTree foTree) {
-            try {
-                initialValue = new EnumType
-                        (PropNames.PADDING_AFTER_CONDITIONALITY,
-                                                Conditionality.DISCARD);
-            } catch (PropertyException e) {
-                throw new RuntimeException
-                                    ("PropertyException: " + e.getMessage());
-            }
+        public static PropertyValue getInitialValue(FOTree foTree)
+            throws PropertyException
+        {
+            return new EnumType (PropNames.PADDING_AFTER_CONDITIONALITY, Conditionality.DISCARD);
         }
         public static final int inherited = COMPOUND;
 
@@ -5459,15 +4963,10 @@ public abstract class Properties {
         public static final int dataTypes = PERCENTAGE | LENGTH | INHERIT;
         public static final int traitMapping = FORMATTING | RENDERING;
         public static final int initialValueType = LENGTH_IT;
-        protected static Numeric initialValue;
-        public static void setInitialValue(FOTree foTree) {
-            try {
-                initialValue = Length.makeLength
-                                (PropNames.PADDING_BEFORE, 0.0d, Length.PT);
-            } catch (PropertyException e) {
-                throw new RuntimeException
-                                    ("PropertyException: " + e.getMessage());
-            }
+        public static PropertyValue getInitialValue(FOTree foTree)
+            throws PropertyException
+        {
+            return Length.makeLength (PropNames.PADDING_BEFORE, 0.0d, Length.PT);
         }
         public static final int inherited = NO;
     }
@@ -5476,15 +4975,10 @@ public abstract class Properties {
         public static final int dataTypes = LENGTH;
         public static final int traitMapping = FORMATTING | RENDERING;
         public static final int initialValueType = LENGTH_IT;
-        protected static Numeric initialValue;
-        public static void setInitialValue(FOTree foTree) {
-            try {
-                initialValue = Length.makeLength
-                            (PropNames.PADDING_BEFORE_LENGTH, 0.0d, Length.PT);
-            } catch (PropertyException e) {
-                throw new RuntimeException
-                                    ("PropertyException: " + e.getMessage());
-            }
+        public static PropertyValue getInitialValue(FOTree foTree)
+            throws PropertyException
+        {
+            return Length.makeLength (PropNames.PADDING_BEFORE_LENGTH, 0.0d, Length.PT);
         }
         public static final int inherited = COMPOUND;
     }
@@ -5493,16 +4987,10 @@ public abstract class Properties {
         public static final int dataTypes = ENUM;
         public static final int traitMapping = FORMATTING | RENDERING;
         public static final int initialValueType = ENUM_IT;
-        protected static EnumType initialValue;
-        public static void setInitialValue(FOTree foTree) {
-            try {
-                initialValue = new EnumType
-                        (PropNames.PADDING_BEFORE_CONDITIONALITY,
-                                                Conditionality.DISCARD);
-            } catch (PropertyException e) {
-                throw new RuntimeException
-                                    ("PropertyException: " + e.getMessage());
-            }
+        public static PropertyValue getInitialValue(FOTree foTree)
+            throws PropertyException
+        {
+            return new EnumType (PropNames.PADDING_BEFORE_CONDITIONALITY, Conditionality.DISCARD);
         }
         public static final int inherited = COMPOUND;
 
@@ -5515,15 +5003,10 @@ public abstract class Properties {
         public static final int dataTypes = PERCENTAGE | LENGTH | INHERIT;
         public static final int traitMapping = DISAPPEARS;
         public static final int initialValueType = LENGTH_IT;
-        protected static Numeric initialValue;
-        public static void setInitialValue(FOTree foTree) {
-            try {
-                initialValue = Length.makeLength
-                                (PropNames.PADDING_BOTTOM, 0.0d, Length.PT);
-            } catch (PropertyException e) {
-                throw new RuntimeException
-                                    ("PropertyException: " + e.getMessage());
-            }
+        public static PropertyValue getInitialValue(FOTree foTree)
+            throws PropertyException
+        {
+            return Length.makeLength (PropNames.PADDING_BOTTOM, 0.0d, Length.PT);
         }
         public static final int inherited = NO;
     }
@@ -5532,15 +5015,10 @@ public abstract class Properties {
         public static final int dataTypes = PERCENTAGE | LENGTH | INHERIT;
         public static final int traitMapping = FORMATTING | RENDERING;
         public static final int initialValueType = LENGTH_IT;
-        protected static Numeric initialValue;
-        public static void setInitialValue(FOTree foTree) {
-            try {
-                initialValue = Length.makeLength
-                                  (PropNames.PADDING_END, 0.0d, Length.PT);
-            } catch (PropertyException e) {
-                throw new RuntimeException
-                                    ("PropertyException: " + e.getMessage());
-            }
+        public static PropertyValue getInitialValue(FOTree foTree)
+            throws PropertyException
+        {
+            return Length.makeLength (PropNames.PADDING_END, 0.0d, Length.PT);
         }
         public static final int inherited = NO;
     }
@@ -5549,15 +5027,10 @@ public abstract class Properties {
         public static final int dataTypes = LENGTH;
         public static final int traitMapping = FORMATTING | RENDERING;
         public static final int initialValueType = LENGTH_IT;
-        protected static Numeric initialValue;
-        public static void setInitialValue(FOTree foTree) {
-            try {
-                initialValue = Length.makeLength
-                            (PropNames.PADDING_END_LENGTH, 0.0d, Length.PT);
-            } catch (PropertyException e) {
-                throw new RuntimeException
-                                    ("PropertyException: " + e.getMessage());
-            }
+        public static PropertyValue getInitialValue(FOTree foTree)
+            throws PropertyException
+        {
+            return Length.makeLength (PropNames.PADDING_END_LENGTH, 0.0d, Length.PT);
         }
         public static final int inherited = COMPOUND;
     }
@@ -5566,16 +5039,10 @@ public abstract class Properties {
         public static final int dataTypes = ENUM;
         public static final int traitMapping = FORMATTING | RENDERING;
         public static final int initialValueType = ENUM_IT;
-        protected static EnumType initialValue;
-        public static void setInitialValue(FOTree foTree) {
-            try {
-                initialValue = new EnumType
-                        (PropNames.PADDING_END_CONDITIONALITY,
-                                                Conditionality.DISCARD);
-            } catch (PropertyException e) {
-                throw new RuntimeException
-                                    ("PropertyException: " + e.getMessage());
-            }
+        public static PropertyValue getInitialValue(FOTree foTree)
+            throws PropertyException
+        {
+            return new EnumType (PropNames.PADDING_END_CONDITIONALITY, Conditionality.DISCARD);
         }
         public static final int inherited = COMPOUND;
 
@@ -5588,15 +5055,10 @@ public abstract class Properties {
         public static final int dataTypes = PERCENTAGE | LENGTH | INHERIT;
         public static final int traitMapping = DISAPPEARS;
         public static final int initialValueType = LENGTH_IT;
-        protected static Numeric initialValue;
-        public static void setInitialValue(FOTree foTree) {
-            try {
-                initialValue = Length.makeLength
-                                    (PropNames.PADDING_LEFT, 0.0d, Length.PT);
-            } catch (PropertyException e) {
-                throw new RuntimeException
-                                    ("PropertyException: " + e.getMessage());
-            }
+        public static PropertyValue getInitialValue(FOTree foTree)
+            throws PropertyException
+        {
+            return Length.makeLength (PropNames.PADDING_LEFT, 0.0d, Length.PT);
         }
         public static final int inherited = NO;
     }
@@ -5605,15 +5067,10 @@ public abstract class Properties {
         public static final int dataTypes = PERCENTAGE | LENGTH | INHERIT;
         public static final int traitMapping = DISAPPEARS;
         public static final int initialValueType = LENGTH_IT;
-        protected static Numeric initialValue;
-        public static void setInitialValue(FOTree foTree) {
-            try {
-                initialValue = Length.makeLength
-                                    (PropNames.PADDING_RIGHT, 0.0d, Length.PT);
-            } catch (PropertyException e) {
-                throw new RuntimeException
-                                    ("PropertyException: " + e.getMessage());
-            }
+        public static PropertyValue getInitialValue(FOTree foTree)
+            throws PropertyException
+        {
+            return Length.makeLength (PropNames.PADDING_RIGHT, 0.0d, Length.PT);
         }
         public static final int inherited = NO;
     }
@@ -5622,15 +5079,10 @@ public abstract class Properties {
         public static final int dataTypes = PERCENTAGE | LENGTH | INHERIT;
         public static final int traitMapping = FORMATTING | RENDERING;
         public static final int initialValueType = LENGTH_IT;
-        protected static Numeric initialValue;
-        public static void setInitialValue(FOTree foTree) {
-            try {
-                initialValue = Length.makeLength
-                                    (PropNames.PADDING_START, 0.0d, Length.PT);
-            } catch (PropertyException e) {
-                throw new RuntimeException
-                                    ("PropertyException: " + e.getMessage());
-            }
+        public static PropertyValue getInitialValue(FOTree foTree)
+            throws PropertyException
+        {
+            return Length.makeLength (PropNames.PADDING_START, 0.0d, Length.PT);
         }
         public static final int inherited = NO;
     }
@@ -5639,15 +5091,10 @@ public abstract class Properties {
         public static final int dataTypes = LENGTH;
         public static final int traitMapping = FORMATTING | RENDERING;
         public static final int initialValueType = LENGTH_IT;
-        protected static Numeric initialValue;
-        public static void setInitialValue(FOTree foTree) {
-            try {
-                initialValue = Length.makeLength
-                            (PropNames.PADDING_START_LENGTH, 0.0d, Length.PT);
-            } catch (PropertyException e) {
-                throw new RuntimeException
-                                    ("PropertyException: " + e.getMessage());
-            }
+        public static PropertyValue getInitialValue(FOTree foTree)
+            throws PropertyException
+        {
+            return Length.makeLength (PropNames.PADDING_START_LENGTH, 0.0d, Length.PT);
         }
         public static final int inherited = COMPOUND;
     }
@@ -5656,16 +5103,10 @@ public abstract class Properties {
         public static final int dataTypes = ENUM;
         public static final int traitMapping = FORMATTING | RENDERING;
         public static final int initialValueType = ENUM_IT;
-        protected static EnumType initialValue;
-        public static void setInitialValue(FOTree foTree) {
-            try {
-                initialValue = new EnumType
-                    (PropNames.PADDING_START_CONDITIONALITY,
-                                                Conditionality.DISCARD);
-            } catch (PropertyException e) {
-                throw new RuntimeException
-                                    ("PropertyException: " + e.getMessage());
-            }
+        public static PropertyValue getInitialValue(FOTree foTree)
+            throws PropertyException
+        {
+            return new EnumType (PropNames.PADDING_START_CONDITIONALITY, Conditionality.DISCARD);
         }
         public static final int inherited = COMPOUND;
 
@@ -5678,15 +5119,10 @@ public abstract class Properties {
         public static final int dataTypes = PERCENTAGE | LENGTH | INHERIT;
         public static final int traitMapping = DISAPPEARS;
         public static final int initialValueType = LENGTH_IT;
-        protected static Numeric initialValue;
-        public static void setInitialValue(FOTree foTree) {
-            try {
-                initialValue = Length.makeLength
-                                    (PropNames.PADDING_TOP, 0.0d, Length.PT);
-            } catch (PropertyException e) {
-                throw new RuntimeException
-                                    ("PropertyException: " + e.getMessage());
-            }
+        public static PropertyValue getInitialValue(FOTree foTree)
+            throws PropertyException
+        {
+            return Length.makeLength (PropNames.PADDING_TOP, 0.0d, Length.PT);
         }
         public static final int inherited = NO;
     }
@@ -5769,15 +5205,10 @@ public abstract class Properties {
         public static final int LAST = 2;
         public static final int REST = 3;
         public static final int ANY = 4;
-        protected static EnumType initialValue;
-        public static void setInitialValue(FOTree foTree) {
-            try {
-                initialValue = new EnumType
-                                        (PropNames.PAGE_POSITION, ANY);
-            } catch (PropertyException e) {
-                throw new RuntimeException
-                                    ("PropertyException: " + e.getMessage());
-            }
+        public static PropertyValue getInitialValue(FOTree foTree)
+            throws PropertyException
+        {
+            return new EnumType (PropNames.PAGE_POSITION, ANY);
         }
         public static final int inherited = NO;
 
@@ -5851,14 +5282,10 @@ public abstract class Properties {
         public static final int RELATIVE = 2;
         public static final int ABSOLUTE = 3;
         public static final int FIXED = 4;
-        protected static EnumType initialValue;
-        public static void setInitialValue(FOTree foTree) {
-            try {
-                initialValue = new EnumType(PropNames.POSITION, STATIC);
-            } catch (PropertyException e) {
-                throw new RuntimeException
-                                    ("PropertyException: " + e.getMessage());
-            }
+        public static PropertyValue getInitialValue(FOTree foTree)
+            throws PropertyException
+        {
+            return new EnumType(PropNames.POSITION, STATIC);
         }
         public static final int inherited = NO;
 
@@ -5877,14 +5304,10 @@ public abstract class Properties {
         public static final int dataTypes = BOOL | INHERIT;
         public static final int traitMapping = SPECIFICATION;
         public static final int initialValueType = BOOL_IT;
-        protected static Bool initialValue;
-        public static void setInitialValue(FOTree foTree) {
-            try {
-                initialValue = new Bool(PropNames.PRECEDENCE, false);
-            } catch (PropertyException e) {
-                throw new RuntimeException
-                                ("PropertyException: " + e.getMessage());
-            }
+        public static PropertyValue getInitialValue(FOTree foTree)
+            throws PropertyException
+        {
+            return new Bool(PropNames.PRECEDENCE, false);
         }
         public static final int inherited = NO;
     }
@@ -5904,16 +5327,10 @@ public abstract class Properties {
         public static final int dataTypes = LENGTH | INHERIT;
         public static final int traitMapping = SPECIFICATION;
         public static final int initialValueType = LENGTH_IT;
-        protected static Numeric initialValue;
-        public static void setInitialValue(FOTree foTree) {
-            try {
-                initialValue = Length.makeLength
-                    (PropNames.PROVISIONAL_DISTANCE_BETWEEN_STARTS,
-                        24.0d, Length.PT);
-            } catch (PropertyException e) {
-                throw new RuntimeException
-                                    ("PropertyException: " + e.getMessage());
-            }
+        public static PropertyValue getInitialValue(FOTree foTree)
+            throws PropertyException
+        {
+            return Length.makeLength (PropNames.PROVISIONAL_DISTANCE_BETWEEN_STARTS, 24.0d, Length.PT);
         }
         public static final int inherited = COMPUTED;
     }
@@ -5922,15 +5339,10 @@ public abstract class Properties {
         public static final int dataTypes = LENGTH | INHERIT;
         public static final int traitMapping = SPECIFICATION;
         public static final int initialValueType = LENGTH_IT;
-        protected static Numeric initialValue;
-        public static void setInitialValue(FOTree foTree) {
-            try {
-                initialValue = Length.makeLength
-                    (PropNames.PROVISIONAL_LABEL_SEPARATION, 6.0d, Length.PT);
-            } catch (PropertyException e) {
-                throw new RuntimeException
-                                    ("PropertyException: " + e.getMessage());
-            }
+        public static PropertyValue getInitialValue(FOTree foTree)
+            throws PropertyException
+        {
+            return Length.makeLength (PropNames.PROVISIONAL_LABEL_SEPARATION, 6.0d, Length.PT);
         }
         public static final int inherited = COMPUTED;
     }
@@ -5939,15 +5351,10 @@ public abstract class Properties {
         public static final int dataTypes = INTEGER | INHERIT;
         public static final int traitMapping = NEW_TRAIT;
         public static final int initialValueType = INTEGER_IT;
-        protected static Numeric initialValue;
-        public static void setInitialValue(FOTree foTree) {
-            try {
-                initialValue = IntegerType.makeInteger
-                                    (PropNames.REFERENCE_ORIENTATION, 0);
-            } catch (PropertyException e) {
-                throw new RuntimeException
-                                    ("PropertyException: " + e.getMessage());
-            }
+        public static PropertyValue getInitialValue(FOTree foTree)
+            throws PropertyException
+        {
+            return IntegerType.makeInteger (PropNames.REFERENCE_ORIENTATION, 0);
         }
         public static final int inherited = COMPUTED;
 
@@ -6003,15 +5410,10 @@ public abstract class Properties {
         public static final int initialValueType = ENUM_IT;
         public static final int BEFORE = 1;
         public static final int BASELINE = 2;
-        protected static EnumType initialValue;
-        public static void setInitialValue(FOTree foTree) {
-            try {
-                initialValue = new EnumType
-                                    (PropNames.RELATIVE_ALIGN, BEFORE);
-            } catch (PropertyException e) {
-                throw new RuntimeException
-                                    ("PropertyException: " + e.getMessage());
-            }
+        public static PropertyValue getInitialValue(FOTree foTree)
+            throws PropertyException
+        {
+            return new EnumType (PropNames.RELATIVE_ALIGN, BEFORE);
         }
         public static final int inherited = COMPUTED;
 
@@ -6030,15 +5432,10 @@ public abstract class Properties {
         public static final int initialValueType = ENUM_IT;
         public static final int STATIC = 1;
         public static final int RELATIVE = 2;
-        protected static EnumType initialValue;
-        public static void setInitialValue(FOTree foTree) {
-            try {
-                initialValue = new EnumType
-                                (PropNames.RELATIVE_POSITION, STATIC);
-            } catch (PropertyException e) {
-                throw new RuntimeException
-                                    ("PropertyException: " + e.getMessage());
-            }
+        public static PropertyValue getInitialValue(FOTree foTree)
+            throws PropertyException
+        {
+            return new EnumType (PropNames.RELATIVE_POSITION, STATIC);
         }
         public static final int inherited = NO;
 
@@ -6089,15 +5486,10 @@ public abstract class Properties {
         public static final int PAGE = 1;
         public static final int PAGE_SEQUENCE = 2;
         public static final int DOCUMENT = 3;
-        protected static EnumType initialValue;
-        public static void setInitialValue(FOTree foTree) {
-            try {
-                initialValue = new EnumType
-                        (PropNames.RETRIEVE_BOUNDARY, PAGE_SEQUENCE);
-            } catch (PropertyException e) {
-                throw new RuntimeException
-                                    ("PropertyException: " + e.getMessage());
-            }
+        public static PropertyValue getInitialValue(FOTree foTree)
+            throws PropertyException
+        {
+            return new EnumType (PropNames.RETRIEVE_BOUNDARY, PAGE_SEQUENCE);
         }
         public static final int inherited = NO;
 
@@ -6127,16 +5519,10 @@ public abstract class Properties {
         public static final int FIRST_INCLUDING_CARRYOVER = 2;
         public static final int LAST_STARTING_WITHIN_PAGE = 3;
         public static final int LAST_ENDING_WITHIN_PAGE = 4;
-        protected static EnumType initialValue;
-        public static void setInitialValue(FOTree foTree) {
-            try {
-                initialValue = new EnumType
-                        (PropNames.RETRIEVE_POSITION,
-                                            FIRST_STARTING_WITHIN_PAGE);
-            } catch (PropertyException e) {
-                throw new RuntimeException
-                                    ("PropertyException: " + e.getMessage());
-            }
+        public static PropertyValue getInitialValue(FOTree foTree)
+            throws PropertyException
+        {
+            return new EnumType (PropNames.RETRIEVE_POSITION, FIRST_STARTING_WITHIN_PAGE);
         }
         public static final int inherited = NO;
 
@@ -6184,14 +5570,10 @@ public abstract class Properties {
         public static final int DOUBLE = 4;
         public static final int GROOVE = 5;
         public static final int RIDGE = 6;
-        protected static EnumType initialValue;
-        public static void setInitialValue(FOTree foTree) {
-            try {
-                initialValue = new EnumType(PropNames.RULE_STYLE, SOLID);
-            } catch (PropertyException e) {
-                throw new RuntimeException
-                                    ("PropertyException: " + e.getMessage());
-            }
+        public static PropertyValue getInitialValue(FOTree foTree)
+            throws PropertyException
+        {
+            return new EnumType(PropNames.RULE_STYLE, SOLID);
         }
         public static final int inherited = COMPUTED;
 
@@ -6222,15 +5604,10 @@ public abstract class Properties {
         public static final int dataTypes = LENGTH;
         public static final int traitMapping = RENDERING;
         public static final int initialValueType = LENGTH_IT;
-        protected static Numeric initialValue;
-        public static void setInitialValue(FOTree foTree) {
-            try {
-                initialValue = Length.makeLength
-                                (PropNames.RULE_THICKNESS, 1.0d, Length.PT);
-            } catch (PropertyException e) {
-                throw new RuntimeException
-                                    ("PropertyException: " + e.getMessage());
-            }
+        public static PropertyValue getInitialValue(FOTree foTree)
+            throws PropertyException
+        {
+            return Length.makeLength (PropNames.RULE_THICKNESS, 1.0d, Length.PT);
         }
         public static final int inherited = COMPUTED;
     }
@@ -6241,14 +5618,10 @@ public abstract class Properties {
         public static final int initialValueType = ENUM_IT;
         public static final int UNIFORM = 1;
         public static final int NON_UNIFORM = 2;
-        protected static EnumType initialValue;
-        public static void setInitialValue(FOTree foTree) {
-            try {
-                initialValue = new EnumType(PropNames.SCALING, UNIFORM);
-            } catch (PropertyException e) {
-                throw new RuntimeException
-                                    ("PropertyException: " + e.getMessage());
-            }
+        public static PropertyValue getInitialValue(FOTree foTree)
+            throws PropertyException
+        {
+            return new EnumType(PropNames.SCALING, UNIFORM);
         }
         public static final int inherited = NO;
 
@@ -6282,14 +5655,10 @@ public abstract class Properties {
         public static final int dataTypes = BOOL | INHERIT;
         public static final int traitMapping = FORMATTING;
         public static final int initialValueType = BOOL_IT;
-        protected static Bool initialValue;
-        public static void setInitialValue(FOTree foTree) {
-            try {
-                initialValue = new Bool(PropNames.SCORE_SPACES, true);
-            } catch (PropertyException e) {
-                throw new RuntimeException
-                                ("PropertyException: " + e.getMessage());
-            }
+        public static PropertyValue getInitialValue(FOTree foTree)
+            throws PropertyException
+        {
+            return new Bool(PropNames.SCORE_SPACES, true);
         }
         public static final int inherited = COMPUTED;
     }
@@ -6307,15 +5676,10 @@ public abstract class Properties {
         public static final int initialValueType = ENUM_IT;
         public static final int REPLACE = 1;
         public static final int NEW = 2;
-        protected static EnumType initialValue;
-        public static void setInitialValue(FOTree foTree) {
-            try {
-                initialValue = new EnumType
-                                (PropNames.SHOW_DESTINATION, REPLACE);
-            } catch (PropertyException e) {
-                throw new RuntimeException
-                                    ("PropertyException: " + e.getMessage());
-            }
+        public static PropertyValue getInitialValue(FOTree foTree)
+            throws PropertyException
+        {
+            return new EnumType (PropNames.SHOW_DESTINATION, REPLACE);
         }
         public static final int inherited = NO;
 
@@ -6377,15 +5741,10 @@ public abstract class Properties {
         public static final int dataTypes = LENGTH;
         public static final int traitMapping = FORMATTING;
         public static final int initialValueType = LENGTH_IT;
-        protected static Numeric initialValue;
-        public static void setInitialValue(FOTree foTree) {
-            try {
-                initialValue = Length.makeLength
-                            (PropNames.SPACE_AFTER_MINIMUM, 0.0d, Length.PT);
-            } catch (PropertyException e) {
-                throw new RuntimeException
-                                    ("PropertyException: " + e.getMessage());
-            }
+        public static PropertyValue getInitialValue(FOTree foTree)
+            throws PropertyException
+        {
+            return Length.makeLength (PropNames.SPACE_AFTER_MINIMUM, 0.0d, Length.PT);
         }
         public static final int inherited = COMPOUND;
     }
@@ -6394,15 +5753,10 @@ public abstract class Properties {
         public static final int dataTypes = LENGTH;
         public static final int traitMapping = FORMATTING;
         public static final int initialValueType = LENGTH_IT;
-        protected static Numeric initialValue;
-        public static void setInitialValue(FOTree foTree) {
-            try {
-                initialValue = Length.makeLength
-                            (PropNames.SPACE_AFTER_OPTIMUM, 0.0d, Length.PT);
-            } catch (PropertyException e) {
-                throw new RuntimeException
-                                    ("PropertyException: " + e.getMessage());
-            }
+        public static PropertyValue getInitialValue(FOTree foTree)
+            throws PropertyException
+        {
+            return Length.makeLength (PropNames.SPACE_AFTER_OPTIMUM, 0.0d, Length.PT);
         }
         public static final int inherited = COMPOUND;
     }
@@ -6411,15 +5765,10 @@ public abstract class Properties {
         public static final int dataTypes = LENGTH;
         public static final int traitMapping = FORMATTING;
         public static final int initialValueType = LENGTH_IT;
-        protected static Numeric initialValue;
-        public static void setInitialValue(FOTree foTree) {
-            try {
-                initialValue = Length.makeLength
-                            (PropNames.SPACE_AFTER_MAXIMUM, 0.0d, Length.PT);
-            } catch (PropertyException e) {
-                throw new RuntimeException
-                                    ("PropertyException: " + e.getMessage());
-            }
+        public static PropertyValue getInitialValue(FOTree foTree)
+            throws PropertyException
+        {
+            return Length.makeLength (PropNames.SPACE_AFTER_MAXIMUM, 0.0d, Length.PT);
         }
         public static final int inherited = COMPOUND;
     }
@@ -6428,16 +5777,10 @@ public abstract class Properties {
         public static final int dataTypes = ENUM;
         public static final int traitMapping = FORMATTING;
         public static final int initialValueType = ENUM_IT;
-        protected static EnumType initialValue;
-        public static void setInitialValue(FOTree foTree) {
-            try {
-                initialValue = new EnumType
-                        (PropNames.SPACE_AFTER_CONDITIONALITY,
-                                            Conditionality.DISCARD);
-            } catch (PropertyException e) {
-                throw new RuntimeException
-                                    ("PropertyException: " + e.getMessage());
-            }
+        public static PropertyValue getInitialValue(FOTree foTree)
+            throws PropertyException
+        {
+            return new EnumType (PropNames.SPACE_AFTER_CONDITIONALITY, Conditionality.DISCARD);
         }
         public static final int inherited = COMPOUND;
 
@@ -6450,15 +5793,10 @@ public abstract class Properties {
         public static final int dataTypes = INTEGER | ENUM;
         public static final int traitMapping = FORMATTING;
         public static final int initialValueType = INTEGER_IT;
-        protected static Numeric initialValue;
-        public static void setInitialValue(FOTree foTree) {
-            try {
-                initialValue = IntegerType.makeInteger
-                                        (PropNames.SPACE_AFTER_PRECEDENCE, 0);
-            } catch(PropertyException e) {
-                throw new RuntimeException
-                                    ("PropertyException: " + e.getMessage());
-            }
+        public static PropertyValue getInitialValue(FOTree foTree)
+            throws PropertyException
+        {
+            return IntegerType.makeInteger (PropNames.SPACE_AFTER_PRECEDENCE, 0);
         }
 
         public static final int inherited = COMPOUND;
@@ -6479,15 +5817,10 @@ public abstract class Properties {
         public static final int dataTypes = LENGTH;
         public static final int traitMapping = FORMATTING;
         public static final int initialValueType = LENGTH_IT;
-        protected static Numeric initialValue;
-        public static void setInitialValue(FOTree foTree) {
-            try {
-                initialValue = Length.makeLength
-                            (PropNames.SPACE_BEFORE_MINIMUM, 0.0d, Length.PT);
-            } catch (PropertyException e) {
-                throw new RuntimeException
-                                    ("PropertyException: " + e.getMessage());
-            }
+        public static PropertyValue getInitialValue(FOTree foTree)
+            throws PropertyException
+        {
+            return Length.makeLength (PropNames.SPACE_BEFORE_MINIMUM, 0.0d, Length.PT);
         }
         public static final int inherited = COMPOUND;
     }
@@ -6496,15 +5829,10 @@ public abstract class Properties {
         public static final int dataTypes = LENGTH;
         public static final int traitMapping = FORMATTING;
         public static final int initialValueType = LENGTH_IT;
-        protected static Numeric initialValue;
-        public static void setInitialValue(FOTree foTree) {
-            try {
-                initialValue = Length.makeLength
-                            (PropNames.SPACE_BEFORE_OPTIMUM, 0.0d, Length.PT);
-            } catch (PropertyException e) {
-                throw new RuntimeException
-                                    ("PropertyException: " + e.getMessage());
-            }
+        public static PropertyValue getInitialValue(FOTree foTree)
+            throws PropertyException
+        {
+            return Length.makeLength (PropNames.SPACE_BEFORE_OPTIMUM, 0.0d, Length.PT);
         }
         public static final int inherited = COMPOUND;
     }
@@ -6513,15 +5841,10 @@ public abstract class Properties {
         public static final int dataTypes = LENGTH;
         public static final int traitMapping = FORMATTING;
         public static final int initialValueType = LENGTH_IT;
-        protected static Numeric initialValue;
-        public static void setInitialValue(FOTree foTree) {
-            try {
-                initialValue = Length.makeLength
-                            (PropNames.SPACE_BEFORE_MAXIMUM, 0.0d, Length.PT);
-            } catch (PropertyException e) {
-                throw new RuntimeException
-                                    ("PropertyException: " + e.getMessage());
-            }
+        public static PropertyValue getInitialValue(FOTree foTree)
+            throws PropertyException
+        {
+            return Length.makeLength (PropNames.SPACE_BEFORE_MAXIMUM, 0.0d, Length.PT);
         }
         public static final int inherited = COMPOUND;
     }
@@ -6530,16 +5853,10 @@ public abstract class Properties {
         public static final int dataTypes = ENUM;
         public static final int traitMapping = FORMATTING;
         public static final int initialValueType = ENUM_IT;
-        protected static EnumType initialValue;
-        public static void setInitialValue(FOTree foTree) {
-            try {
-                initialValue = new EnumType
-                        (PropNames.SPACE_BEFORE_CONDITIONALITY,
-                                                Conditionality.DISCARD);
-            } catch (PropertyException e) {
-                throw new RuntimeException
-                                    ("PropertyException: " + e.getMessage());
-            }
+        public static PropertyValue getInitialValue(FOTree foTree)
+            throws PropertyException
+        {
+            return new EnumType (PropNames.SPACE_BEFORE_CONDITIONALITY, Conditionality.DISCARD);
         }
         public static final int inherited = COMPOUND;
 
@@ -6552,15 +5869,10 @@ public abstract class Properties {
         public static final int dataTypes = INTEGER | ENUM;
         public static final int traitMapping = FORMATTING;
         public static final int initialValueType = INTEGER_IT;
-        protected static Numeric initialValue;
-        public static void setInitialValue(FOTree foTree) {
-            try {
-                initialValue = IntegerType.makeInteger
-                                        (PropNames.SPACE_BEFORE_PRECEDENCE, 0);
-            } catch(PropertyException e) {
-                throw new RuntimeException
-                                    ("PropertyException: " + e.getMessage());
-            }
+        public static PropertyValue getInitialValue(FOTree foTree)
+            throws PropertyException
+        {
+            return IntegerType.makeInteger (PropNames.SPACE_BEFORE_PRECEDENCE, 0);
         }
 
         public static final int inherited = COMPOUND;
@@ -6581,15 +5893,10 @@ public abstract class Properties {
         public static final int dataTypes = LENGTH | PERCENTAGE;
         public static final int traitMapping = FORMATTING;
         public static final int initialValueType = LENGTH_IT;
-        protected static Numeric initialValue;
-        public static void setInitialValue(FOTree foTree) {
-            try {
-                initialValue = Length.makeLength
-                            (PropNames.SPACE_END_MINIMUM, 0.0d, Length.PT);
-            } catch (PropertyException e) {
-                throw new RuntimeException
-                                    ("PropertyException: " + e.getMessage());
-            }
+        public static PropertyValue getInitialValue(FOTree foTree)
+            throws PropertyException
+        {
+            return Length.makeLength (PropNames.SPACE_END_MINIMUM, 0.0d, Length.PT);
         }
         public static final int inherited = COMPOUND;
     }
@@ -6598,15 +5905,10 @@ public abstract class Properties {
         public static final int dataTypes = LENGTH | PERCENTAGE;
         public static final int traitMapping = FORMATTING;
         public static final int initialValueType = LENGTH_IT;
-        protected static Numeric initialValue;
-        public static void setInitialValue(FOTree foTree) {
-            try {
-                initialValue = Length.makeLength
-                            (PropNames.SPACE_END_OPTIMUM, 0.0d, Length.PT);
-            } catch (PropertyException e) {
-                throw new RuntimeException
-                                    ("PropertyException: " + e.getMessage());
-            }
+        public static PropertyValue getInitialValue(FOTree foTree)
+            throws PropertyException
+        {
+            return Length.makeLength (PropNames.SPACE_END_OPTIMUM, 0.0d, Length.PT);
         }
         public static final int inherited = COMPOUND;
     }
@@ -6615,15 +5917,10 @@ public abstract class Properties {
         public static final int dataTypes = LENGTH | PERCENTAGE;
         public static final int traitMapping = FORMATTING;
         public static final int initialValueType = LENGTH_IT;
-        protected static Numeric initialValue;
-        public static void setInitialValue(FOTree foTree) {
-            try {
-                initialValue = Length.makeLength
-                            (PropNames.SPACE_END_MAXIMUM, 0.0d, Length.PT);
-            } catch (PropertyException e) {
-                throw new RuntimeException
-                                    ("PropertyException: " + e.getMessage());
-            }
+        public static PropertyValue getInitialValue(FOTree foTree)
+            throws PropertyException
+        {
+            return Length.makeLength (PropNames.SPACE_END_MAXIMUM, 0.0d, Length.PT);
         }
         public static final int inherited = COMPOUND;
     }
@@ -6632,16 +5929,10 @@ public abstract class Properties {
         public static final int dataTypes = ENUM;
         public static final int traitMapping = FORMATTING;
         public static final int initialValueType = ENUM_IT;
-        protected static EnumType initialValue;
-        public static void setInitialValue(FOTree foTree) {
-            try {
-                initialValue = new EnumType
-                        (PropNames.SPACE_END_CONDITIONALITY,
-                                                Conditionality.DISCARD);
-            } catch (PropertyException e) {
-                throw new RuntimeException
-                                    ("PropertyException: " + e.getMessage());
-            }
+        public static PropertyValue getInitialValue(FOTree foTree)
+            throws PropertyException
+        {
+            return new EnumType (PropNames.SPACE_END_CONDITIONALITY, Conditionality.DISCARD);
         }
         public static final int inherited = COMPOUND;
 
@@ -6654,15 +5945,10 @@ public abstract class Properties {
         public static final int dataTypes = INTEGER | ENUM;
         public static final int traitMapping = FORMATTING;
         public static final int initialValueType = INTEGER_IT;
-        protected static Numeric initialValue;
-        public static void setInitialValue(FOTree foTree) {
-            try {
-                initialValue = IntegerType.makeInteger
-                                        (PropNames.SPACE_END_PRECEDENCE, 0);
-            } catch(PropertyException e) {
-                throw new RuntimeException
-                                    ("PropertyException: " + e.getMessage());
-            }
+        public static PropertyValue getInitialValue(FOTree foTree)
+            throws PropertyException
+        {
+            return IntegerType.makeInteger (PropNames.SPACE_END_PRECEDENCE, 0);
         }
 
         public static final int inherited = COMPOUND;
@@ -6683,15 +5969,10 @@ public abstract class Properties {
         public static final int dataTypes = LENGTH | PERCENTAGE;
         public static final int traitMapping = FORMATTING;
         public static final int initialValueType = LENGTH_IT;
-        protected static Numeric initialValue;
-        public static void setInitialValue(FOTree foTree) {
-            try {
-                initialValue = Length.makeLength
-                            (PropNames.SPACE_START_MINIMUM, 0.0d, Length.PT);
-            } catch (PropertyException e) {
-                throw new RuntimeException
-                                    ("PropertyException: " + e.getMessage());
-            }
+        public static PropertyValue getInitialValue(FOTree foTree)
+            throws PropertyException
+        {
+            return Length.makeLength (PropNames.SPACE_START_MINIMUM, 0.0d, Length.PT);
         }
         public static final int inherited = COMPOUND;
     }
@@ -6700,15 +5981,10 @@ public abstract class Properties {
         public static final int dataTypes = LENGTH | PERCENTAGE;
         public static final int traitMapping = FORMATTING;
         public static final int initialValueType = LENGTH_IT;
-        protected static Numeric initialValue;
-        public static void setInitialValue(FOTree foTree) {
-            try {
-                initialValue = Length.makeLength
-                            (PropNames.SPACE_START_OPTIMUM, 0.0d, Length.PT);
-            } catch (PropertyException e) {
-                throw new RuntimeException
-                                    ("PropertyException: " + e.getMessage());
-            }
+        public static PropertyValue getInitialValue(FOTree foTree)
+            throws PropertyException
+        {
+            return Length.makeLength (PropNames.SPACE_START_OPTIMUM, 0.0d, Length.PT);
         }
         public static final int inherited = COMPOUND;
     }
@@ -6717,15 +5993,10 @@ public abstract class Properties {
         public static final int dataTypes = LENGTH | PERCENTAGE;
         public static final int traitMapping = FORMATTING;
         public static final int initialValueType = LENGTH_IT;
-        protected static Numeric initialValue;
-        public static void setInitialValue(FOTree foTree) {
-            try {
-                initialValue = Length.makeLength
-                            (PropNames.SPACE_START_MAXIMUM, 0.0d, Length.PT);
-            } catch (PropertyException e) {
-                throw new RuntimeException
-                                    ("PropertyException: " + e.getMessage());
-            }
+        public static PropertyValue getInitialValue(FOTree foTree)
+            throws PropertyException
+        {
+            return Length.makeLength (PropNames.SPACE_START_MAXIMUM, 0.0d, Length.PT);
         }
         public static final int inherited = COMPOUND;
     }
@@ -6734,16 +6005,10 @@ public abstract class Properties {
         public static final int dataTypes = ENUM;
         public static final int traitMapping = FORMATTING;
         public static final int initialValueType = ENUM_IT;
-        protected static EnumType initialValue;
-        public static void setInitialValue(FOTree foTree) {
-            try {
-                initialValue = new EnumType
-                        (PropNames.SPACE_START_CONDITIONALITY,
-                                                Conditionality.DISCARD);
-            } catch (PropertyException e) {
-                throw new RuntimeException
-                                    ("PropertyException: " + e.getMessage());
-            }
+        public static PropertyValue getInitialValue(FOTree foTree)
+            throws PropertyException
+        {
+            return new EnumType (PropNames.SPACE_START_CONDITIONALITY, Conditionality.DISCARD);
         }
         public static final int inherited = COMPOUND;
 
@@ -6756,15 +6021,10 @@ public abstract class Properties {
         public static final int dataTypes = INTEGER | ENUM;
         public static final int traitMapping = FORMATTING;
         public static final int initialValueType = INTEGER_IT;
-        protected static Numeric initialValue;
-        public static void setInitialValue(FOTree foTree) {
-            try {
-                initialValue = IntegerType.makeInteger
-                                        (PropNames.SPACE_START_PRECEDENCE, 0);
-            } catch(PropertyException e) {
-                throw new RuntimeException
-                                    ("PropertyException: " + e.getMessage());
-            }
+        public static PropertyValue getInitialValue(FOTree foTree)
+            throws PropertyException
+        {
+            return IntegerType.makeInteger (PropNames.SPACE_START_PRECEDENCE, 0);
         }
 
         public static final int inherited = COMPOUND;
@@ -6835,15 +6095,10 @@ public abstract class Properties {
         public static final int dataTypes = LENGTH | INHERIT;
         public static final int traitMapping = FORMATTING;
         public static final int initialValueType = LENGTH_IT;
-        protected static Numeric initialValue;
-        public static void setInitialValue(FOTree foTree) {
-            try {
-                initialValue = Length.makeLength
-                                    (PropNames.START_INDENT, 0.0d, Length.PT);
-            } catch (PropertyException e) {
-                throw new RuntimeException
-                                    ("PropertyException: " + e.getMessage());
-            }
+        public static PropertyValue getInitialValue(FOTree foTree)
+            throws PropertyException
+        {
+            return Length.makeLength (PropNames.START_INDENT, 0.0d, Length.PT);
         }
         public static final int inherited = COMPUTED;
     }
@@ -6854,15 +6109,10 @@ public abstract class Properties {
         public static final int initialValueType = ENUM_IT;
         public static final int SHOW = 1;
         public static final int HIDE = 2;
-        protected static EnumType initialValue;
-        public static void setInitialValue(FOTree foTree) {
-            try {
-                initialValue = new EnumType
-                                    (PropNames.STARTING_STATE, SHOW);
-            } catch (PropertyException e) {
-                throw new RuntimeException
-                                    ("PropertyException: " + e.getMessage());
-            }
+        public static PropertyValue getInitialValue(FOTree foTree)
+            throws PropertyException
+        {
+            return new EnumType (PropNames.STARTING_STATE, SHOW);
         }
         public static final int inherited = NO;
 
@@ -6879,14 +6129,10 @@ public abstract class Properties {
         public static final int dataTypes = BOOL;
         public static final int traitMapping = FORMATTING;
         public static final int initialValueType = BOOL_IT;
-        protected static Bool initialValue;
-        public static void setInitialValue(FOTree foTree) {
-            try {
-                initialValue = new Bool(PropNames.STARTS_ROW, false);
-            } catch (PropertyException e) {
-                throw new RuntimeException
-                                    ("PropertyException: " + e.getMessage());
-            }
+        public static PropertyValue getInitialValue(FOTree foTree)
+            throws PropertyException
+        {
+            return new Bool(PropNames.STARTS_ROW, false);
         }
         public static final int inherited = NO;
     }
@@ -6922,15 +6168,10 @@ public abstract class Properties {
         public static final int XSL_PRECEDING = 1;
         public static final int XSL_FOLLOWING = 2;
         public static final int XSL_ANY = 3;
-        protected static EnumType initialValue;
-        public static void setInitialValue(FOTree foTree) {
-            try {
-                initialValue = new EnumType
-                                        (PropNames.SWITCH_TO, XSL_ANY);
-            } catch (PropertyException e) {
-                throw new RuntimeException
-                                    ("PropertyException: " + e.getMessage());
-            }
+        public static PropertyValue getInitialValue(FOTree foTree)
+            throws PropertyException
+        {
+            return new EnumType (PropNames.SWITCH_TO, XSL_ANY);
         }
         public static final int inherited = NO;
 
@@ -6980,15 +6221,10 @@ public abstract class Properties {
         public static final int dataTypes = BOOL;
         public static final int traitMapping = FORMATTING;
         public static final int initialValueType = BOOL_IT;
-        protected static Bool initialValue;
-        public static void setInitialValue(FOTree foTree) {
-            try {
-                initialValue = new Bool
-                                (PropNames.TABLE_OMIT_FOOTER_AT_BREAK, false);
-            } catch (PropertyException e) {
-                throw new RuntimeException
-                                    ("PropertyException: " + e.getMessage());
-            }
+        public static PropertyValue getInitialValue(FOTree foTree)
+            throws PropertyException
+        {
+            return new Bool (PropNames.TABLE_OMIT_FOOTER_AT_BREAK, false);
         }
         public static final int inherited = NO;
     }
@@ -6997,15 +6233,10 @@ public abstract class Properties {
         public static final int dataTypes = BOOL;
         public static final int traitMapping = FORMATTING;
         public static final int initialValueType = BOOL_IT;
-        protected static Bool initialValue;
-        public static void setInitialValue(FOTree foTree) {
-            try {
-                initialValue = new Bool
-                                (PropNames.TABLE_OMIT_HEADER_AT_BREAK, false);
-            } catch (PropertyException e) {
-                throw new RuntimeException
-                                    ("PropertyException: " + e.getMessage());
-            }
+        public static PropertyValue getInitialValue(FOTree foTree)
+            throws PropertyException
+        {
+            return new Bool (PropNames.TABLE_OMIT_HEADER_AT_BREAK, false);
         }
         public static final int inherited = NO;
     }
@@ -7015,16 +6246,10 @@ public abstract class Properties {
         public static final int traitMapping = ACTION;
         public static final int initialValueType = ENUM_IT;
         public static final int USE_TARGET_PROCESSING_CONTEXT = 1;
-        protected static EnumType initialValue;
-        public static void setInitialValue(FOTree foTree) {
-            try {
-                initialValue = new EnumType
-                        (PropNames.TARGET_PRESENTATION_CONTEXT,
-                                        USE_TARGET_PROCESSING_CONTEXT);
-            } catch (PropertyException e) {
-                throw new RuntimeException
-                                    ("PropertyException: " + e.getMessage());
-            }
+        public static PropertyValue getInitialValue(FOTree foTree)
+            throws PropertyException
+        {
+            return new EnumType (PropNames.TARGET_PRESENTATION_CONTEXT, USE_TARGET_PROCESSING_CONTEXT);
         }
         public static final int inherited = NO;
 
@@ -7041,16 +6266,10 @@ public abstract class Properties {
         public static final int traitMapping = ACTION;
         public static final int initialValueType = ENUM_IT;
         public static final int DOCUMENT_ROOT = 1;
-        protected static EnumType initialValue;
-        public static void setInitialValue(FOTree foTree) {
-            try {
-                initialValue = new EnumType
-                        (PropNames.TARGET_PROCESSING_CONTEXT,
-                                                        DOCUMENT_ROOT);
-            } catch (PropertyException e) {
-                throw new RuntimeException
-                                    ("PropertyException: " + e.getMessage());
-            }
+        public static PropertyValue getInitialValue(FOTree foTree)
+            throws PropertyException
+        {
+            return new EnumType (PropNames.TARGET_PROCESSING_CONTEXT, DOCUMENT_ROOT);
         }
         public static final int inherited = NO;
 
@@ -7067,16 +6286,10 @@ public abstract class Properties {
         public static final int traitMapping = ACTION;
         public static final int initialValueType = ENUM_IT;
         public static final int USE_NORMAL_STYLESHEET = 1;
-        protected static EnumType initialValue;
-        public static void setInitialValue(FOTree foTree) {
-            try {
-                initialValue = new EnumType
-                            (PropNames.TARGET_STYLESHEET,
-                                                USE_NORMAL_STYLESHEET);
-            } catch (PropertyException e) {
-                throw new RuntimeException
-                                    ("PropertyException: " + e.getMessage());
-            }
+        public static PropertyValue getInitialValue(FOTree foTree)
+            throws PropertyException
+        {
+            return new EnumType (PropNames.TARGET_STYLESHEET, USE_NORMAL_STYLESHEET);
         }
         public static final int inherited = NO;
 
@@ -7101,14 +6314,10 @@ public abstract class Properties {
         public static final int LEFT = 7;
         public static final int RIGHT = 8;
 
-        protected static EnumType initialValue;
-        public static void setInitialValue(FOTree foTree) {
-            try {
-                initialValue = new EnumType(PropNames.TEXT_ALIGN, START);
-            } catch (PropertyException e) {
-                throw new RuntimeException
-                                    ("PropertyException: " + e.getMessage());
-            }
+        public static PropertyValue getInitialValue(FOTree foTree)
+            throws PropertyException
+        {
+            return new EnumType(PropNames.TEXT_ALIGN, START);
         }
 
         public static final int inherited = COMPUTED;
@@ -7152,15 +6361,10 @@ public abstract class Properties {
         public static final int LEFT = 8;
         public static final int RIGHT = 9;
 
-        protected static EnumType initialValue;
-        public static void setInitialValue(FOTree foTree) {
-            try {
-                initialValue = new EnumType
-                                (PropNames.TEXT_ALIGN_LAST, RELATIVE);
-            } catch (PropertyException e) {
-                throw new RuntimeException
-                                    ("PropertyException: " + e.getMessage());
-            }
+        public static PropertyValue getInitialValue(FOTree foTree)
+            throws PropertyException
+        {
+            return new EnumType (PropNames.TEXT_ALIGN_LAST, RELATIVE);
         }
 
         public static final int inherited = COMPUTED;
@@ -7196,15 +6400,10 @@ public abstract class Properties {
         public static final int traitMapping = FORMATTING;
         public static final int initialValueType = ENUM_IT;
         public static final int USE_FONT_METRICS = 1;
-        protected static EnumType initialValue;
-        public static void setInitialValue(FOTree foTree) {
-            try {
-                initialValue = new EnumType
-                            (PropNames.TEXT_ALTITUDE, USE_FONT_METRICS);
-            } catch (PropertyException e) {
-                throw new RuntimeException
-                                    ("PropertyException: " + e.getMessage());
-            }
+        public static PropertyValue getInitialValue(FOTree foTree)
+            throws PropertyException
+        {
+            return new EnumType (PropNames.TEXT_ALTITUDE, USE_FONT_METRICS);
         }
         public static final int inherited = NO;
 
@@ -7220,15 +6419,10 @@ public abstract class Properties {
         public static final int dataTypes = COMPLEX | NONE | INHERIT;
         public static final int traitMapping = NEW_TRAIT;
         public static final int initialValueType = TEXT_DECORATION_IT;
-        protected static TextDecorations initialValue;
-        public static void setInitialValue(FOTree foTree) {
-            try {
-                initialValue = new TextDecorations
-                            (PropNames.TEXT_DECORATION, NO_DECORATION);
-            } catch (PropertyException e) {
-                throw new RuntimeException
-                                    ("PropertyException: " + e.getMessage());
-            }
+        public static PropertyValue getInitialValue(FOTree foTree)
+            throws PropertyException
+        {
+            return new TextDecorations (PropNames.TEXT_DECORATION, NO_DECORATION);
         }
         public static final int inherited = NO;
 
@@ -7317,15 +6511,10 @@ public abstract class Properties {
         public static final int traitMapping = FORMATTING;
         public static final int initialValueType = ENUM_IT;
         public static final int USE_FONT_METRICS = 1;
-        protected static EnumType initialValue;
-        public static void setInitialValue(FOTree foTree) {
-            try {
-                initialValue = new EnumType
-                            (PropNames.TEXT_DEPTH, USE_FONT_METRICS);
-            } catch (PropertyException e) {
-                throw new RuntimeException
-                                    ("PropertyException: " + e.getMessage());
-            }
+        public static PropertyValue getInitialValue(FOTree foTree)
+            throws PropertyException
+        {
+            return new EnumType (PropNames.TEXT_DEPTH, USE_FONT_METRICS);
         }
         public static final int inherited = NO;
 
@@ -7341,15 +6530,10 @@ public abstract class Properties {
         public static final int dataTypes = PERCENTAGE | LENGTH | INHERIT;
         public static final int traitMapping = FORMATTING;
         public static final int initialValueType = LENGTH_IT;
-        protected static Numeric initialValue;
-        public static void setInitialValue(FOTree foTree) {
-            try {
-                initialValue = Length.makeLength
-                                    (PropNames.TEXT_INDENT, 0.0d, Length.PT);
-            } catch (PropertyException e) {
-                throw new RuntimeException
-                                    ("PropertyException: " + e.getMessage());
-            }
+        public static PropertyValue getInitialValue(FOTree foTree)
+            throws PropertyException
+        {
+            return Length.makeLength (PropNames.TEXT_INDENT, 0.0d, Length.PT);
         }
         public static final int inherited = COMPUTED;
     }
@@ -7432,15 +6616,10 @@ public abstract class Properties {
         public static final int NORMAL = 1;
         public static final int EMBED = 2;
         public static final int BIDI_OVERRIDE = 3;
-        protected static EnumType initialValue;
-        public static void setInitialValue(FOTree foTree) {
-            try {
-                initialValue = new EnumType
-                                    (PropNames.UNICODE_BIDI, NORMAL);
-            } catch (PropertyException e) {
-                throw new RuntimeException
-                                   ("PropertyException: " + e.getMessage());
-            }
+        public static PropertyValue getInitialValue(FOTree foTree)
+            throws PropertyException
+        {
+            return new EnumType (PropNames.UNICODE_BIDI, NORMAL);
         }
         public static final int inherited = NO;
 
@@ -7467,15 +6646,10 @@ public abstract class Properties {
         public static final int TEXT_BOTTOM = 6;
         public static final int TOP = 7;
         public static final int BOTTOM = 8;
-        protected static EnumType initialValue;
-        public static void setInitialValue(FOTree foTree) {
-            try {
-                initialValue = new EnumType
-                                (PropNames.VERTICAL_ALIGN, BASELINE);
-            } catch (PropertyException e) {
-                throw new RuntimeException
-                                    ("PropertyException: " + e.getMessage());
-            }
+        public static PropertyValue getInitialValue(FOTree foTree)
+            throws PropertyException
+        {
+            return new EnumType (PropNames.VERTICAL_ALIGN, BASELINE);
         }
         public static final int inherited = NO;
 
@@ -7511,15 +6685,10 @@ public abstract class Properties {
         public static final int VISIBLE = 1;
         public static final int HIDDEN = 2;
         public static final int COLLAPSE = 3;
-        protected static EnumType initialValue;
-        public static void setInitialValue(FOTree foTree) {
-            try {
-                initialValue = new EnumType
-                                        (PropNames.VISIBILITY, VISIBLE);
-            } catch (PropertyException e) {
-                throw new RuntimeException
-                                    ("PropertyException: " + e.getMessage());
-            }
+        public static PropertyValue getInitialValue(FOTree foTree)
+            throws PropertyException
+        {
+            return new EnumType (PropNames.VISIBILITY, VISIBLE);
         }
         public static final int inherited = COMPUTED;
 
@@ -7554,15 +6723,10 @@ public abstract class Properties {
         public static final int NORMAL = 1;
         public static final int PRE = 2;
         public static final int NOWRAP = 3;
-        protected static EnumType initialValue;
-        public static void setInitialValue(FOTree foTree) {
-            try {
-                initialValue = new EnumType
-                                        (PropNames.WHITE_SPACE, NORMAL);
-            } catch (PropertyException e) {
-                throw new RuntimeException
-                                    ("PropertyException: " + e.getMessage());
-            }
+        public static PropertyValue getInitialValue(FOTree foTree)
+            throws PropertyException
+        {
+            return new EnumType (PropNames.WHITE_SPACE, NORMAL);
         }
         public static final int inherited = SHORTHAND_INH;
 
@@ -7580,14 +6744,10 @@ public abstract class Properties {
         public static final int dataTypes = BOOL | INHERIT;
         public static final int traitMapping = FORMATTING;
         public static final int initialValueType = BOOL_IT;
-        protected static Bool initialValue;
-        public static void setInitialValue(FOTree foTree) {
-            try {
-                initialValue = new Bool(PropNames.WHITE_SPACE_COLLAPSE, true);
-            } catch (PropertyException e) {
-                throw new RuntimeException
-                                    ("PropertyException: " + e.getMessage());
-            }
+        public static PropertyValue getInitialValue(FOTree foTree)
+            throws PropertyException
+        {
+            return new Bool(PropNames.WHITE_SPACE_COLLAPSE, true);
         }
         public static final int inherited = COMPUTED;
     }
@@ -7601,15 +6761,10 @@ public abstract class Properties {
         public static final int IGNORE_IF_BEFORE_LINEFEED = 3;
         public static final int IGNORE_IF_AFTER_LINEFEED = 4;
         public static final int IGNORE_IF_SURROUNDING_LINEFEED = 5;
-        protected static EnumType initialValue;
-        public static void setInitialValue(FOTree foTree) {
-            try {
-                initialValue = new EnumType
-                            (PropNames.WHITE_SPACE_TREATMENT, PRESERVE);
-            } catch (PropertyException e) {
-                throw new RuntimeException
-                                    ("PropertyException: " + e.getMessage());
-            }
+        public static PropertyValue getInitialValue(FOTree foTree)
+            throws PropertyException
+        {
+            return new EnumType (PropNames.WHITE_SPACE_TREATMENT, PRESERVE);
         }
         public static final int inherited = COMPUTED;
 
@@ -7639,14 +6794,10 @@ public abstract class Properties {
         public static final int dataTypes = INTEGER | INHERIT;
         public static final int traitMapping = FORMATTING;
         public static final int initialValueType = INTEGER_IT;
-        protected static Numeric initialValue;
-        public static void setInitialValue(FOTree foTree) {
-            try {
-                initialValue = IntegerType.makeInteger(PropNames.WIDOWS, 2);
-            } catch(PropertyException e) {
-                throw new RuntimeException
-                                    ("PropertyException: " + e.getMessage());
-            }
+        public static PropertyValue getInitialValue(FOTree foTree)
+            throws PropertyException
+        {
+            return IntegerType.makeInteger(PropNames.WIDOWS, 2);
         }
 
         public static final int inherited = COMPUTED;
@@ -7665,15 +6816,10 @@ public abstract class Properties {
         public static final int traitMapping = DISAPPEARS;
         public static final int initialValueType = ENUM_IT;
         public static final int NORMAL = 1;
-        protected static EnumType initialValue;
-        public static void setInitialValue(FOTree foTree) {
-            try {
-                initialValue = new EnumType
-                                    (PropNames.WORD_SPACING, NORMAL);
-            } catch (PropertyException e) {
-                throw new RuntimeException
-                                    ("PropertyException: " + e.getMessage());
-            }
+        public static PropertyValue getInitialValue(FOTree foTree)
+            throws PropertyException
+        {
+            return new EnumType (PropNames.WORD_SPACING, NORMAL);
         }
         public static final int inherited = COMPUTED;
 
@@ -7691,14 +6837,10 @@ public abstract class Properties {
         public static final int initialValueType = ENUM_IT;
         public static final int WRAP = 1;
         public static final int NO_WRAP = 2;
-        protected static EnumType initialValue;
-        public static void setInitialValue(FOTree foTree) {
-            try {
-                initialValue = new EnumType(PropNames.WRAP_OPTION, WRAP);
-            } catch (PropertyException e) {
-                throw new RuntimeException
-                                    ("PropertyException: " + e.getMessage());
-            }
+        public static PropertyValue getInitialValue(FOTree foTree)
+            throws PropertyException
+        {
+            return new EnumType(PropNames.WRAP_OPTION, WRAP);
         }
         public static final int inherited = COMPUTED;
 
@@ -7721,15 +6863,10 @@ public abstract class Properties {
         public static final int LR = 4;
         public static final int RL = 5;
         public static final int TB = 6;
-        protected static EnumType initialValue;
-        public static void setInitialValue(FOTree foTree) {
-            try {
-                initialValue = new EnumType
-                                        (PropNames.WRITING_MODE, LR_TB);
-            } catch (PropertyException e) {
-                throw new RuntimeException
-                                    ("PropertyException: " + e.getMessage());
-            }
+        public static PropertyValue getInitialValue(FOTree foTree)
+            throws PropertyException
+        {
+            return new EnumType (PropNames.WRITING_MODE, LR_TB);
         }
         public static final int inherited = COMPUTED;
 

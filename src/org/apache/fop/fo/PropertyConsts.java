@@ -13,8 +13,11 @@ package org.apache.fop.fo;
 import java.lang.Character;
 import java.lang.reflect.Method;
 import java.lang.reflect.InvocationTargetException;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.List;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.BitSet;
@@ -27,8 +30,6 @@ import org.apache.fop.fo.expr.PropertyException;
 import org.apache.fop.datatypes.Ints;
 import org.apache.fop.datastructs.ROIntArray;
 import org.apache.fop.datastructs.ROStringArray;
-import org.apache.fop.datastructs.ROClassArray;
-import org.apache.fop.datastructs.ROMethodArray;
 import org.apache.fop.fo.expr.PropertyValue;
 
 /**
@@ -331,12 +332,12 @@ public class PropertyConsts {
     private static final Class[] classes;
 
     /**
-     * An ROClassArray of the property classes.  This read-only array
+     * An unmodifiable List of the property classes.  This random access list
      * is derived fo <i>classes</i>, above.
      * It can be indexed by the property name constants defined in
      * the PropNames class.
      */
-    public static final ROClassArray propertyClasses;
+    public static final List propertyClasses;
 
     /**
      * A HashMap whose elements are an integer index value keyed by a
@@ -447,12 +448,12 @@ public class PropertyConsts {
     private static final Method[] complexmethods;
 
     /**
-     * An ROMethodArray of the property <i>complex</i> methods.
-     * This read-only array is derived from <i>complexmethods</i>, above.
+     * An unmodifiable List of the property <i>complex</i> methods.
+     * This random access list is derived from <i>complexmethods</i>, above.
      * It can be indexed by the property name constants defined in
      * the PropNames class.
      */
-    public static final ROMethodArray complexMethods;
+    public static final List complexMethods;
 
     /**
      * A sparsely populated array of <tt>Method</tt> objects.  Although this
@@ -464,12 +465,13 @@ public class PropertyConsts {
     private static final Method[] initialvaluemethods;
 
     /**
-     * An ROMethodArray of the property <i>setInitialValue</i> methods.
-     * This read-only array is derived from <i>initialvaluemethods</i>, above.
+     * An unmodifiable List of the property <i>setInitialValue</i> methods.
+     * This random access list is derived from <i>initialvaluemethods</i>,
+     * above.
      * It can be indexed by the property name constants defined in
      * the PropNames class.
      */
-    public static final ROMethodArray initialValueMethods;
+    public static final List initialValueMethods;
 
     static {
         String prefix = packageName + "." + "Properties" + "$";
@@ -562,7 +564,7 @@ public class PropertyConsts {
                                         != 0)
                     initialvaluemethods[i] =
                             classes[i].getMethod
-                                    ("setInitialValue",
+                                    ("getInitialValue",
                                      new Class[]
                                         {org.apache.fop.fo.FOTree.class});
             }
@@ -586,11 +588,14 @@ public class PropertyConsts {
 
         // Initialise the RO arrays
         propertyClassNames  = new ROStringArray(classNames);
-        propertyClasses     = new ROClassArray(classes);
+        propertyClasses     = Collections.unmodifiableList
+                                        (Arrays.asList(classes));
         inherited           = new ROIntArray(inherit);
         dataTypes           = new ROIntArray(datatypes);
-        complexMethods      = new ROMethodArray(complexmethods);
-        initialValueMethods = new ROMethodArray(initialvaluemethods);
+        complexMethods      = Collections.unmodifiableList
+                                        (Arrays.asList(complexmethods));
+        initialValueMethods = Collections.unmodifiableList
+                                        (Arrays.asList(initialvaluemethods));
 
     }
 
