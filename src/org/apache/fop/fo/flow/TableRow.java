@@ -111,6 +111,7 @@ public class TableRow extends FObj {
 
     // added by Dresdner Bank, Germany
     DisplaySpace spacer = null;
+    boolean hasAddedSpacer = false;
     DisplaySpace spacerAfter = null;
 
     /**
@@ -359,7 +360,6 @@ public class TableRow extends FObj {
             this.marker = 0;
         }
 
-
         if ((spaceBefore != 0) && (this.marker == 0)) {
             spacer = new DisplaySpace(spaceBefore);
             area.increaseHeight(spaceBefore);
@@ -482,8 +482,9 @@ public class TableRow extends FObj {
                     }
                 } else {
                     // added on 11/28/2000, by Dresdner Bank, Germany
-                    if (spacer != null)
+                    if (hasAddedSpacer && spacer != null)
                         area.removeChild(spacer);
+                    hasAddedSpacer = false;
                     if(spacerAfter != null)
                         area.removeChild(spacerAfter);
 
@@ -517,9 +518,9 @@ public class TableRow extends FObj {
         }
 
         // added by Dresdner Bank, Germany
-        if (spacer != null) {
+        if (!hasAddedSpacer && spacer != null) {
             area.addChild(spacer);
-            spacer = null;
+            hasAddedSpacer = true;
         }
 
         area.addChild(areaContainer);
@@ -533,16 +534,6 @@ public class TableRow extends FObj {
         // bug fix from Eric Schaeffer
         //area.increaseHeight(largestCellHeight);
 
-        if (spaceAfter != 0) {
-            spacerAfter = new DisplaySpace(spaceAfter);
-            area.increaseHeight(spaceAfter);
-            area.addChild(spacerAfter);
-        }
-
-        if (area instanceof BlockArea) {
-            area.start();
-        }
-
         // test to see if some cells are not
         // completely laid out.
         // Hani Elabed 11/22/2000
@@ -553,6 +544,16 @@ public class TableRow extends FObj {
                 someCellDidNotLayoutCompletely = true;
                 break; // out of for loop
             }
+        }
+
+        if (!someCellDidNotLayoutCompletely && spaceAfter != 0) {
+            spacerAfter = new DisplaySpace(spaceAfter);
+            area.increaseHeight(spaceAfter);
+            area.addChild(spacerAfter);
+        }
+
+        if (area instanceof BlockArea) {
+            area.start();
         }
 
         // replaced by Hani Elabed 11/27/2000
@@ -574,17 +575,28 @@ public class TableRow extends FObj {
     }
 
     public void removeLayout(Area area) {
-        if (spacer != null)
-            area.removeChild(spacer);
+        if (spacer != null) {
+            if(hasAddedSpacer) {
+                area.removeChild(spacer);
+            } else {
+                area.increaseHeight(-spaceBefore);
+            }
+        }
+        hasAddedSpacer = false;
         if(spacerAfter != null)
             area.removeChild(spacerAfter);
-        // removing something that was added by succession
-        // of cell.layout()
-        // just to keep my sanity here, Hani
-        //    	        area.increaseHeight(areaContainer.getHeight());
+        //area.increaseHeight(areaContainer.getHeight());
         area.removeChild(areaContainer);
         this.resetMarker();
         cells = null;
         this.removeID(area.getIDReferences());
+    }
+
+    public void resetMarker()
+    {
+        super.resetMarker();
+        spacer = null;
+        spacerAfter = null;
+        hasAddedSpacer = false;
     }
 }

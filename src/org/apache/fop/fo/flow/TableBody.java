@@ -189,7 +189,7 @@ public class TableBody extends FObj {
             row.setColumns(columns);
             row.doSetup(areaContainer);
             if (row.getKeepWithPrevious() != 0 && lastRow != null &&
-                    keepWith.indexOf(lastRow) != -1) {
+                    keepWith.indexOf(lastRow) == -1) {
                 keepWith.addElement(lastRow);
             }
 
@@ -275,12 +275,18 @@ public class TableBody extends FObj {
         return new Status(Status.OK);
     }
 
-    public int getAreaHeight() {
+/*    public int getAreaHeight() {
         return areaContainer.getHeight();
-    }
+    }*/
 
     public void removeLayout(Area area) {
         area.removeChild(areaContainer);
+        if (spaceBefore != 0) {
+            area.increaseHeight(-spaceBefore);
+        }
+        if (spaceAfter != 0) {
+            area.increaseHeight(-spaceAfter);
+        }
         this.resetMarker();
     }
 }
