@@ -241,6 +241,13 @@ to an integer value. In future this will be improved.
 The Acrobat viewer has both "smooth line art" and "smooth text" settings that may need to be set for SVG images to be displayed nicely on your screen (see Edit / Preferences / Display).
 This setting will not affect the printing of your document, which should be OK in any case, but will only affect the quality of the screen display.</p>
       </section>
+      <section id="svg-scaling">
+        <title>Scaling</title>
+        <p>Currently, SVG images are rendered with the dimensions specified <em>in the SVG file</em>, within the viewport specified in the fo:external-graphic element.
+For everything to work properly, the two should be equal.
+The SVG standard leaves this issue as an implementation detail.
+FOP will probably implement a scaling mechanism in the future.</p>
+      </section>
       <section id="svg-problems">
         <title>Known Problems</title>
         <ul>
