@@ -56,9 +56,5 @@ extends BorderCommonStyleAbsolute {
                 foNode, WritingMode.TOP);
     }
 
-    public boolean overridesCorresponding(FONode foNode) {
-        return false;
-    }
-
 }
 

@@ -55,10 +55,6 @@ public class BorderColorCorrespondingRelative extends BorderColorCorresponding {
         return absBorderColorProps[absEdge];
     }
 
-    public boolean overridesCorresponding(FONode foNode) {
-        return false;
-    }
-
     public boolean isCorrespondingRelative() {
         return true;
     }

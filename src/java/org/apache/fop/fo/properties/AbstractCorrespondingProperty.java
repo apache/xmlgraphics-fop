@@ -49,12 +49,4 @@ public abstract class AbstractCorrespondingProperty extends Property
         throw new PropertyException("Called from superclass");
     }
 
-    /**
-     * @return
-     * @throws PropertyException
-     */
-    public boolean overridesCorresponding()
-    throws PropertyException {
-        throw new PropertyException("Called from superclass");
-    }
 }

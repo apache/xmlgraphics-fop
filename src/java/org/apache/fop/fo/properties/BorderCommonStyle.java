@@ -23,7 +23,6 @@ package org.apache.fop.fo.properties;
 import java.util.HashMap;
 
 import org.apache.fop.datatypes.Ints;
-import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.expr.PropertyException;
 
 /**
@@ -80,9 +79,5 @@ extends AbstractCorrespondingProperty  {
         return rwEnums[index];
     }
 
-    public boolean overridesCorresponding(FONode foNode)
-    throws PropertyException {
-        throw new PropertyException("Called within superclass");
-    }
 }
 

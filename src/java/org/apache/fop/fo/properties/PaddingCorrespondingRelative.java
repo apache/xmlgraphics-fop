@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Created on 22/04/2004
+ * Created on 29/04/2004
  * $Id$
  */
 package org.apache.fop.fo.properties;
@@ -27,35 +27,36 @@ import org.apache.fop.fo.expr.PropertyException;
  * @author pbw
  * @version $Revision$ $Name$
  */
-public abstract class BorderCommonWidthRelative extends BorderCommonWidth {
+public abstract class PaddingCorrespondingRelative extends AbstractCorrespondingProperty {
 
-    /** Array of absolute border width properties,
+    /** Array of absolute padding properties,
      * indexed by absolute edge constants */
-    private static int[] absBorderWidthProps = {
+    private static int[] absPaddingProps = {
             PropNames.NO_PROPERTY
-            ,PropNames.BORDER_TOP_WIDTH
-            ,PropNames.BORDER_BOTTOM_WIDTH
-            ,PropNames.BORDER_LEFT_WIDTH
-            ,PropNames.BORDER_RIGHT_WIDTH
+            ,PropNames.PADDING_TOP
+            ,PropNames.PADDING_BOTTOM
+            ,PropNames.PADDING_LEFT
+            ,PropNames.PADDING_RIGHT
     };
 
     /**
-     * Gets the absolute border width property corresponding to the given
+     * Gets the absolute padding property corresponding to the given
      * relative edge
      * @param foNode the node on which the property is being defined
      * @param relativeEdge
-     * @return the absolute border width property index
+     * @return the absolute padding property index
      * @throws PropertyException
      */
-    protected int getCorrespondingWidthProperty(
+    protected int getCorrespondingPaddingProperty(
             FONode foNode, int relativeEdge)
     throws PropertyException {
-        int absEdge = WritingMode.getCorrespondingAbsoluteEdge(
+        int relEdge = WritingMode.getCorrespondingAbsoluteEdge(
                 getWritingMode(foNode), relativeEdge);
-        return absBorderWidthProps[absEdge];
+        return absPaddingProps[relEdge];
     }
 
     public boolean isCorrespondingRelative() {
         return true;
     }
+
 }
