@@ -149,7 +149,7 @@ public class XMLRenderer implements Renderer {
      * @param area the area container to render
      */
     public void renderAreaContainer(AreaContainer area) {
-        writeStartTag("<AreaContainer>");
+        writeStartTag("<AreaContainer name=\"" + area.getAreaName() + "\">");
         Enumeration e = area.getChildren().elements();
         while (e.hasMoreElements()) {
             Box b = (Box) e.nextElement();
@@ -194,9 +194,35 @@ public class XMLRenderer implements Renderer {
      * @param area the block area to render
      */
     public void renderBlockArea(BlockArea area) {
-        writeStartTag("<BlockArea start-indent=\"" +
-                      area.getStartIndent() + "\" end-indent=\"" +
-                      area.getEndIndent() + "\">");
+		StringBuffer baText = new StringBuffer();
+		baText.append("<BlockArea start-indent=\"" + area.getStartIndent() + "\"");
+		baText.append(" end-indent=\"" + area.getEndIndent() + "\"");
+		baText.append("\nis-first=\"" + area.isFirst + "\"");
+		baText.append(" is-last=\"" + area.isLast + "\"");
+		if (null != area.generatedBy)
+			baText.append(" generated-by=\"" + area.generatedBy.getName() +
+			"//" + area.generatedBy + "\"");
+		baText.append(">");
+        writeStartTag(baText.toString());
+		
+		// write out marker info
+		java.util.Vector markers = area.getMarkers();
+		if (!markers.isEmpty()) {
+			writeStartTag("<Markers>");
+			for (int m = 0; m < markers.size(); m++) {
+				org.apache.fop.fo.flow.Marker marker =
+					(org.apache.fop.fo.flow.Marker)markers.elementAt(m);
+				StringBuffer maText = new StringBuffer();
+				maText.append("<Marker marker-class-name=\"" +
+					marker.getMarkerClassName() + "\"");
+				maText.append(" RegisteredArea=\"" +
+					marker.getRegistryArea() + "\"");
+				maText.append("/>");
+				writeEmptyElementTag(maText.toString());
+			}
+			writeEndTag("</Markers>");
+		}
+		
         Enumeration e = area.getChildren().elements();
         while (e.hasMoreElements()) {
             Box b = (Box) e.nextElement();
@@ -310,7 +336,7 @@ public class XMLRenderer implements Renderer {
     public void renderPage(Page page) {
         BodyAreaContainer body;
         AreaContainer before, after;
-        writeStartTag("<Page number=\"" + page.getNumber() + "\">");
+        writeStartTag("<Page number=\"" + page.getFormattedNumber() + "\">");
         body = page.getBody();
         before = page.getBefore();
         after = page.getAfter();

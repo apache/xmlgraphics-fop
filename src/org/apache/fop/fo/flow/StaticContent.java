@@ -62,6 +62,9 @@ public class StaticContent extends Flow {
 
         }
 
+		if (area instanceof org.apache.fop.layout.AreaContainer)
+			((org.apache.fop.layout.AreaContainer)area).setAreaName(regionClass);
+			
         if (regionClass.equals(RegionBefore.REGION_CLASS)) {
             area.setAbsoluteHeight(-area.getMaxHeight());
         } else if (regionClass.equals(RegionAfter.REGION_CLASS)) {
