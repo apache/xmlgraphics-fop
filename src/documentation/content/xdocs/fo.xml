@@ -326,7 +326,7 @@ To accomplish this, place an empty block with an id at the end of the flow:
         <p>
           Get the number of the last page as follows:
         </p>
-        <source><![CDATA[ <fo:page-nuber-citation ref-id="last-page"/>]]></source>
+        <source><![CDATA[ <fo:page-number-citation ref-id="last-page"/>]]></source>
         <p>
           This does not work in certain situations: multiple page sequences, an initial page number other than 1, or forcing a certain page count, thereby producing blank pages at the end.
         </p>
