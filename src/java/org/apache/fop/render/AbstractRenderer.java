@@ -47,6 +47,7 @@ import org.apache.fop.area.PageViewport;
 import org.apache.fop.area.RegionViewport;
 import org.apache.fop.area.RegionReference;
 import org.apache.fop.area.Title;
+import org.apache.fop.area.Trait;
 import org.apache.fop.area.TreeExt;
 import org.apache.fop.area.inline.Container;
 import org.apache.fop.area.inline.ForeignObject;
@@ -464,18 +465,29 @@ public abstract class AbstractRenderer
      */
     protected void renderBlocks(Block parent, List blocks) {
         int saveIP = currentIPPosition;
+        int saveBP = currentBPPosition;
+
+        // Calculate the position of the content rectangle.
+        if (parent != null) {
+            currentBPPosition += parent.getBorderAndPaddingWidthBefore();
+            currentIPPosition += parent.getBorderAndPaddingWidthStart();
+            Integer spaceStart = (Integer) parent.getTrait(Trait.SPACE_START);
+            if (spaceStart != null) {
+                currentIPPosition += spaceStart.intValue();
+            }
+        }
         
         // the position of the containing block is used for
         // absolutely positioned areas
         int contBP = currentBPPosition;
         int contIP = currentIPPosition;
-        containingBPPosition = contBP;
-        containingIPPosition = contIP;
+        containingBPPosition = currentBPPosition;
+        containingIPPosition = currentIPPosition;
 
         for (int count = 0; count < blocks.size(); count++) {
             Object obj = blocks.get(count);
             if (obj instanceof Block) {
-                currentIPPosition = saveIP;
+                currentIPPosition = contIP;
                 containingBPPosition = contBP;
                 containingIPPosition = contIP;
                 renderBlock((Block) obj);
@@ -485,7 +497,7 @@ public abstract class AbstractRenderer
                 // a line area is rendered from the top left position
                 // of the line, each inline object is offset from there
                 LineArea line = (LineArea) obj;
-                currentIPPosition = saveIP + line.getStartIndent();
+                currentIPPosition = contIP + line.getStartIndent();
                 renderLineArea(line);
                 currentBPPosition += line.getAllocBPD();
             }
