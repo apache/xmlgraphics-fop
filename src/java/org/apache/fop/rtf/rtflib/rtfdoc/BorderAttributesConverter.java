@@ -53,18 +53,19 @@
 
 package org.apache.fop.rtf.rtflib.rtfdoc;
 
-/** Constants for RTF border attribute names, and a static method for converting fo attribute strings. */
+/** Constants for RTF border attribute names, and a static method for converting
+ *  fo attribute strings. */
 
 public class BorderAttributesConverter {
-    
+
     public static final String BORDER_SINGLE_THICKNESS = "brdrs";
     public static final String BORDER_DOUBLE_THICKNESS = "brdrth";
-    public static final String BORDER_SHADOWED ="brdrsh";
-    public static final String BORDER_DOUBLE ="brdrdb";
-    public static final String BORDER_DOTTED ="brdrdot";
-    public static final String BORDER_DASH ="brdrdash";
-    public static final String BORDER_HAIRLINE ="brdrhair";
-    public static final String BORDER_DASH_SMALL ="brdrdashsm";
+    public static final String BORDER_SHADOWED = "brdrsh";
+    public static final String BORDER_DOUBLE = "brdrdb";
+    public static final String BORDER_DOTTED = "brdrdot";
+    public static final String BORDER_DASH = "brdrdash";
+    public static final String BORDER_HAIRLINE = "brdrhair";
+    public static final String BORDER_DASH_SMALL = "brdrdashsm";
     public static final String BORDER_DOT_DASH = "brdrdashd";
     public static final String BORDER_DOT_DOT_DASH = "brdrdashdd";
     public static final String BORDER_TRIPLE = "brdrtriple";
@@ -85,59 +86,63 @@ public class BorderAttributesConverter {
     public static final String BORDER_COLOR = "brdrcf";
     public static final String BORDER_SPACE = "brsp";
     public static final String BORDER_WIDTH = "brdrw";
-    
+
     public static final String [] BORDERS = new String[] {
-        BORDER_SINGLE_THICKNESS,		BORDER_DOUBLE_THICKNESS,		BORDER_SHADOWED,
-        BORDER_DOUBLE,				BORDER_DOTTED, 					BORDER_DASH,
-        BORDER_HAIRLINE, 				BORDER_DASH_SMALL,				BORDER_DOT_DASH,
-        BORDER_DOT_DOT_DASH,		BORDER_TRIPLE,						BORDER_THINK_THIN_SMALL,
-        BORDER_THIN_THICK_SMALL,		BORDER_THIN_THICK_THIN_SMALL, 	BORDER_THINK_THIN_MEDIUM,
-        BORDER_THIN_THICK_MEDIUM,	BORDER_THIN_THICK_THIN_MEDIUM,  	BORDER_THINK_THIN_LARGE,
-        BORDER_THIN_THICK_LARGE,		BORDER_THIN_THICK_THIN_LARGE, 	BORDER_WAVY,
-        BORDER_WAVY_DOUBLE, 		BORDER_STRIPED, 					BORDER_EMBOSS,
-        BORDER_ENGRAVE,				BORDER_COLOR,						BORDER_SPACE,
+        BORDER_SINGLE_THICKNESS,    BORDER_DOUBLE_THICKNESS,            BORDER_SHADOWED,
+        BORDER_DOUBLE,              BORDER_DOTTED,                      BORDER_DASH,
+        BORDER_HAIRLINE,            BORDER_DASH_SMALL,                  BORDER_DOT_DASH,
+        BORDER_DOT_DOT_DASH,        BORDER_TRIPLE,                      BORDER_THINK_THIN_SMALL,
+        BORDER_THIN_THICK_SMALL,    BORDER_THIN_THICK_THIN_SMALL,       BORDER_THINK_THIN_MEDIUM,
+        BORDER_THIN_THICK_MEDIUM,   BORDER_THIN_THICK_THIN_MEDIUM,      BORDER_THINK_THIN_LARGE,
+        BORDER_THIN_THICK_LARGE,    BORDER_THIN_THICK_THIN_LARGE,       BORDER_WAVY,
+        BORDER_WAVY_DOUBLE,         BORDER_STRIPED,                     BORDER_EMBOSS,
+        BORDER_ENGRAVE,             BORDER_COLOR,                       BORDER_SPACE,
         BORDER_WIDTH
     };
-    
-    /**BorderAttributesConverter: Static Method for converting FO strings
-     * to RTF control words*/
+
+    /**
+    * BorderAttributesConverter: Static Method for converting FO strings
+    * to RTF control words
+    * @param value FO string
+    * @return RTF control word
+    */
     public static String convertAttributetoRtf(String value) {
         // Added by Normand Masse
-        // "solid" is interpreted like "thin"        
-		if(value.equals("thin") || value.equals("solid")){
+        // "solid" is interpreted like "thin"
+        if (value.equals("thin") || value.equals("solid")) {
             return BORDER_SINGLE_THICKNESS;
-        }else if (value.equals("thick")) {
+        } else if (value.equals("thick")) {
             return BORDER_DOUBLE_THICKNESS;
-        }else if(value.equals("shadowed")){
+        } else if (value.equals("shadowed")) {
             return BORDER_SHADOWED;
-        }else if(value.equals("double")){
+        } else if (value.equals("double")) {
             return BORDER_DOUBLE;
-        }else if(value.equals("dotted")){
+        } else if (value.equals("dotted")) {
             return BORDER_DOTTED;
-        }else if(value.equals("dash")){
+        } else if (value.equals("dash")) {
             return BORDER_DASH;
-        }else if(value.equals("hairline")){
+        } else if (value.equals("hairline")) {
             return BORDER_HAIRLINE;
-        }else if(value.equals("dot-dash")){
+        } else if (value.equals("dot-dash")) {
             return BORDER_DOT_DASH;
-        }else if(value.equals("dot-dot-dash")){
+        } else if (value.equals("dot-dot-dash")) {
             return BORDER_DOT_DOT_DASH;
-        }else if(value.equals("triple")){
+        } else if (value.equals("triple")) {
             return BORDER_TRIPLE;
-        }else if(value.equals("wavy")){
+        } else if (value.equals("wavy")) {
             return BORDER_WAVY;
-        }else if(value.equals("wavy-double")){
+        } else if (value.equals("wavy-double")) {
             return BORDER_WAVY_DOUBLE;
-        }else if(value.equals("striped")){
+        } else if (value.equals("striped")) {
             return BORDER_STRIPED;
-        }else if(value.equals("emboss")){
+        } else if (value.equals("emboss")) {
             return BORDER_EMBOSS;
-        }else if(value.equals("engrave")){
+        } else if (value.equals("engrave")) {
             return BORDER_ENGRAVE;
-        }else{
+        } else {
             return null;
         }
     }
-    
-    
+
+
 }
