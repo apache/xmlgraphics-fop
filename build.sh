@@ -79,10 +79,9 @@ fi
 
 LIBDIR=lib
 LOCALCLASSPATH="$JAVA_HOME/lib/tools.jar:$JAVA_HOME/lib/classes.zip"
-LOCALCLASSPATH="$LOCALCLASSPATH:$LIBDIR/ant.jar"
-LOCALCLASSPATH="$LOCALCLASSPATH:$LIBDIR/xml-apis.jar"
-LOCALCLASSPATH="$LOCALCLASSPATH:$LIBDIR/xercesImpl-2.2.1.jar"
-LOCALCLASSPATH="$LOCALCLASSPATH:$LIBDIR/xalan-2.4.1.jar"
+for jar in $LIBDIR/*.jar; do
+    LOCALCLASSPATH="$LOCALCLASSPATH:$jar"
+done
 
 ANT_HOME="$LIBDIR"
 # antRun must be executable (can't do this in build.xml because Ant uses antRun
