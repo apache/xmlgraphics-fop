@@ -47,9 +47,6 @@ public abstract class FONode {
     /** Parent FO node */
     protected FONode parent;
 
-    /** Name of the node */
-    protected String name;
-
     /** Marks input file containing this object **/
     public String systemId;
 
@@ -118,7 +115,6 @@ public abstract class FONode {
     */
     public void processNode(String elementName, Locator locator, Attributes attlist) throws FOPException {
         System.out.println("name = " + elementName);
-        this.name = elementName;
     }
 
     /**
@@ -126,7 +122,7 @@ public abstract class FONode {
      * @return the name of this object
      */
     public String getName() {
-        return this.name;
+        return null;
     }
 
     /**

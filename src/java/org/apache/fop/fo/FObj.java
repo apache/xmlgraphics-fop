@@ -45,11 +45,17 @@ public class FObj extends FONode implements Constants {
     /** Property manager for providing refined properties/traits. */
     protected PropertyManager propMgr;
 
-    /** Id of this fo element of null if no id. */
-    protected String id = null;
-
     /** The immediate child nodes of this node. */
     public ArrayList childNodes = null;
+
+    /** Used to indicate if this FO is either an Out Of Line FO (see rec)
+        or a descendant of one.  Used during validateChildNode() FO 
+        validation.
+    */
+    private boolean isOutOfLineFODescendant = false;
+
+    /** Id of this fo element or null if no id. */
+    protected String id = null;
 
     /** Markers added to this element. */
     protected Map markers = null;
@@ -57,19 +63,12 @@ public class FObj extends FONode implements Constants {
     /** Dynamic layout dimension. Used to resolve relative lengths. */
     protected Map layoutDimension = null;
 
-    /** During input FO validation, certain FO's are not valid as
-        child nodes if they would be a descendant of an Out Of Line 
-        Formatting Object as defined in specification (See Sect. 6.2
-        of spec.)  This value is also set to true if this object 
-        itself is an Out Of Line FO.
-    */
-    protected boolean isOutOfLineFODescendant = false;
-
     /**
      * Create a new formatting object.
      * All formatting object classes extend this class.
      *
      * @param parent the parent node
+     * @todo move propertyListTable initialization someplace else?
      */
     public FObj(FONode parent) {
         super(parent);
@@ -96,31 +95,12 @@ public class FObj extends FONode implements Constants {
     }
 
     /**
-     * Used to indicate if this FO is the descendant of an out-of-line
-     * formatting object  (From Sect. 6.10, fo:float, fo:footnote, 
-     * fo:footnote-body).  Important for validating child nodes.
-     * @return true if descendant, false otherwise
-     */
-    public boolean getIsOutOfLineFODescendant() {
-        return isOutOfLineFODescendant;
-    }
-
-    /**
      * @see org.apache.fop.fo.FONode#processNode
      */
     public void processNode(String elementName, Locator locator, 
                             Attributes attlist) throws FOPException {
         setLocation(locator);
         addProperties(attlist);
-    }
-
-    /**
-     * Set the name of this element.
-     * The prepends "fo:" to the name to indicate it is in the fo namespace.
-     * @param str the xml element name
-     */
-    public void setName(String str) {
-        name = "fo:" + str;
     }
 
     /**
@@ -139,6 +119,14 @@ public class FObj extends FONode implements Constants {
         propertyList.addAttributesToList(attlist);
         propMgr = new PropertyManager(propertyList);
         setWritingMode();
+    }
+
+    /**
+     * Returns Out Of Line FO Descendant indicator.
+     * @return true if Out of Line FO or Out Of Line descendant, false otherwise
+     */
+    public boolean getIsOutOfLineFODescendant() {
+        return isOutOfLineFODescendant;
     }
 
     /**
@@ -174,7 +162,7 @@ public class FObj extends FONode implements Constants {
      */
     protected void addChildNode(FONode child) {
         if (containsMarkers() && "fo:marker".equals(child.getName())) {
-            addMarker((Marker)child);
+            addMarker((Marker) child);
         } else {
             if (childNodes == null) {
                 childNodes = new ArrayList();
@@ -347,7 +335,8 @@ public class FObj extends FONode implements Constants {
     /**
      * Check if this formatting object may contain markers.
      *
-     * @return true if this can contian markers
+     * @return true if this can contain markers
+     * @todo confirm if still needed after validateChildNode() fully implemented
      */
     protected boolean containsMarkers() {
         return false;
@@ -509,6 +498,18 @@ public class FObj extends FONode implements Constants {
             || lName.equals("multi-toggle")
             || (!isOutOfLineFODescendant && lName.equals("footnote"))
             || isNeutralItem(nsURI, lName)));
+    }
+
+    /**
+     * Convenience method for validity checking.  Checks if the
+     * incoming node is a member of the "%block;" parameter entity
+     * or "%inline;" parameter entity
+     * @param nsURI namespace URI of incoming node
+     * @param lName local name (i.e., no prefix) of incoming node 
+     * @return true if a member, false if not
+     */
+    protected boolean isBlockOrInlineItem(String nsURI, String lName) {
+        return (isBlockItem(nsURI, lName) || isInlineItem(nsURI, lName));
     }
 
     /**

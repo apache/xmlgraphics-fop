@@ -47,6 +47,9 @@ public abstract class XMLObj extends FONode {
     /** DOM document containing this node */
     protected Document doc;
 
+    /** Name of the node */
+    protected String name;
+
     /**
      *
      * @param parent the parent formatting object
@@ -73,6 +76,14 @@ public abstract class XMLObj extends FONode {
 
     public Point2D getDimension(Point2D view) {
          return null;
+    }
+
+    /**
+     * Returns the name of the object
+     * @return the name of this object
+     */
+    public String getName() {
+        return name;
     }
 
     /**

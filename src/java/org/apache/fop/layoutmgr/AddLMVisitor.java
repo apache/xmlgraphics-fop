@@ -241,7 +241,6 @@ public class AddLMVisitor {
      * Add start and end properties for the link
      */
     public void serveBasicLink(final BasicLink node) {
-        node.setup();
         InlineStackingLayoutManager lm;
         lm = new InlineStackingLayoutManager(node) {
             protected InlineParent createArea() {
@@ -307,7 +306,6 @@ public class AddLMVisitor {
      }
 
      private InlineArea getLeaderInlineArea(Leader node, LayoutManager parentLM) {
-         node.setup();
          InlineArea leaderArea = null;
 
          if (node.getLeaderPattern() == Constants.LeaderPattern.RULE) {
@@ -427,7 +425,6 @@ public class AddLMVisitor {
       * @return the viewport containing the image area
       */
      public InlineArea getExternalGraphicInlineArea(ExternalGraphic node) {
-         node.setup();
          if (node.getURL() == null) {
              return null;
          }
@@ -652,7 +649,6 @@ public class AddLMVisitor {
       * @param lms the list to which the layout manager(s) should be added
       */
      public void servePageNumber(final PageNumber node) {
-         node.setup();
          LayoutManager lm;
          lm = new LeafNodeLayoutManager(node) {
                      public InlineArea get(LayoutContext context) {
@@ -686,7 +682,6 @@ public class AddLMVisitor {
      }
 
      public void servePageNumberCitation(final PageNumberCitation node) {
-         node.setup();
          LayoutManager lm;
          lm = new LeafNodeLayoutManager(node) {
                      public InlineArea get(LayoutContext context) {

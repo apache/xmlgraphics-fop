@@ -47,7 +47,7 @@ public class StaticContent extends Flow {
 
     /**
      * @see org.apache.fop.fo.FONode#validateChildNode(Locator, String, String)
-     * XSL/FOP Content Model: (%block;)+
+     * XSL Content Model: (%block;)+
      */
     protected void validateChildNode(Locator loc, String nsURI, String localName) 
         throws SAXParseException {

@@ -135,7 +135,7 @@ public class PageSequence extends FObj {
 
     /**
      * @see org.apache.fop.fo.FONode#validateChildNode(Locator, String, String)
-        XSL/FOP Content Model: (title?,static-content*,flow)
+        XSL Content Model: (title?,static-content*,flow)
      */
     protected void validateChildNode(Locator loc, String nsURI, String localName) 
         throws SAXParseException {

@@ -92,7 +92,7 @@ public abstract class Region extends FObj {
             if (isReserved(getRegionName())
                     && !getRegionName().equals(getDefaultRegionName())) {
                 throw new FOPException("region-name '" + regionName
-                        + "' for " + this.name
+                        + "' for " + this.getName()
                         + " not permitted.");
             }
         }
@@ -100,7 +100,7 @@ public abstract class Region extends FObj {
         if (parent instanceof SimplePageMaster) {
             layoutMaster = (SimplePageMaster)parent;
         } else {
-            throw new FOPException(this.name + " must be child "
+            throw new FOPException(this.getName() + " must be child "
                     + "of simple-page-master, not "
                     + parent.getName());
         }

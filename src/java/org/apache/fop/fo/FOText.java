@@ -431,16 +431,6 @@ public class FOText extends FObj {
         }
     }
 
-    /**
-     * This is a hook for the AddLMVisitor class to be able to access
-     * this object.
-     * @param aLMV the AddLMVisitor object that can access this object.
-     */
-    public void acceptVisitor(AddLMVisitor aLMV) {
-        aLMV.serveFOText(this);
-    }
-
-    
     private class TextCharIterator extends AbstractCharIterator {
         private int curIndex = 0;
 
@@ -496,5 +486,17 @@ public class FOText extends FObj {
         }
 
     }
-    
+
+    public String getName() {
+        return "fo:text";
+    }
+
+    /**
+     * This is a hook for the AddLMVisitor class to be able to access
+     * this object.
+     * @param aLMV the AddLMVisitor object that can access this object.
+     */
+    public void acceptVisitor(AddLMVisitor aLMV) {
+        aLMV.serveFOText(this);
+    }
 }
