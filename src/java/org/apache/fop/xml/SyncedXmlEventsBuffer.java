@@ -82,7 +82,7 @@ public class SyncedXmlEventsBuffer extends SyncedCircularBuffer {
      * Maintains an index of namespace URIs.  These can then be referred to
      * by an <tt>int</tt> index.
      */
-    private XMLNamespaces namespaces;
+    private Namespaces namespaces;
 
     /**
      * No-argument constructor sets up a buffer with the default number of
@@ -94,7 +94,7 @@ public class SyncedXmlEventsBuffer extends SyncedCircularBuffer {
         throws IllegalArgumentException
     {
         super();
-        namespaces = new XMLNamespaces();
+        namespaces = new Namespaces();
     }
 
     /**
@@ -105,14 +105,14 @@ public class SyncedXmlEventsBuffer extends SyncedCircularBuffer {
         throws IllegalArgumentException
     {
         super(size);
-        namespaces = new XMLNamespaces();
+        namespaces = new Namespaces();
     }
 
     /**
-     * Get the <tt>XMLNamespaces</tt> from this buffer.
+     * Get the <tt>Namespaces</tt> from this buffer.
      * @return - the namespaces object.
      */
-    public XMLNamespaces getNamespaces() { return namespaces; }
+    public Namespaces getNamespaces() { return namespaces; }
 
     /**
      * @return next event from the SyncedCircularBuffer
@@ -182,7 +182,7 @@ public class SyncedXmlEventsBuffer extends SyncedCircularBuffer {
      * Discard intervening events.
      * @param eventType the SAX event type.
      * @param uriIndex the URI index maintained in the
-     * <tt>XMLNamespaces</tt> object.
+     * <tt>Namespaces</tt> object.
      * @param localName of the required element.
      * @return an event of the given type.
      * @exception FOPException if buffer errors or interrupts occur.
@@ -225,22 +225,22 @@ public class SyncedXmlEventsBuffer extends SyncedCircularBuffer {
         while (ev != null) {
             if (ev.type == eventType && ev.uriIndex == uriIndex) {
                 switch (uriIndex) {
-                case XMLNamespaces.DefAttrNSIndex:
+                case Namespaces.DefAttrNSIndex:
                     throw new NoSuchElementException
                     ("No special types for default attribute namespace");
-                case XMLNamespaces.XSLNSpaceIndex:
+                case Namespaces.XSLNSpaceIndex:
                     // The FO namespace
                     if (ev.getFoType() == nsType) {
                         return ev;
                     }
                     break;
-                case XMLNamespaces.FOXNSpaceIndex:
+                case Namespaces.FOXNSpaceIndex:
                     // The FOX namespace
                     if (ev.getFoxType() == nsType) {
                         return ev;
                     }
                     break;
-                case XMLNamespaces.SVGNSpaceIndex:
+                case Namespaces.SVGNSpaceIndex:
                     // The SVG namespace
                     if (ev.getSvgType() == nsType) {
                         return ev;
@@ -270,7 +270,7 @@ public class SyncedXmlEventsBuffer extends SyncedCircularBuffer {
                 throws FOPException
     {
         return getSaxUriTypedEvent(
-                eventType, XMLNamespaces.XSLNSpaceIndex, foType);
+                eventType, Namespaces.XSLNSpaceIndex, foType);
     }
 
     /**
@@ -421,22 +421,22 @@ public class SyncedXmlEventsBuffer extends SyncedCircularBuffer {
         }
         if (ev != null && ev.type == eventType) {
             switch (uriIndex) {
-            case XMLNamespaces.DefAttrNSIndex:
+            case Namespaces.DefAttrNSIndex:
                 throw new NoSuchElementException
                 ("No special types for default attribute namespace");
-            case XMLNamespaces.XSLNSpaceIndex:
+            case Namespaces.XSLNSpaceIndex:
                 // The FO namespace
                 if (ev.getFoType() == nsType) {
                     return ev;
                 }
                 break;
-            case XMLNamespaces.FOXNSpaceIndex:
+            case Namespaces.FOXNSpaceIndex:
                 // The FOX namespace
                 if (ev.getFoxType() == nsType) {
                     return ev;
                 }
                 break;
-            case XMLNamespaces.SVGNSpaceIndex:
+            case Namespaces.SVGNSpaceIndex:
                 // The SVG namespace
                 if (ev.getSvgType() == nsType) {
                     return ev;
@@ -472,7 +472,7 @@ public class SyncedXmlEventsBuffer extends SyncedCircularBuffer {
                 throws FOPException
     {
         return expectSaxUriTypedEvent(
-                eventType, XMLNamespaces.XSLNSpaceIndex,
+                eventType, Namespaces.XSLNSpaceIndex,
                 foType, discardWhiteSpace);
     }
 

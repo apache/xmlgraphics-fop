@@ -67,7 +67,7 @@ public class UriLocalName extends Poolable {
 
     /**
      * @param uriIndex - the index of the namespace URI maintained in
-     * the associated <tt>XMLNamespaces</tt> object.
+     * the associated <tt>Namespaces</tt> object.
      * @param localName - the local name of the event.
      */
     public UriLocalName(int uriIndex, String localName, int sequence) {
@@ -77,7 +77,7 @@ public class UriLocalName extends Poolable {
     }
     
     public Poolable clear() {
-        uriIndex = XMLNamespaces.NO_NAMESPACE;
+        uriIndex = Namespaces.NO_NAMESPACE;
         localName = "";
         return this;
     }

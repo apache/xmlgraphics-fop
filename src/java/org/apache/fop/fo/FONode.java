@@ -75,7 +75,7 @@ import org.apache.fop.fo.properties.Property;
 import org.apache.fop.messaging.MessageHandler;
 import org.apache.fop.xml.XMLEvent;
 import org.apache.fop.xml.SyncedXmlEventsBuffer;
-import org.apache.fop.xml.XMLNamespaces;
+import org.apache.fop.xml.Namespaces;
 
 /**
  * Class for nodes in the FO tree.
@@ -142,7 +142,7 @@ public class FONode extends Node{
     protected final SyncedXmlEventsBuffer xmlevents;
 
     /** The namespaces object associated with <i>xmlevents</i>. */
-    protected XMLNamespaces namespaces;
+    protected Namespaces namespaces;
 
     /** The FO type. */
     public final int type;

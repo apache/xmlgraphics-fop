@@ -66,7 +66,7 @@ import org.apache.fop.apps.Driver;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.configuration.Configuration;
 import org.apache.fop.fo.FObjectNames;
-import org.apache.fop.xml.XMLNamespaces;
+import org.apache.fop.xml.Namespaces;
 
 /**
  * <tt>FoXmlSerialHandler</tt> is the <tt>ContentHandler</tt> for the
@@ -80,7 +80,7 @@ public class FoXmlSerialHandler extends DefaultHandler implements Runnable {
 
     private SyncedXmlEventsBuffer events;
     private XMLReader parser;
-    private XMLNamespaces namespaces;
+    private Namespaces namespaces;
     private InputSource source;
     private Thread foThread;
     private boolean errorDump;
@@ -145,7 +145,7 @@ public class FoXmlSerialHandler extends DefaultHandler implements Runnable {
      */
     public void startDocument() throws NoSuchElementException {
         synchronized (events) {
-            XMLEvent event = acquireXMLEvent(XMLNamespaces.DefAttrNSIndex);
+            XMLEvent event = acquireXMLEvent(Namespaces.DefAttrNSIndex);
             //System.out.println("StartDocument thread "
             //                   + Thread.currentThread().getName());
             event.type = XMLEvent.STARTDOCUMENT;
@@ -159,7 +159,7 @@ public class FoXmlSerialHandler extends DefaultHandler implements Runnable {
      */
     public void endDocument() throws NoSuchElementException {
         synchronized (events) {
-            XMLEvent event = acquireXMLEvent(XMLNamespaces.DefAttrNSIndex);
+            XMLEvent event = acquireXMLEvent(Namespaces.DefAttrNSIndex);
             //System.out.println("EndDocument thread "
                                //+ Thread.currentThread().getName());
             event.type = XMLEvent.ENDDOCUMENT;
@@ -200,7 +200,7 @@ public class FoXmlSerialHandler extends DefaultHandler implements Runnable {
             try {
                 int uriIndex = namespaces.getURIIndex(uri);
                 XMLEvent event = acquireXMLEvent(uriIndex);
-                if (uriIndex == XMLNamespaces.XSLNSpaceIndex) {
+                if (uriIndex == Namespaces.XSLNSpaceIndex) {
                         event.setFoType(FObjectNames.getFOIndex(localName));
                 }
                 //System.out.println("startElement: acquired " + event.id);
@@ -240,7 +240,7 @@ public class FoXmlSerialHandler extends DefaultHandler implements Runnable {
                                    //+ Thread.currentThread().getName());
                 event.type = XMLEvent.ENDELEMENT;
                 event.uriIndex = uriIndex;
-                if (uriIndex == XMLNamespaces.XSLNSpaceIndex) {
+                if (uriIndex == Namespaces.XSLNSpaceIndex) {
                     event.setFoType(FObjectNames.getFOIndex(localName));
                 }
                 event.localName = localName;
@@ -271,7 +271,7 @@ public class FoXmlSerialHandler extends DefaultHandler implements Runnable {
                 // downstream processing to determine the environment in
                 // which the characters belong.
                 XMLEvent event
-                    = namespaces.acquireXMLEvent(XMLNamespaces.DefAttrNSIndex);
+                    = namespaces.acquireXMLEvent(Namespaces.DefAttrNSIndex);
                 //System.out.println("characters thread "
                 //                   + Thread.currentThread().getName());
                 event.type = XMLEvent.CHARACTERS;

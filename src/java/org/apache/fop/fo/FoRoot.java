@@ -68,7 +68,7 @@ import org.apache.fop.fo.pagination.FoLayoutMasterSet;
 import org.apache.fop.xml.FoXMLEvent;
 import org.apache.fop.xml.SyncedXmlEventsBuffer;
 import org.apache.fop.xml.XMLEvent;
-import org.apache.fop.xml.XMLNamespaces;
+import org.apache.fop.xml.Namespaces;
 
 /**
  * <tt>FoRoot</tt> is the class which processes the fo:root start element
@@ -221,7 +221,7 @@ public class FoRoot extends FONode {
         // Clean up root's FO tree build environment
         makeSparsePropsSet();
         // Provide some stats
-        for (int i = 0; i <= XMLNamespaces.LAST_NS_INDEX; i++) {
+        for (int i = 0; i <= Namespaces.LAST_NS_INDEX; i++) {
             System.out.println("Namespace " + namespaces.getIndexURI(i));
             System.out.println("Size of event pool: " + 
                     namespaces.getNSPoolSize(i));

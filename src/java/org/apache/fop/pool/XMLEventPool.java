@@ -65,7 +65,7 @@ public class XMLEventPool extends FopPool {
     private static final String revision = "$Revision$";
 
     /** Required argument for constructing new <tt>XMLEvent</tt>s. */
-    //protected final XMLNamespaces namespaces;
+    //protected final Namespaces namespaces;
     /**
      * The zero-argument constructor
      */
