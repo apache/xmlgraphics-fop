@@ -58,9 +58,11 @@ public class RegionBefore extends Region {
         // this.properties.get("reference-orientation");
         // this.properties.get("writing-mode");
 
-        return new RegionArea(allocationRectangleXPosition,
-                              allocationRectangleYPosition,
-                              allocationRectangleWidth, extent);
+        RegionArea area = new RegionArea(allocationRectangleXPosition,
+					 allocationRectangleYPosition,
+					 allocationRectangleWidth, extent);
+	area.setBackground(bProps);
+	return area;
     }
 
 

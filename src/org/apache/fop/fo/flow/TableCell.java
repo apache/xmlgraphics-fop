@@ -30,7 +30,6 @@ public class TableCell extends FObj {
 
     // int spaceBefore;
     // int spaceAfter;
-    ColorType backgroundColor;
 
     String id;
     int numColumnsSpanned;
@@ -173,9 +172,6 @@ public class TableCell extends FObj {
             numRowsSpanned = 1;
         }
 
-        this.backgroundColor =
-            this.properties.get("background-color").getColorType();
-
         this.id = this.properties.get("id").getString();
 
         bSepBorders = (this.properties.get("border-collapse").getEnum()
@@ -247,7 +243,7 @@ public class TableCell extends FObj {
             System.err.println("Can't clone BorderAndPadding: " + e) ;
             cellArea.setBorderAndPadding(propMgr.getBorderAndPadding());
         }
-        cellArea.setBackgroundColor(this.backgroundColor);
+        cellArea.setBackground(propMgr.getBackgroundProps());
         cellArea.start();
 
         cellArea.setAbsoluteHeight(area.getAbsoluteHeight());    // ???

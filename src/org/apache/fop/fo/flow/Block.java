@@ -53,7 +53,6 @@ public class Block extends FObjMixed {
     int spaceAfter;
     int textIndent;
     int keepWithNext;
-    ColorType backgroundColor;
     int blockWidows;
     int blockOrphans;
 
@@ -154,8 +153,6 @@ public class Block extends FObjMixed {
                 this.properties.get("text-indent").getLength().mvalue();
             this.keepWithNext =
                 this.properties.get("keep-with-next").getEnum();
-            this.backgroundColor =
-                this.properties.get("background-color").getColorType();
 
             this.blockWidows =
                 this.properties.get("widows").getNumber().intValue();
@@ -245,7 +242,7 @@ public class Block extends FObjMixed {
 
         blockArea.setParent(area);    // BasicLink needs it
         blockArea.setPage(area.getPage());
-        blockArea.setBackgroundColor(backgroundColor);
+        blockArea.setBackground(propMgr.getBackgroundProps());
         blockArea.setBorderAndPadding(propMgr.getBorderAndPadding());
         blockArea.setHyphenation(propMgr.getHyphenationProps());
         blockArea.start();

@@ -48,7 +48,7 @@ abstract public class Area extends Box {
     /* the page this area is on */
     protected Page page;
 
-    protected ColorType backgroundColor;
+    protected BackgroundProps background;
 
     private IDReferences idReferences;
 
@@ -206,8 +206,8 @@ abstract public class Area extends Box {
         return this.page;
     }
 
-    public ColorType getBackgroundColor() {
-        return this.backgroundColor;
+    public BackgroundProps getBackground() {
+        return this.background;
     }
 
     // Must handle conditionality here, depending on isLast/isFirst
@@ -291,8 +291,8 @@ abstract public class Area extends Box {
         this.page = page;
     }
 
-    public void setBackgroundColor(ColorType bgColor) {
-        this.backgroundColor = bgColor;
+    public void setBackground(BackgroundProps bg) {
+        this.background = bg;
     }
 
     public void setBorderAndPadding(BorderAndPadding bp) {
