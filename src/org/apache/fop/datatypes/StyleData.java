@@ -175,6 +175,17 @@ public class StyleData {
 //					boolean
 				} else if(type.equals("stroke-antialiasing")) {
 //					boolean
+				} else if(type.equals("writing-mode")) {
+				} else if(type.equals("glyph-orientation-vertical")) {
+				} else if(type.equals("glyph-orientation-horizontal")) {
+				} else if(type.equals("direction")) {
+				} else if(type.equals("unicode-bidi")) {
+				} else if(type.equals("text-anchor")) {
+					table.put(type, value);
+				} else if(type.equals("dominant-baseline")) {
+				} else if(type.equals("baseline-identifier")) {
+				} else if(type.equals("baseline-shift")) {
+				} else if(type.equals("font-size-adjust")) {
 				} else {
 					MessageHandler.logln("WARNING: Unknown style element : " + type);
 				}
