@@ -934,6 +934,38 @@
     </datatype>
     <default>uniform</default>
   </property>
+  <property>
+    <name>vertical-align</name>
+    <class-name>VerticalAlign</class-name>
+    <inherited>false</inherited>
+    <datatype>
+      <enumeration>
+        <value const="BASELINE">baseline</value>
+        <value const="MIDDLE">middle</value>
+        <value const="SUB">sub</value>
+        <value const="SUPER">super</value>
+        <value const="TEXT_TOP">text-top</value>
+        <value const="TEXT_BOTTOM">text-bottom</value>
+        <value const="TOP">top</value>
+        <value const="BOTTOM">bottom</value>
+      </enumeration>
+    </datatype>
+    <default>baseline</default>
+  </property>
+  <property>
+    <name>overflow</name>
+    <class-name>Overflow</class-name>
+    <inherited>false</inherited>
+    <datatype>
+      <enumeration>
+        <value const="VISIBLE">visible</value>
+        <value const="HIDDEN">hidden</value>
+        <value const="SCROLL">scroll</value>
+        <value const="AUTO">auto</value>
+      </enumeration>
+    </datatype>
+    <default>auto</default>
+  </property>
 
 </property-list>
 
