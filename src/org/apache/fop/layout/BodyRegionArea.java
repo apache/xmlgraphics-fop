@@ -25,11 +25,6 @@ public class BodyRegionArea extends RegionArea {
     }
 
     public BodyAreaContainer makeBodyAreaContainer() {
-	System.out.println(" +++ Constructing new BodyAreaContainer:");
-	System.out.println("  -> x     : " + xPosition);
-	System.out.println("  -> y     : " + yPosition);
-	System.out.println("  -> allocW: " + width);
-	System.out.println("  -> maxH  : " + height);
         BodyAreaContainer area =
 	    new BodyAreaContainer(null, xPosition, yPosition, width,
 				  height, Position.ABSOLUTE, columnCount,

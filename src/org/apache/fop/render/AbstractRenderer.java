@@ -71,10 +71,6 @@ public abstract class AbstractRenderer implements Renderer {
      * @param h the height in millipoints
      */
     protected void doBackground(Area area, int x, int y, int w, int h) {
-	System.out.println("Doing background: " + area);
-	System.out.println("   x:" + x + " y:" + y);
-	System.out.println("   w:" + w + " h:" + h);
-
 	if (h == 0 || w == 0)
 	    return;
 
