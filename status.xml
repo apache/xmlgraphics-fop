@@ -110,6 +110,10 @@ inactive??
 
   <changes>
    <release version="?" date="2002">
+    <action context="fonts" dev="KL" type="fix">
+      Correct ordering of loca table in embedded true type fonts (Bug 14290). 
+      Fix taken over from maintenance branch.
+    </action>
     <action context="docs" dev="KLL" type="update"
             due-to="Victor Mote" due-to-email="vic@outfitr.com">
       Added links to the Eyebrowse mail list archives.
