@@ -30,72 +30,6 @@ public abstract class BlockStackingLayoutManager extends AbstractBPLayoutManager
         super(fobj);
     }
 
-    public boolean splitArea(Area area, SplitContext splitContext) {
-        // Divide area so that it will be within targetLength if possible
-        // If not, it can be shorter, but not longer.
-        /* Iterate over contents of the area. *
-
-        // Need to figure out if we can do this generically
-        // Logically a BlockStacking LM only handles Block-type areas
-        if (!(area instanceof BlockParent)) {
-            return false;
-    }
-        Iterator areaIter = ((BlockParent) area).getChildAreas().iterator();
-
-
-        BreakCost minBreakCost = null;
-        MinOptMax remainBPD = splitContext.targetBPD;
-        splitContext.nextArea = area;
-
-        while (areaIter.hasNext()) {
-            Area childArea = (Area) areaIter.next();
-            if (remainBPD.max < childArea.getAllocationBPD().min) {
-                // Past the end point: try to break it
-                // TODO: get a LayoutManager to do the split of the child
-                // area, either Area => LM or Area => gen FO => LM
-                LayoutManager childLM =
-                  childArea.getGeneratingFObj(). getLayoutManager();
-                splitContext.targetBPD = remainBPD;
-                if (childLM.splitArea(childArea, splitContext) == false) {
-                    // Can't split, so must split this area before childArea
-                    // Can we pass the iter?
-                    // If already saw several a potential break, use it
-                    if (minBreakCost != null) {
-                        /* Split 'area', placing all children after
-         * minBreakCost.getArea() into a new area,
-         * which we store in the splitContext.
-         *
-                        // splitContext.nextArea = area.splitAfter(minBreakCost.getArea());
-                    } else {
-                        /* This area will be shorter than the desired minimum.
-         * Split before the current childArea (which will be
-         * the first area in the newly created Area.
-         *
-                        //splitContext.nextArea = area.splitBefore(childArea);
-                    }
-                } else
-                    return true; // childLM has done the work for us!
-                // Set cost, dimension ???
-                break;
-            } else {
-                remainBPD.subtract(childArea.getAllocationBPD());
-                if (remainBPD.min < 0) {
-                    // Potential breakpoint: remember break Position and
-                    // break "cost" (constraint violation)
-                    BreakCost breakCost =
-                      evaluateBreakCost(area, childArea);
-                    minBreakCost = breakCost.chooseLowest(minBreakCost);
-                }
-            }
-            //Note: size of area when split can depend on conditional
-            // space, border and padding of the split area!!!
-    }
-        // True if some part of area can be placed, false if none is placed
-        return (splitContext.nextArea != area);
-         */
-        return false;
-    }
-
     private BreakCost evaluateBreakCost(Area parent, Area child) {
         return new BreakCost(child, 0);
     }
@@ -157,7 +91,6 @@ public abstract class BlockStackingLayoutManager extends AbstractBPLayoutManager
             flush(); // hand off current area to parent
             // Probably need something like max BPD so we don't get into
             // infinite loops with large unbreakable chunks
-            //SplitContext splitContext = new SplitContext(targetDim);
 
             /*LayoutManager childLM =
               childArea.getGeneratingFObj(). getLayoutManager();

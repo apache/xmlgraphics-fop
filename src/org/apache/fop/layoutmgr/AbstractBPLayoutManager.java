@@ -100,7 +100,9 @@ public abstract class AbstractBPLayoutManager extends AbstractLayoutManager impl
             }
             m_childLMiter.next(); // Otherwise next returns same object
         }
-        m_curChildLM.resetPosition(pos);
+        if(m_curChildLM != null) {
+            m_curChildLM.resetPosition(pos);
+        }
         if (isFinished()) {
             setFinished(false);
         }
