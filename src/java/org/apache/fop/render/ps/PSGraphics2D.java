@@ -1,5 +1,5 @@
 /*
- * Copyright 1999-2004 The Apache Software Foundation.
+ * Copyright 1999-2005 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -392,6 +392,26 @@ public class PSGraphics2D extends AbstractGraphics2D {
 
         public int getRessourceBytesSize() {
             return 0;
+        }
+
+        /** @see org.apache.fop.image.FopImage#getIntrinsicWidth() */
+        public int getIntrinsicWidth() {
+            return (int)(getWidth() * 72000 / getHorizontalResolution());
+        }
+
+        /** @see org.apache.fop.image.FopImage#getIntrinsicHeight() */
+        public int getIntrinsicHeight() {
+            return (int)(getHeight() * 72000 / getVerticalResolution());
+        }
+
+        /** @see org.apache.fop.image.FopImage#getHorizontalResolution() */
+        public double getHorizontalResolution() {
+            return 72;
+        }
+
+        /** @see org.apache.fop.image.FopImage#getVerticalResolution() */
+        public double getVerticalResolution() {
+            return 72;
         }
 
     }
