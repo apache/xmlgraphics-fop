@@ -18,21 +18,8 @@ import org.apache.fop.apps.FOPException;
  */
 public class Declarations extends ToBeImplementedElement {
 
-    public static class Maker extends FObj.Maker {
-        public FObj make(FObj parent,
-                         PropertyList propertyList) throws FOPException {
-            return new Declarations(parent, propertyList);
-        }
-
-    }
-
-    public static FObj.Maker maker() {
-        return new Declarations.Maker();
-    }
-
-    protected Declarations(FObj parent,
-                           PropertyList propertyList) throws FOPException {
-        super(parent, propertyList);
+    protected Declarations(FObj parent) {
+        super(parent);
         this.name = "fo:declarations";
     }
 

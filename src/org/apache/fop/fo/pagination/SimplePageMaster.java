@@ -18,25 +18,14 @@ import org.apache.fop.apps.FOPException;
 
 import java.util.*;
 
+import org.xml.sax.Attributes;
+
 public class SimplePageMaster extends FObj {
-
-    public static class Maker extends FObj.Maker {
-        public FObj make(FObj parent,
-                         PropertyList propertyList) throws FOPException {
-            return new SimplePageMaster(parent, propertyList);
-        }
-
-    }
-
-    public static FObj.Maker maker() {
-        return new SimplePageMaster.Maker();
-    }
 
     /**
      * Page regions (regionClass, Region)
      */
     private Hashtable _regions;
-
 
     LayoutMasterSet layoutMasterSet;
     PageMaster pageMaster;
@@ -48,10 +37,13 @@ public class SimplePageMaster extends FObj {
     boolean afterPrecedence;
     int afterHeight;
 
-    protected SimplePageMaster(FObj parent, PropertyList propertyList)
-            throws FOPException {
-        super(parent, propertyList);
+    public SimplePageMaster(FObj parent) {
+        super(parent);
         this.name = "fo:simple-page-master";
+    }
+
+    public void handleAttrs(Attributes attlist) throws FOPException {
+        super.handleAttrs(attlist);
 
         if (parent.getName().equals("fo:layout-master-set")) {
             this.layoutMasterSet = (LayoutMasterSet)parent;

@@ -19,21 +19,8 @@ import java.util.Enumeration;
 
 public class StaticContent extends Flow {
 
-    public static class Maker extends FObj.Maker {
-        public FObj make(FObj parent,
-                         PropertyList propertyList) throws FOPException {
-            return new StaticContent(parent, propertyList);
-        }
-
-    }
-
-    public static FObj.Maker maker() {
-        return new StaticContent.Maker();
-    }
-
-    protected StaticContent(FObj parent,
-                            PropertyList propertyList) throws FOPException {
-        super(parent, propertyList);
+    public StaticContent(FObj parent) {
+        super(parent);
         ((PageSequence)parent).setIsFlowSet(false);    // hacquery of sorts
     }
 

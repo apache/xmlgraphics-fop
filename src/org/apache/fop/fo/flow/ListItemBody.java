@@ -19,20 +19,8 @@ import java.util.Enumeration;
 
 public class ListItemBody extends FObj {
 
-    public static class Maker extends FObj.Maker {
-        public FObj make(FObj parent,
-                         PropertyList propertyList) throws FOPException {
-            return new ListItemBody(parent, propertyList);
-        }
-
-    }
-
-    public static FObj.Maker maker() {
-        return new ListItemBody.Maker();
-    }
-
-    public ListItemBody(FObj parent, PropertyList propertyList) {
-        super(parent, propertyList);
+    public ListItemBody(FObj parent) {
+        super(parent);
         this.name = "fo:list-item-body";
     }
 

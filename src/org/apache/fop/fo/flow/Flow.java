@@ -20,19 +20,9 @@ import java.util.Hashtable;
 import java.util.Enumeration;
 import java.util.Vector;
 
+import org.xml.sax.Attributes;
+
 public class Flow extends FObj {
-
-    public static class Maker extends FObj.Maker {
-        public FObj make(FObj parent,
-                         PropertyList propertyList) throws FOPException {
-            return new Flow(parent, propertyList);
-        }
-
-    }
-
-    public static FObj.Maker maker() {
-        return new Flow.Maker();
-    }
 
     /**
      * PageSequence container
@@ -62,11 +52,13 @@ public class Flow extends FObj {
     private Status _status = new Status(Status.AREA_FULL_NONE);
 
 
-    protected Flow(FObj parent,
-                   PropertyList propertyList) throws FOPException {
-        super(parent, propertyList);
+    public Flow(FObj parent) {
+        super(parent);
         this.name = getElementName();
+    }
 
+    public void handleAttrs(Attributes attlist) throws FOPException {
+        super.handleAttrs(attlist);
         if (parent.getName().equals("fo:page-sequence")) {
             this.pageSequence = (PageSequence)parent;
         } else {
@@ -74,14 +66,11 @@ public class Flow extends FObj {
                                    + "page-sequence, not "
                                    + parent.getName());
         }
-        setFlowName(getProperty("flow-name").getString());
-
         // according to communication from Paul Grosso (XSL-List,
         // 001228, Number 406), confusion in spec section 6.4.5 about
         // multiplicity of fo:flow in XSL 1.0 is cleared up - one (1)
         // fo:flow per fo:page-sequence only.
-
-        if (pageSequence.isFlowSet()) {
+/*        if (pageSequence.isFlowSet()) {
             if (this.name.equals("fo:flow")) {
                 throw new FOPException("Only a single fo:flow permitted"
                                        + " per fo:page-sequence");
@@ -90,6 +79,8 @@ public class Flow extends FObj {
                                        + " not allowed after fo:flow");
             }
         }
+*/
+        setFlowName(getProperty("flow-name").getString());
         pageSequence.addFlow(this);
     }
 

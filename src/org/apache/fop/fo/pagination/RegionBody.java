@@ -21,26 +21,12 @@ import org.apache.fop.layout.MarginProps;
 
 public class RegionBody extends Region {
 
-
-    public static class Maker extends FObj.Maker {
-        public FObj make(FObj parent,
-                         PropertyList propertyList) throws FOPException {
-            return new RegionBody(parent, propertyList);
-        }
-
-    }
-
-    public static FObj.Maker maker() {
-        return new RegionBody.Maker();
-    }
-
     public static final String REGION_CLASS = "body";
 
     ColorType backgroundColor;
 
-    protected RegionBody(FObj parent,
-                         PropertyList propertyList) throws FOPException {
-        super(parent, propertyList);
+    public RegionBody(FObj parent) {
+        super(parent);
     }
 
     RegionArea makeRegionArea(int allocationRectangleXPosition,

@@ -14,26 +14,10 @@ import org.apache.fop.datatypes.*;
 import org.apache.fop.layout.*;
 import org.apache.fop.apps.FOPException;
 
-// Java
-import java.util.Vector;
-import java.util.Enumeration;
-
 public class TableHeader extends TableBody {
 
-    public static class Maker extends FObj.Maker {
-        public FObj make(FObj parent,
-                         PropertyList propertyList) throws FOPException {
-            return new TableHeader(parent, propertyList);
-        }
-
-    }
-
-    public static FObj.Maker maker() {
-        return new TableHeader.Maker();
-    }
-
-    public TableHeader(FObj parent, PropertyList propertyList) {
-        super(parent, propertyList);
+    public TableHeader(FObj parent) {
+        super(parent);
         this.name = "fo:table-header";
     }
 

@@ -20,21 +20,8 @@ import java.util.Vector;
 
 public class Footnote extends FObj {
 
-    public static class Maker extends FObj.Maker {
-        public FObj make(FObj parent,
-                         PropertyList propertyList) throws FOPException {
-            return new Footnote(parent, propertyList);
-        }
-
-    }
-
-    public static FObj.Maker maker() {
-        return new Footnote.Maker();
-    }
-
-    public Footnote(FObj parent,
-                    PropertyList propertyList) throws FOPException {
-        super(parent, propertyList);
+    public Footnote(FObj parent) {
+        super(parent);
         this.name = "fo:footnote";
     }
 

@@ -14,6 +14,8 @@ import org.apache.fop.layout.*;
 import org.apache.fop.datatypes.*;
 import org.apache.fop.apps.FOPException;
 
+import org.xml.sax.Attributes;
+
 /*
   Modified by Mark Lillywhite mark-fop@inomial.com. The changes
   here are based on memory profiling and do not change functionality.
@@ -30,18 +32,6 @@ import org.apache.fop.apps.FOPException;
   */
 
 public class Block extends FObjMixed {
-
-    public static class Maker extends FObj.Maker {
-        public FObj make(FObj parent,
-                         PropertyList propertyList) throws FOPException {
-            return new Block(parent, propertyList);
-        }
-
-    }
-
-    public static FObj.Maker maker() {
-        return new Block.Maker();
-    }
 
     int align;
     int alignLast;
@@ -66,9 +56,13 @@ public class Block extends FObjMixed {
     // this may be helpful on other FOs too
     boolean anythingLaidOut = false;
 
-    public Block(FObj parent, PropertyList propertyList) {
-        super(parent, propertyList);
+    public Block(FObj parent) {
+        super(parent);
         this.name = "fo:block";
+    }
+
+    public void handleAttrs(Attributes attlist) throws FOPException {
+        super.handleAttrs(attlist);
         this.span = this.properties.get("span").getEnum();
     }
 

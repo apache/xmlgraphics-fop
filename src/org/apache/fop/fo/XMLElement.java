@@ -13,6 +13,8 @@ import org.apache.fop.layout.Area;
 import org.apache.fop.layout.inline.*;
 import org.apache.fop.apps.FOPException;
 
+import org.xml.sax.Attributes;
+
 /**
  * class representing svg:svg pseudo flow object.
  */
@@ -20,46 +22,17 @@ public class XMLElement extends XMLObj {
     String namespace = "";
 
     /**
-     * inner class for making XML objects.
-     */
-    public static class Maker extends FObj.Maker {
-        String tag;
-
-        Maker(String t) {
-            tag = t;
-        }
-
-        /**
-         * make an XML object.
-         *
-         * @param parent the parent formatting object
-         * @param propertyList the explicit properties of this object
-         *
-         * @return the XML object
-         */
-        public FObj make(FObj parent,
-                         PropertyList propertyList) throws FOPException {
-            return new XMLElement(parent, propertyList, tag);
-        }
-    }
-
-    /**
-     * returns the maker for this object.
-     *
-     * @return the maker for XML objects
-     */
-    public static FObj.Maker maker(String tag) {
-        return new XMLElement.Maker(tag);
-    }
-
-    /**
      * constructs an XML object (called by Maker).
      *
      * @param parent the parent formatting object
      * @param propertyList the explicit properties of this object
      */
-    public XMLElement(FObj parent, PropertyList propertyList, String tag) {
-        super(parent, propertyList, tag);
+    public XMLElement(FObj parent) {
+        super(parent);
+    }
+
+    public void handleAttrs(Attributes attlist) throws FOPException {
+        super.handleAttrs(attlist);
         init();
     }
 

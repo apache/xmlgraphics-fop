@@ -18,39 +18,16 @@ import org.w3c.dom.Element;
 public class UnknownXMLObj extends XMLObj {
     String namespace;
 
-    /**
-     * inner class for making unknown xml objects.
-     */
-    public static class Maker extends FObj.Maker {
+    public static class Maker extends ElementMapping.Maker {
         String space;
-        String tag;
 
-        Maker(String sp, String t) {
+        Maker(String sp) {
             space = sp;
-            tag = t;
         }
 
-        /**
-         * make an unknown xml object.
-         *
-         * @param parent the parent formatting object
-         * @param propertyList the explicit properties of this object
-         *
-         * @return the unknown xml object
-         */
-        public FObj make(FObj parent,
-                         PropertyList propertyList) throws FOPException {
-            return new UnknownXMLObj(parent, propertyList, space, tag);
+        public FObj make(FObj parent) {
+            return new UnknownXMLObj(parent, space);
         }
-    }
-
-    /**
-     * returns the maker for this object.
-     *
-     * @return the maker for an unknown xml object
-     */
-    public static FObj.Maker maker(String space, String tag) {
-        return new UnknownXMLObj.Maker(space, tag);
     }
 
     /**
@@ -59,14 +36,9 @@ public class UnknownXMLObj extends XMLObj {
      * @param parent the parent formatting object
      * @param propertyList the explicit properties of this object
      */
-    protected UnknownXMLObj(FObj parent, PropertyList propertyList, String space, String tag) {
-        super(parent, propertyList, tag);
+    protected UnknownXMLObj(FObj parent, String space) {
+        super(parent);
         this.namespace = space;
-				if(!"".equals(space)) {
-            this.name = this.namespace + ":" + tag;
-        } else {
-            this.name = "(none):" + tag;
-        }
     }
 
     public String getNameSpace() {
@@ -88,11 +60,11 @@ public class UnknownXMLObj extends XMLObj {
     }
 
     public Status layout(Area area) throws FOPException {
-        //if (!(area instanceof ForeignObjectArea)) {
-            // this is an error
-            //throw new FOPException("Foreign XML not in fo:instream-foreign-object");
-        //}
-        log.error("no handler defined for " + this.name + " foreign xml");
+        if(!"".equals(this.namespace)) {
+            log.error("no handler defined for " + this.namespace + ":" + this.name + " foreign xml");
+        } else {
+            log.error("no handler defined for (none):" + this.name + " foreign xml");
+        }
 
         /* return status */
         return new Status(Status.OK);

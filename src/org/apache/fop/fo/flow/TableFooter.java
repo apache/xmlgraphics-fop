@@ -14,19 +14,7 @@ import org.apache.fop.datatypes.*;
 import org.apache.fop.layout.*;
 import org.apache.fop.apps.FOPException;
 
-// Java
-import java.util.Vector;
-import java.util.Enumeration;
-
 public class TableFooter extends TableBody {
-
-    public static class Maker extends FObj.Maker {
-        public FObj make(FObj parent,
-                         PropertyList propertyList) throws FOPException {
-            return new TableFooter(parent, propertyList);
-        }
-
-    }
 
     public int getYPosition() {
         return areaContainer.getCurrentYPosition() - spaceBefore;
@@ -36,12 +24,8 @@ public class TableFooter extends TableBody {
         areaContainer.setYPosition(value + 2 * spaceBefore);
     }
 
-    public static FObj.Maker maker() {
-        return new TableFooter.Maker();
-    }
-
-    public TableFooter(FObj parent, PropertyList propertyList) {
-        super(parent, propertyList);
+    public TableFooter(FObj parent) {
+        super(parent);
         this.name = "fo:table-footer";
     }
 

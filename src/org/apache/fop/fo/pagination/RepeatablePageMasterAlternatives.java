@@ -13,23 +13,12 @@ import org.apache.fop.apps.FOPException;
 // Java
 import java.util.Vector;
 
+import org.xml.sax.Attributes;
+
 public class RepeatablePageMasterAlternatives extends FObj
     implements SubSequenceSpecifier {
 
     private static final int INFINITE = -1;
-
-
-    public static class Maker extends FObj.Maker {
-        public FObj make(FObj parent,
-                         PropertyList propertyList) throws FOPException {
-            return new RepeatablePageMasterAlternatives(parent, propertyList);
-        }
-
-    }
-
-    public static FObj.Maker maker() {
-        return new RepeatablePageMasterAlternatives.Maker();
-    }
 
     private PageSequenceMaster pageSequenceMaster;
 
@@ -42,10 +31,13 @@ public class RepeatablePageMasterAlternatives extends FObj
 
     private Vector conditionalPageMasterRefs;
 
-    public RepeatablePageMasterAlternatives(FObj parent, PropertyList propertyList)
-            throws FOPException {
-        super(parent, propertyList);
+    public RepeatablePageMasterAlternatives(FObj parent) {
+        super(parent);
         this.name = "fo:repeatable-page-master-alternatives";
+    }
+
+    public void handleAttrs(Attributes attlist) throws FOPException {
+        super.handleAttrs(attlist);
 
         conditionalPageMasterRefs = new Vector();
 

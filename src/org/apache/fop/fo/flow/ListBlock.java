@@ -21,18 +21,6 @@ import java.util.Enumeration;
 
 public class ListBlock extends FObj {
 
-    public static class Maker extends FObj.Maker {
-        public FObj make(FObj parent,
-                         PropertyList propertyList) throws FOPException {
-            return new ListBlock(parent, propertyList);
-        }
-
-    }
-
-    public static FObj.Maker maker() {
-        return new ListBlock.Maker();
-    }
-
     int align;
     int alignLast;
     int breakBefore;
@@ -45,8 +33,8 @@ public class ListBlock extends FObj {
     int spaceBetweenListRows = 0;
     ColorType backgroundColor;
 
-    public ListBlock(FObj parent, PropertyList propertyList) {
-        super(parent, propertyList);
+    public ListBlock(FObj parent) {
+        super(parent);
         this.name = "fo:list-block";
     }
 

@@ -18,21 +18,8 @@ import org.apache.fop.apps.FOPException;
  */
 public class MultiProperties extends ToBeImplementedElement {
 
-    public static class Maker extends FObj.Maker {
-        public FObj make(FObj parent,
-                         PropertyList propertyList) throws FOPException {
-            return new MultiProperties(parent, propertyList);
-        }
-
-    }
-
-    public static FObj.Maker maker() {
-        return new MultiProperties.Maker();
-    }
-
-    protected MultiProperties(FObj parent,
-                              PropertyList propertyList) throws FOPException {
-        super(parent, propertyList);
+    public MultiProperties(FObj parent) {
+        super(parent);
         this.name = "fo:multi-properties";
     }
 

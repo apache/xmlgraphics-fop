@@ -18,21 +18,8 @@ import org.apache.fop.apps.FOPException;
  */
 public class MultiSwitch extends ToBeImplementedElement {
 
-    public static class Maker extends FObj.Maker {
-        public FObj make(FObj parent,
-                         PropertyList propertyList) throws FOPException {
-            return new MultiSwitch(parent, propertyList);
-        }
-
-    }
-
-    public static FObj.Maker maker() {
-        return new MultiSwitch.Maker();
-    }
-
-    protected MultiSwitch(FObj parent,
-                          PropertyList propertyList) throws FOPException {
-        super(parent, propertyList);
+    public MultiSwitch(FObj parent) {
+        super(parent);
         this.name = "fo:multi-switch";
     }
 

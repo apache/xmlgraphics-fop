@@ -11,9 +11,11 @@ import org.apache.fop.fo.*;
 import org.apache.fop.pdf.PDFGoTo;
 import org.apache.fop.pdf.PDFAction;
 import org.apache.fop.datatypes.IDReferences;
+import org.apache.fop.apps.FOPException;
 
 import java.util.*;
 
+import org.xml.sax.Attributes;
 
 public class Outline extends ExtensionObj {
     private Label _label;
@@ -32,21 +34,12 @@ public class Outline extends ExtensionObj {
      */
     private Object _rendererObject;
 
-
-    public static class Maker extends FObj.Maker {
-        public FObj make(FObj parent, PropertyList propertyList) {
-            return new Outline(parent, propertyList);
-        }
-
+    public Outline(FObj parent) {
+        super(parent);
     }
 
-    public static FObj.Maker maker() {
-        return new Outline.Maker();
-    }
-
-    public Outline(FObj parent, PropertyList propertyList) {
-        super(parent, propertyList);
-
+    public void handleAttrs(Attributes attlist) throws FOPException {
+        super.handleAttrs(attlist);
         _internalDestination =
             this.properties.get("internal-destination").getString();
         _externalDestination =
@@ -92,7 +85,7 @@ public class Outline extends ExtensionObj {
     }
 
     public Label getLabel() {
-        return _label == null ? new Label(this, this.properties) : _label;
+        return _label == null ? new Label(this) : _label;
     }
 
     public Vector getOutlines() {

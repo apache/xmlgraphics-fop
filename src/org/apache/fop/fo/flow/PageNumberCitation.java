@@ -72,18 +72,6 @@ import org.apache.fop.apps.FOPException;
  */
 public class PageNumberCitation extends FObj {
 
-    public static class Maker extends FObj.Maker {
-        public FObj make(FObj parent,
-                         PropertyList propertyList) throws FOPException {
-            return new PageNumberCitation(parent, propertyList);
-        }
-
-    }
-
-    public static FObj.Maker maker() {
-        return new PageNumberCitation.Maker();
-    }
-
     float red;
     float green;
     float blue;
@@ -96,11 +84,10 @@ public class PageNumberCitation extends FObj {
     TextState ts;
 
 
-    public PageNumberCitation(FObj parent, PropertyList propertyList) {
-        super(parent, propertyList);
+    public PageNumberCitation(FObj parent) {
+        super(parent);
         this.name = "fo:page-number-citation";
     }
-
 
     public Status layout(Area area) throws FOPException {
         if (!(area instanceof BlockArea)) {

@@ -18,21 +18,8 @@ import org.apache.fop.apps.FOPException;
  */
 public class MultiCase extends ToBeImplementedElement {
 
-    public static class Maker extends FObj.Maker {
-        public FObj make(FObj parent,
-                         PropertyList propertyList) throws FOPException {
-            return new MultiCase(parent, propertyList);
-        }
-
-    }
-
-    public static FObj.Maker maker() {
-        return new MultiCase.Maker();
-    }
-
-    protected MultiCase(FObj parent,
-                        PropertyList propertyList) throws FOPException {
-        super(parent, propertyList);
+    public MultiCase(FObj parent) {
+        super(parent);
         this.name = "fo:multi-case";
     }
 

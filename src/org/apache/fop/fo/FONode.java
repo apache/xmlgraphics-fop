@@ -22,6 +22,8 @@ import org.apache.log.Logger;
 import java.util.Vector;
 import java.util.Hashtable;
 
+import org.xml.sax.Attributes;
+
 /**
  * base class for nodes in the formatting object tree
  *
@@ -91,6 +93,9 @@ abstract public class FONode {
 
     public void setLogger(Logger logger) {
         log = logger;
+    }
+
+    public void handleAttrs(Attributes attlist) throws FOPException {
     }
 
     public void setIsInTableCell() {

@@ -27,26 +27,13 @@ public class FootnoteBody extends FObj {
     int endIndent;
     int textIndent;
 
-    public static class Maker extends FObj.Maker {
-        public FObj make(FObj parent,
-                         PropertyList propertyList) throws FOPException {
-            return new FootnoteBody(parent, propertyList);
-        }
-
-    }
-
-    public static FObj.Maker maker() {
-        return new FootnoteBody.Maker();
-    }
-
-    public FootnoteBody(FObj parent,
-                        PropertyList propertyList) throws FOPException {
-        super(parent, propertyList);
+    public FootnoteBody(FObj parent) {
+        super(parent);
         this.name = "fo:footnote-body";
-        this.areaClass = AreaClass.setAreaClass(AreaClass.XSL_FOOTNOTE);
     }
 
     public Status layout(Area area) throws FOPException {
+        this.areaClass = AreaClass.setAreaClass(AreaClass.XSL_FOOTNOTE);
         if (this.marker == START) {
             this.marker = 0;
         }

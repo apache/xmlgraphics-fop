@@ -284,7 +284,7 @@ public class Driver {
      *
      */
     public void setupDefaultMappings() {
-        addElementMapping("org.apache.fop.fo.StandardElementMapping");
+        addElementMapping("org.apache.fop.fo.FOElementMapping");
         addElementMapping("org.apache.fop.svg.SVGElementMapping");
         addElementMapping("org.apache.fop.extensions.ExtensionElementMapping");
 

@@ -26,7 +26,6 @@ import org.xml.sax.Attributes;
 
 // Java
 import java.util.HashMap;
-import java.util.Stack;
 import java.util.ArrayList;
 import java.io.IOException;
 
@@ -41,7 +40,7 @@ import java.io.IOException;
  * supresses adding the PageSequence object to the Root,
  * since it is parsed immediately.
  */
-public class FOTreeBuilder extends DefaultHandler implements TreeBuilder {
+public class FOTreeBuilder extends DefaultHandler {
 
     /**
      * table mapping element names to the makers of objects
@@ -50,11 +49,6 @@ public class FOTreeBuilder extends DefaultHandler implements TreeBuilder {
     protected HashMap fobjTable = new HashMap();
 
     protected ArrayList namespaces = new ArrayList();
-
-    /**
-     * class that builds a property list for each formatting object
-     */
-    protected HashMap propertylistTable = new HashMap();
 
     /**
      * current formatting object being handled
@@ -105,56 +99,6 @@ public class FOTreeBuilder extends DefaultHandler implements TreeBuilder {
     }
 
     /**
-     * add a mapping from element name to maker.
-     *
-     * @param namespaceURI namespace URI of formatting object element
-     * @param localName local name of formatting object element
-     * @param maker Maker for class representing formatting object
-     */
-    public void addPropertyList(String namespaceURI, HashMap list) {
-        PropertyListBuilder plb;
-        plb = (PropertyListBuilder)this.propertylistTable.get(namespaceURI);
-        if (plb == null) {
-            plb = new PropertyListBuilder();
-            plb.addList(list);
-            this.propertylistTable.put(namespaceURI, plb);
-        } else {
-            plb.addList(list);
-        }
-    }
-
-    /**
-     * add a mapping from element name to maker.
-     *
-     * @param namespaceURI namespace URI of formatting object element
-     * @param localName local name of formatting object element
-     * @param maker Maker for class representing formatting object
-     */
-    public void addElementPropertyList(String namespaceURI, String localName,
-                                       HashMap list) {
-        PropertyListBuilder plb;
-        plb = (PropertyListBuilder)this.propertylistTable.get(namespaceURI);
-        if (plb == null) {
-            plb = new PropertyListBuilder();
-            plb.addElementList(localName, list);
-            this.propertylistTable.put(namespaceURI, plb);
-        } else {
-            plb.addElementList(localName, list);
-        }
-    }
-
-    public void addPropertyListBuilder(String namespaceURI,
-                                       PropertyListBuilder propbuilder) {
-        PropertyListBuilder plb;
-        plb = (PropertyListBuilder)this.propertylistTable.get(namespaceURI);
-        if (plb == null) {
-            this.propertylistTable.put(namespaceURI, propbuilder);
-        } else {
-            // Error already added
-        }
-    }
-
-    /**
      * SAX Handler for characters
      */
     public void characters(char data[], int start, int length) {
@@ -169,18 +113,6 @@ public class FOTreeBuilder extends DefaultHandler implements TreeBuilder {
     public void endElement(String uri, String localName, String rawName)
     throws SAXException {
         currentFObj.end();
-
-        //
-        // mark-fop@inomial.com - tell the stream renderer to render
-        // this page-sequence
-        //
-        if(currentFObj instanceof PageSequence) {
-            streamRenderer.render((PageSequence) currentFObj);
-        } else if(currentFObj instanceof ExtensionObj) {
-            if(!(currentFObj.getParent() instanceof ExtensionObj)) {
-                streamRenderer.addExtension((ExtensionObj)currentFObj);
-            }
-        }
 
         currentFObj = (FObj)currentFObj.getParent();
     }
@@ -210,15 +142,16 @@ public class FOTreeBuilder extends DefaultHandler implements TreeBuilder {
         FObj fobj;
 
         /* the maker for the formatting object started */
-        FObj.Maker fobjMaker = null;
+        ElementMapping.Maker fobjMaker = null;
 
         HashMap table = (HashMap)fobjTable.get(uri);
         if(table != null) {
-            fobjMaker = (FObj.Maker)table.get(localName);
+            fobjMaker = (ElementMapping.Maker)table.get(localName);
+            // try default
+            if(fobjMaker == null) {
+                fobjMaker = (ElementMapping.Maker)table.get("<default>");
+            }
         }
-
-        PropertyListBuilder currentListBuilder =
-            (PropertyListBuilder)this.propertylistTable.get(uri);
 
         boolean foreignXML = false;
         if (fobjMaker == null) {
@@ -232,28 +165,16 @@ public class FOTreeBuilder extends DefaultHandler implements TreeBuilder {
                 // fall back
                 fobjMaker = new Unknown.Maker();
             } else {
-                fobjMaker = new UnknownXMLObj.Maker(uri, localName);
+                fobjMaker = new UnknownXMLObj.Maker(uri);
                 foreignXML = true;
             }
         }
 
         try {
-            PropertyList list = null;
-            if (currentListBuilder != null) {
-                list =
-                    currentListBuilder.makeList(uri, localName, attlist,
-                                                (currentFObj == null) ? null
-                                                : currentFObj.properties, currentFObj);
-            } else if(foreignXML) {
-                list = new DirectPropertyListBuilder.AttrPropertyList(attlist);
-            } else {
-                if(currentFObj == null) {
-                    throw new FOPException("Invalid XML or missing namespace");
-                }
-                list = currentFObj.properties;
-            }
-            fobj = fobjMaker.make(currentFObj, list);
+            fobj = fobjMaker.make(currentFObj);
+            fobj.setName(localName);
             fobj.setLogger(log);
+            fobj.handleAttrs(attlist);
         } catch (FOPException e) {
             throw new SAXException(e);
         }

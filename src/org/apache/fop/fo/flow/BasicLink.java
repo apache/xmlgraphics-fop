@@ -20,21 +20,8 @@ import java.awt.Rectangle;
 
 public class BasicLink extends Inline {
 
-    public static class Maker extends FObj.Maker {
-        public FObj make(FObj parent,
-                         PropertyList propertyList) throws FOPException {
-            return new BasicLink(parent, propertyList);
-        }
-
-    }
-
-    public static FObj.Maker maker() {
-        return new BasicLink.Maker();
-    }
-
-    public BasicLink(FObj parent,
-                     PropertyList propertyList) throws FOPException {
-        super(parent, propertyList);
+    public BasicLink(FObj parent) {
+        super(parent);
         this.name = "fo:basic-link";
     }
 

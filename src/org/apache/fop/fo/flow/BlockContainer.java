@@ -19,6 +19,8 @@ import org.apache.fop.datatypes.*;
 import java.util.Hashtable;
 import java.util.Enumeration;
 
+import org.xml.sax.Attributes;
+
 public class BlockContainer extends FObj {
 
     ColorType backgroundColor;
@@ -35,24 +37,15 @@ public class BlockContainer extends FObj {
 
     AreaContainer areaContainer;
 
-    public static class Maker extends FObj.Maker {
-        public FObj make(FObj parent,
-                         PropertyList propertyList) throws FOPException {
-            return new BlockContainer(parent, propertyList);
-        }
-
-    }
-
-    public static FObj.Maker maker() {
-        return new BlockContainer.Maker();
-    }
-
     PageSequence pageSequence;
 
-    protected BlockContainer(FObj parent,
-                             PropertyList propertyList) throws FOPException {
-        super(parent, propertyList);
+    public BlockContainer(FObj parent) {
+        super(parent);
         this.name = "fo:block-container";
+    }
+
+    public void handleAttrs(Attributes attlist) throws FOPException {
+        super.handleAttrs(attlist);
         this.span = this.properties.get("span").getEnum();
     }
 

@@ -21,35 +21,6 @@ import java.util.Enumeration;
 
 public class InstreamForeignObject extends FObj {
 
-    /**
-     * inner class for making SVG objects.
-     */
-    public static class Maker extends FObj.Maker {
-
-        /**
-         * make an SVG object.
-         *
-         * @param parent the parent formatting object
-         * @param propertyList the explicit properties of this object
-         *
-         * @return the SVG object
-         */
-        public FObj make(FObj parent,
-                         PropertyList propertyList) throws FOPException {
-            return new InstreamForeignObject(parent, propertyList);
-        }
-
-    }
-
-    /**
-     * returns the maker for this object.
-     *
-     * @return the maker for SVG objects
-     */
-    public static FObj.Maker maker() {
-        return new InstreamForeignObject.Maker();
-    }
-
     int breakBefore;
     int breakAfter;
     int scaling;
@@ -74,8 +45,8 @@ public class InstreamForeignObject extends FObj {
      * @param parent the parent formatting object
      * @param propertyList the explicit properties of this object
      */
-    public InstreamForeignObject(FObj parent, PropertyList propertyList) {
-        super(parent, propertyList);
+    public InstreamForeignObject(FObj parent) {
+        super(parent);
         this.name = "fo:instream-foreign-object";
     }
 

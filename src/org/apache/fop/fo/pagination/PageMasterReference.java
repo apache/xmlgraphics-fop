@@ -11,6 +11,8 @@ import org.apache.fop.fo.*;
 import org.apache.fop.fo.properties.*;
 import org.apache.fop.apps.FOPException;
 
+import org.xml.sax.Attributes;
+
 /**
  * Base PageMasterReference class. Provides implementation for handling the
  * master-name attribute and containment within a PageSequenceMaster
@@ -21,10 +23,13 @@ public abstract class PageMasterReference extends FObj
     private String _masterName;
     private PageSequenceMaster _pageSequenceMaster;
 
-    public PageMasterReference(FObj parent, PropertyList propertyList)
-            throws FOPException {
-        super(parent, propertyList);
+    public PageMasterReference(FObj parent) {
+        super(parent);
         this.name = getElementName();
+    }
+
+    public void handleAttrs(Attributes attlist) throws FOPException {
+        super.handleAttrs(attlist);
         if (getProperty("master-name") != null) {
             setMasterName(getProperty("master-name").getString());
         }

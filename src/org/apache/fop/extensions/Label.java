@@ -13,19 +13,8 @@ import org.apache.fop.fo.*;
 public class Label extends ExtensionObj {
     private String _label = "";
 
-    public static class Maker extends FObj.Maker {
-        public FObj make(FObj parent, PropertyList propertyList) {
-            return new Label(parent, propertyList);
-        }
-
-    }
-
-    public static FObj.Maker maker() {
-        return new Label.Maker();
-    }
-
-    public Label(FObj parent, PropertyList propertyList) {
-        super(parent, propertyList);
+    public Label(FObj parent) {
+        super(parent);
     }
 
     protected void addCharacters(char data[], int start, int end) {

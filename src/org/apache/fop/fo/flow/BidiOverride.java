@@ -19,21 +19,8 @@ import org.apache.fop.apps.FOPException;
  */
 public class BidiOverride extends ToBeImplementedElement {
 
-    public static class Maker extends FObj.Maker {
-        public FObj make(FObj parent,
-                         PropertyList propertyList) throws FOPException {
-            return new BidiOverride(parent, propertyList);
-        }
-
-    }
-
-    public static FObj.Maker maker() {
-        return new BidiOverride.Maker();
-    }
-
-    protected BidiOverride(FObj parent,
-                           PropertyList propertyList) throws FOPException {
-        super(parent, propertyList);
+    public BidiOverride(FObj parent) {
+        super(parent);
         this.name = "fo:bidi-override";
     }
 

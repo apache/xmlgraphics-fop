@@ -20,18 +20,6 @@ import java.util.Enumeration;
 
 public class TableRow extends FObj {
 
-    public static class Maker extends FObj.Maker {
-        public FObj make(FObj parent,
-                         PropertyList propertyList) throws FOPException {
-            return new TableRow(parent, propertyList);
-        }
-
-    }
-
-    public static FObj.Maker maker() {
-        return new TableRow.Maker();
-    }
-
     boolean setup = false;
 
     int breakAfter;
@@ -172,8 +160,8 @@ public class TableRow extends FObj {
     }
 
 
-    public TableRow(FObj parent, PropertyList propertyList) {
-        super(parent, propertyList);
+    public TableRow(FObj parent) {
+        super(parent);
         this.name = "fo:table-row";
     }
 

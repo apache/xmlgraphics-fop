@@ -23,23 +23,10 @@ import org.apache.fop.apps.FOPException;
  * The following patterns are treated: rule, space, dots.
  * The pattern use-content is ignored, i.e. it still must be implemented.
  */
-
 public class Leader extends FObjMixed {
 
-    public static class Maker extends FObj.Maker {
-        public FObj make(FObj parent,
-                         PropertyList propertyList) throws FOPException {
-            return new Leader(parent, propertyList);
-        }
-
-    }
-
-    public static FObj.Maker maker() {
-        return new Leader.Maker();
-    }
-
-    public Leader(FObj parent, PropertyList propertyList) {
-        super(parent, propertyList);
+    public Leader(FObj parent) {
+        super(parent);
         this.name = "fo:leader";
     }
 

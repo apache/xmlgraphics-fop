@@ -10,32 +10,24 @@ package org.apache.fop.fo.pagination;
 import org.apache.fop.fo.*;
 import org.apache.fop.apps.FOPException;
 
+import org.xml.sax.Attributes;
+
 public class RepeatablePageMasterReference extends PageMasterReference
     implements SubSequenceSpecifier {
 
     private static final int INFINITE = -1;
-
-    public static class Maker extends FObj.Maker {
-        public FObj make(FObj parent,
-                         PropertyList propertyList) throws FOPException {
-            return new RepeatablePageMasterReference(parent, propertyList);
-        }
-
-    }
-
-    public static FObj.Maker maker() {
-        return new RepeatablePageMasterReference.Maker();
-    }
-
 
     private PageSequenceMaster pageSequenceMaster;
 
     private int maximumRepeats;
     private int numberConsumed = 0;
 
-    public RepeatablePageMasterReference(FObj parent, PropertyList propertyList)
-            throws FOPException {
-        super(parent, propertyList);
+    public RepeatablePageMasterReference(FObj parent) {
+        super(parent);
+    }
+
+    public void handleAttrs(Attributes attlist) throws FOPException {
+        super.handleAttrs(attlist);
 
         String mr = getProperty("maximum-repeats").getString();
         if (mr.equals("no-limit")) {
