@@ -767,7 +767,7 @@ list of possible build targets.
         <package name="org.apache.fop.viewer"/>
       </group>
       <group title="Structural Rendering">
-        <package name="org.apache.fop.rtf.renderer"/>
+        <package name="org.apache.fop.render.rtf"/>
         <package name="org.apache.fop.render.mif"/>
       </group>
       <group title="Utility">
@@ -782,8 +782,8 @@ list of possible build targets.
         <package name="org.apache.fop.util"/>
       </group>
       <group title="RTFLib (formerly JFor) Subpackage Candidate">
-        <package name="org.apache.fop.rtf.rtflib"/>
-        <package name="org.apache.fop.rtf.rtflib.*"/>
+        <package name="org.apache.fop.render.rtf.rtflib"/>
+        <package name="org.apache.fop.render.rtf.rtflib.*"/>
       </group>
     </javadoc>
   </target>
