@@ -21,6 +21,7 @@
 package org.apache.fop.apps;
 
 //import java.util.logging.Handler;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Enumeration;
@@ -28,9 +29,11 @@ import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import org.apache.fop.configuration.*;
+import org.apache.fop.configuration.CLI_Options;
 import org.apache.fop.configuration.ConfigurationResource;
 import org.apache.fop.configuration.Configuration;
+import org.apache.fop.configuration.SystemOptions;
+import org.apache.fop.configuration.UserOptions;
 
 public class Fop {
 
@@ -111,6 +114,8 @@ public class Fop {
         logger.setLevel(Level.WARNING);
         Driver driver;
         SystemOptions options = null;
+        UserOptions userOptions = null;
+        CLI_Options cliOptions = null;
         Boolean bool = null;
 
         runtime = Runtime.getRuntime();
@@ -121,9 +126,21 @@ public class Fop {
         try {
             configuration = new Configuration();
             if (args == null) {
-                options = new UserOptions(configuration);
+                userOptions = new UserOptions(configuration);
+                options = userOptions;
+                try {
+                    userOptions.configure();
+                } catch (FileNotFoundException e2) {
+                    throw new FOPException(e2);
+                }
             } else {
-                options = new CLI_Options(configuration, args);
+                cliOptions = new CLI_Options(configuration, args);
+                options = cliOptions;
+                try {
+                    cliOptions.configure(args);
+                } catch (FileNotFoundException e2) {
+                    throw new FOPException(e2);
+                }
             }
             driver = new Driver(configuration, options);
             driver.run();
