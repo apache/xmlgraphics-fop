@@ -75,13 +75,11 @@ import org.apache.fop.fo.flow.Marker;
 import org.apache.fop.fo.pagination.PageNumberGenerator;
 import org.apache.fop.fo.pagination.PageSequence;
 import org.apache.fop.fo.pagination.Region;
-import org.apache.fop.fo.properties.RetrieveBoundary;
 import org.apache.fop.fo.pagination.SimplePageMaster;
 import org.apache.fop.fo.pagination.StaticContent;
 import org.apache.fop.fo.properties.CommonBackground;
 import org.apache.fop.fo.properties.CommonBorderAndPadding;
 import org.apache.fop.fo.properties.CommonMarginBlock;
-import org.apache.fop.fo.properties.Overflow;
 
 import java.util.ArrayList;
 import java.util.List;

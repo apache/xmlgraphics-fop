@@ -63,7 +63,6 @@ import org.apache.fop.fo.properties.CommonBorderAndPadding;
 import org.apache.fop.fo.properties.CommonMarginInline;
 import org.apache.fop.fo.properties.CommonRelativePosition;
 import org.apache.fop.fo.properties.FOPropertyMapping;
-import org.apache.fop.fo.properties.LeaderPattern;
 import org.apache.fop.fonts.Font;
 
 /**

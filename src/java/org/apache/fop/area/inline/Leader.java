@@ -50,7 +50,7 @@
  */
 package org.apache.fop.area.inline;
 
-import org.apache.fop.fo.properties.RuleStyle;
+import org.apache.fop.fo.Constants;
 
 /**
  * This is a leader inline area.
@@ -63,7 +63,7 @@ public class Leader extends InlineArea {
     // if space replaced with a space
     // otherwise this is a holder for a line
 
-    private int ruleStyle = RuleStyle.SOLID;
+    private int ruleStyle = Constants.RuleStyle.SOLID;
     private int ruleThickness = 1000;
 
     /**

@@ -57,9 +57,6 @@ import org.xml.sax.Attributes;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.FOTreeVisitor;
-import org.apache.fop.fo.properties.BlankOrNotBlank;
-import org.apache.fop.fo.properties.OddOrEven;
-import org.apache.fop.fo.properties.PagePosition;
 import org.apache.fop.apps.FOPException;
 
 /**

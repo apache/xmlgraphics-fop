@@ -107,8 +107,8 @@ import org.apache.fop.render.pdf.PDFRenderer;
 import org.apache.fop.render.svg.SVGRenderer;
 import org.apache.fop.render.xml.XMLRenderer;
 import org.apache.fop.apps.FOUserAgent;
+import org.apache.fop.fo.Constants;
 import org.apache.fop.fo.pagination.Region;
-import org.apache.fop.fo.properties.RuleStyle;
 import org.apache.fop.fonts.FontMetrics;
 
 // Avalon
@@ -698,17 +698,17 @@ class TreeLoader extends AbstractLogEnabled {
         Leader leader = new Leader();
         String rs = root.getAttribute("ruleStyle");
         if ("solid".equals(rs)) {
-            leader.setRuleStyle(RuleStyle.SOLID);
+            leader.setRuleStyle(Constants.RuleStyle.SOLID);
         } else if ("dotted".equals(rs)) {
-            leader.setRuleStyle(RuleStyle.DOTTED);
+            leader.setRuleStyle(Constants.RuleStyle.DOTTED);
         } else if ("dashed".equals(rs)) {
-            leader.setRuleStyle(RuleStyle.DASHED);
+            leader.setRuleStyle(Constants.RuleStyle.DASHED);
         } else if ("double".equals(rs)) {
-            leader.setRuleStyle(RuleStyle.DOUBLE);
+            leader.setRuleStyle(Constants.RuleStyle.DOUBLE);
         } else if ("groove".equals(rs)) {
-            leader.setRuleStyle(RuleStyle.GROOVE);
+            leader.setRuleStyle(Constants.RuleStyle.GROOVE);
         } else if ("ridge".equals(rs)) {
-            leader.setRuleStyle(RuleStyle.RIDGE);
+            leader.setRuleStyle(Constants.RuleStyle.RIDGE);
         }
         String rt = root.getAttribute("ruleThickness");
         int thick = Integer.parseInt(rt);

@@ -93,7 +93,6 @@ import org.apache.fop.area.inline.Space;
 import org.apache.fop.area.inline.Viewport;
 import org.apache.fop.area.inline.TextArea;
 import org.apache.fop.fonts.FontSetup;
-import org.apache.fop.fo.properties.RuleStyle;
 import org.apache.fop.fo.FOTreeControl;
 import org.apache.fop.fo.pagination.Region;
 

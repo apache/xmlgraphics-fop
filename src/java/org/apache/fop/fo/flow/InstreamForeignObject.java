@@ -53,8 +53,6 @@ package org.apache.fop.fo.flow;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FOTreeVisitor;
 import org.apache.fop.fo.FObj;
-import org.apache.fop.fo.properties.DisplayAlign;
-import org.apache.fop.fo.properties.TextAlign;
 
 /**
  * The instream-foreign-object flow formatting object.

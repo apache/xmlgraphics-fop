@@ -54,10 +54,8 @@ package org.apache.fop.fo;
 import java.util.NoSuchElementException;
 
 // FOP
-import org.apache.fop.fo.properties.WhiteSpaceCollapse;
 import org.apache.fop.fo.flow.Block;
 import org.apache.fop.fo.pagination.Root;
-import org.apache.fop.fo.properties.TextTransform;
 
 /**
  * A text node in the formatting object tree.

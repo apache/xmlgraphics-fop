@@ -59,7 +59,6 @@ import org.apache.fop.area.inline.TextArea;
 import org.apache.fop.svg.SVGUtilities;
 import org.apache.fop.apps.Document;
 import org.apache.fop.apps.FOUserAgent;
-import org.apache.fop.fo.properties.RuleStyle;
 import org.apache.fop.fo.FOTreeControl;
 
 import org.w3c.dom.Node;

@@ -306,7 +306,7 @@ Software Foundation, please see <http://www.apache.org/>.
     <!-- Is this property an Enum or derived from a generic Enum -->
     <xsl:variable name="enumconst">
       <xsl:if test="enumeration/value and not(@type='generic')">
-        <xsl:text> implements </xsl:text><xsl:value-of select="$eclassname"/></xsl:if>
+        <xsl:text> implements Constants</xsl:text></xsl:if>
     </xsl:variable>
 
     <redirect:write select="concat($classname, '.java')">
@@ -758,7 +758,7 @@ public class </xsl:text>
             int correspondingValue = correspondingProperty.getEnum();</xsl:text>
         <xsl:for-each select="derive/if">
           <xsl:text>
-            if (correspondingValue == </xsl:text>
+            if (correspondingValue == Constants.</xsl:text>
           <xsl:value-of select="@match"/>
           <xsl:text>)
                 computedProperty = new EnumProperty(</xsl:text>

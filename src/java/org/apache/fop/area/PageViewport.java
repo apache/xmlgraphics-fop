@@ -59,7 +59,7 @@ import java.util.Map;
 import java.util.HashMap;
 import java.util.Iterator;
 
-import org.apache.fop.fo.properties.RetrievePosition;
+import org.apache.fop.fo.Constants;
 
 /**
  * Page viewport that specifies the viewport area and holds the page contents.
@@ -307,7 +307,7 @@ public class PageViewport implements Resolveable, Cloneable {
     public Object getMarker(String name, int pos) {
         Object mark = null;
         switch (pos) {
-            case RetrievePosition.FSWP:
+            case Constants.RetrievePosition.FSWP:
                 if (markerFirstStart != null) {
                     mark = markerFirstStart.get(name);
                 }
@@ -315,12 +315,12 @@ public class PageViewport implements Resolveable, Cloneable {
                     mark = markerFirstAny.get(name);
                 }
             break;
-            case RetrievePosition.FIC:
+            case Constants.RetrievePosition.FIC:
                 if (markerFirstAny != null) {
                     mark = markerFirstAny.get(name);
                 }
             break;
-            case RetrievePosition.LSWP:
+            case Constants.RetrievePosition.LSWP:
                 if (markerLastStart != null) {
                     mark = markerLastStart.get(name);
                 }
@@ -328,7 +328,7 @@ public class PageViewport implements Resolveable, Cloneable {
                     mark = markerLastAny.get(name);
                 }
             break;
-            case RetrievePosition.LEWP:
+            case Constants.RetrievePosition.LEWP:
                 if (markerLastEnd != null) {
                     mark = markerLastEnd.get(name);
                 }

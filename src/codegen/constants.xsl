@@ -46,7 +46,7 @@ This software consists of voluntary contributions made by many individuals
 on behalf of the Apache Software Foundation and was originally created by
 James Tauber <jtauber@jtauber.com>. For more information on the Apache
 Software Foundation, please see <http://www.apache.org/>.
---> 
+-->
 <xsl:stylesheet version="1.0"
                 xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
 
@@ -86,7 +86,6 @@ Software Foundation, please see <http://www.apache.org/>.
   </xsl:for-each>
 </xsl:variable>
 
-
 <xsl:variable name="elementlist">
   <xsl:for-each select="document(elementfile)//element">
     <xsl:sort select="name"/>
@@ -100,7 +99,15 @@ Software Foundation, please see <http://www.apache.org/>.
 
 <xsl:text>
 
-package org.apache.fop.fo.properties;
+package org.apache.fop.fo;
+
+import org.apache.fop.fo.properties.GenericBoolean;
+import org.apache.fop.fo.properties.GenericBorderStyle;
+import org.apache.fop.fo.properties.GenericBreak;
+import org.apache.fop.fo.properties.GenericCondBorderWidth;
+import org.apache.fop.fo.properties.GenericCondPadding;
+import org.apache.fop.fo.properties.GenericKeep;
+import org.apache.fop.fo.properties.GenericSpace;
 
 public interface Constants {</xsl:text>
 
@@ -114,7 +121,8 @@ public interface Constants {</xsl:text>
     int COMPOUND_SHIFT = 9;
     int PROPERTY_MASK = (1 &lt;&lt; COMPOUND_SHIFT)-1;
     int COMPOUND_MASK = ~PROPERTY_MASK;
-
+    int COMPOUND_COUNT = 11;
+    
     // property constants
 <xsl:call-template name="sortconsts">
   <xsl:with-param name="consts" select="$propertylist"/>
@@ -132,9 +140,57 @@ public interface Constants {</xsl:text>
   <xsl:with-param name="consts" select="$constlist"/>
 </xsl:call-template>
 
+   // Enumeration Interfaces
+<xsl:apply-templates select="document(propfile)//property[not(@type='generic')]"/>
+
 <xsl:text>
 }
 </xsl:text>
+</xsl:template>
+
+<xsl:template match="property">
+  <xsl:variable name="classname">
+    <xsl:choose>
+      <xsl:when test="class-name">
+        <xsl:value-of select="class-name"/>
+      </xsl:when>
+      <xsl:otherwise>
+        <xsl:call-template name="makeClassName">
+          <xsl:with-param name="propstr" select="name"/>
+        </xsl:call-template>
+      </xsl:otherwise>
+    </xsl:choose>
+  </xsl:variable>
+  <xsl:variable name="bEnum">
+    <xsl:call-template name="hasEnum"/>
+  </xsl:variable>
+  <xsl:variable name="bSubpropEnum">
+    <xsl:call-template name="hasSubpropEnum"/>
+  </xsl:variable>
+
+  <xsl:if test="$bEnum='true' or contains($bSubpropEnum, 'true')">
+    <!--redirect:write select="concat($classname, '.java')"-->
+      <!-- Handle enumeration values -->
+      <xsl:text>
+    public interface </xsl:text>
+      <xsl:value-of select="$classname"/>
+      <xsl:if test="use-generic">
+        <xsl:text> extends </xsl:text>
+        <xsl:value-of select="use-generic"/>
+        <xsl:text>.Enums</xsl:text>
+      </xsl:if>
+      <xsl:text> {</xsl:text>
+      <xsl:for-each select="enumeration/value">
+        <xsl:text>
+        int </xsl:text>
+        <xsl:value-of select="@const"/>
+        <xsl:text> = Constants.</xsl:text>
+        <xsl:value-of select="@const"/>
+        <xsl:text>;</xsl:text>
+      </xsl:for-each>
+      <xsl:text> }
+</xsl:text>
+  </xsl:if>
 </xsl:template>
 
 <xsl:template name="sortconsts">

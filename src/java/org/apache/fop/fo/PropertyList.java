@@ -58,7 +58,6 @@ import org.xml.sax.Attributes;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.fo.Property.Maker;
 import org.apache.fop.fo.properties.FOPropertyMapping;
-import org.apache.fop.fo.properties.WritingMode;
 
 
 /**
@@ -110,15 +109,15 @@ public class PropertyList extends HashMap {
 
     private static final HashMap WRITING_MODE_TABLES = new HashMap(4);
     {
-        WRITING_MODE_TABLES.put(new Integer(WritingMode.LR_TB),    /* lr-tb */
+        WRITING_MODE_TABLES.put(new Integer(Constants.WritingMode.LR_TB),    /* lr-tb */
         new byte[] {
             START, END, BEFORE, AFTER, BLOCKPROGDIM, INLINEPROGDIM
         });
-        WRITING_MODE_TABLES.put(new Integer(WritingMode.RL_TB),    /* rl-tb */
+        WRITING_MODE_TABLES.put(new Integer(Constants.WritingMode.RL_TB),    /* rl-tb */
         new byte[] {
             END, START, BEFORE, AFTER, BLOCKPROGDIM, INLINEPROGDIM
         });
-        WRITING_MODE_TABLES.put(new Integer(WritingMode.TB_RL),    /* tb-rl */
+        WRITING_MODE_TABLES.put(new Integer(Constants.WritingMode.TB_RL),    /* tb-rl */
         new byte[] {
             AFTER, BEFORE, START, END, INLINEPROGDIM, BLOCKPROGDIM
         });
@@ -385,9 +384,9 @@ public class PropertyList extends HashMap {
      */
     public int wmMap(int lrtb, int rltb, int tbrl) {
         switch (writingMode) {
-        case WritingMode.LR_TB: return lrtb;
-        case WritingMode.RL_TB: return rltb;
-        case WritingMode.TB_RL: return tbrl;
+        case Constants.WritingMode.LR_TB: return lrtb;
+        case Constants.WritingMode.RL_TB: return rltb;
+        case Constants.WritingMode.TB_RL: return tbrl;
         }
         return -1;
     }

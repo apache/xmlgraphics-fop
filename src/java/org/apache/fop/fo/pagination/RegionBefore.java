@@ -52,7 +52,6 @@ package org.apache.fop.fo.pagination;
 
 // FOP
 import org.apache.fop.datatypes.FODimension;
-import org.apache.fop.fo.properties.WritingMode;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FOTreeVisitor;
 

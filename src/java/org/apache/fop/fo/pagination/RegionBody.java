@@ -61,7 +61,6 @@ import org.apache.fop.fo.Property;
 import org.apache.fop.fo.PropertyList;
 import org.apache.fop.fo.properties.CommonMarginBlock;
 import org.apache.fop.fo.properties.FOPropertyMapping;
-import org.apache.fop.fo.properties.WritingMode;
 
 /**
  * The fo:region-body element.

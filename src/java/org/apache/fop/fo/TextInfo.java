@@ -54,7 +54,6 @@ package org.apache.fop.fo;
 import org.apache.fop.fonts.Font;
 import org.apache.fop.datatypes.ColorType;
 import org.apache.fop.traits.SpaceVal;
-import org.apache.fop.fo.properties.TextTransform;
 
 /**
  * Collection of properties used in
@@ -75,7 +74,7 @@ public class TextInfo {
     /** fo:line-height property */
     public int lineHeight;
     /** fo:text-transform property */
-    public int textTransform = TextTransform.NONE;
+    public int textTransform = Constants.TextTransform.NONE;
 
     // Props used for calculating inline-progression-dimension
     /** fo:word-spacing property */
