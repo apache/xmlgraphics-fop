@@ -1,0 +1,135 @@
+<?xml version="1.0" standalone="no"?>
+
+<!-- SVG in FOP -->
+
+<s1 title="TODO List for FOP">
+  <s2 title="FOP TODO">
+    <p>
+Core Features - these are the areas that are important to getting fop
+to be useable for general use.
+    </p>
+    <p>
+Processing improvements - these are mainly things that can be improved
+in the way fop works, eg. resources usage, pdf output etc.
+    </p>
+    <p>
+Enhancements - these are added functionality that might be useful, no
+comment is made about the suitability of these suggestions.
+    </p>
+  </s2>
+  <s2 title="Core Features">
+<s3 title="Layout">
+    <p>
+This is the crucial part to getting FOP to make it to the next step.
+    </p>
+</s3>
+<s3 title="Webstart Demo">
+    <p>
+a demo using Java Webstart that runs the awt viewer and supports
+linking from an index
+    </p>
+</s3>
+<s3 title="Website">
+    <p>
+Need to improve the website to better demonstrate what fop is and
+can do. Examples, screenshots, pdf documents.
+    </p>
+</s3>
+<s3 title="Property Support">
+    <p>
+Currently all properties are in the xml file. We need to handle all default
+values properly (including ones that change depending on the element) and
+all possible values.
+    </p>
+</s3>
+<s3 title="Property Resolution">
+    <p>
+This is support for the functions in property values that evaluate some
+expression.
+Better support for resolution including support for "inherit" and values
+with lists.
+    </p>
+</s3>
+<s3 title="Validity Checking">
+    <p>
+Check the validity of children for a particular element to ensure
+there are no invalid children. Should help process the layout better.
+    </p>
+</s3>
+</s2>
+  <s2 title="Processing Improvements">
+<s3 title="Logging">
+    <p>
+Support for proper logging with logKit.
+    </p>
+</s3>
+<s3 title="Image Handling">
+    <p>
+Needs to be a bit more solid and allow for direct insertion of images
+(jpeg) into the pdf.
+    </p>
+</s3>
+<s3 title="Configuration">
+    <p>
+Support for avalon. Better multithread handling.
+    </p>
+</s3>
+<s3 title="More PDF Outputs">
+    <p>
+Support for streaming and linearized pdf to help with different
+deployement of pdf documents.
+    </p>
+</s3>
+<s3 title="i18n in awt viewer">
+    <p>
+Use proper i18n handling for awt viewer.
+    </p>
+</s3>
+<s3 title="better abstraction of rendering classes">
+    <p>
+put all common rendering processes into an abstract class that has
+no dependancies on any specific renderers.
+    </p>
+</s3>
+</s2>
+  <s2 title="Enhancements">
+<s3 title="linking support in svg">
+    <p>
+support the a link rendering for the svg output.
+    </p>
+</s3>
+<s3 title="input from url">
+    <p>
+be able to specify a url as the input fo (or xml, xsl) documents.
+    </p>
+</s3>
+<s3 title="improve text handling in svg">
+    <p>
+support (better) the direct rendering of text into pdf graphics
+and other similair outputs
+    </p>
+</s3>
+<s3 title="svg renderer (output to svg doc for slide presentation)">
+    <p>
+Create an SVGRenderer that will render all pages onto a single
+svg document suitable for slide show presentations (with batik)
+suggested by Vincent Hardy.
+    </p>
+</s3>
+<s3 title="stream encoding">
+    <p>
+support for different encoding on different types of streams
+in pdf document.
+    </p>
+</s3>
+<s3 title="svg features">
+    <p>
+currently patterns and gradients are not generated properly
+    </p>
+</s3>
+
+  </s2>
+
+
+</s1>
+

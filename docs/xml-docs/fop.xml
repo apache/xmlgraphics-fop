@@ -5,6 +5,7 @@
   <external href="../index.html"  label="Home"/>
   <separator/>
   <document id="index"          label="Readme"      source="fop/readme.xml"/>
+  <document id="todo"           label="TODO"    source="fop/todo.xml"    />
   <document id="download"       label="Download"    source="fop/download.xml"    />
   <document id="running"        label="Running FOP"     source="fop/running.xml"    />
   <document id="implemented"    label="Features" source="fop/implemented.xml"    />

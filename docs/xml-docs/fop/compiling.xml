@@ -8,7 +8,7 @@
        can start one of these scripts, you have to setup your classpath and the environment variable JAVA_HOME (see below).</p>
      <p> The compilation uses Ant, 
        a replacement of make (you can find more information about Ant at 
-       <jump href="http://jakarta.apache.org/ant/">jakarte.apache.org</jump>).
+       <jump href="http://jakarta.apache.org/ant/">jakarta.apache.org</jump>).
         build.xml is the replacement of makefile. Look there for detailed information on the build
         process and different targets. </p>
        <p>A help screen is shown by calling "build usage".</p>
