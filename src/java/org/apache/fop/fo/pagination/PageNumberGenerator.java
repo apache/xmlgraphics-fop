@@ -18,9 +18,6 @@
  
 package org.apache.fop.fo.pagination;
 
-import org.apache.commons.logging.Log;
-
-
 /**
  * This class uses the 'format', 'groupingSeparator', 'groupingSize',
  * and 'letterValue' properties on fo:page-sequence to return a String
@@ -32,11 +29,6 @@ public class PageNumberGenerator {
     private char groupingSeparator;
     private int groupingSize;
     private int letterValue;
-
-    /**
-     * logging instance
-     */
-    protected Log logger = null;
 
     // constants
     private static final int DECIMAL = 1;       // '0*1'
@@ -104,22 +96,6 @@ public class PageNumberGenerator {
                 }
             }
         }
-    }
-
-    /**
-     * Sets the Commons-Logging instance for this class
-     * @param logger The Commons-Logging instance
-     */
-    public void setLogger(Log logger) {
-        this.logger = logger;
-    }
-
-    /**
-     * Returns the Commons-Logging instance for this class
-     * @return  The Commons-Logging instance
-     */
-    protected Log getLogger(Log logger) {
-        return logger;
     }
 
     /**
@@ -192,10 +168,5 @@ public class PageNumberGenerator {
         }
         return alphaNumber.reverse().toString();
     }
-
-    public String getName() {
-        return "fo:page-number-generator";
-    }
-
 }
 
