@@ -50,9 +50,6 @@
  */
 package org.apache.fop.apps;
 
-// Java
-import java.awt.print.PrinterJob;
-
 // FOP
 import org.apache.fop.fo.ElementMapping;
 import org.apache.fop.fo.FOTreeBuilder;
@@ -391,6 +388,7 @@ public class Driver implements LogEnabled {
      * <ul>
      * <li>RENDER_PDF</li>
      * <li>RENDER_AWT</li>
+     * <li>RENDER_PRINT</li>
      * <li>RENDER_MIF</li>
      * <li>RENDER_XML</li>
      * <li>RENDER_PCL</li>
@@ -411,16 +409,7 @@ public class Driver implements LogEnabled {
         case RENDER_AWT:
             throw new IllegalArgumentException("Use renderer form of setRenderer() for AWT");
         case RENDER_PRINT:
-            // a PrinterJob object is needed to create this renderer
-            PrinterJob pj = PrinterJob.getPrinterJob();
-            int copies = AWTPrintRenderer.getIntProperty("copies", 1);
-            pj.setCopies(copies);
-            if (System.getProperty("dialog") != null) {
-                if (!pj.printDialog()) {
-                    throw new IllegalArgumentException("Printing cancelled by operator");
-                }
-            }
-            setRenderer(new AWTPrintRenderer(pj));
+            setRenderer("org.apache.fop.render.awt.AWTPrintRenderer");
             break;
         case RENDER_PCL:
             setRenderer("org.apache.fop.render.pcl.PCLRenderer");
