@@ -57,7 +57,7 @@ import java.util.Vector;
  *
  */
 public class SVGMaskElementImpl extends SVGElementImpl {
-	public Vector elements;
+	public Vector elements = new Vector();
 
 	public void addElement(GraphicImpl g)
 	{

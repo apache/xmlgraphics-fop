@@ -59,7 +59,7 @@ import org.w3c.dom.svg.*;
  *
  */
 public class SVGClipPathElementImpl extends GraphicElement implements SVGClipPathElement {
-	public Vector elements;
+	public Vector elements = new Vector();
 	SVGAnimatedEnumeration units;
 
 	public void addElement(GraphicImpl g)
