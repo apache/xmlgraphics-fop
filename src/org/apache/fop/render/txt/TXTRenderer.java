@@ -23,6 +23,7 @@ import org.apache.fop.image.*;
 import org.apache.fop.svg.SVGArea;
 
 import org.w3c.dom.svg.SVGSVGElement;
+import org.w3c.dom.svg.SVGDocument;
 
 // Java
 import java.io.IOException;
@@ -956,7 +957,7 @@ if ( debug )
 System.out.println("TXTRenderer.renderSVGArea(" + area + ")");
 		int x = this.currentAreaContainerXPosition;
 		int y = this.currentYPosition;
-		SVGSVGElement svg = area.getSVGDocument().getRootElement();
+		SVGSVGElement svg = ((SVGDocument)area.getSVGDocument()).getRootElement();
 		int w = (int)(svg.getWidth().getBaseVal().getValue() * 1000);
 		int h = (int)(svg.getHeight().getBaseVal().getValue() * 1000);
 

@@ -235,13 +235,10 @@ public class PDFRenderer extends PrintRenderer {
             try {
                 closeText();
 
-                SVGSVGElement svg =
-                  ((SVGImage) img).getSVGDocument().getRootElement();
-                currentStream.add("ET\nq\n" + (((float) w) / 1000f) +
-                                  " 0 0 " + (((float) h) / 1000f) + " " +
-                                  (((float) x) / 1000f) + " " +
-                                  (((float)(y - h)) / 1000f) + " cm\n");
-                //        renderSVG(svg, (int) x, (int) y);
+                SVGDocument svg =
+                  ((SVGImage) img).getSVGDocument();
+                currentStream.add("ET\nq\n");
+                renderSVGDocument(svg, (int) x, (int) y, area.getFontState());
                 currentStream.add("Q\nBT\n");
             } catch (FopImageException e) {
             }
@@ -329,7 +326,11 @@ public class PDFRenderer extends PrintRenderer {
         // place at the current instream offset
         int x = this.currentXPosition;
         int y = this.currentYPosition;
-        SVGSVGElement svg = ((SVGDocument)area.getSVGDocument()).getRootElement();
+        renderSVGDocument(area.getSVGDocument(), x, y, area.getFontState());
+    }
+
+    protected void renderSVGDocument(Document doc, int x, int y, FontState fs) {
+        SVGSVGElement svg = ((SVGDocument)doc).getRootElement();
         int w = (int)(svg.getWidth().getBaseVal().getValue() * 1000);
         int h = (int)(svg.getHeight().getBaseVal().getValue() * 1000);
         float sx = 1, sy = -1;
@@ -358,8 +359,6 @@ public class PDFRenderer extends PrintRenderer {
                           " " + yOffset / 1000f + " cm\n");
 
 
-        Document doc = area.getSVGDocument();
-
         UserAgent userAgent = new MUserAgent(new AffineTransform());
 
         GVTBuilder builder = new GVTBuilder();
@@ -368,7 +367,7 @@ public class PDFRenderer extends PrintRenderer {
         GraphicsNode root;
         //System.out.println("creating PDFGraphics2D");
         PDFGraphics2D graphics =
-          new PDFGraphics2D(true, area.getFontState(), pdfDoc,
+          new PDFGraphics2D(true, fs, pdfDoc,
                             currentFontName, currentFontSize, currentXPosition,
                             currentYPosition);
         graphics.setGraphicContext(

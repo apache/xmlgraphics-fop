@@ -146,17 +146,17 @@ public class AWTRenderer implements Renderer, Printable, Pageable {
     }
 
     /**
-      * add a line to the current stream
-      *
-      * @param x1 the start x location in millipoints
-      * @param y1 the start y location in millipoints
-      * @param x2 the end x location in millipoints
-      * @param y2 the end y location in millipoints
-      * @param th the thickness in millipoints
-      * @param r the red component
-      * @param g the green component
-      * @param b the blue component
-      */
+     * add a line to the current stream
+     *
+     * @param x1 the start x location in millipoints
+     * @param y1 the start y location in millipoints
+     * @param x2 the end x location in millipoints
+     * @param y2 the end y location in millipoints
+     * @param th the thickness in millipoints
+     * @param r the red component
+     * @param g the green component
+     * @param b the blue component
+     */
     protected void addLine(int x1, int y1, int x2, int y2, int th,
                            float r, float g, float b) {
         graphics.setColor(new Color (r, g, b));
@@ -168,16 +168,16 @@ public class AWTRenderer implements Renderer, Printable, Pageable {
 
 
     /**
-      * draw a filled rectangle
-      *
-      * @param x the x position of left edge in millipoints
-      * @param y the y position of top edge in millipoints
-      * @param w the width in millipoints
-      * @param h the height in millipoints
-      * @param r the red component
-      * @param g the green component
-      * @param b the blue component
-      */
+     * draw a filled rectangle
+     *
+     * @param x the x position of left edge in millipoints
+     * @param y the y position of top edge in millipoints
+     * @param w the width in millipoints
+     * @param h the height in millipoints
+     * @param r the red component
+     * @param g the green component
+     * @param b the blue component
+     */
     protected void addRect(int x, int y, int w, int h, float r,
                            float g, float b) {
         graphics.setColor(new Color (r, g, b));
@@ -188,19 +188,19 @@ public class AWTRenderer implements Renderer, Printable, Pageable {
     }
 
     /**
-      * draw a filled rectangle
-      *
-      * @param x the x position of left edge in millipoints
-      * @param y the y position of top edge in millipoints
-      * @param w the width in millipoints
-      * @param h the height in millipoints
-      * @param r the red component of edges
-      * @param g the green component of edges
-      * @param b the blue component of edges
-      * @param fr the red component of the fill
-      * @param fg the green component of the fill
-      * @param fb the blue component of the fill
-      */
+     * draw a filled rectangle
+     *
+     * @param x the x position of left edge in millipoints
+     * @param y the y position of top edge in millipoints
+     * @param w the width in millipoints
+     * @param h the height in millipoints
+     * @param r the red component of edges
+     * @param g the green component of edges
+     * @param b the blue component of edges
+     * @param fr the red component of the fill
+     * @param fg the green component of the fill
+     * @param fb the blue component of the fill
+     */
     protected void addRect(int x, int y, int w, int h, float r,
                            float g, float b, float fr, float fg, float fb) {
         graphics.setColor(new Color (r, g, b));
@@ -210,12 +210,12 @@ public class AWTRenderer implements Renderer, Printable, Pageable {
     }
 
     /**
-      * To configure before print.
-      *
-      * Choose pages
-      * Zoom factor
-      * Page format  / Landscape or Portrait
-      **/
+     * To configure before print.
+     *
+     * Choose pages
+     * Zoom factor
+     * Page format  / Landscape or Portrait
+     **/
     public void transform(Graphics2D g2d, double zoomPercent,
                           double angle) {
         AffineTransform at = g2d.getTransform();
@@ -241,10 +241,10 @@ public class AWTRenderer implements Renderer, Printable, Pageable {
     }
 
     /**
-      * Retrieve the number of pages in this document.
-      *
-      * @return the number of pages
-      */
+     * Retrieve the number of pages in this document.
+     *
+     * @return the number of pages
+     */
     public int getPageCount() {
         if (tree == null) {
             return 0;
@@ -319,7 +319,7 @@ public class AWTRenderer implements Renderer, Printable, Pageable {
         if (page.hasLinks()) {
           ....
     }
-        */
+         */
     }
 
     public void renderAreaContainer(AreaContainer area) {
@@ -336,11 +336,11 @@ public class AWTRenderer implements Renderer, Printable, Pageable {
               2 * area.getBorderTopWidth();
             this.currentAreaContainerXPosition = area.getXPosition();
         } else if (area.getPosition() ==
-                org.apache.fop.fo.properties.Position.RELATIVE) {
+            org.apache.fop.fo.properties.Position.RELATIVE) {
             this.currentYPosition -= area.getYPosition();
             this.currentAreaContainerXPosition += area.getXPosition();
         } else if (area.getPosition() ==
-                org.apache.fop.fo.properties.Position.STATIC) {
+            org.apache.fop.fo.properties.Position.STATIC) {
             this.currentYPosition -=
               area.getPaddingTop() + area.getBorderTopWidth();
             this.currentAreaContainerXPosition +=
@@ -365,27 +365,30 @@ public class AWTRenderer implements Renderer, Printable, Pageable {
         }
     }
 
-	// empty for now
-  	public void renderBodyAreaContainer(BodyAreaContainer area) {
-  		renderAreaContainer(area.getBeforeFloatReferenceArea());
-  		renderAreaContainer(area.getFootnoteReferenceArea());
-		
-		// main reference area
-		Enumeration e = area.getMainReferenceArea().getChildren().elements();
-		while (e.hasMoreElements()) {
-			org.apache.fop.layout.Box b = (org.apache.fop.layout.Box) e.nextElement();
-			b.render(this);	// span areas
-		}		
-	}
+    // empty for now
+    public void renderBodyAreaContainer(BodyAreaContainer area) {
+        renderAreaContainer(area.getBeforeFloatReferenceArea());
+        renderAreaContainer(area.getFootnoteReferenceArea());
 
-	// empty for now
-	public void renderSpanArea(SpanArea area) {
-		Enumeration e = area.getChildren().elements();
-		while (e.hasMoreElements()) {
-			org.apache.fop.layout.Box b = (org.apache.fop.layout.Box) e.nextElement();
-			b.render(this);	// column areas
-		}				
-	}
+        // main reference area
+        Enumeration e =
+          area.getMainReferenceArea().getChildren().elements();
+        while (e.hasMoreElements()) {
+            org.apache.fop.layout.Box b =
+              (org.apache.fop.layout.Box) e.nextElement();
+            b.render(this); // span areas
+        }
+    }
+
+    // empty for now
+    public void renderSpanArea(SpanArea area) {
+        Enumeration e = area.getChildren().elements();
+        while (e.hasMoreElements()) {
+            org.apache.fop.layout.Box b =
+              (org.apache.fop.layout.Box) e.nextElement();
+            b.render(this); // column areas
+        }
+    }
 
     private void doFrame(org.apache.fop.layout.Area area) {
         int w, h;
@@ -417,31 +420,35 @@ public class AWTRenderer implements Renderer, Printable, Pageable {
         w = w + area.getBorderLeftWidth() + area.getBorderRightWidth();
         h = h + area.getBorderTopWidth() + area.getBorderBottomWidth();
 
-	BorderAndPadding bp = area.getBorderAndPadding();
-	ColorType borderColor;
+        BorderAndPadding bp = area.getBorderAndPadding();
+        ColorType borderColor;
 
         if (area.getBorderTopWidth() != 0) {
-	  borderColor=bp.getBorderColor(BorderAndPadding.TOP);
-	  addLine(rx, ry, rx + w, ry, area.getBorderTopWidth(),
-		  borderColor.red(), borderColor.green(), borderColor.blue());
+            borderColor = bp.getBorderColor(BorderAndPadding.TOP);
+            addLine(rx, ry, rx + w, ry, area.getBorderTopWidth(),
+                    borderColor.red(), borderColor.green(),
+                    borderColor.blue());
         }
 
         if (area.getBorderLeftWidth() != 0) {
-	  borderColor=bp.getBorderColor(BorderAndPadding.LEFT);
+            borderColor = bp.getBorderColor(BorderAndPadding.LEFT);
             addLine(rx, ry, rx, ry - h, area.getBorderLeftWidth(),
-		  borderColor.red(), borderColor.green(), borderColor.blue());
+                    borderColor.red(), borderColor.green(),
+                    borderColor.blue());
         }
 
         if (area.getBorderRightWidth() != 0) {
-	  borderColor=bp.getBorderColor(BorderAndPadding.RIGHT);
-            addLine(rx + w, ry, rx + w, ry - h, area.getBorderRightWidth(),
-		  borderColor.red(), borderColor.green(), borderColor.blue());
+            borderColor = bp.getBorderColor(BorderAndPadding.RIGHT);
+            addLine(rx + w, ry, rx + w, ry - h,
+                    area.getBorderRightWidth(), borderColor.red(),
+                    borderColor.green(), borderColor.blue());
         }
 
         if (area.getBorderBottomWidth() != 0) {
-	  borderColor=bp.getBorderColor(BorderAndPadding.BOTTOM);
-            addLine(rx, ry - h, rx + w, ry - h, area.getBorderBottomWidth(),
-		  borderColor.red(), borderColor.green(), borderColor.blue());
+            borderColor = bp.getBorderColor(BorderAndPadding.BOTTOM);
+            addLine(rx, ry - h, rx + w, ry - h,
+                    area.getBorderBottomWidth(), borderColor.red(),
+                    borderColor.green(), borderColor.blue());
         }
     }
 
@@ -474,80 +481,51 @@ public class AWTRenderer implements Renderer, Printable, Pageable {
 
     public void renderImageArea(ImageArea area) {
 
-        int x = currentAreaContainerXPosition +
-                area.getXOffset();
-
+        int x = currentAreaContainerXPosition + area.getXOffset();
         int y = currentYPosition;
-
         int w = area.getContentWidth();
-
         int h = area.getHeight();
-
-
 
         FopImage img = area.getImage();
 
-
-
         if (img == null) {
-
             MessageHandler.logln("Error while loading image : area.getImage() is null");
-
-            graphics.drawRect(x / 1000,
-                              pageHeight - y / 1000,
-                              w / 1000,
-                              h / 1000);
-
+            graphics.drawRect(x / 1000, pageHeight - y / 1000,
+                              w / 1000, h / 1000);
             java.awt.Font f = graphics.getFont();
-
             java.awt.Font smallFont =
               new java.awt.Font(f.getFontName(), f.getStyle(), 8);
-
             graphics.setFont(smallFont);
-
             graphics.drawString("area.getImage() is null", x / 1000,
                                 pageHeight - y / 1000);
-
             graphics.setFont(f);
-
         } else {
+            if (img instanceof SVGImage) {
+                try {
+                    SVGDocument svg = ((SVGImage) img).getSVGDocument();
+                    renderSVGDocument(svg, (int) x, (int) y);
+                } catch (FopImageException e) {
+                }
+            } else {
 
+                String urlString = img.getURL();
+                try {
+                    URL url = new URL(urlString);
 
+                    ImageIcon icon = new ImageIcon(url);
+                    Image image = icon.getImage();
 
-            String urlString = img.getURL();
-
-            try {
-
-                URL url = new URL(urlString);
-
-
-
-                ImageIcon icon = new ImageIcon(url);
-
-                Image image = icon.getImage();
-
-
-
-                graphics.drawImage(image, x / 1000,
-                                   pageHeight - y / 1000,
-                                   w / 1000,
-                                   h / 1000,
-                                   null);
-
-            } catch (MalformedURLException mue) {
-
-                // cannot normally occur because, if URL is wrong, constructing FopImage
-
-                // will already have failed earlier on
-
+                    graphics.drawImage(image, x / 1000,
+                                       pageHeight - y / 1000, w / 1000, h / 1000,
+                                       null);
+                } catch (MalformedURLException mue) {
+                    // cannot normally occur because, if URL is wrong, constructing FopImage
+                    // will already have failed earlier on
+                }
             }
-
         }
 
-
-
         currentYPosition -= h;
-
     }
 
     public void renderWordArea(WordArea area) {
@@ -636,9 +614,10 @@ public class AWTRenderer implements Renderer, Printable, Pageable {
 
         Enumeration e = area.getChildren().elements();
         while (e.hasMoreElements()) {
-            org.apache.fop.layout.Box b = (org.apache.fop.layout.Box) e.nextElement();
-            if(b instanceof InlineArea) {
-                InlineArea ia = (InlineArea)b;
+            org.apache.fop.layout.Box b =
+              (org.apache.fop.layout.Box) e.nextElement();
+            if (b instanceof InlineArea) {
+                InlineArea ia = (InlineArea) b;
                 this.currentYPosition = ry - ia.getYOffset();
             } else {
                 this.currentYPosition = ry - area.getPlacementOffset();
@@ -649,30 +628,31 @@ public class AWTRenderer implements Renderer, Printable, Pageable {
         this.currentYPosition = ry - h;
     }
 
-  /**
-   * render leader area into AWT
-   *
-   * @param area area to render
-   */
-  public void renderLeaderArea(LeaderArea area) {
+    /**
+     * render leader area into AWT
+     *
+     * @param area area to render
+     */
+    public void renderLeaderArea(LeaderArea area) {
 
-  	int rx = this.currentXPosition;
-	int ry = this.currentYPosition;
-	int w = area.getLeaderLength();
-	int h = area.getHeight();
-	int th = area.getRuleThickness();
-        int st = area.getRuleStyle();   //not used at the moment
-	float r = area.getRed();
-	float g = area.getGreen();
-	float b = area.getBlue();
-	Color oldColor = graphics.getColor();
+        int rx = this.currentXPosition;
+        int ry = this.currentYPosition;
+        int w = area.getLeaderLength();
+        int h = area.getHeight();
+        int th = area.getRuleThickness();
+        int st = area.getRuleStyle(); //not used at the moment
+        float r = area.getRed();
+        float g = area.getGreen();
+        float b = area.getBlue();
+        Color oldColor = graphics.getColor();
 
-	graphics.setColor(new Color(r, g, b));
-	graphics.fillRect((int)(rx / 1000f), (int)(pageHeight - ry / 1000f),
-					  (int)(w / 1000f), (int)(th / 1000f));
-	graphics.setColor(oldColor);
-	this.currentXPosition += area.getContentWidth();
-  }
+        graphics.setColor(new Color(r, g, b));
+        graphics.fillRect((int)(rx / 1000f),
+                          (int)(pageHeight - ry / 1000f), (int)(w / 1000f),
+                          (int)(th / 1000f));
+        graphics.setColor(oldColor);
+        this.currentXPosition += area.getContentWidth();
+    }
 
     public void renderSVGArea(SVGArea area) {
 
@@ -681,10 +661,12 @@ public class AWTRenderer implements Renderer, Printable, Pageable {
         int w = area.getContentWidth();
         int h = area.getHeight();
 
-//        this.currentYPosition -= h;
-
         Document doc = area.getSVGDocument();
+        renderSVGDocument(doc, x, y);
+        this.currentXPosition += area.getContentWidth();
+    }
 
+    protected void renderSVGDocument(Document doc, int x, int y) {
         UserAgent userAgent = new MUserAgent(new AffineTransform());
 
         GVTBuilder builder = new GVTBuilder();
@@ -696,12 +678,10 @@ public class AWTRenderer implements Renderer, Printable, Pageable {
         try {
             root = builder.build(ctx, doc);
             root.paint(graphics, rc);
-        } catch(Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
         graphics.translate(-x / 1000f, y / 1000f - pageHeight);
-        this.currentXPosition += area.getContentWidth();
-
     }
 
     public GraphicsNodeRenderContext getRenderContext() {
@@ -709,27 +689,24 @@ public class AWTRenderer implements Renderer, Printable, Pageable {
         if (nodeRenderContext == null) {
             RenderingHints hints = new RenderingHints(null);
             hints.put(RenderingHints.KEY_ANTIALIASING,
-                  RenderingHints.VALUE_ANTIALIAS_ON);
+                      RenderingHints.VALUE_ANTIALIAS_ON);
 
             hints.put(RenderingHints.KEY_INTERPOLATION,
-                  RenderingHints.VALUE_INTERPOLATION_BILINEAR);
+                      RenderingHints.VALUE_INTERPOLATION_BILINEAR);
 
             FontRenderContext fontRenderContext =
-                new FontRenderContext(new AffineTransform(), true, true);
+              new FontRenderContext(new AffineTransform(), true,
+                                    true);
 
             TextPainter textPainter = new StrokingTextPainter();
 
             GraphicsNodeRableFactory gnrFactory =
-                new ConcreteGraphicsNodeRableFactory();
+              new ConcreteGraphicsNodeRableFactory();
 
-            nodeRenderContext =
-                new GraphicsNodeRenderContext(new AffineTransform(),
-                                          null,
-                                          hints,
-                                          fontRenderContext,
-                                          textPainter,
-                                          gnrFactory);
-            }
+            nodeRenderContext = new GraphicsNodeRenderContext(
+                                  new AffineTransform(), null, hints,
+                                  fontRenderContext, textPainter, gnrFactory);
+        }
 
         return nodeRenderContext;
     }
@@ -794,10 +771,10 @@ public class AWTRenderer implements Renderer, Printable, Pageable {
 
 
     /**
-      * Draws an image.
-      * TODO: protect other image formats (JIMI)
-      */
-    public void renderImage(String href, float x, float y, float width,
+     * Draws an image.
+     * TODO: protect other image formats (JIMI)
+     */
+/*    public void renderImage(String href, float x, float y, float width,
                             float height, Vector transform) {
         // What is with transformations?
         try {
@@ -831,7 +808,7 @@ public class AWTRenderer implements Renderer, Printable, Pageable {
             MessageHandler.errorln("AWTRenderer: renderImage(): " +
                                    ex.getMessage());
         }
-    }
+    }*/
 
     public void renderForeignObjectArea(ForeignObjectArea area) {
         area.getObject().render(this);
@@ -852,7 +829,7 @@ public class AWTRenderer implements Renderer, Printable, Pageable {
         public void displayError(String message) {
             System.err.println(message);
         }
-    
+
         /**
          * Displays an error resulting from the specified Exception.
          */
@@ -894,11 +871,10 @@ public class AWTRenderer implements Renderer, Printable, Pageable {
          * Returns the class name of the XML parser.
          */
         public String getXMLParserClassName() {
-	String parserClassName =
-	    System.getProperty("org.xml.sax.parser");
-	if (parserClassName == null) {
-	    parserClassName = "org.apache.xerces.parsers.SAXParser";
-	}
+            String parserClassName = System.getProperty("org.xml.sax.parser");
+            if (parserClassName == null) {
+                parserClassName = "org.apache.xerces.parsers.SAXParser";
+            }
             return parserClassName;//application.getXMLParserClassName();
         }
 
@@ -907,47 +883,38 @@ public class AWTRenderer implements Renderer, Printable, Pageable {
          * @param doc The current document.
          * @param uri The document URI.
          */
-        public void openLink(SVGAElement elt)
-        {
+        public void openLink(SVGAElement elt) {
             //application.openLink(uri);
         }
 
-        public Point getClientAreaLocationOnScreen()
-        {
+        public Point getClientAreaLocationOnScreen() {
             return new Point(0, 0);
         }
 
-        public void setSVGCursor(java.awt.Cursor cursor)
-        {
+        public void setSVGCursor(java.awt.Cursor cursor) {
         }
 
-        public AffineTransform getTransform()
-        {
+        public AffineTransform getTransform() {
             return currentTransform;
         }
 
-        public Dimension2D getViewportSize()
-        {
+        public Dimension2D getViewportSize() {
             return new Dimension(100, 100);
         }
 
-        public EventDispatcher getEventDispatcher()
-        {
+        public EventDispatcher getEventDispatcher() {
             return null;
         }
 
-        public boolean supportExtension(String str)
-        {
+        public boolean supportExtension(String str) {
             return false;
         }
 
-        public boolean hasFeature(String str)
-        {
-                return false;
+        public boolean hasFeature(String str) {
+            return false;
         }
 
-        public void registerExtension(BridgeExtension be)
-        {
+        public void registerExtension(BridgeExtension be) {
         }
     }
 }
