@@ -1,9 +1,8 @@
-/* 
+/* $Id$
  * Copyright (C) 2001 The Apache Software Foundation. All rights reserved.
- * For details on use and redistribution please refer to the 
- * LICENSE file included with these sources."
+ * For details on use and redistribution please refer to the
+ * LICENSE file included with these sources.
  */
-
 
 package org.apache.fop.apps;
 
@@ -20,21 +19,18 @@ import java.io.File;
 /**
  * Manages input if it is an xsl:fo file
  */
-
 public class FOInputHandler extends InputHandler {
 
-	File fofile;
+    File fofile;
     public FOInputHandler (File fofile) {
-		this.fofile = fofile;
+        this.fofile = fofile;
     }
 
     public InputSource getInputSource () {
         return super.fileInputSource(fofile);
     }
 
-    public XMLReader getParser() 
-	throws FOPException
-    {
+    public XMLReader getParser() throws FOPException {
         return super.createParser();
     }
 }

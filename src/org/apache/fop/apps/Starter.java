@@ -1,9 +1,8 @@
-/* 
+/* $Id$
  * Copyright (C) 2001 The Apache Software Foundation. All rights reserved.
- * For details on use and redistribution please refer to the 
- * LICENSE file included with these sources."
+ * For details on use and redistribution please refer to the
+ * LICENSE file included with these sources.
  */
-
 
 package org.apache.fop.apps;
 
@@ -18,10 +17,8 @@ import java.net.URL;
 // FOP
 import org.apache.fop.messaging.MessageHandler;
 
-
 /**
- * 
- * abstract super class 
+ * abstract super class
  * Creates a SAX Parser (defaulting to Xerces).
  *
  */
@@ -29,29 +26,26 @@ public abstract class Starter {
 
     Options options;
     InputHandler inputHandler;
-	
-    public Starter() 
-	throws FOPException
-    {
-	options = new Options ();		
+
+    public Starter() throws FOPException {
+        options = new Options ();
     }
-    
+
     public void setInputHandler(InputHandler inputHandler) {
-	this.inputHandler = inputHandler;
+        this.inputHandler = inputHandler;
     }
-    
-    abstract public void run()
-	throws FOPException;
-    
-    // setting the parser features	
-    public void setParserFeatures (XMLReader parser) 
-	throws FOPException
-    {
+
+    abstract public void run() throws FOPException;
+
+            // setting the parser features
+    public void setParserFeatures (XMLReader parser) throws FOPException {
         try {
-            parser.setFeature("http://xml.org/sax/features/namespace-prefixes",true);
+            parser.setFeature("http://xml.org/sax/features/namespace-prefixes",
+                              true);
         } catch (SAXException e) {
-	    throw new FOPException("Error in setting up parser feature namespace-prefixes\n" +
-				   "You need a parser which supports SAX version 2",e);
+            throw new FOPException(
+              "Error in setting up parser feature namespace-prefixes\n" +
+              "You need a parser which supports SAX version 2",e);
         }
     }
 }

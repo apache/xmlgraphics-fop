@@ -1,7 +1,7 @@
-/* 
+/* $Id$
  * Copyright (C) 2001 The Apache Software Foundation. All rights reserved.
- * For details on use and redistribution please refer to the 
- * LICENSE file included with these sources."
+ * For details on use and redistribution please refer to the
+ * LICENSE file included with these sources.
  */
 
 package org.apache.fop.apps;
@@ -54,9 +54,8 @@ public class AWTStarter extends CommandLineStarter {
 
     private Translator resource;
 
-    public AWTStarter (CommandLineOptions commandLineOptions) 
-	throws FOPException
-    {
+    public AWTStarter (CommandLineOptions commandLineOptions)
+    throws FOPException {
         super(commandLineOptions);
         init();
     }
@@ -91,10 +90,8 @@ public class AWTStarter extends CommandLineStarter {
     }
 
 
-    public void run () 
-	throws FOPException
-    {
-	Driver driver = new Driver();
+    public void run () throws FOPException {
+        Driver driver = new Driver();
         if (errorDump) {
             driver.setErrorDump(true);
         }
@@ -104,7 +101,7 @@ public class AWTStarter extends CommandLineStarter {
         XMLReader parser = inputHandler.getParser();
 
         if (parser == null) {
-	    throw new FOPException("Unable to create SAX parser");
+            throw new FOPException("Unable to create SAX parser");
         }
 
         setParserFeatures(parser);
@@ -128,10 +125,10 @@ public class AWTStarter extends CommandLineStarter {
             frame.showPage();
 
         } catch (Exception e) {
-	    if (e instanceof FOPException) {
-		throw (FOPException)e;
-	    }
-	    throw new FOPException(e);
+            if (e instanceof FOPException) {
+                throw (FOPException) e;
+            }
+            throw new FOPException(e);
         }
 
     }

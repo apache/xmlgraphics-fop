@@ -1,9 +1,8 @@
-/* 
+/* $Id$
  * Copyright (C) 2001 The Apache Software Foundation. All rights reserved.
- * For details on use and redistribution please refer to the 
- * LICENSE file included with these sources."
+ * For details on use and redistribution please refer to the
+ * LICENSE file included with these sources.
  */
-
 
 package org.apache.fop.apps;
 
@@ -36,44 +35,42 @@ import org.apache.fop.messaging.MessageHandler;
  * XSLTInputHandler basically takes an xmlfile and transforms it with an xsltfile
  * and the resulting xsl:fo document is input for Fop.
  */
-
 public class TraxInputHandler extends InputHandler {
 
-	File xmlfile, xsltfile;
+    File xmlfile, xsltfile;
 
-    public TraxInputHandler (File xmlfile, File xsltfile ) {
+    public TraxInputHandler (File xmlfile, File xsltfile) {
         this.xmlfile = xmlfile;
-		this.xsltfile = xsltfile;
+        this.xsltfile = xsltfile;
     }
 
     /**
-      *  overwrites the method of the super class to return the xmlfile
-      */
+     *  overwrites the method of the super class to return the xmlfile
+     */
     public InputSource getInputSource () {
         return fileInputSource(xmlfile);
     }
 
     /**
-      *  overwrites this method of the super class and returns an XMLFilter instead of a
-      *  simple XMLReader which allows chaining of transformations
-      *
-      */
+     *  overwrites this method of the super class and returns an XMLFilter instead of a
+     *  simple XMLReader which allows chaining of transformations
+     *
+     */
     public XMLReader getParser() throws FOPException {
-        return this.getXMLFilter(xmlfile,xsltfile);
+        return this.getXMLFilter(xmlfile, xsltfile);
     }
 
     /**
-      * Creates from the transformer an instance of an XMLFilter which
-      * then can be used in a chain with the XMLReader passed to Driver. This way
-      * during the conversion of the xml file + xslt stylesheet the resulting
-      * data is fed into Fop. This should help to avoid memory problems
-      * @param xmlfile The xmlfile containing the text data
-      * @param xsltfile An xslt stylesheet
-      * @return XMLFilter an XMLFilter which can be chained together with other XMLReaders or XMLFilters
-      */
-    public static XMLFilter getXMLFilter (File xmlfile, File xsltfile) 
-	throws FOPException
-    {
+     * Creates from the transformer an instance of an XMLFilter which
+     * then can be used in a chain with the XMLReader passed to Driver. This way
+     * during the conversion of the xml file + xslt stylesheet the resulting
+     * data is fed into Fop. This should help to avoid memory problems
+     * @param xmlfile The xmlfile containing the text data
+     * @param xsltfile An xslt stylesheet
+     * @return XMLFilter an XMLFilter which can be chained together with other XMLReaders or XMLFilters
+     */
+    public static XMLFilter getXMLFilter (File xmlfile,
+                                          File xsltfile) throws FOPException {
         try {
             // Instantiate  a TransformerFactory.
             TransformerFactory tFactory = TransformerFactory.newInstance();
@@ -104,11 +101,11 @@ public class TraxInputHandler extends InputHandler {
             }
         }
         catch (Exception ex) {
-	    if (ex instanceof FOPException) {
-		throw (FOPException)ex;
-	    }
-	    throw new FOPException(ex);
-	}
+            if (ex instanceof FOPException) {
+                throw (FOPException) ex;
+            }
+            throw new FOPException(ex);
+        }
     }
 }
 

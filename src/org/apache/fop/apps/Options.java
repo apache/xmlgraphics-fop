@@ -23,7 +23,6 @@ import org.apache.fop.configuration.ConfigurationReader;
  *  Options handles loading of configuration files and 
  *  additional setting of commandline options
  */
-
 public class Options {
 	boolean errorDump = false;
 	
