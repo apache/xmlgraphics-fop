@@ -36,7 +36,7 @@ Instead, FOP takes SAX events and builds its own tree-like structure. Why?</p>
       <title>Namespaces</title>
       <p>To allow for extensions to the XSL-FO language, FOP provides a mechanism for handling foreign namespaces.</p>
       <p>See <link href="../extensions.html">User Extensions</link> for a discussion of standard extensions shipped with FOP, and their related namespaces.</p>
-      <p>See <link href="../dev/extenstions.html">Developer Extensions</link> for a discussion of the mechanisms in place to allow developers to add their own extensions, including how to tell FOP about the foreign namespace.</p>
+      <p>See <link href="../dev/extensions.html">Developer Extensions</link> for a discussion of the mechanisms in place to allow developers to add their own extensions, including how to tell FOP about the foreign namespace.</p>
     </section>
   </body>
 </document>
