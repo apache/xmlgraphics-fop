@@ -25,5 +25,11 @@ public interface FontMetric {
      * code point i
      */
     public int width(int i, int size);
+
+    /**
+     * Return the array of widths.
+     * This is used to get an array for inserting in an output format.
+     * It should not be used for lookup.
+     */
     public int[] getWidths(int size);
 }
