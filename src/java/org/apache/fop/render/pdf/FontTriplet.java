@@ -92,5 +92,12 @@ public class FontTriplet {
     public String getStyle() {
         return style;
     }
+    
+    /**
+     * @see java.lang.Object#toString()
+     */
+    public String toString() {
+        return getName() + "," + getStyle() + "," + getWeight();
+    }
 }
 
