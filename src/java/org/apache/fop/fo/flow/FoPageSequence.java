@@ -41,6 +41,7 @@ import org.apache.fop.area.PageSet;
 import org.apache.fop.area.PageSetElement;
 import org.apache.fop.datastructs.TreeException;
 import org.apache.fop.fo.FONode;
+import org.apache.fop.fo.FOPageSeqNode;
 import org.apache.fop.fo.FOTree;
 import org.apache.fop.fo.FObjectNames;
 import org.apache.fop.fo.PropNames;
@@ -126,10 +127,6 @@ public class FoPageSequence extends FONode {
     public Map staticContents = null;
     /** Child index of fo:flow child. */
     private int flowChild = -1;
-    /** The <code>PageList</code> for this page-sequence */
-    private PageList pagelist = null;
-    /** The index of the current element in the pagelist */
-    private int pgListIndex = -1;
     /** The page currently being processed by this page-sequence */
     private Page page = null;
     /**
@@ -139,6 +136,11 @@ public class FoPageSequence extends FONode {
     public Page getPage() {
         return page;
     }
+
+    /** The <code>PageList</code> for this page-sequence */
+    private PageList pagelist = null;
+    /** The index of the current element in the pagelist */
+    private int pgListIndex = -1;
 
     /**
      * @return the pagelist
@@ -183,6 +185,38 @@ public class FoPageSequence extends FONode {
         return (Page)firstPage;
     }
 
+    /** Maps flownames to fo:flow and fo:static-content objects */
+    private HashMap flowMap = new HashMap(10);
+    /**
+     * Maps a flow name to a <code>FoFlow</code> or <code>FoStaticContent</code>
+     * object.
+     * @param flowname the name of the flow
+     * @param flow the flow or static-content object
+     * @throws FOPException if object that the name is being mapped to is
+     * not a flow or static-content
+     */
+    public void mapFlowName(String flowname, FOPageSeqNode flow)
+    throws FOPException {
+        synchronized (flowMap) {
+            if ( ! (flow.type == FObjectNames.FLOW
+                    || flow.type == FObjectNames.STATIC_CONTENT)) {
+                throw new FOPException(
+                "Only fo:flow or fo:static-content allowed in flowmap");
+            }
+            flowMap.put(flowname, flow);
+        }
+    }
+
+
+    /**
+     * @param flowname
+     * @return
+     */
+    public FOPageSeqNode unmapFlowName(String flowname) {
+        synchronized (flowMap) {
+            return (FOPageSeqNode)(flowMap.get(flowname));
+        }
+    }
     /** An image on which to draw areas */
     private BufferedImage pageSpread = null;
     /**
