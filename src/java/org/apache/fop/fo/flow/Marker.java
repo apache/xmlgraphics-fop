@@ -20,6 +20,9 @@ package org.apache.fop.fo.flow;
 
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
+import java.util.ListIterator;
+
 
 import org.xml.sax.Locator;
 
@@ -70,7 +73,7 @@ public class Marker extends FObjMixed {
         // Set a new parent property list and bind all the children again.
         propertyList.setParentPropertyList(parentPropertyList);
         for (Iterator i = children.keySet().iterator(); i.hasNext(); ) {
-            Object child = i.next();
+            FONode child = (FONode) i.next();
             PropertyList childList = (PropertyList) children.get(child);
             if (child instanceof FObj) {
                 ((FObj) child).bind(childList);
@@ -123,6 +126,21 @@ public class Marker extends FObjMixed {
         throws ValidationException {
         if (!isBlockOrInlineItem(nsURI, localName)) {
             invalidChildError(loc, nsURI, localName);
+        }
+    }
+
+    /**
+     * @see org.apache.fop.fo.FONode#addLayoutManager(List)
+     * @todo remove null check when vCN() & endOfNode() implemented
+     */
+    public void addLayoutManager(List list) {
+        ListIterator baseIter = getChildNodes();
+        if (baseIter == null) {
+            return;
+        }
+        while (baseIter.hasNext()) {
+            FONode child = (FONode) baseIter.next();
+            child.addLayoutManager(list);
         }
     }
 

@@ -24,6 +24,7 @@ import org.apache.fop.area.Area;
 import org.apache.fop.area.Resolvable;
 import org.apache.fop.area.PageViewport;
 import org.apache.fop.fo.Constants;
+import org.apache.fop.fo.flow.RetrieveMarker;
 import org.apache.fop.fo.flow.Marker;
 
 import org.apache.commons.logging.Log;
@@ -373,6 +374,17 @@ public abstract class AbstractLayoutManager implements LayoutManager, Constants 
             Object theobj = fobjIter.next();
             if (theobj instanceof FONode) {
                 FONode foNode = (FONode) theobj;
+                if (foNode instanceof RetrieveMarker) {
+                    RetrieveMarker rm = (RetrieveMarker) foNode;
+                    Marker marker = retrieveMarker(rm.getRetrieveClassName(),
+                                                   rm.getRetrievePosition(),
+                                                   rm.getRetrieveBoundary());
+                    if (marker == null) {
+                        continue;
+                    }
+                    rm.bindMarker(marker);
+                    foNode = marker;
+                }
                 foNode.addLayoutManager(newLMs);
             }
         }
