@@ -195,6 +195,7 @@ public class AWTRenderer extends AbstractRenderer implements Printable, Pageable
         // empty pageViewportList, in case of a reload from PreviewDialog
         pageViewportList.removeAllElements();
         pageList.removeAllElements();
+        System.out.println("\nRegion Types: 0-Before/Top, 1-Start/Left, 2-Body, 3-End/Right, 4-After/Bottom");
     }
 
     public void stopRenderer()
@@ -317,15 +318,7 @@ public class AWTRenderer extends AbstractRenderer implements Printable, Pageable
         currentFontName = "";
         currentFontSize = 0;
         Rectangle2D viewArea = region.getViewArea();
-/*
-        if (region.getRegion() != null) {
-            System.out.print("Region type = " + region.getRegion().getRegionClass());
-        }
-        System.out.println("  X, Y, Width, Height: " + viewArea.getX()
-            + " " + viewArea.getY()
-            + " " + viewArea.getWidth()
-            + " " + viewArea.getHeight());
-*/
+
         int startX = (int)(((float) viewArea.getX() / 1000f + .5)
             * (scaleFactor / 100f));
         int startY = (int)(((float) viewArea.getY() / 1000f + .5)
@@ -334,6 +327,15 @@ public class AWTRenderer extends AbstractRenderer implements Printable, Pageable
             * (scaleFactor / 100f));
         int height = (int)(((float) viewArea.getHeight() / 1000f + .5)
             * (scaleFactor / 100f));
+
+        if (region.getRegion() != null) {
+            System.out.print("\nRegion type = " + region.getRegion().getRegionClass());
+        }
+        System.out.println("  X, Width, Y, Height: " + startX
+            + " " + width
+            + " " + startY
+            + " " + height
+            );
 
         drawBackAndBorders(region, startX, startY, width, height);
     }
@@ -384,33 +386,46 @@ public class AWTRenderer extends AbstractRenderer implements Printable, Pageable
 
         BorderProps bps = (BorderProps) block.getTrait(Trait.BORDER_BEFORE);
         if (bps != null) {
-            int endx = startx + width;
-            int bwidth = bps.width;
+            int borderWidth = (int) ((bps.width / 1000f) * (scaleFactor / 100f));
+            System.out.println("Before (color/width) " + bps.color.getAWTColor().toString() + " " + bps.width);
             graphics.setColor(bps.color.getAWTColor());
-            graphics.drawLine(startx, starty + bwidth / 2, endx, starty + bwidth / 2);
+            // drawLine(x1, y1, x2, y2);
+            System.out.println("Draw from (" + startx + "," + (starty + borderWidth/2) + 
+                ") to (" + (startx+width) + "," + (starty + borderWidth/ 2) + ")");
+            graphics.drawLine(startx, starty + borderWidth / 2, startx + width, 
+                starty + borderWidth / 2);
         }
         bps = (BorderProps) block.getTrait(Trait.BORDER_START);
         if (bps != null) {
-            int endy = starty + height;
-            int bwidth = bps.width;
+            int borderWidth = (int) ((bps.width / 1000f) * (scaleFactor / 100f));
+            System.out.println("Start (color/width) " + bps.color.getAWTColor().toString() + " " + bps.width);
             graphics.setColor(bps.color.getAWTColor());
-            graphics.drawLine(startx + bwidth / 2, starty, startx + bwidth / 2, endy);
+            System.out.println("Draw from (" + (startx + borderWidth / 2) + "," + starty + 
+                ") to (" + (startx + borderWidth / 2) + "," + (starty + height) + ")");
+            graphics.drawLine(startx + borderWidth / 2, starty, startx + borderWidth / 2, 
+                starty + height);
         }
         bps = (BorderProps) block.getTrait(Trait.BORDER_AFTER);
         if (bps != null) {
+            int borderWidth = (int) ((bps.width / 1000f) * (scaleFactor / 100f));
+            System.out.println("After (color/width) " + bps.color.getAWTColor().toString() + " " + bps.width);
             int sy = starty + height;
-            int endx = startx + width;
-            int bwidth = bps.width;
             graphics.setColor(bps.color.getAWTColor());
-            graphics.drawLine(startx, sy - bwidth / 2, endx, sy - bwidth / 2);
+            System.out.println("Draw from (" + startx + "," + (sy - borderWidth / 2) + 
+                ") to (" + (startx+width) + "," + (sy - borderWidth / 2) + ")");
+            graphics.drawLine(startx, sy - borderWidth / 2, startx + width,
+                sy - borderWidth / 2);
         }
         bps = (BorderProps) block.getTrait(Trait.BORDER_END);
         if (bps != null) {
+            int borderWidth = (int) ((bps.width / 1000f) * (scaleFactor / 100f));
+            System.out.println("End (color/width) " + bps.color.getAWTColor().toString() + " " + bps.width);
             int sx = startx + width;
-            int endy = starty + height;
-            int bwidth = bps.width;
             graphics.setColor(bps.color.getAWTColor());
-            graphics.drawLine(sx - bwidth / 2, starty, sx - bwidth / 2, endy);
+            System.out.println("Draw from (" + (sx - borderWidth / 2) + "," + starty + 
+                ") to (" + (sx - borderWidth / 2) + "," + (starty + height) + ")");
+            graphics.drawLine(sx - borderWidth / 2, starty, sx - borderWidth / 2, 
+                starty + height);
         }
     }
 }
