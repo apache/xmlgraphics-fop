@@ -1,5 +1,6 @@
 ==============================================================================
 Done since 0.20.4 release
+- Fixed infinite loop when page-height="auto" (Oleg Tkachenko)
 - Fix embedding of Adobe Type 1 fonts. PFB file encoded in PC format were
   not decoded prior to embedding. This may explain error messages with
   certain RIP engines. (Jeremias Maerki)
