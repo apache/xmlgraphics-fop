@@ -129,20 +129,6 @@ public class Area extends AreaNode implements Cloneable  {
      * differ from the writing mode of the generating FO if this is a
      * <code>reference-area</code>. */
     protected int frameWritingMode;
-    /** True if the <code>writing-mode</code> of the frames of this area is
-     * horizontal.  May differ from contentIsHorizontal if this is a
-     * <code>reference-area</code>. */
-    protected boolean frameIsHorizontal = true;
-    /** True if the the <code>writing-mode</code> of the frames of this area is
-     * left-to-right.  May differ from contentIsHorizontal if this is a
-     * <code>reference-area</code>. */
-    protected boolean frameLeftToRight = true;
-    /** The rotation trait for the framing rectangles of this area */
-    protected int frameRotation;
-    /** Rotation from content to frame.  One of 0, 90, 180, 270. */
-    protected int rotateToFrame;
-    /** Rotation from frame to content. One of 0, 90, 180, 270. */
-    protected int rotateToContent;
 
     protected void setup() {
         try {
@@ -150,26 +136,14 @@ public class Area extends AreaNode implements Cloneable  {
             contentIsHorizontal = WritingMode.isHorizontal(contentWritingMode);
             contentLeftToRight = WritingMode.isLeftToRight(contentWritingMode);
             contentRotation = generatedBy.getRefOrientation();
-            frameWritingMode =
-                ((FONode)generatedBy.getParent()).getWritingMode();
-            frameIsHorizontal = WritingMode.isHorizontal(frameWritingMode);
-            frameLeftToRight = WritingMode.isLeftToRight(frameWritingMode);
-            frameRotation =
-                ((FONode)generatedBy.getParent()).getRefOrientation();
+            frameWritingMode = contentWritingMode;
         } catch (PropertyException e) {
             throw new RuntimeException(e.getMessage());
         }
-        rotateToFrame = frameRotation - contentRotation;
-        if (rotateToFrame == 0) {
-            rotateToContent = 0;
-        } else {
-            if (rotateToFrame < 0) {
-                rotateToContent = -rotateToFrame;
-                rotateToFrame +=360;
-            } else {
-                rotateToContent = 360 - rotateToFrame;
-            }
-        }
+        setupFrames();
+    }
+
+    protected void setupFrames() {
         content = new ContentRectangle(this);
         padding = content.getPadding();
         borders = padding.getBorders();
@@ -470,12 +444,16 @@ public class Area extends AreaNode implements Cloneable  {
          * @return the writing-mode of the framing rectangles
          */
         public int getFrameWritingMode() {
-            return frameWritingMode;
+            return contentWritingMode;
         }
 
         /**
          * Gets the reference-orientation applying to the contents of this
          * area, expressed as a normalized angle; one of 0, 90, 180 or 270.
+         * TODO - should this simply be 0.  Should reference-orientation on
+         * all non-reference areas be set to 0; i.e. not rotated with respect
+         * to the ancestor reference-area?
+         * BEWARE - this is set to 0
          * @return the reference-orientation
          */
         public int getContentRotation() {
@@ -483,7 +461,7 @@ public class Area extends AreaNode implements Cloneable  {
         }
 
         public int getRotationToFrame() {
-            return rotateToFrame;
+            return 0;
         }
 
         /**
@@ -493,11 +471,11 @@ public class Area extends AreaNode implements Cloneable  {
          * @return the parent's reference-orientation
          */
         public int getFrameRotation() {
-            return frameRotation;
+            return contentRotation;
         }
 
         public int getRotationToContent() {
-            return rotateToContent;
+            return 0;
         }
 
         /**
@@ -514,19 +492,26 @@ public class Area extends AreaNode implements Cloneable  {
 
         /**
          * Gets the width of this <code>AreaGeometry</code> as seen from any
-         * enclosing frame
+         * enclosing frame.  For all
+         * <code>AreaGeometry</code>s except <code>ContentRectangle</code>s,
+         * the relative dimensions are the same for frame and contents; i.e.
+         * height is height and width is width.
          * @return the frame-view width
          */
         protected double getFrameRelativeWidth() {
-            return getFrameRelativeDimensions().getWidth();
+            return getWidth();
         }
+
         /**
          * Gets the height of this <code>AreaGeometry</code> as seen from any
-         * enclosing frame
+         * enclosing frame.  For all <code>AreaGeometry</code>s except
+         * <code>ContentRectangle</code>s, the relative dimensions are the
+         * same for frame and contents; i.e. height is height and width is
+         * width.
          * @return the frame-view height
          */
         protected double getFrameRelativeHeight() {
-            return getFrameRelativeDimensions().getHeight();
+            return getHeight();
         }
         /**
          * Gets the <code>block-progression-dimension</code> of the area
