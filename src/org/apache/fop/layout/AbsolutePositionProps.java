@@ -15,10 +15,10 @@ import org.apache.fop.datatypes.Length;
  */
 public class AbsolutePositionProps {
     public int absolutePosition;
-    public Length top;
-    public Length right;
-    public Length bottom;
-    public Length left;
+    public int top;
+    public int right;
+    public int bottom;
+    public int left;
 
     public AbsolutePositionProps() {}
 

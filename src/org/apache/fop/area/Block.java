@@ -67,6 +67,10 @@ public class Block extends BlockParent implements Serializable {
         return bpd;
     }
 
+    public void setPositioning(int pos) {
+        positioning = pos;
+    }
+
     public int getPositioning() {
         return positioning;
     }

@@ -276,6 +276,113 @@ public class PDFRenderer extends PrintRenderer {
         super.renderRegion(region);
     }
 
+    protected void renderBlockViewport(BlockViewport bv, List children) {
+        // clip and position viewport if necessary
+
+        // save positions
+        int saveIP = currentIPPosition;
+        int saveBP = currentBPPosition;
+
+        CTM ctm = bv.getCTM();
+
+        closeText();
+
+        if (bv.getPositioning() == Block.ABSOLUTE) {
+
+            currentIPPosition = 0;
+            currentBPPosition = 0;
+
+            currentStream.add("ET\n");
+
+            if(bv.getClip()) {
+                Rectangle2D rect = bv.getBounds();
+
+                currentStream.add("q\n");
+                float x = (float)rect.getX() / 1000f;
+                float y = (float)rect.getY() / 1000f;
+                float width = (float)rect.getWidth() / 1000f;
+                float height = (float)rect.getHeight() / 1000f;
+                clip(x, y, width, height);
+            }
+
+            startVParea(ctm);
+            renderBlocks(children);
+            endVParea();
+
+            if (bv.getClip()) {
+                currentStream.add("Q\n");
+            }
+            currentStream.add("BT\n");
+
+            // clip if necessary
+
+            currentIPPosition = saveIP;
+            currentBPPosition = saveBP;
+        } else {
+
+            Rectangle2D rect = bv.getBounds();
+
+            if(ctm != null) {
+                currentIPPosition = 0;
+                currentBPPosition = 0;
+
+                currentStream.add("ET\n");
+
+                double[] vals = ctm.toArray();
+                boolean aclock = vals[2] == 1.0;
+                if(vals[2] == 1.0) {
+                    ctm = ctm.translate(-saveBP - rect.getHeight(), -saveIP);
+                } else if(vals[0] == -1.0) {
+                    ctm = ctm.translate(-saveIP - rect.getWidth(), -saveBP - rect.getHeight());
+                } else {
+                    ctm = ctm.translate(saveBP, saveIP - rect.getWidth());
+                }
+            }
+
+            if(bv.getClip()) {
+                currentStream.add("q\n"); 
+                float x = (float)rect.getX() / 1000f;
+                float y = (float)rect.getY() / 1000f;
+                float width = (float)rect.getWidth() / 1000f;
+                float height = (float)rect.getHeight() / 1000f;
+                clip(x, y, width, height);
+            }
+
+            if(ctm != null) {
+                startVParea(ctm);
+            }
+            renderBlocks(children);
+            if(ctm != null) {
+                endVParea();
+            }
+        
+            if (bv.getClip()) {
+                currentStream.add("Q\n");
+            }
+            if(ctm != null) {
+                currentStream.add("BT\n");
+            }
+
+            // clip if necessary
+
+            if(rect != null) {
+                currentIPPosition = saveIP;
+                currentBPPosition = saveBP;
+                currentBPPosition += (int)(rect.getHeight());
+            }
+        }
+    }
+
+    protected void clip(float x, float y, float width, float height) {
+        currentStream.add(x + " " + y + " m\n");
+        currentStream.add((x + width) + " " + y + " l\n");
+        currentStream.add((x + width) + " " + (y + height) + " l\n");
+        currentStream.add(x + " " + (y + height) + " l\n");
+        currentStream.add("h\n");
+        currentStream.add("W\n");
+        currentStream.add("n\n");
+    }
+
     protected void renderLineArea(LineArea line) {
         super.renderLineArea(line);
         closeText();
@@ -609,13 +716,7 @@ public class PDFRenderer extends PrintRenderer {
             float y = (currentBPPosition + viewport.getOffset()) / 1000f;
             float width = viewport.getWidth() / 1000f;
             float height = viewport.getHeight() / 1000f;
-            currentStream.add(x + " " + y + " m\n");
-            currentStream.add((x + width) + " " + y + " l\n");
-            currentStream.add((x + width) + " " + (y + height) + " l\n");
-            currentStream.add(x + " " + (y + height) + " l\n");
-            currentStream.add("h\n");
-            currentStream.add("W\n");
-            currentStream.add("n\n");
+            clip(x, y, width, height);
         }
         super.renderViewport(viewport);
 
