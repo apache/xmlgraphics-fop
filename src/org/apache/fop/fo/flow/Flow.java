@@ -14,6 +14,8 @@ import org.apache.fop.fo.pagination.*;
 import org.apache.fop.layout.Area;
 import org.apache.fop.layout.BodyAreaContainer;
 import org.apache.fop.apps.FOPException;
+import org.apache.fop.layoutmgr.LayoutManager;
+import org.apache.fop.layoutmgr.FlowLayoutManager;
 
 // Java
 import java.util.Hashtable;
@@ -70,6 +72,7 @@ public class Flow extends FObj {
         // 001228, Number 406), confusion in spec section 6.4.5 about
         // multiplicity of fo:flow in XSL 1.0 is cleared up - one (1)
         // fo:flow per fo:page-sequence only.
+
 /*        if (pageSequence.isFlowSet()) {
             if (this.name.equals("fo:flow")) {
                 throw new FOPException("Only a single fo:flow permitted"
@@ -81,7 +84,8 @@ public class Flow extends FObj {
         }
 */
         setFlowName(getProperty("flow-name").getString());
-        pageSequence.addFlow(this);
+	// Now done in addChild of page-sequence
+        //pageSequence.addFlow(this);
     }
 
     protected void setFlowName(String name) throws FOPException {
@@ -220,6 +224,10 @@ public class Flow extends FObj {
 
     public boolean generatesReferenceAreas() {
         return true;
+    }
+
+    public LayoutManager getLayoutManager() {
+	return new FlowLayoutManager(this);
     }
 
 }
