@@ -81,6 +81,25 @@ public class FoRoot extends FONode {
     /** Offset of first page-sequence child node. */
     private int firstPageSeq = -1;
 
+    /** The page number of the last laid-out page */
+    private int lastPageNumber = 0;
+    /**
+     * Gets the last laid-out page number.  This is generally set by the
+     * page-sequence.
+     * @return the page number
+     */
+    public int getLastPageNumber() {
+        return lastPageNumber;
+    }
+    /**
+     * Sets the last generated page number.  This is generally set from the
+     * page-sequence processing.
+     * @param number the last generated number
+     */
+    public void setLastPageNumber(int number) {
+        lastPageNumber = number; 
+    }
+
     /**
      * @param foTree the FO tree being built
      * @param event the <tt>XmlEvent</tt> that triggered the creation of this
@@ -159,16 +178,16 @@ public class FoRoot extends FONode {
             if (ev == null)
                 throw new FOPException("No page-sequence found.");
             firstPageSeq = numChildren();
-            new FoPageSequence(
-                    getFOTree(), this, (FoXmlEvent)ev, layoutMasters);
+            new FoPageSequence(getFOTree(), this, (FoXmlEvent)ev,
+                    layoutMasters.getPageSequenceMasters());
             ev = xmlevents.getEndElement(XmlEventReader.DISCARD_EV, ev);
             namespaces.relinquishEvent(ev);
             while ((ev = xmlevents.expectStartElement
                     (FObjectNames.PAGE_SEQUENCE, XmlEvent.DISCARD_W_SPACE))
                    != null) {
                 // Loop over remaining fo:page-sequences
-                new FoPageSequence(
-                        getFOTree(), this, (FoXmlEvent)ev, layoutMasters);
+                new FoPageSequence(getFOTree(), this, (FoXmlEvent)ev,
+                        layoutMasters.getPageSequenceMasters());
                 ev = xmlevents.getEndElement(XmlEventReader.DISCARD_EV, ev);
                 namespaces.relinquishEvent(ev);
             }

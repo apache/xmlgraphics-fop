@@ -36,17 +36,19 @@ import org.apache.fop.apps.FOPException;
 import org.apache.fop.area.Area;
 import org.apache.fop.area.Page;
 import org.apache.fop.area.PageList;
-import org.apache.fop.area.PageListElement;
-import org.apache.fop.area.PageSet;
-import org.apache.fop.area.PageSetElement;
 import org.apache.fop.datastructs.TreeException;
+import org.apache.fop.datatypes.EnumType;
+import org.apache.fop.datatypes.IntegerType;
+import org.apache.fop.datatypes.Numeric;
+import org.apache.fop.datatypes.PropertyValue;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FOPageSeqNode;
 import org.apache.fop.fo.FOTree;
 import org.apache.fop.fo.FObjectNames;
+import org.apache.fop.fo.FoRoot;
 import org.apache.fop.fo.PropNames;
 import org.apache.fop.fo.expr.PropertyException;
-import org.apache.fop.fo.pagination.FoLayoutMasterSet;
+import org.apache.fop.fo.properties.InitialPageNumber;
 import org.apache.fop.xml.FoXmlEvent;
 import org.apache.fop.xml.XmlEvent;
 import org.apache.fop.xml.XmlEventReader;
@@ -129,6 +131,7 @@ public class FoPageSequence extends FONode {
     private int flowChild = -1;
     /** The page currently being processed by this page-sequence */
     private Page page = null;
+    
     /**
      * Gets the current page of this page-sequence
      * @return the page
@@ -137,22 +140,30 @@ public class FoPageSequence extends FONode {
         return page;
     }
 
-    /** The <code>PageList</code> for this page-sequence */
-    private PageList pagelist = null;
-    /** The index of the current element in the pagelist */
+    /** The <code>PageList</code> containing the flattened
+     * <code>pageTree</code> for this page-sequence.  This PageList contains
+     * only <code>Page</code> elements. */
+    private ArrayList pageArray = new ArrayList();
+    /** The index of the current element in the pageList */
     private int pgListIndex = -1;
 
+    /** The tree of all layout attempts for this page-sequence */
+    private PageList pageList = null;
+    /** An array of indicies mapping the path through the
+     * <code>pageTree</code> to the current element  */
+    private ArrayList pageTreeMap = null;
+
     /**
-     * @return the pagelist
+     * @return the pageList
      */
-    public PageList getPagelist() {
-        return pagelist;
+    public PageList getPageList() {
+        return pageList;
     }
     /**
-     * @param pagelist to set
+     * @param pageList to set
      */
-    public void setPagelist(PageList pagelist) {
-        this.pagelist = pagelist;
+    public void setPagelist(PageList pageList) {
+        this.pageList = pageList;
     }
     /**
      * @return the pgListIndex
@@ -167,22 +178,69 @@ public class FoPageSequence extends FONode {
         this.pgListIndex = pgListIndex;
     }
 
-    /**
-     * Gets the current first page
-     * @return the first page
-     */
     public Page getCurr1stPage() {
-        PageListElement firstPage = pagelist.get(0);
-        while (firstPage.isPageSet()) {
-            PageSet pageset = (PageSet)firstPage;
-            PageSetElement setEl = pageset.get(pageset.getCurrentElement());
-            if (setEl.isPageList()) {
-                firstPage = ((PageList)setEl).get(0);
-            } else {
-                firstPage = (Page)setEl;
-            }
+        if (pageArray == null) {
+            return null;
         }
-        return (Page)firstPage;
+        return (Page)(pageArray.get(0));
+    }
+
+    /**
+     * The number of the page being laid out
+     */
+    private int currPageNumber = 0;
+
+    private FoRoot root;
+
+    private void getInitialPageNumber() {
+        PropertyValue pv;
+        try {
+            pv = getPropertyValue(PropNames.INITIAL_PAGE_NUMBER);
+        } catch (PropertyException e) {
+            throw new RuntimeException(
+                    "Unable to obtain InitialPageNumber value");
+        }
+        int i = 0;
+        int lastnum = root.getLastPageNumber();
+        switch (pv.getType()) {
+        case PropertyValue.AUTO:
+            currPageNumber = lastnum + 1;
+            break;
+        case PropertyValue.ENUM:
+            i = ((EnumType)pv).getEnumValue();
+            switch (i) {
+            case InitialPageNumber.AUTO_ODD:
+                currPageNumber = 
+                    ((lastnum % 2 == 0) ? lastnum + 1 : lastnum + 2);
+                break;
+            case InitialPageNumber.AUTO_EVEN:
+                currPageNumber = 
+                    ((lastnum % 2 == 0) ? lastnum + 2 : lastnum + 1);
+                break;
+            default:
+                throw new RuntimeException(
+                        "Unknown InitialPageNumber enum value: " + i);
+            }
+        case PropertyValue.INTEGER:
+            i = ((IntegerType)pv).getInt();
+            if (i < 0) {
+                currPageNumber = 1;
+            } else {
+                currPageNumber = i;
+            }
+            break;
+        case PropertyValue.NUMERIC:
+            i = ((Numeric)pv).asInt();
+            if (i < 0) {
+                currPageNumber = 1;
+            } else {
+                currPageNumber = i;
+            }
+            break;
+        default:
+            throw new RuntimeException("Invalid property value type "
+                    + PropertyValue.propertyTypes.get(pv.getType()));
+        }
     }
 
     /** Maps flownames to fo:flow and fo:static-content objects */
@@ -233,14 +291,16 @@ public class FoPageSequence extends FONode {
      * @param parent the parent FONode of this node
      * @param event the <tt>XmlEvent</tt> that triggered the creation of
      * this node
-     * @param layoutMasters the layout master set
+     * @param pageSeqMasters a <code>Map</code> of the page sequence masters
+     * from the layout master set
      */
     public FoPageSequence(FOTree foTree, FONode parent, FoXmlEvent event,
-            FoLayoutMasterSet layoutMasters)
+            Map pageSeqMasters)
         throws TreeException, FOPException
     {
         super(foTree, FObjectNames.PAGE_SEQUENCE, parent, event,
               FONode.PAGESEQ_SET, sparsePropsMap, sparseIndices);
+        root = (FoRoot)parent;
         // Set up the graphics environment
         pageSpread =
             new BufferedImage(20*72, 12*72, BufferedImage.TYPE_INT_RGB);
@@ -306,7 +366,7 @@ public class FoPageSequence extends FONode {
             // Generate a null page for the flow(s)
             page = Page.setupNullPage(this, foTree.getNextPageId());
             // Intialize the PageList for this page-sequence
-            pagelist = new PageList(page);
+            pageList = new PageList(page);
             pgListIndex = 0;
 
             // Look for one or more fo:flow
