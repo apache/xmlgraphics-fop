@@ -82,9 +82,11 @@ public class XMLEventPool {
      * @param ev - the event being returned.
      */
     public synchronized void surrenderEvent(XMLEvent ev) {
-        System.out.println("surrenderEvent " + ev.id + "  poolSize " + poolSize);
+        //System.out.println("surrenderEvent " + ev.id
+                                           //+ "  poolSize " + poolSize);
         if (ev == null) return;
         if (eventSet.get(ev.id)) {
+            //System.out.println("Event clash: " + ev);
             MessageHandler.logln
                     ("Event clash in XMLEvent pool. Id " + ev.id);
             return;
@@ -104,5 +106,11 @@ public class XMLEventPool {
      * @return the <tt>XMLNamespaces</tt> object.
      */
     public XMLNamespaces getNamespaces() { return namespaces; }
+
+    /**
+     * Get the size of the event pool.
+     * @return pool size.
+     */
+    public int getPoolSize() { return pool.size(); }
 
 }
