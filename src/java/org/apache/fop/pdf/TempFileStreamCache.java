@@ -56,6 +56,7 @@ import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.IOException;
 import java.io.File;
@@ -63,12 +64,12 @@ import java.io.File;
 /**
  * StreamCache implementation that uses temporary files rather than heap.
  */
-public class TempFileStreamCache extends StreamCache {
+public class TempFileStreamCache implements StreamCache {
 
     /**
      * The current output stream.
      */
-    private BufferedOutputStream output;
+    private OutputStream output;
 
     /**
      * The temp file.
@@ -101,6 +102,13 @@ public class TempFileStreamCache extends StreamCache {
         return output;
     }
 
+    /**
+     * @see org.apache.fop.pdf.StreamCache#write(byte[])
+     */
+    public void write(byte[] data) throws IOException {
+        getOutputStream().write(data);
+    }
+    
     /**
      * Filter the cache with the supplied PDFFilter.
      *
@@ -136,21 +144,23 @@ public class TempFileStreamCache extends StreamCache {
     /**
      * Outputs the cached bytes to the given stream.
      *
-     * @param stream the output stream to write to
+     * @param out the output stream to write to
+     * @return the number of bytes written
      * @throws IOException if there is an IO error
      */
-    public void outputStreamData(OutputStream stream) throws IOException {
+    public int outputContents(OutputStream out) throws IOException {
         if (output == null) {
-            return;
+            return 0;
         }
 
         output.close();
         output = null;
 
         // don't need a buffer because streamCopy is buffered
-        FileInputStream input = new FileInputStream(tempFile);
-        StreamUtilities.streamCopy(input, output);
+        InputStream input = new java.io.FileInputStream(tempFile);
+        final long bytesCopied = StreamUtilities.streamCopy(input, out);
         input.close();
+        return (int)bytesCopied;
     }
 
     /**
@@ -167,26 +177,11 @@ public class TempFileStreamCache extends StreamCache {
     }
 
     /**
-     * Closes the cache and frees resources.
-     *
-     * @throws IOException if there is an IO error
-     */
-    public void close() throws IOException {
-        if (output != null) {
-            output.close();
-            output = null;
-        }
-        if (tempFile.exists()) {
-            tempFile.delete();
-        }
-    }
-
-    /**
      * Clears and resets the cache.
      *
      * @throws IOException if there is an IO error
      */
-    public void reset() throws IOException {
+    public void clear() throws IOException {
         if (output != null) {
             output.close();
             output = null;

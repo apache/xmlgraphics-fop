@@ -58,7 +58,9 @@ import java.io.IOException;
 /**
  * StreamCache implementation that uses temporary files rather than heap.
  */
-public class InMemoryStreamCache extends StreamCache {
+public class InMemoryStreamCache implements StreamCache {
+
+    private int hintSize = -1;
 
     /**
      * The current output stream.
@@ -72,6 +74,14 @@ public class InMemoryStreamCache extends StreamCache {
     }
 
     /**
+     * Creates a new InMemoryStreamCache.
+     * @param hintSize a hint about the approximate expected size of the buffer
+     */
+    public InMemoryStreamCache(int hintSize) {
+        this.hintSize = hintSize;
+    }
+
+    /**
      * Get the current OutputStream. Do not store it - it may change
      * from call to call.
      * @throws IOException if there is an error getting the output stream
@@ -79,11 +89,22 @@ public class InMemoryStreamCache extends StreamCache {
      */
     public OutputStream getOutputStream() throws IOException {
         if (output == null) {
-            output = new ByteArrayOutputStream();
+            if (this.hintSize <= 0) {
+                output = new ByteArrayOutputStream(512);
+            } else {
+                output = new ByteArrayOutputStream(this.hintSize);
+            }
         }
         return output;
     }
 
+    /**
+     * @see org.apache.fop.pdf.StreamCache#write(byte[])
+     */
+    public void write(byte[] data) throws IOException {
+        getOutputStream().write(data);
+    }
+    
     /**
      * Filter the cache with the supplied PDFFilter.
      * @param filter the filter to apply
@@ -112,15 +133,17 @@ public class InMemoryStreamCache extends StreamCache {
 
     /**
      * Outputs the cached bytes to the given stream.
-     * @param stream the output stream to write to
+     * @param out the output stream to write to
+     * @return the number of bytes written
      * @throws IOException if there is an IO error writing to the output stream
      */
-    public void outputStreamData(OutputStream stream) throws IOException {
+    public int outputContents(OutputStream out) throws IOException {
         if (output == null) {
-            return;
+            return 0;
         }
 
-        output.writeTo(stream);
+        output.writeTo(out);
+        return output.size();
     }
 
     /**
@@ -137,21 +160,10 @@ public class InMemoryStreamCache extends StreamCache {
     }
 
     /**
-     * Closes the cache and frees resources.
-     * @throws IOException if there is an error closing the stream
-     */
-    public void close() throws IOException {
-        if (output != null) {
-            output.close();
-            output = null;
-        }
-    }
-
-    /**
      * Clears and resets the cache.
      * @throws IOException if there is an error closing the stream
      */
-    public void reset() throws IOException {
+    public void clear() throws IOException {
         if (output != null) {
             output.close();
             output = null;
