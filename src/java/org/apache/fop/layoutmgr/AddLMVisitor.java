@@ -95,6 +95,7 @@ import org.apache.fop.fo.flow.PageNumberCitation;
 import org.apache.fop.fo.flow.Table;
 import org.apache.fop.fo.flow.TableBody;
 import org.apache.fop.fo.flow.TableCell;
+import org.apache.fop.fo.flow.TableColumn;
 import org.apache.fop.fo.flow.TableRow;
 import org.apache.fop.fo.pagination.Flow;
 
@@ -108,6 +109,7 @@ import org.apache.fop.layoutmgr.BidiLayoutManager;
 import org.apache.fop.layoutmgr.LayoutProcessor;
 import org.apache.fop.layoutmgr.LMiter;
 import org.apache.fop.layoutmgr.table.Cell;
+import org.apache.fop.layoutmgr.table.Column;
 import org.apache.fop.layoutmgr.table.Body;
 import org.apache.fop.layoutmgr.table.Row;
 import org.apache.fop.layoutmgr.table.TableLayoutManager;
@@ -782,7 +784,12 @@ public class AddLMVisitor extends FOTreeVisitor {
          TableLayoutManager tlm = new TableLayoutManager();
          tlm.setUserAgent(node.getUserAgent());
          tlm.setFObj(node);
-         tlm.setColumns(node.getColumns());
+         ArrayList columnLMs = new ArrayList();
+         ListIterator iter = node.getColumns().listIterator();
+         while (iter.hasNext()) {
+             columnLMs.add(getTableColumnLayoutManager((TableColumn)iter.next()));
+         }
+         tlm.setColumns(columnLMs);
          if (node.getTableHeader() != null) {
              tlm.setTableHeader(getTableBodyLayoutManager(node.getTableHeader()));
          }
@@ -790,6 +797,14 @@ public class AddLMVisitor extends FOTreeVisitor {
              tlm.setTableFooter(getTableBodyLayoutManager(node.getTableFooter()));
          }
          currentLMList.add(tlm);
+     }
+
+     public LayoutManager getTableColumnLayoutManager(TableColumn node) {
+         node.doSetup();
+         Column clm = new Column();
+         clm.setUserAgent(node.getUserAgent());
+         clm.setFObj(node);
+         return clm;
      }
 
      public void serveVisitor(TableBody node) {

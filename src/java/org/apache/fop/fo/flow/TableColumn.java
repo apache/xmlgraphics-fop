@@ -60,9 +60,6 @@ import org.apache.fop.fo.Property;
 
 import org.apache.fop.fo.properties.CommonBackground;
 import org.apache.fop.fo.properties.CommonBorderAndPadding;
-import org.apache.fop.layoutmgr.LayoutManager;
-import org.apache.fop.layoutmgr.table.Column;
-import org.apache.fop.apps.*;
 
 /**
  * Class modelling the fo:table-column object. See Sec. 6.7.4 of the XSL-FO
@@ -85,14 +82,6 @@ public class TableColumn extends FObj {
      */
     public TableColumn(FONode parent) {
         super(parent);
-    }
-
-    public LayoutManager getLayoutManager() {
-        doSetup();
-        Column clm = new Column();
-        clm.setUserAgent(getUserAgent());
-        clm.setFObj(this);
-        return clm;
     }
 
     /**
@@ -132,7 +121,7 @@ public class TableColumn extends FObj {
         return numColumnsRepeated;
     }
 
-    private void doSetup() {
+    public void doSetup() {
 
         // Common Border, Padding, and Background Properties
         // only background apply, border apply if border-collapse
