@@ -9,6 +9,7 @@ package org.apache.fop.layout;
 // FOP
 import org.apache.fop.datatypes.*;
 import org.apache.fop.fo.flow.Marker;
+import org.apache.fop.layout.inline.InlineSpace;
 
 // Java
 import java.util.Vector;
@@ -51,15 +52,15 @@ abstract public class Area extends Box {
 	protected Vector markers;
 	
 	// as defined in Section 6.1.1
-	public org.apache.fop.fo.FObj generatedBy;	// corresponds to 'generated-by' trait
+	protected org.apache.fop.fo.FObj generatedBy;	// corresponds to 'generated-by' trait
 	protected Hashtable returnedBy;
 	
 	// as defined in Section 6.1.1
 	protected String areaClass;
 	
 	// as defined in Section 4.2.2
-	public boolean isFirst = false;
-	public boolean isLast = false;
+	protected boolean isFirst = false;
+	protected boolean isLast = false;
 	
     /* author : Seshadri G
     ** the fo which created it */	
@@ -109,6 +110,11 @@ abstract public class Area extends Box {
         this.addChild(new DisplaySpace(size));
         this.absoluteHeight += size;
         this.currentHeight += size;
+    }
+
+    public void addInlineSpace(int size) {
+        this.addChild(new InlineSpace(size));
+		// other adjustments...
     }
 
     public FontInfo getFontInfo() {
@@ -376,4 +382,29 @@ abstract public class Area extends Box {
   public Vector getMarkers() {
 	  return markers;
   }
+  
+	public void setGeneratedBy(org.apache.fop.fo.FObj generatedBy) {
+		this.generatedBy = generatedBy;
+	}
+	
+	public org.apache.fop.fo.FObj getGeneratedBy() {
+		return generatedBy;
+	}
+	
+	public void isFirst(boolean isFirst) {
+		this.isFirst = isFirst;
+	}
+	
+	public boolean isFirst() {
+		return isFirst;
+	}
+	
+	public void isLast(boolean isLast) {
+		this.isLast = isLast;
+	}
+	
+	public boolean isLast() {
+		return isLast;
+	}
+	
 }

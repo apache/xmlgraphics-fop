@@ -111,7 +111,7 @@ public class RetrieveMarker extends FObjMixed {
 			for (int c = 0; c < pageMarkers.size(); c++) {
 				Marker currentMarker = (Marker)pageMarkers.elementAt(c);
 				if (currentMarker.getMarkerClassName().equals(retrieveClassName)) {
-					if (currentMarker.getRegistryArea().isFirst) {
+					if (currentMarker.getRegistryArea().isFirst()) {
 						return currentMarker;
 					}
 				}
@@ -121,7 +121,7 @@ public class RetrieveMarker extends FObjMixed {
 			for (int c = pageMarkers.size(); c > 0; c--) {
 				Marker currentMarker = (Marker)pageMarkers.elementAt(c-1);
 				if (currentMarker.getMarkerClassName().equals(retrieveClassName)) {
-					if (currentMarker.getRegistryArea().isFirst) {
+					if (currentMarker.getRegistryArea().isFirst()) {
 						return currentMarker;
 					}
 				}
@@ -131,7 +131,7 @@ public class RetrieveMarker extends FObjMixed {
 			for (int c = pageMarkers.size(); c > 0; c--) {
 				Marker currentMarker = (Marker)pageMarkers.elementAt(c-1);
 				if (currentMarker.getMarkerClassName().equals(retrieveClassName)) {
-					if (currentMarker.getRegistryArea().isLast) {
+					if (currentMarker.getRegistryArea().isLast()) {
 						return currentMarker;
 					}
 				}

@@ -94,10 +94,10 @@ public class ListBlock extends FObj {
 					area.getAllocationWidth(),
 					area.spaceLeft(), startIndent, endIndent, 0, align,
 					alignLast, lineHeight);
-				blockArea.generatedBy = this;
+				blockArea.setGeneratedBy(this);
 				this.areasGenerated++;
 				if (this.areasGenerated == 1)
-					blockArea.isFirst = true;
+					blockArea.isFirst(true);
 				// for normal areas this should be the only pair
 				blockArea.addLineagePair(this, this.areasGenerated);
 				
@@ -147,7 +147,7 @@ public class ListBlock extends FObj {
 						area.start();
 				}
 
-				blockArea.isLast = true;
+				blockArea.isLast(true);
 				return new Status(Status.OK);
 		}
 

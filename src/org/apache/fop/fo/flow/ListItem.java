@@ -80,10 +80,10 @@ public class ListItem extends FObj {
 						new BlockArea(propMgr.getFontState(area.getFontInfo()), area.getAllocationWidth(),
 													area.spaceLeft(), 0, 0,
 													0, align, alignLast, lineHeight);
-				this.blockArea.generatedBy = this;
+				this.blockArea.setGeneratedBy(this);
 				this.areasGenerated++;
 				if (this.areasGenerated == 1)
-					this.blockArea.isFirst = true;
+					this.blockArea.isFirst(true);
 				// for normal areas this should be the only pair
 				this.blockArea.addLineagePair(this, this.areasGenerated);
 				
@@ -142,7 +142,7 @@ public class ListItem extends FObj {
 				if (area instanceof BlockArea) {
 						area.start();
 				}
-				this.blockArea.isLast = true;
+				this.blockArea.isLast(true);
 				return new Status(Status.OK);
     }
 
