@@ -225,7 +225,7 @@
            url: http://www.w3.org/TR/xsl/ -->
       <fo:block text-align="center"
                 space-before.optimum="0.5cm">
-        <fo:external-graphic src="file:../graphics/listgeometry.gif"/>
+        <fo:external-graphic src="file:../../graphics/listgeometry.gif"/>
       </fo:block>
       <fo:block font-size="10pt" 
             font-family="sans-serif"
@@ -575,7 +575,7 @@
         <fo:list-item>
           <!-- insert a bullet -->
           <fo:list-item-label end-indent="label-end()">
-            <fo:block text-align="end">label 1)</fo:block>
+            <fo:block>label 1)</fo:block>
           </fo:list-item-label>
           <!-- list text --> 
           <fo:list-item-body start-indent="body-start()">
@@ -589,7 +589,7 @@
         <fo:list-item>
           <!-- insert a bullet -->
           <fo:list-item-label end-indent="label-end()">
-            <fo:block text-align="end">lab. 2)</fo:block>
+            <fo:block>lab. 2)</fo:block>
           </fo:list-item-label>
           <!-- list text --> 
           <fo:list-item-body start-indent="body-start()">
@@ -603,7 +603,7 @@
         <fo:list-item>
           <!-- insert a bullet -->
           <fo:list-item-label end-indent="label-end()">
-            <fo:block text-align="end">lab.  3)</fo:block>
+            <fo:block>lab.  3)</fo:block>
           </fo:list-item-label>
           <!-- list text --> 
           <fo:list-item-body start-indent="body-start()">
@@ -617,7 +617,7 @@
         <fo:list-item>
           <!-- insert a bullet -->
           <fo:list-item-label end-indent="label-end()">
-            <fo:block text-align="end">lab. 4)</fo:block>
+            <fo:block>lab. 4)</fo:block>
           </fo:list-item-label>
           <!-- list text --> 
           <fo:list-item-body start-indent="body-start()">
@@ -631,7 +631,7 @@
         <fo:list-item>
           <!-- insert a bullet -->
           <fo:list-item-label end-indent="label-end()">
-            <fo:block text-align="end">lab. 5)</fo:block>
+            <fo:block>lab. 5)</fo:block>
           </fo:list-item-label>
           <!-- list text --> 
           <fo:list-item-body start-indent="body-start()">
@@ -2009,7 +2009,7 @@
                 <fo:list-item start-indent="0.5cm">
                   <!-- insert a number -->
                   <fo:list-item-label end-indent="label-end()">
-                    <fo:block text-align="end">1.)</fo:block>
+                    <fo:block>1.)</fo:block>
                   </fo:list-item-label>
                   <!-- list text --> 
                   <fo:list-item-body start-indent="body-start()">
@@ -2022,7 +2022,7 @@
                 <fo:list-item start-indent="0.5cm">
                   <!-- insert a number -->
                   <fo:list-item-label end-indent="label-end()">
-                    <fo:block text-align="end">2.)</fo:block>
+                    <fo:block>2.)</fo:block>
                   </fo:list-item-label>
                   <!-- list text --> 
                   <fo:list-item-body start-indent="body-start()">
@@ -2038,7 +2038,7 @@
                 <fo:list-item start-indent="0.5cm">
                   <!-- insert a number -->
                   <fo:list-item-label end-indent="label-end()">
-                    <fo:block text-align="end">3.)</fo:block>
+                    <fo:block>3.)</fo:block>
                   </fo:list-item-label>
                   <!-- list text --> 
                   <fo:list-item-body start-indent="body-start()">
@@ -2051,7 +2051,7 @@
                 <fo:list-item start-indent="0.5cm">
                   <!-- insert a number -->
                   <fo:list-item-label end-indent="label-end()">
-                    <fo:block text-align="end">4.)</fo:block>
+                    <fo:block>4.)</fo:block>
                   </fo:list-item-label>
                   <!-- list text --> 
                   <fo:list-item-body start-indent="body-start()">
@@ -2067,7 +2067,7 @@
                 <fo:list-item start-indent="0.5cm">
                   <!-- insert a number -->
                   <fo:list-item-label end-indent="label-end()">
-                    <fo:block text-align="end">5.)</fo:block>
+                    <fo:block>5.)</fo:block>
                   </fo:list-item-label>
                   <!-- list text --> 
                   <fo:list-item-body start-indent="body-start()">
@@ -2194,7 +2194,7 @@
           <fo:list-item start-indent="0.5cm">
             <!-- insert a number -->
             <fo:list-item-label end-indent="label-end()">
-              <fo:block text-align="end">1.)</fo:block>
+              <fo:block>1.)</fo:block>
             </fo:list-item-label>
             <!-- list text --> 
             <fo:list-item-body start-indent="body-start()">
@@ -2355,7 +2355,7 @@
                 <fo:list-item start-indent="0.5cm">
                   <!-- insert a number -->
                   <fo:list-item-label end-indent="label-end()">
-                    <fo:block text-align="end">1.)</fo:block>
+                    <fo:block>1.)</fo:block>
                   </fo:list-item-label>
                   <!-- list text --> 
                   <fo:list-item-body start-indent="body-start()">
@@ -2368,7 +2368,7 @@
                 <fo:list-item start-indent="0.5cm">
                   <!-- insert a number -->
                   <fo:list-item-label end-indent="label-end()">
-                    <fo:block text-align="end">2.)</fo:block>
+                    <fo:block>2.)</fo:block>
                   </fo:list-item-label>
                   <!-- list text --> 
                   <fo:list-item-body start-indent="body-start()">
@@ -2384,7 +2384,7 @@
                 <fo:list-item start-indent="0.5cm">
                   <!-- insert a number -->
                   <fo:list-item-label end-indent="label-end()">
-                    <fo:block text-align="end">3.)</fo:block>
+                    <fo:block>3.)</fo:block>
                   </fo:list-item-label>
                   <!-- list text --> 
                   <fo:list-item-body start-indent="body-start()">
@@ -2397,7 +2397,7 @@
                 <fo:list-item start-indent="0.5cm">
                   <!-- insert a number -->
                   <fo:list-item-label end-indent="label-end()">
-                    <fo:block text-align="end">4.)</fo:block>
+                    <fo:block>4.)</fo:block>
                   </fo:list-item-label>
                   <!-- list text --> 
                   <fo:list-item-body start-indent="body-start()">
@@ -2413,7 +2413,7 @@
                 <fo:list-item start-indent="0.5cm">
                   <!-- insert a number -->
                   <fo:list-item-label end-indent="label-end()">
-                    <fo:block text-align="end">5.)</fo:block>
+                    <fo:block>5.)</fo:block>
                   </fo:list-item-label>
                   <!-- list text --> 
                   <fo:list-item-body start-indent="body-start()">
@@ -2426,7 +2426,7 @@
                 <fo:list-item start-indent="0.5cm">
                   <!-- insert a number -->
                   <fo:list-item-label end-indent="label-end()">
-                    <fo:block text-align="end">6.)</fo:block>
+                    <fo:block>6.)</fo:block>
                   </fo:list-item-label>
                   <!-- list text --> 
                   <fo:list-item-body start-indent="body-start()">
@@ -2442,7 +2442,7 @@
                 <fo:list-item start-indent="0.5cm">
                   <!-- insert a number -->
                   <fo:list-item-label end-indent="label-end()">
-                    <fo:block text-align="end">7.)</fo:block>
+                    <fo:block>7.)</fo:block>
                   </fo:list-item-label>
                   <!-- list text --> 
                   <fo:list-item-body start-indent="body-start()">
@@ -2458,7 +2458,7 @@
                 <fo:list-item start-indent="0.5cm">
                   <!-- insert a number -->
                   <fo:list-item-label end-indent="label-end()">
-                    <fo:block text-align="end">8.)</fo:block>
+                    <fo:block>8.)</fo:block>
                   </fo:list-item-label>
                   <!-- list text --> 
                   <fo:list-item-body start-indent="body-start()">
@@ -2474,7 +2474,7 @@
                 <fo:list-item start-indent="0.5cm">
                   <!-- insert a number -->
                   <fo:list-item-label end-indent="label-end()">
-                    <fo:block text-align="end">9.)</fo:block>
+                    <fo:block>9.)</fo:block>
                   </fo:list-item-label>
                   <!-- list text --> 
                   <fo:list-item-body start-indent="body-start()">
@@ -2490,7 +2490,7 @@
                 <fo:list-item start-indent="0.5cm">
                   <!-- insert a number -->
                   <fo:list-item-label end-indent="label-end()">
-                    <fo:block text-align="end">10.)</fo:block>
+                    <fo:block>10.)</fo:block>
                   </fo:list-item-label>
                   <!-- list text --> 
                   <fo:list-item-body start-indent="body-start()">
@@ -2506,7 +2506,7 @@
                 <fo:list-item start-indent="0.5cm">
                   <!-- insert a number -->
                   <fo:list-item-label end-indent="label-end()">
-                    <fo:block text-align="end">11.)</fo:block>
+                    <fo:block>11.)</fo:block>
                   </fo:list-item-label>
                   <!-- list text --> 
                   <fo:list-item-body start-indent="body-start()">
@@ -2522,7 +2522,7 @@
                 <fo:list-item start-indent="0.5cm">
                   <!-- insert a number -->
                   <fo:list-item-label end-indent="label-end()">
-                    <fo:block text-align="end">12.)</fo:block>
+                    <fo:block>12.)</fo:block>
                   </fo:list-item-label>
                   <!-- list text --> 
                   <fo:list-item-body start-indent="body-start()">
@@ -2538,7 +2538,7 @@
                 <fo:list-item start-indent="0.5cm">
                   <!-- insert a number -->
                   <fo:list-item-label end-indent="label-end()">
-                    <fo:block text-align="end">13.)</fo:block>
+                    <fo:block>13.)</fo:block>
                   </fo:list-item-label>
                   <!-- list text --> 
                   <fo:list-item-body start-indent="body-start()">
@@ -2554,7 +2554,7 @@
                 <fo:list-item start-indent="0.5cm">
                   <!-- insert a number -->
                   <fo:list-item-label end-indent="label-end()">
-                    <fo:block text-align="end">14.)</fo:block>
+                    <fo:block>14.)</fo:block>
                   </fo:list-item-label>
                   <!-- list text --> 
                   <fo:list-item-body start-indent="body-start()">
@@ -2570,7 +2570,7 @@
                 <fo:list-item start-indent="0.5cm">
                   <!-- insert a number -->
                   <fo:list-item-label end-indent="label-end()">
-                    <fo:block text-align="end">15.)</fo:block>
+                    <fo:block>15.)</fo:block>
                   </fo:list-item-label>
                   <!-- list text --> 
                   <fo:list-item-body start-indent="body-start()">
@@ -2586,7 +2586,7 @@
                 <fo:list-item start-indent="0.5cm">
                   <!-- insert a number -->
                   <fo:list-item-label end-indent="label-end()">
-                    <fo:block text-align="end">16.)</fo:block>
+                    <fo:block>16.)</fo:block>
                   </fo:list-item-label>
                   <!-- list text --> 
                   <fo:list-item-body start-indent="body-start()">
@@ -2602,7 +2602,7 @@
                 <fo:list-item start-indent="0.5cm">
                   <!-- insert a number -->
                   <fo:list-item-label end-indent="label-end()">
-                    <fo:block text-align="end">17.)</fo:block>
+                    <fo:block>17.)</fo:block>
                   </fo:list-item-label>
                   <!-- list text --> 
                   <fo:list-item-body start-indent="body-start()">
