@@ -255,10 +255,12 @@ public class FOTreeBuilder extends DefaultHandler {
                     "Error:  First element must be fo:root formatting object"));
             }
         } else { // check that incoming node is valid for currentFObj
-            try {
-                currentFObj.validateChildNode(locator, namespaceURI, localName);
-            } catch (SAXParseException e) {
-                throw e;
+            if (namespaceURI.equals(FOElementMapping.URI)) {
+                try {
+                    currentFObj.validateChildNode(locator, namespaceURI, localName);
+                } catch (SAXParseException e) {
+                    throw e;
+                }
             }
         }
         
