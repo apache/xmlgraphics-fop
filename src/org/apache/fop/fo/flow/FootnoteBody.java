@@ -62,7 +62,7 @@ import org.apache.fop.layout.*;
 import java.util.Enumeration;
 
 public class FootnoteBody extends FObj {
-		FontState fs;
+
 		int align;
 		int alignLast;
 		int lineHeight;
@@ -87,49 +87,35 @@ public class FootnoteBody extends FObj {
 		this.name = "fo:footnote-body";
 	}
 
-		public Status layout(Area area) throws FOPException {
-				if(this.marker == START) {
-						this.marker = 0;
-				}
-						String fontFamily =
-							this.properties.get("font-family").getString();
-						String fontStyle =
-							this.properties.get("font-style").getString();
-						String fontWeight =
-							this.properties.get("font-weight").getString();
-						int fontSize =
-							this.properties.get("font-size").getLength().mvalue();
-						// font-variant support
-						// added by Eric SCHAEFFER
-						int fontVariant =
-							this.properties.get("font-variant").getEnum();
+    public Status layout(Area area) throws FOPException {
+      if(this.marker == START) {
+	this.marker = 0;
+      }
+      BlockArea blockArea =
+	new BlockArea(propMgr.getFontState(area.getFontInfo()),
+		      area.getAllocationWidth(),
+		      area.spaceLeft(), startIndent, endIndent, textIndent,
+		      align, alignLast, lineHeight);
+      blockArea.setPage(area.getPage());
+      blockArea.start();
 
-						FontState fs = new FontState(area.getFontInfo(), fontFamily,
-																		fontStyle, fontWeight, fontSize, fontVariant);
+      blockArea.setAbsoluteHeight(area.getAbsoluteHeight());
+      blockArea.setIDReferences(area.getIDReferences());
+      
+      blockArea.setTableCellXOffset(area.getTableCellXOffset());
 
-				BlockArea blockArea = new BlockArea(fs, area.getAllocationWidth(),
-																			 area.spaceLeft(), startIndent, endIndent, textIndent,
-																			 align, alignLast, lineHeight);
-				blockArea.setPage(area.getPage());
-				blockArea.start();
-
-				blockArea.setAbsoluteHeight(area.getAbsoluteHeight());
-				blockArea.setIDReferences(area.getIDReferences());
-
-				blockArea.setTableCellXOffset(area.getTableCellXOffset());
-
-				int numChildren = this.children.size();
-				for ( int i = this.marker; i < numChildren; i++ ) {
-						FONode fo = (FONode) children.elementAt(i);
-						Status status;
-						if ( (status = fo.layout(blockArea)).isIncomplete() ) {
-								this.resetMarker();
-								return status;
-						}
-				}
-				blockArea.end();
-				area.addChild(blockArea);
-				area.increaseHeight(blockArea.getHeight());
-				return new Status(Status.OK);
-		}
+      int numChildren = this.children.size();
+      for ( int i = this.marker; i < numChildren; i++ ) {
+	FONode fo = (FONode) children.elementAt(i);
+	Status status;
+	if ( (status = fo.layout(blockArea)).isIncomplete() ) {
+	  this.resetMarker();
+	  return status;
+	}
+      }
+      blockArea.end();
+      area.addChild(blockArea);
+      area.increaseHeight(blockArea.getHeight());
+      return new Status(Status.OK);
+    }
 }

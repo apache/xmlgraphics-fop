@@ -128,7 +128,6 @@ public class PageNumberCitation extends FObj {
 				return new PageNumberCitation.Maker();
 		}
 
-		FontState fs;
 		float red;
 		float green;
 		float blue;
@@ -156,21 +155,6 @@ public class PageNumberCitation extends FObj {
 				IDReferences idReferences = area.getIDReferences();
 				this.area = area;
 				if (this.marker == START) {
-						String fontFamily =
-							this.properties.get("font-family").getString();
-						String fontStyle =
-							this.properties.get("font-style").getString();
-						String fontWeight =
-							this.properties.get("font-weight").getString();
-						int fontSize =
-							this.properties.get("font-size").getLength().mvalue();
-						// font-variant support
-						// added by Eric SCHAEFFER
-						int fontVariant =
-							this.properties.get("font-variant").getEnum();
-
-						this.fs = new FontState(area.getFontInfo(), fontFamily,
-																		fontStyle, fontWeight, fontSize, fontVariant);
 
 						ColorType c = this.properties.get("color").getColorType();
 						this.red = c.red();
@@ -203,7 +187,9 @@ public class PageNumberCitation extends FObj {
 				pageNumber = idReferences.getPageNumber(refId);
 
 				if (pageNumber != null) { // if we already know the page number
-						this.marker = FOText.addText((BlockArea) area, fs, red, green, blue,
+						this.marker = FOText.addText((BlockArea) area,
+													propMgr.getFontState(area.getFontInfo()),
+													red, green, blue,
 													wrapOption, null, whiteSpaceCollapse,
 													pageNumber.toCharArray(), 0, pageNumber.length(),
 													ts, VerticalAlign.BASELINE);
@@ -213,7 +199,7 @@ public class PageNumberCitation extends FObj {
             if(la == null) {
 						return new Status(Status.AREA_FULL_NONE);
             }
-            la.changeFont(fs);
+            la.changeFont(propMgr.getFontState(area.getFontInfo()));
             la.changeColor(red, green, blue);
             la.changeWrapOption(wrapOption);
             la.changeWhiteSpaceCollapse(whiteSpaceCollapse);

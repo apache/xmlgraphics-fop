@@ -96,20 +96,6 @@ public class Leader extends FObjMixed {
 						blockArea = (BlockArea) area;
 				}
 
-				//retrieving font property information for fo:leader
-				String fontFamily = this.properties.get("font-family").getString();
-				String fontStyle = this.properties.get("font-style").getString();
-				String fontWeight = this.properties.get("font-weight").getString();
-				int fontSize =
-					this.properties.get("font-size").getLength().mvalue();
-				// font-variant support
-				// added by Eric SCHAEFFER
-				int fontVariant =
-					this.properties.get("font-variant").getEnum();
-
-				FontState fontstate = new FontState(area.getFontInfo(), fontFamily,
-																fontStyle, fontWeight, fontSize, fontVariant);
-
 				//color properties
 				ColorType c = this.properties.get("color").getColorType();
 				float red = c.red();
@@ -141,7 +127,7 @@ public class Leader extends FObjMixed {
 				blockArea.getIDReferences().initializeID(id, blockArea);
 
 				//adds leader to blockarea, there the leaderArea is generated
-				int succeeded = addLeader(blockArea, fontstate, red, green, blue,
+				int succeeded = addLeader(blockArea, propMgr.getFontState(area.getFontInfo()), red, green, blue,
 																						leaderPattern, leaderLengthMinimum,
 																						leaderLengthOptimum, leaderLengthMaximum,
 																						ruleThickness, ruleStyle, leaderPatternWidth,

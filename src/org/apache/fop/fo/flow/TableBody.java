@@ -75,13 +75,9 @@ public class TableBody extends FObj {
 				return new TableBody.Maker();
 		}
 
-		FontState fs;
 		int spaceBefore;
 		int spaceAfter;
 		ColorType backgroundColor;
-		ColorType borderColor;
-		int borderWidth;
-		int borderStyle;
 		String id;
 
 		Vector columns;
@@ -115,21 +111,6 @@ public class TableBody extends FObj {
 				}
 
 				if (this.marker == START) {
-						String fontFamily =
-							this.properties.get("font-family").getString();
-						String fontStyle =
-							this.properties.get("font-style").getString();
-						String fontWeight =
-							this.properties.get("font-weight").getString();
-						int fontSize =
-							this.properties.get("font-size").getLength().mvalue();
-						// font-variant support
-						// added by Eric SCHAEFFER
-						int fontVariant =
-							this.properties.get("font-variant").getEnum();
-
-						this.fs = new FontState(area.getFontInfo(), fontFamily,
-																		fontStyle, fontWeight, fontSize, fontVariant);
 
 						this.spaceBefore = this.properties.get(
 																 "space-before.optimum").getLength().mvalue();
@@ -137,12 +118,6 @@ public class TableBody extends FObj {
 																"space-after.optimum").getLength().mvalue();
 						this.backgroundColor = this.properties.get(
 																		 "background-color").getColorType();
-						this.borderColor =
-							this.properties.get("border-color").getColorType();
-						this.borderWidth = this.properties.get(
-																 "border-width").getLength().mvalue();
-						this.borderStyle =
-							this.properties.get("border-style").getEnum();
 						this.id = this.properties.get("id").getString();
 
 						area.getIDReferences().createID(id);
@@ -168,19 +143,15 @@ public class TableBody extends FObj {
 						area.getIDReferences().configureID(id, area);
 				}
 
-				this.areaContainer = new AreaContainer(fs, -area.borderWidthLeft,
-																							 -area.borderWidthTop + area.getHeight(),
+				this.areaContainer = new AreaContainer(propMgr.getFontState(area.getFontInfo()),
+																							 -area.getBorderLeftWidth(),
+																							 -area.getBorderTopWidth() + area.getHeight(),
 																							 area.getAllocationWidth(), area.spaceLeft(),
 																							 Position.RELATIVE);
 				areaContainer.foCreator=this;	// G Seshadri
 				areaContainer.setPage(area.getPage());
 				areaContainer.setBackgroundColor(backgroundColor);
-				areaContainer.setBorderStyle(borderStyle, borderStyle,
-																		 borderStyle, borderStyle);
-				areaContainer.setBorderWidth(borderWidth, borderWidth,
-																		 borderWidth, borderWidth);
-				areaContainer.setBorderColor(borderColor, borderColor,
-																		 borderColor, borderColor);
+				areaContainer.setBorderAndPadding(propMgr.getBorderAndPadding());
 				areaContainer.start();
 
 				areaContainer.setAbsoluteHeight(area.getAbsoluteHeight());

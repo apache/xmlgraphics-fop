@@ -75,7 +75,6 @@ public class PageNumber extends FObj {
 				return new PageNumber.Maker();
 		}
 
-		FontState fs;
 		float red;
 		float green;
 		float blue;
@@ -94,21 +93,6 @@ public class PageNumber extends FObj {
 						return new Status(Status.OK);
 				}
 				if (this.marker == START) {
-						String fontFamily =
-							this.properties.get("font-family").getString();
-						String fontStyle =
-							this.properties.get("font-style").getString();
-						String fontWeight =
-							this.properties.get("font-weight").getString();
-						int fontSize =
-							this.properties.get("font-size").getLength().mvalue();
-						// font-variant support
-						// added by Eric SCHAEFFER
-						int fontVariant =
-							this.properties.get("font-variant").getEnum();
-
-						this.fs = new FontState(area.getFontInfo(), fontFamily,
-																		fontStyle, fontWeight, fontSize, fontVariant);
 
 						ColorType c = this.properties.get("color").getColorType();
 						this.red = c.red();
@@ -127,7 +111,7 @@ public class PageNumber extends FObj {
 				}
 
 				String p = Integer.toString(area.getPage().getNumber());
-				this.marker = FOText.addText((BlockArea) area, fs, red, green, blue,
+				this.marker = FOText.addText((BlockArea) area, propMgr.getFontState(area.getFontInfo()), red, green, blue,
 											wrapOption, null, whiteSpaceCollapse, p.toCharArray(),
 											0, p.length(), ts, VerticalAlign.BASELINE);
 				return new Status(Status.OK);

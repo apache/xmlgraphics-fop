@@ -1,7 +1,7 @@
 /*-- $Id$ --
 
  ============================================================================
-									 The Apache Software License, Version 1.1
+ The Apache Software License, Version 1.1
  ============================================================================
 
 		Copyright (C) 1999 The Apache Software Foundation. All rights reserved.
@@ -72,10 +72,8 @@ public class Block extends FObjMixed {
 				return new Block.Maker();
 		}
 
-		FontState fs;
 		int align;
 		int alignLast;
-		int breakBefore;
 		int breakAfter;
 		int lineHeight;
 		int startIndent;
@@ -85,35 +83,11 @@ public class Block extends FObjMixed {
 		int textIndent;
 		int keepWithNext;
 		ColorType backgroundColor;
-		int paddingTop;
-		int paddingBottom;
-		int paddingLeft;
-		int paddingRight;
 		int blockWidows;
 		int blockOrphans;
 
 		String id;
-
-		ColorType borderTopColor;
-		int borderTopWidth;
-		int borderTopStyle;
-		ColorType borderBottomColor;
-		int borderBottomWidth;
-		int borderBottomStyle;
-		ColorType borderLeftColor;
-		int borderLeftWidth;
-		int borderLeftStyle;
-		ColorType borderRightColor;
-		int borderRightWidth;
-		int borderRightStyle;
-
-		int hyphenate;
-		char hyphenationChar;
-		int hyphenationPushCharacterCount;
-		int hyphenationRemainCharacterCount;
-		String language;
-		String country;
-	int span;
+	        int span;
 
 		BlockArea blockArea;
 
@@ -135,28 +109,10 @@ public class Block extends FObjMixed {
 				}
 
 				if (this.marker == START) {
-						String fontFamily =
-							this.properties.get("font-family").getString();
-						String fontStyle =
-							this.properties.get("font-style").getString();
-						String fontWeight =
-							this.properties.get("font-weight").getString();
-						int fontSize =
-							this.properties.get("font-size").getLength().mvalue();
-
-						// font-variant support
-						// added by Eric SCHAEFFER
-						int fontVariant =
-							this.properties.get("font-variant").getEnum();
-
-						this.fs = new FontState(area.getFontInfo(), fontFamily,
-																		fontStyle, fontWeight, fontSize, fontVariant);
 
 						this.align = this.properties.get("text-align").getEnum();
 						this.alignLast =
 							this.properties.get("text-align-last").getEnum();
-						this.breakBefore =
-							this.properties.get("break-before").getEnum();
 						this.breakAfter = this.properties.get("break-after").getEnum();
 						this.lineHeight = this.properties.get(
 																"line-height").getLength().mvalue();
@@ -172,112 +128,29 @@ public class Block extends FObjMixed {
 																"text-indent").getLength().mvalue();
 						this.keepWithNext =
 							this.properties.get("keep-with-next").getEnum();
-						this.backgroundColor = this.properties.get(
-																		 "background-color").getColorType();
-						this.paddingTop =
-							this.properties.get("padding").getLength().mvalue();
+						this.backgroundColor = this.properties.get("background-color").getColorType();
 
-						this.paddingLeft = this.paddingTop;
-						this.paddingRight = this.paddingTop;
-						this.paddingBottom = this.paddingTop;
-						if (this.paddingTop == 0) {
-								this.paddingTop = this.properties.get(
-																		"padding-top").getLength().mvalue();
-								this.paddingLeft = this.properties.get(
-																		 "padding-left").getLength().mvalue();
-								this.paddingBottom = this.properties.get(
-																			 "padding-bottom").getLength().mvalue();
-								this.paddingRight = this.properties.get(
-																			"padding-right").getLength().mvalue();
-						}
-						this.borderTopColor =
-							this.properties.get("border-color").getColorType();
-						this.borderBottomColor = this.borderTopColor;
-						this.borderLeftColor = this.borderTopColor;
-						this.borderRightColor = this.borderTopColor;
-						if (this.borderTopColor == null) {
-								this.borderTopColor = this.properties.get(
-																				"border-top-color").getColorType();
-								this.borderBottomColor = this.properties.get(
-																					 "border-bottom-color").getColorType();
-								this.borderLeftColor = this.properties.get(
-																				 "border-left-color").getColorType();
-								this.borderRightColor = this.properties.get(
-																					"border-right-color").getColorType();
-						}
-						this.borderTopWidth = this.properties.get(
-																		"border-width").getLength().mvalue();
-						this.borderBottomWidth = this.borderTopWidth;
-						this.borderLeftWidth = this.borderTopWidth;
-						this.borderRightWidth = this.borderTopWidth;
-						if (this.borderTopWidth == 0) {
-								this.borderTopWidth = this.properties.get(
-																				"border-top-width").getLength().mvalue();
-								this.borderBottomWidth = this.properties.get(
-																					 "border-bottom-width").getLength().mvalue();
-								this.borderLeftWidth = this.properties.get(
-																				 "border-left-width").getLength().mvalue();
-								this.borderRightWidth = this.properties.get(
-																					"border-right-width").getLength().mvalue();
-						}
-						this.borderTopStyle =
-							this.properties.get("border-style").getEnum();
-						this.borderBottomStyle = this.borderTopStyle;
-						this.borderLeftStyle = this.borderTopStyle;
-						this.borderRightStyle = this.borderTopStyle;
-						if (this.borderTopStyle == 0) {
-								this.borderTopStyle =
-									this.properties.get("border-top-style").getEnum();
-								this.borderBottomStyle = this.properties.get(
-																					 "border-bottom-style").getEnum();
-								this.borderLeftStyle = this.properties.get(
-																				 "border-left-style").getEnum();
-								this.borderRightStyle = this.properties.get(
-																					"border-right-style").getEnum();
-						}
 						this.blockWidows =
 							this.properties.get("widows").getNumber().intValue();
 						this.blockOrphans =
 							this.properties.get("orphans").getNumber().intValue();
 
-						this.hyphenate = this.properties.get("hyphenate").getEnum();
-						this.hyphenationChar = this.properties.get("hyphenation-character").getCharacter();
-						this.hyphenationPushCharacterCount = this.properties.get(
-																									 "hyphenation-push-character-count").getNumber().
-																								 intValue();
-						this.hyphenationRemainCharacterCount = this.properties.get(
-																										 "hyphenation-remain-character-count").getNumber().
-																									 intValue();
-						this.language = this.properties.get("language").getString();
-						this.country = this.properties.get("country").getString();
+
 
 						this.id = this.properties.get("id").getString();
 
 						if (area instanceof BlockArea) {
-								area.end();
+						    area.end();
 						}
 
 						if(area.getIDReferences() != null)
 								area.getIDReferences().createID(id);
 
 						this.marker = 0;
-
-						if (breakBefore == BreakBefore.PAGE) {
-								return new Status(Status.FORCE_PAGE_BREAK);
-						}
-
-						if (breakBefore == BreakBefore.ODD_PAGE) {
-								return new Status(Status.FORCE_PAGE_BREAK_ODD);
-						}
-
-						if (breakBefore == BreakBefore.EVEN_PAGE) {
-								return new Status(Status.FORCE_PAGE_BREAK_EVEN);
-						}
-
-						if (breakBefore == BreakBefore.COLUMN) {
-								return new Status(Status.FORCE_COLUMN_BREAK);
-						}
-
+						int breakStatus;
+  if ((breakStatus = propMgr.checkBreakBefore()) != Status.OK) {
+    return new Status(breakStatus);
+  }
 						int numChildren = this.children.size();
 						for (int i = 0; i < numChildren; i++) {
 								FONode fo = (FONode) children.elementAt(i);
@@ -323,23 +196,14 @@ public class Block extends FObjMixed {
 				}
 
 				int spaceLeft = area.spaceLeft();
-				this.blockArea = new BlockArea(fs, area.getAllocationWidth(),
-																			 area.spaceLeft(), startIndent, endIndent, textIndent,
-																			 align, alignLast, lineHeight);
+				this.blockArea = new BlockArea(propMgr.getFontState(area.getFontInfo()), area.getAllocationWidth(),
+								area.spaceLeft(), startIndent, endIndent, textIndent,
+								align, alignLast, lineHeight);
 				this.blockArea.setParent(area);	// BasicLink needs it
 				blockArea.setPage(area.getPage());
 				blockArea.setBackgroundColor(backgroundColor);
-				blockArea.setPadding(paddingTop, paddingLeft, paddingBottom,
-														 paddingRight);
-				blockArea.setBorderStyle(borderTopStyle, borderLeftStyle,
-																 borderBottomStyle, borderRightStyle);
-				blockArea.setBorderWidth(borderTopWidth, borderLeftWidth,
-																 borderBottomWidth, borderRightWidth);
-				blockArea.setBorderColor(borderTopColor, borderLeftColor,
-																 borderBottomColor, borderRightColor);
-				blockArea.setHyphenation(language, country, hyphenate,
-																 hyphenationChar, hyphenationPushCharacterCount,
-																 hyphenationRemainCharacterCount);
+				blockArea.setBorderAndPadding(propMgr.getBorderAndPadding());
+				blockArea.setHyphenation(propMgr.getHyphenationProps());
 				blockArea.start();
 
 				blockArea.setAbsoluteHeight(area.getAbsoluteHeight());
