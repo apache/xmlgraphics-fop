@@ -1,13 +1,21 @@
 /*
  * $Id$
- * Copyright (C) 2001 The Apache Software Foundation. All rights reserved.
+ * Copyright (C) 2001-2003 The Apache Software Foundation. All rights reserved.
  * For details on use and redistribution please refer to the
  * LICENSE file included with these sources.
  */
 
 package org.apache.fop.apps;
 
+/*
+ * The main application class for the FOP command line interface (CLI).
+ */
 public class Fop {
+
+    /*
+     * The main routine for the command line interface
+     * @param args the command line parameters
+     */
     public static void main(String[] args) {
         CommandLineOptions options = null;
 
@@ -16,7 +24,7 @@ public class Fop {
             Starter starter = options.getStarter();
             starter.run();
         } catch (FOPException e) {
-            if("null".equals("" + e.getMessage())) {
+            if (e.getMessage()==null) {
                 System.err.println("Exception occured with a null error message");
             } else {
                 System.err.println("" + e.getMessage());

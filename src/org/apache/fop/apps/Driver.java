@@ -1,6 +1,6 @@
 /*
  * $Id$
- * Copyright (C) 2001 The Apache Software Foundation. All rights reserved.
+ * Copyright (C) 2001-2003 The Apache Software Foundation. All rights reserved.
  * For details on use and redistribution please refer to the
  * LICENSE file included with these sources.
  */
@@ -8,37 +8,39 @@
 package org.apache.fop.apps;
 
 // FOP
-import org.apache.fop.fo.FOUserAgent;
-import org.apache.fop.fo.FOTreeBuilder;
 import org.apache.fop.fo.ElementMapping;
+import org.apache.fop.fo.FOTreeBuilder;
+import org.apache.fop.fo.FOUserAgent;
 import org.apache.fop.render.Renderer;
 import org.apache.fop.tools.DocumentInputSource;
 import org.apache.fop.tools.DocumentReader;
 
-import org.apache.fop.render.pdf.PDFRenderer;
 
 // Avalon
 import org.apache.avalon.framework.logger.ConsoleLogger;
-import org.apache.avalon.framework.logger.Logger;
 import org.apache.avalon.framework.logger.LogEnabled;
-import org.apache.avalon.framework.logger.AbstractLogEnabled;
+import org.apache.avalon.framework.logger.Logger;
 
 // DOM
 import org.w3c.dom.Document;
-import org.w3c.dom.Node;
-import org.w3c.dom.NamedNodeMap;
-import org.w3c.dom.Attr;
 
 // SAX
 import org.xml.sax.ContentHandler;
 import org.xml.sax.InputSource;
-import org.xml.sax.XMLReader;
 import org.xml.sax.SAXException;
-import org.xml.sax.helpers.AttributesImpl;
+import org.xml.sax.XMLReader;
+import javax.xml.parsers.ParserConfigurationException;
 
 // Java
-import java.io.*;
-import java.util.*;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.Reader;
+import java.util.Enumeration;
+import java.util.Hashtable;
+import java.util.Vector;
 
 /**
  * Primary class that drives overall FOP process.
@@ -142,17 +144,17 @@ public class Driver implements LogEnabled {
     /**
      * the FO tree builder
      */
-    private FOTreeBuilder _treeBuilder;
+    private FOTreeBuilder treeBuilder;
 
     /**
      * the renderer type code given by setRenderer
      */
-    private int _rendererType;
+    private int rendererType;
 
     /**
      * the renderer to use to output the area tree
      */
-    private Renderer _renderer;
+    private Renderer renderer;
 
     /**
      * the structure handler
@@ -162,17 +164,17 @@ public class Driver implements LogEnabled {
     /**
      * the source of the FO file
      */
-    private InputSource _source;
+    private InputSource source;
 
     /**
      * the stream to use to output the results of the renderer
      */
-    private OutputStream _stream;
+    private OutputStream stream;
 
     /**
      * The XML parser to use when building the FO tree
      */
-    private XMLReader _reader;
+    private XMLReader reader;
 
     /**
      * the system resources that FOP will use
@@ -182,7 +184,8 @@ public class Driver implements LogEnabled {
 
     public static final String getParserClassName() {
         try {
-            return javax.xml.parsers.SAXParserFactory.newInstance().newSAXParser().getXMLReader().getClass().getName();
+            return javax.xml.parsers.SAXParserFactory.newInstance()
+                .newSAXParser().getXMLReader().getClass().getName();
         } catch (javax.xml.parsers.ParserConfigurationException e) {
             return null;
         } catch (org.xml.sax.SAXException e) {
@@ -194,19 +197,19 @@ public class Driver implements LogEnabled {
      * create a new Driver
      */
     public Driver() {
-        _stream = null;
+        stream = null;
     }
 
     public Driver(InputSource source, OutputStream stream) {
         this();
-        _source = source;
-        _stream = stream;
+        this.source = source;
+        this.stream = stream;
     }
 
     public void initialize() {
-        _stream = null;
-        _treeBuilder = new FOTreeBuilder();
-        _treeBuilder.setUserAgent(getUserAgent());
+        stream = null;
+        treeBuilder = new FOTreeBuilder();
+        treeBuilder.setUserAgent(getUserAgent());
         setupDefaultMappings();
     }
 
@@ -218,7 +221,7 @@ public class Driver implements LogEnabled {
         if (userAgent == null) {
             userAgent = new FOUserAgent();
             userAgent.enableLogging(getLogger());
-            userAgent.setBaseURL("file:/.");
+            userAgent.setBaseURL("");
         }
         return userAgent;
     }
@@ -247,14 +250,14 @@ public class Driver implements LogEnabled {
      * The output stream is cleared. The renderer is cleared.
      */
     public synchronized void reset() {
-        _source = null;
-        _stream = null;
-        _reader = null;
-        _treeBuilder.reset();
+        source = null;
+        stream = null;
+        reader = null;
+        treeBuilder.reset();
     }
 
     public boolean hasData() {
-        return (_treeBuilder.hasData());
+        return (treeBuilder.hasData());
     }
 
     /**
@@ -264,7 +267,7 @@ public class Driver implements LogEnabled {
      *
      */
     public void setOutputStream(OutputStream stream) {
-        _stream = stream;
+        this.stream = stream;
     }
 
     /**
@@ -273,15 +276,16 @@ public class Driver implements LogEnabled {
      * @see DocumentInputSource
      */
     public void setInputSource(InputSource source) {
-        _source = source;
+        this.source = source;
     }
 
     /**
      * Sets the reader used when reading in the source. If not set,
      * this defaults to a basic SAX parser.
+     * @param reader the reader to use.
      */
     public void setXMLReader(XMLReader reader) {
-        _reader = reader;
+        this.reader = reader;
     }
 
     /**
@@ -301,29 +305,31 @@ public class Driver implements LogEnabled {
                 String str = (String)providers.nextElement();
                 try {
                     addElementMapping(str);
-                } catch (IllegalArgumentException e) {}
+                } catch (IllegalArgumentException e) {
+                }
 
             }
         }
     }
 
     /**
-     * Set the rendering type to use. Must be one of
+     * Shortcut to set the rendering type to use. Must be one of
      * <ul>
-     * <li>RENDER_PDF
-     * <li>RENDER_AWT
-     * <li>RENDER_MIF
-     * <li>RENDER_XML
-     * <li>RENDER_PCL
-     * <li>RENDER_PS
-     * <li>RENDER_TXT
-     * <li>RENDER_SVG
-     * <li>RENDER_RTF
+     * <li>RENDER_PDF</li>
+     * <li>RENDER_AWT</li>
+     * <li>RENDER_MIF</li>
+     * <li>RENDER_XML</li>
+     * <li>RENDER_PCL</li>
+     * <li>RENDER_PS</li>
+     * <li>RENDER_TXT</li>
+     * <li>RENDER_SVG</li>
+     * <li>RENDER_RTF</li>
      * </ul>
      * @param renderer the type of renderer to use
+     * @throws IllegalArgumentException if an unsupported renderer type was required.
      */
     public void setRenderer(int renderer) throws IllegalArgumentException {
-        _rendererType = renderer;
+        rendererType = renderer;
         switch (renderer) {
         case RENDER_PDF:
             setRenderer("org.apache.fop.render.pdf.PDFRenderer");
@@ -364,15 +370,15 @@ public class Driver implements LogEnabled {
      */
     public void setRenderer(Renderer renderer) {
         renderer.setUserAgent(getUserAgent());
-        _renderer = renderer;
+        this.renderer = renderer;
     }
 
     public Renderer getRenderer() {
-        return _renderer;
+        return renderer;
     }
 
     /**
-     * @deprecated use renderer.setProducer(version) + setRenderer(renderer) or just setRenderer(renderer_type) which will use the default producer string.
+     * @deprecated use renderer.setProducer(version) + setRenderer(renderer) or just setRenderer(rendererType) which will use the default producer string.
      * @see #setRenderer(int)
      * @see #setRenderer(Renderer)
      */
@@ -391,26 +397,23 @@ public class Driver implements LogEnabled {
     public void setRenderer(String rendererClassName)
     throws IllegalArgumentException {
         try {
-            _renderer =
+            renderer =
                 (Renderer)Class.forName(rendererClassName).newInstance();
-            if (_renderer instanceof LogEnabled) {
-                ((LogEnabled)_renderer).enableLogging(getLogger());
+            if (renderer instanceof LogEnabled) {
+                ((LogEnabled)renderer).enableLogging(getLogger());
             }
-            _renderer.setProducer(Version.getVersion());
-            _renderer.setUserAgent(getUserAgent());
+            renderer.setProducer(Version.getVersion());
+            renderer.setUserAgent(getUserAgent());
         } catch (ClassNotFoundException e) {
             throw new IllegalArgumentException("Could not find "
                                                + rendererClassName);
-        }
-        catch (InstantiationException e) {
+        } catch (InstantiationException e) {
             throw new IllegalArgumentException("Could not instantiate "
                                                + rendererClassName);
-        }
-        catch (IllegalAccessException e) {
+        } catch (IllegalAccessException e) {
             throw new IllegalArgumentException("Could not access "
                                                + rendererClassName);
-        }
-        catch (ClassCastException e) {
+        } catch (ClassCastException e) {
             throw new IllegalArgumentException(rendererClassName
                                                + " is not a renderer");
         }
@@ -423,14 +426,16 @@ public class Driver implements LogEnabled {
      * @param mapping the element mappingto add
      */
     public void addElementMapping(ElementMapping mapping) {
-        mapping.addToBuilder(_treeBuilder);
+        mapping.addToBuilder(treeBuilder);
     }
 
     /**
-     * add the element mapping with the given class name
+     * Add the element mapping with the given class name.
+     * @param the class name representing the element mapping.
+     * @throws IllegalArgumentException if there was not such element mapping.
      */
     public void addElementMapping(String mappingClassName)
-    throws IllegalArgumentException {
+        throws IllegalArgumentException {
         try {
             ElementMapping mapping =
                 (ElementMapping)Class.forName(mappingClassName).newInstance();
@@ -438,16 +443,13 @@ public class Driver implements LogEnabled {
         } catch (ClassNotFoundException e) {
             throw new IllegalArgumentException("Could not find "
                                                + mappingClassName);
-        }
-        catch (InstantiationException e) {
+        } catch (InstantiationException e) {
             throw new IllegalArgumentException("Could not instantiate "
                                                + mappingClassName);
-        }
-        catch (IllegalAccessException e) {
+        } catch (IllegalAccessException e) {
             throw new IllegalArgumentException("Could not access "
                                                + mappingClassName);
-        }
-        catch (ClassCastException e) {
+        } catch (ClassCastException e) {
             throw new IllegalArgumentException(mappingClassName
                                                + " is not an ElementMapping");
         }
@@ -459,62 +461,73 @@ public class Driver implements LogEnabled {
      * Used in situations where SAX is used but not via a FOP-invoked
      * SAX parser. A good example is an XSLT engine that fires SAX
      * events but isn't a SAX Parser itself.
+     * @return a content handler for handling the SAX events.
      */
     public ContentHandler getContentHandler() {
         // TODO - do this stuff in a better way
-        if(_rendererType == RENDER_MIF) {
-            structHandler = new org.apache.fop.mif.MIFHandler(_stream);
-        } else if(_rendererType == RENDER_RTF) {
-            structHandler = new org.apache.fop.rtf.renderer.RTFHandler(_stream);
+        // PIJ: I guess the structure handler should be created by the renderer.
+        if (rendererType == RENDER_MIF) {
+            structHandler = new org.apache.fop.mif.MIFHandler(stream);
+        } else if (rendererType == RENDER_RTF) {
+            structHandler = new org.apache.fop.rtf.renderer.RTFHandler(stream);
         } else {
-            if (_renderer == null) throw new Error("_renderer not set when using standard structHandler");
-            structHandler = new LayoutHandler(_stream, _renderer, true);
+            if (renderer == null) {
+                throw new Error("Renderer not set when using standard structHandler");
+            }
+            structHandler = new LayoutHandler(stream, renderer, true);
         }
 
         structHandler.enableLogging(getLogger());
 
-        _treeBuilder.setUserAgent(getUserAgent());
-        _treeBuilder.setStructHandler(structHandler);
+        treeBuilder.setUserAgent(getUserAgent());
+        treeBuilder.setStructHandler(structHandler);
 
-        return _treeBuilder;
+        return treeBuilder;
     }
 
     /**
-     * Build the formatting object tree using the given SAX Parser and
-     * SAX InputSource
+     * Render the FO document read by a SAX Parser from an InputSource.
+     * @param parser the SAX parser.
+     * @param source the input source the parser reads from.
+     * @throws FOPException if anything goes wrong.
      */
     public synchronized void render(XMLReader parser, InputSource source)
-    throws FOPException {
+        throws FOPException {
         parser.setContentHandler(getContentHandler());
         try {
             parser.parse(source);
         } catch (SAXException e) {
             if (e.getException() instanceof FOPException) {
+                // Undo exception tunneling.
                 throw (FOPException)e.getException();
             } else {
                 throw new FOPException(e);
             }
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
             throw new FOPException(e);
         }
     }
 
     /**
-     * Build the formatting object tree using the given DOM Document
+     * Render the FO ducument represented by a DOM Document.
+     * @param document the DOM document to read from
+     * @throws FOPException if anything goes wrong.
      */
     public synchronized void render(Document document)
-    throws FOPException {
-
+        throws FOPException {
         try {
             DocumentInputSource source = new DocumentInputSource(document);
             DocumentReader reader = new DocumentReader();
             reader.setContentHandler(getContentHandler());
             reader.parse(source);
         } catch (SAXException e) {
-            throw new FOPException(e);
-        }
-        catch (IOException e) {
+            if (e.getException() instanceof FOPException) {
+                // Undo exception tunneling.
+                throw (FOPException)e.getException();
+            } else {
+                throw new FOPException(e);
+            }
+        } catch (IOException e) {
             throw new FOPException(e);
         }
 
@@ -522,31 +535,40 @@ public class Driver implements LogEnabled {
 
     /**
      * Runs the formatting and renderering process using the previously set
-     * inputsource and outputstream
+     * parser, input source, renderer and output stream.
+     * If the renderer was not set, default to PDF.
+     * If no parser was set, and the input source is not a dom document,
+     * get a default SAX parser.
+     * @throws IOException in case of IO errors.
+     * @throws FOPException if anything else goes wrong.
      */
-    public synchronized void run() throws IOException, FOPException {
-        if (_renderer == null) {
+    public synchronized void run()
+        throws IOException, FOPException {
+        if (renderer == null) {
             setRenderer(RENDER_PDF);
         }
 
-        if (_source == null) {
+        if (source == null) {
             throw new FOPException("InputSource is not set.");
         }
 
-        if (_reader == null) {
-            if (!(_source instanceof DocumentInputSource)) {
+        if (reader == null) {
+            if (!(source instanceof DocumentInputSource)) {
                 try {
-                _reader = javax.xml.parsers.SAXParserFactory.newInstance().newSAXParser().getXMLReader();
-                } catch(Exception e) {
+                    reader = javax.xml.parsers.SAXParserFactory.newInstance()
+                        .newSAXParser().getXMLReader();
+                } catch (SAXException e) {
+                    throw new FOPException(e);
+                } catch (ParserConfigurationException e) {
                     throw new FOPException(e);
                 }
             }
         }
 
-        if (_source instanceof DocumentInputSource) {
-            render(((DocumentInputSource)_source).getDocument());
+        if (source instanceof DocumentInputSource) {
+            render(((DocumentInputSource)source).getDocument());
         } else {
-            render(_reader, _source);
+            render(reader, source);
         }
     }
 
@@ -561,7 +583,7 @@ public class Driver implements LogEnabled {
  */
 class Service {
 
-    static Hashtable providerMap = new Hashtable();
+    static private Hashtable providerMap = new Hashtable();
 
     public static synchronized Enumeration providers(Class cls) {
         ClassLoader cl = cls.getClassLoader();

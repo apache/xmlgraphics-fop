@@ -1,6 +1,6 @@
 /*
  * $Id$
- * Copyright (C) 2001 The Apache Software Foundation. All rights reserved.
+ * Copyright (C) 2001-2003 The Apache Software Foundation. All rights reserved.
  * For details on use and redistribution please refer to the
  * LICENSE file included with these sources.
  */
@@ -9,13 +9,10 @@ package org.apache.fop.apps;
 
 // SAX
 import org.xml.sax.XMLReader;
-import org.xml.sax.InputSource;
-import org.xml.sax.SAXException;
-import org.xml.sax.SAXParseException;
 
 // Java
-import java.io.*;
-import java.net.URL;
+import java.io.BufferedOutputStream;
+import java.io.FileOutputStream;
 
 
 /**
@@ -25,7 +22,7 @@ import java.net.URL;
  */
 public class CommandLineStarter extends Starter {
 
-    CommandLineOptions commandLineOptions;
+    protected CommandLineOptions commandLineOptions;
 
     public CommandLineStarter(CommandLineOptions commandLineOptions)
     throws FOPException {
@@ -54,7 +51,7 @@ public class CommandLineStarter extends Starter {
             BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(
                                       commandLineOptions.getOutputFile()));
             driver.setOutputStream(bos);
-            if(driver.getRenderer() != null) {
+            if (driver.getRenderer() != null) {
                 driver.getRenderer().setOptions(
               commandLineOptions.getRendererOptions());
             }

@@ -18,6 +18,11 @@ import javax.xml.parsers.ParserConfigurationException;
 import java.net.URL;
 import java.io.File;
 
+/*
+ * Abstract super class for input handlers.
+ * Should be used to abstract the various possibilities on how input
+ * can be provided to FOP (but actually isn't).
+ */
 public abstract class InputHandler {
 
     public abstract InputSource getInputSource();
@@ -53,6 +58,7 @@ public abstract class InputHandler {
      * Creates <code>XMLReader</code> object using default
      * <code>SAXParserFactory</code>
      * @return the created <code>XMLReader</code>
+     * @throws FOPException if the parser couldn't be created or configured for proper operation.
      */
     protected static XMLReader createParser() throws FOPException {
         try {

@@ -1,6 +1,6 @@
 /*
  * $Id$
- * Copyright (C) 2001-2002 The Apache Software Foundation. All rights reserved.
+ * Copyright (C) 2001-2003 The Apache Software Foundation. All rights reserved.
  * For details on use and redistribution please refer to the
  * LICENSE file included with these sources.
  */
@@ -13,8 +13,8 @@ import org.apache.fop.viewer.PreviewDialog;
 import org.apache.fop.viewer.Translator;
 
 //Java
-import javax.swing.UIManager;
-import java.awt.*;
+import java.awt.Dimension;
+import java.awt.Toolkit;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.Locale;
@@ -36,7 +36,13 @@ public class AWTStarter extends CommandLineStarter {
     private Driver driver;
     private XMLReader parser;
 
-    public AWTStarter(CommandLineOptions commandLineOptions) throws FOPException {
+    /**
+     * Construct an AWTStarter
+     * @param commandLineOptions the parsed command line options
+     * @throws FOPException if anything goes wrong during initialization.
+     */
+    public AWTStarter(CommandLineOptions commandLineOptions)
+        throws FOPException {
         super(commandLineOptions);
         init();
     }
@@ -44,10 +50,11 @@ public class AWTStarter extends CommandLineStarter {
     private void init() throws FOPException {
         //Creates Translator according to the language
         String language = commandLineOptions.getLanguage();
-        if (language == null)
+        if (language == null) {
             translator = new Translator(Locale.getDefault());
-        else
+        } else {
             translator = new Translator(new Locale(language, ""));
+        }
         AWTRenderer renderer = new AWTRenderer(translator);
         frame = createPreviewDialog(renderer, translator);
         renderer.setComponent(frame);
@@ -61,6 +68,7 @@ public class AWTStarter extends CommandLineStarter {
 
     /**
      * Runs formatting.
+     * @throws FOPException FIXME should not happen.
      */
     public void run() throws FOPException {
         driver.reset();

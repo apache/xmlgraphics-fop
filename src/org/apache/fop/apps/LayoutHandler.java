@@ -8,19 +8,23 @@
 package org.apache.fop.apps;
 
 // Java
-import java.io.OutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.util.List;
 
 // SAX
 import org.xml.sax.SAXException;
 
 // FOP
-import org.apache.fop.layout.FontInfo;
-import org.apache.fop.area.*;
-import org.apache.fop.render.Renderer;
-import org.apache.fop.fo.pagination.PageSequence;
+import org.apache.fop.area.AreaTree;
+import org.apache.fop.area.AreaTreeModel;
+import org.apache.fop.area.StorePagesModel;
+import org.apache.fop.area.Title;
+import org.apache.fop.area.TreeExt;
 import org.apache.fop.fo.pagination.LayoutMasterSet;
+import org.apache.fop.fo.pagination.PageSequence;
+import org.apache.fop.layout.FontInfo;
+import org.apache.fop.render.Renderer;
 
 /**
  * Layout handler that receives the structure events.
