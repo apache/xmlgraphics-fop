@@ -1,5 +1,53 @@
 <?xml version="1.0"?>
 <!-- ===========================================================================
+ ============================================================================
+                    The Apache Software License, Version 1.1
+ ============================================================================
+ 
+ Copyright (C) 1999-2003 The Apache Software Foundation. All rights reserved.
+ 
+ Redistribution and use in source and binary forms, with or without modifica-
+ tion, are permitted provided that the following conditions are met:
+ 
+ 1. Redistributions of source code must retain the above copyright notice,
+    this list of conditions and the following disclaimer.
+ 
+ 2. Redistributions in binary form must reproduce the above copyright notice,
+    this list of conditions and the following disclaimer in the documentation
+    and/or other materials provided with the distribution.
+ 
+ 3. The end-user documentation included with the redistribution, if any, must
+    include the following acknowledgment: "This product includes software
+    developed by the Apache Software Foundation (http://www.apache.org/)."
+    Alternately, this acknowledgment may appear in the software itself, if
+    and wherever such third-party acknowledgments normally appear.
+ 
+ 4. The names "FOP" and "Apache Software Foundation" must not be used to
+    endorse or promote products derived from this software without prior
+    written permission. For written permission, please contact
+    apache@apache.org.
+ 
+ 5. Products derived from this software may not be called "Apache", nor may
+    "Apache" appear in their name, without prior written permission of the
+    Apache Software Foundation.
+ 
+ THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESSED OR IMPLIED WARRANTIES,
+ INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND
+ FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
+ APACHE SOFTWARE FOUNDATION OR ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
+ INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLU-
+ DING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS
+ OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON
+ ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
+ THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ ============================================================================
+ 
+ This software consists of voluntary contributions made by many individuals
+ on behalf of the Apache Software Foundation and was originally created by
+ James Tauber <jtauber@jtauber.com>. For more information on the Apache
+ Software Foundation, please see <http://www.apache.org/>.
+
 
                            * ================== *
                            |  FOP build system  |
@@ -40,6 +88,7 @@ list of possible build targets.
       <property file="build-local.properties"/>
   <property file="build.properties"/>
 
+<!--
   <fileset dir="${basedir}" id="dist.bin">
     <include name="conf/**"/>
     <include name="docs/**"/>
@@ -78,32 +127,32 @@ list of possible build targets.
     <include name="fop.bat"/>
     <include name="fop.sh"/>
   </fileset>
+-->
 
   <path id="libs-build-classpath">
-    <fileset dir="lib">
+    <fileset dir="${basedir}/lib">
       <include name="*.jar"/>
     </fileset>
   </path>
 
   <path id="libs-run-classpath">
-    <fileset dir="lib">
+    <fileset dir="${basedir}/lib">
       <include name="*.jar"/>
       <exclude name="ant.jar"/>
     </fileset>
-    <fileset dir="build">
+    <fileset dir="${basedir}/build">
       <include name="fop.jar"/>
     </fileset>
   </path>
 
   <path id="checkstylepath">
-    <fileset dir="lib">
+    <fileset dir="${basedir}/lib">
       <include name="checkstyle-all-*.jar"/>
     </fileset>
   </path>
 
   <patternset id="base-sources">
     <include name="**/*.java"/>
-    <exclude name="**/*${ignore_this}"/>
   </patternset>
 
   <!-- =================================================================== -->
@@ -154,6 +203,7 @@ list of possible build targets.
     <!-- Build directories -->
     <property name="build.dir" value="${basedir}/build"/>
     <property name="build.dest" value="${build.dir}/classes"/>
+    <property name="build.conf" value="${build.dest}/conf"/>
     <property name="build.tmp" value="${build.dir}/tmp"/>
     <property name="build.javadocs" value="${build.dir}/javadocs"/>
     <property name="build.examples.dir" value="${build.dir}/examples"/>
@@ -227,6 +277,7 @@ list of possible build targets.
     
     <property name="textfontencoding" value="WinAnsiEncoding"/>
 
+<!--
     <property name="dist.bin.dir" value="${basedir}/dist-bin"/>
     <property name="dist.src.dir" value="${basedir}/dist-src"/>
     <property name="dist.bin.result.dir"
@@ -234,11 +285,8 @@ list of possible build targets.
     <property name="dist.src.result.dir"
                                   value="${dist.src.dir}/${build.tag.name}"/>
 
-    <property name="ignore_this" value="ignore_this.dummy"/>
-    <property name="jimi" value="JimiImage.java"/>
-    <property name="jai" value="JAIImage.java"/>
-
     <property name="xslt" value="org.apache.xalan.xslt.Process"/>
+-->
 
     <!-- Font generation properties -->
     <property name="encodings.xml" value="${src.codegen}/encodings.xml"/>
@@ -270,11 +318,9 @@ list of possible build targets.
       <include name="Zapf*.java"/>
     </fileset>
 
-    <!-- CountrtLanguageScript.java generation properties -->
+    <!-- CountryLanguageScript.java generation properties -->
     <property name="xml-lang.xml" value="${src.codegen}/xml-lang.xml"/>
     <property name="xml-lang.xsl" value="${src.codegen}/xml-lang.xsl"/>
-
-    <property name="tools.pkg" value="org/apache/fop/tools"/>
 
     <property name="main.class" value="org.apache.fop.apps.Fop"/>
 
@@ -395,16 +441,24 @@ list of possible build targets.
   <!-- =================================================================== -->
   <!-- Compiles the source directory                                       -->
   <!-- =================================================================== -->
-  <target name="compile-src" depends="codegen">
+  <target name="compile-src" depends="init">
     <echo message="Compiling the sources "/>
     <!-- create directories -->
+    <mkdir dir="${build.conf}"/>
+    <!-- Copy the conf directory files into build -->
+    <copy todir="${build.conf}">
+      <fileset dir="${conf.dir}"/>
+    </copy>
+    <move todir="${build.conf}">
+      <fileset dir="${build.conf}">
+        <include name="cvsignore"/>
+      </fileset>
+      <mapper type="glob" from="*" to=".*"/>
+    </move>
 
     <javac destdir="${build.dest}" debug="${debug}" deprecation="${deprecation}" optimize="${optimize}">
       <src path="${src.java}"/>
       <src path="${src.codegen}"/>
-      <patternset refid="exclude-jce-dependencies"/>
-      <patternset refid="exclude-jai"/>
-      <patternset refid="exclude-jimi"/>
       <classpath refid="libs-build-classpath"/>
       <patternset refid="base-sources"/>
     </javac>
@@ -530,57 +584,20 @@ list of possible build targets.
   </target>
 
   <!-- =================================================================== -->
-  <!-- Creates the distribution                                            -->
-  <!-- =================================================================== -->
-  <target name="dist" depends="dist-src,dist-bin" description="Generates the distribution package"/>
-
-  <target name="dist-bin" depends="all">
-    <echo message="Building the binary distribution files (zip,tar)"/>
-    <mkdir dir="${dist.bin.result.dir}"/>
-    <copy todir="${dist.bin.result.dir}">
-      <fileset refid="dist.bin"/>
-      <fileset refid="dist.bin.lib"/>
-    </copy>
-    <mkdir dir="${dist.bin.result.dir}/build"/>
-    <copy todir="${dist.bin.result.dir}/build" file="build/fop.jar"/>
-    <chmod file="${dist.bin.result.dir}/fop.sh" perm="ugo+rx"/>
-
-    <zip zipfile="${Name}-${version}-bin.zip" basedir="${dist.bin.dir}" includes="**"/>
-    <tar tarfile="${Name}-${version}-bin.tar" basedir="${dist.bin.dir}" includes="**"/>
-    <gzip zipfile="${Name}-${version}-bin.tar.gz" src="${Name}-${version}-bin.tar"/>
-    <delete file="${Name}-${version}-bin.tar"/>
-  </target>
-
-  <target name="dist-src" depends="all, javadocs">
-    <echo message="Building the source distribution files (zip,tar)"/>
-    <mkdir dir="${dist.src.result.dir}"/>
-    <copy todir="${dist.src.result.dir}">
-      <fileset refid="dist.src"/>
-    </copy>
-    <copy todir="${dist.src.result.dir}/javadocs">
-      <fileset dir="${build.javadocs}"/>
-    </copy>
-    <mkdir dir="${dist.src.result.dir}/build"/>
-    <copy todir="${dist.src.result.dir}/build" file="build/fop.jar"/>
-    <chmod file="${dist.src.result.dir}/build.sh" perm="ugo+rx"/>
-    <chmod file="${dist.src.result.dir}/fop.sh" perm="ugo+rx"/>
-
-    <zip zipfile="${Name}-${version}-src.zip" basedir="${dist.src.dir}" includes="**"/>
-    <tar tarfile="${Name}-${version}-src.tar" basedir="${dist.src.dir}" includes="**"/>
-    <gzip zipfile="${Name}-${version}-src.tar.gz" src="${Name}-${version}-src.tar"/>
-    <delete file="${Name}-${version}-src.tar"/>
-  </target>
-
-  <!-- =================================================================== -->
   <!-- Clean targets                                                       -->
   <!-- =================================================================== -->
   <target name="clean" depends="pre-init" description="Cleans the build directory">
-    <delete dir="${build.dest}"/>
-    <delete dir="${build.tmp}"/>
-    <delete dir="${build.javadocs}"/>
-    <delete dir="${build.examples.dir}"/>
+    <delete dir="${build.conf}"/>
+    <delete>
+      <fileset dir="${build.dir}" defaultexcludes="no">
+        <exclude name="**/CVS"/>
+        <exclude name="**CVS/*"/>
+        <exclude name=".cvsignore"/>
+      </fileset>
+    </delete>
   </target>
 
+<!--
   <target name="distclean" depends="clean" description="Cleans the distribution target directories">
     <delete dir="${dist.src.dir}"/>
     <delete dir="${dist.bin.dir}"/>
@@ -589,5 +606,6 @@ list of possible build targets.
       <fileset dir="${basedir}" includes="${Name}-*.zip"/>
     </delete>
   </target>
+-->
 
 </project>
