@@ -1,6 +1,6 @@
 <?xml version="1.0" standalone="no"?>
 <!--
-  Copyright 1999-2004 The Apache Software Foundation
+  Copyright 1999-2005 The Apache Software Foundation
 
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -46,8 +46,10 @@
           pages since his first webmaster position @brain.com in 1996. Most 
           important creation? His li&apos;l Jeremy was born June 18, 2002.</li>
         <li id="jm"><link href="mailto:jeremias@apache.org">Jeremias M&#x00E4;rki</link> (JM)
-          is a software engineer from Lucerne, Switzerland. He's also
-          the creator of <fork href="http://barcode4j.krysalis.org">Barcode4J</fork>.
+          is an independent software engineer and consultant from Lucerne, Switzerland. He's also
+          the creator of <fork href="http://barcode4j.krysalis.org">Barcode4J</fork>. 
+          See his <fork href="http://www.jeremias-maerki.ch">home page</fork> for more information
+          about him.
         </li>
         <li id="gm"><link href="mailto:gmazza@apache.org">Glen Mazza</link> (GM) is an information
             systems analyst with EDS in Arlington, Virginia, USA.</li>
@@ -58,7 +60,6 @@
             page</fork> for some of his private projects.</li>
         <li id="jp"><link href="mailto:pietsch@apache.org">J&#x00F6;rg Pietschmann</link> (JP)</li>
         <li id="ot"><link href="mailto:olegt@apache.org">Oleg Tkachenko</link> (OT)</li>
-        <li id="pbw"><link href="mailto:pbwest@apache.org">Peter B. West</link> (PBW)</li>
       </ul>
     </section>
     <section id="contribute-active">
@@ -90,6 +91,7 @@
         <li id="as"><link href="mailto:arved@apache.org">Arved Sandstrom</link></li>
         <li id="es"><link href="mailto:eschaeffer@apache.org">Eric Schaeffer</link></li>
         <li id="aw"><link href="mailto:artw@apache.org">Art Welch</link></li>
+        <li id="pbw"><link href="mailto:pbwest@apache.org">Peter B. West</link></li>
       </ul>
     </section>
     <section id="expertise">
@@ -148,7 +150,7 @@
           <td/>
           <td/>
           <td>X</td>
-          <td/>
+          <td>X</td>
           <td/>
           <td/>
           <td>X</td>
@@ -232,7 +234,7 @@
           <td/>
           <td/>
           <td/>
-          <td/>
+          <td>X</td>
           <td/>
           <td>X</td>
           <td/>
@@ -256,7 +258,7 @@
           <td/>
           <td/>
           <td>X</td>
-          <td/>
+          <td>X</td>
           <td/>
           <td/>
           <td/>
