@@ -82,7 +82,7 @@
     static data and methods have been split tentatively into
     three:
   </p>
-  <figure src="PropertyStaticsOverview.png" alt="Top level
+  <figure src="images/design/alt.design/PropertyStaticsOverview.png" alt="Top level
     property classes"/>
   <dl>
     <dt><link href="PropNames.html">PropNames</link></dt>
@@ -191,7 +191,7 @@
       </section>
       <p>
   <strong>Previous:</strong> <link href=
-  "alt.properties.html" >alt.properties</link>
+  "alt-properties.html" >alt.properties</link>
       </p>
       <p>
   <strong>Next:</strong> <link href=

@@ -12,7 +12,7 @@
     <body>
     <section>
       <title>fo.Properties and the nested properties classes</title>
-      <figure src="PropertyClasses.png" alt="Nested property and
+      <figure src="images/design/alt.design/PropertyClasses.png" alt="Nested property and
         top-level classes"/> 
       <section>
         <title>Nested property classes</title>

@@ -116,7 +116,7 @@
       <code>LinkedList</code>s as the stacks, on the assumption
       that
     </p>
-    <sl>
+    <ul>
       <!-- one of (dl sl ul ol li) -->
       <li>random access would not be required</li>
       <li>
@@ -125,7 +125,7 @@
       </li>
       <li> no penalty for first addition to an empty list</li>
       <li>efficient access to both bottom and top of stack</li>
-    </sl>
+    </ul>
     <p>
       However, it may be required to perform stack access
       operations from an arbitrary place on the stack, in which

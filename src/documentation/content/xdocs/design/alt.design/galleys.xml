@@ -93,7 +93,7 @@
     "../layout.html" >layout managers</link><em></em> already
     proposed, the layout tree acts as a bridge between the <link
     href= "../fotree.html" >FO Tree</link> and the <link href=
-    "../areatree.html" >Area Tree</link>.  If the elements of
+    "../areas.html" >Area Tree</link>.  If the elements of
     the FO Tree are FO nodes, and the elements of the Area Tree
     are Area nodes, representing areas to be drawn on the output
     medium, the elements of the layout tree are <strong>galley
@@ -178,7 +178,7 @@
     <br/><br/>
     <strong>Figure 1</strong>
   </p>
-  <figure src="galley-preprocessing.png" alt="Galley
+  <figure src="images/design/alt.design/galley-preprocessing.png" alt="Galley
     pre-processing diagram"/>
   <p>
     Once this pre-processing has been achieved, it is

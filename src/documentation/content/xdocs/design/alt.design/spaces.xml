@@ -58,7 +58,7 @@
     <link href="#Figure1">Figure 1</link>.)
   </p>
   <p><strong>Figure 1</strong></p><anchor id="Figure1"/> 
-  <figure src="block-stacking-constraints.png" 
+  <figure src="images/design/alt.design/block-stacking-constraints.png" 
     alt="block-stacking-constraints.png"/>
   <note>
     Figure 1 assumes a block-progression-direction of top to
@@ -126,7 +126,7 @@
   </p>
   <p><strong>Figure 2</strong></p>
   <anchor id="Figure2"/>
-  <figure src="block-stacking-keeps.png"
+  <figure src="images/design/alt.design/block-stacking-keeps.png"
     alt="block-stacking-keeps.png"/>
       </section>
       <section>

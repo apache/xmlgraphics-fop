@@ -28,7 +28,7 @@
         <title>Footnotes and galleys</title>
   <p>
     In the structure described in the <link href=
-    "../galleys.html" >introduction to FOP galleys</link>,
+    "galleys.html" >introduction to FOP galleys</link>,
     footnotes would be pre-processed as galleys themselves, but
     they would remain attached as subtrees to their points of 
     invocation in the main text.  Allocation to a
@@ -38,7 +38,7 @@
   <p>
     When footnotes are introduced, the communication between
     galleys and layout manager, as mentioned <link href=
-    "../galleys.html#pre-processing" >above</link>, would be
+    "galleys.html#pre-processing" >above</link>, would be
     affected.  The returned information would two b-p-d values: 
     the primary line-area b-p-d impact and the footnote b-p-d
     impact.  The distinction is necessary for two reasons; to
@@ -56,7 +56,7 @@
   </note>
   <p>
     This note assumes a galley, as discussed <link href=
-    "../galleys.html" >elsewhere</link>, flowing text with
+    "galleys.html" >elsewhere</link>, flowing text with
     footnotes and possibly other blocks into a possibly
     multi-column area.  The logic of flowing into multiple
     columns is trivially applied to a single column.  The galley
@@ -100,7 +100,7 @@
     and totals for each column.<br/><br/>
     <strong>Figure 1</strong> Columns before first footnote.
   </p>
-  <figure src="initial-column-values.png" alt="Columns before
+  <figure src="images/design/alt.design/initial-column-values.png" alt="Columns before
     first footnote"/>
       </section>
       <section>
@@ -109,7 +109,7 @@
     <strong>Figure 2</strong> Adding a line area with first
     footnote.
   </p>
-  <figure src="line-area-5.png"
+  <figure src="images/design/alt.design/line-area-5.png"
     alt="Columns after adding first footnote"/>
   <p>
     Columns are balanced dynamically in the galley preliminary
@@ -127,7 +127,7 @@
     <strong>Figure 3</strong> Adding a line area with next
     footnote.
   </p>
-  <figure src="line-area-6.png"
+  <figure src="images/design/alt.design/line-area-6.png"
     alt="Columns after adding next footnote"/>
       </section>
       <section>
