@@ -45,12 +45,11 @@ public class Fop {
 
         try {
             Driver driver = new Driver();
-            SimpleLog log = new SimpleLog("FOP");
-            log.setLevel(SimpleLog.LOG_LEVEL_INFO);
-            driver.setLogger(log);
-            
-            driver.getLogger().info(version);
             options = new CommandLineOptions(args);
+
+            driver.setLogger(options.getLogger());
+            driver.getLogger().info(version);
+
             inputHandler = options.getInputHandler();
 
             try {

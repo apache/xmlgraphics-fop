@@ -1,5 +1,4 @@
-/*
- * Copyright 1999-2004 The Apache Software Foundation.
+/* Copyright 1999-2004 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,6 +23,8 @@ import java.io.FileNotFoundException;
 import java.util.Locale;
 import java.util.Vector;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.commons.logging.impl.SimpleLog;
 
 /**
@@ -59,7 +60,7 @@ public class CommandLineOptions {
     public static final int RTF_OUTPUT = 10;
 
     /* show configuration information */
-    private Boolean dumpConfiguration = Boolean.FALSE;
+    private Boolean showConfiguration = Boolean.FALSE;
     /* suppress any progress information */
     private Boolean quiet = Boolean.FALSE;
     /* for area tree XML output, only down to block area level */
@@ -81,7 +82,7 @@ public class CommandLineOptions {
 
     private java.util.HashMap rendererOptions;
 
-    private SimpleLog log;
+    private Log log;
 
     private Vector xsltParams = null;
     
@@ -94,14 +95,16 @@ public class CommandLineOptions {
     public CommandLineOptions(String[] args)
             throws FOPException, FileNotFoundException {
 
-        log = new SimpleLog("FOP");
-        log.setLevel(SimpleLog.LOG_LEVEL_INFO);
-
+        log = LogFactory.getLog("FOP");
+        
         boolean optionsParsed = true;
         rendererOptions = new java.util.HashMap();
         try {
             optionsParsed = parseOptions(args);
             if (optionsParsed) {
+                if (showConfiguration == Boolean.TRUE) {
+                    dumpConfiguration();
+                }
                 checkSettings();
             }
         } catch (FOPException e) {
@@ -117,7 +120,7 @@ public class CommandLineOptions {
      * Get the logger.
      * @return the logger
      */
-    public SimpleLog getLogger() {
+    public Log getLogger() {
         return log;
     }
 
@@ -131,14 +134,14 @@ public class CommandLineOptions {
         for (int i = 0; i < args.length; i++) {
             if (args[i].equals("-d") || args[i].equals("--full-error-dump")) {
                 log = new SimpleLog("FOP");
-                log.setLevel(SimpleLog.LOG_LEVEL_DEBUG);
+                ((SimpleLog) log).setLevel(SimpleLog.LOG_LEVEL_DEBUG);
             } else if (args[i].equals("-x")
                        || args[i].equals("--dump-config")) {
-                dumpConfiguration = Boolean.TRUE;
+                showConfiguration = Boolean.TRUE;
             } else if (args[i].equals("-q") || args[i].equals("--quiet")) {
                 quiet = Boolean.TRUE;
                 log = new SimpleLog("FOP");
-                log.setLevel(SimpleLog.LOG_LEVEL_ERROR);
+                ((SimpleLog) log).setLevel(SimpleLog.LOG_LEVEL_ERROR);
             } else if (args[i].equals("-c")) {
                 i = i + parseConfigurationOption(args, i);
             } else if (args[i].equals("-l")) {
@@ -548,22 +551,6 @@ public class CommandLineOptions {
     }
 
     /**
-     * Indicates if FOP should be silent.
-     * @return true if should be silent
-     */
-    public Boolean isQuiet() {
-        return quiet;
-    }
-
-    /**
-     * Indicates if FOP should dump its configuration during runtime.
-     * @return true if config dump is enabled
-     */
-    public Boolean dumpConfiguration() {
-        return dumpConfiguration;
-    }
-
-    /**
      * Indicates whether the XML renderer should generate course area XML
      * @return true if coarse area XML is desired
      */
@@ -643,7 +630,7 @@ public class CommandLineOptions {
     /**
      * debug mode. outputs all commandline settings
      */
-    private void debug() {
+    private void dumpConfiguration() {
         log.debug("Input mode: ");
         switch (inputmode) {
         case NOT_SET:
@@ -712,25 +699,20 @@ public class CommandLineOptions {
             log.debug("unknown input type");
         }
 
-
         log.debug("OPTIONS");
+        
         if (userConfigFile != null) {
             log.debug("user configuration file: "
                                  + userConfigFile.toString());
         } else {
             log.debug("no user configuration file is used [default]");
         }
-        if (dumpConfiguration != null) {
-            log.debug("dump configuration");
-        } else {
-            log.debug("don't dump configuration [default]");
-        }
-        if (quiet != null) {
-            log.debug("quiet mode on");
-        } else {
-            log.debug("quiet mode off [default]");
-        }
 
+        if (quiet == Boolean.TRUE) {
+            log.debug("quiet mode off [default]");
+        } else {
+            log.debug("quiet mode on");
+        }
     }
 
 }
