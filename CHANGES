@@ -53,7 +53,8 @@ Done since 0.20.3 release
   (thanks to Arnd Beissner and Brian O'Kelley)
 - Added support for comma-separated values for the font-family property
   Submitted by: Oleg Tkachenko <olegt@multiconn.com>
-
+- Implemented margin shorthand
+  Submitted by: Peter Kullmann <p.kullmann@arenae.ch>
 
 ==============================================================================
 Done since 0.20.2 release

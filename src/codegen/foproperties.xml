@@ -829,24 +829,28 @@
     <inherited>false</inherited>
     <datatype>Length</datatype>
     <default>0pt</default>
+    <shorthand>margin</shorthand>
   </property>
   <property>
     <name>margin-bottom</name>
     <inherited>false</inherited>
     <datatype>Length</datatype>
     <default>0pt</default>
+    <shorthand>margin</shorthand>
   </property>
   <property>
     <name>margin-left</name>
     <inherited>false</inherited>
     <datatype>Length</datatype>
     <default>0pt</default>
+    <shorthand>margin</shorthand>
   </property>
   <property>
     <name>margin-right</name>
     <inherited>false</inherited>
     <datatype>Length</datatype>
     <default>0pt</default>
+    <shorthand>margin</shorthand>
   </property>
   <property>
     <name>space-before</name>
@@ -2090,8 +2094,8 @@
   <property>
     <name>margin</name>
     <inherited>false</inherited>
-    <datatype>ToBeImplemented</datatype>
-    <default></default>
+    <datatype>List</datatype>
+    <datatype-parser>MarginShorthandParser</datatype-parser>
   </property>
   <property>
     <name>padding</name>
