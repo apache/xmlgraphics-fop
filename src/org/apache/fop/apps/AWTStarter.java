@@ -13,7 +13,6 @@ package org.apache.fop.apps;
  * Stanislav Gorkhover: Stanislav.Gorkhover@jCatalog.com
  * Modified to use streaming API by Mark Lillywhite, mark-fop@inomial.com
  */
-import org.apache.fop.messaging.MessageHandler;
 import org.apache.fop.viewer.*;
 import org.apache.fop.render.awt.*;
 
@@ -46,7 +45,6 @@ import java.util.*;
 /**
  * initialize AWT previewer
  */
-
 public class AWTStarter extends CommandLineStarter {
 
     PreviewDialog frame;
@@ -90,13 +88,12 @@ public class AWTStarter extends CommandLineStarter {
         frame = createPreviewDialog(renderer, resource);
         renderer.setProgressListener(frame);
         renderer.setComponent(frame);
-        MessageHandler.setOutputMethod(MessageHandler.EVENT);
-        MessageHandler.addListener(frame);
     }
 
 
     public void run() throws FOPException {
         Driver driver = new Driver();
+        driver.setLogger(log);
         if (errorDump) {
             driver.setErrorDump(true);
         }
@@ -157,8 +154,8 @@ public class AWTStarter extends CommandLineStarter {
             URL url = getClass().getResource(path);
             in = url.openStream();
         } catch (Exception ex) {
-            MessageHandler.logln("Can't find URL to: <" + path + "> "
-                                 + ex.getMessage());
+            log.error("Can't find URL to: <" + path + "> "
+                                 + ex.getMessage(), ex);
         }
         return new SecureResourceBundle(in);
     }

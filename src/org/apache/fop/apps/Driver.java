@@ -230,6 +230,9 @@ public class Driver implements Loggable {
      */
     public synchronized void reset() {
         _areaTree = null;
+        _source = null;
+        _stream = null;
+        _reader = null;
         _treeBuilder.reset();
     }
 

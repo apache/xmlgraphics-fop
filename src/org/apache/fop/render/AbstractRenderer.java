@@ -64,6 +64,58 @@ public abstract class AbstractRenderer implements Renderer {
     protected abstract void doFrame(Area area);
 
     /**
+     * render area container
+     *
+     * @param area the area container to render
+     */
+    public void renderAreaContainer(AreaContainer area) {
+
+        int saveY = this.currentYPosition;
+        int saveX = this.currentAreaContainerXPosition;
+
+        if (area.getPosition() == Position.ABSOLUTE) {
+            // XPosition and YPosition give the content rectangle position
+            this.currentYPosition = area.getYPosition();
+            this.currentAreaContainerXPosition = area.getXPosition();
+        } else if (area.getPosition() == Position.RELATIVE) {
+            this.currentYPosition -= area.getYPosition();
+            this.currentAreaContainerXPosition += area.getXPosition();
+        } else if (area.getPosition() == Position.STATIC) {
+            this.currentYPosition -= area.getPaddingTop()
+                                     + area.getBorderTopWidth();
+            /*
+             * this.currentAreaContainerXPosition +=
+             * area.getPaddingLeft() + area.getBorderLeftWidth();
+             */
+        }
+
+        this.currentXPosition = this.currentAreaContainerXPosition;
+        doFrame(area);
+
+        Enumeration e = area.getChildren().elements();
+        while (e.hasMoreElements()) {
+            Box b = (Box)e.nextElement();
+            b.render(this);
+        }
+        // Restore previous origin
+        this.currentYPosition = saveY;
+        this.currentAreaContainerXPosition = saveX;
+        if (area.getPosition() == Position.STATIC) {
+            this.currentYPosition -= area.getHeight();
+        }
+
+        /**
+         * **
+         * if (area.getPosition() != Position.STATIC) {
+         * this.currentYPosition = saveY;
+         * this.currentAreaContainerXPosition = saveX;
+         * } else
+         * this.currentYPosition -= area.getHeight();
+         * **
+         */
+    }
+
+    /**
      * render block area
      *
      * @param area the block area to render

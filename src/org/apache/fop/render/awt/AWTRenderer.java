@@ -392,49 +392,6 @@ public class AWTRenderer extends AbstractRenderer implements Printable, Pageable
          */
     }
 
-    public void renderAreaContainer(AreaContainer area) {
-
-        int saveY = this.currentYPosition;
-        int saveX = this.currentAreaContainerXPosition;
-
-        if (area.getPosition()
-                == org.apache.fop.fo.properties.Position.ABSOLUTE) {
-            // Y position is computed assuming positive Y axis, adjust
-            // for negative postscript one
-            this.currentYPosition = area.getYPosition()
-                                    - 2 * area.getPaddingTop()
-                                    - 2 * area.getBorderTopWidth();
-            this.currentAreaContainerXPosition = area.getXPosition();
-        } else if (area.getPosition()
-                   == org.apache.fop.fo.properties.Position.RELATIVE) {
-            this.currentYPosition -= area.getYPosition();
-            this.currentAreaContainerXPosition += area.getXPosition();
-        } else if (area.getPosition()
-                   == org.apache.fop.fo.properties.Position.STATIC) {
-            this.currentYPosition -= area.getPaddingTop()
-                                     + area.getBorderTopWidth();
-            this.currentAreaContainerXPosition += area.getPaddingLeft()
-                                                  + area.getBorderLeftWidth();
-        }
-
-        doFrame(area);
-
-        Enumeration e = area.getChildren().elements();
-        while (e.hasMoreElements()) {
-            org.apache.fop.layout.Box b =
-                (org.apache.fop.layout.Box)e.nextElement();
-            b.render(this);
-        }
-
-        if (area.getPosition()
-                != org.apache.fop.fo.properties.Position.STATIC) {
-            this.currentYPosition = saveY;
-            this.currentAreaContainerXPosition = saveX;
-        } else {
-            this.currentYPosition -= area.getHeight();
-        }
-    }
-
     public void renderBodyAreaContainer(BodyAreaContainer area) {
         renderAreaContainer(area.getBeforeFloatReferenceArea());
         renderAreaContainer(area.getFootnoteReferenceArea());

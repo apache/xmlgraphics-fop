@@ -55,6 +55,8 @@ public class XMLRenderer extends AbstractRenderer {
 
     public XMLRenderer() {}
 
+    protected void doFrame(Area area) {}
+
     /**
      * set up renderer options
      */
