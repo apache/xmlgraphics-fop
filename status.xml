@@ -104,6 +104,10 @@ inactive??
 
   <changes>
    <release version="2003" date="2003">
+    <action context="code" dev="JM" type="fix" due-to="CTB/McGraw-Hill">
+      Fix for bad font encodings in the PS renderer (Fonts get reencoded as
+      WinAnsiEncoding, Symbol and ZapfDingbats show correctly now)
+    </action>
     <action context="code" dev="JM" type="fix">
       Fix for bug #20239: Failure while generating XML metrics files from TT
       collections when names are in Unicode (JM)
