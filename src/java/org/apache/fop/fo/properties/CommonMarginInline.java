@@ -18,6 +18,10 @@
 
 package org.apache.fop.fo.properties;
 
+import org.apache.fop.datatypes.Length;
+import org.apache.fop.fo.Constants;
+import org.apache.fop.fo.PropertyList;
+
 /**
  * Store all common margin properties for inlines.
  * See Sec. 7.11 of the XSL-FO Standard.
@@ -25,11 +29,51 @@ package org.apache.fop.fo.properties;
  */
 public class CommonMarginInline {
 
-    public int marginTop;
-    public int marginBottom;
-    public int marginLeft;
-    public int marginRight;
-    public int spaceStart;
-    public int spaceEnd;
+    /**
+     * The "margin-top" property.
+     */
+    public Length marginTop;
 
+    /**
+     * The "margin-bottom" property.
+     */
+    public Length marginBottom;
+
+    /**
+     * The "margin-left" property.
+     */
+    public Length marginLeft;
+
+    /**
+     * The "margin-right" property.
+     */
+    public Length marginRight;
+
+    /**
+     * The "space-start" property.
+     */
+    public SpaceProperty spaceStart;
+
+    /**
+     * The "space-end" property.
+     */
+    public SpaceProperty spaceEnd;
+
+    public CommonMarginInline() {
+
+    }
+
+    /**
+     * Create a CommonMarginInline object.
+     * @param pList The PropertyList with propery values.
+     */
+    public CommonMarginInline(PropertyList pList) {
+        marginTop = pList.get(Constants.PR_MARGIN_TOP).getLength();
+        marginBottom = pList.get(Constants.PR_MARGIN_BOTTOM).getLength();
+        marginLeft = pList.get(Constants.PR_MARGIN_LEFT).getLength();
+        marginRight = pList.get(Constants.PR_MARGIN_RIGHT).getLength();
+
+        spaceStart = pList.get(Constants.PR_SPACE_START).getSpace();
+        spaceEnd = pList.get(Constants.PR_SPACE_END).getSpace();
+    }
 }

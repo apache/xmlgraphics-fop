@@ -18,19 +18,53 @@
 
 package org.apache.fop.fo.properties;
 
+import org.apache.fop.datatypes.Length;
+import org.apache.fop.fo.Constants;
+import org.apache.fop.fo.PropertyList;
+
 /**
  * Store all common absolute position properties.
  * See Sec. 7.5 of the XSL-FO Standard.
  * Public "structure" allows direct member access.
  */
 public class CommonAbsolutePosition {
+    /**
+     * The "absolute-position" property.
+     */
     public int absolutePosition;
-    public int top;
-    public int right;
-    public int bottom;
-    public int left;
+
+    /**
+     * The "top" property.
+     */
+    public Length top;
+
+    /**
+     * The "right" property.
+     */
+    public Length right;
+    
+    /**
+     * The "bottom" property.
+     */
+    public Length bottom;
+    
+    /**
+     * The "left" property.
+     */
+    public Length left;
 
     public CommonAbsolutePosition() {
     }
 
+    /**
+     * Create a CommonAbsolutePosition object.
+     * @param pList The PropertyList with propery values.
+     */
+    public CommonAbsolutePosition(PropertyList pList) {
+        absolutePosition = pList.get(Constants.PR_ABSOLUTE_POSITION).getEnum();
+        top = pList.get(Constants.PR_TOP).getLength();
+        bottom = pList.get(Constants.PR_BOTTOM).getLength();
+        left = pList.get(Constants.PR_LEFT).getLength();
+        right = pList.get(Constants.PR_RIGHT).getLength();      
+    }
 }
