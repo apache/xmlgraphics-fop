@@ -1,5 +1,5 @@
 /*
- * Copyright 1999-2004 The Apache Software Foundation.
+ * Copyright 1999-2005 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -48,6 +48,7 @@ public class FOElementMapping extends ElementMapping {
             foObjs.put("bookmark-tree", new BookmarkTreeMaker());
             foObjs.put("bookmark", new BookmarkMaker());
             foObjs.put("bookmark-title", new BookmarkTitleMaker());
+//          foObjs.put("page-sequence-wrapper", new PageSequenceWrapperMaker());
             foObjs.put("page-sequence", new PageSequenceMaker());
             foObjs.put("layout-master-set", new LayoutMasterSetMaker());
             foObjs.put("page-sequence-master",
@@ -163,6 +164,12 @@ public class FOElementMapping extends ElementMapping {
     static class BookmarkTitleMaker extends ElementMapping.Maker {
         public FONode make(FONode parent) {
             return new org.apache.fop.fo.pagination.bookmarks.BookmarkTitle(parent);
+        }
+    }
+
+    static class PageSequenceWrapperMaker extends ElementMapping.Maker {
+        public FONode make(FONode parent) {
+            return new org.apache.fop.fo.pagination.PageSequenceWrapper(parent);
         }
     }
 
