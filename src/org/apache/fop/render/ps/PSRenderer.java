@@ -724,10 +724,11 @@ public class PSRenderer extends AbstractRenderer {
         if (area.getFontState().getLetterSpacing() > 0) {
             //float f = area.getFontState().getLetterSpacing() * 1000 / this.currentFontSize;
             float f = area.getFontState().getLetterSpacing();
-            psString = (new StringBuffer().append(f).append(" 0.0 (").append(sb).
-                        append(") A")).toString();
+            psString = (new StringBuffer().append(f).append(" 0.0 (")
+              .append(sb.toString()).append(") A")).toString();
         } else {
-            psString = (new StringBuffer("(").append(sb).append(") t")).toString();
+            psString = (new StringBuffer("(").append(sb.toString())
+              .append(") t")).toString();
         }
 
 
