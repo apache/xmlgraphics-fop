@@ -1,1 +1,5 @@
-classes tmp javadoc conf fop.jar
+classes
+javadoc
+conf
+fop.jar
+tmp
