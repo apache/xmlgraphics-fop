@@ -71,16 +71,16 @@ import org.apache.fop.rtf.rtflib.rtfdoc.RtfTableCell;
  */
 class SimpleTable extends TestDocument {
     /** generate the body of the test document */
+    static final int MAX_ROW = 2;
+    static final int MAX_COL = 3;
+    static final int INCH_TO_TWIPS = 1440;
+    static final int C1W = 4;
+
     protected void generateDocument(RtfDocumentArea rda, RtfSection sect)
     throws IOException {
         final RtfTable tbl = sect.newTable(new DummyTableColumnsInfo());
-        final int MAX_ROW = 2;
-        final int MAX_COL = 3;
-
-        final int INCH_TO_TWIPS = 1440;
-        final int c1w = 4;
-        tbl.newTableRow().newTableCell(c1w * INCH_TO_TWIPS).newParagraph().newText
-                ("Here's a table row with just one cell, width " + c1w + "''");
+        tbl.newTableRow().newTableCell(C1W * INCH_TO_TWIPS).newParagraph().newText
+                ("Here's a table row with just one cell, width " + C1W + "''");
 
         for (int row = 0; row < MAX_ROW; row++) {
             final RtfTableRow r = tbl.newTableRow();

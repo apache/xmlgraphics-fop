@@ -69,8 +69,18 @@ import org.apache.fop.rtf.rtflib.rtfdoc.RtfAttributes;
  */
 public class ParagraphAlignment extends TestDocument {
 
+    /**
+     * Constructor
+     */
     public ParagraphAlignment() {
     }
+
+    /**
+     * Generate the document.
+     * @param rda RtfDocumentArea
+     * @param sect RtfSection
+     * @throws java.io.IOException for I/O errors
+     */
     protected void generateDocument(RtfDocumentArea rda, RtfSection sect) throws java.io.IOException
     {
         RtfAttributes attr = new RtfAttributes ();

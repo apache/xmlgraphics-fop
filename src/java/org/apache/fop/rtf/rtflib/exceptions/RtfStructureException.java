@@ -61,9 +61,11 @@ package org.apache.fop.rtf.rtflib.exceptions;
 /**  Thrown when a method call would lead to an invalid RTF document structure.
  *  @author Bertrand Delacretaz bdelacretaz@codeconsult.ch
  */
-
 public class RtfStructureException
 extends RtfException {
+    /**
+     * @param reason Description of reason for exception.
+     */
     public RtfStructureException(String reason) {
         super(reason);
     }

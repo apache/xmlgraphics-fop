@@ -84,9 +84,8 @@ public class ImageUtil {
      *
      * @param value String with digits
      *
-     * @return
-     *  -1      There is no digit\n
-     *  number  The digits as integer
+     * @return -1      There is no digit
+     *         number  The digits as integer
      */
     public static int getInt (String value) {
         String retString = new String ();
@@ -111,9 +110,8 @@ public class ImageUtil {
      *
      * @param value String with digits
      *
-     * @return
-     * true    The string contains a % value
-     * false   Other string
+     * @return true    The string contains a % value
+     *         false   Other string
      */
     public static boolean isPercent (String value) {
         if (value.endsWith ("%")) {
@@ -132,9 +130,8 @@ public class ImageUtil {
      * @param searchAt Position to start compare
      * @param searchForward Direction to compare byte arrays
      *
-     * @return
-     *  true    If equal\n
-     *  false   If different
+     * @return true    If equal
+     *         false   If different
      */
     public static boolean compareHexValues (byte[] pattern, byte[] data, int searchAt,
                                             boolean searchForward) {
@@ -178,10 +175,11 @@ public class ImageUtil {
      * Determines a integer value from a hexadecimal byte array.
      *
      * @param data Image
-     * @param start Start index to read from
-     * @param end End index until to read
+     * @param startAt Start index to read from
+     * @param length Number of data elements to read
+     * @param searchForward True if searching forward, False if not (??)
      *
-     * @return A number
+     * @return integer
      */
     public static int getIntFromByteArray (byte[] data, int startAt, int length,
                                            boolean searchForward) {

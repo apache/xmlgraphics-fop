@@ -82,7 +82,11 @@ public class BasicLink extends TestDocument {
     public BasicLink() {
     }
 
-    /** generate the body of the test document */
+    /** generate the body of the test document
+     * @param rda RtfDocumentArea
+     * @param sect RtfSection
+     * @throws IOException for I/O Errors
+     */
     protected void generateDocument(RtfDocumentArea rda, RtfSection sect) throws IOException {
         RtfParagraph p = sect.newParagraph ();
         p.newLineBreak();

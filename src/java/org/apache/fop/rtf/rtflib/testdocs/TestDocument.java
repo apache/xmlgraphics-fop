@@ -74,11 +74,11 @@ import org.apache.fop.rtf.rtflib.rtfdoc.RtfParagraph;
  */
 
 abstract class TestDocument {
-    private File m_output;
+    private File output;
 
     final void setOutputDir(File outDir)
     throws IOException {
-        m_output = new File(outDir, getRtfFilename());
+        output = new File(outDir, getRtfFilename());
     }
 
     final String getRtfFilename() {
@@ -90,8 +90,8 @@ abstract class TestDocument {
 
     final void generateOutput()
     throws IOException {
-        debugMsg("Generating document " + m_output + "...");
-        final RtfFile f = new RtfFile(new FileWriter(m_output));
+        debugMsg("Generating document " + output + "...");
+        final RtfFile f = new RtfFile(new FileWriter(output));
         final RtfDocumentArea rda = f.startDocumentArea();
         final RtfSection sect = rda.newSection();
         addIntroComments(sect);

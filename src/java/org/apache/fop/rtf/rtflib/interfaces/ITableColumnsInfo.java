@@ -76,9 +76,9 @@ public interface ITableColumnsInfo {
      */
     float getColumnWidth();
 
-     /** @return current column iteration index */
-     int getColumnIndex();
+    /** @return current column iteration index */
+    int getColumnIndex();
 
-     /** @return number of columns */
-     int getNumberOfColumns();
+    /** @return number of columns */
+    int getNumberOfColumns();
 }
