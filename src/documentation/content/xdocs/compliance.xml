@@ -165,14 +165,33 @@ want it to.</comment>
           <level-3 name="border-right-color" compliance-level="1" comply="yes"/>
           <level-3 name="border-right-style" compliance-level="1" comply="yes"/>
           <level-3 name="border-right-width" compliance-level="1" comply="yes"/>
-          <level-3 name="padding-before" compliance-level="1" comply="yes"/>
-          <level-3 name="padding-after" compliance-level="1" comply="yes"/>
-          <level-3 name="padding-start" compliance-level="1" comply="yes"/>
-          <level-3 name="padding-end" compliance-level="1" comply="yes"/>
-          <level-3 name="padding-top" compliance-level="1" comply="yes"/>
-          <level-3 name="padding-bottom" compliance-level="1" comply="yes"/>
-          <level-3 name="padding-left" compliance-level="1" comply="yes"/>
-          <level-3 name="padding-right" compliance-level="1" comply="yes"/>
+          <level-3 name="padding-before" compliance-level="1" comply="yes">
+            <comment>only one value allowed</comment>
+            <comment>only implemented for blocks</comment>
+            <comment>can't be used to make extra space (use indents + spaces instead)</comment>
+            <comment>can be used to control how much the background-color extends beyond the content rectangle</comment>
+          </level-3>
+          <level-3 name="padding-after" compliance-level="1" comply="yes">
+            <comment>same limitations as padding-before</comment>
+          </level-3>
+          <level-3 name="padding-start" compliance-level="1" comply="yes">
+            <comment>same limitations as padding-before</comment>
+          </level-3>
+          <level-3 name="padding-end" compliance-level="1" comply="yes">
+            <comment>same limitations as padding-before</comment>
+          </level-3>
+          <level-3 name="padding-top" compliance-level="1" comply="yes">
+            <comment>same limitations as padding-before</comment>
+          </level-3>
+          <level-3 name="padding-bottom" compliance-level="1" comply="yes">
+            <comment>same limitations as padding-before</comment>
+          </level-3>
+          <level-3 name="padding-left" compliance-level="1" comply="yes">
+            <comment>same limitations as padding-before</comment>
+          </level-3>
+          <level-3 name="padding-right" compliance-level="1" comply="yes">
+            <comment>same limitations as padding-before</comment>
+          </level-3>
         </level-2>
         <level-2 name="Common Font Properties">
           <level-3 name="font-family" compliance-level="1" comply="yes"/>
@@ -233,7 +252,7 @@ want it to.</comment>
         <level-2 name="Area Dimension Properties">
           <level-3 name="block-progression-dimension" compliance-level="1" comply="no"/>
           <level-3 name="content-height" compliance-level="2" comply="no"/>
-          <level-3 name="content-width" compliance-level="1" comply="no"/>
+          <level-3 name="content-width" compliance-level="2" comply="no"/>
           <level-3 name="height" compliance-level="1" comply="yes"/>
           <level-3 name="inline-progression-dimension" compliance-level="1" comply="no"/>
           <level-3 name="max-height" compliance-level="3" comply="no"/>
@@ -374,6 +393,7 @@ want it to.</comment>
           <level-3 name="ends-row" compliance-level="2" comply="no"/>
           <level-3 name="number-columns-repeated" compliance-level="1" comply="no"/>
           <level-3 name="number-columns-spanned" compliance-level="1" comply="yes"/>
+          <level-3 name="number-rows-spanned" compliance-level="1" comply="yes"/>
           <level-3 name="starts-row" compliance-level="2" comply="no"/>
           <level-3 name="table-layout" compliance-level="2" comply="no"/>
           <level-3 name="table-omit-footer-at-break" compliance-level="2" comply="yes"/>
