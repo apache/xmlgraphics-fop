@@ -56,8 +56,6 @@ import org.apache.fop.layout.FontInfo;
 
 // Java
 import java.util.List;
-import java.io.IOException;
-import java.io.OutputStream;
 
 /** Abstract base class of "Print" type renderers.  */
 public abstract class PrintRenderer extends AbstractRenderer {
@@ -77,13 +75,5 @@ public abstract class PrintRenderer extends AbstractRenderer {
         this.fontInfo = fontInfo;
         FontSetup.setup(fontInfo, fontList);
     }
-
-    /** @see org.apache.fop.render.Renderer */
-    public void startRenderer(OutputStream outputStream)
-        throws IOException { }
-
-    /** @see org.apache.fop.render.Renderer */
-    public void stopRenderer()
-        throws IOException { }
 
 }

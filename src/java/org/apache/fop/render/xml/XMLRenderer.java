@@ -109,12 +109,6 @@ public class XMLRenderer extends AbstractRenderer {
     private RendererContext context;
 
     /**
-     * @see org.apache.fop.render.Renderer#setProducer(String)
-     */
-    public void setProducer(String producer) {
-    }
-
-    /**
      * indentation to use for pretty-printing the XML
      */
     protected int indent = 0;

@@ -91,14 +91,6 @@ public class PCLRenderer extends PrintRenderer {
     public PCLRenderer() {
     }
 
-    /**
-     * set the PCL document's producer
-     *
-     * @param producer string indicating application producing PCL
-     */
-    public void setProducer(String producer) {
-    }
-
     public void setFont(String name, float size) {
         int fontcode = 0;
         if (name.length() > 1 && name.charAt(0) == 'F') {

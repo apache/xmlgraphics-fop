@@ -161,10 +161,6 @@ public class PDFRenderer extends PrintRenderer {
     /** Page viewport references */
     protected Map pvReferences = new java.util.HashMap();
 
-    private String producer = "FOP";
-
-    private String creator = null;
-
     /**
      * The output stream to write the document to
      */
@@ -253,24 +249,6 @@ public class PDFRenderer extends PrintRenderer {
         } else {
             this.fontList.addAll(cfgFonts);
         }
-    }
-
-    /**
-     * Set the document creator.
-     *
-     * @param creator string indicating application that is creating the document
-     */
-    public void setCreator(String creator) {
-        this.creator = creator;
-    }
-
-    /**
-     * Set the PDF document's producer.
-     *
-     * @param producer string indicating application producing PDF
-     */
-    public void setProducer(String producer) {
-        this.producer = producer;
     }
 
     /**

@@ -104,15 +104,6 @@ public class TXTRenderer extends PrintRenderer {
     private boolean suppressGraphics = false;
     private boolean firstPage = false;
 
-    /**
-     * Set the TXT document's producer
-     *
-     * @param producer string indicating application producing PDF
-     */
-    public void setProducer(String producer) {
-    }
-
-
     private void addStr(int row, int col, String str, boolean ischar) {
         if (debug) {
             getLogger().debug("TXTRenderer.addStr(" + row + ", " + col
