@@ -29,6 +29,7 @@ import java.util.BitSet;
 
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.area.Area;
+import org.apache.fop.area.Page;
 import org.apache.fop.datastructs.TreeException;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FOPageSeqNode;
@@ -125,7 +126,7 @@ public class FoFlow extends FOPageSeqNode {
         makeSparsePropsSet();
     }
 
-    public Area getReferenceRectangle() throws FOPException {
+    public Area getReferenceRectangle() {
         // TODO Reference rectangle is assumed to be the content rectangle of
         // the first region into which the content is flowed.  For region-body
         // it is normal-flow reference-area; for other regions it is the
@@ -139,12 +140,22 @@ public class FoFlow extends FOPageSeqNode {
         // Get the first page of the page-sequence
         // TODO check whether the current page from the page-sequence will be
         // enough
-        return pageSequence.getCurr1stPage().getRegionBodyRefArea();
+        Page page = pageSequence.getCurr1stPage();
+        if (page == null) return null;
+        return page.getNormalFlowRefArea();
     }
 
     public Area getLayoutContext() {
-        // The layout context for fo:flow is is the region-body-reference-area.
-        return pageSequence.getPage().getRegionBodyRefArea();
+        // The layout context for fo:flow is
+        // the first normal-flow-reference-area.
+        return getReferenceRectangle();
+    }
+
+    public Area getChildrensLayoutContext() {
+        // The layout context for the &block; children of fo:flow is
+        // the current normal-flow-reference-area.
+        Page page = pageSequence.getPage();
+        return page.getNormalFlowRefArea();
     }
 
 }
