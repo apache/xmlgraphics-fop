@@ -74,16 +74,16 @@ public class NumberProperty extends Property {
 
   private Number number;
 
-  public NumberProperty(Number number) {
-    this.number = number;
+  public NumberProperty(Number num) {
+    this.number = num;
   }
 
-  public NumberProperty(double number) {
-    this.number = new Double(number);
+  public NumberProperty(double num) {
+    this.number = new Double(num);
   }
 
-  public NumberProperty(int number) {
-    this.number = new Integer(number);
+  public NumberProperty(int num) {
+    this.number = new Integer(num);
   }
 
   public Number getNumber() {
