@@ -38,8 +38,13 @@ import org.apache.fop.fo.pagination.FoPageSequenceMaster
         .FoRepeatablePageMasterAlternatives.FoConditionalPageMasterReference;
 
 /**
- * Encodes an fo:page-sequence-master and associated
- * conditions.
+ * Encodes an <b>fo:page-sequence-master</b> and associated
+ * conditions.  All <i>page-sequence-master</i> specifications are converted
+ * into <i>repeatable-page-master-alternative</i>s.
+ * For a <i>simple-page-master</i>, a <i>PageSequenceMaster</i> object is
+ * created which shares a name with its target <i>simple-page-master</i>.
+ * This procedure results in a single common structure and manner of access
+ * for all page masters.
  */
 public class PageSequenceMaster {
 
@@ -55,15 +60,36 @@ public class PageSequenceMaster {
     private ArrayList masters = new ArrayList(1);
 
     /**
-     * @param masterName - the name of this master.
+     * Create a <i>PageSequenceMaster</i> from an
+     * <tt>FoSimplePageMaster</tt>.
+     * @param simplePM - the <tt>FoSimplePageMaster</tt> from which this
+     * <i>PageSequenceMaster</i> is derived.
+     */
+    public PageSequenceMaster(FoSimplePageMaster simplePM)
+        throws PropertyException, FOPException
+    {
+        PageMasterAlternatives masterAlt;
+        masterName = simplePM.getMasterName();
+        masterAlt = new PageMasterAlternatives(1, NO_LIMIT);
+        // Create and add a single default PageCondition
+        masterAlt.addCondition
+                    (masterAlt.new PageCondition(simplePM,
+                                   BlankOrNotBlank.ANY,
+                                   OddOrEven.ANY,
+                                   PagePosition.ANY));
+        masters.add(masterAlt);
+    }
+
+    /**
+     * Create a <i>PageSequenceMaster</i> from an
+     * <tt>FoPageSequenceMaster</tt>.
      * @param pageSeq - the <tt>FoPageSequenceMaster</tt> from which this
      * <i>PageSequenceMaster</i> is derived.
      * @param simplePageMasters - a <tt>HashMap</tt> of
      * <tt>FoSimplePageMaster</tt>s indexed by master-name.
      */
     public PageSequenceMaster
-                (String masterName, FoPageSequenceMaster pageSeq,
-                                                HashMap simplePageMasters)
+                (FoPageSequenceMaster pageSeq, HashMap simplePageMasters)
         throws PropertyException, FOPException
     {
         String masterRef;
@@ -73,23 +99,7 @@ public class PageSequenceMaster {
         int enumValue;
         PropertyValue pv;
         Numeric npv;
-        this.masterName = masterName;
-        // Convert the simple-page-masters into page-sequence-masters
-        Iterator names = simplePageMasters.keySet().iterator();
-        while (names.hasNext()) {
-            String master = (String)(names.next());
-            simplePM =
-                    (FoSimplePageMaster)(simplePageMasters.get(master));
-            // Create a PageMasterAlternatives
-            masterAlt = new PageMasterAlternatives(1, NO_LIMIT);
-            // Create and add a single default PageCondition
-            masterAlt.addCondition
-                        (masterAlt.new PageCondition(simplePM,
-                                       BlankOrNotBlank.ANY,
-                                       OddOrEven.ANY,
-                                       PagePosition.ANY));
-            masters.add(masterAlt);
-        }
+        masterName = pageSeq.getMasterName();
         // Process the sequence of masters.
         int numChildren = pageSeq.numChildren();
         for (int child = 0; child < numChildren; child++) {
@@ -213,6 +223,16 @@ public class PageSequenceMaster {
                          + masterReference.type);
             }
         }
+    }
+
+    /**
+     * Get the master-name of this <i>PageSequenceMaster</i>.  This is the
+     * name by which <i>fo:page-sequence</i>s will reference the master
+     * through their <i>master-reference</i> property.
+     * @return the name.
+     */
+    public String getMasterName() {
+        return masterName;
     }
 
     /**
