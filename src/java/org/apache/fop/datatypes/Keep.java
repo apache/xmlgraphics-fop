@@ -51,7 +51,7 @@
 package org.apache.fop.datatypes;
 
 import org.apache.fop.fo.Property;
-import org.apache.fop.fo.Constants;
+
 
 /**
  * XSL FO Keep Property datatype (keep-together, etc)
