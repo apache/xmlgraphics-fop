@@ -66,8 +66,23 @@ import org.apache.fop.fo.expr.PropertyException;
 
 public class Position extends Property  {
     public static final int dataTypes = SHORTHAND | ENUM | INHERIT;
+
+    public int getDataTypes() {
+        return dataTypes;
+    }
+
     public static final int traitMapping = SHORTHAND_MAP;
+
+    public int getTraitMapping() {
+        return traitMapping;
+    }
+
     public static final int initialValueType = ENUM_IT;
+
+    public int getInitialValueType() {
+        return initialValueType;
+    }
+
     public static final int STATIC = 1;
     public static final int RELATIVE = 2;
     public static final int ABSOLUTE = 3;
@@ -78,6 +93,11 @@ public class Position extends Property  {
         return new EnumType(PropNames.POSITION, STATIC);
     }
     public static final int inherited = NO;
+
+    public int getInherited() {
+        return inherited;
+    }
+
 
     private static final String[] rwEnums = {
         null

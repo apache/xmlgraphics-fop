@@ -65,14 +65,34 @@ import org.apache.fop.fo.expr.PropertyException;
 
 public class FontFamily extends Property  {
     public static final int dataTypes = COMPLEX | INHERIT | FONTSET;
+
+    public int getDataTypes() {
+        return dataTypes;
+    }
+
     public static final int traitMapping = FONT_SELECTION;
+
+    public int getTraitMapping() {
+        return traitMapping;
+    }
+
     public static final int initialValueType = NOTYPE_IT;
+
+    public int getInitialValueType() {
+        return initialValueType;
+    }
+
     public static final int SERIF = 1;
     public static final int SANS_SERIF = 2;
     public static final int CURSIVE = 3;
     public static final int FANTASY = 4;
     public static final int MONOSPACE = 5;
     public static final int inherited = COMPUTED;
+
+    public int getInherited() {
+        return inherited;
+    }
+
 
     private static final String[] rwEnums = {
         null
@@ -84,7 +104,7 @@ public class FontFamily extends Property  {
     };
     private static final HashMap rwEnumHash;
     static {
-        rwEnumHash = new HashMap(rwEnums.length);
+        rwEnumHash = new HashMap((int)(rwEnums.length / 0.75) + 1);
         for (int i = 1; i < rwEnums.length; i++ ) {
             rwEnumHash.put((Object)rwEnums[i],
                                 (Object) Ints.consts.get(i));

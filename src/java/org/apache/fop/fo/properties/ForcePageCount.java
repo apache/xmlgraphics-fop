@@ -58,8 +58,23 @@ import org.apache.fop.fo.expr.PropertyException;
 
 public class ForcePageCount extends Property  {
     public static final int dataTypes = AUTO | ENUM | INHERIT;
+
+    public int getDataTypes() {
+        return dataTypes;
+    }
+
     public static final int traitMapping = SPECIFICATION;
+
+    public int getTraitMapping() {
+        return traitMapping;
+    }
+
     public static final int initialValueType = AUTO_IT;
+
+    public int getInitialValueType() {
+        return initialValueType;
+    }
+
     public static final int EVEN = 1;
     public static final int ODD = 2;
     public static final int END_ON_EVEN = 3;
@@ -67,6 +82,11 @@ public class ForcePageCount extends Property  {
     public static final int NO_FORCE = 5;
 
     public static final int inherited = NO;
+
+    public int getInherited() {
+        return inherited;
+    }
+
 
     private static final String[] rwEnums = {
         null
@@ -78,7 +98,7 @@ public class ForcePageCount extends Property  {
     };
     private static final HashMap rwEnumHash;
     static {
-        rwEnumHash = new HashMap(rwEnums.length);
+        rwEnumHash = new HashMap((int)(rwEnums.length / 0.75) + 1);
         for (int i = 1; i < rwEnums.length; i++ ) {
             rwEnumHash.put((Object)rwEnums[i],
                                 (Object) Ints.consts.get(i));

@@ -63,8 +63,23 @@ import org.apache.fop.fo.expr.PropertyException;
 
 public class SwitchTo extends Property  {
     public static final int dataTypes = COMPLEX;
+
+    public int getDataTypes() {
+        return dataTypes;
+    }
+
     public static final int traitMapping = ACTION;
+
+    public int getTraitMapping() {
+        return traitMapping;
+    }
+
     public static final int initialValueType = ENUM_IT;
+
+    public int getInitialValueType() {
+        return initialValueType;
+    }
+
     public static final int XSL_PRECEDING = 1;
     public static final int XSL_FOLLOWING = 2;
     public static final int XSL_ANY = 3;
@@ -74,6 +89,11 @@ public class SwitchTo extends Property  {
         return new EnumType (PropNames.SWITCH_TO, XSL_ANY);
     }
     public static final int inherited = NO;
+
+    public int getInherited() {
+        return inherited;
+    }
+
 
     private static final String[] rwEnums = {
         null

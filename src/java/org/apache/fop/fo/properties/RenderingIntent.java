@@ -58,13 +58,33 @@ import org.apache.fop.fo.expr.PropertyException;
 
 public class RenderingIntent extends Property  {
     public static final int dataTypes = AUTO | ENUM | INHERIT;
+
+    public int getDataTypes() {
+        return dataTypes;
+    }
+
     public static final int traitMapping = FORMATTING;
+
+    public int getTraitMapping() {
+        return traitMapping;
+    }
+
     public static final int initialValueType = AUTO_IT;
+
+    public int getInitialValueType() {
+        return initialValueType;
+    }
+
     public static final int PERCEPTUAL = 1;
     public static final int RELATIVE_COLORIMETRIC = 2;
     public static final int SATURATION = 3;
     public static final int ABSOLUTE_COLORIMETRIC = 4;
     public static final int inherited = NO;
+
+    public int getInherited() {
+        return inherited;
+    }
+
 
     private static final String[] rwEnums = {
         null
@@ -75,7 +95,7 @@ public class RenderingIntent extends Property  {
     };
     private static final HashMap rwEnumHash;
     static {
-        rwEnumHash = new HashMap(rwEnums.length);
+        rwEnumHash = new HashMap((int)(rwEnums.length / 0.75) + 1);
         for (int i = 1; i < rwEnums.length; i++ ) {
             rwEnumHash.put((Object)rwEnums[i],
                                 (Object) Ints.consts.get(i));

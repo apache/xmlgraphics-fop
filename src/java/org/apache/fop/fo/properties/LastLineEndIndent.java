@@ -58,8 +58,23 @@ import org.apache.fop.fo.expr.PropertyException;
 
 public class LastLineEndIndent extends Property  {
     public static final int dataTypes = PERCENTAGE | LENGTH | INHERIT;
+
+    public int getDataTypes() {
+        return dataTypes;
+    }
+
     public static final int traitMapping = FORMATTING;
+
+    public int getTraitMapping() {
+        return traitMapping;
+    }
+
     public static final int initialValueType = LENGTH_IT;
+
+    public int getInitialValueType() {
+        return initialValueType;
+    }
+
     public PropertyValue getInitialValue(int property)
         throws PropertyException
     {
@@ -67,5 +82,10 @@ public class LastLineEndIndent extends Property  {
                         (PropNames.LAST_LINE_END_INDENT, 0.0d, Length.PT);
     }
     public static final int inherited = COMPUTED;
+
+    public int getInherited() {
+        return inherited;
+    }
+
 }
 

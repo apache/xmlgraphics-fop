@@ -59,8 +59,23 @@ import org.apache.fop.fo.expr.PropertyException;
 
 public class FontWeight extends Property  {
     public static final int dataTypes = INTEGER | ENUM | INHERIT;
+
+    public int getDataTypes() {
+        return dataTypes;
+    }
+
     public static final int traitMapping = FONT_SELECTION;
+
+    public int getTraitMapping() {
+        return traitMapping;
+    }
+
     public static final int initialValueType = INTEGER_IT;
+
+    public int getInitialValueType() {
+        return initialValueType;
+    }
+
     public static final int NORMAL = 1;
     public static final int BOLD = 2;
     public static final int BOLDER = 3;
@@ -73,6 +88,11 @@ public class FontWeight extends Property  {
     }
 
     public static final int inherited = COMPUTED;
+
+    public int getInherited() {
+        return inherited;
+    }
+
 
     private static final String[] rwEnums = {
         null

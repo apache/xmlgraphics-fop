@@ -55,12 +55,32 @@ import org.apache.fop.fo.expr.PropertyException;
 
 public class IntrusionDisplace extends Property  {
     public static final int dataTypes = AUTO | ENUM | NONE | INHERIT;
+
+    public int getDataTypes() {
+        return dataTypes;
+    }
+
     public static final int traitMapping = FORMATTING;
+
+    public int getTraitMapping() {
+        return traitMapping;
+    }
+
     public static final int initialValueType = AUTO_IT;
+
+    public int getInitialValueType() {
+        return initialValueType;
+    }
+
     public static final int LINE = 1;
     public static final int INDENT = 2;
     public static final int BLOCK = 3;
     public static final int inherited = COMPUTED;
+
+    public int getInherited() {
+        return inherited;
+    }
+
 
     private static final String[] rwEnums = {
         null

@@ -59,8 +59,23 @@ import org.apache.fop.fo.expr.PropertyException;
 
 public class BorderBottomWidth extends BorderCommonWidth {
     public static final int dataTypes = LENGTH | MAPPED_LENGTH | INHERIT;
+
+    public int getDataTypes() {
+        return dataTypes;
+    }
+
     public static final int traitMapping = DISAPPEARS;
+
+    public int getTraitMapping() {
+        return traitMapping;
+    }
+
     public static final int initialValueType = LENGTH_IT;
+
+    public int getInitialValueType() {
+        return initialValueType;
+    }
+
     public PropertyValue getInitialValue(int property)
         throws PropertyException
     {
@@ -74,6 +89,11 @@ public class BorderBottomWidth extends BorderCommonWidth {
     }
 
     public static final int inherited = NO;
+
+    public int getInherited() {
+        return inherited;
+    }
+
 
 }
 

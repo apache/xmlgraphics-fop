@@ -55,13 +55,33 @@ import org.apache.fop.fo.expr.PropertyException;
 
 public class Overflow extends Property  {
     public static final int dataTypes = AUTO | ENUM | INHERIT;
+
+    public int getDataTypes() {
+        return dataTypes;
+    }
+
     public static final int traitMapping = FORMATTING;
+
+    public int getTraitMapping() {
+        return traitMapping;
+    }
+
     public static final int initialValueType = AUTO_IT;
+
+    public int getInitialValueType() {
+        return initialValueType;
+    }
+
     public static final int VISIBLE = 1;
     public static final int HIDDEN = 2;
     public static final int SCROLL = 3;
     public static final int ERROR_IF_OVERFLOW = 4;
     public static final int inherited = NO;
+
+    public int getInherited() {
+        return inherited;
+    }
+
 
     private static final String[] rwEnums = {
         null

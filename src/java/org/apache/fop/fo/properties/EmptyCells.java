@@ -58,8 +58,23 @@ import org.apache.fop.fo.expr.PropertyException;
 
 public class EmptyCells extends Property  {
     public static final int dataTypes = ENUM | INHERIT;
+
+    public int getDataTypes() {
+        return dataTypes;
+    }
+
     public static final int traitMapping = FORMATTING;
+
+    public int getTraitMapping() {
+        return traitMapping;
+    }
+
     public static final int initialValueType = ENUM_IT;
+
+    public int getInitialValueType() {
+        return initialValueType;
+    }
+
     public static final int SHOW = 1;
     public static final int HIDE = 2;
     public PropertyValue getInitialValue(int property)
@@ -68,6 +83,11 @@ public class EmptyCells extends Property  {
         return new EnumType (PropNames.EMPTY_CELLS, SHOW);
     }
     public static final int inherited = COMPUTED;
+
+    public int getInherited() {
+        return inherited;
+    }
+
 
     private static final String[] rwEnums = {
         null

@@ -55,8 +55,28 @@ package org.apache.fop.fo.properties;
 public class Role extends Property  {
     public static final int dataTypes =
                             NCNAME | URI_SPECIFICATION | NONE | INHERIT;
+
+    public int getDataTypes() {
+        return dataTypes;
+    }
+
     public static final int traitMapping = RENDERING;
+
+    public int getTraitMapping() {
+        return traitMapping;
+    }
+
     public static final int initialValueType = NONE_IT;
+
+    public int getInitialValueType() {
+        return initialValueType;
+    }
+
     public static final int inherited = NO;
+
+    public int getInherited() {
+        return inherited;
+    }
+
 }
 

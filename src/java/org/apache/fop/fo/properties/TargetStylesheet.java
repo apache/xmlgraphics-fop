@@ -58,8 +58,23 @@ import org.apache.fop.fo.expr.PropertyException;
 
 public class TargetStylesheet extends Property  {
     public static final int dataTypes = URI_SPECIFICATION | ENUM;
+
+    public int getDataTypes() {
+        return dataTypes;
+    }
+
     public static final int traitMapping = ACTION;
+
+    public int getTraitMapping() {
+        return traitMapping;
+    }
+
     public static final int initialValueType = ENUM_IT;
+
+    public int getInitialValueType() {
+        return initialValueType;
+    }
+
     public static final int USE_NORMAL_STYLESHEET = 1;
     public PropertyValue getInitialValue(int property)
         throws PropertyException
@@ -68,6 +83,11 @@ public class TargetStylesheet extends Property  {
                                                 USE_NORMAL_STYLESHEET);
     }
     public static final int inherited = NO;
+
+    public int getInherited() {
+        return inherited;
+    }
+
 
     private static final String[] rwEnums = {
         null

@@ -59,13 +59,33 @@ import org.apache.fop.fo.expr.PropertyException;
 public class MaxHeight extends Property  {
     public static final int dataTypes =
                                     PERCENTAGE | LENGTH | NONE | INHERIT;
+
+    public int getDataTypes() {
+        return dataTypes;
+    }
+
     public static final int traitMapping = SHORTHAND_MAP;
+
+    public int getTraitMapping() {
+        return traitMapping;
+    }
+
     public static final int initialValueType = LENGTH_IT;
+
+    public int getInitialValueType() {
+        return initialValueType;
+    }
+
     public PropertyValue getInitialValue(int property)
         throws PropertyException
     {
         return Length.makeLength (PropNames.MAX_HEIGHT, 0.0d, Length.PT);
     }
     public static final int inherited = NO;
+
+    public int getInherited() {
+        return inherited;
+    }
+
 }
 

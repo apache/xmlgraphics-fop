@@ -58,8 +58,23 @@ import org.apache.fop.fo.expr.PropertyException;
 
 public class StartingState extends Property  {
     public static final int dataTypes = ENUM;
+
+    public int getDataTypes() {
+        return dataTypes;
+    }
+
     public static final int traitMapping = ACTION;
+
+    public int getTraitMapping() {
+        return traitMapping;
+    }
+
     public static final int initialValueType = ENUM_IT;
+
+    public int getInitialValueType() {
+        return initialValueType;
+    }
+
     public static final int SHOW = 1;
     public static final int HIDE = 2;
     public PropertyValue getInitialValue(int property)
@@ -68,6 +83,11 @@ public class StartingState extends Property  {
         return new EnumType (PropNames.STARTING_STATE, SHOW);
     }
     public static final int inherited = NO;
+
+    public int getInherited() {
+        return inherited;
+    }
+
 
     private static final String[] rwEnums = {
         null

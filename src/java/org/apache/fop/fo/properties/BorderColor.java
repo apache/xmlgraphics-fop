@@ -63,9 +63,29 @@ import org.apache.fop.fo.expr.PropertyException;
 
 public class BorderColor extends ColorTransparent {
     public static final int dataTypes = SHORTHAND;
+
+    public int getDataTypes() {
+        return dataTypes;
+    }
+
     public static final int traitMapping = SHORTHAND_MAP;
+
+    public int getTraitMapping() {
+        return traitMapping;
+    }
+
     public static final int initialValueType = NOTYPE_IT;
+
+    public int getInitialValueType() {
+        return initialValueType;
+    }
+
     public static final int inherited = NO;
+
+    public int getInherited() {
+        return inherited;
+    }
+
 
 
     /**

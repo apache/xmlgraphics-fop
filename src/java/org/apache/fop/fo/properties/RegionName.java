@@ -58,8 +58,23 @@ import org.apache.fop.fo.expr.PropertyException;
 
 public class RegionName extends Property  {
     public static final int dataTypes = NCNAME | ENUM;
+
+    public int getDataTypes() {
+        return dataTypes;
+    }
+
     public static final int traitMapping = SPECIFICATION;
+
+    public int getTraitMapping() {
+        return traitMapping;
+    }
+
     public static final int initialValueType = NOTYPE_IT;
+
+    public int getInitialValueType() {
+        return initialValueType;
+    }
+
     public static final int XSL_REGION_BODY = 1;
     public static final int XSL_REGION_START = 2;
     public static final int XSL_REGION_END = 3;
@@ -68,6 +83,11 @@ public class RegionName extends Property  {
     public static final int XSL_BEFORE_FLOAT_SEPARATOR = 6;
     public static final int XSL_FOOTNOTE_SEPARATOR = 7;
     public static final int inherited = NO;
+
+    public int getInherited() {
+        return inherited;
+    }
+
 
     private static final String[] rwEnums = {
         null
@@ -81,7 +101,7 @@ public class RegionName extends Property  {
     };
     private static final HashMap rwEnumHash;
     static {
-        rwEnumHash = new HashMap(rwEnums.length);
+        rwEnumHash = new HashMap((int)(rwEnums.length / 0.75) + 1);
         for (int i = 1; i < rwEnums.length; i++ ) {
             rwEnumHash.put((Object)rwEnums[i],
                                 (Object) Ints.consts.get(i));

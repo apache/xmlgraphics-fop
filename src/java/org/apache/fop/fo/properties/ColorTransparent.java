@@ -67,7 +67,7 @@ public class ColorTransparent extends ColorCommon  {
      */
     private static final HashMap rwEnumHash;
     static {
-	rwEnumHash = new HashMap(rwEnums.length + 1);
+	rwEnumHash = new HashMap((int)((rwEnums.length + 1) / 0.75) + 1);
 	for (int i = 1; i < rwEnums.length; i++ ) {
 	    rwEnumHash.put(rwEnums[i], Ints.consts.get(i));
 	}

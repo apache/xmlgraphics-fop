@@ -55,12 +55,32 @@ import org.apache.fop.fo.expr.PropertyException;
 
 public class TextTransform extends Property  {
     public static final int dataTypes = ENUM | NONE | INHERIT;
+
+    public int getDataTypes() {
+        return dataTypes;
+    }
+
     public static final int traitMapping = REFINE;
+
+    public int getTraitMapping() {
+        return traitMapping;
+    }
+
     public static final int initialValueType = NONE_IT;
+
+    public int getInitialValueType() {
+        return initialValueType;
+    }
+
     public static final int CAPITALIZE = 1;
     public static final int UPPERCASE = 2;
     public static final int LOWERCASE = 3;
     public static final int inherited = COMPUTED;
+
+    public int getInherited() {
+        return inherited;
+    }
+
 
     private static final String[] rwEnums = {
         null

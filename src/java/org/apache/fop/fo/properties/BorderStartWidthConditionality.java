@@ -58,8 +58,23 @@ import org.apache.fop.fo.expr.PropertyException;
 
 public class BorderStartWidthConditionality extends Conditionality {
     public static final int dataTypes = ENUM;
+
+    public int getDataTypes() {
+        return dataTypes;
+    }
+
     public static final int traitMapping = FORMATTING | RENDERING;
+
+    public int getTraitMapping() {
+        return traitMapping;
+    }
+
     public static final int initialValueType = ENUM_IT;
+
+    public int getInitialValueType() {
+        return initialValueType;
+    }
+
     public PropertyValue getInitialValue(int property)
         throws PropertyException
     {
@@ -67,6 +82,11 @@ public class BorderStartWidthConditionality extends Conditionality {
 		    (PropNames.BORDER_START_WIDTH_CONDITIONALITY, DISCARD);
     }
     public static final int inherited = NO;
+
+    public int getInherited() {
+        return inherited;
+    }
+
 
 }
 

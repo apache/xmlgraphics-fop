@@ -55,10 +55,30 @@ import org.apache.fop.fo.expr.PropertyException;
 
 public class FontSelectionStrategy extends Property  {
     public static final int dataTypes = AUTO | ENUM | INHERIT;
+
+    public int getDataTypes() {
+        return dataTypes;
+    }
+
     public static final int traitMapping = FONT_SELECTION;
+
+    public int getTraitMapping() {
+        return traitMapping;
+    }
+
     public static final int initialValueType = AUTO_IT;
+
+    public int getInitialValueType() {
+        return initialValueType;
+    }
+
     public static final int CHARACTER_BY_CHARACTER = 1;
     public static final int inherited = COMPUTED;
+
+    public int getInherited() {
+        return inherited;
+    }
+
 
     private static final String[] rwEnums = {
         null

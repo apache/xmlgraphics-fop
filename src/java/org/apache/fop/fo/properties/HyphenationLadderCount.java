@@ -58,8 +58,23 @@ import org.apache.fop.fo.expr.PropertyException;
 
 public class HyphenationLadderCount extends Property  {
     public static final int dataTypes = NUMBER | ENUM | INHERIT;
+
+    public int getDataTypes() {
+        return dataTypes;
+    }
+
     public static final int traitMapping = FORMATTING;
+
+    public int getTraitMapping() {
+        return traitMapping;
+    }
+
     public static final int initialValueType = ENUM_IT;
+
+    public int getInitialValueType() {
+        return initialValueType;
+    }
+
     public static final int NO_LIMIT = 1;
     public PropertyValue getInitialValue(int property)
         throws PropertyException
@@ -67,6 +82,11 @@ public class HyphenationLadderCount extends Property  {
         return new EnumType (PropNames.HYPHENATION_LADDER_COUNT, NO_LIMIT);
     }
     public static final int inherited = COMPUTED;
+
+    public int getInherited() {
+        return inherited;
+    }
+
 
     private static final String[] rwEnums = {
         null

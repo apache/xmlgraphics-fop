@@ -54,9 +54,29 @@ package org.apache.fop.fo.properties;
 
 public class KeepWithNextWithinColumn extends Keep  {
     public static final int dataTypes = AUTO | ENUM | INTEGER;
+
+    public int getDataTypes() {
+        return dataTypes;
+    }
+
     public static final int traitMapping = FORMATTING;
+
+    public int getTraitMapping() {
+        return traitMapping;
+    }
+
     public static final int initialValueType = AUTO_IT;
+
+    public int getInitialValueType() {
+        return initialValueType;
+    }
+
     public static final int inherited = NO;
+
+    public int getInherited() {
+        return inherited;
+    }
+
 
 }
 

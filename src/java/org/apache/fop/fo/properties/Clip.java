@@ -62,9 +62,29 @@ import org.apache.fop.fo.expr.PropertyException;
 
 public class Clip extends Property  {
     public static final int dataTypes = AUTO | COMPLEX | INHERIT;
+
+    public int getDataTypes() {
+        return dataTypes;
+    }
+
     public static final int traitMapping = RENDERING;
+
+    public int getTraitMapping() {
+        return traitMapping;
+    }
+
     public static final int initialValueType = AUTO_IT;
+
+    public int getInitialValueType() {
+        return initialValueType;
+    }
+
     public static final int inherited = NO;
+
+    public int getInherited() {
+        return inherited;
+    }
+
 
     /*
      * @param propindex - the <tt>int</tt> property index.

@@ -58,8 +58,23 @@ import org.apache.fop.fo.expr.PropertyException;
 
 public class Clear extends Property  {
     public static final int dataTypes = ENUM | NONE | INHERIT;
+
+    public int getDataTypes() {
+        return dataTypes;
+    }
+
     public static final int traitMapping = FORMATTING;
+
+    public int getTraitMapping() {
+        return traitMapping;
+    }
+
     public static final int initialValueType = NONE_IT;
+
+    public int getInitialValueType() {
+        return initialValueType;
+    }
+
     public static final int START = 1;
     public static final int END = 2;
     public static final int LEFT = 3;
@@ -67,6 +82,11 @@ public class Clear extends Property  {
     public static final int BOTH = 5;
 
     public static final int inherited = NO;
+
+    public int getInherited() {
+        return inherited;
+    }
+
 
     private static final String[] rwEnums = {
         null
@@ -79,7 +99,7 @@ public class Clear extends Property  {
 
     private static final HashMap rwEnumHash;
     static {
-        rwEnumHash = new HashMap(rwEnums.length);
+        rwEnumHash = new HashMap((int)(rwEnums.length / 0.75) + 1);
         for (int i = 1; i < rwEnums.length; i++ ) {
             rwEnumHash.put((Object)rwEnums[i],
                                 (Object) Ints.consts.get(i));

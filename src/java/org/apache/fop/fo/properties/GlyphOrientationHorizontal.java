@@ -58,8 +58,23 @@ import org.apache.fop.fo.expr.PropertyException;
 
 public class GlyphOrientationHorizontal extends Property  {
     public static final int dataTypes = ANGLE | INHERIT;
+
+    public int getDataTypes() {
+        return dataTypes;
+    }
+
     public static final int traitMapping = FORMATTING;
+
+    public int getTraitMapping() {
+        return traitMapping;
+    }
+
     public static final int initialValueType = ANGLE_IT;
+
+    public int getInitialValueType() {
+        return initialValueType;
+    }
+
     public PropertyValue getInitialValue(int property)
         throws PropertyException
     {
@@ -67,5 +82,10 @@ public class GlyphOrientationHorizontal extends Property  {
 		    (PropNames.GLYPH_ORIENTATION_HORIZONTAL, Angle.DEG, 0d);
     }
     public static final int inherited = COMPUTED;
+
+    public int getInherited() {
+        return inherited;
+    }
+
 }
 

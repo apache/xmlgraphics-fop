@@ -62,9 +62,29 @@ import org.apache.fop.fo.expr.PropertyException;
 
 public class TextShadow extends ColorNonTransparent  {
     public static final int dataTypes = COMPLEX | NONE | INHERIT;
+
+    public int getDataTypes() {
+        return dataTypes;
+    }
+
     public static final int traitMapping = RENDERING;
+
+    public int getTraitMapping() {
+        return traitMapping;
+    }
+
     public static final int initialValueType = NONE_IT;
+
+    public int getInitialValueType() {
+        return initialValueType;
+    }
+
     public static final int inherited = COMPUTED;
+
+    public int getInherited() {
+        return inherited;
+    }
+
 
 
     /**
