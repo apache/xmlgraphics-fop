@@ -80,52 +80,6 @@ import org.apache.fop.apps.FOPException;
 public class ExampleXML2PDF {
 
     /**
-     * Converts an XML file to a PDF file using JAXP and FOP.
-     * @param xml the XML file
-     * @param xslt the stylesheet file
-     * @param pdf the target PDF file
-     * @throws IOException In case of an I/O problem
-     * @throws FOPException In case of a FOP problem
-     * @throws TransformerException In case of a XSL transformation problem
-     */
-    public void convertXML2PDF(File xml, File xslt, File pdf) 
-                throws IOException, FOPException, TransformerException {
-        //Construct driver
-        Driver driver = new Driver();
-        
-        //Setup logger
-        Logger logger = new ConsoleLogger(ConsoleLogger.LEVEL_INFO);
-        driver.enableLogging(logger);
-        driver.initialize();
-
-        //Setup Renderer (output format)        
-        driver.setRenderer(Driver.RENDER_PDF);
-        
-        //Setup output
-        OutputStream out = new java.io.FileOutputStream(pdf);
-        out = new java.io.BufferedOutputStream(out);
-        try {
-            driver.setOutputStream(out);
-
-            //Setup XSLT
-            TransformerFactory factory = TransformerFactory.newInstance();
-            Transformer transformer = factory.newTransformer(new StreamSource(xslt));
-        
-            //Setup input for XSLT transformation
-            Source src = new StreamSource(xml);
-        
-            //Resulting SAX events (the generated FO) must be piped through to FOP
-            Result res = new SAXResult(driver.getContentHandler());
-
-            //Start XSLT transformation and FOP processing
-            transformer.transform(src, res);
-        } finally {
-            out.close();
-        }
-    }
-
-
-    /**
      * Main method.
      * @param args command-line arguments
      */
@@ -150,8 +104,41 @@ public class ExampleXML2PDF {
             System.out.println();
             System.out.println("Transforming...");
             
-            ExampleXML2PDF app = new ExampleXML2PDF();
-            app.convertXML2PDF(xmlfile, xsltfile, pdffile);
+            //Construct driver
+            Driver driver = new Driver();
+            
+            //Setup logger
+            Logger logger = new ConsoleLogger(ConsoleLogger.LEVEL_INFO);
+            driver.enableLogging(logger);
+            driver.initialize();
+    
+            //Setup Renderer (output format)        
+            driver.setRenderer(Driver.RENDER_PDF);
+            
+            //Setup output
+            OutputStream out = new java.io.FileOutputStream(pdffile);
+            out = new java.io.BufferedOutputStream(out);
+            try {
+                driver.setOutputStream(out);
+    
+                //Setup XSLT
+                TransformerFactory factory = TransformerFactory.newInstance();
+                Transformer transformer = factory.newTransformer(new StreamSource(xsltfile));
+                
+                // set the value of a <param> in the stylesheet
+                transformer.setParameter("versionParam", "2.0");
+            
+                //Setup input for XSLT transformation
+                Source src = new StreamSource(xmlfile);
+            
+                //Resulting SAX events (the generated FO) must be piped through to FOP
+                Result res = new SAXResult(driver.getContentHandler());
+    
+                //Start XSLT transformation and FOP processing
+                transformer.transform(src, res);
+            } finally {
+                out.close();
+            }
             
             System.out.println("Success!");
         } catch (Exception e) {
