@@ -203,6 +203,10 @@ public class TableBody extends FObj {
                         tr.removeLayout(areaContainer);
                         i--;
                     }
+                    if(i == 0) {
+                        resetMarker();
+                        return new Status(Status.AREA_FULL_NONE);
+                    }
                 }
                 this.marker = i;
                 if ((i != 0) &&
