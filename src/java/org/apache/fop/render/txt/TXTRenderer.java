@@ -31,6 +31,9 @@ import org.apache.fop.render.pcl.PCLStream;
  */
 public class TXTRenderer extends PrintRenderer {
 
+    /** The MIME type for PostScript */
+    public static final String MIME_TYPE = "text/plain";
+
     /**
      * the current stream to add Text commands to
      */
@@ -126,6 +129,11 @@ public class TXTRenderer extends PrintRenderer {
         } else {
             decoData[row] = sb;
         }
+    }
+
+    /** @see org.apache.fop.render.AbstractRenderer */
+    public String getMimeType() {
+        return MIME_TYPE;
     }
 
 }
