@@ -563,29 +563,25 @@ public abstract class AbstractBreaker {
      * Logs the contents of a block list for debugging purposes
      * @param blockList block list to log
      */
-    private void logBlocklist(BlockSequence blockList) {
+    private void logBlocklist(KnuthSequence blockList) {
         ListIterator tempIter = blockList.listIterator();
 
         KnuthElement temp;
         System.out.println(" ");
         while (tempIter.hasNext()) {
             temp = (KnuthElement) tempIter.next();
-            String segno = temp.isAuxiliary() ? "+ " : "- ";
             if (temp.isBox()) {
-                System.out.println(segno + tempIter.previousIndex()
-                        + ")  <box> " + temp.getW());
+                System.out.println(tempIter.previousIndex()
+                        + ") " + temp);
             } else if (temp.isGlue()) {
-                System.out.println(segno + tempIter.previousIndex()
-                        + ")  <glue> " + temp.getW() + " + "
-                        + ((KnuthGlue) temp).getY() + " - "
-                        + ((KnuthGlue) temp).getZ());
+                System.out.println(tempIter.previousIndex()
+                        + ") " + temp);
             } else {
-                System.out
-                        .println(segno
-                                + tempIter.previousIndex()
-                                + ")  <"
-                                + (((KnuthPenalty) temp).getP() == KnuthElement.INFINITE ? "PENALTY"
-                                        : "penalty") + "> " + temp.getW());
+                System.out.println(tempIter.previousIndex()
+                        + ") " + temp);
+            }
+            if (temp.getPosition() != null) {
+                System.out.println("            " + temp.getPosition());
             }
         }
         System.out.println(" ");
@@ -594,43 +590,10 @@ public abstract class AbstractBreaker {
     /**
      * Logs the contents of an effective block list for debugging purposes
      * @param effectiveList block list to log
-     * @todo combine with logBlocklist()
      */
     private void logEffectiveList(KnuthSequence effectiveList) {
-        ListIterator tempIter;
-        KnuthElement temp;
         System.out.println("Effective list");
-        System.out.println(" ");
-        tempIter = effectiveList.listIterator();
-        System.out.println(" ");
-        while (tempIter.hasNext()) {
-            temp = (KnuthElement) tempIter.next();
-            String segno = temp.isAuxiliary() ? "+ " : "- ";
-            if (temp.isBox()) {
-                System.out.println(segno + tempIter.previousIndex()
-                        + ")  <box> - - " + ((KnuthBox) temp).getW());
-            } else if (temp.isGlue()) {
-                System.out
-                        .println(segno
-                                + tempIter.previousIndex()
-                                + ")  <glue> "
-                                + (((KnuthGlue) temp).getW() - ((KnuthGlue) temp)
-                                        .getZ())
-                                + " - "
-                                + ((KnuthGlue) temp).getW()
-                                + " - "
-                                + (((KnuthGlue) temp).getW() + ((KnuthGlue) temp)
-                                        .getY()));
-            } else {
-                System.out
-                        .println(segno
-                                + tempIter.previousIndex()
-                                + ")  <"
-                                + (((KnuthPenalty) temp).getP() == KnuthElement.INFINITE ? "PENALTY"
-                                        : "penalty") + "> ");
-            }
-        }
-        System.out.println(" ");
+        logBlocklist(effectiveList);
     }
 
     private int adjustBlockSpaces(LinkedList spaceList, int difference, int total) {
