@@ -565,7 +565,7 @@ public class Node implements Cloneable {
      * containing Tree instance.
      */
 
-    class PreOrder implements Iterator {
+    public class PreOrder implements Iterator {
         private boolean selfNotReturned = true;
         private int nextChildIndex = 0;     // N.B. this must be kept as
         // the index of the active child until that child is exhausted.
@@ -709,7 +709,7 @@ public class Node implements Cloneable {
      * containing Tree instance.
      */
 
-    class PostOrder implements Iterator {
+    public class PostOrder implements Iterator {
         private boolean selfReturned = false;
         private int nextChildIndex = 0;     // N.B. this must be kept as
         // the index of the active child until that child is exhausted.
@@ -827,7 +827,7 @@ public class Node implements Cloneable {
      * containing Tree instance.
      */
 
-    class Ancestor implements Iterator {
+    public class Ancestor implements Iterator {
         private Node nextAncestor;
         private int age;
 
@@ -896,7 +896,7 @@ public class Node implements Cloneable {
      * behaviour.
      */
 
-    class FollowingSibling implements ListIterator {
+    public class FollowingSibling implements ListIterator {
 
         private ListIterator listIterator;
         private ArrayList rootDummy = new ArrayList();
@@ -1008,7 +1008,7 @@ public class Node implements Cloneable {
      * behaviour.
      */
 
-    class PrecedingSibling implements ListIterator {
+    public class PrecedingSibling implements ListIterator {
 
         private ListIterator listIterator;
         private ArrayList rootDummy = new ArrayList();
