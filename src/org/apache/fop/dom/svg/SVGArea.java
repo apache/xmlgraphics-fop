@@ -85,6 +85,11 @@ public class SVGArea extends Area implements GraphicImpl, GetSVGDocument {//, SV
 		contentRectangleWidth = (int)width * 1000;
 	}
 
+    public int getWidth()
+    {
+        return contentRectangleWidth;
+    }
+
 	/**
 	 * add a graphic.
 	 *
