@@ -417,9 +417,8 @@ public class Property {
             if (inheritsSpecified()) {
                 // recalculate based on last specified value
                 // Climb up propertylist and find last spec'd value
-                String propName = FOPropertyMapping.getPropertyName(this.propId);
                 Property specProp =
-                    propertyList.getNearestSpecified(propName);
+                    propertyList.getNearestSpecified(propId);
                 if (specProp != null) {
                     // Only need to do this if the value is relative!!!
                     String specVal = specProp.getSpecifiedValue();

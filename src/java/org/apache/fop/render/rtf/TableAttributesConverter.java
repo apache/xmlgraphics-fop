@@ -156,7 +156,7 @@ public class TableAttributesConverter {
         boolean isBorderPresent = false;
 
         // Cell background color
-        if ((p = props.getNearestSpecified("background-color")) != null) {
+        if ((p = props.getNearestSpecified(Constants.PR_BACKGROUND_COLOR)) != null) {
             ColorType color = p.getColorType();
             if (color != null) {
                 if (color.getAlpha() != 0
@@ -174,8 +174,8 @@ public class TableAttributesConverter {
         }
 
         // Cell borders :
-        if ((p = props.getExplicit("border-color")) != null) {
-            ListProperty listprop = (ListProperty)p;
+        if ((p = props.getExplicit(Constants.PR_BORDER_COLOR)) != null) {
+            ListProperty listprop = (ListProperty) p;
             ColorType color = null;
             if (listprop.getList().get(0) instanceof NCnameProperty) {
                 color = new ColorType(((NCnameProperty)listprop.getList().get(0)).getNCname());
@@ -188,28 +188,28 @@ public class TableAttributesConverter {
                 colorTable.getColorNumber((int)color.getRed(), (int)color.getGreen(),
                         (int)color.getBlue()).intValue());
         }
-        if ((p = props.getExplicit("border-top-color")) != null) {
+        if ((p = props.getExplicit(Constants.PR_BORDER_TOP_COLOR)) != null) {
             ColorType color = p.getColorType();
             attrib.set(
                 BorderAttributesConverter.BORDER_COLOR,
                 colorTable.getColorNumber((int)color.getRed(), (int)color.getGreen(),
                         (int)color.getBlue()).intValue());
         }
-        if ((p = props.getExplicit("border-bottom-color")) != null) {
+        if ((p = props.getExplicit(Constants.PR_BORDER_BOTTOM_COLOR)) != null) {
             ColorType color = p.getColorType();
             attrib.set(
                 BorderAttributesConverter.BORDER_COLOR,
                 colorTable.getColorNumber((int)color.getRed(), (int)color.getGreen(),
                         (int)color.getBlue()).intValue());
         }
-        if ((p = props.getExplicit("border-left-color")) != null) {
+        if ((p = props.getExplicit(Constants.PR_BORDER_LEFT_COLOR)) != null) {
             ColorType color = p.getColorType();
             attrib.set(
                 BorderAttributesConverter.BORDER_COLOR,
                 colorTable.getColorNumber((int)color.getRed(), (int)color.getGreen(),
                         (int)color.getBlue()).intValue());
         }
-        if ((p = props.getExplicit("border-right-color")) != null) {
+        if ((p = props.getExplicit(Constants.PR_BORDER_RIGHT_COLOR)) != null) {
             ColorType color = p.getColorType();
             attrib.set(
                 BorderAttributesConverter.BORDER_COLOR,

@@ -87,7 +87,7 @@ public class LabelEndFunction extends FunctionBase {
         Length distance =
             pInfo.getPropertyList().get(Constants.PR_PROVISIONAL_DISTANCE_BETWEEN_STARTS).getLength();
         Length separation =
-            pInfo.getPropertyList().getNearestSpecified("provisional-label-separation").getLength();
+            pInfo.getPropertyList().getNearestSpecified(Constants.PR_PROVISIONAL_LABEL_SEPARATION).getLength();
 
         FONode item = pInfo.getFO();
         while (item != null && !(item instanceof ListItem)) {
