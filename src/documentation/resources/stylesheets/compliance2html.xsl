@@ -140,7 +140,6 @@
 <xsl:template match="level-1">
   <h3>
     <xsl:variable name="target-level-1">
-      <xsl:text>#</xsl:text>
       <xsl:value-of select="../@ref-name"/>
       <xsl:text>-</xsl:text>
       <xsl:value-of select="@ref-name"/>
@@ -208,7 +207,6 @@
   <tr>
     <td colspan="6" class="category">
       <xsl:variable name="target-level-2">
-        <xsl:text>#</xsl:text>
         <xsl:value-of select="../../@ref-name"/>
         <xsl:text>-</xsl:text>
         <xsl:value-of select="../@ref-name"/>
@@ -243,7 +241,6 @@
   <tr>
     <td>
       <xsl:variable name="target-name">
-        <xsl:text>#</xsl:text>
         <xsl:value-of select="../../../@ref-name"/>
         <xsl:text>-</xsl:text>
         <xsl:value-of select="../../@ref-name"/>
