@@ -329,7 +329,10 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager
             MinOptMax range = new MinOptMax(relDims.ipd);
             BlockContainerBreaker breaker = new BlockContainerBreaker(this, range);
             breaker.doLayout(relDims.bpd);
-            boolean contentOverflows = (breaker.deferredAlg.getPageBreaks().size() > 1);
+            boolean contentOverflows = false;
+            if (!breaker.isEmpty()) {
+                contentOverflows = (breaker.deferredAlg.getPageBreaks().size() > 1);
+            }
 
             Position bcPosition = new BlockContainerPosition(this, breaker);
             returnList.add(new KnuthBox(vpContentBPD, bcPosition, false));
@@ -552,6 +555,9 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager
         }
         
         public void addContainedAreas() {
+            if (isEmpty()) {
+                return;
+            }
             //Rendering all parts (not just the first) at once for the case where the parts that 
             //overflow should be visible.
             //TODO Check if this has any unwanted side-effects. Feels a bit like a hack.
