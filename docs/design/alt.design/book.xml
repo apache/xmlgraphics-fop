@@ -5,7 +5,8 @@
   <separator/>
   <external href="../index.html"      label="NEW DESIGN" />
   <separator/>
-  <page id="index" label="co-routines" source="coroutines.xml"/>
+  <page id="index" label="Alt Design" source="intro.xml"/>
+  <page id="co-routines" label="co-routines" source="coroutines.xml"/>
   <page id="galleys" label="galleys" source="galleys.xml"/>
   <page id="footnotes" label="footnotes" source="footnotes.xml"/>
   <page id="keeps" label="keeps" source="keeps.xml"/>
