@@ -90,6 +90,8 @@ public class Block extends FObjMixed {
     int paddingLeft;
     int paddingRight;
     
+    String id;
+    
     ColorType borderColor;
     int borderWidth;
     int borderStyle;
@@ -168,6 +170,9 @@ public class Block extends FObjMixed {
 	    this.borderStyle =
 		this.properties.get("border-style").getEnum();
             
+            this.id = 
+                this.properties.get("id").getString(); 
+            
 	    if (area instanceof BlockArea) {
 		area.end();
 	    }
@@ -181,6 +186,8 @@ public class Block extends FObjMixed {
 	    if (this.isInListBody) {
 		startIndent += bodyIndent + distanceBetweenStarts;
 	    }
+
+            area.getIDReferences().createID(id,area); 
 
 	    this.marker = 0;
 
@@ -206,9 +213,7 @@ public class Block extends FObjMixed {
 	}        
         
         if ( marker==0 ) {
-            // initialize id                       
-            String id = this.properties.get("id").getString(); 
-            area.getIDReferences().initializeID(id,area);                        
+                area.getIDReferences().configureID(id,area);
         }
         
         this.blockArea =
@@ -225,7 +230,6 @@ public class Block extends FObjMixed {
         blockArea.setBorderWidth(borderWidth, borderWidth, borderWidth, borderWidth); 
         blockArea.setBorderColor(borderColor, borderColor, borderColor, borderColor); 
 	blockArea.start();
-	layoutStart(area);  // performs
 
         blockArea.setAbsoluteHeight(area.getAbsoluteHeight()); 
         blockArea.setIDReferences(area.getIDReferences());
