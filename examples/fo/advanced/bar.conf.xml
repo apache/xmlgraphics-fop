@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+
+<!-- TODO: use proper config -->
+
+<configuration>
+
+<fonts>
+    <font metrics-file="K3.xml" kerning="yes" embed-file="K3.TTF">
+        <font-triplet name="Barcode" style="normal" weight="normal"/>
+    </font>
+</fonts>
+
+</configuration>
+
