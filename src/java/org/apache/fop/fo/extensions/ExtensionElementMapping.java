@@ -55,8 +55,6 @@ import org.apache.fop.fo.ElementMapping;
 
 import java.util.HashMap;
 
-import org.apache.fop.extensions.*;
-
 /**
  * Element mapping for the pdf bookmark extension.
  * This sets up the mapping for the classes that handle the
