@@ -50,8 +50,8 @@ public class TextInfo {
     /** fo:letter-spacing property */
     public SpaceVal letterSpacing;
 
-    /** can this text be hyphenated? */
-    public boolean bCanHyphenate = true;
+    /* the hyphenation character to be used */
+    public char hyphChar = '-';
 
     /** fo:text-decoration property: is text underlined? */
     public boolean underlined = false;
