@@ -31,6 +31,11 @@ public class BodyRegion extends RegionReference {
 	this.columnCount = colCount;
     }
 
+    // Number of columns when not spanning
+    public int getColumnCount() {
+	return this.columnCount ;
+    }
+
     // A length (mpoints)
     public void setColumnGap(int colGap) {
 	this.columnGap = colGap;

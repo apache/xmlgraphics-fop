@@ -376,21 +376,7 @@ public class Block extends FObjMixed {
 
     public void addLayoutManager(List list) {
         BlockLayoutManager blm = new BlockLayoutManager(this);
-        TextInfo ti = new TextInfo();
-
-        try {
-            ti.fs = propMgr.getFontState(fontInfo);
-        } catch (FOPException fopex) {
-            log.error("Error setting FontState for characters: " +
-                      fopex.getMessage());
-        }
-        ti.lineHeight = this.lineHeight;
-
-        ColorType c = getProperty("color").getColorType();
-        ti.color = c;
-
-        ti.verticalAlign = getProperty("vertical-align").getEnum();
-
+        TextInfo ti = propMgr.getTextLayoutProps(fontInfo);
         blm.setBlockTextInfo(ti);
         list.add(blm);
     }

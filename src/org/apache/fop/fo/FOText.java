@@ -17,6 +17,7 @@ import org.apache.fop.fo.properties.*;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.layoutmgr.LayoutManager;
 import org.apache.fop.layoutmgr.TextLayoutManager;
+import org.apache.fop.layoutmgr.TextBPLayoutManager;
 
 import java.util.NoSuchElementException;
 import java.util.List;
@@ -81,6 +82,8 @@ public class FOText extends FObj {
             System.arraycopy(tmp, 0, ca, 0, length);
         }
         list.add(new TextLayoutManager(this, ca, textInfo));
+	// TEST VARIANT USING Karen's BreakPoss scheme
+        // list.add(new TextBPLayoutManager(this, ca, textInfo));
     }
 
     public CharIterator charIterator() {

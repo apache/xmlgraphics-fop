@@ -8,27 +8,27 @@
 package org.apache.fop.fo;
 
 // FOP
-import org.apache.fop.layout.Area;
-import org.apache.fop.layout.BlockArea;
 import org.apache.fop.layout.FontState;
-import org.apache.fop.layout.*;
-import org.apache.fop.datatypes.*;
-import org.apache.fop.fo.properties.*;
-import org.apache.fop.apps.FOPException;
-import org.apache.fop.layoutmgr.LayoutManager;
-import org.apache.fop.layoutmgr.TextLayoutManager;
-
-import java.util.NoSuchElementException;
+import org.apache.fop.datatypes.ColorType;
+import org.apache.fop.traits.SpaceVal;
 
 /**
+ * Collection of properties used in
  */
     public class TextInfo {
         public FontState fs;
         public ColorType color;
         public int wrapOption;
+        public boolean bWrap ; // True if wrap-option = WRAP
         public int whiteSpaceCollapse;
         public int verticalAlign;
         public int lineHeight;
+
+	// Props used for calculating inline-progression-dimension
+        public SpaceVal wordSpacing;
+        public SpaceVal letterSpacing;
+
+	// Add hyphenation props too
 
         // Textdecoration
         public boolean underlined = false;

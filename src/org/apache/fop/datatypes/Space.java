@@ -51,12 +51,6 @@ public class Space extends LengthRange {
         return this.precedence;
     }
 
-    /*
-     * public boolean isDiscard() {
-     * return (this.conditionality == DISCARD);
-     * }
-     */
-
     public Property getConditionality() {
         return this.conditionality;
     }

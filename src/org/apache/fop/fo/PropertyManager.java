@@ -11,20 +11,26 @@ package org.apache.fop.fo;
 import java.awt.geom.Rectangle2D;
 import org.apache.fop.area.CTM;
 import org.apache.fop.datatypes.FODimension;
+import org.apache.fop.fo.TextInfo; // should be somewhere else probably...
 import org.apache.fop.layout.FontState;
 import org.apache.fop.layout.FontInfo;
 import org.apache.fop.layout.BorderAndPadding;
 import org.apache.fop.layout.MarginProps;
-import org.apache.fop.layout.BackgroundProps;
 import org.apache.fop.layout.MarginInlineProps;
+import org.apache.fop.layout.BackgroundProps;
 import org.apache.fop.layout.AccessibilityProps;
 import org.apache.fop.layout.AuralProps;
 import org.apache.fop.layout.RelativePositionProps;
 import org.apache.fop.layout.AbsolutePositionProps;
+import org.apache.fop.traits.BlockProps;
+import org.apache.fop.traits.InlineProps;
+import org.apache.fop.traits.SpaceVal;
+import org.apache.fop.traits.LayoutProps;  // keep, break, span, space?
 import org.apache.fop.fo.properties.BreakAfter;
 import org.apache.fop.fo.properties.BreakBefore;
 import org.apache.fop.fo.properties.Constants;
 import org.apache.fop.fo.properties.WritingMode;
+import org.apache.fop.fo.properties.Span;
 import org.apache.fop.layout.HyphenationProps;
 import org.apache.fop.apps.FOPException;
 import java.text.MessageFormat;
@@ -35,9 +41,11 @@ import org.apache.fop.layout.ColumnArea;
 public class PropertyManager {
 
     private PropertyList properties;
+    private FontInfo m_fontInfo = null;
     private FontState fontState = null;
     private BorderAndPadding borderAndPadding = null;
     private HyphenationProps hyphProps = null;
+    private TextInfo textInfo = null;
 
     private String[] saLeft;
     private String[] saRight;
@@ -57,6 +65,10 @@ public class PropertyManager {
         this.properties = pList;
     }
 
+    public void setFontInfo(FontInfo fontInfo) {
+	m_fontInfo = fontInfo;
+    }
+
     private void initDirections() {
         saLeft = new String[1];
         saRight = new String[1];
@@ -70,6 +82,12 @@ public class PropertyManager {
 
     public FontState getFontState(FontInfo fontInfo) throws FOPException {
         if (fontState == null) {
+	    if (fontInfo == null) {
+		fontInfo = m_fontInfo;
+	    }
+	    else if (m_fontInfo == null) {
+		m_fontInfo = fontInfo;
+	    }
             String fontFamily = properties.get("font-family").getString();
             String fontStyle = properties.get("font-style").getString();
             String fontWeight = properties.get("font-weight").getString();
@@ -227,6 +245,15 @@ public class PropertyManager {
         return props;
     }
 
+    public InlineProps getInlineProps() {
+        InlineProps props = new InlineProps();
+        props.spaceStart = new SpaceVal(properties.get("space-start").
+					getSpace());
+        props.spaceEnd = new SpaceVal(properties.get("space-end").
+					getSpace());
+        return props;
+    }
+
     public AccessibilityProps getAccessibilityProps() {
         AccessibilityProps props = new AccessibilityProps();
         String str;
@@ -254,6 +281,65 @@ public class PropertyManager {
     public AbsolutePositionProps getAbsolutePositionProps() {
         AbsolutePositionProps props = new AbsolutePositionProps();
         return props;
+    }
+
+    public BlockProps getBlockProps() {
+        BlockProps props = new BlockProps();
+        props.firstIndent = this.properties.get("text-indent").
+	    getLength().mvalue();
+        props.lastIndent = 0; /*this.properties.get("last-line-end-indent").getLength().mvalue(); */
+        props.textAlign = this.properties.get("text-align").getEnum();
+        props.textAlignLast = this.properties.get("text-align-last").
+	    getEnum();
+	props.lineStackType = this.properties.
+	    get("line-stacking-strategy").getEnum();
+
+        return props;
+    }
+
+    public LayoutProps getLayoutProps() {
+        LayoutProps props = new LayoutProps();
+        props.breakBefore = this.properties.get("break-before").getEnum();
+        props.breakAfter = this.properties.get("break-after").getEnum();
+	props.bIsSpan = (this.properties.get("span").getEnum() == Span.ALL);
+        props.spaceBefore = new SpaceVal(this.properties.get("space-before").
+					 getSpace());
+        props.spaceAfter = new SpaceVal(this.properties.get("space-after").
+					getSpace());
+        return props;
+    }
+
+    public TextInfo getTextLayoutProps(FontInfo fontInfo) {
+	if (textInfo == null) {
+	    textInfo = new TextInfo();
+	    try {
+		textInfo.fs = getFontState(fontInfo);
+	    } catch (FOPException fopex) {
+		/* log.error("Error setting FontState for characters: " +
+		   fopex.getMessage());*/
+		// Now what should we do ???
+	    }
+	    textInfo.color = properties.get("color").getColorType();
+
+	    textInfo.verticalAlign =
+                properties.get("vertical-align").getEnum();
+
+	    textInfo.wrapOption = properties.get("wrap-option").getEnum();
+	    textInfo.bWrap = (textInfo.wrapOption == Constants.WRAP);
+
+	    textInfo.wordSpacing =
+		new SpaceVal(properties.get("word-spacing").getSpace());
+
+	    /* textInfo.letterSpacing =
+	       new SpaceVal(properties.get("letter-spacing").getSpace());*/
+
+	    textInfo.whiteSpaceCollapse =
+                properties.get("white-space-collapse").getEnum();
+
+	    textInfo.lineHeight = this.properties.
+		get("line-height").getLength().mvalue();
+	}
+	return textInfo;
     }
 
     public CTM getCTMandRelDims(Rectangle2D absVPrect, FODimension reldims) {

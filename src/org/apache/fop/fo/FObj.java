@@ -378,5 +378,14 @@ public class FObj extends FONode {
     public ArrayList getMarkers() {
         return new ArrayList(markers.values());
     }
+
+    /**
+     * lets layout managers access FO properties via PropertyManager
+     * @return the property manager for this FO
+     */
+    public PropertyManager getPropertyManager() {
+        return this.propMgr;
+    }
+
 }
 

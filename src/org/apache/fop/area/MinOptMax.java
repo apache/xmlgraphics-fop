@@ -14,7 +14,7 @@ package org.apache.fop.area;
  * variables are package visible.
  */
 
-public class MinOptMax implements java.io.Serializable {
+public class MinOptMax implements java.io.Serializable, Cloneable {
 
     /** Publicly visible min(imum), opt(imum) and max(imum) values.*/
     public int min;
@@ -35,6 +35,15 @@ public class MinOptMax implements java.io.Serializable {
 	this.max = max;
     }
 
+    public Object clone() {
+	try {
+	    return super.clone();
+	} catch (CloneNotSupportedException ex) {
+	    // SHOULD NEVER OCCUR - all members are primitive types!
+	    return null;
+	}
+    }
+
     public static MinOptMax subtract(MinOptMax op1, MinOptMax op2) {
 	return new MinOptMax(op1.min - op2.max, op1.opt - op2.opt,
 			     op1.max - op2.min);
@@ -43,6 +52,12 @@ public class MinOptMax implements java.io.Serializable {
     public static MinOptMax add(MinOptMax op1, MinOptMax op2) {
 	return new MinOptMax(op1.min + op2.min, op1.opt + op2.opt,
 			     op1.max + op2.max);
+    }
+
+    public static MinOptMax multiply(MinOptMax op1, double mult) {
+	return new MinOptMax((int)(op1.min * mult),
+			     (int)(op1.opt * mult),
+			     (int)(op1.max * mult));
     }
 
     public void add(MinOptMax op) {

@@ -45,26 +45,11 @@ public class FObjMixed extends FObj {
     }
 
     protected void addCharacters(char data[], int start, int length) {
-        if (textInfo == null) {
-            textInfo = new TextInfo();
-
-            try {
-                textInfo.fs = propMgr.getFontState(fontInfo);
-            } catch (FOPException fopex) {
-                log.error("Error setting FontState for characters: " +
-                          fopex.getMessage());
-            }
-
-            ColorType c = getProperty("color").getColorType();
-            textInfo.color = c;
-
-            textInfo.verticalAlign =
-              getProperty("vertical-align").getEnum();
-
-            textInfo.wrapOption = getProperty("wrap-option").getEnum();
-            textInfo.whiteSpaceCollapse =
-              getProperty("white-space-collapse").getEnum();
-
+        if(textInfo == null) {
+	    // Really only need one of these, but need to get fontInfo
+	    // stored in propMgr for later use.
+	    propMgr.setFontInfo(fontInfo);
+	    textInfo = propMgr.getTextLayoutProps(fontInfo);
         }
 
         FOText ft = new FOText(data, start, length, textInfo);
