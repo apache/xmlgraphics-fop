@@ -9,6 +9,7 @@ package org.apache.fop.tools;
 
 import org.apache.fop.apps.*;
 import org.apache.fop.configuration.*;
+import org.apache.fop.messaging.MessageHandler;
 
 import org.apache.avalon.framework.logger.ConsoleLogger;
 import org.apache.avalon.framework.logger.Logger;
@@ -87,6 +88,7 @@ public class TestConverter {
 
     private void setupLogging() {
 	log = new ConsoleLogger(ConsoleLogger.LEVEL_ERROR);
+	MessageHandler.setScreenLogger(log);	
     }
 
     public void setOutputPDF(boolean pdf) {

@@ -15,6 +15,7 @@ import java.io.FileNotFoundException;
 // FOP
 import org.apache.fop.configuration.Configuration;
 import org.apache.fop.apps.FOPException;
+import org.apache.fop.messaging.MessageHandler;
 
 // Avalon
 import org.apache.avalon.framework.logger.ConsoleLogger;
@@ -92,7 +93,7 @@ public class CommandLineOptions {
     public CommandLineOptions(String[] args)
             throws FOPException, FileNotFoundException {
 
-        log = new ConsoleLogger(ConsoleLogger.LEVEL_INFO);
+        setLogger(new ConsoleLogger(ConsoleLogger.LEVEL_INFO));
 
         boolean optionsParsed = true;
         rendererOptions = new java.util.Hashtable();
@@ -123,13 +124,13 @@ public class CommandLineOptions {
         for (int i = 0; i < args.length; i++) {
             if (args[i].equals("-d") || args[i].equals("--full-error-dump")) {
                 errorDump = new Boolean(true);
-                log = new ConsoleLogger(ConsoleLogger.LEVEL_DEBUG);
+                setLogger(new ConsoleLogger(ConsoleLogger.LEVEL_DEBUG));
             } else if (args[i].equals("-x")
                        || args[i].equals("--dump-config")) {
                 dumpConfiguration = new Boolean(true);
             } else if (args[i].equals("-q") || args[i].equals("--quiet")) {
                 quiet = new Boolean(true);
-                log = new ConsoleLogger(ConsoleLogger.LEVEL_ERROR);
+                setLogger(new ConsoleLogger(ConsoleLogger.LEVEL_ERROR));
             } else if (args[i].equals("-c")) {
                 if ((i + 1 == args.length)
                         || (args[i + 1].charAt(0) == '-')) {
@@ -346,6 +347,11 @@ public class CommandLineOptions {
 
         }
     }    // end checkSettings
+
+    private void setLogger(Logger newLogger) {
+	this.log = newLogger;
+	MessageHandler.setScreenLogger(newLogger);
+    }
 
     /**
      * returns the chosen renderer, throws FOPException
