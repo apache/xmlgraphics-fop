@@ -70,7 +70,7 @@ public class NameSpaceType extends UriLocalName {
     }
     
     public Poolable clear() {
-        nsType = XMLNamespaces.NO_NS_TYPE;
+        nsType = Namespaces.NO_NS_TYPE;
         return super.clear();
     }
 }

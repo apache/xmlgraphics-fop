@@ -75,12 +75,12 @@ public class FoXMLEvent extends XMLEvent {
     private int foType = FObjectNames.NO_FO;
 
     /**
-     * @param namespaces the <code>XMLNamespaces</code> object
+     * @param namespaces the <code>Namespaces</code> object
      * @param sequence the sequence number of the event within its
      * namespace
      * @param uriIndex the namesopace index
      */
-    public FoXMLEvent (XMLNamespaces namespaces, int sequence, int uriIndex) {
+    public FoXMLEvent (Namespaces namespaces, int sequence, int uriIndex) {
         super(namespaces, sequence, uriIndex);
     }
 
@@ -88,7 +88,7 @@ public class FoXMLEvent extends XMLEvent {
      * The fully defined constructor takes values for each of the data
      * elements.
      */
-    public FoXMLEvent(XMLNamespaces namespaces, int sequence,
+    public FoXMLEvent(Namespaces namespaces, int sequence,
                     int type, String chars, int uriIndex,
                     String localName, String qName,
                     AttributesImpl attributes, 
@@ -110,12 +110,12 @@ public class FoXMLEvent extends XMLEvent {
         foType = ev.foType;
     }
 
-    public FoXMLEvent(XMLNamespaces namespaces, int sequence,
+    public FoXMLEvent(Namespaces namespaces, int sequence,
             int uriIndex, int type, String chars) {
         super(namespaces, sequence, uriIndex, type, chars);
     }
 
-    public FoXMLEvent(XMLNamespaces namespaces, int sequence,
+    public FoXMLEvent(Namespaces namespaces, int sequence,
             int type, int uriIndex, AttributesImpl attributes, int foType) {
         super(namespaces, sequence, uriIndex);
         this.type = type;

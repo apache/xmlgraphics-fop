@@ -55,7 +55,7 @@ import org.apache.fop.pool.*;
 /**
  * Maintains the namespaces encountered by an invocation of
  *  <tt>XMLSerialHandler</tt>.
- * One instance of <i>XMLNamespaces</i> is maintained across all documents
+ * One instance of <i>Namespaces</i> is maintained across all documents
  * that may be processed in a single invocation of <tt>XMLSerialhandler</tt>.
  * A reference to that instance is kept with every instance of <tt>XMLEvent</tt>.
  * An <code>XMLEventPool</code> pool of event objects is maintained for every
@@ -65,7 +65,7 @@ import org.apache.fop.pool.*;
  * encountered.
  */
 
-public class XMLNamespaces {
+public class Namespaces {
 
     private static final String tag = "$Name$";
     private static final String revision = "$Revision$";
@@ -121,7 +121,7 @@ public class XMLNamespaces {
 
     /**
      * An array of <code>XMLEventPool</code>s. This ArrayList is indexed by
-     * the namespace index used in this <code>XMLNamespaces</code> object.
+     * the namespace index used in this <code>Namespaces</code> object.
      * This allows for the maintenance of individual event pools for each
      * namespace active in the current document.
      */
@@ -176,7 +176,7 @@ public class XMLNamespaces {
      */
     private final int uriLocalSeqMask = (1 << FO_SEQ_BITS) - 1;
 
-    public XMLNamespaces() {
+    public Namespaces() {
         for (int i = 0; i <= LAST_NS_INDEX; i++) {
             pools[i] = null;
             nsSequences[i] = 0;
@@ -268,7 +268,7 @@ public class XMLNamespaces {
 
     /**
      * Generate a new XMLEvent, based on the uriIndex argument. The uriIndex
-     * must be valid for this XMLNamespaces object; i.e. it must correspond to
+     * must be valid for this Namespaces object; i.e. it must correspond to
      * a namespace being tracked in this object.
      * 
      * @param nsIndex

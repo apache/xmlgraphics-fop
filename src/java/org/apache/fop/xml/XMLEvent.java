@@ -106,11 +106,11 @@ public class XMLEvent extends Poolable {
     // the basic XML events are unlikely to change.
     protected int type = NOEVENT;
     protected String chars;
-    protected int uriIndex = XMLNamespaces.DefAttrNSIndex;
+    protected int uriIndex = Namespaces.DefAttrNSIndex;
     protected String localName;
     protected String qName;
     protected AttributesImpl attributes;
-    protected XMLNamespaces namespaces;
+    protected Namespaces namespaces;
     
     /**
      * The one-argument constructor uses the default initialization values:
@@ -121,7 +121,7 @@ public class XMLEvent extends Poolable {
      * namespace
      * @param uriIndex the namespace index
      */
-    public XMLEvent (XMLNamespaces namespaces, int sequence, int uriIndex ) {
+    public XMLEvent (Namespaces namespaces, int sequence, int uriIndex ) {
         super(sequence);
         this.namespaces = namespaces;
         this.uriIndex = uriIndex;
@@ -140,7 +140,7 @@ public class XMLEvent extends Poolable {
      * @param attributes the AttributesImpl containing the element
      *         attributes, if any
      */
-    public XMLEvent(XMLNamespaces namespaces, int sequence,
+    public XMLEvent(Namespaces namespaces, int sequence,
             int type, String chars, int uriIndex,
                     String localName, String qName,
                     AttributesImpl attributes)
@@ -179,7 +179,7 @@ public class XMLEvent extends Poolable {
      * @param chars in this event, if any
      * @param namespaces the object maintaing URIs and their indices
      */
-    public XMLEvent(XMLNamespaces namespaces, int sequence,
+    public XMLEvent(Namespaces namespaces, int sequence,
             int uriIndex, int type, String chars) {
         super(sequence);
         this.namespaces = namespaces;
@@ -341,18 +341,18 @@ public class XMLEvent extends Poolable {
     }
 
     /**
-     * Set the <tt>XMLNamespaces</tt> object associated with this event.
-     * @param namespaces  the XMLNamespaces
+     * Set the <tt>Namespaces</tt> object associated with this event.
+     * @param namespaces  the Namespaces
      */
-    public void setNamespaces(XMLNamespaces namespaces) {
+    public void setNamespaces(Namespaces namespaces) {
         this.namespaces = namespaces;
     }
 
     /**
-     * Get the <tt>XMLNamespaces</tt> object associated with this event.
-     * @return the <tt>XMLNamespaces</tt> object.
+     * Get the <tt>Namespaces</tt> object associated with this event.
+     * @return the <tt>Namespaces</tt> object.
      */
-    public XMLNamespaces getNamespaces() { return namespaces; }
+    public Namespaces getNamespaces() { return namespaces; }
 
     /**
      * Illegal operation in superclass
