@@ -21,6 +21,8 @@
 
 package org.apache.fop.apps;
 
+import java.util.logging.Logger;
+
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
@@ -66,6 +68,7 @@ public class Driver {
     /** Render to RTF. OutputStream must be set */
     public static final int RENDER_RTF = 10;
 
+    protected Logger logger = Logger.getLogger(Fop.fopPackage);
     /** If true, full error stacks are reported */
     private boolean _errorDump = false;
     private Configuration configuration = null;
@@ -97,7 +100,7 @@ public class Driver {
         configuration = new Configuration();
         options = new FOPOptions(configuration);
         _errorDump = configuration.isTrue("debugMode");
-        Fop.logger.config(version);
+        logger.config(version);
     }
     
     public Driver(String[] args, Configuration config, FOPOptions options) {
@@ -105,7 +108,7 @@ public class Driver {
         configuration = config;
         this.options = options;
         _errorDump = configuration.isTrue("debugMode");
-        Fop.logger.config(version);
+        logger.config(version);
     }
 
     /**
