@@ -59,6 +59,27 @@ public abstract class BlockStackingLayoutManager extends AbstractLayoutManager {
     }
 
     /**
+     * Add a block spacer for space before and space after a block.
+     * This adds an empty Block area that acts as a block space.
+     *
+     * @param adjust the adjustment value
+     * @param minoptmax the min/opt/max value of the spacing
+     */
+    public void addBlockSpacing(double adjust, MinOptMax minoptmax) {
+        int sp = minoptmax.opt;
+        if(adjust > 0) {
+            sp = sp + (int)(adjust * (minoptmax.max - minoptmax.opt));
+        } else {
+            sp = sp + (int)(adjust * (minoptmax.opt - minoptmax.min));
+        }
+        if(sp != 0) {
+            Block spacer = new Block();
+            spacer.setHeight(sp);
+            parentLM.addChild(spacer);
+        }
+    }
+
+    /**
      * Add the childArea to the passed area.
      * Called by child LayoutManager when it has filled one of its areas.
      * The LM should already have an Area in which to put the child.
@@ -77,14 +98,14 @@ public abstract class BlockStackingLayoutManager extends AbstractLayoutManager {
 
         // See if the whole thing fits, including space before
         // Calculate space between last child in curFlow and childArea
-        MinOptMax targetDim = parentArea.getAvailBPD();
+        //MinOptMax targetDim = parentArea.getAvailBPD();
         MinOptMax spaceBefore = resolveSpaceSpecifier(childArea);
-        targetDim.subtract(spaceBefore);
-        if (targetDim.max >= childArea.getAllocationBPD().min) {
+        //targetDim.subtract(spaceBefore);
+        //if (targetDim.max >= childArea.getAllocationBPD().min) {
             //parentArea.addBlock(new InterBlockSpace(spaceBefore));
-            parentArea.addBlock((Block) childArea);
-            return false;
-        } else {
+        //    parentArea.addBlock((Block) childArea);
+        //    return false;
+        //} else {
             parentArea.addBlock((Block) childArea);
             flush(); // hand off current area to parent
             // Probably need something like max BPD so we don't get into
@@ -104,7 +125,7 @@ public abstract class BlockStackingLayoutManager extends AbstractLayoutManager {
             //addChild(splitContext.nextArea);
             //addChild(childArea);
             return true;
-        }
+        //}
     }
 
 

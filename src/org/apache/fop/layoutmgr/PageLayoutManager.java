@@ -60,7 +60,7 @@ public class PageLayoutManager extends AbstractLayoutManager implements Runnable
     private AreaTree areaTree;
     private PageSequence pageSequence;
 
-    private int pageCount = 0;
+    private int pageCount = 1;
 
     /**
      * This is the top level layout manager.
@@ -98,7 +98,6 @@ public class PageLayoutManager extends AbstractLayoutManager implements Runnable
         BreakPoss bp;
         LayoutContext childLC = new LayoutContext(0);
         while (!isFinished()) {
-            pageCount++;
             if ((bp = getNextBreakPoss(childLC)) != null) {
                 addAreas((BlockBreakPosition)bp.getPosition());
                 // add static areas and resolve any new id areas
@@ -106,6 +105,7 @@ public class PageLayoutManager extends AbstractLayoutManager implements Runnable
                 // finish page and add to area tree
                 finishPage();
             }
+            pageCount++;
         }
 
     }
@@ -214,14 +214,14 @@ public class PageLayoutManager extends AbstractLayoutManager implements Runnable
         // Alternatively the child LM indicates to parent that it's full?
         //System.out.println("size: " + area.getAllocationBPD().max +
         //                   ":" + curSpan.getMaxBPD().min);
-        if (area.getAllocationBPD().max >= curSpan.getMaxBPD().min) {
+        /*if (area.getAllocationBPD().max >= curSpan.getMaxBPD().min) {
             // Consider it filled
             if (curSpan.getColumnCount() == curSpanColumns) {
                 finishPage();
                 return true;
             } else
                 curFlow = null; // Create new flow on next getParentArea()
-        }
+        }*/
         return false;
     }
 

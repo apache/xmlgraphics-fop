@@ -447,7 +447,9 @@ public class InlineStackingLayoutManager extends AbstractLayoutManager {
             context.setTrailingSpace(getContext().getTrailingSpace());
         }
         // Add own trailing space to parent context (or set on area?)
-        context.getTrailingSpace().addSpace(m_inlineProps.spaceEnd);
+        if(context.getTrailingSpace() != null) {
+            context.getTrailingSpace().addSpace(m_inlineProps.spaceEnd);
+        }
 
         // Add border and padding to current area and set flags (FIRST, LAST ...)
         TraitSetter.setBorderPaddingTraits(getCurrentArea(),
@@ -511,5 +513,5 @@ public class InlineStackingLayoutManager extends AbstractLayoutManager {
         }
     }
 
-
 }
+

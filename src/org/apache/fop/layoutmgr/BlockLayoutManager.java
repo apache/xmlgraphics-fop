@@ -9,11 +9,18 @@ package org.apache.fop.layoutmgr;
 
 import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.TextInfo;
+import org.apache.fop.fo.PropertyManager;
 import org.apache.fop.area.Area;
 import org.apache.fop.area.BlockParent;
 import org.apache.fop.area.Block;
 import org.apache.fop.area.LineArea;
 import org.apache.fop.area.MinOptMax;
+import org.apache.fop.area.Trait;
+import org.apache.fop.traits.LayoutProps;
+import org.apache.fop.layout.BorderAndPadding;
+import org.apache.fop.layout.BackgroundProps;
+import org.apache.fop.traits.SpaceVal;
+import org.apache.fop.traits.BorderProps;
 
 import java.util.ListIterator;
 import java.util.ArrayList;
@@ -25,6 +32,10 @@ import java.util.List;
 public class BlockLayoutManager extends BlockStackingLayoutManager {
 
     private Block curBlockArea;
+
+    LayoutProps layoutProps;
+    BorderAndPadding borderProps;
+    BackgroundProps backgroundsPops;
 
     int lead = 12000;
     int lineHeight = 14000;
@@ -96,12 +107,23 @@ public class BlockLayoutManager extends BlockStackingLayoutManager {
         lineHeight = ti.lineHeight;
     }
 
+    /**
+     * This method provides a hook for a LayoutManager to intialize traits
+     * for the areas it will create, based on Properties set on its FO.
+     */
+    protected void initProperties(PropertyManager pm) {
+        layoutProps = pm.getLayoutProps();
+        borderProps = pm.getBorderAndPadding();
+        backgroundsPops = pm.getBackgroundProps();
+    }
+    
     public BreakPoss getNextBreakPoss(LayoutContext context) {
         LayoutManager curLM ; // currently active LM
 
         MinOptMax stackSize = new MinOptMax();
         // if starting add space before
-        // stackSize.add(spaceBefore);
+        stackSize.add(layoutProps.spaceBefore.space);
+
         BreakPoss lastPos = null;
 
         while ((curLM = getChildLM()) != null) {
@@ -127,7 +149,7 @@ public class BlockLayoutManager extends BlockStackingLayoutManager {
             while (!curLM.isFinished()) {
                 if ((bp = curLM.getNextBreakPoss(childLC)) != null) {
                     stackSize.add(bp.getStackingSize());
-                    if (stackSize.min > context.getStackLimit().max) {
+                    if (stackSize.opt > context.getStackLimit().max) {
                         // reset to last break
                         if (lastPos != null) {
                             reset(lastPos.getPosition());
@@ -148,6 +170,9 @@ public class BlockLayoutManager extends BlockStackingLayoutManager {
                     }
                 }
             }
+            if(getChildLM() == null) {
+                stackSize.add(layoutProps.spaceAfter.space);
+            }
             BreakPoss breakPoss = new BreakPoss(
                                     new LeafPosition(this, childBreaks.size() - 1));
             breakPoss.setStackingSize(stackSize);
@@ -160,6 +185,11 @@ public class BlockLayoutManager extends BlockStackingLayoutManager {
     public void addAreas(PositionIterator parentIter,
                          LayoutContext layoutContext) {
         getParentArea(null);
+
+        // if adjusted space before
+        double adjust = layoutContext.getSpaceAdjust();
+        addBlockSpacing(adjust, layoutProps.spaceBefore.space);
+
         addID();
 
         LayoutManager childLM ;
@@ -179,6 +209,9 @@ public class BlockLayoutManager extends BlockStackingLayoutManager {
 
         flush();
 
+        // if adjusted space after
+        addBlockSpacing(adjust, layoutProps.spaceAfter.space);
+
         childBreaks.clear();
         curBlockArea = null;
     }
@@ -196,6 +229,10 @@ public class BlockLayoutManager extends BlockStackingLayoutManager {
     public Area getParentArea(Area childArea) {
         if (curBlockArea == null) {
             curBlockArea = new Block();
+
+            // set traits
+            addBorders(curBlockArea);
+
             // Set up dimensions
             // Must get dimensions from parent area
             Area parentArea = parentLM.getParentArea(curBlockArea);
@@ -207,6 +244,32 @@ public class BlockLayoutManager extends BlockStackingLayoutManager {
         return curBlockArea;
     }
 
+    public void addBorders(Block curBlockArea) {
+        BorderProps bps = getBorderProps(BorderAndPadding.TOP);
+        if(bps.width != 0) {
+            curBlockArea.addTrait(Trait.BORDER_START, bps);
+        }
+        bps = getBorderProps(BorderAndPadding.BOTTOM);
+        if(bps.width != 0) {
+            curBlockArea.addTrait(Trait.BORDER_END, bps);
+        }
+        bps = getBorderProps(BorderAndPadding.LEFT);
+        if(bps.width != 0) {
+            curBlockArea.addTrait(Trait.BORDER_BEFORE, bps);
+        }
+        bps = getBorderProps(BorderAndPadding.RIGHT);
+        if(bps.width != 0) {
+            curBlockArea.addTrait(Trait.BORDER_AFTER, bps);
+        }
+    }
+
+    private BorderProps getBorderProps(int side) {
+        BorderProps bps;
+        bps = new BorderProps(borderProps.getBorderStyle(side),
+                              borderProps.getBorderWidth(side, false),
+                              borderProps.getBorderColor(side));
+        return bps;
+    }
 
     public boolean addChild(Area childArea) {
         if (curBlockArea != null) {
