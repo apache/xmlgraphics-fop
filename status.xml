@@ -123,6 +123,12 @@ inactive??
 
   <changes>
    <release version="?" date="2002">
+    <action dev="CG" type="add" context="code"
+            due-to="Bernd Brandstetter" due-to-email="bbrand@freenet.de">
+      Linking to a specific page and a named destinations of an
+      external PDF file.
+      (see www.adobe.com/products/acrobat/pdfs/c01acrotip.pdf)
+    </action>
     <action context="code" dev="KLL" type="update">
       Started table layout managers.
     </action>

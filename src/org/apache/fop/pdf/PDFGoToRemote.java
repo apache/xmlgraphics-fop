@@ -16,6 +16,8 @@ public class PDFGoToRemote extends PDFAction {
      * the file specification
      */
     protected PDFFileSpec pdfFileSpec;
+    protected int pageReference = 0;
+    protected String destination = null;
 
     /**
      * create an GoToR object.
@@ -29,6 +31,38 @@ public class PDFGoToRemote extends PDFAction {
         super(number);
 
         this.pdfFileSpec = pdfFileSpec;
+    }
+
+    /**
+     * create an GoToR object.
+     *
+     * @param number the object's number
+     * @param fileSpec the fileSpec associated with the action
+     * @param page a page reference within the remote document
+     */
+    public PDFGoToRemote(int number, PDFFileSpec pdfFileSpec, int page) {
+
+        /* generic creation of object */
+        super(number);
+
+        this.pdfFileSpec = pdfFileSpec;
+        this.pageReference = page;
+    }
+
+    /**
+     * create an GoToR object.
+     *
+     * @param number the object's number
+     * @param fileSpec the fileSpec associated with the action
+     * @param dest a named destination within the remote document
+     */
+    public PDFGoToRemote(int number, PDFFileSpec pdfFileSpec, String dest) {
+
+        /* generic creation of object */
+        super(number);
+
+        this.pdfFileSpec = pdfFileSpec;
+        this.destination = dest;
     }
 
     /**
@@ -48,9 +82,16 @@ public class PDFGoToRemote extends PDFAction {
     public byte[] toPDF() {
         String p = new String(this.number + " " + this.generation + " obj\n"
                               + "<<\n/S /GoToR\n" + "/F "
-                              + pdfFileSpec.referencePDF() + "\n"
-                              + "/D [ 0 /XYZ null null null ]"
-                              + " \n>>\nendobj\n");
+                              + pdfFileSpec.referencePDF() + "\n");
+
+        if (destination != null) {
+            p += "/D (" + this.destination + ")";
+        } else {
+            p += "/D [ " + this.pageReference + " /XYZ null null null ]";
+        }
+
+        p += " \n>>\nendobj\n";
+
         return p.getBytes();
     }
 

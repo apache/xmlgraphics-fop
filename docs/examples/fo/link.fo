@@ -114,6 +114,16 @@
 				go to <fo:basic-link external-destination="normal.pdf">normal.pdf</fo:basic-link>
 			</fo:block>
 
+			<!-- Normal text -->
+			<fo:block text-align="start"
+								space-before.optimum="6pt"
+								line-height="24pt"
+								font-family="serif"
+								padding-top="3pt"
+								>
+				9. Linking to a specific page of an external:
+				<fo:basic-link external-destination="extensive.pdf#page=1">extensive.pdf, Page 2</fo:basic-link>.
+			</fo:block>
 
 			<!-- Normal text -->
 <!--      <fo:block text-align="start"

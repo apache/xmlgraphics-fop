@@ -1233,6 +1233,7 @@ public class PDFDocument {
 
         PDFLink linkObject;
         PDFAction action;
+        int index;
 
         PDFLink link = new PDFLink(++this.objectcount, rect);
         this.objects.add(link);
@@ -1244,6 +1245,22 @@ public class PDFDocument {
                                                        destination);
                 this.objects.add(fileSpec);
                 action = new PDFGoToRemote(++this.objectcount, fileSpec);
+                this.objects.add(action);
+                link.setAction(action);
+            } else if ((index = destination.indexOf(".pdf#page=")) > 0) {
+                String file = destination.substring(0, index + 4);
+                int page = Integer.parseInt(destination.substring(index + 10));
+                PDFFileSpec fileSpec = new PDFFileSpec(++this.objectcount, file);
+                this.objects.add(fileSpec);
+                action = new PDFGoToRemote(++this.objectcount, fileSpec, page);
+                this.objects.add(action);
+                link.setAction(action);
+            } else if ((index = destination.indexOf(".pdf#dest=")) > 0) {
+                String file = destination.substring(0, index + 4);
+                String dest = destination.substring(index + 10);
+                PDFFileSpec fileSpec = new PDFFileSpec(++this.objectcount, file);
+                this.objects.add(fileSpec);
+                action = new PDFGoToRemote(++this.objectcount, fileSpec, dest);
                 this.objects.add(action);
                 link.setAction(action);
             } else {                               // URI
