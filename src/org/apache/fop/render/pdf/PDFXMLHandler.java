@@ -15,8 +15,6 @@ import org.apache.fop.svg.*;
 import org.apache.fop.svg.SVGUserAgent;
 import org.apache.fop.layout.FontState;
 
-import org.apache.log.Logger;
-
 import org.apache.batik.dom.util.DOMUtilities;
 
 import org.w3c.dom.Document;

@@ -8,8 +8,6 @@ package org.apache.fop.render;
 
 import org.apache.fop.fo.FOUserAgent;
 
-import org.apache.log.Logger;
-
 import java.util.HashMap;
 
 /**

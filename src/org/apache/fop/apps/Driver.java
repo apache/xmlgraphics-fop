@@ -20,10 +20,9 @@ import org.apache.fop.tools.DocumentReader;
 
 import org.apache.fop.render.pdf.PDFRenderer;
 
-import org.apache.log.*;
-import org.apache.log.format.*;
-import org.apache.log.output.io.*;
-import org.apache.log.output.*;
+// Avalon
+import org.apache.avalon.framework.logger.ConsoleLogger;
+import org.apache.avalon.framework.logger.Logger;
 
 // DOM
 import org.w3c.dom.Document;
@@ -227,18 +226,10 @@ public class Driver {
 
     private Logger getLogger() {
         if(log == null) {
-            Hierarchy hierarchy = Hierarchy.getDefaultHierarchy();
-            PatternFormatter formatter = new PatternFormatter(
-               "[%{priority}]: %{message}\n%{throwable}" );
+	    log = new ConsoleLogger(ConsoleLogger.LEVEL_INFO);
+	    log.error("Logger not set");
+	}
 
-            LogTarget target = null;
-            target = new StreamTarget(System.out, formatter);
-
-            hierarchy.setDefaultLogTarget(target);
-            log = hierarchy.getLoggerFor("fop");
-            log.setPriority(Priority.INFO);
-            log.error("Logger not set");
-        }
         return log;
     }
 

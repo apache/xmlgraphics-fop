@@ -11,11 +11,6 @@ package org.apache.fop.tools.anttasks;
 import org.apache.tools.ant.*;
 import org.apache.tools.ant.types.FileSet;
 
-import org.apache.log.*;
-import org.apache.log.format.*;
-import org.apache.log.output.io.*;
-import org.apache.log.output.*;
-
 // SAX
 import org.xml.sax.XMLReader;
 import org.xml.sax.InputSource;
@@ -34,6 +29,10 @@ import org.apache.fop.apps.FOInputHandler;
 import org.apache.fop.apps.Driver;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.configuration.Configuration;
+
+// Avalon
+import org.apache.avalon.framework.logger.ConsoleLogger;
+import org.apache.avalon.framework.logger.Logger;
 
 /**
  * Wrapper for Fop which allows it to be accessed from within an Ant task.
@@ -194,25 +193,7 @@ class FOPTaskStarter extends Starter {
     FOPTaskStarter(Fop task) throws FOPException {
         this.task = task;
 
-	Hierarchy hierarchy = Hierarchy.getDefaultHierarchy();
-        // PatternFormatter formatter = new PatternFormatter(
-        //   "[%{priority}] %{category}: %{message}\n%{throwable}" );
-        PatternFormatter formatter = new PatternFormatter("%{message}\n%{throwable}");
-
-        LogTarget target = null;
-        boolean doConsoleLogging = true;
-        if (doConsoleLogging) {
-            target = new StreamTarget(System.out, formatter);
-        } else {
-            try {
-                File f = new File("fop.log");
-                target = new FileTarget(f, false, formatter);
-            } catch (IOException e) {}
-        }
-
-        hierarchy.setDefaultLogTarget(target);
-        log = hierarchy.getLoggerFor("fop");
-        log.setPriority(Priority.INFO);
+	log = new ConsoleLogger(ConsoleLogger.LEVEL_INFO);
     }
 
     private int determineRenderer(String format) {

@@ -13,8 +13,6 @@ import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
 
-import org.apache.log.*;
-
 // Java
 import java.io.*;
 import java.net.URL;

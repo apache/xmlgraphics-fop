@@ -13,7 +13,8 @@ import org.apache.fop.area.inline.*;
 import org.apache.fop.layout.FontInfo;
 import org.apache.fop.fo.FOUserAgent;
 
-import org.apache.log.Logger;
+// Avalon
+import org.apache.avalon.framework.logger.Logger;
 
 // Java
 import java.io.OutputStream;

@@ -37,6 +37,18 @@
    driver.setRenderer(RENDER_PDF);
    driver.run();]]></source>
 
+  <p>You also need to set up logging. Global logging for all FOP
+    processes is managed by MessageHandler. Per-instance logging
+    is handled by Driver. You want to set both using an implementation
+    of org.apache.avalon.framework.logger.Logger. See
+    <jump href="http://jakarta.apache.org/avalon/framework/">Jakarta
+    Avalon Framework</jump> for more information.
+  </p>
+    <source><![CDATA[
+    Logger logger = new ConsoleLogger(ConsoleLogger.LEVEL_INFO);
+    MessageHandler.setScreenLogger(logger);
+    driver.setLogger(logger);]]></source>
+
   <p>To setup the user config file you can do the following
   </p>
     <source><![CDATA[

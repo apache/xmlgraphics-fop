@@ -13,7 +13,8 @@ import org.apache.fop.apps.StreamRenderer;
 import org.apache.fop.layout.Area;
 import org.apache.fop.util.CharUtilities;
 
-import org.apache.log.Logger;
+// Avalon
+import org.apache.avalon.framework.logger.Logger;
 
 import org.xml.sax.Attributes;
 

@@ -15,7 +15,7 @@ import org.apache.fop.fo.expr.PropertyException;
 import org.apache.fop.apps.FOPException;
 import java.util.Vector;
 
-import org.apache.log.Logger;
+import org.apache.avalon.framework.logger.Logger;
 
 public class Property {
 

@@ -7,7 +7,8 @@
 
 package org.apache.fop.apps;
 
-import org.apache.log.*;
+// Avalon
+import org.apache.avalon.framework.logger.Logger;
 
 // SAX
 import org.xml.sax.XMLReader;

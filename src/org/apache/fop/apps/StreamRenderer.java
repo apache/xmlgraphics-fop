@@ -16,7 +16,7 @@ import org.apache.fop.datatypes.IDReferences;
 import org.apache.fop.extensions.ExtensionObj;
 import org.apache.fop.fo.pagination.PageSequence;
 
-import org.apache.log.Logger;
+import org.apache.avalon.framework.logger.Logger;
 
 /**
   This class acts as a bridge between the XML:FO parser
