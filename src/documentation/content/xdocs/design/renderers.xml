@@ -191,5 +191,22 @@ AbstractRenderer's methods can easily be overridden to handle things in a differ
       <p>The layout of the document depends mainly on the font being used.
 If two renderers have the same font metrics then it is possible to use the same Area Tree to render both. This can be handled by the AreaTree Handler.</p>
     </section>
+    <section id="status">
+      <title>Status</title>
+      <section id="status-todo">
+        <title>To Do</title>
+      </section>
+      <section id="status-wip">
+        <title>Work In Progress</title>
+      </section>
+      <section id="status-complete">
+        <title>Completed</title>
+        <ul>
+          <li>new renderer model</li>
+          <li>new interface for structured documents, rtf and mif</li>
+          <li>added handlers for xml in renderer</li>
+        </ul>
+      </section>
+    </section>
   </body>
 </document>

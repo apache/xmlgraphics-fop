@@ -280,5 +280,23 @@ This handles the situation where before floats or footnotes may have been remove
 The areas are then placed on a last page.</p>
       </section>
     </section>
+    <section id="status">
+      <title>Status</title>
+      <section id="status-todo">
+        <title>To Do</title>
+      </section>
+      <section id="status-wip">
+        <title>Work in Progress</title>
+        <ul>
+          <li><strong>better layout design</strong> - that can handle keeps and spacing better</li>
+          <li><strong>better area tree handling</strong> - means it can run in less memory</li>
+          <li>new area tree model</li>
+          <li>changed area tree xml format to match the area tree hierarchy</li>
+        </ul>
+      </section>
+      <section id="status-complete">
+        <title>Completed</title>
+      </section>
+    </section>
   </body>
 </document>

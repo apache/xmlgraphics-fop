@@ -98,7 +98,27 @@ to result in a text box referencing the following PDF action:</p>
 >>]]></source>
 
 </section>
-
+    <section id="status">
+      <title>Status</title>
+      <section id="status-todo">
+        <title>To Do</title>
+      </section>
+      <section id="status-wip">
+        <title>Work In Progress</title>
+        <ul>
+          <li>mathml extension</li>
+          <li>another xml -> svg extension</li>
+          <li>svg text normal text if that can be handled otherwise stroked this is done automatically</li>
+        </ul>
+      </section>
+      <section id="status-complete">
+        <title>Completed</title>
+        <ul>
+          <li>svg now in an xml handler, FOP can be used without batik</li>
+          <li>bookmark extension improved a bit - changed bookmark extension, now requires a wrapping element bookmark</li>
+        </ul>
+      </section>
+    </section>
     </body>
 </document>
 

@@ -1,0 +1,39 @@
+<?xml version="1.0" standalone="no"?>
+<!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V1.1//EN"
+    "http://cvs.apache.org/viewcvs.cgi/*checkout*/xml-forrest/src/resources/schema/dtd/document-v11.dtd">
+<document>
+  <header>
+    <title>FOP Design: Startup, Environment, Control</title>
+  </header>
+  <body>
+    <section id="intro">
+      <title>Introduction</title>
+      <p>Startup is the process of getting FOP bootstrapped and creating basic objects. Environment includes acquiring user options, instantiating any frameworks, setting up logging, etc. Control includes the basic logic for tieing the various subsystems together properly.</p>
+    </section>
+    <section id="status">
+      <title>Status</title>
+      <section id="status-todo">
+        <title>To Do</title>
+        <ul>
+          <li>avalon integration - logging, configuration, component management, caching, uri resolver</li>
+          <li>improved interfaces
+            <ul>
+              <li>no threading/static problems</li>
+              <li>simpler to use</li>
+            </ul>
+          </li>
+          <li>better commandline handling</li>
+        </ul>
+      </section>
+      <section id="status-wip">
+        <title>Work In Progress</title>
+      </section>
+      <section id="status-complete">
+        <title>Completed</title>
+        <ul>
+          <li><strong>better image handling</strong> - redone so it can use a cache and synchronizes properly only on the current image while loading</li>
+        </ul>
+      </section>
+    </section>
+  </body>
+</document>

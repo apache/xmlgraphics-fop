@@ -38,5 +38,22 @@ Instead, FOP takes SAX events and builds its own tree-like structure. Why?</p>
       <p>See <link href="../extensions.html">User Extensions</link> for a discussion of standard extensions shipped with FOP, and their related namespaces.</p>
       <p>See <link href="../dev/extensions.html">Developer Extensions</link> for a discussion of the mechanisms in place to allow developers to add their own extensions, including how to tell FOP about the foreign namespace.</p>
     </section>
+    <section id="status">
+      <title>Status</title>
+      <section id="status-todo">
+        <title>To Do</title>
+      </section>
+      <section id="status-wip">
+        <title>Work In Progress</title>
+      </section>
+      <section id="status-complete">
+        <title>Completed</title>
+        <ul>
+          <li>better handling of unknown xml and xml from an unknown namespace</li>
+          <li>Changed extensions to allow for external xml</li>
+          <li>Can have a default element mapping for extensions</li>
+        </ul>
+      </section>
+    </section>
   </body>
 </document>
