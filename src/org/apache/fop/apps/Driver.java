@@ -349,7 +349,7 @@ public class Driver {
      * render the area tree to the output form
      */
     public void render()
-	throws IOException {
+	throws IOException, FOPException {
 	this.renderer.render(areaTree, this.writer);
     }
 }
