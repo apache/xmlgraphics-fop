@@ -33,9 +33,14 @@ import org.apache.fop.fo.Properties;
  * Therefore, only a number, its power and its baseunit need be provided for
  * in this class.
  * All numeric values are represented as a value and a unit raised to a
- * power.  For absolute numbers, including relative lengths, the unit power is
- * zero.
+ * power.  For absolute numbers and relative lengths the unit power is zero.
+ *
  * Whenever the power associated with a number is non-zero, it is a length.
+ * N.B. this includes relative lengths.  The resolution of a relative
+ * length is NOT performed by multiplying the relative length by its
+ * reference length in a standard * operation, but by specific methods.
+ * This allows invalid multiplication operations (any multiplication
+ * of a relative length is invalid in an expression.)
  * <p>
  * It is an error for the end result of an expression to be a numeric with
  * a power other than 0 or 1. (Rec. 5.9.6)
@@ -50,16 +55,22 @@ import org.apache.fop.fo.Properties;
  * )
  * numeric^n   addop  numeric^m   = Illegal
  * numeric1    addop  numeric2    = Illegal
- * numeric1^n  addop  numeric1^n  = numeric1^n   includes number + number
+ * rel-len1    addop  any         = Illegal  See 5.9.6 Absolute Numerics
+ * "...only the mod, addition, and subtraction operators require that the
+ * "numerics on either side of the operation be absolute numerics of the
+ * "same unit power."
+ *
+ * absnum1^n   addop  absnum1^n  = absnum1^n   includes number + number
  *
  * number      multop anyunit     = anyunit      universal multiplier
  *                                               includes number * relunit
- * unit1       multop unit2       = Illegal
+ *
+ * unit1       multop unit2       = Illegal      includes relunit * length
+ *
  * relunit     multop relunit     = Illegal
  *
  * unit1^n     multop unit1^m     = unit1^(n+m)  includes number * number
  *                                               excludes relunit* relunit
- * relunit     multop length      = length
  *
  * In fact, all lengths are maintained internally
  * in millipoints.
@@ -140,8 +151,9 @@ public class Numeric extends AbstractPropertyValue implements Cloneable {
      * @param property <tt>int</tt> index of the property.
      * @param value the actual value.
      * @param baseunit the baseunit for this <tt>Numeric</tt>.
-     * @param power The dimension of the value. 0 for a Number, 1 for a Length
-     * (any type), >1, <0 if Lengths have been multiplied or divided.
+     * @param power The dimension of the value. 0 for a Number,
+     * 0 for EMs or Percentage, 1 for a Length (any type),
+     * >1, <0 if Lengths have been multiplied or divided.
      * @param unit <tt>int</tt> enumeration of the subtype of the
      * <i>baseunit</i> in which this <i>Numeric</i> is being defined
      * e.g. Length.PX or Length.MM.
@@ -328,6 +340,14 @@ public class Numeric extends AbstractPropertyValue implements Cloneable {
     }
 
     /**
+     * This object is an ABSOLUTE NUMERIC type if it is a NUMBER or an
+     * ABSOLUTE LENGTH.
+     */
+    public boolean isAbsoluteNumeric() {
+        return (baseunit & ABS_UNIT) != 0;
+    }
+
+    /**
      * This object is a number if the baseunit is NUMBER.  Power is
      * guaranteed to be zero for NUMBER baseunit.
      */
@@ -395,6 +415,45 @@ public class Numeric extends AbstractPropertyValue implements Cloneable {
      }
 
     /**
+     * @param fontSize a <tt>Numeric</tt> containing the reference
+     * <i>font-size</i> length
+     * @return <i>this</i>, with values changed to reflect the conversion
+     * @exception <tt>PropertyException</tt>
+     */
+    public Numeric expandEms(Numeric fontSize) throws PropertyException {
+        if (baseunit == EMS) {
+            value = value *= fontSize.getValue();
+            power = power += fontSize.getPower();
+            baseunit = fontSize.getBaseunit();
+            if (isLength()) return this;
+
+            throw new PropertyException
+                    ("Invalid result from expandEms: " + value + power
+                     + getBaseunitString());
+        }
+        throw new PropertyException("Target of expandEms not EMs");
+    }
+
+    /**
+     * @param ref a <tt>Numeric</tt> containing the reference length
+     * @return <i>this</i>, with values changed to reflect the conversion
+     * @exception <tt>PropertyException</tt>
+     */
+    public Numeric expandPercent(Numeric ref) throws PropertyException {
+        if (baseunit == PERCENTAGE) {
+            value = value *= ref.getValue();
+            power = power += ref.getPower();
+            baseunit = ref.getBaseunit();
+            if (isLength()) return this;
+
+            throw new PropertyException
+                    ("Invalid result from expandPercent: " + value + power
+                     + getBaseunitString());
+        }
+        throw new PropertyException("Target of expandPercent not percentage");
+    }
+
+    /**
      * Subtract the operand from the current value.
      * @param op The value to subtract.
      * @return <i>Numeric</i>; this object.
@@ -408,6 +467,11 @@ public class Numeric extends AbstractPropertyValue implements Cloneable {
         if (baseunit != op.baseunit) {
              throw new PropertyException
                      ("Can't subtract Numerics of different baseunits: "
+                      + getBaseunitString() + " " + op.getBaseunitString());
+        }
+        if ((baseunit & REL_LENGTH) != 0) {
+            throw new PropertyException
+                    ("Can't subtract relative lengths."
                       + getBaseunitString() + " " + op.getBaseunitString());
         }
         
@@ -431,6 +495,11 @@ public class Numeric extends AbstractPropertyValue implements Cloneable {
         if (baseunit != op.baseunit) {
              throw new PropertyException
                      ("Can't add Numerics of different baseunits: "
+                      + getBaseunitString() + " " + op.getBaseunitString());
+        }
+        if ((baseunit & REL_LENGTH) != 0) {
+            throw new PropertyException
+                    ("Can't add relative lengths."
                       + getBaseunitString() + " " + op.getBaseunitString());
         }
 
@@ -506,41 +575,26 @@ public class Numeric extends AbstractPropertyValue implements Cloneable {
      * @throws PropertyException for invalid combinations.
      */
     public Numeric multiply(Numeric op) throws PropertyException {
-        if (baseunit == NUMBER) {
+        if (baseunit == NUMBER || op.baseunit == NUMBER) {
             // NUMBER is the universal multiplier
             // Multiply and convert to the basetype and power of the arg
             value *= op.value;
-            power = op.power;
-            baseunit = op.baseunit;
-        } else { // this is not a NUMBER - must be absolute or relative length
-            if (op.baseunit == NUMBER) {
-                // NUMBER is the universal multiplier
+            power += op.power;
+            if (baseunit == NUMBER) baseunit = op.baseunit;
+        } else { // this is not a NUMBER and op not a NUMBER
+            // baseunits must both be absolute lengths
+            if (baseunit == MILLIPOINTS &&  op.baseunit == MILLIPOINTS)
+            {
                 value *= op.value;
-            } else { // op not a NUMBER - must be MILLIPOINTS or REL_LENGTH
-                if (baseunit == MILLIPOINTS) { // this is a LENGTH
-                    if (op.baseunit == MILLIPOINTS) { // op is a LENGTH
-                        value *= op.value;
-                        power += op.power;
-                    } else { // op is a REL_LENGTH; this is a LENGTH
-                        // Result is a length * numeric relative factor
-                        value *= op.value;
-                    }
-                } else { // this is a REL_LENGTH  op is LENGTH or REL_LENGTH
-                    // only valid if op is a LENGTH
-                    if (op.baseunit == MILLIPOINTS) {
-                        value *= op.value;
-                        power = op.power;
-                        baseunit = op.baseunit;
-                    } else { // Can't be done
-                        throw new PropertyException
-                                ("Can't multiply a unit other than a "
-                                 + "length by a relative length: "
-                                 + getBaseunitString()
-                                 + " " + op.getBaseunitString());
-                    }
-                }
+                power += op.power;
+            } else { // Invalid combination
+                throw new PropertyException
+                        ("Can't multiply relative lengths or an absolute "
+                         + "length and a relative length: "
+                         + getBaseunitString()
+                         + " " + op.getBaseunitString());
             }
-        } // end of this == unit or relative length
+        }
         // Perfom some validity checks
         if (isNumeric() && power != 0)
             throw new PropertyException
@@ -568,41 +622,26 @@ public class Numeric extends AbstractPropertyValue implements Cloneable {
      * @throws PropertyException for invalid combinations.
      */
     public Numeric divide(Numeric op) throws PropertyException {
-        if (baseunit == NUMBER) {
-            // NUMBER is the universal multiplier
-            // Multiply and convert to the basetype and power of the arg
+        if (baseunit == NUMBER || op.baseunit == NUMBER) {
+            // NUMBER is the universal divisor
+            // Divide and convert to the basetype and power of the arg
             value /= op.value;
-            power = op.power;
-            baseunit = op.baseunit;
-        } else { // this is not a NUMBER - must be absolute or relative length
-            if (op.baseunit == NUMBER) {
-                // NUMBER is the universal multiplier
+            power -= op.power;
+            if (baseunit == NUMBER) baseunit = op.baseunit;
+        } else { // this is not a NUMBER and op not a NUMBER
+            // baseunits must both be absolute lengths
+            if (baseunit == MILLIPOINTS &&  op.baseunit == MILLIPOINTS)
+            {
                 value /= op.value;
-            } else { // op not a NUMBER - must be MILLIPOINTS or REL_LENGTH
-                if (baseunit == MILLIPOINTS) { // this is a LENGTH
-                    if (op.baseunit == MILLIPOINTS) { // op is a LENGTH
-                        value /= op.value;
-                        power -= op.power;
-                    } else { // op is a REL_LENGTH; this is a LENGTH
-                        // Result is a length / numeric relative factor
-                        value /= op.value;
-                    }
-                } else { // this is a REL_LENGTH  op is LENGTH or REL_LENGTH
-                    // only valid if op is a LENGTH
-                    if (op.baseunit == MILLIPOINTS) {
-                        value /= op.value;
-                        power = op.power;
-                        baseunit = op.baseunit;
-                    } else { // Can't be done
-                        throw new PropertyException
-                                ("Can't divide a unit other than a "
-                                 + "length by a relative length: "
-                                 + getBaseunitString()
-                                 + " " + op.getBaseunitString());
-                    }
-                }
+                power -= op.power;
+            } else { // Invalid combination
+                throw new PropertyException
+                        ("Can't divide relative lengths or an absolute "
+                         + "length and a relative length: "
+                         + getBaseunitString()
+                         + " " + op.getBaseunitString());
             }
-        } // end of this == unit or relative length
+        }
         // Perfom some validity checks
         if (isNumeric() && power != 0)
             throw new PropertyException
