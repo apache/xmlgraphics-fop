@@ -1,10 +1,53 @@
 /*
  * $Id$
- * Copyright (C) 2002 The Apache Software Foundation. All rights reserved.
- * For details on use and redistribution please refer to the
- * LICENSE file included with these sources.
- */
-
+ * ============================================================================
+ *                    The Apache Software License, Version 1.1
+ * ============================================================================
+ * 
+ * Copyright (C) 1999-2003 The Apache Software Foundation. All rights reserved.
+ * 
+ * Redistribution and use in source and binary forms, with or without modifica-
+ * tion, are permitted provided that the following conditions are met:
+ * 
+ * 1. Redistributions of source code must retain the above copyright notice,
+ *    this list of conditions and the following disclaimer.
+ * 
+ * 2. Redistributions in binary form must reproduce the above copyright notice,
+ *    this list of conditions and the following disclaimer in the documentation
+ *    and/or other materials provided with the distribution.
+ * 
+ * 3. The end-user documentation included with the redistribution, if any, must
+ *    include the following acknowledgment: "This product includes software
+ *    developed by the Apache Software Foundation (http://www.apache.org/)."
+ *    Alternately, this acknowledgment may appear in the software itself, if
+ *    and wherever such third-party acknowledgments normally appear.
+ * 
+ * 4. The names "FOP" and "Apache Software Foundation" must not be used to
+ *    endorse or promote products derived from this software without prior
+ *    written permission. For written permission, please contact
+ *    apache@apache.org.
+ * 
+ * 5. Products derived from this software may not be called "Apache", nor may
+ *    "Apache" appear in their name, without prior written permission of the
+ *    Apache Software Foundation.
+ * 
+ * THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESSED OR IMPLIED WARRANTIES,
+ * INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND
+ * FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
+ * APACHE SOFTWARE FOUNDATION OR ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
+ * INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLU-
+ * DING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS
+ * OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON
+ * ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
+ * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ * ============================================================================
+ * 
+ * This software consists of voluntary contributions made by many individuals
+ * on behalf of the Apache Software Foundation and was originally created by
+ * James Tauber <jtauber@jtauber.com>. For more information on the Apache
+ * Software Foundation, please see <http://www.apache.org/>.
+ */ 
 package org.apache.fop.layoutmgr;
 
 import org.apache.fop.fo.PropertyManager;
@@ -75,15 +118,13 @@ public class LineLayoutManager extends InlineStackingLayoutManager {
     private int follow;
 
     // inline start pos when adding areas
-    int iStartPos = 0;
+    private int iStartPos = 0;
 
     /**
      * Create a new Line Layout Manager.
      * This is used by the block layout manager to create
      * line managers for handling inline areas flowing into line areas.
      *
-     * @param fobj the block the is creating the lines
-     * @param lms the list of layout managers that will add inline areas
      * @param lh the default line height
      * @param l the default lead, from top to baseline
      * @param f the default follow, from baseline to bottom
@@ -98,6 +139,7 @@ public class LineLayoutManager extends InlineStackingLayoutManager {
     /**
      * Initialize the properties for this layout manager.
      * The properties are from the block area.
+     * @see org.apache.fop.layoutmgr.AbstractLayoutManager#initProperties(PropertyManager)
      */
     protected void initProperties(PropertyManager propMgr) {
         MarginProps marginProps = propMgr.getMarginProps();
@@ -141,13 +183,14 @@ public class LineLayoutManager extends InlineStackingLayoutManager {
         while ((curLM = getChildLM()) != null) {
             // INITIALIZE LAYOUT CONTEXT FOR CALL TO CHILD LM
             // First break for the child LM in each of its areas
-            boolean bFirstBPforLM = (vecInlineBreaks.isEmpty() ||
-                                     (((BreakPoss) vecInlineBreaks.get(vecInlineBreaks.size() - 1)).
+            boolean bFirstBPforLM = (vecInlineBreaks.isEmpty()
+                    || (((BreakPoss) vecInlineBreaks.get(vecInlineBreaks.size() - 1)).
                                       getLayoutManager() != curLM));
 
             // Need previous breakpoint! ATTENTION when backing up for hyphenation!
-            prev = (vecInlineBreaks.isEmpty()) ? null :
-                     (BreakPoss) vecInlineBreaks.get(vecInlineBreaks.size() - 1);
+            prev = (vecInlineBreaks.isEmpty()) 
+                    ? null
+                    : (BreakPoss) vecInlineBreaks.get(vecInlineBreaks.size() - 1);
             initChildLC(inlineLC, prev,
                         (vecInlineBreaks.size() == iPrevLineEnd),
                         bFirstBPforLM, new SpaceSpecifier(true));
@@ -158,10 +201,10 @@ public class LineLayoutManager extends InlineStackingLayoutManager {
              * then set the SUPPRESS_LEADING_SPACE flag.
              */
             inlineLC.setFlags(LayoutContext.SUPPRESS_LEADING_SPACE,
-                              (vecInlineBreaks.size() == iPrevLineEnd &&
-                               !vecInlineBreaks.isEmpty() &&
-                               ((BreakPoss) vecInlineBreaks.get(vecInlineBreaks.size() - 1)).
-                               isForcedBreak() == false));
+                              (vecInlineBreaks.size() == iPrevLineEnd
+                               && !vecInlineBreaks.isEmpty()
+                               && ((BreakPoss) vecInlineBreaks.get(vecInlineBreaks.size() - 1)).
+                                    isForcedBreak() == false));
 
             // GET NEXT POSSIBLE BREAK FROM CHILD LM
             // prevBP = bp;
@@ -209,17 +252,17 @@ public class LineLayoutManager extends InlineStackingLayoutManager {
 
                         inlineLC.setHyphContext(
                           getHyphenContext(prevBP, bp));
-                        if (inlineLC.getHyphContext() == null)
+                        if (inlineLC.getHyphContext() == null) {
                             break;
+                        }
                         inlineLC.setFlags(LayoutContext.TRY_HYPHENATE,
                                           true);
                         // Reset to previous acceptable break
                         reset();
-                    }
-                    /* If we are not in justified text, we can end the line at
-                     * prevBP.
-                     */
-                    else {
+                    } else {
+                        /* If we are not in justified text, we can end the line at
+                         * prevBP.
+                         */
                         break;
                     }
                 } else {
@@ -240,23 +283,23 @@ public class LineLayoutManager extends InlineStackingLayoutManager {
                              * (ie, bpDim.opt closes to availIPD.opt), keeps
                              * and hyphenation.
                              */
-                            vecPossEnd.add( new BreakCost(bp,
-                                                          Math.abs(availIPD.opt - bpDim.opt)));
+                            vecPossEnd.add(new BreakCost(bp,
+                                    Math.abs(availIPD.opt - bpDim.opt)));
                         }
                         // Otherwise it's short
                     } else {
                         /* Can't end line here. */
                     }
                 } // end of bpDim.min <= availIPD.max
-            } // end of getNextBreakPoss!=null on current child LM
-            else {
+            // end of getNextBreakPoss!=null on current child LM   
+            } else {
                 /* The child LM can return a null BreakPoss if it has
                  * nothing (more) to layout. This can happen when backing
                  * up. Just try the next child LM.
                  */
             }
-            if (inlineLC.tryHyphenate() &&
-                    !inlineLC.getHyphContext().hasMoreHyphPoints()) {
+            if (inlineLC.tryHyphenate()
+                    && !inlineLC.getHyphContext().hasMoreHyphPoints()) {
                 break;
             }
         } // end of while on child LM
@@ -265,10 +308,12 @@ public class LineLayoutManager extends InlineStackingLayoutManager {
             setFinished(true);
         }
 
-        if (bp == null)
+        if (bp == null) {
             return null;
-        if (prevBP == null)
+        }
+        if (prevBP == null) {
             prevBP = bp;
+        }
 
         // Choose the best break
         if (!bp.isForcedBreak() && vecPossEnd.size() > 0) {
@@ -288,7 +333,6 @@ public class LineLayoutManager extends InlineStackingLayoutManager {
         }
         return makeLineBreak(iPrevLineEnd, availIPD, talign);
     }
-
 
     private void reset() {
         while (vecInlineBreaks.get(vecInlineBreaks.size() - 1) != prevBP) {
@@ -350,7 +394,7 @@ public class LineLayoutManager extends InlineStackingLayoutManager {
 
         vecInlineBreaks.add(newBP);
         ListIterator bpIter =
-          vecInlineBreaks. listIterator(vecInlineBreaks.size());
+            vecInlineBreaks.listIterator(vecInlineBreaks.size());
         while (bpIter.hasPrevious() && bpIter.previous() != prev) {
         }
         if (bpIter.next() != prev) {
@@ -430,8 +474,8 @@ public class LineLayoutManager extends InlineStackingLayoutManager {
         MinOptMax actual = new MinOptMax();
         BreakPoss lastBP = null;
         LayoutManager lastLM = null;
-        for(Iterator iter = vecInlineBreaks.listIterator(prevLineEnd);
-                iter.hasNext(); ) {
+        for (Iterator iter = vecInlineBreaks.listIterator(prevLineEnd);
+                iter.hasNext();) {
             BreakPoss bp = (BreakPoss)iter.next();
             if (bp.getLead() > lineLead) {
                 lineLead = bp.getLead();
@@ -474,20 +518,18 @@ public class LineLayoutManager extends InlineStackingLayoutManager {
         int targetWith = target.opt;
         int realWidth = actual.opt;
         if (actual.opt > targetWith) {
-            if (actual.opt - targetWith <
-                    (actual.opt - actual.min)) {
-                ipdAdjust = -(actual.opt - targetWith) /
-                                (float)(actual.opt - actual.min);
+            if (actual.opt - targetWith < (actual.opt - actual.min)) {
+                ipdAdjust = -(actual.opt - targetWith)
+                                / (float)(actual.opt - actual.min);
                 realWidth = targetWith;
             } else {
                 ipdAdjust = -1;
                 realWidth = actual.max;
             }
         } else {
-            if (targetWith - actual.opt <
-                    actual.max - actual.opt) {
-                ipdAdjust = (targetWith - actual.opt) /
-                                (float)(actual.max - actual.opt);
+            if (targetWith - actual.opt < actual.max - actual.opt) {
+                ipdAdjust = (targetWith - actual.opt)
+                                / (float)(actual.max - actual.opt);
                 realWidth = targetWith;
             } else {
                 ipdAdjust = 1;
@@ -541,8 +583,7 @@ public class LineLayoutManager extends InlineStackingLayoutManager {
             prevBP = null;
         } else {
             prevBP = (BreakPoss)vecInlineBreaks.get(((LineBreakPosition)resetPos).getLeafPos());
-            while (vecInlineBreaks.get(vecInlineBreaks.size() - 1) != prevBP)
-{
+            while (vecInlineBreaks.get(vecInlineBreaks.size() - 1) != prevBP) {
                 vecInlineBreaks.remove(vecInlineBreaks.size() - 1);
             }
             reset(prevBP.getPosition());
@@ -599,7 +640,7 @@ public class LineLayoutManager extends InlineStackingLayoutManager {
                 lc.setTrailingSpace(new SpaceSpecifier(false));
             }
             // when can this be null?
-            if(lc.getTrailingSpace() != null) {
+            if (lc.getTrailingSpace() != null) {
                 addSpace(lineArea, lc.getTrailingSpace().resolve(true),
                          lc.getSpaceAdjust());
             }

@@ -67,10 +67,17 @@ public class SpaceSpecifier implements Cloneable {
     private List vecSpaceVals = new java.util.ArrayList();
 
 
+    /**
+     * Creates a new SpaceSpecifier.
+     * @param bStarts true if it starts anew reference area
+     */
     public SpaceSpecifier(boolean bStarts) {
         bStartsRefArea = bStarts;
     }
 
+    /**
+     * @see java.lang.Object#clone()
+     */
     public Object clone() {
         try {
             SpaceSpecifier ss = (SpaceSpecifier) super.clone();
@@ -92,8 +99,10 @@ public class SpaceSpecifier implements Cloneable {
         vecSpaceVals.clear();
     }
 
-
-    /** Return true if any space-specifiers have been added. */
+    /**
+     * Indicates whether any space-specifiers have been added.
+     * @return true if any space-specifiers have been added.
+     */
     public boolean hasSpaces() {
         return (vecSpaceVals.size() > 0);
     }
