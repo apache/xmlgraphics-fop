@@ -114,62 +114,62 @@ Sometimes ant gives out this warnings, but the build is finished without any pro
 
 <project default="package" basedir=".">
 
-    <fileset dir="${basedir}" id="dist.bin">
-       <include name="conf/**"/>
-       <include name="docs/xslfoRef.pdf"/>
-       <include name="docs/examples/**"/>
-       <exclude name="docs/examples/build.xml"/>
-       <exclude name="docs/examples/runtests.*"/>
-       <exclude name="docs/examples/results.html"/>
-       <include name="docs/graphics/**"/>
-       <include name="CHANGES"/>
-       <include name="LICENSE"/>
-       <include name="README"/>
-       <include name="STATUS"/>
-       <include name="ReleaseNotes.html"/>
-       <include name="fop.bat"/>
-       <include name="fop.sh"/>
-       <exclude name="src/**"/>
-       <exclude name="dist/**"/>
-       <exclude name="build/**"/>
-       <exclude name="lib/**"/>
-    </fileset>
+  <fileset dir="${basedir}" id="dist.bin">
+    <include name="conf/**"/>
+    <include name="docs/xslfoRef.pdf"/>
+    <include name="docs/examples/**"/>
+    <exclude name="docs/examples/build.xml"/>
+    <exclude name="docs/examples/runtests.*"/>
+    <exclude name="docs/examples/results.html"/>
+    <include name="docs/graphics/**"/>
+    <include name="CHANGES"/>
+    <include name="LICENSE"/>
+    <include name="README"/>
+    <include name="STATUS"/>
+    <include name="ReleaseNotes.html"/>
+    <include name="fop.bat"/>
+    <include name="fop.sh"/>
+    <exclude name="src/**"/>
+    <exclude name="dist/**"/>
+    <exclude name="build/**"/>
+    <exclude name="lib/**"/>
+  </fileset>
+  
+  <fileset dir="${basedir}" id="dist.bin.lib">
+    <include name="lib/xercesImpl-2.0.1.jar"/>
+    <include name="lib/xerces.LICENSE.txt"/>
+    <include name="lib/xml-apis.jar"/>
+    <include name="lib/xml-apis.README.txt"/>
+    <include name="lib/xalan-2.3.1.jar"/>
+    <include name="lib/xalan.LICENSE.txt"/>
+    <include name="lib/batik.jar"/>
+    <include name="lib/batik.LICENSE.txt"/>
+    <include name="lib/avalon-framework-cvs-20020806.jar"/>
+    <include name="lib/avalon.LICENSE.txt"/>
+    <include name="lib/readme"/>
+  </fileset>
 
-    <fileset dir="${basedir}" id="dist.bin.lib">
-       <include name="lib/xercesImpl-2.0.1.jar"/>
-       <include name="lib/xerces.LICENSE.txt"/>
-       <include name="lib/xml-apis.jar"/>
-       <include name="lib/xml-apis.README.txt"/>
-       <include name="lib/xalan-2.3.1.jar"/>
-       <include name="lib/xalan.LICENSE.txt"/>
-       <include name="lib/batik.jar"/>
-       <include name="lib/batik.LICENSE.txt"/>
-       <include name="lib/avalon-framework-cvs-20020806.jar"/>
-       <include name="lib/avalon.LICENSE.txt"/>
-       <include name="lib/readme"/>
-    </fileset>
-
-    <fileset dir="${basedir}" id="dist.src">
-       <exclude name="lib/jimi*"/>
-       <exclude name="build/**"/>
-       <include name="src/**"/>
-       <include name="conf/**"/>
-       <include name="docs/**"/>
-       <include name="hyph/**"/>
-       <include name="lib/**"/>
-       <include name="CHANGES"/>
-       <include name="LICENSE"/>
-       <include name="README"/>
-       <include name="STATUS"/>
-       <include name="ReleaseNotes.html"/>
-       <include name="build*"/>
-       <include name="fop.bat"/>
-       <include name="fop.sh"/>
-    </fileset>
+  <fileset dir="${basedir}" id="dist.src">
+    <exclude name="lib/jimi*"/>
+    <exclude name="build/**"/>
+    <include name="src/**"/>
+    <include name="conf/**"/>
+    <include name="docs/**"/>
+    <include name="hyph/**"/>
+    <include name="lib/**"/>
+    <include name="CHANGES"/>
+    <include name="LICENSE"/>
+    <include name="README"/>
+    <include name="STATUS"/>
+    <include name="ReleaseNotes.html"/>
+    <include name="build*"/>
+    <include name="fop.bat"/>
+    <include name="fop.sh"/>
+  </fileset>
 
   <path id="libs-build-classpath">
     <fileset dir="lib">
-      <include name="stylebook*.jar"/>
+      <!--include name="stylebook*.jar"/-->
       <include name="xalan*.jar"/>
       <include name="xerces*.jar"/>
       <include name="xml-apis*.jar"/>
@@ -179,7 +179,7 @@ Sometimes ant gives out this warnings, but the build is finished without any pro
   <!-- =================================================================== -->
   <!-- Initialization target                                               -->
   <!-- =================================================================== -->
-  <target name="init" depends="init-avail, init-filters-xalan2">
+  <target name="init" depends="init-avail, init-filters-jdk14, init-filters-jdk13">
     <tstamp/>
     <property name="Name" value="Fop"/>
     <property name="name" value="fop"/>
@@ -204,14 +204,14 @@ Sometimes ant gives out this warnings, but the build is finished without any pro
     <property name="conf.dir" value="./conf"/>
     <property name="packages" value="org.apache.fop.*"/>
 
-    <property name="docs"           value="docs/html-docs"/>
-    <property name="xdocs"           value="docs/xml-docs"/>
-    <property name="skins"           value="docs/xml-docs/skins/xml.apache.org/"/>
-    <property name="doc.generator" value="org.apache.stylebook.StyleBook"/>
-    <property name="doc.generator.package" value="${lib.dir}/stylebook-1.0-b2.jar"/>
+    <property name="docs" value="docs/html-docs"/>
+    <property name="xdocs" value="docs/xml-docs"/>
+    <property name="skins" value="docs/xml-docs/skins/xml.apache.org/"/>
+    <!--property name="doc.generator" value="org.apache.stylebook.StyleBook"/>
+    <property name="doc.generator.package" value="${lib.dir}/stylebook-1.0-b2.jar"/-->
 
-	<property name="viewer.resources.src.dir" value="./src/org/apache/fop/viewer/resources"/>
-	<property name="viewer.images.src.dir" value="./src/org/apache/fop/viewer/Images"/>
+    <property name="viewer.resources.src.dir" value="./src/org/apache/fop/viewer/resources"/>
+    <property name="viewer.images.src.dir" value="./src/org/apache/fop/viewer/Images"/>
 	
     <property name="build.dir" value="./build"/>
     <property name="build.src" value="./build/src"/>
@@ -220,8 +220,8 @@ Sometimes ant gives out this warnings, but the build is finished without any pro
     <property name="build.docs" value="./build/docs"/>
     <property name="build.javadocs" value="./build/javadocs"/>
 
-	<property name="viewer.resources.dest.dir" value="${build.dest}/org/apache/fop/viewer/resources"/>
-	<property name="viewer.images.dest.dir" value="${build.dest}/org/apache/fop/viewer/Images"/>
+    <property name="viewer.resources.dest.dir" value="${build.dest}/org/apache/fop/viewer/resources"/>
+    <property name="viewer.images.dest.dir" value="${build.dest}/org/apache/fop/viewer/Images"/>
 
 	<!-- <property name="dist.dir" value="./dist"/> -->
     <property name="dist.bin.dir" value="./dist-bin"/>
@@ -232,12 +232,12 @@ Sometimes ant gives out this warnings, but the build is finished without any pro
     <property name="properties.dir" value="org/apache/fop/fo/properties"/>
     <property name="fonts.dir" value="org/apache/fop/render/pdf/fonts"/>
     <property name="svg.dir" value="org/apache/fop/svg"/>
-    <property name="replacestring" value="org/apache/fop"/>
+    <!--property name="replacestring" value="org/apache/fop"/-->
     <property name="ignore_this" value="ignore_this.java"/>
     <property name="jimi" value="JimiImage.java"/>
     <property name="jai" value="JAIImage.java"/>
 
-    <property name="xslt" value="org.apache.xalan.xslt.Process"/>
+    <!--property name="xslt" value="org.apache.xalan.xslt.Process"/-->
     <property name="src.properties.xsl" value="${src.codegen}/properties.xsl"/>
     <property name="src.propmaker.xsl" value="${src.codegen}/propmaker.xsl"/>
     <property name="foproperties.xml" value="${build.codegen}/foproperties.xml"/>
@@ -287,9 +287,8 @@ Sometimes ant gives out this warnings, but the build is finished without any pro
 
     <property name="main.class" value="org.apache.fop.apps.Fop"/>
             <property name="runtime.classpath" value="xercesImpl-2.0.1.jar xml-apis.jar xalan-2.3.1.jar batik.jar jimi-1.0.jar avalon-framework-cvs-20020806.jar"/>
-   
-    <filter filtersfile="${build.src}/codegen/filter"/>
 
+    <filter filtersfile="${build.codegen}/filter"/>
   </target>
 
   <target name="init-avail">
@@ -297,13 +296,18 @@ Sometimes ant gives out this warnings, but the build is finished without any pro
     <available property="jai.present" classname="javax.media.jai.JAI"/>
 
     <available property="trax.present" classname="javax.xml.transform.Transformer"/>
-
-    <filter token="xalan2-replacestring" value="../org/apache/fop"/>
+    <available property="jdk14.present" classname="java.lang.CharSequence"/>
 
   </target>
 
-  <target name="init-filters-xalan2" depends="init-avail" if="trax.present">
-    <copy file="src/codegen/xalan2.filter" toFile="./build/src/codegen/filter" filtering="on"/>
+  <target name="init-filters-jdk13" depends="init-avail" unless="jdk14.present">
+    <echo message="JDK 1.3 or earlier present."/>
+    <copy file="src/codegen/jdk13.filter" toFile="build/src/codegen/filter"/>
+  </target>
+
+  <target name="init-filters-jdk14" depends="init-avail" if="jdk14.present">
+    <echo message="JDK 1.4 present."/>
+    <copy file="src/codegen/jdk14.filter" toFile="build/src/codegen/filter"/>
   </target>
 
 
@@ -397,7 +401,7 @@ Sometimes ant gives out this warnings, but the build is finished without any pro
   <!-- =================================================================== -->
   <target name="prepare-src" depends="prepare, prepare-jimi, prepare-jai, prepare-trax">
     <!-- copy src files -->
-    <copy todir="${build.src}">
+    <copy todir="${build.src}" filtering="yes">
       <fileset dir="${src.dir}" 
          excludes="**/package.html, **/${jimi},**/${jai},**/${xsltransform},**/${trax},**/apps/TraxInputHandler.java"/>
     </copy>
@@ -411,7 +415,7 @@ Sometimes ant gives out this warnings, but the build is finished without any pro
     <echo message="Resetting codegen directory"/>
 
     <!-- copy codegen directory -->
-    <copy todir="${build.codegen}" filtering="on">
+    <copy todir="${build.codegen}" filtering="yes">
       <fileset dir="${src.codegen}"/>
     </copy>
 
@@ -420,11 +424,11 @@ Sometimes ant gives out this warnings, but the build is finished without any pro
 
     <dependset>
         <srcfilelist dir="./" files="${foproperties.xml},${colorkw.xml}"/>
-        <targetfilelist dir="./" files="${build.src}/${replacestring}/fo/properties/Constants.java,${build.src}/${replacestring}/fo/properties/fo_${ignore_this}"/>
+        <targetfilelist dir="./" files="${build.src}/org/apache/fop/fo/properties/Constants.java,${build.src}/org/apache/fop/fo/properties/fo_${ignore_this}"/>
     </dependset>
     <dependset>
         <srcfilelist dir="./" files="${propinc.xsl}"/>
-        <targetfilelist dir="./" files="${build.src}/${replacestring}/fo/properties/fo_${ignore_this},${build.src}/${replacestring}/fo/properties/FOPropertyMapping.java,${build.src}/${replacestring}/fo/properties/foenums_${ignore_this}"/>
+        <targetfilelist dir="./" files="${build.src}/org/apache/fop/fo/properties/fo_${ignore_this},${build.src}/org/apache/fop/fo/properties/FOPropertyMapping.java,${build.src}/org/apache/fop/fo/properties/foenums_${ignore_this}"/>
     </dependset>
 
     <dependset>
@@ -436,119 +440,104 @@ Sometimes ant gives out this warnings, but the build is finished without any pro
                                      ${Times-Roman.xml},${Times-Italic.xml},${Times-Bold.xml},
                                      ${Times-BoldItalic.xml},
                                      ${Symbol.xml},${ZapfDingbats.xml}"/>
-        <targetfilelist dir="./" files="${build.src}/${replacestring}/render/pdf/fonts/Courier*,
-                                        ${build.src}/${replacestring}/render/pdf/fonts/Times*,
-                                        ${build.src}/${replacestring}/render/pdf/fonts/Helvetica*,
-                                        ${build.src}/${replacestring}/render/pdf/fonts/Symbol*,
-                                        ${build.src}/${replacestring}/render/pdf/fonts/ZapfDingbats*"/>
+        <targetfilelist dir="./" files="${build.src}/org/apache/fop/render/pdf/fonts/Courier*,
+                                        ${build.src}/org/apache/fop/render/pdf/fonts/Times*,
+                                        ${build.src}/org/apache/fop/render/pdf/fonts/Helvetica*,
+                                        ${build.src}/org/apache/fop/render/pdf/fonts/Symbol*,
+                                        ${build.src}/org/apache/fop/render/pdf/fonts/ZapfDingbats*"/>
     </dependset>
 
     <style in="${allprops.xml}" style="${genconst.xsl}"
-        out="${build.src}/${replacestring}/fo/properties/Constants.java"/>
+        out="${build.src}/org/apache/fop/fo/properties/Constants.java"/>
 
     <style in="${foproperties.xml}" style="${properties.xsl}"
-        out="${build.src}/${replacestring}/fo/properties/fo_${ignore_this}"/>
+        out="${build.src}/org/apache/fop/fo/properties/fo_${ignore_this}"/>
     <style in="${foproperties.xml}" style="${propmap.xsl}"
-        out="${build.src}/${replacestring}/fo/properties/FOPropertyMapping.java"/>
+        out="${build.src}/org/apache/fop/fo/properties/FOPropertyMapping.java"/>
     <style in="${foproperties.xml}" style="${enumgen.xsl}"
-        out="${build.src}/${replacestring}/fo/properties/foenums_${ignore_this}"/>
+        out="${build.src}/org/apache/fop/fo/properties/foenums_${ignore_this}"/>
 
     <style in="${extproperties.xml}" style="${propmap.xsl}"
-        out="${build.src}/${replacestring}/fo/properties/ExtensionPropertyMapping.java"/>
+        out="${build.src}/org/apache/fop/fo/properties/ExtensionPropertyMapping.java"/>
 
     <style
        in="${encodings.xml}" style="${charlist.xsl}"
-       destdir="${build.src}/${replacestring}/render/pdf" 
-       out="${build.src}/${replacestring}/render/pdf/CodePointMapping.java"/>
+       out="${build.src}/org/apache/fop/render/pdf/CodePointMapping.java"/>
     <style
        in="${Courier.xml}" style="${fontfile.xsl}"
-       destdir="${build.src}/${replacestring}/render/pdf/fonts" 
-       out="${build.src}/${replacestring}/render/pdf/fonts/Courier.java">
+       out="${build.src}/org/apache/fop/render/pdf/fonts/Courier.java">
       <param name="encoding" expression="${textfontencoding}"/>
     </style>
     <style
        in="${Courier-Oblique.xml}" style="${fontfile.xsl}"
-       destdir="${build.src}/${replacestring}/render/pdf/fonts" 
-       out="${build.src}/${replacestring}/render/pdf/fonts/CourierOblique.java">
+       out="${build.src}/org/apache/fop/render/pdf/fonts/CourierOblique.java">
       <param name="encoding" expression="${textfontencoding}"/>
     </style>
     <style
        in="${Courier-Bold.xml}" style="${fontfile.xsl}"
-       destdir="${build.src}/${replacestring}/render/pdf/fonts" 
-       out="${build.src}/${replacestring}/render/pdf/fonts/CourierBold.java">
+       out="${build.src}/org/apache/fop/render/pdf/fonts/CourierBold.java">
       <param name="encoding" expression="${textfontencoding}"/>
     </style>
     <style
        in="${Courier-BoldOblique.xml}" style="${fontfile.xsl}"
-       destdir="${build.src}/${replacestring}/render/pdf/fonts" 
-       out="${build.src}/${replacestring}/render/pdf/fonts/CourierBoldOblique.java">
+       out="${build.src}/org/apache/fop/render/pdf/fonts/CourierBoldOblique.java">
       <param name="encoding" expression="${textfontencoding}"/>
     </style>
     <style
        in="${Helvetica.xml}" style="${fontfile.xsl}"
-       destdir="${build.src}/${replacestring}/render/pdf/fonts" 
-       out="${build.src}/${replacestring}/render/pdf/fonts/Helvetica.java">
+       out="${build.src}/org/apache/fop/render/pdf/fonts/Helvetica.java">
       <param name="encoding" expression="${textfontencoding}"/>
     </style>
     <style
        in="${Helvetica-Bold.xml}" style="${fontfile.xsl}"
-       destdir="${build.src}/${replacestring}/render/pdf/fonts" 
-       out="${build.src}/${replacestring}/render/pdf/fonts/HelveticaBold.java">
+       out="${build.src}/org/apache/fop/render/pdf/fonts/HelveticaBold.java">
       <param name="encoding" expression="${textfontencoding}"/>
     </style>
     <style
        in="${Helvetica-Oblique.xml}" style="${fontfile.xsl}"
-       destdir="${build.src}/${replacestring}/render/pdf/fonts" 
-       out="${build.src}/${replacestring}/render/pdf/fonts/HelveticaOblique.java">
+       out="${build.src}/org/apache/fop/render/pdf/fonts/HelveticaOblique.java">
       <param name="encoding" expression="${textfontencoding}"/>
     </style>
     <style
        in="${Helvetica-BoldOblique.xml}" style="${fontfile.xsl}"
-       destdir="${build.src}/${replacestring}/render/pdf/fonts" 
-       out="${build.src}/${replacestring}/render/pdf/fonts/HelveticaBoldOblique.java">
+       out="${build.src}/org/apache/fop/render/pdf/fonts/HelveticaBoldOblique.java">
       <param name="encoding" expression="${textfontencoding}"/>
     </style>
     <style
        in="${Times-Roman.xml}" style="${fontfile.xsl}"
-       destdir="${build.src}/${replacestring}/render/pdf/fonts" 
-       out="${build.src}/${replacestring}/render/pdf/fonts/TimesRoman.java">
+       out="${build.src}/org/apache/fop/render/pdf/fonts/TimesRoman.java">
       <param name="encoding" expression="${textfontencoding}"/>
     </style>
     <style
        in="${Times-Italic.xml}" style="${fontfile.xsl}"
-       destdir="${build.src}/${replacestring}/render/pdf/fonts" 
-       out="${build.src}/${replacestring}/render/pdf/fonts/TimesItalic.java">
+       out="${build.src}/org/apache/fop/render/pdf/fonts/TimesItalic.java">
       <param name="encoding" expression="${textfontencoding}"/>
     </style>
     <style
        in="${Times-Bold.xml}" style="${fontfile.xsl}"
-       destdir="${build.src}/${replacestring}/render/pdf/fonts" 
-       out="${build.src}/${replacestring}/render/pdf/fonts/TimesBold.java">
+       out="${build.src}/org/apache/fop/render/pdf/fonts/TimesBold.java">
       <param name="encoding" expression="${textfontencoding}"/>
     </style>
     <style
        in="${Times-BoldItalic.xml}" style="${fontfile.xsl}"
-       destdir="${build.src}/${replacestring}/render/pdf/fonts" 
-       out="${build.src}/${replacestring}/render/pdf/fonts/TimesBoldItalic.java">
+       out="${build.src}/org/apache/fop/render/pdf/fonts/TimesBoldItalic.java">
       <param name="encoding" expression="${textfontencoding}"/>
     </style>
     <style
        in="${Symbol.xml}" style="${fontfile.xsl}"
-       destdir="${build.src}/${replacestring}/render/pdf/fonts" 
-       out="${build.src}/${replacestring}/render/pdf/fonts/Symbol.java"/>
+       out="${build.src}/org/apache/fop/render/pdf/fonts/Symbol.java"/>
     <style
        in="${ZapfDingbats.xml}" style="${fontfile.xsl}"
-       destdir="${build.src}/${replacestring}/render/pdf/fonts" 
-       out="${build.src}/${replacestring}/render/pdf/fonts/ZapfDingbats.java"/>
+       out="${build.src}/org/apache/fop/render/pdf/fonts/ZapfDingbats.java"/>
 
     <!-- custom fonts (Use t1fontfile.xsl instead of fontfile.xsl for Type 1 fonts!) step 2/2 -->
     <!-- use this as a template for type 1 fonts: 
     <xslt infile="${myfont.xml}" xsltfile="${t1fontfile.xsl}"
-        outfile="${build.src}/${replacestring}/render/pdf/fonts/myfont.java" smart="yes"/>
+        outfile="${build.src}/org/apache/fop/render/pdf/fonts/myfont.java" smart="yes"/>
     -->
     <!-- use this as a template for truetype fonts 
     <xslt infile="${myfont.xml}" xsltfile="${ttffontfile.xsl}" 
-        outfile="${build.src}/${replacestring}/render/pdf/fonts/myfont.java" smart="yes"/>
+        outfile="${build.src}/org/apache/fop/render/pdf/fonts/myfont.java" smart="yes"/>
     -->
 
 
@@ -562,11 +551,11 @@ Sometimes ant gives out this warnings, but the build is finished without any pro
     <!-- create directories -->
     <mkdir dir="${build.dest}"/>
 
-	<mkdir dir="${viewer.resources.dest.dir}"/>
+    <mkdir dir="${viewer.resources.dest.dir}"/>
     <copy todir="${viewer.resources.dest.dir}">
       <fileset dir="${viewer.resources.src.dir}"/>
     </copy>
-	<mkdir dir="${viewer.images.dest.dir}"/>
+    <mkdir dir="${viewer.images.dest.dir}"/>
     <copy todir="${viewer.images.dest.dir}">
       <fileset dir="${viewer.images.src.dir}"/>
     </copy>
@@ -655,7 +644,7 @@ Sometimes ant gives out this warnings, but the build is finished without any pro
   <target name="htmldoc" depends="prepare-src">
     <copy file="${xdocs}/fop.xml"
           tofile="${xdocs}/book.xml"
-          filtering="on"/>
+          filtering="yes"/>
     <java classname="${doc.generator}" fork="yes">
       <classpath refid="libs-build-classpath"/>
       <arg line="targetDirectory=${docs} ${xdocs}/book.xml ${skins}"/>
