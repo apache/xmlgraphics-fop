@@ -155,6 +155,20 @@
     <default>8in</default>
   </property>
   <property>
+    <name>content-width</name>
+    <class-name>ContentWidth</class-name>
+    <inherited>false</inherited>
+    <datatype>Length</datatype>
+    <default>auto</default>
+  </property>
+  <property>
+    <name>content-height</name>
+    <class-name>ContentHeight</class-name>
+    <inherited>false</inherited>
+    <datatype>Length</datatype>
+    <default>auto</default>
+  </property>
+  <property>
     <name>page-master-repeating</name>
     <class-name>PageMasterRepeating</class-name>
     <inherited>false</inherited>
