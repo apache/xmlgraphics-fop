@@ -153,6 +153,7 @@ public class PDFRenderer extends PrintRenderer {
 
     public void stopRenderer(OutputStream stream)
     throws IOException {
+        FontSetup.addToResources(this.pdfDoc, fontInfo);
         pdfDoc.outputTrailer(stream);
     }
 
@@ -684,7 +685,7 @@ public class PDFRenderer extends PrintRenderer {
         this.pdfDoc.setIDReferences(idReferences);
         this.renderPage(page);
 
-        FontSetup.addToResources(this.pdfDoc, fontInfo);
+        //FontSetup.addToResources(this.pdfDoc, fontInfo);
 
         // TODO: this needs to be implemented
         renderRootExtensions(page);
