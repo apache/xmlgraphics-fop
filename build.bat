@@ -6,7 +6,11 @@ echo ----------------
 if "%JAVA_HOME%" == "" goto error
 
 set LIBDIR=lib
-set LOCALCLASSPATH=%JAVA_HOME%\lib\tools.jar;%JAVA_HOME%\lib\classes.zip;%LIBDIR%\ant.jar;%LIBDIR%\buildtools.jar;%LIBDIR%\xercesImpl-2.0.1.jar;%LIBDIR%\xalan-2.3.1.jar;%LIBDIR%\xml-apis.jar
+set LOCALCLASSPATH=%JAVA_HOME%\lib\tools.jar;%JAVA_HOME%\lib\classes.zip
+set LOCALCLASSPATH=%LOCALCLASSPATH%;%LIBDIR%\ant.jar
+set LOCALCLASSPATH=%LOCALCLASSPATH%;%LIBDIR%\xml-apis.jar
+set LOCALCLASSPATH=%LOCALCLASSPATH%;%LIBDIR%\xercesImpl-2.2.1.jar
+set LOCALCLASSPATH=%LOCALCLASSPATH%;%LIBDIR%\xalan-2.4.1.jar
 
 set ANT_HOME=%LIBDIR%
 

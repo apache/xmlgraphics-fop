@@ -58,8 +58,8 @@ list of possible build targets.
   </fileset>
   
   <fileset dir="${basedir}" id="dist.bin.lib">
-    <include name="lib/xercesImpl-2.0.1.jar"/>
-    <include name="lib/xalan-2.3.1.jar"/>
+    <include name="lib/xercesImpl-2.2.1.jar"/>
+    <include name="lib/xalan-2.4.1.jar"/>
     <include name="lib/xml-apis.jar"/>
     <include name="lib/batik.jar"/>
     <include name="lib/avalon-framework*.jar"/>
@@ -221,9 +221,6 @@ list of possible build targets.
     
     <property name="tools.pkg" value="org/apache/fop/tools"/>
 
-    <taskdef name="serHyph" classname="org.apache.fop.tools.anttasks.SerializeHyphPattern"/>
-    <taskdef name="runTest" classname="org.apache.fop.tools.anttasks.RunTest"/>
-    
     <property name="main.class" value="org.apache.fop.apps.Fop"/>
     
     <filter filtersfile="${build.codegen}/filter" />
@@ -263,13 +260,6 @@ list of possible build targets.
     <mkdir dir="${build.gensrc}/${properties.dir}"/>
     <mkdir dir="${build.gensrc}/${fonts.dir}"/>
     <mkdir dir="${build.dest}/hyph"/>
-  </target>
-  
-  <!-- =================================================================== -->
-  <!-- compiles hyphenation patterns                                       -->
-  <!-- =================================================================== -->
-  <target name="hyphenation" depends="prepare">
-    <serHyph includes="*.xml" sourceDir="./hyph" targetDir="${build.dest}/hyph"/>
   </target>
   
   <!-- =================================================================== -->
@@ -442,6 +432,20 @@ list of possible build targets.
   <target name="compile" depends="compile-src,compile-jimi,compile-jai" description="Compiles the source code"/>
   
   <!-- =================================================================== -->
+  <!-- compiles hyphenation patterns                                       -->
+  <!-- =================================================================== -->
+  <target name="hyphenation" depends="prepare">
+    <path id="hyph-classpath">
+      <path refid="libs-build-classpath"/>
+      <pathelement location="${build.dir}/classes"/>
+    </path>
+    <taskdef name="serHyph" classname="org.apache.fop.tools.anttasks.SerializeHyphPattern" classpathref="hyph-classpath"/> 
+    <serHyph includes="*.xml" 
+             sourceDir="${hyph.dir}" 
+             targetDir="${build.dest}/hyph"/> 
+  </target>
+  
+  <!-- =================================================================== -->
   <!-- Creates the class package                                           -->
   <!-- =================================================================== -->
   <target name="package" depends="compile,hyphenation" description="Generates the jar files">
@@ -508,6 +512,11 @@ list of possible build targets.
   <target name="test" depends="package" description="Runs the test suite">
     <echo message="Testing build in jar file ${build.dir}/${name}.jar against reference"/>
     <property name="ref-version" value="FOP 1.0dev"/>
+    <path id="testtask-classpath">
+      <path refid="libs-build-classpath"/>
+      <pathelement location="${build.dir}/classes"/>
+    </path>
+    <taskdef name="runTest" classname="org.apache.fop.tools.anttasks.RunTest" classpathref="testtask-classpath"/>
     <runTest testSuite="basictests.xml" basedir="test/" reference="test/reference/fop.jar"
          refVersion="${ref-version}"/>
     <runTest testSuite="bugtests.xml" basedir="test/" reference="test/reference/fop.jar"
