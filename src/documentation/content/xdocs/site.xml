@@ -24,8 +24,10 @@
     <faqs label="FAQs" href="faq.html"/>
     <maillist label="Mailing Lists" href="maillist.html"/>
     <license label="License" href="license.html"/>
+    <!--
     <all_site label="Full HTML" href="wholesite.html"/>
     <all_sitePDF label="Full PDF" href="wholesite.pdf"/>
+    -->
   </about>
 
   <using label="Using FOP">
