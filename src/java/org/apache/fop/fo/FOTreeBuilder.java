@@ -226,7 +226,8 @@ public class FOTreeBuilder extends DefaultHandler {
 
         // Check to ensure first node encountered is an fo:root
         if (rootFObj == null) {
-            if (!namespaceURI.equals(FObj.FO_URI) || !localName.equals("root")) {
+            if (!namespaceURI.equals(FOElementMapping.URI) 
+                || !localName.equals("root")) {
                 throw new SAXException(new IllegalArgumentException(
                     "Error:  First element must be fo:root formatting object"));
             }

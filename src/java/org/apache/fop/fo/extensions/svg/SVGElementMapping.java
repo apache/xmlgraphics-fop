@@ -33,10 +33,11 @@ import org.apache.batik.dom.svg.SVGDOMImplementation;
  * that create the SVG Document.
  */
 public class SVGElementMapping extends ElementMapping {
+    public static String URI = SVGDOMImplementation.SVG_NAMESPACE_URI;
     private boolean batik = true;
 
     public SVGElementMapping() {
-        namespaceURI = SVGDOMImplementation.SVG_NAMESPACE_URI;
+        namespaceURI = URI;
     }
 
     protected void initialize() {

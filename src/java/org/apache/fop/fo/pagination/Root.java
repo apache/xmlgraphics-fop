@@ -25,6 +25,9 @@ import java.util.List;
 import org.apache.fop.fo.FOTreeControl;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FObj;
+import org.apache.fop.fo.FOElementMapping;
+import org.apache.fop.fo.extensions.ExtensionElementMapping;
+import org.apache.fop.fo.extensions.Bookmarks;
 import org.apache.fop.fo.FOTreeVisitor;
 
 /**
@@ -33,7 +36,9 @@ import org.apache.fop.fo.FOTreeVisitor;
 public class Root extends FObj {
     private LayoutMasterSet layoutMasterSet;
     private Declarations declarations;
+    private Bookmarks bookmarks = null;
     private List pageSequences;
+
     // temporary until above list populated
     private boolean pageSequenceFound = false;
 
@@ -58,39 +63,46 @@ public class Root extends FObj {
 
     /**
      * @see org.apache.fop.fo.FONode#validateChildNode(String, String)
+        XSL 1.0 Spec: (layout-master-set,declarations?,page-sequence+)
+        FOP: (layout-master-set, declarations?, fox:bookmarks?, page-sequence+)
      */
-    protected void validateChildNode(String namespaceURI, String localName) {
-        if (namespaceURI == FObj.FO_URI) {
+    protected void validateChildNode(String nsURI, String localName) {
+        if (nsURI == FOElementMapping.URI) {
             if (localName.equals("layout-master-set")) {   
-                if (layoutMasterSet != null) { // only one fo:declarations
-                    throw new IllegalArgumentException("Error: Only one" +
-                        " fo:layout-master-set may be defined per fo:root");
+                if (layoutMasterSet != null) {
+                    tooManyNodesError("fo:layout-master-set");
                 }
             } else if (localName.equals("declarations")) { 
-                if (layoutMasterSet == null) { // must already have a l-m-s
-                    throw new IllegalArgumentException("Error:" +
-                        " fo:layout-master-set must be first child of" +
-                        " fo:root");
-                } else if (declarations != null) { // only one fo:declarations
-                    throw new IllegalArgumentException("Error: Only one" +
-                        " fo:declarations may be defined per fo:root");
-                } else if (pageSequenceFound) { // no page-seqs yet
-                    throw new IllegalArgumentException("Error: fo:declarations" +
-                        " must be defined before fo:page-sequence declarations");
+                if (layoutMasterSet == null) {
+                    nodesOutOfOrderError("fo:layout-master-set", "fo:declarations");
+                } else if (declarations != null) {
+                    tooManyNodesError("fo:declarations");
+                } else if (bookmarks != null) {
+                    nodesOutOfOrderError("fo:declarations", "fox:bookmarks");
+                } else if (pageSequenceFound) {
+                    nodesOutOfOrderError("fo:declarations", "fo:page-sequence");
                 }
             } else if (localName.equals("page-sequence")) { 
-                if (layoutMasterSet == null) { // must already have a l-m-s
-                    throw new IllegalArgumentException("Error:" +
-                    " fo:layout-master-set must be first child of fo:root");
+                if (layoutMasterSet == null) {
+                    nodesOutOfOrderError("fo:layout-master-set", "fo:page-sequence");
                 } else {
                     pageSequenceFound = true;
                 }
-            } else
-                throw new IllegalArgumentException("Error: Invalid child" +
-                    " node \"fo:" + localName + "\" of fo:root");
+            } else {
+                invalidChildError(nsURI, localName);
+            }
+        } else if (nsURI.equals(ExtensionElementMapping.URI)) {
+            if (!localName.equals("bookmarks")) {
+                invalidChildError(nsURI, localName);
+            } else if (layoutMasterSet == null) {
+                nodesOutOfOrderError("fo:layout-master-set", "fox:bookmarks");
+            } else if (bookmarks != null) {
+                tooManyNodesError("fox:bookmarks");
+            } else if (pageSequenceFound) {
+                nodesOutOfOrderError("fox:bookmarks", "fo:page-sequence");
+            }
         } else {
-            throw new IllegalArgumentException("Error: Invalid child node " +
-                FONode.getNodeString(namespaceURI, localName) + " of fo:root");
+            invalidChildError(nsURI, localName);
         }
     }
 
@@ -166,6 +178,22 @@ public class Root extends FObj {
      */
     public void setDeclarations(Declarations declarations) {
         this.declarations = declarations;
+    }
+
+    /**
+     * Set the Bookmarks object for this FO
+     * @param bookmarks the Bookmarks object
+     */
+    public void setBookmarks(Bookmarks bookmarks) {
+        this.bookmarks = bookmarks;
+    }
+
+    /**
+     * Public accessor for the Bookmarks for this FO
+     * @return the Bookmarks object
+     */
+    public Bookmarks getBookmarks() {
+        return bookmarks;
     }
 
     /**

@@ -25,7 +25,6 @@ import java.util.Set;
 
 // FOP
 import org.apache.fop.apps.Driver;
-import org.apache.fop.fo.extensions.Bookmarks;
 import org.apache.fop.fonts.FontMetrics;
 import org.apache.fop.fonts.FontInfo;
 
@@ -38,19 +37,6 @@ import org.apache.fop.fonts.FontInfo;
  * information.
  */
 public interface FOTreeControl {
-
-    /**
-     * Sets the Bookmark object which encapsulates the bookmarks for the FO
-     * Tree.
-     * @param bookmarks the Bookmark object encapsulating the bookmarks for this
-     * FO Tree.
-     */
-    void setBookmarks(Bookmarks bookmarks);
-
-    /**
-     * @return the Bookmark object encapsulating the bookmarks for the FO Tree.
-     */
-    Bookmarks getBookmarks();
 
     /**
      * Returns the set of ID references found in the FO Tree.

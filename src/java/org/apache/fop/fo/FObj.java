@@ -36,8 +36,6 @@ import org.xml.sax.Locator;
  * Base class for representation of formatting objects and their processing.
  */
 public class FObj extends FONode implements Constants {
-    public static final String FO_URI = "http://www.w3.org/1999/XSL/Format";
-
     public static PropertyMaker[] propertyListTable = null;
     
     /** Formatting properties for this fo element. */
@@ -125,10 +123,10 @@ public class FObj extends FONode implements Constants {
         PropertyList parentPL = null;
 
         if (parentFO != null) {
-            parentPL = parentFO.getPropertiesForNamespace(FO_URI);
+            parentPL = parentFO.getPropertiesForNamespace(FOElementMapping.URI);
         }
 
-        propertyList = new PropertyList(this, parentPL, FO_URI, name);
+        propertyList = new PropertyList(this, parentPL, FOElementMapping.URI, name);
         propertyList.addAttributesToList(attlist);
         propMgr = new PropertyManager(propertyList);
         setWritingMode();

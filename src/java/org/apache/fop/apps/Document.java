@@ -29,7 +29,6 @@ import org.apache.fop.area.AreaTreeModel;
 
 import org.apache.fop.fo.FOInputHandler;
 import org.apache.fop.fo.FOTreeControl;
-import org.apache.fop.fo.extensions.Bookmarks;
 import org.apache.fop.fonts.FontInfo;
 
 import org.apache.commons.logging.Log;
@@ -55,8 +54,6 @@ public class Document implements FOTreeControl {
     /** The AreaTreeModel for the PageSequence being rendered. */
     public AreaTreeModel atModel;
 
-    private Bookmarks bookmarks = null;
-
     /**
      * The current set of id's in the FO tree.
      * This is used so we know if the FO tree contains duplicates.
@@ -64,8 +61,8 @@ public class Document implements FOTreeControl {
     private Set idReferences = new HashSet();
 
     /**
-     * Structure handler used to notify structure events
-     * such as start end element.
+     * Structure handler used to notify structure
+     * events such as start end element.
      */
     public FOInputHandler foInputHandler;
 
@@ -101,23 +98,6 @@ public class Document implements FOTreeControl {
      */
     public AreaTree getAreaTree() {
         return areaTree;
-    }
-
-    /**
-     * Set the Bookmarks object for this Document
-     * @param bookmarks the Bookmarks object containing the bookmarks for this
-     * Document
-     */
-    public void setBookmarks(Bookmarks bookmarks) {
-        this.bookmarks = bookmarks;
-    }
-
-    /**
-     * Public accessor for the Bookmarks for this Document
-     * @return the Bookmarks for this Document
-     */
-    public Bookmarks getBookmarks() {
-        return bookmarks;
     }
 
     /**

@@ -20,6 +20,7 @@ package org.apache.fop.fo.extensions;
 
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FOTreeVisitor;
+import org.apache.fop.fo.pagination.Root;
 
 import java.util.ArrayList;
 
@@ -58,7 +59,7 @@ public class Bookmarks extends ExtensionObj {
      * the extension to the area tree.
      */
     public void end() {
-        getFOTreeControl().setBookmarks(this);
+        ((Root) parent).setBookmarks(this);
     }
 
     public void acceptVisitor(FOTreeVisitor fotv) {
