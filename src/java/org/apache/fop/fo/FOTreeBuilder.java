@@ -51,22 +51,16 @@
 package org.apache.fop.fo;
 
 // FOP
-import org.apache.fop.apps.FOPException;
-
-// Java
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
-// SAX
-import org.xml.sax.helpers.DefaultHandler;
-import org.xml.sax.SAXException;
-import org.xml.sax.Attributes;
-
-// Avalon
 import org.apache.avalon.framework.logger.Logger;
-import org.apache.fop.fo.ElementMapping.*;
-import org.apache.fop.fo.ElementMapping.*;
+import org.apache.fop.apps.FOPException;
+import org.apache.fop.fo.ElementMapping.Maker;
+import org.xml.sax.Attributes;
+import org.xml.sax.SAXException;
+import org.xml.sax.helpers.DefaultHandler;
 
 /**
  * SAX Handler that builds the formatting object tree.

@@ -51,23 +51,15 @@
 package org.apache.fop.rtf.renderer;
 
 // Java
+import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
-import java.io.IOException;
 
-// XML
-import org.xml.sax.SAXException;
-
-// FOP
-import org.apache.fop.layout.FontInfo;
 import org.apache.fop.apps.FOPException;
-import org.apache.fop.fo.PropertyList;
 import org.apache.fop.fo.StructureHandler;
-import org.apache.fop.fo.pagination.PageSequence;
-import org.apache.fop.fo.properties.Constants;
 import org.apache.fop.fo.flow.Block;
-import org.apache.fop.fo.flow.Flow;
 import org.apache.fop.fo.flow.ExternalGraphic;
+import org.apache.fop.fo.flow.Flow;
 import org.apache.fop.fo.flow.InstreamForeignObject;
 import org.apache.fop.fo.flow.Leader;
 import org.apache.fop.fo.flow.ListBlock;
@@ -76,14 +68,16 @@ import org.apache.fop.fo.flow.Table;
 import org.apache.fop.fo.flow.TableBody;
 import org.apache.fop.fo.flow.TableCell;
 import org.apache.fop.fo.flow.TableRow;
-
-// JFOR
+import org.apache.fop.fo.pagination.PageSequence;
+import org.apache.fop.fo.properties.Constants;
+import org.apache.fop.layout.FontInfo;
 import org.apache.fop.rtf.rtflib.rtfdoc.RtfAttributes;
+import org.apache.fop.rtf.rtflib.rtfdoc.RtfDocumentArea;
 import org.apache.fop.rtf.rtflib.rtfdoc.RtfFile;
+import org.apache.fop.rtf.rtflib.rtfdoc.RtfParagraph;
 import org.apache.fop.rtf.rtflib.rtfdoc.RtfSection;
 import org.apache.fop.rtf.rtflib.rtfdoc.RtfText;
-import org.apache.fop.rtf.rtflib.rtfdoc.RtfParagraph;
-import org.apache.fop.rtf.rtflib.rtfdoc.RtfDocumentArea;
+import org.xml.sax.SAXException;
 
 /**
  * RTF Handler: generates RTF output using the structure events from

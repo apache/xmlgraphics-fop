@@ -58,12 +58,11 @@
 
 package org.apache.fop.rtf.rtflib.rtfdoc;
 
-import java.io.Writer;
-import java.io.*;
-import java.util.*;
 import java.io.IOException;
+import java.io.Writer;
+
 /** Specifies rtf control words.  Is the container for page attributes.
- *    Overrides okToWriteRtf.
+ *  Overrides okToWriteRtf.
  *  @author Christopher Scott, scottc@westinghouse.com
  */
 
