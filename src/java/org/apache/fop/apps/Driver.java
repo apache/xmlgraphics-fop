@@ -52,22 +52,18 @@ package org.apache.fop.apps;
 
 // FOP
 import org.apache.fop.area.AreaTree;
-import org.apache.fop.area.AreaTreeModel;
 import org.apache.fop.control.Document;
 import org.apache.fop.fo.ElementMapping;
 import org.apache.fop.fo.FOTreeBuilder;
 import org.apache.fop.fo.FOUserAgent;
 import org.apache.fop.fo.FOInputHandler;
 import org.apache.fop.fo.FOTreeHandler;
-import org.apache.fop.area.Title;
-import org.apache.fop.fo.pagination.PageSequence;
 import org.apache.fop.mif.MIFHandler;
 import org.apache.fop.render.Renderer;
 import org.apache.fop.render.awt.AWTRenderer;
 import org.apache.fop.rtf.renderer.RTFHandler;
 import org.apache.fop.tools.DocumentInputSource;
 import org.apache.fop.tools.DocumentReader;
-import org.apache.fop.layout.LayoutStrategy;
 import org.apache.fop.layoutmgr.LayoutManagerLS;
 
 // Avalon

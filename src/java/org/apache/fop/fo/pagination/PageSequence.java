@@ -55,11 +55,8 @@ import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.FOTreeVisitor;
 import org.apache.fop.layout.PageMaster;
-import org.apache.fop.area.AreaTree;
 import org.apache.fop.area.PageViewport;
 import org.apache.fop.apps.FOPException;
-
-import org.apache.fop.layoutmgr.PageLayoutManager;
 
 // Java
 import java.util.HashMap;
@@ -772,26 +769,53 @@ public class PageSequence extends FObj {
         return titleFO;
     }
 
+    /**
+     * Hook for Visitor objects accessing the FO Tree.
+     * @param fotv the FOTreeVisitor object accessing this node of the FO Tree
+     */
     public void acceptVisitor(FOTreeVisitor fotv) {
         fotv.serveVisitor(this);
     }
 
+    /**
+     * Public accessor for getting the MainFlow to which this PageSequence is
+     * attached.
+     * @return the MainFlow object to which this PageSequence is attached.
+     */
     public Flow getMainFlow() {
         return mainFlow;
     }
 
+    /**
+     * Public accessor for getting the PageSequenceMaster to which this
+     * PageSequence is attached.
+     * @return the PageSequenceMaster to which this PageSequence is attached.
+     */
     public PageSequenceMaster getPageSequenceMaster() {
         return pageSequenceMaster;
     }
 
+    /**
+     * Public accessor for getting the PageNumberGenerator.
+     * @return the PageNumberGenerator
+     */
     public PageNumberGenerator getPageNumberGenerator() {
         return pageNumberGenerator;
     }
 
+    /**
+     * Public accessor for setting the currentPageNumber.
+     * @param currentPageNumber the value to which currentPageNumber should be
+     * set.
+     */
     public void setCurrentPageNumber(int currentPageNumber) {
         this.currentPageNumber = currentPageNumber;
     }
 
+    /**
+     * Public accessor for the ancestor Root.
+     * @return the ancestor Root
+     */
     public Root getRoot() {
         return root;
     }
