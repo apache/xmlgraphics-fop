@@ -264,9 +264,10 @@ public class FOTreeBuilder extends DefaultHandler implements TreeBuilder {
 		PropertyList list = null;
 		if(currentListBuilder != null) {
 		  list = currentListBuilder.makeList(fullName, attlist,  
-			(currentFObj == null) ? null : currentFObj.properties);
+			(currentFObj == null) ? null : currentFObj.properties,
+						     currentFObj);
 		}
-	    fobj = fobjMaker.make(currentFObj, list);
+		fobj = fobjMaker.make(currentFObj, list);
 	} catch (FOPException e) {
 		throw new SAXException(e);
 	}

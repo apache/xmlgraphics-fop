@@ -272,7 +272,7 @@ public class SVGTreeBuilder extends DefaultHandler implements TreeBuilder {
 		PropertyList list = null;
 		if(currentListBuilder != null) {
 			list = currentListBuilder.makeList(fullName, attlist,  
-			     (currentFObj == null) ? null : currentFObj.properties);
+			     (currentFObj == null) ? null : currentFObj.properties, currentFObj);
 		}
 	    fobj = fobjMaker.make(currentFObj, list);
 	} catch (FOPException e) {
