@@ -7,7 +7,6 @@
 
 package org.apache.fop.fo.flow;
 
-import org.apache.fop.layout.Area;
 import java.util.Enumeration;
 
 public class RowSpanMgr {
@@ -41,7 +40,6 @@ public class RowSpanMgr {
             totalRowHeight += rowHeight;
             if (--rowsRemaining == 0) {
                 if (cell != null) {
-                    cell.setRowHeight(totalRowHeight);
                 }
                 return true;
             } else

@@ -90,17 +90,7 @@ public class Block extends FObjMixed {
         structHandler.startBlock(this);
     }
 
-    public Status layout(Area area) throws FOPException {
-        BlockArea blockArea;
-
-        // log.error(" b:LAY[" + marker + "] ");
-
-
-        if (this.marker == BREAK_AFTER) {
-            return new Status(Status.OK);
-        }
-
-        if (this.marker == START) {
+    public void setup() {
 
             // Common Accessibility Properties
             AccessibilityProps mAccProps = propMgr.getAccessibilityProps();
@@ -132,7 +122,7 @@ public class Block extends FObjMixed {
             // this.properties.get("text-altitude");
             // this.properties.get("hyphenation-keep");
             // this.properties.get("hyphenation-ladder-count");
-            // this.properties.get("id");
+            setupID();
             // this.properties.get("keep-together");
             // this.properties.get("keep-with-next");
             // this.properties.get("keep-with-previous");
@@ -179,185 +169,6 @@ public class Block extends FObjMixed {
             this.blockOrphans =
               this.properties.get("orphans").getNumber().intValue();
 
-            this.id = this.properties.get("id").getString();
-
-            if (area instanceof BlockArea) {
-                area.end();
-            }
-
-            if (area.getIDReferences() != null)
-                area.getIDReferences().createID(id);
-
-            this.marker = 0;
-
-            // no break if first in area tree, or leading in context
-            // area
-            int breakBeforeStatus = propMgr.checkBreakBefore(area);
-            if (breakBeforeStatus != Status.OK) {
-                return new Status(breakBeforeStatus);
-            }
-
-            int numChildren = this.children.size();
-            for (int i = 0; i < numChildren; i++) {
-                FONode fo = (FONode) children.get(i);
-                if (fo instanceof FOText) {
-                    if (((FOText) fo).willCreateArea()) {
-                        //fo.setWidows(blockWidows);
-                        break;
-                    } else {
-                        children.remove(i);
-                        numChildren = this.children.size();
-                        i--;
-                    }
-                } else {
-                    //fo.setWidows(blockWidows);
-                    break;
-                }
-            }
-
-            for (int i = numChildren - 1; i >= 0; i--) {
-                FONode fo = (FONode) children.get(i);
-                if (fo instanceof FOText) {
-                    if (((FOText) fo).willCreateArea()) {
-                        //fo.setOrphans(blockOrphans);
-                        break;
-                    }
-                } else {
-                    //fo.setOrphans(blockOrphans);
-                    break;
-                }
-            }
-        }
-
-        if ((spaceBefore != 0) && (this.marker == 0)) {
-            area.addDisplaySpace(spaceBefore);
-        }
-
-        if (anythingLaidOut) {
-            this.textIndent = 0;
-        }
-
-        if (marker == 0 && area.getIDReferences() != null) {
-            area.getIDReferences().configureID(id, area);
-        }
-
-        int spaceLeft = area.spaceLeft();
-        blockArea = new BlockArea( propMgr.getFontState(area.getFontInfo()),
-                                   area.getAllocationWidth(), area.spaceLeft(),
-                                   startIndent, endIndent, textIndent, align, alignLast,
-                                   lineHeight);
-        blockArea.setGeneratedBy(this);
-        this.areasGenerated++;
-        if (this.areasGenerated == 1)
-            blockArea.isFirst(true);
-        // for normal areas this should be the only pair
-        blockArea.addLineagePair(this, this.areasGenerated);
-
-        // markers
-        //if (this.hasMarkers())
-        //blockArea.addMarkers(this.getMarkers());
-
-        blockArea.setParent(area); // BasicLink needs it
-        blockArea.setPage(area.getPage());
-        blockArea.setBackgroundColor(backgroundColor);
-        blockArea.setBorderAndPadding(propMgr.getBorderAndPadding());
-        blockArea.setHyphenation(propMgr.getHyphenationProps());
-        blockArea.start();
-
-        blockArea.setAbsoluteHeight(area.getAbsoluteHeight());
-        blockArea.setIDReferences(area.getIDReferences());
-
-        blockArea.setTableCellXOffset(area.getTableCellXOffset());
-
-        int numChildren = this.children.size();
-        for (int i = this.marker; i < numChildren; i++) {
-            FONode fo = (FONode) children.get(i);
-            Status status;
-            if ((status = fo.layout(blockArea)).isIncomplete()) {
-                this.marker = i;
-                // this block was modified by
-                // Hani Elabed 11/27/2000
-                // if ((i != 0) && (status.getCode() == Status.AREA_FULL_NONE))
-                // {
-                // status = new Status(Status.AREA_FULL_SOME);
-                // }
-
-                // new block to replace the one above
-                // Hani Elabed 11/27/2000
-                if (status.getCode() == Status.AREA_FULL_NONE) {
-                    // something has already been laid out
-                    if ((i != 0)) {
-                        status = new Status(Status.AREA_FULL_SOME);
-                        area.addChild(blockArea);
-                        area.setMaxHeight(area.getMaxHeight() -
-                                          spaceLeft + blockArea.getMaxHeight());
-                        area.increaseHeight(blockArea.getHeight());
-                        area.setAbsoluteHeight(
-                          blockArea.getAbsoluteHeight());
-                        anythingLaidOut = true;
-
-                        return status;
-                    } else // i == 0 nothing was laid out..
-                    {
-                        anythingLaidOut = false;
-                        return status;
-                    }
-                }
-
-                // blockArea.end();
-                area.addChild(blockArea);
-                area.setMaxHeight(area.getMaxHeight() - spaceLeft +
-                                  blockArea.getMaxHeight());
-                area.increaseHeight(blockArea.getHeight());
-                area.setAbsoluteHeight(blockArea.getAbsoluteHeight());
-                anythingLaidOut = true;
-                return status;
-            }
-            anythingLaidOut = true;
-        }
-
-        blockArea.end();
-
-        area.setMaxHeight(area.getMaxHeight() - spaceLeft +
-                          blockArea.getMaxHeight());
-
-        area.addChild(blockArea);
-
-        /* should this be combined into above? */
-        area.increaseHeight(blockArea.getHeight());
-
-        area.setAbsoluteHeight(blockArea.getAbsoluteHeight());
-
-        if (spaceAfter != 0) {
-            area.addDisplaySpace(spaceAfter);
-        }
-
-        if (area instanceof BlockArea) {
-            area.start();
-        }
-        // This is not needed any more and it consumes a LOT
-        // of memory. So we release it for the GC.
-        areaHeight = blockArea.getHeight();
-        contentWidth = blockArea.getContentWidth();
-
-        // no break if last in area tree, or trailing in context
-        // area
-        int breakAfterStatus = propMgr.checkBreakAfter(area);
-        if (breakAfterStatus != Status.OK) {
-            this.marker = BREAK_AFTER;
-            blockArea = null; //Faster GC - BlockArea is big
-            return new Status(breakAfterStatus);
-        }
-
-        if (keepWithNext != 0) {
-            blockArea = null; // Faster GC - BlockArea is big
-            return new Status(Status.KEEP_WITH_NEXT);
-        }
-
-        // log.error(" b:OK" + marker + " ");
-        blockArea.isLast(true);
-        blockArea = null; // Faster GC - BlockArea is big
-        return new Status(Status.OK);
     }
 
     public int getAreaHeight() {

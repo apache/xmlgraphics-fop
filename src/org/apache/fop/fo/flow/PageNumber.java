@@ -53,12 +53,7 @@ public class PageNumber extends FObj {
         });
     }
 
-    public Status layout(Area area) throws FOPException {
-        if (!(area instanceof BlockArea)) {
-            log.warn("page-number outside block area");
-            return new Status(Status.OK);
-        }
-        if (this.marker == START) {
+    public void setup() throws FOPException {
 
             // Common Accessibility Properties
             AccessibilityProps mAccProps = propMgr.getAccessibilityProps();
@@ -71,7 +66,7 @@ public class PageNumber extends FObj {
             BackgroundProps bProps = propMgr.getBackgroundProps();
 
             // Common Font Properties
-            //this.fontState = propMgr.getFontState(area.getFontInfo());
+            //this.fontState = propMgr.getFontState(structHandler.getFontInfo());
  
             // Common Margin Properties-Inline
             MarginInlineProps mProps = propMgr.getMarginInlineProps();
@@ -104,19 +99,7 @@ public class PageNumber extends FObj {
             this.whiteSpaceCollapse =
                 this.properties.get("white-space-collapse").getEnum();
             ts = new TextState();
-            this.marker = 0;
 
-            // initialize id
-            area.getIDReferences().initializeID(id, area);
-        }
-
-        String p = area.getPage().getFormattedNumber();
-        this.marker = FOText.addText((BlockArea)area,
-                                     propMgr.getFontState(area.getFontInfo()),
-                                     red, green, blue, wrapOption, null,
-                                     whiteSpaceCollapse, p.toCharArray(), 0,
-                                     p.length(), ts, VerticalAlign.BASELINE);
-        return new Status(Status.OK);
     }
 
 }

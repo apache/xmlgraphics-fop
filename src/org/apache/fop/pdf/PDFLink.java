@@ -14,6 +14,8 @@ import java.awt.Rectangle;
  * class representing an /Annot object of /Subtype /Link
  */
 public class PDFLink extends PDFObject {
+    public static final int EXTERNAL = 0;
+    public static final int INTERNAL = 1;
 
     float ulx;
     float uly;

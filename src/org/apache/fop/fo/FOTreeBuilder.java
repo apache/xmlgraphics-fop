@@ -8,7 +8,6 @@
 package org.apache.fop.fo;
 
 // FOP
-import org.apache.fop.layout.AreaTree;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.apps.StructureHandler;
 import org.apache.fop.fo.pagination.Root;

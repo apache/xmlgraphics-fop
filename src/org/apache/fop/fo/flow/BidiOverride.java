@@ -13,7 +13,6 @@ import org.apache.fop.layout.AuralProps;
 import org.apache.fop.layout.RelativePositionProps;
 import org.apache.fop.fo.flow.*;
 import org.apache.fop.fo.properties.*;
-import org.apache.fop.layout.AreaTree;
 import org.apache.fop.apps.FOPException;
 
 import org.apache.fop.layoutmgr.LeafNodeLayoutManager;

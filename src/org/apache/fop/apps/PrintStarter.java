@@ -31,8 +31,6 @@ import java.io.IOException;
 import java.util.Vector;
 
 import org.apache.fop.render.awt.AWTRenderer;
-import org.apache.fop.layout.AreaTree;
-import org.apache.fop.layout.Page;
 
 /**
  * This class prints a xsl-fo dokument without interaction.
@@ -154,10 +152,10 @@ public class PrintStarter extends CommandLineStarter {
             }
         }
 
-        public void renderPage(Page page) {
+        /*public void renderPage(Page page) {
             pageWidth = (int)((float)page.getWidth() / 1000f);
             pageHeight = (int)((float)page.getHeight() / 1000f);
-        }
+        }*/
 
         private Vector getInvalidPageNumbers() {
 

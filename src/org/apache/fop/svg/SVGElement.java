@@ -10,7 +10,6 @@ package org.apache.fop.svg;
 // FOP
 import org.apache.fop.fo.*;
 import org.apache.fop.fo.properties.*;
-import org.apache.fop.layout.Area;
 import org.apache.fop.layout.FontState;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.layout.inline.*;

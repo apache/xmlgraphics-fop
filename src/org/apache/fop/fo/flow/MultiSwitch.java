@@ -22,7 +22,7 @@ public class MultiSwitch extends ToBeImplementedElement {
         super(parent);
     }
 
-    public Status layout(Area area) throws FOPException {
+    public void setup() {
 
         // Common Accessibility Properties
         AccessibilityProps mAccProps = propMgr.getAccessibilityProps();
@@ -30,6 +30,5 @@ public class MultiSwitch extends ToBeImplementedElement {
         // this.properties.get("auto-restore");
         setupID();
 
-        return super.layout(area);
     }
 }

@@ -691,10 +691,10 @@ public class PageSequence extends FObj {
 
 
             Flow flow = (Flow)_flowMap.get(region.getRegionName());
-            if ((null == flow) || flow.getStatus().isIncomplete())
+            /*if ((null == flow) || flow.getStatus().isIncomplete())
                 return false;
             else
-                return true;
+                return true;*/
         }
         return false;
     }

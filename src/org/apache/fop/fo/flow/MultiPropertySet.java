@@ -22,11 +22,10 @@ public class MultiPropertySet extends ToBeImplementedElement {
         super(parent);
     }
 
-    public Status layout(Area area) throws FOPException {
+    public void setup() {
 
         setupID();
         // this.properties.get("active-state");
 
-        return super.layout(area);
     }
 }

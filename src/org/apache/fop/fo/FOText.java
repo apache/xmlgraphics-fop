@@ -8,8 +8,6 @@
 package org.apache.fop.fo;
 
 // FOP
-import org.apache.fop.layout.Area;
-import org.apache.fop.layout.BlockArea;
 import org.apache.fop.layout.FontState;
 import org.apache.fop.layout.*;
 import org.apache.fop.datatypes.*;
@@ -68,16 +66,6 @@ public class FOText extends FObj {
             }
         }
         return false;
-    }
-
-    // Just to keep PageNumber and PageNumber citation happy for now.
-    // The real code is moved to TextLayoutManager!
-
-    public static int addText(BlockArea ba, FontState fontState,
-                              float red, float green, float blue, int wrapOption,
-                              LinkSet ls, int whiteSpaceCollapse, char data[],
-                              int start, int end, TextState textState, int vAlign) {
-        return 0;
     }
 
     public void addLayoutManager(List list) {

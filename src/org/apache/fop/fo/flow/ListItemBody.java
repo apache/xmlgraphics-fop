@@ -23,19 +23,13 @@ public class ListItemBody extends FObj {
         super(parent);
     }
 
-    public Status layout(Area area) throws FOPException {
-        if (this.marker == START) {
+    public void setup() {
 
             // Common Accessibility Properties
             AccessibilityProps mAccProps = propMgr.getAccessibilityProps();
 
             setupID();
             // this.properties.get("keep-together");
-
-            this.marker = 0;
-            // initialize id
-            area.getIDReferences().initializeID(id, area);
-        }
 
         /*
          * For calculating the lineage - The fo:list-item-body formatting object
@@ -44,21 +38,6 @@ public class ListItemBody extends FObj {
          * of areas returned by each of the children of the fo:list-item-body.
          */
 
-        int numChildren = this.children.size();
-        for (int i = this.marker; i < numChildren; i++) {
-            FObj fo = (FObj)children.get(i);
-
-            Status status;
-            if ((status = fo.layout(area)).isIncomplete()) {
-                this.marker = i;
-                if ((i == 0) && (status.getCode() == Status.AREA_FULL_NONE)) {
-                    return new Status(Status.AREA_FULL_NONE);
-                } else {
-                    return new Status(Status.AREA_FULL_SOME);
-                }
-            }
-        }
-        return new Status(Status.OK);
     }
 
 }

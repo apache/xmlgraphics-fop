@@ -8,15 +8,11 @@
 package org.apache.fop.fo;
 
 // FOP
-import org.apache.fop.layout.Area;
 import org.apache.fop.layout.AreaClass;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.apps.StructureHandler;
 import org.apache.fop.layoutmgr.LayoutManager;
 import org.apache.fop.fo.properties.FOPropertyMapping;
-import org.apache.fop.layout.Area;
-import org.apache.fop.layout.AreaClass;
-import org.apache.fop.layout.LinkSet;
 import org.apache.fop.fo.flow.Marker;
 
 // Java
@@ -66,8 +62,6 @@ public class FObj extends FONode {
 
     protected int widows = 0;
     protected int orphans = 0;
-
-    protected LinkSet linkSet;
 
     // count of areas generated-by/returned-by
     public int areasGenerated = 0;
@@ -293,21 +287,6 @@ public class FObj extends FONode {
 
     public void removeAreas() {
         // still to do
-    }
-
-    public void setLinkSet(LinkSet linkSet) {
-        this.linkSet = linkSet;
-        for (int i = 0; i < this.children.size(); i++) {
-            Object obj = this.children.get(i);
-            if (obj instanceof FObj) {
-                FObj child = (FObj) obj;
-                child.setLinkSet(linkSet);
-            }
-        }
-    }
-
-    public LinkSet getLinkSet() {
-        return this.linkSet;
     }
 
     /**
