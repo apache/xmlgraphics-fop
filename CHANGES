@@ -1,5 +1,8 @@
 ==============================================================================
 Done since 0.20.4 release
+- Fixed bug in ASCII85OutputStream where EOF marker got split over two lines
+  resulting in an illegal stream. (JM)
+  Submitted by: Larry Moore <lmoore@providerlink.com>
 - PS renderer got a configurable setting to do auto-landscape rotation. (JM)
   Inspired by: Henrik Olsson <henrik.olsson@intentia.se>
 - Use Locator to make system id, line and column number available to
