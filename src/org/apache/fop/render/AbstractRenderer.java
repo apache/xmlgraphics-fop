@@ -95,15 +95,15 @@ public abstract class AbstractRenderer implements Renderer {
 
     protected void renderPageAreas(Page page) {
         RegionViewport viewport;
-        viewport = page.getRegion(Region.BEFORE);
+        viewport = page.getRegion(RegionReference.BEFORE);
         renderRegionViewport(viewport);
-        viewport = page.getRegion(Region.START);
+        viewport = page.getRegion(RegionReference.START);
         renderRegionViewport(viewport);
-        viewport = page.getRegion(Region.BODY);
+        viewport = page.getRegion(RegionReference.BODY);
         renderRegionViewport(viewport);
-        viewport = page.getRegion(Region.END);
+        viewport = page.getRegion(RegionReference.END);
         renderRegionViewport(viewport);
-        viewport = page.getRegion(Region.AFTER);
+        viewport = page.getRegion(RegionReference.AFTER);
         renderRegionViewport(viewport);
 
     }
@@ -117,7 +117,7 @@ public abstract class AbstractRenderer implements Renderer {
             currentIPPosition = (int) view.getX();
             currentBlockIPPosition = currentIPPosition;
 
-            Region region = port.getRegion();
+            RegionReference region = port.getRegion();
             if (region.getRegionClass() == Region.BODY) {
                 renderBodyRegion((BodyRegion) region);
             } else {
@@ -126,7 +126,7 @@ public abstract class AbstractRenderer implements Renderer {
         }
     }
 
-    protected void renderRegion(Region region) {
+    protected void renderRegion(RegionReference region) {
         List blocks = region.getBlocks();
 
         renderBlocks(blocks);
