@@ -289,13 +289,13 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager implements 
      * This resolves a reference ID and returns the first PageViewport
      * that contains the reference ID or null if reference not found.
      *
-     * @param ref the reference ID to lookup
+     * @param id the reference ID to lookup
      * @return the first page viewport that contains the reference
      */
-    public PageViewport resolveRefID(String ref) {
-        List list = areaTreeHandler.getIDReferences(ref);
+    public PageViewport resolveRefID(String id) {
+        List list = areaTreeHandler.getPageViewportsContainingID(id);
         if (list != null && list.size() > 0) {
-            return (PageViewport)list.get(0);
+            return (PageViewport) list.get(0);
         }
         return null;
     }
@@ -323,7 +323,7 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager implements 
      * @param id the ID reference to add
      */
     public void addIDToPage(String id) {
-        areaTreeHandler.addIDRef(id, curPage);
+        areaTreeHandler.associateIDWithPageViewport(id, curPage);
     }
 
     /**
