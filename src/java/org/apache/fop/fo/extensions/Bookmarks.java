@@ -18,11 +18,13 @@
 
 package org.apache.fop.fo.extensions;
 
+// Java
+import java.util.ArrayList;
+
+// FOP
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FOTreeVisitor;
 import org.apache.fop.fo.pagination.Root;
-
-import java.util.ArrayList;
 
 /**
  * Bookmarks data is the top level element of the pdf bookmark extension.
@@ -58,7 +60,7 @@ public class Bookmarks extends ExtensionObj {
      * the bookmark data from the child elements and add
      * the extension to the area tree.
      */
-    public void end() {
+    protected void end() {
         ((Root) parent).setBookmarks(this);
     }
 

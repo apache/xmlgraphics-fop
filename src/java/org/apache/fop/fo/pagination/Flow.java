@@ -98,7 +98,7 @@ public class Flow extends FObj {
     /**
      * Tell the StructureRenderer that we are at the end of the flow.
      */
-    public void end() {
+    protected void end() {
         getFOInputHandler().endFlow(this);
     }
 

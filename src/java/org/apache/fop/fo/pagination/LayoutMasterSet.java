@@ -28,8 +28,10 @@ import org.xml.sax.Attributes;
 // FOP
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FObj;
+import org.apache.fop.fo.FOElementMapping;
 import org.apache.fop.fo.FOTreeVisitor;
 import org.apache.fop.apps.FOPException;
+import org.xml.sax.Locator;
 
 /**
  * The layout-master-set formatting object.
@@ -50,6 +52,27 @@ public class LayoutMasterSet extends FObj {
      */
     public LayoutMasterSet(FONode parent) {
         super(parent);
+    }
+
+    /**
+     * @see org.apache.fop.fo.FONode#validateChildNode(Locator, String, String)
+        XSL/FOP: (simple-page-master|page-sequence-master)+
+     */
+    protected void validateChildNode(Locator loc, String nsURI, String localName) {
+        if (nsURI == FOElementMapping.URI) {
+            if (!localName.equals("simple-page-master") 
+                && !localName.equals("page-sequence-master")) {   
+                    invalidChildError(loc, nsURI, localName);
+            }
+        } else {
+            invalidChildError(loc, nsURI, localName);
+        }
+    }
+
+    protected void end() {
+        if (children == null) {
+           missingChildElementError("(simple-page-master|page-sequence-master)+");
+        }
     }
 
     /**

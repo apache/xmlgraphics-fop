@@ -58,6 +58,7 @@ public abstract class XMLObj extends FONode {
      * @see org.apache.fop.fo.FONode#processNode
      */
     public void processNode(String elementName, Locator locator, Attributes attlist) throws FOPException {
+        setLocation(locator);
         name = elementName;
         attr = attlist;
     }

@@ -52,7 +52,7 @@ public class PPColWidthFunction extends FunctionBase {
             throw new PropertyException("Non numeric operand to "
                     + "proportional-column-width function");
         }
-        if (!pInfo.getPropertyList().getElement().equals("fo:table-column")) {
+        if (!pInfo.getPropertyList().getFObj().getName().equals("fo:table-column")) {
             throw new PropertyException("proportional-column-width function "
                     + "may only be used on table-column FO");
         }

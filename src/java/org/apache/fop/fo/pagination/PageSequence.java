@@ -18,16 +18,17 @@
 
 package org.apache.fop.fo.pagination;
 
+// Java
+import java.util.HashMap;
+
+// XML
+import org.xml.sax.Attributes;
+
 // FOP
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.FOTreeVisitor;
 import org.apache.fop.apps.FOPException;
-
-// Java
-import java.util.HashMap;
-
-import org.xml.sax.Attributes;
 
 /**
  * This provides pagination of flows onto pages. Much of the
@@ -301,7 +302,7 @@ public class PageSequence extends FObj {
      * This passes the end page sequence to the structure handler
      * so it can act upon that.
      */
-    public void end() {
+    protected void end() {
         try {
             getFOInputHandler().endPageSequence(this);
         } catch (FOPException fopex) {

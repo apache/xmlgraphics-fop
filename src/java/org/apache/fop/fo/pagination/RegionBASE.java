@@ -18,9 +18,13 @@
 
 package org.apache.fop.fo.pagination;
 
+// XML
+import org.xml.sax.SAXException;
+
 // FOP
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FOTreeVisitor;
+
 
 /**
  * Base class for Before, After, Start and End regions (BASE).
@@ -39,7 +43,7 @@ public abstract class RegionBASE extends Region {
     /**
      * @see org.apache.fop.fo.FONode#end()
      */
-    public void end() {
+    protected void end() {
         // The problem with this is that it might not be known yet....
         // Supposing extent is calculated in terms of percentage
         this.extent = this.propertyList.get(PR_EXTENT).getLength().getValue();

@@ -56,15 +56,6 @@ public class FObj extends FONode implements Constants {
     /** Dynamic layout dimension. Used to resolve relative lengths. */
     protected Map layoutDimension = null;
 
-    /** Marks input file containing this object **/
-    public String systemId;
-
-    /** Marks line number of this object in the input file **/
-    public int line;
-
-    /** Marks column number of this object in the input file **/
-    public int column;
-
     /**
      * Create a new formatting object.
      * All formatting object classes extend this class.
@@ -103,18 +94,6 @@ public class FObj extends FONode implements Constants {
     }
 
     /**
-     * Set the location information for this element
-     * @param locator the org.xml.sax.Locator object
-     */
-    public void setLocation(Locator locator) {
-        if (locator != null) {
-            line = locator.getLineNumber();
-            column = locator.getColumnNumber();
-            systemId = locator.getSystemId();
-        }
-    }
-
-    /**
      * Set properties for this FO based on node attributes
      * @param attlist Collection of attributes passed to us from the parser.
      */
@@ -126,7 +105,7 @@ public class FObj extends FONode implements Constants {
             parentPL = parentFO.getPropertiesForNamespace(FOElementMapping.URI);
         }
 
-        propertyList = new PropertyList(this, parentPL, FOElementMapping.URI, name);
+        propertyList = new PropertyList(this, parentPL, FOElementMapping.URI);
         propertyList.addAttributesToList(attlist);
         propMgr = new PropertyManager(propertyList);
         setWritingMode();
@@ -457,5 +436,10 @@ public class FObj extends FONode implements Constants {
         return getName() + " at line " + line + ":" + column;
     }
 */    
+
+    public String getName() {
+        return null;
+    }
+
 }
 

@@ -24,7 +24,10 @@ import java.awt.color.ICC_ColorSpace;
 import java.net.URL;
 import java.io.IOException;
 import java.io.InputStream;
+
+// XML
 import org.xml.sax.Locator;
+import org.xml.sax.SAXException;
 
 // FOP
 import org.apache.fop.datatypes.ColorType;
@@ -50,7 +53,7 @@ public class ColorProfile extends FObj {
     }
 
     /**
-     * @see org.apache.fop.fo.FONode#validateChildNode(String, String)
+     * @see org.apache.fop.fo.FONode#validateChildNode(Locator, String, String)
         XSL 1.0/FOP: EMPTY (no child nodes permitted)
      */
     protected void validateChildNode(Locator loc, String nsURI, String localName) {
@@ -62,7 +65,7 @@ public class ColorProfile extends FObj {
      * Extract instance variables from the collection of properties for this
      * object.
      */
-    public void end() {
+    protected void end() {
         src = this.propertyList.get(PR_SRC).getString();
         profileName = this.propertyList.get(PR_COLOR_PROFILE_NAME).getString();
         intent = this.propertyList.get(PR_RENDERING_INTENT).getEnum();

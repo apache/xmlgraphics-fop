@@ -20,6 +20,7 @@ package org.apache.fop.fo.flow;
 
 // XML
 import org.xml.sax.Attributes;
+import org.xml.sax.SAXException;
 
 // FOP
 import org.apache.fop.apps.FOPException;
@@ -236,7 +237,7 @@ public class Block extends FObjMixed {
     /**
      * @see org.apache.fop.fo.FONode#end
      */
-    public void end() {
+    protected void end() {
         handleWhiteSpace();
         getFOInputHandler().endBlock(this);
     }

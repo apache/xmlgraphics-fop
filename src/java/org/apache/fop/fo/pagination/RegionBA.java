@@ -25,6 +25,7 @@ import java.awt.Rectangle;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FOTreeVisitor;
 
+
 /**
  * Abstract base class for fo:region-before and fo:region-after.
  */
@@ -49,7 +50,7 @@ public abstract class RegionBA extends RegionBASE {
     /**
      * @see org.apache.fop.fo.FONode#end()
      */
-    public void end() {
+    protected void end() {
         super.end();
         bPrecedence =
             (this.propertyList.get(PR_PRECEDENCE).getEnum() == Precedence.TRUE);

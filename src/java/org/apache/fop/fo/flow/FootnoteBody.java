@@ -20,6 +20,7 @@ package org.apache.fop.fo.flow;
 
 // XML
 import org.xml.sax.Attributes;
+import org.xml.sax.SAXException;
 
 // FOP
 import org.apache.fop.apps.FOPException;

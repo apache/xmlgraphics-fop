@@ -268,7 +268,12 @@ public class FOTreeBuilder extends DefaultHandler {
      */
     public void endElement(String uri, String localName, String rawName)
                 throws SAXException {
-        currentFObj.end();
+        try {
+            currentFObj.end();
+        } catch (IllegalArgumentException e) {
+            throw new SAXException(e);
+        }
+
         currentFObj = currentFObj.getParent();
     }
 
