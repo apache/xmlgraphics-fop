@@ -32,12 +32,28 @@ public class PaddingRectangle extends AreaFrame {
     private static final String revision = "$Revision$";
 
 
-    public PaddingRectangle(Area area, Area.AreaGeometry content) {
+    /**
+     * Instantiates a <code>PaddingRectangle</code> within the given instance
+     * of <code>Area</code>, with the given <code>ContentRectangle</code> as
+     * content. 
+     * @param area the containing area instance
+     * @param content the <i>content-rectangle</i> framed by this padding
+     */
+    public PaddingRectangle(Area area, ContentRectangle content) {
         super(area, content);
         borders = new BorderRectangle(area, this);
     }
 
-    /**
+	/**
+     * Instantiates a <code>PaddingRectangle</code> within the given instance
+     * of <code>Area</code>, with the given offset and dimension values, the
+     * given <code>ContentRectangle</code> as content at the given offset from
+     * the origin corner of the <i>padding-rectangle</i>. 
+     * @param area the containing area instance
+	 * @param ipOffset
+	 * @param bpOffset
+	 * @param ipDim
+	 * @param bpDim
 	 * @param contents
 	 * @param contentOffset
 	 */
@@ -64,4 +80,45 @@ public class PaddingRectangle extends AreaFrame {
     public BorderRectangle getBorders() {
         return borders;
     }
+
+    /**
+     * {@inheritDoc}
+     * <p>The containing <code>BorderRectangle</code> is notified of the
+     * change.
+     */
+    public void setTop(double top) {
+        super.setTop(top);
+        borders.setContents(this);
+    }
+
+    /**
+     * {@inheritDoc}
+     * <p>The containing <code>BorderRectangle</code> is notified of the
+     * change.
+     */
+    public void setLeft(double left) {
+        super.setLeft(left);
+        borders.setContents(this);
+    }
+
+    /**
+     * {@inheritDoc}
+     * <p>The containing <code>BorderRectangle</code> is notified of the
+     * change.
+     */
+    public void setBottom(double bottom) {
+        super.setBottom(bottom);
+        borders.setContents(this);
+    }
+
+    /**
+     * {@inheritDoc}
+     * <p>The containing <code>BorderRectangle</code> is notified of the
+     * change.
+     */
+    public void setRight(double right) {
+        super.setRight(right);
+        borders.setContents(this);
+    }
+
 }
