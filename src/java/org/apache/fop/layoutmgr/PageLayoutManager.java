@@ -678,6 +678,7 @@ public class PageLayoutManager extends AbstractLayoutManager implements Runnable
         //}
         //else newpos = new MinOptMax();
         curSpan = new Span(numCols);
+        curSpanColumns = numCols;
         // get Width or Height as IPD for span
 
         RegionViewport rv = curPage.getPage().getRegionViewport(FO_REGION_BODY);
