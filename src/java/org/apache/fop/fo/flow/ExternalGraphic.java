@@ -124,7 +124,7 @@ public class ExternalGraphic extends FObj {
                 return;
             }
             // load dimensions
-            if (!fopimage.load(FopImage.DIMENSIONS, getUserAgent().getLogger())) {
+            if (!fopimage.load(FopImage.DIMENSIONS)) {
                 // error
                 url = null;
                 return;

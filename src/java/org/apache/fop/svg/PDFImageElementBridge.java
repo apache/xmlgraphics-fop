@@ -68,7 +68,7 @@ public class PDFImageElementBridge extends SVGImageElementBridge {
                 JpegImage jpeg = new JpegImage(ii);
                 SimpleLog logger = new SimpleLog("FOP/SVG");
                 logger.setLevel(SimpleLog.LOG_LEVEL_INFO);
-                jpeg.load(FopImage.ORIGINAL_DATA, logger);
+                jpeg.load(FopImage.ORIGINAL_DATA);
                 PDFJpegNode node = new PDFJpegNode(jpeg, origGN);
 
                 Rectangle2D imgBounds = getImageBounds(ctx, e);

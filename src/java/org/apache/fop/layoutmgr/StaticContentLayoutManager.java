@@ -62,7 +62,7 @@ public class StaticContentLayoutManager extends BlockStackingLayoutManager {
                 if ((bp = curLM.getNextBreakPoss(childLC)) != null) {
                     blockBreaks.add(bp);
                     if (bp.isForcedBreak()) {
-                        getLogger().error("Forced breaks are not allowed in "
+                        log.error("Forced breaks are not allowed in "
                                 + "static content - ignoring");
                         return null;
                     }
@@ -128,7 +128,7 @@ public class StaticContentLayoutManager extends BlockStackingLayoutManager {
      */
     public void addMarker(Map marks, boolean start, boolean isfirst) {
         // error markers not allowed in static
-        getLogger().error("Cannot add marker to static areas");
+        log.error("Cannot add marker to static areas");
     }
 }
 

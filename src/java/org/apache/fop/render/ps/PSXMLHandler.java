@@ -33,11 +33,16 @@ import org.apache.batik.bridge.GVTBuilder;
 import org.apache.batik.bridge.BridgeContext;
 import org.apache.batik.bridge.ViewBox;
 import org.apache.batik.gvt.GraphicsNode;
+
 // FOP
 import org.apache.fop.fonts.FontInfo;
 import org.apache.fop.render.XMLHandler;
 import org.apache.fop.render.RendererContext;
 import org.apache.fop.svg.SVGUserAgent;
+
+// Commons-Logging
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /**
  * PostScript XML handler.
@@ -49,6 +54,11 @@ import org.apache.fop.svg.SVGUserAgent;
  * @version $Id: PSXMLHandler.java,v 1.4 2003/03/11 08:42:24 jeremias Exp $
  */
 public class PSXMLHandler implements XMLHandler {
+
+    /**
+     * logging instance
+     */
+    private Log log = LogFactory.getLog(PSXMLHandler.class);
 
     /**
      * The PostScript generator that is being used to drawn into.
@@ -258,9 +268,9 @@ public class PSXMLHandler implements XMLHandler {
             PSGenerator gen = psInfo.psGenerator;
 
             SVGUserAgent ua
-                 = new SVGUserAgent(context.getUserAgent().getLogger(), 
-                        context.getUserAgent().getPixelUnitToMillimeter(),
-                        new AffineTransform());
+                 = new SVGUserAgent(
+                    context.getUserAgent().getPixelUnitToMillimeter(),
+                    new AffineTransform());
 
             GVTBuilder builder = new GVTBuilder();
             BridgeContext ctx = new BridgeContext(ua);
@@ -280,7 +290,7 @@ public class PSXMLHandler implements XMLHandler {
             try {
                 root = builder.build(ctx, doc);
             } catch (Exception e) {
-                context.getUserAgent().getLogger().error("SVG graphic could not be built: "
+                log.error("SVG graphic could not be built: "
                                        + e.getMessage(), e);
                 return;
             }
@@ -337,7 +347,7 @@ public class PSXMLHandler implements XMLHandler {
                     root.paint(graphics);
                     //psInfo.currentStream.add(graphics.getString());
                 } catch (Exception e) {
-                    context.getUserAgent().getLogger().error("SVG graphic could not be rendered: "
+                    log.error("SVG graphic could not be rendered: "
                                            + e.getMessage(), e);
                 }
 
@@ -345,7 +355,7 @@ public class PSXMLHandler implements XMLHandler {
                 //psInfo.pdfState.pop();
                 gen.writeln("%SVG graphic end ---");
             } catch (IOException ioe) {
-                context.getUserAgent().getLogger().error("SVG graphic could not be rendered: "
+                log.error("SVG graphic could not be rendered: "
                                        + ioe.getMessage(), ioe);
             }
         }

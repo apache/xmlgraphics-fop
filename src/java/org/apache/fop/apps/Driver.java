@@ -245,7 +245,6 @@ public class Driver {
     public FOUserAgent getUserAgent() {
         if (userAgent == null) {
             userAgent = new FOUserAgent();
-            userAgent.setLogger(getLogger());
         }
         return userAgent;
     }

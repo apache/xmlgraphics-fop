@@ -30,6 +30,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.fo.ElementMapping.Maker;
@@ -52,6 +53,11 @@ public class FOTreeBuilder extends DefaultHandler {
      * representing formatting objects.
      */
     protected Map fobjTable = new java.util.HashMap();
+
+    /**
+     * logging instance
+     */
+    protected Log log = LogFactory.getLog(FOTreeBuilder.class);
 
     /**
      * Set of mapped namespaces.
@@ -90,7 +96,7 @@ public class FOTreeBuilder extends DefaultHandler {
     }
 
     private Log getLogger() {
-        return userAgent.getLogger();
+        return log;
     }
 
     /**

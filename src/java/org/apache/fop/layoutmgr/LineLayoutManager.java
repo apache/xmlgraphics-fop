@@ -448,7 +448,7 @@ public class LineLayoutManager extends InlineStackingLayoutManager {
         while (bpIter.hasPrevious() && bpIter.previous() != prev) {
         }
         if (prev != null && bpIter.next() != prev) {
-            getLogger().error("findHyphenPoss: problem!");
+            log.error("findHyphenPoss: problem!");
             return null;
         }
         StringBuffer sbChars = new StringBuffer(30);
@@ -465,7 +465,7 @@ public class LineLayoutManager extends InlineStackingLayoutManager {
             prev = bp;
         }
         vecInlineBreaks.remove(vecInlineBreaks.size() - 1); // remove last
-        getLogger().debug("Word to hyphenate: " + sbChars.toString());
+        log.debug("Word to hyphenate: " + sbChars.toString());
 
         // Now find all hyphenation points in this word (get in an array of offsets)
         // hyphProps are from the block level?. Note that according to the spec,

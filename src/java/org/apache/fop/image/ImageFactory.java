@@ -30,6 +30,7 @@ import java.util.Collections;
 import java.util.Iterator;
 
 import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 // FOP
 import org.apache.fop.image.analyser.ImageReaderFactory;
@@ -41,6 +42,11 @@ import org.apache.fop.apps.FOUserAgent;
  * @author Eric SCHAEFFER
  */
 public class ImageFactory {
+
+    /**
+     * logging instance
+     */
+    protected static Log log = LogFactory.getLog(FopImage.class);
 
     private static ImageFactory factory = new ImageFactory();
 
@@ -129,7 +135,6 @@ public class ImageFactory {
      * @return the fop image instance
      */
     public static FopImage loadImage(String href, FOUserAgent ua) {
-        Log log = ua.getLogger();
 
         InputStream in = openStream(href, ua);
 
@@ -214,7 +219,7 @@ public class ImageFactory {
      * @return a new FopImage object
      */
     protected static InputStream openStream(String href, FOUserAgent ua) {
-        Log log = ua.getLogger();
+
         // Get the absolute URL
         URL absoluteURL = null;
         InputStream in = null;

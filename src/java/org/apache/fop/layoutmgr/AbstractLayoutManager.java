@@ -28,6 +28,7 @@ import org.apache.fop.fo.Constants;
 import org.apache.fop.fo.PropertyManager;
 
 import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import java.util.ListIterator;
 import java.util.Map;
@@ -47,6 +48,11 @@ public abstract class AbstractLayoutManager implements LayoutManager, Constants 
     protected LayoutManager curChildLM = null;
     protected ListIterator childLMiter;
     protected boolean bInited = false;
+
+    /**
+     * logging instance
+     */
+    protected static Log log = LogFactory.getLog(AbstractLayoutManager.class);
 
     /**
      * Abstract layout manager.
@@ -91,10 +97,6 @@ public abstract class AbstractLayoutManager implements LayoutManager, Constants 
      */
     public FOUserAgent getUserAgent() {
         return userAgent;
-    }
-
-    protected Log getLogger() {
-        return userAgent.getLogger();
     }
 
     public void setParent(LayoutManager lm) {

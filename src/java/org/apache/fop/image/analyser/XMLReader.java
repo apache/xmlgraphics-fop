@@ -32,8 +32,17 @@ import org.w3c.dom.Element;
 import org.apache.fop.image.FopImage;
 import org.apache.fop.apps.FOUserAgent;
 
+// Commons-Logging
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 /** ImageReader object for XML document image type. */
 public class XMLReader implements ImageReader {
+
+    /**
+     * logging instance
+     */
+    private Log log = LogFactory.getLog(XMLReader.class);
 
     private static Map converters = new java.util.HashMap();
 
@@ -108,7 +117,7 @@ public class XMLReader implements ImageReader {
             info.data = doc;
 
             Element root = doc.getDocumentElement();
-            ua.getLogger().debug("XML image namespace: " + root.getAttribute("xmlns"));
+            log.debug("XML image namespace: " + root.getAttribute("xmlns"));
             String ns = root.getAttribute("xmlns");
             info.str = ns;
 
@@ -120,7 +129,7 @@ public class XMLReader implements ImageReader {
                 }
             }
         } catch (Exception e) {
-            ua.getLogger().warn("Error while constructing image from XML", e);
+            log.warn("Error while constructing image from XML", e);
             try {
                 is.reset();
             } catch (IOException ioe) {

@@ -163,7 +163,6 @@ public class AreaTreeBuilder {
         org.apache.fop.apps.Document doc = new org.apache.fop.apps.Document(null);
         rend.setupFontInfo(doc.getFontInfo());
         FOUserAgent ua = new FOUserAgent();
-        ua.setLogger(logger);
         rend.setUserAgent(ua);
 
         StorePagesModel sm = AreaTree.createStorePagesModel();

@@ -27,6 +27,10 @@ import java.awt.geom.AffineTransform;
 import java.awt.geom.Dimension2D;
 import java.awt.Dimension;
 
+// Commons-Logging
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 /**
  * The SVG user agent.
  * This is an implementation of the batik svg user agent
@@ -34,8 +38,12 @@ import java.awt.Dimension;
  */
 public class SVGUserAgent extends UserAgentAdapter {
     private AffineTransform currentTransform = null;
-    private Log logger;
     private float pixelUnitToMillimeter = 0.0f;
+
+    /**
+     * logging instance
+     */
+    private Log logger = LogFactory.getLog(SVGUserAgent.class);
 
     /**
      * Creates a new SVGUserAgent.
@@ -44,8 +52,7 @@ public class SVGUserAgent extends UserAgentAdapter {
      *                  currently in effect
      * @param at the current transform
      */
-    public SVGUserAgent(Log log, float pixelUnitToMM, AffineTransform at) {
-        logger = log;
+    public SVGUserAgent(float pixelUnitToMM, AffineTransform at) {
         pixelUnitToMillimeter = pixelUnitToMM;
         currentTransform = at;
     }
