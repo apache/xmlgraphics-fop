@@ -59,11 +59,11 @@ public class PDFANode extends CompositeGraphicsNode {
                 Shape outline = getOutline();
                 if(destination.startsWith("#svgView(viewBox(")) {
                     type = org.apache.fop.layout.LinkSet.INTERNAL;
-                    String nums = destination.substring(18, destination.length() - 2);
+                    String nums = destination.substring(17, destination.length() - 2);
                     float x = 0;
                     float y = 0;
                     float width = 0;
-                    float height;
+                    float height = 0;
                     int count = 0;
                     try {
                         StringTokenizer st = new StringTokenizer(nums, ",");
@@ -88,12 +88,21 @@ public class PDFANode extends CompositeGraphicsNode {
                             }
                         }
                     } catch(Exception e) {
+                        e.printStackTrace();
                     }
+                    Rectangle2D destRect = new Rectangle2D.Float(x, y, width, height);
+                    destRect = transform.createTransformedShape(destRect).getBounds();
                     // these numbers need conversion to current
                     // svg position and scaled for the page
-                    destination = "" + x + " " + y + " " + 200 / width;
+                    x = (float)destRect.getX();
+                    y = (float)destRect.getY();
+                    width = (float)destRect.getWidth();
+                    height = (float)destRect.getHeight();
+
+                    destination = "" + x + " " + y + " "
+                                  + (x + width) + " " + (y + height);
                 }
-                pdfg.addLink(outline, transform, destination, type);           
+                pdfg.addLink(getBounds(), transform, destination, type);           
             }
         }
     }

@@ -10,9 +10,11 @@ package org.apache.fop.pdf;
 import java.awt.Shape;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 
 import java.awt.Color;
 import java.awt.Paint;
+import java.awt.geom.AffineTransform;
 
 /**
  * This keeps information about the current state when writing to pdf.
@@ -57,7 +59,7 @@ public class PDFState {
     boolean text = false;
     int dashOffset = 0;
     int[] dashArray = new int[0];
-    double[] transform = new double[]{1, 0, 0, 1, 0, 0};
+    AffineTransform transform = new AffineTransform();
     float fontSize = 0;
     String fontName = "";
     Shape clip = null;
@@ -89,6 +91,8 @@ public class PDFState {
         saveMap.put(CLIP, clip);
 
         stateStack.add(saveMap);
+
+        transform = new AffineTransform();
     }
 
     public void pop() {
@@ -106,7 +110,7 @@ public class PDFState {
             text = ((Boolean)saveMap.get(TEXT)).booleanValue();
             dashOffset = ((Integer)saveMap.get(DASHOFFSET)).intValue();
             dashArray = (int[])saveMap.get(DASHARRAY);
-            transform = (double[])saveMap.get(TRANSFORM);
+            transform = (AffineTransform)saveMap.get(TRANSFORM);
             fontSize = ((Float)saveMap.get(FONTSIZE)).floatValue();
             fontName = (String)saveMap.get(FONTNAME);
             clip = (Shape)saveMap.get(CLIP);
@@ -165,17 +169,25 @@ public class PDFState {
         clip = cl;
     }
 
-    public boolean checkTransform(double[] vals) {
-        for(int count = 0; count < transform.length; count++) {
-            if(transform[count] != vals[count]) {
-                return true;
-            }
-        }
-        return false;
+    public boolean checkTransform(AffineTransform tf) {
+        return !tf.equals(transform);
     }
 
-    public void setTransform(double[] vals) {
-        transform = vals;
+    public void setTransform(AffineTransform tf) {
+        transform.concatenate(tf);
+    }
+
+    public AffineTransform getTransform() {
+        AffineTransform tf;
+        AffineTransform at = new AffineTransform();
+        for(Iterator iter = stateStack.iterator(); iter.hasNext(); ) {
+            HashMap map = (HashMap)iter.next();
+            tf = (AffineTransform)map.get(TRANSFORM);
+            at.concatenate(tf);
+        }
+        at.concatenate(transform);
+
+        return at;
     }
 }
 

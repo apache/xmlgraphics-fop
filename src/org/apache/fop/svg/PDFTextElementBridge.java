@@ -91,9 +91,9 @@ public class PDFTextElementBridge extends SVGTextElementBridge {
             }
         }
 
-        if(CSSUtilities.convertFilter(element, node, ctx) != null) {
+        /*if(CSSUtilities.convertFilter(element, node, ctx) != null) {
             return false;
-        }
+        }*/
 
         return true;
     }

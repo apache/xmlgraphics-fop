@@ -210,4 +210,8 @@ public class CTM implements Serializable {
     public String toPDFctm() {
 	return a + " " + b + " " + c + " " + d + " " + e/1000f + " " + f/1000f;
     }
+
+    public double[] toArray() {
+        return new double[] {a, b, c, d, e / 1000.0, f / 1000.0};
+    }
 }

@@ -33,6 +33,7 @@ import org.w3c.dom.Document;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.awt.geom.Rectangle2D;
+import java.awt.geom.AffineTransform;
 import java.util.HashMap;
 import java.util.List;
 
@@ -99,6 +100,8 @@ public class PDFRenderer extends PrintRenderer {
     PDFPage currentPage;
 
     // drawing state
+    PDFState currentState = null;
+
     PDFColor currentColor;
     String currentFontName = "";
     int currentFontSize = 0;
@@ -215,6 +218,9 @@ public class PDFRenderer extends PrintRenderer {
             pageReferences.put(page, currentPage.referencePDF());
         }
         currentStream = this.pdfDoc.makeStream();
+
+        currentState = new PDFState();
+        currentState.setTransform(new AffineTransform(1, 0, 0, -1, 0, (int) Math.round(pageHeight / 1000)));
 	// Transform origin at top left to origin at bottom left
 	currentStream.add("1 0 0 -1 0 " +
 			  (int) Math.round(pageHeight / 1000) + " cm\n");
@@ -233,6 +239,9 @@ public class PDFRenderer extends PrintRenderer {
 
     protected void startVParea(CTM ctm) {
 	// Set the given CTM in the graphics state
+        currentState.push();
+        currentState.setTransform(new AffineTransform(ctm.toArray()));
+
 	currentStream.add("q\n");
 	// multiply with current CTM
 	currentStream.add(ctm.toPDFctm() + " cm\n");
@@ -243,6 +252,7 @@ public class PDFRenderer extends PrintRenderer {
     protected void endVParea() {
   currentStream.add("ET\n");
 	currentStream.add("Q\n");
+        currentState.pop();
     }
 
     protected void renderRegion(RegionReference region) {
@@ -527,6 +537,8 @@ public class PDFRenderer extends PrintRenderer {
         context.setUserAgent(userAgent);
 
         context.setProperty(PDFXMLHandler.PDF_DOCUMENT, pdfDoc);
+        context.setProperty(PDFXMLHandler.PDF_STATE, currentState);
+        context.setProperty(PDFXMLHandler.PDF_PAGE, currentPage);
         context.setProperty(PDFXMLHandler.PDF_STREAM, currentStream);
         context.setProperty(PDFXMLHandler.PDF_X, new Integer(currentBlockIPPosition));
         context.setProperty(PDFXMLHandler.PDF_Y, new Integer(currentBPPosition));

@@ -124,9 +124,10 @@ import org.w3c.dom.svg.SVGSVGElement;
  * @version $Id$
  */
 public class PDFTranscoder extends XMLAbstractTranscoder {
-
+    /*
     public static final TranscodingHints.Key KEY_STROKE_TEXT =
-        new StringKey();
+        new BooleanKey();
+    */
 
     /**
      * The user agent dedicated to an <tt>ImageTranscoder</tt>.

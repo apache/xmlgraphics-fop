@@ -37,7 +37,6 @@ import org.apache.batik.ext.awt.g2d.GraphicContext;
 public class PDFDocumentGraphics2D extends PDFGraphics2D {
     OutputStream stream;
 
-    PDFPage currentPage;
     PDFStream pdfStream;
     int width;
     int height;
@@ -156,9 +155,6 @@ public class PDFDocumentGraphics2D extends PDFGraphics2D {
         PDFResources pdfResources = this.pdfDoc.getResources();
         currentPage.setContents(pdfStream);
         this.pdfDoc.addPage(currentPage);
-        if(currentAnnotList != null) {
-            currentPage.setAnnotList(currentAnnotList);
-        }
         if (fontInfo != null) {
             FontSetup.addToResources(this.pdfDoc, fontInfo);
         }

@@ -28,6 +28,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.awt.Rectangle;
 
 /**
@@ -953,7 +954,7 @@ public class PDFDocument {
          * create a PDFPage with the next object number, the given
          * resources, contents and dimensions
          */
-        PDFPage page = new PDFPage(++this.objectcount, resources,
+        PDFPage page = new PDFPage(this, ++this.objectcount, resources,
                                    pagewidth, pageheight);
 
         /* add it to the list of objects */
@@ -965,6 +966,20 @@ public class PDFDocument {
     public void addPage(PDFPage page) {
         /* add it to the list of objects */
         this.objects.add(page);
+
+        if(pendingLinks != null) {
+            for(Iterator iter = pendingLinks.iterator(); iter.hasNext(); ) {
+                PendingLink pl = (PendingLink)iter.next();
+                PDFGoTo gt = new PDFGoTo(++this.objectcount,
+                                         page.referencePDF());
+                gt.setDestination(pl.dest);
+                addTrailerObject(gt);
+                PDFInternalLink internalLink =
+                                 new PDFInternalLink(gt.referencePDF());
+                pl.link.setAction(internalLink);
+            }
+            pendingLinks = null;
+        }
     }
 
     /**
