@@ -7,12 +7,10 @@
 <document>
     <header>
         <title>Embedding FOP</title>
-        <subtitle>Notes about embedding FOP in your Java application</subtitle>
+        <subtitle>How to Embed FOP in a Java application</subtitle>
     </header>
 
     <body>
-<section>
-  <title>Embedding FOP</title>
   <section>
     <title>Overview</title>
   <p>Instantiate org.apache.fop.apps.Driver. Once this class is
@@ -36,9 +34,9 @@
   </p>
     <source><![CDATA[
    import org.apache.fop.apps.Driver;
-   
-   /*..*/ 
-    
+
+   /*..*/
+
    Driver driver = new Driver(new InputSource(args[0]),
                               new FileOutputStream(args[1]));
    driver.setRenderer(Driver.RENDER_PDF);
@@ -47,7 +45,6 @@
 In the example above, args[0] contains the path to an XSL-FO file, while 
 args[1] contains a path for the target PDF file.
   </p>
-
   <p>You also need to set up logging. Global logging for all FOP
     processes is managed by MessageHandler. Per-instance logging
     is handled by Driver. You want to set both using an implementation
@@ -199,23 +196,71 @@ pages of each document.
       </p>
     </section>
   </section>
-  <section>
-    <title>Using FOP in a servlet</title>
-     <p>
-In the directory xml-fop/examples/servlet you can find a working example how
-to use FOP in a servlet. After building the servlet you can drop the fop.war 
-into the webapps directory of Tomcat, then go to a URL like this:
+  <section id="servlet">
+    <title>Using FOP in a Servlet</title>
+      <p>
+        Here is a minimal code snippet to demonstrate the basics:
+      </p>
+      <source>response.setContentType("application/pdf");
+Driver driver=new Driver( new InputSource("foo.fo"),
+                          response.getOutputStream());
+driver.setRenderer(Driver.RENDER_PDF);
+driver.run();</source>
+      <p>
+There are numerous problems with the code snippet above.
+Its purpose is only to demonstrate the basic concepts.
+See xml-fop/examples/servlet for a working example of FOP used in a servlet.
+After building the servlet, drop the fop.war into the webapps directory of Tomcat.
+Then access a URL as follows:
      </p>
      <p>http://localhost:8080/fop/fop?fo=/home/path/to/fofile.fo</p>
      <p>http://localhost:8080/fop/fop?xml=/home/path/to/xmlfile.xml&amp;xsl=/home/path/to/xslfile.xsl</p>
      <p>The source code for the servlet can be found under xml-fop/examples/servlet/src/FopServlet.java.</p>
-     <note>
-         Some browsers have problems handling the PDF result sent back to
-         the browser. IE is particularly bad and different versions behave
-         differently. Having a ".pdf" on the end of the URL may help.
-     </note>
+      <note>
+        Some versions of Internet Explorer will not automatically show the PDF.
+This is well-known to be a limitation of Internet Explorer, and is not a problem with the servlet.
+However, Internet Explorer can still be used to download the PDF so that it can be viewed later. Also, appending ".pdf" to the end of the URL may help.
+      </note>
   </section>
-</section>
+  <section id="servlet-transform">
+    <title>Using FOP in a Servlet with an XSLT Transformation</title>
+    <p>
+      If both the source XML and XSL are read from files, use the TraxInputHandler:
+    </p>
+    <source>response.setContentType("application/pdf");
+XSLTInputHandler input
+  =new XSLTInputHandler(new File("foo.xml"), new File("foo.xsl"));
+Driver driver=new Driver();
+driver.setOutputStream(response.getOutputStream());
+driver.setRenderer(Driver.RENDER_PDF);
+driver.render(input.getParser(), input.getInputSource());</source>
+    <p>
+      This code snippet has the same problems as the one from the <link href="#servlet">section above</link>.
+    </p>
+    <p>
+      If your source XML is generated on the fly (for example from a database, a web service, or another servlet), create a transformer object explicitly, and use a SAX event stream to feed the transformation result into FOP:
+    </p>
+    <source>response.setContentType("application/pdf");
+Driver driver =new Driver();
+driver.setOutputStream(response.getOutputStream());
+driver.setRenderer(Driver.RENDER_PDF);
+Transformer transformer=TransformerFactory.newInstance()
+        .newTransformer(new StreamSource("foo.xsl"));
+transformer.transform(xmlsource, new SAXResult(driver.getContentHandler()));</source>
+    <p>
+      You don't have to call run() or render() on the driver object.
+    </p>
+    <p>
+      The <code>xmlsource</code> is a placeholder for your actual XML source.
+If you have to read the XML from a string, supply a <code>new StreamSource(new StringReader(xmlstring))</code>.
+Constructing and reparsing an XML string is generally less desirable than using a SAXSource if you generate your XML.
+You can alternatively supply a DOMSource as well.
+You may also use dynamically generated XSL if you like.
+    </p>
+    <p>
+      Because you have an explicit transformer object, you can also use it to explicitly set parameters for the transformation run.
+    </p>
+  </section>
 <section>
   <title>Examples</title>
   <p>
