@@ -70,7 +70,8 @@ public class IndentPropertyMaker extends CorrespondingPropertyMaker {
      */
     public Property compute(PropertyList propertyList) throws FOPException {
         // TODO: bckfnn reenable
-        if (propertyList.getExplicitOrShorthand(propertyList.wmMap(lr_tb, rl_tb, tb_rl)) == null) {
+        if (propertyList.getExplicitOrShorthand(
+                propertyList.getWritingMode(lr_tb, rl_tb, tb_rl)) == null) {
             return null;
         }
         // Calculate the values as described in 5.3.2.
@@ -82,7 +83,7 @@ public class IndentPropertyMaker extends CorrespondingPropertyMaker {
                 v = v.add(propertyList.getInherited(propName).getNumeric());
             }
             */
-            v = NumericOp.addition(v, propertyList.get(propertyList.wmMap(lr_tb, rl_tb, tb_rl)).getNumeric());
+            v = NumericOp.addition(v, propertyList.get(propertyList.getWritingMode(lr_tb, rl_tb, tb_rl)).getNumeric());
             v = NumericOp.addition(v, getCorresponding(paddingCorresponding, propertyList).getNumeric());
             v = NumericOp.addition(v, getCorresponding(borderWidthCorresponding, propertyList).getNumeric());
             return (Property) v;
@@ -94,7 +95,7 @@ public class IndentPropertyMaker extends CorrespondingPropertyMaker {
     }
     
     private Property getCorresponding(int[] corresponding, PropertyList propertyList) {
-        int wmcorr = propertyList.wmMap(corresponding[0], corresponding[1], corresponding[2]);
+        int wmcorr = propertyList.getWritingMode(corresponding[0], corresponding[1], corresponding[2]);
         return propertyList.get(wmcorr);
     }
 }

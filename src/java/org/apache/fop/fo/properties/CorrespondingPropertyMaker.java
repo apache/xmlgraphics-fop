@@ -69,19 +69,21 @@ public class CorrespondingPropertyMaker {
      * direction has been specified in the input properties
      */
     public boolean isCorrespondingForced(PropertyList propertyList) {
+
         if (!relative) {
             return false;
         }
-        PropertyList pList;
-        if (useParent) {
-            pList = propertyList.getParentFObj().propertyList;
-        } else {
-            pList = propertyList;
-        }
-        int correspondingId = pList.wmMap(lr_tb, rl_tb, tb_rl);
-        if (propertyList.getExplicit(correspondingId) != null)
+        
+        PropertyList pList = (useParent) ? propertyList.getParentPropertyList() :
+            propertyList;
+
+        int correspondingId = pList.getWritingMode(lr_tb, rl_tb, tb_rl);
+        
+        if (pList.getExplicit(correspondingId) != null) {
             return true;
-        return false;            
+        } else {
+            return false;
+        }
     }
     
     /**
@@ -104,7 +106,7 @@ public class CorrespondingPropertyMaker {
         } else {
             pList = propertyList;
         }
-        int correspondingId = pList.wmMap(lr_tb, rl_tb, tb_rl);
+        int correspondingId = pList.getWritingMode(lr_tb, rl_tb, tb_rl);
             
         Property p = propertyList.getExplicitOrShorthand(correspondingId);
         if (p != null) {

@@ -58,7 +58,7 @@ public class DimensionPropertyMaker extends CorrespondingPropertyMaker {
         }
 
         // Based on min-[width|height]
-        int wmcorr = propertyList.wmMap(extraCorresponding[0][0], 
+        int wmcorr = propertyList.getWritingMode(extraCorresponding[0][0], 
                                         extraCorresponding[0][1], 
                                         extraCorresponding[0][2]);
         Property subprop = propertyList.getExplicitOrShorthand(wmcorr);
@@ -67,7 +67,7 @@ public class DimensionPropertyMaker extends CorrespondingPropertyMaker {
         }
 
         // Based on max-[width|height]
-        wmcorr = propertyList.wmMap(extraCorresponding[1][0], 
+        wmcorr = propertyList.getWritingMode(extraCorresponding[1][0], 
                                     extraCorresponding[1][1], 
                                     extraCorresponding[1][2]);
         subprop = propertyList.getExplicitOrShorthand(wmcorr);

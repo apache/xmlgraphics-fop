@@ -739,9 +739,9 @@ public class PageLayoutManager extends AbstractLayoutManager implements Runnable
 
     private PageViewport createPageAreas(SimplePageMaster spm) {
         int pageWidth =
-                spm.propertyList.get(PR_PAGE_WIDTH).getLength().getValue();
+                spm.getProperty(PR_PAGE_WIDTH).getLength().getValue();
         int pageHeight =
-                spm.propertyList.get(PR_PAGE_HEIGHT).getLength().getValue();
+                spm.getProperty(PR_PAGE_HEIGHT).getLength().getValue();
         // Set the page dimension as the toplevel containing block for margin.
         ((FObj) fobj.getParent()).setLayoutDimension(PercentBase.BLOCK_IPD, pageWidth);
         ((FObj) fobj.getParent()).setLayoutDimension(PercentBase.BLOCK_BPD, pageHeight);
@@ -833,7 +833,7 @@ public class PageLayoutManager extends AbstractLayoutManager implements Runnable
         BodyRegion body = new BodyRegion();
         setRegionPosition(r, body, absRegVPRect);
         int columnCount =
-                r.propertyList.get(PR_COLUMN_COUNT).getNumber().intValue();
+                r.getProperty(PR_COLUMN_COUNT).getNumber().intValue();
         if ((columnCount > 1) && (r.overflow == Overflow.SCROLL)) {
             // recover by setting 'column-count' to 1. This is allowed but
             // not required by the spec.
@@ -844,7 +844,7 @@ public class PageLayoutManager extends AbstractLayoutManager implements Runnable
         body.setColumnCount(columnCount);
 
         int columnGap =
-                r.propertyList.get(PR_COLUMN_GAP).getLength().getValue();
+                r.getProperty(PR_COLUMN_GAP).getLength().getValue();
         body.setColumnGap(columnGap);
         return body;
     }

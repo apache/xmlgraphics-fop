@@ -42,7 +42,7 @@ public class FObj extends FONode implements Constants {
     /**
      * Formatting properties for this fo element.
      */
-    public PropertyList propertyList;
+    protected PropertyList propertyList;
 
     /**
      * Property manager for handling some common properties.
@@ -292,9 +292,50 @@ public class FObj extends FONode implements Constants {
      * @return the property
      */
     public Property getProperty(int propId) {
-        return (propertyList.get(propId));
+        return propertyList.get(propId);
     }
 
+    /**
+     * Return the "nearest" specified value for the given property.
+     * Implements the from-nearest-specified-value function.
+     * @param propertyName The name of the property whose value is desired.
+     * @return The computed value if the property is explicitly set on some
+     * ancestor of the current FO, else the initial value.
+     */
+    public Property getNearestSpecifiedProperty(int propId) {
+        return propertyList.getNearestSpecified(propId);
+    }
+
+    /**
+     * Return the value explicitly specified on this FO.
+     * @param propertyName The name of the property whose value is desired.
+     * It may be a compound name, such as space-before.optimum.
+     * @return The value if the property is explicitly set, otherwise null.
+     */
+    public Property getExplicitProperty(int propId) {
+        return propertyList.getExplicit(propId);
+    }
+
+    /**
+     * Uses the stored writingMode.
+     * @param absdir an absolute direction (top, bottom, left, right)
+     * @return the corresponding writing model relative direction name
+     * for the flow object.
+     */
+    public int getWritingMode(int lrtb, int rltb, int tbrl) {
+        return propertyList.getWritingMode(lrtb, rltb, tbrl);
+    }
+        
+        
+    /**
+     * Uses the stored writingMode.
+     * @param relativeWritingMode relative direction (start, end, before, after)
+     * @return the corresponding absolute direction name for the flow object.
+     */
+    public String getAbsoluteWritingMode(int relativeWritingMode) {
+        return propertyList.getAbsoluteWritingMode(relativeWritingMode);
+    }
+        
     /**
      * Setup the id for this formatting object.
      * Most formatting objects can have an id that can be referenced.

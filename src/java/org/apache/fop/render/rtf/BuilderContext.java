@@ -33,7 +33,6 @@ import org.apache.fop.render.rtf.rtflib.rtfdoc.RtfContainer;
  *  for the JFOR project and is now integrated into FOP.
  */
 
-
 class BuilderContext {
     /** stack of RtfContainers */
     private final Stack containers = new Stack();
