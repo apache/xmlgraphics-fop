@@ -60,6 +60,8 @@ public class LinkResolver implements Resolvable, Serializable {
 
     /**
      * Resolve by adding an internal link.
+     *
+     * @see org.apache.fop.area.Resolveable#resolveIDRef(String, List)
      */
     public void resolveIDRef(String id, List pages) {
         if (idRef.equals(id) && pages != null) {

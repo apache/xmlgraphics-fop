@@ -51,12 +51,12 @@ public interface Resolvable {
      * identifies to the AreaTreeHandler which idrefs it needs
      * resolved.  After the idrefs are resolved, the ATH calls this
      * method to allow the Resolvable object to update itself with
-     * the PageViewport information.
+     * the PageViewport information.  
      *
      * @param id an ID matching one of the Resolvable object's
      *      unresolved idref's.
      * @param pages the list of PageViewports with the given ID
-     *      may be null if ID is not tied to any
+     *
      */
     void resolveIDRef(String id, List pages);
 }
