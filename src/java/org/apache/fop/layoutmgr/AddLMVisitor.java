@@ -387,7 +387,7 @@ public class AddLMVisitor implements FOTreeVisitor {
                               new Integer(node.getFontState().getFontSize()));
              // set offset of dot within inline parent
              w.setOffset(node.getFontState().getAscender());
-             int width = CharUtilities.getCharWidth(dot, node.getFontState());
+             int width = node.getFontState().getCharWidth(dot);
              Space spacer = null;
              if (node.getPatternWidth() > width) {
                  spacer = new Space();
@@ -742,8 +742,8 @@ public class AddLMVisitor implements FOTreeVisitor {
                          String str = parentLM.getCurrentPageNumber();
                          int width = 0;
                      for (int count = 0; count < str.length(); count++) {
-                             width += CharUtilities.getCharWidth(
-                                        str.charAt(count), node.getFontState());
+                             width += node.getFontState().getCharWidth(
+                                        str.charAt(count));
                          }
                          inline.setWord(str);
                          inline.setIPD(width);

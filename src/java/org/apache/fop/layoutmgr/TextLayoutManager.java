@@ -134,9 +134,9 @@ public class TextLayoutManager extends AbstractLayoutManager {
         this.vecAreaInfo = new java.util.ArrayList();
 
         // With CID fonts, space isn't neccesary currentFontState.width(32)
-        spaceCharIPD = CharUtilities.getCharWidth(' ', textInfo.fs);
+        spaceCharIPD = textInfo.fs.getCharWidth(' ');
         // Use hyphenationChar property
-        hyphIPD = CharUtilities.getCharWidth('-', textInfo.fs);
+        hyphIPD = textInfo.fs.getCharWidth('-');
         // Make half-space: <space> on either side of a word-space)
         SpaceVal ws = textInfo.wordSpacing;
         halfWS = new SpaceVal(MinOptMax.multiply(ws.getSpace(), 0.5),
@@ -237,7 +237,7 @@ public class TextLayoutManager extends AbstractLayoutManager {
 
         for (; iNextStart < iStopIndex; iNextStart++) {
             char c = chars[iNextStart];
-            hyphIPD.opt += CharUtilities.getCharWidth(c, textInfo.fs);
+            hyphIPD.opt += textInfo.fs.getCharWidth(c);
             // letter-space?
         }
         // Need to include hyphen size too, but don't count it in the
@@ -344,7 +344,7 @@ public class TextLayoutManager extends AbstractLayoutManager {
                 bSawNonSuppressible = true;
                 spaceIPD.add(pendingSpace.resolve(false));
                 pendingSpace.clear();
-                wordIPD += CharUtilities.getCharWidth(c, textInfo.fs);
+                wordIPD += textInfo.fs.getCharWidth(c);
             }
         }
 
@@ -381,8 +381,7 @@ public class TextLayoutManager extends AbstractLayoutManager {
                     if (c != SPACE) {
                         iNextStart++;
                         if (c != NEWLINE) {
-                            wordIPD += CharUtilities.getCharWidth(c,
-                                                                  textInfo.fs);
+                            wordIPD += textInfo.fs.getCharWidth(c);
                         } else {
                             iFlags |= BreakPoss.FORCE;
                         }
@@ -402,7 +401,7 @@ public class TextLayoutManager extends AbstractLayoutManager {
                                          context.getLeadingSpace(), null, iFlags,
                                          iWScount);
                 }
-                wordIPD += CharUtilities.getCharWidth(c, textInfo.fs);
+                wordIPD += textInfo.fs.getCharWidth(c);
                 // Note, if a normal non-breaking space, is it stretchable???
                 // If so, keep a count of these embedded spaces.
             }
