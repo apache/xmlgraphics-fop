@@ -23,6 +23,12 @@ public interface ImageReader {
 
     /**
      * Verify image type.
+     * If the stream does not contain image data expected by
+     * the reader it must reset the stream to the start. This
+     * is so that the next reader can start reading from the start.
+     * The reader must not close the stream unless it can handle
+     * the image and it has read the information.
+     *
      * @param bis Image buffered input stream
      * @return true if image type is the handled one
      * @exception IOException io error
