@@ -661,7 +661,9 @@ See <link href="#usercfg">loading the user configuration file</link> for further
     <faq id="multithreaded">
       <question>Can FOP be used in multithreaded environments?</question>
       <answer>
-        <p></p>
+        <p>
+          See <link href="embedding.html#multithreading">Multithreading FOP</link>.
+        </p>
       </answer>
     </faq>
   </part>
