@@ -149,13 +149,9 @@ public class LayoutManagerLS extends LayoutStrategy {
             data.addSubData(createBookmarkData(out));
         }
         // add data to area tree for resolving and handling
-        if (document.getBookmarks().getFOInputHandler() instanceof FOTreeHandler) {
-            FOTreeHandler foth = (FOTreeHandler)document.getBookmarks().getFOInputHandler();
-            Document doc = (Document)foth.foTreeControl;
-            AreaTree at = doc.getAreaTree();
-            at.addTreeExtension(data);
-            data.setAreaTree(at);
-        }
+        AreaTree at = document.getAreaTree();
+        at.addTreeExtension(data);
+        data.setAreaTree(at);
     }
 
     /**
