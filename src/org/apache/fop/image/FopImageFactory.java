@@ -42,6 +42,7 @@ package org.apache.fop.image;
 
 // Java
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URL;
 import java.net.MalformedURLException;
 import java.lang.reflect.Constructor;
@@ -110,14 +111,17 @@ public class FopImageFactory {
 
     // If not, check image type
     ImageReader imgReader = null;
+		InputStream imgIS = null;
     try {
-      imgReader =
-        ImageReaderFactory.Make(absoluteURL.openStream());
+			imgIS = absoluteURL.openStream();
+      imgReader = ImageReaderFactory.Make(imgIS);
     } catch (Exception e) {
       throw new FopImageException(
         "Error while recovering Image Informations (" +
         absoluteURL.toString() + ") : " + e.getMessage());
-    }
+    } finally {
+			try {imgIS.close();} catch (IOException e) {}
+		}
     if (imgReader == null)
       throw new FopImageException("No ImageReader for this type of image (" +
                                   absoluteURL.toString() + ")");
