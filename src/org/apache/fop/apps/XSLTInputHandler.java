@@ -19,6 +19,7 @@ import java.io.*;
  * XSLTInputHandler takes an XML input, transforms it with XSLT
  * and provides the resulting xsl:fo document as input for the
  * FOP driver.
+ * Use TraxInputHandler instead.
  */
 public class XSLTInputHandler extends InputHandler {
     private TraxInputHandler traxInputHandler;
@@ -40,6 +41,7 @@ public class XSLTInputHandler extends InputHandler {
 
     /**
      * Get the InputSource.
+     * Use TraxInputHandler run(Driver driver) instead.
      * @deprecated
      */
     public InputSource getInputSource() {
@@ -48,6 +50,7 @@ public class XSLTInputHandler extends InputHandler {
 
     /**
      * Get the parser, actually an XML filter.
+     * Use TraxInputHandler run(Driver driver) instead.
      * @deprecated
      */
     public XMLReader getParser() throws FOPException {

@@ -73,7 +73,8 @@ public class TraxInputHandler extends InputHandler {
     }
 
     /**
-     * overwrites the method of the super class to return the xmlfile
+     * Overwrites the method of the super class to return the xmlfile.
+     * Use run(Driver driver) instead.
      * @deprecated
      */
     public InputSource getInputSource() {
@@ -84,9 +85,10 @@ public class TraxInputHandler extends InputHandler {
     }
 
     /**
-     * overwrites this method of the super class and returns an XMLFilter 
-     instead of a
-     * simple XMLReader which allows chaining of transformations
+     * Overwrites this method of the super class and returns an
+     * XMLFilter instead of a simple XMLReader which allows chaining
+     * of transformations.
+     * Use run(Driver driver) instead.
      * @deprecated
      *
      */
