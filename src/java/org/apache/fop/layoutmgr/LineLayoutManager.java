@@ -703,6 +703,7 @@ public class LineLayoutManager extends InlineStackingLayoutManager {
             lc.setSpaceAdjust(lbp.dAdjust);
             lc.setIPDAdjust(lbp.ipdAdjust);
             lc.setLeadingSpace(new SpaceSpecifier(true));
+            lc.setTrailingSpace(new SpaceSpecifier(false));
             lc.setFlags(LayoutContext.RESOLVE_LEADING_SPACE, true);
             setChildContext(lc);
             while ((childLM = inlinePosIter.getNextChildLM()) != null) {
