@@ -20,7 +20,7 @@
   </s2>
   <s2 title="Tutorials/Articles">
     <ul>
-      <li><jump href="http://www.ibiblio.org/xml/books/bible/updates/15.html">Elliotte Rusty Harold: Chapter 15 on xsl:fo from his excellent xml book</jump></li>
+      <li><jump href="http://www.ibiblio.org/xml/books/bible2/chapters/ch18.html">Elliotte Rusty Harold: Chapter 18 on xsl:fo from his excellent book XML Bible, Second Edition</jump></li>
       <li><jump href="http://www.sun.com/software/xml/developers/slides-dtd/">Paul Sandoz: Using formatting objects with the slides dtd</jump></li>
       <li><jump href="http://www.xml.com/pub/a/2001/01/17/xsl-fo/index.html">J. David Eisenberg: Using XSL Formatting Objects</jump></li>
       <li><jump href="http://zvon.org/xxl/xslfoReference/Output/index.html">Miloslav Nic: XSL FO reference</jump></li>
