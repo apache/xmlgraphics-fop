@@ -7,7 +7,7 @@
 package org.apache.fop.plan;
 
 // FOP
-import org.apache.fop.fo.*;
+import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.XMLObj;
 
 /**

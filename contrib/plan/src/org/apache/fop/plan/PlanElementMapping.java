@@ -6,7 +6,9 @@
 
 package org.apache.fop.plan;
 
-import org.apache.fop.fo.*;
+import org.apache.fop.fo.FOTreeBuilder;
+import org.apache.fop.fo.FONode;
+import org.apache.fop.fo.ElementMapping;
 import org.apache.fop.image.analyser.XMLReader;
 import org.apache.fop.image.FopImage;
 import org.w3c.dom.Document;

@@ -7,7 +7,8 @@
 package org.apache.fop.plan;
 
 import java.io.*;
-import org.w3c.dom.*;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 
 import org.apache.batik.transcoder.svg2svg.SVGTranscoder;
 import org.apache.batik.transcoder.TranscoderInput;
