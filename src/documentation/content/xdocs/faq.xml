@@ -309,22 +309,7 @@
     <faq id="cannot-find-external-graphics">
       <question>FOP cannot find a file for fo:external-graphics.</question>
       <answer>
-        <p>
-          The src attribute of the fo:external-graphics element takes an URI,
-          not a file name.
-        </p>
-        <p>
-          Relative URLs are resolved against the baseDir property of FOP. For
-          the command line FOP application, the baseDir is the directory of the
-          input file, either the FO file or the XML source. If FOP is used
-          embedded in a servlet, <link href="embedding.html">baseDir can be
-            set explicitely</link>. If it's not set, it is usually the current
-          working directory of the process which runs FOP.
-        </p>
-        <!--p>
-          See Understanding URIs and URLs and Understanding
-          URL resolving.
-        </p-->
+        <p>The src attribute of the fo:external-graphics element requires a URI, not a file name. See <link href="fo.html#external-resources">External Resources</link> for more information about specifying URIs.</p>
       </answer>
     </faq>
     <faq id="fonts-not-found">
