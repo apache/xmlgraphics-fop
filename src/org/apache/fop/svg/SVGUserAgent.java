@@ -31,7 +31,7 @@ import java.awt.Point;
 import java.awt.RenderingHints;
 import java.awt.Dimension;
 
-public class SVGUserAgent implements UserAgent {
+public class SVGUserAgent extends UserAgentAdapter {
     AffineTransform currentTransform = null;
     Logger log;
 
@@ -66,6 +66,13 @@ public class SVGUserAgent implements UserAgent {
      */
     public void displayMessage(String message) {
         log.info(message);
+    }
+
+    /**
+     * Shows an alert dialog box.
+     */
+    public void showAlert(String message) {
+        log.warn(message);
     }
 
     /**
@@ -107,20 +114,6 @@ public class SVGUserAgent implements UserAgent {
         return false;
     }
 
-    /**
-     * Opens a link in a new component.
-     * @param doc The current document.
-     * @param uri The document URI.
-     */
-    public void openLink(SVGAElement elt) {
-    }
-
-    public Point getClientAreaLocationOnScreen() {
-        return new Point(0, 0);
-    }
-
-    public void setSVGCursor(java.awt.Cursor cursor) {}
-
     public AffineTransform getTransform() {
         return currentTransform;
     }
@@ -128,22 +121,6 @@ public class SVGUserAgent implements UserAgent {
     public Dimension2D getViewportSize() {
         return new Dimension(100, 100);
     }
-
-    public EventDispatcher getEventDispatcher() {
-        return null;
-    }
-
-    public boolean supportExtension(String str) {
-        return false;
-    }
-
-    public boolean hasFeature(String str) {
-        return false;
-    }
-
-    public void registerExtension(BridgeExtension be) {}
-
-    public void handleElement(Element elt, Object data) {}
 
 }
 

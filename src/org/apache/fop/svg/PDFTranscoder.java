@@ -38,6 +38,7 @@ import org.apache.batik.bridge.BridgeContext;
 import org.apache.batik.bridge.BridgeException;
 import org.apache.batik.bridge.GVTBuilder;
 import org.apache.batik.bridge.UserAgent;
+import org.apache.batik.bridge.UserAgentAdapter;
 import org.apache.batik.bridge.ViewBox;
 
 import org.apache.batik.dom.svg.DefaultSVGContext;
@@ -310,7 +311,7 @@ public class PDFTranscoder extends XMLAbstractTranscoder {
     /**
      * A user agent implementation for <tt>ImageTranscoder</tt>.
      */
-    protected class ImageTranscoderUserAgent implements UserAgent {
+    protected class ImageTranscoderUserAgent extends UserAgentAdapter {
 
         /**
          * Returns the default size of this user agent (400x400).
@@ -407,65 +408,8 @@ public class PDFTranscoder extends XMLAbstractTranscoder {
         /**
          * Unsupported operation.
          */
-        public EventDispatcher getEventDispatcher() {
-            return null;
-        }
-
-        /**
-         * Unsupported operation.
-         */
-        public void openLink(SVGAElement elt) {}
-
-        /**
-         * Unsupported operation.
-         */
-        public void setSVGCursor(Cursor cursor) {}
-
-        /**
-         * Unsupported operation.
-         */
-        public void runThread(Thread t) {}
-
-        /**
-         * Unsupported operation.
-         */
         public AffineTransform getTransform() {
             return null;
         }
-
-        /**
-         * Unsupported operation.
-         */
-        public Point getClientAreaLocationOnScreen() {
-            return new Point();
-        }
-
-        /**
-         * Tells whether the given feature is supported by this
-         * user agent.
-         */
-        public boolean hasFeature(String s) {
-            return FEATURES.contains(s);
-        }
-
-        /**
-         * Tells whether the given extension is supported by this
-         * user agent.
-         */
-        public boolean supportExtension(String s) {
-            return false;
-        }
-
-        public void registerExtension(BridgeExtension be) {}
-
-        public void handleElement(Element elt, Object data) {}
-
-    }
-
-    protected final static Set FEATURES = new HashSet();
-    static {
-        FEATURES.add(SVGConstants.SVG_ORG_W3C_SVG_FEATURE);
-        FEATURES.add(SVGConstants.SVG_ORG_W3C_SVG_LANG_FEATURE);
-        FEATURES.add(SVGConstants.SVG_ORG_W3C_SVG_STATIC_FEATURE);
     }
 }
