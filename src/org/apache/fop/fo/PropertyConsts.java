@@ -210,9 +210,8 @@ public class PropertyConsts {
     {
         if (initialValues[propindex] != null)
             return initialValues[propindex];
-        Property property = setupProperty(propindex);
-        //System.out.println("PropertyConts.getInitialValue(" + propindex
-                           //+ ") " + property.getClass().getName());
+        System.out.println("PropertyConts.getInitialValue(" + propindex
+                           + ") " + PropNames.getPropertyName(propindex));
         return
             (initialValues[propindex] =
                     setupProperty(propindex).getInitialValue(propindex));
@@ -256,17 +255,18 @@ public class PropertyConsts {
 
     /**
      * Get the <tt>Numeric</tt> value corresponding to an enumerated value.
+     * @param foNode the <tt>FONode</tt> being built
      * @param propindex int index of the FO property
      * @param enum - the integer equivalent of the enumeration keyword.
      * @return the <tt>Numeric</tt> result.
      * @throws PropertyException.
      */
-    public Numeric getMappedNumeric(int propindex, int enum)
+    public Numeric getMappedNumeric(FONode foNode, int propindex, int enum)
             throws PropertyException
     {
         Property property = setupProperty(propindex);
         if ((datatypes[propindex] & Property.MAPPED_LENGTH) != 0)
-            return property.getMappedLength(enum);
+            return property.getMappedLength(foNode, enum);
         else
             throw new PropertyException
                 ("MAPPED_LENGTH not valid in "
