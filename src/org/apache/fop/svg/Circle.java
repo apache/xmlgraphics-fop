@@ -53,7 +53,6 @@ package org.apache.fop.svg;
 
 // FOP
 import org.apache.fop.fo.*;
-import org.apache.fop.messaging.MessageHandler;
 import org.apache.fop.layout.Area;
 import org.apache.fop.layout.FontState;
 import org.apache.fop.apps.FOPException;
@@ -61,95 +60,68 @@ import org.apache.fop.apps.FOPException;
 import java.util.*;
 
 import org.apache.fop.dom.svg.*;
-import org.apache.fop.dom.svg.SVGTextElementImpl;
 import org.apache.fop.dom.svg.SVGArea;
 
+import org.w3c.dom.svg.SVGLength;
 /**
- * class representing svg:text pseudo flow object.
+ * class representing svg:Circle pseudo flow object.
  *
  */
-public class Text extends FObjMixed implements GraphicsCreator {
+public class Circle extends FObj implements GraphicsCreator {
 
 	/**
-	 * inner class for making SVG Text objects.
+	 * inner class for making Circle objects.
 	 */
 	public static class Maker extends FObj.Maker {
 
-	/**
-	 * make an SVG Text object.
-	 *
-	 * @param parent the parent formatting object
-	 * @param propertyList the explicit properties of this object
-	 *
-	 * @return the SVG Text object
-	 */
-	public FObj make(FObj parent, PropertyList propertyList)
-		throws FOPException {
-		return new Text(parent, propertyList);
-	}
+		/**
+		 * make a Circle object.
+		 *
+		 * @param parent the parent formatting object
+		 * @param propertyList the explicit properties of this object
+		 *
+		 * @return the Circle object
+		 */
+		public FObj make(FObj parent, PropertyList propertyList) throws FOPException
+		{
+			return new Circle(parent, propertyList);
+		}
 	}
 
 	/**
 	 * returns the maker for this object.
 	 *
-	 * @return the maker for SVG Text objects
+	 * @return the maker for Circle objects
 	 */
 	public static FObj.Maker maker() {
-	return new Text.Maker();
+		return new Circle.Maker();
 	}
 
 	/**
-	 * the string of text to display
-	 */
-	Vector textList = new Vector();
-
-	/**
-	 * constructs an SVG Text object (called by Maker).
+	 * constructs a Circle object (called by Maker).
 	 *
 	 * @param parent the parent formatting object
 	 * @param propertyList the explicit properties of this object
 	 */
-	protected Text(FObj parent, PropertyList propertyList) {
-	super(parent, propertyList);
-	this.name = "svg:text";
-	}
-
-	SVGTextElementImpl textGraph = new SVGTextElementImpl();
-
-	/**
-	 * add characters to the string to display.
-	 *
-	 * @param data array of characters
-	 * @param start start offset in character array
-	 * @param length number of characters to add
-	 */
-	protected void addCharacters(char data[], int start, int length)
-	{
-		textList.addElement(new String(data, start, length - start).trim());
-	}
-
-	protected void addChild(FONode child) {
-		super.addChild(child);
-		if(child instanceof TextElement) {
-			TextElement te = (TextElement)child;
-			GraphicImpl graph = te.createTextElement();
-			textList.addElement(graph);
-			graph.setParent(textGraph);
-		} else {
-			// error
-		}
+	protected Circle(FObj parent, PropertyList propertyList) {
+		super(parent, propertyList);
+		this.name = "svg:circle";
 	}
 
 	public GraphicImpl createGraphic()
 	{
 		/* retrieve properties */
-		textGraph.x = ((SVGLengthProperty)this.properties.get("x")).getSVGLength().getValue();
-		textGraph.y = ((SVGLengthProperty)this.properties.get("y")).getSVGLength().getValue();
-		textGraph.textList = textList;
-		textGraph.setStyle(((SVGStyle)this.properties.get("style")).getStyle());
-		textGraph.setTransform(((SVGTransform)this.properties.get("transform")).oldgetTransform());
-		textGraph.setId(this.properties.get("id").getString());
-		return textGraph;
+		SVGLength cx = ((SVGLengthProperty)this.properties.get("cx")).getSVGLength();
+		SVGLength cy = ((SVGLengthProperty)this.properties.get("cy")).getSVGLength();
+		SVGLength r = ((SVGLengthProperty)this.properties.get("r")).getSVGLength();
+		SVGCircleElementImpl graph = new SVGCircleElementImpl();
+		graph.setCx(cx);
+		graph.setCy(cy);
+		graph.setR(r);
+		graph.setStyle(((SVGStyle)this.properties.get("style")).getStyle());
+		graph.setTransform(((SVGTransform)this.properties.get("transform")).oldgetTransform());
+		graph.setId(this.properties.get("id").getString());
+		return graph;
 	}
 
 	/**
@@ -160,17 +132,17 @@ public class Text extends FObjMixed implements GraphicsCreator {
 	 * @return the status of the layout
 	 */
 	public Status layout(Area area) throws FOPException {
-	
-	/* if the area this is being put into is an SVGArea */
-	if (area instanceof SVGArea) {
-		/* add the text to the SVGArea */
-		((SVGArea) area).addGraphic(createGraphic());
-	} else {
-		/* otherwise generate a warning */
-	    MessageHandler.errorln("WARNING: svg:text outside svg:svg");
-	}
 
-	/* return status */
-	return new Status(Status.OK);
+		/* if the area this is being put into is an SVGArea */
+		if (area instanceof SVGArea) {
+			/* add a line to the SVGArea */
+			((SVGArea) area).addGraphic(createGraphic());
+		} else {
+			/* otherwise generate a warning */
+			System.err.println("WARNING: svg:circle outside svg:svg");
+		}
+
+		/* return status */
+		return new Status(Status.OK);
 	}
 }

@@ -53,103 +53,83 @@ package org.apache.fop.svg;
 
 // FOP
 import org.apache.fop.fo.*;
-import org.apache.fop.messaging.MessageHandler;
 import org.apache.fop.layout.Area;
 import org.apache.fop.layout.FontState;
 import org.apache.fop.apps.FOPException;
 
-import java.util.*;
-
 import org.apache.fop.dom.svg.*;
-import org.apache.fop.dom.svg.SVGTextElementImpl;
 import org.apache.fop.dom.svg.SVGArea;
-
 /**
- * class representing svg:text pseudo flow object.
  *
  */
-public class Text extends FObjMixed implements GraphicsCreator {
+public class TRef extends FObj implements TextElement {
 
 	/**
-	 * inner class for making SVG Text objects.
+	 * inner class for making Line objects.
 	 */
 	public static class Maker extends FObj.Maker {
 
-	/**
-	 * make an SVG Text object.
-	 *
-	 * @param parent the parent formatting object
-	 * @param propertyList the explicit properties of this object
-	 *
-	 * @return the SVG Text object
-	 */
-	public FObj make(FObj parent, PropertyList propertyList)
-		throws FOPException {
-		return new Text(parent, propertyList);
-	}
+		/**
+		 * make a Line object.
+		 *
+		 * @param parent the parent formatting object
+		 * @param propertyList the explicit properties of this object
+		 *
+		 * @return the Line object
+		 */
+		public FObj make(FObj parent, PropertyList propertyList) throws FOPException
+		{
+			return new TRef(parent, propertyList);
+		}
 	}
 
 	/**
 	 * returns the maker for this object.
 	 *
-	 * @return the maker for SVG Text objects
+	 * @return the maker for TRef objects
 	 */
 	public static FObj.Maker maker() {
-	return new Text.Maker();
+		return new TRef.Maker();
 	}
 
 	/**
-	 * the string of text to display
-	 */
-	Vector textList = new Vector();
-
-	/**
-	 * constructs an SVG Text object (called by Maker).
+	 * constructs a TRef object (called by Maker).
 	 *
 	 * @param parent the parent formatting object
 	 * @param propertyList the explicit properties of this object
 	 */
-	protected Text(FObj parent, PropertyList propertyList) {
-	super(parent, propertyList);
-	this.name = "svg:text";
+	protected TRef(FObj parent, PropertyList propertyList) {
+		super(parent, propertyList);
+		this.name = "svg:tref";
 	}
 
-	SVGTextElementImpl textGraph = new SVGTextElementImpl();
-
-	/**
-	 * add characters to the string to display.
-	 *
-	 * @param data array of characters
-	 * @param start start offset in character array
-	 * @param length number of characters to add
-	 */
-	protected void addCharacters(char data[], int start, int length)
+	public GraphicImpl createTextElement()
 	{
-		textList.addElement(new String(data, start, length - start).trim());
-	}
-
-	protected void addChild(FONode child) {
-		super.addChild(child);
-		if(child instanceof TextElement) {
-			TextElement te = (TextElement)child;
-			GraphicImpl graph = te.createTextElement();
-			textList.addElement(graph);
-			graph.setParent(textGraph);
-		} else {
-			// error
-		}
-	}
-
-	public GraphicImpl createGraphic()
-	{
-		/* retrieve properties */
-		textGraph.x = ((SVGLengthProperty)this.properties.get("x")).getSVGLength().getValue();
-		textGraph.y = ((SVGLengthProperty)this.properties.get("y")).getSVGLength().getValue();
-		textGraph.textList = textList;
-		textGraph.setStyle(((SVGStyle)this.properties.get("style")).getStyle());
-		textGraph.setTransform(((SVGTransform)this.properties.get("transform")).oldgetTransform());
-		textGraph.setId(this.properties.get("id").getString());
-		return textGraph;
+		SVGTRefElementImpl tref = new SVGTRefElementImpl();
+		tref.setStyle(((SVGStyle)this.properties.get("style")).getStyle());
+//		tref.dx = ((SVGLengthProperty)this.properties.get("dx")).getSVGLength().mvalue();
+//		tref.dy = ((SVGLengthProperty)this.properties.get("dy")).getSVGLength().mvalue();
+//		tref.x = ((SVGLengthProperty)this.properties.get("x")).getSVGLength().mvalue();
+//		tref.y = ((SVGLengthProperty)this.properties.get("y")).getSVGLength().mvalue();
+		Property prop;
+		prop = this.properties.get("x");
+		// bit of a hack, but otherwise the svg:text x element could be
+		// returned which is not a list
+		if(prop instanceof SVGLengthListProperty)
+			tref.xlist = ((SVGLengthListProperty)prop).getSVGLengthList();
+		prop = this.properties.get("y");
+		if(prop instanceof SVGLengthListProperty)
+			tref.ylist = ((SVGLengthListProperty)prop).getSVGLengthList();
+		prop = this.properties.get("dx");
+		if(prop instanceof SVGLengthListProperty)
+			tref.dxlist = ((SVGLengthListProperty)prop).getSVGLengthList();
+		prop = this.properties.get("dy");
+		if(prop instanceof SVGLengthListProperty)
+			tref.dylist = ((SVGLengthListProperty)prop).getSVGLengthList();
+//		tref.dxlist = ((SVGLengthProperty)this.properties.get("dx")).getSVGLength().valueList();
+		tref.ref = this.properties.get("xlink:href").getString();
+		tref.setId(this.properties.get("id").getString());
+		return tref;
 	}
 
 	/**
@@ -160,17 +140,16 @@ public class Text extends FObjMixed implements GraphicsCreator {
 	 * @return the status of the layout
 	 */
 	public Status layout(Area area) throws FOPException {
-	
-	/* if the area this is being put into is an SVGArea */
-	if (area instanceof SVGArea) {
-		/* add the text to the SVGArea */
-		((SVGArea) area).addGraphic(createGraphic());
-	} else {
-		/* otherwise generate a warning */
-	    MessageHandler.errorln("WARNING: svg:text outside svg:svg");
-	}
+		
+		/* if the area this is being put into is an SVGArea */
+		if (area instanceof SVGArea) {
+			/* add a line to the SVGArea */
+		} else {
+			/* otherwise generate a warning */
+			System.err.println("WARNING: svg:tref outside svg:svg");
+		}
 
-	/* return status */
-	return new Status(Status.OK);
+		/* return status */
+		return new Status(Status.OK);
 	}
 }

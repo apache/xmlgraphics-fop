@@ -51,35 +51,69 @@
 
 package org.apache.fop.svg;
 
+// FOP
+import org.apache.fop.fo.*;
+import org.apache.fop.layout.Area;
+import org.apache.fop.layout.FontState;
+import org.apache.fop.apps.FOPException;
+
 /**
- * class representing a line in an SVG Area
+ *
  */
-public class LineGraphic extends Graphic {
+public class Title extends FObj {
 
-    /** x-coordinate of start */
-    public int x1;
+	/**
+	 * inner class for making Title objects.
+	 */
+	public static class Maker extends FObj.Maker {
 
-    /** y-coordinate of start */
-    public int y1;
+		/**
+		 * make a Title object.
+		 *
+		 * @param parent the parent formatting object
+		 * @param propertyList the explicit properties of this object
+		 *
+		 * @return the Title object
+		 */
+		public FObj make(FObj parent, PropertyList propertyList) throws FOPException
+		{
+			return new Title(parent, propertyList);
+		}
+	}
 
-    /** x-coordinate of end */
-    public int x2;
+	/**
+	 * returns the maker for this object.
+	 *
+	 * @return the maker for Title objects
+	 */
+	public static FObj.Maker maker() {
+		return new Title.Maker();
+	}
 
-    /** y-coordinate of end */
-    public int y2;
+	/**
+	 * the title string
+	 */
+	protected String text = "";
 
-    /**
-     * construct a line graphic
-     *
-     * @param x1 x-coordinate of start
-     * @param y1 y-coordinate of start
-     * @param x2 x-coordinate of end
-     * @param y2 y-coordinate of end
-     */
-    public LineGraphic(int x1, int y1, int x2, int y2) {
-	this.x1 = x1;
-	this.y1 = y1;
-	this.x2 = x2;
-	this.y2 = y2;
-    }
+	/**
+	 * constructs a Title object (called by Maker).
+	 *
+	 * @param parent the parent formatting object
+	 * @param propertyList the explicit properties of this object
+	 */
+	protected Title(FObj parent, PropertyList propertyList) {
+		super(parent, propertyList);
+		this.name = "svg:title";
+	}
+
+	/**
+	 * add characters to the string to display.
+	 *
+	 * @param data array of characters
+	 * @param start start offset in character array
+	 * @param length number of characters to add
+	 */
+	protected void addCharacters(char data[], int start, int length) {
+		this.text += new String(data, start, length - start);
+	}
 }

@@ -59,15 +59,18 @@ import org.apache.fop.layout.BlockArea;
 import org.apache.fop.layout.FontState;
 import org.apache.fop.apps.FOPException;
 
+import org.apache.fop.dom.svg.*;
+
+import org.apache.fop.dom.svg.SVGArea;
 /**
  * class representing svg:svg pseudo flow object.
  */
-public class SVG extends FObj {
+public class SVG extends FObj implements GraphicsCreator {
 
-    /**
-     * inner class for making SVG objects.
-     */
-    public static class Maker extends FObj.Maker {
+	/**
+	 * inner class for making SVG objects.
+	 */
+	public static class Maker extends FObj.Maker {
 
 	/**
 	 * make an SVG object.
@@ -78,150 +81,209 @@ public class SVG extends FObj {
 	 * @return the SVG object
 	 */
 	public FObj make(FObj parent, PropertyList propertyList)
-	    throws FOPException {
-	    return new SVG(parent, propertyList);
+		throws FOPException {
+		return new SVG(parent, propertyList);
 	}
-    }
+	}
 
-    /**
-     * returns the maker for this object.
-     *
-     * @return the maker for SVG objects
-     */
-    public static FObj.Maker maker() {
+	/**
+	 * returns the maker for this object.
+	 *
+	 * @return the maker for SVG objects
+	 */
+	public static FObj.Maker maker() {
 	return new SVG.Maker();
-    }
+	}
 
-    FontState fs;
-    int breakBefore;
-    int breakAfter;
-    int width;
-    int height;
-    int spaceBefore;
-    int spaceAfter;
+	FontState fs;
+	int breakBefore;
+	int breakAfter;
+	float width;
+	float height;
+	int spaceBefore;
+	int spaceAfter;
 
-    /**
-     * constructs an SVG object (called by Maker).
-     *
-     * @param parent the parent formatting object
-     * @param propertyList the explicit properties of this object
-     */
-    public SVG(FObj parent, PropertyList propertyList) {
+	/**
+	 * constructs an SVG object (called by Maker).
+	 *
+	 * @param parent the parent formatting object
+	 * @param propertyList the explicit properties of this object
+	 */
+	public SVG(FObj parent, PropertyList propertyList) {
 	super(parent, propertyList);
 	this.name = "svg:svg";
-    }
+	}
 
-    /**
-     * layout this formatting object.
-     *
-     * @param area the area to layout the object into
-     *
-     * @return the status of the layout
-     */
-    public Status layout(Area area) throws FOPException {
+/*	protected void addChild(FONode child) {
+		super.addChild(child);
+		if(svgArea != null) {
+			Status status;
+			try {
+				if ((status = child.layout(svgArea)).isIncomplete()) {
+				}
+			} catch(FOPException fope) {
+				fope.printStackTrace();
+			}
+		}
+	}*/
+
+	SVGArea svgArea = null;
+	public GraphicImpl createGraphic()
+	{
+		this.width = ((SVGLengthProperty)this.properties.get("width")).getSVGLength().getValue();
+		this.height = ((SVGLengthProperty)this.properties.get("height")).getSVGLength().getValue();
+		svgArea = new SVGArea(null, width, height);
+		svgArea.setStyle(((SVGStyle)this.properties.get("style")).getStyle());
+		svgArea.setTransform(((SVGTransform)this.properties.get("transform")).oldgetTransform());
+//		svgArea.setId(this.properties.get("id").getString());
+		int numChildren = this.children.size();
+		for (int i = 0; i < numChildren; i++) {
+			FONode fo = (FONode) children.elementAt(i);
+			if(fo instanceof GraphicsCreator) {
+				GraphicImpl impl = ((GraphicsCreator)fo).createGraphic();
+				svgArea.addGraphic(impl);
+			} else if(fo instanceof Defs) {
+				svgArea.addDefs(((Defs)fo).createDefs());
+			}
+			Status status;
+/*			try {
+				if ((status = fo.layout(svgArea)).isIncomplete()) {
+//				return null;
+				}
+			} catch(FOPException fope) {
+				fope.printStackTrace();
+			}*/
+		}
+		return svgArea;
+	}
+
+	/**
+	 * layout this formatting object.
+	 *
+	 * @param area the area to layout the object into
+	 *
+	 * @return the status of the layout
+	 */
+	public Status layout(Area area) throws FOPException {
 	
+	if (area instanceof SVGArea) {
+		((SVGArea) area).addGraphic(createGraphic());
+		return new Status(Status.OK);
+	}
+
 	if (this.marker == BREAK_AFTER) {
-	    return new Status(Status.OK);
+		return new Status(Status.OK);
 	}
 
 	if (this.marker == START) {
-	    /* retrieve properties */
-	    String fontFamily = this.properties.get("font-family").getString();
-	    String fontStyle = this.properties.get("font-style").getString();
-	    String fontWeight = this.properties.get("font-weight").getString();
-	    int fontSize = this.properties.get("font-size").getLength().mvalue();
-	    
-	    this.fs = new FontState(area.getFontInfo(), fontFamily,
+		/* retrieve properties */
+		String id = this.properties.get("id").getString();
+		String fontFamily = this.properties.get("font-family").getString();
+		String fontStyle = this.properties.get("font-style").getString();
+		String fontWeight = this.properties.get("font-weight").getString();
+		int fontSize = this.properties.get("font-size").getLength().mvalue();
+		
+		this.fs = new FontState(area.getFontInfo(), fontFamily,
 					 fontStyle, fontWeight, fontSize);
-	    
-	    this.breakBefore = this.properties.get("break-before").getEnum();
-	    this.breakAfter = this.properties.get("break-after").getEnum();
-	    this.width = this.properties.get("width").getLength().mvalue();
-	    this.height = this.properties.get("height").getLength().mvalue();
-	    
-	    this.spaceBefore =
+		
+		this.breakBefore = this.properties.get("break-before").getEnum();
+		this.breakAfter = this.properties.get("break-after").getEnum();
+		Property prop = this.properties.get("width");
+//		if(prop instanceof SVGLengthProperty)
+			this.width = ((SVGLengthProperty)this.properties.get("width")).getSVGLength().getValue();
+//		else
+//			this.width = 0;
+		prop = this.properties.get("height");
+//		if(prop instanceof SVGLengthProperty)
+			this.height = ((SVGLengthProperty)this.properties.get("height")).getSVGLength().getValue();
+//		else
+//			this.height = 0;
+		
+		this.spaceBefore =
 		this.properties.get("space-before.optimum").getLength().mvalue();
-	    this.spaceAfter =
+		this.spaceAfter =
 		this.properties.get("space-after.optimum").getLength().mvalue();
-	    /* if the SVG is embedded in a block area */
-	    if (area instanceof BlockArea) {
+		/* if the SVG is embedded in a block area */
+		if (area instanceof BlockArea) {
 		/* temporarily end the block area */
 		area.end();
-	    }
-	    
-	    this.marker = 0;
+		}
+		
+		this.marker = 0;
 
-	    if (breakBefore == BreakBefore.PAGE) {
+		if (breakBefore == BreakBefore.PAGE || ((this.height * 1000 + area.getHeight()) > area.getMaxHeight())) {
 		return new Status(Status.FORCE_PAGE_BREAK);
-	    }
+		}
 
-	    if (breakBefore == BreakBefore.ODD_PAGE) {
+		if (breakBefore == BreakBefore.ODD_PAGE) {
 		return new Status(Status.FORCE_PAGE_BREAK_ODD);
-	    }
+		}
 
-	    if (breakBefore == BreakBefore.EVEN_PAGE) {
+		if (breakBefore == BreakBefore.EVEN_PAGE) {
 		return new Status(Status.FORCE_PAGE_BREAK_EVEN);
-	    }
+		}
 	}
-       
+	   
 	/* if there is a space-before */
 	if (spaceBefore != 0) {
-	    /* add a display space */
-	    area.addDisplaySpace(spaceBefore);
+		/* add a display space */
+		area.addDisplaySpace(spaceBefore);
 	}
 
 	/* create an SVG area */
-	SVGArea svgArea = new SVGArea(fs, width, height);
-	svgArea.start();
+	SVGArea svg = new SVGArea(fs, width, height);
+	svg.setStyle(((SVGStyle)this.properties.get("style")).getStyle());
+	svg.setTransform(((SVGTransform)this.properties.get("transform")).oldgetTransform());
+	svg.start();
 
 	/* add the SVG area to the containing area */
-	area.addChild(svgArea);
+	area.addChild(svg);
 
 	/* iterate over the child formatting objects and lay them out
 	   into the SVG area */
 	int numChildren = this.children.size();
 	for (int i = 0; i < numChildren; i++) {
-	    FONode fo = (FONode) children.elementAt(i);
-	    Status status;
-	    if ((status = fo.layout(svgArea)).isIncomplete()) {
+		FONode fo = (FONode) children.elementAt(i);
+		Status status;
+		if ((status = fo.layout(svg)).isIncomplete()) {
 		return status;
-	    }
+		}
 	}
 
 	/* finish off the SVG area */
-	svgArea.end();
+	svg.end();
 
 	/* increase the height of the containing area accordingly */
-	area.increaseHeight(svgArea.getHeight());
+	area.increaseHeight(svg.getHeight());
 
 	/* if there is a space-after */
 	if (spaceAfter != 0) {
-	    /* add a display space */
-	    area.addDisplaySpace(spaceAfter);
+		/* add a display space */
+		area.addDisplaySpace(spaceAfter);
 	}
 
 	/* if the SVG is embedded in a block area */
 	if (area instanceof BlockArea) {
-	    /* re-start the block area */
-	    area.start();
+		/* re-start the block area */
+		area.start();
 	}
 	
 	if (breakAfter == BreakAfter.PAGE) {
-	    this.marker = BREAK_AFTER;
-	    return new Status(Status.FORCE_PAGE_BREAK);
+		this.marker = BREAK_AFTER;
+		return new Status(Status.FORCE_PAGE_BREAK);
 	}
 
 	if (breakAfter == BreakAfter.ODD_PAGE) {
-	    this.marker = BREAK_AFTER;
-	    return new Status(Status.FORCE_PAGE_BREAK_ODD);
+		this.marker = BREAK_AFTER;
+		return new Status(Status.FORCE_PAGE_BREAK_ODD);
 	}
 	
 	if (breakAfter == BreakAfter.EVEN_PAGE) {
-	    this.marker = BREAK_AFTER;
-	    return new Status(Status.FORCE_PAGE_BREAK_EVEN);
+		this.marker = BREAK_AFTER;
+		return new Status(Status.FORCE_PAGE_BREAK_EVEN);
 	}
 
 	/* return status */
 	return new Status(Status.OK);
-    }
+	}
 }

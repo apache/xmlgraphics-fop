@@ -22,7 +22,7 @@
     Alternately, this  acknowledgment may  appear in the software itself,  if
     and wherever such third-party acknowledgments normally appear.
  
- 4. The names "Fop" and  "Apache Software Foundation"  must not be used to
+ 4. The names "FOP" and  "Apache Software Foundation"  must not be used to
     endorse  or promote  products derived  from this  software without  prior
     written permission. For written permission, please contact
     apache@apache.org.
@@ -48,32 +48,93 @@
  Software Foundation, please see <http://www.apache.org/>.
  
  */
+
 package org.apache.fop.svg;
 
+// FOP
+import org.apache.fop.fo.*;
+import org.apache.fop.layout.Area;
+import org.apache.fop.layout.FontState;
+import org.apache.fop.apps.FOPException;
+
+import java.util.*;
+
+import org.apache.fop.dom.svg.*;
+import org.apache.fop.dom.svg.SVGArea;
 /**
- * class representing text in an SVG Area
+ * class representing svg:Path pseudo flow object.
+ *
  */
-public class TextGraphic extends Graphic {
+public class Path extends FObj implements GraphicsCreator {
 
-    /** x-coordinate of text */
-    public int x;
+	/**
+	 * inner class for making Path objects.
+	 */
+	public static class Maker extends FObj.Maker {
 
-    /** y-coordinate of text */
-    public int y;
+		/**
+		 * make a Path object.
+		 *
+		 * @param parent the parent formatting object
+		 * @param propertyList the explicit properties of this object
+		 *
+		 * @return the Path object
+		 */
+		public FObj make(FObj parent, PropertyList propertyList) throws FOPException
+		{
+			return new Path(parent, propertyList);
+		}
+	}
 
-    /** the text string itself */
-    public String s;
+	/**
+	 * returns the maker for this object.
+	 *
+	 * @return the maker for Path objects
+	 */
+	public static FObj.Maker maker() {
+		return new Path.Maker();
+	}
 
-    /**
-     * construct a text graphic
-     *
-     * @param x x-coordinate of text
-     * @param y y-coordinate of text
-     * @param s the text string
-     */
-    public TextGraphic(int x, int y, String s) {
-	this.x = x;
-	this.y = y;
-	this.s = s;
-    }
+	/**
+	 * constructs a Path object (called by Maker).
+	 *
+	 * @param parent the parent formatting object
+	 * @param propertyList the explicit properties of this object
+	 */
+	protected Path(FObj parent, PropertyList propertyList) {
+		super(parent, propertyList);
+		this.name = "svg:path";
+	}
+
+	public GraphicImpl createGraphic()
+	{
+		Vector pd = ((SVGD)this.properties.get("d")).getPath();
+		SVGPathElementImpl graph = new SVGPathElementImpl(pd);
+		graph.setStyle(((SVGStyle)this.properties.get("style")).getStyle());
+		graph.setTransform(((SVGTransform)this.properties.get("transform")).oldgetTransform());
+		graph.setId(this.properties.get("id").getString());
+		return graph;
+	}
+
+	/**
+	 * layout this formatting object.
+	 *
+	 * @param area the area to layout the object into
+	 *
+	 * @return the status of the layout
+	 */
+	public Status layout(Area area) throws FOPException {
+		
+		/* if the area this is being put into is an SVGArea */
+		if (area instanceof SVGArea) {
+			/* add a Path to the SVGArea */
+			((SVGArea) area).addGraphic(createGraphic());
+		} else {
+			/* otherwise generate a warning */
+			System.err.println("WARNING: svg:path outside svg:svg");
+		}
+
+		/* return status */
+		return new Status(Status.OK);
+	}
 }
