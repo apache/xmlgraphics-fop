@@ -128,7 +128,7 @@ public abstract class XMLObj extends FObj {
     }
 
     protected void addCharacters(char data[], int start, int length) {
-        String str = new String(data, start, length - start);
+        String str = new String(data, start, length);
         org.w3c.dom.Text text = doc.createTextNode(str);
         element.appendChild(text);
     }

@@ -11,7 +11,7 @@ import org.apache.fop.fo.*;
 
 
 public class Label extends ExtensionObj {
-    private String _label = "";
+    private StringBuffer textBuffer;
 
     public static class Maker extends FObj.Maker {
         public FObj make(FObj parent, PropertyList propertyList) {
@@ -28,12 +28,15 @@ public class Label extends ExtensionObj {
         super(parent, propertyList);
     }
 
-    protected void addCharacters(char data[], int start, int end) {
-        _label += new String(data, start, end - start);
+    protected void addCharacters(char data[], int start, int length) {
+        if (textBuffer==null) {
+            textBuffer = new StringBuffer();
+        }
+        textBuffer.append(data,start,length);
     }
 
     public String toString() {
-        return _label;
+        return textBuffer.toString();
     }
 
 
