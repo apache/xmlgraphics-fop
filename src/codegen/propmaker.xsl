@@ -4,9 +4,9 @@
                 xmlns:redirect="org.apache.xalan.xslt.extensions.Redirect"
                 extension-element-prefixes="redirect">
 
-<xsl:output method="xml" />
-
 <xsl:import href="elements.xsl"/>
+
+<xsl:output method="xml" />
 
 <xsl:template match="elements">
 <property-list>
