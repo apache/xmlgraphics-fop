@@ -385,8 +385,8 @@ public class PropertyList extends HashMap {
     public int wmMap(int lrtb, int rltb, int tbrl) {
         switch (writingMode) {
         case WritingMode.LR_TB: return lrtb;
-        case WritingMode.RL_TB: return lrtb;
-        case WritingMode.TB_RL: return lrtb;
+        case WritingMode.RL_TB: return rltb;
+        case WritingMode.TB_RL: return tbrl;
         }
         return -1;
     }

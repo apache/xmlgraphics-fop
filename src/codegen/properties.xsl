@@ -1003,7 +1003,15 @@ public class </xsl:text>
   <xsl:param name="lrtb"/>
   <xsl:param name="rltb"/>
   <xsl:param name="tbrl"/>
-  <xsl:text>propertyList.wmMap(Constants.PR_</xsl:text>
+  <xsl:choose>
+    <xsl:when test="parwmrel2abs">
+      <xsl:text>parentFO.propertyList</xsl:text>
+    </xsl:when>
+    <xsl:otherwise>
+     <xsl:text>propertyList</xsl:text>
+    </xsl:otherwise>
+  </xsl:choose>
+  <xsl:text>.wmMap(Constants.PR_</xsl:text>
   <xsl:apply-templates mode="x">
     <xsl:with-param name="dir" select='$lrtb'/>
   </xsl:apply-templates>
