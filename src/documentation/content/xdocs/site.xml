@@ -18,11 +18,15 @@
 
   <about label="About">
     <index label="Introduction" href="index.html"/>
+    <license label="Release Notes" href="relnotes.html"/>
+    <download label="Download" href="http://www.apache.org/dyn/closer.cgi/xml/fop/"/>
+    <help label="Getting Help" href="gethelp.html"/>
+    <faqs label="FAQs" href="faq.html"/>
+    <maillist label="Mailing Lists" href="maillist.html"/>
+    <license label="License" href="license.html"/>
   </about>
 
   <using label="Using FOP">
-    <license label="Release Notes" href="relnotes.html"/>
-    <download label="Download" href="http://www.apache.org/dyn/closer.cgi/xml/fop/"/>
     <build label="Build" href="compiling.html"/>
     <config label="Configure" href="configuration.html"/>
     <run label="Run" href="running.html"/>
@@ -42,14 +46,10 @@
   </features>
 
   <resources label="Resources">
-    <help label="Getting Help" href="gethelp.html"/>
-    <faqs label="FAQs" href="faq.html"/>
     <xsl-fo label="XSL-FO" href="fo.html"/>
     <examples label="Examples" href="examples.html"/>
-    <maillist label="Mailing Lists" href="maillist.html"/>
     <bugs label="Bugs" href="bugs.html"/>
     <wiki label="Wiki" href="http://nagoya.apache.org/wiki/apachewiki.cgi?FOPProjectPages"/>
-    <license label="License" href="license.html"/>
     <other label="Other" href="resources.html"/>
   </resources>
 

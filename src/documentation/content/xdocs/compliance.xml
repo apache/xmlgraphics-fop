@@ -16,7 +16,7 @@
 -->
 <!-- $Id$ -->
 <!DOCTYPE compliance PUBLIC "-//APACHE//DTD Compliance V1.0//EN"
-    "http://cvs.apache.org/viewcvs.cgi/*checkout*/xml-fop/src/documentation/resources/schema/dtd/compliance-v10.dtd">
+    "compliance-v10.dtd">
 
 <compliance>
   <head>
@@ -26,9 +26,9 @@
   <body>
     <standard name="W3C XSL-FO 1.0 Standard" baseURL="http://www.w3.org/TR/xsl" compliance-level-1-desc="Basic" compliance-level-2-desc="Extended" compliance-level-3-desc="Complete" ref-name="fo">
       <explanatory>
-        <p>One of FOP's design goals is conformance to the W3C XSL-FO 1.0 standard, which specifies three levels of "conformance": basic, extended, and complete.
+        <p>One of FOP&apos;s design goals is conformance to the W3C XSL-FO 1.0 standard, which specifies three levels of "conformance": basic, extended, and complete.
 Although FOP does not currently conform to any of these levels, it is nevertheless a useful work-in-progress for many applications.
-The information presented here demonstrates FOP's progress toward the goal of conformance, which progress consists of implementation of specific objects and properties in the standard.
+The information presented here demonstrates FOP&apos;s progress toward the goal of conformance, which progress consists of implementation of specific objects and properties in the standard.
 The information presented is useful not only to the developers as a sort of "to do" list, but also for setting proper expectations for users and potential users.</p>
         <p>In the tables below, "yes" indicates conformance, "no" indicates a lack of conformance, "partial" indicates partial conformance, and "na" indicates that the item is "not applicable" to FOP.
 The color-coding indicates conformance at a specific conformance level, with blue indicating conformance, red indicating non-conformance, and gray indicating partial conformance.
@@ -36,7 +36,7 @@ So, for example, a given item may be blue either because it is not required at t
       </explanatory>
       <level-1 name="XSL-FO Object Support" citation="§6" extURL="slice6.html#fo-section" compliance-item-desc="Object Name" ref-name="object">
         <explanatory>
-          <p>The following is a summary of FOP's current support for the standard XSL-FO objects.</p>
+          <p>The following is a summary of FOP&apos;s current support for the standard XSL-FO objects.</p>
         </explanatory>
         <level-2 name="Declarations and Pagination and Layout Formatting Objects" citation="§6.4" extURL="slice6.html#section-N10029-Declarations-and-Pagination-and-Layout-Formatting-Objects" ref-name="decl">
           <level-3 name="root" citation="§6.4.2" extURL="slice6.html#fo_root" compliance-level="1" comply="yes"/>
@@ -63,7 +63,7 @@ So, for example, a given item may be blue either because it is not required at t
           <level-3 name="block" citation="§6.5.2" extURL="slice6.html#fo_block" compliance-level="1" comply="yes"/>
           <level-3 name="block-container" citation="§6.5.3" extURL="slice6.html#fo_block-container" compliance-level="2" comply="partial">
             <comment>Currently only works as direct child of fo:flow.</comment>
-            <comment>For absolute positioning, use 'position="absolute"' (as 'absolute-position="absolute"' is not implemented), and specify all four of "left", "top", "width" and "height"</comment>
+            <comment>For absolute positioning, use &apos;position="absolute"&apos; (as &apos;absolute-position="absolute"&apos; is not implemented), and specify all four of "left", "top", "width" and "height"</comment>
           </level-3>
         </level-2>
         <level-2 name="Inline Formatting Objects" citation="§6.6" extURL="slice6.html#section-N13277-Inline-level-Formatting-Objects" ref-name="inline">
@@ -78,7 +78,7 @@ So, for example, a given item may be blue either because it is not required at t
           <level-3 name="page-number" citation="§6.6.10" extURL="slice6.html#fo_page-number" compliance-level="1" comply="yes"/>
           <level-3 name="page-number-citation" citation="§6.6.11" extURL="slice6.html#fo_page-number-citation" compliance-level="2" comply="partial">
             <comment>Only works for table of contents without any problems. The case
-where the page number doesn't fit on a line isn't handled, and any text on
+where the page number doesn&apos;t fit on a line isn&apos;t handled, and any text on
 the same line and after the page-number might not appear exactly where you
 want it to.</comment>
           </level-3>
@@ -127,7 +127,7 @@ want it to.</comment>
       </level-1>
       <level-1 name="XSL-FO Property Support" citation="§7" extURL="slice7.html#pr-section" compliance-item-desc="Property Name" ref-name="property">
         <explanatory>
-          <p>The following is a summary of FOP's current support for the standard XSL-FO properties.</p>
+          <p>The following is a summary of FOP&apos;s current support for the standard XSL-FO properties.</p>
         </explanatory>
         <level-2 name="Common Accessibility Properties" citation="§7.4" extURL="slice7.html#common-accessibility-properties" ref-name="commonaccess">
           <level-3 name="source-document" citation="§7.4.1" extURL="slice7.html#source-document" compliance-level="1" comply="na"/>
@@ -212,7 +212,7 @@ want it to.</comment>
           <level-3 name="padding-before" citation="§7.7.31" extURL="slice7.html#padding-before" compliance-level="1" comply="yes">
             <comment>only one value allowed</comment>
             <comment>only implemented for blocks</comment>
-            <comment>can't be used to make extra space (use indents + spaces instead)</comment>
+            <comment>can&apos;t be used to make extra space (use indents + spaces instead)</comment>
             <comment>can be used to control how much the background-color extends beyond the content rectangle</comment>
           </level-3>
           <level-3 name="padding-after" citation="§7.7.32" extURL="slice7.html#padding-after" compliance-level="1" comply="yes">
@@ -435,7 +435,7 @@ want it to.</comment>
           <level-3 name="odd-or-even" citation="§7.25.12" extURL="slice7.html#odd-or-even" compliance-level="2" comply="yes"/>
           <level-3 name="page-height" citation="§7.25.13" extURL="slice7.html#page-height" compliance-level="1" comply="yes"/>
           <level-3 name="page-position" citation="§7.25.14" extURL="slice7.html#page-position" compliance-level="2" comply="partial">
-          	<comment>"last" isn't implemented!</comment>
+          	<comment>"last" isn&apos;t implemented!</comment>
           </level-3>
           <level-3 name="page-width" citation="§7.25.15" extURL="slice7.html#page-width" compliance-level="1" comply="yes"/>
           <level-3 name="precedence" citation="§7.25.16" extURL="slice7.html#precedence" compliance-level="2" comply="no"/>
@@ -509,7 +509,7 @@ want it to.</comment>
           <level-3 name="padding" citation="§7.29.15" extURL="slice7.html#padding" compliance-level="3" comply="partial">
             <comment>only one value allowed</comment>
             <comment>only implemented for blocks</comment>
-            <comment>can't be used to make extra space (use indents + spaces instead)</comment>
+            <comment>can&apos;t be used to make extra space (use indents + spaces instead)</comment>
             <comment>can be used to control how much the background-color extends beyond the content rectangle</comment>
           </level-3>
           <level-3 name="page-break-after" citation="§7.29.16" extURL="slice7.html#page-break-after" compliance-level="3" comply="no"/>
