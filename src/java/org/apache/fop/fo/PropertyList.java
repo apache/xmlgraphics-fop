@@ -161,6 +161,20 @@ public class PropertyList extends HashMap {
     }
 
     /**
+     * @return the namespace of this element
+     */
+    public String getNameSpace() {
+        return namespace;
+    }
+
+    /**
+     * @return element name for this
+     */
+    public String getElement() {
+        return elementName;
+    }
+
+    /**
      * Return the value explicitly specified on this FO.
      * @param propertyName The name of the property whose value is desired.
      * It may be a compound name, such as space-before.optimum.
@@ -169,6 +183,8 @@ public class PropertyList extends HashMap {
      */
     public Property getExplicitOrShorthand(String propertyName) {
         /* Handle request for one part of a compound property */
+        int propId = FOPropertyMapping.getPropertyId(propertyName);
+
         int sepchar = propertyName.indexOf('.');
         String baseName;
         if (sepchar > -1) {
@@ -181,9 +197,7 @@ public class PropertyList extends HashMap {
             p = getShorthand(namespace, elementName, baseName);
         }
         if (p != null && sepchar > -1) {
-            return getSubpropValue(namespace, elementName, baseName, p,
-                                           propertyName.substring(sepchar
-                                           + 1));
+            return getSubpropValue(namespace, elementName, p, propId);
         }
         return p;
     }
@@ -195,14 +209,15 @@ public class PropertyList extends HashMap {
      * @return The value if the property is explicitly set, otherwise null.
      */
     public Property getExplicit(String propertyName) {
+        int propId = FOPropertyMapping.getPropertyId(propertyName);
+
         /* Handle request for one part of a compound property */
         int sepchar = propertyName.indexOf('.');
         if (sepchar > -1) {
             String baseName = propertyName.substring(0, sepchar);
             Property p = getExplicitBaseProp(baseName);
             if (p != null) {
-                return getSubpropValue(namespace, elementName, baseName, p,
-                    propertyName.substring(sepchar + 1));
+                return getSubpropValue(namespace, elementName, p, propId);
             } else {
                 return null;
             }
@@ -227,20 +242,69 @@ public class PropertyList extends HashMap {
      * @return The inherited value, otherwise null.
      */
     public Property getInherited(String propertyName) {
+        int propId = FOPropertyMapping.getPropertyId(propertyName);
+
         if (parentPropertyList != null
                 && isInherited(namespace, elementName, propertyName)) {
-            int propertyId = FOPropertyMapping.getPropertyId(propertyName);
-            return parentPropertyList.get(propertyId);
+            return parentPropertyList.get(propId);
         } else {
             // return the "initial" value
             try {
-                return makeProperty(namespace, elementName, propertyName);
+                return makeProperty(namespace, elementName, propId);
             } catch (org.apache.fop.apps.FOPException e) {
                 //log.error("Exception in getInherited(): property="
                 //                       + propertyName + " : " + e);
             }
         }
         return null;    // Exception in makeProperty!
+    }
+
+    /**
+     * Return the property on the current FlowObject. If it isn't set explicitly,
+     * this will try to compute it based on other properties, or if it is
+     * inheritable, to return the inherited value. If all else fails, it returns
+     * the default value.
+     * @param propId The Constants ID of the property whose value is desired.
+     * @return the Property corresponding to that name
+     */
+    public Property get(int propId) {
+        return get(propId, true, true);
+    }
+
+    /**
+     * Return the property on the current FlowObject. Depending on the passed flags,
+     * this will try to compute it based on other properties, or if it is
+     * inheritable, to return the inherited value. If all else fails, it returns
+     * the default value.
+     */
+    private Property get(int propId, boolean bTryInherit,
+                         boolean bTryDefault) {
+
+        Property p = findProperty(propId & Constants.PROPERTY_MASK, 
+                                    bTryInherit);
+        if (p == null && bTryDefault) {    // default value for this FO!
+            try {
+                p = makeProperty(namespace, elementName, 
+                                    propId & Constants.PROPERTY_MASK);
+            } catch (FOPException e) {
+                // don't know what to do here
+            }
+        }
+
+        // if value is inherit then get computed value from
+        // parent
+        if (p != null && "inherit".equals(p.getSpecifiedValue())) {
+            if (this.parentPropertyList != null) {
+                p = parentPropertyList.get(propId, true, false);
+            }
+        }
+
+        if ((propId & Constants.COMPOUND_MASK) != 0 && p != null) {
+            return getSubpropValue(namespace, elementName, p,
+                propId);
+        } else {
+            return p;
+        }
     }
 
     /*
@@ -251,7 +315,10 @@ public class PropertyList extends HashMap {
      * we try to compute it from the corresponding relative property: this
      * happends in computeProperty.
      */
-    private Property findProperty(String propertyName, boolean bTryInherit) {
+    private Property findProperty(int propId, boolean bTryInherit) {
+
+        String propertyName = FOPropertyMapping.getPropertyName(propId);
+
         Property p = null;
         if (isCorrespondingForced(namespace, elementName, propertyName)) {
             p = computeProperty(namespace, elementName, propertyName);
@@ -267,80 +334,11 @@ public class PropertyList extends HashMap {
                 // else inherit (if has parent and is inheritable)
                 if (this.parentPropertyList != null
                         && isInherited(namespace, elementName, propertyName)) {
-                    p = parentPropertyList.findProperty(propertyName, true);
+                    p = parentPropertyList.findProperty(propId, true);
                 }
             }
         }
         return p;
-    }
-
-    /**
-     * Return the property on the current FlowObject. If it isn't set explicitly,
-     * this will try to compute it based on other properties, or if it is
-     * inheritable, to return the inherited value. If all else fails, it returns
-     * the default value.
-     * @param propId The Constants ID of the property whose value is desired.
-     * @return the Property corresponding to that name
-     */
-    public Property get(int propId) {
-        String propertyName = FOPropertyMapping.getPropertyName(propId);
-        return get(propertyName, true, true);
-    }
-
-    /**
-     * Return the property on the current FlowObject. Depending on the passed flags,
-     * this will try to compute it based on other properties, or if it is
-     * inheritable, to return the inherited value. If all else fails, it returns
-     * the default value.
-     */
-    private Property get(String propertyName, boolean bTryInherit,
-                         boolean bTryDefault) {
-
-        /* Handle request for one part of a compound property */
-        int sepchar = propertyName.indexOf('.');
-        String subpropName = null;
-        if (sepchar > -1) {
-            subpropName = propertyName.substring(sepchar + 1);
-            propertyName = propertyName.substring(0, sepchar);
-        }
-
-        Property p = findProperty(propertyName, bTryInherit);
-        if (p == null && bTryDefault) {    // default value for this FO!
-            try {
-                p = makeProperty(namespace, elementName, propertyName);
-            } catch (FOPException e) {
-                // don't know what to do here
-            }
-        }
-
-        // if value is inherit then get computed value from
-        // parent
-        if (p != null && "inherit".equals(p.getSpecifiedValue())) {
-            if (this.parentPropertyList != null) {
-                p = parentPropertyList.get(propertyName, true, false);
-            }
-        }
-
-        if (subpropName != null && p != null) {
-            return getSubpropValue(namespace, elementName, propertyName, p,
-                subpropName);
-        } else {
-            return p;
-        }
-    }
-
-    /**
-     * @return the namespace of this element
-     */
-    public String getNameSpace() {
-        return namespace;
-    }
-
-    /**
-     * @return element name for this
-     */
-    public String getElement() {
-        return elementName;
     }
 
     /**
@@ -351,6 +349,8 @@ public class PropertyList extends HashMap {
      * ancestor of the current FO, else the initial value.
      */
     public Property getNearestSpecified(String propertyName) {
+        int propId = FOPropertyMapping.getPropertyId(propertyName);
+
         Property p = null;
         for (PropertyList plist = this; p == null && plist != null;
                 plist = plist.parentPropertyList) {
@@ -359,7 +359,7 @@ public class PropertyList extends HashMap {
         if (p == null) {
             // If no explicit setting found, return initial (default) value.
             try {
-                p = makeProperty(namespace, elementName, propertyName);
+                p = makeProperty(namespace, elementName, propId);
             } catch (FOPException e) {
                 //log.error("Exception in getNearestSpecified(): property="
                 //                       + propertyName + " : " + e);
@@ -382,7 +382,7 @@ public class PropertyList extends HashMap {
             return parentPropertyList.get(propId);
         } else {
             try {
-                return makeProperty(namespace, elementName, propertyName);
+                return makeProperty(namespace, elementName, propId);
             } catch (org.apache.fop.apps.FOPException e) {
                 //log.error("Exception in getFromParent(): property="
                 //                       + propertyName + " : " + e);
@@ -597,8 +597,14 @@ public class PropertyList extends HashMap {
      * @return the sub-property
      */
     public Property getSubpropValue(String space, String element,
-                                    String propertyName, Property p,
-                                    String subpropName) {
+                                    Property p, int propId) {
+
+        String propertyName = FOPropertyMapping.getPropertyName(propId &
+            Constants.PROPERTY_MASK);
+                                        
+        String subpropName = FOPropertyMapping.getPropertyName(propId &
+            Constants.COMPOUND_MASK);
+
         Property.Maker maker = findMaker(space, element, propertyName);
         if (maker != null) {
             return maker.getSubpropValue(p, subpropName);
@@ -651,8 +657,9 @@ public class PropertyList extends HashMap {
      * @throws FOPException for errors in the input
      */
     public Property makeProperty(String space, String element,
-                                 String propertyName) throws FOPException {
+                                 int propId) throws FOPException {
 
+        String propertyName = FOPropertyMapping.getPropertyName(propId);
         Property p = null;
 
         Property.Maker propertyMaker = findMaker(space, element,
@@ -668,7 +675,6 @@ public class PropertyList extends HashMap {
 
     /**
      *
-     * @param propertyList collection of properties
      * @param space namespace of element
      * @param element name of element
      * @param propertyName name of property
