@@ -770,17 +770,20 @@ public class PDFDocument {
                 
             PDFFontNonBase14 font = null;
             if (subtype == PDFFont.TYPE0) {
-                PDFCMap cmap = new PDFCMap(++this.objectcount,
-                                           "fop-ucs-H",
-                                           new PDFCIDSystemInfo("Adobe",
-                                                                "Identity",
-                                                                0));
-                cmap.addContents();
-                this.objects.addElement(cmap);
-            
+                    /*
+                     * Temporary commented out - customized CMaps
+                     * isn't needed until /ToUnicode support is added
+                      PDFCMap cmap = new PDFCMap(++this.objectcount,
+                      "fop-ucs-H",
+                      new PDFCIDSystemInfo("Adobe",
+                      "Identity",
+                      0));
+                      cmap.addContents();
+                      this.objects.addElement(cmap);
+                    */
                 font = (PDFFontNonBase14)PDFFont.createFont(
                     ++this.objectcount, fontname,
-                    subtype, basefont, cmap);
+                    subtype, basefont, "Identity-H");
             } else {
             
                 font = (PDFFontNonBase14)PDFFont.createFont(
