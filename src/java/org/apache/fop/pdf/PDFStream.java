@@ -52,8 +52,6 @@ package org.apache.fop.pdf;
 
 import java.io.OutputStream;
 import java.io.IOException;
-import java.util.List;
-import java.util.Map;
 
 /**
  * Class representing a PDF stream.
@@ -63,43 +61,24 @@ import java.util.Map;
  * work is done, the dictionary just provides information like the stream
  * length.
  */
-public class PDFStream extends PDFObject {
+public class PDFStream extends AbstractPDFStream {
     
-    /** Key for the default filter */
-    public static final String DEFAULT_FILTER = "default";
-    /** Key for the filter used for normal content*/
-    public static final String CONTENT_FILTER = "content";
-    /** Key for the filter used for images */
-    public static final String IMAGE_FILTER = "image";
-    /** Key for the filter used for JPEG images */
-    public static final String JPEG_FILTER = "jpeg";
-    /** Key for the filter used for fonts */
-    public static final String FONT_FILTER = "font";
-
     /**
      * The stream of PDF commands
      */
     protected StreamCache data;
 
     /**
-     * The filters that should be applied
-     */
-    private List filters;
-
-    /**
      * Create an empty stream object
-     *
-     * @param number the object's number
      */
-    public PDFStream(int number) {
-        super(number);
+    public PDFStream() {
+        super();
         try {
-            data = StreamCache.createStreamCache();
+            data = StreamCacheFactory.getInstance().createStreamCache();
         } catch (IOException ex) {
             /**@todo Log with Logger */
             ex.printStackTrace();
         }
-        filters = new java.util.ArrayList();
     }
 
     /**
@@ -118,115 +97,14 @@ public class PDFStream extends PDFObject {
     }
 
     /**
-     * Add a filter for compression of the stream. Filters are
-     * applied in the order they are added. This should always be a
-     * new instance of the particular filter of choice. The applied
-     * flag in the filter is marked true after it has been applied to the
-     * data.
-     * @param filter filter to add
-     */
-    public void addFilter(PDFFilter filter) {
-        if (filter != null) {
-            filters.add(filter);
-        }
-
-    }
-
-    /**
-     * Add a filter for compression of the stream by name.
-     * @param filterType name of the filter to add
-     */
-    public void addFilter(String filterType) {
-        if (filterType == null) {
-            return;
-        }
-        if (filterType.equals("flate")) {
-            addFilter(new FlateFilter());
-        } else if (filterType.equals("ascii-85")) {
-            addFilter(new ASCII85Filter());
-        } else if (filterType.equals("ascii-hex")) {
-            addFilter(new ASCIIHexFilter());
-        } else if (filterType.equals("")) {
-            return;
-        } else {
-            throw new IllegalArgumentException(
-                "Unsupported filter type in stream-filter-list: " + filterType);
-        }
-    }
-
-    /**
-     * Adds the default filters to this stream.
-     * @param filters Map of filters
-     * @param type which filter list to modify
-     */
-    public void addDefaultFilters(Map filters, String type) {
-        List filterset = (List)filters.get(type);
-        if (filterset == null) {
-            filterset = (List)filters.get(DEFAULT_FILTER);
-        }
-        if (filterset == null || filterset.size() == 0) {
-            // built-in default to flate
-            //addFilter(new FlateFilter());
-        } else {
-            for (int i = 0; i < filterset.size(); i++) {
-                String v = (String)filterset.get(i);
-                addFilter(v);
-            }
-        }
-    }
-
-    /**
-     * Append an array of xRGB pixels, ASCII Hex Encoding it first
-     *
-     * @param pixels the area of pixels
-     * @param width the width of the image in pixels
-     * @param height the height of the image in pixels
-     */
-    public void addImageArray(int[] pixels, int width, int height) {
-        try {
-            for (int i = 0; i < height; i++) {
-                for (int j = 0; j < width; j++) {
-                    int p = pixels[i * width + j];
-                    int r = (p >> 16) & 0xFF;
-                    int g = (p >> 8) & 0xFF;
-                    int b = (p) & 0xFF;
-                    if (r < 16) {
-                        data.getOutputStream().write('0');
-                    }
-                    data.getOutputStream().write(Integer.toHexString(r).getBytes());
-                    if (g < 16) {
-                        data.getOutputStream().write('0');
-                    }
-                    data.getOutputStream().write(Integer.toHexString(g).getBytes());
-                    if (b < 16) {
-                        data.getOutputStream().write('0');
-                    }
-                    data.getOutputStream().write(Integer.toHexString(b).getBytes());
-                    data.getOutputStream().write(' ');
-                }
-            }
-            data.getOutputStream().write(">\n".getBytes());
-        } catch (IOException ex) {
-            ex.printStackTrace();
-        }
-
-    }
-
-    /**
      * Used to set the contents of the PDF stream.
      * @param data the contents as a byte array
      * @throws IOException in case of an I/O problem
      */
     public void setData(byte[] data) throws IOException {
-        this.data.reset();
-        this.data.getOutputStream().write(data);
+        this.data.clear();
+        this.data.write(data);
     }
-
-    /*
-    public byte[] getData() {
-        return _data.toByteArray();
-    }
-    */
 
     /**
      * Returns the size of the content.
@@ -242,151 +120,28 @@ public class PDFStream extends PDFObject {
     }
 
     /**
-     * Represent as PDF.
-     *
-     * @return the PDF string.
+     * @see org.apache.fop.pdf.AbstractPDFStream#getSizeHint()
      */
-    public byte[] toPDF() {
-        throw new UnsupportedOperationException("Use output(OutputStream) instead");
-        /*
-         * byte[] d = _data.toByteArray();
-         * ByteArrayOutputStream s = new ByteArrayOutputStream();
-         * String p = this.number + " " + this.generation
-         * + " obj\n<< /Length " + (d.length+1)
-         * + " >>\nstream\n";
-         * s.write(p.getBytes());
-         * s.write(d);
-         * s.write("\nendstream\nendobj\n".getBytes());
-         * return s.toByteArray();
-         */
+    protected int getSizeHint() throws IOException {
+        return data.getSize();
     }
 
     /**
-     * Overload the base object method so we don't have to copy
-     * byte arrays around so much
+     * @see org.apache.fop.pdf.AbstractPDFStream#outputRawStreamData(OutputStream)
+     */
+    protected void outputRawStreamData(OutputStream out) throws IOException {
+        data.outputContents(out);
+    }
+
+    /**
      * @see org.apache.fop.pdf.PDFObject#output(OutputStream)
      */
     protected int output(OutputStream stream) throws IOException {
-        int length = 0;
-        String filterEntry = applyFilters();
-        byte[] p = (this.number + " " + this.generation + " obj\n<< /Length "
-                    + (data.getSize() + 1) + " " + filterEntry
-                    + " >>\n").getBytes();
-
-        stream.write(p);
-        length += p.length;
-        length += outputStreamData(stream);
-        p = "endobj\n".getBytes();
-        stream.write(p);
-        length += p.length;
-        return length;
-
+        final int len = super.output(stream);
+        
+        //Now that the data has been written, it can be discarded.
+        this.data = null;
+        return len;
     }
-
-    /**
-     * Output just the stream data enclosed by stream/endstream markers
-     * @param stream OutputStream to write to
-     * @return int number of bytes written
-     * @throws IOException in case of an I/O problem
-     */
-    protected int outputStreamData(OutputStream stream) throws IOException {
-        int length = 0;
-        byte[] p = "stream\n".getBytes();
-        stream.write(p);
-        length += p.length;
-        data.outputStreamData(stream);
-        length += data.getSize();
-        data.close();
-        p = "\nendstream\n".getBytes();
-        stream.write(p);
-        length += p.length;
-        return length;
-
-    }
-
-    /**
-     * Apply the filters to the data
-     * in the order given and return the /Filter and /DecodeParms
-     * entries for the stream dictionary. If the filters have already
-     * been applied to the data (either externally, or internally)
-     * then the dictionary entries are built and returned.
-     * @return a String representing the filter list
-     * @throws IOException in case of an I/O problem
-     */
-    protected String applyFilters() throws IOException {
-        if (filters.size() > 0) {
-            List names = new java.util.ArrayList();
-            List parms = new java.util.ArrayList();
-
-            // run the filters
-            for (int count = 0; count < filters.size(); count++) {
-                PDFFilter filter = (PDFFilter)filters.get(count);
-                // apply the filter encoding if neccessary
-                if (!filter.isApplied()) {
-                    data.applyFilter(filter);
-                    filter.setApplied(true);
-                }
-                // place the names in our local vector in reverse order
-                names.add(0, filter.getName());
-                parms.add(0, filter.getDecodeParms());
-            }
-
-            // now build up the filter entries for the dictionary
-            return buildFilterEntries(names) + buildDecodeParms(parms);
-        }
-        return "";
-
-    }
-
-    private String buildFilterEntries(List names) {
-        boolean needFilterEntry = false;
-        StringBuffer sb = new StringBuffer();
-        sb.append("/Filter [ ");
-        for (int i = 0; i < names.size(); i++) {
-            final String name = (String)names.get(i);
-            if (name.length() > 0) {
-                needFilterEntry = true;
-                sb.append(name);
-                sb.append(" ");
-            }
-        }
-        if (needFilterEntry) {
-            sb.append("]");
-            sb.append("\n");
-            return sb.toString();
-        } else {
-            return "";
-        }
-    }
-
-    private String buildDecodeParms(List parms) {
-        StringBuffer sb = new StringBuffer();
-        boolean needParmsEntry = false;
-        sb.append("/DecodeParms ");
-
-        if (parms.size() > 1) {
-            sb.append("[ ");
-        }
-        for (int count = 0; count < parms.size(); count++) {
-            String s = (String)parms.get(count);
-            if (s != null) {
-                sb.append(s);
-                needParmsEntry = true;
-            } else {
-                sb.append("null");
-            }
-            sb.append(" ");
-        }
-        if (parms.size() > 1) {
-            sb.append("]");
-        }
-        sb.append("\n");
-        if (needParmsEntry) {
-            return sb.toString();
-        } else {
-            return "";
-        }
-    }
-
 
 }
