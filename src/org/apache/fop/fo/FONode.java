@@ -191,7 +191,11 @@ abstract public class FONode {
     }
 
     public void setLinkSet(LinkSet linkSet) {
-	this.linkSet = linkSet;
+	this.linkSet = linkSet;        	
+	for (int i = 0; i < this.children.size(); i++) {
+	    FONode child = (FONode) this.children.elementAt(i);
+	    child.setLinkSet(linkSet);
+        }
     }
 
     public LinkSet getLinkSet() {
