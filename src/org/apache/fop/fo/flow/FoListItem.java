@@ -106,7 +106,6 @@ public class FoListItem extends FONode {
         super(foTree, FObjectNames.LIST_ITEM, parent, event,
                           stateFlags, sparsePropsMap, sparseIndices);
         FoXMLEvent ev;
-        xmlevents = foTree.getXmlevents();
         // Look for zero or more markers
         String nowProcessing = "marker";
         try {
@@ -122,7 +121,7 @@ public class FoListItem extends FONode {
             nowProcessing = "list-item-label";
             if ((ev = xmlevents.expectStartElement
                     (FObjectNames.LIST_ITEM_LABEL, XMLEvent.DISCARD_W_SPACE))
-                   != null)
+                   == null)
                 throw new FOPException
                         ("No list-item-label in list-item.");
             new FoListItemLabel(getFOTree(), this, ev, stateFlags);
@@ -132,7 +131,7 @@ public class FoListItem extends FONode {
             nowProcessing = "list-item-body";
             if ((ev = xmlevents.expectStartElement
                     (FObjectNames.LIST_ITEM_BODY, XMLEvent.DISCARD_W_SPACE))
-                   != null)
+                   == null)
                 throw new FOPException
                         ("No list-item-body in list-item.");
             new FoListItemBody(getFOTree(), this, ev, stateFlags);
