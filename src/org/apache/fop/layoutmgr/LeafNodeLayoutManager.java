@@ -84,7 +84,10 @@ public class LeafNodeLayoutManager extends AbstractBPLayoutManager {
     }
 
     public void resetPosition(Position resetPos) {
-        setFinished(false);
+        // only reset if setting null, start again
+        if(resetPos == null) {
+            setFinished(false);
+        }
     }
 
     public void addAreas(PositionIterator posIter, LayoutContext context) {
