@@ -105,6 +105,10 @@ public class PropertyListBuilder {
 	propertyTable.put("column-width",ColumnWidth.maker());
 	propertyTable.put("keep-with-next",KeepWithNext.maker());
 	propertyTable.put("background-color",BackgroundColor.maker());
+	propertyTable.put("padding-top",PaddingTop.maker());
+	propertyTable.put("padding-bottom",PaddingBottom.maker());
+	propertyTable.put("padding-left",PaddingLeft.maker());
+	propertyTable.put("padding-right",PaddingRight.maker());
 
 	propertyTable.put("height",SVGLength.maker());
 	propertyTable.put("width",SVGLength.maker());

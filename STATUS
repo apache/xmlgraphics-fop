@@ -5,6 +5,7 @@ STATUS
 Things to do:
 
 Get images working
+[PARTIAL] Get padding working
 [PARTIAL] Incorporate Arved Sandstrom's simple-link implementation
 [PARTIAL] Implement basic keeps
 [PARTIAL] Incorporate Eric Schaeffer's further table fixes
@@ -28,7 +29,11 @@ Todo's and problems with AWT Previewer:
 - should "preview" be an option when calling FOP instead of having
   it's own main method?
 
-Done:
+Done since 0.12.0 release:
+
+basic support for padding-{top,left,bottom,right} on blocks.
+
+Done for 0.12.0 release:
 
 Make sure Makefiles work
 Switch to using Status object as return from layout()

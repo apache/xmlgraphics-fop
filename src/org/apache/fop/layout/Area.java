@@ -82,6 +82,11 @@ abstract public class Area extends Box {
 
     protected ColorType backgroundColor;
 
+    protected int paddingTop;
+    protected int paddingLeft;
+    protected int paddingBottom;
+    protected int paddingRight;
+
     public Area (FontState fontState) {
 	this.fontState = fontState;
     }
@@ -146,6 +151,22 @@ abstract public class Area extends Box {
 	return this.backgroundColor;
     }
 
+    public int getPaddingTop() {
+	return this.paddingTop;
+    }
+
+    public int getPaddingLeft() {
+	return this.paddingLeft;
+    }
+
+    public int getPaddingBottom() {
+	return this.paddingBottom;
+    }
+
+    public int getPaddingRight() {
+	return this.paddingRight;
+    }
+
     public void increaseHeight(int amount) {
 	this.currentHeight += amount;
     }
@@ -165,6 +186,13 @@ abstract public class Area extends Box {
 
     public void setBackgroundColor(ColorType bgColor) {
 	this.backgroundColor = bgColor;
+    }
+
+    public void setPadding(int top, int left, int bottom, int right) {
+	this.paddingTop = top;
+	this.paddingLeft = left;
+	this.paddingBottom = bottom;
+	this.paddingRight = right;
     }
 
     public int spaceLeft() {
