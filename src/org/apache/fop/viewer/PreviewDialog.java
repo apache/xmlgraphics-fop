@@ -10,11 +10,13 @@ package org.apache.fop.viewer;
 
 
 import java.awt.*;
+import java.awt.print.*;
 import java.awt.event.*;
 import java.util.*;
 import javax.swing.*;
-import java.beans.PropertyChangeListener;
+import java.beans.*;
 
+import org.apache.fop.apps.AWTCommandLine;
 import org.apache.fop.layout.*;
 import org.apache.fop.render.awt.*;
 
@@ -24,8 +26,9 @@ import org.apache.fop.render.awt.*;
 /**
  * Frame and User Interface for Preview
  */
-public class PreviewDialog extends JFrame {
+public class PreviewDialog extends JFrame implements ProgressListener {
 
+  protected Translator res;
 
   protected int currentPage = 0;
   protected int pageCount = 0;
@@ -34,32 +37,47 @@ public class PreviewDialog extends JFrame {
 
   protected IconToolBar toolBar = new IconToolBar();
 
-  protected Command printAction        = new Command("Print", "Print");// { public void doit() {}}
-  protected Command firstPageAction    = new Command("First page",   "firstpg") { public void doit() {goToFirstPage(null);}};
-  protected Command previousPageAction = new Command("Previous page", "prevpg") { public void doit() {goToPreviousPage(null);}};
-  protected Command nextPageAction     = new Command("Next page",     "nextpg") { public void doit() {goToNextPage(null);}};
-  protected Command lastPageAction     = new Command("Last page",     "lastpg") { public void doit() {goToLastPage(null);}};
+  protected Command printAction;
+  protected Command firstPageAction;
+  protected Command previousPageAction;
+  protected Command nextPageAction;
+  protected Command lastPageAction;
+
+
+
+
 
   protected JLabel zoomLabel = new JLabel(); //{public float getAlignmentY() { return 0.0f; }};
   protected JComboBox scale = new JComboBox() {public float getAlignmentY() { return 0.5f; }};
 
   protected JScrollPane previewArea = new JScrollPane();
-  protected JLabel statusBar = new JLabel();
+  // protected JLabel statusBar = new JLabel();
+  protected JPanel statusBar = new JPanel();
+  protected GridBagLayout statusBarLayout = new GridBagLayout();
+
+  protected JLabel statisticsStatus = new JLabel();
+  protected JLabel processStatus = new JLabel();
+  protected JLabel infoStatus = new JLabel();
   protected DocumentPanel docPanel;
 
 
 
 
-  public PreviewDialog(AWTRenderer aRenderer) {
+  public PreviewDialog(AWTRenderer aRenderer, Translator aRes) {
+    res = aRes;
     renderer = aRenderer;
 
+    printAction        = new Command(res.getString("Print"), "Print") { public void doit() {print();}};
+    firstPageAction    = new Command(res.getString("First page"),   "firstpg") { public void doit() {goToFirstPage(null);}};
+    previousPageAction = new Command(res.getString("Previous page"), "prevpg") { public void doit() {goToPreviousPage(null);}};
+    nextPageAction     = new Command(res.getString("Next page"),     "nextpg") { public void doit() {goToNextPage(null);}};
+    lastPageAction     = new Command(res.getString("Last page"),     "lastpg") { public void doit() {goToLastPage(null);}};
 
     setDefaultCloseOperation(DISPOSE_ON_CLOSE);
     this.setSize(new Dimension(379, 476));
     previewArea.setMinimumSize(new Dimension(50, 50));
-    statusBar.setText("");
-    statusBar.setBackground(new Color(0, 0, 231));
-    this.setTitle("FOP: AWT-Preview");
+
+    this.setTitle("FOP: AWT-" + res.getString("Preview"));
 
     scale.addItem("25");
     scale.addItem("50");
@@ -80,12 +98,11 @@ public class PreviewDialog extends JFrame {
     scale.setSelectedItem("100");
     renderer.setScaleFactor(100.0);
 
-    zoomLabel.setText("Zoom");
+    zoomLabel.setText(res.getString("Zoom"));
 
     this.setJMenuBar(setupMenue());
 
     this.getContentPane().add(toolBar, BorderLayout.NORTH);
-    this.getContentPane().add(statusBar, BorderLayout.SOUTH);
 
     toolBar.add(printAction);
     toolBar.addSeparator();
@@ -99,14 +116,33 @@ public class PreviewDialog extends JFrame {
     toolBar.add(scale, null);
 
     this.getContentPane().add(previewArea, BorderLayout.CENTER);
+    this.getContentPane().add(statusBar, BorderLayout.SOUTH);
+
+
+    statisticsStatus.setBorder(BorderFactory.createEtchedBorder());
+    processStatus.setBorder(BorderFactory.createEtchedBorder());
+    infoStatus.setBorder(BorderFactory.createEtchedBorder());
+
+    statusBar.setLayout(statusBarLayout);
+
+    processStatus.setPreferredSize(new Dimension(200, 21));
+    statisticsStatus.setPreferredSize(new Dimension(100, 21));
+    infoStatus.setPreferredSize(new Dimension(100, 21));
+    processStatus.setMinimumSize(new Dimension(200, 21));
+    statisticsStatus.setMinimumSize(new Dimension(100, 21));
+    infoStatus.setMinimumSize(new Dimension(100, 21));
+    statusBar.add(processStatus, new GridBagConstraints(0, 0, 2, 1, 2.0, 0.0
+            ,GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL, new Insets(0, 0, 0, 5), 0, 0));
+    statusBar.add(statisticsStatus, new GridBagConstraints(2, 0, 1, 2, 1.0, 0.0
+            ,GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL, new Insets(0, 0, 0, 5), 0, 0));
+    statusBar.add(infoStatus, new GridBagConstraints(3, 0, 1, 1, 1.0, 0.0
+            ,GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL, new Insets(0, 0, 0, 0), 0, 0));
+
 
     docPanel = new DocumentPanel(renderer, this);
 
-
     previewArea.setSize(docPanel.getSize());
     previewArea.getViewport().add(docPanel);
-    statusBar.setText("FOTree --> AreaTree ...");
-
   }
 
 
@@ -117,7 +153,7 @@ public class PreviewDialog extends JFrame {
     JMenu     subMenu;
 
     menuBar = new JMenuBar();
-      menu = new JMenu("File");
+      menu = new JMenu(res.getString("File"));
         subMenu = new JMenu("OutputFormat");
           subMenu.add(new Command("mHTML"));
           subMenu.add(new Command("mPDF"));
@@ -125,17 +161,17 @@ public class PreviewDialog extends JFrame {
           subMenu.add(new Command("mTEXT"));
         // menu.add(subMenu);
         // menu.addSeparator();
-        menu.add(new Command("Print"));
+        menu.add(new Command(res.getString("Print")) {public void doit(){print();}});
         menu.addSeparator();
-        menu.add(new Command("Exit") { public void doit() {dispose();}} );
+        menu.add(new Command(res.getString("Exit")){ public void doit() {dispose();}} );
       menuBar.add(menu);
-      menu = new JMenu("View");
-        menu.add(new Command("First page") { public void doit() {goToFirstPage(null);}} );
-        menu.add(new Command("Previous page") { public void doit() {goToPreviousPage(null);}} );
-        menu.add(new Command("Next page") { public void doit() {goToNextPage(null);}} );
-        menu.add(new Command("Last page") { public void doit() {goToLastPage(null);}} );
+      menu = new JMenu(res.getString("View"));
+        menu.add(new Command(res.getString("First page")) { public void doit() {goToFirstPage(null);}} );
+        menu.add(new Command(res.getString("Previous page")) { public void doit() {goToPreviousPage(null);}} );
+        menu.add(new Command(res.getString("Next page")) { public void doit() {goToNextPage(null);}} );
+        menu.add(new Command(res.getString("Last page")) { public void doit() {goToLastPage(null);}} );
         menu.addSeparator();
-        subMenu = new JMenu("Zoom");
+        subMenu = new JMenu(res.getString("Zoom"));
           subMenu.add(new Command("25%") { public void doit() {setScale(25.0);}} );
           subMenu.add(new Command("50%") { public void doit() {setScale(50.0);}} );
           subMenu.add(new Command("75%") { public void doit() {setScale(75.0);}} );
@@ -144,23 +180,21 @@ public class PreviewDialog extends JFrame {
           subMenu.add(new Command("200%") { public void doit() {setScale(200.0);}} );
         menu.add(subMenu);
         menu.addSeparator();
-        menu.add(new Command("Default zoom") { public void doit() {setScale(100.0);}} );
+        menu.add(new Command(res.getString("Default zoom")) { public void doit() {setScale(100.0);}} );
       menuBar.add(menu);
-      menu = new JMenu("Help");
-        menu.add(new Command("Index"));
+      menu = new JMenu(res.getString("Help"));
+        menu.add(new Command(res.getString("Index")));
         menu.addSeparator();
-        menu.add(new Command("Introduction"));
+        menu.add(new Command(res.getString("Introduction")));
         menu.addSeparator();
-        menu.add(new Command("About"){ public void doit() {startHelpAbout(null);}} );
+        menu.add(new Command(res.getString("About")){ public void doit() {startHelpAbout(null);}} );
       menuBar.add(menu);
     return menuBar;
   }
 
-
   public void dispose() {
     System.exit(0);
   }
-
 
   //Aktion Hilfe | Info durchgeführt
 
@@ -178,7 +212,8 @@ public class PreviewDialog extends JFrame {
     docPanel.setPageNumber(number);
     repaint();
     previewArea.repaint();
-    statusBar.setText("Page " + (number + 1) + " of " + pageCount);
+    statisticsStatus.setText(res.getString("Page") + " " + (currentPage + 1) + " " + res.getString("of") + " " +
+                             pageCount);
   }
 
   /**
@@ -223,21 +258,20 @@ public class PreviewDialog extends JFrame {
     goToPage(currentPage);
   }
 
-  void print(ActionEvent e) {
-    Properties p = null;
+  void print() {
 
-    Container parent = this.getRootPane();
-    while ( !( parent instanceof Frame )) parent = parent.getParent();
-    Frame f = (Frame)parent;
+    PrinterJob pj = PrinterJob.getPrinterJob();
+    // Nicht nötig, Pageable get a Printable.
+    // pj.setPrintable(renderer);
+    pj.setPageable(renderer);
 
-    PrintJob pj = f.getToolkit().getPrintJob(f, getTitle(), p);
-    if(pj == null) return;
-    Graphics pg = pj.getGraphics();
-    if (pg != null) {
-      docPanel.paintAll(pg);
-      pg.dispose();
+    if (pj.printDialog()) {
+      try {
+        pj.print();
+      } catch(PrinterException pe) {
+        pe.printStackTrace();
+      }
     }
-    pj.end();
   }
 
   public void setScale(double scaleFactor) {
@@ -267,26 +301,24 @@ public class PreviewDialog extends JFrame {
 
   public void setPageCount(int aPageCount) {
     pageCount = aPageCount;
-    statusBar.setText("Page 1 of " + pageCount);
+    statisticsStatus.setText(res.getString("Page") + " " + (currentPage + 1) +
+                             " " + res.getString("of") + " " + pageCount);
   }
 
+
+  public void progress(int percentage) {
+    processStatus.setText(percentage + "%");
+  }
+
+  public void progress(int percentage, String message) {
+    processStatus.setText(message + " " + percentage + "%");
+  }
+
+  public void progress(String message) {
+    processStatus.setText(message);
+  }
+
+
 }  // class PreviewDialog
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 

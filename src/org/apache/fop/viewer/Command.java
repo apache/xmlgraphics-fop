@@ -24,7 +24,7 @@ import java.io.File;
  */
 public class Command extends AbstractAction {
 
-  public static final String IMAGE_DIR = "../viewer/images/";
+  public static String IMAGE_DIR = "../viewer/images/";
 
   public Command(String name) {
     this(name, (ImageIcon)null);
