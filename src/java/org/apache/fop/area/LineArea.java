@@ -26,6 +26,7 @@ import java.awt.font.TextLayout;
 import java.awt.font.TextMeasurer;
 import java.text.AttributedCharacterIterator;
 import java.text.AttributedString;
+import java.text.BreakIterator;
 import java.util.Map;
 
 import org.apache.fop.datastructs.Node;
@@ -173,8 +174,21 @@ public class LineArea extends BlockArea {
             new Float(Math.max(
                     layout.getLeading(),
                     (layout.getAscent() + layout.getDescent())));
-        // Find the shortest fragment of the text
-        // TODO work out Locale handling
+        // Find the longest fragment of the text
+        BreakIterator words =
+            BreakIterator.getWordInstance(generatedBy.getLocale());
+        words.setText(text);
+        int begin = 0;
+        float maxWordWidth = 0;
+        int boundary = 0;
+        while ((boundary = words.next()) != BreakIterator.DONE) {
+            float width = measurer.getAdvanceBetween(begin, boundary);
+            maxWordWidth = Math.max(maxWordWidth, width);
+            begin = boundary;
+        }
+        iPDimMin = new Float(maxWordWidth);
+        // For now, set bPDimMin = bPDimMax.
+        bPDimMin = bPDimMax;
     }
 
 
