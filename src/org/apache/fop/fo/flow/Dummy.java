@@ -1,52 +1,67 @@
 package org.apache.fop.fo.flow;
 
-
-import org.apache.fop.fo.flow.FoBasicLink;
-import org.apache.fop.fo.flow.FoBidiOverride;
-import org.apache.fop.fo.flow.FoBlockContainer;
-import org.apache.fop.fo.flow.FoBlock;
-import org.apache.fop.fo.flow.FoCharacter;
-import org.apache.fop.fo.flow.FoExternalGraphic;
-import org.apache.fop.fo.flow.FoFloat;
-import org.apache.fop.fo.flow.FoFlow;
-import org.apache.fop.fo.flow.FoFootnoteBody;
-import org.apache.fop.fo.flow.FoFootnote;
-import org.apache.fop.fo.flow.FoInitialPropertySet;
-import org.apache.fop.fo.flow.FoInlineContainer;
-import org.apache.fop.fo.flow.FoInline;
-import org.apache.fop.fo.flow.FoInstreamForeignObject;
-import org.apache.fop.fo.flow.FoLeader;
-import org.apache.fop.fo.flow.FoListBlock;
-import org.apache.fop.fo.flow.FoListItemBody;
-import org.apache.fop.fo.flow.FoListItem;
-import org.apache.fop.fo.flow.FoListItemLabel;
-import org.apache.fop.fo.flow.FoMarker;
-import org.apache.fop.fo.flow.FoMultiCase;
-import org.apache.fop.fo.flow.FoMultiProperties;
-import org.apache.fop.fo.flow.FoMultiPropertySet;
-import org.apache.fop.fo.flow.FoMultiSwitch;
-import org.apache.fop.fo.flow.FoMultiToggle;
-import org.apache.fop.fo.flow.FoNoFo;
-import org.apache.fop.fo.flow.FoPageNumberCitation;
-import org.apache.fop.fo.flow.FoPageNumber;
-import org.apache.fop.fo.flow.FoPageSequence;
-import org.apache.fop.fo.flow.FoPcdata;
-import org.apache.fop.fo.flow.FoRetrieveMarker;
-import org.apache.fop.fo.flow.FoStaticContent;
-import org.apache.fop.fo.flow.FoTableAndCaption;
-import org.apache.fop.fo.flow.FoTableBody;
-import org.apache.fop.fo.flow.FoTableCaption;
-import org.apache.fop.fo.flow.FoTableCell;
-import org.apache.fop.fo.flow.FoTableColumn;
-import org.apache.fop.fo.flow.FoTableFooter;
-import org.apache.fop.fo.flow.FoTableHeader;
-import org.apache.fop.fo.flow.FoTable;
-import org.apache.fop.fo.flow.FoTableRow;
-import org.apache.fop.fo.flow.FoTitle;
-import org.apache.fop.fo.flow.FoWrapper;
+import org.apache.fop.apps.FOPException;
+import org.apache.fop.datastructs.TreeException;
 
 public class Dummy {
+    public static boolean crash = true;
+
+    private static void setup() {
+        try {
+            FoBasicLink iFoBasicLink = new FoBasicLink(null, null, null, 0);
+            FoBidiOverride iFoBidiOverride = new FoBidiOverride(null, null, null, 0);
+            FoBlockContainer iFoBlockContainer = new FoBlockContainer(null, null, null, 0);
+            FoBlock iFoBlock = new FoBlock(null, null, null, 0);
+            FoCharacter iFoCharacter = new FoCharacter(null, null, null, 0);
+            FoExternalGraphic iFoExternalGraphic = new FoExternalGraphic(null, null, null, 0);
+            FoFloat iFoFloat = new FoFloat(null, null, null, 0);
+            FoFlow iFoFlow = new FoFlow(null, null, null);
+            FoFootnoteBody iFoFootnoteBody = new FoFootnoteBody(null, null, null, 0);
+            FoFootnote iFoFootnote = new FoFootnote(null, null, null, 0);
+            FoInitialPropertySet iFoInitialPropertySet = new FoInitialPropertySet(null, null, null, 0);
+            FoInlineContainer iFoInlineContainer = new FoInlineContainer(null, null, null, 0);
+            FoInline iFoInline = new FoInline(null, null, null, 0);
+            FoInstreamForeignObject iFoInstreamForeignObject = new FoInstreamForeignObject(null, null, null, 0);
+            FoLeader iFoLeader = new FoLeader(null, null, null, 0);
+            FoListBlock iFoListBlock = new FoListBlock(null, null, null, 0);
+            FoListItemBody iFoListItemBody = new FoListItemBody(null, null, null, 0);
+            FoListItem iFoListItem = new FoListItem(null, null, null, 0);
+            FoListItemLabel iFoListItemLabel = new FoListItemLabel(null, null, null, 0);
+            FoMarker iFoMarker = new FoMarker(null, null, null, 0);
+            FoMultiCase iFoMultiCase = new FoMultiCase(null, null, null, 0);
+            FoMultiProperties iFoMultiProperties = new FoMultiProperties(null, null, null, 0);
+            FoMultiPropertySet iFoMultiPropertySet = new FoMultiPropertySet(null, null, null, 0);
+            FoMultiSwitch iFoMultiSwitch = new FoMultiSwitch(null, null, null, 0);
+            FoMultiToggle iFoMultiToggle = new FoMultiToggle(null, null, null, 0);
+            FoNoFo iFoNoFo = new FoNoFo(null, null, null, 0);
+            FoPageNumberCitation iFoPageNumberCitation = new FoPageNumberCitation(null, null, null, 0);
+            FoPageNumber iFoPageNumber = new FoPageNumber(null, null, null, 0);
+            FoPageSequence iFoPageSequence = new FoPageSequence(null, null, null);
+            FoPcdata iFoPcdata = new FoPcdata(null, null, null, 0);
+            FoRetrieveMarker iFoRetrieveMarker = new FoRetrieveMarker(null, null, null, 0);
+            FoStaticContent iFoStaticContent = new FoStaticContent(null, null, null);
+            FoTableAndCaption iFoTableAndCaption = new FoTableAndCaption(null, null, null, 0);
+            FoTableBody iFoTableBody = new FoTableBody(null, null, null, 0);
+            FoTableCaption iFoTableCaption = new FoTableCaption(null, null, null, 0);
+            FoTableCell iFoTableCell = new FoTableCell(null, null, null, 0);
+            FoTableColumn iFoTableColumn = new FoTableColumn(null, null, null, 0);
+            FoTableFooter iFoTableFooter = new FoTableFooter(null, null, null, 0);
+            FoTableHeader iFoTableHeader = new FoTableHeader(null, null, null, 0);
+            FoTable iFoTable = new FoTable(null, null, null, 0);
+            FoTableRow iFoTableRow = new FoTableRow(null, null, null, 0);
+            FoTitle iFoTitle = new FoTitle(null, null, null);
+            FoWrapper iFoWrapper = new FoWrapper(null, null, null, 0);
+        } catch (TreeException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        } catch (FOPException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+    }
+
     public static void Main(String[] args) {
-        System.out.println("Crash!!!");
+        if (crash) throw new RuntimeException("Running Dummy.");
+        setup();
     }
 }
