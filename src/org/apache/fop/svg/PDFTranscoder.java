@@ -41,10 +41,10 @@ import org.apache.batik.bridge.UserAgent;
 import org.apache.batik.bridge.UserAgentAdapter;
 import org.apache.batik.bridge.ViewBox;
 
-import org.apache.batik.dom.svg.DefaultSVGContext;
 import org.apache.batik.dom.svg.SAXSVGDocumentFactory;
 import org.apache.batik.dom.svg.SVGDOMImplementation;
 import org.apache.batik.dom.svg.SVGOMDocument;
+import org.apache.batik.dom.svg.SVGContext; 
 import org.apache.batik.dom.util.DocumentFactory;
 
 import org.apache.batik.ext.awt.image.GraphicsUtil;
@@ -163,9 +163,6 @@ public class PDFTranscoder extends XMLAbstractTranscoder {
         SVGSVGElement root = svgDoc.getRootElement();
         // initialize the SVG document with the appropriate context
         String parserClassname = (String)hints.get(KEY_XML_PARSER_CLASSNAME);
-        DefaultSVGContext svgCtx = new DefaultSVGContext();
-        svgCtx.setPixelToMM(userAgent.getPixelToMM());
-        ((SVGOMDocument)document).setSVGContext(svgCtx);
 
         /*boolean stroke = true;
         if (hints.containsKey(KEY_STROKE_TEXT)) {
