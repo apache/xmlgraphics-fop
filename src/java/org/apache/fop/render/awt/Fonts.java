@@ -588,20 +588,8 @@ public class Fonts implements FontData {
         }
     }
 
-    /**
-     * Gets a java.awt.Font matching the given criteria.
-     * @param family the font family
-     * @param style only NORMAL, ITALIC and OBLIQUE are supported
-     * @param variant only NORMAL is supported
-     * @param weight only NORMAL and BOLD are supported
-     * @param stretch only NORMAL is supported
-     * @param size the size of the font in fractional points
-     * @param strategy currently ignored
-     * @return
-     */
-    public Font getFont(
-            String family, int style, int variant, int weight,
-            int stretch, float size, int strategy)
+    public Map makeFontAttributes(String family, int style, int variant,
+            int weight, int stretch, float size)
     throws FontException {
         HashMap attributes = new HashMap();
         attributes.put(TextAttribute.FAMILY, family);
@@ -645,6 +633,31 @@ public class Fonts implements FontData {
                 throw new FontException("Only NORMAL supported for stretch");
         }
         attributes.put(TextAttribute.SIZE, new Float(size));
+        return attributes;
+    }
+
+    /**
+     * Gets a java.awt.Font matching the given criteria.
+     * @param family the font family
+     * @param style only NORMAL, ITALIC and OBLIQUE are supported
+     * @param variant only NORMAL is supported
+     * @param weight only NORMAL and BOLD are supported
+     * @param stretch only NORMAL is supported
+     * @param size the size of the font in fractional points
+     * @param strategy currently ignored
+     * @return
+     */
+    public Font getFont(
+            String family, int style, int variant, int weight,
+            int stretch, float size, int strategy)
+    throws FontException {
+        Map attributes = makeFontAttributes(family, style, variant, weight,
+                stretch, size);
+        return new Font(attributes);
+    }
+
+    public Font getFont(Map attributes, int strategy) {
+        // strategy currently ignored
         return new Font(attributes);
     }
 
@@ -663,50 +676,14 @@ public class Fonts implements FontData {
             String type, int style, int variant, int weight,
             int stretch, float size)
         throws FontException {
-            HashMap attributes = new HashMap();
-            attributes.put(TextAttribute.FAMILY, type);
-            switch (style) {
-                case FontStyle.NORMAL:
-                    attributes.put(
-                            TextAttribute.POSTURE, TextAttribute.POSTURE_REGULAR);
-                    break;
-                case FontStyle.ITALIC:
-                case FontStyle.OBLIQUE:
-                    attributes.put(
-                            TextAttribute.POSTURE, TextAttribute.POSTURE_OBLIQUE);
-                    break;
-                default:
-                    throw new FontException(
-                    "Only NORMAL, OBLIQUE and ITALIC supported for style");
-            }
-            switch (variant) {
-                case FontVariant.NORMAL:
-                    break;
-                default:
-                    throw new FontException("Only NORMAL supported for variant");
-            }
-            switch (weight) {
-                case FontWeight.NORMAL:
-                    attributes.put(
-                            TextAttribute.WEIGHT, TextAttribute.WEIGHT_REGULAR);
-                    break;
-                case FontWeight.BOLD:
-                    attributes.put(
-                            TextAttribute.WEIGHT, TextAttribute.WEIGHT_BOLD);
-                break;
-                default:
-                    throw new FontException(
-                            "Only NORMAL and BOLD supported for weight");
-            }
-            switch (stretch) {
-                case FontStretch.NORMAL:
-                    break;
-                default:
-                    throw new FontException("Only NORMAL supported for stretch");
-            }
-            attributes.put(TextAttribute.SIZE, new Float(size));
+            Map attributes = makeFontAttributes(type, style, variant, weight,
+                    stretch, size);
             return new Font(attributes);
         
+    }
+
+    public Font getGenericFont(Map attributes) {
+        return new Font(attributes);
     }
 
     /**
