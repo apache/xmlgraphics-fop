@@ -258,7 +258,7 @@ public class AWTRenderer implements Renderer, Printable, Pageable {
     }
 
     public void render(AreaTree areaTree,
-                       PrintWriter writer) throws IOException {
+                       OutputStream stream) throws IOException {
         tree = areaTree;
         render(areaTree, 0);
     }
