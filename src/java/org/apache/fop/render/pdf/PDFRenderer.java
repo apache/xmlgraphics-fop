@@ -285,7 +285,7 @@ public class PDFRenderer extends PrintRenderer {
      * @see org.apache.fop.render.Renderer#supportsOutOfOrder()
      */
     public boolean supportsOutOfOrder() {
-        return true;
+        return false;
     }
 
     /**
