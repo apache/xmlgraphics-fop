@@ -50,7 +50,7 @@ public class BmpImage extends AbstractFopImage {
      * @param ua the user agent
      * @return true if it was loaded successfully
      */
-    protected boolean loadBitmap(Log logger) {
+    protected boolean loadBitmap() {
         int wpos = 18;
         int hpos = 22; // offset positioning for w and height in  bmp files
         int[] headermap = new int[54];
@@ -88,7 +88,7 @@ public class BmpImage extends AbstractFopImage {
                 }
             }
         } catch (IOException e) {
-            logger.error("Error while loading image "
+            log.error("Error while loading image "
                                          + "" + " : "
                                          + e.getClass() + " - "
                                          + e.getMessage(), e);
@@ -118,7 +118,7 @@ public class BmpImage extends AbstractFopImage {
         } else if (this.bitsPerPixel == 4 || this.bitsPerPixel == 8) {
             bytes = this.width / (8 / this.bitsPerPixel);
         } else {
-            logger.error("Image (" + ""
+            log.error("Image (" + ""
                           + ") has " + this.bitsPerPixel
                           + " which is not a supported BMP format.");
             return false;
@@ -143,7 +143,7 @@ public class BmpImage extends AbstractFopImage {
             inputStream.close();
             inputStream = null;
         } catch (IOException e) {
-            logger.error("Error while loading image "
+            log.error("Error while loading image "
                           + "" + " : "
                           + e.getClass() + " - "
                           + e.getMessage(), e);

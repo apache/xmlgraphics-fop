@@ -48,26 +48,26 @@ public class JimiImage extends AbstractFopImage {
         }
     }
 
-    protected boolean loadDimensions(Log logger) {
+    protected boolean loadDimensions() {
         if (this.bitmaps == null) {
-            loadImage(logger);
+            loadImage();
         }
 
         return this.bitmaps != null;
     }
 
     /**
-     * @see org.apache.fop.image.AbstractFopImage#loadBitmap(Logger)
+     * @see org.apache.fop.image.AbstractFopImage#loadBitmap()
      */
-    protected boolean loadBitmap(Log logger) {
+    protected boolean loadBitmap() {
         if (this.bitmaps == null) {
-            loadImage(logger);
+            loadImage();
         }
 
         return this.bitmaps != null;
     }
 
-    protected void loadImage(Log log) {
+    protected void loadImage() {
         int[] tmpMap = null;
         try {
             ImageProducer ip =

@@ -52,10 +52,9 @@ public class JpegImage extends AbstractFopImage {
      * This loads the original jpeg data and reads the color space,
      * and icc profile if any.
      *
-     * @param ua the user agent
      * @return true if loaded false for any error
      */
-    protected boolean loadOriginalData(Log logger) {
+    protected boolean loadOriginalData() {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         ByteArrayOutputStream iccStream = new ByteArrayOutputStream();
         int index = 0;
@@ -70,7 +69,7 @@ public class JpegImage extends AbstractFopImage {
             inputStream.close();
             inputStream = null;
         } catch (java.io.IOException ex) {
-            logger.error("Error while loading image "
+            log.error("Error while loading image "
                           + " : " + ex.getClass()
                           + " - " + ex.getMessage(), ex);
             return false;
@@ -115,7 +114,7 @@ public class JpegImage extends AbstractFopImage {
                             */
                             this.colorSpace = CMYKColorSpace.getInstance();
                         } else {
-                            logger.error("Unknown ColorSpace for image: "
+                            log.error("Unknown ColorSpace for image: "
                                                    + "");
                             return false;
                         }
@@ -157,7 +156,7 @@ public class JpegImage extends AbstractFopImage {
                 }
             }
         } else {
-            logger.error("Error while loading "
+            log.error("Error while loading "
                          + "JpegImage - Invalid JPEG Header.");
             return false;
         }
@@ -166,7 +165,7 @@ public class JpegImage extends AbstractFopImage {
             try {
                 iccStream.write(align);
             } catch (Exception e) {
-                logger.error("Error while loading image "
+                log.error("Error while loading image "
                               + " : "
                               + e.getMessage(), e);
                 return false;
@@ -174,11 +173,11 @@ public class JpegImage extends AbstractFopImage {
             try {
                 iccProfile = ICC_Profile.getInstance(iccStream.toByteArray());
             } catch (Exception e) {
-                logger.error("Invalid ICC profile: " + e, e);
+                log.error("Invalid ICC profile: " + e, e);
                 return false;
             }
         } else if (this.colorSpace == null) {
-            logger.error("ColorSpace not specified for JPEG image");
+            log.error("ColorSpace not specified for JPEG image");
             return false;
         }
         return true;
