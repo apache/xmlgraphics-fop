@@ -32,7 +32,6 @@ import org.apache.fop.area.inline.Image;
 import org.apache.fop.area.inline.InlineArea;
 import org.apache.fop.area.inline.InlineParent;
 import org.apache.fop.area.inline.Space;
-import org.apache.fop.area.inline.UnresolvedPageNumber;
 import org.apache.fop.area.inline.Viewport;
 import org.apache.fop.area.inline.TextArea;
 import org.apache.fop.datatypes.Length;
@@ -45,7 +44,6 @@ import org.apache.fop.fo.flow.Character;
 import org.apache.fop.fo.flow.Inline;
 import org.apache.fop.fo.flow.InstreamForeignObject;
 import org.apache.fop.fo.flow.Leader;
-import org.apache.fop.fo.flow.PageNumber;
 import org.apache.fop.fo.flow.RetrieveMarker;
 import org.apache.fop.fo.flow.Table;
 import org.apache.fop.fo.flow.TableAndCaption;
@@ -415,43 +413,6 @@ public class AddLMVisitor {
          areaCurrent.setOffset(0);
 
          return areaCurrent;
-     }
-
-     /**
-      * Overridden from FObj
-      * @param lms the list to which the layout manager(s) should be added
-      */
-     public void servePageNumber(final PageNumber node) {
-         LayoutManager lm;
-         lm = new LeafNodeLayoutManager(node) {
-                     public InlineArea get(LayoutContext context) {
-                         // get page string from parent, build area
-                         TextArea inline = new TextArea();
-                         String str = parentLM.getCurrentPageNumber();
-                         int width = 0;
-                     for (int count = 0; count < str.length(); count++) {
-                             width += node.getFontState().getCharWidth(
-                                        str.charAt(count));
-                         }
-                         inline.setTextArea(str);
-                         inline.setIPD(width);
-                         inline.setHeight(node.getFontState().getAscender()
-                                          - node.getFontState().getDescender());
-                         inline.setOffset(node.getFontState().getAscender());
-
-                         inline.addTrait(Trait.FONT_NAME,
-                                         node.getFontState().getFontName());
-                         inline.addTrait(Trait.FONT_SIZE,
-                                         new Integer(node.getFontState().getFontSize()));
-
-                         return inline;
-                     }
-
-                     protected void offsetArea(LayoutContext context) {
-                         curArea.setOffset(context.getBaseline());
-                     }
-                 };
-         currentLMList.add(lm);
      }
 
      public void serveTable(Table node) {

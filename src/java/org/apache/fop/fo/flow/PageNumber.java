@@ -18,6 +18,9 @@
 
 package org.apache.fop.fo.flow;
 
+// Java
+import java.util.List;
+
 // XML
 import org.xml.sax.Attributes;
 import org.xml.sax.Locator;
@@ -26,23 +29,15 @@ import org.xml.sax.SAXParseException;
 // FOP
 import org.apache.fop.datatypes.ColorType;
 import org.apache.fop.fo.FONode;
-import org.apache.fop.layoutmgr.AddLMVisitor;
 import org.apache.fop.fo.FObj;
-import org.apache.fop.fo.properties.CommonAccessibility;
-import org.apache.fop.fo.properties.CommonAural;
-import org.apache.fop.fo.properties.CommonBackground;
-import org.apache.fop.fo.properties.CommonBorderAndPadding;
-import org.apache.fop.fo.properties.CommonMarginInline;
-import org.apache.fop.fo.properties.CommonRelativePosition;
 import org.apache.fop.fonts.Font;
-import org.apache.fop.fo.LMVisited;
-
+import org.apache.fop.layoutmgr.PageNumberLayoutManager;
 
 /**
  * Class modelling the fo:page-number object. See Sec. 6.6.10 of the XSL-FO
  * Standard.
  */
-public class PageNumber extends FObj implements LMVisited {
+public class PageNumber extends FObj {
     /** FontState for this object */
     protected Font fontState;
 
@@ -77,42 +72,10 @@ public class PageNumber extends FObj implements LMVisited {
     }
 
     private void setup() {
-
-        // Common Accessibility Properties
-        CommonAccessibility mAccProps = propMgr.getAccessibilityProps();
-
-        // Common Aural Properties
-        CommonAural mAurProps = propMgr.getAuralProps();
-
-        // Common Border, Padding, and Background Properties
-        CommonBorderAndPadding bap = propMgr.getBorderAndPadding();
-        CommonBackground bProps = propMgr.getBackgroundProps();
-
         // Common Font Properties
         this.fontState = propMgr.getFontState(getFOInputHandler().getFontInfo());
 
-        // Common Margin Properties-Inline
-        CommonMarginInline mProps = propMgr.getMarginInlineProps();
-
-        // Common Relative Position Properties
-        CommonRelativePosition mRelProps =
-          propMgr.getRelativePositionProps();
-
-        // this.propertyList.get("alignment-adjust");
-        // this.propertyList.get("alignment-baseline");
-        // this.propertyList.get("baseline-shift");
-        // this.propertyList.get("dominant-baseline");
         setupID();
-        // this.propertyList.get("keep-with-next");
-        // this.propertyList.get("keep-with-previous");
-        // this.propertyList.get("letter-spacing");
-        // this.propertyList.get("line-height");
-        // this.propertyList.get("line-height-shift-adjustment");
-        // this.propertyList.get("score-spaces");
-        // this.propertyList.get("text-decoration");
-        // this.propertyList.get("text-shadow");
-        // this.propertyList.get("text-transform");
-        // this.propertyList.get("word-spacing");
 
         ColorType c = this.propertyList.get(PR_COLOR).getColorType();
         this.red = c.getRed();
@@ -120,7 +83,6 @@ public class PageNumber extends FObj implements LMVisited {
         this.blue = c.getBlue();
 
         this.wrapOption = this.propertyList.get(PR_WRAP_OPTION).getEnum();
-
     }
 
     /**
@@ -134,17 +96,15 @@ public class PageNumber extends FObj implements LMVisited {
         getFOInputHandler().endPageNumber(this);
     }
     
+    /**
+     * @see org.apache.fop.fo.FObj#addLayoutManager(List)
+     */
+    public void addLayoutManager(List list) { 	 
+        PageNumberLayoutManager lm = new PageNumberLayoutManager(this);
+        list.add(lm);
+    }
+
     public String getName() {
         return "fo:page-number";
-    }
-    
-    /**
-     * This is a hook for the AddLMVisitor class to be able to access
-     * this object.
-     * @param aLMV the AddLMVisitor object that can access this object.
-     */
-    public void acceptVisitor(AddLMVisitor aLMV) {
-       setup();
-       aLMV.servePageNumber(this);
     }
 }
