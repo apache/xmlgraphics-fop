@@ -55,6 +55,7 @@ package org.apache.fop.fo;
 import java.util.Map;
 
 // FOP
+import org.apache.fop.extensions.Bookmarks;
 import org.apache.fop.fonts.FontMetrics;
 
 /**
@@ -76,5 +77,9 @@ public interface FOTreeControl {
     public boolean isSetupValid();
 
     public Map getFonts();
+
+    public void setBookmarks(Bookmarks bookmarks);
+
+    public Bookmarks getBookmarks();
 
 }
