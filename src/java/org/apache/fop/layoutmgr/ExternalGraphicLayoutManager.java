@@ -74,7 +74,7 @@ public class ExternalGraphicLayoutManager extends LeafNodeLayoutManager {
      * @todo see if can simplify property handling logic
      */
     private void setup() {
-        url = ImageFactory.getURL(graphic.getURL());
+        url = ImageFactory.getURL(graphic.getPropString(PR_SRC));
 
         // assume lr-tb for now and just use the .optimum value of the range
         Length ipd = graphic.getPropertyList().get(PR_INLINE_PROGRESSION_DIMENSION).
@@ -215,7 +215,7 @@ public class ExternalGraphicLayoutManager extends LeafNodeLayoutManager {
       * @return the viewport containing the image area
       */
      public InlineArea getExternalGraphicInlineArea() {
-         Image imArea = new Image(graphic.getURL());
+         Image imArea = new Image(graphic.getPropString(PR_SRC));
          Viewport vp = new Viewport(imArea);
          vp.setWidth(viewWidth);
          vp.setHeight(viewHeight);

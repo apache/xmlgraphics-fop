@@ -242,7 +242,7 @@ public class PageSequence extends FObj {
 
         // we are now on the first page of the page sequence
         thisIsFirstPage = true;
-        ipnValue = this.propertyList.get(PR_INITIAL_PAGE_NUMBER).getString();
+        ipnValue = getPropString(PR_INITIAL_PAGE_NUMBER);
 
         if (ipnValue.equals("auto")) {
             pageNumberType = AUTO;
@@ -261,7 +261,7 @@ public class PageSequence extends FObj {
             }
         }
 
-        String masterName = this.propertyList.get(PR_MASTER_REFERENCE).getString();
+        String masterName = getPropString(PR_MASTER_REFERENCE);
         this.simplePageMaster =
                 this.layoutMasterSet.getSimplePageMaster(masterName);
         if (this.simplePageMaster == null) {

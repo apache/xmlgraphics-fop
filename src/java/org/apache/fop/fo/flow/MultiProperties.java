@@ -18,23 +18,76 @@
 
 package org.apache.fop.fo.flow;
 
+// XML
+import org.xml.sax.Attributes;
+import org.xml.sax.Locator;
+import org.xml.sax.SAXParseException;
+
 // FOP
 import org.apache.fop.fo.FONode;
-import org.apache.fop.fo.ToBeImplementedElement;
+import org.apache.fop.fo.FObj;
 
 /**
  * Class modelling the fo:multi-properties object. See Sec. 6.9.6 of the XSL-FO
  * Standard.
  */
-public class MultiProperties extends ToBeImplementedElement {
+public class MultiProperties extends FObj {
+
+    static boolean notImplementedWarningGiven = false;
+
+    // used for input FO validation
+    boolean hasMultiPropertySet = false;
+    boolean hasWrapper = false;
 
     /**
      * @param parent FONode that is the parent of this object
      */
     public MultiProperties(FONode parent) {
         super(parent);
+
+        if (!notImplementedWarningGiven) {
+            getLogger().warn("fo:multi-properties is not yet implemented.");
+            notImplementedWarningGiven = true;
+        }
     }
 
+    /**
+     * @see org.apache.fop.fo.FONode#validateChildNode(Locator, String, String)
+     * XSL Content Model: (multi-property-set+, wrapper)
+     */
+    protected void validateChildNode(Locator loc, String nsURI, String localName) 
+        throws SAXParseException {
+            if (nsURI == FO_URI && localName.equals("multi-property-set")) {
+                if (hasWrapper) {
+                    nodesOutOfOrderError(loc, "fo:multi-property-set", "fo:wrapper");
+                } else {
+                    hasMultiPropertySet = true;
+                }
+            } else if (nsURI == FO_URI && localName.equals("wrapper")) {
+                if (hasWrapper) {
+                    tooManyNodesError(loc, "fo:wrapper");
+                } else {
+                    hasWrapper = true;
+                }
+            } else {
+                invalidChildError(loc, nsURI, localName);
+            }
+    }
+
+    /**
+     * Make sure content model satisfied, if so then tell the
+     * FOInputHandler that we are at the end of the flow.
+     * @see org.apache.fop.fo.FONode#end
+     */
+    protected void endOfNode() throws SAXParseException {
+        if (!hasMultiPropertySet || !hasWrapper) {
+            missingChildElementError("(multi-property-set+, wrapper)");
+        }
+    }
+
+    /**
+     * @see org.apache.fop.fo.FObj#getName()
+     */
     public String getName() {
         return "fo:multi-properties";
     }

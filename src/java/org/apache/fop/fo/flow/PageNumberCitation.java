@@ -81,7 +81,7 @@ public class PageNumberCitation extends FObj {
         this.blue = c.getBlue();
 
         this.wrapOption = this.propertyList.get(PR_WRAP_OPTION).getEnum();
-        this.refId = this.propertyList.get(PR_REF_ID).getString();
+        this.refId = getPropString(PR_REF_ID);
 
         if (this.refId.equals("")) {
             //throw new FOPException("page-number-citation must contain \"ref-id\"");
