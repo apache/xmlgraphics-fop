@@ -84,16 +84,6 @@ public class PropertyInfo {
     }
 
     /**
-     * Return whether this property inherits specified values.
-     * Propagates to the Maker.
-     * @return true if the property inherits specified values, false if it
-     * inherits computed values.
-     */
-    public boolean inheritsSpecified() {
-        return maker.inheritsSpecified();
-    }
-
-    /**
      * Return the PercentBase object used to calculate the absolute value from
      * a percent specification.
      * Propagates to the Maker.
