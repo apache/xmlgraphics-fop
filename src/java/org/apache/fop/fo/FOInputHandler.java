@@ -76,9 +76,15 @@ import org.apache.fop.layout.FontInfo;
 import org.xml.sax.SAXException;
 
 /**
- * This class receives structure events from the FO Tree.
- * Sub-classes can then implement various methods to handle
- * the FO Tree when the SAX events occur.
+ * Abstract class defining what should be done with SAX events that map to
+ * XSL-FO input. The events are actually captured by fo/FOTreeBuilder, passed
+ * to the various fo Objects, which in turn, if needed, pass them to an instance
+ * of FOInputHandler.
+ *
+ * Sub-classes will generally fall into one of two categories:
+ * 1) a handler that actually builds an FO Tree from the events, or 2) a
+ * handler that builds a structured (as opposed to formatted) document, such
+ * as our MIF and RTF output targets.
  */
 public abstract class FOInputHandler extends AbstractLogEnabled {
     /**
