@@ -80,15 +80,6 @@ public class Driver implements Constants {
     }
 
     /**
-     * Convenience constructor for directly setting input and output.
-     * @param stream Target output stream
-     */
-    public Driver(OutputStream stream) {
-        this();
-        this.stream = stream;
-    }
-
-    /**
      * Constructor with FOUserAgent
      * Used by CLI, AWTRenderer
      */
