@@ -18,21 +18,24 @@
 
 package org.apache.fop.fo.flow;
 
+// Java
+import java.util.List;
+
+// FOP
 import org.apache.fop.datatypes.ColorType;
 import org.apache.fop.datatypes.Length;
 import org.apache.fop.fo.FONode;
-import org.apache.fop.layoutmgr.AddLMVisitor;
 import org.apache.fop.fo.FObjMixed;
 import org.apache.fop.fo.properties.PercentLength;
 import org.apache.fop.fonts.Font;
-import org.apache.fop.fo.LMVisited;
+import org.apache.fop.layoutmgr.LeaderLayoutManager;
 
 /**
- * Class modelling fo:leader object. See Sec. 6.6.9 of the XSL-FO Standard.
+ * Class modelling fo:leader object.
  * The main property of fo:leader is leader-pattern.
  * The following patterns are treated: rule, space, dots and use-content.
  */
-public class Leader extends FObjMixed implements LMVisited {
+public class Leader extends FObjMixed {
 
     private int ruleStyle;
     private int ruleThickness;
@@ -89,12 +92,14 @@ public class Leader extends FObjMixed implements LMVisited {
 
     }
 
+    /**
+     * @todo check need for each of these accessors (should be LM instead?)
+     */
     public int getLength(int propId, int dim) {
         int length;
         Length maxlength = propertyList.get(propId).getLength();
         if (maxlength instanceof PercentLength) {
-            length = (int)(((PercentLength)maxlength).value()
-                                      * dim);
+            length = (int)(((PercentLength)maxlength).value() * dim);
         } else {
             length = maxlength.getValue();
         }
@@ -121,20 +126,22 @@ public class Leader extends FObjMixed implements LMVisited {
         return patternWidth;
     }
 
+    /**
+     * @see org.apache.fop.fo.FObj#addLayoutManager(List)
+     */
+    public void addLayoutManager(List list) {
+        setup();
+        LeaderLayoutManager lm = new LeaderLayoutManager(this);
+        list.add(lm);
+    }
+
+    /**
+     * @see org.apache.fop.fo.FObj#getName()
+     */
     public String getName() {
         return "fo:leader";
     }
-    
-    /**
-     * This is a hook for the AddLMVisitor class to be able to access
-     * this object.
-     * @param aLMV the AddLMVisitor object that can access this object.
-     */
-    public void acceptVisitor(AddLMVisitor aLMV) {
-        setup();
-        aLMV.serveLeader(this);
-    }
-    
+
     /**
      * @see org.apache.fop.fo.FObj#getNameId()
      */
