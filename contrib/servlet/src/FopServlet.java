@@ -16,7 +16,6 @@ import org.xml.sax.XMLReader;
 import org.apache.fop.apps.Driver;
 import org.apache.fop.apps.Version;
 import org.apache.fop.apps.XSLTInputHandler;
-import org.apache.fop.messaging.MessageHandler;
 
 import org.apache.avalon.framework.logger.ConsoleLogger;
 import org.apache.avalon.framework.logger.Logger;
@@ -52,7 +51,6 @@ public class FopServlet extends HttpServlet {
                       HttpServletResponse response) throws ServletException {
         if (log == null) {
             log = new ConsoleLogger(ConsoleLogger.LEVEL_WARN);
-            MessageHandler.setScreenLogger(log);
         }
         try {
             String foParam = request.getParameter(FO_REQUEST_PARAM);

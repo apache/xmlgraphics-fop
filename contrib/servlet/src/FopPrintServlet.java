@@ -18,10 +18,10 @@ import org.xml.sax.InputSource;
 import org.xml.sax.XMLReader;
 
 import org.apache.fop.apps.Driver;
-import org.apache.fop.layout.Page;
+import org.apache.fop.apps.FOPException;
+import org.apache.fop.area.PageViewport;
 import org.apache.fop.apps.Version;
 import org.apache.fop.apps.XSLTInputHandler;
-import org.apache.fop.messaging.MessageHandler;
 
 import org.apache.fop.render.awt.AWTRenderer ;
 
@@ -61,7 +61,6 @@ public class FopPrintServlet extends HttpServlet {
                       HttpServletResponse response) throws ServletException {
         if (log == null) {
             log = new ConsoleLogger(ConsoleLogger.LEVEL_WARN);
-            MessageHandler.setScreenLogger(log);
         }
 
         try {
@@ -185,17 +184,17 @@ public class FopPrintServlet extends HttpServlet {
             }
         }
 
-        public void stopRenderer(OutputStream outputStream)
+        public void stopRenderer()
         throws IOException {
-            super.stopRenderer(outputStream);
+            super.stopRenderer();
 
             if (endNumber == -1)
                 endNumber = getPageCount();
 
             Vector numbers = getInvalidPageNumbers();
             for (int i = numbers.size() - 1; i > -1; i--)
-                removePage(
-                  Integer.parseInt((String) numbers.elementAt(i)));
+                //removePage(
+                //  Integer.parseInt((String) numbers.elementAt(i)));
 
             try {
                 printerJob.print();
@@ -206,9 +205,9 @@ public class FopPrintServlet extends HttpServlet {
             }
         }
 
-        public void renderPage(Page page) {
-            pageWidth = (int)((float) page.getWidth() / 1000f);
-            pageHeight = (int)((float) page.getHeight() / 1000f);
+        public void renderPage(PageViewport page) throws IOException, FOPException {
+            pageWidth = (int)((float) page.getViewArea().getWidth() / 1000f);
+            pageHeight = (int)((float) page.getViewArea().getHeight() / 1000f);
             super.renderPage(page);
         }
 
