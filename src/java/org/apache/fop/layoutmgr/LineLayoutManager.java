@@ -325,7 +325,15 @@ public class LineLayoutManager extends InlineStackingLayoutManager {
             return null;
         }
         if (prevBP == null) {
-            prevBP = bp;
+            BreakPoss prevLineEnd = (iPrevLineEnd == 0)
+                ? null
+                : (BreakPoss) vecInlineBreaks.get(iPrevLineEnd);
+            if (allAreSuppressible(prevLineEnd)) {
+                removeAllBP(prevLineEnd);
+                return null;
+            } else {
+                prevBP = bp;
+            }
         }
 
         // Choose the best break
@@ -419,6 +427,33 @@ public class LineLayoutManager extends InlineStackingLayoutManager {
             if (!couldEndLine || bp == prev) break;
         }
         return couldEndLine;
+    }
+
+    /** Test whether all breakposs in vecInlineBreaks
+        back to and excluding prev are suppressible */
+    private boolean allAreSuppressible(BreakPoss prev) {
+        ListIterator bpIter =
+            vecInlineBreaks.listIterator(vecInlineBreaks.size());
+        boolean allAreSuppressible = true;
+        BreakPoss bp;
+        while (bpIter.hasPrevious()
+               && (bp = (BreakPoss) bpIter.previous()) != prev
+               && (allAreSuppressible = bp.isSuppressible())) {
+        }
+        return allAreSuppressible;
+    }
+
+    /** Remove all BPs from the end back to and excluding prev
+        from vecInlineBreaks*/
+    private void removeAllBP(BreakPoss prev) {
+        int iPrev;
+        if (prev == null) {
+            vecInlineBreaks.clear();
+        } else if ((iPrev = vecInlineBreaks.indexOf(prev)) != -1) {
+            for (int i = vecInlineBreaks.size(); iPrev < i; --i) {
+                vecInlineBreaks.remove(i);
+            }
+        }
     }
 
     private HyphContext getHyphenContext(BreakPoss prev,
