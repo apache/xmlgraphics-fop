@@ -218,9 +218,7 @@ public class IndirectValue extends AbstractPropertyValue {
         return pv;
     }
 
-    public static boolean isUnresolved(PropertyValue value)
-                    throws PropertyException
-    {
+    public static boolean isUnresolved(PropertyValue value) {
         return (value.getType() == PropertyValue.NUMERIC
                                     && ((Numeric)(value)).isPercentage());
     }
