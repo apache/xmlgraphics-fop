@@ -56,4 +56,45 @@ public class BorderRectangle extends AreaFrame {
     public SpacesRectangle getSpaces() {
         return spaces;
     }
+
+    /**
+     * {@inheritDoc}
+     * <p>The containing <code>SpacesRectangle</code> is notified of the
+     * change.
+     */
+    public void setTop(double top) {
+        super.setTop(top);
+        spaces.setContents(this);
+    }
+
+    /**
+     * {@inheritDoc}
+     * <p>The containing <code>SpacesRectangle</code> is notified of the
+     * change.
+     */
+    public void setLeft(double left) {
+        super.setLeft(left);
+        spaces.setContents(this);
+    }
+
+    /**
+     * {@inheritDoc}
+     * <p>The containing <code>SpacesRectangle</code> is notified of the
+     * change.
+     */
+    public void setBottom(double bottom) {
+        super.setBottom(bottom);
+        spaces.setContents(this);
+    }
+
+    /**
+     * {@inheritDoc}
+     * <p>The containing <code>SpacesRectangle</code> is notified of the
+     * change.
+     */
+    public void setRight(double right) {
+        super.setRight(right);
+        spaces.setContents(this);
+    }
+
 }
