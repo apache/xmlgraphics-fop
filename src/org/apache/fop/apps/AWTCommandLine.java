@@ -2,9 +2,9 @@
 package org.apache.fop.apps;
 /*
   originally contributed by
-  Juergen Verwohlt: Juergen.Verwohlt@af-software.de,
-  Rainer Steinkuhle: Rainer.Steinkuhle@af-software.de,
-  Stanislav Gorkhover: Stanislav.Gorkhover@af-software.de
+  Juergen Verwohlt: Juergen.Verwohlt@jcatalog.com,
+  Rainer Steinkuhle: Rainer.Steinkuhle@jcatalog.com,
+  Stanislav Gorkhover: Stanislav.Gorkhover@jcatalog.com
  */
 
 
@@ -30,6 +30,7 @@ import java.io.PrintWriter;
 import java.io.IOException;
 import java.io.FileNotFoundException;
 import java.io.FileInputStream;
+import java.io.InputStream;
 import java.net.URL;
 import java.util.*;
 
@@ -42,31 +43,23 @@ import java.util.*;
 public class AWTCommandLine {
 
 
-  public static String DEFAULT_TRANSLATION_PATH
-                               = "../viewer/resources/resources." +
-                                 System.getProperty("user.language");
+  public static String TRANSLATION_PATH = "/org/apache/fop/viewer/resources/";
 
 
   private Translator resource;
 
 
 
-  public AWTCommandLine(String srcFile, String translationPath) {
+  public AWTCommandLine(String srcFile, String language) {
 
-    resource = getResourceBundle(translationPath);
+    if (language == null)
+      language = System.getProperty("user.language");
 
-    String messPath = new File(translationPath).getAbsoluteFile().getParent();
-    if (!messPath.endsWith(System.getProperty("file.separator")))
-      messPath += System.getProperty("file.separator");
-    messPath += "messages." + System.getProperty("user.language");
-    System.out.println("Set messages resource: " + messPath);
-    UserMessage.setTranslator(getResourceBundle(messPath));
+    resource = getResourceBundle(TRANSLATION_PATH + "resources." + language);
+
+    UserMessage.setTranslator(getResourceBundle(TRANSLATION_PATH + "messages." + language));
 
     resource.setMissingEmphasized(false);
-
-    if (!resource.isSourceFound())
-      UserMessage.show("TRANSLATION_SOURCE_NOT_FOUND",
-                       new File(translationPath).getAbsolutePath());
 
     AWTRenderer renderer = new AWTRenderer(resource);
     PreviewDialog frame = createPreviewDialog(renderer, resource);
@@ -105,7 +98,7 @@ public class AWTCommandLine {
 // render: time
         frame.progress(resource.getString("Render") + " ...");
         driver.render();
-        
+
         frame.progress(resource.getString("Show"));
 
 	} catch (Exception e) {
@@ -187,15 +180,16 @@ public class AWTCommandLine {
 
 
   private SecureResourceBundle getResourceBundle(String path) {
-    FileInputStream in = null;
+    InputStream in = null;
+
     try {
-    in = new FileInputStream(path);
+    URL url = getClass().getResource(path);
+    in = url.openStream();
     } catch(Exception ex) {
-      System.out.println("Abgefangene Exception: " + ex.getMessage());
+      System.out.println("Can't find URL to: <" + path + "> " + ex.getMessage());
     }
     return new SecureResourceBundle(in);
   }
-
 
 
   /* main
@@ -208,34 +202,22 @@ public class AWTCommandLine {
     }
 
     String srcPath = null;
-    String translationFile = null;
+    String language = null;
     String imageDir = null;
 
     System.err.println(Version.getVersion());
     if (args.length < 1 || args.length > 3) {
       System.err.println("usage: java AWTCommandLine " +
-                         "formatting-object-file [translation-file] " +
-                         "[image-dir]");
+                         "formatting-object-file [language] ");
       System.exit(1);
     }
 
     srcPath = args[0];
     if (args.length > 1) {
-      translationFile = args[1];
-    }
-    if (args.length > 2) {
-      imageDir = args[2];
-      if (!imageDir.endsWith(System.getProperty("file.separator")))
-        imageDir += System.getProperty("file.separator");
-        
-      Command.IMAGE_DIR = imageDir;
+      language = args[1];
     }
 
-    if (translationFile == null)
-      translationFile = DEFAULT_TRANSLATION_PATH;
-
-
-    new AWTCommandLine(srcPath, translationFile);
+    new AWTCommandLine(srcPath, language);
 
   }  // main
 }  // AWTCommandLine
