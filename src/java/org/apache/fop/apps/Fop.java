@@ -1,6 +1,4 @@
 /*
- * $Id$
- * 
  * ============================================================================
  *                   The Apache Software License, Version 1.1
  * ============================================================================
@@ -47,7 +45,8 @@
  * on  behalf of the Apache Software  Foundation and was  originally created by
  * James Tauber <jtauber@jtauber.com>. For more  information on the Apache 
  * Software Foundation, please see <http://www.apache.org/>.
- *  
+ * 
+ * $Id$
  */
 
 package org.apache.fop.apps;
@@ -63,7 +62,12 @@ public class Fop {
     public static long startPCi;
     public static long endPCi;
     
-    protected static final Logger logger = Logger.getLogger("org.apache.fop");
+    /**
+     * The top-level package for FOP
+     */
+    public static final String fopPackage = "org.apache.fop";
+    
+    protected static final Logger logger = Logger.getLogger(fopPackage);
 
     public static void main(String[] args) {
 
