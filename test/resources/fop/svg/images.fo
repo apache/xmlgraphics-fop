@@ -4,11 +4,11 @@
 
   <fo:layout-master-set>
     <fo:simple-page-master master-name="simple"
-                  page-height="29.7cm" 
+                  page-height="29.7cm"
                   page-width="21cm"
-                  margin-top="1cm" 
-                  margin-bottom="2cm" 
-                  margin-left="2.5cm" 
+                  margin-top="1cm"
+                  margin-bottom="2cm"
+                  margin-left="2.5cm"
                   margin-right="2.5cm">
       <fo:region-body margin-top="3cm"/>
       <fo:region-before extent="3cm"/>
@@ -20,11 +20,11 @@
 
     <fo:flow flow-name="xsl-region-body">
 
-      <fo:block space-after.optimum="40pt">                
+      <fo:block space-after.optimum="40pt">
         Embedded/Image SVG
       </fo:block>
 
-      <fo:block>                
+      <fo:block>
 <fo:external-graphic src="images.svg"/>
       </fo:block>
 
