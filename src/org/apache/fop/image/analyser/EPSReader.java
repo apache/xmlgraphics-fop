@@ -176,7 +176,8 @@ public class EPSReader implements ImageReader {
         int nidx = idx;
 
         while (nidx < data.epsFile.length &&
-                (data.epsFile[nidx] >= 48 && data.epsFile[nidx] <= 57))
+                ((data.epsFile[nidx] >= 48 && data.epsFile[nidx] <= 57) ||
+                (data.epsFile[nidx] == 45)))
             nidx++;
 
         byte[] num = new byte[nidx - idx];
