@@ -47,7 +47,7 @@ import org.apache.fop.area.PageViewport;
 import org.apache.fop.area.RegionViewport;
 import org.apache.fop.area.RegionReference;
 import org.apache.fop.area.Trait;
-import org.apache.fop.area.TreeExt;
+import org.apache.fop.area.OffDocumentItem;
 import org.apache.fop.area.inline.Container;
 import org.apache.fop.area.inline.ForeignObject;
 import org.apache.fop.area.inline.Image;
@@ -156,10 +156,9 @@ public abstract class AbstractRenderer
     }
 
     /**
-     * @param ext  (todo) Description of the Parameter
-     * @see        org.apache.fop.render.Renderer
+     * @see     org.apache.fop.render.Renderer
      */
-    public void renderExtension(TreeExt ext) { }
+    public void processOffDocumentItem(OffDocumentItem oDI) { }
 
     /**
      * Prepare a page for rendering. This is called if the renderer supports

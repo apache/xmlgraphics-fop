@@ -126,7 +126,7 @@ public class RenderPagesModel extends StorePagesModel {
         boolean cont = checkPreparedPages(page);
 
         if (cont) {
-            renderExtensions(pendingExt);
+            processOffDocumentItems(pendingExt);
             pendingExt.clear();
         }
     }
@@ -175,26 +175,26 @@ public class RenderPagesModel extends StorePagesModel {
     }
 
     /**
-     * @see org.apache.fop.area.AreaTreeModel#handleExtension(TreeExt, int)
+     * @see org.apache.fop.area.AreaTreeModel#handleOffDocumentItem(OffDocumentItem, int)
      */
-    public void handleExtension(TreeExt ext, int when) {
+    public void handleOffDocumentItem(OffDocumentItem ext, int when) {
         switch(when) {
-            case TreeExt.IMMEDIATELY:
-                renderer.renderExtension(ext);
+            case OffDocumentItem.IMMEDIATELY:
+                renderer.processOffDocumentItem(ext);
                 break;
-            case TreeExt.AFTER_PAGE:
+            case OffDocumentItem.AFTER_PAGE:
                 pendingExt.add(ext);
                 break;
-            case TreeExt.END_OF_DOC:
+            case OffDocumentItem.END_OF_DOC:
                 endDocExt.add(ext);
                 break;
         }
     }
 
-    private void renderExtensions(List list) {
+    private void processOffDocumentItems(List list) {
         for (int count = 0; count < list.size(); count++) {
-            TreeExt ext = (TreeExt)list.get(count);
-            renderer.renderExtension(ext);
+            OffDocumentItem ext = (OffDocumentItem)list.get(count);
+            renderer.processOffDocumentItem(ext);
         }
     }
 
@@ -206,10 +206,10 @@ public class RenderPagesModel extends StorePagesModel {
         // render any pages that had unresolved ids
         checkPreparedPages(null);
 
-        renderExtensions(pendingExt);
+        processOffDocumentItems(pendingExt);
         pendingExt.clear();
 
-        renderExtensions(endDocExt);
+        processOffDocumentItems(endDocExt);
         
         try {
             renderer.stopRenderer();

@@ -26,7 +26,7 @@ import java.io.IOException;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.area.PageViewport;
 import org.apache.fop.area.LineArea;
-import org.apache.fop.area.TreeExt;
+import org.apache.fop.area.OffDocumentItem;
 import org.apache.fop.area.inline.Container;
 import org.apache.fop.fonts.FontInfo;
 import org.apache.fop.apps.FOUserAgent;
@@ -109,11 +109,13 @@ public interface Renderer {
     boolean supportsOutOfOrder();
 
     /**
-     * Tells the renderer to render an extension element.
+     * Tells the renderer to process an item not explicitly placed on the 
+     * document (e.g., PDF bookmarks).  Note - not all renderers will process
+     * all off-document items.
      *
      * @param ext  The extension element to be rendered
      */
-    void renderExtension(TreeExt ext);
+    public void processOffDocumentItem(OffDocumentItem ext);
 
     /**
      * This is called if the renderer supports out of order rendering. The

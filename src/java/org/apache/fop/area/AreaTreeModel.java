@@ -43,11 +43,11 @@ public abstract class AreaTreeModel {
     public abstract void addPage(PageViewport page);
 
     /**
-     * Handle an area tree extension 
+     * Handle an OffDocumentItem 
      * @param ext the extension to handle
      * @param when when the extension should be handled
      */
-    public abstract void handleExtension(TreeExt ext, int when);
+    public abstract void handleOffDocumentItem(OffDocumentItem ext, int when);
 
     /**
      * Signal the end of the document for any processing.
