@@ -37,7 +37,7 @@ import org.apache.fop.area.Block;
 import org.apache.fop.area.BlockViewport;
 import org.apache.fop.area.BodyRegion;
 import org.apache.fop.area.CTM;
-import org.apache.fop.area.Flow;
+import org.apache.fop.area.NormalFlow;
 import org.apache.fop.area.Footnote;
 import org.apache.fop.area.LineArea;
 import org.apache.fop.area.MainReference;
@@ -380,7 +380,7 @@ public abstract class AbstractRenderer
                     - (span.getColumnCount() - 1) * mr.getColumnGap())
                     / span.getColumnCount() + mr.getColumnGap();
             for (int c = 0; c < span.getColumnCount(); c++) {
-                Flow flow = (Flow) span.getFlow(c);
+                NormalFlow flow = (NormalFlow) span.getNormalFlow(c);
 
                 renderFlow(flow);
                 currentIPPosition += offset;
@@ -395,7 +395,7 @@ public abstract class AbstractRenderer
      *
      * @param flow  The flow reference area
      */
-    protected void renderFlow(Flow flow) {
+    protected void renderFlow(NormalFlow flow) {
         // the normal flow reference area contains stacked blocks
         List blocks = flow.getChildAreas();
         if (blocks != null) {

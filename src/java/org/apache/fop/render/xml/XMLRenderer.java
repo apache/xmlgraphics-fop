@@ -47,7 +47,7 @@ import org.apache.fop.area.BeforeFloat;
 import org.apache.fop.area.Block;
 import org.apache.fop.area.BlockViewport;
 import org.apache.fop.area.BodyRegion;
-import org.apache.fop.area.Flow;
+import org.apache.fop.area.NormalFlow;
 import org.apache.fop.area.Footnote;
 import org.apache.fop.area.LineArea;
 import org.apache.fop.area.MainReference;
@@ -445,7 +445,7 @@ public class XMLRenderer extends AbstractRenderer {
             addTraitAttributes(span);
             startElement("span", atts);
             for (int c = 0; c < span.getColumnCount(); c++) {
-                Flow flow = (Flow) span.getFlow(c);
+                NormalFlow flow = (NormalFlow) span.getNormalFlow(c);
 
                 renderFlow(flow);
             }
@@ -457,7 +457,7 @@ public class XMLRenderer extends AbstractRenderer {
     /**
      * @see org.apache.fop.render.AbstractRenderer#renderFlow(Flow)
      */
-    protected void renderFlow(Flow flow) {
+    protected void renderFlow(NormalFlow flow) {
         // the normal flow reference area contains stacked blocks
         atts.clear();
         addAreaAttributes(flow);

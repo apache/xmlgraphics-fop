@@ -1,5 +1,5 @@
 /*
- * Copyright 1999-2004 The Apache Software Foundation.
+ * Copyright 1999-2005 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,17 +19,15 @@
 package org.apache.fop.area;
 
 /**
- * The normal flow reference area class.
- * This area contains a list of block areas from the flow.
+ * The normal-flow-reference-area class.
+ * Each span-reference-area contains one or more of these objects
+ * See fo:region-body definition in the XSL Rec for more information.
  */
-public class Flow extends BlockParent {
-    // the list of blocks created from the flow
-    private int stacking = TB;
-
+public class NormalFlow extends BlockParent {
     /**
      * Constructor.
      */
-    public Flow() {
+    public NormalFlow() {
         addTrait(Trait.IS_REFERENCE_AREA, Boolean.TRUE);
     }
 }
