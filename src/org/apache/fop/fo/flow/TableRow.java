@@ -237,7 +237,7 @@ public class TableRow extends FObj {
 	    }
 
 	    this.marker = 0;
-	    int breakStatus = propMgr.checkBreakBefore();
+	    int breakStatus = propMgr.checkBreakBefore(area);
 	    if (breakStatus != Status.OK)
 		return new Status(breakStatus);
 	}
