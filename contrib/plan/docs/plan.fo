@@ -101,6 +101,13 @@ All other options are set in the style attribute.
 
       </fo:block>
 
+      <fo:block>
+A plan as an external graphic.
+      </fo:block>
+
+      <fo:block>
+<fo:external-graphic src="june.xml"/>
+      </fo:block>
     </fo:flow>
   </fo:page-sequence>
 </fo:root>

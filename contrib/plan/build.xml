@@ -15,7 +15,7 @@
     <property name="name" value="plan"/>
     <property name="version" value="0.1-CVS"/>
     <filter  token="version" value="${version}"/>
-    <property name="year" value="2001"/>
+    <property name="year" value="2002"/>
 
     <echo message="------------------- ${Name} ${version} [${year}] ----------------"/>
 

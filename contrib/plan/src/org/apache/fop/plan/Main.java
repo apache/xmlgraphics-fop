@@ -48,15 +48,12 @@ public class Main {
     public Document createSVGDocument(InputStream is) {
         Document doc = null;
 
-        Element svgRoot = null;
+        Element root = null;
         try {
-            //        DOMImplementation impl = javax.xml.parsers.DocumentBuilderFactory.newInstance().newDocumentBuilder().getDOMImplementation();
-            //        String ns = GraphElementMapping.URI;
-            //        doc = impl.createDocument(ns, "graph", null);
             doc = javax.xml.parsers.DocumentBuilderFactory.newInstance().
                   newDocumentBuilder().parse(is);
 
-            svgRoot = doc.getDocumentElement();
+            root = doc.getDocumentElement();
 
         } catch (Exception e) {
             e.printStackTrace();
