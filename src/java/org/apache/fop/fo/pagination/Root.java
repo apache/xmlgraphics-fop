@@ -163,6 +163,10 @@ public class Root extends FObj {
         return foTreeControl;
     }
 
+    /**
+     * Hook for Visitor objects accessing the FO Tree.
+     * @param fotv the FOTreeVisitor object accessing this node of the FO Tree
+     */
     public void acceptVisitor(FOTreeVisitor fotv) {
         fotv.serveVisitor(this);
     }

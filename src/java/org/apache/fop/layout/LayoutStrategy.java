@@ -72,6 +72,12 @@ public abstract class LayoutStrategy {
         return name;
     }
 
+    /**
+     * Format a PageSequence into an AreaTree
+     * @param pageSeq the PageSequence to be formatted
+     * @param areaTree the AreaTree in which to place the formatted PageSequence
+     * @throws FOPException for errors during layout
+     */
     public abstract void format (PageSequence pageSeq, AreaTree areaTree)
             throws FOPException;
 }

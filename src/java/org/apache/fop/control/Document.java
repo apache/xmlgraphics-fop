@@ -103,6 +103,7 @@ public class Document implements FOTreeControl, FOTreeListener {
 
     /**
      * Main constructor
+     * @param driver the Driver object that is the "parent" of this Document
      */
     public Document(Driver driver) {
         this.driver = driver;
@@ -303,6 +304,10 @@ public class Document implements FOTreeControl, FOTreeListener {
         return layoutStrategy;
     }
 
+    /**
+     * Public accessor for the parent Driver of this Document
+     * @return the parent Driver for this Document
+     */
     public Driver getDriver() {
         return driver;
     }

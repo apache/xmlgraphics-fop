@@ -67,6 +67,7 @@ public class LayoutManagerLS extends LayoutStrategy {
     /**
      * Runs the formatting of this page sequence into the given area tree
      *
+     * @param pageSeq the PageSequence to be formatted
      * @param areaTree the area tree to format this page sequence into
      * @throws FOPException if there is an error formatting the contents
      */
