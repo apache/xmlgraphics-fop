@@ -213,7 +213,7 @@ public abstract class AbstractFOPTranscoder extends SVGAbstractTranscoder
                 return ((Float)getTranscodingHints().get(key)).floatValue();
             } else {
                 // return 0.3528f; // 72 dpi
-                return 0.26458333333333333333333333333333f;    // 96dpi
+                return 25.4f / 96; //96dpi = 0.2645833333333333333f;
             }
         }
 
