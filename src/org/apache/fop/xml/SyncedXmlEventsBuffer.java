@@ -69,7 +69,7 @@ public class SyncedXmlEventsBuffer extends SyncedCircularBuffer {
         XMLEvent ev;
         try {
             ev = (XMLEvent)get();
-            System.out.println("getEvent: " + ev);
+            //System.out.println("getEvent: " + ev);
             return ev;
         } catch (InterruptedException e) {
             throw new FOPException(e);
@@ -450,11 +450,11 @@ public class SyncedXmlEventsBuffer extends SyncedCircularBuffer {
                 } catch (NoSuchElementException e) {
                     // Keep trying
                 }
-            } else if (o instanceof XMLEvent.UriLocalName) {
+            } else if (o instanceof UriLocalName) {
                 try {
                     ev = expectStartElement
-                            (((XMLEvent.UriLocalName) o).getUriIndex(),
-                             ((XMLEvent.UriLocalName) o).getLocalName(),
+                            (((UriLocalName) o).uriIndex,
+                             ((UriLocalName) o).localName,
                              discardWhiteSpace);
                     // Found it!
                     return ev;
@@ -473,7 +473,7 @@ public class SyncedXmlEventsBuffer extends SyncedCircularBuffer {
      * Get one of a array of possible STARTELEMENT events.  Scan and discard
      * events until a STARTELEMENT event is found whose URI index and
      * local name matches one of those in the argument
-     * <tt>XMLEvent.UriLocalName[]</tt> array.
+     * <tt>UriLocalName[]</tt> array.
      * @param list an array containing <tt>UriLocalName</tt>
      * objects with the URI index and local name of
      * @param discardWhiteSpace - if true, discard any <tt>characters</tt>
@@ -484,7 +484,7 @@ public class SyncedXmlEventsBuffer extends SyncedCircularBuffer {
      * @exception NoSuchElementException if the event is not found
      */
     public XMLEvent getStartElement
-                    (XMLEvent.UriLocalName[] list, boolean discardWhiteSpace)
+                    (UriLocalName[] list, boolean discardWhiteSpace)
         throws FOPException
     {
         XMLEvent ev;
@@ -509,8 +509,8 @@ public class SyncedXmlEventsBuffer extends SyncedCircularBuffer {
     /**
      * Expect one of an array of possible STARTELEMENT events.  The next
      * STARTELEMENT must have a URI index and local name which match
-     * an element of the argument <tt>XMLEvent.UriLocalName[]</tt> list.
-     * @param list an <tt>XMLEvent.UriLocalName[]</tt> array containing the
+     * an element of the argument <tt>UriLocalName[]</tt> list.
+     * @param list an <tt>UriLocalName[]</tt> array containing the
      * namespace Uri index and LocalName
      * of possible events, one of which must be the next returned.
      * @param discardWhiteSpace - if true, discard any <tt>characters</tt>
@@ -520,14 +520,14 @@ public class SyncedXmlEventsBuffer extends SyncedCircularBuffer {
      * @exception NoSuchElementException if the event is not found
      */
     public XMLEvent expectStartElement
-                    (XMLEvent.UriLocalName[] list, boolean discardWhiteSpace)
+                    (UriLocalName[] list, boolean discardWhiteSpace)
         throws FOPException
     {
         XMLEvent ev;
         for (int i = 0; i < list.length; i++) {
             try {
-                ev = expectStartElement(list[i].getUriIndex(),
-                                        list[i].getLocalName(),
+                ev = expectStartElement(list[i].uriIndex,
+                                        list[i].localName,
                                         discardWhiteSpace);
                 // Found it!
                 return ev;
