@@ -1,128 +1,132 @@
-<transform xmlns="http://www.w3.org/1999/XSL/Transform"
- xmlns:xt="http://www.jclark.com/xt" element-prefixes="xt"
- version="1.0">
-<template match="property" priority="-1">
-<variable name="classname" select="class-name"/>
-<xt:document method="text" href="org/apache/fop/fo/properties/{$classname}.java">
+<xsl:stylesheet version="1.0"
+                xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
+                xmlns:lxslt="http://xml.apache.org/xslt"
+                xmlns:redirect="org.apache.xalan.xslt.extensions.Redirect"
+                extension-element-prefixes="redirect">
+<xsl:output method="text" />
+
+<xsl:template match="property" priority="-1">
+<xsl:variable name="classname" select="class-name"/>
+<redirect:write select="concat('org/apache/fop/fo/properties/', $classname, '.java')">
 package org.apache.fop.fo.properties;
 
 import org.apache.fop.datatypes.*;
 import org.apache.fop.fo.*;
 import org.apache.fop.apps.FOPException;
 
-public class <value-of select="class-name"/> extends Property {
+public class <xsl:value-of select="class-name"/> extends Property {
 
   public static class Maker extends Property.Maker {
-    public boolean isInherited() { return <value-of select="inherited"/>; }
+    public boolean isInherited() { return <xsl:value-of select="inherited"/>; }
 
     public Property make(PropertyList propertyList, String value) throws FOPException {
-<choose>
-<when test="make">
-      <variable name="datatype" select="datatype"/>
-      <value-of select="$datatype"/> v;
-<if test="make/to-double">
+<xsl:choose>
+<xsl:when test="make">
+      <xsl:variable name="datatype" select="datatype"/>
+      <xsl:value-of select="$datatype"/> v;
+<xsl:if test="make/to-double">
       double d = toDouble(value);
-</if>
-<for-each select="make/if">
-      if (value.equals("<value-of select="@match"/>")) {
-        v = new <value-of select="$datatype"/>(<value-of select="."/>);
+</xsl:if>
+<xsl:for-each select="make/if">
+      if (value.equals("<xsl:value-of select="@match"/>")) {
+        v = new <xsl:value-of select="$datatype"/>(<xsl:value-of select="."/>);
       }
-</for-each>
-<for-each select="make/else-if-number">
+</xsl:for-each>
+<xsl:for-each select="make/else-if-number">
       else if (!Double.isNaN(d)) {
-        v = new <value-of select="$datatype"/>( <value-of select="."/>);
+        v = new <xsl:value-of select="$datatype"/>( <xsl:value-of select="."/>);
       }
-</for-each>
+</xsl:for-each>
       else {
-        v = new <value-of select="datatype"/>(<value-of select="make/else"/>);
+        v = new <xsl:value-of select="datatype"/>(<xsl:value-of select="make/else"/>);
       }
-      return new <value-of select="class-name"/>(propertyList, v);
-</when>
-<otherwise>
-      return new <value-of select="class-name"/>(propertyList, new <value-of select="datatype"/>(value));
-</otherwise>
-</choose>
+      return new <xsl:value-of select="class-name"/>(propertyList, v);
+</xsl:when>
+<xsl:otherwise>
+      return new <xsl:value-of select="class-name"/>(propertyList, new <xsl:value-of select="datatype"/>(value));
+</xsl:otherwise>
+</xsl:choose>
     }
 
     public Property make(PropertyList propertyList) throws FOPException {
-      return make(propertyList, "<value-of select="default"/>");
+      return make(propertyList, "<xsl:value-of select="default"/>");
     }
   }
 
   public static Property.Maker maker() {
-    return new <value-of select="class-name"/>.Maker();
+    return new <xsl:value-of select="class-name"/>.Maker();
   }
 
-  private <value-of select="datatype"/> value;
+  private <xsl:value-of select="datatype"/> value;
 
-  public <value-of select="class-name"/>(PropertyList propertyList, <value-of select="datatype"/> explicitValue) {
+  public <xsl:value-of select="class-name"/>(PropertyList propertyList, <xsl:value-of select="datatype"/> explicitValue) {
     this.propertyList = propertyList;
     this.value = explicitValue;
   }
 
-  public <value-of select="datatype"/> get<value-of select="datatype"/>() {
+  public <xsl:value-of select="datatype"/> get<xsl:value-of select="datatype"/>() {
     return this.value;
   }
 
 }
-</xt:document>
-</template>
+</redirect:write>
+</xsl:template>
 
-<template match="property[datatype/enumeration]">
-<variable name="classname" select="class-name"/>
-<xt:document method="text" href="org/apache/fop/fo/properties/{$classname}.java">
+<xsl:template match="property[datatype/enumeration]">
+<xsl:variable name="classname" select="class-name"/>
+<redirect:write select="concat('org/apache/fop/fo/properties/', $classname, '.java')">
 package org.apache.fop.fo.properties;
 
 import org.apache.fop.datatypes.*;
 import org.apache.fop.fo.*;
 import org.apache.fop.apps.FOPException;
 
-public class <value-of select="class-name"/> extends Property {
-<for-each select="datatype/enumeration/value">
-  public final static int <value-of select="@const"/> = <number/>;</for-each>
+public class <xsl:value-of select="class-name"/> extends Property {
+<xsl:for-each select="datatype/enumeration/value">
+  public final static int <xsl:value-of select="@const"/> = <xsl:number/>;</xsl:for-each>
 
   public static class Maker extends Property.Maker {
-    public boolean isInherited() { return <value-of select="inherited"/>; }
+    public boolean isInherited() { return <xsl:value-of select="inherited"/>; }
 
     public Property make(PropertyList propertyList, String value) throws FOPException {
       int v;
-      <for-each select="datatype/enumeration/value">
-      if (value.equals("<value-of select="."/>")) { v = <value-of select="@const"/>; }
-      else</for-each>
+      <xsl:for-each select="datatype/enumeration/value">
+      if (value.equals("<xsl:value-of select="."/>")) { v = <xsl:value-of select="@const"/>; }
+      else</xsl:for-each>
       {
-        System.err.println("WARNING: Unknown value for <value-of select="name"/>: " + value);
-        return make(propertyList, "<value-of select="default"/>");
+        System.err.println("WARNING: Unknown value for <xsl:value-of select="name"/>: " + value);
+        return make(propertyList, "<xsl:value-of select="default"/>");
       }
-      return new <value-of select="class-name"/>(propertyList, v);
+      return new <xsl:value-of select="class-name"/>(propertyList, v);
     }
 
     public Property make(PropertyList propertyList) throws FOPException {
-      return make(propertyList, "<value-of select="default"/>");
+      return make(propertyList, "<xsl:value-of select="default"/>");
     }
-    <if test="derive">
+    <xsl:if test="derive">
     public Property compute(PropertyList propertyList) {
       Property computedProperty = null;
-      Property correspondingProperty = propertyList.get("<value-of select="derive/@from"/>");
+      Property correspondingProperty = propertyList.get("<xsl:value-of select="derive/@from"/>");
       if (correspondingProperty != null) {
         int correspondingValue = correspondingProperty.getEnum();
-        <for-each select="derive/if">
-        if (correspondingValue == <value-of select="@match"/>)
-          computedProperty = new <value-of select="$classname"/>(propertyList, <value-of select="."/>);
-        else</for-each>
+        <xsl:for-each select="derive/if">
+        if (correspondingValue == <xsl:value-of select="@match"/>)
+          computedProperty = new <xsl:value-of select="$classname"/>(propertyList, <xsl:value-of select="."/>);
+        else</xsl:for-each>
         ;
       }
       return computedProperty;
     }
-    </if>
+    </xsl:if>
   }
 
   public static Property.Maker maker() {
-    return new <value-of select="class-name"/>.Maker();
+    return new <xsl:value-of select="class-name"/>.Maker();
   }
 
   private int value;
 
-  public <value-of select="class-name"/>(PropertyList propertyList, int explicitValue) {
+  public <xsl:value-of select="class-name"/>(PropertyList propertyList, int explicitValue) {
     this.propertyList = propertyList;
     this.value = explicitValue;
   }
@@ -132,6 +136,7 @@ public class <value-of select="class-name"/> extends Property {
   }
 
 }
-</xt:document>
-</template>
-</transform>
+</redirect:write>
+</xsl:template>
+</xsl:stylesheet>
+
