@@ -719,7 +719,30 @@
       </fo:block>
 
 
+      <fo:block text-align="start">Characters:
+        <fo:leader leader-pattern="use-content">abcd</fo:leader>
+      </fo:block>
 
+      <fo:block text-align="start">Set width:
+        <fo:leader leader-pattern="use-content"
+            leader-pattern-width="50pt">abcd</fo:leader>
+      </fo:block>
+
+      <fo:block text-align="start">Small Width:
+        <fo:leader leader-pattern="use-content"
+                   leader-pattern-width="2pt">abcd</fo:leader>
+      </fo:block>
+
+      <fo:block text-align="start">SVG:
+        <fo:leader leader-pattern="use-content">
+<fo:instream-foreign-object>
+<svg xmlns="http://www.w3.org/2000/svg" width="10" height="10">
+<rect x="0" y="0" width="5" height="5" style="fill:red"/>
+<rect x="5" y="5" width="5" height="5" style="fill:black"/>
+</svg>
+</fo:instream-foreign-object>
+        </fo:leader>
+      </fo:block>
     </fo:flow>
   </fo:page-sequence>
 </fo:root>
