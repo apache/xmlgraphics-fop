@@ -70,16 +70,16 @@ public class RtfListStyleNumber extends RtfListStyle {
      * 
      * @see org.apache.fop.render.rtf.rtflib.rtfdoc.RtfListStyle#writeListPrefix()
      */
-    public void writeListPrefix(RtfList list)
+    public void writeListPrefix(RtfListItem item)
     throws IOException {
-        list.writeControlWord("pnlvlbody");
-        list.writeControlWord("ilvl0");
-        list.writeOneAttribute(RtfListTable.LIST_NUMBER, "0");
-        list.writeControlWord("pndec");
-        list.writeOneAttribute("pnstart", new Integer(1));
-        list.writeOneAttribute("pnindent",
-                list.attrib.getValue(RtfListTable.LIST_INDENT));
-        list.writeControlWord("pntxta.");
+        item.writeControlWord("pnlvlbody");
+        item.writeControlWord("ilvl0");
+        item.writeOneAttribute(RtfListTable.LIST_NUMBER, "0");
+        item.writeControlWord("pndec");
+        item.writeOneAttribute("pnstart", new Integer(1));
+        item.writeOneAttribute("pnindent",
+                item.attrib.getValue(RtfListTable.LIST_INDENT));
+        item.writeControlWord("pntxta.");
     }
     
     /**
