@@ -32,17 +32,38 @@ import org.apache.fop.fo.flow.FoPageSequence;
 public class RegionBodyVport extends RegionViewport {
 
     /**
+     * @param area
      * @param parent
      * @param sync
-     * @param viewArea
      */
     public RegionBodyVport(
-            Rectangle2D viewArea,
+            Rectangle2D area,
             FoPageSequence pageSeq,
             FONode generatedBy,
             Node parent,
             Object sync) {
-        super(viewArea, pageSeq, generatedBy, parent, sync);
+        super(area, pageSeq, generatedBy, parent, sync);
     }
 
+    /**
+     * @param parent
+     * @param sync
+     */
+    public RegionBodyVport(
+            FoPageSequence pageSeq,
+            FONode generatedBy,
+            Node parent,
+            Object sync) {
+        super(pageSeq, generatedBy, parent, sync);
+    }
+
+    public static RegionBodyVport nullRegionBodyVport(
+            FoPageSequence pageSeq, FONode generatedBy,
+            Node parent, Object sync) {
+        RegionBodyVport vport =
+            new RegionBodyVport(pageSeq, generatedBy, parent, sync);
+        vport.setRegion(RegionBodyRefArea.nullRegionBodyRef(
+                pageSeq, generatedBy, vport, sync));
+        return vport;
+    }
 }

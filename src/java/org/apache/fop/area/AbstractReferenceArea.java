@@ -19,6 +19,7 @@
 package org.apache.fop.area;
 
 import java.awt.geom.AffineTransform;
+import java.awt.geom.Rectangle2D;
 
 import org.apache.fop.datastructs.Node;
 import org.apache.fop.fo.FONode;
@@ -47,6 +48,22 @@ public abstract class AbstractReferenceArea
             Node parent,
             Object sync) {
         super(pageSeq, generatedBy, parent, sync);
+        // TODO Auto-generated constructor stub
+    }
+
+    /**
+     * @param pageSeq through which this area was generated
+     * @param generatedBy the given <code>FONode</code> generated this
+     * @param parent area of this
+     * @param sync object on which operations in this are synchronized
+     */
+    public AbstractReferenceArea(
+            Rectangle2D area,
+            FoPageSequence pageSeq,
+            FONode generatedBy,
+            Node parent,
+            Object sync) {
+        super(area, pageSeq, generatedBy, parent, sync);
         // TODO Auto-generated constructor stub
     }
 

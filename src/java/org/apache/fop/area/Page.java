@@ -28,6 +28,7 @@ import java.util.Map;
 import org.apache.fop.datastructs.Node;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.flow.FoPageSequence;
+import org.apache.fop.fo.pagination.FoSimplePageMaster;
 import org.apache.fop.fo.properties.RetrievePosition;
 
 /**
@@ -54,7 +55,7 @@ public class Page extends AreaNode implements Cloneable {
     }
 
     /**
-     * Create a page viewport.
+     * Create a page.
      * @param parent node of this viewport
      * @param sync object on which the Area is synchronized
      * @param pageId the unique identifier of this page
@@ -69,6 +70,38 @@ public class Page extends AreaNode implements Cloneable {
         this.pageId = pageId;
     }
 
+    /**
+     * Creates a null page, consisting of
+     * <ul>
+     * <li>a <code>PageViewport</code>/<code>PageRefArea</code> pair</li>
+     * <li>a set of region viewport/reference-area pairs
+     *   <ul>
+     *     <li><code>RegionBodyVPort</code>/<code>RegionBodyRefArea</code>
+     *       <ul>
+     *         <li><code>MainReferenceArea</code></li>
+     *         <li><code>SpanReferenceArea</code></li>
+     *         <li><code>NormalFlowRefArea</code></li>
+     *       </ul>
+     *     </li>
+     *     <li><code>RegionBeforeVPort</code>/<code>RegionBeforeRefArea</code>
+     *     </li>
+     *     <li><code>RegionAfterVPort</code>/<code>RegionAfterRefArea</code>
+     *     </li>
+     *     <li><code>RegionStartVPort</code>/<code>RegionStartRefArea</code>
+     *     </li>
+     *     <li><code>RegionEndVPort</code>/<code>RegionEndRefArea</code>
+     *     </li>
+     *   </ul>
+     * </li>
+     * </ul>
+     * 
+     */
+    public void setupNullPage() {
+        
+    }
+
+    /** The <code>simple-page-master</code> that generated this page. */
+    protected FoSimplePageMaster pageMaster = null; 
     /** Unique ID for this page.  0 is an invalid ID.  */
     private long pageId = 0;
     /** The formatted page number */
