@@ -164,8 +164,9 @@ public class SVGElement extends SVGObj {
         float pixeltoMM;
 
         public PDFUnitContext(int size, Element e, float ptmm) {
-            this.e  = e;
+            this.e = e;
             this.fontSize = size;
+            this.pixeltoMM = ptmm;
         }
 
         /**
@@ -176,7 +177,7 @@ public class SVGElement extends SVGObj {
         }
 
         /**
-      * Returns the context of the parent element of this context.
+         * Returns the context of the parent element of this context.
          * Since this is always for the root SVG element there never
          * should be one...
          */
@@ -192,13 +193,6 @@ public class SVGElement extends SVGObj {
         }
         public float getPixelUnitToMillimeter() {
             return pixeltoMM;
-        }
-
-        /**
-         * Returns the font-size medium value in pt.
-         */
-        public float getMediumFontSize() {
-            return 9f;
         }
 
         /**
