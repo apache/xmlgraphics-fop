@@ -18,13 +18,13 @@ import javax.swing.JComponent.*;
  * @author S. Gorkhover
  * @version 18.03.1999
  *
- * @changed 23.04.99 Juergen.Verwohlt@af-software.de
+ * @changed 23.04.99 Juergen.Verwohlt@jCatalog.com
  * @subject Weitere Ausgabemethoden: show(String, String) und show(String,String,Frame)
  *
- * @changed 28.05.99 Juergen.Verwohlt@af-software.de
+ * @changed 28.05.99 Juergen.Verwohlt@jCatalog.com
  * @subject MessageException unterstützen
  *
- * @changed 09.06.99 Juergen.Verwohlt@af-software.de
+ * @changed 09.06.99 Juergen.Verwohlt@jCatalog.com
  * @subject Neue Klasse MessagesException zur Anzeige verwenden
  */
 public class UserMessage {

@@ -5,7 +5,7 @@ package org.apache.fop.viewer;
  * Definition für die Übersetzer-Klassen.
  *
  * @version 03.12.99
- * @author Stanislav.Gorkhover@af-software.de
+ * @author Stanislav.Gorkhover@jCatalog.com
  *
  */
 public interface Translator {
