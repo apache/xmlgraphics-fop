@@ -25,6 +25,15 @@ import org.xml.sax.Attributes;
 
 // FOP
 import org.apache.fop.apps.FOPException;
+import org.apache.fop.fo.properties.CommonAbsolutePosition;
+import org.apache.fop.fo.properties.CommonAccessibility;
+import org.apache.fop.fo.properties.CommonAural;
+import org.apache.fop.fo.properties.CommonBorderPaddingBackground;
+import org.apache.fop.fo.properties.CommonFont;
+import org.apache.fop.fo.properties.CommonHyphenation;
+import org.apache.fop.fo.properties.CommonMarginBlock;
+import org.apache.fop.fo.properties.CommonMarginInline;
+import org.apache.fop.fo.properties.CommonRelativePosition;
 import org.apache.fop.fo.properties.Property;
 import org.apache.fop.fo.properties.PropertyMaker;
 
@@ -386,6 +395,14 @@ public class PropertyList extends HashMap {
     }
 
     /**
+     * Return the "writing-mode" property value. 
+     * @return The "writing-mode" property value.
+     */
+    public int getWritingMode() {
+        return writingMode;
+    }
+
+    /**
      * Uses the stored writingMode.
      * @param absdir an absolute direction (top, bottom, left, right)
      * @return the corresponding writing model relative direction name
@@ -647,6 +664,81 @@ public class PropertyList extends HashMap {
             return FObj.propertyListTable[propId];
         }
     }
+
+    /**
+     * Constructs a BorderAndPadding object.
+     * @return a BorderAndPadding object
+     */
+    public CommonBorderPaddingBackground getBorderPaddingBackgroundProps() {
+        return new CommonBorderPaddingBackground(this);
+    }
     
+
+    
+    /**
+     * Constructs a HyphenationProps objects.
+     * @return a HyphenationProps object
+     */
+    public CommonHyphenation getHyphenationProps() {
+        return new CommonHyphenation();
+    }
+    
+    /**
+     * Constructs a MarginProps objects.
+     * @return a MarginProps object
+     */
+    public CommonMarginBlock getMarginBlockProps() {
+        return new CommonMarginBlock();
+    }
+    
+    /**
+     * Constructs a MarginInlineProps objects.
+     * @return a MarginInlineProps object
+     */
+    public CommonMarginInline getMarginInlineProps() {
+        return new CommonMarginInline();
+    }
+    
+    /**
+     * Constructs a AccessibilityProps objects. 
+     * @return a AccessibilityProps object
+     */
+    public CommonAccessibility getAccessibilityProps() {
+        return new CommonAccessibility();
+    }
+
+    /**
+     * Constructs a AuralProps objects.
+     * @return a AuralProps object
+     */
+    public CommonAural getAuralProps() {
+        CommonAural props = new CommonAural();
+        return props;
+    }
+
+    /**
+     * Constructs a RelativePositionProps objects.
+     * @return a RelativePositionProps object
+     */
+    public CommonRelativePosition getRelativePositionProps() {
+        return new CommonRelativePosition();
+    }
+    
+    /**
+     * Constructs a AbsolutePositionProps objects.
+     * @return a AbsolutePositionProps object
+     */
+    public CommonAbsolutePosition getAbsolutePositionProps() {
+        return new CommonAbsolutePosition();
+    }    
+    
+
+    /**
+     * Constructs a CommonFont object. 
+     * @return A CommonFont object
+     */
+    public CommonFont getFontProps() {
+        return new CommonFont(this);
+    }
 }
 
