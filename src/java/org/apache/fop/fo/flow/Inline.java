@@ -66,7 +66,7 @@ public class Inline extends FObjMixed {
     private KeepProperty keepWithPrevious;
     private Length lineHeight;
     private int textDecoration;
-    // private ToBeImplementedProperty visibility;
+    private int visibility;
     private Length width;
     private int wrapOption;
     // End of property values
@@ -106,7 +106,7 @@ public class Inline extends FObjMixed {
         keepWithPrevious = pList.get(PR_KEEP_WITH_PREVIOUS).getKeep();
         lineHeight = pList.get(PR_LINE_HEIGHT).getLength();
         textDecoration = pList.get(PR_TEXT_DECORATION).getEnum();
-        // visibility = pList.get(PR_VISIBILITY);
+        visibility = pList.get(PR_VISIBILITY).getEnum();
         width = pList.get(PR_WIDTH).getLength();
         wrapOption = pList.get(PR_WRAP_OPTION).getEnum();
     }

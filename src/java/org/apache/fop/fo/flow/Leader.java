@@ -71,7 +71,7 @@ public class Leader extends FObjMixed {
     // private ToBeImplementedProperty letterSpacing;
     private Length lineHeight;
     // private ToBeImplementedProperty textShadow;
-    // private ToBeImplementedProperty visibility;
+    private int visibility;
     private SpaceProperty wordSpacing;
     // End of property values
 
@@ -126,7 +126,7 @@ public class Leader extends FObjMixed {
         // letterSpacing = pList.get(PR_LETTER_SPACING);
         lineHeight = pList.get(PR_LINE_HEIGHT).getLength();
         // textShadow = pList.get(PR_TEXT_SHADOW);
-        // visibility = pList.get(PR_VISIBILITY);
+        visibility = pList.get(PR_VISIBILITY).getEnum();
         wordSpacing = pList.get(PR_WORD_SPACING).getSpace();
     }
 

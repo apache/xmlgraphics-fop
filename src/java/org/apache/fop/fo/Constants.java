@@ -540,7 +540,16 @@ public interface Constants {
     int COLLAPSE_WITH_PRECEDENCE = 149;
     int SHOW = 150;
     int HIDE = 151;
-    int ENUM_COUNT = 151;
+    int EMBED = 152;
+    int BIDI_OVERRIDE = 153;
+    int LTR = 154;
+    int RTL = 155;
+    int CHARACTER_BY_CHARACTER = 156;
+    int SUPPRESS = 157;
+    int PAGINATE = 158;
+    int BOUNDED_IN_ONE_DIMENSION = 159;
+    int UNBOUNDED = 160;
+    int ENUM_COUNT = 160;
 
    // Enumeration Interfaces
    

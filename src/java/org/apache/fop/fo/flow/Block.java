@@ -91,7 +91,7 @@ public class Block extends FObjMixed {
     private KeepProperty keepTogether;
     private KeepProperty keepWithNext;
     private KeepProperty keepWithPrevious;
-    // private ToBeImplementedProperty lastLineEndIndent;
+    private Length lastLineEndIndent;
     private int linefeedTreatment;
     private SpaceProperty lineHeight;
     private int lineHeightShiftAdjustment;
@@ -102,7 +102,7 @@ public class Block extends FObjMixed {
     private int textAlign;
     private int textAlignLast;
     private Length textIndent;
-    // private ToBeImplementedProperty visibility;
+    private int visibility;
     private int whiteSpaceCollapse;
     private Numeric widows;
     private int wrapOption;
@@ -149,7 +149,7 @@ public class Block extends FObjMixed {
         keepTogether = pList.get(PR_KEEP_TOGETHER).getKeep();
         keepWithNext = pList.get(PR_KEEP_WITH_NEXT).getKeep();
         keepWithPrevious = pList.get(PR_KEEP_WITH_PREVIOUS).getKeep();
-        // lastLineEndIndent = pList.get(PR_LAST_LINE_END_INDENT);
+        lastLineEndIndent = pList.get(PR_LAST_LINE_END_INDENT).getLength();
         linefeedTreatment = pList.get(PR_LINEFEED_TREATMENT).getEnum();
         lineHeight = pList.get(PR_LINE_HEIGHT).getSpace();
         lineHeightShiftAdjustment = pList.get(PR_LINE_HEIGHT_SHIFT_ADJUSTMENT).getEnum();
@@ -160,7 +160,7 @@ public class Block extends FObjMixed {
         textAlign = pList.get(PR_TEXT_ALIGN).getEnum();
         textAlignLast = pList.get(PR_TEXT_ALIGN_LAST).getEnum();
         textIndent = pList.get(PR_TEXT_INDENT).getLength();
-        // visibility = pList.get(PR_VISIBILITY);
+        visibility = pList.get(PR_VISIBILITY).getEnum();
         whiteSpaceCollapse = pList.get(PR_WHITE_SPACE_COLLAPSE).getEnum();
         widows = pList.get(PR_WIDOWS).getNumeric();
         wrapOption = pList.get(PR_WRAP_OPTION).getEnum();

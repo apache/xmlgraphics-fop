@@ -56,7 +56,7 @@ public class ExternalGraphic extends FObj {
     private LengthRangeProperty blockProgressionDimension;
     // private ToBeImplementedProperty clip;
     private Length contentHeight;
-    // private ToBeImplementedProperty contentType;
+    private String contentType;
     private Length contentWidth;
     private int displayAlign;
     private int dominantBaseline;
@@ -99,7 +99,7 @@ public class ExternalGraphic extends FObj {
         blockProgressionDimension = pList.get(PR_BLOCK_PROGRESSION_DIMENSION).getLengthRange();
         // clip = pList.get(PR_CLIP);
         contentHeight = pList.get(PR_CONTENT_HEIGHT).getLength();
-        // contentType = pList.get(PR_CONTENT_TYPE);
+        contentType = pList.get(PR_CONTENT_TYPE).getString();
         contentWidth = pList.get(PR_CONTENT_WIDTH).getLength();
         displayAlign = pList.get(PR_DISPLAY_ALIGN).getEnum();
         dominantBaseline = pList.get(PR_DOMINANT_BASELINE).getEnum();

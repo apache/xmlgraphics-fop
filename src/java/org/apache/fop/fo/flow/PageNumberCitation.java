@@ -63,13 +63,13 @@ public class PageNumberCitation extends FObj {
     // private ToBeImplementedProperty letterSpacing;
     private Length lineHeight;
     private String refId;
-    // private ToBeImplementedProperty scoreSpaces;
+    private int scoreSpaces;
     private Length textAltitude;
     private int textDecoration;
     private Length textDepth;
     // private ToBeImplementedProperty textShadow;
     private int textTransform;
-    // private ToBeImplementedProperty visibility;
+    private int visibility;
     private SpaceProperty wordSpacing;
     private int wrapOption;
     // End of property values
@@ -101,13 +101,13 @@ public class PageNumberCitation extends FObj {
         // letterSpacing = pList.get(PR_LETTER_SPACING);
         lineHeight = pList.get(PR_LINE_HEIGHT).getLength();
         refId = pList.get(PR_REF_ID).getString();
-        // scoreSpaces = pList.get(PR_SCORE_SPACES);
+        scoreSpaces = pList.get(PR_SCORE_SPACES).getEnum();
         textAltitude = pList.get(PR_TEXT_ALTITUDE).getLength();
         textDecoration = pList.get(PR_TEXT_DECORATION).getEnum();
         textDepth = pList.get(PR_TEXT_DEPTH).getLength();
         // textShadow = pList.get(PR_TEXT_SHADOW);
         textTransform = pList.get(PR_TEXT_TRANSFORM).getEnum();
-        // visibility = pList.get(PR_VISIBILITY);
+        visibility = pList.get(PR_VISIBILITY).getEnum();
         wordSpacing = pList.get(PR_WORD_SPACING).getSpace();
         wrapOption = pList.get(PR_WRAP_OPTION).getEnum();
     }

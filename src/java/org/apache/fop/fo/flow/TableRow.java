@@ -58,7 +58,7 @@ public class TableRow extends FObj {
     private KeepProperty keepTogether;
     private KeepProperty keepWithNext;
     private KeepProperty keepWithPrevious;
-    // private ToBeImplementedProperty visibility;
+    private int visibility;
     // End of property values
     
     private boolean setup = false;
@@ -90,7 +90,7 @@ public class TableRow extends FObj {
         keepTogether = pList.get(PR_KEEP_TOGETHER).getKeep();
         keepWithNext = pList.get(PR_KEEP_WITH_NEXT).getKeep();
         keepWithPrevious = pList.get(PR_KEEP_WITH_PREVIOUS).getKeep();
-        // visibility = pList.get(PR_VISIBILITY);
+        visibility = pList.get(PR_VISIBILITY).getEnum();
     }
 
     /**
