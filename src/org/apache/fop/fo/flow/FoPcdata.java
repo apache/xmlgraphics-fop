@@ -104,23 +104,32 @@ public class FoPcdata extends FONode {
     private String characters;
 
     /**
+     * Construct an FoPcdata object to contain the characers from a
+     * character data node.  There is no corresponding Flow Obect in the
+     * specification.
      * @param foTree the FO tree being built
      * @param parent the parent FONode of this node
      * @param event the <tt>FoXMLEvent</tt> that triggered the creation of
      * this node
-     * @param attrSet the index of the attribute set applying to the node.
+     * @param stateFlags - passed down from the parent.  Includes the
+     * attribute set information.
      */
     public FoPcdata
-                (FOTree foTree, FONode parent, FoXMLEvent event, int attrSet)
+            (FOTree foTree, FONode parent, FoXMLEvent event, int stateFlags)
         throws TreeException, FOPException
     {
         super(foTree, FObjectNames.PCDATA, parent, event,
-                          attrSet, sparsePropsMap, sparseIndices);
+                          stateFlags, sparsePropsMap, sparseIndices);
         characters = event.getChars();
-        FoXMLEvent ev;
-        String nowProcessing;
-
         makeSparsePropsSet();
+    }
+
+    /**
+     * Get the <tt>String</tt> data of the node.
+     * @return the string of characters.
+     */
+    public String getCharacters() {
+        return characters;
     }
 
 }
