@@ -69,7 +69,7 @@ public class PDFRenderer extends PrintRenderer {
     PDFPage currentPage;
 
     PDFColor currentColor;
-    
+
     /** true if a TJ command is left to be written */
     boolean textOpen = false;
 
@@ -88,7 +88,7 @@ public class PDFRenderer extends PrintRenderer {
 
     /** reusable word area string buffer to reduce memory usage */
     private StringBuffer _wordAreaPDF = new StringBuffer();
-    
+
     /**
      * create the PDF renderer
      */
@@ -97,20 +97,20 @@ public class PDFRenderer extends PrintRenderer {
     }
 
     /**
-        * set the PDF document's producer
-        *
-        * @param producer string indicating application producing PDF
-        */
+     * set the PDF document's producer
+     *
+     * @param producer string indicating application producing PDF
+     */
     public void setProducer(String producer) {
         this.pdfDoc.setProducer(producer);
     }
 
     /**
-        * render the areas into PDF
-        *
-        * @param areaTree the laid-out area tree
-        * @param stream the OutputStream to write the PDF to
-        */
+     * render the areas into PDF
+     *
+     * @param areaTree the laid-out area tree
+     * @param stream the OutputStream to write the PDF to
+     */
     public void render(AreaTree areaTree,
                        OutputStream stream) throws IOException, FOPException {
         MessageHandler.logln("rendering areas to PDF");
@@ -137,17 +137,17 @@ public class PDFRenderer extends PrintRenderer {
     }
 
     /**
-        * add a line to the current stream
-        *
-        * @param x1 the start x location in millipoints
-        * @param y1 the start y location in millipoints
-        * @param x2 the end x location in millipoints
-        * @param y2 the end y location in millipoints
-        * @param th the thickness in millipoints
-        * @param r the red component
-        * @param g the green component
-        * @param b the blue component
-        */
+     * add a line to the current stream
+     *
+     * @param x1 the start x location in millipoints
+     * @param y1 the start y location in millipoints
+     * @param x2 the end x location in millipoints
+     * @param y2 the end y location in millipoints
+     * @param th the thickness in millipoints
+     * @param r the red component
+     * @param g the green component
+     * @param b the blue component
+     */
     protected void addLine(int x1, int y1, int x2, int y2, int th,
                            PDFPathPaint stroke) {
         closeText();
@@ -159,18 +159,18 @@ public class PDFRenderer extends PrintRenderer {
     }
 
     /**
-       * add a line to the current stream
-       *
-       * @param x1 the start x location in millipoints
-       * @param y1 the start y location in millipoints
-       * @param x2 the end x location in millipoints
-       * @param y2 the end y location in millipoints
-       * @param th the thickness in millipoints
-       * @param rs the rule style
-       * @param r the red component
-       * @param g the green component
-       * @param b the blue component
-       */
+     * add a line to the current stream
+     *
+     * @param x1 the start x location in millipoints
+     * @param y1 the start y location in millipoints
+     * @param x2 the end x location in millipoints
+     * @param y2 the end y location in millipoints
+     * @param th the thickness in millipoints
+     * @param rs the rule style
+     * @param r the red component
+     * @param g the green component
+     * @param b the blue component
+     */
     protected void addLine(int x1, int y1, int x2, int y2, int th,
                            int rs, PDFPathPaint stroke) {
         closeText();
@@ -181,14 +181,14 @@ public class PDFRenderer extends PrintRenderer {
     }
 
     /**
-        * add a rectangle to the current stream
-        *
-        * @param x the x position of left edge in millipoints
-        * @param y the y position of top edge in millipoints
-        * @param w the width in millipoints
-        * @param h the height in millipoints
-        * @param stroke the stroke color/gradient
-        */
+     * add a rectangle to the current stream
+     *
+     * @param x the x position of left edge in millipoints
+     * @param y the y position of top edge in millipoints
+     * @param w the width in millipoints
+     * @param h the height in millipoints
+     * @param stroke the stroke color/gradient
+     */
     protected void addRect(int x, int y, int w, int h,
                            PDFPathPaint stroke) {
         closeText();
@@ -198,15 +198,15 @@ public class PDFRenderer extends PrintRenderer {
     }
 
     /**
-        * add a filled rectangle to the current stream
-        *
-        * @param x the x position of left edge in millipoints
-        * @param y the y position of top edge in millipoints
-        * @param w the width in millipoints
-        * @param h the height in millipoints
-        * @param fill the fill color/gradient
-        * @param stroke the stroke color/gradient
-        */
+     * add a filled rectangle to the current stream
+     *
+     * @param x the x position of left edge in millipoints
+     * @param y the y position of top edge in millipoints
+     * @param w the width in millipoints
+     * @param h the height in millipoints
+     * @param fill the fill color/gradient
+     * @param stroke the stroke color/gradient
+     */
     protected void addRect(int x, int y, int w, int h,
                            PDFPathPaint stroke, PDFPathPaint fill) {
         closeText();
@@ -217,10 +217,10 @@ public class PDFRenderer extends PrintRenderer {
     }
 
     /**
-        * render image area to PDF
-        *
-        * @param area the image area to render
-        */
+     * render image area to PDF
+     *
+     * @param area the image area to render
+     */
     public void renderImageArea(ImageArea area) {
         // adapted from contribution by BoBoGi
         int x = this.currentAreaContainerXPosition + area.getXOffset();
@@ -321,15 +321,13 @@ public class PDFRenderer extends PrintRenderer {
     }
 
     /**
-        * render SVG area to PDF
-        *
-        * @param area the SVG area to render
-        */
+     * render SVG area to PDF
+     *
+     * @param area the SVG area to render
+     */
     public void renderSVGArea(SVGArea area) {
         // place at the current instream offset
         int x = this.currentXPosition;
-        // Buggy: Method getXOffset() not found in class org.apache.fop.dom.svg.SVGArea
-        //int x = this.currentAreaContainerXPosition + area.getXOffset();
         int y = this.currentYPosition;
         SVGSVGElement svg = area.getSVGDocument().getRootElement();
         int w = (int)(svg.getWidth().getBaseVal().getValue() * 1000);
@@ -337,30 +335,11 @@ public class PDFRenderer extends PrintRenderer {
         float sx = 1, sy = -1;
         int xOffset = x, yOffset = y;
 
-        // translate and scale according to viewbox.
-        if (svg.getViewBox () != null) {
-            SVGRect view = svg.getViewBox().getBaseVal();
-
-            // TODO take aspect constraints (attribute preserveAspectRatio)
-            // into account.
-            // Viewbox coordinates are all relative to the viewport
-            // (ie. the x,y,w and h values calculated above).
-            sx = svg.getWidth().getBaseVal().getValue() / view.getWidth ();
-            sy = svg.getHeight().getBaseVal().getValue() /
-                 view.getHeight ();
-
-            // move the origin
-            xOffset -= (int)(sx * view.getX () * 1000f);
-            yOffset -= (int)(sy * view.getY () * 1000f);
-
-            sy = -sy;
-        }
-
         /*
-          * Clip to the svg area.
-          * Note: To have the svg overlay (under) a text area then use
-          * an fo:block-container
-          */
+         * Clip to the svg area.
+         * Note: To have the svg overlay (under) a text area then use
+         * an fo:block-container
+         */
         currentStream.add("q\n");
         if (w != 0 && h != 0) {
             currentStream.add(x / 1000f + " " + y / 1000f + " m\n");
@@ -374,9 +353,9 @@ public class PDFRenderer extends PrintRenderer {
         }
         // transform so that the coordinates (0,0) is from the top left
         // and positive is down and to the right. (0,0) is where the
-	// viewBox puts it.
-        currentStream.add(sx + " 0 0 " + sy + " " +
-                          xOffset / 1000f + " " + yOffset / 1000f + " cm\n");
+        // viewBox puts it.
+        currentStream.add(sx + " 0 0 " + sy + " " + xOffset / 1000f +
+                          " " + yOffset / 1000f + " cm\n");
 
 
         SVGDocument doc = area.getSVGDocument();
@@ -387,17 +366,19 @@ public class PDFRenderer extends PrintRenderer {
         GraphicsNodeRenderContext rc = getRenderContext();
         BridgeContext ctx = new BridgeContext(userAgent, rc);
         GraphicsNode root;
-		//System.out.println("creating PDFGraphics2D");
-        PDFGraphics2D graphics = new PDFGraphics2D(true, area.getFontState(), pdfDoc,
-                          currentFontName, currentFontSize, currentXPosition,
-                          currentYPosition);
-        graphics.setGraphicContext(new org.apache.batik.ext.awt.g2d.GraphicContext());
+        //System.out.println("creating PDFGraphics2D");
+        PDFGraphics2D graphics =
+          new PDFGraphics2D(true, area.getFontState(), pdfDoc,
+                            currentFontName, currentFontSize, currentXPosition,
+                            currentYPosition);
+        graphics.setGraphicContext(
+          new org.apache.batik.ext.awt.g2d.GraphicContext());
         graphics.setRenderingHints(rc.getRenderingHints());
         try {
             root = builder.build(ctx, doc);
             root.paint(graphics, rc);
             currentStream.add(graphics.getString());
-        } catch(Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
 
@@ -409,207 +390,202 @@ public class PDFRenderer extends PrintRenderer {
         if (nodeRenderContext == null) {
             RenderingHints hints = new RenderingHints(null);
             hints.put(RenderingHints.KEY_ANTIALIASING,
-                  RenderingHints.VALUE_ANTIALIAS_ON);
+                      RenderingHints.VALUE_ANTIALIAS_ON);
 
             hints.put(RenderingHints.KEY_INTERPOLATION,
-                  RenderingHints.VALUE_INTERPOLATION_BILINEAR);
+                      RenderingHints.VALUE_INTERPOLATION_BILINEAR);
 
             FontRenderContext fontRenderContext =
-                new FontRenderContext(new AffineTransform(), true, true);
+              new FontRenderContext(new AffineTransform(), true,
+                                    true);
 
             TextPainter textPainter = new StrokingTextPainter();
 
             GraphicsNodeRableFactory gnrFactory =
-                new ConcreteGraphicsNodeRableFactory();
+              new ConcreteGraphicsNodeRableFactory();
 
-            nodeRenderContext =
-                new GraphicsNodeRenderContext(new AffineTransform(),
-                                          null,
-                                          hints,
-                                          fontRenderContext,
-                                          textPainter,
-                                          gnrFactory);
-                nodeRenderContext.setTextPainter(textPainter);
-            }
+            nodeRenderContext = new GraphicsNodeRenderContext(
+                                  new AffineTransform(), null, hints,
+                                  fontRenderContext, textPainter, gnrFactory);
+            nodeRenderContext.setTextPainter(textPainter);
+        }
 
         return nodeRenderContext;
     }
 
     /**
-        * render inline area to PDF
-        *
-        * @param area inline area to render
-        */
+     * render inline area to PDF
+     *
+     * @param area inline area to render
+     */
     public void renderWordArea(WordArea area) {
-	synchronized (_wordAreaPDF) {
-	    StringBuffer pdf = _wordAreaPDF;
-	    pdf.setLength(0);
-	
-	    Hashtable kerning = null;
-	    boolean kerningAvailable = false;
+        synchronized (_wordAreaPDF) {
+            StringBuffer pdf = _wordAreaPDF;
+            pdf.setLength(0);
 
-	    kerning = area.getFontState().getKerning();
-	    if (kerning != null && !kerning.isEmpty()) {
-		kerningAvailable = true;
-	    }
+            Hashtable kerning = null;
+            boolean kerningAvailable = false;
 
-	    String name = area.getFontState().getFontName();
-	    int size = area.getFontState().getFontSize();
+            kerning = area.getFontState().getKerning();
+            if (kerning != null && !kerning.isEmpty()) {
+                kerningAvailable = true;
+            }
 
-	    // This assumes that *all* CIDFonts use a /ToUnicode mapping
-	    boolean useMultiByte = false;
-	    Font f = (Font) area.getFontState().getFontInfo().getFonts().get(
-									     name);
-	    if (f instanceof CIDFont)
-		useMultiByte = true;
-	    //String startText = useMultiByte ? "<FEFF" : "(";
-	    String startText = useMultiByte ? "<" : "(";
-	    String endText = useMultiByte ? "> " : ") ";
-	
-	    if ((!name.equals(this.currentFontName)) ||
-                (size != this.currentFontSize)) {
-		closeText();
+            String name = area.getFontState().getFontName();
+            int size = area.getFontState().getFontSize();
 
-		this.currentFontName = name;
-		this.currentFontSize = size;
-		pdf = pdf.append("/" + name + " " + (size / 1000) + " Tf\n");
-	    }
-	
-	    PDFColor areaColor = null;
-	    if (this.currentFill instanceof PDFColor) {
-		areaColor = (PDFColor)this.currentFill;
-	    }
-	
-	    if (areaColor == null ||
-		areaColor.red()   != (double)area.getRed() ||
-		areaColor.green() != (double)area.getGreen() ||
-		areaColor.blue()  != (double)area.getBlue()) {
+            // This assumes that *all* CIDFonts use a /ToUnicode mapping
+            boolean useMultiByte = false;
+            Font f = (Font) area.getFontState().getFontInfo().getFonts().
+                     get(name);
+            if (f instanceof CIDFont)
+                useMultiByte = true;
+            //String startText = useMultiByte ? "<FEFF" : "(";
+            String startText = useMultiByte ? "<" : "(";
+            String endText = useMultiByte ? "> " : ") ";
 
-		areaColor = new PDFColor((double) area.getRed(),
-					 (double) area.getGreen(), 
-					 (double) area.getBlue());
-	    
+            if ((!name.equals(this.currentFontName)) ||
+                    (size != this.currentFontSize)) {
+                closeText();
 
-		closeText();
-		this.currentFill = areaColor;
-		pdf.append(this.currentFill.getColorSpaceOut(true));
-	    }
+                this.currentFontName = name;
+                this.currentFontSize = size;
+                pdf = pdf.append("/" + name + " " + (size / 1000) + " Tf\n");
+            }
+
+            PDFColor areaColor = null;
+            if (this.currentFill instanceof PDFColor) {
+                areaColor = (PDFColor) this.currentFill;
+            }
+
+            if (areaColor == null ||
+                    areaColor.red() != (double) area.getRed() ||
+                    areaColor.green() != (double) area.getGreen() ||
+                    areaColor.blue() != (double) area.getBlue()) {
+
+                areaColor = new PDFColor((double) area.getRed(),
+                                         (double) area.getGreen(), (double) area.getBlue());
 
 
-	    int rx = this.currentXPosition;
-	    int bl = this.currentYPosition;
+                closeText();
+                this.currentFill = areaColor;
+                pdf.append(this.currentFill.getColorSpaceOut(true));
+            }
 
-	    addWordLines(area, rx, bl, size, areaColor);
 
-     
-	    if (!textOpen || bl != prevWordY) {
-		closeText();
-	    
-		pdf.append("1 0 0 1 " +(rx / 1000f) + " " +
-			   (bl / 1000f) + " Tm [" + startText);
-		prevWordY = bl;
-		textOpen = true;
-	    } else {
-		// express the space between words in thousandths of an em
-		int space = prevWordX - rx + prevWordWidth;
-		float emDiff =
-		    (float) space / (float) currentFontSize * 1000f;
-		pdf.append(Float.toString(emDiff));
-		pdf.append(" ");
-		pdf.append(startText);
-	    }
-	    prevWordWidth = area.getContentWidth();
-	    prevWordX = rx;
-	
-	
-	    String s;
-	    if (area.getPageNumberID() != null) { // this text is a page number, so resolve it
-		s = idReferences.getPageNumber(area.getPageNumberID());
-		if (s == null) {
-		    s = "";
-		}
-	    } else {
-		s = area.getText();
-	    }
+            int rx = this.currentXPosition;
+            int bl = this.currentYPosition;
 
-	    int l = s.length();
+            addWordLines(area, rx, bl, size, areaColor);
 
-	    for (int i = 0; i < l; i++) {
-		char ch = s.charAt(i);
 
-		if (!useMultiByte) {
-		    if (ch > 127) {
-			pdf.append("\\");
-			pdf.append(Integer.toOctalString((int) ch));
-		    
-		    } else {
-			switch (ch) {
-			case '(':
-			case ')':
-			case '\\':
-			    pdf.append("\\");
-			    break;
-			}
-			pdf.append(ch);
-		    }
-		}
-		else {
-		    pdf.append(getUnicodeString(ch));
-		}
-	    
-		if (kerningAvailable && (i + 1) < l) {
-		    addKerning(pdf, (new Integer((int) ch)),
-			       (new Integer((int) s.charAt(i + 1))), kerning,
-			       startText, endText);
-		}
+            if (!textOpen || bl != prevWordY) {
+                closeText();
 
-	    }
-	    pdf.append(endText);
+                pdf.append("1 0 0 1 " +(rx / 1000f) + " " +
+                           (bl / 1000f) + " Tm [" + startText);
+                prevWordY = bl;
+                textOpen = true;
+            } else {
+                // express the space between words in thousandths of an em
+                int space = prevWordX - rx + prevWordWidth;
+                float emDiff =
+                  (float) space / (float) currentFontSize * 1000f;
+                pdf.append(Float.toString(emDiff));
+                pdf.append(" ");
+                pdf.append(startText);
+            }
+            prevWordWidth = area.getContentWidth();
+            prevWordX = rx;
 
-	    currentStream.add(pdf.toString());
 
-	    this.currentXPosition += area.getContentWidth();
+            String s;
+            if (area.getPageNumberID() != null) { // this text is a page number, so resolve it
+                s = idReferences.getPageNumber(area.getPageNumberID());
+                if (s == null) {
+                    s = "";
+                }
+            } else {
+                s = area.getText();
+            }
 
-	}
+            int l = s.length();
+
+            for (int i = 0; i < l; i++) {
+                char ch = s.charAt(i);
+
+                if (!useMultiByte) {
+                    if (ch > 127) {
+                        pdf.append("\\");
+                        pdf.append(Integer.toOctalString((int) ch));
+
+                    } else {
+                        switch (ch) {
+                            case '(':
+                            case ')':
+                            case '\\':
+                                pdf.append("\\");
+                                break;
+                        }
+                        pdf.append(ch);
+                    }
+                } else {
+                    pdf.append(getUnicodeString(ch));
+                }
+
+                if (kerningAvailable && (i + 1) < l) {
+                    addKerning(pdf, (new Integer((int) ch)),
+                               (new Integer((int) s.charAt(i + 1))),
+                               kerning, startText, endText);
+                }
+
+            }
+            pdf.append(endText);
+
+            currentStream.add(pdf.toString());
+
+            this.currentXPosition += area.getContentWidth();
+
+        }
     }
-    
+
 
     /**
-      * Convert a char to a multibyte hex representation
-      */
+     * Convert a char to a multibyte hex representation
+     */
     private String getUnicodeString(char c) {
 
-	StringBuffer buf = new StringBuffer(4);
-	
-	byte[] uniBytes = null;
-	try {
-	    char[] a = {c};
-	    uniBytes = new String(a).getBytes("UnicodeBigUnmarked");
-	} catch (Exception e) {
-	    // This should never fail
-	}
-	
-	for (int i = 0; i < uniBytes.length; i++) {
-	    int b = (uniBytes[i] < 0) ? (int)(256 + uniBytes[i]) :
-		(int) uniBytes[i];
-	    
-	    String hexString = Integer.toHexString(b);
-	    if (hexString.length() == 1)
-		buf = buf.append("0"+hexString);
-	    else
-		buf = buf.append(hexString);
-	}
-	
-	return buf.toString();
-        
+        StringBuffer buf = new StringBuffer(4);
+
+        byte[] uniBytes = null;
+        try {
+            char[] a = {c};
+            uniBytes = new String(a).getBytes("UnicodeBigUnmarked");
+        } catch (Exception e) {
+            // This should never fail
+        }
+
+        for (int i = 0; i < uniBytes.length; i++) {
+            int b = (uniBytes[i] < 0) ? (int)(256 + uniBytes[i]) :
+                    (int) uniBytes[i];
+
+            String hexString = Integer.toHexString(b);
+            if (hexString.length() == 1)
+                buf = buf.append("0"+hexString);
+            else
+                buf = buf.append(hexString);
+        }
+
+        return buf.toString();
+
     }
 
 
     /** Checks to see if we have some text rendering commands open
-      * still and writes out the TJ command to the stream if we do
-      */
+     * still and writes out the TJ command to the stream if we do
+     */
     private void closeText() {
-        if  (textOpen) {
+        if (textOpen) {
             currentStream.add("] TJ\n");
             textOpen = false;
             prevWordX = 0;
@@ -624,9 +600,8 @@ public class PDFRenderer extends PrintRenderer {
         if (kernPair != null) {
             Integer width = (Integer) kernPair.get(ch2);
             if (width != null) {
-                buf.append(endText)
-		    .append(-(width.intValue()))
-		    .append(' ').append(startText);
+                buf.append(endText).append(-
+                                           (width.intValue())).append(' ').append(startText);
             }
         }
     }
@@ -700,14 +675,14 @@ public class PDFRenderer extends PrintRenderer {
             // just to be on the safe side
             currentAnnotList = null;
         }
-		
-		// ensures that color is properly reset for blocks that carry over pages
-		this.currentFill = null;
+
+        // ensures that color is properly reset for blocks that carry over pages
+        this.currentFill = null;
     }
 
     /**
-        * defines a string containing dashArray and dashPhase for the rule style
-        */
+     * defines a string containing dashArray and dashPhase for the rule style
+     */
     private String setRuleStylePattern (int style) {
         String rs = "";
         switch (style) {
@@ -774,7 +749,7 @@ public class PDFRenderer extends PrintRenderer {
             renderOutline((Outline) e.nextElement());
         }
     }
- 
+
     protected class MUserAgent implements UserAgent {
         AffineTransform currentTransform = null;
         /**
@@ -790,7 +765,7 @@ public class PDFRenderer extends PrintRenderer {
         public void displayError(String message) {
             System.err.println(message);
         }
-    
+
         /**
          * Displays an error resulting from the specified Exception.
          */
@@ -832,11 +807,10 @@ public class PDFRenderer extends PrintRenderer {
          * Returns the class name of the XML parser.
          */
         public String getXMLParserClassName() {
-	String parserClassName =
-	    System.getProperty("org.xml.sax.parser");
-	if (parserClassName == null) {
-	    parserClassName = "org.apache.xerces.parsers.SAXParser";
-	}
+            String parserClassName = System.getProperty("org.xml.sax.parser");
+            if (parserClassName == null) {
+                parserClassName = "org.apache.xerces.parsers.SAXParser";
+            }
             return parserClassName;//application.getXMLParserClassName();
         }
 
@@ -845,47 +819,38 @@ public class PDFRenderer extends PrintRenderer {
          * @param doc The current document.
          * @param uri The document URI.
          */
-        public void openLink(SVGAElement elt)
-        {
+        public void openLink(SVGAElement elt) {
             //application.openLink(uri);
         }
 
-        public Point getClientAreaLocationOnScreen()
-        {
+        public Point getClientAreaLocationOnScreen() {
             return new Point(0, 0);
         }
 
-        public void setSVGCursor(java.awt.Cursor cursor)
-        {
+        public void setSVGCursor(java.awt.Cursor cursor) {
         }
 
-        public AffineTransform getTransform()
-        {
+        public AffineTransform getTransform() {
             return currentTransform;
         }
 
-        public Dimension2D getViewportSize()
-        {
+        public Dimension2D getViewportSize() {
             return new Dimension(100, 100);
         }
 
-        public EventDispatcher getEventDispatcher()
-        {
+        public EventDispatcher getEventDispatcher() {
             return null;
         }
 
-        public boolean supportExtension(String str)
-	{
-	    return false;
-	}
-
-        public boolean hasFeature(String str)
-	{
+        public boolean supportExtension(String str) {
             return false;
-	}
+        }
 
-        public void registerExtension(BridgeExtension be)
-        {
+        public boolean hasFeature(String str) {
+            return false;
+        }
+
+        public void registerExtension(BridgeExtension be) {
         }
     }
 }
