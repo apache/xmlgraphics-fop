@@ -79,10 +79,12 @@ public class FObj extends FONode implements Constants {
         if (parent != null && parent instanceof FObj) {
             if (((FObj)parent).getIsOutOfLineFODescendant() == true) {
                 isOutOfLineFODescendant = true;
-            } else if ("fo:float".equals(getName())
-                || "fo:footnote".equals(getName())
-                || "fo:footnote-body".equals(getName())) {
-                isOutOfLineFODescendant = true;
+            } else {
+                int foID = getNameId();
+                if (foID == FO_FLOAT || foID == FO_FOOTNOTE
+                    || foID == FO_FOOTNOTE_BODY) {
+                        isOutOfLineFODescendant = true;
+                }
             }
         }
         
@@ -114,10 +116,10 @@ public class FObj extends FONode implements Constants {
         PropertyList parentPL = null;
 
         if (parentFO != null) {
-            parentPL = parentFO.getPropertiesForNamespace(FOElementMapping.URI);
+            parentPL = parentFO.getPropertiesForNamespace(FO_URI);
         }
 
-        propertyList = new PropertyList(this, parentPL, FOElementMapping.URI);
+        propertyList = new PropertyList(this, parentPL, FO_URI);
         propertyList.addAttributesToList(attlist);
         propMgr = new PropertyManager(propertyList);
         setWritingMode();
@@ -457,7 +459,7 @@ public class FObj extends FONode implements Constants {
      * @return true if a member, false if not
      */
     protected boolean isBlockItem(String nsURI, String lName) {
-        return (nsURI == FOElementMapping.URI && 
+        return (nsURI == FO_URI && 
             (lName.equals("block") 
             || lName.equals("table") 
             || lName.equals("table-and-caption") 
@@ -476,7 +478,7 @@ public class FObj extends FONode implements Constants {
      * @return true if a member, false if not
      */
     protected boolean isInlineItem(String nsURI, String lName) {
-        return (nsURI == FOElementMapping.URI && 
+        return (nsURI == FO_URI && 
             (lName.equals("bidi-override") 
             || lName.equals("character") 
             || lName.equals("external-graphic") 
@@ -513,7 +515,7 @@ public class FObj extends FONode implements Constants {
      * @return true if a member, false if not
      */
     protected boolean isNeutralItem(String nsURI, String lName) {
-        return (nsURI == FOElementMapping.URI && 
+        return (nsURI == FO_URI && 
             (lName.equals("multi-switch") 
             || lName.equals("multi-properties")
             || lName.equals("wrapper") 

@@ -27,9 +27,7 @@ import java.util.ListIterator;
 import org.apache.fop.area.Trait;
 import org.apache.fop.area.inline.FilledArea;
 import org.apache.fop.area.inline.ForeignObject;
-import org.apache.fop.area.inline.Image;
 import org.apache.fop.area.inline.InlineArea;
-import org.apache.fop.area.inline.InlineParent;
 import org.apache.fop.area.inline.Space;
 import org.apache.fop.area.inline.Viewport;
 import org.apache.fop.area.inline.TextArea;
@@ -39,7 +37,6 @@ import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.XMLObj;
 import org.apache.fop.fo.flow.Block;
-import org.apache.fop.fo.flow.Character;
 import org.apache.fop.fo.flow.Inline;
 import org.apache.fop.fo.flow.InstreamForeignObject;
 import org.apache.fop.fo.flow.Leader;
@@ -211,26 +208,6 @@ public class AddLMVisitor {
              leaderArea = fa;
          }
          return leaderArea;
-     }
-
-     public void serveCharacter(Character node) {
-         InlineArea inline = getCharacterInlineArea(node);
-         if (inline != null) {
-             LeafNodeLayoutManager lm = new LeafNodeLayoutManager(node);
-             lm.setCurrentArea(inline);
-             currentLMList.add(lm);
-         }
-     }
-
-     public InlineArea getCharacterInlineArea(Character node) {
-         String str = node.getProperty(Constants.PR_CHARACTER).getString();
-         if (str.length() == 1) {
-             org.apache.fop.area.inline.Character ch =
-               new org.apache.fop.area.inline.Character(
-                 str.charAt(0));
-             return ch;
-         }
-         return null;
      }
 
      public void serveInstreamForeignObject(InstreamForeignObject node) {
