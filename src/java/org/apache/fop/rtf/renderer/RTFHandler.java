@@ -74,6 +74,7 @@ import org.apache.fop.fo.flow.TableCell;
 import org.apache.fop.fo.flow.TableRow;
 import org.apache.fop.fo.pagination.Flow;
 import org.apache.fop.fo.pagination.PageSequence;
+import org.apache.fop.fo.pagination.SimplePageMaster;
 import org.apache.fop.fo.properties.Constants;
 import org.apache.fop.fo.Property;
 import org.apache.fop.apps.Document;
@@ -179,6 +180,23 @@ public class RTFHandler extends FOInputHandler {
     public void startPageSequence(PageSequence pageSeq)  {
         try {
             sect = docArea.newSection();
+
+            //read page size and margins, if specified
+            Property prop;
+            if((prop=pageSeq.properties.get("master-reference"))!=null) {
+                String reference=prop.getString();
+
+                SimplePageMaster pagemaster=
+                    pageSeq.getLayoutMasterSet().getSimplePageMaster(reference);
+
+                //only simple-page-master supported, so pagemaster may be null
+                if(pagemaster!=null) {
+                    sect.getRtfAttributes().set(
+                        PageAttributesConverter.convertPageAttributes(
+                            pagemaster.properties,null));
+                }
+            }
+
             builderContext.pushContainer(sect);
 
             bHeaderSpecified = false;
