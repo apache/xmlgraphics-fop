@@ -29,6 +29,7 @@ import org.apache.fop.traits.SpaceVal;
         public SpaceVal letterSpacing;
 
 	// Add hyphenation props too
+	public boolean bCanHyphenate=true;
 
         // Textdecoration
         public boolean underlined = false;
