@@ -1,5 +1,5 @@
 /*
- * Copyright 1999-2004 The Apache Software Foundation.
+ * Copyright 1999-2005 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -46,6 +46,7 @@ public class Body extends BlockStackingLayoutManager {
     private boolean rows = true;
     private List columns;
 
+    private int xoffset;
     private int yoffset;
     private int bodyHeight;
 
@@ -148,6 +149,15 @@ public class Body extends BlockStackingLayoutManager {
     }
 
     /**
+     * Set the x offset of this body within the table.
+     * This is used to set the row offsets.
+     * @param value
+     */
+    public void setXOffset(int off) {
+        xoffset = off;
+    }
+
+    /**
      * Set the y offset of this body within the table.
      * This is used to set the row offsets.
      *
@@ -181,6 +191,7 @@ public class Body extends BlockStackingLayoutManager {
             iStartPos = lfp.getLeafPos() + 1;
             int lastheight = 0;
             while ((childLM = (Row)breakPosIter.getNextChildLM()) != null) {
+                childLM.setXOffset(xoffset);
                 childLM.setYOffset(yoffset + rowoffset);
                 childLM.addAreas(breakPosIter, lc);
                 lastheight = childLM.getRowHeight();
@@ -256,5 +267,6 @@ public class Body extends BlockStackingLayoutManager {
         TraitSetter.addBackground(curBlockArea, fobj.getCommonBorderPaddingBackground());
         return curBlockArea;
     }
+
 }
 

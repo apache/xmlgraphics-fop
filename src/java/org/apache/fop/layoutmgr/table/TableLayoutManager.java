@@ -1,5 +1,5 @@
 /*
- * Copyright 1999-2004 The Apache Software Foundation.
+ * Copyright 1999-2005 The Apache Software Foundation.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -34,6 +34,7 @@ import org.apache.fop.layoutmgr.TraitSetter;
 import org.apache.fop.area.Area;
 import org.apache.fop.area.Block;
 import org.apache.fop.traits.MinOptMax;
+import org.apache.fop.traits.SpaceVal;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -59,7 +60,14 @@ public class TableLayoutManager extends BlockStackingLayoutManager {
     private List bodyBreaks = new ArrayList();
     private BreakPoss headerBreak;
     private BreakPoss footerBreak;
+    
+    private int referenceIPD;
 
+    //TODO space-before|after: handle space-resolution rules
+    private MinOptMax spaceBefore;
+    private MinOptMax spaceAfter;
+    
+    
     private class SectionPosition extends LeafPosition {
         protected List list;
         protected SectionPosition(LayoutManager lm, int pos, List l) {
@@ -106,6 +114,20 @@ public class TableLayoutManager extends BlockStackingLayoutManager {
         tableFooter.setParent(this);
     }
 
+    /** @see org.apache.fop.layoutmgr.AbstractLayoutManager#initProperties() */
+    protected void initProperties() {
+        super.initProperties();
+        spaceBefore = new SpaceVal(fobj.getCommonMarginBlock().spaceBefore).getSpace();
+        spaceAfter = new SpaceVal(fobj.getCommonMarginBlock().spaceAfter).getSpace();
+    }
+
+    private int getIPIndents() {
+        int iIndents = 0;
+        iIndents += fobj.getCommonMarginBlock().startIndent.getValue();
+        iIndents += fobj.getCommonMarginBlock().endIndent.getValue();
+        return iIndents;
+    }
+    
     /**
      * Get the next break possibility.
      * The break possibility depends on the height of the header and footer
@@ -117,14 +139,29 @@ public class TableLayoutManager extends BlockStackingLayoutManager {
     public BreakPoss getNextBreakPoss(LayoutContext context) {
         Body curLM; // currently active LM
 
+        referenceIPD = context.getRefIPD();
+        if (fobj.getInlineProgressionDimension().getOptimum().getEnum() != EN_AUTO) {
+            referenceIPD = fobj.getInlineProgressionDimension().getOptimum().getLength().getValue();
+        }
+        if (referenceIPD > context.getRefIPD()) {
+            log.warn("Allocated IPD exceeds available reference IPD");
+        }
+        int contentIPD = referenceIPD - getIPIndents();
+
         MinOptMax stackSize = new MinOptMax();
-        // if starting add space before
-        // stackSize.add(spaceBefore);
+        //Add spacing
+        if (spaceAfter != null) {
+            stackSize.add(spaceAfter);
+        }
+        if (spaceBefore != null) {
+            stackSize.add(spaceBefore);
+        }
+
         BreakPoss lastPos = null;
 
-        fobj.setLayoutDimension(PercentBase.BLOCK_IPD, context.getRefIPD());
+        fobj.setLayoutDimension(PercentBase.BLOCK_IPD, referenceIPD);
         fobj.setLayoutDimension(PercentBase.BLOCK_BPD, context.getStackLimit().opt);
-        fobj.setLayoutDimension(PercentBase.REFERENCE_AREA_IPD, context.getRefIPD());
+        fobj.setLayoutDimension(PercentBase.REFERENCE_AREA_IPD, referenceIPD);
         fobj.setLayoutDimension(PercentBase.REFERENCE_AREA_BPD, context.getStackLimit().opt);
 
         // either works out table of column widths or if proportional-column-width function
@@ -142,10 +179,10 @@ public class TableLayoutManager extends BlockStackingLayoutManager {
             }
         }
         // sets TABLE_UNITS in case where one or more columns is defined using proportional-column-width
-        if (sumCols < context.getRefIPD()) {
+        if (sumCols < contentIPD) {
             if (fobj.getLayoutDimension(PercentBase.TABLE_UNITS).floatValue() == 0.0) {
                 fobj.setLayoutDimension(PercentBase.TABLE_UNITS,
-                                      (context.getRefIPD() - sumCols) / factors);
+                                      (contentIPD - sumCols) / factors);
             }
         }
         MinOptMax headerSize = null;
@@ -236,14 +273,15 @@ public class TableLayoutManager extends BlockStackingLayoutManager {
      * @return the break possibility containing the stacking size
      */
     protected BreakPoss getHeight(Body lm, LayoutContext context) {
-        int ipd = context.getRefIPD();
+        int referenceIPD = context.getRefIPD();
+        int contentIPD = referenceIPD - getIPIndents();
         BreakPoss bp;
 
         MinOptMax stackSize = new MinOptMax();
 
         LayoutContext childLC = new LayoutContext(0);
         childLC.setStackLimit(context.getStackLimit());
-        childLC.setRefIPD(ipd);
+        childLC.setRefIPD(contentIPD);
 
         lm.setColumns(columns);
 
@@ -274,6 +312,11 @@ public class TableLayoutManager extends BlockStackingLayoutManager {
         getParentArea(null);
         addID(fobj.getId());
 
+        // if adjusted space before
+        double adjust = layoutContext.getSpaceAdjust();
+        addBlockSpacing(adjust, spaceBefore);
+        spaceBefore = null;
+        
         // add column, body then row areas
 
         int tableHeight = 0;
@@ -286,6 +329,7 @@ public class TableLayoutManager extends BlockStackingLayoutManager {
             List list = pos.list;
             PositionIterator breakPosIter = new BreakPossPosIter(list, 0, list.size() + 1);
             while ((childLM = (Body)breakPosIter.getNextChildLM()) != null) {
+                childLM.setXOffset(fobj.getCommonMarginBlock().startIndent.getValue());
                 childLM.addAreas(breakPosIter, lc);
                 tableHeight += childLM.getBodyHeight();
             }
@@ -300,6 +344,7 @@ public class TableLayoutManager extends BlockStackingLayoutManager {
                                    lfp.getLeafPos() + 1);
             iStartPos = lfp.getLeafPos() + 1;
             while ((childLM = (Body)breakPosIter.getNextChildLM()) != null) {
+                childLM.setXOffset(fobj.getCommonMarginBlock().startIndent.getValue());
                 childLM.setYOffset(tableHeight);
                 childLM.addAreas(breakPosIter, lc);
                 tableHeight += childLM.getBodyHeight();
@@ -312,6 +357,7 @@ public class TableLayoutManager extends BlockStackingLayoutManager {
             List list = pos.list;
             PositionIterator breakPosIter = new BreakPossPosIter(list, 0, list.size() + 1);
             while ((childLM = (Body)breakPosIter.getNextChildLM()) != null) {
+                childLM.setXOffset(fobj.getCommonMarginBlock().startIndent.getValue());
                 childLM.setYOffset(tableHeight);
                 childLM.addAreas(breakPosIter, lc);
                 tableHeight += childLM.getBodyHeight();
@@ -322,8 +368,16 @@ public class TableLayoutManager extends BlockStackingLayoutManager {
 
         TraitSetter.addBorders(curBlockArea, fobj.getCommonBorderPaddingBackground());
         TraitSetter.addBackground(curBlockArea, fobj.getCommonBorderPaddingBackground());
+        TraitSetter.addMargins(curBlockArea,
+                fobj.getCommonBorderPaddingBackground(), 
+                fobj.getCommonMarginBlock());
+        TraitSetter.addBreaks(curBlockArea, 
+                fobj.getBreakBefore(), fobj.getBreakAfter());
 
         flush();
+
+        // if adjusted space after
+        addBlockSpacing(adjust, spaceAfter);
 
         bodyBreaks.clear();
         curBlockArea = null;
@@ -347,11 +401,12 @@ public class TableLayoutManager extends BlockStackingLayoutManager {
             curBlockArea = new Block();
             // Set up dimensions
             // Must get dimensions from parent area
-            Area parentArea = parentLM.getParentArea(curBlockArea);
-            int referenceIPD = parentArea.getIPD();
-            curBlockArea.setIPD(referenceIPD);
-            // Get reference IPD from parentArea
-            setCurrentArea(curBlockArea); // ??? for generic operations
+            /*Area parentArea =*/ parentLM.getParentArea(curBlockArea);
+            
+            int contentIPD = referenceIPD - getIPIndents();
+            curBlockArea.setIPD(contentIPD);
+            
+            setCurrentArea(curBlockArea);
         }
         return curBlockArea;
     }
@@ -377,5 +432,6 @@ public class TableLayoutManager extends BlockStackingLayoutManager {
             reset(null);
         }
     }
+    
 }
 

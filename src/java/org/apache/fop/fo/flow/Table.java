@@ -1,5 +1,5 @@
 /*
- * Copyright 1999-2004 The Apache Software Foundation.
+ * Copyright 1999-2005 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,13 +18,9 @@
 
 package org.apache.fop.fo.flow;
 
-// Java
-import java.util.ArrayList;
 import java.util.List;
-import java.util.ListIterator;
 
 import org.apache.fop.apps.FOPException;
-import org.apache.fop.datatypes.Length;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.PropertyList;
@@ -36,9 +32,6 @@ import org.apache.fop.fo.properties.CommonRelativePosition;
 import org.apache.fop.fo.properties.KeepProperty;
 import org.apache.fop.fo.properties.LengthPairProperty;
 import org.apache.fop.fo.properties.LengthRangeProperty;
-import org.apache.fop.layoutmgr.table.Body;
-import org.apache.fop.layoutmgr.table.Column;
-import org.apache.fop.layoutmgr.table.TableLayoutManager;
 
 /**
  * Class modelling the fo:table object.
@@ -62,21 +55,21 @@ public class Table extends FObj {
     private String id;
     private LengthRangeProperty inlineProgressionDimension;
     private int intrusionDisplace;
-    private Length height;
+    //private Length height;
     private KeepProperty keepTogether;
     private KeepProperty keepWithNext;
     private KeepProperty keepWithPrevious;
     private int tableLayout;
     private int tableOmitFooterAtBreak;
     private int tableOmitHeaderAtBreak;
-    private Length width;
+    //private Length width;
     private int writingMode;
     // End of property values
 
     private static final int MINCOLWIDTH = 10000; // 10pt
 
     /** collection of columns in this table */
-    protected ArrayList columns = null;
+    protected List columns = null;
     private TableBody tableHeader = null;
     private TableBody tableFooter = null;
 
@@ -108,14 +101,14 @@ public class Table extends FObj {
         id = pList.get(PR_ID).getString();
         inlineProgressionDimension = pList.get(PR_INLINE_PROGRESSION_DIMENSION).getLengthRange();
         intrusionDisplace = pList.get(PR_INTRUSION_DISPLACE).getEnum();
-        height = pList.get(PR_HEIGHT).getLength();
+        //height = pList.get(PR_HEIGHT).getLength();
         keepTogether = pList.get(PR_KEEP_TOGETHER).getKeep();
         keepWithNext = pList.get(PR_KEEP_WITH_NEXT).getKeep();
         keepWithPrevious = pList.get(PR_KEEP_WITH_PREVIOUS).getKeep();
         tableLayout = pList.get(PR_TABLE_LAYOUT).getEnum();
         tableOmitFooterAtBreak = pList.get(PR_TABLE_OMIT_FOOTER_AT_BREAK).getEnum();
         tableOmitHeaderAtBreak = pList.get(PR_TABLE_OMIT_HEADER_AT_BREAK).getEnum();
-        width = pList.get(PR_WIDTH).getLength();
+        //width = pList.get(PR_WIDTH).getLength();
         writingMode = pList.get(PR_WRITING_MODE).getEnum();
     }
 
@@ -140,7 +133,7 @@ public class Table extends FObj {
     protected void addChildNode(FONode child) throws FOPException {
         if (child.getName().equals("fo:table-column")) {
             if (columns == null) {
-                columns = new ArrayList();
+                columns = new java.util.ArrayList();
             }
             columns.add(((TableColumn)child));
         } else if (child.getName().equals("fo:table-footer")) {
@@ -153,7 +146,7 @@ public class Table extends FObj {
         }
     }
 
-    public ArrayList getColumns() {
+    public List getColumns() {
         return columns;
     }
 
@@ -166,21 +159,49 @@ public class Table extends FObj {
     }
 
     /**
-     * Return the Common Margin Properties-Block.
+     * @return the "inline-progression-dimension" property.
+     */
+    public LengthRangeProperty getInlineProgressionDimension() {
+        return inlineProgressionDimension;
+    }
+
+    /**
+     * @return the "block-progression-dimension" property.
+     */
+    public LengthRangeProperty getBlockProgressionDimension() {
+        return blockProgressionDimension;
+    }
+    
+    /**
+     * @return the Common Margin Properties-Block.
      */
     public CommonMarginBlock getCommonMarginBlock() {
         return commonMarginBlock;
     }
 
     /**
-     * Return the Common Border, Padding, and Background Properties.
+     * @return the Common Border, Padding, and Background Properties.
      */
     public CommonBorderPaddingBackground getCommonBorderPaddingBackground() {
         return commonBorderPaddingBackground;
     }
 
     /**
-     * Return the "id" property.
+     * @return the "break-after" property.
+     */
+    public int getBreakAfter() {
+        return breakAfter;
+    }
+
+    /**
+     * @return the "break-before" property.
+     */
+    public int getBreakBefore() {
+        return breakBefore;
+    }
+
+    /**
+     * @return the "id" property.
      */
     public String getId() {
         return id;
