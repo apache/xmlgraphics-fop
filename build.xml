@@ -276,7 +276,9 @@ Sometimes ant gives out this warnings, but the build is finished without any pro
     <mkdir dir="${build.src}/${fonts.dir}"/>
     <mkdir dir="${build.dest}/conf"/>
     <mkdir dir="${build.dest}/hyph"/>
-    <copydir src="./conf" dest="${build.dest}/conf" />
+    <copy todir="${build.dest}/conf">
+       <fileset dir="./conf"/>
+    </copy>
   </target>
 
 
@@ -295,9 +297,9 @@ Sometimes ant gives out this warnings, but the build is finished without any pro
   <!-- copies some source files if xt is present                           -->
   <!-- =================================================================== -->
   <target name="prepare-xt" depends="prepare" if="xt.present">
-    <copydir src="${src.dir}"
-             dest="${build.src}"
-             includes="**/XT*,**/PDFOutputHandler.java"/>
+    <copy todir="${build.src}">
+      <fileset dir="${src.dir}" includes="**/XT*,**/PDFOutputHandler.java"/>
+    </copy>
   </target>
 
   <!-- =================================================================== -->
@@ -305,9 +307,9 @@ Sometimes ant gives out this warnings, but the build is finished without any pro
   <!-- =================================================================== -->
   <target name="prepare-jimi" depends="prepare" if="jimi.present">
     <echo message="Jimi library is present. Fop installs jimi support."/>
-    <copydir src="${src.dir}"
-             dest="${build.src}"
-             includes="**/${jimi}"/>
+    <copy todir="${build.src}">
+      <fileset dir="${src.dir}" includes="**/${jimi}"/>
+    </copy>
   </target>
 
   <!-- =================================================================== -->
@@ -315,24 +317,24 @@ Sometimes ant gives out this warnings, but the build is finished without any pro
   <!-- =================================================================== -->
   <target name="prepare-jai" depends="prepare" if="jai.present">
     <echo message="JAI library is present. Fop installs JAI support."/>
-    <copydir src="${src.dir}"
-             dest="${build.src}"
-             includes="**/${jai}"/>
+    <copy todir="${build.src}">
+      <fileset dir="${src.dir}" includes="**/${jai}"/>
+    </copy>
   </target>
 
 
   <target name="prepare-xalan1" if="xalan1.present">
       <echo message="Xalan1 is present. Installing Xalan1 support"/>
-      <copydir src="${src.dir}"
- 	      dest="${build.src}"
- 	      includes="**/${xsltransform},**/${xalan1}"/>
+    <copy todir="${build.src}">
+      <fileset dir="${src.dir}" includes="**/${xsltransform},**/${xalan1}"/>
+    </copy>
   </target>
  
   <target name="prepare-trax" if="trax.present">
       <echo message="JAXP1.1 transforms is present. Installing TRaX support"/>
-      <copydir src="${src.dir}"
- 	      dest="${build.src}"
- 	      includes="**/${xsltransform},**/${trax},**/apps/TraxInputHandler.java"/>
+    <copy todir="${build.src}">
+      <fileset dir="${src.dir}" includes="**/${xsltransform},**/${trax},**/apps/TraxInputHandler.java"/>
+    </copy>
   </target>
 
 
@@ -341,9 +343,10 @@ Sometimes ant gives out this warnings, but the build is finished without any pro
   <!-- =================================================================== -->
   <target name="prepare-src" depends="prepare, prepare-xt, prepare-jimi, prepare-jai, prepare-xalan1, prepare-trax">
     <!-- copy src files -->
-    <copydir src="${src.dir}"
-             dest="${build.src}"
-             excludes="**/Makefile*, **/package.html, **/XT*,**/PDFOutputHandler.java,**/${jimi},**/${jai},**/${xsltransform},**/${trax},**/${xalan1},**/apps/TraxInputHandler.java"/>
+    <copy todir="${build.src}">
+      <fileset dir="${src.dir}" 
+         excludes="**/Makefile*, **/package.html, **/XT*,**/PDFOutputHandler.java,**/${jimi},**/${jai},**/${xsltransform},**/${trax},**/${xalan1},**/apps/TraxInputHandler.java"/>
+    </copy>
   </target>
 
   <!-- =================================================================== -->
@@ -354,7 +357,9 @@ Sometimes ant gives out this warnings, but the build is finished without any pro
     <echo message="Resetting codegen directory"/>
 
     <!-- copy codegen directory -->
-    <copydir src="${src.codegen}" dest="${build.codegen}" filtering="on"/>
+    <copy todir="${build.codegen}" filtering="on">
+      <fileset dir="${src.codegen}"/>
+    </copy>
 
     <!-- generate the java files from xml resources -->
     <echo message="Generating the java files from xml resources"/>
@@ -496,12 +501,17 @@ Sometimes ant gives out this warnings, but the build is finished without any pro
   <!-- =================================================================== -->
   <target name="docs" depends="prepare-docs">
     <echo message="Copying doc files "/>
-    <copydir src="${docs.dir}" dest="${build.docs}" />
-    <copydir src="${lib.dir}" dest="${build.dir}/${lib.dir}" />
-    <copyfile src="build.xml" dest="${build.dir}/build.xml" /> 
-    <copyfile src="${basedir}/README" dest="${build.dir}/README" />
-    <copyfile src="${basedir}/STATUS" dest="${build.dir}/STATUS" />
-    <copyfile src="${basedir}/LICENSE" dest="${build.dir}/LICENSE" />
+    <copy todir="${build.docs}">
+      <fileset dir="${docs.dir}"/>
+    </copy>
+    <copy todir="${build.dir}/${lib.dir}">
+      <fileset dir="${lib.dir}"/>
+    </copy>
+   
+    <copy file="build.xml" tofile="${build.dir}/build.xml" /> 
+    <copy file="${basedir}/README" tofile="${build.dir}/README" />
+    <copy file="${basedir}/STATUS" tofile="${build.dir}/STATUS" />
+    <copy file="${basedir}/LICENSE" tofile="${build.dir}/LICENSE" />
   </target>
 
   <!-- =================================================================== -->
@@ -529,13 +539,19 @@ Sometimes ant gives out this warnings, but the build is finished without any pro
     <mkdir dir="${dist.dir}"/>
     <mkdir dir="${dist.dir}/conf"/>
     <mkdir dir="${dist.dir}/hyph"/>
-    <copyfile src="${basedir}/build.sh" dest="${dist.dir}/build.sh" />
+    <copy file="${basedir}/build.sh" tofile="${dist.dir}/build.sh" />
     <chmod file="${dist.dir}/build.sh" perm="ugo+rx" />
-    <copyfile src="${basedir}/build.bat" dest="${dist.dir}/build.bat" />
-    <copydir src="${build.dir}" dest="${dist.dir}" 
-        excludes="**/classes/**, **/${ignore_this}"/>
-    <copydir src="${hyph.dir}" dest="${dist.dir}/hyph"/>
-    <copydir src="${conf.dir}" dest="${dist.dir}/conf"/>
+    <copy file="${basedir}/build.bat" tofile="${dist.dir}/build.bat" />
+    <copy todir="${dist.dir}">
+      <fileset dir="${build.dir}" excludes="**/classes/**, **/${ignore_this}"/>
+    </copy>
+    <copy todir="${dist.dir}/hyph">
+      <fileset dir="${hyph.dir}"/>
+    </copy>
+    <copy todir="${dist.dir}/conf">
+      <fileset dir="${conf.dir}"/>
+    </copy>
+
     <zip zipfile="${Name}-${version}.zip" basedir="${dist.dir}" includes="**"/>
     <tar tarfile="${Name}-${version}.tar" basedir="${dist.dir}" includes="**"/>
     <gzip zipfile="${Name}-${version}.tar.gz" src="${Name}-${version}.tar" />
@@ -546,11 +562,11 @@ Sometimes ant gives out this warnings, but the build is finished without any pro
   <!-- Clean targets                                                       -->
   <!-- =================================================================== -->
   <target name="clean" depends="init">
-    <deltree dir="${build.dir}"/>
+    <delete dir="${build.dir}"/>
   </target>
 
   <target name="distclean" depends="clean">
-    <deltree dir="${dist.dir}"/>
+    <delete dir="${dist.dir}"/>
     <delete file="${Name}-${version}.tar.gz"/>
     <delete file="${Name}-${version}.tar"/>
     <delete file="${Name}-${version}.zip"/>

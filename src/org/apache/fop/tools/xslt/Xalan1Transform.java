@@ -79,9 +79,7 @@ public class Xalan1Transform
 	}
 	
 	// Use XSLTProcessor to instantiate an XSLTProcessor.
-	XSLTProcessor processor = XSLTProcessorFactory.getProcessor
-	    (new org.apache.xalan.xpath.xdom.XercesLiaison());
-	
+	XSLTProcessor processor = XSLTProcessorFactory.getProcessor();
 	
 	XSLTInputSource xslSheet = new XSLTInputSource (xsltFilename);
 
@@ -126,8 +124,7 @@ public class Xalan1Transform
 	StylesheetRoot stylesheet = getStylesheet(xslURL,true);
 	
         // Perform the transformation.
-        stylesheet.process(XSLTProcessorFactory.getProcessor
-			   (new org.apache.xalan.xpath.xdom.XercesLiaison()),
+        stylesheet.process(XSLTProcessorFactory.getProcessor(),
 			   xmlSource, xmlResult);
     }
     
@@ -145,9 +142,8 @@ public class Xalan1Transform
 	StylesheetRoot stylesheet = getStylesheet(xslURL,true);
 	
         // Perform the transformation.
-        stylesheet.process(XSLTProcessorFactory.getProcessor
-			   (new org.apache.xalan.xpath.xdom.XercesLiaison()),
-			  source, xmlResult);
+        stylesheet.process(XSLTProcessorFactory.getProcessor(),
+			   source, xmlResult);
     }
 
     public static void transform(Document xmlSource, 
@@ -164,9 +160,8 @@ public class Xalan1Transform
 	
 	
         // Perform the transformation.
-	XSLTProcessor processor =
-	    XSLTProcessorFactory.getProcessor(new org.apache.xalan.xpath.xdom.XercesLiaison());
-
+	XSLTProcessor processor = XSLTProcessorFactory.getProcessor();
+	
         processor.process(source, xslSheet, xmlResult);
     }
 }
