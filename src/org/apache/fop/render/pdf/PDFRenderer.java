@@ -1,65 +1,93 @@
 /*-- $Id$ --
- *
- * Copyright (C) 2001 The Apache Software Foundation. All rights reserved.
- * For details on use and redistribution please refer to the 
- * LICENSE file included with these sources."
+
+ ============================================================================
+				   The Apache Software License, Version 1.1
+ ============================================================================
+
+	Copyright (C) 1999 The Apache Software Foundation. All rights reserved.
+
+ Redistribution and use in source and binary forms, with or without modifica-
+ tion, are permitted provided that the following conditions are met:
+
+ 1. Redistributions of	source code must  retain the above copyright  notice,
+	this list of conditions and the following disclaimer.
+
+ 2. Redistributions in binary form must reproduce the above copyright notice,
+	this list of conditions and the following disclaimer in the documentation
+	and/or other materials provided with the distribution.
+
+ 3. The end-user documentation included with the redistribution, if any, must
+	include  the following	acknowledgment:  "This product includes  software
+	developed  by the  Apache Software Foundation  (http://www.apache.org/)."
+	Alternately, this  acknowledgment may  appear in the software itself,  if
+	and wherever such third-party acknowledgments normally appear.
+
+ 4. The names "FOP" and  "Apache Software Foundation"  must not be used to
+	endorse  or promote  products derived  from this  software without	prior
+	written permission. For written permission, please contact
+	apache@apache.org.
+
+ 5. Products  derived from this software may not  be called "Apache", nor may
+	"Apache" appear  in their name,  without prior written permission  of the
+	Apache Software Foundation.
+
+ THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESSED OR IMPLIED WARRANTIES,
+ INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND
+ FITNESS  FOR A PARTICULAR	PURPOSE ARE  DISCLAIMED.  IN NO  EVENT SHALL  THE
+ APACHE SOFTWARE  FOUNDATION  OR ITS CONTRIBUTORS  BE LIABLE FOR  ANY DIRECT,
+ INDIRECT, INCIDENTAL, SPECIAL,  EXEMPLARY, OR CONSEQUENTIAL  DAMAGES (INCLU-
+ DING, BUT NOT LIMITED TO, PROCUREMENT	OF SUBSTITUTE GOODS OR SERVICES; LOSS
+ OF USE, DATA, OR  PROFITS; OR BUSINESS  INTERRUPTION)	HOWEVER CAUSED AND ON
+ ANY  THEORY OF LIABILITY,	WHETHER  IN CONTRACT,  STRICT LIABILITY,  OR TORT
+ (INCLUDING  NEGLIGENCE OR	OTHERWISE) ARISING IN  ANY WAY OUT OF THE  USE OF
+ THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+ This software	consists of voluntary contributions made  by many individuals
+ on  behalf of the Apache Software	Foundation and was	originally created by
+ James Tauber <jtauber@jtauber.com>. For more  information on the Apache
+ Software Foundation, please see <http://www.apache.org/>.
+
  */
 
 package org.apache.fop.render.pdf;
 
 // FOP
-import org.apache.fop.render.Renderer;
+import org.apache.fop.render.PrintRenderer;
 import org.apache.fop.messaging.MessageHandler;
 import org.apache.fop.image.ImageArea;
 import org.apache.fop.image.FopImage;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.fo.properties.*;
-import org.apache.fop.layout.*;
 import org.apache.fop.layout.inline.*;
-import org.apache.fop.datatypes.*;
-import org.apache.fop.svg.PathPoint;
 import org.apache.fop.pdf.*;
 import org.apache.fop.layout.*;
 import org.apache.fop.image.*;
-import org.apache.fop.configuration.Configuration;
 import org.apache.fop.extensions.*;
 import org.apache.fop.datatypes.IDReferences;
 
-import org.w3c.dom.*;
 import org.w3c.dom.svg.*;
-import org.w3c.dom.css.*;
-import org.w3c.dom.svg.SVGLength;
 
 import org.apache.fop.dom.svg.*;
-import org.apache.fop.dom.svg.SVGRectElementImpl;
-import org.apache.fop.dom.svg.SVGTextElementImpl;
-import org.apache.fop.dom.svg.SVGLineElementImpl;
-import org.apache.fop.dom.svg.SVGArea;
 
 // Java
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Enumeration;
-import java.awt.Rectangle;
 import java.util.Vector;
 import java.util.Hashtable;
 
 /**
  * Renderer that renders areas to PDF
  */
-public class PDFRenderer implements Renderer {
+public class PDFRenderer extends PrintRenderer {
 
     private static final boolean OPTIMIZE_TEXT = true;
     
-
     /** the PDF Document being created */
     protected PDFDocument pdfDoc;
 
     /** the /Resources object of the PDF document being created */
     protected PDFResources pdfResources;
-
-    /** the IDReferences for this document */
-    protected IDReferences idReferences;
 
     /** the current stream to add PDF commands to */
     PDFStream currentStream;
@@ -69,55 +97,6 @@ public class PDFRenderer implements Renderer {
 
     /** the current page to add annotations to */
     PDFPage currentPage;
-
-    /** the current (internal) font name */
-    protected String currentFontName;
-
-    /** the current font size in millipoints */
-    protected int currentFontSize;
-
-    /** the current color/gradient for borders, letters, etc. */
-    protected PDFPathPaint currentStroke = null;
-
-    /** the current color/gradient to fill shapes with */
-    protected PDFPathPaint currentFill = null;
-
-    /** the current colour's red component */
-    protected float currentRed = 0;
-
-    /** the current colour's green component */
-    protected float currentGreen = 0;
-
-    /** the current colour's blue component */
-    protected float currentBlue = 0;
-
-    /** the current vertical position in millipoints from bottom */
-    protected int currentYPosition = 0;
-
-    /** the current horizontal position in millipoints from left */
-    protected int currentXPosition = 0;
-
-    /** the horizontal position of the current area container */
-    private int currentAreaContainerXPosition = 0;
-
-    /** the current colour for use in svg */
-    private PDFColor currentColour = new PDFColor(0, 0, 0);
-
-    private FontInfo fontInfo;
-    
-    // previous values used for text-decoration drawing
-    int prevUnderlineXEndPos;
-    int prevUnderlineYEndPos;
-    int prevUnderlineSize;
-    PDFColor prevUnderlineColor;
-    int prevOverlineXEndPos;
-    int prevOverlineYEndPos;
-    int prevOverlineSize;
-    PDFColor prevOverlineColor;
-    int prevLineThroughXEndPos;
-    int prevLineThroughYEndPos;
-    int prevLineThroughSize;
-    PDFColor prevLineThroughColor;
 
     /** true if a TJ command is left to be written */
     boolean textOpen = false;
@@ -174,7 +153,7 @@ public class PDFRenderer implements Renderer {
                                    idReferences.getInvalidIds() + "\n");
 
         }
-	renderRootExtensions(areaTree);
+		renderRootExtensions(areaTree);
 	
         FontSetup.addToResources(this.pdfDoc, fontInfo);
         
@@ -196,7 +175,7 @@ public class PDFRenderer implements Renderer {
        */
     protected void addLine(int x1, int y1, int x2, int y2, int th,
                            PDFPathPaint stroke) {
-	closeText();
+		closeText();
 	
         currentStream.add("ET\nq\n" + stroke.getColorSpaceOut(false) +
                           (x1 / 1000f) + " "+ (y1 / 1000f) + " m " +
@@ -212,16 +191,16 @@ public class PDFRenderer implements Renderer {
       * @param x2 the end x location in millipoints
       * @param y2 the end y location in millipoints
       * @param th the thickness in millipoints
-      * @param rs the rule style as String containing dashArray + dashPhase
+      * @param rs the rule style
       * @param r the red component
       * @param g the green component
       * @param b the blue component
       */
     protected void addLine(int x1, int y1, int x2, int y2, int th,
-                           String rs, PDFPathPaint stroke) {
+                           int rs, PDFPathPaint stroke) {
 	closeText();
         currentStream.add("ET\nq\n" + stroke.getColorSpaceOut(false) +
-                          rs + (x1 / 1000f) + " "+ (y1 / 1000f) + " m " +
+                          setRuleStylePattern(rs) + (x1 / 1000f) + " "+ (y1 / 1000f) + " m " +
                           (x2 / 1000f) + " "+ (y2 / 1000f) + " l " +
                           (th / 1000f) + " w S\n" + "Q\nBT\n");
     }
@@ -260,174 +239,6 @@ public class PDFRenderer implements Renderer {
                           stroke.getColorSpaceOut(false) + (x / 1000f) + " " +
                           (y / 1000f) + " " + (w / 1000f) + " " + (h / 1000f) +
                           " re b\n" + "Q\nBT\n");
-    }
-
-    /**
-       * render area container to PDF
-       *
-       * @param area the area container to render
-       */
-    public void renderAreaContainer(AreaContainer area) {
-
-        int saveY = this.currentYPosition;
-        int saveX = this.currentAreaContainerXPosition;
-
-        if (area.getPosition() == Position.ABSOLUTE) {
-            // Y position is computed assuming positive Y axis, adjust for negative postscript one
-            this.currentYPosition =
-              area.getYPosition() - 2 * area.getPaddingTop() -
-              2 * area.getBorderTopWidth();
-            this.currentAreaContainerXPosition = area.getXPosition();
-        } else if (area.getPosition() == Position.RELATIVE) {
-            this.currentYPosition -= area.getYPosition();
-            this.currentAreaContainerXPosition += area.getXPosition();
-        } else if (area.getPosition() == Position.STATIC) {
-            this.currentYPosition -=
-              area.getPaddingTop() + area.getBorderTopWidth();
-            this.currentAreaContainerXPosition +=
-              area.getPaddingLeft() + area.getBorderLeftWidth();
-        }
-
-        this.currentXPosition = this.currentAreaContainerXPosition;
-        doFrame(area);
-
-        Enumeration e = area.getChildren().elements();
-        while (e.hasMoreElements()) {
-            Box b = (Box) e.nextElement();
-            b.render(this);
-        }
-        if (area.getPosition() != Position.STATIC) {
-            this.currentYPosition = saveY;
-            this.currentAreaContainerXPosition = saveX;
-        } else
-            this.currentYPosition -= area.getHeight();
-    }
-
-	public void renderBodyAreaContainer(BodyAreaContainer area) {
-        int saveY = this.currentYPosition;
-        int saveX = this.currentAreaContainerXPosition;
-
-        if (area.getPosition() == Position.ABSOLUTE) {
-            // Y position is computed assuming positive Y axis, adjust for negative postscript one
-            this.currentYPosition = area.getYPosition();
-            this.currentAreaContainerXPosition = area.getXPosition();
-        } else if (area.getPosition() == Position.RELATIVE) {
-            this.currentYPosition -= area.getYPosition();
-            this.currentAreaContainerXPosition += area.getXPosition();
-        }
-
-        this.currentXPosition = this.currentAreaContainerXPosition;
-        int w, h;
-        int rx = this.currentAreaContainerXPosition;
-        w = area.getContentWidth();
-        h = area.getContentHeight();
-        int ry = this.currentYPosition;
-        ColorType bg = area.getBackgroundColor();
-
-        // I'm not sure I should have to check for bg being null
-        // but I do
-        if ((bg != null) && (bg.alpha() == 0)) {
-            this.addRect(rx, ry, w, -h, new PDFColor(bg), new PDFColor(bg));
-        }
-
-		// floats & footnotes stuff
-		renderAreaContainer(area.getBeforeFloatReferenceArea());
-  		renderAreaContainer(area.getFootnoteReferenceArea());
-
-		// main reference area
-		Enumeration e = area.getMainReferenceArea().getChildren().elements();
-		while (e.hasMoreElements()) {
-			Box b = (Box) e.nextElement();
-			b.render(this);	// span areas
-		}
-
-        if (area.getPosition() != Position.STATIC) {
-            this.currentYPosition = saveY;
-            this.currentAreaContainerXPosition = saveX;
-        } else
-            this.currentYPosition -= area.getHeight();
-
-	}
-
-	public void renderSpanArea(SpanArea area) {
-		Enumeration e = area.getChildren().elements();
-		while (e.hasMoreElements()) {
-			Box b = (Box) e.nextElement();
-			b.render(this);	// column areas
-		}
-	}
-
-    private void doFrame(Area area) {
-        int w, h;
-        int rx = this.currentAreaContainerXPosition;
-        w = area.getContentWidth();
-        if (area instanceof BlockArea)
-            rx += ((BlockArea) area).getStartIndent();
-        h = area.getContentHeight();
-        int ry = this.currentYPosition;
-        ColorType bg = area.getBackgroundColor();
-
-        rx = rx - area.getPaddingLeft();
-        ry = ry + area.getPaddingTop();
-        w = w + area.getPaddingLeft() + area.getPaddingRight();
-        h = h + area.getPaddingTop() + area.getPaddingBottom();
-
-        // I'm not sure I should have to check for bg being null
-        // but I do
-        if ((bg != null) && (bg.alpha() == 0)) {
-            this.addRect(rx, ry, w, -h, new PDFColor(bg), new PDFColor(bg));
-        }
-
-        rx = rx - area.getBorderLeftWidth();
-        ry = ry + area.getBorderTopWidth();
-        w = w + area.getBorderLeftWidth() + area.getBorderRightWidth();
-        h = h + area.getBorderTopWidth() + area.getBorderBottomWidth();
-
-	// Handle line style
-	// Offset for haft the line width!
-				BorderAndPadding bp = area.getBorderAndPadding();
-        if (area.getBorderTopWidth() != 0)
-            addLine(rx, ry, rx + w, ry, area.getBorderTopWidth(),
-                    new PDFColor(bp.getBorderColor(BorderAndPadding.TOP)));
-        if (area.getBorderLeftWidth() != 0)
-            addLine(rx, ry, rx, ry - h, area.getBorderLeftWidth(),
-                    new PDFColor(bp.getBorderColor(BorderAndPadding.LEFT)));
-        if (area.getBorderRightWidth() != 0)
-            addLine(rx + w, ry, rx + w, ry - h, area.getBorderRightWidth(),
-                    new PDFColor(bp.getBorderColor(BorderAndPadding.RIGHT)));
-        if (area.getBorderBottomWidth() != 0)
-            addLine(rx, ry - h, rx + w, ry - h, area.getBorderBottomWidth(),
-                    new PDFColor(bp.getBorderColor(BorderAndPadding.BOTTOM)));
-
-    }
-
-
-    /**
-       * render block area to PDF
-       *
-       * @param area the block area to render
-       */
-    public void renderBlockArea(BlockArea area) {
-      // KLease: Temporary test to fix block positioning
-      // Offset ypos by padding and border widths
-        this.currentYPosition -= (area.getPaddingTop() + area.getBorderTopWidth());
-        doFrame(area);
-        Enumeration e = area.getChildren().elements();
-        while (e.hasMoreElements()) {
-            Box b = (Box) e.nextElement();
-            b.render(this);
-        }
-	this.currentYPosition -= (area.getPaddingBottom() + area.getBorderBottomWidth());
-    }
-
-    /**
-       * render display space to PDF
-       *
-       * @param space the display space to render
-       */
-    public void renderDisplaySpace(DisplaySpace space) {
-        int d = space.getSize();
-        this.currentYPosition -= d;
     }
 
     /**
@@ -652,38 +463,7 @@ public class PDFRenderer implements Renderer {
         int rx = this.currentXPosition;
         int bl = this.currentYPosition;
 
-
-        if (area.getUnderlined()) {
-            int yPos = bl - size/10;
-            addLine(rx, yPos, rx + area.getContentWidth(),
-                    yPos, size/14, theAreaColor);
-            // save position for underlining a following InlineSpace
-            prevUnderlineXEndPos = rx + area.getContentWidth();
-            prevUnderlineYEndPos = yPos;
-            prevUnderlineSize = size/14;
-            prevUnderlineColor = theAreaColor;
-        }
-
-        if (area.getOverlined()) {
-            int yPos = bl + area.getFontState().getAscender() + size/10;
-            addLine(rx, yPos, rx + area.getContentWidth(),
-                    yPos, size/14, theAreaColor);
-            prevOverlineXEndPos = rx + area.getContentWidth();
-            prevOverlineYEndPos = yPos;
-            prevOverlineSize = size/14;
-            prevOverlineColor = theAreaColor;
-        }
-
-        if (area.getLineThrough()) {
-            int yPos = bl + area.getFontState().getAscender() * 3/8;
-            addLine(rx, yPos, rx + area.getContentWidth(),
-                    yPos, size/14, theAreaColor);
-            prevLineThroughXEndPos = rx + area.getContentWidth();
-            prevLineThroughYEndPos = yPos;
-            prevLineThroughSize = size/14;
-            prevLineThroughColor = theAreaColor;
-        }
-
+		addWordLines(area, rx, bl, size, theAreaColor);
 
 	if (OPTIMIZE_TEXT) {
 	    if (!textOpen || bl != prevWordY) {
@@ -828,72 +608,6 @@ public class PDFRenderer implements Renderer {
 	    prevWordY = 0;
 	}
     }
-    
-	
-
-    /**
-       * render inline space to PDF
-       *
-       * @param space space to render
-       */
-    public void renderInlineSpace(InlineSpace space) {
-        this.currentXPosition += space.getSize();
-        if (space.getUnderlined()) {
-            if (prevUnderlineColor != null) {
-               addLine(prevUnderlineXEndPos, prevUnderlineYEndPos,
-                       prevUnderlineXEndPos + space.getSize(),
-                       prevUnderlineYEndPos, prevUnderlineSize, prevUnderlineColor);
-            }
-        }
-        if (space.getOverlined()) {
-            if (prevOverlineColor != null) {
-                addLine(prevOverlineXEndPos, prevOverlineYEndPos,
-                        prevOverlineXEndPos + space.getSize(),
-                        prevOverlineYEndPos, prevOverlineSize, prevOverlineColor);
-            }
-        }
-        if (space.getLineThrough()) {
-            if (prevLineThroughColor != null) {
-                addLine(prevLineThroughXEndPos, prevLineThroughYEndPos,
-                        prevLineThroughXEndPos + space.getSize(),
-                        prevLineThroughYEndPos, prevLineThroughSize, prevLineThroughColor);
-            }
-         }
-
-    }
-
-    /**
-       * render line area to PDF
-       *
-       * @param area area to render
-       */
-    public void renderLineArea(LineArea area) {
-        int rx = this.currentAreaContainerXPosition + area.getStartIndent();
-        int ry = this.currentYPosition;
-        int w = area.getContentWidth();
-        int h = area.getHeight();
-
-        this.currentYPosition -= area.getPlacementOffset();
-        this.currentXPosition = rx;
-
-        int bl = this.currentYPosition;
-
-        Enumeration e = area.getChildren().elements();
-        while (e.hasMoreElements()) {
-            Box b = (Box) e.nextElement();
-            if(b instanceof InlineArea) {
-                InlineArea ia = (InlineArea)b;
-                this.currentYPosition = ry - ia.getYOffset();
-            } else {
-                this.currentYPosition = ry - area.getPlacementOffset();
-            }
-            b.render(this);
-        }
-
-        this.currentYPosition = ry - h;
-        this.currentXPosition = rx;
-    }
-
 
    private StringBuffer addKerning(Integer ch1, Integer ch2,
                                    Hashtable kerning, String startText,
@@ -985,68 +699,6 @@ public class PDFRenderer implements Renderer {
     }
 
     /**
-       * render leader area into PDF
-       *
-       * @param area area to render
-       */
-    public void renderLeaderArea(LeaderArea area) {
-        int rx = this.currentXPosition;
-        ;
-        int ry = this.currentYPosition;
-        int w = area.getContentWidth();
-        int h = area.getHeight();
-        int th = area.getRuleThickness();
-        int st = area.getRuleStyle();
-        String rs = setRuleStylePattern(st);
-        //checks whether thickness is = 0, because of bug in pdf (or where?),
-        //a line with thickness 0 is still displayed
-        if (th != 0) {
-            switch (st) {
-                case org.apache.fop.fo.properties.RuleStyle.DOUBLE:
-                    addLine(rx, ry, rx + w, ry, th / 3, rs,
-                            new PDFColor(area.getRed(),
-                                         area.getGreen(), area.getBlue()));
-                    addLine(rx, ry + (2 * th / 3), rx + w,
-                            ry + (2 * th / 3), th / 3, rs,
-                            new PDFColor(area.getRed(),
-                                         area.getGreen(), area.getBlue()));
-                    break;
-                case org.apache.fop.fo.properties.RuleStyle.GROOVE:
-                    addLine(rx, ry, rx + w, ry, th / 2, rs,
-                            new PDFColor(area.getRed(),
-                                         area.getGreen(), area.getBlue()));
-                    addLine(rx, ry + (th / 2), rx + w, ry + (th / 2),
-                            th / 2, rs, new PDFColor(255, 255, 255));
-                    break;
-                case org.apache.fop.fo.properties.RuleStyle.RIDGE:
-                    addLine(rx, ry, rx + w, ry, th / 2, rs,
-                            new PDFColor(255, 255, 255));
-                    addLine(rx, ry + (th / 2), rx + w, ry + (th / 2),
-                            th / 2, rs,
-                            new PDFColor(area.getRed(),
-                                         area.getGreen(), area.getBlue()));
-                    break;
-                default:
-                    addLine(rx, ry, rx + w, ry, th, rs,
-                            new PDFColor(area.getRed(),
-                                         area.getGreen(), area.getBlue()));
-            }
-            this.currentXPosition += area.getContentWidth();
-            this.currentYPosition += th;
-        }
-    }
-
-    /**
-       * set up the font info
-       *
-       * @param fontInfo font info to set up
-       */
-    public void setupFontInfo(FontInfo fontInfo) {
-        this.fontInfo = fontInfo;
-        FontSetup.setup(fontInfo);
-    }
-
-    /**
        * defines a string containing dashArray and dashPhase for the rule style
        */
     private String setRuleStylePattern (int style) {
@@ -1118,5 +770,4 @@ public class PDFRenderer implements Renderer {
 	    renderOutline((Outline)e.nextElement());
 	}
     }
- 
 }
