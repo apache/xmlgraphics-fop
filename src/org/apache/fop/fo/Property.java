@@ -188,10 +188,9 @@ public class Property {
                 }
                 return pret;
             } catch (org.apache.fop.fo.expr.PropertyException propEx) {
-                //MessageHandler.errorln("Error in " + propName
-                //                       + " property value '" + value + "': "
-                //                       + propEx);
-                throw new FOPException("Property error");
+                throw new FOPException("Error in " + propName +
+                                       " property value '" + value + "': " +
+                                       propEx);
             }
         }
 
