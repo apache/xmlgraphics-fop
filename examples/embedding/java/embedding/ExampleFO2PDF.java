@@ -59,7 +59,6 @@ public class ExampleFO2PDF {
     
             // Setup output
             out = new java.io.FileOutputStream(pdf);
-            out = new java.io.BufferedOutputStream(out);
             driver.setOutputStream(out);
 
             // Setup JAXP using identity transformer
