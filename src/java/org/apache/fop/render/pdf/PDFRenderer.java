@@ -67,46 +67,21 @@ import org.apache.avalon.framework.configuration.Configuration;
 import org.apache.avalon.framework.configuration.ConfigurationException;
 
 // FOP
-import org.apache.fop.render.PrintRenderer;
-import org.apache.fop.render.RendererContext;
-import org.apache.fop.apps.FOUserAgent;
-import org.apache.fop.image.FopImage;
-import org.apache.fop.image.XMLImage;
-import org.apache.fop.image.ImageFactory;
 import org.apache.fop.apps.FOPException;
+import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.apps.Version;
-import org.apache.fop.fo.properties.RuleStyle;
-import org.apache.fop.fo.properties.BackgroundRepeat;
-import org.apache.fop.fonts.Typeface;
-import org.apache.fop.fonts.FontMetrics;
-import org.apache.fop.pdf.PDFEncryptionManager;
-import org.apache.fop.pdf.PDFFilterList;
-import org.apache.fop.pdf.PDFStream;
-import org.apache.fop.pdf.PDFDocument;
-import org.apache.fop.pdf.PDFInfo;
-import org.apache.fop.pdf.PDFResources;
-import org.apache.fop.pdf.PDFResourceContext;
-import org.apache.fop.pdf.PDFText;
-import org.apache.fop.pdf.PDFXObject;
-import org.apache.fop.pdf.PDFPage;
-import org.apache.fop.pdf.PDFState;
-import org.apache.fop.pdf.PDFLink;
-import org.apache.fop.pdf.PDFOutline;
-import org.apache.fop.pdf.PDFAnnotList;
-import org.apache.fop.pdf.PDFColor;
-import org.apache.fop.area.extensions.BookmarkData;
-
-import org.apache.fop.area.Trait;
-import org.apache.fop.area.TreeExt;
-import org.apache.fop.area.CTM;
-import org.apache.fop.area.Title;
-import org.apache.fop.area.PageViewport;
-import org.apache.fop.area.Page;
-import org.apache.fop.area.RegionViewport;
 import org.apache.fop.area.Area;
 import org.apache.fop.area.Block;
 import org.apache.fop.area.BlockViewport;
+import org.apache.fop.area.CTM;
 import org.apache.fop.area.LineArea;
+import org.apache.fop.area.Page;
+import org.apache.fop.area.PageViewport;
+import org.apache.fop.area.RegionViewport;
+import org.apache.fop.area.Title;
+import org.apache.fop.area.Trait;
+import org.apache.fop.area.TreeExt;
+import org.apache.fop.area.extensions.BookmarkData;
 import org.apache.fop.area.inline.Character;
 import org.apache.fop.area.inline.Word;
 import org.apache.fop.area.inline.Viewport;
@@ -114,10 +89,34 @@ import org.apache.fop.area.inline.ForeignObject;
 import org.apache.fop.area.inline.Image;
 import org.apache.fop.area.inline.Leader;
 import org.apache.fop.area.inline.InlineParent;
-import org.apache.fop.fonts.Font;
-import org.apache.fop.traits.BorderProps;
 import org.apache.fop.datatypes.ColorType;
-import org.apache.fop.apps.*;
+import org.apache.fop.fo.properties.BackgroundRepeat;
+import org.apache.fop.fo.properties.RuleStyle;
+import org.apache.fop.fonts.Typeface;
+import org.apache.fop.fonts.Font;
+import org.apache.fop.fonts.FontMetrics;
+import org.apache.fop.image.FopImage;
+import org.apache.fop.image.ImageFactory;
+import org.apache.fop.image.XMLImage;
+import org.apache.fop.pdf.PDFAnnotList;
+import org.apache.fop.pdf.PDFColor;
+import org.apache.fop.pdf.PDFDocument;
+import org.apache.fop.pdf.PDFEncryptionManager;
+import org.apache.fop.pdf.PDFFilterList;
+import org.apache.fop.pdf.PDFInfo;
+import org.apache.fop.pdf.PDFLink;
+import org.apache.fop.pdf.PDFOutline;
+import org.apache.fop.pdf.PDFPage;
+import org.apache.fop.pdf.PDFResourceContext;
+import org.apache.fop.pdf.PDFResources;
+import org.apache.fop.pdf.PDFState;
+import org.apache.fop.pdf.PDFStream;
+import org.apache.fop.pdf.PDFText;
+import org.apache.fop.pdf.PDFXObject;
+import org.apache.fop.render.PrintRenderer;
+import org.apache.fop.render.RendererContext;
+import org.apache.fop.traits.BorderProps;
+
 
 /*
 todo:
@@ -494,12 +493,12 @@ public class PDFRenderer extends PrintRenderer {
     }
 
     /**
-     * Handle the viewport traits.
-     * This is used to draw the traits for a viewport.
-     *
-     * @param region the viewport region to handle
+     * Handle the traits for a region
+     * This is used to draw the traits for the given page region
+     * (see Sect. 6.4.1.2 of XSL-FO spec.)
+     * @param region the RegionViewport whose region is to be drawn
      */
-    protected void handleViewportTraits(RegionViewport region) {
+    protected void handleRegionTraits(RegionViewport region) {
         currentFontName = "";
         float startx = 0;
         float starty = 0;

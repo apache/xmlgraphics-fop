@@ -337,7 +337,7 @@ public class PropertyManager {
         CommonBackground bp = new CommonBackground();
         bp.backAttachment = properties.get("background-attachment").getEnum();
         bp.backColor = properties.get("background-color").getColorType();
-        if (bp.backColor.alpha() == 1) {
+        if (bp.backColor.getAlpha() == 0) {
             bp.backColor = null;
         }
 

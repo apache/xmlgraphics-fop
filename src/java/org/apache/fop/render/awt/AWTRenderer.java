@@ -86,9 +86,15 @@ import org.apache.fop.area.Area;
 import org.apache.fop.area.Page;
 import org.apache.fop.area.PageViewport;
 import org.apache.fop.area.RegionViewport;
+import org.apache.fop.area.Trait;
+import org.apache.fop.datatypes.ColorType;
 import org.apache.fop.fo.FOTreeControl;
+import org.apache.fop.fo.properties.BackgroundRepeat;
 import org.apache.fop.fonts.Font;
+import org.apache.fop.image.FopImage;
+import org.apache.fop.image.ImageFactory;
 import org.apache.fop.render.AbstractRenderer;
+import org.apache.fop.traits.BorderProps;
 import org.apache.fop.viewer.PreviewDialog;
 import org.apache.fop.viewer.Translator;
 
@@ -100,6 +106,8 @@ public class AWTRenderer extends AbstractRenderer implements Printable, Pageable
     protected double scaleFactor = 100.0;
     protected int pageNumber = 0;
     protected Vector pageViewportList = new java.util.Vector();
+    protected Vector pageList = new java.util.Vector(); 
+    protected BufferedImage currentPageImage = null;
 
     /** Font configuration */
     protected Document fontInfo;
@@ -186,6 +194,7 @@ public class AWTRenderer extends AbstractRenderer implements Printable, Pageable
     throws IOException {
         // empty pageViewportList, in case of a reload from PreviewDialog
         pageViewportList.removeAllElements();
+        pageList.removeAllElements();
     }
 
     public void stopRenderer()
@@ -242,6 +251,7 @@ public class AWTRenderer extends AbstractRenderer implements Printable, Pageable
     */
     public void renderPage(PageViewport pageViewport)  throws IOException, FOPException {
         pageViewportList.add(pageViewport);
+        pageList.add(pageViewport.getPage().clone());        
     }
 
     /** Generates a desired page from the renderer's page viewport vector.
@@ -256,18 +266,23 @@ public class AWTRenderer extends AbstractRenderer implements Printable, Pageable
                 + " page(s) available.");
         }
         PageViewport pageViewport = (PageViewport) pageViewportList.get(pageNum);
-        Page page = pageViewport.getPage();
+        Page page = (Page) pageList.get(pageNum);
         
         Rectangle2D bounds = pageViewport.getViewArea();
         int pageWidth = (int)((float) bounds.getWidth() / 1000f + .5);
         int pageHeight = (int)((float) bounds.getHeight() / 1000f + .5);
-
-        BufferedImage pageImage =
+/*
+        System.out.println("(Page) X, Y, Width, Height: " + bounds.getX()
+            + " " + bounds.getY()
+            + " " + bounds.getWidth()
+            + " " + bounds.getHeight());
+*/      
+        currentPageImage =
             new BufferedImage((int)((pageWidth * (int)scaleFactor) / 100),
                               (int)((pageHeight * (int)scaleFactor) / 100),
                               BufferedImage.TYPE_INT_RGB);
 
-        Graphics2D graphics = pageImage.createGraphics();
+        Graphics2D graphics = currentPageImage.createGraphics();
         graphics.setRenderingHint (RenderingHints.KEY_FRACTIONALMETRICS,
                                    RenderingHints.VALUE_FRACTIONALMETRICS_ON);
 
@@ -286,10 +301,116 @@ public class AWTRenderer extends AbstractRenderer implements Printable, Pageable
         graphics.drawLine(0, pageHeight + 2, pageWidth + 2, pageHeight + 2);
         graphics.drawLine(1, pageHeight + 3, pageWidth + 3, pageHeight + 3);
 
-        this.currentFontName = "";
-        this.currentFontSize = 0;
-//      renderPageAreas(page);
-        return pageImage;
+        currentFontName = "";
+        currentFontSize = 0;
+        renderPageAreas(page);
+        return currentPageImage;
     }
 
+    /**
+     * Handle the traits for a region
+     * This is used to draw the traits for the given page region
+     * (see Sect. 6.4.1.2 of XSL-FO spec.)
+     * @param region the RegionViewport whose region is to be drawn
+     */
+    protected void handleRegionTraits(RegionViewport region) {
+        currentFontName = "";
+        currentFontSize = 0;
+        Rectangle2D viewArea = region.getViewArea();
+/*
+        if (region.getRegion() != null) {
+            System.out.print("Region type = " + region.getRegion().getRegionClass());
+        }
+        System.out.println("  X, Y, Width, Height: " + viewArea.getX()
+            + " " + viewArea.getY()
+            + " " + viewArea.getWidth()
+            + " " + viewArea.getHeight());
+*/      
+        int startX = (int)(((float) viewArea.getX() / 1000f + .5) 
+            * (scaleFactor / 100f));
+        int startY = (int)(((float) viewArea.getY() / 1000f + .5) 
+            * (scaleFactor / 100f));
+        int width = (int)(((float) viewArea.getWidth() / 1000f + .5) 
+            * (scaleFactor / 100f));
+        int height = (int)(((float) viewArea.getHeight() / 1000f + .5)
+            * (scaleFactor / 100f));
+         
+        drawBackAndBorders(region, startX, startY, width, height);
+    }
+    
+    /**
+     * Draw the background and borders.
+     * This draws the background and border traits for an area given
+     * the position.
+     *
+     * @param block the area to get the traits from
+     * @param startx the start x position
+     * @param starty the start y position
+     * @param width the width of the area
+     * @param height the height of the area
+     */
+    protected void drawBackAndBorders(Area block,
+                    int startx, int starty,
+                    int width, int height) {
+
+        // draw background then border
+        Graphics2D graphics = currentPageImage.createGraphics();
+        Trait.Background back;
+        back = (Trait.Background) block.getTrait(Trait.BACKGROUND);
+        if (back != null) {
+
+            if (back.getColor() != null) {
+                graphics.setColor(back.getColor().getAWTColor());
+                graphics.fillRect(startx, starty, width, height);
+            }
+            if (back.getURL() != null) {  // TODO: implement
+                ImageFactory fact = ImageFactory.getInstance();
+                FopImage fopimage = fact.getImage(back.getURL(), userAgent);
+                if (fopimage != null && fopimage.load(FopImage.DIMENSIONS, userAgent)) {
+                    if (back.getRepeat() == BackgroundRepeat.REPEAT) {
+                        // create a pattern for the image
+                    } else {
+                        // place once
+                        Rectangle2D pos;
+                        pos = new Rectangle2D.Float((startx + back.getHoriz()) * 1000,
+                                                    (starty + back.getVertical()) * 1000,
+                                                    fopimage.getWidth() * 1000,
+                                                    fopimage.getHeight() * 1000);
+//                      putImage(back.getURL(), pos);
+                    }
+                }
+            }
+        }
+
+        BorderProps bps = (BorderProps) block.getTrait(Trait.BORDER_BEFORE);
+        if (bps != null) {
+            int endx = startx + width;
+            int bwidth = bps.width;
+            graphics.setColor(bps.color.getAWTColor());
+            graphics.drawLine(startx, starty + bwidth / 2, endx, starty + bwidth / 2);
+        }
+        bps = (BorderProps) block.getTrait(Trait.BORDER_START);
+        if (bps != null) {
+            int endy = starty + height;
+            int bwidth = bps.width;
+            graphics.setColor(bps.color.getAWTColor());
+            graphics.drawLine(startx + bwidth / 2, starty, startx + bwidth / 2, endy);
+        }
+        bps = (BorderProps) block.getTrait(Trait.BORDER_AFTER);
+        if (bps != null) {
+            int sy = starty + height;
+            int endx = startx + width;
+            int bwidth = bps.width;
+            graphics.setColor(bps.color.getAWTColor());
+            graphics.drawLine(startx, sy - bwidth / 2, endx, sy - bwidth / 2);
+        }
+        bps = (BorderProps) block.getTrait(Trait.BORDER_END);
+        if (bps != null) {
+            int sx = startx + width;
+            int endy = starty + height;
+            int bwidth = bps.width;
+            graphics.setColor(bps.color.getAWTColor());
+            graphics.drawLine(sx - bwidth / 2, starty, sx - bwidth / 2, endy);
+        }
+    }
 }
