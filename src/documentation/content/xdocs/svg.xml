@@ -30,7 +30,7 @@
         <tr>
           <td>GIF</td>
           <td>bitmap</td>
-          <td>FOP native</td>
+          <td><link href="#native">FOP native</link></td>
         </tr>
         <tr>
           <td>FPX</td>
@@ -43,9 +43,9 @@
           <td><link href="#jimi">JIMI</link></td>
         </tr>
         <tr>
-          <td>JPEG</td>
+          <td><link href="#jpeg">JPEG</link></td>
           <td>bitmap</td>
-          <td>FOP native</td>
+          <td><link href="#native">FOP native</link></td>
         </tr>
         <tr>
           <td>PCX</td>
