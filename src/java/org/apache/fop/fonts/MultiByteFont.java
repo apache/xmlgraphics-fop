@@ -53,9 +53,6 @@ package org.apache.fop.fonts;
 //Java
 import java.util.Map;
 
-//FOP
-import org.apache.fop.pdf.PDFWArray;
-
 /**
  * Generic MultiByte (CID) font
  */
@@ -73,22 +70,8 @@ public class MultiByteFont extends CIDFont {
     private CIDFontType cidType = CIDFontType.CIDTYPE2;
 
     private String namePrefix = null;    // Quasi unique prefix
-    //private PDFWArray warray = new PDFWArray();
-    private int width[] = null;
 
     private BFEntry[] bfentries = null;
-
-    /**
-     * usedGlyphs contains orginal, new glyph index
-     */
-    private Map usedGlyphs = new java.util.HashMap();
-
-    /**
-     * usedGlyphsIndex contains new glyph, original index
-     */
-    private Map usedGlyphsIndex = new java.util.HashMap();
-    private int usedGlyphsCount = 0;
-
 
     /**
      * Default constructor
@@ -223,23 +206,6 @@ public class MultiByteFont extends CIDFont {
             arr[i] *= size;
         */
         return arr;
-    }
-
-    /**
-     * @see org.apache.fop.fonts.CIDFont#getSubsetWidths()
-     */
-    public PDFWArray getSubsetWidths() {
-        // Create widths for reencoded chars
-        PDFWArray warray = new PDFWArray();
-        int[] tmpWidth = new int[usedGlyphsCount];
-
-        for (int i = 0; i < usedGlyphsCount; i++) {
-            Integer nw = (Integer)usedGlyphsIndex.get(new Integer(i));
-            int nwx = (nw == null) ? 0 : nw.intValue();
-            tmpWidth[i] = width[nwx];
-        }
-        warray.addEntry(0, tmpWidth);
-        return warray;
     }
 
     /**

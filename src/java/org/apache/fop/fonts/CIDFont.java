@@ -50,12 +50,27 @@
  */
 package org.apache.fop.fonts;
 
-import org.apache.fop.pdf.PDFWArray;
+//Java
+import java.util.Map;
 
 /**
  * Abstract base class for CID fonts.
  */
 public abstract class CIDFont extends CustomFont {
+
+    /**
+     * usedGlyphs contains orginal, new glyph index
+     */
+    public Map usedGlyphs = new java.util.HashMap();
+
+    /**
+     * usedGlyphsIndex contains new glyph, original index
+     */
+    public Map usedGlyphsIndex = new java.util.HashMap();
+    public int usedGlyphsCount = 0;
+
+    //private PDFWArray warray = new PDFWArray();
+    public int width[] = null;
 
     // ---- Required ----
     /**
@@ -106,12 +121,5 @@ public abstract class CIDFont extends CustomFont {
     public boolean isMultiByte() {
         return true;
     }
-
-    /**
-     * Returns a PDFWArray containing all the widths of the subset to be used.
-     * @return the character widths
-     * (todo) Try to avoid dependency on PDF library
-     */
-    public abstract PDFWArray getSubsetWidths();
 
 }
