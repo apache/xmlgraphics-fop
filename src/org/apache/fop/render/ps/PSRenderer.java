@@ -961,7 +961,9 @@ public class PSRenderer implements Renderer {
          * Returns a customized the pixel to mm factor.
          */
         public float getPixelToMM() {
-            return 0.264583333333333333333f;    // 72 dpi
+            // this is set to 72dpi as the values in fo are 72dpi
+            return 0.3527777777777777778f; // 72 dpi
+            // return 0.26458333333333333333333333333333f;    // 96dpi
         }
 
         /**
