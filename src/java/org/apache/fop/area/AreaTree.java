@@ -50,6 +50,10 @@
  */
 package org.apache.fop.area;
 
+import org.apache.fop.area.extensions.BookmarkData;
+import org.apache.fop.fo.extensions.Outline;
+import org.apache.fop.apps.Document;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -233,5 +237,43 @@ public class AreaTree {
         }
         model.endDocument();
     }
-}
 
+    /**
+     * When this element is finished then it can create
+     * the bookmark data from the child elements and add
+     * the extension to the area tree.
+     */
+    public void addBookmarksToAreaTree(Document document) {
+        if (document.getBookmarks() == null) {
+            return;
+        }
+        document.getDriver().getLogger().debug("adding bookmarks to area tree");
+        BookmarkData data = new BookmarkData();
+        for (int count = 0; count < document.getBookmarks().getOutlines().size(); count++) {
+            Outline out = (Outline)(document.getBookmarks().getOutlines()).get(count);
+            data.addSubData(createBookmarkData(out));
+        }
+        // add data to area tree for resolving and handling
+        AreaTree at = document.getAreaTree();
+        at.addTreeExtension(data);
+        data.setAreaTree(at);
+    }
+
+    /**
+     * Create and return the bookmark data for this outline.
+     * This creates a bookmark data with the destination
+     * and adds all the data from child outlines.
+     *
+     * @return the new bookmark data
+     */
+    public BookmarkData createBookmarkData(Outline outline) {
+        BookmarkData data = new BookmarkData(outline.getInternalDestination());
+        data.setLabel(outline.getLabel());
+        for (int count = 0; count < outline.getOutlines().size(); count++) {
+            Outline out = (Outline)(outline.getOutlines()).get(count);
+            data.addSubData(createBookmarkData(out));
+        }
+        return data;
+    }
+
+}
