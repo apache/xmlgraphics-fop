@@ -89,7 +89,7 @@ public class IDReferences {
      */
     public void initializeID(String id, Area area) throws FOPException
     {
-        createID(id,area);
+        createID(id);
         configureID(id,area);        
     }
 
@@ -101,7 +101,7 @@ public class IDReferences {
      * @param area   The area where this id was encountered
      * @exception FOPException
      */
-    public void createID(String id, Area area) throws FOPException
+    public void createID(String id) throws FOPException
     {
         if ( id!=null && !id.equals("") ) {
             if ( doesIDExist(id) ) {
