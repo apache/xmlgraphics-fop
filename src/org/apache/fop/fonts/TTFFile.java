@@ -224,31 +224,23 @@ public class TTFFile {
 
 
                             // Also add winAnsiWidth
-                            if (false) {
-                                int d = j;
-                                if (j > 127)
-                                    d = (int)org.apache.fop.render.pdf.CodePointMapping.map[j];
-                                if (d < ansiWidth.length)
-                                    ansiWidth[d] = mtx_tab[glyphIdx].wx;
-                            } else {
-                                Vector v =
-                                    (Vector)ansiIndex.get(new Integer(j));
-                                if (v != null) {
-                                    for (Enumeration e = v.elements();
-                                            e.hasMoreElements(); ) {
-                                        Integer aIdx =
-                                            (Integer)e.nextElement();
-                                        ansiWidth[aIdx.intValue()] =
-                                            mtx_tab[glyphIdx].wx;
-                                        /*
-                                         * System.out.println("Added width "+
-                                         * mtx_tab[glyphIdx].wx +
-                                         * " uni: " + j +
-                                         * " ansi: " + aIdx.intValue());
-                                         */
-                                    }
-                                }
-                            }
+			    Vector v =
+				(Vector)ansiIndex.get(new Integer(j));
+			    if (v != null) {
+				for (Enumeration e = v.elements();
+				     e.hasMoreElements(); ) {
+				    Integer aIdx =
+					(Integer)e.nextElement();
+				    ansiWidth[aIdx.intValue()] =
+					mtx_tab[glyphIdx].wx;
+				    /*
+				     * System.out.println("Added width "+
+				     * mtx_tab[glyphIdx].wx +
+				     * " uni: " + j +
+				     * " ansi: " + aIdx.intValue());
+				     */
+				}
+			    }
                             /*
                              * System.out.println("Idx: "+
                              * glyphIdx +
@@ -281,26 +273,17 @@ public class TTFFile {
 
 
                             // Also add winAnsiWidth
-                            if (false) {
-                                int d = j;
-                                if (j > 127)
-                                    d = (int)org.apache.fop.render.pdf.CodePointMapping.map[j];
-
-                                if (d < ansiWidth.length)
-                                    ansiWidth[d] = mtx_tab[glyphIdx].wx;
-                            } else {
-                                Vector v =
-                                    (Vector)ansiIndex.get(new Integer(j));
-                                if (v != null) {
-                                    for (Enumeration e = v.elements();
-                                            e.hasMoreElements(); ) {
-                                        Integer aIdx =
-                                            (Integer)e.nextElement();
-                                        ansiWidth[aIdx.intValue()] =
-                                            mtx_tab[glyphIdx].wx;
-                                    }
-                                }
-                            }
+			    Vector v =
+				(Vector)ansiIndex.get(new Integer(j));
+			    if (v != null) {
+				for (Enumeration e = v.elements();
+				     e.hasMoreElements(); ) {
+				    Integer aIdx =
+					(Integer)e.nextElement();
+				    ansiWidth[aIdx.intValue()] =
+					mtx_tab[glyphIdx].wx;
+				}
+			    }
 
                             /*
                              * System.out.println("IIdx: "+
