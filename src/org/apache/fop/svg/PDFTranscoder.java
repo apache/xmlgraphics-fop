@@ -70,6 +70,7 @@ import org.apache.batik.transcoder.*;
 import org.apache.batik.transcoder.image.*;
 
 import org.apache.batik.util.SVGConstants;
+import org.apache.batik.util.XMLResourceDescriptor;
 
 import org.apache.batik.bridge.*;
 import org.apache.batik.swing.svg.*;
@@ -397,8 +398,11 @@ public class PDFTranscoder extends XMLAbstractTranscoder {
          * Returns the XML parser to use from the TranscodingHints.
          */
         public String getXMLParserClassName() {
-            return (String) getTranscodingHints().get(
-                     KEY_XML_PARSER_CLASSNAME);
+            if (getTranscodingHints().containsKey(KEY_XML_PARSER_CLASSNAME)) {
+                return (String)getTranscodingHints().get(KEY_XML_PARSER_CLASSNAME);
+            } else {
+                return XMLResourceDescriptor.getXMLParserClassName();
+            }
         }
 
         /**
