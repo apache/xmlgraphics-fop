@@ -66,6 +66,7 @@ public class RtfBefore extends RtfAfterBeforeBase {
     /**RtfBefore attributes*/
     public static final String HEADER = "header";
 
+    /** String array of attribute names */
     public static final String[] HEADER_ATTR = new String[]{
         HEADER
     };
@@ -74,6 +75,9 @@ public class RtfBefore extends RtfAfterBeforeBase {
         super(parent, w, attrs);
     }
 
+    /**
+     * @see RtfAfterBeforeBase#writeMyAttributes
+     */
     protected void writeMyAttributes() throws IOException {
         writeAttributes(attrib, HEADER_ATTR);
     }

@@ -184,7 +184,9 @@ public class RtfBookmark extends RtfElement {
         this.writeGroupMark (false);
     }
 
-        /** true if this element would generate no "useful" RTF content */
+        /**
+         * @return true if this element would generate no "useful" RTF content
+         */
         public boolean isEmpty() {
             return bookmark == null || bookmark.trim().length() == 0;
         }

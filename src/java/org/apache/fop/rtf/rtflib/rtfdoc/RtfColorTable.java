@@ -74,9 +74,9 @@ public class RtfColorTable {
     //////////////////////////////////////////////////
 
     // Defines the bit moving for the colors
-    private static int RED = 16;
-    private static int GREEN = 8;
-    private static int BLUE = 0;
+    private static final int RED = 16;
+    private static final int GREEN = 8;
+    private static final int BLUE = 0;
 
 
     //////////////////////////////////////////////////
@@ -164,8 +164,9 @@ public class RtfColorTable {
     // @@ Public methods
     //////////////////////////////////////////////////
 
-        /** get the RTF number of a named color
-         *  @return null if name not found
+        /**
+         * @param name a named color
+         * @return the RTF number of a named color, or null if name not found
          */
     public Integer getColorNumber (String name) {
             return (Integer)namedColors.get(name.toLowerCase());
