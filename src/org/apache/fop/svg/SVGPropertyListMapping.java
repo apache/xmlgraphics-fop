@@ -98,10 +98,6 @@ public class SVGPropertyListMapping implements PropertyListMapping {
 	propertyTable.put("font-style",FontStyle.maker());
 	propertyTable.put("font-weight",FontWeight.maker());
 	propertyTable.put("font-size",FontSize.maker());
-	propertyTable.put("break-before",BreakBefore.maker());
-	propertyTable.put("break-after",BreakAfter.maker());
-	propertyTable.put("space-before.optimum",SpaceBeforeOptimum.maker());
-	propertyTable.put("space-after.optimum",SpaceAfterOptimum.maker());
 //		propertyTable.put("id", SVGStringProperty.maker());
 
 	propertyTable.put("id",Id.maker());			// attribute for objects
