@@ -51,6 +51,7 @@
 package org.apache.fop.pdf;
 
 import java.io.IOException;
+import java.io.OutputStream;
 
 /**
  * Interface for a PDF image.
@@ -68,9 +69,11 @@ public interface PDFImage {
 
     /**
      * Setup the PDF image for the current document.
-     * Some image formats may need to access the document.
+     * Some image formats may need to access the document (for example to
+     * add an ICC profile to the document).
      *
      * @param doc the PDF parent document
+     * @todo Remove this and deletgate to the XObject
      */
     void setup(PDFDocument doc);
 
@@ -111,6 +114,13 @@ public interface PDFImage {
     boolean isPS();
 
     /**
+     * Check if this image is a DCT encoded image (for JPEG images).
+     *
+     * @return true if this is a DCT image
+     */
+    boolean isDCT();
+
+    /**
      * Check if this image has a transparent color transparency.
      *
      * @return true if it has transparency
@@ -141,12 +151,12 @@ public interface PDFImage {
     // get the image bytes, and bytes properties
 
     /**
-     * Get the data stream containing the image contents.
+     * Writes the raw, unencoded contents of the image to a given output stream.
      *
+     * @param out OutputStream to write to
      * @throws IOException if there creating stream
-     * @return the PDFStream containing the image data
      */
-    PDFStream getDataStream() throws IOException;
+    void outputContents(OutputStream out) throws IOException;
 
     /**
      * Get the ICC stream for this image.
@@ -154,6 +164,13 @@ public interface PDFImage {
      * @return the ICC stream for this image if any
      */
     PDFICCStream getICCStream();
+
+    /**
+     * Returns a hint in form of a String (Possible values from PDFFilterList)
+     * indicating which filter setup should be used to encode the object.
+     * @return the filter setup hint
+     */
+    String getFilterHint();
 
 }
 
