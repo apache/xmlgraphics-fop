@@ -106,11 +106,11 @@ public abstract class CIDFont extends CustomFont {
     public boolean isMultiByte() {
         return true;
     }
-    
+
     /**
      * Returns a PDFWArray containing all the widths of the subset to be used.
      * @return the character widths
-     * @todo Try to avoid dependency on PDF library
+     * (todo) Try to avoid dependency on PDF library
      */
     public abstract PDFWArray getSubsetWidths();
 

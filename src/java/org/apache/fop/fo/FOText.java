@@ -415,7 +415,7 @@ public class FOText extends FObj {
      * We have not found a definition of "word" in the standard (1.0), so the
      * logic used here is based on the programmer's best guess.
      *
-     * @parameter char inputChar: the character to be tested.
+     * @param char inputChar: the character to be tested.
      * @return int IS_WORD_CHAR_TRUE, IS_WORD_CHAR_FALSE, or IS_WORD_CHAR_MAYBE,
      * depending on whether the character should be considered part of a word
      * or not.
