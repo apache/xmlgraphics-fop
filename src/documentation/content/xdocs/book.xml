@@ -8,16 +8,8 @@
         copyright="@year@ The Apache Software Foundation"
         xmlns:xlink="http://www.w3.org/1999/xlink">
 
-        <menu label="About">
-          <menu-item label="Home" href="index.html"/>
-          <menu-item label="News" href="news.html"/>
-          <menu-item label="Logo contest" href="logocontest.html"/>
-        </menu>
-
-        <menu label="Project">
-          <menu-item label="Status" href="status.html"/>
-          <menu-item label="Changes" href="changes.html"/>
-          <menu-item label="Todo" href="todo.html"/>
+        <menu label="Home">
+          <menu-item label="Introduction" href="index.html"/>
         </menu>
 
         <menu label="Using FOP">
@@ -48,4 +40,13 @@
           <menu-item label="License" href="license.html"/>
           <menu-item label="Other" href="resources.html"/>
         </menu>
+
+        <menu label="Project">
+          <menu-item label="News" href="news.html"/>
+          <menu-item label="Logo contest" href="logocontest.html"/>
+          <menu-item label="Status" href="status.html"/>
+          <menu-item label="Changes" href="changes.html"/>
+          <menu-item label="Todo" href="todo.html"/>
+        </menu>
+
     </book>
