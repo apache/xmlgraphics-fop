@@ -25,7 +25,6 @@ import org.apache.fop.fo.FONode;
 
 /**
  * Class modelling the fo:table-header object.
- * @todo implement validateChildNode()
  */
 public class TableHeader extends TableBody {
 

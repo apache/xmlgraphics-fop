@@ -66,11 +66,6 @@ public class Flow extends FObj {
      * @see org.apache.fop.fo.FONode#startOfNode
      */
     protected void startOfNode() throws FOPException {
-        if (!parent.getName().equals("fo:page-sequence")) {
-            throw new ValidationException("flow must be child of "
-                                 + "page-sequence, not " + parent.getName(), locator);
-        }
-
         if (flowName == null || flowName.equals("")) {
             missingPropertyError("flow-name");
         }
