@@ -4,7 +4,7 @@
  *                    The Apache Software License, Version 1.1
  * ============================================================================
  * 
- * Copyright (C) 1999-2003 The Apache Software Foundation. All rights reserved.
+ * Copyright (C) 1999-2004 The Apache Software Foundation. All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without modifica-
  * tion, are permitted provided that the following conditions are met:
@@ -62,7 +62,6 @@ import javax.xml.parsers.DocumentBuilder;
 // DOM
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
-import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.Text;
 
@@ -86,7 +85,7 @@ public class ExampleDOM2PDF {
 
     /**
      * Converts a DOM Document to a PDF file using FOP.
-     * @param doc the DOM Document
+     * @param xslfoDoc the DOM Document
      * @param pdf the target PDF file
      * @throws IOException In case of an I/O problem
      * @throws FOPException In case of a FOP problem
@@ -166,7 +165,7 @@ public class ExampleDOM2PDF {
             ele2 = foDoc.createElementNS(foNS, "fo:flow");
             ele1.appendChild(ele2);
             ele2.setAttributeNS(null, "flow-name", "xsl-region-body");
-            AddElement(ele2, "fo:block", "Hello World!");
+            addElement(ele2, "fo:block", "Hello World!");
             
             ExampleDOM2PDF app = new ExampleDOM2PDF();
             app.convertDOM2PDF(foDoc, pdffile);
@@ -178,15 +177,22 @@ public class ExampleDOM2PDF {
         }
     }
 
-	protected static void AddElement(Node parent, String newNodeName, 
-        String textVal)
-	{
-		if (textVal == null) return;  // use only with text nodes
-		Element newElement = 
-            parent.getOwnerDocument().createElementNS(foNS, newNodeName);
-		Text elementText = parent.getOwnerDocument().createTextNode(textVal);
-		newElement.appendChild(elementText);
-		parent.appendChild(newElement);
-	}
+    /**
+     * Adds an element to the DOM.
+     * @param parent parent node to attach the new element to
+     * @param newNodeName name of the new node
+     * @param textVal content of the element
+     */
+    protected static void addElement(Node parent, String newNodeName, 
+                                String textVal) {
+        if (textVal == null) {
+            return;
+        }  // use only with text nodes
+        Element newElement = parent.getOwnerDocument().createElementNS(
+                                        foNS, newNodeName);
+        Text elementText = parent.getOwnerDocument().createTextNode(textVal);
+        newElement.appendChild(elementText);
+        parent.appendChild(newElement);
+    }
 }
 
