@@ -50,16 +50,17 @@
  */ 
 package org.apache.fop.fonts.type1;
 
+// Java
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Map;
 
-//Avalon
+// Apache libs
 import org.apache.avalon.framework.logger.AbstractLogEnabled;
+import org.apache.commons.io.IOUtil;
 
-//FOP
+// FOP
 import org.apache.fop.fonts.Glyphs;
-import org.apache.fop.util.StreamUtilities;
 
 /**
  * This class represents a PFM file (or parts of it) as a Java object.
@@ -100,7 +101,7 @@ public class PFMFile extends AbstractLogEnabled {
      * @throws IOException In case of an I/O problem
      */
     public void load(InputStream inStream) throws IOException {
-        final byte[] buf = StreamUtilities.toByteArray(inStream, 8000);
+        final byte[] buf = IOUtil.toByteArray(inStream);
         final InputStream bufin = new java.io.ByteArrayInputStream(buf);
         PFMInputStream in = new PFMInputStream(bufin);
         /*final int version =*/ in.readShort();
