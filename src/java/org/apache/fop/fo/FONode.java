@@ -198,6 +198,15 @@ public abstract class FONode implements Cloneable {
     }
 
     /**
+     * Removes a child node. Used by the child nodes to remove themselves, for
+     * example table-body if it has no children.
+     * @param child child node to be removed
+     */
+    public void removeChild(FONode child) {
+        //nop
+    }
+
+    /**
      * @return the parent node of this node
      */
     public FONode getParent() {
@@ -410,5 +419,6 @@ public abstract class FONode implements Cloneable {
     public int getNameId() {
         return Constants.FO_UNKNOWN_NODE;
     }
+
 }
 
