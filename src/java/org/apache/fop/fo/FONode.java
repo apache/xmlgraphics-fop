@@ -73,8 +73,8 @@ import org.apache.fop.fo.expr.PropertyException;
 import org.apache.fop.fo.expr.PropertyParser;
 import org.apache.fop.fo.properties.Property;
 import org.apache.fop.messaging.MessageHandler;
-import org.apache.fop.xml.FoXMLEvent;
-import org.apache.fop.xml.SyncedFoXmlEventsBuffer;
+import org.apache.fop.xml.XMLEvent;
+import org.apache.fop.xml.SyncedXmlEventsBuffer;
 import org.apache.fop.xml.XMLNamespaces;
 
 /**
@@ -139,7 +139,7 @@ public class FONode extends Node{
         PAGESEQ | FLOW | STATIC | TITLE | MC_MARKER;
 
     /** The buffer from which parser events are drawn. */
-    protected final SyncedFoXmlEventsBuffer xmlevents;
+    protected final SyncedXmlEventsBuffer xmlevents;
 
     /** The namespaces object associated with <i>xmlevents</i>. */
     protected XMLNamespaces namespaces;
@@ -208,24 +208,6 @@ public class FONode extends Node{
     protected FONode ancestorRefArea = null;
 
     /**
-     * The default constructor arguments for an FObject. <b>N.B.</b> not
-     * all subclasses of <tt>FONode</tt> use this constructor; e.g.
-     * <tt>FoRoot</tt>, <tt>FoPageSequence</tt> &amp; <tt>FoFlow</tt>.
-     * Generally these FObjects are not invoked through reflection.  If such
-     * invocation becomes necessary for a particular class, a contructor of
-     * this kind must be added to the class.
-     * <p>At present, the only difference is in the addition of the
-     * <tt>int.class</tt> constructor argument.
-     */
-    protected static final Class[] defaultConstructorArgs =
-        new Class[] {
-            FOTree.class
-            ,FONode.class
-            ,FoXMLEvent.class
-            ,int.class
-        };
-
-    /**
      * @param foTree an <tt>FOTree</tt> to which this node belongs
      * @param type the fo type of this FONode.
      * @param parent an <tt>FONode</tt>, the parent node of this node in
@@ -244,7 +226,7 @@ public class FONode extends Node{
      * properties.
      */
     public FONode
-        (FOTree foTree, int type, FONode parent, FoXMLEvent event,
+        (FOTree foTree, int type, FONode parent, XMLEvent event,
              int stateFlags, int[] sparsePropsMap, int[] sparseIndices)
         throws TreeException, FOPException, PropertyException
     {
