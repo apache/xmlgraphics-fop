@@ -55,7 +55,7 @@ public class PageMaster {
     private int width;
     private int height;
 	
-    private RegionArea body;
+    private BodyRegionArea body;
     private RegionArea before;
     private RegionArea after;
     private RegionArea start;
@@ -74,7 +74,7 @@ public class PageMaster {
 	this.before = region;
     }
 
-    public void addBody(RegionArea region) {
+    public void addBody(BodyRegionArea region) {
 	this.body = region;
     }
 
@@ -97,7 +97,7 @@ public class PageMaster {
     public Page makePage(AreaTree areaTree) {
 	Page p = new Page(areaTree, this.height, this.width);
 	if (this.body != null) {
-	    p.addBody(body.makeAreaContainer());
+	    p.addBody(body.makeBodyAreaContainer());
 	}
 	if (this.before != null) {
 	    p.addBefore(before.makeAreaContainer());
