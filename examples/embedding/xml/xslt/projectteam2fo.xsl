@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xsl:stylesheet version="1.1" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:fo="http://www.w3.org/1999/XSL/Format" exclude-result-prefixes="fo">
   <xsl:output method="xml" version="1.0" omit-xml-declaration="no" indent="yes"/>
+  <xsl:param name="versionParam" select="1.0"/> 
   <!-- ========================= -->
   <!-- root element: projectteam -->
   <!-- ========================= -->
@@ -14,6 +15,8 @@
       <fo:page-sequence master-reference="simpleA4">
         <fo:flow flow-name="xsl-region-body">
           <fo:block font-size="16pt" font-weight="bold" space-after="5mm">Project: <xsl:value-of select="projectname"/>
+          </fo:block>
+          <fo:block font-size="12pt" space-after="5mm">Version <xsl:value-of select="$versionParam"/>
           </fo:block>
           <fo:block font-size="10pt">
             <fo:table table-layout="fixed">
