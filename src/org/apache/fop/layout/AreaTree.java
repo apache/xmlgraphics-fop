@@ -13,6 +13,7 @@ import org.apache.fop.svg.*;
 import org.apache.fop.render.Renderer;
 import org.apache.fop.datatypes.IDReferences;
 import org.apache.fop.extensions.ExtensionObj;
+import org.apache.fop.fo.pagination.PageSequence;
 
 // Java
 import java.io.IOException;
@@ -67,5 +68,43 @@ public class AreaTree {
 	return rootExtensions;
     }
     
+	public Page getNextPage(Page current, boolean isWithinPageSequence,	
+		boolean isFirstCall) {
+		Page nextPage = null;
+		int pageIndex = 0;
+		if (isFirstCall)
+			pageIndex = pageList.size();
+		else
+			pageIndex = pageList.indexOf(current);
+		if ((pageIndex + 1) < pageList.size()) {
+			nextPage = (Page)pageList.elementAt(pageIndex + 1);
+			if (isWithinPageSequence && !nextPage.getPageSequence().equals(current.getPageSequence())) {
+				nextPage = null;
+			}
+		}
+		return nextPage;
+	}
 
+	public Page getPreviousPage(Page current, boolean isWithinPageSequence,
+		boolean isFirstCall) {
+		Page previousPage = null;
+		int pageIndex = 0;
+		if (isFirstCall)
+			pageIndex = pageList.size();
+		else
+			pageIndex = pageList.indexOf(current);
+		// System.out.println("Page index = " + pageIndex);
+		if ((pageIndex - 1) >= 0) {
+			previousPage = (Page)pageList.elementAt(pageIndex - 1);
+			PageSequence currentPS = current.getPageSequence();
+			// System.out.println("Current PS = '" + currentPS + "'");
+			PageSequence previousPS = previousPage.getPageSequence();
+			// System.out.println("Previous PS = '" + previousPS + "'");
+			if (isWithinPageSequence && !previousPS.equals(currentPS)) {
+				// System.out.println("Outside page sequence");
+				previousPage = null;
+			}
+		}
+		return previousPage;
+	}
 }

@@ -264,7 +264,9 @@ public class PageSequence extends FObj {
 
             }
 
-			// because of markers, do after fo:flow
+			// because of markers, do after fo:flow (likely also
+			// justifiable because of spec)
+			currentPage.setPageSequence(this);
             formatStaticContent(areaTree);
 
             MessageHandler.log("]");
@@ -627,6 +629,7 @@ public class PageSequence extends FObj {
 			String formattedPageNumber =
 				pageNumberGenerator.makeFormattedPageNumber(this.currentPageNumber);
 			currentPage.setFormattedNumber(formattedPageNumber);
+			currentPage.setPageSequence(this);
 			formatStaticContent(areaTree);
 			MessageHandler.log("[forced-" + firstAvailPageNumber + "]");
 			areaTree.addPage(currentPage);
