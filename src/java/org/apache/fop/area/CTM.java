@@ -50,12 +50,11 @@
  */
 package org.apache.fop.area;
 
-import org.apache.fop.datatypes.FODimension;
-import org.apache.fop.fo.PropertyManager;
-import java.awt.geom.Rectangle2D;
 import java.awt.Rectangle;
+import java.awt.geom.Rectangle2D;
 import java.io.Serializable;
 
+import org.apache.fop.datatypes.FODimension;
 import org.apache.fop.fo.properties.WritingMode;
 
 /**

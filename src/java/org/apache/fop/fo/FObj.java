@@ -50,23 +50,20 @@
  */
 package org.apache.fop.fo;
 
-// Java
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.ListIterator;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.HashMap;
-import java.util.Set;
 import java.util.Map;
+import java.util.Set;
+
+import org.apache.fop.apps.FOPException;
+import org.apache.fop.fo.flow.Marker;
+import org.apache.fop.fo.properties.FOPropertyMapping;
 import org.xml.sax.Attributes;
 
-// FOP
-import org.apache.fop.apps.FOPException;
-import org.apache.fop.fo.properties.FOPropertyMapping;
-import org.apache.fop.fo.flow.Marker;
-
 /**
- * base class for representation of formatting objects and their processing
+ * Base class for representation of formatting objects and their processing.
  */
 public class FObj extends FONode {
     private static final String FO_URI = "http://www.w3.org/1999/XSL/Format";

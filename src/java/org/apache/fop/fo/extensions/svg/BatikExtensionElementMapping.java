@@ -52,12 +52,10 @@ package org.apache.fop.fo.extensions.svg;
 
 import java.util.HashMap;
 
-import org.apache.fop.fo.FONode;
-import org.apache.fop.fo.ElementMapping;
-import org.apache.fop.apps.FOFileHandler;
-
 import org.apache.batik.util.XMLResourceDescriptor;
-import org.apache.batik.dom.svg.ExtensibleSVGDOMImplementation;
+import org.apache.fop.apps.FOFileHandler;
+import org.apache.fop.fo.ElementMapping;
+import org.apache.fop.fo.FONode;
 
 /**
  * This Element Mapping is for Batik SVG Extension elements

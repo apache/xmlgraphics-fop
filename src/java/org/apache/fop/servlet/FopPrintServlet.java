@@ -51,10 +51,8 @@
 package org.apache.fop.servlet;
 
 import java.io.File;
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
-import java.util.List;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -62,18 +60,12 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.xml.transform.TransformerFactory;
 
-import org.xml.sax.InputSource;
-
-// Avalon
 import org.apache.avalon.framework.logger.ConsoleLogger;
 import org.apache.avalon.framework.logger.Logger;
-
-// FOP
 import org.apache.fop.apps.Driver;
-import org.apache.fop.apps.FOPException;
-import org.apache.fop.area.PageViewport;
 import org.apache.fop.apps.XSLTInputHandler;
 import org.apache.fop.render.awt.AWTPrintRenderer;
+import org.xml.sax.InputSource;
 
 /**
  * Example servlet to generate a fop printout from a servlet.

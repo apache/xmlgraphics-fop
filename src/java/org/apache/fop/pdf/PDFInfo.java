@@ -69,6 +69,7 @@ public class PDFInfo extends PDFObject {
     private String author = null;
     private String subject = null;
     private String keywords = null;
+    private Date creationDate = null;
 
     /**
      * the name of the application that created the
@@ -131,6 +132,20 @@ public class PDFInfo extends PDFObject {
     }
 
     /**
+     * @return last set creation date
+     */
+    public Date getCreationDate() {
+        return creationDate;
+    }
+
+    /**
+     * @param date Date to store in the PDF as creation date. Use null to force current system date.
+     */
+    public void setCreationDate(Date date) {
+        creationDate = date;
+    }
+
+    /**
      * @see org.apache.fop.pdf.PDFObject#toPDF()
      */
     public byte[] toPDF() {
@@ -170,9 +185,11 @@ public class PDFInfo extends PDFObject {
             bout.write(encode("\n"));
     
             // creation date in form (D:YYYYMMDDHHmmSSOHH'mm')
-            final Date date = new Date();
+            if(creationDate==null) {
+                creationDate = new Date();
+            }
             final SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmss");
-            final String str = sdf.format(date) + "+00'00'";
+            final String str = sdf.format(creationDate) + "+00'00'";
             bout.write(encode("/CreationDate "));
             bout.write(encodeString("D:" + str));
             bout.write(encode("\n>>\nendobj\n"));
@@ -181,5 +198,6 @@ public class PDFInfo extends PDFObject {
         }
         return bout.toByteArray();
     }
+
 }
 

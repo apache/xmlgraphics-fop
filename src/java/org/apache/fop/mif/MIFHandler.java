@@ -54,29 +54,25 @@ package org.apache.fop.mif;
 import java.io.IOException;
 import java.io.OutputStream;
 
-// XML
-import org.xml.sax.SAXException;
-
-// FOP
-import org.apache.fop.apps.Driver;
-import org.apache.fop.fo.FOInputHandler;
-import org.apache.fop.fo.flow.Block;
-import org.apache.fop.fo.pagination.Flow;
-import org.apache.fop.fo.pagination.PageSequence;
-import org.apache.fop.fo.pagination.PageSequenceMaster;
-import org.apache.fop.fo.pagination.SimplePageMaster;
 import org.apache.fop.apps.Document;
 import org.apache.fop.apps.FOPException;
+import org.apache.fop.fo.FOInputHandler;
+import org.apache.fop.fo.flow.Block;
 import org.apache.fop.fo.flow.ExternalGraphic;
 import org.apache.fop.fo.flow.InstreamForeignObject;
 import org.apache.fop.fo.flow.Leader;
 import org.apache.fop.fo.flow.ListBlock;
 import org.apache.fop.fo.flow.ListItem;
 import org.apache.fop.fo.flow.Table;
-import org.apache.fop.fo.flow.TableColumn;
 import org.apache.fop.fo.flow.TableBody;
 import org.apache.fop.fo.flow.TableCell;
+import org.apache.fop.fo.flow.TableColumn;
 import org.apache.fop.fo.flow.TableRow;
+import org.apache.fop.fo.pagination.Flow;
+import org.apache.fop.fo.pagination.PageSequence;
+import org.apache.fop.fo.pagination.PageSequenceMaster;
+import org.apache.fop.fo.pagination.SimplePageMaster;
+import org.xml.sax.SAXException;
 
 // TODO: do we really want every method throwing a SAXException
 
