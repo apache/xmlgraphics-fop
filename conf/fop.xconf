@@ -14,95 +14,105 @@ the location of this file.
 <!-- NOTE: This is the version of the configuration -->
 <fop version="1.0">
 
-<userAgent>
-  <base url="./"/>
-  <!-- pixel to millimeter to specify dpi, 72dpi -->
-  <pixelToMillimeter value="0.35277777777777777778"/>
-</userAgent>
+  <userAgent>
+    <base url="./"/>
+    <!-- pixel to millimeter to specify dpi, 72dpi -->
+    <pixelToMillimeter value="0.35277777777777777778"/>
+  </userAgent>
 
-<!-- Information for specific renderers -->
-<!-- Uses renderer mime type for renderers -->
-<renderers>
-<renderer mime="application/pdf">
-  <filterList>
-      <!-- provides compression using zlib flate (default is on)-->
-      <value>flate</value>
+  <!-- Information for specific renderers -->
+  <!-- Uses renderer mime type for renderers -->
+  <renderers>
+    <renderer mime="application/pdf">
+      <filterList>
+        <!-- provides compression using zlib flate (default is on) -->
+        <value>flate</value>
+  
+        <!-- encodes binary data into printable ascii characters (default off)
+             This provides about a 4:5 expansion of data size -->
+        <!-- <value>ascii-85</value> -->
+  
+        <!-- encodes binary data with hex representation (default off)
+             This filter is not recommended as it doubles the data size -->
+        <!-- <value>ascii-hex</value> -->
+      </filterList>
 
-      <!-- encodes binary data into printable ascii characters (default off)
-           This provides about a 4:5 expansion of data size -->
-      <!-- <value>ascii-85</value> -->
+      <fonts>
+        <!-- embedded fonts -->
+        <!--
+        This information must exactly match the font specified
+        in the fo file. Otherwise it will use a default font.
 
-      <!-- encodes binary data with hex representation (default off)
-           This filter is not recommended as it doubles the data size -->
-      <!-- <value>ascii-hex</value> -->
-  </filterList>
+        For example,
+        <fo:inline font-family="Arial" font-weight="bold" font-style="normal">
+            Arial-normal-normal font
+        </fo:inline>
+        for the font triplet specified by:
+        <font-triplet name="Arial" style="normal" weight="bold"/>
 
-<fonts>
-      <!-- embedded fonts -->
-    <!--
-      this information must exactly match the font specified
-      in the fo file otherwise it will use a default font.
-      ie.
-      <fo:inline font-family="Arial" font-weight="bold" font-style="normal">
-          Arial-normal-normal font
-      </fo:inline>
+        If you do not want to embed the font in the pdf document
+        then do not include the "embed-url" attribute.
+        The font will be needed where the document is viewed
+        for it to be displayed properly.
 
-      for the font triplet specified by:
-      <font-triplet name="Arial" style="normal" weight="bold"/>
+        possible styles: normal | italic | oblique | backslant
+        possible weights: normal | bold | 100 | 200 | 300 | 400
+                          | 500 | 600 | 700 | 800 | 900
+        (normal = 400, bold = 700)
+        -->
 
-      If you do not want to embed the font in the pdf document
-      then do not include the "embed-url" attribute.
-      The font will be needed where the document is viewed
-      for it to be displayed properly.
+        <!--
+        <font metrics-url="arial.xml" kerning="yes" embed-url="arial.ttf">
+          <font-triplet name="Arial" style="normal" weight="normal"/>
+          <font-triplet name="ArialMT" style="normal" weight="normal"/>
+        </font>
+        <font metrics-url="arialb.xml" kerning="yes" embed-url="arialb.ttf">
+          <font-triplet name="Arial" style="normal" weight="bold"/>
+          <font-triplet name="ArialMT" style="normal" weight="bold"/>
+        </font>
+        -->
+      </fonts>
 
-      possible styles: normal | italic | oblique | backslant
-      possible weights: normal | bold | 100 | 200 | 300 | 400
-                        | 500 | 600 | 700 | 800 | 900
-      (normal = 400, bold = 700)
-     -->
+      <xmlHandler mime="text/svg+xml">
+      </xmlHandler>
 
-<!--
- <font metrics-url="arial.xml" kerning="yes" embed-url="arial.ttf">
-    <font-triplet name="Arial" style="normal" weight="normal"/>
-    <font-triplet name="ArialMT" style="normal" weight="normal"/>
- </font>
- <font metrics-url="arialb.xml" kerning="yes" embed-url="arialb.ttf">
-    <font-triplet name="Arial" style="normal" weight="bold"/>
-    <font-triplet name="ArialMT" style="normal" weight="bold"/>
- </font>
--->
-</fonts>
-<xmlHandler mime="text/svg+xml">
-</xmlHandler>
-</renderer>
-<renderer mime="application/ps">
-<xmlHandler mime="image/svg+xml">
-</xmlHandler>
-</renderer>
-<renderer mime="pcl">
+    </renderer>
 
-</renderer>
-<renderer mime="mif">
+    <renderer mime="application/postscript">
+      <xmlHandler mime="image/svg+xml">
+      </xmlHandler>
+    </renderer>
 
-</renderer>
-<renderer mime="text/svg+xml">
-<format type="paginated"/>
-<link value="true"/>
-<strokeText value="false"/>
-</renderer>
-<renderer mime="awt">
+    <renderer mime="application/vnd.hp-PCL">
+    </renderer>
 
-</renderer>
-<renderer mime="text/xml">
+    <!-- MIF does not have a renderer
+    <renderer mime="application/vnd.mif">
+    </renderer>
+    -->
 
-</renderer>
-<renderer mime="application/rtf">
+    <renderer mime="image/svg+xml">
+      <format type="paginated"/>
+      <link value="true"/>
+      <strokeText value="false"/>
+    </renderer>
 
-</renderer>
-<renderer mime="text/text">
-<pageSize columns="80"/>
-</renderer>
-</renderers>
+    <renderer mime="application/awt">
+    </renderer>
+
+    <renderer mime="text/xml">
+    </renderer>
+
+    <!-- RTF does not have a renderer
+    <renderer mime="text/rtf">
+    </renderer>
+    -->
+
+    <renderer mime="text/plain">
+      <pageSize columns="80"/>
+    </renderer>
+
+  </renderers>
 
 </fop>
 
