@@ -122,8 +122,9 @@ public class BodyAreaContainer extends Area {
 	this.addChild(footnoteReferenceArea);
 	
 	// all padding and border-width must be 0
-    setPadding(0, 0, 0, 0);
-    setBorderWidth(0, 0, 0, 0);
+	//setBorderAndPadding(new BorderAndPadding());
+	//    setPadding(0, 0, 0, 0);
+	//    setBorderWidth(0, 0, 0, 0);
     }
 
     public void render(Renderer renderer) {
@@ -135,7 +136,7 @@ public class BodyAreaContainer extends Area {
     }
 
     public int getXPosition() {
-        return xPosition + this.paddingLeft + this.borderWidthLeft;
+        return xPosition + getPaddingLeft() + getBorderLeftWidth();
     }
 
     public void setXPosition(int value)
@@ -144,7 +145,7 @@ public class BodyAreaContainer extends Area {
     }
 
     public int getYPosition() {
-      return yPosition + this.paddingTop + this.borderWidthTop;
+      return yPosition + getPaddingTop() + getBorderTopWidth();
     }
 	
     public void setYPosition(int value)

@@ -62,6 +62,7 @@ abstract public class Area extends Box {
     /* nominal font size and nominal font family incorporated in
        fontState */
     protected FontState fontState;
+    protected BorderAndPadding bp=null;
 
     protected Vector children = new Vector();
 
@@ -86,39 +87,26 @@ abstract public class Area extends Box {
     protected ColorType backgroundColor;
 
     private IDReferences idReferences;
-    protected int paddingTop;
-    protected int paddingLeft;
-    protected int paddingBottom;
-    protected int paddingRight;
 
     /* author : Seshadri G
     ** the fo which created it */	
     public org.apache.fop.fo.FObj foCreator;	
         
-    public int borderWidthTop;
-    public int borderWidthLeft;
-    public int borderWidthRight;
-    public int borderWidthBottom;
-    public int borderStyleTop;
-    public int borderStyleLeft;
-    public int borderStyleRight;
-    public int borderStyleBottom;
-    public ColorType borderColorTop;
-    public ColorType borderColorLeft;
-    public ColorType borderColorRight;
-    public ColorType borderColorBottom;
-
     public Area (FontState fontState) {
-        this.fontState = fontState;
+	setFontState(fontState);
     }
 
     public Area (FontState fontState, int allocationWidth, int maxHeight) {
-        this.fontState = fontState;
+	setFontState(fontState);
         this.allocationWidth = allocationWidth;
         this.contentRectangleWidth = allocationWidth;
         this.maxHeight = maxHeight;
     }
 
+  private void setFontState(FontState fontState) {
+    // fontState.setFontInfo(this.page.getFontInfo());
+    this.fontState = fontState;
+  }
     public void addChild(Box child) {
         this.children.addElement(child);
         child.parent = this;
@@ -143,8 +131,11 @@ abstract public class Area extends Box {
     }
 
     public int getAllocationWidth() {
-        return this.allocationWidth - paddingLeft - paddingRight -
-               borderWidthLeft - borderWidthRight;
+      /* ATTENTION: this may change your output!! (Karen Lease, 4mar2001)
+	return this.allocationWidth - getPaddingLeft() - getPaddingRight()
+      - getBorderLeftWidth() - getBorderRightWidth();
+      */
+      return this.allocationWidth ;
     }
 
     public void setAllocationWidth(int w) {
@@ -157,8 +148,11 @@ abstract public class Area extends Box {
     }
 
     public int getContentWidth() {
-        return contentRectangleWidth - paddingLeft - paddingRight -
-               borderWidthLeft - borderWidthRight;
+      /* ATTENTION: this may change your output!! (Karen Lease, 4mar2001)
+	return contentRectangleWidth  - getPaddingLeft() - getPaddingRight()
+	- getBorderLeftWidth() - getBorderRightWidth();
+      */
+	return contentRectangleWidth ;
     }
 
     public FontState getFontState() {
@@ -170,13 +164,13 @@ abstract public class Area extends Box {
     }
 
     public int getHeight() {
-        return this.currentHeight + paddingTop + paddingBottom +
-               borderWidthTop + borderWidthBottom;
+        return this.currentHeight + getPaddingTop() + getPaddingBottom() +
+               getBorderTopWidth() + getBorderBottomWidth();
     }
 
     public int getMaxHeight() {
-        return this.maxHeight - paddingTop - paddingBottom -
-               borderWidthTop - borderWidthBottom;
+        return this.maxHeight - getPaddingTop() - getPaddingBottom() -
+               getBorderTopWidth() - getBorderBottomWidth();
     }
 
     public Page getPage() {
@@ -187,20 +181,39 @@ abstract public class Area extends Box {
         return this.backgroundColor;
     }
 
+  // Must handle conditionality here, depending on isLast/isFirst
     public int getPaddingTop() {
-        return this.paddingTop;
+        return (bp==null? 0 : bp.getPaddingTop(false));
     }
 
     public int getPaddingLeft() {
-        return this.paddingLeft;
+        return(bp==null? 0 :  bp.getPaddingLeft(false));
     }
 
     public int getPaddingBottom() {
-        return this.paddingBottom;
+        return (bp==null? 0 : bp.getPaddingBottom(false));
     }
 
     public int getPaddingRight() {
-        return this.paddingRight;
+        return (bp==null? 0 : bp.getPaddingRight(false));
+    }
+
+  // Handle border-width, including conditionality
+  // For now, just pass false everywhere!
+    public int getBorderTopWidth() {
+        return (bp==null? 0 : bp.getBorderTopWidth(false));
+    }
+
+    public int getBorderRightWidth() {
+        return (bp==null? 0 :  bp.getBorderRightWidth(false));
+    }
+
+    public int getBorderLeftWidth() {
+        return (bp==null? 0 : bp.getBorderLeftWidth(false));
+    }
+
+    public int getBorderBottomWidth() {
+        return (bp==null? 0 : bp.getBorderBottomWidth(false));
     }
 
     public int getTableCellXOffset() {
@@ -252,33 +265,8 @@ abstract public class Area extends Box {
         this.backgroundColor = bgColor;
     }
 
-    public void setPadding(int top, int left, int bottom, int right) {
-        this.paddingTop = top;
-        this.paddingLeft = left;
-        this.paddingBottom = bottom;
-        this.paddingRight = right;
-    }
-
-    public void setBorderWidth(int top, int left, int bottom, int right) {
-        this.borderWidthTop = top;
-        this.borderWidthLeft = left;
-        this.borderWidthBottom = bottom;
-        this.borderWidthRight = right;
-    }
-
-    public void setBorderStyle(int top, int left, int bottom, int right) {
-        this.borderStyleTop = top;
-        this.borderStyleLeft = left;
-        this.borderStyleBottom = bottom;
-        this.borderStyleRight = right;
-    }
-
-    public void setBorderColor(ColorType top, ColorType left,
-                               ColorType bottom, ColorType right) {
-        this.borderColorTop = top;
-        this.borderColorLeft = left;
-        this.borderColorBottom = bottom;
-        this.borderColorRight = right;
+    public void setBorderAndPadding(BorderAndPadding bp) {
+      this.bp = bp;
     }
 
     public int spaceLeft() {
@@ -333,4 +321,8 @@ abstract public class Area extends Box {
 		} 
 		return (AreaContainer)area;
 	}
+
+  public BorderAndPadding getBorderAndPadding() {
+    return bp;
+  }
 }
