@@ -57,7 +57,6 @@ import java.io.PrintWriter;
 import java.util.List;
 
 import java.awt.print.PrinterJob;
-import java.awt.print.PrinterException;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -76,7 +75,7 @@ import org.apache.fop.apps.Driver;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.area.PageViewport;
 import org.apache.fop.apps.XSLTInputHandler;
-import org.apache.fop.render.awt.AWTRenderer;
+import org.apache.fop.render.awt.AWTPrintRenderer;
 
 /**
  * Example servlet to generate a fop printout from a servlet.
@@ -173,7 +172,7 @@ public class FopPrintServlet extends HttpServlet {
         try {
             Driver driver = new Driver(foFile, null);
             PrinterJob pj = PrinterJob.getPrinterJob();
-            PrintRenderer renderer = new PrintRenderer(pj);
+            AWTPrintRenderer renderer = new AWTPrintRenderer(pj);
 
             driver.enableLogging(log);
             driver.setRenderer(renderer);
@@ -196,7 +195,7 @@ public class FopPrintServlet extends HttpServlet {
         try {
             Driver driver = new Driver();
             PrinterJob pj = PrinterJob.getPrinterJob();
-            PrintRenderer renderer = new PrintRenderer(pj);
+            AWTPrintRenderer renderer = new AWTPrintRenderer(pj);
 
             pj.setCopies(1);
 
@@ -228,90 +227,5 @@ public class FopPrintServlet extends HttpServlet {
             throw new ServletException(ex);
         }
     }
-
-    // This is stolen from PrintStarter
-    class PrintRenderer extends AWTRenderer {
-
-        private static final int EVEN_AND_ALL = 0;
-        private static final int EVEN = 1;
-        private static final int ODD = 2;
-
-        private int startNumber;
-        private int endNumber;
-        private int mode = EVEN_AND_ALL;
-        private int copies = 1;
-        private PrinterJob printerJob;
-
-        PrintRenderer(PrinterJob printerJob) {
-            super(null);
-
-            this.printerJob = printerJob;
-            startNumber = 0;
-            endNumber = -1;
-
-            printerJob.setPageable(this);
-
-            mode = EVEN_AND_ALL;
-            String str = System.getProperty("even");
-            if (str != null) {
-                mode = Boolean.valueOf(str).booleanValue() ? EVEN : ODD;
-            }
-        }
-
-        public void stopRenderer() throws IOException {
-            super.stopRenderer();
-
-            if (endNumber == -1) {
-                endNumber = getPageCount();
-            }
-
-            List numbers = getInvalidPageNumbers();
-            for (int i = numbers.size() - 1; i > -1; i--) {
-                //removePage(
-                //  Integer.parseInt((String) numbers.elementAt(i)));
-            }
-
-            try {
-                printerJob.print();
-            } catch (PrinterException e) {
-                e.printStackTrace();
-                throw new IOException("Unable to print: "
-                                    + e.getClass().getName() + ": " + e.getMessage());
-            }
-        }
-
-        public void renderPage(PageViewport page) throws IOException, FOPException {
-            pageWidth = (int)((float) page.getViewArea().getWidth() / 1000f);
-            pageHeight = (int)((float) page.getViewArea().getHeight() / 1000f);
-            super.renderPage(page);
-        }
-
-
-        private List getInvalidPageNumbers() {
-
-            List list = new java.util.ArrayList();
-            int max = getPageCount();
-            boolean isValid;
-            for (int i = 0; i < max; i++) {
-                isValid = true;
-                if (i < startNumber || i > endNumber) {
-                    isValid = false;
-                } else if (mode != EVEN_AND_ALL) {
-                    if (mode == EVEN && ((i + 1) % 2 != 0)) {
-                        isValid = false;
-                    } else if (mode == ODD && ((i + 1) % 2 != 1)) {
-                        isValid = false;
-                    }
-                }
-
-                if (!isValid) {
-                    list.add(Integer.toString(i));
-                }
-            }
-
-            return list;
-        }
-    } // class PrintRenderer
-
 }
 
