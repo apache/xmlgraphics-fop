@@ -2,8 +2,10 @@ package org.apache.fop.xml;
 
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.xml.XMLEvent;
+import org.apache.fop.messaging.MessageHandler;
 
 import java.util.ArrayList;
+import java.util.BitSet;
 
 /*
  * $Id$
@@ -23,13 +25,24 @@ public class XMLEventPool {
     private static final String revision = "$Revision$";
 
     /** Required argument for constructing new <tt>XMLEvent</tt>s. */
-    protected XMLNamespaces namespaces;
+    protected final XMLNamespaces namespaces;
     /** The pool realized as a ArrayList. */
-    protected ArrayList pool;
+    protected final ArrayList pool;
     /** The number of events in the list. */
     protected int poolSize = 0;
     /** The maximum number of events in the list. */
     protected int maxPoolSize = 0;
+
+    /**
+     * Set of currently pooled events.  The size of this set is limited by
+     * the range of values that the <tt>XMLEvent</tt> <i>id</i> field can
+     * assume.  This, in turn, is limited by to the range of values returned
+     * by the <tt>XMLNamespaces</tt> <i>getSequence()</i> method.
+     * If there is a signficant disparity between the frequency of
+     * pool acquire and surrender invocations, an id clash may arise in
+     * the current set.
+     */
+    protected final BitSet eventSet;
 
     /**
      * The one-argument constructor requires <i>namespaces</i>.
@@ -38,6 +51,7 @@ public class XMLEventPool {
     public XMLEventPool(XMLNamespaces namespaces) {
         this.namespaces = namespaces;
         pool = new ArrayList();
+        eventSet = new BitSet();
     }
 
     /**
@@ -48,6 +62,7 @@ public class XMLEventPool {
     public XMLEventPool(XMLNamespaces namespaces, int initialSize) {
         this.namespaces = namespaces;
         pool = new ArrayList(initialSize);
+        eventSet = new BitSet(initialSize);
     }
 
     /**
@@ -57,7 +72,9 @@ public class XMLEventPool {
     public synchronized XMLEvent acquireXMLEvent() {
         if (poolSize == 0)
             return new XMLEvent(namespaces);
-        return ((XMLEvent)(pool.get(--poolSize))).clear();
+        XMLEvent ev = ((XMLEvent)(pool.get(--poolSize))).clear();
+        eventSet.clear(ev.id);
+        return ev;
     }
 
     /**
@@ -65,7 +82,15 @@ public class XMLEventPool {
      * @param ev - the event being returned.
      */
     public synchronized void surrenderEvent(XMLEvent ev) {
-        if (maxPoolSize > poolSize)
+        System.out.println("surrenderEvent " + ev.id + "  poolSize " + poolSize);
+        if (ev == null) return;
+        if (eventSet.get(ev.id)) {
+            MessageHandler.logln
+                    ("Event clash in XMLEvent pool. Id " + ev.id);
+            return;
+        }
+        eventSet.set(ev.id);
+        if (pool.size() > poolSize)
             pool.set(poolSize++, ev);
         else {
             pool.add(ev);
