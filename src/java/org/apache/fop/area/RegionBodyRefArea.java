@@ -20,7 +20,6 @@ package org.apache.fop.area;
 import java.awt.geom.Rectangle2D;
 
 import org.apache.fop.datastructs.Node;
-import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.flow.FoPageSequence;
 
 /**
@@ -42,17 +41,15 @@ implements ReferenceArea {
      * default column count and gap
      * This sets the region reference area class to BODY.
      * @param pageSeq the generating <code>page-sequence</code>
-     * @param generatedBy the node which generated this reference area; in this
-     * case, the <code>page-sequence</code>
      * @param parent the page-reference-area
      * @param sync
      */
     public RegionBodyRefArea(
             FoPageSequence pageSeq,
-            FONode generatedBy,
             Node parent,
             Object sync) {
-        super(pageSeq, generatedBy, parent, sync);
+        // the page-sequence is the generated-by node
+        super(pageSeq, pageSeq, parent, sync);
     }
 
     /**
@@ -63,8 +60,6 @@ implements ReferenceArea {
      * @param columnGap
      * @param area the rectangular area
      * @param pageSeq the generating <code>page-sequence</code>
-     * @param generatedBy the node which generated this reference area; in this
-     * case, the <code>page-sequence</code>
      * @param parent the page-reference-area
      * @param sync
      */
@@ -73,10 +68,10 @@ implements ReferenceArea {
             int columnGap,
             Rectangle2D area,
             FoPageSequence pageSeq,
-            FONode generatedBy,
             Node parent,
             Object sync) {
-        super(area, pageSeq, generatedBy, parent, sync);
+        // the page-sequence is the generated-by node
+        super(area, pageSeq, pageSeq, parent, sync);
         this.columnCount = columnCount;
         this.columnGap = columnGap;
     }
@@ -86,19 +81,16 @@ implements ReferenceArea {
      * area. The area created references a null <code>MainReferenceArea</code>.
      * <b>N.B.</b> this is a <code>static</code> method.
      * @param pageSeq the <code>page-sequence</code> to which this area belongs
-     * @param generatedBy the node which generated this reference area; in this
-     * case, the <code>page-sequence</code>
      * @param parent the <code>region-body-viewport-area</code>
      * @param sync
      * @return the created reference area
      */
     public static RegionBodyRefArea nullRegionBodyRef(
-            FoPageSequence pageSeq, FONode generatedBy,
-            Node parent, Object sync) {
+            FoPageSequence pageSeq, Node parent, Object sync) {
         RegionBodyRefArea bodyRef =
-            new RegionBodyRefArea(pageSeq, generatedBy, parent, sync);
+            new RegionBodyRefArea(pageSeq, parent, sync);
         bodyRef.setMainReference(MainReferenceArea.nullMainRefArea(
-                pageSeq, generatedBy, bodyRef, sync));
+                pageSeq, pageSeq, bodyRef, sync));
         return bodyRef;
     }
     /**

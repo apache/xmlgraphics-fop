@@ -26,7 +26,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.fop.datastructs.Node;
-import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.flow.FoPageSequence;
 import org.apache.fop.fo.pagination.FoSimplePageMaster;
 import org.apache.fop.fo.properties.RetrievePosition;
@@ -48,9 +47,9 @@ public class Page extends AreaNode implements Cloneable {
      */
     public Page(
             FoPageSequence pageSeq,
-            FONode generatedBy,
             long pageId) {
-        super(pageSeq, generatedBy);
+        // the page-sequence is the generated-by node
+        super(pageSeq, pageSeq);
         this.pageId = pageId;
     }
 
@@ -62,12 +61,33 @@ public class Page extends AreaNode implements Cloneable {
      */
     public Page(
             FoPageSequence pageSeq,
-            FONode generatedBy,
             long pageId,
             Node parent,
             Object sync) {
-        super(pageSeq, generatedBy, parent, sync);
+        // the page-sequence is the generated-by node
+        super(pageSeq, pageSeq, parent, sync);
         this.pageId = pageId;
+    }
+
+    /** Unique ID for this page.  0 is an invalid ID.  */
+    private long pageId = 0;
+
+    /**
+     * @return the pageId
+     */
+    public long getPageId() {
+        synchronized (sync) {
+            return pageId;
+        }
+    }
+
+    /**
+     * @param pageId to set
+     */
+    public void setPageId(long pageId) {
+        synchronized (sync) {
+            this.pageId = pageId;
+        }
     }
 
     /**
@@ -96,52 +116,30 @@ public class Page extends AreaNode implements Cloneable {
      * </ul>
      * 
      */
-    public void setupNullPage() {
-        
+    public static Page setupNullPage(FoPageSequence pageSeq, long id) {
+        Page page = new Page(pageSeq, id);
+        page.setVport(PageViewport.nullPageVport(pageSeq, page, page));
+        return page;
     }
-
     /** The <code>simple-page-master</code> that generated this page. */
-    protected FoSimplePageMaster pageMaster = null; 
-    /** Unique ID for this page.  0 is an invalid ID.  */
-    private long pageId = 0;
+    protected FoSimplePageMaster pageMaster = null;
+    /** The single <code>page-viewport</code> child of this page */
+    protected PageViewport vport = null;
+
+    /**
+     * @return the vport
+     */
+    public PageViewport getVport() {
+        return vport;
+    }
+    /**
+     * @param vport to set
+     */
+    public void setVport(PageViewport vport) {
+        this.vport = vport;
+    }
     /** The formatted page number */
     private String pageNumber = null;
-
-    // list of id references and the rectangle on the page
-    private Map idReferences = null;
-
-    // this keeps a list of currently unresolved areas or extensions
-    // once the thing is resolved it is removed
-    // when this is empty the page can be rendered
-    private Map unresolved = null;
-
-    private Map pendingResolved = null;
-
-    // hashmap of markers for this page
-    // start and end are added by the fo that contains the markers
-    private Map markerFirstStart = null;
-    private Map markerLastStart = null;
-    private Map markerFirstAny = null;
-    private Map markerLastEnd = null;
-    private Map markerLastAny = null;
-
-    /**
-     * @return the pageId
-     */
-    public long getPageId() {
-        synchronized (sync) {
-            return pageId;
-        }
-    }
-
-    /**
-     * @param pageId to set
-     */
-    public void setPageId(long pageId) {
-        synchronized (sync) {
-            this.pageId = pageId;
-        }
-    }
 
     /**
      * Set the page number for this page.
@@ -162,6 +160,16 @@ public class Page extends AreaNode implements Cloneable {
             return pageNumber;
         }
     }
+
+    // list of id references and the rectangle on the page
+    private Map idReferences = null;
+
+    // this keeps a list of currently unresolved areas or extensions
+    // once the thing is resolved it is removed
+    // when this is empty the page can be rendered
+    private Map unresolved = null;
+
+    private Map pendingResolved = null;
 
     /**
      * Add an unresolved id to this page.
@@ -195,6 +203,13 @@ public class Page extends AreaNode implements Cloneable {
         }
     }
 
+    // hashmap of markers for this page
+    // start and end are added by the fo that contains the markers
+    private Map markerFirstStart = null;
+    private Map markerLastStart = null;
+    private Map markerFirstAny = null;
+    private Map markerLastEnd = null;
+    private Map markerLastAny = null;
 
     /**
      * Add the markers for this page.

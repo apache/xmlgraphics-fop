@@ -22,7 +22,6 @@ package org.apache.fop.area;
 import java.awt.geom.Rectangle2D;
 
 import org.apache.fop.datastructs.Node;
-import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.flow.FoPageSequence;
 
 /**
@@ -36,35 +35,31 @@ public class RegionAfterRefArea
     /**
      * Creates a new region-after area with no defined rectangular area
      * @param pageSeq the generating <code>page-sequence</code>
-     * @param generatedBy the node which generated this reference area; in this
-     * case, the <code>page-sequence</code>
      * @param parent the page-reference-area
      * @param sync
      */
     public RegionAfterRefArea(
             FoPageSequence pageSeq,
-            FONode generatedBy,
             Node parent,
             Object sync) {
-        super(pageSeq, generatedBy, parent, sync);
+        // the page-sequence is the generated-by node
+        super(pageSeq, pageSeq, parent, sync);
     }
 
     /**
      * Creates a new region-after area with the given rectangular area
      * @param area the rectangular area
      * @param pageSeq the generating <code>page-sequence</code>
-     * @param generatedBy the node which generated this reference area; in this
-     * case, the <code>page-sequence</code>
      * @param parent the page-reference-area
      * @param sync
      */
     public RegionAfterRefArea(
             Rectangle2D area,
             FoPageSequence pageSeq,
-            FONode generatedBy,
             Node parent,
             Object sync) {
-        super(area, pageSeq, generatedBy, parent, sync);
+        // the page-sequence is the generated-by node
+        super(area, pageSeq, pageSeq, parent, sync);
     }
 
     /**
@@ -72,17 +67,14 @@ public class RegionAfterRefArea
      * rectangular area.
      * <b>N.B.</b> this is a <code>static</code> method.
      * @param pageSeq the <code>page-sequence</code> to which this area belongs
-     * @param generatedBy the node which generated this reference area; in this
-     * case, the <code>page-sequence</code>
      * @param parent the <code>region-body-viewport-area</code>
      * @param sync
      * @return the created reference area
      */
     public static RegionAfterRefArea nullRegionAfterRef(
-            FoPageSequence pageSeq, FONode generatedBy,
-            Node parent, Object sync) {
+            FoPageSequence pageSeq, Node parent, Object sync) {
         RegionAfterRefArea afterRef =
-            new RegionAfterRefArea(pageSeq, generatedBy, parent, sync);
+            new RegionAfterRefArea(pageSeq, parent, sync);
         return afterRef;
     }
 
