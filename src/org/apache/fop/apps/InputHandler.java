@@ -10,27 +10,27 @@ package org.apache.fop.apps;
 // SAX
 import org.xml.sax.InputSource;
 import org.xml.sax.XMLReader;
+import org.xml.sax.SAXException;
 
 // Java
+import javax.xml.parsers.SAXParserFactory;
+import javax.xml.parsers.ParserConfigurationException;
 import java.net.URL;
 import java.io.File;
 
 public abstract class InputHandler {
 
-
     public abstract InputSource getInputSource();
     public abstract XMLReader getParser() throws FOPException;
-
 
     public static InputSource urlInputSource(URL url) {
         return new InputSource(url.toString());
     }
 
     /**
-     * create an InputSource from a File
-     *
-     * @param file the File
-     * @return the InputSource created
+     * Creates an <code>InputSource</code> from a <code>File</code>
+     * @param file the <code>File</code>
+     * @return the <code>InputSource</code> created
      */
     public static InputSource fileInputSource(File file) {
         /* this code adapted from James Clark's in XT */
@@ -50,29 +50,20 @@ public abstract class InputHandler {
     }
 
     /**
-     * creates a SAX parser, using the value of org.xml.sax.parser
-     * defaulting to org.apache.xerces.parsers.SAXParser
-     *
-     * @return the created SAX parser
+     * Creates <code>XMLReader</code> object using default
+     * <code>SAXParserFactory</code>
+     * @return the created <code>XMLReader</code>
      */
     protected static XMLReader createParser() throws FOPException {
-        String parserClassName = Driver.getParserClassName();
-        //log.debug("using SAX parser " + parserClassName);
-
         try {
-            return (XMLReader)Class.forName(parserClassName).newInstance();
-        } catch (ClassNotFoundException e) {
-            throw new FOPException(e);
-        } catch (InstantiationException e) {
-            throw new FOPException("Could not instantiate "
-                                   + parserClassName, e);
-        } catch (IllegalAccessException e) {
-            throw new FOPException("Could not access " + parserClassName, e);
-        } catch (ClassCastException e) {
-            throw new FOPException(parserClassName + " is not a SAX driver",
-                                   e);
+            SAXParserFactory factory = SAXParserFactory.newInstance();
+            factory.setNamespaceAware(true);
+            return factory.newSAXParser().getXMLReader();
+        } catch (SAXException se) {
+            throw new FOPException("Coudn't create XMLReader", se);
+        } catch (ParserConfigurationException pce) {
+            throw new FOPException("Coudn't create XMLReader", pce);
         }
     }
-
 }
 
