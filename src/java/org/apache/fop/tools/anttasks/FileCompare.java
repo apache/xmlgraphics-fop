@@ -35,16 +35,11 @@ import java.text.DateFormat;
  * It provides methods to compare two files.
  */
 
-public class Compare {
+public class FileCompare {
     
-    private static final boolean IDENTICAL_FILES = true;
-    private static final boolean NOTIDENTICAL_FILES = false;
-
     private String referenceDirectory, testDirectory;
     private String[] filenameList;
     private String filenames;
-    private BufferedInputStream oldfileInput;
-    private BufferedInputStream newfileInput;
 
     /**
      * Sets directory for test files.
@@ -83,36 +78,48 @@ public class Compare {
         filenameList = (String[])filenameListTmp.toArray(new String[0]);
     }
 
-    private boolean compareBytes(File oldFile, File newFile) {
-        try {
-            oldfileInput =
-                new BufferedInputStream(new java.io.FileInputStream(oldFile));
-            newfileInput =
-                new BufferedInputStream(new java.io.FileInputStream(newFile));
-            int charactO = 0;
-            int charactN = 0;
-            boolean identical = true;
-
-            while (identical & (charactO != -1)) {
-                if (charactO == charactN) {
-                    charactO = oldfileInput.read();
-                    charactN = newfileInput.read();
-                } else {
-                    return NOTIDENTICAL_FILES;
-                }
-            }
-            return IDENTICAL_FILES;
-        } catch (IOException io) {
-            System.err.println("Task Compare - Error: \n" + io.toString());
-        }
-        return NOTIDENTICAL_FILES;
+    /**
+     * Compares two files to see if they are equal
+     * @param true if files are same, false otherwise
+     */
+    public static boolean compareFiles(File f1, File f2) throws IOException {
+        return (compareFileSize(f1, f2) && compareBytes(f1, f2));
     }
 
-    private boolean compareFileSize(File oldFile, File newFile) {
+    /**
+     * Does a byte compare of two files
+     * @param true if files are same byte-by-byte, false otherwise
+     */
+    private static boolean compareBytes(File file1, File file2) throws IOException {
+        BufferedInputStream file1Input =
+            new BufferedInputStream(new java.io.FileInputStream(file1));
+        BufferedInputStream file2Input =
+            new BufferedInputStream(new java.io.FileInputStream(file2));
+
+        int charact1 = 0;
+        int charact2 = 0;
+
+        while (charact1 != -1) {
+            if (charact1 == charact2) {
+                charact1 = file1Input.read();
+                charact2 = file2Input.read();
+            } else {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    /**
+     * Does a file size compare of two files
+     * @param true if files are same length, false otherwise
+     */
+    private static boolean compareFileSize(File oldFile, File newFile) {
         if (oldFile.length() != newFile.length()) {
-            return NOTIDENTICAL_FILES;
+            return false;
         } else {
-            return IDENTICAL_FILES;
+            return true;
         }
     }    // end: compareBytes
 
@@ -142,8 +149,6 @@ public class Compare {
                         + "<th align='center'>reference file</th>"
                         + "<th align='center'>test file</th>"
                         + "<th align='center'>identical?</th></thead>");
-
-
     }
 
     /**

@@ -17,7 +17,7 @@
       <pathelement location="../../build/fop.jar"/>
 	  </path>
     <taskdef name="fop" classname="org.apache.fop.tools.anttasks.Fop" classpathref="run-classpath"/>
-    <taskdef name="compare" classname="org.apache.fop.tools.anttasks.Compare" classpathref="run-classpath"/>
+    <taskdef name="compare" classname="org.apache.fop.tools.anttasks.FileCompare" classpathref="run-classpath"/>
   </target>
   <!-- =================================================================== -->
   <!-- Help on usage                                                       -->

@@ -29,11 +29,11 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import org.apache.fop.apps.Fop;
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.apps.InputHandler;
+import org.apache.fop.tools.anttasks.FileCompare;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-import org.apache.commons.logging.Log;
 import org.apache.commons.logging.impl.SimpleLog;
 
 
@@ -60,24 +60,7 @@ public class TestConverter {
     /**
      * logging instance
      */
-    protected Log logger = null;
-
-
-    /**
-     * Sets the Commons-Logging instance for this class
-     * @param logger The Commons-Logging instance
-     */
-    public void setLogger(Log logger) {
-        this.logger = logger;
-    }
-
-    /**
-     * Returns the Commons-Logging instance for this class
-     * @return  The Commons-Logging instance
-     */
-    protected Log getLogger() {
-        return logger;
-    }
+    protected SimpleLog logger = null;
 
     /**
      * This main method can be used to run the test converter from
@@ -128,9 +111,8 @@ public class TestConverter {
      * Construct a new TestConverter
      */
     public TestConverter() {
-        SimpleLog log = new SimpleLog("FOP/Test");
-        log.setLevel(SimpleLog.LOG_LEVEL_ERROR);
-        setLogger(log);
+        logger = new SimpleLog("FOP/Test");
+        logger.setLevel(SimpleLog.LOG_LEVEL_ERROR);
     }
 
     /**
@@ -159,14 +141,14 @@ public class TestConverter {
     }
 
     /**
-     * Controls whether to generate PDF or XML.
-     * @param pdf If True, PDF is generated, Area Tree XML otherwise.
+     * Controls whether to set logging to debug level
+     * @param If true, debug level, if false, error level
      */
     public void setDebug(boolean debug) {
         if (debug) {
-            SimpleLog log = new SimpleLog("FOP/Test");
-            log.setLevel(SimpleLog.LOG_LEVEL_DEBUG);
-            setLogger(log);
+            logger.setLevel(SimpleLog.LOG_LEVEL_DEBUG);
+        } else {
+            logger.setLevel(SimpleLog.LOG_LEVEL_ERROR);
         }
     }
 
@@ -338,7 +320,7 @@ public class TestConverter {
                 }
             }
         } catch (Exception e) {
-            getLogger().error("Error while running tests", e);
+            logger.error("Error while running tests", e);
         }
     }
 
@@ -364,28 +346,12 @@ public class TestConverter {
      * @return true if equal
      */
     protected boolean compareFiles(File f1, File f2) {
-        if (f1.length() != f2.length()) {
-            return false;
-        }
         try {
-            InputStream is1 = new java.io.BufferedInputStream(new java.io.FileInputStream(f1));
-            InputStream is2 = new java.io.BufferedInputStream(new java.io.FileInputStream(f2));
-            while (true) {
-                int ch1 = is1.read();
-                int ch2 = is2.read();
-                if (ch1 == ch2) {
-                    if (ch1 == -1) {
-                        return true;
-                    }
-                } else {
-                    return false;
-                }
-            }
+            return FileCompare.compareFiles(f1, f2);
         } catch (Exception e) {
             logger.error("Error while comparing files", e);
+            return false;
         }
-
-        return false;
     }
 
     private Node locateResult(Node testcase, String id) {

@@ -37,8 +37,8 @@ import java.util.Map;
 /**
  * Testing ant task.
  * This task is used to test FOP as a build target.
- * This uses the TestConverter (with weak code dependancy) to run the tests
- * and check the results.
+ * This uses the TestConverter (with weak code dependency)
+ * to run the tests and check the results.
  */
 public class RunTest extends Task {
     
@@ -144,7 +144,7 @@ public class RunTest extends Task {
             boolean failed = false;
 
             try {
-                Class cla = Class.forName("org.apache.fop.apps.Version", true,
+                Class cla = Class.forName("org.apache.fop.apps.Fop", true,
                                     loader);
                 Method get = cla.getMethod("getVersion", new Class[]{});
                 if (!get.invoke(null, new Object[]{}).equals(refVersion)) {
@@ -180,6 +180,8 @@ public class RunTest extends Task {
      * This loads the TestConverter using the class loader and
      * then runs the test suite for the current test suite
      * file in the base directory.
+     * (Note class loader option provided to allow for different
+     * fop.jar and other libraries to be activated.)
      * @param loader the class loader to use to run the tests with
      * @param dest destination directory
      * @param compDir comparison directory
