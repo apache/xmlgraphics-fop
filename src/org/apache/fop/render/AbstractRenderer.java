@@ -134,18 +134,27 @@ public abstract class AbstractRenderer implements Renderer {
     protected void renderRegionViewport(RegionViewport port) {
         if (port != null) {
             Rectangle2D view = port.getViewArea();
-            currentBPPosition = (int) (view.getY() / 1000);
-            currentIPPosition = (int) (view.getX() / 1000);
+	    // The CTM will transform coordinates relative to
+	    // this region-reference area into page coords, so
+	    // set origin for the region to 0,0.
+            currentBPPosition = 0; // (int) (view.getY() / 1000);
+            currentIPPosition = 0; // (int) (view.getX() / 1000);
             currentBlockIPPosition = currentIPPosition;
 
             RegionReference region = port.getRegion();
+	    startVParea(region.getCTM());
             if (region.getRegionClass() == Region.BODY) {
                 renderBodyRegion((BodyRegion) region);
             } else {
                 renderRegion(region);
             }
+	    endVParea();
         }
     }
+
+    protected void startVParea(CTM ctm) { }
+
+    protected void endVParea() { }
 
     protected void renderRegion(RegionReference region) {
         List blocks = region.getBlocks();
