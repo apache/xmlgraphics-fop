@@ -1,0 +1,160 @@
+# $Id$
+# Copyright (c) 2000,2001 Peter B. West <pbwest@powerup.com.au>
+# N.B  The following PATH manipulation functions
+# 1) MUST NOT have a vertical bar `|' in any specified path
+# 2) Handle the empty path "", but do not equate the empty path with "."
+
+# These functions have been written to cope with spaces in the file paths.
+
+# Clear path element given as arg from PATH
+# N.B. path element MUST NOT contain a vertical bar `|'
+rem_path() {
+    if [ $# -lt 1 ]; then return; fi
+    rem_vpath PATH "$@"
+}
+
+# Clear path element(s) given as arg 2 (3 ...) from the path named in arg1
+# N.B. path element MUST NOT contain a vertical bar `|'
+rem_vpath() {
+    if [ $# -lt 2 ]; then return; fi
+    eval _AP_=\"\$$1\"
+    _P_=$1
+    shift
+    while [ $# -ge 1 ]; do
+	_RP_="$1"
+	shift
+	_AP_=`echo $_AP_|
+	sed ':loop
+{s|:'"$_RP_"':|:|g
+t loop
+}
+s|^'"$_RP_"':||
+s|:'"$_RP_"'$||
+s|^'"$_RP_"'$||'`
+    eval $_P_=\"$_AP_\"
+    done
+    unset _AP_ _P_ _RP_
+}
+
+# To path named in $1, append path element arg(s), replacing all existing
+# instances in the named path
+# N.B. path elements MUST NOT contain a vertical bar `|'
+app_vpath() {
+    _VP_=$1; shift
+    eval _VAL_=\"\$$_VP_\"
+    for el
+    do
+	rem_vpath _VAL_ "$el"
+	_VAL_="${_VAL_:+${_VAL_}:}$el"
+    done
+    eval ${_VP_}=\"$_VAL_\"
+    export $_VP_
+    unset _VP_ _VAL_
+}
+
+# Append path element(s) given as args to PATH, replacing all existing
+# instances in the PATH
+# N.B. path elements MUST NOT contain a vertical bar `|'
+app_path() {
+    app_vpath PATH "$@"
+}
+
+# To path named in $1, prepend path element arg(s), replacing all existing
+# instances in the named path.  Elements will be appear in the PATH in
+# argument order.
+# N.B. path elements MUST NOT contain a vertical bar `|'
+pre_vpath() {
+    _VP_=$1; shift
+    eval _VAL_=\"\$$_VP_\"
+    _elx_=0
+    while [ $# -gt 0 ]
+    do
+        _elx_=`expr $_elx_ + 1`
+        eval _VAL_$_elx_=\"\$1\"
+        shift
+    done
+    while [ $_elx_ -gt 0 ]
+    do
+        eval _el_=\"\$_VAL_$_elx_\"
+        unset _VAL_$_elx_
+        _elx_=`expr $_elx_ - 1`
+	rem_vpath _VAL_ "$_el_"
+	_VAL_="$_el_${_VAL_:+:${_VAL_}}"
+    done
+    eval ${_VP_}=\"$_VAL_\"
+    export $_VP_
+    unset _VP_ _VAL_
+}
+
+# Prepend path element(s) given as args to PATH, replacing all existing
+# instances in the PATH.  N.B. elements will be appear in the PATH in
+# REVERSE argument order.
+# N.B. path elements MUST NOT contain a vertical bar `|'
+pre_path() {
+    pre_vpath PATH "$@"
+}
+
+# This function is no longer used.  Originally written for clean_vpath
+# in order to process the arguments to pre_vpath in reverse order, it
+# has been superseded by the modification to pre_vpath which processes
+# its args in reverse order so that the argument list order will be
+# preserved at the front of the path
+
+# echo arguments in reverse order.  Args echoed are surrounded by
+# single quotes - to provide these successfully to a subsequent function
+# or command, submit the lot to an eval.
+# E.g. eval command `reverse "arg 1" arg2 "This is arg 3"`
+#  will supply three arguments to the echo.
+# This will not preserve multiple spaces in the individal arguments.
+# For that, use
+# eval command "`reverse 'arg 1' arg2 'This is arg 3'`"
+# I.e. use single quotes around the individual args, and surround the
+# whole with double quotes; or
+# var=`reverse "arg 1" arg2 "This is arg 3"`
+# eval command "$var"
+
+# This will BREAK if the arguments contain \<char> sequences which represent
+# valid escaped characters, e.g. \\ or \t
+
+# Variables used: _ix_ _o_ _v_ _stk_1 .. _stk_$#
+reverseargs() {
+    _ix_=0
+    while [ $# -gt 0 ]
+    do
+        _ix_=`expr $_ix_ + 1`
+        eval _stk_$_ix_=\"\$1\"
+        shift
+    done
+
+    # No need to worry about the extra space at the beginning
+    while [ $_ix_ -gt 0 ]
+    do
+        eval _v_=\"\$_stk_$_ix_\"
+        unset _stk_$_ix_
+        _o_="$_o_ '$_v_'"
+        _ix_=`expr $_ix_ - 1`
+    done
+
+    echo "$_o_"
+    unset _o_ _v_ _ix_
+}
+
+# Clean a path - run pre_vpath with every current element of the path
+# in reverse order
+# This removes all duplicates in the path, and leaves the first instance
+# of a path element in its original relative place - later ones are deleted.
+clean_vpath() {
+    _CVP_=$1; shift
+    # _CVP_ contains the name of the path
+    eval _CVAL_=\"\$$_CVP_\"
+    # _CVAL_ contains the value of the path
+    _CVAL_=`echo "$_CVAL_"|sed 's/^/"/
+s/:/" "/g
+s/$/"/'`
+    eval pre_vpath $_CVP_ "$_CVAL_"
+    unset _CVAL_ _CVP_
+}
+
+clean_path() {
+    clean_vpath PATH
+}
