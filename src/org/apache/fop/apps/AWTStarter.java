@@ -150,6 +150,15 @@ public class AWTStarter extends CommandLineStarter {
 
         try {
             URL url = getClass().getResource(path);
+
+            /* The following code was added by Alex Alishevskikh [alex@openmechanics.net]
+               to fix for crashes on machines with unsupported user languages */
+	    if (url == null) {
+                // if the given resource file not found, the english resource uses as default
+                path = path.substring(0, path.lastIndexOf(".")) + ".en";
+                url = getClass().getResource(path);
+	    }
+
             in = url.openStream();
         } catch (Exception ex) {
             log.error("Can't find URL to: <" + path + "> "

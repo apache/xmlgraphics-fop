@@ -1,38 +1,38 @@
-File=Ôàéë
+﻿File=Файл
 
-Exit=Çàêîí÷èòü
+Exit=Выход
 
-View=Âèä
+View=Вид
 
-First page=Ïåðâàÿ ñòðàíèöà
+First page=Первая страница
 
-Previous page=Ïðåäûäóùàÿ ñòðàíèöà
+Previous page=Предыдущая страница
 
-Next page=Ñëåäóþùàÿ ñòðàíèöà
+Next page=Следующая страница
 
-Last page=Ïîñëåäíÿÿ ñòðàíèöà
+Last page=Последняя страница
 
-Go to Page=Èäòè ê ñòðàíèöå
+Go to Page=Перейти к странице
 
-Help=Ïîìîùü
+Help=Помощь
 
-Default zoom=Ñòàíäàðòíûé ìàñøòàá
+Default zoom=Стандартный размер
 
-Introduction=Ââåäåíèå
+Introduction=Введение
 
-About=Î ïðîãðàììå
+About=О продукте
 
-Show=Ïîêàç
+Show=Просмотр
 
-Preview=Ïðîñìîòð
+Preview=Просмотр
 
-Print=Ïå÷àòàòü
+Print=Печать
 
-Page=Ñòðàíèöà
+Page=Страница
 
-of=èç
+of=из
 
-Zoom=Ìàñøòàá
+Zoom=Размер
 
-Close=Çàêðûòü
+Close=Закрыть
 
