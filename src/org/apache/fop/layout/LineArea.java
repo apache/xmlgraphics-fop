@@ -1,32 +1,70 @@
 /*
  * $Id$
- * Copyright (C) 2001 The Apache Software Foundation. All rights reserved.
- * For details on use and redistribution please refer to the
- * LICENSE file included with these sources.
- */
-
+ * ============================================================================
+ *                    The Apache Software License, Version 1.1
+ * ============================================================================
+ * 
+ * Copyright (C) 1999-2003 The Apache Software Foundation. All rights reserved.
+ * 
+ * Redistribution and use in source and binary forms, with or without modifica-
+ * tion, are permitted provided that the following conditions are met:
+ * 
+ * 1. Redistributions of source code must retain the above copyright notice,
+ *    this list of conditions and the following disclaimer.
+ * 
+ * 2. Redistributions in binary form must reproduce the above copyright notice,
+ *    this list of conditions and the following disclaimer in the documentation
+ *    and/or other materials provided with the distribution.
+ * 
+ * 3. The end-user documentation included with the redistribution, if any, must
+ *    include the following acknowledgment: "This product includes software
+ *    developed by the Apache Software Foundation (http://www.apache.org/)."
+ *    Alternately, this acknowledgment may appear in the software itself, if
+ *    and wherever such third-party acknowledgments normally appear.
+ * 
+ * 4. The names "FOP" and "Apache Software Foundation" must not be used to
+ *    endorse or promote products derived from this software without prior
+ *    written permission. For written permission, please contact
+ *    apache@apache.org.
+ * 
+ * 5. Products derived from this software may not be called "Apache", nor may
+ *    "Apache" appear in their name, without prior written permission of the
+ *    Apache Software Foundation.
+ * 
+ * THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESSED OR IMPLIED WARRANTIES,
+ * INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND
+ * FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
+ * APACHE SOFTWARE FOUNDATION OR ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
+ * INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLU-
+ * DING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS
+ * OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON
+ * ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
+ * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ * ============================================================================
+ * 
+ * This software consists of voluntary contributions made by many individuals
+ * on behalf of the Apache Software Foundation and was originally created by
+ * James Tauber <jtauber@jtauber.com>. For more information on the Apache
+ * Software Foundation, please see <http://www.apache.org/>.
+ */ 
 package org.apache.fop.layout;
 
-// fop
+// FOP
 import org.apache.fop.render.Renderer;
 import org.apache.fop.messaging.MessageHandler;
 import org.apache.fop.layout.inline.*;
-import org.apache.fop.datatypes.IDNode;
 import org.apache.fop.fo.properties.WrapOption;
 import org.apache.fop.fo.properties.WhiteSpaceCollapse;
 import org.apache.fop.fo.properties.TextAlign;
-import org.apache.fop.fo.properties.TextAlignLast;
 import org.apache.fop.fo.properties.LeaderPattern;
 import org.apache.fop.fo.properties.Hyphenate;
-import org.apache.fop.fo.properties.CountryMaker;
-import org.apache.fop.fo.properties.LanguageMaker;
 import org.apache.fop.fo.properties.LeaderAlignment;
 import org.apache.fop.fo.properties.VerticalAlign;
 import org.apache.fop.layout.hyphenation.Hyphenation;
 import org.apache.fop.layout.hyphenation.Hyphenator;
-import org.apache.fop.configuration.Configuration;
 
-// java
+// Java
 import java.util.ArrayList;
 import java.util.StringTokenizer;
 import java.awt.Rectangle;
@@ -567,7 +605,7 @@ public class LineArea extends Area {
                 } else if (prev == TEXT || prev == MULTIBYTECHAR ) {
                     if ( prev == TEXT && curr == TEXT || ! canBreakMidWord()) {
                         wordLength++;
-    	                wordWidth += charWidth;
+                        wordWidth += charWidth;
                     } else {
 
 //                    if (spaceWidth > 0) { // for text-align="justify"
@@ -1161,11 +1199,11 @@ public class LineArea extends Area {
     public void addInlineArea(InlineArea box, LinkSet ls) {
         addPending();
         addChild(box);
-	if (ls != null) {
-	    Rectangle lr=new Rectangle(finalWidth, 0,box.getContentWidth(),
-				       box.getContentHeight());
-	    ls.addRect(lr, this, box);
-	}
+        if (ls != null) {
+            Rectangle lr = new Rectangle(finalWidth, 0,box.getContentWidth(),
+                    box.getContentHeight());
+            ls.addRect(lr, this, box);
+        }
         prev = TEXT;
         finalWidth += box.getContentWidth();
     }
