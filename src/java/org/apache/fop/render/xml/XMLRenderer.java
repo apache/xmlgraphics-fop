@@ -244,8 +244,32 @@ public class XMLRenderer extends AbstractRenderer {
     protected void addAreaAttributes(Area area) {
         addAttribute("ipd", area.getIPD());
         addAttribute("bpd", area.getBPD());
+        addAttribute("bap", area.getBorderAndPaddingWidthStart() + " "
+                + area.getBorderAndPaddingWidthEnd() + " "
+                + area.getBorderAndPaddingWidthBefore() + " "
+                + area.getBorderAndPaddingWidthAfter());
     }
     
+    /**
+     * Adds attributes from traits of an Area. 
+     * @param area Area to extract traits from
+     */
+    protected void addTraitAttributes(Area area) {
+        Map traitMap = area.getTraits();
+        if (traitMap != null) {
+            Iterator iter = traitMap.entrySet().iterator();
+            while (iter.hasNext()) {
+                Map.Entry traitEntry = (Map.Entry) iter.next();
+                String name = Trait.getTraitName(traitEntry.getKey());
+                if ("break-before".equals(name) || "break-after".equals(name)) {
+                    continue;
+                }
+                String value = traitEntry.getValue().toString();
+                addAttribute(name, value);
+            }
+        }
+    }
+
     private String createString(Rectangle2D rect) {
         return "" + (int) rect.getX() + " " + (int) rect.getY() + " "
                   + (int) rect.getWidth() + " " + (int) rect.getHeight();
@@ -372,7 +396,7 @@ public class XMLRenderer extends AbstractRenderer {
      * @see org.apache.fop.render.AbstractRenderer#renderBeforeFloat(BeforeFloat)
      */
     protected void renderBeforeFloat(BeforeFloat bf) {
-        startElement("<beforeFloat>");
+        startElement("beforeFloat");
         super.renderBeforeFloat(bf);
         endElement("beforeFloat");
     }
@@ -426,10 +450,7 @@ public class XMLRenderer extends AbstractRenderer {
     protected void renderBlock(Block block) {
         atts.clear();
         addAreaAttributes(block);
-        Map map = block.getTraits();
-        if (map != null) {
-            addAttribute("props", getPropString(map));
-        }
+        addTraitAttributes(block);
         startElement("block", atts);
         super.renderBlock(block);
         endElement("block");
@@ -441,10 +462,7 @@ public class XMLRenderer extends AbstractRenderer {
     protected void renderLineArea(LineArea line) {
         atts.clear();
         addAreaAttributes(line);
-        Map map = line.getTraits();
-        if (map != null) {
-            addAttribute("props", getPropString(map));
-        }
+        addTraitAttributes(line);
         startElement("lineArea", atts);
         super.renderLineArea(line);
         endElement("lineArea");
@@ -500,10 +518,7 @@ public class XMLRenderer extends AbstractRenderer {
      */
     protected void renderCharacter(org.apache.fop.area.inline.Character ch) {
         atts.clear();
-        Map map = ch.getTraits();
-        if (map != null) {
-            addAttribute("props", getPropString(map));
-        }
+        addTraitAttributes(ch);
         startElement("char", atts);
         characters(ch.getChar());
         endElement("char");
@@ -524,12 +539,13 @@ public class XMLRenderer extends AbstractRenderer {
      */
     protected void renderText(TextArea text) {
         atts.clear();
-        addAttribute("twsadjust", text.getTextWordSpaceAdjust());
-        addAttribute("tlsadjust", text.getTextLetterSpaceAdjust());
-        Map map = text.getTraits();
-        if (map != null) {
-            addAttribute("props", getPropString(map));
+        if (text.getTextWordSpaceAdjust() != 0) {
+            addAttribute("twsadjust", text.getTextWordSpaceAdjust());
         }
+        if (text.getTextLetterSpaceAdjust() != 0) {
+            addAttribute("tlsadjust", text.getTextLetterSpaceAdjust());
+        }
+        addTraitAttributes(text);
         startElement("text", atts);
         characters(text.getTextArea());
         endElement("text");
@@ -541,10 +557,7 @@ public class XMLRenderer extends AbstractRenderer {
      */
     protected void renderInlineParent(InlineParent ip) {
         atts.clear();
-        Map map = ip.getTraits();
-        if (map != null) {
-            addAttribute("props", getPropString(map));
-        }
+        addTraitAttributes(ip);
         startElement("inlineparent", atts);
         super.renderInlineParent(ip);
         endElement("inlineparent");
@@ -583,24 +596,6 @@ public class XMLRenderer extends AbstractRenderer {
         startElement("leader", atts);
         endElement("leader");
         super.renderLeader(area);
-    }
-
-    /**
-     * Builds a String with attributes from the trait map.
-     * @param traitMap the trait map
-     * @return String the generated attributes
-     */
-    protected String getPropString(Map traitMap) {
-        StringBuffer strbuf = new StringBuffer();
-        Iterator iter = traitMap.entrySet().iterator();
-        while (iter.hasNext()) {
-            Map.Entry traitEntry = (Map.Entry) iter.next();
-            strbuf.append(Trait.getTraitName(traitEntry.getKey()));
-            strbuf.append(':');
-            strbuf.append(traitEntry.getValue().toString());
-            strbuf.append(';');
-        }
-        return strbuf.toString();
     }
 
     /** @see org.apache.fop.render.AbstractRenderer */
