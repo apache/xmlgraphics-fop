@@ -67,12 +67,17 @@ public class XMLElement extends XMLObj {
      * constructs an XML object (called by Maker).
      *
      * @param parent the parent formatting object
-     * @param propertyList the explicit properties of this object
      */
     public XMLElement(FONode parent) {
         super(parent);
     }
 
+    /**
+     * Process the attributes for this element.
+     * @param attlist the attribute list for this element returned by the SAX
+     * parser
+     * @throws FOPException for invalid attributes
+     */
     public void handleAttrs(Attributes attlist) throws FOPException {
         super.handleAttrs(attlist);
         init();
@@ -82,6 +87,10 @@ public class XMLElement extends XMLObj {
         createBasicDocument();
     }
 
+    /**
+     * Public accessor for the namespace.
+     * @return the namespace for this element
+     */
     public String getNameSpace() {
         return namespace;
     }

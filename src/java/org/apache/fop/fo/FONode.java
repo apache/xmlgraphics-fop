@@ -61,9 +61,8 @@ import org.apache.avalon.framework.logger.Logger;
 
 // FOP
 import org.apache.fop.apps.FOPException;
-import org.apache.fop.fo.FOTreeControl;
 import org.apache.fop.util.CharUtilities;
-import org.apache.fop.apps.*;
+import org.apache.fop.apps.FOUserAgent;
 
 /**
  * base class for nodes in the XML tree
@@ -197,6 +196,9 @@ public abstract class FONode {
         return null;
     }
 
+    /**
+     * @return an iterator for the characters in this node
+     */
     public CharIterator charIterator() {
         return new OneCharIterator(CharUtilities.CODE_EOT);
     }

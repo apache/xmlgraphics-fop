@@ -50,8 +50,6 @@
  */
 package org.apache.fop.fo;
 
-import org.apache.fop.apps.*;
-
 /**
  * Base class for representation of mixed content formatting objects
  * and their processing

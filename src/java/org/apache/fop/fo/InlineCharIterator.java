@@ -62,7 +62,7 @@ public class InlineCharIterator extends RecursiveCharIterator {
     /**
      * @param fobj the object for whose character contents and for whose
      * descendant's character contents should be iterated
-     * @param bap
+     * @param bap the CommonBorderAndPadding properties to be applied
      */
     public InlineCharIterator(FObj fobj, CommonBorderAndPadding bap) {
         super(fobj);

@@ -54,7 +54,6 @@ package org.apache.fop.fo;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
-import org.apache.fop.fo.FOTreeControl;
 import org.apache.fop.fo.pagination.Root;
 
 // SAX
@@ -74,7 +73,7 @@ import java.io.Reader;
 import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.List;
-import org.apache.fop.apps.*;
+import org.apache.fop.apps.FOUserAgent;
 
 /**
  * SAX Handler that passes parsed data to the various
@@ -123,6 +122,7 @@ public class FOTreeBuilder extends DefaultHandler {
 
     private FOUserAgent userAgent;
 
+    /** The FOTreeControl object managing the FO Tree that is being built */
     public FOTreeControl foTreeControl;
 
     /**

@@ -66,20 +66,45 @@ import org.apache.fop.fonts.FontMetrics;
  * with information about the environment, and to keep track of meta-type
  * information.
  */
-
 public interface FOTreeControl {
 
-    public String fontLookup(String family, String style,
+    /**
+     * @param family the font family
+     * @param style the font style
+     * @param weight the font weight
+     * @return the String font name matching the parameters
+     */
+    String fontLookup(String family, String style,
                              int weight);
 
-    public FontMetrics getMetricsFor(String fontName);
+    /**
+     * @param fontName the String containing the font name for which a
+     * FontMetrics object is desired
+     * @return the FontMetrics object matching the fontName parameter
+     */
+    FontMetrics getMetricsFor(String fontName);
 
-    public boolean isSetupValid();
+    /**
+     * @return true if the default font has been properly setup
+     */
+    boolean isSetupValid();
 
-    public Map getFonts();
+    /**
+     * @return a Map containing the Fonts used in this FO Tree
+     */
+    Map getFonts();
 
-    public void setBookmarks(Bookmarks bookmarks);
+    /**
+     * Sets the Bookmark object which encapsulates the bookmarks for the FO
+     * Tree.
+     * @param bookmarks the Bookmark object encapsulating the bookmarks for this
+     * FO Tree.
+     */
+    void setBookmarks(Bookmarks bookmarks);
 
-    public Bookmarks getBookmarks();
+    /**
+     * @return the Bookmark object encapsulating the bookmarks for the FO Tree.
+     */
+    Bookmarks getBookmarks();
 
 }
