@@ -82,7 +82,7 @@ public class PropertyMaker implements Cloneable {
         percentBase = generic.percentBase;
         if (generic.shorthands != null) {
             shorthands = new PropertyMaker[generic.shorthands.length];
-            System.arraycopy(shorthands, 0, generic.shorthands, 0, shorthands.length);
+            System.arraycopy(generic.shorthands, 0, shorthands, 0, shorthands.length);
         }
         if (generic.enums != null) {
             enums = new HashMap(generic.enums);
