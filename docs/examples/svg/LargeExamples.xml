@@ -1,0 +1,67 @@
+<?xml version="1.0"?>
+<!DOCTYPE Document SYSTEM "Document.dtd">
+<Document>
+	<Title>Large SVG Examples</Title>
+	<Description>
+	    Some large svg examples which have many shapes.
+	</Description>
+	<Chapter>
+		<Title>Examples</Title>
+		<Section>
+			<Title>Introduction</Title>
+			<Body>
+				<p>
+					These examples show the areas of SVG currently implemented.
+				</p>
+				<p>
+					This is provided so that others can see how to write the svg elements
+					and the result to expect.
+				</p>
+			</Body>
+		</Section>
+		<Section>
+			<Title>Graphic Elements</Title>
+			<SubSection>
+				<Title>Miscellaneous</Title>
+				<Body>
+					<p>
+						<ExternalDiagram file="misc-diagrams.xml">misc-lion</ExternalDiagram>
+						A lion
+					</p>
+					<p>
+						<ExternalDiagram file="misc-diagrams.xml">misc-molecule</ExternalDiagram>
+						A molecule
+					</p>
+					<p>
+						<ExternalDiagram file="misc-diagrams.xml">misc-newlion</ExternalDiagram>
+						Another lion
+					</p>
+					<p>
+						<ExternalDiagram file="misc-diagrams.xml">misc-picasso</ExternalDiagram>
+						A Picasso picture
+					</p>
+					<p>
+						<ExternalDiagram file="misc-diagrams.xml">misc-svglogo</ExternalDiagram>
+						The SVG View logo
+					</p>
+					<p>
+						<ExternalDiagram file="misc-diagrams.xml">misc-tiger</ExternalDiagram>
+						A tiger
+					</p>
+					<p>
+						<ExternalDiagram file="apache-diagrams.xml">apache-foplogo</ExternalDiagram>
+						FOP logo in SVG.
+					</p>
+					<p>
+						<ExternalDiagram file="apache-diagrams.xml">apache-xml</ExternalDiagram>
+						Apache logo in SVG.
+					</p>
+					<p>
+						<ExternalDiagram file="mozilla-diagrams.xml">mozilla-xml</ExternalDiagram>
+						Mozilla logo in SVG.
+					</p>
+				</Body>
+			</SubSection>
+		</Section>
+	</Chapter>
+</Document>

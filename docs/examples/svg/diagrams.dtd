@@ -1,0 +1,9 @@
+<!--
+	XML Diagrams DTD, version 1.00
+
+	diagrams dtd
+-->
+
+<!ELEMENT Diagrams		(Diagram*)>
+<!ATTLIST Diagrams		version CDATA #FIXED "1.0">
+<!ELEMENT Diagram		ANY>

@@ -1,0 +1,78 @@
+<?xml version="1.0"?>
+<!DOCTYPE Document SYSTEM "Document.dtd">
+<Document>
+	<Title>More SVG Tests</Title>
+	<Description>
+	    Some more SVG tests.
+	</Description>
+	<Chapter>
+		<Title>Examples</Title>
+		<Section>
+			<Title>Introduction</Title>
+			<Body>
+				<p>
+					These examples show the areas of SVG currently implemented.
+				</p>
+				<p>
+					This is provided so that others can see how to write the svg elements
+					and the result to expect.
+				</p>
+			</Body>
+		</Section>
+		<Section>
+			<Title>Graphic Elements</Title>
+			<SubSection>
+				<Title>Miscellaneous</Title>
+				<Body>
+					<p>
+						Various styles and other drawing things.
+					</p>
+					<p>
+						<ExternalDiagram file="misc-diagrams.xml">misc-arc</ExternalDiagram>
+						Arcs
+					</p>
+					<p>
+						<ExternalDiagram file="misc-diagrams.xml">misc-gradients</ExternalDiagram>
+						Gradients
+					</p>
+					<p>
+						<ExternalDiagram file="misc-diagrams.xml">misc-paths</ExternalDiagram>
+						Paths
+					</p>
+					<p>
+						<ExternalDiagram file="misc-diagrams.xml">misc-radial</ExternalDiagram>
+						Radial
+					</p>
+					<p>
+						<ExternalDiagram file="misc-diagrams.xml">misc-rotate</ExternalDiagram>
+						Rotations
+					</p>
+					<p>
+						<ExternalDiagram file="misc-diagrams.xml">misc-rototext</ExternalDiagram>
+						Rotated text
+					</p>
+					<p>
+						<ExternalDiagram file="misc-diagrams.xml">misc-shapes</ExternalDiagram>
+						Shapes
+					</p>
+					<p>
+						<ExternalDiagram file="misc-diagrams.xml">misc-stroke</ExternalDiagram>
+						Strokes
+					</p>
+					<p>
+						<ExternalDiagram file="misc-diagrams.xml">misc-test</ExternalDiagram>
+						Tests
+					</p>
+					<p>
+						<ExternalDiagram file="misc-diagrams.xml">misc-transform</ExternalDiagram>
+						Transforms
+					</p>
+					<p>
+						<ExternalDiagram file="misc-diagrams.xml">misc-opac</ExternalDiagram>
+						Opacity
+					</p>
+				</Body>
+			</SubSection>
+		</Section>
+	</Chapter>
+</Document>
