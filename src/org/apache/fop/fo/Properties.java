@@ -644,40 +644,6 @@ public abstract class Properties {
     }
 
     /**
-     * @param value <tt>PropertyValue</tt> the value being tested
-     * @param property <tt>int</tt> property index of returned value
-     * @return <tt>PropertyValue</t> the same value, with its property set
-     *  to the <i>property</i> argument, if it is an Auto or a
-     * <tt>Numeric</tt> distance
-     * @exception <tt>PropertyException</tt> if the conditions are not met
-     */
-    protected static PropertyValue autoOrDistance
-                                        (PropertyValue value, int property)
-        throws PropertyException
-    {
-        if (value instanceof Auto ||
-                value instanceof Numeric && ((Numeric)value).isDistance()) {
-            value.setProperty(property);
-            return value;
-        }
-        else throw new PropertyException
-            ("Value not 'Auto' or a distance for "
-                + PropNames.getPropertyName(value.getProperty()));
-    }
-
-    /**
-     * @param value <tt>PropertyValue</tt> the value being tested
-     * @return <tt>PropertyValue</t> the same value if it is an Auto or a
-     * <tt>Numeric</tt> distance
-     * @exception <tt>PropertyException</tt> if the conditions are not met
-     */
-    protected static PropertyValue autoOrDistance(PropertyValue value)
-        throws PropertyException
-    {
-        return autoOrDistance(value, value.getProperty());
-    }
-
-    /**
      * Pseudo-property class for common border style values occurring in a
      * number of classes.
      */
@@ -2358,10 +2324,10 @@ public abstract class Properties {
 
                 // There must be at least two
                 top = getColor((PropertyValue)(colors.next()));
-                left = getColor((PropertyValue)(colors.next()));
+                right = getColor((PropertyValue)(colors.next()));
                 try {
                     bottom = (ColorType)(top.clone());
-                    right = (ColorType)(left.clone());
+                    left = (ColorType)(right.clone());
                 } catch (CloneNotSupportedException cnse) {
                     throw new PropertyException
                                     ("clone() not supported on ColorType");
@@ -2369,14 +2335,14 @@ public abstract class Properties {
 
                 if (colors.hasNext()) bottom
                                 = getColor((PropertyValue)(colors.next()));
-                if (colors.hasNext()) right
+                if (colors.hasNext()) left
                                 = getColor((PropertyValue)(colors.next()));
 
                 // Set the properties for each
                 top.setProperty(PropNames.BORDER_TOP_COLOR);
-                left.setProperty(PropNames.BORDER_LEFT_COLOR);
-                bottom.setProperty(PropNames.BORDER_BOTTOM_COLOR);
                 right.setProperty(PropNames.BORDER_RIGHT_COLOR);
+                bottom.setProperty(PropNames.BORDER_BOTTOM_COLOR);
+                left.setProperty(PropNames.BORDER_LEFT_COLOR);
 
                 list = new PropertyValueList(PropNames.BORDER_COLOR);
                 list.add(top);
@@ -2963,13 +2929,13 @@ public abstract class Properties {
                 // There must be at least two
                 top = Properties.getEnum((PropertyValue)(styles.next()),
                                     PropNames.BORDER_TOP_STYLE , "style");
-                left = Properties.getEnum((PropertyValue)(styles.next()),
-                                    PropNames.BORDER_LEFT_STYLE, "style");
+                right = Properties.getEnum((PropertyValue)(styles.next()),
+                                    PropNames.BORDER_RIGHT_STYLE, "style");
                 try {
                     bottom = (EnumType)(top.clone());
                     bottom.setProperty(PropNames.BORDER_BOTTOM_STYLE);
-                    right = (EnumType)(left.clone());
-                    right.setProperty(PropNames.BORDER_RIGHT_STYLE);
+                    left = (EnumType)(right.clone());
+                    left.setProperty(PropNames.BORDER_LEFT_STYLE);
                 } catch (CloneNotSupportedException cnse) {
                     throw new PropertyException
                                 ("clone() not supported on EnumType");
@@ -2978,9 +2944,9 @@ public abstract class Properties {
                 if (styles.hasNext()) bottom
                         = Properties.getEnum((PropertyValue)(styles.next()),
                                     PropNames.BORDER_BOTTOM_STYLE, "style");
-                if (styles.hasNext()) right
+                if (styles.hasNext()) left
                         = Properties.getEnum((PropertyValue)(styles.next()),
-                                    PropNames.BORDER_RIGHT_STYLE, "style");
+                                    PropNames.BORDER_LEFT_STYLE, "style");
 
                 list = new PropertyValueList(PropNames.BORDER_STYLE);
                 list.add(top);
@@ -3185,15 +3151,15 @@ public abstract class Properties {
                             (PropNames.BORDER_TOP_WIDTH,
                             ((NCName)(widths.next())).getNCName(), foTree)
                         ).getMappedNumValue();
-                left = (new MappedNumeric
-                            (PropNames.BORDER_LEFT_WIDTH,
+                right = (new MappedNumeric
+                            (PropNames.BORDER_RIGHT_WIDTH,
                             ((NCName)(widths.next())).getNCName(), foTree)
                         ).getMappedNumValue();
                 try {
                     bottom = (Numeric)(top.clone());
                     bottom.setProperty(PropNames.BORDER_BOTTOM_WIDTH);
-                    right = (Numeric)(left.clone());
-                    right.setProperty(PropNames.BORDER_RIGHT_WIDTH);
+                    left = (Numeric)(right.clone());
+                    left.setProperty(PropNames.BORDER_LEFT_WIDTH);
                 } catch (CloneNotSupportedException cnse) {
                     throw new PropertyException
                                 ("clone() not supported on Numeric");
@@ -3205,8 +3171,8 @@ public abstract class Properties {
                                 ((NCName)(widths.next())).getNCName(), foTree)
                             ).getMappedNumValue();
                 if (widths.hasNext())
-                    right = (new MappedNumeric
-                                (PropNames.BORDER_RIGHT_WIDTH,
+                    left = (new MappedNumeric
+                                (PropNames.BORDER_LEFT_WIDTH,
                                 ((NCName)(widths.next())).getNCName(), foTree)
                             ).getMappedNumValue();
 
@@ -5373,7 +5339,7 @@ public abstract class Properties {
                     )
                     return PropertySets.expandAndCopySHand(value);
                 return PropertySets.expandAndCopySHand
-                                        (Properties.autoOrDistance(value));
+                                                    (autoOrDistance(value));
             } else {
                 PropertyValueList list =
                                 spaceSeparatedList((PropertyValueList)value);
@@ -5386,28 +5352,26 @@ public abstract class Properties {
                 Iterator margins = list.iterator();
 
                 // There must be at least two
-                top = Properties.autoOrDistance
+                top = autoOrDistance
                     ((PropertyValue)(margins.next()), PropNames.MARGIN_TOP);
-                left = Properties.autoOrDistance
-                    ((PropertyValue)(margins.next()), PropNames.MARGIN_LEFT);
+                right = autoOrDistance
+                    ((PropertyValue)(margins.next()), PropNames.MARGIN_RIGHT);
                 try {
                     bottom = (PropertyValue)(top.clone());
                     bottom.setProperty(PropNames.MARGIN_BOTTOM);
-                    right = (PropertyValue)(left.clone());
-                    right.setProperty(PropNames.MARGIN_RIGHT);
+                    left = (PropertyValue)(right.clone());
+                    left.setProperty(PropNames.MARGIN_LEFT);
                 } catch (CloneNotSupportedException cnse) {
                     throw new PropertyException
                                 (cnse.getMessage());
                 }
 
                 if (margins.hasNext())
-                    bottom = Properties.autoOrDistance(
-                                            (PropertyValue)(margins.next()),
+                    bottom = autoOrDistance((PropertyValue)(margins.next()),
                                                     PropNames.MARGIN_BOTTOM);
                 if (margins.hasNext())
-                    right = Properties.autoOrDistance(
-                                            (PropertyValue)(margins.next()),
-                                                    PropNames.MARGIN_RIGHT);
+                    left = autoOrDistance((PropertyValue)(margins.next()),
+                                                    PropNames.MARGIN_LEFT);
 
                 list = new PropertyValueList(PropNames.MARGIN);
                 list.add(top);
@@ -5416,6 +5380,40 @@ public abstract class Properties {
                 list.add(left);
                 return list;
             }
+        }
+
+        /**
+         * @param value <tt>PropertyValue</tt> the value being tested
+         * @param property <tt>int</tt> property index of returned value
+         * @return <tt>PropertyValue</t> the same value, with its property set
+         *  to the <i>property</i> argument, if it is an Auto or a
+         * <tt>Numeric</tt> distance
+         * @exception <tt>PropertyException</tt> if the conditions are not met
+         */
+        private static PropertyValue autoOrDistance
+                                        (PropertyValue value, int property)
+            throws PropertyException
+        {
+            if (value instanceof Auto ||
+                value instanceof Numeric && ((Numeric)value).isDistance()) {
+                value.setProperty(property);
+                return value;
+            }
+            else throw new PropertyException
+                ("Value not 'Auto' or a distance for "
+                    + PropNames.getPropertyName(value.getProperty()));
+        }
+
+        /**
+         * @param value <tt>PropertyValue</tt> the value being tested
+         * @return <tt>PropertyValue</t> the same value if it is an Auto or a
+         * <tt>Numeric</tt> distance
+         * @exception <tt>PropertyException</tt> if the conditions are not met
+         */
+        private static PropertyValue autoOrDistance(PropertyValue value)
+            throws PropertyException
+        {
+            return autoOrDistance(value, value.getProperty());
         }
     }
 
@@ -5691,6 +5689,90 @@ public abstract class Properties {
         public static final int traitMapping = SHORTHAND_MAP;
         public static final int initialValueType = NOTYPE_IT;
         public static final int inherited = NO;
+
+        /**
+         * 'value' is a PropertyValueList or an individual PropertyValue.
+         *
+         * <p>If 'value' is an individual PropertyValue, it must contain
+         * either
+         *   a FromParent value,
+         *   a FromNearestSpecified value,
+         *   an Inherit value,
+         *   a Numeric value which is a distance, rather than a number.
+         *
+         * <p>If 'value' is a PropertyValueList, it contains a list of
+         * 2 to 4 length or percentage values representing padding
+         * dimensions.
+         *
+         * <p>The value(s) provided, if valid, are converted into a list
+         * containing the expansion of the shorthand.
+         * The first element is a value for padding-top,
+         * the second element is a value for padding-right,
+         * the third element is a value for padding-bottom,
+         * the fourth element is a value for padding-left.
+         *
+         * @param foTree the <tt>FOTree</tt> being built
+         * @param value <tt>PropertyValue</tt> returned by the parser
+         * @return <tt>PropertyValue</tt> the verified value
+         */
+        public static PropertyValue verifyParsing
+                                        (FOTree foTree, PropertyValue value)
+                    throws PropertyException
+        {
+            if ( ! (value instanceof PropertyValueList)) {
+                if (value instanceof Inherit
+                    || value instanceof FromParent
+                    || value instanceof FromNearestSpecified
+                    || (value instanceof Numeric
+                            && ((Numeric)value).isDistance())
+                    )
+                    return PropertySets.expandAndCopySHand(value);
+                throw new PropertyException
+                    ("Invalid property value for 'padding': "
+                        + value.getClass().getName());
+            } else {
+                PropertyValueList list =
+                                spaceSeparatedList((PropertyValueList)value);
+                Numeric top, left, bottom, right;
+                int count = list.size();
+                if (count < 2 || count > 4)
+                    throw new PropertyException
+                        ("padding list contains " + count + " items");
+
+                Iterator paddings = list.iterator();
+
+                // There must be at least two
+                top = (Numeric)(paddings.next());
+                right = (Numeric)(paddings.next());
+                try {
+                    bottom = (Numeric)(top.clone());
+                    left = (Numeric)(right.clone());
+                } catch (CloneNotSupportedException cnse) {
+                    throw new PropertyException
+                                (cnse.getMessage());
+                }
+
+                if (paddings.hasNext())
+                    bottom = (Numeric)(paddings.next());
+                if (paddings.hasNext())
+                    left = (Numeric)(paddings.next());
+
+                if ( ! (top.isDistance() & right.isDistance()
+                        & bottom.isDistance() && left.isDistance()))
+                    throw new PropertyException
+                        ("Values for 'padding' must be distances");
+                list = new PropertyValueList(PropNames.PADDING);
+                top.setProperty(PropNames.PADDING_TOP);
+                list.add(top);
+                right.setProperty(PropNames.PADDING_RIGHT);
+                list.add(right);
+                bottom.setProperty(PropNames.PADDING_BOTTOM);
+                list.add(bottom);
+                left.setProperty(PropNames.PADDING_LEFT);
+                list.add(left);
+                return list;
+            }
+        }
     }
 
     public static class PaddingAfter extends Properties {
@@ -5930,7 +6012,60 @@ public abstract class Properties {
             enumValues =
                 Collections.unmodifiableMap((Map)rwEnumValues);
         }
+
+        /*
+         * @param foTree the <tt>FOTree</tt> being built
+         * @param value <tt>PropertyValue</tt> returned by the parser
+         * @return <tt>PropertyValue</tt> the verified value
+         */
+        public static PropertyValue verifyParsing
+                                        (FOTree foTree, PropertyValue value)
+                        throws PropertyException
+        {
+            if (value instanceof Inherit |
+                    value instanceof FromParent |
+                        value instanceof FromNearestSpecified |
+                            value instanceof Auto)
+            {
+                return PropertySets.expandAndCopySHand(value);
+            }
+            if (value instanceof NCName) {
+                EnumType enum = null;
+                String ncname = ((NCName)value).getNCName();
+                try {
+                    enum = new EnumType(value.getProperty(), ncname);
+                } catch (PropertyException e) {
+                    throw new PropertyException
+                    ("Unrecognized NCName in page-break-after: " + ncname);
+                }
+                PropertyValueList list =
+                            new PropertyValueList(PropNames.PAGE_BREAK_AFTER);
+                switch (enum.getEnumValue()) {
+                case ALWAYS:
+                    list.add(new EnumType(PropNames.BREAK_AFTER, "page"));
+                    list.add(new Auto(PropNames.KEEP_WITH_NEXT));
+                    return list;
+                case AVOID:
+                    list.add(new Auto(PropNames.BREAK_AFTER));
+                    list.add(new EnumType(PropNames.KEEP_WITH_NEXT, "always"));
+                    return list;
+                case LEFT:
+                    list.add(new EnumType(PropNames.BREAK_AFTER, "even-page"));
+                    list.add(new Auto(PropNames.KEEP_WITH_NEXT));
+                    return list;
+                case RIGHT:
+                    list.add(new EnumType(PropNames.BREAK_AFTER, "odd-page"));
+                    list.add(new Auto(PropNames.KEEP_WITH_NEXT));
+                    return list;
+                }
+            }
+
+            throw new PropertyException
+                ("Invalid value for 'page-break-after': "
+                    + value.getClass().getName());
+        }
     }
+
     public static class PageBreakBefore extends Properties {
         public static final int dataTypes = SHORTHAND | AUTO | ENUM | INHERIT;
         public static final int traitMapping = SHORTHAND_MAP;
@@ -5939,6 +6074,61 @@ public abstract class Properties {
 
         private static final HashMap rwEnumValues
                                             = PageBreakAfter.rwEnumValues;
+
+        /*
+         * @param foTree the <tt>FOTree</tt> being built
+         * @param value <tt>PropertyValue</tt> returned by the parser
+         * @return <tt>PropertyValue</tt> the verified value
+         */
+        public static PropertyValue verifyParsing
+                                        (FOTree foTree, PropertyValue value)
+                        throws PropertyException
+        {
+            if (value instanceof Inherit |
+                    value instanceof FromParent |
+                        value instanceof FromNearestSpecified |
+                            value instanceof Auto)
+            {
+                return PropertySets.expandAndCopySHand(value);
+            }
+            if (value instanceof NCName) {
+                EnumType enum = null;
+                String ncname = ((NCName)value).getNCName();
+                try {
+                    enum = new EnumType(value.getProperty(), ncname);
+                } catch (PropertyException e) {
+                    throw new PropertyException
+                    ("Unrecognized NCName in page-break-before: " + ncname);
+                }
+                PropertyValueList list =
+                        new PropertyValueList(PropNames.PAGE_BREAK_BEFORE);
+                switch (enum.getEnumValue()) {
+                case PageBreakAfter.ALWAYS:
+                    list.add(new EnumType(PropNames.BREAK_BEFORE, "page"));
+                    list.add(new Auto(PropNames.KEEP_WITH_NEXT));
+                    return list;
+                case PageBreakAfter.AVOID:
+                    list.add(new Auto(PropNames.BREAK_BEFORE));
+                    list.add
+                        (new EnumType(PropNames.KEEP_WITH_NEXT, "always"));
+                    return list;
+                case PageBreakAfter.LEFT:
+                    list.add
+                        (new EnumType(PropNames.BREAK_BEFORE, "even-page"));
+                    list.add(new Auto(PropNames.KEEP_WITH_NEXT));
+                    return list;
+                case PageBreakAfter.RIGHT:
+                    list.add
+                        (new EnumType(PropNames.BREAK_BEFORE, "odd-page"));
+                    list.add(new Auto(PropNames.KEEP_WITH_NEXT));
+                    return list;
+                }
+            }
+
+            throw new PropertyException
+                ("Invalid value for 'page-break-before': "
+                    + value.getClass().getName());
+        }
     }
 
     public static class PageBreakInside extends Properties {
@@ -5954,6 +6144,46 @@ public abstract class Properties {
         };
         public static final ROStringArray enums = new ROStringArray(rwEnums);
         public static final ROStringArray enumValues = enums;
+
+        /*
+         * @param foTree the <tt>FOTree</tt> being built
+         * @param value <tt>PropertyValue</tt> returned by the parser
+         * @return <tt>PropertyValue</tt> the verified value
+         */
+        public static PropertyValue verifyParsing
+                                        (FOTree foTree, PropertyValue value)
+                        throws PropertyException
+        {
+            if (value instanceof Inherit |
+                    value instanceof FromParent |
+                        value instanceof FromNearestSpecified |
+                            value instanceof Auto)
+            {
+                return PropertySets.expandAndCopySHand(value);
+            }
+            if (value instanceof NCName) {
+                EnumType enum = null;
+                String ncname = ((NCName)value).getNCName();
+                try {
+                    enum = new EnumType(value.getProperty(), ncname);
+                } catch (PropertyException e) {
+                    throw new PropertyException
+                    ("Unrecognized NCName in page-break-inside: " + ncname);
+                }
+                PropertyValueList list =
+                        new PropertyValueList(PropNames.PAGE_BREAK_INSIDE);
+                switch (enum.getEnumValue()) {
+                case AVOID:
+                    list.add
+                        (new EnumType(PropNames.KEEP_TOGETHER, "always"));
+                    return list;
+                }
+            }
+
+            throw new PropertyException
+                ("Invalid value for 'page-break-inside': "
+                    + value.getClass().getName());
+        }
     }
 
     public static class PageHeight extends Properties {
@@ -6072,6 +6302,63 @@ public abstract class Properties {
         };
         public static final ROStringArray enums = new ROStringArray(rwEnums);
         public static final ROStringArray enumValues = enums;
+
+        /*
+         * @param foTree the <tt>FOTree</tt> being built
+         * @param value <tt>PropertyValue</tt> returned by the parser
+         * @return <tt>PropertyValue</tt> the verified value
+         */
+        public static PropertyValue verifyParsing
+                                        (FOTree foTree, PropertyValue value)
+                        throws PropertyException
+        {
+            if (value instanceof Inherit |
+                    value instanceof FromParent |
+                        value instanceof FromNearestSpecified)
+            {
+                return PropertySets.expandAndCopySHand(value);
+            }
+            if (value instanceof NCName) {
+                EnumType enum = null;
+                String ncname = ((NCName)value).getNCName();
+                try {
+                    enum = new EnumType(value.getProperty(), ncname);
+                } catch (PropertyException e) {
+                    throw new PropertyException
+                    ("Unrecognized NCName in position: " + ncname);
+                }
+                PropertyValueList list =
+                            new PropertyValueList(PropNames.POSITION);
+                switch (enum.getEnumValue()) {
+                case STATIC:
+                    list.add(new EnumType
+                                (PropNames.RELATIVE_POSITION, "static"));
+                    list.add(new Auto(PropNames.ABSOLUTE_POSITION));
+                    return list;
+                case RELATIVE:
+                    list.add(new EnumType
+                                (PropNames.RELATIVE_POSITION, "relative"));
+                    list.add(new Auto(PropNames.ABSOLUTE_POSITION));
+                    return list;
+                case ABSOLUTE:
+                    list.add(new EnumType
+                                (PropNames.RELATIVE_POSITION, "static"));
+                    list.add(new EnumType
+                                (PropNames.ABSOLUTE_POSITION, "absolute"));
+                    return list;
+                case FIXED:
+                    list.add(new EnumType
+                                (PropNames.RELATIVE_POSITION, "static"));
+                    list.add(new EnumType
+                                (PropNames.ABSOLUTE_POSITION, "fixed"));
+                    return list;
+                }
+            }
+
+            throw new PropertyException
+                ("Invalid value for 'position': "
+                    + value.getClass().getName());
+        }
     }
 
     public static class Precedence extends Properties {
@@ -6104,7 +6391,8 @@ public abstract class Properties {
         public static PropertyValue getInitialValue(int property)
             throws PropertyException
         {
-            return Length.makeLength (PropNames.PROVISIONAL_DISTANCE_BETWEEN_STARTS, 24.0d, Length.PT);
+            return Length.makeLength
+            (PropNames.PROVISIONAL_DISTANCE_BETWEEN_STARTS, 24.0d, Length.PT);
         }
         public static final int inherited = COMPUTED;
     }
@@ -6116,7 +6404,8 @@ public abstract class Properties {
         public static PropertyValue getInitialValue(int property)
             throws PropertyException
         {
-            return Length.makeLength (PropNames.PROVISIONAL_LABEL_SEPARATION, 6.0d, Length.PT);
+            return Length.makeLength
+            (PropNames.PROVISIONAL_LABEL_SEPARATION, 6.0d, Length.PT);
         }
         public static final int inherited = COMPUTED;
     }
