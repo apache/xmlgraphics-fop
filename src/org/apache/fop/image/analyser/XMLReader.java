@@ -14,6 +14,7 @@ import java.util.Map;
 // XML
 import javax.xml.parsers.DocumentBuilderFactory;
 import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 
 // FOP
 import org.apache.fop.image.FopImage;
