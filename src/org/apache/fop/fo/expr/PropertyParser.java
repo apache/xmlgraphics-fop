@@ -127,11 +127,13 @@ public class PropertyParser extends PropertyTokenizer {
     public PropertyValue parse(FONode node, int property, String expr)
         throws PropertyException
     {
+        //System.out.println("-----Entering parse:"
+        // + PropNames.getPropertyName(property) + " " + expr);
         synchronized (this) {
             // make sure this parser is available
-            if (expr != null) // the parser is currently active
+            if (getExpr() != null) // the parser is currently active
                 throw new PropertyException
-                        ("PropertyParser is currently active.");
+                        ("PropertyParser is currently active: " + getExpr());
             initialize(property, expr);
             this.node = node;
         }
@@ -149,8 +151,10 @@ public class PropertyParser extends PropertyTokenizer {
                 // end of the expression - add to list and go
                 if (propList.size() != 0) {
                     propList.add(prop);
+                    reset();
                     return propList;
                 } else { // list is empty
+                    reset();
                     return prop;
                 }
             }
@@ -164,8 +168,10 @@ public class PropertyParser extends PropertyTokenizer {
                 propList.add(prop);
             } else { // whitespace separates list elements; make a sublist
                 propList.add(parseSublist(prop));
-                if (currentToken == EOF)
+                if (currentToken == EOF) {
+                    reset();
                     return propList;
+                }
             }
         }
     }
@@ -489,20 +495,6 @@ public class PropertyParser extends PropertyTokenizer {
                 }
 
                 // Property value functions
-                if (currentTokenValue.equals("inherited-property-value")) {
-                    int propindex = property;
-                    PropertyValue[] args = parseArgs(0, 1);
-                    if (args.length != 0)
-                        propindex = PropertyConsts.getPropertyIndex(
-                                ((StringType)args[0]).getString());
-                    if (PropertyConsts.inheritance(propindex) == Properties.NO)
-                        throw new PropertyException
-                                ("inherited-property-value: "
-                                 + PropNames.getPropertyName(propindex)
-                                 + " is not inherited.");
-                    prop = new InheritedValue(property, propindex);
-                    break;
-                }
                 if (currentTokenValue.equals("label-end")) {
                     PropertyValue[] args = parseArgs(0);
                     throw new FunctionNotImplementedException("label-end");
@@ -512,6 +504,29 @@ public class PropertyParser extends PropertyTokenizer {
                     PropertyValue[] args = parseArgs(0);
                     throw new FunctionNotImplementedException("body-start");
                     //break;
+                }
+                if (currentTokenValue.equals("inherited-property-value")) {
+                    int propindex = property;
+                    PropertyValue[] args = parseArgs(0, 1);
+                    if (args.length != 0)
+                        propindex = PropertyConsts.getPropertyIndex(
+                                ((StringType)args[0]).getString());
+
+                    // If it's a compound, return an InheritedValue object
+                    if (PropertyConsts.isCompound(propindex)) {
+                        prop = new InheritedValue(property, propindex);
+                        break;
+                    }
+                    // Is it an inherited property?
+                    if (PropertyConsts.inheritance(propindex)
+                                                            == Properties.NO)
+                        throw new PropertyException
+                                ("inherited-property-value: "
+                                 + PropNames.getPropertyName(propindex)
+                                 + " is not inherited.");
+                    // Not a compound, and inherited - try to resolve it
+                    prop = node.fromParent(property, propindex);
+                    break;
                 }
                 // N.B. see comments on classes FromNearestSpecified and
                 // FromParent for explanation of this section
