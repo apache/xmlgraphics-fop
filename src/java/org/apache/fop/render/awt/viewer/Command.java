@@ -38,7 +38,7 @@ import java.net.URL;
  */
 public class Command extends AbstractAction {
 
-    private static final String IMAGE_DIR = "images/";
+    private static final String IMAGE_DIR = "resources/awt_viewere/images/";
 
     /**
      * Creates <code>Command</code> object with a given name and

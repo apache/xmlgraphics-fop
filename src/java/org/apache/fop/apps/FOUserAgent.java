@@ -20,15 +20,11 @@ package org.apache.fop.apps;
 
 // Java
 import java.util.Map;
-import java.io.IOException;
 import java.io.InputStream;
 
 // Avalon
 import org.apache.avalon.framework.logger.LogEnabled;
 import org.apache.avalon.framework.logger.Logger;
-
-// FOP
-import org.apache.fop.pdf.PDFEncryptionParams;
 
 /**
  * The User Agent for fo.
@@ -58,7 +54,6 @@ public class FOUserAgent implements LogEnabled {
     /** Map containing XML handlers for various document types */
     public Map handlers = new java.util.HashMap();
     private String baseURL;
-    private PDFEncryptionParams pdfEncryptionParams;
     private float px2mm = 0.35277777777777777778f; //72dpi (=25.4/dpi)
 
     /**
@@ -72,7 +67,6 @@ public class FOUserAgent implements LogEnabled {
 
     /**
      * Returns the logger to use.
-     * @see org.apache.avalon.framework.logger.AbstractLogEnabled#getLogger()
      * (todo) This breaks IoC/SoC. Should be improved.
      */
     public Logger getLogger() {
@@ -99,32 +93,14 @@ public class FOUserAgent implements LogEnabled {
         }
     }
 
-    /**
-     * Returns the parameters for PDF encryption.
-     * @return the PDF encryption parameters, null if not applicable
-     */
-    public PDFEncryptionParams getPDFEncryptionParams() {
-        return pdfEncryptionParams;
-    }
-
-    /**
-     * Sets the parameters for PDF encryption.
-     * @param pdfEncryptionParams the PDF encryption parameters, null to
-     * disable PDF encryption
-     */
-    public void setPDFEncryptionParams(PDFEncryptionParams pdfEncryptionParams) {
-        this.pdfEncryptionParams = pdfEncryptionParams;
-    }
-
 
     /**
      * Get an input stream for a reference.
      * Temporary solution until API better.
      * @param uri URI to access
      * @return InputStream for accessing the resource.
-     * @throws IOException in case of an I/O problem
      */
-    public InputStream getStream(String uri) throws IOException {
+    public InputStream getStream(String uri) {
         return null;
     }
 

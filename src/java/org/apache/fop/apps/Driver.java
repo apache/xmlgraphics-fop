@@ -30,6 +30,8 @@ import org.xml.sax.XMLReader;
 import org.apache.fop.configuration.Configuration;
 import org.apache.fop.fo.FOTree;
 import org.apache.fop.layout.AreaTree;
+import org.apache.fop.render.Renderer;
+import org.apache.fop.render.awt.AWTRenderer;
 import org.apache.fop.version.Version;
 import org.apache.fop.xml.FoXmlSerialHandler;
 import org.apache.fop.xml.Namespaces;
@@ -73,6 +75,7 @@ public class Driver {
     private boolean _errorDump = false;
     private Configuration configuration = null;
     private FOPOptions options = null;
+    private FOUserAgent userAgent = null;
     
     private InputHandler inputHandler;
     private XMLReader parser;
@@ -91,6 +94,12 @@ public class Driver {
     private Thread areaThread;
     private Thread renderThread;
 
+    /** the renderer type code given by setRenderer  */
+    private int rendererType = NOT_SET;
+
+    /** the renderer to use to output the area tree */
+    private Renderer renderer;
+
 
     /**
      * Error handling, version and logging initialization.
@@ -99,14 +108,16 @@ public class Driver {
         String version = Version.getVersion();
         configuration = new Configuration();
         options = new FOPOptions(configuration);
+        userAgent = new FOUserAgent();
         _errorDump = configuration.isTrue("debugMode");
         logger.config(version);
     }
     
-    public Driver(String[] args, Configuration config, FOPOptions options) {
+    public Driver(Configuration config, FOPOptions options) {
         String version = Version.getVersion();
         configuration = config;
         this.options = options;
+        userAgent = new FOUserAgent();
         _errorDump = configuration.isTrue("debugMode");
         logger.config(version);
     }
@@ -185,15 +196,133 @@ public class Driver {
         this.inputHandler = inputHandler;
     }
 
-    /**
-     * Sets the parser features.
-     * @param parser the XMLReader used to parse the input
-     * @throws FOPException
-     */
-    /*
-    public void setParserFeatures(XMLReader parser) throws FOPException {
+    protected FOUserAgent getUserAgent() {
+        return userAgent;
     }
-    */
+
+    /**
+     * Shortcut to set the rendering type to use. Must be one of
+     * <ul>
+     * <li>RENDER_PDF</li>
+     * <li>RENDER_AWT</li>
+     * <li>RENDER_PRINT</li>
+     * <li>RENDER_MIF</li>
+     * <li>RENDER_XML</li>
+     * <li>RENDER_PCL</li>
+     * <li>RENDER_PS</li>
+     * <li>RENDER_TXT</li>
+     * <li>RENDER_SVG</li>
+     * <li>RENDER_RTF</li>
+     * </ul>
+     * @param renderer the type of renderer to use
+     * @throws IllegalArgumentException if an unsupported renderer type was required.
+     */
+    public void setRenderer(int renderer) throws IllegalArgumentException {
+        rendererType = renderer;
+        switch (renderer) {
+//        case RENDER_PDF:
+//            setRenderer("org.apache.fop.render.pdf.PDFRenderer");
+//            break;
+        case RENDER_AWT:
+            throw new IllegalArgumentException("Use renderer form of setRenderer() for AWT");
+//        case RENDER_PRINT:
+//            setRenderer("org.apache.fop.render.awt.AWTPrintRenderer");
+//            break;
+//        case RENDER_PCL:
+//            setRenderer("org.apache.fop.render.pcl.PCLRenderer");
+//            break;
+//        case RENDER_PS:
+//            setRenderer("org.apache.fop.render.ps.PSRenderer");
+//            break;
+//        case RENDER_TXT:
+//            setRenderer("org.apache.fop.render.txt.TXTRenderer()");
+//            break;
+//        case RENDER_MIF:
+//            //foInputHandler will be set later
+//            break;
+//        case RENDER_XML:
+//            setRenderer("org.apache.fop.render.xml.XMLRenderer");
+//            break;
+//        case RENDER_SVG:
+//            setRenderer("org.apache.fop.render.svg.SVGRenderer");
+//            break;
+//        case RENDER_RTF:
+//            //foInputHandler will be set later
+//            break;
+        default:
+            rendererType = NOT_SET;
+            throw new IllegalArgumentException("Unknown renderer type " + renderer);
+        }
+    }
+
+    /**
+     * Set the Renderer to use.
+     * @param renderer the renderer instance to use (Note: Logger must be set at this point)
+     */
+    public void setRenderer(Renderer renderer) {
+        // AWTStarter calls this function directly
+        if (renderer instanceof AWTRenderer) {
+            rendererType = RENDER_AWT;
+        }
+        renderer.setProducer(Version.getVersion());
+        renderer.setUserAgent(getUserAgent());
+        this.renderer = renderer;
+    }
+
+    /**
+     * Returns the currently active renderer.
+     * @return the renderer
+     */
+    public Renderer getRenderer() {
+        return renderer;
+    }
+
+    /**
+     * Set the class name of the Renderer to use as well as the
+     * producer string for those renderers that can make use of it.
+     * @param rendererClassName classname of the renderer to use such as
+     * "org.apache.fop.render.pdf.PDFRenderer"
+     * @exception IllegalArgumentException if the classname was invalid.
+     * @see #setRenderer(int)
+     */
+    public void setRenderer(String rendererClassName)
+                throws IllegalArgumentException {
+        try {
+            renderer = (Renderer)Class.forName(rendererClassName).newInstance();
+            renderer.setProducer(Version.getVersion());
+            renderer.setUserAgent(getUserAgent());
+        } catch (ClassNotFoundException e) {
+            throw new IllegalArgumentException("Could not find "
+                                               + rendererClassName);
+        } catch (InstantiationException e) {
+            throw new IllegalArgumentException("Could not instantiate "
+                                               + rendererClassName);
+        } catch (IllegalAccessException e) {
+            throw new IllegalArgumentException("Could not access "
+                                               + rendererClassName);
+        } catch (ClassCastException e) {
+            throw new IllegalArgumentException(rendererClassName
+                                               + " is not a renderer");
+        }
+    }
+
+    /**
+     * DOES NOTHING
+     * TODO Eliminate or actualise
+     */
+    public synchronized void reset() {
+    }
+
+    /**
+     * Render the FO document read by a SAX Parser from an InputHandler
+     * @param inputHandler the input handler containing the source and
+     * parser information.
+     * @throws FOPException if anything goes wrong.
+     */
+    public synchronized void render(InputHandler inputHandler)
+                throws FOPException {
+        throw new FOPException("Attempting to run null 'render' method");
+    }
 
     /**
      * Prints stack trace of an exception

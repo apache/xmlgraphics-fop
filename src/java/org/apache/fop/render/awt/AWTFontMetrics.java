@@ -157,7 +157,7 @@ public class AWTFontMetrics {
      */
     public int getXHeight(String family, int style, int size) {
         setFont(family, style, size);
-        return (int)(FONT_FACTOR * xHeight);
+        return (FONT_FACTOR * xHeight);
     }
 
     /**
@@ -178,7 +178,7 @@ public class AWTFontMetrics {
         if (i <= 32) {
             w = (int)(1.4 * fmt.charWidth(i) * FONT_FACTOR);
         } else {
-            w = (int)(fmt.charWidth(i) * FONT_FACTOR);
+            w = (fmt.charWidth(i) * FONT_FACTOR);
         }
         return w;
     }
@@ -227,7 +227,7 @@ public class AWTFontMetrics {
             if ((this.style != style) || !this.family.equals(family)
                     || this.size != s) {
                 if (family.equals(this.family)) {
-                    f1 = f1.deriveFont(style, (float)s);
+                    f1 = f1.deriveFont(style, s);
                 } else {
                     f1 = new Font(family, style, s);
                 }

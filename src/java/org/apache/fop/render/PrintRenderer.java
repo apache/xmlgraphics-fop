@@ -19,9 +19,6 @@
 package org.apache.fop.render;
 
 // FOP
-import org.apache.fop.apps.Document;
-import org.apache.fop.fo.FOTreeControl;
-import org.apache.fop.fonts.FontSetup;
 
 // Java
 import java.util.List;
@@ -29,20 +26,7 @@ import java.util.List;
 /** Abstract base class of "Print" type renderers.  */
 public abstract class PrintRenderer extends AbstractRenderer {
 
-    /** Font configuration */
-    protected FOTreeControl fontInfo;
-
     /** list of fonts */
     protected List fontList = null;
-
-    /**
-     * Set up the font info
-     *
-     * @param fontInfo  font info to set up
-     */
-    public void setupFontInfo(FOTreeControl foTreeControl) {
-        this.fontInfo = foTreeControl;
-        FontSetup.setup((Document)fontInfo, fontList);
-    }
 
 }
