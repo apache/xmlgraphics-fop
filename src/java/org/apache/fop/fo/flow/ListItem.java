@@ -1,5 +1,5 @@
 /*
- * Copyright 1999-2004 The Apache Software Foundation.
+ * Copyright 1999-2005 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,12 +14,9 @@
  * limitations under the License.
  */
 
-/* $Id:$ */
+/* $Id$ */
 
 package org.apache.fop.fo.flow;
-
-// Java
-import java.util.List;
 
 import org.xml.sax.Locator;
 
@@ -34,7 +31,6 @@ import org.apache.fop.fo.properties.CommonBorderPaddingBackground;
 import org.apache.fop.fo.properties.CommonMarginBlock;
 import org.apache.fop.fo.properties.CommonRelativePosition;
 import org.apache.fop.fo.properties.KeepProperty;
-import org.apache.fop.layoutmgr.list.ListItemLayoutManager;
 
 /**
  * Class modelling the fo:list-item object.
@@ -145,6 +141,34 @@ public class ListItem extends FObj {
         } else if (nameId == FO_MARKER) {
             addMarker((Marker) child);
         }
+    }
+
+    /**
+     * @return the Common Margin Properties-Block.
+     */
+    public CommonMarginBlock getCommonMarginBlock() {
+        return commonMarginBlock;
+    }
+
+    /**
+     * @return the Common Border, Padding, and Background Properties.
+     */
+    public CommonBorderPaddingBackground getCommonBorderPaddingBackground() {
+        return commonBorderPaddingBackground;
+    }
+
+    /**
+     * @return the "break-after" property.
+     */
+    public int getBreakAfter() {
+        return breakAfter;
+    }
+
+    /**
+     * @return the "break-before" property.
+     */
+    public int getBreakBefore() {
+        return breakBefore;
     }
 
     /**
