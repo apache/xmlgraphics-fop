@@ -2,12 +2,12 @@ File=Fichier
 Print=Imprimer
 Exit=Quitter
 View=Affichage
-First page=Première page
-Previous page=Page précédente
+First page=PremiÃ¨re page
+Previous page=Page prÃ©cÃ©dente
 Next page=Page suivante
-Last page=Dernière page
+Last page=DerniÃ¨re page
 Help=Aide
-Default zoom=Zoom par défaut
+Default zoom=Zoom par dÃ©faut
 Introduction=Introduction
 About=A propos
 

@@ -45,12 +45,12 @@ This files shows next to the trivial usage of fo:block and fo:inline examples of
 
 <fo:page-sequence-master master-name="basicPSM" >
 	<fo:repeatable-page-master-alternatives>
-		<fo:conditional-page-master-reference master-name="first"
+		<fo:conditional-page-master-reference master-reference="first"
 			page-position="first" />
-		<fo:conditional-page-master-reference master-name="rest"
+		<fo:conditional-page-master-reference master-reference="rest"
 			page-position="rest" />
 		<!-- recommended fallback procedure -->
-		<fo:conditional-page-master-reference master-name="rest" />
+		<fo:conditional-page-master-reference master-reference="rest" />
 	</fo:repeatable-page-master-alternatives>
 </fo:page-sequence-master>
 
@@ -123,7 +123,7 @@ This files shows next to the trivial usage of fo:block and fo:inline examples of
 
 
   <!-- actual layout -->
-  <fo:page-sequence master-name="basicPSM">
+  <fo:page-sequence master-reference="basicPSM">
 
 
 <fo:static-content flow-name="xsl-region-before">
@@ -355,7 +355,7 @@ This is not the latest Fop documentation, but just an fo example. FOP - p. <fo:p
     <fo:list-block start-indent="1cm" provisional-distance-between-starts="12pt" font-family="serif">
       <fo:list-item>
 <fo:list-item-label end-indent="label-end()">
-<fo:block><fo:inline font-family="Symbol">&#183;</fo:inline></fo:block>
+<fo:block><fo:inline font-family="Symbol">&#x2022;</fo:inline></fo:block>
 </fo:list-item-label>
 <fo:list-item-body start-indent="body-start()">
 <fo:block>root </fo:block>
@@ -363,7 +363,7 @@ This is not the latest Fop documentation, but just an fo example. FOP - p. <fo:p
 </fo:list-item>
       <fo:list-item>
 <fo:list-item-label end-indent="label-end()">
-<fo:block><fo:inline font-family="Symbol">&#183;</fo:inline></fo:block>
+<fo:block><fo:inline font-family="Symbol">&#x2022;</fo:inline></fo:block>
 </fo:list-item-label>
 <fo:list-item-body start-indent="body-start()">
 <fo:block>layout-master-set </fo:block>
@@ -371,7 +371,7 @@ This is not the latest Fop documentation, but just an fo example. FOP - p. <fo:p
 </fo:list-item>
       <fo:list-item>
 <fo:list-item-label end-indent="label-end()">
-<fo:block><fo:inline font-family="Symbol">&#183;</fo:inline></fo:block>
+<fo:block><fo:inline font-family="Symbol">&#x2022;</fo:inline></fo:block>
 </fo:list-item-label>
 <fo:list-item-body start-indent="body-start()">
 <fo:block>simple-page-master </fo:block>
@@ -379,7 +379,7 @@ This is not the latest Fop documentation, but just an fo example. FOP - p. <fo:p
 </fo:list-item>
       <fo:list-item>
 <fo:list-item-label end-indent="label-end()">
-<fo:block><fo:inline font-family="Symbol">&#183;</fo:inline></fo:block>
+<fo:block><fo:inline font-family="Symbol">&#x2022;</fo:inline></fo:block>
 </fo:list-item-label>
 <fo:list-item-body start-indent="body-start()">
 <fo:block>region-body </fo:block>
@@ -387,7 +387,7 @@ This is not the latest Fop documentation, but just an fo example. FOP - p. <fo:p
 </fo:list-item>
       <fo:list-item>
 <fo:list-item-label end-indent="label-end()">
-<fo:block><fo:inline font-family="Symbol">&#183;</fo:inline></fo:block>
+<fo:block><fo:inline font-family="Symbol">&#x2022;</fo:inline></fo:block>
 </fo:list-item-label>
 <fo:list-item-body start-indent="body-start()">
 <fo:block>region-before </fo:block>
@@ -395,7 +395,7 @@ This is not the latest Fop documentation, but just an fo example. FOP - p. <fo:p
 </fo:list-item>
       <fo:list-item>
 <fo:list-item-label end-indent="label-end()">
-<fo:block><fo:inline font-family="Symbol">&#183;</fo:inline></fo:block>
+<fo:block><fo:inline font-family="Symbol">&#x2022;</fo:inline></fo:block>
 </fo:list-item-label>
 <fo:list-item-body start-indent="body-start()">
 <fo:block>region-after </fo:block>
@@ -403,7 +403,7 @@ This is not the latest Fop documentation, but just an fo example. FOP - p. <fo:p
 </fo:list-item>
       <fo:list-item>
 <fo:list-item-label end-indent="label-end()">
-<fo:block><fo:inline font-family="Symbol">&#183;</fo:inline></fo:block>
+<fo:block><fo:inline font-family="Symbol">&#x2022;</fo:inline></fo:block>
 </fo:list-item-label>
 <fo:list-item-body start-indent="body-start()">
 <fo:block>page-sequence </fo:block>
@@ -411,7 +411,7 @@ This is not the latest Fop documentation, but just an fo example. FOP - p. <fo:p
 </fo:list-item>
       <fo:list-item>
 <fo:list-item-label end-indent="label-end()">
-<fo:block><fo:inline font-family="Symbol">&#183;</fo:inline></fo:block>
+<fo:block><fo:inline font-family="Symbol">&#x2022;</fo:inline></fo:block>
 </fo:list-item-label>
 <fo:list-item-body start-indent="body-start()">
 <fo:block>sequence-specification </fo:block>
@@ -419,7 +419,7 @@ This is not the latest Fop documentation, but just an fo example. FOP - p. <fo:p
 </fo:list-item>
       <fo:list-item>
 <fo:list-item-label end-indent="label-end()">
-<fo:block><fo:inline font-family="Symbol">&#183;</fo:inline></fo:block>
+<fo:block><fo:inline font-family="Symbol">&#x2022;</fo:inline></fo:block>
 </fo:list-item-label>
 <fo:list-item-body start-indent="body-start()">
 <fo:block>sequence-specifier-single </fo:block>
@@ -427,7 +427,7 @@ This is not the latest Fop documentation, but just an fo example. FOP - p. <fo:p
 </fo:list-item>
       <fo:list-item>
 <fo:list-item-label end-indent="label-end()">
-<fo:block><fo:inline font-family="Symbol">&#183;</fo:inline></fo:block>
+<fo:block><fo:inline font-family="Symbol">&#x2022;</fo:inline></fo:block>
 </fo:list-item-label>
 <fo:list-item-body start-indent="body-start()">
 <fo:block>sequence-specifier-repeating </fo:block>
@@ -435,7 +435,7 @@ This is not the latest Fop documentation, but just an fo example. FOP - p. <fo:p
 </fo:list-item>
       <fo:list-item>
 <fo:list-item-label end-indent="label-end()">
-<fo:block><fo:inline font-family="Symbol">&#183;</fo:inline></fo:block>
+<fo:block><fo:inline font-family="Symbol">&#x2022;</fo:inline></fo:block>
 </fo:list-item-label>
 <fo:list-item-body start-indent="body-start()">
 <fo:block>sequence-specifier-alternating </fo:block>
@@ -443,7 +443,7 @@ This is not the latest Fop documentation, but just an fo example. FOP - p. <fo:p
 </fo:list-item>
       <fo:list-item>
 <fo:list-item-label end-indent="label-end()">
-<fo:block><fo:inline font-family="Symbol">&#183;</fo:inline></fo:block>
+<fo:block><fo:inline font-family="Symbol">&#x2022;</fo:inline></fo:block>
 </fo:list-item-label>
 <fo:list-item-body start-indent="body-start()">
 <fo:block>flow </fo:block>
@@ -451,7 +451,7 @@ This is not the latest Fop documentation, but just an fo example. FOP - p. <fo:p
 </fo:list-item>
       <fo:list-item>
 <fo:list-item-label end-indent="label-end()">
-<fo:block><fo:inline font-family="Symbol">&#183;</fo:inline></fo:block>
+<fo:block><fo:inline font-family="Symbol">&#x2022;</fo:inline></fo:block>
 </fo:list-item-label>
 <fo:list-item-body start-indent="body-start()">
 <fo:block>static-content </fo:block>
@@ -459,7 +459,7 @@ This is not the latest Fop documentation, but just an fo example. FOP - p. <fo:p
 </fo:list-item>
       <fo:list-item>
 <fo:list-item-label end-indent="label-end()">
-<fo:block><fo:inline font-family="Symbol">&#183;</fo:inline></fo:block>
+<fo:block><fo:inline font-family="Symbol">&#x2022;</fo:inline></fo:block>
 </fo:list-item-label>
 <fo:list-item-body start-indent="body-start()">
 <fo:block>block </fo:block>
@@ -467,7 +467,7 @@ This is not the latest Fop documentation, but just an fo example. FOP - p. <fo:p
 </fo:list-item>
       <fo:list-item>
 <fo:list-item-label end-indent="label-end()">
-<fo:block><fo:inline font-family="Symbol">&#183;</fo:inline></fo:block>
+<fo:block><fo:inline font-family="Symbol">&#x2022;</fo:inline></fo:block>
 </fo:list-item-label>
 <fo:list-item-body start-indent="body-start()">
 <fo:block>list-block </fo:block>
@@ -475,7 +475,7 @@ This is not the latest Fop documentation, but just an fo example. FOP - p. <fo:p
 </fo:list-item>
       <fo:list-item>
 <fo:list-item-label end-indent="label-end()">
-<fo:block><fo:inline font-family="Symbol">&#183;</fo:inline></fo:block>
+<fo:block><fo:inline font-family="Symbol">&#x2022;</fo:inline></fo:block>
 </fo:list-item-label>
 <fo:list-item-body start-indent="body-start()">
 <fo:block>list-item </fo:block>
@@ -483,7 +483,7 @@ This is not the latest Fop documentation, but just an fo example. FOP - p. <fo:p
 </fo:list-item>
       <fo:list-item>
 <fo:list-item-label end-indent="label-end()">
-<fo:block><fo:inline font-family="Symbol">&#183;</fo:inline></fo:block>
+<fo:block><fo:inline font-family="Symbol">&#x2022;</fo:inline></fo:block>
 </fo:list-item-label>
 <fo:list-item-body start-indent="body-start()">
 <fo:block>list-item-label </fo:block>
@@ -491,7 +491,7 @@ This is not the latest Fop documentation, but just an fo example. FOP - p. <fo:p
 </fo:list-item>
       <fo:list-item>
 <fo:list-item-label end-indent="label-end()">
-<fo:block><fo:inline font-family="Symbol">&#183;</fo:inline></fo:block>
+<fo:block><fo:inline font-family="Symbol">&#x2022;</fo:inline></fo:block>
 </fo:list-item-label>
 <fo:list-item-body start-indent="body-start()">
 <fo:block>list-item-body </fo:block>
@@ -499,7 +499,7 @@ This is not the latest Fop documentation, but just an fo example. FOP - p. <fo:p
 </fo:list-item>
       <fo:list-item>
 <fo:list-item-label end-indent="label-end()">
-<fo:block><fo:inline font-family="Symbol">&#183;</fo:inline></fo:block>
+<fo:block><fo:inline font-family="Symbol">&#x2022;</fo:inline></fo:block>
 </fo:list-item-label>
 <fo:list-item-body start-indent="body-start()">
 <fo:block>page-number </fo:block>
@@ -507,7 +507,7 @@ This is not the latest Fop documentation, but just an fo example. FOP - p. <fo:p
 </fo:list-item>
       <fo:list-item>
 <fo:list-item-label end-indent="label-end()">
-<fo:block><fo:inline font-family="Symbol">&#183;</fo:inline></fo:block>
+<fo:block><fo:inline font-family="Symbol">&#x2022;</fo:inline></fo:block>
 </fo:list-item-label>
 <fo:list-item-body start-indent="body-start()">
 <fo:block>display-sequence </fo:block>
@@ -515,7 +515,7 @@ This is not the latest Fop documentation, but just an fo example. FOP - p. <fo:p
 </fo:list-item>
       <fo:list-item>
 <fo:list-item-label end-indent="label-end()">
-<fo:block><fo:inline font-family="Symbol">&#183;</fo:inline></fo:block>
+<fo:block><fo:inline font-family="Symbol">&#x2022;</fo:inline></fo:block>
 </fo:list-item-label>
 <fo:list-item-body start-indent="body-start()">
 <fo:block>inline </fo:block>
@@ -523,7 +523,7 @@ This is not the latest Fop documentation, but just an fo example. FOP - p. <fo:p
 </fo:list-item>
       <fo:list-item>
 <fo:list-item-label end-indent="label-end()">
-<fo:block><fo:inline font-family="Symbol">&#183;</fo:inline></fo:block>
+<fo:block><fo:inline font-family="Symbol">&#x2022;</fo:inline></fo:block>
 </fo:list-item-label>
 <fo:list-item-body start-indent="body-start()">
 <fo:block>display-rule </fo:block>
@@ -531,7 +531,7 @@ This is not the latest Fop documentation, but just an fo example. FOP - p. <fo:p
 </fo:list-item>
       <fo:list-item>
 <fo:list-item-label end-indent="label-end()">
-<fo:block><fo:inline font-family="Symbol">&#183;</fo:inline></fo:block>
+<fo:block><fo:inline font-family="Symbol">&#x2022;</fo:inline></fo:block>
 </fo:list-item-label>
 <fo:list-item-body start-indent="body-start()">
 <fo:block>display-graphic </fo:block>
@@ -539,7 +539,7 @@ This is not the latest Fop documentation, but just an fo example. FOP - p. <fo:p
 </fo:list-item>
       <fo:list-item>
 <fo:list-item-label end-indent="label-end()">
-<fo:block><fo:inline font-family="Symbol">&#183;</fo:inline></fo:block>
+<fo:block><fo:inline font-family="Symbol">&#x2022;</fo:inline></fo:block>
 </fo:list-item-label>
 <fo:list-item-body start-indent="body-start()">
 <fo:block>table (minimal support)</fo:block>
@@ -547,7 +547,7 @@ This is not the latest Fop documentation, but just an fo example. FOP - p. <fo:p
 </fo:list-item>
       <fo:list-item>
 <fo:list-item-label end-indent="label-end()">
-<fo:block><fo:inline font-family="Symbol">&#183;</fo:inline></fo:block>
+<fo:block><fo:inline font-family="Symbol">&#x2022;</fo:inline></fo:block>
 </fo:list-item-label>
 <fo:list-item-body start-indent="body-start()">
 <fo:block>table-column (minimal support)</fo:block>
@@ -555,7 +555,7 @@ This is not the latest Fop documentation, but just an fo example. FOP - p. <fo:p
 </fo:list-item>
       <fo:list-item>
 <fo:list-item-label end-indent="label-end()">
-<fo:block><fo:inline font-family="Symbol">&#183;</fo:inline></fo:block>
+<fo:block><fo:inline font-family="Symbol">&#x2022;</fo:inline></fo:block>
 </fo:list-item-label>
 <fo:list-item-body start-indent="body-start()">
 <fo:block>table-body (minimal support)</fo:block>
@@ -563,7 +563,7 @@ This is not the latest Fop documentation, but just an fo example. FOP - p. <fo:p
 </fo:list-item>
       <fo:list-item>
 <fo:list-item-label end-indent="label-end()">
-<fo:block><fo:inline font-family="Symbol">&#183;</fo:inline></fo:block>
+<fo:block><fo:inline font-family="Symbol">&#x2022;</fo:inline></fo:block>
 </fo:list-item-label>
 <fo:list-item-body start-indent="body-start()">
 <fo:block>table-row (minimal support)</fo:block>
@@ -571,7 +571,7 @@ This is not the latest Fop documentation, but just an fo example. FOP - p. <fo:p
 </fo:list-item>
       <fo:list-item>
 <fo:list-item-label end-indent="label-end()">
-<fo:block><fo:inline font-family="Symbol">&#183;</fo:inline></fo:block>
+<fo:block><fo:inline font-family="Symbol">&#x2022;</fo:inline></fo:block>
 </fo:list-item-label>
 <fo:list-item-body start-indent="body-start()">
 <fo:block>table-cell (minimal support)</fo:block>
@@ -585,7 +585,7 @@ This is not the latest Fop documentation, but just an fo example. FOP - p. <fo:p
     <fo:list-block start-indent="1cm" provisional-distance-between-starts="12pt" font-family="serif">
       <fo:list-item>
 <fo:list-item-label end-indent="label-end()">
-<fo:block><fo:inline font-family="Symbol">&#183;</fo:inline></fo:block>
+<fo:block><fo:inline font-family="Symbol">&#x2022;</fo:inline></fo:block>
 </fo:list-item-label>
 <fo:list-item-body start-indent="body-start()">
 <fo:block>end-indent </fo:block>
@@ -593,7 +593,7 @@ This is not the latest Fop documentation, but just an fo example. FOP - p. <fo:p
 </fo:list-item>
       <fo:list-item>
 <fo:list-item-label end-indent="label-end()">
-<fo:block><fo:inline font-family="Symbol">&#183;</fo:inline></fo:block>
+<fo:block><fo:inline font-family="Symbol">&#x2022;</fo:inline></fo:block>
 </fo:list-item-label>
 <fo:list-item-body start-indent="body-start()">
 <fo:block>page-master-name </fo:block>
@@ -601,7 +601,7 @@ This is not the latest Fop documentation, but just an fo example. FOP - p. <fo:p
 </fo:list-item>
       <fo:list-item>
 <fo:list-item-label end-indent="label-end()">
-<fo:block><fo:inline font-family="Symbol">&#183;</fo:inline></fo:block>
+<fo:block><fo:inline font-family="Symbol">&#x2022;</fo:inline></fo:block>
 </fo:list-item-label>
 <fo:list-item-body start-indent="body-start()">
 <fo:block>page-master-first </fo:block>
@@ -609,7 +609,7 @@ This is not the latest Fop documentation, but just an fo example. FOP - p. <fo:p
 </fo:list-item>
       <fo:list-item>
 <fo:list-item-label end-indent="label-end()">
-<fo:block><fo:inline font-family="Symbol">&#183;</fo:inline></fo:block>
+<fo:block><fo:inline font-family="Symbol">&#x2022;</fo:inline></fo:block>
 </fo:list-item-label>
 <fo:list-item-body start-indent="body-start()">
 <fo:block>page-master-repeating </fo:block>
@@ -617,7 +617,7 @@ This is not the latest Fop documentation, but just an fo example. FOP - p. <fo:p
 </fo:list-item>
       <fo:list-item>
 <fo:list-item-label end-indent="label-end()">
-<fo:block><fo:inline font-family="Symbol">&#183;</fo:inline></fo:block>
+<fo:block><fo:inline font-family="Symbol">&#x2022;</fo:inline></fo:block>
 </fo:list-item-label>
 <fo:list-item-body start-indent="body-start()">
 <fo:block>page-master-odd </fo:block>
@@ -625,7 +625,7 @@ This is not the latest Fop documentation, but just an fo example. FOP - p. <fo:p
 </fo:list-item>
       <fo:list-item>
 <fo:list-item-label end-indent="label-end()">
-<fo:block><fo:inline font-family="Symbol">&#183;</fo:inline></fo:block>
+<fo:block><fo:inline font-family="Symbol">&#x2022;</fo:inline></fo:block>
 </fo:list-item-label>
 <fo:list-item-body start-indent="body-start()">
 <fo:block>page-master-even </fo:block>
@@ -633,7 +633,7 @@ This is not the latest Fop documentation, but just an fo example. FOP - p. <fo:p
 </fo:list-item>
       <fo:list-item>
 <fo:list-item-label end-indent="label-end()">
-<fo:block><fo:inline font-family="Symbol">&#183;</fo:inline></fo:block>
+<fo:block><fo:inline font-family="Symbol">&#x2022;</fo:inline></fo:block>
 </fo:list-item-label>
 <fo:list-item-body start-indent="body-start()">
 <fo:block>margin-top (only on pages and regions)</fo:block>
@@ -641,7 +641,7 @@ This is not the latest Fop documentation, but just an fo example. FOP - p. <fo:p
 </fo:list-item>
       <fo:list-item>
 <fo:list-item-label end-indent="label-end()">
-<fo:block><fo:inline font-family="Symbol">&#183;</fo:inline></fo:block>
+<fo:block><fo:inline font-family="Symbol">&#x2022;</fo:inline></fo:block>
 </fo:list-item-label>
 <fo:list-item-body start-indent="body-start()">
 <fo:block>margin-bottom (only on pages and regions)</fo:block>
@@ -649,7 +649,7 @@ This is not the latest Fop documentation, but just an fo example. FOP - p. <fo:p
 </fo:list-item>
       <fo:list-item>
 <fo:list-item-label end-indent="label-end()">
-<fo:block><fo:inline font-family="Symbol">&#183;</fo:inline></fo:block>
+<fo:block><fo:inline font-family="Symbol">&#x2022;</fo:inline></fo:block>
 </fo:list-item-label>
 <fo:list-item-body start-indent="body-start()">
 <fo:block>margin-left (only on pages and regions)</fo:block>
@@ -657,7 +657,7 @@ This is not the latest Fop documentation, but just an fo example. FOP - p. <fo:p
 </fo:list-item>
       <fo:list-item>
 <fo:list-item-label end-indent="label-end()">
-<fo:block><fo:inline font-family="Symbol">&#183;</fo:inline></fo:block>
+<fo:block><fo:inline font-family="Symbol">&#x2022;</fo:inline></fo:block>
 </fo:list-item-label>
 <fo:list-item-body start-indent="body-start()">
 <fo:block>margin-right (only on pages and regions)</fo:block>
@@ -665,7 +665,7 @@ This is not the latest Fop documentation, but just an fo example. FOP - p. <fo:p
 </fo:list-item>
       <fo:list-item>
 <fo:list-item-label end-indent="label-end()">
-<fo:block><fo:inline font-family="Symbol">&#183;</fo:inline></fo:block>
+<fo:block><fo:inline font-family="Symbol">&#x2022;</fo:inline></fo:block>
 </fo:list-item-label>
 <fo:list-item-body start-indent="body-start()">
 <fo:block>extent </fo:block>
@@ -673,7 +673,7 @@ This is not the latest Fop documentation, but just an fo example. FOP - p. <fo:p
 </fo:list-item>
       <fo:list-item>
 <fo:list-item-label end-indent="label-end()">
-<fo:block><fo:inline font-family="Symbol">&#183;</fo:inline></fo:block>
+<fo:block><fo:inline font-family="Symbol">&#x2022;</fo:inline></fo:block>
 </fo:list-item-label>
 <fo:list-item-body start-indent="body-start()">
 <fo:block>page-width </fo:block>
@@ -681,7 +681,7 @@ This is not the latest Fop documentation, but just an fo example. FOP - p. <fo:p
 </fo:list-item>
       <fo:list-item>
 <fo:list-item-label end-indent="label-end()">
-<fo:block><fo:inline font-family="Symbol">&#183;</fo:inline></fo:block>
+<fo:block><fo:inline font-family="Symbol">&#x2022;</fo:inline></fo:block>
 </fo:list-item-label>
 <fo:list-item-body start-indent="body-start()">
 <fo:block>page-height </fo:block>
@@ -689,7 +689,7 @@ This is not the latest Fop documentation, but just an fo example. FOP - p. <fo:p
 </fo:list-item>
       <fo:list-item>
 <fo:list-item-label end-indent="label-end()">
-<fo:block><fo:inline font-family="Symbol">&#183;</fo:inline></fo:block>
+<fo:block><fo:inline font-family="Symbol">&#x2022;</fo:inline></fo:block>
 </fo:list-item-label>
 <fo:list-item-body start-indent="body-start()">
 <fo:block>flow-name </fo:block>
@@ -697,7 +697,7 @@ This is not the latest Fop documentation, but just an fo example. FOP - p. <fo:p
 </fo:list-item>
       <fo:list-item>
 <fo:list-item-label end-indent="label-end()">
-<fo:block><fo:inline font-family="Symbol">&#183;</fo:inline></fo:block>
+<fo:block><fo:inline font-family="Symbol">&#x2022;</fo:inline></fo:block>
 </fo:list-item-label>
 <fo:list-item-body start-indent="body-start()">
 <fo:block>font-family </fo:block>
@@ -705,7 +705,7 @@ This is not the latest Fop documentation, but just an fo example. FOP - p. <fo:p
 </fo:list-item>
       <fo:list-item>
 <fo:list-item-label end-indent="label-end()">
-<fo:block><fo:inline font-family="Symbol">&#183;</fo:inline></fo:block>
+<fo:block><fo:inline font-family="Symbol">&#x2022;</fo:inline></fo:block>
 </fo:list-item-label>
 <fo:list-item-body start-indent="body-start()">
 <fo:block>font-style </fo:block>
@@ -713,7 +713,7 @@ This is not the latest Fop documentation, but just an fo example. FOP - p. <fo:p
 </fo:list-item>
       <fo:list-item>
 <fo:list-item-label end-indent="label-end()">
-<fo:block><fo:inline font-family="Symbol">&#183;</fo:inline></fo:block>
+<fo:block><fo:inline font-family="Symbol">&#x2022;</fo:inline></fo:block>
 </fo:list-item-label>
 <fo:list-item-body start-indent="body-start()">
 <fo:block>font-weight </fo:block>
@@ -721,7 +721,7 @@ This is not the latest Fop documentation, but just an fo example. FOP - p. <fo:p
 </fo:list-item>
       <fo:list-item>
 <fo:list-item-label end-indent="label-end()">
-<fo:block><fo:inline font-family="Symbol">&#183;</fo:inline></fo:block>
+<fo:block><fo:inline font-family="Symbol">&#x2022;</fo:inline></fo:block>
 </fo:list-item-label>
 <fo:list-item-body start-indent="body-start()">
 <fo:block>font-size </fo:block>
@@ -729,7 +729,7 @@ This is not the latest Fop documentation, but just an fo example. FOP - p. <fo:p
 </fo:list-item>
       <fo:list-item>
 <fo:list-item-label end-indent="label-end()">
-<fo:block><fo:inline font-family="Symbol">&#183;</fo:inline></fo:block>
+<fo:block><fo:inline font-family="Symbol">&#x2022;</fo:inline></fo:block>
 </fo:list-item-label>
 <fo:list-item-body start-indent="body-start()">
 <fo:block>line-height </fo:block>
@@ -737,7 +737,7 @@ This is not the latest Fop documentation, but just an fo example. FOP - p. <fo:p
 </fo:list-item>
       <fo:list-item>
 <fo:list-item-label end-indent="label-end()">
-<fo:block><fo:inline font-family="Symbol">&#183;</fo:inline></fo:block>
+<fo:block><fo:inline font-family="Symbol">&#x2022;</fo:inline></fo:block>
 </fo:list-item-label>
 <fo:list-item-body start-indent="body-start()">
 <fo:block>text-align </fo:block>
@@ -745,7 +745,7 @@ This is not the latest Fop documentation, but just an fo example. FOP - p. <fo:p
 </fo:list-item>
       <fo:list-item>
 <fo:list-item-label end-indent="label-end()">
-<fo:block><fo:inline font-family="Symbol">&#183;</fo:inline></fo:block>
+<fo:block><fo:inline font-family="Symbol">&#x2022;</fo:inline></fo:block>
 </fo:list-item-label>
 <fo:list-item-body start-indent="body-start()">
 <fo:block>text-align-last </fo:block>
@@ -753,7 +753,7 @@ This is not the latest Fop documentation, but just an fo example. FOP - p. <fo:p
 </fo:list-item>
       <fo:list-item>
 <fo:list-item-label end-indent="label-end()">
-<fo:block><fo:inline font-family="Symbol">&#183;</fo:inline></fo:block>
+<fo:block><fo:inline font-family="Symbol">&#x2022;</fo:inline></fo:block>
 </fo:list-item-label>
 <fo:list-item-body start-indent="body-start()">
 <fo:block>space-before.optimum </fo:block>
@@ -761,7 +761,7 @@ This is not the latest Fop documentation, but just an fo example. FOP - p. <fo:p
 </fo:list-item>
       <fo:list-item>
 <fo:list-item-label end-indent="label-end()">
-<fo:block><fo:inline font-family="Symbol">&#183;</fo:inline></fo:block>
+<fo:block><fo:inline font-family="Symbol">&#x2022;</fo:inline></fo:block>
 </fo:list-item-label>
 <fo:list-item-body start-indent="body-start()">
 <fo:block>space-after.optimum </fo:block>
@@ -769,7 +769,7 @@ This is not the latest Fop documentation, but just an fo example. FOP - p. <fo:p
 </fo:list-item>
       <fo:list-item>
 <fo:list-item-label end-indent="label-end()">
-<fo:block><fo:inline font-family="Symbol">&#183;</fo:inline></fo:block>
+<fo:block><fo:inline font-family="Symbol">&#x2022;</fo:inline></fo:block>
 </fo:list-item-label>
 <fo:list-item-body start-indent="body-start()">
 <fo:block>start-indent </fo:block>
@@ -777,7 +777,7 @@ This is not the latest Fop documentation, but just an fo example. FOP - p. <fo:p
 </fo:list-item>
       <fo:list-item>
 <fo:list-item-label end-indent="label-end()">
-<fo:block><fo:inline font-family="Symbol">&#183;</fo:inline></fo:block>
+<fo:block><fo:inline font-family="Symbol">&#x2022;</fo:inline></fo:block>
 </fo:list-item-label>
 <fo:list-item-body start-indent="body-start()">
 <fo:block>end-indent </fo:block>
@@ -785,7 +785,7 @@ This is not the latest Fop documentation, but just an fo example. FOP - p. <fo:p
 </fo:list-item>
       <fo:list-item>
 <fo:list-item-label end-indent="label-end()">
-<fo:block><fo:inline font-family="Symbol">&#183;</fo:inline></fo:block>
+<fo:block><fo:inline font-family="Symbol">&#x2022;</fo:inline></fo:block>
 </fo:list-item-label>
 <fo:list-item-body start-indent="body-start()">
 <fo:block>provisional-distance-between-starts </fo:block>
@@ -793,7 +793,7 @@ This is not the latest Fop documentation, but just an fo example. FOP - p. <fo:p
 </fo:list-item>
       <fo:list-item>
 <fo:list-item-label end-indent="label-end()">
-<fo:block><fo:inline font-family="Symbol">&#183;</fo:inline></fo:block>
+<fo:block><fo:inline font-family="Symbol">&#x2022;</fo:inline></fo:block>
 </fo:list-item-label>
 <fo:list-item-body start-indent="body-start()">
 <fo:block>provisional-label-separation </fo:block>
@@ -801,7 +801,7 @@ This is not the latest Fop documentation, but just an fo example. FOP - p. <fo:p
 </fo:list-item>
       <fo:list-item>
 <fo:list-item-label end-indent="label-end()">
-<fo:block><fo:inline font-family="Symbol">&#183;</fo:inline></fo:block>
+<fo:block><fo:inline font-family="Symbol">&#x2022;</fo:inline></fo:block>
 </fo:list-item-label>
 <fo:list-item-body start-indent="body-start()">
 <fo:block>rule-thickness </fo:block>
@@ -809,7 +809,7 @@ This is not the latest Fop documentation, but just an fo example. FOP - p. <fo:p
 </fo:list-item>
       <fo:list-item>
 <fo:list-item-label end-indent="label-end()">
-<fo:block><fo:inline font-family="Symbol">&#183;</fo:inline></fo:block>
+<fo:block><fo:inline font-family="Symbol">&#x2022;</fo:inline></fo:block>
 </fo:list-item-label>
 <fo:list-item-body start-indent="body-start()">
 <fo:block>color </fo:block>
@@ -817,7 +817,7 @@ This is not the latest Fop documentation, but just an fo example. FOP - p. <fo:p
 </fo:list-item>
       <fo:list-item>
 <fo:list-item-label end-indent="label-end()">
-<fo:block><fo:inline font-family="Symbol">&#183;</fo:inline></fo:block>
+<fo:block><fo:inline font-family="Symbol">&#x2022;</fo:inline></fo:block>
 </fo:list-item-label>
 <fo:list-item-body start-indent="body-start()">
 <fo:block>wrap-option </fo:block>
@@ -825,7 +825,7 @@ This is not the latest Fop documentation, but just an fo example. FOP - p. <fo:p
 </fo:list-item>
       <fo:list-item>
 <fo:list-item-label end-indent="label-end()">
-<fo:block><fo:inline font-family="Symbol">&#183;</fo:inline></fo:block>
+<fo:block><fo:inline font-family="Symbol">&#x2022;</fo:inline></fo:block>
 </fo:list-item-label>
 <fo:list-item-body start-indent="body-start()">
 <fo:block>white-space-treatment </fo:block>
@@ -833,7 +833,7 @@ This is not the latest Fop documentation, but just an fo example. FOP - p. <fo:p
 </fo:list-item>
       <fo:list-item>
 <fo:list-item-label end-indent="label-end()">
-<fo:block><fo:inline font-family="Symbol">&#183;</fo:inline></fo:block>
+<fo:block><fo:inline font-family="Symbol">&#x2022;</fo:inline></fo:block>
 </fo:list-item-label>
 <fo:list-item-body start-indent="body-start()">
 <fo:block>break-before </fo:block>
@@ -841,7 +841,7 @@ This is not the latest Fop documentation, but just an fo example. FOP - p. <fo:p
 </fo:list-item>
       <fo:list-item>
 <fo:list-item-label end-indent="label-end()">
-<fo:block><fo:inline font-family="Symbol">&#183;</fo:inline></fo:block>
+<fo:block><fo:inline font-family="Symbol">&#x2022;</fo:inline></fo:block>
 </fo:list-item-label>
 <fo:list-item-body start-indent="body-start()">
 <fo:block>break-after </fo:block>
@@ -849,7 +849,7 @@ This is not the latest Fop documentation, but just an fo example. FOP - p. <fo:p
 </fo:list-item>
       <fo:list-item>
 <fo:list-item-label end-indent="label-end()">
-<fo:block><fo:inline font-family="Symbol">&#183;</fo:inline></fo:block>
+<fo:block><fo:inline font-family="Symbol">&#x2022;</fo:inline></fo:block>
 </fo:list-item-label>
 <fo:list-item-body start-indent="body-start()">
 <fo:block>text-indent </fo:block>
@@ -857,7 +857,7 @@ This is not the latest Fop documentation, but just an fo example. FOP - p. <fo:p
 </fo:list-item>
       <fo:list-item>
 <fo:list-item-label end-indent="label-end()">
-<fo:block><fo:inline font-family="Symbol">&#183;</fo:inline></fo:block>
+<fo:block><fo:inline font-family="Symbol">&#x2022;</fo:inline></fo:block>
 </fo:list-item-label>
 <fo:list-item-body start-indent="body-start()">
 <fo:block>href</fo:block>
@@ -865,7 +865,7 @@ This is not the latest Fop documentation, but just an fo example. FOP - p. <fo:p
 </fo:list-item>
       <fo:list-item>
 <fo:list-item-label end-indent="label-end()">
-<fo:block><fo:inline font-family="Symbol">&#183;</fo:inline></fo:block>
+<fo:block><fo:inline font-family="Symbol">&#x2022;</fo:inline></fo:block>
 </fo:list-item-label>
 <fo:list-item-body start-indent="body-start()">
 <fo:block>column-width</fo:block>
@@ -873,7 +873,7 @@ This is not the latest Fop documentation, but just an fo example. FOP - p. <fo:p
 </fo:list-item>
       <fo:list-item>
 <fo:list-item-label end-indent="label-end()">
-<fo:block><fo:inline font-family="Symbol">&#183;</fo:inline></fo:block>
+<fo:block><fo:inline font-family="Symbol">&#x2022;</fo:inline></fo:block>
 </fo:list-item-label>
 <fo:list-item-body start-indent="body-start()">
 <fo:block>background-color</fo:block>
@@ -881,7 +881,7 @@ This is not the latest Fop documentation, but just an fo example. FOP - p. <fo:p
 </fo:list-item>
       <fo:list-item>
 <fo:list-item-label end-indent="label-end()">
-<fo:block><fo:inline font-family="Symbol">&#183;</fo:inline></fo:block>
+<fo:block><fo:inline font-family="Symbol">&#x2022;</fo:inline></fo:block>
 </fo:list-item-label>
 <fo:list-item-body start-indent="body-start()">
 <fo:block>padding-top (only in conjunction with background color)</fo:block>
@@ -889,7 +889,7 @@ This is not the latest Fop documentation, but just an fo example. FOP - p. <fo:p
 </fo:list-item>
       <fo:list-item>
 <fo:list-item-label end-indent="label-end()">
-<fo:block><fo:inline font-family="Symbol">&#183;</fo:inline></fo:block>
+<fo:block><fo:inline font-family="Symbol">&#x2022;</fo:inline></fo:block>
 </fo:list-item-label>
 <fo:list-item-body start-indent="body-start()">
 <fo:block>padding-left (only in conjunction with background color)</fo:block>
@@ -897,7 +897,7 @@ This is not the latest Fop documentation, but just an fo example. FOP - p. <fo:p
 </fo:list-item>
       <fo:list-item>
 <fo:list-item-label end-indent="label-end()">
-<fo:block><fo:inline font-family="Symbol">&#183;</fo:inline></fo:block>
+<fo:block><fo:inline font-family="Symbol">&#x2022;</fo:inline></fo:block>
 </fo:list-item-label>
 <fo:list-item-body start-indent="body-start()">
 <fo:block>padding-bottom (only in conjunction with background color)</fo:block>
@@ -905,7 +905,7 @@ This is not the latest Fop documentation, but just an fo example. FOP - p. <fo:p
 </fo:list-item>
       <fo:list-item>
 <fo:list-item-label end-indent="label-end()">
-<fo:block><fo:inline font-family="Symbol">&#183;</fo:inline></fo:block>
+<fo:block><fo:inline font-family="Symbol">&#x2022;</fo:inline></fo:block>
 </fo:list-item-label>
 <fo:list-item-body start-indent="body-start()">
 <fo:block>padding-right (only in conjunction with background color)</fo:block>
@@ -1096,7 +1096,7 @@ This is not the latest Fop documentation, but just an fo example. FOP - p. <fo:p
   <fo:list-block start-indent="1cm" provisional-distance-between-starts="12pt" font-family="serif">
     <fo:list-item>
 <fo:list-item-label end-indent="label-end()">
-<fo:block><fo:inline font-family="Symbol">&#183;</fo:inline></fo:block>
+<fo:block><fo:inline font-family="Symbol">&#x2022;</fo:inline></fo:block>
 </fo:list-item-label>
 <fo:list-item-body start-indent="body-start()">
 <fo:block>
@@ -1109,7 +1109,7 @@ This is not the latest Fop documentation, but just an fo example. FOP - p. <fo:p
 </fo:list-item>
     <fo:list-item>
 <fo:list-item-label end-indent="label-end()">
-<fo:block><fo:inline font-family="Symbol">&#183;</fo:inline></fo:block>
+<fo:block><fo:inline font-family="Symbol">&#x2022;</fo:inline></fo:block>
 </fo:list-item-label>
 <fo:list-item-body start-indent="body-start()">
 <fo:block>
@@ -1122,7 +1122,7 @@ This is not the latest Fop documentation, but just an fo example. FOP - p. <fo:p
 </fo:list-item>
     <fo:list-item>
 <fo:list-item-label end-indent="label-end()">
-<fo:block><fo:inline font-family="Symbol">&#183;</fo:inline></fo:block>
+<fo:block><fo:inline font-family="Symbol">&#x2022;</fo:inline></fo:block>
 </fo:list-item-label>
 <fo:list-item-body start-indent="body-start()">
 <fo:block>
@@ -1135,7 +1135,7 @@ This is not the latest Fop documentation, but just an fo example. FOP - p. <fo:p
 </fo:list-item>
     <fo:list-item>
 <fo:list-item-label end-indent="label-end()">
-<fo:block><fo:inline font-family="Symbol">&#183;</fo:inline></fo:block>
+<fo:block><fo:inline font-family="Symbol">&#x2022;</fo:inline></fo:block>
 </fo:list-item-label>
 <fo:list-item-body start-indent="body-start()">
 <fo:block>
@@ -1148,7 +1148,7 @@ This is not the latest Fop documentation, but just an fo example. FOP - p. <fo:p
 </fo:list-item>
     <fo:list-item>
 <fo:list-item-label end-indent="label-end()">
-<fo:block><fo:inline font-family="Symbol">&#183;</fo:inline></fo:block>
+<fo:block><fo:inline font-family="Symbol">&#x2022;</fo:inline></fo:block>
 </fo:list-item-label>
 <fo:list-item-body start-indent="body-start()">
 <fo:block>
@@ -1161,7 +1161,7 @@ This is not the latest Fop documentation, but just an fo example. FOP - p. <fo:p
 </fo:list-item>
     <fo:list-item>
 <fo:list-item-label end-indent="label-end()">
-<fo:block><fo:inline font-family="Symbol">&#183;</fo:inline></fo:block>
+<fo:block><fo:inline font-family="Symbol">&#x2022;</fo:inline></fo:block>
 </fo:list-item-label>
 <fo:list-item-body start-indent="body-start()">
 <fo:block>
@@ -1174,7 +1174,7 @@ This is not the latest Fop documentation, but just an fo example. FOP - p. <fo:p
 </fo:list-item>
     <fo:list-item>
 <fo:list-item-label end-indent="label-end()">
-<fo:block><fo:inline font-family="Symbol">&#183;</fo:inline></fo:block>
+<fo:block><fo:inline font-family="Symbol">&#x2022;</fo:inline></fo:block>
 </fo:list-item-label>
 <fo:list-item-body start-indent="body-start()">
 <fo:block>
@@ -1187,7 +1187,7 @@ This is not the latest Fop documentation, but just an fo example. FOP - p. <fo:p
 </fo:list-item>
     <fo:list-item>
 <fo:list-item-label end-indent="label-end()">
-<fo:block><fo:inline font-family="Symbol">&#183;</fo:inline></fo:block>
+<fo:block><fo:inline font-family="Symbol">&#x2022;</fo:inline></fo:block>
 </fo:list-item-label>
 <fo:list-item-body start-indent="body-start()">
 <fo:block>

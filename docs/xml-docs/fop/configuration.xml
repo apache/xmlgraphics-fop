@@ -1,6 +1,14 @@
 <?xml version="1.0" standalone="no"?>
 
+<document>
+    <header>
+        <title>Configuration</title>
+        <subtitle>Configurating FOP</subtitle>
+        <authors>
+        </authors>
+    </header>
 
+    <body>
 <s1 title="Configuration">
   <s2 title="How to configure Fop">
     <p>In the directory xml-fop/conf you will find two configuration files. One of them,
@@ -24,7 +32,7 @@
        to the hyphenation.dtd in the sub directory /hyph
     </p>
     <p>2. name this new file following this schema: languageCode_countryCode.xml. If you don't need 
-       a country code, leave it away, p.e. the file name for an American english hyphenation pattern
+       a country code, leave it out, e.g the file name for an American english hyphenation pattern
        would look like this: en_US.xml. For an Italian file: it.xml. Language and country codes must be
        the same as in xsl:fo, that is follow 
        <jump href="http://www.ics.uci.edu/pub/ietf/http/related/iso639.txt">ISO 639</jump> 
@@ -43,4 +51,6 @@
     </p>
   </s2>
 </s1>
+    </body>
+</document>
 

@@ -15,18 +15,16 @@
                 <jump href="http://xml.apache.org/xerces-j/index.html">Xerces-J</jump>. 
                 (Xerces is the default xml parser)
             </li>
-            <li>An XSLT processor 
+            <li>An XSLT processor (Xalan is included)
             </li>
             <li>The SVG library batik.jar is the library from the <jump href="http://xml.apache.org/batik/">batik project</jump> at xml.apache.org.
-            </li>
-            <li>The imaging library Jimi from Sun
             </li>
           </ul>
     </p>
   </s2>
 
   <s2 title="Starting FOP as an standalone application">
-    <p><code>Fop [options] [-fo|-xml] infile [-xsl file] [-awt|-pdf|-mif|-pcl|-txt|-print] &lt;outfile></code></p>
+    <p><code>Fop [options] [-fo|-xml] infile [-xsl file] [-awt|-pdf|-mif|-pcl|-txt|-svg|-at|-print] &lt;outfile></code></p>
      <p>[OPTIONS]<br/>
      <source>
       -d          debug mode<br/>
@@ -51,6 +49,8 @@
       -mif outfile      input will be rendered as mif file (outfile req'd)<br/>
       -pcl outfile      input will be rendered as pcl file (outfile req'd)<br/>
       -txt outfile      input will be rendered as text file (outfile req'd)<br/>
+      -svg outfile      input will be rendered as an svg slides file (outfile req'd)
+      -at outfile       representation of area tree as XML (outfile req'd)
       -print            input file will be rendered and sent to the printer<br/>
                         see options with "-print help"<br/></source>
     </p>
@@ -69,8 +69,10 @@
   <s2 title="Problems">
     <p>If you have problems running FOP, please have a look at the 
        <jump href="http://www.owal.co.uk:8090/asf/servlet/asf/screen/DisplayTopics/action/SetAll/project_id/18/faq_id/276">FOP FAQ</jump>. If you don't find a solution there,
-       you can ask for help on the list fop-dev@xml.apache.org. Maybe it is a bug and 
-       maybe somebody is already working on it. 
+       you can ask for help on 
+       <jump href="http://marc.theaimsgroup.com/?l=fop-user&amp;r=1&amp;w=2">fop-user@xml.apache.org</jump>
+      (see  <jump href="http://xml.apache.org/mail.html">here</jump> for
+       howto subscribe). Maybe it is a bug and maybe somebody is already working on it. 
     </p>
   </s2>
 </s1>

@@ -123,9 +123,11 @@ public class FOText extends FONode {
             int fontVariant =
                 this.parent.properties.get("font-variant").getEnum();
 
+            int letterSpacing =
+                this.parent.properties.get("letter-spacing").getLength().mvalue();
             this.fs = new FontState(area.getFontInfo(), fontFamily,
                                     fontStyle, fontWeight, fontSize,
-                                    fontVariant);
+                                    fontVariant, letterSpacing);
 
             ColorType c = this.parent.properties.get("color").getColorType();
             this.red = c.red();

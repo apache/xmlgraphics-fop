@@ -548,6 +548,10 @@ public class PDFRenderer extends PrintRenderer {
             addWordLines(area, rx, bl, size, areaColor);
 
 
+            // Set letterSpacing
+            float ls = area.getFontState().getLetterSpacing() / this.currentFontSize;
+            pdf.append(ls).append(" Tc\n");
+
             if (!textOpen || bl != prevWordY) {
                 closeText();
 
@@ -575,7 +579,6 @@ public class PDFRenderer extends PrintRenderer {
             }
             prevWordWidth = area.getContentWidth();
             prevWordX = rx;
-
 
             String s;
             if (area.getPageNumberID()
@@ -686,6 +689,7 @@ public class PDFRenderer extends PrintRenderer {
             }
         }
     }
+
 
     public void render(Page page, OutputStream outputStream)
     throws FOPException, IOException {

@@ -5,8 +5,8 @@
 
 <s1 title="Features">
   <s2 title="What's Implemented?">
-      <p>The following formatting objects and properties of the xsl-fo 
-         candidate recommendation are implemented.Please have also a look at the 
+      <p>The following formatting objects and properties of the XSL-FO 1.0
+         W3C Recommandation are implemented.Please have also a look at the 
          section on <jump href="limitations.html">limitations</jump>
       </p>
   </s2>
@@ -39,8 +39,8 @@
     <s3 title="B.2 Block Formatting Objects">
       <ul>
         <li>block </li>
+        <li>block-container (limited)</li>
       </ul>
-      <p>Not implemented: block-container</p>
     </s3>
 
     <s3 title="B.3 Inline Formatting Objects">
@@ -97,13 +97,10 @@
     <s3 title="B.8 Other Formatting Objects">
       <ul>
         <li>wrapper</li>
+        <li>marker, retrieve marker</li>
       </ul>
-      <p>Not implemented: marker, retrieve-marker</p>
     </s3>
   </s2>
-
-
-border and padding shorthand properties 
 
   <s2 title="2) Properties">
   <p>Property values can be computed. Compound properties are also understood by Fop.</p>
@@ -179,6 +176,7 @@ border and padding shorthand properties
       <li>margin-right (only on pages and regions) </li>
       <li>margin-top (only on pages and regions) </li>
       <li>master-name </li>
+      <li>master-reference </li>
       <li>maximum-repeats</li>
       <li>number-columns-spanned</li>
       <li>odd-or-even</li>

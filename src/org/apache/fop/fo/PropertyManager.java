@@ -26,6 +26,8 @@ import java.text.MessageFormat;
 import java.text.FieldPosition;
 import org.apache.fop.layout.Area;
 import org.apache.fop.layout.ColumnArea;
+import org.apache.fop.layout.TextState;
+import org.apache.fop.fo.properties.TextDecoration;
 
 public class PropertyManager {
 
@@ -247,4 +249,55 @@ public class PropertyManager {
         AbsolutePositionProps props = new AbsolutePositionProps();
         return props;
     }
+
+    public TextState getTextDecoration(FObj parent) throws FOPException {
+
+        // TextState from parent Block/Inline
+        TextState tsp = null;
+        boolean found = false;
+
+        do {
+            String fname = parent.getName();
+            if (fname.equals("fo:flow") || fname.equals("fo:static-content")) {
+                found = true;
+            } else if (fname.equals("fo:block") || fname.equals("fo:inline")) {
+                FObjMixed fom = (FObjMixed) parent;
+                tsp = fom.getTextState();
+                found = true;
+            }
+            parent = parent.getParent();
+        } while (!found);
+
+        TextState ts = new TextState();
+
+        if (tsp != null) {
+            ts.setUnderlined(tsp.getUnderlined());
+            ts.setOverlined(tsp.getOverlined());
+            ts.setLineThrough(tsp.getLineThrough());
+        }
+
+        int textDecoration = this.properties.get("text-decoration").getEnum();
+
+        if (textDecoration == TextDecoration.UNDERLINE) {
+            ts.setUnderlined(true);
+        }
+        if (textDecoration == TextDecoration.OVERLINE) {
+            ts.setOverlined(true);
+        }
+        if (textDecoration == TextDecoration.LINE_THROUGH) {
+            ts.setLineThrough(true);
+        }
+        if (textDecoration == TextDecoration.NO_UNDERLINE) {
+            ts.setUnderlined(false);
+        }
+        if (textDecoration == TextDecoration.NO_OVERLINE) {
+            ts.setOverlined(false);
+        }
+        if (textDecoration == TextDecoration.NO_LINE_THROUGH) {
+            ts.setLineThrough(false);
+        }
+
+        return ts;
+    }
+
 }

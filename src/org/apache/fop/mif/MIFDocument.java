@@ -47,6 +47,55 @@ public class MIFDocument {
     // a table
     private ID curIDCounter = new ID();
 
+    public final static String MIFEncode(String val) {
+        int len = val.length();
+        StringBuffer buf = new StringBuffer(len * 2);
+        char c;
+        
+        for(int i = 0; i < len; i++) {
+            c = val.charAt(i);
+            switch(c) {
+                case '\u00e0':	buf.append("\\x88 ");	break;
+                case '\u00e8':	buf.append("\\x8f ");	break;
+                case '\u00ec':	buf.append("\\x93 ");	break;
+                case '\u00f2':	buf.append("\\x98 ");	break;
+                case '\u00f9':	buf.append("\\x9d ");	break;
+                case '\u00c0':	buf.append("\\xcb ");	break;
+                case '\u00c8':	buf.append("\\xe9 ");	break;
+                case '\u00cc':	buf.append("\\xed ");	break;
+                case '\u00d2':	buf.append("\\xf1 ");	break;
+                case '\u00d9':	buf.append("\\xf4 ");	break;
+                    
+                case '\u00e1':	buf.append("\\x87 ");	break;
+                case '\u00e9':	buf.append("\\x8e ");	break;
+                case '\u00ed':	buf.append("\\x92 ");	break;
+                case '\u00f3':	buf.append("\\x97 ");	break;
+                case '\u00fa':	buf.append("\\x9c ");	break;
+                case '\u00c1':	buf.append("\\xe7 ");	break;
+                case '\u00c9':	buf.append("\\x83 ");	break;
+                case '\u00cd':	buf.append("\\xea ");	break;
+                case '\u00d3':	buf.append("\\xee ");	break;
+                case '\u00da':	buf.append("\\xf2 ");	break;
+                    
+                case '\u00f1':	buf.append("\\x96 ");	break;
+                case '\u00d1':	buf.append("\\x84 ");	break;
+                    
+                case '\u00e7':	buf.append("\\x8d ");	break;
+                case '\u00c7':	buf.append("\\x82 ");	break;
+                    
+                case '`':	buf.append("\\xd4 ");	break;
+                case '\'':	buf.append("\\xd5 ");	break;
+                case '\u00b4':	buf.append("\\xab ");	break;
+                case '\u00aa':	buf.append("\\xbb ");	break;
+                case '\u00ba':	buf.append("\\xbc ");	break;
+                    
+                case '>':	buf.append("\\>");		break;
+                default:	buf.append(c);
+            }
+        }
+        return buf.toString();
+    }
+
     class ID {
 
         private int idCounter = 1;
@@ -299,6 +348,12 @@ public class MIFDocument {
 
         public TextRect curTextRect() {
 
+            //temporary fix for NoSuchElementException
+            if (textRects.isEmpty()) {
+                TextRect textRect = new TextRect(1);
+                this.textRects.addElement(textRect);
+            }
+
             return (TextRect)textRects.lastElement();
 
         }
@@ -505,7 +560,7 @@ public class MIFDocument {
 
                         mif = "\n<Char HardReturn>";
                     } else {
-                        mif = "\n\t<String `" + elem + "'>";
+                        mif = "\n\t<String `" + MIFEncode((String)elem) + "'>";
                     }
                     stream.write(mif.getBytes());
 

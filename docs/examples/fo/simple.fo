@@ -39,7 +39,7 @@
        the attribute value of master-name refers to the page layout
        which is to be used to layout the text contained in this
        page-sequence-->
-  <fo:page-sequence master-name="simple">
+  <fo:page-sequence master-reference="simple">
 
       <!-- start fo:flow
            each flow is targeted 

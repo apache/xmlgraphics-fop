@@ -334,6 +334,10 @@ public class PDFGraphics2D extends AbstractGraphics2D {
             this.m_mask = mask;
         }
 
+    public boolean invertImage() {
+return false;
+}
+
         public String getURL() {
             return "" + m_bitmaps;
         }
@@ -511,7 +515,17 @@ public class PDFGraphics2D extends AbstractGraphics2D {
         applyPaint(getPaint(), false);
         applyStroke(getStroke());
 
-        PathIterator iter = s.getPathIterator(getTransform());
+        AffineTransform trans = getTransform();
+        double[] tranvals = new double[6];
+        trans.getMatrix(tranvals);
+        currentStream.write(PDFNumber.doubleOut(tranvals[0]) + " "
+                            + PDFNumber.doubleOut(tranvals[1]) + " "
+                            + PDFNumber.doubleOut(tranvals[2]) + " "
+                            + PDFNumber.doubleOut(tranvals[3]) + " "
+                            + PDFNumber.doubleOut(tranvals[4]) + " "
+                            + PDFNumber.doubleOut(tranvals[5]) + " cm\n");
+
+        PathIterator iter = s.getPathIterator(new AffineTransform());
         while (!iter.isDone()) {
             double vals[] = new double[6];
             int type = iter.currentSegment(vals);
@@ -1239,6 +1253,11 @@ System.out.println("getting getNormalizingTransform");
         public GraphicsDevice getDevice() {
             return new PDFGraphicsDevice(this);
         }
+
+        // needed for compiling under jdk1.4
+        //public java.awt.image.VolatileImage createCompatibleVolatileImage(int width, int height) {
+        //    return null;
+        //}
 
     }
 

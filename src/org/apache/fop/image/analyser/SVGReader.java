@@ -160,6 +160,9 @@ public class SVGReader extends AbstractImageReader {
             return "";
         }
 
+public boolean isXMLParserValidating() {
+return true;
+}
 
         /**
          * Returns the user stylesheet uri.

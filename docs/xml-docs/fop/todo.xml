@@ -1,6 +1,15 @@
 <?xml version="1.0" standalone="no"?>
 
-<!-- SVG in FOP -->
+<!-- TODO -->
+<document>
+    <header>
+        <title>TODO</title>
+        <subtitle>TODO list for FOP</subtitle>
+        <authors>
+        </authors>
+    </header>
+
+    <body>
 
 <s1 title="TODO List for FOP">
   <s2 title="FOP TODO">
@@ -20,19 +29,9 @@ comment is made about the suitability of these suggestions.
   <s2 title="Core Features">
 <s3 title="Layout">
     <p>
-This is the crucial part to getting FOP to make it to the next step.
-    </p>
-</s3>
-<s3 title="Webstart Demo">
-    <p>
-a demo using Java Webstart that runs the awt viewer and supports
-linking from an index
-    </p>
-</s3>
-<s3 title="Website">
-    <p>
-Need to improve the website to better demonstrate what fop is and
-can do. Examples, screenshots, pdf documents.
+The design for the layout is being developed under the
+<jump href="design/index.html">Design</jump> section.
+The details should be discussed on the dev mailing list.
     </p>
 </s3>
 <s3 title="Property Support">
@@ -56,23 +55,24 @@ Better support for resolution including support for "inherit" and values
 with lists.
     </p>
 </s3>
-<s3 title="Validity Checking">
+<s3 title="Examples">
     <p>
-Check the validity of children for a particular element to ensure
-there are no invalid children. Should help process the layout better.
+Better and more available examples for users and new people to get a
+feel for what FOP does.
     </p>
 </s3>
 </s2>
   <s2 title="Processing Improvements">
 <s3 title="Image Handling">
     <p>
-Needs to be a bit more solid.
+Needs to be a bit more solid. Images are not cached properly
+and image formats are not well documented.
 Allow for direct insertion of jpeg images in svg into the pdf.
     </p>
 </s3>
 <s3 title="Configuration">
     <p>
-Support for avalon. Better multithread handling.
+A better configuration setup that users can easily integrate.
     </p>
 </s3>
 <s3 title="More PDF Outputs">
@@ -84,12 +84,6 @@ deployement of pdf documents.
 <s3 title="i18n in awt viewer">
     <p>
 Use proper i18n handling for awt viewer.
-    </p>
-</s3>
-<s3 title="better abstraction of rendering classes">
-    <p>
-put all common rendering processes into an abstract class that has
-no dependancies on any specific renderers.
     </p>
 </s3>
 </s2>
@@ -138,4 +132,6 @@ Currently patterns and gradients are not generated properly
 
 
 </s1>
+    </body>
+</document>
 

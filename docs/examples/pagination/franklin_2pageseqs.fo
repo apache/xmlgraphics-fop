@@ -53,20 +53,20 @@
 		</fo:simple-page-master>
 
 		<fo:page-sequence-master master-name="run1">
-			<fo:repeatable-page-master-reference master-name="noheaders_center"
+			<fo:repeatable-page-master-reference master-reference="noheaders_center"
 				maximum-repeats="6"/>
 		</fo:page-sequence-master>
 
 		<fo:page-sequence-master master-name="run2">
 			<fo:repeatable-page-master-alternatives>
 				<fo:conditional-page-master-reference
-					master-name="headers_center"
+					master-reference="headers_center"
 					page-position="first" />
 				<fo:conditional-page-master-reference
-					master-name="headers_right"
+					master-reference="headers_right"
 					odd-or-even="odd" />
 				<fo:conditional-page-master-reference
-					master-name="headers_left"
+					master-reference="headers_left"
 					odd-or-even="even" />
 			</fo:repeatable-page-master-alternatives>
 		</fo:page-sequence-master>
@@ -74,7 +74,7 @@
 	<!-- end: defines page layout -->
 
 	<!-- actual layout -->
-	<fo:page-sequence master-name="run1" initial-page-number="1">
+	<fo:page-sequence master-reference="run1" initial-page-number="1">
 
     <fo:flow flow-name="xsl-region-body">
 
@@ -451,7 +451,7 @@ made to-day was not more than six miles.
 </fo:flow>
 </fo:page-sequence>
 
-	<fo:page-sequence master-name="run2" initial-page-number="7">
+	<fo:page-sequence master-reference="run2" initial-page-number="7">
 
     <!-- header -->
 	<fo:static-content flow-name="xsl-region-before">

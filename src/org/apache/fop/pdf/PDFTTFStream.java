@@ -40,7 +40,7 @@ public class PDFTTFStream extends PDFStream {
 
     public void setData(byte[] data, int size) throws java.io.IOException {
         _data.reset();
-        System.out.println("Writing " + size + " bytes of font data");
+        //System.out.println("Writing " + size + " bytes of font data");
         _data.write(data, 0, size);
     }
 

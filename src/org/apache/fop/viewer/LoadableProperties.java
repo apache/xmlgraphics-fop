@@ -33,7 +33,7 @@ public class LoadableProperties extends Hashtable {
     public void load(InputStream inStream) throws IOException {
 
         BufferedReader in = new BufferedReader(new InputStreamReader(inStream,
-                "8859_1"));
+                "UTF-8"));
 
         String aKey;
         String aValue;

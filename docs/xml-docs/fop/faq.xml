@@ -1,8 +1,9 @@
 <?xml version="1.0"?>
-
-
-<s1 title="Frequently Asked Questions">
-  <s2 title="Introduction">
+<!DOCTYPE faqs SYSTEM "../dtd/faq-v10.dtd">
+<faqs title="Frequently Asked Questions">
+<faq>
+    <question>About the FAQ</question>
+		<answer>
       <p>
        Here we have some answers to common questions about FOP. This only covers
        general information about getting started with FOP and pointers to more
@@ -13,21 +14,11 @@
         The site uses Jyve to provide an interactive FAQ: 
          <jump href="http://www.owal.co.uk:8090/asf/servlet/asf/screen/DisplayTopics/action/SetAll/project_id/18/faq_id/276">http://www.OWAL.co.uk:8090/</jump>
       </p>
-  </s2>
-  <s2 title="Questions">
-    <ul>
-      <li><jump href="#q1">What is FOP?</jump></li>
-      <li><jump href="#q2">How does FOP interact with other Apache Projects?</jump></li>
-      <li><jump href="#q3">What is XSL (FO)?</jump></li>
-      <li><jump href="#q4">What can I do with FOP?</jump></li>
-      <li><jump href="#q5">How can I contribute?</jump></li>
-      <li><jump href="#q6">How do I author XSL documents?</jump></li>
-      <li><jump href="#q7">How can I see a demo?</jump></li>
-    </ul>   
-  </s2>
-  <s2 title="Answers">
-    <s3 title="What is FOP">
-<anchor name="q1"></anchor>
+  </answer>
+</faq>
+<faq>
+    <question>What is FOP?</question>
+    <answer>
       <p>
         FOP is a print formatter for XSL formatting objects.
       </p>
@@ -36,9 +27,11 @@
         into a page layout. The main target is PDF but other rendering targets
         are supported, such as AWT, PCL, text and direct printing.
       </p>
-    </s3>
-    <s3 title="How does FOP interact with other Apache Projects?">
-<anchor name="q2"></anchor>
+  </answer>
+</faq>
+<faq>
+    <question>How does FOP interact with other Apache Projects?</question>
+    <answer>
       <p>
         FOP is distributed with <jump href="http://xml.apache.org/cocoon">Cocoon</jump> as a PDF serializer for XSL (FO) documents.
       </p>
@@ -46,34 +39,94 @@
         <jump href="http://xml.apache.org/batik">Batik</jump> can be used with FOP to <jump href="http://xml.apache.org/batik/svgrasterizer.html">transcode an SVG image</jump> into a PDF document.
         The mime type for PDF is "application/pdf".
       </p>
-    </s3>
-    <s3 title="What is XSL (FO)">
-<anchor name="q3"></anchor>
+  </answer>
+</faq>
+
+<faq>
+    <question>What is XSL (FO)?</question>
+    <answer>
       <p>
+XSL is an XML format that is used to specify a pagination and other
+styling for page layout output. XSL can be used in conjunction with
+XSLT to convert from any XML format into a paginated layout ready for
+printing or displaying.
       </p>
-    </s3>
-    <s3 title="What can I do with FOP">
-<anchor name="q4"></anchor>
       <p>
+XSL defines a set of formatting objects in xml that describes the
+way pages are set up. The contents of the pages are filled from
+flows which. There can be static flows that appear on every page
+and the main flow which fills the body of the page.
       </p>
-    </s3>
-    <s3 title="How can I contribute">
-<anchor name="q5"></anchor>
+  </answer>
+</faq>
+
+<faq>
+    <question>What can I do with FOP?</question>
+    <answer>
       <p>
+FOP is an application or library that converts an XSL FO document
+into the paginated output. It is possible to render the output
+to different targets, the main target is PDF. FOP can be run from
+the command line or embedded into your Java application.
       </p>
-    </s3>
-    <s3 title="How do I author XSL documents">
-<anchor name="q6"></anchor>
       <p>
+The XSL FO can be delivered to FOP with XML(XSL FO), XML+XSL or
+SAX events.
       </p>
-    </s3>
-    <s3 title="How can I see a demo">
-<anchor name="q7"></anchor>
+  </answer>
+</faq>
+
+<faq>
+    <question>How can I contribute?</question>
+    <answer>
+      <p>
+There is always plenty of things to do.
+      </p>
+  </answer>
+</faq>
+
+<faq>
+    <question>How do I author XSL documents?</question>
+    <answer>
+      <p>
+Often XSL FO is created from XML and XSLT. There are some
+standard XML markups such as Docbook that can be converted
+into XSL FO and other XML formats.
+      </p>
+      <p>
+There are some XSL authoring tools that may help you to
+author XSL FO documents or the XML and XSLT documents.
+      </p>
+  </answer>
+</faq>
+
+<faq>
+    <question>How can I insert special character "X"?</question>
+    <answer>
+      <p>
+All the characters you need are available at
+<jump href="http://www.unicode.org/charts/">http://www.unicode.org/charts/</jump>.
+If you need a character it will be there. Once you have found the hex
+or decimal code for the character then you can use this in you xml
+document. It will be in the form &amp;#&lt;decimal value&gt;; or 
+&amp;#x&lt;hex value&gt;;.
+      </p>
+      <p>
+You must have a font that supports the character you need otherwise
+it will replace it with a "#" in the output.
+      </p>
+  </answer>
+</faq>
+
+<faq>
+    <question>How can I see a demo?</question>
+    <answer>
       <p>
         There will be a Java Webstart demo sometime in the future.
+This will use the AWT viewer to display FO documents.
       </p>
-    </s3>
-  </s2>
+  </answer>
+</faq>
 
-</s1>
+</faqs>
 

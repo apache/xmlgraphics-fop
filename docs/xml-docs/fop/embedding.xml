@@ -2,7 +2,15 @@
 
 
 <!-- Embedding FOP -->
+<document>
+    <header>
+        <title>Embedding FOP</title>
+        <subtitle>Notes about embedding FOP in your Java application</subtitle>
+        <authors>
+        </authors>
+    </header>
 
+    <body>
 <s1 title="Embedding FOP ">
   <s2 title="Overview">
   <p>Instantiate org.apache.fop.apps.Driver. Once this class is 
@@ -57,8 +65,10 @@
      invocation of the method is either render(Document) or
      render(Parser, InputSource) respectively.
   </p>
-  <p>A third possibility may be used to build the FO Tree, namely
-     calling getContentHandler() and firing the SAX events yourself.
+  <p>
+     <strong>Another possibility may be used to build the FO Tree. You can
+     call getContentHandler() and fire the SAX events yourself.
+     </strong>
   </p>
   <p>Once the FO Tree is built, the format() and render() methods may be
      called in that order.
@@ -81,6 +91,16 @@
   driver.setOutputStream(new FileOutputStream(outFile));
   driver.render(parser, inputHandler.getInputSource());]]></source>
   <p>Have a look at the classes CommandLineStarter or FopServlet for complete examples.</p>
+<p>
+<note>If your FO files contain SVG then batik will be used. When batik is
+initialised it uses certain classes in <code>java.awt</code> that
+intialises the java AWT classes. This means that a daemon thread
+is created by the jvm and on unix it will need to connect to a
+DISPLAY.
+The thread means that the java application will not automatically quit
+when finished, you will need to call <code>System.exit</code>. These
+issues should be fixed in the upcoming JDK1.4</note>
+</p>
   </s2>
   <s2 title="Hints">
      <p>
@@ -96,16 +116,24 @@ IntputStream and renderer.
      </p>
   </s2>
   <s2 title="Using Fop in a servlet">  
-     <p>In the directory xml-fop/docs/examples/embedding you can find a working example how to use
-        Fop in a servlet. You can drop the fop.war into the webapps directory of Tomcat, then 
-        go to a URL like this:
+     <p>
+In the directory xml-fop/docs/examples/embedding you can find a working
+example how to use Fop in a servlet. You can drop the fop.war into the
+webapps directory of Tomcat, then go to a URL like this:
      </p>
      <p>http://localhost:8080/fop/fop?fo=/home/path/to/fofile.fo</p>
+     <p>http://localhost:8080/fop/fop?xml=/home/path/to/xmlfile.xml&amp;xsl=/home/path/to/xslfile.xsl</p>
      <p>You can also find the source code there in the file FopServlet.java</p>
      <p>
         To compile this code you will need servlet_2_2.jar (or compatible), fop.jar and the sax api in your classpath.
      </p>
+     <note><p>
+         Some browsers have problems handling the PDF result sent back to
+         the browser. IE is particularly bad and different versions behave
+         differently. Having a ".pdf" on the end of the url may help.
+     </p></note>
   </s2>
 </s1>
-
+    </body>
+</document>
 

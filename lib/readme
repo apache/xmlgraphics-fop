@@ -14,3 +14,10 @@ buildtools.jar  Ant tasks required for building FOP. Rebuild with
 		Xalan 2 in the classpath when building it.)
 
 stylebook.jar	Jar used for creating the FOP website
+
+*** OPTIONAL ***
+
+jimi.jar			May be obtained from http://java.sun.com/products/jimi/.
+					Place jimi*.jar in lib/; modify batch/shell script
+					classpaths.
+

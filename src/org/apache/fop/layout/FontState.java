@@ -11,6 +11,7 @@ import java.util.Hashtable;
 
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.fo.properties.FontVariant;
+import org.apache.fop.render.pdf.CodePointMapping;
 
 public class FontState {
 
@@ -23,6 +24,7 @@ public class FontState {
     private int _fontVariant;
 
     private FontMetric _metric;
+    private int _letterSpacing;
 
     private static Hashtable EMPTY_HASHTABLE = new Hashtable();
 
@@ -38,11 +40,26 @@ public class FontState {
         _fontName = fontInfo.fontLookup(fontFamily, fontStyle, fontWeight);
         _metric = fontInfo.getMetricsFor(_fontName);
         _fontVariant = fontVariant;
+        _letterSpacing = 0;
     }
+
+    public FontState(FontInfo fontInfo, String fontFamily, String fontStyle,
+                     String fontWeight, int fontSize,
+                     int fontVariant, int letterSpacing) throws FOPException {
+        this(fontInfo, fontFamily, fontStyle, fontWeight, fontSize,
+             fontVariant);
+        _letterSpacing = letterSpacing;
+    }
+
 
     public int getAscender() {
         return _metric.getAscender(_fontSize) / 1000;
     }
+
+    public int getLetterSpacing() {
+        return _letterSpacing;
+    }
+
 
     public int getCapHeight() {
         return _metric.getCapHeight(_fontSize) / 1000;
@@ -95,7 +112,7 @@ public class FontState {
 
     public int width(int charnum) {
         // returns width of given character number in millipoints
-        return (_metric.width(charnum, _fontSize) / 1000);
+        return _letterSpacing + (_metric.width(charnum, _fontSize) / 1000);
     }
 
     /**
@@ -106,17 +123,17 @@ public class FontState {
 
         if (_metric instanceof org.apache.fop.render.pdf.Font) {
             return ((org.apache.fop.render.pdf.Font)_metric).mapChar(c);
+        } else if (_metric instanceof org.apache.fop.render.awt.FontMetricsMapper) {
+            return c;
         }
 
         // Use default CodePointMapping
-        if (c > 127) {
-            char d = org.apache.fop.render.pdf.CodePointMapping.map[c];
-            if (d != 0) {
-                c = d;
-            } else {
-                c = '#';
-            }
-        }
+	char d = CodePointMapping.getMapping("WinAnsiEncoding").mapChar(c);
+	if (d != 0) {
+	    c = d;
+	} else {
+	    c = '#';
+	}
 
         return c;
     }

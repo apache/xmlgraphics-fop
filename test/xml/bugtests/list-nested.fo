@@ -16,7 +16,7 @@
   </fo:layout-master-set>
 
   <!-- starts actual layout -->
-  <fo:page-sequence master-name="first">
+  <fo:page-sequence master-reference="first">
 
   <!-- Inserts a header with the page number -->
   <fo:static-content flow-name="xsl-region-before">

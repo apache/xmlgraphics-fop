@@ -271,10 +271,14 @@ public class AWTRenderer extends AbstractRenderer implements Printable, Pageable
         int starty = pageHeight - ((y + 500) / 1000);
         int endx = (x + w + 500) / 1000;
         int endy = pageHeight - ((y + h + 500) / 1000);
-        if (drawAsOutline)
+        if (drawAsOutline) {
             graphics.drawRect(startx, starty, endx - startx, endy - starty);
-        else
+        } else {
+            //don't round down to zero
+            if (w != 0 && endx == startx) endx++;
+            if (h != 0 && endy == starty) endy++;
             graphics.fillRect(startx, starty, endx - startx, endy - starty);
+        }
     }
 
     protected void addFilledRect(int x, int y, int w, int h,
