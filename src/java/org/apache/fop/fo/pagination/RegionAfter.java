@@ -58,7 +58,6 @@ import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FOTreeVisitor;
 import org.apache.fop.fo.properties.WritingMode;
 import org.apache.fop.datatypes.FODimension;
-import org.apache.fop.area.RegionReference;
 
 /**
  * The fo:region-after element.
@@ -97,17 +96,17 @@ public class RegionAfter extends RegionBA {
     }
 
     /**
-     * @see org.apache.fop.fo.pagination.Region#getRegionAreaClass()
-     */
-    public int getRegionAreaClass() {
-        return RegionReference.AFTER;
-    }
-
-    /**
      * @see org.apache.fop.fo.pagination.Region#getRegionClass()
      */
     public String getRegionClass() {
         return Region.AFTER;
+    }
+
+    /**
+     * @see org.apache.fop.fo.pagination.Region#getRegionClassCode()
+     */
+    public int getRegionClassCode() {
+        return Region.AFTER_CODE;
     }
 
     /**

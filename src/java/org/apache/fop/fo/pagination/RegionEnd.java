@@ -58,7 +58,6 @@ import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FOTreeVisitor;
 import org.apache.fop.fo.properties.WritingMode;
 import org.apache.fop.datatypes.FODimension;
-import org.apache.fop.area.RegionReference;
 
 /**
  * The fo:region-end element.
@@ -105,10 +104,10 @@ public class RegionEnd extends RegionSE {
     }
 
     /**
-     * @see org.apache.fop.fo.pagination.Region#getRegionAreaClass()
+     * @see org.apache.fop.fo.pagination.Region#getRegionClassCode()
      */
-    public int getRegionAreaClass() {
-        return RegionReference.END;
+    public int getRegionClassCode() {
+        return Region.END_CODE;
     }
 
     /**
