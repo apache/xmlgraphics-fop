@@ -277,7 +277,8 @@ public class TTFSubSetFile extends TTFFile {
          output[currentPos+9] = 0;
          output[currentPos+10] = 0;
          output[currentPos+11] = 0;
-         output[currentPos+(int)entry.length-2] = 0; // long locaformat
+         output[currentPos+50] = 0; // long locaformat
+         output[currentPos+51] = 1; // long locaformat
 
          int checksum = getCheckSum(currentPos, (int)entry.length);
          writeULong(headDirOffset, checksum);
@@ -341,7 +342,7 @@ public class TTFSubSetFile extends TTFFile {
 
          size = currentPos - start;
 
-         int checksum = getCheckSum(currentPos, size);
+         int checksum = getCheckSum(start, size);
          writeULong(glyfDirOffset, checksum);
          writeULong(glyfDirOffset+4, start);
          writeULong(glyfDirOffset+8, size);
