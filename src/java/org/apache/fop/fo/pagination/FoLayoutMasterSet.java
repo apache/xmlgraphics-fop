@@ -159,7 +159,7 @@ public class FoLayoutMasterSet extends FONode {
      * fo:layout-master-set contents are
      * (simple-page-master|page-sequence-master)+
      * @param event - the layout page-master-set STARTELEMENT event.
-     * @throws <tt>FOPException</tt>.
+     * @throws FOPException
      */
     public void setupPageMasters(FoXMLEvent event)
             throws FOPException, PropertyException
