@@ -65,7 +65,6 @@ public class AreaTreeHandler extends FOEventHandler {
     // TODO: Collecting of statistics should be configurable
     private final boolean collectStatistics = true;
     private static final boolean MEM_PROFILE_WITH_GC = false;
-    private boolean pageSequenceFound = false;
     
     // for statistics gathering
     private Runtime runtime;
@@ -235,11 +234,6 @@ public class AreaTreeHandler extends FOEventHandler {
      * @throws SAXException if there is some error
      */
     public void endDocument() throws SAXException {
-        if (pageSequenceFound == false) {
-            throw new SAXException("Error: No fo:page-sequence child " +
-                "found within fo:root element.");
-        }
-
         // deal with unresolved references
         for (Iterator iter = resolve.keySet().iterator(); iter.hasNext();) {
             String id = (String)iter.next();
@@ -316,17 +310,6 @@ public class AreaTreeHandler extends FOEventHandler {
     }
 
     /**
-     * Start a page sequence.
-     * At the start of a page sequence it can start the page sequence
-     * on the area tree with the page sequence title.
-     *
-     * @param pageSeq the page sequence starting
-     */
-    public void startPageSequence(PageSequence pageSeq) {
-        pageSequenceFound = true;
-    }
-
-    /**
      * End the PageSequence.
      * The PageSequence formats Pages and adds them to the AreaTree.
      * The area tree then handles what happens with the pages.
@@ -354,31 +337,6 @@ public class AreaTreeHandler extends FOEventHandler {
             pageSLM.run();
             pageSequence.setCurrentPageNumber(pageSLM.getPageCount());
         }
-    }
-
-    /**
-     * Add a new page to the area tree.
-     * @param page the page to add
-     */
-    public void startPageSequence(LineArea title) {
-        model.startPageSequence(title);
-    }
-
-    /**
-     * Add a new page to the area tree.
-     * @param page the page to add
-     */
-    public void addPage(PageViewport page) {
-        model.addPage(page);
-    }
-
-    /**
-     * Accessor for the currentLMList.
-     * @return the currentLMList.
-     * @todo see if should have initialization of LM list occur here
-     */
-    public List getCurrentLMList() {
-        return currentLMList;
     }
 
     /**
