@@ -64,6 +64,10 @@ public class PDFNumber {
 	public String doubleOut(Double doubleDown)
 	{
 		StringBuffer p = new StringBuffer();
+		if(doubleDown.doubleValue() < 0) {
+			doubleDown = new Double(-doubleDown.doubleValue());
+			p.append("-");
+		}
 		double trouble = doubleDown.doubleValue() % 1;
 		if(trouble > 0.950)
 		{
@@ -77,15 +81,19 @@ public class PDFNumber {
 		{
 			String doubleString = new String(doubleDown+"");
 			int decimal = doubleString.indexOf(".");
-			p.append(doubleString.substring(0, decimal));
+			if(decimal != -1) {
+				p.append(doubleString.substring(0, decimal));
 
-			if ((doubleString.length() - decimal) > 6)
-			{
-				p.append(doubleString.substring(decimal,decimal+6));
-			}
-			else
-			{
-				p.append(doubleString.substring(decimal));
+				if ((doubleString.length() - decimal) > 6)
+				{
+					p.append(doubleString.substring(decimal,decimal+6));
+				}
+				else
+				{
+					p.append(doubleString.substring(decimal));
+				}
+			} else {
+				p.append(doubleString);
 			}
 		}
 		return(p.toString());
@@ -95,6 +103,10 @@ public class PDFNumber {
 	{
 		
 		StringBuffer p = new StringBuffer();
+		if(doubleDown < 0) {
+			doubleDown = -doubleDown;
+			p.append("-");
+		}
 		double trouble = doubleDown % 1;
 		
 		if(trouble > 0.950)
@@ -109,15 +121,19 @@ public class PDFNumber {
 		{
 			String doubleString = new String(doubleDown+"");
 			int decimal = doubleString.indexOf(".");
-			p.append(doubleString.substring(0, decimal));
+			if(decimal != -1) {
+				p.append(doubleString.substring(0, decimal));
 
-			if ((doubleString.length() - decimal) > 6)
-			{
-				p.append(doubleString.substring(decimal,decimal+6));
-			}
-			else
-			{
-				p.append(doubleString.substring(decimal));
+				if ((doubleString.length() - decimal) > 6)
+				{
+					p.append(doubleString.substring(decimal,decimal+6));
+				}
+				else
+				{
+					p.append(doubleString.substring(decimal));
+				}
+			} else {
+				p.append(doubleString);
 			}
 		}
 		return(p.toString());
