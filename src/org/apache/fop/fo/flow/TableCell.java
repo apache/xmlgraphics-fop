@@ -95,9 +95,14 @@ public class TableCell extends FObj {
 
     AreaContainer cellArea;
 
-    public TableCell(FObj parent, PropertyList propertyList) {
+    public TableCell(FObj parent, PropertyList propertyList)
+        throws FOPException {
         super(parent, propertyList);
         this.name = "fo:table-cell";
+        if (!(parent instanceof TableRow)) {
+            throw new FOPException("A table cell must be child of fo:table-row,"
+                                   + " not " + parent.getName());
+        }
         doSetup();    // init some basic property values
     }
 

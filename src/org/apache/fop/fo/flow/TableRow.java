@@ -171,9 +171,15 @@ public class TableRow extends FObj {
     }
 
 
-    public TableRow(FObj parent, PropertyList propertyList) {
+    public TableRow(FObj parent, PropertyList propertyList)
+        throws FOPException {
         super(parent, propertyList);
         this.name = "fo:table-row";
+        if (!(parent instanceof AbstractTableBody)) {
+            throw new FOPException("A table row must be child of fo:table-body,"
+                                   + " fo:table-header or fo:table-footer, not "
+                                   + parent.getName());
+        }
     }
 
     public void setColumns(Vector columns) {
