@@ -22,7 +22,7 @@ package org.apache.fop.render;
 import java.util.Map;
 
 //FOP
-import org.apache.fop.apps.FOUserAgent;
+import org.apache.fop.configuration.FOUserAgent;
 
 /**
  * The Render Context for external handlers. This provides a rendering context

@@ -27,7 +27,7 @@ import java.util.Map;
 // FOP
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.area.PageViewport;
-import org.apache.fop.apps.FOUserAgent;
+import org.apache.fop.configuration.FOUserAgent;
 
 /**
  * Interface implemented by all renderers. This interface is used to control
