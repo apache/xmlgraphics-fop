@@ -19,11 +19,10 @@
 package embedding;
 
 // Java
+import java.io.BufferedOutputStream;
 import java.io.File;
-import java.io.IOException;
-import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.io.InputStream;
+import java.io.IOException;
 import java.io.OutputStream;
 
 //JAXP
@@ -32,10 +31,7 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.Source;
 import javax.xml.transform.Result;
 import javax.xml.transform.stream.StreamSource;
-import javax.xml.parsers.SAXParserFactory;
 import javax.xml.transform.sax.SAXResult;
-import org.xml.sax.XMLReader;
-import org.xml.sax.InputSource;
 
 
 // FOP
@@ -63,35 +59,25 @@ public class ExampleFO2PDF {
             Driver driver = new Driver();
             driver.setRenderer(Driver.RENDER_PDF);
     
-            // Setup output stream
-            // For performance, also buffering output stream.
-            // Note: buffering recommended for FileOutputStreams
-            // but not for ByteArrayOutputStreams.
-            out = new java.io.FileOutputStream(pdf);
-            out = new java.io.BufferedOutputStream(out);
+            // Setup output stream.  Note: Using BufferedOutputStream
+            // for performance reasons (helpful with FileOutputStreams).
+            out = new FileOutputStream(pdf);
+            out = new BufferedOutputStream(out);
             driver.setOutputStream(out);
-
-            InputSource src = new InputSource(new FileInputStream(fo));
-            SAXParserFactory factory = SAXParserFactory.newInstance();
-            factory.setNamespaceAware(true);
-            XMLReader parser = factory.newSAXParser().getXMLReader();
-            parser.setContentHandler(driver.getContentHandler());
-            parser.parse(src);
-
-/*
-            // Setup input stream
-            Source src = new StreamSource(fo);
 
             // Setup JAXP using identity transformer
             TransformerFactory factory = TransformerFactory.newInstance();
             Transformer transformer = factory.newTransformer(); // identity transformer
             
+            // Setup input stream
+            Source src = new StreamSource(fo);
+
             // Resulting SAX events (the generated FO) must be piped through to FOP
             Result res = new SAXResult(driver.getContentHandler());
             
             // Start XSLT transformation and FOP processing
             transformer.transform(src, res);
-*/
+
         } catch (Exception e) {
             e.printStackTrace(System.err);
             System.exit(-1);
