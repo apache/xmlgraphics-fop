@@ -40,7 +40,6 @@ public class Fop {
             }
             System.exit(1);
         }
-        System.exit(0);
     }
 
 }
