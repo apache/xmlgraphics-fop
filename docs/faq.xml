@@ -15,7 +15,7 @@
 
 <head>
    <title>FOP - Frequently Asked Questions</title>
-   <version>1.0 1999/11/24 </version>
+   <version>1.0.1 1999/11/29 </version>
    <maintain>
       <name>James Tauber</name> 
       <name>Fotis Jannidis</name> 
@@ -40,6 +40,14 @@
       </p>
    </a>
 </qna>
+
+<qna>
+   <q>Q: The char ">" is inserted into the page number display like this 
+      "formatting FOs into areas [1] [2] [3>>>>]". Is this a bug?</q>
+   <a><p>A: No, a feature. It simply means that on that page an area 
+         overflowed (ie there was not enough room to fit the text in).</p></a>
+</qna>
+
 
 <!-- Template for next question
 <qna>
