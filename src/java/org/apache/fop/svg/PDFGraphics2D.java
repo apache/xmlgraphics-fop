@@ -406,6 +406,50 @@ public class PDFGraphics2D extends AbstractGraphics2D {
             return false;
         }
 
+        return drawImage(img, x, y, width, height, observer);
+    }
+
+    private BufferedImage buildBufferedImage(Dimension size) {
+        return new BufferedImage(size.width, size.height,
+                                 BufferedImage.TYPE_INT_ARGB);
+    }
+
+    /**
+     * Draws as much of the specified image as has already been scaled
+     * to fit inside the specified rectangle.
+     * <p>
+     * The image is drawn inside the specified rectangle of this
+     * graphics context's coordinate space, and is scaled if
+     * necessary. Transparent pixels do not affect whatever pixels
+     * are already there.
+     * <p>
+     * This method returns immediately in all cases, even if the
+     * entire image has not yet been scaled, dithered, and converted
+     * for the current output device.
+     * If the current output representation is not yet complete, then
+     * <code>drawImage</code> returns <code>false</code>. As more of
+     * the image becomes available, the process that draws the image notifies
+     * the image observer by calling its <code>imageUpdate</code> method.
+     * <p>
+     * A scaled version of an image will not necessarily be
+     * available immediately just because an unscaled version of the
+     * image has been constructed for this output device.  Each size of
+     * the image may be cached separately and generated from the original
+     * data in a separate image production sequence.
+     * @param    img    the specified image to be drawn.
+     * @param    x      the <i>x</i> coordinate.
+     * @param    y      the <i>y</i> coordinate.
+     * @param    width  the width of the rectangle.
+     * @param    height the height of the rectangle.
+     * @param    observer    object to be notified as more of
+     * the image is converted.
+     * @return true if the image was drawn
+     * @see      java.awt.Image
+     * @see      java.awt.image.ImageObserver
+     * @see      java.awt.image.ImageObserver#imageUpdate(java.awt.Image, int, int, int, int, int)
+     */
+    public boolean drawImage(Image img, int x, int y, int width, int height,
+                               ImageObserver observer) {
         // first we look to see if we've already added this image to
         // the pdf document. If so, we just reuse the reference;
         // otherwise we have to build a FopImage and add it to the pdf
@@ -540,51 +584,6 @@ public class PDFGraphics2D extends AbstractGraphics2D {
         currentStream.write("" + width + " 0 0 " + (-height) + " " + x
                             + " " + (y + height) + " cm\n" + "/Im"
                             + imageInfo.getXNumber() + " Do\nQ\n");
-        return true;
-    }
-
-    private BufferedImage buildBufferedImage(Dimension size) {
-        return new BufferedImage(size.width, size.height,
-                                 BufferedImage.TYPE_INT_ARGB);
-    }
-
-    /**
-     * Draws as much of the specified image as has already been scaled
-     * to fit inside the specified rectangle.
-     * <p>
-     * The image is drawn inside the specified rectangle of this
-     * graphics context's coordinate space, and is scaled if
-     * necessary. Transparent pixels do not affect whatever pixels
-     * are already there.
-     * <p>
-     * This method returns immediately in all cases, even if the
-     * entire image has not yet been scaled, dithered, and converted
-     * for the current output device.
-     * If the current output representation is not yet complete, then
-     * <code>drawImage</code> returns <code>false</code>. As more of
-     * the image becomes available, the process that draws the image notifies
-     * the image observer by calling its <code>imageUpdate</code> method.
-     * <p>
-     * A scaled version of an image will not necessarily be
-     * available immediately just because an unscaled version of the
-     * image has been constructed for this output device.  Each size of
-     * the image may be cached separately and generated from the original
-     * data in a separate image production sequence.
-     * @param    img    the specified image to be drawn.
-     * @param    x      the <i>x</i> coordinate.
-     * @param    y      the <i>y</i> coordinate.
-     * @param    width  the width of the rectangle.
-     * @param    height the height of the rectangle.
-     * @param    observer    object to be notified as more of
-     * the image is converted.
-     * @return true if the image was drawn
-     * @see      java.awt.Image
-     * @see      java.awt.image.ImageObserver
-     * @see      java.awt.image.ImageObserver#imageUpdate(java.awt.Image, int, int, int, int, int)
-     */
-    public boolean drawImage(Image img, int x, int y, int width, int height,
-                             ImageObserver observer) {
-        System.out.println("drawImage");
         return true;
     }
 
