@@ -13,8 +13,6 @@
 
     <body>
 
-<section>
-  <title>Properties</title>
   <section>
     <title>Property datatypes</title>
 <p>The property datatypes are defined in the
@@ -262,7 +260,6 @@ the result is a Property object, and the actual value may be accessed
 (in this example) by using the "getLength()" accessor.
 </p>
   </section>
-</section>
     </body>
 </document>
 
