@@ -758,31 +758,9 @@ Can I control this?</question>
       <answer>
         <p>
           This is a problem of Internet Explorer requesting the content several
-          times. Some suggestions:
+          times. Please see the <link href="servlets.html#ie">notes on Internet Explorer</link>
+          for more information.
         </p>
-        <ul>
-          <li>
-            Use an URL ending in <code>.pdf</code>, like
-            <code>http://myserver/servlet/stuff.pdf</code>. Yes, the servlet can
-            be configured to handle this. If the URL has to contain parameters,
-            try to have both the base URL as well as the last parameter end in
-            <code>.pdf</code>, if necessary append a dummy parameter, like
-            <code>http://myserver/servlet/stuff.pdf?par1=a&amp;par2=b&amp;d=.pdf</code>. The
-            effect may depend on IEx version.
-          </li>
-          <li>
-            Give IEx the opportunity to cache. In particular, ensure the server
-            does not set any headers causing IEx not to cache the content. This
-            may be a real problem if the document is sent over HTTPS. Consult
-            your server manual.
-          </li>
-          <li>
-            Cache in the server. Including a parameter in the URL which has a
-            timestamp as the value may help you to decide whether a request is
-            repeated. IEx is reported to retrieve a document up to three times,
-            but never more often.
-          </li>
-        </ul>
       </answer>
     </faq>
     <faq id="iex-pdf-print-from-browser">
