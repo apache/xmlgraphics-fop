@@ -54,7 +54,7 @@ package org.apache.fop.fonts;
 import java.util.Map;
 
 //FOP
-import org.apache.fop.render.pdf.FontReader;
+
 
 /**
  * This class is used to defer the loading of a font until it is really used.
