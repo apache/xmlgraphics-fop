@@ -67,11 +67,7 @@ public class Fop {
 
         try {
             options = new CommandLineOptions(args);
-            if (options.getOutputMode() == CommandLineOptions.AWT_OUTPUT) {
-                starter = new AWTStarter(options);
-            } else {
-                starter = new CommandLineStarter(options);
-            }
+            starter = new CommandLineStarter(options);
             starter.enableLogging(new ConsoleLogger(ConsoleLogger.LEVEL_INFO));
             starter.run();
         } catch (FOPException e) {

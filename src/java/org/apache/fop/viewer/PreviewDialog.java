@@ -77,7 +77,8 @@ import java.awt.print.PrinterJob;
 import java.awt.print.PrinterException;
 
 //FOP
-import org.apache.fop.apps.AWTStarter;
+import org.apache.fop.apps.Driver;
+import org.apache.fop.apps.InputHandler;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.render.awt.AWTRenderer;
 
@@ -94,8 +95,10 @@ public class PreviewDialog extends JFrame {
     protected Translator translator;
     /** The AWT renderer */
     protected AWTRenderer renderer;
-    /** The AWT starter */
-    protected AWTStarter starter;
+    /** The InputHandler associated with this window */
+    protected InputHandler inputHandler;
+    /** The Driver used for refreshing/reloading the view */
+    protected Driver driver;
 
     private int currentPage = 0;
     private int pageCount = 0;
@@ -106,21 +109,12 @@ public class PreviewDialog extends JFrame {
     private JLabel infoStatus;
 
     /**
-     *  Creates a new PreviewDialog that uses the given starter and renderer.
-     *  @param aStarter the to use starter
-     *  @param aRenderer the to use renderer
-     */
-    public PreviewDialog(AWTStarter aStarter, AWTRenderer aRenderer) {
-        this(aRenderer);
-        starter = aStarter;
-    }
-
-    /**
      * Creates a new PreviewDialog that uses the given renderer.
      * @param aRenderer the to use renderer
      */
-    public PreviewDialog(AWTRenderer aRenderer) {
+    public PreviewDialog(AWTRenderer aRenderer, InputHandler handler) {
         renderer = aRenderer;
+        inputHandler = handler;
         translator = renderer.getTranslator();
 
         //Commands aka Actions
@@ -253,11 +247,14 @@ public class PreviewDialog extends JFrame {
                 print();
             }
         });
-        menu.add(new Command(translator.getString("Menu.Reload")) {
-            public void doit() {
-                reload();
-            }
-        });
+        // inputHandler must be set to allow reloading
+        if (inputHandler != null) {
+            menu.add(new Command(translator.getString("Menu.Reload")) {
+                public void doit() {
+                    reload();
+                }
+            });
+        }
         menu.addSeparator();
         menu.add(new Command(translator.getString("Menu.Exit")) {
             public void doit() {
@@ -415,6 +412,13 @@ public class PreviewDialog extends JFrame {
      */
     private class Reloader extends Thread {
         public void run() {
+            if (driver == null) {
+                driver = new Driver();
+                driver.setRenderer(renderer);
+            } else {
+                driver.reset();
+            }
+            
             pageLabel.setIcon(null);
             infoStatus.setText("");
             currentPage = 0;
@@ -423,7 +427,7 @@ public class PreviewDialog extends JFrame {
             //    renderer.removePage(0);
             try {
                 setStatus(translator.getString("Status.Build.FO.tree"));
-                starter.run();
+                driver.render(inputHandler);
                 setStatus(translator.getString("Status.Show"));
             } catch (FOPException e) {
                 reportException(e);
