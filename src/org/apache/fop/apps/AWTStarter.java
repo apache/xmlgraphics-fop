@@ -54,7 +54,9 @@ public class AWTStarter extends CommandLineStarter {
 
     private Translator resource;
 
-    public AWTStarter (CommandLineOptions commandLineOptions) {
+    public AWTStarter (CommandLineOptions commandLineOptions) 
+	throws FOPException
+    {
         super(commandLineOptions);
         init();
     }
@@ -89,7 +91,9 @@ public class AWTStarter extends CommandLineStarter {
     }
 
 
-    public void run () {
+    public void run () 
+	throws FOPException
+    {
 	Driver driver = new Driver();
         if (errorDump) {
             driver.setErrorDump(true);
@@ -100,8 +104,7 @@ public class AWTStarter extends CommandLineStarter {
         XMLReader parser = inputHandler.getParser();
 
         if (parser == null) {
-            MessageHandler.errorln("ERROR: Unable to create SAX parser");
-            System.exit(1);
+	    throw new FOPException("Unable to create SAX parser");
         }
 
         setParserFeatures(parser);
@@ -125,9 +128,10 @@ public class AWTStarter extends CommandLineStarter {
             frame.showPage();
 
         } catch (Exception e) {
-            MessageHandler.errorln("FATAL ERROR: " + e.getMessage());
-            e.printStackTrace();
-            System.exit(1);
+	    if (e instanceof FOPException) {
+		throw (FOPException)e;
+	    }
+	    throw new FOPException(e);
         }
 
     }

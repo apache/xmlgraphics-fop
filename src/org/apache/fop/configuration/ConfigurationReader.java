@@ -101,42 +101,27 @@ public class ConfigurationReader {
     public void start () throws FOPException {
         XMLReader parser = createParser();
 
-        if (parser == null) {
-            MessageHandler.errorln("ERROR: Unable to create SAX parser");
-            System.exit(1);
-        }
-
         // setting the parser features
         try {
             parser.setFeature("http://xml.org/sax/features/namespace-prefixes",
                               false);
         } catch (SAXException e) {
-            MessageHandler.errorln("You need a parser which supports SAX version 2");
-            if (errorDump) {
-                e.printStackTrace();
-            }
-            System.exit(1);
+	    throw new FOPException("You need a parser which supports SAX version 2",e);
         }
         ConfigurationParser configurationParser = new ConfigurationParser();
         parser.setContentHandler(configurationParser);
 
         try {
             parser.parse(filename);
-//            Configuration.setup(Configuration.STANDARD, configurationParser.getConfiguration(Configuration.STANDARD));
-//            Configuration.setup(Configuration.PDF, configurationParser.getConfiguration(Configuration.PDF));
-//            Configuration.setup(Configuration.AWT, configurationParser.getConfiguration(Configuration.AWT));
         } catch (SAXException e) {
             if (e.getException() instanceof FOPException) {
-                dumpError(e.getException());
                 throw (FOPException) e.getException();
             } else {
-                dumpError(e);
-                throw new FOPException(e.getMessage());
+                throw new FOPException(e);
             }
         }
         catch (IOException e) {
-            dumpError(e);
-            throw new FOPException(e.getMessage());
+            throw new FOPException(e);
         }
     }
 
@@ -147,7 +132,9 @@ public class ConfigurationReader {
        *
        * @return the created SAX parser
        */
-    public static XMLReader createParser() {
+    public static XMLReader createParser()
+	throws FOPException
+    {
         String parserClassName = System.getProperty("org.xml.sax.parser");
         if (parserClassName == null) {
             parserClassName = "org.apache.xerces.parsers.SAXParser";
@@ -161,31 +148,18 @@ public class ConfigurationReader {
             return (XMLReader) Class.forName(
                      parserClassName).newInstance();
         } catch (ClassNotFoundException e) {
-            MessageHandler.errorln("Could not find " + parserClassName);
-            if (errorDump) {
-                e.printStackTrace();
-            }
+	    throw new FOPException("Could not find " + parserClassName,e);
         }
         catch (InstantiationException e) {
-            MessageHandler.errorln("Could not instantiate " +
-                                   parserClassName);
-            if (errorDump) {
-                e.printStackTrace();
-            }
+            throw new FOPException("Could not instantiate " +
+                                   parserClassName,e);
         }
         catch (IllegalAccessException e) {
-            MessageHandler.errorln("Could not access " + parserClassName);
-            if (errorDump) {
-                e.printStackTrace();
-            }
+            throw new FOPException("Could not access " + parserClassName,e);
         }
         catch (ClassCastException e) {
-            MessageHandler.errorln(parserClassName + " is not a SAX driver");
-            if (errorDump) {
-                e.printStackTrace();
-            }
+            throw new FOPException(parserClassName + " is not a SAX driver",e);
         }
-        return null;
     }
 
     /**
@@ -203,6 +177,7 @@ public class ConfigurationReader {
             }
         }
     }
+    
 
     /**
       *  long or short error messages

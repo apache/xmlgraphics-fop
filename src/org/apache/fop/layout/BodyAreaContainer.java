@@ -326,8 +326,7 @@ public class BodyAreaContainer extends Area {
 		}
 		else
 		{
-			System.err.println("Trying to balance balanced area");
-			System.exit(0);
+		    throw new IllegalStateException("Trying to balance balanced area");
 		}
 	}
 	

@@ -7,11 +7,30 @@
 
 package org.apache.fop.apps;
 
+import org.apache.fop.messaging.MessageHandler;
+
 public class Fop {
     public static void main (String [] args) {
-        CommandLineOptions options = new CommandLineOptions (args);
-        Starter starter = options.getStarter();
-        starter.run();
+	CommandLineOptions options = null;
+	
+	try {
+	    options = new CommandLineOptions (args);
+	    Starter starter = options.getStarter();
+	    starter.run();
+	}
+	catch (FOPException e) {
+	    MessageHandler.errorln("ERROR: "+e.getMessage());
+	    if (options != null && options.isDebugMode().booleanValue()) {
+		e.printStackTrace();
+	    }
+	}
+	catch (java.io.FileNotFoundException e) {
+	    MessageHandler.errorln("ERROR: "+e.getMessage());
+	    if (options != null && options.isDebugMode().booleanValue()) {
+		e.printStackTrace();
+	    }
+	}
     }
+    
 }
 

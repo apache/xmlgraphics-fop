@@ -24,7 +24,7 @@ abstract public class InputHandler {
 
 
     abstract public InputSource getInputSource();
-    abstract public XMLReader getParser();
+    abstract public XMLReader getParser() throws FOPException;
 
 
     /**
@@ -54,8 +54,9 @@ abstract public class InputHandler {
         *
         * @return the created SAX parser
         */
-    static XMLReader createParser() {
-		boolean debugMode = Configuration.getBooleanValue("debugMode").booleanValue();
+    protected static XMLReader createParser() 
+	throws FOPException
+    {
         String parserClassName = System.getProperty("org.xml.sax.parser");
         if (parserClassName == null) {
             parserClassName = "org.apache.xerces.parsers.SAXParser";
@@ -66,31 +67,18 @@ abstract public class InputHandler {
             return (XMLReader) Class.forName(
                      parserClassName).newInstance();
         } catch (ClassNotFoundException e) {
-            MessageHandler.errorln("Could not find " + parserClassName);
-            if (debugMode) {
-                e.printStackTrace();
-            }
+	    throw new FOPException(e);
         }
         catch (InstantiationException e) {
-            MessageHandler.errorln("Could not instantiate " +
-                                   parserClassName);
-            if (debugMode) {
-                e.printStackTrace();
-            }
+	    throw new FOPException("Could not instantiate " +
+                                   parserClassName,e);
         }
         catch (IllegalAccessException e) {
-            MessageHandler.errorln("Could not access " + parserClassName);
-            if (debugMode) {
-                e.printStackTrace();
-            }
+	    throw new FOPException("Could not access " + parserClassName,e);
         }
         catch (ClassCastException e) {
-            MessageHandler.errorln(parserClassName + " is not a SAX driver");
-            if (debugMode) {
-                e.printStackTrace();
-            }
+	    throw new FOPException(parserClassName + " is not a SAX driver",e);
         }
-        return null;
     }
 }
 

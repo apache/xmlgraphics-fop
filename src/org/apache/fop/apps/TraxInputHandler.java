@@ -58,7 +58,7 @@ public class TraxInputHandler extends InputHandler {
       *  simple XMLReader which allows chaining of transformations
       *
       */
-    public XMLReader getParser() {
+    public XMLReader getParser() throws FOPException {
         return this.getXMLFilter(xmlfile,xsltfile);
     }
 
@@ -71,7 +71,9 @@ public class TraxInputHandler extends InputHandler {
       * @param xsltfile An xslt stylesheet
       * @return XMLFilter an XMLFilter which can be chained together with other XMLReaders or XMLFilters
       */
-    public static XMLFilter getXMLFilter (File xmlfile, File xsltfile) {
+    public static XMLFilter getXMLFilter (File xmlfile, File xsltfile) 
+	throws FOPException
+    {
         try {
             // Instantiate  a TransformerFactory.
             TransformerFactory tFactory = TransformerFactory.newInstance();
@@ -89,25 +91,24 @@ public class TraxInputHandler extends InputHandler {
                 // Create an XMLReader.
                 XMLReader parser = createParser();
                 if (parser == null) {
-                    MessageHandler.errorln("ERROR: Unable to create SAX parser");
-                    System.exit(1);
+                    throw new FOPException("Unable to create SAX parser");
                 }
 
                 // xmlFilter1 uses the XMLReader as its reader.
                 xmlfilter.setParent(parser);
                 return xmlfilter;
             } else {
-                MessageHandler.errorln(
+                throw new FOPException(
                   "Your parser doesn't support the features SAXSource and SAXResult." +
                   "\nMake sure you are using a xsl parser which supports TrAX");
-                System.exit(1);
-                return null;
             }
         }
         catch (Exception ex) {
-            MessageHandler.errorln(ex.toString());
-            return null;
-        }
+	    if (ex instanceof FOPException) {
+		throw (FOPException)ex;
+	    }
+	    throw new FOPException(ex);
+	}
     }
 }
 
