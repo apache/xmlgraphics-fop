@@ -112,18 +112,37 @@
     <element>
         <tagname>a</tagname>
         <attributes>
-            <attribute>xml:href</attribute>
+            <includeAttributes ref="stdAttrs"/>
+            <attribute>xlnk:href</attribute>
+            <attribute>xlink:role</attribute>
+            <attribute>xlink:arcrole</attribute>
+            <attribute>xlink:title</attribute>
+            <attribute>xlink:show</attribute>
+            <attribute>xlink:actuate</attribute>
+            <includeAttributes ref="testAttrs"/>
+            <includeAttributes ref="langSpaceAttrs"/>
+            <attribute>externalResourcesRequired</attribute>
+            <attribute>class</attribute>
+            <attribute>style</attribute>
+            <includeAttributes ref="PresentationAttributes-All"/>
+            <attribute>transform</attribute>
+            <includeAttributes ref="graphicsElementsEvents"/>
+            <attribute>target</attribute>
         </attributes>
     </element>
     <element>
         <tagname>circle</tagname>
         <attributes>
             <includeAttributes ref="stdAttrs"/>
+            <includeAttributes ref="testAttrs"/>
+            <includeAttributes ref="langSpaceAttrs"/>
+            <attribute>externalResourceRequired</attribute>
+            <attribute>class</attribute>
+            <attribute>style</attribute>
             <includeAttributes ref="PresentationAttributes-FillStroke"/>
             <includeAttributes ref="PresentationAttributes-Graphics"/>
-            <attribute>id</attribute>
-            <attribute>style</attribute>
             <attribute>transform</attribute>
+            <includeAttributes ref="graphicsElementsEvents"/>
             <attribute>cx</attribute>
             <attribute>cy</attribute>
             <attribute>r</attribute>
@@ -189,9 +208,15 @@
         <tagname>ellipse</tagname>
         <attributes>
             <includeAttributes ref="stdAttrs"/>
-            <attribute>id</attribute>
+            <includeAttributes ref="testAttrs"/>
+            <includeAttributes ref="langSpaceAttrs"/>
+            <attribute>externalResourceRequired</attribute>
+            <attribute>class</attribute>
             <attribute>style</attribute>
+            <includeAttributes ref="PresentationAttributes-FillStroke"/>
+            <includeAttributes ref="PresentationAttributes-Graphics"/>
             <attribute>transform</attribute>
+            <includeAttributes ref="graphicsElementsEvents"/>
             <attribute>cx</attribute>
             <attribute>cy</attribute>
             <attribute>rx</attribute>
@@ -252,10 +277,16 @@
         <tagname>line</tagname>
         <attributes>
             <includeAttributes ref="stdAttrs"/>
-            <attribute>id</attribute>
-            <attribute>style</attribute>
-            <attribute>transform</attribute>
+            <includeAttributes ref="testAttrs"/>
+            <includeAttributes ref="langSpaceAttrs"/>
+            <attribute>externalResourceRequired</attribute>
             <attribute>class</attribute>
+            <attribute>style</attribute>
+            <includeAttributes ref="PresentationAttributes-FillStroke"/>
+            <includeAttributes ref="PresentationAttributes-Graphics"/>
+            <includeAttributes ref="PresentationAttributes-Markers"/>
+            <attribute>transform</attribute>
+            <includeAttributes ref="graphicsElementsEvents"/>
             <attribute>x1</attribute>
             <attribute>x2</attribute>
             <attribute>y1</attribute>
@@ -331,10 +362,16 @@
         <tagname>polygon</tagname>
         <attributes>
             <includeAttributes ref="stdAttrs"/>
-            <attribute>id</attribute>
-            <attribute>style</attribute>
-            <attribute>transform</attribute>
+            <includeAttributes ref="testAttrs"/>
+            <includeAttributes ref="langSpaceAttrs"/>
+            <attribute>externalResourceRequired</attribute>
             <attribute>class</attribute>
+            <attribute>style</attribute>
+            <includeAttributes ref="PresentationAttributes-FillStroke"/>
+            <includeAttributes ref="PresentationAttributes-Graphics"/>
+            <includeAttributes ref="PresentationAttributes-Markers"/>
+            <attribute>transform</attribute>
+            <includeAttributes ref="graphicsElementsEvents"/>
             <attribute>points</attribute>
         </attributes>
     </element>
@@ -342,10 +379,16 @@
         <tagname>polyline</tagname>
         <attributes>
             <includeAttributes ref="stdAttrs"/>
-            <attribute>id</attribute>
-            <attribute>style</attribute>
-            <attribute>transform</attribute>
+            <includeAttributes ref="testAttrs"/>
+            <includeAttributes ref="langSpaceAttrs"/>
+            <attribute>externalResourceRequired</attribute>
             <attribute>class</attribute>
+            <attribute>style</attribute>
+            <includeAttributes ref="PresentationAttributes-FillStroke"/>
+            <includeAttributes ref="PresentationAttributes-Graphics"/>
+            <includeAttributes ref="PresentationAttributes-Markers"/>
+            <attribute>transform</attribute>
+            <includeAttributes ref="graphicsElementsEvents"/>
             <attribute>points</attribute>
         </attributes>
     </element>
@@ -371,16 +414,19 @@
         <tagname>rect</tagname>
         <attributes>
             <includeAttributes ref="stdAttrs"/>
+            <includeAttributes ref="testAttrs"/>
+            <includeAttributes ref="langSpaceAttrs"/>
+            <attribute>externalResourceRequired</attribute>
+            <attribute>class</attribute>
+            <attribute>style</attribute>
             <includeAttributes ref="PresentationAttributes-FillStroke"/>
             <includeAttributes ref="PresentationAttributes-Graphics"/>
-            <attribute>id</attribute>
-            <attribute>style</attribute>
             <attribute>transform</attribute>
-            <attribute>class</attribute>
-            <attribute>width</attribute>
-            <attribute>height</attribute>
+            <includeAttributes ref="graphicsElementsEvents"/>
             <attribute>x</attribute>
             <attribute>y</attribute>
+            <attribute>width</attribute>
+            <attribute>height</attribute>
             <attribute>rx</attribute>
             <attribute>ry</attribute>
         </attributes>
@@ -429,25 +475,48 @@
         <tagname>tref</tagname>
         <attributes>
             <includeAttributes ref="stdAttrs"/>
-            <attribute>id</attribute>
-            <attribute>style</attribute>
+            <includeAttributes ref="xlinkRefAttrs"/>
             <attribute>xlink:href</attribute>
+            <includeAttributes ref="testAttrs"/>
+            <includeAttributes ref="langSpaceAttrs"/>
+            <attribute>externalResourceRequired</attribute>
+            <attribute>class</attribute>
+            <attribute>style</attribute>
+            <includeAttributes ref="PresentationAttributes-FillStroke"/>
+            <includeAttributes ref="PresentationAttributes-FontSpecification"/>
+            <includeAttributes ref="PresentationAttributes-Graphics"/>
+            <includeAttributes ref="PresentationAttributes-TextContentElements"/>
+            <includeAttributes ref="graphicsElementsEvents"/>
             <attribute>x</attribute>
             <attribute>y</attribute>
             <attribute>dx</attribute>
             <attribute>dy</attribute>
+            <attribute>rotate</attribute>
+            <attribute>textLength</attribute>
+            <attribute>lengthAdjust</attribute>
         </attributes>
     </element>
     <element addText="true">
         <tagname>tspan</tagname>
         <attributes>
             <includeAttributes ref="stdAttrs"/>
-            <attribute>id</attribute>
+            <includeAttributes ref="testAttrs"/>
+            <includeAttributes ref="langSpaceAttrs"/>
+            <attribute>externalResourceRequired</attribute>
+            <attribute>class</attribute>
             <attribute>style</attribute>
+            <includeAttributes ref="PresentationAttributes-FillStroke"/>
+            <includeAttributes ref="PresentationAttributes-FontSpecification"/>
+            <includeAttributes ref="PresentationAttributes-Graphics"/>
+            <includeAttributes ref="PresentationAttributes-TextContentElements"/>
+            <includeAttributes ref="graphicsElementsEvents"/>
             <attribute>x</attribute>
             <attribute>y</attribute>
             <attribute>dx</attribute>
             <attribute>dy</attribute>
+            <attribute>rotate</attribute>
+            <attribute>textLength</attribute>
+            <attribute>lengthAdjust</attribute>
         </attributes>
     </element>
     <element addText="true">
@@ -456,27 +525,43 @@
             <includeAttributes ref="stdAttrs"/>
             <includeAttributes ref="testAttrs"/>
             <includeAttributes ref="langSpaceAttrs"/>
-            <includeAttributes ref="PresentationAttributes-FillStroke"/>
-            <includeAttributes ref="PresentationAttributes-Graphics"/>
-            <includeAttributes ref="PresentationAttributes-FontSpecification"/>
-            <includeAttributes ref="PresentationAttributes-TextContentElements"/>
-            <includeAttributes ref="PresentationAttributes-TextElements"/>
+            <attribute>externalResourceRequired</attribute>
             <attribute>class</attribute>
             <attribute>style</attribute>
+            <includeAttributes ref="PresentationAttributes-FillStroke"/>
+            <includeAttributes ref="PresentationAttributes-FontSpecification"/>
+            <includeAttributes ref="PresentationAttributes-Graphics"/>
+            <includeAttributes ref="PresentationAttributes-TextContentElements"/>
+            <includeAttributes ref="PresentationAttributes-TextElements"/>
             <attribute>transform</attribute>
+            <includeAttributes ref="graphicsElementsEvents"/>
             <attribute>x</attribute>
             <attribute>y</attribute>
-            <attribute>text-anchor</attribute>
-            <attribute>xml:space</attribute>
+            <attribute>textLength</attribute>
+            <attribute>lengthAdjust</attribute>
         </attributes>
     </element>
     <element addText="true">
         <tagname>textPath</tagname>
         <attributes>
             <includeAttributes ref="stdAttrs"/>
-            <attribute>id</attribute>
-            <attribute>style</attribute>
+            <includeAttributes ref="xlinkRefAttrs"/>
             <attribute>xlink:href</attribute>
+            <includeAttributes ref="langSpaceAttrs"/>
+            <includeAttributes ref="testAttrs"/>
+            <attribute>externalResourceRequired</attribute>
+            <attribute>class</attribute>
+            <attribute>style</attribute>
+            <includeAttributes ref="PresentationAttributes-FillStroke"/>
+            <includeAttributes ref="PresentationAttributes-FontSpecification"/>
+            <includeAttributes ref="PresentationAttributes-Graphics"/>
+            <includeAttributes ref="PresentationAttributes-TextContentElements"/>
+            <includeAttributes ref="graphicsElementsEvents"/>
+            <attribute>startOffset</attribute>
+            <attribute>textLength</attribute>
+            <attribute>lengthAdjust</attribute>
+            <attribute>method</attribute>
+            <attribute>spacing</attribute>
         </attributes>
     </element>
     <element addText="true">
