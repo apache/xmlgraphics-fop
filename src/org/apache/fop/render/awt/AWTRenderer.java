@@ -326,7 +326,7 @@ public class AWTRenderer implements Renderer, Printable, Pageable {
             //for negative postscript one
             this.currentYPosition =
               area.getYPosition() - 2 * area.getPaddingTop() -
-              2 * area.borderWidthTop;
+              2 * area.getBorderTopWidth();
             this.currentAreaContainerXPosition = area.getXPosition();
         } else if (area.getPosition() ==
                 org.apache.fop.fo.properties.Position.RELATIVE) {
@@ -335,9 +335,9 @@ public class AWTRenderer implements Renderer, Printable, Pageable {
         } else if (area.getPosition() ==
                 org.apache.fop.fo.properties.Position.STATIC) {
             this.currentYPosition -=
-              area.getPaddingTop() + area.borderWidthTop;
+              area.getPaddingTop() + area.getBorderTopWidth();
             this.currentAreaContainerXPosition +=
-              area.getPaddingLeft() + area.borderWidthLeft;
+              area.getPaddingLeft() + area.getBorderLeftWidth();
         }
 
         doFrame(area);
@@ -405,36 +405,36 @@ public class AWTRenderer implements Renderer, Printable, Pageable {
                          bg.blue(), bg.red(), bg.green(), bg.blue());
         }
 
-        rx = rx - area.borderWidthLeft;
-        ry = ry + area.borderWidthTop;
-        w = w + area.borderWidthLeft + area.borderWidthRight;
-        h = h + area.borderWidthTop + area.borderWidthBottom;
+        rx = rx - area.getBorderLeftWidth();
+        ry = ry + area.getBorderTopWidth();
+        w = w + area.getBorderLeftWidth() + area.getBorderRightWidth();
+        h = h + area.getBorderTopWidth() + area.getBorderBottomWidth();
 
-        if (area.borderWidthTop != 0) {
-            addLine(rx, ry, rx + w, ry, area.borderWidthTop,
-                    area.borderColorTop.red(), area.borderColorTop.green(),
-                    area.borderColorTop.blue());
+	BorderAndPadding bp = area.getBorderAndPadding();
+	ColorType borderColor;
+
+        if (area.getBorderTopWidth() != 0) {
+	  borderColor=bp.getBorderColor(BorderAndPadding.TOP);
+	  addLine(rx, ry, rx + w, ry, area.getBorderTopWidth(),
+		  borderColor.red(), borderColor.green(), borderColor.blue());
         }
 
-        if (area.borderWidthLeft != 0) {
-            addLine(rx, ry, rx, ry - h, area.borderWidthLeft,
-                    area.borderColorLeft.red(),
-                    area.borderColorLeft.green(),
-                    area.borderColorLeft.blue());
+        if (area.getBorderLeftWidth() != 0) {
+	  borderColor=bp.getBorderColor(BorderAndPadding.LEFT);
+            addLine(rx, ry, rx, ry - h, area.getBorderLeftWidth(),
+		  borderColor.red(), borderColor.green(), borderColor.blue());
         }
 
-        if (area.borderWidthRight != 0) {
-            addLine(rx + w, ry, rx + w, ry - h, area.borderWidthRight,
-                    area.borderColorRight.red(),
-                    area.borderColorRight.green(),
-                    area.borderColorRight.blue());
+        if (area.getBorderRightWidth() != 0) {
+	  borderColor=bp.getBorderColor(BorderAndPadding.RIGHT);
+            addLine(rx + w, ry, rx + w, ry - h, area.getBorderRightWidth(),
+		  borderColor.red(), borderColor.green(), borderColor.blue());
         }
 
-        if (area.borderWidthBottom != 0) {
-            addLine(rx, ry - h, rx + w, ry - h, area.borderWidthBottom,
-                    area.borderColorBottom.red(),
-                    area.borderColorBottom.green(),
-                    area.borderColorBottom.blue());
+        if (area.getBorderBottomWidth() != 0) {
+	  borderColor=bp.getBorderColor(BorderAndPadding.BOTTOM);
+            addLine(rx, ry - h, rx + w, ry - h, area.getBorderBottomWidth(),
+		  borderColor.red(), borderColor.green(), borderColor.blue());
         }
     }
 
