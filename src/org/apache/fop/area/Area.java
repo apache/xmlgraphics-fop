@@ -105,7 +105,11 @@ public class Area implements Serializable {
 
     private int areaClass = CLASS_NORMAL;
     private int ipd;
-    private HashMap props = null;
+
+    /**
+     * Traits for this area stored in a HashMap
+     */
+    protected HashMap props = null;
 
     /**
      * Get the area class of this area.
