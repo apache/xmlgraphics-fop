@@ -53,11 +53,11 @@ extends BorderCommonStyleAbsolute {
 
     public int getCorrespondingRelativeProperty(FONode foNode)
     throws PropertyException {
-        return getCorrespondingRelativeStyleProperty(
+        return getCorrespondingStyleProperty(
                 foNode, WritingMode.LEFT);
     }
 
-    public boolean correspondingOverrides(FONode foNode) {
+    public boolean overridesCorresponding(FONode foNode) {
         return false;
     }
 

@@ -40,9 +40,21 @@ public abstract class AbstractCorrespondingProperty extends Property
         PropertyValue wm = foNode.getPropertyValue(PropNames.WRITING_MODE);
         return EnumType.getEnumValue(wm);
     }
+
     /* (non-Javadoc)
      * @see org.apache.fop.fo.properties.CorrespondingProperty#getCorrespondingProperty(org.apache.fop.fo.FONode)
      */
-    public abstract int getCorrespondingProperty(FONode foNode)
-    throws PropertyException;
+    public int getCorrespondingProperty(FONode foNode)
+    throws PropertyException {
+        throw new PropertyException("Called from superclass");
+    }
+
+    /**
+     * @return
+     * @throws PropertyException
+     */
+    public boolean overridesCorresponding()
+    throws PropertyException {
+        throw new PropertyException("Called from superclass");
+    }
 }
