@@ -83,6 +83,8 @@ public class TTFFile extends AbstractLogEnabled {
 
     private int ansiWidth[];
     private Map ansiIndex;
+    
+    private TTFDirTabEntry currentDirTab;
 
     /**
      * Position inputstream to position indicated
@@ -93,10 +95,10 @@ public class TTFFile extends AbstractLogEnabled {
         TTFDirTabEntry dt = (TTFDirTabEntry)dirTabs.get(name);
         if (dt == null) {
             getLogger().error("Dirtab " + name + " not found.");
-            return;
+        } else {
+            in.seekSet(dt.getOffset() + offset);
+            this.currentDirTab = dt;
         }
-
-        in.seekSet(dt.getOffset() + offset);
     }
 
     /**
@@ -711,6 +713,16 @@ public class TTFFile extends AbstractLogEnabled {
         in.skip(2 + 2 + 3 * 2 + 8 * 2);
         nhmtx = in.readTTFUShort();
         getLogger().debug("Number of horizontal metrics: " + nhmtx);
+
+        //Check OS/2 table for ascender/descender if necessary
+        if (ascender == 0 || descender == 0) {
+            seekTab(in, "OS/2", 68);
+            if (this.currentDirTab.getLength() >= 78) {
+                ascender = in.readTTFShort(); //sTypoAscender
+                descender = in.readTTFShort(); //sTypoDescender
+            }
+        }
+
     }
 
     /**
