@@ -4,24 +4,23 @@
 
 <document>
   <header>
-    <title>Configuration</title>
+    <title>FOP: Configuration</title>
   </header>
 
   <body>
   <section id="general">
-    <title>How to configure FOP</title>
-    <p>In the directory {fop-dir}/conf you will find two configuration files. One of them,
-       config.xml, is only intended for FOP developers, who want to add new default values
-       to some FOP feature. Don't change this file. For user configuration there is a file called
-       userconfig.xml. It contains templates for all settings a user can change. Most of them are
-       commented out. Uncomment the entry you want to set and change the value according to
-       your wishes. Please regard any comments which specify the value range. And, well, the
-       configuration files are xml files, so keep them at least well-formed. ;-)
-    </p>
-    <p>The file userconfig.xml is not read automatically, but the user must specify its use on
-       the command line. See <link href="running.html">Running FOP</link>
-       or <link href="embedding.html">Embedding FOP</link> for details.
-    </p>
+    <title>Configuration File Basics</title>
+    <p>The FOP configuration file is an XML file contains a variety of settings that are useful for controlling FOP's behavior, and for helping it find resources that you wish it to use.</p>
+    <p>The easiest way to get started using a FOP configuration file is to copy the sample found at <code>{fop-dir}/conf/userconfig.xml</code> to a location of your choice, and then to edit it according to your needs.
+It contains templates for the various configuration options, most of which are commented out. Remove the comments and change the settings for entries that you wish to use.
+Be sure to follow any instructions, including comments which specify the value range.
+Also, since the configuration file is XML, be sure to keep it well-formed.</p>
+    <note>Do <strong>not</strong> change <code>{fop-dir}/conf/config.xml</code> or use it as the basis for your configuration file. It has an entirely different purpose.</note>
+    <p>After creating your configuration file, you must tell FOP how to find it:</p>
+    <ul>
+      <li>If running FOP from the command-line, see the "-c" command-line option in <link href="running.html">Running FOP</link>.</li>
+      <li>If running FOP as an embedded application, see <link href="embedding.html#config-external">FOP: Embedding, Using a Configuration File</link>.</li>
+    </ul>
   </section>
   <section id="hyphenation">
     <title>Setting up hyphenation</title>
