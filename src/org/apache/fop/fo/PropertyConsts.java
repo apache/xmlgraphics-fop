@@ -425,21 +425,22 @@ public class PropertyConsts {
     public static final ROIntArray dataTypes;
 
     /**
-     * A sparsely populated array of <tt>Method</tt> objects.  Although this
-     * array has a slot for every property, only positions corresponding to
-     * properties which have a <i>complex()</i> method for processing
-     * complex property value specifications, will hold a valid
-     * <tt>Method</tt> object.
+     * An array of <tt>Method</tt> objects.  This array holds, for each
+     * property, the <tt>method</tt> object corresponding to the
+     * <em>verifyParsing</em> method of the property's class.<br/>
+     * <em>verifyParsing</em> methods defined in individual properties
+     * shadow the method in the <em>Properties</em> class.
      */
-    private static final Method[] complexmethods;
+    private static final Method[] verifyparsingmethods;
 
     /**
-     * An unmodifiable List of the property <i>complex</i> methods.
-     * This random access list is derived from <i>complexmethods</i>, above.
+     * An unmodifiable List of the property <i>verifyParsing</i> methods.
+     * This random access list is derived from <i>verifyparsingmethods</i>,
+     * above.
      * It can be indexed by the property name constants defined in
      * the PropNames class.
      */
-    public static final List complexMethods;
+    public static final List verifyParsingMethods;
 
     /**
      * A <tt>HashMap</tt> of <tt>Method</tt> objects.  It contains the
@@ -462,14 +463,14 @@ public class PropertyConsts {
         classNames   = new String[PropNames.LAST_PROPERTY_INDEX + 1];
         toIndex      = new HashMap(PropNames.LAST_PROPERTY_INDEX + 1);
         classToIndex = new HashMap(PropNames.LAST_PROPERTY_INDEX + 1);
-        inherit            = new int[PropNames.LAST_PROPERTY_INDEX + 1];
-        nonInheritedProps  = new BitSet(PropNames.LAST_PROPERTY_INDEX + 1);
-        initialValueTypes  = new int[PropNames.LAST_PROPERTY_INDEX + 1];
-        traitMappings      = new int[PropNames.LAST_PROPERTY_INDEX + 1];
-        datatypes          = new int[PropNames.LAST_PROPERTY_INDEX + 1];
-        classes            = new Class[PropNames.LAST_PROPERTY_INDEX + 1];
-        complexmethods     = new Method[PropNames.LAST_PROPERTY_INDEX + 1];
-        mappednummethods   = new HashMap();
+        inherit              = new int[PropNames.LAST_PROPERTY_INDEX + 1];
+        nonInheritedProps    = new BitSet(PropNames.LAST_PROPERTY_INDEX + 1);
+        initialValueTypes    = new int[PropNames.LAST_PROPERTY_INDEX + 1];
+        traitMappings        = new int[PropNames.LAST_PROPERTY_INDEX + 1];
+        datatypes            = new int[PropNames.LAST_PROPERTY_INDEX + 1];
+        classes              = new Class[PropNames.LAST_PROPERTY_INDEX + 1];
+        verifyparsingmethods = new Method[PropNames.LAST_PROPERTY_INDEX + 1];
+        mappednummethods     = new HashMap();
 
         for (int i = 0; i <= PropNames.LAST_PROPERTY_INDEX; i++) {
             cname = "";
@@ -536,10 +537,9 @@ public class PropertyConsts {
                 traitMappings[i] =
                 classes[i].getField("traitMapping").getInt(null);
                 datatypes[i] = classes[i].getField("dataTypes").getInt(null);
-                if ((datatypes[i] & Properties.COMPLEX) != 0)
-                    complexmethods[i] =
+                verifyparsingmethods[i] =
                             classes[i].getMethod
-                                        ("complex", new Class[]
+                                        ("verifyParsing", new Class[]
                                             {org.apache.fop.fo.FOTree.class,
                                                      PropertyValue.class});
                 if ((datatypes[i] & Properties.MAPPED_NUMERIC) != 0)
@@ -566,14 +566,14 @@ public class PropertyConsts {
         }
 
         // Initialise the RO arrays
-        propertyClassNames  = new ROStringArray(classNames);
-        propertyClasses     = Collections.unmodifiableList
+        propertyClassNames   = new ROStringArray(classNames);
+        propertyClasses      = Collections.unmodifiableList
                                         (Arrays.asList(classes));
-        inherited           = new ROIntArray(inherit);
-        dataTypes           = new ROIntArray(datatypes);
-        complexMethods      = Collections.unmodifiableList
-                                        (Arrays.asList(complexmethods));
-        mappedNumMethods    = Collections.unmodifiableMap(mappednummethods);
+        inherited            = new ROIntArray(inherit);
+        dataTypes            = new ROIntArray(datatypes);
+        verifyParsingMethods = Collections.unmodifiableList
+                                    (Arrays.asList(verifyparsingmethods));
+        mappedNumMethods     = Collections.unmodifiableMap(mappednummethods);
 
     }
 
