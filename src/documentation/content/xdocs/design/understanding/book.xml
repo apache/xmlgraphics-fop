@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE book PUBLIC "-//APACHE//DTD Cocoon Documentation Book V1.0//EN"
+    "http://cvs.apache.org/viewcvs.cgi/*checkout*/xml-cocoon2/src/documentation/xdocs/dtd/book-cocoon-v10.dtd">
+
+<book software="FOP"
+    title="Understanding FOP Design"
+    copyright="@year@ The Apache Software Foundation"
+    xmlns:xlink="http://www.w3.org/1999/xlink">
+
+    <menu label="Index">
+      <menu-item label="FOP Home" href="../../index.html"/>
+    </menu>
+    <menu label="Understanding the Design">
+      <menu-item label="Understanding" href="index.html"/>
+      <menu-item label="XML Parsing" href="xml_parsing.html"/>
+      <menu-item label="FO Tree" href="fo_tree.html"/>
+      <menu-item label="Properties" href="properties.html"/>
+      <menu-item label="Layout Managers" href="layout_managers.html"/>
+      <menu-item label="Area Tree" href="area_tree.html"/>
+      <menu-item label="Renderers" href="renderers.html"/>
+    </menu>
+    <menu label="Extras">
+      <menu-item label="Images" href="images.html"/>
+      <menu-item label="PDF Library" href="pdf_library.html"/>
+      <menu-item label="SVG" href="svg.html"/>
+    </menu>
+</book>
+
