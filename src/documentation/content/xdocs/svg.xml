@@ -2,16 +2,16 @@
 <!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V1.1//EN"
     "http://cvs.apache.org/viewcvs.cgi/*checkout*/xml-forrest/src/resources/schema/dtd/document-v11.dtd">
 
-<!-- SVG in FOP -->
-
 <document>
     <header>
-        <title>Using SVG with FOP</title>
+        <title>FOP Graphics Formats</title>
     </header>
 
     <body>
 
-  <section id="intro">
+    <section id="svg">
+      <title>SVG</title>
+  <section id="svg-intro">
     <title>Introduction</title>
     <p>
 FOP uses the SVG library from <link href="http://xml.apache.org/batik/">Batik</link> to handle SVG.
@@ -30,7 +30,7 @@ PDF markup which is placed into the current PDF document.
     </p>
   </section>
 
-  <section id="pdf_conversion">
+  <section id="svg-pdf-conversion">
     <title>Converting SVG to a PDF Document</title>
     <p>
 It is possible to convert a standalone SVG document directly into a simple page PDF document.
@@ -55,7 +55,7 @@ how transcoders work.
     </p>
   </section>
 
-  <section id="pdf_graphics">
+  <section id="svg-pdf-graphics">
     <title>Placing SVG Graphics into PDF</title>
     <p>
 The svg is inserted into PDF by using PDF commands to draw and fill
@@ -74,7 +74,7 @@ contain effects or graphics with transparent areas will not be displayed
 correctly.
     </p>
   </section>
-  <section id="pdf_text">
+  <section id="svg-pdf-text">
     <title>Placing SVG Text into PDF</title>
     <p>If possible, Batik will use normal PDF text when inserting text. It does
 this by checking if the text can be drawn normally and the font is
@@ -116,7 +116,7 @@ The Acrobat viewer has both "smooth line art" and "smooth text" settings that ma
 This setting will not affect the printing of your document, which should be OK in any case, but will only affect the quality of the screen display.</p>
   </section>
 
-          <section>
+          <section id="svg-problems">
             <title>Known Problems</title>
 <ul>
 <li>
@@ -148,6 +148,7 @@ into a raster graphic are not drawn properly in PDF. The image is opaque.
 </li>
 </ul>
           </section>
+    </section>
     </body>
 </document>
 
