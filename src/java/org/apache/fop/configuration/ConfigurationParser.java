@@ -270,8 +270,9 @@ public class ConfigurationParser extends DefaultHandler {
                 configuration.logger.config(
                         "Existing value for key " + key + ":"
                         + val.toString() + " overrides " + value.toString());
+            } else {
+                activeConfiguration.put(key, value);
             }
-            activeConfiguration.put(key, value);
         } else {
             configuration.logger.warning("Unknown role >" + role
                                    + "< for new configuration entry. \n"

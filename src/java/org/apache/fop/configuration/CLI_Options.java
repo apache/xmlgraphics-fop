@@ -19,8 +19,6 @@
 
 package org.apache.fop.configuration;
 
-// java
-import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.Locale;
 import java.util.logging.Level;
@@ -40,17 +38,12 @@ import org.apache.fop.apps.FOPException;
  * additional setting of commandline options
  */
 public class CLI_Options extends UserOptions {
-    
+
+    String[] args = null;
+
     public CLI_Options(Configuration configuration, String[] args) {
         super(configuration);
-        this.configuration = configuration;
-        try {
-            configure(args);
-        } catch (FileNotFoundException e) {
-            throw new RuntimeException(e);
-        } catch (FOPException e) {
-            throw new RuntimeException(e);
-        }
+        this.args = args;
     }
 
     /**
@@ -69,18 +62,20 @@ public class CLI_Options extends UserOptions {
     private Options makeOptions() {
         // Create the Options object that will be returned
         Options options = new Options();
+        OptionBuilder.withArgName("help");
+        OptionBuilder.withLongOpt("help");
+        OptionBuilder.withDescription("Describe usage");
+        options.addOption(OptionBuilder.create("?"));
         // The mutually exclusive verbosity group includes the -d and -q flags
         OptionGroup verbosity = new OptionGroup();
         OptionBuilder.withArgName("debug mode");
         OptionBuilder.withLongOpt("full-error-dump");
         OptionBuilder.withDescription("Debug mode: verbose reporting");
-        verbosity.addOption(
-                OptionBuilder.create("d"));
+        verbosity.addOption(OptionBuilder.create("d"));
         OptionBuilder.withArgName("quiet mode");
         OptionBuilder.withLongOpt("quiet");
         OptionBuilder.withDescription("Quiet mode: report errors only");
-        verbosity.addOption(
-                OptionBuilder.create("q"));
+        verbosity.addOption(OptionBuilder.create("q"));
         verbosity.setRequired(false);
         // Add verbosity to options
         options.addOptionGroup(verbosity);
@@ -95,23 +90,20 @@ public class CLI_Options extends UserOptions {
         OptionBuilder.withLongOpt("config-file");
         OptionBuilder.hasArg();
         OptionBuilder.withDescription("Configuration file");
-        options.addOption(
-                OptionBuilder.create("c"));
+        options.addOption(OptionBuilder.create("c"));
         // Add the language option directly
         OptionBuilder.withArgName("language");
         OptionBuilder.withLongOpt("language");
         OptionBuilder.hasArg();
         OptionBuilder.withDescription("ISO639 language code");
-        options.addOption(
-                OptionBuilder.create("l"));
+        options.addOption(OptionBuilder.create("l"));
         // Create the mutually exclusive input group
         OptionGroup input = new OptionGroup();
         OptionBuilder.withArgName("fo:file");
         OptionBuilder.withLongOpt("fo");
         OptionBuilder.hasArg();
         OptionBuilder.withDescription("XSL-FO input file");
-        input.addOption(
-                OptionBuilder.create("fo"));
+        input.addOption(OptionBuilder.create("fo"));
         OptionBuilder.withArgName("xml file");
         OptionBuilder.withLongOpt("xml");
         OptionBuilder.hasArg();
@@ -126,8 +118,7 @@ public class CLI_Options extends UserOptions {
         OptionBuilder.withLongOpt("xsl");
         OptionBuilder.hasArg();
         OptionBuilder.withDescription("XSL stylesheet for transforming XML to XSL-FO");
-        options.addOption(
-                OptionBuilder.create("xsl"));
+        options.addOption(OptionBuilder.create("xsl"));
         // Work-around for the xsl parameters
         // Allow multiple arguments (does this apply to multiple instances
         // of the argument specifier?) of the form <name=value>, using '='
@@ -137,80 +128,68 @@ public class CLI_Options extends UserOptions {
         OptionBuilder.withLongOpt("xsl-param");
         OptionBuilder.hasArgs(Option.UNLIMITED_VALUES);
         OptionBuilder.withDescription("Parameter to XSL stylesheet");
-        options.addOption(
-                OptionBuilder.create("param"));
+        options.addOption(OptionBuilder.create("param"));
         
         // Create the mutually exclusive output group
         OptionGroup output = new OptionGroup();
         OptionBuilder.withArgName("screen renderer");
         OptionBuilder.withLongOpt("awt");
         OptionBuilder.withDescription("Input will be renderered to display");
-        output.addOption(
-                OptionBuilder.create("awt"));
+        output.addOption(OptionBuilder.create("awt"));
         OptionBuilder.withArgName("pdf output file");
         OptionBuilder.withLongOpt("pdf");
         OptionBuilder.hasArg();
         OptionBuilder.withDescription("Input will be rendered as PDF to named file");
-        output.addOption(
-                OptionBuilder.create("pdf"));
+        output.addOption(OptionBuilder.create("pdf"));
         OptionBuilder.withArgName("postscript output file");
         OptionBuilder.withLongOpt("ps");
         OptionBuilder.hasArg();
         OptionBuilder.withDescription("Input will be rendered as Postscript to named file");
-        output.addOption(
-                OptionBuilder.create("ps"));
+        output.addOption(OptionBuilder.create("ps"));
         OptionBuilder.withArgName("pcl output file");
         OptionBuilder.withLongOpt("pcl");
         OptionBuilder.hasArg();
         OptionBuilder.withDescription("Input will be rendered as PCL to named file");
-        output.addOption(
-                OptionBuilder.create("pcl"));
+        output.addOption(OptionBuilder.create("pcl"));
         OptionBuilder.withArgName("rtf output file");
         OptionBuilder.withLongOpt("rtf");
         OptionBuilder.hasArg();
         OptionBuilder.withDescription("Input will be rendered as RTF to named file");
-        output.addOption(
-                OptionBuilder.create("rtf"));
+        output.addOption(OptionBuilder.create("rtf"));
         OptionBuilder.withArgName("mif output file");
         OptionBuilder.withLongOpt("mif");
         OptionBuilder.hasArg();
         OptionBuilder.withDescription("Input will be rendered as MIF to named file");
-        output.addOption(
-                OptionBuilder.create("mif"));
+        output.addOption(OptionBuilder.create("mif"));
         OptionBuilder.withArgName("svg output file");
         OptionBuilder.withLongOpt("svg");
         OptionBuilder.hasArg();
         OptionBuilder.withDescription("Input will be rendered as SVG to named file");
-        output.addOption(
-                OptionBuilder.create("svg"));
+        output.addOption(OptionBuilder.create("svg"));
         OptionBuilder.withArgName("text output file");
         OptionBuilder.withLongOpt("plain-text");
         OptionBuilder.hasArg();
         OptionBuilder.withDescription("Input will be rendered as plain text to named file");
-        output.addOption(
-                OptionBuilder.create("txt"));
+        output.addOption(OptionBuilder.create("txt"));
         OptionBuilder.withArgName("area tree output file");
         OptionBuilder.withLongOpt("area-tree");
         OptionBuilder.hasArg();
         OptionBuilder.withDescription("Area tree will be output as XML to named file");
-        output.addOption(
-                OptionBuilder.create("at"));
+        output.addOption(OptionBuilder.create("at"));
         OptionBuilder.withArgName("help");
         OptionBuilder.withLongOpt("print");
         OptionBuilder.hasOptionalArg();
         OptionBuilder.withDescription("Input will be rendered and sent to the printer. "
                 + "Requires extra arguments to the \"java\" command. "
                 + "See options with \"-print help\".");
-        output.addOption(
-                OptionBuilder.create("print"));
+        output.addOption(OptionBuilder.create("print"));
         
         // -s option relevant only to -at area tree output.  Again, no way
         // to express this directly
         OptionBuilder.withArgName("supress low-level areas");
         OptionBuilder.withLongOpt("only-block-areas");
         OptionBuilder.withDescription("Suppress non-block areas in XML renderer");
-        options.addOption(
-                OptionBuilder.create("s"));
+        options.addOption(OptionBuilder.create("s"));
         return options;
     }
     
@@ -328,7 +307,7 @@ public class CLI_Options extends UserOptions {
             if (cli.getOptionValue("print").toLowerCase(Locale.getDefault())
                     == "help") {
                 printUsagePrintOutput();
-                throw new FOPException("Usage only");
+                throw new FOPException("Print usage only");
             }
         }
         // Get any remaining non-options
@@ -341,7 +320,6 @@ public class CLI_Options extends UserOptions {
                 setInputMode(FO_INPUT);
                 filename = remArgs[i++];
                 configuration.put("foFileName", filename);
-                foFile = new File(filename);
             }
             if (outputmode == NOT_SET && i < remArgs.length
                     && remArgs[i].charAt(0) != '-') {
