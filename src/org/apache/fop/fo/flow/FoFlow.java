@@ -85,21 +85,23 @@ public class FoFlow extends FONode {
             if ((ev = xmlevents.expectBlock()) == null)
                 throw new FOPException("%block; not found in fo:flow");
             // Generate the flow object
-            System.out.println("Generating first block for flow.");
+            //System.out.println("Generating first block for flow.");
             FObjects.fobjects.makeFlowObject
                             (foTree, this, ev, FONode.FLOW_SET);
             // Clear the blockage
-            ev = xmlevents.getEndElement(ev);
+            ev = xmlevents.getEndElement(xmlevents.DISCARD_EV, ev);
+            pool.surrenderEvent(ev);
             // Get the rest of the %block;s
             do {
                 ev = xmlevents.expectBlock();
                 if (ev != null) {
                     // Generate the flow object
-                    System.out.println
-                        ("Generating subsequent block for flow.");
+                    //System.out.println
+                            //("Generating subsequent block for flow.");
                     FObjects.fobjects.makeFlowObject
                             (foTree, this, ev, FONode.FLOW_SET);
-                    ev = xmlevents.getEndElement(ev);
+                    ev = xmlevents.getEndElement(xmlevents.DISCARD_EV, ev);
+                    pool.surrenderEvent(ev);
                 }
             } while (ev != null);
         } catch(UnexpectedStartElementException e) {

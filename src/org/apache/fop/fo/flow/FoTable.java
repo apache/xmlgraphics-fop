@@ -142,7 +142,8 @@ public class FoTable extends FONode {
                    != null) {
                 new FoMarker(getFOTree(), this, ev, stateFlags);
                 numMarkers++;
-                xmlevents.getEndElement(ev);
+                ev = xmlevents.getEndElement(xmlevents.DISCARD_EV, ev);
+                pool.surrenderEvent(ev);
             }
 
             // Look for zero or more table-columns
@@ -152,7 +153,8 @@ public class FoTable extends FONode {
                    != null) {
                 new FoTableColumn(getFOTree(), this, ev, stateFlags);
                 numColumns++;
-                xmlevents.getEndElement(ev);
+                ev = xmlevents.getEndElement(xmlevents.DISCARD_EV, ev);
+                pool.surrenderEvent(ev);
             }
 
             // Look for optional table-header
@@ -162,7 +164,8 @@ public class FoTable extends FONode {
                    != null) {
                 headerOffset = numChildren();
                 new FoTableHeader(getFOTree(), this, ev, stateFlags);
-                xmlevents.getEndElement(ev);
+                ev = xmlevents.getEndElement(xmlevents.DISCARD_EV, ev);
+                pool.surrenderEvent(ev);
             }
 
             // Look for optional table-footer
@@ -172,7 +175,8 @@ public class FoTable extends FONode {
                    != null) {
                 footerOffset = numChildren();
                 new FoTableFooter(getFOTree(), this, ev, stateFlags);
-                xmlevents.getEndElement(ev);
+                ev = xmlevents.getEndElement(xmlevents.DISCARD_EV, ev);
+                pool.surrenderEvent(ev);
             }
 
             // Look for one or more table-body
@@ -185,14 +189,16 @@ public class FoTable extends FONode {
             firstBodyOffset = numChildren();
             new FoTableBody(getFOTree(), this, ev, stateFlags);
             numBodies++;
-            xmlevents.getEndElement(ev);
+            ev = xmlevents.getEndElement(xmlevents.DISCARD_EV, ev);
+            pool.surrenderEvent(ev);
             while ((ev = xmlevents.expectStartElement
                         (FObjectNames.TABLE_BODY, XMLEvent.DISCARD_W_SPACE))
                    != null) {
                 // Loop over remaining fo:table-body's
                 new FoTableBody(getFOTree(), this, ev, stateFlags);
                 numBodies++;
-                xmlevents.getEndElement(ev);
+                ev = xmlevents.getEndElement(xmlevents.DISCARD_EV, ev);
+                pool.surrenderEvent(ev);
             }
 
             /*

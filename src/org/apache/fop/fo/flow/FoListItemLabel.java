@@ -105,7 +105,8 @@ public class FoListItemLabel extends FONode {
             // Generate the flow object
             FObjects.fobjects.makeFlowObject(foTree, this, ev, stateFlags);
             // Clear the blockage
-            ev = xmlevents.getEndElement(ev);
+            ev = xmlevents.getEndElement(xmlevents.DISCARD_EV, ev);
+            pool.surrenderEvent(ev);
             // Get the rest of the %block;s
             do {
                 if ((stateFlags & FONode.MC_OUT_OF_LINE) == 0)
@@ -116,7 +117,8 @@ public class FoListItemLabel extends FONode {
                     // Generate the flow object
                     FObjects.fobjects.makeFlowObject
                                             (foTree, this, ev, stateFlags);
-                    ev = xmlevents.getEndElement(ev);
+                    ev = xmlevents.getEndElement(xmlevents.DISCARD_EV, ev);
+                    pool.surrenderEvent(ev);
                 }
             } while (ev != null);
         } catch(UnexpectedStartElementException e) {

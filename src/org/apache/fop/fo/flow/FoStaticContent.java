@@ -87,23 +87,22 @@ public class FoStaticContent extends FONode {
                 throw new FOPException
                         ("%block; not found in fo:static-content");
             // Generate the flow object
-            System.out.println("Generating first block for static-content.");
+            //System.out.println("Generating first block for static-content.");
             FObjects.fobjects.makeFlowObject
-                            (foTree, this, ev, FONode.STATIC_SET);
+                                    (foTree, this, ev, FONode.STATIC_SET);
             // Clear the blockage
-            ev = xmlevents.getEndElement(ev);
+            ev = xmlevents.getEndElement(xmlevents.DISCARD_EV, ev);
+            pool.surrenderEvent(ev);
             // Get the rest of the %block;s
-            do {
-                ev = xmlevents.expectBlock();
-                if (ev != null) {
-                    // Generate the flow object
-                    System.out.println
-                        ("Generating subsequent block for static-content.");
-                    FObjects.fobjects.makeFlowObject
-                            (foTree, this, ev, FONode.STATIC_SET);
-                    ev = xmlevents.getEndElement(ev);
-                }
-            } while (ev != null);
+            while ((ev = xmlevents.expectBlock()) != null) {
+                // Generate the flow object
+                //System.out.println
+                    //("Generating subsequent block for static-content.");
+                FObjects.fobjects.makeFlowObject
+                                    (foTree, this, ev, FONode.STATIC_SET);
+                ev = xmlevents.getEndElement(xmlevents.DISCARD_EV, ev);
+                pool.surrenderEvent(ev);
+            }
         } catch(UnexpectedStartElementException e) {
             throw new FOPException
             ("Block not found or unexpected non-block in fo:static-content");
