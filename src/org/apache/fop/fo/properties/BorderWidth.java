@@ -83,9 +83,9 @@ public class BorderWidth extends BorderCommonWidth {
                 // check for mapped enum.
                 Numeric mapped;
                 try {
-                    mapped =
-                        (new MappedNumeric(PropNames.BORDER_TOP_WIDTH,
-                            ((NCName)value).getNCName(), foNode.getFOTree()))
+                    mapped = (new MappedNumeric
+                                    (foNode, PropNames.BORDER_TOP_WIDTH,
+                                                ((NCName)value).getNCName()))
                                 .getMappedNumValue();
                 } catch (PropertyException e) {
                     throw new PropertyException
@@ -118,14 +118,12 @@ public class BorderWidth extends BorderCommonWidth {
 
             // There must be at least two
             top = (new MappedNumeric
-                        (PropNames.BORDER_TOP_WIDTH,
-                        ((NCName)(widths.next())).getNCName(),
-                        foNode.getFOTree())
+                        (foNode, PropNames.BORDER_TOP_WIDTH,
+                        ((NCName)(widths.next())).getNCName())
                     ).getMappedNumValue();
             right = (new MappedNumeric
-                        (PropNames.BORDER_RIGHT_WIDTH,
-                        ((NCName)(widths.next())).getNCName(),
-                        foNode.getFOTree())
+                        (foNode, PropNames.BORDER_RIGHT_WIDTH,
+                        ((NCName)(widths.next())).getNCName())
                     ).getMappedNumValue();
             try {
                 bottom = (Numeric)(top.clone());
@@ -139,15 +137,13 @@ public class BorderWidth extends BorderCommonWidth {
 
             if (widths.hasNext())
                 bottom = (new MappedNumeric
-                            (PropNames.BORDER_BOTTOM_WIDTH,
-                            ((NCName)(widths.next())).getNCName(),
-                            foNode.getFOTree())
+                            (foNode, PropNames.BORDER_BOTTOM_WIDTH,
+                            ((NCName)(widths.next())).getNCName())
                         ).getMappedNumValue();
             if (widths.hasNext())
                 left = (new MappedNumeric
-                            (PropNames.BORDER_LEFT_WIDTH,
-                            ((NCName)(widths.next())).getNCName(),
-                            foNode.getFOTree())
+                            (foNode, PropNames.BORDER_LEFT_WIDTH,
+                            ((NCName)(widths.next())).getNCName())
                         ).getMappedNumValue();
 
             list = new PropertyValueList(PropNames.BORDER_WIDTH);
