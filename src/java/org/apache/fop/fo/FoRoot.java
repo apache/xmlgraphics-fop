@@ -66,7 +66,7 @@ import org.apache.fop.fo.expr.PropertyException;
 import org.apache.fop.fo.flow.FoPageSequence;
 import org.apache.fop.fo.pagination.FoLayoutMasterSet;
 import org.apache.fop.xml.FoXMLEvent;
-import org.apache.fop.xml.SyncedFoXmlEventsBuffer;
+import org.apache.fop.xml.SyncedXmlEventsBuffer;
 import org.apache.fop.xml.XMLEvent;
 import org.apache.fop.xml.XMLNamespaces;
 
@@ -125,11 +125,11 @@ public class FoRoot extends FONode {
 
     /**
      * @param foTree the FO tree being built
-     * @param event the <tt>FoXMLEvent</tt> that triggered the creation of this
+     * @param event the <tt>XMLEvent</tt> that triggered the creation of this
      * node
      */
     public FoRoot
-        (FOTree foTree, FoXMLEvent event)
+        (FOTree foTree, XMLEvent event)
         throws TreeException, FOPException, PropertyException
     {
         // This is the root node of the tree; hence the null argument
@@ -162,7 +162,7 @@ public class FoRoot extends FONode {
      * in the page-sequence-sequence.
      */
     public void buildFoTree() throws FOPException{
-        FoXMLEvent ev;
+        XMLEvent ev;
         String nowProcessing;
         //System.out.println("buildFoTree: " + event);
         nowProcessing = "layout-master-set";
@@ -175,7 +175,7 @@ public class FoRoot extends FONode {
                                 new FoLayoutMasterSet(getFOTree(), this, ev);
             // Clean up the fo:layout-master-set event
             pageSequenceMasters = layoutMasters.getPageSequenceMasters();
-            ev = xmlevents.getEndElement(SyncedFoXmlEventsBuffer.DISCARD_EV, ev);
+            ev = xmlevents.getEndElement(SyncedXmlEventsBuffer.DISCARD_EV, ev);
             namespaces.surrenderEvent(ev);
             layoutMasters.deleteSubTree();
 
@@ -187,7 +187,7 @@ public class FoRoot extends FONode {
                 // process the declarations
                 declarations = numChildren();
                 new FoDeclarations(getFOTree(), this, ev);
-                ev = xmlevents.getEndElement(SyncedFoXmlEventsBuffer.DISCARD_EV, ev);
+                ev = xmlevents.getEndElement(SyncedXmlEventsBuffer.DISCARD_EV, ev);
                 namespaces.surrenderEvent(ev);
             }
 
@@ -199,15 +199,15 @@ public class FoRoot extends FONode {
             if (ev == null)
                 throw new FOPException("No page-sequence found.");
             firstPageSeq = numChildren();
-            new FoPageSequence(getFOTree(), this, ev);
-            ev = xmlevents.getEndElement(SyncedFoXmlEventsBuffer.DISCARD_EV, ev);
+            new FoPageSequence(getFOTree(), this, (FoXMLEvent)ev);
+            ev = xmlevents.getEndElement(SyncedXmlEventsBuffer.DISCARD_EV, ev);
             namespaces.surrenderEvent(ev);
             while ((ev = xmlevents.expectStartElement
                     (FObjectNames.PAGE_SEQUENCE, XMLEvent.DISCARD_W_SPACE))
                    != null) {
                 // Loop over remaining fo:page-sequences
-                new FoPageSequence(getFOTree(), this, ev);
-                ev = xmlevents.getEndElement(SyncedFoXmlEventsBuffer.DISCARD_EV, ev);
+                new FoPageSequence(getFOTree(), this, (FoXMLEvent)ev);
+                ev = xmlevents.getEndElement(SyncedXmlEventsBuffer.DISCARD_EV, ev);
                 namespaces.surrenderEvent(ev);
             }
         } catch (NoSuchElementException e) {
@@ -224,7 +224,7 @@ public class FoRoot extends FONode {
         for (int i = 0; i <= XMLNamespaces.LAST_NS_INDEX; i++) {
             System.out.println("Namespace " + namespaces.getIndexURI(i));
             System.out.println("Size of event pool: " + 
-                    namespaces.getPoolSize(i));
+                    namespaces.getNSPoolSize(i));
             System.out.println("Next event id     : " + 
                     namespaces.getSequenceValue(i));
         }
