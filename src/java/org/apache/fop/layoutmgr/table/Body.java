@@ -128,7 +128,7 @@ public class Body extends BlockStackingLayoutManager {
 
         if (columns == null) {
             setFinished(true);
-            getLogger().warn("ignoring table body with undefined columns");
+            getLogger().warn("ignoring fo:table-body with undefined fo:table-columns");
             return null;
         }
 
