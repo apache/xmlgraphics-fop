@@ -37,7 +37,7 @@
     </note>
   </section>
   <section>
-    <title>Adding additional Type 1 fonts</title>
+    <title>Adding Type 1 fonts</title>
     <p>As mentioned above you need an XML file containing font metrics to be able to use an additional font. FOP
     contains a tool that can generate such a font metrics file from a PFM file, which normally comes with the font file.
     </p>
@@ -102,7 +102,7 @@ java -cp build/fop.jar:lib/avalon-framework.jar:lib/xml-apis.jar:
     </section>
   </section>
   <section>
-    <title>Adding additional TrueType</title>
+    <title>Adding TrueType Fonts</title>
         <p>Adding TrueType fonts is almost identical to the process of
         adding Type 1 fonts. The main difference is in the first
         step.</p>
@@ -165,13 +165,31 @@ java -cp build\fop.jar;lib\avalon-framework.jar;lib\xml-apis.jar;
   <section>
     <title>Embedding fonts</title>
     <p>
-      Font embedding is enabled in the userconfig.xml file and controlled over the embed-file attribute.
-      If you don't specify the embed-file attribute the fonts doesn't get embedded but only referenced.
+      Font embedding is enabled in the userconfig.xml file and controlled by the embed-file attribute.
+      If you don't specify the embed-file attribute the font will not be embedded, but will only be referenced.
     </p>
-    <note>
-      Remember to start fop with -c conf/userconfig.xml on the command line.
-    </note>
+    <p>
+      When FOP embeds a font, it scrambles its fontname by inserting a prefix that ensures that the fontname will not match the fontname of an installed font.
+This is helpful with older versions of Acrobat Reader that preferred installed fonts over embedded fonts.
+    </p>
+    <p>
+      When embedding PostScript fonts, the entire font is always embedded.
+    </p>
+    <p>
+      When embedding TrueType fonts, a new font, containing only the glyphs used, is created from the original font and embedded in the pdf.
+Currently, this embedded font contains only the minimum data needed to be embedded in a pdf document, and does not contain any codepage information.
+The PDF document contains indexes to the glyphs in the font instead of to encoded characters.
+While the document will be displayed correctly, the net effect of this is that searching, indexing, and cut-and-paste will not work properly.
+    </p>
+    <p>
+      One workaround for this behavior is to use the -ansi option when generating metrics with TTFReader.
+This will cause the whole font to be embedded in the pdf document.
+Characters will be WinAnsi encoded (as specified in the PDF spec), so you lose the ability to use characters from other character sets.
+    </p>
   </section>
+  <note>
+    Be sure to start FOP with the option to find the config file ("-c conf/userconfig.xml" from the command line). Otherwise, it has no way of finding your custom font information.
+  </note>
 </body>
 </document>
 
