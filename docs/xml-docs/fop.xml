@@ -4,6 +4,7 @@
 	<separator/>
 	<page id="index" label="About FOP" source="fop/readme.xml"/>
 	<page id="news" label="News" source="fop/news.xml"/>
+	<page id="status" label="Status" source="fop/status.xml"/>
 	<page id="download" label="Download" source="fop/download.xml"/>
 	<page id="relnotes" label="Release Notes" source="fop/relnotes.xml"/>
 	<page id="gethelp" label="How to get Help" source="fop/gethelp.xml"/>

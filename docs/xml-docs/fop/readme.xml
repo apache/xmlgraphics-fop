@@ -72,31 +72,6 @@ to the svg renderer then putting the rendered pages into an svg document
 along with the xml.
 </p>
   </s1>
-  <s1 title="Status">
-<p>
-        <figure width="585" height="175" src="track.png" alt="Planning and branches of FOP development" />
-</p>
-<p>
-This is the development status of FOP. A branch has been created for
-maintenance releases while the development is done to address various
-performance and design issues.
-</p>
-<p>
-Maintenance releases will be done as necessary. Another maintenance release
-is planned for the near future to provide some fixes and to provide
-compatibilty with <jump href="http://xml.apache.org/batik/">Batik</jump>
-version 1.5 beta2. Other changes are: new hyphentaion patterns, changed
-to use Avalon Logger interface and added background image support.
-</p>
-<p>
-Development for 1.0DR1 is addressing the design issues for layout and
-performance. This is focusing on making it possible to be conformant
-to the spec and be able to handle large documents. This is roughly
-30% towards a developers release that should have: similar functionality to
-previous FOP releases, a rough API and a suitable design for developers
-to work on more functionality.
-</p>
-  </s1>
   <s1 title="FOP Objectives">
     <p>The goals of the Apache XML FOP Project are to deliver an XSL FO->PDF formatter that is compliant to at least the Basic
        conformance level described in the W3C Recommendation from 15 October 2001, and that complies with the 11 March 1999 Portable Document
