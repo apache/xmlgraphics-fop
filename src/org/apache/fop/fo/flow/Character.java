@@ -60,6 +60,7 @@ import org.apache.fop.layout.Area;
 import org.apache.fop.layout.inline.InlineArea;
 import org.apache.fop.fo.FObj;
 import org.apache.fop.layout.FontState;
+import org.apache.fop.layout.LineArea;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.messaging.MessageHandler;
 
@@ -80,7 +81,6 @@ import org.apache.fop.messaging.MessageHandler;
 public class Character  extends FObj {
 		public final static int OK = 0;
 		public final static int DOESNOT_FIT = 1;
-
 
 		public Character(FObj parent, PropertyList propertyList) {
 				super(parent, propertyList);
@@ -143,10 +143,27 @@ public class Character  extends FObj {
 				// initialize id
 				String id = this.properties.get("id").getString();
 				blockArea.getIDReferences().initializeID(id, blockArea);
-				blockArea.addCharacter(fontstate,red,green,blue,wrapOption,this.getLinkSet(),
-															 whiteSpaceCollapse,characterValue,textDecoration);
-				return new Status(Status.OK);
 
+        LineArea la = blockArea.getCurrentLineArea();
+        la.changeFont(fontstate);
+        la.changeColor(red, green, blue);
+        la.changeWrapOption(wrapOption);
+        la.changeWhiteSpaceCollapse(whiteSpaceCollapse);
+        blockArea.setupLinkSet(this.getLinkSet());
+        int result = la.addCharacter(characterValue, this.getLinkSet(), textDecoration);
+        if (result == Character.DOESNOT_FIT) {
+            la = blockArea.createNextLineArea();
+            if(la == null) {
+                return new Status(Status.AREA_FULL_NONE);
+            }
+            la.changeFont(fontstate);
+            la.changeColor(red, green, blue);
+            la.changeWrapOption(wrapOption);
+            la.changeWhiteSpaceCollapse(whiteSpaceCollapse);
+            blockArea.setupLinkSet(this.getLinkSet());
+            la.addCharacter(characterValue, this.getLinkSet(), textDecoration);
+        }
+				return new Status(Status.OK);
 
 		}
 

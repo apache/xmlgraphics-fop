@@ -62,6 +62,16 @@ import java.util.Vector;
 import java.util.Enumeration;
 import org.apache.fop.messaging.MessageHandler;
 
+/**
+ * This class represents a Block Area.
+ * A block area is made up of a sequence of Line Areas.
+ *
+ * This class is used to organise the sequence of line areas as
+ * inline areas are added to this block it creates and ands line areas
+ * to hold the inline areas.
+ * This uses the line-height and line-stacking-strategy to work
+ * out how to stack the lines.
+ */
 public class BlockArea extends Area {
 
 		/* relative to area container */
@@ -139,31 +149,6 @@ public class BlockArea extends Area {
 						}
 						pendingFootnotes = null;
 				}
-		}
-
-		public int addPageNumberCitation(FontState fontState, float red,
-																		 float green, float blue, int wrapOption, LinkSet ls,
-																		 int whiteSpaceCollapse, String refid) {
-
-				this.currentLineArea.changeFont(fontState);
-				this.currentLineArea.changeColor(red, green, blue);
-				this.currentLineArea.changeWrapOption(wrapOption);
-				this.currentLineArea.changeWhiteSpaceCollapse(whiteSpaceCollapse);
-				this.currentLineArea.changeHyphenation(language, country, hyphenate,
-																 hyphenationChar, hyphenationPushCharacterCount,
-																 hyphenationRemainCharacterCount);
-
-
-				if (ls != null) {
-						this.currentLinkSet = ls;
-						ls.setYOffset(currentHeight);
-				}
-
-				this.currentLineArea.addPageNumberCitation(refid, ls);
-				this.hasLines = true;
-
-				return -1;
-
 		}
 
 		// font-variant support : addText is a wrapper for addRealText
@@ -359,45 +344,36 @@ public class BlockArea extends Area {
 				return 1;
 		}
 
-		public void addCharacter(FontState fontState, float red, float green,
-											 float blue, int wrapOption, LinkSet ls,
-											 int whiteSpaceCollapse, char data, boolean ul) {
+    public LineArea getCurrentLineArea()
+    {
+        return this.currentLineArea;
+    }
 
-				this.currentLineArea.changeFont(fontState);
-				this.currentLineArea.changeColor(red, green, blue);
-				this.currentLineArea.changeWrapOption(wrapOption);
-				this.currentLineArea.changeWhiteSpaceCollapse(whiteSpaceCollapse);
-
-				if (ls != null) {
-						this.currentLinkSet = ls;
-						ls.setYOffset(currentHeight);
-				}
-
-				int marker = this.currentLineArea.addCharacter(data, ls, ul);
-				//if character didn't fit into line, open a new one
-				if (marker == org.apache.fop.fo.flow.Character.DOESNOT_FIT) {
+    public LineArea createNextLineArea()
+    {
+				if (this.hasLines) {
+						this.currentLineArea.addPending();
 						this.currentLineArea.align(this.align);
+//						this.currentLineArea.verticalAlign();
 						this.addLineArea(this.currentLineArea);
-
+				}
 						this.currentLineArea =
 							new LineArea(fontState, lineHeight, halfLeading,
 													 allocationWidth, startIndent, endIndent,
 													 currentLineArea);
-						this.currentLineArea.changeFont(fontState);
-						this.currentLineArea.changeColor(red, green, blue);
-						this.currentLineArea.changeWrapOption(wrapOption);
-						this.currentLineArea.changeWhiteSpaceCollapse(
-							whiteSpaceCollapse);
+				if (currentHeight + lineHeight > maxHeight) {
+						return null;
+				}
+        return this.currentLineArea;
+    }
+
+    public void setupLinkSet(LinkSet ls)
+    {
 						if (ls != null) {
 								this.currentLinkSet = ls;
 								ls.setYOffset(currentHeight);
 						}
-
-						this.currentLineArea.addCharacter(data, ls, ul);
-				}
-				this.hasLines = true;
-		}
-
+    }
 
 		public void end() {
 				if (this.hasLines) {
