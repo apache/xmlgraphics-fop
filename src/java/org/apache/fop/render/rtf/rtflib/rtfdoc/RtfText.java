@@ -34,18 +34,18 @@ import java.io.Writer;
  */
 
 public class RtfText extends RtfElement {
-        // char code for non-breakable space
-        private static final int CHAR_NBSP = 160;
-        private static final int CHAR_TAB = 137;
-        private static final int CHAR_NEW_LINE = 141;
-        /* these next two variables are used to encode bold formating in the
-         * raw xml text. Usefull when specific words or phrases are to be bolded
-         * but their placement and length change.  Thus the bold formatting becomes
-         * part of the data.  The same method can be used for implementing other types
-         * of raw text formatting.
-         */
-        private static final int CHAR_BOLD_START = 130;
-        private static final int CHAR_BOLD_END = 131;
+    // char code for non-breakable space
+    private static final int CHAR_NBSP = 160;
+    private static final int CHAR_TAB = 137;
+    private static final int CHAR_NEW_LINE = 141;
+    /* these next two variables are used to encode bold formating in the
+     * raw xml text. Usefull when specific words or phrases are to be bolded
+     * but their placement and length change.  Thus the bold formatting becomes
+     * part of the data.  The same method can be used for implementing other types
+     * of raw text formatting.
+     */
+    private static final int CHAR_BOLD_START = 130;
+    private static final int CHAR_BOLD_END = 131;
 
     /** members */
     private String text;
@@ -189,40 +189,39 @@ public class RtfText extends RtfElement {
      * @throws IOException for I/O problems
      */
     public void writeRtfContent() throws IOException {
-            writeChars: {
+        writeChars: {
 
-                //these lines were added by Boris Pouderous
-                  if (attr != null) {
-                  writeAttributes(attr, new String[] {RtfText.SPACE_BEFORE});
-                  writeAttributes(attr, new String[] {RtfText.SPACE_AFTER});
+            //these lines were added by Boris Pouderous
+            if (attr != null) {
+                writeAttributes(attr, new String[] {RtfText.SPACE_BEFORE});
+                writeAttributes(attr, new String[] {RtfText.SPACE_AFTER});
+            }
+
+            if (isTab()) {
+                writeControlWord("tab");
+            } else if (isNewLine()) {
+                break writeChars;
+            } else if (isBold(true)) {
+                writeControlWord("b");
+            } else if (isBold(false)) {
+                writeControlWord("b0");
+            // TODO not optimal, consecutive RtfText with same attributes
+            // could be written without group marks
+            } else {
+                writeGroupMark(true);
+                if (attr != null && mustWriteAttributes()) {
+                    writeAttributes(attr, RtfText.ATTR_NAMES);
                 }
-
-                if (isTab()) {
-                    writeControlWord("tab");
-                } else if (isNewLine()) {
-                    break writeChars;
-                } else if (isBold(true)) {
-                    writeControlWord("b");
-                } else if (isBold(false)) {
-                    writeControlWord("b0");
-                // TODO not optimal, consecutive RtfText with same attributes
-                // could be written without group marks
-                } else {
-                    writeGroupMark(true);
-                    if (attr != null && mustWriteAttributes()) {
-                        writeAttributes(attr, RtfText.ATTR_NAMES);
-                    }
-                    RtfStringConverter.getInstance().writeRtfString(writer, text);
-                    writeGroupMark(false);
-                }
-
-          }
+                RtfStringConverter.getInstance().writeRtfString(writer, text);
+                writeGroupMark(false);
+            }
+        }
     }
 
-        /** true if our text attributes must be written */
-        private boolean mustWriteAttributes() {
-            return !isEmpty() && !isNbsp();
-        }
+    /** true if our text attributes must be written */
+    private boolean mustWriteAttributes() {
+        return !isEmpty() && !isNbsp();
+    }
 
     /** IRtfTextContainer requirement:
      * @return a copy of our attributes */
