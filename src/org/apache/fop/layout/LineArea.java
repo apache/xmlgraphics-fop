@@ -1214,7 +1214,7 @@ public class LineArea extends Area {
             return wordStart;
         } else if (hyph == null && preString != null) {
             // no hyphenation points, but a inword non-letter character
-            remainingString.append(preString);
+            remainingString.append(preString.toString());
             this.addWord(remainingString, startw, ls, textState);
             return wordStart + remainingString.length();
         } else if (hyph != null && preString == null) {
@@ -1230,12 +1230,12 @@ public class LineArea extends Area {
             // hyphenation points and a inword non letter character
             int index = getFinalHyphenationPoint(hyph, remainingWidth);
             if (index != -1) {
-                remainingString.append(preString.append(hyph.getPreHyphenText(index)));
+                remainingString.append(preString.append(hyph.getPreHyphenText(index)).toString());
                 remainingString.append(this.hyphProps.hyphenationChar);
                 this.addWord(remainingString, startw, ls, textState);
                 return wordStart + remainingString.length() - 1;
             } else {
-                remainingString.append(preString);
+                remainingString.append(preString.toString());
                 this.addWord(remainingString, startw, ls, textState);
                 return wordStart + remainingString.length();
             }
