@@ -128,11 +128,11 @@ public class FopImageFactory {
       imgClassName = "org.apache.fop.image.GifJpegImage";
     } else if ("image/jpeg".equals(imgMimeType)) {
       imgClassName = "org.apache.fop.image.GifJpegImage";
+    } else if ("image/bmp".equals(imgMimeType)) {
+      imgClassName = "org.apache.fop.image.BmpImage";
     } else if ("image/png".equals(imgMimeType)) {
       imgClassName = "org.apache.fop.image.JimiImage";
     } else if ("image/tga".equals(imgMimeType)) {
-      imgClassName = "org.apache.fop.image.JimiImage";
-    } else if ("image/bmp".equals(imgMimeType)) {
       imgClassName = "org.apache.fop.image.JimiImage";
     } else if ("image/tiff".equals(imgMimeType)) {
       imgClassName = "org.apache.fop.image.JimiImage";
