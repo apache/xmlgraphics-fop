@@ -6,10 +6,11 @@
  */
 
 package org.apache.fop.fo.expr;
+
+public class PropertyNotImplementedException extends PropertyException {
     private static final String tag = "$Name$";
     private static final String revision = "$Revision$";
 
-public class PropertyNotImplementedException extends PropertyException {
     public PropertyNotImplementedException(String detail) {
         super(detail);
     }
