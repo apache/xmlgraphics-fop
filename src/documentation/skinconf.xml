@@ -66,7 +66,7 @@ which will be used to configure the chosen Forrest skin.
   <!-- mandatory project logo
        default skin: renders it at the top -->
   <project-name>FOP</project-name>
-  <project-description>FOP (Formatting Objects Processor) is the world&apos;s first print formatter driven by XSL formatting  objects (XSL-FO) and the world&apos;s first output independent formatter. It is a  Java application that reads a formatting object (FO) tree and  renders the resulting pages to a specified output. Output formats  currently supported include PDF, PCL, PS, SVG, XML (area tree representation),  Print, AWT, MIF and TXT.  The primary output target is PDF.</project-description>
+  <project-description>FOP (Formatting Objects Processor) is the world&apos;s first output independent formatter. Output formats  currently supported include PDF, PCL, PS, SVG, XML (area tree representation), Print, AWT, MIF and TXT.  The primary output target is PDF.</project-description>
   <project-url>http://xml.apache.org/fop/</project-url>
   <project-logo>images/logo.jpg</project-logo>
   <!-- Alternative static image:
@@ -104,10 +104,10 @@ which will be used to configure the chosen Forrest skin.
 	  Use location="none" to not display the trail (if the skin supports it).
     For some skins just set the attributes to blank.
   -->
-  <trail>
+  <trail location="alt">
     <link1 name="apache" href="http://www.apache.org/"/>
-    <link2 name="xmlgraphics.apache" href="http://xmlgraphics.apache.org/"/>
-    <link3 name="" href=""/>
+    <link2 name="xml.apache" href="http://xml.apache.org/"/>
+    <link3 name="xmlgraphics.apache" href="http://xmlgraphics.apache.org/"/>
   </trail>
 
   <!-- Configure the TOC, i.e. the Table of Contents.
@@ -150,13 +150,19 @@ which will be used to configure the chosen Forrest skin.
       background-color: #f0f0f0;
       font-family: monospace;
     }
+    .yes         { background-color: #99FF99; }
+    .no          { background-color: #FF9999; }
+    .partial     { background-color: #FFFFCC; }
+    .category    { /*background-color: #CFDCED;*/
+                   font-size: 1.2em }
+
   </extra-css>
 
   <colors>
   <!-- These values are used for the generated CSS files. -->
 
   <!-- Krysalis -->
-<!--
+
     <color name="header"    value="#FFFFFF"/>
 
     <color name="tab-selected" value="#a5b6c6" link="#000000" vlink="#000000" hlink="#000000"/>
@@ -166,7 +172,7 @@ which will be used to configure the chosen Forrest skin.
 
     <color name="heading" value="#a5b6c6"/>
     <color name="subheading" value="#CFDCED"/>
-        
+    <color name='searchbox' value="#FFFFFF" font="#000000"/>        
     <color name="navstrip" value="#CFDCED" font="#000000" link="#000000" vlink="#000000" hlink="#000000"/>
     <color name="toolbox" value="#a5b6c6"/>
     <color name="border" value="#a5b6c6"/>
@@ -185,7 +191,7 @@ which will be used to configure the chosen Forrest skin.
     <color name="code" value="#a5b6c6"/>
         
     <color name="footer" value="#a5b6c6"/>
--->
+
   
   <!-- Forrest -->
 <!--
