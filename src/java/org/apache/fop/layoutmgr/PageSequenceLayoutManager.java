@@ -150,7 +150,6 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager implements 
      * @param generator the page number generator
      */
     private void setPageCounting(int pc, PageNumberGenerator generator) {
-        pageSequence.initPageNumber();
         pageCount = pc;
         pageNumberGenerator = generator;
         pageNumberString = pageNumberGenerator.makeFormattedPageNumber(pageCount);
@@ -166,6 +165,7 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager implements 
      * rendering process can also run in a parallel thread.
      */
     public void run() {
+        pageSequence.initPageNumber();
         setPageCounting(pageSequence.getCurrentPageNumber(),
             pageSequence.getPageNumberGenerator());
 
