@@ -160,6 +160,7 @@ Sometimes ant gives out this warnings, but the build is finished without any pro
     <property name="Name" value="Fop"/>
     <property name="name" value="fop"/>
     <property name="version" value="0.18.0-DEV"/>
+    <filter  token="version" value="${version}"/>
     <property name="year" value="1999-2001"/>
 
     <echo message="------------------- ${Name} ${version} [${year}] ----------------"/>
@@ -323,7 +324,7 @@ Sometimes ant gives out this warnings, but the build is finished without any pro
     <mkdir dir="${build.src}/${fonts.dir}"/>
     <mkdir dir="${build.dest}/conf"/>
     <mkdir dir="${build.dest}/hyph"/>
-    <copy todir="${build.dest}/conf">
+    <copy todir="${build.dest}/conf" filtering="yes">
        <fileset dir="./conf"/>
     </copy>
   </target>
