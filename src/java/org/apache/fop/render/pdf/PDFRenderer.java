@@ -49,7 +49,6 @@ import org.apache.fop.area.Trait;
 import org.apache.fop.area.OffDocumentItem;
 import org.apache.fop.area.BookmarkData;
 import org.apache.fop.area.inline.Character;
-import org.apache.fop.area.inline.InlineArea;
 import org.apache.fop.area.inline.TextArea;
 import org.apache.fop.area.inline.Viewport;
 import org.apache.fop.area.inline.ForeignObject;
@@ -197,7 +196,7 @@ public class PDFRenderer extends PrintRenderer {
     /**
      * reusable word area string buffer to reduce memory usage
      */
-    private StringBuffer wordAreaPDF = new StringBuffer();
+    //private StringBuffer wordAreaPDF = new StringBuffer();
 
     /**
      * create the PDF renderer
@@ -274,7 +273,6 @@ public class PDFRenderer extends PrintRenderer {
         currentPage = null;
         currentState = null;
         currentFontName = "";
-        wordAreaPDF = new StringBuffer();
     }
 
     /**
@@ -677,22 +675,21 @@ public class PDFRenderer extends PrintRenderer {
         CTM ctm = bv.getCTM();
         int borderPaddingStart = bv.getBorderAndPaddingWidthStart();
         int borderPaddingBefore = bv.getBorderAndPaddingWidthBefore();
-        float x,y;
+        float x, y;
         x = (float)(bv.getXOffset() + containingIPPosition) / 1000f;
         y = (float)(bv.getYOffset() + containingBPPosition) / 1000f;
 
         if (bv.getPositioning() == Block.ABSOLUTE
                 || bv.getPositioning() == Block.FIXED) {
 
-            getLogger().debug("containing position ip=" + containingIPPosition + " bp=" + containingBPPosition);
+            //TODO Handle positioning=FIXED
+            
             CTM tempctm = new CTM(containingIPPosition, containingBPPosition);
             ctm = tempctm.multiply(ctm);
-            getLogger().debug("tempctm=" + tempctm + " ctm=" + ctm);
 
             //This is the content-rect
             float width = (float)bv.getIPD() / 1000f;
             float height = (float)bv.getBPD() / 1000f;
-            getLogger().debug("renderBlockViewport: x=" + x + " y=" + y + " width=" + width + " height=" + height);
             
             //Adjust for spaces (from margin or indirectly by start-indent etc.
             Integer spaceStart = (Integer) bv.getTrait(Trait.SPACE_START);
@@ -746,21 +743,6 @@ public class PDFRenderer extends PrintRenderer {
 
             CTM tempctm = new CTM(containingIPPosition, currentBPPosition + containingBPPosition);
             ctm = tempctm.multiply(ctm);
-            /*
-            if (ctm != null) {
-                double[] vals = ctm.toArray();
-                //boolean aclock = vals[2] == 1.0;
-                if (vals[2] == 1.0) {
-                    ctm = ctm.translate(-saveBP - bv.getBPD(), -saveIP);
-                } else if (vals[0] == -1.0) {
-                    ctm = ctm.translate(-saveIP - bv.getIPD(), -saveBP - bv.getBPD());
-                } else {
-                    //ctm = ctm.translate(saveBP, saveIP - bv.getIPD());
-                    //ctm = ctm.translate(saveIP, saveBP);
-                }
-            }
-            ctm = new CTM().translate(saveIP, saveBP).multiply(ctm);
-            */
             
             //Now adjust for border/padding
             x += borderPaddingStart / 1000f;
@@ -790,6 +772,8 @@ public class PDFRenderer extends PrintRenderer {
 
             currentIPPosition = saveIP;
             currentBPPosition = saveBP;
+            
+            //Adjust BP position (alloc BPD + spaces)
             if (spaceBefore != null) {
                 currentBPPosition += spaceBefore.intValue();
             }
