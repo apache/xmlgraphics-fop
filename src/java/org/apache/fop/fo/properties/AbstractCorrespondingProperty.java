@@ -14,25 +14,35 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Created on 20/04/2004
+ * Created on 21/04/2004
  * $Id$
  */
 package org.apache.fop.fo.properties;
 
+import org.apache.fop.datatypes.EnumType;
+import org.apache.fop.datatypes.PropertyValue;
 import org.apache.fop.fo.FONode;
+import org.apache.fop.fo.PropNames;
 import org.apache.fop.fo.expr.PropertyException;
 
 /**
- * Interface implemented by those <code>Property</code> classes which have
- * corresponding <b><i>relative</i></b> properties; <i>i.e.</i> which are
- * themselves corresponding <i>absolute</i> properties.
- * 
  * @author pbw
  * @version $Revision$ $Name$
  */
-public interface AbsoluteCorrespondingProperty
-extends CorrespondingProperty {
-    public int getCorrespondingRelativeProperty(FONode foNode)
+public abstract class AbstractCorrespondingProperty extends Property
+        implements
+            CorrespondingProperty {
+    /* (non-Javadoc)
+     * @see org.apache.fop.fo.properties.CorrespondingProperty#getWritingMode(org.apache.fop.fo.FONode)
+     */
+    public int getWritingMode(FONode foNode)
+    throws PropertyException {
+        PropertyValue wm = foNode.getPropertyValue(PropNames.WRITING_MODE);
+        return EnumType.getEnumValue(wm);
+    }
+    /* (non-Javadoc)
+     * @see org.apache.fop.fo.properties.CorrespondingProperty#getCorrespondingProperty(org.apache.fop.fo.FONode)
+     */
+    public abstract int getCorrespondingProperty(FONode foNode)
     throws PropertyException;
-    public boolean overridesCorresponding(FONode foNode);
 }
