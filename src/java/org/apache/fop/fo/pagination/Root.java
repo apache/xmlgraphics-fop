@@ -104,7 +104,7 @@ public class Root extends FObj {
                 } else if (declarations != null) {
                     tooManyNodesError(loc, "fo:declarations");
                 } else if (bookmarks != null) {
-                    nodesOutOfOrderError(loc, "fo:declarations", "fox:bookmarks");
+                    nodesOutOfOrderError(loc, "fo:declarations", "fox:outline");
                 } else if (pageSequenceFound) {
                     nodesOutOfOrderError(loc, "fo:declarations", "fo:page-sequence");
                 }
@@ -118,14 +118,14 @@ public class Root extends FObj {
                 invalidChildError(loc, nsURI, localName);
             }
         } else if (nsURI.equals(ExtensionElementMapping.URI)) {
-            if (!localName.equals("bookmarks")) {
+            if (!localName.equals("outline")) {
                 invalidChildError(loc, nsURI, localName);
             } else if (layoutMasterSet == null) {
-                nodesOutOfOrderError(loc, "fo:layout-master-set", "fox:bookmarks");
+                nodesOutOfOrderError(loc, "fo:layout-master-set", "fox:outline");
             } else if (bookmarks != null) {
-                tooManyNodesError(loc, "fox:bookmarks");
+                tooManyNodesError(loc, "fox:outline");
             } else if (pageSequenceFound) {
-                nodesOutOfOrderError(loc, "fox:bookmarks", "fo:page-sequence");
+                nodesOutOfOrderError(loc, "fox:outline", "fo:page-sequence");
             }
         } else {
             invalidChildError(loc, nsURI, localName);
