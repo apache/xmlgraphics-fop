@@ -76,6 +76,12 @@ public class FopImageFactory {
         } catch (Exception e) {
             // maybe relative
             URL context_url = null;
+            String base = Configuration.getStringValue("baseDir");
+            if(base == null) {
+                throw new FopImageException("Error with image URL: "
+                                             + e.getMessage()
+                                             + " and no base directory is specified");
+            }
             try {
                 absoluteURL = new URL(Configuration.getStringValue("baseDir")
                                       + absoluteURL.getFile());
