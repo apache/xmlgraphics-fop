@@ -1,5 +1,5 @@
 <?xml version="1.0" standalone="no"?>
-<!DOCTYPE s1 SYSTEM "sbk:/style/dtd/document.dtd">
+
 <!-- by Arved Sandstrom -->
 
 <s1 title="FOP Mechanics">
@@ -33,15 +33,15 @@ constructing the FO tree. The key SAX events used are </p>
 <em>org.apache.fop.fo.FONode</em>. The other FO classes inherit from 
 <em>FONode</em> as follows:</p>
 
-<p><code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;FONode</code></p>
-<p><code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|</code></p>
-<p><code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;__________|________</code></p>
-<p><code>&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|</code></p>
-<p><code>&nbsp;&nbsp;&nbsp;FObj&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;FOText</code></p>
-<p><code>&nbsp;&nbsp;&nbsp;&nbsp;|</code></p>
-<p><code>&nbsp;&nbsp;&nbsp;&nbsp;|___________________</code></p>
-<p><code>&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|</code></p>
-<p><code>&nbsp;&nbsp;FObjMixed&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;SequenceSpecifier
+<p><code>&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;FONode</code></p>
+<p><code>&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;|</code></p>
+<p><code>&#160;&#160;&#160;&#160;&#160;__________|________</code></p>
+<p><code>&#160;&#160;&#160;&#160;|&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;|</code></p>
+<p><code>&#160;&#160;&#160;FObj&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;FOText</code></p>
+<p><code>&#160;&#160;&#160;&#160;|</code></p>
+<p><code>&#160;&#160;&#160;&#160;|___________________</code></p>
+<p><code>&#160;&#160;&#160;&#160;|&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;|</code></p>
+<p><code>&#160;&#160;FObjMixed&#160;&#160;&#160;&#160;&#160;&#160;SequenceSpecifier
 </code></p>
 
 <p>FO's extending FObj:</p>
@@ -123,11 +123,11 @@ Every FO class has code that looks something like this:
 </p>
 
 <p><code>public static class Maker extends FObj.Maker {</code></p>
-<p><code>&nbsp;&nbsp;  public FObj make(FObj parent, PropertyList propertyList)</code></p>
-<p><code>&nbsp;&nbsp;&nbsp;&nbsp;    throws FOPException</code></p>
-<p><code>&nbsp;&nbsp;  {</code></p>
-<p><code>&nbsp;&nbsp;&nbsp;&nbsp;    return new SimplePageMaster(parent, propertyList);</code></p>
-<p><code>&nbsp;&nbsp;  }</code></p>
+<p><code>&#160;&#160;  public FObj make(FObj parent, PropertyList propertyList)</code></p>
+<p><code>&#160;&#160;&#160;&#160;    throws FOPException</code></p>
+<p><code>&#160;&#160;  {</code></p>
+<p><code>&#160;&#160;&#160;&#160;    return new SimplePageMaster(parent, propertyList);</code></p>
+<p><code>&#160;&#160;  }</code></p>
 <p><code>}</code></p>
 
 
@@ -136,9 +136,9 @@ The class also has a static method that resembles
 </p>
 
 <p><code>public static FObj.Maker maker()</code></p>
-<p><code>&nbsp;&nbsp; {</code></p>
-<p><code>&nbsp;&nbsp;&nbsp;&nbsp;     return new PageSequence.Maker();</code></p>
-<p><code>&nbsp;&nbsp;   }</code></p>
+<p><code>&#160;&#160; {</code></p>
+<p><code>&#160;&#160;&#160;&#160;     return new PageSequence.Maker();</code></p>
+<p><code>&#160;&#160;   }</code></p>
 
 <p>
 A hash 'fobjTable' exists in <em>FOTreeBuilder</em>, and maps the FO names (such as
