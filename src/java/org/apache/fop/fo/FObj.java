@@ -173,20 +173,43 @@ public class FObj extends FONode {
     }
 
     /**
-     * Find nearest ancestor, including self, which generates
-     * reference areas.
-     * If no such ancestor is found, use the value on the root FO.
+     * Find nearest ancestor which generates Reference Areas.
      *
+     * @param includeSelf Set to true to consider the current FObj as an
+     * "ancestor". Set to false to only return a true ancestor.
+     * @param returnRoot Supposing a condition where no appropriate ancestor
+     * FObj is found, setting returnRoot to true will return the FObj with no
+     * parent (presumably the root FO). Otherwise, null will be returned.
+     * Note that this will override a false setting for includeSelf, and return
+     * the current node if it is the root FO. Setting returnRoot to true should
+     * always return a valid FObj.
      * @return FObj of the nearest ancestor that generates Reference Areas
+     * and fits the parameters.
      */
-    private FObj findNearestAncestorGeneratingRAs() {
+    private FObj findNearestAncestorGeneratingRAs(boolean includeSelf,
+                                                  boolean returnRoot) {
         FObj p = this;
-        FObj parent = p.findNearestAncestorFObj();
-        while (parent != null && !p.generatesReferenceAreas()) {
-            p = (FObj) parent;
-            parent = p.findNearestAncestorFObj();
+        if (includeSelf && p.generatesReferenceAreas()) {
+            return p;
         }
-        return p;
+        FObj parent = p.findNearestAncestorFObj();
+        if (parent == null && returnRoot) {
+            return p;
+        }
+        do {
+            p = parent;
+            parent = p.findNearestAncestorFObj();
+        } while (parent != null && !p.generatesReferenceAreas());
+        if (p.generatesReferenceAreas()) {
+            return p;
+        }
+        // if we got here, it is because parent is null
+        if (returnRoot) {
+            return p;
+        }
+        else {
+            return null;
+        }
     }
 
     public PropertyList getPropertiesForNamespace(String nameSpaceURI) {
@@ -304,7 +327,7 @@ public class FObj extends FONode {
      * reference areas, or from root FO if no ancestor found.
      */
     protected void setWritingMode() {
-        FObj p = findNearestAncestorGeneratingRAs();
+        FObj p = findNearestAncestorGeneratingRAs(true, true);
         this.properties.setWritingMode(
           p.getProperty("writing-mode").getEnum());
     }
