@@ -17,32 +17,32 @@ package org.apache.fop.layoutmgr;
  */
 public class HyphContext {
     private int[] m_hyphPoints;
-    private int m_iCurOffset=0;
-    private int m_iCurIndex=0;
+    private int m_iCurOffset = 0;
+    private int m_iCurIndex = 0;
 
     public HyphContext(int[] hyphPoints) {
-	m_hyphPoints = hyphPoints;
+        m_hyphPoints = hyphPoints;
     }
 
     public int getNextHyphPoint() {
-	for (; m_iCurIndex < m_hyphPoints.length; m_iCurIndex++) {
-	    if (m_hyphPoints[m_iCurIndex] > m_iCurOffset) {
-		return (m_hyphPoints[m_iCurIndex] - m_iCurOffset);
-	    }
-	}
-	return -1; // AT END!
+        for (; m_iCurIndex < m_hyphPoints.length; m_iCurIndex++) {
+            if (m_hyphPoints[m_iCurIndex] > m_iCurOffset) {
+                return (m_hyphPoints[m_iCurIndex] - m_iCurOffset);
+            }
+        }
+        return -1; // AT END!
     }
 
     public boolean hasMoreHyphPoints() {
-	for (; m_iCurIndex < m_hyphPoints.length; m_iCurIndex++) {
-	    if (m_hyphPoints[m_iCurIndex] > m_iCurOffset) {
-		return true;
-	    }
-	}
-	return false;
+        for (; m_iCurIndex < m_hyphPoints.length; m_iCurIndex++) {
+            if (m_hyphPoints[m_iCurIndex] > m_iCurOffset) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public void updateOffset(int iCharsProcessed) {
-	m_iCurOffset += iCharsProcessed;
+        m_iCurOffset += iCharsProcessed;
     }
 }

@@ -31,7 +31,7 @@ public class LeafNodeLayoutManager extends AbstractBPLayoutManager {
     }
 
     public InlineArea get(int index) {
-        if(index > 0)
+        if (index > 0)
             return null;
         return curArea;
     }
@@ -59,7 +59,9 @@ public class LeafNodeLayoutManager extends AbstractBPLayoutManager {
     /**
      * This is a leaf-node, so this method is never called.
      */
-    public boolean addChild(Area childArea) {return false;}
+    public boolean addChild(Area childArea) {
+        return false;
+    }
 
 
     /**
@@ -70,13 +72,16 @@ public class LeafNodeLayoutManager extends AbstractBPLayoutManager {
     }
 
     public BreakPoss getNextBreakPoss(LayoutContext context,
-              Position prevBreakPoss) {
+                                      Position prevBreakPoss) {
         curArea = get(0);
-        if(curArea == null) {
+        if (curArea == null) {
             setFinished(true);
             return null;
         }
-        BreakPoss bp = new BreakPoss(new LeafPosition(this, 0), BreakPoss.CAN_BREAK_AFTER | BreakPoss.CAN_BREAK_BEFORE | BreakPoss.ISFIRST | BreakPoss.ISLAST | BreakPoss.REST_ARE_SUPPRESS_AT_LB);
+        BreakPoss bp = new BreakPoss(new LeafPosition(this, 0),
+                                     BreakPoss.CAN_BREAK_AFTER |
+                                     BreakPoss.CAN_BREAK_BEFORE | BreakPoss.ISFIRST |
+                                     BreakPoss.ISLAST | BreakPoss.REST_ARE_SUPPRESS_AT_LB);
         bp.setStackingSize(curArea.getAllocationIPD());
         setFinished(true);
         return bp;
@@ -84,7 +89,7 @@ public class LeafNodeLayoutManager extends AbstractBPLayoutManager {
 
     public void addAreas(PositionIterator posIter, LayoutContext context) {
         parentLM.addChild(curArea);
-        while(posIter.hasNext()) {
+        while (posIter.hasNext()) {
             posIter.next();
         }
     }

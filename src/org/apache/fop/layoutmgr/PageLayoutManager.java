@@ -12,11 +12,23 @@ import org.apache.fop.area.*;
 import org.apache.fop.fo.pagination.PageSequence;
 import org.apache.fop.fo.properties.Constants;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * LayoutManager for a PageSequence and its flow.
  * It manages all page-related layout.
  */
-public class PageLayoutManager extends AbstractLayoutManager implements Runnable {
+public class PageLayoutManager extends AbstractBPLayoutManager implements Runnable {
+
+    private static class BlockBreakPosition extends LeafPosition {
+        List blockps;
+
+        BlockBreakPosition(BPLayoutManager lm, int iBreakIndex, List bps) {
+            super(lm, iBreakIndex);
+            blockps = bps;
+        }
+    }
 
     /** True if haven't yet laid out any pages.*/
     private boolean bFirstPage;
@@ -64,10 +76,72 @@ public class PageLayoutManager extends AbstractLayoutManager implements Runnable
      * rendering process can also run in a parallel thread.
      */
     public void run() {
-        generateAreas();
+        //generateAreas();
+        doLayout();
         flush();
     }
 
+    public void doLayout() {
+
+        //ArrayList vecBreakPoss = new ArrayList();
+
+        BreakPoss bp;
+        LayoutContext childLC = new LayoutContext(0);
+        while (!isFinished()) {
+        ArrayList vecBreakPoss = new ArrayList();
+            makeNewPage(false, false);
+            if ((bp = getNextBreakPoss(childLC, null)) != null) {
+                vecBreakPoss.add(bp);
+                addAreas( new BreakPossPosIter(vecBreakPoss, 0,
+                                       vecBreakPoss.size()), null);
+            }
+        }
+
+        //addAreas( new BreakPossPosIter(vecBreakPoss, 0,
+        //                               vecBreakPoss.size()), null);
+
+    }
+
+
+    public BreakPoss getNextBreakPoss(LayoutContext context,
+                                      Position prevLineBP) {
+
+        BPLayoutManager curLM ; // currently active LM
+
+        while ((curLM = getChildLM()) != null) {
+            // Make break positions and return lines!
+            // Set up a LayoutContext
+            int bpd = 0;
+            BreakPoss bp;
+            ArrayList vecBreakPoss = new ArrayList();
+
+            // Force area creation on first call
+            // NOTE: normally not necessary when fully integrated!
+            LayoutContext childLC = new LayoutContext(0);
+            childLC.setStackLimit(new MinOptMax(bpd));
+
+            if (!curLM.isFinished()) {
+                if ((bp = curLM.getNextBreakPoss(childLC, null)) != null) {
+                    vecBreakPoss.add(bp);
+                }
+            }
+System.out.println("BREAKS: " + vecBreakPoss.size());
+            return new BreakPoss(
+                     new BlockBreakPosition(curLM, 0, vecBreakPoss));
+        }
+        setFinished(true);
+        return null;
+    }
+
+    public void addAreas(PositionIterator parentIter, LayoutContext lc) {
+
+        while (parentIter.hasNext()) {
+            BlockBreakPosition bbp = (BlockBreakPosition) parentIter.next();
+System.out.println("ADD BREAKS: " + bbp.blockps.size());
+            bbp.getLM().addAreas( new BreakPossPosIter(bbp.blockps, 0,
+                                  bbp.blockps.size()), null);
+        }
+    }
 
     /**
      * For now, only handle normal flow areas.
@@ -102,9 +176,10 @@ public class PageLayoutManager extends AbstractLayoutManager implements Runnable
         // The Flow LM sets the "finished" flag on the Flow Area if it has
         // completely filled it. In this case, if on the last column
         // end the page.
-
+getParentArea(area);
         // Alternatively the child LM indicates to parent that it's full?
-System.out.println("size: " + area.getAllocationBPD().max + ":" + curSpan.getMaxBPD().min);
+        System.out.println("size: " + area.getAllocationBPD().max +
+                           ":" + curSpan.getMaxBPD().min);
         if (area.getAllocationBPD().max >= curSpan.getMaxBPD().min) {
             // Consider it filled
             if (curSpan.getColumnCount() == curSpanColumns) {
@@ -335,8 +410,8 @@ System.out.println("size: " + area.getAllocationBPD().max + ":" + curSpan.getMax
         // 	else newpos = new MinOptMax();
         curSpan = new Span(numCols);
         // get Width or Height as IPD for span
-        curSpan.setIPD((int) curPage.getPage(). getRegion(
-                    RegionReference.BODY).getViewArea().getWidth());
+        curSpan.setIPD( (int) curPage.getPage(). getRegion(
+                          RegionReference.BODY).getViewArea().getWidth());
 
         //curSpan.setPosition(BPD, newpos);
         curBody.getMainReference().addSpan(curSpan);

@@ -13,7 +13,7 @@ import org.apache.fop.area.MinOptMax;
 public class LayoutInfo {
     public int alignment;
     public int lead;
-    public boolean blOffset = false;    
+    public boolean blOffset = false;
     public boolean breakAfter = false;
 
     public boolean keepNext = false;

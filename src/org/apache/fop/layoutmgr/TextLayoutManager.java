@@ -46,8 +46,7 @@ public class TextLayoutManager extends LeafNodeLayoutManager {
     protected static final int WHITESPACE = 1;
     protected static final int TEXT = 2;
 
-    public TextLayoutManager(FObj fobj, char[] chars,
-                             TextInfo textInfo) {
+    public TextLayoutManager(FObj fobj, char[] chars, TextInfo textInfo) {
         super(fobj);
         this.chars = chars;
         this.textInfo = textInfo;
@@ -60,7 +59,7 @@ public class TextLayoutManager extends LeafNodeLayoutManager {
 
     public InlineArea get(int index) {
         parseChars();
-        return (InlineArea)words.get(index);
+        return (InlineArea) words.get(index);
     }
 
     /**
@@ -76,11 +75,11 @@ public class TextLayoutManager extends LeafNodeLayoutManager {
     }
 
     protected void parseChars() {
-        if(chars == null) {
+        if (chars == null) {
             return;
         }
 
-    int whitespaceWidth;
+        int whitespaceWidth;
         // With CID fonts, space isn't neccesary currentFontState.width(32)
         whitespaceWidth = CharUtilities.getCharWidth(' ', textInfo.fs);
 
@@ -90,7 +89,7 @@ public class TextLayoutManager extends LeafNodeLayoutManager {
         int spaceWidth = 0;
 
         int prev = NOTHING;
-    int i = 0;
+        int i = 0;
 
         /* iterate over each character */
         for (; i < chars.length; i++) {
@@ -167,8 +166,9 @@ public class TextLayoutManager extends LeafNodeLayoutManager {
                         // spaces. Split the word and add Space
                         // as necessary. All spaces inside the word
                         // Have a fixed width.
-                        words.add(createWord(new String(chars, wordStart + 1,
-                                                        wordLength), wordWidth));
+                        words.add( createWord(
+                                     new String(chars, wordStart + 1,
+                                                wordLength), wordWidth));
 
                         // reset word width
                         wordWidth = 0;
@@ -229,7 +229,9 @@ public class TextLayoutManager extends LeafNodeLayoutManager {
                 wordLength = chars.length - 1 - wordStart;
             }
 
-            words.add(createWord(new String(chars, wordStart + 1, wordLength), wordWidth));
+            words.add( createWord(
+                         new String(chars, wordStart + 1, wordLength),
+                         wordWidth));
         }
 
         chars = null;
@@ -238,7 +240,8 @@ public class TextLayoutManager extends LeafNodeLayoutManager {
     protected Word createWord(String str, int width) {
         Word curWordArea = new Word();
         curWordArea.setWidth(width);
-        curWordArea.setHeight(textInfo.fs.getAscender() - textInfo.fs.getDescender());
+        curWordArea.setHeight(textInfo.fs.getAscender() -
+                              textInfo.fs.getDescender());
         curWordArea.setOffset(textInfo.fs.getAscender());
         curWordArea.info = new LayoutInfo();
         curWordArea.info.lead = textInfo.fs.getAscender();

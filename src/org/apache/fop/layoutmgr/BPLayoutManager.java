@@ -35,7 +35,7 @@ public interface BPLayoutManager extends LayoutManager {
      * BreakPoss.
      */
     public BreakPoss getNextBreakPoss(LayoutContext context,
-				      Position prevBreakPosition);
+                                      Position prevBreakPosition);
 
     public BreakPoss getNextBreakPoss(LayoutContext context);
 
@@ -44,27 +44,27 @@ public interface BPLayoutManager extends LayoutManager {
      * Return a value indicating whether this LayoutManager has laid out
      * all its content (or generated BreakPossibilities for all content.)
      */
-    public boolean isFinished() ;
+    public boolean isFinished();
 
     /**
      * Set a flag indicating whether the LayoutManager has laid out all
      * its content. This is generally called by the LM itself, but can
      * be called by a parentLM when backtracking.
      */
-    public void setFinished(boolean isFinished) ;
+    public void setFinished(boolean isFinished);
 
     /**
      * Tell the layout manager to add all the child areas implied
      * by Position objects which will be returned by the
      * Iterator.
      */
-    public void addAreas(PositionIterator posIter, LayoutContext context) ;
+    public void addAreas(PositionIterator posIter, LayoutContext context);
 
-    public void init() ;
+    public void init();
 
     public void resetPosition(Position position);
 
-    public void getWordChars(StringBuffer sbChars,
-			     Position bp1, Position bp2);
+    public void getWordChars(StringBuffer sbChars, Position bp1,
+                             Position bp2);
 
 }

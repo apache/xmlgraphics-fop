@@ -37,17 +37,17 @@ public class TextBPLayoutManager extends AbstractBPLayoutManager {
      * Number of word-spaces?
      */
     private class AreaInfo {
-	short m_iStartIndex;
-	short m_iBreakIndex;
-	short m_iWScount;
-	MinOptMax m_ipdArea;
-	AreaInfo(short iStartIndex, short iBreakIndex, short iWScount,
-		 MinOptMax ipdArea) {
-	    m_iStartIndex = iStartIndex;
-	    m_iBreakIndex = iBreakIndex;
-	    m_iWScount = iWScount;
-	    m_ipdArea = ipdArea;
-	}
+        short m_iStartIndex;
+        short m_iBreakIndex;
+        short m_iWScount;
+        MinOptMax m_ipdArea;
+        AreaInfo(short iStartIndex, short iBreakIndex, short iWScount,
+                 MinOptMax ipdArea) {
+            m_iStartIndex = iStartIndex;
+            m_iBreakIndex = iBreakIndex;
+            m_iWScount = iWScount;
+            m_ipdArea = ipdArea;
+        }
     }
 
 
@@ -61,7 +61,7 @@ public class TextBPLayoutManager extends AbstractBPLayoutManager {
     private TextInfo textInfo;
 
     private static final char NEWLINE = '\n';
-    private static final char SPACE = '\u0020';   // Normal space
+    private static final char SPACE = '\u0020'; // Normal space
     private static final char NBSPACE = '\u00A0'; // Non-breaking space
     private static final char LINEBREAK = '\u2028';
     private static final char ZERO_WIDTH_SPACE = '\u200B';
@@ -83,25 +83,23 @@ public class TextBPLayoutManager extends AbstractBPLayoutManager {
     /** 1/2 of word-spacing value */
     private SpaceVal m_halfWS;
     /** Number of space characters after previous possible break position. */
-    private int  m_iNbSpacesPending;
+    private int m_iNbSpacesPending;
 
 
-    public TextBPLayoutManager(FObj fobj, char[] chars,
-                             TextInfo textInfo) {
+    public TextBPLayoutManager(FObj fobj, char[] chars, TextInfo textInfo) {
         super(fobj);
         this.chars = chars;
         this.textInfo = textInfo;
-	this.m_vecAreaInfo = new Vector(chars.length/5); // Guess
+        this.m_vecAreaInfo = new Vector(chars.length / 5); // Guess
 
         // With CID fonts, space isn't neccesary currentFontState.width(32)
         m_spaceIPD = CharUtilities.getCharWidth(' ', textInfo.fs);
-	// Use hyphenationChar property
+        // Use hyphenationChar property
         m_hyphIPD = CharUtilities.getCharWidth('-', textInfo.fs);
-	// Make half-space: <space> on either side of a word-space)
-	SpaceVal ws = textInfo.wordSpacing;
-	m_halfWS = new SpaceVal(MinOptMax.multiply(ws.space, 0.5),
-				ws.bConditional, ws.bForcing,
-				ws.iPrecedence);
+        // Make half-space: <space> on either side of a word-space)
+        SpaceVal ws = textInfo.wordSpacing;
+        m_halfWS = new SpaceVal(MinOptMax.multiply(ws.space, 0.5),
+                                ws.bConditional, ws.bForcing, ws.iPrecedence);
     }
 
 
@@ -113,7 +111,7 @@ public class TextBPLayoutManager extends AbstractBPLayoutManager {
      * used in Keiron's implemenation, but not here (yet at least).
      */
     public int size() {
-	return 0;
+        return 0;
     }
 
     public InlineArea get(int index) {
@@ -133,16 +131,17 @@ public class TextBPLayoutManager extends AbstractBPLayoutManager {
     }
 
 
-    public void getWordChars(StringBuffer sbChars,
-			     Position bp1, Position bp2) {
-	LeafPosition endPos = (LeafPosition)bp2;
-	AreaInfo ai =
-	    (AreaInfo) m_vecAreaInfo.elementAt(endPos.getLeafPos());
-	// Skip all leading spaces for hyphenation
-	int i;
-        for (i=ai.m_iStartIndex;i < ai.m_iBreakIndex && 
-		 CharUtilities.isAnySpace(chars[i])==true ;i++);
-	sbChars.append(new String(chars, i, ai.m_iBreakIndex-i));
+    public void getWordChars(StringBuffer sbChars, Position bp1,
+                             Position bp2) {
+        LeafPosition endPos = (LeafPosition) bp2;
+        AreaInfo ai =
+          (AreaInfo) m_vecAreaInfo.elementAt(endPos.getLeafPos());
+        // Skip all leading spaces for hyphenation
+        int i;
+        for (i = ai.m_iStartIndex; i < ai.m_iBreakIndex &&
+                CharUtilities.isAnySpace(chars[i]) == true ; i++)
+            ;
+        sbChars.append(new String(chars, i, ai.m_iBreakIndex - i));
     }
 
     /**
@@ -152,63 +151,63 @@ public class TextBPLayoutManager extends AbstractBPLayoutManager {
      * Return true if the first character is a potential linebreak character.
      */
     public boolean canBreakBefore(LayoutContext context) {
-	char c = chars[m_iNextStart];
-	return ((c == NEWLINE) || (textInfo.bWrap &&
-		 (CharUtilities.isSpace(c) || s_breakChars.indexOf(c)>=0)));
+        char c = chars[m_iNextStart];
+        return ((c == NEWLINE) || (textInfo.bWrap &&
+                                   (CharUtilities.isSpace(c) ||
+                                    s_breakChars.indexOf(c) >= 0)));
     }
 
     /** Reset position for returning next BreakPossibility. */
 
     public void resetPosition(Position prevPos) {
-	if (prevPos != null) {
-	    // ASSERT (prevPos.getLM() == this)
-	    if (prevPos.getLM() != this) {
-		System.err.println("TextBPLayoutManager.resetPosition: " +
-				   "LM mismatch!!!");
-	    }
-	    LeafPosition tbp = (LeafPosition)prevPos;
-	    AreaInfo ai =
-		 (AreaInfo) m_vecAreaInfo.elementAt(tbp.getLeafPos());
-	    if (ai.m_iBreakIndex != m_iNextStart) {
-		m_iNextStart = ai.m_iBreakIndex;
-		m_vecAreaInfo.setSize(tbp.getLeafPos()+1);
-		// TODO: reset or recalculate total IPD = sum of all word IPD
-		// up to the break position
-		m_ipdTotal = ai.m_ipdArea;
-		setFinished(false);
-	    }
-	}
-	else {
-	    // Reset to beginning!
-	    m_vecAreaInfo.setSize(0);
-	    m_iNextStart = 0;
-	    setFinished(false);
-	}
+        if (prevPos != null) {
+            // ASSERT (prevPos.getLM() == this)
+            if (prevPos.getLM() != this) {
+                System.err.println(
+                  "TextBPLayoutManager.resetPosition: " + "LM mismatch!!!");
+            }
+            LeafPosition tbp = (LeafPosition) prevPos;
+            AreaInfo ai =
+              (AreaInfo) m_vecAreaInfo.elementAt(tbp.getLeafPos());
+            if (ai.m_iBreakIndex != m_iNextStart) {
+                m_iNextStart = ai.m_iBreakIndex;
+                m_vecAreaInfo.setSize(tbp.getLeafPos() + 1);
+                // TODO: reset or recalculate total IPD = sum of all word IPD
+                // up to the break position
+                m_ipdTotal = ai.m_ipdArea;
+                setFinished(false);
+            }
+        } else {
+            // Reset to beginning!
+            m_vecAreaInfo.setSize(0);
+            m_iNextStart = 0;
+            setFinished(false);
+        }
     }
 
 
     // TODO: see if we can use normal getNextBreakPoss for this with
     // extra hyphenation information in LayoutContext
     private boolean getHyphenIPD(HyphContext hc, MinOptMax hyphIPD) {
-	// Skip leading word-space before calculating count?
-	boolean bCanHyphenate = true;
-	int iStopIndex =  m_iNextStart + hc.getNextHyphPoint();
+        // Skip leading word-space before calculating count?
+        boolean bCanHyphenate = true;
+        int iStopIndex = m_iNextStart + hc.getNextHyphPoint();
 
-	if (chars.length < iStopIndex || textInfo.bCanHyphenate==false ) {
-	    iStopIndex = chars.length;
-	    bCanHyphenate = false;
-	}
-	hc.updateOffset(iStopIndex - m_iNextStart);
+        if (chars.length < iStopIndex || textInfo.bCanHyphenate == false) {
+            iStopIndex = chars.length;
+            bCanHyphenate = false;
+        }
+        hc.updateOffset(iStopIndex - m_iNextStart);
 
         for (; m_iNextStart < iStopIndex; m_iNextStart++) {
             char c = chars[m_iNextStart];
-	    hyphIPD.opt += CharUtilities.getCharWidth(c, textInfo.fs);
-	    // letter-space?
-	}
-	// Need to include hyphen size too, but don't count it in the
-	// stored running total, since it would be double counted
-	// with later hyphenation points
-	return bCanHyphenate;
+            hyphIPD.opt += CharUtilities.getCharWidth(c, textInfo.fs);
+            // letter-space?
+        }
+        // Need to include hyphen size too, but don't count it in the
+        // stored running total, since it would be double counted
+        // with later hyphenation points
+        return bCanHyphenate;
     }
 
     /**
@@ -230,209 +229,204 @@ public class TextBPLayoutManager extends AbstractBPLayoutManager {
      * into spaces. A LINEFEED always forces a break.
      */
     public BreakPoss getNextBreakPoss(LayoutContext context,
-				      Position prevPos) {
-	/* On first call in a new Line, the START_AREA
-	 * flag in LC is set.
-	 */
+                                      Position prevPos) {
+        /* On first call in a new Line, the START_AREA
+         * flag in LC is set.
+         */
 
-	int iFlags = 0;
+        int iFlags = 0;
 
-	if (context.startsNewArea()) {
-	    /* This could be first call on this LM, or the first call
-	     * in a new (possible) LineArea.
-	     */
-	    m_ipdTotal = new MinOptMax(0);
-	    iFlags |= BreakPoss.ISFIRST;
-	}
+        if (context.startsNewArea()) {
+            /* This could be first call on this LM, or the first call
+             * in a new (possible) LineArea.
+             */
+            m_ipdTotal = new MinOptMax(0);
+            iFlags |= BreakPoss.ISFIRST;
+        }
 
 
         /* HANDLE SUPPRESSED LEADING SPACES
-	 * See W3C XSL Rec. 7.16.3.
-	 * Suppress characters whose "suppress-at-line-break" property = "suppress"
-	 * This can only be set on an explicit fo:character object. The default
-	 * behavior is that U+0020 is suppressed; all other character codes are
-	 * retained.
-	 */
-	if (context.suppressLeadingSpace()) {
-	    for (; m_iNextStart < chars.length &&
-		     chars[m_iNextStart]==SPACE; m_iNextStart++);
-	    // If now at end, nothing to compose here!
-	    if (m_iNextStart >= chars.length) {
-		setFinished(true);
-		return null; // Or an "empty" BreakPoss?
-	    }
-	}
+         * See W3C XSL Rec. 7.16.3.
+         * Suppress characters whose "suppress-at-line-break" property = "suppress"
+         * This can only be set on an explicit fo:character object. The default
+         * behavior is that U+0020 is suppressed; all other character codes are
+         * retained.
+         */
+        if (context.suppressLeadingSpace()) {
+            for (; m_iNextStart < chars.length &&
+                    chars[m_iNextStart] == SPACE; m_iNextStart++)
+                ;
+            // If now at end, nothing to compose here!
+            if (m_iNextStart >= chars.length) {
+                setFinished(true);
+                return null; // Or an "empty" BreakPoss?
+            }
+        }
 
 
-	/* Start of this "word", plus any non-suppressed leading space.
-	 * Collapse any remaining word-space with leading space from
-	 * ancestor FOs.
-	 * Add up other leading space which is counted in the word IPD.
-	 */
+        /* Start of this "word", plus any non-suppressed leading space.
+         * Collapse any remaining word-space with leading space from
+         * ancestor FOs.
+         * Add up other leading space which is counted in the word IPD.
+         */
 
-	SpaceSpecifier pendingSpace= new SpaceSpecifier(false);
+        SpaceSpecifier pendingSpace = new SpaceSpecifier(false);
         short iThisStart = m_iNextStart; // Index of first character counted
         MinOptMax spaceIPD = new MinOptMax(0); // Extra IPD from word-spacing
-	// Sum of glyph IPD of all characters in a word, inc. leading space
+        // Sum of glyph IPD of all characters in a word, inc. leading space
         int wordIPD = 0;
-	short iWScount=0; // Count of word spaces
-	boolean bSawNonSuppressible = false;
+        short iWScount = 0; // Count of word spaces
+        boolean bSawNonSuppressible = false;
 
         for (; m_iNextStart < chars.length; m_iNextStart++) {
             char c = chars[m_iNextStart];
-	    if (CharUtilities.isAnySpace(c)==false) break;
-            if (c==SPACE || c==NBSPACE) {
-		++iWScount;
-		// Counted as word-space
-		if (m_iNextStart == iThisStart &&
-		    (iFlags & BreakPoss.ISFIRST) !=0 ) {
-		    // If possible, treat as normal inter-word space
-		    if (context.getLeadingSpace().hasSpaces()) {
-			context.getLeadingSpace().addSpace(m_halfWS);
-		    }
-		    else {
-			// Doesn't combine with any other leading spaces
-			// from ancestors
-			spaceIPD.add(m_halfWS.space);
-		    }
-		}
-		else {
-		    pendingSpace.addSpace(m_halfWS);
-		    spaceIPD.add(pendingSpace.resolve(false));
-		}
-		wordIPD += m_spaceIPD; // Space glyph IPD
-		pendingSpace.clear();
-		pendingSpace.addSpace(m_halfWS);
-		if (c == NBSPACE) {
-		    bSawNonSuppressible = true; 
-		}
-	    }
-	    else {
-		// If we have letter-space, so we apply this to fixed-
-		// width spaces (which are not word-space) also?
-		bSawNonSuppressible = true; 
-		spaceIPD.add(pendingSpace.resolve(false));
-		pendingSpace.clear();
-		wordIPD += CharUtilities.getCharWidth(c, textInfo.fs);
-	    }
-	}
+            if (CharUtilities.isAnySpace(c) == false)
+                break;
+            if (c == SPACE || c == NBSPACE) {
+                ++iWScount;
+                // Counted as word-space
+                if (m_iNextStart == iThisStart &&
+                        (iFlags & BreakPoss.ISFIRST) != 0) {
+                    // If possible, treat as normal inter-word space
+                    if (context.getLeadingSpace().hasSpaces()) {
+                        context.getLeadingSpace().addSpace(m_halfWS);
+                    } else {
+                        // Doesn't combine with any other leading spaces
+                        // from ancestors
+                        spaceIPD.add(m_halfWS.space);
+                    }
+                } else {
+                    pendingSpace.addSpace(m_halfWS);
+                    spaceIPD.add(pendingSpace.resolve(false));
+                }
+                wordIPD += m_spaceIPD; // Space glyph IPD
+                pendingSpace.clear();
+                pendingSpace.addSpace(m_halfWS);
+                if (c == NBSPACE) {
+                    bSawNonSuppressible = true;
+                }
+            } else {
+                // If we have letter-space, so we apply this to fixed-
+                // width spaces (which are not word-space) also?
+                bSawNonSuppressible = true;
+                spaceIPD.add(pendingSpace.resolve(false));
+                pendingSpace.clear();
+                wordIPD += CharUtilities.getCharWidth(c, textInfo.fs);
+            }
+        }
 
-	if (m_iNextStart < chars.length) {
-	    spaceIPD.add(pendingSpace.resolve(false));
-	}
-	else {
-	    // This FO ended with spaces. Return the BP
-	    if (!bSawNonSuppressible) {
-		iFlags |= BreakPoss.ALL_ARE_SUPPRESS_AT_LB;
-	    }
-	    return makeBreakPoss(iThisStart, spaceIPD, wordIPD, 
-				 context.getLeadingSpace(), pendingSpace,
-				 iFlags, iWScount);
-	}
+        if (m_iNextStart < chars.length) {
+            spaceIPD.add(pendingSpace.resolve(false));
+        } else {
+            // This FO ended with spaces. Return the BP
+            if (!bSawNonSuppressible) {
+                iFlags |= BreakPoss.ALL_ARE_SUPPRESS_AT_LB;
+            }
+            return makeBreakPoss(iThisStart, spaceIPD, wordIPD,
+                                 context.getLeadingSpace(), pendingSpace, iFlags,
+                                 iWScount);
+        }
 
-	if (context.tryHyphenate()) {
-	    // Get the size of the next syallable
-	    MinOptMax hyphIPD = new MinOptMax(0);
-	    if (getHyphenIPD(context.getHyphContext(), hyphIPD)) {
-		iFlags |= (BreakPoss.CAN_BREAK_AFTER | BreakPoss.HYPHENATED);
-	    }
-	    wordIPD += hyphIPD.opt;
-	}
-	else {
-        // Look for a legal line-break: breakable white-space and certain
-        // characters such as '-' which can serve as word breaks.
-        // Don't look for hyphenation points here though
-	    for (; m_iNextStart < chars.length; m_iNextStart++) {
-		char c = chars[m_iNextStart];
-		if ((c == NEWLINE) ||
-		    // Include any breakable white-space as break char
-		    //  even if fixed width
-		    (textInfo.bWrap &&
-		     (CharUtilities.isSpace(c) ||
-		      s_breakChars.indexOf(c)>=0))) {
-		    iFlags |= BreakPoss.CAN_BREAK_AFTER;
-		    if (c != SPACE) {
-			m_iNextStart++;
-			if (c != NEWLINE) {
-			    wordIPD += CharUtilities.getCharWidth(c, textInfo.fs);
-			}
-			else {
-			    iFlags |= BreakPoss.FORCE;
-			}
-		    }
-		    // If all remaining characters would be suppressed at
-		    // line-end, set a flag for parent LM.
-		    int iLastChar;
-		    for (iLastChar = m_iNextStart;
-			 iLastChar < chars.length && chars[iLastChar]==SPACE;
-			 iLastChar++);
-		    if (iLastChar == chars.length) {
-			iFlags |= BreakPoss.REST_ARE_SUPPRESS_AT_LB;
-		    }
-		    return makeBreakPoss(iThisStart, spaceIPD, wordIPD,
-					 context.getLeadingSpace(), null,
-					 iFlags, iWScount);
-		}
-		wordIPD += CharUtilities.getCharWidth(c, textInfo.fs);
-		// Note, if a normal non-breaking space, is it stretchable???
-		// If so, keep a count of these embedded spaces.
-	    }
-	}
-	return makeBreakPoss(iThisStart, spaceIPD, wordIPD, 
-			     context.getLeadingSpace(), null, iFlags, iWScount);
+        if (context.tryHyphenate()) {
+            // Get the size of the next syallable
+            MinOptMax hyphIPD = new MinOptMax(0);
+            if (getHyphenIPD(context.getHyphContext(), hyphIPD)) {
+                iFlags |= (BreakPoss.CAN_BREAK_AFTER |
+                           BreakPoss.HYPHENATED);
+            }
+            wordIPD += hyphIPD.opt;
+        } else {
+            // Look for a legal line-break: breakable white-space and certain
+            // characters such as '-' which can serve as word breaks.
+            // Don't look for hyphenation points here though
+            for (; m_iNextStart < chars.length; m_iNextStart++) {
+                char c = chars[m_iNextStart];
+                if ((c == NEWLINE) || // Include any breakable white-space as break char
+                        //  even if fixed width
+                        (textInfo.bWrap && (CharUtilities.isSpace(c) ||
+                                            s_breakChars.indexOf(c) >= 0))) {
+                    iFlags |= BreakPoss.CAN_BREAK_AFTER;
+                    if (c != SPACE) {
+                        m_iNextStart++;
+                        if (c != NEWLINE) {
+                            wordIPD += CharUtilities.getCharWidth(c,
+                                                                  textInfo.fs);
+                        } else {
+                            iFlags |= BreakPoss.FORCE;
+                        }
+                    }
+                    // If all remaining characters would be suppressed at
+                    // line-end, set a flag for parent LM.
+                    int iLastChar;
+                    for (iLastChar = m_iNextStart;
+                            iLastChar < chars.length &&
+                            chars[iLastChar] == SPACE; iLastChar++)
+                        ;
+                    if (iLastChar == chars.length) {
+                        iFlags |= BreakPoss.REST_ARE_SUPPRESS_AT_LB;
+                    }
+                    return makeBreakPoss(iThisStart, spaceIPD, wordIPD,
+                                         context.getLeadingSpace(), null, iFlags,
+                                         iWScount);
+                }
+                wordIPD += CharUtilities.getCharWidth(c, textInfo.fs);
+                // Note, if a normal non-breaking space, is it stretchable???
+                // If so, keep a count of these embedded spaces.
+            }
+        }
+        return makeBreakPoss(iThisStart, spaceIPD, wordIPD,
+                             context.getLeadingSpace(), null, iFlags, iWScount);
     }
 
 
-    private BreakPoss makeBreakPoss(short iWordStart, MinOptMax spaceIPD,
-				    int wordDim, SpaceSpecifier leadingSpace,
-				    SpaceSpecifier trailingSpace,
-				    int flags, short iWScount)
-    {
-	MinOptMax ipd = new MinOptMax(wordDim);
-	ipd.add(spaceIPD);
-        if(m_ipdTotal != null) {
-	ipd.add(m_ipdTotal); // sum of all words so far in line
+    private BreakPoss makeBreakPoss(short iWordStart,
+                                    MinOptMax spaceIPD, int wordDim,
+                                    SpaceSpecifier leadingSpace, SpaceSpecifier trailingSpace,
+                                    int flags, short iWScount) {
+        MinOptMax ipd = new MinOptMax(wordDim);
+        ipd.add(spaceIPD);
+        if (m_ipdTotal != null) {
+            ipd.add(m_ipdTotal); // sum of all words so far in line
         }
-	// Note: break position now stores total size to here
+        // Note: break position now stores total size to here
 
-	// Position is the index of the info for this word in the vector
-	m_vecAreaInfo.add(new AreaInfo(iWordStart, m_iNextStart, iWScount, ipd));
-        BreakPoss bp =
-	    new BreakPoss(new LeafPosition(this, m_vecAreaInfo.size()-1));
-	m_ipdTotal = ipd;
-	if ((flags & BreakPoss.HYPHENATED)!=0) {
-	    // Add the hyphen size, but don't change total IPD!
-	    bp.setStackingSize(MinOptMax.add(ipd, new MinOptMax(m_hyphIPD)));
-	}
-	else {
-	    bp.setStackingSize(ipd);
-	}
-	// TODO: make this correct (see Keiron's vertical alignment code)
-	bp.setNonStackingSize(new MinOptMax(textInfo.lineHeight));
+        // Position is the index of the info for this word in the vector
+        m_vecAreaInfo.add(
+          new AreaInfo(iWordStart, m_iNextStart, iWScount, ipd));
+        BreakPoss bp = new BreakPoss(
+                         new LeafPosition(this, m_vecAreaInfo.size() - 1));
+        m_ipdTotal = ipd;
+        if ((flags & BreakPoss.HYPHENATED) != 0) {
+            // Add the hyphen size, but don't change total IPD!
+            bp.setStackingSize(
+              MinOptMax.add(ipd, new MinOptMax(m_hyphIPD)));
+        } else {
+            bp.setStackingSize(ipd);
+        }
+        // TODO: make this correct (see Keiron's vertical alignment code)
+        bp.setNonStackingSize(new MinOptMax(textInfo.lineHeight));
 
-	/* Set max ascender and descender (offset from baseline),
-	 * used for calculating the bpd of the line area containing
-	 * this text.
-	 */
-	//bp.setDescender(textInfo.fs.getDescender());
-	//bp.setAscender(textInfo.fs.getAscender());
-	if (m_iNextStart == chars.length) {
-	    flags |= BreakPoss.ISLAST;
- 	    setFinished(true);
- 	}
-	bp.setFlag(flags);
-	if (trailingSpace != null) {
-	    bp.setTrailingSpace(trailingSpace);
-	}
-	else {
-	    bp.setTrailingSpace(new SpaceSpecifier(false));
-	}
-	if (leadingSpace != null) {
-	    bp.setLeadingSpace(leadingSpace);
-	}
-	else {
-	    bp.setLeadingSpace(new SpaceSpecifier(false));
-	}
+        /* Set max ascender and descender (offset from baseline),
+         * used for calculating the bpd of the line area containing
+         * this text.
+         */
+        //bp.setDescender(textInfo.fs.getDescender());
+        //bp.setAscender(textInfo.fs.getAscender());
+        if (m_iNextStart == chars.length) {
+            flags |= BreakPoss.ISLAST;
+            setFinished(true);
+        }
+        bp.setFlag(flags);
+        if (trailingSpace != null) {
+            bp.setTrailingSpace(trailingSpace);
+        } else {
+            bp.setTrailingSpace(new SpaceSpecifier(false));
+        }
+        if (leadingSpace != null) {
+            bp.setLeadingSpace(leadingSpace);
+        } else {
+            bp.setLeadingSpace(new SpaceSpecifier(false));
+        }
         return bp;
     }
 
@@ -449,69 +443,70 @@ public class TextBPLayoutManager extends AbstractBPLayoutManager {
      * in order to justify the line.
      */
     public void addAreas(PositionIterator posIter, LayoutContext context) {
-	// Add word areas
-	AreaInfo ai=null ;
-	int iStart = -1;
-	int iWScount = 0;
+        // Add word areas
+        AreaInfo ai = null ;
+        int iStart = -1;
+        int iWScount = 0;
 
-	/* On first area created, add any leading space.
-	 * Calculate word-space stretch value.
-	 */
-	while (posIter.hasNext()) {
-	    LeafPosition tbpNext = (LeafPosition)posIter.next();
-	    ai = (AreaInfo)m_vecAreaInfo.elementAt(tbpNext.getLeafPos());
-	    if (iStart == -1) {
-		iStart = ai.m_iStartIndex;
-	    }
-	    iWScount += ai.m_iWScount;
-	}
-	// Calculate total adjustment
-	int iAdjust = 0;
-	double dSpaceAdjust = context.getSpaceAdjust();
-	if (dSpaceAdjust > 0.0) {
-	    // Stretch by factor
-// 	    System.err.println("Potential stretch = " +
-// 			       (ai.m_ipdArea.max - ai.m_ipdArea.opt));
-	    iAdjust = (int)((double)(ai.m_ipdArea.max - ai.m_ipdArea.opt) *
-		dSpaceAdjust);
-	}
-	else if (dSpaceAdjust < 0.0)  {
-	    // Shrink by factor
-// 	    System.err.println("Potential shrink = " +
-// 			       (ai.m_ipdArea.opt - ai.m_ipdArea.min));
-	    iAdjust = (int)((double)(ai.m_ipdArea.opt - ai.m_ipdArea.min) *
-		dSpaceAdjust);
-	}
-// 	System.err.println("Text adjustment factor = " + dSpaceAdjust +
-// 			   " total=" + iAdjust);
+        /* On first area created, add any leading space.
+         * Calculate word-space stretch value.
+         */
+        while (posIter.hasNext()) {
+            LeafPosition tbpNext = (LeafPosition) posIter.next();
+            ai = (AreaInfo) m_vecAreaInfo.elementAt(tbpNext.getLeafPos());
+            if (iStart == -1) {
+                iStart = ai.m_iStartIndex;
+            }
+            iWScount += ai.m_iWScount;
+        }
+        // Calculate total adjustment
+        int iAdjust = 0;
+        double dSpaceAdjust = context.getSpaceAdjust();
+        if (dSpaceAdjust > 0.0) {
+            // Stretch by factor
+            // 	    System.err.println("Potential stretch = " +
+            // 			       (ai.m_ipdArea.max - ai.m_ipdArea.opt));
+            iAdjust = (int)((double)(ai.m_ipdArea.max -
+                                     ai.m_ipdArea.opt) * dSpaceAdjust);
+        } else if (dSpaceAdjust < 0.0) {
+            // Shrink by factor
+            // 	    System.err.println("Potential shrink = " +
+            // 			       (ai.m_ipdArea.opt - ai.m_ipdArea.min));
+            iAdjust = (int)((double)(ai.m_ipdArea.opt -
+                                     ai.m_ipdArea.min) * dSpaceAdjust);
+        }
+        // 	System.err.println("Text adjustment factor = " + dSpaceAdjust +
+        // 			   " total=" + iAdjust);
 
-	// Make an area containing all characters between start and end.
-	Word word = createWord(new String(chars, iStart,
-					  ai.m_iBreakIndex - iStart),
-			       ai.m_ipdArea.opt + iAdjust);
-	if (iWScount > 0) {
-	    System.err.println("Adjustment per word-space= " +
-			       iAdjust/iWScount);
-	    word.setWSadjust(iAdjust/iWScount);
-	}
-	if ((chars[iStart] == SPACE || chars[iStart] == NBSPACE) &&
-	    context.getLeadingSpace().hasSpaces()) {
-	    context.getLeadingSpace().addSpace(m_halfWS);
-	}
-	// Set LAST flag if done making characters
-	int iLastChar;
-	for (iLastChar = ai.m_iBreakIndex;
-	     iLastChar < chars.length && chars[iLastChar]==SPACE;
-	     iLastChar++);
-	context.setFlags(LayoutContext.LAST_AREA, iLastChar==chars.length );
+        // Make an area containing all characters between start and end.
+        Word word = createWord(
+                      new String(chars, iStart, ai.m_iBreakIndex - iStart),
+                      ai.m_ipdArea.opt + iAdjust);
+        if (iWScount > 0) {
+            System.err.println("Adjustment per word-space= " +
+                               iAdjust / iWScount);
+            word.setWSadjust(iAdjust / iWScount);
+        }
+        if ((chars[iStart] == SPACE || chars[iStart] == NBSPACE) &&
+                context.getLeadingSpace().hasSpaces()) {
+            context.getLeadingSpace().addSpace(m_halfWS);
+        }
+        // Set LAST flag if done making characters
+        int iLastChar;
+        for (iLastChar = ai.m_iBreakIndex;
+                iLastChar < chars.length && chars[iLastChar] == SPACE;
+                iLastChar++)
+            ;
+        context.setFlags(LayoutContext.LAST_AREA,
+                         iLastChar == chars.length);
 
-	// Can we have any trailing space? Yes, if last char was a space!
-	context.setTrailingSpace(new SpaceSpecifier(false));
-	if (chars[ai.m_iBreakIndex-1] == SPACE ||
-	    chars[ai.m_iBreakIndex-1] == NBSPACE ) {
-	    context.getTrailingSpace().addSpace(m_halfWS);
-	}
-	parentLM.addChild(word);
+        // Can we have any trailing space? Yes, if last char was a space!
+        context.setTrailingSpace(new SpaceSpecifier(false));
+        if (chars[ai.m_iBreakIndex - 1] == SPACE ||
+                chars[ai.m_iBreakIndex - 1] == NBSPACE) {
+            context.getTrailingSpace().addSpace(m_halfWS);
+        }
+        parentLM.addChild(word);
     }
 
 
@@ -519,7 +514,8 @@ public class TextBPLayoutManager extends AbstractBPLayoutManager {
     protected Word createWord(String str, int width) {
         Word curWordArea = new Word();
         curWordArea.setWidth(width);
-        curWordArea.setHeight(textInfo.fs.getAscender() - textInfo.fs.getDescender());
+        curWordArea.setHeight(textInfo.fs.getAscender() -
+                              textInfo.fs.getDescender());
         curWordArea.setOffset(textInfo.fs.getAscender());
         curWordArea.info = new LayoutInfo();
         curWordArea.info.lead = textInfo.fs.getAscender();
@@ -528,7 +524,8 @@ public class TextBPLayoutManager extends AbstractBPLayoutManager {
 
         curWordArea.setWord(str);
         curWordArea.addTrait(Trait.FONT_NAME, textInfo.fs.getFontName());
-        curWordArea.addTrait(Trait.FONT_SIZE, new Integer(textInfo.fs.getFontSize()));
+        curWordArea.addTrait(Trait.FONT_SIZE,
+                             new Integer(textInfo.fs.getFontSize()));
         return curWordArea;
     }
 

@@ -17,6 +17,7 @@ import org.apache.fop.area.MinOptMax;
 
 import java.util.ListIterator;
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * LayoutManager for a block FO.
@@ -51,56 +52,175 @@ public class BlockLayoutManager extends BlockStackingLayoutManager {
         return curBlockArea.getIPD();
     }
 
+    private static class BlockBreakPosition extends LeafPosition {
+        List blockps;
+
+        BlockBreakPosition(BPLayoutManager lm, int iBreakIndex, List bps) {
+            super(lm, iBreakIndex);
+            blockps = bps;
+        }
+    }
+
+    protected BPLayoutManager getChildLM() {
+        if (m_curChildLM != null && !m_curChildLM.isFinished()) {
+            return m_curChildLM;
+        }
+        while (m_childLMiter.hasNext()) {
+            LayoutManager lm = (LayoutManager) m_childLMiter.next();
+            if (lm.generatesInlineAreas()) {
+                ArrayList inlines = new ArrayList();
+                inlines.add(lm);
+                //lms.remove(count);
+                while (m_childLMiter.hasNext()) {
+                    lm = (LayoutManager) m_childLMiter.next();
+                    if (lm.generatesInlineAreas()) {
+                        inlines.add(lm);
+                        //lms.remove(count + 1);
+                    } else {
+                        m_childLMiter.previousIndex();
+                        break;
+                    }
+                }
+                m_curChildLM = new LineBPLayoutManager(fobj, inlines,
+                                                       lineHeight, lead, follow);
+                m_curChildLM.setParentLM(this);
+                m_curChildLM.init();
+                return m_curChildLM;
+                //lms.set(count, lm);
+            } else if (lm instanceof BPLayoutManager) {
+                m_curChildLM = (BPLayoutManager) lm;
+                m_curChildLM.setParentLM(this);
+                m_curChildLM.init();
+                return m_curChildLM;
+            } else {
+                m_childLMiter.remove();
+                System.err.println(
+                  "WARNING: child LM not a BPLayoutManager: " +
+                  lm.getClass().getName());
+            }
+        }
+        return null;
+    }
+
+    public BreakPoss getNextBreakPoss(LayoutContext context,
+                                      Position prevLineBP) {
+
+        BPLayoutManager curLM ; // currently active LM
+        ArrayList list = new ArrayList();
+
+        while ((curLM = getChildLM()) != null) {
+            // Make break positions and return lines!
+            // Set up a LayoutContext
+            int ipd = 0;
+            BreakPoss bp;
+            ArrayList vecBreakPoss = new ArrayList();
+
+            // Force area creation on first call
+            // NOTE: normally not necessary when fully integrated!
+            LayoutContext childLC =
+              new LayoutContext(LayoutContext.CHECK_REF_AREA);
+
+            while (!curLM.isFinished()) {
+                if ((bp = curLM.getNextBreakPoss(childLC, null)) != null) {
+                    if (bp.checkIPD()) {
+                        // Need IPD in order to layout lines!
+                        // This is supposed to bubble up to PageLM to
+                        // make the necessary flow reference area, depending
+                        // on span and break-before flags set as the BreakPoss
+                        // makes its way back up the call stack.
+                        // Fake it for now!
+                        getParentArea(null);
+                        ipd = getContentIPD();
+                        childLC.flags &= ~LayoutContext.CHECK_REF_AREA;
+                        childLC.setStackLimit(new MinOptMax(ipd/* - m_iIndents -
+                                                                                                                                                                                                                                                                                     m_iTextIndent*/));
+                    } else {
+                        vecBreakPoss.add(bp);
+                        // Reset stackLimit for non-first lines
+                        childLC.setStackLimit(new MinOptMax(ipd/* - m_iIndents*/));
+                    }
+                }
+            }
+            list.add(vecBreakPoss);
+            return new BreakPoss(
+                     new BlockBreakPosition(curLM, 0, vecBreakPoss));
+        }
+        setFinished(true);
+        return new BreakPoss(new BlockBreakPosition(this, 0, list));
+    }
+
+    public void addAreas(PositionIterator parentIter, LayoutContext lc) {
+
+        while (parentIter.hasNext()) {
+            BlockBreakPosition bbp = (BlockBreakPosition) parentIter.next();
+            bbp.getLM().addAreas( new BreakPossPosIter(bbp.blockps, 0,
+                                  bbp.blockps.size()), null);
+        }
+        flush();
+    }
+
+
     /**
-     * Generate areas by tellings all layout managers for its FO's
+     * Generate areas by telling all layout managers for its FO's
      * children to generate areas.
      */
     public boolean generateAreas() {
         ArrayList lms = new ArrayList();
         LayoutManager lm = null;
-	FObj curFobj = fobj;
+        FObj curFobj = fobj;
         if (fobj != null) {
             ListIterator children = fobj.getChildren();
             while (children.hasNext()) {
                 Object childFO = children.next();
-                if(childFO instanceof FObj) {
-                    ((FObj)childFO).addLayoutManager(lms);
+                if (childFO instanceof FObj) {
+                    ((FObj) childFO).addLayoutManager(lms);
                 }
             }
-            fobj = null;
+            //fobj = null;
         }
 
-        for (int count = 0; count < lms.size(); count++) {
-            lm = (LayoutManager) lms.get(count);
-            if (lm.generatesInlineAreas()) {
-                ArrayList inlines = new ArrayList();
-                inlines.add(lm);
-                //lms.remove(count);
-                while (count + 1 < lms.size()) {
-                    lm = (LayoutManager) lms.get(count + 1);
-                    if (lm.generatesInlineAreas()) {
-                        inlines.add(lm);
-                        lms.remove(count + 1);
-                    } else {
-                        break;
-                    }
-                }
-		/*
-                lm = new LineLayoutManager(curFobj, inlines, lineHeight, lead,
-                                           follow);
-		*/
-		// !!!! To test BreakPoss Line LayoutManager, uncomment!
-                lm = new LineBPLayoutManager(curFobj, inlines, lineHeight,
-		                                lead, follow);
-                lms.set(count, lm);
-            }
-            lm.setParentLM(this);
-            if (lm.generateAreas()) {
-                if (flush()) {
-                    return true;
-                }
+        ArrayList vecBreakPoss = new ArrayList();
+
+        BreakPoss bp;
+        LayoutContext childLC = new LayoutContext(0);
+        while (!isFinished()) {
+            if ((bp = getNextBreakPoss(childLC, null)) != null) {
+                vecBreakPoss.add(bp);
             }
         }
+
+        addAreas( new BreakPossPosIter(vecBreakPoss, 0,
+                                       vecBreakPoss.size()), null);
+
+
+        /*
+                for (int count = 0; count < lms.size(); count++) {
+                    lm = (LayoutManager) lms.get(count);
+                    if (lm.generatesInlineAreas()) {
+                        ArrayList inlines = new ArrayList();
+                        inlines.add(lm);
+                        //lms.remove(count);
+                        while (count + 1 < lms.size()) {
+                            lm = (LayoutManager) lms.get(count + 1);
+                            if (lm.generatesInlineAreas()) {
+                                inlines.add(lm);
+                                lms.remove(count + 1);
+                            } else {
+                                break;
+                            }
+                        }
+                        lm = new LineBPLayoutManager(curFobj, inlines,
+                                                     lineHeight, lead, follow);
+                        lms.set(count, lm);
+                    }
+                    lm.setParentLM(this);
+                    if (lm.generateAreas()) {
+                        if (flush()) {
+                            return true;
+                        }
+                    }
+                }
+         */
         return flush(); // Add last area to parent
     }
 

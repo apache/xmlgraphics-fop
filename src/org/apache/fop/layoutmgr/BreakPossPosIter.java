@@ -14,37 +14,36 @@ public class BreakPossPosIter extends PositionIterator {
     private int m_iterCount ;
 
     BreakPossPosIter(List bpList, int startPos, int endPos) {
-	super(bpList.listIterator(startPos));
-	m_iterCount = endPos - startPos;
+        super(bpList.listIterator(startPos));
+        m_iterCount = endPos - startPos;
     }
 
     // Check position < endPos
 
     protected boolean checkNext() {
-	if (m_iterCount > 0) {
-	    return super.checkNext();
-	}
-	else {
-	    endIter();
-	    return false;
-	}
+        if (m_iterCount > 0) {
+            return super.checkNext();
+        } else {
+            endIter();
+            return false;
+        }
     }
 
     public Object next() {
-	--m_iterCount;
-	return super.next();
+        --m_iterCount;
+        return super.next();
     }
 
     public BreakPoss getBP() {
-	return (BreakPoss)peekNext();
+        return (BreakPoss) peekNext();
     }
 
     protected BPLayoutManager getLM(Object nextObj) {
-	return ((BreakPoss)nextObj).getLayoutManager();
+        return ((BreakPoss) nextObj).getLayoutManager();
     }
 
     protected Position getPos(Object nextObj) {
-	return ((BreakPoss)nextObj).getPosition();
+        return ((BreakPoss) nextObj).getPosition();
     }
 
 }

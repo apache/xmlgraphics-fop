@@ -68,7 +68,8 @@ public class LineLayoutManager extends AbstractLayoutManager {
         // footnotes, floats?
     }
 
-    public LineLayoutManager(FObj fobjBlock, List lms, int lh, int l, int f) {
+    public LineLayoutManager(FObj fobjBlock, List lms, int lh, int l,
+                             int f) {
         super(fobjBlock);
         lmList = lms;
         lineHeight = lh;
