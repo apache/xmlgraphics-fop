@@ -41,7 +41,7 @@ These are the meaningful targets for this build file:
   <!-- compiles all xml files into one and removes the proprietary sbk protocol -->
   <!-- =================================================================== -->
   <target name="prepare-files" depends="init">
-    <collectDocFiles configFile="Fop.xml" outFile="fop.pdf"/>
+    <collectDocFiles configFile="fop.xml" outFile="fop.pdf"/>
   </target>
 
   <!-- =================================================================== -->
