@@ -1,4 +1,5 @@
 /*
+ * $Id$
  * ============================================================================
  *                    The Apache Software License, Version 1.1
  * ============================================================================
@@ -67,7 +68,6 @@ import org.apache.fop.fo.ColorTypeProperty;
 import org.apache.fop.fo.NumberProperty;
 import org.apache.fop.datatypes.ColorType;
 
-import org.xml.sax.Attributes;
 import org.apache.fop.rtf.rtflib.rtfdoc.RtfAttributes;
 import org.apache.fop.rtf.rtflib.rtfdoc.ITableAttributes;
 import org.apache.fop.rtf.rtflib.rtfdoc.RtfColorTable;
@@ -89,7 +89,7 @@ import org.apache.fop.rtf.rtflib.rtfdoc.RtfColorTable;
 
 public class TableAttributesConverter {
 
-    static Logger log=new ConsoleLogger();
+    private static Logger log = new ConsoleLogger();
 
     //////////////////////////////////////////////////
     // @@ Construction
@@ -120,87 +120,84 @@ public class TableAttributesConverter {
 
         Property p;
         EnumProperty ep;
-        RtfColorTable colorTable=RtfColorTable.getInstance();
+        RtfColorTable colorTable = RtfColorTable.getInstance();
 
-        RtfAttributes attrib=null;
+        RtfAttributes attrib = null;
 
-        if(defProps!=null)
-        {
-            attrib=convertCellAttributes(defProps,null);
-        }
-        else
-        {
-            attrib=new RtfAttributes();
+        if (defProps != null) {
+            attrib = convertCellAttributes(defProps, null);
+        } else {
+            attrib = new RtfAttributes();
         }
 
-        boolean isBorderPresent=false;
+        boolean isBorderPresent = false;
 
         // Cell background color
-        if ((p=props.getNearestSpecified("background-color"))!=null)
-        {
-            ColorType color=p.getColorType();
-            if(color!=null)
-            {
-                if(color.getAlpha()!=0
-                || color.getRed()!=0
-                || color.getGreen()!=0
-                || color.getBlue()!=0)
-                {
+        if ((p = props.getNearestSpecified("background-color")) != null) {
+            ColorType color = p.getColorType();
+            if (color != null) {
+                if (color.getAlpha() != 0
+                        || color.getRed() != 0
+                        || color.getGreen() != 0
+                        || color.getBlue() != 0) {
                     attrib.set(
                         ITableAttributes.CELL_COLOR_BACKGROUND,
                         RTFHandler.convertFOPColorToRTF(color));
                 }
-            }
-            else
-            {
+            } else {
                 log.warn("Named color '" + p.toString() + "' not found. ");
             }
 
         }
 
         // Cell borders :
-        if ((p=props.getExplicit("border-color"))!=null){
-            ListProperty listprop=(ListProperty)p;
-            ColorType color=null;
-            if(listprop.getList().get(0) instanceof NCnameProperty){
-                color=new ColorType(((NCnameProperty)listprop.getList().get(0)).getNCname());
-            }
-            else if(listprop.getList().get(0) instanceof ColorTypeProperty){
-                color=((ColorTypeProperty)listprop.getList().get(0)).getColorType();
+        if ((p = props.getExplicit("border-color")) != null) {
+            ListProperty listprop = (ListProperty)p;
+            ColorType color = null;
+            if (listprop.getList().get(0) instanceof NCnameProperty) {
+                color = new ColorType(((NCnameProperty)listprop.getList().get(0)).getNCname());
+            } else if (listprop.getList().get(0) instanceof ColorTypeProperty) {
+                color = ((ColorTypeProperty)listprop.getList().get(0)).getColorType();
             }
 
             attrib.set(
                 BorderAttributesConverter.BORDER_COLOR,
-                colorTable.getColorNumber((int)color.getRed(),(int)color.getGreen(),(int)color.getBlue()).intValue());
+                colorTable.getColorNumber((int)color.getRed(), (int)color.getGreen(),
+                        (int)color.getBlue()).intValue());
         }
-        if ((p=props.getExplicit("border-top-color"))!=null){
-            ColorType color=p.getColorType();
+        if ((p = props.getExplicit("border-top-color")) != null) {
+            ColorType color = p.getColorType();
             attrib.set(
                 BorderAttributesConverter.BORDER_COLOR,
-                colorTable.getColorNumber((int)color.getRed(),(int)color.getGreen(),(int)color.getBlue()).intValue());
+                colorTable.getColorNumber((int)color.getRed(), (int)color.getGreen(),
+                        (int)color.getBlue()).intValue());
         }
-        if((p=props.getExplicit("border-bottom-color"))!=null){
-            ColorType color=p.getColorType();
+        if ((p = props.getExplicit("border-bottom-color")) != null) {
+            ColorType color = p.getColorType();
             attrib.set(
                 BorderAttributesConverter.BORDER_COLOR,
-                colorTable.getColorNumber((int)color.getRed(),(int)color.getGreen(),(int)color.getBlue()).intValue());
+                colorTable.getColorNumber((int)color.getRed(), (int)color.getGreen(),
+                        (int)color.getBlue()).intValue());
         }
-        if((p=props.getExplicit("border-left-color"))!=null){
-            ColorType color=p.getColorType();
+        if ((p = props.getExplicit("border-left-color")) != null) {
+            ColorType color = p.getColorType();
             attrib.set(
                 BorderAttributesConverter.BORDER_COLOR,
-                colorTable.getColorNumber((int)color.getRed(),(int)color.getGreen(),(int)color.getBlue()).intValue());
+                colorTable.getColorNumber((int)color.getRed(), (int)color.getGreen(),
+                        (int)color.getBlue()).intValue());
         }
-        if((p=props.getExplicit("border-right-color"))!=null){
-            ColorType color=p.getColorType();
+        if ((p = props.getExplicit("border-right-color")) != null) {
+            ColorType color = p.getColorType();
             attrib.set(
                 BorderAttributesConverter.BORDER_COLOR,
-                colorTable.getColorNumber((int)color.getRed(),(int)color.getGreen(),(int)color.getBlue()).intValue());
+                colorTable.getColorNumber((int)color.getRed(), (int)color.getGreen(),
+                        (int)color.getBlue()).intValue());
         }
 
         // Border styles do not inherit from parent
-        if((p=props.get("border-style"))!=null){
-            log.warn("border-style not implemented. Please use border-style-left, ...-right, ...-top or ...-bottom");
+        if ((p = props.get("border-style")) != null) {
+            log.warn("border-style not implemented. Please use border-style-left, "
+                     + "...-right, ...-top or ...-bottom");
             /*
             attrib.set(ITableAttributes.CELL_BORDER_LEFT,  "\\"+convertAttributetoRtf(e.getEnum()));
             attrib.set(ITableAttributes.CELL_BORDER_RIGHT, "\\"+convertAttributetoRtf(e.getEnum()));
@@ -209,46 +206,51 @@ public class TableAttributesConverter {
             isBorderPresent=true;
             */
         }
-        ep=(EnumProperty)props.get("border-top-style");
-        if(ep!=null && ep.getEnum()!=Constants.NONE){
-            attrib.set(ITableAttributes.CELL_BORDER_TOP,   "\\"+convertAttributetoRtf(ep.getEnum()));
-            isBorderPresent=true;
+        ep = (EnumProperty)props.get("border-top-style");
+        if (ep != null && ep.getEnum() != Constants.NONE) {
+            attrib.set(ITableAttributes.CELL_BORDER_TOP,   "\\"
+                       + convertAttributetoRtf(ep.getEnum()));
+            isBorderPresent = true;
         }
-        ep=(EnumProperty)props.get("border-bottom-style");
-        if(ep!=null && ep.getEnum()!=Constants.NONE){
-            attrib.set(ITableAttributes.CELL_BORDER_BOTTOM,"\\"+convertAttributetoRtf(ep.getEnum()));
-            isBorderPresent=true;
+        ep = (EnumProperty)props.get("border-bottom-style");
+        if (ep != null && ep.getEnum() != Constants.NONE) {
+            attrib.set(ITableAttributes.CELL_BORDER_BOTTOM, "\\"
+                       + convertAttributetoRtf(ep.getEnum()));
+            isBorderPresent = true;
         }
-        ep=(EnumProperty)props.get("border-left-style");
-        if(ep!=null && ep.getEnum()!=Constants.NONE){
-            attrib.set(ITableAttributes.CELL_BORDER_LEFT,  "\\"+convertAttributetoRtf(ep.getEnum()));
-            isBorderPresent=true;
+        ep = (EnumProperty)props.get("border-left-style");
+        if (ep != null && ep.getEnum() != Constants.NONE) {
+            attrib.set(ITableAttributes.CELL_BORDER_LEFT,  "\\"
+                       + convertAttributetoRtf(ep.getEnum()));
+            isBorderPresent = true;
         }
-        ep=(EnumProperty)props.get("border-right-style");
-        if(ep!=null && ep.getEnum()!=Constants.NONE){
-            attrib.set(ITableAttributes.CELL_BORDER_RIGHT, "\\"+convertAttributetoRtf(ep.getEnum()));
-            isBorderPresent=true;
+        ep = (EnumProperty)props.get("border-right-style");
+        if (ep != null && ep.getEnum() != Constants.NONE) {
+            attrib.set(ITableAttributes.CELL_BORDER_RIGHT, "\\"
+                       + convertAttributetoRtf(ep.getEnum()));
+            isBorderPresent = true;
         }
 
-        if((p=props.get("border-width"))!=null) {
-            ListProperty listprop=(ListProperty)p;
-            LengthProperty lengthprop=(LengthProperty)listprop.getList().get(0);
+        if ((p = props.get("border-width")) != null) {
+            ListProperty listprop = (ListProperty)p;
+            LengthProperty lengthprop = (LengthProperty)listprop.getList().get(0);
 
-            Float f=new Float(lengthprop.getLength().getValue()/1000f);
+            Float f = new Float(lengthprop.getLength().getValue() / 1000f);
             String sValue = f.toString() + "pt";
 
-            attrib.set(BorderAttributesConverter.BORDER_WIDTH, (int)FoUnitsConverter.getInstance().convertToTwips(sValue));
-        }
-        else if(isBorderPresent){
+            attrib.set(BorderAttributesConverter.BORDER_WIDTH,
+                       (int)FoUnitsConverter.getInstance().convertToTwips(sValue));
+        } else if (isBorderPresent) {
             //if not defined, set default border width
             //note 20 twips = 1 point
-            attrib.set(BorderAttributesConverter.BORDER_WIDTH, (int)FoUnitsConverter.getInstance().convertToTwips("1pt"));
+            attrib.set(BorderAttributesConverter.BORDER_WIDTH,
+                       (int)FoUnitsConverter.getInstance().convertToTwips("1pt"));
         }
 
 
         // Column spanning :
-        NumberProperty n=(NumberProperty)props.get("number-columns-spanned");
-        if(n!=null && n.getNumber().intValue()>1) {
+        NumberProperty n = (NumberProperty)props.get("number-columns-spanned");
+        if (n != null && n.getNumber().intValue() > 1) {
             attrib.set(ITableAttributes.COLUMN_SPAN, n.getNumber().intValue());
         }
 
@@ -266,141 +268,172 @@ public class TableAttributesConverter {
      *
      * @throws ConverterException On convertion error
      */
-    static RtfAttributes convertRowAttributes(PropertyList props, PropertyList defProps, RtfAttributes rtfatts)
+    static RtfAttributes convertRowAttributes(PropertyList props,
+            PropertyList defProps, RtfAttributes rtfatts)
     throws FOPException {
 
         Property p;
         EnumProperty ep;
-        RtfColorTable colorTable=RtfColorTable.getInstance();
+        RtfColorTable colorTable = RtfColorTable.getInstance();
 
-        RtfAttributes attrib=null;
+        RtfAttributes attrib = null;
 
-        if(defProps!=null)
-        {
-            attrib=convertRowAttributes(defProps,null,rtfatts);
-        }
-        else
-        {
-            if(rtfatts==null)
-                attrib=new RtfAttributes();
-            else
-                attrib=rtfatts;
+        if (defProps != null) {
+            attrib = convertRowAttributes(defProps, null, rtfatts);
+        } else {
+            if (rtfatts == null) {
+                attrib = new RtfAttributes();
+            } else {
+                attrib = rtfatts;
+            }
         }
 
         String attrValue;
-        boolean isBorderPresent=false;
+        boolean isBorderPresent = false;
         //need to set a default width
 
         //check for keep-together row attribute
-        if ((p=props.get("keep-together.within-page"))!=null){
+        if ((p = props.get("keep-together.within-page")) != null) {
             attrib.set(ITableAttributes.ROW_KEEP_TOGETHER);
         }
 
-        if ((p=props.get("keep-together"))!=null){
+        if ((p = props.get("keep-together")) != null) {
             attrib.set(ITableAttributes.ROW_KEEP_TOGETHER);
         }
 
         //Check for keep-with-next row attribute.
-        if ((p=props.get("keep-together"))!=null){
+        if ((p = props.get("keep-together")) != null) {
             attrib.set(ITableAttributes.ROW_KEEP_WITH_NEXT);
         }
 
         //Check for keep-with-previous row attribute.
-        if ((p=props.get("keep-with-previous"))!=null){
+        if ((p = props.get("keep-with-previous")) != null) {
             attrib.set(ITableAttributes.ROW_KEEP_WITH_PREVIOUS);
         }
 
         //Check for height row attribute.
-        if ((p=props.get("height"))!=null){
-            Float f=new Float(p.getLength().getValue()/1000);
+        if ((p = props.get("height")) != null) {
+            Float f = new Float(p.getLength().getValue() / 1000);
             attrValue = f.toString() + "pt";
-            attrib.set(ITableAttributes.ROW_HEIGHT, (int)FoUnitsConverter.getInstance().convertToTwips(attrValue));
+            attrib.set(ITableAttributes.ROW_HEIGHT,
+                       (int)FoUnitsConverter.getInstance().convertToTwips(attrValue));
         }
 
-        /* to write a border to a side of a cell one must write the directional side (ie. left, right) and the inside value
-         * if one needs to be taken out ie if the cell lies on the edge of a table or not, the offending value will be taken out
-         * by RtfTableRow.  This is because you can't say BORDER_TOP and BORDER_HORIZONTAL if the cell lies at the
-         * top of the table.  Similarly using BORDER_BOTTOM and BORDER_HORIZONTAL will not work if the cell lies at th
-         * bottom of the table.  The same rules apply for left right and vertical.
+        /* to write a border to a side of a cell one must write the directional
+         * side (ie. left, right) and the inside value if one needs to be taken
+         * out ie if the cell lies on the edge of a table or not, the offending
+         * value will be taken out by RtfTableRow.  This is because you can't
+         * say BORDER_TOP and BORDER_HORIZONTAL if the cell lies at the top of
+         * the table.  Similarly using BORDER_BOTTOM and BORDER_HORIZONTAL will
+         * not work if the cell lies at th bottom of the table.  The same rules
+         * apply for left right and vertical.
 
-         * Also, the border type must be written after every control word.  Thus it is implemented that the border type is the value
-         * of the border place.
+         * Also, the border type must be written after every control word.  Thus
+         * it is implemented that the border type is the value of the border
+         * place.
          */
-        if((p=props.get("border-style"))!=null){
-            log.warn("border-style not implemented. Please use border-style-left, ...-right, ...-top or ...-bottom");
+        if ((p = props.get("border-style")) != null) {
+            log.warn("border-style not implemented. Please use border-style-left, "
+                     + "...-right, ...-top or ...-bottom");
+/*
+            attrValue = new String(AbstractBuilder.getValue( attrs, "border-style", defAttrs ));
+            attrib.set(ITableAttributes.ROW_BORDER_LEFT,"\\"
+                       + BorderAttributesConverter.convertAttributetoRtf(attrValue));
+            attrib.set(ITableAttributes.ROW_BORDER_RIGHT,"\\"
+                       + BorderAttributesConverter.convertAttributetoRtf(attrValue));
+            attrib.set(ITableAttributes.ROW_BORDER_HORIZONTAL,"\\"
+                       + BorderAttributesConverter.convertAttributetoRtf(attrValue));
+            attrib.set(ITableAttributes.ROW_BORDER_VERTICAL,"\\"
+                       + BorderAttributesConverter.convertAttributetoRtf(attrValue));
+            attrib.set(ITableAttributes.ROW_BORDER_BOTTOM,"\\"
+                       + BorderAttributesConverter.convertAttributetoRtf(attrValue));
+            attrib.set(ITableAttributes.ROW_BORDER_TOP,"\\"
+                       + BorderAttributesConverter.convertAttributetoRtf(attrValue));
+            isBorderPresent=true;
+*/
+        }
+        ep = (EnumProperty)props.get("border-top-style");
+        if (ep != null && ep.getEnum() != Constants.NONE) {
+            attrib.set(ITableAttributes.ROW_BORDER_TOP,       "\\"
+                       + convertAttributetoRtf(ep.getEnum()));
+            attrib.set(ITableAttributes.ROW_BORDER_HORIZONTAL, "\\"
+                       + convertAttributetoRtf(ep.getEnum()));
+            isBorderPresent = true;
+        }
+        ep = (EnumProperty)props.get("border-bottom-style");
+        if (ep != null && ep.getEnum() != Constants.NONE) {
+            attrib.set(ITableAttributes.ROW_BORDER_BOTTOM,    "\\"
+                       + convertAttributetoRtf(ep.getEnum()));
+            attrib.set(ITableAttributes.ROW_BORDER_HORIZONTAL, "\\"
+                       + convertAttributetoRtf(ep.getEnum()));
+            isBorderPresent = true;
+        }
+        ep = (EnumProperty)props.get("border-left-style");
+        if (ep != null && ep.getEnum() != Constants.NONE) {
+            attrib.set(ITableAttributes.ROW_BORDER_LEFT,     "\\"
+                       + convertAttributetoRtf(ep.getEnum()));
+            attrib.set(ITableAttributes.ROW_BORDER_VERTICAL, "\\"
+                       + convertAttributetoRtf(ep.getEnum()));
+            isBorderPresent = true;
+        }
+        ep = (EnumProperty)props.get("border-right-style");
+        if (ep != null && ep.getEnum() != Constants.NONE) {
+            attrib.set(ITableAttributes.ROW_BORDER_RIGHT,    "\\"
+                       + convertAttributetoRtf(ep.getEnum()));
+            attrib.set(ITableAttributes.ROW_BORDER_VERTICAL, "\\"
+                       + convertAttributetoRtf(ep.getEnum()));
+            isBorderPresent = true;
+        }
+        ep = (EnumProperty)props.get("border-horizontal-style");
+        if (ep != null && ep.getEnum() != Constants.NONE) {
+            attrib.set(ITableAttributes.ROW_BORDER_HORIZONTAL, "\\"
+                       + convertAttributetoRtf(ep.getEnum()));
+            attrib.set(ITableAttributes.ROW_BORDER_TOP,        "\\"
+                       + convertAttributetoRtf(ep.getEnum()));
+            attrib.set(ITableAttributes.ROW_BORDER_BOTTOM,     "\\"
+                       + convertAttributetoRtf(ep.getEnum()));
+            isBorderPresent = true;
+        }
+        ep = (EnumProperty)props.get("border-vertical-style");
+        if (ep != null && ep.getEnum() != Constants.NONE) {
+            attrib.set(ITableAttributes.ROW_BORDER_VERTICAL,  "\\"
+                       + convertAttributetoRtf(ep.getEnum()));
+            attrib.set(ITableAttributes.ROW_BORDER_LEFT,      "\\"
+                       + convertAttributetoRtf(ep.getEnum()));
+            attrib.set(ITableAttributes.ROW_BORDER_RIGHT,     "\\"
+                       + convertAttributetoRtf(ep.getEnum()));
+            isBorderPresent = true;
+        }
 
-//            attrValue = new String(AbstractBuilder.getValue( attrs, "border-style", defAttrs ));
-//            attrib.set(ITableAttributes.ROW_BORDER_LEFT,"\\"+BorderAttributesConverter.convertAttributetoRtf(attrValue));
-//            attrib.set(ITableAttributes.ROW_BORDER_RIGHT,"\\"+BorderAttributesConverter.convertAttributetoRtf(attrValue));
-//            attrib.set(ITableAttributes.ROW_BORDER_HORIZONTAL,"\\"+BorderAttributesConverter.convertAttributetoRtf(attrValue));
-//            attrib.set(ITableAttributes.ROW_BORDER_VERTICAL,"\\"+BorderAttributesConverter.convertAttributetoRtf(attrValue));
-//            attrib.set(ITableAttributes.ROW_BORDER_BOTTOM,"\\"+BorderAttributesConverter.convertAttributetoRtf(attrValue));
-//            attrib.set(ITableAttributes.ROW_BORDER_TOP,"\\"+BorderAttributesConverter.convertAttributetoRtf(attrValue));
-//            isBorderPresent=true;
-        }
-        ep=(EnumProperty)props.get("border-top-style");
-        if(ep!=null && ep.getEnum()!=Constants.NONE){
-            attrib.set(ITableAttributes.ROW_BORDER_TOP,       "\\"+convertAttributetoRtf(ep.getEnum()));
-            attrib.set(ITableAttributes.ROW_BORDER_HORIZONTAL,"\\"+convertAttributetoRtf(ep.getEnum()));
-            isBorderPresent=true;
-        }
-        ep=(EnumProperty)props.get("border-bottom-style");
-        if(ep!=null && ep.getEnum()!=Constants.NONE){
-            attrib.set(ITableAttributes.ROW_BORDER_BOTTOM,    "\\"+convertAttributetoRtf(ep.getEnum()));
-            attrib.set(ITableAttributes.ROW_BORDER_HORIZONTAL,"\\"+convertAttributetoRtf(ep.getEnum()));
-            isBorderPresent=true;
-        }
-        ep=(EnumProperty)props.get("border-left-style");
-        if(ep!=null && ep.getEnum()!=Constants.NONE){
-            attrib.set(ITableAttributes.ROW_BORDER_LEFT,     "\\"+convertAttributetoRtf(ep.getEnum()));
-            attrib.set(ITableAttributes.ROW_BORDER_VERTICAL, "\\"+convertAttributetoRtf(ep.getEnum()));
-            isBorderPresent=true;
-        }
-        ep=(EnumProperty)props.get("border-right-style");
-        if(ep!=null && ep.getEnum()!=Constants.NONE){
-            attrib.set(ITableAttributes.ROW_BORDER_RIGHT,    "\\"+convertAttributetoRtf(ep.getEnum()));
-            attrib.set(ITableAttributes.ROW_BORDER_VERTICAL, "\\"+convertAttributetoRtf(ep.getEnum()));
-            isBorderPresent=true;
-        }
-        ep=(EnumProperty)props.get("border-horizontal-style");
-        if(ep!=null && ep.getEnum()!=Constants.NONE){
-            attrib.set(ITableAttributes.ROW_BORDER_HORIZONTAL, "\\"+convertAttributetoRtf(ep.getEnum()));
-            attrib.set(ITableAttributes.ROW_BORDER_TOP,        "\\"+convertAttributetoRtf(ep.getEnum()));
-            attrib.set(ITableAttributes.ROW_BORDER_BOTTOM,     "\\"+convertAttributetoRtf(ep.getEnum()));
-            isBorderPresent=true;
-        }
-        ep=(EnumProperty)props.get("border-vertical-style");
-        if(ep!=null && ep.getEnum()!=Constants.NONE){
-            attrib.set(ITableAttributes.ROW_BORDER_VERTICAL,  "\\"+convertAttributetoRtf(ep.getEnum()));
-            attrib.set(ITableAttributes.ROW_BORDER_LEFT,      "\\"+convertAttributetoRtf(ep.getEnum()));
-            attrib.set(ITableAttributes.ROW_BORDER_RIGHT,     "\\"+convertAttributetoRtf(ep.getEnum()));
-            isBorderPresent=true;
-        }
+        if ((p = props.get("border-width")) != null) {
+            ListProperty listprop = (ListProperty)p;
+            LengthProperty lengthprop = (LengthProperty)listprop.getList().get(0);
 
-        if((p=props.get("border-width"))!=null){
-            ListProperty listprop=(ListProperty)p;
-            LengthProperty lengthprop=(LengthProperty)listprop.getList().get(0);
-
-            Float f=new Float(lengthprop.getLength().getValue()/1000f);
+            Float f = new Float(lengthprop.getLength().getValue() / 1000f);
             String sValue = f.toString() + "pt";
 
-            attrib.set(BorderAttributesConverter.BORDER_WIDTH, (int)FoUnitsConverter.getInstance().convertToTwips(sValue));
-        }
-        else if(isBorderPresent){
+            attrib.set(BorderAttributesConverter.BORDER_WIDTH,
+                       (int)FoUnitsConverter.getInstance().convertToTwips(sValue));
+        } else if (isBorderPresent) {
             //if not defined, set default border width
             //note 20 twips = 1 point
-            attrib.set(BorderAttributesConverter.BORDER_WIDTH, (int)FoUnitsConverter.getInstance().convertToTwips("1pt"));
+            attrib.set(BorderAttributesConverter.BORDER_WIDTH,
+                       (int)FoUnitsConverter.getInstance().convertToTwips("1pt"));
         }
 
         return attrib;
     }
 
 
-
+    /**
+     *
+     * @param iBorderStyle the border style to be converted
+     * @return String with the converted border style
+     */
     public static String convertAttributetoRtf(int iBorderStyle) {
         // Added by Normand Masse
         // "solid" is interpreted like "thin"
-        if (iBorderStyle==Constants.SOLID) {
+        if (iBorderStyle == Constants.SOLID) {
             return BorderAttributesConverter.BORDER_SINGLE_THICKNESS;
 /*        } else if (iBorderStyle==Constants.THIN) {
                         return BorderAttributesConverter.BORDER_SINGLE_THICKNESS;
@@ -408,11 +441,11 @@ public class TableAttributesConverter {
             return BorderAttributesConverter.BORDER_DOUBLE_THICKNESS;
         } else if (iBorderStyle==Constants. value.equals("shadowed")) {
             return BorderAttributesConverter.BORDER_SHADOWED;*/
-        } else if (iBorderStyle==Constants.DOUBLE) {
+        } else if (iBorderStyle == Constants.DOUBLE) {
             return BorderAttributesConverter.BORDER_DOUBLE;
-        } else if (iBorderStyle==Constants.DOTTED) {
+        } else if (iBorderStyle == Constants.DOTTED) {
             return BorderAttributesConverter.BORDER_DOTTED;
-        } else if (iBorderStyle==Constants.DASHED) {
+        } else if (iBorderStyle == Constants.DASHED) {
             return BorderAttributesConverter.BORDER_DASH;
 /*        } else if (iBorderStyle==Constants value.equals("hairline")) {
             return BorderAttributesConverter.BORDER_HAIRLINE;*/

@@ -103,12 +103,12 @@ public class RTFHandler extends FOInputHandler {
 
     private RtfFile rtfFile;
     private final OutputStream os;
-    private final Logger log=new ConsoleLogger();
+    private final Logger log = new ConsoleLogger();
     private RtfSection sect;
     private RtfDocumentArea docArea;
     private RtfParagraph para;
     private boolean warned = false;
-    private BuilderContext m_context=new BuilderContext(null);
+    private BuilderContext m_context = new BuilderContext(null);
 
     private static final String ALPHA_WARNING = "WARNING: RTF renderer is "
         + "veryveryalpha at this time, see class org.apache.fop.rtf.renderer.RTFHandler";
@@ -205,7 +205,9 @@ public class RTFHandler extends FOInputHandler {
             attrBlockFontSize(bl, rtfAttr);
             attrBlockFontWeight(bl, rtfAttr);
 
-            IRtfParagraphContainer pc=(IRtfParagraphContainer)m_context.getContainer(IRtfParagraphContainer.class,true,null);
+            IRtfParagraphContainer pc =
+                    (IRtfParagraphContainer)m_context.getContainer
+                        (IRtfParagraphContainer.class, true, null);
             para = pc.newParagraph(rtfAttr);
 
             m_context.pushContainer(para);
@@ -213,9 +215,7 @@ public class RTFHandler extends FOInputHandler {
             // FIXME could we throw Exception in all FOInputHandler events?
             log.error("startBlock: " + ioe.getMessage());
             throw new Error("IOException: " + ioe);
-        }
-        catch(Exception e)
-        {
+        } catch (Exception e) {
             log.error("startBlock: " + e.getMessage());
             throw new Error("Exception: " + e);
         }
@@ -235,15 +235,14 @@ public class RTFHandler extends FOInputHandler {
     public void startTable(Table tbl) {
         // create an RtfTable in the current table container
         TableContext tableContext = new TableContext(m_context);
-        RtfAttributes atts=new RtfAttributes();
+        RtfAttributes atts = new RtfAttributes();
 
-        try
-        {
-            final IRtfTableContainer tc = (IRtfTableContainer)m_context.getContainer(IRtfTableContainer.class,true,null);
+        try {
+            final IRtfTableContainer tc =
+                   (IRtfTableContainer)m_context.getContainer(IRtfTableContainer.class,
+                   true, null);
             m_context.pushContainer(tc.newTable(atts, tableContext));
-        }
-        catch(Exception e)
-        {
+        } catch (Exception e) {
             log.error("startTable:" + e.getMessage());
             throw new Error(e.getMessage());
         }
@@ -265,14 +264,11 @@ public class RTFHandler extends FOInputHandler {
     */
 
     public void startColumn(TableColumn tc) {
-        try
-        {
-            Integer iWidth=new Integer(tc.getColumnWidth()/1000);
-            m_context.getTableContext().setNextColumnWidth(iWidth.toString()+"pt");
-            m_context.getTableContext().setNextColumnRowSpanning(new Integer(0),null);
-        }
-        catch(Exception e)
-        {
+        try {
+            Integer iWidth = new Integer(tc.getColumnWidth() / 1000);
+            m_context.getTableContext().setNextColumnWidth(iWidth.toString() + "pt");
+            m_context.getTableContext().setNextColumnRowSpanning(new Integer(0), null);
+        } catch (Exception e) {
             log.error("startColumn: " + e.getMessage());
             throw new Error(e.getMessage());
         }
@@ -284,7 +280,7 @@ public class RTFHandler extends FOInputHandler {
      * @param th TableColumn that is ending;
      */
 
-    public void endColumn(TableColumn tc){
+    public void endColumn(TableColumn tc) {
     }
 
     /**
@@ -315,15 +311,13 @@ public class RTFHandler extends FOInputHandler {
      * @see org.apache.fop.fo.FOInputHandler#startBody(TableBody)
      */
     public void startBody(TableBody tb) {
-        try
-        {
-            RtfAttributes atts=TableAttributesConverter.convertRowAttributes (tb.properties, null, null);
+        try {
+            RtfAttributes atts = TableAttributesConverter.convertRowAttributes (tb.properties,
+                   null, null);
 
-            RtfTable tbl = (RtfTable)m_context.getContainer(RtfTable.class,true,this);
+            RtfTable tbl = (RtfTable)m_context.getContainer(RtfTable.class, true, this);
             tbl.setHeaderAttribs(atts);
-        }
-        catch(Exception e)
-        {
+        } catch (Exception e) {
             log.error("startBody: " + e.getMessage());
             throw new Error(e.getMessage());
         }
@@ -333,13 +327,10 @@ public class RTFHandler extends FOInputHandler {
      * @see org.apache.fop.fo.FOInputHandler#endBody(TableBody)
      */
     public void endBody(TableBody tb) {
-        try
-        {
-            RtfTable tbl = (RtfTable)m_context.getContainer(RtfTable.class,true,this);
-            tbl.setHeaderAttribs( null );
-        }
-        catch(Exception e)
-        {
+        try {
+            RtfTable tbl = (RtfTable)m_context.getContainer(RtfTable.class, true, this);
+            tbl.setHeaderAttribs(null);
+        } catch (Exception e) {
             log.error("endBody: " + e.getMessage());
             throw new Error(e.getMessage());
         }
@@ -349,22 +340,21 @@ public class RTFHandler extends FOInputHandler {
      * @see org.apache.fop.fo.FOInputHandler#startRow(TableRow)
      */
     public void startRow(TableRow tr) {
-        try
-        {
+        try {
             // create an RtfTableRow in the current RtfTable
-            final RtfTable tbl = (RtfTable)m_context.getContainer(RtfTable.class,true,null);
+            final RtfTable tbl = (RtfTable)m_context.getContainer(RtfTable.class,
+                    true, null);
 
             RtfAttributes tblAttribs = tbl.getRtfAttributes();
             RtfAttributes tblRowAttribs = new RtfAttributes();
-            RtfAttributes atts=TableAttributesConverter.convertRowAttributes(tr.properties,null,tbl.getHeaderAttribs());
+            RtfAttributes atts = TableAttributesConverter.convertRowAttributes(tr.properties,
+                    null, tbl.getHeaderAttribs());
 
-            m_context.pushContainer(tbl.newTableRow( atts ));
+            m_context.pushContainer(tbl.newTableRow(atts));
 
             // reset column iteration index to correctly access column widths
             m_context.getTableContext().selectFirstColumn();
-        }
-        catch(Exception e)
-        {
+        } catch (Exception e) {
             log.error("startRow: " + e.getMessage());
             throw new Error(e.getMessage());
         }
@@ -382,46 +372,44 @@ public class RTFHandler extends FOInputHandler {
      * @see org.apache.fop.fo.FOInputHandler#startCell(TableCell)
      */
     public void startCell(TableCell tc) {
-        try
-        {
-            TableContext tctx=m_context.getTableContext();
-            final RtfTableRow row = (RtfTableRow)m_context.getContainer(RtfTableRow.class,true,null);
+        try {
+            TableContext tctx = m_context.getTableContext();
+            final RtfTableRow row = (RtfTableRow)m_context.getContainer(RtfTableRow.class,
+                    true, null);
 
 
             //while the current column is in row-spanning, act as if
             //a vertical merged cell would have been specified.
-            while(tctx.getNumberOfColumns()>tctx.getColumnIndex() && tctx.getColumnRowSpanningNumber().intValue()>0)
-            {
-                row.newTableCellMergedVertically((int)tctx.getColumnWidth(),tctx.getColumnRowSpanningAttrs());
+            while (tctx.getNumberOfColumns() > tctx.getColumnIndex()
+                  && tctx.getColumnRowSpanningNumber().intValue() > 0) {
+                row.newTableCellMergedVertically((int)tctx.getColumnWidth(),
+                        tctx.getColumnRowSpanningAttrs());
                 tctx.selectNextColumn();
             }
 
             //get the width of the currently started cell
-            float width=tctx.getColumnWidth();
+            float width = tctx.getColumnWidth();
 
             // create an RtfTableCell in the current RtfTableRow
-            RtfAttributes atts=TableAttributesConverter.convertCellAttributes(tc.properties,null);
-            RtfTableCell cell=row.newTableCell((int)width, atts);
+            RtfAttributes atts = TableAttributesConverter.convertCellAttributes(tc.properties,
+                    null);
+            RtfTableCell cell = row.newTableCell((int)width, atts);
 
             //process number-rows-spanned attribute
-            Property p=null;
-            if ((p=tc.properties.get("number-rows-spanned")) != null && false)
-            {
+            Property p = null;
+            if ((p = tc.properties.get("number-rows-spanned")) != null && false) {
                 // Start vertical merge
                 cell.setVMerge(RtfTableCell.MERGE_START);
 
                 // set the number of rows spanned
-                tctx.setCurrentColumnRowSpanning(new Integer(p.getNumber().intValue()), cell.getRtfAttributes());
-            }
-            else
-            {
-                tctx.setCurrentColumnRowSpanning(new Integer(1),null);
+                tctx.setCurrentColumnRowSpanning(new Integer(p.getNumber().intValue()),
+                        cell.getRtfAttributes());
+            } else {
+                tctx.setCurrentColumnRowSpanning(new Integer(1), null);
             }
 
             m_context.pushContainer(cell);
-        }
-        catch(Exception e)
-        {
+        } catch (Exception e) {
             log.error("startCell: " + e.getMessage());
             throw new Error(e.getMessage());
         }
@@ -564,18 +552,17 @@ public class RTFHandler extends FOInputHandler {
         }
     }
 
-    private void attrBlockFontSize(Block bl, RtfAttributes rtfAttr){
-        int fopValue = bl.properties.get("font-size").getLength().getValue()/500;
-        rtfAttr.set("fs",fopValue);
+    private void attrBlockFontSize(Block bl, RtfAttributes rtfAttr) {
+        int fopValue = bl.properties.get("font-size").getLength().getValue() / 500;
+        rtfAttr.set("fs", fopValue);
     }
 
-    private void attrBlockFontWeight(Block bl, RtfAttributes rtfAttr){
+    private void attrBlockFontWeight(Block bl, RtfAttributes rtfAttr) {
         String fopValue = bl.properties.get("font-weight").getString();
-        if(fopValue=="bold" || fopValue=="700"){
-            rtfAttr.set("b",1);
-        }
-        else{
-            rtfAttr.set("b",0);
+        if (fopValue == "bold" || fopValue == "700") {
+            rtfAttr.set("b", 1);
+        } else {
+            rtfAttr.set("b", 0);
         }
     }
 

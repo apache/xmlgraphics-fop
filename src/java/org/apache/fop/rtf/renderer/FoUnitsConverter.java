@@ -1,4 +1,5 @@
 /*
+ * $Id$
  * ============================================================================
  *                    The Apache Software License, Version 1.1
  * ============================================================================
@@ -49,7 +50,8 @@
  */
 package org.apache.fop.rtf.renderer;
 
-import java.util.*;
+import java.util.Map;
+import java.util.HashMap;
 
 //FOP
 import org.apache.fop.apps.FOPException;
@@ -65,8 +67,7 @@ import org.apache.fop.apps.FOPException;
  *  for the JFOR project and is now integrated into FOP.
  */
 
-class FoUnitsConverter
-{
+class FoUnitsConverter {
     private static final FoUnitsConverter m_instance = new FoUnitsConverter();
 
     /** points to twips: 1 twip is 1/20 of a point */
@@ -81,41 +82,38 @@ class FoUnitsConverter
     /** conversion factors keyed by xsl:fo units names */
     private static final Map m_twipFactors = new HashMap();
     static {
-        m_twipFactors.put("mm",new Float(MM_TO_TWIPS));
-        m_twipFactors.put("cm",new Float(CM_TO_TWIPS));
-        m_twipFactors.put("pt",new Float(POINT_TO_TWIPS));
-        m_twipFactors.put("in",new Float(IN_TO_TWIPS));
+        m_twipFactors.put("mm", new Float(MM_TO_TWIPS));
+        m_twipFactors.put("cm", new Float(CM_TO_TWIPS));
+        m_twipFactors.put("pt", new Float(POINT_TO_TWIPS));
+        m_twipFactors.put("in", new Float(IN_TO_TWIPS));
     }
 
     /** singleton pattern */
-    private FoUnitsConverter()
-    {
+    private FoUnitsConverter() {
     }
 
     /** singleton pattern */
-    static FoUnitsConverter getInstance()
-    {
+    static FoUnitsConverter getInstance() {
         return m_instance;
     }
 
     /** convert given value to RTF units
      *  @param foValue a value like "12mm"
      *  TODO: tested with "mm" units only, needs work to comply with FO spec
-     *	Why does it search for period instead of simply breaking last two
+     *  Why does it search for period instead of simply breaking last two
      *  Characters into another units string? - Chris
      */
     float convertToTwips(String foValue)
-    throws FOPException
-    {
+            throws FOPException {
         foValue = foValue.trim();
 
         // break value into number and units
         final StringBuffer number = new StringBuffer();
         final StringBuffer units = new StringBuffer();
 
-        for(int i=0; i < foValue.length(); i++) {
+        for (int i = 0; i < foValue.length(); i++) {
             final char c = foValue.charAt(i);
-            if(Character.isDigit(c) || c == '.') {
+            if (Character.isDigit(c) || c == '.') {
                 number.append(c);
             } else {
                 // found the end of the digits
@@ -124,29 +122,31 @@ class FoUnitsConverter
             }
         }
 
-        return numberToTwips(number.toString(),units.toString());
+        return numberToTwips(number.toString(), units.toString());
     }
 
 
     /** convert given value to twips according to given units */
-    private float numberToTwips(String number,String units)
-    throws FOPException
-    {
+    private float numberToTwips(String number, String units)
+            throws FOPException {
         float result = 0;
 
         // convert number to integer
         try {
-            if(number != null && number.trim().length() > 0) {
+            if (number != null && number.trim().length() > 0) {
                 result = Float.valueOf(number).floatValue();
             }
-        } catch(Exception e) {
-            throw new FOPException("number format error: cannot convert '" + number + "' to float value");
+        } catch (Exception e) {
+            throw new FOPException("number format error: cannot convert '"
+                                   + number + "' to float value");
         }
 
         // find conversion factor
-        if(units != null && units.trim().length() > 0) {
+        if (units != null && units.trim().length() > 0) {
             final Float factor = (Float)m_twipFactors.get(units.toLowerCase());
-            if(factor == null) throw new FOPException("conversion factor not found for '" + units + "' units");
+            if (factor == null) {
+                throw new FOPException("conversion factor not found for '" + units + "' units");
+            }
             result *= factor.floatValue();
         }
 
@@ -154,20 +154,19 @@ class FoUnitsConverter
     }
 
     /** convert a font size given in points like "12pt" */
-    int convertFontSize(String size)
-    throws FOPException
-    {
+    int convertFontSize(String size) throws FOPException {
         size = size.trim();
         final String FONT_SUFFIX = "pt";
-        if(!size.endsWith(FONT_SUFFIX)) {
-            throw new FOPException("Invalid font size '" + size + "', must end with '" + FONT_SUFFIX + "'");
+        if (!size.endsWith(FONT_SUFFIX)) {
+            throw new FOPException("Invalid font size '" + size + "', must end with '"
+                                   + FONT_SUFFIX + "'");
         }
 
         float result = 0;
-        size = size.substring(0,size.length() - FONT_SUFFIX.length());
+        size = size.substring(0, size.length() - FONT_SUFFIX.length());
         try {
             result = (Float.valueOf(size).floatValue());
-        } catch(Exception e) {
+        } catch (Exception e) {
             throw new FOPException("Invalid font size value '" + size + "'");
         }
 
