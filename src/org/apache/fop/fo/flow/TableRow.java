@@ -152,6 +152,8 @@ public class TableRow extends FObj {
         areaContainer.setBorderColor(borderColor, borderColor, borderColor, borderColor); 
 	areaContainer.start();
 
+        areaContainer.setAbsoluteHeight(area.getAbsoluteHeight());
+
 	int numChildren = this.children.size();
 	if (numChildren != columns.size()) {
 	    System.err.println("WARNING: Number of children under table-row not equal to number of table-columns");

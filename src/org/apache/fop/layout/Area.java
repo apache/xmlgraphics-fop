@@ -69,6 +69,12 @@ abstract public class Area extends Box {
     protected int maxHeight;
 
     protected int currentHeight = 0;
+    
+    // used to keep track of the current x position within a table.  Required for drawing rectangle links.
+    protected int tableCellXOffset = 0;
+    
+    // used to keep track of the absolute height on the page.  Required for drawing rectangle links.
+    private int absoluteHeight = 0;  
 
     protected int contentRectangleWidth;
 
@@ -120,6 +126,7 @@ abstract public class Area extends Box {
 	
     public void addDisplaySpace(int size) {
 	this.addChild(new DisplaySpace(size));
+        this.absoluteHeight += size;
 	this.currentHeight += size;
     }
 
@@ -182,12 +189,39 @@ abstract public class Area extends Box {
 	return this.paddingRight;
     }
 
+    public int getTableCellXOffset()
+    {
+        return tableCellXOffset;
+    }
+    
+    public void setTableCellXOffset(int offset)
+    {
+        tableCellXOffset=offset;
+    }
+    
+    public int getAbsoluteHeight()
+    {
+        return absoluteHeight;
+    }
+
+    public void setAbsoluteHeight(int value)
+    {
+        absoluteHeight=value;
+    }
+
+    public void increaseAbsoluteHeight(int value)
+    {
+        absoluteHeight+=value;
+    } 
+    
     public void increaseHeight(int amount) {
 	this.currentHeight += amount;
+        this.absoluteHeight += amount;
     }
 
     protected void removeChild(Area area) {
 	this.currentHeight -= area.getHeight();
+        this.absoluteHeight -= area.getHeight();
 	this.children.removeElement(area);
     }
 	
@@ -241,8 +275,10 @@ abstract public class Area extends Box {
     public void setHeight(int height) {
       if (height > currentHeight)
         currentHeight = height;
+        absoluteHeight = height;        
       if (currentHeight > getMaxHeight())
         currentHeight = getMaxHeight();
+        absoluteHeight = getMaxHeight();        
     }
     
     public void setMaxHeight(int height) {

@@ -101,7 +101,7 @@ public class PDFLink extends PDFObject {
 	    (brx/1000f) + " " + (bry/1000f) + " ]\n"
 	    + "/C [ " + this.color + " ]\n" + 
 	    "/Border [ 0 0 0 ]\n" +
-	    "/A " + this.action.referencePDF() + "\n" +
+	    "/A " + this.action.getAction() + "\n" +
 	    "/H /I\n>>\nendobj\n";
 	return p;
     }

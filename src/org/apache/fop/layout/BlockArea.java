@@ -70,6 +70,7 @@ public class BlockArea extends Area {
 	
     protected int halfLeading;
 
+    
     /* text-align of all but the last line */
     protected int align;
 
@@ -197,4 +198,10 @@ public class BlockArea extends Area {
     public int spaceLeft() {
 	return maxHeight - currentHeight;
     }
+    
+    public int getHalfLeading()
+    {
+        return halfLeading;
+    }
+
 }

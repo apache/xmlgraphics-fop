@@ -139,6 +139,8 @@ public class TableBody extends FObj {
 	areaContainer.setBackgroundColor(backgroundColor);
 	areaContainer.start();
 
+        areaContainer.setAbsoluteHeight(area.getAbsoluteHeight());
+
 	int numChildren = this.children.size();
 	for (int i = this.marker; i < numChildren; i++) {
 	    TableRow row = (TableRow) children.elementAt(i);
@@ -153,7 +155,9 @@ public class TableBody extends FObj {
 		}
     	        area.addChild(areaContainer);
 		//areaContainer.end();
+
 		area.increaseHeight(areaContainer.getHeight());
+                area.setAbsoluteHeight(areaContainer.getAbsoluteHeight());
 		return status;
 	    }
 	}
@@ -162,6 +166,8 @@ public class TableBody extends FObj {
 
 	/* should this be combined into above? */
 	area.increaseHeight(areaContainer.getHeight());
+
+        area.setAbsoluteHeight(areaContainer.getAbsoluteHeight());
 
 	if (spaceAfter != 0) {
 	    area.addDisplaySpace(spaceAfter);

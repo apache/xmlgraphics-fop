@@ -169,6 +169,8 @@ public class Table extends FObj {
         areaContainer.setBorderColor(borderColor, borderColor, borderColor, borderColor); 
 	areaContainer.start();
 
+        areaContainer.setAbsoluteHeight(area.getAbsoluteHeight());
+
 	// added by Eric Schaeffer
 	currentColumnNumber = 0;
         int offset = 0;
@@ -207,6 +209,7 @@ public class Table extends FObj {
 		    //areaContainer.end();
 		    area.addChild(areaContainer);
 		    area.increaseHeight(areaContainer.getHeight());
+                    area.setAbsoluteHeight(areaContainer.getAbsoluteHeight()); 
 		    return status;
 		}
 	    }
@@ -227,6 +230,8 @@ public class Table extends FObj {
 	/* should this be combined into above? */
 	area.increaseHeight(areaContainer.getHeight());
 
+        area.setAbsoluteHeight(areaContainer.getAbsoluteHeight()); 
+        
 	if (spaceAfter != 0) {
 	    area.addDisplaySpace(spaceAfter);
 	}

@@ -119,7 +119,7 @@ public class SimpleLink extends FObjMixed {
 	    }
 	}
 		
-	ls.applyAreaContainerOffsets(ac);
+	ls.applyAreaContainerOffsets(ac, area);
 		
 	// pass on command line
 	String mergeLinks = System.getProperty( "links.merge" );

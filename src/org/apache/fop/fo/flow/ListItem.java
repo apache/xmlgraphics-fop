@@ -140,6 +140,8 @@ public class ListItem extends FObj {
 	blockArea.setPage(area.getPage());
 	blockArea.start();
 
+        blockArea.setAbsoluteHeight(area.getAbsoluteHeight());
+
 	int numChildren = this.children.size();
 	if (numChildren != 2) {
 	    throw new FOPException("list-item must have exactly two children");
@@ -174,6 +176,7 @@ public class ListItem extends FObj {
 	    blockArea.end();
 	    area.addChild(blockArea);
 	    area.increaseHeight(blockArea.getHeight());
+            area.setAbsoluteHeight(blockArea.getAbsoluteHeight());
 	    this.marker = 1;
 	    return status;
 	}
@@ -181,6 +184,7 @@ public class ListItem extends FObj {
 	blockArea.end();
 	area.addChild(blockArea);
 	area.increaseHeight(blockArea.getHeight());
+        area.setAbsoluteHeight(blockArea.getAbsoluteHeight());
 
 	if (spaceAfter != 0) {
 	    area.addDisplaySpace(spaceAfter);
