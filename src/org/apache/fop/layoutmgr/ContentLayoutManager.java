@@ -43,14 +43,47 @@ public class ContentLayoutManager implements LayoutManager {
         childLC.setStackLimit(new MinOptMax(ipd));
         childLC.setRefIPD(ipd);
 
+        int lineHeight = 14000;
+        int lead = 12000;
+        int follow = 2000;
+
+        int halfLeading = (lineHeight - lead - follow) / 2;
+        // height before baseline
+        int lineLead = lead + halfLeading;
+        // maximum size of top and bottom alignment
+        int maxtb = follow + halfLeading;
+        // max size of middle alignment below baseline
+        int middlefollow = maxtb;
+
         while (!curLM.isFinished()) {
             if ((bp = curLM.getNextBreakPoss(childLC)) != null) {
                 stack.add(bp.getStackingSize());
                 childBreaks.add(bp);
+
+            if(bp.getLead() > lineLead) {
+                lineLead = bp.getLead();
+            }
+            if(bp.getTotal() > maxtb) {
+                maxtb = bp.getTotal();
+            }
+            if(bp.getMiddle() > middlefollow) {
+                middlefollow = bp.getMiddle();
+            }
             }
         }
 
+        if(maxtb - lineLead > middlefollow) {
+            middlefollow = maxtb - lineLead;
+        }
+
+        //if(holder instanceof InlineParent) {
+        //    ((InlineParent)holder).setHeight(lineHeight);
+        //}
+
         LayoutContext lc = new LayoutContext(0);
+        lc.setBaseline(lineLead);
+        lc.setLineHeight(lineHeight);
+
         lc.setFlags(LayoutContext.RESOLVE_LEADING_SPACE, true);
         lc.setLeadingSpace(new SpaceSpecifier(false));
         lc.setTrailingSpace(new SpaceSpecifier(false));

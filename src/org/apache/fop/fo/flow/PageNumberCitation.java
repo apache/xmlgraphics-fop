@@ -75,6 +75,10 @@ public class PageNumberCitation extends FObj {
                                                        (Resolveable) inline);
                         }
                     }
+
+                    protected void offsetArea(LayoutContext context) {
+                        curArea.setOffset(context.getBaseline());
+                    }
                 }
                );
     }
