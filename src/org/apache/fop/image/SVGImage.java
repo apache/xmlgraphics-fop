@@ -29,7 +29,7 @@ public class SVGImage extends AbstractFopImage {
     public SVGImage(URL href, ImageReader imgReader) {
         super(href, imgReader);
         if(imgReader instanceof SVGReader) {
-            doc = ((SVGReader)imgReader).getDocument();
+            doc = (SVGDocument)((SVGReader)imgReader).getDocument();
         }
     }
 
