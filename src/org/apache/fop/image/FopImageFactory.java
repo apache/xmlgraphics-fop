@@ -9,6 +9,7 @@ package org.apache.fop.image;
 // Java
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.File;
 import java.net.URL;
 import java.net.MalformedURLException;
 import java.lang.reflect.Constructor;
@@ -48,16 +49,7 @@ public class FopImageFactory {
             // maybe relative
             URL context_url = null;
             try {
-                String baseDir = Configuration.getStringValue("baseDir");
-                context_url = new URL(baseDir); // how to get the context URL ?
-                try {
-                    absoluteURL = new URL(context_url, href);
-                } catch (MalformedURLException e_abs) {
-                    // not found
-                    throw new FopImageException( "Invalid Image URL : " +
-                                                 e_abs.getMessage() + "(base URL " +
-                                                 context_url.toString() + ")");
-                }
+                absoluteURL = new URL(Configuration.getStringValue("baseDir") + absoluteURL.getPath());
             } catch (MalformedURLException e_context) {
                 // pb context url
                 throw new FopImageException(
