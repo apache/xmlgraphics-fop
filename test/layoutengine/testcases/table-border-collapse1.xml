@@ -34,8 +34,12 @@
             <fo:block>block before table</fo:block>
           </fo:block-container>
           <fo:block margin="0pt" border="groove 5pt green" border-right="15pt" height="20pt">normal border here</fo:block>
-          <fo:block-container margin-left="150pt" width="150pt + 7.5pt" height="5pt" background-color="gray"/>
-          <fo:block-container margin-left="150pt + 7.5pt" width="150pt - 7.5pt - 7.5pt" height="5pt" background-color="gray"/>
+          <fo:block-container margin-left="150pt" width="150pt + 7.5pt" height="5pt" background-color="gray">
+            <fo:block/>
+          </fo:block-container>
+          <fo:block-container margin-left="150pt + 7.5pt" width="150pt - 7.5pt - 7.5pt" height="5pt" background-color="gray">
+            <fo:block/>
+          </fo:block-container>
           <fo:table table-layout="fixed" width="100%" border-collapse="collapse" background-color="rgb(90%, 90%, 100%)">
             <fo:table-column column-width="150pt"/>
             <fo:table-column column-width="150pt"/>
