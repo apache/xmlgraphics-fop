@@ -1,5 +1,5 @@
 #!/bin/sh
-# Hopefully the permissions will be correct on checkout.
+# This should be executable.
 echo
 echo "Fop Build System"
 echo "----------------"
