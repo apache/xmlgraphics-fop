@@ -56,7 +56,7 @@ import java.util.Map;
 
 import org.apache.fop.fonts.Font;
 import org.apache.fop.fonts.Glyphs;
-import org.apache.fop.layout.FontInfo;
+import org.apache.fop.control.Document;
 
 /**
  * This class defines the basic resources (procsets) used by FOP's PostScript
@@ -209,7 +209,7 @@ public final class PSProcSets {
      * @param fontInfo available fonts
      * @throws IOException in case of an I/O problem
      */
-    public static void writeFontDict(PSGenerator gen, FontInfo fontInfo) 
+    public static void writeFontDict(PSGenerator gen, Document fontInfo) 
                 throws IOException {
         gen.writeln("%%BeginResource: procset FOPFonts");
         gen.writeln("%%Title: Font setup (shortcuts) for this file");

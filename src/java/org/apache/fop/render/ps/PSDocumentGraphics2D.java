@@ -62,7 +62,7 @@ import java.io.IOException;
 
 //FOP
 import org.apache.fop.render.pdf.FontSetup;
-import org.apache.fop.layout.FontInfo;
+import org.apache.fop.control.Document;
 
 /**
  * This class is a wrapper for the <tt>PSGraphics2D</tt> that
@@ -94,7 +94,7 @@ public class PSDocumentGraphics2D extends PSGraphics2D {
         super(textAsShapes);
 
         if (!textAsShapes) {
-            fontInfo = new FontInfo();
+            fontInfo = new Document();
             FontSetup.setup(fontInfo, null);
             //FontState fontState = new FontState("Helvetica", "normal",
             //                          FontInfo.NORMAL, 12, 0);
@@ -187,7 +187,7 @@ public class PSDocumentGraphics2D extends PSGraphics2D {
      * Get the font info for this PostScript document.
      * @return the font information
      */
-    public FontInfo getFontInfo() {
+    public Document getFontInfo() {
         return fontInfo;
     }
 

@@ -72,7 +72,7 @@ import org.apache.fop.fo.flow.TableRow;
 import org.apache.fop.fo.pagination.Flow;
 import org.apache.fop.fo.pagination.PageSequence;
 import org.apache.fop.fo.properties.Constants;
-import org.apache.fop.layout.FontInfo;
+import org.apache.fop.control.Document;
 import org.apache.fop.rtf.rtflib.rtfdoc.RtfAttributes;
 import org.apache.fop.rtf.rtflib.rtfdoc.RtfColorTable;
 import org.apache.fop.rtf.rtflib.rtfdoc.RtfDocumentArea;
@@ -90,7 +90,7 @@ import org.xml.sax.SAXException;
  */
 public class RTFHandler extends FOInputHandler {
 
-    private FontInfo fontInfo = new FontInfo();
+    private Document fontInfo = new Document();
     private RtfFile rtfFile;
     private final OutputStream os;
     private RtfSection sect;
@@ -122,7 +122,7 @@ public class RTFHandler extends FOInputHandler {
     /**
      * @see org.apache.fop.fo.FOInputHandler#getFontInfo()
      */
-    public FontInfo getFontInfo() {
+    public Document getFontInfo() {
         return this.fontInfo;
     }
 

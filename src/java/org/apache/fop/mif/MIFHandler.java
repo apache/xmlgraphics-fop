@@ -65,7 +65,7 @@ import org.apache.fop.fo.pagination.Flow;
 import org.apache.fop.fo.pagination.PageSequence;
 import org.apache.fop.fo.pagination.PageSequenceMaster;
 import org.apache.fop.fo.pagination.SimplePageMaster;
-import org.apache.fop.layout.FontInfo;
+import org.apache.fop.control.Document;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.fo.flow.ExternalGraphic;
 import org.apache.fop.fo.flow.InstreamForeignObject;
@@ -91,7 +91,7 @@ public class MIFHandler extends FOInputHandler {
     protected MIFFile mifFile;
     /** the OutputStream to write to */
     protected OutputStream outStream;
-    private FontInfo fontInfo = new FontInfo();
+    private Document fontInfo = new Document();
 
     // current state elements
     private MIFElement textFlow;
@@ -111,7 +111,7 @@ public class MIFHandler extends FOInputHandler {
     /**
      * @see org.apache.fop.fo.FOInputHandler#getFontInfo()
      */
-    public FontInfo getFontInfo() {
+    public Document getFontInfo() {
         return fontInfo;
     }
 

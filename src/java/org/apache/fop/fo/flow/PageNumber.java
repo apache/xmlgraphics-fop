@@ -58,7 +58,7 @@ import org.apache.fop.fo.properties.CommonAccessibility;
 import org.apache.fop.fo.properties.CommonAural;
 import org.apache.fop.fo.properties.CommonBackground;
 import org.apache.fop.fo.properties.CommonBorderAndPadding;
-import org.apache.fop.layout.FontInfo;
+import org.apache.fop.control.Document;
 import org.apache.fop.layout.FontState;
 import org.apache.fop.fo.properties.CommonMarginInline;
 import org.apache.fop.fo.properties.CommonRelativePosition;
@@ -82,7 +82,7 @@ import org.apache.fop.area.Trait;
  */
 public class PageNumber extends FObj {
     /** FontInfo for this object */
-    protected FontInfo fontInfo = null;
+    protected Document fontInfo = null;
     /** FontState for this object */
     protected FontState fontState;
 

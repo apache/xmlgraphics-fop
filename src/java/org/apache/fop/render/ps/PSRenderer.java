@@ -3,34 +3,34 @@
  * ============================================================================
  *                    The Apache Software License, Version 1.1
  * ============================================================================
- * 
+ *
  * Copyright (C) 1999-2003 The Apache Software Foundation. All rights reserved.
- * 
+ *
  * Redistribution and use in source and binary forms, with or without modifica-
  * tion, are permitted provided that the following conditions are met:
- * 
+ *
  * 1. Redistributions of source code must retain the above copyright notice,
  *    this list of conditions and the following disclaimer.
- * 
+ *
  * 2. Redistributions in binary form must reproduce the above copyright notice,
  *    this list of conditions and the following disclaimer in the documentation
  *    and/or other materials provided with the distribution.
- * 
+ *
  * 3. The end-user documentation included with the redistribution, if any, must
  *    include the following acknowledgment: "This product includes software
  *    developed by the Apache Software Foundation (http://www.apache.org/)."
  *    Alternately, this acknowledgment may appear in the software itself, if
  *    and wherever such third-party acknowledgments normally appear.
- * 
+ *
  * 4. The names "FOP" and "Apache Software Foundation" must not be used to
  *    endorse or promote products derived from this software without prior
  *    written permission. For written permission, please contact
  *    apache@apache.org.
- * 
+ *
  * 5. Products derived from this software may not be called "Apache", nor may
  *    "Apache" appear in their name, without prior written permission of the
  *    Apache Software Foundation.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESSED OR IMPLIED WARRANTIES,
  * INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND
  * FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
@@ -42,12 +42,12 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ============================================================================
- * 
+ *
  * This software consists of voluntary contributions made by many individuals
  * on behalf of the Apache Software Foundation and was originally created by
  * James Tauber <jtauber@jtauber.com>. For more information on the Apache
  * Software Foundation, please see <http://www.apache.org/>.
- */ 
+ */
 package org.apache.fop.render.ps;
 
 // Java
@@ -73,7 +73,7 @@ import org.apache.fop.area.inline.Word;
 import org.apache.fop.datatypes.ColorType;
 import org.apache.fop.fo.FOUserAgent;
 import org.apache.fop.fonts.Font;
-import org.apache.fop.layout.FontInfo;
+import org.apache.fop.control.Document;
 import org.apache.fop.render.AbstractRenderer;
 import org.apache.fop.render.RendererContext;
 
@@ -81,7 +81,9 @@ import org.apache.fop.image.FopImage;
 import org.apache.fop.image.ImageFactory;
 import org.apache.fop.traits.BorderProps;
 
-import org.w3c.dom.Document;
+/* org.w3c.dom.Document is not imported to avoid conflict with
+   org.apache.fop.control.Document */
+
 /**
  * Renderer that renders to PostScript.
  * <br>
@@ -96,7 +98,7 @@ import org.w3c.dom.Document;
  * <br>
  * The PS renderer operates in millipoints as the layout engine. Since PostScript
  * initially uses points, scaling is applied as needed.
- * 
+ *
  * @author <a href="mailto:fop-dev@xml.apache.org">Apache XML FOP Development Team</a>
  * @author <a href="mailto:jeremias@apache.org">Jeremias Maerki</a>
  * @version $Id: PSRenderer.java,v 1.31 2003/03/11 08:42:24 jeremias Exp $
@@ -122,7 +124,7 @@ public class PSRenderer extends AbstractRenderer {
     private float currGreen;
     private float currBlue;
 
-    private FontInfo fontInfo;
+    private Document fontInfo;
 
     /**
      * @see org.apache.avalon.framework.configuration.Configurable#configure(Configuration)
@@ -131,7 +133,7 @@ public class PSRenderer extends AbstractRenderer {
         super.configure(cfg);
         this.autoRotateLandscape = cfg.getChild("auto-rotate-landscape").getValueAsBoolean(false);
     }
-    
+
     /**
      * @see org.apache.fop.render.Renderer#setUserAgent(FOUserAgent)
      */
@@ -201,7 +203,7 @@ public class PSRenderer extends AbstractRenderer {
             handleIOTrouble(ioe);
         }
     }
-    
+
     /** Restores the last graphics state of the rendering engine. */
     public void restoreGraphicsState() {
         try {
@@ -211,12 +213,12 @@ public class PSRenderer extends AbstractRenderer {
             handleIOTrouble(ioe);
         }
     }
-    
+
     /** Indicates the beginning of a text object. */
     protected void beginTextObject() {
         writeln("BT");
     }
-        
+
     /** Indicates the end of a text object. */
     protected void endTextObject() {
         writeln("ET");
@@ -232,7 +234,7 @@ public class PSRenderer extends AbstractRenderer {
      * @param f F part
      */
     protected void concatMatrix(double a, double b,
-                                double c, double d, 
+                                double c, double d,
                                 double e, double f) {
         try {
             gen.concatMatrix(a, b, c, d, e, f);
@@ -240,7 +242,7 @@ public class PSRenderer extends AbstractRenderer {
             handleIOTrouble(ioe);
         }
     }
-    
+
     /**
      * Concats the transformations matrix.
      * @param matrix Matrix to use
@@ -252,13 +254,13 @@ public class PSRenderer extends AbstractRenderer {
             handleIOTrouble(ioe);
         }
     }
-                                
+
     /**
      * Set up the font info
      *
      * @param fontInfo the font info object to set up
      */
-    public void setupFontInfo(FontInfo fontInfo) {
+    public void setupFontInfo(Document fontInfo) {
         /* use PDF's font setup to get PDF metrics */
         org.apache.fop.render.pdf.FontSetup.setup(fontInfo, null);
         this.fontInfo = fontInfo;
@@ -338,22 +340,22 @@ public class PSRenderer extends AbstractRenderer {
         //Setup for PostScript generation
         this.gen = new PSGenerator(outputStream);
         this.currentPageNumber = 0;
-        
+
         //PostScript Header
         writeln(DSCConstants.PS_ADOBE_30);
         gen.writeDSCComment(DSCConstants.CREATOR, new String[] {"FOP " + this.producer});
         gen.writeDSCComment(DSCConstants.CREATION_DATE, new Object[] {new java.util.Date()});
         gen.writeDSCComment(DSCConstants.PAGES, new Object[] {PSGenerator.ATEND});
         gen.writeDSCComment(DSCConstants.END_COMMENTS);
-        
+
         //Defaults
         gen.writeDSCComment(DSCConstants.BEGIN_DEFAULTS);
         gen.writeDSCComment(DSCConstants.END_DEFAULTS);
-        
+
         //Prolog
         gen.writeDSCComment(DSCConstants.BEGIN_PROLOG);
         gen.writeDSCComment(DSCConstants.END_PROLOG);
-        
+
         //Setup
         gen.writeDSCComment(DSCConstants.BEGIN_SETUP);
         PSProcSets.writeFOPStdProcSet(gen);
@@ -379,9 +381,9 @@ public class PSRenderer extends AbstractRenderer {
     public void renderPage(PageViewport page)
             throws IOException, FOPException {
         getLogger().debug("renderPage(): " + page);
-        
+
         this.currentPageNumber++;
-        gen.writeDSCComment(DSCConstants.PAGE, new Object[] 
+        gen.writeDSCComment(DSCConstants.PAGE, new Object[]
                 {page.getPageNumber(),
                  new Integer(this.currentPageNumber)});
         final Integer zero = new Integer(0);
@@ -416,22 +418,22 @@ public class PSRenderer extends AbstractRenderer {
                      new Double(pspageheight)});
             if (this.autoRotateLandscape) {
                 gen.writeDSCComment(DSCConstants.PAGE_ORIENTATION, "Portrait");
-            }                
+            }
         }
-        gen.writeDSCComment(DSCConstants.BEGIN_PAGE_SETUP);         
+        gen.writeDSCComment(DSCConstants.BEGIN_PAGE_SETUP);
         if (rotate) {
             gen.writeln(Math.round(pspageheight) + " 0 translate");
             gen.writeln("90 rotate");
         }
         gen.writeln("0.001 0.001 scale");
         concatMatrix(1, 0, 0, -1, 0, pageheight);
-        
-        gen.writeDSCComment(DSCConstants.END_PAGE_SETUP);         
-        
+
+        gen.writeDSCComment(DSCConstants.END_PAGE_SETUP);
+
         //Process page
         super.renderPage(page);
-        
-        writeln("showpage");        
+
+        writeln("showpage");
         gen.writeDSCComment(DSCConstants.PAGE_TRAILER);
         gen.writeDSCComment(DSCConstants.END_PAGE);
     }
@@ -446,7 +448,7 @@ public class PSRenderer extends AbstractRenderer {
     protected void paintText(int rx, int bl, String text, Font font) {
         saveGraphicsState();
         writeln("1 0 0 -1 " + rx + " " + bl + " Tm");
-        
+
         int initialSize = text.length();
         initialSize += initialSize / 2;
         StringBuffer sb = new StringBuffer(initialSize);
@@ -470,19 +472,19 @@ public class PSRenderer extends AbstractRenderer {
 
         // This assumes that *all* CIDFonts use a /ToUnicode mapping
         Font f = (Font)fontInfo.getFonts().get(fontname);
-        
+
         //Determine position
         int rx = currentBlockIPPosition;
         int bl = currentBPPosition + area.getOffset();
 
         useFont(fontname, fontsize);
-        
+
         paintText(rx, bl, area.getWord(), f);
 
 /*
         String psString = null;
         if (area.getFontState().getLetterSpacing() > 0) {
-            //float f = area.getFontState().getLetterSpacing() 
+            //float f = area.getFontState().getLetterSpacing()
             //    * 1000 / this.currentFontSize;
             float f = area.getFontState().getLetterSpacing();
             psString = (new StringBuffer().append(f).append(" 0.0 (")
@@ -620,7 +622,7 @@ public class PSRenderer extends AbstractRenderer {
         }
         currentFontName = saveFontName;
     }
-    
+
     /**
      * @see org.apache.fop.render.AbstractRenderer#startVParea(CTM)
      */
@@ -628,15 +630,15 @@ public class PSRenderer extends AbstractRenderer {
         // Set the given CTM in the graphics state
         //currentState.push();
         //currentState.setTransform(new AffineTransform(CTMHelper.toPDFArray(ctm)));
-        
+
         saveGraphicsState();
         // multiply with current CTM
         //writeln(CTMHelper.toPDFString(ctm) + " cm\n");
         final double[] matrix = ctm.toArray();
         concatMatrix(matrix);
-        
+
         // Set clip?
-        beginTextObject();        
+        beginTextObject();
     }
 
     /**
@@ -695,7 +697,7 @@ public class PSRenderer extends AbstractRenderer {
      * @param height the height of the area
      */
     protected void drawBackAndBorders(Area block,
-                                    float startx, float starty, 
+                                    float startx, float starty,
                                     float width, float height) {
         // draw background then border
 
@@ -821,10 +823,10 @@ public class PSRenderer extends AbstractRenderer {
         writeln(startx + " " + starty + " M ");
         writeln(endx + " " + endy + " lineto");
     }
-    
+
     private void updateColor(ColorType col, boolean fill, StringBuffer pdf) {
-        writeln(gen.formatDouble(col.getRed()) + " " 
-                        + gen.formatDouble(col.getGreen()) + " " 
+        writeln(gen.formatDouble(col.getRed()) + " "
+                        + gen.formatDouble(col.getGreen()) + " "
                         + gen.formatDouble(col.getBlue()) + " setrgbcolor");
     }
 
@@ -832,7 +834,7 @@ public class PSRenderer extends AbstractRenderer {
      * @see org.apache.fop.render.AbstractRenderer#renderForeignObject(ForeignObject, Rectangle2D)
      */
     public void renderForeignObject(ForeignObject fo, Rectangle2D pos) {
-        Document doc = fo.getDocument();
+        org.w3c.dom.Document doc = fo.getDocument();
         String ns = fo.getNameSpace();
         renderDocument(doc, ns, pos);
     }
@@ -843,7 +845,7 @@ public class PSRenderer extends AbstractRenderer {
      * @param ns Namespace for the XML document
      * @param pos Position for the generated graphic/image
      */
-    public void renderDocument(Document doc, String ns, Rectangle2D pos) {
+    public void renderDocument(org.w3c.dom.Document doc, String ns, Rectangle2D pos) {
         RendererContext context;
         context = new RendererContext(MIME_TYPE);
         context.setUserAgent(userAgent);
@@ -859,13 +861,13 @@ public class PSRenderer extends AbstractRenderer {
         context.setProperty(PSXMLHandler.PS_YPOS,
                             new Integer(currentBPPosition + (int) pos.getY()));
         //context.setProperty("strokeSVGText", options.get("strokeSVGText"));
-        
+
         /*
         context.setProperty(PDFXMLHandler.PDF_DOCUMENT, pdfDoc);
         context.setProperty(PDFXMLHandler.OUTPUT_STREAM, ostream);
         context.setProperty(PDFXMLHandler.PDF_STATE, currentState);
         context.setProperty(PDFXMLHandler.PDF_PAGE, currentPage);
-        context.setProperty(PDFXMLHandler.PDF_CONTEXT, 
+        context.setProperty(PDFXMLHandler.PDF_CONTEXT,
                     currentContext == null ? currentPage: currentContext);
         context.setProperty(PDFXMLHandler.PDF_CONTEXT, currentContext);
         context.setProperty(PDFXMLHandler.PDF_STREAM, currentStream);
@@ -881,12 +883,12 @@ public class PSRenderer extends AbstractRenderer {
                             new Integer((int) pos.getWidth()));
         context.setProperty(PDFXMLHandler.PDF_HEIGHT,
                             new Integer((int) pos.getHeight()));
-        */           
+        */
         userAgent.renderXML(context, doc, ns);
 
     }
 
-    
+
 
 
 }

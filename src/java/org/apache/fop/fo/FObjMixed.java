@@ -50,7 +50,7 @@
  */
 package org.apache.fop.fo;
 
-import org.apache.fop.layout.FontInfo;
+import org.apache.fop.control.Document;
 import org.apache.fop.layoutmgr.InlineStackingLayoutManager;
 import org.apache.fop.layoutmgr.LMiter;
 
@@ -64,7 +64,7 @@ public class FObjMixed extends FObj {
     /** TextInfo for this object */
     protected TextInfo textInfo = null;
     /** FontInfo for this object */
-    protected FontInfo fontInfo = null;
+    protected Document fontInfo = null;
 
     /**
      * @param parent FONode that is the parent of this object

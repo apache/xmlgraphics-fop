@@ -66,7 +66,7 @@ import org.apache.fop.area.inline.Leader;
 import org.apache.fop.area.inline.Space;
 import org.apache.fop.area.inline.Viewport;
 import org.apache.fop.area.inline.Word;
-import org.apache.fop.layout.FontInfo;
+import org.apache.fop.control.Document;
 import org.apache.fop.fo.FOUserAgent;
 
 /**
@@ -123,7 +123,7 @@ public interface Renderer {
      *
      * @param fontInfo  The fonts
      */
-    void setupFontInfo(FontInfo fontInfo);
+    void setupFontInfo(Document fontInfo);
 
     /**
      * Set up renderer options.

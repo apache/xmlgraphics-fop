@@ -58,7 +58,7 @@ import java.awt.geom.Rectangle2D;
 import org.apache.fop.area.CTM;
 import org.apache.fop.datatypes.FODimension;
 import org.apache.fop.layout.FontState;
-import org.apache.fop.layout.FontInfo;
+import org.apache.fop.control.Document;
 import org.apache.fop.fo.properties.CommonBorderAndPadding;
 import org.apache.fop.fo.properties.CommonMarginBlock;
 import org.apache.fop.fo.properties.CommonMarginInline;
@@ -83,7 +83,7 @@ import org.apache.fop.fo.properties.CommonHyphenation;
 public class PropertyManager {
 
     private PropertyList properties;
-    private FontInfo fontInfo = null;
+    private Document fontInfo = null;
     private FontState fontState = null;
     private CommonBorderAndPadding borderAndPadding = null;
     private CommonHyphenation hyphProps = null;
@@ -122,7 +122,7 @@ public class PropertyManager {
      * available.
      * @param fontInfo available fonts
      */
-    public void setFontInfo(FontInfo fontInfo) {
+    public void setFontInfo(Document fontInfo) {
         this.fontInfo = fontInfo;
     }
 
@@ -133,7 +133,7 @@ public class PropertyManager {
      * @param fontInfo FontInfo to work with
      * @return a FontState object
      */
-    public FontState getFontState(FontInfo fontInfo) {
+    public FontState getFontState(Document fontInfo) {
         if (fontState == null) {
             if (fontInfo == null) {
                 fontInfo = this.fontInfo;
@@ -479,7 +479,7 @@ public class PropertyManager {
      * @param fontInfo available fonts
      * @return a TextInfo object
      */
-    public TextInfo getTextLayoutProps(FontInfo fontInfo) {
+    public TextInfo getTextLayoutProps(Document fontInfo) {
         if (textInfo == null) {
             textInfo = new TextInfo();
             textInfo.fs = getFontState(fontInfo);

@@ -88,7 +88,7 @@ import org.apache.fop.area.inline.Viewport;
 import org.apache.fop.area.inline.Word;
 import org.apache.fop.area.inline.Character;
 import org.apache.fop.fo.FOUserAgent;
-import org.apache.fop.layout.FontInfo;
+import org.apache.fop.control.Document;
 
 // Avalon
 import org.apache.avalon.framework.logger.AbstractLogEnabled;
@@ -168,7 +168,7 @@ public abstract class AbstractRenderer extends AbstractLogEnabled
     }
 
     /** @see org.apache.fop.render.Renderer */
-    public abstract void setupFontInfo(FontInfo fontInfo);
+    public abstract void setupFontInfo(Document fontInfo);
 
     /** @see org.apache.fop.render.Renderer */
     public void setUserAgent(FOUserAgent agent) {

@@ -3,34 +3,34 @@
  * ============================================================================
  *                    The Apache Software License, Version 1.1
  * ============================================================================
- * 
+ *
  * Copyright (C) 1999-2003 The Apache Software Foundation. All rights reserved.
- * 
+ *
  * Redistribution and use in source and binary forms, with or without modifica-
  * tion, are permitted provided that the following conditions are met:
- * 
+ *
  * 1. Redistributions of source code must retain the above copyright notice,
  *    this list of conditions and the following disclaimer.
- * 
+ *
  * 2. Redistributions in binary form must reproduce the above copyright notice,
  *    this list of conditions and the following disclaimer in the documentation
  *    and/or other materials provided with the distribution.
- * 
+ *
  * 3. The end-user documentation included with the redistribution, if any, must
  *    include the following acknowledgment: "This product includes software
  *    developed by the Apache Software Foundation (http://www.apache.org/)."
  *    Alternately, this acknowledgment may appear in the software itself, if
  *    and wherever such third-party acknowledgments normally appear.
- * 
+ *
  * 4. The names "FOP" and "Apache Software Foundation" must not be used to
  *    endorse or promote products derived from this software without prior
  *    written permission. For written permission, please contact
  *    apache@apache.org.
- * 
+ *
  * 5. Products derived from this software may not be called "Apache", nor may
  *    "Apache" appear in their name, without prior written permission of the
  *    Apache Software Foundation.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESSED OR IMPLIED WARRANTIES,
  * INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND
  * FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
@@ -42,12 +42,12 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ============================================================================
- * 
+ *
  * This software consists of voluntary contributions made by many individuals
  * on behalf of the Apache Software Foundation and was originally created by
  * James Tauber <jtauber@jtauber.com>. For more information on the Apache
  * Software Foundation, please see <http://www.apache.org/>.
- */ 
+ */
 package org.apache.fop.render.ps;
 
 // Java
@@ -55,7 +55,8 @@ import java.awt.geom.AffineTransform;
 import java.io.IOException;
 
 // DOM
-import org.w3c.dom.Document;
+/* org.w3c.dom.Document is not imported to avoid conflict with
+   org.apache.fop.control.Document */
 import org.w3c.dom.svg.SVGDocument;
 import org.w3c.dom.svg.SVGSVGElement;
 
@@ -67,10 +68,10 @@ import org.apache.batik.gvt.GraphicsNode;
 import org.apache.batik.gvt.TextPainter;
 
 // FOP
+import org.apache.fop.control.Document;
 import org.apache.fop.render.XMLHandler;
 import org.apache.fop.render.RendererContext;
 import org.apache.fop.svg.SVGUserAgent;
-import org.apache.fop.layout.FontInfo;
 
 /**
  * PostScript XML handler.
@@ -128,7 +129,7 @@ public class PSXMLHandler implements XMLHandler {
      * @param ns the namespace of the XML document
      * @throws Exception any sort of exception could be thrown and shuld be handled
      */
-    public void handleXML(RendererContext context, Document doc,
+    public void handleXML(RendererContext context, org.w3c.dom.Document doc,
                           String ns) throws Exception {
         PSInfo psi = getPSInfo(context);
 
@@ -149,7 +150,7 @@ public class PSXMLHandler implements XMLHandler {
     public static PSInfo getPSInfo(RendererContext context) {
         PSInfo psi = new PSInfo();
         psi.psGenerator = (PSGenerator)context.getProperty(PS_GENERATOR);
-        psi.fontInfo = (FontInfo)context.getProperty(PS_FONT_INFO);
+        psi.fontInfo = (org.apache.fop.control.Document)context.getProperty(PS_FONT_INFO);
         psi.width = ((Integer)context.getProperty(PS_WIDTH)).intValue();
         psi.height = ((Integer)context.getProperty(PS_HEIGHT)).intValue();
         psi.currentXPosition = ((Integer)context.getProperty(PS_XPOS)).intValue();
@@ -161,11 +162,11 @@ public class PSXMLHandler implements XMLHandler {
      * PostScript information structure for drawing the XML document.
      */
     public static class PSInfo {
-        
+
         /** see PS_GENERATOR */
         private PSGenerator psGenerator;
         /** see PS_FONT_INFO */
-        private FontInfo fontInfo;
+        private org.apache.fop.control.Document fontInfo;
         /** see PS_PAGE_WIDTH */
         private int width;
         /** see PS_PAGE_HEIGHT */
@@ -194,7 +195,7 @@ public class PSXMLHandler implements XMLHandler {
          * Returns the fontInfo.
          * @return FontInfo
          */
-        public FontInfo getFontInfo() {
+        public org.apache.fop.control.Document getFontInfo() {
             return fontInfo;
         }
 
@@ -202,7 +203,7 @@ public class PSXMLHandler implements XMLHandler {
          * Sets the fontInfo.
          * @param fontInfo The fontInfo to set
          */
-        public void setFontInfo(FontInfo fontInfo) {
+        public void setFontInfo(org.apache.fop.control.Document fontInfo) {
             this.fontInfo = fontInfo;
         }
 
@@ -283,7 +284,8 @@ public class PSXMLHandler implements XMLHandler {
          * @param doc the svg document
          * @param psInfo the pdf information of the current context
          */
-        protected void renderSVGDocument(RendererContext context, Document doc, PSInfo psInfo) {
+        protected void renderSVGDocument(RendererContext context,
+                org.w3c.dom.Document doc, PSInfo psInfo) {
             int xOffset = psInfo.currentXPosition;
             int yOffset = psInfo.currentYPosition;
             PSGenerator gen = psInfo.psGenerator;
@@ -303,9 +305,9 @@ public class PSXMLHandler implements XMLHandler {
             transform.translate(xOffset / 1000f, yOffset / 1000f);
             //aBridge.setCurrentTransform(transform);
             //ctx.putBridge(aBridge);
-          
+
             TextPainter textPainter = new PSTextPainter(psInfo.getFontInfo());
-            ctx.setTextPainter(textPainter);            
+            ctx.setTextPainter(textPainter);
             GraphicsNode root;
             try {
                 root = builder.build(ctx, doc);
@@ -336,16 +338,16 @@ public class PSXMLHandler implements XMLHandler {
                 // and positive is down and to the right. (0,0) is where the
                 // viewBox puts it.
                 gen.concatMatrix(sx, 0, 0, sy, xOffset, yOffset);
-                
+
                 SVGSVGElement svg = ((SVGDocument)doc).getRootElement();
-                AffineTransform at = ViewBox.getPreserveAspectRatioTransform(svg, 
+                AffineTransform at = ViewBox.getPreserveAspectRatioTransform(svg,
                                     w / 1000f, h / 1000f);
                 if (!at.isIdentity()) {
                     double[] vals = new double[6];
                     at.getMatrix(vals);
                     gen.concatMatrix(vals);
                 }
-                
+
                 /*
                 if (psInfo.pdfContext == null) {
                     psInfo.pdfContext = psInfo.pdfPage;
@@ -365,7 +367,7 @@ public class PSXMLHandler implements XMLHandler {
                     context.getUserAgent().getLogger().error("SVG graphic could not be rendered: "
                                            + e.getMessage(), e);
                 }
-                
+
                 psInfo.psGenerator.restoreGraphicsState();
                 //psInfo.pdfState.pop();
                 gen.writeln("%SVG graphic end ---");

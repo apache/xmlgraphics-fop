@@ -3,34 +3,34 @@
  * ============================================================================
  *                    The Apache Software License, Version 1.1
  * ============================================================================
- * 
+ *
  * Copyright (C) 1999-2003 The Apache Software Foundation. All rights reserved.
- * 
+ *
  * Redistribution and use in source and binary forms, with or without modifica-
  * tion, are permitted provided that the following conditions are met:
- * 
+ *
  * 1. Redistributions of source code must retain the above copyright notice,
  *    this list of conditions and the following disclaimer.
- * 
+ *
  * 2. Redistributions in binary form must reproduce the above copyright notice,
  *    this list of conditions and the following disclaimer in the documentation
  *    and/or other materials provided with the distribution.
- * 
+ *
  * 3. The end-user documentation included with the redistribution, if any, must
  *    include the following acknowledgment: "This product includes software
  *    developed by the Apache Software Foundation (http://www.apache.org/)."
  *    Alternately, this acknowledgment may appear in the software itself, if
  *    and wherever such third-party acknowledgments normally appear.
- * 
+ *
  * 4. The names "FOP" and "Apache Software Foundation" must not be used to
  *    endorse or promote products derived from this software without prior
  *    written permission. For written permission, please contact
  *    apache@apache.org.
- * 
+ *
  * 5. Products derived from this software may not be called "Apache", nor may
  *    "Apache" appear in their name, without prior written permission of the
  *    Apache Software Foundation.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESSED OR IMPLIED WARRANTIES,
  * INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND
  * FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
@@ -42,12 +42,12 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ============================================================================
- * 
+ *
  * This software consists of voluntary contributions made by many individuals
  * on behalf of the Apache Software Foundation and was originally created by
  * James Tauber <jtauber@jtauber.com>. For more information on the Apache
  * Software Foundation, please see <http://www.apache.org/>.
- */ 
+ */
 package org.apache.fop.render.svg;
 
 import org.apache.fop.apps.FOPException;
@@ -57,14 +57,15 @@ import org.apache.fop.area.inline.ForeignObject;
 import org.apache.fop.area.inline.Leader;
 import org.apache.fop.area.inline.Word;
 import org.apache.fop.svg.SVGUtilities;
-import org.apache.fop.layout.FontInfo;
+import org.apache.fop.control.Document;
 import org.apache.fop.fo.FOUserAgent;
 import org.apache.fop.fo.properties.RuleStyle;
 
 import org.w3c.dom.Node;
 import org.w3c.dom.svg.SVGSVGElement;
 import org.w3c.dom.svg.SVGDocument;
-import org.w3c.dom.Document;
+/* org.w3c.dom.Document is not imported to avoid conflict with
+   org.apache.fop.control.Document */
 import org.w3c.dom.Element;
 import org.w3c.dom.DOMImplementation;
 import org.w3c.dom.Text;
@@ -93,14 +94,14 @@ import org.apache.fop.render.RendererContext;
  * This is the SVG renderer.
  */
 public class SVGRenderer extends AbstractRenderer implements XMLHandler {
-    
+
     /** SVG MIME type */
     public static final String SVG_MIME_TYPE = "image/svg+xml";
-    
+
     /** SVG namespace */
     public static final String SVG_NAMESPACE = SVGDOMImplementation.SVG_NAMESPACE_URI;
-    
-    private Document svgDocument;
+
+    private org.w3c.dom.Document svgDocument;
     private Element svgRoot;
     private Element currentPageG = null;
     private Element lastLink = null;
@@ -166,7 +167,7 @@ public class SVGRenderer extends AbstractRenderer implements XMLHandler {
     /**
      * @see org.apache.fop.render.Renderer#setupFontInfo(FontInfo)
      */
-    public void setupFontInfo(FontInfo fontInfo) {
+    public void setupFontInfo(Document fontInfo) {
         // create a temp Image to test font metrics on
         BufferedImage fontImage =
           new BufferedImage(1, 1, BufferedImage.TYPE_INT_RGB);
@@ -185,7 +186,7 @@ public class SVGRenderer extends AbstractRenderer implements XMLHandler {
         svgRoot = svgDocument.getDocumentElement();
         /*
         ProcessingInstruction pi =
-            svgDocument.createProcessingInstruction("xml", 
+            svgDocument.createProcessingInstruction("xml",
                         " version=\"1.0\" encoding=\"ISO-8859-1\"");
         svgDocument.insertBefore(pi, svgRoot);
         */
@@ -269,7 +270,7 @@ public class SVGRenderer extends AbstractRenderer implements XMLHandler {
 
         // if there is a link from the last page
         if (lastLink != null) {
-            lastLink.setAttributeNS(null, "xlink:href", "#svgView(viewBox(" 
+            lastLink.setAttributeNS(null, "xlink:href", "#svgView(viewBox("
                                     + totalWidth + ", "
                                     + sequenceHeight + ", "
                                     + pageWidth + ", "
@@ -313,10 +314,10 @@ public class SVGRenderer extends AbstractRenderer implements XMLHandler {
             lastPageLink.setAttributeNS(null, "xlink:href", lastViewbox);
         } else {
             lastPageLink.setAttributeNS(null, "xlink:href",
-                    "#svgView(viewBox(" 
+                    "#svgView(viewBox("
                         + totalWidth + ", "
-                        + (sequenceHeight - pageHeight) + ", " 
-                        + pageWidth + ", " 
+                        + (sequenceHeight - pageHeight) + ", "
+                        + pageWidth + ", "
                         + pageHeight + "))");
         }
         pagesGroup.appendChild(lastPageLink);
@@ -335,10 +336,10 @@ public class SVGRenderer extends AbstractRenderer implements XMLHandler {
         rect.setAttributeNS(null, "style", "fill:blue;visibility:hidden");
         lastLink.appendChild(rect);
 
-        lastViewbox = "#svgView(viewBox(" 
-                    + totalWidth + ", " 
-                    + (sequenceHeight - pageHeight) + ", " 
-                    + pageWidth + ", " 
+        lastViewbox = "#svgView(viewBox("
+                    + totalWidth + ", "
+                    + (sequenceHeight - pageHeight) + ", "
+                    + pageWidth + ", "
                     + pageHeight + "))";
 
         pageNumber++;
@@ -350,7 +351,7 @@ public class SVGRenderer extends AbstractRenderer implements XMLHandler {
      * @param fo the foreign object
      */
     public void renderForeignObject(ForeignObject fo) {
-        Document doc = fo.getDocument();
+        org.w3c.dom.Document doc = fo.getDocument();
         String ns = fo.getNameSpace();
         userAgent.renderXML(context, doc, ns);
     }
@@ -358,7 +359,7 @@ public class SVGRenderer extends AbstractRenderer implements XMLHandler {
     /**
      * @see org.apache.fop.render.XMLHandler#handleXML(RendererContext, Document, String)
      */
-    public void handleXML(RendererContext context, Document doc,
+    public void handleXML(RendererContext context, org.w3c.dom.Document doc,
                           String ns) throws Exception {
         if (SVG_NAMESPACE.equals(ns)) {
             if (!(doc instanceof SVGDocument)) {

@@ -3,34 +3,34 @@
  * ============================================================================
  *                    The Apache Software License, Version 1.1
  * ============================================================================
- * 
+ *
  * Copyright (C) 1999-2003 The Apache Software Foundation. All rights reserved.
- * 
+ *
  * Redistribution and use in source and binary forms, with or without modifica-
  * tion, are permitted provided that the following conditions are met:
- * 
+ *
  * 1. Redistributions of source code must retain the above copyright notice,
  *    this list of conditions and the following disclaimer.
- * 
+ *
  * 2. Redistributions in binary form must reproduce the above copyright notice,
  *    this list of conditions and the following disclaimer in the documentation
  *    and/or other materials provided with the distribution.
- * 
+ *
  * 3. The end-user documentation included with the redistribution, if any, must
  *    include the following acknowledgment: "This product includes software
  *    developed by the Apache Software Foundation (http://www.apache.org/)."
  *    Alternately, this acknowledgment may appear in the software itself, if
  *    and wherever such third-party acknowledgments normally appear.
- * 
+ *
  * 4. The names "FOP" and "Apache Software Foundation" must not be used to
  *    endorse or promote products derived from this software without prior
  *    written permission. For written permission, please contact
  *    apache@apache.org.
- * 
+ *
  * 5. Products derived from this software may not be called "Apache", nor may
  *    "Apache" appear in their name, without prior written permission of the
  *    Apache Software Foundation.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESSED OR IMPLIED WARRANTIES,
  * INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND
  * FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
@@ -42,12 +42,12 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ============================================================================
- * 
+ *
  * This software consists of voluntary contributions made by many individuals
  * on behalf of the Apache Software Foundation and was originally created by
  * James Tauber <jtauber@jtauber.com>. For more information on the Apache
  * Software Foundation, please see <http://www.apache.org/>.
- */ 
+ */
 package org.apache.fop.render.pdf;
 
 // Java
@@ -273,7 +273,7 @@ public class PDFRenderer extends PrintRenderer {
         this.pdfDoc.setCreator(creator);
         this.pdfDoc.setFilterMap(filterMap);
         this.pdfDoc.outputHeader(stream);
-        
+
         //Setup encryption if necessary
         PDFEncryptionManager.setupPDFEncryption(userAgent, this.pdfDoc, getLogger());
     }
@@ -352,27 +352,27 @@ public class PDFRenderer extends PrintRenderer {
             renderOutline(outline.getSubData(i), pdfOutline);
         }
     }
-    
+
     /** Saves the graphics state of the rendering engine. */
     protected void saveGraphicsState() {
         currentStream.add("q\n");
     }
-    
+
     /** Restores the last graphics state of the rendering engine. */
     protected void restoreGraphicsState() {
         currentStream.add("Q\n");
     }
-    
+
     /** Indicates the beginning of a text object. */
     protected void beginTextObject() {
         currentStream.add("BT\n");
     }
-        
+
     /** Indicates the end of a text object. */
     protected void endTextObject() {
         currentStream.add("ET\n");
     }
-        
+
     /**
      * Start the next page sequence.
      * For the pdf renderer there is no concept of page sequences
@@ -421,7 +421,7 @@ public class PDFRenderer extends PrintRenderer {
      * immediately to the output stream.
      * @see org.apache.fop.render.Renderer#renderPage(PageViewport)
      */
-    public void renderPage(PageViewport page) 
+    public void renderPage(PageViewport page)
                 throws IOException, FOPException {
         if (pages != null
                 && (currentPage = (PDFPage) pages.get(page)) != null) {
@@ -537,8 +537,8 @@ public class PDFRenderer extends PrintRenderer {
      * @param width the width of the area
      * @param height the height of the area
      */
-    protected void drawBackAndBorders(Area block, 
-                    float startx, float starty, 
+    protected void drawBackAndBorders(Area block,
+                    float startx, float starty,
                     float width, float height) {
         // draw background then border
 
@@ -1172,7 +1172,7 @@ public class PDFRenderer extends PrintRenderer {
         context.setProperty(PDFXMLHandler.OUTPUT_STREAM, ostream);
         context.setProperty(PDFXMLHandler.PDF_STATE, currentState);
         context.setProperty(PDFXMLHandler.PDF_PAGE, currentPage);
-        context.setProperty(PDFXMLHandler.PDF_CONTEXT, 
+        context.setProperty(PDFXMLHandler.PDF_CONTEXT,
                     currentContext == null ? currentPage : currentContext);
         context.setProperty(PDFXMLHandler.PDF_CONTEXT, currentContext);
         context.setProperty(PDFXMLHandler.PDF_STREAM, currentStream);
@@ -1291,7 +1291,7 @@ public class PDFRenderer extends PrintRenderer {
             }
 
         }
-        
+
         restoreGraphicsState();
         beginTextObject();
         super.renderLeader(area);

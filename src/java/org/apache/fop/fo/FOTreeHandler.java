@@ -77,7 +77,7 @@ import org.apache.fop.fo.flow.TableCell;
 import org.apache.fop.fo.flow.TableRow;
 import org.apache.fop.fo.pagination.Flow;
 import org.apache.fop.fo.pagination.PageSequence;
-import org.apache.fop.layout.FontInfo;
+import org.apache.fop.control.Document;
 import org.apache.fop.render.Renderer;
 
 /**
@@ -130,7 +130,7 @@ public class FOTreeHandler extends FOInputHandler {
     /**
      * The FontInfo for this renderer.
      */
-    private FontInfo fontInfo = new FontInfo();
+    private Document fontInfo = new Document();
 
     /**
      * Collection of objects that have registered to be notified about
@@ -477,7 +477,7 @@ public class FOTreeHandler extends FOInputHandler {
      *
      * @return the font information
      */
-    public FontInfo getFontInfo() {
+    public Document getFontInfo() {
         return this.fontInfo;
     }
 
