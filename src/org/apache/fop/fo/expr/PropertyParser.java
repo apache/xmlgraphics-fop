@@ -480,7 +480,7 @@ public class PropertyParser extends PropertyTokenizer {
                     prop = SystemFontFunction.systemFontCharacteristic
                             (property,
                              ((StringType)args[0]).getString(),
-                             ((StringType)args[0]).getString());
+                             ((StringType)args[1]).getString());
                 }
             }
 
