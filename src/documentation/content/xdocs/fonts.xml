@@ -176,7 +176,7 @@ This is helpful with older versions of Acrobat Reader that preferred installed f
       When embedding PostScript fonts, the entire font is always embedded.
     </p>
     <p>
-      When embedding TrueType fonts, a new font, containing only the glyphs used, is created from the original font and embedded in the pdf.
+      When embedding TrueType fonts (ttf) or TrueType Collections (ttc), a new font, containing only the glyphs used, is created from the original font and embedded in the pdf.
 Currently, this embedded font contains only the minimum data needed to be embedded in a pdf document, and does not contain any codepage information.
 The PDF document contains indexes to the glyphs in the font instead of to encoded characters.
 While the document will be displayed correctly, the net effect of this is that searching, indexing, and cut-and-paste will not work properly.
