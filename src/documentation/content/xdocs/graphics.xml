@@ -121,14 +121,14 @@
         <title>JIMI</title>
         <p>
           Because of licensing issues, the JIMI image library is not included in the FOP distribution. First, <fork href="http://java.sun.com/products/jimi">download</fork> and install it.
-Then, copy the file "JimiProClasses.zip" from the archive to xml-fop/lib/jimi-1.0.jar. Please note that FOP binary distributions are compiled with JIMI support, so there is no need for you to build FOP to add the support. If jimi-1.0.jar is installed in the right place, it will automatically be used by FOP, otherwise it will not.
+Then, copy the file "JimiProClasses.zip" from the archive to {fop-install-dir}/lib/jimi-1.0.jar. Please note that FOP binary distributions are compiled with JIMI support, so there is no need for you to build FOP to add the support. If jimi-1.0.jar is installed in the right place, it will automatically be used by FOP, otherwise it will not.
         </p>
       </section>
       <section id="jai">
         <title>JAI</title>
         <p>
           FOP has been compiled with JAI support, but JAI is not included in the FOP distribution.
-To use it, simply install <link href="http://java.sun.com/products/java-media/jai">JAI</link>.
+To use it, install <link href="http://java.sun.com/products/java-media/jai">JAI</link>, then copy the jai_core.jar file to {fop-install-dir}/lib.
 JAI is much faster than JIMI, but is not available for all platforms. See <link href="http://java.sun.com/products/java-media/jai/forDevelopers/jaifaq.html#platforms">What platforms are supported?</link> on the JAI FAQ page for more details.
         </p>
       </section>
