@@ -19,7 +19,6 @@
 package org.apache.fop.fo.pagination;
 
 // XML
-import org.xml.sax.Attributes;
 import org.xml.sax.Locator;
 import org.xml.sax.SAXParseException;
 
@@ -72,20 +71,6 @@ public class SinglePageMasterReference extends FObj
         }
     }
     
-    /**
-     * @see org.apache.fop.fo.FObj#addProperties
-     */
-    protected void addProperties(Attributes attlist) throws SAXParseException {
-        super.addProperties(attlist);
-
-        PageSequenceMaster pageSequenceMaster = (PageSequenceMaster) parent;
-        if (getPropString(PR_MASTER_REFERENCE) == null) {
-            missingPropertyError("master-reference");
-        } else {
-            pageSequenceMaster.addSubsequenceSpecifier(this);
-        }
-    }
-
     /**
      * @see org.apache.fop.fo.FONode#validateChildNode(Locator, String, String)
      * XSL Content Model: empty

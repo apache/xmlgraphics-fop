@@ -22,12 +22,10 @@ package org.apache.fop.fo.flow;
 import java.util.List;
 
 // XML
-import org.xml.sax.Attributes;
 import org.xml.sax.Locator;
 import org.xml.sax.SAXParseException;
 
 // FOP
-import org.apache.fop.datatypes.ColorType;
 import org.apache.fop.datatypes.Length;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FObj;
@@ -73,13 +71,6 @@ public class PageNumber extends FObj {
     private SpaceProperty wordSpacing;
     private int wrapOption;
     //  End of property values
-
-    /** FontState for this object */
-    protected Font fontState;
-
-    private float red;
-    private float green;
-    private float blue;
 
     /**
      * @param parent FONode that is the parent of this object
@@ -143,28 +134,11 @@ public class PageNumber extends FObj {
     }
 
     /**
-     * @see org.apache.fop.fo.FObj#addProperties
-     */
-    protected void addProperties(Attributes attlist) throws SAXParseException {
-        super.addProperties(attlist);
-
-        // Common Font Properties
-        this.fontState = propMgr.getFontState(getFOEventHandler().getFontInfo());
-
-        ColorType c = this.propertyList.get(PR_COLOR).getColorType();
-        this.red = c.getRed();
-        this.green = c.getGreen();
-        this.blue = c.getBlue();
-
-        this.wrapOption = getPropEnum(PR_WRAP_OPTION);
-        getFOEventHandler().startPageNumber(this);
-    }
-
-    /**
      * @return the FontState object for this PageNumber
      */
     public Font getFontState() {
-        return fontState;
+        return propMgr.getFontState(getFOEventHandler().getFontInfo());
+
     }
 
     /**

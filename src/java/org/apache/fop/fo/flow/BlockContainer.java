@@ -22,7 +22,6 @@ package org.apache.fop.fo.flow;
 import java.util.List;
 
 // FOP
-import org.apache.fop.datatypes.ColorType;
 import org.apache.fop.datatypes.Length;
 import org.apache.fop.datatypes.Numeric;
 import org.apache.fop.fo.FONode;
@@ -35,7 +34,6 @@ import org.apache.fop.fo.properties.KeepProperty;
 import org.apache.fop.fo.properties.LengthRangeProperty;
 import org.apache.fop.layoutmgr.BlockContainerLayoutManager;
 
-import org.xml.sax.Attributes;
 import org.xml.sax.SAXParseException;
 
 /**
@@ -66,17 +64,6 @@ public class BlockContainer extends FObj {
     private int writingMode;
     // private ToBeImplementedProperty zIndex;
     // End of property values
-
-    private ColorType backgroundColor;
-    private int position;
-
-    private int top;
-    private int bottom;
-    private int left;
-    private int right;
-    private int _width;
-    private int _height;
-
 
     /**
      * @param parent FONode that is the parent of this object
@@ -120,20 +107,6 @@ public class BlockContainer extends FObj {
         getFOEventHandler().startBlockContainer(this);
     }
 
-    /**
-     * @see org.apache.fop.fo.FObj#addProperties
-     */
-    protected void addProperties(Attributes attlist) throws SAXParseException {
-        super.addProperties(attlist);
-        this.span = getPropEnum(PR_SPAN);
-        this.backgroundColor =
-            this.propertyList.get(PR_BACKGROUND_COLOR).getColorType();
-
-        this._width = getPropLength(PR_WIDTH);
-        this._height = getPropLength(PR_HEIGHT);
-        getFOEventHandler().startBlockContainer(this);
-    }
-    
     /**
      * @see org.apache.fop.fo.FONode#endOfNode
      */

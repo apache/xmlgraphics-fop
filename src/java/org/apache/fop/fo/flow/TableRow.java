@@ -22,12 +22,10 @@ package org.apache.fop.fo.flow;
 import java.util.List;
 
 // XML
-import org.xml.sax.Attributes;
 import org.xml.sax.Locator;
 import org.xml.sax.SAXParseException;
 
 // FOP
-import org.apache.fop.datatypes.ColorType;
 import org.apache.fop.datatypes.KeepValue;
 import org.apache.fop.datatypes.Length;
 import org.apache.fop.fo.FONode;
@@ -69,14 +67,6 @@ public class TableRow extends FObj {
     // End of property values
     
     private boolean setup = false;
-
-    private ColorType backgroundColor;
-
-    private KeepValue _keepWithNext;
-    private KeepValue _keepWithPrevious;
-    private KeepValue _keepTogether;
-
-    private int minHeight = 0;    // force row height
 
     /**
      * @param parent FONode that is the parent of this object
@@ -127,14 +117,6 @@ public class TableRow extends FObj {
     }
 
     /**
-     * @see org.apache.fop.fo.FObj#addProperties
-     */
-    protected void addProperties(Attributes attlist) throws SAXParseException {
-        super.addProperties(attlist);
-        getFOEventHandler().startRow(this);
-    }
-
-    /**
      * @see org.apache.fop.fo.FONode#validateChildNode(Locator, String, String)
      * XSL Content Model: (table-cell+)
      */
@@ -143,30 +125,6 @@ public class TableRow extends FObj {
         if (!(nsURI == FO_URI && localName.equals("table-cell"))) {
             invalidChildError(loc, nsURI, localName);
         }
-    }
-
-    /**
-     * @return keepWithPrevious
-     */
-    public KeepValue getKeepWithPrevious() {
-        return _keepWithPrevious;
-    }
-
-    /**
-     * @todo see if should remove, or move code to addProperties()
-     */
-    private void doSetup() {
-        this.breakAfter = getPropEnum(PR_BREAK_AFTER);
-        this.backgroundColor =
-            this.propertyList.get(PR_BACKGROUND_COLOR).getColorType();
-
-        this._keepTogether = getKeepValue(PR_KEEP_TOGETHER | CP_WITHIN_COLUMN);
-        this._keepWithNext = getKeepValue(PR_KEEP_WITH_NEXT | CP_WITHIN_COLUMN);
-        this._keepWithPrevious =
-            getKeepValue(PR_KEEP_WITH_PREVIOUS | CP_WITHIN_COLUMN);
-
-        this.minHeight = getPropLength(PR_HEIGHT);
-        setup = true;
     }
 
     private KeepValue getKeepValue(int propId) {

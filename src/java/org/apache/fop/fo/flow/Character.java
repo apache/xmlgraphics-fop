@@ -22,7 +22,6 @@ package org.apache.fop.fo.flow;
 import java.util.List;
 
 // XML
-import org.xml.sax.Attributes;
 import org.xml.sax.Locator;
 import org.xml.sax.SAXParseException;
 
@@ -95,8 +94,6 @@ public class Character extends FObj {
     /** constant indicating that the character does not fit */
     public static final int DOESNOT_FIT = 1;
 
-    private char characterValue;
-
     /**
      * @param parent FONode that is the parent of this object
      */
@@ -157,21 +154,11 @@ public class Character extends FObj {
             invalidChildError(loc, nsURI, localName);
     }
 
-
-    /**
-     * @see org.apache.fop.fo.FObj#addProperties
-     */
-    protected void addProperties(Attributes attlist) throws SAXParseException {
-        super.addProperties(attlist);
-        characterValue = propertyList.get(PR_CHARACTER).getCharacter();
-        getFOEventHandler().character(this);
-    }
-
     /**
      * @see org.apache.fop.fo.FObj#charIterator
      */
     public CharIterator charIterator() {
-        return new OneCharIterator(characterValue);
+        return new OneCharIterator(character);
         // But what if the character is ignored due to white space handling?
     }
 

@@ -22,7 +22,6 @@ package org.apache.fop.fo.pagination;
 import java.util.List;
 
 // XML
-import org.xml.sax.Attributes;
 import org.xml.sax.Locator;
 import org.xml.sax.SAXParseException;
 
@@ -95,28 +94,6 @@ public class PageSequenceMaster extends FObj {
         if (childNodes == null) {
            missingChildElementError("(single-page-master-reference|" +
             "repeatable-page-master-reference|repeatable-page-master-alternatives)+");
-        }
-    }
-
-    /**
-     * @see org.apache.fop.fo.FObj#addProperties
-     */
-    protected void addProperties(Attributes attlist) throws SAXParseException {
-        super.addProperties(attlist);
-        subSequenceSpecifiers = new java.util.ArrayList();
-        if (parent.getName().equals("fo:layout-master-set")) {
-            this.layoutMasterSet = (LayoutMasterSet)parent;
-            masterName = getPropString(PR_MASTER_NAME);
-            if (masterName == null) {
-                getLogger().warn("page-sequence-master does not have "
-                                       + "a master-name and so is being ignored");
-            } else {
-                this.layoutMasterSet.addPageSequenceMaster(masterName, this);
-            }
-        } else {
-            throw new SAXParseException("fo:page-sequence-master must be child "
-                                   + "of fo:layout-master-set, not "
-                                   + parent.getName(), locator);
         }
     }
 

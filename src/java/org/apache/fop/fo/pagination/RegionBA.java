@@ -22,7 +22,6 @@ package org.apache.fop.fo.pagination;
 import java.awt.Rectangle;
 
 // XML
-import org.xml.sax.Attributes;
 import org.xml.sax.SAXParseException;
 
 // FOP
@@ -56,13 +55,6 @@ public abstract class RegionBA extends Region {
     }
 
     /**
-     * @see org.apache.fop.fo.FObj#addProperties
-     */
-    protected void addProperties(Attributes attlist) throws SAXParseException {
-        super.addProperties(attlist);
-    }
-
-    /**
      * Return the "extent" property.
      */
     public Length getExtent() {
@@ -71,9 +63,8 @@ public abstract class RegionBA extends Region {
 
     /**
      * Return the "precedence" property.
-     * TODO: 31699
      */
-    public int ___getPrecedence() {
+    public int getPrecedence() {
         return precedence;
     }
 

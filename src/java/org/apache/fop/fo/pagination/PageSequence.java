@@ -22,7 +22,6 @@ package org.apache.fop.fo.pagination;
 import java.util.HashMap;
 
 // XML
-import org.xml.sax.Attributes;
 import org.xml.sax.Locator;
 import org.xml.sax.SAXParseException;
 
@@ -202,58 +201,6 @@ public class PageSequence extends FObj {
         }
 
         getFOEventHandler().endPageSequence(this);
-    }
-
-    /**
-     * @see org.apache.fop.fo.FObj#addProperties
-     */
-    protected void addProperties(Attributes attlist) throws SAXParseException {
-        super.addProperties(attlist);
-        this.root = (Root) parent;
-        layoutMasterSet = root.getLayoutMasterSet();
-        flowMap = new HashMap();
-
-        // we are now on the first page of the page sequence
-        thisIsFirstPage = true;
-        Property ipnValue = getProperty(PR_INITIAL_PAGE_NUMBER);
-
-        if (ipnValue.getEnum() != 0) {
-            // auto | auto-odd | auto-even.
-            pageNumberType = ipnValue.getEnum();
-        } else {
-            pageNumberType = EXPLICIT;
-            int pageStart = ipnValue.getNumber().intValue();
-            this.explicitFirstNumber = (pageStart > 0) ? pageStart : 1;
-        }
-
-        String masterName = getPropString(PR_MASTER_REFERENCE);
-        this.simplePageMaster =
-                this.layoutMasterSet.getSimplePageMaster(masterName);
-        if (this.simplePageMaster == null) {
-            this.pageSequenceMaster =
-                    this.layoutMasterSet.getPageSequenceMaster(masterName);
-            if (this.pageSequenceMaster == null) {
-                throw new SAXParseException("master-reference '" + masterName
-                    + "' for fo:page-sequence matches no"
-                    + " simple-page-master or page-sequence-master", locator);
-            }
-        }
-
-        // get the 'format' properties
-        this.pageNumberGenerator =
-            new PageNumberGenerator(getPropString(PR_FORMAT),
-                this.propertyList.get(PR_GROUPING_SEPARATOR).getCharacter(),
-                this.propertyList.get(PR_GROUPING_SIZE).getNumber().intValue(),
-                getPropEnum(PR_LETTER_VALUE));
-
-        this.forcePageCount = getPropEnum(PR_FORCE_PAGE_COUNT);
-
-        // this.propertyList.get("country");
-        // this.propertyList.get("language");
-
-        //call startStructuredPageSequence to ensure, that startPageSequence is called
-        //before startFlow.
-        startStructuredPageSequence();
     }
 
     /**

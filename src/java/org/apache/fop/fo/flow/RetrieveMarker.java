@@ -22,7 +22,6 @@ package org.apache.fop.fo.flow;
 import java.util.List;
 
 // XML
-import org.xml.sax.Attributes;
 import org.xml.sax.Locator;
 import org.xml.sax.SAXParseException;
 
@@ -63,16 +62,6 @@ public class RetrieveMarker extends FObjMixed {
         retrieveBoundary = pList.get(PR_RETRIEVE_BOUNDARY).getEnum();
     }
     
-    /**
-     * @see org.apache.fop.fo.FObj#addProperties
-     */
-    protected void addProperties(Attributes attlist) throws SAXParseException {
-        super.addProperties(attlist);
-        this.retrieveClassName = getPropString(PR_RETRIEVE_CLASS_NAME);
-        this.retrievePosition = getPropEnum(PR_RETRIEVE_POSITION);
-        this.retrieveBoundary = getPropEnum(PR_RETRIEVE_BOUNDARY);
-    }
-
     /**
      * @see org.apache.fop.fo.FONode#validateChildNode(Locator, String, String)
      * XSL Content Model: empty

@@ -21,7 +21,6 @@ package org.apache.fop.fo.pagination;
 import java.awt.Rectangle;
 
 // XML
-import org.xml.sax.Attributes;
 import org.xml.sax.Locator;
 import org.xml.sax.SAXParseException;
 
@@ -48,9 +47,6 @@ public abstract class Region extends FObj {
     // End of property values
     
     private SimplePageMaster layoutMaster;
-
-    /** Holds the writing mode */
-    protected int wm;
 
     /**
      * @see org.apache.fop.fo.FONode#FONode(FONode)
@@ -87,32 +83,6 @@ public abstract class Region extends FObj {
                         + " is not permitted.", locator);
             }
         }
-    }
-
-    /**
-     * @see org.apache.fop.fo.FObj#addProperties
-     */
-    protected void addProperties(Attributes attlist) throws SAXParseException {
-        super.addProperties(attlist);
-
-        // regions may have name, or default
-        if (null == this.propertyList.get(PR_REGION_NAME)) {
-            setRegionName(getDefaultRegionName());
-        } else if (getPropString(PR_REGION_NAME).equals("")) {
-            setRegionName(getDefaultRegionName());
-        } else {
-            setRegionName(getPropString(PR_REGION_NAME));
-            // check that name is OK. Not very pretty.
-            if (isReserved(getRegionName())
-                    && !getRegionName().equals(getDefaultRegionName())) {
-                throw new SAXParseException("region-name '" + regionName
-                        + "' for " + this.getName()
-                        + " is not permitted.", locator);
-            }
-        }
-
-        this.wm = getPropEnum(PR_WRITING_MODE);
-        this.overflow = getPropEnum(PR_OVERFLOW);
     }
 
     /**

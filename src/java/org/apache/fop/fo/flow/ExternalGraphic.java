@@ -22,7 +22,6 @@ package org.apache.fop.fo.flow;
 import java.util.List;
 
 // XML
-import org.xml.sax.Attributes;
 import org.xml.sax.Locator;
 import org.xml.sax.SAXParseException;
 
@@ -135,15 +134,6 @@ public class ExternalGraphic extends FObj {
     protected void validateChildNode(Locator loc, String nsURI, String localName) 
         throws SAXParseException {
             invalidChildError(loc, nsURI, localName);
-    }
-
-    /**
-     * @see org.apache.fop.fo.FObj#addProperties
-     * @todo switch method from image() to startImage()?
-     */
-    protected void addProperties(Attributes attlist) throws SAXParseException {
-        super.addProperties(attlist);
-        getFOEventHandler().image(this);
     }
 
     /**

@@ -19,7 +19,6 @@
 package org.apache.fop.fo.flow;
 
 // XML
-import org.xml.sax.Attributes;
 import org.xml.sax.Locator;
 import org.xml.sax.SAXParseException;
 
@@ -141,33 +140,6 @@ public class Inline extends FObjMixed {
      */
     protected void endOfNode() throws SAXParseException {
         getFOEventHandler().endInline(this);
-    }
-
-    /**
-     * @see org.apache.fop.fo.FObj#addProperties
-     */
-    protected void addProperties(Attributes attlist) throws SAXParseException {
-        super.addProperties(attlist);
-
-       /* Check to see if this node can have block-level children.
-        * See validateChildNode() below.
-        */
-       int lvlLeader = findAncestor(FO_LEADER);
-       int lvlFootnote = findAncestor(FO_FOOTNOTE);
-       int lvlInCntr = findAncestor(FO_INLINE_CONTAINER);
-
-       if (lvlLeader > 0) {
-           if (lvlInCntr < 0 ||
-               (lvlInCntr > 0 && lvlInCntr > lvlLeader)) {
-               canHaveBlockLevelChildren = false;
-           }
-       } else if (lvlFootnote > 0) {
-           if (lvlInCntr < 0 || lvlInCntr > lvlFootnote) {
-               canHaveBlockLevelChildren = false;
-           }
-       }
-
-        getFOEventHandler().startInline(this);
     }
 
     /**

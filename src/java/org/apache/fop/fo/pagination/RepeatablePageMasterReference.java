@@ -19,7 +19,6 @@
 package org.apache.fop.fo.pagination;
 
 // XML
-import org.xml.sax.Attributes;
 import org.xml.sax.Locator;
 import org.xml.sax.SAXParseException;
 
@@ -45,7 +44,6 @@ public class RepeatablePageMasterReference extends FObj
     private static final int INFINITE = -1;
 
     private PageSequenceMaster pageSequenceMaster;
-    private int _maximumRepeats;
     private int numberConsumed = 0;
 
     /**
@@ -75,35 +73,7 @@ public class RepeatablePageMasterReference extends FObj
             pageSequenceMaster.addSubsequenceSpecifier(this);
         }
     }
-
-    /**
-     * @see org.apache.fop.fo.FObj#addProperties
-     */
-    protected void addProperties(Attributes attlist) throws SAXParseException {
-        super.addProperties(attlist);
-
-        PageSequenceMaster pageSequenceMaster = (PageSequenceMaster) parent;
-
-        if (getPropString(PR_MASTER_REFERENCE) == null) {
-            missingPropertyError("master-reference");
-        } else {
-            pageSequenceMaster.addSubsequenceSpecifier(this);
-        }
-
-        Property mr = getProperty(PR_MAXIMUM_REPEATS);
-
-        if (mr.getEnum() == NO_LIMIT) {
-            this._maximumRepeats = INFINITE;
-        } else {
-            this._maximumRepeats = mr.getNumber().intValue();
-            if (this._maximumRepeats < 0) {
-                getLogger().debug("negative maximum-repeats: "
-                                  + this.maximumRepeats);
-                this._maximumRepeats = 0;
-            }
-        }
-    }
-
+ 
     /**
      * @see org.apache.fop.fo.FONode#validateChildNode(Locator, String, String)
      * XSL Content Model: empty
@@ -119,8 +89,8 @@ public class RepeatablePageMasterReference extends FObj
     public String getNextPageMasterName(boolean isOddPage,
                                         boolean isFirstPage,
                                         boolean isEmptyPage) {
-        if (_maximumRepeats != INFINITE) {
-            if (numberConsumed < _maximumRepeats) {
+        if (getMaximumRepeats() != INFINITE) {
+            if (numberConsumed < getMaximumRepeats()) {
                 numberConsumed++;
             } else {
                 return null;
