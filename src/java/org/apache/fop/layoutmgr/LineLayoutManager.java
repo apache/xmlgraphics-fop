@@ -102,7 +102,7 @@ public class LineLayoutManager extends InlineStackingLayoutManager {
         lineHeight = lh;
         lead = l;
         follow = f;
-        init(); // Normally done when started by parent!
+        initialize(); // Normally done when started by parent!
     }
 
     /**

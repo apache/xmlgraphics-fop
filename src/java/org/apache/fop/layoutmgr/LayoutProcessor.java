@@ -54,9 +54,9 @@ public interface LayoutProcessor extends LayoutManager {
     LayoutManagerLS getLayoutManagerLS();
 
     /**
-     * Initialise this layout manager.
+     * Initialize this layout manager.
      */
-    void init();
+    void initialize();
 
     /**
      * Generates inline areas.

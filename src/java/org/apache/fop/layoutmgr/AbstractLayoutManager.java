@@ -165,7 +165,7 @@ public abstract class AbstractLayoutManager implements LayoutProcessor, Constant
             curChildLM = (LayoutProcessor) childLMiter.next();
             curChildLM.setUserAgent(getUserAgent());
             curChildLM.setParent(this);
-            curChildLM.init();
+            curChildLM.initialize();
             return curChildLM;
         }
         return null;
@@ -222,10 +222,10 @@ public abstract class AbstractLayoutManager implements LayoutProcessor, Constant
 
 
     /**
-     * This method provides a hook for a LayoutManager to intialize traits
+     * This method provides a hook for a LayoutManager to initialize traits
      * for the areas it will create, based on Properties set on its FO.
      */
-    public void init() {
+    public void initialize() {
         if (fobj != null && bInited == false) {
             initProperties(fobj.getPropertyManager());
             bInited = true;
@@ -233,7 +233,7 @@ public abstract class AbstractLayoutManager implements LayoutProcessor, Constant
     }
 
     /**
-     * This method provides a hook for a LayoutManager to intialize traits
+     * This method provides a hook for a LayoutManager to initialize traits
      * for the areas it will create, based on Properties set on its FO.
      */
     protected void initProperties(PropertyManager pm) {

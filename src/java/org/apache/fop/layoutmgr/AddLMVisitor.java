@@ -369,7 +369,7 @@ public class AddLMVisitor implements FOTreeVisitor {
              lm.setUserAgent(node.getUserAgent());
              lm.setFObj(node);
              lm.setLMiter(new LMiter(lm, node.getChildren()));
-             lm.init();
+             lm.initialize();
 
              // get breaks then add areas to FilledArea
              FilledArea fa = new FilledArea();
