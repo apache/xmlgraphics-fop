@@ -17,7 +17,6 @@ import java.lang.reflect.Constructor;
 import java.util.Hashtable;
 
 // FOP
-import org.apache.fop.messaging.MessageHandler;
 import org.apache.fop.image.analyser.ImageReaderFactory;
 import org.apache.fop.image.analyser.ImageReader;
 import org.apache.fop.configuration.Configuration;
@@ -40,10 +39,25 @@ public class FopImageFactory {
     public static FopImage Make(String href)
             throws MalformedURLException, FopImageException {
 
+        /*
+         * According to section 5.11 a <uri-specification> is:
+         * "url(" + URI + ")"
+         * according to 7.28.7 a <uri-specification> is:
+         * URI
+         * So handle both.
+         */
         // Get the absolute URL
         URL absoluteURL = null;
         InputStream imgIS = null;
+        href = href.trim();
+        if(href.startsWith("url(") && (href.indexOf(")") != -1)) {
+            href = href.substring(4, href.indexOf(")")).trim();
+        }
         try {
+            // try url as complete first, this can cause
+            // a problem with relative uri's if there is an
+            // image relative to where fop is run and relative
+            // to the base dir of the document
             try {
                 absoluteURL = new URL(href);
             } catch (MalformedURLException mue) {
