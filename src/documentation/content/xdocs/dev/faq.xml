@@ -274,12 +274,12 @@
           <code>path/file.ext</code> or <code>../file.ext</code>. The string
           <code>file:path/file.ext</code> is <em>not</em> a relative URL,
           in fact, it isn't a valid URL at all. A relative URL is subject to a
-          <link>resolving process</link>, which transforms it into an absolute
+          resolving process, which transforms it into an absolute
           URL.
         </p>
         <p>
-          See <link>Understanding URIs and URLs</link> and <link>Understanding
-          URL resolving</link>.
+          See Understanding URIs and URLs and Understanding
+          URL resolving.
         </p>
       </answer>
     </faq>
@@ -298,7 +298,7 @@
           whether you got them right.
         </p>
         <p>
-          You can use the <link>FOP DTD</link> or <link>FOP Schema</link> to
+          You can use the FOP DTD or FOP Schema to
           validate your soure. This will catch most, but still not all problems.
         </p>
         <p>
@@ -368,8 +368,8 @@
           the user agent.
         </p>
         <p>
-          See <link>Understanding URIs and URLs</link> and <link>Understanding
-          URL resolving</link>.
+          See Understanding URIs and URLs and Understanding
+          URL resolving.
         </p>
       </answer>
     </faq>
@@ -506,7 +506,7 @@
           </li>
         </ul>
         <p>
-          See also <link>supported image formats</link>.
+          See also supported image formats.
         </p>
       </answer>
     </faq>
@@ -526,7 +526,7 @@
     <faq>
       <question>How do I use FOP in a servlet?</question>
       <answer>
-        <p>Look at the <link>servlet example</link>.</p>
+        <p>Look at the servlet example.</p>
         <p>
           A rather minimal code snippet to demonstrate the basics:
         </p>
@@ -541,7 +541,7 @@ driver.run();</source>
           with IEx and view it later. There are other problems with this code.
         </p>
         <p>
-          Please look into <link>Howto embed FOP in a servlet</link> for all
+          Please look into Howto embed FOP in a servlet for all
           kinds of details.
         </p>
       </answer>
@@ -802,26 +802,30 @@ transformer.transform(xmlsource, new SAXResult(driver.getContentHandler()));</so
       <question>How do I embed fonts in PDF?</question>
       <answer>
         <p>
-          Provide$$$
+          See the <link href="fonts.html">Fonts</link> page for information
+          about embedding fonts.
         </p>
       </answer>
     </faq>
     <faq>
-      <question>Characters not displayed, or displayed incorrectly, or displayed
-  as "#"</question>
+      <question>Characters not displayed, or displayed incorrectly, or displayed  as "#"</question>
       <answer>
-        <p>  Answers are that fonts must be available on the target platform, and
+        <p>Answers are that fonts must be available for the output format, and
   the selected font must contain glyphs for the desired character.
+PDF has a set of <link href="output.html#pdf-fonts">defined fonts</link>, other fonts can be embedded following the
+<link href="fonts.html">instructions</link>.
+To find out if the characters you need are in the core fonts then
+(todo - find a glyph font table for the fonts).
 </p>
         <p>  For example, for most symbols, the symbol font has to be selected
-  explicitely (actually: is this a feature or a bug?):
+  explicitely (in future it should be possible to specify a list of fonts
+where it will select the font for the specified character):
 </p>
 <p>   &lt;fo:inline font-family="Symbol">&amp;#x2205;&lt;/fo:inline></p>
 <p>  gives EMPTY SET while the same characters in the default font results
   in AE LIGATURE (which happens to occupy the same place in the default
   font as the EMPTY SET in the Symbol font). The "#" shows up if the
   selected font does not define a glyph for the translated index.</p>
-        <p>(Still applicable in 0.20.3?)</p>
       </answer>
     </faq>
     <faq>

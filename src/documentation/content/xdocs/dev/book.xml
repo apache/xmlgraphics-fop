@@ -24,6 +24,7 @@
       <menu-item label="Fonts" href="fonts.html"/>
     </menu>
     <menu label="Developers">
+      <external label="Tasks Wiki" href="http://codeconsult.ch/wiki/index.php/FopTasks"/>
       <menu-item label="Design" href="../design/index.html"/>
     </menu>
 </book>

@@ -105,6 +105,11 @@ The image
 (<fo:external-graphic content-width="75pt" content-height="100pt" scaling="uniform" src="images/fop.jpg"/>)
 has uniform scaling.
   </fo:block>
+  <fo:block>
+The image
+(<fo:external-graphic width="75pt" height="100pt" content-width="scale-to-fit" content-height="scale-to-fit" src="images/fop.jpg"/>)
+is scaled to fit the viewport.
+  </fo:block>
 </fo:block>
 
 <fo:block>
