@@ -369,10 +369,52 @@
         </p>
       </answer>
     </faq>
+    <faq id="graphic-not-displayed">
+      <question>A graphic is not displayed.</question>
+      <answer>
+        <p>
+          The most common reason is that the file is not found because of an
+          empty or wrong baseDir setting, spelling errors in the file name, in
+          particular using the wrong case, or, if the image is retrieved over
+          HTTP, the image was not delivered because of security settings in the
+          server, missing cookies or other authorization information, or
+          because of server misconfigurations.  One way to check this is to
+          cut&amp;paste the source URL from the fo:external-graphic into the
+          Location field of a browser <strong>on the machine where the FOP
+          process will be running</strong>.
+        </p>
+        <p>
+          Several other possibilities:
+        </p>
+        <ul>
+          <li>
+            The graphic is too large to fit into the intended space.
+          </li>
+          <li>
+            Some image format subclasses can't be handled, try to convert the
+            graphic to a format subclass known to work. (Sorry, no list of
+            formats known to work)
+          </li>
+          <li>
+            Something else obscures the graphic, for example stuff from a
+            static content (very rare, but has happened).
+          </li>
+        </ul>
+        <!-- p>
+          See also supported image formats.
+        </p -->
+      </answer>
+    </faq>
     <faq id="png-fails">
       <question>My graphical images do not work properly.</question>
       <answer>
         <p>See <link href="svg.html">Graphical Formats</link>.</p>
+      </answer>
+    </faq>
+    <faq id="graphic-resolution">
+      <question>Why is my graphic rendered at a different resolution than it was created?</question>
+      <answer>
+        <p>See <link href="graphics.html#resolution">Graphics Resolution</link>.</p>
       </answer>
     </faq>
     <faq id="keep-with">
@@ -471,42 +513,6 @@
           to remedy this. However, this is likely to look ugly, and wont fix the
           problem completely.
         </p>
-      </answer>
-    </faq>
-    <faq id="graphic-not-displayed">
-      <question>A graphic is not displayed.</question>
-      <answer>
-        <p>
-          The most common reason is that the file is not found because of an
-          empty or wrong baseDir setting, spelling errors in the file name, in
-          particular using the wrong case, or, if the image is retrieved over
-          HTTP, the image was not delivered because of security settings in the
-          server, missing cookies or other authorization information, or
-          because of server misconfigurations.  One way to check this is to
-          cut&amp;paste the source URL from the fo:external-graphic into the
-          Location field of a browser <strong>on the machine where the FOP
-          process will be running</strong>.
-        </p>
-        <p>
-          Several other possibilities:
-        </p>
-        <ul>
-          <li>
-            The graphic is too large to fit into the intended space.
-          </li>
-          <li>
-            Some image format subclasses can't be handled, try to convert the
-            graphic to a format subclass known to work. (Sorry, no list of
-            formats known to work)
-          </li>
-          <li>
-            Something else obscures the graphic, for example stuff from a
-            static content (very rare, but has happened).
-          </li>
-        </ul>
-        <!-- p>
-          See also supported image formats.
-        </p -->
       </answer>
     </faq>
     <faq id="hypenation-fails">
