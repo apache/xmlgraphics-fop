@@ -8,6 +8,7 @@
 package org.apache.fop.area;
 
 import java.io.Serializable;
+import org.apache.fop.fo.FObj;
 
 // If the area appears more than once in the output
 // or if the area has external data it is cached
@@ -33,4 +34,87 @@ public class Area implements Serializable {
     public static final int ORIENT_180 = 2;
     public static final int ORIENT_270 = 3;
 
+    // area class values
+    public static final int CLASS_NORMAL = 0;
+    public static final int CLASS_FIXED = 1;
+    public static final int CLASS_ABSOLUTE = 2;
+    public static final int CLASS_BEFORE_FLOAT = 3;
+    public static final int CLASS_FOOTNOTE = 4;
+    public static final int CLASS_SIDE_FLOAT = 5;
+    // IMPORTANT: make sure this is the maximum + 1
+    public static final int CLASS_MAX = CLASS_SIDE_FLOAT+1;
+
+    private int areaClass=CLASS_NORMAL;
+    private FObj genFObj;
+
+    protected Area parent =null; // Doesn't need to be saved in serialization
+
+    public int getAreaClass() {
+	return areaClass;
+    }
+
+    public void setAreaClass(int areaClass) {
+	this.areaClass = areaClass;
+    }
+
+    /**
+     * Return a length range describing the minimum, optimum and maximum
+     * lengths available for content in the block-progression-direction.
+     * This is calculated from the theoretical maximum size of the area
+     * and its current content.
+     */
+    public MinOptMax getAvailBPD() {
+	return MinOptMax.subtract(getMaxBPD(), getContentBPD());
+    }
+
+    /**
+     * Return a length range describing the theoretical maximum size of an
+     * area in the block-progression-direction.
+     * For areas holding normal flowing or floating content in paged media,
+     * this depends on the size of the body. In general the answer is the
+     * gotten from the parent. At the body level, the calculation accounts
+     * for the sizes of the conditional areas.
+     */
+    public MinOptMax getMaxBPD() {
+	if (parent != null) {
+	    return parent.getMaxBPD();
+	}
+	else return new MinOptMax();
+    }
+
+    /**
+     * Return a length range describing the minimum, optimum and maximum
+     * lengths of all area content in the block-progression-direction.
+     * This is based on the allocation rectangles of all content in
+     * the area.
+     */
+    public MinOptMax getContentBPD() {
+	return new MinOptMax();
+    }
+
+    /**
+     * Return a length range describing the minimum, optimum and maximum
+     * lengths of the area's allocation rectangle
+     * in the block-progression-direction.
+     * This is based on the allocation rectangles of all content in
+     * the area.
+     * The default implementation simply returns the same as the content BPD.
+     * If an Area has before or after border and padding, these contribute
+     * to the allocation BPD, depending on conditionality.
+     */
+    public MinOptMax getAllocationBPD() {
+	return getContentBPD();
+    }
+
+    public void setParent(Area parent) {
+	this.parent = parent;
+    }
+
+    public void setGeneratingFObj(FObj fobj) {
+	this.genFObj = fobj;
+    }
+
+    public FObj getGeneratingFObj() {
+	return this.genFObj;
+    }
 }

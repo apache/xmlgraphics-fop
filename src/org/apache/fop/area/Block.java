@@ -18,18 +18,13 @@ import java.awt.geom.Rectangle2D;
 // or by relative to the parent for floats, tables and lists
 // cacheable object
 // has id information
-public class Block extends Area implements Serializable {
+public class Block extends BlockParent implements Serializable {
     // normally stacked with other blocks
     public static final int STACK = 0;
     // placed relative to the parent area
     public static final int RELATIVE = 1;
     // placed relative to the page or viewport
     public static final int ABSOLUTE = 2;
-
-    // this position is used for absolute position
-    // or as an indent
-    // this has the size in the block progression dimension
-    Rectangle2D bounds = null;
 
     int stacking = TB;
 
@@ -38,7 +33,6 @@ public class Block extends Area implements Serializable {
     // available markers, markers are discarded once page complete
     private ArrayList markers = null;
 
-    ArrayList children = null;
     boolean blocks = false;
     // a block with may contain the dominant styling info in
     // terms of most lines or blocks with info
@@ -46,8 +40,6 @@ public class Block extends Area implements Serializable {
 
     int positioning = STACK;
 
-    // orientation if reference area
-    int orientation = ORIENT_0;
 
     public void addBlock(Block block) {
         if (children == null) {
@@ -71,10 +63,6 @@ public class Block extends Area implements Serializable {
 
     public boolean isChildrenBlocks() {
         return blocks;
-    }
-
-    public List getChildAreas() {
-        return children;
     }
 
     public int getPositioning() {
