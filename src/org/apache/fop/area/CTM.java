@@ -21,9 +21,9 @@ import org.apache.fop.fo.properties.WritingMode;
 public class CTM implements Serializable {
     private double a,b,c,d,e,f;
 
-    private static CTM s_CTM_lrtb = new CTM(1,0,0,-1,0,0);
-    private static CTM s_CTM_rltb = new CTM(-1,0,0,-1,0,0);
-    private static CTM s_CTM_tbrl = new CTM(0,-1,-1,0,0,0);
+    private static CTM s_CTM_lrtb = new CTM(1,0,0,1,0,0);
+    private static CTM s_CTM_rltb = new CTM(-1,0,0,1,0,0);
+    private static CTM s_CTM_tbrl = new CTM(0,1,-1,0,0,0);
 /**
  * Create the identity matrix
  */
@@ -61,6 +61,15 @@ public class CTM implements Serializable {
         this.f = y;
     }
 
+    protected CTM(CTM ctm) {
+	this.a = ctm.a;
+	this.b = ctm.b;
+	this.c = ctm.c;
+	this.d = ctm.d;
+	this.e = ctm.e;
+	this.f = ctm.f;
+    }
+
     /**
      * Return a CTM which will transform coordinates for a particular writing-mode
      * into normalized first quandrant coordinates.
@@ -72,13 +81,24 @@ public class CTM implements Serializable {
      * CTM is being set.
      */
     static public CTM getWMctm(int wm, int ipd, int bpd) {
+	CTM wmctm;
         switch (wm) {
             case WritingMode.LR_TB:
-                return s_CTM_lrtb.translate(0,bpd);
+                return new CTM(s_CTM_lrtb);
             case WritingMode.RL_TB:
-                return  s_CTM_rltb.translate(ipd, bpd);
+		{
+		wmctm = new CTM(s_CTM_rltb);
+		wmctm.e = ipd;
+		return wmctm;
+		}
+                //return  s_CTM_rltb.translate(ipd, 0);
             case WritingMode.TB_RL: // CJK
-                return s_CTM_tbrl.translate(bpd, ipd);
+		{
+		wmctm = new CTM(s_CTM_tbrl);
+		wmctm.e = bpd;
+		return wmctm;
+		}
+                //return s_CTM_tbrl.translate(0, ipd);
 	    default:
 		return null;
         }
@@ -110,10 +130,25 @@ public class CTM implements Serializable {
      * @return CTM The result of rotating this CTM.
      */
     public CTM rotate(double angle) {
-	double rad = Math.toRadians(angle);
-	double cos = Math.cos(rad);
-	double sin = Math.sin(rad);
-        CTM rotate= new CTM(cos, sin, -sin, cos, 0, 0);
+	double cos, sin;
+	if (angle == 90.0) {
+	    cos = 0.0;
+	    sin = 1.0;
+	}
+	else if (angle == 270.0) {
+	    cos = 0.0;
+	    sin = -1.0;
+	}
+	else if (angle == 180.0) {
+	    cos = -1.0;
+	    sin = 0.0;
+	}
+	else {
+	    double rad = Math.toRadians(angle);
+	    cos = Math.cos(rad);
+	    sin = Math.sin(rad);
+	}
+        CTM rotate= new CTM(cos,-sin, sin, cos, 0, 0);
         return multiply(rotate);
     }
 
@@ -166,5 +201,9 @@ public class CTM implements Serializable {
             y1t = tmp;
         }
         return new Rectangle(x1t, y1t, x2t-x1t, y2t-y1t);
+    }
+
+    public String toString() {
+	return "[" + a + " " + b + " " + c + " " + d + " " + e + " " + f + "]";
     }
 }

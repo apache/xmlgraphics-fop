@@ -36,9 +36,18 @@ public class RegionBody extends Region {
 	// Need these in writing-mode relative coordinates
 	// Or shall we get absolute and transform to relative using writing mode?
         MarginProps mProps = propMgr.getMarginProps();
+	/**
+	System.err.println("BodyRegion margin props=" + mProps.startIndent + ","
+			   + mProps.spaceBefore + "," + mProps.endIndent + ","
+			   + mProps.spaceAfter);
+
         return new Rectangle( mProps.startIndent, mProps.spaceBefore,
 			      reldims.ipd - mProps.startIndent - mProps.endIndent,
 			      reldims.bpd - mProps.spaceBefore - mProps.spaceAfter);
+	**/
+	return new Rectangle( mProps.marginLeft, mProps.marginTop,
+			      reldims.ipd - mProps.marginLeft - mProps.marginRight,
+			      reldims.bpd - mProps.marginTop - mProps.marginBottom);
     }
 
     protected void setRegionTraits(RegionReference r, Rectangle2D absRegVPRect) {
@@ -66,6 +75,7 @@ public class RegionBody extends Region {
     public RegionReference makeRegionReferenceArea(Rectangle2D absRegVPRect) {
 	// Should set some column stuff here I think, or put it elsewhere
 	BodyRegion body = new BodyRegion();
+	setRegionTraits(body, absRegVPRect);
         int columnCount=
             this.properties.get("column-count").getNumber().intValue();
         if ((columnCount > 1) && (overflow == Overflow.SCROLL)) {

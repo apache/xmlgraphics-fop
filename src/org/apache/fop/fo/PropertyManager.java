@@ -278,19 +278,20 @@ public class PropertyManager {
          * (Note: scrolling between region vp and ref area when doing online content!)
          */
          CTM ctm = new CTM(absVPrect.getX(), absVPrect.getY());
+
          // First transform for rotation
          if (absRefOrient != 0) {
             // Rotation implies translation to keep the drawing area in the
             // first quadrant. Note: rotation is counter-clockwise
              switch (absRefOrient) {
                case 90:
-                ctm = ctm.translate(height, 0); // height = absVPrect.width
+                ctm = ctm.translate(0, width); // width = absVPrect.height
                 break;
             case 180:
                 ctm = ctm.translate(width, height);
                 break;
             case 270:
-                ctm = ctm.translate(0, width); // width = absVPrect.height
+                ctm = ctm.translate(height,0); // height = absVPrect.width
                 break;
            }
            ctm = ctm.rotate(absRefOrient);
