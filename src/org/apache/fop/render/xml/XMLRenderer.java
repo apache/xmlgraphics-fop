@@ -495,7 +495,15 @@ public class XMLRenderer implements Renderer {
     }
 
     private boolean isCoarseXml() {
-        return ((Boolean)options.get("fineDetail")).booleanValue();
+        if (options == null) {
+            return false;
+        }
+        Boolean b = (Boolean)options.get("fineDetail");
+        if (b != null) {
+            return b.booleanValue();
+        } else {
+            return false;
+        }
     }
 
     /**
