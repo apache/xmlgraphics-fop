@@ -49,56 +49,54 @@ public class TraitSetter {
         int iBP;
         iBP = bpProps.getPadding(CommonBorderPaddingBackground.START, bNotFirst);
         if (iBP > 0) {
-            //area.addTrait(new Trait(Trait.PADDING_START, new Integer(iBP)));
             area.addTrait(Trait.PADDING_START, new Integer(iBP));
         }
         iBP = bpProps.getPadding(CommonBorderPaddingBackground.END, bNotLast);
         if (iBP > 0) {
-            //area.addTrait(new Trait(Trait.PADDING_END, new Integer(iBP)));
             area.addTrait(Trait.PADDING_END, new Integer(iBP));
         }
         iBP = bpProps.getPadding(CommonBorderPaddingBackground.BEFORE, false);
         if (iBP > 0) {
-            // area.addTrait(new Trait(Trait.PADDING_BEFORE, new Integer(iBP)));
             area.addTrait(Trait.PADDING_BEFORE, new Integer(iBP));
         }
         iBP = bpProps.getPadding(CommonBorderPaddingBackground.AFTER, false);
         if (iBP > 0) {
-            //area.addTrait(new Trait(Trait.PADDING_AFTER, new Integer(iBP)));
             area.addTrait(Trait.PADDING_AFTER, new Integer(iBP));
         }
 
         addBorderTrait(area, bpProps, bNotFirst,
-                       CommonBorderPaddingBackground.START, Trait.BORDER_START);
+                       CommonBorderPaddingBackground.START, 
+                       BorderProps.SEPARATE, Trait.BORDER_START);
 
-        addBorderTrait(area, bpProps, bNotLast, CommonBorderPaddingBackground.END,
-                       Trait.BORDER_END);
+        addBorderTrait(area, bpProps, bNotLast, 
+                       CommonBorderPaddingBackground.END,
+                       BorderProps.SEPARATE, Trait.BORDER_END);
 
-        addBorderTrait(area, bpProps, false, CommonBorderPaddingBackground.BEFORE,
-                       Trait.BORDER_BEFORE);
+        addBorderTrait(area, bpProps, false, 
+                       CommonBorderPaddingBackground.BEFORE,
+                       BorderProps.SEPARATE, Trait.BORDER_BEFORE);
 
-        addBorderTrait(area, bpProps, false, CommonBorderPaddingBackground.AFTER,
-                       Trait.BORDER_AFTER);
+        addBorderTrait(area, bpProps, false, 
+                       CommonBorderPaddingBackground.AFTER,
+                       BorderProps.SEPARATE, Trait.BORDER_AFTER);
     }
 
     /**
      * Sets border traits on an area.
      * @param area area to set the traits on
      * @param bpProps border and padding properties
+     * @param mode the border paint mode (see BorderProps)
      */
     private static void addBorderTrait(Area area,
                                        CommonBorderPaddingBackground bpProps,
-                                       boolean bDiscard, int iSide,
+                                       boolean bDiscard, int iSide, int mode,
                                        Object oTrait) {
         int iBP = bpProps.getBorderWidth(iSide, bDiscard);
         if (iBP > 0) {
-            //     area.addTrait(new Trait(oTrait,
-            //     new BorderProps(bpProps.getBorderStyle(iSide),
-            //     iBP,
-            //     bpProps.getBorderColor(iSide))));
             area.addTrait(oTrait,
                           new BorderProps(bpProps.getBorderStyle(iSide),
-                                          iBP, bpProps.getBorderColor(iSide)));
+                                          iBP, bpProps.getBorderColor(iSide),
+                                          mode));
         }
     }
 
@@ -111,22 +109,62 @@ public class TraitSetter {
      */
     public static void addBorders(Area area, CommonBorderPaddingBackground bordProps) {
         BorderProps bps = getBorderProps(bordProps, CommonBorderPaddingBackground.BEFORE);
-        if (bps.width != 0) {
+        if (bps != null) {
             area.addTrait(Trait.BORDER_BEFORE, bps);
         }
         bps = getBorderProps(bordProps, CommonBorderPaddingBackground.AFTER);
-        if (bps.width != 0) {
+        if (bps != null) {
             area.addTrait(Trait.BORDER_AFTER, bps);
         }
         bps = getBorderProps(bordProps, CommonBorderPaddingBackground.START);
-        if (bps.width != 0) {
+        if (bps != null) {
             area.addTrait(Trait.BORDER_START, bps);
         }
         bps = getBorderProps(bordProps, CommonBorderPaddingBackground.END);
-        if (bps.width != 0) {
+        if (bps != null) {
             area.addTrait(Trait.BORDER_END, bps);
         }
 
+        addPadding(area, bordProps);
+    }
+
+    /**
+     * Add borders to an area for the collapsing border model in tables.
+     * Layout managers that create areas with borders can use this to
+     * add the borders to the area.
+     * @param area the area to set the traits on.
+     * @param bordProps border properties
+     * @param outer 4 boolean values indicating if the side represents the 
+     *     table's outer border. Order: before, after, start, end
+     */
+    public static void addCollapsingBorders(Area area, 
+            CommonBorderPaddingBackground bordProps,
+            boolean[] outer) {
+        BorderProps bps = getCollapsingBorderProps(bordProps, 
+                CommonBorderPaddingBackground.BEFORE, outer[0]);
+        if (bps != null) {
+            area.addTrait(Trait.BORDER_BEFORE, bps);
+        }
+        bps = getCollapsingBorderProps(bordProps, 
+                CommonBorderPaddingBackground.AFTER, outer[1]);
+        if (bps != null) {
+            area.addTrait(Trait.BORDER_AFTER, bps);
+        }
+        bps = getCollapsingBorderProps(bordProps, 
+                CommonBorderPaddingBackground.START, outer[2]);
+        if (bps != null) {
+            area.addTrait(Trait.BORDER_START, bps);
+        }
+        bps = getCollapsingBorderProps(bordProps, 
+                CommonBorderPaddingBackground.END, outer[3]);
+        if (bps != null) {
+            area.addTrait(Trait.BORDER_END, bps);
+        }
+
+        addPadding(area, bordProps);
+    }
+
+    private static void addPadding(Area area, CommonBorderPaddingBackground bordProps) {
         int padding = bordProps.getPadding(CommonBorderPaddingBackground.START, false);
         if (padding != 0) {
             area.addTrait(Trait.PADDING_START, new java.lang.Integer(padding));
@@ -147,13 +185,33 @@ public class TraitSetter {
             area.addTrait(Trait.PADDING_AFTER, new java.lang.Integer(padding));
         }
     }
-
+    
     private static BorderProps getBorderProps(CommonBorderPaddingBackground bordProps, int side) {
-        BorderProps bps;
-        bps = new BorderProps(bordProps.getBorderStyle(side),
-                              bordProps.getBorderWidth(side, false),
-                              bordProps.getBorderColor(side));
-        return bps;
+        int width = bordProps.getBorderWidth(side, false);
+        if (width != 0) {
+            BorderProps bps;
+            bps = new BorderProps(bordProps.getBorderStyle(side),
+                                  width,
+                                  bordProps.getBorderColor(side),
+                                  BorderProps.SEPARATE);
+            return bps;
+        } else {
+            return null;
+        }
+    }
+
+    private static BorderProps getCollapsingBorderProps(
+            CommonBorderPaddingBackground bordProps, int side, boolean outer) {
+        int width = bordProps.getBorderWidth(side, false);
+        if (width != 0) {
+            BorderProps bps;
+            bps = new BorderProps(bordProps.getBorderStyle(side),
+                    width, bordProps.getBorderColor(side),
+                    (outer ? BorderProps.COLLAPSE_OUTER : BorderProps.COLLAPSE_INNER));
+            return bps;
+        } else {
+            return null;
+        }
     }
 
     /**
