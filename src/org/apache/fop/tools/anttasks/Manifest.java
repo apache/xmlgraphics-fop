@@ -149,7 +149,7 @@ public class Manifest extends Task
 		}
 		System.out.println("creating "+f);
 	    
-		f.createNewFile();
+		//jdk1.2 -- f.createNewFile();
 		out = new PrintWriter(new FileOutputStream(f));
 	    
 	    }
