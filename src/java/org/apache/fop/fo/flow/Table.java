@@ -285,20 +285,31 @@ public class Table extends FObj {
         return commonBorderPaddingBackground;
     }
 
-    /**
-     * @return the "break-after" property.
-     */
+    /** @return the "break-after" property. */
     public int getBreakAfter() {
         return breakAfter;
     }
 
-    /**
-     * @return the "break-before" property.
-     */
+    /** @return the "break-before" property. */
     public int getBreakBefore() {
         return breakBefore;
     }
-    
+
+    /** @return the "keep-with-next" property.  */
+    public KeepProperty getKeepWithNext() {
+        return keepWithNext;
+    }
+
+    /** @return the "keep-with-previous" property.  */
+    public KeepProperty getKeepWithPrevious() {
+        return keepWithPrevious;
+    }
+
+    /** @return the "keep-together" property.  */
+    public KeepProperty getKeepTogether() {
+        return keepTogether;
+    }
+
     /** @return the "border-collapse" property. */
     public int getBorderCollapse() {
         return borderCollapse;
