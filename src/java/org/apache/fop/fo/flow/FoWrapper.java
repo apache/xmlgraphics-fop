@@ -5,7 +5,7 @@
  *                   The Apache Software License, Version 1.1
  * ============================================================================
  * 
- * Copyright (C) 1999-2003 The Apache Software Foundation. All rights reserved.
+ * Copyright (C) 1999-2004 The Apache Software Foundation. All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without modifica-
  * tion, are permitted provided that the following conditions are met:
@@ -138,7 +138,7 @@ public class FoWrapper extends FONode {
                                 (foTree, this, ev, stateFlags);
                     if (ev.getFoType() != FObjectNames.PCDATA)
                         ev = xmlevents.getEndElement(SyncedFoXmlEventsBuffer.DISCARD_EV, ev);
-                        pool.surrenderEvent(ev);
+                        namespaces.surrenderEvent(ev);
                 }
             } catch(UnexpectedStartElementException e) {
                 ev = xmlevents.getStartElement();
@@ -146,7 +146,7 @@ public class FoWrapper extends FONode {
                         ("Ignoring unexpected Start Element: "
                                                          + ev.getQName());
                 ev = xmlevents.getEndElement(SyncedFoXmlEventsBuffer.DISCARD_EV, ev);
-                pool.surrenderEvent(ev);
+                namespaces.surrenderEvent(ev);
             }
         } while (ev != null);
 

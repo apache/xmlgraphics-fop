@@ -5,7 +5,7 @@
  *                   The Apache Software License, Version 1.1
  * ============================================================================
  * 
- * Copyright (C) 1999-2003 The Apache Software Foundation. All rights reserved.
+ * Copyright (C) 1999-2004 The Apache Software Foundation. All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without modifica-
  * tion, are permitted provided that the following conditions are met:
@@ -153,7 +153,7 @@ public class FoPageSequence extends FONode {
                 title = numChildren();
                 new FoTitle(getFOTree(), this, ev);
                 ev = xmlevents.getEndElement(SyncedFoXmlEventsBuffer.DISCARD_EV, ev);
-                pool.surrenderEvent(ev);
+                namespaces.surrenderEvent(ev);
             } // else ignore
 
             // Look for zero or more static-content
@@ -166,7 +166,7 @@ public class FoPageSequence extends FONode {
                     firstStaticContent = numChildren();
                 new FoStaticContent(getFOTree(), this, ev);
                 ev = xmlevents.getEndElement(SyncedFoXmlEventsBuffer.DISCARD_EV, ev);
-                pool.surrenderEvent(ev);
+                namespaces.surrenderEvent(ev);
             }
 
             // Look for one or more page-sequence
@@ -179,14 +179,14 @@ public class FoPageSequence extends FONode {
             firstFlow = numChildren();
             new FoFlow(getFOTree(), this, ev);
             ev = xmlevents.getEndElement(SyncedFoXmlEventsBuffer.DISCARD_EV, ev);
-            pool.surrenderEvent(ev);
+            namespaces.surrenderEvent(ev);
             while ((ev = xmlevents.expectStartElement
                             (FObjectNames.FLOW, XMLEvent.DISCARD_W_SPACE))
                    != null) {
                 // Loop over remaining fo:page-sequences
                 new FoFlow(getFOTree(), this, ev);
                 ev = xmlevents.getEndElement(SyncedFoXmlEventsBuffer.DISCARD_EV, ev);
-                pool.surrenderEvent(ev);
+                namespaces.surrenderEvent(ev);
             }
         } catch (NoSuchElementException e) {
             throw new FOPException

@@ -5,7 +5,7 @@
  *                   The Apache Software License, Version 1.1
  * ============================================================================
  * 
- * Copyright (C) 1999-2003 The Apache Software Foundation. All rights reserved.
+ * Copyright (C) 1999-2004 The Apache Software Foundation. All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without modifica-
  * tion, are permitted provided that the following conditions are met:
@@ -78,21 +78,22 @@ public class FoXMLEvent extends XMLEvent {
      * NOEVENT for the event <i>type</i>, and null references for all others
      * except <i>namespaces</i>.
      */
-    public FoXMLEvent (XMLNamespaces namespaces) {
-        super(namespaces);
+    public FoXMLEvent (XMLNamespaces namespaces, int sequence) {
+        super(namespaces, sequence);
     }
 
     /**
      * The fully defined constructor takes values for each of the data
      * elements.
      */
-    public FoXMLEvent(int type, String chars, int uriIndex,
+    public FoXMLEvent(XMLNamespaces namespaces, int sequence,
+                    int type, String chars, int uriIndex,
                     String localName, String qName,
-                    AttributesImpl attributes, XMLNamespaces namespaces,
+                    AttributesImpl attributes, 
                     int foType)
     {
-        super
-            (type, chars, uriIndex, localName, qName, attributes, namespaces);
+        super(namespaces, sequence, type, chars, uriIndex, localName,
+                qName, attributes);
         this.foType = foType;
     }
 
@@ -100,18 +101,19 @@ public class FoXMLEvent extends XMLEvent {
      * The cloning constructor takes a reference to an existing
      * <tt>FoXMLEvent</tt> object.
      */
-    public FoXMLEvent(FoXMLEvent ev) {
+    public FoXMLEvent(FoXMLEvent ev) throws FOPException {
         super(ev);
         foType = ev.foType;
     }
 
-    public FoXMLEvent(int type, String chars, XMLNamespaces namespaces) {
-        super(type, chars, namespaces);
+    public FoXMLEvent(XMLNamespaces namespaces, int sequence,
+            int type, String chars) {
+        super(namespaces, sequence, type, chars);
     }
 
-    public FoXMLEvent(int type, int uriIndex, AttributesImpl attributes,
-                    XMLNamespaces namespaces, int foType) {
-        super(namespaces);
+    public FoXMLEvent(XMLNamespaces namespaces, int sequence,
+            int type, int uriIndex, AttributesImpl attributes, int foType) {
+        super(namespaces, sequence);
         this.type = type;
         this.uriIndex = uriIndex;
         this.attributes = attributes;
@@ -162,17 +164,17 @@ public class FoXMLEvent extends XMLEvent {
     }
 
     /**
-     * Get the FO type of this <i>FoXMLEvent</i>.
-     * @returns the FO type.
+     * Get the FO type of this <i>FoXMLEvent</i>
+     * @returns the FO type
      */
     public int getFoType() { return foType; }
 
     /**
-     * Set the FO type of this <i>FoXMLEvent</i>.
-     * @param foType -the FO type.
+     * Set the FO type of this <i>FoXMLEvent</i>
+     *      * @param foType the FO type
      */
     public void setFoType(int foType) { this.foType = foType; }
-
+    
     public String toString() {
         String tstr;
         try {

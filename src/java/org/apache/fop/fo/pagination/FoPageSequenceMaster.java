@@ -5,7 +5,7 @@
  *                   The Apache Software License, Version 1.1
  * ============================================================================
  * 
- * Copyright (C) 1999-2003 The Apache Software Foundation. All rights reserved.
+ * Copyright (C) 1999-2004 The Apache Software Foundation. All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without modifica-
  * tion, are permitted provided that the following conditions are met:
@@ -252,8 +252,9 @@ public class FoPageSequenceMaster extends FONode {
                 } else
                     throw new FOPException
                             ("Aargh! expectStartElement(events, list)");
-                ev = xmlevents.getEndElement(SyncedFoXmlEventsBuffer.DISCARD_EV, ev);
-                pool.surrenderEvent(ev);
+                ev = xmlevents.getEndElement
+                                    (SyncedFoXmlEventsBuffer.DISCARD_EV, ev);
+                namespaces.surrenderEvent(ev);
             } while (true);
         } catch (NoSuchElementException e) {
             throw new FOPException("Unexpected EOF in page-sequence-master.");
@@ -343,8 +344,8 @@ public class FoPageSequenceMaster extends FONode {
                     //    ("Found conditional-page-master-reference");
                     new FoConditionalPageMasterReference(foTree, this, ev);
                     ev = this.xmlevents.getEndElement
-                                            (SyncedFoXmlEventsBuffer.DISCARD_EV, ev);
-                    this.pool.surrenderEvent(ev);
+                                    (SyncedFoXmlEventsBuffer.DISCARD_EV, ev);
+                    this.namespaces.surrenderEvent(ev);
                 } while (true);
             } catch (NoSuchElementException e) {
                 // End of file reached

@@ -5,7 +5,7 @@
  *                   The Apache Software License, Version 1.1
  * ============================================================================
  * 
- * Copyright (C) 1999-2003 The Apache Software Foundation. All rights reserved.
+ * Copyright (C) 1999-2004 The Apache Software Foundation. All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without modifica-
  * tion, are permitted provided that the following conditions are met:
@@ -125,7 +125,7 @@ public class FoDeclarations extends FONode {
                         ("No fo:color-profile in fo:declarations.");
             new FoColorProfile(foTree, this, ev);
             ev = xmlevents.getEndElement(SyncedFoXmlEventsBuffer.DISCARD_EV, ev);
-            pool.surrenderEvent(ev);
+            namespaces.surrenderEvent(ev);
             do {
                 ev = xmlevents.expectStartElement
                     (FObjectNames.COLOR_PROFILE, XMLEvent.DISCARD_W_SPACE);
@@ -133,7 +133,7 @@ public class FoDeclarations extends FONode {
                 new FoColorProfile(foTree, this, ev);
                 // Flush the master event
                 ev = xmlevents.getEndElement(SyncedFoXmlEventsBuffer.DISCARD_EV, ev);
-                pool.surrenderEvent(ev);
+                namespaces.surrenderEvent(ev);
             } while (true);
         } catch (NoSuchElementException e) {
             // Unexpected end of file

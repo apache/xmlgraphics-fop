@@ -5,7 +5,7 @@
  *                   The Apache Software License, Version 1.1
  * ============================================================================
  * 
- * Copyright (C) 1999-2003 The Apache Software Foundation. All rights reserved.
+ * Copyright (C) 1999-2004 The Apache Software Foundation. All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without modifica-
  * tion, are permitted provided that the following conditions are met:
@@ -146,7 +146,7 @@ public class FoMultiProperties extends FONode {
                 new FoMultiPropertySet(getFOTree(), this, ev, stateFlags);
                 numSets++;
                 ev = xmlevents.getEndElement(SyncedFoXmlEventsBuffer.DISCARD_EV, ev);
-                pool.surrenderEvent(ev);
+                namespaces.surrenderEvent(ev);
             }
 
             if (numSets == 0)
@@ -161,7 +161,7 @@ public class FoMultiProperties extends FONode {
                         ("No wrapper in multi-properties.");
             new FoWrapper(getFOTree(), this, ev, stateFlags);
             ev = xmlevents.getEndElement(SyncedFoXmlEventsBuffer.DISCARD_EV, ev);
-            pool.surrenderEvent(ev);
+            namespaces.surrenderEvent(ev);
 
             /*
         } catch (NoSuchElementException e) {

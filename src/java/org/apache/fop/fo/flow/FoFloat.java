@@ -5,7 +5,7 @@
  *                   The Apache Software License, Version 1.1
  * ============================================================================
  * 
- * Copyright (C) 1999-2003 The Apache Software Foundation. All rights reserved.
+ * Copyright (C) 1999-2004 The Apache Software Foundation. All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without modifica-
  * tion, are permitted provided that the following conditions are met:
@@ -149,7 +149,7 @@ public class FoFloat extends FONode {
                     (foTree, this, ev, stateFlags | FONode.MC_FLOAT);
             // Clear the blockage
             ev = xmlevents.getEndElement(SyncedFoXmlEventsBuffer.DISCARD_EV, ev);
-            pool.surrenderEvent(ev);
+            namespaces.surrenderEvent(ev);
             // Get the rest of the %block;s
             do {
                 if ((stateFlags & FONode.MC_OUT_OF_LINE) == 0)
@@ -161,7 +161,7 @@ public class FoFloat extends FONode {
                     FObjects.fobjects.makeFlowObject
                             (foTree, this, ev, stateFlags | FONode.MC_FLOAT);
                     ev = xmlevents.getEndElement(SyncedFoXmlEventsBuffer.DISCARD_EV, ev);
-                    pool.surrenderEvent(ev);
+                    namespaces.surrenderEvent(ev);
                 }
             } while (ev != null);
         } catch(UnexpectedStartElementException e) {

@@ -6,7 +6,7 @@
  *                   The Apache Software License, Version 1.1
  * ============================================================================
  * 
- * Copyright (C) 1999-2003 The Apache Software Foundation. All rights reserved.
+ * Copyright (C) 1999-2004 The Apache Software Foundation. All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without modifica-
  * tion, are permitted provided that the following conditions are met:
@@ -85,11 +85,6 @@ public class SyncedFoXmlEventsBuffer extends SyncedCircularBuffer {
     private XMLNamespaces namespaces;
 
     /**
-     * The FoXMLEventPool for this buffer.
-     */
-    private FoXMLEventPool pool;
-
-    /**
      * No-argument constructor sets up a buffer with the default number of
      * elements.
      * The producer and consumer <tt>Thread</tt>s default to the current
@@ -100,7 +95,6 @@ public class SyncedFoXmlEventsBuffer extends SyncedCircularBuffer {
     {
         super();
         namespaces = new XMLNamespaces();
-        pool = new FoXMLEventPool(namespaces, DEFAULTBUFSIZE);
     }
 
     /**
@@ -112,7 +106,6 @@ public class SyncedFoXmlEventsBuffer extends SyncedCircularBuffer {
     {
         super(size);
         namespaces = new XMLNamespaces();
-        pool = new FoXMLEventPool(namespaces);
     }
 
     /**
@@ -120,12 +113,6 @@ public class SyncedFoXmlEventsBuffer extends SyncedCircularBuffer {
      * @return - the namespaces object.
      */
     public XMLNamespaces getNamespaces() { return namespaces; }
-
-    /**
-     * Get the <tt>FoXMLEventPool</tt> from this buffer.
-     * @return - the pool object.
-     */
-    public FoXMLEventPool getPool() { return pool; }
 
     /**
      * @return next event from the SyncedCircularBuffer
@@ -210,7 +197,7 @@ public class SyncedFoXmlEventsBuffer extends SyncedCircularBuffer {
                ! (ev.type == eventType
                   && ev.uriIndex == uriIndex
                   && ev.localName.equals(localName))) {
-            pool.surrenderEvent(ev);
+            namespaces.surrenderEvent(ev);
             ev = getEvent();
         }
         if (ev == null)
@@ -236,7 +223,7 @@ public class SyncedFoXmlEventsBuffer extends SyncedCircularBuffer {
         FoXMLEvent ev = getEvent();
         while (ev != null &&
                ! (ev.type == eventType && ev.foType == foType)) {
-            pool.surrenderEvent(ev);
+            namespaces.surrenderEvent(ev);
             ev = getEvent();
         }
         if (ev == null)
@@ -266,7 +253,7 @@ public class SyncedFoXmlEventsBuffer extends SyncedCircularBuffer {
         if (discardWhiteSpace) {
             while (ev != null && ev.type == XMLEvent.CHARACTERS
                    && ev.chars.trim().equals("")) {
-                pool.surrenderEvent(ev);
+                namespaces.surrenderEvent(ev);
                 ev = getEvent();
             }
         }
@@ -304,7 +291,7 @@ public class SyncedFoXmlEventsBuffer extends SyncedCircularBuffer {
         if (discardWhiteSpace) {
             while (ev != null && ev.type == XMLEvent.CHARACTERS
                    && ev.chars.trim().equals("")) {
-                pool.surrenderEvent(ev);
+                namespaces.surrenderEvent(ev);
                 ev = getEvent();
             }
         }
@@ -344,7 +331,7 @@ public class SyncedFoXmlEventsBuffer extends SyncedCircularBuffer {
         if (discardWhiteSpace) {
             while (ev != null && ev.type == XMLEvent.CHARACTERS
                    && ev.chars.trim().equals("")) {
-                pool.surrenderEvent(ev);
+                namespaces.surrenderEvent(ev);
                 ev = getEvent();
             }
         }
@@ -384,7 +371,7 @@ public class SyncedFoXmlEventsBuffer extends SyncedCircularBuffer {
         if (discardWhiteSpace) {
             while (ev != null && ev.type == XMLEvent.CHARACTERS
                    && ev.chars.trim().equals("")) {
-                pool.surrenderEvent(ev);
+                namespaces.surrenderEvent(ev);
                 ev = getEvent();
             }
         }
@@ -597,7 +584,7 @@ public class SyncedFoXmlEventsBuffer extends SyncedCircularBuffer {
             // getEvent() returns null, the expectStartElement() calls
             // return null.
             ev = getEvent();
-            pool.surrenderEvent(ev);
+            namespaces.surrenderEvent(ev);
         } while (ev != null);
         // Exit from this while loop is only by discovery of null event
         throw new NoSuchElementException
@@ -675,7 +662,7 @@ public class SyncedFoXmlEventsBuffer extends SyncedCircularBuffer {
             // getEvent() returns null, the expectStartElement() calls
             // will throw a NoSuchElementException
             ev = getEvent();
-            pool.surrenderEvent(ev);
+            namespaces.surrenderEvent(ev);
         } while (ev != null);
         // Exit from this while loop is only by discovery of null event
         throw new NoSuchElementException
@@ -736,7 +723,7 @@ public class SyncedFoXmlEventsBuffer extends SyncedCircularBuffer {
             // getEvent() returns null, the expectStartElement() calls
             // will throw a NoSuchElementException
             ev = getEvent();
-            pool.surrenderEvent(ev);
+            namespaces.surrenderEvent(ev);
         } while (ev != null);
         // Exit from this while loop is only by discovery of null event
         throw new NoSuchElementException
@@ -795,7 +782,7 @@ public class SyncedFoXmlEventsBuffer extends SyncedCircularBuffer {
             // getEvent() returns null, the expectStartElement() calls
             // will throw a NoSuchElementException
             ev = getEvent();
-            pool.surrenderEvent(ev);
+            namespaces.surrenderEvent(ev);
         } while (ev != null);
         // Exit from this while loop is only by discovery of null event
         throw new NoSuchElementException
@@ -855,10 +842,10 @@ public class SyncedFoXmlEventsBuffer extends SyncedCircularBuffer {
                 // getEvent() returns null, the expectStartElement() calls
                 // will throw a NoSuchElementException
                 ev = getEvent();
-                pool.surrenderEvent(ev);
+                namespaces.surrenderEvent(ev);
             } catch(UnexpectedStartElementException e) {
                 ev = getEvent();
-                pool.surrenderEvent(ev);
+                namespaces.surrenderEvent(ev);
             }
         } while (ev != null);
         // Exit from this while loop is only by discovery of null event
@@ -1225,7 +1212,7 @@ public class SyncedFoXmlEventsBuffer extends SyncedCircularBuffer {
                     (XMLEvent.ENDELEMENT, event.uriIndex, event.localName);
         if (discardEvent) {
             //System.out.println("discardEvent");
-            pool.surrenderEvent(event);
+            namespaces.surrenderEvent(event);
         }
         return ev;
     }
@@ -1259,7 +1246,7 @@ public class SyncedFoXmlEventsBuffer extends SyncedCircularBuffer {
                 (XMLEvent.ENDELEMENT, event.uriIndex, event.localName,
                                                          discardWhiteSpace);
         if (discardEvent)
-            pool.surrenderEvent(event);
+            namespaces.surrenderEvent(event);
         return ev;
     }
 
@@ -1271,7 +1258,7 @@ public class SyncedFoXmlEventsBuffer extends SyncedCircularBuffer {
     public FoXMLEvent getCharacters() throws FOPException {
         FoXMLEvent ev = getEvent();
         while (ev != null && ev.type != XMLEvent.CHARACTERS) {
-            pool.surrenderEvent(ev);
+            namespaces.surrenderEvent(ev);
             ev = getEvent();
         }
         if (ev == null) {
