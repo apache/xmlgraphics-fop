@@ -162,14 +162,20 @@ public class DisplayGraphic extends FObj {
 			double imgWidth = img.getWidth();
 			double imgHeight = img.getHeight();
 			if ((width == 0) && (height == 0)) {
-				width = (int) (imgWidth / 2d * 1000d);
-				height = (int) (imgHeight / 2d * 1000d);
+				width = (int) ((imgWidth * 1000d) / 2d);
+				height = (int) ((imgHeight * 1000d) / 2d);
 			} else if (height == 0) {
-				height = (int) (imgHeight / imgWidth * ((double) width));
+				height = (int) ((imgHeight * ((double) width)) / imgWidth);
 			} else if (width == 0) {
-				width = (int) (imgWidth / imgHeight * ((double) height));
+				width = (int) ((imgWidth * ((double) height)) / imgHeight);
 			}
+//System.err.println("DisplayGraphic: imgW=" + imgWidth + " imgH=" + imgHeight + " w=" + width + " h=" + height);
 		}
+
+		if (area.spaceLeft() < (height + spaceBefore)) {
+			return new Status(Status.AREA_FULL_NONE);
+		}
+
 		this.imageArea = new ImageArea(
 										fs,
 										img,
