@@ -23,19 +23,12 @@ import java.util.List;
 import org.xml.sax.Locator;
 
 import org.apache.fop.apps.FOPException;
-import org.apache.fop.datatypes.ColorType;
 import org.apache.fop.datatypes.Length;
 import org.apache.fop.fo.CharIterator;
 import org.apache.fop.fo.FONode;
-import org.apache.fop.fo.FObjMixed;
 import org.apache.fop.fo.InlineCharIterator;
 import org.apache.fop.fo.PropertyList;
 import org.apache.fop.fo.ValidationException;
-import org.apache.fop.fo.properties.CommonAccessibility;
-import org.apache.fop.fo.properties.CommonAural;
-import org.apache.fop.fo.properties.CommonBorderPaddingBackground;
-import org.apache.fop.fo.properties.CommonFont;
-import org.apache.fop.fo.properties.CommonMarginInline;
 import org.apache.fop.fo.properties.CommonRelativePosition;
 import org.apache.fop.fo.properties.KeepProperty;
 import org.apache.fop.fo.properties.LengthRangeProperty;
@@ -44,19 +37,14 @@ import org.apache.fop.layoutmgr.InlineLayoutManager;
 /**
  * Class modelling the fo:inline formatting object.
  */
-public class Inline extends FObjMixed {
+public class Inline extends InlineLevel {
     // The value of properties relevant for fo:inline.
-    private CommonAccessibility commonAccessibility;
-    private CommonAural commonAural;
-    private CommonBorderPaddingBackground commonBorderPaddingBackground;
-    private CommonFont commonFont;
-    private CommonMarginInline commonMarginInline;
+    // See also superclass InlineLevel
     private CommonRelativePosition commonRelativePosition;
     private Length alignmentAdjust;
     private int alignmentBaseline;
     private Length baselineShift;
     private LengthRangeProperty blockProgressionDimension;
-    private ColorType color;
     private int dominantBaseline;
     private Length height;
     private String id;
@@ -64,10 +52,8 @@ public class Inline extends FObjMixed {
     private KeepProperty keepTogether;
     private KeepProperty keepWithNext;
     private KeepProperty keepWithPrevious;
-    private Length lineHeight;
     private int textDecoration;
     private int verticalAlign;
-    private int visibility;
     private Length width;
     private int wrapOption;
     // End of property values
@@ -87,17 +73,12 @@ public class Inline extends FObjMixed {
      * @see org.apache.fop.fo.FObj#bind(PropertyList)
      */
     public void bind(PropertyList pList) throws FOPException {
-        commonAccessibility = pList.getAccessibilityProps();
-        commonAural = pList.getAuralProps();
-        commonBorderPaddingBackground = pList.getBorderPaddingBackgroundProps();
-        commonFont = pList.getFontProps();
-        commonMarginInline = pList.getMarginInlineProps();
+        super.bind(pList);
         commonRelativePosition = pList.getRelativePositionProps();
         alignmentAdjust = pList.get(PR_ALIGNMENT_ADJUST).getLength();
         alignmentBaseline = pList.get(PR_ALIGNMENT_BASELINE).getEnum();
         baselineShift = pList.get(PR_BASELINE_SHIFT).getLength();
         blockProgressionDimension = pList.get(PR_BLOCK_PROGRESSION_DIMENSION).getLengthRange();
-        color = pList.get(PR_COLOR).getColorType();
         dominantBaseline = pList.get(PR_DOMINANT_BASELINE).getEnum();
         height = pList.get(PR_HEIGHT).getLength();
         id = pList.get(PR_ID).getString();
@@ -105,10 +86,8 @@ public class Inline extends FObjMixed {
         keepTogether = pList.get(PR_KEEP_TOGETHER).getKeep();
         keepWithNext = pList.get(PR_KEEP_WITH_NEXT).getKeep();
         keepWithPrevious = pList.get(PR_KEEP_WITH_PREVIOUS).getKeep();
-        lineHeight = pList.get(PR_LINE_HEIGHT).getLength();
         textDecoration = pList.get(PR_TEXT_DECORATION).getEnum();
         verticalAlign = pList.get(PR_VERTICAL_ALIGN).getEnum();
-        visibility = pList.get(PR_VISIBILITY).getEnum();
         width = pList.get(PR_WIDTH).getLength();
         wrapOption = pList.get(PR_WRAP_OPTION).getEnum();
     }
@@ -172,34 +151,6 @@ public class Inline extends FObjMixed {
         } else {
             blockOrInlineItemFound = true;
         }
-    }
-
-    /**
-     * Return the Common Margin Properties-Inline.
-     */
-    public CommonMarginInline getCommonMarginInline() {
-        return commonMarginInline;
-    }
-
-    /**
-     * Return the Common Border, Padding, and Background Properties.
-     */
-    public CommonBorderPaddingBackground getCommonBorderPaddingBackground() {
-        return commonBorderPaddingBackground;
-    }
-
-    /**
-     * Return the Common Font Properties.
-     */
-    public CommonFont getCommonFont() {
-        return commonFont;
-    }
-
-    /**
-     * Return the "color" property.
-     */
-    public ColorType getColor() {
-        return color;
     }
 
     /**

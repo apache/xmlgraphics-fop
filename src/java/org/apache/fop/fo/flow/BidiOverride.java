@@ -36,7 +36,7 @@ import org.apache.fop.fo.properties.CommonFont;
 import org.apache.fop.fo.properties.CommonRelativePosition;
 import org.apache.fop.fo.properties.SpaceProperty;
 import org.apache.fop.layoutmgr.BidiLayoutManager;
-import org.apache.fop.layoutmgr.InlineStackingLayoutManager;
+import org.apache.fop.layoutmgr.InlineLayoutManager;
 import org.apache.fop.layoutmgr.LayoutManager;
 
 /**
@@ -148,7 +148,7 @@ public class BidiOverride extends FObjMixed {
                 LayoutManager lm = (LayoutManager) childList.get(count);
                 if (lm.generatesInlineAreas()) {
                     LayoutManager blm = new BidiLayoutManager(this,
-                        (InlineStackingLayoutManager) lm);
+                        (InlineLayoutManager) lm);
                     list.add(blm);
                 } else {
                     list.add(lm);

@@ -23,8 +23,7 @@ import java.util.ListIterator;
 import java.util.LinkedList;
 
 import org.apache.fop.fo.FObj;
-import org.apache.fop.fo.flow.Inline;
-import org.apache.fop.fo.flow.Leader;
+import org.apache.fop.fo.flow.InlineLevel;
 import org.apache.fop.fo.properties.CommonBorderPaddingBackground;
 import org.apache.fop.fo.properties.CommonMarginInline;
 import org.apache.fop.fo.properties.SpaceProperty;
@@ -37,7 +36,7 @@ import org.apache.fop.traits.SpaceVal;
  */
 public class InlineLayoutManager extends InlineStackingLayoutManager 
                                          implements InlineLevelLayoutManager {
-    private FObj fobj;
+    private InlineLevel fobj;
 
     private CommonMarginInline inlineProps = null;
     private CommonBorderPaddingBackground borderProps = null;
@@ -49,19 +48,8 @@ public class InlineLayoutManager extends InlineStackingLayoutManager
      *
      * @param node the formatting object that creates the area
      */
-    public InlineLayoutManager(Inline node) {
-        super(node);
-        fobj = node;
-    }
-
-    /**
-     * Create an inline layout manager.
-     * This is used for fo's that create areas that
-     * contain inline areas.
-     *
-     * @param node the formatting object that creates the area
-     */
-    public InlineLayoutManager(Leader node) {
+    // The node should be FObjMixed
+    public InlineLayoutManager(InlineLevel node) {
         super(node);
         fobj = node;
     }
@@ -70,14 +58,9 @@ public class InlineLayoutManager extends InlineStackingLayoutManager
      * @see org.apache.fop.layoutmgr.AbstractLayoutManager#initProperties()
      */
     protected void initProperties() {
-        // fobj can be either an Inline or a Leader
-        if (fobj instanceof Inline) {
-            inlineProps = ((Inline) fobj).getCommonMarginInline();
-            borderProps = ((Inline) fobj).getCommonBorderPaddingBackground();
-        } else {
-            inlineProps = ((Leader) fobj).getCommonMarginInline();
-            borderProps = ((Leader) fobj).getCommonBorderPaddingBackground();
-        }
+        inlineProps = fobj.getCommonMarginInline();
+        borderProps = fobj.getCommonBorderPaddingBackground();
+
         int iPad = borderProps.getPadding(CommonBorderPaddingBackground.BEFORE, false);
         iPad += borderProps.getBorderWidth(CommonBorderPaddingBackground.BEFORE,
                                              false);

@@ -177,8 +177,8 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
 
         // use special layout manager to add the inline areas
         // to the Title.
-        InlineStackingLayoutManager lm;
-        lm = new InlineStackingLayoutManager(foTitle);
+        InlineLayoutManager lm;
+        lm = new InlineLayoutManager(foTitle);
         clm.addChildLM(lm);
 
         clm.fillArea(lm);
