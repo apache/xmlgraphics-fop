@@ -74,15 +74,20 @@ import java.util.Iterator;
 import java.util.List;
 
 /**
- * SAX Handler that builds the formatting object tree.
- *
- * Modified by Mark Lillywhite mark-fop@inomial.com. Now uses
+ * SAX Handler that passes parsed data to the various
+ * FO objects, where they can be used either to build
+ * an FO Tree, or used by Structure Renderers to build
+ * other data structures.
+ * Now uses
  * StreamRenderer to automagically render the document as
  * soon as it receives a page-sequence end-tag. Also,
  * calls methods to set up and shut down the renderer at
  * the beginning and end of the FO document. Finally,
  * supresses adding the PageSequence object to the Root,
  * since it is parsed immediately.
+ *
+ * @author unascribed
+ * @author Mark Lillywhite mark-fop@inomial.com
  */
 public class FOTreeBuilder extends DefaultHandler {
 

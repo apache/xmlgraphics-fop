@@ -82,9 +82,11 @@ import org.apache.fop.layout.FontInfo;
 import org.apache.fop.render.Renderer;
 
 /**
- * Layout handler that receives the structure events.
+ * Defines how SAX events specific to XSL-FO input should be handled when
+ * an FO Tree needs to be built.
  * This initiates layout processes and corresponding
  * rendering processes such as start/end.
+ * @see FOInputHandler
  */
 public class FOTreeHandler extends FOInputHandler {
 
