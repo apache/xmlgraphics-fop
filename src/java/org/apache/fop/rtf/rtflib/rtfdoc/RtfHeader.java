@@ -102,13 +102,13 @@ class RtfHeader extends RtfContainer {
                 final Map.Entry entry = (Map.Entry)it.next();
                 writeGroupMark(true);
                 writeControlWord("propname");
-                RtfStringConverter.getInstance().writeRtfString(m_writer,
+                RtfStringConverter.getInstance().writeRtfString(writer,
                         entry.getKey().toString());
                 writeGroupMark(false);
                 writeControlWord("proptype30");
                 writeGroupMark(true);
                 writeControlWord("staticval");
-                RtfStringConverter.getInstance().writeRtfString(m_writer,
+                RtfStringConverter.getInstance().writeRtfString(writer,
                         entry.getValue().toString());
                 writeGroupMark(false);
             }
@@ -121,11 +121,11 @@ class RtfHeader extends RtfContainer {
      *  what is written here to render it in writeRtfContent. <-- it is for the color table
      */
     void write(String toWrite) throws IOException {
-        m_writer.write(toWrite);
+        writer.write(toWrite);
     }
 
     /** write to our Writer using an RtfStringConverter */
     void writeRtfString(String toWrite) throws IOException {
-        RtfStringConverter.getInstance().writeRtfString(m_writer, toWrite);
+        RtfStringConverter.getInstance().writeRtfString(writer, toWrite);
     }
 }

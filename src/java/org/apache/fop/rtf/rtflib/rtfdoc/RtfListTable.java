@@ -118,9 +118,9 @@ public class RtfListTable extends RtfContainer {
         Date runTime = new Date();
         Random listIdGenerator = new Random(runTime.getTime());
         listId = new Integer(listIdGenerator.nextInt());
-        m_attrib.set(LIST_ID, listId.toString());
+        attrib.set(LIST_ID, listId.toString());
         listTemplateId = new Integer(listIdGenerator.nextInt());
-        m_attrib.set(LIST_NUMBER_TYPE, 0);
+        attrib.set(LIST_NUMBER_TYPE, 0);
     }
 
     public void setParentList(RtfList parent) {
@@ -138,15 +138,15 @@ public class RtfListTable extends RtfContainer {
             // bullet definition for bulleted lists
             // Chris Scott's version was "\\\'01\\u-3913 ?;"
             // 'b7 is what was used in jfor V0.5.2
-            m_attrib.set(LIST_TEXT_FORM, "\\\'01\\'b7 ?;");
-            m_attrib.set(LIST_NUM_POSITION);
-            m_attrib.set(LIST_NUMBER_TYPE, 23);
-            m_attrib.set(LIST_FONT_TYPE, 2);
+            attrib.set(LIST_TEXT_FORM, "\\\'01\\'b7 ?;");
+            attrib.set(LIST_NUM_POSITION);
+            attrib.set(LIST_NUMBER_TYPE, 23);
+            attrib.set(LIST_FONT_TYPE, 2);
         } else {
-            m_attrib.set(LIST_TEXT_FORM, "\\\'03\\\'00. ;");
-            m_attrib.set(LIST_NUM_POSITION, "\\\'01;");
-            m_attrib.set(LIST_NUMBER_TYPE, 0);
-            m_attrib.set(LIST_FONT_TYPE, 0);
+            attrib.set(LIST_TEXT_FORM, "\\\'03\\\'00. ;");
+            attrib.set(LIST_NUM_POSITION, "\\\'01;");
+            attrib.set(LIST_NUMBER_TYPE, 0);
+            attrib.set(LIST_FONT_TYPE, 0);
         }
     }
 
@@ -158,22 +158,22 @@ public class RtfListTable extends RtfContainer {
 
         writeControlWordNS(LIST);
         writeOneAttributeNS(LIST_TEMPLATE_ID, listTemplateId.toString());
-        writeOneAttributeNS(LIST, m_attrib.getValue(LIST));
+        writeOneAttributeNS(LIST, attrib.getValue(LIST));
         writeGroupMark(true);
         writeControlWordNS(LIST_LEVEL);
-        writeOneAttributeNS(LIST_NUMBER_TYPE, m_attrib.getValue(LIST_NUMBER_TYPE));
-        writeOneAttributeNS(LIST_JUSTIFICATION, m_attrib.getValue(LIST_JUSTIFICATION));
-        writeOneAttributeNS(LIST_FOLLOWING_CHAR, m_attrib.getValue(LIST_FOLLOWING_CHAR));
-        writeOneAttributeNS(LIST_START_AT, m_attrib.getValue(LIST_START_AT));
+        writeOneAttributeNS(LIST_NUMBER_TYPE, attrib.getValue(LIST_NUMBER_TYPE));
+        writeOneAttributeNS(LIST_JUSTIFICATION, attrib.getValue(LIST_JUSTIFICATION));
+        writeOneAttributeNS(LIST_FOLLOWING_CHAR, attrib.getValue(LIST_FOLLOWING_CHAR));
+        writeOneAttributeNS(LIST_START_AT, attrib.getValue(LIST_START_AT));
         writeOneAttributeNS(LIST_SPACE, new Integer(0));
-        writeOneAttributeNS(LIST_INDENT, m_attrib.getValue(LIST_INDENT));
+        writeOneAttributeNS(LIST_INDENT, attrib.getValue(LIST_INDENT));
         writeGroupMark(true);
-        writeOneAttributeNS(LIST_TEXT_FORM, m_attrib.getValue(LIST_TEXT_FORM));
+        writeOneAttributeNS(LIST_TEXT_FORM, attrib.getValue(LIST_TEXT_FORM));
         writeGroupMark(false);
         writeGroupMark(true);
-        writeOneAttributeNS(LIST_NUM_POSITION, m_attrib.getValue(LIST_NUM_POSITION));
+        writeOneAttributeNS(LIST_NUM_POSITION, attrib.getValue(LIST_NUM_POSITION));
         writeGroupMark(false);
-        writeOneAttributeNS(LIST_FONT_TYPE, m_attrib.getValue(LIST_FONT_TYPE));
+        writeOneAttributeNS(LIST_FONT_TYPE, attrib.getValue(LIST_FONT_TYPE));
         writeGroupMark(false);
         writeGroupMark(true);
         writeControlWordNS(LIST_NAME);

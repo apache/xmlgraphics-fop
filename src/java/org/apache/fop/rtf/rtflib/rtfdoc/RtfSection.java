@@ -93,14 +93,14 @@ implements
     /** start a new external graphic after closing current paragraph, list and table */
     public RtfExternalGraphic newImage() throws IOException {
         closeAll();
-        m_externalGraphic = new RtfExternalGraphic(this, m_writer);
+        m_externalGraphic = new RtfExternalGraphic(this, writer);
         return m_externalGraphic;
     }
 
     /** start a new paragraph after closing current paragraph, list and table */
     public RtfParagraph newParagraph(RtfAttributes attrs) throws IOException {
         closeAll();
-        m_paragraph = new RtfParagraph(this, m_writer, attrs);
+        m_paragraph = new RtfParagraph(this, writer, attrs);
         return m_paragraph;
     }
 
@@ -111,7 +111,7 @@ implements
 
     /** close current paragraph if any and start a new one */
     public RtfParagraphKeepTogether newParagraphKeepTogether() throws IOException {
-        return new RtfParagraphKeepTogether(this, m_writer);
+        return new RtfParagraphKeepTogether(this, writer);
     }
 
     /** start a new table after closing current paragraph, list and table
@@ -120,7 +120,7 @@ implements
    */
     public RtfTable newTable(ITableColumnsInfo tc) throws IOException {
         closeAll();
-        m_table = new RtfTable(this, m_writer, tc);
+        m_table = new RtfTable(this, writer, tc);
         return m_table;
     }
 
@@ -130,34 +130,34 @@ implements
    */
     public RtfTable newTable(RtfAttributes attrs, ITableColumnsInfo tc) throws IOException {
         closeAll();
-        m_table = new RtfTable(this, m_writer, attrs, tc);
+        m_table = new RtfTable(this, writer, attrs, tc);
         return m_table;
     }
 
     /** start a new list after closing current paragraph, list and table */
     public RtfList newList(RtfAttributes attrs) throws IOException {
         closeAll();
-        m_list = new RtfList(this, m_writer, attrs);
+        m_list = new RtfList(this, writer, attrs);
         return m_list;
     }
 
     /** IRtfBeforeContainer */
     public RtfBefore newBefore(RtfAttributes attrs) throws IOException {
         closeAll();
-        m_before = new RtfBefore(this, m_writer, attrs);
+        m_before = new RtfBefore(this, writer, attrs);
         return m_before;
     }
 
     /** IRtfAfterContainer */
     public RtfAfter newAfter(RtfAttributes attrs) throws IOException {
         closeAll();
-        m_after = new RtfAfter(this, m_writer, attrs);
+        m_after = new RtfAfter(this, writer, attrs);
         return m_after;
     }
 
 
     public RtfJforCmd newJforCmd(RtfAttributes attrs) throws IOException {
-        m_jforCmd  = new RtfJforCmd(this, m_writer, attrs);
+        m_jforCmd  = new RtfJforCmd(this, writer, attrs);
         return m_jforCmd;
     }
 

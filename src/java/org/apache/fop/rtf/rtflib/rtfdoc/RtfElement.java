@@ -68,43 +68,51 @@ import java.util.Iterator;
  *  @author Andreas Putz a.putz@skynamics.com
  */
 public abstract class RtfElement {
-    protected final Writer m_writer;
-    protected final RtfContainer m_parent;
-    protected final RtfAttributes m_attrib;
-    private boolean m_written;
-    private boolean m_closed;
-    private final int m_id;
-    private static int m_idCounter;
+    /** Writer to be used */
+    protected final Writer writer;
+    /** parent element */
+    protected final RtfContainer parent;
+    /** attributes of the element */
+    protected final RtfAttributes attrib;
+    private boolean written;
+    private boolean closed;
+    private final int id;
+    private static int idCounter;
 
     /** Create an RTF element as a child of given container */
     RtfElement(RtfContainer parent, Writer w) throws IOException {
         this(parent, w, null);
     }
 
-
     /** Create an RTF element as a child of given container with given attributes */
     RtfElement(RtfContainer parent, Writer w, RtfAttributes attr) throws IOException {
 
-        m_id = m_idCounter++;
-        m_parent = parent;
-        m_attrib = (attr != null ? attr : new RtfAttributes());
-        if (m_parent != null) {
-            m_parent.addChild(this);
+        id = idCounter++;
+        this.parent = parent;
+        attrib = (attr != null ? attr : new RtfAttributes());
+        if (this.parent != null) {
+            this.parent.addChild(this);
         }
-        m_writer = w;
-        m_written = false;
+        writer = w;
+        written = false;
     }
 
-    /** Does nothing, meant to allow elements to write themselves without waiting
-     *  for write(), but not implemented yet */
+    /**
+     * Does nothing, meant to allow elements to write themselves without waiting
+     * for write(), but not implemented yet
+     * @throws IOException for I/O problems
+     */
     public final void close() throws IOException {
-        m_closed = true;
+        closed = true;
     }
 
-    /** write the RTF code of this element to our Writer */
+    /**
+     * Write the RTF code of this element to our Writer
+     * @throws IOException for I/O problems
+     */
     public final void writeRtf() throws IOException {
-        if (!m_written) {
-            m_written = true;
+        if (!written) {
+            written = true;
             if (okToWriteRtf()) {
                 writeRtfPrefix();
                 writeRtfContent();
@@ -113,56 +121,88 @@ public abstract class RtfElement {
         }
     }
 
-    /** write an RTF control word to our Writer */
+    /**
+     * Write an RTF control word to our Writer
+     * @param word RTF control word to write
+     * @throws IOException for I/O problems
+     */
     protected final void writeControlWord(String word)
     throws IOException {
-        m_writer.write('\\');
-        m_writer.write(word);
-        m_writer.write(' ');
+        writer.write('\\');
+        writer.write(word);
+        writer.write(' ');
     }
 
-    /** write an RTF control word to our Writer, preceeded by a star '*'
-     *  meaning "ignore this if you don't know what it means"
+    /**
+     * Write an RTF control word to our Writer, preceeded by a star '*'
+     * meaning "ignore this if you don't know what it means"
+     * @param word RTF control word to write
+     * @throws IOException for I/O problems
      */
     protected final void writeStarControlWord(String word)
     throws IOException {
-        m_writer.write("\\*\\");
-        m_writer.write(word);
-        m_writer.write(' ');
+        writer.write("\\*\\");
+        writer.write(word);
+        writer.write(' ');
     }
 
+    /**
+     * Same as writeStarControlWord(String word), except with no space behind it
+     * @param word RTF control word to write
+     * @throws IOException for I/O problems
+     */
     protected final void writeStarControlWordNS(String word)
     throws IOException {
-        m_writer.write("\\*\\");
-        m_writer.write(word);
+        writer.write("\\*\\");
+        writer.write(word);
     }
 
-    /** write rtf control word without the space behind it */
+    /**
+     * Write rtf control word without the space behind it
+     * @param word RTF control word to write
+     * @throws IOException for I/O problems
+     */
     protected final void writeControlWordNS(String word)
     throws IOException {
-        m_writer.write('\\');
-        m_writer.write(word);
+        writer.write('\\');
+        writer.write(word);
     }
 
-    /** called before writeRtfContent() */
+    /**
+     * Called before writeRtfContent()
+     * @throws IOException for I/O problems
+     */
     protected void writeRtfPrefix() throws IOException {
     }
 
-    /** must be implemented to write RTF content to m_writer */
+    /**
+     * Must be implemented to write RTF content to m_writer
+     * @throws IOException for I/O problems
+     */
     protected abstract void writeRtfContent() throws IOException;
 
-    /** called after writeRtfContent() */
+    /**
+     * Called after writeRtfContent()
+     * @throws IOException for I/O problems
+     */
     protected void writeRtfSuffix() throws IOException {
     }
 
-    /** Write a start or end group mark */
+    /**
+     * Write a start or end group mark
+     * @param isStart set to true if this is a start mark
+     * @throws IOException for I/O problems
+     */
     protected final void writeGroupMark(boolean isStart)
     throws IOException {
-        m_writer.write(isStart ? "{" : "}");
+        writer.write(isStart ? "{" : "}");
     }
 
-    /** write given attribute values to our Writer
-     *  @param nameList if given, only attribute names from this list are considered
+    /**
+     * Write given attribute values to our Writer
+     * @param attr RtfAttributes to be written
+     * @param nameList if given, only attribute names from this list are considered
+     * @throws IOException for I/O problems
      */
     protected void writeAttributes(RtfAttributes attr, String [] nameList)
     throws IOException {
@@ -189,7 +229,12 @@ public abstract class RtfElement {
         }
     }
 
-    /** write one attribute to our Writer */
+    /**
+     * Write one attribute to our Writer
+     * @param name name of attribute to write
+     * @param value value of attribute to be written
+     * @throws IOException for I/O problems
+     */
     protected void writeOneAttribute(String name, Object value)
     throws IOException {
         String cw = name;
@@ -201,7 +246,13 @@ public abstract class RtfElement {
         }
         writeControlWord(cw);
     }
-    /** write one attribute to our Writer without a space*/
+
+    /**
+     * Write one attribute to our Writer without a space
+     * @param name name of attribute to write
+     * @param value value of attribute to be written
+     * @throws IOException for I/O problems
+     */
     protected void writeOneAttributeNS(String name, Object value)
     throws IOException {
         String cw = name;
@@ -214,7 +265,10 @@ public abstract class RtfElement {
         writeControlWordNS(cw);
     }
 
-    /** can be overridden to suppress all RTF output */
+    /**
+     * can be overridden to suppress all RTF output
+     * @return true if this object can be written into the RTF
+     */
     protected boolean okToWriteRtf() {
         return true;
     }
@@ -230,22 +284,25 @@ public abstract class RtfElement {
         w.flush();
     }
 
-    /** minimal debugging display */
+    /**
+     * minimal debugging display
+     * @return String representation of object
+     */
     public String toString() {
-        return (this == null) ? "null" : (this.getClass().getName() + " #" + m_id);
+        return (this == null) ? "null" : (this.getClass().getName() + " #" + id);
     }
 
     /** true if close() has been called */
     boolean isClosed() {
-        return m_closed;
+        return closed;
     }
 
     /** access our RtfFile, which is always the topmost parent */
     RtfFile getRtfFile() {
         // go up the chain of parents until we find the topmost one
         RtfElement result = this;
-        while (result.m_parent != null) {
-            result = result.m_parent;
+        while (result.parent != null) {
+            result = result.parent;
         }
 
         // topmost parent must be an RtfFile
@@ -259,8 +316,8 @@ public abstract class RtfElement {
     RtfElement getParentOfClass(Class c) {
         RtfElement result = null;
         RtfElement current = this;
-        while (current.m_parent != null) {
-            current = current.m_parent;
+        while (current.parent != null) {
+            current = current.parent;
             if (c.isAssignableFrom(current.getClass())) {
                 result = current;
                 break;
@@ -269,10 +326,16 @@ public abstract class RtfElement {
         return result;
     }
 
-    /** true if this element would generate no "useful" RTF content */
+    /**
+     * @return true if this element would generate no "useful" RTF content
+     */
     public abstract boolean isEmpty();
 
-
+    /**
+     * Make a visible entry in the RTF for an exception
+     * @param ie Exception to flag
+     * @throws IOException for I/O problems
+     */
     protected void writeExceptionInRtf(Exception ie)
     throws IOException {
         writeGroupMark(true);
@@ -282,18 +345,21 @@ public abstract class RtfElement {
         writeControlWord("fs48");
 //        RtfStringConverter.getInstance().writeRtfString(m_writer,
 //                JForVersionInfo.getShortVersionInfo() + ": ");
-        RtfStringConverter.getInstance().writeRtfString(m_writer, ie.getClass().getName());
+        RtfStringConverter.getInstance().writeRtfString(writer, ie.getClass().getName());
 
         writeControlWord("fs20");
-        RtfStringConverter.getInstance().writeRtfString(m_writer, " " + ie.toString());
+        RtfStringConverter.getInstance().writeRtfString(writer, " " + ie.toString());
 
         writeControlWord("par");
         writeGroupMark(false);
     }
 
-    // Added by Normand Masse
-    // Used for attribute inheritance
+    /**
+     * Added by Normand Masse
+     * Used for attribute inheritance
+     * @return RtfAttributes
+     */
     public RtfAttributes getRtfAttributes() {
-        return m_attrib;
+        return attrib;
     }
 }

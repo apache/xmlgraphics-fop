@@ -89,9 +89,9 @@ public class RtfPageNumberCitation extends RtfContainer {
   RtfPageNumberCitation (RtfParagraph parent, Writer w, String id)
     throws IOException {
       // add the attributes ant text attributes of the parent paragraph
-      super((RtfContainer)parent, w, parent.m_attrib);
+      super((RtfContainer)parent, w, parent.attrib);
       if (parent.getTextAttributes() != null) {
-          m_attrib.set(parent.getTextAttributes());
+          attrib.set(parent.getTextAttributes());
       }
       this.id = id;
   }
@@ -112,7 +112,7 @@ public class RtfPageNumberCitation extends RtfContainer {
             writeGroupMark(true);
             writeControlWord(RTF_FIELD);
             writeGroupMark(true);
-            writeAttributes(m_attrib, RtfText.ATTR_NAMES); // Added by Boris Poudérous
+            writeAttributes(attrib, RtfText.ATTR_NAMES); // Added by Boris Poudérous
             writeStarControlWord(pageRef);
             writeGroupMark(false);
             writeGroupMark(true);

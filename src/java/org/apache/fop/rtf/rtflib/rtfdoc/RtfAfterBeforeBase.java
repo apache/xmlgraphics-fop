@@ -83,19 +83,19 @@ implements IRtfParagraphContainer, IRtfExternalGraphicContainer, IRtfTableContai
 
     public RtfParagraph newParagraph() throws IOException {
         closeAll();
-        para = new RtfParagraph(this, m_writer);
+        para = new RtfParagraph(this, writer);
         return para;
     }
 
     public RtfParagraph newParagraph(RtfAttributes attrs) throws IOException {
         closeAll();
-        para = new RtfParagraph(this, m_writer, attrs);
+        para = new RtfParagraph(this, writer, attrs);
         return para;
     }
 
     public RtfExternalGraphic newImage() throws IOException {
         closeAll();
-        externalGraphic = new RtfExternalGraphic(this, m_writer);
+        externalGraphic = new RtfExternalGraphic(this, writer);
         return externalGraphic;
     }
 
@@ -145,14 +145,14 @@ implements IRtfParagraphContainer, IRtfExternalGraphicContainer, IRtfTableContai
      */
     public RtfTable newTable(RtfAttributes attrs, ITableColumnsInfo tc) throws IOException {
         closeAll();
-        table = new RtfTable(this, m_writer, attrs, tc);
+        table = new RtfTable(this, writer, attrs, tc);
         return table;
     }
 
     /** close current table if any and start a new one  */
     public RtfTable newTable(ITableColumnsInfo tc) throws IOException {
         closeAll();
-        table = new RtfTable(this, m_writer, tc);
+        table = new RtfTable(this, writer, tc);
         return table;
     }
 }

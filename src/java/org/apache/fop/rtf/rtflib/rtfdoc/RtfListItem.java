@@ -76,7 +76,7 @@ implements IRtfParagraphContainer {
 
         RtfListItemParagraph(RtfListItem rli, RtfAttributes attrs)
         throws IOException {
-            super(rli, rli.m_writer, attrs);
+            super(rli, rli.writer, attrs);
         }
 
         protected void writeRtfPrefix() throws IOException {

@@ -81,11 +81,11 @@ public class RtfPageNumber extends RtfContainer {
      */
      RtfPageNumber(RtfParagraph parent, Writer w) throws IOException {
          // Adds the attributes of the parent paragraph
-         super((RtfContainer)parent, w, parent.m_attrib);
+         super((RtfContainer)parent, w, parent.attrib);
 
          // copy parent's text attributes
          if (parent.getTextAttributes() != null) {
-             m_attrib.set(parent.getTextAttributes());
+             attrib.set(parent.getTextAttributes());
          }
      }
 
@@ -94,7 +94,7 @@ public class RtfPageNumber extends RtfContainer {
         writeGroupMark(true);
         writeControlWord(RTF_FIELD);
         writeGroupMark(true);
-        writeAttributes(m_attrib, RtfText.ATTR_NAMES); // Added by Boris Poudérous
+        writeAttributes(attrib, RtfText.ATTR_NAMES); // Added by Boris Poudérous
         writeStarControlWord(RTF_FIELD_PAGE);
         writeGroupMark(false);
         writeGroupMark(true);

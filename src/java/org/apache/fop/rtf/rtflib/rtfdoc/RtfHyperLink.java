@@ -115,16 +115,16 @@ public class RtfHyperLink extends RtfContainer implements IRtfTextContainer {
         super.writeGroupMark (true);
         super.writeStarControlWord ("fldinst");
 
-        m_writer.write ("HYPERLINK \"" + url + "\" ");
+        writer.write ("HYPERLINK \"" + url + "\" ");
         super.writeGroupMark (false);
 
         super.writeGroupMark (true);
         super.writeControlWord ("fldrslt");
 
         // start a group for this paragraph and write our own attributes if needed
-        if (m_attrib != null && m_attrib.isSet ("cs")) {
+        if (attrib != null && attrib.isSet ("cs")) {
             writeGroupMark (true);
-            writeAttributes(m_attrib, new String [] {"cs"});
+            writeAttributes(attrib, new String [] {"cs"});
         }
     }
 
@@ -134,7 +134,7 @@ public class RtfHyperLink extends RtfContainer implements IRtfTextContainer {
      * @exception IOException On error
      */
     public void writeRtfSuffix () throws IOException {
-        if (m_attrib != null && m_attrib.isSet ("cs")) {
+        if (attrib != null && attrib.isSet ("cs")) {
             writeGroupMark (false);
         }
         super.writeGroupMark (false);
@@ -158,22 +158,22 @@ public class RtfHyperLink extends RtfContainer implements IRtfTextContainer {
      */
     public RtfText newText (String str, RtfAttributes attr) throws IOException {
         closeAll ();
-        mText = new RtfText (this, m_writer, str, attr);
+        mText = new RtfText (this, writer, str, attr);
         return mText;
     }
 
     /** IRtfTextContainer requirement: return a copy of our attributes */
     public RtfAttributes getTextContainerAttributes() {
-        if (m_attrib == null) {
+        if (attrib == null) {
             return null;
         }
-        return (RtfAttributes) this.m_attrib.clone ();
+        return (RtfAttributes) this.attrib.clone ();
     }
 
 
     /** add a line break */
     public void newLineBreak () throws IOException {
-        new RtfLineBreak (this, m_writer);
+        new RtfLineBreak (this, writer);
     }
 
 

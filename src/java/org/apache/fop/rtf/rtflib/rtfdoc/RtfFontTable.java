@@ -74,7 +74,7 @@ class RtfFontTable extends RtfElement {
 
     /** write our contents to m_writer. */
     protected void writeRtfContent() throws IOException {
-        RtfFontManager.getInstance ().writeFonts ((RtfHeader)m_parent);
+        RtfFontManager.getInstance ().writeFonts ((RtfHeader)parent);
     }
 
     /** true if this element would generate no "useful" RTF content */

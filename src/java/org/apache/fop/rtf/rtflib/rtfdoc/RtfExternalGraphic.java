@@ -213,7 +213,7 @@ public class RtfExternalGraphic extends RtfElement {
      */
     protected void writeRtfContentWithException() throws IOException {
 
-        if (m_writer == null) {
+        if (writer == null) {
             return;
         }
 
@@ -225,11 +225,11 @@ public class RtfExternalGraphic extends RtfElement {
 
         String linkToRoot = System.getProperty("jfor_link_to_root");
         if (linkToRoot != null) {
-            m_writer.write("{\\field {\\* \\fldinst { INCLUDEPICTURE \"");
-            m_writer.write(linkToRoot);
+            writer.write("{\\field {\\* \\fldinst { INCLUDEPICTURE \"");
+            writer.write(linkToRoot);
             File urlFile = new File(url.getFile());
-            m_writer.write(urlFile.getName());
-            m_writer.write("\" \\\\* MERGEFORMAT \\\\d }}}");
+            writer.write(urlFile.getName());
+            writer.write("\" \\\\* MERGEFORMAT \\\\d }}}");
             return;
         }
 
@@ -403,7 +403,7 @@ public class RtfExternalGraphic extends RtfElement {
         char[] chars = new char[len];
 
         buf.getChars(0, len, chars, 0);
-        m_writer.write(chars);
+        writer.write(chars);
 
         // Writes the end of RTF image
 
