@@ -95,19 +95,16 @@ selection for renderer options.
   </s2>
 <s2 title="Others">
 <p>
-render to more than one renderer at once (maybe not from the command line). Two independent
-sources have asked me in the last few weeks if this works. I must say
-that this would be nice, since I could generate a PDF for the archive
+render to more than one renderer at once (maybe not from the command line).
+For example you could generate a PDF for the archive
 and the PS for the printer in one run. It would probably be faster than
 converting the PDF to PostScript afterwards.
 </p>
 <p>
-I want to note that several code pieces for resolving URLs and/or
-file locations are scattered all over FOP and Batik. Replacing
-them all with an URIResolver invocation would unify behaviour and
-remove redundancies. I'd also recommend to lift the default
-URIResolver implementation from Saxon, it seems to tolerate the
-usual abuse better than everything else i came across elsewere.
+Several code pieces for resolving URLs and/or
+file locations are scattered all over FOP and Batik. These should
+be replaced with an URIResolver invocation to unify behaviour and
+remove redundancies.
    </p>
   </s2>
 </s1>
