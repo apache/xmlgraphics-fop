@@ -117,18 +117,20 @@
 <fo:block>This            is            default!</fo:block>
 <fo:block white-space-collapse="false">This            is            false!</fo:block>
 <fo:block white-space-collapse="true">This            is            true!</fo:block>
-<fo:block font-family="monospace" white-space-collapse="false"> 
-<![CDATA[
-<?xml version="1.0"?>
+<fo:block font-family="monospace"
+          white-space-collapse="false"
+          linefeed-treatment="preserve"
+          white-space-treatment="preserve"
+          wrap-option="no-wrap">
+<![CDATA[<?xml version="1.0"?>
 <document>
     <heading>This is a heading</heading>
     <list>
         <item>Item one</item>
         <item>Item two</item>
     </list>
-</document>
-]]>
-</fo:block>-->
+</document>]]>
+</fo:block>
       <fo:block break-before="page" font-size="24pt" line-height="28pt" space-before.optimum="12pt" space-after.optimum="12pt">Embedded SVG</fo:block>
       <fo:block><fo:instream-foreign-object>
         <svg:svg width="400pt" height="200pt">
