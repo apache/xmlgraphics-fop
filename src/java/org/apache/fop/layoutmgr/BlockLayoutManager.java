@@ -336,7 +336,8 @@ public class BlockLayoutManager extends BlockStackingLayoutManager {
             curBlockArea = new Block();
 
             // Must get dimensions from parent area
-            //Area parentArea = parentLM.getParentArea(curBlockArea);
+            //Don't optimize this line away. It can have ugly side-effects.
+            /*Area parentArea =*/ parentLM.getParentArea(curBlockArea);
 
             // set traits
             TraitSetter.addBorders(curBlockArea, 
