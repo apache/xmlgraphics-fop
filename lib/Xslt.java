@@ -59,6 +59,10 @@ import java.net.*;
 import java.io.*;
 import java.util.*;
 import org.apache.xalan.xslt.*;
+import org.w3c.dom.*;
+import org.xml.sax.SAXException;
+import org.w3c.dom.*;
+import org.xml.sax.SAXException;
 
 /**
  * Task to call the XSLT processor Xalan (part of xml.apache.org), which converts xml files  
@@ -76,21 +80,25 @@ import org.apache.xalan.xslt.*;
  * <p>  
  * Of these arguments, <b>infile, outfile</b> and <b>xsltfile</b> are required.
  * <p>smart defaults to 'no'. The other allowed value is 'yes'. If smart is set to 'yes'
+ * <P>
  * xalan is only called if either the outfile is older than the infile or the stylesheet
  * or the outfile doesn't exist. 
+ * <P>
  * <p>dependent defaults to 'none'. Other possible values: a comma delimited list of file names
  * which date is checked against the output file. This way you can name files which, if 
  * they have been modified, initiate a restart of the xslt process, like external entities etc.
  * <p>
  * @author Fotis Jannidis <a href="mailto:fotis@jannidis.de">fotis@jannidis.de</a>
+ * @author Kelly A. Campbell <a href="mailto:camk@camk.net">camk@camk.net</a>
  */
 
 
 public class Xslt extends Task {
-  private String infile, outfile, xsltfile;
+  private String infile, outfile, xsltfile, mergefile;
   private String smart = "no";  //defaults to do conversion everytime task is called
   private String dependent = "none"; //defaults to no dependencies
   private boolean startXslt = false; 
+    
 
 
   /**
@@ -101,6 +109,11 @@ public class Xslt extends Task {
     this.infile = infile;
   }
 
+    public void setMergefile (String mergefile) 
+    {
+  this.mergefile = mergefile;
+    }
+    
   /**
    * Sets the stylesheet file
    *
@@ -144,6 +157,37 @@ public class Xslt extends Task {
     this.dependent = dependent;
   }
   
+
+    /**
+     * Builds a document from the given file, merging the mergefile onto the end of the root node
+     */
+    private org.w3c.dom.Document buildDocument(String xmlFile) 
+  throws IOException, SAXException
+    {
+  try {
+      
+      javax.xml.parsers.DocumentBuilder docBuilder = javax.xml.parsers.DocumentBuilderFactory.newInstance().newDocumentBuilder();
+      Document doc = docBuilder.parse(new FileInputStream(xmlFile));
+  
+      if (mergefile != null && !mergefile.equals("")) {
+      
+    File mergefileF = new File(mergefile);
+      
+    Document mergedoc = docBuilder.parse(new FileInputStream(mergefileF));
+    Node mergenode = doc.importNode(mergedoc.getDocumentElement(), true);
+    doc.getDocumentElement().appendChild(mergenode);
+      }
+
+      return doc;
+  }
+  catch (javax.xml.parsers.ParserConfigurationException e) {
+      System.out.println("Task xslt - SAX ERROR:\n      " + e.getMessage()); 
+  }
+  return null;
+  
+    }
+    
+
   /**
    * Calls Xalan and does the transformation
    *
@@ -153,15 +197,14 @@ public class Xslt extends Task {
                                   java.net.MalformedURLException, 
                                   org.xml.sax.SAXException 
   {               
-    // Use XSLTProcessor to instantiate an XSLTProcessor.
-    org.apache.xalan.xslt.XSLTProcessor processor =
-                 org.apache.xalan.xslt.XSLTProcessorFactory.getProcessor();
-                 
+      StylesheetRoot stylesheet = StylesheetCache.getStylesheet(xsltfile);
+
+      org.w3c.dom.Document source = buildDocument(infile);
+      
+         
     // Create the 3 objects the XSLTProcessor needs to perform the transformation.
     org.apache.xalan.xslt.XSLTInputSource xmlSource = 
-                        new org.apache.xalan.xslt.XSLTInputSource (infile);
-    org.apache.xalan.xslt.XSLTInputSource xslSheet = 
-                       new org.apache.xalan.xslt.XSLTInputSource (xsltfile);
+                        new org.apache.xalan.xslt.XSLTInputSource (source);
     org.apache.xalan.xslt.XSLTResultTarget xmlResult = 
                        new org.apache.xalan.xslt.XSLTResultTarget (outfile);
 
@@ -169,7 +212,9 @@ public class Xslt extends Task {
     System.out.println("============================");
     System.out.println("xslt \nin: " + infile + "\nstyle: " + xsltfile + "\nout: " + outfile);
     System.out.println("============================");
-    processor.process(xmlSource, xslSheet, xmlResult);
+
+    stylesheet.process(xmlSource, xmlResult);
+
   } //end transform
     
   /**
@@ -284,6 +329,46 @@ public class Xslt extends Task {
       xslt.setSmart("yes");
       xslt.setDependent("test1,test2");
       xslt.execute();
-  } */
+  } */    
+  
+  /**
+     * Cache for stylesheets we've already processed 
+     */
+    protected static class StylesheetCache 
+    {
+  /** Cache of compiled stylesheets (filename, StylesheetRoot) */
+  private static Hashtable _stylesheetCache = new Hashtable();
+  
+  /**
+   * Returns a compiled StylesheetRoot object for a given filename
+   */
+  public static StylesheetRoot getStylesheet(String xsltFilename) 
+      throws org.xml.sax.SAXException
+  {
+      if (_stylesheetCache.containsKey(xsltFilename)) {
+    return (StylesheetRoot)_stylesheetCache.get(xsltFilename);
+      }
+      
+      // Use XSLTProcessor to instantiate an XSLTProcessor.
+      org.apache.xalan.xslt.XSLTProcessor processor =
+    org.apache.xalan.xslt.XSLTProcessorFactory.getProcessor(new org.apache.xalan.xpath.xdom.XercesLiaison());
+  
+
+      org.apache.xalan.xslt.XSLTInputSource xslSheet = 
+    new org.apache.xalan.xslt.XSLTInputSource (xsltFilename);
+  
+      // Perform the transformation.
+      System.out.println("****************************");
+      System.out.println("xslt compile \nin: " + xsltFilename);
+      System.out.println("****************************");
+  
+      StylesheetRoot compiledSheet = processor.processStylesheet(xslSheet);
+  
+      _stylesheetCache.put(xsltFilename, compiledSheet);
+      return compiledSheet;
+  }
+    }
+
+   
     
 }
