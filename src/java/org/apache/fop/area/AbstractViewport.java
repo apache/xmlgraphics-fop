@@ -33,9 +33,6 @@ public class AbstractViewport
 extends Area
 implements Viewport {
     
-    /** The viewport rectange */
-    protected Rectangle2D viewArea = null;
-    
     /** Does the viewport rectange clip the reference-area? */
     protected boolean clip = true;
 
@@ -62,46 +59,30 @@ implements Viewport {
     /**
      * @param pageSeq
      * @param generatedBy
-     * @param viewArea the viewport rectangle
+     * @param area the viewport rectangle
      * @param parent
      * @param sync
      */
     public AbstractViewport(
-            Rectangle2D viewArea,
+            Rectangle2D area,
             FoPageSequence pageSeq,
             FONode generatedBy,
             Node parent,
             Object sync) {
         super(pageSeq, generatedBy, parent, sync);
-        this.viewArea = viewArea;
+        this.area = area;
     }
     /**
      * @param pageSeq
      * @param generatedBy
-     * @param viewArea the viewport rectangle
+     * @param area the viewport rectangle
      */
     public AbstractViewport(
-            Rectangle2D viewArea,
+            Rectangle2D area,
             FoPageSequence pageSeq,
             FONode generatedBy) {
         super(pageSeq, generatedBy);
-        this.viewArea = viewArea;
-    }
-    /* (non-Javadoc)
-     * @see org.apache.fop.area.Viewport#getViewArea()
-     */
-    public Rectangle2D getViewArea() {
-        synchronized (sync) {
-            return viewArea;
-        }
-    }
-    /* (non-Javadoc)
-     * @see org.apache.fop.area.Viewport#setViewArea(java.awt.geom.Rectangle2D)
-     */
-    public void setViewArea(Rectangle2D viewArea) {
-        synchronized (sync) {
-            this.viewArea = viewArea;
-        }
+        this.area = area;
     }
     /* (non-Javadoc)
      * @see org.apache.fop.area.Viewport#setReferenceArea(org.apache.fop.area.ReferenceArea)
