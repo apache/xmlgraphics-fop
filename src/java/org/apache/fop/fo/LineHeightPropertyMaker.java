@@ -55,7 +55,7 @@ import org.apache.fop.datatypes.PercentLength;
 
 /**
  * A maker which calculates the line-height property.
- * This property maker is special because line-heighe inherot the specified
+ * This property maker is special because line-height inherit the specified
  * value, instead of the computed value.
  * So when a line-height is create based on a attribute, the specified value
  * is stored in the property and in compute() the stored specified value of
