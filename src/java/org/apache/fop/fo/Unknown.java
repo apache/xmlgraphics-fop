@@ -19,8 +19,8 @@
 package org.apache.fop.fo;
 
 /**
- * Class for handling an unknown element, for example one from an unsupported
- * namespace.
+ * Class for handling an unknown element from a namespace recognized
+ * by FOP.
  * This prevents any further problems arising from the unknown
  * data.
  */
@@ -46,9 +46,5 @@ public class Unknown extends FONode {
      */
     public Unknown(FONode parent) {
         super(parent);
-    }
-
-    private void setup() {
-        getLogger().debug("Layout Unknown element");
     }
 }

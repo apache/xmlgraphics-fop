@@ -34,10 +34,10 @@ public class UnknownXMLObj extends XMLObj {
 
         /**
          * Construct the Maker
-         * @param sp the namespace for this Maker
+         * @param ns the namespace for this Maker
          */
-        public Maker(String sp) {
-            space = sp;
+        public Maker(String ns) {
+            space = ns;
         }
 
         /**
