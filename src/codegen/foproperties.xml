@@ -844,10 +844,18 @@
   <property>
     <name>space-before</name>
     <use-generic>GenericSpace</use-generic>
+    <!-- Get corresponding margin property using PARENT's writing-mode -->
+    <corresponding use-if-specified="true">
+      <propval>margin-<parwmrel2abs dir="BEFORE"/></propval>
+    </corresponding>
   </property>
   <property>
     <name>space-after</name>
     <use-generic>GenericSpace</use-generic>
+    <!-- Get corresponding margin property using PARENT's writing-mode -->
+    <corresponding use-if-specified="true">
+      <propval>margin-<parwmrel2abs dir="AFTER"/></propval>
+    </corresponding>
   </property>
   <property>
     <name>start-indent</name>
@@ -860,6 +868,7 @@
       <propval>margin-<wmrel2abs dir="START"/></propval>+
       <propval>padding-<wmrel2abs dir="START"/></propval>+
       <propval>border-<wmrel2abs dir="START"/>-width</propval>
+      <!-- + parent start-indent unless parent generates ref area (?) -->
       </propexpr>
     </corresponding>
   </property>
