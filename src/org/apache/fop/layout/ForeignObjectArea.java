@@ -71,7 +71,8 @@ public class ForeignObjectArea extends Area {
     }
 
     public void render(Renderer renderer) {
-	renderer.renderForeignObjectArea(this);
+	if(foreignObject != null)
+		renderer.renderForeignObjectArea(this);
     }
 
     public void setObject(Area fobject) {
