@@ -1,5 +1,10 @@
 ==============================================================================
 Done since 0.20.4 release
+- FOP Ant task: Fix for logging behaviour, fix for directory structure
+  preservation for nested filesets and additional attribute "logFiles".
+  Submitted by: Stefan Wachter <Stefan.Wachter@gmx.de>
+- Fixed TrueType embedding bug when the font doesn't contain the fpgm table
+  which is optional. (Jeremias Maerki)
 - Added support for url()-syntax to the fo:basic-link-Element
   Submitted by: Stefan Wachter <Stefan.Wachter@gmx.de>
 - Added new extension element for defining named destinations (PDF)
