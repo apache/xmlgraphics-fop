@@ -849,7 +849,7 @@ public class PSRenderer extends AbstractRenderer {
         write(area.getContentWidth() + " 0 RM");
     }
 
-    private void doFrame(Area area) {
+    protected void doFrame(Area area) {
         int w, h;
         int rx = this.currentAreaContainerXPosition;
         w = area.getContentWidth();

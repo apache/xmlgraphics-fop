@@ -238,7 +238,7 @@ public class MIFRenderer extends AbstractRenderer {
 
     }
 
-    private void doFrame(Area area) {
+    protected void doFrame(Area area) {
         int w, h;
         int rx = this.currentAreaContainerXPosition;
         w = area.getContentWidth();

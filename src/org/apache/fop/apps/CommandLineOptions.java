@@ -139,11 +139,13 @@ public class CommandLineOptions {
         for (int i = 0; i < args.length; i++) {
             if (args[i].equals("-d") || args[i].equals("--full-error-dump")) {
                 errorDump = new Boolean(true);
+                log.setPriority(Priority.DEBUG);
             } else if (args[i].equals("-x")
                        || args[i].equals("--dump-config")) {
                 dumpConfiguration = new Boolean(true);
             } else if (args[i].equals("-q") || args[i].equals("--quiet")) {
                 quiet = new Boolean(true);
+                log.setPriority(Priority.ERROR);
             } else if (args[i].equals("-c")) {
                 if ((i + 1 == args.length)
                         || (args[i + 1].charAt(0) == '-')) {
@@ -416,6 +418,7 @@ public class CommandLineOptions {
                 }
                 throw new FOPException("AWTStarter could not be loaded.", e);
             }
+        break;
         case PRINT_OUTPUT:
             try {
                 starter = ((Starter)Class.forName("org.apache.fop.apps.PrintStarter").getConstructor(new Class[] {
@@ -430,7 +433,7 @@ public class CommandLineOptions {
                 throw new FOPException("PrintStarter could not be loaded.",
                                        e);
             }
-
+        break;
         default:
             starter = new CommandLineStarter(this);
         }
