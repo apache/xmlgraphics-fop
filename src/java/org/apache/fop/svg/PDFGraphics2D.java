@@ -274,12 +274,13 @@ public class PDFGraphics2D extends AbstractGraphics2D {
     /**
      * Restore the PDF graphics state to the starting state level.
      */
+    /* seems not to be used
     public void restorePDFState() {
         for (int count = graphicsState.getStackLevel(); count > baseLevel; count--) {
             currentStream.write("Q\n");
         }
         graphicsState.restoreLevel(baseLevel);
-    }
+    }*/
 
     /**
      * This is a pdf specific method used to add a link to the
