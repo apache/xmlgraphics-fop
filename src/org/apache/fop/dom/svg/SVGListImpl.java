@@ -58,7 +58,7 @@ import org.w3c.dom.*;
 /**
  *
  */
-class SVGListImpl implements SVGList {
+public class SVGListImpl implements SVGList {
 	Vector list = new Vector();
 
 	public int getNumberOfItems( )
@@ -89,19 +89,19 @@ class SVGListImpl implements SVGList {
 		return obj;
 	}
 
-	public Object insertBefore(Object newItem, int index)
+	public Object insertItemBefore(Object newItem, int index)
 		throws SVGException
 	{
 		return null;
 	}
 
-	public Object replace(Object newItem, int index)
+	public Object replaceItem(Object newItem, int index)
 		throws DOMException, SVGException
 	{
 		return null;
 	}
 
-	public Object remove(int index)
+	public Object removeItem(int index)
 		throws DOMException
 	{
 		Object obj = list.elementAt(index);
@@ -109,7 +109,7 @@ class SVGListImpl implements SVGList {
 		return obj;
 	}
 
-	public Object append(Object newItem)
+	public Object appendItem(Object newItem)
 		throws SVGException
 	{
 		list.addElement(newItem);

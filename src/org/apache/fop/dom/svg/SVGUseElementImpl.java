@@ -110,48 +110,66 @@ public class SVGUseElementImpl extends GraphicElement implements SVGUseElement {
 	{
 	}
 
-	public String getHref( )
+	public SVGAnimatedString getHref( )
 	{
 		return null;
 	}
 
-	public void setHref( String href )
+	public void setHref( SVGAnimatedString href )
 	{
 	}
 
-	public SVGLength getX( )
+	public SVGAnimatedLength getX( )
 	{
 		return null;
 	}
 
-	public void setX( SVGLength x )
+	public void setX( SVGAnimatedLength x )
 	{
 	}
 
-	public SVGLength getY( )
+	public SVGAnimatedLength getY( )
 	{
 		return null;
 	}
 
-	public void setY( SVGLength y )
+	public void setY( SVGAnimatedLength y )
 	{
 	}
 
-	public SVGLength getWidth( )
+	public SVGAnimatedLength getWidth( )
 	{
 		return null;
 	}
 
-	public void setWidth( SVGLength width )
+	public void setWidth( SVGAnimatedLength width )
 	{
 	}
 
-	public SVGLength getHeight( )
+	public SVGAnimatedLength getHeight( )
 	{
 		return null;
 	}
 
-	public void setHeight( SVGLength height )
+	public void setHeight( SVGAnimatedLength height )
 	{
 	}
+
+	public SVGElementInstance getInstanceRoot( )
+	{
+		return null;
+	}
+
+	public SVGElementInstance getAnimatedInstanceRoot( )
+	{
+		return null;
+	}
+
+/*	public SVGAnimatedBoolean getExternalResourcesRequired( )
+	{
+	}
+
+	public void setExternalResourcesRequired( SVGAnimatedBoolean externalResourcesRequired )
+	{
+	}*/
 }

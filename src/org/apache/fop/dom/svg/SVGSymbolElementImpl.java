@@ -62,21 +62,21 @@ public class SVGSymbolElementImpl extends GraphicElement implements SVGSymbolEle
 	{
 	}
 
-	public SVGRect getViewBox()
+	public SVGAnimatedRect getViewBox()
 	{
 		return null;
 	}
 
-	public void setViewBox(SVGRect viewBox)
+	public void setViewBox(SVGAnimatedRect viewBox)
 	{
 	}
 
-	public SVGPreserveAspectRatio getPreserveAspectRatio( )
+	public SVGAnimatedPreserveAspectRatio getPreserveAspectRatio( )
 	{
 		return null;
 	}
 
-	public void setPreserveAspectRatio(SVGPreserveAspectRatio preserveAspectRatio)
+	public void setPreserveAspectRatio(SVGAnimatedPreserveAspectRatio preserveAspectRatio)
 	{
 	}
 }

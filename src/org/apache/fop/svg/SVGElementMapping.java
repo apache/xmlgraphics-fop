@@ -56,7 +56,7 @@ import org.apache.fop.fo.ElementMapping;
 public class SVGElementMapping implements ElementMapping {
 
 	public void addToBuilder(FOTreeBuilder builder) {
-		String uri = "http://www.w3.org/TR/2000/03/WD-SVG-20000303/DTD/svg-20000303-stylable.dtd";
+		String uri = "http://www.w3.org/TR/2000/WD-SVG-20000629/DTD/svg-20000629.dtd";
 		builder.addMapping(uri, "svg", SVG.maker());
 		builder.addMapping(uri, "rect", Rect.maker());
 		builder.addMapping(uri, "line", Line.maker());

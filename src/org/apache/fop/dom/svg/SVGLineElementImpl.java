@@ -59,58 +59,17 @@ import org.w3c.dom.events.*;
  * class representing a line in an SVG Area
  */
 public class SVGLineElementImpl extends GraphicElement implements SVGLineElement {
-
-  public SVGLength getX1( )
-  {
-  	return x1;
-  }
-
-  public void setX1( SVGLength x1 )
-  {
-	this.x1 = x1;
-  }
-
-  public SVGLength getY1( )
-  {
-  	return y1;
-  }
-
-  public void setY1( SVGLength y1 )
-  {
-	this.y1 = y1;
-  }
-
-  public SVGLength getX2( )
-  {
-  	return x2;
-  }
-
-  public void setX2( SVGLength x2 )
-  {
-	this.x2 = x2;
-  }
-
-  public SVGLength getY2( )
-  {
-  	return y2;
-  }
-
-  public void setY2( SVGLength y2 )
-  {
-	this.y2 = y2;
-  }
-
 	/** x-coordinate of start */
-	protected SVGLength x1;
+	protected SVGAnimatedLength x1;
 
 	/** y-coordinate of start */
-	protected SVGLength y1;
+	protected SVGAnimatedLength y1;
 
 	/** x-coordinate of end */
-	protected SVGLength x2;
+	protected SVGAnimatedLength x2;
 
 	/** y-coordinate of end */
-	protected SVGLength y2;
+	protected SVGAnimatedLength y2;
 
 	/**
 	 * construct a line graphic
@@ -123,4 +82,44 @@ public class SVGLineElementImpl extends GraphicElement implements SVGLineElement
 	public SVGLineElementImpl()
 	{
 	}
+
+  public SVGAnimatedLength getX1( )
+  {
+  	return x1;
+  }
+
+  public void setX1( SVGAnimatedLength x1 )
+  {
+	this.x1 = x1;
+  }
+
+  public SVGAnimatedLength getY1( )
+  {
+  	return y1;
+  }
+
+  public void setY1( SVGAnimatedLength y1 )
+  {
+	this.y1 = y1;
+  }
+
+  public SVGAnimatedLength getX2( )
+  {
+  	return x2;
+  }
+
+  public void setX2( SVGAnimatedLength x2 )
+  {
+	this.x2 = x2;
+  }
+
+  public SVGAnimatedLength getY2( )
+  {
+  	return y2;
+  }
+
+  public void setY2( SVGAnimatedLength y2 )
+  {
+	this.y2 = y2;
+  }
 }

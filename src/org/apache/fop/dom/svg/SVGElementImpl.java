@@ -52,6 +52,8 @@ package org.apache.fop.dom.svg;
 
 import org.apache.fop.datatypes.*;
 
+import org.w3c.dom.css.CSSStyleDeclaration;
+import org.w3c.dom.css.CSSValue;
 import org.w3c.dom.svg.*;
 import org.w3c.dom.*;
 
@@ -179,14 +181,14 @@ class ElementImpl implements Element {
 		return null;
 	}
 
-	public String getClassName()
+/*	public String getClassName()
 	{
 		return null;
 	}
 
 	public void setClassName(String n)
 	{
-	}
+	}*/
 
     public String getNodeValue() throws DOMException
 	{
@@ -330,6 +332,30 @@ public abstract class SVGElementImpl extends ElementImpl implements GraphicImpl,
 		return null;
 	}
 
+	public SVGAnimatedString getClassName( )
+	{
+		return null;
+	}
+
+	public void setClassName( SVGAnimatedString className )
+	{
+	}
+
+	public CSSValue getPresentationAttribute ( String name )
+	{
+		return null;
+	}
+
+	public CSSValue getAnimatedPresentationAttribute ( String name )
+	{
+		return null;
+	}
+
+	public CSSStyleDeclaration getStyle( )
+	{
+		return null;
+	}
+
 	GraphicImpl parent = null;
 	public GraphicImpl getGraphicParent()
 	{
@@ -347,11 +373,11 @@ public abstract class SVGElementImpl extends ElementImpl implements GraphicImpl,
 		style = st;
 	}
 
-	public Hashtable getStyle()
+	public Hashtable oldgetStyle()
 	{
 		Hashtable ret = null;
 		if(parent != null) {
-			ret = parent.getStyle();
+			ret = parent.oldgetStyle();
 			if(ret != null)
 				ret = (Hashtable)ret.clone();
 		}
@@ -451,5 +477,14 @@ public abstract class SVGElementImpl extends ElementImpl implements GraphicImpl,
 			}
 		}
 		return ret;*/
+	}
+
+	public SVGAnimatedBoolean getExternalResourcesRequired( )
+	{
+		return null;
+	}
+
+	public void setExternalResourcesRequired( SVGAnimatedBoolean externalResourcesRequired )
+	{
 	}
 }

@@ -61,75 +61,75 @@ public class SVGPatternElementImpl extends SVGURIReferenceImpl implements SVGPat
 	public SVGPatternElementImpl() {
 	}
 
-	public short getPatternUnits( )
-	{
-		return 0;
-	}
-
-	public void setPatternUnits( short patternUnits )
-	{
-	}
-
-	public SVGTransformList getPatternTransform( )
+	public SVGAnimatedEnumeration getPatternUnits( )
 	{
 		return null;
 	}
 
-	public void setPatternTransform( SVGTransformList patternTransform )
+	public void setPatternUnits( SVGAnimatedEnumeration patternUnits )
 	{
 	}
 
-	public SVGLength getX( )
-	{
-		return null;
-	}
-
-	public void setX( SVGLength x )
-	{
-	}
-
-	public SVGLength getY( )
+	public SVGAnimatedTransformList getPatternTransform( )
 	{
 		return null;
 	}
 
-	public void setY( SVGLength y )
+	public void setPatternTransform( SVGAnimatedTransformList patternTransform )
 	{
 	}
 
-	public SVGLength getWidth( )
-	{
-		return null;
-	}
-
-	public void setWidth( SVGLength width )
-	{
-	}
-
-	public SVGLength getHeight( )
+	public SVGAnimatedLength getX( )
 	{
 		return null;
 	}
 
-	public void setHeight( SVGLength height )
+	public void setX( SVGAnimatedLength x )
 	{
 	}
 
-	public SVGRect getViewBox( )
-	{
-		return null;
-	}
-
-	public void setViewBox( SVGRect viewBox )
-	{
-	}
-
-	public SVGPreserveAspectRatio getPreserveAspectRatio( )
+	public SVGAnimatedLength getY( )
 	{
 		return null;
 	}
 
-	public void setPreserveAspectRatio( SVGPreserveAspectRatio preserveAspectRatio)
+	public void setY( SVGAnimatedLength y )
+	{
+	}
+
+	public SVGAnimatedLength getWidth( )
+	{
+		return null;
+	}
+
+	public void setWidth( SVGAnimatedLength width )
+	{
+	}
+
+	public SVGAnimatedLength getHeight( )
+	{
+		return null;
+	}
+
+	public void setHeight( SVGAnimatedLength height )
+	{
+	}
+
+	public SVGAnimatedRect getViewBox( )
+	{
+		return null;
+	}
+
+	public void setViewBox( SVGAnimatedRect viewBox )
+	{
+	}
+
+	public SVGAnimatedPreserveAspectRatio getPreserveAspectRatio( )
+	{
+		return null;
+	}
+
+	public void setPreserveAspectRatio( SVGAnimatedPreserveAspectRatio preserveAspectRatio)
 	{
 	}
 }

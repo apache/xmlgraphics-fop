@@ -57,61 +57,61 @@ import org.w3c.dom.svg.*;
  *
  */
 public class SVGMarkerElementImpl extends GraphicElement implements SVGMarkerElement {
-	short units;
-	short otype;
+	SVGAnimatedEnumeration units;
+	SVGAnimatedEnumeration otype;
 
 	public SVGMarkerElementImpl()
 	{
 	}
 
-	public short getMarkerUnits( )
+	public SVGAnimatedEnumeration getMarkerUnits( )
 	{
 		return units;
 	}
 
-	public short getOrientType( )
+	public SVGAnimatedEnumeration getOrientType( )
 	{
 		return otype;
 	}
 
-	public SVGAngle getOrientAngle( )
+	public SVGAnimatedAngle getOrientAngle( )
 	{
 		return null;
 	}
 
-	public SVGLength getRefX( )
+	public SVGAnimatedLength getRefX( )
 	{
 		return null;
 	}
 
-	public void setRefX( SVGLength refX )
+	public void setRefX(SVGAnimatedLength refX)
 	{
 	}
 
-	public SVGLength getRefY( )
-	{
-		return null;
-	}
-
-	public void setRefY( SVGLength refY )
-	{
-	}
-
-	public SVGLength getMarkerWidth( )
+	public SVGAnimatedLength getRefY( )
 	{
 		return null;
 	}
 
-	public void setMarkerWidth( SVGLength markerWidth )
+	public void setRefY( SVGAnimatedLength refY )
 	{
 	}
 
-	public SVGLength getMarkerHeight( )
+	public SVGAnimatedLength getMarkerWidth( )
 	{
 		return null;
 	}
 
-	public void setMarkerHeight( SVGLength markerHeight )
+	public void setMarkerWidth( SVGAnimatedLength markerWidth )
+	{
+	}
+
+	public SVGAnimatedLength getMarkerHeight( )
+	{
+		return null;
+	}
+
+	public void setMarkerHeight( SVGAnimatedLength markerHeight )
 	{
 	}
 
@@ -124,21 +124,25 @@ public class SVGMarkerElementImpl extends GraphicElement implements SVGMarkerEle
 	{
 	}
 
-	public SVGRect getViewBox( )
+	public SVGAnimatedRect getViewBox( )
 	{
 		return null;
 	}
 
-	public void setViewBox( SVGRect viewBox )
+	public void setViewBox( SVGAnimatedRect viewBox )
 	{
 	}
 
-	public SVGPreserveAspectRatio getPreserveAspectRatio( )
+	public SVGAnimatedPreserveAspectRatio getPreserveAspectRatio( )
 	{
 		return null;
 	}
 
-	public void setPreserveAspectRatio( SVGPreserveAspectRatio preserveAspectRatio )
+	public void setPreserveAspectRatio( SVGAnimatedPreserveAspectRatio preserveAspectRatio )
+	{
+	}
+
+	public void setMarkerUnits( SVGAnimatedEnumeration markerUnits )
 	{
 	}
 }

@@ -54,7 +54,6 @@ package org.apache.fop.svg;
 // FOP
 import org.apache.fop.fo.*;
 import org.apache.fop.messaging.MessageHandler;
-//import org.apache.fop.fo.properties.*;
 import org.apache.fop.layout.Area;
 import org.apache.fop.layout.FontState;
 import org.apache.fop.apps.FOPException;
@@ -117,10 +116,10 @@ public class Line extends FObj implements GraphicsCreator {
 		SVGLength y1 = ((SVGLengthProperty)this.properties.get("y1")).getSVGLength();
 		SVGLength y2 = ((SVGLengthProperty)this.properties.get("y2")).getSVGLength();
 		SVGLineElementImpl graph = new SVGLineElementImpl();
-		graph.setX1(x1);
-		graph.setY1(y1);
-		graph.setX2(x2);
-		graph.setY2(y2);
+		graph.setX1(new SVGAnimatedLengthImpl(x1));
+		graph.setY1(new SVGAnimatedLengthImpl(y1));
+		graph.setX2(new SVGAnimatedLengthImpl(x2));
+		graph.setY2(new SVGAnimatedLengthImpl(y2));
 		graph.setStyle(((SVGStyle)this.properties.get("style")).getStyle());
 		graph.setTransform(((SVGTransform)this.properties.get("transform")).oldgetTransform());
 		graph.setId(this.properties.get("id").getString());

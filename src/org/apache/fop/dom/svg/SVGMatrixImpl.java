@@ -64,8 +64,8 @@ public class SVGMatrixImpl implements SVGMatrix {
 	float b = 0.0f;
 	float c = 0.0f;
 	float d = 1.0f;
-	SVGLength e = new SVGLengthImpl();
-	SVGLength f = new SVGLengthImpl();
+	float e = 0.0f;
+	float f = 0.0f;
 
 	public SVGMatrixImpl()
 	{
@@ -111,22 +111,22 @@ public class SVGMatrixImpl implements SVGMatrix {
 		this.d = d;
 	}
 
-	public SVGLength getE( )
+	public float getE( )
 	{
 		return e;
 	}
 
-	public void setE( SVGLength e )
+	public void setE( float e )
 	{
 		this.e = e;
 	}
 
-	public SVGLength getF( )
+	public float getF( )
 	{
 		return f;
 	}
 
-	public void setF( SVGLength f )
+	public void setF( float f )
 	{
 		this.f = f;
 	}
@@ -140,13 +140,8 @@ public class SVGMatrixImpl implements SVGMatrix {
 		mat.setC(c * secondMatrix.getA() + d * secondMatrix.getC());
 		mat.setD(c * secondMatrix.getB() + d * secondMatrix.getD());
 		// e,f?
-		SVGLengthImpl len;
-		len = new SVGLengthImpl();
-		len.setValue(e.getValue() + secondMatrix.getE().getValue());
-		mat.setE(len);
-		len = new SVGLengthImpl();
-		len.setValue(f.getValue() + secondMatrix.getF().getValue());
-		mat.setF(len);
+		mat.setE(e + secondMatrix.getE());
+		mat.setF(f + secondMatrix.getF());
 		return mat;
 	}
 
@@ -160,13 +155,8 @@ public class SVGMatrixImpl implements SVGMatrix {
 		mat.setC((float)(-c / det));
 		mat.setD((float)(a / det));
 		// e,f?
-		SVGLengthImpl len;
-		len = new SVGLengthImpl();
-		len.setValue(-e.getValue());
-		mat.setE(len);
-		len = new SVGLengthImpl();
-		len.setValue(-f.getValue());
-		mat.setF(len);
+		mat.setE(-e);
+		mat.setF(-f);
 		return mat;
 	}
 
@@ -207,7 +197,7 @@ public class SVGMatrixImpl implements SVGMatrix {
 				break;
 			}*/
 
-	public SVGMatrix translate ( SVGLength x, SVGLength y )
+	public SVGMatrix translate ( float x, float y )
 	              throws SVGException
 	{
 		SVGMatrix matrix = new SVGMatrixImpl();
@@ -215,13 +205,8 @@ public class SVGMatrixImpl implements SVGMatrix {
 		matrix.setB(b);
 		matrix.setC(c);
 		matrix.setD(d);
-		SVGLength len;
-		len = new SVGLengthImpl();
-		len.setValue(e.getValue() + x.getValue());
-		matrix.setE(len);
-		len = new SVGLengthImpl();
-		len.setValue(f.getValue() + y.getValue());
-		matrix.setF(len);
+		matrix.setE(e + x);
+		matrix.setF(f + y);
 		return matrix;
 	}
 
@@ -251,18 +236,18 @@ public class SVGMatrixImpl implements SVGMatrix {
 		return matrix;
 	}
 
-	public SVGMatrix rotate ( SVGAngle angle )
+	public SVGMatrix rotate ( float angle )
 	              throws SVGException
 	{
 		SVGMatrix matrix = new SVGMatrixImpl();
-		matrix.setA((float)Math.cos(angle.getValue()));
-		matrix.setB((float)Math.sin(angle.getValue()));
-		matrix.setC((float)-Math.sin(angle.getValue()));
-		matrix.setD((float)Math.cos(angle.getValue()));
+		matrix.setA((float)Math.cos(angle));
+		matrix.setB((float)Math.sin(angle));
+		matrix.setC((float)-Math.sin(angle));
+		matrix.setD((float)Math.cos(angle));
 		return multiply(matrix);
 	}
 
-	public SVGMatrix rotateFromVector(SVGLength x, SVGLength y) throws SVGException
+	public SVGMatrix rotateFromVector(float x, float y) throws SVGException
 	{
 		return null;
 	}
@@ -277,22 +262,22 @@ public class SVGMatrixImpl implements SVGMatrix {
 		return null;
 	}
 
-	public SVGMatrix skewX(SVGAngle angle) throws SVGException
+	public SVGMatrix skewX(float angle) throws SVGException
 	{
 		SVGMatrix matrix = new SVGMatrixImpl();
 		matrix.setA(1);
-		matrix.setB((float)Math.sin(angle.getValue()));
+		matrix.setB((float)Math.sin(angle));
 		matrix.setC(0);
 		matrix.setD(1);
 		return multiply(matrix);
 	}
 
-	public SVGMatrix skewY(SVGAngle angle) throws SVGException
+	public SVGMatrix skewY(float angle) throws SVGException
 	{
 		SVGMatrix matrix = new SVGMatrixImpl();
 		matrix.setA(1);
 		matrix.setB(0);
-		matrix.setC((float)-Math.sin(angle.getValue()));
+		matrix.setC((float)-Math.sin(angle));
 		matrix.setD(1);
 		return multiply(matrix);
 	}
@@ -300,6 +285,6 @@ public class SVGMatrixImpl implements SVGMatrix {
 	public String toString()
 	{
 		return "[" + getA() + " " + getB() + " " + getC()
-					+ " " + getD() + " " + getE().getValue() + " " + getF().getValue() + "]";
+					+ " " + getD() + " " + getE() + " " + getF() + "]";
 	}
 }

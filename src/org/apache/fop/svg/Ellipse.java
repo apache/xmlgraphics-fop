@@ -114,10 +114,10 @@ public class Ellipse extends FObj implements GraphicsCreator {
 		SVGLength rx = ((SVGLengthProperty)this.properties.get("rx")).getSVGLength();
 		SVGLength ry = ((SVGLengthProperty)this.properties.get("ry")).getSVGLength();
 		SVGEllipseElementImpl graph = new SVGEllipseElementImpl();
-		graph.setCx(cx);
-		graph.setCy(cy);
-		graph.setRx(rx);
-		graph.setRy(ry);
+		graph.setCx(new SVGAnimatedLengthImpl(cx));
+		graph.setCy(new SVGAnimatedLengthImpl(cy));
+		graph.setRx(new SVGAnimatedLengthImpl(rx));
+		graph.setRy(new SVGAnimatedLengthImpl(ry));
 		graph.setStyle(((SVGStyle)this.properties.get("style")).getStyle());
 		graph.setTransform(((SVGTransform)this.properties.get("transform")).oldgetTransform());
 		graph.setId(this.properties.get("id").getString());

@@ -75,19 +75,21 @@ public abstract class GraphicElement extends SVGElementImpl implements SVGTransf
 		return null;
 	}
 
-	public SVGTransformList getTransform()
+	public SVGAnimatedTransformList getTransform()
 	{
 		if(trans != null) {
 			SVGTransformList stl = new SVGTransformListImpl();
 			for(Enumeration e = trans.elements(); e.hasMoreElements(); ) {
-				stl.append((SVGTransform)e.nextElement());
+				stl.appendItem((SVGTransform)e.nextElement());
 			}
-			return stl;
+			SVGAnimatedTransformList atl = new SVGAnimatedTransformListImpl();
+			atl.setBaseVal(stl);
+			return atl;
 		}
 		return null;
 	}
 
-	public void setTransform(SVGTransformList transform)
+	public void setTransform(SVGAnimatedTransformList transform)
 	{
 	}
 
@@ -130,21 +132,37 @@ public abstract class GraphicElement extends SVGElementImpl implements SVGTransf
 	{
 	}
 
-	public String getSystemRequired()
+	public SVGList getRequiredFeatures( )
 	{
 		return null;
 	}
 
-	public void setSystemRequired(String systemRequired)
+	public void setRequiredFeatures( SVGList requiredFeatures )
+                       throws DOMException
 	{
 	}
 
-	public String getSystemLanguage()
+	public SVGList getRequiredExtensions( )
 	{
 		return null;
 	}
 
-	public void setSystemLanguage(String systemLanguage)
+	public void setRequiredExtensions( SVGList requiredExtensions )
+                       throws DOMException
+	{
+	}
+
+	public boolean hasExtension ( String extension )
+	{
+		return false;
+	}
+
+	public SVGList getSystemLanguage()
+	{
+		return null;
+	}
+
+	public void setSystemLanguage(SVGList systemLanguage)
 	{
 	}
 

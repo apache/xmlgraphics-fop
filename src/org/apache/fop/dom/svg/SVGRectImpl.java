@@ -60,51 +60,51 @@ import org.w3c.dom.svg.*;
  *
  */
 public class SVGRectImpl implements SVGRect {
-	SVGNumber x;
-	SVGNumber y;
-	SVGNumber width;
-	SVGNumber height;
+	float x;
+	float y;
+	float width;
+	float height;
 
-	SVGRectImpl()
+	public SVGRectImpl()
 	{
 	}
 
-	public SVGNumber getX( )
+	public float getX( )
 	{
 		return x;
 	}
 
-	public void setX( SVGNumber x )
+	public void setX(float x )
 	{
 		this.x = x;
 	}
 
-	public SVGNumber getY( )
+	public float getY( )
 	{
 		return y;
 	}
 
-	public void setY( SVGNumber y )
+	public void setY(float y )
 	{
 		this.y = y;
 	}
 
-	public SVGNumber getWidth( )
+	public float getWidth( )
 	{
 		return width;
 	}
 
-	public void setWidth( SVGNumber width )
+	public void setWidth(float width )
 	{
 		this.width = width;
 	}
 
-	public SVGNumber getHeight( )
+	public float getHeight( )
 	{
 		return height;
 	}
 
-	public void setHeight( SVGNumber height )
+	public void setHeight(float height )
 	{
 		this.height = height;
 	}

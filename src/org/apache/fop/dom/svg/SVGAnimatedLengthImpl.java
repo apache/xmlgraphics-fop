@@ -53,56 +53,26 @@ package org.apache.fop.dom.svg;
 
 import org.w3c.dom.svg.*;
 
-/**
- *
- */
-public class SVGGradientElementImpl extends SVGURIReferenceImpl implements SVGGradientElement {
-/*
-SVG_SPREADMETHOD_UNKNOWN;
-SVG_SPREADMETHOD_PAD;
-SVG_SPREADMETHOD_REFLECT;
-SVG_SPREADMETHOD_REPEAT;
-*/
-	SVGAnimatedEnumeration units = new SVGAnimatedEnumerationImpl(SVG_UNIT_TYPE_UNKNOWN);
+public class SVGAnimatedLengthImpl implements SVGAnimatedLength {
+    SVGLength len = null;
 
-	public SVGGradientElementImpl()
-	{
-	}
+    public SVGAnimatedLengthImpl(SVGLength l)
+    {
+        len = l;
+    }
 
-	public SVGAnimatedEnumeration getGradientUnits( )
-	{
-		return units;
-	}
+  public SVGLength getBaseVal( )
+  {
+      return len;
+  }
 
-	public void setGradientUnits(SVGAnimatedEnumeration gradientUnits)
-	{
-		units = gradientUnits;
-	}
+  public void setBaseVal( SVGLength baseVal )
+  {
+      len = baseVal;
+  }
 
-	public SVGAnimatedTransformList getGradientTransform()
-	{
-		return null;
-	}
-
-	public void setGradientTransform(SVGAnimatedTransformList gradientTransform)
-	{
-	}
-
-	public SVGAnimatedEnumeration   getSpreadMethod( )
-	{
-		return null;
-	}
-
-	public void setSpreadMethod( SVGAnimatedEnumeration spreadMethod )
-	{
-	}
-
-	public SVGAnimatedBoolean getExternalResourcesRequired( )
-	{
-		return null;
-	}
-
-	public void      setExternalResourcesRequired( SVGAnimatedBoolean externalResourcesRequired )
-	{
-	}
+  public SVGLength getAnimVal( )
+  {
+      return null;
+  }
 }

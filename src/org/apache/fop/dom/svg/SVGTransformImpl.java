@@ -77,44 +77,43 @@ public class SVGTransformImpl implements SVGTransform {
 		return matrix;
 	}
 
-	public SVGAngle getAngle( )
+	public float getAngle( )
 	{
-		return null;
+		return 0.0f;
 	}
 
 	public void setMatrix ( SVGMatrix matrix )
-	              throws SVGException
 	{
 		this.matrix = matrix;
 	}
 
-	public void setTranslate ( SVGLength tx, SVGLength ty )
+	public void setTranslate ( float tx, float ty )
 	              throws SVGException
 	{
 		matrix.setE(tx);
 		matrix.setF(ty);
 	}
 
-	public void setScale ( SVGNumber sx, SVGNumber sy )
+	public void setScale ( float sx, float sy )
 	              throws SVGException
 	{
-		matrix.setA(sx.getValue());
-		matrix.setD(sy.getValue());
+		matrix.setA(sx);
+		matrix.setD(sy);
 	}
 
-	public void setRotate ( SVGAngle angle )
+	public void setRotate (float angle, float cx, float cy)
 	              throws SVGException
 	{
 		matrix = matrix.rotate(angle);
 	}
 
-	public void setSkewX ( SVGAngle angle )
+	public void setSkewX ( float angle )
 	              throws SVGException
 	{
 		matrix = matrix.skewX(angle);
 	}
 
-	public void setSkewY ( SVGAngle angle )
+	public void setSkewY ( float angle )
 	              throws SVGException
 	{
 		matrix = matrix.skewY(angle);

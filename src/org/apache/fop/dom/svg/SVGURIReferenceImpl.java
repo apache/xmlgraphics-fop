@@ -59,7 +59,7 @@ public class SVGURIReferenceImpl extends GraphicElement implements SVGURIReferen
 	String xlinkTitle;
 	String xlinkShow;
 	String xlinkActuate;
-	String href;
+	SVGAnimatedString href;
 
 	public String getXlinkType( )
 	{
@@ -111,13 +111,22 @@ public class SVGURIReferenceImpl extends GraphicElement implements SVGURIReferen
 		this.xlinkActuate = xlinkActuate;
 	}
 
-	public String getHref( )
+	public SVGAnimatedString getHref( )
 	{
 		return href;
 	}
 
-	public void setHref( String href )
+	public void setHref( SVGAnimatedString href )
 	{
 		this.href = href;
+	}
+
+	public SVGAnimatedBoolean getExternalResourcesRequired()
+	{
+		return null;
+	}
+
+	public void setExternalResourcesRequired(SVGAnimatedBoolean externalResourcesRequired)
+	{
 	}
 }

@@ -118,10 +118,10 @@ public class Rect extends FObj implements GraphicsCreator {
 		SVGLength x = ((SVGLengthProperty)this.properties.get("x")).getSVGLength();
 		SVGLength y = ((SVGLengthProperty)this.properties.get("y")).getSVGLength();
 		SVGRectElementImpl graph = new SVGRectElementImpl();
-		graph.setX(x);
-		graph.setY(y);
-		graph.setWidth(width);
-		graph.setHeight(height);
+		graph.setX(new SVGAnimatedLengthImpl(x));
+		graph.setY(new SVGAnimatedLengthImpl(y));
+		graph.setWidth(new SVGAnimatedLengthImpl(width));
+		graph.setHeight(new SVGAnimatedLengthImpl(height));
 		graph.setStyle(((SVGStyle)this.properties.get("style")).getStyle());
 		graph.setTransform(((SVGTransform)this.properties.get("transform")).oldgetTransform());
 		graph.setId(this.properties.get("id").getString());

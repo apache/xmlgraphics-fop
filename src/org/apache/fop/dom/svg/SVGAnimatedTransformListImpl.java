@@ -48,61 +48,35 @@
  Software Foundation, please see <http://www.apache.org/>.
  
  */
-
 package org.apache.fop.dom.svg;
 
+import java.util.*;
+
 import org.w3c.dom.svg.*;
+import org.w3c.dom.*;
 
 /**
- *
+ * Transform List
  */
-public class SVGGradientElementImpl extends SVGURIReferenceImpl implements SVGGradientElement {
-/*
-SVG_SPREADMETHOD_UNKNOWN;
-SVG_SPREADMETHOD_PAD;
-SVG_SPREADMETHOD_REFLECT;
-SVG_SPREADMETHOD_REPEAT;
-*/
-	SVGAnimatedEnumeration units = new SVGAnimatedEnumerationImpl(SVG_UNIT_TYPE_UNKNOWN);
+public class SVGAnimatedTransformListImpl implements SVGAnimatedTransformList {
+    SVGTransformList base;
 
-	public SVGGradientElementImpl()
-	{
-	}
+    public SVGAnimatedTransformListImpl()
+    {
+    }
 
-	public SVGAnimatedEnumeration getGradientUnits( )
-	{
-		return units;
-	}
+    public SVGTransformList getBaseVal( )
+    {
+        return base;
+    }
 
-	public void setGradientUnits(SVGAnimatedEnumeration gradientUnits)
-	{
-		units = gradientUnits;
-	}
+    public void setBaseVal(SVGTransformList baseVal )
+    {
+        base = baseVal;
+    }
 
-	public SVGAnimatedTransformList getGradientTransform()
-	{
-		return null;
-	}
-
-	public void setGradientTransform(SVGAnimatedTransformList gradientTransform)
-	{
-	}
-
-	public SVGAnimatedEnumeration   getSpreadMethod( )
-	{
-		return null;
-	}
-
-	public void setSpreadMethod( SVGAnimatedEnumeration spreadMethod )
-	{
-	}
-
-	public SVGAnimatedBoolean getExternalResourcesRequired( )
-	{
-		return null;
-	}
-
-	public void      setExternalResourcesRequired( SVGAnimatedBoolean externalResourcesRequired )
-	{
-	}
+    public SVGTransformList getAnimVal()
+    {
+        return null;
+    }
 }

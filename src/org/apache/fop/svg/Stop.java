@@ -113,7 +113,7 @@ public class Stop extends FObj {
 		SVGStopElementImpl sse = new SVGStopElementImpl();
 		sse.setStyle(((SVGStyle)this.properties.get("style")).getStyle());
 		SVGLength offset = ((SVGLengthProperty)this.properties.get("offset")).getSVGLength();
-		sse.setOffset(offset.getValue()); // what about percentages
+		sse.setOffset(new SVGAnimatedNumberImpl(offset.getValue())); // what about percentages
 		sse.setId(this.properties.get("id").getString());
 		return sse;
 	}

@@ -57,18 +57,18 @@ import org.w3c.dom.svg.*;
  *
  */
 public class SVGStopElementImpl extends SVGElementImpl implements SVGStopElement {
-	float offset;
+	SVGAnimatedNumber offset;
 
 	public SVGStopElementImpl()
 	{
 	}
 
-	public float getOffset()
+	public SVGAnimatedNumber getOffset()
 	{
 		return offset;
 	}
 
-	public void setOffset(float offset)
+	public void setOffset(SVGAnimatedNumber offset)
 	{
 		this.offset = offset;
 	}

@@ -62,7 +62,7 @@ import java.util.*;
  */
 // use this so that the SVGArea can also hold style, defs and transform etc.
 public interface GraphicImpl {
-	public Hashtable getStyle();
+	public Hashtable oldgetStyle();
 	public void setParent(GraphicImpl g);
 	public GraphicImpl getGraphicParent();
 	public Vector oldgetTransform();	// ??
