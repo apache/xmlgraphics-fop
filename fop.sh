@@ -2,7 +2,7 @@
 #
 # Shell script to run FOP, adapted from the Jakarta-Ant project.
 
-if [ -f $HOME/.foprc ] ; then 
+if [ -f $HOME/.foprc ] ; then
   . $HOME/.foprc
 fi
 
@@ -16,28 +16,28 @@ esac
 
 if [ -z "$FOP_HOME" ] ; then
   # try to find FOP
-  if [ -d /opt/fop ] ; then 
+  if [ -d /opt/fop ] ; then
     FOP_HOME=/opt/fop
   fi
 
-  if [ -d ${HOME}/opt/fop ] ; then 
+  if [ -d ${HOME}/opt/fop ] ; then
     FOP_HOME=${HOME}/opt/fop
   fi
 
   ## resolve links - $0 may be a link to fop's home
   PRG=$0
   progname=`basename $0`
-  
+
   while [ -h "$PRG" ] ; do
     ls=`ls -ld "$PRG"`
     link=`expr "$ls" : '.*-> \(.*\)$'`
     if expr "$link" : '.*/.*' > /dev/null; then
-	PRG="$link"
+      PRG="$link"
     else
-	PRG="`dirname $PRG`/$link"
+      PRG="`dirname $PRG`/$link"
     fi
   done
-  
+
   FOP_HOME=`dirname "$PRG"`
 
 fi
@@ -52,9 +52,9 @@ if $cygwin ; then
     CLASSPATH=`cygpath --path --unix "$CLASSPATH"`
 fi
 
-if [ -z "$JAVACMD" ] ; then 
+if [ -z "$JAVACMD" ] ; then
   if [ -n "$JAVA_HOME"  ] ; then
-    if [ -x "$JAVA_HOME/jre/sh/java" ] ; then 
+    if [ -x "$JAVA_HOME/jre/sh/java" ] ; then
       # IBM's JDK on AIX uses strange locations for the executables
       JAVACMD=$JAVA_HOME/jre/sh/java
     else
@@ -64,7 +64,7 @@ if [ -z "$JAVACMD" ] ; then
     JAVACMD=java
   fi
 fi
- 
+
 if [ ! -x "$JAVACMD" ] ; then
   echo "Error: JAVA_HOME is not defined correctly."
   echo "  We cannot execute $JAVACMD"

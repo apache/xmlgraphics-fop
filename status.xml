@@ -111,12 +111,12 @@ inactive??
   <changes>
    <release version="?" date="2002">
     <action context="build" dev="JM" type="update">
-      Updated to Xerces 2.2.1 and Xalan 2.4.1. Updated all the related files 
-      and made sure all contrib builds work again. Removed necessity for a 
+      Updated to Xerces 2.2.1 and Xalan 2.4.1. Updated all the related files
+      and made sure all contrib builds work again. Removed necessity for a
       buildtools.jar.
     </action>
     <action context="code" dev="KL" type="fix" fixes-bug="14290">
-      Correct ordering of loca table in embedded true type fonts. 
+      Correct ordering of loca table in embedded true type fonts.
       Fix taken over from maintenance branch.
     </action>
     <action context="docs" dev="KLL" type="update"
@@ -216,7 +216,7 @@ inactive??
     <action context="code" dev="KLL" type="update">
       Add id areas to page when area added.
       When the layout managers add an area to the page it can also add the id
-      information. 
+      information.
     </action>
     <action context="code" dev="KLL" type="update">
       Resolve id references on other pages, extensions.
@@ -252,11 +252,11 @@ inactive??
       Added a RunLengthEncode filter for the PostScript renderer.
     </action>
     <action dev="JM" type="update" context="code">
-      Replaced the PostScript filters with the refactored ones from the maintenance 
+      Replaced the PostScript filters with the refactored ones from the maintenance
       branch.
     </action>
     <action dev="JM" type="update" context="code">
-      First batch of changes in preparation for adoption of Avalon patterns. 
+      First batch of changes in preparation for adoption of Avalon patterns.
       Only changes on logging for now. Mostly usage of LogEnabled contract interface.
     </action>
     <action dev="JM" type="update" context="build">
@@ -304,27 +304,27 @@ inactive??
       separated the specific PDFRender functionality from the CTM class
       and created a small utility class for the renderer to use
     </action>
-    <action dev="KLL" type="update" context="code"> 
+    <action dev="KLL" type="update" context="code">
       FontState only used for calculations,
       stores font name and size on area tree
     </action>
-    <action dev="KLL" type="update" context="code"> 
+    <action dev="KLL" type="update" context="code">
       Improved PDFTextPainter to handle different text better
     </action>
-    <action dev="KLL" type="update" context="code"> 
+    <action dev="KLL" type="update" context="code">
       Applied root element viewBox transform for svg to pdf transcoder
     </action>
-    <action dev="KLL" type="update" context="code"> 
+    <action dev="KLL" type="update" context="code">
       image test for formats, viewport and scaling
     </action>
-    <action dev="KLL" type="add" context="code"> 
+    <action dev="KLL" type="add" context="code">
       added various SVG to PDF tests for trancoder
       and including in fo
     </action>
-    <action dev="KLL" type="update" context="code"> 
+    <action dev="KLL" type="update" context="code">
       Implemented viewport and scaling for images
     </action>
-    <action dev="KLL" type="update" context="code"> 
+    <action dev="KLL" type="update" context="code">
       Implemented viewport and scaling for instream svg
     </action>
     <action dev="KLL" type="update" context="code">
@@ -377,7 +377,7 @@ inactive??
     </action>
     <action dev="KLL" type="update" context="code">
       Added handlers for xml in renderer
-    </action> 
+    </action>
     <action dev="KLL" type="update" context="code">
       svg now in an xml handler, FOP can be used without batik
     </action>

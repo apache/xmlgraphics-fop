@@ -2,10 +2,10 @@ FOP Servlet Readme
 
 This directory contains two sample servlets that use FOP:
 
-- FopServlet can take a XSL:FO file or a XML+XSLT as parameters to create a PDF 
+- FopServlet can take a XSL:FO file or a XML+XSLT as parameters to create a PDF
 that is being shown in the browser.
 
-- FopPrintServlet has the same parameters but prints the generated document to 
+- FopPrintServlet has the same parameters but prints the generated document to
 the default printer instead of generating a PDF.
 
 Creating the WAR file:
@@ -14,7 +14,7 @@ Creating the WAR file:
 2. Run build.bat (on Windows) or build.sh (on Unix) to create the WAR file.
 3. Put the WAR file in you favourite web container.
 
-Sample URLs: 
+Sample URLs:
 http://localhost:8080/fop/servlet/FopServlet?fo=readme.fo
 http://localhost:8080/fop/servlet/FopPrintServlet?fo=readme.fo
 

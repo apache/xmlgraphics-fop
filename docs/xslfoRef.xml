@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- 
-tbd: - internal linking  
+<!--
+tbd: - internal linking
      - one line explanation
      - example
-please note: the short explanation of each fo is based (mostly verbatim) on the section 6.3 of 
-the Extensible Stylesheet Language (XSL) Version 1.0 W3C Candidate Recommendation 21 November 2000. 
+please note: the short explanation of each fo is based (mostly verbatim) on the section 6.3 of
+the Extensible Stylesheet Language (XSL) Version 1.0 W3C Candidate Recommendation 21 November 2000.
            authors: Sharon Adler, Anders Berglund, Jeff Caruso, Stephen Deach
-                    Paul Grosso, Eduardo Gutentag, Alex Milowski, Scott Parnell, 
+                    Paul Grosso, Eduardo Gutentag, Alex Milowski, Scott Parnell,
                     Jeremy Richman, Steve Zilles
            url: http://www.w3.org/TR/2000/CR-xsl-20001121/
 
@@ -44,7 +44,7 @@ the Extensible Stylesheet Language (XSL) Version 1.0 W3C Candidate Recommendatio
 </properties>
 </div><div id="fo:bidi-override">
 <fo>fo:bidi-override</fo>
-<explanation> overrides the default Unicode-bidirectionality algorithm direction for different 
+<explanation> overrides the default Unicode-bidirectionality algorithm direction for different
  (or nested) inline scripts in mixed-language documents</explanation>
 <content>(#PCDATA|%inline;|%block;)*</content>
 <properties>
