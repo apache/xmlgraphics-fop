@@ -1,5 +1,10 @@
 ==============================================================================
 Done since 0.20.4 release
+- PS Renderer: Improved DSC-conformance in %%Page comments.
+- Fix for bug #20879 (PS Renderer: leader broken, cursor positioning) (JM)
+  Submitted by: Larry Moore <lmoore@providerlink.com>
+- Fix for bug #5674 (PS Renderer: High memory usage in PS interpreter, FOP 
+  procs were started for every page but not ended after the page) (JM)
 - Fix for bug: Wrong length value for embedded Type1 font stream (JM)
 - Fix for bug #20506 (grayscale images in PS renderer) (JM)
   Submitted by: Zhong(George) Yi <yidaomao@yahoo.com>
