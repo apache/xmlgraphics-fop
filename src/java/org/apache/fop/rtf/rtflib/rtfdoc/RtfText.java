@@ -43,13 +43,19 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ============================================================================
  *
- * The RTF library of the FOP project consists of voluntary contributions made by
- * many individuals on behalf of the Apache Software Foundation and was originally
- * created by Bertrand Delacretaz <bdelacretaz@codeconsult.ch> and contributors of
- * the jfor project (www.jfor.org), who agreed to donate jfor to the FOP project.
- * For more information on the Apache Software Foundation, please
- * see <http://www.apache.org/>.
+ * This software consists of voluntary contributions made by many individuals
+ * on behalf of the Apache Software Foundation and was originally created by
+ * James Tauber <jtauber@jtauber.com>. For more information on the Apache
+ * Software Foundation, please see <http://www.apache.org/>.
  */
+
+/*
+ * This file is part of the RTF library of the FOP project, which was originally
+ * created by Bertrand Delacretaz <bdelacretaz@codeconsult.ch> and by other
+ * contributors to the jfor project (www.jfor.org), who agreed to donate jfor to
+ * the FOP project.
+ */
+
 package org.apache.fop.rtf.rtflib.rtfdoc;
 
 import java.io.IOException;
@@ -59,7 +65,7 @@ import java.io.Writer;
  *  @author Bertrand Delacretaz bdelacretaz@codeconsult.ch
  */
 
-public class RtfText extends RtfElement 
+public class RtfText extends RtfElement
 {
         // char code for non-breakable space
         private static final int CHAR_NBSP = 160;
@@ -67,17 +73,17 @@ public class RtfText extends RtfElement
         private static final int CHAR_NEW_LINE = 141;
         /* these next two variables are used to encode bold formating in the
          * raw xml text. Usefull when specific words or phrases are to be bolded
-         * but their placement and length change.  Thus the bold formatting becomes 
+         * but their placement and length change.  Thus the bold formatting becomes
          * part of the data.  The same method can be used for implementing other types
-         * of raw text formatting.  
+         * of raw text formatting.
          */
         private static final int CHAR_BOLD_START = 130;
         private static final int CHAR_BOLD_END = 131;
-        
+
 	/** members */
 	private String m_text;
 	private final RtfAttributes m_attr;
-	
+
 
 	/** RtfText attributes: attribute names are RTF control word names to avoid additional mapping */
 	public static final String ATTR_BOLD = "b";
@@ -94,7 +100,7 @@ public class RtfText extends RtfElement
 	public static String ALIGN_RIGHT = "qr";
 	public static String ALIGN_JUSTIFIED = "qj";
 	public static String ALIGN_DISTRIBUTED = "qd";
-	
+
 	/** RtfText attributes: border attributes */
 	//added by Chris Scott
 	public static String BDR_BOTTOM_SINGLE = "brdrb\\brsp40\\brdrs";
@@ -102,7 +108,7 @@ public class RtfText extends RtfElement
 	public static String BDR_BOTTOM_EMBOSS = "brdrb\\brsp40\\brdremboss";
 	public static String BDR_BOTTOM_DOTTED = "brdrb\\brsp40\\brdrdot";
 	public static String BDR_BOTTOM_DASH = "brdrb\\brsp40\\brdrdash";
-	
+
 	/** RtfText attributes: fields */
 	//must be carefull of group markings and star control
 	//ie page field:
@@ -110,20 +116,20 @@ public class RtfText extends RtfElement
 	public static String RTF_FIELD = "field";
 	public static String RTF_FIELD_PAGE = "fldinst { PAGE }";
 	public static String RTF_FIELD_RESULT = "fldrslt";
-	
+
 	/**RtfText attributes: indentation attributes */
 	//added by Chris Scott
 	public static String LEFT_INDENT_BODY = "li";
 	public static String LEFT_INDENT_FIRST = "fi-";
-	
+
 	public static String TAB_CENTER = "tqc\\tx";
 	public static String TAB_RIGHT = "tqr\\tx";
-	public static String TAB_LEADER_DOTS = "tldot"; 
-	public static String TAB_LEADER_HYPHEN = "tlhyph"; 
+	public static String TAB_LEADER_DOTS = "tldot";
+	public static String TAB_LEADER_HYPHEN = "tlhyph";
 	public static String TAB_LEADER_UNDER = "tlul";
 	public static String TAB_LEADER_THICK = "tlth";
 	public static String TAB_LEADER_EQUALS = "tleq";
-	
+
 	/** Space before/after a paragraph */
 	//these lines were added by Boris Pouderous
 	public static final String SPACE_BEFORE = "sb";
@@ -134,25 +140,25 @@ public class RtfText extends RtfElement
 	{
 		ALIGN_CENTER, ALIGN_LEFT, ALIGN_RIGHT, ALIGN_JUSTIFIED, ALIGN_DISTRIBUTED
 	};
-	
+
 	/** RtfText attributes:: this must contain all border attribute names*/
 	//this line added by Chris Scott, Westinghouse
 	public static String[] BORDER = new String []
 	{
 		BDR_BOTTOM_SINGLE,BDR_BOTTOM_DOUBLE,BDR_BOTTOM_EMBOSS,BDR_BOTTOM_DOTTED,BDR_BOTTOM_DASH
 	};
-	
+
 	public static String[] INDENT = new String []
 	{
 		LEFT_INDENT_BODY, LEFT_INDENT_FIRST
 	};
-	
+
 	public static String[] TABS = new String []
 	{
 		TAB_CENTER ,TAB_RIGHT,TAB_LEADER_DOTS,TAB_LEADER_HYPHEN,TAB_LEADER_UNDER,
 		TAB_LEADER_THICK,TAB_LEADER_EQUALS
 	};
-	
+
 
 	/** RtfText attributes: this must contain all attribute names */
 	public static final String [] ATTR_NAMES = {
@@ -162,7 +168,7 @@ public class RtfText extends RtfElement
 		ATTR_FONT_SIZE,
 		ATTR_FONT_FAMILY,
 		ATTR_FONT_COLOR,
-		ATTR_BACKGROUND_COLOR	
+		ATTR_BACKGROUND_COLOR
 	};
 
 	/** Create an RtfText in given IRtfTextContainer.
@@ -179,13 +185,13 @@ public class RtfText extends RtfElement
 	public void writeRtfContent() throws IOException
 	{
             writeChars: {
-            	
+
             	//these lines were added by Boris Pouderous
           		if (m_attr != null) {
                   writeAttributes(m_attr,new String[] {RtfText.SPACE_BEFORE});
                   writeAttributes(m_attr,new String[] {RtfText.SPACE_AFTER});
-                }  	
-            	
+                }
+
 	            if(isTab()){
 	            	writeControlWord("tab");
 	            }else if(isNewLine()){
@@ -204,7 +210,7 @@ public class RtfText extends RtfElement
 		            RtfStringConverter.getInstance().writeRtfString(m_writer,m_text);
 		            writeGroupMark(false);
 		        }
-	      
+
 	      }
 	}
 
@@ -213,7 +219,7 @@ public class RtfText extends RtfElement
         {
             return !isEmpty() && !isNbsp();
         }
-        
+
 	/** IRtfTextContainer requirement: return a copy of our attributes */
 	public RtfAttributes getTextContainerAttributes() {
 		if(m_attrib == null) return null;
@@ -244,7 +250,7 @@ public class RtfText extends RtfElement
 		return m_text == null || m_text.trim().length() == 0;
 	}
 
-	/** 
+	/**
 	 *  True if text contains a single non-breaking space (#160).
          *  TODO make this more general and/or merge with isEmpty? <-- what happen with empty paragraphs, if they will be removed, than NO, else ok
 	 *
@@ -259,7 +265,7 @@ public class RtfText extends RtfElement
 				return true;
 		return false;
 	}
-	
+
 	public boolean isTab()
 	{
 		if(m_text.trim().length()==1 && m_text.charAt(0)== CHAR_TAB)
@@ -267,7 +273,7 @@ public class RtfText extends RtfElement
 		else
 			return false;
 	}
-	
+
 	public boolean isNewLine()
 	{
 		if(m_text.trim().length()==1 && m_text.charAt(0)== CHAR_NEW_LINE)
@@ -275,7 +281,7 @@ public class RtfText extends RtfElement
 		else
 			return false;
 	}
-	
+
 	public boolean isBold(boolean isStart)
 	{
 		if(isStart){
@@ -289,7 +295,7 @@ public class RtfText extends RtfElement
 		}
 		return false;
 	}
-				
+
     /** get the attributes of our text */
     public RtfAttributes getTextAttributes(){
         return m_attr;

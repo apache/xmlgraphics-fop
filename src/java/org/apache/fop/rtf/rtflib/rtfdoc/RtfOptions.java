@@ -43,13 +43,19 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ============================================================================
  *
- * The RTF library of the FOP project consists of voluntary contributions made by
- * many individuals on behalf of the Apache Software Foundation and was originally
- * created by Bertrand Delacretaz <bdelacretaz@codeconsult.ch> and contributors of
- * the jfor project (www.jfor.org), who agreed to donate jfor to the FOP project.
- * For more information on the Apache Software Foundation, please
- * see <http://www.apache.org/>.
+ * This software consists of voluntary contributions made by many individuals
+ * on behalf of the Apache Software Foundation and was originally created by
+ * James Tauber <jtauber@jtauber.com>. For more information on the Apache
+ * Software Foundation, please see <http://www.apache.org/>.
  */
+
+/*
+ * This file is part of the RTF library of the FOP project, which was originally
+ * created by Bertrand Delacretaz <bdelacretaz@codeconsult.ch> and by other
+ * contributors to the jfor project (www.jfor.org), who agreed to donate jfor to
+ * the FOP project.
+ */
+
 package org.apache.fop.rtf.rtflib.rtfdoc;
 
 import java.io.Writer;
@@ -64,7 +70,7 @@ public class RtfOptions
 {
     /** if true, RtfParagraphs that have no children do not generate any RTF code */
     public boolean ignoreEmptyParagraphs() { return true; }
-    
+
     /** RtfContainer does not generate any RTF is this returns false */
     public boolean renderContainer(RtfContainer c) { return true; }
 }

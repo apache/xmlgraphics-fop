@@ -43,13 +43,19 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ============================================================================
  *
- * The RTF library of the FOP project consists of voluntary contributions made by
- * many individuals on behalf of the Apache Software Foundation and was originally
- * created by Bertrand Delacretaz <bdelacretaz@codeconsult.ch> and contributors of
- * the jfor project (www.jfor.org), who agreed to donate jfor to the FOP project.
- * For more information on the Apache Software Foundation, please
- * see <http://www.apache.org/>.
+ * This software consists of voluntary contributions made by many individuals
+ * on behalf of the Apache Software Foundation and was originally created by
+ * James Tauber <jtauber@jtauber.com>. For more information on the Apache
+ * Software Foundation, please see <http://www.apache.org/>.
  */
+
+/*
+ * This file is part of the RTF library of the FOP project, which was originally
+ * created by Bertrand Delacretaz <bdelacretaz@codeconsult.ch> and by other
+ * contributors to the jfor project (www.jfor.org), who agreed to donate jfor to
+ * the FOP project.
+ */
+
 package org.apache.fop.rtf.rtflib.rtfdoc;
 
 import java.io.Writer;
@@ -64,13 +70,13 @@ extends RtfContainer
     private RtfPage m_currentPage;
     private RtfNull nullChild;
     private RtfAttributes childAttributes;
-    
+
     /** Create an RTF element as a child of given container */
     RtfPageArea(RtfFile f,Writer w) throws IOException
     {
         super(f,w);
     }
-    
+
     /** close current Rtfpage if any and create a new one */
     public RtfPage newPage(RtfAttributes attr) throws IOException
     {
@@ -81,7 +87,7 @@ extends RtfContainer
 
         return m_currentPage;
     }
-	
+
 	protected boolean okToWriteRtf()
 	{
 		return true;

@@ -43,13 +43,19 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ============================================================================
  *
- * The RTF library of the FOP project consists of voluntary contributions made by
- * many individuals on behalf of the Apache Software Foundation and was originally
- * created by Bertrand Delacretaz <bdelacretaz@codeconsult.ch> and contributors of
- * the jfor project (www.jfor.org), who agreed to donate jfor to the FOP project.
- * For more information on the Apache Software Foundation, please
- * see <http://www.apache.org/>.
+ * This software consists of voluntary contributions made by many individuals
+ * on behalf of the Apache Software Foundation and was originally created by
+ * James Tauber <jtauber@jtauber.com>. For more information on the Apache
+ * Software Foundation, please see <http://www.apache.org/>.
  */
+
+/*
+ * This file is part of the RTF library of the FOP project, which was originally
+ * created by Bertrand Delacretaz <bdelacretaz@codeconsult.ch> and by other
+ * contributors to the jfor project (www.jfor.org), who agreed to donate jfor to
+ * the FOP project.
+ */
+
 package org.apache.fop.rtf.rtflib.rtfdoc;
 
 import java.util.*;
@@ -61,20 +67,20 @@ import java.io.File;
  * Singelton of the RTF style template
  * This class belongs to the <jfor:style-template> tag processing.
  */
- 
+
 public class RtfTemplate  {
-	
+
 	/** Singelton instance */
 	private static RtfTemplate instance = null;
-	
+
 	private String templateFilePath = null;
-	
+
 	/**
 	 * Constructor.
 	 */
 	private RtfTemplate ()
 	{
-	
+
 	}
 
 
@@ -93,10 +99,10 @@ public class RtfTemplate  {
 	}
 
 
-	/** 
-	 *Set the template file and adjust tha path separator 
+	/**
+	 *Set the template file and adjust tha path separator
 	 *
-	 *@param templateFilePath The full path of the template 
+	 *@param templateFilePath The full path of the template
 	 **/
 	public void setTemplateFilePath(String templateFilePath) throws IOException {
 		// no validity checks here - leave this to the RTF client
@@ -115,12 +121,12 @@ public class RtfTemplate  {
 	public void writeTemplate (RtfHeader header) throws IOException
 	{
 		if (templateFilePath == null || templateFilePath.length() == 0) return;
-		
+
 		header.writeGroupMark (true);
 		header.writeControlWord ("template");
 		header.writeRtfString(this.templateFilePath);
 		header.writeGroupMark (false);
-		
+
 		header.writeGroupMark (true);
 		header.writeControlWord ("linkstyles");
 		header.writeGroupMark (false);

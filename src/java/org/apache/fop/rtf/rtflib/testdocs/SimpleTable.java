@@ -43,13 +43,19 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ============================================================================
  *
- * The RTF library of the FOP project consists of voluntary contributions made by
- * many individuals on behalf of the Apache Software Foundation and was originally
- * created by Bertrand Delacretaz <bdelacretaz@codeconsult.ch> and contributors of
- * the jfor project (www.jfor.org), who agreed to donate jfor to the FOP project.
- * For more information on the Apache Software Foundation, please
- * see <http://www.apache.org/>.
+ * This software consists of voluntary contributions made by many individuals
+ * on behalf of the Apache Software Foundation and was originally created by
+ * James Tauber <jtauber@jtauber.com>. For more information on the Apache
+ * Software Foundation, please see <http://www.apache.org/>.
  */
+
+/*
+ * This file is part of the RTF library of the FOP project, which was originally
+ * created by Bertrand Delacretaz <bdelacretaz@codeconsult.ch> and by other
+ * contributors to the jfor project (www.jfor.org), who agreed to donate jfor to
+ * the FOP project.
+ */
+
 package org.apache.fop.rtf.rtflib.testdocs;
 
 import java.util.Date;
@@ -66,14 +72,14 @@ class SimpleTable extends TestDocument {
         final RtfTable tbl = sect.newTable(new DummyTableColumnsInfo());
         final int MAX_ROW = 2;
         final int MAX_COL = 3;
-        
+
         final int INCH_TO_TWIPS = 1440;
         final int c1w = 4;
         tbl.newTableRow().newTableCell(c1w * INCH_TO_TWIPS).newParagraph().newText("Here's a table row with just one cell, width " + c1w + "''");
-        
+
         for(int row=0; row < MAX_ROW; row++) {
             final RtfTableRow r = tbl.newTableRow();
-            
+
             for(int col=0; col < MAX_COL; col++) {
                 final float widthInInches = col / 2f + 1f;
                 final int widthInTwips = (int)(widthInInches * INCH_TO_TWIPS);
@@ -86,7 +92,7 @@ class SimpleTable extends TestDocument {
                 }
             }
         }
-        
+
         sect.newParagraph().newText("This paragraph follows the table.");
     }
 }

@@ -43,13 +43,19 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ============================================================================
  *
- * The RTF library of the FOP project consists of voluntary contributions made by
- * many individuals on behalf of the Apache Software Foundation and was originally
- * created by Bertrand Delacretaz <bdelacretaz@codeconsult.ch> and contributors of
- * the jfor project (www.jfor.org), who agreed to donate jfor to the FOP project.
- * For more information on the Apache Software Foundation, please
- * see <http://www.apache.org/>.
+ * This software consists of voluntary contributions made by many individuals
+ * on behalf of the Apache Software Foundation and was originally created by
+ * James Tauber <jtauber@jtauber.com>. For more information on the Apache
+ * Software Foundation, please see <http://www.apache.org/>.
  */
+
+/*
+ * This file is part of the RTF library of the FOP project, which was originally
+ * created by Bertrand Delacretaz <bdelacretaz@codeconsult.ch> and by other
+ * contributors to the jfor project (www.jfor.org), who agreed to donate jfor to
+ * the FOP project.
+ */
+
 package org.apache.fop.rtf.rtflib.rtfdoc;
 
 import java.util.Iterator;
@@ -62,7 +68,7 @@ import java.util.StringTokenizer;
 class WhitespaceCollapser {
     private final static String SPACE = " ";
     private boolean m_lastEndSpace = true;
-    
+
     /** remove extra whitespace in RtfText elements that are inside c */
     WhitespaceCollapser(RtfContainer c) {
         // process all texts
@@ -78,11 +84,11 @@ class WhitespaceCollapser {
             }
         }
     }
-    
+
     /** process one RtfText from our container */
     private void processText(RtfText txt) {
         final String orig = txt.getText();
-        
+
         // tokenize the text based on whitespace and regenerate it so as
         // to collapse multiple spaces into one
         if(orig != null && orig.length() > 0) {
@@ -90,7 +96,7 @@ class WhitespaceCollapser {
             final boolean endSpace = allSpaces || Character.isWhitespace(orig.charAt(orig.length() - 1));
             final boolean beginSpace = Character.isWhitespace(orig.charAt(0));
             final StringBuffer sb = new StringBuffer(orig.length());
-            
+
             // if text contains spaces only, keep at most one
             if(allSpaces) {
                 if(!m_lastEndSpace) sb.append(SPACE);
@@ -104,14 +110,14 @@ class WhitespaceCollapser {
                         sb.append(SPACE);
                     }
                     first = false;
-                    
+
                     sb.append(stk.nextToken());
                     if(stk.hasMoreTokens() || endSpace) {
                         sb.append(SPACE);
                     }
                 }
             }
-            
+
             txt.setText(sb.toString());
             m_lastEndSpace = endSpace;
         }

@@ -43,13 +43,19 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ============================================================================
  *
- * The RTF library of the FOP project consists of voluntary contributions made by
- * many individuals on behalf of the Apache Software Foundation and was originally
- * created by Bertrand Delacretaz <bdelacretaz@codeconsult.ch> and contributors of
- * the jfor project (www.jfor.org), who agreed to donate jfor to the FOP project.
- * For more information on the Apache Software Foundation, please
- * see <http://www.apache.org/>.
+ * This software consists of voluntary contributions made by many individuals
+ * on behalf of the Apache Software Foundation and was originally created by
+ * James Tauber <jtauber@jtauber.com>. For more information on the Apache
+ * Software Foundation, please see <http://www.apache.org/>.
  */
+
+/*
+ * This file is part of the RTF library of the FOP project, which was originally
+ * created by Bertrand Delacretaz <bdelacretaz@codeconsult.ch> and by other
+ * contributors to the jfor project (www.jfor.org), who agreed to donate jfor to
+ * the FOP project.
+ */
+
 package org.apache.fop.rtf.rtflib.rtfdoc;
 
 import java.io.Writer;
@@ -65,17 +71,17 @@ extends RtfContainer
 implements IRtfParagraphContainer {
     private RtfList m_parentList;
     private RtfParagraph m_paragraph;
-    
+
     /** special RtfParagraph that writes list item setup code before its content */
     private class RtfListItemParagraph extends RtfParagraph {
-        
+
         RtfListItemParagraph(RtfListItem rli,RtfAttributes attrs)
         throws IOException {
             super(rli,rli.m_writer,attrs);
         }
-        
+
         protected void writeRtfPrefix() throws IOException {
-            super.writeRtfPrefix(); 
+            super.writeRtfPrefix();
             // for bulleted list, add list item setup group before paragraph contents
             if(m_parentList.isBulletedList()) {
                 writeGroupMark(true);
@@ -90,21 +96,21 @@ implements IRtfParagraphContainer {
         		writeGroupMark(false);
         	}
         }
-        
+
     }
-    
+
     /** Create an RTF list item as a child of given container with default attributes */
     RtfListItem(RtfList parent, Writer w) throws IOException {
         super((RtfContainer)parent,w);
         m_parentList = parent;
     }
-    
+
     /** Create an RTF list item as a child of given container with given attributes */
     RtfListItem(RtfList parent, Writer w, RtfAttributes attr) throws IOException {
         super((RtfContainer)parent,w,attr);
         m_parentList = parent;
     }
-    
+
     /** close current paragraph and start a new one */
     /** close current paragraph if any and start a new one */
     public RtfParagraph newParagraph(RtfAttributes attrs) throws IOException {
@@ -112,10 +118,10 @@ implements IRtfParagraphContainer {
         m_paragraph = new RtfListItemParagraph(this,attrs);
         return m_paragraph;
     }
-    
+
     /** close current paragraph if any and start a new one with default attributes */
     public RtfParagraph newParagraph() throws IOException {
         return newParagraph(null);
     }
-    
+
 }

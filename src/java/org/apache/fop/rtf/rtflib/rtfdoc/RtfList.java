@@ -43,13 +43,19 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ============================================================================
  *
- * The RTF library of the FOP project consists of voluntary contributions made by
- * many individuals on behalf of the Apache Software Foundation and was originally
- * created by Bertrand Delacretaz <bdelacretaz@codeconsult.ch> and contributors of
- * the jfor project (www.jfor.org), who agreed to donate jfor to the FOP project.
- * For more information on the Apache Software Foundation, please
- * see <http://www.apache.org/>.
+ * This software consists of voluntary contributions made by many individuals
+ * on behalf of the Apache Software Foundation and was originally created by
+ * James Tauber <jtauber@jtauber.com>. For more information on the Apache
+ * Software Foundation, please see <http://www.apache.org/>.
  */
+
+/*
+ * This file is part of the RTF library of the FOP project, which was originally
+ * created by Bertrand Delacretaz <bdelacretaz@codeconsult.ch> and by other
+ * contributors to the jfor project (www.jfor.org), who agreed to donate jfor to
+ * the FOP project.
+ */
+
 package org.apache.fop.rtf.rtflib.rtfdoc;
 
 import java.io.Writer;
@@ -64,7 +70,7 @@ public class RtfList extends RtfContainer {
     private RtfListItem m_item;
     private RtfListTable m_listTable;
     private final boolean m_hasTableParent;
-    
+
     /** list numbering style.
      *  Could add more variables, for now we simply differentiate between bullets and numbering
      */
@@ -72,7 +78,7 @@ public class RtfList extends RtfContainer {
     public static class NumberingStyle {
         public boolean isBulletedList = true;
     }
-    
+
     /** Create an RTF list as a child of given container with given attributes */
     RtfList(RtfContainer parent, Writer w, RtfAttributes attr) throws IOException {
         super((RtfContainer)parent,w,attr);
@@ -80,34 +86,34 @@ public class RtfList extends RtfContainer {
         //create a new list table entry for the list
         m_listTable = (getRtfFile()).startListTable(attr);
         m_listTable.setParentList(this);
-        
+
         // find out if we are nested in a table
         m_hasTableParent = this.getParentOfClass(RtfTable.class) != null;
     }
-    
+
     /** change numbering style */
     public void setNumberingStyle(NumberingStyle ns) {
         m_numberingStyle = ns;
     }
-    
+
     /** overridden to setup the list: start a group with appropriate attributes */
     protected void writeRtfPrefix() throws IOException {
         // pard causes word97 (and sometimes 2000 too) to crash if the list is nested in a table
         if(!m_hasTableParent) writeControlWord("pard");
-        
+
         writeOneAttribute(RtfText.LEFT_INDENT_FIRST,m_attrib.getValue(RtfListTable.LIST_INDENT));
         writeOneAttribute(RtfText.LEFT_INDENT_BODY,m_attrib.getValue(RtfText.LEFT_INDENT_BODY));
-        
+
         // put the whole list in a group
         writeGroupMark(true);
-        
+
         // group for list setup info
         writeGroupMark(true);
-        
+
         writeStarControlWord("pn");
         //Modified by Chris Scott
         //fixes second line indentation
-        
+
         if(m_numberingStyle.isBulletedList) {
             // bulleted list
             writeControlWord("pnlvlblt");
@@ -136,22 +142,22 @@ public class RtfList extends RtfContainer {
             m_attrib.getValue(RtfListTable.LIST_INDENT));
             writeControlWord("pntxta.");
         }
-        
+
         writeGroupMark(false);
         writeOneAttribute(RtfListTable.LIST_NUMBER,
         (m_listTable.getListNumber()).toString());
     }
-    
+
     /** end the list group */
     protected void writeRtfSuffix() throws IOException {
         // close group that encloses the whole list
         writeGroupMark(false);
-        
+
         // reset paragraph defaults to make sure list ends
          // but pard causes word97 (and sometimes 2000 too) to crash if the list is nested in a table
         if(!m_hasTableParent) writeControlWord("pard");
     }
-    
+
     /** close current list item and start a new one */
     public RtfListItem newListItem() throws IOException {
         if(m_item != null) m_item.close();

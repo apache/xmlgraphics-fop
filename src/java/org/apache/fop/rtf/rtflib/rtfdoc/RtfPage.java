@@ -43,13 +43,19 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ============================================================================
  *
- * The RTF library of the FOP project consists of voluntary contributions made by
- * many individuals on behalf of the Apache Software Foundation and was originally
- * created by Bertrand Delacretaz <bdelacretaz@codeconsult.ch> and contributors of
- * the jfor project (www.jfor.org), who agreed to donate jfor to the FOP project.
- * For more information on the Apache Software Foundation, please
- * see <http://www.apache.org/>.
+ * This software consists of voluntary contributions made by many individuals
+ * on behalf of the Apache Software Foundation and was originally created by
+ * James Tauber <jtauber@jtauber.com>. For more information on the Apache
+ * Software Foundation, please see <http://www.apache.org/>.
  */
+
+/*
+ * This file is part of the RTF library of the FOP project, which was originally
+ * created by Bertrand Delacretaz <bdelacretaz@codeconsult.ch> and by other
+ * contributors to the jfor project (www.jfor.org), who agreed to donate jfor to
+ * the FOP project.
+ */
+
 package org.apache.fop.rtf.rtflib.rtfdoc;
 
 import java.io.Writer;
@@ -68,19 +74,19 @@ extends RtfContainer{
 	/**RtfPage attributes*/
 	public final static String PAGE_WIDTH = "paperw";
 	public final static String PAGE_HEIGHT = "paperh";
-	
+
 	public final static String MARGIN_TOP = "margt";
 	public final static String MARGIN_BOTTOM = "margb";
 	public final static String MARGIN_LEFT = "margl";
 	public final static String MARGIN_RIGHT = "margr";
-	
+
 	public final static String[] PAGE_ATTR = new String[]{
 		PAGE_WIDTH, PAGE_HEIGHT, MARGIN_TOP, MARGIN_BOTTOM,
 		MARGIN_LEFT, MARGIN_RIGHT
 	};
-	
+
 	/**	RtfPage creates new page attributes with the parent container, the writer
-	   	and the attributes*/ 
+	   	and the attributes*/
 	RtfPage(RtfPageArea parent, Writer w, RtfAttributes attrs) throws IOException {
 		super((RtfContainer)parent,w);
 		m_attrib = attrs;
@@ -90,31 +96,31 @@ extends RtfContainer{
 		PAGE_ATTR, if not null */
 		protected void writeRtfContent() throws IOException {
 		writeAttributes(m_attrib, PAGE_ATTR);
-        
+
         if (m_attrib != null)
         {
             Object widthRaw = m_attrib.getValue( PAGE_WIDTH );
             Object heightRaw = m_attrib.getValue( PAGE_HEIGHT );
-            
+
             if ((widthRaw instanceof Integer) && (heightRaw instanceof Integer) &&
                 ((Integer) widthRaw).intValue() > ((Integer) heightRaw).intValue())
             {
                 writeControlWord( "landscape" );
             }
-        }   
+        }
 	}
-	
+
 	/** RtfPage - attributes accessor */
 	public RtfAttributes getAttributes(){
 		return m_attrib;
 	}
-	
+
 	/** RtfPage - is overwritten here because page attributes have no content
-		only attributes. RtfContainer is defined not to write when empty.  
+		only attributes. RtfContainer is defined not to write when empty.
 		Therefore must make this true to print.*/
 	protected boolean okToWriteRtf()
 	{
 		return true;
 	}
-	
+
 }

@@ -43,13 +43,19 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ============================================================================
  *
- * The RTF library of the FOP project consists of voluntary contributions made by
- * many individuals on behalf of the Apache Software Foundation and was originally
- * created by Bertrand Delacretaz <bdelacretaz@codeconsult.ch> and contributors of
- * the jfor project (www.jfor.org), who agreed to donate jfor to the FOP project.
- * For more information on the Apache Software Foundation, please
- * see <http://www.apache.org/>.
+ * This software consists of voluntary contributions made by many individuals
+ * on behalf of the Apache Software Foundation and was originally created by
+ * James Tauber <jtauber@jtauber.com>. For more information on the Apache
+ * Software Foundation, please see <http://www.apache.org/>.
  */
+
+/*
+ * This file is part of the RTF library of the FOP project, which was originally
+ * created by Bertrand Delacretaz <bdelacretaz@codeconsult.ch> and by other
+ * contributors to the jfor project (www.jfor.org), who agreed to donate jfor to
+ * the FOP project.
+ */
+
 package org.apache.fop.rtf.rtflib.rtfdoc;
 
 
@@ -59,14 +65,14 @@ import java.util.*;
 import java.io.IOException;
 
 public class RtfParagraphKeepTogether extends RtfContainer{
-	
+
 	public static final int STATUS_NULL=0;
 	public static final int STATUS_OPEN_PARAGRAPH=1;
 	public static final int STATUS_CLOSE_PARAGRAPH=2;
 	private int m_status =STATUS_NULL;
-	
 
-	/**	RtfParagraphKeepTogether*/ 
+
+	/**	RtfParagraphKeepTogether*/
 	RtfParagraphKeepTogether(IRtfParagraphContainer parent, Writer w) throws IOException {
 		super((RtfContainer)parent,w);
 	}
@@ -80,28 +86,28 @@ public class RtfParagraphKeepTogether extends RtfContainer{
 			writeControlWord("pard");
 			writeControlWord("par");
 			writeControlWord("keepn");
-			writeGroupMark(true);    	
+			writeGroupMark(true);
 			m_status = STATUS_NULL;
 		}
 
 
 		if (m_status == STATUS_CLOSE_PARAGRAPH) {
 			writeGroupMark(false);
-			m_status = STATUS_NULL;			
+			m_status = STATUS_NULL;
 		}
 
 	}
-	
-	
+
+
 
 	public void setStatus(int status) {
-		m_status = status;	
-	}	
+		m_status = status;
+	}
 
  	/** true if this element would generate no "useful" RTF content */
     public boolean isEmpty()
     {
         return false;
     }
-	
+
 }

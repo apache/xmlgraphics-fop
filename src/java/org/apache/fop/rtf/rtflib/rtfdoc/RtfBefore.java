@@ -43,13 +43,19 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ============================================================================
  *
- * The RTF library of the FOP project consists of voluntary contributions made by
- * many individuals on behalf of the Apache Software Foundation and was originally
- * created by Bertrand Delacretaz <bdelacretaz@codeconsult.ch> and contributors of
- * the jfor project (www.jfor.org), who agreed to donate jfor to the FOP project.
- * For more information on the Apache Software Foundation, please
- * see <http://www.apache.org/>.
+ * This software consists of voluntary contributions made by many individuals
+ * on behalf of the Apache Software Foundation and was originally created by
+ * James Tauber <jtauber@jtauber.com>. For more information on the Apache
+ * Software Foundation, please see <http://www.apache.org/>.
  */
+
+/*
+ * This file is part of the RTF library of the FOP project, which was originally
+ * created by Bertrand Delacretaz <bdelacretaz@codeconsult.ch> and by other
+ * contributors to the jfor project (www.jfor.org), who agreed to donate jfor to
+ * the FOP project.
+ */
+
 package org.apache.fop.rtf.rtflib.rtfdoc;
 
 import java.io.Writer;
@@ -59,15 +65,15 @@ import java.io.IOException;
 public class RtfBefore extends RtfAfterBeforeBase {
     /**RtfBefore attributes*/
     public final static String HEADER = "header";
-    
+
     public final static String[] HEADER_ATTR = new String[]{
         HEADER
     };
-    
+
     RtfBefore(RtfSection parent, Writer w, RtfAttributes attrs) throws IOException {
         super(parent,w,attrs);
     }
-    
+
     protected void writeMyAttributes() throws IOException {
         writeAttributes(m_attrib,HEADER_ATTR);
     }
