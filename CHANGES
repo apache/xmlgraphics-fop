@@ -29,6 +29,9 @@ Done since 0.17 release
 - updated: the FOP build to fix the problems of the output location for the 
            property code generation. updated ant.jar to version 1.3, 
            added all needed jar files [Kelly Campbell] 
+- changed: cleaned up renderWordArea. removed unused code. 
+           optimized object creation a   little. [Kelly Campbell] 
+- changed: refactored FontState so it doesn't do excessive font lookups per character [Kelly Campbell] 
 - changed: Driver to make embedding Fop easier [Kelly Campbell] 
 - changed: apps package and commandline usage of Fop [Fotis Jannidis]
 - changed: adding a PrintRenderer for all print oriented renderers [Art Welch] 
@@ -47,6 +50,10 @@ Done since 0.17 release
 - fixed:  put text-anchor in the correct place [Keiron Liddle]
 - fixed: InstreamForeignObject checks for no more room in block area [Keiron Liddle]
 - fixed: false border rendering for PCL renderer [Art Welch]
+- fixed: added default producer to fix a bug where the PDF producer is set to null in the default 
+         commandline usage. [Kelly Campbell]
+- fixed: Made logging go to the same stream (out) for pages and the newline after a page 
+         sequence. The newline was previously going to the err stream. [Kelly Campbell]
 
 
 
