@@ -36,6 +36,10 @@ public class CommandLineOptions {
     private static final int MIF_OUTPUT = 3;
     /* output: sent swing rendered file to printer  */
     private static final int PRINT_OUTPUT = 4;
+    /* output: pcl file  */
+    private static final int PCL_OUTPUT = 5;
+    /* output: text file  */
+    private static final int TXT_OUTPUT = 6;
 
     /* use debug mode*/
     Boolean errorDump = null;
@@ -177,8 +181,37 @@ public class CommandLineOptions {
                         printUsagePrintOutput();
                     }
                 }
-            }
-            else if (args[i].charAt(0) != '-') {
+            } else if (args[i].equals("-pcl")) {
+                if (outputmode == NOT_SET) {
+                    outputmode = PCL_OUTPUT;
+                } else {
+                    MessageHandler.errorln("ERROR: you can only set one output method");
+                    printUsage();
+                }
+                if ((i + 1 == args.length) ||
+                        (args[i + 1].charAt(0) == '-')) {
+                    MessageHandler.errorln("ERROR: you must specify the pdf output file");
+                    printUsage();
+                } else {
+                    outfile = new File (args[i + 1]);
+                    i++;
+                }
+            } else if (args[i].equals("-txt")) {
+                if (outputmode == NOT_SET) {
+                    outputmode = TXT_OUTPUT;
+                } else {
+                    MessageHandler.errorln("ERROR: you can only set one output method");
+                    printUsage();
+                }
+                if ((i + 1 == args.length) ||
+                        (args[i + 1].charAt(0) == '-')) {
+                    MessageHandler.errorln("ERROR: you must specify the pdf output file");
+                    printUsage();
+                } else {
+                    outfile = new File (args[i + 1]);
+                    i++;
+                }
+            } else if (args[i].charAt(0) != '-') {
                 if (inputmode == NOT_SET) {
                     inputmode = FO_INPUT;
                     fofile = new File (args[i]);
@@ -272,6 +305,10 @@ public class CommandLineOptions {
                 return Driver.RENDER_MIF;
             case PRINT_OUTPUT:
                 return Driver.RENDER_PRINT;
+            case PCL_OUTPUT:
+                return Driver.RENDER_PCL;
+            case TXT_OUTPUT:
+                return Driver.RENDER_TXT;
             default:
                 throw new FOPException("Invalid Renderer setting!");
         }
@@ -411,6 +448,8 @@ public class CommandLineOptions {
           "  -pdf outfile      input will be rendered as pdf file (outfile req'd) \n" +
           "  -awt              input will be displayed on screen \n" +
           "  -mif outfile      input will be rendered as mif file (outfile req'd)\n" +
+          "  -pcl outfile      input will be rendered as pcl file (outfile req'd) \n" +
+          "  -txt outfile      input will be rendered as text file (outfile req'd) \n" +
           "  -print            input file will be rendered and sent to the printer \n" +
           "                    see options with \"-print help\" \n\n" +
           " [Examples]\n" + "  Fop foo.fo foo.pdf \n" +
@@ -482,6 +521,14 @@ public class CommandLineOptions {
                     MessageHandler.logln("ERROR: print mode, but outfile is set:");
                     MessageHandler.logln("out file: " + outfile.toString());
                 }
+                break;
+            case PCL_OUTPUT:
+                MessageHandler.logln("pcl");
+                MessageHandler.logln("output file: " + outfile.toString());
+                break;
+            case TXT_OUTPUT:
+                MessageHandler.logln("txt");
+                MessageHandler.logln("output file: " + outfile.toString());
                 break;
             default:
                 MessageHandler.logln("unknown input type");
