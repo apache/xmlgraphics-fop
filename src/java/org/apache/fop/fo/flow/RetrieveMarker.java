@@ -111,7 +111,7 @@ public class RetrieveMarker extends FObjMixed {
      * @see org.apache.fop.fo.FOTreeVisitor
      */
     public void acceptVisitor(FOTreeVisitor fotv) {
-        fotv.serveVisitor(this);
+        fotv.serveRetrieveMarker(this);
     }
 
 }

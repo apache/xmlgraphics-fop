@@ -116,7 +116,7 @@ public class RegionAfter extends RegionBA {
      * @see org.apache.fop.fo.FOTreeVisitor
      */
     public void acceptVisitor(FOTreeVisitor fotv) {
-        fotv.serveVisitor(this);
+        fotv.serveRegionAfter(this);
     }
 
 }

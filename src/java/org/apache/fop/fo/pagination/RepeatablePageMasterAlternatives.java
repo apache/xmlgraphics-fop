@@ -167,7 +167,7 @@ public class RepeatablePageMasterAlternatives extends FObj
     }
 
     public void acceptVisitor(FOTreeVisitor fotv) {
-        fotv.serveVisitor(this);
+        fotv.serveRepeatablePageMasterAlternatives(this);
     }
 
 }

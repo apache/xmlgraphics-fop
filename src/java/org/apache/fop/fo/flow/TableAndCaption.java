@@ -115,7 +115,7 @@ public class TableAndCaption extends ToBeImplementedElement {
     }
 
     public void acceptVisitor(FOTreeVisitor fotv) {
-        fotv.serveVisitor(this);
+        fotv.serveTableAndCaption(this);
     }
 
 }

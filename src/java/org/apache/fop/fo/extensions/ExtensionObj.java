@@ -69,7 +69,7 @@ public abstract class ExtensionObj extends FObj {
     }
 
     public void acceptVisitor(FOTreeVisitor fotv) {
-        fotv.serveVisitor(this);
+        fotv.serveExtensionObj(this);
     }
 
 }

@@ -154,7 +154,7 @@ public class BasicLink extends Inline {
      * @see org.apache.fop.fo.FOTreeVisitor
      */
     public void acceptVisitor(FOTreeVisitor fotv) {
-        fotv.serveVisitor(this);
+        fotv.serveBasicLink(this);
     }
 
 }

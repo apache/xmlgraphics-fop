@@ -105,7 +105,7 @@ public class InitialPropertySet extends ToBeImplementedElement {
     }
 
     public void acceptVisitor(FOTreeVisitor fotv) {
-        fotv.serveVisitor(this);
+        fotv.serveInitialPropertySet(this);
     }
 
 }

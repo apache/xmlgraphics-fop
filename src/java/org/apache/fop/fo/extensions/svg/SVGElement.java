@@ -313,7 +313,7 @@ public class SVGElement extends SVGObj {
     }
 
     public void acceptVisitor(FOTreeVisitor fotv) {
-        fotv.serveVisitor(this);
+        fotv.serveSVGElement(this);
     }
 
 }

@@ -199,7 +199,7 @@ public class ConditionalPageMasterReference extends FObj {
     }
 
     public void acceptVisitor(FOTreeVisitor fotv) {
-        fotv.serveVisitor(this);
+        fotv.serveConditionalPageMasterReference(this);
     }
 
 }

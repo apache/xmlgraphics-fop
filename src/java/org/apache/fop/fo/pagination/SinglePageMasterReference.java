@@ -96,7 +96,7 @@ public class SinglePageMasterReference extends PageMasterReference
     }
 
     public void acceptVisitor(FOTreeVisitor fotv) {
-        fotv.serveVisitor(this);
+        fotv.serveSinglePageMasterReference(this);
     }
 
 }

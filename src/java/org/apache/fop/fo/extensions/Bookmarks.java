@@ -94,7 +94,7 @@ public class Bookmarks extends ExtensionObj {
     }
 
     public void acceptVisitor(FOTreeVisitor fotv) {
-        fotv.serveVisitor(this);
+        fotv.serveBookmarks(this);
     }
 
     public ArrayList getOutlines() {

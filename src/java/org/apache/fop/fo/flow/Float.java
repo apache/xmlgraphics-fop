@@ -76,7 +76,7 @@ public class Float extends ToBeImplementedElement {
     }
 
     public void acceptVisitor(FOTreeVisitor fotv) {
-        fotv.serveVisitor(this);
+        fotv.serveFloat(this);
     }
 
 }

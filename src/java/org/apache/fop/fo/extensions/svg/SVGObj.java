@@ -77,7 +77,7 @@ public class SVGObj extends XMLObj {
     }
 
     public void acceptVisitor(FOTreeVisitor fotv) {
-        fotv.serveVisitor(this);
+        fotv.serveSVGObj(this);
     }
 
 }

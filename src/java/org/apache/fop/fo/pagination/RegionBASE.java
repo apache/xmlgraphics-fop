@@ -85,7 +85,7 @@ public abstract class RegionBASE extends Region {
     }
 
     public void acceptVisitor(FOTreeVisitor fotv) {
-        fotv.serveVisitor(this);
+        fotv.serveRegionBASE(this);
     }
 
 }

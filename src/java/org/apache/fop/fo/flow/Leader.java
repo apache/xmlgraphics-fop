@@ -205,7 +205,7 @@ public class Leader extends FObjMixed {
      * @see org.apache.fop.fo.FOTreeVisitor
      */
     public void acceptVisitor(FOTreeVisitor fotv) {
-        fotv.serveVisitor(this);
+        fotv.serveLeader(this);
     }
 
 }

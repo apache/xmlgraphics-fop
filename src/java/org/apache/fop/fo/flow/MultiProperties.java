@@ -79,7 +79,7 @@ public class MultiProperties extends ToBeImplementedElement {
     }
 
     public void acceptVisitor(FOTreeVisitor fotv) {
-        fotv.serveVisitor(this);
+        fotv.serveMultiProperties(this);
     }
 
 }

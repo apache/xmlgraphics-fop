@@ -80,7 +80,7 @@ public class Wrapper extends FObjMixed {
     }
 
     public void acceptVisitor(FOTreeVisitor fotv) {
-        fotv.serveVisitor(this);
+        fotv.serveWrapper(this);
     }
 
 }

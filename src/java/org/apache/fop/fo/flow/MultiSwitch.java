@@ -80,7 +80,7 @@ public class MultiSwitch extends ToBeImplementedElement {
     }
 
     public void acceptVisitor(FOTreeVisitor fotv) {
-        fotv.serveVisitor(this);
+        fotv.serveMultiSwitch(this);
     }
 
 }

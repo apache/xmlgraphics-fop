@@ -76,7 +76,7 @@ public class MultiPropertySet extends ToBeImplementedElement {
     }
 
     public void acceptVisitor(FOTreeVisitor fotv) {
-        fotv.serveVisitor(this);
+        fotv.serveMultiPropertySet(this);
     }
 
 }

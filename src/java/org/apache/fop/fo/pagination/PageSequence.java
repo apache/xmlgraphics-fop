@@ -718,7 +718,7 @@ public class PageSequence extends FObj {
      * @param fotv the FOTreeVisitor object accessing this node of the FO Tree
      */
     public void acceptVisitor(FOTreeVisitor fotv) {
-        fotv.serveVisitor(this);
+        fotv.servePageSequence(this);
     }
 
     /**

@@ -119,7 +119,7 @@ public abstract class RegionBA extends RegionBASE {
     }
 
     public void acceptVisitor(FOTreeVisitor fotv) {
-        fotv.serveVisitor(this);
+        fotv.serveRegionBA(this);
     }
 
 }

@@ -123,7 +123,7 @@ import org.apache.fop.fo.extensions.svg.SVGElement;
  * hierarchy without knowing what subclass of FONode is being accessed.
  * To preserve inheritance, and simulate the polymorphism that would exist if
  * the subclass methods were embedded in the visited hierarchy, the default for
- * each method (except serveVisitor(FONode)) is to run the the visitXXXX method
+ * each method (except serveFONode(FONode)) is to run the the serveXXXX method
  * that corresponds to the superclass of the FOTree child element. Thus, any
  * method that is overridden in a subclass of FOTreeVisitor will affect not only
  * FOTree elements of the class that method was written for, but also all
@@ -131,543 +131,392 @@ import org.apache.fop.fo.extensions.svg.SVGElement;
  * <p>Caveat: Because there appears to be no way for one
  * object to cast objects from another class to their superclass, this
  * superclass logic has been hard-coded into FOTreeVisitor. So, for example,
- * serveVisitor(FObj) runs the following:</p>
- * <pre><code>    serveVisitor((FONode)node);</code></pre>
+ * serveFObj(FObj) runs the following:</p>
+ * <pre><code>    serveFONode((FONode)node);</code></pre>
  * <p>If FObj ceases to be a direct subclass of FONode, then the above may cause
  * problems.</p>
  */
-public abstract class FOTreeVisitor {
+public interface FOTreeVisitor {
 
     /**
      * @param node FONode object to process
      */
-    public void serveVisitor(FONode node) {
-    }
+    public void serveFONode(FONode node);
 
     /**
      * @param node FObj object to process
      */
-    public void serveVisitor(FObj node) {
-        serveVisitor((FONode)node);
-    }
+    public void serveFObj(FObj node);
 
     /**
      * @param node BlockContainer object to process
      */
-    public void serveVisitor(BlockContainer node) {
-        serveVisitor((FObj)node);
-    }
+    public void serveBlockContainer(BlockContainer node);
 
     /**
      * @param node Character object to process
      */
-    public void serveVisitor(Character node) {
-        serveVisitor((FObj)node);
-    }
+    public void serveCharacter(Character node);
 
     /**
      * @param node ColorProfile object to process
      */
-    public void serveVisitor(ColorProfile node) {
-        serveVisitor((FObj)node);
-    }
+    public void serveColorProfile(ColorProfile node);
 
     /**
      * @param node ConditionalPageMasterReference object to process
      */
-    public void serveVisitor(ConditionalPageMasterReference node) {
-        serveVisitor((FObj)node);
-    }
+    public void serveConditionalPageMasterReference(ConditionalPageMasterReference node);
 
     /**
      * @param node Declarations object to process
      */
-    public void serveVisitor(Declarations node) {
-        serveVisitor((FObj)node);
-    }
+    public void serveDeclarations(Declarations node);
 
     /**
      * @param node ExtensionObj object to process
      */
-    public void serveVisitor(ExtensionObj node) {
-        serveVisitor((FObj)node);
-    }
+    public void serveExtensionObj(ExtensionObj node);
 
     /**
      * @param node Bookmarks object to process
      */
-    public void serveVisitor(Bookmarks node) {
-        serveVisitor((ExtensionObj)node);
-    }
+    public void serveBookmarks(Bookmarks node);
 
     /**
      * @param node Label object to process
      */
-    public void serveVisitor(Label node) {
-        serveVisitor((ExtensionObj)node);
-    }
+    public void serveLabel(Label node);
 
     /**
      * @param node Outline object to process
      */
-    public void serveVisitor(Outline node) {
-        serveVisitor((ExtensionObj)node);
-    }
+    public void serveOutline(Outline node);
 
     /**
      * @param node ExternalGraphic object to process
      */
-    public void serveVisitor(ExternalGraphic node) {
-        serveVisitor((FObj)node);
-    }
+    public void serveExternalGraphic(ExternalGraphic node);
 
     /**
      * @param node Flow object to process
      */
-    public void serveVisitor(Flow node) {
-        serveVisitor((FObj)node);
-    }
+    public void serveFlow(Flow node);
 
     /**
      * @param node StaticContent object to process
      */
-    public void serveVisitor(StaticContent node) {
-        serveVisitor((Flow)node);
-    }
+    public void serveStaticContent(StaticContent node);
 
     /**
      * @param node FObjMixed object to process
      */
-    public void serveVisitor(FObjMixed node) {
-        serveVisitor((FObj)node);
-    }
+    public void serveFObjMixed(FObjMixed node);
 
     /**
      * @param node BidiOverride object to process
      */
-    public void serveVisitor(BidiOverride node) {
-        serveVisitor((FObjMixed)node);
-    }
+    public void serveBidiOverride(BidiOverride node);
 
     /**
      * @param node Block object to process
      */
-    public void serveVisitor(Block node) {
-        serveVisitor((FObjMixed)node);
-    }
+    public void serveBlock(Block node);
 
     /**
      * @param node Inline object to process
      */
-    public void serveVisitor(Inline node) {
-        serveVisitor((FObjMixed)node);
-    }
+    public void serveInline(Inline node);
 
     /**
      * @param node BasicLink object to process
      */
-    public void serveVisitor(BasicLink node) {
-        serveVisitor((Inline)node);
-    }
+    public void serveBasicLink(BasicLink node);
 
     /**
      * @param node Leader object to process
      */
-    public void serveVisitor(Leader node) {
-        serveVisitor((FObjMixed)node);
-    }
+    public void serveLeader(Leader node);
 
     /**
      * @param node Marker object to process
      */
-    public void serveVisitor(Marker node) {
-        serveVisitor((FObjMixed)node);
-    }
+    public void serveMarker(Marker node);
 
     /**
      * @param node RetrieveMarker object to process
      */
-    public void serveVisitor(RetrieveMarker node) {
-        serveVisitor((FObjMixed)node);
-    }
+    public void serveRetrieveMarker(RetrieveMarker node);
 
     /**
      * @param node Title object to process
      */
-    public void serveVisitor(Title node) {
-        serveVisitor((FObjMixed)node);
-    }
+    public void serveTitle(Title node);
 
     /**
      * @param node Wrapper object to process
      */
-    public void serveVisitor(Wrapper node) {
-        serveVisitor((FObjMixed)node);
-    }
+    public void serveWrapper(Wrapper node);
 
     /**
      * @param node Footnote object to process
      */
-    public void serveVisitor(Footnote node) {
-        serveVisitor((FObj)node);
-    }
+    public void serveFootnote(Footnote node);
 
     /**
      * @param node FootnoteBody object to process
      */
-    public void serveVisitor(FootnoteBody node) {
-        serveVisitor((FObj)node);
-    }
+    public void serveFootnoteBody(FootnoteBody node);
 
     /**
      * @param node FOText object to process
      */
-    public void serveVisitor(FOText node) {
-        serveVisitor((FObj)node);
-    }
+    public void serveFOText(FOText node);
 
     /**
      * @param node InlineContainer object to process
      */
-    public void serveVisitor(InlineContainer node) {
-        serveVisitor((FObj)node);
-    }
+    public void serveInlineContainer(InlineContainer node);
 
     /**
      * @param node InstreamForeignObject object to process
      */
-    public void serveVisitor(InstreamForeignObject node) {
-        serveVisitor((FObj)node);
-    }
+    public void serveInstreamForeignObject(InstreamForeignObject node);
 
     /**
      * @param node LayoutMasterSet object to process
      */
-    public void serveVisitor(LayoutMasterSet node) {
-        serveVisitor((FObj)node);
-    }
+    public void serveLayoutMasterSet(LayoutMasterSet node);
 
     /**
      * @param node ListBlock object to process
      */
-    public void serveVisitor(ListBlock node) {
-        serveVisitor((FObj)node);
-    }
+    public void serveListBlock(ListBlock node);
 
     /**
      * @param node ListItem object to process
      */
-    public void serveVisitor(ListItem node) {
-        serveVisitor((FObj)node);
-    }
+    public void serveListItem(ListItem node);
 
     /**
      * @param node ListItemBody object to process
      */
-    public void serveVisitor(ListItemBody node) {
-        serveVisitor((FObj)node);
-    }
+    public void serveListItemBody(ListItemBody node);
 
     /**
      * @param node ListItemLabel object to process
      */
-    public void serveVisitor(ListItemLabel node) {
-        serveVisitor((FObj)node);
-    }
+    public void serveListItemLabel(ListItemLabel node);
 
     /**
      * @param node PageMasterReference object to process
      */
-    public void serveVisitor(PageMasterReference node) {
-        serveVisitor((FObj)node);
-    }
+    public void servePageMasterReference(PageMasterReference node);
 
     /**
      * @param node RepeatablePageMasterReference object to process
      */
-    public void serveVisitor(RepeatablePageMasterReference node) {
-        serveVisitor((PageMasterReference)node);
-    }
+    public void serveRepeatablePageMasterReference(RepeatablePageMasterReference node);
 
     /**
      * @param node SinglePageMasterReference object to process
      */
-    public void serveVisitor(SinglePageMasterReference node) {
-        serveVisitor((PageMasterReference)node);
-    }
+    public void serveSinglePageMasterReference(SinglePageMasterReference node);
 
     /**
      * @param node PageNumber object to process
      */
-    public void serveVisitor(PageNumber node) {
-        serveVisitor((FObj)node);
-    }
+    public void servePageNumber(PageNumber node);
 
     /**
      * @param node PageNumberCitation object to process
      */
-    public void serveVisitor(PageNumberCitation node) {
-        serveVisitor((FObj)node);
-    }
+    public void servePageNumberCitation(PageNumberCitation node);
 
     /**
      * @param node PageSequence object to process
      */
-    public void serveVisitor(PageSequence node) {
-        serveVisitor((FObj)node);
-    }
+    public void servePageSequence(PageSequence node);
 
     /**
      * @param node PageSequenceMaster object to process
      */
-    public void serveVisitor(PageSequenceMaster node) {
-        serveVisitor((FObj)node);
-    }
+    public void servePageSequenceMaster(PageSequenceMaster node);
 
     /**
      * @param node Region object to process
      */
-    public void serveVisitor(Region node) {
-        serveVisitor((FObj)node);
-    }
+    public void serveRegion(Region node);
 
     /**
      * @param node RegionBASE object to process
      */
-    public void serveVisitor(RegionBASE node) {
-        serveVisitor((Region)node);
-    }
+    public void serveRegionBASE(RegionBASE node);
 
     /**
      * @param node RegionBA object to process
      */
-    public void serveVisitor(RegionBA node) {
-        serveVisitor((RegionBASE)node);
-    }
+    public void serveRegionBA(RegionBA node);
 
     /**
      * @param node RegionAfter object to process
      */
-    public void serveVisitor(RegionAfter node) {
-        serveVisitor((RegionBA)node);
-    }
+    public void serveRegionAfter(RegionAfter node);
 
     /**
      * @param node RegionBefore object to process
      */
-    public void serveVisitor(RegionBefore node) {
-        serveVisitor((RegionBA)node);
-    }
+    public void serveRegionBefore(RegionBefore node);
 
     /**
      * @param node RegionSE object to process
      */
-    public void serveVisitor(RegionSE node) {
-        serveVisitor((RegionBASE)node);
-    }
+    public void serveRegionSE(RegionSE node);
 
     /**
      * @param node RegionEnd object to process
      */
-    public void serveVisitor(RegionEnd node) {
-        serveVisitor((RegionSE)node);
-    }
+    public void serveRegionEnd(RegionEnd node);
 
     /**
      * @param node RegionStart object to process
      */
-    public void serveVisitor(RegionStart node) {
-        serveVisitor((RegionSE)node);
-    }
+    public void serveRegionStart(RegionStart node);
 
     /**
      * @param node RegionBody object to process
      */
-    public void serveVisitor(RegionBody node) {
-        serveVisitor((Region)node);
-    }
+    public void serveRegionBody(RegionBody node);
 
     /**
      * @param node RepeatablePageMasterAlternatives object to process
      */
-    public void serveVisitor(RepeatablePageMasterAlternatives node) {
-        serveVisitor((FObj)node);
-    }
+    public void serveRepeatablePageMasterAlternatives(RepeatablePageMasterAlternatives node);
 
     /**
      * @param node Root object to process
      */
-    public void serveVisitor(Root node) {
-        serveVisitor((FObj)node);
-    }
+    public void serveRoot(Root node);
 
     /**
      * @param node SimplePageMaster object to process
      */
-    public void serveVisitor(SimplePageMaster node) {
-        serveVisitor((FObj)node);
-    }
+    public void serveSimplePageMaster(SimplePageMaster node);
 
     /**
      * @param node Table object to process
      */
-    public void serveVisitor(Table node) {
-        serveVisitor((FObj)node);
-    }
+    public void serveTable(Table node);
 
     /**
      * @param node TableBody object to process
      */
-    public void serveVisitor(TableBody node) {
-        serveVisitor((FObj)node);
-    }
+    public void serveTableBody(TableBody node);
 
     /**
      * @param node TableFooter object to process
      */
-    public void serveVisitor(TableFooter node) {
-        serveVisitor((TableBody)node);
-    }
+    public void serveTableFooter(TableFooter node);
 
     /**
      * @param node TableHeader object to process
      */
-    public void serveVisitor(TableHeader node) {
-        serveVisitor((TableBody)node);
-    }
+    public void serveTableHeader(TableHeader node);
 
     /**
      * @param node TableCell object to process
      */
-    public void serveVisitor(TableCell node) {
-        serveVisitor((FObj)node);
-    }
+    public void serveTableCell(TableCell node);
 
     /**
      * @param node TableColumn object to process
      */
-    public void serveVisitor(TableColumn node) {
-        serveVisitor((FObj)node);
-    }
+    public void serveTableColumn(TableColumn node);
 
     /**
      * @param node TableRow object to process
      */
-    public void serveVisitor(TableRow node) {
-        serveVisitor((FObj)node);
-    }
+    public void serveTableRow(TableRow node);
 
     /**
      * @param node ToBeImplementedElement object to process
      */
-    public void serveVisitor(ToBeImplementedElement node) {
-        serveVisitor((FObj)node);
-    }
+    public void serveToBeImplementedElement(ToBeImplementedElement node);
 
     /**
      * @param node Float object to process
      */
-    public void serveVisitor(Float node) {
-        serveVisitor((ToBeImplementedElement)node);
-    }
+    public void serveFloat(Float node);
 
     /**
      * @param node InitialPropertySet object to process
      */
-    public void serveVisitor(InitialPropertySet node) {
-        serveVisitor((ToBeImplementedElement)node);
-    }
+    public void serveInitialPropertySet(InitialPropertySet node);
 
     /**
      * @param node MultiCase object to process
      */
-    public void serveVisitor(MultiCase node) {
-        serveVisitor((ToBeImplementedElement)node);
-    }
+    public void serveMultiCase(MultiCase node);
 
     /**
      * @param node MultiProperties object to process
      */
-    public void serveVisitor(MultiProperties node) {
-        serveVisitor((ToBeImplementedElement)node);
-    }
+    public void serveMultiProperties(MultiProperties node);
 
     /**
      * @param node MultiPropertySet object to process
      */
-    public void serveVisitor(MultiPropertySet node) {
-        serveVisitor((ToBeImplementedElement)node);
-    }
+    public void serveMultiPropertySet(MultiPropertySet node);
 
     /**
      * @param node MultiSwitch object to process
      */
-    public void serveVisitor(MultiSwitch node) {
-        serveVisitor((ToBeImplementedElement)node);
-    }
+    public void serveMultiSwitch(MultiSwitch node);
 
     /**
      * @param node MultiToggle object to process
      */
-    public void serveVisitor(MultiToggle node) {
-        serveVisitor((ToBeImplementedElement)node);
-    }
+    public void serveMultiToggle(MultiToggle node);
 
     /**
      * @param node TableAndCaption object to process
      */
-    public void serveVisitor(TableAndCaption node) {
-        serveVisitor((ToBeImplementedElement)node);
-    }
+    public void serveTableAndCaption(TableAndCaption node);
 
     /**
      * @param node TableCaption object to process
      */
-    public void serveVisitor(TableCaption node) {
-        serveVisitor((ToBeImplementedElement)node);
-    }
+    public void serveTableCaption(TableCaption node);
 
     /**
      * @param node Unknown object to process
      */
-    public void serveVisitor(Unknown node) {
-        serveVisitor((FONode)node);
-    }
+    public void serveUnknown(Unknown node);
 
     /**
      * @param node XMLObj object to process
      */
-    public void serveVisitor(XMLObj node) {
-        serveVisitor((FONode)node);
-    }
+    public void serveXMLObj(XMLObj node);
 
     /**
      * @param node SVGObj object to process
      */
-    public void serveVisitor(SVGObj node) {
-        serveVisitor((XMLObj)node);
-    }
+    public void serveSVGObj(SVGObj node);
 
     /**
      * @param node SVGElement object to process
      */
-    public void serveVisitor(SVGElement node) {
-        serveVisitor((SVGObj)node);
-    }
+    public void serveSVGElement(SVGElement node);
 
     /**
      * @param node UnknownXMLObj object to process
      */
-    public void serveVisitor(UnknownXMLObj node) {
-        serveVisitor((XMLObj)node);
-    }
+    public void serveUnknownXMLObj(UnknownXMLObj node);
 
     /**
      * @param node XMLElement object to process
      */
-    public void serveVisitor(XMLElement node) {
-        serveVisitor((XMLObj)node);
-    }
+    public void serveXMLElement(XMLElement node);
 
 }
 

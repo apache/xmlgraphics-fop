@@ -51,82 +51,121 @@
 
 package org.apache.fop.layoutmgr;
 
-import org.apache.fop.apps.Document;
+import java.awt.geom.Point2D;
+import java.awt.geom.Rectangle2D;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.ListIterator;
 
+
+import org.apache.fop.apps.Document;
 import org.apache.fop.area.LinkResolver;
 import org.apache.fop.area.PageViewport;
 import org.apache.fop.area.Resolveable;
 import org.apache.fop.area.Trait;
-import org.apache.fop.area.inline.InlineArea;
-import org.apache.fop.area.inline.InlineParent;
 import org.apache.fop.area.inline.FilledArea;
 import org.apache.fop.area.inline.ForeignObject;
+import org.apache.fop.area.inline.Image;
+import org.apache.fop.area.inline.InlineArea;
+import org.apache.fop.area.inline.InlineParent;
 import org.apache.fop.area.inline.Space;
 import org.apache.fop.area.inline.UnresolvedPageNumber;
-import org.apache.fop.area.inline.Word;
-import org.apache.fop.area.inline.Image;
 import org.apache.fop.area.inline.Viewport;
-
+import org.apache.fop.area.inline.Word;
 import org.apache.fop.datatypes.Length;
-
+import org.apache.fop.fo.FONode;
+import org.apache.fop.fo.FOText;
 import org.apache.fop.fo.FOTreeVisitor;
 import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.FObjMixed;
-import org.apache.fop.fo.FONode;
-import org.apache.fop.fo.FOText;
 import org.apache.fop.fo.TextInfo;
+import org.apache.fop.fo.ToBeImplementedElement;
+import org.apache.fop.fo.Unknown;
+import org.apache.fop.fo.UnknownXMLObj;
+import org.apache.fop.fo.XMLElement;
 import org.apache.fop.fo.XMLObj;
-import org.apache.fop.fo.flow.BidiOverride;
-import org.apache.fop.fo.flow.Inline;
+import org.apache.fop.fo.extensions.Bookmarks;
+import org.apache.fop.fo.extensions.ExtensionObj;
+import org.apache.fop.fo.extensions.Label;
+import org.apache.fop.fo.extensions.Outline;
+import org.apache.fop.fo.extensions.svg.SVGElement;
+import org.apache.fop.fo.extensions.svg.SVGObj;
 import org.apache.fop.fo.flow.BasicLink;
+import org.apache.fop.fo.flow.BidiOverride;
 import org.apache.fop.fo.flow.Block;
-import org.apache.fop.fo.flow.Leader;
-import org.apache.fop.fo.flow.RetrieveMarker;
+import org.apache.fop.fo.flow.BlockContainer;
 import org.apache.fop.fo.flow.Character;
 import org.apache.fop.fo.flow.ExternalGraphic;
-import org.apache.fop.fo.flow.BlockContainer;
+import org.apache.fop.fo.flow.Float;
 import org.apache.fop.fo.flow.Footnote;
+import org.apache.fop.fo.flow.FootnoteBody;
+import org.apache.fop.fo.flow.InitialPropertySet;
+import org.apache.fop.fo.flow.Inline;
+import org.apache.fop.fo.flow.InlineContainer;
+import org.apache.fop.fo.flow.InstreamForeignObject;
+import org.apache.fop.fo.flow.Leader;
 import org.apache.fop.fo.flow.ListBlock;
+import org.apache.fop.fo.flow.ListItem;
 import org.apache.fop.fo.flow.ListItemBody;
 import org.apache.fop.fo.flow.ListItemLabel;
-import org.apache.fop.fo.flow.InstreamForeignObject;
-import org.apache.fop.fo.flow.InlineContainer;
-import org.apache.fop.fo.flow.ListItem;
+import org.apache.fop.fo.flow.Marker;
+import org.apache.fop.fo.flow.MultiCase;
+import org.apache.fop.fo.flow.MultiProperties;
+import org.apache.fop.fo.flow.MultiPropertySet;
+import org.apache.fop.fo.flow.MultiSwitch;
+import org.apache.fop.fo.flow.MultiToggle;
 import org.apache.fop.fo.flow.PageNumber;
 import org.apache.fop.fo.flow.PageNumberCitation;
+import org.apache.fop.fo.flow.RetrieveMarker;
 import org.apache.fop.fo.flow.Table;
+import org.apache.fop.fo.flow.TableAndCaption;
 import org.apache.fop.fo.flow.TableBody;
+import org.apache.fop.fo.flow.TableCaption;
 import org.apache.fop.fo.flow.TableCell;
 import org.apache.fop.fo.flow.TableColumn;
+import org.apache.fop.fo.flow.TableFooter;
+import org.apache.fop.fo.flow.TableHeader;
 import org.apache.fop.fo.flow.TableRow;
+import org.apache.fop.fo.flow.Wrapper;
+import org.apache.fop.fo.pagination.ColorProfile;
+import org.apache.fop.fo.pagination.ConditionalPageMasterReference;
+import org.apache.fop.fo.pagination.Declarations;
 import org.apache.fop.fo.pagination.Flow;
-
-import org.apache.fop.fo.properties.LeaderPattern;
-import org.apache.fop.fo.properties.CommonBorderAndPadding;
+import org.apache.fop.fo.pagination.LayoutMasterSet;
+import org.apache.fop.fo.pagination.PageMasterReference;
+import org.apache.fop.fo.pagination.PageSequence;
+import org.apache.fop.fo.pagination.PageSequenceMaster;
+import org.apache.fop.fo.pagination.Region;
+import org.apache.fop.fo.pagination.RegionAfter;
+import org.apache.fop.fo.pagination.RegionBA;
+import org.apache.fop.fo.pagination.RegionBASE;
+import org.apache.fop.fo.pagination.RegionBefore;
+import org.apache.fop.fo.pagination.RegionBody;
+import org.apache.fop.fo.pagination.RegionEnd;
+import org.apache.fop.fo.pagination.RegionSE;
+import org.apache.fop.fo.pagination.RegionStart;
+import org.apache.fop.fo.pagination.RepeatablePageMasterAlternatives;
+import org.apache.fop.fo.pagination.RepeatablePageMasterReference;
+import org.apache.fop.fo.pagination.Root;
+import org.apache.fop.fo.pagination.SimplePageMaster;
+import org.apache.fop.fo.pagination.SinglePageMasterReference;
+import org.apache.fop.fo.pagination.StaticContent;
+import org.apache.fop.fo.pagination.Title;
 import org.apache.fop.fo.properties.CommonBackground;
+import org.apache.fop.fo.properties.CommonBorderAndPadding;
+import org.apache.fop.fo.properties.LeaderPattern;
 import org.apache.fop.fo.properties.Overflow;
 import org.apache.fop.fo.properties.Scaling;
-
-import org.apache.fop.layoutmgr.BidiLayoutManager;
-import org.apache.fop.layoutmgr.LayoutProcessor;
-import org.apache.fop.layoutmgr.LMiter;
-import org.apache.fop.layoutmgr.table.Cell;
-import org.apache.fop.layoutmgr.table.Column;
-import org.apache.fop.layoutmgr.table.Body;
-import org.apache.fop.layoutmgr.table.Row;
-import org.apache.fop.layoutmgr.table.TableLayoutManager;
 import org.apache.fop.layoutmgr.list.Item;
 import org.apache.fop.layoutmgr.list.ListBlockLayoutManager;
 import org.apache.fop.layoutmgr.list.ListItemLayoutManager;
-
+import org.apache.fop.layoutmgr.table.Body;
+import org.apache.fop.layoutmgr.table.Cell;
+import org.apache.fop.layoutmgr.table.Column;
+import org.apache.fop.layoutmgr.table.Row;
+import org.apache.fop.layoutmgr.table.TableLayoutManager;
 import org.apache.fop.traits.MinOptMax;
 import org.apache.fop.util.CharUtilities;
-
-import java.util.List;
-import java.util.ListIterator;
-import java.util.ArrayList;
-import java.awt.geom.Point2D;
-import java.awt.geom.Rectangle2D;
 
 /**
  * Concrete implementation of FOTreeVisitor for the purpose of adding
@@ -136,7 +175,7 @@ import java.awt.geom.Rectangle2D;
  * @see org.apache.fop.fo.FOTreeVisitor
  */
 
-public class AddLMVisitor extends FOTreeVisitor {
+public class AddLMVisitor implements FOTreeVisitor {
 
     /** The List object to which methods in this class should add Layout
      *  Managers */
@@ -175,7 +214,7 @@ public class AddLMVisitor extends FOTreeVisitor {
         return saveLMList;
     }
 
-    public void serveVisitor(FOText node) {
+    public void serveFOText(FOText node) {
         if (node.length == 0) {
             return;
         }
@@ -189,7 +228,7 @@ public class AddLMVisitor extends FOTreeVisitor {
         currentLMList.add(lm);
     }
 
-    public void serveVisitor(FObjMixed node) {
+    public void serveFObjMixed(FObjMixed node) {
         if (node.getChildren() != null) {
             InlineStackingLayoutManager lm;
             lm = new InlineStackingLayoutManager();
@@ -201,14 +240,14 @@ public class AddLMVisitor extends FOTreeVisitor {
         }
     }
 
-    public void serveVisitor(BidiOverride node) {
+    public void serveBidiOverride(BidiOverride node) {
         if (false) {
-            serveVisitor((FObjMixed)node);
+            serveFObjMixed((FObjMixed)node);
         } else {
             ArrayList childList = new ArrayList();
             saveLMList = currentLMList;
             currentLMList = childList;
-            serveVisitor((FObjMixed)node);
+            serveFObjMixed((FObjMixed)node);
             currentLMList = saveLMList;
             for (int count = childList.size() - 1; count >= 0; count--) {
                 LayoutProcessor lm = (LayoutProcessor) childList.get(count);
@@ -226,23 +265,23 @@ public class AddLMVisitor extends FOTreeVisitor {
     /**
      * @param node Inline object to process
      */
-    public void serveVisitor(Inline node) {
-        serveVisitor((FObjMixed)node);
+    public void serveInline(Inline node) {
+        serveFObjMixed((FObjMixed)node);
     }
 
-    public void serveVisitor(Footnote node) {
+    public void serveFootnote(Footnote node) {
         if (node.getInlineFO() == null) {
             node.getLogger().error("inline required in footnote");
             return;
         }
-        serveVisitor(node.getInlineFO());
+        serveInline(node.getInlineFO());
     }
 
-    public void serveVisitor(InlineContainer node) {
+    public void serveInlineContainer(InlineContainer node) {
         ArrayList childList = new ArrayList();
         saveLMList = currentLMList;
         currentLMList = childList;
-        serveVisitor((FObj)node);
+        serveFObj((FObj)node);
         currentLMList = saveLMList;
         LayoutManager lm = new ICLayoutManager(childList);
         lm.setUserAgent(node.getUserAgent());
@@ -253,7 +292,7 @@ public class AddLMVisitor extends FOTreeVisitor {
     /**
      * Add start and end properties for the link
      */
-    public void serveVisitor(BasicLink node) {
+    public void serveBasicLink(BasicLink node) {
         node.setup();
         InlineStackingLayoutManager lm;
         lm = new InlineStackingLayoutManager() {
@@ -287,7 +326,7 @@ public class AddLMVisitor extends FOTreeVisitor {
          }
      }
 
-     public void serveVisitor(Block node) {
+     public void serveBlock(Block node) {
          BlockLayoutManager blm = new BlockLayoutManager();
          blm.setUserAgent(node.getUserAgent());
          blm.setFObj(node);
@@ -296,7 +335,7 @@ public class AddLMVisitor extends FOTreeVisitor {
          currentLMList.add(blm);
      }
 
-     public void serveVisitor(final Leader node) {
+     public void serveLeader(final Leader node) {
          LeafNodeLayoutManager lm = new LeafNodeLayoutManager() {
              public InlineArea get(LayoutContext context) {
                  return getLeaderInlineArea(node);
@@ -400,7 +439,7 @@ public class AddLMVisitor extends FOTreeVisitor {
          return leaderArea;
      }
 
-     public void serveVisitor(RetrieveMarker node) {
+     public void serveRetrieveMarker(RetrieveMarker node) {
          RetrieveMarkerLayoutManager rmlm;
          rmlm = new RetrieveMarkerLayoutManager(node.getRetrieveClassName(),
                  node.getRetrievePosition(),
@@ -410,7 +449,7 @@ public class AddLMVisitor extends FOTreeVisitor {
          currentLMList.add(rmlm);
      }
 
-     public void serveVisitor(Character node) {
+     public void serveCharacter(Character node) {
          InlineArea inline = getCharacterInlineArea(node);
          if (inline != null) {
              LeafNodeLayoutManager lm = new LeafNodeLayoutManager();
@@ -436,7 +475,7 @@ public class AddLMVisitor extends FOTreeVisitor {
       * This adds a leafnode layout manager that deals with the
       * created viewport/image area.
       */
-     public void serveVisitor(ExternalGraphic node) {
+     public void serveExternalGraphic(ExternalGraphic node) {
          InlineArea area = getExternalGraphicInlineArea(node);
          if (area != null) {
              node.setupID();
@@ -478,7 +517,7 @@ public class AddLMVisitor extends FOTreeVisitor {
          return vp;
      }
 
-     public void serveVisitor(BlockContainer node) {
+     public void serveBlockContainer(BlockContainer node) {
          BlockContainerLayoutManager blm = new BlockContainerLayoutManager();
          blm.setUserAgent(node.getUserAgent());
          blm.setFObj(node);
@@ -486,14 +525,14 @@ public class AddLMVisitor extends FOTreeVisitor {
          currentLMList.add(blm);
      }
 
-     public void serveVisitor(ListBlock node) {
+     public void serveListBlock(ListBlock node) {
          ListBlockLayoutManager blm = new ListBlockLayoutManager();
          blm.setUserAgent(node.getUserAgent());
          blm.setFObj(node);
          currentLMList.add(blm);
      }
 
-     public void serveVisitor(InstreamForeignObject node) {
+     public void serveInstreamForeignObject(InstreamForeignObject node) {
          Viewport areaCurrent = getInstreamForeignObjectInlineArea(node);
          if (areaCurrent != null) {
              LeafNodeLayoutManager lm = new LeafNodeLayoutManager();
@@ -656,7 +695,7 @@ public class AddLMVisitor extends FOTreeVisitor {
          return areaCurrent;
      }
 
-     public void serveVisitor(ListItem node) {
+     public void serveListItem(ListItem node) {
          if (node.getLabel() != null && node.getBody() != null) {
              ListItemLayoutManager blm = new ListItemLayoutManager();
              blm.setUserAgent(node.getUserAgent());
@@ -693,7 +732,7 @@ public class AddLMVisitor extends FOTreeVisitor {
       * Overridden from FObj
       * @param lms the list to which the layout manager(s) should be added
       */
-     public void serveVisitor(final PageNumber node) {
+     public void servePageNumber(final PageNumber node) {
          node.setup();
          LayoutManager lm;
          lm = new LeafNodeLayoutManager() {
@@ -729,7 +768,7 @@ public class AddLMVisitor extends FOTreeVisitor {
          currentLMList.add(lm);
      }
 
-     public void serveVisitor(final PageNumberCitation node) {
+     public void servePageNumberCitation(final PageNumberCitation node) {
          node.setup();
          LayoutManager lm;
          lm = new LeafNodeLayoutManager() {
@@ -799,7 +838,7 @@ public class AddLMVisitor extends FOTreeVisitor {
          return inline;
      }
 
-     public void serveVisitor(Table node) {
+     public void serveTable(Table node) {
          TableLayoutManager tlm = new TableLayoutManager();
          tlm.setUserAgent(node.getUserAgent());
          tlm.setFObj(node);
@@ -826,7 +865,7 @@ public class AddLMVisitor extends FOTreeVisitor {
          return clm;
      }
 
-     public void serveVisitor(TableBody node) {
+     public void serveTableBody(TableBody node) {
          currentLMList.add(getTableBodyLayoutManager(node));
      }
 
@@ -837,25 +876,395 @@ public class AddLMVisitor extends FOTreeVisitor {
          return blm;
      }
 
-     public void serveVisitor(TableCell node) {
+     public void serveTableCell(TableCell node) {
          Cell clm = new Cell();
          clm.setUserAgent(node.getUserAgent());
          clm.setFObj(node);
          currentLMList.add(clm);
      }
 
-     public void serveVisitor(TableRow node) {
+     public void serveTableRow(TableRow node) {
          Row rlm = new Row();
          rlm.setUserAgent(node.getUserAgent());
          rlm.setFObj(node);
          currentLMList.add(rlm);
      }
 
-     public void serveVisitor(Flow node) {
+     public void serveFlow(Flow node) {
          FlowLayoutManager lm = new FlowLayoutManager();
          lm.setUserAgent(node.getUserAgent());
          lm.setFObj(node);
          currentLMList.add(lm);
      }
+
+    /**
+     * @param node FONode object to process
+     */
+    public void serveFONode(FONode node) {
+    }
+
+    /**
+     * @param node FObj object to process
+     */
+    public void serveFObj(FObj node) {
+        serveFONode((FONode)node);
+    }
+
+    /**
+     * @param node ColorProfile object to process
+     */
+    public void serveColorProfile(ColorProfile node) {
+        serveFObj((FObj)node);
+    }
+
+    /**
+     * @param node ConditionalPageMasterReference object to process
+     */
+    public void serveConditionalPageMasterReference(ConditionalPageMasterReference node) {
+        serveFObj((FObj)node);
+    }
+
+    /**
+     * @param node Declarations object to process
+     */
+    public void serveDeclarations(Declarations node) {
+        serveFObj((FObj)node);
+    }
+
+    /**
+     * @param node ExtensionObj object to process
+     */
+    public void serveExtensionObj(ExtensionObj node) {
+        serveFObj((FObj)node);
+    }
+
+    /**
+     * @param node Bookmarks object to process
+     */
+    public void serveBookmarks(Bookmarks node) {
+        serveExtensionObj((ExtensionObj)node);
+    }
+
+    /**
+     * @param node Label object to process
+     */
+    public void serveLabel(Label node) {
+        serveExtensionObj((ExtensionObj)node);
+    }
+
+    /**
+     * @param node Outline object to process
+     */
+    public void serveOutline(Outline node) {
+        serveExtensionObj((ExtensionObj)node);
+    }
+
+    /**
+     * @param node StaticContent object to process
+     */
+    public void serveStaticContent(StaticContent node) {
+        serveFlow((Flow)node);
+    }
+
+    /**
+     * @param node Marker object to process
+     */
+    public void serveMarker(Marker node) {
+        serveFObjMixed((FObjMixed)node);
+    }
+
+    /**
+     * @param node Title object to process
+     */
+    public void serveTitle(Title node) {
+        serveFObjMixed((FObjMixed)node);
+    }
+
+    /**
+     * @param node Wrapper object to process
+     */
+    public void serveWrapper(Wrapper node) {
+        serveFObjMixed((FObjMixed)node);
+    }
+
+    /**
+     * @param node FootnoteBody object to process
+     */
+    public void serveFootnoteBody(FootnoteBody node) {
+        serveFObj((FObj)node);
+    }
+
+    /**
+     * @param node LayoutMasterSet object to process
+     */
+    public void serveLayoutMasterSet(LayoutMasterSet node) {
+        serveFObj((FObj)node);
+    }
+
+    /**
+     * @param node ListItemBody object to process
+     */
+    public void serveListItemBody(ListItemBody node) {
+        serveFObj((FObj)node);
+    }
+
+    /**
+     * @param node ListItemLabel object to process
+     */
+    public void serveListItemLabel(ListItemLabel node) {
+        serveFObj((FObj)node);
+    }
+
+    /**
+     * @param node PageMasterReference object to process
+     */
+    public void servePageMasterReference(PageMasterReference node) {
+        serveFObj((FObj)node);
+    }
+
+    /**
+     * @param node RepeatablePageMasterReference object to process
+     */
+    public void serveRepeatablePageMasterReference(RepeatablePageMasterReference node) {
+        servePageMasterReference((PageMasterReference)node);
+    }
+
+    /**
+     * @param node SinglePageMasterReference object to process
+     */
+    public void serveSinglePageMasterReference(SinglePageMasterReference node) {
+        servePageMasterReference((PageMasterReference)node);
+    }
+
+    /**
+     * @param node PageSequence object to process
+     */
+    public void servePageSequence(PageSequence node) {
+        serveFObj((FObj)node);
+    }
+
+    /**
+     * @param node PageSequenceMaster object to process
+     */
+    public void servePageSequenceMaster(PageSequenceMaster node) {
+        serveFObj((FObj)node);
+    }
+
+    /**
+     * @param node Region object to process
+     */
+    public void serveRegion(Region node) {
+        serveFObj((FObj)node);
+    }
+
+    /**
+     * @param node RegionBASE object to process
+     */
+    public void serveRegionBASE(RegionBASE node) {
+        serveRegion((Region)node);
+    }
+
+    /**
+     * @param node RegionBA object to process
+     */
+    public void serveRegionBA(RegionBA node) {
+        serveRegionBASE((RegionBASE)node);
+    }
+
+    /**
+     * @param node RegionAfter object to process
+     */
+    public void serveRegionAfter(RegionAfter node) {
+        serveRegionBA((RegionBA)node);
+    }
+
+    /**
+     * @param node RegionBefore object to process
+     */
+    public void serveRegionBefore(RegionBefore node) {
+        serveRegionBA((RegionBA)node);
+    }
+
+    /**
+     * @param node RegionSE object to process
+     */
+    public void serveRegionSE(RegionSE node) {
+        serveRegionBASE((RegionBASE)node);
+    }
+
+    /**
+     * @param node RegionEnd object to process
+     */
+    public void serveRegionEnd(RegionEnd node) {
+        serveRegionSE((RegionSE)node);
+    }
+
+    /**
+     * @param node RegionStart object to process
+     */
+    public void serveRegionStart(RegionStart node) {
+        serveRegionSE((RegionSE)node);
+    }
+
+    /**
+     * @param node RegionBody object to process
+     */
+    public void serveRegionBody(RegionBody node) {
+        serveRegion((Region)node);
+    }
+
+    /**
+     * @param node RepeatablePageMasterAlternatives object to process
+     */
+    public void serveRepeatablePageMasterAlternatives(RepeatablePageMasterAlternatives node) {
+        serveFObj((FObj)node);
+    }
+
+    /**
+     * @param node Root object to process
+     */
+    public void serveRoot(Root node) {
+        serveFObj((FObj)node);
+    }
+
+    /**
+     * @param node SimplePageMaster object to process
+     */
+    public void serveSimplePageMaster(SimplePageMaster node) {
+        serveFObj((FObj)node);
+    }
+
+    /**
+     * @param node TableFooter object to process
+     */
+    public void serveTableFooter(TableFooter node) {
+        serveTableBody((TableBody)node);
+    }
+
+    /**
+     * @param node TableHeader object to process
+     */
+    public void serveTableHeader(TableHeader node) {
+        serveTableBody((TableBody)node);
+    }
+
+    /**
+     * @param node TableColumn object to process
+     */
+    public void serveTableColumn(TableColumn node) {
+        serveFObj((FObj)node);
+    }
+
+    /**
+     * @param node ToBeImplementedElement object to process
+     */
+    public void serveToBeImplementedElement(ToBeImplementedElement node) {
+        serveFObj((FObj)node);
+    }
+
+    /**
+     * @param node Float object to process
+     */
+    public void serveFloat(Float node) {
+        serveToBeImplementedElement((ToBeImplementedElement)node);
+    }
+
+    /**
+     * @param node InitialPropertySet object to process
+     */
+    public void serveInitialPropertySet(InitialPropertySet node) {
+        serveToBeImplementedElement((ToBeImplementedElement)node);
+    }
+
+    /**
+     * @param node MultiCase object to process
+     */
+    public void serveMultiCase(MultiCase node) {
+        serveToBeImplementedElement((ToBeImplementedElement)node);
+    }
+
+    /**
+     * @param node MultiProperties object to process
+     */
+    public void serveMultiProperties(MultiProperties node) {
+        serveToBeImplementedElement((ToBeImplementedElement)node);
+    }
+
+    /**
+     * @param node MultiPropertySet object to process
+     */
+    public void serveMultiPropertySet(MultiPropertySet node) {
+        serveToBeImplementedElement((ToBeImplementedElement)node);
+    }
+
+    /**
+     * @param node MultiSwitch object to process
+     */
+    public void serveMultiSwitch(MultiSwitch node) {
+        serveToBeImplementedElement((ToBeImplementedElement)node);
+    }
+
+    /**
+     * @param node MultiToggle object to process
+     */
+    public void serveMultiToggle(MultiToggle node) {
+        serveToBeImplementedElement((ToBeImplementedElement)node);
+    }
+
+    /**
+     * @param node TableAndCaption object to process
+     */
+    public void serveTableAndCaption(TableAndCaption node) {
+        serveToBeImplementedElement((ToBeImplementedElement)node);
+    }
+
+    /**
+     * @param node TableCaption object to process
+     */
+    public void serveTableCaption(TableCaption node) {
+        serveToBeImplementedElement((ToBeImplementedElement)node);
+    }
+
+    /**
+     * @param node Unknown object to process
+     */
+    public void serveUnknown(Unknown node) {
+        serveFONode((FONode)node);
+    }
+
+    /**
+     * @param node XMLObj object to process
+     */
+    public void serveXMLObj(XMLObj node) {
+        serveFONode((FONode)node);
+    }
+
+    /**
+     * @param node SVGObj object to process
+     */
+    public void serveSVGObj(SVGObj node) {
+        serveXMLObj((XMLObj)node);
+    }
+
+    /**
+     * @param node SVGElement object to process
+     */
+    public void serveSVGElement(SVGElement node) {
+        serveSVGObj((SVGObj)node);
+    }
+
+    /**
+     * @param node UnknownXMLObj object to process
+     */
+    public void serveUnknownXMLObj(UnknownXMLObj node) {
+        serveXMLObj((XMLObj)node);
+    }
+
+    /**
+     * @param node XMLElement object to process
+     */
+    public void serveXMLElement(XMLElement node) {
+        serveXMLObj((XMLObj)node);
+    }
 
 }

@@ -163,7 +163,7 @@ public class Inline extends FObjMixed {
     }
 
     public void acceptVisitor(FOTreeVisitor fotv) {
-        fotv.serveVisitor(this);
+        fotv.serveInline(this);
     }
 
 }

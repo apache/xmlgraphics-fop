@@ -150,7 +150,7 @@ public class RegionBody extends Region {
      * @see org.apache.fop.fo.FOTreeVisitor
      */
     public void acceptVisitor(FOTreeVisitor fotv) {
-        fotv.serveVisitor(this);
+        fotv.serveRegionBody(this);
     }
 
 }

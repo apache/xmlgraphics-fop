@@ -128,7 +128,7 @@ public class RepeatablePageMasterReference extends PageMasterReference
     }
 
     public void acceptVisitor(FOTreeVisitor fotv) {
-        fotv.serveVisitor(this);
+        fotv.serveRepeatablePageMasterReference(this);
     }
 
 }

@@ -93,7 +93,7 @@ public class StaticContent extends Flow {
      * @see org.apache.fop.fo.FOTreeVisitor
      */
     public void acceptVisitor(FOTreeVisitor fotv) {
-        fotv.serveVisitor(this);
+        fotv.serveStaticContent(this);
     }
 
 }

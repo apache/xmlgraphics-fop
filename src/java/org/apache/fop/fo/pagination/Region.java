@@ -242,7 +242,7 @@ public abstract class Region extends FObj {
      * @see org.apache.fop.fo.FOTreeVisitor
      */
     public void acceptVisitor(FOTreeVisitor fotv) {
-        fotv.serveVisitor(this);
+        fotv.serveRegion(this);
     }
 
 }

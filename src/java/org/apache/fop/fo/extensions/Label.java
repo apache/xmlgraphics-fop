@@ -92,7 +92,7 @@ public class Label extends ExtensionObj {
     }
 
     public void acceptVisitor(FOTreeVisitor fotv) {
-        fotv.serveVisitor(this);
+        fotv.serveLabel(this);
     }
 
 }

@@ -154,7 +154,7 @@ public class ListBlock extends FObj {
      * @see org.apache.fop.fo.FOTreeVisitor
      */
     public void acceptVisitor(FOTreeVisitor fotv) {
-        fotv.serveVisitor(this);
+        fotv.serveListBlock(this);
     }
 
 }
