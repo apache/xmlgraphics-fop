@@ -1040,7 +1040,7 @@
         <value const="OBJECT_BOUNDING_BOX">objectBoundingBox</value>
       </enumeration>
   </datatype>
-	<default>pad</default> 
+	<default>userSpace</default> 
   </property>
   <property>
     <name>viewBox</name>
