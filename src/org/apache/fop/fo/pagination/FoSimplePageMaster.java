@@ -11,6 +11,7 @@ package org.apache.fop.fo.pagination;
 
 // FOP
 import org.apache.fop.fo.FOAttributes;
+import org.apache.fop.fo.PropNames;
 import org.apache.fop.xml.XMLEvent;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.fo.FObjects;
@@ -19,6 +20,8 @@ import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FOTree;
 import org.apache.fop.fo.expr.PropertyException;
 import org.apache.fop.datastructs.Tree;
+import org.apache.fop.datatypes.PropertyValue;
+import org.apache.fop.datatypes.NCName;
 
 /**
  * Implements the fo:simple-page-master flow object
@@ -42,11 +45,13 @@ public class FoSimplePageMaster extends FONode {
         super(foTree, FObjectNames.SIMPLE_PAGE_MASTER, parent, event,
               FObjects.LAYOUT_SET);
         System.out.println("FOAttributes: " + event);
-        try {
-            masterName = foAttributes.getFoAttrValue("master-name");
-        } catch (PropertyException e) {
-            throw new FOPException(e.getMessage());
-        }
+        // Check that the property has been set
+        PropertyValue name = propertySet[PropNames.MASTER_NAME];
+        if (name == null)
+            throw new PropertyException("master-name property not set");
+        if (name.getType() != PropertyValue.NCNAME)
+            throw new PropertyException("master-name property not an NCName.");
+        masterName = ((NCName)name).getNCName();
         // Process regions here
         XMLEvent ev = xmlevents.getEndElement(event);
     }
