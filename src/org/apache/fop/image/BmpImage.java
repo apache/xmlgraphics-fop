@@ -74,7 +74,7 @@ public class BmpImage extends AbstractFopImage
     super(href);
   }
 
-  public BmpImage(URL href, ImageReader imgReader) {
+  public BmpImage(URL href, ImageReader imgReader) throws FopImageException {
     super(href, imgReader);
   }
 
