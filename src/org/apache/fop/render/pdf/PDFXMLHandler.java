@@ -256,10 +256,10 @@ public class PDFXMLHandler implements XMLHandler {
             if (!at.isIdentity()) {
                 double[] vals = new double[6];
                 at.getMatrix(vals);
-                pdfInfo.currentStream.add(PDFNumber.doubleOut(vals[0]) + " "
-                                + PDFNumber.doubleOut(vals[1]) + " "
-                                + PDFNumber.doubleOut(vals[2]) + " "
-                                + PDFNumber.doubleOut(vals[3]) + " "
+                pdfInfo.currentStream.add(PDFNumber.doubleOut(vals[0], 5) + " "
+                                + PDFNumber.doubleOut(vals[1], 5) + " "
+                                + PDFNumber.doubleOut(vals[2], 5) + " "
+                                + PDFNumber.doubleOut(vals[3], 5) + " "
                                 + PDFNumber.doubleOut(vals[4]) + " "
                                 + PDFNumber.doubleOut(vals[5]) + " cm\n");
             }
