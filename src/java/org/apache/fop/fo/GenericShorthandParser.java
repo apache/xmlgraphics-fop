@@ -52,7 +52,6 @@ package org.apache.fop.fo;
 
 import java.util.Vector;
 import java.util.Enumeration;
-import org.apache.fop.fo.properties.FOPropertyMapping;
 
 public class GenericShorthandParser implements ShorthandParser {
 
@@ -96,8 +95,7 @@ public class GenericShorthandParser implements ShorthandParser {
         if (count() == 1) {
             String sval = ((Property)list.elementAt(0)).getString();
             if (sval != null && sval.equals("inherit")) {
-                String name = FOPropertyMapping.getPropertyName(propId);
-                return propertyList.getFromParent(name);
+                return propertyList.getFromParent(propId);
             }
         }
         return convertValueForProperty(propId, maker, propertyList);

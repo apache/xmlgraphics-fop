@@ -132,14 +132,14 @@ public class Block extends FObjMixed {
      */
     public void handleAttrs(Attributes attlist) throws FOPException {
         super.handleAttrs(attlist);
-        this.span = this.propertyList.get("span").getEnum();
+        this.span = this.propertyList.get(PR_SPAN).getEnum();
         this.wsTreatment =
-          this.propertyList.get("white-space-treatment").getEnum();
+          this.propertyList.get(PR_WHITE_SPACE_TREATMENT).getEnum();
         this.bWScollapse =
-          (this.propertyList.get("white-space-collapse").getEnum()
+          (this.propertyList.get(PR_WHITE_SPACE_COLLAPSE).getEnum()
            == Constants.TRUE);
         this.lfTreatment =
-          this.propertyList.get("linefeed-treatment").getEnum();
+          this.propertyList.get(PR_LINEFEED_TREATMENT).getEnum();
 
         setupID();
 
@@ -199,29 +199,29 @@ public class Block extends FObjMixed {
             // this.propertyList.get("wrap-option");
             // this.propertyList.get("z-index");
 
-            this.align = this.propertyList.get("text-align").getEnum();
+            this.align = this.propertyList.get(PR_TEXT_ALIGN).getEnum();
             this.alignLast =
-              this.propertyList.get("text-align-last").getEnum();
-            this.breakAfter = this.propertyList.get("break-after").getEnum();
+              this.propertyList.get(PR_TEXT_ALIGN_LAST).getEnum();
+            this.breakAfter = this.propertyList.get(PR_BREAK_AFTER).getEnum();
             this.lineHeight = this.propertyList.get(
-                                "line-height").getLength().getValue();
+                                PR_LINE_HEIGHT).getLength().getValue();
             this.startIndent = this.propertyList.get(
-                                 "start-indent").getLength().getValue();
+                                 PR_START_INDENT).getLength().getValue();
             this.endIndent = this.propertyList.get(
-                               "end-indent").getLength().getValue();
+                               PR_END_INDENT).getLength().getValue();
             this.spaceBefore = this.propertyList.get(
-                                 "space-before.optimum").getLength().getValue();
+                                 PR_SPACE_BEFORE | CP_OPTIMUM).getLength().getValue();
             this.spaceAfter = this.propertyList.get(
-                                "space-after.optimum").getLength().getValue();
+                                PR_SPACE_AFTER | CP_OPTIMUM).getLength().getValue();
             this.textIndent = this.propertyList.get(
-                                "text-indent").getLength().getValue();
+                                PR_TEXT_INDENT).getLength().getValue();
             this.keepWithNext =
-              this.propertyList.get("keep-with-next").getEnum();
+              this.propertyList.get(PR_KEEP_WITH_NEXT).getEnum();
 
             this.blockWidows =
-              this.propertyList.get("widows").getNumber().intValue();
+              this.propertyList.get(PR_WIDOWS).getNumber().intValue();
             this.blockOrphans =
-              this.propertyList.get("orphans").getNumber().intValue();
+              this.propertyList.get(PR_ORPHANS).getNumber().intValue();
 
     }
 

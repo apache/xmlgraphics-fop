@@ -74,7 +74,7 @@ import org.apache.fop.fo.properties.CommonHyphenation;
 /**
  * Helper class for managing groups of properties.
  */
-public class PropertyManager {
+public class PropertyManager implements Constants {
 
     private PropertyList propertyList;
     private FOTreeControl foTreeControl = null;
@@ -138,9 +138,9 @@ public class PropertyManager {
             }
             /**@todo this is ugly. need to improve. */
 
-            String fontFamily = propertyList.get("font-family").getString();
-            String fontStyle = propertyList.get("font-style").getString();
-            String fw = propertyList.get("font-weight").getString();
+            String fontFamily = propertyList.get(PR_FONT_FAMILY).getString();
+            String fontStyle = propertyList.get(PR_FONT_STYLE).getString();
+            String fw = propertyList.get(PR_FONT_WEIGHT).getString();
             int fontWeight = 400;
             if (fw.equals("bolder")) {
                 // +100 from inherited
@@ -161,7 +161,7 @@ public class PropertyManager {
 
             // NOTE: this is incomplete. font-size may be specified with
             // various kinds of keywords too
-            int fontSize = propertyList.get("font-size").getLength().getValue();
+            int fontSize = propertyList.get(PR_FONT_SIZE).getLength().getValue();
             //int fontVariant = propertyList.get("font-variant").getEnum();
             String fname = foTreeControl.fontLookup(fontFamily, fontStyle,
                                                fontWeight);
@@ -213,18 +213,18 @@ public class PropertyManager {
         if (hyphProps == null) {
             this.hyphProps = new CommonHyphenation();
             hyphProps.hyphenate =
-              this.propertyList.get("hyphenate").getEnum();
+              this.propertyList.get(PR_HYPHENATE).getEnum();
             hyphProps.hyphenationChar = this.propertyList.get(
-                                          "hyphenation-character").getCharacter();
+                                          PR_HYPHENATION_CHARACTER).getCharacter();
             hyphProps.hyphenationPushCharacterCount = this.propertyList.get(
-                      "hyphenation-push-character-count").getNumber().
+                      PR_HYPHENATION_PUSH_CHARACTER_COUNT).getNumber().
                     intValue();
             hyphProps.hyphenationRemainCharacterCount = this.propertyList.get(
-                      "hyphenation-remain-character-count").getNumber().
+                      PR_HYPHENATION_REMAIN_CHARACTER_COUNT).getNumber().
                     intValue();
             hyphProps.language =
-              this.propertyList.get("language").getString();
-            hyphProps.country = this.propertyList.get("country").getString();
+              this.propertyList.get(PR_LANGUAGE).getString();
+            hyphProps.country = this.propertyList.get(PR_COUNTRY).getString();
         }
         return hyphProps;
     }
@@ -306,22 +306,22 @@ public class PropertyManager {
 
         // Common Margin Properties-Block
         props.marginTop =
-          this.propertyList.get("margin-top").getLength().getValue();
+          this.propertyList.get(PR_MARGIN_TOP).getLength().getValue();
         props.marginBottom =
-          this.propertyList.get("margin-bottom").getLength().getValue();
+          this.propertyList.get(PR_MARGIN_BOTTOM).getLength().getValue();
         props.marginLeft =
-          this.propertyList.get("margin-left").getLength().getValue();
+          this.propertyList.get(PR_MARGIN_LEFT).getLength().getValue();
         props.marginRight =
-          this.propertyList.get("margin-right").getLength().getValue();
+          this.propertyList.get(PR_MARGIN_RIGHT).getLength().getValue();
 
         // For now, we only get the optimum value for space-before and after
-        props.spaceBefore = this.propertyList.get("space-before").
+        props.spaceBefore = this.propertyList.get(PR_SPACE_BEFORE).
                         getSpace().getOptimum().getLength().getValue();
-        props.spaceAfter = this.propertyList.get("space-after").
+        props.spaceAfter = this.propertyList.get(PR_SPACE_AFTER).
                         getSpace().getOptimum().getLength().getValue();
-        props.startIndent = this.propertyList.get("start-indent").
+        props.startIndent = this.propertyList.get(PR_START_INDENT).
                         getLength().getValue();
-        props.endIndent = this.propertyList.get("end-indent").
+        props.endIndent = this.propertyList.get(PR_END_INDENT).
                         getLength().getValue();
 
         return props;
@@ -334,22 +334,22 @@ public class PropertyManager {
      */
     public CommonBackground getBackgroundProps() {
         CommonBackground bp = new CommonBackground();
-        bp.backAttachment = propertyList.get("background-attachment").getEnum();
-        bp.backColor = propertyList.get("background-color").getColorType();
+        bp.backAttachment = propertyList.get(PR_BACKGROUND_ATTACHMENT).getEnum();
+        bp.backColor = propertyList.get(PR_BACKGROUND_COLOR).getColorType();
         if (bp.backColor.getAlpha() == 0) {
             bp.backColor = null;
         }
 
-        bp.backImage = propertyList.get("background-image").getString();
+        bp.backImage = propertyList.get(PR_BACKGROUND_IMAGE).getString();
         if (bp.backImage == null || NONE.equals(bp.backImage)) {
             bp.backImage = null;
         } else {
-            bp.backRepeat = propertyList.get("background-repeat").getEnum();
-            Property prop = propertyList.get("background-position-horizontal");
+            bp.backRepeat = propertyList.get(PR_BACKGROUND_REPEAT).getEnum();
+            Property prop = propertyList.get(PR_BACKGROUND_POSITION_HORIZONTAL);
             if (prop != null) {
                 bp.backPosHorizontal = prop.getLength();
             }
-            prop = propertyList.get("background-position-vertical");
+            prop = propertyList.get(PR_BACKGROUND_POSITION_VERTICAL);
             if (prop != null) {
                 bp.backPosVertical = prop.getLength();
             }
@@ -375,8 +375,8 @@ public class PropertyManager {
      */
     public InlineProps getInlineProps() {
         InlineProps props = new InlineProps();
-        props.spaceStart =  new SpaceVal(propertyList.get("space-start").getSpace());
-        props.spaceEnd =    new SpaceVal(propertyList.get("space-end").getSpace());
+        props.spaceStart =  new SpaceVal(propertyList.get(PR_SPACE_START).getSpace());
+        props.spaceEnd =    new SpaceVal(propertyList.get(PR_SPACE_END).getSpace());
         return props;
     }
 
@@ -388,11 +388,11 @@ public class PropertyManager {
     public CommonAccessibility getAccessibilityProps() {
         CommonAccessibility props = new CommonAccessibility();
         String str;
-        str = this.propertyList.get("source-document").getString();
+        str = this.propertyList.get(PR_SOURCE_DOCUMENT).getString();
         if (!NONE.equals(str)) {
             props.sourceDoc = str;
         }
-        str = this.propertyList.get("role").getString();
+        str = this.propertyList.get(PR_ROLE).getString();
         if (!NONE.equals(str)) {
             props.role = str;
         }
@@ -427,11 +427,11 @@ public class PropertyManager {
     public CommonAbsolutePosition getAbsolutePositionProps() {
         CommonAbsolutePosition props = new CommonAbsolutePosition();
         props.absolutePosition =
-          this.propertyList.get("absolute-position").getEnum();
-        props.top = this.propertyList.get("top").getLength().getValue();
-        props.bottom = this.propertyList.get("bottom").getLength().getValue();
-        props.left = this.propertyList.get("left").getLength().getValue();
-        props.right = this.propertyList.get("right").getLength().getValue();
+          this.propertyList.get(PR_ABSOLUTE_POSITION).getEnum();
+        props.top = this.propertyList.get(PR_TOP).getLength().getValue();
+        props.bottom = this.propertyList.get(PR_BOTTOM).getLength().getValue();
+        props.left = this.propertyList.get(PR_LEFT).getLength().getValue();
+        props.right = this.propertyList.get(PR_RIGHT).getLength().getValue();
         return props;
     }
 
@@ -442,12 +442,12 @@ public class PropertyManager {
      */
     public BlockProps getBlockProps() {
         BlockProps props = new BlockProps();
-        props.firstIndent = this.propertyList.get("text-indent").getLength().getValue();
+        props.firstIndent = this.propertyList.get(PR_TEXT_INDENT).getLength().getValue();
         props.lastIndent = 0;
             /*this.propertyList.get("last-line-end-indent").getLength().mvalue(); */
-        props.textAlign = this.propertyList.get("text-align").getEnum();
-        props.textAlignLast = this.propertyList.get("text-align-last").getEnum();
-        props.lineStackType = this.propertyList.get("line-stacking-strategy").getEnum();
+        props.textAlign = this.propertyList.get(PR_TEXT_ALIGN).getEnum();
+        props.textAlignLast = this.propertyList.get(PR_TEXT_ALIGN_LAST).getEnum();
+        props.lineStackType = this.propertyList.get(PR_LINE_STACKING_STRATEGY).getEnum();
 
         return props;
     }
@@ -459,13 +459,13 @@ public class PropertyManager {
      */
     public LayoutProps getLayoutProps() {
         LayoutProps props = new LayoutProps();
-        props.breakBefore = this.propertyList.get("break-before").getEnum();
-        props.breakAfter = this.propertyList.get("break-after").getEnum();
-        props.bIsSpan = (this.propertyList.get("span").getEnum() == Span.ALL);
+        props.breakBefore = this.propertyList.get(PR_BREAK_BEFORE).getEnum();
+        props.breakAfter = this.propertyList.get(PR_BREAK_AFTER).getEnum();
+        props.bIsSpan = (this.propertyList.get(PR_SPAN).getEnum() == Span.ALL);
         props.spaceBefore = new SpaceVal(
-                              this.propertyList.get("space-before").getSpace());
+                              this.propertyList.get(PR_SPACE_BEFORE).getSpace());
         props.spaceAfter = new SpaceVal(
-                             this.propertyList.get("space-after").getSpace());
+                             this.propertyList.get(PR_SPACE_AFTER).getSpace());
         return props;
     }
 
@@ -480,28 +480,28 @@ public class PropertyManager {
         if (textInfo == null) {
             textInfo = new TextInfo();
             textInfo.fs = getFontState(foTreeControl);
-            textInfo.color = propertyList.get("color").getColorType();
+            textInfo.color = propertyList.get(PR_COLOR).getColorType();
 
             textInfo.verticalAlign =
-              propertyList.get("vertical-align").getEnum();
+              propertyList.get(PR_VERTICAL_ALIGN).getEnum();
 
-            textInfo.wrapOption = propertyList.get("wrap-option").getEnum();
+            textInfo.wrapOption = propertyList.get(PR_WRAP_OPTION).getEnum();
             textInfo.bWrap = (textInfo.wrapOption == Constants.WRAP);
 
             textInfo.wordSpacing = new SpaceVal(
-                                     propertyList.get("word-spacing").getSpace());
+                                     propertyList.get(PR_WORD_SPACING).getSpace());
 
             /* textInfo.letterSpacing =
                new SpaceVal(propertyList.get("letter-spacing").getSpace());*/
 
             textInfo.whiteSpaceCollapse =
-              propertyList.get("white-space-collapse").getEnum();
+              propertyList.get(PR_WHITE_SPACE_COLLAPSE).getEnum();
 
             textInfo.lineHeight = this.propertyList.get(
-                                    "line-height").getLength().getValue();
+                                    PR_LINE_HEIGHT).getLength().getValue();
 
             textInfo.textTransform
-                    = this.propertyList.get("text-transform").getEnum();
+                    = this.propertyList.get(PR_TEXT_TRANSFORM).getEnum();
 
         }
         return textInfo;
@@ -512,14 +512,14 @@ public class PropertyManager {
      * @return the enumerated reference-orientation
      */
     public int getAbsRefOrient() {
-        return propertyList.get("reference-orientation").getNumber().intValue();
+        return propertyList.get(PR_REFERENCE_ORIENTATION).getNumber().intValue();
     }
 
     /**
      * @return the enumerated writing-mode
      */
     public int getWritingMode() {
-        return propertyList.get("writing-mode").getEnum();
+        return propertyList.get(PR_WRITING_MODE).getEnum();
     }
 
 }

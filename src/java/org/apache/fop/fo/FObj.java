@@ -66,7 +66,7 @@ import org.xml.sax.Locator;
 /**
  * Base class for representation of formatting objects and their processing.
  */
-public class FObj extends FONode {
+public class FObj extends FONode implements Constants {
     private static final String FO_URI = "http://www.w3.org/1999/XSL/Format";
     public static Property.Maker[] propertyListTable = null;
     
@@ -257,7 +257,8 @@ public class FObj extends FONode {
      * @return the property
      */
     public Property getProperty(String name) {
-        return (propertyList.get(name));
+        int propId = FOPropertyMapping.getPropertyId(name);
+        return (propertyList.get(propId));
     }
 
     /**
@@ -267,7 +268,7 @@ public class FObj extends FONode {
      * fo and sets the id attribute of this object.
      */
     public void setupID() {
-        Property prop = this.propertyList.get("id");
+        Property prop = this.propertyList.get(PR_ID);
         if (prop != null) {
             String str = prop.getString();
             if (str != null && !str.equals("")) {
