@@ -1,7 +1,8 @@
 package org.apache.fop.xml;
 
+import org.apache.fop.fo.FObjectNames;
 import org.apache.fop.xml.XMLNamespaces;
-import org.apache.fop.xml.SyncedXmlEventsBuffer;
+import org.apache.fop.xml.SyncedFoXmlEventsBuffer;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.apps.Driver;
 import org.apache.fop.configuration.Configuration;
@@ -26,16 +27,16 @@ import java.util.NoSuchElementException;
  * @version $Revision$ $Name$
  */
 /**
- * <tt>XMLSerialHandler</tt> is the <tt>ContentHandler</tt> for the
+ * <tt>FoXMLSerialHandler</tt> is the <tt>ContentHandler</tt> for the
  * background <tt>XMLReader</tt> thread.
  */
 
-public class XMLSerialHandler extends DefaultHandler implements Runnable {
+public class FoXMLSerialHandler extends DefaultHandler implements Runnable {
 
     private static final String tag = "$Name$";
     private static final String revision = "$Revision$";
 
-    private SyncedXmlEventsBuffer events;
+    private SyncedFoXmlEventsBuffer events;
     private XMLReader parser;
     private XMLNamespaces namespaces;
     private InputSource source;
@@ -47,8 +48,9 @@ public class XMLSerialHandler extends DefaultHandler implements Runnable {
      * @param parser the xml parser.
      * @param source the parser input source.
      */
-    public XMLSerialHandler
-        (SyncedXmlEventsBuffer events, XMLReader parser, InputSource source) {
+    public FoXMLSerialHandler
+        (SyncedFoXmlEventsBuffer events, XMLReader parser, InputSource source)
+    {
         this.events = events;
         this.parser = parser;
         this.source = source;
@@ -68,6 +70,7 @@ public class XMLSerialHandler extends DefaultHandler implements Runnable {
         // I''m in the thread - run the parser
         try {
             parser.parse(source);
+            //System.out.println("Parser terminating.");
         } catch (Exception e) {
             if (errorDump) Driver.dumpError(e);
             if (foThread != null) {
@@ -82,9 +85,9 @@ public class XMLSerialHandler extends DefaultHandler implements Runnable {
     /**
      * Utility routine for the callback methods.  It captures the
      * <tt>InterruptedException</tt> that is possible from the <i>put</i>
-     * method of a <tt>SyncedXmlEventsBuffer</tt>.
+     * method of a <tt>SyncedFoXmlEventsBuffer</tt>.
      */
-    public void putEvent(XMLEvent event) throws NoSuchElementException {
+    public void putEvent(FoXMLEvent event) throws NoSuchElementException {
         synchronized (events) {
             try {
                 events.put(event);
@@ -100,7 +103,7 @@ public class XMLSerialHandler extends DefaultHandler implements Runnable {
      */
     public void startDocument() throws NoSuchElementException {
         synchronized (events) {
-            XMLEvent event = new XMLEvent(namespaces);
+            FoXMLEvent event = new FoXMLEvent(namespaces);
             //System.out.println("StartDocument thread "
             //                   + Thread.currentThread().getName());
             event.type = XMLEvent.STARTDOCUMENT;
@@ -114,13 +117,13 @@ public class XMLSerialHandler extends DefaultHandler implements Runnable {
      */
     public void endDocument() throws NoSuchElementException {
         synchronized (events) {
-            XMLEvent event = new XMLEvent(namespaces);
+            FoXMLEvent event = new FoXMLEvent(namespaces);
             //System.out.println("EndDocument thread "
-            //                   + Thread.currentThread().getName());
+                               //+ Thread.currentThread().getName());
             event.type = XMLEvent.ENDDOCUMENT;
             //System.out.println("SerialHandler: " + event);
             putEvent(event);
-            events.flushBuffer();
+            events.producerExhausted();
         }
     }
 
@@ -137,11 +140,17 @@ public class XMLSerialHandler extends DefaultHandler implements Runnable {
         throws NoSuchElementException
     {
         synchronized (events) {
-            XMLEvent event = new XMLEvent(namespaces);
+            FoXMLEvent event = new FoXMLEvent(namespaces);
             //System.out.println("StartElement thread "
             //                   + Thread.currentThread().getName());
             event.type = XMLEvent.STARTELEMENT;
+            // Is this from the fo: namespace?
             event.uriIndex = namespaces.getURIIndex(uri);
+            if (event.uriIndex == XMLNamespaces.XSLNSpaceIndex) {
+                try {
+                    event.foType = FObjectNames.getFOIndex(localName);
+                } catch (FOPException e) {}
+            }
             event.localName = localName;
             event.qName = qName;
             event.attributes = new AttributesImpl(attributes);
@@ -161,11 +170,16 @@ public class XMLSerialHandler extends DefaultHandler implements Runnable {
         throws NoSuchElementException
     {
         synchronized (events) {
-            XMLEvent event = new XMLEvent(namespaces);
+            FoXMLEvent event = new FoXMLEvent(namespaces);
             //System.out.println("EndElement thread "
-            //                   + Thread.currentThread().getName());
+                               //+ Thread.currentThread().getName());
             event.type = XMLEvent.ENDELEMENT;
             event.uriIndex = namespaces.getURIIndex(uri);
+            if (event.uriIndex == XMLNamespaces.XSLNSpaceIndex) {
+                try {
+                    event.foType = FObjectNames.getFOIndex(localName);
+                } catch (FOPException e) {}
+            }
             event.localName = localName;
             event.qName = qName;
             putEvent(event);
@@ -183,7 +197,7 @@ public class XMLSerialHandler extends DefaultHandler implements Runnable {
         throws NoSuchElementException
     {
         synchronized (events) {
-            XMLEvent event = new XMLEvent(namespaces);
+            FoXMLEvent event = new FoXMLEvent(namespaces);
             //System.out.println("characters thread "
             //                   + Thread.currentThread().getName());
             event.type = XMLEvent.CHARACTERS;

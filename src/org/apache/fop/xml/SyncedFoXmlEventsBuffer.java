@@ -2,6 +2,7 @@ package org.apache.fop.xml;
 
 import org.apache.fop.datastructs.SyncedCircularBuffer;
 import org.apache.fop.apps.FOPException;
+import org.apache.fop.fo.FObjectNames;
 
 import java.util.NoSuchElementException;
 import java.util.LinkedList;
@@ -18,10 +19,10 @@ import java.util.Iterator;
  * @version $Revision$ $Name$
  */
 /**
- * A synchronized circular buffer for XMLEvents.
+ * A synchronized circular buffer for FoXMLEvents.
  * @see org.apache.fop.datastructs.SyncedCircularBuffer
  */
-public class SyncedXmlEventsBuffer extends SyncedCircularBuffer {
+public class SyncedFoXmlEventsBuffer extends SyncedCircularBuffer {
 
     /**
      * Maintains an index of namespace URIs.  These can then be referred to
@@ -35,7 +36,7 @@ public class SyncedXmlEventsBuffer extends SyncedCircularBuffer {
      * The producer and consumer <tt>Thread</tt>s default to the current
      * thread at the time of instantiation.
      */
-    public SyncedXmlEventsBuffer()
+    public SyncedFoXmlEventsBuffer()
         throws IllegalArgumentException
     {
         super();
@@ -46,7 +47,7 @@ public class SyncedXmlEventsBuffer extends SyncedCircularBuffer {
      * Constructor taking one argument; the size of the buffer.
      * @param size the size of the buffer.  Must be > 1.
      */
-    public SyncedXmlEventsBuffer(int size)
+    public SyncedFoXmlEventsBuffer(int size)
         throws IllegalArgumentException
     {
         super(size);
@@ -65,10 +66,10 @@ public class SyncedXmlEventsBuffer extends SyncedCircularBuffer {
      * and transform any InterruptedException exceptions thrown by the
      * <tt>SyncedCircularBuffer</tt>.
      */
-    public XMLEvent getEvent() throws FOPException {
-        XMLEvent ev;
+    public FoXMLEvent getEvent() throws FOPException {
+        FoXMLEvent ev;
         try {
-            ev = (XMLEvent)get();
+            ev = (FoXMLEvent)get();
             //System.out.println("getEvent: " + ev);
             return ev;
         } catch (InterruptedException e) {
@@ -84,8 +85,8 @@ public class SyncedXmlEventsBuffer extends SyncedCircularBuffer {
      * @exception FOPException if buffer errors or interrupts occur.
      * @exception NoSuchElementException if the event is not found.
      */
-    public XMLEvent getTypedEvent(int eventType) throws FOPException {
-        XMLEvent ev = getEvent();
+    public FoXMLEvent getTypedEvent(int eventType) throws FOPException {
+        FoXMLEvent ev = getEvent();
         while (ev != null && ev.type != eventType) {
             ev = getEvent();
         }
@@ -106,10 +107,10 @@ public class SyncedXmlEventsBuffer extends SyncedCircularBuffer {
      * @exception FOPException if buffer errors or interrupts occur.
      * @exception NoSuchElementException if the event is not found.
      */
-    public XMLEvent getTypedEvent(int eventType, String qName)
+    public FoXMLEvent getTypedEvent(int eventType, String qName)
                 throws FOPException
     {
-        XMLEvent ev = getEvent();
+        FoXMLEvent ev = getEvent();
         while (ev != null &&
                ! (ev.type == eventType && ev.qName.equals(qName))) {
             ev = getEvent();
@@ -133,14 +134,14 @@ public class SyncedXmlEventsBuffer extends SyncedCircularBuffer {
      * @exception FOPException if buffer errors or interrupts occur.
      * @exception NoSuchElementException if the event is not found.
      */
-    public XMLEvent getTypedEvent
+    public FoXMLEvent getTypedEvent
                             (int eventType, int uriIndex, String localName)
                 throws FOPException
     {
-        XMLEvent ev = getEvent();
+        FoXMLEvent ev = getEvent();
         while (ev != null &&
                ! (ev.type == eventType
-                  && ev.type == eventType
+                  && ev.uriIndex == uriIndex
                   && ev.localName.equals(localName))) {
             ev = getEvent();
         }
@@ -153,21 +154,46 @@ public class SyncedXmlEventsBuffer extends SyncedCircularBuffer {
     }
 
     /**
+     * Get the next event of the given type, from the fo: namespace, with
+     * the given FO type.  Discard intervening events.
+     * @param eventType - the <tt>int</tt> event type.
+     * @param foType - the <tt>int</tt> FO type.
+     * @return an event of the given type.
+     * @exception FOPException if buffer errors or interrupts occur.
+     * @exception NoSuchElementException if the event is not found.
+     */
+    public FoXMLEvent getTypedEvent(int eventType, int foType)
+                throws FOPException
+    {
+        FoXMLEvent ev = getEvent();
+        while (ev != null &&
+               ! (ev.type == eventType && ev.foType == foType)) {
+            ev = getEvent();
+        }
+        if (ev == null)
+            throw new NoSuchElementException
+                    (XMLEvent.eventTypeName(eventType)
+                             + " FO type " + foType + " not found.");
+        return ev;
+    }
+
+    /**
      * Return the next element if it is of the required type.  If the next
      * element is not of the required type, push it back onto the buffer.
      * @param eventType - the <tt>int</tt> event type.
      * @param discardWhiteSpace - if true, discard any <tt>characters</tt>
      * events which contain only whitespace.
-     * @return an event of the required type.
-     * @exception FOPException if buffer errors or interrupts occur.
-     * @exception NoSuchElementException if the next
-     * event detected is not of the required type.
+     * @return an event of the required type.  If the next
+     * event detected is not of the required type, <tt>null</tt> is returned.
      * The erroneous event is pushed back.
+     * @exception FOPException if buffer errors or interrupts occur.
+     * @exception NoSuchElementException if the buffer is empty.
      */
-    public XMLEvent expectTypedEvent(int eventType, boolean discardWhiteSpace)
+    public FoXMLEvent expectTypedEvent
+                                    (int eventType, boolean discardWhiteSpace)
                 throws FOPException
     {
-        XMLEvent ev = getEvent();
+        FoXMLEvent ev = getEvent();
         if (discardWhiteSpace) {
             while (ev != null && ev.type == XMLEvent.CHARACTERS
                    && ev.chars.trim().equals("")) {
@@ -177,9 +203,12 @@ public class SyncedXmlEventsBuffer extends SyncedCircularBuffer {
         if (ev != null && ev.type == eventType) {
             return ev;
         }
+        if (ev == null)
+            throw new NoSuchElementException
+                        (XMLEvent.eventTypeName(eventType)
+                                           + " not found: end of buffer.");
         pushBack(ev);
-        throw new NoSuchElementException
-                        (XMLEvent.eventTypeName(eventType) + " not found.");
+        return null;
     }
 
     /**
@@ -191,17 +220,17 @@ public class SyncedXmlEventsBuffer extends SyncedCircularBuffer {
      * required element.
      * @param discardWhiteSpace - if true, discard any <tt>characters</tt>
      * events which contain only whitespace.
-     * @return an event of the required type.
-     * @exception FOPException if buffer errors or interrupts occur.
-     * @exception NoSuchElementException if the next
-     * event detected is not of the required type.
+     * @return an event of the required type.  If the next
+     * event detected is not of the required type, <tt>null</tt> is returned.
      * The erroneous event is pushed back.
+     * @exception FOPException if buffer errors or interrupts occur.
+     * @exception NoSuchElementException if the event is not found.
      */
-    public XMLEvent expectTypedEvent
+    public FoXMLEvent expectTypedEvent
                     (int eventType, String qName, boolean discardWhiteSpace)
                 throws FOPException
     {
-        XMLEvent ev = getEvent();
+        FoXMLEvent ev = getEvent();
         if (discardWhiteSpace) {
             while (ev != null && ev.type == XMLEvent.CHARACTERS
                    && ev.chars.trim().equals("")) {
@@ -211,9 +240,12 @@ public class SyncedXmlEventsBuffer extends SyncedCircularBuffer {
         if (ev != null && ev.type == eventType && ev.qName.equals(qName)) {
             return ev;
         }
+        if (ev == null)
+            throw new NoSuchElementException
+                        (XMLEvent.eventTypeName(eventType)
+                                           + " not found: end of buffer.");
         pushBack(ev);
-        throw new NoSuchElementException
-            (XMLEvent.eventTypeName(eventType) + " " + qName + " not found.");
+        return null;
     }
 
     /**
@@ -226,18 +258,18 @@ public class SyncedXmlEventsBuffer extends SyncedCircularBuffer {
      * required element.
      * @param discardWhiteSpace - if true, discard any <tt>characters</tt>
      * events which contain only whitespace.
-     * @return an event of the required type.
-     * @exception FOPException if buffer errors or interrupts occur.
-     * @exception NoSuchElementException if the next
-     * event detected is not of the required type.
+     * @return an event of the required type.  If the next
+     * event detected is not of the required type, <tt>null</tt> is returned.
      * The erroneous event is pushed back.
+     * @exception FOPException if buffer errors or interrupts occur.
+     * @exception NoSuchElementException if end of buffer detected.
      */
-    public XMLEvent expectTypedEvent
+    public FoXMLEvent expectTypedEvent
                             (int eventType, int uriIndex,
                                  String localName, boolean discardWhiteSpace)
                 throws FOPException
     {
-        XMLEvent ev = getEvent();
+        FoXMLEvent ev = getEvent();
         if (discardWhiteSpace) {
             while (ev != null && ev.type == XMLEvent.CHARACTERS
                    && ev.chars.trim().equals("")) {
@@ -250,11 +282,48 @@ public class SyncedXmlEventsBuffer extends SyncedCircularBuffer {
                        && ev.localName.equals(localName)) {
             return ev;
         }
+        if (ev == null)
+            throw new NoSuchElementException
+                        (XMLEvent.eventTypeName(eventType)
+                                           + " not found: end of buffer.");
         pushBack(ev);
-        throw new NoSuchElementException
-                    (XMLEvent.eventTypeName(eventType)
-                             + namespaces.getIndexURI(uriIndex)
-                                       + ":" + localName + " not found.");
+        return null;
+    }
+
+    /**
+     * Return the next element if it is of the required type and has the
+     * required FO type.  If the next
+     * element is not of the required type, push it back onto the buffer.
+     * @param eventType - the <tt>int</tt> event type.
+     * @param foType - the <tt>int</tt> FO type.
+     * @param discardWhiteSpace - if true, discard any <tt>characters</tt>
+     * events which contain only whitespace.
+     * @return an event of the required type.  If the next
+     * event detected is not of the required type, <tt>null</tt> is returned.
+     * The erroneous event is pushed back.
+     * @exception FOPException if buffer errors or interrupts occur.
+     * @exception NoSuchElementException if end of buffer detected.
+     */
+    public FoXMLEvent expectTypedEvent
+                    (int eventType, int foType, boolean discardWhiteSpace)
+                throws FOPException
+    {
+        FoXMLEvent ev = getEvent();
+        if (discardWhiteSpace) {
+            while (ev != null && ev.type == XMLEvent.CHARACTERS
+                   && ev.chars.trim().equals("")) {
+                ev = getEvent();
+            }
+        }
+        if (ev != null && ev.type == eventType && ev.foType == foType) {
+            return ev;
+        }
+        if (ev == null)
+            throw new NoSuchElementException
+                        (XMLEvent.eventTypeName(eventType)
+                                           + " not found: end of buffer.");
+        pushBack(ev);
+        return null;
     }
 
     /**
@@ -264,7 +333,7 @@ public class SyncedXmlEventsBuffer extends SyncedCircularBuffer {
      * @exception FOPException if buffer errors or interrupts occur
      * @exception NoSuchElementException if the event is not found
      */
-    public XMLEvent getEndDocument() throws FOPException {
+    public FoXMLEvent getEndDocument() throws FOPException {
         return getTypedEvent(XMLEvent.ENDDOCUMENT);
     }
 
@@ -273,12 +342,13 @@ public class SyncedXmlEventsBuffer extends SyncedCircularBuffer {
      * element is not of the required type, push it back onto the buffer.
      * @param discardWhiteSpace - if true, discard any <tt>characters</tt>
      * events which contain only whitespace.
-     * @return an ENDDOCUMENT event
+     * @return an ENDDOCUMENT event. If the next
+     * event detected is not of the required type, <tt>null</tt> is returned.
+     * The erroneous event is pushed back.
      * @exception FOPException if buffer errors or interrupts occur
-     * @exception NoSuchElementException if ENDDOCUMENT is not the next
-     * event detected.  The erroneous event is pushed back.
+     * @exception NoSuchElementException if end of buffer detected.
      */
-    public XMLEvent expectEndDocument(boolean discardWhiteSpace)
+    public FoXMLEvent expectEndDocument(boolean discardWhiteSpace)
                 throws FOPException
     {
         return expectTypedEvent(XMLEvent.ENDDOCUMENT, discardWhiteSpace);
@@ -291,7 +361,7 @@ public class SyncedXmlEventsBuffer extends SyncedCircularBuffer {
      * @exception FOPException if buffer errors or interrupts occur
      * @exception NoSuchElementException if the event is not found
      */
-    public XMLEvent getStartElement() throws FOPException {
+    public FoXMLEvent getStartElement() throws FOPException {
         return getTypedEvent(XMLEvent.STARTELEMENT);
     }
 
@@ -300,12 +370,13 @@ public class SyncedXmlEventsBuffer extends SyncedCircularBuffer {
      * element is not of the required type, push it back onto the buffer.
      * @param discardWhiteSpace - if true, discard any <tt>characters</tt>
      * events which contain only whitespace.
-     * @return a STARTELEMENT event
+     * @return a STARTELEMENT event.  If the next
+     * event detected is not of the required type, <tt>null</tt> is returned.
+     * The erroneous event is pushed back.
      * @exception FOPException if buffer errors or interrupts occur
-     * @exception NoSuchElementException if STARTELEMENT is not the next
-     * event detected.  The erroneous event is pushed back.
+     * @exception NoSuchElementException if end of buffer detected.
      */
-    public XMLEvent expectStartElement(boolean discardWhiteSpace)
+    public FoXMLEvent expectStartElement(boolean discardWhiteSpace)
                 throws FOPException
     {
         return expectTypedEvent(XMLEvent.STARTELEMENT, discardWhiteSpace);
@@ -321,7 +392,7 @@ public class SyncedXmlEventsBuffer extends SyncedCircularBuffer {
      * @exception FOPException if buffer errors or interrupts occur
      * @exception NoSuchElementException if the event is not found
      */
-    public XMLEvent getStartElement(String qName) throws FOPException
+    public FoXMLEvent getStartElement(String qName) throws FOPException
     {
         return getTypedEvent(XMLEvent.STARTELEMENT, qName);
     }
@@ -334,12 +405,13 @@ public class SyncedXmlEventsBuffer extends SyncedCircularBuffer {
      * required STARTELEMENT
      * @param discardWhiteSpace - if true, discard any <tt>characters</tt>
      * events which contain only whitespace.
-     * @return a STARTELEMENT event
+     * @return a STARTELEMENT event.  If the next
+     * event detected is not of the required type, <tt>null</tt> is returned.
+     * The erroneous event is pushed back.
      * @exception FOPException if buffer errors or interrupts occur
-     * @exception NoSuchElementException if STARTELEMENT is not the next
-     * event detected.  The erroneous event is pushed back.
+     * @exception NoSuchElementException if end of buffer detected.
      */
-    public XMLEvent expectStartElement
+    public FoXMLEvent expectStartElement
                                 (String qName, boolean discardWhiteSpace)
         throws FOPException
     {
@@ -359,7 +431,7 @@ public class SyncedXmlEventsBuffer extends SyncedCircularBuffer {
      * @exception FOPException if buffer errors or interrupts occur
      * @exception NoSuchElementException if the event is not found
      */
-    public XMLEvent getStartElement(int uriIndex, String localName)
+    public FoXMLEvent getStartElement(int uriIndex, String localName)
         throws FOPException
     {
         return getTypedEvent(XMLEvent.STARTELEMENT, uriIndex, localName);
@@ -374,17 +446,57 @@ public class SyncedXmlEventsBuffer extends SyncedCircularBuffer {
      * required STARTELEMENT
      * @param discardWhiteSpace - if true, discard any <tt>characters</tt>
      * events which contain only whitespace.
-     * @return a STARTELEMENT event
+     * @return a STARTELEMENT event.  If the next
+     * event detected is not of the required type, <tt>null</tt> is returned.
+     * The erroneous event is pushed back.
      * @exception FOPException if buffer errors or interrupts occur
-     * @exception NoSuchElementException if STARTELEMENT is not the next
-     * event detected.  The erroneous event is pushed back.
+     * @exception NoSuchElementException if end of buffer detected.
      */
-    public XMLEvent expectStartElement
+    public FoXMLEvent expectStartElement
                 (int uriIndex, String localName, boolean discardWhiteSpace)
         throws FOPException
     {
         return expectTypedEvent
             (XMLEvent.STARTELEMENT, uriIndex, localName, discardWhiteSpace);
+    }
+
+    /**
+     * From the buffer get the next STARTELEMENT event from the fo: namespace
+     * with the given FO object type.
+     *  Discard any other events preceding the
+     * STARTELEMENT event.
+     * @param foType - the <tt>int</tt> FO object type, as defined in
+     * <tt>FObjectNames</tt>.
+     * @return a matching STARTELEMENT event.
+     * @exception FOPException if buffer errors or interrupts occur
+     * @exception NoSuchElementException if the event is not found
+     */
+    public FoXMLEvent getStartElement(int foType)
+        throws FOPException
+    {
+        return getTypedEvent(XMLEvent.STARTELEMENT, foType);
+    }
+
+    /**
+     * From the buffer return the next STARTELEMENT event from the fo:
+     * namespace with the given FO object type.  If the next
+     * element is not of the required type, push it back onto the buffer.
+     * @param foType - the <tt>int</tt> FO object type, as defined in
+     * <tt>FObjectNames</tt>.
+     * @param discardWhiteSpace - if true, discard any <tt>characters</tt>
+     * events which contain only whitespace.
+     * @return a matching STARTELEMENT event.  If the next
+     * event detected is not of the required type, <tt>null</tt> is returned.
+     * The erroneous event is pushed back.
+     * @exception FOPException if buffer errors or interrupts occur
+     * @exception NoSuchElementException if end of buffer detected.
+     */
+    public FoXMLEvent expectStartElement
+                                    (int foType, boolean discardWhiteSpace)
+        throws FOPException
+    {
+        return expectTypedEvent
+            (XMLEvent.STARTELEMENT, foType, discardWhiteSpace);
     }
 
     /**
@@ -399,22 +511,18 @@ public class SyncedXmlEventsBuffer extends SyncedCircularBuffer {
      * @exception FOPException if buffer errors or interrupts occur
      * @exception NoSuchElementException if the event is not found
      */
-    public XMLEvent getStartElement
+    public FoXMLEvent getStartElement
                                 (LinkedList list, boolean discardWhiteSpace)
         throws FOPException
     {
-        XMLEvent ev;
+        FoXMLEvent ev;
         do {
-            try {
-                ev = expectStartElement(list, discardWhiteSpace);
-                return ev;
-            } catch (NoSuchElementException e) {
-                // keep trying
-            }
+            ev = expectStartElement(list, discardWhiteSpace);
+            if (ev != null) return ev;
             // The non-matching event has been pushed back.
             // Get it and discard.  Note that if the first attempt to
             // getEvent() returns null, the expectStartElement() calls
-            // will throw a NoSuchElementException
+            // return null.
             ev = getEvent();
         } while (ev != null);
         // Exit from this while loop is only by discovery of null event
@@ -430,43 +538,40 @@ public class SyncedXmlEventsBuffer extends SyncedCircularBuffer {
      * STARTELEMENT events.
      * @param discardWhiteSpace - if true, discard any <tt>characters</tt>
      * events which contain only whitespace.
-     * @return a STARTELEMENT event
+     * @return a STARTELEMENT event.  If the next
+     * event detected is not of the required type, <tt>null</tt> is returned.
+     * The erroneous event is pushed back.
      * @exception FOPException if buffer errors or interrupts occur
-     * @exception NoSuchElementException if the event is not found
+     * @exception NoSuchElementException if end of buffer detected.
      */
-    public XMLEvent expectStartElement
+    public FoXMLEvent expectStartElement
                                 (LinkedList list, boolean discardWhiteSpace)
         throws FOPException
     {
-        XMLEvent ev;
+        FoXMLEvent ev;
         Iterator elements = list.iterator();
         while (elements.hasNext()) {
             Object o = elements.next();
             if (o instanceof String) {
-                try {
-                    ev = expectStartElement((String) o, discardWhiteSpace);
-                    // Found it!
-                    return ev;
-                } catch (NoSuchElementException e) {
-                    // Keep trying
-                }
+                ev = expectStartElement((String) o, discardWhiteSpace);
+                // Found it!
+                if (ev != null) return ev;
             } else if (o instanceof UriLocalName) {
-                try {
-                    ev = expectStartElement
-                            (((UriLocalName) o).uriIndex,
-                             ((UriLocalName) o).localName,
-                             discardWhiteSpace);
-                    // Found it!
-                    return ev;
-                } catch (NoSuchElementException e) {
-                    // Keep trying
-                }
+                ev = expectStartElement
+                        (((UriLocalName) o).uriIndex,
+                         ((UriLocalName) o).localName,
+                         discardWhiteSpace);
+                // Found it!
+                if (ev != null) return ev;
+            } else if (o instanceof Integer) {
+                ev = expectStartElement(((Integer)o).intValue(),
+                                        discardWhiteSpace);
+                if (ev != null) return ev;
             } else
                 throw new FOPException
                         ("Invalid list elements for getStartElement");
         }
-        throw new NoSuchElementException
-                ("StartElement from list not found.");
+        return null;
     }
 
     /**
@@ -483,18 +588,14 @@ public class SyncedXmlEventsBuffer extends SyncedCircularBuffer {
      * @exception FOPException if buffer errors or interrupts occur
      * @exception NoSuchElementException if the event is not found
      */
-    public XMLEvent getStartElement
+    public FoXMLEvent getStartElement
                     (UriLocalName[] list, boolean discardWhiteSpace)
         throws FOPException
     {
-        XMLEvent ev;
+        FoXMLEvent ev;
         do {
-            try {
-                ev = expectStartElement(list, discardWhiteSpace);
-                return ev;
-            } catch (NoSuchElementException e) {
-                // keep trying
-            }
+            ev = expectStartElement(list, discardWhiteSpace);
+            if (ev != null) return ev;
             // The non-matching event has been pushed back.
             // Get it and discard.  Note that if the first attempt to
             // getEvent() returns null, the expectStartElement() calls
@@ -515,28 +616,25 @@ public class SyncedXmlEventsBuffer extends SyncedCircularBuffer {
      * of possible events, one of which must be the next returned.
      * @param discardWhiteSpace - if true, discard any <tt>characters</tt>
      * events which contain only whitespace.
-     * @return the matching STARTELEMENT event
+     * @return the matching STARTELEMENT event. If the next
+     * event detected is not of the required type, <tt>null</tt> is returned.
+     * The erroneous event is pushed back.
      * @exception FOPException if buffer errors or interrupts occur
-     * @exception NoSuchElementException if the event is not found
+     * @exception NoSuchElementException if end of buffer detected.
      */
-    public XMLEvent expectStartElement
+    public FoXMLEvent expectStartElement
                     (UriLocalName[] list, boolean discardWhiteSpace)
         throws FOPException
     {
-        XMLEvent ev;
+        FoXMLEvent ev;
         for (int i = 0; i < list.length; i++) {
-            try {
-                ev = expectStartElement(list[i].uriIndex,
-                                        list[i].localName,
-                                        discardWhiteSpace);
-                // Found it!
-                return ev;
-            } catch (NoSuchElementException e) {
-                // Keep trying
-            }
+            ev = expectStartElement(list[i].uriIndex,
+                                    list[i].localName,
+                                    discardWhiteSpace);
+            // Found it!
+            if (ev != null) return ev;
         }
-        throw new NoSuchElementException
-                ("StartElement from array not found.");
+        return null;
     }
 
     /**
@@ -551,17 +649,13 @@ public class SyncedXmlEventsBuffer extends SyncedCircularBuffer {
      * @exception FOPException if buffer errors or interrupts occur
      * @exception NoSuchElementException if the event is not found
      */
-    public XMLEvent getStartElement(String[] list, boolean discardWhiteSpace)
+    public FoXMLEvent getStartElement(String[] list, boolean discardWhiteSpace)
         throws FOPException
     {
-        XMLEvent ev;
+        FoXMLEvent ev;
         do {
-            try {
-                ev = expectStartElement(list, discardWhiteSpace);
-                return ev;
-            } catch (NoSuchElementException e) {
-                // keep trying
-            }
+            ev = expectStartElement(list, discardWhiteSpace);
+            if (ev != null) return ev;
             // The non-matching event has been pushed back.
             // Get it and discard.  Note that if the first attempt to
             // getEvent() returns null, the expectStartElement() calls
@@ -581,26 +675,81 @@ public class SyncedXmlEventsBuffer extends SyncedCircularBuffer {
      * of possible events, one of which must be the next returned.
      * @param discardWhiteSpace - if true, discard any <tt>characters</tt>
      * events which contain only whitespace.
-     * @return the matching STARTELEMENT event
+     * @return the matching STARTELEMENT event.If the next
+     * event detected is not of the required type, <tt>null</tt> is returned.
+     * The erroneous event is pushed back.
      * @exception FOPException if buffer errors or interrupts occur
-     * @exception NoSuchElementException if the event is not found
+     * @exception NoSuchElementException if end of buffer detected.
      */
-    public XMLEvent expectStartElement
+    public FoXMLEvent expectStartElement
                                     (String[] list, boolean discardWhiteSpace)
         throws FOPException
     {
-        XMLEvent ev;
+        FoXMLEvent ev;
         for (int i = 0; i < list.length; i++) {
-            try {
-                ev = expectStartElement(list[i], discardWhiteSpace);
-                // Found it!
-                return ev;
-            } catch (NoSuchElementException e) {
-                // Keep trying
-            }
+            ev = expectStartElement(list[i], discardWhiteSpace);
+            // Found it!
+            if (ev != null) return ev;
         }
+        return null;
+    }
+
+    /**
+     * Get one of a array of possible STARTELEMENT events.  Scan and discard
+     * events until a STARTELEMENT event is found which is in the fo:
+     * namespace and whose FO type matches one of those in the argument
+     * <tt>int</tt> array.
+     * @param list an <tt>int[]</tt> array containing FO types
+     * one of which is required.
+     * @param discardWhiteSpace - if true, discard any <tt>characters</tt>
+     * events which contain only whitespace.
+     * @return the next matching STARTELEMENT event from the buffer.
+     * @exception FOPException if buffer errors or interrupts occur
+     * @exception NoSuchElementException if the event is not found
+     */
+    public FoXMLEvent getStartElement(int[] list, boolean discardWhiteSpace)
+        throws FOPException
+    {
+        FoXMLEvent ev;
+        do {
+            ev = expectStartElement(list, discardWhiteSpace);
+            if (ev != null) return ev;
+            // The non-matching event has been pushed back.
+            // Get it and discard.  Note that if the first attempt to
+            // getEvent() returns null, the expectStartElement() calls
+            // will throw a NoSuchElementException
+            ev = getEvent();
+        } while (ev != null);
+        // Exit from this while loop is only by discovery of null event
         throw new NoSuchElementException
-                ("StartElement from array not found.");
+                    ("StartElement from array not found.");
+    }
+
+    /**
+     * Expect one of an array of possible STARTELEMENT events.  The next
+     * STARTELEMENT must be in the fo: namespace, and must have an FO type
+     * which matches one of those in the argument <tt>int[]</tt> list.
+     * @param list a <tt>int[]</tt> array containing the FO types
+     * of possible events, one of which must be the next returned.
+     * @param discardWhiteSpace - if true, discard any <tt>characters</tt>
+     * events which contain only whitespace.
+     * @return the matching STARTELEMENT event.If the next
+     * event detected is not of the required type, <tt>null</tt> is returned.
+     * The erroneous event is pushed back.
+     * @exception FOPException if buffer errors or interrupts occur
+     * @exception NoSuchElementException if end of buffer detected.
+     */
+    public FoXMLEvent expectStartElement
+                                    (int[] list, boolean discardWhiteSpace)
+        throws FOPException
+    {
+        FoXMLEvent ev;
+        for (int i = 0; i < list.length; i++) {
+            ev = expectStartElement(list[i], discardWhiteSpace);
+            // Found it!
+            if (ev != null) return ev;
+        }
+        return null;
     }
 
     /**
@@ -610,7 +759,7 @@ public class SyncedXmlEventsBuffer extends SyncedCircularBuffer {
      * @exception FOPException if buffer errors or interrupts occur
      * @exception NoSuchElementException if the event is not found
      */
-    public XMLEvent getEndElement() throws FOPException {
+    public FoXMLEvent getEndElement() throws FOPException {
         return getTypedEvent(XMLEvent.ENDELEMENT);
     }
 
@@ -619,12 +768,15 @@ public class SyncedXmlEventsBuffer extends SyncedCircularBuffer {
      * element is not of the required type, push it back onto the buffer.
      * @param discardWhiteSpace - if true, discard any <tt>characters</tt>
      * events which contain only whitespace.
-     * @return an ENDELEMENT event
+     * @return a matching ENDELEMENT event.  If the next
+     * event detected is not of the required type, <tt>null</tt> is returned.
+     * The erroneous event is pushed back.
      * @exception FOPException if buffer errors or interrupts occur
      * @exception NoSuchElementException if ENDELEMENT is not the next
      * event detected.  The erroneous event is pushed back.
+     * @exception NoSuchElementException if end of buffer detected.
      */
-    public XMLEvent expectEndElement(boolean discardWhiteSpace)
+    public FoXMLEvent expectEndElement(boolean discardWhiteSpace)
                 throws FOPException
     {
         return expectTypedEvent(XMLEvent.ENDELEMENT, discardWhiteSpace);
@@ -640,7 +792,7 @@ public class SyncedXmlEventsBuffer extends SyncedCircularBuffer {
      * @exception FOPException if buffer errors or interrupts occur
      * @exception NoSuchElementException if the event is not found
      */
-    public XMLEvent getEndElement(String qName) throws FOPException
+    public FoXMLEvent getEndElement(String qName) throws FOPException
     {
         return getTypedEvent(XMLEvent.ENDELEMENT, qName);
     }
@@ -653,12 +805,13 @@ public class SyncedXmlEventsBuffer extends SyncedCircularBuffer {
      * required ENDELEMENT
      * @param discardWhiteSpace - if true, discard any <tt>characters</tt>
      * events which contain only whitespace.
-     * @return an ENDELEMENT event
+     * @return an ENDELEMENT with the given qname.  If the next
+     * event detected is not an ENDELEMENT, <tt>null</tt> is returned.
+     * The erroneous event is pushed back.
      * @exception FOPException if buffer errors or interrupts occur
-     * @exception NoSuchElementException if STARTELEMENT is not the next
-     * event detected.  The erroneous event is pushed back.
+     * @exception NoSuchElementException if end of buffer detected.
      */
-    public XMLEvent expectEndElement(String qName, boolean discardWhiteSpace)
+    public FoXMLEvent expectEndElement(String qName, boolean discardWhiteSpace)
         throws FOPException
     {
         return expectTypedEvent(XMLEvent.ENDELEMENT, qName, discardWhiteSpace);
@@ -676,7 +829,7 @@ public class SyncedXmlEventsBuffer extends SyncedCircularBuffer {
      * @exception FOPException if buffer errors or interrupts occur
      * @exception NoSuchElementException if the event is not found
      */
-    public XMLEvent getEndElement(int uriIndex, String localName)
+    public FoXMLEvent getEndElement(int uriIndex, String localName)
         throws FOPException
     {
         return getTypedEvent(XMLEvent.ENDELEMENT, uriIndex, localName);
@@ -692,12 +845,14 @@ public class SyncedXmlEventsBuffer extends SyncedCircularBuffer {
      * required ENDELEMENT
      * @param discardWhiteSpace - if true, discard any <tt>characters</tt>
      * events which contain only whitespace.
-     * @return an ENDELEMENT event
+     * @return a matching ENDELEMENT event.
+     * If the next
+     * event detected is not an ENDELEMENT, <tt>null</tt> is returned.
+     * The erroneous event is pushed back.
      * @exception FOPException if buffer errors or interrupts occur
-     * @exception NoSuchElementException if STARTELEMENT is not the next
-     * event detected.  The erroneous event is pushed back.
+     * @exception NoSuchElementException if end of buffer detected.
      */
-    public XMLEvent expectEndElement
+    public FoXMLEvent expectEndElement
                 (int uriIndex, String localName, boolean discardWhiteSpace)
         throws FOPException
     {
@@ -706,39 +861,80 @@ public class SyncedXmlEventsBuffer extends SyncedCircularBuffer {
     }
 
     /**
+     * Get the next ENDELEMENT event with the given Fo type
+     * from the buffer.  Discard any other events preceding the
+     * ENDELEMENT event.
+     * @param foType - the FO type of the required ENDELEMENT
+     * @return a matching ENDELEMENT event.
+     * @exception FOPException if buffer errors or interrupts occur
+     * @exception NoSuchElementException if the event is not found
+     */
+    public FoXMLEvent getEndElement(int foType) throws FOPException
+    {
+        return getTypedEvent(XMLEvent.ENDELEMENT, foType);
+    }
+
+    /**
+     * Return the next element if it is an ENDELEMENT with the given
+     * FO type.  If the next
+     * element is not of the required type, push it back onto the buffer.
+     * @param foType - the FO type of the required ENDELEMENT
+     * @param discardWhiteSpace - if true, discard any <tt>characters</tt>
+     * events which contain only whitespace.
+     * @return a matching ENDELEMENT.  If the next
+     * event detected is not an ENDELEMENT, <tt>null</tt> is returned.
+     * The erroneous event is pushed back.
+     * @exception FOPException if buffer errors or interrupts occur
+     * @exception NoSuchElementException if end of buffer detected.
+     */
+    public FoXMLEvent expectEndElement(int foType, boolean discardWhiteSpace)
+        throws FOPException
+    {
+        return expectTypedEvent
+                            (XMLEvent.ENDELEMENT, foType, discardWhiteSpace);
+    }
+
+    /**
      * Get the next ENDELEMENT event, with the same URI index and local name
-     * as the <tt>XMLEvent</tt> argument, from the buffer.
+     * as the <tt>FoXMLEvent</tt> argument, from the buffer.
      * Discard any other events preceding the ENDELEMENT event.
-     * @param event an <tt>XMLEvent</tt>.  Only the uriIndex and the
-     * localName from the event are used.  It is intended that the XMLEvent
+     * @param event an <tt>FoXMLEvent</tt>.  Only the uriIndex and the
+     * localName from the event are used.  It is intended that the FoXMLEvent
      * returned to the corresponding get/expectStartElement() call be used.
      * @return an ENDELEMENT event
      * @exception FOPException if buffer errors or interrupts occur
      * @exception NoSuchElementException if the event is not found
      */
-    public XMLEvent getEndElement(XMLEvent event) throws FOPException
+    public FoXMLEvent getEndElement(FoXMLEvent event) throws FOPException
     {
+        if (event.foType != FObjectNames.NO_FO)
+            return getTypedEvent(XMLEvent.ENDELEMENT, event.foType);
         return getTypedEvent
                     (XMLEvent.ENDELEMENT, event.uriIndex, event.localName);
     }
 
     /**
      * Return the next element if it is an ENDELEMENT with the same
-     * URI index and local name as the <tt>XMLEvent argument</tt>.  If the
+     * URI index and local name as the <tt>FoXMLEvent argument</tt>.  If the
      * next element is not of the required type, push it back onto the buffer.
-     * @param event an <tt>XMLEvent</tt>.  Only the uriIndex and the
-     * localName from the event are used.  It is intended that the XMLEvent
+     * @param event an <tt>FoXMLEvent</tt>.  Only the uriIndex and the
+     * localName from the event are used.  It is intended that the FoXMLEvent
      * returned to the corresponding get/expectStartElement() call be used.
      * @param discardWhiteSpace - if true, discard any <tt>characters</tt>
      * events which contain only whitespace.
-     * @return an ENDELEMENT event
+     * @return a matching ENDELEMENT event.  If the next
+     * event detected is not an ENDELEMENT, <tt>null</tt> is returned.
+     * The erroneous event is pushed back.
      * @exception FOPException if buffer errors or interrupts occur
-     * @exception NoSuchElementException if STARTELEMENT is not the next
-     * event detected.  The erroneous event is pushed back.
+     * @exception NoSuchElementException if end of buffer detected.
      */
-    public XMLEvent expectEndElement(XMLEvent event, boolean discardWhiteSpace)
+    public FoXMLEvent expectEndElement
+                                (FoXMLEvent event, boolean discardWhiteSpace)
         throws FOPException
     {
+        if (event.foType != FObjectNames.NO_FO)
+            return expectTypedEvent
+                    (XMLEvent.ENDELEMENT, event.foType, discardWhiteSpace);
         return expectTypedEvent
                 (XMLEvent.ENDELEMENT, event.uriIndex, event.localName,
                                                          discardWhiteSpace);
@@ -749,8 +945,8 @@ public class SyncedXmlEventsBuffer extends SyncedCircularBuffer {
      * @exception FOPException if buffer errors or interrupts occur
      * @exception NoSuchElementException if the event is not found
      */
-    public XMLEvent getCharacters() throws FOPException {
-        XMLEvent ev = getEvent();
+    public FoXMLEvent getCharacters() throws FOPException {
+        FoXMLEvent ev = getEvent();
         while (ev != null && ev.type != XMLEvent.CHARACTERS) {
             ev = getEvent();
         }
@@ -761,18 +957,19 @@ public class SyncedXmlEventsBuffer extends SyncedCircularBuffer {
     }
 
     /**
-     * @return a CHARACTERS event
+     * @return a CHARACTERS event.  If the next event detected is not
+     * a CHARACTERS event, <tt>null</tt> is returned.
+     * The erroneous event is pushed back.
      * @exception FOPException if buffer errors or interrupts occur
-     * @exception NoSuchElementException if CHARACTERS is not the next
-     * event detected.  The erroneous event is pushed back.
+     * @exception NoSuchElementException if end of buffer detected.
      */
-    public XMLEvent expectCharacters() throws FOPException {
-        XMLEvent ev = getEvent();
+    public FoXMLEvent expectCharacters() throws FOPException {
+        FoXMLEvent ev = getEvent();
         if (ev != null && ev.type == XMLEvent.CHARACTERS) {
             return ev;
         }
         pushBack(ev);
-        throw new NoSuchElementException("Characters not found.");
+        return null;
     }
 
 }
