@@ -28,9 +28,9 @@ import java.awt.geom.Rectangle2D;
  */
 public class SpacesRectangle extends Area.AreaFrame {
 
-    public SpacesRectangle(Area area) {
-        area.super();
-        contents = new BorderRectangle(area);
+    public SpacesRectangle(Area area, int writingMode) {
+        area.super(writingMode);
+        contents = new BorderRectangle(area, writingMode);
         contentOffset = new Point2D.Double();
 
     }
@@ -43,9 +43,10 @@ public class SpacesRectangle extends Area.AreaFrame {
 	 * @param contents
 	 * @param contentOffset
 	 */
-	public SpacesRectangle(Area area, double x, double y, double w, double h,
+	public SpacesRectangle(Area area, int writingMode,
+            double x, double y, double w, double h,
 			BorderRectangle contents, Point2D contentOffset) {
-		area.super(x, y, w, h, contents, contentOffset);
+		area.super(writingMode, x, y, w, h, contents, contentOffset);
 	}
 
 	/**
@@ -53,9 +54,9 @@ public class SpacesRectangle extends Area.AreaFrame {
 	 * @param contents
 	 * @param contentOffset
 	 */
-	public SpacesRectangle(Area area, Rectangle2D rect,
+	public SpacesRectangle(Area area, int writingMode, Rectangle2D rect,
             BorderRectangle contents, Point2D contentOffset) {
-		area.super(rect, contents, contentOffset);
+		area.super(writingMode, rect, contents, contentOffset);
 	}
 
 }
