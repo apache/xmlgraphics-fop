@@ -54,6 +54,9 @@ package org.apache.fop.pdf;
 //Java...
 import java.util.Vector;
 
+//FOP...
+import org.apache.fop.datatypes.ColorSpace;
+
 /**
  * class representing a PDF Function.
  *
@@ -135,7 +138,6 @@ public class PDFPattern extends PDFPathPaint {
 	protected StringBuffer patternDataStream = null;
 	
 	
-	
 	/**
 	 * Create a tiling pattern (type 1).
 	 * 
@@ -215,7 +217,7 @@ public class PDFPattern extends PDFPathPaint {
 	}
 	
 	
-	public String getColorspaceOut(boolean fillNotStroke)
+	public String getColorSpaceOut(boolean fillNotStroke)
 	{
 		if(fillNotStroke)
 		{ //fill but no stroke

@@ -50,10 +50,13 @@
  */
 package org.apache.fop.pdf;
 
+import org.apache.fop.datatypes.ColorSpace;
+
 public abstract class PDFPathPaint extends PDFObject
 {
 
-	protected int colorspace = 0; //default is 0:RGB, not 1:CMYK
+	//protected int colorspace = 0; //default is 0:RGB, not 1:CMYK
+	protected ColorSpace colorSpace;
 	
 	public PDFPathPaint(int theNumber) {
 		super(theNumber);
@@ -64,17 +67,17 @@ public abstract class PDFPathPaint extends PDFObject
 		//do nothing
 	}
 	
-	abstract String getColorspaceOut(boolean fillNotStroke);
+	abstract String getColorSpaceOut(boolean fillNotStroke);
 	
 	
-	public void setColorspace(int theColorspace)
+	public void setColorSpace(int theColorSpace)
 	{
-		this.colorspace = theColorspace;
+		this.colorSpace.setColorSpace(theColorSpace);
 	}
 	
-	public int getColorspace()
+	public int getColorSpace()
 	{
-		return(this.colorspace);
+		return(this.colorSpace.getColorSpace());
 	}
 	
 }

@@ -54,6 +54,10 @@ package org.apache.fop.pdf;
 //Java... 
 import java.util.Vector;
 
+
+//FOP
+import org.apache.fop.datatypes.ColorSpace;
+
 /**
  * class representing a PDF Smooth Shading object.
  * 
@@ -75,10 +79,10 @@ public class PDFShading extends PDFObject {
 	protected int shadingType = 3; //Default
 	
 	/**
-	 * A String representing the colorspace. "DeviceRGB" is an example.
+	 * A ColorSpace representing the colorspace. "DeviceRGB" is an example.
 	 */
-	protected StringBuffer colorSpace = null;
-
+	//protected StringBuffer colorSpace = null;
+   protected ColorSpace colorSpace=null;
 	/**
 	 * The background color. Since shading is opaque,
 	 * this is very rarely used.
@@ -180,7 +184,7 @@ public class PDFShading extends PDFObject {
 	 * It's optional, the default is the identity matrix
 	 * @param theFunction The PDF Function that maps an (x,y) location to a color
 	 */
-	public PDFShading(int theNumber, String theShadingName, int theShadingType, StringBuffer theColorSpace,
+	public PDFShading(int theNumber, String theShadingName, int theShadingType, ColorSpace theColorSpace,
 		Vector theBackground, Vector theBBox, boolean theAntiAlias,
 		Vector theDomain, Vector theMatrix, PDFFunction theFunction)
 	{
@@ -221,7 +225,7 @@ public class PDFShading extends PDFObject {
 		 * The default is [false, false]
 		 */
 	public PDFShading(int theNumber, String theShadingName,
-		int theShadingType, StringBuffer theColorSpace,
+		int theShadingType, ColorSpace theColorSpace,
 		Vector theBackground, Vector theBBox, boolean theAntiAlias,
 		Vector theCoords, Vector theDomain, PDFFunction theFunction,
 		Vector theExtend)
@@ -265,7 +269,7 @@ public class PDFShading extends PDFObject {
 	 * @param theDecode Vector of Doubles see PDF 1.3 spec pages 303 to 312.
 	 * @param theFunction the PDFFunction
 	 */
-	public PDFShading(int theNumber, String theShadingName, int theShadingType, StringBuffer theColorSpace,
+	public PDFShading(int theNumber, String theShadingName, int theShadingType, ColorSpace theColorSpace,
 		Vector theBackground, Vector theBBox, boolean theAntiAlias,
 		int theBitsPerCoordinate, int theBitsPerComponent,
 		int theBitsPerFlag, Vector theDecode, PDFFunction theFunction)
@@ -307,7 +311,7 @@ public class PDFShading extends PDFObject {
 	 * @param theFunction The PDFFunction that's mapped on to this shape
 	 * @param theNumber the object number of this PDF object.
 	 */
-	public PDFShading(int theNumber, String theShadingName, int theShadingType, StringBuffer theColorSpace,
+	public PDFShading(int theNumber, String theShadingName, int theShadingType, ColorSpace theColorSpace,
 		Vector theBackground, Vector theBBox, boolean theAntiAlias,
 		int theBitsPerCoordinate, int theBitsPerComponent,
 		Vector theDecode, int theVerticesPerRow, PDFFunction theFunction)
@@ -381,7 +385,8 @@ public class PDFShading extends PDFObject {
 			+ " obj\n<< \n/ShadingType "+this.shadingType+" \n");
 		if(this.colorSpace != null)
 		{
-			p.append("/ColorSpace /"+this.colorSpace+" \n");
+			p.append("/ColorSpace /"
+				+this.colorSpace.getColorSpacePDFString()+" \n");
 		}
 		
 		if(this.background != null)
