@@ -134,7 +134,7 @@ public class RepeatablePageMasterAlternatives extends FObj
 			(ConditionalPageMasterReference)conditionalPageMasterRefs.elementAt(i);
 
 			// 0-indexed page number
-			if (cpmr.isValid(currentPageNumber + 1, thisIsFirstPage,false))
+			if (cpmr.isValid(currentPageNumber + 1, thisIsFirstPage,isEmptyPage))
 			{
 				pm = cpmr.getMasterName();
 				break;
