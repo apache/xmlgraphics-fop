@@ -11,7 +11,7 @@ package org.apache.fop.fo.flow;
 import org.apache.fop.fo.*;
 import org.apache.fop.fo.properties.*;
 import org.apache.fop.datatypes.*;
-import org.apache.fop.layout.Area;
+import org.apache.fop.layout.*;
 import org.apache.fop.layout.BlockArea;
 import org.apache.fop.layout.inline.LeaderArea;
 import org.apache.fop.layout.LineArea;
@@ -53,6 +53,47 @@ public class Leader extends FObjMixed {
         } else {
             blockArea = (BlockArea)area;
         }
+
+        // Common Accessibility Properties
+        AccessibilityProps mAccProps = propMgr.getAccessibilityProps();
+
+        // Common Aural Properties
+        AuralProps mAurProps = propMgr.getAuralProps();
+
+        // Common Border, Padding, and Background Properties
+        BorderAndPadding bap = propMgr.getBorderAndPadding();
+        BackgroundProps bProps = propMgr.getBackgroundProps();
+
+        // Common Font Properties
+        //this.fontState = propMgr.getFontState(area.getFontInfo());
+
+        // Common Margin Properties-Inline
+        MarginInlineProps mProps = propMgr.getMarginInlineProps();
+
+        // Common Relative Position Properties
+        RelativePositionProps mRelProps = propMgr.getRelativePositionProps();
+
+        // this.properties.get("alignment-adjust");
+        // this.properties.get("alignment-baseline");
+        // this.properties.get("baseline-shift");
+        // this.properties.get("color");
+        // this.properties.get("dominant-baseline");
+        // this.properties.get("text-depth");
+        // this.properties.get("text-altitude");
+        // this.properties.get("id");
+        // this.properties.get("leader-alignment");
+        // this.properties.get("leader-length");
+        // this.properties.get("leader-pattern");
+        // this.properties.get("leader-pattern-width");
+        // this.properties.get("rule-style");
+        // this.properties.get("rule-thickness");
+        // this.properties.get("letter-spacing");
+        // this.properties.get("line-height");
+        // this.properties.get("line-height-shift-adjustment");
+        // this.properties.get("text-shadow");
+        // this.properties.get("visibility");
+        // this.properties.get("word-spacing");
+        // this.properties.get("z-index");
 
         // color properties
         ColorType c = this.properties.get("color").getColorType();

@@ -10,7 +10,7 @@ package org.apache.fop.fo.flow;
 // FOP
 import org.apache.fop.fo.*;
 import org.apache.fop.fo.properties.*;
-import org.apache.fop.layout.Area;
+import org.apache.fop.layout.*;
 import org.apache.fop.layout.FontState;
 import org.apache.fop.apps.FOPException;
 
@@ -38,6 +38,13 @@ public class ListItemBody extends FObj {
 
     public Status layout(Area area) throws FOPException {
         if (this.marker == START) {
+
+            // Common Accessibility Properties
+            AccessibilityProps mAccProps = propMgr.getAccessibilityProps();
+
+            // this.properties.get("id");
+            // this.properties.get("keep-together");
+
             this.marker = 0;
             // initialize id
             String id = this.properties.get("id").getString();

@@ -57,6 +57,19 @@ public class TableColumn extends FObj {
 
     public void doSetup(Area area) throws FOPException {
 
+        // Common Border, Padding, and Background Properties
+        // only background apply, border apply if border-collapse
+        // is collapse.
+        BorderAndPadding bap = propMgr.getBorderAndPadding();
+        BackgroundProps bProps = propMgr.getBackgroundProps();
+
+        // this.properties.get("column-number");
+        // this.properties.get("column-width");
+        // this.properties.get("number-columns-repeated");
+        // this.properties.get("number-columns-spanned");
+        // this.properties.get("visibility");
+
+
         this.numColumnsRepeated =
             this.properties.get("number-columns-repeated").getNumber().intValue();
 

@@ -12,7 +12,7 @@ import org.apache.fop.fo.*;
 import org.apache.fop.messaging.MessageHandler;
 import org.apache.fop.fo.flow.*;
 import org.apache.fop.fo.properties.*;
-import org.apache.fop.layout.AreaTree;
+import org.apache.fop.layout.*;
 import org.apache.fop.apps.FOPException;
 
 /**
@@ -37,4 +37,11 @@ public class MultiPropertySet extends ToBeImplementedElement {
         this.name = "fo:multi-property-set";
     }
 
+    public Status layout(Area area) throws FOPException {
+
+        // this.properties.get("id");
+        // this.properties.get("active-state");
+
+        return super.layout(area);
+    }
 }

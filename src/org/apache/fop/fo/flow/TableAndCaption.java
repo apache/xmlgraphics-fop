@@ -12,7 +12,7 @@ import org.apache.fop.fo.*;
 import org.apache.fop.messaging.MessageHandler;
 import org.apache.fop.fo.flow.*;
 import org.apache.fop.fo.properties.*;
-import org.apache.fop.layout.AreaTree;
+import org.apache.fop.layout.*;
 import org.apache.fop.apps.FOPException;
 
 /**
@@ -37,4 +37,30 @@ public class TableAndCaption extends ToBeImplementedElement {
         this.name = "fo:table-and-caption";
     }
 
+    public Status layout(Area area) throws FOPException {
+
+        // Common Accessibility Properties
+        AccessibilityProps mAccProps = propMgr.getAccessibilityProps();
+
+        // Common Aural Properties
+        AuralProps mAurProps = propMgr.getAuralProps();
+
+        // Common Border, Padding, and Background Properties
+        BorderAndPadding bap = propMgr.getBorderAndPadding();
+        BackgroundProps bProps = propMgr.getBackgroundProps();
+
+        // Common Margin Properties-Block
+        MarginProps mProps = propMgr.getMarginProps();
+
+        // Common Relative Position Properties
+        RelativePositionProps mRelProps = propMgr.getRelativePositionProps();
+
+        // this.properties.get("caption-side");
+        // this.properties.get("id");
+        // this.properties.get("keep-together");
+        // this.properties.get("keep-with-next");
+        // this.properties.get("keep-with-previous");
+
+        return super.layout(area);
+    }
 }

@@ -66,6 +66,49 @@ public class Character extends FObj {
         blockArea = (BlockArea)area;
         boolean textDecoration;
 
+        // Common Aural Properties
+        AuralProps mAurProps = propMgr.getAuralProps();
+
+        // Common Border, Padding, and Background Properties
+        BorderAndPadding bap = propMgr.getBorderAndPadding();
+        BackgroundProps bProps = propMgr.getBackgroundProps();
+
+        // Common Font Properties
+        //this.fontState = propMgr.getFontState(area.getFontInfo());
+
+        // Common Hyphenation Properties
+        HyphenationProps mHyphProps = propMgr.getHyphenationProps();
+
+        // Common Margin Properties-Inline
+        MarginInlineProps mProps = propMgr.getMarginInlineProps();
+
+        // Common Relative Position Properties
+        RelativePositionProps mRelProps = propMgr.getRelativePositionProps();
+
+        // this.properties.get("alignment-adjust");
+        // this.properties.get("treat-as-word-space");
+        // this.properties.get("alignment-baseline");
+        // this.properties.get("baseline-shift");
+        // this.properties.get("character");
+        // this.properties.get("color");
+        // this.properties.get("dominant-baseline");
+        // this.properties.get("text-depth");
+        // this.properties.get("text-altitude");
+        // this.properties.get("glyph-orientation-horizontal");
+        // this.properties.get("glyph-orientation-vertical");
+        // this.properties.get("id");
+        // this.properties.get("keep-with-next");
+        // this.properties.get("keep-with-previous");
+        // this.properties.get("letter-spacing");
+        // this.properties.get("line-height");
+        // this.properties.get("line-height-shift-adjustment");
+        // this.properties.get("score-spaces");
+        // this.properties.get("suppress-at-line-break");
+        // this.properties.get("text-decoration");
+        // this.properties.get("text-shadow");
+        // this.properties.get("text-transform");
+        // this.properties.get("word-spacing");
+
         // color properties
         ColorType c = this.properties.get("color").getColorType();
         float red = c.red();

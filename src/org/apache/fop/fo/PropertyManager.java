@@ -12,6 +12,11 @@ import org.apache.fop.layout.FontInfo;
 import org.apache.fop.layout.BorderAndPadding;
 import org.apache.fop.layout.MarginProps;
 import org.apache.fop.layout.BackgroundProps;
+import org.apache.fop.layout.MarginInlineProps;
+import org.apache.fop.layout.AccessibilityProps;
+import org.apache.fop.layout.AuralProps;
+import org.apache.fop.layout.RelativePositionProps;
+import org.apache.fop.layout.AbsolutePositionProps;
 import org.apache.fop.fo.properties.BreakAfter;
 import org.apache.fop.fo.properties.BreakBefore;
 import org.apache.fop.fo.properties.Constants;
@@ -209,4 +214,37 @@ public class PropertyManager {
         return bp;
     }
 
+    public MarginInlineProps getMarginInlineProps() {
+        MarginInlineProps props = new MarginInlineProps();
+        return props;
+    }
+
+    public AccessibilityProps getAccessibilityProps() {
+        AccessibilityProps props = new AccessibilityProps();
+        String str;
+        str = this.properties.get("source-document").getString();
+        if(!"none".equals(str)) {
+            props.sourceDoc = str;
+        }
+        str = this.properties.get("role").getString();
+        if(!"none".equals(str)) {
+            props.role = str;
+        }
+        return props;
+    }
+
+    public AuralProps getAuralProps() {
+        AuralProps props = new AuralProps();
+        return props;
+    }
+
+    public RelativePositionProps getRelativePositionProps() {
+        RelativePositionProps props = new RelativePositionProps();
+        return props;
+    }
+
+    public AbsolutePositionProps getAbsolutePositionProps() {
+        AbsolutePositionProps props = new AbsolutePositionProps();
+        return props;
+    }
 }

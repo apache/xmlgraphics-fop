@@ -85,6 +85,56 @@ public class Block extends FObjMixed {
 
         if (this.marker == START) {
 
+            // Common Accessibility Properties
+            AccessibilityProps mAccProps = propMgr.getAccessibilityProps();
+
+            // Common Aural Properties
+            AuralProps mAurProps = propMgr.getAuralProps();
+
+            // Common Border, Padding, and Background Properties
+            BorderAndPadding bap = propMgr.getBorderAndPadding();
+            BackgroundProps bProps = propMgr.getBackgroundProps();
+
+            // Common Font Properties
+            //this.fontState = propMgr.getFontState(area.getFontInfo());
+
+            // Common Hyphenation Properties
+            HyphenationProps mHyphProps = propMgr.getHyphenationProps();
+
+            // Common Margin Properties-Block
+            MarginProps mProps = propMgr.getMarginProps();
+
+            // Common Relative Position Properties
+            RelativePositionProps mRelProps = propMgr.getRelativePositionProps();
+
+            // this.properties.get("break-after");
+            // this.properties.get("break-before");
+            // this.properties.get("color");
+            // this.properties.get("text-depth");
+            // this.properties.get("text-altitude");
+            // this.properties.get("hyphenation-keep");
+            // this.properties.get("hyphenation-ladder-count");
+            // this.properties.get("id");
+            // this.properties.get("keep-together");
+            // this.properties.get("keep-with-next");
+            // this.properties.get("keep-with-previous");
+            // this.properties.get("last-line-end-indent");
+            // this.properties.get("linefeed-treatment");
+            // this.properties.get("line-height");
+            // this.properties.get("line-height-shift-adjustment");
+            // this.properties.get("line-stacking-strategy");
+            // this.properties.get("orphans");
+            // this.properties.get("space-treatment");
+            // this.properties.get("span");
+            // this.properties.get("text-align");
+            // this.properties.get("text-align-last");
+            // this.properties.get("text-indent");
+            // this.properties.get("visibility");
+            // this.properties.get("white-space-collapse");
+            // this.properties.get("widows");
+            // this.properties.get("wrap-option");
+            // this.properties.get("z-index");
+
             this.align = this.properties.get("text-align").getEnum();
             this.alignLast = this.properties.get("text-align-last").getEnum();
             this.breakAfter = this.properties.get("break-after").getEnum();

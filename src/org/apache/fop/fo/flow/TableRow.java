@@ -188,6 +188,32 @@ public class TableRow extends FObj {
 
     public void doSetup(Area area) throws FOPException {
 
+        // Common Accessibility Properties
+        AccessibilityProps mAccProps = propMgr.getAccessibilityProps();
+            
+        // this.properties.get("block-progression-dimension");
+
+        // Common Aural Properties
+        AuralProps mAurProps = propMgr.getAuralProps();
+
+        // Common Border, Padding, and Background Properties
+        // only background apply, border apply if border-collapse
+        // is collapse.
+        BorderAndPadding bap = propMgr.getBorderAndPadding();
+        BackgroundProps bProps = propMgr.getBackgroundProps();
+
+        // Common Relative Position Properties
+        RelativePositionProps mRelProps = propMgr.getRelativePositionProps();
+                    
+        // this.properties.get("break-before");
+        // this.properties.get("break-after");
+        // this.properties.get("id");
+        // this.properties.get("height");
+        // this.properties.get("keep-together");
+        // this.properties.get("keep-with-next");
+        // this.properties.get("keep-with-previous");
+
+
         this.breakAfter = this.properties.get("break-after").getEnum();
         this.backgroundColor =
             this.properties.get("background-color").getColorType();

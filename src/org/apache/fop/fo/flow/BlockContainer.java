@@ -58,6 +58,33 @@ public class BlockContainer extends FObj {
 
     public Status layout(Area area) throws FOPException {
         if (this.marker == START) {
+
+            // Common Accessibility Properties
+            AbsolutePositionProps mAbsProps = propMgr.getAbsolutePositionProps();
+
+            // Common Border, Padding, and Background Properties
+            BorderAndPadding bap = propMgr.getBorderAndPadding();
+            BackgroundProps bProps = propMgr.getBackgroundProps();
+
+            // Common Margin-Block Properties
+            MarginProps mProps = propMgr.getMarginProps();
+
+            // this.properties.get("block-progression-dimension");
+            // this.properties.get("break-after");
+            // this.properties.get("break-before");
+            // this.properties.get("clip");
+            // this.properties.get("display-align");
+            // this.properties.get("height");
+            // this.properties.get("id");
+            // this.properties.get("keep-together");
+            // this.properties.get("keep-with-next");
+            // this.properties.get("keep-with-previous");
+            // this.properties.get("overflow");
+            // this.properties.get("reference-orientation");
+            // this.properties.get("span");
+            // this.properties.get("width");
+            // this.properties.get("writing-mode");
+
             this.marker = 0;
 
             this.backgroundColor =

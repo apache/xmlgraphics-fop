@@ -10,7 +10,7 @@ package org.apache.fop.fo.flow;
 // FOP
 import org.apache.fop.fo.*;
 import org.apache.fop.fo.properties.*;
-import org.apache.fop.layout.Area;
+import org.apache.fop.layout.*;
 import org.apache.fop.layout.BlockArea;
 import org.apache.fop.layout.FontState;
 import org.apache.fop.apps.FOPException;
@@ -51,6 +51,30 @@ public class ListItem extends FObj {
 
     public Status layout(Area area) throws FOPException {
         if (this.marker == START) {
+
+            // Common Accessibility Properties
+            AccessibilityProps mAccProps = propMgr.getAccessibilityProps();
+
+            // Common Aural Properties
+            AuralProps mAurProps = propMgr.getAuralProps();
+
+            // Common Border, Padding, and Background Properties
+            BorderAndPadding bap = propMgr.getBorderAndPadding();
+            BackgroundProps bProps = propMgr.getBackgroundProps();
+
+            // Common Margin Properties-Block
+            MarginProps mProps = propMgr.getMarginProps();
+
+            // Common Relative Position Properties
+            RelativePositionProps mRelProps = propMgr.getRelativePositionProps();
+
+            // this.properties.get("break-after");
+            // this.properties.get("break-before");
+            // this.properties.get("id");
+            // this.properties.get("keep-together");
+            // this.properties.get("keep-with-next");
+            // this.properties.get("keep-with-previous");
+            // this.properties.get("relative-align");
 
             this.align = this.properties.get("text-align").getEnum();
             this.alignLast = this.properties.get("text-align-last").getEnum();

@@ -9,7 +9,7 @@ package org.apache.fop.fo.flow;
 
 // FOP
 import org.apache.fop.fo.*;
-import org.apache.fop.layout.Area;
+import org.apache.fop.layout.*;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.fo.properties.*;
 
@@ -40,6 +40,40 @@ public class Inline extends FObjMixed {
                   PropertyList propertyList) throws FOPException {
         super(parent, propertyList);
         this.name = "fo:inline";
+
+        // Common Accessibility Properties
+        AccessibilityProps mAccProps = propMgr.getAccessibilityProps();
+                    
+        // Common Aural Properties   
+        AuralProps mAurProps = propMgr.getAuralProps();
+
+        // Common Border, Padding, and Background Properties
+        BorderAndPadding bap = propMgr.getBorderAndPadding();
+        BackgroundProps bProps = propMgr.getBackgroundProps();
+     
+        // Common Font Properties
+        //this.fontState = propMgr.getFontState(area.getFontInfo());
+
+        // Common Margin Properties-Inline
+        MarginInlineProps mProps = propMgr.getMarginInlineProps();
+            
+        // Common Relative Position Properties
+        RelativePositionProps mRelProps = propMgr.getRelativePositionProps();
+            
+        // this.properties.get("alignment-adjust");
+        // this.properties.get("alignment-baseline");
+        // this.properties.get("baseline-shift");
+        // this.properties.get("color");
+        // this.properties.get("dominant-baseline");
+        // this.properties.get("id");
+        // this.properties.get("keep-together");
+        // this.properties.get("keep-with-next");
+        // this.properties.get("keep-with-previous");
+        // this.properties.get("line-height");
+        // this.properties.get("line-height-shift-adjustment");
+        // this.properties.get("text-devoration");
+        // this.properties.get("visibility");
+        // this.properties.get("z-index");
 
         int textDecoration = this.properties.get("text-decoration").getEnum();
 

@@ -70,6 +70,21 @@ public class TableBody extends FObj {
 
         if (this.marker == START) {
 
+            // Common Accessibility Properties
+            AccessibilityProps mAccProps = propMgr.getAccessibilityProps();
+
+            // Common Aural Properties
+            AuralProps mAurProps = propMgr.getAuralProps();
+
+            // Common Border, Padding, and Background Properties
+            BorderAndPadding bap = propMgr.getBorderAndPadding();
+            BackgroundProps bProps = propMgr.getBackgroundProps();
+
+            // Common Relative Position Properties        
+            RelativePositionProps mRelProps = propMgr.getRelativePositionProps();
+        
+            // this.properties.get("id");
+
             this.spaceBefore =
                 this.properties.get("space-before.optimum").getLength().mvalue();
             this.spaceAfter =

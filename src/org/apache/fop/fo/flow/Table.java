@@ -62,6 +62,43 @@ public class Table extends FObj {
         }
 
         if (this.marker == START) {
+            // Common Accessibility Properties
+            AccessibilityProps mAccProps = propMgr.getAccessibilityProps();
+
+            // Common Aural Properties
+            AuralProps mAurProps = propMgr.getAuralProps();
+
+            // Common Border, Padding, and Background Properties
+            BorderAndPadding bap = propMgr.getBorderAndPadding();
+            BackgroundProps bProps = propMgr.getBackgroundProps();
+
+            // Common Margin Properties-Block
+            MarginProps mProps = propMgr.getMarginProps();
+
+            // Common Relative Position Properties 
+            RelativePositionProps mRelProps = propMgr.getRelativePositionProps();
+        
+            // this.properties.get("block-progression-dimension");
+            // this.properties.get("border-after-precendence");              
+            // this.properties.get("border-before-precedence");
+            // this.properties.get("border-collapse");
+            // this.properties.get("border-end-precendence");
+            // this.properties.get("border-separation");
+            // this.properties.get("border-start-precendence");
+            // this.properties.get("break-after");
+            // this.properties.get("break-before");
+            // this.properties.get("id");
+            // this.properties.get("inline-progression-dimension");
+            // this.properties.get("height");
+            // this.properties.get("keep-together");
+            // this.properties.get("keep-with-next");
+            // this.properties.get("keep-with-previous");
+            // this.properties.get("table-layout");              
+            // this.properties.get("table-omit-footer-at-break");              
+            // this.properties.get("table-omit-header-at-break");
+            // this.properties.get("width");              
+            // this.properties.get("writing-mode");              
+
             this.breakBefore = this.properties.get("break-before").getEnum();
             this.breakAfter = this.properties.get("break-after").getEnum();
             this.spaceBefore =

@@ -12,7 +12,7 @@ import org.apache.fop.fo.*;
 import org.apache.fop.messaging.MessageHandler;
 import org.apache.fop.fo.flow.*;
 import org.apache.fop.fo.properties.*;
-import org.apache.fop.layout.AreaTree;
+import org.apache.fop.layout.*;
 import org.apache.fop.apps.FOPException;
 
 /**
@@ -37,4 +37,11 @@ public class Float extends ToBeImplementedElement {
         this.name = "fo:float";
     }
 
+    public Status layout(Area area) throws FOPException {
+
+        // this.properties.get("float");
+        // this.properties.get("clear");
+
+        return super.layout(area);
+    }
 }
