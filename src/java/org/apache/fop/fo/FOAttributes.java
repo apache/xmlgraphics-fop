@@ -68,7 +68,7 @@ import org.xml.sax.Attributes;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.datatypes.Ints;
 import org.apache.fop.fo.expr.PropertyException;
-import org.apache.fop.xml.FoXMLEvent;
+import org.apache.fop.xml.XMLEvent;
 import org.apache.fop.xml.XMLNamespaces;
 
 /**
@@ -135,7 +135,7 @@ public class FOAttributes {
      * @param foNode - the <tt>FONode</tt> with which these attributes are
      * associated.
      */
-    public FOAttributes(FoXMLEvent event, FONode foNode) throws FOPException {
+    public FOAttributes(XMLEvent event, FONode foNode) throws FOPException {
 
         // If the event is null, there is no event associated with this
         // node, probably because this is a manufactured node; e.g.,
@@ -143,7 +143,7 @@ public class FOAttributes {
         // includes an empty foAttrMap HashMap.
         if (event == null) return;
 
-        if (event.getFoType() == FObjectNames.PCDATA)
+        if (event.getType() == XMLEvent.CHARACTERS)
             return;  // go with the empty foAttrMap
 
         // Create the foAttrMap.
