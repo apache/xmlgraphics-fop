@@ -48,7 +48,9 @@ public class PDFGoTo extends PDFAction {
         this.pageReference = pageReference;
     }
 
-
+    public String getPageReference() { 
+      return pageReference;
+    }
 
     /**
      * Sets the Y position to jump to

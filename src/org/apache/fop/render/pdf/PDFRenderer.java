@@ -915,6 +915,9 @@ public class PDFRenderer extends PrintRenderer {
                 ExtensionObj ext = (ExtensionObj) extensions.get(i);
                 if (ext instanceof Outline) {
                     renderOutline((Outline) ext);
+                } else if (ext instanceof Destination) {
+                    Destination d = (Destination)ext;
+                    pdfDoc.addDestination(d.getDestinationName(), d.getInternalDestination());
                 }
             }
         }

@@ -1000,6 +1000,7 @@ public class PDFDocument {
 
         PDFLink linkObject;
         PDFAction action;
+        int index;
 
         PDFLink link = new PDFLink(++this.objectcount, rect);
         this.objects.add(link);
@@ -1013,6 +1014,22 @@ public class PDFDocument {
                 action = new PDFGoToRemote(++this.objectcount, fileSpec);
                 this.objects.add(action);
                 link.setAction(action);
+             } else if ((index = destination.indexOf(".pdf#page=")) > 0) {
+                 String file = destination.substring(0, index + 4);
+                 int page = Integer.parseInt(destination.substring(index + 10));
+                 PDFFileSpec fileSpec = new PDFFileSpec(++this.objectcount, file);
+                 this.objects.add(fileSpec);
+                 action = new PDFGoToRemote(++this.objectcount, fileSpec, page);
+                 this.objects.add(action);
+                 link.setAction(action);
+             } else if ((index = destination.indexOf(".pdf#dest=")) > 0) {
+                 String file = destination.substring(0, index + 4);
+                 String dest = destination.substring(index + 10);
+                 PDFFileSpec fileSpec = new PDFFileSpec(++this.objectcount, file);
+                 this.objects.add(fileSpec);
+                 action = new PDFGoToRemote(++this.objectcount, fileSpec, dest);
+                 this.objects.add(action);
+                 link.setAction(action);
             } else {                               // URI
                 PDFUri uri = new PDFUri(destination);
                 link.setAction(uri);
@@ -1322,4 +1339,17 @@ public class PDFDocument {
         this.idReferences = idReferences;
     }
 
+    /**
+     * Make a destination object and add it
+     * @param label the title for the new destination object
+     * @param dest the destination name to reference
+     */
+    public void addDestination(String destinationName, String internalDest) {
+       if (!idReferences.doesIDExist(internalDest)) {
+           idReferences.addToUnvalidatedIdList(internalDest);
+       }
+       PDFDestination obj = new PDFDestination(idReferences, destinationName, internalDest);
+       root.getDestinations().add(obj);
+    }
+    
 }
