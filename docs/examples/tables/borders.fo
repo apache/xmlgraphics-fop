@@ -31,7 +31,7 @@
       Table 1: cell borders
       </fo:block>
 
-      <fo:table>
+      <fo:table border-collapse="separate">
 	<fo:table-column column-width="3cm"/>
 	<fo:table-column column-width="3cm"/>
 	<fo:table-column column-width="3cm"/>
@@ -187,7 +187,7 @@
       Table 1: row borders
       </fo:block>
 
-      <fo:table>
+      <fo:table border-collapse="separate">
 	<fo:table-column column-width="3cm"/>
 	<fo:table-column column-width="3cm"/>
 	<fo:table-column column-width="3cm"/>
@@ -311,7 +311,7 @@
       Table 1: column borders
       </fo:block>
 
-      <fo:table>
+      <fo:table border-collapse="separate">
 	<fo:table-column column-width="3cm" border-left-color="green" border-left-width="0.5pt" border-left-style="solid"/>
 	<fo:table-column column-width="3cm" border-top-color="red" border-top-width="0.5pt" border-top-style="solid"/>
 	<fo:table-column column-width="3cm" border-right-color="blue" border-right-width="0.5pt" border-right-style="solid"/>
@@ -378,7 +378,7 @@
       Table 1: column borders over page
       </fo:block>
 
-      <fo:table>
+      <fo:table border-collapse="separate">
 	<fo:table-column column-width="3cm" border-left-color="green" border-left-width="0.5pt" border-left-style="solid"/>
 	<fo:table-column column-width="3cm" border-top-color="red" border-top-width="0.5pt" border-top-style="solid"/>
 	<fo:table-column column-width="3cm" border-right-color="blue" border-right-width="0.5pt" border-right-style="solid"/>
@@ -445,7 +445,7 @@
       Table 1: body borders
       </fo:block>
 
-      <fo:table>
+      <fo:table border-collapse="separate">
 	<fo:table-column column-width="3cm"/>
 	<fo:table-column column-width="3cm"/>
 	<fo:table-column column-width="3cm"/>
@@ -481,7 +481,7 @@
 	</fo:table-body>
       </fo:table>
 
-      <fo:table>
+      <fo:table border-collapse="separate">
 	<fo:table-column column-width="3cm"/>
 	<fo:table-column column-width="3cm"/>
 	<fo:table-column column-width="3cm"/>
@@ -517,7 +517,7 @@
 	</fo:table-body>
       </fo:table>
 
-      <fo:table>
+      <fo:table border-collapse="separate">
 	<fo:table-column column-width="3cm"/>
 	<fo:table-column column-width="3cm"/>
 	<fo:table-column column-width="3cm"/>
@@ -553,7 +553,7 @@
 	</fo:table-body>
       </fo:table>
 
-      <fo:table>
+      <fo:table border-collapse="separate">
 	<fo:table-column column-width="3cm"/>
 	<fo:table-column column-width="3cm"/>
 	<fo:table-column column-width="3cm"/>
@@ -589,7 +589,7 @@
 	</fo:table-body>
       </fo:table>
 
-      <fo:table>
+      <fo:table border-collapse="separate">
 	<fo:table-column column-width="3cm"/>
 	<fo:table-column column-width="3cm"/>
 	<fo:table-column column-width="3cm"/>
@@ -629,7 +629,8 @@
       Table 1: table borders
       </fo:block>
 
-      <fo:table border-left-color="green" border-left-width="0.5pt" border-left-style="solid">
+      <fo:table border-left-color="green" border-left-width="0.5pt" border-left-style="solid"
+ border-collapse="separate">
 	<fo:table-column column-width="3cm"/>
 	<fo:table-column column-width="3cm"/>
 	<fo:table-column column-width="3cm"/>
@@ -665,7 +666,7 @@
 	</fo:table-body>
       </fo:table>
 
-      <fo:table border-top-color="red" border-top-width="0.5pt" border-top-style="solid">
+      <fo:table border-top-color="red" border-top-width="0.5pt" border-top-style="solid" border-collapse="separate">
 	<fo:table-column column-width="3cm"/>
 	<fo:table-column column-width="3cm"/>
 	<fo:table-column column-width="3cm"/>
@@ -701,7 +702,7 @@
 	</fo:table-body>
       </fo:table>
 
-      <fo:table border-right-color="blue" border-right-width="0.5pt" border-right-style="solid">
+      <fo:table border-right-color="blue" border-right-width="0.5pt" border-right-style="solid" border-collapse="separate">
 	<fo:table-column column-width="3cm"/>
 	<fo:table-column column-width="3cm"/>
 	<fo:table-column column-width="3cm"/>
@@ -737,7 +738,7 @@
 	</fo:table-body>
       </fo:table>
 
-      <fo:table border-bottom-color="yellow" border-bottom-width="0.5pt" border-bottom-style="solid">
+      <fo:table border-bottom-color="yellow" border-bottom-width="0.5pt" border-bottom-style="solid" border-collapse="separate">
 	<fo:table-column column-width="3cm"/>
 	<fo:table-column column-width="3cm"/>
 	<fo:table-column column-width="3cm"/>
@@ -773,7 +774,7 @@
 	</fo:table-body>
       </fo:table>
 
-      <fo:table border-color="orange" border-width="0.5pt" border-style="solid">
+      <fo:table border-color="orange" border-width="0.5pt" border-style="solid" border-collapse="separate">
 	<fo:table-column column-width="3cm"/>
 	<fo:table-column column-width="3cm"/>
 	<fo:table-column column-width="3cm"/>
@@ -813,7 +814,7 @@
       Table 1: combinations
       </fo:block>
 
-      <fo:table border-left-color="green" border-left-width="0.5pt" border-left-style="solid">
+      <fo:table border-left-color="green" border-left-width="0.5pt" border-left-style="solid" border-collapse="separate">
 	<fo:table-column column-width="2.5cm"/>
 	<fo:table-column column-width="2.5cm" border-left-color="green" border-left-width="0.5pt" border-left-style="solid"/>
 	<fo:table-column column-width="2.5cm" border-top-color="red" border-top-width="0.5pt" border-top-style="solid"/>
