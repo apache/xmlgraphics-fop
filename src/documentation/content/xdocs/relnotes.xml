@@ -14,9 +14,11 @@
   <p>Important changes since the last release (0.20.4):</p>
   <ul>
     <li>Some hyphenation patterns (cs, da, de, de_DR, el, en, en_US, fr, nl,
-        no, pt, ru, sk, tr) have been removed due to licensing reasons
-        (en_GB hyphenation has been renamed to en).
-        We hope to resolve this issue before the final release.
+      no, sk, tr) have been removed due to licensing reasons
+      (en_GB hyphenation has been renamed to en).
+      We're still working on this issue
+      (see <link href="http://nagoya.apache.org/wiki/apachewiki.cgi?FOPAudits/March2003">
+      Wiki</link> for details).
     </li>
     <li>Documentation is now built with <link href="http://xml.apache.org/forrest/">
         Forrest</link> (version 0.4). You need to install Forrest if you want build the docs
@@ -38,6 +40,18 @@
     </li>
     <li>Links in PDF won't generate multiple link rectangles anymore. If this causes
         a problem you can set the system property "links.merge" to "no".
+    </li>
+    <li>FOP has been compiled with cryptography support. See <link href="pdfencryption.html">
+      PDF encryption</link> for details about installation and usage.
+    </li>
+    <li>The behaviour of leader has changed. See
+      <link href="http://nagoya.apache.org/bugzilla/show_bug.cgi?id=19341">bug #19341</link>,
+      <link href="http://nagoya.apache.org/bugzilla/show_bug.cgi?id=19465">bug #19465</link>
+      and <code>leader.fo</code> (examples).
+    </li>
+    <li>
+      For a more detailed list of changes, see the CHANGES file in the root of the
+      FOP distribution.
     </li>
   </ul>
 
