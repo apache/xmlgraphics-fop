@@ -494,6 +494,7 @@ public interface Constants {
     int USECONTENT = 104;
     int VISIBLE = 105;
     int WRAP = 106;
+    int ENUM_COUNT = 106;
 
    // Enumeration Interfaces
    
