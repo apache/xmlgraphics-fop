@@ -16,7 +16,7 @@ import org.apache.fop.fo.FOTree;
 import org.apache.fop.fo.expr.PropertyException;
 import org.apache.fop.xml.FoXMLEvent;
 import org.apache.fop.apps.FOPException;
-import org.apache.fop.datastructs.Tree;
+import org.apache.fop.datastructs.TreeException;
 
 /**
  * Implements the fo:simple-page-master flow object
@@ -33,7 +33,7 @@ public class FoRegionAfter extends FoRegionBeforeAfter {
      * this node
      */
     public FoRegionAfter(FOTree foTree, FONode parent, FoXMLEvent event)
-        throws Tree.TreeException, FOPException
+        throws TreeException, FOPException
     {
         super(foTree, FObjectNames.REGION_AFTER, parent, event);
         makeSparsePropsSet();

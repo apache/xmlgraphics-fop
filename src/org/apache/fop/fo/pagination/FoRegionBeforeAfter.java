@@ -20,7 +20,7 @@ import org.apache.fop.fo.FOTree;
 import org.apache.fop.fo.expr.PropertyException;
 import org.apache.fop.xml.FoXMLEvent;
 import org.apache.fop.apps.FOPException;
-import org.apache.fop.datastructs.Tree;
+import org.apache.fop.datastructs.TreeException;
 import org.apache.fop.datatypes.Ints;
 
 import java.util.HashMap;
@@ -88,7 +88,7 @@ public class FoRegionBeforeAfter extends FONode {
      */
     public FoRegionBeforeAfter
                 (FOTree foTree, int foType, FONode parent, FoXMLEvent event)
-        throws Tree.TreeException, FOPException
+        throws TreeException, FOPException
     {
         super(foTree, foType, parent, event, FOPropertySets.LAYOUT_SET,
                 sparsePropsMap, sparseIndices, numProps);

@@ -21,7 +21,7 @@ import org.apache.fop.fo.FObjectNames;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FOTree;
 import org.apache.fop.fo.expr.PropertyException;
-import org.apache.fop.datastructs.Tree;
+import org.apache.fop.datastructs.TreeException;
 import org.apache.fop.datatypes.PropertyValue;
 import org.apache.fop.datatypes.NCName;
 import org.apache.fop.datatypes.Ints;
@@ -91,7 +91,7 @@ public class FoSimplePageMaster extends FONode {
      * this node
      */
     public FoSimplePageMaster(FOTree foTree, FONode parent, FoXMLEvent event)
-        throws Tree.TreeException, FOPException
+        throws TreeException, FOPException
     {
         super(foTree, FObjectNames.SIMPLE_PAGE_MASTER, parent, event,
               FOPropertySets.LAYOUT_SET, sparsePropsMap, sparseIndices,
