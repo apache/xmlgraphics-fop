@@ -1,12 +1,12 @@
 /*
  * Copyright 1999-2004 The Apache Software Foundation.
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -83,6 +83,7 @@ import org.apache.fop.pdf.PDFXObject;
 import org.apache.fop.render.PrintRenderer;
 import org.apache.fop.render.RendererContext;
 import org.apache.fop.traits.BorderProps;
+import org.apache.fop.fo.Constants;
 
 
 /*
@@ -200,7 +201,7 @@ public class PDFRenderer extends PrintRenderer {
     protected int bpMarginOffset = 0;
 
     /**
-     * Offset for rendering text, taking into account borders and padding for 
+     * Offset for rendering text, taking into account borders and padding for
      * both the region and block.
      */
     protected int ipMarginOffset = 0;
@@ -262,7 +263,7 @@ public class PDFRenderer extends PrintRenderer {
      * @see org.apache.fop.render.Renderer#stopRenderer()
      */
     public void stopRenderer() throws IOException {
-        pdfDoc.getResources().addFonts(pdfDoc, 
+        pdfDoc.getResources().addFonts(pdfDoc,
             (org.apache.fop.apps.Document) fontInfo);
         pdfDoc.outputTrailer(ostream);
 
@@ -478,7 +479,7 @@ public class PDFRenderer extends PrintRenderer {
         int saveIPMargin = ipMarginOffset;
         int saveBPMargin = bpMarginOffset;
         if (block != null) {
-            Integer spaceStart = (Integer) block.getTrait(Trait.SPACE_START); 
+            Integer spaceStart = (Integer) block.getTrait(Trait.SPACE_START);
             if (spaceStart != null) {
                 ipMarginOffset += spaceStart.intValue();
             }
@@ -539,7 +540,7 @@ public class PDFRenderer extends PrintRenderer {
      * @param block the block to render the traits
      */
     protected void handleBlockTraits(Block block) {
-        /*  ipMarginOffset for a particular block = region border + 
+        /*  ipMarginOffset for a particular block = region border +
          *  region padding + parent block padding + current block padding
          */
 
@@ -547,12 +548,12 @@ public class PDFRenderer extends PrintRenderer {
         float starty = (currentBPPosition + bpMarginOffset) / 1000f;
         float width = block.getWidth() / 1000f;
 
-        Integer spaceStart = (Integer) block.getTrait(Trait.SPACE_START); 
+        Integer spaceStart = (Integer) block.getTrait(Trait.SPACE_START);
         if (spaceStart != null) {
             startx += spaceStart.floatValue() / 1000;
             width -= spaceStart.floatValue() / 1000;
         }
-        Integer spaceEnd = (Integer) block.getTrait(Trait.SPACE_END); 
+        Integer spaceEnd = (Integer) block.getTrait(Trait.SPACE_END);
         if (spaceEnd != null) {
             width -= spaceEnd.floatValue() / 1000;
         }
@@ -623,10 +624,13 @@ public class PDFRenderer extends PrintRenderer {
             }
 
             float bwidth = bps.width / 1000f;
-            updateColor(bps.color, true, null);
-            currentStream.add(startx + " " + starty + " "
-                              + width + " " + bwidth + " re\n");
-            currentStream.add("f\n");
+            updateColor(bps.color, false, null);
+            updateLineStyle(bps.style);
+            currentStream.add(bwidth + " w\n");
+            float y1 = starty + bwidth / 2;
+            currentStream.add(startx + " " + y1 + " m\n");
+            currentStream.add(startx + width + " " + y1 + " l\n");
+            currentStream.add("S\n");
         }
         bps = (BorderProps)block.getTrait(Trait.BORDER_AFTER);
         if (bps != null) {
@@ -638,10 +642,13 @@ public class PDFRenderer extends PrintRenderer {
             }
 
             float bwidth = bps.width / 1000f;
-            updateColor(bps.color, true, null);
-            currentStream.add(startx + " " + (starty + height - bwidth) + " "
-                              + width + " " + bwidth + " re\n");
-            currentStream.add("f\n");
+            updateColor(bps.color, false, null);
+            updateLineStyle(bps.style);
+            currentStream.add(bwidth + " w\n");
+            float y1 = starty - bwidth / 2;
+            currentStream.add(startx + " " + (y1 + height) + " m\n");
+            currentStream.add((startx + width) + " " + (y1 + height) + " l\n");
+            currentStream.add("S\n");
         }
         bps = (BorderProps)block.getTrait(Trait.BORDER_START);
         if (bps != null) {
@@ -653,10 +660,13 @@ public class PDFRenderer extends PrintRenderer {
             }
 
             float bwidth = bps.width / 1000f;
-            updateColor(bps.color, true, null);
-            currentStream.add(startx + " " + starty + " "
-                              + bwidth + " " + height + " re\n");
-            currentStream.add("f\n");
+            updateColor(bps.color, false, null);
+            updateLineStyle(bps.style);
+            currentStream.add(bwidth + " w\n");
+            float x1 = startx + bwidth / 2;
+            currentStream.add(x1 + " " + starty + " m\n");
+            currentStream.add(x1 + " " + (starty + height) + " l\n");
+            currentStream.add("S\n");
         }
         bps = (BorderProps)block.getTrait(Trait.BORDER_END);
         if (bps != null) {
@@ -668,16 +678,34 @@ public class PDFRenderer extends PrintRenderer {
             }
 
             float bwidth = bps.width / 1000f;
-            updateColor(bps.color, true, null);
-            currentStream.add((startx + width - bwidth) + " " + starty + " "
-                              + bwidth + " " + height + " re\n");
-            currentStream.add("f\n");
+            updateColor(bps.color, false, null);
+            updateLineStyle(bps.style);
+            currentStream.add(bwidth + " w\n");
+            float x1 = startx - bwidth / 2;
+            currentStream.add((x1 + width) + " " + starty + " m\n");
+            currentStream.add((x1 + width) + " " + (starty + height) + " l\n");
+            currentStream.add("S\n");
         }
         if (started) {
             //restoreGraphicsState();
             beginTextObject();
             // font last set out of scope in text section
             currentFontName = "";
+        }
+    }
+
+    private void updateLineStyle(int style) {
+        switch (style) {
+            case Constants.DASHED:
+                currentStream.add("[3] 0 d\n");
+                break;
+            case Constants.DOTTED:
+                currentStream.add("[1 7] 0 d\n");
+                break;
+            default:
+                // solid
+                currentStream.add("[] 0 d\n");
+                break;
         }
     }
 
@@ -719,9 +747,9 @@ public class PDFRenderer extends PrintRenderer {
             float y = (float)(bv.getYOffset() + containingBPPosition) / 1000f;
             float width = (float)bv.getWidth() / 1000f;
             float height = (float)bv.getHeight() / 1000f;
-            
+
             drawBackAndBorders(bv, x, y, width, height);
-            
+
             endTextObject();
             if (bv.getClip()) {
                 saveGraphicsState();
