@@ -106,13 +106,6 @@ public class FOInputHandler extends InputHandler {
     }
 
     /**
-     * @see org.apache.fop.apps.InputHandler#run(Driver)
-     */
-    public void run(Driver driver) throws FOPException {
-        throw new FOPException("not implemented: FOInputHandler.run(Driver)");
-    }
-
-    /**
      * Creates <code>XMLReader</code> object using default
      * <code>SAXParserFactory</code>
      * @return the created <code>XMLReader</code>
@@ -136,5 +129,17 @@ public class FOInputHandler extends InputHandler {
         }
     }
 
+    /**
+     * Returns the fully qualified classname of the standard XML parser for FOP
+     * to use.
+     * @return the XML parser classname
+     */
+    public static final String getParserClassName() {
+        try {
+            return createParser().getClass().getName();
+        } catch (FOPException e) {
+            return null;
+        }
+    }
 }
 

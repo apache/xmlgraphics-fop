@@ -76,8 +76,6 @@ import org.xml.sax.ContentHandler;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.parsers.SAXParserFactory;
 
 // Java
 import java.io.IOException;
@@ -222,22 +220,6 @@ public class Driver implements LogEnabled {
      */
     private Logger log = null;
     private FOUserAgent userAgent = null;
-
-    /**
-     * Returns the fully qualified classname of the standard XML parser for FOP
-     * to use.
-     * @return the XML parser classname
-     */
-    public static final String getParserClassName() {
-        try {
-            return javax.xml.parsers.SAXParserFactory.newInstance()
-                .newSAXParser().getXMLReader().getClass().getName();
-        } catch (javax.xml.parsers.ParserConfigurationException e) {
-            return null;
-        } catch (org.xml.sax.SAXException e) {
-            return null;
-        }
-    }
 
     /**
      * Main constructor for the Driver class.
