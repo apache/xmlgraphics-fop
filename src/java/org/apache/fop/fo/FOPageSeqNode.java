@@ -24,6 +24,7 @@ import org.apache.fop.area.Area;
 import org.apache.fop.datastructs.TreeException;
 import org.apache.fop.fo.expr.PropertyException;
 import org.apache.fop.fo.flow.FoMarker;
+import org.apache.fop.fo.flow.FoPageSequence;
 import org.apache.fop.xml.FoXmlEvent;
 import org.apache.fop.xml.XmlEvent;
 
@@ -34,7 +35,7 @@ import org.apache.fop.xml.XmlEvent;
 public class FOPageSeqNode extends FONode {
 
     /** The <code>FoPageSequence</code> ancestor of this node. */
-    protected final FONode pageSequence;
+    protected final FoPageSequence pageSequence;
     /**
      * Comment for <code>childContext</code>
      */
@@ -78,8 +79,12 @@ public class FOPageSeqNode extends FONode {
             stateFlags,
             sparsePropsMap,
             sparseIndices);
-        
-        this.pageSequence = pageSequence;
+        if (pageSequence.type != FObjectNames.PAGE_SEQUENCE) {
+            throw new RuntimeException(
+                    "FOPageSeqNode constructor expects FoPageSequence; got " +
+                    nodeType());
+        }
+        this.pageSequence = (FoPageSequence)pageSequence;
     }
     
     
@@ -113,19 +118,18 @@ public class FOPageSeqNode extends FONode {
             int[] sparsePropsMap,
             int[] sparseIndices)
     throws TreeException, FOPException, PropertyException {
-        super(
+        this(
                 foTree,
                 type,
+                pageSequence,
                 pageSequence,
                 event,
                 stateFlags,
                 sparsePropsMap,
                 sparseIndices);
-        
-        this.pageSequence = pageSequence;
     }
     
-    public FONode getPageSequence() {
+    public FoPageSequence getPageSequence() {
         return pageSequence;
     }
 
