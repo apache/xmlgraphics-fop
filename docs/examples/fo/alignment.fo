@@ -1,7 +1,7 @@
 <fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:svg="http://www.w3.org/2000/svg">
 <fo:layout-master-set>
   <fo:simple-page-master master-name="one">
-    <fo:region-body margin-top="25pt" margin-bottom="25pt" margin-left="35pt" margin-right="30pt" />
+    <fo:region-body margin-top="25pt" margin-bottom="25pt" margin-left="20pt" margin-right="20pt" />
   </fo:simple-page-master>
 </fo:layout-master-set>
 <fo:page-sequence master-reference="one">
@@ -199,6 +199,9 @@ This is a line with before-edge
 And this is the line of text that follows the line with the aligned objects on it.
 And finally, this line illustrates the normal spacing between lines of text in this font.
 </fo:block>
+
+<fo:block space-after="15pt"><fo:leader leader-pattern="rule"/></fo:block>
+
     </fo:flow>
   </fo:page-sequence>
 </fo:root>
