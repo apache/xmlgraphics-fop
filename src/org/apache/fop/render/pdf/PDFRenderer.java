@@ -372,13 +372,13 @@ public class PDFRenderer implements Renderer {
     		float lastcx = 0;
     		float lastcy = 0;
     		switch(pc.getPathSegType()) {
-    			case SVGPathSeg.SVG_PATHSEG_MOVETO_ABS:
+    			case SVGPathSeg.PATHSEG_MOVETO_ABS:
     				pathmoveto = pc;
 	    			lastx = vals[0];
 	    			lasty = vals[1];
 					currentStream.add(lastx + " " + lasty + " m\n");
     			break;
-    			case SVGPathSeg.SVG_PATHSEG_MOVETO_REL:
+    			case SVGPathSeg.PATHSEG_MOVETO_REL:
 	    			if(pathmoveto == null) {
 	    				lastx = vals[0];
 		    			lasty = vals[1];
@@ -390,33 +390,33 @@ public class PDFRenderer implements Renderer {
 						currentStream.add(lastx + " " + lasty + " l\n");
 	    			}
     			break;
-    			case SVGPathSeg.SVG_PATHSEG_LINETO_ABS:
+    			case SVGPathSeg.PATHSEG_LINETO_ABS:
 	    			lastx = vals[0];
 	    			lasty = vals[1];
 					currentStream.add(lastx + " " + lasty + " l\n");
     			break;
-    			case SVGPathSeg.SVG_PATHSEG_LINETO_REL:
+    			case SVGPathSeg.PATHSEG_LINETO_REL:
 	    			lastx += vals[0];
 	    			lasty += vals[1];
 					currentStream.add(lastx + " " + lasty + " l\n");
     			break;
-    			case SVGPathSeg.SVG_PATHSEG_LINETO_VERTICAL_ABS:
+    			case SVGPathSeg.PATHSEG_LINETO_VERTICAL_ABS:
 	    			lasty = vals[0];
 					currentStream.add(lastx + " " + lasty + " l\n");
     			break;
-    			case SVGPathSeg.SVG_PATHSEG_LINETO_VERTICAL_REL:
+    			case SVGPathSeg.PATHSEG_LINETO_VERTICAL_REL:
 	    			lasty += vals[0];
 					currentStream.add(lastx + " " + lasty + " l\n");
     			break;
-    			case SVGPathSeg.SVG_PATHSEG_LINETO_HORIZONTAL_ABS:
+    			case SVGPathSeg.PATHSEG_LINETO_HORIZONTAL_ABS:
 	    			lastx = vals[0];
 					currentStream.add(lastx + " " + lasty + " l\n");
     			break;
-    			case SVGPathSeg.SVG_PATHSEG_LINETO_HORIZONTAL_REL:
+    			case SVGPathSeg.PATHSEG_LINETO_HORIZONTAL_REL:
 	    			lastx += vals[0];
 					currentStream.add(lastx + " " + lasty + " l\n");
     			break;
-    			case SVGPathSeg.SVG_PATHSEG_CURVETO_CUBIC_ABS:
+    			case SVGPathSeg.PATHSEG_CURVETO_CUBIC_ABS:
 	    			lastx = vals[4];
 	    			lasty = vals[5];
 	    			lastcx = vals[2];
@@ -426,7 +426,7 @@ public class PDFRenderer implements Renderer {
 										lastx + " " + lasty +
 										" c\n");
     			break;
-    			case SVGPathSeg.SVG_PATHSEG_CURVETO_CUBIC_REL:
+    			case SVGPathSeg.PATHSEG_CURVETO_CUBIC_REL:
 					currentStream.add((vals[0] + lastx) + " " + (vals[1] + lasty) + " " +
 										(vals[2] + lastx) + " " + (vals[3] + lasty) + " " +
 										(vals[4] + lastx) + " " + (vals[5] + lasty) +
@@ -436,7 +436,7 @@ public class PDFRenderer implements Renderer {
 	    			lastx += vals[4];
 	    			lasty += vals[5];
     			break;
-    			case SVGPathSeg.SVG_PATHSEG_CURVETO_CUBIC_SMOOTH_ABS:
+    			case SVGPathSeg.PATHSEG_CURVETO_CUBIC_SMOOTH_ABS:
     				if(lastcx == 0) {
     					lastcx = lastx;
     				}
@@ -450,7 +450,7 @@ public class PDFRenderer implements Renderer {
 										lastx + " " + lasty +
 										" c\n");
     			break;
-    			case SVGPathSeg.SVG_PATHSEG_CURVETO_CUBIC_SMOOTH_REL:
+    			case SVGPathSeg.PATHSEG_CURVETO_CUBIC_SMOOTH_REL:
     				if(lastcx == 0) {
     					lastcx = lastx;
     				}
@@ -464,7 +464,7 @@ public class PDFRenderer implements Renderer {
 	    			lastx += vals[2];
 	    			lasty += vals[3];
     			break;
-    			case SVGPathSeg.SVG_PATHSEG_CURVETO_QUADRATIC_ABS:
+    			case SVGPathSeg.PATHSEG_CURVETO_QUADRATIC_ABS:
     				if(lastcx == 0) {
     					lastcx = lastx;
     				}
@@ -479,7 +479,7 @@ public class PDFRenderer implements Renderer {
 										lastx + " " + lasty +
 										" y\n");
     			break;
-    			case SVGPathSeg.SVG_PATHSEG_CURVETO_QUADRATIC_REL:
+    			case SVGPathSeg.PATHSEG_CURVETO_QUADRATIC_REL:
     				if(lastcx == 0) {
     					lastcx = lastx;
     				}
@@ -496,7 +496,7 @@ public class PDFRenderer implements Renderer {
     			break;
     			// these arcs are wrongs, I can't figure out the
     			// equations at the moment
-    			case SVGPathSeg.SVG_PATHSEG_ARC_ABS:
+    			case SVGPathSeg.PATHSEG_ARC_ABS:
     				{
 	    				double rx = vals[0];
 	    				double ry = vals[1];
@@ -516,7 +516,7 @@ public class PDFRenderer implements Renderer {
 		    			lasty = vals[6];
 					}
     			break;
-    			case SVGPathSeg.SVG_PATHSEG_ARC_REL:
+    			case SVGPathSeg.PATHSEG_ARC_REL:
     				{
 	    				double rx = vals[0];
 	    				double ry = vals[1];
@@ -534,7 +534,7 @@ public class PDFRenderer implements Renderer {
 		    			lasty += vals[6];
 		    		}
     			break;
-    			case SVGPathSeg.SVG_PATHSEG_CLOSEPATH:
+    			case SVGPathSeg.PATHSEG_CLOSEPATH:
 					currentStream.add("h\n");
     			break;
     		}
@@ -818,10 +818,10 @@ public class PDFRenderer implements Renderer {
 					SVGLinearGradientElement linear = (SVGLinearGradientElement)gi;
 
 					Vector theCoords = new Vector();
-					theCoords.addElement(new Double(linear.getX1().getValue()));
-					theCoords.addElement(new Double(linear.getY1().getValue()));
-					theCoords.addElement(new Double(linear.getX2().getValue()));
-					theCoords.addElement(new Double(linear.getY2().getValue()));
+					theCoords.addElement(new Double(linear.getX1().getBaseVal().getValue()));
+					theCoords.addElement(new Double(linear.getY1().getBaseVal().getValue()));
+					theCoords.addElement(new Double(linear.getX2().getBaseVal().getValue()));
+					theCoords.addElement(new Double(linear.getY2().getBaseVal().getValue()));
 
 					Vector theExtend = new Vector();
 					theExtend.addElement(new Boolean(true));
@@ -851,7 +851,7 @@ public class PDFRenderer implements Renderer {
 					Hashtable table;
 					for(int count = 0; count < nl.getLength(); count++) {
 						stop = (SVGStopElementImpl)nl.item(count);
-						table = stop.getStyle();
+						table = stop.oldgetStyle();
 						ColorType sc = (ColorType)table.get("stop-color");
 						if(sc == null) {
 							// maybe using color
@@ -862,7 +862,7 @@ public class PDFRenderer implements Renderer {
 							System.err.println("no stop-color or color in stop element");
 							continue;
 						}
-						float offset = stop.getOffset();
+						float offset = stop.getOffset().getBaseVal();
 						PDFColor color = new PDFColor(sc.red(), sc.green(), sc.blue());
 						Vector colVector = color.getVector();
 						// create bounds from last to offset
@@ -904,7 +904,7 @@ public class PDFRenderer implements Renderer {
 					if(area instanceof SVGRectElement) {
 						bbox = ((SVGRectElement)area).getBBox();
 					}
-					short units = radial.getGradientUnits();
+					short units = radial.getGradientUnits().getBaseVal();
 					switch(units) {
 						case SVGUnitTypes.SVG_UNIT_TYPE_OBJECTBOUNDINGBOX:
 						break;
@@ -913,29 +913,29 @@ public class PDFRenderer implements Renderer {
 					}
 					// check value types, eg. %
 					if(bbox != null) {
-						theCoords.addElement(new Double(bbox.getX().getValue() +
-							radial.getCx().getValue() * bbox.getWidth().getValue()));
-						theCoords.addElement(new Double(bbox.getY().getValue() +
-							radial.getCy().getValue() * bbox.getHeight().getValue()));
-						theCoords.addElement(new Double(radial.getR().getValue() *
-							bbox.getHeight().getValue()));
-						theCoords.addElement(new Double(bbox.getX().getValue() +
-							radial.getFx().getValue() * bbox.getWidth().getValue()));
-						theCoords.addElement(new Double(bbox.getY().getValue() +
-							radial.getFy().getValue() * bbox.getHeight().getValue()));
-						theCoords.addElement(new Double(radial.getR().getValue()));
+						theCoords.addElement(new Double(bbox.getX() +
+							radial.getCx().getBaseVal().getValue() * bbox.getWidth()));
+						theCoords.addElement(new Double(bbox.getY() +
+							radial.getCy().getBaseVal().getValue() * bbox.getHeight()));
+						theCoords.addElement(new Double(radial.getR().getBaseVal().getValue() *
+							bbox.getHeight()));
+						theCoords.addElement(new Double(bbox.getX() +
+							radial.getFx().getBaseVal().getValue() * bbox.getWidth()));
+						theCoords.addElement(new Double(bbox.getY() +
+							radial.getFy().getBaseVal().getValue() * bbox.getHeight()));
+						theCoords.addElement(new Double(radial.getR().getBaseVal().getValue()));
 					} else {
-						theCoords.addElement(new Double(radial.getCx().getValue()));
-						theCoords.addElement(new Double(radial.getCy().getValue()));
-						theCoords.addElement(new Double(radial.getR().getValue()));
-						theCoords.addElement(new Double(radial.getFx().getValue())); // Fx
-						theCoords.addElement(new Double(radial.getFy().getValue())); // Fy
-						theCoords.addElement(new Double(radial.getR().getValue()));
+						theCoords.addElement(new Double(radial.getCx().getBaseVal().getValue()));
+						theCoords.addElement(new Double(radial.getCy().getBaseVal().getValue()));
+						theCoords.addElement(new Double(radial.getR().getBaseVal().getValue()));
+						theCoords.addElement(new Double(radial.getFx().getBaseVal().getValue())); // Fx
+						theCoords.addElement(new Double(radial.getFy().getBaseVal().getValue())); // Fy
+						theCoords.addElement(new Double(radial.getR().getBaseVal().getValue()));
 					}
 					float lastoffset = 0;
 					for(int count = 0; count < nl.getLength(); count++) {
 						stop = (SVGStopElementImpl)nl.item(count);
-						table = stop.getStyle();
+						table = stop.oldgetStyle();
 						ColorType sc = (ColorType)table.get("stop-color");
 						if(sc == null) {
 							// maybe using color
@@ -946,7 +946,7 @@ public class PDFRenderer implements Renderer {
 							System.err.println("no stop-color or color in stop element");
 							continue;
 						}
-						float offset = stop.getOffset();
+						float offset = stop.getOffset().getBaseVal();
 						PDFColor color = new PDFColor(sc.red(), sc.green(), sc.blue());
 						// create bounds from last to offset
 						lastoffset = offset;
@@ -1103,7 +1103,7 @@ public class PDFRenderer implements Renderer {
 			SVGTransform t = (SVGTransform)e.nextElement();
 			SVGMatrix matrix = t.getMatrix();
 			currentStream.add(pdfNumber.doubleOut(matrix.getA()) + " " + pdfNumber.doubleOut(matrix.getB()) + " " + pdfNumber.doubleOut(matrix.getC())
-					+ " " + pdfNumber.doubleOut(matrix.getD()) + " " + pdfNumber.doubleOut(matrix.getE().getValue()) + " " + pdfNumber.doubleOut(matrix.getF().getValue()) + " cm\n");
+					+ " " + pdfNumber.doubleOut(matrix.getD()) + " " + pdfNumber.doubleOut(matrix.getE()) + " " + pdfNumber.doubleOut(matrix.getF()) + " cm\n");
 		}
 	}
 
@@ -1111,7 +1111,7 @@ public class PDFRenderer implements Renderer {
 	{
 		int x = posx;
 		int y = posy;
-		Hashtable style = area.getStyle();
+		Hashtable style = area.oldgetStyle();
 		DrawingInstruction di = null;
 
 		currentStream.add("q\n");
@@ -1126,17 +1126,17 @@ public class PDFRenderer implements Renderer {
 
 		if (area instanceof SVGRectElement) {
 			SVGRectElement rg = (SVGRectElement)area;
-			float rx = rg.getX().getValue();
-			float ry = rg.getY().getValue();
-			float rw = rg.getWidth().getValue();
-			float rh = rg.getHeight().getValue();
+			float rx = rg.getX().getBaseVal().getValue();
+			float ry = rg.getY().getBaseVal().getValue();
+			float rw = rg.getWidth().getBaseVal().getValue();
+			float rh = rg.getHeight().getBaseVal().getValue();
 			addRect(rx, ry, rw, rh, di);
 		} else if (area instanceof SVGLineElement) {
 			SVGLineElement lg = (SVGLineElement)area;
-			float x1 = lg.getX1().getValue();
-			float y1 = lg.getY1().getValue();
-			float x2 = lg.getX2().getValue();
-			float y2 = lg.getY2().getValue();
+			float x1 = lg.getX1().getBaseVal().getValue();
+			float y1 = lg.getY1().getBaseVal().getValue();
+			float x2 = lg.getX2().getBaseVal().getValue();
+			float y2 = lg.getY2().getBaseVal().getValue();
 			addLine(x1,y1,x2,y2, di);
 		} else if (area instanceof SVGTextElementImpl) {
 //			currentStream.add("q\n");
@@ -1147,16 +1147,16 @@ public class PDFRenderer implements Renderer {
 //			currentStream.add("Q\n");
 		} else if (area instanceof SVGCircleElement) {
 			SVGCircleElement cg = (SVGCircleElement)area;
-			float cx = cg.getCx().getValue();
-			float cy = cg.getCy().getValue();
-			float r = cg.getR().getValue();
+			float cx = cg.getCx().getBaseVal().getValue();
+			float cy = cg.getCy().getBaseVal().getValue();
+			float r = cg.getR().getBaseVal().getValue();
 			addCircle(cx,cy,r, di);
 		} else if (area instanceof SVGEllipseElement) {
 			SVGEllipseElement cg = (SVGEllipseElement)area;
-			float cx = cg.getCx().getValue();
-			float cy = cg.getCy().getValue();
-			float rx = cg.getRx().getValue();
-			float ry = cg.getRy().getValue();
+			float cx = cg.getCx().getBaseVal().getValue();
+			float cy = cg.getCy().getBaseVal().getValue();
+			float rx = cg.getRx().getBaseVal().getValue();
+			float ry = cg.getRy().getBaseVal().getValue();
 			addEllipse(cx,cy,rx,ry, di);
 		} else if (area instanceof SVGPathElementImpl) {
 			addPath(((SVGPathElementImpl)area).pathElements, posx, posy, di);
@@ -1210,11 +1210,11 @@ public class PDFRenderer implements Renderer {
 		PDFNumber pdfNumber = new PDFNumber();
 
 		Hashtable styles;
-		styles = tg.getStyle();
+		styles = tg.oldgetStyle();
 		applyStyle(tg, styles);
 		// apply transform
 		// text has a Tm and need to handle each element
-		SVGTransformList trans = tg.getTransform();
+		SVGTransformList trans = tg.getTransform().getBaseVal();
 		SVGMatrix matrix = trans.consolidate().getMatrix();
 		String transstr = (pdfNumber.doubleOut(matrix.getA())
 							+ " " + pdfNumber.doubleOut(matrix.getB())
@@ -1258,8 +1258,8 @@ public class PDFRenderer implements Renderer {
 			if(o instanceof String) {
 				String str = (String)o;
 				currentStream.add(transstr
-					+ (currentX + matrix.getE().getValue()) + " "
-					+ (y+ty + matrix.getF().getValue()) + " Tm " 
+					+ (currentX + matrix.getE()) + " "
+					+ (y+ty + matrix.getF()) + " Tm " 
 					+ "(" + str + ") Tj\n");
 				for(int count = 0; count < str.length(); count++) {
 					currentX += fs.width(str.charAt(count)) / 1000f;
@@ -1295,7 +1295,7 @@ public class PDFRenderer implements Renderer {
 			} else if(o instanceof SVGTSpanElementImpl) {
 				// TODO handle dy properly
 				SVGTSpanElementImpl tsg = (SVGTSpanElementImpl)o;
-				styles = tsg.getStyle();
+				styles = tsg.oldgetStyle();
 				applyStyle(tsg, styles);
 				boolean changed = false;
 
@@ -1342,8 +1342,8 @@ public class PDFRenderer implements Renderer {
 					while(enum.hasMoreElements() && count < tsg.str.length()) {
 						float pos = ((Float)enum.nextElement()).floatValue();
 						currentStream.add(transstr
-							+ (x + pos + matrix.getE().getValue()) + " "
-							+ (y + ty + tsg.dy + matrix.getF().getValue()) + " Tm " 
+							+ (x + pos + matrix.getE()) + " "
+							+ (y + ty + tsg.dy + matrix.getF()) + " Tm " 
 							+ "(" + tsg.str.charAt(count) + ") Tj\n");
 						currentX = x + pos + fs.width(tsg.str.charAt(count)) / 1000f;
 						count++;
@@ -1352,8 +1352,8 @@ public class PDFRenderer implements Renderer {
 						// do nothing
 					} else if(count < tsg.str.length()) {
 						currentStream.add(transstr
-							+ (currentX + matrix.getE().getValue()) + " "
-							+ (y + ty + tsg.dy + matrix.getF().getValue()) + " Tm " 
+							+ (currentX + matrix.getE()) + " "
+							+ (y + ty + tsg.dy + matrix.getF()) + " Tm " 
 							+ "(" + tsg.str.substring(count, tsg.str.length()) + ") Tj\n");
 					}
 				} else if(tsg.dxlist != null) {
@@ -1362,8 +1362,8 @@ public class PDFRenderer implements Renderer {
 					while(enum.hasMoreElements() && count < tsg.str.length()) {
 						float pos = ((Float)enum.nextElement()).floatValue();
 						currentStream.add(transstr
-							+ (currentX + pos + matrix.getE().getValue()) + " "
-							+ (y + ty + tsg.dy + matrix.getF().getValue()) + " Tm " 
+							+ (currentX + pos + matrix.getE()) + " "
+							+ (y + ty + tsg.dy + matrix.getF()) + " Tm " 
 							+ "(" + tsg.str.charAt(count) + ") Tj\n");
 						currentX += pos + fs.width(tsg.str.charAt(count)) / 1000f;
 						count++;
@@ -1372,8 +1372,8 @@ public class PDFRenderer implements Renderer {
 						// do nothing
 					} else if(count < tsg.str.length()) {
 						currentStream.add(transstr
-							+ (currentX + matrix.getE().getValue()) + " "
-							+ (y + ty + tsg.dy + matrix.getF().getValue()) + " Tm " 
+							+ (currentX + matrix.getE()) + " "
+							+ (y + ty + tsg.dy + matrix.getF()) + " Tm " 
 							+ "(" + tsg.str.substring(count, tsg.str.length()) + ") Tj\n");
 					}
 				} else {
