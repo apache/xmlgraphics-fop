@@ -12,7 +12,7 @@
     <menu-item label="Alt Design" href="../index.html"/>
   </menu>
   <menu label="Alt properties">
-    <menu-item label="Introduction" href="index.html"/>
+    <menu-item label="Introduction" href="introduction.html"/>
     <menu-item label="Classes overview" href="classes-overview.html"/>
     <menu-item label="PropertyConsts" href="PropertyConsts-class.html"/>
     <menu-item label="Simple Properties" href="simple-properties.html"/>
