@@ -9,6 +9,7 @@ import org.apache.fop.datatypes.Ems;
 import org.apache.fop.datatypes.Length;
 import org.apache.fop.datatypes.Ints;
 import org.apache.fop.fo.PropNames;
+import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.properties.Property;
 
 import java.util.Map;
@@ -35,7 +36,7 @@ public class FontSize extends Property  {
         throws PropertyException
     {
         System.out.println("font-size initial size"); //DEBUG
-        return getMappedLength(MEDIUM);
+        return getMappedLength(null, MEDIUM);
     }
 
     public static final int inherited = COMPUTED;
@@ -67,13 +68,14 @@ public class FontSize extends Property  {
         ,0.83d      // smaller
     };
 
-    public Numeric getMappedLength(int enum)
+    public Numeric getMappedLength(FONode node, int enum)
         throws PropertyException
     {
         System.out.println("font-size getMappedLength " + enum + " "
                             + mappedLengths[enum]);
         if (enum == LARGER || enum == SMALLER)
-            return Ems.makeEms(PropNames.FONT_SIZE, mappedLengths[enum]);
+            return Ems.makeEms
+                            (node, PropNames.FONT_SIZE, mappedLengths[enum]);
         return
             Length.makeLength
                     (PropNames.FONT_SIZE, mappedLengths[enum], Length.PT);
