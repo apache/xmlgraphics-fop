@@ -339,20 +339,24 @@ public class PDFStream extends PDFObject {
     }
 
     private String buildFilterEntries(List names) {
+        boolean needFilterEntry = false;
         StringBuffer sb = new StringBuffer();
-        sb.append("/Filter ");
-        if (names.size() > 1) {
-            sb.append("[ ");
+        sb.append("/Filter [ ");
+        for (int i = 0; i < names.size(); i++) {
+            final String name = (String)names.get(i);
+            if (name.length() > 0) {
+                needFilterEntry = true;
+                sb.append(name);
+                sb.append(" ");
+            }
         }
-        for (int count = 0; count < names.size(); count++) {
-            sb.append((String)names.get(count));
-            sb.append(" ");
-        }
-        if (names.size() > 1) {
+        if (needFilterEntry) {
             sb.append("]");
+            sb.append("\n");
+            return sb.toString();
+        } else {
+            return "";
         }
-        sb.append("\n");
-        return sb.toString();
     }
 
     private String buildDecodeParms(List parms) {
