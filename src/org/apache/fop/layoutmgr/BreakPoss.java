@@ -40,6 +40,8 @@ public class BreakPoss {
     // Set this flag if all fo:character generated Areas would
     // suppressed at the end or beginning of a line
     public static final int ALL_ARE_SUPPRESS_AT_LB =    0x80;
+    /** This break possibility is a hyphenation */
+    public static final int HYPHENATED =    0x100;
 
 
     /** The top-level layout manager which generated this BreakPoss. */

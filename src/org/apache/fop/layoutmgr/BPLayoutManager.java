@@ -39,10 +39,6 @@ public interface BPLayoutManager extends LayoutManager {
 
     public BreakPoss getNextBreakPoss(LayoutContext context);
 
-    /** CURRENTLY NOT USED
-    public BreakPoss getStartBreakPoss(LayoutContext lc,
-				       BreakPoss.Position bpPrevEnd);
-    **/
 
     /**
      * Return a value indicating whether this LayoutManager has laid out
@@ -62,10 +58,13 @@ public interface BPLayoutManager extends LayoutManager {
      * by BreakPoss.Position objectw which will be returned by the
      * Iterator.
      */
-    public void addAreas(PositionIterator posIter) ;
+    public void addAreas(PositionIterator posIter, double dSpaceAdjust) ;
 
     public void init() ;
 
     public void resetPosition(BreakPoss.Position position);
+
+    public void getWordChars(StringBuffer sbChars,
+			     BreakPoss.Position bp1, BreakPoss.Position bp2);
 
 }

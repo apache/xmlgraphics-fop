@@ -134,18 +134,6 @@ public abstract class AbstractBPLayoutManager extends AbstractLayoutManager
     }
 
 
-//     /**
-//      * Get the BreakPoss at the start of the next "area".
-//      * @param lc The LayoutContext for this LayoutManager.
-//      * @param bpPrevEnd The Position returned by the previous call
-//      * to getNextBreakPoss, or null if none.
-//      */
-//     public BreakPoss getStartBreakPoss(LayoutContext lc,
-// 				       BreakPoss.Position bpPrevEnd) {
-// 	return null;
-//     }
-
-
     /**
      * Generate and return the next break possibility.
      * Each layout manager must implement this.
@@ -179,7 +167,12 @@ public abstract class AbstractBPLayoutManager extends AbstractLayoutManager
     }
 
 
-    public void addAreas(PositionIterator parentIter) {
+    public void addAreas(PositionIterator parentIter, double dSpaceAdjust) {
+    }
+
+    
+    public void getWordChars(StringBuffer sbChars,
+			     BreakPoss.Position bp1, BreakPoss.Position bp2) {
     }
 
     /* ---------------------------------------------------------

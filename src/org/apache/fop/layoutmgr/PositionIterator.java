@@ -83,6 +83,10 @@ abstract class PositionIterator implements Iterator
 	}
     }
 
+    protected Object peekNext() {
+	return m_nextObj;
+    }
+
     public void remove() throws UnsupportedOperationException {
 	throw new UnsupportedOperationException("PositionIterator doesn't support remove");
     }
