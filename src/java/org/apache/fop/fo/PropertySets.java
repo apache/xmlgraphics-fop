@@ -1,5 +1,5 @@
 /*
- * Copyright 1999-2004 The Apache Software Foundation.
+ * Copyright 1999-2005 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,7 +26,6 @@ import java.util.ArrayList;
 public class PropertySets {
     private static short[][] mapping = null;
     private static BitSet can_have_markers = null;
-    private static BitSet can_have_id = null;
     private static BitSet no_inline_areas = null;
 
     private Element[] elements = new Element[Constants.FRM_OBJ_COUNT+1];
@@ -1053,53 +1052,6 @@ public class PropertySets {
             can_have_markers.set(Constants.FO_WRAPPER);
         }
         return can_have_markers.get(elementId);
-    }
-    
-    /**
-     * Determines if the XSL "id" property is applicable for this FO
-     * @param elementId Constants enumeration ID of the FO (e.g., FO_ROOT)
-     * @return true if id property is applicable, false otherwise
-     * @todo see if we can stop merging properties applicable for the children
-     *   of an FO into the FO in the mapping[] array above.  If so, we can
-     *   rely on getPropertySet() instead of this method.
-     */
-    public static boolean canHaveId(int elementId) {
-        if (can_have_id == null) {
-            can_have_id = new BitSet();
-            can_have_id.set(Constants.FO_BASIC_LINK);
-            can_have_id.set(Constants.FO_BIDI_OVERRIDE);
-            can_have_id.set(Constants.FO_BLOCK);
-            can_have_id.set(Constants.FO_BLOCK_CONTAINER);
-            can_have_id.set(Constants.FO_CHARACTER);
-            can_have_id.set(Constants.FO_EXTERNAL_GRAPHIC);
-            can_have_id.set(Constants.FO_INITIAL_PROPERTY_SET);
-            can_have_id.set(Constants.FO_INLINE);
-            can_have_id.set(Constants.FO_INLINE_CONTAINER);
-            can_have_id.set(Constants.FO_INSTREAM_FOREIGN_OBJECT);
-            can_have_id.set(Constants.FO_LEADER);
-            can_have_id.set(Constants.FO_LIST_BLOCK);
-            can_have_id.set(Constants.FO_LIST_ITEM);
-            can_have_id.set(Constants.FO_LIST_ITEM_BODY);
-            can_have_id.set(Constants.FO_LIST_ITEM_LABEL);
-            can_have_id.set(Constants.FO_MULTI_CASE);
-            can_have_id.set(Constants.FO_MULTI_PROPERTIES);
-            can_have_id.set(Constants.FO_MULTI_PROPERTY_SET);
-            can_have_id.set(Constants.FO_MULTI_SWITCH);
-            can_have_id.set(Constants.FO_MULTI_TOGGLE);
-            can_have_id.set(Constants.FO_PAGE_NUMBER);
-            can_have_id.set(Constants.FO_PAGE_NUMBER_CITATION);
-            can_have_id.set(Constants.FO_PAGE_SEQUENCE);
-            can_have_id.set(Constants.FO_TABLE_AND_CAPTION);
-            can_have_id.set(Constants.FO_TABLE);
-            can_have_id.set(Constants.FO_TABLE_BODY);
-            can_have_id.set(Constants.FO_TABLE_CAPTION);
-            can_have_id.set(Constants.FO_TABLE_CELL);
-            can_have_id.set(Constants.FO_TABLE_FOOTER);
-            can_have_id.set(Constants.FO_TABLE_HEADER);
-            can_have_id.set(Constants.FO_TABLE_ROW);
-            can_have_id.set(Constants.FO_WRAPPER);
-        }
-        return can_have_id.get(elementId);
     }
 
     /**

@@ -1,5 +1,5 @@
 /*
- * Copyright 1999-2004 The Apache Software Foundation.
+ * Copyright 1999-2005 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -42,7 +42,7 @@ public class Bookmark extends FObj {
     private CommonAccessibility commonAccessibility;
     private String internalDestination;
     private String externalDestination;
-    // private ToBeImplementedProperty startingState;
+    private int startingState;
 
     /**
      * Create a new bookmark object.
@@ -128,6 +128,10 @@ public class Bookmark extends FObj {
 
     public String getExternalDestination() {
         return externalDestination;
+    }
+
+    public int getStartingState() {
+        return startingState;
     }
 
     public ArrayList getChildBookmarks() {
