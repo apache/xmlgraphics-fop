@@ -53,8 +53,8 @@ public class TableBody extends FObj {
     
     private PropertyList savedPropertyList;
 
-    private boolean tableRowsFound = false;
-    private boolean tableColumnsFound = false;   
+    protected boolean tableRowsFound = false;
+    protected boolean tableCellsFound = false;   
     
     /**
      * @param parent FONode that is the parent of the object
@@ -93,7 +93,7 @@ public class TableBody extends FObj {
      */
     protected void endOfNode() throws FOPException {
         getFOEventHandler().endBody(this);
-        if (!(tableRowsFound || tableColumnsFound)) {
+        if (!(tableRowsFound || tableCellsFound)) {
             if (getUserAgent().validateStrictly()) {
                 missingChildElementError("marker* (table-row+|table-cell+)");
             } else {
@@ -113,21 +113,21 @@ public class TableBody extends FObj {
         throws ValidationException {
         if (nsURI == FO_URI) {
             if (localName.equals("marker")) {
-                if (tableRowsFound || tableColumnsFound) {
+                if (tableRowsFound || tableCellsFound) {
                    nodesOutOfOrderError(loc, "fo:marker", "(table-row+|table-cell+)");
                 }
             } else if (localName.equals("table-row")) {
                 tableRowsFound = true;
-                if (tableColumnsFound) {
+                if (tableCellsFound) {
                     invalidChildError(loc, nsURI, localName, "Either fo:table-rows" +
-                      " or fo:table-columns may be children of an fo:table-body" +
+                      " or fo:table-cells may be children of an " + getName() +
                       " but not both");
                 }
-            } else if (localName.equals("table-column")) {
-                tableColumnsFound = true;
+            } else if (localName.equals("table-cell")) {
+                tableCellsFound = true;
                 if (tableRowsFound) {
                     invalidChildError(loc, nsURI, localName, "Either fo:table-rows" +
-                      " or fo:table-columns may be children of an fo:table-body" +
+                      " or fo:table-cells may be children of an " + getName() +
                       " but not both");
                 }  
             } else {
