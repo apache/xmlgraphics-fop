@@ -12,6 +12,8 @@ import org.apache.fop.layout.*;
 public class InlineSpace extends Space {
     private int size; // in millipoints
     private boolean resizeable = true; //to disallow size changes during justification of a line
+        // Used to discard some pending spaces in LineArea
+    private boolean eatable = false; 
 
     // Textdecoration
     protected boolean underlined = false;
@@ -71,6 +73,18 @@ public class InlineSpace extends Space {
       this.resizeable = resizeable;
     }
 
+        /**
+         * And eatable InlineSpace is discarded if it occurs
+         * as the first pending element in a LineArea
+         */
+    public void setEatable(boolean eatable) {
+        this.eatable = eatable;
+    }
+
+    public boolean isEatable() {
+        return eatable;
+    }
+    
     public void render(Renderer renderer) {
 	renderer.renderInlineSpace(this);
     }
