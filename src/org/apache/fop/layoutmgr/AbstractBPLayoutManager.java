@@ -157,14 +157,9 @@ public abstract class AbstractBPLayoutManager extends AbstractLayoutManager impl
      * default implementation?
      */
     public BreakPoss getNextBreakPoss(LayoutContext context) {
-        return getNextBreakPoss(context, null);
-    }
-
-
-    public BreakPoss getNextBreakPoss(LayoutContext context,
-                                      Position prevBreakPoss) {
         return null;
     }
+
 
     /**
      * Return value indicating whether the next area to be generated could

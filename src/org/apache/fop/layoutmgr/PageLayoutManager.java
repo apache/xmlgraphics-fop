@@ -96,7 +96,7 @@ public class PageLayoutManager extends AbstractBPLayoutManager implements Runnab
         BreakPoss bp;
         LayoutContext childLC = new LayoutContext(0);
         while (!isFinished()) {
-            if ((bp = getNextBreakPoss(childLC, null)) != null) {
+            if ((bp = getNextBreakPoss(childLC)) != null) {
                 addAreas((BlockBreakPosition)bp.getPosition());
                 // add static areas and resolve any new id areas
 
@@ -108,8 +108,7 @@ public class PageLayoutManager extends AbstractBPLayoutManager implements Runnab
     }
 
 
-    public BreakPoss getNextBreakPoss(LayoutContext context,
-                                      Position prevLineBP) {
+    public BreakPoss getNextBreakPoss(LayoutContext context) {
 
         BPLayoutManager curLM ; // currently active LM
 
@@ -121,7 +120,7 @@ public class PageLayoutManager extends AbstractBPLayoutManager implements Runnab
             childLC.setRefIPD(flowIPD);
 
             if (!curLM.isFinished()) {
-                bp = curLM.getNextBreakPoss(childLC, null);
+                bp = curLM.getNextBreakPoss(childLC);
             }
             if(bp != null) {
                 return new BreakPoss(
@@ -242,7 +241,7 @@ public class PageLayoutManager extends AbstractBPLayoutManager implements Runnab
                 childLC.setRefIPD((int)reg.getViewArea().getWidth());
 
                 while (!lm.isFinished()) {
-                    BreakPoss bp = lm.getNextBreakPoss(childLC, null);
+                    BreakPoss bp = lm.getNextBreakPoss(childLC);
                     if (bp != null) {
                         ArrayList vecBreakPoss = new ArrayList();
                         vecBreakPoss.add(bp);
