@@ -143,6 +143,7 @@ Sometimes ant gives out this warnings, but the build is finished without any pro
        <include name="lib/avalon.LICENSE.txt"/>
        <include name="lib/ant-1.4.1.jar"/>
        <include name="lib/ant.license.txt"/>
+       <include name="lib/readme"/>
     </fileset>
 
     <fileset dir="${basedir}" id="dist.src">
