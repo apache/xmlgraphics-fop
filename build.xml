@@ -285,7 +285,7 @@ Sometimes ant gives out this warnings, but the build is finished without any pro
     -->
 
     <property name="main.class" value="org.apache.fop.apps.Fop"/>
-            <property name="runtime.classpath" value="xercesImpl-2.0.1.jar xml-apis.jar xalan-2.3.1.jar batik.jar jimi-1.0.jar avalon-framework-cvs-20020806.jar"/>
+    <property name="runtime.classpath" value="xercesImpl-2.2.1.jar xml-apis.jar xalan-2.4.1.jar batik.jar jimi-1.0.jar avalon-framework-cvs-20020806.jar"/>
 
     <filter filtersfile="${build.codegen}/filter"/>
   </target>
