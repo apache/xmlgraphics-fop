@@ -46,7 +46,7 @@ public class BookmarkData extends OffDocumentItem implements Resolvable {
     public BookmarkData(AreaTreeModel model) {
         idRef = null;
         areaTreeModel = model;
-        whenToProcess = IMMEDIATELY;
+        whenToProcess = END_OF_DOC;
     }
 
     /**
