@@ -9,24 +9,46 @@ package org.apache.fop.render.pdf;
 
 // FOP
 import org.apache.fop.render.PrintRenderer;
-import org.apache.fop.render.XMLHandler;
 import org.apache.fop.render.RendererContext;
 import org.apache.fop.fo.FOUserAgent;
-import org.apache.fop.image.*;
+import org.apache.fop.image.FopImage;
+import org.apache.fop.image.XMLImage;
+import org.apache.fop.image.ImageFactory;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.apps.Version;
-import org.apache.fop.fo.properties.*;
-import org.apache.fop.datatypes.*;
-import org.apache.fop.pdf.*;
-import org.apache.fop.image.*;
-import org.apache.fop.extensions.*;
-import org.apache.fop.render.pdf.fonts.LazyFont;
+import org.apache.fop.fo.properties.RuleStyle;
+//import org.apache.fop.datatypes.*;
+import org.apache.fop.pdf.PDFStream;
+import org.apache.fop.pdf.PDFDocument; 
+import org.apache.fop.pdf.PDFInfo;
+import org.apache.fop.pdf.PDFResources;
+import org.apache.fop.pdf.PDFXObject;      
+import org.apache.fop.pdf.PDFPage;        
+import org.apache.fop.pdf.PDFState;
+import org.apache.fop.pdf.PDFLink;
+import org.apache.fop.pdf.PDFOutline;
+import org.apache.fop.pdf.PDFAnnotList;
+import org.apache.fop.pdf.PDFColor;
+import org.apache.fop.extensions.BookmarkData;
 
-import org.apache.fop.area.*;
-import org.apache.fop.area.inline.*;
+import org.apache.fop.area.Trait;
+import org.apache.fop.area.TreeExt;
+import org.apache.fop.area.CTM; 
+import org.apache.fop.area.Title;
+import org.apache.fop.area.PageViewport;
+import org.apache.fop.area.Page;
+import org.apache.fop.area.RegionReference;
+import org.apache.fop.area.Block;
+import org.apache.fop.area.BlockViewport;
+import org.apache.fop.area.LineArea;
 import org.apache.fop.area.inline.Character;
+import org.apache.fop.area.inline.Word;
+import org.apache.fop.area.inline.Viewport;
+import org.apache.fop.area.inline.ForeignObject;
+import org.apache.fop.area.inline.Image;
+import org.apache.fop.area.inline.Leader;
+import org.apache.fop.area.inline.InlineParent;
 import org.apache.fop.layout.FontState;
-import org.apache.fop.layout.FontInfo;
 import org.apache.fop.layout.FontMetric;
 
 import org.w3c.dom.Document;
@@ -35,20 +57,17 @@ import org.w3c.dom.Document;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.awt.geom.Rectangle2D;
-import java.awt.Rectangle;
 import java.awt.geom.AffineTransform;
 import java.util.HashMap;
 import java.util.List;
 
 /*
-TODO:
+todo:
 
 word rendering and optimistion
 pdf state optimisation
 line and border
-leader
 background pattern
-orientation
 writing mode
 text decoration
 
@@ -59,25 +78,35 @@ text decoration
  *
  */
 public class PDFRenderer extends PrintRenderer {
-    public static final String mimeType = "application/pdf";
+    /**
+     * The mime type for pdf
+     */
+    public static final String MIME_TYPE = "application/pdf";
 
     /**
      * the PDF Document being created
      */
     protected PDFDocument pdfDoc;
 
-    // map of pages using the PageViewport as the key
-    // this is used for prepared pages that cannot be immediately
-    // rendered
+    /**
+     * Map of pages using the PageViewport as the key
+     * this is used for prepared pages that cannot be immediately
+     * rendered
+     */
     protected HashMap pages = null;
 
-    // page references are stored using the PageViewport as the key
-    // when a reference is made the PageViewport is used
-    // for pdf this means we need the pdf page reference
+    /**
+     * Page references are stored using the PageViewport as the key
+     * when a reference is made the PageViewport is used
+     * for pdf this means we need the pdf page reference
+     */
     protected HashMap pageReferences = new HashMap();
 
-    protected String producer;
+    private String producer;
 
+    /**
+     * The output stream to write the document to
+     */
     protected OutputStream ostream;
 
     /**
@@ -133,7 +162,7 @@ public class PDFRenderer extends PrintRenderer {
     /**
      * reusable word area string buffer to reduce memory usage
      */
-    private StringBuffer _wordAreaPDF = new StringBuffer();
+    private StringBuffer wordAreaPDF = new StringBuffer();
 
     /**
      * create the PDF renderer
@@ -153,9 +182,9 @@ public class PDFRenderer extends PrintRenderer {
     public void setUserAgent(FOUserAgent agent) {
         super.setUserAgent(agent);
         PDFXMLHandler xmlHandler = new PDFXMLHandler();
-        //userAgent.setDefaultXMLHandler(mimeType, xmlHandler);
+        //userAgent.setDefaultXMLHandler(MIME_TYPE, xmlHandler);
         String svg = "http://www.w3.org/2000/svg";
-        userAgent.addXMLHandler(mimeType, svg, xmlHandler);
+        userAgent.addXMLHandler(MIME_TYPE, svg, xmlHandler);
     }
 
     public void startRenderer(OutputStream stream) throws IOException {
@@ -246,9 +275,12 @@ public class PDFRenderer extends PrintRenderer {
      */
     public void renderPage(PageViewport page) throws IOException,
     FOPException {
-        if (pages != null &&
-                (currentPage = (PDFPage) pages.get(page)) != null) {
+        if (pages != null
+                && (currentPage = (PDFPage) pages.get(page)) != null) {
             pages.remove(page);
+            Rectangle2D bounds = page.getViewArea();
+            double h = bounds.getHeight();
+            pageHeight = (int) h;
         } else {
             this.pdfResources = this.pdfDoc.getResources();
             Rectangle2D bounds = page.getViewArea();
@@ -256,18 +288,18 @@ public class PDFRenderer extends PrintRenderer {
             double h = bounds.getHeight();
             pageHeight = (int) h;
             currentPage = this.pdfDoc.makePage(this.pdfResources,
-                                               (int) Math.round(w / 1000), (int) Math.round(h / 1000));
+                              (int) Math.round(w / 1000), (int) Math.round(h / 1000));
             pageReferences.put(page, currentPage.referencePDF());
         }
         currentStream =
           this.pdfDoc.makeStream(PDFStream.CONTENT_FILTER, false);
 
         currentState = new PDFState();
-        currentState.setTransform( new AffineTransform(1, 0, 0, -1, 0,
+        currentState.setTransform(new AffineTransform(1, 0, 0, -1, 0,
                                    (int) Math.round(pageHeight / 1000)));
         // Transform origin at top left to origin at bottom left
-        currentStream.add("1 0 0 -1 0 " +
-                          (int) Math.round(pageHeight / 1000) + " cm\n");
+        currentStream.add("1 0 0 -1 0 "
+                           + (int) Math.round(pageHeight / 1000) + " cm\n");
         //currentStream.add("BT\n");
         currentFontName = "";
 
@@ -598,8 +630,8 @@ public class PDFRenderer extends PrintRenderer {
         }
 
         for (int i = 0; i < uniBytes.length; i++) {
-            int b = (uniBytes[i] < 0) ? (int)(256 + uniBytes[i]) :
-                    (int) uniBytes[i];
+            int b = (uniBytes[i] < 0) ? (int)(256 + uniBytes[i])
+                        : (int) uniBytes[i];
 
             String hexString = Integer.toHexString(b);
             if (hexString.length() == 1) {
@@ -618,8 +650,8 @@ public class PDFRenderer extends PrintRenderer {
         if (kernPair != null) {
             Integer width = (Integer) kernPair.get(ch2);
             if (width != null) {
-                buf.append(endText).append(-
-                                           (width.intValue())).append(' ').append(startText);
+                buf.append(endText).append(-width.intValue());
+                buf.append(' ').append(startText);
             }
         }
     }
@@ -664,8 +696,8 @@ public class PDFRenderer extends PrintRenderer {
 
             this.currentFontName = name;
             this.currentFontSize = size;
-            pdf = pdf.append("/" + name + " " + ((float) size / 1000f) +
-                             " Tf\n");
+            pdf = pdf.append("/" + name + " " + ((float) size / 1000f)
+                              + " Tf\n");
         }
     }
 
@@ -749,7 +781,7 @@ public class PDFRenderer extends PrintRenderer {
 
     protected void placeImage(int x, int y, int w, int h, int xobj) {
         currentStream.add("q\n" + ((float) w) + " 0 0 "
-                          + ((float) - h) + " "
+                          + ((float) -h) + " "
                           + (((float) currentBlockIPPosition) / 1000f + x) + " "
                           + (((float)(currentBPPosition + 1000 * h)) / 1000f
                           + y) + " cm\n" + "/Im" + xobj + " Do\nQ\n");
@@ -764,7 +796,7 @@ public class PDFRenderer extends PrintRenderer {
 
     public void renderDocument(Document doc, String ns, Rectangle2D pos) {
         RendererContext context;
-        context = new RendererContext(mimeType);
+        context = new RendererContext(MIME_TYPE);
         context.setUserAgent(userAgent);
 
         context.setProperty(PDFXMLHandler.PDF_DOCUMENT, pdfDoc);

@@ -8,14 +8,13 @@
 package org.apache.fop.area;
 
 import java.util.List;
-import java.io.Serializable;
 
 /**
  * Resolveable Interface.
  * Classes that implement this can be resolved when
  * an id is added to the area tree.
  */
-public interface Resolveable extends Serializable {
+public interface Resolveable {
 
     public boolean isResolved();
 
