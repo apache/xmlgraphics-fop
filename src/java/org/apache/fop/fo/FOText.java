@@ -197,10 +197,12 @@ public class FOText extends FONode {
         while (this.ancestorBlock == null) {
             ancestorFONode = ancestorFONode.parent;
             Class myclass = ancestorFONode.getClass();
-            if (ancestorFONode instanceof Root) {
+            if (ancestorFONode instanceof org.apache.fop.fo.pagination.Title) {
+                return;
+            } else if (ancestorFONode instanceof Root) {
                 getLogger().warn("Unexpected: fo:text with no fo:block ancestor");
-            }
-            if (ancestorFONode instanceof Block) {
+                return;
+            } else if (ancestorFONode instanceof Block) {
                 this.ancestorBlock = (Block)ancestorFONode;
             }
         }

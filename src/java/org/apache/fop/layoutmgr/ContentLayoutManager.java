@@ -18,8 +18,9 @@
 
 package org.apache.fop.layoutmgr;
 
-import org.apache.fop.fo.FObj;
 import org.apache.fop.apps.FOUserAgent;
+import org.apache.fop.fo.FObj;
+import org.apache.fop.fo.Constants;
 import org.apache.fop.fo.flow.Marker;
 import org.apache.fop.area.Area;
 import org.apache.fop.area.inline.InlineArea;
@@ -72,10 +73,7 @@ public class ContentLayoutManager implements InlineLevelLayoutManager {
 
     public void fillArea(LayoutManager curLM) {
 
-        List childBreaks = new ArrayList();
-        MinOptMax stack = new MinOptMax();
         int ipd = 1000000;
-        BreakPoss bp;
 
         LayoutContext childLC = new LayoutContext(LayoutContext.NEW_AREA);
         childLC.setLeadingSpace(new SpaceSpecifier(false));
@@ -96,34 +94,34 @@ public class ContentLayoutManager implements InlineLevelLayoutManager {
         // max size of middle alignment below baseline
         int middlefollow = maxtb;
 
-        while (!curLM.isFinished()) {
-            MinOptMax lastSize = null;
-            if ((bp = curLM.getNextBreakPoss(childLC)) != null) {
-                lastSize = bp.getStackingSize();
-                childBreaks.add(bp);
+        stackSize = 0;
 
-                if (bp.getLead() > lineLead) {
-                    lineLead = bp.getLead();
+        LinkedList contentList =
+            getNextKnuthElements(childLC, Constants.EN_START);
+        ListIterator contentIter = contentList.listIterator();
+        while (contentIter.hasNext()) {
+            KnuthElement element = (KnuthElement) contentIter.next();
+            if (element.isBox()) {
+                KnuthBox box = (KnuthBox) element;
+                if (box.getLead() > lineLead) {
+                    lineLead = box.getLead();
                 }
-                if (bp.getTotal() > maxtb) {
-                    maxtb = bp.getTotal();
+                if (box.getTotal() > maxtb) {
+                    maxtb = box.getTotal();
                 }
-                if (bp.getMiddle() > middlefollow) {
-                    middlefollow = bp.getMiddle();
+                // Is this needed? cf. LineLM.makeLineBreakPosition
+                // if (box.getMiddle() > lineLead) {
+                //     lineLead = box.getMiddle();
+                // }
+                if (box.getMiddle() > middlefollow) {
+                    middlefollow = box.getMiddle();
                 }
-            }
-            if (lastSize != null) {
-                stack.add(lastSize);
             }
         }
 
         if (maxtb - lineLead > middlefollow) {
             middlefollow = maxtb - lineLead;
         }
-
-        //if(holder instanceof InlineParent) {
-        //    ((InlineParent)holder).setHeight(lineHeight);
-        //}
 
         LayoutContext lc = new LayoutContext(0);
         lc.setBaseline(lineLead);
@@ -132,10 +130,9 @@ public class ContentLayoutManager implements InlineLevelLayoutManager {
         lc.setFlags(LayoutContext.RESOLVE_LEADING_SPACE, true);
         lc.setLeadingSpace(new SpaceSpecifier(false));
         lc.setTrailingSpace(new SpaceSpecifier(false));
-        PositionIterator breakPosIter =
-                new BreakPossPosIter(childBreaks, 0, childBreaks.size());
-        curLM.addAreas(breakPosIter, lc);
-        stackSize = stack.opt;
+        KnuthPossPosIter contentPosIter =
+            new KnuthPossPosIter(contentList, 0, contentList.size());
+        curLM.addAreas(contentPosIter, lc);
     }
 
     public void addAreas(PositionIterator posIter, LayoutContext context) {
