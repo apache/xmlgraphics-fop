@@ -126,13 +126,12 @@ public class Cell extends BlockStackingLayoutManager {
                 continue;
             }
             // Set up a LayoutContext
-            int ipd = context.getRefIPD();
             BreakPoss bp;
 
             LayoutContext childLC = new LayoutContext(0);
             childLC.setStackLimit(MinOptMax.subtract(context.getStackLimit(),
                                      stackSize));
-            childLC.setRefIPD(ipd);
+            childLC.setRefIPD(cellIPD);
 
             boolean over = false;
 
