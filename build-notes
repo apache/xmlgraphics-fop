@@ -45,6 +45,10 @@ ant build environment.
 
 Running.
 
+Firstly, fix build/classes/conf/userconfig.xml.  It has examples of
+command-line override values specific to my environment.  Sorry
+about that.
+
 N.B. As at the time of integrating this experimental code into the
 CVS tree, running will throw an exception.  Properties handling is
 in a state of flux.
