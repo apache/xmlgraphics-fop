@@ -115,6 +115,20 @@ inactive??
 
   <changes>
    <release version="2003" date="2003">
+   	<action context="code" dev="JM" type="update">
+   		PDF and PS transcoders now have a common base class. It also
+   		optionally supports Avalon Logging and Configuration. Support for
+   		plugging in an EntityResolver into Batik is now included.
+   	</action>
+   	<action context="code" dev="JM" type="update">
+   		Implemented on-the-fly stream output (less buffering leads to
+   		decreased memory usage and increased speed).
+   	</action>
+   	<action context="code" dev="JM" type="update">
+   		General refactoring of the PDF library to centralize certain
+   		behaviour and reduce redundancy. Some memory allocation
+   		optimizations.
+   	</action>
     <action context="code" dev="JM" type="update">
       Enhanced PDF encryption support so it is optional depending on the 
       availability of JCE and/or cryptographic algorithms.
