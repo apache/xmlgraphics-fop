@@ -388,14 +388,18 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
             boolean doc = boundary == EN_DOCUMENT;
             int seq = areaTreeModel.getPageSequenceCount();
             int page = areaTreeModel.getPageCount(seq) - 1;
+            while (page < 0 && doc && seq > 1) {
+                seq--;
+                page = areaTreeModel.getPageCount(seq) - 1;
+            }
             while (page >= 0) {
                 PageViewport pv = areaTreeModel.getPage(seq, page);
-                mark = (Marker)curPage.getMarker(name, pos);
+                mark = (Marker)pv.getMarker(name, pos);
                 if (mark != null) {
                     return mark;
                 }
                 page--;
-                if (page == -1 && doc && seq > 0) {
+                if (page < 0 && doc && seq > 1) {
                     seq--;
                     page = areaTreeModel.getPageCount(seq) - 1;
                 }
