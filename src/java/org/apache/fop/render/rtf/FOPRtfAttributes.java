@@ -36,7 +36,7 @@ public class FOPRtfAttributes extends RtfAttributes {
      * @return this (which now contains the new entry)
      */
     public RtfAttributes set(String name, Length value) {
-        set(name, value.getValue() / (1000 / 20));
+        set(name, value.getValue() / (1000 / 2)); //Convert millipoints to half-points
         return this;
     }
 
