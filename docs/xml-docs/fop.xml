@@ -12,6 +12,7 @@
   <document id="examples"       label="Examples" source="fop/examples.xml"    />
   <document id="config"         label="Configuration" source="fop/configuration.xml"    />
   <document id="fonts"          label="Fonts" source="fop/fonts.xml"    />
+  <document id="extensions"     label="Extensions" source="fop/extensions.xml"    />
   <separator/>
   <document id="compiling"      label="Compiling" source="fop/compiling.xml"    />
   <document id="embedding"      label="Embedding" source="fop/embedding.xml"    />

@@ -1,0 +1,27 @@
+<?xml version="1.0" standalone="no"?>
+
+
+<s1 title="FOP extensions to xsl:fo">
+  <p>Sometimes it is desirable to have extensions to xsl:fo in order to support some feature of the 
+     output format which isn't covered by the xsl:fo specification. 
+     To use the Fop extensions, you need to add a namespace entry for
+     http://xml.apache.org/fop/extensions on the root element. </p>
+  <s2 title="Bookmarks">
+    <p>You can provide outlines inside the root object (but outside any page-sequences or
+       other formatting objects). Here's an example of an outline entry:</p>
+
+    <p><code>&lt;fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format"
+             &#160;&#160; xmlns:fox="http://xml.apache.org/fop/extensions"></code></p> 
+    <p><code>&lt;fox:outline internal-destination="sec3"></code></p>
+    <p><code>&#160;&#160;  &lt;fox:label>Running FOP&lt;/fox:label></code></p>
+
+    <p><code>&#160;&#160;&lt;fox:outline internal-destination="sec3-1"></code></p>
+    <p><code>&#160;&#160;&#160;&#160;&lt;fox:label>Prerequisites&lt;/fox:label></code></p>
+    <p><code>&#160;&#160;&lt;/fox:outline></code></p>
+    <p><code>&lt;fox:outline></code></p>
+    <p><code>&lt;/fo:root></code></p>
+    <p>It works similarly to a basic-link. There is also an external-destination 
+       property, but it isn't supported currently.</p>
+  </s2>
+</s1>
+

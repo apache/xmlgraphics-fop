@@ -13,6 +13,7 @@
     <xsl:copy-of select="document('fop/examples.xml')"/>
     <xsl:copy-of select="document('fop/configuration.xml')"/>
     <xsl:copy-of select="document('fop/fonts.xml')"/>
+    <xsl:copy-of select="document('fop/extensions.xml')"/>
     <xsl:copy-of select="document('fop/compiling.xml')"/>
     <xsl:copy-of select="document('fop/embedding.xml')"/>
     <xsl:copy-of select="document('fop/involved.xml')"/>
