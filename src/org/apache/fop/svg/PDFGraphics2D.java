@@ -31,6 +31,7 @@ import java.awt.image.renderable.*;
 import java.io.*;
 
 import java.util.Map;
+import java.util.HashMap;
 import java.util.Vector;
 import java.util.Hashtable;
 
@@ -91,6 +92,20 @@ public class PDFGraphics2D extends AbstractGraphics2D {
      * the current colour for use in svg
      */
     PDFColor currentColour = new PDFColor(0, 0, 0);
+
+    /**
+     * A registry of images that have already been drawn. They are mapped to 
+     * a structure with the PDF xObjectNum, width and height. This
+     * prevents multiple copies from being stored, which can greatly
+     * reduce the size of a PDF graphic that uses the same image over and over
+     * (e.g. graphic bullets, map icons, etc.).
+     */
+    private HashMap imageInfos = new HashMap();
+    private static class ImageInfo {
+        public int width;
+        public int height;
+        public int xObjectNum;
+    }
 
     /**
      * Create a new PDFGraphics2D with the given pdf document info.
@@ -219,91 +234,105 @@ public class PDFGraphics2D extends AbstractGraphics2D {
                              ImageObserver observer) {
         // System.err.println("drawImage:x, y");
 
-        final int width = img.getWidth(observer);
-        final int height = img.getHeight(observer);
-        if (width == -1 || height == -1) {
-            return false;
-        }
-
-        Dimension size = new Dimension(width * 3, height * 3);
-        BufferedImage buf = buildBufferedImage(size);
-
-        java.awt.Graphics2D g = buf.createGraphics();
-        g.setComposite(AlphaComposite.SrcOver);
-        g.setBackground(new Color(1, 1, 1, 0));
-        g.setPaint(new Color(1, 1, 1, 0));
-        g.fillRect(0, 0, width * 3, height * 3);
-        g.clip(new Rectangle(0, 0, buf.getWidth(), buf.getHeight()));
-
-        if (!g.drawImage(img, 0, 0, buf.getWidth(), buf.getHeight(), observer)) {
-            return false;
-        }
-        g.dispose();
-
-        final byte[] result = new byte[buf.getWidth() * buf.getHeight() * 3];
-        final byte[] mask = new byte[buf.getWidth() * buf.getHeight()];
-
-        Raster raster = buf.getData();
-        DataBuffer bd = raster.getDataBuffer();
-
-        int count = 0;
-        int maskpos = 0;
-        int[] iarray;
-        int i, j, val, alpha, add, mult;
-        switch (bd.getDataType()) {
-        case DataBuffer.TYPE_INT:
-            int[][] idata = ((DataBufferInt)bd).getBankData();
-            for (i = 0; i < idata.length; i++) {
-                iarray = idata[i];
-                for (j = 0; j < iarray.length; j++) {
-                    val = iarray[j];
-                    alpha = val >>> 24;
-                    // mask[maskpos++] = (byte)((idata[i][j] >> 24) & 0xFF);
-                    if (alpha != 255) {
-                        // System.out.println("Alpha: " + alpha);
-                        // Composite with opaque white...
-                        add = (255 - alpha);
-                        mult = (alpha << 16) / 255;
-                        result[count++] =
-                            (byte)(add
-                                   + ((((val >> 16) & 0xFF) * mult) >> 16));
-                        result[count++] =
-                            (byte)(add
-                                   + ((((val >> 8) & 0xFF) * mult) >> 16));
-                        result[count++] = (byte)(add
-                                                 + ((((val) & 0xFF) * mult)
-                                                    >> 16));
-                    } else {
-                        result[count++] = (byte)((val >> 16) & 0xFF);
-                        result[count++] = (byte)((val >> 8) & 0xFF);
-                        result[count++] = (byte)((val) & 0xFF);
+        // first we look to see if we've already added this image to 
+        // the pdf document. If so, we just reuse the reference;
+        // otherwise we have to build a FopImage and add it to the pdf
+        // document
+        ImageInfo imageInfo = (ImageInfo)imageInfos.get(img);
+        if (imageInfo == null) {
+            // OK, have to build and add a PDF image
+            imageInfo = new ImageInfo();
+            imageInfo.width = img.getWidth(observer);
+            imageInfo.height = img.getHeight(observer);
+            
+            if (imageInfo.width == -1 || imageInfo.height == -1) {
+                return false;
+            }
+            
+            Dimension size = new Dimension(imageInfo.width * 3, imageInfo.height * 3);
+            BufferedImage buf = buildBufferedImage(size);
+            
+            java.awt.Graphics2D g = buf.createGraphics();
+            g.setComposite(AlphaComposite.SrcOver);
+            g.setBackground(new Color(1, 1, 1, 0));
+            g.setPaint(new Color(1, 1, 1, 0));
+            g.fillRect(0, 0, imageInfo.width * 3, imageInfo.height * 3);
+            g.clip(new Rectangle(0, 0, buf.getWidth(), buf.getHeight()));
+            
+            if (!g.drawImage(img, 0, 0, buf.getWidth(), buf.getHeight(), observer)) {
+                return false;
+            }
+            g.dispose();
+            
+            final byte[] result = new byte[buf.getWidth() * buf.getHeight() * 3];
+            final byte[] mask = new byte[buf.getWidth() * buf.getHeight()];
+            
+            Raster raster = buf.getData();
+            DataBuffer bd = raster.getDataBuffer();
+                
+            int count = 0;
+            int maskpos = 0;
+            int[] iarray;
+            int i, j, val, alpha, add, mult;
+            switch (bd.getDataType()) {
+            case DataBuffer.TYPE_INT:
+                int[][] idata = ((DataBufferInt)bd).getBankData();
+                for (i = 0; i < idata.length; i++) {
+                    iarray = idata[i];
+                    for (j = 0; j < iarray.length; j++) {
+                        val = iarray[j];
+                        alpha = val >>> 24;
+                        // mask[maskpos++] = (byte)((idata[i][j] >> 24) & 0xFF);
+                        if (alpha != 255) {
+                            // System.out.println("Alpha: " + alpha);
+                            // Composite with opaque white...
+                            add = (255 - alpha);
+                            mult = (alpha << 16) / 255;
+                            result[count++] =
+                                (byte)(add
+                                       + ((((val >> 16) & 0xFF) * mult) >> 16));
+                            result[count++] =
+                                (byte)(add
+                                       + ((((val >> 8) & 0xFF) * mult) >> 16));
+                            result[count++] = (byte)(add
+                                                     + ((((val) & 0xFF) * mult)
+                                                        >> 16));
+                        } else {
+                            result[count++] = (byte)((val >> 16) & 0xFF);
+                            result[count++] = (byte)((val >> 8) & 0xFF);
+                            result[count++] = (byte)((val) & 0xFF);
+                        }
                     }
                 }
+                break;
+            default:
+                // error
+                break;
+                }
+            
+            try {
+                FopImage fopimg = new TempImage("TempImage:" + img.toString(), buf.getWidth(), buf.getHeight(), result, mask);
+                imageInfo.xObjectNum = this.pdfDoc.addImage(fopimg);
+                imageInfos.put(img, imageInfo);
+            } catch (Exception e) {
+                e.printStackTrace();
             }
-            break;
-        default:
-            // error
-            break;
         }
 
-        try {
-            FopImage fopimg = new TempImage(buf.getWidth(), buf.getHeight(), result, mask);
-            int xObjectNum = this.pdfDoc.addImage(fopimg);
-            AffineTransform at = getTransform();
-            double[] matrix = new double[6];
-            at.getMatrix(matrix);
-            currentStream.write("q\n");
-            Shape imclip = getClip();
-            writeClip(imclip);
-            currentStream.write("" + matrix[0] + " " + matrix[1] + " "
-                                + matrix[2] + " " + matrix[3] + " "
-                                + matrix[4] + " " + matrix[5] + " cm\n");
-            currentStream.write("" + width + " 0 0 " + (-height) + " " + x
-                                + " " + (y + height) + " cm\n" + "/Im"
-                                + xObjectNum + " Do\nQ\n");
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        // now do any transformation required and add the actual image
+        // placement instance
+        AffineTransform at = getTransform();
+        double[] matrix = new double[6];
+        at.getMatrix(matrix);
+        currentStream.write("q\n");
+        Shape imclip = getClip();
+        writeClip(imclip);
+        currentStream.write("" + matrix[0] + " " + matrix[1] + " "
+                            + matrix[2] + " " + matrix[3] + " "
+                            + matrix[4] + " " + matrix[5] + " cm\n");
+        currentStream.write("" + imageInfo.width + " 0 0 " + (-imageInfo.height) + " " + x
+                            + " " + (y + imageInfo.height) + " cm\n" + "/Im"
+                            + imageInfo.xObjectNum + " Do\nQ\n");
         return true;
     }
 
@@ -321,9 +350,11 @@ public class PDFGraphics2D extends AbstractGraphics2D {
         byte[] m_bitmaps;
         byte[] m_mask;
         PDFColor transparent = new PDFColor(255, 255, 255);
+        String url;
 
-        TempImage(int width, int height, byte[] result,
+        TempImage(String url, int width, int height, byte[] result,
                   byte[] mask) throws FopImageException {
+            this.url = url;
             this.m_height = height;
             this.m_width = width;
             this.m_bitsPerPixel = 8;
@@ -334,12 +365,12 @@ public class PDFGraphics2D extends AbstractGraphics2D {
             this.m_mask = mask;
         }
 
-    public boolean invertImage() {
-return false;
-}
+        public boolean invertImage() {
+            return false;
+        }
 
         public String getURL() {
-            return "" + m_bitmaps;
+            return url;
         }
 
         // image size
