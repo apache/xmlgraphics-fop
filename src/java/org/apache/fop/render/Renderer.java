@@ -147,12 +147,5 @@ public interface Renderer {
     void renderPage(PageViewport page)
         throws IOException, FOPException;
 
-    /**
-     * Tells the renderer to render an inline container.
-     *
-     * @param cont  The inline container area
-     */
-    void renderContainer(Container cont);
-
 }
 

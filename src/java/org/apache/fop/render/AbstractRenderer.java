@@ -644,8 +644,11 @@ public abstract class AbstractRenderer
         // Some renderers (ex. Text) don't support images.
     }
 
-    /** @see org.apache.fop.render.Renderer */
-    public void renderContainer(Container cont) {
+    /**
+     * Tells the renderer to render an inline container.
+     * @param cont  The inline container area
+     */
+    protected void renderContainer(Container cont) {
         int saveIP = currentIPPosition;
         int saveBP = currentBPPosition;
 

@@ -63,8 +63,6 @@ public class AreaTreeHandler extends FOEventHandler {
     // show statistics after document complete?
     private boolean outputStatistics;
 
-    private static final boolean MEM_PROFILE_WITH_GC = false;
-    
     // for statistics gathering
     private Runtime runtime;
 
@@ -80,7 +78,8 @@ public class AreaTreeHandler extends FOEventHandler {
     // AreaTreeModel in use
     private AreaTreeModel model;
 
-    // hashmap of arraylists containing pages with id area
+    // HashMap of ID's whose area is located on one or more PageViewports
+    // Each ID has an arraylist of PageViewports sharing the area with this ID
     private Map idLocations = new HashMap();
 
     // idref's whose corresponding id's have yet to be found
@@ -120,35 +119,42 @@ public class AreaTreeHandler extends FOEventHandler {
     }
 
     /**
-     * Add an id reference pointing to a page viewport.
-     * @param id the id of the reference
-     * @param pv the page viewport that contains the id reference
+     * Tie a PageViewport with an ID found on a child area of the PV.
+     * Note that an area with a given ID may be on more than one PV, hence
+     * an ID may have more than one PV associated with it.
+     * @param id the property ID of the area
+     * @param pv a page viewport that contains the area with this ID
      */
-    public void addIDRef(String id, PageViewport pv) {
-        List list = (List)idLocations.get(id);
-        if (list == null) {
-            list = new ArrayList();
-            idLocations.put(id, list);
-        }
-        list.add(pv);
+    public void associateIDWithPageViewport(String id, PageViewport pv) {
+        List pvList = (List) idLocations.get(id);
+        if (pvList == null) { // first time ID located
+            pvList = new ArrayList();
+            idLocations.put(id, pvList);
+            pvList.add(pv);
 
-        Set todo = (Set) unresolvedIDRefs.get(id);
-        if (todo != null) {
-            for (Iterator iter = todo.iterator(); iter.hasNext();) {
-                Resolvable res = (Resolvable)iter.next();
-                res.resolve(id, list);
+            /* See if this ID is in the unresolved idref list.  Note:
+             * unresolving occurs at first PV found for a given area. 
+             */
+            Set todo = (Set) unresolvedIDRefs.get(id);
+            if (todo != null) {
+                for (Iterator iter = todo.iterator(); iter.hasNext();) {
+                    Resolvable res = (Resolvable) iter.next();
+                    res.resolve(id, pvList);
+                }
+                unresolvedIDRefs.remove(id);
             }
-            unresolvedIDRefs.remove(id);
+        } else {
+            pvList.add(pv);
         }
     }
 
     /**
-     * Get the list of id references for an id.
+     * Get the list of page viewports that have an area with a given id.
      * @param id the id to lookup
-     * @return the list of id references.
+     * @return the list of PageViewports
      */
-    public List getIDReferences(String id) {
-        return (List)idLocations.get(id);
+    public List getPageViewportsContainingID(String id) {
+        return (List) idLocations.get(id);
     }
 
     /**
@@ -176,10 +182,6 @@ public class AreaTreeHandler extends FOEventHandler {
         //Initialize statistics
         if (outputStatistics) {
             pageCount = 0;
-            if (MEM_PROFILE_WITH_GC) {
-                System.gc(); // This takes time but gives better results
-            }
-
             initialMemory = runtime.totalMemory() - runtime.freeMemory();
             startTime = System.currentTimeMillis();
         }
@@ -206,26 +208,16 @@ public class AreaTreeHandler extends FOEventHandler {
         model.endDocument();
 
         if (outputStatistics) {
-            if (MEM_PROFILE_WITH_GC) {
-                // This takes time but gives better results
-                System.gc();
-            }
             long memoryNow = runtime.totalMemory() - runtime.freeMemory();
             long memoryUsed = (memoryNow - initialMemory) / 1024L;
             long timeUsed = System.currentTimeMillis() - startTime;
-            if (log != null && log.isDebugEnabled()) {
-                log.debug("Initial heap size: " + (initialMemory / 1024L) + "Kb");
-                log.debug("Current heap size: " + (memoryNow / 1024L) + "Kb");
-                log.debug("Total memory used: " + memoryUsed + "Kb");
-                if (!MEM_PROFILE_WITH_GC) {
-                    log.debug("  Memory use is indicative; no GC was performed");
-                    log.debug("  These figures should not be used comparatively");
-                }
-                log.debug("Total time used: " + timeUsed + "ms");
-                log.debug("Pages rendered: " + pageCount);
-                if (pageCount > 0) {
-                    log.debug("Avg render time: " + (timeUsed / pageCount) + "ms/page");
-                }
+            log.debug("Initial heap size: " + (initialMemory / 1024L) + "Kb");
+            log.debug("Current heap size: " + (memoryNow / 1024L) + "Kb");
+            log.debug("Total memory used: " + memoryUsed + "Kb");
+            log.debug("Total time used: " + timeUsed + "ms");
+            log.debug("Pages rendered: " + pageCount);
+            if (pageCount > 0) {
+                log.debug("Avg render time: " + (timeUsed / pageCount) + "ms/page");
             }
         }
     }
@@ -240,14 +232,8 @@ public class AreaTreeHandler extends FOEventHandler {
     public void endPageSequence(PageSequence pageSequence) {
 
         if (outputStatistics) {
-            if (MEM_PROFILE_WITH_GC) {
-                // This takes time but gives better results
-                System.gc();
-            }
             long memoryNow = runtime.totalMemory() - runtime.freeMemory();
-            if (log != null) {
-                log.debug("Current heap size: " + (memoryNow / 1024L) + "Kb");
-            }
+            log.debug("Current heap size: " + (memoryNow / 1024L) + "Kb");
         }
 
         // If no main flow, nothing to layout!
@@ -305,18 +291,13 @@ public class AreaTreeHandler extends FOEventHandler {
      */
     private void addOffDocumentItem(OffDocumentItem ext) {
         if (ext instanceof Resolvable) {
-            Resolvable res = (Resolvable)ext;
+            Resolvable res = (Resolvable) ext;
             String[] ids = res.getIDs();
             for (int count = 0; count < ids.length; count++) {
                 if (idLocations.containsKey(ids[count])) {
-                    res.resolve(ids[count], (List)idLocations.get(ids[count]));
+                    res.resolve(ids[count], (List) idLocations.get(ids[count]));
                 } else {
-                    Set todo = (Set) unresolvedIDRefs.get(ids[count]);
-                    if (todo == null) {
-                        todo = new HashSet();
-                        unresolvedIDRefs.put(ids[count], todo);
-                    }
-                    todo.add(ext);
+                    addUnresolvedIDRef(ids[count], res);
                 }
             }
         } else {
