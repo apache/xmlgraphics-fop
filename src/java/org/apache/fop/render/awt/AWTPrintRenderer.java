@@ -18,9 +18,9 @@
  
 package org.apache.fop.render.awt;
 
-import java.awt.print.PrinterException;
+//import java.awt.print.PrinterException;
 import java.awt.print.PrinterJob;
-import java.io.IOException;
+//import java.io.IOException;
 import java.util.Vector;
 
 public class AWTPrintRenderer extends AWTRenderer {
@@ -60,27 +60,27 @@ public class AWTPrintRenderer extends AWTRenderer {
         printerJob.setPageable(this);
     }   
 
-    public void stopRenderer() throws IOException {
-        super.stopRenderer();
-
-        if (endNumber == -1) {
-            endNumber = getNumberOfPages();
-        }
-
-        Vector numbers = getInvalidPageNumbers();
-        for (int i = numbers.size() - 1; i > -1; i--) {
-            // removePage(Integer.parseInt((String)numbers.elementAt(i)));
-        }
-
-        try {
-            printerJob.print();
-        } catch (PrinterException e) {
-            e.printStackTrace();
-            throw new IOException("Unable to print: " 
-                + e.getClass().getName()
-                + ": " + e.getMessage());
-        }
-    }
+//    public void stopRenderer() throws IOException {
+//        super.stopRenderer();
+//
+//        if (endNumber == -1) {
+//            endNumber = getNumberOfPages();
+//        }
+//
+//        Vector numbers = getInvalidPageNumbers();
+//        for (int i = numbers.size() - 1; i > -1; i--) {
+//            // removePage(Integer.parseInt((String)numbers.elementAt(i)));
+//        }
+//
+//        try {
+//            printerJob.print();
+//        } catch (PrinterException e) {
+//            e.printStackTrace();
+//            throw new IOException("Unable to print: " 
+//                + e.getClass().getName()
+//                + ": " + e.getMessage());
+//        }
+//    }
 
     public static int getIntProperty(String name, int def) {
         String propValue = System.getProperty(name);
