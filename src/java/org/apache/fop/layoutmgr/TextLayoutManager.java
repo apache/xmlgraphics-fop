@@ -788,16 +788,13 @@ public class TextLayoutManager extends AbstractLayoutManager
                 iThisStart = iNextStart;
                 iTempStart = iNextStart;
                 MinOptMax wordIPD = new MinOptMax(0);
-                for (;
-                     iTempStart < textArray.length
-                     && textArray[iTempStart] != SPACE
-                     && textArray[iTempStart] != NBSPACE;
-                     iTempStart ++) {
-                    // ignore newline characters
-                    if (textArray[iTempStart] != NEWLINE) {
-                        wordIPD.add
-                            (new MinOptMax(fs.getCharWidth(textArray[iTempStart])));
-                    }
+                for (; iTempStart < textArray.length
+                        && textArray[iTempStart] != SPACE
+                        && textArray[iTempStart] != NBSPACE
+                        && textArray[iTempStart] != NEWLINE;
+                        iTempStart++) {
+                    wordIPD.add(
+                        new MinOptMax(fs.getCharWidth(textArray[iTempStart])));
                 }
                 wordIPD.add(MinOptMax.multiply(letterSpaceIPD, (iTempStart - iThisStart - 1)));
                 vecAreaInfo.add
