@@ -44,11 +44,11 @@
 	
 	<fo:page-sequence-master master-name="alternating">
 		<fo:repeatable-page-master-alternatives maximum-repeats="no-limit">
-			<fo:conditional-page-master-reference master-name="right"
+			<fo:conditional-page-master-reference master-reference="right"
 				odd-or-even="odd" />
-			<fo:conditional-page-master-reference master-name="left"
+			<fo:conditional-page-master-reference master-reference="left"
 				odd-or-even="even" />
-			<fo:conditional-page-master-reference master-name="center"/>
+			<fo:conditional-page-master-reference master-reference="center"/>
 		</fo:repeatable-page-master-alternatives>
 	</fo:page-sequence-master>
 	
@@ -56,7 +56,7 @@
 	<!-- end: defines page layout -->
 
 	<!-- actual layout -->
-	<fo:page-sequence master-name="alternating" initial-page-number="1">
+	<fo:page-sequence master-reference="alternating" initial-page-number="1">
 
     <!-- header -->
 	<fo:static-content flow-name="xsl-region-before">

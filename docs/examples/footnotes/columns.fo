@@ -37,7 +37,7 @@
   </fo:layout-master-set>
 
   <!-- actual layout -->
-  <fo:page-sequence master-name="first">
+  <fo:page-sequence master-reference="first">
     <fo:static-content flow-name="xsl-region-before">
       <fo:block font-size="16pt" 
                 font-family="sans-serif" 
@@ -142,7 +142,7 @@ How shall I complete the wall?
 	  </fo:flow>
   </fo:page-sequence>
 
-  <fo:page-sequence master-name="next">
+  <fo:page-sequence master-reference="next">
     <fo:static-content flow-name="xsl-region-before">
       <fo:block font-size="16pt" 
                 font-family="sans-serif" 

@@ -339,7 +339,7 @@ public class LineArea extends Area {
                     spaceWidth = getCharWidth(c);
 
                     /*
-                     * here is the place for space-treatment value 'ignore':
+                     * here is the place for white-space-treatment value 'ignore':
                      * if (this.spaceTreatment ==
                      * SpaceTreatment.IGNORE) {
                      * // do nothing

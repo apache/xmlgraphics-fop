@@ -70,7 +70,7 @@
  </fox:outline>
 
 
- <fo:page-sequence master-name="A4">
+ <fo:page-sequence master-reference="A4">
 
   <fo:flow flow-name="xsl-region-body">
    <fo:wrapper  font-family="Times" font-size="12pt" text-align="justify">

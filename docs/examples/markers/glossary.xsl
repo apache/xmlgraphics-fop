@@ -20,7 +20,7 @@
 
 	</fo:layout-master-set>
 
-	<fo:page-sequence master-name="all" format="i">
+	<fo:page-sequence master-reference="all" format="i">
 
     <!-- header with running glossary entries -->
     <fo:static-content flow-name="xsl-region-before">

@@ -1148,7 +1148,7 @@
     <default>treat-as-space</default>
   </property>
   <property>
-    <name>space-treatment</name>
+    <name>white-space-treatment</name>
     <inherited>true</inherited>
     <datatype>ToBeImplemented</datatype>
     <default>preserve</default>
@@ -1686,6 +1686,12 @@
   </property>
   <property>
     <name>master-name</name>
+    <inherited>false</inherited>
+    <datatype>String</datatype>
+    <default></default>
+  </property>
+  <property>
+    <name>master-reference</name>
     <inherited>false</inherited>
     <datatype>String</datatype>
     <default></default>
