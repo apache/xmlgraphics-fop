@@ -69,7 +69,6 @@ public class FontFileReader {
         ins.close();
     }
 
-
     /**
      * Set current file position to offset
      */
