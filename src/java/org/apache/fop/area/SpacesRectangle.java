@@ -21,6 +21,9 @@ package org.apache.fop.area;
 
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
+import java.util.ArrayList;
+
+import org.apache.fop.area.Area.AreaGeometry;
 
 /**
  * @author pbw
@@ -51,5 +54,40 @@ public class SpacesRectangle extends AreaFrame {
             BorderRectangle contents, Point2D contentOffset) {
 		super(area, rect, contents, contentOffset);
 	}
+
+    public void setContents(AreaGeometry contents) {
+        super.setContents(contents);
+        notifyListeners(this);
+    }
+
+    /** Initial size of the <code>listeners</code> array */
+    private static final int INITIAL_SPACES_LISTENER_SIZE = 1;
+    /** Array of registered <code>AreaListener</code>s */
+    private ArrayList listeners = null;
+    /**
+     * Registers a listener to be notified on any change of dimension in the
+     * <code>spaces</code> <code>AreaFrame</code>. 
+     * @param listener to be notified
+     */
+    public void registerAreaListener(AreaListener listener) {
+        synchronized (this) {
+            if (listeners == null) {
+                listeners = new ArrayList(INITIAL_SPACES_LISTENER_SIZE);
+            }
+            listeners.add(listener);
+        }
+    }
+
+    /**
+     * Notifies any registered listener of a change of dimensions in the
+     * <code>Rectangle2D</code> content
+     */
+    protected void notifyListeners(Area.AreaGeometry geometry) {
+        for (int i = 0; i < listeners.size(); i++) {
+            synchronized (this) {
+                ((AreaListener)(listeners.get(i))).setDimensions(geometry);
+            }
+        }
+    }
 
 }
