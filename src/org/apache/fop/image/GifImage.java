@@ -19,17 +19,18 @@ import org.apache.fop.pdf.PDFColor;
 import org.apache.fop.image.analyser.ImageReader;
 
 /**
- * FopImage object for GIF or JPEG images, using Java native classes.
+ * FopImage object for GIF images, using Java native classes.
  * @author Eric SCHAEFFER
+ * @author Modified by Eric Dalquist - 9/14/2001 - ebdalqui@mtu.edu
  * @see AbstractFopImage
  * @see FopImage
  */
-public class GifJpegImage extends AbstractFopImage {
-    public GifJpegImage(URL href) throws FopImageException {
+public class GifImage extends AbstractFopImage {
+    public GifImage(URL href) throws FopImageException {
         super(href);
     }
 
-    public GifJpegImage(URL href,
+    public GifImage(URL href,
                         ImageReader imgReader) throws FopImageException {
         super(href, imgReader);
     }
@@ -41,9 +42,12 @@ public class GifJpegImage extends AbstractFopImage {
             FopImageConsumer consumer = new FopImageConsumer(ip);
             ip.startProduction(consumer);
 
+
+            //Load the image into memory
             while (!consumer.isImageReady()) {
                 Thread.sleep(500);
             }
+
             this.m_height = consumer.getHeight();
             this.m_width = consumer.getWidth();
 
@@ -117,7 +121,6 @@ public class GifJpegImage extends AbstractFopImage {
                                         + ex.getClass() + " - "
                                         + ex.getMessage());
         }
-
 
         // Should take care of the ColorSpace and bitsPerPixel
         this.m_bitmapsSize = this.m_width * this.m_height * 3;

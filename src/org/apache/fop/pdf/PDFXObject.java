@@ -65,7 +65,15 @@ public class PDFXObject extends PDFObject {
             PDFStream imgStream = new PDFStream(0);
 
             imgStream.setData(fopimage.getBitmaps());
-            // imgStream.addFilter(new FlateFilter());
+
+            /*
+             * Added by Eric Dalquist
+             * If the DCT filter hasn't been added to the object we add it here
+             */
+            if (fopimage.getPDFFilter() != null) {
+                imgStream.addFilter(fopimage.getPDFFilter());
+            }
+
             imgStream.addDefaultFilters();
 
             String dictEntries = imgStream.applyFilters();
@@ -74,7 +82,7 @@ public class PDFXObject extends PDFObject {
             p = p + "<</Type /XObject\n";
             p = p + "/Subtype /Image\n";
             p = p + "/Name /Im" + Xnum + "\n";
-            p = p + "/Length " + imgStream.getDataLength();
+            p = p + "/Length " + imgStream.getDataLength() + "\n";
             p = p + "/Width " + fopimage.getWidth() + "\n";
             p = p + "/Height " + fopimage.getHeight() + "\n";
             p = p + "/BitsPerComponent " + fopimage.getBitsPerPixel() + "\n";

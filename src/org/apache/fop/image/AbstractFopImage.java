@@ -21,6 +21,7 @@ import org.apache.fop.image.analyser.ImageReader;
 /**
  * Base class to implement the FopImage interface.
  * @author Eric SCHAEFFER
+ * @author Modified by Eric Dalquist - 9/14/2001 - ebdalqui@mtu.edu
  * @see FopImage
  */
 public abstract class AbstractFopImage implements FopImage {
@@ -74,6 +75,12 @@ public abstract class AbstractFopImage implements FopImage {
      * Transparent color (org.apache.fop.pdf.PDFColor).
      */
     protected PDFColor m_transparentColor = null;
+
+    /**
+     * Image compression type.
+     * Added by Eric Dalquist
+     */
+    protected PDFFilter m_compressionType = null;
 
     /**
      * Constructor.
@@ -250,7 +257,16 @@ public abstract class AbstractFopImage implements FopImage {
      * @exception FopImageException an error occured during loading
      */
     public PDFFilter getPDFFilter() throws FopImageException {
-        return null;
+
+        /*
+         * Added by Eric Dalquist
+         * Using the bitsPerPixel var as our flag since many imges will
+         * have a null m_compressionType even after being loaded
+         */
+        if (this.m_bitsPerPixel == 0)
+            this.loadImage();
+
+        return m_compressionType;
     }
 
     /**
