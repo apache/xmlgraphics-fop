@@ -8,7 +8,6 @@
 package org.apache.fop.image;
 
 // Java
-import java.util.Hashtable;
 import java.net.URL;
 
 // FOP
@@ -17,6 +16,7 @@ import org.apache.fop.pdf.PDFColor;
 import org.apache.fop.pdf.PDFFilter;
 import org.apache.fop.image.analyser.ImageReaderFactory;
 import org.apache.fop.image.analyser.ImageReader;
+import org.apache.fop.fo.FOUserAgent;
 
 /**
  * Base class to implement the FopImage interface.
@@ -25,6 +25,7 @@ import org.apache.fop.image.analyser.ImageReader;
  * @see FopImage
  */
 public abstract class AbstractFopImage implements FopImage {
+    protected int loaded = 0;
 
     /**
      * Image width (in pixel).
@@ -91,49 +92,53 @@ public abstract class AbstractFopImage implements FopImage {
      * </UL>
      * The image data isn't kept in memory.
      * @param href image URL
-     * @return a new FopImage object
-     * @exception FopImageException an error occured during initialization
-     */
-    public AbstractFopImage(URL href) throws FopImageException {
-        this.m_href = href;
-        try {
-            this.m_imageReader =
-                ImageReaderFactory.Make(this.m_href.toExternalForm(),
-                                        this.m_href.openStream());
-        } catch (Exception e) {
-            throw new FopImageException(e.getMessage());
-        }
-        this.m_width = this.m_imageReader.getWidth();
-        this.m_height = this.m_imageReader.getHeight();
-    }
-
-    /**
-     * Constructor.
-     * Construct a new FopImage object and initialize its default properties:
-     * <UL>
-     * <LI>image width
-     * <LI>image height
-     * </UL>
-     * The image data isn't kept in memory.
-     * @param href image URL
      * imgReader ImageReader object
      * @return a new FopImage object
-     * @exception FopImageException an error occured during initialization
      */
-    public AbstractFopImage(URL href,
-                            ImageReader imgReader) throws FopImageException {
+    public AbstractFopImage(URL href, ImageReader imgReader) {
         this.m_href = href;
         this.m_imageReader = imgReader;
         this.m_width = this.m_imageReader.getWidth();
         this.m_height = this.m_imageReader.getHeight();
+        loaded = loaded & DIMENSIONS;
+    }
+
+    public String getMimeType() {
+        return m_imageReader.getMimeType();
     }
 
     /**
      * Load image data and initialize its properties.
-     * Subclasses need to implement this method.
-     * @exception FopImageException an error occured during loading
      */
-    abstract protected void loadImage() throws FopImageException;
+    public synchronized boolean load(int type, FOUserAgent ua) {
+        if((loaded & type) != 0) {
+            return true;
+        }
+        boolean success = true;
+        if(((type & DIMENSIONS) != 0) && ((loaded & DIMENSIONS) == 0)) {
+            success = success && loadDimensions(ua);
+
+            if(!success) {
+                return false;
+            }
+            loaded = loaded & DIMENSIONS;
+        }
+        if(((type & BITMAP) != 0) && ((loaded & BITMAP) == 0)) {
+            success = success && loadBitmap(ua);
+            if(success) {
+                loaded = loaded & BITMAP;
+            }
+        }
+        return success;
+    }
+
+    protected boolean loadDimensions(FOUserAgent ua) {
+        return false;
+    }
+
+    protected boolean loadBitmap(FOUserAgent ua) {
+        return false;
+    }
 
     /**
      * Return the image URL.
@@ -146,148 +151,95 @@ public abstract class AbstractFopImage implements FopImage {
     /**
      * Return the image width.
      * @return the image width
-     * @exception FopImageException an error occured during property retriaval
      */
-    public int getWidth() throws FopImageException {
-        if (this.m_width == 0)
-            this.loadImage();
-
+    public int getWidth() {
         return this.m_width;
     }
 
     /**
      * Return the image height.
      * @return the image height
-     * @exception FopImageException an error occured during property retriaval
      */
-    public int getHeight() throws FopImageException {
-        if (this.m_height == 0)
-            this.loadImage();
-
+    public int getHeight() {
         return this.m_height;
     }
 
     /**
      * Return the image color space.
      * @return the image color space (org.apache.fop.datatypes.ColorSpace)
-     * @exception FopImageException an error occured during property retriaval
      */
-    public ColorSpace getColorSpace() throws FopImageException {
-        if (this.m_colorSpace == null)
-            this.loadImage();
-
+    public ColorSpace getColorSpace() {
         return this.m_colorSpace;
     }
 
     /**
      * Return the number of bits per pixel.
      * @return number of bits per pixel
-     * @exception FopImageException an error occured during property retriaval
      */
-    public int getBitsPerPixel() throws FopImageException {
-        if (this.m_bitsPerPixel == 0)
-            this.loadImage();
-
+    public int getBitsPerPixel() {
         return this.m_bitsPerPixel;
     }
 
     /**
      * Return the image transparency.
      * @return true if the image is transparent
-     * @exception FopImageException an error occured during property retriaval
      */
-    public boolean isTransparent() throws FopImageException {
+    public boolean isTransparent() {
         return this.m_isTransparent;
     }
 
     /**
      * Return the transparent color.
      * @return the transparent color (org.apache.fop.pdf.PDFColor)
-     * @exception FopImageException an error occured during property retriaval
      */
-    public PDFColor getTransparentColor() throws FopImageException {
+    public PDFColor getTransparentColor() {
         return this.m_transparentColor;
     }
 
     /**
      * Return the image data (uncompressed).
      * @return the image data
-     * @exception FopImageException an error occured during loading
      */
-    public byte[] getBitmaps() throws FopImageException {
-        if (this.m_bitmaps == null)
-            this.loadImage();
-
+    public byte[] getBitmaps() {
         return this.m_bitmaps;
     }
 
     /**
      * Return the image data size (uncompressed).
      * @return the image data size
-     * @exception FopImageException an error occured during loading
      */
-    public int getBitmapsSize() throws FopImageException {
-        if (this.m_bitmapsSize == 0)
-            this.loadImage();
-
+    public int getBitmapsSize() {
         return this.m_bitmapsSize;
     }
 
     /**
      * Return the original image data (compressed).
      * @return the original image data
-     * @exception FopImageException an error occured during loading
      */
-    public byte[] getRessourceBytes() throws FopImageException {
+    public byte[] getRessourceBytes() {
         return null;
     }
 
     /**
      * Return the original image data size (compressed).
      * @return the original image data size
-     * @exception FopImageException an error occured during loading
      */
-    public int getRessourceBytesSize() throws FopImageException {
+    public int getRessourceBytesSize() {
         return 0;
     }
 
     /**
      * Return the original image compression type.
      * @return the original image compression type (org.apache.fop.pdf.PDFFilter)
-     * @exception FopImageException an error occured during loading
      */
-    public PDFFilter getPDFFilter() throws FopImageException {
+    public PDFFilter getPDFFilter() {
 
         /*
          * Added by Eric Dalquist
          * Using the bitsPerPixel var as our flag since many imges will
          * have a null m_compressionType even after being loaded
          */
-        if (this.m_bitsPerPixel == 0)
-            this.loadImage();
-
         return m_compressionType;
-    }
-
-    /**
-     * Free all ressource.
-     */
-    public void close() {
-        /*
-         * For the moment, only release the bitmaps (image areas
-         * can share the same FopImage object)
-         * Thus, even if it had been called, other properties
-         * are still available.
-         */
-        // this.m_width = 0;
-        // this.m_height = 0;
-        // this.m_href = null;
-        // this.m_colorSpace = null;
-        // this.m_bitsPerPixel = 0;
-        this.m_bitmaps = null;
-        this.m_bitmapsSize = 0;
-        // this.m_isTransparent = false;
-        // this.m_transparentColor = null;
     }
 
 }

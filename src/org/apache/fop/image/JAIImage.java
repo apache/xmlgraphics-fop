@@ -34,16 +34,15 @@ import org.apache.fop.image.analyser.ImageReader;
  * @see FopImage
  */
 public class JAIImage extends AbstractFopImage {
-    public JAIImage(URL href) throws FopImageException {
+    public JAIImage(URL href) {
         super(href);
     }
 
-    public JAIImage(URL href,
-                    ImageReader imgReader) throws FopImageException {
+    public JAIImage(URL href, ImageReader imgReader) {
         super(href, imgReader);
     }
 
-    protected void loadImage() throws FopImageException {
+    protected void loadImage() {
         try {
             InputStream inputStream = this.m_href.openStream();
             /*
@@ -51,7 +50,7 @@ public class JAIImage extends AbstractFopImage {
              * inputStream.reset();
              */
             com.sun.media.jai.codec.FileCacheSeekableStream seekableInput =
-                new FileCacheSeekableStream(inputStream);
+              new FileCacheSeekableStream(inputStream);
             RenderedOp imageOp = JAI.create("stream", seekableInput);
 
             this.m_height = imageOp.getHeight();
@@ -64,38 +63,37 @@ public class JAIImage extends AbstractFopImage {
 
             BufferedImage imageData = imageOp.getAsBufferedImage();
             int[] tmpMap = imageData.getRGB(0, 0, this.m_width,
-                                            this.m_height, null, 0,
-                                            this.m_width);
+                                            this.m_height, null, 0, this.m_width);
 
             if (cm.hasAlpha()) {
-                int transparencyType =
-                    cm.getTransparency();    // java.awt.Transparency. BITMASK or OPAQUE or TRANSLUCENT
+                int transparencyType = cm.getTransparency(); // java.awt.Transparency. BITMASK or OPAQUE or TRANSLUCENT
                 if (transparencyType == java.awt.Transparency.OPAQUE) {
                     this.m_isTransparent = false;
-                } else if (transparencyType
-                           == java.awt.Transparency.BITMASK) {
+                } else if (transparencyType ==
+                    java.awt.Transparency.BITMASK) {
                     if (cm instanceof IndexColorModel) {
                         this.m_isTransparent = false;
-                        byte[] alphas =
-                            new byte[((IndexColorModel)cm).getMapSize()];
-                        byte[] reds =
-                            new byte[((IndexColorModel)cm).getMapSize()];
-                        byte[] greens =
-                            new byte[((IndexColorModel)cm).getMapSize()];
-                        byte[] blues =
-                            new byte[((IndexColorModel)cm).getMapSize()];
-                        ((IndexColorModel)cm).getAlphas(alphas);
-                        ((IndexColorModel)cm).getReds(reds);
-                        ((IndexColorModel)cm).getGreens(greens);
-                        ((IndexColorModel)cm).getBlues(blues);
+                        byte[] alphas = new byte[
+                                          ((IndexColorModel) cm).getMapSize()];
+                        byte[] reds = new byte[
+                                        ((IndexColorModel) cm).getMapSize()];
+                        byte[] greens = new byte[
+                                          ((IndexColorModel) cm).getMapSize()];
+                        byte[] blues = new byte[
+                                         ((IndexColorModel) cm).getMapSize()];
+                        ((IndexColorModel) cm).getAlphas(alphas);
+                        ((IndexColorModel) cm).getReds(reds);
+                        ((IndexColorModel) cm).getGreens(greens);
+                        ((IndexColorModel) cm).getBlues(blues);
                         for (int i = 0;
-                                i < ((IndexColorModel)cm).getMapSize(); i++) {
+                                i < ((IndexColorModel) cm).getMapSize();
+                                i++) {
                             if ((alphas[i] & 0xFF) == 0) {
                                 this.m_isTransparent = true;
-                                this.m_transparentColor =
-                                    new PDFColor((int)(reds[i] & 0xFF),
-                                                 (int)(greens[i] & 0xFF),
-                                                 (int)(blues[i] & 0xFF));
+                                this.m_transparentColor = new PDFColor(
+                                                            (int)(reds[i] & 0xFF),
+                                                            (int)(greens[i] & 0xFF),
+                                                            (int)(blues[i] & 0xFF));
                                 break;
                             }
                         }
@@ -127,24 +125,25 @@ public class JAIImage extends AbstractFopImage {
             for (int i = 0; i < this.m_height; i++) {
                 for (int j = 0; j < this.m_width; j++) {
                     int p = tmpMap[i * this.m_width + j];
-                    int r = (p >> 16) & 0xFF;
-                    int g = (p >> 8) & 0xFF;
+                    int r = (p > > 16) & 0xFF;
+                    int g = (p > > 8) & 0xFF;
                     int b = (p) & 0xFF;
-                    this.m_bitmaps[3 * (i * this.m_width + j)] = (byte)(r
-                            & 0xFF);
-                    this.m_bitmaps[3 * (i * this.m_width + j) + 1] = (byte)(g
-                            & 0xFF);
-                    this.m_bitmaps[3 * (i * this.m_width + j) + 2] = (byte)(b
-                            & 0xFF);
+                    this.m_bitmaps[3 * (i * this.m_width + j)] =
+                      (byte)(r & 0xFF);
+                    this.m_bitmaps[3 * (i * this.m_width + j) + 1] =
+                      (byte)(g & 0xFF);
+                    this.m_bitmaps[3 * (i * this.m_width + j) + 2] =
+                      (byte)(b & 0xFF);
                 }
             }
 
-        } catch (Exception ex) {
-            throw new FopImageException("Error while loading image "
-                                        + this.m_href.toString() + " : "
-                                        + ex.getClass() + " - "
-                                        + ex.getMessage());
         }
+        catch (Exception ex) {
+            /*throw new FopImageException("Error while loading image "
+                                         + this.m_href.toString() + " : "
+                                         + ex.getClass() + " - "
+                                         + ex.getMessage());
+             */}
     }
 
 }

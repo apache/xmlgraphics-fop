@@ -11,6 +11,8 @@ package org.apache.fop.image.analyser;
 import java.io.BufferedInputStream;
 import java.io.IOException;
 
+import org.apache.fop.fo.FOUserAgent;
+
 /**
  * Base class implementing ImageReader.
  * @author Pankaj Narula
@@ -34,8 +36,8 @@ public abstract class AbstractImageReader implements ImageReader {
      */
     protected BufferedInputStream imageStream = null;
 
-    public abstract boolean verifySignature(String uri, BufferedInputStream fis)
-            throws IOException;
+    public abstract boolean verifySignature(String uri,
+                                            BufferedInputStream fis, FOUserAgent ua) throws IOException;
 
     public int getHeight() {
         return this.height;

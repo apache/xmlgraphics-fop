@@ -15,6 +15,7 @@ import org.apache.fop.image.*;
 import org.apache.fop.datatypes.ColorSpace;
 import org.apache.fop.render.pdf.CIDFont;
 import org.apache.fop.render.pdf.fonts.LazyFont;
+import org.apache.fop.fo.FOUserAgent;
 
 import org.apache.batik.ext.awt.g2d.*;
 import org.apache.batik.ext.awt.image.GraphicsUtil;
@@ -320,7 +321,7 @@ public class PDFGraphics2D extends AbstractGraphics2D {
         PDFColor transparent = new PDFColor(255, 255, 255);
 
         TempImage(int width, int height, byte[] result,
-                  byte[] mask) throws FopImageException {
+                  byte[] mask) {
             this.m_height = height;
             this.m_width = width;
             this.m_bitsPerPixel = 8;
@@ -331,67 +332,75 @@ public class PDFGraphics2D extends AbstractGraphics2D {
             this.m_mask = mask;
         }
 
+        public boolean load(int type, FOUserAgent ua) {
+            return true;
+        }
+
+        public String getMimeType() {
+            return "";
+        }
+
         public String getURL() {
             return "" + m_bitmaps;
         }
 
         // image size
-        public int getWidth() throws FopImageException {
+        public int getWidth() {
             return m_width;
         }
 
-        public int getHeight() throws FopImageException {
+        public int getHeight() {
             return m_height;
         }
 
         // DeviceGray, DeviceRGB, or DeviceCMYK
-        public ColorSpace getColorSpace() throws FopImageException {
+        public ColorSpace getColorSpace() {
             return m_colorSpace;
         }
 
         // bits per pixel
-        public int getBitsPerPixel() throws FopImageException {
+        public int getBitsPerPixel() {
             return m_bitsPerPixel;
         }
 
         // For transparent images
-        public boolean isTransparent() throws FopImageException {
+        public boolean isTransparent() {
             return transparent != null;
         }
 
-        public PDFColor getTransparentColor() throws FopImageException {
+        public PDFColor getTransparentColor() {
             return transparent;
         }
 
-        public byte[] getMask() throws FopImageException {
+        public byte[] getMask() {
             return m_mask;
         }
 
         // get the image bytes, and bytes properties
 
         // get uncompressed image bytes
-        public byte[] getBitmaps() throws FopImageException {
+        public byte[] getBitmaps() {
             return m_bitmaps;
         }
 
         // width * (bitsPerPixel / 8) * height, no ?
-        public int getBitmapsSize() throws FopImageException {
+        public int getBitmapsSize() {
             return m_width * m_height * 3;
         }
 
         // get compressed image bytes
         // I don't know if we really need it, nor if it
         // should be changed...
-        public byte[] getRessourceBytes() throws FopImageException {
+        public byte[] getRessourceBytes() {
             return null;
         }
 
-        public int getRessourceBytesSize() throws FopImageException {
+        public int getRessourceBytesSize() {
             return 0;
         }
 
         // return null if no corresponding PDFFilter
-        public PDFFilter getPDFFilter() throws FopImageException {
+        public PDFFilter getPDFFilter() {
             return null;
         }
 
@@ -779,7 +788,6 @@ public class PDFGraphics2D extends AbstractGraphics2D {
     public void drawRenderedImage(RenderedImage img, AffineTransform xform) {
         System.out.println("drawRenderedImage");
     }
-
 
     /**
      * Renders a

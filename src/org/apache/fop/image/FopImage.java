@@ -13,50 +13,53 @@ package org.apache.fop.image;
 import org.apache.fop.datatypes.ColorSpace;
 import org.apache.fop.pdf.PDFColor;
 import org.apache.fop.pdf.PDFFilter;
+import org.apache.fop.fo.FOUserAgent;
 
 public interface FopImage {
-    // Init the object.
-    // If href protocol isn't file://, can load the entire image
-    // and keep it in memory.
-    // Should cache the input stream, and load data when needed.
-    // public FopImage(URL href) throws FopImageException;
+    public static final int DIMENSIONS = 1;
+    public static final int ORIGINAL_DATA = 2;
+    public static final int BITMAP = 4;
 
-    // Get image general properties.
-    // Methods throw exception because they can retrieve data
-    // when needed.
+    public String getMimeType();
+
+    /**
+     * Load particular inforamtion for this image
+     * This must be called before attempting to get
+     * the information.
+     * @return boolean true if the information could be loaded
+     */
+    public boolean load(int type, FOUserAgent ua);
 
     // Ressource location
     public String getURL();
 
     // image size
-    public int getWidth() throws FopImageException;
-    public int getHeight() throws FopImageException;
+    public int getWidth();
+    public int getHeight();
 
     // DeviceGray, DeviceRGB, or DeviceCMYK
-    public ColorSpace getColorSpace() throws FopImageException;
+    public ColorSpace getColorSpace();
 
     // bits per pixel
-    public int getBitsPerPixel() throws FopImageException;
+    public int getBitsPerPixel();
 
     // For transparent images
-    public boolean isTransparent() throws FopImageException;
-    public PDFColor getTransparentColor() throws FopImageException;
+    public boolean isTransparent();
+    public PDFColor getTransparentColor();
 
     // get the image bytes, and bytes properties
 
     // get uncompressed image bytes
-    public byte[] getBitmaps() throws FopImageException;
+    public byte[] getBitmaps();
     // width * (bitsPerPixel / 8) * height, no ?
-    public int getBitmapsSize() throws FopImageException;
+    public int getBitmapsSize();
 
     // get compressed image bytes
     // I don't know if we really need it, nor if it
     // should be changed...
-    public byte[] getRessourceBytes() throws FopImageException;
-    public int getRessourceBytesSize() throws FopImageException;
+    public byte[] getRessourceBytes();
+    public int getRessourceBytesSize();
     // return null if no corresponding PDFFilter
-    public PDFFilter getPDFFilter() throws FopImageException;
-
-    // release memory
-    public void close();
+    public PDFFilter getPDFFilter();
 }
+

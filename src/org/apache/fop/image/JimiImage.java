@@ -29,31 +29,21 @@ import org.apache.fop.image.analyser.ImageReader;
  * @see FopImage
  */
 public class JimiImage extends AbstractFopImage {
-    public JimiImage(URL href) throws FopImageException {
-        super(href);
-        try {
-            Class c = Class.forName("com.sun.jimi.core.Jimi");
-        } catch (ClassNotFoundException e) {
-            throw new FopImageException("Jimi image library not available");
-        }
-    }
-
-    public JimiImage(URL href,
-                     ImageReader imgReader) throws FopImageException {
+    public JimiImage(URL href, ImageReader imgReader) {
         super(href, imgReader);
         try {
             Class c = Class.forName("com.sun.jimi.core.Jimi");
         } catch (ClassNotFoundException e) {
-            throw new FopImageException("Jimi image library not available");
+            //throw new FopImageException("Jimi image library not available");
         }
     }
 
-    protected void loadImage() throws FopImageException {
+    protected void loadImage() {
         int[] tmpMap = null;
         try {
-            ImageProducer ip = Jimi.getImageProducer(this.m_href.openStream(),
-                                                     Jimi.SYNCHRONOUS
-                                                     | Jimi.IN_MEMORY);
+            ImageProducer ip =
+              Jimi.getImageProducer(this.m_href.openStream(),
+                                    Jimi.SYNCHRONOUS | Jimi.IN_MEMORY);
             FopImageConsumer consumer = new FopImageConsumer(ip);
             ip.startProduction(consumer);
 
@@ -66,43 +56,43 @@ public class JimiImage extends AbstractFopImage {
             try {
                 tmpMap = consumer.getImage();
             } catch (Exception ex) {
-                throw new FopImageException("Image grabbing interrupted : "
-                                            + ex.getMessage());
-            }
+                /*throw new FopImageException("Image grabbing interrupted : "
+                                             + ex.getMessage());
+                 */}
 
             ColorModel cm = consumer.getColorModel();
             this.m_bitsPerPixel = 8;
             // this.m_bitsPerPixel = cm.getPixelSize();
             this.m_colorSpace = new ColorSpace(ColorSpace.DEVICE_RGB);
             if (cm.hasAlpha()) {
-                int transparencyType =
-                    cm.getTransparency();    // java.awt.Transparency. BITMASK or OPAQUE or TRANSLUCENT
+                int transparencyType = cm.getTransparency(); // java.awt.Transparency. BITMASK or OPAQUE or TRANSLUCENT
                 if (transparencyType == java.awt.Transparency.OPAQUE) {
                     this.m_isTransparent = false;
-                } else if (transparencyType
-                           == java.awt.Transparency.BITMASK) {
+                } else if (transparencyType ==
+                    java.awt.Transparency.BITMASK) {
                     if (cm instanceof IndexColorModel) {
                         this.m_isTransparent = false;
-                        byte[] alphas =
-                            new byte[((IndexColorModel)cm).getMapSize()];
-                        byte[] reds =
-                            new byte[((IndexColorModel)cm).getMapSize()];
-                        byte[] greens =
-                            new byte[((IndexColorModel)cm).getMapSize()];
-                        byte[] blues =
-                            new byte[((IndexColorModel)cm).getMapSize()];
-                        ((IndexColorModel)cm).getAlphas(alphas);
-                        ((IndexColorModel)cm).getReds(reds);
-                        ((IndexColorModel)cm).getGreens(greens);
-                        ((IndexColorModel)cm).getBlues(blues);
+                        byte[] alphas = new byte[
+                                          ((IndexColorModel) cm).getMapSize()];
+                        byte[] reds = new byte[
+                                        ((IndexColorModel) cm).getMapSize()];
+                        byte[] greens = new byte[
+                                          ((IndexColorModel) cm).getMapSize()];
+                        byte[] blues = new byte[
+                                         ((IndexColorModel) cm).getMapSize()];
+                        ((IndexColorModel) cm).getAlphas(alphas);
+                        ((IndexColorModel) cm).getReds(reds);
+                        ((IndexColorModel) cm).getGreens(greens);
+                        ((IndexColorModel) cm).getBlues(blues);
                         for (int i = 0;
-                                i < ((IndexColorModel)cm).getMapSize(); i++) {
+                                i < ((IndexColorModel) cm).getMapSize();
+                                i++) {
                             if ((alphas[i] & 0xFF) == 0) {
                                 this.m_isTransparent = true;
-                                this.m_transparentColor =
-                                    new PDFColor((int)(reds[i] & 0xFF),
-                                                 (int)(greens[i] & 0xFF),
-                                                 (int)(blues[i] & 0xFF));
+                                this.m_transparentColor = new PDFColor(
+                                                            (int)(reds[i] & 0xFF),
+                                                            (int)(greens[i] & 0xFF),
+                                                            (int)(blues[i] & 0xFF));
                                 break;
                             }
                         }
@@ -128,11 +118,11 @@ public class JimiImage extends AbstractFopImage {
                 this.m_isTransparent = false;
             }
         } catch (Exception ex) {
-            throw new FopImageException("Error while loading image "
-                                        + this.m_href.toString() + " : "
-                                        + ex.getClass() + " - "
-                                        + ex.getMessage());
-        }
+            /*throw new FopImageException("Error while loading image "
+                                         + this.m_href.toString() + " : "
+                                         + ex.getClass() + " - "
+                                         + ex.getMessage());
+             */}
 
 
         // Should take care of the ColorSpace and bitsPerPixel
@@ -141,14 +131,15 @@ public class JimiImage extends AbstractFopImage {
         for (int i = 0; i < this.m_height; i++) {
             for (int j = 0; j < this.m_width; j++) {
                 int p = tmpMap[i * this.m_width + j];
-                int r = (p >> 16) & 0xFF;
-                int g = (p >> 8) & 0xFF;
+                int r = (p > > 16) & 0xFF;
+                int g = (p > > 8) & 0xFF;
                 int b = (p) & 0xFF;
-                this.m_bitmaps[3 * (i * this.m_width + j)] = (byte)(r & 0xFF);
-                this.m_bitmaps[3 * (i * this.m_width + j) + 1] = (byte)(g
-                        & 0xFF);
-                this.m_bitmaps[3 * (i * this.m_width + j) + 2] = (byte)(b
-                        & 0xFF);
+                this.m_bitmaps[3 * (i * this.m_width + j)] =
+                  (byte)(r & 0xFF);
+                this.m_bitmaps[3 * (i * this.m_width + j) + 1] =
+                  (byte)(g & 0xFF);
+                this.m_bitmaps[3 * (i * this.m_width + j) + 2] =
+                  (byte)(b & 0xFF);
             }
         }
     }

@@ -23,7 +23,7 @@ import org.apache.fop.layout.MarginInlineProps;
 import org.apache.fop.layout.RelativePositionProps;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.layoutmgr.LayoutManager;
-import org.apache.fop.layoutmgr.SplitContext;
+import org.apache.fop.layoutmgr.LeafNodeLayoutManager;
 
 import org.w3c.dom.Document;
 
@@ -58,28 +58,9 @@ public class InstreamForeignObject extends FObj {
     }
 
     public LayoutManager getLayoutManager() {
-        return new LayoutManager() {
-            LayoutManager lm;
-            public void generateAreas() {
-                lm.addChild(getInlineArea());
-            }
-
-            public Area getParentArea (Area childArea) {
-                return null;
-            }
-
-            public void addChild (Area childArea) {
-            }
-
-            public boolean splitArea(Area areaToSplit, SplitContext context) {
-                return false;
-            }
-
-            public void setParentLM(LayoutManager lm) {
-                this.lm = lm;
-            }
-
-        };
+        LeafNodeLayoutManager lm = new LeafNodeLayoutManager(this);
+        lm.setCurrentArea(getInlineArea());
+        return lm;
     }
 
     /**

@@ -205,7 +205,9 @@ public class Driver {
     }
 
     private FOUserAgent getUserAgent() {
-        return new FOUserAgent();
+        FOUserAgent ua = new FOUserAgent();
+        ua.setLogger(log);
+        return ua;
     }
 
     public void setLogger(Logger logger) {

@@ -13,9 +13,6 @@ import org.apache.fop.layout.inline.*;
 
 import org.apache.fop.render.Renderer;
 
-import java.util.Vector;
-import java.util.Enumeration;
-
 public class ImageArea extends InlineArea {
 
     protected int xOffset = 0;
@@ -24,9 +21,9 @@ public class ImageArea extends InlineArea {
     protected FopImage image;
 
 
-    public ImageArea(FontState fontState, FopImage img, int AllocationWidth,
-                     int width, int height, int startIndent, int endIndent,
-                     int align) {
+    public ImageArea(FontState fontState, FopImage img,
+                     int AllocationWidth, int width, int height,
+                     int startIndent, int endIndent, int align) {
         super(fontState, width, 0, 0, 0);
         this.currentHeight = height;
         this.contentRectangleWidth = width;

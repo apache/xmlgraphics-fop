@@ -31,64 +31,54 @@ import org.xml.sax.XMLReader;
 public class EPSImage extends AbstractFopImage {
     private String docName;
     private int[] bbox;
-    
+
     private byte[] epsImage = null;
     private EPSReader epsReader = null;
-    
-	/**
-         * Initialize docName and bounding box
-         */
+
+    /**
+     * Initialize docName and bounding box
+     */
     private void init(URL href) {
         bbox = new int[4];
         bbox[0] = 0;
         bbox[1] = 0;
         bbox[2] = 0;
         bbox[3] = 0;
-        
+
         docName = href.toString();
     }
-    
-	/**
-         * Return the name of the eps
-         */
+
+    /**
+     * Return the name of the eps
+     */
     public String getDocName() {
         return docName;
     }
-    
-	/**
-         * Return the bounding box
-         */
+
+    /**
+     * Return the bounding box
+     */
     public int[] getBBox() {
         return bbox;
     }
-    
-    public EPSImage(URL href) throws FopImageException {
-        super(href);
-        init(href);
-    }
-    
-    public EPSImage(URL href,
-                    ImageReader imgReader) throws FopImageException {
+
+    public EPSImage(URL href, ImageReader imgReader) {
         super(href, imgReader);
         init(href);
         if (imgReader instanceof EPSReader) {
-            EPSReader eimgReader = (EPSReader)imgReader;
+            EPSReader eimgReader = (EPSReader) imgReader;
             epsReader = eimgReader;
             epsImage = eimgReader.getEpsFile();
             m_bitmaps = epsImage;
             bbox = eimgReader.getBBox();
         }
     }
-    
-    protected void loadImage() throws FopImageException {
-            // Image is loaded in reader
-    }
-    
-    public byte[] getEPSImage() throws FopImageException {
-       	if (epsImage == null) {
+
+    public byte[] getEPSImage() {
+        if (epsImage == null) {
             //log.error("ERROR LOADING EXTERNAL EPS");
         }
         return epsImage;
     }
-    
+
 }

@@ -11,11 +11,9 @@ package org.apache.fop.image.analyser;
 import java.io.InputStream;
 import java.io.BufferedInputStream;
 import java.io.IOException;
-import java.util.Enumeration;
-import java.util.Vector;
+import java.util.ArrayList;
 
-// FOP
-import org.apache.fop.image.FopImageException;
+import org.apache.fop.fo.FOUserAgent;
 
 /**
  * Factory for ImageReader objects.
@@ -23,41 +21,41 @@ import org.apache.fop.image.FopImageException;
  * @version 1.0
  */
 public class ImageReaderFactory {
-    static protected Vector formats = null;
+    static protected ArrayList formats = new ArrayList();
+    static {
+        formats.add(new JPEGReader());
+        formats.add(new BMPReader());
+        formats.add(new GIFReader());
+        formats.add(new PNGReader());
+        formats.add(new TIFFReader());
+        formats.add(new EPSReader());
+        formats.add(new SVGReader());
+    };
+
+    // TODO - a way to add other readers
 
     /**
      * ImageReader maker.
      * @param in image input stream
      * @return ImageReader object
-     * @exception FopImageException  an error occured during creation or
      * image type is not supported
      */
-    static public ImageReader Make(String uri,
-                                   InputStream in) throws FopImageException {
-
-        // need to use a config file and remove static methods
-        formats = new Vector();
-        formats.addElement(new JPEGReader());
-        formats.addElement(new BMPReader());
-        formats.addElement(new GIFReader());
-        formats.addElement(new PNGReader());
-        formats.addElement(new TIFFReader());
-        formats.addElement(new EPSReader());
-        formats.addElement(new SVGReader());
-        //
+    static public ImageReader make(String uri, InputStream in,
+                                   FOUserAgent ua) {
 
         ImageReader reader;
         BufferedInputStream bis = new BufferedInputStream(in);
-        Enumeration itr = formats.elements();
         try {
-            while (itr.hasMoreElements()) {
-                reader = (ImageReader)itr.nextElement();
-                if (reader.verifySignature(uri, bis)) {
+            for (int count = 0; count < formats.size(); count++) {
+                reader = (ImageReader) formats.get(count);
+                if (reader.verifySignature(uri, bis, ua)) {
                     return reader;
                 }
             }
         } catch (IOException ex) {
-            throw new FopImageException(ex.getMessage());
+            ua.getLogger().error(
+              "Error while recovering Image Informations (" +
+              uri + ") : " + ex.getMessage());
         }
         return null;
     }

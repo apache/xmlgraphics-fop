@@ -11,6 +11,8 @@ package org.apache.fop.image.analyser;
 import java.io.BufferedInputStream;
 import java.io.IOException;
 
+import org.apache.fop.fo.FOUserAgent;
+
 /**
  * ImageReader object for GIF image type.
  * @author Pankaj Narula
@@ -20,14 +22,14 @@ public class GIFReader extends AbstractImageReader {
     static protected final int GIF_SIG_LENGTH = 10;
     protected byte[] header;
 
-    public boolean verifySignature(String uri, BufferedInputStream fis)
-            throws IOException {
+    public boolean verifySignature(String uri, BufferedInputStream fis,
+                                   FOUserAgent ua) throws IOException {
         this.imageStream = fis;
         this.setDefaultHeader();
-        boolean supported = ((header[0] == 'G') && (header[1] == 'I')
-                             && (header[2] == 'F') && (header[3] == '8')
-                             && (header[4] == '7' || header[4] == '9')
-                             && (header[5] == 'a'));
+        boolean supported = ((header[0] == 'G') && (header[1] == 'I') &&
+                             (header[2] == 'F') && (header[3] == '8') &&
+                             (header[4] == '7' || header[4] == '9') &&
+                             (header[5] == 'a'));
         if (supported) {
             setDimension();
             return true;
