@@ -540,8 +540,23 @@ public class Driver implements LogEnabled {
 
         foInputHandler.enableLogging(getLogger());
 
+        /** Document creation is hard-wired for now, but needs to be made
+         accessible through the API and/or configuration */
+        if (currentDocument == null) {
+            currentDocument = new Document(this);
+        }
+        currentDocument.foInputHandler = foInputHandler;
+        /** LayoutStrategy is hard-wired for now, but needs to be made
+        accessible through the API and/or configuration */
+        if (foInputHandler instanceof FOTreeHandler) {
+            if (currentDocument.getLayoutStrategy() == null) {
+                currentDocument.setLayoutStrategy(new LayoutManagerLS(currentDocument));
+            }
+        }
+
         treeBuilder.setUserAgent(getUserAgent());
         treeBuilder.setFOInputHandler(foInputHandler);
+        treeBuilder.foTreeControl = currentDocument;
 
         return treeBuilder;
     }
@@ -568,24 +583,7 @@ public class Driver implements LogEnabled {
      */
     public synchronized void render(XMLReader parser, InputSource source)
                 throws FOPException {
-        if (!isInitialized()) {
-            initialize();
-        }
-        /** Document creation is hard-wired for now, but needs to be made
-         accessible through the API and/or configuration */
-        if (currentDocument == null) {
-            currentDocument = new Document(this);
-        }
         parser.setContentHandler(getContentHandler());
-        currentDocument.foInputHandler = foInputHandler;
-        /** LayoutStrategy is hard-wired for now, but needs to be made
-        accessible through the API and/or configuration */
-        if (foInputHandler instanceof FOTreeHandler) {
-            if (currentDocument.getLayoutStrategy() == null) {
-                currentDocument.setLayoutStrategy(new LayoutManagerLS(currentDocument));
-            }
-        }
-        treeBuilder.foTreeControl = currentDocument;
         try {
             if (foInputHandler instanceof FOTreeHandler) {
                 FOTreeHandler foTreeHandler = (FOTreeHandler)foInputHandler;
