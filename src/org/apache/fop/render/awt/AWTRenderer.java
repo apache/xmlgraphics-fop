@@ -27,6 +27,7 @@ import org.apache.batik.swing.gvt.*;
 import org.apache.batik.gvt.*;
 import org.apache.batik.gvt.renderer.*;
 import org.apache.batik.gvt.filter.*;
+import org.apache.batik.gvt.event.*;
 
 import java.awt.*;
 import java.awt.Image;
@@ -690,6 +691,7 @@ public class AWTRenderer implements Renderer, Printable, Pageable {
         BridgeContext ctx = new BridgeContext(userAgent, rc);
         GraphicsNode root;
         graphics.translate(x / 1000f, pageHeight - y / 1000f);
+        graphics.setRenderingHints(rc.getRenderingHints());
         try {
             root = builder.build(ctx, doc);
             root.paint(graphics, rc);
@@ -926,6 +928,21 @@ public class AWTRenderer implements Renderer, Printable, Pageable {
         public Dimension2D getViewportSize()
         {
             return new Dimension(100, 100);
+        }
+
+        public EventDispatcher getEventDispatcher()
+        {
+            return null;
+        }
+
+        public boolean supportExtension(String str)
+        {
+            return false;
+        }
+
+        public boolean hasFeature(String str)
+        {
+                return false;
         }
     }
 }

@@ -60,7 +60,7 @@ public class CommandLineStarter extends Starter {
             if (errorDump) {
                 e.printStackTrace();
             }
-            System.exit(1);
+            System.exit(0);
         }
     }
 	

@@ -12,6 +12,8 @@ import org.apache.fop.pdf.*;
 import org.apache.fop.layout.*;
 import org.apache.fop.fonts.*;
 import org.apache.fop.render.pdf.*;
+import org.apache.fop.image.*;
+import org.apache.fop.datatypes.ColorSpace;
 
 import org.apache.batik.ext.awt.g2d.*;
 
@@ -40,17 +42,19 @@ import java.util.Map;
  * @see org.apache.batik.ext.awt.g2d.AbstractGraphics2D
  */
 public class PDFGraphics2D extends AbstractGraphics2D {
-        boolean standalone = false;
-
-		/** the PDF Document being created */
 		protected PDFDocument pdfDoc;
 
 		protected FontState fontState;
 
+        boolean standalone = false;
+
+		/** the PDF Document being created */
+		//protected PDFDocument pdfDoc;
+
+		//protected FontState fontState;
+
 		/** the current stream to add PDF commands to */
 		StringWriter currentStream = new StringWriter();
-
-        PDFStream pdfStream;
 
 		/** the current (internal) font name */
 		protected String currentFontName;
@@ -65,9 +69,9 @@ public class PDFGraphics2D extends AbstractGraphics2D {
 		protected int currentXPosition = 0;
 
 		/** the current colour for use in svg */
-		private PDFColor currentColour = new PDFColor(0, 0, 0);
+		PDFColor currentColour = new PDFColor(0, 0, 0);
 
-    private FontInfo fontInfo;
+	    FontInfo fontInfo;
 
     /**
      * Create a new PDFGraphics2D with the given pdf document info.
@@ -85,38 +89,10 @@ public class PDFGraphics2D extends AbstractGraphics2D {
 				fontState = fs;
     }
 
-    /**
-     * Create a new PDFGraphics2D with the given pdf document info.
-     * This is used to create a Graphics object for use inside an already
-     * existing document.
-     * Maybe this could be handled as a subclass (PDFDocumentGraphics2d)
-     */
-    public PDFGraphics2D(boolean textAsShapes, OutputStream stream)
+    public PDFGraphics2D(boolean textAsShapes)
 	{
         super(textAsShapes);
-        standalone = true;
-        this.pdfDoc = new PDFDocument();
-        this.pdfDoc.setProducer("FOP SVG Renderer");
-        pdfStream = this.pdfDoc.makeStream();
-
-				currentFontName = "";
-				currentFontSize = 0;
-				currentYPosition = 0;
-				currentXPosition = 0;
-//				fontState = fs;
-
-        // end part
-        /*
-        FontSetup.addToResources(this.pdfDoc, fontInfo);
-        pdfStream.write(getString())
-        this.pdfResources = this.pdfDoc.getResources();
-        currentPage = this.pdfDoc.makePage(this.pdfResources, currentStream,
-                                           page.getWidth() / 1000,
-					   page.getHeight() / 1000, page);
-        this.pdfDoc.output(stream);
-		*/
-
-    }
+	}
 
 		public String getString() {
 				return currentStream.toString();
@@ -144,13 +120,6 @@ public class PDFGraphics2D extends AbstractGraphics2D {
         return new PDFGraphics2D(this);
     }
 
-    public void setColor(Color c){
-        super.setColor(c);
-        currentColour = new PDFColor(c.getRed(), c.getGreen(), c.getBlue());
-		currentStream.write(currentColour.getColorSpaceOut(false));
-		currentStream.write(currentColour.getColorSpaceOut(true));
-    }
-
     /**
      * Draws as much of the specified image as is currently available.
      * The image is drawn with its top-left corner at
@@ -176,19 +145,160 @@ public class PDFGraphics2D extends AbstractGraphics2D {
      * @see      java.awt.image.ImageObserver#imageUpdate(java.awt.Image, int, int, int, int, int)
      */
     public boolean drawImage(Image img, int x, int y, ImageObserver observer){
-        System.err.println("drawImage");
-/*        int width = img.getWidth(observer);
-        int height = img.getHeight(observer);
-        FopImage fopimg = new FopImage() {
-        };
+        System.err.println("drawImage:x, y");
+
+        final int width = img.getWidth(observer);
+        final int height = img.getHeight(observer);
+		if(width == -1 || height == -1) {
+			return false;
+		}
+
+        Dimension size = new Dimension(width, height);
+        BufferedImage buf = buildBufferedImage(size);
+
+        java.awt.Graphics2D g = buf.createGraphics();
+        g.setComposite(AlphaComposite.SrcOver);
+		g.setBackground(new Color(1, 1, 1, 0));
+        g.setPaint(new Color(1, 1, 1, 0));
+		g.fillRect(0, 0, width, height);
+        g.clip(new Rectangle(0, 0, buf.getWidth(), buf.getHeight()));
+
+        if(!g.drawImage(img, 0, 0, observer)) {
+			return false;
+		}
+        g.dispose();
+
+		final byte[] result = new byte[buf.getWidth() * buf.getHeight() * 3];
+
+		Raster raster = buf.getData();
+		DataBuffer bd = raster.getDataBuffer();
+
+		int count = 0;
+		switch(bd.getDataType()) {
+		    case DataBuffer.TYPE_INT:
+				int[][] idata = ((DataBufferInt)bd).getBankData();
+				for(int i = 0; i < idata.length; i++) {
+					for(int j = 0; j < idata[i].length; j++) {
+						//System.out.println("data:" + ((idata[i][j] >> 24) & 0xFF));
+						if(((idata[i][j] >> 24) & 0xFF) != 255) {
+System.out.println("data:" + ((idata[i][j] >> 24) & 0xFF));
+							result[count++] = (byte)0xFF;
+							result[count++] = (byte)0xFF;
+							result[count++] = (byte)0xFF;
+						} else {
+							result[count++] = (byte)((idata[i][j] >> 16) & 0xFF);
+							result[count++] = (byte)((idata[i][j] >> 8) & 0xFF);
+							result[count++] = (byte)((idata[i][j]) & 0xFF);
+						}
+					}
+				}
+			break;
+		    default:
+				// error
+			break;
+			}
+
+		try {
+        FopImage fopimg = new TempImage(width, height, result);
         int xObjectNum = this.pdfDoc.addImage(fopimg);
-        currentStream.add("q\n" + (((float) w) / 1000f) +
-                          " 0 0 " + (((float) h) / 1000f) + " " +
+		/*currentStream.write("q\n" + (((float) width)) +
+                          " 0 0 " + (((float) height)) + " " +
                           x + " " +
-                          ((float)(y - h)) + " cm\n" + "/Im" +
+                          ((float)(y - height)) + " cm\n" + "/Im" +
                           xObjectNum + " Do\nQ\n");*/
+		AffineTransform at = getTransform();
+		double[] matrix = new double[6];
+		at.getMatrix(matrix);
+		currentStream.write("q\n" + matrix[0] +
+                          " " + matrix[1] + " " + matrix[2]  + " " + matrix[3] + " " +
+                          matrix[4] + " " +
+                          matrix[5] + " cm\n");
+		currentStream.write("" + width +
+                          " 0 0 " + (-height) + " " +
+                          x + " " +
+                          (y + height) + " cm\n" + "/Im" +
+                          xObjectNum + " Do\nQ\n");
+		} catch(Exception e) {
+			e.printStackTrace();
+		}
         return true;
     }
+
+    public BufferedImage buildBufferedImage(Dimension size) {
+        return new BufferedImage(size.width, size.height,
+                                 BufferedImage.TYPE_INT_ARGB);
+    }
+
+        class TempImage implements FopImage {
+			int m_height;
+			int m_width;
+			int m_bitsPerPixel;
+			ColorSpace m_colorSpace;
+			int m_bitmapSiye;
+			byte[] m_bitmaps;
+			PDFColor transparent = new PDFColor(255, 255, 255);
+
+			TempImage(int width, int height, byte[] result) throws FopImageException
+			{
+				this.m_height = height;
+				this.m_width = width;
+				this.m_bitsPerPixel = 8;
+				this.m_colorSpace = new ColorSpace(ColorSpace.DEVICE_RGB);
+				//this.m_isTransparent = false;
+				//this.m_bitmapsSize = this.m_width * this.m_height * 3;
+				this.m_bitmaps = result;
+			}
+
+			public String getURL() {return "" + m_bitmaps;}
+
+			// image size
+			public int getWidth() throws FopImageException
+			{
+				return m_width;
+			}
+
+	public int getHeight() throws FopImageException
+			{return m_height;}
+
+	// DeviceGray, DeviceRGB, or DeviceCMYK
+	public ColorSpace getColorSpace() throws FopImageException
+			{return m_colorSpace;}
+
+	// bits per pixel
+	public int getBitsPerPixel() throws FopImageException
+			{return m_bitsPerPixel;}
+
+	// For transparent images
+	public boolean isTransparent() throws FopImageException
+			{return transparent != null;}
+	public PDFColor getTransparentColor() throws FopImageException
+			{return transparent;}
+
+	// get the image bytes, and bytes properties
+
+	// get uncompressed image bytes
+	public byte[] getBitmaps() throws FopImageException
+			{return m_bitmaps;}
+// width * (bitsPerPixel / 8) * height, no ?
+	public int getBitmapsSize() throws FopImageException
+			{return m_width * m_height * 3;}
+
+	// get compressed image bytes
+	// I don't know if we really need it, nor if it
+	// should be changed...
+	public byte[] getRessourceBytes() throws FopImageException
+			{return null;}
+	public int getRessourceBytesSize() throws FopImageException
+			{return 0;}
+	// return null if no corresponding PDFFilter
+	public PDFFilter getPDFFilter() throws FopImageException
+			{return null;}
+
+	// release memory
+			public void close() {}
+
+        }
+
 
     /**
      * Draws as much of the specified image as has already been scaled
@@ -278,10 +388,17 @@ public class PDFGraphics2D extends AbstractGraphics2D {
      * @see #setComposite
      */
     public void draw(Shape s){
-        System.out.println("draw(Shape)");
+        //System.out.println("draw(Shape)");
+        Color c = getColor();
+        currentColour = new PDFColor(c.getRed(), c.getGreen(), c.getBlue());
+        currentStream.write(currentColour.getColorSpaceOut(true));
+        c = getBackground();
+        PDFColor col = new PDFColor(c.getRed(), c.getGreen(), c.getBlue());
+        currentStream.write(col.getColorSpaceOut(false));
+
 		PDFNumber pdfNumber = new PDFNumber();
 
-        PathIterator iter = s.getPathIterator(new AffineTransform());
+        PathIterator iter = s.getPathIterator(getTransform());
         while(!iter.isDone()) {
             double vals[] = new double[6];
             int type = iter.currentSegment(vals);
@@ -427,8 +544,6 @@ public class PDFGraphics2D extends AbstractGraphics2D {
          System.err.println("drawString(AttributedCharacterIterator)");
      }
 
-
-
     /**
      * Fills the interior of a <code>Shape</code> using the settings of the
      * <code>Graphics2D</code> context. The rendering attributes applied
@@ -444,10 +559,17 @@ public class PDFGraphics2D extends AbstractGraphics2D {
      * @see #setClip
      */
     public void fill(Shape s){
-        System.err.println("fill");
+        //System.err.println("fill");
+        Color c = getColor();
+        currentColour = new PDFColor(c.getRed(), c.getGreen(), c.getBlue());
+        currentStream.write(currentColour.getColorSpaceOut(true));
+        c = getBackground();
+        PDFColor col = new PDFColor(c.getRed(), c.getGreen(), c.getBlue());
+        currentStream.write(col.getColorSpaceOut(false));
+
 		PDFNumber pdfNumber = new PDFNumber();
 
-        PathIterator iter = s.getPathIterator(new AffineTransform());
+        PathIterator iter = s.getPathIterator(getTransform());
         while(!iter.isDone()) {
             double vals[] = new double[6];
             int type = iter.currentSegment(vals);
@@ -503,7 +625,7 @@ public class PDFGraphics2D extends AbstractGraphics2D {
      */
     public GraphicsConfiguration getDeviceConfiguration(){
         System.out.println("getDeviceConviguration");
-        return null;
+        return GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice().getDefaultConfiguration();
     }
 
     /**
