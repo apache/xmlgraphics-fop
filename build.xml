@@ -84,7 +84,8 @@ list of possible build targets.
 <project default="all" basedir=".">
 
   <!-- used to set values for testing etc. -->
-  <!-- build-local.properties is not stored in CVS and overrides values from build.properties -->
+  <!-- build-local.properties is not stored in CVS
+                                  and overrides values from build.properties -->
       <property file="build-local.properties"/>
   <property file="build.properties"/>
 
@@ -179,7 +180,6 @@ list of possible build targets.
     <property name="lib.dir" value="${basedir}/lib"/>
     <property name="hyph.dir" value="${src.dir}/hyph"/>
     <property name="conf.dir" value="${basedir}/conf"/>
-    <property name="fo.examples.dir" value="${basedir}/examples/fo/basic"/>
 
     <!-- Properties for derivation of Version information -->
     <property name="fop.dir" value="org/apache/fop"/>
@@ -198,7 +198,16 @@ list of possible build targets.
 
     <!-- CountryLanguageScript.java generation -->
     <property name="datatypes.dir" value="${fop.dir}/datatypes"/>
-    <property name="gendatatypes.dir" value="${src.codegen}/${datatypes.dir}"/>
+    <property name="gendatatypes.dir"
+                        value="${src.codegen}/${datatypes.dir}"/>
+
+    <!-- Examples directory properties -->
+    <property name="fo.examples" value="examples/fo"/>
+    <property name="fo.basic.examples" value="${fo.examples}/basic"/>
+    <property name="examples.dir" value="${basedir}/examples"/>
+    <property name="fo.examples.dir" value="${basedir}/${fo.examples}"/>
+    <property name="fo.basic.examples.dir"
+                              value="${basedir}/${fo.basic.examples}"/>
 
     <!-- Build directories -->
     <property name="build.dir" value="${basedir}/build"/>
@@ -207,6 +216,12 @@ list of possible build targets.
     <property name="build.tmp" value="${build.dir}/tmp"/>
     <property name="build.javadocs" value="${build.dir}/javadocs"/>
     <property name="build.examples.dir" value="${build.dir}/examples"/>
+    <property name="build.fo.examples.dir"
+                                  value="${build.dir}/${fo.examples}"/>
+    <property name="build.basic.examples.dir"
+                              value="${build.dir}/${fo.basic.examples}"/>
+    <property name="build.examples.test.dir"
+                                  value="${build.fo.examples.dir}"/>
 
   </target>
 
@@ -219,6 +234,9 @@ list of possible build targets.
      necessary.  build.dir is never deleted, only subdirectories.   -->
     <mkdir dir="${build.dir}"/>
     <mkdir dir="${build.dest}"/>
+    <mkdir dir="${build.conf}"/>
+    <mkdir dir="${build.examples.dir}"/>
+    <mkdir dir="${build.javadocs}"/>
     <mkdir dir="${build.tmp}"/>
   </target>
 
@@ -258,15 +276,19 @@ list of possible build targets.
       <isset property="build.tag"/>
     </condition>
     
-    <condition property="build.display.name" value="${build.default.description}">
+    <condition property="build.display.name"
+                        value="${build.default.description}">
       <isset property="build.default.description"/>
     </condition>
     <condition property="build.tag.name" value="${build.default.tag}">
       <isset property="build.default.tag"/>
     </condition>
     
-    <echo message="------------------- ${build.display.name} [${year}] ----------------"/>
-    <echo message="See build.properties and build-local.properties for additional build settings"/>
+    <property name="hyphens" value="-------------------"/>
+    <property name="build.props.files"
+                        value="build.properties and build-local.properties"/>
+    <echo message="${hyphens} ${build.display.name} [${year}] ${hyphens}"/>
+    <echo message="See ${build.props.files} for additional build settings."/>
 
   </target>
 
@@ -290,24 +312,36 @@ list of possible build targets.
 
     <!-- Font generation properties -->
     <property name="encodings.xml" value="${src.codegen}/encodings.xml"/>
-    <property name="charlist.xsl" value="${src.codegen}/code-point-mapping.xsl"/>
+    <property name="charlist.xsl"
+                        value="${src.codegen}/code-point-mapping.xsl"/>
     <property name="fontfile.xsl" value="${src.codegen}/font-file.xsl"/>
     <property name="t1fontfile.xsl" value="${src.codegen}/t1font-file.xsl"/>
-    <property name="ttffontfile.xsl" value="${src.codegen}/ttffontfile.xsl"/>
+    <property name="ttffontfile.xsl"
+                        value="${src.codegen}/ttffontfile.xsl"/>
 
     <property name="Courier.xml" value="${src.codegen}/Courier.xml"/>
-    <property name="Courier-Oblique.xml" value="${src.codegen}/CourierOblique.xml"/>
-    <property name="Courier-Bold.xml" value="${src.codegen}/CourierBold.xml"/>
-    <property name="Courier-BoldOblique.xml" value="${src.codegen}/CourierBoldOblique.xml"/>
+    <property name="Courier-Oblique.xml"
+                        value="${src.codegen}/CourierOblique.xml"/>
+    <property name="Courier-Bold.xml"
+                        value="${src.codegen}/CourierBold.xml"/>
+    <property name="Courier-BoldOblique.xml"
+                        value="${src.codegen}/CourierBoldOblique.xml"/>
     <property name="Helvetica.xml" value="${src.codegen}/Helvetica.xml"/>
-    <property name="Helvetica-Oblique.xml" value="${src.codegen}/HelveticaOblique.xml"/>
-    <property name="Helvetica-Bold.xml" value="${src.codegen}/HelveticaBold.xml"/>
-    <property name="Helvetica-BoldOblique.xml" value="${src.codegen}/HelveticaBoldOblique.xml"/>
-    <property name="Times-Roman.xml" value="${src.codegen}/TimesRoman.xml"/>
-    <property name="Times-Italic.xml" value="${src.codegen}/TimesItalic.xml"/>
+    <property name="Helvetica-Oblique.xml"
+                        value="${src.codegen}/HelveticaOblique.xml"/>
+    <property name="Helvetica-Bold.xml"
+                        value="${src.codegen}/HelveticaBold.xml"/>
+    <property name="Helvetica-BoldOblique.xml"
+                        value="${src.codegen}/HelveticaBoldOblique.xml"/>
+    <property name="Times-Roman.xml"
+                        value="${src.codegen}/TimesRoman.xml"/>
+    <property name="Times-Italic.xml"
+                        value="${src.codegen}/TimesItalic.xml"/>
     <property name="Times-Bold.xml" value="${src.codegen}/TimesBold.xml"/>
-    <property name="Times-BoldItalic.xml" value="${src.codegen}/TimesBoldItalic.xml"/>
-    <property name="ZapfDingbats.xml" value="${src.codegen}/ZapfDingbats.xml"/>
+    <property name="Times-BoldItalic.xml"
+                        value="${src.codegen}/TimesBoldItalic.xml"/>
+    <property name="ZapfDingbats.xml"
+                        value="${src.codegen}/ZapfDingbats.xml"/>
     <property name="Symbol.xml" value="${src.codegen}/Symbol.xml"/>
 
     <fileset id="font.java.files" dir="${genbase14.dir}">
@@ -329,7 +363,8 @@ list of possible build targets.
   <!-- =================================================================== -->
   <!-- Initialization target                                               -->
   <!-- =================================================================== -->
-  <target name="init" depends="post-version">
+  <target name="init" depends="post-version" description=
+              "All initialization components, including Version generation.">
   </target>
 
   <!-- =================================================================== -->
@@ -342,7 +377,8 @@ list of possible build targets.
   <!-- =================================================================== -->
   <!-- Generate the source code                                            -->
   <!-- =================================================================== -->
-  <target name="codegen" depends="init" description="Generates the java files from the xml resources">
+  <target name="codegen" depends="init"
+              description="Generates the java files from the xml resources">
     <!-- resetting /codegen directory -->
     <echo message="Resetting codegen directory"/>
 
@@ -441,10 +477,10 @@ list of possible build targets.
   <!-- =================================================================== -->
   <!-- Compiles the source directory                                       -->
   <!-- =================================================================== -->
-  <target name="compile-src" depends="init">
+  <target name="compile" depends="init"
+      description=
+            "Compiles Java sources and copies conf and examples directories.">
     <echo message="Compiling the sources "/>
-    <!-- create directories -->
-    <mkdir dir="${build.conf}"/>
     <!-- Copy the conf directory files into build -->
     <copy todir="${build.conf}">
       <fileset dir="${conf.dir}"/>
@@ -456,7 +492,38 @@ list of possible build targets.
       <mapper type="glob" from="*" to=".*"/>
     </move>
 
-    <javac destdir="${build.dest}" debug="${debug}" deprecation="${deprecation}" optimize="${optimize}">
+    <!-- Copy the examples directory files into build -->
+
+    <!-- Set up the examples properties -->
+    <property name="examples.cvsignore" value="${examples.dir}/cvsignore"/>
+    <property name="build.examples.cvsignore"
+                                  value="${build.examples.dir}/.cvsignore"/>
+    <property name="test.fo.filename" value="test.fo"/>
+    <property name="test.fo.file"
+                      value="${build.examples.test.dir}/${test.fo.filename}"/>
+
+    <!-- Examples test file
+          For the purposes of basic testing, a .fo file from examples/fo/basic
+          is specified, and copies as examples/fo/test.fo.  The name of this
+          file may be overridden in build-local.properties.  The purpose of
+          this file is to provide a test of the most basic level of alt.design
+          funtionality.
+    -->
+    <property name="example.fo.file"
+                            value="${fo.basic.examples.dir}/corresprop.fo"/>
+    <condition property="example.fo.present" value="${example.fo.file}">
+      <available file="${example.fo.file}"/>
+    </condition>
+
+    <copy todir="${build.fo.examples.dir}">
+      <fileset dir="${fo.examples.dir}"/>
+    </copy>
+    <copy file="${examples.cvsignore}" tofile="${build.examples.cvsignore}"/>
+
+    <antcall target="copy-test-file"/>
+
+    <javac destdir="${build.dest}" debug="${debug}"
+                          deprecation="${deprecation}" optimize="${optimize}">
       <src path="${src.java}"/>
       <src path="${src.codegen}"/>
       <classpath refid="libs-build-classpath"/>
@@ -464,35 +531,53 @@ list of possible build targets.
     </javac>
   </target>
 
-  <target name="compile" depends="compile-src" description="Compiles the source code"/>
+  <!-- =================================================================== -->
+  <!-- Conditional copy of single test file to examples/fo/test.fo         -->
+  <!-- =================================================================== -->
+  <target name="copy-test-file" if="example.fo.present"
+    description=
+      "Conditionally copies a single examples .fo file to build directory.">
+    <copy file="${example.fo.file}" tofile="${test.fo.file}"/>
+  </target>
 
   <!-- =================================================================== -->
   <!-- Creates the class package                                           -->
   <!-- =================================================================== -->
-  <target name="package" depends="compile" description="Generates the jar files">
+  <target name="package" depends="compile"
+                                  description="Generates the jar files">
     <echo message="Creating the jar file ${build.dir}/${name}.jar"/>
 
     <tstamp>
       <format property="ts" pattern="yyyyMMdd-HHmmss-z"/>
     </tstamp>
-    <pathconvert property="manifest-classpath" dirsep="/" pathsep=" " refid="libs-run-classpath">
+    <pathconvert property="manifest-classpath" dirsep="/" pathsep=" "
+                        refid="libs-run-classpath">
       <map from="${basedir}${file.separator}lib${file.separator}" to=""/>
-      <map from="${basedir}${file.separator}build${file.separator}fop.jar" to=""/>
+      <map from="${basedir}${file.separator}build${file.separator}fop.jar"
+                        to=""/>
     </pathconvert>
 
-    <jar jarfile="${build.dir}/${name}.jar" basedir="${build.dest}" includes="org/**">
+    <property name="osdetails" value=
+      "[${os.name} ${os.version} ${os.arch}, Java ${java.runtime.version}]"/>
+
+    <jar jarfile="${build.dir}/${name}.jar" basedir="${build.dest}"
+                        includes="org/**">
       <manifest>
         <attribute name="Main-Class" value="${main.class}"/>
         <attribute name="Class-Path" value="${manifest-classpath}"/>
         <attribute name="Implementation-Title" value="${Name}"/>
-        <attribute name="Implementation-Version" value="${build.display.name}"/>
-        <attribute name="Implementation-Vendor" value="Apache Software Foundation (http://xml.apache.org/fop/)"/>
-        <attribute name="Build-Id" value="${ts} (${user.name} [${os.name} ${os.version} ${os.arch}, Java ${java.runtime.version}])"/>
+        <attribute name="Implementation-Version"
+                        value="${build.display.name}"/>
+        <attribute name="Implementation-Vendor"
+                        value="Apache Software Foundation (http://xml.apache.org/fop/)"/>
+        <attribute name="Build-Id" value="${ts} (${user.name} ${osdetails})"/>
       </manifest>
     </jar>
   </target>
 
-  <target name="all" depends="package"/> <!-- "all" target for us Makefile converts ;-) -->
+  <!-- "all" target for us Makefile converts ;-) -->
+  <target name="all" depends="package"
+                                  description="Builds the package target."/>
 
   <!-- =================================================================== -->
   <!-- Creates the API documentation                                       -->
@@ -509,7 +594,8 @@ list of possible build targets.
         version="true"
         windowtitle="${NAME} API"
         doctitle="Formatting Objects Processor (FOP)"
-        bottom="Copyright &#169; ${year} Apache Software Foundation. All Rights Reserved."
+        bottom=
+    "Copyright &#169; ${year} Apache Software Foundation. All Rights Reserved."
         overview="${src.dir}/java/org/apache/fop/overview.html"
         use="true"
         failonerror="true">
@@ -565,29 +651,45 @@ list of possible build targets.
   <!-- =================================================================== -->
   <!-- Checkstyle                                                          -->
   <!-- =================================================================== -->
-  <target name="checkstyle" depends="init" description="Runs Checkstyle for a code quality report">
-    <available property="checkstyle.available" classname="com.puppycrawl.tools.checkstyle.CheckStyleTask" classpathref="checkstylepath"/>
-    <fail message="Please put checkstyle-all-*.jar in the lib directory. Get it from http://checkstyle.sourceforge.net" unless="checkstyle.available"/>
-    <taskdef name="checkstyle" classname="com.puppycrawl.tools.checkstyle.CheckStyleTask" classpathref="checkstylepath"/>
+  <target name="checkstyle" depends="init"
+                      description="Runs Checkstyle for a code quality report">
+    <available property="checkstyle.available"
+                    classname="com.puppycrawl.tools.checkstyle.CheckStyleTask"
+                    classpathref="checkstylepath"/>
+    <fail unless=
+    "checkstyle.available">Please put checkstyle-all-*.jar in the lib directory.
+Get it from http://checkstyle.sourceforge.net</fail>
+                      
+    <taskdef name="checkstyle"
+                    classname="com.puppycrawl.tools.checkstyle.CheckStyleTask"
+                    classpathref="checkstylepath"/>
 
     <checkstyle properties="checkstyle.cfg" failonviolation="false">
       <fileset dir="${src.java}" includes="org/apache/fop/**/*.java"/>
       <formatter type="plain" toFile="${build.dir}/checkstyle_report.txt"/>
       <formatter type="xml" toFile="${build.dir}/checkstyle_report.xml"/>
     </checkstyle>
-    <available property="checkstyle.stylesheet.available" file="checkstyle-noframes.xsl"/>
+    <available property="checkstyle.stylesheet.available"
+                        file="checkstyle-noframes.xsl"/>
     <antcall target="checkstyle-html"/>
   </target>
 
   <target name="checkstyle-html" if="checkstyle.stylesheet.available">
-    <style in="${build.dir}/checkstyle_report.xml" out="${build.dir}/checkstyle_report.html" style="checkstyle-noframes.xsl"/>
+    <style in="${build.dir}/checkstyle_report.xml"
+                        out="${build.dir}/checkstyle_report.html"
+                        style="checkstyle-noframes.xsl"/>
   </target>
 
   <!-- =================================================================== -->
   <!-- Clean targets                                                       -->
   <!-- =================================================================== -->
-  <target name="clean" depends="pre-init" description="Cleans the build directory">
+  <target name="clean" depends="pre-init"
+                        description="Cleans the build directory">
+    <!--
     <delete dir="${build.conf}"/>
+    <delete dir="${build.examples.dir}"/>
+    -->
+    <delete dir="${build.javadocs}"/>
     <delete>
       <fileset dir="${build.dir}" defaultexcludes="no">
         <exclude name="**/CVS"/>
@@ -598,7 +700,8 @@ list of possible build targets.
   </target>
 
 <!--
-  <target name="distclean" depends="clean" description="Cleans the distribution target directories">
+  <target name="distclean" depends="clean"
+                    description="Cleans the distribution target directories">
     <delete dir="${dist.src.dir}"/>
     <delete dir="${dist.bin.dir}"/>
     <delete>
