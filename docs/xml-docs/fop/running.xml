@@ -26,7 +26,7 @@
   </s2>
 
   <s2 title="Starting FOP as an standalone application">
-    <p><code>Fop [options] [-fo|-xml] infile [-xsl file] [-awt|-pdf|-mif|-pcl|-txt|-print] &lt;outfile></code></p>
+    <p><code>Fop [options] [-fo|-xml] infile [-xsl file] [-awt|-pdf|-mif|-pcl|-txt|-svg|-at|-print] &lt;outfile></code></p>
      <p>[OPTIONS]<br/>
      <source>
       -d          debug mode<br/>
@@ -51,6 +51,8 @@
       -mif outfile      input will be rendered as mif file (outfile req'd)<br/>
       -pcl outfile      input will be rendered as pcl file (outfile req'd)<br/>
       -txt outfile      input will be rendered as text file (outfile req'd)<br/>
+      -svg outfile      input will be rendered as an svg slides file (outfile req'd)
+      -at outfile       representation of area tree as XML (outfile req'd)
       -print            input file will be rendered and sent to the printer<br/>
                         see options with "-print help"<br/></source>
     </p>

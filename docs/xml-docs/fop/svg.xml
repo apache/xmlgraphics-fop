@@ -93,6 +93,11 @@ this workaround. The fonts available are the standard pdf fonts and any
 fonts that you have embedded using FOP. The font sizes will be rounded
 to an integer value. In future this will be improved.
     </p>
+    <p>
+Currently transparency is not supported in PDF so many svg images that
+contain effects or graphics with transparent areas will not be displayed
+correctly.
+    </p>
   </s2>
 
   <s2 title="Classes">
@@ -114,7 +119,7 @@ document from an svg. Can be used independantly the same as any Graphics2D.
 </li>
 <li><em>PDFTranscoder</em>
 <br/>
-used to transcode an svg document into a standalone pdf, via
+used by Batik to transcode an svg document into a standalone pdf, via
 PDFDocumentGraphics2D.
 </li>
 </ul>

@@ -16,7 +16,7 @@
   <s2 title="Specifications">
   <ul>
     <li><jump href="http://www.w3.org/TR/2001/REC-xsl-20011015/">XSL-FO Recommendation (15 October 2001)</jump></li>
-    <li><jump href="http://www.renderx.com/Tests/validator/fo2000.dtd.html">A dtd for the XSL-FO CR from November provided by N. Grigoriev from RenderX</jump></li>
+    <li><jump href="http://www.renderx.com/Tests/validator/fo.dtd.html">A dtd for the XSL-FO Recommendation provided by N. Grigoriev from RenderX</jump></li>
     <li><jump href="http://www.w3.org/TR/SVG/">Supported SVG Recommendation (04 September 2001)</jump></li>
     <li><jump href="http://www.w3.org/TR/REC-xml">XML Recommendation</jump></li>
     <li><jump href="http://www.w3.org/TR/xslt">XSLT Recommendation</jump></li>
@@ -39,6 +39,8 @@
     <ul>
       <li><jump href="http://xml.apache.org/mail/fop-dev/">Apache archive of fop-dev@apache.org</jump></li>
       <li><jump href="http://marc.theaimsgroup.com/">External, but easier to browse archive fop-dev@apache.org</jump></li>
+      <li>The Mailing list ARChives (MARC) at the AIMS group: <jump href="http://marc.theaimsgroup.com/?l=fop-dev&amp;r=1&amp;w=2">fop-dev</jump>,
+      <jump href="http://marc.theaimsgroup.com/?l=fop-user&amp;r=1&amp;w=2">fop-user</jump></li>(searchable)
       <li>There is an xsl:fo mailing list: www-xsl-fo@w3.org. Subscription info can be found here: <jump href="http://www.w3.org/Mail/Request">
           http://www.w3.org/Mail/Request</jump>. And the archive can be found here: 
           <jump href="http://lists.w3.org/Archives/Public/www-xsl-fo/">http://lists.w3.org/Archives/Public/www-xsl-fo/</jump></li>
