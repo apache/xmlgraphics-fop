@@ -13,7 +13,7 @@ package org.apache.fop.fo;
  * Constants interface for all writing modes.
  */
 
-public interface WritingMode {
+public interface WritingModes {
     public final static int LR_TB = 1;
     public final static int RL_TB = 2;
     public final static int TB_RL = 3;
