@@ -152,8 +152,10 @@ public class Table extends FObj {
 						if (area instanceof BlockArea) {
 								area.end();
 						}
-
-						area.getIDReferences().createID(id);
+						if (this.areaContainer == null) { // check if anything was previously laid out
+						    area.getIDReferences().createID(id);
+						}
+						
 
 						this.marker = 0;
 
@@ -174,7 +176,7 @@ public class Table extends FObj {
 						area.addDisplaySpace(spaceBefore);
 				}
 
-				if (marker == 0) {
+				if (marker == 0 && areaContainer == null) {
 						// configure id
 						area.getIDReferences().configureID(id, area);
 				}
