@@ -340,12 +340,12 @@ public class PropertyParser extends PropertyTokenizer {
         case FLOAT:
             // Do I need to differentiate here between floats and integers?
             prop = new Numeric
-                    (property, (new Double(currentTokenValue)).doubleValue());
+                    (property, Double.parseDouble(currentTokenValue));
             break;
 
         case INTEGER:
-            prop = IntegerType.makeInteger
-                    (property, (new Long(currentTokenValue)).longValue());
+            prop = new IntegerType
+                    (property, Integer.parseInt(currentTokenValue));
             break;
 
         case PERCENT:
@@ -355,32 +355,29 @@ public class PropertyParser extends PropertyTokenizer {
              * factor by dividing by 100.
              */
             prop = Percentage.makePercentage
-                    (property, (new Double(currentTokenValue)).doubleValue());
+                    (property, Double.parseDouble(currentTokenValue));
             break;
 
         case ABSOLUTE_LENGTH:
             prop = Length.makeLength(property,
-                              (new Double(currentTokenValue)).doubleValue(),
+                              Double.parseDouble(currentTokenValue),
                               currentUnit);
             break;
         case TIME:
-            prop = Time.makeTime(property,
-                              (new Double(currentTokenValue)).doubleValue(),
-                              currentUnit);
+            prop = new Time(property, currentUnit,
+                            Double.parseDouble(currentTokenValue));
             break;
         case FREQ:
-            prop = Frequency.makeFrequency(property,
-                              (new Double(currentTokenValue)).doubleValue(),
-                              currentUnit);
+            prop = new Frequency(property, currentUnit,
+                                 Double.parseDouble(currentTokenValue));
             break;
         case ANGLE:
-            prop = Angle.makeAngle(property,
-                              (new Double(currentTokenValue)).doubleValue(),
-                              currentUnit);
+            prop = new Angle(property, currentUnit,
+                             Double.parseDouble(currentTokenValue));
             break;
         case RELATIVE_LENGTH:
             prop = Ems.makeEms(property,
-                     (new Double(currentTokenValue)).doubleValue());
+                               Double.parseDouble(currentTokenValue));
             break;
 
         case COLORSPEC:
