@@ -115,15 +115,15 @@ public class RTFHandler extends FOInputHandler {
     private RtfDocumentArea docArea;
     private RtfParagraph para;
     private boolean warned = false;
-    private boolean bPrevHeaderSpecified=false;//true, if there has been a
-                                               //header in any page-sequence
-    private boolean bPrevFooterSpecified=false;//true, if there has been a
-                                               //footer in any page-sequence
+    private boolean bPrevHeaderSpecified = false;//true, if there has been a
+                                                 //header in any page-sequence
+    private boolean bPrevFooterSpecified = false;//true, if there has been a
+                                                 //footer in any page-sequence
     private boolean bHeaderSpecified = false;  //true, if there is a header
                                                //in current page-sequence
     private boolean bFooterSpecified = false;  //true, if there is a footer
                                                //in current page-sequence
-    private BuilderContext m_context = new BuilderContext(null);
+    private BuilderContext builderContext = new BuilderContext(null);
 
     private static final String ALPHA_WARNING = "WARNING: RTF renderer is "
         + "veryveryalpha at this time, see class org.apache.fop.rtf.renderer.RTFHandler";
@@ -136,6 +136,7 @@ public class RTFHandler extends FOInputHandler {
 
     /**
      * Creates a new RTF structure handler.
+     * @param doc the Document for which this RTFHandler is processing
      * @param os OutputStream to write to
      */
     public RTFHandler(Document doc, OutputStream os) {
@@ -178,10 +179,10 @@ public class RTFHandler extends FOInputHandler {
     public void startPageSequence(PageSequence pageSeq)  {
         try {
             sect = docArea.newSection();
-            m_context.pushContainer(sect);
+            builderContext.pushContainer(sect);
 
-            bHeaderSpecified=false;
-            bFooterSpecified=false;
+            bHeaderSpecified = false;
+            bFooterSpecified = false;
         } catch (IOException ioe) {
             // FIXME could we throw Exception in all FOInputHandler events?
             log.error("startPageSequence: " + ioe.getMessage());
@@ -193,7 +194,7 @@ public class RTFHandler extends FOInputHandler {
      * @see org.apache.fop.fo.FOInputHandler#endPageSequence(PageSequence)
      */
     public void endPageSequence(PageSequence pageSeq) throws FOPException {
-        m_context.popContainer();
+        builderContext.popContainer();
     }
 
     /**
@@ -205,20 +206,24 @@ public class RTFHandler extends FOInputHandler {
                 // if there is no header in current page-sequence but there has been
                 // a header in a previous page-sequence, insert an empty header.
                 if (bPrevHeaderSpecified && !bHeaderSpecified) {
-                    RtfAttributes attr=new RtfAttributes();
+                    RtfAttributes attr = new RtfAttributes();
                     attr.set(RtfBefore.HEADER);
 
-                    final IRtfBeforeContainer contBefore = (IRtfBeforeContainer)m_context.getContainer(IRtfBeforeContainer.class,true,this);
+                    final IRtfBeforeContainer contBefore =
+                            (IRtfBeforeContainer)builderContext.getContainer
+                                (IRtfBeforeContainer.class, true, this);
                     contBefore.newBefore(attr);
                 }
 
                 // if there is no footer in current page-sequence but there has been
                 // a footer in a previous page-sequence, insert an empty footer.
                 if (bPrevFooterSpecified && !bFooterSpecified) {
-                    RtfAttributes attr=new RtfAttributes();
+                    RtfAttributes attr = new RtfAttributes();
                     attr.set(RtfAfter.FOOTER);
 
-                    final IRtfAfterContainer contAfter = (IRtfAfterContainer)m_context.getContainer(IRtfAfterContainer.class,true,this);
+                    final IRtfAfterContainer contAfter =
+                            (IRtfAfterContainer)builderContext.getContainer
+                                (IRtfAfterContainer.class, true, this);
                     contAfter.newAfter(attr);
                 }
 
@@ -227,40 +232,44 @@ public class RTFHandler extends FOInputHandler {
                     sect.newParagraph().newText(ALPHA_WARNING);
                     warned = true;
                 }
-            } else if(fl.getFlowName().equals("xsl-region-before")) {
-                bHeaderSpecified=true;
-                bPrevHeaderSpecified=true;
+            } else if (fl.getFlowName().equals("xsl-region-before")) {
+                bHeaderSpecified = true;
+                bPrevHeaderSpecified = true;
 
-                final IRtfBeforeContainer c = (IRtfBeforeContainer)m_context.getContainer(IRtfBeforeContainer.class,true,this);
+                final IRtfBeforeContainer c =
+                        (IRtfBeforeContainer)builderContext.getContainer(IRtfBeforeContainer.class,
+                        true, this);
 
                 RtfAttributes beforeAttributes = ((RtfElement)c).getRtfAttributes();
-                if ( beforeAttributes == null ) {
+                if (beforeAttributes == null) {
                     beforeAttributes = new RtfAttributes();
                 }
                 beforeAttributes.set(RtfBefore.HEADER);
 
                 RtfBefore before = c.newBefore(beforeAttributes);
-                m_context.pushContainer(before);
-            } else if(fl.getFlowName().equals("xsl-region-after")) {
-                bFooterSpecified=true;
-                bPrevFooterSpecified=true;
+                builderContext.pushContainer(before);
+            } else if (fl.getFlowName().equals("xsl-region-after")) {
+                bFooterSpecified = true;
+                bPrevFooterSpecified = true;
 
-                final IRtfAfterContainer c = (IRtfAfterContainer)m_context.getContainer(IRtfAfterContainer.class,true,this);
+                final IRtfAfterContainer c =
+                        (IRtfAfterContainer)builderContext.getContainer(IRtfAfterContainer.class,
+                        true, this);
 
                 RtfAttributes afterAttributes = ((RtfElement)c).getRtfAttributes();
-                if ( afterAttributes == null ) {
+                if (afterAttributes == null) {
                     afterAttributes = new RtfAttributes();
                 }
 
                 afterAttributes.set(RtfAfter.FOOTER);
 
                 RtfAfter after = c.newAfter(afterAttributes);
-                m_context.pushContainer(after);
+                builderContext.pushContainer(after);
             }
-        } catch(IOException ioe) {
+        } catch (IOException ioe) {
             log.error("startFlow: " + ioe.getMessage());
             throw new Error(ioe.getMessage());
-        } catch(Exception e) {
+        } catch (Exception e) {
             log.error("startFlow: " + e.getMessage());
             throw new Error(e.getMessage());
         }
@@ -274,11 +283,11 @@ public class RTFHandler extends FOInputHandler {
             if (fl.getFlowName().equals("xsl-region-body")) {
                 //just do nothing
             } else if (fl.getFlowName().equals("xsl-region-before")) {
-                m_context.popContainer();
+                builderContext.popContainer();
             } else if (fl.getFlowName().equals("xsl-region-after")) {
-                m_context.popContainer();
+                builderContext.popContainer();
             }
-        } catch(Exception e){
+        } catch (Exception e) {
             log.error("endFlow: " + e.getMessage());
             throw new Error(e.getMessage());
         }
@@ -296,11 +305,11 @@ public class RTFHandler extends FOInputHandler {
             attrBlockFontWeight(bl, rtfAttr);
 
             IRtfParagraphContainer pc =
-                    (IRtfParagraphContainer)m_context.getContainer
+                    (IRtfParagraphContainer)builderContext.getContainer
                         (IRtfParagraphContainer.class, true, null);
             para = pc.newParagraph(rtfAttr);
 
-            m_context.pushContainer(para);
+            builderContext.pushContainer(para);
         } catch (IOException ioe) {
             // FIXME could we throw Exception in all FOInputHandler events?
             log.error("startBlock: " + ioe.getMessage());
@@ -316,7 +325,7 @@ public class RTFHandler extends FOInputHandler {
      * @see org.apache.fop.fo.FOInputHandler#endBlock(Block)
      */
     public void endBlock(Block bl) {
-        m_context.popContainer();
+        builderContext.popContainer();
     }
 
     /**
@@ -324,40 +333,40 @@ public class RTFHandler extends FOInputHandler {
      */
     public void startTable(Table tbl) {
         // create an RtfTable in the current table container
-        TableContext tableContext = new TableContext(m_context);
+        TableContext tableContext = new TableContext(builderContext);
         RtfAttributes atts = new RtfAttributes();
 
         try {
             final IRtfTableContainer tc =
-                   (IRtfTableContainer)m_context.getContainer(IRtfTableContainer.class,
+                   (IRtfTableContainer)builderContext.getContainer(IRtfTableContainer.class,
                    true, null);
-            m_context.pushContainer(tc.newTable(atts, tableContext));
+            builderContext.pushContainer(tc.newTable(atts, tableContext));
         } catch (Exception e) {
             log.error("startTable:" + e.getMessage());
             throw new Error(e.getMessage());
         }
 
-        m_context.pushTableContext(tableContext);
+        builderContext.pushTableContext(tableContext);
     }
 
     /**
      * @see org.apache.fop.fo.FOInputHandler#endTable(Table)
      */
     public void endTable(Table tbl) {
-        m_context.popTableContext();
-        m_context.popContainer();
+        builderContext.popTableContext();
+        builderContext.popContainer();
     }
 
     /**
     *
-    * @param th TableColumn that is starting;
+    * @param tc TableColumn that is starting;
     */
 
     public void startColumn(TableColumn tc) {
         try {
             Integer iWidth = new Integer(tc.getColumnWidth() / 1000);
-            m_context.getTableContext().setNextColumnWidth(iWidth.toString() + "pt");
-            m_context.getTableContext().setNextColumnRowSpanning(new Integer(0), null);
+            builderContext.getTableContext().setNextColumnWidth(iWidth.toString() + "pt");
+            builderContext.getTableContext().setNextColumnRowSpanning(new Integer(0), null);
         } catch (Exception e) {
             log.error("startColumn: " + e.getMessage());
             throw new Error(e.getMessage());
@@ -367,7 +376,7 @@ public class RTFHandler extends FOInputHandler {
 
      /**
      *
-     * @param th TableColumn that is ending;
+     * @param tc TableColumn that is ending;
      */
 
     public void endColumn(TableColumn tc) {
@@ -405,7 +414,7 @@ public class RTFHandler extends FOInputHandler {
             RtfAttributes atts = TableAttributesConverter.convertRowAttributes (tb.properties,
                    null, null);
 
-            RtfTable tbl = (RtfTable)m_context.getContainer(RtfTable.class, true, this);
+            RtfTable tbl = (RtfTable)builderContext.getContainer(RtfTable.class, true, this);
             tbl.setHeaderAttribs(atts);
         } catch (Exception e) {
             log.error("startBody: " + e.getMessage());
@@ -418,7 +427,7 @@ public class RTFHandler extends FOInputHandler {
      */
     public void endBody(TableBody tb) {
         try {
-            RtfTable tbl = (RtfTable)m_context.getContainer(RtfTable.class, true, this);
+            RtfTable tbl = (RtfTable)builderContext.getContainer(RtfTable.class, true, this);
             tbl.setHeaderAttribs(null);
         } catch (Exception e) {
             log.error("endBody: " + e.getMessage());
@@ -432,7 +441,7 @@ public class RTFHandler extends FOInputHandler {
     public void startRow(TableRow tr) {
         try {
             // create an RtfTableRow in the current RtfTable
-            final RtfTable tbl = (RtfTable)m_context.getContainer(RtfTable.class,
+            final RtfTable tbl = (RtfTable)builderContext.getContainer(RtfTable.class,
                     true, null);
 
             RtfAttributes tblAttribs = tbl.getRtfAttributes();
@@ -440,10 +449,10 @@ public class RTFHandler extends FOInputHandler {
             RtfAttributes atts = TableAttributesConverter.convertRowAttributes(tr.properties,
                     null, tbl.getHeaderAttribs());
 
-            m_context.pushContainer(tbl.newTableRow(atts));
+            builderContext.pushContainer(tbl.newTableRow(atts));
 
             // reset column iteration index to correctly access column widths
-            m_context.getTableContext().selectFirstColumn();
+            builderContext.getTableContext().selectFirstColumn();
         } catch (Exception e) {
             log.error("startRow: " + e.getMessage());
             throw new Error(e.getMessage());
@@ -454,8 +463,8 @@ public class RTFHandler extends FOInputHandler {
      * @see org.apache.fop.fo.FOInputHandler#endRow(TableRow)
      */
     public void endRow(TableRow tr) {
-        m_context.popContainer();
-        m_context.getTableContext().decreaseRowSpannings();
+        builderContext.popContainer();
+        builderContext.getTableContext().decreaseRowSpannings();
     }
 
     /**
@@ -463,8 +472,8 @@ public class RTFHandler extends FOInputHandler {
      */
     public void startCell(TableCell tc) {
         try {
-            TableContext tctx = m_context.getTableContext();
-            final RtfTableRow row = (RtfTableRow)m_context.getContainer(RtfTableRow.class,
+            TableContext tctx = builderContext.getTableContext();
+            final RtfTableRow row = (RtfTableRow)builderContext.getContainer(RtfTableRow.class,
                     true, null);
 
 
@@ -498,7 +507,7 @@ public class RTFHandler extends FOInputHandler {
                 tctx.setCurrentColumnRowSpanning(new Integer(1), null);
             }
 
-            m_context.pushContainer(cell);
+            builderContext.pushContainer(cell);
         } catch (Exception e) {
             log.error("startCell: " + e.getMessage());
             throw new Error(e.getMessage());
@@ -509,8 +518,8 @@ public class RTFHandler extends FOInputHandler {
      * @see org.apache.fop.fo.FOInputHandler#endCell(TableCell)
      */
     public void endCell(TableCell tc) {
-        m_context.popContainer();
-        m_context.getTableContext().selectNextColumn();
+        builderContext.popContainer();
+        builderContext.getTableContext().selectNextColumn();
     }
 
     // Lists
@@ -722,16 +731,18 @@ public class RTFHandler extends FOInputHandler {
     public void startPageNumber(PageNumber pagenum) {
         try {
             //insert page number
-            IRtfPageNumberContainer pageNumberContainer = (IRtfPageNumberContainer)m_context.getContainer(IRtfPageNumberContainer.class,true,this);
-            m_context.pushContainer(pageNumberContainer.newPageNumber());
+            IRtfPageNumberContainer pageNumberContainer =
+                    (IRtfPageNumberContainer)builderContext.getContainer
+                        (IRtfPageNumberContainer.class, true, this);
+            builderContext.pushContainer(pageNumberContainer.newPageNumber());
 
             //set Attribute "WhiteSpaceFalse" in order to prevent the rtf library from
             //stripping the whitespaces. This applies to whole paragraph.
-            if(pageNumberContainer instanceof RtfParagraph) {
-                RtfParagraph para=(RtfParagraph)pageNumberContainer;
+            if (pageNumberContainer instanceof RtfParagraph) {
+                RtfParagraph para = (RtfParagraph)pageNumberContainer;
                 para.getRtfAttributes().set("WhiteSpaceFalse");
             }
-        } catch(Exception e) {
+        } catch (Exception e) {
             log.error("startPageNumber: " + e.getMessage());
             throw new Error(e.getMessage());
         }
@@ -742,6 +753,6 @@ public class RTFHandler extends FOInputHandler {
      * @param pagenum PageNumber that is ending.
      */
     public void endPageNumber(PageNumber pagenum) {
-        m_context.popContainer();
+        builderContext.popContainer();
     }
 }
