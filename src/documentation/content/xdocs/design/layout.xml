@@ -319,9 +319,10 @@ that requires further analysis.</td>
             <td/>
           </tr>
           <tr>
-            <td>Re-parenting retrieved markers</td>
+            <td>Get Markers Working</td>
             <td>High</td>
-            <td/>
+            <td>Currently #### is displayed in place of fo:marker, and also when marker is retrieved, 
+with actual value offset to right</td>
           </tr>
           <tr>
             <td>Absolutely positioned block containers</td>
