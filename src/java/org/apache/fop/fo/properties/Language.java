@@ -20,6 +20,13 @@
  */
 package org.apache.fop.fo.properties;
 
+import java.util.Locale;
+
+import org.apache.fop.datatypes.LanguageType;
+import org.apache.fop.datatypes.PropertyValue;
+import org.apache.fop.fo.PropNames;
+import org.apache.fop.fo.expr.PropertyException;
+
 
 public class Language extends Property  {
     public static final int dataTypes = LANGUAGE_T | NONE | INHERIT;
@@ -34,7 +41,7 @@ public class Language extends Property  {
         return traitMapping;
     }
 
-    public static final int initialValueType = NONE_IT;
+    public static final int initialValueType = LANGUAGE_IT;
 
     public int getInitialValueType() {
         return initialValueType;
@@ -44,6 +51,21 @@ public class Language extends Property  {
 
     public int getInherited() {
         return inherited;
+    }
+    private LanguageType initialValue;
+
+    public PropertyValue getInitialValue(int propindex)
+    throws PropertyException {
+        if (propindex != PropNames.COUNTRY) {
+            throw new PropertyException(
+                    "Called in Language with property other than 'language'");
+        }
+        return initialValue;
+    }
+
+    public Language() throws PropertyException {
+        initialValue = new LanguageType(
+                PropNames.COUNTRY, Locale.getDefault().getLanguage());
     }
 
 }
