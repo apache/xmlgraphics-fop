@@ -472,7 +472,9 @@ public class Driver {
             MessageHandler.errorln("Fatal error: can't find default configuration file");
             System.exit(1);
         }
-        MessageHandler.logln("reading default configuration file");
+        if (errorDump) {
+            MessageHandler.logln("reading default configuration file");
+        }
         ConfigurationReader reader =
           new ConfigurationReader (new InputSource(configfile),
                                    "standard");

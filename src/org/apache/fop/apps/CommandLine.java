@@ -125,12 +125,16 @@ public class CommandLine {
 
     public void run() {
         Driver driver  = new Driver();
+        if (errorDump)  {
+            driver.setErrorDump(true);
+        }
         driver.loadStandardConfiguration("standard");
 //        driver.loadStandardConfiguration("pdf");
         if (userConfigFile != null)  {
             driver.loadUserconfiguration(userConfigFile,"standard");
         }
         driver.setBaseDir(foFile);
+
 
         String version = Version.getVersion();
         MessageHandler.logln(version);
@@ -156,7 +160,6 @@ public class CommandLine {
         }
 
         try {
-            driver.setErrorDump(errorDump);
             driver.setRenderer("org.apache.fop.render.pdf.PDFRenderer",
                                Version.getVersion());
             driver.addElementMapping("org.apache.fop.fo.StandardElementMapping");
