@@ -75,7 +75,7 @@ import org.apache.fop.fo.properties.TextAlignLast; // for enumerated
 public class LinkSet {
 
     /** the destination of the links */
-    String externalDestination;
+    String destination;
 
     /** the set of rectangles */
     Vector rects = new Vector();
@@ -89,14 +89,21 @@ public class LinkSet {
     protected int startIndent;
     protected int endIndent;
 
+    private int linkType;
+
     private Area area;
+
+    public final static int 
+        INTERNAL = 0,  // represents internal link
+        EXTERNAL = 1;  // represents external link    
 
     // property required for alignment adjustments
     int contentRectangleWidth = 0;
 
-    public LinkSet(String externalDest, Area area) {
-	this.externalDestination = externalDest;
+    public LinkSet(String destination, Area area, int linkType) {
+	this.destination = destination;
 	this.area = area;
+        this.linkType = linkType;
     }
     
     public void addRect(Rectangle r, LineArea lineArea) {
@@ -170,7 +177,7 @@ public class LinkSet {
     }
 
     public String getDest() {
-	return this.externalDestination;
+	return this.destination;
     }
 
     public Vector getRects() {
@@ -187,5 +194,9 @@ public class LinkSet {
     
     public Area getArea() {
 	return area;
+    }
+
+    public int getLinkType(){
+        return linkType;
     }
 }
