@@ -54,6 +54,13 @@ able to send the output stream directly to a printer. If your printer
 supports postscript you could send the postscript to the printer. If
 you have a printer that supports PCL you could stream the PCL document
 to your printer.
+On Windows:
+<source><![CDATA[fop ... -ps \\computername\printer or fop ... -pcl \\computername\printer]]></source>
+On UNIX:
+<source><![CDATA[proc = Runtime.getRuntime().exec("lp -d" + print_queue + " -o -dp -");
+out = proc.getOutputStream();]]></source>
+And give the OutputStream (out) to the PCLRenderer and it happily sends the
+PCL to the AIX print queue.
     </p>
 </s2>
 <s2 title="PDF">

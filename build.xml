@@ -84,8 +84,9 @@ These are the meaningful targets for this build file:
  - package [default] -> creates ./build/fop.jar
  - usage -> shows a help screen
  - codegen -> generates needed java sources from xml resources
- - docs -> generates the HTML documentation in ./build/docs
+ - htmldoc -> generates the HTML documentation in ./build/docs/html-docs
  - javadocs -> generates the API documentation in ./build/javadocs
+ - pdfdoc -> generates the PDF documentation in ./build/docs/xml-docs
  - dist -> generates the Fop distribution
  - clean -> restores the distribution to its original and clean state 
             (excepting dist files)
@@ -308,8 +309,9 @@ Sometimes ant gives out this warnings, but the build is finished without any pro
     <echo message="   package   --> generates the ${name}.jar file (default)"/>
     <echo message="   codegen   --> generates the java files from the xml resources"/>
     <echo message="   compile   --> compiles the source code"/>
-    <echo message="   docs      --> generates the HTML documentation"/>
+    <echo message="   htmldoc   --> generates the HTML documentation"/>
     <echo message="   javadocs  --> generates the API documentation (java 1.2 only)"/>
+    <echo message="   pdfdoc    --> generates the PDF documentation"/>
     <echo message="   dist      --> generates the ${Name} distribution as .tar.gz and .zip"/>
     <echo message="   clean     --> cleans up the directory (except for the dist files)"/>
     <echo message="   distclean --> cleans up the directory"/>
@@ -537,7 +539,10 @@ Sometimes ant gives out this warnings, but the build is finished without any pro
   </target>
 
   <target name="html" depends="javadocs, htmldoc"/>
-  <target name="htmldoc" depends="prepare-src">
+  
+  <target name="htmldoc" depends= "html-fop, html-design"/>
+
+  <target name="html-fop" depends="prepare-src">
     <copy file="${xdocs}/fop.xml"
           tofile="${xdocs}/book.xml"
           filtering="on"/>
@@ -545,9 +550,29 @@ Sometimes ant gives out this warnings, but the build is finished without any pro
       <classpath refid="libs-build-classpath"/>
       <arg line="targetDirectory=${docs} ${xdocs}/book.xml ${skins}"/>
     </java>
+  </target>
+
+  <target name="html-design" depends="prepare-src, html-newdesign,
+	  html-altdesign, html-understanding"/>
+
+  <target name="html-newdesign" depends="prepare-src">
     <java classname="${doc.generator}" fork="yes">
       <classpath refid="libs-build-classpath"/>
       <arg line="targetDirectory=${docs}/design/ docs/design/book.xml ${skins}"/>
+    </java>
+  </target>
+
+  <target name="html-altdesign" depends="prepare-src">
+    <java classname="${doc.generator}" fork="yes">
+      <classpath refid="libs-build-classpath"/>
+      <arg line="targetDirectory=${docs}/design/alt.design/ docs/design/alt.design/book.xml ${skins}"/>
+    </java>
+  </target>
+
+  <target name="html-understanding" depends="prepare-src">
+    <java classname="${doc.generator}" fork="yes">
+      <classpath refid="libs-build-classpath"/>
+      <arg line="targetDirectory=${docs}/design/understanding docs/design/understanding/book.xml ${skins}"/>
     </java>
   </target>
 
