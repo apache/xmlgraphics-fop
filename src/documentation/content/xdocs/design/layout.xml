@@ -339,6 +339,11 @@ that requires further analysis.</td>
             <td/>
           </tr>
           <tr>
+            <td>Fix break-* properties</td>
+            <td>High</td>
+            <td/>
+          </tr>
+          <tr>
             <td>Footnotes</td>
             <td>Medium</td>
             <td/>
