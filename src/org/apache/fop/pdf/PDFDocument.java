@@ -766,7 +766,7 @@ public class PDFDocument {
         */
     public PDFICCStream makePDFICCStream() {
         PDFICCStream iccStream = new PDFICCStream(++this.objectcount);
-        this.objects.addElement(iccStream);
+        this.objects.add(iccStream);
         return iccStream;
     }
     
