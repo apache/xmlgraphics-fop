@@ -59,7 +59,6 @@ package org.apache.fop.apps;
  * (apparently) redundant copies code, generally cleaned up, and
  * added interfaces to the new Render API.
  */
-import org.xml.sax.XMLReader;
 import java.awt.print.PrinterJob;
 import org.apache.fop.render.awt.AWTPrintRenderer;
 
@@ -88,13 +87,6 @@ public class PrintStarter extends CommandLineStarter {
     public void run() throws FOPException {
         Driver driver = new Driver();
 
-        String version = Version.getVersion();
-        //log.debug(version);
-
-        XMLReader parser = inputHandler.getParser();
-
-        setParserFeatures(parser);
-
         PrinterJob pj = PrinterJob.getPrinterJob();
         if (System.getProperty("dialog") != null) {
             if (!pj.printDialog()) {
@@ -110,7 +102,7 @@ public class PrintStarter extends CommandLineStarter {
 
         try {
             driver.setRenderer(renderer);
-            driver.render(parser, inputHandler.getInputSource());
+            driver.render(inputHandler);
         } catch (Exception e) {
             if (e instanceof FOPException) {
                 throw (FOPException)e;

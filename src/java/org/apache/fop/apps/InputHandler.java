@@ -136,6 +136,22 @@ public abstract class InputHandler {
      * @throws FOPException if processing this InputHandler fails
      */
     public abstract void run(Driver driver) throws FOPException;
-    
+
+    /**
+     * Sets the parser features on an XMLReader
+     * @param parser XMLReader to set features on
+     * @throws FOPException if the XMLReader doesn't support the feature that
+     * need to be set
+     */
+    public static void setParserFeatures(XMLReader parser) throws FOPException {
+        try {
+            parser.setFeature("http://xml.org/sax/features/namespace-prefixes",
+                              true);
+        } catch (SAXException e) {
+            throw new FOPException("Error: You need a parser which allows the"
+                   + " http://xml.org/sax/features/namespace-prefixes"
+                   + " feature to be set to true to support namespaces", e);
+        }
+    }
 }
 

@@ -553,6 +553,19 @@ public class Driver implements LogEnabled {
     }
 
     /**
+     * Render the FO document read by a SAX Parser from an InputHandler
+     * @param InputHandler the input handler containing the source and
+     * parser information.
+     * @throws FOPException if anything goes wrong.
+     */
+    public synchronized void render(InputHandler inputHandler)
+                throws FOPException {
+        XMLReader parser = inputHandler.getParser();
+        inputHandler.setParserFeatures(parser);
+        render(parser, inputHandler.getInputSource());
+    }
+
+    /**
      * Render the FO document read by a SAX Parser from an InputSource.
      * @param parser the SAX parser.
      * @param source the input source the parser reads from.

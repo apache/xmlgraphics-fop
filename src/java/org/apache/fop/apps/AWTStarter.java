@@ -62,9 +62,6 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.Locale;
 
-// SAX
-import org.xml.sax.XMLReader;
-
 /**
  * AWT Viewer starter.
  * Originally contributed by:
@@ -77,7 +74,6 @@ public class AWTStarter extends CommandLineStarter {
     private PreviewDialog frame;
     private Translator translator;
     private Driver driver;
-    private XMLReader parser;
 
     /**
      * Construct an AWTStarter
@@ -103,11 +99,6 @@ public class AWTStarter extends CommandLineStarter {
         renderer.setComponent(frame);
         driver = new Driver();
         driver.setRenderer(renderer);
-        parser = inputHandler.getParser();
-        if (parser == null) {
-            throw new FOPException("Unable to create SAX parser");
-        }
-        setParserFeatures(parser);
     }
 
     /**
@@ -118,7 +109,7 @@ public class AWTStarter extends CommandLineStarter {
         driver.reset();
         try {
             frame.setStatus(translator.getString("Status.Build.FO.tree"));
-            driver.render(parser, inputHandler.getInputSource());
+            driver.render(inputHandler);
             frame.setStatus(translator.getString("Status.Show"));
             frame.showPage();
         } catch (Exception e) {

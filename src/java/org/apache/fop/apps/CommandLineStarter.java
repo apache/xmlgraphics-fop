@@ -50,9 +50,6 @@
  */ 
 package org.apache.fop.apps;
 
-// SAX
-import org.xml.sax.XMLReader;
-
 // Java
 import java.io.BufferedOutputStream;
 import java.io.FileOutputStream;
@@ -85,15 +82,9 @@ public class CommandLineStarter extends Starter {
      */
     public void run() throws FOPException {
         String version = Version.getVersion();
-
         getLogger().info(version);
-
-        XMLReader parser = inputHandler.getParser();
-        setParserFeatures(parser);
-
         Driver driver = new Driver();
         setupLogger(driver);
-        driver.initialize();
 
         try {
             driver.setRenderer(commandLineOptions.getRenderer());
@@ -105,7 +96,7 @@ public class CommandLineStarter extends Starter {
                     driver.getRenderer().setOptions(
                   commandLineOptions.getRendererOptions());
                 }
-                driver.render(parser, inputHandler.getInputSource());
+                driver.render(inputHandler);
             } finally {
                 bos.close();
             }

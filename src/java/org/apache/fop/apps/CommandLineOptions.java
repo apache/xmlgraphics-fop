@@ -678,7 +678,7 @@ public class CommandLineOptions {
             + "                    see options with \"-print help\" \n\n"
             + " [Examples]\n" + "  Fop foo.fo foo.pdf \n"
             + "  Fop -fo foo.fo -pdf foo.pdf (does the same as the previous line)\n"
-            + "  Fop -xsl foo.xsl -xml foo.xml -pdf foo.pdf\n"
+            + "  Fop -xml foo.xml -xsl foo.xsl -pdf foo.pdf\n"
             + "  Fop foo.fo -mif foo.mif\n"
             + "  Fop foo.fo -rtf foo.rtf\n"
             + "  Fop foo.fo -print or Fop -print foo.fo \n"

@@ -70,8 +70,6 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
-import org.xml.sax.XMLReader;
-import org.xml.sax.SAXException;
 
 /**
  * TestConverter is used to process a set of tests specified in
@@ -287,12 +285,8 @@ public class TestConverter extends AbstractLogEnabled {
                                                              + xsl));
             }
 
-            XMLReader parser = inputHandler.getParser();
-            setParserFeatures(parser);
-
             Driver driver = new Driver();
             setupLogger(driver, "fop");
-            driver.initialize();
             FOUserAgent userAgent = new FOUserAgent();
             userAgent.setBaseURL(baseURL);
             driver.setUserAgent(userAgent);
@@ -316,7 +310,7 @@ public class TestConverter extends AbstractLogEnabled {
                                        new java.io.FileOutputStream(new File(destdir,
                                        outname + (outputPDF ? ".pdf" : ".at.xml")))));
             getLogger().debug("ddir:" + destdir + " on:" + outname + ".pdf");
-            driver.render(parser, inputHandler.getInputSource());
+            driver.render(inputHandler);
 
             // check difference
             if (compare != null) {
@@ -360,16 +354,6 @@ public class TestConverter extends AbstractLogEnabled {
         }
 
         return false;
-    }
-
-    private void setParserFeatures(XMLReader parser) throws FOPException {
-        try {
-            parser.setFeature("http://xml.org/sax/features/namespace-prefixes",
-                              true);
-        } catch (SAXException e) {
-            throw new FOPException("Error in setting up parser feature namespace-prefixes\n"
-                                   + "You need a parser which supports SAX version 2", e);
-        }
     }
 
     private Node locateResult(Node testcase, String id) {
