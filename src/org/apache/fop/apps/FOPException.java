@@ -85,7 +85,7 @@ public class FOPException extends Exception {
                 _exception.printStackTrace(stream);
             }
             if (getRootException() != null) {
-                System.err.println(EXCEPTION_SEPARATOR);
+                stream.println(EXCEPTION_SEPARATOR);
                 getRootException().printStackTrace(stream);
             }
         }
@@ -99,7 +99,7 @@ public class FOPException extends Exception {
                 _exception.printStackTrace(writer);
             }
             if (getRootException() != null) {
-                System.err.println(EXCEPTION_SEPARATOR);
+                writer.println(EXCEPTION_SEPARATOR);
                 getRootException().printStackTrace(writer);
             }
         }
