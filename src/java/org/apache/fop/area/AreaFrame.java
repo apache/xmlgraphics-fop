@@ -42,30 +42,25 @@ public class AreaFrame extends AreaGeometry {
     /**
      * @param writingMode
      */
-    public AreaFrame(Area area, int writingMode) {
-        area.super(writingMode);
+    public AreaFrame(Area area) {
+        area.super(area.frameWritingMode);
+        // contents and contentOffset remain null
     }
 
     /**
-     * @param writingMode
-     * @param ipOrigin
-     * @param bpOrigin
-     * @param ipDim
-     * @param bpDim
+     * Contents and offset remain null
      */
-    public AreaFrame(Area area, int writingMode,
+    public AreaFrame(Area area,
             double ipOrigin, double bpOrigin, double ipDim, double bpDim) {
-        area.super(writingMode, ipOrigin, bpOrigin, ipDim, bpDim);
+        area.super(area.frameWritingMode, ipOrigin, bpOrigin, ipDim, bpDim);
     }
 
     /**
      * Instantiates a frame with 0-width edges.
      * @param contents the contained rectangle
      */
-    public AreaFrame(Area area, int writingMode, AreaGeometry contents) {
-        area.super(writingMode);
-        // TODO transform contents according to contents writing mode
-        int contentsWMode = contents.getWritingMode();
+    public AreaFrame(Area area, AreaGeometry contents) {
+        area.super(area.frameWritingMode);
         setRect(contents);
         this.contents = contents;
         this.contentOffset = new Point2D.Double();
@@ -86,10 +81,10 @@ public class AreaFrame extends AreaGeometry {
      * @param contentOffset the offset to the origin point of the framed
      * rectangle from the origin point of <code>this</code> framing rectangle.
      */
-    public AreaFrame(Area area, int writingMode,
+    public AreaFrame(Area area,
             double ipOrigin, double bpOrigin, double ipDim, double bpDim,
             AreaGeometry contents, Point2D contentOffset) {
-        area.super(writingMode, ipOrigin, bpOrigin, ipDim,  bpDim);
+        area.super(area.frameWritingMode, ipOrigin, bpOrigin, ipDim,  bpDim);
         this.contents = contents;
         this.contentOffset = contentOffset;
     }
@@ -105,12 +100,16 @@ public class AreaFrame extends AreaGeometry {
      * @param contentOffset offset from origin of the framing rectangle to the
      * origin of the framed rectangle
      */
-    public AreaFrame(Area area, int writingMode,
+    public AreaFrame(Area area,
             Rectangle2D rect, AreaGeometry contents,
             Point2D contentOffset) {
-        this(area, writingMode, rect.getX(), rect.getY(),
-                rect.getWidth(), rect.getHeight(),
-                contents, contentOffset);
+        area.super(area.frameWritingMode, rect);
+        this.contents = contents;
+        this.contentOffset = contentOffset;
+    }
+
+    public int getWritingMode() {
+        return writingMode;
     }
 
     /**
