@@ -24,10 +24,8 @@
     <faqs label="FAQs" href="faq.html"/>
     <maillist label="Mailing Lists" href="maillist.html"/>
     <license label="License" href="license.html"/>
-    <!--
     <all_site label="Full HTML" href="wholesite.html"/>
     <all_sitePDF label="Full PDF" href="wholesite.pdf"/>
-    -->
   </about>
 
   <using label="Using FOP">
@@ -40,7 +38,7 @@
   </using>
 
   <features label="Features">
-    <compliance label="Compliance" href="compliance.html"/>
+    <compliance label="Compliance" href="compliance.html" description="FOP Compliance"/>
     <ouput label="Output Targets" href="output.html"/>
     <pdfencryption label="PDF Encryption" href="pdfencryption.html"/>
     <graphics label="Graphics" href="graphics.html"/>
@@ -61,7 +59,6 @@
     <news label="News" href="news.html"/>
     <team label="Who We Are" href="team.html"/>
     <status label="Status" href="status.html"/>
-    <logocontest label="Logo Contest" href="logocontest.html"/>
     <changes label="Changes" href="changes.html"/>
     <todo label="Todo" href="todo.html"/>
   </project>
@@ -133,31 +130,6 @@
       <useragent label="User Agent" href="useragent.html"/>
     </miscellaneous>
   </design>
-
-  <altdesign label="Alt Design" href="design/alt.design/" tab="altdesign">
-    <about label="About">
-      <intro label="Introduction" href="index.html"/>
-      <coroutines label="co-routines" href="coroutines.html"/>
-      <galleys label="galleys" href="galleys.html"/>
-      <footnotes label="footnotes" href="footnotes.html"/>
-      <keeps label="keeps" href="keeps.html"/>
-      <spaces label="space-specifiers" href="spaces.html"/>
-    </about>
-
-    <input-parsing label="Input Parsing">
-      <xml-parsing label="XML Parsing" href="xml-parsing.html"/>
-    </input-parsing>
-
-    <properties label="Properties">
-      <alt-properties label="alt.properties" href="properties/introduction.html"/>
-    </properties>
-
-    <other label="Other">
-      <traits label="Traits" href="traits.html"/>
-      <compound-properties label="Compound Types" href="compound-properties.html"/>
-      <user-agent-refs label="User agent refs" href="user-agent-refs.html"/>
-    </other>
-  </altdesign>
 
   <!-- references label="Related Projects">
     <forrest label="Apache Forrest" href="http://forrest.apache.org/"/>
