@@ -277,19 +277,15 @@ Adobe Framemaker. This is currently not fully implemented.
 <section id="txt">
   <title>TXT</title>
     <p>
-Text as you could imagine does not work very well. It is an output format
-that you should expect bad results. The main purpose of this is to get
-a quick and dirty view of the document and the text inside it.
-    </p>
-    <p>
-The TXTRenderer is a FOP renderer that produces plain ASCII text output
+The text renderer produces plain ASCII text output
 that attempts to match the output of the PDFRenderer as closely as
 possible. This was originally developed to accommodate an archive system
-that could only accept plain text files. Of course when limited to plain
-fixed pitch text the output does not always look very good.
+that could only accept plain text files, and is primarily useful for getting
+a quick-and-dirty view of the document text. The renderer is very limited,
+so do not be surprised if it gives unsatisfactory results.
     </p>
     <p>
-The TXTRenderer works with a fixed size page buffer. The size of this
+The Text renderer works with a fixed size page buffer. The size of this
 buffer is controlled with the textCPI and textLPI public variables.
 The textCPI is the effective horizontal characters per inch to use.
 The textLPI is the vertical lines per inch to use. From these values
@@ -298,6 +294,13 @@ The formatting objects to be rendered are then mapped to this grid.
 Graphic elements (lines, borders, etc) are assigned a lower priority
 than text, so text will overwrite any graphic element representations.
     </p>
+    <p>Because FOP lays the text onto a grid during layout, there are frequently extra or missing spaces between characters and lines, which is generally unsatisfactory.
+Users have reported that the optimal settings to avoid such spacing problems are:</p>
+    <ul>
+      <li>font-family="Courier"</li>
+      <li>font-size="7.3pt"</li>
+      <li>line-height="10.5pt"</li>
+    </ul>
 </section>
 
     </body>
