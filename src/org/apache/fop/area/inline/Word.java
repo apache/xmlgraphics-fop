@@ -13,6 +13,7 @@ public class Word extends InlineArea {
 
     // character info: font, char spacing, colour, baseline
     String word;
+    int iWSadjust = 0;
 
     public void render(Renderer renderer) {
         renderer.renderWord(this);
@@ -24,5 +25,13 @@ public class Word extends InlineArea {
 
     public String getWord() {
         return word;
+    }
+
+    public int getWSadjust() {
+	return iWSadjust;
+    }
+
+    public void setWSadjust(int iWSadjust) {
+	this.iWSadjust = iWSadjust;
     }
 }

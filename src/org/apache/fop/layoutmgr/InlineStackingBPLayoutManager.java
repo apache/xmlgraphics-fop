@@ -27,20 +27,6 @@ import java.util.HashMap;
  */
 public class InlineStackingBPLayoutManager extends AbstractBPLayoutManager {
 
-    /**
-     * Private class to store information about a lower-level BreakPosition.
-     * Note: fields are directly readable in this class
-     */
-    private static class WrappedPosition implements BreakPoss.Position {
-        BPLayoutManager m_childLM;
-        BreakPoss.Position m_childPosition;
-
-        WrappedPosition(BPLayoutManager childLM,
-			BreakPoss.Position childPosition) {
-            m_childLM = childLM;
-            m_childPosition = childPosition;
-        }
-    }
 
     private static class StackingIter extends PositionIterator {
 
@@ -49,11 +35,11 @@ public class InlineStackingBPLayoutManager extends AbstractBPLayoutManager {
 	}
 
 	protected BPLayoutManager getLM(Object nextObj) {
-	    return ((WrappedPosition)nextObj).m_childLM;
+	    return ((Position)nextObj).getPosition().getLM();
 	}
 
-	protected BreakPoss.Position getPos(Object nextObj) {
-	    return ((WrappedPosition)nextObj).m_childPosition;
+	protected Position getPos(Object nextObj) {
+	    return ((Position)nextObj).getPosition();
 	}
 
     }
@@ -73,10 +59,13 @@ public class InlineStackingBPLayoutManager extends AbstractBPLayoutManager {
     private InlineProps m_inlineProps = null;
     private BorderAndPadding m_borderProps = null;
 
-    private InlineParent m_inlineArea;
+    private Area m_currentArea; // LineArea or InlineParent
 
     private BreakPoss m_prevBP;
     private LayoutContext m_childLC ;
+
+    private BPLayoutManager m_lastChildLM=null; // Set when return last breakposs
+    private boolean m_bAreaCreated = false;
 
     /** Used to store previous content IPD for each child LM. */
     private HashMap m_hmPrevIPD = new HashMap();
@@ -111,6 +100,7 @@ public class InlineStackingBPLayoutManager extends AbstractBPLayoutManager {
 	return new MinOptMax(iBP);
     }
 
+
     protected boolean hasLeadingFence(boolean bNotFirst) {
 	int iBP = m_borderProps.getPadding(BorderAndPadding.START, bNotFirst);
 	iBP += m_borderProps.getBorderWidth(BorderAndPadding.START, bNotFirst);
@@ -124,24 +114,35 @@ public class InlineStackingBPLayoutManager extends AbstractBPLayoutManager {
     }
     
 
-    /** Reset position for returning next BreakPossibility. */
+    /**
+     * Reset position for returning next BreakPossibility.
+     * @param prevPos a Position returned by this layout manager
+     * representing a potential break decision.
+     */
 
-    public void resetPosition(BreakPoss.Position prevPos) {
-	WrappedPosition wrappedPos = (WrappedPosition)prevPos;
-	if (wrappedPos != null) {
-	    // Back up the layout manager iterator
-	    reset(wrappedPos.m_childLM, wrappedPos.m_childPosition);
+    public void resetPosition(Position prevPos) {
+	if (prevPos != null) {
+	    // ASSERT (prevPos.getLM() == this)
+	    if (prevPos.getLM() != this) {
+		System.err.println("InlineStackingBPLayoutManager.resetPosition: " +
+				   "LM mismatch!!!");
+	    }
+	    // Back up the child LM Position
+	    Position childPos = prevPos.getPosition();
+	    reset(childPos);
 	    if (m_prevBP != null && 
-		m_prevBP.getLayoutManager() !=wrappedPos.m_childLM) {
+		m_prevBP.getLayoutManager() !=childPos.getLM()) {
 		m_childLC = null;
 	    }
-	    m_prevBP = new BreakPoss(wrappedPos.m_childLM,
-				     wrappedPos.m_childPosition);
+	    m_prevBP = new BreakPoss(childPos);
 	}
 	else {
 	    // Backup to start of first child layout manager
 	    m_prevBP = null;
-	    super.resetPosition(prevPos);
+	    // super.resetPosition(prevPos);
+	    reset(prevPos);
+	    // If any areas created, we are restarting!
+	    m_bAreaCreated = false;
 	}
 	// Do we need to reset some context like pending or prevContent?
 	// What about m_prevBP?
@@ -177,18 +178,18 @@ public class InlineStackingBPLayoutManager extends AbstractBPLayoutManager {
     }
 
 
-    public BreakPoss getNextBreakPoss(LayoutContext lc,
-				      BreakPoss.Position pbp) {
+    public BreakPoss getNextBreakPoss(LayoutContext lc, Position pbp) {
         // Get a break from currently active child LM
         BreakPoss bp =null;
 	BPLayoutManager curLM ;
-	SpaceSpecifier leadingSpace = lc.getPendingSpace();
+	SpaceSpecifier leadingSpace = lc.getLeadingSpace();
 
 	if (lc.startsNewArea()) {
 	    // First call to this LM in new parent "area", but this may
 	    // not be the first area created by this inline
 	    m_childLC = new LayoutContext(lc);
-	    lc.getPendingSpace().addSpace(m_inlineProps.spaceStart);
+	    lc.getLeadingSpace().addSpace(m_inlineProps.spaceStart);
+
 	    // Check for "fence"
 	    if (hasLeadingFence(!lc.isFirstArea())) {
 		// Reset leading space sequence for child areas
@@ -228,7 +229,18 @@ public class InlineStackingBPLayoutManager extends AbstractBPLayoutManager {
             // Alternative is to return a BP with the isLast flag set
         }
         else {
-            return makeBreakPoss(bp, lc, (getChildLM() == null));
+	    boolean bIsLast = false;
+	    if (getChildLM() == null) {
+		bIsLast = true;
+		setFinished(true);
+	    }
+	    else if (bp.couldEndLine()) {
+		/* Child LM ends with suppressible spaces. See if it could
+		 * end this LM's area too. Child LM finish flag is NOT set!
+		 */
+		bIsLast = !hasMoreLM(bp.getLayoutManager());
+	    }
+            return makeBreakPoss(bp, lc, bIsLast);
         }
     }
 
@@ -242,15 +254,15 @@ public class InlineStackingBPLayoutManager extends AbstractBPLayoutManager {
 	if (bStartParent) {
 	    // Start of a new line area or inline parent area
 	    childLC.setFlags(LayoutContext.FIRST_AREA, bFirstChildBP );
-	    childLC.setPendingSpace(leadingSpace);
+	    childLC.setLeadingSpace(leadingSpace);
 	}
 	else if (bFirstChildBP) {
 	    // Space-after sequence from previous "area"
 	    childLC.setFlags(LayoutContext.FIRST_AREA, true);
-	    childLC.setPendingSpace(prevBP.getTrailingSpace());
+	    childLC.setLeadingSpace(prevBP.getTrailingSpace());
 	}
 	else {
-	    childLC.setPendingSpace(null);
+	    childLC.setLeadingSpace(null);
 	}
 
     }
@@ -258,12 +270,16 @@ public class InlineStackingBPLayoutManager extends AbstractBPLayoutManager {
 
     private BreakPoss makeBreakPoss(BreakPoss bp, LayoutContext lc,
 				   boolean bIsLast) {
-        WrappedPosition inlbp =
-            new WrappedPosition(bp.getLayoutManager(), bp.getPosition());
-	BreakPoss myBP = new BreakPoss(this, inlbp, bp.getFlags());
+        NonLeafPosition inlbp =
+            new NonLeafPosition(this, bp.getPosition());
+	BreakPoss myBP = new BreakPoss(inlbp, bp.getFlags());
 
 	myBP.setFlag(BreakPoss.ISFIRST, lc.isFirstArea());
 	myBP.setFlag(BreakPoss.ISLAST, bIsLast);
+
+	if (bIsLast) {
+	    m_lastChildLM = bp.getLayoutManager();
+	}
 
         // Update dimension information for our allocation area,
 	// including child areas
@@ -276,7 +292,7 @@ public class InlineStackingBPLayoutManager extends AbstractBPLayoutManager {
 					  lc.startsNewArea(), lc.isFirstArea()); 
 
 	if (lc.startsNewArea()) {
-	    myBP.setLeadingSpace(lc.getPendingSpace());
+	    myBP.setLeadingSpace(lc.getLeadingSpace());
 	}
 
 
@@ -288,6 +304,12 @@ public class InlineStackingBPLayoutManager extends AbstractBPLayoutManager {
 	    bpDim.add(bp.resolveTrailingSpace(false));
 	    trailingSpace = new SpaceSpecifier(false);
 	}
+	else {
+	    // Need this to avoid modifying pending space specifiers
+	    // on previous BP from child as we use these on the next
+	    // call in this LM
+	    trailingSpace = (SpaceSpecifier)trailingSpace.clone();
+	}
 	trailingSpace.addSpace(m_inlineProps.spaceEnd);
 	myBP.setTrailingSpace(trailingSpace);
 
@@ -298,9 +320,9 @@ public class InlineStackingBPLayoutManager extends AbstractBPLayoutManager {
 					      m_extraBPD));
 
 	m_prevBP = bp;
-        if (bIsLast) {
-	    setFinished(true);  // Our last area, so indicate done
-        }
+//         if (bIsLast) {
+// 	    setFinished(true);  // Our last area, so indicate done
+//         }
 	return myBP;
     }
 
@@ -339,15 +361,16 @@ public class InlineStackingBPLayoutManager extends AbstractBPLayoutManager {
     }
 
     public void getWordChars(StringBuffer sbChars,
-				BreakPoss.Position bp1, BreakPoss.Position bp2) {
-	WrappedPosition endPos = (WrappedPosition)bp2;
+			     Position bp1, Position bp2) {
+	Position endPos = ((NonLeafPosition)bp2).getPosition();
+	Position prevPos = null;
 	if (bp1 != null) {
-	    WrappedPosition prevPos = (WrappedPosition)bp1;
-	    if (prevPos.m_childLM == endPos.m_childLM) {
-		bp1 = prevPos.m_childPosition;
+	    prevPos = ((NonLeafPosition)bp1).getPosition();
+	    if (prevPos.getLM() != endPos.getLM()) {
+		prevPos = null;
 	    }
 	}
-	endPos.m_childLM.getWordChars(sbChars, bp1, endPos.m_childPosition);
+	endPos.getLM().getWordChars(sbChars, prevPos, endPos);
     }
 
     /******
@@ -358,43 +381,125 @@ public class InlineStackingBPLayoutManager extends AbstractBPLayoutManager {
     /**
      * Generate and add areas to parent area.
      * Set size of each area.
-     * @param parentIter Iterator over BreakPoss.Position information returned
+     * @param parentIter Iterator over Position information returned
      * by this LayoutManager.
      * @param dSpaceAdjust Factor controlling how much extra space to add
      * in order to justify the line.
      */
-    public void addAreas(PositionIterator parentIter, double dSpaceAdjust) {
-        // Make areas from start to end
-        // Update childLM based on bpEnd
-        // It might be a previous sibling of the current one!
+    public void addAreas(PositionIterator parentIter, LayoutContext context) {
+        setCurrentArea(new InlineParent());
 
-        m_inlineArea = new InlineParent();
+	setChildContext(new LayoutContext(context)); // Store current value
+
+	// If has fence, make a new leadingSS
+	/* How to know if first area created by this LM? Keep a count and
+	 * reset it if getNextBreakPoss() is called again.
+	 */
+	if (hasLeadingFence(m_bAreaCreated)) {
+	    getContext().setLeadingSpace(new SpaceSpecifier(false));
+	    getContext().setFlags(LayoutContext.RESOLVE_LEADING_SPACE, true);
+	}
+	else {
+	    getContext().setFlags(LayoutContext.RESOLVE_LEADING_SPACE, false);
+	}
+
+	context.getLeadingSpace().addSpace(m_inlineProps.spaceStart);
+
        
-	// Note: if first, bpStart is perhaps null????
-	// If we are first in parent, set ISFIRST...
-
-
 	// posIter iterates over positions returned by this LM
 	StackingIter childPosIter = new StackingIter(parentIter);
+	BPLayoutManager prevLM = null;
 	BPLayoutManager childLM ;
 	while  ((childLM = childPosIter.getNextChildLM())!= null) {
- 	    childLM.addAreas(childPosIter, dSpaceAdjust);
+	    //getContext().setTrailingSpace(new SpaceSpecifier(false));
+ 	    childLM.addAreas(childPosIter, getContext());
+	    getContext().setLeadingSpace(getContext().getTrailingSpace());
+	    getContext().setFlags(LayoutContext.RESOLVE_LEADING_SPACE, true);
+	    prevLM = childLM;
 	}
+
+	/* If has trailing fence, resolve trailing space specs from descendants.
+	 * Otherwise, propagate any trailing space specs to parent LM via
+	 * the context object.
+	 * If the last child LM called return ISLAST in the context object
+	 * and it is the last child LM for this LM, then this must be 
+	 * the last area for the current LM also.
+	 */
+	boolean bIsLast = (getContext().isLastArea() && prevLM == m_lastChildLM);
+	if (hasTrailingFence(bIsLast)) {
+	    addSpace(getCurrentArea(),
+		     getContext().getTrailingSpace().resolve(false),
+		     getContext().getSpaceAdjust());
+	    context.setTrailingSpace(new SpaceSpecifier(false));
+	}
+	else {
+	    // Propagate trailing space-spec sequence to parent LM in context
+	    context.setTrailingSpace(getContext().getTrailingSpace());
+	}
+	// Add own trailing space to parent context (or set on area?)
+	context.getTrailingSpace().addSpace(m_inlineProps.spaceEnd);
 	
-	parentLM.addChild(m_inlineArea);
+	// Add border and padding to current area and set flags (FIRST, LAST ...)
+	TraitSetter.setBorderPaddingTraits(getCurrentArea(), m_borderProps,
+					   m_bAreaCreated, !bIsLast);
+	parentLM.addChild(getCurrentArea());	
+	context.setFlags(LayoutContext.LAST_AREA, bIsLast);
+	m_bAreaCreated = true;
     }
 
+    protected Area getCurrentArea() {
+	return m_currentArea;
+    }
 
-//     protected Area createArea() {
-//         return new InlineParent();
-//     }
+    protected void setCurrentArea(Area area) {
+	m_currentArea = area;
+    }
+
 
     public boolean addChild(Area childArea) {
 	// Make sure childArea is inline area
 	if (childArea instanceof InlineArea) {
-	    m_inlineArea.addChild((InlineArea)childArea);
+	    Area parent = getCurrentArea();
+ 	    if (getContext().resolveLeadingSpace()) {
+ 		addSpace(parent,
+ 			 getContext().getLeadingSpace().resolve(false),
+ 			 getContext().getSpaceAdjust());
+ 	    }
+	    parent.addChild(childArea);
 	}
 	return false;
+    }
+
+    protected void setChildContext(LayoutContext lc) {
+	m_childLC = lc;
+    }
+
+    // Current child layout context
+    protected LayoutContext getContext() {
+	return m_childLC ;
+    }
+    
+    protected void addSpace(Area parentArea, MinOptMax spaceRange,
+			    double dSpaceAdjust) {
+	if (spaceRange != null) {
+	    int iAdjust= spaceRange.opt;
+	    if (dSpaceAdjust > 0.0) {
+		// Stretch by factor
+		iAdjust += (int)((double)(spaceRange.max - spaceRange.opt) *
+				dSpaceAdjust);
+	    }
+	    else if (dSpaceAdjust < 0.0)  {
+		// Shrink by factor
+		iAdjust += (int)((double)(spaceRange.opt - spaceRange.min) *
+				dSpaceAdjust);
+	    }
+	    if (iAdjust != 0) {
+		    System.err.println("Add leading space: " + iAdjust);
+		    Space ls = new Space();
+		    ls.setWidth(iAdjust);
+		    parentArea.addChild(ls);
+	    }
+	}
     }
 
 

@@ -165,6 +165,21 @@ public class ColorType {
         return this.alpha;
     }
 
+    public String toString() {
+	StringBuffer sbuf = new StringBuffer(8);
+	sbuf.append('#');
+	String s = Integer.toHexString((int)(red * 255.0));
+	if (s.length() == 1) sbuf.append('0');
+	sbuf.append(s);
+	s = Integer.toHexString((int)(green * 255.0));
+	if (s.length() == 1) sbuf.append('0');
+	sbuf.append(s);
+	s = Integer.toHexString((int)(blue * 255.0));
+	if (s.length() == 1) sbuf.append('0');
+	sbuf.append(s);
+	return sbuf.toString();
+    }
+
     final static String[] names = {
         "aliceblue", "antiquewhite", "aqua", "aquamarine", "azure", "beige",
         "bisque", "black", "blanchedalmond", "blue", "blueviolet", "brown",

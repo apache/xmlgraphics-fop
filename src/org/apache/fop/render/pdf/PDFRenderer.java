@@ -266,13 +266,7 @@ public class PDFRenderer extends PrintRenderer {
 
             FontState fs = null;
 
-            List props = word.getTraitList();
-            for(int count = 0; count < props.size(); count++) {
-                Trait pro = (Trait)props.get(count);
-                if(pro.propType == Trait.FONT_STATE) {
-                    fs = (FontState)pro.data;
-                }
-            }
+	    fs = (FontState)word.getTrait(Trait.FONT_STATE);
             String name = fs.getFontName();
             int size = fs.getFontSize();
 

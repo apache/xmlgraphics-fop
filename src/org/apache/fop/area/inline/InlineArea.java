@@ -11,6 +11,7 @@ import org.apache.fop.area.Area;
 import org.apache.fop.area.MinOptMax;
 import org.apache.fop.area.Trait;
 import org.apache.fop.render.Renderer;
+import org.apache.fop.traits.BorderProps;
 
 import org.apache.fop.layoutmgr.LayoutInfo;
 
@@ -25,8 +26,10 @@ import java.util.ArrayList;
  * requested renderer.
  */
 public class InlineArea extends Area {
-    int width;
+    // int width;
     int height;
+    protected int contentIPD = 0;
+
     // position within the line area, either top or baseline
     int verticalPosition;
     // width, height, vertical alignment
@@ -42,11 +45,19 @@ public class InlineArea extends Area {
     }
 
     public void setWidth(int w) {
-        width = w;
+        contentIPD = w;
     }
 
     public int getWidth() {
-        return width;
+        return contentIPD;
+    }
+
+    public void setIPD(int ipd) {
+	this.contentIPD = ipd;
+    }
+
+    public void increaseIPD(int ipd) {
+	this.contentIPD += ipd;
     }
 
     public void setHeight(int h) {
@@ -57,10 +68,27 @@ public class InlineArea extends Area {
         return height;
     }
 
+    public int getAllocIPD() {
+	// If start or end border or padding is non-zero, add to content IPD
+	int iBP = contentIPD;
+	Object t;
+	if ((t = getTrait(Trait.PADDING_START)) != null) {
+	    iBP += ((Integer)t).intValue();
+	}
+	if ((t = getTrait(Trait.PADDING_END)) != null) {
+	    iBP += ((Integer)t).intValue();
+	}
+	if ((t = getTrait(Trait.BORDER_START)) != null) {
+	    iBP += ((BorderProps)t).width;;
+	}
+	if ((t = getTrait(Trait.BORDER_END)) != null) {
+	    iBP += ((BorderProps)t).width;;
+	}
+	return iBP;
+    }
+
     public MinOptMax getAllocationIPD() {
-	// Should also account for any borders and padding in the
-	// inline progression dimension
-	return new MinOptMax(width);
+	return new MinOptMax(getAllocIPD());
     }
 
     public void setOffset(int v) {
@@ -71,14 +99,4 @@ public class InlineArea extends Area {
         return verticalPosition;
     }
 
-    public void addTrait(Trait prop) {
-        if (props == null) {
-            props = new ArrayList();
-        }
-        props.add(prop);
-    }
-
-    public List getTraitList() {
-        return props;
-    }
 }

@@ -71,18 +71,6 @@ public class Block extends BlockParent implements Serializable {
         return positioning;
     }
 
-    // store properties in array list, need better solution
-    ArrayList traits = null;
 
-    public void addTrait(Trait prop) {
-        if (traits == null) {
-            traits = new ArrayList();
-        }
-        traits.add(prop);
-    }
-
-    public List getTraitList() {
-        return traits;
-    }
 }
 

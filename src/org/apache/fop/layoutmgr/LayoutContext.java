@@ -35,6 +35,9 @@ public class LayoutContext {
     public static final int SUPPRESS_LEADING_SPACE =       0x10;
     public static final int FIRST_AREA =                   0x20;
     public static final int TRY_HYPHENATE =                0x40;
+    public static final int LAST_AREA =                    0x80;
+
+    public static final int RESOLVE_LEADING_SPACE =       0x100;
 
 
     public int flags;  // Contains some set of flags defined above
@@ -55,17 +58,25 @@ public class LayoutContext {
     int refIPD;
 
     /** Current pending space-after or space-end from preceding area */
-    SpaceSpecifier m_pendingSpace;
+    SpaceSpecifier m_trailingSpace;
+
+    /** Current pending space-before or space-start from ancestor areas */
+    SpaceSpecifier m_leadingSpace;
 
     /** Current hyphenation context. May be null. */
     private HyphContext m_hyphContext=null;
+
+    /** Stretch or shrink value when making areas. */
+    private double m_dSpaceAdjust = 0.0;
 
     public LayoutContext(LayoutContext parentLC) {
         this.flags = parentLC.flags;
         this.refIPD = parentLC.refIPD;
         this.m_stackLimit = null; // Don't reference parent MinOptMax!
-	this.m_pendingSpace = parentLC.m_pendingSpace; //???
+	this.m_leadingSpace = parentLC.m_leadingSpace; //???
+	this.m_trailingSpace = parentLC.m_trailingSpace; //???
 	this.m_hyphContext = parentLC.m_hyphContext;
+	this.m_dSpaceAdjust = parentLC.m_dSpaceAdjust;
         // Copy other fields as necessary. Use clone???
     }
 
@@ -73,7 +84,8 @@ public class LayoutContext {
         this.flags = flags;
         this.refIPD = 0;
 	m_stackLimit = new MinOptMax(0);
-	m_pendingSpace = null;
+	m_leadingSpace = null;
+	m_trailingSpace = null;
     }
 
     public void setFlags(int flags) {
@@ -98,23 +110,39 @@ public class LayoutContext {
     }
 
     public boolean startsNewArea() {
-	return ((this.flags & NEW_AREA) != 0 && m_pendingSpace != null);
+	return ((this.flags & NEW_AREA) != 0 && m_leadingSpace != null);
     }
 
     public boolean isFirstArea() {
 	return ((this.flags & FIRST_AREA) != 0);
     }
 
+    public boolean isLastArea() {
+	return ((this.flags & LAST_AREA) != 0);
+    }
+
     public boolean suppressLeadingSpace() {
 	return ((this.flags & SUPPRESS_LEADING_SPACE) != 0);
     }
 
-    public void setPendingSpace(SpaceSpecifier space) {
-	m_pendingSpace = space;
+    public void setLeadingSpace(SpaceSpecifier space) {
+	m_leadingSpace = space;
     }
 
-    public SpaceSpecifier getPendingSpace() {
-	return m_pendingSpace;
+    public SpaceSpecifier getLeadingSpace() {
+	return m_leadingSpace;
+    }
+
+    public boolean resolveLeadingSpace() {
+	return ((this.flags & RESOLVE_LEADING_SPACE) != 0);
+    }
+
+    public void setTrailingSpace(SpaceSpecifier space) {
+	m_trailingSpace = space;
+    }
+
+    public SpaceSpecifier getTrailingSpace() {
+	return m_trailingSpace;
     }
 
     public void setStackLimit(MinOptMax stackLimit) {
@@ -135,5 +163,13 @@ public class LayoutContext {
 
     public boolean tryHyphenate() {
 	return ((this.flags & TRY_HYPHENATE) != 0);
+    }
+
+    public void setSpaceAdjust(double dSpaceAdjust) {
+	m_dSpaceAdjust = dSpaceAdjust ;
+    }
+
+    public double getSpaceAdjust() {
+	return m_dSpaceAdjust;
     }
 }

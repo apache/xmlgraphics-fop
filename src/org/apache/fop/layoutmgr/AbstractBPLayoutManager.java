@@ -67,14 +67,28 @@ public abstract class AbstractBPLayoutManager extends AbstractLayoutManager
 	return null;
     }
 
+    protected boolean hasMoreLM(BPLayoutManager prevLM) {
+	// prevLM should = m_curChildLM
+	if (prevLM != m_curChildLM) {
+	    System.err.println("AbstractBPLayoutManager.peekNextLM: " +
+			       "passed LM is not current child LM!");
+	    return false;
+	}
+	return !m_childLMiter.hasNext();
+    }
+
 
     /**
      * Reset the layoutmanager "iterator" so that it will start
-     * with the passed bplm on the next call to getChildLM.
-     * @param bplm Reset iterator to this LayoutManager.
+     * with the passed Position's generating LM
+     * on the next call to getChildLM.
+     * @param pos a Position returned by a child layout manager
+     * representing a potential break decision.
+     * If pos is null, then back up to the first child LM.
      */
-    protected void reset(LayoutManager lm, BreakPoss.Position pos) {
+    protected void reset(Position pos) {
  	//if (lm == null) return;
+	BPLayoutManager lm = (pos != null)? pos.getLM(): null;
 	if (m_curChildLM != lm) {
 	    // ASSERT m_curChildLM == (BPLayoutManager)m_childLMiter.previous()
 	    if (m_curChildLM != (BPLayoutManager)m_childLMiter.previous()) {
@@ -92,10 +106,10 @@ public abstract class AbstractBPLayoutManager extends AbstractLayoutManager
  	}
     }
 
-    public void resetPosition(BreakPoss.Position resetPos) {
-	if (resetPos == null) {
-	    reset(null, null);
-	}
+    public void resetPosition(Position resetPos) {
+// 	if (resetPos == null) {
+// 	    reset(null);
+// 	}
     }
 
 
@@ -146,7 +160,7 @@ public abstract class AbstractBPLayoutManager extends AbstractLayoutManager
 
 
     public BreakPoss getNextBreakPoss(LayoutContext context,
-				      BreakPoss.Position prevBreakPoss) {
+				      Position prevBreakPoss) {
 	return null;
     }
 
@@ -167,12 +181,12 @@ public abstract class AbstractBPLayoutManager extends AbstractLayoutManager
     }
 
 
-    public void addAreas(PositionIterator parentIter, double dSpaceAdjust) {
+    public void addAreas(PositionIterator posIter, LayoutContext context) {
     }
 
     
     public void getWordChars(StringBuffer sbChars,
-			     BreakPoss.Position bp1, BreakPoss.Position bp2) {
+			     Position bp1, Position bp2) {
     }
 
     /* ---------------------------------------------------------

@@ -121,6 +121,21 @@ public class FontState {
         return c;
     }
 
+    public String toString() {
+	StringBuffer sbuf = new StringBuffer();
+	sbuf.append('(');
+	sbuf.append(_fontFamily);
+	sbuf.append(',');
+	sbuf.append(_fontName);
+	sbuf.append(',');
+	sbuf.append(_fontSize);
+	sbuf.append(',');
+	sbuf.append(_fontStyle);
+	sbuf.append(',');
+	sbuf.append(_fontWeight);
+	sbuf.append(')');
+	return sbuf.toString();
+    }
 }
 
 

@@ -9,6 +9,7 @@ package org.apache.fop.layout;
 
 import org.apache.fop.datatypes.ColorType;
 import org.apache.fop.datatypes.CondLength;
+import org.apache.fop.fo.properties.Constants;
 
 public class BorderAndPadding implements Cloneable {
 
@@ -132,11 +133,13 @@ public class BorderAndPadding implements Cloneable {
 
 
     public int getBorderWidth(int side, boolean bDiscard) {
-        if ((borderInfo[side] == null)
-                || (bDiscard && borderInfo[side].mWidth.bDiscard)) {
+        if ((borderInfo[side] == null) ||
+	    (borderInfo[side].mStyle == Constants.NONE) ||
+	    (bDiscard && borderInfo[side].mWidth.bDiscard)) {
             return 0;
-        } else
+        } else {
             return borderInfo[side].mWidth.iLength;
+	}
     }
 
     public ColorType getBorderColor(int side) {

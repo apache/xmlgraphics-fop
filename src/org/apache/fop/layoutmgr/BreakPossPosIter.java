@@ -43,7 +43,7 @@ public class BreakPossPosIter extends PositionIterator {
 	return ((BreakPoss)nextObj).getLayoutManager();
     }
 
-    protected BreakPoss.Position getPos(Object nextObj) {
+    protected Position getPos(Object nextObj) {
 	return ((BreakPoss)nextObj).getPosition();
     }
 

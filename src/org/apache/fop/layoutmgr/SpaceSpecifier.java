@@ -42,11 +42,17 @@ public class SpaceSpecifier implements Cloneable {
     }
 
     /**
-     * Clear all space specifiers and fences.
+     * Clear all space specifiers
      */
     public void clear() {
 	m_bHasForcing=false;
 	m_vecSpaceVals.clear();
+    }
+
+
+    /** Return true if any space-specifiers have been added. */
+    public boolean hasSpaces() {
+	return (m_vecSpaceVals.size() > 0);
     }
 
     /**
@@ -61,31 +67,25 @@ public class SpaceSpecifier implements Cloneable {
 	    if (moreSpace.bForcing) {
 		if (m_bHasForcing == false) {
 		    // Remove all other values (must all be non-forcing)
-		    // Back to the preceding fence
 		    m_vecSpaceVals.clear();
 		    m_bHasForcing = true;
 		}
 		m_vecSpaceVals.add(moreSpace);
 	    }
 	    else if (m_bHasForcing==false) {
-		m_vecSpaceVals.add(moreSpace);
+		// Don't bother adding all 0 space-specifier if not forcing
+		if (moreSpace.space.min != 0 || moreSpace.space.opt != 0 ||
+		    moreSpace.space.max != 0) {
+		    m_vecSpaceVals.add(moreSpace);
+		}
 	    }
 	}
     }
 
-    /**
-     * Add a "fence" following or preceding any space-specifiers.
-     * Note that we always add specifiers to the sequence in the
-     * progression direction, either inline or block. 
-     */
-    public void addFence() {
-	// Fence as first value clears m_bStartsRefArea
-	// Fence clears m_bHasForcing
-    }
 
     /**
      * Resolve the current sequence of space-specifiers, accounting for
-     * forcing values and "fence" behavior.
+     * forcing values.
      * @param bEndsReferenceArea True if the sequence should be resolved
      * at the trailing edge of reference area.
      * @return The resolved value as a min/opt/max triple.
@@ -94,7 +94,7 @@ public class SpaceSpecifier implements Cloneable {
 	int lastIndex = m_vecSpaceVals.size();
 	if (bEndsReferenceArea) {
 	    // Start from the end and count conditional specifiers
-	    // Stop at first non-conditional or first fence
+	    // Stop at first non-conditional
 	    for (; lastIndex > 0; --lastIndex) {
 		SpaceVal sval =
 		    (SpaceVal)m_vecSpaceVals.elementAt(lastIndex-1);
@@ -104,7 +104,6 @@ public class SpaceSpecifier implements Cloneable {
 	    }
 	}
 	MinOptMax resSpace = new MinOptMax(0);
-	// Must calculate in sub-sequences delimited by fences!
 	int iMaxPrec = -1;
 	for(int index=0; index < lastIndex; index++) {
 	    SpaceVal sval = (SpaceVal)m_vecSpaceVals.elementAt(index);

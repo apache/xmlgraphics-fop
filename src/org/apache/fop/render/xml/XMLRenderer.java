@@ -29,8 +29,9 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.OutputStream;
 import java.util.Enumeration;
-import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Iterator;
 import java.awt.geom.Rectangle2D;
 
 import org.w3c.dom.Document;
@@ -278,9 +279,9 @@ public class XMLRenderer extends AbstractRenderer {
 
     protected void renderBlock(Block block) {
         String prop = "";
-        List list = block.getTraitList();
-        if (list != null) {
-            prop = " props=\"" + getPropString(list) + "\"";
+        Map map = block.getTraits();
+        if (map != null) {
+            prop = " props=\"" + getPropString(map) + "\"";
         }
         writeStartTag("<block" + prop + ">");
         super.renderBlock(block);
@@ -289,9 +290,9 @@ public class XMLRenderer extends AbstractRenderer {
 
     protected void renderLineArea(LineArea line) {
         String prop = "";
-        List list = line.getTraitList();
-        if (list != null) {
-            prop = " props=\"" + getPropString(list) + "\"";
+        Map map = line.getTraits();
+        if (map != null) {
+            prop = " props=\"" + getPropString(map) + "\"";
         }
         writeStartTag("<lineArea height=\"" + line.getHeight() + "\"" +
                       prop + ">");
@@ -327,9 +328,9 @@ public class XMLRenderer extends AbstractRenderer {
 
     public void renderCharacter(org.apache.fop.area.inline.Character ch) {
         String prop = "";
-        List list = ch.getTraitList();
-        if (list != null) {
-            prop = " props=\"" + getPropString(list) + "\"";
+        Map map = ch.getTraits();
+        if (map != null) {
+            prop = " props=\"" + getPropString(map) + "\"";
         }
         writeElement("<char" + prop + ">" + ch.getChar() + "</char>");
     }
@@ -340,19 +341,20 @@ public class XMLRenderer extends AbstractRenderer {
 
     public void renderWord(Word word) {
         String prop = "";
-        List list = word.getTraitList();
-        if (list != null) {
-            prop = " props=\"" + getPropString(list) + "\"";
+        Map map = word.getTraits();
+        if (map != null) {
+            prop = " props=\"" + getPropString(map) + "\"";
         }
-        writeElement("<word" + prop + ">" + word.getWord() + "</word>");
+        writeElement("<word wsadjust=\"" + word.getWSadjust() + "\"" +
+		     prop + ">" + word.getWord() + "</word>");
         super.renderWord(word);
     }
 
     public void renderInlineParent(InlineParent ip) {
         String prop = "";
-        List list = ip.getTraitList();
-        if (list != null) {
-            prop = " props=\"" + getPropString(list) + "\"";
+        Map map = ip.getTraits();
+        if (map != null) {
+            prop = " props=\"" + getPropString(map) + "\"";
         }
         writeStartTag("<inlineparent" + prop + ">");
         super.renderInlineParent(ip);
@@ -385,56 +387,18 @@ public class XMLRenderer extends AbstractRenderer {
         super.renderLeader(area);
     }
 
-    protected String getPropString(List list) {
-        String str = "";
-        for (int count = 0; count < list.size(); count++) {
-            Trait prop = (Trait) list.get(count);
-            switch (prop.propType) {
-                case Trait.INTERNAL_LINK:
-                    str += "internal-link:" + prop.data;
-                    break;
-                case Trait.EXTERNAL_LINK:
-                    str += "external-link:" + prop.data;
-                    break;
-                case Trait.FONT_FAMILY:
-                    str += "font-family:" + prop.data;
-                    break;
-                case Trait.FONT_SIZE:
-                    str += "font-size:" + prop.data;
-                    break;
-                case Trait.FONT_WEIGHT:
-                    str += "font-weight:" + prop.data;
-                    break;
-                case Trait.FONT_STYLE:
-                    str += "font-style:" + prop.data;
-                    break;
-                case Trait.COLOR:
-                    str += "color:" + prop.data;
-                    break;
-                case Trait.BACKGROUND:
-                    str += "background:" + prop.data;
-                    break;
-                case Trait.UNDERLINE:
-                    str += "underline:" + prop.data;
-                    break;
-                case Trait.OVERLINE:
-                    str += "overline:" + prop.data;
-                    break;
-                case Trait.LINETHROUGH:
-                    str += "linethrough:" + prop.data;
-                    break;
-                case Trait.OFFSET:
-                    str += "offset:" + prop.data;
-                    break;
-                case Trait.SHADOW:
-                    str += "shadow:" + prop.data;
-                    break;
-                default:
-                    break;
-            }
-            str += ";";
-        }
-        return str;
+    protected String getPropString(Map traitMap) {
+        StringBuffer strbuf = new StringBuffer();
+	Iterator iter = traitMap.entrySet().iterator();
+	while (iter.hasNext()) {
+            Map.Entry traitEntry = (Map.Entry) iter.next();
+	    strbuf.append(Trait.getTraitName(traitEntry.getKey()));
+	    strbuf.append(':');
+	    strbuf.append(traitEntry.getValue().toString());
+	    strbuf.append(';');
+	}
+	return strbuf.toString();
     }
+
 }
 

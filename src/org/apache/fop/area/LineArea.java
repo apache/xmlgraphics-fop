@@ -46,26 +46,18 @@ public class LineArea extends Area {
         return new MinOptMax(lineHeight);
     }
 
+    public void addChild(Area childArea) {
+	if (childArea instanceof InlineArea) {
+	    addInlineArea((InlineArea)childArea);
+	}
+    }
+
     public void addInlineArea(InlineArea area) {
         inlineAreas.add(area);
     }
 
     public List getInlineAreas() {
         return inlineAreas;
-    }
-
-    // store properties in array list, need better solution
-    ArrayList props = null;
-
-    public void addTrait(Trait prop) {
-        if (props == null) {
-            props = new ArrayList();
-        }
-        props.add(prop);
-    }
-
-    public List getTraitList() {
-        return props;
     }
 
     public void verticalAlign(int lh, int lead, int follow) {
