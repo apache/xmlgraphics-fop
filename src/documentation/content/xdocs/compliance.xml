@@ -1,15 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE compliance PUBLIC "-//APACHE//DTD Compliance V1.0//EN"
-    "http://cvs.apache.org/viewcvs.cgi/*checkout*/xml-fop/src/documentation/resources/schema/dtd/compliance-v10.dtd?rev=1.5">
+    "http://cvs.apache.org/viewcvs.cgi/*checkout*/xml-fop/src/documentation/resources/schema/dtd/compliance-v10.dtd?rev=1.6">
 
 <compliance>
   <head>
     <title>FOP 0.20.4 Standards Compliance</title>
+    <subtitle>Progress Report on Standard Features Implemented</subtitle>
   </head>
   <body>
     <standard name="W3C XSL-FO 1.0 Standard" baseURL="http://www.w3.org/TR/xsl" compliance-level-1-desc="Basic" compliance-level-2-desc="Extended" compliance-level-3-desc="Complete" ref-name="fo">
       <explanatory>
-        <p>FOP's goal is to be compliant with the W3C XSL-FO 1.0 standard. There are three levels of compliance specified in the standard: basic, extended, and complete. In the tables below, blue indicates support at the specified level of compliance, and red indicates a lack of support.</p>
+        <p>One of FOP's design goals is conformance to the W3C XSL-FO 1.0 standard, which specifies three levels of "conformance": basic, extended, and complete.
+Although FOP does not currently conform to any of these levels, it is nevertheless a useful work-in-progress for many applications.
+The information presented here demonstrates FOP's progress toward the goal of conformance, which progress consists of implementation of specific objects and properties in the standard.
+The information presented is useful not only to the developers as a sort of "to do" list, but also for setting proper expectations for users and potential users.</p>
+        <p>In the tables below, blue indicates support at the specified level of conformance, and red indicates a lack of support.</p>
       </explanatory>
       <level-1 name="XSL-FO Object Support" citation="§6" extURL="slice6.html#fo-section" compliance-item-desc="Object Name" ref-name="object">
         <explanatory>
