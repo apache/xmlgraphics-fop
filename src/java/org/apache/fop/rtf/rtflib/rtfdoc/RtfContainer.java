@@ -70,9 +70,9 @@ import org.apache.fop.rtf.rtflib.exceptions.RtfStructureException;
  */
 
 public class RtfContainer extends RtfElement {
-    private LinkedList m_children;  // 'final' removed by Boris Poudérous on 07/22/2002
-    private RtfOptions m_options = new RtfOptions();
-    private RtfElement m_lastChild;
+    private LinkedList children;  // 'final' removed by Boris Poudérous on 07/22/2002
+    private RtfOptions options = new RtfOptions();
+    private RtfElement lastChild;
 
     /** Create an RTF container as a child of given container */
     RtfContainer(RtfContainer parent, Writer w) throws IOException {
@@ -82,15 +82,22 @@ public class RtfContainer extends RtfElement {
     /** Create an RTF container as a child of given container with given attributes */
     RtfContainer(RtfContainer parent, Writer w, RtfAttributes attr) throws IOException {
         super(parent, w, attr);
-        m_children = new LinkedList();
+        children = new LinkedList();
     }
 
-    /** set options */
+    /**
+     * set options
+     * @param opt options to set
+     */
     public void setOptions(RtfOptions opt) {
-        m_options = opt;
+        options = opt;
     }
 
-    /** add a child element to this */
+    /**
+     * add a child element to this
+     * @param e child element to add
+     * @throws RtfStructureException for trying to add an invalid child (??)
+     */
     protected void addChild(RtfElement e)
     throws RtfStructureException {
         if (isClosed()) {
@@ -116,37 +123,46 @@ public class RtfContainer extends RtfElement {
              */
         }
 
-        m_children.add(e);
-        m_lastChild = e;
+        children.add(e);
+        lastChild = e;
     }
 
-    /** return a copy of our children's list */
+    /**
+     * @return a copy of our children's list
+     */
     public List getChildren() {
-        return (List)m_children.clone();
+        return (List)children.clone();
     }
 
-    /** return the number of children */
+    /**
+     * @return the number of children
+     */
     public int getChildCount() {
-        return m_children.size();
+        return children.size();
     }
 
     /**
      * Add by Boris Poudérous on 07/22/2002
      * Set the children list
+     * @param children list of child objects
+     * @return true if process succeeded
      */
     public boolean setChildren (List children) {
       if (children instanceof LinkedList) {
-          this.m_children = (LinkedList)children;
+          this.children = (LinkedList)children;
           return true;
         }
 
       return false;
     }
 
-    /** write RTF code of all our children */
+    /**
+     * write RTF code of all our children
+     * @throws IOException for I/O problems
+     */
     protected void writeRtfContent()
     throws IOException {
-        for (Iterator it = m_children.iterator(); it.hasNext();) {
+        for (Iterator it = children.iterator(); it.hasNext();) {
             final RtfElement e = (RtfElement)it.next();
             e.writeRtf();
         }
@@ -154,13 +170,13 @@ public class RtfContainer extends RtfElement {
 
     /** return our options */
     RtfOptions getOptions() {
-        return m_options;
+        return options;
     }
 
     /** true if this (recursively) contains at least one RtfText object */
     boolean containsText() {
         boolean result = false;
-        for (Iterator it = m_children.iterator(); it.hasNext();) {
+        for (Iterator it = children.iterator(); it.hasNext();) {
             final RtfElement e = (RtfElement)it.next();
             if (e instanceof RtfText) {
                 result = !e.isEmpty();
@@ -180,32 +196,38 @@ public class RtfContainer extends RtfElement {
     void dump(Writer w, int indent)
     throws IOException {
         super.dump(w, indent);
-        for (Iterator it = m_children.iterator(); it.hasNext();) {
+        for (Iterator it = children.iterator(); it.hasNext();) {
             final RtfElement e = (RtfElement)it.next();
             e.dump(w, indent + 1);
         }
     }
 
-    /** minimal debugging display */
+    /**
+     * minimal debugging display
+     * @return String representation of object contents
+     */
     public String toString() {
         return super.toString() + " (" + getChildCount() + " children)";
     }
 
-    /** don't write any RTF if empty of if our options block it */
+    /**
+     * @return false if empty or if our options block writing
+     */
     protected boolean okToWriteRtf() {
         boolean result = super.okToWriteRtf() && !isEmpty();
-        if (result && !m_options.renderContainer(this)) {
+        if (result && !options.renderContainer(this)) {
             result = false;
         }
         return result;
     }
 
-    /** true if this element would generate no "useful" RTF content.
-     *  For an RtfContainer, true if it has no children where isEmpty() is false
+    /**
+     * @return true if this element would generate no "useful" RTF content,
+     * i.e. (for RtfContainer) true if it has no children where isEmpty() is false
      */
     public boolean isEmpty() {
         boolean result = true;
-        for (Iterator it = m_children.iterator(); it.hasNext();) {
+        for (Iterator it = children.iterator(); it.hasNext();) {
             final RtfElement e = (RtfElement)it.next();
             if (!e.isEmpty()) {
                 result = false;
