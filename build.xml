@@ -184,8 +184,8 @@ Sometimes ant gives out this warnings, but the build is finished without any pro
 
     <property name="build.compiler" value="classic"/>
     <property name="debug" value="on"/>
-    <property name="optimize" value="on"/>
-    <property name="deprecation" value="on"/>
+    <property name="optimize" value="off"/>
+    <property name="deprecation" value="off"/>
 
     <property name="src.dir" value="./src"/>
     <property name="src.codegen" value="./src/codegen"/>
