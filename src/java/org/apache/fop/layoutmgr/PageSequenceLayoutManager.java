@@ -128,18 +128,33 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
      * This is the top level layout manager.
      * It is created by the PageSequence FO.
      *
-     * @param areaTree the area tree to add pages to
      * @param pageseq the page sequence fo
      */
-    public PageSequenceLayoutManager(AreaTreeHandler areaTreeHandler, PageSequence pageseq) {
+    public PageSequenceLayoutManager(PageSequence pageseq) {
         super(pageseq);
         fobj = pageseq;
-        this.areaTreeHandler = areaTreeHandler;
-        areaTreeModel = areaTreeHandler.getAreaTreeModel();
         if (fobj.getPageSequenceMaster() != null) {
             fobj.getPageSequenceMaster().reset();
         }
     }
+
+    /**
+     * Set the AreaTreeHandler
+     * @param areaTreeHandler the area tree handler to add pages to
+     */
+    public void setAreaTreeHandler(AreaTreeHandler areaTreeHandler) {
+        this.areaTreeHandler = areaTreeHandler;
+        areaTreeModel = areaTreeHandler.getAreaTreeModel();
+    }
+
+    /**
+     * @see org.apache.fop.layoutmgr.LayoutManager
+     * @return the AreaTreeHandler object
+     */
+    public AreaTreeHandler getAreaTreeHandler() {
+        return areaTreeHandler;
+    }
+
 
     /**
      * Set the page counting for this page sequence.
@@ -174,6 +189,7 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
 
         ContentLayoutManager clm = new ContentLayoutManager(title);
         clm.setUserAgent(foTitle.getUserAgent());
+        clm.setAreaTreeHandler(areaTreeHandler);
 
         // use special layout manager to add the inline areas
         // to the Title.
@@ -891,12 +907,14 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
      */
     private StaticContentLayoutManager getStaticContentLayoutManager(StaticContent sc) {
         StaticContentLayoutManager lm =
-                (StaticContentLayoutManager)staticContentLMs.get(sc.getFlowName());
-        if (lm != null) {
-            return lm;
+            (StaticContentLayoutManager)
+            staticContentLMs.get(sc.getFlowName());
+        if (lm == null) {
+            lm = (StaticContentLayoutManager)
+                getAreaTreeHandler().getLayoutManagerMaker().
+                makeLayoutManager(sc);
+            staticContentLMs.put(sc.getFlowName(), lm);
         }
-        lm = new StaticContentLayoutManager(sc);
-        staticContentLMs.put(sc.getFlowName(), lm);
         return lm;
     }
 }

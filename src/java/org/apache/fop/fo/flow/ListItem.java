@@ -155,14 +155,6 @@ public class ListItem extends FObj {
     }
 
     /**
-     * @see org.apache.fop.fo.FONode#addLayoutManager(List)
-     */
-    public void addLayoutManager(List list) {
-        ListItemLayoutManager blm = new ListItemLayoutManager(this);
-        list.add(blm);
-    }
-
-    /**
      * @return the label of the list item
      */
     public ListItemLabel getLabel() {

@@ -371,14 +371,6 @@ public abstract class FONode implements Cloneable {
     }
 
     /**
-     * Return a LayoutManager responsible for laying out this FObj's content.
-     * Must override in subclasses if their content can be laid out.
-     * @param list the list to which the layout manager(s) should be added
-     */
-    public void addLayoutManager(List list) {
-    }
-
-    /**
      * Returns the name of the node
      * @return the name of this node
      */

@@ -176,14 +176,6 @@ public class Leader extends InlineLevel {
     }
 
     /**
-     * @see org.apache.fop.fo.FONode#addLayoutManager(List)
-     */
-    public void addLayoutManager(List list) {
-        LeaderLayoutManager lm = new LeaderLayoutManager(this);
-        list.add(lm);
-    }
-
-    /**
      * @see org.apache.fop.fo.FObj#getName()
      */
     public String getName() {

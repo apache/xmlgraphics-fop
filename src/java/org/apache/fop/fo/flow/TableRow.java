@@ -163,14 +163,6 @@ public class TableRow extends FObj {
     public CommonBorderPaddingBackground getCommonBorderPaddingBackground() {
         return commonBorderPaddingBackground;
     }
-
-    /**
-     * @see org.apache.fop.fo.FONode#addLayoutManager(List)
-     */
-    public void addLayoutManager(List list) {
-        Row rlm = new Row(this);
-        list.add(rlm);
-    }
     
     /**
      * @see org.apache.fop.fo.FObj#getName()

@@ -151,15 +151,6 @@ public class PageNumberCitation extends FObj {
     public String getRefId() {
         return refId;
     }
-
-    /**
-     * @see org.apache.fop.fo.FONode#addLayoutManager(List)
-     */
-    public void addLayoutManager(List list) {
-        PageNumberCitationLayoutManager lm = 
-            new PageNumberCitationLayoutManager(this);
-        list.add(lm);
-    }
      
     /**
      * @see org.apache.fop.fo.FObj#getName()

@@ -473,14 +473,6 @@ public class Block extends FObjMixed {
             bNextIsLF = false;
         }
     }
-
-    /**
-     * @see org.apache.fop.fo.FONode#addLayoutManager(List)
-     */
-    public void addLayoutManager(List list) {    
-        BlockLayoutManager blm = new BlockLayoutManager(this);
-        list.add(blm);
-    }
      
     /**
      * @see org.apache.fop.fo.FONode#getName()

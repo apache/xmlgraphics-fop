@@ -23,6 +23,7 @@ import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.Constants;
 import org.apache.fop.fo.flow.Marker;
 import org.apache.fop.area.Area;
+import org.apache.fop.area.AreaTreeHandler;
 import org.apache.fop.area.inline.InlineArea;
 import org.apache.fop.area.Resolvable;
 import org.apache.fop.area.PageViewport;
@@ -44,6 +45,7 @@ import org.apache.commons.logging.LogFactory;
  */
 public class ContentLayoutManager implements InlineLevelLayoutManager {
     private FOUserAgent userAgent;
+    private AreaTreeHandler areaTreeHandler;
     private Area holder;
     private int stackSize;
     private LayoutManager parentLM;
@@ -254,6 +256,31 @@ public class ContentLayoutManager implements InlineLevelLayoutManager {
     /** @see org.apache.fop.layoutmgr.LayoutManager */
     public Marker retrieveMarker(String name, int pos, int boundary) {
         return parentLM.retrieveMarker(name, pos, boundary);
+    }
+
+    /**
+     * Set the AreaTreeHandler.
+     * This is used by the PageSequenceLM for the Title,
+     * because it does not set itself as the parentLM.
+     * @param areaTreeHandler the area tree handler to add pages to
+     */
+    public void setAreaTreeHandler(AreaTreeHandler areaTreeHandler) {
+        this.areaTreeHandler = areaTreeHandler;
+    }
+
+    /**
+     * Either areaTreeHandler or parentLM should not be null.
+     * If areaTreeHandler is null,
+     * delegate getAreaTreeHandler to the parent layout manager.
+     *
+     * @see org.apache.fop.layoutmgr.LayoutManager
+     * @return the AreaTreeHandler object.
+     */
+    public AreaTreeHandler getAreaTreeHandler() {
+        if (areaTreeHandler == null) {
+            areaTreeHandler = parentLM.getAreaTreeHandler();
+        }
+        return areaTreeHandler;
     }
 
     /**

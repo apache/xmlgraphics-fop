@@ -123,13 +123,6 @@ public class Marker extends FObjMixed {
     }
 
     /**
-     * @see org.apache.fop.fo.FONode#addLayoutManager(List)
-     */
-    public void addLayoutManager(List list) {
-        // no layout manager
-    }
-
-    /**
      * Return the "marker-class-name" property.
      */
     public String getMarkerClassName() {

@@ -190,14 +190,6 @@ public class BlockContainer extends FObj {
     }
 
     /**
-     * @see org.apache.fop.fo.FONode#addLayoutManager(List)
-     */
-    public void addLayoutManager(List list) {    
-        BlockContainerLayoutManager blm = new BlockContainerLayoutManager(this);
-        list.add(blm);
-    }
-
-    /**
      * @see org.apache.fop.fo.FObj#getName()
      */
     public String getName() {

@@ -261,14 +261,6 @@ public class InstreamForeignObject extends FObj {
     }
 
     /**
-     * @see org.apache.fop.fo.FONode#addLayoutManager(List)
-     */
-    public void addLayoutManager(List list) {
-        InstreamForeignObjectLM lm = new InstreamForeignObjectLM(this);
-        list.add(lm);
-    }
-
-    /**
      * @see org.apache.fop.fo.FObj#getName()
      */
     public String getName() {

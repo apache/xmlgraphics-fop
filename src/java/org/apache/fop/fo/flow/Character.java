@@ -234,14 +234,6 @@ public class Character extends FObj {
     }
 
     /**
-     * @see org.apache.fop.fo.FONode#addLayoutManager(List)
-     */
-    public void addLayoutManager(List list) {
-        CharacterLayoutManager lm = new CharacterLayoutManager(this);
-        list.add(lm);
-    }
-
-    /**
      * @see org.apache.fop.fo.FObj#getName()
      */
     public String getName() {

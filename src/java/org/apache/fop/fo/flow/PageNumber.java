@@ -160,14 +160,6 @@ public class PageNumber extends FObj {
     }
 
     /**
-     * @see org.apache.fop.fo.FONode#addLayoutManager(List)
-     */
-    public void addLayoutManager(List list) {
-        PageNumberLayoutManager lm = new PageNumberLayoutManager(this);
-        list.add(lm);
-    }
-
-    /**
      * @see org.apache.fop.fo.FONode#getName()
      */
     public String getName() {

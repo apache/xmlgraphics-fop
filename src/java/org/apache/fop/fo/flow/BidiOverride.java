@@ -132,30 +132,6 @@ public class BidiOverride extends FObjMixed {
             blockOrInlineItemFound = true;
         }
     }
-    
-    /**
-     * @see org.apache.fop.fo.FONode#addLayoutManager(List)
-     * @todo see if can/should move the child iteration logic 
-     *      to BidiLayoutManager
-     */
-    public void addLayoutManager(List list) {    
-        if (false) {
-            super.addLayoutManager(list);
-        } else {
-            ArrayList childList = new ArrayList();
-            super.addLayoutManager(list);
-            for (int count = childList.size() - 1; count >= 0; count--) {
-                LayoutManager lm = (LayoutManager) childList.get(count);
-                if (lm.generatesInlineAreas()) {
-                    LayoutManager blm = new BidiLayoutManager(this,
-                        (InlineLayoutManager) lm);
-                    list.add(blm);
-                } else {
-                    list.add(lm);
-                }
-            }
-        }
-    }
 
     /**
      * @see org.apache.fop.fo.FObj#getName()

@@ -147,14 +147,6 @@ public class ListBlock extends FObj {
     }
 
     /**
-     * @see org.apache.fop.fo.FONode#addLayoutManager(List)
-     */
-    public void addLayoutManager(List list) {
-        ListBlockLayoutManager lm = new ListBlockLayoutManager(this);
-        list.add(lm);
-    }
-
-    /**
      * @see org.apache.fop.fo.FObj#getName()
      */
     public String getName() {
