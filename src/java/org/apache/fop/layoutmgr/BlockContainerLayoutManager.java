@@ -85,9 +85,9 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager {
         marginProps = propManager.getMarginProps();
         borderProps = propManager.getBorderAndPadding();
         height = fobj.getPropertyList().get(
-            PR_BLOCK_PROGRESSION_DIMENSION | CP_OPTIMUM).getLength();
+            PR_BLOCK_PROGRESSION_DIMENSION).getLengthRange().getOptimum().getLength();
         width = fobj.getPropertyList().get(
-            PR_INLINE_PROGRESSION_DIMENSION | CP_OPTIMUM).getLength();
+            PR_INLINE_PROGRESSION_DIMENSION).getLengthRange().getOptimum().getLength();
     }
 
     public void setOverflow(int of) {

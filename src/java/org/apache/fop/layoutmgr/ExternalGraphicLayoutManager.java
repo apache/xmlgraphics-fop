@@ -87,7 +87,7 @@ public class ExternalGraphicLayoutManager extends LeafNodeLayoutManager {
                 viewWidth = ipd.getValue();
             }
         }
-        Length bpd = graphic.getPropertyList().get(PR_BLOCK_PROGRESSION_DIMENSION | CP_OPTIMUM).getLength();
+        Length bpd = graphic.getPropertyList().get(PR_BLOCK_PROGRESSION_DIMENSION).getLengthRange().getOptimum().getLength();
         if (!bpd.isAuto()) {
             viewHeight = bpd.getValue();
         } else {

@@ -174,7 +174,7 @@ public class TableAttributesConverter {
         //need to set a default width
 
         //check for keep-together row attribute
-        if ((p = fobj.getProperty(Constants.PR_KEEP_TOGETHER | Constants.CP_WITHIN_PAGE)) != null) {
+        if ((p = fobj.getProperty(Constants.PR_KEEP_TOGETHER).getKeep().getWithinPage()) != null) {
             attrib.set(ITableAttributes.ROW_KEEP_TOGETHER);
         }
 
