@@ -225,7 +225,6 @@ public class ImageFactory {
         }
         catch (Exception ex) {
             log.error("Error creating FopImage object (" +
-                      "Error creating FopImage object (" +
                       absoluteURL.toString() + ") : " + ex.getMessage(), ex);
             return null;
         }
