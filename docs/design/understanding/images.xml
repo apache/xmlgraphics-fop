@@ -1,21 +1,21 @@
 <?xml version="1.0" standalone="no"?>
 <!-- Overview -->
-<document> 
-  <header> 
-	 <title>Images</title> 
-	 <subtitle>All you wanted to know about Images in FOP !</subtitle> 
-	 <authors> <person name="Keiron Liddle" email="keiron@aftexsw.com"/> 
-	 </authors> 
-  </header> 
+<document>
+  <header>
+   <title>Images</title>
+   <subtitle>All you wanted to know about Images in FOP !</subtitle>
+   <authors> <person name="Keiron Liddle" email="keiron@aftexsw.com"/>
+   </authors>
+  </header>
   <body>
- 
 
-  <s1 title="Images in FOP"> <note> this is still in progress, input in the code is welcome. Needs documenting formats, testing. 
+
+  <s1 title="Images in FOP"> <note> this is still in progress, input in the code is welcome. Needs documenting formats, testing.
   So all those people interested in images should get involved.</note>
-		<p>Images may only be needed to be loaded when the image is rendered to the
+    <p>Images may only be needed to be loaded when the image is rendered to the
 output or to find the dimensions.<br/>
 An image url may be invalid, this can be costly to find out so we need to
-keep a list of invalid image urls.</p> 
+keep a list of invalid image urls.</p>
 <p>We have a number of different caching schemes that are possible.</p>
 <p>All images are referred to using the url given in the XSL:FO after
 removing "url('')" wrapping. This does
@@ -25,7 +25,7 @@ have the url as a reference.
 The images are handled through a static interface in ImageFactory.<br/></p>
 
 
-<p>(insert image)</p>		
+<p>(insert image)</p>
 
 
 <s2 title="Threading">
@@ -129,9 +129,8 @@ then load the required data depending on the image mime type. If the
 renderer can insert the image into the document and use that data for all
 future references of the same image then it can cache the reference in the
 renderer and the image can be released from the image cache.</p></s2>
-</s1> 
+</s1>
   </body></document>
- 
 
 
 
@@ -143,4 +142,5 @@ renderer and the image can be released from the image cache.</p></s2>
 
 
 
-  
+
+

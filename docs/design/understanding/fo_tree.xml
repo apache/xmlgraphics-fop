@@ -1,11 +1,11 @@
 <?xml version="1.0"?>
 <document>
-  <header> 
-   <title>FO Tree</title> 
-   <subtitle>All you wanted to know about FO Tree !</subtitle> 
-   <authors> <person name="Keiron Liddle" email="keiron@aftexsw.com"/> 
-   </authors> 
-  </header> 
+  <header>
+   <title>FO Tree</title>
+   <subtitle>All you wanted to know about FO Tree !</subtitle>
+   <authors> <person name="Keiron Liddle" email="keiron@aftexsw.com"/>
+   </authors>
+  </header>
 <body><s1 title="FO Tree">
       <p>
         The FO Tree is a representation of the XSL:FO document. This

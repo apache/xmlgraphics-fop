@@ -1,15 +1,15 @@
 <?xml version="1.0"?>
-<document> 
-  <header> 
-	 <title>XML Parsing</title> 
-	 <subtitle>All you wanted to know about XML Parsing !</subtitle> 
-	 <authors> <person name="Keiron Liddle" email="keiron@aftexsw.com"/> 
-	 </authors> 
-  </header> 
+<document>
+  <header>
+   <title>XML Parsing</title>
+   <subtitle>All you wanted to know about XML Parsing !</subtitle>
+   <authors> <person name="Keiron Liddle" email="keiron@aftexsw.com"/>
+   </authors>
+  </header>
   <body>
-  
+
 <s1 title="XML Parsing"><p>Since everyone knows the basics we can get
-                  into the various stages starting with the XML handling.</p> 
+                  into the various stages starting with the XML handling.</p>
                 <s2 title="XML Input"><p>FOP can take the input XML in a number of ways:
                          </p>
         <ul>
@@ -31,7 +31,7 @@
                 <code>Driver</code>.
               </li>
             </ul>
-          </li>  
+          </li>
           <li>
             data source which is parsed and converted into SAX Events
             <ul>
@@ -41,7 +41,7 @@
                 <code>Stream</code>, <code>String</code> etc.
               </li>
             </ul>
-          </li> 
+          </li>
           <li>
             XML+XSLT which is transformed using an XSLT Processor and
             the result is fired as SAX Events
@@ -56,10 +56,10 @@
             </ul>
           </li>
         </ul>
-                                
+
                   <p>The SAX Events which are fired on the SAX Handler, class
                          <code>FOTreeBuilder</code>, must represent an XSL:FO document. If not there will be an
-                         error. Any problems with the XML being well formed are handled here.</p></s2> 
+                         error. Any problems with the XML being well formed are handled here.</p></s2>
                 <s2 title="Element Mappings"><p> The element mapping is a hashmap of all
                          the elements in a particular namespace. This makes it easy to create a
                          different object for each element. Element mappings are static to save on
@@ -68,14 +68,14 @@
                          This must contain a line with the fully qualified name of a class that
                          implements the <em>org.apache.fop.fo.ElementMapping</em> interface. This will then be
                          loaded automatically at the start. Internal mappings are: FO, SVG and Extension
-                         (pdf bookmarks)</p></s2> 
+                         (pdf bookmarks)</p></s2>
                 <s2 title="Tree Building"><p>The SAX Events will fire all the information
                          for the document with start element, end element, text data etc. This
                          information is used to build up a representation of the FO document. To do this
                          for a namespace there is a set of element mappings. When an element + namepsace
                          mapping is found then it can create an object for that element. If the element
                          is not found then it creates a dummy object or a generic DOM for unknown
-                         namespaces.</p> 
+                         namespaces.</p>
                   <p>The object is then setup and then given attributes for the element.
                          For the FO Tree the attributes are converted into properties. The FO objects
                          use a property list mapping to convert the attributes into a list of properties
@@ -83,7 +83,7 @@
                          constructed. This DOM can then be passed through to the renderer. Other element
                          mappings can be used in different ways, for example to create elements that
                          create areas during the layout process or setup information for the renderer
-                         etc.</p> 
+                         etc.</p>
         <p>
           While the tree building is mainly about creating the FO Tree
           there are some stages that can propagate to the renderer. At
@@ -98,9 +98,9 @@
           sequence.  The page may not yet be complete, however,
           containing forward page number references, for example.)
         </p>
-      </s2> 
-                <s2 title="Associated Tasks"> 
-                  <ul><li>Error handling for xml not well formed.</li> 
+      </s2>
+                <s2 title="Associated Tasks">
+                  <ul><li>Error handling for xml not well formed.</li>
                          <li>Error handling for other XML parsing errors.</li><li>Developer
-                                info for adding namespace handlers.</li></ul></s2></s1>   
+                                info for adding namespace handlers.</li></ul></s2></s1>
   </body></document>
