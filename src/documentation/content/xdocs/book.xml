@@ -40,6 +40,7 @@
           <menu-item label="Examples" href="examples.html"/>
           <menu-item label="Mailing Lists" href="maillist.html"/>
           <menu-item label="Bugs" href="bugs.html"/>
+          <menu-item label="Wiki" href="http://nagoya.apache.org/wiki/apachewiki.cgi?FOPProjectPages"/>
           <menu-item label="License" href="license.html"/>
           <menu-item label="Other" href="resources.html"/>
         </menu>
