@@ -6,7 +6,7 @@ import org.apache.fop.datatypes.ColorType;
 import org.apache.fop.fo.PropNames;
 
 public class BorderBottomColor extends ColorTransparent {
-    public static final int dataTypes = COLOR_T | INHERIT;
+    public static final int dataTypes = ENUM | COLOR_T | INHERIT;
     public static final int traitMapping = DISAPPEARS;
     public static final int initialValueType = COLOR_IT;
     public static final int inherited = NO;

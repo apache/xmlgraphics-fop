@@ -6,7 +6,7 @@ import org.apache.fop.datatypes.ColorType;
 import org.apache.fop.fo.PropNames;
 
 public class BackgroundColor extends ColorTransparent {
-    public static final int dataTypes = COLOR_TRANS | INHERIT;
+    public static final int dataTypes = ENUM | COLOR_TRANS | INHERIT;
     public static final int traitMapping = RENDERING;
     public static final int initialValueType = COLOR_IT;
     public PropertyValue getInitialValue(int property)
