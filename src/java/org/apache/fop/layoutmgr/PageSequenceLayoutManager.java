@@ -450,9 +450,12 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
                 currentPageNum, isFirstPage, bIsBlank);
             Region body = currentSimplePageMaster.getRegion(FO_REGION_BODY);
             if (!pageSeq.getMainFlow().getFlowName().equals(body.getRegionName())) {
+              // this is fine by the XSL Rec (fo:flow's flow-name can be mapped to
+              // any region), but we don't support it yet.
               throw new FOPException("Flow '" + pageSeq.getMainFlow().getFlowName()
                  + "' does not map to the region-body in page-master '"
-                 + currentSimplePageMaster.getMasterName() + "'");
+                 + currentSimplePageMaster.getMasterName() + "'.  FOP presently "
+                 + "does not support this.");
             }
             curPage = createPageAreas(currentSimplePageMaster);
             isFirstPage = false;
@@ -496,7 +499,7 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
         curFlow = curSpan.getNormalFlow(0);
     }
 
-    private void layoutStaticContent(int regionID) {
+    private void layoutSideRegion(int regionID) {
         SideRegion reg = (SideRegion)currentSimplePageMaster.getRegion(regionID);
         if (reg == null) {
             return;
@@ -556,11 +559,11 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
             curFlow = null;
             return;
         }
-        // Layout static content into the regions
-        layoutStaticContent(FO_REGION_BEFORE); 
-        layoutStaticContent(FO_REGION_AFTER);
-        layoutStaticContent(FO_REGION_START);
-        layoutStaticContent(FO_REGION_END);
+        // Layout side regions
+        layoutSideRegion(FO_REGION_BEFORE); 
+        layoutSideRegion(FO_REGION_AFTER);
+        layoutSideRegion(FO_REGION_START);
+        layoutSideRegion(FO_REGION_END);
         // Queue for ID resolution and rendering
         areaTreeModel.addPage(curPage);
         log.debug("page finished: " + curPage.getPageNumberString() + ", current num: " + currentPageNum);
