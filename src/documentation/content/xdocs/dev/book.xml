@@ -15,7 +15,6 @@
     </menu>
     <menu label="Using">
       <menu-item label="Extensions" href="extensions.html"/>
-      <menu-item label="Configuration" href="configuration.html"/>
     </menu>
     <menu label="Extras">
       <menu-item label="SVG" href="svg.html"/>
