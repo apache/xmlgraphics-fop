@@ -132,10 +132,10 @@ Sometimes ant gives out this warnings, but the build is finished without any pro
     </fileset>
 
     <fileset dir="${basedir}" id="dist.bin.lib">
-       <include name="lib/xerces-1.2.3.jar"/>
+       <include name="lib/xercesImpl-2.0.1.jar"/>
        <include name="lib/xerces.LICENSE.txt"/>
-       <include name="lib/xalan-2.0.0.jar"/>
-       <include name="lib/xalanj1compat.jar"/>
+       <include name="lib/xml-apis.jar"/>
+       <include name="lib/xalan-2.3.1.jar"/>
        <include name="lib/xalan.LICENSE.txt"/>
        <include name="lib/batik.jar"/>
        <include name="lib/batik.LICENSE.txt"/>
@@ -170,6 +170,7 @@ Sometimes ant gives out this warnings, but the build is finished without any pro
       <include name="stylebook*.jar"/>
       <include name="xalan*.jar"/>
       <include name="xerces*.jar"/>
+      <include name="xml-apis*.jar"/>
     </fileset>
   </path>
 
@@ -283,7 +284,7 @@ Sometimes ant gives out this warnings, but the build is finished without any pro
     <taskdef name="runTest" classname="org.apache.fop.tools.anttasks.RunTest"/>
 
     <property name="main.class" value="org.apache.fop.apps.Fop"/>
-    <property name="runtime.classpath" value="lib/xerces-1.2.3.jar lib/xalan-2.0.0.jar lib/batik.jar lib/jimi-1.0.jar lib/avalon-framework-cvs-20020315.jar"/>
+    <property name="runtime.classpath" value="lib/xercesImpl-2.0.1.jar lib/xml-apis.jar lib/xalan-2.3.1.jar lib/batik.jar lib/jimi-1.0.jar lib/avalon-framework-cvs-20020315.jar"/>
    
     <filter filtersfile="${build.src}/codegen/filter"/>
 
