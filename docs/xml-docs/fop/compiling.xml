@@ -33,14 +33,13 @@
       setting. It is used by the compilation software.</p>
     </s3>
     <s3 title="Settings in your classpath">
-      <p>If you need PDFOutputHandler (an extension, which calls Fop from the XSLT processor XT) you also 
-         must have xp.jar and xt.jar (both can be found at <jump href="http://www.jclark.com/xml/">http://www.jclark.com/xml/
-         </jump> in your classpath.
+      <p>If you want Fop to use the image library jimi, it should be in your classpath during 
+         compilation. 
       </p>
       <p>A CLASSPATH for a complete compilation of Fop could look like this, if all these jar files are in 
          a directory called jars (example uses windows syntax):
       </p>
-      <p><code>set CLASSPATH=\jars\xp.jar;\jars\xt.jar;\jars\xalan.jar;\jars\xerces.jar;\jars\bsf.jar
+      <p><code>set CLASSPATH=\jars\xalan.jar;\jars\xerces.jar;\jars\bsf.jar;\jars\jimi.jar;
       </code></p>
     </s3>
     </s2>
