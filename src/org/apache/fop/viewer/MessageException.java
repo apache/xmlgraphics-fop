@@ -9,7 +9,7 @@ import java.lang.Exception;
  * Aufrufer hochgereicht werden, bis schliesslich ein Aufrufer die
  * Meldung zur Anzeige bringt.
  *
- * @author Juergen.Verwohlt@af-software.de
+ * @author Juergen.Verwohlt@jCatalog.com
  * @version 1.0 28.05.99
  *
  */

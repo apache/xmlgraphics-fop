@@ -11,7 +11,7 @@ import java.io.*;
  * <strong>Key <i>key</i> not found</strong> zurückgibt.
  * @see PropertyResourceBundle
  *
- * @author Stanislav.Gorkhover@af-software.de
+ * @author Stanislav.Gorkhover@jCatalog.com
  * @version 1.0 18.03.1999
  */
 public class SecureResourceBundle extends ResourceBundle implements Translator {

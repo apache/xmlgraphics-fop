@@ -18,7 +18,7 @@ import org.apache.fop.apps.*;
  * eine Detailanzeige einzublenden, in der z.B. bei Fehlern der StackTrace ausgegeben
  * werden kann.
  *
- * @author Juergen.Verwohlt@af-software.de
+ * @author Juergen.Verwohlt@jCatalog.com
  * @version 1.0 09.06.99
  */
 public class MessagesDialog extends JOptionPane {

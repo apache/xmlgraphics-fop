@@ -2,11 +2,10 @@ package org.apache.fop.viewer;
 
 /*
   originally contributed by
-  Juergen Verwohlt: Juergen.Verwohlt@af-software.de,
-  Rainer Steinkuhle: Rainer.Steinkuhle@af-software.de,
-  Stanislav Gorkhover: Stanislav.Gorkhover@af-software.de
+  Juergen Verwohlt: Juergen.Verwohlt@jCatalog.com,
+  Rainer Steinkuhle: Rainer.Steinkuhle@jCatalog.com,
+  Stanislav Gorkhover: Stanislav.Gorkhover@jCatalog.com
  */
-
 
 import java.awt.*;
 import java.awt.print.*;
@@ -61,7 +60,7 @@ public class PreviewDialog extends JFrame implements ProgressListener {
     public PreviewDialog(AWTRenderer aRenderer, Translator aRes) {
 	res = aRes;
 	renderer = aRenderer;
-	
+
 	printAction = new Command(res.getString("Print"), "Print") {
 		public void doit() {print();}};
 	firstPageAction =
@@ -187,6 +186,8 @@ public class PreviewDialog extends JFrame implements ProgressListener {
 		public void doit() {goToNextPage(null);}} );
         menu.add(new Command(res.getString("Last page")) {
 		public void doit() {goToLastPage(null);}} );
+        menu.add(new Command(res.getString("Go to Page") + " ...") {
+		public void doit() {goToPage(null);}} );
         menu.addSeparator();
         subMenu = new JMenu(res.getString("Zoom"));
 	subMenu.add(new Command("25%") {
@@ -279,6 +280,24 @@ public class PreviewDialog extends JFrame implements ProgressListener {
     }
 
     /**
+     * Shows a page by number.
+     */
+    private void goToPage(ActionEvent e) {
+
+    GoToPageDialog d = new GoToPageDialog(this, res.getString("Go to Page"), true);
+    d.setLocation((int) getLocation().getX() + 50, (int) getLocation().getY() + 50);
+    d.show();
+    currentPage = d.getPageNumber();
+
+	if (currentPage < 1 || currentPage > pageCount)
+      return;
+
+    currentPage--;
+
+	goToPage(currentPage);
+    }
+
+    /**
      * Shows the first page.
      */
     private void goToFirstPage(ActionEvent e) {
@@ -342,8 +361,11 @@ public class PreviewDialog extends JFrame implements ProgressListener {
 	BufferedImage pageImage = null;
 	Graphics graphics = null;
 
+
 	renderer.render(currentPage);
 	pageImage = renderer.getLastRenderedPage();
+        if (pageImage == null)
+          return;
 	graphics = pageImage.getGraphics();
 	graphics.setColor(Color.black);
 	graphics.drawRect(0, 0, pageImage.getWidth() - 1,
@@ -352,11 +374,15 @@ public class PreviewDialog extends JFrame implements ProgressListener {
 	previewImageLabel.setIcon(new ImageIcon(pageImage));
 
 	pageCount = renderer.getPageCount();
-	
+
 	statisticsStatus.setText(res.getString("Page") + " " +
 				 (currentPage + 1) + " " +
 				 res.getString("of") + " " +
 				 pageCount);
+    }
+
+    public void dispose() {
+      System.exit(0);
     }
 }  // class PreviewDialog
 

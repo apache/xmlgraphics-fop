@@ -2,9 +2,9 @@
 package org.apache.fop.apps;
 /*
   originally contributed by
-  Juergen Verwohlt: Juergen.Verwohlt@jcatalog.com,
-  Rainer Steinkuhle: Rainer.Steinkuhle@jcatalog.com,
-  Stanislav Gorkhover: Stanislav.Gorkhover@jcatalog.com
+  Juergen Verwohlt: Juergen.Verwohlt@jCatalog.com,
+  Rainer Steinkuhle: Rainer.Steinkuhle@jCatalog.com,
+  Stanislav Gorkhover: Stanislav.Gorkhover@jCatalog.com
  */
 import org.apache.fop.messaging.MessageHandler;
 import org.apache.fop.viewer.*;
@@ -60,7 +60,6 @@ public class AWTCommandLine {
     UserMessage.setTranslator(getResourceBundle(TRANSLATION_PATH + "messages." + language));
 
     resource.setMissingEmphasized(false);
-
     AWTRenderer renderer = new AWTRenderer(resource);
     PreviewDialog frame = createPreviewDialog(renderer, resource);
     renderer.setProgressListener(frame);
@@ -80,7 +79,7 @@ public class AWTCommandLine {
     parser.setFeature("http://xml.org/sax/features/namespace-prefixes", true);
   } catch (SAXException e) {
     MessageHandler.errorln("Error in setting up parser feature namespace-prefixes");
-    MessageHandler.errorln("You need a parser which supports SAX version 2");  
+    MessageHandler.errorln("You need a parser which supports SAX version 2");
     System.exit(1);
   }
 
@@ -93,6 +92,8 @@ public class AWTCommandLine {
 
 	    driver.addElementMapping("org.apache.fop.fo.StandardElementMapping");
 	    driver.addElementMapping("org.apache.fop.svg.SVGElementMapping");
+        driver.addPropertyList("org.apache.fop.fo.StandardPropertyListMapping");
+        driver.addPropertyList("org.apache.fop.svg.SVGPropertyListMapping");
 
 // build FO tree: time
         frame.progress(resource.getString("Build FO tree") + " ...");
@@ -107,6 +108,7 @@ public class AWTCommandLine {
         driver.render();
 
         frame.progress(resource.getString("Show"));
+        frame.showPage();
 
 	} catch (Exception e) {
 	    MessageHandler.errorln("FATAL ERROR: " + e.getMessage());
@@ -167,7 +169,6 @@ public class AWTCommandLine {
    * @return the InputSource created
    */
   protected static InputSource fileInputSource(String filename) {
-
 	/* this code adapted from James Clark's in XT */
 	File file = new File(filename);
 	String path = file.getAbsolutePath();
@@ -216,7 +217,7 @@ public class AWTCommandLine {
     if (args.length < 1 || args.length > 3) {
       MessageHandler.errorln("usage: java AWTCommandLine " +
                          "formatting-object-file [language] ");
-      System.exit(1);
+       System.exit(1);
     }
 
     srcPath = args[0];
@@ -228,4 +229,5 @@ public class AWTCommandLine {
 
   }  // main
 }  // AWTCommandLine
+
 

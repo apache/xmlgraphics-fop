@@ -13,7 +13,7 @@ import java.util.*;
  * Schlüsselwerte mit Leerzeichen zu.
  *
  * @version 02.12.99
- * @author Stanislav.Gorkhover@af-software.de
+ * @author Stanislav.Gorkhover@jCatalog.com
  *
  */
 public class LoadableProperties extends Hashtable {
