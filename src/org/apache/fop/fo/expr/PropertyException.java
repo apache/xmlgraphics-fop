@@ -51,7 +51,7 @@
 package org.apache.fop.fo.expr;
 
 public class PropertyException extends Exception {
-  PropertyException(String detail) {
+  public PropertyException(String detail) {
     super(detail);
   }
 }
