@@ -708,6 +708,8 @@ list of possible build targets.
           <include name="fop-transcoder-allinone.jar"/>
         </fileset>
         <fileset dir="${lib.dir}">
+          <include name="xml-apis*.jar"/>
+          <include name="xerces*.jar"/>
           <include name="batik*.jar"/>
         </fileset>
       </classpath>
