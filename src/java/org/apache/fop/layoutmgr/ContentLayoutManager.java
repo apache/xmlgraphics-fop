@@ -63,15 +63,17 @@ public class ContentLayoutManager implements InlineLevelLayoutManager {
      *
      * @param area  The parent area
      */
-    public ContentLayoutManager(Area area) {
+    public ContentLayoutManager(Area area, LayoutManager parentLM) {
         holder = area;
+        this.parentLM = parentLM;
     }
 
     /**
      * Constructor using a fo:title formatting object
      */
-    public ContentLayoutManager(Title foTitle) {
+    public ContentLayoutManager(Title foTitle, LayoutManager parentLM) {
         // get breaks then add areas to title
+        this.parentLM = parentLM;
         holder = new LineArea();
 
         setUserAgent(foTitle.getUserAgent());
@@ -82,14 +84,6 @@ public class ContentLayoutManager implements InlineLevelLayoutManager {
         lm = new InlineLayoutManager(foTitle);
         addChildLM(lm);
         fillArea(lm);
-    }
-
-    /**
-     * Set the FO object for this layout manager
-     *
-     * @param fo the fo for this layout manager
-     */
-    public void setFObj(FObj fo) {
     }
 
     public void fillArea(LayoutManager curLM) {
@@ -210,6 +204,10 @@ public class ContentLayoutManager implements InlineLevelLayoutManager {
     }
 
     /** @see org.apache.fop.layoutmgr.LayoutManager */
+    public void setFObj(FObj fobj) {
+    }
+
+    /** @see org.apache.fop.layoutmgr.LayoutManager */
     public void setParent(LayoutManager lm) {
         parentLM = lm;
     }
@@ -283,28 +281,11 @@ public class ContentLayoutManager implements InlineLevelLayoutManager {
     }
 
     /**
-     * Set the AreaTreeHandler.
-     * This is used by the PageSequenceLM for the Title,
-     * because it does not set itself as the parentLM.
-     * @param areaTreeHandler the area tree handler to add pages to
-     */
-    public void setAreaTreeHandler(AreaTreeHandler areaTreeHandler) {
-        this.areaTreeHandler = areaTreeHandler;
-    }
-
-    /**
-     * Either areaTreeHandler or parentLM should not be null.
-     * If areaTreeHandler is null,
-     * delegate getAreaTreeHandler to the parent layout manager.
-     *
      * @see org.apache.fop.layoutmgr.LayoutManager
      * @return the AreaTreeHandler object.
      */
     public AreaTreeHandler getAreaTreeHandler() {
-        if (areaTreeHandler == null) {
-            areaTreeHandler = parentLM.getAreaTreeHandler();
-        }
-        return areaTreeHandler;
+        return parentLM.getAreaTreeHandler();
     }
 
     /**

@@ -108,12 +108,6 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
     private SimplePageMaster currentSimplePageMaster;
 
     /**
-     * The collection of StaticContentLayoutManager objects that are associated
-     * with this Page Sequence, keyed by flow-name.
-     */
-    //private HashMap staticContentLMs = new HashMap(4);
-
-    /**
      * Constructor - activated by AreaTreeHandler for each
      * fo:page-sequence in the input FO stream
      *
@@ -155,8 +149,7 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
 
         if (pageSeq.getTitleFO() != null) {
             ContentLayoutManager clm = 
-                new ContentLayoutManager(pageSeq.getTitleFO());
-            clm.setAreaTreeHandler(areaTreeHandler);
+                new ContentLayoutManager(pageSeq.getTitleFO(), this);
             title = (LineArea) clm.getParentArea(null); // can improve
         }
 
@@ -172,7 +165,6 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
             if ((bp = getNextBreakPoss(childLC)) != null) {
                 addAreas((BlockBreakPosition)bp.getPosition());
                 // add static areas and resolve any new id areas
-
                 // finish page and add to area tree
                 finishPage();
                 currentPageNum++;
@@ -728,6 +720,7 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
                spm.getWritingMode(), pageRefRect, reldims);
 
        // Create a RegionViewport/ reference area pair for each page region
+       RegionReference rr = null;
        for (Iterator regenum = spm.getRegions().values().iterator();
             regenum.hasNext();) {
            Region r = (Region)regenum.next();
@@ -735,16 +728,18 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
            r.setLayoutDimension(PercentBase.BLOCK_IPD, rvp.getIPD());
            r.setLayoutDimension(PercentBase.BLOCK_BPD, rvp.getBPD());
            if (r.getNameId() == FO_REGION_BODY) {
-               rvp.setRegion(makeRegionBodyReferenceArea((RegionBody) r, rvp.getViewArea()));
+               rr = new BodyRegion((RegionBody) r);
            } else {
-               rvp.setRegion(makeRegionReferenceArea(r, rvp.getViewArea()));
+               rr = new RegionReference(r.getNameId());
            }
+           setRegionPosition(r, rr, rvp.getViewArea());
+           rvp.setRegion(rr);
            page.setRegionViewport(r.getNameId(), rvp);
        }
 
        return new PageViewport(page, new Rectangle(0, 0, pageWidth, pageHeight));
-    }
-
+    }  
+    
     /**
      * Creates a RegionViewport Area object for this pagination Region.
      * @param reldims relative dimensions
@@ -762,46 +757,16 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
         TraitSetter.addBackground(rv, r.getCommonBorderPaddingBackground());
         return rv;
     }
-
-    private BodyRegion makeRegionBodyReferenceArea(RegionBody r,
-            Rectangle2D absRegVPRect) {
-        // Should set some column stuff here I think, or put it elsewhere
-        BodyRegion body = new BodyRegion();
-        setRegionPosition(r, body, absRegVPRect);
-        int columnCount = r.getColumnCount();
-        if ((columnCount > 1) && (r.getOverflow() == EN_SCROLL)) {
-            // recover by setting 'column-count' to 1. This is allowed but
-            // not required by the spec.
-            log.error("Setting 'column-count' to 1 because "
-                    + "'overflow' is set to 'scroll'");
-            columnCount = 1;
-        }
-        body.setColumnCount(columnCount);
-        body.setColumnGap(r.getColumnGap());
-        return body;
-    }
-
-    /**
-     * Create the region reference area for this region master.
-     * @param absRegVPRect The region viewport rectangle is "absolute" coordinates
-     * where x=distance from left, y=distance from bottom, width=right-left
-     * height=top-bottom
-     * @return a new region reference area
-     */
-    private RegionReference makeRegionReferenceArea(Region r,
-            Rectangle2D absRegVPRect) {
-        RegionReference rr = new RegionReference(r.getNameId());
-        setRegionPosition(r, rr, absRegVPRect);
-        return rr;
-    }
-
+   
     /**
      * Set the region position inside the region viewport.
      * This sets the trasnform that is used to place the contents of
      * the region.
      *
      * @param r the region reference area
-     * @param absRegVPRect the rectangle to place the region contents
+     * @param absRegVPRect The region viewport rectangle in "absolute" coordinates
+     * where x=distance from left, y=distance from bottom, width=right-left
+     * height=top-bottom
      */
     private void setRegionPosition(Region r, RegionReference rr,
                                   Rectangle2D absRegVPRect) {
