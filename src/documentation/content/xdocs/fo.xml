@@ -88,7 +88,7 @@ If you view their output with something not aware of the encoding, like Notepad 
         <title>Current Date and Time</title>
         <p>XSL-FO does not currently have a function for retrieving the current date and time.
 However, in some cases, XSLT can be used to place the current date and time into the XSL-FO document as it is generated.</p>
-        <p>One possibility is to use the <link href="http://exslt.org/date/index.html">exslt date and time extension</link>.</p>
+        <p>One possibility is to use the <jump href="http://exslt.org/date/index.html">exslt date and time extension</jump>.</p>
         <p>Another possibility is to use java or javascript (or perhaps some other language).
 Here is an example, using java, that works with Xalan. First, create the appropriate namespace:</p>
         <source><![CDATA[<xsl:stylesheet version="1.0"
