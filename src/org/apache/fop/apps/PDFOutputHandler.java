@@ -5,8 +5,8 @@ import com.jclark.xsl.sax.*;
 import java.io.*;
 
 // FOP
-import org.apache.fop.fo.FOTreeBuilder;
-import org.apache.fop.fo.ElementMapping; 
+import org.apache.fop.fo.XTFOTreeBuilder;
+import org.apache.fop.fo.XTElementMapping; 
 import org.apache.fop.layout.AreaTree;
 import org.apache.fop.layout.FontInfo;
 import org.apache.fop.render.Renderer;
@@ -22,7 +22,7 @@ import org.apache.fop.messaging.MessageHandler;
  * to your stylesheet. Now XT will automatically call FOP.
  * 
  */
-public class PDFOutputHandler extends FOTreeBuilder implements OutputDocumentHandler {
+public class PDFOutputHandler extends XTFOTreeBuilder implements OutputDocumentHandler {
   
   /** the area tree that is the result of formatting the FO tree */
   protected AreaTree areaTree;
@@ -121,7 +121,7 @@ public class PDFOutputHandler extends FOTreeBuilder implements OutputDocumentHan
    *
    * an element mapping maps element names to Java classes
    */
-  public void addElementMapping(ElementMapping mapping) {
+  public void addElementMapping(XTElementMapping mapping) {
     mapping.addToBuilder(this);
   }
     
@@ -138,11 +138,11 @@ public class PDFOutputHandler extends FOTreeBuilder implements OutputDocumentHan
    * protected method used by addElementMapping(String) to
    * instantiate element mapping class
    */
-  protected ElementMapping createElementMapping(String mappingClassName) {
+  protected XTElementMapping createElementMapping(String mappingClassName) {
     MessageHandler.logln("using element mapping " + mappingClassName);
 
     try {
-        return (ElementMapping)
+        return (XTElementMapping)
     	Class.forName(mappingClassName).newInstance();
     } catch (ClassNotFoundException e) {
         MessageHandler.errorln("Could not find " + mappingClassName);

@@ -7,7 +7,7 @@ package org.apache.fop.apps;
  */
 
 
-import org.xml.sax.Parser;
+import org.xml.sax.XMLReader;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
@@ -50,7 +50,7 @@ public class PrintCommandLine extends CommandLine {
       System.exit(1);
     }
 
-    Parser parser = createParser();
+    XMLReader parser = createParser();
 
     if (parser == null) {
       MessageHandler.errorln("ERROR: Unable to create SAX parser");

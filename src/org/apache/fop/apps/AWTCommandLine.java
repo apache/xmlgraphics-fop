@@ -15,7 +15,7 @@ import javax.swing.UIManager;
 import java.awt.*;
 
 // SAX
-import org.xml.sax.Parser;
+import org.xml.sax.XMLReader;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
@@ -68,7 +68,7 @@ public class AWTCommandLine {
 
 //init parser
     frame.progress(resource.getString("Init parser") + " ...");
-    Parser parser = createParser();
+    XMLReader parser = createParser();
 
 
 	if (parser == null) {
@@ -109,16 +109,16 @@ public class AWTCommandLine {
   }
 
 
-    static Parser createParser() {
+    static XMLReader createParser() {
 	String parserClassName =
 	    System.getProperty("org.xml.sax.parser");
 	if (parserClassName == null) {
-	    parserClassName = "com.jclark.xml.sax.Driver";
+	    parserClassName = "org.apache.xerces.parsers.SAXParser";
 	}
 	MessageHandler.errorln("using SAX parser " + parserClassName);
 
 	try {
-	    return (Parser)
+	    return (XMLReader)
 		Class.forName(parserClassName).newInstance();
 	} catch (ClassNotFoundException e) {
 	    MessageHandler.errorln("Could not find " + parserClassName);
