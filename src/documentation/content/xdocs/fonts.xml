@@ -122,7 +122,7 @@ java -cp build/fop.jar:lib/avalon-framework.jar:lib/xml-apis.jar:
 java -cp build\fop.jar;lib\avalon-framework.jar;lib\xml-apis.jar;
          lib\xercesImpl.jar;lib\xalan.jar
            org.apache.fop.fonts.apps.TTFReader
-             C:\myfonts\cmr10.ttf C:\myfonts\cmr10.ttf ttfcm.xml
+             C:\myfonts\cmr10.ttf ttfcm.xml
 </source>
     </section>
     <section id="truetype-collections">
