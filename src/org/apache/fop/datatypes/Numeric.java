@@ -20,38 +20,32 @@ import org.apache.fop.fo.Properties;
 
 /**
  * An abstraction of "numeric" values as defined by the XSL FO Specification.
- * Numerics include absolute numbers, absolute lengths, relative lengths
- * (percentages and ems), angle, time and frequency.
- *
+ * Numerics include absolute numbers, absolute lengths and relative lengths
+ * (percentages and ems).
+ * <p>
  * Relative lengths are converted immediately to a pure numeric factor, i.e.
  * an absolute number (a number with unit power zero.)  They retain a
  * baseunit of PERCENTAGE or EMS respectively.
- *
+ * <p>
  * Relative lengths resolve to absolute lengths as soon as they are involved
- * in a multop with any Numeric with a baseunit of MILLIPOINTS.  It is illegal
- * for them to be involved in multops with Numerics of other baseunits.
- *
+ * in a multop with any Numeric with a baseunit of MILLIPOINTS.
+ * <p>
  * Therefore, only a number, its power and its baseunit need be provided for
  * in this class.
- *
  * All numeric values are represented as a value and a unit raised to a
  * power.  For absolute numbers, including relative lengths, the unit power is
  * zero.
- *
- * Whenever the power associated with a number is non-zero, it is a length,
- * angle, time or frequency.
- *
+ * Whenever the power associated with a number is non-zero, it is a length.
+ * <p>
  * It is an error for the end result of an expression to be a numeric with
  * a power other than 0 or 1. (Rec. 5.9.6)
- *
+ * <pre>
  * Operations defined on combinations of the types are (where
- *   unit      = ( MILLIPOINTS | HERTZ | MILLISECS | DEGREES )
  *   length    = MILLIPOINTS
  *   number    = NUMBER
- *   relunit   = ( PERCENTAGE | EMS )
- *   notnumber = ( unit | relunit )
- *   absunit   = ( number | unit )
- *   notlength = ( HERTZ | MILLISECS | DEGREES )
+ *   rel-len   = ( PERCENTAGE | EMS )
+ *   notnumber = ( length | rel-len )
+ *   absunit   = ( number | length )
  *   numeric   = ( number | notnumber )
  * )
  * numeric^n   addop  numeric^m   = Illegal
@@ -61,26 +55,14 @@ import org.apache.fop.fo.Properties;
  * number      multop anyunit     = anyunit      universal multiplier
  *                                               includes number * relunit
  * unit1       multop unit2       = Illegal
- * relunit     multop notlength   = Illegal
  * relunit     multop relunit     = Illegal
  *
  * unit1^n     multop unit1^m     = unit1^(n+m)  includes number * number
  *                                               excludes relunit* relunit
  * relunit     multop length      = length
  *
- * <i>Numeric</i>s are changeable, as the above table shows.  A numeric
- * created as a <i>Time</i> in seconds to power 1, e.g., if divided by another
- * <i>Time</i> in seconds to power 1 becomes a number.  if it is then
- * multiplied by a <i>Length</i> in points to power 1, it becomes a
- * <i>Length</i> in points.
- *
  * In fact, all lengths are maintained internally
- * in millipoints.  Each of the non-number <i>Numeric</i> types is maintained
- * internally in a single baseunit.  These are:<br/>
- * MILLIPOINTS<br/>
- * HERTZ<br/>
- * MILLISECS<br/>
- * DEGREES<br/>
+ * in millipoints.
  */
 public class Numeric extends AbstractPropertyValue implements Cloneable {
 
@@ -96,11 +78,8 @@ public class Numeric extends AbstractPropertyValue implements Cloneable {
         ,PERCENTAGE = 2
                ,EMS = 4
        ,MILLIPOINTS = 8
-             ,HERTZ = 16
-         ,MILLISECS = 32
-           ,DEGREES = 64
 
-     ,LAST_BASEUNIT = DEGREES
+     ,LAST_BASEUNIT = MILLIPOINTS
                   ;
 
     /**
@@ -114,24 +93,14 @@ public class Numeric extends AbstractPropertyValue implements Cloneable {
     public static final int REL_LENGTH = PERCENTAGE | EMS;
 
     /**
-     * Integer constants for the named units.
-     */
-    public static final int UNIT = MILLIPOINTS | HERTZ | MILLISECS | DEGREES;
-
-    /**
-     * Integer constants for the named units not a length.
-     */
-    public static final int NOT_LENGTH = HERTZ | MILLISECS | DEGREES;
-
-    /**
      * Integer constants for the absolute-valued units.
      */
-    public static final int ABS_UNIT = NUMBER | UNIT;
+    public static final int ABS_UNIT = NUMBER | MILLIPOINTS;
 
     /**
      * Integer constants for non-numbers.
      */
-    public static final int NOT_NUMBER = UNIT | REL_LENGTH;
+    public static final int NOT_NUMBER = MILLIPOINTS | REL_LENGTH;
 
     /**
      * Integer constants for distances.
@@ -144,7 +113,7 @@ public class Numeric extends AbstractPropertyValue implements Cloneable {
     protected double value;
 
     /**
-     * The power to which the UNIT (not the number) is raised
+     * The power to which the Numeric is raised
      */
     protected int power;
 
@@ -161,7 +130,8 @@ public class Numeric extends AbstractPropertyValue implements Cloneable {
 
     /**
      * The actual unit in which this <tt>Numeric</tt> was originally defined.
-     * This is a constant defined in each of the original unit types.
+     * This is a constant defined in each of the original unit types
+     * (currently only Length).
      */
     private int originalUnit = Length.PT;
 
@@ -173,7 +143,8 @@ public class Numeric extends AbstractPropertyValue implements Cloneable {
      * @param power The dimension of the value. 0 for a Number, 1 for a Length
      * (any type), >1, <0 if Lengths have been multiplied or divided.
      * @param unit <tt>int</tt> enumeration of the subtype of the
-     * <i>baseunit</i> in which this <i>Numeric</i> is being defined.
+     * <i>baseunit</i> in which this <i>Numeric</i> is being defined
+     * e.g. Length.PX or Length.MM.
      */
     protected Numeric
         (int property, double value, int baseunit, int power, int unit)
@@ -194,7 +165,6 @@ public class Numeric extends AbstractPropertyValue implements Cloneable {
         this.baseunit = baseunit;
         originalBaseUnit = baseunit;
         originalUnit = unit;
-        if (baseunit == DEGREES) this.value = Angle.normalize(this);
     }
 
     /**
@@ -343,24 +313,6 @@ public class Numeric extends AbstractPropertyValue implements Cloneable {
                 throw new PropertyException
                         ("Length with unit power " + power);
             break;
-        case HERTZ:
-            super.validate(Properties.FREQUENCY);
-            if (power != 1)
-                throw new PropertyException
-                        ("Frequency with unit power " + power);
-            break;
-        case MILLISECS:
-            super.validate(Properties.TIME);
-            if (power != 1)
-                throw new PropertyException
-                        ("Time with unit power " + power);
-            break;
-        case DEGREES:
-            super.validate(Properties.ANGLE);
-            if (power != 1)
-                 throw new PropertyException
-                         ("Angle with unit power " + power);
-            break;
         default: 
             throw new PropertyException
                     ("Unrecognized baseunit type: " + baseunit);
@@ -384,7 +336,7 @@ public class Numeric extends AbstractPropertyValue implements Cloneable {
     }
 
     /**
-     * This object is an EMS factor is the baseunit is EMS.  Power is
+     * This object is an EMS factor if the baseunit is EMS.  Power is
      * guaranteed to be zero for EMS baseunit.
      */
     public boolean isEms() {
@@ -411,27 +363,6 @@ public class Numeric extends AbstractPropertyValue implements Cloneable {
      */
     public boolean isDistance() {
         return (baseunit & DISTANCE) != 0;
-    }
-
-    /**
-     * This object is a time in milliseconds.
-     */
-    public boolean isTime() {
-        return (baseunit == MILLISECS && power == 1);
-    }
-
-    /**
-     * This object is a frequency in hertz.
-     */
-    public boolean isFrequency() {
-        return (baseunit == HERTZ && power == 1);
-    }
-
-    /**
-     * This object is an angle in degrees.
-     */
-    public boolean isAngle() {
-        return (baseunit == DEGREES && power == 1);
     }
 
     /**
@@ -482,7 +413,6 @@ public class Numeric extends AbstractPropertyValue implements Cloneable {
         
         // Subtract each type of value
         value -= op.value;
-        if (baseunit == DEGREES) this.value = Angle.normalize(this);
         return this;
     }
 
@@ -506,7 +436,6 @@ public class Numeric extends AbstractPropertyValue implements Cloneable {
 
         // Add each type of value
         value += op.value;
-        if (baseunit == DEGREES) this.value = Angle.normalize(this);
         return this;
     }
 
@@ -535,7 +464,6 @@ public class Numeric extends AbstractPropertyValue implements Cloneable {
         }
 
         value %= op.value;
-        if (baseunit == DEGREES) this.value = Angle.normalize(this);
         return this;
     }
 
@@ -568,7 +496,6 @@ public class Numeric extends AbstractPropertyValue implements Cloneable {
         }
 
         value %= op;
-        if (baseunit == DEGREES) this.value = Angle.normalize(this);
         return this;
     }
 
@@ -585,35 +512,20 @@ public class Numeric extends AbstractPropertyValue implements Cloneable {
             value *= op.value;
             power = op.power;
             baseunit = op.baseunit;
-        } else { // this is not a NUMBER - must be unit or relative length
+        } else { // this is not a NUMBER - must be absolute or relative length
             if (op.baseunit == NUMBER) {
                 // NUMBER is the universal multiplier
                 value *= op.value;
-            } else { // op not a NUMBER - must be UNIT or REL_LENGTH
-                if ((baseunit & UNIT ) != 0) { // this is a unit
-                    if ((op.baseunit & UNIT) != 0) { // op is a unit
-                        if (baseunit != op.baseunit) { // not same unit
-                            throw new PropertyException
-                                    ("Can't multiply Numerics of different "
-                                     + "baseunits: " + getBaseunitString()
-                                     + " " + op.getBaseunitString());
-                        } else { // same unit- multiply OK
-                            value *= op.value;
-                            power += op.power;
-                        }
-                    } else { // op is a REL_LENGTH; this is a UNIT
-                        if (baseunit == MILLIPOINTS) { // this is a LENGTH
-                            // Result is a length * numeric relative factor
-                            value *= op.value;
-                        } else { // this is a UNIT not a LENGTH
-                            throw new PropertyException
-                                    ("Can't multiply a unit other than a "
-                                     + "length by a relative length: "
-                                     + getBaseunitString()
-                                     + " " + op.getBaseunitString());
-                        }
+            } else { // op not a NUMBER - must be MILLIPOINTS or REL_LENGTH
+                if (baseunit == MILLIPOINTS) { // this is a LENGTH
+                    if (op.baseunit == MILLIPOINTS) { // op is a LENGTH
+                        value *= op.value;
+                        power += op.power;
+                    } else { // op is a REL_LENGTH; this is a LENGTH
+                        // Result is a length * numeric relative factor
+                        value *= op.value;
                     }
-                } else { // this is a REL_LENGTH  op is UNIT or REL_LENGTH
+                } else { // this is a REL_LENGTH  op is LENGTH or REL_LENGTH
                     // only valid if op is a LENGTH
                     if (op.baseunit == MILLIPOINTS) {
                         value *= op.value;
@@ -636,8 +548,6 @@ public class Numeric extends AbstractPropertyValue implements Cloneable {
         // if the operation has resulted in a non-NUMERIC reducing to
         // a unit power of 0, change the type to NUMBER
         if (power == 0 && ! this.isNumeric()) baseunit = NUMBER;
-        // Always normalize if we are dealing with degrees.
-        if (baseunit == DEGREES) this.value = Angle.normalize(this);
         return this;
     }
 
@@ -648,7 +558,6 @@ public class Numeric extends AbstractPropertyValue implements Cloneable {
      */
     public Numeric multiply(double op) {
         value *= op;
-        if (baseunit == DEGREES) this.value = Angle.normalize(this);
         return this;
     }
 
@@ -661,39 +570,24 @@ public class Numeric extends AbstractPropertyValue implements Cloneable {
     public Numeric divide(Numeric op) throws PropertyException {
         if (baseunit == NUMBER) {
             // NUMBER is the universal multiplier
-            // Divide and convert to the basetype and power of the arg
+            // Multiply and convert to the basetype and power of the arg
             value /= op.value;
             power = op.power;
             baseunit = op.baseunit;
-        } else { // this is not a NUMBER - must be unit or relative length
+        } else { // this is not a NUMBER - must be absolute or relative length
             if (op.baseunit == NUMBER) {
                 // NUMBER is the universal multiplier
                 value /= op.value;
-            } else { // op not a NUMBER - must be UNIT or REL_LENGTH
-                if ((baseunit & UNIT ) != 0) { // this is a unit
-                    if ((op.baseunit & UNIT) != 0) { // op is a unit
-                        if (baseunit != op.baseunit) { // not same unit
-                            throw new PropertyException
-                                    ("Can't divide Numerics of different "
-                                     + "baseunits: " + getBaseunitString()
-                                     + " " + op.getBaseunitString());
-                        } else { // same unit- divide OK
-                            value /= op.value;
-                            power -= op.power;
-                        }
-                    } else { // op is a REL_LENGTH; this is a UNIT
-                        if (baseunit == MILLIPOINTS) { // this is a LENGTH
-                            // Result is a length * numeric relative factor
-                            value /= op.value;
-                        } else { // this is a UNIT not a LENGTH
-                            throw new PropertyException
-                                    ("Can't multiply a unit other than a "
-                                     + "length by a relative length: "
-                                     + getBaseunitString()
-                                     + " " + op.getBaseunitString());
-                        }
+            } else { // op not a NUMBER - must be MILLIPOINTS or REL_LENGTH
+                if (baseunit == MILLIPOINTS) { // this is a LENGTH
+                    if (op.baseunit == MILLIPOINTS) { // op is a LENGTH
+                        value /= op.value;
+                        power -= op.power;
+                    } else { // op is a REL_LENGTH; this is a LENGTH
+                        // Result is a length / numeric relative factor
+                        value /= op.value;
                     }
-                } else { // this is a REL_LENGTH  op is UNIT or REL_LENGTH
+                } else { // this is a REL_LENGTH  op is LENGTH or REL_LENGTH
                     // only valid if op is a LENGTH
                     if (op.baseunit == MILLIPOINTS) {
                         value /= op.value;
@@ -701,7 +595,7 @@ public class Numeric extends AbstractPropertyValue implements Cloneable {
                         baseunit = op.baseunit;
                     } else { // Can't be done
                         throw new PropertyException
-                                ("Can't multiply a unit other than a "
+                                ("Can't divide a unit other than a "
                                  + "length by a relative length: "
                                  + getBaseunitString()
                                  + " " + op.getBaseunitString());
@@ -716,8 +610,6 @@ public class Numeric extends AbstractPropertyValue implements Cloneable {
         // if the operation has resulted in a non-NUMERIC reducing to
         // a unit power of 0, change the type to NUMBER
         if (power == 0 && ! this.isNumeric()) baseunit = NUMBER;
-        // Always normalize if we are dealing with degrees.
-        if (baseunit == DEGREES) this.value = Angle.normalize(this);
         return this;
     }
 
@@ -728,7 +620,6 @@ public class Numeric extends AbstractPropertyValue implements Cloneable {
      */
     public Numeric divide(double op) {
         value /= op;
-        if (baseunit == DEGREES) this.value = Angle.normalize(this);
         return this;
     }
 
@@ -738,8 +629,6 @@ public class Numeric extends AbstractPropertyValue implements Cloneable {
      */
     public Numeric negate() {
         value = -value;
-        // I think this is OK
-        if (baseunit == DEGREES) this.value = Angle.normalize(this);
         return this;
     }
 
@@ -864,14 +753,10 @@ public class Numeric extends AbstractPropertyValue implements Cloneable {
             return "numeric";
         case PERCENTAGE:
             return "percentage";
+        case EMS:
+            return "ems";
         case MILLIPOINTS:
             return "millipoints";
-        case HERTZ:
-            return "Hertz";
-        case MILLISECS:
-            return "milliseconds";
-        case DEGREES:
-            return "degrees";
         default: 
             return "Unrecognized baseunit type: " + baseunit;
         }
@@ -900,37 +785,25 @@ public class Numeric extends AbstractPropertyValue implements Cloneable {
      * Defined relative to the <i>originalBaseUnit</i>.
      */
     public String getOriginalUnitString() {
-        switch (originalBaseUnit) {
-        case NUMBER:
-            return "";
-        case PERCENTAGE:
-            return "%";
-        case MILLIPOINTS:
-            return Length.getUnitName(originalUnit);
-        case HERTZ:
-            return Frequency.getUnitName(originalUnit);
-        case MILLISECS:
-            return Time.getUnitName(originalUnit);
-        case DEGREES:
-            return Angle.getUnitName(originalUnit);
-        default: 
-            return "Unrecognized original baseunit type: " + originalBaseUnit;
-        }
-        
+        return getUnitName(originalBaseUnit, originalUnit);
     }
 
     /**
      * @param unit an <tt>int</tt> encoding a unit.
      * @return the <tt>String</tt> name of the unit.
      */
-    public static String getUnitName(int unit) {
-        switch (unit) {
+    public static String getUnitName(int baseunit, int unit) {
+        switch (baseunit) {
         case NUMBER:
             return "";
         case PERCENTAGE:
             return "%";
+        case EMS:
+            return "em";
+        case MILLIPOINTS:
+            return Length.getUnitName(unit);
         default:
-            return "";
+            return "Unrecognized original baseunit type: " + baseunit;
         }
     }
 
