@@ -1081,7 +1081,8 @@ public class FOPropertyMapping implements Constants {
         m.addEnum("semi-expanded", makeEnumProperty(SEMI_EXPANDED, "SEMI_EXPANDED"));
         m.addEnum("expanded", makeEnumProperty(EXPANDED, "EXPANDED"));
         m.addEnum("extra-expanded", makeEnumProperty(EXTRA_EXPANDED, "EXTRA_EXPANDED"));
-        m.addEnum("ultra-expanded", makeEnumProperty(ULTRA_EXPANDED, "ULTRA_EXPANDED"));        m.setDefault("normal");
+        m.addEnum("ultra-expanded", makeEnumProperty(ULTRA_EXPANDED, "ULTRA_EXPANDED"));
+        m.setDefault("normal");
         addPropertyMaker("font-stretch", m);
 
         // font-size-adjust
