@@ -100,6 +100,172 @@ public class LineArea extends Area {
     protected boolean prevOlState = false;
     protected boolean prevLTState = false;
 
+    public class Leader {
+        int leaderPattern;
+        int leaderLengthMinimum;
+        int leaderLengthOptimum;
+        int leaderLengthMaximum;
+        int ruleStyle;
+        int ruleThickness;
+        int leaderPatternWidth;
+        int leaderAlignment;
+        FontState fontState;
+        float red;
+        float green;
+        float blue;
+        int placementOffset;
+        int position;
+
+        Leader(int leaderPattern, int leaderLengthMinimum,
+               int leaderLengthOptimum, int leaderLengthMaximum,
+               int ruleStyle, int ruleThickness,
+               int leaderPatternWidth, int leaderAlignment,
+               FontState fontState,
+               float red, float green, float blue,
+               int placementOffset,
+               int position) {
+            this.leaderPattern=leaderPattern;
+            this.leaderLengthMinimum=leaderLengthMinimum;
+            this.leaderLengthOptimum=leaderLengthOptimum;
+            this.leaderLengthMaximum=leaderLengthMaximum;
+            this.ruleStyle=ruleStyle;
+            this.ruleThickness=ruleThickness;
+            this.leaderPatternWidth=leaderPatternWidth;
+            this.leaderAlignment=leaderAlignment;
+            this.fontState=fontState;
+            this.red=red;
+            this.green=green;
+            this.blue=blue;
+            this.placementOffset=placementOffset;
+            this.position = position;
+        }
+        void expand(int leaderLength) {
+            char dot = '.';
+            int dotWidth =  getCharWidth(dot);
+            char space = ' ';
+            int spaceWidth = getCharWidth(space);
+            int idx=children.indexOf(this);
+            children.remove(this);
+            switch (leaderPattern) {
+            case LeaderPattern.SPACE:
+                InlineSpace spaceArea = new InlineSpace(leaderLength,false);
+                children.add(idx,spaceArea);
+                break;
+            case LeaderPattern.RULE:
+                LeaderArea leaderArea = new LeaderArea(this.fontState, this.red, this.green,
+                                                       this.blue, "", leaderLength,
+                                                       this.leaderPattern,
+                                                       this.ruleThickness, this.ruleStyle);
+                leaderArea.setYOffset(this.placementOffset);
+                children.add(idx,leaderArea);
+                break;
+            case LeaderPattern.DOTS:
+                // if the width of a dot is larger than leader-pattern-width
+                // ignore this property
+                if (this.leaderPatternWidth < dotWidth) {
+                    this.leaderPatternWidth = 0;
+                }
+                // if value of leader-pattern-width is 'use-font-metrics' (0)
+                if (this.leaderPatternWidth == 0) {
+                    if (dotWidth == 0) {
+                        MessageHandler.errorln("char " + dot
+                                               + " has width 0. Using width 100 instead.");
+                        dotWidth = 100;
+                    }
+                    // if leader-alignment is used, calculate space to
+                    // insert before leader so that all dots will be
+                    // parallel.
+                    if (leaderAlignment == LeaderAlignment.REFERENCE_AREA) {
+                        int nextRepeatedLeaderPatternCycle
+                            = (int)Math.ceil((double)position/(double)dotWidth);
+                        int spaceBeforeLeader =
+                            dotWidth * nextRepeatedLeaderPatternCycle
+                            - position;
+                        // appending indent space leader-alignment setting
+                        // InlineSpace to false, so it is not used in line
+                        // justification
+                        System.out.println("align, space="+spaceBeforeLeader);
+                        if (spaceBeforeLeader > 0) {
+                            children.add(idx, new InlineSpace(spaceBeforeLeader,
+                                                              false));
+                            idx++;
+                            // shorten leaderLength, otherwise - in
+                            // case of leaderLength=remaining length -
+                            // it will cut off the end of leaderlength
+                            leaderLength -= spaceBeforeLeader;
+                        }
+                    }
+                    int factor = (int)Math.floor(leaderLength / dotWidth);
+                    char[] leaderChars = new char[factor];
+                    for (int i = 0; i < factor; i++) {
+                        leaderChars[i] = dot;
+                    }
+                    WordArea leaderPatternArea =
+                        new WordArea(currentFontState,
+                                     this.red, this.green, this.blue,
+                                     new String(leaderChars), leaderLength);
+                    leaderPatternArea.setYOffset(this.placementOffset);
+                    children.add(idx, leaderPatternArea);
+                } else {
+                    // if leader-alignment is used, calculate space to
+                    // insert before leader so that all dots will be
+                    // parallel.
+                    if (leaderAlignment == LeaderAlignment.REFERENCE_AREA) {
+                        int nextRepeatedLeaderPatternCycle
+                            = (int)Math.ceil((double)position/(double)leaderPatternWidth);
+                        int spaceBeforeLeader =
+                            leaderPatternWidth * nextRepeatedLeaderPatternCycle
+                            - position;
+                        // appending indent space leader-alignment setting
+                        // InlineSpace to false, so it is not used in line
+                        // justification
+                        System.out.println("align, space="+spaceBeforeLeader);
+                        if (spaceBeforeLeader > 0) {
+                            children.add(idx, new InlineSpace(spaceBeforeLeader,
+                                                              false));
+                            idx++;
+                            // shorten leaderLength, otherwise - in
+                            // case of leaderLength=remaining length -
+                            // it will cut off the end of leaderlength
+                            leaderLength -= spaceBeforeLeader;
+                        }
+                    }
+                    // calculate the space to insert between the dots
+                    // and create a inline area with this width
+                    int dotsFactor =
+                        (int)Math.floor(((double)leaderLength)
+                                        / ((double)this.leaderPatternWidth));
+                    // add combination of dot + space to fill leader
+                    // is there a way to do this in a more effective way?
+                    for (int i = 0; i < dotsFactor; i++) {
+                        InlineSpace spaceBetweenDots =
+                            new InlineSpace(this.leaderPatternWidth - dotWidth, false);
+                        WordArea leaderPatternArea =
+                            new WordArea(this.fontState,
+                                         this.red, this.green, this.blue,
+                                         new String("."), dotWidth);
+                        leaderPatternArea.setYOffset(this.placementOffset);
+                        children.add(idx,leaderPatternArea);
+                        idx++;
+                        children.add(idx,spaceBetweenDots);
+                        idx++;
+                    }
+                    // append at the end some space to fill up to leader length
+                    children.add(idx,new InlineSpace(leaderLength
+                                                     - dotsFactor
+                                                     * this.leaderPatternWidth));
+                    idx++;
+                }
+                break;
+                // leader pattern use-content not implemented.
+            case LeaderPattern.USECONTENT:
+                MessageHandler.errorln("leader-pattern=\"use-content\" not "
+                                       + "supported by this version of Fop");
+                return;
+            }
+        }
+    }
+ 
     public LineArea(FontState fontState, int lineHeight, int halfLeading,
                     int allocationWidth, int startIndent, int endIndent,
                     LineArea prevLineArea) {
@@ -109,11 +275,11 @@ public class LineArea extends Area {
         this.lineHeight = lineHeight;
         this.nominalFontSize = fontState.getFontSize();
         this.nominalGlyphHeight = fontState.getAscender()
-                                  - fontState.getDescender();
+            - fontState.getDescender();
 
         this.placementOffset = fontState.getAscender();
         this.contentRectangleWidth = allocationWidth - startIndent
-                                     - endIndent;
+            - endIndent;
         this.fontState = fontState;
 
         this.allocationHeight = this.nominalGlyphHeight;
@@ -169,9 +335,11 @@ public class LineArea extends Area {
         int width = 3*getCharWidth(' ');
 
 
-        PageNumberInlineArea pia = new PageNumberInlineArea(currentFontState,
-                this.red, this.green, this.blue, refid, width);
-
+        PageNumberInlineArea pia
+            = new PageNumberInlineArea(currentFontState,
+                                       this.red, this.green, this.blue,
+                                       refid, width);
+        
         pia.setYOffset(placementOffset);
         pendingAreas.add(pia);
         pendingWidth += width;
@@ -209,7 +377,7 @@ public class LineArea extends Area {
             /* get the character */
             char c = data[i];
             if (!(isSpace(c) || (c == '\n') || (c == '\r') || (c == '\t')
-                    || (c == '\u2028'))) {
+                  || (c == '\u2028'))) {
                 charWidth = getCharWidth(c);
                 isText = true;
                 isMultiByteChar = (c > 127);
@@ -388,7 +556,7 @@ public class LineArea extends Area {
 
                     wordWidth = charWidth;
                     if ((finalWidth + spaceWidth + wordWidth)
-                            > this.getContentWidth()) {
+                        > this.getContentWidth()) {
                         if (overrun)
                             MessageHandler.log("area contents overflows area");
                         if (this.wrapOption == WrapOption.WRAP) {
@@ -425,13 +593,13 @@ public class LineArea extends Area {
                         for (int j = 0; j < pendingAreas.size(); j++ ) {
                             Box box = (Box)pendingAreas.get(j);
                             if (box instanceof InlineArea) {
-                              if (ls != null) {
-                                  Rectangle lr =
-                                    new Rectangle(finalWidth, 0,
-                                                  ((InlineArea)box).getContentWidth(),
-                                                  fontState.getFontSize());
-                                  ls.addRect(lr, this, (InlineArea)box);
-                              }
+                                if (ls != null) {
+                                    Rectangle lr =
+                                        new Rectangle(finalWidth, 0,
+                                                      ((InlineArea)box).getContentWidth(),
+                                                      fontState.getFontSize());
+                                    ls.addRect(lr, this, (InlineArea)box);
+                                }
                             }
                             addChild(box);
                         }
@@ -468,19 +636,19 @@ public class LineArea extends Area {
                 }
 
                 if ((finalWidth + spaceWidth + pendingWidth + wordWidth)
-                        > this.getContentWidth()) {
+                    > this.getContentWidth()) {
 
                     // BREAK MID WORD
 /*                    if (canBreakMidWord()) {
-                        addSpacedWord(new String(data, wordStart, wordLength - 1),
-                                      ls,
-                                      finalWidth + spaceWidth
-                                      + embeddedLinkStart, spaceWidth,
-                                                           textState, false);
-                        finalWidth += wordWidth;
-                        wordWidth = 0;
-                        return i;
-                    }
+                      addSpacedWord(new String(data, wordStart, wordLength - 1),
+                      ls,
+                      finalWidth + spaceWidth
+                      + embeddedLinkStart, spaceWidth,
+                      textState, false);
+                      finalWidth += wordWidth;
+                      wordWidth = 0;
+                      return i;
+                      }
 */
                     if (this.wrapOption == WrapOption.WRAP) {
 
@@ -574,115 +742,29 @@ public class LineArea extends Area {
                           int leaderLengthOptimum, int leaderLengthMaximum,
                           int ruleStyle, int ruleThickness,
                           int leaderPatternWidth, int leaderAlignment) {
-        WordArea leaderPatternArea;
-        int leaderLength = 0;
-        char dot = '.';
-        int dotWidth =  getCharWidth(dot);
-        char space = ' ';
-        int spaceWidth = getCharWidth(space);
-
-        int remainingWidth = this.getRemainingWidth();
-
-        /**
-         * checks whether leaderLenghtOptimum fits into rest of line;
-         * should never overflow, as it has been checked already in BlockArea
-         * first check: use remaining width if it smaller than optimum oder maximum
-         */
-        if ((remainingWidth <= leaderLengthOptimum)
-                || (remainingWidth <= leaderLengthMaximum)) {
-            leaderLength = remainingWidth;
-        } else if ((remainingWidth > leaderLengthOptimum)
-                   && (remainingWidth > leaderLengthMaximum)) {
-            leaderLength = leaderLengthMaximum;
-        } else if ((leaderLengthOptimum > leaderLengthMaximum)
-                   && (leaderLengthOptimum < remainingWidth)) {
-            leaderLength = leaderLengthOptimum;
-        }
-
-        // stop if leader-length is too small
-        if (leaderLength <= 0) {
+        System.out.println(
+            "min="+leaderLengthMinimum+
+            " opt="+leaderLengthOptimum+
+            " max="+leaderLengthMaximum+
+            " th="+ruleThickness+
+            " al="+leaderAlignment);
+        if (leaderLengthMinimum>leaderLengthOptimum
+            || leaderLengthOptimum>leaderLengthMaximum) {
+            MessageHandler.errorln("leader sizes wrong");
             return;
         }
-
-        switch (leaderPattern) {
-        case LeaderPattern.SPACE:
-            InlineSpace spaceArea = new InlineSpace(leaderLength);
-            pendingAreas.add(spaceArea);
-            break;
-        case LeaderPattern.RULE:
-            LeaderArea leaderArea = new LeaderArea(fontState, red, green,
-                                                   blue, "", leaderLength,
-                                                   leaderPattern,
-                                                   ruleThickness, ruleStyle);
-            leaderArea.setYOffset(placementOffset);
-            pendingAreas.add(leaderArea);
-            break;
-        case LeaderPattern.DOTS:
-            // if the width of a dot is larger than leader-pattern-width
-            // ignore this property
-            if (leaderPatternWidth < dotWidth) {
-                leaderPatternWidth = 0;
-            }
-            // if value of leader-pattern-width is 'use-font-metrics' (0)
-            if (leaderPatternWidth == 0) {
-                pendingAreas.add(this.buildSimpleLeader(dot, leaderLength));
-            } else {
-                // if leader-alignment is used, calculate space to
-                // insert before leader so that all dots will be
-                // parallel.
-                if (leaderAlignment == LeaderAlignment.REFERENCE_AREA) {
-                    int spaceBeforeLeader =
-                        this.getLeaderAlignIndent(leaderLength,
-                                                  leaderPatternWidth);
-                    // appending indent space leader-alignment setting
-                    // InlineSpace to false, so it is not used in line
-                    // justification
-                    if (spaceBeforeLeader != 0) {
-                        pendingAreas.add(new InlineSpace(spaceBeforeLeader, false));
-                        pendingWidth += spaceBeforeLeader;
-                        // shorten leaderLength, otherwise - in case of
-                        // leaderLength=remaining length - it will cut off the end of
-                        // leaderlength
-                        leaderLength -= spaceBeforeLeader;
-                    }
-                }
-
-                // calculate the space to insert between the dots and create a
-                // inline area with this width
-                InlineSpace spaceBetweenDots =
-                    new InlineSpace(leaderPatternWidth - dotWidth, false);
-
-                leaderPatternArea = new WordArea(currentFontState, this.red,
-                                                 this.green, this.blue,
-                                                 new String("."), dotWidth);
-                leaderPatternArea.setYOffset(placementOffset);
-                int dotsFactor =
-                    (int)Math.floor(((double)leaderLength)
-                                    / ((double)leaderPatternWidth));
-
-                // add combination of dot + space to fill leader
-                // is there a way to do this in a more effective way?
-                for (int i = 0; i < dotsFactor; i++) {
-                    pendingAreas.add(leaderPatternArea);
-                    pendingAreas.add(spaceBetweenDots);
-                }
-                // append at the end some space to fill up to leader length
-                pendingAreas.add(new InlineSpace(leaderLength
-                                                        - dotsFactor
-                                                          * leaderPatternWidth));
-            }
-            break;
-        // leader pattern use-content not implemented.
-        case LeaderPattern.USECONTENT:
-            MessageHandler.errorln("leader-pattern=\"use-content\" not "
-                                   + "supported by this version of Fop");
+        if (leaderLengthOptimum>getRemainingWidth()) {
+            MessageHandler.errorln("leader width assertion failed");
             return;
         }
-        // adds leader length to length of pending inline areas
-        pendingWidth += leaderLength;
-        // sets prev to TEXT and makes so sure, that also blocks only
-        // containing leaders are processed
-        prev = TEXT;
+        addPending();
+        children.add(new LineArea.Leader(leaderPattern, leaderLengthMinimum,
+                                         leaderLengthOptimum, leaderLengthMaximum,
+                                         ruleStyle, ruleThickness,
+                                         leaderPatternWidth, leaderAlignment,
+                                         fontState, red, green, blue,
+                                         placementOffset, getCurrentXPosition()));
+        finalWidth += leaderLengthOptimum;
     }
 
     /**
@@ -715,52 +797,103 @@ public class LineArea extends Area {
      */
     public void align(int type) {
         int padding = 0;
+
         switch (type) {
         case TextAlign.START:      // left
             padding = this.getContentWidth() - finalWidth;
             endIndent += padding;
+            for (int i = 0; i < children.size(); i++) {
+                Object o = children.get(i);
+                if (o instanceof LineArea.Leader) {
+                    LineArea.Leader leader = (LineArea.Leader)o;
+                    leader.expand(leader.leaderLengthOptimum);
+                }
+            }
             break;
         case TextAlign.END:        // right
             padding = this.getContentWidth() - finalWidth;
             startIndent += padding;
+            for (int i = 0; i < children.size(); i++) {
+                Object o = children.get(i);
+                if (o instanceof LineArea.Leader) {
+                    LineArea.Leader leader = (LineArea.Leader)o;
+                    leader.expand(leader.leaderLengthOptimum);
+                }
+            }
             break;
         case TextAlign.CENTER:     // center
             padding = (this.getContentWidth() - finalWidth) / 2;
             startIndent += padding;
             endIndent += padding;
+            for (int i = 0; i < children.size(); i++) {
+                Object o = children.get(i);
+                if (o instanceof LineArea.Leader) {
+                    LineArea.Leader leader = (LineArea.Leader)o;
+                    leader.expand(leader.leaderLengthOptimum);
+                }
+            }
             break;
         case TextAlign.JUSTIFY:    // justify
             // first pass - count the spaces
+            int leaderCount = 0;
             int spaceCount = 0;
             for (int i = 0; i < children.size(); i++ ) {
-                Box b = (Box)children.get(i);
-                if (b instanceof InlineSpace) {
-                    InlineSpace space = (InlineSpace)b;
+                Object o = children.get(i);
+                if (o instanceof InlineSpace) {
+                    InlineSpace space = (InlineSpace)o;
                     if (space.getResizeable()) {
                         spaceCount++;
                     }
+                } else if(o instanceof LineArea.Leader) {
+                    leaderCount++;
                 }
             }
-            if (spaceCount > 0) {
-                padding = (this.getContentWidth() - finalWidth) / spaceCount;
-            } else {               // no spaces
-                padding = 0;
-            }
-            // second pass - add additional space
-            spaceCount = 0;
-            for (int i = 0; i < children.size(); i++) {
-                Box b = (Box)children.get(i);
-                if (b instanceof InlineSpace) {
-                    InlineSpace space = (InlineSpace)b;
-                    if (space.getResizeable()) {
-                        space.setSize(space.getSize() + padding);
-                        spaceCount++;
+            padding = (this.getContentWidth() - finalWidth);
+            if (padding>0) {
+                if (leaderCount>0) {
+                    int offset=0;
+                    for (int i = 0; i < children.size(); i++) {
+                        Object o = children.get(i);
+                        if (o instanceof LineArea.Leader) {
+                            LineArea.Leader leader = (LineArea.Leader)o;
+                            int leaderExpansionMaximum=
+                                leader.leaderLengthMaximum - leader.leaderLengthOptimum;
+                            if (leaderExpansionMaximum < padding) {
+                                leader.expand(leader.leaderLengthMaximum);
+                                padding-=leaderExpansionMaximum;
+                                offset+=leaderExpansionMaximum;
+                            } else {
+                                leader.expand(leader.leaderLengthOptimum + padding);
+                                padding=0;
+                                offset+=padding;
+                            }
+                        } else if (o instanceof InlineArea) {
+                            ((InlineArea)o).setXOffset(((InlineArea)o).getXOffset() + offset);
+                        }
                     }
-                } else if (b instanceof InlineArea) {
-                    ((InlineArea)b).setXOffset(spaceCount * padding);
                 }
-
+                if (spaceCount > 0 && padding > 0) {
+                    padding = padding/spaceCount;
+                } else {               // no spaces
+                    padding = 0;
+                }
+                spaceCount = 0;
+                // second pass - add additional space
+                for (int i = 0; i < children.size(); i++) {
+                    Object o = children.get(i);
+                    if (o instanceof InlineSpace) {
+                        InlineSpace space = (InlineSpace)o;
+                        if (space.getResizeable()) {
+                            space.setSize(space.getSize() + padding);
+                            spaceCount++;
+                        }
+                    } else if (o instanceof InlineArea) {
+                        ((InlineArea)o).setXOffset(((InlineArea)o).getXOffset() + i * padding);
+                    }
+                }
             }
+        default: 
+            MessageHandler.errorln("bad align: "+type);
         }
     }
 
@@ -873,27 +1006,6 @@ public class LineArea extends Area {
     }
 
     /**
-     * calculates the width of space which has to be inserted before the
-     * start of the leader, so that all leader characters are aligned.
-     * is used if property leader-align is set. At the moment only the value
-     * for leader-align="reference-area" is supported.
-     *
-     */
-    private int getLeaderAlignIndent(int leaderLength,
-                                     int leaderPatternWidth) {
-        // calculate position of used space in line area
-        double position = getCurrentXPosition();
-        // calculate factor of next leader pattern cycle
-        double nextRepeatedLeaderPatternCycle = Math.ceil(position
-                / leaderPatternWidth);
-        // calculate difference between start of next leader
-        // pattern cycle and already used space
-        double difference =
-            (leaderPatternWidth * nextRepeatedLeaderPatternCycle) - position;
-        return (int)difference;
-    }
-
-    /**
      * calculates the used space in this line area
      */
     private int getCurrentXPosition() {
@@ -974,7 +1086,7 @@ public class LineArea extends Area {
         if (getWordWidth(wordToHyphenate) < remainingWidth) {
             inwordPunctuation =
                 characters[wordStart + remainingString.length()
-                    + wordToHyphenate.length()];
+                           + wordToHyphenate.length()];
             if (inwordPunctuation == '-' || inwordPunctuation == '/') {
                 preString = new StringBuffer(wordToHyphenate);
                 preString = preString.append(inwordPunctuation);
@@ -1083,7 +1195,7 @@ public class LineArea extends Area {
         } else {
             // if whitespace-collapse == true, discard character
             if (Character.isSpaceChar(data)
-                    && whiteSpaceCollapse == WhiteSpaceCollapse.TRUE) {
+                && whiteSpaceCollapse == WhiteSpaceCollapse.TRUE) {
                 return org.apache.fop.fo.flow.Character.OK;
             }
             // create new InlineArea
@@ -1135,9 +1247,9 @@ public class LineArea extends Area {
             if (box instanceof InlineArea) {
                 if (ls != null) {
                     Rectangle lr =
-                      new Rectangle(finalWidth, 0,
-                                    ((InlineArea)box).getContentWidth(),
-                                    fontState.getFontSize());
+                        new Rectangle(finalWidth, 0,
+                                      ((InlineArea)box).getContentWidth(),
+                                      fontState.getFontSize());
                     ls.addRect(lr, this, (InlineArea)box);
                 }
             }
@@ -1152,8 +1264,8 @@ public class LineArea extends Area {
         String word = (wordBuf != null) ? wordBuf.toString() : "";
         int wordWidth = this.getWordWidth(word);
         WordArea hia = new WordArea(currentFontState,
-                          this.red, this.green, this.blue,
-                          word, wordWidth);
+                                    this.red, this.green, this.blue,
+                                    word, wordWidth);
         hia.setYOffset(placementOffset);
         hia.setUnderlined(textState.getUnderlined());
         prevUlState = textState.getUnderlined();
@@ -1165,10 +1277,10 @@ public class LineArea extends Area {
         this.addChild(hia);
 
         if (ls != null) {
-           Rectangle lr = new Rectangle(startw, 0,
-                                       hia.getContentWidth(),
-                                       fontState.getFontSize());
-           ls.addRect(lr, this, hia);
+            Rectangle lr = new Rectangle(startw, 0,
+                                         hia.getContentWidth(),
+                                         fontState.getFontSize());
+            ls.addRect(lr, this, hia);
         }
         // calculate the space needed
         finalWidth +=  wordWidth;
@@ -1205,10 +1317,10 @@ public class LineArea extends Area {
     private boolean canBreakMidWord() {
         boolean ret = false;
         if (hyphProps != null && hyphProps.language != null
-                &&!hyphProps.language.equals("NONE")) {
+            &&!hyphProps.language.equals("NONE")) {
             String lang = hyphProps.language.toLowerCase();
             if ("zh".equals(lang) || "ja".equals(lang) || "ko".equals(lang)
-                    || "vi".equals(lang))
+                || "vi".equals(lang))
                 ret = true;
         }
         return ret;
@@ -1230,7 +1342,7 @@ public class LineArea extends Area {
         // the mapping returns '#' for unmapped characters in standard fonts
         // what happens for other fonts?
         if (mappedChar != '#') {
-          // should do something to discover non-proportional fonts
+            // should do something to discover non-proportional fonts
             return (getEmWidth()*9)/10;
         } else {
             return currentFontState.width(mappedChar);
@@ -1304,17 +1416,17 @@ public class LineArea extends Area {
      */
     private boolean isSpace(char c) {
         if (c == ' ' || c == '\u2000' ||    // en quad
-        c == '\u2001' ||                    // em quad
-        c == '\u2002' ||                    // en space
-        c == '\u2003' ||                    // em space
-        c == '\u2004' ||                    // three-per-em space
-        c == '\u2005' ||                    // four--per-em space
-        c == '\u2006' ||                    // six-per-em space
-        c == '\u2007' ||                    // figure space
-        c == '\u2008' ||                    // punctuation space
-        c == '\u2009' ||                    // thin space
-        c == '\u200A' ||                    // hair space
-        c == '\u200B')                      // zero width space
+            c == '\u2001' ||                    // em quad
+            c == '\u2002' ||                    // en space
+            c == '\u2003' ||                    // em space
+            c == '\u2004' ||                    // three-per-em space
+            c == '\u2005' ||                    // four--per-em space
+            c == '\u2006' ||                    // six-per-em space
+            c == '\u2007' ||                    // figure space
+            c == '\u2008' ||                    // punctuation space
+            c == '\u2009' ||                    // thin space
+            c == '\u200A' ||                    // hair space
+            c == '\u200B')                      // zero width space
             return true;
         else
             return false;
@@ -1327,8 +1439,8 @@ public class LineArea extends Area {
      */
     private boolean isNBSP(char c) {
         if (c == '\u00A0' || c == '\u202F' ||    // narrow no-break space
-        c == '\u3000' ||                    // ideographic space
-        c == '\uFEFF') {                    // zero width no-break space
+            c == '\u3000' ||                    // ideographic space
+            c == '\uFEFF') {                    // zero width no-break space
             return true;
         } else
             return false;
@@ -1355,7 +1467,7 @@ public class LineArea extends Area {
             String currentWord = st.nextToken();
 
             if (currentWord.length() == 1
-                    && (isNBSP(currentWord.charAt(0)))) {
+                && (isNBSP(currentWord.charAt(0)))) {
                 // Add an InlineSpace
                 int spaceWidth = getCharWidth(currentWord.charAt(0));
                 if (spaceWidth > 0) {
@@ -1411,5 +1523,4 @@ public class LineArea extends Area {
     }
 
 }
-
 

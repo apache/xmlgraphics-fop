@@ -51,9 +51,6 @@ public class BlockArea extends Area {
     protected LineArea currentLineArea;
     protected LinkSet currentLinkSet;
 
-    /* have any line areas been used? */
-    protected boolean hasLines = false;
-
     /* hyphenation */
     protected HyphenationProps hyphProps;
 
@@ -114,18 +111,23 @@ public class BlockArea extends Area {
     /**
      * Get the current line area in this block area.
      * This is used to get the current line area for adding
-     * inline objects to.
+     * inline objects.
      * This will return null if there is not enough room left
      * in the block area to accomodate the line area.
      *
-     * @return the line area to be used to add inlie objects
+     * @return the line area to be used to add inline objects
      */
     public LineArea getCurrentLineArea() {
         if (currentHeight + lineHeight > maxHeight) {
             return null;
         }
-        this.currentLineArea.changeHyphenation(hyphProps);
-        this.hasLines = true;
+        if (this.currentLineArea==null ) {
+            this.currentLineArea = new LineArea(fontState, lineHeight,
+                                                halfLeading, allocationWidth,
+                                                startIndent + textIndent,
+                                                endIndent, null);
+            this.currentLineArea.changeHyphenation(hyphProps);
+        }
         return this.currentLineArea;
     }
 
@@ -140,18 +142,18 @@ public class BlockArea extends Area {
      * @return the new current line area, which will be empty.
      */
     public LineArea createNextLineArea() {
-        if (this.hasLines) {
+        if (this.currentLineArea!=null) {
             this.currentLineArea.align(this.align);
             this.addLineArea(this.currentLineArea);
+        }
+        if (currentHeight + lineHeight > maxHeight) {
+            return null;
         }
         this.currentLineArea = new LineArea(fontState, lineHeight,
                                             halfLeading, allocationWidth,
                                             startIndent, endIndent,
                                             currentLineArea);
         this.currentLineArea.changeHyphenation(hyphProps);
-        if (currentHeight + lineHeight > maxHeight) {
-            return null;
-        }
         return this.currentLineArea;
     }
 
@@ -168,7 +170,7 @@ public class BlockArea extends Area {
      * add (if any) the current line area.
      */
     public void end() {
-        if (this.hasLines) {
+        if (this.currentLineArea!=null) {
             this.currentLineArea.addPending();
             this.currentLineArea.align(this.alignLastLine);
             this.addLineArea(this.currentLineArea);
@@ -176,10 +178,6 @@ public class BlockArea extends Area {
     }
 
     public void start() {
-        currentLineArea = new LineArea(fontState, lineHeight, halfLeading,
-                                       allocationWidth,
-                                       startIndent + textIndent, endIndent,
-                                       null);
     }
 
     public int getEndIndent() {
