@@ -64,6 +64,9 @@ import org.w3c.dom.svg.*;
 import org.w3c.dom.svg.SVGLength;
 
 import org.apache.fop.dom.svg.SVGArea;
+
+import java.util.StringTokenizer;
+
 /**
  * class representing svg:svg pseudo flow object.
  */
@@ -119,6 +122,40 @@ public class SVG extends FObj implements GraphicsCreator {
 				SVGLength h = ((SVGLengthProperty) this.properties.get("height")).
 											getSVGLength();
 				svgArea = new SVGSVGElementImpl();
+				{
+						String box = this.properties.get("viewBox").getString();
+						if (box != "") {
+								StringTokenizer st = new StringTokenizer(box, " ");
+								float x = 0;
+								float y = 0;
+								float width = 0;
+								float height = 0;
+								try {
+									 if(st.hasMoreTokens()) {
+											 x = Double.valueOf(st.nextToken()).floatValue();
+									 }
+									 if(st.hasMoreTokens()) {
+											 y = Double.valueOf(st.nextToken()).floatValue();
+									 }
+									 if(st.hasMoreTokens()) {
+											 width = Double.valueOf(st.nextToken()).floatValue();
+									 }
+									 if(st.hasMoreTokens()) {
+											 height = Double.valueOf(st.nextToken()).floatValue();
+									 }
+								} catch(Exception e) {
+                }
+                SVGRect rect = new SVGRectImpl();
+                rect.setX(x);
+                rect.setY(y);
+                rect.setWidth(width);
+                rect.setHeight(height);
+                svgArea.setViewBox (new SVGAnimatedRectImpl (rect));
+						} else {
+								svgArea.setViewBox (null);
+						}
+				}
+
 				SVGAnimatedLengthImpl sal;
 				if (w == null)
 						w = new SVGLengthImpl();
