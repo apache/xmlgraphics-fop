@@ -27,6 +27,7 @@ import org.xml.sax.ContentHandler;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
+import org.xml.sax.helpers.DefaultHandler;
 
 // FOP
 import org.apache.fop.fo.Constants;
@@ -146,11 +147,15 @@ public class Driver implements Constants {
      * ContentHandler that directly place data into the output stream. Layout
      * renderers (e.g. PDF & PostScript) use a ContentHandler that builds an FO
      * Tree.
-     * @return a SAX ContentHandler for handling the SAX events.
-     * @throws FOPException if setting up the ContentHandler fails
+     * @return a SAX DefaultHandler for handling the SAX events.
+     * @throws FOPException if setting up the DefaultHandler fails
      */
-    public ContentHandler getContentHandler() throws FOPException {
+    public DefaultHandler getDefaultHandler() throws FOPException {
         return new FOTreeBuilder(renderType, foUserAgent, stream);
+    }
+
+    public ContentHandler getContentHandler() throws FOPException {
+        return getDefaultHandler();
     }
 
     /**

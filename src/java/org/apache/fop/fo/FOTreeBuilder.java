@@ -43,6 +43,7 @@ import org.apache.fop.fo.pagination.Root;
 import org.xml.sax.Attributes;
 import org.xml.sax.Locator;
 import org.xml.sax.SAXException;
+import org.xml.sax.SAXParseException;
 import org.xml.sax.helpers.DefaultHandler;
 
 /**
@@ -324,6 +325,28 @@ public class FOTreeBuilder extends DefaultHandler {
           }
       }
       return fobjMaker;
+    }
+
+    /**
+     * org.xml.sax.ErrorHandler#warning
+     **/
+    public void warning(SAXParseException e) {
+        log.warn(e.toString());
+    }
+
+    /**
+     * org.xml.sax.ErrorHandler#error
+     **/
+    public void error(SAXParseException e) {
+        log.error(e.toString());
+    }
+
+    /**
+     * org.xml.sax.ErrorHandler#fatalError
+     **/
+    public void fatalError(SAXParseException e) throws SAXException {
+        log.error(e.toString());
+        throw e;
     }
 
     /**
