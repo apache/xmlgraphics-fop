@@ -1,6 +1,6 @@
 /*
  * $Id$
- * Copyright (C) 2001 The Apache Software Foundation. All rights reserved.
+ * Copyright (C) 2001-2003 The Apache Software Foundation. All rights reserved.
  * For details on use and redistribution please refer to the
  * LICENSE file included with these sources.
  */
@@ -8,16 +8,32 @@
 package org.apache.fop.render.pdf;
 
 // FOP
-import org.apache.fop.render.pdf.fonts.*;
+import org.apache.fop.fonts.Font;
+import org.apache.fop.fonts.FontDescriptor;
+import org.apache.fop.fonts.LazyFont;
 import org.apache.fop.layout.FontInfo;
-import org.apache.fop.layout.FontDescriptor;
 import org.apache.fop.pdf.PDFDocument;
 import org.apache.fop.pdf.PDFResources;
+// FOP (base 14 fonts)
+import org.apache.fop.fonts.base14.Helvetica;
+import org.apache.fop.fonts.base14.HelveticaBold;
+import org.apache.fop.fonts.base14.HelveticaOblique;
+import org.apache.fop.fonts.base14.HelveticaBoldOblique;
+import org.apache.fop.fonts.base14.TimesRoman;
+import org.apache.fop.fonts.base14.TimesBold;
+import org.apache.fop.fonts.base14.TimesItalic;
+import org.apache.fop.fonts.base14.TimesBoldItalic;
+import org.apache.fop.fonts.base14.Courier;
+import org.apache.fop.fonts.base14.CourierBold;
+import org.apache.fop.fonts.base14.CourierOblique;
+import org.apache.fop.fonts.base14.CourierBoldOblique;
+import org.apache.fop.fonts.base14.Symbol;
+import org.apache.fop.fonts.base14.ZapfDingbats;
 
 // Java
-import java.util.HashMap;
+import java.util.Map;
 import java.util.Iterator;
-import java.util.ArrayList;
+import java.util.List;
 
 /**
  * sets up the PDF fonts.
@@ -28,14 +44,15 @@ import java.util.ArrayList;
 public class FontSetup {
 
     /**
-     * sets up the font info object.
+     * Sets up the font info object.
      *
-     * adds metrics for basic fonts and useful family-style-weight
-     * triplets for lookup
+     * Adds metrics for basic fonts and useful family-style-weight
+     * triplets for lookup.
      *
      * @param fontInfo the font info object to set up
+     * @param embedList ???
      */
-    public static void setup(FontInfo fontInfo, ArrayList embedList) {
+    public static void setup(FontInfo fontInfo, List embedList) {
 
         fontInfo.addMetrics("F1", new Helvetica());
         fontInfo.addMetrics("F2", new HelveticaOblique());
@@ -133,63 +150,67 @@ public class FontSetup {
     /**
      * Add fonts from configuration file starting with
      * internalnames F<num>
+     * @param fontInfo the font info object to set up
+     * @param fontInfos ???
+     * @param num starting index for internal font numbering
      */
-    public static void addConfiguredFonts(FontInfo fontInfo, ArrayList fontInfos, int num) {
-        if (fontInfos == null)
-            return;
+    public static void addConfiguredFonts(FontInfo fontInfo, List fontInfos, int num) {
+        if (fontInfos == null) {
+            return; //No fonts to process
+        }
 
         String internalName = null;
-        FontReader reader = null;
+        //FontReader reader = null;
 
-        for (int count = 0; count < fontInfos.size(); count++) {
-            EmbedFontInfo configFontInfo =
-                (EmbedFontInfo)fontInfos.get(count);
+        for (int i = 0; i < fontInfos.size(); i++) {
+            EmbedFontInfo configFontInfo = (EmbedFontInfo)fontInfos.get(i);
 
-                String metricsFile = configFontInfo.getMetricsFile();
-                if (metricsFile != null) {
-                    internalName = "F" + num;
-                    num++;
-                    /*
-                    reader = new FontReader(metricsFile);
-                    reader.useKerning(configFontInfo.getKerning());
-                    reader.setFontEmbedPath(configFontInfo.getEmbedFile());
-                    fontInfo.addMetrics(internalName, reader.getFont());
-                    */
-                    LazyFont font = new LazyFont(configFontInfo.getEmbedFile(),
-                                                 metricsFile,
-                                                 configFontInfo.getKerning());
-                    fontInfo.addMetrics(internalName, font);
+            String metricsFile = configFontInfo.getMetricsFile();
+            if (metricsFile != null) {
+                internalName = "F" + num;
+                num++;
+                /*
+                reader = new FontReader(metricsFile);
+                reader.useKerning(configFontInfo.getKerning());
+                reader.setFontEmbedPath(configFontInfo.getEmbedFile());
+                fontInfo.addMetrics(internalName, reader.getFont());
+                */
+                LazyFont font = new LazyFont(configFontInfo.getEmbedFile(),
+                                             metricsFile,
+                                             configFontInfo.getKerning());
+                fontInfo.addMetrics(internalName, font);
 
-                    ArrayList triplets = configFontInfo.getFontTriplets();
-                    for (int c = 0; c < triplets.size(); c++) {
-                        FontTriplet triplet = (FontTriplet)triplets.get(c);
+                List triplets = configFontInfo.getFontTriplets();
+                for (int c = 0; c < triplets.size(); c++) {
+                    FontTriplet triplet = (FontTriplet)triplets.get(c);
 
-                        int weight = 400;
-                        try {
-                            weight = Integer.parseInt(triplet.getWeight());
-                            weight = ((int)weight/100) * 100;
-                            if(weight < 100) weight = 100;
-                            if(weight > 900) weight = 900;
-                        } catch(NumberFormatException nfe) {
-
-                        }
-                        fontInfo.addFontProperties(internalName,
-                                                   triplet.getName(),
-                                                   triplet.getStyle(),
-                                                   weight);
+                    int weight = 400;
+                    try {
+                        weight = Integer.parseInt(triplet.getWeight());
+                        weight = ((int)weight / 100) * 100;
+                        weight = Math.min(weight, 100);
+                        weight = Math.max(weight, 900);
+                    } catch (NumberFormatException nfe) {
+                        /**@todo log this exception */
                     }
+                    fontInfo.addFontProperties(internalName,
+                                               triplet.getName(),
+                                               triplet.getStyle(),
+                                               weight);
                 }
+            }
         }
     }
 
     /**
-     * add the fonts in the font info to the PDF document
+     * Add the fonts in the font info to the PDF document
      *
      * @param doc PDF document to add fonts to
+     * @param resources PDFResources object to attach the font to
      * @param fontInfo font info object to get font information from
      */
     public static void addToResources(PDFDocument doc, PDFResources resources, FontInfo fontInfo) {
-        HashMap fonts = fontInfo.getUsedFonts();
+        Map fonts = fontInfo.getUsedFonts();
         Iterator e = fonts.keySet().iterator();
         while (e.hasNext()) {
             String f = (String)e.next();
@@ -198,8 +219,8 @@ public class FontSetup {
             if (font instanceof FontDescriptor) {
                 desc = (FontDescriptor)font;
             }
-            resources.addFont(doc.makeFont(f, font.fontName(),
-                                           font.encoding(), font, desc));
+            resources.addFont(doc.makeFont(f, font.getFontName(),
+                                           font.getEncoding(), font, desc));
         }
     }
 }
