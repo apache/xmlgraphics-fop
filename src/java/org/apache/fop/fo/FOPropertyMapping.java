@@ -1481,6 +1481,7 @@ public class FOPropertyMapping implements Constants {
 
         // line-height
         m  = new LineHeightPropertyMaker(PR_LINE_HEIGHT);
+        m.useGeneric(genericSpace);
         m.setInherited(true);
         m.setDefault("normal", true);
         m.addKeyword("normal", "1.2em");
