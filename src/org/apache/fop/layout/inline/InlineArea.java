@@ -58,6 +58,9 @@ import org.apache.fop.layout.*;
 public abstract class InlineArea extends Area {
 
     private int yOffset = 0;
+
+    /** amount of space added since the original layout - needed by links */
+    private int xOffset = 0;
     protected int height = 0;
     private int verticalAlign = 0;
     protected String pageNumberId = null;
@@ -112,6 +115,14 @@ public abstract class InlineArea extends Area {
 
     public int getYOffset() {
         return this.yOffset;
+    }
+
+    public void setXOffset(int xOffset) {
+        this.xOffset = xOffset;
+    }
+
+    public int getXOffset() {
+        return this.xOffset;
     }
 
     public String getPageNumberID() {
