@@ -27,6 +27,8 @@ import org.apache.fop.image.analyser.ImageReaderFactory;
 import java.awt.Shape;
 import java.awt.Graphics2D;
 import java.awt.geom.Rectangle2D;
+import java.io.BufferedInputStream;
+import java.io.InputStream;
 
 import org.w3c.dom.Element;
 
@@ -59,17 +61,25 @@ public class PDFImageElementBridge extends SVGImageElementBridge {
      */
     protected GraphicsNode createImageGraphicsNode
         (BridgeContext ctx, Element e, ParsedURL purl) {
-        GraphicsNode origGN = super.createImageGraphicsNode
-            (ctx, e, purl);
         try {
+            InputStream is = purl.openStream();
+            if (!is.markSupported()) {
+                is = new BufferedInputStream(is, 1024);
+            }
+            
+            is.mark(3);
+            byte [] data = new byte[3];
+            is.read(data);
+            is.reset();
+            if ((data[0] == (byte)0xFF) && (data[1] == (byte)0xD8) && 
+                (data[2] == (byte)0xFF)) {
             FopImage.ImageInfo ii = ImageReaderFactory.make
-                (purl.toString(), purl.openStream(), null);
-            if (ii.mimeType.toLowerCase() == "image/jpeg") {
+                    (purl.toString(), is, null);
                 JpegImage jpeg = new JpegImage(ii);
                 SimpleLog logger = new SimpleLog("FOP/SVG");
                 logger.setLevel(SimpleLog.LOG_LEVEL_INFO);
                 jpeg.load(FopImage.ORIGINAL_DATA);
-                PDFJpegNode node = new PDFJpegNode(jpeg, origGN);
+                PDFJpegNode node = new PDFJpegNode(jpeg, ctx, e, purl);
 
                 Rectangle2D imgBounds = getImageBounds(ctx, e);
             Rectangle2D bounds = node.getPrimitiveBounds();
@@ -87,26 +97,37 @@ public class PDFImageElementBridge extends SVGImageElementBridge {
         } catch (Exception ex) {
         }
 
-        return origGN;
+        return superCreateGraphicsNode(ctx, e, purl);
     }
+
+    protected GraphicsNode superCreateGraphicsNode
+        (BridgeContext ctx, Element e, ParsedURL purl) {
+        return super.createImageGraphicsNode(ctx, e, purl);
+    }
+
 
     /**
      * A PDF jpeg node.
      * This holds a jpeg image so that it can be drawn into
      * the PDFGraphics2D.
      */
-    public static class PDFJpegNode extends AbstractGraphicsNode {
+    public class PDFJpegNode extends AbstractGraphicsNode {
         private JpegImage jpeg;
-        private GraphicsNode origGraphicsNode ;
+        private BridgeContext ctx;
+        private Element e;
+        private ParsedURL purl;
+        private GraphicsNode origGraphicsNode=null;
         /**
          * Create a new pdf jpeg node for drawing jpeg images
          * into pdf graphics.
          * @param j the jpeg image
          */
-        public PDFJpegNode(JpegImage j,
-                           GraphicsNode origGraphicsNode) {
-            jpeg = j;
-            this.origGraphicsNode = origGraphicsNode;
+        public PDFJpegNode(JpegImage j, BridgeContext ctx, 
+                           Element e, ParsedURL purl) {
+            this.jpeg = j;
+            this.ctx  = ctx;
+            this.e    = e;
+            this.purl = purl;
         }
 
         /**
@@ -137,7 +158,14 @@ public class PDFImageElementBridge extends SVGImageElementBridge {
                 }
             } else {
                 // Not going directly into PDF so use
-                // original implemtation so filters etc work.
+                // original implementation so filters etc work.
+                if (origGraphicsNode == null) {
+                    // Haven't constructed baseclass Graphics Node,
+                    // so do so now.
+                    origGraphicsNode = 
+                        PDFImageElementBridge.this.superCreateGraphicsNode
+                        (ctx,  e, purl);
+                }
                 origGraphicsNode.primitivePaint(g2d);
             }
         }

@@ -98,17 +98,35 @@ public class JPEGReader implements ImageReader {
     private FopImage.ImageInfo getDimension(InputStream imageStream) throws IOException {
         FopImage.ImageInfo info = new FopImage.ImageInfo();
         try {
-            imageStream.mark(imageStream.available());
+            int pos=0, avail = imageStream.available();
+            imageStream.mark(avail);
             int marker = NULL;
             long length, skipped;
 outer:
-            while (imageStream.available() > 0) {
-                while ((marker = imageStream.read()) != MARK) {
-                    //nop, simply skip
+            while (true) {
+                do {
+                    if (avail == 0) {
+                        imageStream.reset();
+                        avail = 2*pos;
+                        imageStream.mark(avail);
+                        pos = (int)this.skip(imageStream, pos);
+                        avail -= pos;
                 }
 
-                do {
                     marker = imageStream.read();
+                    pos++; avail--;
+                } while (marker != MARK);
+
+                do {
+                    if (avail == 0) {
+                        imageStream.reset();
+                        avail = 2*pos;
+                        imageStream.mark(avail);
+                        pos = (int)this.skip(imageStream, pos);
+                        avail -= pos;
+                    }
+                    marker = imageStream.read();
+                    pos++; avail--;
                 } while (marker == MARK);
 
                 switch (marker) {
@@ -120,13 +138,42 @@ outer:
                     case SOF2:
                     case SOF3: // SOF3 and SOFA are only supported by PDF 1.3
                     case SOFA:
+                        while (avail < 7) {
+                            imageStream.reset();
+                            avail = 2*pos;
+                            imageStream.mark(avail);
+                            pos = (int)this.skip(imageStream, pos);
+                            avail -= pos;
+                        }
                         this.skip(imageStream, 3);
+                        pos+=3; avail-=3;
                         info.height = this.read2bytes(imageStream);
+                        pos+=2; avail-=2;
                         info.width = this.read2bytes(imageStream);
+                        pos+=2; avail-=2;
                         break outer;
                     default:
+                        while (avail < 2) {
+                            imageStream.reset();
+                            avail = 2*pos;
+                            imageStream.mark(avail);
+                            pos = (int)this.skip(imageStream, pos);
+                            avail -= pos;
+                        }
                         length = this.read2bytes(imageStream);
+                        pos+=2; avail-=2;
+                        if (avail < length) {
+                            imageStream.reset();
+                            avail = 2*pos;
+                            if (avail < pos+length+10) {
+                                avail = (int)(pos+length+10);
+                            }
+                            imageStream.mark(avail);
+                            pos = (int)this.skip(imageStream, pos);
+                            avail -= pos;
+                        }
                         skipped = this.skip(imageStream, length - 2);
+                        pos += skipped; avail -= skipped;
                         if (skipped != length - 2) {
                             throw new IOException("Skipping Error");
                         }
