@@ -199,18 +199,6 @@ public class PDFRenderer extends PrintRenderer {
     private StringBuffer wordAreaPDF = new StringBuffer();
 
     /**
-     * Offset for rendering text, taking into account borders and padding for
-     * both region and block.
-     */
-    protected int bpMarginOffset = 0;
-
-    /**
-     * Offset for rendering text, taking into account borders and padding for
-     * both the region and block.
-     */
-    protected int ipMarginOffset = 0;
-
-    /**
      * create the PDF renderer
      */
     public PDFRenderer() {
@@ -481,41 +469,6 @@ public class PDFRenderer extends PrintRenderer {
     }
 
     /**
-     * @see org.apache.fop.render.AbstractRenderer#renderBlocks(Block, List)
-     */
-    protected void renderBlocks(Block block, List blocks) {
-        int saveIPMargin = ipMarginOffset;
-        int saveBPMargin = bpMarginOffset;
-        if (block != null) {
-            Integer spaceStart = (Integer) block.getTrait(Trait.SPACE_START);
-            if (spaceStart != null) {
-                ipMarginOffset += spaceStart.intValue();
-            }
-
-            Integer paddingStart = (Integer) block.getTrait(Trait.PADDING_START);
-            if (paddingStart != null) {
-                ipMarginOffset += paddingStart.intValue();
-            }
-            Integer paddingBefore = (Integer) block.getTrait(Trait.PADDING_BEFORE);
-            if (paddingBefore != null) {
-                bpMarginOffset += paddingBefore.intValue();
-            }
-
-            BorderProps borderStartWidth = (BorderProps) block.getTrait(Trait.BORDER_START);
-            if (borderStartWidth != null) {
-                ipMarginOffset += borderStartWidth.width;
-            }
-            BorderProps borderBeforeWidth = (BorderProps) block.getTrait(Trait.BORDER_BEFORE);
-            if (borderBeforeWidth != null) {
-                bpMarginOffset += borderBeforeWidth.width;
-            }
-        }
-        super.renderBlocks(block, blocks);
-        ipMarginOffset = saveIPMargin;
-        bpMarginOffset = saveBPMargin;
-    }
-
-    /**
      * Handle the traits for a region
      * This is used to draw the traits for the given page region.
      * (See Sect. 6.4.1.2 of XSL-FO spec.)
@@ -530,8 +483,8 @@ public class PDFRenderer extends PrintRenderer {
         float height = (float)(viewArea.getHeight() / 1000f);
 
         if (region.getRegion().getRegionClass() == FO_REGION_BODY) {
-            bpMarginOffset = region.getBorderAndPaddingWidthBefore();
-            ipMarginOffset = region.getBorderAndPaddingWidthStart();
+            currentBPPosition = region.getBorderAndPaddingWidthBefore();
+            currentIPPosition = region.getBorderAndPaddingWidthStart();
         }
         drawBackAndBorders(region, startx, starty, width, height);
     }
@@ -545,12 +498,11 @@ public class PDFRenderer extends PrintRenderer {
      * @param block the block to render the traits
      */
     protected void handleBlockTraits(Block block) {
-        /*  ipMarginOffset for a particular block = region border +
-         *  region padding + parent block padding + current block padding
-         */
-
-        float startx = (currentIPPosition + ipMarginOffset) / 1000f;
-        float starty = (currentBPPosition + bpMarginOffset) / 1000f;
+        int borderPaddingStart = block.getBorderAndPaddingWidthStart();
+        int borderPaddingBefore = block.getBorderAndPaddingWidthBefore();
+        
+        float startx = currentIPPosition / 1000f;
+        float starty = currentBPPosition / 1000f;
         float width = block.getIPD() / 1000f;
         float height = block.getBPD() / 1000f;
 
@@ -558,39 +510,11 @@ public class PDFRenderer extends PrintRenderer {
         if (spaceStart != null) {
             startx += spaceStart.floatValue() / 1000;
         }
-        BorderProps borderStart = (BorderProps) block.getTrait(Trait.BORDER_START);
-        if (borderStart != null) {
-            width += borderStart.width / 1000f;
-        }
-        Integer paddingStart = (Integer) block.getTrait(Trait.PADDING_START);
-        if (paddingStart != null) {
-            width += paddingStart.intValue() / 1000f;
-        }
-        BorderProps borderEnd = (BorderProps) block.getTrait(Trait.BORDER_END);
-        if (borderEnd != null) {
-            width += borderEnd.width / 1000f;
-        }
-        Integer paddingEnd = (Integer) block.getTrait(Trait.PADDING_END);
-        if (paddingEnd != null) {
-            width += paddingEnd.intValue() / 1000f;
-        }
 
-        BorderProps borderBefore = (BorderProps) block.getTrait(Trait.BORDER_BEFORE);
-        if (borderBefore != null) {
-            height += borderBefore.width / 1000f;
-        }
-        Integer paddingBefore = (Integer) block.getTrait(Trait.PADDING_BEFORE);
-        if (paddingBefore != null) {
-            height += paddingBefore.intValue() / 1000f;
-        }
-        BorderProps borderAfter = (BorderProps) block.getTrait(Trait.BORDER_AFTER);
-        if (borderAfter != null) {
-            height += borderAfter.width / 1000f;
-        }
-        Integer paddingAfter = (Integer) block.getTrait(Trait.PADDING_AFTER);
-        if (paddingAfter != null) {
-            height += paddingAfter.intValue() / 1000f;
-        }
+        width += borderPaddingStart / 1000f;
+        width += block.getBorderAndPaddingWidthEnd() / 1000f;
+        height += borderPaddingBefore / 1000f;
+        height += block.getBorderAndPaddingWidthAfter() / 1000f;
 
         drawBackAndBorders(block, startx, starty,
             width, height);
@@ -851,8 +775,8 @@ public class PDFRenderer extends PrintRenderer {
      * @param ip the inline parent area
      */
     public void renderInlineParent(InlineParent ip) {
-        float start = (currentIPPosition + ipMarginOffset) / 1000f;
-        float top = (ip.getOffset() + currentBPPosition + bpMarginOffset) / 1000f;
+        float start = currentIPPosition / 1000f;
+        float top = (ip.getOffset() + currentBPPosition) / 1000f;
         float width = ip.getIPD() / 1000f;
         float height = ip.getBPD() / 1000f;
         drawBackAndBorders(ip, start, top, width, height);
@@ -918,8 +842,8 @@ public class PDFRenderer extends PrintRenderer {
         // word.getOffset() = only height of text itself
         // currentBlockIPPosition: 0 for beginning of line; nonzero
         //  where previous line area failed to take up entire allocated space
-        int rx = currentIPPosition + ipMarginOffset;
-        int bl = currentBPPosition + bpMarginOffset + ch.getOffset();
+        int rx = currentIPPosition;
+        int bl = currentBPPosition + ch.getOffset();
 
 /*        System.out.println("Text = " + ch.getTextArea() +
             "; text width: " + ch.getWidth() +
@@ -990,8 +914,8 @@ public class PDFRenderer extends PrintRenderer {
         // word.getOffset() = only height of text itself
         // currentBlockIPPosition: 0 for beginning of line; nonzero
         //  where previous line area failed to take up entire allocated space
-        int rx = currentIPPosition + ipMarginOffset;
-        int bl = currentBPPosition + bpMarginOffset + text.getOffset();
+        int rx = currentIPPosition;
+        int bl = currentBPPosition + text.getOffset();
 
 /*        System.out.println("Text = " + text.getTextArea() +
             "; text width: " + text.getWidth() +
@@ -1247,8 +1171,8 @@ public class PDFRenderer extends PrintRenderer {
         saveGraphicsState();
         currentStream.add(((float) w) + " 0 0 "
                           + ((float) -h) + " "
-                          + (((float) currentIPPosition + ipMarginOffset) / 1000f + x) + " "
-                          + (((float)(currentBPPosition + bpMarginOffset + 1000 * h)) / 1000f
+                          + (((float) currentIPPosition) / 1000f + x) + " "
+                          + (((float)(currentBPPosition + 1000 * h)) / 1000f
                           + y) + " cm\n" + "/Im" + xobj + " Do\n");
         restoreGraphicsState();
     }
@@ -1308,6 +1232,7 @@ public class PDFRenderer extends PrintRenderer {
         float y = (currentBPPosition + viewport.getOffset()) / 1000f;
         float width = viewport.getIPD() / 1000f;
         float height = viewport.getBPD() / 1000f;
+        // TODO: Calculate the border rect correctly. 
         drawBackAndBorders(viewport, x, y, width, height);
 
         if (viewport.getClip()) {
