@@ -103,6 +103,12 @@ public class Driver {
     /** Render to PRINT. No OutputStream neccessary */
     public static final int RENDER_PRINT = 5;
 
+    /** Render to PCL. OutputStream must be set */
+    public static final int RENDER_PCL = 6;
+
+    /** Render to Text. OutputStream must be set */
+    public static final int RENDER_TXT = 7;
+
     /** the FO tree builder */
     private FOTreeBuilder _treeBuilder;
 
@@ -207,6 +213,8 @@ public class Driver {
      *   <li>RENDER_AWT
      *   <li>RENDER_MIF
      *   <li>RENDER_XML
+     *   <li>RENDER_PCL
+     *   <li>RENDER_TXT
      * </ul>
      * @param renderer the type of renderer to use
      */
@@ -221,6 +229,12 @@ public class Driver {
 	    throw new IllegalArgumentException("Use renderer form of setRenderer() for AWT");
 	case RENDER_PRINT:
 	    throw new IllegalArgumentException("Use renderer form of setRenderer() for PRINT");
+    case RENDER_PCL:
+        setRenderer(new org.apache.fop.render.pcl.PCLRenderer());
+        break;
+    case RENDER_TXT:
+        setRenderer(new org.apache.fop.render.txt.TXTRenderer());
+		break;
 	case RENDER_MIF:
 	    setRenderer(new org.apache.fop.render.mif.MIFRenderer());
 	    break;
