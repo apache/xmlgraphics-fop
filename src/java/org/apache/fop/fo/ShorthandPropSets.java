@@ -353,8 +353,8 @@ public class ShorthandPropSets {
         shorthandMap = new HashMap(shorthands.length);
         for (int i = 0; i < shorthands.length; i++) {
             shorthandMap.put
-                    ((Object)(Ints.consts.get(shorthands[i])), 
-                     (Object)(Ints.consts.get(i)));
+                    ((Ints.consts.get(shorthands[i])), 
+                     (Ints.consts.get(i)));
         }
     }
 
@@ -380,7 +380,7 @@ public class ShorthandPropSets {
      * @param property <tt>int</tt> property index
      * @return <tt>ROIntArray</tt> containing the expansion list for
      * this shorthand.
-     * @exception <tt>PropertyException</tt> if this is not a valid
+     * @exception PropertyException if this is not a valid
      * shorthand property
      */
     public static ROIntArray getSHandExpansionSet(int property)
@@ -464,7 +464,7 @@ public class ShorthandPropSets {
      * @param element the overriding <tt>PropertyValue</tt>
      * @return <tt>PropertyValueList</tt> the expansion list with the
      *  appropriate element reset
-     * @exception <tt>PropertyException</tt>
+     * @exception PropertyException
      */
     public static PropertyValueList overrideSHandElement
         (PropertyValueList expansionList, PropertyValue element)
@@ -494,7 +494,7 @@ public class ShorthandPropSets {
      * @param list the overriding <tt>PropertyValueList</tt>
      * @return <tt>PropertyValueList</tt> the new expansion list with
      *  appropriate elements reset
-     * @exception <tt>PropertyException</tt>
+     * @exception PropertyException
      */
     public static PropertyValueList overrideSHandElements
         (PropertyValueList expansionList, PropertyValueList list)
@@ -814,8 +814,8 @@ public class ShorthandPropSets {
         compoundMap = new HashMap(compounds.length);
         for (int i = 0; i < compounds.length; i++) {
             compoundMap.put
-                    ((Object)(Ints.consts.get(compounds[i])), 
-                     (Object)(Ints.consts.get(i)));
+                    ((Ints.consts.get(compounds[i])), 
+                     (Ints.consts.get(i)));
         }
     }
 
@@ -961,7 +961,7 @@ public class ShorthandPropSets {
      * @param list - the list to which to append the expansion elements.
      * @return the original <tt>PropertyValueList</tt> containing the
      * appended expansions.
-     * @exception <tt>PropertyException</tt>
+     * @exception PropertyException
      */
     private static PropertyValueList copyValueToSet(PropertyValue value,
                             ROIntArray expansionSet, PropertyValueList list)
@@ -991,13 +991,13 @@ public class ShorthandPropSets {
      * <b>references</b> to the initial values. Note also that, in the
      * expansion of a compound value, the initial value comonents are
      * regarded as having been specified.
-     * @param foTree - the <tt>FOTree</tt> of the node whose properties are
-     * being processed.
-     * @param expansion - the set of indices of the expansion properties.
-     * @param list - the list to which to append the expansion elements.
+     * @param foTree tree of the node whose properties are
+     * being processed
+     * @param expansion the set of indices of the expansion properties
+     * @param list the list to which to append the expansion elements
      * @return the original <tt>PropertyValueList</tt> containing the
      * appended initial value expansions for the (compound) property.
-     * @exception <tt>PropertyException</tt>
+     * @exception PropertyException
      */
     public static PropertyValueList initialValueCompoundExpansion
                 (FOTree foTree, ROIntArray expansion, PropertyValueList list)
