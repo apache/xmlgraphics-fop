@@ -20,21 +20,30 @@ package org.apache.fop.fo.flow;
 
 // FOP
 import org.apache.fop.fo.FONode;
-import org.apache.fop.fo.ToBeImplementedElement;
+import org.apache.fop.fo.FObj;
 
 /**
- * Class modelling the fo:multi-switch object. See Sec. 6.9.3 of the XSL-FO
- * Standard.
+ * Class modelling the fo:multi-switch object.
  */
-public class MultiSwitch extends ToBeImplementedElement {
+public class MultiSwitch extends FObj {
+
+    static boolean notImplementedWarningGiven = false;
 
     /**
      * @param parent FONode that is the parent of this object
      */
     public MultiSwitch(FONode parent) {
         super(parent);
+
+        if (!notImplementedWarningGiven) {
+            getLogger().warn("fo:multi-switch is not yet implemented.");
+            notImplementedWarningGiven = true;
+        }
     }
 
+    /**
+     * @see org.apache.fop.fo.FObj#getName()
+     */
     public String getName() {
         return "fo:multi-switch";
     }

@@ -20,19 +20,25 @@ package org.apache.fop.fo.flow;
 
 // FOP
 import org.apache.fop.fo.FONode;
-import org.apache.fop.fo.ToBeImplementedElement;
+import org.apache.fop.fo.FObj;
 
 /**
- * Class modelling the fo:multi-toggle property. See Sec. 6.9.5 of the XSL-FO
- * Standard.
+ * Class modelling the fo:multi-toggle property.
  */
-public class MultiToggle extends ToBeImplementedElement {
+public class MultiToggle extends FObj {
+
+    static boolean notImplementedWarningGiven = false;
 
     /**
      * @param parent FONode that is the parent of this object
      */
     public MultiToggle(FONode parent) {
         super(parent);
+
+        if (!notImplementedWarningGiven) {
+            getLogger().warn("fo:multi-toggle is not yet implemented.");
+            notImplementedWarningGiven = true;
+        }
     }
 
     /**
