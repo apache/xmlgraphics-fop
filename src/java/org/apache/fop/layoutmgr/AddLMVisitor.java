@@ -842,12 +842,15 @@ public class AddLMVisitor implements FOTreeVisitor {
          TableLayoutManager tlm = new TableLayoutManager();
          tlm.setUserAgent(node.getUserAgent());
          tlm.setFObj(node);
-         ArrayList columnLMs = new ArrayList();
-         ListIterator iter = node.getColumns().listIterator();
-         while (iter.hasNext()) {
-             columnLMs.add(getTableColumnLayoutManager((TableColumn)iter.next()));
+         ArrayList columns = node.getColumns();
+         if (columns != null) {
+             ArrayList columnLMs = new ArrayList();
+             ListIterator iter = columns.listIterator();
+             while (iter.hasNext()) {
+                 columnLMs.add(getTableColumnLayoutManager((TableColumn)iter.next()));
+             }
+             tlm.setColumns(columnLMs);
          }
-         tlm.setColumns(columnLMs);
          if (node.getTableHeader() != null) {
              tlm.setTableHeader(getTableBodyLayoutManager(node.getTableHeader()));
          }
