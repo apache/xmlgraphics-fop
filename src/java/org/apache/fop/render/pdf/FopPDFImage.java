@@ -87,9 +87,12 @@ public class FopPDFImage implements PDFImage {
             }
         }
 
+        //Handle transparency mask if applicable
         if (fopImage.hasSoftMask()) {
             byte [] softMask = fopImage.getSoftMask();
-            if (softMask == null) return;
+            if (softMask == null) {
+                return;
+            }
             BitmapImage fopimg = new BitmapImage
                 ("Mask:" + key, fopImage.getWidth(), fopImage.getHeight(), 
                  softMask, null);
@@ -169,7 +172,6 @@ public class FopPDFImage implements PDFImage {
      * @see org.apache.fop.pdf.PDFImage#getSoftMask()
      */
     public String getSoftMask() {
-
         return softMaskRef;
     }
 
@@ -190,8 +192,6 @@ public class FopPDFImage implements PDFImage {
      * @throws IOException in case of an I/O problem
      */
     protected void outputPostScriptContents(OutputStream out) throws IOException {
-        int length = 0;
-        int i = 0;
         EPSImage epsImage = (EPSImage) fopImage;
         int[] bbox = epsImage.getBBox();
         int bboxw = bbox[2] - bbox[0];
