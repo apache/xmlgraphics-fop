@@ -182,12 +182,15 @@ public class PSRenderer extends AbstractRenderer {
 
     /**
      * Generates the PostScript code for the font dictionary.
+     * @param gen PostScript generator to use for output
      * @param fontInfo available fonts
+     * @throws IOException in case of an I/O problem
      */
-    protected void writeFontDict(FontInfo fontInfo) {
-        writeln("%%BeginResource: procset FOPFonts");
-        writeln("%%Title: Font setup (shortcuts) for this file");
-        writeln("/FOPFonts 100 dict dup begin");
+    public static void writeFontDict(PSGenerator gen, FontInfo fontInfo) 
+                throws IOException {
+        gen.writeln("%%BeginResource: procset FOPFonts");
+        gen.writeln("%%Title: Font setup (shortcuts) for this file");
+        gen.writeln("/FOPFonts 100 dict dup begin");
 
         // write("/gfF1{/Helvetica findfont} bd");
         // write("/gfF3{/Helvetica-Bold findfont} bd");
@@ -196,21 +199,21 @@ public class PSRenderer extends AbstractRenderer {
         while (enum.hasNext()) {
             String key = (String)enum.next();
             Font fm = (Font)fonts.get(key);
-            writeln("/" + key + " /" + fm.getFontName() + " def");
+            gen.writeln("/" + key + " /" + fm.getFontName() + " def");
         }
-        writeln("end def");
-        writeln("%%EndResource");
+        gen.writeln("end def");
+        gen.writeln("%%EndResource");
         enum = fonts.keySet().iterator();
         while (enum.hasNext()) {
             String key = (String)enum.next();
             Font fm = (Font)fonts.get(key);
-            writeln("/" + fm.getFontName() + " findfont");
-            writeln("dup length dict begin");
-            writeln("  {1 index /FID ne {def} {pop pop} ifelse} forall");
-            writeln("  /Encoding ISOLatin1Encoding def");
-            writeln("  currentdict");
-            writeln("end");
-            writeln("/" + fm.getFontName() + " exch definefont pop");
+            gen.writeln("/" + fm.getFontName() + " findfont");
+            gen.writeln("dup length dict begin");
+            gen.writeln("  {1 index /FID ne {def} {pop pop} ifelse} forall");
+            gen.writeln("  /Encoding ISOLatin1Encoding def");
+            gen.writeln("  currentdict");
+            gen.writeln("end");
+            gen.writeln("/" + fm.getFontName() + " exch definefont pop");
         }
     }
 
@@ -396,7 +399,7 @@ public class PSRenderer extends AbstractRenderer {
         gen.writeDSCComment(DSCConstants.BEGIN_SETUP);
         PSProcSets.writeFOPStdProcSet(gen);
         PSProcSets.writeFOPEPSProcSet(gen);
-        writeFontDict(fontInfo);
+        writeFontDict(gen, fontInfo);
         gen.writeDSCComment(DSCConstants.END_SETUP);
     }
 
