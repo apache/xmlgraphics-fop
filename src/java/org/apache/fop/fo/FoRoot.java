@@ -1,6 +1,4 @@
 /*
- * $Id$
- * 
  * ============================================================================
  *                   The Apache Software License, Version 1.1
  * ============================================================================
@@ -48,15 +46,12 @@
  * James Tauber <jtauber@jtauber.com>. For more  information on the Apache 
  * Software Foundation, please see <http://www.apache.org/>.
  *  
- *
- * @author <a href="mailto:pbwest@powerup.com.au">Peter B. West</a>
- * @version $Revision$ $Name$
+ * $Id$
  */
 
 package org.apache.fop.fo;
 
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.NoSuchElementException;
 
 import org.apache.fop.apps.FOPException;
@@ -73,10 +68,12 @@ import org.apache.fop.xml.XmlEventReader;
 /**
  * <tt>FoRoot</tt> is the class which processes the fo:root start element
  * XML event.
- * <p>
  * The building of all of the fo tree, and the forwarding of FO tree events
  * on to further stages of processing, will all take place within the
  * <tt>buildFoTree()</tt> method of this class instance.
+ * 
+ * @author <a href="mailto:pbwest@powerup.com.au">Peter B. West</a>
+ * @version $Revision$ $Name$
  */
 
 public class FoRoot extends FONode {
@@ -110,12 +107,6 @@ public class FoRoot extends FONode {
         sparsePropsMap
                 [PropNames.MEDIA_USAGE] = 0;
     }
-
-    /** 
-     * The HashMap of PageSequenceMaster objects produced from the
-     * layout-master-set.
-     */
-    private HashMap pageSequenceMasters;
 
     /** Offset of declarations child node. */
     private int declarations = -1;
@@ -174,7 +165,6 @@ public class FoRoot extends FONode {
             FoLayoutMasterSet layoutMasters =
                                 new FoLayoutMasterSet(getFOTree(), this, ev);
             // Clean up the fo:layout-master-set event
-            pageSequenceMasters = layoutMasters.getPageSequenceMasters();
             ev = xmlevents.getEndElement(XmlEventReader.DISCARD_EV, ev);
             namespaces.relinquishEvent(ev);
             layoutMasters.deleteSubTree();
@@ -199,14 +189,16 @@ public class FoRoot extends FONode {
             if (ev == null)
                 throw new FOPException("No page-sequence found.");
             firstPageSeq = numChildren();
-            new FoPageSequence(getFOTree(), this, (FoXmlEvent)ev);
+            new FoPageSequence(
+                    getFOTree(), this, (FoXmlEvent)ev, layoutMasters);
             ev = xmlevents.getEndElement(XmlEventReader.DISCARD_EV, ev);
             namespaces.relinquishEvent(ev);
             while ((ev = xmlevents.expectStartElement
                     (FObjectNames.PAGE_SEQUENCE, XmlEvent.DISCARD_W_SPACE))
                    != null) {
                 // Loop over remaining fo:page-sequences
-                new FoPageSequence(getFOTree(), this, (FoXmlEvent)ev);
+                new FoPageSequence(
+                        getFOTree(), this, (FoXmlEvent)ev, layoutMasters);
                 ev = xmlevents.getEndElement(XmlEventReader.DISCARD_EV, ev);
                 namespaces.relinquishEvent(ev);
             }
