@@ -636,12 +636,4 @@ public class Driver {
         }
     }
 
-    /**   
-      * Public accessor for getting the document used by this generation
-      * @return the current Document object
-      */   
-     public Document getCurrentDocument() {
-        return currentDocument;
-     }
-     
 }
