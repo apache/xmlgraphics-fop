@@ -41,7 +41,7 @@ import java.util.Map;
  */
 public abstract class AbstractLayoutManager implements LayoutManager, Constants {
     protected LayoutManager parentLM = null;
-    protected List childLMs = new ArrayList(10);
+    protected List childLMs = null;
     protected ListIterator fobjIter = null;
     protected Map markers = null;
 
@@ -453,6 +453,9 @@ public abstract class AbstractLayoutManager implements LayoutManager, Constants 
      * @see org.apache.fop.layoutmgr.LayoutManager#getChildLMs
      */
     public List getChildLMs() {
+        if (childLMs == null) {
+            childLMs = new java.util.ArrayList(10);
+        }
         return childLMs;
     }
 
@@ -465,6 +468,9 @@ public abstract class AbstractLayoutManager implements LayoutManager, Constants 
         }
         lm.setParent(this);
         lm.initialize();
+        if (childLMs == null) {
+            childLMs = new java.util.ArrayList(10);
+        }
         childLMs.add(lm);
         log.trace(this.getClass().getName()
                   + ": Adding child LM " + lm.getClass().getName());
