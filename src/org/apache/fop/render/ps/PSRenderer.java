@@ -106,9 +106,6 @@ public class PSRenderer extends AbstractRenderer {
 
     protected IDReferences idReferences;
 
-    protected Hashtable options;
-
-
     /**
      * set the document's producer
      *
@@ -116,14 +113,6 @@ public class PSRenderer extends AbstractRenderer {
      */
     public void setProducer(String producer) {
         this.producer = producer;
-    }
-
-
-    /**
-     * set up renderer options
-     */
-    public void setOptions(Hashtable options) {
-        this.options = options;
     }
 
     /**
@@ -239,7 +228,7 @@ public class PSRenderer extends AbstractRenderer {
     }
 
     protected void movetoCurrPosition() {
-        write(this.currentXPosition + " " + this.currentYPosition + " M");
+        write(this.currentIPPosition + " " + this.currentBPPosition + " M");
     }
 
     /**
@@ -266,190 +255,6 @@ public class PSRenderer extends AbstractRenderer {
             write("fill");
     }
 
-    /**
-     * render a display space to PostScript
-     *
-     * @param space the space to render
-     */
-    public void renderDisplaySpace(DisplaySpace space) {
-        // write("% --- DisplaySpace size="+space.getSize());
-        this.currentYPosition -= space.getSize();
-        movetoCurrPosition();
-    }
-
-    /**
-     * render a foreign object area
-     */
-    public void renderForeignObjectArea(ForeignObjectArea area) {
-        // if necessary need to scale and align the content
-        area.getObject().render(this);
-    }
-
-    /**
-     * render an SVG area to PostScript
-     *
-     * @param area the area to render
-     */
-    public void renderSVGArea(SVGArea area) {
-        int x = this.currentXPosition;
-        int y = this.currentYPosition;
-        Document doc = area.getSVGDocument();
-
-        org.apache.fop.svg.SVGUserAgent userAgent
-            = new org.apache.fop.svg.SVGUserAgent(new AffineTransform());
-        userAgent.setLogger(log);
-
-        GVTBuilder builder = new GVTBuilder();
-        BridgeContext ctx = new BridgeContext(userAgent);
-
-        GraphicsNode root;
-        try {        
-            root = builder.build(ctx, doc);
-        } catch (Exception e) {        
-            log.error("svg graphic could not be built: "
-                                   + e.getMessage(), e);        
-            return;
-        }
-        // get the 'width' and 'height' attributes of the SVG document
-        float w = (float)ctx.getDocumentSize().getWidth() * 1000f;
-        float h = (float)ctx.getDocumentSize().getHeight() * 1000f;
-        ctx = null;
-        builder = null;
-
-        float sx = 1, sy = -1;
-        int xOffset = x, yOffset = y;
-
-        comment("% --- SVG Area");
-        write("gsave");
-        if (w != 0 && h != 0) {
-            write("newpath");
-            write(x + " " + y + " M");
-            write((x + w) + " " + y + " rlineto");
-            write((x + w) + " " + (y - h) + " rlineto");
-            write(x + " " + (y - h) + " rlineto");
-            write("closepath");
-            write("clippath");
-        }
-        // transform so that the coordinates (0,0) is from the top left
-        // and positive is down and to the right. (0,0) is where the
-        // viewBox puts it.
-        write(xOffset + " " + yOffset + " translate");
-        write(sx + " " + sy + " scale");
-
-        PSGraphics2D graphics = new PSGraphics2D(false, area.getFontState(),
-                                this, currentFontName,
-                                currentFontSize,
-                                currentXPosition,
-                                currentYPosition);
-        graphics.setGraphicContext(new org.apache.batik.ext.awt.g2d.GraphicContext());
-        try {
-            root.paint(graphics);
-        } catch (Exception e) {
-            log.error("svg graphic could not be rendered: "
-                                   + e.getMessage(), e);
-        }
-
-        write("grestore");
-
-        comment("% --- SVG Area end");
-        movetoCurrPosition();
-    }
-
-    public void renderBitmap(FopImage img, int x, int y, int w, int h) {
-        try {
-            boolean iscolor = img.getColorSpace().getColorSpace()
-                              != ColorSpace.DEVICE_GRAY;
-            byte[] imgmap = img.getBitmaps();
-
-            write("gsave");
-            write("/DeviceRGB setcolorspace");
-            write(x + " " + (y - h) + " translate");
-            write(w + " " + h + " scale");
-            write("<<");
-            write("  /ImageType 1");
-            write("  /Width " + img.getWidth());
-            write("  /Height " + img.getHeight());
-            write("  /BitsPerComponent 8");
-            if (iscolor) {
-                write("  /Decode [0 1 0 1 0 1]");
-            } else {
-                write("  /Decode [0 1]");
-            }
-            // Setup scanning for left-to-right and top-to-bottom
-            write("  /ImageMatrix [" + img.getWidth() + " 0 0 -"
-                  + img.getHeight() + " 0 " + img.getHeight() + "]");
-            write("  /DataSource currentfile /ASCII85Decode filter /FlateDecode filter");
-            // write("  /DataSource currentfile /ASCIIHexDecode filter /FlateDecode filter");
-            // write("  /DataSource currentfile /ASCII85Decode filter /RunLengthDecode filter");
-            // write("  /DataSource currentfile /ASCIIHexDecode filter /RunLengthDecode filter");
-            // write("  /DataSource currentfile /ASCIIHexDecode filter");
-            // write("  /DataSource currentfile /ASCII85Decode filter");
-            // write("  /DataSource currentfile /RunLengthDecode filter");
-            write(">>");
-            write("image");
-
-            /*
-             * for (int y=0; y<img.getHeight(); y++) {
-             * int indx = y * img.getWidth();
-             * if (iscolor) indx*= 3;
-             * for (int x=0; x<img.getWidth(); x++) {
-             * if (iscolor) {
-             * writeASCIIHex(imgmap[indx++] & 0xFF);
-             * writeASCIIHex(imgmap[indx++] & 0xFF);
-             * writeASCIIHex(imgmap[indx++] & 0xFF);
-             * } else {
-             * writeASCIIHex(imgmap[indx++] & 0xFF);
-             * }
-             * }
-             * }
-             */
-            try {
-                // imgmap[0] = 1;
-                InputStream bain = new ByteArrayInputStream(imgmap);
-                InputStream in;
-                in = bain;
-                in = FlateEncodeFilter.filter(in);
-                // in = RunLengthEncodeFilter.filter(in);
-                // in = ASCIIHexEncodeFilter.filter(in);
-                in = ASCII85EncodeFilter.filter(in);
-                copyStream(in, this.out);
-            } catch (IOException e) {
-                if (!ioTrouble)
-                    e.printStackTrace();
-                ioTrouble = true;
-            }
-
-            write("");
-            write("grestore");
-        } catch (FopImageException e) {
-            log.error("PSRenderer.renderImageArea(): Error rendering bitmap ("
-                                   + e.getMessage() + ")", e);
-        }
-    }
-
-    /**
-     * render an image area to PostScript
-     *
-     * @param area the area to render
-     */
-    public void renderImageArea(ImageArea area) {
-        int x = this.currentAreaContainerXPosition + area.getXOffset();
-        int y = this.currentYPosition;
-        int w = area.getContentWidth();
-        int h = area.getHeight();
-        this.currentYPosition -= area.getHeight();
-
-        imagecount++;
-        // if (imagecount!=4) return;
-
-        comment("% --- ImageArea");
-        if (area.getImage() instanceof SVGImage) {}
-        else {
-            renderBitmap(area.getImage(), x, y, w, h);
-        }
-        comment("% --- ImageArea end");
-    }
-
     private long copyStream(InputStream in, OutputStream out,
                             int bufferSize) throws IOException {
         long bytes_total = 0;
@@ -468,326 +273,11 @@ public class PSRenderer extends AbstractRenderer {
         return copyStream(in, out, 4096);
     }
 
-    /**
-     * render an inline area to PostScript
-     *
-     * @param area the area to render
-     */
-    public void renderWordArea(WordArea area) {
-        FontState fs = area.getFontState();
-        String fontWeight = fs.getFontWeight();
-        StringBuffer sb = new StringBuffer();
-        String s;
-        if (area.getPageNumberID()
-                != null) {    // this text is a page number, so resolve it
-            s = idReferences.getPageNumber(area.getPageNumberID());
-            if (s == null) {
-                s = "";
-            }
-        } else {
-            s = area.getText();
-        }
-        int l = s.length();
-        
-        for (int i = 0; i < l; i++) {
-            char ch = s.charAt(i);
-            char mch = fs.mapChar(ch);
-            if (mch > 127) {
-                sb = sb.append("\\" + Integer.toOctalString(mch));
-            } else {
-                String escape = "\\()[]{}";
-                if (escape.indexOf(mch) >= 0) {
-                    sb.append("\\");
-                }
-                sb = sb.append(mch);
-            }
-        }
-        // System.out.println("["+s+"] --> ["+sb.toString()+"]");
-
-        // comment("% --- InlineArea font-weight="+fontWeight+": " + sb.toString());
-        useFont(fs.getFontName(), fs.getFontSize());
-        useColor(area.getRed(), area.getGreen(), area.getBlue());
-        if (area.getUnderlined() || area.getLineThrough()
-                || area.getOverlined())
-            write("ULS");
-        write("(" + sb.toString() + ") t");
-        if (area.getUnderlined())
-            write("ULE");
-        if (area.getLineThrough())
-            write("SOE");
-        if (area.getOverlined())
-            write("OLE");
-        this.currentXPosition += area.getContentWidth();
-    }
-
     public void useFont(String name, int size) {
         if ((currentFontName != name) || (currentFontSize != size)) {
             write(name + " " + size + " F");
             currentFontName = name;
             currentFontSize = size;
-        }
-    }
-
-    /**
-     * render an inline space to PostScript
-     *
-     * @param space the space to render
-     */
-    public void renderInlineSpace(InlineSpace space) {
-        // write("% --- InlineSpace size="+space.getSize());
-        this.currentXPosition += space.getSize();
-        if (space.getUnderlined() || space.getLineThrough()
-                || space.getOverlined())
-            write("ULS");
-        write(space.getSize() + " 0 RM");
-        if (space.getUnderlined())
-            write("ULE");
-        if (space.getLineThrough())
-            write("SOE");
-        if (space.getOverlined())
-            write("OLE");
-    }
-
-    /**
-     * render a line area to PostScript
-     *
-     * @param area the area to render
-     */
-    public void renderLineArea(LineArea area) {
-        int rx = this.currentAreaContainerXPosition + area.getStartIndent();
-        int ry = this.currentYPosition;
-        int w = area.getContentWidth();
-        int h = area.getHeight();
-
-        this.currentYPosition -= area.getPlacementOffset();
-        this.currentXPosition = rx;
-
-        int bl = this.currentYPosition;
-        // method is identical to super method except next line
-        movetoCurrPosition();
-
-        String fontWeight = area.getFontState().getFontWeight();
-        // comment("% --- LineArea begin font-weight="+fontWeight);
-        Enumeration e = area.getChildren().elements();
-        while (e.hasMoreElements()) {
-            Box b = (Box)e.nextElement();
-            this.currentYPosition = ry - area.getPlacementOffset();
-            b.render(this);
-        }
-        // comment("% --- LineArea end");
-
-        this.currentYPosition = ry - h;
-        this.currentXPosition = rx;
-    }
-
-    /**
-     * render a page to PostScript
-     *
-     * @param page the page to render
-     */
-    public void renderPage(Page page) {
-        this.idReferences = page.getIDReferences();
-
-        BodyAreaContainer body;
-        AreaContainer before, after;
-        write("%%Page: " + page.getNumber() + " " + page.getNumber());
-        write("%%BeginPageSetup");
-        write("FOPFonts begin");
-        write("0.001 0.001 scale");
-        write("%%EndPageSetup");
-        body = page.getBody();
-        before = page.getBefore();
-        after = page.getAfter();
-        if (before != null) {
-            renderAreaContainer(before);
-        }
-        renderBodyAreaContainer(body);
-        if (after != null) {
-            renderAreaContainer(after);
-        }
-        write("showpage");
-        write("%%PageTrailer");
-        write("%%EndPage");
-    }
-
-    /**
-     * render a leader area to PostScript
-     *
-     * @param area the area to render
-     */
-    public void renderLeaderArea(LeaderArea area) {
-        int rx = this.currentXPosition;
-        int ry = this.currentYPosition;
-        int w = area.getContentWidth();
-        int th = area.getRuleThickness();
-        int th2 = th / 2;
-        int th3 = th / 3;
-        int th4 = th / 4;
-
-        switch (area.getLeaderPattern()) {
-        case LeaderPattern.SPACE:
-            // NOP
-
-            break;
-        case LeaderPattern.RULE:
-            if (area.getRuleStyle() == RuleStyle.NONE)
-                break;
-            useColor(area.getRed(), area.getGreen(), area.getBlue());
-            write("gsave");
-            write("0 setlinecap");
-            switch (area.getRuleStyle()) {
-            case RuleStyle.DOTTED:
-                write("newpath");
-                write("[1000 3000] 0 setdash");
-                write(th + " setlinewidth");
-                write(rx + " " + ry + " M");
-                write(w + " 0 rlineto");
-                useColor(area.getRed(), area.getGreen(), area.getBlue());
-                write("stroke");
-                break;
-            case RuleStyle.DASHED:
-                write("newpath");
-                write("[3000 3000] 0 setdash");
-                write(th + " setlinewidth");
-                write(rx + " " + ry + " M");
-                write(w + " 0 rlineto");
-                useColor(area.getRed(), area.getGreen(), area.getBlue());
-                write("stroke");
-                break;
-            case RuleStyle.SOLID:
-                write("newpath");
-                write(th + " setlinewidth");
-                write(rx + " " + ry + " M");
-                write(w + " 0 rlineto");
-                useColor(area.getRed(), area.getGreen(), area.getBlue());
-                write("stroke");
-                break;
-            case RuleStyle.DOUBLE:
-                write("newpath");
-                write(th3 + " setlinewidth");
-                write(rx + " " + (ry - th3) + " M");
-                write(w + " 0 rlineto");
-                write(rx + " " + (ry + th3) + " M");
-                write(w + " 0 rlineto");
-                useColor(area.getRed(), area.getGreen(), area.getBlue());
-                write("stroke");
-                break;
-            case RuleStyle.GROOVE:
-                write(th2 + " setlinewidth");
-                write("newpath");
-                write(rx + " " + (ry - th4) + " M");
-                write(w + " 0 rlineto");
-                useColor(area.getRed(), area.getGreen(), area.getBlue());
-                write("stroke");
-                write("newpath");
-                write(rx + " " + (ry + th4) + " M");
-                write(w + " 0 rlineto");
-                useColor(1, 1, 1);    // white
-                write("stroke");
-                break;
-            case RuleStyle.RIDGE:
-                write(th2 + " setlinewidth");
-                write("newpath");
-                write(rx + " " + (ry - th4) + " M");
-                write(w + " 0 rlineto");
-                useColor(1, 1, 1);    // white
-                write("stroke");
-                write("newpath");
-                write(rx + " " + (ry + th4) + " M");
-                write(w + " 0 rlineto");
-                useColor(area.getRed(), area.getGreen(), area.getBlue());
-                write("stroke");
-                break;
-            }
-            write("grestore");
-            break;
-        case LeaderPattern.DOTS:
-            comment("% --- Leader dots NYI");
-            log.error("Leader dots: Not yet implemented");
-            break;
-        case LeaderPattern.USECONTENT:
-            comment("% --- Leader use-content NYI");
-            log.error("Leader use-content: Not yet implemented");
-            break;
-        }
-        this.currentXPosition += area.getContentWidth();
-        write(area.getContentWidth() + " 0 RM");
-    }
-
-    protected void doFrame(Area area) {
-        int w, h;
-        int rx = this.currentAreaContainerXPosition;
-        w = area.getContentWidth();
-        BorderAndPadding bap = area.getBorderAndPadding();
-
-        if (area instanceof BlockArea)
-            rx += ((BlockArea)area).getStartIndent();
-
-        h = area.getContentHeight();
-        int ry = this.currentYPosition;
-
-        rx = rx - area.getPaddingLeft();
-        ry = ry + area.getPaddingTop();
-        w = w + area.getPaddingLeft() + area.getPaddingRight();
-        h = h + area.getPaddingTop() + area.getPaddingBottom();
-
-        rx = rx - area.getBorderLeftWidth();
-        ry = ry + area.getBorderTopWidth();
-        w = w + area.getBorderLeftWidth() + area.getBorderRightWidth();
-        h = h + area.getBorderTopWidth() + area.getBorderBottomWidth();
-
-        // Create a textrect with these dimensions.
-        // The y co-ordinate is measured +ve downwards so subtract page-height
-
-        ColorType bg = area.getBackgroundColor();
-        if ((bg != null) && (bg.alpha() == 0)) {
-            write("newpath");
-            write(rx + " " + ry + " M");
-            write(w + " 0 rlineto");
-            write("0 " + (-h) + " rlineto");
-            write((-w) + " 0 rlineto");
-            write("0 " + h + " rlineto");
-            write("closepath");
-            useColor(bg);
-            write("fill");
-        }
-
-
-        if (area.getBorderTopWidth() != 0) {
-            write("newpath");
-            write(rx + " " + ry + " M");
-            write(w + " 0 rlineto");
-            write(area.getBorderTopWidth() + " setlinewidth");
-            write("0 setlinecap");
-            useColor(bap.getBorderColor(BorderAndPadding.TOP));
-            write("stroke");
-        }
-        if (area.getBorderLeftWidth() != 0) {
-            write("newpath");
-            write(rx + " " + ry + " M");
-            write("0 " + (-h) + " rlineto");
-            write(area.getBorderLeftWidth() + " setlinewidth");
-            write("0 setlinecap");
-            useColor(bap.getBorderColor(BorderAndPadding.LEFT));
-            write("stroke");
-        }
-        if (area.getBorderRightWidth() != 0) {
-            write("newpath");
-            write((rx + w) + " " + ry + " M");
-            write("0 " + (-h) + " rlineto");
-            write(area.getBorderRightWidth() + " setlinewidth");
-            write("0 setlinecap");
-            useColor(bap.getBorderColor(BorderAndPadding.RIGHT));
-            write("stroke");
-        }
-        if (area.getBorderBottomWidth() != 0) {
-            write("newpath");
-            write(rx + " " + (ry - h) + " M");
-            write(w + " 0 rlineto");
-            write(area.getBorderBottomWidth() + " setlinewidth");
-            write("0 setlinecap");
-            useColor(bap.getBorderColor(BorderAndPadding.BOTTOM));
-            write("stroke");
         }
     }
 
@@ -805,8 +295,6 @@ public class PSRenderer extends AbstractRenderer {
     }
 
     /**
-      Default start renderer method. This would
-      normally be overridden. (mark-fop@inomial.com).
     */
     public void startRenderer(OutputStream outputStream)
     throws IOException {
@@ -829,18 +317,12 @@ public class PSRenderer extends AbstractRenderer {
     }
 
     /**
-      Default stop renderer method. This would
-      normally be overridden. (mark-fop@inomial.com).
     */
-    public void stopRenderer(OutputStream outputStream)
+    public void stopRenderer()
     throws IOException {
         write("%%Trailer");
         write("%%EOF");
         this.out.flush();
-        log.debug("written out PostScript");
     }
 
-    public void render(Page page, OutputStream outputStream) {
-        this.renderPage(page);
-    }
 }

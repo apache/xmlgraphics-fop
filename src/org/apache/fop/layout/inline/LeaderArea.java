@@ -38,10 +38,6 @@ public class LeaderArea extends InlineArea {
         this.ruleThickness = ruleThickness;
     }
 
-    public void render(Renderer renderer) {
-        renderer.renderLeaderArea(this);
-    }
-
     public int getRuleThickness() {
         return this.ruleThickness;
     }

@@ -95,10 +95,6 @@ public class BodyAreaContainer extends Area {
         // setBorderWidth(0, 0, 0, 0);
     }
 
-    public void render(Renderer renderer) {
-        renderer.renderBodyAreaContainer(this);
-    }
-
     public int getPosition() {
         return position;
     }

@@ -8,222 +8,221 @@
 package org.apache.fop.render;
 
 // FOP
-import org.apache.fop.pdf.PDFPathPaint;
-import org.apache.fop.pdf.PDFColor;
 import org.apache.fop.image.ImageArea;
 import org.apache.fop.apps.FOPException;
-import org.apache.fop.fo.properties.*;
-import org.apache.fop.layout.*;
-import org.apache.fop.layout.inline.*;
-import org.apache.fop.datatypes.*;
-import org.apache.fop.render.pdf.FontSetup;
+import org.apache.fop.area.*;
+import org.apache.fop.area.Span;
+import org.apache.fop.area.inline.*;
+import org.apache.fop.area.inline.Space;
+import org.apache.fop.fo.FOUserAgent;
 
 import org.apache.log.Logger;
 
 // Java
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.List;
 
 /**
  * Abstract base class for all renderers.
- * 
+ * The Abstract renderer does all the top level processing
+ * of the area tree and adds some abstract methods to handle
+ * viewports.
  */
 public abstract class AbstractRenderer implements Renderer {
     protected Logger log;
+    protected FOUserAgent userAgent;
+    protected HashMap options;
 
-    /**
-     * the current vertical position in millipoints from bottom
-     */
-    protected int currentYPosition = 0;
+    // block progression position
+    protected int currentBPPosition = 0;
 
-    /**
-     * the current horizontal position in millipoints from left
-     */
-    protected int currentXPosition = 0;
+    // inline progression position
+    protected int currentIPPosition = 0;
 
-    /**
-     * the horizontal position of the current area container
-     */
-    protected int currentAreaContainerXPosition = 0;
+    protected int currentBlockIPPosition = 0;
 
     public void setLogger(Logger logger) {
         log = logger;
     }
 
-    public void renderSpanArea(SpanArea area) {
-        Enumeration e = area.getChildren().elements();
-        while (e.hasMoreElements()) {
-            Box b = (Box)e.nextElement();
-            b.render(this);    // column areas
-        }
+    public void setUserAgent(FOUserAgent agent) {
+userAgent = agent;
+    }
+
+    public void setOptions(HashMap opt) {
+        options = opt;
+    }
+
+    public void startPageSequence(Title seqTitle) {
+    }
+
+    // normally this would be overriden to create a page in the
+    // output
+    public void renderPage(PageViewport page) throws IOException,
+    FOPException {
+
+        Page p = page.getPage();
+renderPageAreas(p);
+    }
+
+    protected void renderPageAreas(Page page) {
+        RegionViewport viewport;
+        viewport = page.getRegion(Region.BEFORE);
+        renderRegionViewport(viewport);
+        viewport = page.getRegion(Region.START);
+        renderRegionViewport(viewport);
+        viewport = page.getRegion(Region.BODY);
+        renderRegionViewport(viewport);
+        viewport = page.getRegion(Region.END);
+        renderRegionViewport(viewport);
+        viewport = page.getRegion(Region.AFTER);
+        renderRegionViewport(viewport);
 
     }
 
-    protected abstract void doFrame(Area area);
-
-    /**
-     * Add a filled rectangle to the current stream
-     * This default implementation calls addRect
-     * using the same color for fill and border.
-     *
-     * @param x the x position of left edge in millipoints
-     * @param y the y position of top edge in millipoints
-     * @param w the width in millipoints
-     * @param h the height in millipoints
-     * @param fill the fill color/gradient
-     */
-    protected abstract void addFilledRect(int x, int y, int w, int h,
-                                 ColorType col);
-
-    public void renderBodyAreaContainer(BodyAreaContainer area) {
-        int saveY = this.currentYPosition;
-        int saveX = this.currentAreaContainerXPosition;
-
-        if (area.getPosition() == Position.ABSOLUTE) {
-            // Y position is computed assuming positive Y axis, adjust for negative postscript one
-            this.currentYPosition = area.getYPosition();
-            this.currentAreaContainerXPosition = area.getXPosition();
-        } else if (area.getPosition() == Position.RELATIVE) {
-            this.currentYPosition -= area.getYPosition();
-            this.currentAreaContainerXPosition += area.getXPosition();
+    // the region may clip the area and it establishes
+    // a position from where the region is placed
+    protected void renderRegionViewport(RegionViewport port) {
+        if(port != null) {
+        Region region = port.getRegion();
+        if (region.getRegionClass() == Region.BODY) {
+            renderBodyRegion((BodyRegion) region);
+        } else {
+            renderRegion(region);
         }
-
-        this.currentXPosition = this.currentAreaContainerXPosition;
-        int w, h;
-        int rx = this.currentAreaContainerXPosition;
-        w = area.getContentWidth();
-        h = area.getContentHeight();
-        int ry = this.currentYPosition;
-        ColorType bg = area.getBackgroundColor();
-
-        // I'm not sure I should have to check for bg being null
-        // but I do
-        if ((bg != null) && (bg.alpha() == 0)) {
-            addFilledRect(rx, ry, w, -h, bg);
         }
+    }
 
-        // floats & footnotes stuff
-        renderAreaContainer(area.getBeforeFloatReferenceArea());
-        renderAreaContainer(area.getFootnoteReferenceArea());
+    protected void renderRegion(Region region) {
+        List blocks = region.getBlocks();
 
-        // main reference area
-        Enumeration e = area.getMainReferenceArea().getChildren().elements();
-        while (e.hasMoreElements()) {
-            Box b = (Box)e.nextElement();
-            b.render(this);    // span areas
-        }
-
-
-        if (area.getPosition() != Position.STATIC) {
-            this.currentYPosition = saveY;
-            this.currentAreaContainerXPosition = saveX;
-        } else
-            this.currentYPosition -= area.getHeight();
+        renderBlocks(blocks);
 
     }
 
-    /**
-     * render area container
-     *
-     * @param area the area container to render
-     */
-    public void renderAreaContainer(AreaContainer area) {
-
-        int saveY = this.currentYPosition;
-        int saveX = this.currentAreaContainerXPosition;
-
-        if (area.getPosition() == Position.ABSOLUTE) {
-            // XPosition and YPosition give the content rectangle position
-            this.currentYPosition = area.getYPosition();
-            this.currentAreaContainerXPosition = area.getXPosition();
-        } else if (area.getPosition() == Position.RELATIVE) {
-            this.currentYPosition -= area.getYPosition();
-            this.currentAreaContainerXPosition += area.getXPosition();
-        } else if (area.getPosition() == Position.STATIC) {
-            this.currentYPosition -= area.getPaddingTop()
-                                     + area.getBorderTopWidth();
-            /*
-             * this.currentAreaContainerXPosition +=
-             * area.getPaddingLeft() + area.getBorderLeftWidth();
-             */
-        }
-
-        this.currentXPosition = this.currentAreaContainerXPosition;
-        doFrame(area);
-
-        Enumeration e = area.getChildren().elements();
-        while (e.hasMoreElements()) {
-            Box b = (Box)e.nextElement();
-            b.render(this);
-        }
-        // Restore previous origin
-        this.currentYPosition = saveY;
-        this.currentAreaContainerXPosition = saveX;
-        if (area.getPosition() == Position.STATIC) {
-            this.currentYPosition -= area.getHeight();
-        }
-
-        /**
-         * **
-         * if (area.getPosition() != Position.STATIC) {
-         * this.currentYPosition = saveY;
-         * this.currentAreaContainerXPosition = saveX;
-         * } else
-         * this.currentYPosition -= area.getHeight();
-         * **
-         */
+    protected void renderBodyRegion(BodyRegion region) {
+        BeforeFloat bf = region.getBeforeFloat();
+if(bf != null) {
+        renderBeforeFloat(bf);
+}
+        MainReference mr = region.getMainReference();
+if(mr != null) {
+        renderMainReference(mr);
+}
+        Footnote foot = region.getFootnote();
+if(foot != null) {
+        renderFootnote(foot);
+}
     }
 
-    /**
-     * render block area
-     *
-     * @param area the block area to render
-     */
-    public void renderBlockArea(BlockArea area) {
-        // KLease: Temporary test to fix block positioning
-        // Offset ypos by padding and border widths
-        this.currentYPosition -= (area.getPaddingTop()
-                                  + area.getBorderTopWidth());
-        doFrame(area);
-        Enumeration e = area.getChildren().elements();
-        while (e.hasMoreElements()) {
-            Box b = (Box)e.nextElement();
-            b.render(this);
-        }
-        this.currentYPosition -= (area.getPaddingBottom()
-                                  + area.getBorderBottomWidth());
-    }
-
-    /**
-     * render line area
-     *
-     * @param area area to render
-     */
-    public void renderLineArea(LineArea area) {
-        int rx = this.currentAreaContainerXPosition + area.getStartIndent();
-        int ry = this.currentYPosition;
-        int w = area.getContentWidth();
-        int h = area.getHeight();
-
-        this.currentYPosition -= area.getPlacementOffset();
-        this.currentXPosition = rx;
-
-        int bl = this.currentYPosition;
-
-        Enumeration e = area.getChildren().elements();
-        while (e.hasMoreElements()) {
-            Box b = (Box)e.nextElement();
-            if (b instanceof InlineArea) {
-                InlineArea ia = (InlineArea)b;
-                this.currentYPosition = ry - ia.getYOffset();
-            } else {
-                this.currentYPosition = ry - area.getPlacementOffset();
+    protected void renderBeforeFloat(BeforeFloat bf) {
+        List blocks = bf.getBlocks();
+        if (blocks != null) {
+            renderBlocks(blocks);
+            Block sep = bf.getSeparator();
+            if (sep != null) {
+                renderBlock(sep);
             }
-            b.render(this);
+        }
+    }
+
+    protected void renderFootnote(Footnote footnote) {
+        List blocks = footnote.getBlocks();
+        if (blocks != null) {
+            Block sep = footnote.getSeparator();
+            if (sep != null) {
+                renderBlock(sep);
+            }
+            renderBlocks(blocks);
+        }
+    }
+
+    // the main reference area contains a list of spans that are
+    // stacked on the page
+    // the spans contain a list of normal flow reference areas
+    // that are positioned into columns.
+    protected void renderMainReference(MainReference mr) {
+        int saveIPPos = currentIPPosition;
+
+        Span span = null;
+        List spans = mr.getSpans();
+        for (int count = 0; count < spans.size(); count++) {
+            span = (Span) spans.get(count);
+            int offset = (mr.getWidth() -
+                          (span.getColumnCount() - 1) * mr.getColumnGap()) /
+                         span.getColumnCount() + mr.getColumnGap();
+            for (int c = 0; c < span.getColumnCount(); c++) {
+                Flow flow = (Flow) span.getFlow(c);
+
+                renderFlow(flow);
+                currentIPPosition += offset;
+            }
+            currentIPPosition = saveIPPos;
+            currentBPPosition += span.getHeight();
+        }
+    }
+
+    // the normal flow reference area contains stacked blocks
+    protected void renderFlow(Flow flow) {
+        List blocks = flow.getBlocks();
+        renderBlocks(blocks);
+
+    }
+
+    protected void renderBlock(Block block) {
+        boolean childrenblocks = block.isChildrenBlocks();
+        List children = block.getChildAreas();
+        if (childrenblocks) {
+            renderBlocks(children);
+        } else {
+            if (children == null) {
+                // simply move position
+            } else {
+                for (int count = 0; count < children.size(); count++) {
+                    LineArea line = (LineArea) children.get(count);
+                    renderLineArea(line);
+                }
+
+            }
+        }
+    }
+
+    // a line area may have grouped styling for its children
+    // such as underline, background
+    protected void renderLineArea(LineArea line) {
+        List children = line.getInlineAreas();
+
+        for (int count = 0; count < children.size(); count++) {
+            InlineArea inline = (InlineArea) children.get(count);
+            inline.render(this);
         }
 
-        this.currentYPosition = ry - h;
-        this.currentXPosition = rx;
+    }
+
+    public void renderContainer(Container cont) {
+        List blocks = cont.getBlocks();
+        renderBlocks(blocks);
+
+    }
+
+    public void renderCharacter(org.apache.fop.area.inline.Character ch) {
+        currentBlockIPPosition += ch.getWidth();
+    }
+
+    // an inline space moves the inline progression position
+    // for the current block by the width or height of the space
+    // it may also have styling (only on this object) that needs
+    // handling
+    public void renderInlineSpace(Space space) {
+        currentBlockIPPosition += space.getWidth();
+    }
+
+    protected void renderBlocks(List blocks) {
+        for (int count = 0; count < blocks.size(); count++) {
+            Block block = (Block) blocks.get(count);
+            renderBlock(block);
+        }
     }
 }

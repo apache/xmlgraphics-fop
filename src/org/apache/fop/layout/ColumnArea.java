@@ -29,10 +29,6 @@ public class ColumnArea extends AreaContainer {
         this.setAreaName("normal-flow-ref.-area");
     }
 
-    public void render(Renderer renderer) {
-        renderer.renderAreaContainer(this);
-    }
-
     public void end() {}
 
     public void start() {}

@@ -86,7 +86,7 @@ public class AWTStarter extends CommandLineStarter {
         resource.setMissingEmphasized(false);
         renderer = new AWTRenderer(resource);
         frame = createPreviewDialog(renderer, resource);
-        renderer.setProgressListener(frame);
+        //renderer.setProgressListener(frame);
         renderer.setComponent(frame);
     }
 

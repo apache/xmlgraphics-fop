@@ -45,11 +45,6 @@ public class ForeignObjectArea extends InlineArea {
         super(fontState, width, 0, 0, 0);
     }
 
-    public void render(Renderer renderer) {
-        if (foreignObject != null)
-            renderer.renderForeignObjectArea(this);
-    }
-
     /**
      * This is NOT the content width of the instream-foreign-object.
      * This is the content width for a Box.

@@ -86,7 +86,7 @@ public class CommandLineOptions {
     /* language for user information */
     String language = null;
 
-    private java.util.Hashtable rendererOptions;
+    private java.util.HashMap rendererOptions;
 
     private Logger log;
 
@@ -113,7 +113,7 @@ public class CommandLineOptions {
         log.setPriority(Priority.INFO);
 
         boolean optionsParsed = true;
-        rendererOptions = new java.util.Hashtable();
+        rendererOptions = new java.util.HashMap();
         try {
             optionsParsed = parseOptions(args);
             if (optionsParsed) {
@@ -410,7 +410,7 @@ public class CommandLineOptions {
         }
     }
 
-    public java.util.Hashtable getRendererOptions() {
+    public java.util.HashMap getRendererOptions() {
         return rendererOptions;
     }
 

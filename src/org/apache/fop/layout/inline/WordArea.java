@@ -27,10 +27,6 @@ public class WordArea extends InlineArea {
         this.contentRectangleWidth = width;
     }
 
-    public void render(Renderer renderer) {
-        renderer.renderWordArea(this);
-    }
-
     public String getText() {
         return this.text;
     }

@@ -227,7 +227,7 @@ class FOPTaskStarter extends Starter {
         } else if (format.equalsIgnoreCase("application/vnd.mif") ||
             format.equalsIgnoreCase("mif")) {
             return Driver.RENDER_MIF;
-        } else if (format.equalsIgnoreCase("application/vnd.gp-PCL") ||
+        } else if (format.equalsIgnoreCase("application/vnd.hp-PCL") ||
             format.equalsIgnoreCase("pcl")) {
             return Driver.RENDER_PCL;
         } else if (format.equalsIgnoreCase("text/plain") ||
@@ -368,7 +368,7 @@ class FOPTaskStarter extends Starter {
             driver.setLogger(log);
             driver.setRenderer(renderer);
 	    if (renderer == Driver.RENDER_XML) {
-		Hashtable rendererOptions = new Hashtable();
+		HashMap rendererOptions = new HashMap();
 		rendererOptions.put("fineDetail", new Boolean(true));
 		driver.getRenderer().setOptions(rendererOptions);
 	    }

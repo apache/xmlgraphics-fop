@@ -132,7 +132,7 @@ public class StreamRenderer {
         */
         try {
             processQueue(true);
-            renderer.stopRenderer(outputStream);
+            renderer.stopRenderer();
         } catch (FOPException e) {
             throw new SAXException(e);
         }
@@ -202,11 +202,11 @@ public class StreamRenderer {
           valid on the current pages. This short-cuts the
           pipeline and renders the area immediately.
         */
-        if ((renderQueue.size() == 0) && idReferences.isEveryIdValid())
-            renderer.render(page, outputStream);
-        else
+        if ((renderQueue.size() == 0) && idReferences.isEveryIdValid()) {
+            //renderer.render(page, outputStream);
+        } else {
             addToRenderQueue(page);
-
+        }
         pageCount++;
     }
 
@@ -235,7 +235,7 @@ public class StreamRenderer {
             if ((!force) && (!entry.isResolved()))
                 break;
 
-            renderer.render(entry.getPage(), outputStream);
+            //renderer.render(entry.getPage(), outputStream);
 
             /* TODO
             Enumeration rootEnumeration =
