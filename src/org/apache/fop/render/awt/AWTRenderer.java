@@ -453,20 +453,25 @@ public class AWTRenderer implements Renderer, Printable, Pageable {
 	    System.out.println("area.getImage() is null");
 	}
 	
-	int[] map = img.getimagemap();
-	
-	String path = img.gethref();
-	
-	ImageIcon icon = new ImageIcon(path);
-	Image imgage = icon.getImage();
-	
-	graphics.drawImage(imgage, currentXPosition / 1000,
-			   pageHeight - y / 1000,
-			   img.getWidth() / 1000,
-			   img.getHeight() / 1000,
-			   null);
-	
-	currentYPosition -= h;
+	try {
+		byte[] map = img.getBitmaps();
+		
+		String path = img.getURL();
+		
+		ImageIcon icon = new ImageIcon(path);
+		Image imgage = icon.getImage();
+		
+		graphics.drawImage(imgage, currentXPosition / 1000,
+				   pageHeight - y / 1000,
+				   img.getWidth() / 1000,
+				   img.getHeight() / 1000,
+				   null);
+		
+		currentYPosition -= h;
+	} catch (FopImageException imgex) {
+		// ?
+		System.out.println("Error while loading image : " + imgex.getMessage());
+	}
     }
 
     public void renderInlineArea(InlineArea area) {
