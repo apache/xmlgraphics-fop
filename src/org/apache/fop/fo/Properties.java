@@ -25,9 +25,9 @@ import org.apache.fop.messaging.MessageHandler;
 import org.apache.fop.fo.PropertyConsts;
 import org.apache.fop.fo.FOTree;
 import org.apache.fop.fo.FObjects;
-import org.apache.fop.fo.expr.PropertyValue;
-import org.apache.fop.fo.expr.AbstractPropertyValue;
-import org.apache.fop.fo.expr.PropertyValueList;
+import org.apache.fop.datatypes.PropertyValue;
+import org.apache.fop.datatypes.AbstractPropertyValue;
+import org.apache.fop.datatypes.PropertyValueList;
 import org.apache.fop.fo.expr.PropertyException;
 import org.apache.fop.fo.expr.PropertyNotImplementedException;
 import org.apache.fop.fo.expr.SystemFontFunction;
@@ -53,15 +53,15 @@ import org.apache.fop.datatypes.Bool;
 import org.apache.fop.datatypes.Literal;
 import org.apache.fop.datatypes.Auto;
 import org.apache.fop.datatypes.None;
-import org.apache.fop.datatypes.Inherit;
 import org.apache.fop.datatypes.ColorType;
 import org.apache.fop.datatypes.FontFamilySet;
 import org.apache.fop.datatypes.TextDecorations;
 import org.apache.fop.datatypes.TextDecorator;
 import org.apache.fop.datatypes.ShadowEffect;
-import org.apache.fop.datatypes.FromParent;
-import org.apache.fop.datatypes.FromNearestSpecified;
 import org.apache.fop.datatypes.Slash;
+import org.apache.fop.datatypes.indirect.Inherit;
+import org.apache.fop.datatypes.indirect.FromParent;
+import org.apache.fop.datatypes.indirect.FromNearestSpecified;
 
 /**
  * Parent class for all of the individual property classes.  It also contains
@@ -4385,7 +4385,8 @@ public abstract class Properties {
             // First, check that we have a list
             if (type != PropertyValue.LIST) {
                 if ( ! nested && type == PropertyValue.INHERIT) {
-                    return ((Inherit)value).resolve(foTree);
+                    return value; // DUMMY
+                    //return ((Inherit)value).resolve(foTree);
                 }
                 if ( ! (value instanceof StringType))
                     throw new PropertyException
