@@ -31,6 +31,7 @@ import org.apache.fop.layoutmgr.TraitSetter;
 import org.apache.fop.area.Area;
 import org.apache.fop.area.Block;
 import org.apache.fop.traits.MinOptMax;
+import org.apache.fop.traits.SpaceVal;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -45,25 +46,46 @@ public class ListBlockLayoutManager extends BlockStackingLayoutManager {
     
     private Block curBlockArea;
 
+    private int referenceIPD = 0;
+
     private List bodyBreaks = new ArrayList();
 
+    //TODO space-before|after: handle space-resolution rules
+    private MinOptMax spaceBefore;
+    private MinOptMax spaceAfter;
+
+    /*
     private class SectionPosition extends LeafPosition {
         protected List list;
         protected SectionPosition(LayoutManager lm, int pos, List l) {
             super(lm, pos);
             list = l;
         }
-    }
+    }*/
 
     /**
      * Create a new table layout manager.
-     *
+     * @param node list-block to create the layout manager for
      */
     public ListBlockLayoutManager(ListBlock node) {
         super(node);
         fobj = node;
     }
 
+    /** @see org.apache.fop.layoutmgr.AbstractLayoutManager#initProperties() */
+    protected void initProperties() {
+        super.initProperties();
+        spaceBefore = new SpaceVal(fobj.getCommonMarginBlock().spaceBefore).getSpace();
+        spaceAfter = new SpaceVal(fobj.getCommonMarginBlock().spaceAfter).getSpace();
+    }
+
+    private int getIPIndents() {
+        int iIndents = 0;
+        iIndents += fobj.getCommonMarginBlock().startIndent.getValue();
+        iIndents += fobj.getCommonMarginBlock().endIndent.getValue();
+        return iIndents;
+    }
+    
     /**
      * Get the next break possibility.
      * The break possibility depends on the height of the header and footer
@@ -76,22 +98,31 @@ public class ListBlockLayoutManager extends BlockStackingLayoutManager {
         // currently active LM
         LayoutManager curLM;
 
+        referenceIPD = context.getRefIPD();
+
         MinOptMax stackSize = new MinOptMax();
-        // if starting add space before
-        // stackSize.add(spaceBefore);
+        
+        //Add spacing
+        if (spaceAfter != null) {
+            stackSize.add(spaceAfter);
+        }
+        if (spaceBefore != null) {
+            stackSize.add(spaceBefore);
+        }
+
         BreakPoss lastPos = null;
 
         while ((curLM = (LayoutManager)getChildLM()) != null) {
             // Make break positions
             // Set up a LayoutContext
-            int ipd = context.getRefIPD();
+            //int ipd = context.getRefIPD();
             BreakPoss bp;
 
             LayoutContext childLC = new LayoutContext(0);
             childLC.setStackLimit(
                   MinOptMax.subtract(context.getStackLimit(),
                                      stackSize));
-            childLC.setRefIPD(ipd);
+            childLC.setRefIPD(referenceIPD);
 
             boolean over = false;
             while (!curLM.isFinished()) {
@@ -145,11 +176,17 @@ public class ListBlockLayoutManager extends BlockStackingLayoutManager {
     public void addAreas(PositionIterator parentIter,
                          LayoutContext layoutContext) {
         getParentArea(null);
+        
+        // if adjusted space before
+        double adjust = layoutContext.getSpaceAdjust();
+        addBlockSpacing(adjust, spaceBefore);
+        spaceBefore = null;
+        
         addID(fobj.getId());
 
         // the list block contains areas stacked from each list item
 
-        int listHeight = 0;
+        //int listHeight = 0;
 
         LayoutManager childLM;
         int iStartPos = 0;
@@ -157,20 +194,20 @@ public class ListBlockLayoutManager extends BlockStackingLayoutManager {
         while (parentIter.hasNext()) {
             LeafPosition lfp = (LeafPosition) parentIter.next();
             // Add the block areas to Area
-            PositionIterator breakPosIter =
-              new BreakPossPosIter(bodyBreaks, iStartPos,
-                                   lfp.getLeafPos() + 1);
+            PositionIterator breakPosIter = new BreakPossPosIter(
+                    bodyBreaks, iStartPos, lfp.getLeafPos() + 1);
             iStartPos = lfp.getLeafPos() + 1;
             while ((childLM = (LayoutManager)breakPosIter.getNextChildLM()) != null) {
                 childLM.addAreas(breakPosIter, lc);
             }
         }
 
-        TraitSetter.addBorders(curBlockArea, fobj.getCommonBorderPaddingBackground());
-        TraitSetter.addBackground(curBlockArea, fobj.getCommonBorderPaddingBackground());
 
         flush();
 
+        // if adjusted space after
+        addBlockSpacing(adjust, spaceAfter);
+        
         bodyBreaks.clear();
         curBlockArea = null;
     }
@@ -191,13 +228,24 @@ public class ListBlockLayoutManager extends BlockStackingLayoutManager {
     public Area getParentArea(Area childArea) {
         if (curBlockArea == null) {
             curBlockArea = new Block();
+            
             // Set up dimensions
             // Must get dimensions from parent area
-            Area parentArea = parentLM.getParentArea(curBlockArea);
-            int referenceIPD = parentArea.getIPD();
-            curBlockArea.setIPD(referenceIPD);
-            // Get reference IPD from parentArea
-            setCurrentArea(curBlockArea); // ??? for generic operations
+            /*Area parentArea =*/ parentLM.getParentArea(curBlockArea);
+
+            // set traits
+            TraitSetter.addBorders(curBlockArea, fobj.getCommonBorderPaddingBackground());
+            TraitSetter.addBackground(curBlockArea, fobj.getCommonBorderPaddingBackground());
+            TraitSetter.addMargins(curBlockArea,
+                    fobj.getCommonBorderPaddingBackground(), 
+                    fobj.getCommonMarginBlock());
+            TraitSetter.addBreaks(curBlockArea, 
+                    fobj.getBreakBefore(), fobj.getBreakAfter());
+            
+            int contentIPD = referenceIPD - getIPIndents();
+            curBlockArea.setIPD(contentIPD);
+            
+            setCurrentArea(curBlockArea);
         }
         return curBlockArea;
     }
@@ -223,7 +271,7 @@ public class ListBlockLayoutManager extends BlockStackingLayoutManager {
             bodyBreaks.clear();
             reset(null);
         } else {
-
+            //TODO Something to put here?
         }
     }
 }
