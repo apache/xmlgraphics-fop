@@ -56,11 +56,12 @@ class PropertyTokenizer {
                ,BOOL = 24
                 ,URI = 25
            ,MIMETYPE = 26
+              ,SLASH = 27
             // NO_UNIT is a transient token for internal use only.  It is
             // never set as the end result of parsing a token.
-            ,NO_UNIT = 27
-            //,NSPREFIX = 28
-            //,WHITESPACE = 29
+            ,NO_UNIT = 28
+            //,NSPREFIX = 29
+            //,WHITESPACE = 30
                      ;
 
     /*
@@ -243,6 +244,10 @@ class PropertyTokenizer {
                 } else {
                     throw new PropertyException("illegal character '#'");
                 }
+
+            case '/':
+                currentToken = SLASH;
+                return;
 
             default:
                 --exprIndex;
