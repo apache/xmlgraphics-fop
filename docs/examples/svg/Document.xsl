@@ -16,7 +16,7 @@
 				</fo:simple-page-master>
 			</fo:layout-master-set>
 			<fo:page-sequence master-name="front">
-				<fo:flow font-size="14pt" line-height="14pt">
+				<fo:flow font-size="14pt" line-height="14pt" flow-name="xsl-region-body">
 		            <fo:block-container height="20cm" width="6cm" top="2cm" left="-1cm" position="absolute">
 						<fo:block>
 							<fo:instream-foreign-object>
@@ -62,12 +62,16 @@
 						</fo:block>
 		            </fo:block-container>
 					<fo:block-container height="1cm" width="17cm" top="1.1cm" left="0cm" position="absolute">
-						<fo:leader leader-pattern="rule" space-before.optimum="0pt" space-after.optimum="0pt"/>
+						<fo:block>
+							<fo:leader leader-pattern="rule" space-before.optimum="0pt" space-after.optimum="0pt"/>
+						</fo:block>
 		            </fo:block-container>
 				</fo:static-content>
 				<fo:static-content flow-name="xsl-region-after">
 					<fo:block-container height="1cm" width="17cm" top="0cm" left="0cm" position="absolute">
-						<fo:leader leader-pattern="rule" space-before.optimum="0pt" space-after.optimum="0pt"/>
+						<fo:block>
+							<fo:leader leader-pattern="rule" space-before.optimum="0pt" space-after.optimum="0pt"/>
+						</fo:block>
 		            </fo:block-container>
 	    	        <fo:block-container height="2cm" width="6cm" top="0.1cm" left="0cm" position="absolute">
 						<fo:block font-size="10pt" font-family="serif" line-height="12pt">
@@ -87,7 +91,7 @@
 						</fo:block>
             		</fo:block-container>
 				</fo:static-content>
-				<fo:flow font-size="10pt" line-height="10pt">
+				<fo:flow font-size="10pt" line-height="10pt" flow-name="xsl-region-body">
 					<xsl:apply-templates select="Summary"/>
 					<xsl:apply-templates select="ExternalChapter|Chapter"/>
 				</fo:flow>
@@ -154,7 +158,9 @@
 		<xsl:if test="not(position()=1)">
 			<fo:block break-before="page"/>
 		</xsl:if>
-		<fo:leader leader-pattern="rule" rule-thickness="1.5pt" space-before.optimum="5pt" space-after.optimum="4pt"/>
+		<fo:block>
+			<fo:leader leader-pattern="rule" rule-thickness="1.5pt" space-before.optimum="5pt" space-after.optimum="4pt"/>
+		</fo:block>
 		<fo:block font-weight="bold" font-size="18pt" line-height="18pt"><xsl:apply-templates select="Title"/></fo:block>
 		<xsl:apply-templates select="ExternalDiagram|ExternalSVG"/>
 		<xsl:apply-templates select="Body"/>
@@ -183,7 +189,9 @@
 	</xsl:template>
 
 	<xsl:template match="Section">
-		<fo:leader leader-pattern="rule" space-before.optimum="8pt"/>
+		<fo:block>
+			<fo:leader leader-pattern="rule" space-before.optimum="8pt"/>
+		</fo:block>
 		<fo:block font-weight="bold" font-size="14pt" line-height="14pt" space-before.optimum="2pt"><xsl:apply-templates select="Title"/></fo:block>
 
 		<xsl:apply-templates select="ExternalDiagram|ExternalSVG"/>
@@ -194,7 +202,9 @@
 	</xsl:template>
 
 	<xsl:template match="SubSection">
-		<fo:leader leader-pattern="rule" space-before.optimum="6pt"/>
+		<fo:block>
+			<fo:leader leader-pattern="rule" space-before.optimum="6pt"/>
+		</fo:block>
 		<fo:block font-weight="bold" font-size="12pt" line-height="12pt" space-before.optimum="2pt"><xsl:apply-templates select="Title"/></fo:block>
 
 		<xsl:apply-templates select="ExternalDiagram|ExternalSVG"/>
