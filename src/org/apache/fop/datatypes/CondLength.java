@@ -51,6 +51,8 @@
 package org.apache.fop.datatypes;
 
 import org.apache.fop.fo.Property;
+import org.apache.fop.fo.properties.Constants;
+
 /**
  * a space quantity in XSL (space-before, space-after)
  */
@@ -82,5 +84,13 @@ public class CondLength implements CompoundDatatype {
 
   public Property getLength() {
     return this.length;
+  }
+
+  public boolean isDiscard() {
+      return this.conditionality.getEnum() == Constants.DISCARD ;
+    }
+
+  public int mvalue() {
+    return this.length.getLength().mvalue();
   }
 }
