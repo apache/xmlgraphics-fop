@@ -103,7 +103,7 @@ public class SVGArea extends Area implements GraphicImpl, GetSVGDocument {//, SV
 	 * @param renderer the Renderer to use
 	 */
 	public void render(Renderer renderer) {
-		renderer.renderSVGArea(this);
+//		renderer.renderSVGArea(this);
 	}
 
 
