@@ -21,6 +21,7 @@
     </menu>
     <menu label="Extras">
       <menu-item label="SVG" href="svg.html"/>
+      <menu-item label="Fonts" href="fonts.html"/>
     </menu>
     <menu label="Developers">
       <menu-item label="Design" href="../design/index.html"/>
