@@ -1,0 +1,21 @@
+<?xml version="1.0" standalone="no"?>
+<!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V1.1//EN"
+    "http://cvs.apache.org/viewcvs.cgi/*checkout*/xml-forrest/src/resources/schema/dtd/document-v11.dtd">
+
+<document>
+    <header>
+        <title>AbsolutePosition diagram</title>
+    <authors>
+      <person id="pbw" name="Peter B. West"
+        email="pbwest@powerup.com.au"/>
+    </authors>
+    </header>
+    <body>
+    <section>
+      <title>Properties$AbsolutePosition</title>
+      <figure src="AbsolutePosition.png" alt="AbsolutePosition diagram"/>
+    </section>
+
+    </body>
+</document>
+
