@@ -14,6 +14,7 @@ import java.lang.reflect.*;
 import java.net.URLClassLoader;
 import java.net.URL;
 import java.net.MalformedURLException;
+import java.util.*;
 
 import javax.xml.parsers.*;
 
@@ -24,6 +25,10 @@ import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
 
 /**
+ * Testing ant task.
+ * This task is used to test FOP as a build target.
+ * This uses the TestConverter (with weak code dependancy) to run the tests
+ * and check the results.
  */
 public class RunTest extends Task {
     String basedir;
@@ -34,13 +39,11 @@ public class RunTest extends Task {
     public RunTest() {
     }
 
-    public void setTestSuite(String str)
-    {
+    public void setTestSuite(String str) {
         testsuite = str;
     }
 
-    public void setBasedir(String str)
-    {
+    public void setBasedir(String str) {
         basedir = str;
     }
 
@@ -70,9 +73,26 @@ public class RunTest extends Task {
      */
     protected void testNewBuild() {
         try {
-            ClassLoader loader = new URLClassLoader(new URL[] {new URL("file:build/fop.jar")});
-            runConverter(loader);
-        } catch(MalformedURLException mue) {
+            ClassLoader loader = new URLClassLoader(new URL[]{new URL("file:build/fop.jar")});
+            Hashtable diff = runConverter(loader, "areatree", "reference/output/");
+            if (diff != null && !diff.isEmpty()) {
+                System.out.println("The following files differ:");
+                boolean broke = false;
+                for (Enumeration keys = diff.keys();
+                        keys.hasMoreElements();) {
+                    Object fname = keys.nextElement();
+                    Boolean pass = (Boolean) diff.get(fname);
+                    System.out.println("file: " + fname +
+                                       " - reference success: " + pass);
+                    if (pass.booleanValue()) {
+                        broke = true;
+                    }
+                }
+                if (broke) {
+                    throw new BuildException("Working tests have been changed.");
+                }
+            }
+        } catch (MalformedURLException mue) {
             mue.printStackTrace();
         }
     }
@@ -84,37 +104,59 @@ public class RunTest extends Task {
      * the version required.
      * The reference output is then created.
      */
-    protected void runReference() throws BuildException
-    {
+    protected void runReference() throws BuildException {
         // check not already done
-            File f = new File(basedir + "reference/output/");
-            if(f.exists()) {
-                return;
-            } else {
-                try {
-                    ClassLoader loader = new URLClassLoader(new URL[] {new URL("file:" + basedir + referenceJar)});
+        File f = new File(basedir + "/reference/output/");
+        //if(f.exists()) {
+        // need to check that files have actually been created.
+        //return;
+        //} else {
+        try {
+            ClassLoader loader = new URLClassLoader(
+                                   new URL[]{new URL("file:" + basedir + referenceJar)});
+            boolean failed = false;
 
-                    try {
-                        Class cla = Class.forName("org.apache.fop.apps.Options", true, loader);
-                        Object opts = cla.newInstance();
-                        cla = Class.forName("org.apache.fop.apps.Version", true, loader);
-                        Method get = cla.getMethod("getVersion", new Class[] {});
-                        if(!get.invoke(null, new Object[] {}).equals(refVersion)) {
-                            throw new BuildException("Reference jar is not correct version");
-                        }
-                    } catch(IllegalAccessException iae) {
-                    } catch(IllegalArgumentException are) {
-                    } catch(InvocationTargetException are) {
-                    } catch(ClassNotFoundException are) {
-                    } catch(InstantiationException are) {
-                    } catch(NoSuchMethodException are) {
-                    }
- 
-                    runConverter(loader);
-                } catch(MalformedURLException mue) {
-                    mue.printStackTrace();
+            try {
+                Class cla = Class.forName("org.apache.fop.apps.Options",
+                                          true, loader);
+                Object opts = cla.newInstance();
+                cla = Class.forName("org.apache.fop.apps.Version", true,
+                                    loader);
+                Method get = cla.getMethod("getVersion", new Class[]{});
+                if (!get.invoke(null, new Object[]{}).equals(refVersion)) {
+                    throw new BuildException(
+                      "Reference jar is not correct version it must be: " +
+                      refVersion);
                 }
+            } catch (IllegalAccessException iae) {
+                failed = true;
             }
+            catch (IllegalArgumentException are) {
+                failed = true;
+            }
+            catch (InvocationTargetException are) {
+                failed = true;
+            }
+            catch (ClassNotFoundException are) {
+                failed = true;
+            }
+            catch (InstantiationException are) {
+                failed = true;
+            }
+            catch (NoSuchMethodException are) {
+                failed = true;
+            }
+            if (failed) {
+                throw new BuildException(
+                  "Reference jar could not be found in: " +
+                  basedir + "/reference/");
+            }
+            f.mkdirs();
+            runConverter(loader, "reference/output/", null);
+        } catch (MalformedURLException mue) {
+            mue.printStackTrace();
+        }
+        //}
     }
 
     /**
@@ -125,22 +167,26 @@ public class RunTest extends Task {
      * file in the base directory.
      * @param loader the class loader to use to run the tests with
      */
-    protected void runConverter(ClassLoader loader)
-    {
+    protected Hashtable runConverter(ClassLoader loader, String dest,
+                                     String compDir) {
         String converter = "org.apache.fop.tools.TestConverter";
 
+        Hashtable diff = null;
         try {
             Class cla = Class.forName(converter, true, loader);
             Object tc = cla.newInstance();
             Method meth;
 
-            meth = cla.getMethod("setBaseDir", new Class[] {String.class});
-            meth.invoke(tc, new Object[] {basedir});
+            meth = cla.getMethod("setBaseDir", new Class[]{String.class});
+            meth.invoke(tc, new Object[]{basedir});
 
-            meth = cla.getMethod("runTests", new Class[] {String.class});
-            meth.invoke(tc, new Object[] {testsuite});
-        } catch(Exception e) {
+            meth = cla.getMethod("runTests", new Class[]{String.class,
+                                 String.class, String.class});
+            diff = (Hashtable) meth.invoke(tc, new Object[]{testsuite,
+                                           dest, compDir});
+        } catch (Exception e) {
             e.printStackTrace();
         }
+        return diff;
     }
 }
