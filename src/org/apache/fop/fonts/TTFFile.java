@@ -179,7 +179,7 @@ public class TTFFile {
             int startRangeOffset = in.getCurrentPos();
 
             for (int i = 0; i < (cmap_segCountX2 / 2); i++) {
-                cmap_rangeOffsets[i] = in.readTTFShort();
+                cmap_rangeOffsets[i] = in.readTTFUShort();
             }
 
             int glyphIdArrayOffset = in.getCurrentPos();
