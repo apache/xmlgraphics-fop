@@ -28,7 +28,7 @@ import org.apache.fop.fo.flow.Marker;
  * LayoutManager for a block FO.
  */
 public class RetrieveMarkerLayoutManager extends AbstractLayoutManager {
-    private LayoutProcessor replaceLM = null;
+    private LayoutManager replaceLM = null;
     private boolean loaded = false;
     private String name;
     private int position;
@@ -94,7 +94,7 @@ public class RetrieveMarkerLayoutManager extends AbstractLayoutManager {
             if (marker != null) {
                 addLMVisitor.addLayoutManager(marker, list);
                 if (list.size() > 0) {
-                    replaceLM =  (LayoutProcessor)list.get(0);
+                    replaceLM =  (LayoutManager)list.get(0);
                     replaceLM.setParent(this);
                     replaceLM.initialize();
                     getLogger().debug("retrieved: " + replaceLM + ":" + list.size());
@@ -110,7 +110,7 @@ public class RetrieveMarkerLayoutManager extends AbstractLayoutManager {
      * This returns the current block container area
      * and creates it if required.
      *
-     * @see org.apache.fop.layoutmgr.LayoutProcessor#getParentArea(Area)
+     * @see org.apache.fop.layoutmgr.LayoutManager#getParentArea(Area)
      */
     public Area getParentArea(Area childArea) {
         return parentLM.getParentArea(childArea);
@@ -119,14 +119,14 @@ public class RetrieveMarkerLayoutManager extends AbstractLayoutManager {
     /**
      * Add the child to the block container.
      *
-     * @see org.apache.fop.layoutmgr.LayoutProcessor#addChild(Area)
+     * @see org.apache.fop.layoutmgr.LayoutManager#addChild(Area)
      */
     public void addChild(Area childArea) {
         parentLM.addChild(childArea);
     }
 
     /**
-     * @see org.apache.fop.layoutmgr.LayoutProcessor#resetPosition(Position)
+     * @see org.apache.fop.layoutmgr.LayoutManager#resetPosition(Position)
      */
     public void resetPosition(Position resetPos) {
         loadLM();

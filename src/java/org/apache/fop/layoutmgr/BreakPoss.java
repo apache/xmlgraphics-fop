@@ -104,7 +104,7 @@ public class BreakPoss {
     /**
      * The top-level layout manager responsible for this break
      */
-    public LayoutProcessor getLayoutManager() {
+    public LayoutManager getLayoutManager() {
         return position.getLM();
     }
 

@@ -139,7 +139,7 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager {
             stackLimit = context.getStackLimit();
         }
 
-        LayoutProcessor curLM ; // currently active LM
+        LayoutManager curLM ; // currently active LM
 
         MinOptMax stackSize = new MinOptMax();
         // if starting add space before
@@ -212,7 +212,7 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager {
 
     public BreakPoss getAbsoluteBreakPoss(LayoutContext context) {
 
-        LayoutProcessor curLM ; // currently active LM
+        LayoutManager curLM ; // currently active LM
 
         MinOptMax stackSize = new MinOptMax();
 
@@ -260,7 +260,7 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager {
         addID();
         addMarkers(true, true);
 
-        LayoutProcessor childLM;
+        LayoutManager childLM;
         int iStartPos = 0;
         LayoutContext lc = new LayoutContext(0);
         while (parentIter.hasNext()) {
@@ -288,7 +288,7 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager {
      * This returns the current block container area
      * and creates it if required.
      *
-     * @see org.apache.fop.layoutmgr.LayoutProcessor#getParentArea(Area)
+     * @see org.apache.fop.layoutmgr.LayoutManager#getParentArea(Area)
      */
     public Area getParentArea(Area childArea) {
         if (curBlockArea == null) {
@@ -355,7 +355,7 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager {
     /**
      * Add the child to the block container.
      *
-     * @see org.apache.fop.layoutmgr.LayoutProcessor#addChild(Area)
+     * @see org.apache.fop.layoutmgr.LayoutManager#addChild(Area)
      */
     public void addChild(Area childArea) {
         if (curBlockArea != null) {

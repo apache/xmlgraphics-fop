@@ -78,14 +78,14 @@ public class BlockLayoutManager extends BlockStackingLayoutManager {
 
         private ListIterator proxy;
 
-        public BlockLMiter(LayoutProcessor lp, ListIterator pr) {
+        public BlockLMiter(LayoutManager lp, ListIterator pr) {
             super(lp, null);
             proxy = pr;
         }
 
         protected boolean preLoadNext() {
             while (proxy.hasNext()) {
-                LayoutProcessor lm = (LayoutProcessor) proxy.next();
+                LayoutManager lm = (LayoutManager) proxy.next();
                 lm.setParent(BlockLayoutManager.this);
                 if (lm.generatesInlineAreas()) {
                     LineLayoutManager lineLM = createLineManager(lm);
@@ -102,11 +102,11 @@ public class BlockLayoutManager extends BlockStackingLayoutManager {
 
         protected LineLayoutManager createLineManager(
           LayoutManager firstlm) {
-            LayoutProcessor lm;
+            LayoutManager lm;
             List inlines = new ArrayList();
             inlines.add(firstlm);
             while (proxy.hasNext()) {
-                lm = (LayoutProcessor) proxy.next();
+                lm = (LayoutManager) proxy.next();
                 lm.setParent(BlockLayoutManager.this);
                 if (lm.generatesInlineAreas()) {
                     inlines.add(lm);
@@ -159,7 +159,7 @@ public class BlockLayoutManager extends BlockStackingLayoutManager {
     }
 
     public BreakPoss getNextBreakPoss(LayoutContext context) {
-        LayoutProcessor curLM; // currently active LM
+        LayoutManager curLM; // currently active LM
 
         int ipd = context.getRefIPD();
         int iIndents = marginProps.startIndent + marginProps.endIndent; 
@@ -209,7 +209,7 @@ public class BlockLayoutManager extends BlockStackingLayoutManager {
                     if (stackSize.opt + bp.getStackingSize().opt > context.getStackLimit().max) {
                         // reset to last break
                         if (lastPos != null) {
-                            LayoutProcessor lm = lastPos.getLayoutManager();
+                            LayoutManager lm = lastPos.getLayoutManager();
                             lm.resetPosition(lastPos.getPosition());
                             if (lm != curLM) {
                                 curLM.resetPosition(null);
@@ -270,7 +270,7 @@ public class BlockLayoutManager extends BlockStackingLayoutManager {
         addID();
         addMarkers(true, true);
 
-        LayoutProcessor childLM;
+        LayoutManager childLM;
         LayoutContext lc = new LayoutContext(0);
         while (parentIter.hasNext()) {
             LeafPosition lfp = (LeafPosition) parentIter.next();

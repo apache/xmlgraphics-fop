@@ -46,7 +46,7 @@ public class InlineStackingLayoutManager extends AbstractLayoutManager {
             super(parentIter);
         }
 
-        protected LayoutProcessor getLM(Object nextObj) {
+        protected LayoutManager getLM(Object nextObj) {
             return ((Position) nextObj).getPosition().getLM();
         }
 
@@ -213,7 +213,7 @@ public class InlineStackingLayoutManager extends AbstractLayoutManager {
         if (inlineProps.spaceStart.getSpace().min > 0 || hasLeadingFence(false)) {
             return true;
         }
-        LayoutProcessor lm = getChildLM();
+        LayoutManager lm = getChildLM();
         if (lm != null) {
             return lm.canBreakBefore(context);
         } else {
@@ -243,7 +243,7 @@ public class InlineStackingLayoutManager extends AbstractLayoutManager {
     public BreakPoss getNextBreakPoss(LayoutContext lc) {
         // Get a break from currently active child LM
         BreakPoss bp = null;
-        LayoutProcessor curLM;
+        LayoutManager curLM;
         SpaceSpecifier leadingSpace = lc.getLeadingSpace();
 
         if (lc.startsNewArea()) {
@@ -481,8 +481,8 @@ public class InlineStackingLayoutManager extends AbstractLayoutManager {
 
         // posIter iterates over positions returned by this LM
         StackingIter childPosIter = new StackingIter(parentIter);
-        LayoutProcessor prevLM = null;
-        LayoutProcessor childLM ;
+        LayoutManager prevLM = null;
+        LayoutManager childLM ;
         while ((childLM = childPosIter.getNextChildLM()) != null) {
             //getContext().setTrailingSpace(new SpaceSpecifier(false));
             childLM.addAreas(childPosIter, getContext());

@@ -35,11 +35,11 @@ import org.apache.fop.traits.MinOptMax;
  * For use with objects that contain inline areas such as
  * leader use-content and title.
  */
-public class ContentLayoutManager implements LayoutProcessor {
+public class ContentLayoutManager implements LayoutManager {
     private FOUserAgent userAgent;
     private Area holder;
     private int stackSize;
-    private LayoutProcessor parentLM;
+    private LayoutManager parentLM;
 
     /**
      * Constructs a new ContentLayoutManager
@@ -58,7 +58,7 @@ public class ContentLayoutManager implements LayoutProcessor {
     public void setFObj(FObj fo) {
     }
 
-    public void fillArea(LayoutProcessor curLM) {
+    public void fillArea(LayoutManager curLM) {
 
         List childBreaks = new ArrayList();
         MinOptMax stack = new MinOptMax();
@@ -162,11 +162,11 @@ public class ContentLayoutManager implements LayoutProcessor {
     }
 
     /** @see org.apache.fop.layoutmgr.LayoutManager */
-    public void setParent(LayoutProcessor lm) {
+    public void setParent(LayoutManager lm) {
         parentLM = lm;
     }
 
-    public LayoutProcessor getParent() {
+    public LayoutManager getParent() {
         return this.parentLM;
     }
 

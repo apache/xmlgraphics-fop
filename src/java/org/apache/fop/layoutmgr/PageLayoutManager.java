@@ -69,7 +69,7 @@ public class PageLayoutManager extends AbstractLayoutManager implements Runnable
     private static class BlockBreakPosition extends LeafPosition {
         protected BreakPoss breakps;
 
-        protected BlockBreakPosition(LayoutProcessor lm, BreakPoss bp) {
+        protected BlockBreakPosition(LayoutManager lm, BreakPoss bp) {
             super(lm, 0);
             breakps = bp;
         }
@@ -214,7 +214,7 @@ public class PageLayoutManager extends AbstractLayoutManager implements Runnable
      */
     public BreakPoss getNextBreakPoss(LayoutContext context) {
 
-        LayoutProcessor curLM ; // currently active LM
+        LayoutManager curLM ; // currently active LM
 
         while ((curLM = getChildLM()) != null) {
             BreakPoss bp = null;

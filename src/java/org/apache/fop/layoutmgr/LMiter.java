@@ -32,10 +32,10 @@ public class LMiter implements ListIterator {
     private FObj curFO;
     protected List listLMs;
     protected int curPos = 0;
-    /** The LayoutProcessor to which this LMiter is attached **/
-    private LayoutProcessor lp;
+    /** The LayoutManager to which this LMiter is attached **/
+    private LayoutManager lp;
 
-    public LMiter(LayoutProcessor lp, ListIterator bIter) {
+    public LMiter(LayoutManager lp, ListIterator bIter) {
         this.lp = lp;
         baseIter = bIter;
         listLMs = new ArrayList(10);

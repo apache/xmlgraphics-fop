@@ -23,7 +23,7 @@ import org.apache.fop.datatypes.PercentBase;
 import org.apache.fop.fo.PropertyManager;
 import org.apache.fop.fo.properties.TableColLength;
 import org.apache.fop.layoutmgr.BlockStackingLayoutManager;
-import org.apache.fop.layoutmgr.LayoutProcessor;
+import org.apache.fop.layoutmgr.LayoutManager;
 import org.apache.fop.layoutmgr.LeafPosition;
 import org.apache.fop.layoutmgr.BreakPoss;
 import org.apache.fop.layoutmgr.LayoutContext;
@@ -65,7 +65,7 @@ public class TableLayoutManager extends BlockStackingLayoutManager {
 
     private class SectionPosition extends LeafPosition {
         protected List list;
-        protected SectionPosition(LayoutProcessor lm, int pos, List l) {
+        protected SectionPosition(LayoutManager lm, int pos, List l) {
             super(lm, pos);
             list = l;
         }
@@ -197,7 +197,7 @@ public class TableLayoutManager extends BlockStackingLayoutManager {
                     if (stackSize.opt + bp.getStackingSize().opt > context.getStackLimit().max) {
                         // reset to last break
                         if (lastPos != null) {
-                            LayoutProcessor lm = lastPos.getLayoutManager();
+                            LayoutManager lm = lastPos.getLayoutManager();
                             lm.resetPosition(lastPos.getPosition());
                             if (lm != curLM) {
                                 curLM.resetPosition(null);

@@ -22,7 +22,7 @@ public class NonLeafPosition extends Position {
 
     private Position subPos;
 
-    public NonLeafPosition(LayoutProcessor lm, Position sub) {
+    public NonLeafPosition(LayoutManager lm, Position sub) {
         super(lm);
         subPos = sub;
     }
