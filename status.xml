@@ -104,6 +104,10 @@ inactive??
 
   <changes>
    <release version="2003" date="2003">
+    <action context="code" dev="JM" type="fix">
+      Fix for bug #20239: Failure while generating XML metrics files from TT
+      collections when names are in Unicode (JM)
+    </action>
     <action context="code" dev="JM" type="fix"
           due-to="Matthias Germann" due-to-email="germannm@post.ch">
       Fixed bug: PFBParser reports "Could not load the whole segment" (#19764).
