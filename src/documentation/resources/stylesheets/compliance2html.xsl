@@ -43,6 +43,17 @@
     </td>
   </tr>
   </table>
+  <ul class="minitoc">
+    <xsl:for-each select="standard">
+      <a>
+        <xsl:attribute name="href">
+          <xsl:text>#</xsl:text>
+          <xsl:value-of select="@ref-name"/>
+        </xsl:attribute>
+        <li><xsl:value-of select="@name"/></li>
+      </a>
+    </xsl:for-each>
+  </ul>
   <xsl:apply-templates select="standard"/>
 </xsl:template>
 
@@ -55,16 +66,89 @@
       <xsl:attribute name="href">
         <xsl:value-of select="@baseURL"/>
       </xsl:attribute>
+      <xsl:attribute name="name">
+        <xsl:value-of select="@ref-name"/>
+      </xsl:attribute>
       <xsl:value-of select="@name"/>
     </a>
   </h2>
   <xsl:apply-templates select="explanatory"/>
+  <ul class="minitoc">
+    <xsl:for-each select="/compliance/body/standard/level-1">
+      <li>
+        <xsl:variable name="href-level-1">
+          <xsl:text>#</xsl:text>
+          <xsl:value-of select="../@ref-name"/>
+          <xsl:text>-</xsl:text>
+          <xsl:value-of select="@ref-name"/>
+        </xsl:variable>
+        <a>
+          <xsl:attribute name="href">
+            <xsl:value-of select="$href-level-1"/>
+          </xsl:attribute>
+          <xsl:value-of select="@name"/>
+        </a>
+      </li>
+      <ul>
+        <xsl:for-each select="level-2">
+          <li>
+            <xsl:variable name="href-level-2">
+              <xsl:text>#</xsl:text>
+              <xsl:value-of select="../../@ref-name"/>
+              <xsl:text>-</xsl:text>
+              <xsl:value-of select="../@ref-name"/>
+              <xsl:text>-</xsl:text>
+              <xsl:value-of select="@ref-name"/>
+            </xsl:variable>
+            <a>
+              <xsl:attribute name="href">
+                <xsl:value-of select="$href-level-2"/>
+              </xsl:attribute>
+              <xsl:value-of select="@name"/>
+            </a>
+            <xsl:text>: </xsl:text>
+            <xsl:for-each select="level-3">
+              <xsl:variable name="href-level-3">
+                <xsl:text>#</xsl:text>
+                <xsl:value-of select="../../../@ref-name"/>
+                <xsl:text>-</xsl:text>
+                <xsl:value-of select="../../@ref-name"/>
+                <xsl:text>-</xsl:text>
+                <xsl:value-of select="@name"/>
+              </xsl:variable>
+              <a>
+                <xsl:attribute name="href">
+                  <xsl:value-of select="$href-level-3"/>
+                </xsl:attribute>
+                <xsl:value-of select="@name"/>
+              </a>
+              <xsl:choose>
+                <xsl:when test="position()=last()"></xsl:when>
+                <xsl:otherwise><xsl:text>, </xsl:text></xsl:otherwise>
+              </xsl:choose>
+            </xsl:for-each>
+          </li>
+        </xsl:for-each>
+      </ul>
+    </xsl:for-each>
+  </ul>
   <xsl:apply-templates select="level-1"/>
 </xsl:template>
 
 <xsl:template match="level-1">
   <h3>
-    <xsl:value-of select="@name"/>
+    <xsl:variable name="target-level-1">
+      <xsl:text>#</xsl:text>
+      <xsl:value-of select="../@ref-name"/>
+      <xsl:text>-</xsl:text>
+      <xsl:value-of select="@ref-name"/>
+    </xsl:variable>
+    <a>
+      <xsl:attribute name="name">
+        <xsl:value-of select="$target-level-1"/>
+      </xsl:attribute>
+      <xsl:value-of select="@name"/>
+    </a>
     <xsl:if test="@citation">
       <xsl:text> (</xsl:text>
       <a>
@@ -121,7 +205,20 @@
 <xsl:template match="level-2">
   <tr>
     <td colspan="6" class="category">
-    <xsl:value-of select="@name"/>
+      <xsl:variable name="target-level-2">
+        <xsl:text>#</xsl:text>
+        <xsl:value-of select="../../@ref-name"/>
+        <xsl:text>-</xsl:text>
+        <xsl:value-of select="../@ref-name"/>
+        <xsl:text>-</xsl:text>
+        <xsl:value-of select="@ref-name"/>
+      </xsl:variable>
+      <a>
+        <xsl:attribute name="name">
+          <xsl:value-of select="$target-level-2"/>
+        </xsl:attribute>
+        <xsl:value-of select="@name"/>
+      </a>
     <xsl:if test="@citation">
       <xsl:text> (</xsl:text>
       <a>
@@ -143,7 +240,20 @@
 <xsl:template match="level-3">
   <tr>
     <td>
-      <xsl:value-of select="@name"/>
+      <xsl:variable name="target-name">
+        <xsl:text>#</xsl:text>
+        <xsl:value-of select="../../../@ref-name"/>
+        <xsl:text>-</xsl:text>
+        <xsl:value-of select="../../@ref-name"/>
+        <xsl:text>-</xsl:text>
+        <xsl:value-of select="@name"/>
+      </xsl:variable>
+      <a>
+        <xsl:attribute name="name">
+          <xsl:value-of select="$target-name"/>
+        </xsl:attribute>
+        <xsl:value-of select="@name"/>
+      </a>
     </td>
     <td align="center">
       <xsl:choose>
