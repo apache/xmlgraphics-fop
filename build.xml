@@ -80,6 +80,7 @@ list of possible build targets.
     <include name="lib/batik.jar"/>
     <include name="lib/avalon-framework*.jar"/>
     <include name="lib/commons-logging*.jar"/>
+    <include name="lib/commons-io*.jar"/>
   </fileset>
 
   <fileset dir="${basedir}" id="dist.src">
@@ -538,9 +539,10 @@ list of possible build targets.
     <patternset id="transcoder-classes">
       <!-- General classes -->
       <patternset>
-        <include name="org/apache/fop/apps/Document*"/>
-        <include name="org/apache/fop/fo/FOTreeControl*"/>
-        <include name="org/apache/fop/fo/FOTreeListener*"/>
+        <include name="org/apache/fop/apps/Fop.class"/>
+        <include name="org/apache/fop/apps/FOPException.class"/>
+        <include name="org/apache/fop/fo/Constants.class"/>
+        <include name="org/apache/fop/fo/FOTreeBuilder.class"/>
         <include name="org/apache/fop/area/AreaTreeControl*"/>
         <include name="org/apache/fop/svg/**"/>
         <include name="org/apache/fop/fonts/**"/>
@@ -551,7 +553,7 @@ list of possible build targets.
         <include name="org/apache/fop/image/Abstract*"/>
         <include name="org/apache/fop/image/analyser/*.class"/>
         <include name="org/apache/fop/util/CMYKColorSpace*.class"/>
-        <include name="org/apache/fop/util/StreamUtilities.class"/>
+        <include name="org/apache/fop/util/ASCII*.class"/>
         <include name="org/apache/fop/util/*OutputStream.class"/>
         <include name="org/apache/fop/util/Finalizable.class"/>
       </patternset>
@@ -589,7 +591,10 @@ list of possible build targets.
     <unjar dest="${transcoder-deps}">
       <patternset>
         <include name="org/apache/avalon/framework/*"/>
-        <include name="org/apache/commons/logging/*"/>
+        <include name="org/apache/avalon/framework/activity/*"/>
+        <include name="org/apache/avalon/framework/configuration/*"/>
+        <include name="org/apache/avalon/framework/container/*"/>
+        <include name="org/apache/commons/logging/**"/>
         <include name="org/apache/commons/io/CopyUtils.class"/>
         <include name="org/apache/commons/io/IOUtils.class"/>
         <include name="org/apache/commons/io/output/ProxyOutputStream.class"/>
@@ -668,7 +673,7 @@ list of possible build targets.
     </javac>
     <echo message="Running basic functionality tests for fop-transcoder.jar"/>
     <mkdir dir="${build.dir}/test-reports/fop-transcoder"/>
-    <junit>
+    <junit haltonerror="yes">
       <sysproperty key="basedir" value="${basedir}"/>
       <formatter type="plain"/>
       <classpath>
@@ -686,7 +691,7 @@ list of possible build targets.
     </junit>
     <echo message="Running basic functionality tests for fop-transcoder-allinone.jar"/>
     <mkdir dir="${build.dir}/test-reports/fop-transcoder-allinone"/>
-    <junit>
+    <junit haltonerror="yes">
       <sysproperty key="basedir" value="${basedir}"/>
       <formatter type="plain"/>
       <classpath>
@@ -706,7 +711,7 @@ list of possible build targets.
     </junit>
     <echo message="Running basic functionality tests for fop.jar"/>
     <mkdir dir="${build.dir}/test-reports/fop"/>
-    <junit>
+    <junit haltonerror="yes">
       <sysproperty key="basedir" value="${basedir}"/>
       <formatter type="plain"/>
       <classpath>
