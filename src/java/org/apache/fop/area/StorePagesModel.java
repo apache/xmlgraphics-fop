@@ -135,6 +135,15 @@ public class StorePagesModel extends AreaTreeModel {
     }
 
     /**
+     * Get the title for a page sequence. 	 
+     * @param count the page sequence count 	 
+     * @return the title of the page sequence 	 
+     */ 	 
+    public Title getTitle(int count) { 	 
+        return (Title) titles.get(count);
+    }
+     
+    /**
      * End document, do nothing.
      */
     public void endDocument() throws SAXException {
