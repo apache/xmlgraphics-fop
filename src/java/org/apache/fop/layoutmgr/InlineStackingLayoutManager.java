@@ -88,12 +88,6 @@ public class InlineStackingLayoutManager extends AbstractLayoutManager {
      */
     public InlineStackingLayoutManager(FObj node) {
         super(node);
-    }
-
-    /**
-     * @see org.apache.fop.layoutmgr.AbstractLayoutManager#initProperties()
-     */
-    protected void initProperties() {
         extraBPD = new MinOptMax(0);
     }
 
