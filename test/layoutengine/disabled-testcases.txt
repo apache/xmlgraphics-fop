@@ -4,3 +4,4 @@ markers5a.xml
 normal-breaking4.xml
 table-cell3a.xml
 table-fixed2.xml
+table-hf4.xml
