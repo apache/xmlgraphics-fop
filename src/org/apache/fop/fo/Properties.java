@@ -127,13 +127,13 @@ public abstract class Properties {
                    ,COLOR_TRANS = 67108864
                       ,MIMETYPE = 134217728
                        ,FONTSET = 268435456
-    //                   ,SPARE = 536870912
+                      ,COMPOUND = 536870912
     //                   ,SPARE = 1073741824
     //                   ,SPARE = -2147483648
 
     // A number of questions are unresolved about the interaction of
     // complex parsing, property expression parsing & property validation.
-    // At this time (2002/07/03) it looks as though the verifyParsing() method
+    // At this time (2002/07/03) it looks as though the refineParsing() method
     // will take full validation responsibility, so it will not be
     // necessary to specify any individual datatypes besides COMPLEX in the
     // property dataTypes field.  This renders some such specifications
@@ -269,18 +269,33 @@ public abstract class Properties {
                              NO = 0
                       ,COMPUTED = 1
                      ,SPECIFIED = 2
-                      ,COMPOUND = 3
-                 ,SHORTHAND_INH = 4
-                ,VALUE_SPECIFIC = 5
+                ,VALUE_SPECIFIC = 3
                               ;
 
     /**
-     * Constant for nested <tt>verifyParsing</tt> methods
+     * Derive inherited value for the given property.
+     * This method must be shadowed by properties with special requirements.
+     * @param foTree the <tt>FOTree</tt> being built
+     * @param property the <tt>int</tt> property index
+     * @return <tt>PropertyValue</tt> the inherited property value for the
+     * property.  It contains the inherited <i>computed</i> value, and no
+     * <i>specified</i> value.
+     * @exception <tt>PropertyException</tt>
+     */
+    public static PropertyValue inheritance(FOTree foTree, int property)
+            throws PropertyException
+    {
+        // Is it inherited?
+        return foTree.getCurrentInherited(property);
+    }
+
+    /**
+     * Constant for nested <tt>refineParsing</tt> methods
      */
     public static boolean IS_NESTED = true;
 
     /**
-     * Constant for non-nested <tt>verifyParsing</tt> methods
+     * Constant for non-nested <tt>refineParsing</tt> methods
      */
     public static boolean NOT_NESTED = false;
 
@@ -289,7 +304,7 @@ public abstract class Properties {
      * 1) PropertyTokenizer<br>
      * 2) PropertyParser - returns context-free <tt>PropertyValue</tt>s
      *    recognizable by the parser<br>
-     * 3) verifyParsing - verifies results from parser, translates
+     * 3) refineParsing - verifies results from parser, translates
      *    property types like NCName into more specific value types,
      *    resolves enumeration types, etc.<br>
      *
@@ -298,23 +313,23 @@ public abstract class Properties {
      * @param foTree the <tt>FOTree</tt> being built
      * @param value <tt>PropertyValue</tt> returned by the parser
      */
-    public static PropertyValue verifyParsing
+    public static PropertyValue refineParsing
                                         (FOTree foTree, PropertyValue value)
             throws PropertyException
     {
-        return verifyParsing(foTree, value, NOT_NESTED);
+        return refineParsing(foTree, value, NOT_NESTED);
     }
 
     /**
-     * Do the work for the two argument verifyParsing method.
+     * Do the work for the two argument refineParsing method.
      * @param foTree the <tt>FOTree</tt> being built
      * @param value <tt>PropertyValue</tt> returned by the parser
      * @param nested <tt>boolean</tt> indicating whether this method is
-     * called normally (false), or as part of another <i>verifyParsing</i>
+     * called normally (false), or as part of another <i>refineParsing</i>
      * method.
-     * @see #verifyParsing(FOTree,PropertyValue)
+     * @see #refineParsing(FOTree,PropertyValue)
      */
-    protected static PropertyValue verifyParsing
+    protected static PropertyValue refineParsing
                         (FOTree foTree, PropertyValue value, boolean nested)
             throws PropertyException
     {
@@ -371,7 +386,7 @@ public abstract class Properties {
             // Some instances of 'none' are part of an enumeration, but
             // the parser will find and return 'none' as a None
             // PropertyValue.
-            // In these cases, the individual property's verifyParsing
+            // In these cases, the individual property's refineParsing
             // method must shadow this method.
             if ((datatype & NONE) != 0) return value;
             throw new PropertyException("'none' invalid  for " + propName);
@@ -393,7 +408,7 @@ public abstract class Properties {
             }
         }
         throw new PropertyException
-            ("Inappropriate datatype passed to Properties.verifyParsing: "
+            ("Inappropriate datatype passed to Properties.refineParsing: "
                 + value.getClass().getName());
     }
 
@@ -1026,7 +1041,7 @@ public abstract class Properties {
          *   a BackgroundPositionHorizontal Numeric or Inherit value
          *   a BackgroundPositionVertical Numeric or Inherit value
          */
-        public static PropertyValue verifyParsing
+        public static PropertyValue refineParsing
                 (FOTree foTree, PropertyValue value)
                         throws PropertyException
         {
@@ -1125,14 +1140,14 @@ public abstract class Properties {
                             MessageHandler.log("background: duplicate" +
                             "position overrides previous position");
                     if (tmpval == null)
-                        position = BackgroundPosition.verifyParsing
+                        position = BackgroundPosition.refineParsing
                                                 (foTree, pval, IS_NESTED);
                     else { // 2 elements
                         // make a space-separated list
                         PropertyValueList ssList = new PropertyValueList
                                             (PropNames.BACKGROUND_POSITION);
                         ssList.add(posnList);
-                        position = BackgroundPosition.verifyParsing
+                        position = BackgroundPosition.refineParsing
                                                 (foTree, ssList, IS_NESTED);
                     }
                     continue scanning_elements;
@@ -1215,11 +1230,11 @@ public abstract class Properties {
                             PropertyValueList ssList = new PropertyValueList
                                             (PropNames.BACKGROUND_POSITION);
                             ssList.add(posnList);
-                            position = BackgroundPosition.verifyParsing
+                            position = BackgroundPosition.refineParsing
                                                 (foTree, ssList, IS_NESTED);
                         } else { // one only
                         // Now send one NCName to BackgroundPosition
-                            position = BackgroundPosition.verifyParsing
+                            position = BackgroundPosition.refineParsing
                                                 (foTree, pval, IS_NESTED);
                         }
                         continue scanning_elements;
@@ -1368,24 +1383,24 @@ public abstract class Properties {
          * @param value <tt>PropertyValue</tt> returned by the parser
          * @return <tt>PropertyValue</tt> the verified value
          */
-        public static PropertyValue verifyParsing
+        public static PropertyValue refineParsing
                                         (FOTree foTree, PropertyValue value)
                         throws PropertyException
         {
-            return verifyParsing(foTree, value, NOT_NESTED);
+            return refineParsing(foTree, value, NOT_NESTED);
         }
 
         /**
-         * Do the work for the two argument verifyParsing method.
+         * Do the work for the two argument refineParsing method.
          * @param foTree the <tt>FOTree</tt> being built
          * @param value <tt>PropertyValue</tt> returned by the parser
          * @param nested <tt>boolean</tt> indicating whether this method is
-         * called normally (false), or as part of another <i>verifyParsing</i>
+         * called normally (false), or as part of another <i>refineParsing</i>
          * method.
          * @return <tt>PropertyValue</tt> the verified value
-         * @see #verifyParsing(FOTree,PropertyValue)
+         * @see #refineParsing(FOTree,PropertyValue)
          */
-        public static PropertyValue verifyParsing
+        public static PropertyValue refineParsing
                         (FOTree foTree, PropertyValue value, boolean nested)
                         throws PropertyException
         {
@@ -1813,7 +1828,7 @@ public abstract class Properties {
 
     public static class BlockProgressionDimension extends Properties {
         public static final int dataTypes =
-                                        PERCENTAGE | LENGTH | AUTO | INHERIT;
+                            COMPOUND | PERCENTAGE | LENGTH | AUTO | INHERIT;
         public static final int traitMapping = FORMATTING;
         public static final int initialValueType = AUTO_IT;
         public static final int inherited = NO;
@@ -1823,21 +1838,21 @@ public abstract class Properties {
         public static final int dataTypes = PERCENTAGE | LENGTH | AUTO;
         public static final int traitMapping = FORMATTING;
         public static final int initialValueType = AUTO_IT;
-        public static final int inherited = COMPOUND;
+        public static final int inherited = NO;
     }
 
     public static class BlockProgressionDimensionOptimum extends Properties {
         public static final int dataTypes = PERCENTAGE | LENGTH | AUTO;
         public static final int traitMapping = FORMATTING;
         public static final int initialValueType = AUTO_IT;
-        public static final int inherited = COMPOUND;
+        public static final int inherited = NO;
     }
 
     public static class BlockProgressionDimensionMaximum extends Properties {
         public static final int dataTypes = PERCENTAGE | LENGTH | AUTO;
         public static final int traitMapping = FORMATTING;
         public static final int initialValueType = AUTO_IT;
-        public static final int inherited = COMPOUND;
+        public static final int inherited = NO;
     }
 
     public static class Border extends Properties {
@@ -1846,7 +1861,7 @@ public abstract class Properties {
         public static final int initialValueType = NOTYPE_IT;
         public static final int inherited = NO;
 
-        public static PropertyValue verifyParsing
+        public static PropertyValue refineParsing
                                         (FOTree foTree, PropertyValue value)
             throws PropertyException
         {
@@ -1881,7 +1896,7 @@ public abstract class Properties {
                 PropertyValue val = (PropertyValue)(values.next());
                 PropertyValue pv = null;
                 try {
-                    pv = BorderWidth.verifyParsing(foTree, val, IS_NESTED);
+                    pv = BorderWidth.refineParsing(foTree, val, IS_NESTED);
                     if (width != null)
                         MessageHandler.log("border: duplicate" +
                         "width overrides previous width");
@@ -1889,7 +1904,7 @@ public abstract class Properties {
                     continue;
                 } catch (PropertyException e) {}
                 try {
-                    pv = BorderStyle.verifyParsing(foTree, val, IS_NESTED);
+                    pv = BorderStyle.refineParsing(foTree, val, IS_NESTED);
                     if (style != null)
                         MessageHandler.log("border: duplicate" +
                         "style overrides previous style");
@@ -1897,7 +1912,7 @@ public abstract class Properties {
                     continue;
                 } catch (PropertyException e) {}
                 try {
-                    pv = BorderColor.verifyParsing(foTree, val, IS_NESTED);
+                    pv = BorderColor.refineParsing(foTree, val, IS_NESTED);
                     if (color != null)
                         MessageHandler.log("border: duplicate" +
                         "color overrides previous color");
@@ -1982,7 +1997,8 @@ public abstract class Properties {
     // automatically update the following initial Length PropertyValue
     // if the mapping changes.
     public static class BorderAfterWidth extends Properties {
-        public static final int dataTypes = MAPPED_NUMERIC | LENGTH | INHERIT;
+        public static final int dataTypes =
+                                COMPOUND | MAPPED_NUMERIC | LENGTH | INHERIT;
         public static final int traitMapping = FORMATTING | RENDERING;
         public static final int initialValueType = LENGTH_IT;
         public static PropertyValue getInitialValue(int property)
@@ -2010,7 +2026,7 @@ public abstract class Properties {
         public static final int dataTypes = LENGTH;
         public static final int traitMapping = FORMATTING | RENDERING;
         public static final int initialValueType = NOTYPE_IT;
-        public static final int inherited = COMPOUND;
+        public static final int inherited = NO;
     }
 
     public static class BorderAfterWidthConditionality extends Properties {
@@ -2020,9 +2036,10 @@ public abstract class Properties {
         public static PropertyValue getInitialValue(int property)
             throws PropertyException
         {
-            return  new EnumType(PropNames.BORDER_AFTER_WIDTH_CONDITIONALITY, Conditionality.DISCARD);
+            return  new EnumType(PropNames.BORDER_AFTER_WIDTH_CONDITIONALITY,
+                                                    Conditionality.DISCARD);
         }
-        public static final int inherited = COMPOUND;
+        public static final int inherited = NO;
 
         public static final ROStringArray enums = Conditionality.enums;
         public static final ROStringArray enumValues
@@ -2067,7 +2084,8 @@ public abstract class Properties {
     }
 
     public static class BorderBeforeWidth extends Properties {
-        public static final int dataTypes = MAPPED_NUMERIC | LENGTH | INHERIT;
+        public static final int dataTypes =
+                                COMPOUND | MAPPED_NUMERIC | LENGTH | INHERIT;
         public static final int traitMapping = FORMATTING | RENDERING;
         public static final int initialValueType = LENGTH_IT;
         public static PropertyValue getInitialValue(int property)
@@ -2095,7 +2113,7 @@ public abstract class Properties {
         public static final int dataTypes = LENGTH;
         public static final int traitMapping = FORMATTING | RENDERING;
         public static final int initialValueType = NOTYPE_IT;
-        public static final int inherited = COMPOUND;
+        public static final int inherited = NO;
     }
 
     public static class BorderBeforeWidthConditionality extends Properties {
@@ -2105,9 +2123,10 @@ public abstract class Properties {
         public static PropertyValue getInitialValue(int property)
             throws PropertyException
         {
-            return  new EnumType(PropNames.BORDER_BEFORE_WIDTH_CONDITIONALITY, Conditionality.DISCARD);
+            return  new EnumType(PropNames.BORDER_BEFORE_WIDTH_CONDITIONALITY,
+                                                    Conditionality.DISCARD);
         }
-        public static final int inherited = COMPOUND;
+        public static final int inherited = NO;
 
         public static final ROStringArray enums = Conditionality.enums;
         public static final ROStringArray enumValues
@@ -2138,7 +2157,7 @@ public abstract class Properties {
          * @param value <tt>PropertyValue</tt> returned by the parser
          * @return <tt>PropertyValue</tt> the verified value
          */
-        public static PropertyValue verifyParsing
+        public static PropertyValue refineParsing
                                         (FOTree foTree, PropertyValue value)
                     throws PropertyException
         {
@@ -2258,24 +2277,24 @@ public abstract class Properties {
          * @param value <tt>PropertyValue</tt> returned by the parser
          * @return <tt>PropertyValue</tt> the verified value
          */
-        public static PropertyValue verifyParsing
+        public static PropertyValue refineParsing
                                         (FOTree foTree, PropertyValue value)
                     throws PropertyException
         {
-            return verifyParsing(foTree, value, NOT_NESTED);
+            return refineParsing(foTree, value, NOT_NESTED);
         }
 
         /**
-         * Do the work for the two argument verifyParsing method.
+         * Do the work for the two argument refineParsing method.
          * @param foTree the <tt>FOTree</tt> being built
          * @param value <tt>PropertyValue</tt> returned by the parser
          * @param nested <tt>boolean</tt> indicating whether this method is
-         * called normally (false), or as part of another <i>verifyParsing</i>
+         * called normally (false), or as part of another <i>refineParsing</i>
          * method.
          * @return <tt>PropertyValue</tt> the verified value
-         * @see #verifyParsing(FOTree,PropertyValue)
+         * @see #refineParsing(FOTree,PropertyValue)
          */
-        public static PropertyValue verifyParsing
+        public static PropertyValue refineParsing
                         (FOTree foTree, PropertyValue value, boolean nested)
                     throws PropertyException
         {
@@ -2308,7 +2327,7 @@ public abstract class Properties {
             } else {
                 if (nested) throw new PropertyException
                         ("PropertyValueList invalid for nested border-color "
-                            + "verifyParsing() method");
+                            + "refineParsing() method");
                 // List may contain only multiple color specifiers
                 // i.e. ColorTypes or NCNames specifying a standard color or
                 // 'transparent'.
@@ -2425,7 +2444,8 @@ public abstract class Properties {
     }
 
     public static class BorderEndWidth extends Properties {
-        public static final int dataTypes = MAPPED_NUMERIC | LENGTH | INHERIT;
+        public static final int dataTypes =
+                                COMPOUND | MAPPED_NUMERIC | LENGTH | INHERIT;
         public static final int traitMapping = FORMATTING | RENDERING;
         public static final int initialValueType = LENGTH_IT;
         public static PropertyValue getInitialValue(int property)
@@ -2453,7 +2473,7 @@ public abstract class Properties {
         public static final int dataTypes = LENGTH;
         public static final int traitMapping = FORMATTING | RENDERING;
         public static final int initialValueType = NOTYPE_IT;
-        public static final int inherited = COMPOUND;
+        public static final int inherited = NO;
     }
 
     public static class BorderEndWidthConditionality extends Properties {
@@ -2463,9 +2483,10 @@ public abstract class Properties {
         public static PropertyValue getInitialValue(int property)
             throws PropertyException
         {
-            return  new EnumType(PropNames.BORDER_END_WIDTH_CONDITIONALITY, Conditionality.DISCARD);
+            return  new EnumType(PropNames.BORDER_END_WIDTH_CONDITIONALITY,
+                                                    Conditionality.DISCARD);
         }
-        public static final int inherited = COMPOUND;
+        public static final int inherited = NO;
 
         public static final ROStringArray enums = Conditionality.enums;
         public static final ROStringArray enumValues
@@ -2496,7 +2517,7 @@ public abstract class Properties {
          * @param value <tt>PropertyValue</tt> returned by the parser
          * @return <tt>PropertyValue</tt> the verified value
          */
-        public static PropertyValue verifyParsing
+        public static PropertyValue refineParsing
                 (FOTree foTree, PropertyValue value)
                     throws PropertyException
         {
@@ -2583,7 +2604,7 @@ public abstract class Properties {
          * @param value <tt>PropertyValue</tt> returned by the parser
          * @return <tt>PropertyValue</tt> the verified value
          */
-        public static PropertyValue verifyParsing
+        public static PropertyValue refineParsing
                 (FOTree foTree, PropertyValue value)
                     throws PropertyException
         {
@@ -2648,7 +2669,7 @@ public abstract class Properties {
     }
 
     public static class BorderSeparation extends Properties {
-        public static final int dataTypes = INHERIT;
+        public static final int dataTypes = COMPOUND | LENGTH | INHERIT;
         public static final int traitMapping = FORMATTING;
         public static final int initialValueType = NOTYPE_IT;
         public static final int inherited = COMPUTED;
@@ -2662,9 +2683,11 @@ public abstract class Properties {
         public static PropertyValue getInitialValue(int property)
             throws PropertyException
         {
-            return Length.makeLength (PropNames.BORDER_SEPARATION_BLOCK_PROGRESSION_DIRECTION, 0.0d, Length.PT);
+            return Length.makeLength
+                (PropNames.BORDER_SEPARATION_BLOCK_PROGRESSION_DIRECTION,
+                    0.0d, Length.PT);
         }
-        public static final int inherited = COMPOUND;
+        public static final int inherited = NO;
     }
 
     public static class BorderSeparationInlineProgressionDirection
@@ -2675,16 +2698,18 @@ public abstract class Properties {
         public static PropertyValue getInitialValue(int property)
             throws PropertyException
         {
-            return Length.makeLength (PropNames.BORDER_SEPARATION_INLINE_PROGRESSION_DIRECTION, 0.0d, Length.PT);
+            return Length.makeLength
+                (PropNames.BORDER_SEPARATION_INLINE_PROGRESSION_DIRECTION,
+                    0.0d, Length.PT);
         }
-        public static final int inherited = COMPOUND;
+        public static final int inherited = NO;
     }
 
     public static class BorderSpacing extends Properties {
         public static final int dataTypes = SHORTHAND;
         public static final int traitMapping = SHORTHAND_MAP;
         public static final int initialValueType = NOTYPE_IT;
-        public static final int inherited = SHORTHAND_INH;
+        public static final int inherited = NO;
 
         /**
          * 'value' is a PropertyValueList or an individual PropertyValue.
@@ -2702,7 +2727,7 @@ public abstract class Properties {
          * @param value <tt>PropertyValue</tt> returned by the parser
          * @return <tt>PropertyValue</tt> the verified value
          */
-        public static PropertyValue verifyParsing
+        public static PropertyValue refineParsing
                 (FOTree foTree, PropertyValue value)
                     throws PropertyException
         {
@@ -2785,7 +2810,8 @@ public abstract class Properties {
     }
 
     public static class BorderStartWidth extends Properties {
-        public static final int dataTypes = MAPPED_NUMERIC | LENGTH | INHERIT;
+        public static final int dataTypes =
+                                COMPOUND | MAPPED_NUMERIC | LENGTH | INHERIT;
         public static final int traitMapping = FORMATTING | RENDERING;
         public static final int initialValueType = LENGTH_IT;
         public static PropertyValue getInitialValue(int property)
@@ -2813,7 +2839,7 @@ public abstract class Properties {
         public static final int dataTypes = LENGTH;
         public static final int traitMapping = FORMATTING | RENDERING;
         public static final int initialValueType = NOTYPE_IT;
-        public static final int inherited = COMPOUND;
+        public static final int inherited = NO;
     }
 
     public static class BorderStartWidthConditionality extends Properties {
@@ -2823,9 +2849,10 @@ public abstract class Properties {
         public static PropertyValue getInitialValue(int property)
             throws PropertyException
         {
-            return  new EnumType(PropNames.BORDER_START_WIDTH_CONDITIONALITY, Conditionality.DISCARD);
+            return  new EnumType(PropNames.BORDER_START_WIDTH_CONDITIONALITY,
+                                                    Conditionality.DISCARD);
         }
-        public static final int inherited = COMPOUND;
+        public static final int inherited = NO;
 
         public static final ROStringArray enums = Conditionality.enums;
         public static final ROStringArray enumValues
@@ -2865,24 +2892,24 @@ public abstract class Properties {
          * @param value <tt>PropertyValue</tt> returned by the parser
          * @return <tt>PropertyValue</tt> the verified value
          */
-        public static PropertyValue verifyParsing
+        public static PropertyValue refineParsing
                                         (FOTree foTree, PropertyValue value)
                     throws PropertyException
         {
-            return verifyParsing(foTree, value, NOT_NESTED);
+            return refineParsing(foTree, value, NOT_NESTED);
         }
 
         /**
-         * Do the work for the two argument verifyParsing method.
+         * Do the work for the two argument refineParsing method.
          * @param foTree the <tt>FOTree</tt> being built
          * @param value <tt>PropertyValue</tt> returned by the parser
          * @param nested <tt>boolean</tt> indicating whether this method is
-         * called normally (false), or as part of another <i>verifyParsing</i>
+         * called normally (false), or as part of another <i>refineParsing</i>
          * method.
          * @return <tt>PropertyValue</tt> the verified value
-         * @see #verifyParsing(FOTree,PropertyValue)
+         * @see #refineParsing(FOTree,PropertyValue)
          */
-        public static PropertyValue verifyParsing
+        public static PropertyValue refineParsing
                         (FOTree foTree, PropertyValue value, boolean nested)
                     throws PropertyException
         {
@@ -2913,7 +2940,7 @@ public abstract class Properties {
             } else {
                 if (nested) throw new PropertyException
                         ("PropertyValueList invalid for nested border-style "
-                            + "verifyParsing() method");
+                            + "refineParsing() method");
                 // List may contain only multiple style specifiers
                 // i.e. NCNames specifying a standard style
                 PropertyValueList list =
@@ -2985,7 +3012,7 @@ public abstract class Properties {
          * @param value <tt>PropertyValue</tt> returned by the parser
          * @return <tt>PropertyValue</tt> the verified value
          */
-        public static PropertyValue verifyParsing
+        public static PropertyValue refineParsing
                 (FOTree foTree, PropertyValue value)
                     throws PropertyException
         {
@@ -3083,24 +3110,24 @@ public abstract class Properties {
          * @param value <tt>PropertyValue</tt> returned by the parser
          * @return <tt>PropertyValue</tt> the verified value
          */
-        public static PropertyValue verifyParsing
+        public static PropertyValue refineParsing
                                         (FOTree foTree, PropertyValue value)
                     throws PropertyException
         {
-            return verifyParsing(foTree, value, NOT_NESTED);
+            return refineParsing(foTree, value, NOT_NESTED);
         }
 
         /**
-         * Do the work for the two argument verifyParsing method.
+         * Do the work for the two argument refineParsing method.
          * @param foTree the <tt>FOTree</tt> being built
          * @param value <tt>PropertyValue</tt> returned by the parser
          * @param nested <tt>boolean</tt> indicating whether this method is
-         * called normally (false), or as part of another <i>verifyParsing</i>
+         * called normally (false), or as part of another <i>refineParsing</i>
          * method.
          * @return <tt>PropertyValue</tt> the verified value
-         * @see #verifyParsing(FOTree,PropertyValue)
+         * @see #refineParsing(FOTree,PropertyValue)
          */
-        public static PropertyValue verifyParsing
+        public static PropertyValue refineParsing
                         (FOTree foTree, PropertyValue value, boolean nested)
                     throws PropertyException
         {
@@ -3133,7 +3160,7 @@ public abstract class Properties {
             } else {
                 if (nested) throw new PropertyException
                         ("PropertyValueList invalid for nested border-width "
-                            + "verifyParsing() method");
+                            + "refineParsing() method");
                 // List may contain only multiple width specifiers
                 // i.e. NCNames specifying a standard width
                 PropertyValueList list =
@@ -3361,7 +3388,7 @@ public abstract class Properties {
          * @param value <tt>PropertyValue</tt> returned by the parser
          * @return <tt>PropertyValue</tt> the verified value
          */
-        public static PropertyValue verifyParsing
+        public static PropertyValue refineParsing
                                         (FOTree foTree, PropertyValue value)
                         throws PropertyException
         {
@@ -3523,7 +3550,7 @@ public abstract class Properties {
          * @param value <tt>PropertyValue</tt> returned by the parser
          * @return <tt>PropertyValue</tt> the verified value
          */
-        public static PropertyValue verifyParsing
+        public static PropertyValue refineParsing
                 (FOTree foTree, PropertyValue value)
                     throws PropertyException
         {
@@ -3800,7 +3827,7 @@ public abstract class Properties {
         public static final int dataTypes = SHORTHAND;
         public static final int traitMapping = SHORTHAND_MAP;
         public static final int initialValueType = NOTYPE_IT;
-        public static final int inherited = SHORTHAND_INH;
+        public static final int inherited = NO;
 
         public static final int
                    CAPTION = 1
@@ -3945,7 +3972,7 @@ public abstract class Properties {
          * @param value <tt>PropertyValue</tt> returned by the parser
          * @return <tt>PropertyValue</tt> the verified value
          */
-        public static PropertyValue verifyParsing
+        public static PropertyValue refineParsing
                 (FOTree foTree, PropertyValue value)
                         throws PropertyException
         {
@@ -4094,11 +4121,11 @@ public abstract class Properties {
                 // font-family begins at slash + 2
                 familyStart = slash + 2;
                 fontsize = slash - 1;
-                size = FontSize.verifyParsing
+                size = FontSize.refineParsing
                                     (foTree, propvals[fontsize], IS_NESTED);
                 // derive the line-height
                 // line-height is at slash + 1
-                height = LineHeight.verifyParsing
+                height = LineHeight.refineParsing
                                     (foTree, propvals[slash + 1], IS_NESTED);
             } else {
                 // Don''t know where slash is.  If anything precedes the
@@ -4148,12 +4175,12 @@ public abstract class Properties {
             // The discovered font or font-family name must be prepended to
             // the fontList.  If the font name is a single element, and the
             // fontList is empty, only that single element is passed to the
-            // verifyParsing() method of FontFamily.  Otherwise the font
+            // refineParsing() method of FontFamily.  Otherwise the font
             // name element or elements is formed into a PropertyValueList,
             // and that list is prepended to fontList.
             if (fontList.size() == 0
                                 && familyStart == (propvals.length - 1)) {
-                fontset = FontFamily.verifyParsing
+                fontset = FontFamily.refineParsing
                                 (foTree, propvals[familyStart], IS_NESTED);
             } else {
                 // Must develop a list to prepend to fontList
@@ -4163,7 +4190,7 @@ public abstract class Properties {
                     tmpList.add(propvals[i]);
                 fontList.addFirst(tmpList);
                 // Get a FontFamilySet
-                fontset = FontFamily.verifyParsing
+                fontset = FontFamily.refineParsing
                                             (foTree, fontList, IS_NESTED);
             }
             // Only font-style font-variant and font-weight, in any order
@@ -4171,7 +4198,7 @@ public abstract class Properties {
             for (int i = 0; i < fontsize; i++) {
                 PropertyValue pv = null;
                 try {
-                    pv = FontStyle.verifyParsing
+                    pv = FontStyle.refineParsing
                                             (foTree, propvals[i], IS_NESTED);
                     if (style != null)
                         MessageHandler.log("font: duplicate" +
@@ -4181,7 +4208,7 @@ public abstract class Properties {
                 } catch(PropertyException e) {}
 
                 try {
-                    pv = FontVariant.verifyParsing
+                    pv = FontVariant.refineParsing
                                             (foTree, propvals[i], IS_NESTED);
                     if (variant != null)
                         MessageHandler.log("font: duplicate" +
@@ -4191,7 +4218,7 @@ public abstract class Properties {
                 } catch(PropertyException e) {}
 
                 try {
-                    pv = FontWeight.verifyParsing
+                    pv = FontWeight.refineParsing
                                             (foTree, propvals[i], IS_NESTED);
                     if (weight != null)
                         MessageHandler.log("font: duplicate" +
@@ -4272,7 +4299,7 @@ public abstract class Properties {
                 Collections.unmodifiableMap((Map)rwEnumValues);
         }
 
-        public static PropertyValue verifyParsing
+        public static PropertyValue refineParsing
                                         (FOTree foTree, PropertyValue value)
                         throws PropertyException
         {
@@ -4289,10 +4316,10 @@ public abstract class Properties {
             // be at the top level, and any font family names
             // that contained spaces will be in PropertyValueLists.
 
-            return verifyParsing(foTree, value, NOT_NESTED);
+            return refineParsing(foTree, value, NOT_NESTED);
         }
 
-        public static PropertyValue verifyParsing
+        public static PropertyValue refineParsing
                         (FOTree foTree, PropertyValue value, boolean nested)
                         throws PropertyException
         {
@@ -4566,30 +4593,30 @@ public abstract class Properties {
          * @param value <tt>PropertyValue</tt> returned by the parser
          * @return <tt>PropertyValue</tt> the verified value
          */
-        public static PropertyValue verifyParsing
+        public static PropertyValue refineParsing
                                         (FOTree foTree, PropertyValue value)
                         throws PropertyException
         {
-            return verifyParsing(foTree, value, NOT_NESTED);
+            return refineParsing(foTree, value, NOT_NESTED);
         }
 
         /**
-         * Do the work for the two argument verifyParsing method.
+         * Do the work for the two argument refineParsing method.
          * @param foTree the <tt>FOTree</tt> being built
          * @param value <tt>PropertyValue</tt> returned by the parser
          * @param nested <tt>boolean</tt> indicating whether this method is
-         * called normally (false), or as part of another <i>verifyParsing</i>
+         * called normally (false), or as part of another <i>refineParsing</i>
          * method.
          * @return <tt>PropertyValue</tt> the verified value
-         * @see #verifyParsing(FOTree,PropertyValue)
+         * @see #refineParsing(FOTree,PropertyValue)
          */
-        public static PropertyValue verifyParsing
+        public static PropertyValue refineParsing
                         (FOTree foTree, PropertyValue value, boolean nested)
                         throws PropertyException
         {
             // Override the shadowed method to ensure that Integer values
             // are limited to the valid numbers
-            PropertyValue fw = Properties.verifyParsing(foTree, value, nested);
+            PropertyValue fw = Properties.refineParsing(foTree, value, nested);
             // If the result is an IntegerType, restrict the values
             if (fw instanceof IntegerType) {
                 int weight = ((IntegerType)fw).getInt();
@@ -4814,7 +4841,7 @@ public abstract class Properties {
 
     public static class InlineProgressionDimension extends Properties {
         public static final int dataTypes =
-                                        PERCENTAGE | LENGTH | AUTO | INHERIT;
+                            COMPOUND | PERCENTAGE | LENGTH | AUTO | INHERIT;
         public static final int traitMapping = FORMATTING;
         public static final int initialValueType = AUTO_IT;
         public static final int inherited = NO;
@@ -4824,21 +4851,21 @@ public abstract class Properties {
         public static final int dataTypes = PERCENTAGE | LENGTH | AUTO;
         public static final int traitMapping = FORMATTING;
         public static final int initialValueType = AUTO_IT;
-        public static final int inherited = COMPOUND;
+        public static final int inherited = NO;
     }
 
     public static class InlineProgressionDimensionOptimum extends Properties {
         public static final int dataTypes = PERCENTAGE | LENGTH | AUTO;
         public static final int traitMapping = FORMATTING;
         public static final int initialValueType = AUTO_IT;
-        public static final int inherited = COMPOUND;
+        public static final int inherited = NO;
     }
 
     public static class InlineProgressionDimensionMaximum extends Properties {
         public static final int dataTypes = PERCENTAGE | LENGTH | AUTO;
         public static final int traitMapping = FORMATTING;
         public static final int initialValueType = AUTO_IT;
-        public static final int inherited = COMPOUND;
+        public static final int inherited = NO;
     }
 
     public static class InternalDestination extends Properties {
@@ -4994,7 +5021,8 @@ public abstract class Properties {
     }
 
     public static class LeaderLength extends Properties {
-        public static final int dataTypes = LENGTH | PERCENTAGE | INHERIT;
+        public static final int dataTypes =
+                                    COMPOUND | LENGTH | PERCENTAGE | INHERIT;
         public static final int traitMapping = FORMATTING;
         public static final int initialValueType = NOTYPE_IT;
         public static final int inherited = COMPUTED;
@@ -5007,9 +5035,10 @@ public abstract class Properties {
         public static PropertyValue getInitialValue(int property)
             throws PropertyException
         {
-            return Length.makeLength (PropNames.LEADER_LENGTH_MINIMUM, 0.0d, Length.PT);
+            return Length.makeLength(PropNames.LEADER_LENGTH_MINIMUM,
+                                                            0.0d, Length.PT);
         }
-        public static final int inherited = COMPOUND;
+        public static final int inherited = NO;
     }
 
     public static class LeaderLengthOptimum extends Properties {
@@ -5019,9 +5048,10 @@ public abstract class Properties {
         public static PropertyValue getInitialValue(int property)
             throws PropertyException
         {
-            return Length.makeLength (PropNames.LEADER_LENGTH_OPTIMUM, 12.0d, Length.PT);
+            return Length.makeLength(PropNames.LEADER_LENGTH_OPTIMUM,
+                                                            12.0d, Length.PT);
         }
-        public static final int inherited = COMPOUND;
+        public static final int inherited = NO;
     }
 
     public static class LeaderLengthMaximum extends Properties {
@@ -5031,9 +5061,10 @@ public abstract class Properties {
         public static PropertyValue getInitialValue(int property)
             throws PropertyException
         {
-            return Percentage.makePercentage (PropNames.LEADER_LENGTH_MAXIMUM, 100.0d);
+            return Percentage.makePercentage
+                                    (PropNames.LEADER_LENGTH_MAXIMUM, 100.0d);
         }
-        public static final int inherited = COMPOUND;
+        public static final int inherited = NO;
     }
 
     public static class LeaderPattern extends Properties {
@@ -5156,7 +5187,7 @@ public abstract class Properties {
 
     public static class LineHeight extends Properties {
         public static final int dataTypes =
-                    PERCENTAGE | LENGTH | NUMBER | MAPPED_NUMERIC | INHERIT;
+            COMPOUND| PERCENTAGE | LENGTH | NUMBER | MAPPED_NUMERIC | INHERIT;
         public static final int traitMapping = FORMATTING;
         public static final int initialValueType = NOTYPE_IT;
         public static final int NORMAL = 1;
@@ -5190,7 +5221,7 @@ public abstract class Properties {
         {
             return Ems.makeEms(PropNames.LINE_HEIGHT, 1.2d);
         }
-        public static final int inherited = COMPOUND;
+        public static final int inherited = NO;
     }
 
     public static class LineHeightOptimum extends Properties {
@@ -5202,7 +5233,7 @@ public abstract class Properties {
         {
             return Ems.makeEms(PropNames.LINE_HEIGHT, 1.2d);
         }
-        public static final int inherited = COMPOUND;
+        public static final int inherited = NO;
     }
 
     public static class LineHeightMaximum extends Properties {
@@ -5214,7 +5245,7 @@ public abstract class Properties {
         {
             return Ems.makeEms(PropNames.LINE_HEIGHT, 1.2d);
         }
-        public static final int inherited = COMPOUND;
+        public static final int inherited = NO;
     }
 
     public static class LineHeightConditionality extends Properties {
@@ -5224,9 +5255,10 @@ public abstract class Properties {
         public static PropertyValue getInitialValue(int property)
             throws PropertyException
         {
-            return new EnumType (PropNames.SPACE_AFTER_CONDITIONALITY, Conditionality.DISCARD);
+            return new EnumType(PropNames.SPACE_AFTER_CONDITIONALITY,
+                                                    Conditionality.DISCARD);
         }
-        public static final int inherited = COMPOUND;
+        public static final int inherited = NO;
 
         public static final ROStringArray enums = Conditionality.enums;
         public static final ROStringArray enumValues
@@ -5243,7 +5275,7 @@ public abstract class Properties {
             return new IntegerType(PropNames.LINE_HEIGHT_PRECEDENCE, 0);
         }
 
-        public static final int inherited = COMPOUND;
+        public static final int inherited = NO;
 
         public static final ROStringArray enums = PrecedenceCommon.enums;
         public static final ROStringArray enumValues
@@ -5328,7 +5360,7 @@ public abstract class Properties {
          * @param value <tt>PropertyValue</tt> returned by the parser
          * @return <tt>PropertyValue</tt> the verified value
          */
-        public static PropertyValue verifyParsing
+        public static PropertyValue refineParsing
                                         (FOTree foTree, PropertyValue value)
                     throws PropertyException
         {
@@ -5715,7 +5747,7 @@ public abstract class Properties {
          * @param value <tt>PropertyValue</tt> returned by the parser
          * @return <tt>PropertyValue</tt> the verified value
          */
-        public static PropertyValue verifyParsing
+        public static PropertyValue refineParsing
                                         (FOTree foTree, PropertyValue value)
                     throws PropertyException
         {
@@ -5776,27 +5808,29 @@ public abstract class Properties {
     }
 
     public static class PaddingAfter extends Properties {
-        public static final int dataTypes = PERCENTAGE | LENGTH | INHERIT;
+        public static final int dataTypes =
+                                    COMPOUND | PERCENTAGE | LENGTH | INHERIT;
         public static final int traitMapping = FORMATTING | RENDERING;
         public static final int initialValueType = LENGTH_IT;
         public static PropertyValue getInitialValue(int property)
             throws PropertyException
         {
-            return Length.makeLength (PropNames.PADDING_AFTER, 0.0d, Length.PT);
+            return Length.makeLength(PropNames.PADDING_AFTER, 0.0d, Length.PT);
         }
         public static final int inherited = NO;
     }
 
     public static class PaddingAfterLength extends Properties {
-        public static final int dataTypes = LENGTH;
+        public static final int dataTypes = PERCENTAGE | LENGTH;
         public static final int traitMapping = FORMATTING | RENDERING;
         public static final int initialValueType = LENGTH_IT;
         public static PropertyValue getInitialValue(int property)
             throws PropertyException
         {
-            return Length.makeLength (PropNames.PADDING_AFTER_LENGTH, 0.0d, Length.PT);
+            return Length.makeLength(PropNames.PADDING_AFTER_LENGTH,
+                                                            0.0d, Length.PT);
         }
-        public static final int inherited = COMPOUND;
+        public static final int inherited = NO;
     }
 
     public static class PaddingAfterConditionality extends Properties {
@@ -5806,13 +5840,14 @@ public abstract class Properties {
         public static PropertyValue getInitialValue(int property)
             throws PropertyException
         {
-            return new EnumType (PropNames.PADDING_AFTER_CONDITIONALITY, Conditionality.DISCARD);
+            return new EnumType(PropNames.PADDING_AFTER_CONDITIONALITY,
+                                                    Conditionality.DISCARD);
         }
-        public static final int inherited = COMPOUND;
+        public static final int inherited = NO;
 
         public static final ROStringArray enums = Conditionality.enums;
         public static final ROStringArray enumValues
-                                            = Conditionality.enumValues;
+                                                = Conditionality.enumValues;
     }
 
     public static class PaddingBefore extends Properties {
@@ -5822,7 +5857,8 @@ public abstract class Properties {
         public static PropertyValue getInitialValue(int property)
             throws PropertyException
         {
-            return Length.makeLength (PropNames.PADDING_BEFORE, 0.0d, Length.PT);
+            return Length.makeLength(PropNames.PADDING_BEFORE,
+                                                            0.0d, Length.PT);
         }
         public static final int inherited = NO;
     }
@@ -5834,9 +5870,10 @@ public abstract class Properties {
         public static PropertyValue getInitialValue(int property)
             throws PropertyException
         {
-            return Length.makeLength (PropNames.PADDING_BEFORE_LENGTH, 0.0d, Length.PT);
+            return Length.makeLength(PropNames.PADDING_BEFORE_LENGTH,
+                                                            0.0d, Length.PT);
         }
-        public static final int inherited = COMPOUND;
+        public static final int inherited = NO;
     }
 
     public static class PaddingBeforeConditionality extends Properties {
@@ -5846,9 +5883,10 @@ public abstract class Properties {
         public static PropertyValue getInitialValue(int property)
             throws PropertyException
         {
-            return new EnumType (PropNames.PADDING_BEFORE_CONDITIONALITY, Conditionality.DISCARD);
+            return new EnumType(PropNames.PADDING_BEFORE_CONDITIONALITY,
+                                                    Conditionality.DISCARD);
         }
-        public static final int inherited = COMPOUND;
+        public static final int inherited = NO;
 
         public static final ROStringArray enums = Conditionality.enums;
         public static final ROStringArray enumValues
@@ -5868,7 +5906,8 @@ public abstract class Properties {
     }
 
     public static class PaddingEnd extends Properties {
-        public static final int dataTypes = PERCENTAGE | LENGTH | INHERIT;
+        public static final int dataTypes =
+                                    COMPOUND | PERCENTAGE | LENGTH | INHERIT;
         public static final int traitMapping = FORMATTING | RENDERING;
         public static final int initialValueType = LENGTH_IT;
         public static PropertyValue getInitialValue(int property)
@@ -5880,15 +5919,16 @@ public abstract class Properties {
     }
 
     public static class PaddingEndLength extends Properties {
-        public static final int dataTypes = LENGTH;
+        public static final int dataTypes = PERCENTAGE | LENGTH;
         public static final int traitMapping = FORMATTING | RENDERING;
         public static final int initialValueType = LENGTH_IT;
         public static PropertyValue getInitialValue(int property)
             throws PropertyException
         {
-            return Length.makeLength (PropNames.PADDING_END_LENGTH, 0.0d, Length.PT);
+            return Length.makeLength(PropNames.PADDING_END_LENGTH,
+                                                            0.0d, Length.PT);
         }
-        public static final int inherited = COMPOUND;
+        public static final int inherited =  NO;
     }
 
     public static class PaddingEndConditionality extends Properties {
@@ -5898,9 +5938,10 @@ public abstract class Properties {
         public static PropertyValue getInitialValue(int property)
             throws PropertyException
         {
-            return new EnumType (PropNames.PADDING_END_CONDITIONALITY, Conditionality.DISCARD);
+            return new EnumType(PropNames.PADDING_END_CONDITIONALITY,
+                                                    Conditionality.DISCARD);
         }
-        public static final int inherited = COMPOUND;
+        public static final int inherited =  NO;
 
         public static final ROStringArray enums = Conditionality.enums;
         public static final ROStringArray enumValues
@@ -5932,7 +5973,8 @@ public abstract class Properties {
     }
 
     public static class PaddingStart extends Properties {
-        public static final int dataTypes = PERCENTAGE | LENGTH | INHERIT;
+        public static final int dataTypes =
+                                    COMPOUND | PERCENTAGE | LENGTH | INHERIT;
         public static final int traitMapping = FORMATTING | RENDERING;
         public static final int initialValueType = LENGTH_IT;
         public static PropertyValue getInitialValue(int property)
@@ -5944,15 +5986,16 @@ public abstract class Properties {
     }
 
     public static class PaddingStartLength extends Properties {
-        public static final int dataTypes = LENGTH;
+        public static final int dataTypes = PERCENTAGE | LENGTH;
         public static final int traitMapping = FORMATTING | RENDERING;
         public static final int initialValueType = LENGTH_IT;
         public static PropertyValue getInitialValue(int property)
             throws PropertyException
         {
-            return Length.makeLength (PropNames.PADDING_START_LENGTH, 0.0d, Length.PT);
+            return Length.makeLength(PropNames.PADDING_START_LENGTH,
+                                                            0.0d, Length.PT);
         }
-        public static final int inherited = COMPOUND;
+        public static final int inherited = NO;
     }
 
     public static class PaddingStartConditionality extends Properties {
@@ -5962,9 +6005,10 @@ public abstract class Properties {
         public static PropertyValue getInitialValue(int property)
             throws PropertyException
         {
-            return new EnumType (PropNames.PADDING_START_CONDITIONALITY, Conditionality.DISCARD);
+            return new EnumType(PropNames.PADDING_START_CONDITIONALITY,
+                                                    Conditionality.DISCARD);
         }
-        public static final int inherited = COMPOUND;
+        public static final int inherited = NO;
 
         public static final ROStringArray enums = Conditionality.enums;
         public static final ROStringArray enumValues
@@ -6018,7 +6062,7 @@ public abstract class Properties {
          * @param value <tt>PropertyValue</tt> returned by the parser
          * @return <tt>PropertyValue</tt> the verified value
          */
-        public static PropertyValue verifyParsing
+        public static PropertyValue refineParsing
                                         (FOTree foTree, PropertyValue value)
                         throws PropertyException
         {
@@ -6080,7 +6124,7 @@ public abstract class Properties {
          * @param value <tt>PropertyValue</tt> returned by the parser
          * @return <tt>PropertyValue</tt> the verified value
          */
-        public static PropertyValue verifyParsing
+        public static PropertyValue refineParsing
                                         (FOTree foTree, PropertyValue value)
                         throws PropertyException
         {
@@ -6136,7 +6180,7 @@ public abstract class Properties {
         public static final int traitMapping = SHORTHAND_MAP;
         public static final int initialValueType = AUTO_IT;
         public static final int AVOID = 1;
-        public static final int inherited = COMPUTED;
+        public static final int inherited = NO;
 
         private static final String[] rwEnums = {
             null
@@ -6150,7 +6194,7 @@ public abstract class Properties {
          * @param value <tt>PropertyValue</tt> returned by the parser
          * @return <tt>PropertyValue</tt> the verified value
          */
-        public static PropertyValue verifyParsing
+        public static PropertyValue refineParsing
                                         (FOTree foTree, PropertyValue value)
                         throws PropertyException
         {
@@ -6308,7 +6352,7 @@ public abstract class Properties {
          * @param value <tt>PropertyValue</tt> returned by the parser
          * @return <tt>PropertyValue</tt> the verified value
          */
-        public static PropertyValue verifyParsing
+        public static PropertyValue refineParsing
                                         (FOTree foTree, PropertyValue value)
                         throws PropertyException
         {
@@ -6783,12 +6827,12 @@ public abstract class Properties {
          * @param value <tt>PropertyValue</tt> returned by the parser
          * @return <tt>PropertyValue</tt> the verified value
          */
-        public static PropertyValue verifyParsing
+        public static PropertyValue refineParsing
                                         (FOTree foTree, PropertyValue list)
                         throws PropertyException
         {
             PropertyValue value =
-                        Properties.verifyParsing(foTree, list, IS_NESTED);
+                        Properties.refineParsing(foTree, list, IS_NESTED);
             // Confirm that the list contains only UriType elements
             Iterator iter = ((PropertyValueList)value).iterator();
             while (iter.hasNext()) {
@@ -6802,7 +6846,7 @@ public abstract class Properties {
     }
 
     public static class SpaceAfter extends Properties {
-        public static final int dataTypes = LENGTH | INHERIT;
+        public static final int dataTypes = COMPOUND | LENGTH | INHERIT;
         public static final int traitMapping = FORMATTING;
         public static final int initialValueType = NOTYPE_IT;
         public static final int inherited = NO;
@@ -6815,9 +6859,10 @@ public abstract class Properties {
         public static PropertyValue getInitialValue(int property)
             throws PropertyException
         {
-            return Length.makeLength (PropNames.SPACE_AFTER_MINIMUM, 0.0d, Length.PT);
+            return Length.makeLength(PropNames.SPACE_AFTER_MINIMUM,
+                                                            0.0d, Length.PT);
         }
-        public static final int inherited = COMPOUND;
+        public static final int inherited = NO;
     }
 
     public static class SpaceAfterOptimum extends Properties {
@@ -6827,9 +6872,10 @@ public abstract class Properties {
         public static PropertyValue getInitialValue(int property)
             throws PropertyException
         {
-            return Length.makeLength (PropNames.SPACE_AFTER_OPTIMUM, 0.0d, Length.PT);
+            return Length.makeLength(PropNames.SPACE_AFTER_OPTIMUM,
+                                                            0.0d, Length.PT);
         }
-        public static final int inherited = COMPOUND;
+        public static final int inherited = NO;
     }
 
     public static class SpaceAfterMaximum extends Properties {
@@ -6839,9 +6885,10 @@ public abstract class Properties {
         public static PropertyValue getInitialValue(int property)
             throws PropertyException
         {
-            return Length.makeLength (PropNames.SPACE_AFTER_MAXIMUM, 0.0d, Length.PT);
+            return Length.makeLength(PropNames.SPACE_AFTER_MAXIMUM,
+                                                            0.0d, Length.PT);
         }
-        public static final int inherited = COMPOUND;
+        public static final int inherited = NO;
     }
 
     public static class SpaceAfterConditionality extends Properties {
@@ -6851,9 +6898,10 @@ public abstract class Properties {
         public static PropertyValue getInitialValue(int property)
             throws PropertyException
         {
-            return new EnumType (PropNames.SPACE_AFTER_CONDITIONALITY, Conditionality.DISCARD);
+            return new EnumType(PropNames.SPACE_AFTER_CONDITIONALITY,
+                                                    Conditionality.DISCARD);
         }
-        public static final int inherited = COMPOUND;
+        public static final int inherited = NO;
 
         public static final ROStringArray enums = Conditionality.enums;
         public static final ROStringArray enumValues
@@ -6870,7 +6918,7 @@ public abstract class Properties {
             return new IntegerType(PropNames.SPACE_AFTER_PRECEDENCE, 0);
         }
 
-        public static final int inherited = COMPOUND;
+        public static final int inherited = NO;
 
         public static final ROStringArray enums = PrecedenceCommon.enums;
         public static final ROStringArray enumValues
@@ -6878,7 +6926,7 @@ public abstract class Properties {
     }
 
     public static class SpaceBefore extends Properties {
-        public static final int dataTypes = LENGTH | INHERIT;
+        public static final int dataTypes = COMPOUND | LENGTH | INHERIT;
         public static final int traitMapping = FORMATTING;
         public static final int initialValueType = NOTYPE_IT;
         public static final int inherited = NO;
@@ -6891,9 +6939,10 @@ public abstract class Properties {
         public static PropertyValue getInitialValue(int property)
             throws PropertyException
         {
-            return Length.makeLength (PropNames.SPACE_BEFORE_MINIMUM, 0.0d, Length.PT);
+            return Length.makeLength(PropNames.SPACE_BEFORE_MINIMUM,
+                                                            0.0d, Length.PT);
         }
-        public static final int inherited = COMPOUND;
+        public static final int inherited = NO;
     }
 
     public static class SpaceBeforeOptimum extends Properties {
@@ -6903,9 +6952,10 @@ public abstract class Properties {
         public static PropertyValue getInitialValue(int property)
             throws PropertyException
         {
-            return Length.makeLength (PropNames.SPACE_BEFORE_OPTIMUM, 0.0d, Length.PT);
+            return Length.makeLength(PropNames.SPACE_BEFORE_OPTIMUM,
+                                                            0.0d, Length.PT);
         }
-        public static final int inherited = COMPOUND;
+        public static final int inherited = NO;
     }
 
     public static class SpaceBeforeMaximum extends Properties {
@@ -6915,9 +6965,10 @@ public abstract class Properties {
         public static PropertyValue getInitialValue(int property)
             throws PropertyException
         {
-            return Length.makeLength (PropNames.SPACE_BEFORE_MAXIMUM, 0.0d, Length.PT);
+            return Length.makeLength(PropNames.SPACE_BEFORE_MAXIMUM,
+                                                            0.0d, Length.PT);
         }
-        public static final int inherited = COMPOUND;
+        public static final int inherited = NO;
     }
 
     public static class SpaceBeforeConditionality extends Properties {
@@ -6927,9 +6978,10 @@ public abstract class Properties {
         public static PropertyValue getInitialValue(int property)
             throws PropertyException
         {
-            return new EnumType (PropNames.SPACE_BEFORE_CONDITIONALITY, Conditionality.DISCARD);
+            return new EnumType(PropNames.SPACE_BEFORE_CONDITIONALITY,
+                                                    Conditionality.DISCARD);
         }
-        public static final int inherited = COMPOUND;
+        public static final int inherited = NO;
 
         public static final ROStringArray enums = Conditionality.enums;
         public static final ROStringArray enumValues
@@ -6946,7 +6998,7 @@ public abstract class Properties {
             return new IntegerType(PropNames.SPACE_BEFORE_PRECEDENCE, 0);
         }
 
-        public static final int inherited = COMPOUND;
+        public static final int inherited = NO;
 
         public static final ROStringArray enums = PrecedenceCommon.enums;
         public static final ROStringArray enumValues
@@ -6954,7 +7006,8 @@ public abstract class Properties {
     }
 
     public static class SpaceEnd extends Properties {
-        public static final int dataTypes = LENGTH | PERCENTAGE | INHERIT;
+        public static final int dataTypes =
+                                    COMPOUND | LENGTH | PERCENTAGE | INHERIT;
         public static final int traitMapping = FORMATTING;
         public static final int initialValueType = NOTYPE_IT;
         public static final int inherited = NO;
@@ -6967,9 +7020,10 @@ public abstract class Properties {
         public static PropertyValue getInitialValue(int property)
             throws PropertyException
         {
-            return Length.makeLength (PropNames.SPACE_END_MINIMUM, 0.0d, Length.PT);
+            return Length.makeLength(PropNames.SPACE_END_MINIMUM,
+                                                            0.0d, Length.PT);
         }
-        public static final int inherited = COMPOUND;
+        public static final int inherited = NO;
     }
 
     public static class SpaceEndOptimum extends Properties {
@@ -6979,9 +7033,10 @@ public abstract class Properties {
         public static PropertyValue getInitialValue(int property)
             throws PropertyException
         {
-            return Length.makeLength (PropNames.SPACE_END_OPTIMUM, 0.0d, Length.PT);
+            return Length.makeLength(PropNames.SPACE_END_OPTIMUM,
+                                                            0.0d, Length.PT);
         }
-        public static final int inherited = COMPOUND;
+        public static final int inherited = NO;
     }
 
     public static class SpaceEndMaximum extends Properties {
@@ -6991,9 +7046,10 @@ public abstract class Properties {
         public static PropertyValue getInitialValue(int property)
             throws PropertyException
         {
-            return Length.makeLength (PropNames.SPACE_END_MAXIMUM, 0.0d, Length.PT);
+            return Length.makeLength(PropNames.SPACE_END_MAXIMUM,
+                                                            0.0d, Length.PT);
         }
-        public static final int inherited = COMPOUND;
+        public static final int inherited = NO;
     }
 
     public static class SpaceEndConditionality extends Properties {
@@ -7003,9 +7059,10 @@ public abstract class Properties {
         public static PropertyValue getInitialValue(int property)
             throws PropertyException
         {
-            return new EnumType (PropNames.SPACE_END_CONDITIONALITY, Conditionality.DISCARD);
+            return new EnumType(PropNames.SPACE_END_CONDITIONALITY,
+                                                    Conditionality.DISCARD);
         }
-        public static final int inherited = COMPOUND;
+        public static final int inherited = NO;
 
         public static final ROStringArray enums = Conditionality.enums;
         public static final ROStringArray enumValues
@@ -7022,7 +7079,7 @@ public abstract class Properties {
             return new IntegerType(PropNames.SPACE_END_PRECEDENCE, 0);
         }
 
-        public static final int inherited = COMPOUND;
+        public static final int inherited = NO;
 
         public static final ROStringArray enums = PrecedenceCommon.enums;
         public static final ROStringArray enumValues
@@ -7030,7 +7087,8 @@ public abstract class Properties {
     }
 
     public static class SpaceStart extends Properties {
-        public static final int dataTypes = LENGTH | PERCENTAGE | INHERIT;
+        public static final int dataTypes =
+                                    COMPOUND | LENGTH | PERCENTAGE | INHERIT;
         public static final int traitMapping = FORMATTING;
         public static final int initialValueType = NOTYPE_IT;
         public static final int inherited = NO;
@@ -7043,9 +7101,10 @@ public abstract class Properties {
         public static PropertyValue getInitialValue(int property)
             throws PropertyException
         {
-            return Length.makeLength (PropNames.SPACE_START_MINIMUM, 0.0d, Length.PT);
+            return Length.makeLength(PropNames.SPACE_START_MINIMUM,
+                                                            0.0d, Length.PT);
         }
-        public static final int inherited = COMPOUND;
+        public static final int inherited = NO;
     }
 
     public static class SpaceStartOptimum extends Properties {
@@ -7055,9 +7114,10 @@ public abstract class Properties {
         public static PropertyValue getInitialValue(int property)
             throws PropertyException
         {
-            return Length.makeLength (PropNames.SPACE_START_OPTIMUM, 0.0d, Length.PT);
+            return Length.makeLength(PropNames.SPACE_START_OPTIMUM,
+                                                            0.0d, Length.PT);
         }
-        public static final int inherited = COMPOUND;
+        public static final int inherited = NO;
     }
 
     public static class SpaceStartMaximum extends Properties {
@@ -7067,9 +7127,10 @@ public abstract class Properties {
         public static PropertyValue getInitialValue(int property)
             throws PropertyException
         {
-            return Length.makeLength (PropNames.SPACE_START_MAXIMUM, 0.0d, Length.PT);
+            return Length.makeLength(PropNames.SPACE_START_MAXIMUM,
+                                                            0.0d, Length.PT);
         }
-        public static final int inherited = COMPOUND;
+        public static final int inherited = NO;
     }
 
     public static class SpaceStartConditionality extends Properties {
@@ -7079,9 +7140,10 @@ public abstract class Properties {
         public static PropertyValue getInitialValue(int property)
             throws PropertyException
         {
-            return new EnumType (PropNames.SPACE_START_CONDITIONALITY, Conditionality.DISCARD);
+            return new EnumType(PropNames.SPACE_START_CONDITIONALITY,
+                                                    Conditionality.DISCARD);
         }
-        public static final int inherited = COMPOUND;
+        public static final int inherited = NO;
 
         public static final ROStringArray enums = Conditionality.enums;
         public static final ROStringArray enumValues
@@ -7098,7 +7160,7 @@ public abstract class Properties {
             return new IntegerType(PropNames.SPACE_START_PRECEDENCE, 0);
         }
 
-        public static final int inherited = COMPOUND;
+        public static final int inherited = NO;
 
         public static final ROStringArray enums = PrecedenceCommon.enums;
         public static final ROStringArray enumValues
@@ -7255,7 +7317,7 @@ public abstract class Properties {
         public static final ROStringArray enums = new ROStringArray(rwEnums);
         public static final ROStringArray enumValues = enums;
 
-        public static PropertyValue verifyParsing
+        public static PropertyValue refineParsing
                 (FOTree foTree, PropertyValue list)
                         throws PropertyException
         {
@@ -7263,7 +7325,7 @@ public abstract class Properties {
             // N.B. it may be a possible to perform further checks on the
             // validity of the NCNames - do they match multi-case case names.
             if ( ! (list instanceof PropertyValueList))
-                return Properties.verifyParsing(foTree, list);
+                return Properties.refineParsing(foTree, list);
 
             PropertyValueList ssList =
                                 spaceSeparatedList((PropertyValueList)list);
@@ -7531,7 +7593,7 @@ public abstract class Properties {
                                     ,BLINK
                             });
 
-        public static PropertyValue verifyParsing
+        public static PropertyValue refineParsing
                 (FOTree foTree, PropertyValue list)
                         throws PropertyException
         {
@@ -7635,13 +7697,13 @@ public abstract class Properties {
          * <tt>Length</tt>s may be preceded or followed by a color
          * specifier.
          */
-        public static PropertyValue verifyParsing
+        public static PropertyValue refineParsing
                 (FOTree foTree, PropertyValue list)
                         throws PropertyException
         {
             int property = list.getProperty();
             if ( ! (list instanceof PropertyValueList)) {
-                return Properties.verifyParsing(foTree, list);
+                return Properties.refineParsing(foTree, list);
             }
             if (((PropertyValueList)list).size() == 0)
                 throw new PropertyException
@@ -7809,7 +7871,7 @@ public abstract class Properties {
         {
             return new EnumType (PropNames.WHITE_SPACE, NORMAL);
         }
-        public static final int inherited = SHORTHAND_INH;
+        public static final int inherited = NO;
 
         private static final String[] rwEnums = {
             null
@@ -7978,7 +8040,7 @@ public abstract class Properties {
         public static final int dataTypes = SHORTHAND;
         public static final int traitMapping = SHORTHAND_MAP;
         public static final int initialValueType = NOTYPE_IT;
-        public static final int inherited = SHORTHAND_INH;
+        public static final int inherited = NO;
     }
 
     public static class ZIndex extends Properties {
