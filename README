@@ -1,119 +1,135 @@
-FOP README
-
-$Id$
-
-Contributed by
-Fotis Jannidis, James Tauber
-
-FOP: An Open-Source XSL Formatter and Renderer
-
-What is FOP?
-
-FOP is the world's first print formatter driven by XSL formatting
-objects. It is a Java 1.1 application that reads a formatting object
-tree and then turns it into a PDF document. The formatting object
-tree, can be in the form of an XML document (output by an XSLT engine
-like XT or Xalan) or can be passed in memory as a DOM Document or (in
-the case of XT) SAX events.
 
 
-A. Compiling FOP
 
-1. Prerequisites
+   FOP: An Open-Source XSL Formatter and Renderer
+   
+   
 
-   a) Java 1.1.x or later
 
-   b) XT from James Clark
 
+1) What is FOP?
+2) Compiling FOP
+3) Running FOP
+4) What's Implemented?
+5) Bugs
+6) FOP Relevant Specifications
+
+
+  1) What is FOP?
+  FOP is the world's first print formatter driven by XSL formatting
+     objects. It is a Java 1.1 application that reads a formatting object
+     tree and then turns it into a PDF document. The formatting object
+     tree, can be in the form of an XML document (output by an XSLT engine
+     like XT or Xalan) or can be passed in memory as a DOM Document or (in
+     the case of XT) SAX events.
+
+  
+  FOP is part of Apache's XML project. The homepage of FOP is 
+     http:/xml.apache.org/fop (http:/xml.apache.org/fop)
+. 
+  
+
+
+
+  2) Compiling FOP
+  
+    1. Prerequisites
+
+      a) Java 1.1.x or later
+      
+    
+    
+      b) XT from James Clark
       Some of the Java source code in FOP is generated from XML using
-      XSLT. XT must be used to generate this code. 
-
-      XT is an XSL stylesheet processor written in java. At the moment
-      you can't use any other processor, because the make file makes
-      use of some proprietary features of Clark's xt which allow to
-      write output in more then one document. You can find XT at
-      <http://www.jclark.com/xml/xt.html>
-      You have to use XT version 19991105 or later.
-
-      (Under windows you shouldn't use the prepackaged xt.exe but also
-      the generic jar file, otherwise make won't work)
-
+         XSLT. XT must be used to generate this code.
+      XT is an XSL stylesheet processor written in java. At the moment you
+         can't use any other processor, because the make file makes use of some
+         proprietary features of Clark's xt which allow to write output in more
+         then one document. You can find XT at 
+        James Clark's website (http://www.jclark.com/xml/xt.html)
+. You have to use XT version 19991105 or later.
+      (Under windows you shouldn't use the prepackaged xt.exe but also the
+         generic jar file, otherwise make won't work)
+      
       XT relies on an sax parser like XP (also J. Clark), which can be
-      downloaded at <http://www.jclark.com/xml/xp/index.html>
+         downloaded at James 
+         Clark's Website (http://www.jclark.com/xml/xp/index.html)
 
-   c) make
+      
+    
+    
+      c) make
+      Under windows it has been reported that the use of the cygnus solutions port 
+         of the GNU utilities works. You can find it at 
+         Cygnus Solutions (http://sourceware.cygnus.com/cygwin/)
 
-      Under windows it has been reported that the use of the cygnus
-      solutions port of the GNU utilities works. You can find it at 
-      <http://sourceware.cygnus.com/cygwin/>
-
-
-
-B. Running FOP
-
-1) Prerequisites
-
-   Following software must be installed:
-
-   a) Java 1.1.x or later
-
-   b) A sax parser like XP <http://www.jclark.com/xml/xp/index.html>.
-
-   c) If you have to produce the formatting objects files, which are
-      the input for FOP, you need a transformation utility to create
-      this files from your xml files. 
-      Normally this is an XSLT stylesheet processor like XT
-      <http://www.jclark.com/xml/xt.html> or XALAN
-      <http://xml.apache.org/xalan/index.html>.
-
-2) Starting FOP as an standalone application
-
-   There are two ways of running FOP from the command line.
-
-   Method One
-
-   One is to first use an XSLT engine to produce the formatting object
-   tree as an XML document and then running the class
-   org.apache.fop.apps.CommandLine with the formatting object file
-   name and PDF filename as arguments. You will need to include FOP,
-   SAX and your SAX Parser in your classpath and so you might invoke 
-
-   java -cp fop_x_xx_x.jar;sax.jar;xp.jar
-   org.apache.fop.apps.CommandLine formatting-tree-file pdf-file
-
-   If your SAX Parser is other than XP, you will need to set the property
-   org.xml.sax.parser to the SAX Parser class to use.
-
-   Method Two
-
-   Rather than performing transformation with an XSLT before invoking
-   FOP, it is possible, if you use XT as your XSLT engine, to just
-   call FOP and have it call XT for you. To do this, run the class
-   org.apache.fop.apps.CommandLine with the source XML file name, XSL
-   file name and PDF file name as arguments. You will need to include
-   FOP, SAX, your SAX Parser and XT in your classpath and so you might
-   invoke 
-
-   java -cp fop_x_xx_x.jar;sax.jar;xp.jar;xt.jar
-   org.apache.fop.apps.XTCommandLine xml-file xsl-file pdf-file
-
-   Again, if your SAX Parser is other than XP, you will need to set
-   the property org.xml.sax.parser to the SAX Parser class to use.
-
-   Note: If you are using java 2 or later (i.e. jdk 1.2. or later) you
-   can put all needed jar files into the subdirectory
-   jdk1.2.x\jre\lib\ext (windows example). Then FOP can be started
-   without classpath:  
-
-   java org.apache.fop.apps.CommandLine formatting-tree-file pdf-file
+      
+    
+  
 
 
-C) What's Implemented?
 
-   Also see STATUS for what is being worked on.
+  3) Running FOP
+  
+    1) Prerequisites
+    Following software must be installed:
+    a) Java 1.1.x or later
+    b) A sax parser like XP (http://www.jclark.com/xml/xp/index.html)
+.
+    c) If you have to produce the flow objects files, which are the input for FOP, 
+       you need a transformation utility to create this files from your xml files. 
+       Normally this is an XSLT stylesheet processor like 
+       XT (http://www.jclark.com/xml/xt.html)
+ 
+       or XALAN (http://xml.apache.org/xalan/index.html)
+. 
+    
+  
+  
+    2) Starting FOP as an standalone application
+    There are two ways of running FOP from the command line.
+    
+      a) Method One
+      One is to first use an XSLT engine to produce the formatting object tree as an 
+         XML document and then running the class org.apache.fop.apps.CommandLine with the
+         formatting object file name and PDF filename as arguments. You will need to include 
+         FOP, SAX and your SAX Parser in your classpath and so you might invoke 
+      
+      java -cp fop_x_xx_x.jar;sax.jar;xp.jar
+      org.apache.fop.apps.CommandLine formatting-tree-file pdf-file
+      If your SAX Parser is other than XP, you will need to set the property 
+         org.xml.sax.parser to the SAX Parser class to use.
+      
+    
+    
+      b) Method Two
+      Rather than performing transformation with an XSLT before invoking FOP, it is 
+         possible, if you use XT as your XSLT engine, to just call FOP and have it call 
+         XT for you. To do this, run the class org.apache.fop.apps.CommandLine with the 
+         source XML file name, XSL file name and PDF file name as arguments. You will 
+         need to include FOP, SAX, your SAX Parser and XT in your classpath and so you might 
+         invoke 
+      
+      java -cp fop_x_xx_x.jar;sax.jar;xp.jar;xt.jar
+      org.apache.fop.apps.CommandLine xml-file xsl-file pdf-file
+      Again, if your SAX Parser is other than XP, you will need to set the property
+         org.xml.sax.parser to the SAX Parser class to use.
+      
+      Note: If you are using java 2 or later (i.e. jdk 1.2. or later) you can put all 
+         needed jar files into the subdirectory jdk1.2.x\jre\lib\ext (windows example). Then 
+         FOP can be started without classpath: 
+      
+      java org.apache.fop.apps.CommandLine formatting-tree-file pdf-file
+    
+  
 
-   a) Formatting Objects
 
+
+  4) What's Implemented?
+      Also see STATUS for what is being worked on.
+  
+    a) Formatting Objects
+    
       root 
       layout-master-set 
       simple-page-master 
@@ -143,8 +159,11 @@ C) What's Implemented?
       table-row (minimal support)
       table-cell (minimal support)
 
-   b) Properties
 
+  
+  
+    b) Properties
+    
       end-indent 
       page-master-name 
       page-master-first 
@@ -152,8 +171,8 @@ C) What's Implemented?
       page-master-odd 
       page-master-even 
       margin-top (only on pages and regions)
-      margin-bottom (only on pages and regions) 
-      margin-left (only on pages and regions) 
+      margin-bottom (only on pages and regions)
+      margin-left (only on pages and regions)
       margin-right (only on pages and regions)
       extent 
       page-width 
@@ -179,35 +198,43 @@ C) What's Implemented?
       break-before 
       break-after 
       text-indent 
-      href 
+      href
       column-width
+    
+  
 
-D) Bugs
 
-   see STATUS file     
 
-E) FOP Relevant Specifications
+  5) Bugs
+  see STATUS file
 
-   XML Recommendation
-	<http://www.w3.org/TR/REC-xml>
 
-   XSL-FO Working Draft
-	<http://www.w3.org/TR/WD-xsl/>
 
-   XSLT Recommandation
-	<http://www.w3.org/TR/xslt>
+  6) FOP Relevant Specifications
+  
+    XML Recommendation (http://www.w3.org/TR/REC-xml)
 
-   PDF Documentation
-	<http://partners.adobe.com/asn/developer/acrosdk/DOCS/pdfspec.pdf>
+    XSL-FO Working Draft (http://www.w3.org/TR/WD-xsl/)
 
-   Simple API for XML (SAX)
-	<http://www.megginson.com/SAX/>
+    XSLT Recommandation (http://www.w3.org/TR/xslt)
 
-   Document Object Model (DOM)
-	<http://www.w3.org/TR/REC-DOM-Level-1>
+    PDF Documentation (http://partners.adobe.com/asn/developer/acrosdk/DOCS/pdfspec.pdf)
 
-   Namespaces in XML Recommendation
-	<http://www.w3.org/TR/REC-xml-names/>
+    Simple API for XML (SAX) (http://www.megginson.com/SAX/)
 
-   Java JDK 1.1 Documentation
-	 <http://java.sun.com/products/jdk/1.1/docs/index.html>
+    Document Object Model (DOM) (http://www.w3.org/TR/REC-DOM-Level-1)
+
+    Namespaces in XML Recommendation (http://www.w3.org/TR/REC-xml-names/)
+
+    Java JDK 1.1 Documentation (http://java.sun.com/products/jdk/1.1/docs/index.html)
+
+  
+
+
+
+
+
+
+Version: 1.3 1999/11/23 03:31:30 - 
+Contact: James Tauber (jtauber@jtauber.com)
+
