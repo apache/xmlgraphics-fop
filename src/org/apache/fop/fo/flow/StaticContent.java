@@ -77,7 +77,7 @@ public class StaticContent extends Flow {
             Status status;
             if ((status = fo.layout(area)).isIncomplete()) {
                 // in fact all should be laid out and clip, error etc depending on 'overflow'
-                log.debug("Warning: Some static content could not fit in the area.");
+                log.warn("Some static content could not fit in the area.");
                 this.marker = i;
                 if ((i != 0) && (status.getCode() == Status.AREA_FULL_NONE)) {
                     status = new Status(Status.AREA_FULL_SOME);
