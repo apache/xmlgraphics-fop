@@ -134,13 +134,6 @@
     <default>6pt</default>
   </property>
   <property>
-    <name>id</name>
-    <class-name>ID</class-name>
-    <inherited>false</inherited>
-    <datatype>String</datatype>
-    <default></default>
-  </property>
-  <property>
     <name>margin-right</name>
     <class-name>MarginRight</class-name>
     <inherited>false</inherited>
@@ -799,20 +792,20 @@
     <datatype>String</datatype>
     <default>auto</default>
   </property>
-	<property>
-		<name>ref-id</name>
-		<class-name>RefId</class-name>
-		<inherited>false</inherited>
-		<datatype>String</datatype>
-		<default></default> 
-	</property>
-	<property>
-		<name>id</name>
-		<class-name>Id</class-name>
-		<inherited>false</inherited>
-		<datatype>String</datatype>
-		<default></default> 
-	</property>
+  <property>
+   <name>ref-id</name>
+	<class-name>RefId</class-name>
+	<inherited>false</inherited>
+	<datatype>String</datatype>
+	<default></default> 
+  </property>
+  <property>
+	<name>id</name>
+	<class-name>Id</class-name>
+	<inherited>false</inherited>
+	<datatype>String</datatype>
+	<default></default> 
+   </property>
 
 
 </property-list>
