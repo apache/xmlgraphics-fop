@@ -27,13 +27,13 @@ import java.util.logging.Level;
 // fop
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
+import org.apache.commons.cli.GnuParser;
 import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.OptionBuilder;
 import org.apache.commons.cli.OptionGroup;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
-import org.apache.commons.cli.PosixParser;
 import org.apache.fop.apps.FOPException;
 
 /**
@@ -210,7 +210,7 @@ public class CLI_Options extends UserOptions {
      */
     private boolean parseOptions(String[] args) throws FOPException {
         options = makeOptions();
-        CommandLineParser parser = new PosixParser();
+        CommandLineParser parser = new GnuParser();
         CommandLine cli;
         String[] xslParams = null;
         String[] remArgs = null;
