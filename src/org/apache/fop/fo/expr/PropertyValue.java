@@ -14,7 +14,7 @@ import org.apache.fop.fo.expr.PropertyException;
  * @version $Revision$ $Name$
  */
 /**
- * Base class for all property value types.
+ * Base interface for all property value types.
  */
 
 public interface PropertyValue {
@@ -56,6 +56,11 @@ public interface PropertyValue {
      */
     public int getProperty();
     public void setProperty(int index) throws PropertyException;
+
+    /**
+     * @return type field of the <tt>PropertyValue</tt>.
+     */
+    public int getType();
 
     /**
      * In some circumstances, the property against which a type is to be

@@ -77,6 +77,13 @@ public abstract class AbstractPropertyValue
     }
 
     /**
+     * @return type field of the <tt>PropertyValue</tt>.
+     */
+    public int getType() {
+        return type;
+    }
+
+    /**
      * In some circumstances, the property against which a type is to be
      * validated may not be the same as the property against which this
      * <i>AbstractPropertyValue</i> is defined.
