@@ -18,7 +18,13 @@
 
 package org.apache.fop.fo.flow;
 
+// XML
+import org.xml.sax.Attributes;
+import org.xml.sax.Locator;
+import org.xml.sax.SAXParseException;
+
 // FOP
+import org.apache.fop.fo.FOElementMapping;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FObjMixed;
 import org.apache.fop.layoutmgr.AddLMVisitor;
@@ -30,36 +36,72 @@ import org.apache.fop.fo.properties.CommonRelativePosition;
  */
 public class BidiOverride extends FObjMixed {
 
+    // used for FO validation
+    private boolean blockOrInlineItemFound = false;
+    private boolean canHaveBlockLevelChildren = true;
+
     /**
      * @param parent FONode that is the parent of this object
      */
     public BidiOverride(FONode parent) {
         super(parent);
+        
+       /* Check to see if this node can have block-level children.
+        * See validateChildNode() below.
+        */
+       int lvlLeader = findAncestor("fo:leader");
+       int lvlInCntr = findAncestor("fo:inline-container");
+       int lvlInline = findAncestor("fo:inline");
+       int lvlFootnote = findAncestor("fo:footnote");
+
+       if (lvlLeader > 0) {
+           if (lvlInCntr < 0 ||
+               (lvlInCntr > 0 && lvlInCntr > lvlLeader)) {
+               canHaveBlockLevelChildren = false;
+           }
+       } else if (lvlInline > 0 && lvlFootnote == (lvlInline + 1)) {
+           if (lvlInCntr < 0 ||
+           (lvlInCntr > 0 && lvlInCntr > lvlInline)) {
+               canHaveBlockLevelChildren = false;
+           }
+       }
+
     }
 
-    private void setup() {
-
-        // Common Aural Properties
-        CommonAural mAurProps = propMgr.getAuralProps();
-
-        // Common Font Properties
-        //this.fontState = propMgr.getFontState(area.getFontInfo());
-
-        // Common Margin Properties-Inline
-        CommonRelativePosition mProps = propMgr.getRelativePositionProps();
-
-        // this.propertyList.get("color");
-        // this.propertyList.get("direction");
+    /**
+     * @see org.apache.fop.fo.FObj#addProperties
+     */
+    protected void addProperties(Attributes attlist) throws SAXParseException {
+        super.addProperties(attlist);
         setupID();
-        // this.propertyList.get("letter-spacing");
-        // this.propertyList.get("line-height");
-        // this.propertyList.get("line-height-shift-adjustment");
-        // this.propertyList.get("score-spaces");
-        // this.propertyList.get("text-shadow");
-        // this.propertyList.get("text-transform");
-        // this.propertyList.get("unicode-bidi");
-        // this.propertyList.get("word-spacing");
+    }
 
+    /**
+     * @see org.apache.fop.fo.FONode#validateChildNode(Locator, String, String)
+     * XSL Content Model: marker* (#PCDATA|%inline;|%block;)*
+     * Additionally: "An fo:bidi-override that is a descendant of an fo:leader
+     *  or of the fo:inline child of an fo:footnote may not have block-level
+     *  children, unless it has a nearer ancestor that is an 
+     *  fo:inline-container."
+     */
+    protected void validateChildNode(Locator loc, String nsURI, String localName) 
+        throws SAXParseException {
+        if (nsURI == FOElementMapping.URI && localName.equals("marker")) {
+            if (blockOrInlineItemFound) {
+               nodesOutOfOrderError(loc, "fo:marker", 
+                    "(#PCDATA|%inline;|%block;)");
+            }
+        } else if (!isBlockOrInlineItem(nsURI, localName)) {
+            invalidChildError(loc, nsURI, localName);
+        } else if (!canHaveBlockLevelChildren && isBlockItem(nsURI, localName)) {
+            invalidChildError(loc, nsURI, localName);
+        } else {
+            blockOrInlineItemFound = true;
+        }
+    }
+    
+    public String getName() {
+        return "fo:bidi-override";
     }
 
     /**
@@ -76,9 +118,5 @@ public class BidiOverride extends FObjMixed {
      */
     public void acceptVisitor(AddLMVisitor aLMV) {
         aLMV.serveBidiOverride(this);
-    }
-
-    public String getName() {
-        return "fo:bidi-override";
     }
 }

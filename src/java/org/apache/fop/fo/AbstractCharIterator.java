@@ -33,7 +33,7 @@ public abstract class AbstractCharIterator implements CharIterator, Cloneable {
     /**
      * @see org.apache.fop.fo.CharIterator#nextChar()
      */
-    public abstract char nextChar() throws NoSuchElementException ;
+    public abstract char nextChar() throws NoSuchElementException;
 
     /**
      * @see java.util.Iterator#next()
