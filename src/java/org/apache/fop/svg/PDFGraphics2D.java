@@ -32,7 +32,7 @@ import org.apache.fop.pdf.PDFDocument;
 import org.apache.fop.pdf.PDFLink;
 import org.apache.fop.pdf.PDFAnnotList;
 import org.apache.fop.pdf.BitmapImage;
-import org.apache.fop.apps.Document;
+import org.apache.fop.fonts.FontInfo;
 import org.apache.fop.fonts.Font;
 import org.apache.fop.fonts.FontSetup;
 import org.apache.fop.fonts.FontMetrics;
@@ -128,7 +128,7 @@ public class PDFGraphics2D extends AbstractGraphics2D {
     /**
      * The current font information.
      */
-    protected Document fontInfo;
+    protected FontInfo fontInfo;
 
     /**
      * The override font state used when drawing text and the font cannot be
@@ -172,7 +172,7 @@ public class PDFGraphics2D extends AbstractGraphics2D {
      * @param font the current font name
      * @param size the current font size
      */
-    public PDFGraphics2D(boolean textAsShapes, Document fi, PDFDocument doc,
+    public PDFGraphics2D(boolean textAsShapes, FontInfo fi, PDFDocument doc,
                          PDFResourceContext page, String pref, String font, float size) {
         super(textAsShapes);
         pdfDoc = doc;
@@ -943,7 +943,7 @@ public class PDFGraphics2D extends AbstractGraphics2D {
     private void createPattern(PatternPaint pp, boolean fill) {
         Rectangle2D rect = pp.getPatternRect();
 
-        Document fontInfo = new Document(null);
+        FontInfo fontInfo = new FontInfo();
         FontSetup.setup(fontInfo, null);
 
         PDFResources res = pdfDoc.getFactory().makeResources();

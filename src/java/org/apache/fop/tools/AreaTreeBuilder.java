@@ -33,8 +33,7 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.w3c.dom.Element;
-/* org.w3c.dom.Document is not imported to avoid conflict with
-   org.apache.fop.control.Document */
+import org.w3c.dom.Document;
 
 // Batik
 import org.apache.batik.dom.svg.SVGDOMImplementation;
@@ -68,8 +67,8 @@ import org.apache.fop.area.inline.Leader;
 import org.apache.fop.area.inline.Space;
 import org.apache.fop.area.inline.Viewport;
 import org.apache.fop.area.inline.TextArea;
-import org.apache.fop.apps.Document;
 import org.apache.fop.fonts.Font;
+import org.apache.fop.fonts.FontInfo;
 import org.apache.fop.render.Renderer;
 import org.apache.fop.render.pdf.PDFRenderer;
 import org.apache.fop.render.svg.SVGRenderer;
@@ -161,14 +160,14 @@ public class AreaTreeBuilder {
         }
 
         rend.setLogger(logger);
-        Document fi = new Document(null);
-        rend.setupFontInfo(fi);
+        org.apache.fop.apps.Document doc = new org.apache.fop.apps.Document(null);
+        rend.setupFontInfo(doc.getFontInfo());
         FOUserAgent ua = new FOUserAgent();
         ua.setLogger(logger);
         rend.setUserAgent(ua);
 
         StorePagesModel sm = AreaTree.createStorePagesModel();
-        TreeLoader tl = new TreeLoader(fi);
+        TreeLoader tl = new TreeLoader(doc);
         tl.setLogger(logger);
         tl.setTreeModel(sm);
         try {
@@ -240,12 +239,12 @@ public class AreaTreeBuilder {
 class TreeLoader {
     private AreaTree areaTree;
     private AreaTreeModel model;
-    private Document fontInfo;
+    private org.apache.fop.apps.Document document;
     private Font currentFontState;
     private Log logger = null;
 
-    TreeLoader(Document fi) {
-        fontInfo = fi;
+    TreeLoader(org.apache.fop.apps.Document doc) {
+        document = doc;
     }
 
     /**
@@ -261,7 +260,7 @@ class TreeLoader {
     }
 
     public void buildAreaTree(InputStream is) {
-        org.w3c.dom.Document doc = null;
+        Document doc = null;
         try {
             DocumentBuilderFactory fact =
               DocumentBuilderFactory.newInstance();
@@ -273,7 +272,7 @@ class TreeLoader {
         Element root = null;
         root = doc.getDocumentElement();
 
-        areaTree = new AreaTree(fontInfo);
+        areaTree = new AreaTree(document);
         areaTree.setTreeModel(model);
 
         readAreaTree(root);
@@ -533,7 +532,7 @@ class TreeLoader {
                     // error
                 }
                 LineArea line = new LineArea();
-        addTraits((Element) obj, line);
+                addTraits((Element) obj, line);
                 String height = ((Element) obj).getAttribute("height");
                 int h = Integer.parseInt(height);
                 line.setHeight(h);
@@ -560,8 +559,8 @@ class TreeLoader {
                 Character ch =
                   new Character(getString((Element) obj).charAt(0));
                 addTraits((Element) obj, ch);
-                String fname = fontInfo.fontLookup("sans-serif", "normal", Font.NORMAL);
-                FontMetrics metrics = fontInfo.getMetricsFor(fname);
+                String fname = document.getFontInfo().fontLookup("sans-serif", "normal", Font.NORMAL);
+                FontMetrics metrics = document.getFontInfo().getMetricsFor(fname);
                 currentFontState =
                     new Font(fname, metrics, 12000);
 
@@ -585,8 +584,8 @@ class TreeLoader {
                     list.add(leader);
                 }
             } else if (obj.getNodeName().equals("word")) {
-                String fname = fontInfo.fontLookup("sans-serif", "normal", Font.NORMAL);
-                FontMetrics metrics = fontInfo.getMetricsFor(fname);
+                String fname = document.getFontInfo().fontLookup("sans-serif", "normal", Font.NORMAL);
+                FontMetrics metrics = document.getFontInfo().getMetricsFor(fname);
                 currentFontState =
                     new Font(fname, metrics, 12000);
                 TextArea text = getText((Element) obj);
@@ -639,7 +638,7 @@ class TreeLoader {
     }
 
     ForeignObject getForeignObject(Element root) {
-        org.w3c.dom.Document doc;
+        Document doc;
         String svgNS = SVGDOMImplementation.SVG_NAMESPACE_URI;
 
         NodeList childs = root.getChildNodes();

@@ -262,8 +262,7 @@ public class PDFRenderer extends PrintRenderer {
      * @see org.apache.fop.render.Renderer#stopRenderer()
      */
     public void stopRenderer() throws IOException {
-        pdfDoc.getResources().addFonts(pdfDoc,
-            (org.apache.fop.apps.Document) fontInfo);
+        pdfDoc.getResources().addFonts(pdfDoc, fontInfo);
         pdfDoc.outputTrailer(ostream);
 
         this.pdfDoc = null;

@@ -386,18 +386,18 @@ public class PSTextPainter implements TextPainter {
                     return;
                 }*/
                 fontFamily = fam.getFamilyName();
-                if (document.hasFont(fontFamily, style, weight)) {
-                    String fname = document.fontLookup(
+                if (document.getFontInfo().hasFont(fontFamily, style, weight)) {
+                    String fname = document.getFontInfo().fontLookup(
                             fontFamily, style, weight);
-                    FontMetrics metrics = document.getMetricsFor(fname);
+                    FontMetrics metrics = document.getFontInfo().getMetricsFor(fname);
                     int fsize = (int)(fontSize.floatValue() * 1000);
                     return new Font(fname, metrics, fsize);
                 }
             }
         }
-        String fname = document.fontLookup(
+        String fname = document.getFontInfo().fontLookup(
                 "any", style, Font.NORMAL);
-        FontMetrics metrics = document.getMetricsFor(fname);
+        FontMetrics metrics = document.getFontInfo().getMetricsFor(fname);
         int fsize = (int)(fontSize.floatValue() * 1000);
         return new Font(fname, metrics, fsize);
     }

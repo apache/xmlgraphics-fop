@@ -25,7 +25,7 @@ import org.apache.fop.area.inline.ForeignObject;
 import org.apache.fop.area.inline.Leader;
 import org.apache.fop.area.inline.TextArea;
 import org.apache.fop.svg.SVGUtilities;
-import org.apache.fop.apps.Document;
+import org.apache.fop.fonts.FontInfo;
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.fo.FOTreeControl;
 
@@ -134,11 +134,11 @@ public class SVGRenderer extends AbstractRenderer implements XMLHandler {
     /**
      * @see org.apache.fop.render.Renderer#setupFontInfo(FOTreeControl)
      */
-    public void setupFontInfo(FOTreeControl foTreeControl) {
+    public void setupFontInfo(FontInfo fontInfo) {
         // create a temp Image to test font metrics on
         BufferedImage fontImage =
           new BufferedImage(1, 1, BufferedImage.TYPE_INT_RGB);
-        org.apache.fop.render.awt.FontSetup.setup((Document)foTreeControl,
+        org.apache.fop.render.awt.FontSetup.setup(fontInfo,
                 fontImage.createGraphics());
     }
 

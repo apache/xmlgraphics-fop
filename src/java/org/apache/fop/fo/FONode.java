@@ -71,7 +71,7 @@ public abstract class FONode {
      * @return the logger
      */
     public Log getLogger() {
-        return getFOTreeControl().getLogger();
+        return getFOTreeControl().getDriver().getLogger();
     }
 
     /**
@@ -79,7 +79,7 @@ public abstract class FONode {
      * @return FOUserAgent
      */
     public FOUserAgent getUserAgent() {
-        return getFOTreeControl().getUserAgent();
+        return getFOTreeControl().getDriver().getUserAgent();
     }
 
     /**

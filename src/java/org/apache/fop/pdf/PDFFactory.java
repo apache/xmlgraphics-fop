@@ -26,7 +26,6 @@ import java.util.List;
 import java.util.Map;
 
 // Apache libs
-import org.apache.avalon.framework.container.ContainerUtil;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;

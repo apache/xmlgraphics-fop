@@ -35,7 +35,7 @@ import org.apache.fop.area.inline.Leader;
 import org.apache.fop.area.inline.Space;
 import org.apache.fop.area.inline.Viewport;
 import org.apache.fop.area.inline.TextArea;
-import org.apache.fop.fo.FOTreeControl;
+import org.apache.fop.fonts.FontInfo;
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.commons.logging.Log;
 
@@ -92,9 +92,9 @@ public interface Renderer {
     /**
      * Set up the given FontInfo.
      *
-     * @param fontInfo  The fonts
+     * @param fontInfo  The font information
      */
-    void setupFontInfo(FOTreeControl foTreeControl);
+    void setupFontInfo(FontInfo fontInfo);
 
     /**
      * Set up renderer options.

@@ -45,7 +45,7 @@ import java.io.OutputStream;
 import java.util.Map;
 import java.util.Vector;
 
-import org.apache.fop.apps.Document;
+import org.apache.fop.fonts.FontInfo;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.apps.InputHandler;
 import org.apache.fop.area.Area;
@@ -79,7 +79,7 @@ public class AWTRenderer extends AbstractRenderer implements Printable, Pageable
     private BufferedImage currentPageImage = null;
     
     /** Font configuration */
-    protected Document fontInfo;
+    protected FontInfo fontInfo;
 
     /**
         The InputHandler associated with this Renderer.
@@ -125,9 +125,9 @@ public class AWTRenderer extends AbstractRenderer implements Printable, Pageable
         return translator;
     }
 
-    public void setupFontInfo(FOTreeControl foTreeControl) {
+    public void setupFontInfo(FontInfo inFontInfo) {
         // create a temp Image to test font metrics on
-        fontInfo = (Document) foTreeControl;
+        fontInfo = inFontInfo;
         BufferedImage fontImage =
             new BufferedImage(100, 100, BufferedImage.TYPE_INT_RGB);
         FontSetup.setup(fontInfo, fontImage.createGraphics());

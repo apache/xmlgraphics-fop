@@ -20,7 +20,7 @@ package org.apache.fop.render;
 
 // FOP
 import org.apache.fop.apps.Document;
-import org.apache.fop.fo.FOTreeControl;
+import org.apache.fop.fonts.FontInfo;
 import org.apache.fop.fonts.FontSetup;
 
 // Java
@@ -30,7 +30,7 @@ import java.util.List;
 public abstract class PrintRenderer extends AbstractRenderer {
 
     /** Font configuration */
-    protected FOTreeControl fontInfo;
+    protected FontInfo fontInfo;
 
     /** list of fonts */
     protected List fontList = null;
@@ -40,9 +40,9 @@ public abstract class PrintRenderer extends AbstractRenderer {
      *
      * @param fontInfo  font info to set up
      */
-    public void setupFontInfo(FOTreeControl foTreeControl) {
-        this.fontInfo = foTreeControl;
-        FontSetup.setup((Document)fontInfo, fontList);
+    public void setupFontInfo(FontInfo inFontInfo) {
+        this.fontInfo = inFontInfo;
+        FontSetup.setup(fontInfo, fontList);
     }
 
 }

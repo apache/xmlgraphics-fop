@@ -222,7 +222,7 @@ public class AreaTree {
         if (atControl.getBookmarks() == null) {
             return;
         }
-        atControl.getLogger().debug("adding bookmarks to area tree");
+        atControl.getDriver().getLogger().debug("adding bookmarks to area tree");
         BookmarkData data = new BookmarkData();
         for (int count = 0; count < atControl.getBookmarks().getOutlines().size(); count++) {
             Outline out = (Outline)(atControl.getBookmarks().getOutlines()).get(count);

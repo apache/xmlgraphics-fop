@@ -61,7 +61,7 @@ import org.apache.fop.area.inline.TextArea;
 import org.apache.fop.area.inline.Character;
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.fo.Constants;
-import org.apache.fop.fo.FOTreeControl;
+import org.apache.fop.fonts.FontInfo;
 import org.apache.fop.fo.pagination.Region;
 import org.apache.commons.logging.Log;
 
@@ -170,7 +170,7 @@ public abstract class AbstractRenderer
     /**
      *  @see org.apache.fop.render.Renderer
      */
-    public abstract void setupFontInfo(FOTreeControl foTreeControl);
+    public abstract void setupFontInfo(FontInfo fontInfo);
 
     /**
      *  @see org.apache.fop.render.Renderer
