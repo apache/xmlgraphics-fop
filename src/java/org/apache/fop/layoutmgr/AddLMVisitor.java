@@ -140,11 +140,11 @@ public class AddLMVisitor extends FOTreeVisitor {
 
     /** The List object to which methods in this class should add Layout
      *  Managers */
-    private List currentLMList;
+    protected List currentLMList;
 
     /** A List object which can be used to save and restore the currentLMList if
      * another List should temporarily be used */
-    private List saveLMList;
+    protected List saveLMList;
 
     /**
      *
