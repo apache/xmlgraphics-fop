@@ -359,8 +359,7 @@ XML access. This may be easier to understand for people familiar with JAXP.
     <title>ExampleFO2PDF.java</title>
     <p>
         <fork href="http://cvs.apache.org/viewcvs.cgi/xml-fop/examples/embedding/java/embedding/ExampleFO2PDF.java?rev=HEAD">
-            This example
-        </fork>
+            This example</fork>
 demonstrates the basic usage pattern to transform an XSL-FO
 file to PDF using FOP.
     </p>
@@ -370,8 +369,7 @@ file to PDF using FOP.
     <title>ExampleXML2FO.java</title>
     <p>
         <fork href="http://cvs.apache.org/viewcvs.cgi/xml-fop/examples/embedding/java/embedding/ExampleXML2FO.java?rev=HEAD">
-            This example
-        </fork>
+            This example</fork>
 has nothing to do with FOP. It is there to show you how an XML 
 file can be converted to XSL-FO using XSLT. The JAXP API is used to do the
 transformation. Make sure you've got a JAXP-compliant XSLT processor in your 
@@ -383,8 +381,7 @@ classpath (ex. <fork href="http://xml.apache.org/xalan-j">Xalan</fork>).
     <title>ExampleXML2PDF.java</title>
     <p>
         <fork href="http://cvs.apache.org/viewcvs.cgi/xml-fop/examples/embedding/java/embedding/ExampleXML2PDF.java?rev=HEAD">
-        This example
-        </fork>
+        This example</fork>
 demonstrates how you can convert an arbitrary XML file to PDF 
 using XSLT and XSL-FO/FOP. It is a combination of the first two examples 
 above. The example uses JAXP to transform the XML file to XSL-FO and FOP to 
@@ -437,8 +434,7 @@ used. For more detailed information see other resources on JAXP (ex.
     <title>ExampleObj2PDF.java</title>
     <p>
         <fork href="http://cvs.apache.org/viewcvs.cgi/xml-fop/examples/embedding/java/embedding/ExampleObj2PDF.java?rev=HEAD">
-            The last example
-        </fork>
+            The last example</fork>
 here combines the previous and the third to demonstrate 
 how you can transform a Java object to a PDF directly in one smooth run
 by generating SAX events from the Java object that get fed to an XSL 
