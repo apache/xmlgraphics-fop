@@ -505,4 +505,98 @@ public class PDFShading extends PDFObject {
         return (p.toString().getBytes());
     }
 
+    public boolean equals(Object obj) {
+        if(obj == null) {
+            return false;
+        }
+        if(obj == this) {
+            return true;
+        }
+        if(!(obj instanceof PDFShading)) {
+            return false;
+        }
+        PDFShading shad = (PDFShading)obj;
+        if(shadingType != shad.shadingType) {
+            return false;
+        }
+        if(antiAlias != shad.antiAlias) {
+            return false;
+        }
+        if(bitsPerCoordinate != shad.bitsPerCoordinate) {
+            return false;
+        }
+        if(bitsPerFlag != shad.bitsPerFlag) {
+            return false;
+        }
+        if(bitsPerComponent != shad.bitsPerComponent) {
+            return false;
+        }
+        if(verticesPerRow != shad.verticesPerRow) {
+            return false;
+        }
+        if(colorSpace != null) {
+            if(!colorSpace.equals(shad.colorSpace)) {
+                return false;
+            }
+        } else if(shad.colorSpace != null) {
+            return false;
+        }
+        if(background != null) {
+            if(!background.equals(shad.background)) {
+                return false;
+            }
+        } else if(shad.background != null) {
+            return false;
+        }
+        if(bBox != null) {
+            if(!bBox.equals(shad.bBox)) {
+                return false;
+            }
+        } else if(shad.bBox != null) {
+            return false;
+        }
+        if(domain != null) {
+            if(!domain.equals(shad.domain)) {
+                return false;
+            }
+        } else if(shad.domain != null) {
+            return false;
+        }
+        if(matrix != null) {
+            if(!matrix.equals(shad.matrix)) {
+                return false;
+            }
+        } else if(shad.matrix != null) {
+            return false;
+        }
+        if(coords != null) {
+            if(!coords.equals(shad.coords)) {
+                return false;
+            }
+        } else if(shad.coords != null) {
+            return false;
+        }
+        if(extend != null) {
+            if(!extend.equals(shad.extend)) {
+                return false;
+            }
+        } else if(shad.extend != null) {
+            return false;
+        }
+        if(decode != null) {
+            if(!decode.equals(shad.decode)) {
+                return false;
+            }
+        } else if(shad.decode != null) {
+            return false;
+        }
+        if(function != null) {
+            if(!function.equals(shad.function)) {
+                return false;
+            }
+        } else if(shad.function != null) {
+            return false;
+        }
+        return true;
+    }
 }

@@ -28,8 +28,8 @@ public class PDFResources extends PDFObject {
     protected HashMap fonts = new HashMap();
 
     protected HashSet xObjects = new HashSet();
-    protected ArrayList patterns = new ArrayList();
-    protected ArrayList shadings = new ArrayList();
+    protected HashSet patterns = new HashSet();
+    protected HashSet shadings = new HashSet();
     protected HashSet gstates = new HashSet();
 
     /**
@@ -94,12 +94,8 @@ public class PDFResources extends PDFObject {
         if (!this.shadings.isEmpty()) {
             p.append("/Shading << ");
 
-            for (int currentShadingNumber = 0;
-                    currentShadingNumber < this.shadings.size();
-                    currentShadingNumber++) {
-                currentShading =
-                    ((PDFShading)this.shadings.get(currentShadingNumber));
-
+            for (Iterator iter = shadings.iterator(); iter.hasNext(); ) {
+                currentShading = (PDFShading)iter.next();
                 p.append("/" + currentShading.getName() + " "
                          + currentShading.referencePDF() + " ");    // \n ??????
             }
@@ -113,12 +109,8 @@ public class PDFResources extends PDFObject {
         if (!this.patterns.isEmpty()) {
             p.append("/Pattern << ");
 
-            for (int currentPatternNumber = 0;
-                    currentPatternNumber < this.patterns.size();
-                    currentPatternNumber++) {
-                currentPattern =
-                    ((PDFPattern)this.patterns.get(currentPatternNumber));
-
+            for (Iterator iter = patterns.iterator(); iter.hasNext(); ) {
+                currentPattern = (PDFPattern)iter.next();
                 p.append("/" + currentPattern.getName() + " "
                          + currentPattern.referencePDF() + " ");
             }
