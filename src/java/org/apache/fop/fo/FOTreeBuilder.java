@@ -224,7 +224,14 @@ public class FOTreeBuilder extends DefaultHandler {
         /* the node found in the FO document */
         FONode foNode;
 
-        /* the maker for the formatting object started */
+        // Check to ensure first node encountered is an fo:root
+        if (rootFObj == null) {
+            if (!namespaceURI.equals(FObj.FO_URI) || !localName.equals("root")) {
+                throw new SAXException(new FOPException("Error:  Root element" +
+                    " must be fo:root formatting object"));
+            }
+        }
+        
         ElementMapping.Maker fobjMaker = findFOMaker(namespaceURI, localName);
 
 //      System.out.println("found a " + fobjMaker.toString());
@@ -237,11 +244,6 @@ public class FOTreeBuilder extends DefaultHandler {
         }
 
         if (rootFObj == null) {
-            if (!foNode.getName().equals("fo:root")) {
-                throw new SAXException(new FOPException("Root element must"
-                                                        + " be fo:root, not "
-                                                        + foNode.getName()));
-            }
             rootFObj = (Root) foNode;
             rootFObj.setFOTreeControl(foTreeControl);
         } else {
