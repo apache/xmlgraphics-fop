@@ -19,6 +19,8 @@ import org.apache.fop.render.awt.*;
 
 import javax.swing.UIManager;
 import java.awt.*;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 
 // SAX
 import org.xml.sax.XMLReader;
@@ -130,6 +132,11 @@ public class AWTStarter extends CommandLineStarter {
             Translator res) {
         PreviewDialog frame = new PreviewDialog(renderer, res);
         frame.validate();
+        frame.addWindowListener(new WindowAdapter() {
+            public void windowClosed(WindowEvent we) {
+                System.exit(0);
+            }
+        });
 
         // center window
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
