@@ -226,7 +226,7 @@ public class TraitSetter {
      * @param bpProps the border, padding and background properties
      * @param marginProps the margin properties.
      */
-    public static void addMargins(Area area, Area parentArea,
+    public static void addMargins(Area area,
                                   CommonBorderPaddingBackground bpProps,
                                   CommonMarginBlock marginProps) {
         int startIndent = marginProps.startIndent.getValue();
