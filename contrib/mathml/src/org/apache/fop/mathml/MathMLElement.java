@@ -63,7 +63,7 @@ public class MathMLElement extends MathMLObj {
                 doc = svgDoc;
             }
         } catch (Throwable t) {
-            log.error("Could not convert MathML to SVG", t);
+            userAgent.getLogger().error("Could not convert MathML to SVG", t);
             width = 0;
             height = 0;
         }

@@ -275,7 +275,7 @@ public class SimplePlanDrawer implements PlanDrawer {
         line = SVGUtilities.createLine(doc,
                                        (float)(200 + (currentDays + 0.5) * 300 / 35), graphTop,
                                        (float)(200 + (currentDays + 0.5) * 300 / 35), height);
-        line.setAttributeNS(null, "style", "fill:none;stroke:rgb(200,50,50);stroke-dasharray:5 5");
+        line.setAttributeNS(null, "style", "fill:none;stroke:rgb(200,50,50);stroke-dasharray:5,5");
         svgRoot.appendChild(line);
 
 
