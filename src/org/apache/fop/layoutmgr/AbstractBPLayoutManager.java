@@ -90,7 +90,7 @@ public abstract class AbstractBPLayoutManager extends AbstractLayoutManager impl
         BPLayoutManager lm = (pos != null) ? pos.getLM() : null;
         if (m_curChildLM != lm) {
             // ASSERT m_curChildLM == (BPLayoutManager)m_childLMiter.previous()
-            if (m_curChildLM !=
+            if (m_childLMiter.hasPrevious() && m_curChildLM !=
                     (BPLayoutManager) m_childLMiter.previous()) {
                 //log.error("LMiter problem!");
             }

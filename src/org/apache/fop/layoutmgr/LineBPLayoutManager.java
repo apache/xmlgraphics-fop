@@ -95,7 +95,6 @@ public class LineBPLayoutManager extends InlineStackingBPLayoutManager {
         m_hyphProps = propMgr.getHyphenationProps();
     }
 
-
     /**
      * Call child layout managers to generate content as long as they
      * generate inline areas. If a block-level generating LM is found,
@@ -457,6 +456,7 @@ public class LineBPLayoutManager extends InlineStackingBPLayoutManager {
 
     public void resetPosition(Position resetPos) {
         if (resetPos == null) {
+            iStartPos = 0;
             reset(null);
             m_vecInlineBreaks.clear();
             m_prevBP = null;

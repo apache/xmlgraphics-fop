@@ -18,8 +18,8 @@ public class LMiter implements ListIterator {
 
     private ListIterator m_baseIter;
     private FObj m_curFO;
-    private ArrayList m_listLMs;
-    private int m_curPos = 0;
+    protected ArrayList m_listLMs;
+    protected int m_curPos = 0;
 
     public LMiter(ListIterator baseIter) {
         m_baseIter = baseIter;
@@ -30,7 +30,7 @@ public class LMiter implements ListIterator {
         return (m_curPos < m_listLMs.size()) ? true : preLoadNext();
     }
 
-    private boolean preLoadNext() {
+    protected boolean preLoadNext() {
         // skip over child FObj's that don't add lms
         while (m_baseIter.hasNext()) {
             FObj fobj = (FObj) m_baseIter.next();
