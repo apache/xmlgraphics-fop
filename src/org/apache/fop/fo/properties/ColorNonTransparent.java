@@ -23,6 +23,7 @@ public class ColorNonTransparent extends ColorCommon  {
 	    rwEnumHash.put((Object)rwEnums[i],
 				(Object) Ints.consts.get(i));
 	}
+        rwEnumHash.put("grey", Ints.consts.get(ColorCommon.GRAY));
     }
 
     public int getEnumIndex(String enum)
@@ -36,7 +37,7 @@ public class ColorNonTransparent extends ColorCommon  {
     public String getEnumText(int index)
         throws PropertyException
     {
-        if (index < 1 || index >= rwEnums.length)
+        if (index < 1 || index >= (rwEnums.length - 1))
             throw new PropertyException("index out of range: " + index);
         return rwEnums[index];
     }
