@@ -37,7 +37,7 @@ public class ContentRectangle extends AreaGeometry {
     private final Area area;
 
     /**
-     * @param writingMode
+     * @param area the containing <code>Area</code> instance
      */
     public ContentRectangle(Area area) {
         area.super(area.contentWritingMode);
@@ -46,7 +46,7 @@ public class ContentRectangle extends AreaGeometry {
     }
 
     /**
-     * @param writingMode
+     * @param area the containing <code>Area</code> instance
      * @param ipOrigin
      * @param bpOrigin
      * @param ipDim
@@ -128,6 +128,7 @@ public class ContentRectangle extends AreaGeometry {
      */
     public void setIPDimPts(double pts) {
         super.setIPDimPts(pts);
+        padding.setContents(this);
         area.notifyListeners();
     }
 
@@ -138,6 +139,7 @@ public class ContentRectangle extends AreaGeometry {
      */
     public void setBPDimPts(double pts) {
         super.setBPDimPts(pts);
+        padding.setContents(this);
         area.notifyListeners();
     }
 
