@@ -261,25 +261,11 @@ public class SVGRenderer extends AbstractRenderer {
     }
 
     public void renderPage(Page page) {
-        BodyAreaContainer body;
-        AreaContainer before, after;
-
-        body = page.getBody();
-        before = page.getBefore();
-        after = page.getAfter();
 
         this.currentFontName = "";
         this.currentFontSize = 0;
 
-        renderBodyAreaContainer(body);
-
-        if (before != null) {
-            renderAreaContainer(before);
-        }
-
-        if (after != null) {
-            renderAreaContainer(after);
-        }
+        renderRegions(page);
     }
 
     protected void doFrame(org.apache.fop.layout.Area area) {

@@ -66,6 +66,11 @@ public interface Renderer {
     public void renderBodyAreaContainer(BodyAreaContainer area);
 
     /**
+     * render the given region area container
+     */
+    public void renderRegionAreaContainer(AreaContainer area);
+
+    /**
      * render the given span area
      */
     public void renderSpanArea(SpanArea area);

@@ -29,7 +29,7 @@ public class RegionArea {
     public AreaContainer makeAreaContainer() {
 	AreaContainer area =
 	    new AreaContainer(null, xPosition, yPosition, width, height,
-			      Position.ABSOLUTE);
+			      Position.ABSOLUTE, true);
 	area.setBackground(getBackground());
 	return area;
     }
@@ -44,6 +44,10 @@ public class RegionArea {
 
     public int getHeight() {
         return height;
+    }
+
+    public int getWidth() {
+        return width;
     }
 
 }

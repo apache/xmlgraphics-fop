@@ -65,6 +65,20 @@ public class RegionBefore extends Region {
 	return area;
     }
 
+    RegionArea makeRegionArea(int allocationRectangleXPosition,
+                              int allocationRectangleYPosition,
+                              int allocationRectangleWidth,
+                              int allocationRectangleHeight,
+                              int startExtent, int endExtent) {
+        if (getPrecedence() == false) {
+            allocationRectangleXPosition += startExtent;
+            allocationRectangleWidth -= startExtent + endExtent;
+        }
+        return makeRegionArea(allocationRectangleXPosition,
+                              allocationRectangleYPosition,
+                              allocationRectangleWidth,
+                              allocationRectangleHeight);
+    }
 
     protected String getDefaultRegionName() {
         return "xsl-region-before";
@@ -82,4 +96,7 @@ public class RegionBefore extends Region {
         return (precedence == Precedence.TRUE ? true : false);
     }
 
+    public int getExtent() {
+        return properties.get("extent").getLength().mvalue();
+    }
 }
