@@ -12,7 +12,7 @@
   <body>
     <section id="intro">
       <title>Summary</title>
-      <p>The following table summarizes the font capabilites of the various FOP renderers:</p>
+      <p>The following table summarizes the font capabilities of the various FOP renderers:</p>
       <table>
         <tr>
           <th>Renderer</th>
@@ -143,7 +143,7 @@ The constructed values however appear to have no visible influence.</note>
         <title>TrueType Font Metrics</title>
         <p>FOP includes TTFReader, which reads the TTF file and generates an appropriate font metrics file for it.
 Use it in a similar manner to PFMReader.
-For example, to create such a metcis file in Windows from the TrueType font at c:\myfonts\cmr10.ttf:</p>
+For example, to create such a metrics file in Windows from the TrueType font at c:\myfonts\cmr10.ttf:</p>
         <source>java -cp build\fop.jar;lib\avalon-framework.jar;lib\xml-apis.jar;
          lib\xercesImpl.jar;lib\xalan.jar
            org.apache.fop.fonts.apps.TTFReader [options]
@@ -185,7 +185,7 @@ will produce incorrect results.</td>
             <td>Correct.</td>
             <td>Correct if and only if the font is embedded in the output. (This is possible
 because, although the underlying characters are encoded incorrectly, the embedded font is
-also encoded incorreclty).</td>
+also encoded incorrectly).</td>
           </tr>
         </table>
         <warning id="cid-keyed-encoding-ttf">As shown in the above table, regardless of
