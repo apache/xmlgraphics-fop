@@ -29,38 +29,18 @@ import java.util.NoSuchElementException;
 public class LMiter implements ListIterator {
 
 
-    private ListIterator baseIter;
-    private FObj curFO;
     protected List listLMs;
     protected int curPos = 0;
     /** The LayoutManager to which this LMiter is attached **/
     private LayoutManager lp;
 
-    public LMiter(LayoutManager lp, ListIterator bIter) {
+    public LMiter(LayoutManager lp) {
         this.lp = lp;
-        baseIter = bIter;
-        listLMs = new ArrayList(10);
+        listLMs = lp.getChildLMs();
     }
 
     public boolean hasNext() {
-        return (curPos < listLMs.size()) ? true : preLoadNext();
-    }
-
-    protected boolean preLoadNext() {
-        AreaTreeHandler areaTreeHandler = lp.getAreaTreeHandler();
-        // skip over child FObj's that don't add lms
-        while (baseIter != null && baseIter.hasNext()) {
-            Object theobj = baseIter.next();
-            if (theobj instanceof FObj) {
-                FObj fobj = (FObj) theobj;
-                //listLMs.add(fobj.getLayoutManager());
-                areaTreeHandler.addLayoutManager(fobj, listLMs);
-                if (curPos < listLMs.size()) {
-                    return true;
-                }
-            }
-        }
-        return false;
+        return (curPos < listLMs.size()) ? true : lp.preLoadNext(curPos);
     }
 
     public boolean hasPrevious() {

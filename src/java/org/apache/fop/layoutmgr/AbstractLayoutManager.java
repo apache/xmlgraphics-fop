@@ -31,6 +31,8 @@ import org.apache.fop.fo.PropertyManager;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import java.util.List;
+import java.util.ArrayList;
 import java.util.ListIterator;
 import java.util.Map;
 
@@ -40,20 +42,24 @@ import java.util.Map;
 public abstract class AbstractLayoutManager implements LayoutManager, Constants {
     protected FOUserAgent userAgent;
     protected LayoutManager parentLM = null;
+    protected List childLMs = new ArrayList(10);
     protected FObj fobj;
     protected String foID = null;
+    protected ListIterator fobjIter = null;
     protected Map markers = null;
 
     /** True if this LayoutManager has handled all of its content. */
     private boolean bFinished = false;
-    protected LayoutManager curChildLM = null;
-    protected ListIterator childLMiter;
     protected boolean bInited = false;
+
+    /** child LM and child LM iterator during getNextBreakPoss phase */
+    protected LayoutManager curChildLM = null;
+    protected ListIterator childLMiter = null;
 
     /**
      * logging instance
      */
-    protected static Log log = LogFactory.getLog(AbstractLayoutManager.class);
+    protected static Log log = LogFactory.getLog(LayoutManager.class);
 
     /**
      * Abstract layout manager.
@@ -82,7 +88,8 @@ public abstract class AbstractLayoutManager implements LayoutManager, Constants 
         this.fobj = fo;
         foID = fobj.getID();
         markers = fobj.getMarkers();
-        childLMiter = new LMiter(this, fobj.getChildNodes());
+        fobjIter = fobj.getChildNodes();
+        childLMiter = new LMiter(this);
     }
 
     /**
@@ -169,8 +176,6 @@ public abstract class AbstractLayoutManager implements LayoutManager, Constants 
         }
         while (childLMiter.hasNext()) {
             curChildLM = (LayoutManager) childLMiter.next();
-            curChildLM.setParent(this);
-            curChildLM.initialize();
             return curChildLM;
         }
         return null;
@@ -361,6 +366,71 @@ public abstract class AbstractLayoutManager implements LayoutManager, Constants 
      */
     public Marker retrieveMarker(String name, int pos, int boundary) {
         return parentLM.retrieveMarker(name, pos, boundary);
+    }
+
+    /**
+     * Convenience method: preload a number of child LMs
+     * @param size the requested number of child LMs
+     * @return the list with the preloaded child LMs
+     */
+    protected List preLoadList(int size) {
+        if (fobjIter == null) {
+            return null;
+        }
+        AreaTreeHandler areaTreeHandler = getAreaTreeHandler();
+        List newLMs = new ArrayList(size);
+        while (fobjIter.hasNext() && newLMs.size() < size ) {
+            Object theobj = fobjIter.next();
+            if (theobj instanceof FObj) {
+                FObj fobj = (FObj) theobj;
+                areaTreeHandler.addLayoutManager(fobj, newLMs);
+            }
+        }
+        return newLMs;
+    }
+
+    /**
+     * @see org.apache.fop.layoutmgr.LayoutManager#preLoadNext
+     */
+    public boolean preLoadNext(int pos) {
+        List newLMs = preLoadList(pos + 1 - childLMs.size());
+        addChildLMs(newLMs);
+        return pos < childLMs.size();
+    }
+
+    /**
+     * @see org.apache.fop.layoutmgr.LayoutManager#getChildLMs
+     */
+    public List getChildLMs() {
+        return childLMs;
+    }
+
+    /**
+     * @see org.apache.fop.layoutmgr.LayoutManager#addChildLM
+     */
+    public void addChildLM(LayoutManager lm) {
+        if (lm == null) {
+            return;
+        }
+        lm.setParent(this);
+        lm.initialize();
+        childLMs.add(lm);
+        log.trace(this.getClass().getName()
+                  + ": Adding child LM " + lm.getClass().getName());
+    }
+
+    /**
+     * @see org.apache.fop.layoutmgr.LayoutManager#addChildLMs
+     */
+    public void addChildLMs(List newLMs) {
+        if (newLMs == null || newLMs.size() == 0) {
+            return;
+        }
+        ListIterator iter = newLMs.listIterator();
+        while (iter.hasNext()) {
+            LayoutManager lm = (LayoutManager) iter.next();
+            addChildLM(lm);
+        }
     }
 
 }

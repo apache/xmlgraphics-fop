@@ -115,6 +115,9 @@ public class LineLayoutManager extends InlineStackingLayoutManager {
      */
     public LineLayoutManager(FObj node, int lh, int l, int f) {
         super(node);
+        // the child FObj are owned by the parent BlockLM
+        // this LM has all its childLMs preloaded
+        fobjIter = null;
         lineHeight = lh;
         lead = l;
         follow = f;

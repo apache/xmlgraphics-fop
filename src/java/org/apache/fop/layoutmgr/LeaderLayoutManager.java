@@ -108,18 +108,20 @@ public class LeaderLayoutManager extends LeafNodeLayoutManager {
                 ldrNode.getLogger().error("Leader use-content with no content");
                 return null;
             }
-            InlineStackingLayoutManager lm;
-            lm = new InlineStackingLayoutManager(ldrNode);
-            lm.setLMiter(new LMiter(lm, ldrNode.getChildNodes()));
-            lm.initialize();
 
+            // child FOs are assigned to the InlineStackingLM
+            fobjIter = null;
+            
             // get breaks then add areas to FilledArea
             FilledArea fa = new FilledArea();
-            
+
             ContentLayoutManager clm = new ContentLayoutManager(fa);
-            clm.setParent(this);
             clm.setUserAgent(ldrNode.getUserAgent());
-            lm.setParent(clm);
+            addChildLM(clm);
+
+            InlineStackingLayoutManager lm;
+            lm = new InlineStackingLayoutManager(ldrNode);
+            clm.addChildLM(lm);
 
             clm.fillArea(lm);
             int width = clm.getStackingSize();

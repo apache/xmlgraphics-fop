@@ -27,9 +27,13 @@ import org.apache.fop.area.Resolveable;
 import org.apache.fop.area.PageViewport;
 
 import java.util.List;
+import java.util.ListIterator;
 import java.util.Map;
 import java.util.ArrayList;
 import org.apache.fop.traits.MinOptMax;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /**
  * Content Layout Manager.
@@ -41,6 +45,12 @@ public class ContentLayoutManager implements LayoutManager {
     private Area holder;
     private int stackSize;
     private LayoutManager parentLM;
+    private List childLMs = new ArrayList(1);
+
+    /**
+     * logging instance
+     */
+    protected static Log log = LogFactory.getLog(LayoutManager.class);
 
     /**
      * Constructs a new ContentLayoutManager
@@ -241,5 +251,48 @@ public class ContentLayoutManager implements LayoutManager {
     public Marker retrieveMarker(String name, int pos, int boundary) {
         return parentLM.retrieveMarker(name, pos, boundary);
     }
+
+    /**
+     * @see org.apache.fop.layoutmgr.LayoutManager#preLoadNext
+     */
+    public boolean preLoadNext(int pos) {
+        return false;
+    }
+
+    /**
+     * @see org.apache.fop.layoutmgr.LayoutManager#getChildLMs
+     */
+    public List getChildLMs() {
+        return childLMs;
+    }
+
+    /**
+     * @see org.apache.fop.layoutmgr.LayoutManager#addChildLM
+     */
+    public void addChildLM(LayoutManager lm) {
+        if (lm == null) {
+            return;
+        }
+        lm.setParent(this);
+        lm.initialize();
+        childLMs.add(lm);
+        log.trace(this.getClass().getName()
+                  + ": Adding child LM " + lm.getClass().getName());
+    }
+
+    /**
+     * @see org.apache.fop.layoutmgr.LayoutManager#addChildLMs
+     */
+    public void addChildLMs(List newLMs) {
+        if (newLMs == null || newLMs.size() == 0) {
+            return;
+        }
+        ListIterator iter = newLMs.listIterator();
+        while (iter.hasNext()) {
+            LayoutManager lm = (LayoutManager) iter.next();
+            addChildLM(lm);
+        }
+    }
+
 }
 
