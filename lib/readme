@@ -7,7 +7,7 @@ Ant is the scripting tool which is used to build Fop or to run
 the test scripts. see build.xml in root for more information
 
 batik.jar
-cvs 21/03/2002
+version 1.5beta2
 created from all-jar build target
 the svg library from Batik at xml.apache.org
 
