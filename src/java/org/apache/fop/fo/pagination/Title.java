@@ -59,7 +59,7 @@ public class Title extends FObjMixed {
         CommonBackground bProps = propMgr.getBackgroundProps();
 
         // Common Font Properties
-        Font fontState = propMgr.getFontState(getFOTreeControl());
+        Font fontState = propMgr.getFontState(getDocument());
 
         // Common Margin Properties-Inline
         CommonMarginInline mProps = propMgr.getMarginInlineProps();

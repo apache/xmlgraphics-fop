@@ -19,6 +19,7 @@
 package org.apache.fop.fo;
 
 // FOP
+import org.apache.fop.apps.Document;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.fonts.Font;
 import org.apache.fop.fo.properties.Property;
@@ -44,7 +45,7 @@ import org.xml.sax.Attributes;
 public class PropertyManager implements Constants {
 
     private PropertyList propertyList;
-    private FOTreeControl foTreeControl = null;
+    private Document document = null;
     private Font fontState = null;
     private CommonBorderAndPadding borderAndPadding = null;
     private CommonHyphenation hyphProps = null;
@@ -72,27 +73,27 @@ public class PropertyManager implements Constants {
     /**
      * Sets the Document object telling the property manager which fonts are
      * available.
-     * @param foTreeControl foTreeControl implementation containing font
+     * @param document apps.Document implementation containing font
      * information
      */
-    public void setFontInfo(FOTreeControl foTreeControl) {
-        this.foTreeControl = foTreeControl;
+    public void setFontInfo(Document document) {
+        this.document = document;
     }
 
 
     /**
      * Constructs a FontState object. If it was constructed before it is
      * reused.
-     * @param foTreeControl FOTreeControl implementation containing the font
+     * @param document apps.Document implementation containing the font
      * information
      * @return a FontState object
      */
-    public Font getFontState(FOTreeControl foTreeControl) {
+    public Font getFontState(Document document) {
         if (fontState == null) {
-            if (foTreeControl == null) {
-                foTreeControl = this.foTreeControl;
-            } else if (this.foTreeControl == null) {
-                this.foTreeControl = foTreeControl;
+            if (document == null) {
+                document = this.document;
+            } else if (this.document == null) {
+                this.document = document;
             }
             /**@todo this is ugly. need to improve. */
 
@@ -121,9 +122,9 @@ public class PropertyManager implements Constants {
             // various kinds of keywords too
             int fontSize = propertyList.get(PR_FONT_SIZE).getLength().getValue();
             //int fontVariant = propertyList.get("font-variant").getEnum();
-            String fname = foTreeControl.getFontInfo().fontLookup(fontFamily, fontStyle,
+            String fname = document.getFontInfo().fontLookup(fontFamily, fontStyle,
                                                fontWeight);
-            FontMetrics metrics = foTreeControl.getFontInfo().getMetricsFor(fname);
+            FontMetrics metrics = document.getFontInfo().getMetricsFor(fname);
             fontState = new Font(fname, metrics, fontSize);
         }
         return fontState;
@@ -457,14 +458,14 @@ public class PropertyManager implements Constants {
     /**
      * Constructs a TextInfo objects. If it was constructed before it is
      * reused.
-     * @param foTreeControl FOTreeControl implementation containing list of
+     * @param document apps.Document implementation containing list of
      * available fonts
      * @return a TextInfo object
      */
-    public TextInfo getTextLayoutProps(FOTreeControl foTreeControl) {
+    public TextInfo getTextLayoutProps(Document document) {
         if (textInfo == null) {
             textInfo = new TextInfo();
-            textInfo.fs = getFontState(foTreeControl);
+            textInfo.fs = getFontState(document);
             textInfo.color = propertyList.get(PR_COLOR).getColorType();
 
             textInfo.verticalAlign =

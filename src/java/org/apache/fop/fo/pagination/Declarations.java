@@ -24,6 +24,7 @@ import java.util.Map;
 import java.util.Iterator;
 
 // FOP
+import org.apache.fop.fo.FOElementMapping;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.FOTreeVisitor;
@@ -48,6 +49,19 @@ public class Declarations extends FObj {
     public Declarations(FONode parent) {
         super(parent);
         ((Root) parent).setDeclarations(this);
+    }
+
+    /**
+     * @see org.apache.fop.fo.FONode#validateChildNode(String, String)
+        XSL 1.0: (color-profile)+ (and non-XSL NS nodes)
+        FOP (currently): (color-profile)* (and non-XSL NS nodes)
+     */
+    protected void validateChildNode(String nsURI, String localName) {
+        if (nsURI == FOElementMapping.URI) {
+            if (!localName.equals("color-profile")) {   
+                invalidChildError(nsURI, localName);
+            }
+        } // anything outside of XSL namespace is OK.
     }
 
     /**
@@ -79,7 +93,7 @@ public class Declarations extends FObj {
                     }
                     external.add(node);
                 } else {
-                    getLogger().warn("invalid element " + node.getName() + "inside declarations");
+                    getLogger().warn("invalid element " + node.getName() + " inside declarations");
                 }
             }
         }

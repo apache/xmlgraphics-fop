@@ -46,7 +46,7 @@ public class ListItemLabel extends FObj {
      */
     protected void addProperties(Attributes attlist) throws FOPException {
         super.addProperties(attlist);
-        getFOTreeControl().getFOInputHandler().startListLabel();
+        getDocument().getFOInputHandler().startListLabel();
     }
 
     private void setup() {
@@ -86,7 +86,7 @@ public class ListItemLabel extends FObj {
     protected void end() {
         super.end();
         
-        getFOTreeControl().getFOInputHandler().endListLabel();
+        getDocument().getFOInputHandler().endListLabel();
     }
     
     public String getName() {

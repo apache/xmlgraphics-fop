@@ -57,7 +57,7 @@ public class TableBody extends FObj {
     protected void addProperties(Attributes attlist) throws FOPException {
         super.addProperties(attlist);
         setupID();
-        getFOTreeControl().getFOInputHandler().startBody(this);
+        getDocument().getFOInputHandler().startBody(this);
     }
 
     private void setup() throws FOPException {
@@ -104,7 +104,7 @@ public class TableBody extends FObj {
     }
 
     protected void end() {
-        getFOTreeControl().getFOInputHandler().endBody(this);
+        getDocument().getFOInputHandler().endBody(this);
     }
 
     public String getName() {

@@ -46,8 +46,8 @@ public class FObjMixed extends FObj {
         if (textInfo == null) {
             // Really only need one of these, but need to get fontInfo
             // stored in propMgr for later use.
-            propMgr.setFontInfo(getFOTreeControl());
-            textInfo = propMgr.getTextLayoutProps(getFOTreeControl());
+            propMgr.setFontInfo(getDocument());
+            textInfo = propMgr.getTextLayoutProps(getDocument());
         }
 
         FOText ft = new FOText(data, start, length, textInfo, this);
@@ -55,7 +55,7 @@ public class FObjMixed extends FObj {
         ft.setName("text");
         
         /* characters() processing empty for FOTreeHandler, not empty for RTF & MIFHandlers */
-        getFOTreeControl().getFOInputHandler().characters(ft.ca, ft.startIndex, ft.endIndex);
+        getDocument().getFOInputHandler().characters(ft.ca, ft.startIndex, ft.endIndex);
 
         addChild(ft);
     }

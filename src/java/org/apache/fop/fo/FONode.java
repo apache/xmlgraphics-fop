@@ -28,9 +28,10 @@ import org.xml.sax.Locator;
 import org.apache.commons.logging.Log;
 
 // FOP
+import org.apache.fop.apps.Document;
 import org.apache.fop.apps.FOPException;
-import org.apache.fop.util.CharUtilities;
 import org.apache.fop.apps.FOUserAgent;
+import org.apache.fop.util.CharUtilities;
 import org.apache.fop.fo.extensions.ExtensionElementMapping;
 import org.apache.fop.fo.extensions.svg.SVGElementMapping;
 
@@ -59,7 +60,7 @@ public abstract class FONode {
      * @return FOUserAgent
      */
     public FOUserAgent getUserAgent() {
-        return getFOTreeControl().getDriver().getUserAgent();
+        return getDocument().getDriver().getUserAgent();
     }
 
     /**
@@ -67,7 +68,7 @@ public abstract class FONode {
      * @return the logger
      */
     public Log getLogger() {
-        return getFOTreeControl().getDriver().getLogger();
+        return getDocument().getDriver().getLogger();
     }
 
     /**
@@ -183,8 +184,8 @@ public abstract class FONode {
      * which returns the parent Document.
      * @return the Document object that is the parent of this node.
      */
-    public FOTreeControl getFOTreeControl() {
-        return parent.getFOTreeControl();
+    public Document getDocument() {
+        return parent.getDocument();
     }
 
     /**

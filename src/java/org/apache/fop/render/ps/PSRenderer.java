@@ -44,7 +44,6 @@ import org.apache.fop.fonts.Typeface;
 import org.apache.fop.fonts.FontInfo;
 import org.apache.fop.render.AbstractRenderer;
 import org.apache.fop.render.RendererContext;
-import org.apache.fop.fo.FOTreeControl;
 
 import org.apache.fop.image.FopImage;
 import org.apache.fop.image.ImageFactory;
@@ -226,7 +225,7 @@ public class PSRenderer extends AbstractRenderer {
     /**
      * Set up the font info
      *
-     * @param foTreeControl the font info object to set up
+     * @param inFontInfo the font info object to set up
      */
     public void setupFontInfo(FontInfo inFontInfo) {
         this.fontInfo = inFontInfo;

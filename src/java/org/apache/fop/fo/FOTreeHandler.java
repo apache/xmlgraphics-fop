@@ -98,7 +98,7 @@ public class FOTreeHandler extends FOInputHandler {
 
     /**
      * Main constructor
-     * @param foTreeControl the FOTreeControl implementation that governs this
+     * @param document the apps.Document implementation that governs this
      * FO Tree
      * @param store if true then use the store pages model and keep the
      *              area tree in memory
@@ -478,7 +478,7 @@ public class FOTreeHandler extends FOInputHandler {
      *
      * @return the font information
      */
-    public FOTreeControl getFontInfo() {
+    public Document getFontInfo() {
         return doc;
     }
 
