@@ -318,14 +318,14 @@ public class Driver {
 		    currentAtts.clear();
 		    for (int i = map.getLength() - 1; i >= 0; i--) {
 			Attr att = (Attr)map.item(i);
-			currentAtts.addAttribute("",
+			currentAtts.addAttribute(att.getNamespaceURI(),
+                         att.getLocalName(),
                          att.getName(),
-                         "",
                          "CDATA",
                          att.getValue());
 		    }
 		    this.treeBuilder.startElement(
-			"", currentNode.getNodeName(), "", currentAtts);
+			currentNode.getNamespaceURI(), currentNode.getLocalName(), currentNode.getNodeName(), currentAtts);
 		    break;
 		}
 		
@@ -342,7 +342,7 @@ public class Driver {
 			break;
 		    case Node.ELEMENT_NODE:
 			this.treeBuilder.endElement(
-			    "", currentNode.getNodeName(), "" );
+			    currentNode.getNamespaceURI(), currentNode.getLocalName(), currentNode.getNodeName());
 			break;
 		    }
 		    
