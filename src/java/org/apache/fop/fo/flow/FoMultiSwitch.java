@@ -66,7 +66,7 @@ import org.apache.fop.fo.FObjectNames;
 import org.apache.fop.fo.PropNames;
 import org.apache.fop.fo.PropertySets;
 import org.apache.fop.fo.expr.PropertyException;
-import org.apache.fop.xml.FoXMLEvent;
+import org.apache.fop.xml.FoXmlEvent;
 import org.apache.fop.xml.XmlEvent;
 import org.apache.fop.xml.SyncedXmlEventsBuffer;
 
@@ -132,7 +132,7 @@ public class FoMultiSwitch extends FONode {
      * attribute set information.
      */
     public FoMultiSwitch
-            (FOTree foTree, FONode parent, FoXMLEvent event, int stateFlags)
+            (FOTree foTree, FONode parent, FoXmlEvent event, int stateFlags)
         throws TreeException, FOPException
     {
         super(foTree, FObjectNames.MULTI_SWITCH, parent, event,
@@ -144,7 +144,7 @@ public class FoMultiSwitch extends FONode {
                     (FObjectNames.MULTI_CASE, XmlEvent.DISCARD_W_SPACE))
                    != null) {
                 new FoMultiCase(
-                        getFOTree(), this, (FoXMLEvent)ev, stateFlags);
+                        getFOTree(), this, (FoXmlEvent)ev, stateFlags);
                 numCases++;
                 ev = xmlevents.getEndElement(
                         SyncedXmlEventsBuffer.DISCARD_EV, ev);

@@ -66,7 +66,7 @@ import org.apache.fop.fo.FObjectNames;
 import org.apache.fop.fo.PropNames;
 import org.apache.fop.fo.PropertySets;
 import org.apache.fop.fo.expr.PropertyException;
-import org.apache.fop.xml.FoXMLEvent;
+import org.apache.fop.xml.FoXmlEvent;
 import org.apache.fop.xml.XmlEvent;
 import org.apache.fop.xml.SyncedXmlEventsBuffer;
 
@@ -137,7 +137,7 @@ public class FoFootnote extends FONode {
      * attribute set information.
      */
     public FoFootnote
-            (FOTree foTree, FONode parent, FoXMLEvent event, int stateFlags)
+            (FOTree foTree, FONode parent, FoXmlEvent event, int stateFlags)
         throws TreeException, FOPException
     {
         super(foTree, FObjectNames.FOOTNOTE, parent, event,
@@ -153,7 +153,7 @@ public class FoFootnote extends FONode {
                    == null)
                 throw new FOPException("No inline in footnote.");
             new FoInline(
-                    getFOTree(), this, (FoXMLEvent)ev,
+                    getFOTree(), this, (FoXmlEvent)ev,
                     stateFlags | FONode.MC_FOOTNOTE);
             ev =  xmlevents.getEndElement(
                     SyncedXmlEventsBuffer.DISCARD_EV, ev);
@@ -165,7 +165,7 @@ public class FoFootnote extends FONode {
                    == null)
                 throw new FOPException("No footnote-body in footnote.");
             new FoFootnoteBody(
-                    getFOTree(), this, (FoXMLEvent)ev,
+                    getFOTree(), this, (FoXmlEvent)ev,
                     stateFlags | FONode.MC_FOOTNOTE);
             ev = xmlevents.getEndElement(SyncedXmlEventsBuffer.DISCARD_EV, ev);
             namespaces.surrenderEvent(ev);

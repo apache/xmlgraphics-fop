@@ -125,7 +125,7 @@ public class FoRegionBody extends FONode {
     /**
      * @param foTree the FO tree being built
      * @param parent the parent FONode of this node
-     * @param event the <tt>FoXMLEvent</tt> that triggered the creation of
+     * @param event the <tt>FoXmlEvent</tt> that triggered the creation of
      * this node
      */
     public FoRegionBody(FOTree foTree, FONode parent, XmlEvent event)

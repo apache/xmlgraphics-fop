@@ -67,7 +67,7 @@ import org.apache.fop.fo.FObjects;
 import org.apache.fop.fo.PropNames;
 import org.apache.fop.fo.PropertySets;
 import org.apache.fop.messaging.MessageHandler;
-import org.apache.fop.xml.FoXMLEvent;
+import org.apache.fop.xml.FoXmlEvent;
 import org.apache.fop.xml.XmlEvent;
 import org.apache.fop.xml.SyncedXmlEventsBuffer;
 import org.apache.fop.xml.UnexpectedStartElementException;
@@ -137,7 +137,7 @@ public class FoTitle extends FONode {
      * @param event the <tt>XmlEvent</tt> that triggered the creation of
      * this node
      */
-    public FoTitle(FOTree foTree, FONode parent, FoXMLEvent event)
+    public FoTitle(FOTree foTree, FONode parent, FoXmlEvent event)
         throws TreeException, FOPException
     {
         super(foTree, FObjectNames.TITLE, parent, event,

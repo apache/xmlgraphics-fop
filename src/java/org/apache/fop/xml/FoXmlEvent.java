@@ -66,7 +66,7 @@ import org.apache.fop.pool.Poolable;
  * The <tt>XMLSerialHandler</tt> methods set the values directly.
  */
 
-public class FoXMLEvent extends XmlEvent {
+public class FoXmlEvent extends XmlEvent {
 
     private static final String tag = "$Name$";
     private static final String revision = "$Revision$";
@@ -80,7 +80,7 @@ public class FoXMLEvent extends XmlEvent {
      * namespace
      * @param uriIndex the namesopace index
      */
-    public FoXMLEvent (Namespaces namespaces, int sequence, int uriIndex) {
+    public FoXmlEvent (Namespaces namespaces, int sequence, int uriIndex) {
         super(namespaces, sequence, uriIndex);
     }
 
@@ -88,7 +88,7 @@ public class FoXMLEvent extends XmlEvent {
      * The fully defined constructor takes values for each of the data
      * elements.
      */
-    public FoXMLEvent(Namespaces namespaces, int sequence,
+    public FoXmlEvent(Namespaces namespaces, int sequence,
                     int type, String chars, int uriIndex,
                     String localName, String qName,
                     AttributesImpl attributes, 
@@ -101,21 +101,21 @@ public class FoXMLEvent extends XmlEvent {
 
     /**
      * The cloning constructor takes a reference to an existing
-     * <tt>FoXMLEvent</tt> object.
+     * <tt>FoXmlEvent</tt> object.
      * @param ev the event to clone
      * @param sequence number of the clone
      */
-    public FoXMLEvent(FoXMLEvent ev, int sequence) {
+    public FoXmlEvent(FoXmlEvent ev, int sequence) {
         super(ev, sequence);
         foType = ev.foType;
     }
 
-    public FoXMLEvent(Namespaces namespaces, int sequence,
+    public FoXmlEvent(Namespaces namespaces, int sequence,
             int uriIndex, int type, String chars) {
         super(namespaces, sequence, uriIndex, type, chars);
     }
 
-    public FoXMLEvent(Namespaces namespaces, int sequence,
+    public FoXmlEvent(Namespaces namespaces, int sequence,
             int type, int uriIndex, AttributesImpl attributes, int foType) {
         super(namespaces, sequence, uriIndex);
         this.type = type;
@@ -139,8 +139,8 @@ public class FoXMLEvent extends XmlEvent {
      * Neither the <i>namespaces</i> nor the <i>id</i> field is cleared.
      * @return the cleared <tt>XmlEvent</tt> event.
      */
-    public FoXMLEvent clearFo() {
-        return (FoXMLEvent)clear();
+    public FoXmlEvent clearFo() {
+        return (FoXmlEvent)clear();
     }
 
     /**
@@ -151,7 +151,7 @@ public class FoXMLEvent extends XmlEvent {
      * @param ev the <tt>XmlEvent</tt> to copy.
      * @return the copied <tt>XmlEvent</tt> event.
      */
-    public XmlEvent copyEvent(FoXMLEvent ev) {
+    public XmlEvent copyEvent(FoXmlEvent ev) {
         foType = ev.foType;
         return super.copyEvent(ev);
     }
@@ -163,18 +163,18 @@ public class FoXMLEvent extends XmlEvent {
      * The <i>namespaces</i> field is not cleared.
      * @return the copied <tt>XmlEvent</tt> event.
      */
-    public FoXMLEvent copyFoEvent(FoXMLEvent ev) {
-        return (FoXMLEvent)copyEvent(ev);
+    public FoXmlEvent copyFoEvent(FoXmlEvent ev) {
+        return (FoXmlEvent)copyEvent(ev);
     }
 
     /**
-     * Get the FO type of this <i>FoXMLEvent</i>
+     * Get the FO type of this <i>FoXmlEvent</i>
      * @returns the FO type
      */
     public int getFoType() { return foType; }
 
     /**
-     * Set the FO type of this <i>FoXMLEvent</i>
+     * Set the FO type of this <i>FoXmlEvent</i>
      *      * @param foType the FO type
      */
     public void setFoType(int foType) { this.foType = foType; }

@@ -65,7 +65,7 @@ import org.apache.fop.fo.FOTree;
 import org.apache.fop.fo.FObjectNames;
 import org.apache.fop.fo.PropNames;
 import org.apache.fop.fo.PropertySets;
-import org.apache.fop.xml.FoXMLEvent;
+import org.apache.fop.xml.FoXmlEvent;
 
 /**
  * Implements the fo:character flow object.
@@ -151,7 +151,7 @@ public class FoCharacter extends FONode {
      * attribute set information.
      */
     public FoCharacter
-            (FOTree foTree, FONode parent, FoXMLEvent event, int stateFlags)
+            (FOTree foTree, FONode parent, FoXmlEvent event, int stateFlags)
         throws TreeException, FOPException
     {
         super(foTree, FObjectNames.CHARACTER, parent, event,

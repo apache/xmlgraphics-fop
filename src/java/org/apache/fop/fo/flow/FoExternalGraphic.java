@@ -65,7 +65,7 @@ import org.apache.fop.fo.FOTree;
 import org.apache.fop.fo.FObjectNames;
 import org.apache.fop.fo.PropNames;
 import org.apache.fop.fo.PropertySets;
-import org.apache.fop.xml.FoXMLEvent;
+import org.apache.fop.xml.FoXmlEvent;
 
 /**
  * Implements the fo:external-graphic flow object.
@@ -150,7 +150,7 @@ public class FoExternalGraphic extends FONode {
      * attribute set information.
      */
     public FoExternalGraphic
-            (FOTree foTree, FONode parent, FoXMLEvent event, int stateFlags)
+            (FOTree foTree, FONode parent, FoXmlEvent event, int stateFlags)
         throws TreeException, FOPException
     {
         super(foTree, FObjectNames.EXTERNAL_GRAPHIC, parent, event,

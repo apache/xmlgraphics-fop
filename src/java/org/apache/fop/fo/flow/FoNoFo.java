@@ -58,7 +58,7 @@ package org.apache.fop.fo.flow;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FOTree;
-import org.apache.fop.xml.FoXMLEvent;
+import org.apache.fop.xml.FoXmlEvent;
 
 /**
  * Implements the fo:no-fo flow object.
@@ -112,7 +112,7 @@ public class FoNoFo {
      * @throws FOPException, without exception.
      */
     public FoNoFo
-            (FOTree foTree, FONode parent, FoXMLEvent event, int stateFlags)
+            (FOTree foTree, FONode parent, FoXmlEvent event, int stateFlags)
         throws FOPException
     {
         throw new FOPException("No such flow object as fo:no-fo.");

@@ -65,7 +65,7 @@ import org.apache.fop.fo.FOTree;
 import org.apache.fop.fo.FObjectNames;
 import org.apache.fop.fo.PropNames;
 import org.apache.fop.fo.PropertySets;
-import org.apache.fop.xml.FoXMLEvent;
+import org.apache.fop.xml.FoXmlEvent;
 
 /**
  * Implements the fo:table-column flow object.
@@ -132,7 +132,7 @@ public class FoTableColumn extends FONode {
      * attribute set information.
      */
     public FoTableColumn
-            (FOTree foTree, FONode parent, FoXMLEvent event, int stateFlags)
+            (FOTree foTree, FONode parent, FoXmlEvent event, int stateFlags)
         throws TreeException, FOPException
     {
         super(foTree, FObjectNames.TABLE_COLUMN, parent, event,
