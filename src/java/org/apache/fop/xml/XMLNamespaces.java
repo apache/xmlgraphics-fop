@@ -75,13 +75,13 @@ public class XMLNamespaces {
     public static final String DefAttrNSpace = "";
     public static final String XSLNamespace =
         "http://www.w3.org/1999/XSL/Format";
+    public static final String FOXNamespace =
+        "http://xml.apache.org/fop/extensions";
     public static final String SVGNamespace = "http://www.w3.org/2000/svg";
-    public static final String XlinkNamespace =
-        "http://www.w3.org/1999/xlink";
     public static final int DefAttrNSIndex = 0;
     public static final int XSLNSpaceIndex = 1;
-    public static final int SVGNSpaceIndex = 2;
-    public static final int XLinkNSpaceIndex = 3;
+    public static final int FOXNSpaceIndex = 2;
+    public static final int SVGNSpaceIndex = 3;
 
     /**
      * A <tt>HashMap</tt> mapping a namespace URI to an <tt>int</tt>
@@ -122,10 +122,16 @@ public class XMLNamespaces {
      */
     private int sequence = 0;
 
+    /**
+     * Number of bits in the sequence mask.  This value will determine
+     * the number of sequence values the pool will track.
+     */
+    private static final int SEQ_BITS = 18;
+
     /** Mask to restrict the range of values within which <i>sequence</i>
      * may cycle.
      */
-    public final int seqMask = (1 << 20) - 1;
+    public final int seqMask = (1 << SEQ_BITS) - 1;
 
     /**
      * The access function for the sequence.
@@ -138,16 +144,16 @@ public class XMLNamespaces {
     }
 
     public XMLNamespaces() {
-        uriIndices = new HashMap(4);
-        uris = new ArrayList(4);
+        uriIndices = new HashMap((int)(6/0.75));
+        uris = new ArrayList(6);
         uriIndices.put(DefAttrNSpace, Ints.consts.get(DefAttrNSIndex));
         uris.add(DefAttrNSIndex, DefAttrNSpace);
         uriIndices.put(XSLNamespace, Ints.consts.get(XSLNSpaceIndex));
         uris.add(XSLNSpaceIndex, XSLNamespace);
+        uriIndices.put(FOXNamespace, Ints.consts.get(FOXNSpaceIndex));
+        uris.add(FOXNSpaceIndex, FOXNamespace);
         uriIndices.put(SVGNamespace, Ints.consts.get(SVGNSpaceIndex));
         uris.add(SVGNSpaceIndex, SVGNamespace);
-        uriIndices.put(XlinkNamespace, Ints.consts.get(XLinkNSpaceIndex));
-        uris.add(XLinkNSpaceIndex, XlinkNamespace);
     }
 
     /**
@@ -171,7 +177,7 @@ public class XMLNamespaces {
             i = uris.size();
             //System.out.println("****Adding namespace " + uri + " " + i);
             uriIndices.put(uri, Ints.consts.get(i));
-            uris.add(i, uri);
+            uris.add(i, uri.intern());
             return i;
         }
         // not null - found the integer
