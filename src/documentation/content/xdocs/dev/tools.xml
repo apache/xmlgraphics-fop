@@ -77,6 +77,19 @@
           <li>On a Linux/Unix machine, you will want to redirect the output from the above command into a file. If you are using GNU WinCVS, you can cut the output from the console window and paste it into a file. The "-w" ignores whitespace differences. The "-u" puts the diff in "universal" format. You may wish to use the "-N" option as well, which is supposed to treat new files as if there were an old 0 byte file -- in other words, it is supposed to include the new file in the patch. However, it only operates on files that have been "add"ed to the CVS repository, which cannot be done without commit access.</li>
         </ul>
       </section>
+      <section id="cvs-doc">
+        <title>Documentation</title>
+        <ul>
+          <li>[online resource] <jump href="http://www.cvshome.org">The CVS Home Page</jump>.</li>
+          <li>[electronic manual] <jump href="http://www.cvshome.org/docs/manual">"The Cederqvist"</jump> (official CVS manual).
+Note that this manual applies to the command-line version of CVS.</li>
+          <li>[book] <jump href="http://www.oreilly.com/catalog/cvs">Essential CVS</jump>, by Jennifer Vesperman (O'Reilly &amp; Associates).</li>
+          <li>[book] <jump href="http://www.oreilly.com/catalog/cvspr2">The CVS Pocket Reference</jump>, by Gregor N. Purdy (O'Reilly &amp; Associates).</li>
+          <li>[book] Open Source Development with CVS, by Moshe Bar and Karl Franz Fogel (Paraglyph Press, ISBN 1-932111-81-6).</li>
+          <li>[book] <jump href="http://www.oreilly.com/catalog/rcs">Applying RCS and SCCS</jump>, by Dan Bolinger and Tan Bronson (O'Reilly &amp; Associates).
+RCS is used by CVS for its file operations (CVS is kind of a wrapper around RCS).</li>
+        </ul>
+      </section>
     </section>
     <section id="ide">
       <title>Integrated Development Environments (IDEs)</title>
