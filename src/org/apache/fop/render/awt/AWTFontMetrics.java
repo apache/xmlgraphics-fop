@@ -177,14 +177,26 @@ public class AWTFontMetrics {
     public int width(int i, String family, int style, int size) {
         int w;
         setFont(family, style, size);
+        
+        // Nov 18, 2002,  aml/rlc  
+        // measure character width using getStringBounds for better results
+        
+        char [] ac = new char [1];
+        ac [0] = (char)i;
+        
+        double dWidth = fmt.getStringBounds (ac, 0, 1, graphics).getWidth() * FONT_FACTOR;
+        
+        // The following was left in based on this comment from the past (may be vestigial)
+        
         // the output seems to look a little better if the
         // space is rendered larger than given by
         // the FontMetrics object
-        if (i <= 32)
-            w = (int)(1.4 * fmt.charWidth(i) * FONT_FACTOR);
-        else
-            w = (int)(fmt.charWidth(i) * FONT_FACTOR);
-        return w;
+        
+        if (i <=32) {
+          dWidth = dWidth * 1.4;
+        }
+
+        return (int) dWidth;
     }
 
     /**
