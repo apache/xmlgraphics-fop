@@ -237,6 +237,7 @@ public class TableBody extends FObj {
 
         if (spaceAfter != 0) {
             area.increaseHeight(spaceAfter);
+            area.setMaxHeight(area.getMaxHeight() - spaceAfter);
         }
 
         if (area instanceof BlockArea) {
