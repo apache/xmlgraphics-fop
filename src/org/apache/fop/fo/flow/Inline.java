@@ -40,6 +40,10 @@ public class Inline extends FObjMixed {
                   PropertyList propertyList) throws FOPException {
         super(parent, propertyList);
         this.name = "fo:inline";
+        if (parent.getName().equals("fo:flow")) {
+            throw new FOPException("inline formatting objects cannot"
+                                   + " be directly under flow");
+        }
 
         // Common Accessibility Properties
         AccessibilityProps mAccProps = propMgr.getAccessibilityProps();
@@ -88,12 +92,6 @@ public class Inline extends FObjMixed {
         if (textDecoration == TextDecoration.LINE_THROUGH) {
             this.lineThrough = true;
         }
-
-        if (parent.getName().equals("fo:flow")) {
-            throw new FOPException("fo:inline can't be directly"
-                                   + " under flow");
-        }
-
     }
 
     protected void addCharacters(char data[], int start, int length) {
