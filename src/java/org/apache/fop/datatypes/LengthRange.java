@@ -51,7 +51,6 @@
 package org.apache.fop.datatypes;
 
 import org.apache.fop.fo.Property;
-import org.apache.fop.fo.Constants;
 
 /**
  * A "progression-dimension" quantity.
@@ -74,11 +73,11 @@ public class LengthRange implements CompoundDatatype {
      */
     public void setComponent(int cmpId, Property cmpnValue,
                              boolean bIsDefault) {
-        if (cmpId == Constants.CP_MINIMUM) {
+        if (cmpId == CP_MINIMUM) {
             setMinimum(cmpnValue, bIsDefault);
-        } else if (cmpId == Constants.CP_OPTIMUM) {
+        } else if (cmpId == CP_OPTIMUM) {
             setOptimum(cmpnValue, bIsDefault);
-        } else if (cmpId == Constants.CP_MAXIMUM) {
+        } else if (cmpId == CP_MAXIMUM) {
             setMaximum(cmpnValue, bIsDefault);
         }
     }
@@ -87,11 +86,11 @@ public class LengthRange implements CompoundDatatype {
      * @see org.apache.fop.datatypes.CompoundDatatype#getComponent(int)
      */
     public Property getComponent(int cmpId) {
-        if (cmpId == Constants.CP_MINIMUM) {
+        if (cmpId == CP_MINIMUM) {
             return getMinimum();
-        } else if (cmpId == Constants.CP_OPTIMUM) {
+        } else if (cmpId == CP_OPTIMUM) {
             return getOptimum();
-        } else if (cmpId == Constants.CP_MAXIMUM) {
+        } else if (cmpId == CP_MAXIMUM) {
             return getMaximum();
         } else {
             return null;    // SHOULDN'T HAPPEN

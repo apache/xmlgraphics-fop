@@ -51,7 +51,6 @@
 package org.apache.fop.datatypes;
 
 import org.apache.fop.fo.Property;
-import org.apache.fop.fo.Constants;
 
 /**
  * a space quantity in XSL (space-before, space-after)
@@ -66,9 +65,9 @@ public class Space extends LengthRange {
      */
     public void setComponent(int cmpId, Property cmpnValue,
                              boolean bIsDefault) {
-        if (cmpId == Constants.CP_PRECEDENCE) {
+        if (cmpId == CP_PRECEDENCE) {
             setPrecedence(cmpnValue, bIsDefault);
-        } else if (cmpId == Constants.CP_CONDITIONALITY) {
+        } else if (cmpId == CP_CONDITIONALITY) {
             setConditionality(cmpnValue, bIsDefault);
         } else {
             super.setComponent(cmpId, cmpnValue, bIsDefault);
@@ -79,9 +78,9 @@ public class Space extends LengthRange {
      * @see org.apache.fop.datatypes.CompoundDatatype#getComponent(int)
      */
     public Property getComponent(int cmpId) {
-        if (cmpId == Constants.CP_PRECEDENCE) {
+        if (cmpId == CP_PRECEDENCE) {
             return getPrecedence();
-        } else if (cmpId == Constants.CP_CONDITIONALITY) {
+        } else if (cmpId == CP_CONDITIONALITY) {
             return getConditionality();
         } else {
             return super.getComponent(cmpId);
