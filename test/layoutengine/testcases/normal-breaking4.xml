@@ -45,6 +45,7 @@ Apache FOP is a great tool to create PDF documents with.
 Apache FOP is a great tool to create PDF documents with.
 Apache FOP is a great tool to create PDF documents with.
 </fo:block>
+        <fo:block background-color="yellow">last line in new block</fo:block>
         </fo:flow>
       </fo:page-sequence>
     </fo:root>
