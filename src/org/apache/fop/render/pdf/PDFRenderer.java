@@ -59,6 +59,7 @@ import org.apache.fop.image.FopImage;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.fo.properties.*;
 import org.apache.fop.layout.*;
+import org.apache.fop.layout.inline.*;
 import org.apache.fop.datatypes.*;
 import org.apache.fop.svg.PathPoint;
 import org.apache.fop.pdf.*;
@@ -565,7 +566,7 @@ public class PDFRenderer implements Renderer {
        *
        * @param area inline area to render
        */
-    public void renderInlineArea(InlineArea area) {
+    public void renderWordArea(WordArea area) {
         char ch;
         StringBuffer pdf = new StringBuffer();
 

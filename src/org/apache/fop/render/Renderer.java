@@ -55,6 +55,7 @@ import org.apache.fop.dom.svg.SVGArea;
 import org.apache.fop.image.ImageArea;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.layout.*;
+import org.apache.fop.layout.inline.*;
 
 // Java
 import java.io.OutputStream;
@@ -102,7 +103,7 @@ public interface Renderer {
     public void renderImageArea(ImageArea area);
 
     /** render the given inline area */
-    public void renderInlineArea(InlineArea area);
+    public void renderWordArea(WordArea area);
 
     /** render the given inline space */
     public void renderInlineSpace(InlineSpace space);

@@ -58,6 +58,7 @@ import org.apache.fop.dom.svg.SVGArea;
 import org.apache.fop.render.Renderer;
 import org.apache.fop.image.ImageArea;
 import org.apache.fop.layout.*;
+import org.apache.fop.layout.inline.*;
 import org.apache.fop.pdf.*;
 import org.apache.fop.fo.properties.LeaderPattern;
 
@@ -279,7 +280,7 @@ public class XMLRenderer implements Renderer {
      *
      * @param area the area to render
      */
-    public void renderInlineArea(InlineArea area) {
+    public void renderWordArea(WordArea area) {
 	String fontWeight = area.getFontState().getFontWeight();
 	StringBuffer sb = new StringBuffer();
 	String s = area.getText();
