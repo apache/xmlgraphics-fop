@@ -88,7 +88,7 @@ public abstract class Region extends FObj {
     private String regionName;
 
     /** Holds the overflow attribute */
-    protected int overflow;
+    public int overflow;
     /** Holds the writing mode */
     protected int wm;
 
@@ -138,19 +138,6 @@ public abstract class Region extends FObj {
     public abstract Rectangle getViewportRectangle(FODimension pageRefRect);
 
     /**
-     * Create the region reference area for this region master.
-     * @param absRegVPRect The region viewport rectangle is "absolute" coordinates
-     * where x=distance from left, y=distance from bottom, width=right-left
-     * height=top-bottom
-     * @return a new region reference area
-     */
-    public RegionReference makeRegionReferenceArea(Rectangle2D absRegVPRect) {
-        RegionReference r = new RegionReference(getRegionAreaClass());
-        setRegionPosition(r, absRegVPRect);
-        return r;
-    }
-
-    /**
      * Set the region position inside the region viewport.
      * This sets the trasnform that is used to place the contents of
      * the region.
@@ -158,7 +145,7 @@ public abstract class Region extends FObj {
      * @param r the region reference area
      * @param absRegVPRect the rectangle to place the region contents
      */
-    protected void setRegionPosition(RegionReference r, Rectangle2D absRegVPRect) {
+    public void setRegionPosition(RegionReference r, Rectangle2D absRegVPRect) {
         FODimension reldims = new FODimension(0, 0);
         r.setCTM(CTM.getCTMandRelDims(propMgr.getAbsRefOrient(),
                 propMgr.getWritingMode(), absRegVPRect, reldims));

@@ -83,6 +83,7 @@ import org.apache.fop.fo.properties.CommonBackground;
 import org.apache.fop.fo.properties.CommonBorderAndPadding;
 import org.apache.fop.fo.properties.CommonMarginBlock;
 import org.apache.fop.fo.properties.Constants;
+import org.apache.fop.fo.properties.Overflow;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -785,7 +786,11 @@ public class PageLayoutManager extends AbstractLayoutManager implements Runnable
             regenum.hasNext();) {
            Region r = (Region)regenum.next();
            RegionViewport rvp = makeRegionViewport(r, reldims, pageCTM);
-           rvp.setRegion(r.makeRegionReferenceArea(rvp.getViewArea()));
+           if (r.getRegionAreaClass() == RegionReference.BODY) {
+               rvp.setRegion(makeRegionBodyReferenceArea(r, rvp.getViewArea()));
+           } else {
+               rvp.setRegion(makeRegionReferenceArea(r, rvp.getViewArea()));
+           }
            page.setRegion(r.getRegionAreaClass(), rvp);
            if (r.getRegionAreaClass() == RegionReference.BODY) {
                bHasBody = true;
@@ -831,5 +836,44 @@ public class PageLayoutManager extends AbstractLayoutManager implements Runnable
         TraitSetter.addBackground(rv, bProps);
     }
 
-}
+    /**
+     * Override the inherited method.
+     * @see org.apache.fop.fo.pagination.Region#makeRegionReferenceArea(Rectangle2D)
+     */
+    public RegionReference makeRegionBodyReferenceArea(Region r,
+            Rectangle2D absRegVPRect) {
+        // Should set some column stuff here I think, or put it elsewhere
+        BodyRegion body = new BodyRegion();
+        r.setRegionPosition(body, absRegVPRect);
+        int columnCount =
+                r.properties.get("column-count").getNumber().intValue();
+        if ((columnCount > 1) && (r.overflow == Overflow.SCROLL)) {
+            // recover by setting 'column-count' to 1. This is allowed but
+            // not required by the spec.
+            getLogger().error("Setting 'column-count' to 1 because "
+                    + "'overflow' is set to 'scroll'");
+            columnCount = 1;
+        }
+        body.setColumnCount(columnCount);
 
+        int columnGap =
+                r.properties.get("column-gap").getLength().getValue();
+        body.setColumnGap(columnGap);
+        return body;
+    }
+
+    /**
+     * Create the region reference area for this region master.
+     * @param absRegVPRect The region viewport rectangle is "absolute" coordinates
+     * where x=distance from left, y=distance from bottom, width=right-left
+     * height=top-bottom
+     * @return a new region reference area
+     */
+    public RegionReference makeRegionReferenceArea(Region r,
+            Rectangle2D absRegVPRect) {
+        RegionReference rr = new RegionReference(r.getRegionAreaClass());
+        r.setRegionPosition(rr, absRegVPRect);
+        return rr;
+    }
+
+}
