@@ -280,12 +280,10 @@ Sometimes ant gives out this warnings, but the build is finished without any pro
     -->
 
     <taskdef name="serHyph" classname="org.apache.fop.tools.anttasks.SerializeHyphPattern"/> 
-    <taskdef name="xslt" classname="org.apache.fop.tools.anttasks.Xslt"/>
-    <taskdef name="manifest" classname="org.apache.fop.tools.anttasks.Manifest"/>
     <taskdef name="runTest" classname="org.apache.fop.tools.anttasks.RunTest"/>
 
     <property name="main.class" value="org.apache.fop.apps.Fop"/>
-    <property name="runtime.classpath" value="lib/xerces-1.2.3.jar lib/xalan-2.0.0.jar lib/xalanj1compat.jar lib/batik.jar lib/jimi-1.0.jar lib/avalon-framework-cvs-20020315.jar"/>
+    <property name="runtime.classpath" value="lib/xerces-1.2.3.jar lib/xalan-2.0.0.jar lib/batik.jar lib/jimi-1.0.jar lib/avalon-framework-cvs-20020315.jar"/>
    
     <filter filtersfile="${build.src}/codegen/filter"/>
 
@@ -583,14 +581,23 @@ Sometimes ant gives out this warnings, but the build is finished without any pro
   <!-- =================================================================== -->
   <target name="package" depends="compile,hyphenation">
     <echo message="Creating the jar file ${build.dir}/${name}.jar"/>
-    <manifest file="${build.dir}/Manifest.txt" overwrite="yes"
-	      mainclass="${main.class}" 
-              classpath="${runtime.classpath}"
-              impltitle="${Name}" implversion="${version}"
-	      implvendor="Apache Software Foundation (http://xml.apache.org/fop/)"/>
-    <jar jarfile="${build.dir}/${name}.jar" manifest="${build.dir}/Manifest.txt"
+
+    <tstamp>
+      <format property="ts" pattern="yyyyMMdd-HHmmss-z"/>
+    </tstamp>
+    <jar jarfile="${build.dir}/${name}.jar"
          basedir="${build.dest}"
-         includes="org/**,conf/**,hyph/**"/>
+         includes="org/**,conf/**,hyph/**">
+    <manifest>
+        <attribute name="Main-Class" value="${main.class}"/>
+        <attribute name="Class-Path" value="${runtime.classpath}"/>
+        <attribute name="Implementation-Title" value="${Name}"/>
+        <attribute name="Implementation-Version" value="${version}"/>
+        <attribute name="Implementation-Vendor" value="Apache Software Foundation (http://xml.apache.org/fop/)"/>
+        <attribute name="Build-Id" value="${ts} (${user.name} [${os.name} ${os.version} ${os.arch}])"/>
+    </manifest>
+    </jar>
+
   </target>
 
   <target name="test" depends="package">
