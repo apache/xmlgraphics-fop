@@ -213,50 +213,51 @@ public class FontReader extends DefaultHandler {
      * @see org.xml.sax.ContentHandler#endElement(String, String, String)
      */
     public void endElement(String uri, String localName, String qName) {
+        String content = text.toString().trim();
         if ("font-name".equals(localName)) {
-            returnFont.setFontName(text.toString());
+            returnFont.setFontName(content);
         } else if ("ttc-name".equals(localName) && isCID) {
-            multiFont.setTTCName(text.toString());
+            multiFont.setTTCName(content);
         } else if ("cap-height".equals(localName)) {
-            returnFont.setCapHeight(getInt(text.toString()));
+            returnFont.setCapHeight(getInt(content));
         } else if ("x-height".equals(localName)) {
-            returnFont.setXHeight(getInt(text.toString()));
+            returnFont.setXHeight(getInt(content));
         } else if ("ascender".equals(localName)) {
-            returnFont.setAscender(getInt(text.toString()));
+            returnFont.setAscender(getInt(content));
         } else if ("descender".equals(localName)) {
-            returnFont.setDescender(getInt(text.toString()));
+            returnFont.setDescender(getInt(content));
         } else if ("left".equals(localName)) {
             int[] bbox = returnFont.getFontBBox();
-            bbox[0] = getInt(text.toString());
+            bbox[0] = getInt(content);
             returnFont.setFontBBox(bbox);
         } else if ("bottom".equals(localName)) {
             int[] bbox = returnFont.getFontBBox();
-            bbox[1] = getInt(text.toString());
+            bbox[1] = getInt(content);
             returnFont.setFontBBox(bbox);
         } else if ("right".equals(localName)) {
             int[] bbox = returnFont.getFontBBox();
-            bbox[2] = getInt(text.toString());
+            bbox[2] = getInt(content);
             returnFont.setFontBBox(bbox);
         } else if ("top".equals(localName)) {
             int[] bbox = returnFont.getFontBBox();
-            bbox[3] = getInt(text.toString());
+            bbox[3] = getInt(content);
             returnFont.setFontBBox(bbox);
         } else if ("first-char".equals(localName)) {
-            returnFont.setFirstChar(getInt(text.toString()));
+            returnFont.setFirstChar(getInt(content));
         } else if ("last-char".equals(localName)) {
-            returnFont.setLastChar(getInt(text.toString()));
+            returnFont.setLastChar(getInt(content));
         } else if ("flags".equals(localName)) {
-            returnFont.setFlags(getInt(text.toString()));
+            returnFont.setFlags(getInt(content));
         } else if ("stemv".equals(localName)) {
-            returnFont.setStemV(getInt(text.toString()));
+            returnFont.setStemV(getInt(content));
         } else if ("italic-angle".equals(localName)) {
-            returnFont.setItalicAngle(getInt(text.toString()));
+            returnFont.setItalicAngle(getInt(content));
         } else if ("missing-width".equals(localName)) {
-            returnFont.setMissingWidth(getInt(text.toString()));
+            returnFont.setMissingWidth(getInt(content));
         } else if ("cid-type".equals(localName)) {
-            multiFont.setCIDType(CIDFontType.byName(text.toString()));
+            multiFont.setCIDType(CIDFontType.byName(content));
         } else if ("default-width".equals(localName)) {
-            multiFont.setDefaultWidth(getInt(text.toString()));
+            multiFont.setDefaultWidth(getInt(content));
         } else if ("cid-widths".equals(localName)) {
             int[] wds = new int[cidWidths.size()];
             int j = 0;
