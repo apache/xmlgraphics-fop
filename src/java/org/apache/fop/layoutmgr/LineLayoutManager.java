@@ -50,6 +50,27 @@ public class LineLayoutManager extends InlineStackingLayoutManager {
     private Block fobj; 
     
     /**
+     * Create a new Line Layout Manager.
+     * This is used by the block layout manager to create
+     * line managers for handling inline areas flowing into line areas.
+     *
+     * @param lh the default line height
+     * @param l the default lead, from top to baseline
+     * @param f the default follow, from baseline to bottom
+     */
+    public LineLayoutManager(Block node, int lh, int l, int f) {
+        super(node);
+        fobj = node;
+        // the child FObj are owned by the parent BlockLM
+        // this LM has all its childLMs preloaded
+        fobjIter = null;
+        lineHeight = lh;
+        lead = l;
+        follow = f;
+        initialize(); // Normally done when started by parent!
+    }
+
+    /**
      * @see org.apache.fop.layoutmgr.AbstractLayoutManager#initProperties()
      */
     protected void initProperties() {
@@ -339,27 +360,6 @@ public class LineLayoutManager extends InlineStackingLayoutManager {
         }
     }
 
-
-    /**
-     * Create a new Line Layout Manager.
-     * This is used by the block layout manager to create
-     * line managers for handling inline areas flowing into line areas.
-     *
-     * @param lh the default line height
-     * @param l the default lead, from top to baseline
-     * @param f the default follow, from baseline to bottom
-     */
-    public LineLayoutManager(Block node, int lh, int l, int f) {
-        super(node);
-        fobj = node;
-        // the child FObj are owned by the parent BlockLM
-        // this LM has all its childLMs preloaded
-        fobjIter = null;
-        lineHeight = lh;
-        lead = l;
-        follow = f;
-        initialize(); // Normally done when started by parent!
-    }
 
     /**
      * Call child layout managers to generate content.
