@@ -224,6 +224,9 @@ public class InstreamForeignObject extends FObj {
 		if (area instanceof BlockArea) {
             BlockArea ba = (BlockArea)area;
             LineArea la = ba.getCurrentLineArea();
+            if(la == null) {
+                return new Status(Status.AREA_FULL_NONE);
+            }
             la.addPending();
             if(areaCurrent.getEffectiveWidth() > la.getRemainingWidth()) {
                 la = ba.createNextLineArea();
