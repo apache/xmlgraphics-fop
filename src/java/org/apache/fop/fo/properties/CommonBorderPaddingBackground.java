@@ -22,6 +22,7 @@ import org.apache.fop.datatypes.ColorType;
 import org.apache.fop.datatypes.Length;
 import org.apache.fop.fo.Constants;
 import org.apache.fop.fo.PropertyList;
+import org.apache.fop.fo.expr.PropertyException;
 
 /**
  * Stores all common border and padding properties.
@@ -82,7 +83,7 @@ public class CommonBorderPaddingBackground implements Cloneable {
      * Construct a CommonBorderPaddingBackground object.
      * @param pList The PropertyList to get properties from.
      */
-    public CommonBorderPaddingBackground(PropertyList pList) {
+    public CommonBorderPaddingBackground(PropertyList pList) throws PropertyException {
         backgroundAttachment = pList.get(Constants.PR_BACKGROUND_ATTACHMENT).getEnum();
         backgroundColor = pList.get(Constants.PR_BACKGROUND_COLOR).getColorType();
         if (backgroundColor.getAlpha() == 0) {
@@ -122,7 +123,8 @@ public class CommonBorderPaddingBackground implements Cloneable {
     }
 
     private void initBorderInfo(PropertyList pList, int side, 
-            int colorProp, int styleProp, int widthProp, int paddingProp) 
+            int colorProp, int styleProp, int widthProp, int paddingProp)
+        throws PropertyException
     {
         padding[side] = pList.get(paddingProp).getCondLength();
         // If style = none, force width to 0, don't get Color (spec 7.7.20)

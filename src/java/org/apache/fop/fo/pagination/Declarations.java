@@ -19,18 +19,17 @@
 package org.apache.fop.fo.pagination;
 
 // Java
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Iterator;
 
-// XML
 import org.xml.sax.Locator;
-import org.xml.sax.SAXParseException;
 
-// FOP
+import org.apache.fop.apps.FOPException;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.PropertyList;
+import org.apache.fop.fo.ValidationException;
 import org.apache.fop.fo.XMLObj;
 
 
@@ -57,7 +56,7 @@ public class Declarations extends FObj {
     /**
      * @see org.apache.fop.fo.FObj#bind(PropertyList)
      */
-    public void bind(PropertyList pList) {
+    public void bind(PropertyList pList) throws FOPException {
         // No properties defined for fo:declarations
     }
 
@@ -67,7 +66,7 @@ public class Declarations extends FObj {
         FOP/XSL 1.1: (color-profile)* (and non-XSL NS nodes)
      */
     protected void validateChildNode(Locator loc, String nsURI, String localName) 
-        throws SAXParseException {
+        throws ValidationException {
         if (nsURI == FO_URI) {
             if (!localName.equals("color-profile")) {   
                 invalidChildError(loc, nsURI, localName);
@@ -79,7 +78,7 @@ public class Declarations extends FObj {
      * At the end of this element sort out the child into
      * a hashmap of color profiles and a list of external xml.
      */
-    protected void endOfNode() throws SAXParseException {
+    protected void endOfNode() throws FOPException {
         if (childNodes != null) {
             for (Iterator iter = childNodes.iterator(); iter.hasNext();) {
                 FONode node = (FONode)iter.next();

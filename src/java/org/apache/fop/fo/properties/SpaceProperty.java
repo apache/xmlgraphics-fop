@@ -18,9 +18,9 @@
 
 package org.apache.fop.fo.properties;
 
-import org.apache.fop.apps.FOPException;
 import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.PropertyList;
+import org.apache.fop.fo.expr.PropertyException;
 
 /**
  * Base class used for handling properties of the fo:space-before and
@@ -56,7 +56,7 @@ public class SpaceProperty extends LengthRangeProperty {
          */
         public Property convertProperty(Property p,
                                         PropertyList propertyList,
-                                        FObj fo) throws FOPException {
+                                        FObj fo) throws PropertyException {
             if (p instanceof SpaceProperty) {
                 return p;
             }

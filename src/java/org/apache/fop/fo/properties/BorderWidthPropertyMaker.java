@@ -18,9 +18,9 @@
 
 package org.apache.fop.fo.properties;
 
-import org.apache.fop.apps.FOPException;
 import org.apache.fop.fo.Constants;
 import org.apache.fop.fo.PropertyList;
+import org.apache.fop.fo.expr.PropertyException;
 
 /**
  * This subclass of LengthProperty.Maker handles the special treatment of 
@@ -54,7 +54,7 @@ public class BorderWidthPropertyMaker extends LengthProperty.Maker {
    
     public Property get(int subpropId, PropertyList propertyList,
                         boolean bTryInherit, boolean bTryDefault)
-        throws FOPException
+        throws PropertyException
     {
         Property p = super.get(subpropId, propertyList,
                                bTryInherit, bTryDefault);

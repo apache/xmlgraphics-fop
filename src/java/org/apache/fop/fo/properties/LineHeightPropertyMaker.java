@@ -18,7 +18,6 @@
 
 package org.apache.fop.fo.properties;
 
-import org.apache.fop.apps.FOPException;
 import org.apache.fop.datatypes.Numeric;
 import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.PropertyList;
@@ -47,7 +46,7 @@ public class LineHeightPropertyMaker extends SpaceProperty.Maker {
      * @see PropertyMaker#make(PropertyList, String, FObj)
      */
     public Property make(PropertyList propertyList, String value,
-                         FObj fo) throws FOPException {
+                         FObj fo) throws PropertyException {
         Property p = super.make(propertyList, value, fo);
         p.setSpecifiedValue(checkValueKeywords(value));
         return p;
@@ -58,22 +57,15 @@ public class LineHeightPropertyMaker extends SpaceProperty.Maker {
      * value.
      * @see PropertyMaker#compute(PropertyList)
      */
-    protected Property compute(PropertyList propertyList) throws FOPException {
+    protected Property compute(PropertyList propertyList) throws PropertyException {
         // recalculate based on last specified value
         // Climb up propertylist and find last spec'd value
         Property specProp = propertyList.getNearestSpecified(propId);
         if (specProp != null) {
             String specVal = specProp.getSpecifiedValue();
             if (specVal != null) {
-                try {
-                    return make(propertyList, specVal,
+                return make(propertyList, specVal,
                             propertyList.getParentFObj());
-                } catch (FOPException e) {
-                    //getLogger()error("Error computing property value for "
-                    //                       + propName + " from "
-                    //                       + specVal);
-                    return null;
-                }
             }
         }
         return null;
@@ -81,14 +73,10 @@ public class LineHeightPropertyMaker extends SpaceProperty.Maker {
 
     public Property convertProperty(Property p,
             PropertyList propertyList,
-            FObj fo) throws FOPException {
+            FObj fo) throws PropertyException {
         Numeric numval = p.getNumeric();
         if (numval != null && numval.getDimension() == 0) {
-            try {
-                p = new PercentLength(numval.getNumericValue(), getPercentBase(fo,propertyList));
-            } catch (PropertyException exc) {
-                // log.error("exception", exc);
-            }
+            p = new PercentLength(numval.getNumericValue(), getPercentBase(fo,propertyList));
         }
         return super.convertProperty(p, propertyList, fo);
     }

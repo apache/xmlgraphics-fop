@@ -19,6 +19,7 @@
 package org.apache.fop.fo.properties;
 
 import org.apache.fop.fo.PropertyList;
+import org.apache.fop.fo.expr.PropertyException;
 
 /**
  * Interface used to provide parsing capabilities to Properties with shorthand
@@ -35,5 +36,5 @@ public interface ShorthandParser {
     Property getValueForProperty(int propId,
                                  Property property,
                                  PropertyMaker maker,
-                                 PropertyList propertyList);
+                                 PropertyList propertyList) throws PropertyException;
 }

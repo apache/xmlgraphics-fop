@@ -15,6 +15,7 @@
  */
 package org.apache.fop.fo;
 
+import org.apache.fop.fo.expr.PropertyException;
 import org.apache.fop.fo.properties.Property;
 
 /**
@@ -59,7 +60,9 @@ public class StaticPropertyList extends PropertyList {
      * retrieved property values.
      * @param propId The property ID
      */
-    public Property get(int propId, boolean bTryInherit, boolean bTryDefault) {
+    public Property get(int propId, boolean bTryInherit, boolean bTryDefault)
+        throws PropertyException 
+    {
         Property p = values[propId];
         if (p == null) {
             p = values[propId] = super.get(propId, bTryInherit, bTryDefault);

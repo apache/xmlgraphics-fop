@@ -21,6 +21,7 @@ package org.apache.fop.fo.properties;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.PropertyList;
+import org.apache.fop.fo.expr.PropertyException;
 
 /**
  */
@@ -94,7 +95,7 @@ public class CorrespondingPropertyMaker {
      * are specified (in foproperties.xml) to compute the value.
      * @throws FOPException for invalid or inconsistent FO input
      */
-    public Property compute(PropertyList propertyList) throws FOPException {
+    public Property compute(PropertyList propertyList) throws PropertyException {
         PropertyList pList = getWMPropertyList(propertyList);
         if (pList == null) {
             return null;

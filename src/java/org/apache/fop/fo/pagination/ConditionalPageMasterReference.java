@@ -20,12 +20,12 @@ package org.apache.fop.fo.pagination;
 
 // XML
 import org.xml.sax.Locator;
-import org.xml.sax.SAXParseException;
 
-// FOP
+import org.apache.fop.apps.FOPException;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.PropertyList;
+import org.apache.fop.fo.ValidationException;
 
 /**
  * A conditional-page-master-reference formatting object.
@@ -55,7 +55,7 @@ public class ConditionalPageMasterReference extends FObj {
     /**
      * @see org.apache.fop.fo.FObj#bind(PropertyList)
      */
-    public void bind(PropertyList pList) {
+    public void bind(PropertyList pList) throws FOPException {
         masterReference = pList.get(PR_MASTER_REFERENCE).getString();
         pagePosition = pList.get(PR_PAGE_POSITION).getEnum();
         oddOrEven = pList.get(PR_ODD_OR_EVEN).getEnum();
@@ -65,7 +65,7 @@ public class ConditionalPageMasterReference extends FObj {
     /**
      * @see org.apache.fop.fo.FONode#startOfNode
      */
-    protected void startOfNode() throws SAXParseException {
+    protected void startOfNode() throws FOPException {
         validateParent(parent);
     }
 
@@ -74,7 +74,7 @@ public class ConditionalPageMasterReference extends FObj {
      * XSL Content Model: empty
      */
     protected void validateChildNode(Locator loc, String nsURI, String localName) 
-        throws SAXParseException {
+        throws ValidationException {
        invalidChildError(loc, nsURI, localName);
     }
 
@@ -137,9 +137,9 @@ public class ConditionalPageMasterReference extends FObj {
      * Check that the parent is the right type of formatting object
      * repeatable-page-master-alternatives.
      * @param parent parent node
-     * @throws SAXParseException If the parent is invalid
+     * @throws ValidationException If the parent is invalid
      */
-    protected void validateParent(FONode parent) throws SAXParseException {
+    protected void validateParent(FONode parent) throws ValidationException {
         if (parent.getName().equals("fo:repeatable-page-master-alternatives")) {
             this.repeatablePageMasterAlternatives =
                 (RepeatablePageMasterAlternatives)parent;
@@ -151,7 +151,7 @@ public class ConditionalPageMasterReference extends FObj {
                 this.repeatablePageMasterAlternatives.addConditionalPageMasterReference(this);
             }
         } else {
-            throw new SAXParseException("fo:conditional-page-master-reference must be child "
+            throw new ValidationException("fo:conditional-page-master-reference must be child "
                                    + "of fo:repeatable-page-master-alternatives, not "
                                    + parent.getName(), locator);
         }

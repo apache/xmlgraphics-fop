@@ -20,6 +20,9 @@ package org.apache.fop.fo.properties;
 
 import java.util.Vector;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 import org.apache.fop.datatypes.Length;
 import org.apache.fop.datatypes.Numeric;
 
@@ -28,6 +31,7 @@ import org.apache.fop.datatypes.Numeric;
  * @author unascribed
  */
 public class Property {
+    protected static Log log = LogFactory.getLog(PropertyMaker.class);
 
     /**
      * The original specified value for properties which inherit

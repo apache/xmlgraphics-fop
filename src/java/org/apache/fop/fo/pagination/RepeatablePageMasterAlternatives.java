@@ -21,14 +21,13 @@ package org.apache.fop.fo.pagination;
 // Java
 import java.util.ArrayList;
 
-// XML
 import org.xml.sax.Locator;
-import org.xml.sax.SAXParseException;
 
-// FOP
+import org.apache.fop.apps.FOPException;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.PropertyList;
+import org.apache.fop.fo.ValidationException;
 import org.apache.fop.fo.properties.Property;
 
 /**
@@ -59,21 +58,21 @@ public class RepeatablePageMasterAlternatives extends FObj
     /**
      * @see org.apache.fop.fo.FObj#bind(PropertyList)
      */
-    public void bind(PropertyList pList) {
+    public void bind(PropertyList pList) throws FOPException {
         maximumRepeats = pList.get(PR_MAXIMUM_REPEATS);
     }
 
     /**
      * @see org.apache.fop.fo.FONode#startOfNode
      */
-    protected void startOfNode() throws SAXParseException {
+    protected void startOfNode() throws FOPException {
         conditionalPageMasterRefs = new ArrayList();
 
         if (parent.getName().equals("fo:page-sequence-master")) {
             PageSequenceMaster pageSequenceMaster = (PageSequenceMaster)parent;
             pageSequenceMaster.addSubsequenceSpecifier(this);
         } else {
-            throw new SAXParseException("fo:repeatable-page-master-alternatives "
+            throw new ValidationException("fo:repeatable-page-master-alternatives "
                                    + "must be child of fo:page-sequence-master, not "
                                    + parent.getName(), locator);
         }
@@ -82,7 +81,7 @@ public class RepeatablePageMasterAlternatives extends FObj
     /**
      * @see org.apache.fop.fo.FONode#endOfNode
      */
-    protected void endOfNode() throws SAXParseException {
+    protected void endOfNode() throws FOPException {
         if (childNodes == null) {
            missingChildElementError("(conditional-page-master-reference+)");
         }
@@ -93,7 +92,7 @@ public class RepeatablePageMasterAlternatives extends FObj
         XSL/FOP: (conditional-page-master-reference+)
      */
     protected void validateChildNode(Locator loc, String nsURI, String localName) 
-        throws SAXParseException {
+        throws ValidationException {
         if (!(nsURI == FO_URI &&
             localName.equals("conditional-page-master-reference"))) {
                 invalidChildError(loc, nsURI, localName);

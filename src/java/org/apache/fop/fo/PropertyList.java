@@ -21,8 +21,11 @@ package org.apache.fop.fo;
 // Java
 import org.xml.sax.Attributes;
 
-// FOP
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 import org.apache.fop.apps.FOPException;
+import org.apache.fop.fo.expr.PropertyException;
 import org.apache.fop.fo.properties.CommonAbsolutePosition;
 import org.apache.fop.fo.properties.CommonAccessibility;
 import org.apache.fop.fo.properties.CommonAural;
@@ -34,9 +37,6 @@ import org.apache.fop.fo.properties.CommonMarginInline;
 import org.apache.fop.fo.properties.CommonRelativePosition;
 import org.apache.fop.fo.properties.Property;
 import org.apache.fop.fo.properties.PropertyMaker;
-
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 
 /**
  * Class containing the collection of properties for a given FObj.
@@ -94,7 +94,7 @@ abstract public class PropertyList {
      * @return The value if the property is explicitly set or set by
      * a shorthand property, otherwise null.
      */
-    public Property getExplicitOrShorthand(int propId) {
+    public Property getExplicitOrShorthand(int propId) throws PropertyException {
         /* Handle request for one part of a compound property */
         Property p = getExplicit(propId);
         if (p == null) {
@@ -124,20 +124,14 @@ abstract public class PropertyList {
      * @param propId The ID of the property whose value is desired.
      * @return The inherited value, otherwise null.
      */
-    public Property getInherited(int propId) {
+    public Property getInherited(int propId) throws PropertyException {
 
         if (isInherited(propId)) {
             return getFromParent(propId);
         } else {
             // return the "initial" value
-            try {
-                return makeProperty(propId);
-            } catch (org.apache.fop.apps.FOPException e) {
-                //log.error("Exception in getInherited(): property="
-                //                       + propertyName + " : " + e);
-            }
+            return makeProperty(propId);
         }
-        return null;    // Exception in makeProperty!
     }
 
     /**
@@ -148,7 +142,7 @@ abstract public class PropertyList {
      * @param propId The Constants ID of the property whose value is desired.
      * @return the Property corresponding to that name
      */
-    public Property get(int propId) {
+    public Property get(int propId) throws PropertyException {
         return get(propId, true, true);
     }
 
@@ -159,16 +153,11 @@ abstract public class PropertyList {
      * the default value.
      */
     public Property get(int propId, boolean bTryInherit,
-                         boolean bTryDefault) {
+                         boolean bTryDefault) throws PropertyException {
 
         PropertyMaker propertyMaker = findMaker(propId & Constants.PROPERTY_MASK);
-        try {
-            return propertyMaker.get(propId & Constants.COMPOUND_MASK, this,
+        return propertyMaker.get(propId & Constants.COMPOUND_MASK, this,
                                      bTryInherit, bTryDefault);
-        } catch (FOPException exc) {
-            fobj.getLogger().error("Error during property processing", exc);
-        }
-        return null;
     }
 
     /**
@@ -178,7 +167,7 @@ abstract public class PropertyList {
      * @return The computed value if the property is explicitly set on some
      * ancestor of the current FO, else the initial value.
      */
-    public Property getNearestSpecified(int propId) {
+    public Property getNearestSpecified(int propId) throws PropertyException {
         Property p = null;
 
         for (PropertyList plist = this; p == null && plist != null;
@@ -188,12 +177,7 @@ abstract public class PropertyList {
 
         if (p == null) {
             // If no explicit setting found, return initial (default) value.
-            try {
-                p = makeProperty(propId);
-            } catch (FOPException e) {
-                //log.error("Exception in getNearestSpecified(): property="
-                //                       + propertyName + " : " + e);
-            }
+            p = makeProperty(propId);
         }
         return p;
     }
@@ -205,18 +189,12 @@ abstract public class PropertyList {
      * @return The computed value on the parent or the initial value if this
      * FO is the root or is in a different namespace from its parent.
      */
-    public Property getFromParent(int propId) {
+    public Property getFromParent(int propId) throws PropertyException {
         if (parentPropertyList != null) {
             return parentPropertyList.get(propId);
         } else {
-            try {
-                return makeProperty(propId);
-            } catch (org.apache.fop.apps.FOPException e) {
-                //log.error("Exception in getFromParent(): property="
-                //                       + propertyName + " : " + e);
-            }
+            return makeProperty(propId);
         }
-        return null;    // Exception in makeProperty!
     }
 
     /**
@@ -224,7 +202,7 @@ abstract public class PropertyList {
      * Use that from the nearest ancestor, including self, which generates
      * reference areas, or from root FO if no ancestor found.
      */
-    protected void setWritingMode() {
+    protected void setWritingMode() throws PropertyException {
         FObj p = fobj.findNearestAncestorFObj();
         // If this is a RA or the root, use the property value.
         if (fobj.generatesReferenceAreas() || p == null) {
@@ -336,9 +314,9 @@ abstract public class PropertyList {
             if (prop != null) {
                 putExplicit(propId, prop);
             }
-        } catch (FOPException e) {
-            /**@todo log this exception */
-            // log.error(e.getMessage());
+        } catch (PropertyException e) {
+            // TODO: Add strict validation.
+            log.error(e.getMessage());
         }
     }
 
@@ -347,7 +325,7 @@ abstract public class PropertyList {
                                       int propId,
                                       String basePropName,
                                       PropertyMaker propertyMaker)
-            throws FOPException {
+            throws PropertyException {
 
         /* If the baseProperty has already been created, return it
          * e.g. <fo:leader xxxx="120pt" xxxx.maximum="200pt"... />
@@ -416,7 +394,7 @@ abstract public class PropertyList {
      * @param propId ID of property
      * @return new Property object
      */
-    private Property getShorthand(int propId) {
+    private Property getShorthand(int propId) throws PropertyException {
         PropertyMaker propertyMaker = findMaker(propId);
         
         if (propertyMaker != null) {
@@ -432,7 +410,7 @@ abstract public class PropertyList {
      * @return new Property object
      * @throws FOPException for errors in the input
      */
-    private Property makeProperty(int propId) throws FOPException {
+    private Property makeProperty(int propId) throws PropertyException {
         PropertyMaker propertyMaker = findMaker(propId);
         if (propertyMaker != null) {
             return propertyMaker.make(this);
@@ -477,7 +455,7 @@ abstract public class PropertyList {
      * Constructs a BorderAndPadding object.
      * @return a BorderAndPadding object
      */
-    public CommonBorderPaddingBackground getBorderPaddingBackgroundProps() {
+    public CommonBorderPaddingBackground getBorderPaddingBackgroundProps() throws PropertyException {
         return new CommonBorderPaddingBackground(this);
     }
     
@@ -487,7 +465,7 @@ abstract public class PropertyList {
      * Constructs a HyphenationProps objects.
      * @return a HyphenationProps object
      */
-    public CommonHyphenation getHyphenationProps() {
+    public CommonHyphenation getHyphenationProps() throws PropertyException {
         return new CommonHyphenation(this);
     }
     
@@ -495,7 +473,7 @@ abstract public class PropertyList {
      * Constructs a MarginProps objects.
      * @return a MarginProps object
      */
-    public CommonMarginBlock getMarginBlockProps() {
+    public CommonMarginBlock getMarginBlockProps() throws PropertyException {
         return new CommonMarginBlock(this);
     }
     
@@ -503,7 +481,7 @@ abstract public class PropertyList {
      * Constructs a MarginInlineProps objects.
      * @return a MarginInlineProps object
      */
-    public CommonMarginInline getMarginInlineProps() {
+    public CommonMarginInline getMarginInlineProps() throws PropertyException {
         return new CommonMarginInline(this);
     }
     
@@ -511,7 +489,7 @@ abstract public class PropertyList {
      * Constructs a AccessibilityProps objects. 
      * @return a AccessibilityProps object
      */
-    public CommonAccessibility getAccessibilityProps() {
+    public CommonAccessibility getAccessibilityProps() throws PropertyException {
         return new CommonAccessibility(this);
     }
 
@@ -519,7 +497,7 @@ abstract public class PropertyList {
      * Constructs a AuralProps objects.
      * @return a AuralProps object
      */
-    public CommonAural getAuralProps() {
+    public CommonAural getAuralProps() throws PropertyException {
         CommonAural props = new CommonAural(this);
         return props;
     }
@@ -528,7 +506,7 @@ abstract public class PropertyList {
      * Constructs a RelativePositionProps objects.
      * @return a RelativePositionProps object
      */
-    public CommonRelativePosition getRelativePositionProps() {
+    public CommonRelativePosition getRelativePositionProps() throws PropertyException {
         return new CommonRelativePosition(this);
     }
     
@@ -536,7 +514,7 @@ abstract public class PropertyList {
      * Constructs a AbsolutePositionProps objects.
      * @return a AbsolutePositionProps object
      */
-    public CommonAbsolutePosition getAbsolutePositionProps() {
+    public CommonAbsolutePosition getAbsolutePositionProps() throws PropertyException {
         return new CommonAbsolutePosition(this);
     }    
     
@@ -545,7 +523,7 @@ abstract public class PropertyList {
      * Constructs a CommonFont object. 
      * @return A CommonFont object
      */
-    public CommonFont getFontProps() {
+    public CommonFont getFontProps() throws PropertyException {
         return new CommonFont(this);
     }
 }

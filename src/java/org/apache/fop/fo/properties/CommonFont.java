@@ -23,6 +23,7 @@ import org.apache.fop.datatypes.Length;
 import org.apache.fop.datatypes.Numeric;
 import org.apache.fop.fo.Constants;
 import org.apache.fop.fo.PropertyList;
+import org.apache.fop.fo.expr.PropertyException;
 import org.apache.fop.fonts.Font;
 import org.apache.fop.fonts.FontInfo;
 import org.apache.fop.fonts.FontMetrics;
@@ -78,7 +79,7 @@ public class CommonFont {
      * Create a CommonFont object.
      * @param pList The PropertyList to get properties from.
      */
-	public CommonFont(PropertyList pList) {
+	public CommonFont(PropertyList pList) throws PropertyException {
     	fontFamily = pList.get(Constants.PR_FONT_FAMILY).getString();
     	fontSelectionStrategy = pList.get(Constants.PR_FONT_SELECTION_STRATEGY).getEnum();
     	fontSize = pList.get(Constants.PR_FONT_SIZE).getLength();

@@ -21,17 +21,17 @@ package org.apache.fop.fo.flow;
 // Java
 import java.util.List;
 
-// XML
 import org.xml.sax.Locator;
-import org.xml.sax.SAXParseException;
 
-// FOP
+import org.apache.fop.apps.FOPException;
 import org.apache.fop.datatypes.ColorType;
 import org.apache.fop.datatypes.Length;
 import org.apache.fop.fo.CharIterator;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FObj;
+import org.apache.fop.fo.OneCharIterator;
 import org.apache.fop.fo.PropertyList;
+import org.apache.fop.fo.ValidationException;
 import org.apache.fop.fo.properties.CommonAural;
 import org.apache.fop.fo.properties.CommonBorderPaddingBackground;
 import org.apache.fop.fo.properties.CommonFont;
@@ -40,7 +40,6 @@ import org.apache.fop.fo.properties.CommonMarginInline;
 import org.apache.fop.fo.properties.CommonRelativePosition;
 import org.apache.fop.fo.properties.KeepProperty;
 import org.apache.fop.fo.properties.Property;
-import org.apache.fop.fo.OneCharIterator;
 import org.apache.fop.layoutmgr.CharacterLayoutManager;
 
 /**
@@ -104,7 +103,7 @@ public class Character extends FObj {
     /**
      * @see org.apache.fop.fo.FObj#bind(PropertyList)
      */
-    public void bind(PropertyList pList) {
+    public void bind(PropertyList pList) throws FOPException {
         commonAural = pList.getAuralProps();
         commonBorderPaddingBackground = pList.getBorderPaddingBackgroundProps();
         commonFont = pList.getFontProps();
@@ -140,7 +139,7 @@ public class Character extends FObj {
     /**
      * @see org.apache.fop.fo.FONode#startOfNode
      */
-    protected void startOfNode() throws SAXParseException {
+    protected void startOfNode() throws FOPException {
         checkId(id);
         getFOEventHandler().character(this);
     }
@@ -150,7 +149,7 @@ public class Character extends FObj {
      * XSL Content Model: empty
      */
     protected void validateChildNode(Locator loc, String nsURI, String localName) 
-        throws SAXParseException {
+        throws ValidationException {
             invalidChildError(loc, nsURI, localName);
     }
 

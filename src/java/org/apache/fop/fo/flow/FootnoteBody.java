@@ -20,12 +20,12 @@ package org.apache.fop.fo.flow;
 
 // XML
 import org.xml.sax.Locator;
-import org.xml.sax.SAXParseException;
 
-// FOP
+import org.apache.fop.apps.FOPException;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.PropertyList;
+import org.apache.fop.fo.ValidationException;
 import org.apache.fop.fo.properties.CommonAccessibility;
 
 /**
@@ -44,11 +44,25 @@ public class FootnoteBody extends FObj {
     }
 
     /**
+     * @see org.apache.fop.fo.FObj#bind(PropertyList)
+     */
+    public void bind(PropertyList pList) throws FOPException {
+        commonAccessibility = pList.getAccessibilityProps();
+    }
+
+    /**
+     * @see org.apache.fop.fo.FONode#startOfNode
+     */
+    protected void startOfNode() throws FOPException {
+        getFOEventHandler().startFootnoteBody(this);
+    }
+
+    /**
      * Make sure content model satisfied, if so then tell the
      * FOEventHandler that we are at the end of the flow.
      * @see org.apache.fop.fo.FONode#endOfNode
      */
-    protected void endOfNode() throws SAXParseException {
+    protected void endOfNode() throws FOPException {
         if (childNodes == null) {
             missingChildElementError("(%block;)+");
         }
@@ -56,25 +70,11 @@ public class FootnoteBody extends FObj {
     }
 
     /**
-     * @see org.apache.fop.fo.FObj#bind(PropertyList)
-     */
-    public void bind(PropertyList pList) {
-        commonAccessibility = pList.getAccessibilityProps();
-    }
-
-    /**
-     * @see org.apache.fop.fo.FONode#startOfNode
-     */
-    protected void startOfNode() throws SAXParseException {
-        getFOEventHandler().startFootnoteBody(this);
-    }
-
-    /**
      * @see org.apache.fop.fo.FONode#validateChildNode(Locator, String, String)
      * XSL Content Model: (%block;)+
      */
     protected void validateChildNode(Locator loc, String nsURI, String localName) 
-        throws SAXParseException {
+        throws ValidationException {
             if (!isBlockItem(nsURI, localName)) {
                 invalidChildError(loc, nsURI, localName);
             }

@@ -21,13 +21,12 @@ package org.apache.fop.fo.flow;
 // Java
 import java.util.List;
 
-// XML
 import org.xml.sax.Locator;
-import org.xml.sax.SAXParseException;
 
-// FOP
+import org.apache.fop.apps.FOPException;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.PropertyList;
+import org.apache.fop.fo.ValidationException;
 import org.apache.fop.layoutmgr.BasicLinkLayoutManager;
 
 /**
@@ -63,7 +62,7 @@ public class BasicLink extends Inline {
     /**
      * @see org.apache.fop.fo.FObj#bind(PropertyList)
      */
-    public void bind(PropertyList pList) throws SAXParseException {
+    public void bind(PropertyList pList) throws FOPException {
         super.bind(pList);
         // destinationPlacementOffset = pList.get(PR_DESTINATION_PLACEMENT_OFFSET);
         // dominantBaseline = pList.get(PR_DOMINANT_BASELINE);
@@ -88,7 +87,7 @@ public class BasicLink extends Inline {
     /**
      * @see org.apache.fop.fo.FONode#startOfNode
      */
-    protected void startOfNode() throws SAXParseException {
+    protected void startOfNode() throws FOPException {
         super.startOfNode();
         getFOEventHandler().startLink(this);
     }
@@ -96,7 +95,7 @@ public class BasicLink extends Inline {
     /**
      * @see org.apache.fop.fo.FONode#endOfNode
      */
-    protected void endOfNode() throws SAXParseException {
+    protected void endOfNode() throws FOPException {
         super.endOfNode();
         getFOEventHandler().endLink();
     }
@@ -106,7 +105,7 @@ public class BasicLink extends Inline {
      * XSL Content Model: marker* (#PCDATA|%inline;|%block;)*
      */
     protected void validateChildNode(Locator loc, String nsURI, String localName) 
-        throws SAXParseException {
+        throws ValidationException {
         if (nsURI == FO_URI && localName.equals("marker")) {
             if (blockOrInlineItemFound) {
                nodesOutOfOrderError(loc, "fo:marker", "(#PCDATA|%inline;|%block;)");

@@ -21,21 +21,21 @@ package org.apache.fop.fo.flow;
 // Java
 import java.util.List;
 
-// XML
 import org.xml.sax.Locator;
-import org.xml.sax.SAXParseException;
 
-// FOP
+import org.apache.fop.apps.FOPException;
 import org.apache.fop.datatypes.ColorType;
 import org.apache.fop.datatypes.Length;
 import org.apache.fop.datatypes.Numeric;
 import org.apache.fop.fo.CharIterator;
+import org.apache.fop.fo.Constants;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FOText;
 import org.apache.fop.fo.FObjMixed;
 import org.apache.fop.fo.PropertyList;
 import org.apache.fop.fo.PropertySets;
 import org.apache.fop.fo.RecursiveCharIterator;
+import org.apache.fop.fo.ValidationException;
 import org.apache.fop.fo.properties.CommonAccessibility;
 import org.apache.fop.fo.properties.CommonAural;
 import org.apache.fop.fo.properties.CommonBorderPaddingBackground;
@@ -46,7 +46,6 @@ import org.apache.fop.fo.properties.CommonRelativePosition;
 import org.apache.fop.fo.properties.KeepProperty;
 import org.apache.fop.fo.properties.SpaceProperty;
 import org.apache.fop.layoutmgr.BlockLayoutManager;
-import org.apache.fop.fo.Constants;
 import org.apache.fop.util.CharUtilities;
 
 /*
@@ -129,7 +128,7 @@ public class Block extends FObjMixed {
     /**
      * @see org.apache.fop.fo.FObj#bind(PropertyList)
      */
-    public void bind(PropertyList pList) throws SAXParseException {
+    public void bind(PropertyList pList) throws FOPException {
         commonAccessibility = pList.getAccessibilityProps();
         commonAural = pList.getAuralProps();
         commonBorderPaddingBackground = pList.getBorderPaddingBackgroundProps();
@@ -170,7 +169,7 @@ public class Block extends FObjMixed {
     /**
      * @see org.apache.fop.fo.FONode#startOfNode
      */
-    protected void startOfNode() throws SAXParseException {
+    protected void startOfNode() throws FOPException {
         checkId(id);
         getFOEventHandler().startBlock(this);
     }
@@ -178,7 +177,7 @@ public class Block extends FObjMixed {
     /**
      * @see org.apache.fop.fo.FONode#endOfNode
      */
-    protected void endOfNode() throws SAXParseException {
+    protected void endOfNode() throws FOPException {
         handleWhiteSpace();
         getFOEventHandler().endBlock(this);
     }
@@ -283,7 +282,7 @@ public class Block extends FObjMixed {
      *  fo:inline-container."
      */
     protected void validateChildNode(Locator loc, String nsURI, String localName) 
-        throws SAXParseException {
+        throws ValidationException {
         if (nsURI == FO_URI && localName.equals("marker")) {
             if (blockOrInlineItemFound || initialPropertySetFound) {
                nodesOutOfOrderError(loc, "fo:marker", 
@@ -308,7 +307,7 @@ public class Block extends FObjMixed {
     /**
      * @see org.apache.fop.fo.FONode#addChildNode(FONode)
      */
-    public void addChildNode(FONode child) throws SAXParseException {
+    public void addChildNode(FONode child) throws FOPException {
         // Handle whitespace based on values of properties
         // Handle a sequence of inline-producing child nodes in
         // one pass

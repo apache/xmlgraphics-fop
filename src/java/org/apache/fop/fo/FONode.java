@@ -21,19 +21,18 @@ package org.apache.fop.fo;
 // Java
 import java.util.List;
 import java.util.ListIterator;
+
+import org.xml.sax.Attributes;
+import org.xml.sax.Locator;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-// XML
-import org.xml.sax.Attributes;
-import org.xml.sax.Locator;
-import org.xml.sax.SAXParseException;
-
-// FOP
+import org.apache.fop.apps.FOPException;
 import org.apache.fop.apps.FOUserAgent;
-import org.apache.fop.util.CharUtilities;
 import org.apache.fop.fo.extensions.ExtensionElementMapping;
 import org.apache.fop.fo.extensions.svg.SVGElementMapping;
+import org.apache.fop.util.CharUtilities;
 
 /**
  * base class for nodes in the XML tree
@@ -105,10 +104,10 @@ public abstract class FONode {
      * @param elementName element name (e.g., "fo:block")
      * @param locator Locator object (ignored by default)
      * @param attlist Collection of attributes passed to us from the parser.
-     * @throws SAXParseException for errors or inconsistencies in the attributes
+     * @throws FOPException for errors or inconsistencies in the attributes
     */
     public void processNode(String elementName, Locator locator, 
-            Attributes attlist, PropertyList parent) throws SAXParseException {
+            Attributes attlist, PropertyList parent) throws FOPException {
         System.out.println("name = " + elementName);
     }
 
@@ -120,7 +119,7 @@ public abstract class FONode {
      *              instance can be found.
      * @return A new property list.
      */
-    protected PropertyList createPropertyList(PropertyList parent, FOEventHandler foEventHandler) throws SAXParseException {
+    protected PropertyList createPropertyList(PropertyList parent, FOEventHandler foEventHandler) throws FOPException {
         return null;
     }
 
@@ -131,10 +130,10 @@ public abstract class FONode {
      * called within FObj constructor
      * @param namespaceURI namespace of incoming node
      * @param localName (e.g. "table" for "fo:table")
-     * @throws SAXParseException if incoming node not valid for parent
+     * @throws ValidationException if incoming node not valid for parent
      */
     protected void validateChildNode(Locator loc, String namespaceURI, String localName) 
-        throws SAXParseException {}
+        throws ValidationException {}
 
     /**
      * Adds characters (does nothing here)
@@ -145,28 +144,28 @@ public abstract class FONode {
      */
     protected void addCharacters(char data[], int start, int length,
                                  PropertyList pList,
-                                 Locator locator) throws SAXParseException {
+                                 Locator locator) throws FOPException {
         // ignore
     }
 
     /**
     *
     */
-    protected void startOfNode() throws SAXParseException {
+    protected void startOfNode() throws FOPException {
         // do nothing by default
    }
 
     /**
      *
      */
-    protected void endOfNode() throws SAXParseException {
+    protected void endOfNode() throws FOPException {
         // do nothing by default
     }
 
     /**
      * @param child child node to be added to the childNodes of this node
      */
-    protected void addChildNode(FONode child) throws SAXParseException {
+    protected void addChildNode(FONode child) throws FOPException {
     }
 
     /**
@@ -232,8 +231,8 @@ public abstract class FONode {
      * @param offendingNode incoming node that would cause a duplication.
      */
     protected void attributeError(String problem) 
-        throws SAXParseException {
-        throw new SAXParseException (errorText(locator) + getName() + ", " + 
+        throws ValidationException {
+        throw new ValidationException(errorText(locator) + getName() + ", " + 
             problem, locator);
     }
 
@@ -245,8 +244,8 @@ public abstract class FONode {
      * @param lName local name (i.e., no prefix) of incoming node 
      */
     protected void tooManyNodesError(Locator loc, String nsURI, String lName) 
-        throws SAXParseException {
-        throw new SAXParseException (errorText(loc) + getName() + ", only one " 
+        throws ValidationException {
+        throw new ValidationException(errorText(loc) + getName() + ", only one " 
             + getNodeString(nsURI, lName) + " may be declared.", loc);
     }
 
@@ -258,8 +257,8 @@ public abstract class FONode {
      * @param offendingNode incoming node that would cause a duplication.
      */
     protected void tooManyNodesError(Locator loc, String offendingNode) 
-        throws SAXParseException {
-        throw new SAXParseException (errorText(loc) + getName() + ", only one " 
+        throws ValidationException {
+        throw new ValidationException(errorText(loc) + getName() + ", only one " 
             + offendingNode + " may be declared.", loc);
     }
 
@@ -271,8 +270,8 @@ public abstract class FONode {
      * @param tooEarlyNode string name of node that should be later in document
      */
     protected void nodesOutOfOrderError(Locator loc, String tooLateNode, 
-        String tooEarlyNode) throws SAXParseException {
-        throw new SAXParseException (errorText(loc) + "For " + getName() + ", " + tooLateNode 
+        String tooEarlyNode) throws ValidationException {
+        throw new ValidationException(errorText(loc) + "For " + getName() + ", " + tooLateNode 
             + " must be declared before " + tooEarlyNode + ".", loc);
     }
     
@@ -284,7 +283,7 @@ public abstract class FONode {
      * @param lName local name (i.e., no prefix) of incoming node 
      */
     protected void invalidChildError(Locator loc, String nsURI, String lName) 
-        throws SAXParseException {
+        throws ValidationException {
         invalidChildError(loc, nsURI, lName, null);
     }
     
@@ -298,8 +297,8 @@ public abstract class FONode {
      */
     protected void invalidChildError(Locator loc, String nsURI, String lName,
         String ruleViolated)
-        throws SAXParseException {
-        throw new SAXParseException (errorText(loc) + getNodeString(nsURI, lName) + 
+        throws ValidationException {
+        throw new ValidationException(errorText(loc) + getNodeString(nsURI, lName) + 
             " is not a valid child element of " + getName() 
             + ((ruleViolated != null) ? ": " + ruleViolated : "."), loc);
     }
@@ -311,8 +310,8 @@ public abstract class FONode {
      * or a similar description indicating child elements needed.
      */
     protected void missingChildElementError(String contentModel)
-        throws SAXParseException {
-        throw new SAXParseException(errorText(locator) + getName() + 
+        throws ValidationException {
+        throw new ValidationException(errorText(locator) + getName() + 
             " is missing child elements. \nRequired Content Model: " 
             + contentModel, locator);
     }
@@ -324,8 +323,8 @@ public abstract class FONode {
      * or a similar description indicating child elements needed.
      */
     protected void missingPropertyError(String propertyName)
-        throws SAXParseException {
-        throw new SAXParseException(errorText(locator) + getName() +
+        throws ValidationException {
+        throw new ValidationException(errorText(locator) + getName() +
             " is missing required \"" + propertyName + "\" property.", locator);
     }
 

@@ -22,15 +22,14 @@ package org.apache.fop.fo.flow;
 import java.util.ArrayList;
 import java.util.List;
 
-// XML
 import org.xml.sax.Locator;
-import org.xml.sax.SAXParseException;
 
-// FOP
+import org.apache.fop.apps.FOPException;
 import org.apache.fop.datatypes.Length;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FObjMixed;
 import org.apache.fop.fo.PropertyList;
+import org.apache.fop.fo.ValidationException;
 import org.apache.fop.fo.properties.ColorTypeProperty;
 import org.apache.fop.fo.properties.CommonAural;
 import org.apache.fop.fo.properties.CommonFont;
@@ -93,7 +92,7 @@ public class BidiOverride extends FObjMixed {
     /**
      * @see org.apache.fop.fo.FObj#bind(PropertyList)
      */
-    public void bind(PropertyList pList) {
+    public void bind(PropertyList pList) throws FOPException {
         commonAural = pList.getAuralProps();
         commonFont = pList.getFontProps();
         commonRelativePosition = pList.getRelativePositionProps();
@@ -115,7 +114,7 @@ public class BidiOverride extends FObjMixed {
      *  fo:inline-container."
      */
     protected void validateChildNode(Locator loc, String nsURI, String localName) 
-        throws SAXParseException {
+        throws ValidationException {
         if (nsURI == FO_URI && localName.equals("marker")) {
             if (blockOrInlineItemFound) {
                nodesOutOfOrderError(loc, "fo:marker", 

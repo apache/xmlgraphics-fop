@@ -21,14 +21,13 @@ package org.apache.fop.fo.pagination;
 // Java
 import java.util.HashMap;
 
-// XML
 import org.xml.sax.Locator;
-import org.xml.sax.SAXParseException;
 
-// FOP
+import org.apache.fop.apps.FOPException;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.PropertyList;
+import org.apache.fop.fo.ValidationException;
 import org.apache.fop.fo.properties.Property;
 
 /**
@@ -135,7 +134,7 @@ public class PageSequence extends FObj {
     /**
      * @see org.apache.fop.fo.FObj#bind(PropertyList)
      */
-    public void bind(PropertyList pList) {
+    public void bind(PropertyList pList) throws FOPException {
         country = pList.get(PR_COUNTRY).getString();
         format = pList.get(PR_FORMAT).getString();
         language = pList.get(PR_LANGUAGE).getString();
@@ -151,7 +150,7 @@ public class PageSequence extends FObj {
     /**
      * @see org.apache.fop.fo.FONode#startOfNode()
      */
-    protected void startOfNode() throws SAXParseException {
+    protected void startOfNode() throws FOPException {
         this.root = (Root) parent;
         layoutMasterSet = root.getLayoutMasterSet();
         flowMap = new HashMap();
@@ -174,7 +173,7 @@ public class PageSequence extends FObj {
             this.pageSequenceMaster =
                     this.layoutMasterSet.getPageSequenceMaster(masterReference);
             if (this.pageSequenceMaster == null) {
-                throw new SAXParseException("master-reference '" + masterReference
+                throw new ValidationException("master-reference '" + masterReference
                                        + "' for fo:page-sequence matches no"
                                        + " simple-page-master or page-sequence-master", locator);
             }
@@ -195,7 +194,7 @@ public class PageSequence extends FObj {
      * This passes the end page sequence to the structure handler
      * so it can act upon that.
      */
-    protected void endOfNode() throws SAXParseException {
+    protected void endOfNode() throws FOPException {
         if (mainFlow == null) {
            missingChildElementError("(title?,static-content*,flow)");
         }
@@ -208,7 +207,7 @@ public class PageSequence extends FObj {
         XSL Content Model: (title?,static-content*,flow)
      */
     protected void validateChildNode(Locator loc, String nsURI, String localName) 
-        throws SAXParseException {
+        throws ValidationException {
         if (nsURI == FO_URI) {
             if (localName.equals("title")) {
                 if (titleFO != null) {
@@ -239,7 +238,7 @@ public class PageSequence extends FObj {
      * @todo see if addChildNode() should also be called for fo's other than
      *  fo:flow.
      */
-    public void addChildNode(FONode child) throws SAXParseException {
+    public void addChildNode(FONode child) throws FOPException {
         int childId = child.getNameId();
 
         if (childId == FO_TITLE) {
@@ -263,11 +262,11 @@ public class PageSequence extends FObj {
      * based on the region-names given to the regions in the page-master
      * used to generate that page.
      */
-     private void addFlow(Flow flow) throws SAXParseException {
+     private void addFlow(Flow flow) throws ValidationException {
         String flowName = flow.getFlowName();
 
         if (hasFlowName(flowName)) {
-            throw new SAXParseException ("duplicate flow-name \""
+            throw new ValidationException("duplicate flow-name \""
                 + flowName
                 + "\" found within fo:page-sequence", flow.locator);
         }
@@ -275,7 +274,7 @@ public class PageSequence extends FObj {
         if (!layoutMasterSet.regionNameExists(flowName) 
             && !flowName.equals("xsl-before-float-separator") 
             && !flowName.equals("xsl-footnote-separator")) {
-                throw new SAXParseException ("flow-name \""
+                throw new ValidationException("flow-name \""
                     + flowName
                     + "\" could not be mapped to a region-name in the"
                     + " layout-master-set", flow.locator);

@@ -21,6 +21,7 @@ package org.apache.fop.fo.properties;
 import org.apache.fop.datatypes.Length;
 import org.apache.fop.fo.Constants;
 import org.apache.fop.fo.PropertyList;
+import org.apache.fop.fo.expr.PropertyException;
 
 /**
  * Store all common absolute position properties.
@@ -57,7 +58,7 @@ public class CommonAbsolutePosition {
      * Create a CommonAbsolutePosition object.
      * @param pList The PropertyList with propery values.
      */
-    public CommonAbsolutePosition(PropertyList pList) {
+    public CommonAbsolutePosition(PropertyList pList) throws PropertyException {
         absolutePosition = pList.get(Constants.PR_ABSOLUTE_POSITION).getEnum();
         top = pList.get(Constants.PR_TOP).getLength();
         bottom = pList.get(Constants.PR_BOTTOM).getLength();

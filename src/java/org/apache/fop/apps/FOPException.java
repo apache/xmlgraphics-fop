@@ -18,16 +18,16 @@
 
 package org.apache.fop.apps;
 
+import org.xml.sax.Locator;
 import org.xml.sax.SAXException;
 
 /**
  * Exception thrown when FOP has a problem.
  */
-public class FOPException extends Exception {
+public class FOPException extends SAXException {
 
     private static final String EXCEPTION_SEPARATOR = "\n---------\n";
 
-    private Throwable exception;
     private String systemId;
     private int line;
     private int column;
@@ -48,13 +48,18 @@ public class FOPException extends Exception {
         this.column = column;
     }
 
+    public FOPException(String message, Locator locator) {
+        super(message);
+        setLocator(locator);
+    }
+
+
     /**
      *
      * @param e Throwable object
      */
-    public FOPException(Throwable e) {
-        super(e.getMessage());
-        setException(e);
+    public FOPException(Exception e) {
+        super(e);
     }
 
     /**
@@ -64,23 +69,14 @@ public class FOPException extends Exception {
      */
     public FOPException(String message, Throwable e) {
         super(message);
-        setException(e);
     }
 
-    /**
-     * Sets exception
-     * @param t Throwable object
-     */
-    protected void setException(Throwable t) {
-        exception = t;
-    }
-
-    /**
-     * Accessor for exception
-     * @return exception
-     */
-    public Throwable getException() {
-        return exception;
+    public void setLocator(Locator locator) {
+        if (locator != null) {
+            this.systemId = locator.getSystemId();
+            this.line = locator.getLineNumber();
+            this.column = locator.getColumnNumber();
+        }
     }
 
     public void setLocation(String systemId, int line, int column) {
@@ -90,7 +86,15 @@ public class FOPException extends Exception {
     }
 
     public boolean isLocationSet() {
-        return line>=0;
+        return line > 0;
+    }
+
+    public String getMessage() {
+        if (isLocationSet()) {
+            return systemId + ":" + line + "," + column + " " + super.getMessage();
+        } else {
+            return super.getMessage();
+        }
     }
 
     /**
@@ -98,7 +102,7 @@ public class FOPException extends Exception {
      * @return the exception recast as another type if possible, otherwise null.
      */
     protected Throwable getRootException() {
-        Throwable result = exception;
+        Throwable result = getException();
 
         if (result instanceof SAXException) {
             result = ((SAXException)result).getException();
@@ -107,7 +111,7 @@ public class FOPException extends Exception {
             result =
                 ((java.lang.reflect.InvocationTargetException)result).getTargetException();
         }
-        if (result != exception) {
+        if (result != getException()) {
             return result;
         }
         return null;
@@ -119,9 +123,9 @@ public class FOPException extends Exception {
     public void printStackTrace() {
         synchronized (System.err) {
             super.printStackTrace();
-            if (exception != null) {
+            if (getException() != null) {
                 System.err.println(EXCEPTION_SEPARATOR);
-                exception.printStackTrace();
+                getException().printStackTrace();
             }
             if (getRootException() != null) {
                 System.err.println(EXCEPTION_SEPARATOR);
@@ -137,9 +141,9 @@ public class FOPException extends Exception {
     public void printStackTrace(java.io.PrintStream stream) {
         synchronized (stream) {
             super.printStackTrace(stream);
-            if (exception != null) {
+            if (getException() != null) {
                 stream.println(EXCEPTION_SEPARATOR);
-                exception.printStackTrace(stream);
+                getException().printStackTrace(stream);
             }
             if (getRootException() != null) {
                 stream.println(EXCEPTION_SEPARATOR);
@@ -155,9 +159,9 @@ public class FOPException extends Exception {
     public void printStackTrace(java.io.PrintWriter writer) {
         synchronized (writer) {
             super.printStackTrace(writer);
-            if (exception != null) {
+            if (getException() != null) {
                 writer.println(EXCEPTION_SEPARATOR);
-                exception.printStackTrace(writer);
+                getException().printStackTrace(writer);
             }
             if (getRootException() != null) {
                 writer.println(EXCEPTION_SEPARATOR);

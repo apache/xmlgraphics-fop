@@ -21,17 +21,16 @@ package org.apache.fop.fo.pagination;
 // java
 import java.util.List;
 
-// XML
 import org.xml.sax.Locator;
-import org.xml.sax.SAXParseException;
 
-// FOP
+import org.apache.fop.apps.FOPException;
+import org.apache.fop.fo.FOEventHandler;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FObj;
-import org.apache.fop.fo.FOEventHandler;
 import org.apache.fop.fo.PropertyList;
-import org.apache.fop.fo.extensions.ExtensionElementMapping;
+import org.apache.fop.fo.ValidationException;
 import org.apache.fop.fo.extensions.Bookmarks;
+import org.apache.fop.fo.extensions.ExtensionElementMapping;
 
 /**
  * The fo:root formatting object. Contains page masters, page-sequences.
@@ -81,7 +80,7 @@ public class Root extends FObj {
     /**
      * Signal end of this xml element.
      */
-    protected void endOfNode() throws SAXParseException {
+    protected void endOfNode() throws FOPException {
         if (!pageSequenceFound || layoutMasterSet == null) {
             missingChildElementError("(layout-master-set, declarations?, " + 
                 "fox:bookmarks?, page-sequence+)");
@@ -94,7 +93,7 @@ public class Root extends FObj {
         FOP: (layout-master-set, declarations?, fox:bookmarks?, page-sequence+)
      */
     protected void validateChildNode(Locator loc, String nsURI, String localName) 
-        throws SAXParseException {
+        throws ValidationException {
         if (nsURI == FO_URI) {
             if (localName.equals("layout-master-set")) {   
                 if (layoutMasterSet != null) {

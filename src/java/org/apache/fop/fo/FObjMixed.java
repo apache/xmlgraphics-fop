@@ -19,8 +19,10 @@
 package org.apache.fop.fo;
 
 import java.util.List;
+
 import org.xml.sax.Locator;
-import org.xml.sax.SAXParseException;
+
+import org.apache.fop.apps.FOPException;
 import org.apache.fop.layoutmgr.InlineStackingLayoutManager;
 
 /**
@@ -43,7 +45,7 @@ public class FObjMixed extends FObj {
      */
     protected void addCharacters(char data[], int start, int length,
                                  PropertyList pList,
-                                 Locator locator) throws SAXParseException {
+                                 Locator locator) throws FOPException {
         FOText ft = new FOText(data, start, length, this);
         ft.setLocator(locator);
         ft.bind(pList);

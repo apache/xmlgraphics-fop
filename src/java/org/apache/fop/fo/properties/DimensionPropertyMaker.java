@@ -18,9 +18,9 @@
 
 package org.apache.fop.fo.properties;
 
-import org.apache.fop.apps.FOPException;
 import org.apache.fop.fo.Constants;
 import org.apache.fop.fo.PropertyList;
+import org.apache.fop.fo.expr.PropertyException;
 
 /**
  * @author me
@@ -50,7 +50,7 @@ public class DimensionPropertyMaker extends CorrespondingPropertyMaker {
         return false;
     }
 
-    public Property compute(PropertyList propertyList) throws FOPException {
+    public Property compute(PropertyList propertyList) throws PropertyException {
         // Based on [width|height]
         Property p = super.compute(propertyList);
         if (p == null) {

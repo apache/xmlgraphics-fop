@@ -20,10 +20,10 @@ package org.apache.fop.fo.pagination;
 
 // XML
 import org.xml.sax.Locator;
-import org.xml.sax.SAXParseException;
 
-// FOP
+import org.apache.fop.apps.FOPException;
 import org.apache.fop.fo.FONode;
+import org.apache.fop.fo.ValidationException;
 
 /**
  * Class modelling the fo:static-content object.
@@ -40,9 +40,9 @@ public class StaticContent extends Flow {
     /**
      * @see org.apache.fop.fo.FONode#startOfNode()
      */
-    protected void startOfNode() throws SAXParseException {
+    protected void startOfNode() throws FOPException {
         if (getFlowName() == null || getFlowName().equals("")) {
-            throw new SAXParseException("A 'flow-name' is required for "
+            throw new ValidationException("A 'flow-name' is required for "
                                    + getName() + ".", locator);
         }
         getFOEventHandler().startFlow(this);
@@ -53,7 +53,7 @@ public class StaticContent extends Flow {
      * FOEventHandler that we are at the end of the flow.
      * @see org.apache.fop.fo.FONode#endOfNode
      */
-    protected void endOfNode() throws SAXParseException {
+    protected void endOfNode() throws FOPException {
         if (childNodes == null) {
             missingChildElementError("(%block;)+");
         }
@@ -65,7 +65,7 @@ public class StaticContent extends Flow {
      * XSL Content Model: (%block;)+
      */
     protected void validateChildNode(Locator loc, String nsURI, String localName) 
-        throws SAXParseException {
+        throws ValidationException {
         if (!isBlockItem(nsURI, localName)) {
             invalidChildError(loc, nsURI, localName);
         }

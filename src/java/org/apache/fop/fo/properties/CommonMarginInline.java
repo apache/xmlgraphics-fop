@@ -21,6 +21,7 @@ package org.apache.fop.fo.properties;
 import org.apache.fop.datatypes.Length;
 import org.apache.fop.fo.Constants;
 import org.apache.fop.fo.PropertyList;
+import org.apache.fop.fo.expr.PropertyException;
 
 /**
  * Store all common margin properties for inlines.
@@ -63,7 +64,7 @@ public class CommonMarginInline {
      * Create a CommonMarginInline object.
      * @param pList The PropertyList with propery values.
      */
-    public CommonMarginInline(PropertyList pList) {
+    public CommonMarginInline(PropertyList pList) throws PropertyException {
         marginTop = pList.get(Constants.PR_MARGIN_TOP).getLength();
         marginBottom = pList.get(Constants.PR_MARGIN_BOTTOM).getLength();
         marginLeft = pList.get(Constants.PR_MARGIN_LEFT).getLength();

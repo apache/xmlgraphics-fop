@@ -20,12 +20,12 @@ package org.apache.fop.fo.flow;
 
 // XML
 import org.xml.sax.Locator;
-import org.xml.sax.SAXParseException;
 
-// FOP
+import org.apache.fop.apps.FOPException;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.PropertyList;
+import org.apache.fop.fo.ValidationException;
 
 /**
  * Class modelling the fo:multi-property-set object.
@@ -53,7 +53,7 @@ public class MultiPropertySet extends FObj {
     /**
      * @see org.apache.fop.fo.FObj#bind(PropertyList)
      */
-    public void bind(PropertyList pList) {
+    public void bind(PropertyList pList) throws FOPException {
         id = pList.get(PR_ID).getString();
         // activeState = pList.get(PR_ACTIVE_STATE);
     }
@@ -61,7 +61,7 @@ public class MultiPropertySet extends FObj {
     /**
      * @see org.apache.fop.fo.FONode#startOfNode
      */
-    protected void startOfNode() throws SAXParseException {
+    protected void startOfNode() throws FOPException {
         checkId(id);
     }
 
@@ -70,7 +70,7 @@ public class MultiPropertySet extends FObj {
      * XSL Content Model: empty
      */
     protected void validateChildNode(Locator loc, String nsURI, String localName) 
-        throws SAXParseException {
+        throws ValidationException {
             invalidChildError(loc, nsURI, localName);
     }
 

@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.NoSuchElementException;
 
 // FOP
+import org.apache.fop.apps.FOPException;
 import org.apache.fop.datatypes.ColorType;
 import org.apache.fop.fo.flow.Block;
 import org.apache.fop.fo.pagination.Root;
@@ -132,7 +133,7 @@ public class FOText extends FONode {
     /**
      * @see org.apache.fop.fo.FObj#bind(PropertyList)
      */
-    public void bind(PropertyList pList) {
+    public void bind(PropertyList pList) throws FOPException {
         commonFont = pList.getFontProps();
         commonHyphenation = pList.getHyphenationProps();
         

@@ -18,11 +18,11 @@
 
 package org.apache.fop.fo.properties;
 
-import org.apache.fop.apps.FOPException;
 import org.apache.fop.datatypes.Length;
 import org.apache.fop.datatypes.Numeric;
 import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.PropertyList;
+import org.apache.fop.fo.expr.PropertyException;
 
 /**
  * Superclass for properties wrapping a Length value.
@@ -72,7 +72,7 @@ abstract public class LengthProperty extends Property
          */
         public Property convertProperty(Property p,
                                         PropertyList propertyList,
-                                        FObj fo) throws FOPException {
+                                        FObj fo) throws PropertyException {
             Property prop = super.convertProperty(p, propertyList, fo);
             if (prop != null) {
                 return prop;

@@ -20,6 +20,7 @@ package org.apache.fop.fo.properties;
 
 import org.apache.fop.fo.Constants;
 import org.apache.fop.fo.PropertyList;
+import org.apache.fop.fo.expr.PropertyException;
 
 /**
  * Store all common hyphenation properties.
@@ -66,7 +67,7 @@ public class CommonHyphenation {
      * Create a CommonHyphenation object.
      * @param pList The PropertyList with propery values.
      */
-    public CommonHyphenation(PropertyList pList) {
+    public CommonHyphenation(PropertyList pList) throws PropertyException {
         language = pList.get(Constants.PR_LANGUAGE).getString();
         country = pList.get(Constants.PR_COUNTRY).getString();
         hyphenate = pList.get(Constants.PR_HYPHENATE).getEnum();

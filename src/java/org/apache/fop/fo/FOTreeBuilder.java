@@ -196,7 +196,7 @@ public class FOTreeBuilder extends DefaultHandler {
      * @see org.xml.sax.ContentHandler#characters(char[], int, int)
      */
     public void characters(char[] data, int start, int length) 
-        throws SAXParseException {
+        throws FOPException {
             if (currentFObj != null) {
                 currentFObj.addCharacters(data, start, start + length, currentPropertyList, locator);
             }
@@ -250,7 +250,8 @@ public class FOTreeBuilder extends DefaultHandler {
                 namespaceURI.equals(ExtensionElementMapping.URI)) {
                 try {
                     currentFObj.validateChildNode(locator, namespaceURI, localName);
-                } catch (SAXParseException e) {
+                } catch (ValidationException e) {
+                    // TODO: add relaxed validation.
                     throw e;
                 }
             }
@@ -286,12 +287,8 @@ public class FOTreeBuilder extends DefaultHandler {
      * @see org.xml.sax.ContentHandler#endElement(String, String, String)
      */
     public void endElement(String uri, String localName, String rawName)
-                throws SAXParseException {
-        try {
-            currentFObj.endOfNode();
-        } catch (SAXParseException e) {
-            throw e;
-        }
+                throws FOPException {
+        currentFObj.endOfNode();
 
         if (currentPropertyList.getFObj() == currentFObj) {
             currentPropertyList = currentPropertyList.getParentPropertyList();
@@ -304,9 +301,9 @@ public class FOTreeBuilder extends DefaultHandler {
      * @param namespaceURI URI for the namespace of the element
      * @param localName name of the Element
      * @return the ElementMapping.Maker that can create an FO object for this element
-     * @throws SAXParseException if a Maker could not be found for a bound namespace.
+     * @throws FOPException if a Maker could not be found for a bound namespace.
      */
-    private Maker findFOMaker(String namespaceURI, String localName) throws SAXParseException {
+    private Maker findFOMaker(String namespaceURI, String localName) throws FOPException {
       Map table = (Map)fobjTable.get(namespaceURI);
       Maker fobjMaker = null;
       if (table != null) {
@@ -319,7 +316,7 @@ public class FOTreeBuilder extends DefaultHandler {
 
       if (fobjMaker == null) {
           if (namespaces.contains(namespaceURI.intern())) {
-                throw new SAXParseException (FONode.errorText(locator) + 
+                throw new FOPException(FONode.errorText(locator) + 
                     "No element mapping definition found for "
                     + FONode.getNodeString(namespaceURI, localName), locator);
           } else {

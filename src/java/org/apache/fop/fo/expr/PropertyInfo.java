@@ -65,7 +65,7 @@ public class PropertyInfo {
     /**
      * @return the current font-size value as base units (milli-points).
      */
-    public int currentFontSize() {
+    public int currentFontSize() throws PropertyException {
         return plist.get(Constants.PR_FONT_SIZE).getLength().getValue();
     }
 
@@ -85,6 +85,14 @@ public class PropertyInfo {
         return plist;
     }
 
+    /**
+     * accessor for PropertyMaker
+     * @return PropertyMaker object
+     */
+    public PropertyMaker getPropertyMaker() {
+        return maker;
+    }
+    
     /**
      * push a function onto the function stack
      * @param func function to push onto stack

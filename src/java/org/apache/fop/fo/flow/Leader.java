@@ -21,10 +21,7 @@ package org.apache.fop.fo.flow;
 // Java
 import java.util.List;
 
-// XML
-import org.xml.sax.SAXParseException;
-
-// FOP
+import org.apache.fop.apps.FOPException;
 import org.apache.fop.datatypes.ColorType;
 import org.apache.fop.datatypes.Length;
 import org.apache.fop.fo.FONode;
@@ -88,7 +85,7 @@ public class Leader extends FObjMixed {
     /**
      * @see org.apache.fop.fo.FObj#bind(PropertyList)
      */
-    public void bind(PropertyList pList) {
+    public void bind(PropertyList pList) throws FOPException {
         commonAccessibility = pList.getAccessibilityProps();
         commonAural = pList.getAuralProps();
         commonBorderPaddingBackground = pList.getBorderPaddingBackgroundProps();
@@ -136,7 +133,7 @@ public class Leader extends FObjMixed {
     /**
      * @see org.apache.fop.fo.FONode#startOfNode
      */
-    protected void startOfNode() throws SAXParseException {
+    protected void startOfNode() throws FOPException {
         checkId(id);
     }
  
