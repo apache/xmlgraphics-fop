@@ -58,6 +58,9 @@ import org.apache.fop.datatypes.*;
 import org.apache.fop.apps.FOPException;
 
 import org.apache.fop.dom.svg.*;
+
+import org.w3c.dom.svg.*;
+
 /**
  * a class representing all the length properties in SVG
  */
@@ -83,9 +86,11 @@ public class SVGLengthListProperty extends Property {
 	 */
 	public Property make(PropertyList propertyList, String value)
 		throws FOPException {
+		SVGAnimatedLengthListImpl anime = new SVGAnimatedLengthListImpl();
 		SVGLengthListImpl len = new SVGLengthListImpl();
+		anime.setBaseVal(len);
 		len.setValueAsString(value);
-		return new SVGLengthListProperty(propertyList, len);
+		return new SVGLengthListProperty(propertyList, anime);
 	}
 
 	/** 
@@ -108,7 +113,7 @@ public class SVGLengthListProperty extends Property {
 	}
 
 	/** the length as a Length object */
-	protected SVGLengthListImpl value;
+	protected SVGAnimatedLengthList value;
 	
 	/**
 	 * construct an SVG length (called by the Maker).
@@ -116,7 +121,7 @@ public class SVGLengthListProperty extends Property {
 	 * @param propertyList the property list this is a member of
 	 * @param explicitValue the explicit value as a Length object
 	 */
-	protected SVGLengthListProperty(PropertyList propertyList, SVGLengthListImpl explicitValue) {
+	protected SVGLengthListProperty(PropertyList propertyList, SVGAnimatedLengthList explicitValue) {
 	this.propertyList = propertyList;
 	this.value = explicitValue;
 	}
@@ -126,7 +131,7 @@ public class SVGLengthListProperty extends Property {
 	 *
 	 * @return the length as a Length object
 	 */
-	public /*SVGLengthList*/Vector getSVGLengthList() {
-		return this.value.valueList();
+	public SVGAnimatedLengthList getSVGLengthList() {
+		return this.value;
 	}
 }

@@ -60,7 +60,7 @@ import org.apache.fop.apps.FOPException;
 import org.apache.fop.dom.svg.*;
 import org.apache.fop.dom.svg.SVGArea;
 
-import org.w3c.dom.svg.SVGElement;
+import org.w3c.dom.svg.*;
 
 /**
  *
@@ -110,26 +110,19 @@ public class TRef extends SVGObj implements TextElement {
 	{
 		SVGTRefElementImpl tref = new SVGTRefElementImpl();
 		tref.setStyle(((SVGStyle)this.properties.get("style")).getStyle());
-//		tref.dx = ((SVGLengthProperty)this.properties.get("dx")).getSVGLength().mvalue();
-//		tref.dy = ((SVGLengthProperty)this.properties.get("dy")).getSVGLength().mvalue();
-//		tref.x = ((SVGLengthProperty)this.properties.get("x")).getSVGLength().mvalue();
-//		tref.y = ((SVGLengthProperty)this.properties.get("y")).getSVGLength().mvalue();
 		Property prop;
 		prop = this.properties.get("x");
-		// bit of a hack, but otherwise the svg:text x element could be
-		// returned which is not a list
-//		if(prop instanceof SVGLengthListProperty)
-			tref.xlist = ((SVGLengthListProperty)prop).getSVGLengthList();
+		SVGAnimatedLengthList xlist = ((SVGLengthListProperty)prop).getSVGLengthList();
+		tref.xlist = xlist;
 		prop = this.properties.get("y");
-//		if(prop instanceof SVGLengthListProperty)
-			tref.ylist = ((SVGLengthListProperty)prop).getSVGLengthList();
+		SVGAnimatedLengthList ylist = ((SVGLengthListProperty)prop).getSVGLengthList();
+		tref.ylist = ylist;
 		prop = this.properties.get("dx");
-//		if(prop instanceof SVGLengthListProperty)
-			tref.dxlist = ((SVGLengthListProperty)prop).getSVGLengthList();
+		SVGAnimatedLengthList dxlist = ((SVGLengthListProperty)prop).getSVGLengthList();
+		tref.dxlist = dxlist;
 		prop = this.properties.get("dy");
-//		if(prop instanceof SVGLengthListProperty)
-			tref.dylist = ((SVGLengthListProperty)prop).getSVGLengthList();
-//		tref.dxlist = ((SVGLengthProperty)this.properties.get("dx")).getSVGLength().valueList();
+		SVGAnimatedLengthList dylist = ((SVGLengthListProperty)prop).getSVGLengthList();
+		tref.dylist = dylist;
 		tref.ref = this.properties.get("xlink:href").getString();
 		tref.setId(this.properties.get("id").getString());
 		return tref;

@@ -64,8 +64,10 @@ import java.util.*;
 import org.apache.fop.dom.svg.*;
 import org.apache.fop.dom.svg.SVGTextElementImpl;
 import org.apache.fop.dom.svg.SVGArea;
+import org.apache.fop.dom.CharacterDataImpl;
 
 import org.w3c.dom.svg.SVGElement;
+import org.w3c.dom.CharacterData;
 
 /**
  * class representing svg:text pseudo flow object.
@@ -156,14 +158,16 @@ public class Text extends SVGObj {
 				textGraph.appendChild(child);
 			} else if(obj instanceof String) {
 				String str = (String)obj;
-				// new CDATANode(str); ??
+				CharacterData cd = new CharacterDataImpl();
+				cd.setData(str);
+				textGraph.appendChild(cd);
 			}
 //			System.out.println(child);
 		}
 		/* retrieve properties */
 		textGraph.x = ((SVGLengthProperty)this.properties.get("x")).getSVGLength().getValue();
 		textGraph.y = ((SVGLengthProperty)this.properties.get("y")).getSVGLength().getValue();
-		textGraph.textList = textList;
+//		textGraph.textList = textList;
 		textGraph.setStyle(((SVGStyle)this.properties.get("style")).getStyle());
 		textGraph.setTransform(((SVGTransform)this.properties.get("transform")).getTransform());
 		textGraph.setId(this.properties.get("id").getString());
