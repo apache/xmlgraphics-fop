@@ -27,6 +27,8 @@ import org.xml.sax.SAXException;
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.fo.flow.BasicLink;
 import org.apache.fop.fo.flow.Block;
+import org.apache.fop.fo.flow.BlockContainer;
+import org.apache.fop.fo.flow.Character;
 import org.apache.fop.fo.flow.ExternalGraphic;
 import org.apache.fop.fo.flow.Footnote;
 import org.apache.fop.fo.flow.FootnoteBody;
@@ -192,6 +194,20 @@ public abstract class FOEventHandler {
      */
     public void endBlock(Block bl) {
     }
+
+    /**
+    *
+    * @param bl BlockContainer that is starting.
+    */
+   public void startBlockContainer(BlockContainer blc) {
+   }
+
+   /**
+    *
+    * @param blc BlockContainer that is ending.
+    */
+   public void endBlockContainer(BlockContainer blc) {
+   }
 
     /**
      *
@@ -452,6 +468,13 @@ public abstract class FOEventHandler {
      * @param l Leader to process.
      */
     public void leader(Leader l) {
+    }
+
+    /**
+     * Process a Character.
+     * @param c Character to process.
+     */
+    public void character(Character c) {
     }
 
     /**
