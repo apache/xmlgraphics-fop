@@ -487,14 +487,18 @@ public class LineArea extends Area {
                           int ruleStyle, int ruleThickness, int leaderPatternWidth,
                           int leaderAlignment) {
         WordArea leaderPatternArea;
-        int leaderLength;
+        int leaderLength = 0;
         int remainingWidth =
           this.getContentWidth() - this.getCurrentXPosition();
-        //checks whether leaderLenghtOptimum fits into rest of line;
-        //should never overflow, asit has been checked already in BlockArea
-        if (remainingWidth < leaderLengthOptimum) {
+        /** checks whether leaderLenghtOptimum fits into rest of line;
+         *  should never overflow, as it has been checked already in BlockArea
+         *  first check: use remaining width if it smaller than optimum oder maximum
+         * */
+        if ((remainingWidth <= leaderLengthOptimum) ||   (remainingWidth <= leaderLengthMaximum)) {
             leaderLength = remainingWidth;
-        } else {
+        } else if ((remainingWidth > leaderLengthOptimum) && ( remainingWidth > leaderLengthMaximum)) {
+            leaderLength = leaderLengthMaximum;
+        } else if ((leaderLengthOptimum > leaderLengthMaximum) && (leaderLengthOptimum < remainingWidth)) {
             leaderLength = leaderLengthOptimum;
         }
         switch (leaderPattern) {
