@@ -37,7 +37,7 @@ public abstract class PrintRenderer extends AbstractRenderer {
     /**
      * Set up the font info
      *
-     * @param fontInfo  font info to set up
+     * @param inFontInfo  font info to set up
      */
     public void setupFontInfo(FontInfo inFontInfo) {
         this.fontInfo = inFontInfo;
