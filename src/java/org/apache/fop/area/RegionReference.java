@@ -66,6 +66,8 @@ public class RegionReference extends Area implements Cloneable {
     // the list of block areas from the static flow
     private List blocks = new ArrayList();
 
+    private int bpd;
+
     /**
      * Create a new region reference area.
      *
@@ -122,6 +124,24 @@ public class RegionReference extends Area implements Cloneable {
      */
     public void addBlock(Block block) {
         blocks.add(block);
+    }
+
+    /**
+     * Set the block-progression-dimension.
+     *
+     * @return the footnote area
+     */
+    public void setBPD(int bpd) {
+        this.bpd = bpd;
+    }
+
+    /**
+     * Set the block-progression-dimension.
+     *
+     * @return the footnote area
+     */
+    public int getBPD() {
+        return bpd;
     }
 
     /**
