@@ -80,17 +80,17 @@ public class FromNearestSpecified extends IndirectValue {
 
     /**
      * Attempt to resolve this object into a "real" property value.  If the
-     * object has no <i>inheritedTriplet</i>, obtain and set one.  The
-     * obtained triplet is from the nearest ancestor node on which a value
+     * object has no <i>inheritedValue</i>, obtain and set one.  The
+     * obtained value is from the nearest ancestor node on which a value
      * has been specified.
      * Then invoke the superclass' <i>resolve()</i> method.
      * @param node - the <tt>FONode</tt> with which this object is associated.
      * @return the resulting <tt>PropertyValue</tt>.  Either a resolved value
-     * or <i>this</i>, if bequeathing triplet has no resolved computed value.
+     * or <i>this</i>, if bequeathing value has no resolved computed value.
      */
     public PropertyValue resolve(FONode node) throws PropertyException {
         if (inheritedValue == null) {
-            inheritedValue = node.getNearestSpecifiedTriplet(sourceProperty);
+            inheritedValue = node.getNearestSpecifiedValue(sourceProperty);
         }
         return super.resolve(node);
     }
