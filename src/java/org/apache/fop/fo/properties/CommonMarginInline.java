@@ -59,10 +59,6 @@ public class CommonMarginInline {
      */
     public SpaceProperty spaceEnd;
 
-    public CommonMarginInline() {
-
-    }
-
     /**
      * Create a CommonMarginInline object.
      * @param pList The PropertyList with propery values.
