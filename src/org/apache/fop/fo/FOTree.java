@@ -25,7 +25,6 @@ import org.xml.sax.InputSource;
 import org.xml.sax.XMLReader;
 
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.ArrayList;
 
 import java.lang.reflect.InvocationTargetException;
@@ -74,7 +73,7 @@ public class FOTree extends Tree implements Runnable {
 
     /**
      * The array of stacks for resolving properties during FO tree building.
-     * An Array of LinkedList[].  Each LinkedList is a stack containing the
+     * An Array of ArrayList[].  Each ArrayList is a stack containing the
      * most recently specified value of a particular property.  The first
      * element of each stack will contain the initial value.
      * <p>
@@ -82,9 +81,9 @@ public class FOTree extends Tree implements Runnable {
      * constants in this file, and are the effective index values for the
      * PropNames.propertyNames and classNames arrays.
      * <p>
-     *  LinkedList is part of the 1.2 Collections framework.
+     *  ArrayList is part of the 1.2 Collections framework.
      */
-    protected LinkedList[] propertyStacks;
+    protected ArrayList[] propertyStacks;
 
     /**
      * @param xmlevents the buffer from which <tt>XMLEvent</tt>s from the
@@ -99,10 +98,10 @@ public class FOTree extends Tree implements Runnable {
         exprParser = new PropertyParser(this);
 
         // Initialise the propertyStacks
-        propertyStacks = new LinkedList[PropNames.LAST_PROPERTY_INDEX + 1];
+        propertyStacks = new ArrayList[PropNames.LAST_PROPERTY_INDEX + 1];
         PropertyValue prop;
         for (int i = 1; i <= PropNames.LAST_PROPERTY_INDEX; i++)
-            propertyStacks[i] = new LinkedList();
+            propertyStacks[i] = new ArrayList(1);
         // Initialize the FontSize first.  Any lengths defined in ems must
         // be resolved relative to the current font size.  This may happen
         // during setup of initial values.
@@ -110,16 +109,14 @@ public class FOTree extends Tree implements Runnable {
         prop = PropertyConsts.getInitialValue(PropNames.FONT_SIZE);
         if ( ! (prop instanceof Numeric) || ! ((Numeric)prop).isLength())
             throw new PropertyException("Initial font-size is not a Length");
-        propertyStacks[PropNames.FONT_SIZE].addFirst
-                (new PropertyTriplet(PropNames.FONT_SIZE, prop, prop));
+        propertyStacks[PropNames.FONT_SIZE].add(prop);
 
 
         for (int i = 1; i <= PropNames.LAST_PROPERTY_INDEX; i++) {
-            System.out.println("Set initial value: " + i);
             if (i == PropNames.FONT_SIZE) continue;
             // Set up the initial values for each property
             prop = PropertyConsts.getInitialValue(i);
-            propertyStacks[i].addFirst(new PropertyTriplet(i, prop, prop));
+            propertyStacks[i].add(prop);
         }
 
     }
@@ -132,11 +129,9 @@ public class FOTree extends Tree implements Runnable {
      * supported.
      */
     public Numeric cloneCurrentFontSize() throws PropertyException {
-        Numeric tmpval = (Numeric)
-            (((PropertyTriplet)propertyStacks[PropNames.FONT_SIZE].getLast())
-                .getComputed());
-        if (tmpval == null)
-            throw new PropertyException("'font-size' not computed.");
+        Numeric tmpval =
+                (Numeric)(propertyStacks[PropNames.FONT_SIZE]
+                    .get(propertyStacks[PropNames.FONT_SIZE].size() - 1));
         try {
             return (Numeric)(tmpval.clone());
         } catch (CloneNotSupportedException e) {
@@ -152,12 +147,8 @@ public class FOTree extends Tree implements Runnable {
      * or is not expressed as a <tt>Numeric</tt>.
      */
     public Numeric currentFontSize() throws PropertyException {
-        Numeric tmpval = (Numeric)
-            (((PropertyTriplet)propertyStacks[PropNames.FONT_SIZE].getLast())
-                .getComputed());
-        if (tmpval == null)
-            throw new PropertyException("'font-size' not computed.");
-        return (Numeric)tmpval;
+        return (Numeric)(propertyStacks[PropNames.FONT_SIZE]
+                    .get(propertyStacks[PropNames.FONT_SIZE].size() - 1));
     }
 
     /**
@@ -168,26 +159,23 @@ public class FOTree extends Tree implements Runnable {
     public void setInitialValue(PropertyValue value)
         throws PropertyException
     {
-        int property = value.getProperty();
-        propertyStacks[property].addFirst
-                (new PropertyTriplet(property, value, value));
+        propertyStacks[value.getProperty()].set(0, value);
     }
 
     /**
-     * Get the current <i>TextDecorations</i> property from the property
+     * Clone the current <i>TextDecorations</i> property from the property
      * stacks.
      * @return a <tt>TextDecorations</tt> object containing the current
      * text decorations
      * @exception PropertyException if current text decorations are not
      * defined, or are not expressed as <tt>TextDecorations</tt>.
      */
-    public TextDecorations currentTextDecorations() throws PropertyException {
+    public TextDecorations cloneCurrentTextDecorations()
+            throws PropertyException
+    {
         TextDecorations tmpval = (TextDecorations)
-            (((PropertyTriplet)
-              propertyStacks[PropNames.TEXT_DECORATION].getLast())
-                .getComputed());
-        if (tmpval == null)
-            throw new PropertyException("'text-decoration' not computed.");
+                (propertyStacks[PropNames.TEXT_DECORATION]
+                .get(propertyStacks[PropNames.TEXT_DECORATION].size() - 1));
         try {
             return (TextDecorations)(tmpval.clone());
         } catch (CloneNotSupportedException e) {
@@ -196,82 +184,74 @@ public class FOTree extends Tree implements Runnable {
     }
 
     /**
-     * Get the <tt>PropertyTriplet</tt> at the top of the stack for a
+     * Get the <tt>PropertyValue</tt> at the top of the stack for a
      * given property.
      * @param index - the property index.
-     * @return a <tt>PropertyTriplet</tt> containing the latest property
-     * value elements for the indexed property.
+     * @return a <tt>PropertyValue</tt> containing the latest property
+     * value for the indexed property.
      */
-    public PropertyTriplet getCurrentPropertyTriplet(int index)
+    public PropertyValue getCurrentPropertyValue(int index)
             throws PropertyException
     {
-        return (PropertyTriplet)(propertyStacks[index].getLast());
+        return (PropertyValue)(propertyStacks[index]
+                                    .get(propertyStacks[index].size() - 1));
     }
 
     /**
-     * Pop the <tt>PropertyTriplet</tt> at the top of the stack for a
+     * Clone the <tt>PropertyValue</tt> at the top of the stack for a
      * given property.
      * @param index - the property index.
-     * @return a <tt>PropertyTriplet</tt> containing the property
+     * @return a <tt>PropertyValue</tt> containing the latest property
+     * value for the indexed property.
+     */
+    public PropertyValue cloneCurrentPropertyValue(int index)
+            throws PropertyException
+    {
+        PropertyValue tmpval = (PropertyValue)(propertyStacks[index]
+                                    .get(propertyStacks[index].size() - 1));
+        try {
+            return (PropertyValue)(tmpval.clone());
+        } catch (CloneNotSupportedException e) {
+            throw new PropertyException("Clone not supported.");
+        }
+    }
+
+    /**
+     * Pop the <tt>PropertyValue</tt> at the top of the stack for a
+     * given property.
+     * @param index - the property index.
+     * @return a <tt>PropertyValue</tt> containing the property
      * value elements at the top of the stack for the indexed property.
      */
-    public PropertyTriplet popPropertyTriplet(int index)
+    public PropertyValue popPropertyValue(int index)
             throws PropertyException
     {
-        return (PropertyTriplet)(propertyStacks[index].removeLast());
+        return (PropertyValue)(propertyStacks[index]
+                                .remove(propertyStacks[index].size() - 1));
     }
 
     /**
-     * Get the initial value <tt>PropertyTriplet</tt> from the bottom of the
+     * Get the initial value <tt>PropertyValue</tt> from the bottom of the
      * stack for a given property.
      * @param index - the property index.
-     * @return a <tt>PropertyTriplet</tt> containing the property
-     * value elements at the bottom of the stack for the indexed property.
+     * @return a <tt>PropertyValue</tt> containing the property
+     * value element at the bottom of the stack for the indexed property.
      */
-    public PropertyTriplet getInitialValueTriplet(int index)
+    public PropertyValue getInitialValue(int index)
             throws PropertyException
     {
-        return (PropertyTriplet)(propertyStacks[index].getFirst());
-    }
-
-    /**
-     * Get the initial specified value from the bottom of the stack for a
-     * given property.  This may be a null value.
-     * @param index - the property index.
-     * @return a <tt>PropertyValue</tt> containing the <em>specified</em>
-     * property value at the bottom of the stack for the indexed property.
-     */
-    public PropertyValue getInitialSpecifiedValue(int index)
-            throws PropertyException
-    {
-        return ((PropertyTriplet)(propertyStacks[index].getFirst()))
-                .getSpecified();
+        return (PropertyValue)(propertyStacks[index].get(0));
     }
 
     /**
      * Push a <tt>PropertyValue</tt> onto the top of stack for a given
      * property.
-     * @param index: <tt>int</tt> property index.
-     * @param value a <tt>PropertyTriplet</tt> containing the property
-     * value elements for the indexed property.
+     * @param value a <tt>PropertyValue</tt>.
      */
-    public void pushPropertyTriplet(int index, PropertyTriplet value)
+    public void pushPropertyValue(PropertyValue value)
             throws PropertyException
     {
-        propertyStacks[index].addLast(value);
-        return;
-    }
-
-    /**
-     * Get the computed value from the top of stack for a given property.
-     * @param index - the property index.
-     * @return a <tt>PropertyValue</tt> containing the latest computed
-     * property value for the indexed property.
-     */
-    public PropertyValue getCurrentComputed(int index)
-            throws PropertyException
-    {
-        return getCurrentPropertyTriplet(index).getComputed();
+        propertyStacks[value.getProperty()].add(value);
     }
 
     /**
@@ -304,9 +284,9 @@ public class FOTree extends Tree implements Runnable {
             // positioning of the root element
             event = xmlevents.getStartElement
                                     (XMLNamespaces.XSLNSpaceIndex, "root");
-            //if (event != null) {
-                //System.out.println("FOTree:" + event);
-            //}
+            if (event != null) {
+                System.out.println("FOTree:" + event);
+            }
             foRoot = new FoRoot(this, event);
             foRoot.buildFoTree();
             System.out.println("Back from buildFoTree");
@@ -319,7 +299,7 @@ public class FOTree extends Tree implements Runnable {
                 } catch (Exception ex) {} // Ignore
             }
             // Now propagate a Runtime exception
-            throw new RuntimeException(e.getMessage());
+            throw new RuntimeException(e);
         }
     }
 
