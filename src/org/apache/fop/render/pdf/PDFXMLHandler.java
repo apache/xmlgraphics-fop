@@ -264,6 +264,9 @@ public class PDFXMLHandler implements XMLHandler {
                                 + PDFNumber.doubleOut(vals[5]) + " cm\n");
             }
 
+            if (pdfInfo.pdfContext == null) {
+                pdfInfo.pdfContext = pdfInfo.pdfPage;
+            }
             PDFGraphics2D graphics = new PDFGraphics2D(true, pdfInfo.fi, pdfInfo.pdfDoc,
                                      pdfInfo.pdfContext, pdfInfo.pdfPage.referencePDF(),
                                      pdfInfo.currentFontName,
