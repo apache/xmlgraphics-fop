@@ -75,7 +75,7 @@ public class LeaderLayoutManager extends LeafNodeLayoutManager {
             org.apache.fop.area.inline.Leader leader = 
                 new org.apache.fop.area.inline.Leader();
             leader.setRuleStyle(fobj.getRuleStyle());
-            leader.setRuleThickness(fobj.getRuleThickness());
+            leader.setRuleThickness(fobj.getRuleThickness().getValue());
             leaderArea = leader;
         } else if (fobj.getLeaderPattern() == LeaderPattern.SPACE) {
             leaderArea = new Space();
@@ -90,10 +90,10 @@ public class LeaderLayoutManager extends LeafNodeLayoutManager {
             t.setOffset(font.getAscender());
             int width = font.getCharWidth(dot);
             Space spacer = null;
-            if (fobj.getPatternWidth() > width) {
+            if (fobj.getLeaderPatternWidth().getValue() > width) {
                 spacer = new Space();
-                spacer.setIPD(fobj.getPatternWidth() - width);
-                width = fobj.getPatternWidth();
+                spacer.setIPD(fobj.getLeaderPatternWidth().getValue() - width);
+                width = fobj.getLeaderPatternWidth().getValue();
             }
             FilledArea fa = new FilledArea();
             fa.setUnitWidth(width);
@@ -127,10 +127,10 @@ public class LeaderLayoutManager extends LeafNodeLayoutManager {
             clm.fillArea(lm);
             int width = clm.getStackingSize();
             Space spacer = null;
-            if (fobj.getPatternWidth() > width) {
+            if (fobj.getLeaderPatternWidth().getValue() > width) {
                 spacer = new Space();
-                spacer.setIPD(fobj.getPatternWidth() - width);
-                width = fobj.getPatternWidth();
+                spacer.setIPD(fobj.getLeaderPatternWidth().getValue() - width);
+                width = fobj.getLeaderPatternWidth().getValue();
             }
             fa.setUnitWidth(width);
             if (spacer != null) {
