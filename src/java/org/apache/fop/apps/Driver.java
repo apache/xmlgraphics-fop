@@ -514,8 +514,9 @@ public class Driver implements LogEnabled {
      * renderers (e.g. PDF & PostScript) use a ContentHandler that builds an FO
      * Tree.
      * @return a SAX ContentHandler for handling the SAX events.
+     * @throws FOPException if setting up the ContentHandler fails
      */
-    public ContentHandler getContentHandler() {
+    public ContentHandler getContentHandler() throws FOPException {
         if (!isInitialized()) {
             initialize();
         }
@@ -542,6 +543,21 @@ public class Driver implements LogEnabled {
                         "Renderer not set when using standard foInputHandler");
             }
             foInputHandler = new FOTreeHandler(currentDocument, true);
+            currentDocument.areaTree = new AreaTree(currentDocument);
+            currentDocument.atModel = new RenderPagesModel(renderer);
+            //this.atModel = new CachedRenderPagesModel(renderer);
+            currentDocument.areaTree.setTreeModel(currentDocument.atModel);
+            try {
+                renderer.setupFontInfo(currentDocument);
+                // check that the "any,normal,400" font exists
+                if (!currentDocument.isSetupValid()) {
+                    throw new FOPException(
+                            "No default font defined by OutputConverter");
+                }
+                renderer.startRenderer(stream);
+            } catch (IOException e) {
+                throw new FOPException(e);
+            }
         }
         currentDocument.foInputHandler = foInputHandler;
         /** LayoutStrategy is hard-wired for now, but needs to be made
@@ -588,21 +604,6 @@ public class Driver implements LogEnabled {
             if (foInputHandler instanceof FOTreeHandler) {
                 FOTreeHandler foTreeHandler = (FOTreeHandler)foInputHandler;
                 foTreeHandler.addFOTreeListener(currentDocument);
-                currentDocument.areaTree = new AreaTree(currentDocument);
-                currentDocument.atModel = new RenderPagesModel(renderer);
-                //this.atModel = new CachedRenderPagesModel(renderer);
-                currentDocument.areaTree.setTreeModel(currentDocument.atModel);
-                try {
-                    renderer.setupFontInfo(currentDocument);
-                    // check that the "any,normal,400" font exists
-                    if (!currentDocument.isSetupValid()) {
-                        throw new SAXException(new FOPException(
-                                "No default font defined by OutputConverter"));
-                    }
-                    renderer.startRenderer(stream);
-                } catch (IOException e) {
-                    throw new SAXException(e);
-                }
             }
             /**
              The following statement triggers virtually all of the processing
