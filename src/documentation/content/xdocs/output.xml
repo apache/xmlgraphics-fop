@@ -41,7 +41,7 @@ output format and associated data and flow.
 Fonts and Layout - some formats (eg. PDF and AWT) rely on different
 font information. The fonts for these outputs have different sizes
 for the same point size. This means that the layout can be quite
-different for the same fo document.
+different for the same FO document.
     </p>
     <p>
 DPI - This is an important issue when creating output for printing.
@@ -51,13 +51,13 @@ images and the rendering of certain graphics in the output. Currently
 FOP uses a value of 72dpi.
     </p>
     <p>
-You may want to send your output directly to a printer. The Print
-renderer uses the java api to print the document or you might be
+You may want to send your output directly to a printer. The print
+renderer can use the Java API to print the document. You might also be
 able to send the output stream directly to a printer. If your printer
 supports postscript you could send the postscript to the printer. If
 you have a printer that supports PCL you could stream the PCL document
 to your printer.
-On Windows:
+On Windows, you can use:
     </p>
 <source><![CDATA[fop ... -ps \\computername\printer or fop ... -pcl \\computername\printer]]></source>
     <p>
@@ -66,8 +66,8 @@ On UNIX:
 <source><![CDATA[proc = Runtime.getRuntime().exec("lp -d" + print_queue + " -o -dp -");
 out = proc.getOutputStream();]]></source>
     <p>
-And give the OutputStream (out) to the PCLRenderer and it happily sends the
-PCL to the AIX print queue.
+Set the OutputStream (out) to the PCLRenderer and it happily sends the
+PCL to the UNIX printer queue.
     </p>
 </section>
 <section>
