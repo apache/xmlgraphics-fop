@@ -455,7 +455,24 @@ public class XMLRenderer extends AbstractRenderer {
         addAreaAttributes(block);
         addTraitAttributes(block);
         if (block instanceof BlockViewport) {
-            addAttribute("is-viewport", "true");
+            BlockViewport bvp = (BlockViewport)block;
+            if (bvp.getPositioning() == Block.ABSOLUTE) {
+                addAttribute("positioning", "absolute");
+            } else if (bvp.getPositioning() == Block.FIXED) {
+                addAttribute("positioning", "fixed");
+            }
+            addAttribute("left-position", bvp.getXOffset());
+            addAttribute("top-position", bvp.getYOffset());
+        } else {
+            if (block.getPositioning() == Block.RELATIVE) {
+                addAttribute("positioning", "relative");
+            }
+            if (block.getXOffset() != 0) {
+                addAttribute("left-offset", block.getXOffset());
+            }
+            if (block.getYOffset() != 0) {
+                addAttribute("top-offset", block.getYOffset());
+            }
         }
         startElement("block", atts);
         super.renderBlock(block);
