@@ -32,6 +32,8 @@ public class RecursiveCharIterator extends AbstractCharIterator {
     public Object clone() {
 	RecursiveCharIterator ci = (RecursiveCharIterator)super.clone();
 	ci.childIter = fobj.getChildren(ci.curChild);
+	// Need to advance to the next child, else we get the same one!!!
+	ci.childIter.next();
 	ci.curCharIter = (CharIterator)curCharIter.clone();
 	return ci;
     }
