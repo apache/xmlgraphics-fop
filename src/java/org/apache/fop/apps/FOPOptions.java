@@ -519,8 +519,12 @@ public class FOPOptions {
         // Add verbosity to options
         options.addOptionGroup(verbosity);
         // Add the dump-config option directly
-        options.addOption(new Option(
-                "x", "dump-config", NO_ARG, "Dump configuration settings"));
+        options.addOption(
+                OptionBuilder
+                .withArgName("dump config")
+                .withLongOpt("dump-config")
+                .withDescription("Dump configuration settings")
+                .create("x"));
         // Add the config-file option directly
         options.addOption(
                 OptionBuilder
