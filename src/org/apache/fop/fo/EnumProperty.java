@@ -75,6 +75,11 @@ public class EnumProperty extends Property {
       return null;
     }
 
+    public Property convertProperty(Property p,
+	PropertyList propertyList, FObj fo) throws FOPException {
+      if (p instanceof EnumProperty) return p;
+      else return null;
+    }
   }
 
     private int value;

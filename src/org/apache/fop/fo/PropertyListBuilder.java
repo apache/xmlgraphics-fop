@@ -175,7 +175,7 @@ public class PropertyListBuilder {
 	    if (propertyMaker != null) {
 	      try {
 		if (subpropName != null) {
-		    Property baseProp = p.getExplicit(propName);
+		    Property baseProp = p.getExplicitBaseProp(propName);
 		    if (baseProp == null) {
 			// See if it is specified later in this list
 			String baseValue = attributes.getValue(propName);
@@ -227,6 +227,17 @@ public class PropertyListBuilder {
 	return false;
     }
     
+    public Property getShorthand(PropertyList propertyList, String space,
+    	 String element, String propertyName) {
+	Property.Maker propertyMaker = findMaker(space, element, propertyName);
+	if (propertyMaker != null) {
+	    return propertyMaker.getShorthand(propertyList);
+	} else {
+	    MessageHandler.errorln("WARNING: no Maker for " + propertyName);
+            return null;
+	}
+    }
+
 
     public Property makeProperty(PropertyList propertyList, String space, String element, String propertyName) throws FOPException {
 	

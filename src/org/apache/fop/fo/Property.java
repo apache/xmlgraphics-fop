@@ -57,6 +57,7 @@ import org.apache.fop.fo.expr.PropertyParser;
 import org.apache.fop.fo.expr.PropertyInfo;
 import org.apache.fop.fo.expr.PropertyException;
 import org.apache.fop.apps.FOPException;
+import java.util.Vector;
 
 public class Property {
 
@@ -231,6 +232,45 @@ public class Property {
       }
     }
 
+    public Property convertShorthandProperty(PropertyList propertyList,
+					  Property prop, FObj fo)
+    {
+      Property pret = null;
+      try {
+	pret = convertProperty(prop, propertyList, fo);
+	if (pret == null) {
+	  // If value is a name token, may be keyword or Enum
+	  String sval = prop.getNCname();
+	  if (sval != null) {
+	    // System.err.println("Convert shorthand ncname " + sval);
+	    pret = checkEnumValues(sval);
+	    if (pret == null) {
+	      /* Check for keyword shorthand values to be substituted. */
+	      String pvalue = checkValueKeywords(sval);
+	      if (!pvalue.equals(sval)) {
+		// System.err.println("Convert shorthand keyword" + pvalue);
+		// Substituted a value: must parse it
+		Property p = PropertyParser.parse(pvalue,
+			     new PropertyInfo(this, propertyList, fo));
+		pret = convertProperty(p, propertyList, fo);
+	      }
+	    }
+	  }
+	}
+      } catch (FOPException e) {
+
+	MessageHandler.errorln("convertShorthandProperty caught FOPException " + e);
+      }
+      catch (org.apache.fop.fo.expr.PropertyException propEx) {
+	MessageHandler.errorln("convertShorthandProperty caught PropertyException " + propEx);
+      }
+      if (pret != null) {
+	/* System.err.println("Return shorthand value " + pret.getString() +
+	   " for " + getPropName());*/
+      }
+      return pret;
+    }
+
     protected boolean isCompoundMaker() {
       return false;
     }
@@ -333,6 +373,10 @@ public class Property {
     	return false;
     }
 
+    public Property getShorthand(PropertyList propertyList) {
+    	return null;
+    }
+
   } // end of nested Maker class
 
   /** The original specified value for properties which inherit
@@ -370,6 +414,7 @@ public class Property {
   */
   public int getEnum() { return 0; }
   public char getCharacter() { return 0;}
+  public Vector getList() { return null; } // List of Property objects
 
   public Number getNumber() { return null; }
 
