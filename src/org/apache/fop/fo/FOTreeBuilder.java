@@ -210,12 +210,15 @@ public class FOTreeBuilder extends DefaultHandler implements TreeBuilder {
         FObj fobj;
 
         /* the maker for the formatting object started */
-        FObj.Maker fobjMaker;
+        FObj.Maker fobjMaker = null;
 
         // String fullName = mapName(rawName);
         //String fullName = uri + "^" + localName;
         HashMap table = (HashMap)fobjTable.get(uri);
-        fobjMaker = (FObj.Maker)table.get(localName);
+        if(table != null) {
+            fobjMaker = (FObj.Maker)table.get(localName);
+        }
+
         PropertyListBuilder currentListBuilder =
             (PropertyListBuilder)this.propertylistTable.get(uri);
 
