@@ -23,77 +23,23 @@
     <version>$Revision$</version>
   </header>
   <body>
-    <section id="std">
-      <title>Standard Hyphenation Support</title>
-      <p>The following table summarizes FOP's standard hyphenation support.
-Please note that the "view" links reflect current CVS, and may be different than the contents of released code. See <link href="#patterns">Hyphenation Patterns</link> for a brief explanation of the contents of these files.</p>
-      <table>
-        <tr>
-          <th>language_COUNTRY code</th>
-          <th>Description</th>
-          <th>View Patterns (maintenance branch CVS)</th>
-        </tr>
-        <tr>
-          <td>en</td>
-          <td>English</td>
-          <td><jump href="http://cvs.apache.org/viewcvs.cgi/xml-fop/src/hyph/en.xml?rev=1.1.2&amp;content-type=text/vnd.viewcvs-markup">view</jump></td>
-        </tr>
-        <tr>
-          <td>es</td>
-          <td>Spanish</td>
-          <td><jump href="http://cvs.apache.org/viewcvs.cgi/xml-fop/src/hyph/es.xml?rev=1.1.2&amp;content-type=text/vnd.viewcvs-markup">view</jump></td>
-        </tr>
-        <tr>
-          <td>fi</td>
-          <td>Finnish</td>
-          <td><jump href="http://cvs.apache.org/viewcvs.cgi/xml-fop/src/hyph/fi.xml?rev=1.1.2&amp;content-type=text/vnd.viewcvs-markup">view</jump></td>
-        </tr>
-        <tr>
-          <td>hu</td>
-          <td>Hungarian</td>
-          <td><jump href="http://cvs.apache.org/viewcvs.cgi/xml-fop/src/hyph/hu.xml?rev=1.1.2&amp;content-type=text/vnd.viewcvs-markup">view</jump></td>
-        </tr>
-        <tr>
-          <td>it</td>
-          <td>Italian</td>
-          <td><jump href="http://cvs.apache.org/viewcvs.cgi/xml-fop/src/hyph/it.xml?rev=1.1.2&amp;content-type=text/vnd.viewcvs-markup">view</jump></td>
-        </tr>
-        <tr>
-          <td>pl</td>
-          <td>Polish</td>
-          <td><jump href="http://cvs.apache.org/viewcvs.cgi/xml-fop/src/hyph/pl.xml?rev=1.1.2&amp;content-type=text/vnd.viewcvs-markup">view</jump></td>
-        </tr>
-        <tr>
-          <td>pt</td>
-          <td>Portuguese</td>
-          <td><jump href="http://cvs.apache.org/viewcvs.cgi/xml-fop/src/hyph/pt.xml?rev=1.1.2&amp;content-type=text/vnd.viewcvs-markup">view</jump></td>
-        </tr>
-        <tr>
-          <td>ru</td>
-          <td>Russian</td>
-          <td><jump href="http://cvs.apache.org/viewcvs.cgi/xml-fop/src/hyph/ru.xml?rev=1.1.2&amp;content-type=text/vnd.viewcvs-markup">view</jump></td>
-        </tr>
-      </table>
-    </section>
-    <section id="custom">
-    <title>Custom Hyphenation Support</title>
-    <section id="custom-intro">
+    <section id="support">
+    <title>Hyphenation Support</title>
+    <section id="intro">
       <title>Introduction</title>
       <p>FOP uses Liang's hyphenation algorithm, well known from TeX. It needs
        language specific pattern and other data for operation.</p>
-      <p>Because of <link href="#license-issues">licensing issues</link>,
-       there are currently some significant holes in FOP's hyphenation support.
-       The information in this section is intended to help you work around these
-       limitations, if possible, add support for other languages, or enhance FOP's
-       support of current languages.</p>
-      <note>If you have access to hyphenation patterns that are licensed in an
-       Apache-compatible way, or if you have made improvements to an existing FOP
-       hyphenation pattern, or if you have created one from scratch, please
-       consider contributing these to FOP so that they can benefit other FOP users
-       as well. Please inquire on the <link href="maillist.html#fop-user">FOP User
+      <p>Because of <link href="#license-issues">licensing issues</link> (and for 
+       convenience), all hyphenation patterns for FOP are made available through 
+       the <fork href="http://offo.sourceforge.net/hyphenation.html">Objects For 
+       Formatting Objects</fork> project.</p>
+      <note>If you have made improvements to an existing FOP hyphenation pattern, 
+       or if you have created one from scratch, please consider contributing these 
+       to OFFO so that they can benefit other FOP users as well. 
+       Please inquire on the <link href="maillist.html#fop-user">FOP User
        mailing list</link>.</note>
     </section>
-    <section id="custom-license-issues">
+    <section id="license-issues">
       <title>License Issues</title>
       <p>Many of the hyphenation files distributed with TeX and its offspring are
        licenced under the <fork href="http://www.latex-project.org/lppl.html">LaTeX
@@ -110,19 +56,19 @@ Please note that the "view" links reflect current CVS, and may be different than
       <warning>The user is responsible to settle license issues for hyphenation
        pattern files that are obtained from non-Apache sources.</warning>
     </section>
-    <section id="custom-sources">
+    <section id="sources">
       <title>Sources of Custom Hyphenation Pattern Files</title>
       <p>The most important source of hyphenation pattern files is the
        <fork href="http://www.ctan.org/tex-archive/language/hyphenation/">CTAN TeX
         Archive</fork>.</p>
     </section>
-    <section id="custom-install">
+    <section id="install">
       <title>Installing Custom Hyphenation Patterns</title>
       <p>To install custom a custom hyphenation pattern for use with FOP:</p>
       <ol>
         <li>Convert the TeX hyphenation pattern file to the FOP format. The FOP
          format is an xml file conforming to the DTD found at
-         <code>{fop-dir}/src/hyph/hyphenation.dtd</code>.</li>
+         <code>{fop-dir}/hyph/hyphenation.dtd</code>.</li>
         <li>Name this new file following this schema:
          <code>languageCode_countryCode.xml</code>. The country code is
           optional, and should be used only if needed. For example:
@@ -142,18 +88,33 @@ Please note that the "view" links reflect current CVS, and may be different than
           on it being two letter strings in a few places. So you can make up your
           own codes for custom hyphenation patterns, but they should be two
           letter strings too (patches for proper handling extensions are welcome)</li>
-        <li>There are two ways to make the FOP-compatible hyphenation pattern file
-         accessible to FOP:
+        <li>There are basically three ways to make the FOP-compatible hyphenation pattern 
+          file(s) accessible to FOP:
           <ul>
-            <li>Place the FOP-compatible hyphenation pattern file into the
-             directory {fop-dir}/src/hyph and rebuild FOP. The file will be picked
-             up and added to fop.jar.</li>
-            <li>Put the file into a directory of your choice and configure FOP to
-             look for custom patterns in this directory, by setting the
-             <link href="configuration.html#hyphenation-dir">&lt;hyphenation-dir&gt;
-              configuration option</link>.</li>
+            <li>Download the precompiled JAR from <fork href="http://offo.sourceforge.net/hyphenation.html">OFFO
+            </fork> and place it either in the <code>{fop-dir}/lib</code> directory, or 
+             in a directory of your choice (and append the full path to the JAR to 
+             the environment variable <code>FOP_HYPHENATION_PATH</code>).</li>
+            <li>Download the desired FOP-compatible hyphenation pattern file(s) from 
+             <fork href="http://offo.sourceforge.net/hyphenation.html">OFFO</fork>, place 
+             them in the directory <code>{fop-dir}/hyph</code>, and run Ant with build target
+             <code>hyphenation-jar</code>. This will create a JAR containing the 
+             compiled patterns in <code>{fop-dir}/build</code> that will be added to the 
+             classpath on the next run.
+             (When FOP is built from scratch, and there are pattern source file(s) 
+             present in <code>{fop-dir}/hyph</code>, this JAR will automatically 
+             be created from the supplied pattern(s)).</li>
+            <li>Put the pattern source file(s) into a directory of your choice and 
+             configure FOP to look for custom patterns in this directory, by setting the
+             <link href="configuration.html#hyphenation-dir">&lt;hyphenation-dir&gt;</link> 
+             configuration option.</li>
           </ul>
         </li>
+        <warning>Either of these three options will ensure hyphenation is working when using
+        FOP from the command-line. If FOP is being embedded, remember to add the location(s)
+        of the hyphenation JAR(s) to the CLASSPATH (option 1 and 2) or to set the 
+        <link href="configuration.html#hyphenation-dir">&lt;hyphenation-dir&gt;</link> 
+        configuration option programmatically (option 3).</warning>
       </ol>
     </section>
   </section>
@@ -162,10 +123,9 @@ Please note that the "view" links reflect current CVS, and may be different than
     <p>If you would like to build your own hyphenation pattern files, or modify
      existing ones, this section will help you understand how to do so. Even
      when creating a pattern file from scratch, it may be beneficial to start
-     with an existing file and modify it. See <link href="#std">Standard
-     Hyphenation Support</link> or the source distribution (src/hyph) for
-     examples. Here is a brief explanation of the contents of FOP's hyphenation
-     patterns:</p>
+     with an existing file and modify it. See <fork href="http://offo.sourceforge.net/hyphenation.html">
+     OFFO's Hyphenation page</fork> for examples. 
+     Here is a brief explanation of the contents of FOP's hyphenation patterns:</p>
     <warning>The remaining content of this section should be considered "draft"
      quality. It was drafted from theoretical literature, and has not been
      tested against actual FOP behavior. It may contain errors or omissions.
