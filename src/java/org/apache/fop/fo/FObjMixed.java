@@ -71,7 +71,7 @@ public class FObjMixed extends FObj {
     /**
      * @see org.apache.fop.fo.FObj#addLayoutManager(List)
      */
-    public void addLayoutManager(List list) { 	 
+    public void addLayoutManager(List list) {    
         if (getChildNodes() != null) {
             InlineStackingLayoutManager lm;
             lm = new InlineStackingLayoutManager(this);

@@ -69,10 +69,10 @@ public class PageNumberCitation extends FObj {
     /**
      * @see org.apache.fop.fo.FObj#addLayoutManager(List)
      */
-    public void addLayoutManager(List list) { 	 
+    public void addLayoutManager(List list) {
         PageNumberCitationLayoutManager lm = 
             new PageNumberCitationLayoutManager(this);
-        list.add(lm); 	 
+        list.add(lm);
     }
      
     /**

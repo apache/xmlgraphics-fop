@@ -114,7 +114,7 @@ public class Footnote extends FObj {
     /**
      * @see org.apache.fop.fo.FObj#addLayoutManager(List)
      */
-    public void addLayoutManager(List list) { 	 
+    public void addLayoutManager(List list) {
         if (getInlineFO() == null) {
             getLogger().error("inline required in footnote");
             return;

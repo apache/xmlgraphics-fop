@@ -93,11 +93,14 @@ public class PageNumber extends FObj {
     /**
      * @see org.apache.fop.fo.FObj#addLayoutManager(List)
      */
-    public void addLayoutManager(List list) { 	 
+    public void addLayoutManager(List list) {
         PageNumberLayoutManager lm = new PageNumberLayoutManager(this);
         list.add(lm);
     }
 
+    /**
+     * @see org.apache.fop.fo.FONode#getName()
+     */
     public String getName() {
         return "fo:page-number";
     }

@@ -81,7 +81,7 @@ public class Character extends FObj {
     /**
      * @see org.apache.fop.fo.FObj#addLayoutManager(List)
      */
-    public void addLayoutManager(List list) { 	 
+    public void addLayoutManager(List list) {
         String str = getPropString(PR_CHARACTER);
         if (str.length() == 1) {
             CharacterLayoutManager lm = new CharacterLayoutManager(this);

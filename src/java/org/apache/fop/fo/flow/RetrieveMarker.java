@@ -86,7 +86,7 @@ public class RetrieveMarker extends FObjMixed {
     /**
      * @see org.apache.fop.fo.FObj#addLayoutManager(List)
      */
-    public void addLayoutManager(List list) { 	 
+    public void addLayoutManager(List list) {
         RetrieveMarkerLayoutManager lm = new RetrieveMarkerLayoutManager(this);
         list.add(lm);
     }
