@@ -61,12 +61,7 @@ import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
 
 // Java
-import java.io.FileReader;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.PrintWriter;
-import java.io.IOException;
-import java.io.FileNotFoundException;
+import java.io.*;
 import java.net.URL;
 
 // FOP
@@ -200,7 +195,7 @@ public class Fop {
                 driver.addElementMapping("org.apache.fop.svg.SVGElementMapping");
                 driver.addPropertyList("org.apache.fop.fo.StandardPropertyListMapping");
                 driver.addPropertyList("org.apache.fop.svg.SVGPropertyListMapping");
-                driver.setWriter(new PrintWriter(new FileWriter(pdffile)));
+                driver.setOutputStream(new FileOutputStream(pdffile));
                 driver.buildFOTree(parser, fileInputSource(fofile));
                 driver.format();
                 driver.render();

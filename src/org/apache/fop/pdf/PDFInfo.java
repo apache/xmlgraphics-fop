@@ -85,10 +85,10 @@ public class PDFInfo extends PDFObject {
      *
      * @return the PDF
      */
-    public String toPDF() {
+    public byte[] toPDF() {
 	String p = this.number + " " + this.generation
 	    + " obj\n<< /Type /Info\n/Producer (" + this.producer
 	    + ") >>\nendobj\n";
-	return p;
+	return p.getBytes();
     }
 }

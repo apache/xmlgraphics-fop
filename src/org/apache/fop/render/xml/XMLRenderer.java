@@ -64,6 +64,7 @@ import org.apache.fop.fo.properties.LeaderPattern;
 // Java
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.io.OutputStream;
 import java.util.Enumeration;
 
 /**
@@ -95,10 +96,10 @@ public class XMLRenderer implements Renderer {
      * @param areaTree the laid-out area tree
      * @param writer the PrintWriter to give the XML to
      */
-    public void render(AreaTree areaTree, PrintWriter writer)
+    public void render(AreaTree areaTree, OutputStream stream)
 	throws IOException {
 	MessageHandler.logln("rendering areas to XML");
-	this.writer = writer;
+	this.writer = new PrintWriter(stream);
 	this.writer.write("<?xml version=\"1.0\"?>\n<!-- produced by "
 			  + this.producer + " -->\n");
 	writeStartTag("<AreaTree>");

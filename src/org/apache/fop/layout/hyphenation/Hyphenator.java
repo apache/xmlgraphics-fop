@@ -91,7 +91,7 @@ public class Hyphenator {
 
         HyphenationTree hTree = getFopHyphenationTree(key);
         if (hTree == null) {
-            String hyphenDir = StandardConfiguration.getStringValue("hyphenation-dir");
+            String hyphenDir = Configuration.getStringValue("hyphenation-dir");
             if (hyphenDir != null){
                 hTree = getUserHyphenationTree(key,hyphenDir);
             }

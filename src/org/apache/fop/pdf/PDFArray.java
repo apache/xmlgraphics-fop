@@ -77,7 +77,7 @@ public class PDFArray extends PDFObject {
 	 *
 	 * @return the PDF
 	 */
-	public String toPDF() {
+	public byte[] toPDF() {
 		StringBuffer p = new StringBuffer();
 		p.append(this.number + " " + this.generation + " obj\n[");
 		for (int i = 0; i < values.length; i++) {
@@ -85,6 +85,6 @@ public class PDFArray extends PDFObject {
 			p.append(values[i]);
 		}
 		p.append("]\nendobj\n");
-		return p.toString();
+		return p.toString().getBytes();
 	}
 }

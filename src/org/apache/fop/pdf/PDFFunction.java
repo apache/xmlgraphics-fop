@@ -373,7 +373,7 @@ public class PDFFunction extends PDFObject {
 	  * 
 	  * @return the PDF string.
 	  */ 
-	public String toPDF() {
+	public byte[] toPDF() {
 		int vectorSize=0;
 		int numberOfFunctions=0;
 		int tempInt=0;
@@ -752,7 +752,7 @@ public class PDFFunction extends PDFObject {
 			
 		}
 		
-		return (p.toString());
+		return (p.toString().getBytes());
 		
 	}
 }

@@ -97,7 +97,7 @@ public class PDFRectangle {
 	 *
 	 * @return the PDF
 	 */
-    public String toPDF() {
-		return " [" + llx + " " + lly + " " + urx + " " + ury + "] ";
+    public byte[] toPDF() {
+		return (" [" + llx + " " + lly + " " + urx + " " + ury + "] ").getBytes();
 	}
 }

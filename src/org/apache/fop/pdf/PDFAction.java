@@ -96,6 +96,6 @@ public abstract class PDFAction extends PDFObject {
      *
      * @return the PDF string
      */
-    abstract public String toPDF();
+    abstract public byte[] toPDF();
 
     }

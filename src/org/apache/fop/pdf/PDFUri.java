@@ -84,8 +84,8 @@ public class PDFUri extends PDFAction {
      *
      * @return an empty string
      */
-    public String toPDF() {	
-	return "";
+    public byte[] toPDF() {	
+	return new byte[0];
     } 
     
 }

@@ -209,7 +209,7 @@ public class PDFFont extends PDFObject {
      *
      * @return the PDF
      */
-    public String toPDF() {
+    public byte[] toPDF() {
         StringBuffer p = new StringBuffer();
         p.append(this.number + " " + this.generation
                 + " obj\n<< /Type /Font\n/Subtype /" + TYPE_NAMES[this.subtype]
@@ -226,7 +226,7 @@ public class PDFFont extends PDFObject {
         }
         fillInPDF(p);
         p.append(" >>\nendobj\n");
-        return p.toString();
+        return p.toString().getBytes();
     }
 
     /**

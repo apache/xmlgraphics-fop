@@ -138,7 +138,7 @@ public class PDFPage extends PDFObject {
      *
      * @return the PDF string
      */
-    public String toPDF() {
+    public byte[] toPDF() {
 	StringBuffer sb = new StringBuffer();
 
 	sb = sb.append(this.number + " " + this.generation + " obj\n" +
@@ -155,6 +155,6 @@ public class PDFPage extends PDFObject {
 
 	sb = sb.append(">>\nendobj\n");
 
-	return sb.toString();
+	return sb.toString().getBytes();
     }
 }

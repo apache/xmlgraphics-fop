@@ -77,10 +77,8 @@ import org.xml.sax.SAXException;
 import org.xml.sax.helpers.AttributesImpl;
 
 // Java
-import java.io.PrintWriter;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.File;
+import java.io.*;
+
 
 /**
  * <P>Primary class that drives overall FOP process.
@@ -114,7 +112,7 @@ import java.io.File;
  *   driver.addElementMapping("org.apache.fop.svg.SVGElementMapping");
  *   driver.addPropertyList("org.apache.fop.fo.StandardPropertyListMapping");
  *   driver.addPropertyList("org.apache.fop.svg.SVGPropertyListMapping");
- *   driver.setWriter(new PrintWriter(new FileWriter(args[1])));
+ *   driver.setOutputStream(new FileOutputStream(args[1]));
  *   driver.buildFOTree(parser, fileInputSource(args[0]));
  *   driver.format();
  *   driver.render();
@@ -131,8 +129,8 @@ public class Driver {
     /** the renderer to use to output the area tree */
     protected Renderer renderer;
 
-    /** the PrintWriter to use to output the results of the renderer */
-    protected PrintWriter writer;
+    /** the stream to use to output the results of the renderer */
+    protected OutputStream stream;
 
     /** If true, full error stacks are reported */
     protected boolean errorDump = false;
@@ -421,13 +419,12 @@ public class Driver {
 
     }
 
-
     /**
-        * set the PrintWriter to use to output the result of the Renderer
-        * (if applicable)
-        */
-    public void setWriter(PrintWriter writer) {
-        this.writer = writer;
+       * set the OutputStream to use to output the result of the Renderer
+       * (if applicable)
+       */
+    public void setOutputStream(OutputStream stream) {
+        this.stream = stream;
     }
 
     /**
@@ -447,7 +444,7 @@ public class Driver {
         * render the area tree to the output form
         */
     public void render() throws IOException, FOPException {
-        this.renderer.render(areaTree, this.writer);
+        this.renderer.render(areaTree, this.stream);
     }
 
     /**

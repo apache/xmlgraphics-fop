@@ -60,16 +60,7 @@ import org.xml.sax.SAXParseException;
 
 
 // Java
-import java.io.FileReader;
-import java.io.File;
-import java.io.StringWriter;
-import java.io.StringReader;
-import java.io.FileWriter;
-import java.io.PrintWriter;
-import java.io.BufferedWriter;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.FileNotFoundException;
+import java.io.*;
 import java.net.URL;
 
 // Xalan
@@ -305,9 +296,8 @@ public class XalanCommandLine {
             driver.addElementMapping("org.apache.fop.svg.SVGElementMapping");
             driver.addPropertyList("org.apache.fop.fo.StandardPropertyListMapping");
             driver.addPropertyList("org.apache.fop.svg.SVGPropertyListMapping");
-            PrintWriter pwriter = new PrintWriter(
-                                    new BufferedWriter(new FileWriter(pdfFile)));
-            driver.setWriter(pwriter);
+            OutputStream stream = new BufferedOutputStream(new FileOutputStream(pdfFile));
+            driver.setOutputStream(stream);
             driver.buildFOTree(parser, new InputSource(reader));
             reader.close();
             driver.format();
@@ -315,8 +305,8 @@ public class XalanCommandLine {
             if (usefile) {
                 new File (pdfFile + ".tmp").delete();
             }
-            pwriter.flush();
-            pwriter.close();
+            stream.flush();
+            stream.close();
         }
         catch (Exception e) {
             MessageHandler.errorln("FATAL ERROR: " + e.getMessage());

@@ -52,7 +52,7 @@ package org.apache.fop.pdf;
 
 // Java
 import java.io.IOException;
-import java.io.PrintWriter;
+import java.io.OutputStream;
 
 /**
  * generic PDF object.
@@ -89,13 +89,13 @@ public abstract class PDFObject {
     /**
      * write the PDF represention of this object
      *
-     * @param writer the PrintWriter to write the PDF to
-     * @return the number of characters written
+     * @param stream the stream to write the PDF to
+     * @return the number of bytes written
      */
-    protected int output(PrintWriter writer) throws IOException {
-	String pdf = this.toPDF();
-	writer.write(pdf);
-	return pdf.length();
+    protected int output(OutputStream stream) throws IOException {
+	byte[] pdf = this.toPDF();
+	stream.write(pdf);
+	return pdf.length;
     }
 
     /**
@@ -113,5 +113,5 @@ public abstract class PDFObject {
      *
      * @return PDF string
      */
-    abstract String toPDF();
+    abstract byte[] toPDF();
 }

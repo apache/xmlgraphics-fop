@@ -59,14 +59,8 @@ import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
 
 // Java
-import java.io.FileReader;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.PrintWriter;
-import java.io.IOException;
-import java.io.FileNotFoundException;
+import java.io.*;
 import java.net.URL;
-import java.io.InputStream;
 
 
 // FOP
@@ -176,7 +170,7 @@ public class CommandLine {
             driver.addPropertyList("org.apache.fop.svg.SVGPropertyListMapping");
             driver.buildFOTree(parser, fileInputSource(foFile));
             driver.format();
-            driver.setWriter(new PrintWriter(new FileWriter(pdfFile)));
+	    driver.setOutputStream(new FileOutputStream(pdfFile));
             driver.render();
         } catch (Exception e) {
             MessageHandler.errorln("FATAL ERROR: " + e.getMessage());

@@ -139,7 +139,7 @@ public class PDFFontDescriptor extends PDFObject {
 	 *
 	 * @return the PDF
 	 */
-    public String toPDF() {
+    public byte[] toPDF() {
 		StringBuffer p = new StringBuffer(
 				this.number + " " + this.generation
 				+ " obj\n<< /Type /FontDescriptor"
@@ -188,7 +188,7 @@ public class PDFFontDescriptor extends PDFObject {
 		// CID optional field
 		fillInPDF(p);
 		p.append("\n >>\nendobj\n");
-		return p.toString();
+		return p.toString().getBytes();
     }
 
 	/**

@@ -375,9 +375,9 @@ public class PDFColor extends PDFPathPaint {
 		
 	}
 	
-	String toPDF()
+	byte[] toPDF()
 	{
-		return ("");
+		return (new byte[0]);
 
 	} //end of toPDF
 }

@@ -67,7 +67,7 @@ import org.apache.fop.layout.FontMetric;
 import org.apache.fop.layout.FontDescriptor;
 // Java
 import java.io.IOException;
-import java.io.PrintWriter;
+import java.io.OutputStream;
 import java.util.Vector;
 import java.util.Hashtable;
 import java.util.Enumeration;
@@ -914,10 +914,13 @@ public class PDFDocument {
         /* create a PDFStream with the next object number and add it
     
            to the list of objects */
-        PDFStream obj = new PDFStream(++this.objectcount);
+	PDFStream obj = new PDFStream(++this.objectcount);
+	obj.addDefaultFilters();
+		
         this.objects.addElement(obj);
         return obj;
     }
+	    
 
     /**
      * make an annotation list object
@@ -945,13 +948,13 @@ public class PDFDocument {
     /**
      * write the entire document out
      *
-     * @param writer the PrinterWriter to output the document to
+     * @param writer the OutputStream to output the document to
      */
-    public void output(PrintWriter writer) throws IOException {
+    public void output(OutputStream stream) throws IOException {
 
         /* output the header and increment the character position by
            the header's length */
-        this.position += outputHeader(writer);
+        this.position += outputHeader(stream);
 
         this.resources.setXObjects(xObjects);
 
@@ -967,36 +970,44 @@ public class PDFDocument {
 
             /* output the object and increment the character position
                by the object's length */
-            this.position += object.output(writer);
+            this.position += object.output(stream);
         }
 
         /* output the xref table and increment the character position
            by the table's length */
-        this.position += outputXref(writer);
+        this.position += outputXref(stream);
 
-        /* output the trailer and flush the Writer */
-        outputTrailer(writer);
-        writer.flush();
+        /* output the trailer and flush the Stream */
+        outputTrailer(stream);
+        stream.flush();
     }
 
     /**
      * write the PDF header
      *
-     * @param writer the PrintWriter to write the header to
-     * @return the number of characters written
+     * @param stream the OutputStream to write the header to
+     * @return the number of bytes written
      */
-    protected int outputHeader(PrintWriter writer) throws IOException {
-        String pdf = "%PDF-" + this.pdfVersion + "\n";
-        writer.write(pdf);
-        return pdf.length();
+    protected int outputHeader(OutputStream stream) throws IOException {
+	int length = 0;
+	byte[] pdf = ("%PDF-" + this.pdfVersion + "\n").getBytes();
+	stream.write(pdf);
+	length += pdf.length;
+	
+	// output a binary comment as recommended by the PDF spec (3.4.1)
+	byte[] bin = {(byte)'%', (byte)0xAA, (byte)0xAB, (byte)0xAC, (byte)0xAD, (byte)'\n'};
+	stream.write(bin);
+	length += bin.length;
+	
+	return length;
     }
 
     /**
      * write the trailer
      *
-     * @param writer the PrintWriter to write the trailer to
+     * @param stream the OutputStream to write the trailer to
      */
-    protected void outputTrailer(PrintWriter writer) throws IOException {
+    protected void outputTrailer(OutputStream stream) throws IOException {
 
         /* construct the trailer */
         String pdf = "trailer\n<<\n/Size " + (this.objectcount+1)
@@ -1006,16 +1017,16 @@ public class PDFDocument {
         + "\n%%EOF\n";
 
         /* write the trailer */
-        writer.write(pdf);
+        stream.write(pdf.getBytes());
     }
 
     /**
      * write the xref table
      *
-     * @param writer the PrintWriter to write the xref table to
+     * @param stream the OutputStream to write the xref table to
      * @return the number of characters written
      */
-    private int outputXref(PrintWriter writer) throws IOException {
+    private int outputXref(OutputStream stream) throws IOException {
 
         /* remember position of xref table */
         this.xref = this.position;
@@ -1037,8 +1048,9 @@ public class PDFDocument {
         }
 
         /* write the xref table and return the character length */
-        writer.write(pdf.toString());
-        return pdf.length();
+	byte[] pdfBytes = pdf.toString().getBytes();
+	stream.write(pdfBytes);
+        return pdfBytes.length;
     }    
 
     public void setIDReferences(IDReferences idReferences){

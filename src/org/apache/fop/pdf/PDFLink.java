@@ -93,7 +93,7 @@ public class PDFLink extends PDFObject {
      *
      * @return the PDF
      */
-    public String toPDF() {
+    public byte[] toPDF() {
 	String p = this.number + " " + this.generation + " obj\n" +
 	    "<< /Type /Annot\n" +
 	    "/Subtype /Link\n" +
@@ -103,7 +103,7 @@ public class PDFLink extends PDFObject {
 	    "/Border [ 0 0 0 ]\n" +
 	    "/A " + this.action.getAction() + "\n" +
 	    "/H /I\n>>\nendobj\n";
-	return p;
+	return p.getBytes();
     }
 
     /* example
