@@ -253,15 +253,24 @@ public abstract class FONode implements Cloneable {
     }
 
     /**
-     * Helper function to standardize "too many" error exceptions
-     * (e.g., two fo:declarations within fo:root)
-     * @param loc org.xml.sax.Locator object of the error (*not* parent node)
-     * @param offendingNode incoming node that would cause a duplication.
+     * Helper function to standardize property error exceptions
+     * (e.g., not specifying either an internal- or an external-destination
+     * property for an FO:link)
+     * @param problem text to display that indicates the problem
      */
     protected void attributeError(String problem) 
         throws ValidationException {
         throw new ValidationException(errorText(locator) + getName() + ", " + 
             problem, locator);
+    }
+
+    /**
+     * Helper function to standardize attribute warnings
+     * (e.g., currently unsupported properties)
+     * @param problem text to display that indicates the problem
+     */
+    protected void attributeWarning(String problem) {
+        getLogger().warn(errorText(locator) + getName() + ", " + problem);
     }
 
     /**
@@ -367,6 +376,20 @@ public abstract class FONode implements Cloneable {
             return "Error(Unknown location): ";
         } else {
             return "Error(" + loc.getLineNumber() + "/" + loc.getColumnNumber() + "): ";
+        }
+    }
+
+    /**
+     * Helper function to return "Warning (line#/column#)" string for
+     * warning messages
+     * @param loc org.xml.sax.Locator object
+     * @return String opening warning text
+     */
+    protected static String warningText(Locator loc) {
+        if (loc == null) {
+            return "Warning(Unknown location): ";
+        } else {
+            return "Warning(" + loc.getLineNumber() + "/" + loc.getColumnNumber() + "): ";
         }
     }
 

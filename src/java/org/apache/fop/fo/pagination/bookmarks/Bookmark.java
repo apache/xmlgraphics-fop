@@ -26,6 +26,7 @@ import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.PropertyList;
 import org.apache.fop.fo.ValidationException;
+import org.apache.fop.fo.properties.CommonAccessibility;
 
 
 /**
@@ -37,8 +38,11 @@ public class Bookmark extends FObj {
     private BookmarkTitle bookmarkTitle;
     private ArrayList childBookmarks = new ArrayList();
 
+    // The value of properties relevant for this FO
+    private CommonAccessibility commonAccessibility;
     private String internalDestination;
     private String externalDestination;
+    // private ToBeImplementedProperty startingState;
 
     /**
      * Create a new bookmark object.
@@ -50,27 +54,24 @@ public class Bookmark extends FObj {
     }
 
     /**
-     * The attributes on the bookmark object are the internal and external
-     * destination. One of these is required.
-     *
-     * @see org.apache.fop.fo.FObj#processNode
-     * @todo to include all properties of fo:bookmark
+     * @see org.apache.fop.fo.FObj#bind(PropertyList)
      */
-    public void processNode(String elementName, Locator locator, 
-            Attributes attlist, PropertyList propertyList) throws FOPException 
-    {
-        internalDestination =
-            attlist.getValue("internal-destination");
-        externalDestination =
-            attlist.getValue("external-destination");
-        if (externalDestination != null && !externalDestination.equals("")) {
-            getLogger().warn("fo:bookmark external-destination not supported currently.");
-        }
+    public void bind(PropertyList pList) throws FOPException {
+        commonAccessibility = pList.getAccessibilityProps();
+        externalDestination = pList.get(PR_EXTERNAL_DESTINATION).getString();
+        internalDestination = pList.get(PR_INTERNAL_DESTINATION).getString();
+        // startingState = pList.get(PR_STARTING_STATE);
 
-        if (internalDestination == null || internalDestination.equals("")) {
-            getLogger().warn("fo:bookmark requires an internal-destination.");
+        // per spec, internal takes precedence if both specified        
+        if (internalDestination.length() > 0) { 
+            externalDestination = null;
+        } else if (externalDestination.length() == 0) {
+            // slightly stronger than spec "should be specified"
+            attributeError("Missing attribute:  Either external-destination or " +
+                "internal-destination must be specified.");
+        } else {
+            attributeWarning("external-destination property not currently supported");
         }
-
     }
 
     /**
