@@ -1208,7 +1208,7 @@ public class PDFGraphics2D extends AbstractGraphics2D {
             }
             int siz = gFont.getSize();
             String style = gFont.isItalic() ? "italic" : "normal";
-            int weight = gFont.isBold() ? Document.BOLD : Document.NORMAL;
+            int weight = gFont.isBold() ? Font.BOLD : Font.NORMAL;
             String fname = fontInfo.fontLookup(n, style, weight);
             FontMetrics metrics = fontInfo.getMetricsFor(fname);
             fontState = new Font(fname, metrics, siz * 1000);

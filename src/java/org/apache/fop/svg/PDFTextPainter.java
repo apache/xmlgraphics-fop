@@ -186,8 +186,8 @@ public class PDFTextPainter implements TextPainter {
         String style = ((posture != null) && (posture.floatValue() > 0.0))
                        ? "italic" : "normal";
         int weight = ((taWeight != null)
-                       &&  (taWeight.floatValue() > 1.0)) ? Document.BOLD
-                       : Document.NORMAL;
+                       &&  (taWeight.floatValue() > 1.0)) ? Font.BOLD
+                       : Font.NORMAL;
 
         Font fontState = null;
         Document fi = fontInfo;
@@ -215,7 +215,7 @@ public class PDFTextPainter implements TextPainter {
         }
         if (!found) {
             String fname =
-              fontInfo.fontLookup("any", style, Document.NORMAL);
+              fontInfo.fontLookup("any", style, Font.NORMAL);
             FontMetrics metrics = fontInfo.getMetricsFor(fname);
             int fsize = (int)(size.floatValue() * 1000);
             fontState = new Font(fname, metrics, fsize);
@@ -225,7 +225,7 @@ public class PDFTextPainter implements TextPainter {
             }
         }
         int fStyle = java.awt.Font.PLAIN;
-        if (weight == Document.BOLD) {
+        if (weight == Font.BOLD) {
             if (style.equals("italic")) {
                 fStyle = java.awt.Font.BOLD | java.awt.Font.ITALIC;
             } else {
