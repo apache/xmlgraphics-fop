@@ -437,6 +437,9 @@ public class LineBPLayoutManager extends InlineStackingBPLayoutManager {
     public void addAreas(PositionIterator parentIter,
                          LayoutContext context) {
         addAreas(parentIter, 0.0);
+
+        //m_vecInlineBreaks.clear();
+        m_prevBP = null;
     }
 
     // Generate and add areas to parent area
@@ -464,8 +467,10 @@ public class LineBPLayoutManager extends InlineStackingBPLayoutManager {
                 lc.setLeadingSpace(lc.getTrailingSpace());
                 lc.setTrailingSpace(new SpaceSpecifier(false));
             }
+if(lc.getTrailingSpace() != null) {
             addSpace(lineArea, lc.getTrailingSpace().resolve(true),
                      lc.getSpaceAdjust());
+}
             lineArea.verticalAlign(lineHeight, lead, follow);
             parentLM.addChild(lineArea);
         }

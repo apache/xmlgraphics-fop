@@ -30,6 +30,8 @@ public class BlockLayoutManager extends BlockStackingLayoutManager {
     int lineHeight = 14000;
     int follow = 2000;
 
+    ArrayList childBreaks = new ArrayList();
+
     public BlockLayoutManager(FObj fobj) {
         super(fobj);
     }
@@ -52,15 +54,6 @@ public class BlockLayoutManager extends BlockStackingLayoutManager {
         return curBlockArea.getIPD();
     }
 
-    private static class BlockBreakPosition extends LeafPosition {
-        List blockps;
-
-        BlockBreakPosition(BPLayoutManager lm, int iBreakIndex, List bps) {
-            super(lm, iBreakIndex);
-            blockps = bps;
-        }
-    }
-
     protected BPLayoutManager getChildLM() {
         if (m_curChildLM != null && !m_curChildLM.isFinished()) {
             return m_curChildLM;
@@ -77,7 +70,7 @@ public class BlockLayoutManager extends BlockStackingLayoutManager {
                         inlines.add(lm);
                         //lms.remove(count + 1);
                     } else {
-                        m_childLMiter.previousIndex();
+                        m_childLMiter.previous();
                         break;
                     }
                 }
@@ -106,19 +99,27 @@ public class BlockLayoutManager extends BlockStackingLayoutManager {
                                       Position prevLineBP) {
 
         BPLayoutManager curLM ; // currently active LM
-        ArrayList list = new ArrayList();
+
+        MinOptMax stackSize = new MinOptMax();
+        // if starting add space before
+        // stackSize.add(spaceBefore);
 
         while ((curLM = getChildLM()) != null) {
-            // Make break positions and return lines!
+            // Make break positions and return blocks!
             // Set up a LayoutContext
             int ipd = 0;
             BreakPoss bp;
-            ArrayList vecBreakPoss = new ArrayList();
 
             // Force area creation on first call
             // NOTE: normally not necessary when fully integrated!
             LayoutContext childLC =
               new LayoutContext(LayoutContext.CHECK_REF_AREA);
+            if(curLM.generatesInlineAreas()) {
+                // Reset stackLimit for non-first lines
+                childLC.setStackLimit(new MinOptMax(ipd/* - m_iIndents*/));
+            } else {
+                childLC.setStackLimit(MinOptMax.subtract(context.getStackLimit(), stackSize));
+            }
 
             while (!curLM.isFinished()) {
                 if ((bp = curLM.getNextBreakPoss(childLC, null)) != null) {
@@ -133,30 +134,54 @@ public class BlockLayoutManager extends BlockStackingLayoutManager {
                         ipd = getContentIPD();
                         childLC.flags &= ~LayoutContext.CHECK_REF_AREA;
                         childLC.setStackLimit(new MinOptMax(ipd/* - m_iIndents -
-                                                                                                                                                                                                                                                                                     m_iTextIndent*/));
+                                                              m_iTextIndent*/));
                     } else {
-                        vecBreakPoss.add(bp);
+                        stackSize.add(bp.getStackingSize());
+                        if(stackSize.min > context.getStackLimit().max) {
+                            // reset to last break
+                            // curLM.reset();
+                            break;
+                        }
+                        childBreaks.add(bp);
+
+                        if(curLM.generatesInlineAreas()) {
                         // Reset stackLimit for non-first lines
                         childLC.setStackLimit(new MinOptMax(ipd/* - m_iIndents*/));
+                        } else {
+                            childLC.setStackLimit(MinOptMax.subtract(context.getStackLimit(), stackSize));
+                        }
                     }
                 }
             }
-            list.add(vecBreakPoss);
-            return new BreakPoss(
-                     new BlockBreakPosition(curLM, 0, vecBreakPoss));
+            BreakPoss breakPoss = new BreakPoss(
+                     new LeafPosition(this, childBreaks.size() - 1));
+            breakPoss.setStackingSize(stackSize);
+            return breakPoss;
         }
         setFinished(true);
-        return new BreakPoss(new BlockBreakPosition(this, 0, list));
+        return null;
     }
 
-    public void addAreas(PositionIterator parentIter, LayoutContext lc) {
+    public void addAreas(PositionIterator parentIter, LayoutContext layoutContext) {
 
+        BPLayoutManager childLM ;
+        int iStartPos = 0;
+        LayoutContext lc = new LayoutContext(0);
         while (parentIter.hasNext()) {
-            BlockBreakPosition bbp = (BlockBreakPosition) parentIter.next();
-            bbp.getLM().addAreas( new BreakPossPosIter(bbp.blockps, 0,
-                                  bbp.blockps.size()), null);
+            LeafPosition lfp = (LeafPosition) parentIter.next();
+            // Add the block areas to Area
+            PositionIterator breakPosIter =
+              new BreakPossPosIter(childBreaks, iStartPos,
+                                   lfp.getLeafPos() + 1);
+            iStartPos = lfp.getLeafPos() + 1;
+            while ((childLM = breakPosIter.getNextChildLM()) != null) {
+                childLM.addAreas(breakPosIter, lc);
+            }
         }
+
         flush();
+
+        childBreaks.clear();
     }
 
     /**
@@ -208,48 +233,5 @@ public class BlockLayoutManager extends BlockStackingLayoutManager {
         return false;
     }
 
-
-
-    //     /**
-    //      * Called by child LayoutManager when it has filled one of its areas.
-    //      * If no current container, make one.
-    //      * See if the area will fit in the current container.
-    //      * If so, add it.
-    //      * @param childArea the area to add: will either be a LineArea or
-    //      * a BlockArea.
-    //      */
-    //     public void  addChild(Area childArea) {
-    // 	/* If the childArea fits entirely in the maximum available BPD
-    // 	 * add it and return an OK status.
-    // 	 * If it doesn't all fit, overrun or ask for split?
-    // 	 * Might as well just add it since the page layout process
-    // 	 * may need to make other adjustments, resulting in changing
-    // 	 * split point.
-    // 	 */
-    // 	// Things like breaks on child area can cause premature
-    // 	// termination of the current area.
-    // 	/* We go past the theoretical maximum to be able to handle things
-    // 	 * like widows.
-    // 	 */
-    // 	// WARNING: this doesn't take into account space-specifier
-    // 	// adujstment between childArea and last content of blockArea!
-    // 	if (blockArea.getContentBPD().min + childArea.getAllocationBPD().min
-    // 	    > blockArea.getAvailBPD().max) {
-    // 	    if (++extraLines <= iWidows) {
-    // 		blockArea.add(childArea);
-    // 	    }
-    // 	    else {
-    // 		blockArea.setIsLast(false);
-    // 		parentLM.addChildArea(blockArea);
-    // 		// Make a new one for this area
-    // 		blockArea = makeAreaForChild(childArea);
-    // 		extraLines = 0; // Count potential widows
-    // 		blockArea.add(childArea);
-    // 	    }
-    // 	}
-    // 	else {
-    // 	    blockArea.add(childArea);
-    // 	}
-    //     }
-
 }
+
