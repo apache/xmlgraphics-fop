@@ -7,8 +7,6 @@
 
 package org.apache.fop.apps;
 
-import org.apache.fop.configuration.Configuration;
-
 /**
  * class representing the version of FOP.
  */
@@ -20,7 +18,7 @@ public class Version {
      * @return the version string
      */
     public static String getVersion() {
-        return Configuration.getStringValue("version");
+        return "1.0dev";
     }
 
 }

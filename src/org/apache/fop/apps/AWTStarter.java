@@ -95,9 +95,6 @@ public class AWTStarter extends CommandLineStarter {
     public void run() throws FOPException {
         Driver driver = new Driver();
         setupLogger(driver);
-        if (errorDump) {
-            driver.setErrorDump(true);
-        }
 
         // init parser
         frame.progress(resource.getString("Init parser") + " ...");

@@ -13,7 +13,6 @@ import java.io.File;
 import java.io.FileNotFoundException;
 
 // FOP
-import org.apache.fop.configuration.Configuration;
 import org.apache.fop.apps.FOPException;
 
 // Avalon
@@ -52,8 +51,6 @@ public class CommandLineOptions {
     /* output: XML area tree */
     private static final int AREA_OUTPUT = 9;
 
-    /* use debug mode */
-    Boolean errorDump = Boolean.FALSE;
     /* show configuration information */
     Boolean dumpConfiguration = Boolean.FALSE;
     /* suppress any progress information */
@@ -92,9 +89,6 @@ public class CommandLineOptions {
             optionsParsed = parseOptions(args);
             if (optionsParsed) {
                 checkSettings();
-                if (errorDump != null && errorDump.booleanValue()) {
-                    debug();
-                }
             }
         } catch (FOPException e) {
             printUsage();
@@ -106,6 +100,10 @@ public class CommandLineOptions {
 
     }
 
+    public Logger getLogger() {
+        return log;
+    }
+
     /**
      * parses the commandline arguments
      * @return true if parse was successful and procesing can continue, false if processing should stop
@@ -114,7 +112,6 @@ public class CommandLineOptions {
     private boolean parseOptions(String args[]) throws FOPException {
         for (int i = 0; i < args.length; i++) {
             if (args[i].equals("-d") || args[i].equals("--full-error-dump")) {
-                errorDump = Boolean.TRUE;
                 log = new ConsoleLogger(ConsoleLogger.LEVEL_DEBUG);
             } else if (args[i].equals("-x")
                        || args[i].equals("--dump-config")) {
@@ -452,10 +449,6 @@ public class CommandLineOptions {
         return dumpConfiguration;
     }
 
-    public Boolean isDebugMode() {
-        return errorDump;
-    }
-
     public Boolean isCoarseAreaXml() {
         return suppressLowLevelAreas;
     }
@@ -597,11 +590,6 @@ public class CommandLineOptions {
                                  + userConfigFile.toString());
         } else {
             log.debug("no user configuration file is used [default]");
-        }
-        if (errorDump != null) {
-            log.debug("debug mode on");
-        } else {
-            log.debug("debug mode off [default]");
         }
         if (dumpConfiguration != null) {
             log.debug("dump configuration");

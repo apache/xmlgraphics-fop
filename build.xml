@@ -186,7 +186,7 @@ Sometimes ant gives out this warnings, but the build is finished without any pro
     <property name="build.compiler" value="classic"/>
     <property name="debug" value="on"/>
     <property name="optimize" value="off"/>
-    <property name="deprecation" value="off"/>
+    <property name="deprecation" value="on"/>
 
     <property name="textfontencoding" value="WinAnsiEncoding"/>
 
@@ -308,11 +308,7 @@ Sometimes ant gives out this warnings, but the build is finished without any pro
     <mkdir dir="${build.src}/${properties.dir}"/>
     <mkdir dir="${build.src}/${fonts.dir}"/>
     <mkdir dir="${build.src}/${svg.dir}"/>
-    <mkdir dir="${build.dest}/conf"/>
     <mkdir dir="${build.dest}/hyph"/>
-    <copy todir="${build.dest}/conf" filtering="yes">
-       <fileset dir="./conf"/>
-    </copy>
   </target>
 
   <!-- =================================================================== -->
@@ -548,7 +544,7 @@ Sometimes ant gives out this warnings, but the build is finished without any pro
     </pathconvert>
     <jar jarfile="${build.dir}/${name}.jar"
          basedir="${build.dest}"
-         includes="org/**,conf/**,hyph/**">
+         includes="org/**,hyph/**">
     <manifest>
         <attribute name="Main-Class" value="${main.class}"/>
         <attribute name="Class-Path" value="${manifest-classpath}"/>

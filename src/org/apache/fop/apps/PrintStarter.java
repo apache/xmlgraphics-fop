@@ -51,9 +51,6 @@ public class PrintStarter extends CommandLineStarter {
 
     public void run() throws FOPException {
         Driver driver = new Driver();
-        if (errorDump) {
-            driver.setErrorDump(true);
-        }
 
         String version = Version.getVersion();
         //log.debug(version);

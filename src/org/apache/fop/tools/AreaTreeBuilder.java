@@ -8,7 +8,6 @@
 package org.apache.fop.tools;
 
 import org.apache.fop.apps.*;
-import org.apache.fop.configuration.*;
 import org.apache.fop.area.*;
 import org.apache.fop.area.inline.*;
 import org.apache.fop.area.inline.Character;

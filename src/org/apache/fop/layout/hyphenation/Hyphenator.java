@@ -9,7 +9,6 @@ package org.apache.fop.layout.hyphenation;
 
 import java.io.*;
 import java.util.Hashtable;
-import org.apache.fop.configuration.*;
 
 /**
  * This class is the main entry point to the hyphenation package.
@@ -46,8 +45,7 @@ public class Hyphenator {
 
         HyphenationTree hTree = getFopHyphenationTree(key);
         if (hTree == null) {
-            String hyphenDir =
-                Configuration.getStringValue("hyphenation-dir");
+            String hyphenDir = "/hyph";
             if (hyphenDir != null) {
                 hTree = getUserHyphenationTree(key, hyphenDir);
             }

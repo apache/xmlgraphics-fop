@@ -12,8 +12,6 @@ import org.apache.fop.fo.FOUserAgent;
 import org.apache.fop.fo.FOTreeBuilder;
 import org.apache.fop.fo.ElementMapping;
 import org.apache.fop.render.Renderer;
-import org.apache.fop.configuration.ConfigurationReader;
-import org.apache.fop.configuration.Configuration;
 import org.apache.fop.tools.DocumentInputSource;
 import org.apache.fop.tools.DocumentReader;
 
@@ -167,11 +165,6 @@ public class Driver implements LogEnabled {
     private XMLReader _reader;
 
     /**
-     * If true, full error stacks are reported
-     */
-    private boolean _errorDump = false;
-
-    /**
      * the system resources that FOP will use
      */
     private Logger log = null;
@@ -215,8 +208,7 @@ public class Driver implements LogEnabled {
         if(userAgent == null) {
             userAgent = new FOUserAgent();
             userAgent.enableLogging(getLogger());
-            String base = org.apache.fop.configuration.Configuration.getStringValue("baseDir");
-            userAgent.setBaseURL(base);
+            userAgent.setBaseURL("file:/.");
         }
         return userAgent;
     }
@@ -253,14 +245,6 @@ public class Driver implements LogEnabled {
 
     public boolean hasData() {
         return (_treeBuilder.hasData());
-    }
-
-    /**
-     * Set the error dump option
-     * @param dump if true, full stacks will be reported to the error log
-     */
-    public void setErrorDump(boolean dump) {
-        _errorDump = dump;
     }
 
     /**
@@ -518,27 +502,6 @@ public class Driver implements LogEnabled {
     }
 
     /**
-     * Dumps an error
-     */
-    public void dumpError(Exception e) {
-        if (_errorDump) {
-            if (e instanceof SAXException) {
-                getLogger().error("", e);
-                if (((SAXException)e).getException() != null) {
-                    getLogger().error("", ((SAXException)e).getException());
-                }
-            } else if (e instanceof FOPException) {
-                e.printStackTrace();
-                if (((FOPException)e).getException() != null) {
-                    getLogger().error("", ((FOPException)e).getException());
-                }
-            } else {
-                getLogger().error("", e);
-            }
-        }
-    }
-
-    /**
      * Runs the formatting and renderering process using the previously set
      * inputsource and outputstream
      */
@@ -553,7 +516,11 @@ public class Driver implements LogEnabled {
 
         if (_reader == null) {
             if (!(_source instanceof DocumentInputSource)) {
-                _reader = ConfigurationReader.createParser();
+                try {
+                _reader = javax.xml.parsers.SAXParserFactory.newInstance().newSAXParser().getXMLReader();
+                } catch(Exception e) {
+                    throw new FOPException(e);
+                }
             }
         }
 

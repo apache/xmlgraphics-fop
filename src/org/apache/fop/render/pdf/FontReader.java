@@ -16,10 +16,9 @@ import org.xml.sax.Attributes;
 import java.io.IOException;
 import java.util.Enumeration;
 import java.util.ArrayList;
-import java.util.Hashtable;
+import java.util.HashMap;
 import org.apache.fop.pdf.PDFWArray;
 import org.apache.fop.pdf.PDFCIDFont;
-import org.apache.fop.configuration.ConfigurationReader;
 import org.apache.fop.apps.FOPException;
 
 /**
@@ -38,18 +37,23 @@ public class FontReader extends DefaultHandler {
     private MultiByteFont multiFont = null;
     private SingleByteFont singleFont = null;
     private Font returnFont = null;
-    // private SingleByteFont singleFont = null;
     private String text = null;
 
     private ArrayList cidWidths = null;
     private int cidWidthIndex = 0;
 
-    private Hashtable currentKerning = null;
+    private HashMap currentKerning = null;
 
     private ArrayList bfranges = null;
 
     private void createFont(String path) throws FOPException {
-        XMLReader parser = ConfigurationReader.createParser();
+        XMLReader parser = null;
+
+        try {
+            parser = javax.xml.parsers.SAXParserFactory.newInstance().newSAXParser().getXMLReader();
+        } catch (Exception e) {
+            throw new FOPException(e);
+        }
         if (parser == null)
             throw new FOPException("Unable to create SAX parser");
 
@@ -147,7 +151,7 @@ public class FontReader extends DefaultHandler {
             cidWidthIndex = getInt(attributes.getValue("start-index"));
             cidWidths = new ArrayList();
         } else if ("kerning".equals(localName)) {
-            currentKerning = new Hashtable();
+            currentKerning = new HashMap();
             if (isCID)
                 multiFont.kerning.put(new Integer(attributes.getValue("kpx1")),
                                       currentKerning);
