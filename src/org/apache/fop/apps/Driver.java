@@ -10,8 +10,8 @@ package org.apache.fop.apps;
 // FOP
 import org.apache.fop.fo.FOTree;
 import org.apache.fop.layout.AreaTree;
-import org.apache.fop.xml.XMLSerialHandler;
-import org.apache.fop.xml.SyncedXmlEventsBuffer;
+import org.apache.fop.xml.FoXMLSerialHandler;
+import org.apache.fop.xml.SyncedFoXmlEventsBuffer;
 import org.apache.fop.configuration.Configuration;
 import org.apache.fop.messaging.MessageHandler;
 import org.apache.fop.fo.PropertyConsts;
@@ -38,8 +38,8 @@ public class Driver {
     private XMLReader parser;
     private InputSource source;
 
-    private XMLSerialHandler xmlhandler;
-    private SyncedXmlEventsBuffer xmlevents;
+    private FoXMLSerialHandler xmlhandler;
+    private SyncedFoXmlEventsBuffer xmlevents;
     private FOTree foTree;
     private AreaTree areaTree = new AreaTree();
 
@@ -69,8 +69,8 @@ public class Driver {
         source = inputHandler.getInputSource();
         setParserFeatures(parser);
 
-        xmlevents = new SyncedXmlEventsBuffer();
-        xmlhandler = new XMLSerialHandler(xmlevents, parser, source);
+        xmlevents = new SyncedFoXmlEventsBuffer();
+        xmlhandler = new FoXMLSerialHandler(xmlevents, parser, source);
         foTree = new FOTree(xmlevents);
 
         driverThread = Thread.currentThread();
@@ -90,6 +90,7 @@ public class Driver {
         try {
             parserThread.join();
         } catch (InterruptedException e) {}
+        //System.out.println("Joined to parser.");
         try {
             foThread.join();
         } catch (InterruptedException e) {}
