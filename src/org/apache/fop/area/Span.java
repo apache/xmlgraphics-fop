@@ -22,6 +22,7 @@ public class Span extends Area {
 
     public void addFlow(Flow flow) {
         flowAreas.add(flow);
+	flow.setParent(this);
     }
 
     public int getColumnCount() {

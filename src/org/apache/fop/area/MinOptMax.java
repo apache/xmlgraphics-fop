@@ -14,7 +14,7 @@ package org.apache.fop.area;
  * variables are package visible.
  */
 
-public class MinOptMax {
+public class MinOptMax implements java.io.Serializable {
 
     /** Publicly visible min(imum), opt(imum) and max(imum) values.*/
     public int min;

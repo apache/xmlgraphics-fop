@@ -19,6 +19,7 @@ public class MainReference extends Area implements Serializable {
 
     public void addSpan(Span span) {
         spanAreas.add(span);
+	span.setParent(this);
     }
 
     public List getSpans() {
