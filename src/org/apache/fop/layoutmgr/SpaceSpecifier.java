@@ -1,10 +1,53 @@
 /*
  * $Id$
- * Copyright (C) 2001 The Apache Software Foundation. All rights reserved.
- * For details on use and redistribution please refer to the
- * LICENSE file included with these sources.
- */
-
+ * ============================================================================
+ *                    The Apache Software License, Version 1.1
+ * ============================================================================
+ * 
+ * Copyright (C) 1999-2003 The Apache Software Foundation. All rights reserved.
+ * 
+ * Redistribution and use in source and binary forms, with or without modifica-
+ * tion, are permitted provided that the following conditions are met:
+ * 
+ * 1. Redistributions of source code must retain the above copyright notice,
+ *    this list of conditions and the following disclaimer.
+ * 
+ * 2. Redistributions in binary form must reproduce the above copyright notice,
+ *    this list of conditions and the following disclaimer in the documentation
+ *    and/or other materials provided with the distribution.
+ * 
+ * 3. The end-user documentation included with the redistribution, if any, must
+ *    include the following acknowledgment: "This product includes software
+ *    developed by the Apache Software Foundation (http://www.apache.org/)."
+ *    Alternately, this acknowledgment may appear in the software itself, if
+ *    and wherever such third-party acknowledgments normally appear.
+ * 
+ * 4. The names "FOP" and "Apache Software Foundation" must not be used to
+ *    endorse or promote products derived from this software without prior
+ *    written permission. For written permission, please contact
+ *    apache@apache.org.
+ * 
+ * 5. Products derived from this software may not be called "Apache", nor may
+ *    "Apache" appear in their name, without prior written permission of the
+ *    Apache Software Foundation.
+ * 
+ * THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESSED OR IMPLIED WARRANTIES,
+ * INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND
+ * FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
+ * APACHE SOFTWARE FOUNDATION OR ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
+ * INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLU-
+ * DING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS
+ * OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON
+ * ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
+ * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ * ============================================================================
+ * 
+ * This software consists of voluntary contributions made by many individuals
+ * on behalf of the Apache Software Foundation and was originally created by
+ * James Tauber <jtauber@jtauber.com>. For more information on the Apache
+ * Software Foundation, please see <http://www.apache.org/>.
+ */ 
 package org.apache.fop.layoutmgr;
 
 import org.apache.fop.traits.SpaceVal;
@@ -21,7 +64,7 @@ public class SpaceSpecifier implements Cloneable {
 
     private boolean bStartsRefArea;
     private boolean bHasForcing = false;
-    private List vecSpaceVals = new ArrayList();
+    private List vecSpaceVals = new java.util.ArrayList();
 
 
     public SpaceSpecifier(boolean bStarts) {
@@ -62,9 +105,10 @@ public class SpaceSpecifier implements Cloneable {
      * add it to the sequence.
      */
     public void addSpace(SpaceVal moreSpace) {
-        if (!bStartsRefArea || !moreSpace.bConditional ||
-                !vecSpaceVals.isEmpty()) {
-            if (moreSpace.bForcing) {
+        if (!bStartsRefArea 
+                || !moreSpace.isConditional() 
+                || !vecSpaceVals.isEmpty()) {
+            if (moreSpace.isForcing()) {
                 if (bHasForcing == false) {
                     // Remove all other values (must all be non-forcing)
                     vecSpaceVals.clear();
@@ -73,8 +117,9 @@ public class SpaceSpecifier implements Cloneable {
                 vecSpaceVals.add(moreSpace);
             } else if (bHasForcing == false) {
                 // Don't bother adding all 0 space-specifier if not forcing
-                if (moreSpace.space.min != 0 || moreSpace.space.opt != 0 ||
-                        moreSpace.space.max != 0) {
+                if (moreSpace.getSpace().min != 0
+                        || moreSpace.getSpace().opt != 0
+                        || moreSpace.getSpace().max != 0) {
                     vecSpaceVals.add(moreSpace);
                 }
             }
@@ -97,7 +142,7 @@ public class SpaceSpecifier implements Cloneable {
             for (; lastIndex > 0; --lastIndex) {
                 SpaceVal sval = (SpaceVal) vecSpaceVals.get(
                                   lastIndex - 1);
-                if (!sval.bConditional) {
+                if (!sval.isConditional()) {
                     break;
                 }
             }
@@ -107,19 +152,19 @@ public class SpaceSpecifier implements Cloneable {
         for (int index = 0; index < lastIndex; index++) {
             SpaceVal sval = (SpaceVal) vecSpaceVals.get(index);
             if (bHasForcing) {
-                resSpace.add(sval.space);
-            } else if (sval.iPrecedence > iMaxPrec) {
-                iMaxPrec = sval.iPrecedence;
-                resSpace = sval.space;
-            } else if (sval.iPrecedence == iMaxPrec) {
-                if (sval.space.opt > resSpace.opt) {
-                    resSpace = sval.space;
-                } else if (sval.space.opt == resSpace.opt) {
-                    if (resSpace.min < sval.space.min) {
-                        resSpace.min = sval.space.min;
+                resSpace.add(sval.getSpace());
+            } else if (sval.getPrecedence() > iMaxPrec) {
+                iMaxPrec = sval.getPrecedence();
+                resSpace = sval.getSpace();
+            } else if (sval.getPrecedence() == iMaxPrec) {
+                if (sval.getSpace().opt > resSpace.opt) {
+                    resSpace = sval.getSpace();
+                } else if (sval.getSpace().opt == resSpace.opt) {
+                    if (resSpace.min < sval.getSpace().min) {
+                        resSpace.min = sval.getSpace().min;
                     }
-                    if (resSpace.max > sval.space.max) {
-                        resSpace.max = sval.space.max;
+                    if (resSpace.max > sval.getSpace().max) {
+                        resSpace.max = sval.getSpace().max;
                     }
                 }
             }

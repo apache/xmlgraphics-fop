@@ -1,10 +1,53 @@
 /*
  * $Id$
- * Copyright (C) 2001-2003 The Apache Software Foundation. All rights reserved.
- * For details on use and redistribution please refer to the
- * LICENSE file included with these sources.
- */
-
+ * ============================================================================
+ *                    The Apache Software License, Version 1.1
+ * ============================================================================
+ * 
+ * Copyright (C) 1999-2003 The Apache Software Foundation. All rights reserved.
+ * 
+ * Redistribution and use in source and binary forms, with or without modifica-
+ * tion, are permitted provided that the following conditions are met:
+ * 
+ * 1. Redistributions of source code must retain the above copyright notice,
+ *    this list of conditions and the following disclaimer.
+ * 
+ * 2. Redistributions in binary form must reproduce the above copyright notice,
+ *    this list of conditions and the following disclaimer in the documentation
+ *    and/or other materials provided with the distribution.
+ * 
+ * 3. The end-user documentation included with the redistribution, if any, must
+ *    include the following acknowledgment: "This product includes software
+ *    developed by the Apache Software Foundation (http://www.apache.org/)."
+ *    Alternately, this acknowledgment may appear in the software itself, if
+ *    and wherever such third-party acknowledgments normally appear.
+ * 
+ * 4. The names "FOP" and "Apache Software Foundation" must not be used to
+ *    endorse or promote products derived from this software without prior
+ *    written permission. For written permission, please contact
+ *    apache@apache.org.
+ * 
+ * 5. Products derived from this software may not be called "Apache", nor may
+ *    "Apache" appear in their name, without prior written permission of the
+ *    Apache Software Foundation.
+ * 
+ * THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESSED OR IMPLIED WARRANTIES,
+ * INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND
+ * FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
+ * APACHE SOFTWARE FOUNDATION OR ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
+ * INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLU-
+ * DING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS
+ * OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON
+ * ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
+ * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ * ============================================================================
+ * 
+ * This software consists of voluntary contributions made by many individuals
+ * on behalf of the Apache Software Foundation and was originally created by
+ * James Tauber <jtauber@jtauber.com>. For more information on the Apache
+ * Software Foundation, please see <http://www.apache.org/>.
+ */ 
 package org.apache.fop.fo.flow;
 
 // FOP
@@ -118,29 +161,29 @@ public class InstreamForeignObject extends FObj {
         int ipd = -1;
         boolean bpdauto = false;
         if (hasLH) {
-            bpd = properties.get("line-height").getLength().mvalue();
+            bpd = properties.get("line-height").getLength().getValue();
         } else {
             // this property does not apply when the line-height applies
             // isn't the block-progression-dimension always in the same
             // direction as the line height?
             len = properties.get("block-progression-dimension.optimum").getLength();
             if (!len.isAuto()) {
-                bpd = len.mvalue();
+                bpd = len.getValue();
             } else {
                 len = properties.get("height").getLength();
-                if(!len.isAuto()) {
-                    bpd = len.mvalue();
+                if (!len.isAuto()) {
+                    bpd = len.getValue();
                 }
             }
         }
 
         len = properties.get("inline-progression-dimension.optimum").getLength();
         if (!len.isAuto()) {
-            ipd = len.mvalue();
+            ipd = len.getValue();
         } else {
             len = properties.get("width").getLength();
             if (!len.isAuto()) {
-                ipd = len.mvalue();
+                ipd = len.getValue();
             }
         }
 
@@ -155,7 +198,7 @@ public class InstreamForeignObject extends FObj {
                     cwidth = ipd;
                 }
             } else {*/
-            cwidth = len.mvalue();
+            cwidth = len.getValue();
         }
         len = properties.get("content-height").getLength();
         if (!len.isAuto()) {
@@ -164,10 +207,11 @@ public class InstreamForeignObject extends FObj {
                     cwidth = bpd;
                 }
             } else {*/
-            cheight = len.mvalue();
+            cheight = len.getValue();
         }
 
-        Point2D csize = new Point2D.Float(cwidth == -1 ? -1 : cwidth / 1000f, cheight == -1 ? -1 : cheight / 1000f);
+        Point2D csize = new Point2D.Float(cwidth == -1 ? -1 : cwidth / 1000f,
+                                          cheight == -1 ? -1 : cheight / 1000f);
         Point2D size = child.getDimension(csize);
         if (size == null) {
             // error
@@ -184,7 +228,7 @@ public class InstreamForeignObject extends FObj {
             // adjust the larger
             double rat1 = cwidth / (size.getX() * 1000f);
             double rat2 = cheight / (size.getY() * 1000f);
-            if(rat1 < rat2) {
+            if (rat1 < rat2) {
                 // reduce cheight
                 cheight = (int)(rat1 * size.getY() * 1000);
             } else {
@@ -202,9 +246,9 @@ public class InstreamForeignObject extends FObj {
         boolean clip = false;
         if (cwidth > ipd || cheight > bpd) {
             int overflow = properties.get("overflow").getEnum();
-            if(overflow == Overflow.HIDDEN) {
+            if (overflow == Overflow.HIDDEN) {
                 clip = true;
-            } else if(overflow == Overflow.ERROR_IF_OVERFLOW) {
+            } else if (overflow == Overflow.ERROR_IF_OVERFLOW) {
                 getLogger().error("Instream foreign object overflows the viewport: clipping");
                 clip = true;
             }
@@ -215,31 +259,31 @@ public class InstreamForeignObject extends FObj {
         int da = properties.get("display-align").getEnum();
         switch (da) {
             case DisplayAlign.BEFORE:
-            break;
+                break;
             case DisplayAlign.AFTER:
                 yoffset = bpd - cheight;
-            break;
+                break;
             case DisplayAlign.CENTER:
                 yoffset = (bpd - cheight) / 2;
-            break;
+                break;
             case DisplayAlign.AUTO:
             default:
-            break;
+                break;
         }
 
         int ta = properties.get("text-align").getEnum();
         switch (ta) {
             case TextAlign.CENTER:
                 xoffset = (ipd - cwidth) / 2;
-            break;
+                break;
             case TextAlign.END:
                 xoffset = ipd - cwidth;
-            break;
+                break;
             case TextAlign.START:
-            break;
+                break;
             case TextAlign.JUSTIFY:
             default:
-            break;
+                break;
         }
         Rectangle2D placement = new Rectangle2D.Float(xoffset, yoffset, cwidth, cheight);
 

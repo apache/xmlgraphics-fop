@@ -1,42 +1,91 @@
 /*
- * -- $Id$ --
- * Copyright (C) 2001 The Apache Software Foundation. All rights reserved.
- * For details on use and redistribution please refer to the
- * LICENSE file included with these sources.
- */
-
+ * $Id$
+ * ============================================================================
+ *                    The Apache Software License, Version 1.1
+ * ============================================================================
+ * 
+ * Copyright (C) 1999-2003 The Apache Software Foundation. All rights reserved.
+ * 
+ * Redistribution and use in source and binary forms, with or without modifica-
+ * tion, are permitted provided that the following conditions are met:
+ * 
+ * 1. Redistributions of source code must retain the above copyright notice,
+ *    this list of conditions and the following disclaimer.
+ * 
+ * 2. Redistributions in binary form must reproduce the above copyright notice,
+ *    this list of conditions and the following disclaimer in the documentation
+ *    and/or other materials provided with the distribution.
+ * 
+ * 3. The end-user documentation included with the redistribution, if any, must
+ *    include the following acknowledgment: "This product includes software
+ *    developed by the Apache Software Foundation (http://www.apache.org/)."
+ *    Alternately, this acknowledgment may appear in the software itself, if
+ *    and wherever such third-party acknowledgments normally appear.
+ * 
+ * 4. The names "FOP" and "Apache Software Foundation" must not be used to
+ *    endorse or promote products derived from this software without prior
+ *    written permission. For written permission, please contact
+ *    apache@apache.org.
+ * 
+ * 5. Products derived from this software may not be called "Apache", nor may
+ *    "Apache" appear in their name, without prior written permission of the
+ *    Apache Software Foundation.
+ * 
+ * THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESSED OR IMPLIED WARRANTIES,
+ * INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND
+ * FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
+ * APACHE SOFTWARE FOUNDATION OR ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
+ * INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLU-
+ * DING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS
+ * OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON
+ * ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
+ * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ * ============================================================================
+ * 
+ * This software consists of voluntary contributions made by many individuals
+ * on behalf of the Apache Software Foundation and was originally created by
+ * James Tauber <jtauber@jtauber.com>. For more information on the Apache
+ * Software Foundation, please see <http://www.apache.org/>.
+ */ 
 package org.apache.fop.fo.flow;
-
-// FOP
-import org.apache.fop.fo.*;
-import org.apache.fop.fo.properties.*;
-import org.apache.fop.layout.*;
-import org.apache.fop.datatypes.*;
-import org.apache.fop.apps.FOPException;
-
-import org.apache.fop.layoutmgr.table.TableLayoutManager;
 
 // Java
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Iterator;
+
+// FOP
+import org.apache.fop.datatypes.ColorType;
+import org.apache.fop.datatypes.LengthRange;
+import org.apache.fop.fo.FONode;
+import org.apache.fop.fo.FObj;
+import org.apache.fop.fo.properties.TableLayout;
+import org.apache.fop.fo.properties.TableOmitFooterAtBreak;
+import org.apache.fop.fo.properties.TableOmitHeaderAtBreak;
+import org.apache.fop.layout.AccessibilityProps;
+import org.apache.fop.layout.AuralProps;
+import org.apache.fop.layout.BackgroundProps;
+import org.apache.fop.layout.BorderAndPadding;
+import org.apache.fop.layout.MarginProps;
+import org.apache.fop.layout.RelativePositionProps;
+import org.apache.fop.layoutmgr.table.TableLayoutManager;
 
 public class Table extends FObj {
     private static final int MINCOLWIDTH = 10000; // 10pt
 
     protected ArrayList columns = null;
-    TableBody tableHeader = null;
-    TableBody tableFooter = null;
-    boolean omitHeaderAtBreak = false;
-    boolean omitFooterAtBreak = false;
+    private TableBody tableHeader = null;
+    private TableBody tableFooter = null;
+    private boolean omitHeaderAtBreak = false;
+    private boolean omitFooterAtBreak = false;
 
-    int breakBefore;
-    int breakAfter;
-    int spaceBefore;
-    int spaceAfter;
-    ColorType backgroundColor;
-    LengthRange ipd;
-    int height;
+    private int breakBefore;
+    private int breakAfter;
+    private int spaceBefore;
+    private int spaceAfter;
+    private ColorType backgroundColor;
+    private LengthRange ipd;
+    private int height;
 
     private boolean bAutoLayout = false;
     private int contentWidth = 0; // Sum of column widths
@@ -52,14 +101,14 @@ public class Table extends FObj {
     }
 
     protected void addChild(FONode child) {
-        if(child.getName().equals("fo:table-column")) {
-            if(columns == null) {
+        if (child.getName().equals("fo:table-column")) {
+            if (columns == null) {
                 columns = new ArrayList();
             }
             columns.add(((TableColumn)child).getLayoutManager());
-        } else if(child.getName().equals("fo:table-footer")) {
+        } else if (child.getName().equals("fo:table-footer")) {
             tableFooter = (TableBody)child;
-        } else if(child.getName().equals("fo:table-header")) {
+        } else if (child.getName().equals("fo:table-header")) {
             tableHeader = (TableBody)child;
         } else {
             // add bodies
@@ -76,10 +125,10 @@ public class Table extends FObj {
         tlm.setUserAgent(getUserAgent());
         tlm.setFObj(this);
         tlm.setColumns(columns);
-        if(tableHeader != null) {
+        if (tableHeader != null) {
             tlm.setTableHeader(tableHeader.getLayoutManager());
         }
-        if(tableFooter != null) {
+        if (tableFooter != null) {
             tlm.setTableFooter(tableFooter.getLayoutManager());
         }
         list.add(tlm);
@@ -101,7 +150,7 @@ public class Table extends FObj {
 
         // Common Relative Position Properties
         RelativePositionProps mRelProps =
-          propMgr.getRelativePositionProps();
+                propMgr.getRelativePositionProps();
 
         // this.properties.get("block-progression-dimension");
         // this.properties.get("border-after-precendence");
@@ -127,23 +176,23 @@ public class Table extends FObj {
         this.breakBefore = this.properties.get("break-before").getEnum();
         this.breakAfter = this.properties.get("break-after").getEnum();
         this.spaceBefore = this.properties.get(
-                             "space-before.optimum").getLength().mvalue();
+                             "space-before.optimum").getLength().getValue();
         this.spaceAfter = this.properties.get(
-                            "space-after.optimum").getLength().mvalue();
+                            "space-after.optimum").getLength().getValue();
         this.backgroundColor =
           this.properties.get("background-color").getColorType();
         this.ipd = this.properties.get(
-                     "inline-progression-dimension"). getLengthRange();
-        this.height = this.properties.get("height").getLength().mvalue();
-        this.bAutoLayout = (this.properties.get("table-layout").getEnum() ==
-                            TableLayout.AUTO);
+                     "inline-progression-dimension").getLengthRange();
+        this.height = this.properties.get("height").getLength().getValue();
+        this.bAutoLayout = (this.properties.get(
+                "table-layout").getEnum() == TableLayout.AUTO);
 
         this.omitHeaderAtBreak = this.properties.get(
-                                   "table-omit-header-at-break").getEnum() ==
-                                 TableOmitHeaderAtBreak.TRUE;
+                "table-omit-header-at-break").getEnum() 
+                                            == TableOmitHeaderAtBreak.TRUE;
         this.omitFooterAtBreak = this.properties.get(
-                                   "table-omit-footer-at-break").getEnum() ==
-                                 TableOmitFooterAtBreak.TRUE;
+                "table-omit-footer-at-break").getEnum() 
+                                            == TableOmitFooterAtBreak.TRUE;
 
     }
 

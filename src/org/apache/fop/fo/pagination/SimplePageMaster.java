@@ -1,16 +1,69 @@
 /*
-* $Id$
-* Copyright (C) 2001 The Apache Software Foundation. All rights reserved.
-* For details on use and redistribution please refer to the
-* LICENSE file included with these sources.
-*/
-
+ * $Id$
+ * ============================================================================
+ *                    The Apache Software License, Version 1.1
+ * ============================================================================
+ * 
+ * Copyright (C) 1999-2003 The Apache Software Foundation. All rights reserved.
+ * 
+ * Redistribution and use in source and binary forms, with or without modifica-
+ * tion, are permitted provided that the following conditions are met:
+ * 
+ * 1. Redistributions of source code must retain the above copyright notice,
+ *    this list of conditions and the following disclaimer.
+ * 
+ * 2. Redistributions in binary form must reproduce the above copyright notice,
+ *    this list of conditions and the following disclaimer in the documentation
+ *    and/or other materials provided with the distribution.
+ * 
+ * 3. The end-user documentation included with the redistribution, if any, must
+ *    include the following acknowledgment: "This product includes software
+ *    developed by the Apache Software Foundation (http://www.apache.org/)."
+ *    Alternately, this acknowledgment may appear in the software itself, if
+ *    and wherever such third-party acknowledgments normally appear.
+ * 
+ * 4. The names "FOP" and "Apache Software Foundation" must not be used to
+ *    endorse or promote products derived from this software without prior
+ *    written permission. For written permission, please contact
+ *    apache@apache.org.
+ * 
+ * 5. Products derived from this software may not be called "Apache", nor may
+ *    "Apache" appear in their name, without prior written permission of the
+ *    Apache Software Foundation.
+ * 
+ * THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESSED OR IMPLIED WARRANTIES,
+ * INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND
+ * FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
+ * APACHE SOFTWARE FOUNDATION OR ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
+ * INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLU-
+ * DING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS
+ * OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON
+ * ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
+ * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ * ============================================================================
+ * 
+ * This software consists of voluntary contributions made by many individuals
+ * on behalf of the Apache Software Foundation and was originally created by
+ * James Tauber <jtauber@jtauber.com>. For more information on the Apache
+ * Software Foundation, please see <http://www.apache.org/>.
+ */ 
 package org.apache.fop.fo.pagination;
 
+// Java
+import java.awt.Rectangle;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+
+// XML
+import org.xml.sax.Attributes;
+
 // FOP
-import org.apache.fop.fo.*;
 import org.apache.fop.area.CTM;
 import org.apache.fop.datatypes.FODimension;
+import org.apache.fop.fo.FONode;
+import org.apache.fop.fo.FObj;
 import org.apache.fop.area.PageViewport;
 import org.apache.fop.area.Page;
 import org.apache.fop.area.RegionViewport;
@@ -18,13 +71,6 @@ import org.apache.fop.area.RegionReference;
 import org.apache.fop.layout.MarginProps;
 import org.apache.fop.layout.PageMaster;
 import org.apache.fop.apps.FOPException;
-
-import java.awt.Rectangle;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
-
-import org.xml.sax.Attributes;
 
 /**
  * A simple-page-master formatting object.
@@ -35,10 +81,10 @@ public class SimplePageMaster extends FObj {
     /**
      * Page regions (regionClass, Region)
      */
-    private Map _regions;
+    private Map regions;
 
-    PageMaster pageMaster;
-    String masterName;
+    private PageMaster pageMaster;
+    private String masterName;
 
     public SimplePageMaster(FONode parent) {
         super(parent);
@@ -62,7 +108,7 @@ public class SimplePageMaster extends FObj {
                     + parent.getName());
         }
         //Well, there are only 5 regions so we can save a bit of memory here
-        _regions = new HashMap(5);
+        regions = new HashMap(5);
     }
 
     /**
@@ -71,9 +117,9 @@ public class SimplePageMaster extends FObj {
      */
     protected void end() {
         int pageWidth =
-                this.properties.get("page-width").getLength().mvalue();
+                this.properties.get("page-width").getLength().getValue();
         int pageHeight =
-                this.properties.get("page-height").getLength().mvalue();
+                this.properties.get("page-height").getLength().getValue();
         // this.properties.get("reference-orientation");
         // this.properties.get("writing-mode");
 
@@ -95,15 +141,15 @@ public class SimplePageMaster extends FObj {
 
         // Set up the CTM on the page reference area based on writing-mode
         // and reference-orientation
-        FODimension reldims=new FODimension(0,0);
+        FODimension reldims = new FODimension(0, 0);
         CTM pageCTM = propMgr.getCTMandRelDims(pageRefRect, reldims);
 
         // Create a RegionViewport/ reference area pair for each page region
 
-        boolean bHasBody=false;
+        boolean bHasBody = false;
 
-        for (Iterator regenum = _regions.values().iterator();
-             regenum.hasNext(); ) {
+        for (Iterator regenum = regions.values().iterator();
+             regenum.hasNext();) {
             Region r = (Region)regenum.next();
             RegionViewport rvp = r.makeRegionViewport(reldims, pageCTM);
             rvp.setRegion(r.makeRegionReferenceArea(rvp.getViewArea()));
@@ -118,10 +164,9 @@ public class SimplePageMaster extends FObj {
         }
 
         this.pageMaster = new PageMaster(new PageViewport(page,
-                new Rectangle(0,0,
-                        pageWidth,pageHeight)));
+                new Rectangle(0, 0, pageWidth, pageHeight)));
 
-        //  _regions = null; // PageSequence access SimplePageMaster....
+        //  regions = null; // PageSequence access SimplePageMaster....
         children = null;
         properties = null;
     }
@@ -146,14 +191,14 @@ public class SimplePageMaster extends FObj {
         if (child instanceof Region) {
             addRegion((Region)child);
         } else {
-            getLogger().error("SimplePageMaster cannot have child of type " +
-                    child.getName());
+            getLogger().error("SimplePageMaster cannot have child of type " 
+                    + child.getName());
         }
     }
 
     protected void addRegion(Region region) {
         String key = region.getRegionClass();
-        if (_regions.containsKey(key)) {
+        if (regions.containsKey(key)) {
             getLogger().error("Only one region of class "
                     + key
                     + " allowed within a simple-page-master.");
@@ -161,21 +206,21 @@ public class SimplePageMaster extends FObj {
 //                                    + key
 //                                    + " allowed within a simple-page-master.");
         } else {
-            _regions.put(key, region);
+            regions.put(key, region);
         }
     }
 
     public Region getRegion(String regionClass) {
-        return (Region)_regions.get(regionClass);
+        return (Region)regions.get(regionClass);
     }
 
     protected Map getRegions() {
-        return _regions;
+        return regions;
     }
 
     protected boolean regionNameExists(String regionName) {
-        for (Iterator regenum = _regions.values().iterator();
-             regenum.hasNext(); ) {
+        for (Iterator regenum = regions.values().iterator();
+                regenum.hasNext();) {
             Region r = (Region)regenum.next();
             if (r.getRegionName().equals(regionName)) {
                 return true;
