@@ -53,6 +53,8 @@
     <fop fofile="${foDir}/fonts.fo"   pdffile="${testDir}/fonts.pdf"/> 
     <fop fofile="${foDir}/leader.fo"   pdffile="${testDir}/leader.pdf"/> 
     <fop fofile="${foDir}/textdeko.fo"   pdffile="${testDir}/textdeko.pdf"/> 
+    <fop fofile="${foDir}/inhprop.fo" pdffile="${testDir}/inhprop.pdf"/>
+    <fop fofile="${foDir}/normalex.fo" pdffile="${testDir}/normalex.pdf"/>
   </target>
 
 
