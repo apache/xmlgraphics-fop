@@ -55,11 +55,31 @@ import org.apache.fop.fo.expr.PropertyException;
 
 public class LeaderAlignment extends Property  {
     public static final int dataTypes = ENUM | NONE | INHERIT;
+
+    public int getDataTypes() {
+        return dataTypes;
+    }
+
     public static final int traitMapping = FORMATTING;
+
+    public int getTraitMapping() {
+        return traitMapping;
+    }
+
     public static final int initialValueType = NONE_IT;
+
+    public int getInitialValueType() {
+        return initialValueType;
+    }
+
     public static final int REFERENCE_AREA = 1;
     public static final int PAGE = 2;
     public static final int inherited = COMPUTED;
+
+    public int getInherited() {
+        return inherited;
+    }
+
 
     private static final String[] rwEnums = {
         null

@@ -58,13 +58,33 @@ import org.apache.fop.fo.expr.PropertyException;
 
 public class InternalDestination extends Property  {
     public static final int dataTypes = LITERAL | NCNAME;
+
+    public int getDataTypes() {
+        return dataTypes;
+    }
+
     public static final int traitMapping = ACTION;
+
+    public int getTraitMapping() {
+        return traitMapping;
+    }
+
     public static final int initialValueType = LITERAL_IT;
+
+    public int getInitialValueType() {
+        return initialValueType;
+    }
+
     public PropertyValue getInitialValue(int property)
         throws PropertyException
     {
         return new Literal(PropNames.INTERNAL_DESTINATION, "");
     }
     public static final int inherited = NO;
+
+    public int getInherited() {
+        return inherited;
+    }
+
 }
 

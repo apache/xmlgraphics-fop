@@ -54,9 +54,29 @@ package org.apache.fop.fo.properties;
 
 public class BorderBeforePrecedence extends PrecedenceCommon {
     public static final int dataTypes = INTEGER | ENUM | INHERIT;
+
+    public int getDataTypes() {
+        return dataTypes;
+    }
+
     public static final int traitMapping = FORMATTING;
+
+    public int getTraitMapping() {
+        return traitMapping;
+    }
+
     public static final int initialValueType = NOTYPE_IT;
+
+    public int getInitialValueType() {
+        return initialValueType;
+    }
+
     public static final int inherited = NO;
+
+    public int getInherited() {
+        return inherited;
+    }
+
 
 }
 

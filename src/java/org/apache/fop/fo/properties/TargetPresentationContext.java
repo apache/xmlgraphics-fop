@@ -58,8 +58,23 @@ import org.apache.fop.fo.expr.PropertyException;
 
 public class TargetPresentationContext extends Property  {
     public static final int dataTypes = URI_SPECIFICATION | ENUM;
+
+    public int getDataTypes() {
+        return dataTypes;
+    }
+
     public static final int traitMapping = ACTION;
+
+    public int getTraitMapping() {
+        return traitMapping;
+    }
+
     public static final int initialValueType = ENUM_IT;
+
+    public int getInitialValueType() {
+        return initialValueType;
+    }
+
     public static final int USE_TARGET_PROCESSING_CONTEXT = 1;
     public PropertyValue getInitialValue(int property)
         throws PropertyException
@@ -68,6 +83,11 @@ public class TargetPresentationContext extends Property  {
                                         USE_TARGET_PROCESSING_CONTEXT);
     }
     public static final int inherited = NO;
+
+    public int getInherited() {
+        return inherited;
+    }
+
 
     private static final String[] rwEnums = {
         null

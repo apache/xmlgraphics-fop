@@ -71,9 +71,29 @@ import org.apache.fop.messaging.MessageHandler;
 
 public class Font extends Property  {
     public static final int dataTypes = SHORTHAND;
+
+    public int getDataTypes() {
+        return dataTypes;
+    }
+
     public static final int traitMapping = SHORTHAND_MAP;
+
+    public int getTraitMapping() {
+        return traitMapping;
+    }
+
     public static final int initialValueType = NOTYPE_IT;
+
+    public int getInitialValueType() {
+        return initialValueType;
+    }
+
     public static final int inherited = NO;
+
+    public int getInherited() {
+        return inherited;
+    }
+
 
     public static final int
                CAPTION = 1
@@ -96,7 +116,7 @@ public class Font extends Property  {
 
     private static final HashMap rwEnumHash;
     static {
-        rwEnumHash = new HashMap(rwEnums.length);
+        rwEnumHash = new HashMap((int)(rwEnums.length / 0.75) + 1);
         for (int i = 1; i < rwEnums.length; i++ ) {
             rwEnumHash.put((Object)rwEnums[i],
                                 (Object) Ints.consts.get(i));

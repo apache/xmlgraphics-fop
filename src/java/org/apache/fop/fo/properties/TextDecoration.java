@@ -67,8 +67,23 @@ import org.apache.fop.fo.expr.PropertyException;
 
 public class TextDecoration extends Property  {
     public static final int dataTypes = COMPLEX | NONE | INHERIT;
+
+    public int getDataTypes() {
+        return dataTypes;
+    }
+
     public static final int traitMapping = NEW_TRAIT;
+
+    public int getTraitMapping() {
+        return traitMapping;
+    }
+
     public static final int initialValueType = TEXT_DECORATION_IT;
+
+    public int getInitialValueType() {
+        return initialValueType;
+    }
+
     public PropertyValue getInitialValue(int property)
         throws PropertyException
     {
@@ -76,6 +91,11 @@ public class TextDecoration extends Property  {
                             (PropNames.TEXT_DECORATION, NO_DECORATION);
     }
     public static final int inherited = NO;
+
+    public int getInherited() {
+        return inherited;
+    }
+
 
     /** Text decoration constant. */
     public static final byte

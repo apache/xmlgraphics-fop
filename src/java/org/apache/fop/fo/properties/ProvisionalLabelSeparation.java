@@ -58,8 +58,23 @@ import org.apache.fop.fo.expr.PropertyException;
 
 public class ProvisionalLabelSeparation extends Property  {
     public static final int dataTypes = LENGTH | INHERIT;
+
+    public int getDataTypes() {
+        return dataTypes;
+    }
+
     public static final int traitMapping = SPECIFICATION;
+
+    public int getTraitMapping() {
+        return traitMapping;
+    }
+
     public static final int initialValueType = LENGTH_IT;
+
+    public int getInitialValueType() {
+        return initialValueType;
+    }
+
     public PropertyValue getInitialValue(int property)
         throws PropertyException
     {
@@ -67,5 +82,10 @@ public class ProvisionalLabelSeparation extends Property  {
         (PropNames.PROVISIONAL_LABEL_SEPARATION, 6.0d, Length.PT);
     }
     public static final int inherited = COMPUTED;
+
+    public int getInherited() {
+        return inherited;
+    }
+
 }
 

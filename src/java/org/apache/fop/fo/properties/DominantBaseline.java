@@ -58,8 +58,23 @@ import org.apache.fop.fo.expr.PropertyException;
 
 public class DominantBaseline extends Property  {
     public static final int dataTypes = AUTO | ENUM | INHERIT;
+
+    public int getDataTypes() {
+        return dataTypes;
+    }
+
     public static final int traitMapping = FORMATTING;
+
+    public int getTraitMapping() {
+        return traitMapping;
+    }
+
     public static final int initialValueType = AUTO_IT;
+
+    public int getInitialValueType() {
+        return initialValueType;
+    }
+
     public static final int USE_SCRIPT = 1;
     public static final int NO_CHANGE = 2;
     public static final int RESET_SIZE = 3;
@@ -72,6 +87,11 @@ public class DominantBaseline extends Property  {
     public static final int TEXT_AFTER_EDGE = 10;
     public static final int TEXT_BEFORE_EDGE = 11;
     public static final int inherited = NO;
+
+    public int getInherited() {
+        return inherited;
+    }
+
 
     private static final String[] rwEnums = {
         null
@@ -89,7 +109,7 @@ public class DominantBaseline extends Property  {
     };
     private static final HashMap rwEnumHash;
     static {
-        rwEnumHash = new HashMap(rwEnums.length);
+        rwEnumHash = new HashMap((int)(rwEnums.length / 0.75) + 1);
         for (int i = 1; i < rwEnums.length; i++ ) {
             rwEnumHash.put((Object)rwEnums[i],
                                 (Object) Ints.consts.get(i));

@@ -59,8 +59,23 @@ import org.apache.fop.fo.expr.PropertyException;
 public class AlignmentAdjust extends Property  {
     public static final int dataTypes =
 			    AUTO | ENUM | PERCENTAGE | LENGTH | INHERIT;
+
+    public int getDataTypes() {
+        return dataTypes;
+    }
+
     public static final int traitMapping = FORMATTING;
+
+    public int getTraitMapping() {
+        return traitMapping;
+    }
+
     public static final int initialValueType = AUTO_IT;
+
+    public int getInitialValueType() {
+        return initialValueType;
+    }
+
     public static final int BASELINE = 1;
     public static final int BEFORE_EDGE = 2;
     public static final int TEXT_BEFORE_EDGE = 3;
@@ -74,6 +89,11 @@ public class AlignmentAdjust extends Property  {
     public static final int MATHEMATICAL = 11;
 
     public static final int inherited = NO;
+
+    public int getInherited() {
+        return inherited;
+    }
+
 
     private static final String[] rwEnums = {
 	null
@@ -91,7 +111,7 @@ public class AlignmentAdjust extends Property  {
     };
     private static final HashMap rwEnumHash;
     static {
-	rwEnumHash = new HashMap(rwEnums.length);
+	rwEnumHash = new HashMap((int)(rwEnums.length / 0.75) + 1);
 	for (int i = 1; i < rwEnums.length; i++ ) {
 	    rwEnumHash.put((Object)rwEnums[i],
 				(Object) Ints.consts.get(i));

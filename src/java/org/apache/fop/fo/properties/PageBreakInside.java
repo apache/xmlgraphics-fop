@@ -65,10 +65,30 @@ import org.apache.fop.fo.expr.PropertyException;
 
 public class PageBreakInside extends Property  {
     public static final int dataTypes = SHORTHAND | AUTO | ENUM | INHERIT;
+
+    public int getDataTypes() {
+        return dataTypes;
+    }
+
     public static final int traitMapping = SHORTHAND_MAP;
+
+    public int getTraitMapping() {
+        return traitMapping;
+    }
+
     public static final int initialValueType = AUTO_IT;
+
+    public int getInitialValueType() {
+        return initialValueType;
+    }
+
     public static final int AVOID = 1;
     public static final int inherited = NO;
+
+    public int getInherited() {
+        return inherited;
+    }
+
 
     private static final String[] rwEnums = {
         null

@@ -54,10 +54,30 @@ package org.apache.fop.fo.properties;
 
 public class BorderLeftStyle extends BorderCommonStyle {
     public static final int dataTypes = ENUM | NONE | INHERIT;
+
+    public int getDataTypes() {
+        return dataTypes;
+    }
+
     public static final int traitMapping = DISAPPEARS;
+
+    public int getTraitMapping() {
+        return traitMapping;
+    }
+
     public static final int initialValueType = NONE_IT;
 
+    public int getInitialValueType() {
+        return initialValueType;
+    }
+
+
     public static final int inherited = NO;
+
+    public int getInherited() {
+        return inherited;
+    }
+
 
 
 }

@@ -64,9 +64,29 @@ import org.apache.fop.messaging.MessageHandler;
 
 public class Border extends Property  {
     public static final int dataTypes = SHORTHAND;
+
+    public int getDataTypes() {
+        return dataTypes;
+    }
+
     public static final int traitMapping = SHORTHAND_MAP;
+
+    public int getTraitMapping() {
+        return traitMapping;
+    }
+
     public static final int initialValueType = NOTYPE_IT;
+
+    public int getInitialValueType() {
+        return initialValueType;
+    }
+
     public static final int inherited = NO;
+
+    public int getInherited() {
+        return inherited;
+    }
+
 
     public PropertyValue refineParsing
                         (int propindex, FONode foNode, PropertyValue value)
@@ -137,6 +157,7 @@ public class Border extends Property  {
                 + "width or color in border: "
                 + val.getClass().getName());
         }
+
         // Construct the shorthand expansion list
         // Only those elements which are actually specified fint their
         // way into this list.  Other elements will take their normally

@@ -58,8 +58,23 @@ import org.apache.fop.fo.expr.PropertyException;
 
 public class MaximumRepeats extends Property  {
     public static final int dataTypes = NUMBER | ENUM | INHERIT;
+
+    public int getDataTypes() {
+        return dataTypes;
+    }
+
     public static final int traitMapping = SPECIFICATION;
+
+    public int getTraitMapping() {
+        return traitMapping;
+    }
+
     public static final int initialValueType = ENUM_IT;
+
+    public int getInitialValueType() {
+        return initialValueType;
+    }
+
     public static final int NO_LIMIT = 1;
     public PropertyValue getInitialValue(int property)
         throws PropertyException
@@ -67,6 +82,11 @@ public class MaximumRepeats extends Property  {
         return new EnumType (PropNames.MAXIMUM_REPEATS, NO_LIMIT);
     }
     public static final int inherited = NO;
+
+    public int getInherited() {
+        return inherited;
+    }
+
 
     private static final String[] rwEnums = {
         null

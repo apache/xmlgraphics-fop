@@ -59,8 +59,23 @@ import org.apache.fop.fo.expr.PropertyException;
 public class PaddingBefore extends Property  {
     public static final int dataTypes =
                                 COMPOUND |PERCENTAGE | LENGTH | INHERIT;
+
+    public int getDataTypes() {
+        return dataTypes;
+    }
+
     public static final int traitMapping = FORMATTING | RENDERING;
+
+    public int getTraitMapping() {
+        return traitMapping;
+    }
+
     public static final int initialValueType = LENGTH_IT;
+
+    public int getInitialValueType() {
+        return initialValueType;
+    }
+
     public PropertyValue getInitialValue(int property)
         throws PropertyException
     {
@@ -68,5 +83,10 @@ public class PaddingBefore extends Property  {
                                                         0.0d, Length.PT);
     }
     public static final int inherited = NO;
+
+    public int getInherited() {
+        return inherited;
+    }
+
 }
 

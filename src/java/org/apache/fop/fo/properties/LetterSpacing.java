@@ -58,8 +58,23 @@ import org.apache.fop.fo.expr.PropertyException;
 
 public class LetterSpacing extends Property  {
     public static final int dataTypes = LENGTH | ENUM | INHERIT;
+
+    public int getDataTypes() {
+        return dataTypes;
+    }
+
     public static final int traitMapping = DISAPPEARS;
+
+    public int getTraitMapping() {
+        return traitMapping;
+    }
+
     public static final int initialValueType = LENGTH_IT;
+
+    public int getInitialValueType() {
+        return initialValueType;
+    }
+
     public static final int NORMAL = 1;
     public PropertyValue getInitialValue(int property)
         throws PropertyException
@@ -67,6 +82,11 @@ public class LetterSpacing extends Property  {
         return Length.makeLength(PropNames.LETTER_SPACING, 0d, Length.PT);
     }
     public static final int inherited = COMPUTED;
+
+    public int getInherited() {
+        return inherited;
+    }
+
 
     private static final String[] rwEnums = {
         null

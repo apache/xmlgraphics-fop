@@ -58,13 +58,33 @@ import org.apache.fop.fo.expr.PropertyException;
 
 public class ScoreSpaces extends Property  {
     public static final int dataTypes = BOOL | INHERIT;
+
+    public int getDataTypes() {
+        return dataTypes;
+    }
+
     public static final int traitMapping = FORMATTING;
+
+    public int getTraitMapping() {
+        return traitMapping;
+    }
+
     public static final int initialValueType = BOOL_IT;
+
+    public int getInitialValueType() {
+        return initialValueType;
+    }
+
     public PropertyValue getInitialValue(int property)
         throws PropertyException
     {
         return new Bool(PropNames.SCORE_SPACES, true);
     }
     public static final int inherited = COMPUTED;
+
+    public int getInherited() {
+        return inherited;
+    }
+
 }
 

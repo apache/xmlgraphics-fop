@@ -58,13 +58,33 @@ import org.apache.fop.fo.expr.PropertyException;
 
 public class MasterName extends Property  {
     public static final int dataTypes = NCNAME;
+
+    public int getDataTypes() {
+        return dataTypes;
+    }
+
     public static final int traitMapping = SPECIFICATION;
+
+    public int getTraitMapping() {
+        return traitMapping;
+    }
+
     public static final int initialValueType = NCNAME_IT;
+
+    public int getInitialValueType() {
+        return initialValueType;
+    }
+
     public PropertyValue getInitialValue(int property)
         throws PropertyException
     {
         return new NCName(PropNames.MASTER_NAME, "");
     }
     public static final int inherited = NO;
+
+    public int getInherited() {
+        return inherited;
+    }
+
 }
 

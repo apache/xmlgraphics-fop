@@ -68,9 +68,29 @@ public class BorderWidth extends BorderCommonWidth {
     // not require specific data type settings.  This one is neded for the
     // MappedNumeric generataion in checkBorderWidth().
     public static final int dataTypes = MAPPED_LENGTH | SHORTHAND;
+
+    public int getDataTypes() {
+        return dataTypes;
+    }
+
     public static final int traitMapping = SHORTHAND_MAP;
+
+    public int getTraitMapping() {
+        return traitMapping;
+    }
+
     public static final int initialValueType = NOTYPE_IT;
+
+    public int getInitialValueType() {
+        return initialValueType;
+    }
+
     public static final int inherited = NO;
+
+    public int getInherited() {
+        return inherited;
+    }
+
 
     /** The <tt>FONode</tt> on which this property is defined. */
     private FONode foNode;

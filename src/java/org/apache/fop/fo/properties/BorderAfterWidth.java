@@ -60,8 +60,23 @@ import org.apache.fop.fo.expr.PropertyException;
 public class BorderAfterWidth extends BorderCommonWidth {
     public static final int dataTypes =
                             COMPOUND | MAPPED_LENGTH | LENGTH | INHERIT;
+
+    public int getDataTypes() {
+        return dataTypes;
+    }
+
     public static final int traitMapping = FORMATTING | RENDERING;
+
+    public int getTraitMapping() {
+        return traitMapping;
+    }
+
     public static final int initialValueType = LENGTH_IT;
+
+    public int getInitialValueType() {
+        return initialValueType;
+    }
+
 
     // Initial value for BorderAfterWidth is tne mapped enumerated value
     // "medium".  This maps to 1pt.  There is no way at present to
@@ -81,6 +96,11 @@ public class BorderAfterWidth extends BorderCommonWidth {
     }
 
     public static final int inherited = NO;
+
+    public int getInherited() {
+        return inherited;
+    }
+
     
 
 }

@@ -58,8 +58,23 @@ import org.apache.fop.fo.expr.PropertyException;
 
 public class RetrieveBoundary extends Property  {
     public static final int dataTypes = ENUM;
+
+    public int getDataTypes() {
+        return dataTypes;
+    }
+
     public static final int traitMapping = FORMATTING;
+
+    public int getTraitMapping() {
+        return traitMapping;
+    }
+
     public static final int initialValueType = ENUM_IT;
+
+    public int getInitialValueType() {
+        return initialValueType;
+    }
+
     public static final int PAGE = 1;
     public static final int PAGE_SEQUENCE = 2;
     public static final int DOCUMENT = 3;
@@ -69,6 +84,11 @@ public class RetrieveBoundary extends Property  {
         return new EnumType (PropNames.RETRIEVE_BOUNDARY, PAGE_SEQUENCE);
     }
     public static final int inherited = NO;
+
+    public int getInherited() {
+        return inherited;
+    }
+
 
     private static final String[] rwEnums = {
         null

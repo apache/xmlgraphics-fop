@@ -58,8 +58,23 @@ import org.apache.fop.fo.expr.PropertyException;
 
 public class ColumnCount extends Property  {
     public static final int dataTypes = NUMBER | INHERIT;
+
+    public int getDataTypes() {
+        return dataTypes;
+    }
+
     public static final int traitMapping = SPECIFICATION;
+
+    public int getTraitMapping() {
+        return traitMapping;
+    }
+
     public static final int initialValueType = NUMBER_IT;
+
+    public int getInitialValueType() {
+        return initialValueType;
+    }
+
     public PropertyValue getInitialValue(int property)
         throws PropertyException
     {
@@ -67,5 +82,10 @@ public class ColumnCount extends Property  {
     }
 
     public static final int inherited = NO;
+
+    public int getInherited() {
+        return inherited;
+    }
+
 }
 

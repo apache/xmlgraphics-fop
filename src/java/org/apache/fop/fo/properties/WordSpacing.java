@@ -61,14 +61,34 @@ import org.apache.fop.fo.expr.PropertyException;
 public class WordSpacing extends WordSpacingCommon  {
     public static final int dataTypes =
                             COMPOUND | LENGTH | MAPPED_LENGTH | INHERIT;
+
+    public int getDataTypes() {
+        return dataTypes;
+    }
+
     public static final int traitMapping = DISAPPEARS;
+
+    public int getTraitMapping() {
+        return traitMapping;
+    }
+
     public static final int initialValueType = LENGTH_IT;
+
+    public int getInitialValueType() {
+        return initialValueType;
+    }
+
     public PropertyValue getInitialValue(int property)
         throws PropertyException
     {
         return getMappedLength(null, NORMAL); //null imples initial value
     }
     public static final int inherited = NO;
+
+    public int getInherited() {
+        return inherited;
+    }
+
 
     public Numeric getMappedLength(FONode node, int enum)
         throws PropertyException

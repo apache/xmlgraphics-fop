@@ -58,8 +58,23 @@ import org.apache.fop.fo.expr.PropertyException;
 
 public class LetterSpacingMaximum extends Property  {
     public static final int dataTypes = LENGTH;
+
+    public int getDataTypes() {
+        return dataTypes;
+    }
+
     public static final int traitMapping = DISAPPEARS;
+
+    public int getTraitMapping() {
+        return traitMapping;
+    }
+
     public static final int initialValueType = LENGTH_IT;
+
+    public int getInitialValueType() {
+        return initialValueType;
+    }
+
     public static final int NORMAL = 1;
     public PropertyValue getInitialValue(int property)
         throws PropertyException
@@ -68,5 +83,10 @@ public class LetterSpacingMaximum extends Property  {
                     (PropNames.LETTER_SPACING_MINIMUM, 0d, Length.PT);
     }
     public static final int inherited = COMPUTED;
+
+    public int getInherited() {
+        return inherited;
+    }
+
 }
 

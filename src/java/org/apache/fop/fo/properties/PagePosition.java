@@ -58,8 +58,23 @@ import org.apache.fop.fo.expr.PropertyException;
 
 public class PagePosition extends Property  {
     public static final int dataTypes = ENUM | INHERIT;
+
+    public int getDataTypes() {
+        return dataTypes;
+    }
+
     public static final int traitMapping = SPECIFICATION;
+
+    public int getTraitMapping() {
+        return traitMapping;
+    }
+
     public static final int initialValueType = ENUM_IT;
+
+    public int getInitialValueType() {
+        return initialValueType;
+    }
+
     public static final int FIRST = 1;
     public static final int LAST = 2;
     public static final int REST = 3;
@@ -70,6 +85,11 @@ public class PagePosition extends Property  {
         return new EnumType (PropNames.PAGE_POSITION, ANY);
     }
     public static final int inherited = NO;
+
+    public int getInherited() {
+        return inherited;
+    }
+
 
     private static final String[] rwEnums = {
         null

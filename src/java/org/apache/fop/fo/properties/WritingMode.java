@@ -61,8 +61,23 @@ import org.apache.fop.fo.expr.PropertyException;
 
 public class WritingMode extends Property  {
     public static final int dataTypes = ENUM | INHERIT;
+
+    public int getDataTypes() {
+        return dataTypes;
+    }
+
     public static final int traitMapping = NEW_TRAIT;
+
+    public int getTraitMapping() {
+        return traitMapping;
+    }
+
     public static final int initialValueType = ENUM_IT;
+
+    public int getInitialValueType() {
+        return initialValueType;
+    }
+
     public static final int LR_TB = 1;
     public static final int RL_TB = 2;
     public static final int TB_RL = 3;
@@ -76,6 +91,11 @@ public class WritingMode extends Property  {
     }
     public static final int inherited = COMPUTED;
 
+    public int getInherited() {
+        return inherited;
+    }
+
+
     private static final String[] rwEnums = {
         null
         ,"lr-tb"
@@ -87,7 +107,7 @@ public class WritingMode extends Property  {
     };
     private static final HashMap rwEnumHash;
     static {
-        rwEnumHash = new HashMap(rwEnums.length);
+        rwEnumHash = new HashMap((int)(rwEnums.length / 0.75) + 1);
         for (int i = 1; i < rwEnums.length; i++ ) {
             rwEnumHash.put((Object)rwEnums[i],
                                 (Object) Ints.consts.get(i));

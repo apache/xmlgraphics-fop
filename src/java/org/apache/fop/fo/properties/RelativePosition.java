@@ -58,8 +58,23 @@ import org.apache.fop.fo.expr.PropertyException;
 
 public class RelativePosition extends Property  {
     public static final int dataTypes = ENUM | INHERIT;
+
+    public int getDataTypes() {
+        return dataTypes;
+    }
+
     public static final int traitMapping = NEW_TRAIT;
+
+    public int getTraitMapping() {
+        return traitMapping;
+    }
+
     public static final int initialValueType = ENUM_IT;
+
+    public int getInitialValueType() {
+        return initialValueType;
+    }
+
     public static final int STATIC = 1;
     public static final int RELATIVE = 2;
     public PropertyValue getInitialValue(int property)
@@ -68,6 +83,11 @@ public class RelativePosition extends Property  {
         return new EnumType (PropNames.RELATIVE_POSITION, STATIC);
     }
     public static final int inherited = NO;
+
+    public int getInherited() {
+        return inherited;
+    }
+
 
     private static final String[] rwEnums = {
         null

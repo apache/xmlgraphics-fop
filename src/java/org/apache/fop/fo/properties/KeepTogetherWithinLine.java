@@ -54,9 +54,29 @@ package org.apache.fop.fo.properties;
 
 public class KeepTogetherWithinLine extends Keep  {
     public static final int dataTypes = AUTO | ENUM | INTEGER;
+
+    public int getDataTypes() {
+        return dataTypes;
+    }
+
     public static final int traitMapping = FORMATTING;
+
+    public int getTraitMapping() {
+        return traitMapping;
+    }
+
     public static final int initialValueType = AUTO_IT;
+
+    public int getInitialValueType() {
+        return initialValueType;
+    }
+
     public static final int inherited = COMPUTED;
+
+    public int getInherited() {
+        return inherited;
+    }
+
 
 }
 

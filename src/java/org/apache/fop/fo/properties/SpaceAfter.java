@@ -58,13 +58,33 @@ import org.apache.fop.fo.expr.PropertyException;
 
 public class SpaceAfter extends Property  {
     public static final int dataTypes = COMPOUND | LENGTH | INHERIT;
+
+    public int getDataTypes() {
+        return dataTypes;
+    }
+
     public static final int traitMapping = FORMATTING;
+
+    public int getTraitMapping() {
+        return traitMapping;
+    }
+
     public static final int initialValueType = LENGTH_IT;
+
+    public int getInitialValueType() {
+        return initialValueType;
+    }
+
     public PropertyValue getInitialValue(int property)
         throws PropertyException
     {
         return Length.makeLength(PropNames.SPACE_AFTER, 0.0d, Length.PT);
     }
     public static final int inherited = NO;
+
+    public int getInherited() {
+        return inherited;
+    }
+
 }
 
