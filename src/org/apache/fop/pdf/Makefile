@@ -18,6 +18,9 @@ SOURCES=PDFAction.java \
 	PDFResources.java \
 	PDFRoot.java \
 	PDFStream.java \
+	PDFFilterException.java \
+	PDFFilter.java \
+	PDFBinaryStream.java \
 	PDFXObject.java
 
 CLASSES=$(SOURCES:.java=.class)
