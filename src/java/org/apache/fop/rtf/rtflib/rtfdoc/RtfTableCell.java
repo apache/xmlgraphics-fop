@@ -67,7 +67,7 @@ implements IRtfParagraphContainer,IRtfListContainer,IRtfTableContainer,IRtfExter
     private RtfList m_list;
     private RtfTable m_table;
     private RtfExternalGraphic m_externalGraphic;
-    private final RtfTableRow m_parentRow;    	
+    private final RtfTableRow m_parentRow;
     private boolean set_center;
 	private boolean set_right;
     private int id;
@@ -108,7 +108,7 @@ implements IRtfParagraphContainer,IRtfListContainer,IRtfTableContainer,IRtfExter
         m_parentRow = parent;
         m_cellWidth = cellWidth;
 
-    /** Added by Boris Poudérous on 07/22/2002 in order to process number-columns-spanned attribute */
+    /** Added by Boris PoudÃ©rous on 07/22/2002 in order to process number-columns-spanned attribute */
     // If the cell is spanned horizontally
     if (attrs.getValue("number-columns-spanned") != null)
       {
@@ -157,7 +157,7 @@ implements IRtfParagraphContainer,IRtfListContainer,IRtfTableContainer,IRtfExter
         attrs.set("intbl");
 
         m_paragraph = new RtfParagraph(this,m_writer,attrs);
-        
+
         if(m_paragraph.m_attrib.isSet("qc"))
 		{
 			set_center=true;
@@ -205,11 +205,11 @@ implements IRtfParagraphContainer,IRtfListContainer,IRtfTableContainer,IRtfExter
         return m_table;
     }
 
-    /** start a new nested table after closing current paragraph, list and table */  // Modified by Boris Poudérous on 07/22/2002
+    /** start a new nested table after closing current paragraph, list and table */  // Modified by Boris PoudÃ©rous on 07/22/2002
     public RtfTable newTable(RtfAttributes attrs, ITableColumnsInfo tc) throws IOException
     {
         closeAll();
-        m_table = new RtfTable(this,m_writer, attrs, tc); // Added tc Boris Poudérous 07/22/2002
+        m_table = new RtfTable(this,m_writer, attrs, tc); // Added tc Boris PoudÃ©rous 07/22/2002
         return m_table;
     }
 
@@ -276,7 +276,7 @@ implements IRtfParagraphContainer,IRtfListContainer,IRtfTableContainer,IRtfExter
         // word97 hangs if cell does not contain at least one "par" control word
         // TODO this is what causes the extra spaces in nested table of test 004-spacing-in-tables.fo,
         // but if is not here we generate invalid RTF for word97
-        
+
         if(set_center)
 		{
 			writeControlWord("qc");
@@ -357,10 +357,10 @@ implements IRtfParagraphContainer,IRtfListContainer,IRtfTableContainer,IRtfExter
             if(e instanceof RtfTable) {
                 // nested table - render its cells in supplementary rows after current row,
                 // and put the remaining content of this cell in a new cell after nested table
-                // Line added by Boris Poudérous
+                // Line added by Boris PoudÃ©rous
         m_parentRow.getExtraRowSet().setParentITableColumnsInfo(((RtfTable)this.getParentOfClass(e.getClass())).getITableColumnsInfo());
         extraRowIndex = m_parentRow.getExtraRowSet().addTable((RtfTable)e,extraRowIndex,m_widthOffset);
-                // Boris Poudérous added the passing of the current cell attributes to the new cells (in order not to have cell without border for example)
+                // Boris PoudÃ©rous added the passing of the current cell attributes to the new cells (in order not to have cell without border for example)
         extraCell = m_parentRow.getExtraRowSet().createExtraCell(extraRowIndex,m_widthOffset,this.getCellWidth(), m_attrib);
                 extraRowIndex++;
 

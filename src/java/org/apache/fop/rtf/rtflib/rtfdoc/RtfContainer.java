@@ -62,7 +62,7 @@ import org.apache.fop.rtf.rtflib.exceptions.RtfStructureException;
  */
 
 public class RtfContainer extends RtfElement {
-    private LinkedList m_children;  // 'final' removed by Boris Poudérous on 07/22/2002
+    private LinkedList m_children;  // 'final' removed by Boris PoudÃ©rous on 07/22/2002
     private RtfOptions m_options = new RtfOptions();
     private RtfElement m_lastChild;
 
@@ -123,7 +123,7 @@ public class RtfContainer extends RtfElement {
     }
 
     /**
-     * Add by Boris Poudérous on 07/22/2002
+     * Add by Boris PoudÃ©rous on 07/22/2002
      * Set the children list
      */
     public boolean setChildren (List children)

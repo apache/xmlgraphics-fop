@@ -74,7 +74,7 @@ public class RtfExtraRowSet extends RtfContainer {
     final int DEFAULT_IDNUM = 0;
 
     /** Parent table context
-     * (added by Boris Poudérous on july 2002 in order to process nested tables)
+     * (added by Boris PoudÃ©rous on july 2002 in order to process nested tables)
      */
     private ITableColumnsInfo parentITableColumnsInfo = null;
 
@@ -170,7 +170,7 @@ public class RtfExtraRowSet extends RtfContainer {
     }
 
     /** create an extra cell to hold content that comes after a nested table in a cell
-     *  Modified by Boris Poudérous in order to permit the extra cell to have the attributes of its parent cell
+     *  Modified by Boris PoudÃ©rous in order to permit the extra cell to have the attributes of its parent cell
      */
     RtfTableCell createExtraCell(int rowIndex,int xOffset,int cellWidth,RtfAttributes parentCellAttributes)
     throws IOException {
@@ -225,7 +225,7 @@ public class RtfExtraRowSet extends RtfContainer {
             // TODO should be merged with the cell that is above it
             if(cellIndex==0 && pc.xOffset > 0) {
                /**
-                * Added by Boris Poudérous
+                * Added by Boris PoudÃ©rous
                 */
                // Add empty cells merged vertically with the cells above and with the same widths
                // (BEFORE the cell that contains the nested table)
@@ -240,13 +240,13 @@ public class RtfExtraRowSet extends RtfContainer {
             }
 
             row.addChild(pc.cell);
-            // Line added by Boris Poudérous
+            // Line added by Boris PoudÃ©rous
             xOffsetOfLastPositionedCell = pc.xOffset + pc.cell.getCellWidth();
             cellIndex++;
         }
 
         /**
-         * Added by Boris Poudérous
+         * Added by Boris PoudÃ©rous
          */
         // Add empty cells merged vertically with the cells above AFTER the cell that contains the nested table
         // The cells added have the same widths than the cells above.
@@ -293,7 +293,7 @@ public class RtfExtraRowSet extends RtfContainer {
 
     /**
      * @return The table context of the parent table
-     * Added by Boris Poudérous on july 2002 in order to process nested tables
+     * Added by Boris PoudÃ©rous on july 2002 in order to process nested tables
      */
      public ITableColumnsInfo getParentITableColumnsInfo()
      {

@@ -71,73 +71,73 @@ implements IRtfParagraphContainer, IRtfExternalGraphicContainer,IRtfTableContain
     private RtfParagraph m_para;
     private RtfExternalGraphic m_externalGraphic;
     private RtfTable m_table;
-    
+
     RtfAfterBeforeBase(RtfSection parent, Writer w, RtfAttributes attrs) throws IOException {
         super((RtfContainer)parent,w,attrs);
         m_attrib = attrs;
     }
-    
+
     public RtfParagraph newParagraph() throws IOException {
         closeAll();
         m_para = new RtfParagraph(this,m_writer);
         return m_para;
     }
-    
+
     public RtfParagraph newParagraph(RtfAttributes attrs) throws IOException {
         closeAll();
         m_para = new RtfParagraph(this,m_writer,attrs);
         return m_para;
     }
-    
+
     public RtfExternalGraphic newImage() throws IOException {
         closeAll();
         m_externalGraphic = new RtfExternalGraphic(this,m_writer);
         return m_externalGraphic;
     }
-    
+
     private void closeCurrentParagraph() throws IOException {
         if(m_para!=null) m_para.close();
     }
-    
+
     private void closeCurrentExternalGraphic() throws IOException {
         if(m_externalGraphic!=null) m_externalGraphic.close();
     }
-    
+
     private void closeCurrentTable() throws IOException {
         if(m_table != null) m_table.close();
     }
-    
+
     protected void writeRtfPrefix() throws IOException {
         writeGroupMark(true);
         writeMyAttributes();
     }
-    
+
     /** must be implemented to write the header or footer attributes */
     abstract protected void writeMyAttributes() throws IOException;
-    
+
     protected void writeRtfSuffix() throws IOException {
         writeGroupMark(false);
     }
-    
+
     public RtfAttributes getAttributes(){
         return m_attrib;
     }
-    
+
     public void closeAll() throws IOException {
         closeCurrentParagraph();
         closeCurrentExternalGraphic();
         closeCurrentTable();
     }
-    
+
     /** close current table if any and start a new one
-     * @param tc added by Boris Poudérous on july 2002 in order to process number-columns-spanned attribute
+     * @param tc added by Boris PoudÃ©rous on july 2002 in order to process number-columns-spanned attribute
      */
     public RtfTable newTable(RtfAttributes attrs, ITableColumnsInfo tc) throws IOException {
         closeAll();
         m_table = new RtfTable(this,m_writer,attrs,tc);
         return m_table;
     }
-    
+
     /** close current table if any and start a new one  */
     public RtfTable newTable(ITableColumnsInfo tc) throws IOException {
         closeAll();

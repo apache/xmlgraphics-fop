@@ -65,7 +65,7 @@ public interface IRtfTableContainer
     public RtfTable newTable(ITableColumnsInfo tc) throws IOException;
 
 	/** close current table if any and start a new one
-   *  @param tc added by Boris Poudérous on july 2002 in order to process number-columns-spanned attribute
+   *  @param tc added by Boris PoudÃ©rous on july 2002 in order to process number-columns-spanned attribute
    **/
 	public RtfTable newTable(RtfAttributes attrs, ITableColumnsInfo tc) throws IOException;
 }

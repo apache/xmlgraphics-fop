@@ -66,24 +66,24 @@ public class RtfTable extends RtfContainer
     private RtfTableRow m_row;
     private int highestRow=0;
 
-    /** Added by Boris Poudérous on 07/22/2002 in order to process number-columns-spanned attribute */
+    /** Added by Boris PoudÃ©rous on 07/22/2002 in order to process number-columns-spanned attribute */
     private ITableColumnsInfo m_table_context;
 
     /** Create an RTF element as a child of given container */
     RtfTable(IRtfTableContainer parent, Writer w, ITableColumnsInfo tc) throws IOException
     {
         super((RtfContainer)parent,w);
-        // Line added by Boris Poudérous on 07/22/2002
+        // Line added by Boris PoudÃ©rous on 07/22/2002
         m_table_context = tc;
     }
 
 	/** Create an RTF element as a child of given container
-   * Modified by Boris Poudérous in order to process 'number-columns-spanned' attribute
+   * Modified by Boris PoudÃ©rous in order to process 'number-columns-spanned' attribute
    */
   RtfTable(IRtfTableContainer parent, Writer w, RtfAttributes attrs, ITableColumnsInfo tc) throws IOException
 	{
 		super((RtfContainer)parent,w,attrs);
-    // Line added by Boris Poudérous on 07/22/2002
+    // Line added by Boris PoudÃ©rous on 07/22/2002
     m_table_context = tc;
 	}
 
@@ -133,7 +133,7 @@ public class RtfTable extends RtfContainer
     	return (highestRow == id) ? true : false;
     }
 
-    /** Added by Boris Poudérous on 07/22/2002 */
+    /** Added by Boris PoudÃ©rous on 07/22/2002 */
     public ITableColumnsInfo getITableColumnsInfo()
     {
       return this.m_table_context;

@@ -65,13 +65,13 @@ public class RtfPageNumber extends RtfContainer
 	public static String RTF_FIELD = "field";
 	public static String RTF_FIELD_PAGE = "fldinst { PAGE }";
 	public static String RTF_FIELD_RESULT = "fldrslt";
-    
+
     /** Create an RTF paragraph as a child of given container with default attributes */
     RtfPageNumber(IRtfPageNumberContainer parent, Writer w) throws IOException
     {
         super((RtfContainer)parent,w);
     }
-    
+
     /** Create an RTF page number as a child of given paragraph,
      *  copying the paragraph attributes
      */
@@ -85,14 +85,14 @@ public class RtfPageNumber extends RtfContainer
              m_attrib.set(parent.getTextAttributes());
          }
      }
-    
+
     /** write our attributes and content */
     protected void writeRtfContent() throws IOException
     {
         writeGroupMark(true);
         writeControlWord(RTF_FIELD);
         writeGroupMark(true);
-        writeAttributes(m_attrib,RtfText.ATTR_NAMES); // Added by Boris Poudérous
+        writeAttributes(m_attrib,RtfText.ATTR_NAMES); // Added by Boris PoudÃ©rous
         writeStarControlWord(RTF_FIELD_PAGE);
         writeGroupMark(false);
         writeGroupMark(true);
@@ -100,12 +100,12 @@ public class RtfPageNumber extends RtfContainer
         writeGroupMark(false);
         writeGroupMark(false);
     }
-    
+
     /** true if this element would generate no "useful" RTF content */
     public boolean isEmpty()
     {
         return false;
     }
 }
-	
+
 	
