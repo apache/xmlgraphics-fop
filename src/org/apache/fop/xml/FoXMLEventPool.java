@@ -45,8 +45,11 @@ public class FoXMLEventPool extends XMLEventPool {
      * @return an <tt>FoXMLEvent</tt>.
      */
     public synchronized FoXMLEvent acquireFoXMLEvent() {
-        FoXMLEvent ev = (FoXMLEvent)(acquireXMLEvent());
+        if (poolSize == 0)
+            return new FoXMLEvent(namespaces);
+        FoXMLEvent ev = ((FoXMLEvent)(pool.get(--poolSize))).clearFo();
         ev.setFoType(FObjectNames.NO_FO);
+        eventSet.clear(ev.id);
         return ev;
     }
 
