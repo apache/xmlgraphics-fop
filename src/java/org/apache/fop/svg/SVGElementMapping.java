@@ -68,7 +68,7 @@ public class SVGElementMapping extends ElementMapping {
     private boolean batik = true;
 
     public SVGElementMapping() {
-        URI = SVGDOMImplementation.SVG_NAMESPACE_URI;
+        namespaceURI = SVGDOMImplementation.SVG_NAMESPACE_URI;
     }
 
     protected void initialize() {

@@ -66,7 +66,7 @@ public class ExtensionElementMapping extends ElementMapping {
      * Constructor.
      */
     public ExtensionElementMapping() {
-        URI = "http://xml.apache.org/fop/extensions";
+        namespaceURI = "http://xml.apache.org/fop/extensions";
     }
 
     /**

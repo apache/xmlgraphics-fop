@@ -163,9 +163,15 @@ public abstract class FONode {
         // do nothing by default
     }
 
+    /**
+     * @param child child node to be added to the children of this node
+     */
     protected void addChild(FONode child) {
     }
 
+    /**
+     * @return the parent node of this node
+     */
     public FONode getParent() {
         return this.parent;
     }

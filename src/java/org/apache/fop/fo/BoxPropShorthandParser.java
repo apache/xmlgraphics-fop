@@ -50,6 +50,9 @@
  */
 package org.apache.fop.fo;
 
+/**
+ * Shorthand property parser for Box properties
+ */
 public class BoxPropShorthandParser extends GenericShorthandParser {
 
     /**
@@ -63,7 +66,8 @@ public class BoxPropShorthandParser extends GenericShorthandParser {
      * Stores 1 to 4 values of same type.
      * Set the given property based on the number of values set.
      * Example: padding, border-width, border-color, border-style, margin
-     * @see org.apache.fop.fo.GenericShorthandParser#convertValueForProperty(String, Property.Maker, PropertyList)
+     * @see org.apache.fop.fo.GenericShorthandParser#convertValueForProperty(String,
+     * Property.Maker, PropertyList)
      */
     protected Property convertValueForProperty(String propName,
                                                Property.Maker maker,
