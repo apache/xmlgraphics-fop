@@ -1,36 +1,36 @@
-/*-- $Id$ -- 
+/*-- $Id$ --
 
  ============================================================================
-                   The Apache Software License, Version 1.1
+									 The Apache Software License, Version 1.1
  ============================================================================
- 
-    Copyright (C) 1999 The Apache Software Foundation. All rights reserved.
- 
+
+		Copyright (C) 1999 The Apache Software Foundation. All rights reserved.
+
  Redistribution and use in source and binary forms, with or without modifica-
  tion, are permitted provided that the following conditions are met:
- 
+
  1. Redistributions of  source code must  retain the above copyright  notice,
-    this list of conditions and the following disclaimer.
- 
+		this list of conditions and the following disclaimer.
+
  2. Redistributions in binary form must reproduce the above copyright notice,
-    this list of conditions and the following disclaimer in the documentation
-    and/or other materials provided with the distribution.
- 
+		this list of conditions and the following disclaimer in the documentation
+		and/or other materials provided with the distribution.
+
  3. The end-user documentation included with the redistribution, if any, must
-    include  the following  acknowledgment:  "This product includes  software
-    developed  by the  Apache Software Foundation  (http://www.apache.org/)."
-    Alternately, this  acknowledgment may  appear in the software itself,  if
-    and wherever such third-party acknowledgments normally appear.
- 
+		include  the following  acknowledgment:  "This product includes  software
+		developed  by the  Apache Software Foundation  (http://www.apache.org/)."
+		Alternately, this  acknowledgment may  appear in the software itself,  if
+		and wherever such third-party acknowledgments normally appear.
+
  4. The names "FOP" and  "Apache Software Foundation"  must not be used to
-    endorse  or promote  products derived  from this  software without  prior
-    written permission. For written permission, please contact
-    apache@apache.org.
- 
+		endorse  or promote  products derived  from this  software without  prior
+		written permission. For written permission, please contact
+		apache@apache.org.
+
  5. Products  derived from this software may not  be called "Apache", nor may
-    "Apache" appear  in their name,  without prior written permission  of the
-    Apache Software Foundation.
- 
+		"Apache" appear  in their name,  without prior written permission  of the
+		Apache Software Foundation.
+
  THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESSED OR IMPLIED WARRANTIES,
  INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND
  FITNESS  FOR A PARTICULAR  PURPOSE ARE  DISCLAIMED.  IN NO  EVENT SHALL  THE
@@ -41,12 +41,12 @@
  ANY  THEORY OF LIABILITY,  WHETHER  IN CONTRACT,  STRICT LIABILITY,  OR TORT
  (INCLUDING  NEGLIGENCE OR  OTHERWISE) ARISING IN  ANY WAY OUT OF THE  USE OF
  THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- 
+
  This software  consists of voluntary contributions made  by many individuals
  on  behalf of the Apache Software  Foundation and was  originally created by
- James Tauber <jtauber@jtauber.com>. For more  information on the Apache 
+ James Tauber <jtauber@jtauber.com>. For more  information on the Apache
  Software Foundation, please see <http://www.apache.org/>.
- 
+
  */
 
 package org.apache.fop.fo.flow;
@@ -106,10 +106,10 @@ public class InstreamForeignObject extends FObj {
 	boolean chauto;
 	int spaceBefore;
 	int spaceAfter;
-    int startIndent;
-    int endIndent;
+		int startIndent;
+		int endIndent;
 
-    ForeignObjectArea areaCurrent;
+		ForeignObjectArea areaCurrent;
 
 	/**
 	 * constructs an instream-foreign-object object (called by Maker).
@@ -130,7 +130,7 @@ public class InstreamForeignObject extends FObj {
 	 * @return the status of the layout
 	 */
 	public Status layout(Area area) throws FOPException {
-	
+
 	if (this.marker == BREAK_AFTER) {
 		return new Status(Status.OK);
 	}
@@ -142,13 +142,18 @@ public class InstreamForeignObject extends FObj {
 		String fontStyle = this.properties.get("font-style").getString();
 		String fontWeight = this.properties.get("font-weight").getString();
 		int fontSize = this.properties.get("font-size").getLength().mvalue();
-	    int align = this.properties.get("text-align").getEnum();
-	    int valign = this.properties.get("vertical-align").getEnum();
-	    int overflow = this.properties.get("overflow").getEnum();
-		
+		// font-variant support
+		// added by Eric SCHAEFFER
+		int fontVariant =
+			this.properties.get("font-variant").getEnum();
+
 		this.fs = new FontState(area.getFontInfo(), fontFamily,
-					 fontStyle, fontWeight, fontSize);
-		
+														fontStyle, fontWeight, fontSize, fontVariant);
+
+			int align = this.properties.get("text-align").getEnum();
+			int valign = this.properties.get("vertical-align").getEnum();
+			int overflow = this.properties.get("overflow").getEnum();
+
 		this.breakBefore = this.properties.get("break-before").getEnum();
 		this.breakAfter = this.properties.get("break-after").getEnum();
 		this.width = this.properties.get("width").getLength().mvalue();
@@ -159,10 +164,10 @@ public class InstreamForeignObject extends FObj {
 		this.hauto = this.properties.get("height").getLength().isAuto();
 		this.cwauto = this.properties.get("content-width").getLength().isAuto();
 		this.chauto = this.properties.get("content-height").getLength().isAuto();
-		
-	    this.startIndent =
-	       		this.properties.get("start-indent").getLength().mvalue();
-	    this.endIndent =
+
+			this.startIndent =
+						this.properties.get("start-indent").getLength().mvalue();
+			this.endIndent =
 			this.properties.get("end-indent").getLength().mvalue();
 		this.spaceBefore =
 		this.properties.get("space-before.optimum").getLength().mvalue();
@@ -171,7 +176,7 @@ public class InstreamForeignObject extends FObj {
 
 		this.scaling = this.properties.get("scaling").getEnum();
 
-	    area.getIDReferences().createID(id);                        
+			area.getIDReferences().createID(id);
 		/* if is embedded in a block area */
 		if (area instanceof BlockArea) {
 		/* temporarily end the block area */
@@ -179,7 +184,7 @@ public class InstreamForeignObject extends FObj {
 		}
 		if(this.areaCurrent == null) {
 		this.areaCurrent =
-		    new ForeignObjectArea(fs, area.getAllocationWidth(), area.spaceLeft());
+				new ForeignObjectArea(fs, area.getAllocationWidth(), area.spaceLeft());
 
 		this.areaCurrent.start();
 		areaCurrent.setWidth(this.width);
@@ -198,7 +203,7 @@ public class InstreamForeignObject extends FObj {
 
 		int numChildren = this.children.size();
 		if(numChildren > 1) {
-		    throw new FOPException("Only one child element is allowed in an instream-foreign-object");
+				throw new FOPException("Only one child element is allowed in an instream-foreign-object");
 		}
 		/* layout foreign object */
 		if(this.children.size() > 0) {
@@ -229,22 +234,22 @@ public class InstreamForeignObject extends FObj {
 		}
 	}
 
-    if (this.isInLabel) {
+		if (this.isInLabel) {
 	startIndent += bodyIndent;
 /*	endIndent += (areaCurrent.getEffectiveWidth()
-		      - distanceBetweenStarts - startIndent)
-	    + labelSeparation;*/
-    }
+					- distanceBetweenStarts - startIndent)
+			+ labelSeparation;*/
+		}
 
-    if (this.isInListBody) {
+		if (this.isInListBody) {
 	startIndent += bodyIndent + distanceBetweenStarts;
-    }
+		}
 
-    if (this.isInTableCell) {
+		if (this.isInTableCell) {
 	startIndent += forcedStartOffset;
 /*	endIndent = areaCurrent.getEffectiveWidth() - forcedWidth -
-	    forcedStartOffset;*/
-    }
+			forcedStartOffset;*/
+		}
 
 	areaCurrent.setStartIndent(startIndent);
 //	areaCurrent.setEndIndent(endIndent);
@@ -274,7 +279,7 @@ public class InstreamForeignObject extends FObj {
 		/* re-start the block area */
 		area.start();
 	}
-	
+
 	if (breakAfter == BreakAfter.PAGE) {
 		this.marker = BREAK_AFTER;
 		return new Status(Status.FORCE_PAGE_BREAK);
@@ -284,7 +289,7 @@ public class InstreamForeignObject extends FObj {
 		this.marker = BREAK_AFTER;
 		return new Status(Status.FORCE_PAGE_BREAK_ODD);
 	}
-	
+
 	if (breakAfter == BreakAfter.EVEN_PAGE) {
 		this.marker = BREAK_AFTER;
 		return new Status(Status.FORCE_PAGE_BREAK_EVEN);

@@ -81,17 +81,21 @@ public class ExternalGraphic extends FObj {
 	public Status layout(Area area) throws FOPException {
 
 		if (this.marker == START) {
-			String fontFamily = 
+			String fontFamily =
 					this.properties.get("font-family").getString();
-			String fontStyle = 
+			String fontStyle =
 					this.properties.get("font-style").getString();
-			String fontWeight = 
+			String fontWeight =
 					this.properties.get("font-weight").getString();
-			int fontSize = 
+			int fontSize =
 					this.properties.get("font-size").getLength().mvalue();
+			// font-variant support
+			// added by Eric SCHAEFFER
+			int fontVariant =
+				this.properties.get("font-variant").getEnum();
 
-			this.fs = new FontState(area.getFontInfo(), fontFamily, 
-					fontStyle, fontWeight, fontSize);
+			this.fs = new FontState(area.getFontInfo(), fontFamily,
+															fontStyle, fontWeight, fontSize, fontVariant);
 
 			// FIXME
 			this.align = this.properties.get("text-align").getEnum();
@@ -110,7 +114,7 @@ public class ExternalGraphic extends FObj {
 
 			this.width = this.properties.get("width").getLength().mvalue();
 
-			this.height = 
+			this.height =
 					this.properties.get("height").getLength().mvalue();
 
 			this.id = this.properties.get("id").getString();
@@ -123,8 +127,8 @@ public class ExternalGraphic extends FObj {
 
 			if (this.isInLabel) {
 				startIndent += bodyIndent;
-				endIndent += (area.getAllocationWidth() - 
-						distanceBetweenStarts - startIndent) + 
+				endIndent += (area.getAllocationWidth() -
+						distanceBetweenStarts - startIndent) +
 						labelSeparation;
 			}
 
@@ -134,7 +138,7 @@ public class ExternalGraphic extends FObj {
 
 			if (this.isInTableCell) {
 				startIndent += forcedStartOffset;
-				endIndent = area.getAllocationWidth() - forcedWidth - 
+				endIndent = area.getAllocationWidth() - forcedWidth -
 						forcedStartOffset;
 			}
 
@@ -153,11 +157,11 @@ public class ExternalGraphic extends FObj {
 					height = (int) ((imgHeight * 1000d));
 				}
 				else if (height == 0) {
-					height = (int) ((imgHeight * ((double) width)) / 
+					height = (int) ((imgHeight * ((double) width)) /
 							imgWidth);
 				}
 				else if (width == 0) {
-					width = (int) ((imgWidth * ((double) height)) / 
+					width = (int) ((imgWidth * ((double) height)) /
 							imgHeight);
 				}
 			}
@@ -180,8 +184,8 @@ public class ExternalGraphic extends FObj {
 				return new Status(Status.AREA_FULL_NONE);
 			}
 
-			this.imageArea = 
-					new ImageArea(fs, img, area.getAllocationWidth(), 
+			this.imageArea =
+					new ImageArea(fs, img, area.getAllocationWidth(),
 					width, height, startIndent, endIndent, align);
 
 			if ((spaceBefore != 0) && (this.marker == 0)) {
@@ -205,12 +209,12 @@ public class ExternalGraphic extends FObj {
 		}
 		catch (MalformedURLException urlex) {
 			// bad URL
-			MessageHandler.errorln("Error while creating area : " + 
+			MessageHandler.errorln("Error while creating area : " +
 					urlex.getMessage());
 		}
 		catch (FopImageException imgex) {
 			// image error
-			MessageHandler.errorln("Error while creating area : " + 
+			MessageHandler.errorln("Error while creating area : " +
 					imgex.getMessage());
 		}
 
@@ -228,7 +232,7 @@ public class ExternalGraphic extends FObj {
 
 
 	public static class Maker extends FObj.Maker {
-		public FObj make(FObj parent, 
+		public FObj make(FObj parent,
 				PropertyList propertyList) throws FOPException {
 			return new ExternalGraphic(parent, propertyList);
 		}
