@@ -18,7 +18,6 @@
  */
 package org.apache.fop.fo;
 
-import java.awt.GraphicsEnvironment;
 import java.awt.geom.Rectangle2D;
 import java.util.BitSet;
 import java.util.HashMap;
@@ -191,10 +190,6 @@ public class FONode extends SyncedNode implements AreaListener {
     /** The number of markers on this FO. */
     protected int numMarkers = 0;
 
-    private GraphicsEnvironment gEnv = null;
-    protected GraphicsEnvironment getGraphicsEnvironment() {
-        return gEnv;
-    }
     /**
      * @param foTree an <tt>FOTree</tt> to which this node belongs
      * @param type the fo type of this FONode.
@@ -230,12 +225,6 @@ public class FONode extends SyncedNode implements AreaListener {
         exprParser = foTree.exprParser;
         propertySet = new PropertyValue[PropNames.LAST_PROPERTY_INDEX + 1];
         foAttributes = new FOAttributes(event, this);
-        if (parent == null) {
-            // Setup the graphics environment
-            gEnv = GraphicsEnvironment.getLocalGraphicsEnvironment();
-        } else {
-            gEnv = parent.getGraphicsEnvironment();
-        }
         if ((stateFlags & MC_MARKER) == 0) {
             processAttributes();
         }

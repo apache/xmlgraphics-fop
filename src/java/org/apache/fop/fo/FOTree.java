@@ -18,6 +18,9 @@
  */
 package org.apache.fop.fo;
 
+import java.awt.Graphics2D;
+import java.awt.GraphicsEnvironment;
+import java.awt.font.FontRenderContext;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -92,17 +95,40 @@ public class FOTree extends Tree implements Runnable {
                 PropertyConsts.pconsts.getInitialValue(PropNames.FONT_SIZE);
         if ( ! (prop instanceof Numeric) || ! ((Numeric)prop).isLength())
             throw new PropertyException("Initial font-size is not a Length");
+        // Set up the rendering context
+    }
 
-
-        /*
-        for (int i = 1; i <= PropNames.LAST_PROPERTY_INDEX; i++) {
-            if (i == PropNames.FONT_SIZE) continue;
-            // Set up the initial values for each property
-            PropertyConsts.pconsts.getInitialValue(i);
-            //System.out.println("....Setting initial value for " + i);
-        }
-        */
-
+    /** The graphics environment in which FOP is operating */
+    private GraphicsEnvironment gEnv = null;
+    /**
+     * Gets the FOP <code>GraphicsEnvironment</code>
+     * @return the environment
+     */
+    protected GraphicsEnvironment getGraphicsEnvironment() {
+        return gEnv;
+    }
+    /** The object which controls drawing and text rendering in the page spread
+     */
+    private Graphics2D g2D = null;
+    /**
+     * Gets the <code>Graphics2D</code> rendering and drawing control object
+     * for area layout
+     * @return
+     */
+    public Graphics2D getGraphics2D() {
+        return g2D;
+    }
+    /** The <code>FontRenderContext</code> object garnered from the
+     * <code>Graphics2D</code> control object for area layout
+     */
+    private FontRenderContext frcontext = null;
+    /**
+     * Gets the <code>FontRenderContext</code> derived from the graphics
+     * control object
+     * @return
+     */
+    public FontRenderContext getFontRenderContext() {
+        return frcontext;
     }
 
     /**
