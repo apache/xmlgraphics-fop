@@ -67,6 +67,7 @@ import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
 
 // Java
+import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.PrintWriter;
@@ -82,7 +83,7 @@ import java.net.URL;
  * treats XSLProcessor as SAXParser
  *
  */
-public class XTCommandLine extends CommandLine {
+public class XTCommandLine {
 
     /**
      * mainline method.
@@ -113,7 +114,7 @@ public class XTCommandLine extends CommandLine {
 	try {
 	    xslProcessor.loadStylesheet(fileInputSource(args[1]));
 
-	    Driver driver = new Driver();
+	    XTDriver driver = new XTDriver();
 	    driver.setRenderer("org.apache.fop.render.pdf.PDFRenderer",
 			       version);
 	    driver.addElementMapping("org.apache.fop.fo.StandardElementMapping");
@@ -127,4 +128,60 @@ public class XTCommandLine extends CommandLine {
 	    System.exit(1);
 	}
     }
+
+    /**
+     * creates a SAX parser, using the value of org.xml.sax.parser
+     * defaulting to org.apache.xerces.parsers.SAXParser
+     *
+     * @return the created SAX parser
+     */
+    static Parser createParser() {
+	String parserClassName =
+	    System.getProperty("org.xml.sax.parser");
+	if (parserClassName == null) {
+	    parserClassName = "com.jclark.xml.sax.Driver";
+	}
+	org.apache.fop.messaging.MessageHandler.logln("using SAX parser " + parserClassName);
+
+	try {
+	    return (Parser)
+		Class.forName(parserClassName).newInstance();
+	} catch (ClassNotFoundException e) {
+	    org.apache.fop.messaging.MessageHandler.errorln("Could not find " + parserClassName);
+	} catch (InstantiationException e) {
+	    org.apache.fop.messaging.MessageHandler.errorln("Could not instantiate "
+			       + parserClassName);
+	} catch (IllegalAccessException e) {
+	    org.apache.fop.messaging.MessageHandler.errorln("Could not access " + parserClassName);
+	} catch (ClassCastException e) {
+	    org.apache.fop.messaging.MessageHandler.errorln(parserClassName + " is not a SAX driver"); 
+	}
+	return null;
+    }
+
+    /**
+     * create an InputSource from a file name
+     *
+     * @param filename the name of the file
+     * @return the InputSource created
+     */
+    protected static InputSource fileInputSource(String filename) {
+	
+	/* this code adapted from James Clark's in XT */
+	File file = new File(filename);
+	String path = file.getAbsolutePath();
+	String fSep = System.getProperty("file.separator");
+	if (fSep != null && fSep.length() == 1)
+	    path = path.replace(fSep.charAt(0), '/');
+	if (path.length() > 0 && path.charAt(0) != '/')
+	    path = '/' + path;
+	try {
+	    return new InputSource(new URL("file", null,
+					   path).toString());
+	}
+	catch (java.net.MalformedURLException e) {
+	    throw new Error("unexpected MalformedURLException");
+	}
+    }
+
 }
