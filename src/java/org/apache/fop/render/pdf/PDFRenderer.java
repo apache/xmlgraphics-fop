@@ -541,20 +541,49 @@ public class PDFRenderer extends PrintRenderer {
 
         float startx = (currentIPPosition + ipMarginOffset) / 1000f;
         float starty = (currentBPPosition + bpMarginOffset) / 1000f;
-        float width = block.getWidth() / 1000f;
+        float width = block.getIPD() / 1000f;
+        float height = block.getBPD() / 1000f;
 
         Integer spaceStart = (Integer) block.getTrait(Trait.SPACE_START);
         if (spaceStart != null) {
             startx += spaceStart.floatValue() / 1000;
-            width -= spaceStart.floatValue() / 1000;
         }
-        Integer spaceEnd = (Integer) block.getTrait(Trait.SPACE_END);
-        if (spaceEnd != null) {
-            width -= spaceEnd.floatValue() / 1000;
+        BorderProps borderStart = (BorderProps) block.getTrait(Trait.BORDER_START);
+        if (borderStart != null) {
+            width += borderStart.width / 1000f;
+        }
+        Integer paddingStart = (Integer) block.getTrait(Trait.PADDING_START);
+        if (paddingStart != null) {
+            width += paddingStart.intValue() / 1000f;
+        }
+        BorderProps borderEnd = (BorderProps) block.getTrait(Trait.BORDER_END);
+        if (borderEnd != null) {
+            width += borderEnd.width / 1000f;
+        }
+        Integer paddingEnd = (Integer) block.getTrait(Trait.PADDING_END);
+        if (paddingEnd != null) {
+            width += paddingEnd.intValue() / 1000f;
+        }
+
+        BorderProps borderBefore = (BorderProps) block.getTrait(Trait.BORDER_BEFORE);
+        if (borderBefore != null) {
+            height += borderBefore.width / 1000f;
+        }
+        Integer paddingBefore = (Integer) block.getTrait(Trait.PADDING_BEFORE);
+        if (paddingBefore != null) {
+            height += paddingBefore.intValue() / 1000f;
+        }
+        BorderProps borderAfter = (BorderProps) block.getTrait(Trait.BORDER_AFTER);
+        if (borderAfter != null) {
+            height += borderAfter.width / 1000f;
+        }
+        Integer paddingAfter = (Integer) block.getTrait(Trait.PADDING_AFTER);
+        if (paddingAfter != null) {
+            height += paddingAfter.intValue() / 1000f;
         }
 
         drawBackAndBorders(block, startx, starty,
-            width, block.getHeight() / 1000f);
+            width, height);
     }
 
     /**
@@ -740,8 +769,8 @@ public class PDFRenderer extends PrintRenderer {
 
             float x = (float)(bv.getXOffset() + containingIPPosition) / 1000f;
             float y = (float)(bv.getYOffset() + containingBPPosition) / 1000f;
-            float width = (float)bv.getWidth() / 1000f;
-            float height = (float)bv.getHeight() / 1000f;
+            float width = (float)bv.getIPD() / 1000f;
+            float height = (float)bv.getBPD() / 1000f;
 
             drawBackAndBorders(bv, x, y, width, height);
 
@@ -776,11 +805,11 @@ public class PDFRenderer extends PrintRenderer {
                 double[] vals = ctm.toArray();
                 //boolean aclock = vals[2] == 1.0;
                 if (vals[2] == 1.0) {
-                    ctm = ctm.translate(-saveBP - bv.getHeight(), -saveIP);
+                    ctm = ctm.translate(-saveBP - bv.getBPD(), -saveIP);
                 } else if (vals[0] == -1.0) {
-                    ctm = ctm.translate(-saveIP - bv.getWidth(), -saveBP - bv.getHeight());
+                    ctm = ctm.translate(-saveIP - bv.getIPD(), -saveBP - bv.getBPD());
                 } else {
-                    ctm = ctm.translate(saveBP, saveIP - bv.getWidth());
+                    ctm = ctm.translate(saveBP, saveIP - bv.getIPD());
                 }
             }
 
@@ -792,8 +821,8 @@ public class PDFRenderer extends PrintRenderer {
                 saveGraphicsState();
                 float x = (float)bv.getXOffset() / 1000f;
                 float y = (float)bv.getYOffset() / 1000f;
-                float width = (float)bv.getWidth() / 1000f;
-                float height = (float)bv.getHeight() / 1000f;
+                float width = (float)bv.getIPD() / 1000f;
+                float height = (float)bv.getBPD() / 1000f;
                 clip(x, y, width, height);
             }
 
@@ -821,7 +850,7 @@ public class PDFRenderer extends PrintRenderer {
 
             currentIPPosition = saveIP;
             currentBPPosition = saveBP;
-            currentBPPosition += (int)(bv.getHeight());
+            currentBPPosition += (int)(bv.getAllocBPD());
         }
         currentFontName = saveFontName;
     }
@@ -862,8 +891,8 @@ public class PDFRenderer extends PrintRenderer {
     public void renderInlineParent(InlineParent ip) {
         float start = (currentBlockIPPosition + ipMarginOffset) / 1000f;
         float top = (ip.getOffset() + currentBPPosition + bpMarginOffset) / 1000f;
-        float width = ip.getWidth() / 1000f;
-        float height = ip.getHeight() / 1000f;
+        float width = ip.getIPD() / 1000f;
+        float height = ip.getBPD() / 1000f;
         drawBackAndBorders(ip, start, top, width, height);
 
         // render contents
@@ -956,7 +985,7 @@ public class PDFRenderer extends PrintRenderer {
                            + (ch.getTextWordSpaceAdjust() / 1000f) + " Tw [" + startText);
                 textOpen = true;
         }
-        prevWordWidth = ch.getWidth();
+        prevWordWidth = ch.getIPD();
         prevWordX = rx;
 
         String s = ch.getChar();
@@ -1027,7 +1056,7 @@ public class PDFRenderer extends PrintRenderer {
                        + (text.getTextWordSpaceAdjust() / 1000f) + " Tw [" + startText);
                 textOpen = true;
         }
-        prevWordWidth = text.getWidth();
+        prevWordWidth = text.getIPD();
         prevWordX = rx;
 
         String s = text.getTextArea();
@@ -1314,8 +1343,8 @@ public class PDFRenderer extends PrintRenderer {
 
         float x = currentBlockIPPosition / 1000f;
         float y = (currentBPPosition + viewport.getOffset()) / 1000f;
-        float width = viewport.getWidth() / 1000f;
-        float height = viewport.getHeight() / 1000f;
+        float width = viewport.getIPD() / 1000f;
+        float height = viewport.getBPD() / 1000f;
         drawBackAndBorders(viewport, x, y, width, height);
 
         endTextObject();
@@ -1362,7 +1391,7 @@ public class PDFRenderer extends PrintRenderer {
         }
         float startx = ((float) currentBlockIPPosition) / 1000f;
         float starty = ((currentBPPosition + area.getOffset()) / 1000f);
-        float endx = (currentBlockIPPosition + area.getWidth()) / 1000f;
+        float endx = (currentBlockIPPosition + area.getIPD()) / 1000f;
         if (!alt) {
             currentStream.add(area.getRuleThickness() / 1000f + " w\n");
             drawLine(startx, starty, endx, starty);

@@ -522,8 +522,8 @@ public class PSRenderer extends AbstractRenderer {
                 saveGraphicsState();
                 int x = bv.getXOffset() + containingIPPosition;
                 int y = bv.getYOffset() + containingBPPosition;
-                int width = bv.getWidth();
-                int height = bv.getHeight();
+                int width = bv.getIPD();
+                int height = bv.getBPD();
                 clip(x, y, width, height);
             }
 
@@ -556,11 +556,11 @@ public class PSRenderer extends AbstractRenderer {
                 double[] vals = ctm.toArray();
                 //boolean aclock = vals[2] == 1.0;
                 if (vals[2] == 1.0) {
-                    ctm = ctm.translate(-saveBP - bv.getHeight(), -saveIP);
+                    ctm = ctm.translate(-saveBP - bv.getBPD(), -saveIP);
                 } else if (vals[0] == -1.0) {
-                    ctm = ctm.translate(-saveIP - bv.getWidth(), -saveBP - bv.getHeight());
+                    ctm = ctm.translate(-saveIP - bv.getIPD(), -saveBP - bv.getBPD());
                 } else {
-                    ctm = ctm.translate(saveBP, saveIP - bv.getWidth());
+                    ctm = ctm.translate(saveBP, saveIP - bv.getIPD());
                 }
             }
 
@@ -573,8 +573,8 @@ public class PSRenderer extends AbstractRenderer {
                 saveGraphicsState();
                 int x = bv.getXOffset();
                 int y = bv.getYOffset();
-                int width = bv.getWidth();
-                int height = bv.getHeight();
+                int width = bv.getIPD();
+                int height = bv.getBPD();
                 clip(x, y, width, height);
             }
 
@@ -599,7 +599,7 @@ public class PSRenderer extends AbstractRenderer {
 
             currentIPPosition = saveIP;
             currentBPPosition = saveBP;
-            currentBPPosition += (int)(bv.getHeight());
+            currentBPPosition += (int)(bv.getAllocBPD());
         }
         currentFontName = saveFontName;
     }
@@ -663,7 +663,7 @@ public class PSRenderer extends AbstractRenderer {
         float startx = currentIPPosition;
         float starty = currentBPPosition;
         drawBackAndBorders(block, startx, starty,
-                           block.getWidth(), block.getHeight());
+                           block.getIPD(), block.getBPD());
     }
 
     /**

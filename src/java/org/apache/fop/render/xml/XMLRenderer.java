@@ -331,9 +331,8 @@ public class XMLRenderer extends AbstractRenderer {
      * @see org.apache.fop.render.AbstractRenderer#renderBlock(Block)
      */
     protected void renderBlock(Block block) {
-        String prop = " width=\"" + block.getWidth() +
-                      "\" ipd=\"" + block.getIPD() +
-                      "\" height=\"" + block.getHeight() + "\"";
+        String prop = " ipd=\"" + block.getIPD() +
+                      "\" bpd=\"" + block.getBPD() + "\"";
         Map map = block.getTraits();
         if (map != null) {
             prop = prop + " props=\"" + getPropString(map) + "\"";
@@ -352,7 +351,7 @@ public class XMLRenderer extends AbstractRenderer {
         if (map != null) {
             prop = " props=\"" + getPropString(map) + "\"";
         }
-        writeStartTag("<lineArea height=\"" + line.getHeight() + "\""
+        writeStartTag("<lineArea bpd=\"" + line.getBPD() + "\""
                       + prop + ">");
         super.renderLineArea(line);
         writeEndTag("</lineArea>");
@@ -414,7 +413,7 @@ public class XMLRenderer extends AbstractRenderer {
      * @see org.apache.fop.render.Renderer#renderInlineSpace(Space)
      */
     protected void renderInlineSpace(Space space) {
-        writeElement("<space width=\"" + space.getWidth() + "\"/>");
+        writeElement("<space ipd=\"" + space.getIPD() + "\"/>");
     }
 
     /**
@@ -470,7 +469,7 @@ public class XMLRenderer extends AbstractRenderer {
                 style = "ridge";
                 break;
         }
-        writeElement("<leader width=\"" + area.getWidth()
+        writeElement("<leader ipd=\"" + area.getIPD()
                         + "\" ruleStyle=\"" + style
                         + "\" ruleThickness=\"" + area.getRuleThickness()
                         + "\"/>");

@@ -459,7 +459,7 @@ public class AWTRenderer extends AbstractRenderer implements Printable, Pageable
         graphics.drawString(s, 220, 200);
 
         // TODO: render text decorations
-        currentBlockIPPosition += text.getWidth();
+        currentBlockIPPosition += text.getAllocIPD();
     }
 
     /** @see org.apache.fop.render.AbstractRenderer */
