@@ -111,7 +111,7 @@
 		</fo:block>
 
 		<xsl:if test="@showcode='true'">
-    		<fo:block start-indent="-50pt" text-align="start" font-family="monospace" white-space-treatment="preserve" font-size="9pt" line-height="9pt">
+    		<fo:block start-indent="-50pt" text-align="start" font-family="monospace" white-space-collapse="false" font-size="9pt" line-height="9pt">
 <xsl:text disable-output-escaping="yes">&lt;</xsl:text>![CDATA[
 	    		<xsl:for-each select="document(@file)/Diagrams/Diagram">
 		    		<xsl:if test="$name=@entry">
@@ -244,7 +244,7 @@
 	</xsl:template>
 
 	<xsl:template match="code">
-        <fo:block font-family="monospace" text-align="start" white-space-treatment="preserve">
+        <fo:block font-family="monospace" text-align="start" white-space-collapse="false">
 			<xsl:apply-templates/>
         </fo:block>
 	</xsl:template>
