@@ -141,6 +141,10 @@ public class FoMultiCase extends FONode {
         super(foTree, FObjectNames.MULTI_CASE, parent, event,
                           stateFlags, sparsePropsMap, sparseIndices);
         stateFlags |= FONode.MC_MULTI_CASE;
+        if (getMarkers() != 0) {
+            throw new FOPException(
+            "fo:marker illegal as child of fo:multi-case");
+        }
         XmlEvent ev = null;
         do {
             try {

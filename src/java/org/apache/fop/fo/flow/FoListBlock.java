@@ -130,9 +130,6 @@ public class FoListBlock extends FONode {
         }
     }
 
-    /** The number of markers on this FO. */
-    private int numMarkers = 0;
-
     /** The number of list-items on this FO. */
     private int numItems = 0;
 
@@ -157,18 +154,9 @@ public class FoListBlock extends FONode {
                           stateFlags, sparsePropsMap, sparseIndices);
         XmlEvent ev;
         // Look for zero or more markers
-        String nowProcessing = "marker";
+        getMarkers();
+        String nowProcessing;
         try {
-            while ((ev = xmlevents.expectStartElement
-                    (FObjectNames.MARKER, XmlEvent.DISCARD_W_SPACE))
-                   != null) {
-                new FoMarker(getFOTree(), this, (FoXmlEvent)ev, stateFlags);
-                numMarkers++;
-                ev = xmlevents.getEndElement(
-                        XmlEventReader.DISCARD_EV, ev);
-                namespaces.relinquishEvent(ev);
-            }
-
             // Look for one or more table-rows
             nowProcessing = "list-item";
             while ((ev = xmlevents.expectStartElement

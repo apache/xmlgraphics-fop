@@ -158,6 +158,7 @@ public class FoInline extends FONode {
     {
         super(foTree, FObjectNames.INLINE, parent, event,
                                   stateFlags, sparsePropsMap, sparseIndices);
+        getMarkers();
         XmlEvent ev = null;
         do {
             try {

@@ -122,6 +122,7 @@ public class FoFlow extends FONode {
     {
         super(foTree, FObjectNames.FLOW, parent, event,
               FONode.FLOW_SET, sparsePropsMap, sparseIndices);
+        getMarkers();
         XmlEvent ev;
         try {
             // Get at least one %block;

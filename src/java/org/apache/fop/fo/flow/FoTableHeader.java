@@ -125,9 +125,6 @@ public class FoTableHeader extends FONode {
         }
     }
 
-    /** The number of markers on this FO. */
-    private int numMarkers = 0;
-
     /** The number of table-rows on this FO. */
     private int numRows = 0;
 
@@ -158,9 +155,10 @@ public class FoTableHeader extends FONode {
     {
         super(foTree, FObjectNames.TABLE_HEADER, parent, event,
                           stateFlags, sparsePropsMap, sparseIndices);
-        XmlEvent ev;
         // Look for zero or more markers
-        String nowProcessing = "marker";
+        getMarkers();
+        XmlEvent ev;
+        String nowProcessing;
         try {
             while ((ev = xmlevents.expectStartElement
                     (FObjectNames.MARKER, XmlEvent.DISCARD_W_SPACE))

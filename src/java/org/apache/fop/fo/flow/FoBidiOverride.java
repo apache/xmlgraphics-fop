@@ -144,6 +144,7 @@ public class FoBidiOverride extends FONode {
     {
         super(foTree, FObjectNames.BIDI_OVERRIDE, parent, event,
                           stateFlags, sparsePropsMap, sparseIndices);
+        getMarkers();
         XmlEvent ev = null;
         do {
             try {
