@@ -148,6 +148,7 @@ list of possible build targets.
     <property name="src.dir" value="./src"/>
     <property name="src.codegen" value="./src/codegen"/>
     <property name="docs.dir" value="./docs"/>
+    <property name="xdocs.dir" value="./src/documentation/content/xdocs"/>
     <property name="fo.examples.dir" value="./docs/examples/fo"/>
     <property name="lib.dir" value="./lib"/>
     <property name="hyph.dir" value="./hyph"/>
@@ -706,5 +707,66 @@ list of possible build targets.
       <fileset dir="${basedir}" includes="${Name}-*.tar.gz"/>
       <fileset dir="${basedir}" includes="${Name}-*.zip"/>
     </delete>
+  </target>
+
+  <target name="validate-xdocs" depends="init" description="Validate the
+xdocs. Point schemas.dir to Forrest's 'schemas' directory.">
+    <property name="schemas.dir" value="../xml-forrest/src/resources/schema"/>
+    <xmlvalidate failonerror="no">
+      <fileset dir="${xdocs.dir}" includes="**.xml"/>
+      <xmlcatalog>
+        <entity publicId="-//APACHE//DTD Compliance V1.0//EN"
+          location="src/documentation/resources/schema/dtd/compliance-v10.dtd"/>
+        <entity publicId="-//APACHE//DTD Documentation V1.1//EN"
+          location="${schemas.dir}/dtd/document-v11.dtd"/>
+        <entity publicId="-//APACHE//DTD Specification V1.1//EN"
+          location="${schemas.dir}/dtd/specification-v11.dtd"/>
+        <entity publicId="-//APACHE//DTD FAQ V1.1//EN"
+          location="${schemas.dir}/dtd/faq-v11.dtd"/>
+        <entity publicId="-//APACHE//DTD Changes V1.1//EN"
+          location="${schemas.dir}/dtd/changes-v11.dtd"/>
+        <entity publicId="-//APACHE//DTD Todo V1.1//EN"
+          location="${schemas.dir}/dtd/todo-v11.dtd"/>
+        <entity publicId="-//APACHE//DTD Cocoon Documentation Book V1.0//EN"
+          location="${schemas.dir}/dtd/book-cocoon-v10.dtd"/>
+        <entity publicId="-//APACHE//DTD Cocoon Documentation Tab V1.0//EN"
+          location="${schemas.dir}/dtd/tab-cocoon-v10.dtd"/>
+        <entity publicId="-//APACHE//DTD How-to V1.0//EN"
+          location="${schemas.dir}/dtd/howto-v10.dtd"/>
+        <entity publicId="-//APACHE//DTD Gump Descriptor V1.0//EN"
+          location="${schemas.dir}/dtd/xgump-draft.dtd"/>
+        <entity publicId="-//APACHE//DTD JavaDoc V1.0//EN"
+          location="${schemas.dir}/dtd/javadoc-v04draft.dtd"/>
+        <entity publicId="-//APACHE//DTD Contributors V1.0//EN"
+          location="${schemas.dir}/dtd/contributors-v10.dtd"/>
+        <entity publicId="-//Outerthought//DTD Libre Configuration V0.1//EN"
+          location="${schemas.dir}/dtd/libre-v01.dtd"/>
+        <entity publicId="-//APACHE//ENTITIES Documentation V1.1//EN"
+          location="${schemas.dir}/dtd/document-v11.mod"/>
+        <entity publicId="-//APACHE//ENTITIES FAQ V1.1//EN"
+          location="${schemas.dir}/dtd/faq-v11.mod"/>
+        <entity publicId="-//APACHE//ENTITIES Todo V1.1//EN"
+          location="${schemas.dir}/dtd/todo-v11.mod"/>
+        <entity publicId="-//APACHE//ENTITIES Common Elements V1.0//EN"
+          location="${schemas.dir}/dtd/common-elems-v10.mod"/>
+        <entity publicId="-//APACHE//ENTITIES Common Character Entity Sets V1.0//EN"
+          location="${schemas.dir}/dtd/common-charents-v10.mod"/>
+
+        <entity publicId="ISO 8879-1986//ENTITIES Added Latin 1//EN//XML"
+          location="${schemas.dir}/entity/ISOlat1.pen"/>
+        <entity publicId="ISO 9573-15:1993//ENTITIES Greek Letters//EN//XML"
+          location="${schemas.dir}/entity/ISOgrk1.pen"/>
+        <entity publicId="ISO 8879:1986//ENTITIES Publishing//EN//XML"
+          location="${schemas.dir}/entity/ISOpub.pen"/>
+        <entity publicId="ISO 8879:1986//ENTITIES General Technical//EN//XML"
+          location="${schemas.dir}/entity/ISOtech.pen"/>
+        <entity publicId="ISO 8879:1986//ENTITIES Numeric and Special Graphic//EN//XML"
+          location="${schemas.dir}/entity/ISOnum.pen"/>
+        <entity publicId="ISO 8879:1986//ENTITIES Diacritical Marks//EN//XML"
+          location="${schemas.dir}/entity/ISOdia.pen"/>
+        <entity publicId="ISO 8879:1986//ENTITIES Added Latin 1//EN//XML"
+          location="${schemas.dir}/entity/ISOlat1.pen"/>
+      </xmlcatalog>
+    </xmlvalidate>
   </target>
 </project>
