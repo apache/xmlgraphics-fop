@@ -377,10 +377,6 @@ public class PageSequence extends FObj {
         }
         Page newPage = this.currentSimplePageMaster.getPageMaster()
           .makePage(areaTree);
-        if (currentPage != null) {
-            ArrayList foots = currentPage.getPendingFootnotes();
-            newPage.setPendingFootnotes(foots);
-        }
         newPage.setNumber(this.currentPageNumber);
         String formattedPageNumber =
           pageNumberGenerator.makeFormattedPageNumber(this.currentPageNumber);
@@ -390,9 +386,21 @@ public class PageSequence extends FObj {
             log.info("[" + currentPageNumber + "]");
             BodyAreaContainer bodyArea = newPage.getBody();
             bodyArea.setIDReferences(areaTree.getIDReferences());
+            if (currentPage != null) {
+                ArrayList foots = currentPage.getPendingFootnotes();
+                newPage.setPendingFootnotes(foots);
+            }
             flow.layout(bodyArea);
         } else {
-            log.info("[" + currentPageNumber + " (blank)]");
+            log.info("[" + currentPageNumber + "] (blank)");
+            if (currentPage != null) {
+                ArrayList foots = currentPage.getPendingFootnotes();
+                if (foots != null) {
+                    BodyAreaContainer bodyArea = newPage.getBody();
+                    bodyArea.setIDReferences(areaTree.getIDReferences());
+                    newPage.setPendingFootnotes(foots);
+                }
+            }
         }
         // because of markers, do after fo:flow (likely also
         // justifiable because of spec)
