@@ -69,12 +69,7 @@ public class FOTree extends Tree implements Runnable {
      * <p>
      *  LinkedList is part of the 1.2 Collections framework.
      */
-    protected static final LinkedList[] propertyStacks;
-    static {
-        propertyStacks = new LinkedList[PropNames.LAST_PROPERTY_INDEX + 1];
-        for (int i = 0; i <= PropNames.LAST_PROPERTY_INDEX; i++)
-            propertyStacks[i] = new LinkedList();
-    }
+    protected final LinkedList[] propertyStacks;
 
     /**
      * @param xmlevents the buffer from which <tt>XMLEvent</tt>s from the
@@ -87,6 +82,9 @@ public class FOTree extends Tree implements Runnable {
         exprParser = new PropertyParser();
 
         // Initialise the propertyStacks
+        propertyStacks = new LinkedList[PropNames.LAST_PROPERTY_INDEX + 1];
+        for (int i = 0; i <= PropNames.LAST_PROPERTY_INDEX; i++)
+            propertyStacks[i] = new LinkedList();
         // Initialize the FontSize first.  Any lengths defined in ems must
         // be resolved relative to the current font size.  This may happen
         // during setup of initial values.
