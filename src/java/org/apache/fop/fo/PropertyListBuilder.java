@@ -165,37 +165,27 @@ public class PropertyListBuilder {
         for (int i = 0; i < attributes.getLength(); i++) {
             String attributeName = attributes.getQName(i);
             /* Handle "compound" properties, ex. space-before.minimum */
-            int sepchar = attributeName.indexOf('.');
-            String propName = attributeName;
-            String subpropName = null;
+            String basePropName = findBasePropertyName(attributeName);
+            String subPropName = findSubPropertyName(attributeName);
             Property propVal = null;
-            if (sepchar > -1) {
-                propName = attributeName.substring(0, sepchar);
-                subpropName = attributeName.substring(sepchar + 1);
-            } else if (propsDone.toString().indexOf(' ' + propName + ' ')
-                       != -1) {
-                // Already processed this property (base property
-                // for a property with sub-components or font-size)
-                continue;
-            }
 
-            Property.Maker propertyMaker = findMaker(table, propName);
+            Property.Maker propertyMaker = findMaker(table, basePropName);
 
             if (propertyMaker != null) {
                 try {
-                    if (subpropName != null) {
-                        Property baseProp = p.getExplicitBaseProp(propName);
+                    if (subPropName != null) {
+                        Property baseProp = p.getExplicitBaseProp(basePropName);
                         if (baseProp == null) {
                             // See if it is specified later in this list
-                            String baseValue = attributes.getValue(propName);
+                            String baseValue = attributes.getValue(basePropName);
                             if (baseValue != null) {
                                 baseProp = propertyMaker.make(p, baseValue,
                                                               parentFO);
-                                propsDone.append(propName + ' ');
+                                propsDone.append(basePropName + ' ');
                             }
                             // else baseProp = propertyMaker.makeCompound(p, parentFO);
                         }
-                        propVal = propertyMaker.make(baseProp, subpropName,
+                        propVal = propertyMaker.make(baseProp, subPropName,
                                                      p,
                                                      attributes.getValue(i),
                                                      parentFO);
@@ -205,7 +195,7 @@ public class PropertyListBuilder {
                                                      parentFO);
                     }
                     if (propVal != null) {
-                        p.put(propName, propVal);
+                        p.put(basePropName, propVal);
                     }
                 } catch (FOPException e) { /* Do other props. */
                     //log.error(e.getMessage());
@@ -219,6 +209,38 @@ public class PropertyListBuilder {
         }
 
         return p;
+    }
+
+    /**
+     * Finds the first or base part (up to any period) of an attribute name.
+     * For example, if input is "space-before.minimum", should return
+     * "space-before".
+     * @param attributeName String to be atomized
+     * @return the base portion of the attribute
+     */
+    public static String findBasePropertyName(String attributeName) {
+        int sepCharIndex = attributeName.indexOf('.');
+        String basePropName = attributeName;
+        if (sepCharIndex > -1) {
+            basePropName = attributeName.substring(0, sepCharIndex);
+        }
+        return basePropName;
+    }
+
+    /**
+     * Finds the second or sub part (portion past any period) of an attribute
+     * name. For example, if input is "space-before.minimum", should return
+     * "minimum".
+     * @param attributeName String to be atomized
+     * @return the sub portion of the attribute
+     */
+    public static String findSubPropertyName(String attributeName) {
+        int sepCharIndex = attributeName.indexOf('.');
+        String subPropName = null;
+        if (sepCharIndex > -1) {
+            subPropName = attributeName.substring(sepCharIndex + 1);
+        }
+        return subPropName;
     }
 
     public Property getSubpropValue(String space, String element,
