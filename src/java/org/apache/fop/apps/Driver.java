@@ -28,6 +28,8 @@ import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
 
 import org.apache.fop.configuration.Configuration;
+import org.apache.fop.configuration.FOUserAgent;
+import org.apache.fop.configuration.SystemOptions;
 import org.apache.fop.fo.FOTree;
 import org.apache.fop.layout.AreaTree;
 import org.apache.fop.render.Renderer;
@@ -74,7 +76,7 @@ public class Driver {
     /** If true, full error stacks are reported */
     private boolean _errorDump = false;
     private Configuration configuration = null;
-    private FOPOptions options = null;
+    private SystemOptions options = null;
     private FOUserAgent userAgent = null;
     
     private InputHandler inputHandler;
@@ -107,13 +109,13 @@ public class Driver {
     public Driver() {
         String version = Version.getVersion();
         configuration = new Configuration();
-        options = new FOPOptions(configuration);
+        options = new SystemOptions(configuration);
         userAgent = new FOUserAgent();
         _errorDump = configuration.isTrue("debugMode");
         logger.config(version);
     }
     
-    public Driver(Configuration config, FOPOptions options) {
+    public Driver(Configuration config, SystemOptions options) {
         String version = Version.getVersion();
         configuration = config;
         this.options = options;

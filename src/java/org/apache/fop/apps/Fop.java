@@ -25,8 +25,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Enumeration;
 import java.util.Properties;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import org.apache.fop.configuration.*;
 import org.apache.fop.configuration.ConfigurationResource;
 import org.apache.fop.configuration.Configuration;
 
@@ -44,12 +46,12 @@ public class Fop {
      */
     public static final String fopPackage = "org.apache.fop";
     
-    private static Logger logger;
+    private Logger logger;
     
-    public Configuration configuration = new Configuration();
+    public Configuration configuration = null;
 
     public static void main(String[] args) {
-        Fop fopInstance = new Fop();
+        Fop fopInstance = new Fop(args);
         fopInstance.run();
     }
 
@@ -106,9 +108,9 @@ public class Fop {
         // Now that the Fop system properties have been added, set up logger
         logger = Logger.getLogger(fopPackage);
         // Then restrict to WARNING
+        logger.setLevel(Level.WARNING);
         Driver driver;
-        Configuration configuration;
-        FOPOptions options = null;
+        SystemOptions options = null;
         Boolean bool = null;
 
         runtime = Runtime.getRuntime();
@@ -119,9 +121,9 @@ public class Fop {
         try {
             configuration = new Configuration();
             if (args == null) {
-                options = new FOPOptions(configuration);
+                options = new UserOptions(configuration);
             } else {
-                options = new FOPOptions(configuration, args);
+                options = new CLI_Options(configuration, args);
             }
             driver = new Driver(configuration, options);
             driver.run();

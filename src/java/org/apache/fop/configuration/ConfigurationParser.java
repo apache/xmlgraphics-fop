@@ -265,6 +265,12 @@ public class ConfigurationParser extends DefaultHandler {
     private void store(String role, String key, Object value) {
         activeConfiguration = (HashMap)configMaps.get(role);
         if (activeConfiguration != null) {
+            Object val;
+            if ((val = activeConfiguration.get(key)) != null) {
+                configuration.logger.config(
+                        "Existing value for key " + key + ":"
+                        + val.toString() + " overrides " + value.toString());
+            }
             activeConfiguration.put(key, value);
         } else {
             configuration.logger.warning("Unknown role >" + role
