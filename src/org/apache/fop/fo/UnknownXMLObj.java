@@ -136,7 +136,11 @@ public class UnknownXMLObj extends XMLObj {
     }
 
     public String getName() {
-        return ""+namespace+":"+tagName;
+        if (namespace == null || namespace.length() == 0) {
+            return tagName;
+        } else {
+            return namespace + ":" + tagName;
+        }
     }
 }
 

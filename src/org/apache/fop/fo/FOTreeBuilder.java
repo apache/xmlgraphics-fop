@@ -120,6 +120,8 @@ public class FOTreeBuilder extends DefaultHandler implements TreeBuilder {
     private Logger log;
 
     private Locator locator;
+    
+    private int errorCount = 0;
 
     public FOTreeBuilder() {}
 
@@ -247,6 +249,28 @@ public class FOTreeBuilder extends DefaultHandler implements TreeBuilder {
     public void setDocumentLocator(Locator locator) {
         this.locator = locator;
     }
+    
+    private String formatLocator(Locator locator) {
+        if (locator == null) {
+            return "";
+        } else {
+            StringBuffer sb = new StringBuffer();
+            if (locator.getSystemId() != null) {
+                sb.append(locator.getSystemId());
+            } else if (locator.getPublicId() != null) {
+                sb.append(locator.getPublicId());
+            } else {
+                sb.append("Unknown source");
+            }
+            sb.append(" (line: ");
+            sb.append(locator.getLineNumber());
+            sb.append(", col: ");
+            sb.append(locator.getColumnNumber());
+            sb.append(")");
+            return sb.toString();
+        }
+    }
+    
     /**
      * SAX Handler for the start of an element
      */
@@ -280,8 +304,25 @@ public class FOTreeBuilder extends DefaultHandler implements TreeBuilder {
             String fullName = uri + "^" + localName;
             if (!this.unknownFOs.containsKey(fullName)) {
                 this.unknownFOs.put(fullName, "");
-                log.error("Unknown formatting object "
-                                       + fullName);
+                StringBuffer sb = new StringBuffer(128);
+                sb.append("Unsupported element encountered: ");
+                sb.append(localName);
+                sb.append(" (Namespace: ");
+                sb.append("".equals(uri) ? "default" : uri);
+                sb.append("). ");
+                sb.append("Source context: ");
+                if (locator != null) {
+                    sb.append(formatLocator(locator));
+                } else {
+                    sb.append("unavailable");
+                }
+                log.error(sb.toString());
+                if (this.errorCount == 0) {
+                    log.error("Expected XSL-FO (root, page-sequence, etc.), "
+                        + "SVG (svg, rect, etc.) or elements from another "
+                        + "supported language.");
+                }
+                this.errorCount++;
             }
             if(namespaces.contains(uri.intern())) {
                 // fall back
@@ -317,10 +358,16 @@ public class FOTreeBuilder extends DefaultHandler implements TreeBuilder {
         if (rootFObj == null) {
             rootFObj = fobj;
             if (!fobj.getName().equals("fo:root")) {
-                throw new SAXException(new FOPException("Root element must"
-                                                        + " be root, not "
-                                                        + fobj.getName(),
-                                                        systemId, line, column));
+                if (fobj.getName().equals("root")) {
+                    throw new SAXException(new FOPException(
+                        "Root element is missing the namespace declaration: "
+                        + "http://www.w3.org/1999/XSL/Format",
+                        systemId, line, column));
+                } else {
+                    throw new SAXException(new FOPException(
+                        "Root element must be root, not "
+                        + fobj.getName(), systemId, line, column));
+                }
             }
         } else if(!(fobj instanceof org.apache.fop.fo.pagination.PageSequence)) {
             currentFObj.addChild(fobj);
@@ -333,6 +380,7 @@ public class FOTreeBuilder extends DefaultHandler implements TreeBuilder {
         currentFObj = null;
         rootFObj = null;
         streamRenderer = null;
+        this.errorCount = 0;
     }
 
     public boolean hasData() {
