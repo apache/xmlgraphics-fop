@@ -135,11 +135,16 @@
     <eval expected="24000" xpath="//flow/block[1]/block[3]/block[2]/block[1]/@start-indent"/>
     <true xpath="not(//flow/block[1]/block[3]/block[2]/block[1]/@end-indent)"/>
 
+    <!-- second list-block -->
+    <eval expected="360000" xpath="//flow/block[2]/@ipda"/>
+    <eval expected="360000" xpath="//flow/block[2]/@ipd"/>
     <!-- fourth list-item -->
-    <eval expected="360000" xpath="//flow/block[2]/block[1]/@ipd"/>
+    <eval expected="350000" xpath="//flow/block[2]/block[1]/@ipda"/>
+    <eval expected="350000" xpath="//flow/block[2]/block[1]/@ipd"/>
+    <eval expected="14400" xpath="//flow/block[2]/block[1]/@bpda"/>
     <eval expected="14400" xpath="//flow/block[2]/block[1]/@bpd"/>
     <!-- label of third list-item -->
-    <eval expected="360000" xpath="//flow/block[2]/block[1]/block[1]/@ipd"/>
+    <eval expected="350000" xpath="//flow/block[2]/block[1]/block[1]/@ipd"/>
     <eval expected="14400" xpath="//flow/block[2]/block[1]/block[1]/@bpd"/>
     <!-- content of label of third list-item -->
     <eval expected="40000" xpath="//flow/block[2]/block[1]/block[1]/block[1]/@ipd"/>
@@ -147,7 +152,7 @@
     <eval expected="10000" xpath="//flow/block[2]/block[1]/block[1]/block[1]/@start-indent"/>
     <eval expected="310000" xpath="//flow/block[2]/block[1]/block[1]/block[1]/@end-indent"/>
     <!-- body of third list-item -->
-    <eval expected="360000" xpath="//flow/block[2]/block[1]/block[2]/@ipd"/>
+    <eval expected="350000" xpath="//flow/block[2]/block[1]/block[2]/@ipd"/>
     <eval expected="14400" xpath="//flow/block[2]/block[1]/block[2]/@bpd"/>
     <!-- content of body of third list-item -->
     <eval expected="300000" xpath="//flow/block[2]/block[1]/block[2]/block[1]/@ipd"/>
