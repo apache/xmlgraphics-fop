@@ -1,29 +1,32 @@
 ==============================================================================
 Done since 0.20.4 release
 
+- Update to Xerces 2.2.1 (Jeremias Maerki)
+- Fixed EOFException in TTFReader (Bug #14576)
+  Submitted by: Bernard D'Have <bdhaveos@wanadoo.be>
 - Added support for CCITT Group 4 encoded TIFF files
   Made JAI support dynamic (no recompile needed anymore)
   Submitted by: Manuel Mall <mm@arcus.com.au> (see bug #13866)
 - Fixed problem with jpegs with icc profile and acrobat reader 5 (Bug #11301)
   Submitted by: Stephan Neuhaus <stephan.neuhaus@myview.de>
-- Fix bug in LinkSet.mergeLinks() (ArrayOutOfBoundsException when number of 
+- Fix bug in LinkSet.mergeLinks() (ArrayOutOfBoundsException when number of
   rects is zero) (Jeremias Maerki)
 - Removed the necessity for a buildtools.jar (Jeremias Maerki)
 - Updated several JARs: Ant 1.5.1, Xerces 2.2.0, Xalan 2.4.1 (Jeremias Maerki)
 - Fixed some multi-threading issues (NPEs)
   Submitted by: Joachim Unger <joachim.unger@softwareag.com>
 - Improved registration of ImageReader implementations (Jeremias Maerki)
-- Refactored baseDir stuff. Internally most code has been changed to work on 
-  URLs instead of filenames. The baseDir property is evaluated to a baseURL 
+- Refactored baseDir stuff. Internally most code has been changed to work on
+  URLs instead of filenames. The baseDir property is evaluated to a baseURL
   which can be accessed through Configuration.getBaseURL() (Jeremias Maerki)
-- Added a fontBaseDir property (similar to baseDir) which represents a base 
-  dir/URL for fonts. If this property isn't set, a fallback is made to 
+- Added a fontBaseDir property (similar to baseDir) which represents a base
+  dir/URL for fonts. If this property isn't set, a fallback is made to
   baseDir. (Jeremias Maerki)
 - Fixed some javadoc warnings
   Submitted by: Victor Mote <vic@outfitr.com>
 - Added translation for GoToPageDialog and update for czech translations
   Submitted by: Michal Buchtik <BuchtikM@dlsystem.cz>
-- background properties for all regions + regions precedence support 
+- background properties for all regions + regions precedence support
   (Oleg Tkachenko)
 - TXTRenderer output encoding (Oleg Tkachenko)
 - border-spacing support (Oleg Tkachenko)
