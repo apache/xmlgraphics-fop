@@ -138,6 +138,14 @@ public class PageLayoutManager extends AbstractLayoutManager implements Runnable
     private PageSequence pageSequence;
 
     /**
+     * This is the SimplePageMaster that should be used to create the page. It
+     * will be equal to the PageSequence's simplePageMaster, if it exists, or
+     * to the correct member of the PageSequence's pageSequenceMaster, if that
+     * exists instead.
+     */
+    private SimplePageMaster currentSimplePageMaster;
+
+    /**
      * This is the top level layout manager.
      * It is created by the PageSequence FO.
      *
@@ -497,11 +505,14 @@ public class PageLayoutManager extends AbstractLayoutManager implements Runnable
         if (curPage != null) {
             // Layout static content into the regions
             // Need help from pageseq for this
-            SimplePageMaster spm = pageSequence.getCurrentSimplePageMaster();
-            layoutStaticContent(spm.getRegion(Region.BEFORE), RegionReference.BEFORE);
-            layoutStaticContent(spm.getRegion(Region.AFTER), RegionReference.AFTER);
-            layoutStaticContent(spm.getRegion(Region.START), RegionReference.START);
-            layoutStaticContent(spm.getRegion(Region.END), RegionReference.END);
+            layoutStaticContent(currentSimplePageMaster.getRegion(Region.BEFORE),
+                                RegionReference.BEFORE);
+            layoutStaticContent(currentSimplePageMaster.getRegion(Region.AFTER),
+                                RegionReference.AFTER);
+            layoutStaticContent(currentSimplePageMaster.getRegion(Region.START),
+                                RegionReference.START);
+            layoutStaticContent(currentSimplePageMaster.getRegion(Region.END),
+                                RegionReference.END);
             // Queue for ID resolution and rendering
             areaTree.addPage(curPage);
             curPage = null;
@@ -714,24 +725,25 @@ public class PageLayoutManager extends AbstractLayoutManager implements Runnable
                                    boolean bIsBlank, boolean firstPage,
                                    boolean bIsLast)
                                    throws FOPException {
-        if (pageSequence.getPageSequenceMaster() != null) {
-            pageSequence.setCurrentSimplePageMaster (pageSequence.getPageSequenceMaster()
+        if (pageSequence.getPageSequenceMaster() == null) {
+            currentSimplePageMaster = pageSequence.getSimplePageMaster();
+        } else {
+            currentSimplePageMaster = pageSequence.getPageSequenceMaster()
               .getNextSimplePageMaster(((pageNumber % 2) == 1),
                                        firstPage,
-                                       bIsBlank));
+                                       bIsBlank);
         }
-        Region body = pageSequence.getCurrentSimplePageMaster().getRegion(Region.BODY);
+        Region body = currentSimplePageMaster.getRegion(Region.BODY);
         if (!pageSequence.getMainFlow().getFlowName().equals(body.getRegionName())) {
           throw new FOPException("Flow '" + pageSequence.getMainFlow().getFlowName()
                                  + "' does not map to the region-body in page-master '"
-                                 + pageSequence.getCurrentSimplePageMaster().getMasterName() + "'");
+                                 + currentSimplePageMaster.getMasterName() + "'");
         }
-        SimplePageMaster currentSimplePageMaster = pageSequence.getCurrentSimplePageMaster();
         PageMaster pageMaster = currentSimplePageMaster.getPageMaster();
-        if (pageMaster == null) {
+        if ( pageMaster == null) {
             createSimplePageMasterAreas(currentSimplePageMaster);
         }
-        pageMaster = pageSequence.getCurrentSimplePageMaster().getPageMaster();
+        pageMaster = currentSimplePageMaster.getPageMaster();
         PageViewport p = pageMaster.makePage();
         return p;
         // The page will have a viewport/reference area pair defined
@@ -794,7 +806,6 @@ public class PageLayoutManager extends AbstractLayoutManager implements Runnable
 
        node.setPageMaster(new PageMaster(new PageViewport(page,
                new Rectangle(0, 0, pageWidth, pageHeight))));
-
 
     }
 

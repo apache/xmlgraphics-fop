@@ -135,11 +135,11 @@ public class PageSequence extends FObj {
     /**
      * The currentSimplePageMaster is either the page master for the
      * whole page sequence if master-reference refers to a simple-page-master,
-     * or the simple page master produced by the page sequence mster otherwise.
+     * or the simple page master produced by the page sequence master otherwise.
      * The pageSequenceMaster is null if master-reference refers to a
      * simple-page-master.
      */
-    private SimplePageMaster currentSimplePageMaster;
+    private SimplePageMaster simplePageMaster;
     private PageSequenceMaster pageSequenceMaster;
 
     /**
@@ -210,11 +210,11 @@ public class PageSequence extends FObj {
 
 
         String masterName = this.properties.get("master-reference").getString();
-        this.currentSimplePageMaster =
-          this.layoutMasterSet.getSimplePageMaster(masterName);
-        if (this.currentSimplePageMaster == null) {
+        this.simplePageMaster =
+                this.layoutMasterSet.getSimplePageMaster(masterName);
+        if (this.simplePageMaster == null) {
             this.pageSequenceMaster =
-              this.layoutMasterSet.getPageSequenceMaster(masterName);
+                    this.layoutMasterSet.getPageSequenceMaster(masterName);
             if (this.pageSequenceMaster == null) {
                 throw new FOPException("master-reference '" + masterName
                                        + "' for fo:page-sequence matches no"
@@ -687,20 +687,6 @@ public class PageSequence extends FObj {
 //     }
 
     /**
-     * Get the current simple page master
-     * that is active for the last page created.
-     *
-     * @return the current simple page master
-     */
-    public SimplePageMaster getCurrentSimplePageMaster() {
-        return currentSimplePageMaster;
-    }
-
-    public void setCurrentSimplePageMaster(SimplePageMaster simplePageMaster) {
-        this.currentSimplePageMaster = simplePageMaster;
-    }
-
-    /**
      * Get the static content FO node from the flow map.
      * This gets the static content flow for the given flow name.
      *
@@ -745,12 +731,23 @@ public class PageSequence extends FObj {
     }
 
     /**
-     * Public accessor for getting the PageSequenceMaster to which this
+     * Public accessor for getting the PageSequenceMaster (if any) to which this
      * PageSequence is attached.
-     * @return the PageSequenceMaster to which this PageSequence is attached.
+     * @return the PageSequenceMaster to which this PageSequence is attached, or
+     * null if there is none.
      */
     public PageSequenceMaster getPageSequenceMaster() {
         return pageSequenceMaster;
+    }
+
+    /**
+     * Public accessor for getting the SimplePageMaster (if any) to which this
+     * PageSequence is attached.
+     * @return the SimplePageeMaster to which this PageSequence is attached or
+     * null if there is none.
+     */
+    public SimplePageMaster getSimplePageMaster() {
+        return simplePageMaster;
     }
 
     /**
