@@ -204,7 +204,6 @@ public class Driver implements Loggable {
 
     public void setLogger(Logger logger) {
         log = logger;
-        _treeBuilder.setLogger(log);
     }
 
     private Logger getLogger() {
@@ -440,6 +439,7 @@ public class Driver implements Loggable {
     public ContentHandler getContentHandler() {
         StreamRenderer streamRenderer = new StreamRenderer(_stream, _renderer);
         streamRenderer.setLogger(getLogger());
+        _treeBuilder.setLogger(getLogger());
         _treeBuilder.setStreamRenderer(streamRenderer);
 
         return _treeBuilder;
