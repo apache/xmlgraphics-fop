@@ -93,7 +93,8 @@ public class PDFColor extends PDFPathPaint {
 	
 	// components from 0 to 255
 	public PDFColor(int theRed, int theGreen, int theBlue) {
-		this(((double) theRed) / 255d * 2d - 1d, ((double) theGreen) / 255d * 2d - 1d, ((double) theBlue) / 255d * 2d - 1d);
+		this(((double) theRed) / 255d, ((double) theGreen) / 255d, ((double) theBlue) / 255d );
+
 	}
 	
 	public PDFColor(double theCyan, double theMagenta, double theYellow, double theBlack) {
@@ -146,15 +147,15 @@ public class PDFColor extends PDFPathPaint {
 	}
 	public int red255()
 	{
-		return (int) ((this.red + 1d) / 2d * 255d);
+		return (int) (this.red * 255d);
 	}
 	public int green255()
 	{
-		return (int) ((this.green + 1d) / 2d * 255d);
+		return (int) (this.green * 255d);
 	}
 	public int blue255()
 	{
-		return (int) ((this.blue + 1d) / 2d * 255d);
+		return (int) (this.blue * 255d);
 	}
 	public double cyan()
 	{
