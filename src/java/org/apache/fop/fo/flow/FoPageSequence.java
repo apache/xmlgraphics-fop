@@ -162,10 +162,9 @@ public class FoPageSequence extends FONode {
                     (FObjectNames.STATIC_CONTENT, XmlEvent.DISCARD_W_SPACE))
                    != null) {
                 // Loop over remaining fo:static-content
-                if (firstStaticContent != -1)
+                if (firstStaticContent == -1)
                     firstStaticContent = numChildren();
                 new FoStaticContent(getFOTree(), this, (FoXmlEvent)ev);
-                ev = xmlevents.getEndElement(XmlEventReader.DISCARD_EV, ev);
                 namespaces.relinquishEvent(ev);
             }
 
