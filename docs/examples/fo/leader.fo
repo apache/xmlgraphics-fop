@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<!-- example for the very limited use of the fo leader. -->
+<!-- examples for the use of the fo leader -->
 
 <fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format">
 
@@ -33,7 +33,10 @@
                 font-family="sans-serif" 
                 line-height="15pt"
                 space-after.optimum="3pt"
-                text-align="start">
+                text-align="start"
+                background-color="blue"
+                color="white"
+                >
         Leader examples
       </fo:block>
 
@@ -43,6 +46,35 @@
                 space-before.optimum="5pt"
                 space-after.optimum="3pt"
                 text-align="start">
+        fo:leader is mainly used a) in table-of-contents to generate sequences of "." glyphs that separate titles from page numbers 
+        b) to create entry fields in fill-in-the-blank forms c) to create horizontal rules for use as separators. You 
+        define the look and use of fo:leader with the property "leader-pattern". It can have the following values: a) space. This 
+        just creates an space. b) dots. This creates a sequence of "." c) rule. This creates a line. d) use-content. This creates a 
+        repeating pattern of the content of fo:leader (not supported yet by Fop). 
+      </fo:block>
+
+
+      <fo:block font-size="12pt" 
+                font-family="sans-serif" 
+                line-height="15pt"
+                space-before.optimum="5pt"
+                space-after.optimum="3pt"
+                text-align="start">
+        The dimensions of fo:leader are determined by the compound property leader-length. It consists of the 
+        3 sub values: leader-length.minimum (default = 0), leader-length.optimum (default = 12pt), leader-length.maximum
+        (default = 100%). If you want to make sure, that leader-length has a fixed size, you should use the compound 
+        property (p.e. leader-length="5cm"). If you want to fill the rest of the remaining space with dots in a table of 
+        content, you can use the default values. 
+      </fo:block>
+
+      <fo:block font-size="14pt" 
+                font-family="sans-serif" 
+                line-height="17pt"
+                space-before.optimum="5pt"
+                space-after.optimum="3pt"
+                text-align="start"
+                background-color="blue"
+                color="white">
         leader with leader-pattern="space" 
       </fo:block>
 
@@ -67,13 +99,28 @@
       </fo:block>
 
 
+      <fo:block font-size="14pt" 
+                font-family="sans-serif" 
+                line-height="17pt"
+                space-before.optimum="5pt"
+                space-after.optimum="3pt"
+                text-align="start"
+                background-color="blue"
+                color="white"
+                >
+        Using fo:leader with leader-pattern="dots"
+      </fo:block>
+
       <fo:block font-size="12pt" 
                 font-family="sans-serif" 
                 line-height="15pt"
                 space-before.optimum="5pt"
                 space-after.optimum="3pt"
                 text-align="start">
-        Using fo:leader with leader-pattern="dots"
+        There are two properties which allow you to specify the looks of the dotted line. First 
+        "leader-pattern-width". It specifies the length of one dot and the space up to the next dot. 
+        Second leader-alignment. It can be used to make sure, the dots in different lines are parallel (only value "reference-area"
+        is supported). 
       </fo:block>
 
       <!-- Inserts a leader (dots)   -->
@@ -315,12 +362,96 @@
     <!-- table end -->
 
 
-      <fo:block font-size="12pt" 
+
+      <fo:block text-align="center"
+                   font-size="15pt"
+                   space-before.optimum="16pt"
+                   space-after.optimum="12pt"> 
+      Table of Content
+      </fo:block>
+
+      <fo:block text-align="start"
+                   font-size="10pt"
+                   space-after.optimum="12pt"> 
+      shows the use of leader properties in combination to build a table of content. 
+      Following values are used for the leader: 
+      leader-pattern="dots"
+      leader-pattern-width="8pt"
+      leader-alignment="reference-area"
+      no leader-length is specified, so the default values are used (min: 0, opt: 12pt, max: 100%)
+      </fo:block>
+
+
+      <!-- Here starts the table -->
+      <fo:table>
+        <fo:table-column column-width="1cm"/>
+        <fo:table-column column-width="14.2cm"/>
+        <fo:table-column column-width="0.3cm"/>
+        <fo:table-body font-size="12pt" font-family="sans-serif">
+
+        <fo:table-row line-height="12pt">
+        <fo:table-cell><fo:block text-align="end">A) </fo:block></fo:table-cell>
+        <fo:table-cell><fo:block text-align="start">This is some longer sample text<fo:leader leader-pattern="dots" 
+                   leader-pattern-width="8pt"
+                   leader-alignment="reference-area"
+                   /></fo:block></fo:table-cell>
+        <fo:table-cell><fo:block text-align="end">1</fo:block></fo:table-cell>
+        </fo:table-row>
+
+
+        <fo:table-row line-height="12pt">
+        <fo:table-cell><fo:block text-align="end">B) </fo:block></fo:table-cell>
+        <fo:table-cell><fo:block text-align="start">Some text<fo:leader leader-pattern="dots" 
+                   leader-pattern-width="8pt"
+                   leader-alignment="reference-area"
+                   /></fo:block></fo:table-cell>
+        <fo:table-cell><fo:block text-align="end">2</fo:block></fo:table-cell>
+        </fo:table-row>
+
+        <fo:table-row line-height="12pt">
+        <fo:table-cell><fo:block text-align="end" >C) </fo:block></fo:table-cell>
+        <fo:table-cell><fo:block text-align="start">Text<fo:leader leader-pattern="dots" 
+                   leader-pattern-width="8pt"
+                   leader-alignment="reference-area"
+                   /></fo:block></fo:table-cell>
+        <fo:table-cell><fo:block text-align="end">3</fo:block></fo:table-cell>
+        </fo:table-row>
+
+        <fo:table-row line-height="12pt">
+        <fo:table-cell><fo:block text-align="end">D) </fo:block></fo:table-cell>
+        <fo:table-cell><fo:block text-align="start">This text is even longer than the first entry <fo:leader leader-pattern="dots" 
+                   leader-pattern-width="8pt"
+                   leader-alignment="reference-area"
+                   /></fo:block></fo:table-cell>
+        <fo:table-cell><fo:block text-align="end">4</fo:block></fo:table-cell>
+        </fo:table-row>
+
+        <fo:table-row line-height="12pt">
+        <fo:table-cell><fo:block text-align="end">E) </fo:block></fo:table-cell>
+        <fo:table-cell><fo:block text-align="start">Shorter text example<fo:leader leader-pattern="dots" 
+                   leader-pattern-width="8pt"
+                   leader-alignment="reference-area"
+                   /></fo:block></fo:table-cell>
+        <fo:table-cell><fo:block text-align="end">5</fo:block></fo:table-cell>
+        </fo:table-row>
+
+        </fo:table-body>
+      </fo:table>
+
+
+
+
+
+
+      <fo:block font-size="14pt" 
                 font-family="sans-serif" 
-                line-height="15pt"
-                space-before.optimum="5pt"
+                line-height="17pt"
+                space-before.optimum="15pt"
                 space-after.optimum="3pt"
-                text-align="start">
+                text-align="start"
+                background-color="blue"
+                color="white"
+                >
         Leader with leader-pattern="rule"
       </fo:block>
 
@@ -542,7 +673,7 @@
 
 
       <fo:block text-align="center"
-                   font-size="16pt"
+                   font-size="15pt"
                    space-before.optimum="16pt"
                    space-after.optimum="12pt"> 
       Using leader in combination with justified text
@@ -553,8 +684,7 @@
       Here is some longer text. Here comes the leader (dots width 8pt): 
         <fo:leader leader-pattern="dots" 
                    leader-pattern-width="8pt"
-                   leader-length.minimum="2cm"
-                   leader-length.optimum="5cm"/>Here is some longer text. Here is some longer text. 
+                   leader-length="5cm"/>Here is some longer text. Here is some longer text. 
       Here is some longer text. Here is some longer text. Here is some longer text. 
       </fo:block>
 
@@ -562,16 +692,14 @@
       Here is some longer text. Here comes the leader (dots width 5pt): 
         <fo:leader leader-pattern="dots" 
                    leader-pattern-width="5pt"
-                   leader-length.minimum="2cm"
-                   leader-length.optimum="5cm"/>Here is some longer text. Here is some longer text. 
+                   leader-length="5cm"/>Here is some longer text. Here is some longer text. 
       Here is some longer text. Here is some longer text. Here is some longer text. 
       </fo:block>
 
       <fo:block text-align="justify">Here is some longer text. Here is some longer text. 
       Here is some longer text. Here comes the leader (dots): 
         <fo:leader leader-pattern="dots" 
-                   leader-length.minimum="2cm"
-                   leader-length.optimum="5cm"/>Here is some longer text. Here is some longer text. 
+                   leader-length="5cm"/>Here is some longer text. Here is some longer text. 
       Here is some longer text. Here is some longer text. Here is some longer text. 
       </fo:block>
 
@@ -579,185 +707,16 @@
       <fo:block text-align="justify">Here is some longer text. Here is some longer text. 
       Here is some longer text. Here comes the leader (rule): 
         <fo:leader leader-pattern="rule" 
-                   leader-length.minimum="2cm"
-                   leader-length.optimum="5cm"/>Here is some longer text. Here is some longer text. 
+                   leader-length="5cm"/>Here is some longer text. Here is some longer text. 
       Here is some longer text. Here is some longer text. Here is some longer text. 
       </fo:block>
 
       <fo:block text-align="justify">Here is some longer text. Here is some longer text. 
       Here is some longer text. Here comes the leader (space): 
         <fo:leader leader-pattern="space" 
-                   leader-length.minimum="2cm"
-                   leader-length.optimum="5cm"/>Here is some longer text. Here is some longer text. 
+                   leader-length="5cm"/>Here is some longer text. Here is some longer text. 
       Here is some longer text. Here is some longer text. Here is some longer text. 
       </fo:block>
-
-
-      <fo:block text-align="center"
-                   font-size="16pt"
-                   space-before.optimum="16pt"
-                   space-after.optimum="12pt"> 
-      Table of Content
-      </fo:block>
-
-      <fo:block text-align="start"
-                   font-size="10pt"
-                   space-after.optimum="12pt"> 
-      shows the use of leader properties in combination to build a table of content. 
-      Following values are used for the leader: 
-      leader-pattern="dots"
-      leader-pattern-width="8pt"
-      leader-alignment="reference-area"
-      leader-length.optimum="14cm"
-      </fo:block>
-
-
-      <!-- Here starts the table -->
-      <fo:table>
-        <fo:table-column column-width="1cm"/>
-        <fo:table-column column-width="14.2cm"/>
-        <fo:table-column column-width="0.3cm"/>
-        <fo:table-body font-size="10pt" font-family="sans-serif">
-
-        <fo:table-row line-height="12pt">
-        <fo:table-cell><fo:block text-align="end">A) </fo:block></fo:table-cell>
-        <fo:table-cell><fo:block text-align="start">What is FOP?<fo:leader leader-pattern="dots" 
-                   leader-pattern-width="8pt"
-                   leader-alignment="reference-area"
-                   leader-length="14cm"/></fo:block></fo:table-cell>
-        <fo:table-cell><fo:block text-align="end">1</fo:block></fo:table-cell>
-        </fo:table-row>
-
-
-        <fo:table-row line-height="12pt">
-        <fo:table-cell><fo:block text-align="end">B) </fo:block></fo:table-cell>
-        <fo:table-cell><fo:block text-align="start">Downloading FOP<fo:leader leader-pattern="dots" 
-                   leader-pattern-width="8pt"
-                   leader-alignment="reference-area"
-                   leader-length="14cm"/></fo:block></fo:table-cell>
-        <fo:table-cell><fo:block text-align="end">2</fo:block></fo:table-cell>
-        </fo:table-row>
-
-        <fo:table-row line-height="12pt">
-        <fo:table-cell><fo:block text-align="end" >C) </fo:block></fo:table-cell>
-        <fo:table-cell><fo:block text-align="start">Running FOP<fo:leader leader-pattern="dots" 
-                   leader-pattern-width="8pt"
-                   leader-alignment="reference-area"
-                   leader-length="14cm"/></fo:block></fo:table-cell>
-        <fo:table-cell><fo:block text-align="end">3</fo:block></fo:table-cell>
-        </fo:table-row>
-
-        <fo:table-row line-height="12pt">
-        <fo:table-cell><fo:block text-align="end">D) </fo:block></fo:table-cell>
-        <fo:table-cell><fo:block text-align="start">Embedding FOP<fo:leader leader-pattern="dots" 
-                   leader-pattern-width="8pt"
-                   leader-alignment="reference-area"
-                   leader-length="14cm"/></fo:block></fo:table-cell>
-        <fo:table-cell><fo:block text-align="end">4</fo:block></fo:table-cell>
-        </fo:table-row>
-
-        <fo:table-row line-height="12pt">
-        <fo:table-cell><fo:block text-align="end">E) </fo:block></fo:table-cell>
-        <fo:table-cell><fo:block text-align="start">What is Implemented?<fo:leader leader-pattern="dots" 
-                   leader-pattern-width="8pt"
-                   leader-alignment="reference-area"
-                   leader-length="14cm"/></fo:block></fo:table-cell>
-        <fo:table-cell><fo:block text-align="end">5</fo:block></fo:table-cell>
-        </fo:table-row>
-
-        </fo:table-body>
-      </fo:table>
-
-
-      <fo:block text-align="center"
-                   font-size="16pt"
-                   space-before.optimum="16pt"
-                   space-after.optimum="12pt"> 
-      Table of Content 2
-      </fo:block>
-
-      <fo:block text-align="start"
-                   font-size="10pt"
-                   space-after.optimum="12pt"> 
-      shows the use of leader-length.minimum in the middle column. Values are increased from 0cm (default)
-      to 0.5 and then to 1cm
-      </fo:block>
-
-
-      <!-- Here starts the table -->
-      <fo:table>
-        <fo:table-column column-width="1cm"/>
-        <fo:table-column column-width="7cm"/>
-        <fo:table-column column-width="2cm"/>
-        <fo:table-body font-size="10pt" font-family="sans-serif">
-
-        <fo:table-row line-height="12pt">
-        <fo:table-cell border-width="0.5mm"><fo:block text-align="end">A)</fo:block></fo:table-cell>
-        <fo:table-cell border-width="0.5mm"><fo:block text-align="start">What is FOP doing here in the middle?<fo:leader leader-pattern="dots" 
-                   leader-pattern-width="8pt"
-                   leader-alignment="reference-area"
-                   leader-length.optimum="5cm"
-                   leader-length.maximum="7cm"/></fo:block></fo:table-cell>
-        <fo:table-cell border-width="0.5mm"><fo:block text-align="end">1</fo:block></fo:table-cell>
-        </fo:table-row>
-
-        <fo:table-row line-height="12pt">
-        <fo:table-cell border-width="0.5mm"><fo:block text-align="end">A)</fo:block></fo:table-cell>
-        <fo:table-cell border-width="0.5mm"><fo:block text-align="start">What is FOP doing here in the middle?<fo:leader leader-pattern="dots" 
-                   leader-pattern-width="8pt"
-                   leader-alignment="reference-area"
-                   leader-length.minimum="0.5cm"
-                   leader-length.optimum="5cm"
-                   leader-length.maximum="7cm"/></fo:block></fo:table-cell>
-        <fo:table-cell border-width="0.5mm"><fo:block text-align="end">1</fo:block></fo:table-cell>
-        </fo:table-row>
-
-        <fo:table-row line-height="12pt">
-        <fo:table-cell border-width="0.5mm"><fo:block text-align="end">A)</fo:block></fo:table-cell>
-        <fo:table-cell border-width="0.5mm"><fo:block text-align="start">What is FOP doing here in the middle?<fo:leader leader-pattern="dots" 
-                   leader-pattern-width="8pt"
-                   leader-alignment="reference-area"
-                   leader-length.minimum="1cm"
-                   leader-length.optimum="5cm"
-                   leader-length.maximum="7cm"/></fo:block></fo:table-cell>
-        <fo:table-cell border-width="0.5mm"><fo:block text-align="end">1</fo:block></fo:table-cell>
-        </fo:table-row>
-
-        </fo:table-body>
-      </fo:table>
-
-      <fo:block text-align="center"
-                   font-size="16pt"
-                   space-before.optimum="16pt"
-                   space-after.optimum="12pt"> 
-      The text/leader combination from table 1 without the table
-      </fo:block>
-
-
-<fo:block text-align="start">What is FOP?<fo:leader leader-pattern="dots" 
-                   leader-pattern-width="8pt"
-                   leader-alignment="reference-area"
-                   leader-length="14cm"/></fo:block>
-
-<fo:block text-align="start">Downloading FOP<fo:leader leader-pattern="dots" 
-                   leader-pattern-width="8pt"
-                   leader-alignment="reference-area"
-                   leader-length="14cm"/></fo:block>
-
-<fo:block text-align="start">Running FOP<fo:leader leader-pattern="dots" 
-                   leader-pattern-width="8pt"
-                   leader-alignment="reference-area"
-                   leader-length="14cm"/></fo:block>
-
-<fo:block text-align="start">Embedding FOP<fo:leader leader-pattern="dots" 
-                   leader-pattern-width="8pt"
-                   leader-alignment="reference-area"
-                   leader-length="14cm"/></fo:block>
-
-<fo:block text-align="start">What is Implemented?<fo:leader leader-pattern="dots" 
-                   leader-pattern-width="8pt"
-                   leader-alignment="reference-area"
-                   leader-length="14cm"/></fo:block>
 
 
 
