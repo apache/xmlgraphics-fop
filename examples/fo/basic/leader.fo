@@ -725,7 +725,7 @@
       <fo:block space-before.optimum="8pt" font-size="12pt">
         The following examples show Leader with "use-content".
         The inline areas from the context of the leader are
-        repeated until the lenght of the leader. The
+        repeated until the length of the leader. The
         "leader-pattern-width" can be used to set the width
         of each repeated pattern element. <fo:inline font-style="italic">
         If this width is less than the inline areas then the width
@@ -733,17 +733,17 @@
       </fo:block>
 
       <fo:block space-before.optimum="5pt" text-align="start">Characters:
-        <fo:leader leader-pattern="use-content">abcd</fo:leader>
+        <fo:leader leader-pattern="use-content">abcd</fo:leader>End
       </fo:block>
 
       <fo:block space-before.optimum="5pt" text-align="start">Set width:
         <fo:leader leader-pattern="use-content"
-            leader-pattern-width="50pt">abcd</fo:leader>
+            leader-pattern-width="50pt">abcd</fo:leader>End
       </fo:block>
 
       <fo:block space-before.optimum="5pt" text-align="start">Small Width:
         <fo:leader leader-pattern="use-content"
-                   leader-pattern-width="2pt">abcd</fo:leader>
+                   leader-pattern-width="2pt">abcd</fo:leader>End
       </fo:block>
 
       <fo:block space-before.optimum="5pt" text-align="start">SVG:
@@ -754,7 +754,7 @@
 <rect x="5" y="5" width="5" height="5" style="fill:black"/>
 </svg>
 </fo:instream-foreign-object>
-        </fo:leader>
+        </fo:leader>End
       </fo:block>
 
       <fo:block space-before.optimum="5pt" text-align="start">Mixed:
@@ -766,7 +766,7 @@ abc
 <rect x="5" y="5" width="5" height="5" style="fill:black"/>
 </svg>
 </fo:instream-foreign-object>
-        </fo:leader>
+        </fo:leader>End
       </fo:block>
 
       <fo:block space-before.optimum="5pt" text-align="start">Mixed:
@@ -779,7 +779,7 @@ abc
 </svg>
 </fo:instream-foreign-object>
 def
-        </fo:leader>
+        </fo:leader>End
       </fo:block>
     </fo:flow>
   </fo:page-sequence>
