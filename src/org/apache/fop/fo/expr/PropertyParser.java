@@ -8,7 +8,7 @@
 package org.apache.fop.fo.expr;
 
 import org.apache.fop.fo.PropertyConsts;
-import org.apache.fop.fo.Properties;
+import org.apache.fop.fo.properties.Property;
 import org.apache.fop.fo.PropNames;
 import org.apache.fop.fo.FOTree;
 import org.apache.fop.fo.FONode;
@@ -59,6 +59,8 @@ public class PropertyParser extends PropertyTokenizer {
     private FOTree foTree;
     /** The FONode which has initiated this parser */
     private FONode node;
+    public final PropertyConsts propertyConsts =
+                                        PropertyConsts.getPropertyConsts();
 
     public PropertyParser(FOTree foTree) {
         super();
@@ -692,17 +694,17 @@ public class PropertyParser extends PropertyTokenizer {
                     int propindex = property;
                     PropertyValue[] args = parseArgs(0, 1);
                     if (args.length != 0)
-                        propindex = PropertyConsts.getPropertyIndex(
+                        propindex = PropNames.getPropertyIndex(
                                 ((StringType)args[0]).getString());
 
                     // If it's a compound, return an InheritedValue object
-                    if (PropertyConsts.isCompound(propindex)) {
+                    if (propertyConsts.isCompound(propindex)) {
                         prop = new InheritedValue(property, propindex);
                         break;
                     }
                     // Is it an inherited property?
-                    if (PropertyConsts.inheritance(propindex)
-                                                            == Properties.NO)
+                    if (propertyConsts.inheritance(propindex)
+                                                            == Property.NO)
                         throw new PropertyException
                                 ("inherited-property-value: "
                                  + PropNames.getPropertyName(propindex)
@@ -730,8 +732,8 @@ public class PropertyParser extends PropertyTokenizer {
 
                     PropertyValue[] args = parseArgs(0, 1);
                     if (args.length == 0) {
-                        if (! (PropertyConsts.isShorthand(property)
-                               || PropertyConsts.isCompound(property))) {
+                        if (! (propertyConsts.isShorthand(property)
+                               || propertyConsts.isCompound(property))) {
                             // develop the function value and return it as
                             // a property.
                             switch (funcType) {
@@ -753,9 +755,9 @@ public class PropertyParser extends PropertyTokenizer {
                         NCName ncname = (NCName)args[0];
                         String propname = ncname.getNCName();
                         int nameindex =
-                                PropertyConsts.getPropertyIndex(propname);
-                        if (PropertyConsts.isShorthand(nameindex)
-                            || PropertyConsts.isCompound(nameindex)) {
+                                PropNames.getPropertyIndex(propname);
+                        if (propertyConsts.isShorthand(nameindex)
+                            || propertyConsts.isCompound(nameindex)) {
                             // the argument is a shorthand/compound property -
                             // it must be the same as the property being
                             // assigned to.

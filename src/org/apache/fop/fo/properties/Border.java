@@ -1,0 +1,108 @@
+package org.apache.fop.fo.properties;
+
+import org.apache.fop.datatypes.PropertyValueList;
+import org.apache.fop.fo.expr.PropertyException;
+import org.apache.fop.datatypes.PropertyValue;
+import org.apache.fop.datatypes.Ints;
+import org.apache.fop.datatypes.ColorType;
+import org.apache.fop.fo.PropNames;
+import org.apache.fop.fo.FONode;
+import org.apache.fop.fo.ShorthandPropSets;
+import org.apache.fop.fo.properties.Property;
+import org.apache.fop.messaging.MessageHandler;
+
+import java.util.Iterator;
+import java.util.HashMap;
+import java.util.Map;
+
+public class Border extends Property  {
+    public static final int dataTypes = SHORTHAND;
+    public static final int traitMapping = SHORTHAND_MAP;
+    public static final int initialValueType = NOTYPE_IT;
+    public static final int inherited = NO;
+
+    public /**/static/**/ PropertyValue refineParsing
+                                    (FONode foNode, PropertyValue value)
+        throws PropertyException
+    {
+        int type = value.getType();
+        if (type == PropertyValue.INHERIT ||
+                type == PropertyValue.FROM_PARENT ||
+                    type == PropertyValue.FROM_NEAREST_SPECIFIED)
+            // Copy the value to each member of the shorthand expansion
+            return refineExpansionList
+                (foNode, ShorthandPropSets.expandAndCopySHand(value));
+
+        PropertyValueList ssList = null;
+        // Must be a space-separated list or a single value from the
+        // set of choices
+        if (type != PropertyValue.LIST) {
+            // If it's a single value, form a list from that value
+            ssList = new PropertyValueList(PropNames.BORDER);
+            ssList.add(value);
+        } else {
+            // Must be a space-separated list
+            try {
+                ssList = spaceSeparatedList((PropertyValueList)value);
+            } catch (PropertyException e) {
+                throw new PropertyException
+                    ("Space-separated list required for 'border'");
+            }
+        }
+        // Look for appropriate values in ssList
+        PropertyValue width = null;
+        PropertyValue style = null;
+        PropertyValue color = null;
+        Iterator values = ssList.iterator();
+        while (values.hasNext()) {
+            PropertyValue val = (PropertyValue)(values.next());
+            PropertyValue pv = null;
+            try {
+                // FIXME NOW
+                pv = (new BorderWidth()).refineParsing(foNode, val, IS_NESTED);
+                if (width != null)
+                    MessageHandler.log("border: duplicate" +
+                    "width overrides previous width");
+                width = pv;
+                continue;
+            } catch (PropertyException e) {}
+            try {
+                // FIXME NOW
+                pv = (new BorderStyle()).refineParsing(foNode, val, IS_NESTED);
+                if (style != null)
+                    MessageHandler.log("border: duplicate" +
+                    "style overrides previous style");
+                style = pv;
+                continue;
+            } catch (PropertyException e) {}
+            try {
+                // FIXME NOW
+                pv = (new BorderColor()).refineParsing(foNode, val, IS_NESTED);
+                if (color != null)
+                    MessageHandler.log("border: duplicate" +
+                    "color overrides previous color");
+                color = pv;
+                continue;
+            } catch (PropertyException e) {}
+
+            throw new PropertyException
+                ("Unrecognized value; looking for style, "
+                + "width or color in border: "
+                + val.getClass().getName());
+        }
+        // Construct the shorthand expansion list
+        // Only those elements which are actually specified fint their
+        // way into this list.  Other elements will take their normally
+        // inherited or initial values.
+        PropertyValueList borderexp =
+                                new PropertyValueList(PropNames.BORDER);
+        if (style != null)
+            borderexp.addAll((PropertyValueList)style);
+        if (color != null)
+            borderexp.addAll((PropertyValueList)color);
+        if (width != null)
+            borderexp.addAll((PropertyValueList)width);
+        return borderexp;
+    }
+}
+
