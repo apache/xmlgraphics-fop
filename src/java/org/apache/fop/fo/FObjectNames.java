@@ -149,7 +149,7 @@ public class FObjectNames {
      * <tt>int</tt> constants must be kept in sync with this array, as the
      * constants are used to index into the array.
      */
-    public static final String[][] foLocalNames = {
+    private static final String[][] foLocalNames = {
                                  { "no-fo", ""                }  //0
                            ,{ "basic-link", "fo.flow"         }  //1
                         ,{ "bidi-override", "fo.flow"         }  //2
@@ -209,6 +209,11 @@ public class FObjectNames {
                               ,{ "wrapper", "fo.flow"         }  //56
                                ,{ "pcdata", "fo.flow"         }  //57
     };
+    
+    /**
+     * Publicly visible length of the private foLocaNames array.
+     */
+    public static final int foLocalNamesLength = foLocalNames.length;
 
     /**
      * A HashMap whose elements are an integer index value keyed by an
@@ -249,12 +254,27 @@ public class FObjectNames {
      * @exception FOPException if the FO index is invalid.
      */
     public static String getFOName(int foType)
-                throws FOPException
+    throws FOPException
     {
         if (foType < 0 || foType > LAST_FO)
-                throw new FOPException
-                        ("getFOName: type is invalid: " + foType);
+            throw new FOPException
+            ("getFOName: type is invalid: " + foType);
         return foLocalNames[foType][NAMEX];
+    }
+    
+    /**
+     * Get the FObject package name corresponding to the FO index.
+     * @param foType <tt>int</tt> index of the FO type.
+     * @return <tt>String</tt> package name of the FO.
+     * @exception FOPException if the FO index is invalid.
+     */
+    public static String getFOPkg(int foType)
+    throws FOPException
+    {
+        if (foType < 0 || foType > LAST_FO)
+            throw new FOPException
+            ("getFOPkg: type is invalid: " + foType);
+        return foLocalNames[foType][PACKAGEX];
     }
 
 }
