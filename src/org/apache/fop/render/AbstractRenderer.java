@@ -1,6 +1,6 @@
 /*
  * $Id$
- * Copyright (C) 2001-2002 The Apache Software Foundation. All rights reserved.
+ * Copyright (C) 2001-2003 The Apache Software Foundation. All rights reserved.
  * For details on use and redistribution please refer to the
  * LICENSE file included with these sources.
  */
@@ -9,7 +9,7 @@ package org.apache.fop.render;
 // Java
 import java.awt.geom.Rectangle2D;
 import java.io.IOException;
-import java.util.HashMap;
+import java.util.Map;
 import java.util.List;
 import java.util.Iterator;
 
@@ -66,7 +66,7 @@ public abstract class AbstractRenderer extends AbstractLogEnabled
     /**
      * renderer configuration
      */
-    protected HashMap options;
+    protected Map options;
 
     /**
      * block progression position
@@ -109,7 +109,7 @@ public abstract class AbstractRenderer extends AbstractLogEnabled
     }
 
     /** @see org.apache.fop.render.Renderer */
-    public void setOptions(HashMap opt) {
+    public void setOptions(Map opt) {
         options = opt;
     }
 

@@ -9,7 +9,7 @@ package org.apache.fop.render;
 // Java
 import java.io.OutputStream;
 import java.io.IOException;
-import java.util.HashMap;
+import java.util.Map;
 
 // FOP
 import org.apache.fop.apps.FOPException;
@@ -86,7 +86,7 @@ public interface Renderer {
      *
      * @param options  The Configuration for the renderer
      */
-    void setOptions(HashMap options);
+    void setOptions(Map options);
 
     /**
      * Set the producer of the rendering. If this method isn't called the
