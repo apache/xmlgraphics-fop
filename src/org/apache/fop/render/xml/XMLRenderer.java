@@ -61,7 +61,7 @@ public class XMLRenderer implements Renderer {
     /**
      * options
      */
-    protected Hashtable options;
+    protected java.util.HashMap options;
     private boolean consistentOutput = false;
 
     public XMLRenderer() {}
@@ -69,7 +69,7 @@ public class XMLRenderer implements Renderer {
     /**
      * set up renderer options
      */
-    public void setOptions(Hashtable options) {
+    public void setOptions(java.util.HashMap options) {
         this.options = options;
         Boolean con = (Boolean)options.get("consistentOutput");
         if(con != null) {

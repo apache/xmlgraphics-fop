@@ -80,14 +80,14 @@ public class TXTRenderer extends PrintRenderer {
     /**
      * options
      */
-    protected Hashtable options;
+    protected java.util.HashMap options;
 
     public TXTRenderer() {}
 
     /**
      * set up renderer options
      */
-    public void setOptions(Hashtable options) {
+    public void setOptions(java.util.HashMap options) {
         this.options = options;
     }
 
