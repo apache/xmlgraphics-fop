@@ -56,6 +56,7 @@ import java.util.Map;
 import org.apache.fop.datatypes.ColorType;
 import org.apache.fop.datatypes.LengthBase;
 import org.apache.fop.datatypes.ToBeImplementedProperty;
+import org.apache.fop.fo.properties.BorderWidthPropertyMaker;
 import org.apache.fop.fo.properties.CorrespondingPropertyMaker;
 import org.apache.fop.fo.properties.DimensionPropertyMaker;
 import org.apache.fop.fo.properties.IndentPropertyMaker;

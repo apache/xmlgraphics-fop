@@ -48,9 +48,14 @@
  * James Tauber <jtauber@jtauber.com>. For more information on the Apache
  * Software Foundation, please see <http://www.apache.org/>.
  */
-package org.apache.fop.fo;
+package org.apache.fop.fo.properties;
 
 import org.apache.fop.apps.FOPException;
+import org.apache.fop.fo.Constants;
+import org.apache.fop.fo.LengthProperty;
+import org.apache.fop.fo.Property;
+import org.apache.fop.fo.PropertyList;
+import org.apache.fop.fo.LengthProperty.Maker;
 
 /**
  * This subclass of LengthProperty.Maker handles the special treatment of 
