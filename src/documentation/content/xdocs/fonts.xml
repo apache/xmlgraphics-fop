@@ -12,6 +12,15 @@
   </header>
 <body>
   <section>
+    <title>Important</title>
+    <p>The information on this page applies primarily to the PDF renderer. The PostScript renderer
+    also supports custom fonts but doesn't support font embedding, yet. This page does 
+    <strong>not</strong> apply to the AWT, PCL, MIF and other renderers.</p>
+    <p>The AWT renderer relies upon AWT to provide the available fonts. And it's the printer 
+    driver of your operating system that decides if a font is embedded when using the AWT 
+    renderer.</p>
+  </section>
+  <section>
     <title>Status</title>
     <p>FOP (building PDF files) normally supports only the base 14 font package defined in the Adobe PDF specification.
     That includes the following fonts: Helvetica, Times, Courier, Symbol and ZapfDingbats.
