@@ -22,8 +22,6 @@ package org.apache.fop.apps;
 import java.io.BufferedOutputStream;
 import java.io.FileOutputStream;
 
-import org.apache.commons.logging.impl.SimpleLog;
-
 // FOP
 import org.apache.fop.render.awt.AWTRenderer;
 
@@ -46,9 +44,6 @@ public class Fop {
         try {
             Driver driver = new Driver();
             options = new CommandLineOptions(args);
-
-            driver.setLogger(options.getLogger());
-            driver.getLogger().info(version);
 
             inputHandler = options.getInputHandler();
 

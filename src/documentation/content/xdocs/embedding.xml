@@ -93,26 +93,13 @@ driver.setLogger(logger);]]></source>
   <section id="basic-logging-new-version">
     <title>Logging (Upcoming FOP 1.0 Version only)</title>
     <p>
-      You also need to set up logging. Global logging for all FOP
-      processes is managed by MessageHandler. Per-instance logging
-      is handled by Driver. You want to set both using an implementation
-      of org.apache.commons.logging.Log. See 
-      <jump href="#logging">below</jump> for more information.
+      Logging is handled automatically via Jakarta Commons-Logging, which uses
+      JDK logging by default.  No special driver configuration is needed.
+      For specialized configuration of Commons-Logging (e.g. to use a
+      different logger or to change logging levels), please see the  
+      <fork href="http://jakarta.apache.org/commons/logging/">Jakarta Commons-Logging</fork>
+      site.
     </p>
-    <p>
-      Call <code>setLogger(Logger)</code> always immediately after 
-      instantiating the Driver object. See here:
-    </p>
-    <source><![CDATA[
-import org.apache.commons.logging.Log; 
-import org.apache.commons.logging.impl.SimpleLog; 
-
-/*..*/
-
-Driver driver = new Driver();
-Log logger = new SimpleLog(SimpleLog.LOG_LEVEL_INFO);
-MessageHandler.setScreenLogger(logger);
-driver.setLogger(logger);]]></source>
   </section>
 
   <section id="render">

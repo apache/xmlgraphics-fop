@@ -18,12 +18,10 @@
  
 package embedding;
 
-//Java
+// Java
 import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
-
-//JAXP
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.DocumentBuilder;
 
@@ -33,10 +31,7 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.Text;
 
-// Commons-Logging
-import org.apache.commons.logging.impl.SimpleLog;
-
-//FOP
+// FOP
 import org.apache.fop.apps.Driver;
 import org.apache.fop.apps.FOPException;
 
@@ -61,10 +56,7 @@ public class ExampleDOM2PDF {
         // Construct driver
         Driver driver = new Driver();
         
-        // Setup logger
-        SimpleLog logger = new SimpleLog("log");
-        logger.setLevel(SimpleLog.LOG_LEVEL_INFO);
-        driver.setLogger(logger);
+        // Setup driver
         driver.initialize();
         
         // Setup Renderer (output format)        

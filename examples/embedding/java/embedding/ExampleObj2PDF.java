@@ -18,12 +18,12 @@
  
 package embedding;
 
-//Java
+// Java
 import java.io.File;
 import java.io.OutputStream;
 import java.io.IOException;
 
-//JAXP
+// JAXP
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.TransformerException;
@@ -32,13 +32,9 @@ import javax.xml.transform.Result;
 import javax.xml.transform.stream.StreamSource;
 import javax.xml.transform.sax.SAXResult;
 
-// Commons-Logging
-import org.apache.commons.logging.impl.SimpleLog;
-
-//FOP
+// FOP
 import org.apache.fop.apps.Driver;
 import org.apache.fop.apps.FOPException;
-
 import embedding.model.ProjectTeam;
 
 /**
@@ -62,10 +58,7 @@ public class ExampleObj2PDF {
         // Construct driver
         Driver driver = new Driver();
         
-        // Setup logger
-        SimpleLog logger = new SimpleLog("log");
-        logger.setLevel(SimpleLog.LOG_LEVEL_INFO);
-        driver.setLogger(logger);
+        // Setup driver
         driver.initialize();
 
         // Setup Renderer (output format)        
