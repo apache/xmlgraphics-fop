@@ -130,16 +130,22 @@ public class FopImageFactory {
     String imgClassName = null;
     if ("image/gif".equals(imgMimeType)) {
       imgClassName = "org.apache.fop.image.GifJpegImage";
+//      imgClassName = "org.apache.fop.image.JAIImage";
     } else if ("image/jpeg".equals(imgMimeType)) {
       imgClassName = "org.apache.fop.image.GifJpegImage";
+//      imgClassName = "org.apache.fop.image.JAIImage";
     } else if ("image/bmp".equals(imgMimeType)) {
       imgClassName = "org.apache.fop.image.BmpImage";
+//      imgClassName = "org.apache.fop.image.JAIImage";
     } else if ("image/png".equals(imgMimeType)) {
       imgClassName = "org.apache.fop.image.JimiImage";
+//      imgClassName = "org.apache.fop.image.JAIImage";
     } else if ("image/tga".equals(imgMimeType)) {
       imgClassName = "org.apache.fop.image.JimiImage";
+//      imgClassName = "org.apache.fop.image.JAIImage";
     } else if ("image/tiff".equals(imgMimeType)) {
       imgClassName = "org.apache.fop.image.JimiImage";
+//      imgClassName = "org.apache.fop.image.JAIImage";
     } else if ("image/svg-xml".equals(imgMimeType)) {
       imgClassName = "org.apache.fop.image.SVGImage";
     }
