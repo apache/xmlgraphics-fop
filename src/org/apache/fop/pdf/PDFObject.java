@@ -80,6 +80,12 @@ public abstract class PDFObject {
 	public PDFObject() {
 		//do nothing
 	}
+	/**
+	 * @return the PDF Object number
+	 */
+	public int getNumber() {
+		return this.number;
+	}
     /**
      * write the PDF represention of this object
      *
