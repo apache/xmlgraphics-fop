@@ -18,9 +18,12 @@
 
 package org.apache.fop.fo.flow;
 
+import org.xml.sax.Locator;
+
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FObj;
+import org.apache.fop.fo.ValidationException;
 import org.apache.fop.fo.PropertyList;
 import org.apache.fop.fo.properties.CommonAccessibility;
 import org.apache.fop.fo.properties.KeepProperty;
@@ -35,6 +38,9 @@ public class ListItemBody extends FObj {
     private String id;
     private KeepProperty keepTogether;
     // End of property values
+
+    /** used for FO validation */
+    private boolean blockItemFound = false;
 
     /**
      * @param parent FONode that is the parent of this object
@@ -61,9 +67,31 @@ public class ListItemBody extends FObj {
     }
 
     /**
+     * @see org.apache.fop.fo.FONode#validateChildNode(Locator, String, String)
+     * XSL Content Model: marker* (%block;)+
+     */
+    protected void validateChildNode(Locator loc, String nsURI, String localName) 
+        throws ValidationException {
+        if (nsURI == FO_URI && localName.equals("marker")) {
+            if (blockItemFound) {
+               nodesOutOfOrderError(loc, "fo:marker", "(%block;)");
+            }
+        } else if (!isBlockItem(nsURI, localName)) {
+            invalidChildError(loc, nsURI, localName);
+        } else {
+            blockItemFound = true;
+        }
+    }
+
+    /**
+     * Make sure content model satisfied, if so then tell the
+     * FOEventHandler that we are at the end of the flow.
      * @see org.apache.fop.fo.FONode#endOfNode
      */
     protected void endOfNode() throws FOPException {
+        if (!blockItemFound) {
+            missingChildElementError("marker* (%block;)+");
+        }
         getFOEventHandler().endListBody();
     }
 
