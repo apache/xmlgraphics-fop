@@ -96,6 +96,7 @@ public class Block extends FObjMixed {
         }
 
         if (this.marker == START) {
+            noLayoutCount=0; // Reset the "loop counter".
 
             // Common Accessibility Properties
             AccessibilityProps mAccProps = propMgr.getAccessibilityProps();
