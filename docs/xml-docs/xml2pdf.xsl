@@ -1,4 +1,5 @@
 <?xml version="1.0"?>
+
 <!--    XSLT stylesheet to convert the Fop documentation collected in one xml file into a fo file
         for use in FOP 
 
@@ -24,26 +25,26 @@ TBD: - The faq doesn't show in the content
 		<fo:layout-master-set>
 
 			<fo:simple-page-master master-name="first"
-										height="29.7cm" 
-										width="21cm"
+										page-height="29.7cm" 
+										page-width="21cm"
 										margin-top="1.5cm" 
 										margin-bottom="2cm" 
 										margin-left="2.5cm" 
 										margin-right="2.5cm">
-				<fo:region-before extent="1.5cm"/>
 				<fo:region-body margin-top="3cm"/>
+				<fo:region-before extent="1.5cm"/>
 				<fo:region-after extent="1.5cm"/>
 			</fo:simple-page-master>
 
 			<fo:simple-page-master master-name="rest"
-										height="29.7cm" 
-										width="21cm"
+										page-height="29.7cm" 
+										page-width="21cm"
 										margin-top="1.5cm" 
 										margin-bottom="2cm" 
 										margin-left="2.5cm" 
 										margin-right="2.5cm">
-				<fo:region-before extent="1.5cm"/>
 				<fo:region-body margin-top="2.5cm"/>
+				<fo:region-before extent="1.5cm"/>
 				<fo:region-after extent="1.5cm"/>
 			</fo:simple-page-master>
 
@@ -250,10 +251,10 @@ TBD: - The faq doesn't show in the content
 
 <!-- code -->
 <xsl:template match ="*/code">
-   <fo:inline-sequence font-size="10pt" 
+   <fo:inline font-size="10pt" 
             font-family="Courier">
      <xsl:apply-templates/> 
-   </fo:inline-sequence>
+   </fo:inline>
 </xsl:template>
 
 
@@ -285,7 +286,7 @@ TBD: - The faq doesn't show in the content
 <xsl:template match ="ul/li">
     <fo:list-item>
       <fo:list-item-label>
-        <fo:block><fo:inline-sequence font-family="Symbol">&#183;</fo:inline-sequence></fo:block>
+        <fo:block><fo:inline font-family="Symbol">&#183;</fo:inline></fo:block>
       </fo:list-item-label>
       <fo:list-item-body>
         <fo:block space-after.optimum="4pt"
