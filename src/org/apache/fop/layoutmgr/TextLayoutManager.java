@@ -164,8 +164,8 @@ public class TextLayoutManager extends AbstractLayoutManager {
         if (prevPos != null) {
             // ASSERT (prevPos.getLM() == this)
             if (prevPos.getLM() != this) {
-                //log.error(
-                //  "TextLayoutManager.resetPosition: " + "LM mismatch!!!");
+                getLogger().error(
+                  "TextLayoutManager.resetPosition: " + "LM mismatch!!!");
             }
             LeafPosition tbp = (LeafPosition) prevPos;
             AreaInfo ai =
@@ -477,23 +477,27 @@ public class TextLayoutManager extends AbstractLayoutManager {
         //    " total=" + iAdjust);
 
         // Make an area containing all characters between start and end.
-        Word word = null;
+        InlineArea word = null;
         int adjust = 0;
         // ingnore newline character
         if(chars[ai.iBreakIndex - 1] == NEWLINE) {
             adjust = 1;
         }
         String str = new String(chars, iStart, ai.iBreakIndex - iStart - adjust);
-        //if(!"".equals(str.trim())) {
-            word = createWord(
+        if(" ".equals(str)) {
+            word = new Space();
+            word.setWidth(ai.ipdArea.opt + iAdjust);
+        } else  {
+            Word w = createWord(
                       str,
                       ai.ipdArea.opt + iAdjust, context.getBaseline());
             if (iWScount > 0) {
-                //log.error("Adjustment per word-space= " +
+                //getLogger().error("Adjustment per word-space= " +
                 //                   iAdjust / iWScount);
-                word.setWSadjust(iAdjust / iWScount);
+                w.setWSadjust(iAdjust / iWScount);
             }
-        //}
+            word = w;
+        }
         if ((chars[iStart] == SPACE || chars[iStart] == NBSPACE) &&
                 context.getLeadingSpace().hasSpaces()) {
             context.getLeadingSpace().addSpace(halfWS);
