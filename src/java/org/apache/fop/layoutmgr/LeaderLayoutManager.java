@@ -121,7 +121,7 @@ public class LeaderLayoutManager extends LeafNodeLayoutManager {
             // get breaks then add areas to FilledArea
             FilledArea fa = new FilledArea();
 
-            clm = new ContentLayoutManager(fa);
+            clm = new ContentLayoutManager(fa, this);
             clm.setUserAgent(fobj.getUserAgent());
             addChildLM(clm);
 
