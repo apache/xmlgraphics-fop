@@ -1,6 +1,6 @@
 /*
  * $Id$
- * Copyright (C) 2001 The Apache Software Foundation. All rights reserved.
+ * Copyright (C) 2001-2002 The Apache Software Foundation. All rights reserved.
  * For details on use and redistribution please refer to the
  * LICENSE file included with these sources.
  */
@@ -28,24 +28,26 @@ public class LengthRange implements CompoundDatatype {
     // From CompoundDatatype
     public void setComponent(String sCmpnName, Property cmpnValue,
                              boolean bIsDefault) {
-        if (sCmpnName.equals("minimum"))
+        if (sCmpnName.equals("minimum")) {
             setMinimum(cmpnValue, bIsDefault);
-        else if (sCmpnName.equals("optimum"))
+        } else if (sCmpnName.equals("optimum")) {
             setOptimum(cmpnValue, bIsDefault);
-        else if (sCmpnName.equals("maximum"))
+        } else if (sCmpnName.equals("maximum")) {
             setMaximum(cmpnValue, bIsDefault);
+        }
     }
 
     // From CompoundDatatype
     public Property getComponent(String sCmpnName) {
-        if (sCmpnName.equals("minimum"))
+        if (sCmpnName.equals("minimum")) {
             return getMinimum();
-        else if (sCmpnName.equals("optimum"))
+        } else if (sCmpnName.equals("optimum")) {
             return getOptimum();
-        else if (sCmpnName.equals("maximum"))
+        } else if (sCmpnName.equals("maximum")) {
             return getMaximum();
-        else
+        } else {
             return null;    // SHOULDN'T HAPPEN
+        }
     }
 
     /**
@@ -57,8 +59,9 @@ public class LengthRange implements CompoundDatatype {
      */
     protected void setMinimum(Property minimum, boolean bIsDefault) {
         this.minimum = minimum;
-        if (!bIsDefault)
+        if (!bIsDefault) {
             bfSet |= MINSET;
+        }
     }
 
 
@@ -70,8 +73,9 @@ public class LengthRange implements CompoundDatatype {
      */
     protected void setMaximum(Property max, boolean bIsDefault) {
         maximum = max;
-        if (!bIsDefault)
+        if (!bIsDefault) {
             bfSet |= MAXSET;
+        }
     }
 
 
@@ -83,14 +87,16 @@ public class LengthRange implements CompoundDatatype {
      */
     protected void setOptimum(Property opt, boolean bIsDefault) {
         optimum = opt;
-        if (!bIsDefault)
+        if (!bIsDefault) {
             bfSet |= OPTSET;
+        }
     }
 
     // Minimum is prioritaire, if explicit
     private void checkConsistency() {
-        if (bChecked)
+        if (bChecked) {
             return;
+        }
             // Make sure max >= min
             // Must also control if have any allowed enum values!
 
@@ -159,3 +165,4 @@ public class LengthRange implements CompoundDatatype {
     }
 
 }
+

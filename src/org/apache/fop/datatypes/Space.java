@@ -1,6 +1,6 @@
 /*
  * $Id$
- * Copyright (C) 2001 The Apache Software Foundation. All rights reserved.
+ * Copyright (C) 2001-2002 The Apache Software Foundation. All rights reserved.
  * For details on use and redistribution please refer to the
  * LICENSE file included with these sources.
  */
@@ -20,22 +20,24 @@ public class Space extends LengthRange {
     // From CompoundDatatype
     public void setComponent(String sCmpnName, Property cmpnValue,
                              boolean bIsDefault) {
-        if (sCmpnName.equals("precedence"))
+        if (sCmpnName.equals("precedence")) {
             setPrecedence(cmpnValue, bIsDefault);
-        else if (sCmpnName.equals("conditionality"))
+        } else if (sCmpnName.equals("conditionality")) {
             setConditionality(cmpnValue, bIsDefault);
-        else
+        } else {
             super.setComponent(sCmpnName, cmpnValue, bIsDefault);
+        }
     }
 
     // From CompoundDatatype
     public Property getComponent(String sCmpnName) {
-        if (sCmpnName.equals("precedence"))
+        if (sCmpnName.equals("precedence")) {
             return getPrecedence();
-        else if (sCmpnName.equals("conditionality"))
+        } else if (sCmpnName.equals("conditionality")) {
             return getConditionality();
-        else
+        } else {
             return super.getComponent(sCmpnName);
+        }
     }
 
     protected void setPrecedence(Property precedence, boolean bIsDefault) {
@@ -56,3 +58,4 @@ public class Space extends LengthRange {
     }
 
 }
+

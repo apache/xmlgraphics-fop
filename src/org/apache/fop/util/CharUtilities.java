@@ -1,6 +1,6 @@
 /*
  * $Id$
- * Copyright (C) 2001 The Apache Software Foundation. All rights reserved.
+ * Copyright (C) 2001-2002 The Apache Software Foundation. All rights reserved.
  * For details on use and redistribution please refer to the
  * LICENSE file included with these sources.
  */
@@ -19,13 +19,13 @@ public class CharUtilities {
      * inline content, such as an inline with borders and padding
      * or a nested block object.
      */
-    public static final char CODE_EOT=0;
+    public static final char CODE_EOT = 0;
 
-    public static final int UCWHITESPACE=0; // unicode white space
-    public static final int LINEFEED=1;
-    public static final int EOT=2; // Boundary beteween text runs
-    public static final int NONWHITESPACE=3;
-    public static final int XMLWHITESPACE=4;
+    public static final int UCWHITESPACE = 0; // unicode white space
+    public static final int LINEFEED = 1;
+    public static final int EOT = 2; // Boundary beteween text runs
+    public static final int NONWHITESPACE = 3;
+    public static final int XMLWHITESPACE = 4;
 
 
     /**
@@ -33,11 +33,11 @@ public class CharUtilities {
      * of the passed character.
      */
     public static int classOf(char c) {
-	if (c == CODE_EOT) return EOT;
-	if (c == '\n') return LINEFEED;
-	if ( c==' '|| c == '\r' || c=='\t' ) return XMLWHITESPACE;
-	if (isAnySpace(c)) return UCWHITESPACE;
-	return NONWHITESPACE;
+        if (c == CODE_EOT) { return EOT; }
+        if (c == '\n') { return LINEFEED; }
+        if (c == ' '|| c == '\r' || c == '\t' ) { return XMLWHITESPACE; }
+        if (isAnySpace(c)) { return UCWHITESPACE; }
+        return NONWHITESPACE;
     }
 
     /**
@@ -58,41 +58,58 @@ public class CharUtilities {
                 // the font
                 int em = fs.width(fs.mapChar('m'));
                 int en = fs.width(fs.mapChar('n'));
-                if (em <= 0)
+                if (em <= 0) {
                     em = 500 * fs.getFontSize();
-                if (en <= 0)
+                }
+                if (en <= 0) {
                     en = em - 10;
+                }
 
-                if (c == ' ')
+                if (c == ' ') {
                     width = em;
-                if (c == '\u2000')
+                }
+                if (c == '\u2000') {
                     width = en;
-                if (c == '\u2001')
+                }
+                if (c == '\u2001') {
                     width = em;
-                if (c == '\u2002')
+                }
+                if (c == '\u2002') {
                     width = em / 2;
-                if (c == '\u2003')
+                }
+                if (c == '\u2003') {
                     width = fs.getFontSize();
-                if (c == '\u2004')
+                }
+                if (c == '\u2004') {
                     width = em / 3;
-                if (c == '\u2005')
+                }
+                if (c == '\u2005') {
                     width = em / 4;
-                if (c == '\u2006')
+                }
+                if (c == '\u2006') {
                     width = em / 6;
-                if (c == '\u2007')
+                }
+                if (c == '\u2007') {
                     width = getCharWidth(' ', fs);
-                if (c == '\u2008')
+                }
+                if (c == '\u2008') {
                     width = getCharWidth('.', fs);
-                if (c == '\u2009')
+                }
+                if (c == '\u2009') {
                     width = em / 5;
-                if (c == '\u200A')
+                }
+                if (c == '\u200A') {
                     width = 5;
-                if (c == '\u200B')
+                }
+                if (c == '\u200B') {
                     width = 100;
-                if (c == '\u202F')
+                }
+                if (c == '\u202F') {
                     width = getCharWidth(' ', fs) / 2;
-                if (c == '\u3000')
+                }
+                if (c == '\u3000') {
                     width = getCharWidth(' ', fs) * 2;
+                }
             }
         }
 
@@ -105,8 +122,8 @@ public class CharUtilities {
      * it's not non-breaking
      */
     public static boolean isSpace(char c) {
-        return (c == ' ' ||
-		(c >= '\u2000' && c <= '\u200B'));
+        return (c == ' '
+               || (c >= '\u2000' && c <= '\u200B'));
 //         c == '\u2000'                   // en quad
 //         c == '\u2001'                   // em quad
 //         c == '\u2002'                   // en space
@@ -126,12 +143,13 @@ public class CharUtilities {
      * space.
      */
     public static boolean isNBSP(char c) {
-        if (c == '\u00A0' || c == '\u202F' ||    // narrow no-break space
-        c == '\u3000' ||                    // ideographic space
-        c == '\uFEFF') {                    // zero width no-break space
+        if (c == '\u00A0' || c == '\u202F'    // narrow no-break space
+            || c == '\u3000'                  // ideographic space
+            || c == '\uFEFF') {               // zero width no-break space
             return true;
-        } else
+        } else {
             return false;
+        }
     }
 
     /**

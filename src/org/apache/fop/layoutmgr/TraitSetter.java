@@ -56,10 +56,10 @@ public class TraitSetter {
                                        Object oTrait) {
         int iBP = bpProps.getBorderWidth(iSide, bDiscard);
         if (iBP > 0) {
-            // 	    area.addTrait(new Trait(oTrait,
-            // 				    new BorderProps(bpProps.getBorderStyle(iSide),
-            // 						    iBP,
-            // 						    bpProps.getBorderColor(iSide))));
+            //     area.addTrait(new Trait(oTrait,
+            //     new BorderProps(bpProps.getBorderStyle(iSide),
+            //     iBP,
+            //     bpProps.getBorderColor(iSide))));
             area.addTrait(oTrait,
                           new BorderProps(bpProps.getBorderStyle(iSide),
                                           iBP, bpProps.getBorderColor(iSide)));

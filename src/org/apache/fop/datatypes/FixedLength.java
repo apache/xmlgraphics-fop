@@ -1,6 +1,6 @@
 /*
  * $Id$
- * Copyright (C) 2001 The Apache Software Foundation. All rights reserved.
+ * Copyright (C) 2001-2002 The Apache Software Foundation. All rights reserved.
  * For details on use and redistribution please refer to the
  * LICENSE file included with these sources.
  */
@@ -45,23 +45,23 @@ public class FixedLength extends Length {
 
         int assumed_resolution = 1;    // points/pixel
 
-        if (unit.equals("in"))
+        if (unit.equals("in")) {
             dvalue = dvalue * 72;
-        else if (unit.equals("cm"))
+        } else if (unit.equals("cm")) {
             dvalue = dvalue * 28.3464567;
-        else if (unit.equals("mm"))
+        } else if (unit.equals("mm")) {
             dvalue = dvalue * 2.83464567;
-        else if (unit.equals("pt"))
+        } else if (unit.equals("pt")) {
             dvalue = dvalue;
-        else if (unit.equals("pc"))
+        } else if (unit.equals("pc")) {
             dvalue = dvalue * 12;
             /*
-             * else if (unit.equals("em"))
+             * } else if (unit.equals("em")) {
              * dvalue = dvalue * fontsize;
              */
-        else if (unit.equals("px"))
+        } else if (unit.equals("px")) {
             dvalue = dvalue * assumed_resolution;
-        else {
+        } else {
             dvalue = 0;
             //log.error("unknown length unit '" + unit
             //                       + "'");
@@ -70,6 +70,7 @@ public class FixedLength extends Length {
     }
 
     public Numeric asNumeric() {
-	return new Numeric(this);
+        return new Numeric(this);
     }
 }
+

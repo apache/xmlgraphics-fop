@@ -14,7 +14,6 @@ import java.awt.color.ICC_Profile;
 
 // FOP
 import org.apache.fop.pdf.PDFColor;
-import org.apache.fop.pdf.PDFFilter;
 import org.apache.fop.image.analyser.ImageReaderFactory;
 import org.apache.fop.image.analyser.ImageReader;
 import org.apache.fop.fo.FOUserAgent;

@@ -31,17 +31,16 @@ import org.xml.sax.Attributes;
 public abstract class Region extends FObj {
     public static final String PROP_REGION_NAME = "region-name";
 
-    public final static String BEFORE = "before";
-    public final static String START =  "start";
-    public final static String END =    "end";
-    public final static String AFTER =  "after";
-    public final static String BODY =   "body";
+    public static final String BEFORE = "before";
+    public static final String START =  "start";
+    public static final String END =    "end";
+    public static final String AFTER =  "after";
+    public static final String BODY =   "body";
 
     private SimplePageMaster _layoutMaster;
     private String _regionName;
 
     protected int overflow;
-
 
     protected Region(FONode parent) {
         super(parent);
@@ -66,10 +65,9 @@ public abstract class Region extends FObj {
             }
         }
 
-	if (parent instanceof SimplePageMaster) {
-	    _layoutMaster = (SimplePageMaster)parent;
-	}
-	else {
+        if (parent instanceof SimplePageMaster) {
+            _layoutMaster = (SimplePageMaster)parent;
+        } else {
             throw new FOPException(this.name + " must be child "
                                    + "of simple-page-master, not "
                                    + parent.getName());
@@ -84,11 +82,11 @@ public abstract class Region extends FObj {
         Rectangle2D absRegionRect = pageCTM.transform(relRegionRect);
         // Get the region viewport rectangle in absolute coords by
         // transforming it using the page CTM
-	return new RegionViewport(absRegionRect);
+        return new RegionViewport(absRegionRect);
     }
 
 
-    abstract protected Rectangle getViewportRectangle(FODimension pageRefRect);
+    protected abstract Rectangle getViewportRectangle(FODimension pageRefRect);
 
     /**
      * Create the region reference area for this region master.
@@ -97,32 +95,31 @@ public abstract class Region extends FObj {
      * height=top-bottom
      */
     public RegionReference makeRegionReferenceArea(Rectangle2D absRegVPRect) {
-	RegionReference r = new RegionReference(getRegionAreaClass());
-	setRegionTraits(r, absRegVPRect);
-	return r;
+        RegionReference r = new RegionReference(getRegionAreaClass());
+        setRegionTraits(r, absRegVPRect);
+        return r;
     }
 
     protected void setRegionTraits(RegionReference r, Rectangle2D absRegVPRect) {
         // Common Border, Padding, and Background Properties
         BorderAndPadding bap = propMgr.getBorderAndPadding();
         BackgroundProps bProps = propMgr.getBackgroundProps();
-	/*        this.backgroundColor =
-		  this.properties.get("background-color").getColorType();*/
+/*        backgroundColor = properties.get("background-color").getColorType();*/
 
         // this.properties.get("clip");
         // this.properties.get("display-align");
         this.overflow = this.properties.get("overflow").getEnum();
-	FODimension reldims = new FODimension(0,0);
-	r.setCTM(propMgr.getCTMandRelDims(absRegVPRect, reldims));
+        FODimension reldims = new FODimension(0,0);
+        r.setCTM(propMgr.getCTMandRelDims(absRegVPRect, reldims));
 
-	//r.setBackground(bProps);
+        //r.setBackground(bProps);
     }
 
     /**
      * Return the enumerated value designating this type of region in the
      * Area tree.
      */
-    abstract protected int getRegionAreaClass();
+    protected abstract int getRegionAreaClass();
 
     /**
      * Returns the default region name (xsl-region-before, xsl-region-start,
@@ -169,8 +166,8 @@ public abstract class Region extends FObj {
     }
 
     protected Region getSiblingRegion(String regionClass) {
-	// Ask parent for region
-	return  _layoutMaster.getRegion(regionClass);
+        // Ask parent for region
+        return  _layoutMaster.getRegion(regionClass);
     }
 
     boolean getPrecedence() {

@@ -61,7 +61,7 @@ public class TTFReader {
     }
 
 
-    private final static void displayUsage() {
+    private static final void displayUsage() {
         System.out.println(" java org.apache.fop.fonts.apps.TTFReader [options] fontfile.ttf xmlfile.xml\n");
         System.out.println(" where options can be:\n");
         System.out.println("-enc ansi");

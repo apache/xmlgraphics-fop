@@ -1,6 +1,6 @@
 /*
  * $Id$
- * Copyright (C) 2001 The Apache Software Foundation. All rights reserved.
+ * Copyright (C) 2001-2002 The Apache Software Foundation. All rights reserved.
  * For details on use and redistribution please refer to the
  * LICENSE file included with these sources.
  */
@@ -242,10 +242,11 @@ public class SingleByteFont extends Font implements FontDescriptor {
 
     public char mapChar(char c) {
         char d = mapping.mapChar(c);
-	if(d != 0)
+        if(d != 0) {
             return d;
-        else
-	    return '#';
+        } else {
+            return '#';
+        }
     }
 
 }

@@ -19,6 +19,10 @@ public class FontState {
     private String _fontFamily;
     private String _fontStyle;
     private int _fontWeight;
+
+    /**
+     * normal or small-caps font
+     */
     private int _fontVariant;
 
     private FontMetric _metric;
@@ -81,30 +85,30 @@ public class FontState {
         }
 
         // Use default CodePointMapping
-	char d = CodePointMapping.getMapping("WinAnsiEncoding").mapChar(c);
-	if (d != 0) {
-	    c = d;
-	} else {
-	    c = '#';
-	}
+        char d = CodePointMapping.getMapping("WinAnsiEncoding").mapChar(c);
+        if (d != 0) {
+            c = d;
+        } else {
+            c = '#';
+        }
 
         return c;
     }
 
     public String toString() {
-	StringBuffer sbuf = new StringBuffer();
-	sbuf.append('(');
-	sbuf.append(_fontFamily);
-	sbuf.append(',');
-	sbuf.append(_fontName);
-	sbuf.append(',');
-	sbuf.append(_fontSize);
-	sbuf.append(',');
-	sbuf.append(_fontStyle);
-	sbuf.append(',');
-	sbuf.append(_fontWeight);
-	sbuf.append(')');
-	return sbuf.toString();
+        StringBuffer sbuf = new StringBuffer();
+        sbuf.append('(');
+        sbuf.append(_fontFamily);
+        sbuf.append(',');
+        sbuf.append(_fontName);
+        sbuf.append(',');
+        sbuf.append(_fontSize);
+        sbuf.append(',');
+        sbuf.append(_fontStyle);
+        sbuf.append(',');
+        sbuf.append(_fontWeight);
+        sbuf.append(')');
+        return sbuf.toString();
     }
 }
 

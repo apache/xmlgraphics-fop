@@ -1,6 +1,6 @@
 /*
  * $Id$
- * Copyright (C) 2001 The Apache Software Foundation. All rights reserved.
+ * Copyright (C) 2001-2002 The Apache Software Foundation. All rights reserved.
  * For details on use and redistribution please refer to the
  * LICENSE file included with these sources.
  */
@@ -25,9 +25,9 @@ import java.util.HashMap;
 public class PropertyParser extends PropertyTokenizer {
     private PropertyInfo propInfo;    // Maker and propertyList related info
 
-    static private final String RELUNIT = "em";
-    static private final Numeric negOne = new Numeric(new Double(-1.0));
-    static final private HashMap functionTable = new HashMap();
+    private static final String RELUNIT = "em";
+    private static final Numeric negOne = new Numeric(new Double(-1.0));
+    private static final HashMap functionTable = new HashMap();
 
     static {
         // Initialize the HashMap of XSL-defined functions
@@ -107,8 +107,9 @@ public class PropertyParser extends PropertyTokenizer {
                 if (propList != null) {
                     propList.addProperty(prop);
                     return propList;
-                } else
+                } else {
                     return prop;
+                }
             } else {
                 if (propList == null) {
                     propList = new ListProperty(prop);
@@ -129,7 +130,7 @@ public class PropertyParser extends PropertyTokenizer {
         // Evaluate and put result on the operand stack
         Property prop = parseMultiplicativeExpr();
         loop:
-        for (; ; ) {
+        for (; ;) {
             switch (currentToken) {
             case TOK_PLUS:
                 next();
@@ -156,7 +157,7 @@ public class PropertyParser extends PropertyTokenizer {
     private Property parseMultiplicativeExpr() throws PropertyException {
         Property prop = parseUnaryExpr();
         loop:
-        for (; ; ) {
+        for (; ;) {
             switch (currentToken) {
             case TOK_DIV:
                 next();
@@ -198,8 +199,9 @@ public class PropertyParser extends PropertyTokenizer {
      * and throws an exception if this isn't the case.
      */
     private final void expectRpar() throws PropertyException {
-        if (currentToken != TOK_RPAR)
+        if (currentToken != TOK_RPAR) {
             throw new PropertyException("expected )");
+        }
         next();
     }
 
@@ -272,13 +274,15 @@ public class PropertyParser extends PropertyTokenizer {
             if (unitPart.equals(RELUNIT)) {
                 length = new FixedLength(numPart.doubleValue(),
                                     propInfo.currentFontSize());
-            } else
+            } else {
                 length = new FixedLength(numPart.doubleValue(), unitPart);
+            }
             if (length == null) {
                 throw new PropertyException("unrecognized unit name: "
                                             + currentTokenValue);
-            } else
+            } else {
                 prop = new LengthProperty(length);
+            }
             break;
 
         case TOK_COLORSPEC:
@@ -331,8 +335,9 @@ public class PropertyParser extends PropertyTokenizer {
                     args[i++] = prop;
                 }
                 // ignore extra args
-                if (currentToken != TOK_COMMA)
+                if (currentToken != TOK_COMMA) {
                     break;
+                }
                 next();
             }
             expectRpar();
@@ -355,8 +360,9 @@ public class PropertyParser extends PropertyTokenizer {
      */
     private Property evalAddition(Numeric op1,
                                   Numeric op2) throws PropertyException {
-        if (op1 == null || op2 == null)
+        if (op1 == null || op2 == null) {
             throw new PropertyException("Non numeric operand in addition");
+        }
         return new NumericProperty(op1.add(op2));
     }
 
@@ -371,8 +377,9 @@ public class PropertyParser extends PropertyTokenizer {
      */
     private Property evalSubtraction(Numeric op1,
                                      Numeric op2) throws PropertyException {
-        if (op1 == null || op2 == null)
+        if (op1 == null || op2 == null) {
             throw new PropertyException("Non numeric operand in subtraction");
+        }
         return new NumericProperty(op1.subtract(op2));
     }
 
@@ -385,8 +392,9 @@ public class PropertyParser extends PropertyTokenizer {
      * @throws PropertyException If the operand is null.
      */
     private Property evalNegate(Numeric op) throws PropertyException {
-        if (op == null)
+        if (op == null) {
             throw new PropertyException("Non numeric operand to unary minus");
+        }
         return new NumericProperty(op.multiply(negOne));
     }
 
@@ -401,8 +409,9 @@ public class PropertyParser extends PropertyTokenizer {
      */
     private Property evalMultiply(Numeric op1,
                                   Numeric op2) throws PropertyException {
-        if (op1 == null || op2 == null)
+        if (op1 == null || op2 == null) {
             throw new PropertyException("Non numeric operand in multiplication");
+        }
         return new NumericProperty(op1.multiply(op2));
     }
 
@@ -418,8 +427,9 @@ public class PropertyParser extends PropertyTokenizer {
      */
     private Property evalDivide(Numeric op1,
                                 Numeric op2) throws PropertyException {
-        if (op1 == null || op2 == null)
+        if (op1 == null || op2 == null) {
             throw new PropertyException("Non numeric operand in division");
+        }
         return new NumericProperty(op1.divide(op2));
     }
 
@@ -434,8 +444,9 @@ public class PropertyParser extends PropertyTokenizer {
      */
     private Property evalModulo(Number op1,
                                 Number op2) throws PropertyException {
-        if (op1 == null || op2 == null)
+        if (op1 == null || op2 == null) {
             throw new PropertyException("Non number operand to modulo");
+        }
         return new NumberProperty(op1.doubleValue() % op2.doubleValue());
     }
 

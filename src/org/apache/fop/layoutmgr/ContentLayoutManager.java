@@ -60,8 +60,9 @@ public class ContentLayoutManager implements LayoutManager {
         int middlefollow = maxtb;
 
         while (!curLM.isFinished()) {
+            MinOptMax lastSize = null;
             if ((bp = curLM.getNextBreakPoss(childLC)) != null) {
-                stack.add(bp.getStackingSize());
+                lastSize = bp.getStackingSize();
                 childBreaks.add(bp);
 
                 if (bp.getLead() > lineLead) {
@@ -73,6 +74,9 @@ public class ContentLayoutManager implements LayoutManager {
                 if (bp.getMiddle() > middlefollow) {
                     middlefollow = bp.getMiddle();
                 }
+            }
+            if(lastSize != null) {
+                stack.add(lastSize);
             }
         }
 

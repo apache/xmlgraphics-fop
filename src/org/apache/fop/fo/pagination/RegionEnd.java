@@ -1,6 +1,6 @@
 /*
  * $Id$
- * Copyright (C) 2001 The Apache Software Foundation. All rights reserved.
+ * Copyright (C) 2001-2002 The Apache Software Foundation. All rights reserved.
  * For details on use and redistribution please refer to the
  * LICENSE file included with these sources.
  */
@@ -19,19 +19,18 @@ import org.apache.fop.area.RegionReference;
 public class RegionEnd extends RegionSE {
 
 
-
     public RegionEnd(FONode parent) {
         super(parent);
     }
 
 
     protected Rectangle getViewportRectangle (FODimension reldims) {
-	// Depends on extent and precedence
-	Rectangle vpRect =
-	    new Rectangle(reldims.ipd - getExtent(), 0,
-			  getExtent(), reldims.bpd);
-	adjustIPD(vpRect);
-	return vpRect;
+        // Depends on extent and precedence
+        Rectangle vpRect =
+            new Rectangle(reldims.ipd - getExtent(), 0,
+                          getExtent(), reldims.bpd);
+        adjustIPD(vpRect);
+        return vpRect;
     }
 
     protected String getDefaultRegionName() {
@@ -48,3 +47,4 @@ public class RegionEnd extends RegionSE {
     }
 
 }
+

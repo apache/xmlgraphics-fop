@@ -20,11 +20,12 @@ import java.util.Iterator;
  * areas in the block-progression direction, such as Flow, Block, ListBlock.
  */
 public abstract class BlockStackingLayoutManager extends AbstractLayoutManager {
-    /** Reference to FO whose areas it's managing or to the traits
+    /**
+     * Reference to FO whose areas it's managing or to the traits
      * of the FO.
      */
-    LayoutManager curChildLM = null;
-    BlockParent parentArea = null;
+    protected LayoutManager curChildLM = null;
+    protected BlockParent parentArea = null;
 
     public BlockStackingLayoutManager(FObj fobj) {
         super(fobj);
@@ -50,11 +51,11 @@ public abstract class BlockStackingLayoutManager extends AbstractLayoutManager {
 
     protected MinOptMax resolveSpaceSpecifier(Area nextArea) {
         SpaceSpecifier spaceSpec = new SpaceSpecifier(false);
-        // 	Area prevArea = getCurrentArea().getLast();
-        // 	if (prevArea != null) {
-        // 	    spaceSpec.addSpace(prevArea.getSpaceAfter());
-        // 	}
-        // 	spaceSpec.addSpace(nextArea.getSpaceBefore());
+        // Area prevArea = getCurrentArea().getLast();
+        // if (prevArea != null) {
+        //     spaceSpec.addSpace(prevArea.getSpaceAfter());
+        // }
+        // spaceSpec.addSpace(nextArea.getSpaceBefore());
         return spaceSpec.resolve(false);
     }
 
@@ -96,36 +97,11 @@ public abstract class BlockStackingLayoutManager extends AbstractLayoutManager {
             return false;
         }
 
-        // See if the whole thing fits, including space before
-        // Calculate space between last child in curFlow and childArea
-        //MinOptMax targetDim = parentArea.getAvailBPD();
         MinOptMax spaceBefore = resolveSpaceSpecifier(childArea);
-        //targetDim.subtract(spaceBefore);
-        //if (targetDim.max >= childArea.getAllocationBPD().min) {
-            //parentArea.addBlock(new InterBlockSpace(spaceBefore));
-        //    parentArea.addBlock((Block) childArea);
-        //    return false;
-        //} else {
-            parentArea.addBlock((Block) childArea);
-            flush(); // hand off current area to parent
-            // Probably need something like max BPD so we don't get into
-            // infinite loops with large unbreakable chunks
+        parentArea.addBlock((Block) childArea);
+        flush(); // hand off current area to parent
 
-            /*LayoutManager childLM =
-              childArea.getGeneratingFObj(). getLayoutManager();
-            if (childLM.splitArea(childArea, splitContext)) {
-                //parentArea.addBlock(new InterBlockSpace(spaceBefore));
-                parentArea.addBlock((Block) childArea);
-        }*/
-            //flush(); // hand off current area to parent
-            //getParentArea(splitContext.nextArea);
-            //getParentArea(childArea);
-            // Check that reference IPD hasn't changed!!!
-            // If it has, we must "reflow" the content
-            //addChild(splitContext.nextArea);
-            //addChild(childArea);
-            return true;
-        //}
+        return true;
     }
 
 

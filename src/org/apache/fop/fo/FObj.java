@@ -1,6 +1,6 @@
 /*
  * $Id$
- * Copyright (C) 2001 The Apache Software Foundation. All rights reserved.
+ * Copyright (C) 2001-2002 The Apache Software Foundation. All rights reserved.
  * For details on use and redistribution please refer to the
  * LICENSE file included with these sources.
  */
@@ -39,12 +39,12 @@ public class FObj extends FONode {
     /**
      * value of marker before layout begins
      */
-    public final static int START = -1000;
+    public static final int START = -1000;
 
     /**
      * value of marker after break-after
      */
-    public final static int BREAK_AFTER = -1001;
+    public static final int BREAK_AFTER = -1001;
 
     /**
      * where the layout was up to.
@@ -72,8 +72,9 @@ public class FObj extends FONode {
     public FObj(FONode parent) {
         super(parent);
         markers = new HashMap();
-        if (parent instanceof FObj)
+        if (parent instanceof FObj) {
             this.areaClass = ((FObj) parent).areaClass;
+        }
     }
 
     public void setName(String str) {
@@ -145,11 +146,11 @@ public class FObj extends FONode {
 
     protected void setupID() {
         Property prop = this.properties.get("id");
-        if(prop != null) {
+        if (prop != null) {
             String str = prop.getString();
-            if(str != null && !str.equals("")) {
+            if (str != null && !str.equals("")) {
                 HashSet idrefs = structHandler.getIDReferences();
-                if(!idrefs.contains(str)) {
+                if (!idrefs.contains(str)) {
                     id = str;
                     idrefs.add(id);
                 } else {
@@ -197,8 +198,8 @@ public class FObj extends FONode {
         FONode parent;
         for (p = this; !p.generatesReferenceAreas() &&
                 (parent = p.getParent()) != null &&
-                (parent instanceof FObj); p = (FObj) parent)
-            ;
+                (parent instanceof FObj); p = (FObj) parent) {
+        }
         this.properties.setWritingMode(
           p.getProperty("writing-mode").getEnum());
     }
@@ -216,7 +217,7 @@ public class FObj extends FONode {
      * @return A ListIterator.
      */
     public ListIterator getChildren() {
-        if(children != null) {
+        if (children != null) {
             return children.listIterator();
         }
         return null;
@@ -233,8 +234,9 @@ public class FObj extends FONode {
         int i = children.indexOf(childNode);
         if (i >= 0) {
             return children.listIterator(i);
-        } else
+        } else {
             return null;
+        }
     }
 
     public void setIsInTableCell() {
@@ -308,13 +310,14 @@ public class FObj extends FONode {
         snapshot.add(new Integer(this.marker));
 
         // terminate if no kids or child not yet accessed
-        if (this.marker < 0)
+        if (this.marker < 0) {
             return snapshot;
-        else if (children.isEmpty())
+        } else if (children.isEmpty()) {
             return snapshot;
-        else
+        } else {
             return ( (FObj) children.get(this.marker)).getMarkerSnapshot(
                      snapshot);
+        }
     }
 
     /**
@@ -331,8 +334,9 @@ public class FObj extends FONode {
             // make sure all the children of this FO are also reset
             resetMarker();
             return;
-        } else if ((this.marker == -1) || children.isEmpty())
+        } else if ((this.marker == -1) || children.isEmpty()) {
             return;
+        }
 
         int numChildren = this.children.size();
 

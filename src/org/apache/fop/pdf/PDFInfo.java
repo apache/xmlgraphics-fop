@@ -71,16 +71,16 @@ public class PDFInfo extends PDFObject {
     public byte[] toPDF() {
         String p = this.number + " " + this.generation
                    + " obj\n<< /Type /Info\n";
-        if(title != null) {
+        if (title != null) {
             p += "/Title (" + this.title + ")\n";
         }
-        if(author != null) {
+        if (author != null) {
             p += "/Author (" + this.author + ")\n";
         }
-        if(subject != null) {
+        if (subject != null) {
             p += "/Subject (" + this.subject + ")\n";
         }
-        if(keywords != null) {
+        if (keywords != null) {
             p += "/Keywords (" + this.keywords + ")\n";
         }
 

@@ -1,6 +1,6 @@
 /*
  * $Id$
- * Copyright (C) 2001 The Apache Software Foundation. All rights reserved.
+ * Copyright (C) 2001-2002 The Apache Software Foundation. All rights reserved.
  * For details on use and redistribution please refer to the
  * LICENSE file included with these sources.
  */
@@ -166,21 +166,27 @@ public class ColorType {
     }
 
     public String toString() {
-	StringBuffer sbuf = new StringBuffer(8);
-	sbuf.append('#');
-	String s = Integer.toHexString((int)(red * 255.0));
-	if (s.length() == 1) sbuf.append('0');
-	sbuf.append(s);
-	s = Integer.toHexString((int)(green * 255.0));
-	if (s.length() == 1) sbuf.append('0');
-	sbuf.append(s);
-	s = Integer.toHexString((int)(blue * 255.0));
-	if (s.length() == 1) sbuf.append('0');
-	sbuf.append(s);
-	return sbuf.toString();
+        StringBuffer sbuf = new StringBuffer(8);
+        sbuf.append('#');
+        String s = Integer.toHexString((int)(red * 255.0));
+        if (s.length() == 1) {
+            sbuf.append('0');
+        }
+        sbuf.append(s);
+        s = Integer.toHexString((int)(green * 255.0));
+        if (s.length() == 1) {
+            sbuf.append('0');
+        }
+        sbuf.append(s);
+        s = Integer.toHexString((int)(blue * 255.0));
+        if (s.length() == 1) {
+            sbuf.append('0');
+        }
+        sbuf.append(s);
+        return sbuf.toString();
     }
 
-    final static String[] names = {
+    protected static final String[] names = {
         "aliceblue", "antiquewhite", "aqua", "aquamarine", "azure", "beige",
         "bisque", "black", "blanchedalmond", "blue", "blueviolet", "brown",
         "burlywood", "cadetblue", "chartreuse", "chocolate", "coral",
@@ -213,7 +219,7 @@ public class ColorType {
         "whitesmoke", "yellow", "yellowgreen"
     };
 
-    final static int[][] vals = {
+    protected static final int[][] vals = {
          {
             240, 248, 255
         }, {

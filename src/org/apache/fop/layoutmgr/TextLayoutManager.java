@@ -55,7 +55,7 @@ public class TextLayoutManager extends AbstractLayoutManager {
     private ArrayList m_vecAreaInfo;
 
     /** Non-space characters on which we can end a line. */
-    static private final String s_breakChars = "-/" ;
+    private static final String s_breakChars = "-/" ;
 
     private char[] chars;
     private TextInfo textInfo;
@@ -450,19 +450,19 @@ public class TextLayoutManager extends AbstractLayoutManager {
         double dSpaceAdjust = context.getSpaceAdjust();
         if (dSpaceAdjust > 0.0) {
             // Stretch by factor
-            // 	    System.err.println("Potential stretch = " +
-            // 			       (ai.m_ipdArea.max - ai.m_ipdArea.opt));
+            //     System.err.println("Potential stretch = " +
+            //        (ai.m_ipdArea.max - ai.m_ipdArea.opt));
             iAdjust = (int)((double)(ai.m_ipdArea.max -
                                      ai.m_ipdArea.opt) * dSpaceAdjust);
         } else if (dSpaceAdjust < 0.0) {
             // Shrink by factor
-            // 	    System.err.println("Potential shrink = " +
-            // 			       (ai.m_ipdArea.opt - ai.m_ipdArea.min));
+            //     System.err.println("Potential shrink = " +
+            //        (ai.m_ipdArea.opt - ai.m_ipdArea.min));
             iAdjust = (int)((double)(ai.m_ipdArea.opt -
                                      ai.m_ipdArea.min) * dSpaceAdjust);
         }
-        // 	System.err.println("Text adjustment factor = " + dSpaceAdjust +
-        // 			   " total=" + iAdjust);
+        // System.err.println("Text adjustment factor = " + dSpaceAdjust +
+        //    " total=" + iAdjust);
 
         // Make an area containing all characters between start and end.
         Word word = null;

@@ -9,9 +9,9 @@ package org.apache.fop.pdf;
 
 import org.apache.fop.util.StreamUtilities;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.*;
+import java.io.InputStream;
+import java.io.OutputStream;
 
 /**
  * DCT Filter class. Right now it is just used as a dummy filter flag so

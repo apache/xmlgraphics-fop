@@ -23,29 +23,27 @@ public class SpaceVal {
     public final int iPrecedence; //  Numeric only, if forcing, set to 0
 
     public SpaceVal(Space spaceprop) {
-	space = new MinOptMax(
-			      spaceprop.getMinimum().getLength().mvalue(),
-			      spaceprop.getOptimum().getLength().mvalue(),
-			      spaceprop.getMaximum().getLength().mvalue());
-	bConditional = (spaceprop.getConditionality().getEnum() ==
-			Constants.DISCARD);
-	Property precProp = spaceprop.getPrecedence();
-	if (precProp.getNumber() != null) {
-	    iPrecedence = precProp.getNumber().intValue();
-	    bForcing = false;
-	}
-	else {
-	    bForcing = (precProp.getEnum() == Constants.FORCE);
-	    iPrecedence=0;
-	}
+        space = new MinOptMax( spaceprop.getMinimum().getLength().mvalue(),
+                               spaceprop.getOptimum().getLength().mvalue(),
+                               spaceprop.getMaximum().getLength().mvalue());
+        bConditional = (spaceprop.getConditionality().getEnum() ==
+                        Constants.DISCARD);
+        Property precProp = spaceprop.getPrecedence();
+        if (precProp.getNumber() != null) {
+            iPrecedence = precProp.getNumber().intValue();
+            bForcing = false;
+        } else {
+            bForcing = (precProp.getEnum() == Constants.FORCE);
+            iPrecedence = 0;
+        }
     }
 
-    public SpaceVal(MinOptMax space, boolean bConditional, boolean bForcing,
-		    int iPrecedence) {
-	this.space = space;
-	this.bConditional = bConditional;
-	this.bForcing = bForcing;
-	this.iPrecedence = iPrecedence;
+    public SpaceVal(MinOptMax space, boolean bConditional,
+                    boolean bForcing, int iPrecedence) {
+        this.space = space;
+        this.bConditional = bConditional;
+        this.bForcing = bForcing;
+        this.iPrecedence = iPrecedence;
     }
 
 }

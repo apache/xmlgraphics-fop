@@ -1,6 +1,6 @@
 /*
  * $Id$
- * Copyright (C) 2001 The Apache Software Foundation. All rights reserved.
+ * Copyright (C) 2001-2002 The Apache Software Foundation. All rights reserved.
  * For details on use and redistribution please refer to the
  * LICENSE file included with these sources.
  */
@@ -22,24 +22,26 @@ public class Keep implements CompoundDatatype {
     // From CompoundDatatype
     public void setComponent(String sCmpnName, Property cmpnValue,
                              boolean bIsDefault) {
-        if (sCmpnName.equals("within-line"))
+        if (sCmpnName.equals("within-line")) {
             setWithinLine(cmpnValue, bIsDefault);
-        else if (sCmpnName.equals("within-column"))
+        } else if (sCmpnName.equals("within-column")) {
             setWithinColumn(cmpnValue, bIsDefault);
-        else if (sCmpnName.equals("within-page"))
+        } else if (sCmpnName.equals("within-page")) {
             setWithinPage(cmpnValue, bIsDefault);
+        }
     }
 
     // From CompoundDatatype
     public Property getComponent(String sCmpnName) {
-        if (sCmpnName.equals("within-line"))
+        if (sCmpnName.equals("within-line")) {
             return getWithinLine();
-        else if (sCmpnName.equals("within-column"))
+        } else if (sCmpnName.equals("within-column")) {
             return getWithinColumn();
-        else if (sCmpnName.equals("within-page"))
+        } else if (sCmpnName.equals("within-page")) {
             return getWithinPage();
-        else
+        } else {
             return null;
+        }
     }
 
     public void setWithinLine(Property withinLine, boolean bIsDefault) {

@@ -27,9 +27,9 @@ public abstract class RegionBA extends RegionBASE {
     }
 
     public void end() {
-	super.end();
+        super.end();
         bPrecedence =
-	    (this.properties.get("precedence").getEnum()==Precedence.TRUE);
+            (this.properties.get("precedence").getEnum()==Precedence.TRUE);
     }
 
     /**
@@ -40,18 +40,19 @@ public abstract class RegionBA extends RegionBASE {
      * and end regions if they are present.
      */
     protected void adjustIPD(Rectangle vpRect) {
-	int xoff = 0;
-	Region start = getSiblingRegion(Region.START);
-	if (start != null) {
-	    xoff = start.getExtent();
-	    vpRect.translate(xoff, 0);
-	}
-	Region end =getSiblingRegion(Region.END);
-	if (end != null) {
-	    xoff += end.getExtent();
-	}
-	if (xoff > 0) {
-	    vpRect.grow(-xoff,0);
-	}
+        int xoff = 0;
+        Region start = getSiblingRegion(Region.START);
+        if (start != null) {
+            xoff = start.getExtent();
+            vpRect.translate(xoff, 0);
+        }
+        Region end =getSiblingRegion(Region.END);
+        if (end != null) {
+            xoff += end.getExtent();
+        }
+        if (xoff > 0) {
+            vpRect.grow(-xoff,0);
+        }
     }
 }
+

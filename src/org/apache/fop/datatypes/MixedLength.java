@@ -1,6 +1,6 @@
 /*
  * $Id$
- * Copyright (C) 2001 The Apache Software Foundation. All rights reserved.
+ * Copyright (C) 2001-2002 The Apache Software Foundation. All rights reserved.
  * For details on use and redistribution please refer to the
  * LICENSE file included with these sources.
  */
@@ -23,70 +23,69 @@ public class MixedLength extends Length {
     private Vector lengths ;
 
     public MixedLength(Vector lengths) {
-	this.lengths = lengths;
+        this.lengths = lengths;
     }
 
     protected void computeValue() {
-	int computedValue =0;
-	boolean bAllComputed = true;
-	Enumeration e = lengths.elements();
-	while (e.hasMoreElements()) {
-	    Length l = (Length)e.nextElement();
-	    computedValue += l.mvalue();
-	    if (! l.isComputed()) {
-		bAllComputed = false;
-	    }
+        int computedValue = 0;
+        boolean bAllComputed = true;
+        Enumeration e = lengths.elements();
+        while (e.hasMoreElements()) {
+            Length l = (Length) e.nextElement();
+            computedValue += l.mvalue();
+            if (! l.isComputed()) {
+                bAllComputed = false;
+            }
         }
         setComputedValue(computedValue, bAllComputed);
     }
 
 
     public double getTableUnits() {
-	double tableUnits = 0.0;
-	Enumeration e = lengths.elements();
-	while (e.hasMoreElements()) {
-	    tableUnits += ((Length)e.nextElement()).getTableUnits();
+        double tableUnits = 0.0;
+        Enumeration e = lengths.elements();
+        while (e.hasMoreElements()) {
+            tableUnits += ((Length) e.nextElement()).getTableUnits();
         }
         return tableUnits;
     }
 
     public void resolveTableUnit(double dTableUnit) {
-	Enumeration e = lengths.elements();
-	while (e.hasMoreElements()) {
-	    ((Length)e.nextElement()).resolveTableUnit(dTableUnit);
+        Enumeration e = lengths.elements();
+        while (e.hasMoreElements()) {
+            ((Length) e.nextElement()).resolveTableUnit(dTableUnit);
         }
     }
 
     public String toString() {
         StringBuffer sbuf = new StringBuffer();
-	Enumeration e = lengths.elements();
-	while (e.hasMoreElements()) {
-	    if (sbuf.length()>0) {
-		sbuf.append('+');
-	    }
-	    sbuf.append(e.nextElement().toString());
+        Enumeration e = lengths.elements();
+        while (e.hasMoreElements()) {
+            if (sbuf.length() > 0) {
+                sbuf.append('+');
+            }
+            sbuf.append(e.nextElement().toString());
         }
-	return sbuf.toString();
+        return sbuf.toString();
     }
 
     public Numeric asNumeric() {
-	Numeric numeric = null;
-	for (Enumeration e = lengths.elements(); e.hasMoreElements();) {
-	    Length l = (Length)e.nextElement();
-	    if (numeric == null) {
-		numeric = l.asNumeric();
-	    }
-	    else {
-		try {
-		    Numeric sum = numeric.add(l.asNumeric());
-		    numeric = sum;
-		} catch (PropertyException pe) {
-		    System.err.println("Can't convert MixedLength to Numeric: " +
-				       pe);
-		}
-	    }
-	}
-	return numeric;
+        Numeric numeric = null;
+        for (Enumeration e = lengths.elements(); e.hasMoreElements();) {
+            Length l = (Length) e.nextElement();
+            if (numeric == null) {
+                numeric = l.asNumeric();
+            } else {
+                try {
+                    Numeric sum = numeric.add(l.asNumeric());
+                    numeric = sum;
+                } catch (PropertyException pe) {
+                    System.err.println(
+                      "Can't convert MixedLength to Numeric: " + pe);
+                }
+            }
+        }
+        return numeric;
     }
-
 }
+

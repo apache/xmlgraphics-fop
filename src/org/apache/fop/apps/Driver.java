@@ -205,7 +205,7 @@ public class Driver implements LogEnabled {
     }
 
     private FOUserAgent getUserAgent() {
-        if(userAgent == null) {
+        if (userAgent == null) {
             userAgent = new FOUserAgent();
             userAgent.enableLogging(getLogger());
             userAgent.setBaseURL("file:/.");
@@ -223,7 +223,7 @@ public class Driver implements LogEnabled {
 
 
     protected Logger getLogger() {
-        if(this.log == null) {
+        if (this.log == null) {
             this.log = new ConsoleLogger(ConsoleLogger.LEVEL_INFO);
             this.log.error("Logger not set. Using ConsoleLogger as default.");
         }
@@ -447,7 +447,7 @@ public class Driver implements LogEnabled {
      */
     public ContentHandler getContentHandler() {
         // TODO - do this stuff in a better way
-        if(_renderer != null) {
+        if (_renderer != null) {
             structHandler = new LayoutHandler(_stream, _renderer, true);
         } else {
             structHandler = new org.apache.fop.mif.MIFHandler(_stream);
@@ -547,7 +547,7 @@ class Service {
     public static synchronized Enumeration providers(Class cls) {
         ClassLoader cl = cls.getClassLoader();
         // null if loaded by bootstrap class loader
-        if(cl == null) {
+        if (cl == null) {
             cl = ClassLoader.getSystemClassLoader();
         }
         String serviceFile = "META-INF/services/" + cls.getName();
@@ -555,8 +555,9 @@ class Service {
         // getLogger().debug("File: " + serviceFile);
 
         Vector v = (Vector)providerMap.get(serviceFile);
-        if (v != null)
+        if (v != null) {
             return v.elements();
+        }
 
         v = new Vector();
         providerMap.put(serviceFile, v);
@@ -582,8 +583,9 @@ class Service {
                     try {
                         // First strip any comment...
                         int idx = line.indexOf('#');
-                        if (idx != -1)
+                        if (idx != -1) {
                             line = line.substring(0, idx);
+                        }
 
                         // Trim whitespace.
                         line = line.trim();

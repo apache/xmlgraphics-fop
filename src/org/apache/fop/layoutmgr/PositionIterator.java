@@ -32,9 +32,9 @@ public abstract class PositionIterator implements Iterator {
         return m_childLM;
     }
 
-    abstract protected LayoutManager getLM(Object nextObj);
+    protected abstract LayoutManager getLM(Object nextObj);
 
-    abstract protected Position getPos(Object nextObj);
+    protected abstract Position getPos(Object nextObj);
 
     private void lookAhead() {
         if (m_parentIter.hasNext()) {

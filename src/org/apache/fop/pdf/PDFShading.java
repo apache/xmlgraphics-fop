@@ -1,6 +1,6 @@
 /*
  * $Id$
- * Copyright (C) 2001 The Apache Software Foundation. All rights reserved.
+ * Copyright (C) 2001-2002 The Apache Software Foundation. All rights reserved.
  * For details on use and redistribution please refer to the
  * LICENSE file included with these sources.
  */
@@ -506,95 +506,95 @@ public class PDFShading extends PDFObject {
     }
 
     public boolean equals(Object obj) {
-        if(obj == null) {
+        if (obj == null) {
             return false;
         }
-        if(obj == this) {
+        if (obj == this) {
             return true;
         }
-        if(!(obj instanceof PDFShading)) {
+        if (!(obj instanceof PDFShading)) {
             return false;
         }
         PDFShading shad = (PDFShading)obj;
-        if(shadingType != shad.shadingType) {
+        if (shadingType != shad.shadingType) {
             return false;
         }
-        if(antiAlias != shad.antiAlias) {
+        if (antiAlias != shad.antiAlias) {
             return false;
         }
-        if(bitsPerCoordinate != shad.bitsPerCoordinate) {
+        if (bitsPerCoordinate != shad.bitsPerCoordinate) {
             return false;
         }
-        if(bitsPerFlag != shad.bitsPerFlag) {
+        if (bitsPerFlag != shad.bitsPerFlag) {
             return false;
         }
-        if(bitsPerComponent != shad.bitsPerComponent) {
+        if (bitsPerComponent != shad.bitsPerComponent) {
             return false;
         }
-        if(verticesPerRow != shad.verticesPerRow) {
+        if (verticesPerRow != shad.verticesPerRow) {
             return false;
         }
-        if(colorSpace != null) {
-            if(!colorSpace.equals(shad.colorSpace)) {
+        if (colorSpace != null) {
+            if (!colorSpace.equals(shad.colorSpace)) {
                 return false;
             }
-        } else if(shad.colorSpace != null) {
+        } else if (shad.colorSpace != null) {
             return false;
         }
-        if(background != null) {
-            if(!background.equals(shad.background)) {
+        if (background != null) {
+            if (!background.equals(shad.background)) {
                 return false;
             }
-        } else if(shad.background != null) {
+        } else if (shad.background != null) {
             return false;
         }
-        if(bBox != null) {
-            if(!bBox.equals(shad.bBox)) {
+        if (bBox != null) {
+            if (!bBox.equals(shad.bBox)) {
                 return false;
             }
-        } else if(shad.bBox != null) {
+        } else if (shad.bBox != null) {
             return false;
         }
-        if(domain != null) {
-            if(!domain.equals(shad.domain)) {
+        if (domain != null) {
+            if (!domain.equals(shad.domain)) {
                 return false;
             }
-        } else if(shad.domain != null) {
+        } else if (shad.domain != null) {
             return false;
         }
-        if(matrix != null) {
-            if(!matrix.equals(shad.matrix)) {
+        if (matrix != null) {
+            if (!matrix.equals(shad.matrix)) {
                 return false;
             }
-        } else if(shad.matrix != null) {
+        } else if (shad.matrix != null) {
             return false;
         }
-        if(coords != null) {
-            if(!coords.equals(shad.coords)) {
+        if (coords != null) {
+            if (!coords.equals(shad.coords)) {
                 return false;
             }
-        } else if(shad.coords != null) {
+        } else if (shad.coords != null) {
             return false;
         }
-        if(extend != null) {
-            if(!extend.equals(shad.extend)) {
+        if (extend != null) {
+            if (!extend.equals(shad.extend)) {
                 return false;
             }
-        } else if(shad.extend != null) {
+        } else if (shad.extend != null) {
             return false;
         }
-        if(decode != null) {
-            if(!decode.equals(shad.decode)) {
+        if (decode != null) {
+            if (!decode.equals(shad.decode)) {
                 return false;
             }
-        } else if(shad.decode != null) {
+        } else if (shad.decode != null) {
             return false;
         }
-        if(function != null) {
-            if(!function.equals(shad.function)) {
+        if (function != null) {
+            if (!function.equals(shad.function)) {
                 return false;
             }
-        } else if(shad.function != null) {
+        } else if (shad.function != null) {
             return false;
         }
         return true;

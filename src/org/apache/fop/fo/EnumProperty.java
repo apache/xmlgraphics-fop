@@ -1,6 +1,6 @@
 /*
  * $Id$
- * Copyright (C) 2001 The Apache Software Foundation. All rights reserved.
+ * Copyright (C) 2001-2002 The Apache Software Foundation. All rights reserved.
  * For details on use and redistribution please refer to the
  * LICENSE file included with these sources.
  */
@@ -16,7 +16,6 @@ public class EnumProperty extends Property {
         protected Maker(String propName) {
             super(propName);
         }
-
 
         /**
          * Called by subclass if no match found.
@@ -34,12 +33,12 @@ public class EnumProperty extends Property {
         public Property convertProperty(Property p,
                                         PropertyList propertyList,
                                         FObj fo) throws FOPException {
-            if (p instanceof EnumProperty)
+            if (p instanceof EnumProperty) {
                 return p;
-            else
+            } else {
                 return null;
+            }
         }
-
     }
 
     private int value;
@@ -59,3 +58,4 @@ public class EnumProperty extends Property {
     }
 
 }
+

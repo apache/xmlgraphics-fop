@@ -1,6 +1,6 @@
 /*
  * $Id$
- * Copyright (C) 2001 The Apache Software Foundation. All rights reserved.
+ * Copyright (C) 2001-2002 The Apache Software Foundation. All rights reserved.
  * For details on use and redistribution please refer to the
  * LICENSE file included with these sources.
  */
@@ -18,9 +18,10 @@ public class AbsFunction extends FunctionBase {
     public Property eval(Property[] args,
                          PropertyInfo propInfo) throws PropertyException {
         Numeric num = args[0].getNumeric();
-        if (num == null)
+        if (num == null) {
             throw new PropertyException("Non numeric operand to abs function");
-            // What if has relative composants (percent, table-col units)?
+        }
+        // What if has relative composants (percent, table-col units)?
         return new NumericProperty(num.abs());
     }
 

@@ -1,6 +1,6 @@
 /*
  * $Id$
- * Copyright (C) 2001 The Apache Software Foundation. All rights reserved.
+ * Copyright (C) 2001-2002 The Apache Software Foundation. All rights reserved.
  * For details on use and redistribution please refer to the
  * LICENSE file included with these sources.
  */
@@ -22,20 +22,22 @@ public class LengthPair implements CompoundDatatype {
     // From CompoundDatatype
     public void setComponent(String sCmpnName, Property cmpnValue,
                              boolean bIsDefault) {
-        if (sCmpnName.equals("block-progression-direction"))
+        if (sCmpnName.equals("block-progression-direction")) {
             bpd = cmpnValue;
-        else if (sCmpnName.equals("inline-progression-direction"))
+        } else if (sCmpnName.equals("inline-progression-direction")) {
             ipd = cmpnValue;
+        }
     }
 
     // From CompoundDatatype
     public Property getComponent(String sCmpnName) {
-        if (sCmpnName.equals("block-progression-direction"))
+        if (sCmpnName.equals("block-progression-direction")) {
             return getBPD();
-        else if (sCmpnName.equals("inline-progression-direction"))
+        } else if (sCmpnName.equals("inline-progression-direction")) {
             return getIPD();
-        else
+        } else {
             return null;    // SHOULDN'T HAPPEN
+        }
     }
 
     public Property getIPD() {
@@ -47,3 +49,4 @@ public class LengthPair implements CompoundDatatype {
     }
 
 }
+

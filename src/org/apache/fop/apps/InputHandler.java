@@ -1,6 +1,6 @@
 /*
  * $Id$
- * Copyright (C) 2001 The Apache Software Foundation. All rights reserved.
+ * Copyright (C) 2001-2002 The Apache Software Foundation. All rights reserved.
  * For details on use and redistribution please refer to the
  * LICENSE file included with these sources.
  */
@@ -15,14 +15,14 @@ import org.xml.sax.XMLReader;
 import java.net.URL;
 import java.io.File;
 
-abstract public class InputHandler {
+public abstract class InputHandler {
 
 
-    abstract public InputSource getInputSource();
-    abstract public XMLReader getParser() throws FOPException;
+    public abstract InputSource getInputSource();
+    public abstract XMLReader getParser() throws FOPException;
 
 
-    static public InputSource urlInputSource(URL url) {
+    public static InputSource urlInputSource(URL url) {
         return new InputSource(url.toString());
     }
 
@@ -32,14 +32,16 @@ abstract public class InputHandler {
      * @param file the File
      * @return the InputSource created
      */
-    static public InputSource fileInputSource(File file) {
+    public static InputSource fileInputSource(File file) {
         /* this code adapted from James Clark's in XT */
         String path = file.getAbsolutePath();
         String fSep = System.getProperty("file.separator");
-        if (fSep != null && fSep.length() == 1)
+        if (fSep != null && fSep.length() == 1) {
             path = path.replace(fSep.charAt(0), '/');
-        if (path.length() > 0 && path.charAt(0) != '/')
+        }
+        if (path.length() > 0 && path.charAt(0) != '/') {
             path = '/' + path;
+        }
         try {
             return new InputSource(new URL("file", null, path).toString());
         } catch (java.net.MalformedURLException e) {

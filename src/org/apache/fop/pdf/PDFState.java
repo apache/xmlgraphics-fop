@@ -34,39 +34,39 @@ import java.awt.geom.AffineTransform;
  * the possible combinations after completing.
  */
 public class PDFState {
-    private final static String COLOR = "color";
-    private final static String BACKCOLOR = "backcolor";
-    private final static String PAINT = "paint";
-    private final static String BACKPAINT = "backpaint";
-    private final static String LINECAP = "lineCap";
-    private final static String LINEJOIN = "lineJoin";
-    private final static String LINEWIDTH = "lineWidth";
-    private final static String MITERLIMIT = "miterLimit";
-    private final static String TEXT = "text";
-    private final static String DASHOFFSET = "dashOffset";
-    private final static String DASHARRAY = "dashArray";
-    private final static String TRANSFORM = "transform";
-    private final static String FONTSIZE = "fontSize";
-    private final static String FONTNAME = "fontName";
-    private final static String CLIP = "clip";
-    private final static String GSTATE = "gstate";
+    private static final String COLOR = "color";
+    private static final String BACKCOLOR = "backcolor";
+    private static final String PAINT = "paint";
+    private static final String BACKPAINT = "backpaint";
+    private static final String LINECAP = "lineCap";
+    private static final String LINEJOIN = "lineJoin";
+    private static final String LINEWIDTH = "lineWidth";
+    private static final String MITERLIMIT = "miterLimit";
+    private static final String TEXT = "text";
+    private static final String DASHOFFSET = "dashOffset";
+    private static final String DASHARRAY = "dashArray";
+    private static final String TRANSFORM = "transform";
+    private static final String FONTSIZE = "fontSize";
+    private static final String FONTNAME = "fontName";
+    private static final String CLIP = "clip";
+    private static final String GSTATE = "gstate";
 
-    Color color = Color.black;
-    Color backcolor = Color.white;
-    Paint paint = null;
-    Paint backPaint = null;
-    int lineCap = 0;
-    int lineJoin = 0;
-    float lineWidth = 1;
-    float miterLimit = 0;
-    boolean text = false;
-    int dashOffset = 0;
-    int[] dashArray = new int[0];
-    AffineTransform transform = new AffineTransform();
-    float fontSize = 0;
-    String fontName = "";
-    Shape clip = null;
-    PDFGState gstate = null;
+    private Color color = Color.black;
+    private Color backcolor = Color.white;
+    private Paint paint = null;
+    private Paint backPaint = null;
+    private int lineCap = 0;
+    private int lineJoin = 0;
+    private float lineWidth = 1;
+    private float miterLimit = 0;
+    private boolean text = false;
+    private int dashOffset = 0;
+    private int[] dashArray = new int[0];
+    private AffineTransform transform = new AffineTransform();
+    private float fontSize = 0;
+    private String fontName = "";
+    private Shape clip = null;
+    private PDFGState gstate = null;
 
     ArrayList stateStack = new ArrayList();
 
@@ -132,7 +132,7 @@ public class PDFState {
         while(stateStack.size() > pos + 1) {
             stateStack.remove(stateStack.size() - 1);
         }
-        if(stateStack.size() > pos) {
+        if (stateStack.size() > pos) {
             pop();
         }
     }
@@ -142,7 +142,7 @@ public class PDFState {
     }
 
     public boolean setColor(Color col) {
-        if(!col.equals(color)) {
+        if (!col.equals(color)) {
             color = col;
             return true;
         }
@@ -150,7 +150,7 @@ public class PDFState {
     }
 
     public boolean setBackColor(Color col) {
-        if(!col.equals(backcolor)) {
+        if (!col.equals(backcolor)) {
             backcolor = col;
             return true;
         }
@@ -158,12 +158,12 @@ public class PDFState {
     }
 
     public boolean setPaint(Paint p) {
-        if(paint == null) {
-            if(p != null) {
+        if (paint == null) {
+            if (p != null) {
                 paint = p;
                 return true;
             }
-        } else if(!paint.equals(p)) {
+        } else if (!paint.equals(p)) {
             paint = p;
             return true;
         }
@@ -174,11 +174,11 @@ public class PDFState {
      * For clips it can start a new state
      */
     public boolean checkClip(Shape cl) {
-        if(clip == null) {
-            if(cl != null) {
+        if (clip == null) {
+            if (cl != null) {
                 return true;
             }
-        } else if(!new Area(clip).equals(new Area(cl))) {
+        } else if (!new Area(clip).equals(new Area(cl))) {
             return true;
         }
         return false;
@@ -215,7 +215,7 @@ public class PDFState {
     public AffineTransform getTransform() {
         AffineTransform tf;
         AffineTransform at = new AffineTransform();
-        for(Iterator iter = stateStack.iterator(); iter.hasNext(); ) {
+        for (Iterator iter = stateStack.iterator(); iter.hasNext();) {
             HashMap map = (HashMap)iter.next();
             tf = (AffineTransform)map.get(TRANSFORM);
             at.concatenate(tf);
@@ -238,14 +238,14 @@ public class PDFState {
         PDFGState state;
         PDFGState newstate = new PDFGState(0);
         newstate.addValues(defaultState);
-        for(Iterator iter = stateStack.iterator(); iter.hasNext(); ) {
+        for (Iterator iter = stateStack.iterator(); iter.hasNext(); ) {
             HashMap map = (HashMap)iter.next();
             state = (PDFGState)map.get(GSTATE);
-            if(state != null) {
+            if (state != null) {
                 newstate.addValues(state);
             }
         }
-        if(gstate != null) {
+        if (gstate != null) {
             newstate.addValues(gstate);
         }
 

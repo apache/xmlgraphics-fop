@@ -1,6 +1,6 @@
 /*
  * $Id$
- * Copyright (C) 2001 The Apache Software Foundation. All rights reserved.
+ * Copyright (C) 2001-2002 The Apache Software Foundation. All rights reserved.
  * For details on use and redistribution please refer to the
  * LICENSE file included with these sources.
  */
@@ -19,10 +19,11 @@ public class GenericShorthandParser implements ShorthandParser {
     }
 
     protected Property getElement(int index) {
-        if (list.size() > index)
+        if (list.size() > index) {
             return (Property)list.elementAt(index);
-        else
+        } else {
             return null;
+        }
     }
 
     protected int count() {
@@ -60,3 +61,4 @@ public class GenericShorthandParser implements ShorthandParser {
     }
 
 }
+

@@ -26,8 +26,7 @@ import java.util.Iterator;
 public class PFMReader {
     private boolean invokedStandalone = false;
 
-    public PFMReader() {}
-
+    public PFMReader() { }
 
     /**
      * Parse commandline arguments. put options in the HashMap and return
@@ -40,7 +39,7 @@ public class PFMReader {
         ArrayList arguments = new ArrayList();
         for (int i = 0; i < args.length; i++) {
             if (args[i].startsWith("-")) {
-                if ((i + 1) < args.length &&!args[i + 1].startsWith("-")) {
+                if ((i + 1) < args.length && !args[i + 1].startsWith("-")) {
                     options.put(args[i], args[i + 1]);
                     i++;
                 } else {
@@ -54,7 +53,7 @@ public class PFMReader {
         return (String[])arguments.toArray(new String[0]);
     }
 
-    private final static void displayUsage() {
+    private static final void displayUsage() {
         System.out.println(" java org.apache.fop.fonts.apps.PFMReader [options] metricfile.pfm xmlfile.xml\n");
         System.out.println(" where options can be:\n");
         System.out.println(" -fn <fontname>\n");
@@ -99,22 +98,26 @@ public class PFMReader {
         System.out.println("PFM Reader v1.1");
         System.out.println();
 
-        if (options.get("-ef") != null)
+        if (options.get("-ef") != null) {
             embFile = (String)options.get("-ef");
+        }
 
-        if (options.get("-er") != null)
+        if (options.get("-er") != null) {
             embResource = (String)options.get("-er");
+        }
 
-        if (options.get("-fn") != null)
+        if (options.get("-fn") != null) {
             fontName = (String)options.get("-fn");
+        }
 
-        if (options.get("-cn") != null)
+        if (options.get("-cn") != null) {
             className = (String)options.get("-cn");
+        }
 
         if (arguments.length != 2 || options.get("-h") != null
-            || options.get("-help") != null || options.get("--help") != null)
+            || options.get("-help") != null || options.get("--help") != null) {
             displayUsage();
-        else {
+        } else {
             PFMFile pfm = app.loadPFM(arguments[0]);
             if (pfm != null) {
                 app.preview(pfm);
@@ -238,10 +241,12 @@ public class PFMReader {
 
         el = doc.createElement("embed");
         root.appendChild(el);
-        if (file != null)
+        if (file != null) {
             el.setAttribute("file", file);
-        if (resource != null)
+        }
+        if (resource != null) {
             el.setAttribute("class", resource);
+        }
 
         el = doc.createElement("encoding");
         root.appendChild(el);

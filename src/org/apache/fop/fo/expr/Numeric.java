@@ -1,6 +1,6 @@
 /*
  * $Id$
- * Copyright (C) 2001 The Apache Software Foundation. All rights reserved.
+ * Copyright (C) 2001-2002 The Apache Software Foundation. All rights reserved.
  * For details on use and redistribution please refer to the
  * LICENSE file included with these sources.
  */
@@ -123,7 +123,7 @@ public class Numeric {
      */
     public Length asLength() {
         if (dim == 1) {
-	    Vector len = new Vector(3);
+            Vector len = new Vector(3);
             if ((valType & ABS_LENGTH) != 0) {
                 len.add(new FixedLength((int)absValue));
             }
@@ -133,12 +133,11 @@ public class Numeric {
             if ((valType & TCOL_LENGTH) != 0) {
                 len.add(new TableColLength(tcolValue));
             }
-	    if (len.size() == 1) {
-		return (Length)len.elementAt(0);
-	    }
-	    else {
-		return new MixedLength(len);
-	    }
+            if (len.size() == 1) {
+                return (Length)len.elementAt(0);
+            } else {
+                return new MixedLength(len);
+            }
         } else {
             // or throw exception???
             // can't make Length if dimension != 1
@@ -192,8 +191,9 @@ public class Numeric {
     private boolean isMixedType() {
         int ntype = 0;
         for (int t = valType; t != 0; t = t >> 1) {
-            if ((t & 1) != 0)
+            if ((t & 1) != 0) {
                 ++ntype;
+            }
         }
         return ntype > 1;
     }
@@ -333,16 +333,18 @@ public class Numeric {
         double rslt = 0.0;
         // Only compare if have same dimension and value type!
         if (dim == op.dim && valType == op.valType &&!isMixedType()) {
-            if (valType == ABS_LENGTH)
+            if (valType == ABS_LENGTH) {
                 rslt = absValue - op.absValue;
-            else if (valType == PC_LENGTH)
+            } else if (valType == PC_LENGTH) {
                 rslt = pcValue - op.pcValue;
-            else if (valType == TCOL_LENGTH)
+            } else if (valType == TCOL_LENGTH) {
                 rslt = tcolValue - op.tcolValue;
-            if (rslt > 0.0)
+            }
+            if (rslt > 0.0) {
                 return this;
-            else
+            } else {
                 return op;
+            }
         }
         throw new PropertyException("Arguments to max() must have same dimension and value type.");
     }
@@ -357,18 +359,21 @@ public class Numeric {
         double rslt = 0.0;
         // Only compare if have same dimension and value type!
         if (dim == op.dim && valType == op.valType &&!isMixedType()) {
-            if (valType == ABS_LENGTH)
+            if (valType == ABS_LENGTH) {
                 rslt = absValue - op.absValue;
-            else if (valType == PC_LENGTH)
+            } else if (valType == PC_LENGTH) {
                 rslt = pcValue - op.pcValue;
-            else if (valType == TCOL_LENGTH)
+            } else if (valType == TCOL_LENGTH) {
                 rslt = tcolValue - op.tcolValue;
-            if (rslt > 0.0)
+            }
+            if (rslt > 0.0) {
                 return op;
-            else
+            } else {
                 return this;
+            }
         }
         throw new PropertyException("Arguments to min() must have same dimension and value type.");
     }
 
 }
+

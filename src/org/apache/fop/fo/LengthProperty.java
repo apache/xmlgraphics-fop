@@ -1,6 +1,6 @@
 /*
  * $Id$
- * Copyright (C) 2001 The Apache Software Foundation. All rights reserved.
+ * Copyright (C) 2001-2002 The Apache Software Foundation. All rights reserved.
  * For details on use and redistribution please refer to the
  * LICENSE file included with these sources.
  */
@@ -38,14 +38,17 @@ public class LengthProperty extends Property {
                                         FObj fo) throws FOPException {
             if (isAutoLengthAllowed()) {
                 String pval = p.getString();
-                if (pval != null && pval.equals("auto"))
+                if (pval != null && pval.equals("auto")) {
                     return new LengthProperty(new AutoLength());
+                }
             }
-            if (p instanceof LengthProperty)
+            if (p instanceof LengthProperty) {
                 return p;
+            }
             Length val = p.getLength();
-            if (val != null)
+            if (val != null) {
                 return new LengthProperty(val);
+            }
             return convertPropertyDatatype(p, propertyList, fo);
         }
 
@@ -81,3 +84,4 @@ public class LengthProperty extends Property {
     }
 
 }
+

@@ -151,8 +151,6 @@ public class Area implements Serializable {
      * @param child the child area to add
      */
     public void addChild(Area child) {
-System.out.println("mmmm");
-(new Exception()).printStackTrace();
     }
 
     /**

@@ -1,6 +1,6 @@
 /*
  * $Id$
- * Copyright (C) 2001 The Apache Software Foundation. All rights reserved.
+ * Copyright (C) 2001-2002 The Apache Software Foundation. All rights reserved.
  * For details on use and redistribution please refer to the
  * LICENSE file included with these sources.
  */
@@ -103,8 +103,9 @@ public class LayoutHandler extends StructureHandler {
     public void startDocument() throws SAXException {
         pageCount = 0;
 
-        if (MEM_PROFILE_WITH_GC)
+        if (MEM_PROFILE_WITH_GC) {
             System.gc(); // This takes time but gives better results
+        }
 
         initialMemory = runtime.totalMemory() - runtime.freeMemory();
         startTime = System.currentTimeMillis();
@@ -130,8 +131,9 @@ public class LayoutHandler extends StructureHandler {
             throw new SAXException(e);
         }
 
-        if (MEM_PROFILE_WITH_GC)
+        if (MEM_PROFILE_WITH_GC) {
             System.gc(); // This takes time but gives better results
+        }
 
         long memoryNow = runtime.totalMemory() - runtime.freeMemory();
         long memoryUsed = (memoryNow - initialMemory) / 1024L;
@@ -160,7 +162,7 @@ public class LayoutHandler extends StructureHandler {
 
     public void startPageSequence(PageSequence pageSeq, org.apache.fop.fo.Title seqTitle, LayoutMasterSet lms) {
         Title title = null;
-        if(seqTitle != null) {
+        if (seqTitle != null) {
             title = seqTitle.getTitleArea();
         }
         areaTree.startPageSequence(title);

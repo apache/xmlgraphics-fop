@@ -1,6 +1,6 @@
 /*
  * $Id$
- * Copyright (C) 2001 The Apache Software Foundation. All rights reserved.
+ * Copyright (C) 2001-2002 The Apache Software Foundation. All rights reserved.
  * For details on use and redistribution please refer to the
  * LICENSE file included with these sources.
  */
@@ -198,7 +198,7 @@ public class PDFPattern extends PDFPathPaint {
         p.append(this.number + " " + this.generation
                  + " obj\n<< \n/Type /Pattern \n");
 
-        if(this.resources != null) {
+        if (this.resources != null) {
             p.append("/Resources " + this.resources.referencePDF() + " \n");
         }
 
@@ -308,85 +308,85 @@ public class PDFPattern extends PDFPathPaint {
     public byte[] toPDF() { return null; }
 
     public boolean equals(Object obj) {
-        if(obj == null) {
+        if (obj == null) {
             return false;
         }
-        if(obj == this) {
+        if (obj == this) {
             return true;
         }
-        if(!(obj instanceof PDFPattern)) {
+        if (!(obj instanceof PDFPattern)) {
             return false;
         }
         PDFPattern patt = (PDFPattern)obj;
-        if(patternType != patt.patternType) {
+        if (patternType != patt.patternType) {
             return false;
         }
-        if(paintType != patt.paintType) {
+        if (paintType != patt.paintType) {
             return false;
         }
-        if(tilingType != patt.tilingType) {
+        if (tilingType != patt.tilingType) {
             return false;
         }
-        if(xStep != patt.xStep) {
+        if (xStep != patt.xStep) {
             return false;
         }
-        if(yStep != patt.yStep) {
+        if (yStep != patt.yStep) {
             return false;
         }
-        if(bBox != null) {
-            if(!bBox.equals(patt.bBox)) {
+        if (bBox != null) {
+            if (!bBox.equals(patt.bBox)) {
                 return false;
             }
-        } else if(patt.bBox != null) {
+        } else if (patt.bBox != null) {
             return false;
         }
-        if(bBox != null) {
-            if(!bBox.equals(patt.bBox)) {
+        if (bBox != null) {
+            if (!bBox.equals(patt.bBox)) {
                 return false;
             }
-        } else if(patt.bBox != null) {
+        } else if (patt.bBox != null) {
             return false;
         }
-        if(xUID != null) {
-            if(!xUID.equals(patt.xUID)) {
+        if (xUID != null) {
+            if (!xUID.equals(patt.xUID)) {
                 return false;
             }
-        } else if(patt.xUID != null) {
+        } else if (patt.xUID != null) {
             return false;
         }
-        if(extGState != null) {
-            if(!extGState.equals(patt.extGState)) {
+        if (extGState != null) {
+            if (!extGState.equals(patt.extGState)) {
                 return false;
             }
-        } else if(patt.extGState != null) {
+        } else if (patt.extGState != null) {
             return false;
         }
-        if(matrix != null) {
-            if(!matrix.equals(patt.matrix)) {
+        if (matrix != null) {
+            if (!matrix.equals(patt.matrix)) {
                 return false;
             }
-        } else if(patt.matrix != null) {
+        } else if (patt.matrix != null) {
             return false;
         }
-        if(resources != null) {
-            if(!resources.equals(patt.resources)) {
+        if (resources != null) {
+            if (!resources.equals(patt.resources)) {
                 return false;
             }
-        } else if(patt.resources != null) {
+        } else if (patt.resources != null) {
             return false;
         }
-        if(shading != null) {
-            if(!shading.equals(patt.shading)) {
+        if (shading != null) {
+            if (!shading.equals(patt.shading)) {
                 return false;
             }
-        } else if(patt.shading != null) {
+        } else if (patt.shading != null) {
             return false;
         }
-        if(patternDataStream != null) {
-            if(!patternDataStream.equals(patt.patternDataStream)) {
+        if (patternDataStream != null) {
+            if (!patternDataStream.equals(patt.patternDataStream)) {
                 return false;
             }
-        } else if(patt.patternDataStream != null) {
+        } else if (patt.patternDataStream != null) {
             return false;
         }
 

@@ -17,7 +17,7 @@ public class PDFT1Stream extends PDFStream {
         origLength = len;
     }
 
-    private final static boolean byteCmp(byte[] src, int offset, byte[] cmp) {
+    private static final boolean byteCmp(byte[] src, int offset, byte[] cmp) {
         boolean ret = true;
         for (int i = 0; ret == true && i < cmp.length; i++) {
             // System.out.println("Compare: ");

@@ -62,13 +62,13 @@ public abstract class AbstractLayoutManager implements LayoutManager {
     //      * is enough space to place the float(s) anchored in the line.
     //      */
     //     protected void flush(Area area, boolean bFinished) {
-    // 	if (area != null) {
-    // 	    // area.setFinished(true);
-    // 	    parentLM.addChild(area, bFinished); // ????
-    // 	    if (bFinished) {
-    // 		setCurrentArea(null);
-    // 	    }
-    // 	}
+    // if (area != null) {
+    //     // area.setFinished(true);
+    //     parentLM.addChild(area, bFinished); // ????
+    //     if (bFinished) {
+    // setCurrentArea(null);
+    //     }
+    // }
     //     }
 
     /**
