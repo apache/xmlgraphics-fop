@@ -176,6 +176,8 @@ public class PageSequence extends FObj {
                 throw new ValidationException("master-reference '" + masterReference
                                        + "' for fo:page-sequence matches no"
                                        + " simple-page-master or page-sequence-master", locator);
+            } else {
+                pageSequenceMaster.reset();
             }
         }
 
@@ -658,23 +660,23 @@ public class PageSequence extends FObj {
     }
 
     /**
-     * Public accessor for getting the PageSequenceMaster (if any) to which this
-     * PageSequence is attached.
-     * @return the PageSequenceMaster to which this PageSequence is attached, or
-     * null if there is none.
+     * Public accessor for determining the page master to use for any given
+     * page within this page sequence
+     * @param pageCount = the page number of the page to be created
+     * @param bIsFirstPage = indicator whether this page is the first page of the
+     *      page sequence
+     * @param bIsBlank = indicator whether the page will be blank
+     * @return the SimplePageMaster to use for this page
      */
-    public PageSequenceMaster getPageSequenceMaster() {
-        return pageSequenceMaster;
-    }
+    public SimplePageMaster getSimplePageMasterToUse(int pageCount, boolean bIsFirstPage, 
+        boolean bIsBlank) throws FOPException {
 
-    /**
-     * Public accessor for getting the SimplePageMaster (if any) to which this
-     * PageSequence is attached.
-     * @return the SimplePageeMaster to which this PageSequence is attached or
-     * null if there is none.
-     */
-    public SimplePageMaster getSimplePageMaster() {
-        return simplePageMaster;
+        if (pageSequenceMaster == null) {
+            return simplePageMaster;
+        }
+        boolean isOddPage = ((pageCount % 2) == 1);
+        return pageSequenceMaster.getNextSimplePageMaster(isOddPage, 
+            bIsFirstPage, bIsBlank);
     }
 
     /**

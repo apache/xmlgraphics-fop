@@ -81,6 +81,7 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
 
     /** True if haven't yet laid out any pages.*/
     private boolean bFirstPage;
+
     /** Current page being worked on. */
     private PageViewport curPage;
 
@@ -129,9 +130,6 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
     public PageSequenceLayoutManager(PageSequence pageSeq) {
         super(pageSeq);
         this.pageSeq = pageSeq;
-        if (pageSeq.getPageSequenceMaster() != null) {
-            pageSeq.getPageSequenceMaster().reset();
-        }
     }
 
     /**
@@ -149,17 +147,6 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
      */
     public AreaTreeHandler getAreaTreeHandler() {
         return areaTreeHandler;
-    }
-
-    /**
-     * Get the page count.
-     * Used to get the last page number for reference for
-     * the next page sequence.
-     *
-     * @return the page number
-     */
-    public int getPageCount() {
-        return pageCount;
     }
 
     /**
@@ -223,7 +210,7 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
         pageCount--;
         log.debug("Ending layout");
         finishPage();
-        pageSeq.setCurrentPageNumber(getPageCount());
+        pageSeq.setCurrentPageNumber(pageCount);
     }
 
     /** @see org.apache.fop.layoutmgr.LayoutManager#isBogus() */
@@ -473,12 +460,21 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
 
     private PageViewport makeNewPage(boolean bIsBlank, boolean bIsLast) {
         finishPage();
+
         try {
-            curPage = createPage(bIsBlank, bIsLast);
+            // create a new page
+            currentSimplePageMaster = pageSeq.getSimplePageMasterToUse(
+                pageCount, isFirstPage, bIsBlank);
+            Region body = currentSimplePageMaster.getRegion(FO_REGION_BODY);
+            if (!pageSeq.getMainFlow().getFlowName().equals(body.getRegionName())) {
+              throw new FOPException("Flow '" + pageSeq.getMainFlow().getFlowName()
+                 + "' does not map to the region-body in page-master '"
+                 + currentSimplePageMaster.getMasterName() + "'");
+            }
+            curPage = createPageAreas(currentSimplePageMaster);
             isFirstPage = false;
         } catch (FOPException fopex) {
-            //TODO this exception is fatal, isn't it?
-            log.error("Cannot create page", fopex);
+            throw new IllegalArgumentException("Cannot create page: " + fopex.getMessage());
         }
 
         curPage.setPageNumberString(getCurrentPageNumber());
@@ -745,47 +741,6 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
         //curSpan.setPosition(BPD, newpos);
         curBody.getMainReference().addSpan(curSpan);
         createFlow();
-    }
-
-    /**
-     * Called when a new page is needed.
-     *
-     * @param bIsBlank If true, use a master for a blank page.
-     * @param bIsLast If true, use the master for the last page in the sequence.
-     * @return the page viewport created for the page number
-     * @throws FOPException if there is an error creating page
-     */
-    private PageViewport createPage(boolean bIsBlank, boolean bIsLast)
-                                   throws FOPException {
-        currentSimplePageMaster = getSimplePageMasterToUse(bIsBlank);
-        Region body = currentSimplePageMaster.getRegion(FO_REGION_BODY);
-        if (!pageSeq.getMainFlow().getFlowName().equals(body.getRegionName())) {
-          throw new FOPException("Flow '" + pageSeq.getMainFlow().getFlowName()
-                                 + "' does not map to the region-body in page-master '"
-                                 + currentSimplePageMaster.getMasterName() + "'");
-        }
-        PageViewport p = createPageAreas(currentSimplePageMaster);
-        return p;
-        // The page will have a viewport/reference area pair defined
-        // for each region in the master.
-        // Set up the page itself
-// SKIP ALL THIS FOR NOW!!!
-//             //pageSequence.root.setRunningPageNumberCounter(pageSequence.currentPageNumber);
-
-//             pageSequence.pageCount++;    // used for 'force-page-count' calculations
-
-        // handle the 'force-page-count'
-        //forcePage(areaTree, firstAvailPageNumber);
-    }
-
-    private SimplePageMaster getSimplePageMasterToUse(boolean bIsBlank)
-            throws FOPException {
-        if (pageSeq.getPageSequenceMaster() == null) {
-            return pageSeq.getSimplePageMaster();
-        }
-        boolean isOddPage = ((pageCount % 2) == 1);
-        return pageSeq.getPageSequenceMaster()
-              .getNextSimplePageMaster(isOddPage, isFirstPage, bIsBlank);
     }
 
     private PageViewport createPageAreas(SimplePageMaster spm) {
