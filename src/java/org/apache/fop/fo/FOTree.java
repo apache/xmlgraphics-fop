@@ -19,6 +19,7 @@
 package org.apache.fop.fo;
 
 import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import org.apache.fop.apps.Fop;
 import org.apache.fop.datastructs.Tree;
@@ -56,6 +57,7 @@ public class FOTree extends Tree implements Runnable {
      */
     protected PropertyParser exprParser;
 
+    protected Logger log = Logger.getLogger(Fop.fopPackage);
     /**
      * @param xmlevents the buffer from which <tt>XmlEvent</tt>s from the
      * parser are read.
@@ -64,7 +66,7 @@ public class FOTree extends Tree implements Runnable {
         throws PropertyException
     {
         super();
-        Level level = Fop.logger.getLevel();
+        Level level = log.getLevel();
         if (level.intValue() <= Level.FINE.intValue()) {
             errorDump = true;
         }
