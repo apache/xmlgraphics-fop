@@ -7,28 +7,20 @@
 
 package org.apache.fop.apps;
 
+import java.lang.reflect.*;
 
-// Imported TraX classes
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.stream.StreamSource;
-import javax.xml.transform.sax.SAXResult;
-import javax.xml.transform.sax.SAXSource;
-import javax.xml.transform.sax.SAXTransformerFactory;
 
 // Imported SAX classes
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
-import org.xml.sax.XMLFilter;
-
 
 // Imported java.io classes
-import java.io.InputStream;
-import java.io.IOException;
-import java.io.File;
+import java.io.*;
 
 // FOP
 import org.apache.fop.messaging.MessageHandler;
+import org.apache.fop.tools.xslt.XSLTransform;
 
 /**
  * XSLTInputHandler basically takes an xmlfile and transforms it with an xsltfile
@@ -37,75 +29,100 @@ import org.apache.fop.messaging.MessageHandler;
 
 public class XSLTInputHandler extends InputHandler {
 
-	File xmlfile, xsltfile;
-
+    File xmlfile, xsltfile;
+    boolean useOldTransform = false;
+    
     public XSLTInputHandler (File xmlfile, File xsltfile ) {
         this.xmlfile = xmlfile;
-		this.xsltfile = xsltfile;
+	this.xsltfile = xsltfile;
     }
 
     /**
       *  overwrites the method of the super class to return the xmlfile
       */
     public InputSource getInputSource () {
-        return fileInputSource(xmlfile);
+	if (useOldTransform) {
+	    try {
+		java.io.Writer writer;
+		java.io.Reader reader;
+		File tmpFile = null;
+	 
+		// create a Writer
+		// the following is an ugly hack to allow processing of larger files
+		// if xml file size is larger than 500 kb write the fo:file to disk
+		if ((xmlfile.length()) > 500000) {
+		    tmpFile = new File(xmlfile.getName()+".fo.tmp");
+		    writer = new FileWriter(tmpFile);
+		} else {
+		    writer = new StringWriter();
+		}
+
+		XSLTransform.transform(xmlfile.getCanonicalPath(), xsltfile.getCanonicalPath(), writer);
+
+		writer.flush();
+		writer.close();
+
+		if (tmpFile != null) {
+		    reader = new FileReader(tmpFile);
+		} else {
+		    // create a input source containing the xsl:fo file which can be fed to Fop		    
+		    reader = new StringReader(writer.toString());
+		}
+		return new InputSource(reader);
+	    }
+	    catch (Exception ex) {
+		ex.printStackTrace();
+		return null;
+	    }
+	}
+	else {
+	    return fileInputSource(xmlfile);
+	}
+	
     }
 
     /**
-      *  overwrites this method of the super class and returns an XMLFilter instead of a
-      *  simple XMLReader which allows chaining of transformations
+      * This looks to see if the Trax api is supported and uses that to 
+      * get an XMLFilter. Otherwise, it falls back to using DOM documents 
       *
       */
     public XMLReader getParser() {
-        return this.getXMLFilter(xmlfile,xsltfile);
+	XMLReader result = null;
+	try {
+	    // try trax first
+	    Class transformer = Class.forName("javax.xml.transform.Transformer");
+	    transformer = Class.forName("org.apache.fop.apps.TraxInputHandler");
+	    Class[] argTypes = 	{ File.class, File.class };
+	    Method getFilterMethod = transformer.getMethod("getXMLFilter",argTypes);
+	    File[] args = {xmlfile, xsltfile};
+	    Object obj = getFilterMethod.invoke(null,args);
+	    if (obj instanceof XMLReader) {
+		result = (XMLReader)obj;
+		System.out.println("result OK = "+result);
+		
+	    }
+	}
+	catch (ClassNotFoundException ex){
+	}
+	catch (InvocationTargetException ex) {
+	    ex.printStackTrace();
+	}
+	catch (IllegalAccessException ex) {
+	    ex.printStackTrace();
+	}
+	catch (NoSuchMethodException ex) {
+	    ex.printStackTrace();
+	}
+	// otherwise, use DOM documents via our XSLTransform tool class old style
+	if (result == null) {
+	    useOldTransform = true;
+	    result = createParser();
+	}
+	return result;
+	        
     }
 
-    /**
-      * Creates from the transformer an instance of an XMLFilter which
-      * then can be used in a chain with the XMLReader passed to Driver. This way
-      * during the conversion of the xml file + xslt stylesheet the resulting
-      * data is fed into Fop. This should help to avoid memory problems
-      * @param xmlfile The xmlfile containing the text data
-      * @param xsltfile An xslt stylesheet
-      * @return XMLFilter an XMLFilter which can be chained together with other XMLReaders or XMLFilters
-      */
-    private XMLFilter getXMLFilter (File xmlfile, File xsltfile) {
-        try {
-            // Instantiate  a TransformerFactory.
-            TransformerFactory tFactory = TransformerFactory.newInstance();
-            // Determine whether the TransformerFactory supports The use uf SAXSource
-            // and SAXResult
-            if (tFactory.getFeature(SAXSource.FEATURE) &&
-                    tFactory.getFeature(SAXResult.FEATURE)) {
-                // Cast the TransformerFactory to SAXTransformerFactory.
-                SAXTransformerFactory saxTFactory =
-                  ((SAXTransformerFactory) tFactory);
-                // Create an XMLFilter for each stylesheet.
-                XMLFilter xmlfilter = saxTFactory.newXMLFilter(
-                                        new StreamSource(xsltfile));
-
-                // Create an XMLReader.
-                XMLReader parser = super.createParser();
-                if (parser == null) {
-                    MessageHandler.errorln("ERROR: Unable to create SAX parser");
-                    System.exit(1);
-                }
-
-                // xmlFilter1 uses the XMLReader as its reader.
-                xmlfilter.setParent(parser);
-                return xmlfilter;
-            } else {
-                MessageHandler.errorln(
-                  "Your parser doesn't support the features SAXSource and SAXResult." +
-                  "\nMake sure you are using a xsl parser which supports TrAX");
-                System.exit(1);
-                return null;
-            }
-        }
-        catch (Exception ex) {
-            MessageHandler.errorln(ex.toString());
-            return null;
-        }
-    }
+ 
+    
 }
 
