@@ -55,8 +55,8 @@ import java.io.InputStream;
 import java.io.DataInputStream;
 import java.io.BufferedInputStream;
 
-//FOP
-import org.apache.fop.util.StreamUtilities;
+//Commons
+import org.apache.commons.io.IOUtil;
 
 /**
  * This class represents a parser for Adobe Type 1 PFB files.
@@ -155,10 +155,7 @@ public class PFBParser {
         segmentType = din.readUnsignedByte(); //Read
         int len1 = swapInteger(din.readInt());
         byte[] headerSegment = new byte[len1];
-        bytesRead = din.read(headerSegment);
-        if (bytesRead != len1) {
-            throw new IOException("Could not load the whole segment");
-        }
+        din.readFully(headerSegment);
         pfb.setHeaderSegment(headerSegment);
 
         //Read second segment
@@ -169,10 +166,7 @@ public class PFBParser {
         segmentType = din.readUnsignedByte();
         int len2 = swapInteger(din.readInt());
         byte[] encryptedSegment = new byte[len2];
-        bytesRead = din.read(encryptedSegment);
-        if (bytesRead != len2) {
-            throw new IOException("Could not load the whole segment");
-        }
+        din.readFully(encryptedSegment);
         pfb.setEncryptedSegment(encryptedSegment);
 
         //Read third segment
@@ -183,10 +177,7 @@ public class PFBParser {
         segmentType = din.readUnsignedByte();
         int len3 = swapInteger(din.readInt());
         byte[] trailerSegment = new byte[len3];
-        bytesRead = din.read(trailerSegment);
-        if (bytesRead != len3) {
-            throw new IOException("Could not load the whole segment");
-        }
+        din.readFully(trailerSegment);
         pfb.setTrailerSegment(trailerSegment);
 
         //Read EOF indicator
@@ -270,7 +261,7 @@ public class PFBParser {
 
     private void parseRAWFormat(PFBData pfb, BufferedInputStream bin)
             throws IOException {
-        calcLengths(pfb, StreamUtilities.toByteArray(bin, 32768));
+        calcLengths(pfb, IOUtil.toByteArray(bin));
     }
 
 }
