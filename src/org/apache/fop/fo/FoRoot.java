@@ -41,7 +41,6 @@ public class FoRoot extends FONode {
     private static final String revision = "$Revision$";
 
     private FoLayoutMasterSet layoutMasters;
-    private SyncedXmlEventsBuffer xmlevents;
 
     /**
      * @param foTree the FO tree being built
@@ -53,7 +52,7 @@ public class FoRoot extends FONode {
         throws Tree.TreeException, FOPException, PropertyException
     {
         // This is the root node of the tree; hence the null argument
-        super(foTree, FObjectNames.ROOT, null, event, FONode.ROOT);
+        super(foTree, FObjectNames.ROOT, null, event, FObjects.ROOT_SET);
     }
 
     /**
@@ -82,7 +81,7 @@ public class FoRoot extends FONode {
      */
     public void buildFoTree() throws FOPException{
         XMLEvent ev;
-        //System.out.println("buildFoTree: " + event);
+        System.out.println("buildFoTree: " + event);
         // Look for layout-master-set
         try {
             ev = xmlevents.expectStartElement
