@@ -49,7 +49,7 @@ public class TableCaption extends FObj {
     private Length height;
     private String id;
     private LengthRangeProperty inlineProgressionDimension;
-    // private ToBeImplementedProperty intrusionDisplace;
+    private int intrusionDisplace;
     private KeepProperty keepTogether;
     private Length width;
     // End of property values
@@ -83,7 +83,7 @@ public class TableCaption extends FObj {
         height = pList.get(PR_HEIGHT).getLength();
         id = pList.get(PR_ID).getString();
         inlineProgressionDimension = pList.get(PR_INLINE_PROGRESSION_DIMENSION).getLengthRange();
-        // intrusionDisplace = pList.get(PR_INTRUSION_DISPLACE);
+        intrusionDisplace = pList.get(PR_INTRUSION_DISPLACE).getEnum();
         keepTogether = pList.get(PR_KEEP_TOGETHER).getKeep();
         width = pList.get(PR_WIDTH).getLength();
     }
