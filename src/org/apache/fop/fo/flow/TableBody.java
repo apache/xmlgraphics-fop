@@ -156,6 +156,11 @@ public class TableBody extends FObj {
 		area.increaseHeight(areaContainer.getHeight());
 		return status;
 	    }
+		// if this is not the last row, add display space
+		if(i!=numChildren-1)
+		{
+			areaContainer.addDisplaySpace(row.getLargestCellHeight());
+		}
 	}
 	area.addChild(areaContainer);
 	areaContainer.end();
