@@ -14,15 +14,11 @@ package org.apache.fop.render;
 import org.apache.fop.pdf.PDFPathPaint;
 import org.apache.fop.pdf.PDFColor;
 import org.apache.fop.image.ImageArea;
-// import org.apache.fop.image.FopImage;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.fo.properties.*;
 import org.apache.fop.layout.*;
 import org.apache.fop.layout.inline.*;
 import org.apache.fop.datatypes.*;
-// import org.apache.fop.configuration.Configuration;
-// import org.apache.fop.extensions.*;
-// import org.apache.fop.datatypes.IDReferences;
 import org.apache.fop.render.pdf.FontSetup;
 
 import org.apache.fop.svg.SVGArea;
@@ -80,21 +76,6 @@ public abstract class PrintRenderer extends AbstractRenderer {
      */
     // protected float currentBlue = 0;
     // ^^^
-
-    /**
-     * the current vertical position in millipoints from bottom
-     */
-    protected int currentYPosition = 0;
-
-    /**
-     * the current horizontal position in millipoints from left
-     */
-    protected int currentXPosition = 0;
-
-    /**
-     * the horizontal position of the current area container
-     */
-    protected int currentAreaContainerXPosition = 0;
 
     // previous values used for text-decoration drawing
     protected int prevUnderlineXEndPos;
@@ -295,16 +276,7 @@ public abstract class PrintRenderer extends AbstractRenderer {
 
     }
 
-    public void renderSpanArea(SpanArea area) {
-        Enumeration e = area.getChildren().elements();
-        while (e.hasMoreElements()) {
-            Box b = (Box)e.nextElement();
-            b.render(this);    // column areas
-        }
-
-    }
-
-    private void doFrame(Area area) {
+    protected void doFrame(Area area) {
         int w, h;
         int rx = this.currentAreaContainerXPosition;
         w = area.getContentWidth();
@@ -375,7 +347,7 @@ public abstract class PrintRenderer extends AbstractRenderer {
      * render block area
      * 
      * @param area the block area to render
-     */
+     *
     public void renderBlockArea(BlockArea area) {
         // KLease: Temporary test to fix block positioning
         // Offset ypos by padding and border widths
@@ -390,6 +362,7 @@ public abstract class PrintRenderer extends AbstractRenderer {
         this.currentYPosition -= (area.getPaddingBottom()
                                   + area.getBorderBottomWidth());
     }
+*/
 
     /**
      * render display space
@@ -495,38 +468,6 @@ public abstract class PrintRenderer extends AbstractRenderer {
     }
 
     /**
-     * render line area
-     * 
-     * @param area area to render
-     */
-    public void renderLineArea(LineArea area) {
-        int rx = this.currentAreaContainerXPosition + area.getStartIndent();
-        int ry = this.currentYPosition;
-        int w = area.getContentWidth();
-        int h = area.getHeight();
-
-        this.currentYPosition -= area.getPlacementOffset();
-        this.currentXPosition = rx;
-
-        int bl = this.currentYPosition;
-
-        Enumeration e = area.getChildren().elements();
-        while (e.hasMoreElements()) {
-            Box b = (Box)e.nextElement();
-            if (b instanceof InlineArea) {
-                InlineArea ia = (InlineArea)b;
-                this.currentYPosition = ry - ia.getYOffset();
-            } else {
-                this.currentYPosition = ry - area.getPlacementOffset();
-            }
-            b.render(this);
-        }
-
-        this.currentYPosition = ry - h;
-        this.currentXPosition = rx;
-    }
-
-    /**
      * render page
      * 
      * @param page page to render
@@ -599,11 +540,23 @@ public abstract class PrintRenderer extends AbstractRenderer {
     */
     public void startRenderer(OutputStream outputStream)
     throws IOException {}
+
     /**
      Default stop renderer method. This would
      normally be overridden. (mark-fop@inomial.com).
     */
+    public void stopRenderer(OutputStream outputStream)
+    throws IOException
     {
+        this.idReferences = null;
+        currentFontName = "";
+        currentStroke = null;
+        currentFill = null;
+        prevUnderlineColor = null;
+        prevOverlineColor = null;
+        prevLineThroughColor = null;
+        fontInfo = null;
+        this.idReferences = null;
     }
 
 }

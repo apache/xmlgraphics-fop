@@ -106,21 +106,6 @@ public class AWTRenderer extends AbstractRenderer implements Printable, Pageable
     protected Component parent;
 
     /**
-     * The current vertical position in millipoints from bottom
-     */
-    protected int currentYPosition = 0;
-
-    /**
-     * The current horizontal position in millipoints from left
-     */
-    protected int currentXPosition = 0;
-
-    /**
-     * The horizontal position of the current area container
-     */
-    private int currentAreaContainerXPosition = 0;
-
-    /**
      * options
      */
     protected Hashtable options;
@@ -450,7 +435,6 @@ public class AWTRenderer extends AbstractRenderer implements Printable, Pageable
         }
     }
 
-    // empty for now
     public void renderBodyAreaContainer(BodyAreaContainer area) {
         renderAreaContainer(area.getBeforeFloatReferenceArea());
         renderAreaContainer(area.getFootnoteReferenceArea());
@@ -465,18 +449,7 @@ public class AWTRenderer extends AbstractRenderer implements Printable, Pageable
 
     }
 
-    // empty for now
-    public void renderSpanArea(SpanArea area) {
-        Enumeration e = area.getChildren().elements();
-        while (e.hasMoreElements()) {
-            org.apache.fop.layout.Box b =
-                (org.apache.fop.layout.Box)e.nextElement();
-            b.render(this);    // column areas
-        }
-
-    }
-
-    private void doFrame(org.apache.fop.layout.Area area) {
+    protected void doFrame(org.apache.fop.layout.Area area) {
         int w, h;
         int rx = this.currentAreaContainerXPosition;
         w = area.getContentWidth();
@@ -548,32 +521,6 @@ public class AWTRenderer extends AbstractRenderer implements Printable, Pageable
                                       currentYPosition,
                                       a.getAllocationWidth(), a.getHeight());
     }
-
-    /*
-     * public void renderBlockArea(BlockArea area) {
-     * doFrame(area);
-     * Enumeration e = area.getChildren().elements();
-     * while (e.hasMoreElements()) {
-     * org.apache.fop.layout.Box b =
-     * (org.apache.fop.layout.Box) e.nextElement();
-     * b.render(this);
-     * }
-     * }
-     */
-    public void renderBlockArea(BlockArea area) {
-        this.currentYPosition -= (area.getPaddingTop()
-                                  + area.getBorderTopWidth());
-        doFrame(area);
-        Enumeration e = area.getChildren().elements();
-        while (e.hasMoreElements()) {
-            org.apache.fop.layout.Box b =
-                (org.apache.fop.layout.Box)e.nextElement();
-            b.render(this);
-        }
-        this.currentYPosition -= (area.getPaddingBottom()
-                                  + area.getBorderBottomWidth());
-    }
-
 
     public void setupFontInfo(FontInfo fontInfo) {
         // create a temp Image to test font metrics on
@@ -749,34 +696,6 @@ public class AWTRenderer extends AbstractRenderer implements Printable, Pageable
 
     public void renderInlineSpace(InlineSpace space) {
         this.currentXPosition += space.getSize();
-    }
-
-    public void renderLineArea(LineArea area) {
-
-        int rx = this.currentAreaContainerXPosition + area.getStartIndent();
-        int ry = this.currentYPosition;
-        int w = area.getContentWidth();
-        int h = area.getHeight();
-
-        this.currentYPosition -= area.getPlacementOffset();
-        this.currentXPosition = rx;
-
-        int bl = this.currentYPosition;
-
-        Enumeration e = area.getChildren().elements();
-        while (e.hasMoreElements()) {
-            org.apache.fop.layout.Box b =
-                (org.apache.fop.layout.Box)e.nextElement();
-            if (b instanceof InlineArea) {
-                InlineArea ia = (InlineArea)b;
-                this.currentYPosition = ry - ia.getYOffset();
-            } else {
-                this.currentYPosition = ry - area.getPlacementOffset();
-            }
-            b.render(this);
-        }
-
-        this.currentYPosition = ry - h;
     }
 
     /**

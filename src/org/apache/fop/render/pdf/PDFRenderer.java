@@ -166,6 +166,7 @@ public class PDFRenderer extends PrintRenderer {
         currentAnnotList = null;
         currentPage = null;
         currentColor = null;
+        super.stopRenderer(stream);
     }
 
     /**
