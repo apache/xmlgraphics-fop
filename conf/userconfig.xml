@@ -4,7 +4,7 @@
      configuration of Fop. Actually normally you don't need this configuration 
      file, but if you need to change configuration, you should
      always use this file and *not* config.xml. 
-     Usage: java org.apache.fop.apps.CommandLine -cuserconfig.xml fo-file pdf-file
+     Usage: java org.apache.fop.apps.Fop -c userconfig.xml -fo fo-file -pdf pdf-file
 -->
 
 
@@ -16,7 +16,7 @@ basedir: normally the base directory is the directory where the fo file is
 -->
 <!-- 
   <entry>
-    <key>basedir</key>
+    <key>baseDir</key>
     <value></value>
   </entry>
 -->
