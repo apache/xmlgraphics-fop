@@ -59,6 +59,7 @@ This files shows next to the trivial usage of fo:block and fo:inline examples of
 
 
 <!-- beginning of the PDF outline extensions --> 
+  <fox:bookmarks>
 
   <fox:outline internal-destination="sec1">
     <fox:label>What is FOP?</fox:label>
@@ -119,6 +120,7 @@ This files shows next to the trivial usage of fo:block and fo:inline examples of
   <fox:outline internal-destination="sec11">
     <fox:label>License</fox:label>
   </fox:outline>
+  </fox:bookmarks>
 
 
 
