@@ -217,6 +217,8 @@
       <section id="products-other">
         <title>Other products</title>
         <ul>
+          <li>[software] <jump href="http://defoe.sourceforge.net/">FOray</jump> a renderer for converting XML files to PDF via XSL Formatting Object elements</li>
+          <li>[software] <jump href="http://foray.sourceforge.net/">Defoe</jump> a renderer for XML files containing Formatting Object elements (aka FOP Alt.Design)</li>
           <li>[software] <jump href="http://html2fo.sourceforge.net/">html2fo</jump> is a converter from HTML to XSL-FO (GPL).</li>
           <li>[software] <jump href="http://wh2fo.sourceforge.net/">wh2fo</jump> is a converter from Word HTML to XSL-FO (MPL).</li>
           <li>[software] <jump href="http://www.rtf2fo.com">RTF2FO</jump> is a converter from RTF to XSL-FO by Novosoft (commercial).</li>
