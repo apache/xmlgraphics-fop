@@ -1,0 +1,27 @@
+<?xml version="1.0" standalone="no"?>
+<!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V1.1//EN"
+    "http://cvs.apache.org/viewcvs.cgi/*checkout*/xml-forrest/src/resources/schema/dtd/document-v11.dtd">
+
+<!-- $Id$ -->
+
+<document>
+  <header>
+    <title>FOP Alternative Design Properties Notes</title>
+    <version>$Revision$ $Name$</version>
+    <authors>
+      <person name="Peter B. West" email="pbwest@powerup.com.au"/>
+    </authors>
+  </header>
+  
+  <body>
+    <section>
+      <title>Alt Design Properties Notes</title>
+      <p>
+        This section includes more detailed notes on the classes which
+        are involved in the implementation of FO properties.
+      </p>
+    </section>
+
+  </body>
+</document>
+
