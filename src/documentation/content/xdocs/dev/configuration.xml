@@ -21,7 +21,7 @@ configurable options available in FOP.
   </section>
   <section>
     <title>Setting up Hyphenation</title>
-    <p>Fop comes already with some hyphenation patterns. If you
+    <p>FOP comes already with some hyphenation patterns. If you
        need a hyphenation pattern which isn't included in the
        distribution, do the following:
     </p>
@@ -39,7 +39,7 @@ configurable options available in FOP.
     </p>
     <p>3. If you have build your new hyphenation pattern file
           successfully you put the file into the /hyph directoy
-          and rebuild Fop. The file will be picked up and added
+          and rebuild FOP. The file will be picked up and added
           to the fop.jar.
     </p>
     </section>

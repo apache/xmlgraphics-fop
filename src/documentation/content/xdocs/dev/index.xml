@@ -31,11 +31,11 @@ The development of FOP and the related plans and tasks are discussed on the dev 
 Users can help or get issues resolved by contributing information and examples to the developers.
       </p>
       <section>
-        <title>Get familiar with the Fop related standards</title>
-        <p>At the moment Fop is mainly a tool to render XSL-FO files to pdf. Therefore if you want to contribute to Fop you should become familiar with these standards. You can find links at <link href="../resources.html#specs">Specifications</link>.</p>
+        <title>Get familiar with the FOP-related standards</title>
+        <p>At the moment FOP is mainly a tool to render XSL-FO files to pdf. Therefore if you want to contribute to FOP you should become familiar with these standards. You can find links at <link href="../resources.html#specs">Specifications</link>.</p>
       </section>
       <section>
-        <title>Fop's Design</title>
+        <title>FOP's Design</title>
         <p>The design for FOP is specified under the <link href="../design/index.html">Design</link> section. This is where the information on how FOP is developed and designed
 internally will be kept.
     </p>
@@ -46,7 +46,7 @@ internally will be kept.
         to <link href="mailto:fop-dev-subscribe@xml.apache.org">fop-dev-subscribe@xml.apache.org</link>
         </p>
         <p>Sending bug reports and feature requests to the list is a welcome and important contribution to
-     developing Fop.  </p>
+     developing FOP.  </p>
         <p>Read also the <link href="http://marc.theaimsgroup.com/?l=fop-dev&amp;r=1&amp;w=2">archive</link>
      of the discussion list fop-dev to get an idea of the issues being discussed. </p>
       </section>
@@ -54,12 +54,12 @@ internally will be kept.
         <title>Look at the developer's code using cvs</title>
         <p>Between releases the newest code can be accessed via cvs. To do this you need to install a cvs
      client on your computer, if it is not already there. An explanation how to connect to the
-     Fop source repository can be found at <link href="http://xml.apache.org/cvs.html">http://xml.apache.org/cvs.html</link>.
+     FOP source repository can be found at <link href="http://xml.apache.org/cvs.html">http://xml.apache.org/cvs.html</link>.
      An introduction into cvs and the cvs manual can be found in the
      <link href="http://xml.apache.org/library.html">reference library</link>.</p>
         <p>All changes to the code repository are sent to a special mailing list. After a cvs commit the diffs are automatically sent to this list. You can subscribe
      to fop-cvs@xml.apache.org by sending an email to <link href="mailto:fop-cvs-subscribe@xml.apache.org">
-     fop-cvs-subscribe@xml.apache.org</link>. If you want to contribute to the development of Fop you should subscribe,
+     fop-cvs-subscribe@xml.apache.org</link>. If you want to contribute to the development of FOP you should subscribe,
      because it is important that you follow changes being made. </p>
       </section>
       <section id="patches">

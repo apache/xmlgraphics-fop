@@ -33,9 +33,9 @@ Possible meanings for a user agent:
 <ul>
 <li>something that makes decisions where the specifiction indicates
 that the user agent should decide</li>
-<li>Fop as the user agent, represented by a class that handles
+<li>FOP as the user agent, represented by a class that handles
 various setup and decision values</li>
-<li>an class that handles context for a particular Fop conversion
+<li>an class that handles context for a particular FOP conversion
 that can be configured/overridden when embedding</li>
 </ul>
 

@@ -77,7 +77,7 @@
       fop -fo foo.fo -pdf foo.pdf (does the same as the previous line)
       fop -xsl foo.xsl -xml foo.xml -pdf foo.pdf
       fop foo.fo -mif foo.mif
-      fop foo.fo -print or Fop -print foo.fo
+      fop foo.fo -print or fop -print foo.fo
       fop foo.fo -awt</source>
       <p>PDF encryption is only available if FOP was compiled with encryption support <strong>and</strong> if compatible encryption support is availabe at run time. Currently, only the JCE is supported. Check the <link href="pdfencryption.html">Details</link>.</p>
     </section>

@@ -71,7 +71,7 @@
     The following JARs have been updated: Xerces to version
     2.0.1, Xalan to version 2.3.1 and Batik to version 1.5beta2.
   </li>
-  <li>Fop has been compiled with Jimi support</li>
+  <li>FOP has been compiled with Jimi support</li>
   <li>
     Logging has been changed from LogKit to Avalon's Logger
     Interface
@@ -107,7 +107,7 @@
   <p>Welcome Jeremias Maerki, Joerg Pietschmann and Peter B. West!</p>
  </section>
 <section>
-  <title>11 March 2002 - Fop 0.20.3 released</title>
+  <title>11 March 2002 - FOP 0.20.3 released</title>
   <p>This is a maintenance release, the first version which supports the XSL-FO
    Recommendation syntax. See the
    <link href="http://marc.theaimsgroup.com/?l=xml-apache-announce&amp;m=101588818821794">
