@@ -340,7 +340,7 @@ public class FOTreeBuilder extends DefaultHandler {
     public boolean hasData() {
         return (rootFObj != null);
     }
-	 
+
 }
 
 // code stolen from org.apache.batik.util and modified slightly

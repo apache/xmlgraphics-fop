@@ -150,7 +150,7 @@ public class FObj extends FONode {
      * The attributes must be used immediately as the sax attributes
      * will be altered for the next element.
      * @param attlist Collection of attributes passed to us from the parser.
-     * @throws FOPException
+     * @throws FOPException for invalid FO data
      */
     public void handleAttrs(Attributes attlist) throws FOPException {
         properties = getListBuilder().makeList(FO_URI, name, attlist, this);
@@ -205,24 +205,33 @@ public class FObj extends FONode {
         // if we got here, it is because parent is null
         if (returnRoot) {
             return p;
-        }
-        else {
+        } else {
             return null;
         }
     }
 
+    /**
+     * For a given namespace, determine whether the properties of this object
+     * match that namespace.
+     * @param nameSpaceURI the namespace URI to be tested against
+     * @return this.properties, if the namespaces match; otherwise, null
+     */
     public PropertyList getPropertiesForNamespace(String nameSpaceURI) {
         if (this.properties == null) {
             return null;
         }
-        if (! nameSpaceURI.equals(this.properties.getNameSpace())) {
+        if (!nameSpaceURI.equals(this.properties.getNameSpace())) {
             return null;
         }
         return this.properties;
     }
 
+    /**
+     * @param propertyList the collection of Property objects to be managed
+     * @return a PropertyManager for the Property objects
+     */
     protected PropertyManager makePropertyManager(
-      PropertyList propertyList) {
+            PropertyList propertyList) {
         return new PropertyManager(propertyList);
     }
 
@@ -405,10 +414,16 @@ public class FObj extends FONode {
         }
     }
 
+    /**
+     * @return true if there are any Markers attached to this object
+     */
     public boolean hasMarkers() {
         return markers != null && !markers.isEmpty();
     }
 
+    /**
+     * @return th collection of Markers attached to this object
+     */
     public Map getMarkers() {
         return markers;
     }
