@@ -232,26 +232,99 @@ public class PropertyParser extends PropertyTokenizer {
     }
 
     /**
+     * Generate an arithmetic error string.
+     * @return arithmetic error message.
+     */
+    private String arithErrorStr() {
+        return "Arithmetic operator not followed by Numeric or integer: "
+                + getExpr();
+    }
+
+    /**
      * Try to parse an addition or subtraction expression and return the
      * resulting PropertyValue.
      */
     private PropertyValue parseAdditiveExpr() throws PropertyException {
         // Evaluate and put result on the operand stack
-        System.out.println("parseAdd");
+        //System.out.println("parseAdd");
         PropertyValue prop = parseMultiplicativeExpr();
-        loop:
+        PropertyValue pv;
+        outer:
         for (; ; ) {
-            switch (currentToken) {
-            case PLUS:
-                next();
-                ((Numeric)prop).add((Numeric)parseMultiplicativeExpr());
-                break;
-            case MINUS:
-                next();
-                ((Numeric)prop).subtract((Numeric)parseMultiplicativeExpr());
-                break;
+            inner:
+            switch (prop.getType()) {
+            case PropertyValue.NUMERIC: {
+                switch (currentToken) {
+                case PLUS:
+                    next();
+                    pv = parseMultiplicativeExpr();
+                    switch (pv.getType()) {
+                    case PropertyValue.NUMERIC:
+                        ((Numeric)prop).add((Numeric)pv);
+                        break inner;
+                    case PropertyValue.INTEGER:
+                        ((Numeric)prop).add((double)
+                                            (((IntegerType)pv).getInt()));
+                        break inner;
+                    default:
+                        throw new PropertyException(arithErrorStr());
+                    }
+                case MINUS:
+                    next();
+                    pv = parseMultiplicativeExpr();
+                    switch (pv.getType()) {
+                    case PropertyValue.NUMERIC:
+                        ((Numeric)prop).subtract((Numeric)pv);
+                        break inner;
+                    case PropertyValue.INTEGER:
+                        ((Numeric)prop).subtract((double)
+                                             (((IntegerType)pv).getInt()));
+                        break inner;
+                    default:
+                        throw new PropertyException(arithErrorStr());
+                    }
+                default:
+                    break outer;
+                }
+            }
+            case PropertyValue.INTEGER: {
+                int intVal = ((IntegerType)prop).getInt();
+                switch (currentToken) {
+                case PLUS:
+                    next();
+                    pv = parseMultiplicativeExpr();
+                    switch (pv.getType()) {
+                    case PropertyValue.NUMERIC:
+                        prop = ((Numeric)pv).add((double)intVal);
+                        break inner;
+                    case PropertyValue.INTEGER:
+                        ((IntegerType)prop).setInt(intVal +
+                                            ((IntegerType)pv).getInt());
+                        break inner;
+                    default:
+                        throw new PropertyException(arithErrorStr());
+                    }
+                case MINUS:
+                    next();
+                    pv = parseMultiplicativeExpr();
+                    switch (pv.getType()) {
+                    case PropertyValue.NUMERIC:
+                        ((Numeric)pv).add((double)(-intVal));
+                        prop = ((Numeric)pv).negate();
+                        break inner;
+                    case PropertyValue.INTEGER:
+                        ((IntegerType)prop).setInt(intVal +
+                                            ((IntegerType)pv).getInt());
+                        break inner;
+                    default:
+                        throw new PropertyException(arithErrorStr());
+                    }
+                default:
+                    break outer;
+                }
+            }
             default:
-                break loop;
+                break outer;
             }
         }
         return prop;
@@ -262,7 +335,7 @@ public class PropertyParser extends PropertyTokenizer {
      * the resulting PropertyValue.
      */
     private PropertyValue parseMultiplicativeExpr() throws PropertyException {
-        System.out.println("parseMult");
+        //System.out.println("parseMult");
         PropertyValue prop = parseUnaryExpr();
         PropertyValue pv;
         outer:
@@ -278,37 +351,46 @@ public class PropertyParser extends PropertyTokenizer {
                 switch (currentToken) {
                 case DIV:
                     next();
-                    System.out.println("Dividing......");
                     pv = parseUnaryExpr();
-                    if (pv.getType() == PropertyValue.INTEGER) {
+                    switch (pv.getType()) {
+                    case PropertyValue.INTEGER:
                         ((Numeric)prop).divide
                                         ((double)(((IntegerType)pv).getInt()));
                         break inner;
-                    }  // else must be Numeric
-                    ((Numeric)prop).divide((Numeric)pv);
-                    break inner;
+                    case PropertyValue.NUMERIC:
+                        ((Numeric)prop).divide((Numeric)pv);
+                        break inner;
+                    default:
+                        throw new PropertyException(arithErrorStr());
+                    }
                 case MOD:
                     next();
                     pv = parseUnaryExpr();
-                    if (pv.getType() == PropertyValue.INTEGER) {
+                    switch (pv.getType()) {
+                    case PropertyValue.INTEGER:
                         ((Numeric)prop).mod
                                         ((double)(((IntegerType)pv).getInt()));
                         break inner;
-                    }  // else must be Numeric
-                    ((Numeric)prop).mod((Numeric)parseUnaryExpr());
-                    break inner;
+                    case PropertyValue.NUMERIC:
+                        ((Numeric)prop).mod((Numeric)pv);
+                        break inner;
+                    default:
+                        throw new PropertyException(arithErrorStr());
+                    }
                 case MULTIPLY:
                     next();
-                    System.out.println("Multiplying......");
                     pv = parseUnaryExpr();
-                    System.out.println("...by " + pv);
-                    if (pv.getType() == PropertyValue.INTEGER) {
+                    switch (pv.getType()) {
+                    case PropertyValue.INTEGER:
                         ((Numeric)prop).multiply
                                         ((double)(((IntegerType)pv).getInt()));
                         break inner;
-                    }  // else must be Numeric
-                    ((Numeric)prop).multiply((Numeric)pv);
-                    break inner;
+                    case PropertyValue.NUMERIC:
+                        ((Numeric)prop).multiply((Numeric)pv);
+                        break inner;
+                    default:
+                        throw new PropertyException(arithErrorStr());
+                    }
                 default:
                     break outer;
                 }
@@ -317,49 +399,53 @@ public class PropertyParser extends PropertyTokenizer {
                 // This code treats all multiplicative operations as implicit
                 // operations on doubles.  It might be reasonable to allow
                 // an integer multiply.
+                int intVal = ((IntegerType)prop).getInt();
                 switch (currentToken) {
                 case DIV:
                     next();
-                    System.out.println("Dividing......");
                     pv = parseUnaryExpr();
-                    if (pv.getType() == PropertyValue.INTEGER) {
+                    switch (pv.getType()) {
+                    case PropertyValue.INTEGER:
                         prop = new Numeric(property,
-                                (double)(((IntegerType)prop).getInt()) /
-                                                 ((IntegerType)pv).getInt());
+                            (double)intVal / ((IntegerType)pv).getInt());
                         break inner;
-                    }  // else must be Numeric
-                    prop = (new Numeric(property,
-                                    (double)(((IntegerType)prop).getInt())))
-                            .divide((Numeric)pv);
-                    break inner;
+                    case PropertyValue.NUMERIC:
+                        prop = (new Numeric(property, (double)intVal))
+                                                        .divide((Numeric)pv);
+                        break inner;
+                    default:
+                        throw new PropertyException(arithErrorStr());
+                    }
                 case MOD:
                     next();
                     pv = parseUnaryExpr();
-                    if (pv.getType() == PropertyValue.INTEGER) {
+                    switch (pv.getType()) {
+                    case PropertyValue.INTEGER:
                         prop = new Numeric(property,
-                                (double)(((IntegerType)prop).getInt()) %
-                                                 ((IntegerType)pv).getInt());
+                                ((double)intVal) % ((IntegerType)pv).getInt());
                         break inner;
-                    }  // else must be Numeric
-                    prop = (new Numeric(property,
-                                    (double)(((IntegerType)prop).getInt())))
-                            .mod((Numeric)pv);
-                    break inner;
+                    case PropertyValue.NUMERIC:
+                        prop = (new Numeric(property, (double)intVal))
+                                                        .mod((Numeric)pv);
+                        break inner;
+                    default:
+                        throw new PropertyException(arithErrorStr());
+                    }
                 case MULTIPLY:
                     next();
-                    System.out.println("Multiplying......");
                     pv = parseUnaryExpr();
-                    System.out.println("...by " + pv);
-                    if (pv.getType() == PropertyValue.INTEGER) {
+                    switch (pv.getType()) {
+                    case PropertyValue.INTEGER:
                         prop = new Numeric(property,
-                                (double)(((IntegerType)prop).getInt()) *
-                                                 ((IntegerType)pv).getInt());
+                            ((double)intVal) * ((IntegerType)pv).getInt());
                         break inner;
-                    }  // else must be Numeric
-                    prop = (new Numeric(property,
-                                    (double)(((IntegerType)prop).getInt())))
-                            .multiply((Numeric)pv);
-                    break inner;
+                    case PropertyValue.NUMERIC:
+                        prop = (new Numeric(property, (double)intVal))
+                                                   .multiply((Numeric)pv);
+                        break inner;
+                    default:
+                        throw new PropertyException(arithErrorStr());
+                    }
                 default:
                     break outer;
                 }
@@ -375,11 +461,19 @@ public class PropertyParser extends PropertyTokenizer {
      * resulting PropertyValue.
      */
     private PropertyValue parseUnaryExpr() throws PropertyException {
-        System.out.println("Unary entry");
+        //System.out.println("Unary entry");
         if (currentToken == MINUS) {
             next();
-            System.out.println("Unary");
-            return ((Numeric)parseUnaryExpr()).negate();
+            PropertyValue pv = parseUnaryExpr();
+            switch (pv.getType()) {
+            case PropertyValue.NUMERIC:
+                return ((Numeric)pv).negate();
+            case PropertyValue.INTEGER:
+                ((IntegerType)pv).setInt( -((IntegerType)pv).getInt());
+                return pv;
+            default:
+                throw new PropertyException(arithErrorStr());
+            }
         }
         return parsePrimaryExpr();
     }
@@ -405,8 +499,8 @@ public class PropertyParser extends PropertyTokenizer {
      */
     private PropertyValue parsePrimaryExpr() throws PropertyException {
         PropertyValue prop;
-        System.out.println("Primary currentToken:" + currentToken + " "
-                           + currentTokenValue);
+        //System.out.println("Primary currentToken:" + currentToken + " "
+        //                   + currentTokenValue);
         switch (currentToken) {
         case LPAR:
             next();
