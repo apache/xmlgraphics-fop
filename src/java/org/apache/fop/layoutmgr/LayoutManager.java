@@ -207,10 +207,11 @@ public interface LayoutManager {
      * method is used to add those markers to the page.
      *
      * @param name the marker class name
-     * @param start true if the formatting object is starting false is finishing
-     * @param isfirst a flag for is first
+     * @param starting if the area being added is starting or ending
+     * @param isfirst if the area being added has is-first trait
+     * @param islast if the area being added has is-last trait
      */
-    void addMarkerMap(Map marks, boolean start, boolean isfirst);
+    void addMarkerMap(Map marks, boolean starting, boolean isfirst, boolean islast);
 
     /**
      * Retrieve a marker.

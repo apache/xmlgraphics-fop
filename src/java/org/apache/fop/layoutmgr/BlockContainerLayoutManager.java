@@ -449,8 +449,9 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager {
             foBlockSpaceBefore = null;
         }*/
 
+        BreakPoss bp1 = (BreakPoss)parentIter.peekNext();
         addID(fobj.getId());
-        addMarkers(true, true);
+        addMarkers(true, bp1.isFirstArea(), bp1.isLastArea());
 
         LayoutManager childLM;
         int iStartPos = 0;
@@ -468,7 +469,7 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager {
         }
 
         flush();
-        addMarkers(true, true);
+        addMarkers(true, bp1.isFirstArea(), bp1.isLastArea());
 
         /*
         if (!isAbsoluteOrFixed()) {

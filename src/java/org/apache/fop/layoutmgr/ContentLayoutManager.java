@@ -254,8 +254,8 @@ public class ContentLayoutManager implements InlineLevelLayoutManager {
     }
 
     /** @see org.apache.fop.layoutmgr.LayoutManager */
-    public void addMarkerMap(Map marks, boolean start, boolean isfirst) {
-        parentLM.addMarkerMap(marks, start, isfirst);
+    public void addMarkerMap(Map marks, boolean starting, boolean isfirst, boolean islast) {
+        parentLM.addMarkerMap(marks, starting, isfirst, islast);
     }
 
     /** @see org.apache.fop.layoutmgr.LayoutManager */

@@ -358,10 +358,10 @@ public abstract class AbstractLayoutManager implements LayoutManager, Constants 
     /**
      * Add the markers when adding an area.
      */
-    protected void addMarkers(boolean start, boolean isfirst) {
+    protected void addMarkers(boolean starting, boolean isfirst, boolean islast) {
         // add markers
         if (markers != null) {
-            addMarkerMap(markers, start, isfirst);
+            addMarkerMap(markers, starting, isfirst, islast);
         }
     }
 
@@ -370,8 +370,8 @@ public abstract class AbstractLayoutManager implements LayoutManager, Constants 
      *
      * @see org.apache.fop.layoutmgr.LayoutManager
      */
-    public void addMarkerMap(Map marks, boolean start, boolean isfirst) {
-        parentLM.addMarkerMap(marks, start, isfirst);
+    public void addMarkerMap(Map marks, boolean starting, boolean isfirst, boolean islast) {
+        parentLM.addMarkerMap(marks, starting, isfirst, islast);
     }
 
     /**

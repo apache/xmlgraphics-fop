@@ -70,6 +70,8 @@ public class BlockLayoutManager extends BlockStackingLayoutManager {
     /** The list of child BreakPoss instances. */
     protected List childBreaks = new java.util.ArrayList();
 
+    private boolean isfirst = true;
+
     /**
      * Creates a new BlockLayoutManager.
      * @param inBlock the block FO object to create the layout manager for.
@@ -269,12 +271,21 @@ public class BlockLayoutManager extends BlockStackingLayoutManager {
                     breakPoss.setFlag(BreakPoss.NEXT_OVERFLOWS, true);
                 }
                 breakPoss.setStackingSize(stackSize);
+                if (isfirst && breakPoss.getStackingSize().opt > 0) {
+                    breakPoss.setFlag(BreakPoss.ISFIRST, true);
+                    isfirst = false;
+                }
+                if (isFinished()) {
+                    breakPoss.setFlag(BreakPoss.ISLAST, true);
+                }
                 return breakPoss;
             }
         }
         setFinished(true);
         BreakPoss breakPoss = new BreakPoss(new LeafPosition(this, FINISHED_LEAF_POS));
         breakPoss.setStackingSize(stackSize);
+        breakPoss.setFlag(BreakPoss.ISFIRST, isfirst);
+        breakPoss.setFlag(BreakPoss.ISLAST, true);
         return breakPoss;
     }
 
@@ -295,7 +306,7 @@ public class BlockLayoutManager extends BlockStackingLayoutManager {
 
         if (!isBogus()) {
             addID(fobj.getId());
-            addMarkers(true, true);
+            addMarkers(true, bp1.isFirstArea(), bp1.isLastArea());
         }
 
         try {
@@ -317,7 +328,7 @@ public class BlockLayoutManager extends BlockStackingLayoutManager {
             }
         } finally {
             if (!isBogus()) {
-                addMarkers(false, true);
+                addMarkers(false, bp1.isFirstArea(), bp1.isLastArea());
             }
             flush();
 
