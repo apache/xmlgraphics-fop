@@ -51,15 +51,13 @@
 package org.apache.fop.render.ps;
 
 //Java
-import java.util.List;
 import java.text.AttributedCharacterIterator;
-import java.text.CharacterIterator;
 import java.awt.AlphaComposite;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Dimension;
-/* java.awt.Font is not imported to avoid confusion with
-   org.apache.fop.fonts.Font */
+/* java.awt.Font is not imported to avoid confusion with 
+      org.apache.fop.fonts.Font */ 
 import java.awt.GradientPaint;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
@@ -71,9 +69,11 @@ import java.awt.Rectangle;
 import java.awt.Shape;
 import java.awt.Stroke;
 import java.awt.TexturePaint;
+import java.awt.color.ColorSpace;
+import java.awt.font.FontRenderContext;
+import java.awt.font.GlyphVector;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.PathIterator;
-import java.awt.geom.Point2D;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBuffer;
 import java.awt.image.DataBufferInt;
@@ -83,14 +83,13 @@ import java.awt.image.RenderedImage;
 import java.awt.image.renderable.RenderableImage;
 import java.io.IOException;
 
-// FOP
-import org.apache.fop.apps.Document;
-import org.apache.fop.fonts.Font;
-
-// Batik
+//Batik
 import org.apache.batik.ext.awt.g2d.AbstractGraphics2D;
 import org.apache.batik.ext.awt.g2d.GraphicContext;
 
+//FOP
+import org.apache.fop.fonts.Font;
+import org.apache.fop.apps.Document;
 
 /**
  * This concrete implementation of <tt>AbstractGraphics2D</tt> is a
@@ -106,38 +105,22 @@ import org.apache.batik.ext.awt.g2d.GraphicContext;
  */
 public class PSGraphics2D extends AbstractGraphics2D {
 
-    private boolean standalone = false;
-
-    /**
-     * the PostScript genertaor being created
-     */
+    /** the PostScript generator being created */
     protected PSGenerator gen;
 
+    private boolean clippingDisabled = true;
+
     /** Currently valid FontState */
-    protected Font fontState;
-
+    protected Font font;
+    
     /** Overriding FontState */
-    protected Font overrideFontState = null;
-
-    /**
-     * the current (internal) font name
-     */
+    protected Font overrideFont = null;
+    
+    /** the current (internal) font name */
     protected String currentFontName;
 
-    /**
-     * the current font size in millipoints
-     */
+    /** the current font size in millipoints */
     protected int currentFontSize;
-
-    /**
-     * the current vertical position in millipoints from bottom
-     */
-    protected int currentYPosition = 0;
-
-    /**
-     * the current horizontal position in millipoints from left
-     */
-    protected int currentXPosition = 0;
 
     /**
      * the current colour for use in svg
@@ -145,7 +128,7 @@ public class PSGraphics2D extends AbstractGraphics2D {
     protected Color currentColour = new Color(0, 0, 0);
 
     /** FontInfo containing all available fonts */
-    protected Document fontInfo;
+    protected Document document;
 
     /**
      * Create a new Graphics2D that generates PostScript code.
@@ -210,6 +193,14 @@ public class PSGraphics2D extends AbstractGraphics2D {
     }
 
     /**
+     * This method is used by AbstractPSDocumentGraphics2D to prepare a new page if
+     * necessary.
+     */
+    protected void preparePainting() {
+        //nop, used by AbstractPSDocumentGraphics2D
+    }
+
+    /**
      * Draws as much of the specified image as is currently available.
      * The image is drawn with its top-left corner at
      * (<i>x</i>,&nbsp;<i>y</i>) in this graphics context's coordinate
@@ -236,7 +227,8 @@ public class PSGraphics2D extends AbstractGraphics2D {
      */
     public boolean drawImage(Image img, int x, int y,
                              ImageObserver observer) {
-        // System.err.println("drawImage:x, y");
+        preparePainting();
+        System.out.println("drawImage: x, y  " + img.getClass().getName());
 
         final int width = img.getWidth(observer);
         final int height = img.getHeight(observer);
@@ -289,23 +281,24 @@ public class PSGraphics2D extends AbstractGraphics2D {
             // error
             break;
         }
-
-        /*try {
+/*
+        try {
             FopImage fopimg = new TempImage(width, height, result, mask);
             AffineTransform at = getTransform();
             double[] matrix = new double[6];
             at.getMatrix(matrix);
-            psRenderer.write("gsave");
+            gen.saveGraphicsState();
             Shape imclip = getClip();
             writeClip(imclip);
             // psRenderer.write("" + matrix[0] + " " + matrix[1] +
             // " " + matrix[2] + " " + matrix[3] + " " +
             // matrix[4] + " " + matrix[5] + " cm\n");
             //psRenderer.renderBitmap(fopimg, x, y, width, height);
-            psRenderer.write("grestore");
-        } catch (Exception e) {
-            e.printStackTrace();
-        }*/
+            gen.restoreGraphicsState();
+        } catch (IOException ioe) {
+            handleIOException(ioe);
+        }
+*/
         return true;
     }
 
@@ -319,26 +312,25 @@ public class PSGraphics2D extends AbstractGraphics2D {
                                  BufferedImage.TYPE_INT_ARGB);
     }
 
-    /*class TempImage implements FopImage {
-        int m_height;
-        int m_width;
-        int m_bitsPerPixel;
-        PDFColorSpace m_colorSpace;
-        int m_bitmapSiye;
-        byte[] m_bitmaps;
-        byte[] m_mask;
+/*
+    class TempImage implements FopImage {
+        int height;
+        int width;
+        int bitsPerPixel;
+        ColorSpace colorSpace;
+        int bitmapSiye;
+        byte[] bitmaps;
+        byte[] mask;
         PDFColor transparent = new PDFColor(255, 255, 255);
 
         TempImage(int width, int height, byte[] result,
                   byte[] mask) {
-            this.m_height = height;
-            this.m_width = width;
-            this.m_bitsPerPixel = 8;
-            this.m_colorSpace = new PDFColorSpace(PDFColorSpace.DEVICE_RGB);
-            // this.m_isTransparent = false;
-            // this.m_bitmapsSize = this.m_width * this.m_height * 3;
-            this.m_bitmaps = result;
-            this.m_mask = mask;
+            this.height = height;
+            this.width = width;
+            this.bitsPerPixel = 8;
+            this.colorSpace = ColorSpace.new PDFColorSpace(PDFColorSpace.DEVICE_RGB);
+            this.bitmaps = result;
+            this.mask = mask;
         }
 
         public boolean load(int type, FOUserAgent ua) {
@@ -350,55 +342,55 @@ public class PSGraphics2D extends AbstractGraphics2D {
         }
 
         public String getURL() {
-            return "" + m_bitmaps;
+            return "" + this.bitmaps;
         }
 
         // image size
         public int getWidth() {
-            return m_width;
+            return this.width;
         }
 
         public int getHeight() {
-            return m_height;
+            return this.height;
         }
 
         // DeviceGray, DeviceRGB, or DeviceCMYK
-        public PDFColorSpace getColorSpace() {
-            return m_colorSpace;
+        public ColorSpace getColorSpace() {
+            return this.colorSpace;
         }
 
         // bits per pixel
         public int getBitsPerPixel() {
-            return m_bitsPerPixel;
+            return this.bitsPerPixel;
         }
 
         // For transparent images
         public boolean isTransparent() {
-            return transparent != null;
+            return this.transparent != null;
         }
 
         public PDFColor getTransparentColor() {
-            return transparent;
+            return this.transparent;
         }
 
         public boolean hasSoftMask() {
-            return m_mask != null;
+            return this.mask != null;
         }
 
         public byte[] getSoftMask() {
-            return m_mask;
+            return this.mask;
         }
 
         // get the image bytes, and bytes properties
 
         // get uncompressed image bytes
         public byte[] getBitmaps() {
-            return m_bitmaps;
+            return this.bitmaps;
         }
 
         // width * (bitsPerPixel / 8) * height, no ?
         public int getBitmapsSize() {
-            return m_width * m_height * 3;
+            return getWidth() * getHeight() * 3; //Assumes RGB!
         }
 
         // get compressed image bytes
@@ -418,10 +410,16 @@ public class PSGraphics2D extends AbstractGraphics2D {
         }
 
         // release memory
-        public void close() {}
+        public void close() {
+            //nop
+        }
 
-    }*/
+        public ICC_Profile getICCProfile() {
+            return null;
+        }
 
+    }
+*/
 
     /**
      * Draws as much of the specified image as has already been scaled
@@ -459,6 +457,7 @@ public class PSGraphics2D extends AbstractGraphics2D {
      */
     public boolean drawImage(Image img, int x, int y, int width, int height,
                              ImageObserver observer) {
+        preparePainting();
         System.out.println("drawImage");
         return true;
     }
@@ -493,10 +492,54 @@ public class PSGraphics2D extends AbstractGraphics2D {
     public void dispose() {
         // System.out.println("dispose");
         this.gen = null;
-        fontState = null;
-        currentFontName = null;
-        currentColour = null;
-        fontInfo = null;
+        this.font = null;
+        this.currentColour = null;
+        this.document = null;
+    }
+
+    /**
+     * Processes a path iterator generating the nexessary painting operations.
+     * @param iter PathIterator to process
+     * @throws IOException In case of an I/O problem.
+     */
+    public void processPathIterator(PathIterator iter) throws IOException {
+        double[] vals = new double[6];
+        while (!iter.isDone()) {
+            int type = iter.currentSegment(vals);
+            switch (type) {
+            case PathIterator.SEG_CUBICTO:
+                gen.writeln(gen.formatDouble(1000 * vals[0]) + " "
+                                 + gen.formatDouble(1000 * vals[1]) + " "
+                                 + gen.formatDouble(1000 * vals[2]) + " "
+                                 + gen.formatDouble(1000 * vals[3]) + " "
+                                 + gen.formatDouble(1000 * vals[4]) + " "
+                                 + gen.formatDouble(1000 * vals[5])
+                                 + " curveto");
+                break;
+            case PathIterator.SEG_LINETO:
+                gen.writeln(gen.formatDouble(1000 * vals[0]) + " "
+                                 + gen.formatDouble(1000 * vals[1])
+                                 + " lineto");
+                break;
+            case PathIterator.SEG_MOVETO:
+                gen.writeln(gen.formatDouble(1000 * vals[0]) + " "
+                                 + gen.formatDouble(1000 * vals[1])
+                                 + " M");
+                break;
+            case PathIterator.SEG_QUADTO:
+                gen.writeln(gen.formatDouble(1000 * vals[0]) + " " 
+                          + gen.formatDouble(1000 * vals[1]) + " " 
+                          + gen.formatDouble(1000 * vals[2]) + " " 
+                          + gen.formatDouble(1000 * vals[3]) + " QUADTO ");
+                break;
+            case PathIterator.SEG_CLOSE:
+                gen.writeln("closepath");
+                break;
+            default:
+                break;
+            }
+            iter.next();
+        }
     }
 
     /**
@@ -516,58 +559,20 @@ public class PSGraphics2D extends AbstractGraphics2D {
      * @see #setComposite
      */
     public void draw(Shape s) {
+        preparePainting();
         try {
             // System.out.println("draw(Shape)");
             gen.saveGraphicsState();
             Shape imclip = getClip();
             writeClip(imclip);
-            Color c = getColor();
-            gen.writeln(gen.formatDouble(c.getRed() / 255.0) + " "
-                      + gen.formatDouble(c.getGreen() / 255.0) + " "
-                      + gen.formatDouble(c.getBlue() / 255.0) + " setrgbcolor");
+            establishColor(getColor());
 
             applyPaint(getPaint(), false);
             applyStroke(getStroke());
 
             gen.writeln("newpath");
             PathIterator iter = s.getPathIterator(getTransform());
-            while (!iter.isDone()) {
-                double vals[] = new double[6];
-                int type = iter.currentSegment(vals);
-                switch (type) {
-                case PathIterator.SEG_CUBICTO:
-                    gen.writeln(gen.formatDouble(1000 * vals[0]) + " "
-                              + gen.formatDouble(1000 * vals[1]) + " "
-                              + gen.formatDouble(1000 * vals[2]) + " "
-                              + gen.formatDouble(1000 * vals[3]) + " "
-                              + gen.formatDouble(1000 * vals[4]) + " "
-                              + gen.formatDouble(1000 * vals[5])
-                              + " curveto");
-                    break;
-                case PathIterator.SEG_LINETO:
-                    gen.writeln(gen.formatDouble(1000 * vals[0]) + " "
-                              + gen.formatDouble(1000 * vals[1])
-                              + " lineto");
-                    break;
-                case PathIterator.SEG_MOVETO:
-                    gen.writeln(gen.formatDouble(1000 * vals[0]) + " "
-                              + gen.formatDouble(1000 * vals[1])
-                              + " M");
-                    break;
-                case PathIterator.SEG_QUADTO:
-                    gen.writeln(gen.formatDouble(1000 * vals[0]) + " "
-                              + gen.formatDouble(1000 * vals[1]) + " "
-                              + gen.formatDouble(1000 * vals[2]) + " "
-                              + gen.formatDouble(1000 * vals[3]) + " QUADTO ");
-                    break;
-                case PathIterator.SEG_CLOSE:
-                    gen.writeln("closepath");
-                    break;
-                default:
-                    break;
-                }
-                iter.next();
-            }
+            processPathIterator(iter);
             doDrawing(false, true, false);
             gen.restoreGraphicsState();
         } catch (IOException ioe) {
@@ -580,50 +585,20 @@ public class PSGraphics2D extends AbstractGraphics2D {
      * @param s Shape defining the clipping region
      */
     protected void writeClip(Shape s) {
-        try {
-            PathIterator iter = s.getPathIterator(getTransform());
-            gen.writeln("newpath");
-            while (!iter.isDone()) {
-                double vals[] = new double[6];
-                int type = iter.currentSegment(vals);
-                switch (type) {
-                case PathIterator.SEG_CUBICTO:
-                    gen.writeln(gen.formatDouble(1000 * vals[0]) + " "
-                              + gen.formatDouble(1000 * vals[1]) + " "
-                              + gen.formatDouble(1000 * vals[2]) + " "
-                              + gen.formatDouble(1000 * vals[3]) + " "
-                              + gen.formatDouble(1000 * vals[4]) + " "
-                              + gen.formatDouble(1000 * vals[5])
-                              + " curveto");
-                    break;
-                case PathIterator.SEG_LINETO:
-                    gen.writeln(gen.formatDouble(1000 * vals[0]) + " "
-                              + gen.formatDouble(1000 * vals[1])
-                              + " lineto");
-                    break;
-                case PathIterator.SEG_MOVETO:
-                    gen.writeln(gen.formatDouble(1000 * vals[0]) + " "
-                              + gen.formatDouble(1000 * vals[1])
-                              + " M");
-                    break;
-                case PathIterator.SEG_QUADTO:
-                    gen.writeln(gen.formatDouble(1000 * vals[0]) + " "
-                              + gen.formatDouble(1000 * vals[1]) + " "
-                              + gen.formatDouble(1000 * vals[2]) + " "
-                              + gen.formatDouble(1000 * vals[3]) + " QUADTO ");
-                    break;
-                case PathIterator.SEG_CLOSE:
-                    gen.writeln("closepath");
-                    break;
-                default:
-                    break;
-                }
-                iter.next();
+        if (s == null) {
+            return;
+        }
+        if (!this.clippingDisabled) {
+            preparePainting();
+            try {
+                gen.writeln("newpath");
+                PathIterator iter = s.getPathIterator(getTransform());
+                processPathIterator(iter);
+                // clip area
+                gen.writeln("clippath");
+            } catch (IOException ioe) {
+                handleIOException(ioe);
             }
-            // clip area
-            gen.writeln("clippath");
-        } catch (IOException ioe) {
-            handleIOException(ioe);
         }
     }
 
@@ -633,52 +608,11 @@ public class PSGraphics2D extends AbstractGraphics2D {
      * @param fill True if to be applied for filling
      */
     protected void applyPaint(Paint paint, boolean fill) {
+        preparePainting();
         if (paint instanceof GradientPaint) {
-            GradientPaint gp = (GradientPaint)paint;
-            Color c1 = gp.getColor1();
-            Color c2 = gp.getColor2();
-            Point2D p1 = gp.getPoint1();
-            Point2D p2 = gp.getPoint2();
-            //boolean cyclic = gp.isCyclic();
-
-            List theCoords = new java.util.ArrayList();
-            theCoords.add(new Double(p1.getX()));
-            theCoords.add(new Double(p1.getY()));
-            theCoords.add(new Double(p2.getX()));
-            theCoords.add(new Double(p2.getY()));
-
-            List theExtend = new java.util.ArrayList();
-            theExtend.add(new Boolean(true));
-            theExtend.add(new Boolean(true));
-
-            List theDomain = new java.util.ArrayList();
-            theDomain.add(new Double(0));
-            theDomain.add(new Double(1));
-
-            List theEncode = new java.util.ArrayList();
-            theEncode.add(new Double(0));
-            theEncode.add(new Double(1));
-            theEncode.add(new Double(0));
-            theEncode.add(new Double(1));
-
-            List theBounds = new java.util.ArrayList();
-            theBounds.add(new Double(0));
-            theBounds.add(new Double(1));
-
-            //List theFunctions = new java.util.ArrayList();
-
-            List someColors = new java.util.ArrayList();
-
-            Color color1 = new Color(c1.getRed(), c1.getGreen(),
-                                           c1.getBlue());
-            someColors.add(color1);
-            Color color2 = new Color(c2.getRed(), c2.getGreen(),
-                                           c2.getBlue());
-            someColors.add(color2);
-
-            //PDFColorSpace aColorSpace = new PDFColorSpace(PDFColorSpace.DEVICE_RGB);
+            //NYI
         } else if (paint instanceof TexturePaint) {
-            //nop
+            //NYI
         }
     }
 
@@ -687,33 +621,34 @@ public class PSGraphics2D extends AbstractGraphics2D {
      * @param stroke Stroke object to use
      */
     protected void applyStroke(Stroke stroke) {
+        preparePainting();
         try {
             if (stroke instanceof BasicStroke) {
                 BasicStroke bs = (BasicStroke)stroke;
 
                 float[] da = bs.getDashArray();
                 if (da != null) {
-                    gen.writeln("[");
+                    gen.write("[");
                     for (int count = 0; count < da.length; count++) {
-                        gen.writeln("" + (1000 * (int)da[count]));
+                        gen.write("" + (1000 * (int)da[count]));
                         if (count < da.length - 1) {
-                            gen.writeln(" ");
+                            gen.write(" ");
                         }
                     }
-                    gen.writeln("] ");
+                    gen.write("] ");
                     float offset = bs.getDashPhase();
                     gen.writeln((1000 * (int)offset) + " setdash");
                 }
                 int ec = bs.getEndCap();
                 switch (ec) {
                 case BasicStroke.CAP_BUTT:
-                    gen.writeln(0 + " setlinecap");
+                    gen.writeln("0 setlinecap");
                     break;
                 case BasicStroke.CAP_ROUND:
-                    gen.writeln(1 + " setlinecap");
+                    gen.writeln("1 setlinecap");
                     break;
                 case BasicStroke.CAP_SQUARE:
-                    gen.writeln(2 + " setlinecap");
+                    gen.writeln("2 setlinecap");
                     break;
                 }
 
@@ -761,9 +696,9 @@ public class PSGraphics2D extends AbstractGraphics2D {
      * @see #setClip
      */
     public void drawRenderedImage(RenderedImage img, AffineTransform xform) {
+        preparePainting();
         System.out.println("drawRenderedImage");
     }
-
 
     /**
      * Renders a
@@ -797,7 +732,56 @@ public class PSGraphics2D extends AbstractGraphics2D {
      */
     public void drawRenderableImage(RenderableImage img,
                                     AffineTransform xform) {
+        preparePainting();
         System.out.println("drawRenderableImage");
+    }
+
+    /**
+     * Establishes the given color in the PostScript interpreter.
+     * @param c the color to set
+     * @throws IOException In case of an I/O problem
+     */
+    protected void establishColor(Color c) throws IOException {
+        StringBuffer p = new StringBuffer();
+        float[] comps = c.getColorComponents(null);
+        
+        if (c.getColorSpace().getType() == ColorSpace.TYPE_RGB) {
+            // according to pdfspec 12.1 p.399
+            // if the colors are the same then just use the g or G operator
+            boolean same = (comps[0] == comps[1] 
+                        && comps[0] == comps[2]);
+            // output RGB
+            if (same) {
+                p.append(gen.formatDouble(comps[0]));
+            } else {
+                for (int i = 0; i < c.getColorSpace().getNumComponents(); i++) {
+                    if (i > 0) {
+                        p.append(" ");
+                    }
+                    p.append(gen.formatDouble(comps[i]));
+                }
+            }
+            if (same) {
+                p.append(" setgray");
+            } else {
+                p.append(" setrgbcolor");
+            }
+        } else if (c.getColorSpace().getType() == ColorSpace.TYPE_CMYK) {
+            // colorspace is CMYK
+            for (int i = 0; i < c.getColorSpace().getNumComponents(); i++) {
+                if (i > 0) {
+                    p.append(" ");
+                }
+                p.append(gen.formatDouble(comps[i]));
+            }
+            p.append(" setcmykcolor");
+        } else {
+            // means we're in DeviceGray or Unknown.
+            // assume we're in DeviceGray, because otherwise we're screwed.
+            p.append(gen.formatDouble(comps[0]));
+            p.append(" setgray");
+        }
+        gen.writeln(p.toString());
     }
 
     /**
@@ -825,73 +809,125 @@ public class PSGraphics2D extends AbstractGraphics2D {
      * @see #setClip
      */
     public void drawString(String s, float x, float y) {
-      try {
-        if (overrideFontState == null) {
-            java.awt.Font gFont = getFont();
-            String n = gFont.getFamily();
-            if (n.equals("sanserif")) {
-                n = "sans-serif";
-            }
-            int siz = gFont.getSize();
-            String style = gFont.isItalic() ? "italic" : "normal";
-            String weight = gFont.isBold() ? "bold" : "normal";
-
-            //try {
-                //fontState = new FontState(n, fontState.getFontMetrics(),siz);
-            //} catch (org.apache.fop.apps.FOPException fope) {
-                //fope.printStackTrace();
-            //}
+        if (this.textAsShapes) {
+            drawStringAsShapes(s, x, y);
         } else {
-            fontState = overrideFontState;
-            overrideFontState = null;
+            drawStringAsText(s, x, y);
         }
-        Shape imclip = getClip();
-        writeClip(imclip);
-        Color c = getColor();
-        gen.writeln(c.getRed() / 255.0 + " "
-                  + c.getGreen() / 255.0 + " "
-                  + c.getBlue() / 255.0 + " setrgbcolor");
+    }
 
-        AffineTransform trans = getTransform();
-        trans.translate(x, y);
-        double[] vals = new double[6];
-        trans.getMatrix(vals);
-        gen.writeln(gen.formatDouble(1000 * vals[4]) + " "
-                  + gen.formatDouble(1000 * vals[5]) + " moveto ");
-        //String fontWeight = fontState.getFontWeight();
-        StringBuffer sb = new StringBuffer();
+    /**
+     * Draw a string to the PostScript document. The text is painted as shapes.
+     * @param s the string to draw
+     * @param x the x position
+     * @param y the y position
+     */
+    public void drawStringAsShapes(String s, float x, float y) {
+        java.awt.Font awtFont = super.getFont();
+        FontRenderContext frc = super.getFontRenderContext();
+        GlyphVector gv = awtFont.createGlyphVector(frc, s);
+        Shape glyphOutline = gv.getOutline(x, y);
+        fill(glyphOutline);
+    }
 
-        int l = s.length();
-
-        if ((currentFontName != fontState.getFontName())
-                || (currentFontSize != fontState.getFontSize())) {
-            gen.writeln(fontState.getFontName() + " " + fontState.getFontSize() + " F");
-            currentFontName = fontState.getFontName();
-            currentFontSize = fontState.getFontSize();
-        }
-        for (int i = 0; i < l; i++) {
-            char ch = s.charAt(i);
-            char mch = fontState.mapChar(ch);
-            if (mch > 127) {
-                sb = sb.append("\\" + Integer.toOctalString(mch));
+    /**
+     * Draw a string to the PostScript document. The text is painted using 
+     * text operations.
+     * @param s the string to draw
+     * @param x the x position
+     * @param y the y position
+     */
+    public void drawStringAsText(String s, float x, float y) {
+        preparePainting();
+        //System.out.println("drawString('" + s + "', " + x + ", " + y + ")");
+        try {
+            if (this.overrideFont == null) {
+                java.awt.Font awtFont = getFont();
+                this.font = createFont(awtFont);
             } else {
-                String escape = "\\()[]{}";
-                if (escape.indexOf(mch) >= 0) {
-                    sb.append("\\");
-                }
-                sb = sb.append(mch);
+                this.font = this.overrideFont;
+                this.overrideFont = null;
             }
+            
+            //Color and Font state
+            establishColor(getColor());
+            establishCurrentFont();
+
+            //Clip
+            Shape imclip = getClip();
+            writeClip(imclip);
+
+            gen.saveGraphicsState();
+
+            //Prepare correct transformation
+            AffineTransform trans = getTransform();
+            gen.writeln("[" + toArray(trans) + "] concat"); 
+            gen.writeln(gen.formatDouble(1000 * x) + " "
+                      + gen.formatDouble(1000 * y) + " moveto ");
+            gen.writeln("1 -1 scale");
+      
+            StringBuffer sb = new StringBuffer("(");
+            escapeText(s, sb);
+            sb.append(") t ");
+    
+            gen.writeln(sb.toString());
+            
+            gen.restoreGraphicsState();        
+        } catch (IOException ioe) {
+            handleIOException(ioe);
         }
+    }
 
-        String psString = null;
-        psString = " (" + sb.toString() + ") " + " t ";
+    /**
+     * Converts an AffineTransform to a value array.
+     * @param at AffineTransform to convert
+     * @return a String (array of six space-separated values)
+     */
+    protected String toArray(AffineTransform at) {
+        final double[] vals = new double[6];
+        at.getMatrix(vals);
+        return gen.formatDouble5(vals[0]) + " " 
+                + gen.formatDouble5(vals[1]) + " " 
+                + gen.formatDouble5(vals[2]) + " "   
+                + gen.formatDouble5(vals[3]) + " "   
+                + gen.formatDouble(1000 * vals[4]) + " "   
+                + gen.formatDouble(1000 * vals[5]); 
+    }
 
-        gen.writeln(" 1.0 -1.0 scale");
-        gen.writeln(psString);
-        gen.writeln(" 1.0 -1.0 scale");
-      } catch (IOException ioe) {
-          handleIOException(ioe);
-      }
+    private void escapeText(final String text, StringBuffer target) {
+        final int l = text.length();
+        for (int i = 0; i < l; i++) {
+            final char ch = text.charAt(i);
+            final char mch = this.font.mapChar(ch);
+            PSGenerator.escapeChar(mch, target);
+        }
+    }
+
+    private Font createFont(java.awt.Font f) {
+        String fontFamily = f.getFamily();
+        if (fontFamily.equals("sanserif")) {
+            fontFamily = "sans-serif";
+        }
+        int fontSize = 1000 * f.getSize();
+        String style = f.isItalic() ? "italic" : "normal";
+        int weight = f.isBold() ? Font.BOLD : Font.NORMAL;
+                
+        String fontKey = this.document.findAdjustWeight(fontFamily, style, weight);
+        if (fontKey == null) {
+            fontKey = this.document.findAdjustWeight("sans-serif", style, weight);
+        }
+        return new Font(fontKey, 
+                this.document.getMetricsFor(fontKey), 
+                fontSize);
+    }
+
+    private void establishCurrentFont() throws IOException {
+        if ((currentFontName != this.font.getFontName()) 
+                || (currentFontSize != this.font.getFontSize())) {
+            gen.writeln(this.font.getFontName() + " " + this.font.getFontSize() + " F");
+            currentFontName = this.font.getFontName();
+            currentFontSize = this.font.getFontSize();
+        }
     }
 
     /**
@@ -921,18 +957,14 @@ public class PSGraphics2D extends AbstractGraphics2D {
      */
     public void drawString(AttributedCharacterIterator iterator, float x,
                            float y) {
+        preparePainting();
+        System.err.println("drawString(AttributedCharacterIterator) NYI");
+        /*
         try {
-            System.err.println("drawString(AttributedCharacterIterator)");
-
             gen.writeln("BT");
             Shape imclip = getClip();
             writeClip(imclip);
-            Color c = getColor();
-            currentColour = new Color(c.getRed(), c.getGreen(), c.getBlue());
-            //gen.writeln(currentColour.getColorSpaceOut(true));
-            c = getBackground();
-            Color col = new Color(c.getRed(), c.getGreen(), c.getBlue());
-            //gen.writeln(col.getColorSpaceOut(false));
+            establishColor(getColor());
 
             AffineTransform trans = getTransform();
             trans.translate(x, y);
@@ -952,11 +984,10 @@ public class PSGraphics2D extends AbstractGraphics2D {
                           + gen.formatDouble(vals[6]) + " Tm [" + ch
                           + "]");
             }
-
             gen.writeln("ET");
         } catch (IOException ioe) {
             handleIOException(ioe);
-        }
+        }*/
     }
 
     /**
@@ -974,60 +1005,22 @@ public class PSGraphics2D extends AbstractGraphics2D {
      * @see #setClip
      */
     public void fill(Shape s) {
+        preparePainting();
+        // System.err.println("fill");
         try {
-            // System.err.println("fill");
-            gen.writeln("gsave");
+            gen.saveGraphicsState();
             Shape imclip = getClip();
             writeClip(imclip);
-            Color c = getColor();
-            gen.writeln(gen.formatDouble(c.getRed() / 255.0) + " "
-                      + gen.formatDouble(c.getGreen() / 255.0) + " "
-                      + gen.formatDouble(c.getBlue() / 255.0) + " setrgbcolor");
+            establishColor(getColor());
 
             applyPaint(getPaint(), true);
 
             gen.writeln("newpath");
             PathIterator iter = s.getPathIterator(getTransform());
-            while (!iter.isDone()) {
-                double vals[] = new double[6];
-                int type = iter.currentSegment(vals);
-                switch (type) {
-                case PathIterator.SEG_CUBICTO:
-                    gen.writeln(gen.formatDouble(1000 * vals[0]) + " "
-                              + gen.formatDouble(1000 * vals[1]) + " "
-                              + gen.formatDouble(1000 * vals[2]) + " "
-                              + gen.formatDouble(1000 * vals[3]) + " "
-                              + gen.formatDouble(1000 * vals[4]) + " "
-                              + gen.formatDouble(1000 * vals[5])
-                              + " curveto");
-                    break;
-                case PathIterator.SEG_LINETO:
-                    gen.writeln(gen.formatDouble(1000 * vals[0]) + " "
-                              + gen.formatDouble(1000 * vals[1])
-                              + " lineto");
-                    break;
-                case PathIterator.SEG_MOVETO:
-                    gen.writeln(gen.formatDouble(1000 * vals[0]) + " "
-                              + gen.formatDouble(1000 * vals[1])
-                              + " M");
-                    break;
-                case PathIterator.SEG_QUADTO:
-                    gen.writeln(gen.formatDouble(1000 * vals[0]) + " "
-                              + gen.formatDouble(1000 * vals[1]) + " "
-                              + gen.formatDouble(1000 * vals[2]) + " "
-                              + gen.formatDouble(1000 * vals[3]) + " QUADTO ");
-                    break;
-                case PathIterator.SEG_CLOSE:
-                    gen.writeln("closepath");
-                    break;
-                default:
-                    break;
-                }
-                iter.next();
-            }
+            processPathIterator(iter);
             doDrawing(true, false,
                       iter.getWindingRule() == PathIterator.WIND_EVEN_ODD);
-            gen.writeln("grestore");
+            gen.restoreGraphicsState();
         } catch (IOException ioe) {
             handleIOException(ioe);
         }
@@ -1040,8 +1033,9 @@ public class PSGraphics2D extends AbstractGraphics2D {
      * @param nonzero ???
      * @exception IOException In case of an I/O problem
      */
-    protected void doDrawing(boolean fill, boolean stroke, boolean nonzero)
+    protected void doDrawing(boolean fill, boolean stroke, boolean nonzero) 
                 throws IOException {
+        preparePainting();
         if (fill) {
             if (stroke) {
                 if (!nonzero) {
@@ -1086,13 +1080,13 @@ public class PSGraphics2D extends AbstractGraphics2D {
     }
 
     /**
-     * Sets the overrideing font state.
-     * @param infont FontState to set
+     * Sets the overriding font.
+     * @param font Font to set
      */
-    public void setOverrideFontState(Font infont) {
-        overrideFontState = infont;
+    public void setOverrideFont(Font font) {
+        this.overrideFont = font;
     }
-
+    
     /**
      * Gets the font metrics for the specified font.
      * @return    the font metrics for the specified font.
@@ -1148,5 +1142,27 @@ public class PSGraphics2D extends AbstractGraphics2D {
                          int dy) {
         System.out.println("copyArea");
     }
+
+    /* --- for debugging
+    public void transform(AffineTransform tx) {
+        System.out.println("transform(" + toArray(tx) + ")");
+        super.transform(zx);
+    }
+
+    public void scale(double sx, double sy) {
+        System.out.println("scale(" + sx + ", " + sy + ")");
+        super.scale(sx, sy);
+    }
+
+    public void translate(double tx, double ty) {
+        System.out.println("translate(double " + tx + ", " + ty + ")");
+        super.translate(tx, ty);
+    }
+
+    public void translate(int tx, int ty) {
+        System.out.println("translate(int " + tx + ", " + ty + ")");
+        super.translate(tx, ty);
+    }
+    */
 
 }

@@ -57,6 +57,7 @@ import java.awt.geom.Rectangle2D;
    org.apache.fop.fonts.Font */
 
 import java.text.AttributedCharacterIterator;
+import java.text.CharacterIterator;
 import java.awt.font.TextAttribute;
 import java.awt.Shape;
 import java.awt.Paint;
@@ -65,17 +66,18 @@ import java.awt.Color;
 import java.util.List;
 import java.util.Iterator;
 
+import org.apache.batik.dom.svg.SVGOMTextElement;
 import org.apache.batik.gvt.text.Mark;
 import org.apache.batik.gvt.TextPainter;
 import org.apache.batik.gvt.TextNode;
 import org.apache.batik.gvt.text.GVTAttributedCharacterIterator;
 import org.apache.batik.gvt.text.TextPaintInfo;
 import org.apache.batik.gvt.font.GVTFontFamily;
-import org.apache.batik.bridge.SVGFontFamily;
 import org.apache.batik.gvt.renderer.StrokingTextPainter;
 
 import org.apache.fop.fonts.FontMetrics;
 import org.apache.fop.fonts.Font;
+import org.apache.fop.svg.ACIUtils;
 import org.apache.fop.apps.Document;
 
 /**
@@ -90,24 +92,26 @@ import org.apache.fop.apps.Document;
  * (todo) use drawString(AttributedCharacterIterator iterator...) for some
  *
  * @author <a href="mailto:keiron@aftexsw.com">Keiron Liddle</a>
+ * @author <a href="mailto:jeremias@apache.org">Jeremias Maerki</a>
  * @version $Id: PSTextPainter.java,v 1.15 2003/01/08 14:03:55 jeremias Exp $
  */
 public class PSTextPainter implements TextPainter {
-    private Document fontInfo;
+    
+    private Document document;
 
     /**
      * Use the stroking text painter to get the bounds and shape.
      * Also used as a fallback to draw the string with strokes.
      */
-    protected static final TextPainter PROXY_PAINTER =
-        StrokingTextPainter.getInstance();
+    protected static final TextPainter 
+        PROXY_PAINTER = StrokingTextPainter.getInstance();
 
     /**
      * Create a new PS text painter with the given font information.
-     * @param fi the fint info
+     * @param document the context document
      */
-    public PSTextPainter(Document fi) {
-        fontInfo = fi;
+    public PSTextPainter(Document document) {
+        this.document = document;
     }
 
     /**
@@ -120,152 +124,51 @@ public class PSTextPainter implements TextPainter {
         // System.out.println("PSText paint");
         String txt = node.getText();
         Point2D loc = node.getLocation();
-
-        AttributedCharacterIterator aci =
-          node.getAttributedCharacterIterator();
-        // reset position to start of char iterator
-        if (aci.getBeginIndex() == aci.getEndIndex()) {
-            return;
-        }
-        char ch = aci.first();
-        if (ch == AttributedCharacterIterator.DONE) {
-            return;
-        }
-
-        TextPaintInfo tpi = (TextPaintInfo) aci.getAttribute(
-            GVTAttributedCharacterIterator.TextAttribute.PAINT_INFO);
-        
-        if (tpi == null) {
-            return;
-        }        
-
-        TextNode.Anchor anchor;
-        anchor = (TextNode.Anchor) aci.getAttribute(
-                      GVTAttributedCharacterIterator.TextAttribute.ANCHOR_TYPE);
-
-        List gvtFonts;
-        gvtFonts = (List) aci.getAttribute(
-                      GVTAttributedCharacterIterator.TextAttribute.GVT_FONT_FAMILIES);
-        Paint forg = tpi.fillPaint;
-        Paint strokePaint = tpi.strokePaint;
-        Float size = (Float) aci.getAttribute(TextAttribute.SIZE);
-        if (size == null) {
-            return;
-        }
-        Stroke stroke = tpi.strokeStroke;
-        /*
-        Float xpos = (Float) aci.getAttribute(
-                       GVTAttributedCharacterIterator.TextAttribute.X);
-        Float ypos = (Float) aci.getAttribute(
-                       GVTAttributedCharacterIterator.TextAttribute.Y);
-        */
-
-        Float posture = (Float) aci.getAttribute(TextAttribute.POSTURE);
-        Float taWeight = (Float) aci.getAttribute(TextAttribute.WEIGHT);
-
-        boolean useStrokePainter = false;
-
-        if (forg instanceof Color) {
-            Color col = (Color) forg;
-            if (col.getAlpha() != 255) {
-                useStrokePainter = true;
-            }
-            g2d.setColor(col);
-        }
-        g2d.setPaint(forg);
-        g2d.setStroke(stroke);
-
-        if (strokePaint != null) {
-            // need to draw using AttributedCharacterIterator
-            useStrokePainter = true;
-        }
-
-        if (hasUnsupportedAttributes(aci)) {
-            useStrokePainter = true;
-        }
-
-        // text contains unsupported information
-        if (useStrokePainter) {
+    
+        if (hasUnsupportedAttributes(node)) {
             PROXY_PAINTER.paint(node, g2d);
-            return;
-        }
-
-        String style = ((posture != null) && (posture.floatValue() > 0.0))
-                       ? "italic" : "normal";
-        int weight = ((taWeight != null)
-                       &&  (taWeight.floatValue() > 1.0)) ? Font.BOLD
-                       : Font.NORMAL;
-
-        Font fontState = null;
-        Document fi = fontInfo;
-        boolean found = false;
-        String fontFamily = null;
-        if (gvtFonts != null) {
-            Iterator i = gvtFonts.iterator();
-            while (i.hasNext()) {
-                GVTFontFamily fam = (GVTFontFamily) i.next();
-                if (fam instanceof SVGFontFamily) {
-                    PROXY_PAINTER.paint(node, g2d);
-                    return;
-                }
-                fontFamily = fam.getFamilyName();
-                if (fi.hasFont(fontFamily, style, weight)) {
-                    String fname = fontInfo.fontLookup(fontFamily, style,
-                                                       weight);
-                    FontMetrics metrics = fontInfo.getMetricsFor(fname);
-                    int fsize = (int)(size.floatValue() * 1000);
-                    fontState = new Font(fname, metrics, fsize);
-                    found = true;
-                    break;
-                }
-            }
-        }
-        if (!found) {
-            String fname =
-              fontInfo.fontLookup("any", style, Font.NORMAL);
-            FontMetrics metrics = fontInfo.getMetricsFor(fname);
-            int fsize = (int)(size.floatValue() * 1000);
-            fontState = new Font(fname, metrics, fsize);
         } else {
-            if (g2d instanceof PSGraphics2D) {
-                ((PSGraphics2D) g2d).setOverrideFontState(fontState);
+            paintTextRuns(node.getTextRuns(), g2d, loc);
+        }
+    }
+    
+    
+    private boolean hasUnsupportedAttributes(TextNode node) {
+        Iterator i = node.getTextRuns().iterator();
+        while (i.hasNext()) {
+            StrokingTextPainter.TextRun 
+                    run = (StrokingTextPainter.TextRun)i.next();
+            AttributedCharacterIterator aci = run.getACI();
+            boolean hasUnsupported = hasUnsupportedAttributes(aci);
+            if (hasUnsupported) {
+                return true;
             }
         }
-        int fStyle = java.awt.Font.PLAIN;
-        if (weight == Font.BOLD) {
-            if (style.equals("italic")) {
-                fStyle = java.awt.Font.BOLD | java.awt.Font.ITALIC;
-            } else {
-                fStyle = java.awt.Font.BOLD;
-            }
-        } else {
-            if (style.equals("italic")) {
-                fStyle = java.awt.Font.ITALIC;
-            } else {
-                fStyle = java.awt.Font.PLAIN;
-            }
-        }
-        java.awt.Font font = new java.awt.Font(fontFamily, fStyle,
-                             (int)(fontState.getFontSize() / 1000));
-
-        g2d.setFont(font);
-
-        float advance = getStringWidth(txt, fontState);
-        float tx = 0;
-        if (anchor != null) {
-            switch (anchor.getType()) {
-                case TextNode.Anchor.ANCHOR_MIDDLE:
-                    tx = -advance / 2;
-                    break;
-                case TextNode.Anchor.ANCHOR_END:
-                    tx = -advance;
-            }
-        }
-        g2d.drawString(txt, (float)(loc.getX() + tx), (float)(loc.getY()));
+        return false;
     }
 
     private boolean hasUnsupportedAttributes(AttributedCharacterIterator aci) {
         boolean hasunsupported = false;
+        
+        TextPaintInfo tpi = (TextPaintInfo) aci.getAttribute(
+            GVTAttributedCharacterIterator.TextAttribute.PAINT_INFO);
+        if ((tpi != null) 
+                && ((tpi.strokeStroke != null && tpi.strokePaint != null)
+                    || (tpi.strikethroughStroke != null)
+                    || (tpi.underlineStroke != null)
+                    || (tpi.overlineStroke != null))) {
+            hasunsupported = true;
+        }
+
+        //Alpha is not supported
+        Paint foreground = (Paint) aci.getAttribute(TextAttribute.FOREGROUND);
+        if (foreground instanceof Color) {
+            Color col = (Color)foreground;
+            if (col.getAlpha() != 255) {
+                hasunsupported = true;
+            }
+        }
+
         Object letSpace = aci.getAttribute(
                             GVTAttributedCharacterIterator.TextAttribute.LETTER_SPACING);
         if (letSpace != null) {
@@ -277,33 +180,258 @@ public class PSTextPainter implements TextPainter {
         if (wordSpace != null) {
             hasunsupported = true;
         }
+        
+        Object lengthAdjust = aci.getAttribute(
+                            GVTAttributedCharacterIterator.TextAttribute.LENGTH_ADJUST);
+        if (lengthAdjust != null) {
+            hasunsupported = true;
+        }
 
-        AttributedCharacterIterator.Attribute key;
-        key = GVTAttributedCharacterIterator.TextAttribute.WRITING_MODE;
-        Object writeMod = aci.getAttribute(key);
-        if (!GVTAttributedCharacterIterator.TextAttribute.WRITING_MODE_LTR.equals(
+        Object writeMod = aci.getAttribute(
+                GVTAttributedCharacterIterator.TextAttribute.WRITING_MODE);
+        if (writeMod != null 
+            && !GVTAttributedCharacterIterator.TextAttribute.WRITING_MODE_LTR.equals(
                   writeMod)) {
             hasunsupported = true;
         }
 
         Object vertOr = aci.getAttribute(
-                          GVTAttributedCharacterIterator.TextAttribute.VERTICAL_ORIENTATION);
+                GVTAttributedCharacterIterator.TextAttribute.VERTICAL_ORIENTATION);
         if (GVTAttributedCharacterIterator.TextAttribute.ORIENTATION_ANGLE.equals(
                   vertOr)) {
             hasunsupported = true;
         }
+        
+        Object rcDel = aci.getAttribute(
+                GVTAttributedCharacterIterator.TextAttribute.TEXT_COMPOUND_DELIMITER);
+        if (!(rcDel instanceof SVGOMTextElement)) {
+            hasunsupported = true; //Filter spans
+        }
+        
         return hasunsupported;
     }
 
-    private float getStringWidth(String str, Font fontState) {
+    /**
+     * Paint a list of text runs on the Graphics2D at a given location.
+     * @param textRuns the list of text runs
+     * @param g2d the Graphics2D to paint to
+     * @param loc the current location of the "cursor"
+     */
+    protected void paintTextRuns(List textRuns, Graphics2D g2d, Point2D loc) {
+        Point2D currentloc = loc;
+        Iterator i = textRuns.iterator();
+        while (i.hasNext()) {
+            StrokingTextPainter.TextRun 
+                    run = (StrokingTextPainter.TextRun)i.next();
+            currentloc = paintTextRun(run, g2d, currentloc);
+        }
+    }
+
+    /**
+     * Paint a single text run on the Graphics2D at a given location.
+     * @param run the text run to paint
+     * @param g2d the Graphics2D to paint to
+     * @param loc the current location of the "cursor"
+     * @return the new location of the "cursor" after painting the text run
+     */
+    protected Point2D paintTextRun(StrokingTextPainter.TextRun run, Graphics2D g2d, Point2D loc) {
+        AttributedCharacterIterator aci = run.getACI();
+        return paintACI(aci, g2d, loc);
+    }
+
+    /**
+     * Extract the raw text from an ACI.
+     * @param aci ACI to inspect
+     * @return the extracted text
+     */
+    protected String getText(AttributedCharacterIterator aci) {
+        StringBuffer sb = new StringBuffer(aci.getEndIndex() - aci.getBeginIndex());
+        for (char c = aci.first(); c != CharacterIterator.DONE; c = aci.next()) {
+            sb.append(c);
+        }
+        return sb.toString();
+    }
+
+    /**
+     * Paint an ACI on a Graphics2D at a given location. The method has to 
+     * update the location after painting.
+     * @param aci ACI to paint
+     * @param g2d Graphics2D to paint on
+     * @param loc start location
+     * @return new current location
+     */
+    protected Point2D paintACI(AttributedCharacterIterator aci, Graphics2D g2d, Point2D loc) {
+        //System.out.println("==============================================");
+        //ACIUtils.dumpAttrs(aci);
+        
+        aci.first();
+
+        updateLocationFromACI(aci, loc);
+
+        TextPaintInfo tpi = (TextPaintInfo) aci.getAttribute(
+            GVTAttributedCharacterIterator.TextAttribute.PAINT_INFO);
+        
+        if (tpi == null) {
+            return loc;
+        }
+        
+        TextNode.Anchor anchor = (TextNode.Anchor)aci.getAttribute(
+                GVTAttributedCharacterIterator.TextAttribute.ANCHOR_TYPE);
+
+        //Set up font
+        List gvtFonts = (List)aci.getAttribute(
+                GVTAttributedCharacterIterator.TextAttribute.GVT_FONT_FAMILIES);
+        Paint foreground = tpi.fillPaint;
+        Paint strokePaint = tpi.strokePaint;
+        Stroke stroke = tpi.strokeStroke;
+
+        Float fontSize = (Float)aci.getAttribute(TextAttribute.SIZE);
+        if (fontSize == null) {
+            return loc;
+        }
+        Float posture = (Float)aci.getAttribute(TextAttribute.POSTURE);
+        Float taWeight = (Float)aci.getAttribute(TextAttribute.WEIGHT);
+
+        if (foreground instanceof Color) {
+            Color col = (Color)foreground;
+            g2d.setColor(col);
+        }
+        g2d.setPaint(foreground);
+        g2d.setStroke(stroke);
+
+        Font font = makeFont(aci);
+        java.awt.Font awtFont = makeAWTFont(aci, font);
+
+        g2d.setFont(awtFont);
+
+        String txt = getText(aci);
+        float advance = getStringWidth(txt, font);
+        float tx = 0;
+        if (anchor != null) {
+            switch (anchor.getType()) {
+                case TextNode.Anchor.ANCHOR_MIDDLE:
+                    tx = -advance / 2;
+                    break;
+                case TextNode.Anchor.ANCHOR_END:
+                    tx = -advance;
+                    break;
+                default: //nop
+            }
+        }
+        
+        //Finally draw text
+        if (g2d instanceof PSGraphics2D) {
+            ((PSGraphics2D) g2d).setOverrideFont(font);
+        }
+        try {
+            g2d.drawString(txt, (float)(loc.getX() + tx), (float)(loc.getY()));
+        } finally {
+            if (g2d instanceof PSGraphics2D) {
+                ((PSGraphics2D) g2d).setOverrideFont(null);
+            }
+        }
+        loc.setLocation(loc.getX() + (double)advance, loc.getY());
+        return loc;
+    }
+
+    private void updateLocationFromACI(
+                AttributedCharacterIterator aci,
+                Point2D loc) {
+        //Adjust position of span
+        Float xpos = (Float)aci.getAttribute(
+                GVTAttributedCharacterIterator.TextAttribute.X);
+        Float ypos = (Float)aci.getAttribute(
+                GVTAttributedCharacterIterator.TextAttribute.Y);
+        Float dxpos = (Float)aci.getAttribute(
+                GVTAttributedCharacterIterator.TextAttribute.DX);
+        Float dypos = (Float)aci.getAttribute(
+                GVTAttributedCharacterIterator.TextAttribute.DY);
+        if (xpos != null) {
+            loc.setLocation(xpos.doubleValue(), loc.getY());
+        }
+        if (ypos != null) {
+            loc.setLocation(loc.getX(), ypos.doubleValue());
+        } 
+        if (dxpos != null) {
+            loc.setLocation(loc.getX() + dxpos.doubleValue(), loc.getY());
+        } 
+        if (dypos != null) {
+            loc.setLocation(loc.getX(), loc.getY() + dypos.doubleValue());
+        } 
+    }
+
+    private String getStyle(AttributedCharacterIterator aci) {
+        Float posture = (Float)aci.getAttribute(TextAttribute.POSTURE);
+        return ((posture != null) && (posture.floatValue() > 0.0))
+                       ? "italic" 
+                       : "normal";
+    }
+
+    private int getWeight(AttributedCharacterIterator aci) {
+        Float taWeight = (Float)aci.getAttribute(TextAttribute.WEIGHT);
+        return ((taWeight != null) &&  (taWeight.floatValue() > 1.0)) 
+                       ? Font.BOLD
+                       : Font.NORMAL;
+    }
+
+    private Font makeFont(AttributedCharacterIterator aci) {
+        Float fontSize = (Float)aci.getAttribute(TextAttribute.SIZE);
+        String style = getStyle(aci);
+        int weight = getWeight(aci);
+
+        boolean found = false;
+        String fontFamily = null;
+        List gvtFonts = (List) aci.getAttribute(
+                      GVTAttributedCharacterIterator.TextAttribute.GVT_FONT_FAMILIES);
+        if (gvtFonts != null) {
+            Iterator i = gvtFonts.iterator();
+            while (i.hasNext()) {
+                GVTFontFamily fam = (GVTFontFamily) i.next();
+                /* (todo) Enable SVG Font painting
+                if (fam instanceof SVGFontFamily) {
+                    PROXY_PAINTER.paint(node, g2d);
+                    return;
+                }*/
+                fontFamily = fam.getFamilyName();
+                if (document.hasFont(fontFamily, style, weight)) {
+                    String fname = document.fontLookup(
+                            fontFamily, style, weight);
+                    FontMetrics metrics = document.getMetricsFor(fname);
+                    int fsize = (int)(fontSize.floatValue() * 1000);
+                    return new Font(fname, metrics, fsize);
+                }
+            }
+        }
+        String fname = document.fontLookup(
+                "any", style, Font.NORMAL);
+        FontMetrics metrics = document.getMetricsFor(fname);
+        int fsize = (int)(fontSize.floatValue() * 1000);
+        return new Font(fname, metrics, fsize);
+    }
+
+    private java.awt.Font makeAWTFont(AttributedCharacterIterator aci, Font font) {
+        final String style = getStyle(aci);
+        final int weight = getWeight(aci);
+        int fStyle = java.awt.Font.PLAIN;
+        if (weight == Font.BOLD) {
+            fStyle |= java.awt.Font.BOLD;
+        }
+        if ("italic".equals(style)) {
+            fStyle |= java.awt.Font.ITALIC;
+        }
+        return new java.awt.Font(font.getFontName(), fStyle,
+                             (int)(font.getFontSize() / 1000));
+    }
+
+    private float getStringWidth(String str, Font font) {
         float wordWidth = 0;
-        float whitespaceWidth = fontState.getWidth(fontState.mapChar(' '));
+        float whitespaceWidth = font.getWidth(font.mapChar(' '));
 
         for (int i = 0; i < str.length(); i++) {
             float charWidth;
             char c = str.charAt(i);
             if (!((c == ' ') || (c == '\n') || (c == '\r') || (c == '\t'))) {
-                charWidth = fontState.getWidth(fontState.mapChar(c));
+                charWidth = font.getWidth(font.mapChar(c));
                 if (charWidth <= 0) {
                     charWidth = whitespaceWidth;
                 }
@@ -336,6 +464,9 @@ public class PSTextPainter implements TextPainter {
      * @return the bounds of the text
      */
     public Rectangle2D getBounds2D(TextNode node) {
+        /* (todo) getBounds2D() is too slow 
+         * because it uses the StrokingTextPainter. We should implement this 
+         * method ourselves. */
         return PROXY_PAINTER.getBounds2D(node);
     }
 
