@@ -22,6 +22,8 @@ Done since 0.20.2 release
   Submitted by:	Ralph LaChance <Ralph_LaChance@compuserve.com>
 - Proper use of font encodings for "native" fonts
   Submitted by: Peter S. Housel (housel@acm.org) and Rainer Garus (rainer.garus@arcor.de)
+- fixed Marker (Christian Geisert)
+- updated logkit from 1.0b4 to to 1.0 (Christian Geisert)
 
 *** Tables
 - Implement the proportional-column-width() function in table-column and
@@ -79,7 +81,6 @@ remaining for content. (Karen Lease)
   Submitted by:	Ralph LaChance <Ralph_LaChance@compuserve.com>
 - Improved i18n support for AWT viewer (Japanese dialogs)
   Submitted by: Satoshi Ishigami (ishigami@victokai.co.jp)
-
 
 *** TXTRenderer
 - Generated text is written in UTF-8 encoding instead of ISO-8859-1
