@@ -52,6 +52,8 @@ public class RowSpanMgr {
 
     private SpanInfo spanInfo[];
 
+    private boolean ignoreKeeps = false;
+
     public RowSpanMgr(int numCols) {
         this.spanInfo = new SpanInfo[numCols];
     }
@@ -123,6 +125,24 @@ public class RowSpanMgr {
             return spanInfo[colNum - 1].isInLastRow();
         } else
             return false;
+    }
+
+    /**
+     * helper method to prevent infinite loops if
+     * keeps or spans are not fitting on a page
+     * @param <code>true</code> if keeps and spans should be ignored
+     */
+    public void setIgnoreKeeps(boolean ignoreKeeps) {
+        this.ignoreKeeps = ignoreKeeps;
+    }
+
+    /**
+     * helper method (i.e. hack ;-) to prevent infinite loops if
+     * keeps or spans are not fitting on a page
+     * @return true if keeps or spans should be ignored
+     */
+    public boolean ignoreKeeps() {
+        return ignoreKeeps;
     }
 
 }
