@@ -127,11 +127,13 @@ public class TableColumn extends FObj {
 				}
 			}
 
+			// KL: don't take table borders into account!
 	this.areaContainer =
 			new AreaContainer(propMgr.getFontState(area.getFontInfo()),
-												columnOffset - area.getBorderLeftWidth(),
-												-area.getBorderTopWidth(), columnWidth,
-				area.getHeight(), Position.RELATIVE);
+												columnOffset /*- area.getBorderLeftWidth()*/,
+												/*-area.getBorderTopWidth()*/ 0, columnWidth,
+												area.getContentHeight(), Position.RELATIVE);
+	//	area.getHeight(), Position.RELATIVE);
 	areaContainer.foCreator=this;	// G Seshadri
 	areaContainer.setPage(area.getPage());
 	areaContainer.setBorderAndPadding(propMgr.getBorderAndPadding());

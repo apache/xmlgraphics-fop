@@ -40,13 +40,25 @@ public class TableCell extends FObj {
 		 */
 		protected int startOffset;
 
-		/** Dimension of content rectangle in inline-progression-direction */
+		/** Dimension of allocation rectangle in inline-progression-direction,
+		 *  determined by the width of the column(s) occupied by the cell
+		 */
 		protected int width;
 
 		/** Offset of content rectangle, in block-progression-direction,
 		 * relative to the row.
 		 */
-		protected int beforeOffset;
+		protected int beforeOffset=0;
+
+		/** Offset of content rectangle, in inline-progression-direction,
+		 * relative to the column start edge.
+		 */
+		protected int startAdjust=0;
+
+		/** Adjust to theoretical column width to obtain content width
+		 * relative to the column start edge.
+		 */
+		protected int widthAdjust=0;
 
 		/* For collapsed border style */
 		protected int borderHeight = 0;
@@ -120,6 +132,9 @@ public class TableCell extends FObj {
 
 			bSepBorders = (this.properties.get("border-collapse").getEnum() ==
 													BorderCollapse.SEPARATE);
+
+			calcBorders(propMgr.getBorderAndPadding());
+
 			// Vertical cell alignment
 			verticalAlign = this.properties.get("display-align").getEnum();
 			if (verticalAlign == DisplayAlign.AUTO) {
@@ -145,7 +160,7 @@ public class TableCell extends FObj {
 // 						}
 
 						// Calculate cell borders
-						calcBorders(propMgr.getBorderAndPadding());
+						// calcBorders(propMgr.getBorderAndPadding());
 
 						area.getIDReferences().createID(id);
 
@@ -169,8 +184,9 @@ public class TableCell extends FObj {
 				// and padding are outside of this rectangle.
 				this.cellArea =
 						new AreaContainer(propMgr.getFontState(area.getFontInfo()),
-															startOffset, beforeOffset,
-															width, spaceLeft,
+															startOffset+startAdjust,
+															beforeOffset,
+															width-widthAdjust, spaceLeft,
 															Position.RELATIVE);
 
 				cellArea.foCreator=this;	// G Seshadri
@@ -306,15 +322,14 @@ public class TableCell extends FObj {
 						 * but it inherits.
 						 */
 						int iSep = properties.get("border-separation.inline-progression-direction").getLength().mvalue();
-						int contentOffset = iSep/2 + bp.getBorderLeftWidth(false) +
+						this.startAdjust = iSep/2 + bp.getBorderLeftWidth(false) +
 								bp.getPaddingLeft(false);
 						/*
 						int contentOffset = iSep + bp.getBorderStartWidth(false) +
 								bp.getPaddingStart(false);
 						*/
-						this.startOffset += contentOffset;
-						this.width -= (contentOffset + iSep - iSep/2 +
-								bp.getBorderRightWidth(false) + bp.getPaddingRight(false));
+						this.widthAdjust = startAdjust + iSep - iSep/2 +
+								bp.getBorderRightWidth(false) + bp.getPaddingRight(false);
 						// bp.getBorderEndWidth(false) + bp.getPaddingEnd(false);
 						// Offset of content rectangle in the block-progression direction
 						m_borderSeparation =
@@ -376,10 +391,10 @@ public class TableCell extends FObj {
 						int borderBefore = bp.getBorderTopWidth(false);
 						int borderAfter  = bp.getBorderBottomWidth(false);
 
-						int contentOffset = borderStart/2 + bp.getPaddingLeft(false);
+						this.startAdjust = borderStart/2 + bp.getPaddingLeft(false);
 
-						this.startOffset += contentOffset;
-						this.width -= (contentOffset + borderEnd/2 + bp.getPaddingRight(false));
+						this.widthAdjust = startAdjust + borderEnd/2 +
+								bp.getPaddingRight(false);
 						this.beforeOffset = borderBefore/2 + bp.getPaddingTop(false);
 						// Half border height to fix overestimate of area size!
 						this.borderHeight = (borderBefore + borderAfter)/2;
