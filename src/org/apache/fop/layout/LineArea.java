@@ -199,6 +199,12 @@ public class LineArea extends Area {
             data[count] = odata[count];
         }
 
+			// added by hani 9/13/2000 to maintain  my sanity
+			// and to prevent array index out of bounds.
+		if( start == -1 )
+			return -1;
+	
+
         /* iterate over each character */
         for (int i = start; i < end; i++) {
             int charWidth;
@@ -525,6 +531,7 @@ public class LineArea extends Area {
       */
     public void addPending() {
         if (spaceWidth > 0) {
+			// by Dresdner Bank, Germany        
             // this should handle the correct amount of space after
             // the text if there is no more text, important for right alignment
             if(this.whiteSpaceCollapse == WhiteSpaceCollapse.FALSE || pendingAreas.size() > 0) {

@@ -294,17 +294,41 @@ public class Block extends FObjMixed {
 		fo.setBodyIndent(this.bodyIndent);
 	    }
 	    Status status;
-	    if ((status = fo.layout(blockArea)).isIncomplete()) {
-		this.marker = i;
-		if ((i != 0) && (status.getCode() == Status.AREA_FULL_NONE)) {
-		    status = new Status(Status.AREA_FULL_SOME);
-		}
-		//blockArea.end();
-		area.addChild(blockArea);
-		area.increaseHeight(blockArea.getHeight());
-                area.setAbsoluteHeight(blockArea.getAbsoluteHeight());
-		anythingLaidOut = true;
-		return status;
+	    if ((status = fo.layout(blockArea)).isIncomplete()) 
+	    {
+			this.marker = i;
+				// this block was modified by
+				// Hani Elabed 11/27/2000
+			//if ((i != 0) && (status.getCode() == Status.AREA_FULL_NONE)) 
+			//{
+			//    status = new Status(Status.AREA_FULL_SOME);
+			//}
+			
+				// new block to replace the one above
+				// Hani Elabed 11/27/2000
+			if( status.getCode() == Status.AREA_FULL_NONE )
+			{
+					// something has already been laid out
+				if( (i != 0)  )
+				{
+					status = new Status(Status.AREA_FULL_SOME);
+				    anythingLaidOut = true;
+
+					return status;
+				}
+				else	// i == 0 nothing was laid out..
+				{
+				    anythingLaidOut = false;
+					return status;	
+				}
+			}
+			
+			//blockArea.end();
+			area.addChild(blockArea);
+			area.increaseHeight(blockArea.getHeight());	        
+	        area.setAbsoluteHeight(blockArea.getAbsoluteHeight());
+			anythingLaidOut = true;
+			return status;
 	    }
 	    anythingLaidOut = true;
 	}
