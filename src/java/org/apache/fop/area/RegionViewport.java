@@ -52,17 +52,15 @@ package org.apache.fop.area;
 
 import java.awt.geom.Rectangle2D;
 import java.io.IOException;
-import java.util.HashMap;
-
-import org.apache.fop.traits.BorderProps;
+import org.apache.fop.datastructs.Node;
 
 /**
  * Region Viewport reference area.
  * This area is the viewport for a region and contains a region area.
  */
-public class RegionViewport extends Area implements Cloneable {
+public class RegionViewport extends Area implements Viewport, Cloneable {
     // this rectangle is relative to the page
-    private RegionReference region;
+    private RegionRefArea region;
     private Rectangle2D viewArea;
     private boolean clip = false;
 
@@ -71,7 +69,8 @@ public class RegionViewport extends Area implements Cloneable {
      *
      * @param viewArea the view area of this viewport
      */
-    public RegionViewport(Rectangle2D viewArea) {
+    public RegionViewport(Node parent, Object sync, Rectangle2D viewArea) {
+        super(parent, sync);
         this.viewArea = viewArea;
     }
 
@@ -80,7 +79,7 @@ public class RegionViewport extends Area implements Cloneable {
      *
      * @param reg the child region inside this viewport
      */
-    public void setRegion(RegionReference reg) {
+    public void setRegion(RegionRefArea reg) {
         region = reg;
     }
 
@@ -89,7 +88,7 @@ public class RegionViewport extends Area implements Cloneable {
      *
      * @return the child region inside this viewport
      */
-    public RegionReference getRegion() {
+    public RegionRefArea getRegion() {
         return region;
     }
 
@@ -116,82 +115,86 @@ public class RegionViewport extends Area implements Cloneable {
      *
      * @return width in millipoints
      */
-    public int getBorderAndPaddingWidthBefore() {
-        int margin = 0;
-        BorderProps bps = (BorderProps) getTrait(Trait.BORDER_BEFORE);
-        if (bps != null) {
-            margin = bps.width;
-        }
-        
-        Integer padWidth = (Integer) getTrait(Trait.PADDING_BEFORE);
-        if (padWidth != null) {
-            margin += padWidth.intValue();
-        }
-
-        return margin;
-    }
+//    public int getBorderAndPaddingWidthBefore() {
+//        int margin = 0;
+//        BorderProps bps = (BorderProps) getTrait(Trait.BORDER_BEFORE);
+//        if (bps != null) {
+//            margin = bps.width;
+//        }
+//        
+//        Integer padWidth = (Integer) getTrait(Trait.PADDING_BEFORE);
+//        if (padWidth != null) {
+//            margin += padWidth.intValue();
+//        }
+//
+//        return margin;
+//    }
     
     /**
      * Return the sum of region border- and padding-after
      *
      * @return width in millipoints
      */
-    public int getBorderAndPaddingWidthAfter() {
-        int margin = 0;
-        
-        BorderProps bps = (BorderProps) getTrait(Trait.BORDER_AFTER);
-        if (bps != null) {
-            margin = bps.width;
-        }
-        
-        Integer padWidth = (Integer) getTrait(Trait.PADDING_AFTER);
-        if (padWidth != null) {
-            margin += padWidth.intValue();
-        }
-
-        return margin;
-    }
+//    public int getBorderAndPaddingWidthAfter() {
+//        int margin = 0;
+//        
+//        BorderProps bps = (BorderProps) getTrait(Trait.BORDER_AFTER);
+//        if (bps != null) {
+//            margin = bps.width;
+//        }
+//        
+//        Integer padWidth = (Integer) getTrait(Trait.PADDING_AFTER);
+//        if (padWidth != null) {
+//            margin += padWidth.intValue();
+//        }
+//
+//        return margin;
+//    }
 
     /**
      * Return the sum of region border- and padding-start
      *
      * @return width in millipoints
      */
-    public int getBorderAndPaddingWidthStart() {
-        int margin = 0;
-        BorderProps bps = (BorderProps) getTrait(Trait.BORDER_START);
-        if (bps != null) {
-            margin = bps.width;
-        }
-        
-        Integer padWidth = (Integer) getTrait(Trait.PADDING_START);
-        if (padWidth != null) {
-            margin += padWidth.intValue();
-        }
-
-        return margin;
-    }
+//    public int getBorderAndPaddingWidthStart() {
+//        int margin = 0;
+//        BorderProps bps = (BorderProps) getTrait(Trait.BORDER_START);
+//        if (bps != null) {
+//            margin = bps.width;
+//        }
+//        
+//        Integer padWidth = (Integer) getTrait(Trait.PADDING_START);
+//        if (padWidth != null) {
+//            margin += padWidth.intValue();
+//        }
+//
+//        return margin;
+//    }
 
     /**
      * Return the sum of region border- and padding-end
      *
      * @return width in millipoints
      */
-    public int getBorderAndPaddingWidthEnd() {
-        int margin = 0;
-        BorderProps bps = (BorderProps) getTrait(Trait.BORDER_END);
-        if (bps != null) {
-            margin = bps.width;
-        }
-        
-        Integer padWidth = (Integer) getTrait(Trait.PADDING_END);
-        if (padWidth != null) {
-            margin += padWidth.intValue();
-        }
+//    public int getBorderAndPaddingWidthEnd() {
+//        int margin = 0;
+//        BorderProps bps = (BorderProps) getTrait(Trait.BORDER_END);
+//        if (bps != null) {
+//            margin = bps.width;
+//        }
+//        
+//        Integer padWidth = (Integer) getTrait(Trait.PADDING_END);
+//        if (padWidth != null) {
+//            margin += padWidth.intValue();
+//        }
+//
+//        return margin;
+//    }
 
-        return margin;
-    }
-
+    /**
+     * @param out
+     * @throws IOException
+     */
     private void writeObject(java.io.ObjectOutputStream out)
     throws IOException {
         out.writeFloat((float) viewArea.getX());
@@ -199,7 +202,7 @@ public class RegionViewport extends Area implements Cloneable {
         out.writeFloat((float) viewArea.getWidth());
         out.writeFloat((float) viewArea.getHeight());
         out.writeBoolean(clip);
-        out.writeObject(props);
+        //out.writeObject(props);
         out.writeObject(region);
     }
 
@@ -208,8 +211,8 @@ public class RegionViewport extends Area implements Cloneable {
         viewArea = new Rectangle2D.Float(in.readFloat(), in.readFloat(),
                                          in.readFloat(), in.readFloat());
         clip = in.readBoolean();
-        props = (HashMap)in.readObject();
-        setRegion((RegionReference) in.readObject());
+        //props = (HashMap)in.readObject();
+        setRegion((RegionRefArea) in.readObject());
     }
 
     /**
@@ -219,11 +222,12 @@ public class RegionViewport extends Area implements Cloneable {
      * @return a new copy of this region viewport
      */
     public Object clone() {
-        RegionViewport rv = new RegionViewport((Rectangle2D)viewArea.clone());
-        rv.region = (RegionReference)region.clone();
-        if (props != null) {
-            rv.props = (HashMap)props.clone();
-        }
+        RegionViewport rv =
+            new RegionViewport(parent, sync, (Rectangle2D)viewArea.clone());
+        rv.region = (RegionRefArea)region.clone();
+//        if (props != null) {
+//            rv.props = (HashMap)props.clone();
+//        }
         return rv;
     }
 }
