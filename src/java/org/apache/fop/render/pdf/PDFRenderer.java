@@ -172,6 +172,11 @@ public class PDFRenderer extends PrintRenderer {
     protected boolean textOpen = false;
 
     /**
+     * true if a BT command has been written. 
+     */
+    protected boolean inTextMode = false;
+
+    /**
      * the previous Y coordinate of the last word written.
      * Used to decide if we can draw the next word on the same line.
      */
@@ -333,22 +338,31 @@ public class PDFRenderer extends PrintRenderer {
 
     /** Saves the graphics state of the rendering engine. */
     protected void saveGraphicsState() {
+        endTextObject();
         currentStream.add("q\n");
     }
 
     /** Restores the last graphics state of the rendering engine. */
     protected void restoreGraphicsState() {
+        endTextObject();
         currentStream.add("Q\n");
     }
 
     /** Indicates the beginning of a text object. */
     protected void beginTextObject() {
-        currentStream.add("BT\n");
+        if (!inTextMode) {
+            currentStream.add("BT\n");
+            inTextMode = true;
+        }
     }
 
     /** Indicates the end of a text object. */
     protected void endTextObject() {
-        currentStream.add("ET\n");
+        closeText();
+        if (inTextMode) {
+            currentStream.add("ET\n");
+            inTextMode = false;
+        }
     }
 
     /**
@@ -456,14 +470,12 @@ public class PDFRenderer extends PrintRenderer {
         // multiply with current CTM
         currentStream.add(CTMHelper.toPDFString(ctm) + " cm\n");
         // Set clip?
-        beginTextObject();
     }
 
     /**
      * @see org.apache.fop.render.AbstractRenderer#endVParea()
      */
     protected void endVParea() {
-        endTextObject();
         restoreGraphicsState();
         currentState.pop();
     }
@@ -521,9 +533,7 @@ public class PDFRenderer extends PrintRenderer {
             bpMarginOffset = region.getBorderAndPaddingWidthBefore();
             ipMarginOffset = region.getBorderAndPaddingWidthStart();
         }
-        beginTextObject();
         drawBackAndBorders(region, startx, starty, width, height);
-        endTextObject();
     }
 
     /**
@@ -602,14 +612,10 @@ public class PDFRenderer extends PrintRenderer {
                     float width, float height) {
         // draw background then border
 
-        boolean started = false;
         Trait.Background back;
         back = (Trait.Background)block.getTrait(Trait.BACKGROUND);
         if (back != null) {
-            started = true;
-            closeText();
             endTextObject();
-            //saveGraphicsState();
 
             if (back.getColor() != null) {
                 updateColor(back.getColor(), true, null);
@@ -638,14 +644,7 @@ public class PDFRenderer extends PrintRenderer {
 
         BorderProps bps = (BorderProps)block.getTrait(Trait.BORDER_BEFORE);
         if (bps != null) {
-            float endx = startx + width;
-
-            if (!started) {
-                started = true;
-                closeText();
-                endTextObject();
-                //saveGraphicsState();
-            }
+            endTextObject();
 
             float bwidth = bps.width / 1000f;
             updateColor(bps.color, false, null);
@@ -658,12 +657,7 @@ public class PDFRenderer extends PrintRenderer {
         }
         bps = (BorderProps)block.getTrait(Trait.BORDER_AFTER);
         if (bps != null) {
-            if (!started) {
-                started = true;
-                closeText();
-                endTextObject();
-                //saveGraphicsState();
-            }
+            endTextObject();
 
             float bwidth = bps.width / 1000f;
             updateColor(bps.color, false, null);
@@ -676,12 +670,7 @@ public class PDFRenderer extends PrintRenderer {
         }
         bps = (BorderProps)block.getTrait(Trait.BORDER_START);
         if (bps != null) {
-            if (!started) {
-                started = true;
-                closeText();
-                endTextObject();
-                //saveGraphicsState();
-            }
+            endTextObject();
 
             float bwidth = bps.width / 1000f;
             updateColor(bps.color, false, null);
@@ -694,12 +683,7 @@ public class PDFRenderer extends PrintRenderer {
         }
         bps = (BorderProps)block.getTrait(Trait.BORDER_END);
         if (bps != null) {
-            if (!started) {
-                started = true;
-                closeText();
-                endTextObject();
-                //saveGraphicsState();
-            }
+            endTextObject();
 
             float bwidth = bps.width / 1000f;
             updateColor(bps.color, false, null);
@@ -709,12 +693,6 @@ public class PDFRenderer extends PrintRenderer {
             currentStream.add((x1 + width) + " " + starty + " m\n");
             currentStream.add((x1 + width) + " " + (starty + height) + " l\n");
             currentStream.add("S\n");
-        }
-        if (started) {
-            //restoreGraphicsState();
-            beginTextObject();
-            // font last set out of scope in text section
-            currentFontName = "";
         }
     }
 
@@ -762,8 +740,6 @@ public class PDFRenderer extends PrintRenderer {
 
         if (bv.getPositioning() == Block.ABSOLUTE) {
 
-            closeText();
-
             CTM tempctm = new CTM(containingIPPosition, containingBPPosition);
             ctm = tempctm.multiply(ctm);
 
@@ -774,7 +750,6 @@ public class PDFRenderer extends PrintRenderer {
 
             drawBackAndBorders(bv, x, y, width, height);
 
-            endTextObject();
             if (bv.getClip()) {
                 saveGraphicsState();
                 clip(x, y, width, height);
@@ -791,7 +766,6 @@ public class PDFRenderer extends PrintRenderer {
             if (bv.getClip()) {
                 restoreGraphicsState();
             }
-            beginTextObject();
 
             // clip if necessary
 
@@ -800,8 +774,6 @@ public class PDFRenderer extends PrintRenderer {
         } else {
 
             if (ctm != null) {
-                closeText();
-
                 double[] vals = ctm.toArray();
                 //boolean aclock = vals[2] == 1.0;
                 if (vals[2] == 1.0) {
@@ -815,9 +787,6 @@ public class PDFRenderer extends PrintRenderer {
 
             // clip if necessary
             if (bv.getClip()) {
-                if (ctm == null) {
-                    closeText();
-                }
                 saveGraphicsState();
                 float x = (float)bv.getXOffset() / 1000f;
                 float y = (float)bv.getYOffset() / 1000f;
@@ -828,7 +797,6 @@ public class PDFRenderer extends PrintRenderer {
 
             handleBlockTraits(bv);
             if (ctm != null) {
-                endTextObject();
                 startVParea(ctm);
                 currentIPPosition = 0;
                 currentBPPosition = 0;
@@ -840,12 +808,6 @@ public class PDFRenderer extends PrintRenderer {
 
             if (bv.getClip()) {
                 restoreGraphicsState();
-                if (ctm == null) {
-                    beginTextObject();
-                }
-            }
-            if (ctm != null) {
-                beginTextObject();
             }
 
             currentIPPosition = saveIP;
@@ -1005,6 +967,7 @@ public class PDFRenderer extends PrintRenderer {
      * @see org.apache.fop.render.Renderer#renderText(TextArea)
      */
     public void renderText(TextArea text) {
+        beginTextObject();
         StringBuffer pdf = new StringBuffer();
 
         String name = (String) text.getTrait(Trait.FONT_NAME);
@@ -1143,6 +1106,7 @@ public class PDFRenderer extends PrintRenderer {
             textOpen = false;
             prevWordX = 0;
             prevWordY = 0;
+            currentFontName = "";
         }
     }
 
@@ -1339,15 +1303,12 @@ public class PDFRenderer extends PrintRenderer {
      * @param viewport the viewport to handle
      */
     public void renderViewport(Viewport viewport) {
-        closeText();
 
         float x = currentIPPosition / 1000f;
         float y = (currentBPPosition + viewport.getOffset()) / 1000f;
         float width = viewport.getIPD() / 1000f;
         float height = viewport.getBPD() / 1000f;
         drawBackAndBorders(viewport, x, y, width, height);
-
-        endTextObject();
 
         if (viewport.getClip()) {
             saveGraphicsState();
@@ -1359,7 +1320,6 @@ public class PDFRenderer extends PrintRenderer {
         if (viewport.getClip()) {
             restoreGraphicsState();
         }
-        beginTextObject();
     }
 
     /**
@@ -1368,8 +1328,6 @@ public class PDFRenderer extends PrintRenderer {
      * @param area the leader area to render
      */
     public void renderLeader(Leader area) {
-        closeText();
-        endTextObject();
         saveGraphicsState();
         int style = area.getRuleStyle();
         boolean alt = false;
