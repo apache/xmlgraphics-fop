@@ -6,7 +6,7 @@ import org.apache.fop.fo.expr.PropertyValue;
 import org.apache.fop.fo.expr.PropertyTriplet;
 import org.apache.fop.fo.Properties;
 import org.apache.fop.fo.PropertyConsts;
-import org.apache.fop.fo.FOTree;
+import org.apache.fop.fo.FONode;
 
 /*
  * $Id$
@@ -43,14 +43,14 @@ public class IndirectValue extends AbstractPropertyValue {
      * The property from which the inherited value is to be derived.  This
      * may be different from the target property.
      */
-    private int sourceProperty;
+    protected int sourceProperty;
 
     /**
      * The <tt>PropertyTriplet</tt> from which this object is being
      * inherited.  Set when the inheritance cannot be immediately resolved,
      * e.g. when the specified value is a percentage.
      */
-    private PropertyTriplet inheritedValue = null;
+    protected PropertyTriplet inheritedValue = null;
 
     /**
      * @param property - the <tt>int</tt> index of the property on which
@@ -60,7 +60,7 @@ public class IndirectValue extends AbstractPropertyValue {
      * which the inherited value is derived.
      * @exception PropertyException
      */
-    public IndirectValue(int property, int type, int sourceProperty)
+    protected IndirectValue(int property, int type, int sourceProperty)
         throws PropertyException
     {
         super(property, type);
@@ -73,7 +73,7 @@ public class IndirectValue extends AbstractPropertyValue {
      * @param type - the type of <tt>PropertyValue</tt>.
      * @exception PropertyException
      */
-    public IndirectValue(int property, int type)
+    protected IndirectValue(int property, int type)
         throws PropertyException
     {
         this(property, type, property);
@@ -87,7 +87,7 @@ public class IndirectValue extends AbstractPropertyValue {
      * from which the inherited value is derived.
      * @exception PropertyException
      */
-    public IndirectValue
+    protected IndirectValue
                     (String propertyName, int type, String sourcePropertyName)
         throws PropertyException
     {
@@ -101,7 +101,7 @@ public class IndirectValue extends AbstractPropertyValue {
      * @param type - the type of <tt>PropertyValue</tt>.
      * @exception PropertyException
      */
-    public IndirectValue(String propertyName, int type)
+    protected IndirectValue(String propertyName, int type)
         throws PropertyException
     {
         this(propertyName, type, propertyName);
@@ -153,20 +153,24 @@ public class IndirectValue extends AbstractPropertyValue {
     }
 
     /**
-     * Attempt to resove the <tt>IndirectValue</tt> object.  If no bequeathing
-     * <tt>PropertyTriplet</tt> is associated with this object, get it
-     * from the <i>foTree</i>.  If the computed value of that triplet is
+     * Attempt to resolve the <tt>IndirectValue</tt> object.
+     * If no bequeathing <tt>PropertyTriplet</tt>, assume that the
+     * bequeathing node is the parent node.  This is true for the
+     * <tt>Inherit</tt>, <tt>InheritedValue</tt> and <tt>FromParent</tt>
+     * objects.  <tt>FromNearestSpecified</tt> objects must override this
+     * method to ensure that resolution is carried out against the correct
+     * triplet.
+     * <p>If the computed value of that triplet is
      * null, return this object.  If not, return the computed value.
-     * @param foTree - the <tt>FOTree</tt> with which this object is
-     * associated.
+     * @param node - the <tt>FONode</tt> with which this object is associated.
      * @return - a <tt>PropertyValue</tt> as described above.  A return of
      * the same <tt>IndirectValue</tt> object implies that the inherited
      * computed value has not yet been resolved in the ancestor.
      */
-    public PropertyValue resolve(FOTree foTree) throws PropertyException {
+    protected PropertyValue resolve(FONode node) throws PropertyException {
         PropertyValue pv;
         if (inheritedValue == null)
-            inheritedValue = foTree.getInheritedTriplet(sourceProperty);
+            inheritedValue = node.getParentTriplet(sourceProperty);
         if ((pv = inheritedValue.getComputed()) == null)
             return this;
         // Check that the property is the same
