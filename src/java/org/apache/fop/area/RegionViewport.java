@@ -35,19 +35,19 @@ implements Viewport, Cloneable {
     /**
      * Create a new region viewport.
      *
-     * @param viewArea the view area of this viewport
+     * @param area the view area of this viewport
      */
     public RegionViewport(
-            Rectangle2D viewArea,
+            Rectangle2D area,
             FoPageSequence pageSeq,
             FONode generatedBy,
             Node parent,
             Object sync) {
-        super(viewArea, pageSeq, generatedBy, parent, sync);
+        super(area, pageSeq, generatedBy, parent, sync);
     }
 
     /**
-     * Set the region-regerence-area for this region viewport.
+     * Set the region-reference-area for this region viewport.
      *
      * @param regRef the child region inside this viewport
      */
@@ -151,10 +151,10 @@ implements Viewport, Cloneable {
      */
     private void writeObject(java.io.ObjectOutputStream out)
     throws IOException {
-        out.writeFloat((float) viewArea.getX());
-        out.writeFloat((float) viewArea.getY());
-        out.writeFloat((float) viewArea.getWidth());
-        out.writeFloat((float) viewArea.getHeight());
+        out.writeFloat((float) area.getX());
+        out.writeFloat((float) area.getY());
+        out.writeFloat((float) area.getWidth());
+        out.writeFloat((float) area.getHeight());
         out.writeBoolean(clip);
         //out.writeObject(props);
         out.writeObject(refArea);
@@ -162,7 +162,7 @@ implements Viewport, Cloneable {
 
     private void readObject(java.io.ObjectInputStream in)
             throws IOException, ClassNotFoundException {
-        viewArea = new Rectangle2D.Float(in.readFloat(), in.readFloat(),
+        area = new Rectangle2D.Float(in.readFloat(), in.readFloat(),
                                          in.readFloat(), in.readFloat());
         clip = in.readBoolean();
         //props = (HashMap)in.readObject();
@@ -183,7 +183,7 @@ implements Viewport, Cloneable {
             } catch (CloneNotSupportedException e) {
                 throw new RuntimeException(e);
             }
-            rv.viewArea = (Rectangle2D)(viewArea.clone());
+            rv.area = (Rectangle2D)(area.clone());
             rv.refArea = (PageRefArea)(refArea.clone());
             return rv;
         }
