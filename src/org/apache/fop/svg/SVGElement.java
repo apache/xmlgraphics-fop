@@ -138,19 +138,28 @@ public class SVGElement extends SVGObj {
         };
         ((SVGOMDocument)doc).setSVGContext(dc);
 
-        // this is ugly preprocessing to get the width and height
+        Element e = ((SVGDocument)doc).getRootElement();
+        String s;
         SVGUserAgent userAgent = new SVGUserAgent(new AffineTransform());
         userAgent.setLogger(log);
-        GVTBuilder builder = new GVTBuilder();
         BridgeContext ctx = new BridgeContext(userAgent);
-        GraphicsNode root;
-        root = builder.build(ctx, doc);
-        // get the 'width' and 'height' attributes of the SVG document
-        float width = (float)ctx.getDocumentSize().getWidth();
-        float height = (float)ctx.getDocumentSize().getHeight();
-        ctx = null;
-        builder = null;
-        ///////
+        UnitProcessor.Context uctx = UnitProcessor.createContext(ctx, e);
+
+        // 'width' attribute - default is 100%
+        s = e.getAttributeNS(null, SVGOMDocument.SVG_WIDTH_ATTRIBUTE);
+        if (s.length() == 0) {
+            s = SVGOMDocument.SVG_SVG_WIDTH_DEFAULT_VALUE;
+        }
+        float width = UnitProcessor.svgHorizontalLengthToUserSpace
+                     (s, SVGOMDocument.SVG_WIDTH_ATTRIBUTE, uctx);
+
+        // 'height' attribute - default is 100%
+        s = e.getAttributeNS(null, SVGOMDocument.SVG_HEIGHT_ATTRIBUTE);
+        if (s.length() == 0) {
+            s = SVGOMDocument.SVG_SVG_HEIGHT_DEFAULT_VALUE;
+        }
+        float height = UnitProcessor.svgVerticalLengthToUserSpace
+                     (s, SVGOMDocument.SVG_HEIGHT_ATTRIBUTE, uctx);
 
         SVGArea svg = new SVGArea(fs, width, height);
         svg.setSVGDocument(doc);
