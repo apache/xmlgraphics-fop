@@ -58,8 +58,8 @@ public class ToBeImplementedProperty extends Property {
 
     public static class Maker extends Property.Maker {
 
-        public Maker(String propName) {
-            super(propName);
+        public Maker(int propId) {
+            super(propId);
         }
 
         public Property convertProperty(Property p,

@@ -65,8 +65,8 @@ public class ColorTypeProperty extends Property {
         /**
          * @param propName name of property for which a Maker should be created
          */
-        public Maker(String propName) {
-            super(propName);
+        public Maker(int propId) {
+            super(propId);
         }
 
         public Property convertProperty(Property p,

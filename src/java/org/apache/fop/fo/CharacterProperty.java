@@ -63,8 +63,8 @@ public class CharacterProperty extends Property {
         /**
          * @param propName name of property for which a Maker should be created
          */
-        public Maker(String propName) {
-            super(propName);
+        public Maker(int propId) {
+            super(propId);
         }
 
         public Property make(PropertyList propertyList, String value,

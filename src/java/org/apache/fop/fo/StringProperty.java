@@ -64,8 +64,8 @@ public class StringProperty extends Property {
         /**
          * @param propName name of property for which to create a Maker
          */
-        public Maker(String propName) {
-            super(propName);
+        public Maker(int propId) {
+            super(propId);
         }
 
         /**

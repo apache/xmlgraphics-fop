@@ -68,8 +68,8 @@ public class LengthProperty extends Property {
         /**
          * @param name name of property for which Maker should be created
          */
-        public /* protected */ Maker(String name) {
-            super(name);
+        public Maker(int propId) {
+            super(propId);
         }
 
         /**

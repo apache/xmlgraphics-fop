@@ -66,8 +66,8 @@ public class CondLengthProperty extends Property {
         /**
          * @param name of property for which a Maker should be created
          */
-        public Maker(String name) {
-            super(name);
+        public Maker(int propId) {
+            super(propId);
         }
 
     }

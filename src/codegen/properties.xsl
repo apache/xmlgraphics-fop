@@ -444,7 +444,7 @@ public class </xsl:text>
               <xsl:text> {
         SP_</xsl:text>
               <xsl:value-of select="$spname"/>
-              <xsl:text>Maker(String sPropName) {
+              <xsl:text>Maker(int sPropName) {
             super(sPropName);
         }</xsl:text>
               <xsl:for-each select="enumeration/value">
@@ -466,11 +466,19 @@ public class </xsl:text>
               <xsl:value-of select="$spname"/>
               <xsl:text>Maker =
               new SP_</xsl:text><xsl:value-of select="$spname"/>
-              <xsl:text>Maker("</xsl:text>
-              <xsl:value-of select='../../name'/>
-              <xsl:text>.</xsl:text>
-              <xsl:value-of select='name'/>
-              <xsl:text>");</xsl:text>
+              <xsl:text>Maker(</xsl:text>
+              <xsl:if test="not(../../@type = 'generic')">
+                <xsl:text>Constants.PR_</xsl:text>
+                <xsl:call-template name="makeEnumConstant">
+                  <xsl:with-param name="propstr" select="../../name"/>
+                </xsl:call-template>
+                <xsl:text> | </xsl:text>
+              </xsl:if>
+              <xsl:text>Constants.CP_</xsl:text>
+              <xsl:call-template name="makeEnumConstant">
+                <xsl:with-param name="propstr" select="name"/>
+              </xsl:call-template>
+              <xsl:text>);</xsl:text>
             </xsl:when>
             <xsl:otherwise>
               <xsl:text>
@@ -478,11 +486,19 @@ public class </xsl:text>
               <xsl:value-of select="$spname"/>
               <xsl:text>Maker =
               new </xsl:text><xsl:value-of select="$sp_superclass"/>
-              <xsl:text>("</xsl:text>
-              <xsl:value-of select='../../name'/>
-              <xsl:text>.</xsl:text>
-              <xsl:value-of select='name'/>
-              <xsl:text>");</xsl:text>
+              <xsl:text>(</xsl:text>
+              <xsl:if test="not(../../@type = 'generic')">
+                <xsl:text>Constants.PR_</xsl:text>
+                <xsl:call-template name="makeEnumConstant">
+                  <xsl:with-param name="propstr" select="../../name"/>
+                </xsl:call-template>
+                <xsl:text> | </xsl:text>
+              </xsl:if>
+              <xsl:text>Constants.CP_</xsl:text>
+              <xsl:call-template name="makeEnumConstant">
+                <xsl:with-param name="propstr" select="name"/>
+              </xsl:call-template>
+              <xsl:text>);</xsl:text>
             </xsl:otherwise>
           </xsl:choose>
         </xsl:for-each>
@@ -490,16 +506,16 @@ public class </xsl:text>
 
       <xsl:text>
 
-    static public Property.Maker maker(String propName) {
+    static public Property.Maker maker(int propertyId) {
         return new </xsl:text>
       <xsl:value-of select="$classname"/>
-      <xsl:text>(propName);
+      <xsl:text>(propertyId);
     }
 
     protected </xsl:text>
       <xsl:value-of select="$classname"/>
-      <xsl:text>(String name) {
-        super(name);</xsl:text>
+      <xsl:text>(int propId) {
+        super(propId);</xsl:text>
       <xsl:if test="compound">
         <xsl:text>
         m_shorthandMaker= getSubpropMaker("</xsl:text>

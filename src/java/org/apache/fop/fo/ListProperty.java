@@ -65,8 +65,8 @@ public class ListProperty extends Property {
         /**
          * @param name name of property for which Maker should be created
          */
-        public Maker(String name) {
-            super(name);
+        public Maker(int propId) {
+            super(propId);
         }
 
         /**

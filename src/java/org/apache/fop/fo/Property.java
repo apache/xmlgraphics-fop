@@ -61,6 +61,8 @@ import org.apache.fop.datatypes.Space;
 import org.apache.fop.fo.expr.Numeric;
 import org.apache.fop.fo.expr.PropertyParser;
 import org.apache.fop.fo.expr.PropertyInfo;
+import org.apache.fop.fo.properties.Constants;
+import org.apache.fop.fo.properties.FOPropertyMapping;
 import org.apache.fop.apps.FOPException;
 import java.util.Vector;
 
@@ -75,22 +77,21 @@ public class Property {
      * @author unascribed
      */
     public static class Maker {
-        private static final String UNKNOWN = "UNKNOWN";
-        private String propName;
+        private int propId;
 
         /**
          * @return the name of the property for this Maker
          */
         protected String getPropName() {
-            return propName;
+            return FOPropertyMapping.getPropertyName(this.propId);
         }
 
         /**
          * Construct an instance of a Property.Maker for the given property.
-         * @param propName The name of the property to be made.
+         * @param propId The Constant ID of the property to be made.
          */
-        protected Maker(String propName) {
-            this.propName = propName;
+        protected Maker(int propId) {
+            this.propId = propId;
         }
 
         /**
@@ -98,7 +99,7 @@ public class Property {
          * Note: the property name is set to "UNKNOWN".
          */
         protected Maker() {
-            this.propName = UNKNOWN;
+            this.propId = 0;
         }
 
 
@@ -252,7 +253,8 @@ public class Property {
                 }
                 return pret;
             } catch (org.apache.fop.fo.expr.PropertyException propEx) {
-                throw new FOPException("Error in " + propName
+                String propName = FOPropertyMapping.getPropertyName(this.propId);
+                throw new FOPException("Error in " + propName 
                                      + " property value '" + value + "': "
                                      + propEx);
             }
@@ -416,7 +418,7 @@ public class Property {
             if (inheritsSpecified()) {
                 // recalculate based on last specified value
                 // Climb up propertylist and find last spec'd value
-                // NEED PROPNAME!!! get from Maker
+                String propName = FOPropertyMapping.getPropertyName(this.propId);
                 Property specProp =
                     propertyList.getNearestSpecified(propName);
                 if (specProp != null) {

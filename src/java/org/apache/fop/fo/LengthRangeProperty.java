@@ -65,8 +65,8 @@ public class LengthRangeProperty extends Property {
         /**
          * @param name name of property for which to create Maker
          */
-        protected Maker(String name) {
-            super(name);
+        protected Maker(int propId) {
+            super(propId);
         }
 
     }

@@ -65,8 +65,8 @@ public class LengthPairProperty extends Property {
         /**
          * @param name name of property for which this Maker should be created
          */
-        protected Maker(String name) {
-            super(name);
+        protected Maker(int propId) {
+            super(propId);
         }
 
     }
