@@ -22,7 +22,6 @@ package org.apache.fop.fo.pagination;
 import java.util.ArrayList;
 
 // XML
-import org.xml.sax.Attributes;
 import org.xml.sax.Locator;
 import org.xml.sax.SAXParseException;
 
@@ -124,36 +123,6 @@ public class RepeatablePageMasterAlternatives extends FObj
     }
 
     /**
-     * @see org.apache.fop.fo.FObj#addProperties
-     */
-    protected void addProperties(Attributes attlist) throws SAXParseException {
-        super.addProperties(attlist);
-        conditionalPageMasterRefs = new ArrayList();
-
-        if (parent.getName().equals("fo:page-sequence-master")) {
-            PageSequenceMaster pageSequenceMaster = (PageSequenceMaster)parent;
-            pageSequenceMaster.addSubsequenceSpecifier(this);
-        } else {
-            throw new SAXParseException("fo:repeatable-page-master-alternatives "
-                                   + "must be child of fo:page-sequence-master, not "
-                                   + parent.getName(), locator);
-        }
-
-        Property mr = getProperty(PR_MAXIMUM_REPEATS);
-
-        if (mr.getEnum() == NO_LIMIT) {
-            this._maximumRepeats = INFINITE;
-        } else {
-            this._maximumRepeats = mr.getNumber().intValue();
-            if (this._maximumRepeats < 0) {
-                getLogger().debug("negative maximum-repeats: "
-                                  + this.maximumRepeats);
-                this._maximumRepeats = 0;
-            }
-        }
-    }
-
-    /**
      * Get the next matching page master from the conditional
      * page master references.
      * @see org.apache.fop.fo.pagination.SubSequenceSpecifier
@@ -173,7 +142,7 @@ public class RepeatablePageMasterAlternatives extends FObj
             ConditionalPageMasterReference cpmr =
                 (ConditionalPageMasterReference)conditionalPageMasterRefs.get(i);
             if (cpmr.isValid(isOddPage, isFirstPage, isBlankPage)) {
-                return cpmr.getMasterName();
+                return cpmr.getMasterReference();
             }
         }
         return null;

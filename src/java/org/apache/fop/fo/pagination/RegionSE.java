@@ -22,7 +22,6 @@ package org.apache.fop.fo.pagination;
 import java.awt.Rectangle;
 
 // XML
-import org.xml.sax.Attributes;
 import org.xml.sax.SAXParseException;
 
 // FOP
@@ -54,13 +53,6 @@ public abstract class RegionSE extends Region {
     }
 
     /**
-     * @see org.apache.fop.fo.FObj#addProperties
-     */
-    protected void addProperties(Attributes attlist) throws SAXParseException {
-        super.addProperties(attlist);
-    }
-
-    /**
      * Return the "extent" property.
      */
     public Length getExtent() {
@@ -80,12 +72,12 @@ public abstract class RegionSE extends Region {
     protected void adjustIPD(Rectangle vpRefRect, int wm) {
         int offset = 0;
         RegionBefore before = (RegionBefore) getSiblingRegion(FO_REGION_BEFORE);
-        if (before != null && before.getPrecedence()) {
+        if (before != null && before.getPrecedence() == TRUE) {
             offset = before.getPropLength(PR_EXTENT);
             vpRefRect.translate(0, offset);
         }
         RegionAfter after = (RegionAfter) getSiblingRegion(FO_REGION_AFTER);
-        if (after != null && after.getPrecedence()) {
+        if (after != null && after.getPrecedence() == TRUE) {
             offset += after.getPropLength(PR_EXTENT);
         }
         if (offset > 0) {

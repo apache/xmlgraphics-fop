@@ -23,7 +23,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 // XML
-import org.xml.sax.Attributes;
 import org.xml.sax.Locator;
 import org.xml.sax.SAXParseException;
 
@@ -105,15 +104,6 @@ public class BidiOverride extends FObjMixed {
         // prScoreSpaces = pList.get(PR_SCORE_SPACES);
         // prUnicodeBidi = pList.get(PR_UNICODE_BIDI);
         prWordSpacing = pList.get(PR_WORD_SPACING).getSpace();
-    }
-
-    /**
-     * @see org.apache.fop.fo.FObj#addProperties
-     * @todo see if can use a BitSet to determine if an FO should
-     * have its ID setup; then move setupID() instances to FObj.
-     */
-    protected void addProperties(Attributes attlist) throws SAXParseException {
-        super.addProperties(attlist);
     }
 
     /**

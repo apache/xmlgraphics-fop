@@ -22,7 +22,6 @@ package org.apache.fop.fo.flow;
 import java.util.List;
 
 // XML
-import org.xml.sax.Attributes;
 import org.xml.sax.Locator;
 import org.xml.sax.SAXParseException;
 
@@ -110,23 +109,6 @@ public class Block extends FObjMixed {
     private int wrapOption;
     // End of property values
     
-    private int align;
-    private int alignLast;
-    private int _lineHeight;
-    private int startIndent;
-    private int endIndent;
-    private int spaceBefore;
-    private int spaceAfter;
-    private int _textIndent;
-    private int _keepWithNext;
-    private ColorType backgroundColor;
-    private int blockWidows;
-    private int blockOrphans;
-
-    private int wsTreatment; //ENUMERATION
-    private int lfTreatment; //ENUMERATION
-    private boolean bWScollapse; //true if white-space-collapse=true
-
     // this may be helpful on other FOs too
     private boolean anythingLaidOut = false;
 
@@ -293,33 +275,6 @@ public class Block extends FObjMixed {
     }
 
     /**
-     * @see org.apache.fop.fo.FObj#addProperties
-     */
-    protected void addProperties(Attributes attlist) throws SAXParseException {
-        super.addProperties(attlist);
-        this.span = getPropEnum(PR_SPAN);
-        this.wsTreatment = getPropEnum(PR_WHITE_SPACE_TREATMENT);
-        this.bWScollapse = (getPropEnum(PR_WHITE_SPACE_COLLAPSE) == Constants.TRUE);
-        this.lfTreatment = getPropEnum(PR_LINEFEED_TREATMENT);
-        this.align = getPropEnum(PR_TEXT_ALIGN);
-        this.alignLast = getPropEnum(PR_TEXT_ALIGN_LAST);
-        this.breakAfter = getPropEnum(PR_BREAK_AFTER);
-        this._lineHeight = getPropLength(PR_LINE_HEIGHT);
-        this.startIndent = getPropLength(PR_START_INDENT);
-        this.endIndent = getPropLength(PR_END_INDENT);
-        this.spaceBefore = getPropLength(PR_SPACE_BEFORE | CP_OPTIMUM);
-        this.spaceAfter = getPropLength(PR_SPACE_AFTER | CP_OPTIMUM);
-        this._textIndent = getPropLength(PR_TEXT_INDENT);
-        this._keepWithNext = getPropEnum(PR_KEEP_WITH_NEXT);
-        this.blockWidows =
-          this.propertyList.get(PR_WIDOWS).getNumber().intValue();
-        this.blockOrphans =
-          this.propertyList.get(PR_ORPHANS).getNumber().intValue();
-
-        getFOEventHandler().startBlock(this);
-    }
-
-    /**
      * @see org.apache.fop.fo.FONode#validateChildNode(Locator, String, String)
      * XSL Content Model: marker* initial-property-set? (#PCDATA|%inline;|%block;)*
      * Additionally: "An fo:bidi-override that is a descendant of an fo:leader
@@ -391,7 +346,7 @@ public class Block extends FObjMixed {
                         /* Some kind of whitespace character, except linefeed. */
                         boolean bIgnore = false;
 
-                        switch (wsTreatment) {
+                        switch (whiteSpaceTreatment) {
                             case Constants.IGNORE:
                                 bIgnore = true;
                                 break;
@@ -412,8 +367,8 @@ public class Block extends FObjMixed {
                         // Handle ignore and replacement
                         if (bIgnore) {
                             charIter.remove();
-                        } else if (bWScollapse) {
-                            if (bInWS || (lfTreatment == Constants.PRESERVE
+                        } else if (whiteSpaceCollapse == TRUE) {
+                            if (bInWS || (linefeedTreatment == Constants.PRESERVE
                                         && (bPrevWasLF || lfCheck.nextIsLF()))) {
                                 charIter.remove();
                             } else {
@@ -442,7 +397,7 @@ public class Block extends FObjMixed {
                         lfCheck.reset();
                         bPrevWasLF = true; // for following whitespace
 
-                        switch (lfTreatment) {
+                        switch (linefeedTreatment) {
                             case Constants.IGNORE:
                                 charIter.remove();
                                 break;
@@ -451,7 +406,7 @@ public class Block extends FObjMixed {
                                     // only if bWScollapse=true
                                     charIter.remove();
                                 } else {
-                                    if (bWScollapse) {
+                                    if (whiteSpaceCollapse == TRUE) {
                                         bInWS = true;
                                         // remove the linefeed if no word in block 
                                         // encountered yet

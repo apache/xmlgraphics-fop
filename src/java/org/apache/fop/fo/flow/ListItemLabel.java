@@ -19,7 +19,6 @@
 package org.apache.fop.fo.flow;
 
 // XML
-import org.xml.sax.Attributes;
 import org.xml.sax.SAXParseException;
 
 // FOP
@@ -69,20 +68,6 @@ public class ListItemLabel extends FObj {
      */
     protected void endOfNode() throws SAXParseException {
         getFOEventHandler().endListLabel();
-    }
-
-    /**
-     * @see org.apache.fop.fo.FObj#addProperties
-     */
-    protected void addProperties(Attributes attlist) throws SAXParseException {
-        super.addProperties(attlist);
-        getFOEventHandler().startListLabel();
-        /*
-         * For calculating the lineage - The fo:list-item-label formatting object
-         * does not generate any areas. The fo:list-item-label formatting object
-         * returns the sequence of areas created by concatenating the sequences
-         * of areas returned by each of the child nodes of the fo:list-item-label.
-         */
     }
 
     /**

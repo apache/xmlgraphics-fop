@@ -24,7 +24,6 @@ import java.util.Iterator;
 import java.util.Map;
 
 // XML
-import org.xml.sax.Attributes;
 import org.xml.sax.Locator;
 import org.xml.sax.SAXParseException;
 
@@ -107,24 +106,6 @@ public class SimplePageMaster extends FObj {
             missingChildElementError("(region-body, region-before?," +
                 " region-after?, region-start?, region-end?)");
         }
-    }
-
-    /**
-     * @see org.apache.fop.fo.FObj#addProperties
-     */
-    protected void addProperties(Attributes attlist) throws SAXParseException {
-        super.addProperties(attlist);
-
-        LayoutMasterSet layoutMasterSet = (LayoutMasterSet) parent;
-
-        if (getPropString(PR_MASTER_NAME) == null) {
-            missingPropertyError("master-name");
-        } else {
-            layoutMasterSet.addSimplePageMaster(this);
-        }
-
-        //Well, there are only 5 regions so we can save a bit of memory here
-        regions = new HashMap(5);
     }
 
     /**

@@ -23,7 +23,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 // XML
-import org.xml.sax.Attributes;
 import org.xml.sax.Locator;
 import org.xml.sax.SAXParseException;
 
@@ -46,11 +45,6 @@ public class Flow extends FObj {
      * ArrayList to store snapshot
      */
     private ArrayList markerSnapshot;
-
-    /**
-     * Content-width of current column area during layout
-     */
-    private int contentWidth;
 
     /** used for FO validation */
     private boolean blockItemFound = false;
@@ -115,22 +109,6 @@ public class Flow extends FObj {
     }
 
     /**
-     * @see org.apache.fop.fo.FObj#addProperties
-     */
-    protected void addProperties(Attributes attlist) throws SAXParseException {
-        super.addProperties(attlist);
-
-        // check flow_name property
-        String flowName = getPropString(PR_FLOW_NAME);
-
-        if (flowName == null || flowName.equals("")) {
-            missingPropertyError("flow-name");
-        }
-
-        getFOEventHandler().startFlow(this);
-    }
-
-    /**
      * @see org.apache.fop.fo.FONode#validateChildNode(Locator, String, String)
      * XSL Content Model: marker* (%block;)+
      */
@@ -148,21 +126,6 @@ public class Flow extends FObj {
     }
 
     /**
-     * @param contentWidth content width of this flow, in millipoints (??)
-     */
-    protected void setContentWidth(int contentWidth) {
-        this.contentWidth = contentWidth;
-    }
-
-    /**
-     * @return the content width of this flow (really of the region
-     * in which it is flowing), in millipoints (??).
-     */
-    public int getContentWidth() {
-        return this.contentWidth;
-    }
-
-    /**
      * @return true (Flow can generate reference areas)
      */
     public boolean generatesReferenceAreas() {
@@ -170,7 +133,7 @@ public class Flow extends FObj {
     }
 
     /**
-     * @return the name of this flow
+     * Return "flow-name" property.
      */
     public String getFlowName() {
         return flowName;

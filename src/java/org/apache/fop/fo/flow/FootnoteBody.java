@@ -19,7 +19,6 @@
 package org.apache.fop.fo.flow;
 
 // XML
-import org.xml.sax.Attributes;
 import org.xml.sax.Locator;
 import org.xml.sax.SAXParseException;
 
@@ -67,14 +66,6 @@ public class FootnoteBody extends FObj {
      * @see org.apache.fop.fo.FONode#startOfNode
      */
     protected void startOfNode() throws SAXParseException {
-        getFOEventHandler().startFootnoteBody(this);
-    }
-
-    /**
-     * @see org.apache.fop.fo.FObj#addProperties
-     */
-    protected void addProperties(Attributes attlist) throws SAXParseException {
-        super.addProperties(attlist);
         getFOEventHandler().startFootnoteBody(this);
     }
 

@@ -71,18 +71,6 @@ public class ListItemBody extends FObj {
     }
 
     /**
-     * @todo convert to addProperties()
-     */
-    private void setup() {
-        /*
-         * For calculating the lineage - The fo:list-item-body formatting object
-         * does not generate any areas. The fo:list-item-body formatting object
-         * returns the sequence of areas created by concatenating the sequences
-         * of areas returned by each of the child nodes of the fo:list-item-body.
-         */
-    }
-
-    /**
      * Return the "id" property.
      */
     public String getId() {

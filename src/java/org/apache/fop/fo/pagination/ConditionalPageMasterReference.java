@@ -19,7 +19,6 @@
 package org.apache.fop.fo.pagination;
 
 // XML
-import org.xml.sax.Attributes;
 import org.xml.sax.Locator;
 import org.xml.sax.SAXParseException;
 
@@ -45,8 +44,6 @@ public class ConditionalPageMasterReference extends FObj {
     // End of property values
     
     private RepeatablePageMasterAlternatives repeatablePageMasterAlternatives;
-
-    private String masterName;
 
     /**
      * @see org.apache.fop.fo.FONode#FONode(FONode)
@@ -79,38 +76,6 @@ public class ConditionalPageMasterReference extends FObj {
     protected void validateChildNode(Locator loc, String nsURI, String localName) 
         throws SAXParseException {
        invalidChildError(loc, nsURI, localName);
-    }
-
-    /**
-     * @see org.apache.fop.fo.FObj#addProperties
-     */
-    protected void addProperties(Attributes attlist) throws SAXParseException {
-        super.addProperties(attlist);
-        if (getProperty(PR_MASTER_REFERENCE) != null) {
-            setMasterName(getProperty(PR_MASTER_REFERENCE).getString());
-        }
-
-        validateParent(parent);
-
-        this.pagePosition = getPropEnum(PR_PAGE_POSITION);
-        this.oddOrEven = getPropEnum(PR_ODD_OR_EVEN);
-        this.blankOrNotBlank = getPropEnum(PR_BLANK_OR_NOT_BLANK);
-    }
-
-    /**
-     * Sets the master name.
-     * @param masterName name for the master
-     */
-    protected void setMasterName(String masterName) {
-        this.masterName = masterName;
-    }
-
-    /**
-     * Returns the "master-name" attribute of this page master reference
-     * @return the master name
-     */
-    public String getMasterName() {
-        return masterName;
     }
 
     /**
@@ -179,7 +144,7 @@ public class ConditionalPageMasterReference extends FObj {
             this.repeatablePageMasterAlternatives =
                 (RepeatablePageMasterAlternatives)parent;
 
-            if (getMasterName() == null) {
+            if (getMasterReference() == null) {
                 getLogger().warn("single-page-master-reference"
                                        + "does not have a master-name and so is being ignored");
             } else {

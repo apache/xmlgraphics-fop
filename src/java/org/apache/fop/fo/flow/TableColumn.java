@@ -19,12 +19,10 @@
 package org.apache.fop.fo.flow;
 
 // XML
-import org.xml.sax.Attributes;
 import org.xml.sax.Locator;
 import org.xml.sax.SAXParseException;
 
 // FOP
-import org.apache.fop.datatypes.ColorType;
 import org.apache.fop.datatypes.Length;
 import org.apache.fop.datatypes.Numeric;
 import org.apache.fop.fo.FONode;
@@ -49,11 +47,6 @@ public class TableColumn extends FObj {
     // private ToBeImplementedProperty visibility;
     // End of property values
     
-    private ColorType backgroundColor;
-    private int columnOffset;
-    private int numColumnsRepeated;
-    private int iColumnNumber;
-
     /**
      * @param parent FONode that is the parent of this object
      */
@@ -98,29 +91,6 @@ public class TableColumn extends FObj {
     protected void validateChildNode(Locator loc, String nsURI, String localName) 
         throws SAXParseException {
             invalidChildError(loc, nsURI, localName);
-    }
-
-    /**
-     * @see org.apache.fop.fo.FObj#addProperties(Attributes)
-     */
-    protected void addProperties(Attributes attlist) throws SAXParseException {
-        super.addProperties(attlist);
-
-        iColumnNumber = propertyList.get(PR_COLUMN_NUMBER).getNumber().intValue();
-        numColumnsRepeated =
-            propertyList.get(PR_NUMBER_COLUMNS_REPEATED).getNumber().intValue();
-        this.backgroundColor =
-            this.propertyList.get(PR_BACKGROUND_COLOR).getColorType();
-        columnWidth = this.propertyList.get(PR_COLUMN_WIDTH).getLength();
-
-        getFOEventHandler().startColumn(this);
-    }
-
-    /**
-     * @return value for number of columns repeated
-     */
-    public int getNumColumnsRepeated() {
-        return numColumnsRepeated;
     }
 
     /**

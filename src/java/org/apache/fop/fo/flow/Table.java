@@ -24,11 +24,9 @@ import java.util.ListIterator;
 import java.util.ArrayList;
 
 // XML
-import org.xml.sax.Attributes;
 import org.xml.sax.SAXParseException;
 
 // FOP
-import org.apache.fop.datatypes.ColorType;
 import org.apache.fop.datatypes.Length;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FObj;
@@ -84,23 +82,6 @@ public class Table extends FObj {
     protected ArrayList columns = null;
     private TableBody tableHeader = null;
     private TableBody tableFooter = null;
-    private boolean omitHeaderAtBreak = false;
-    private boolean omitFooterAtBreak = false;
-
-    private int spaceBefore;
-    private int spaceAfter;
-    private ColorType backgroundColor;
-    private LengthRangeProperty ipd;
-    private int _height;
-
-    private boolean bAutoLayout = false;
-    private int contentWidth = 0; // Sum of column widths
-    /** Optimum inline-progression-dimension */
-    private int optIPD;
-    /** Minimum inline-progression-dimension */
-    private int minIPD;
-    /** Maximum inline-progression-dimension */
-    private int maxIPD;
 
     /**
      * @param parent FONode that is the parent of this object
@@ -154,29 +135,6 @@ public class Table extends FObj {
      */
     protected void endOfNode() throws SAXParseException {
         getFOEventHandler().endTable(this);
-    }
-
-    /**
-     * @see org.apache.fop.fo.FObj#addProperties
-     */
-    protected void addProperties(Attributes attlist) throws SAXParseException {
-        super.addProperties(attlist);
-        this.breakBefore = getPropEnum(PR_BREAK_BEFORE);
-        this.breakAfter = getPropEnum(PR_BREAK_AFTER);
-        this.spaceBefore = getPropLength(PR_SPACE_BEFORE | CP_OPTIMUM);
-        this.spaceAfter = getPropLength(PR_SPACE_AFTER | CP_OPTIMUM);
-        this.backgroundColor =
-          this.propertyList.get(PR_BACKGROUND_COLOR).getColorType();
-        this.ipd = this.propertyList.get(
-                     PR_INLINE_PROGRESSION_DIMENSION).getLengthRange();
-        this._height = getPropLength(PR_HEIGHT);
-        this.bAutoLayout = (getPropEnum(PR_TABLE_LAYOUT) == TableLayout.AUTO);
-
-        this.omitHeaderAtBreak = getPropEnum(PR_TABLE_OMIT_HEADER_AT_BREAK)
-            == TableOmitHeaderAtBreak.TRUE;
-        this.omitFooterAtBreak = getPropEnum(PR_TABLE_OMIT_FOOTER_AT_BREAK)
-            == TableOmitFooterAtBreak.TRUE;
-        getFOEventHandler().startTable(this);
     }
 
     /**

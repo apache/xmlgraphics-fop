@@ -22,11 +22,9 @@ package org.apache.fop.fo.flow;
 import java.util.List;
 
 // XML
-import org.xml.sax.Attributes;
 import org.xml.sax.SAXParseException;
 
 // FOP
-import org.apache.fop.datatypes.ColorType;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.PropertyList;
@@ -53,10 +51,6 @@ public class TableBody extends FObj {
     // private ToBeImplementedProperty visibility;
     // End of property values
     
-    private int spaceBefore;
-    private int spaceAfter;
-    private ColorType backgroundColor;
-
     /**
      * @param parent FONode that is the parent of the object
      */
@@ -91,18 +85,6 @@ public class TableBody extends FObj {
      */
     protected void endOfNode() throws SAXParseException {
         getFOEventHandler().endBody(this);
-    }
-
-    /**
-     * @see org.apache.fop.fo.FObj#addProperties
-     */
-    protected void addProperties(Attributes attlist) throws SAXParseException {
-        super.addProperties(attlist);
-        this.spaceBefore = getPropLength(PR_SPACE_BEFORE | CP_OPTIMUM);
-        this.spaceAfter = getPropLength(PR_SPACE_AFTER | CP_OPTIMUM);
-        this.backgroundColor =
-          this.propertyList.get(PR_BACKGROUND_COLOR).getColorType();
-        getFOEventHandler().startBody(this);
     }
 
     /**

@@ -22,7 +22,6 @@ package org.apache.fop.fo.flow;
 import java.util.List;
 
 // XML
-import org.xml.sax.Attributes;
 import org.xml.sax.Locator;
 import org.xml.sax.SAXParseException;
 
@@ -50,12 +49,6 @@ public class BasicLink extends Inline {
     // private ToBeImplementedProperty targetPresentationContext;
     // private ToBeImplementedProperty targetStylesheet;
     // End of property values
-
-    // link represented by this FO
-    private String link = null;
-    
-    // indicator of whether link is internal or external
-    private boolean isExternalLink = false;
 
     // used only for FO validation
     private boolean blockOrInlineItemFound = false;
@@ -109,31 +102,6 @@ public class BasicLink extends Inline {
     }
 
     /**
-     * @see org.apache.fop.fo.FObj#addProperties
-     */
-    protected void addProperties(Attributes attlist) throws SAXParseException {
-        super.addProperties(attlist);
-        
-        // This logic is for determining the link represented by this FO.
-        String ext =  propertyList.get(PR_EXTERNAL_DESTINATION).getString();
-        String internal = propertyList.get(PR_INTERNAL_DESTINATION).getString();
-
-        // per spec, internal takes precedence if both specified        
-        if (internal.length() > 0) { 
-            link = internal;
-        } else if (ext.length() > 0) {
-            link = ext;
-            isExternalLink = true;
-        } else {
-            // slightly stronger than spec "should be specified"
-            attributeError("Missing attribute:  Either external-destination or " +
-                "internal-destination must be specified.");
-        }
-        
-        getFOEventHandler().startLink(this);
-    }
-
-    /**
      * @see org.apache.fop.fo.FONode#validateChildNode(Locator, String, String)
      * XSL Content Model: marker* (#PCDATA|%inline;|%block;)*
      */
@@ -156,20 +124,6 @@ public class BasicLink extends Inline {
     public void addLayoutManager(List list) {    
         BasicLinkLayoutManager lm = new BasicLinkLayoutManager(this);
         list.add(lm);
-    }
-
-    /**
-     * @return link represented by this fo:basic-link
-     */
-    public String getLink() {
-        return link;
-    }
- 
-    /**
-     * @return true if link is external, false if internal
-     */
-    public boolean isExternalLink() {
-        return isExternalLink;
     }
 
     /**

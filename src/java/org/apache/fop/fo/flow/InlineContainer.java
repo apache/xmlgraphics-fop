@@ -23,7 +23,6 @@ import java.util.List;
 import java.util.ArrayList;
 
 // XML
-import org.xml.sax.Attributes;
 import org.xml.sax.SAXParseException;
 
 // FOP
@@ -108,13 +107,6 @@ public class InlineContainer extends FObj {
      */
     protected void startOfNode() throws SAXParseException {
         checkId(id);
-    }
-
-    /**
-     * @see org.apache.fop.fo.FObj#addProperties
-     */
-    protected void addProperties(Attributes attlist) throws SAXParseException {
-        super.addProperties(attlist);
     }
 
     /**

@@ -22,12 +22,10 @@ package org.apache.fop.fo.flow;
 import java.util.List;
 
 // XML
-import org.xml.sax.Attributes;
 import org.xml.sax.Locator;
 import org.xml.sax.SAXParseException;
 
 // FOP
-import org.apache.fop.datatypes.ColorType;
 import org.apache.fop.datatypes.Length;
 import org.apache.fop.datatypes.Numeric;
 import org.apache.fop.fo.FONode;
@@ -73,14 +71,6 @@ public class TableCell extends FObj {
     private Length width;
     // End of property values
 
-    // private int spaceBefore;
-    // private int spaceAfter;
-    private ColorType backgroundColor;
-
-    private int numColumnsSpanned;
-    private int numRowsSpanned;
-    private int iColNumber = -1;    // uninitialized
-
     /** used for FO validation */
     private boolean blockItemFound = false;
 
@@ -89,12 +79,6 @@ public class TableCell extends FObj {
      * relative to table.
      */
     protected int startOffset;
-
-    /**
-     * Dimension of allocation rectangle in inline-progression-direction,
-     * determined by the width of the column(s) occupied by the cell
-     */
-    protected int _width;
 
     /**
      * Offset of content rectangle, in block-progression-direction,
@@ -117,34 +101,13 @@ public class TableCell extends FObj {
     /** For collapsed border style */
     protected int borderHeight = 0;
 
-    /** Minimum content height of cell. */
-    protected int minCellHeight = 0;
-
-    /** Height of cell */
-    protected int _height = 0;
-
     /** Ypos of cell ??? */
     protected int top;
-
-    /** corresponds to display-align property */
-    protected int verticalAlign;
-
-    /** is this cell relatively aligned? */
-    protected boolean bRelativeAlign = false;
-
-    // boolean setup = false;
-    private boolean bSepBorders = true;
 
     /**
      * Set to true if all content completely laid out.
      */
     private boolean bDone = false;
-
-    /**
-     * Border separation value in the block-progression dimension.
-     * Used in calculating cells height.
-     */
-    private int _borderSeparation = 0;
 
     /**
      * @param parent FONode that is the parent of this object
@@ -203,48 +166,6 @@ public class TableCell extends FObj {
     }
 
     /**
-     * @see org.apache.fop.fo.FObj#addProperties
-     */
-    protected void addProperties(Attributes attlist) throws SAXParseException {
-        super.addProperties(attlist);
-        this.iColNumber =
-            propertyList.get(PR_COLUMN_NUMBER).getNumber().intValue();
-        if (iColNumber < 0) {
-            iColNumber = 0;
-        }
-        this.numColumnsSpanned =
-            this.propertyList.get(PR_NUMBER_COLUMNS_SPANNED).getNumber().intValue();
-        if (numColumnsSpanned < 1) {
-            numColumnsSpanned = 1;
-        }
-        this.numRowsSpanned =
-            this.propertyList.get(PR_NUMBER_ROWS_SPANNED).getNumber().intValue();
-        if (numRowsSpanned < 1) {
-            numRowsSpanned = 1;
-        }
-
-        this.backgroundColor =
-            this.propertyList.get(PR_BACKGROUND_COLOR).getColorType();
-
-        bSepBorders = (getPropEnum(PR_BORDER_COLLAPSE) == BorderCollapse.SEPARATE);
-
-        calcBorders(propMgr.getBorderAndPadding());
-
-        // Vertical cell alignment
-        verticalAlign = getPropEnum(PR_DISPLAY_ALIGN);
-        if (verticalAlign == DisplayAlign.AUTO) {
-            // Depends on all cells starting in row
-            bRelativeAlign = true;
-            verticalAlign = getPropEnum(PR_RELATIVE_ALIGN);
-        } else {
-            bRelativeAlign = false;    // Align on a per-cell basis
-        }
-
-        this.minCellHeight = getPropLength(PR_HEIGHT);
-        getFOEventHandler().startCell(this);
-    }
-
-    /**
      * @see org.apache.fop.fo.FONode#validateChildNode(Locator, String, String)
      * XSL Content Model: marker* (%block;)+
      */
@@ -269,42 +190,11 @@ public class TableCell extends FObj {
     }
 
     /**
-     * Sets the width of the cell. Initially this width is the same as the
-     * width of the column containing this cell, or the sum of the spanned
-     * columns if numColumnsSpanned > 1
-     * @param width the width of the cell (in millipoints ??)
-     */
-    public void setWidth(int width) {
-        this._width = width;
-    }
-
-    /**
-     * @return number of the column containing this cell
-     */
-    public int getColumnNumber() {
-        return iColNumber;
-    }
-
-    /**
-     * @return the number of columns spanned by this cell
-     */
-    public int getNumColumnsSpanned() {
-        return numColumnsSpanned;
-    }
-
-    /**
-     * @return the number of rows spanned by this cell
-     */
-    public int getNumRowsSpanned() {
-        return numRowsSpanned;
-    }
-
-    /**
      * Calculate cell border and padding, including offset of content
      * rectangle from the theoretical grid position.
      */
     private void calcBorders(CommonBorderAndPadding bp) {
-        if (this.bSepBorders) {
+        if (this.borderCollapse == BorderCollapse.SEPARATE) {
             /*
              * Easy case.
              * Cell border is the property specified directly on cell.
@@ -323,9 +213,9 @@ public class TableCell extends FObj {
                                + bp.getPaddingEnd(false);
 
             // Offset of content rectangle in the block-progression direction
-            _borderSeparation = getPropLength(PR_BORDER_SEPARATION | 
+            int bSep = getPropLength(PR_BORDER_SEPARATION | 
                 CP_BLOCK_PROGRESSION_DIRECTION);
-            this.beforeOffset = _borderSeparation / 2
+            this.beforeOffset = bSep / 2
                                 + bp.getBorderBeforeWidth(false)
                                 + bp.getPaddingBefore(false);
 
@@ -403,11 +293,10 @@ public class TableCell extends FObj {
     }
 
     /**
-     * @return number of the column containing this cell
-     * TODO 31699
+     * Return the "column-number" property.
      */
-    public int ___getColumnNumber() {
-        return columnNumber.getValue();
+    public int getColumnNumber() {
+        return Math.max(columnNumber.getValue(), 0);
     }
 
     /**
@@ -418,17 +307,17 @@ public class TableCell extends FObj {
     }
 
     /**
-     * @return the number of columns spanned by this cell
+     * Return the "number-columns-spanned" property.
      */
     public int getNumberColumnsSpanned() {
-        return numberColumnsSpanned.getValue();
+        return Math.max(numberColumnsSpanned.getValue(), 1);
     }
 
     /**
-     * @return the number of rows spanned by this cell
+     * Return the "number-rows-spanned" property.
      */
     public int getNumberRowsSpanned() {
-        return numberRowsSpanned.getValue();
+        return Math.max(numberRowsSpanned.getValue(), 1);
     }
 
     /**

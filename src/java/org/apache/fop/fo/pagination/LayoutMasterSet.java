@@ -23,7 +23,6 @@ import java.util.Iterator;
 import java.util.Map;
 
 // XML
-import org.xml.sax.Attributes;
 import org.xml.sax.Locator;
 import org.xml.sax.SAXParseException;
 
@@ -71,6 +70,8 @@ public class LayoutMasterSet extends FObj {
             throw new SAXParseException("fo:layout-master-set must be child of fo:root, not "
                                    + parent.getName(), locator);
         }
+        simplePageMasters = new java.util.HashMap();
+        pageSequenceMasters = new java.util.HashMap();
     }
 
     /**
@@ -81,24 +82,6 @@ public class LayoutMasterSet extends FObj {
             missingChildElementError("(simple-page-master|page-sequence-master)+");
         }
         checkRegionNames();
-    }
-
-    /**
-     * @see org.apache.fop.fo.FObj#addProperties
-     */
-    protected void addProperties(Attributes attlist) throws SAXParseException {
-        super.addProperties(attlist);
-
-        if (parent.getName().equals("fo:root")) {
-            Root root = (Root)parent;
-            root.setLayoutMasterSet(this);
-        } else {
-            throw new SAXParseException("fo:layout-master-set must be child of fo:root, not "
-                                   + parent.getName(), locator);
-        }
-
-        this.simplePageMasters = new java.util.HashMap();
-        this.pageSequenceMasters = new java.util.HashMap();
     }
 
     /**

@@ -80,11 +80,6 @@ public class Leader extends FObjMixed {
     private SpaceProperty wordSpacing;
     // End of property values
 
-    private int _ruleThickness;
-    private int patternWidth;
-    /** FontState for this object */
-    protected Font fontState;
-
     /**
      * @param parent FONode that is the parent of this object
      */
@@ -146,51 +141,12 @@ public class Leader extends FObjMixed {
     protected void startOfNode() throws SAXParseException {
         checkId(id);
     }
-    
-    /**
-     * @todo convert to addProperties()
-     */
-    private void setup() {
-        // Common Font Properties
-        this.fontState = propMgr.getFontState(getFOEventHandler().getFontInfo());
-
-        // color properties
-        ColorType c = this.propertyList.get(PR_COLOR).getColorType();
-        float red = c.getRed();
-        float green = c.getGreen();
-        float blue = c.getBlue();
-
-        // fo:leader specific properties
-        // determines the pattern of leader; allowed values: space, rule,dots, use-content
-        leaderPattern = getPropEnum(PR_LEADER_PATTERN);
-        switch(leaderPattern) {
-            case LeaderPattern.SPACE:
-                // use Space
-            break;
-            case LeaderPattern.RULE:
-                // the following properties only apply
-                // for leader-pattern = "rule"
-                _ruleThickness = getPropLength(PR_RULE_THICKNESS);
-                ruleStyle = getPropEnum(PR_RULE_STYLE);
-            break;
-            case LeaderPattern.DOTS:
-            break;
-            case LeaderPattern.USECONTENT:
-                // use inline layout manager to create inline areas
-                // add the inline parent multiple times until leader full
-            break;
-        }
-
-        // if leaderPatternWidth = 0 = default = use-font-metric
-        patternWidth = getPropLength(PR_LEADER_PATTERN_WIDTH);
-    }
 
     /**
      * @todo check need for each of these accessors (should be LM instead?)
      */
-    public int getLength(int propId, int dim) {
+    public int getLength(Length maxlength, int dim) {
         int length;
-        Length maxlength = propertyList.get(propId).getLength();
         if (maxlength instanceof PercentLength) {
             length = (int)(((PercentLength)maxlength).value() * dim);
         } else {
@@ -200,15 +156,15 @@ public class Leader extends FObjMixed {
     }
 
     public int getRuleThickness() {
-        return _ruleThickness;
+        return ruleThickness.getValue();
     }
 
     public Font getFontState() {
-        return fontState;
+        return propMgr.getFontState(getFOEventHandler().getFontInfo());
     }
 
     public int getPatternWidth() {
-        return patternWidth;
+        return leaderPatternWidth.getValue();
     }
 
     /**
@@ -272,7 +228,6 @@ public class Leader extends FObjMixed {
      * @see org.apache.fop.fo.FONode#addLayoutManager(List)
      */
     public void addLayoutManager(List list) {
-        setup();
         LeaderLayoutManager lm = new LeaderLayoutManager(this);
         list.add(lm);
     }
