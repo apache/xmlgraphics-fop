@@ -19,21 +19,21 @@
  */
 package org.apache.fop.area.inline;
 
-import org.apache.fop.area.Area;
+import org.apache.fop.area.ReferenceArea;
 import org.apache.fop.datastructs.Node;
 
 /**
  * @author pbw
  * @version $Revision$ $Name$
  */
-public class InlineArea extends Area {
+public class InlineContainer extends InlineArea implements ReferenceArea {
 
     /**
      * @param parent
      * @param index
      * @throws IndexOutOfBoundsException
      */
-    public InlineArea(Node parent, int index)
+    public InlineContainer(Node parent, int index)
         throws IndexOutOfBoundsException {
         super(parent, index);
         // TODO Auto-generated constructor stub
@@ -43,7 +43,7 @@ public class InlineArea extends Area {
      * @param parent
      * @throws IndexOutOfBoundsException
      */
-    public InlineArea(Node parent) throws IndexOutOfBoundsException {
+    public InlineContainer(Node parent) throws IndexOutOfBoundsException {
         super(parent);
         // TODO Auto-generated constructor stub
     }

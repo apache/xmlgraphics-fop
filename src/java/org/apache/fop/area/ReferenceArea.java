@@ -17,35 +17,12 @@
  * Created on 30/01/2004
  * $Id$
  */
-package org.apache.fop.area.inline;
-
-import org.apache.fop.area.Area;
-import org.apache.fop.datastructs.Node;
+package org.apache.fop.area;
 
 /**
  * @author pbw
  * @version $Revision$ $Name$
  */
-public class InlineArea extends Area {
-
-    /**
-     * @param parent
-     * @param index
-     * @throws IndexOutOfBoundsException
-     */
-    public InlineArea(Node parent, int index)
-        throws IndexOutOfBoundsException {
-        super(parent, index);
-        // TODO Auto-generated constructor stub
-    }
-
-    /**
-     * @param parent
-     * @throws IndexOutOfBoundsException
-     */
-    public InlineArea(Node parent) throws IndexOutOfBoundsException {
-        super(parent);
-        // TODO Auto-generated constructor stub
-    }
+public interface ReferenceArea {
 
 }
