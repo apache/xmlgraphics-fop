@@ -106,7 +106,16 @@ public class Flow extends FObj {
 				   + parent.getName());
 	} 
 	setFlowName(getProperty("flow-name").getString());
-	pageSequence.addFlow(this);
+
+	// according to communication from Paul Grosso (XSL-List,
+	// 001228, Number 406), confusion in spec section 6.4.5 about
+	// multiplicity of fo:flow in XSL 1.0 is cleared up - one (1)
+	// fo:flow per fo:page-sequence only.
+	if (!pageSequence.isFlowSet())
+		pageSequence.addFlow(this);
+	else
+		throw new FOPException("Only a single fo:flow permitted"
+		+ " per fo:page-sequence");
     }
 
     protected void setFlowName(String name)

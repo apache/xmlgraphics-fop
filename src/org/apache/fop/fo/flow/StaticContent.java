@@ -76,6 +76,7 @@ public class StaticContent extends Flow {
     protected StaticContent(FObj parent, PropertyList propertyList)
 	throws FOPException {
 	super(parent, propertyList);
+	((PageSequence)parent).setIsFlowSet(false);	// hacquery of sorts
     }
     
     public Status layout(Area area) throws FOPException {

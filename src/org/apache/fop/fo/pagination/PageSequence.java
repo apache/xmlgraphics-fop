@@ -118,7 +118,12 @@ public class PageSequence extends FObj
     /** the "master-name" attribute */
     private String masterName;
 	
-
+	// according to communication from Paul Grosso (XSL-List,
+	// 001228, Number 406), confusion in spec section 6.4.5 about
+	// multiplicity of fo:flow in XSL 1.0 is cleared up - one (1)
+	// fo:flow per fo:page-sequence only.
+	private boolean isFlowSet = false;
+	
     //
     // state attributes used during layout
     //
@@ -215,7 +220,7 @@ public class PageSequence extends FObj
 	    MessageHandler.errorln("WARNING: region-name '"+flow.getFlowName()+"' doesn't exist in the layout-master-set.");
 	}
 	_flowMap.put(flow.getFlowName(), flow);
-
+	setIsFlowSet(true);
     }
     
 
@@ -571,7 +576,15 @@ public class PageSequence extends FObj
 		return true;
 	}
 	return false;
-	
     }
-    
+	
+	public boolean isFlowSet()
+	{
+		return isFlowSet;
+	}
+	
+	public void setIsFlowSet(boolean isFlowSet)
+	{
+		this.isFlowSet = isFlowSet;
+	}
 }
