@@ -23,13 +23,13 @@ This certainly includes programmers, but may also include those contributing to 
       <p>Please note that patches for enhancements to the maintenance branch will generally not be considered. Bug fixes are welcome there, but new developers are strongly encouraged to apply their efforts to the trunk development line.</p>
       <p>Because there is a fair amount of common information between the maintenance and trunk development lines, we attempt to document them together, highlighting differences only where needed.</p>
     </section>
-    <section>
+    <section id="involved">
       <title>Getting Involved</title>
       <section id="apache-roles">
         <title>Understand Apache Roles</title>
         <p>Review the <link href="http://xml.apache.org/roles.html">Apache Project Roles and Responsibilities</link> document for an understanding of the various roles of contributors within the community.</p>
       </section>
-      <section>
+      <section id="fop-tasks">
         <title>Understand FOP Development Tasks</title>
         <p>There are many different ways that you can help with FOP development. The following is a non-exhaustive list of ways that <em>non-programmers</em> can help. Remember that an hour spent on the tasks below is an hour that a programmer can devote to fixing bugs or adding features instead:</p>
         <ul>
@@ -48,7 +48,7 @@ This certainly includes programmers, but may also include those contributing to 
           <li>Implementing new features.</li>
         </ul>
       </section>
-      <section>
+      <section id="fop-standards">
         <title>Understand FOP-related standards</title>
         <p>At the moment FOP is mainly a tool to render XSL-FO files to pdf. Therefore if you want to contribute to FOP you should become familiar with these standards. You can find links at <link href="../resources.html#specs">Specifications</link>.</p>
       </section>
@@ -108,7 +108,7 @@ To unsubscribe: Send email to <link href="mailto:fop-dev-unsubscribe@xml.apache.
           <li>Subscribe by sending an email to <link href="mailto:fop-cvs-subscribe@xml.apache.org">fop-cvs-subscribe@xml.apache.org</link>.</li>
         </ul>
       </section>
-      <section>
+      <section id="dev-code">
         <title>Download and Use the Developers' Code Using CVS</title>
         <p>Between releases the newest code can be accessed via cvs. To do this you need to install a cvs
      client on your computer, if it is not already there. An explanation how to connect to the
@@ -127,7 +127,7 @@ To unsubscribe: Send email to <link href="mailto:fop-dev-unsubscribe@xml.apache.
         </ul>
         <p>One of the committers will test your patch and consider its implications for the project. They will then either commit it to the repository or explain on the issue why they did not. Depending on the work load and skill-sets of the various committers, it may take some time before a a submitted patch is addressed.</p>
       </section>
-      <section>
+      <section id="code-conventions">
         <title>Coding Conventions</title>
         <p>As mentioned in <link href="http://xml.apache.org/source.html">Apache XML Project Guidelines</link>,
   <strong>all Java Language source code in the repository must be written in conformance to the</strong>
