@@ -22,6 +22,7 @@ import org.apache.fop.apps.FOPException;
 import org.apache.fop.area.CTM;
 import org.apache.fop.area.RegionViewport;
 import org.apache.fop.area.RegionReference;
+import org.apache.fop.layoutmgr.AbstractLayoutManager;
 
 import org.xml.sax.Attributes;
 
@@ -82,9 +83,29 @@ public abstract class Region extends FObj {
         Rectangle2D absRegionRect = pageCTM.transform(relRegionRect);
         // Get the region viewport rectangle in absolute coords by
         // transforming it using the page CTM
-        return new RegionViewport(absRegionRect);
+        RegionViewport rv = new RegionViewport(absRegionRect);
+        setRegionViewportTraits(rv);
+        return rv;
     }
 
+    /**
+     * Set the region viewport traits.
+     * The viewport has the border, background and
+     * clipping overflow traits.
+     *
+     * @param r the region viewport
+     */
+    protected void setRegionViewportTraits(RegionViewport r) {
+        // Common Border, Padding, and Background Properties
+        BorderAndPadding bap = propMgr.getBorderAndPadding();
+        BackgroundProps bProps = propMgr.getBackgroundProps();
+        AbstractLayoutManager.addBorders(r, bap);
+        AbstractLayoutManager.addBackground(r, bProps);
+
+        // this.properties.get("clip");
+        // this.properties.get("display-align");
+        this.overflow = this.properties.get("overflow").getEnum();
+    }
 
     protected abstract Rectangle getViewportRectangle(FODimension pageRefRect);
 
@@ -96,23 +117,21 @@ public abstract class Region extends FObj {
      */
     public RegionReference makeRegionReferenceArea(Rectangle2D absRegVPRect) {
         RegionReference r = new RegionReference(getRegionAreaClass());
-        setRegionTraits(r, absRegVPRect);
+        setRegionPosition(r, absRegVPRect);
         return r;
     }
 
-    protected void setRegionTraits(RegionReference r, Rectangle2D absRegVPRect) {
-        // Common Border, Padding, and Background Properties
-        BorderAndPadding bap = propMgr.getBorderAndPadding();
-        BackgroundProps bProps = propMgr.getBackgroundProps();
-/*        backgroundColor = properties.get("background-color").getColorType();*/
-
-        // this.properties.get("clip");
-        // this.properties.get("display-align");
-        this.overflow = this.properties.get("overflow").getEnum();
+    /**
+     * Set the region position inside the region viewport.
+     * This sets the trasnform that is used to place the contents of
+     * the region.
+     *
+     * @param r the region reference area
+     * @param absRegVPRect the rectangle to place the region contents
+     */
+    protected void setRegionPosition(RegionReference r, Rectangle2D absRegVPRect) {
         FODimension reldims = new FODimension(0,0);
         r.setCTM(propMgr.getCTMandRelDims(absRegVPRect, reldims));
-
-        //r.setBackground(bProps);
     }
 
     /**

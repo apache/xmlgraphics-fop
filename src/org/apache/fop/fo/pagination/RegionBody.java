@@ -65,16 +65,9 @@ public class RegionBody extends Region {
     return ((prop != null)? prop.getLength().mvalue() : 0);
     }
 
-    protected void setRegionTraits(RegionReference r, Rectangle2D absRegVPRect) {
-    super.setRegionTraits(r, absRegVPRect);
-
-//         r.setBackgroundColor(backgroundColor);
-    }
-
     protected String getDefaultRegionName() {
         return "xsl-region-body";
     }
-
 
     public String getRegionClass() {
         return Region.BODY;
@@ -90,7 +83,7 @@ public class RegionBody extends Region {
     public RegionReference makeRegionReferenceArea(Rectangle2D absRegVPRect) {
     // Should set some column stuff here I think, or put it elsewhere
     BodyRegion body = new BodyRegion();
-    setRegionTraits(body, absRegVPRect);
+    setRegionPosition(body, absRegVPRect);
         int columnCount=
             this.properties.get("column-count").getNumber().intValue();
         if ((columnCount > 1) && (overflow == Overflow.SCROLL)) {
