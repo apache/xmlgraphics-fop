@@ -63,6 +63,7 @@ import org.apache.fop.datatypes.ColorSpace;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Vector;
+import java.util.Hashtable;
 import java.awt.Rectangle;
 							   
 /**
@@ -122,6 +123,10 @@ public class PDFDocument {
 
 	/** the XObjects */
 	protected Vector xObjects = new Vector();
+
+	/** the XObjects Map. 
+	Should be modified (works only for image subtype) */
+	protected Hashtable xObjectsMap = new Hashtable();
 
 	/**
 	 * creates an empty PDF document
@@ -729,10 +734,16 @@ public class PDFDocument {
 	}
 
 	public int addImage(FopImage img) {
-	PDFXObject xObject = new PDFXObject(++this.objectcount,
+	// check if already created
+	String url = img.getURL();
+	PDFXObject xObject = (PDFXObject) this.xObjectsMap.get(url);
+	if (xObject != null) return xObject.getXNumber();
+	// else, create a new one
+	xObject = new PDFXObject(++this.objectcount,
 						++this.xObjectCount, img);
 	this.objects.addElement(xObject);
 	this.xObjects.addElement(xObject);
+	this.xObjectsMap.put(url, xObject);
 	return xObjectCount;
 	}
 
