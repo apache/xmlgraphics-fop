@@ -111,12 +111,12 @@ public class CharUtilities {
 
     /**
      * Helper method to determine if the character is a
-     * space with normal behaviour. Normal behaviour means that
+     * space with normal behavior. Normal behavior means that
      * it's not non-breaking.
      * @param c character to inspect
      * @return True if the character is a normal space
      */
-    public static boolean isSpace(char c) {
+    public static boolean isBreakableSpace(char c) {
         return (c == ' '
                || (c >= '\u2000' && c <= '\u200B'));
 //         c == '\u2000'                   // en quad
@@ -139,7 +139,7 @@ public class CharUtilities {
      * @param c character to check
      * @return True if the character is a nbsp
      */
-    public static boolean isNBSP(char c) {
+    public static boolean isNonBreakableSpace(char c) {
         return
             (c == '\u00A0'      // no-break space
             || c == '\u202F'    // narrow no-break space
@@ -153,7 +153,7 @@ public class CharUtilities {
      * @return True if the character represents any kind of space
      */
     public static boolean isAnySpace(char c) {
-        boolean ret = (isSpace(c) || isNBSP(c));
+        boolean ret = (isBreakableSpace(c) || isNonBreakableSpace(c));
         return ret;
     }
 }

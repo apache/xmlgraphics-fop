@@ -298,15 +298,15 @@ public abstract class AbstractRenderer extends AbstractLogEnabled
         decision is to have fo:region-body on top, hence it is rendered
         last here. */
         RegionViewport viewport;
-        viewport = page.getRegion(Region.BEFORE_CODE);
+        viewport = page.getRegionViewport(Region.BEFORE_CODE);
         renderRegionViewport(viewport);
-        viewport = page.getRegion(Region.START_CODE);
+        viewport = page.getRegionViewport(Region.START_CODE);
         renderRegionViewport(viewport);
-        viewport = page.getRegion(Region.END_CODE);
+        viewport = page.getRegionViewport(Region.END_CODE);
         renderRegionViewport(viewport);
-        viewport = page.getRegion(Region.AFTER_CODE);
+        viewport = page.getRegionViewport(Region.AFTER_CODE);
         renderRegionViewport(viewport);
-        viewport = page.getRegion(Region.BODY_CODE);
+        viewport = page.getRegionViewport(Region.BODY_CODE);
         renderRegionViewport(viewport);
     }
 

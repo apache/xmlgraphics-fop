@@ -83,7 +83,7 @@ public class Page implements Serializable, Cloneable {
      * @param areaclass the area class of the region to set
      * @param port the region viewport to set
      */
-    public void setRegion(int areaclass, RegionViewport port) {
+    public void setRegionViewport(int areaclass, RegionViewport port) {
         if (areaclass == Region.BEFORE_CODE) {
             regionBefore = port;
         } else if (areaclass == Region.START_CODE) {
@@ -103,7 +103,7 @@ public class Page implements Serializable, Cloneable {
      * @param areaclass the region area class
      * @return the region viewport or null if none
      */
-    public RegionViewport getRegion(int areaclass) {
+    public RegionViewport getRegionViewport(int areaclass) {
         if (areaclass == Region.BEFORE_CODE) {
             return regionBefore;
         } else if (areaclass == Region.START_CODE) {

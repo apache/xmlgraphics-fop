@@ -67,6 +67,7 @@ import org.apache.fop.area.Span;
 import org.apache.fop.area.BeforeFloat;
 import org.apache.fop.area.Footnote;
 import org.apache.fop.area.Resolveable;
+import org.apache.fop.area.Trait;
 
 import org.apache.fop.datatypes.FODimension;
 
@@ -78,12 +79,12 @@ import org.apache.fop.fo.pagination.Region;
 import org.apache.fop.fo.properties.RetrieveBoundary;
 import org.apache.fop.fo.pagination.SimplePageMaster;
 import org.apache.fop.fo.pagination.StaticContent;
-
 import org.apache.fop.fo.properties.CommonBackground;
 import org.apache.fop.fo.properties.CommonBorderAndPadding;
 import org.apache.fop.fo.properties.CommonMarginBlock;
 import org.apache.fop.fo.properties.Constants;
 import org.apache.fop.fo.properties.Overflow;
+import org.apache.fop.traits.BorderProps;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -471,10 +472,32 @@ public class PageLayoutManager extends AbstractLayoutManager implements Runnable
         }
 
         curPage.setPageNumber(getCurrentPageNumber());
-        RegionViewport reg = curPage.getPage().getRegion(
+        RegionViewport rv = curPage.getPage().getRegionViewport(
                     Region.BODY_CODE);
-        curBody = (BodyRegion) reg.getRegion();
-        flowBPD = (int)reg.getViewArea().getHeight();
+        curBody = (BodyRegion) rv.getRegion();
+        flowBPD = (int) rv.getViewArea().getHeight();
+        
+        // adjust flowBPD for borders and padding
+        BorderProps bps = (BorderProps) rv.getTrait(Trait.BORDER_BEFORE);
+        if (bps != null) {
+            flowBPD -= bps.width;
+        }
+
+        bps = (BorderProps) rv.getTrait(Trait.BORDER_AFTER);
+        if (bps != null) {
+            flowBPD -= bps.width;
+        }
+
+        java.lang.Integer padWidth = (java.lang.Integer) rv.getTrait(Trait.PADDING_BEFORE);
+        if (padWidth != null) {
+            flowBPD -= padWidth.intValue();
+        }
+
+        padWidth = (java.lang.Integer) rv.getTrait(Trait.PADDING_AFTER);
+        if (padWidth != null) {
+            flowBPD -= padWidth.intValue();
+        }
+
         return curPage;
     }
 
@@ -486,7 +509,7 @@ public class PageLayoutManager extends AbstractLayoutManager implements Runnable
         if (flow == null) {
             return;
         }
-        RegionViewport reg = curPage.getPage().getRegion(regionClass);
+        RegionViewport reg = curPage.getPage().getRegionViewport(regionClass);
         reg.getRegion().setIPD((int)reg.getViewArea().getWidth());
         if (reg == null) {
             getLogger().error("no region viewport: shouldn't happen");
@@ -710,9 +733,32 @@ public class PageLayoutManager extends AbstractLayoutManager implements Runnable
         //else newpos = new MinOptMax();
         curSpan = new Span(numCols);
         // get Width or Height as IPD for span
-        curSpan.setIPD((int) curPage.getPage().getRegion(
-                          Region.BODY_CODE).getViewArea().getWidth());
+        
+        RegionViewport rv = curPage.getPage().getRegionViewport(Region.BODY_CODE);
+        int ipdWidth = (int) rv.getViewArea().getWidth();
+        
+        // adjust IPD for borders and padding
+        BorderProps bps = (BorderProps) rv.getTrait(Trait.BORDER_START);
+        if (bps != null) {
+            ipdWidth -= bps.width;
+        }
 
+        bps = (BorderProps) rv.getTrait(Trait.BORDER_END);
+        if (bps != null) {
+            ipdWidth -= bps.width;
+        }
+
+        java.lang.Integer padWidth = (java.lang.Integer) rv.getTrait(Trait.PADDING_START);
+        if (padWidth != null) {
+            ipdWidth -= padWidth.intValue();
+        }
+
+        padWidth = (java.lang.Integer) rv.getTrait(Trait.PADDING_END);
+        if (padWidth != null) {
+            ipdWidth -= padWidth.intValue();
+        }
+                          
+        curSpan.setIPD(ipdWidth);
         //curSpan.setPosition(BPD, newpos);
         curBody.getMainReference().addSpan(curSpan);
         createFlow();
@@ -803,7 +849,7 @@ public class PageLayoutManager extends AbstractLayoutManager implements Runnable
            } else {
                rvp.setRegion(makeRegionReferenceArea(r, rvp.getViewArea()));
            }
-           page.setRegion(r.getRegionClassCode(), rvp);
+           page.setRegionViewport(r.getRegionClassCode(), rvp);
            if (r.getRegionClassCode() == Region.BODY_CODE) {
                bHasBody = true;
            }

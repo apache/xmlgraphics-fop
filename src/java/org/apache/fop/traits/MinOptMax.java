@@ -157,5 +157,8 @@ public class MinOptMax implements java.io.Serializable, Cloneable {
         max -= op.min;
     }
 
+    public String toString() {
+        return "MinOptMax: min=" + min + "; opt=" + opt + "; max=" + max;
+    }
 }
 
