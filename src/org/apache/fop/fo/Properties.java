@@ -225,7 +225,8 @@ public abstract class Properties {
                       ,COMPUTED = 1
                      ,SPECIFIED = 2
                       ,COMPOUND = 3
-                ,VALUE_SPECIFIC = 4
+                 ,SHORTHAND_INH = 4
+                ,VALUE_SPECIFIC = 5
                               ;
 
 
@@ -577,7 +578,7 @@ public abstract class Properties {
     }
 
     public static class Background extends Properties {
-        public static final int dataTypes = SHORTHAND;
+        public static final int dataTypes = SHORTHAND | INHERIT;
         public static final int traitMapping = SHORTHAND_MAP;
         public static final int initialValueType = NOTYPE_IT;
         public static final int inherited = NO;
@@ -647,6 +648,330 @@ public abstract class Properties {
         public static final int traitMapping = SHORTHAND_MAP;
         public static final int initialValueType = NOTYPE_IT;
         public static final int inherited = NO;
+
+        public static final int
+                                LEFT = 1
+                             ,CENTER = 2
+                              ,RIGHT = 3
+                                ,TOP = 4
+                            ,CENTERV = 5
+                             ,BOTTOM = 6
+                                     ;
+
+        private static final String[] rwEnums = {
+            null
+            ,"left"
+            ,"center"
+            ,"right"
+            ,"top"
+            ,"center"
+            ,"bottom"
+        };
+
+        private static final ROStringArray enums = new ROStringArray(rwEnums);
+
+        /**
+         * 'value' is a PropertyValueList or an individual PropertyValue.
+         *
+         * <p>If 'value' is an individual PropertyValue, it must contain
+         * either a single distance measurement, a single NCName enumeration
+         * token, or an Inherit value.
+         * The distance measurement can be either a Length or a Percentage.
+         *
+         * <p>If 'value' is a PropertyValueList, it contains either a pair of
+         * distance measurement (length or percentage) or a pair of
+         * enumeration tokens representing the background position offset
+         * in the "height" and "width" dimensions.
+         *
+         * <p>The value(s) provided, if valid, are converted into a list
+         * containing the expansion of the shorthand.  I.e. the first
+         * element is a value for BackgroundPositionHorizontal, and the
+         * second is for BackgroundPositionVertical.
+         */
+        public static PropertyValue complex
+            (int property, PropertyValue value) throws PropertyException
+        {
+            if ( ! (value instanceof PropertyValueList)) {
+                return processValue(property, value);
+            } else {
+                return processList(property, (PropertyValueList)value);
+            }
+        }
+
+        private static PropertyValueList processValue
+            (int property, PropertyValue value) throws PropertyException
+        {
+            PropertyValueList newlist = new PropertyValueList(property);
+            // Can only be Inherit, NCName (i.e. enum token)
+            // or Numeric (i.e. Length or Percentage)
+            if (value instanceof Inherit) {
+                // Construct a list of two Inherit values
+                newlist.add(new Inherit(
+                            PropNames.BACKGROUND_POSITION_HORIZONTAL));
+                newlist.add(new Inherit(
+                            PropNames.BACKGROUND_POSITION_VERTICAL));
+            } else if (value instanceof Numeric) {
+                // Single horizontal value given
+                Numeric newNum;
+                try {
+                    newNum = (Numeric)(value.clone());
+                } catch (CloneNotSupportedException cnse) {
+                    throw new PropertyException(cnse.getMessage());
+                }
+                newNum.setProperty(
+                            PropNames.BACKGROUND_POSITION_HORIZONTAL);
+                newlist.add(newNum);
+                newlist.add(Percentage.makePercentage(
+                            PropNames.BACKGROUND_POSITION_VERTICAL,
+                            50.0d));
+            } else if (value instanceof NCName) {
+                String enumval = ((NCName)value).getNCName();
+                int enumIndex;
+                try {
+                    enumIndex = PropertyConsts.enumValueToIndex(
+                                    enumval, enums);
+                } catch (PropertyException e) {
+                    throw new PropertyException(
+                            "Invalid enum value for BackgroundPosition: "
+                            + enumval);
+                }
+                // Found an enum
+                double horiz = 50.0, vert = 50.0;
+                switch (enumIndex) {
+                case LEFT:
+                    horiz = 0.0;
+                    break;
+                case RIGHT:
+                    horiz = 100.0;
+                    break;
+                case TOP:
+                    vert = 0.0;
+                    break;
+                case BOTTOM:
+                    vert = 100.0;
+                    break;
+                }
+                newlist.add(Percentage.makePercentage(
+                            PropNames.BACKGROUND_POSITION_HORIZONTAL,
+                            horiz));
+                newlist.add(Percentage.makePercentage(
+                            PropNames.BACKGROUND_POSITION_VERTICAL,
+                            vert));
+            } else {
+                throw new PropertyException
+                ("Invalid single property value for BackgroundPosition: "
+                + value.toString());
+            }
+            return newlist;
+        }
+
+        private static PropertyValueList processList
+            (int property, PropertyValueList value) throws PropertyException
+        {
+            PropertyValueList newlist = new PropertyValueList(property);
+            // This is a list
+            if (((PropertyValueList)value).size() == 0)
+                throw new PropertyException
+                                ("Empty list for BackgroundPosition");
+            // Only two Numerics allowed
+            if (((PropertyValueList)value).size() != 2)
+                throw new PropertyException
+                        ("More that 2 elements in BackgroundPosition list.");
+            // Analyse the list data.
+            // Can be a pair of Numeric values, Length or Percentage,
+            // or a pair of enum tokens.  One is from the set
+            // [top center bottom]; the other is from the set
+            // [left center right].
+            Iterator positions = ((PropertyValueList)value).iterator();
+            PropertyValue posn = (PropertyValue)(positions.next());
+            PropertyValue posn2 = (PropertyValue)(positions.next());
+
+            if (posn instanceof Numeric) {
+                Numeric num1;
+                try {
+                    num1 = (Numeric)(posn.clone());
+                } catch (CloneNotSupportedException cnse) {
+                    throw new PropertyException(cnse.getMessage());
+                }
+                num1.setProperty(
+                            PropNames.BACKGROUND_POSITION_HORIZONTAL);
+                // Now check the type of the second element
+                if ( ! (posn2 instanceof Numeric))
+                    throw new PropertyException
+                        ("Numeric not followed by Numeric in "
+                        + "BackgroundPosition list: " + posn2.toString());
+                Numeric num2;
+                try {
+                    num2 = (Numeric)(posn2.clone());
+                } catch (CloneNotSupportedException cnse) {
+                    throw new PropertyException(cnse.getMessage());
+                }
+                num2.setProperty(
+                            PropNames.BACKGROUND_POSITION_VERTICAL);
+                if ( ! (num1.isDistance() && num2.isDistance()))
+                    throw new PropertyException
+                        ("Numerics not distances in BackgroundPosition list");
+
+                newlist.add(num1);
+                newlist.add(num2);
+
+            } else if (posn instanceof NCName) {
+                // Now check the type of the second element
+                if ( ! (posn2 instanceof NCName))
+                    throw new PropertyException
+                        ("NCName not followed by NCName in BackgroundPosition"
+                        + " list: " + posn2.toString());
+                int enum1, enum2;
+                String enumval1 = ((NCName)posn ).getNCName();
+                String enumval2 = ((NCName)posn2).getNCName();
+                double percent1 = 50.0d, percent2 = 50.0d;
+                try {
+                    enum1 = PropertyConsts.enumValueToIndex(
+                                    enumval1,
+                                    BackgroundPositionHorizontal.enumValues);
+                } catch (PropertyException e) {
+                    // Not a horizontal element - try vertical
+                    try {
+                        enum1 = PropertyConsts.enumValueToIndex(
+                                    enumval1,
+                                    BackgroundPositionVertical.enumValues);
+                        enum1 += RIGHT;
+                    } catch (PropertyException e2) {
+                        throw new PropertyException
+                            ("Unrecognised value for BackgroundPosition: "
+                            + enumval1);
+                    }
+                }
+                try {
+                    enum2 = PropertyConsts.enumValueToIndex(
+                                    enumval2,
+                                    BackgroundPositionVertical.enumValues);
+                    enum2 += RIGHT;
+                } catch (PropertyException e) {
+                    try {
+                        enum2 = PropertyConsts.enumValueToIndex(
+                                    enumval2,
+                                    BackgroundPositionHorizontal.enumValues);
+                    } catch (PropertyException e2) {
+                        throw new PropertyException
+                            ("Unrecognised value for BackgroundPosition: "
+                            + enumval2);
+                    }
+                }
+                if (enum1 == CENTERV) enum1 = CENTER;
+                if (enum2 == CENTERV) enum2 = CENTER;
+                switch (enum1) {
+                case LEFT:
+                    percent1 = 0.0d;
+                    switch (enum2) {
+                    case CENTER:
+                        percent2 = 50.0d;
+                        break;
+                    case TOP:
+                        percent2 = 0.0d;
+                        break;
+                    case BOTTOM:
+                        percent2 = 100.0d;
+                        break;
+                    default:
+                        throw new PropertyException
+                            ("Incompatible values for BackgroundPosition: "
+                            + enumval1 + " " + enumval2);
+                    }
+                case CENTER:
+                    switch (enum2) {
+                    case LEFT:
+                        percent1 = 0.0d;
+                        percent2 = 50.0d;
+                        break;
+                    case CENTER:
+                        percent1 = 50.0d;
+                        percent2 = 50.0d;
+                        break;
+                    case RIGHT:
+                        percent1 = 100.0d;
+                        percent2 = 50.0d;
+                        break;
+                    case TOP:
+                        percent1 = 50.0d;
+                        percent2 = 0.0d;
+                        break;
+                    case BOTTOM:
+                        percent1 = 50.0d;
+                        percent2 = 100.0d;
+                        break;
+                    default:
+                        throw new PropertyException
+                            ("Incompatible values for BackgroundPosition: "
+                            + enumval1 + " " + enumval2);
+                    }
+                case RIGHT:
+                    percent1 = 100.0d;
+                    switch (enum2) {
+                    case CENTER:
+                        percent2 = 50.0d;
+                        break;
+                    case TOP:
+                        percent2 = 0.0d;
+                        break;
+                    case BOTTOM:
+                        percent2 = 100.0d;
+                        break;
+                    default:
+                        throw new PropertyException
+                            ("Incompatible values for BackgroundPosition: "
+                            + enumval1 + " " + enumval2);
+                    }
+                case TOP:
+                    percent2 = 0.0d;
+                    switch (enum2) {
+                    case LEFT:
+                        percent1 = 0.0d;
+                        break;
+                    case CENTER:
+                        percent1 = 50.0d;
+                        break;
+                    case RIGHT:
+                        percent1 = 100.0d;
+                        break;
+                    default:
+                        throw new PropertyException
+                            ("Incompatible values for BackgroundPosition: "
+                            + enumval1 + " " + enumval2);
+                    }
+                case BOTTOM:
+                    percent2 = 100.0d;
+                    switch (enum2) {
+                    case LEFT:
+                        percent1 = 0.0d;
+                        break;
+                    case CENTER:
+                        percent1 = 50.0d;
+                        break;
+                    case RIGHT:
+                        percent1 = 100.0d;
+                        break;
+                    default:
+                        throw new PropertyException
+                            ("Incompatible values for BackgroundPosition: "
+                            + enumval1 + " " + enumval2);
+                    }
+                }
+
+                newlist.add(Percentage.makePercentage(
+                            PropNames.BACKGROUND_POSITION_HORIZONTAL,
+                            percent1));
+                newlist.add(Percentage.makePercentage(
+                            PropNames.BACKGROUND_POSITION_VERTICAL,
+                            percent2));
+
+            } else throw new PropertyException
+                        ("Invalid element in BackgroundPosition list: "
+                        + posn.toString());
+
+            return newlist;
+        }
+
     }
 
     public static class BackgroundPositionHorizontal extends Properties {
@@ -1427,7 +1752,7 @@ public abstract class Properties {
         public static final int dataTypes = SHORTHAND;
         public static final int traitMapping = SHORTHAND_MAP;
         public static final int initialValueType = NOTYPE_IT;
-        public static final int inherited = COMPUTED;
+        public static final int inherited = SHORTHAND_INH;
     }
 
     public static class BorderStartColor extends Properties {
@@ -2208,7 +2533,7 @@ public abstract class Properties {
         public static final int dataTypes = SHORTHAND;
         public static final int traitMapping = SHORTHAND_MAP;
         public static final int initialValueType = NOTYPE_IT;
-        public static final int inherited = COMPUTED;
+        public static final int inherited = SHORTHAND_INH;
     }
 
     public static class FontFamily extends Properties {
@@ -5924,7 +6249,7 @@ public abstract class Properties {
                                     ("PropertyException: " + e.getMessage());
             }
         }
-        public static final int inherited = COMPUTED;
+        public static final int inherited = SHORTHAND_INH;
 
         private static final String[] rwEnums = {
             null
@@ -6125,7 +6450,7 @@ public abstract class Properties {
         public static final int dataTypes = SHORTHAND;
         public static final int traitMapping = SHORTHAND_MAP;
         public static final int initialValueType = NOTYPE_IT;
-        public static final int inherited = COMPUTED;
+        public static final int inherited = SHORTHAND_INH;
     }
 
     public static class ZIndex extends Properties {
