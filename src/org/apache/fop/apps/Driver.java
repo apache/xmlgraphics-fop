@@ -241,6 +241,19 @@ public class Driver implements Loggable {
         _treeBuilder.reset();
     }
 
+    /**
+     * Returns the results of the last rendering process. Information includes
+     * the total number of pages generated and the number of pages per
+     * page-sequence.
+     */
+    public FormattingResults getResults() {
+        try {
+            return _treeBuilder.getStreamRenderer().getResults();
+        } catch (NullPointerException e) {
+            return null;
+        }
+    }
+
     public boolean hasData() {
         return (_treeBuilder.hasData());
     }
@@ -483,19 +496,9 @@ public class Driver implements Loggable {
      */
     public synchronized void render(Document document)
     throws FOPException {
-
-        try {
-            DocumentInputSource source = new DocumentInputSource(document);
-            DocumentReader reader = new DocumentReader();
-            reader.setContentHandler(getContentHandler());
-            reader.parse(source);
-        } catch (SAXException e) {
-            throw new FOPException(e);
-        }
-        catch (IOException e) {
-            throw new FOPException(e);
-        }
-
+         DocumentInputSource source = new DocumentInputSource(document);
+         DocumentReader reader = new DocumentReader();
+         render(reader, source);
     }
 
     /**

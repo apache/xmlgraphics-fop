@@ -92,6 +92,10 @@ public class FOTreeBuilder extends DefaultHandler implements TreeBuilder {
         this.streamRenderer = streamRenderer;
     }
 
+    public StreamRenderer getStreamRenderer() {
+        return this.streamRenderer;
+    }
+
     /**
      * add a mapping from element name to maker.
      *

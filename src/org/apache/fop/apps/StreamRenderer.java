@@ -66,6 +66,11 @@ public class StreamRenderer {
     private Renderer renderer;
 
     /**
+     * The formatting results to be handed back to the caller.
+     */
+    private FormattingResults results = new FormattingResults();
+
+    /**
       The FontInfo for this renderer.
     */
     private FontInfo fontInfo = new FontInfo();
@@ -100,6 +105,10 @@ public class StreamRenderer {
 
     public IDReferences getIDReferences() {
         return idReferences;
+    }
+
+    public FormattingResults getResults() {
+        return this.results;
     }
 
     public void addExtension(ExtensionObj ext) {
@@ -192,6 +201,8 @@ public class StreamRenderer {
         } catch (FOPException e) {
             throw new SAXException(e);
         }
+        this.results.haveFormattedPageSequence(pageSequence);
+        log.debug("Last page-sequence produced "+pageSequence.getPageCount()+" pages.");
     }
 
     public synchronized void queuePage(Page page)

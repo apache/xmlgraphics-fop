@@ -613,7 +613,11 @@ public class PageSequence extends FObj {
     }
 
     public int getCurrentPageNumber() {
-        return currentPageNumber;
+        return currentPageNumber; 
+    }
+
+    public int getPageCount() {
+    	return this.pageCount;
     }
 
     private void forcePage(AreaTree areaTree, int firstAvailPageNumber) {
