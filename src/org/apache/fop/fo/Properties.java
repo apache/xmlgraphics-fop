@@ -303,6 +303,141 @@ public abstract class Properties {
     }
 
     /**
+     * 'value' is a PropertyValueList or an individual PropertyValue.
+     *
+     * 'value' can contain a parsed Inherit value,
+     *  parsed FromParent value, parsed FromNearestSpecified value,
+     *  or, in any order;
+     * border-width
+     *     a parsed NCName value containing a standard border width
+     * border-style
+     *     a parsed NCName value containing a standard border style
+     * border-color
+     *     a parsed ColorType value, or an NCName containing one of
+     *     the standard colors
+     *
+     * <p>The value(s) provided, if valid, are converted into a list
+     * containing the expansion of the shorthand.  The elements may
+     * be in any order.  A minimum of one value will be present.
+     *
+     *   a border-EDGE-color ColorType or inheritance value
+     *   a border-EDGE-style EnumType or inheritance value
+     *   a border-EDGE-width MappedEnumType or inheritance value
+     *
+     *  N.B. this is the order of elements defined in
+     *       PropertySets.borderRightExpansion
+     */
+    public static PropertyValue borderEdge
+        (PropertyValue value, int styleProp, int colorProp, int widthProp)
+                throws PropertyException
+    {
+        if ( ! (value instanceof PropertyValueList)) {
+            return processEdgeValue(value, styleProp, colorProp, widthProp);
+        } else {
+            return processEdgeList
+                ((PropertyValueList)value, styleProp, colorProp, widthProp);
+        }
+    }
+
+    private static PropertyValueList processEdgeValue
+        (PropertyValue value, int styleProp, int colorProp, int widthProp)
+            throws PropertyException
+    {
+        if (value instanceof Inherit |
+                value instanceof FromParent |
+                    value instanceof FromNearestSpecified)
+        {
+            // Construct a list of Inherit values
+            return PropertySets.expandAndCopySHand(value);
+        } else  {
+            // Make a list and pass to processList
+            PropertyValueList tmpList
+                    = new PropertyValueList(value.getProperty());
+            tmpList.add(value);
+            return processEdgeList(tmpList, styleProp, colorProp, widthProp);
+        }
+    }
+
+    private static PropertyValueList processEdgeList
+        (PropertyValueList value, int styleProp, int colorProp, int widthProp)
+                    throws PropertyException
+    {
+        int property = value.getProperty();
+        String propName = PropNames.getPropertyName(property);
+        PropertyValue   color= null,
+                        style = null,
+                        width = null;
+
+        PropertyValueList newlist = new PropertyValueList(property);
+        // This is a list
+        if (value.size() == 0)
+            throw new PropertyException
+                            ("Empty list for " + propName);
+        Iterator elements = ((PropertyValueList)value).iterator();
+
+        scanning_elements: while (elements.hasNext()) {
+            PropertyValue pval = (PropertyValue)(elements.next());
+            if (pval instanceof ColorType) {
+                if (color != null) MessageHandler.log(propName +
+                            ": duplicate color overrides previous color");
+                color = pval;
+                continue scanning_elements;
+            }
+            if (pval instanceof NCName) {
+                // Could be standard color, style Enum or width MappedEnum
+                PropertyValue colorFound = null;
+                PropertyValue styleFound = null;
+                PropertyValue widthFound = null;
+
+                String ncname = ((NCName)pval).getNCName();
+                try {
+                    styleFound = new EnumType(styleProp, ncname);
+                } catch (PropertyException e) {}
+                if (styleFound != null) {
+                    if (style != null) MessageHandler.log(propName +
+                            ": duplicate style overrides previous style");
+                    style = styleFound;
+                    continue scanning_elements;
+                }
+
+                try {
+                    widthFound = new MappedEnumType(widthProp, ncname);
+                } catch (PropertyException e) {}
+                if (widthFound != null) {
+                    if (width != null) MessageHandler.log(propName +
+                            ": duplicate width overrides previous width");
+                    width = widthFound;
+                    continue scanning_elements;
+                }
+
+                try {
+                    colorFound = new ColorType(colorProp, ncname);
+                } catch (PropertyException e) {};
+                if (colorFound != null) {
+                    if (color != null) MessageHandler.log(propName +
+                            ": duplicate color overrides previous color");
+                    color = colorFound;
+                    continue scanning_elements;
+                }
+
+                throw new PropertyException
+                    ("Unknown NCName value for " + propName + ": " + ncname);
+            }
+            throw new PropertyException
+                ("Invalid " + pval.getClass().getName() +
+                    " property value for " + propName);
+        }
+
+        // Now construct the list of PropertyValues with their
+        // associated property indices, as expanded from the
+        // border-right shorthand.
+        if (style != null) newlist.add(style);
+        if (color != null) newlist.add(style);
+        if (width != null) newlist.add(width);
+        return newlist;
+    }
+
+    /**
      * Pseudo-property class for common border style values occurring in a
      * number of classes.
      */
@@ -1690,6 +1825,30 @@ public abstract class Properties {
         public static final int traitMapping = SHORTHAND_MAP;
         public static final int initialValueType = NOTYPE_IT;
         public static final int inherited = NO;
+
+        /**
+         * 'value' is a PropertyValueList or an individual PropertyValue.
+         *
+         * <p>The value(s) provided, if valid, are converted into a list
+         * containing the expansion of the shorthand.  The elements may
+         * be in any order.  A minimum of one value will be present.
+         *
+         *   a border-EDGE-color ColorType or inheritance value
+         *   a border-EDGE-style EnumType or inheritance value
+         *   a border-EDGE-width MappedEnumType or inheritance value
+         *
+         *  N.B. this is the order of elements defined in
+         *       PropertySets.borderRightExpansion
+         */
+        public static PropertyValue complex(PropertyValue value)
+                    throws PropertyException
+        {
+            return Properties.borderEdge(value,
+                                    PropNames.BORDER_BOTTOM_STYLE,
+                                    PropNames.BORDER_BOTTOM_COLOR,
+                                    PropNames.BORDER_BOTTOM_WIDTH
+                                    );
+        }
     }
 
     public static class BorderBottomColor extends Properties {
@@ -2010,6 +2169,30 @@ public abstract class Properties {
         public static final int traitMapping = SHORTHAND_MAP;
         public static final int initialValueType = NOTYPE_IT;
         public static final int inherited = NO;
+
+        /**
+         * 'value' is a PropertyValueList or an individual PropertyValue.
+         *
+         * <p>The value(s) provided, if valid, are converted into a list
+         * containing the expansion of the shorthand.  The elements may
+         * be in any order.  A minimum of one value will be present.
+         *
+         *   a border-EDGE-color ColorType or inheritance value
+         *   a border-EDGE-style EnumType or inheritance value
+         *   a border-EDGE-width MappedEnumType or inheritance value
+         *
+         *  N.B. this is the order of elements defined in
+         *       PropertySets.borderRightExpansion
+         */
+        public static PropertyValue complex(PropertyValue value)
+                    throws PropertyException
+        {
+            return Properties.borderEdge(value,
+                                    PropNames.BORDER_LEFT_STYLE,
+                                    PropNames.BORDER_LEFT_COLOR,
+                                    PropNames.BORDER_LEFT_WIDTH
+                                    );
+        }
     }
 
     public static class BorderLeftColor extends Properties {
@@ -2072,6 +2255,31 @@ public abstract class Properties {
         public static final int traitMapping = SHORTHAND_MAP;
         public static final int initialValueType = NOTYPE_IT;
         public static final int inherited = NO;
+
+        /**
+         * 'value' is a PropertyValueList or an individual PropertyValue.
+         *
+         * <p>The value(s) provided, if valid, are converted into a list
+         * containing the expansion of the shorthand.  The elements may
+         * be in any order.  A minimum of one value will be present.
+         *
+         *   a border-EDGE-color ColorType or inheritance value
+         *   a border-EDGE-style EnumType or inheritance value
+         *   a border-EDGE-width MappedEnumType or inheritance value
+         *
+         *  N.B. this is the order of elements defined in
+         *       PropertySets.borderRightExpansion
+         */
+        public static PropertyValue complex(PropertyValue value)
+                    throws PropertyException
+        {
+            return Properties.borderEdge(value,
+                                    PropNames.BORDER_RIGHT_STYLE,
+                                    PropNames.BORDER_RIGHT_COLOR,
+                                    PropNames.BORDER_RIGHT_WIDTH
+                                    );
+        }
+
     }
 
     public static class BorderRightColor extends Properties {
@@ -2441,134 +2649,25 @@ public abstract class Properties {
         /**
          * 'value' is a PropertyValueList or an individual PropertyValue.
          *
-         * 'value' can contain a parsed Inherit value,
-         *  parsed FromParent value, parsed FromNearestSpecified value,
-         *  or, in any order;
-         * border-width
-         *     a parsed NCName value containing a standard border width
-         * border-style
-         *     a parsed NCName value containing a standard border style
-         * border-color
-         *     a parsed ColorType value, or an NCName containing one of
-         *     the standard colors
-         *
          * <p>The value(s) provided, if valid, are converted into a list
          * containing the expansion of the shorthand.  The elements may
          * be in any order.  A minimum of one value will be present.
          *
-         *   a border-top-color ColorType or inheritance value
-         *   a border-top-style EnumType or inheritance value
-         *   a border-top-width MappedEnumType or inheritance value
+         *   a border-EDGE-color ColorType or inheritance value
+         *   a border-EDGE-style EnumType or inheritance value
+         *   a border-EDGE-width MappedEnumType or inheritance value
          *
          *  N.B. this is the order of elements defined in
-         *       PropertySets.borderTopExpansion
+         *       PropertySets.borderRightExpansion
          */
         public static PropertyValue complex(PropertyValue value)
                     throws PropertyException
         {
-            if ( ! (value instanceof PropertyValueList)) {
-                return processValue(value);
-            } else {
-                return processList((PropertyValueList)value);
-            }
-        }
-
-        private static PropertyValueList processValue
-            (PropertyValue value) throws PropertyException
-        {
-            if (value instanceof Inherit |
-                    value instanceof FromParent |
-                        value instanceof FromNearestSpecified)
-            {
-                // Construct a list of Inherit values
-                return PropertySets.expandAndCopySHand(value);
-            } else  {
-                // Make a list and pass to processList
-                PropertyValueList tmpList
-                        = new PropertyValueList(value.getProperty());
-                tmpList.add(value);
-                return processList(tmpList);
-            }
-        }
-
-        private static PropertyValueList processList(PropertyValueList value)
-                        throws PropertyException
-        {
-            int property = value.getProperty();
-            PropertyValue   color= null,
-                            style = null,
-                            width = null;
-
-            PropertyValueList newlist = new PropertyValueList(property);
-            // This is a list
-            if (value.size() == 0)
-                throw new PropertyException
-                                ("Empty list for BorderTop");
-            Iterator elements = ((PropertyValueList)value).iterator();
-
-            scanning_elements: while (elements.hasNext()) {
-                PropertyValue pval = (PropertyValue)(elements.next());
-                if (pval instanceof ColorType) {
-                    if (color != null) MessageHandler.log("border-top: " +
-                                "duplicate color overrides previous color");
-                    color = pval;
-                    continue scanning_elements;
-                }
-                if (pval instanceof NCName) {
-                    // Could be standard color, style Enum or width MappedEnum
-                    PropertyValue colorFound = null;
-                    PropertyValue styleFound = null;
-                    PropertyValue widthFound = null;
-
-                    String ncname = ((NCName)pval).getNCName();
-                    try {
-                        styleFound = new EnumType
-                                        (PropNames.BORDER_TOP_STYLE, ncname);
-                    } catch (PropertyException e) {}
-                    if (styleFound != null) {
-                        if (style != null) MessageHandler.log("border-top: " +
-                                "duplicate style overrides previous style");
-                        style = styleFound;
-                        continue scanning_elements;
-                    }
-
-                    try {
-                        widthFound = new MappedEnumType
-                                        (PropNames.BORDER_TOP_WIDTH, ncname);
-                    } catch (PropertyException e) {}
-                    if (widthFound != null) {
-                        if (width != null) MessageHandler.log("border-top: " +
-                                "duplicate width overrides previous width");
-                        width = widthFound;
-                        continue scanning_elements;
-                    }
-
-                    try {
-                        colorFound = new ColorType
-                                        (PropNames.BORDER_TOP_COLOR, ncname);
-                    } catch (PropertyException e) {};
-                    if (colorFound != null) {
-                        if (color != null) MessageHandler.log("border-top: " +
-                                "duplicate color overrides previous color");
-                        color = colorFound;
-                        continue scanning_elements;
-                    }
-
-                    throw new PropertyException
-                        ("Unknown NCName value for border-top: " + ncname);
-                }
-                throw new PropertyException
-                    ("Invalid " + pval.getClass().getName() +
-                        " property value for border-top");
-            }
-
-            // Now construct the list of PropertyValues with their
-            // associated property indices, as expanded from the
-            // border-top shorthand.
-            if (style != null) newlist.add(style);
-            if (color != null) newlist.add(style);
-            if (width != null) newlist.add(width);
-            return newlist;
+            return Properties.borderEdge(value,
+                                    PropNames.BORDER_TOP_STYLE,
+                                    PropNames.BORDER_TOP_COLOR,
+                                    PropNames.BORDER_TOP_WIDTH
+                                    );
         }
     }
 
