@@ -66,7 +66,7 @@ public class FOAttributes {
     private HashMap foAttrMap = new HashMap(0);
 
     /**
-     * An sorted array of the keys (property indices) of the values in
+     * A sorted array of the keys (property indices) of the values in
      * <i>foAttrMap</i>.
      */
     private Integer[] foAttrKeys = null;
@@ -85,7 +85,7 @@ public class FOAttributes {
      * <p>The <tt>Attributes</tt> object on the event is scanned, and each
      * attribute is examined.  If the attribute is in the default namespace
      * for fo: attributes, it is an fo: property, and its value is entered
-     * into the <i>foAttrMap</i> <tt>Hashmap>/tt> indexed by the property
+     * into the <i>foAttrMap</i> <tt>Hashmap</tt> indexed by the property
      * index.
      * <p>If the attribute does not belong to the default namespace, its
      * value is entered into the appropriate <tt>HashMap</tt> in the
