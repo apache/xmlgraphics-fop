@@ -730,7 +730,7 @@ public class PSRenderer extends AbstractRenderer {
             if (back.getURL() != null) {
                 ImageFactory fact = ImageFactory.getInstance();
                 FopImage fopimage = fact.getImage(back.getURL(), userAgent);
-                if (fopimage != null && fopimage.load(FopImage.DIMENSIONS, userAgent)) {
+                if (fopimage != null && fopimage.load(FopImage.DIMENSIONS, userAgent.getLogger())) {
                     if (back.getRepeat() == BackgroundRepeat.REPEAT) {
                         // create a pattern for the image
                     } else {

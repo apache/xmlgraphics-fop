@@ -63,9 +63,6 @@ import com.sun.jimi.core.Jimi;
 // Avalon
 import org.apache.avalon.framework.logger.Logger;
 
-// FOP
-import org.apache.fop.apps.FOUserAgent;
-
 /**
  * FopImage object for several images types, using Jimi.
  * See Jimi documentation for supported image types.
@@ -84,20 +81,20 @@ public class JimiImage extends AbstractFopImage {
         }
     }
 
-    protected boolean loadDimensions(FOUserAgent ua) {
+    protected boolean loadDimensions(Logger logger) {
         if (this.bitmaps == null) {
-            loadImage(ua.getLogger());
+            loadImage(logger);
         }
 
         return this.bitmaps != null;
     }
 
     /**
-     * @see org.apache.fop.image.AbstractFopImage#loadBitmap(FOUserAgent)
+     * @see org.apache.fop.image.AbstractFopImage#loadBitmap(Logger)
      */
-    protected boolean loadBitmap(FOUserAgent ua) {
+    protected boolean loadBitmap(Logger logger) {
         if (this.bitmaps == null) {
-            loadImage(ua.getLogger());
+            loadImage(logger);
         }
 
         return this.bitmaps != null;

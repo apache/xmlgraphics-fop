@@ -595,7 +595,7 @@ public class PDFRenderer extends PrintRenderer {
             if (back.getURL() != null) {
                 ImageFactory fact = ImageFactory.getInstance();
                 FopImage fopimage = fact.getImage(back.getURL(), userAgent);
-                if (fopimage != null && fopimage.load(FopImage.DIMENSIONS, userAgent)) {
+                if (fopimage != null && fopimage.load(FopImage.DIMENSIONS, userAgent.getLogger())) {
                     if (back.getRepeat() == BackgroundRepeat.REPEAT) {
                         // create a pattern for the image
                     } else {
@@ -1102,12 +1102,12 @@ public class PDFRenderer extends PrintRenderer {
         if (fopimage == null) {
             return;
         }
-        if (!fopimage.load(FopImage.DIMENSIONS, userAgent)) {
+        if (!fopimage.load(FopImage.DIMENSIONS, userAgent.getLogger())) {
             return;
         }
         String mime = fopimage.getMimeType();
         if ("text/xml".equals(mime)) {
-            if (!fopimage.load(FopImage.ORIGINAL_DATA, userAgent)) {
+            if (!fopimage.load(FopImage.ORIGINAL_DATA, userAgent.getLogger())) {
                 return;
             }
             Document doc = ((XMLImage) fopimage).getDocument();
@@ -1115,7 +1115,7 @@ public class PDFRenderer extends PrintRenderer {
 
             renderDocument(doc, ns, pos);
         } else if ("image/svg+xml".equals(mime)) {
-            if (!fopimage.load(FopImage.ORIGINAL_DATA, userAgent)) {
+            if (!fopimage.load(FopImage.ORIGINAL_DATA, userAgent.getLogger())) {
                 return;
             }
             Document doc = ((XMLImage) fopimage).getDocument();
@@ -1123,14 +1123,14 @@ public class PDFRenderer extends PrintRenderer {
 
             renderDocument(doc, ns, pos);
         } else if ("image/eps".equals(mime)) {
-            if (!fopimage.load(FopImage.ORIGINAL_DATA, userAgent)) {
+            if (!fopimage.load(FopImage.ORIGINAL_DATA, userAgent.getLogger())) {
                 return;
             }
             FopPDFImage pdfimage = new FopPDFImage(fopimage, url);
             int xobj = pdfDoc.addImage(currentContext, pdfimage).getXNumber();
             fact.releaseImage(url, userAgent);
         } else if ("image/jpeg".equals(mime)) {
-            if (!fopimage.load(FopImage.ORIGINAL_DATA, userAgent)) {
+            if (!fopimage.load(FopImage.ORIGINAL_DATA, userAgent.getLogger())) {
                 return;
             }
             FopPDFImage pdfimage = new FopPDFImage(fopimage, url);
@@ -1142,7 +1142,7 @@ public class PDFRenderer extends PrintRenderer {
             placeImage((int) pos.getX() / 1000,
                        (int) pos.getY() / 1000, w, h, xobj);
         } else {
-            if (!fopimage.load(FopImage.BITMAP, userAgent)) {
+            if (!fopimage.load(FopImage.BITMAP, userAgent.getLogger())) {
                 return;
             }
             FopPDFImage pdfimage = new FopPDFImage(fopimage, url);

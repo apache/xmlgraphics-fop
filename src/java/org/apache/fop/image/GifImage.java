@@ -61,7 +61,7 @@ import java.io.IOException;
 import java.net.URLConnection;
 
 // FOP
-import org.apache.fop.apps.FOUserAgent;
+import org.apache.avalon.framework.logger.Logger;
 
 /**
  * FopImage object for GIF images, using Java native classes.
@@ -90,7 +90,7 @@ public class GifImage extends AbstractFopImage {
      * @param ua the user agent for loading
      * @return True if the load process succeeded
      */
-    protected boolean loadBitmap(FOUserAgent ua) {
+    protected boolean loadBitmap(Logger logger) {
         int[] tmpMap = null;
         try {
             URLConnection con = new DummyConnection(inputStream);
@@ -113,8 +113,8 @@ public class GifImage extends AbstractFopImage {
             try {
                 tmpMap = consumer.getImage();
             } catch (Exception ex) {
-                ua.getLogger().error("Image grabbing interrupted : "
-                                             + ex.getMessage(), ex);
+                logger.error("Image grabbing interrupted : "
+                              + ex.getMessage(), ex);
                 return false;
             }
 
@@ -178,10 +178,10 @@ public class GifImage extends AbstractFopImage {
                 this.isTransparent = false;
             }
         } catch (Exception ex) {
-            ua.getLogger().error("Error while loading image "
-                                         + "" + " : "
-                                         + ex.getClass() + " - "
-                                         + ex.getMessage(), ex);
+            logger.error("Error while loading image "
+                          + "" + " : "
+                          + ex.getClass() + " - "
+                          + ex.getMessage(), ex);
             return false;
         }
 

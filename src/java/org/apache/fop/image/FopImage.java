@@ -55,7 +55,7 @@ import java.awt.color.ColorSpace;
 import java.awt.color.ICC_Profile;
 import java.awt.Color;
 
-import org.apache.fop.apps.FOUserAgent;
+import org.apache.avalon.framework.logger.Logger;
 
 /**
  * Fop image interface for loading images.
@@ -93,10 +93,10 @@ public interface FopImage {
      * the information.
      *
      * @param type the type of loading required
-     * @param ua the user agent
+     * @param logger the Avalon logger
      * @return boolean true if the information could be loaded
      */
-    boolean load(int type, FOUserAgent ua);
+    boolean load(int type, Logger logger);
 
     /**
      * Returns the image width.
