@@ -1,35 +1,44 @@
 /*
  * $Id$
- * Copyright (C) 2001 The Apache Software Foundation. All rights reserved.
+ * Copyright (C) 2001-2003 The Apache Software Foundation. All rights reserved.
  * For details on use and redistribution please refer to the
  * LICENSE file included with these sources.
  */
 
 package org.apache.fop.tools.anttasks;
 
+import java.util.Date;
+import java.util.List;
+import java.util.StringTokenizer;
+import java.io.BufferedInputStream;
+import java.io.File;
+import java.io.IOException;
+import java.io.PrintWriter;
 
-import java.util.*;
-import java.io.*;
-import org.apache.tools.ant.Task;
 import org.apache.tools.ant.BuildException;
 import java.text.DateFormat;
 
 /**
  * This class is an extension of Ant, a script utility from
- * jakarta.apache.org.
- * It provides methods to compare two files
+ * http://ant.apache.org.
+ * It provides methods to compare two files.
  */
 
 public class Compare {
+    
+    private static final boolean IDENTICAL_FILES = true;
+    private static final boolean NOTIDENTICAL_FILES = false;
+
     private String referenceDirectory, testDirectory;
     private String[] filenameList;
     private String filenames;
-    private static boolean IDENTICAL_FILES = true;
-    private static boolean NOTIDENTICAL_FILES = false;
     private BufferedInputStream oldfileInput;
     private BufferedInputStream newfileInput;
 
-    // sets directory for test files
+    /**
+     * Sets directory for test files.
+     * @param testDirectory the test directory
+     */
     public void setTestDirectory(String testDirectory) {
         if (!(testDirectory.endsWith("/") | testDirectory.endsWith("\\"))) {
             testDirectory += File.separator;
@@ -37,7 +46,10 @@ public class Compare {
         this.testDirectory = testDirectory;
     }
 
-    // sets directory for reference files
+    /**
+     * Sets directory for reference files.
+     * @param referenceDirectory the reference directory
+     */
     public void setReferenceDirectory(String referenceDirectory) {
         if (!(referenceDirectory.endsWith("/")
                 | referenceDirectory.endsWith("\\"))) {
@@ -46,9 +58,13 @@ public class Compare {
         this.referenceDirectory = referenceDirectory;
     }
 
+    /**
+     * Sets the comma-separated list of files to process.
+     * @param filenames list of files, comma-separated
+     */
     public void setFilenames(String filenames) {
         StringTokenizer tokens = new StringTokenizer(filenames, ",");
-        ArrayList filenameListTmp = new ArrayList(20);
+        List filenameListTmp = new java.util.ArrayList(20);
         while (tokens.hasMoreTokens()) {
             filenameListTmp.add(tokens.nextToken());
         }
@@ -59,9 +75,9 @@ public class Compare {
     private boolean compareBytes(File oldFile, File newFile) {
         try {
             oldfileInput =
-                new BufferedInputStream(new FileInputStream(oldFile));
+                new BufferedInputStream(new java.io.FileInputStream(oldFile));
             newfileInput =
-                new BufferedInputStream(new FileInputStream(newFile));
+                new BufferedInputStream(new java.io.FileInputStream(newFile));
             int charactO = 0;
             int charactN = 0;
             boolean identical = true;
@@ -104,27 +120,32 @@ public class Compare {
         }
     }
 
-    public void writeHeader(PrintWriter results) {
+    private void writeHeader(PrintWriter results) {
         String dateTime = DateFormat.getDateTimeInstance(DateFormat.MEDIUM,
                 DateFormat.MEDIUM).format(new Date());
         results.println("<html><head><title>Test Results</title></head><body>\n");
         results.println("<h2>Compare Results<br>");
         results.println("<font size='1'>created " + dateTime
                         + "</font></h2>");
-        results.println("<table cellpadding='10' border='2'><thead><th align='center'>reference file</th><th align='center'>test file</th>"
+        results.println("<table cellpadding='10' border='2'><thead>"
+                        + "<th align='center'>reference file</th>"
+                        + "<th align='center'>test file</th>"
                         + "<th align='center'>identical?</th></thead>");
 
 
     }
 
-    // main method of task compare
+    /**
+     * Main method of task compare
+     * @throws BuildException If the execution fails.
+     */
     public void execute() throws BuildException {
         boolean identical = false;
         File oldFile;
         File newFile;
         try {
             PrintWriter results =
-                new PrintWriter(new FileWriter("results.html"), true);
+                new PrintWriter(new java.io.FileWriter("results.html"), true);
             this.writeHeader(results);
             for (int i = 0; i < filenameList.length; i++) {
                 oldFile = new File(referenceDirectory + filenameList[i]);

@@ -1,28 +1,34 @@
 /*
  * $Id$
- * Copyright (C) 2001 The Apache Software Foundation. All rights reserved.
+ * Copyright (C) 2001-2003 The Apache Software Foundation. All rights reserved.
  * For details on use and redistribution please refer to the
  * LICENSE file included with these sources.
  */
 
 package org.apache.fop.tools;
 
-import org.apache.fop.apps.*;
+import org.apache.fop.apps.Driver;
+import org.apache.fop.apps.FOInputHandler;
+import org.apache.fop.apps.FOPException;
+import org.apache.fop.apps.InputHandler;
+import org.apache.fop.apps.XSLTInputHandler;
 import org.apache.fop.fo.FOUserAgent;
 
 import org.apache.avalon.framework.logger.ConsoleLogger;
 import org.apache.avalon.framework.logger.AbstractLogEnabled;
 
-import java.io.*;
-import java.util.*;
+import java.io.File;
+import java.io.InputStream;
+import java.util.Map;
 
-import javax.xml.parsers.*;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
 
-import org.w3c.dom.*;
+import org.w3c.dom.Document;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 import org.xml.sax.XMLReader;
-import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
-import org.xml.sax.SAXParseException;
 
 /**
  * TestConverter is used to process a set of tests specified in
@@ -38,12 +44,13 @@ import org.xml.sax.SAXParseException;
  * interface.
  */
 public class TestConverter extends AbstractLogEnabled {
-    boolean failOnly = false;
-    boolean outputPDF = false;
-    File destdir;
-    File compare = null;
-    String baseDir = "./";
-    HashMap differ = new HashMap();
+    
+    private boolean failOnly = false;
+    private boolean outputPDF = false;
+    private File destdir;
+    private File compare = null;
+    private String baseDir = "./";
+    private Map differ = new java.util.HashMap();
 
     /**
      * This main method can be used to run the test converter from
@@ -54,6 +61,7 @@ public class TestConverter extends AbstractLogEnabled {
      * -b to set the base directory for where the testsuite and associated files are
      * -failOnly to process only the tests which are specified as fail in the test results
      * -pdf to output the result as pdf
+     * @param args command-line arguments
      */
     public static void main(String[] args) {
         if (args == null || args.length == 0) {
@@ -81,14 +89,27 @@ public class TestConverter extends AbstractLogEnabled {
         tc.runTests(testFile, "results", null);
     }
 
+    /**
+     * Controls whether to generate PDF or XML.
+     * @param pdf If True, PDF is generated, Area Tree XML otherwise.
+     */
     public void setOutputPDF(boolean pdf) {
         outputPDF = pdf;
     }
 
+    /**
+     * Controls whether to process only the tests which are specified as fail 
+     * in the test results.
+     * @param fail True if only fail tests should be processed
+     */
     public void setFailOnly(boolean fail) {
         failOnly = fail;
     }
 
+    /**
+     * Sets the base directory.
+     * @param str base directory
+     */
     public void setBaseDir(String str) {
         baseDir = str;
     }
@@ -97,8 +118,12 @@ public class TestConverter extends AbstractLogEnabled {
      * Run the Tests.
      * This runs the tests specified in the xml file fname.
      * The document is read as a dom and each testcase is covered.
+     * @param fname filename of the input file
+     * @param dest destination directory
+     * @param compDir comparison directory
+     * @return Map a Map containing differences
      */
-    public HashMap runTests(String fname, String dest, String compDir) {
+    public Map runTests(String fname, String dest, String compDir) {
         getLogger().debug("running tests in file:" + fname);
         try {
             if (compDir != null) {
@@ -144,6 +169,7 @@ public class TestConverter extends AbstractLogEnabled {
      * This goes through a test case in the document.
      * A testcase can contain a test, a result or more test cases.
      * A test case is handled recursively otherwise the test is run.
+     * @param tcase Test case node to run
      */
     protected void runTestCase(Node tcase) {
         if (tcase.hasAttributes()) {
@@ -160,7 +186,9 @@ public class TestConverter extends AbstractLogEnabled {
                 runTestCase(node);
             } else if (nodename.equals("test")) {
                 runTest(tcase, node);
-            } else if (nodename.equals("result")) {}
+            } else if (nodename.equals("result")) {
+                //nop
+            }
 
         }
 
@@ -172,6 +200,8 @@ public class TestConverter extends AbstractLogEnabled {
      * If the test has a result specified it is checked.
      * This creates an XSLTInputHandler to provide the input
      * for FOP and writes the data out to an XML are tree.
+     * @param testcase Test case to run
+     * @param test Test
      */
     protected void runTest(Node testcase, Node test) {
         String id = test.getAttributes().getNamedItem("id").getNodeValue();
@@ -193,8 +223,8 @@ public class TestConverter extends AbstractLogEnabled {
         if (xslNode != null) {
             xsl = xslNode.getNodeValue();
         }
-        getLogger().debug("converting xml:" + xml + " and xsl:" +
-                  xsl + " to area tree");
+        getLogger().debug("converting xml:" + xml + " and xsl:" 
+                  + xsl + " to area tree");
 
         try {
             File xmlFile = new File(baseDir + "/" + xml);
@@ -229,7 +259,7 @@ public class TestConverter extends AbstractLogEnabled {
                 driver.setRenderer(Driver.RENDER_XML);
             }
 
-            HashMap rendererOptions = new HashMap();
+            Map rendererOptions = new java.util.HashMap();
             rendererOptions.put("fineDetail", new Boolean(false));
             rendererOptions.put("consistentOutput", new Boolean(true));
             driver.getRenderer().setOptions(rendererOptions);
@@ -239,8 +269,8 @@ public class TestConverter extends AbstractLogEnabled {
             if (outname.endsWith(".xml")) {
                 outname = outname.substring(0, outname.length() - 4);
             }
-            driver.setOutputStream(new BufferedOutputStream(
-                                       new FileOutputStream(new File(destdir,
+            driver.setOutputStream(new java.io.BufferedOutputStream(
+                                       new java.io.FileOutputStream(new File(destdir,
                                        outname + (outputPDF ? ".pdf" : ".at.xml")))));
             getLogger().debug("ddir:" + destdir + " on:" + outname + ".pdf");
             driver.render(parser, inputHandler.getInputSource());
@@ -260,15 +290,17 @@ public class TestConverter extends AbstractLogEnabled {
 
     /**
      * Compare files.
-     * Returns true if equal.
+     * @param f1 first file
+     * @param f2 second file
+     * @return true if equal
      */
     protected boolean compareFiles(File f1, File f2) {
-        if(f1.length() != f2.length()) {
+        if (f1.length() != f2.length()) {
             return false;
         }
         try {
-            InputStream is1 = new BufferedInputStream(new FileInputStream(f1));
-            InputStream is2 = new BufferedInputStream(new FileInputStream(f2));
+            InputStream is1 = new java.io.BufferedInputStream(new java.io.FileInputStream(f1));
+            InputStream is2 = new java.io.BufferedInputStream(new java.io.FileInputStream(f2));
             while (true) {
                 int ch1 = is1.read();
                 int ch2 = is2.read();
@@ -280,12 +312,14 @@ public class TestConverter extends AbstractLogEnabled {
                     return false;
                 }
             }
-        } catch (Exception e) {}
+        } catch (Exception e) {
+            getLogger().error("Error while comparing files", e);
+        }
 
         return false;
     }
 
-    public void setParserFeatures(XMLReader parser) throws FOPException {
+    private void setParserFeatures(XMLReader parser) throws FOPException {
         try {
             parser.setFeature("http://xml.org/sax/features/namespace-prefixes",
                               true);
@@ -295,7 +329,7 @@ public class TestConverter extends AbstractLogEnabled {
         }
     }
 
-    protected Node locateResult(Node testcase, String id) {
+    private Node locateResult(Node testcase, String id) {
         NodeList cases = testcase.getChildNodes();
         for (int count = 0; count < cases.getLength(); count++) {
             Node node = cases.item(count);

@@ -1,41 +1,54 @@
 /*
  * $Id$
- * Copyright (C) 2001 The Apache Software Foundation. All rights reserved.
+ * Copyright (C) 2001-2003 The Apache Software Foundation. All rights reserved.
  * For details on use and redistribution please refer to the
  * LICENSE file included with these sources.
  */
 
 package org.apache.fop.tools;
 
-import java.util.*;
-import org.w3c.dom.*;
-import org.xml.sax.*;
+import org.w3c.dom.Document;
+import org.xml.sax.InputSource;
 
 /**
  * This is an InputSource to be used with DocumentReader.
  *
  * @author Kelly A Campbell
- *
  */
-
 public class DocumentInputSource extends InputSource {
-    private Document _document;
+    
+    private Document document;
 
+    /**
+     * Default constructor.
+     */
     public DocumentInputSource() {
         super();
     }
 
+    /**
+     * Main constructor
+     * @param document the DOM document to use as input
+     */
     public DocumentInputSource(Document document) {
         this();
-        _document = document;
+        setDocument(document);
     }
 
+    /**
+     * Returns the input document.
+     * @return the input DOM document.
+     */
     public Document getDocument() {
-        return _document;
+        return this.document;
     }
 
+    /**
+     * Sets the input document.
+     * @param document the DOM document to use as input
+     */
     public void setDocument(Document document) {
-        _document = document;
+        this.document = document;
     }
 
 }

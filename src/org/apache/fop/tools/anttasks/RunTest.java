@@ -1,6 +1,6 @@
 /*
  * $Id$
- * Copyright (C) 2001 The Apache Software Foundation. All rights reserved.
+ * Copyright (C) 2001-2003 The Apache Software Foundation. All rights reserved.
  * For details on use and redistribution please refer to the
  * LICENSE file included with these sources.
  */
@@ -8,22 +8,19 @@
 package org.apache.fop.tools.anttasks;
 
 // Ant
-import org.apache.tools.ant.*;
+import org.apache.tools.ant.BuildException;
+import org.apache.tools.ant.Task;
 
-import java.io.*;
-import java.lang.reflect.*;
+// Java
+import java.io.File;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.net.URLClassLoader;
 import java.net.URL;
 import java.net.MalformedURLException;
-import java.util.*;
+import java.util.Iterator;
+import java.util.Map;
 
-import javax.xml.parsers.*;
-
-import org.w3c.dom.*;
-import org.xml.sax.XMLReader;
-import org.xml.sax.InputSource;
-import org.xml.sax.SAXException;
-import org.xml.sax.SAXParseException;
 
 /**
  * Testing ant task.
@@ -32,33 +29,48 @@ import org.xml.sax.SAXParseException;
  * and check the results.
  */
 public class RunTest extends Task {
-    String basedir;
-    String testsuite = "";
-    String referenceJar = "";
-    String refVersion = "";
+    
+    private String basedir;
+    private String testsuite = "";
+    private String referenceJar = "";
+    private String refVersion = "";
 
-    public RunTest() {}
-
+    /**
+     * Sets the test suite name.
+     * @param str name of the test suite
+     */
     public void setTestSuite(String str) {
         testsuite = str;
     }
 
+    /**
+     * Sets the base directory.
+     * @param str base directory
+     */
     public void setBasedir(String str) {
         basedir = str;
     }
 
+    /**
+     * Sets the reference directory.
+     * @param str reference directory
+     */
     public void setReference(String str) {
         referenceJar = str;
     }
 
+    /**
+     * Sets the reference version.
+     * @param str reference version
+     */
     public void setRefVersion(String str) {
         refVersion = str;
     }
 
     /**
-     * Execute this ant task.
      * This creates the reference output, if required, then tests
      * the current build.
+     * @see org.apache.tools.ant.Task#execute()
      */
     public void execute() throws BuildException {
         runReference();
@@ -76,14 +88,14 @@ public class RunTest extends Task {
             ClassLoader loader = new URLClassLoader(new URL[] {
                 new URL("file:build/fop.jar")
             });
-            HashMap diff = runConverter(loader, "areatree",
+            Map diff = runConverter(loader, "areatree",
                                           "reference/output/");
-            if (diff != null &&!diff.isEmpty()) {
+            if (diff != null && !diff.isEmpty()) {
                 System.out.println("====================================");
                 System.out.println("The following files differ:");
                 boolean broke = false;
                 for (Iterator keys = diff.keySet().iterator();
-                        keys.hasNext(); ) {
+                        keys.hasNext();) {
                     Object fname = keys.next();
                     Boolean pass = (Boolean)diff.get(fname);
                     System.out.println("file: " + fname
@@ -107,6 +119,7 @@ public class RunTest extends Task {
      * run and then checks the version of the reference jar against
      * the version required.
      * The reference output is then created.
+     * @throws BuildException if an error occurs
      */
     protected void runReference() throws BuildException {
         // check not already done
@@ -124,7 +137,7 @@ public class RunTest extends Task {
             try {
                 Class cla = Class.forName("org.apache.fop.apps.Options",
                                           true, loader);
-                Object opts = cla.newInstance();
+                /*Object opts =*/ cla.newInstance();
                 cla = Class.forName("org.apache.fop.apps.Version", true,
                                     loader);
                 Method get = cla.getMethod("getVersion", new Class[]{});
@@ -164,12 +177,15 @@ public class RunTest extends Task {
      * then runs the test suite for the current test suite
      * file in the base directory.
      * @param loader the class loader to use to run the tests with
+     * @param dest destination directory
+     * @param compDir comparison directory
+     * @return A Map with differences
      */
-    protected HashMap runConverter(ClassLoader loader, String dest,
+    protected Map runConverter(ClassLoader loader, String dest,
                                      String compDir) {
         String converter = "org.apache.fop.tools.TestConverter";
 
-        HashMap diff = null;
+        Map diff = null;
         try {
             Class cla = Class.forName(converter, true, loader);
             Object tc = cla.newInstance();
@@ -185,7 +201,7 @@ public class RunTest extends Task {
             meth = cla.getMethod("runTests", new Class[] {
                 String.class, String.class, String.class
             });
-            diff = (HashMap)meth.invoke(tc, new Object[] {
+            diff = (Map)meth.invoke(tc, new Object[] {
                 testsuite, dest, compDir
             });
         } catch (Exception e) {

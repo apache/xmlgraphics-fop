@@ -1,6 +1,6 @@
 /*
  * $Id$
- * Copyright (C) 2001 The Apache Software Foundation. All rights reserved.
+ * Copyright (C) 2001-2003 The Apache Software Foundation. All rights reserved.
  * For details on use and redistribution please refer to the
  * LICENSE file included with these sources.
  */
@@ -8,13 +8,23 @@
 package org.apache.fop.tools;
 
 import java.io.IOException;
-// import java.util.*;
 
 // DOM
-import org.w3c.dom.*;
+import org.w3c.dom.Attr;
+import org.w3c.dom.Document;
+import org.w3c.dom.NamedNodeMap;
+import org.w3c.dom.Node;
 
 // SAX
-import org.xml.sax.*;
+import org.xml.sax.ContentHandler;
+import org.xml.sax.DTDHandler;
+import org.xml.sax.EntityResolver;
+import org.xml.sax.ErrorHandler;
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
+import org.xml.sax.SAXNotRecognizedException;
+import org.xml.sax.SAXNotSupportedException;
+import org.xml.sax.XMLReader;
 import org.xml.sax.helpers.AttributesImpl;
 
 /**
@@ -30,8 +40,8 @@ public class DocumentReader implements XMLReader {
     // //////////////////////////////////////////////////////////////////
     // Configuration.
     // //////////////////////////////////////////////////////////////////
-    private boolean _namespaces = true;
-    private boolean _namespace_prefixes = true;
+    private boolean namespaces = true;
+    private boolean namespacePrefixes = true;
 
 
     /**
@@ -82,9 +92,9 @@ public class DocumentReader implements XMLReader {
      *
      * @param name The feature name, which is a fully-qualified URI.
      * @return The current state of the feature (true or false).
-     * @exception org.xml.sax.SAXNotRecognizedException When the
+     * @exception SAXNotRecognizedException When the
      * XMLReader does not recognize the feature name.
-     * @exception org.xml.sax.SAXNotSupportedException When the
+     * @exception SAXNotSupportedException When the
      * XMLReader recognizes the feature name but
      * cannot determine its value at this time.
      * @see #setFeature
@@ -92,12 +102,12 @@ public class DocumentReader implements XMLReader {
     public boolean getFeature(String name)
             throws SAXNotRecognizedException, SAXNotSupportedException {
         if ("http://xml.org/sax/features/namespaces".equals(name)) {
-            return _namespaces;
+            return namespaces;
         } else if ("http://xml.org/sax/features/namespace-prefixes".equals(name)) {
-            return _namespace_prefixes;
+            return namespacePrefixes;
         } else {
             throw new SAXNotRecognizedException("Feature '" + name
-                                                + "' not recognized or supported by Document2SAXAdapter");
+                    + "' not recognized or supported by Document2SAXAdapter");
         }
 
     }
@@ -123,10 +133,10 @@ public class DocumentReader implements XMLReader {
      * a parse.</p>
      *
      * @param name The feature name, which is a fully-qualified URI.
-     * @param state The requested state of the feature (true or false).
-     * @exception org.xml.sax.SAXNotRecognizedException When the
+     * @param value The requested state of the feature (true or false).
+     * @exception SAXNotRecognizedException When the
      * XMLReader does not recognize the feature name.
-     * @exception org.xml.sax.SAXNotSupportedException When the
+     * @exception SAXNotSupportedException When the
      * XMLReader recognizes the feature name but
      * cannot set the requested value.
      * @see #getFeature
@@ -134,12 +144,12 @@ public class DocumentReader implements XMLReader {
     public void setFeature(String name, boolean value)
             throws SAXNotRecognizedException, SAXNotSupportedException {
         if ("http://xml.org/sax/features/namespaces".equals(name)) {
-            _namespaces = value;
+            namespaces = value;
         } else if ("http://xml.org/sax/features/namespace-prefixes".equals(name)) {
-            _namespace_prefixes = value;
+            namespacePrefixes = value;
         } else {
             throw new SAXNotRecognizedException("Feature '" + name
-                                                + "' not recognized or supported by Document2SAXAdapter");
+                    + "' not recognized or supported by Document2SAXAdapter");
         }
 
     }
@@ -167,9 +177,9 @@ public class DocumentReader implements XMLReader {
      *
      * @param name The property name, which is a fully-qualified URI.
      * @return The current value of the property.
-     * @exception org.xml.sax.SAXNotRecognizedException When the
+     * @exception SAXNotRecognizedException When the
      * XMLReader does not recognize the property name.
-     * @exception org.xml.sax.SAXNotSupportedException When the
+     * @exception SAXNotSupportedException When the
      * XMLReader recognizes the property name but
      * cannot determine its value at this time.
      * @see #setProperty
@@ -177,7 +187,7 @@ public class DocumentReader implements XMLReader {
     public Object getProperty(String name)
             throws SAXNotRecognizedException, SAXNotSupportedException {
         throw new SAXNotRecognizedException("Property '" + name
-                                            + "' not recognized or supported by Document2SAXAdapter");
+                + "' not recognized or supported by Document2SAXAdapter");
     }
 
 
@@ -203,17 +213,17 @@ public class DocumentReader implements XMLReader {
      * extended handlers.</p>
      *
      * @param name The property name, which is a fully-qualified URI.
-     * @param state The requested value for the property.
-     * @exception org.xml.sax.SAXNotRecognizedException When the
+     * @param value The requested value for the property.
+     * @exception SAXNotRecognizedException When the
      * XMLReader does not recognize the property name.
-     * @exception org.xml.sax.SAXNotSupportedException When the
+     * @exception SAXNotSupportedException When the
      * XMLReader recognizes the property name but
      * cannot set the requested value.
      */
     public void setProperty(String name, Object value)
             throws SAXNotRecognizedException, SAXNotSupportedException {
         throw new SAXNotRecognizedException("Property '" + name
-                                            + "' not recognized or supported by Document2SAXAdapter");
+                + "' not recognized or supported by Document2SAXAdapter");
     }
 
 
@@ -221,10 +231,10 @@ public class DocumentReader implements XMLReader {
     // //////////////////////////////////////////////////////////////////
     // Event handlers.
     // //////////////////////////////////////////////////////////////////
-    private EntityResolver _entityResolver = null;
-    private DTDHandler _dtdHandler = null;
-    private ContentHandler _contentHandler = null;
-    private ErrorHandler _errorHandler = null;
+    private EntityResolver entityResolver = null;
+    private DTDHandler dtdHandler = null;
+    private ContentHandler contentHandler = null;
+    private ErrorHandler errorHandler = null;
 
 
     /**
@@ -238,12 +248,10 @@ public class DocumentReader implements XMLReader {
      * resolver immediately.</p>
      *
      * @param resolver The entity resolver.
-     * @exception java.lang.NullPointerException If the resolver
-     * argument is null.
      * @see #getEntityResolver
      */
     public void setEntityResolver(EntityResolver resolver) {
-        _entityResolver = resolver;
+        entityResolver = resolver;
     }
 
 
@@ -256,7 +264,7 @@ public class DocumentReader implements XMLReader {
      * @see #setEntityResolver
      */
     public EntityResolver getEntityResolver() {
-        return _entityResolver;
+        return entityResolver;
     }
 
 
@@ -272,12 +280,10 @@ public class DocumentReader implements XMLReader {
      * handler immediately.</p>
      *
      * @param handler The DTD handler.
-     * @exception java.lang.NullPointerException If the handler
-     * argument is null.
      * @see #getDTDHandler
      */
     public void setDTDHandler(DTDHandler handler) {
-        _dtdHandler = handler;
+        dtdHandler = handler;
     }
 
 
@@ -290,7 +296,7 @@ public class DocumentReader implements XMLReader {
      * @see #setDTDHandler
      */
     public DTDHandler getDTDHandler() {
-        return _dtdHandler;
+        return dtdHandler;
     }
 
 
@@ -307,12 +313,10 @@ public class DocumentReader implements XMLReader {
      * handler immediately.</p>
      *
      * @param handler The content handler.
-     * @exception java.lang.NullPointerException If the handler
-     * argument is null.
      * @see #getContentHandler
      */
     public void setContentHandler(ContentHandler handler) {
-        _contentHandler = handler;
+        contentHandler = handler;
     }
 
 
@@ -325,7 +329,7 @@ public class DocumentReader implements XMLReader {
      * @see #setContentHandler
      */
     public ContentHandler getContentHandler() {
-        return _contentHandler;
+        return contentHandler;
     }
 
 
@@ -344,12 +348,10 @@ public class DocumentReader implements XMLReader {
      * handler immediately.</p>
      *
      * @param handler The error handler.
-     * @exception java.lang.NullPointerException If the handler
-     * argument is null.
      * @see #getErrorHandler
      */
     public void setErrorHandler(ErrorHandler handler) {
-        _errorHandler = handler;
+        errorHandler = handler;
     }
 
     /**
@@ -360,7 +362,7 @@ public class DocumentReader implements XMLReader {
      * @see #setErrorHandler
      */
     public ErrorHandler getErrorHandler() {
-        return _errorHandler;
+        return errorHandler;
     }
 
 
@@ -374,11 +376,11 @@ public class DocumentReader implements XMLReader {
      *
      *
      *
-     * @param source The input source for the top-level of the
+     * @param input The input source for the top-level of the
      * XML document.
-     * @exception org.xml.sax.SAXException Any SAX exception, possibly
+     * @exception SAXException Any SAX exception, possibly
      * wrapping another exception.
-     * @exception java.io.IOException An IO exception from the parser,
+     * @exception IOException An IO exception from the parser,
      * possibly from a byte stream or character stream
      * supplied by the application.
      * @see org.xml.sax.InputSource
@@ -391,7 +393,7 @@ public class DocumentReader implements XMLReader {
     public void parse(InputSource input) throws IOException, SAXException {
         if (input instanceof DocumentInputSource) {
             Document document = ((DocumentInputSource)input).getDocument();
-            if (_contentHandler == null) {
+            if (contentHandler == null) {
                 throw new SAXException("ContentHandler is null. Please use setContentHandler()");
             }
 
@@ -411,7 +413,7 @@ public class DocumentReader implements XMLReader {
             while (currentNode != null) {
                 switch (currentNode.getNodeType()) {
                 case Node.DOCUMENT_NODE:
-                    _contentHandler.startDocument();
+                    contentHandler.startDocument();
                     break;
                 case Node.CDATA_SECTION_NODE:
                 case Node.TEXT_NODE:
@@ -425,10 +427,10 @@ public class DocumentReader implements XMLReader {
                         array = new char[datalen];
                     }
                     data.getChars(0, datalen, array, 0);
-                    _contentHandler.characters(array, 0, datalen);
+                    contentHandler.characters(array, 0, datalen);
                     break;
                 case Node.PROCESSING_INSTRUCTION_NODE:
-                    _contentHandler.processingInstruction(currentNode.getNodeName(),
+                    contentHandler.processingInstruction(currentNode.getNodeName(),
                                                           currentNode.getNodeValue());
                     break;
                 case Node.ELEMENT_NODE:
@@ -441,7 +443,7 @@ public class DocumentReader implements XMLReader {
                                                  att.getName(), "CDATA",
                                                  att.getValue());
                     }
-                    _contentHandler.startElement(currentNode.getNamespaceURI(),
+                    contentHandler.startElement(currentNode.getNamespaceURI(),
                                                  currentNode.getLocalName(),
                                                  currentNode.getNodeName(),
                                                  currentAtts);
@@ -457,10 +459,10 @@ public class DocumentReader implements XMLReader {
                 while (currentNode != null) {
                     switch (currentNode.getNodeType()) {
                     case Node.DOCUMENT_NODE:
-                        _contentHandler.endDocument();
+                        contentHandler.endDocument();
                         break;
                     case Node.ELEMENT_NODE:
-                        _contentHandler.endElement(currentNode.getNamespaceURI(),
+                        contentHandler.endElement(currentNode.getNamespaceURI(),
                                                    currentNode.getLocalName(),
                                                    currentNode.getNodeName());
                         break;
@@ -490,9 +492,9 @@ public class DocumentReader implements XMLReader {
      * instead
      *
      * @param systemId The system identifier (URI).
-     * @exception org.xml.sax.SAXException Any SAX exception, possibly
+     * @exception SAXException Any SAX exception, possibly
      * wrapping another exception.
-     * @exception java.io.IOException An IO exception from the parser,
+     * @exception IOException An IO exception from the parser,
      * possibly from a byte stream or character stream
      * supplied by the application.
      * @see #parse(org.xml.sax.InputSource)

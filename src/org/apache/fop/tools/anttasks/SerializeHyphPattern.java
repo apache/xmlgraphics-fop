@@ -1,22 +1,22 @@
 /*
  * $Id$
- * Copyright (C) 2001 The Apache Software Foundation. All rights reserved.
+ * Copyright (C) 2001-2003 The Apache Software Foundation. All rights reserved.
  * For details on use and redistribution please refer to the
  * LICENSE file included with these sources.
  */
 
 package org.apache.fop.tools.anttasks;
 
-// package org.apache.tools.ant.taskdefs;
+// Java
+import java.io.File;
+import java.io.IOException;
+import java.io.ObjectOutputStream;
 
+// Ant
 import org.apache.tools.ant.taskdefs.MatchingTask;
 import org.apache.tools.ant.DirectoryScanner;
-import java.net.*;
-import java.io.*;
-import java.util.*;
-import org.xml.sax.SAXException;
 
-// fop
+// FOP
 import org.apache.fop.layout.hyphenation.HyphenationTree;
 import org.apache.fop.layout.hyphenation.HyphenationException;
 
@@ -30,7 +30,7 @@ public class SerializeHyphPattern extends MatchingTask {
     private boolean errorDump = false;
 
     /**
-     * Main method, which is called by ant.
+     * @see org.apache.tools.ant.Task#execute()
      */
     public void execute() throws org.apache.tools.ant.BuildException {
         DirectoryScanner ds = this.getDirectoryScanner(sourceDir);
@@ -42,8 +42,8 @@ public class SerializeHyphPattern extends MatchingTask {
 
 
     /**
-     * Sets the source directory
-     *
+     * Sets the source directory.
+     * @param sourceDir source directory
      */
     public void setSourceDir(String sourceDir) {
         File dir = new File(sourceDir);
@@ -57,7 +57,7 @@ public class SerializeHyphPattern extends MatchingTask {
 
     /**
      * Sets the target directory
-     *
+     * @param targetDir target directory
      */
     public void setTargetDir(String targetDir) {
         File dir = new File(targetDir);
@@ -65,8 +65,8 @@ public class SerializeHyphPattern extends MatchingTask {
     }
 
     /**
-     * more error information
-     *
+     * Controls the amount of error information dumped.
+     * @param errorDump True if more error info should be provided
      */
     public void setErrorDump(boolean errorDump) {
         this.errorDump = errorDump;
@@ -80,7 +80,7 @@ public class SerializeHyphPattern extends MatchingTask {
     private void processFile(String filename) {
         File infile = new File(sourceDir, filename + ".xml");
         File outfile = new File(targetDir, filename + ".hyp");
-        long outfileLastModified = outfile.lastModified();
+        //long outfileLastModified = outfile.lastModified();
         boolean startProcess = true;
 
         startProcess = rebuild(infile, outfile);
@@ -110,8 +110,9 @@ public class SerializeHyphPattern extends MatchingTask {
         }
         // serialize class
         try {
-            ObjectOutputStream out =
-                new ObjectOutputStream(new BufferedOutputStream(new FileOutputStream(outfile)));
+            ObjectOutputStream out = new ObjectOutputStream(
+                    new java.io.BufferedOutputStream(
+                    new java.io.FileOutputStream(outfile)));
             out.writeObject(hTree);
             out.close();
         } catch (IOException ioe) {

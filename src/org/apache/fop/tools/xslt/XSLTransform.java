@@ -1,18 +1,29 @@
 /*
  * $Id$
- * Copyright (C) 2001 The Apache Software Foundation. All rights reserved.
+ * Copyright (C) 2001-2003 The Apache Software Foundation. All rights reserved.
  * For details on use and redistribution please refer to the
  * LICENSE file included with these sources.
  */
 
 package org.apache.fop.tools.xslt;
 
-import java.io.*;
-import java.lang.reflect.*;
+import java.io.InputStream;
+import java.io.Writer;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 
-
+/**
+ * Class for transforming XML using XSLT. Wraps either Trax (JAXP) or Xalan 1.x.
+ */
 public class XSLTransform {
 
+    /**
+     * Transforms an XML file using XSLT.
+     * @param xmlSource Filename of the source XML file
+     * @param xslURL Filename of the XSLT filename
+     * @param outputFile Target filename
+     * @throws Exception If the conversion fails
+     */
     public static void transform(String xmlSource, String xslURL,
                                  String outputFile) throws Exception {
         Class[] argTypes = {
@@ -24,6 +35,13 @@ public class XSLTransform {
         transform(params, argTypes);
     }
 
+    /**
+     * Transforms an XML file using XSLT.
+     * @param xmlSource Source DOM Document
+     * @param xslURL Filename of the XSLT filename
+     * @param outputFile Target filename
+     * @throws Exception If the conversion fails
+     */
     public static void transform(org.w3c.dom.Document xmlSource,
                                  String xslURL,
                                  String outputFile) throws Exception {
@@ -38,6 +56,13 @@ public class XSLTransform {
 
     }
 
+    /**
+     * Transforms an XML file using XSLT.
+     * @param xmlSource Filename of the source XML file
+     * @param xslURL Filename of the XSLT filename
+     * @param outputWriter Target Writer instance
+     * @throws Exception If the conversion fails
+     */
     public static void transform(String xmlSource, String xslURL,
                                  Writer outputWriter) throws Exception {
         Class[] argTypes = {
@@ -50,6 +75,13 @@ public class XSLTransform {
 
     }
 
+    /**
+     * Transforms an XML file using XSLT.
+     * @param xmlSource Source DOM Document
+     * @param xsl Filename of the XSLT filename
+     * @param outputDoc Target DOM document
+     * @throws Exception If the conversion fails
+     */
     public static void transform(org.w3c.dom.Document xmlSource,
                                  InputStream xsl,
                                  org.w3c.dom.Document outputDoc) throws Exception {
@@ -97,7 +129,9 @@ public class XSLTransform {
                 Class.forName("org.apache.fop.tools.xslt.TraxTransform");
             return transformer;
 
-        } catch (ClassNotFoundException ex) {}
+        } catch (ClassNotFoundException ex) {
+            //nop
+        }
         // otherwise, try regular xalan1
         try {
             Class transformer =
@@ -106,7 +140,9 @@ public class XSLTransform {
             transformer =
                 Class.forName("org.apache.fop.tools.xslt.Xalan1Transform");
             return transformer;
-        } catch (ClassNotFoundException ex) {}
+        } catch (ClassNotFoundException ex) {
+            //nop
+        }
         return null;
 
     }
