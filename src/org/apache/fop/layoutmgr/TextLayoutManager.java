@@ -85,7 +85,13 @@ public class TextLayoutManager extends AbstractLayoutManager {
     /** Number of space characters after previous possible break position. */
     private int m_iNbSpacesPending;
 
-
+    /**
+     * Create a Text layout manager.
+     *
+     * @param fobj the fo object that contains the text
+     * @param chars the characters
+     * @param textInfo the text information for doing layout
+     */
     public TextLayoutManager(FObj fobj, char[] chars, TextInfo textInfo) {
         super(fobj);
         this.chars = chars;
@@ -102,22 +108,23 @@ public class TextLayoutManager extends AbstractLayoutManager {
                                 ws.bConditional, ws.bForcing, ws.iPrecedence);
     }
 
-
+    /**
+     * Text always generates inline areas.
+     *
+     * @return true
+     */
     public boolean generatesInlineAreas() {
         return true;
     }
 
-    /* METHODS FROM LeafNodeLayoutManager,
-     * used in Keiron's implemenation, but not here (yet at least).
+    /**
+     * Get the word characters between two positions.
+     * This is used when doing hyphenation or other word manipulations.
+     *
+     * @param sbChars the string buffer to put the chars into
+     * @param bp1 the start position
+     * @param bp2 the end position
      */
-    public int size() {
-        return 0;
-    }
-
-    public InlineArea get(int index) {
-        return null;
-    }
-
     public void getWordChars(StringBuffer sbChars, Position bp1,
                              Position bp2) {
         LeafPosition endPos = (LeafPosition) bp2;
@@ -136,6 +143,9 @@ public class TextLayoutManager extends AbstractLayoutManager {
      * start a new line. This should only be called in the "START" condition
      * if a previous inline BP couldn't end the line.
      * Return true if the first character is a potential linebreak character.
+     *
+     * @param context the layout context for determining a break
+     * @return true if can break before this text
      */
     public boolean canBreakBefore(LayoutContext context) {
         char c = chars[m_iNextStart];
@@ -144,8 +154,11 @@ public class TextLayoutManager extends AbstractLayoutManager {
                                     s_breakChars.indexOf(c) >= 0)));
     }
 
-    /** Reset position for returning next BreakPossibility. */
-
+    /**
+     * Reset position for returning next BreakPossibility.
+     *
+     * @param prevPos the position to reset to
+     */
     public void resetPosition(Position prevPos) {
         if (prevPos != null) {
             // ASSERT (prevPos.getLM() == this)
@@ -171,7 +184,6 @@ public class TextLayoutManager extends AbstractLayoutManager {
             setFinished(false);
         }
     }
-
 
     // TODO: see if we can use normal getNextBreakPoss for this with
     // extra hyphenation information in LayoutContext
@@ -361,7 +373,6 @@ public class TextLayoutManager extends AbstractLayoutManager {
                              context.getLeadingSpace(), null, iFlags, iWScount);
     }
 
-
     private BreakPoss makeBreakPoss(short iWordStart,
                                     MinOptMax spaceIPD, int wordDim,
                                     SpaceSpecifier leadingSpace, SpaceSpecifier trailingSpace,
@@ -466,7 +477,12 @@ public class TextLayoutManager extends AbstractLayoutManager {
 
         // Make an area containing all characters between start and end.
         Word word = null;
-        String str = new String(chars, iStart, ai.m_iBreakIndex - iStart);
+        int adjust = 0;
+        // ingnore newline character
+        if(chars[ai.m_iBreakIndex - 1] == NEWLINE) {
+            adjust = 1;
+        }
+        String str = new String(chars, iStart, ai.m_iBreakIndex - iStart - adjust);
         //if(!"".equals(str.trim())) {
             word = createWord(
                       str,
@@ -501,8 +517,15 @@ public class TextLayoutManager extends AbstractLayoutManager {
         }
     }
 
-
-
+    /**
+     * Create an inline word area.
+     * This creates a Word and sets up the various attributes.
+     *
+     * @param str the string for the word
+     * @param width the width that the word uses
+     * @param base the baseline position
+     * @return the new word area
+     */
     protected Word createWord(String str, int width, int base) {
         Word curWordArea = new Word();
         curWordArea.setWidth(width);
