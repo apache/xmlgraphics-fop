@@ -88,6 +88,11 @@ public class TableBody extends FObj {
      */
     protected void endOfNode() throws FOPException {
         getFOEventHandler().endBody(this);
+        if (childNodes == null || childNodes.size() == 0) {
+            getLogger().error("fo:table-body must not be empty. "
+                    + "Expected: (table-row+|table-cell+)");
+            getParent().removeChild(this);
+        }
         convertCellsToRows();
     }
 
@@ -98,7 +103,9 @@ public class TableBody extends FObj {
      */
     private void convertCellsToRows() throws FOPException {
         try {
-            if (childNodes.size() == 0 || childNodes.get(0) instanceof TableRow) {
+            if (childNodes == null 
+                    || childNodes.size() == 0 
+                    || childNodes.get(0) instanceof TableRow) {
                 return;
             }
             //getLogger().debug("Converting cells to rows...");

@@ -170,6 +170,13 @@ public abstract class FObj extends FONode implements Constants {
         }
     }
 
+    /** @see org.apache.fop.fo.FONode#removeChild(org.apache.fop.fo.FONode) */
+    public void removeChild(FONode child) {
+        if (childNodes != null) {
+            childNodes.remove(child);
+        }
+    }
+    
     /**
      * Find the nearest parent, grandparent, etc. FONode that is also an FObj
      * @return FObj the nearest ancestor FONode that is an FObj
