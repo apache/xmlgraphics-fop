@@ -63,6 +63,7 @@ public interface ShorthandParser {
      * @return Property object corresponding to propName
      */
     Property getValueForProperty(int propId,
+                                 ListProperty listProperty,
                                  Property.Maker maker,
                                  PropertyList propertyList);
 }

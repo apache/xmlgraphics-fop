@@ -64,6 +64,7 @@ public class LengthProperty extends Property {
      * Inner class for making instances of LengthProperty
      */
     public static class Maker extends Property.Maker {
+        private boolean autoOk = false;
 
         /**
          * @param name name of property for which Maker should be created
@@ -85,7 +86,15 @@ public class LengthProperty extends Property {
          * @return false (auto-length is not allowed for Length values)
          */
         protected boolean isAutoLengthAllowed() {
-            return false;
+            return autoOk;
+        }
+
+        /**
+         * Set the auto length flag.
+         * @param inherited
+         */
+        public void setAutoOk(boolean autoOk) {
+            this.autoOk = autoOk;
         }
 
         /**
@@ -94,6 +103,10 @@ public class LengthProperty extends Property {
         public Property convertProperty(Property p,
                                         PropertyList propertyList,
                                         FObj fo) throws FOPException {
+            Property prop = super.convertProperty(p, propertyList, fo);
+            if (prop != null) {
+                return prop;
+            }
             if (isAutoLengthAllowed()) {
                 String pval = p.getString();
                 if (pval != null && pval.equals("auto")) {

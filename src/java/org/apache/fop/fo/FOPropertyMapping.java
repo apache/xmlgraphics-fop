@@ -48,648 +48,2486 @@
  * James Tauber <jtauber@jtauber.com>. For more information on the Apache
  * Software Foundation, please see <http://www.apache.org/>.
  */
-
 package org.apache.fop.fo;
 
 import java.util.HashMap;
-import java.util.Set;
-import org.apache.fop.fo.properties.*;
+import java.util.Map;
 
-//import org.apache.fop.svg.*;
+import org.apache.fop.datatypes.ColorType;
+import org.apache.fop.datatypes.LengthBase;
+import org.apache.fop.datatypes.ToBeImplementedProperty;
 
+/**
+ * This class creates and returns an array of Property.Maker instances
+ * indexed by the PR_* propId from Constants.java. 
+ */
 public class FOPropertyMapping implements Constants {
+    private static Map s_htPropNames = new HashMap();
+    private static Map s_htSubPropNames = new HashMap();
+    private static Map s_htPropIds = new HashMap();
+    
+    private static Property.Maker[] s_generics = 
+                new Property.Maker[PROPERTY_COUNT + 1];
+    
+    // The rest is only used during the building of the s_generics array.
+    private Property[] enums = null;
+    
+    private Property.Maker genericColor = null;
+    private Property.Maker genericBoolean = null;
+    private Property.Maker genericKeep = null;
+    private Property.Maker genericCondLength = null;    
+    private Property.Maker genericCondPadding = null;
+    private Property.Maker genericPadding = null;
+    private Property.Maker genericCondBorderWidth = null;
+    private Property.Maker genericBorderWidth = null;
+    private Property.Maker genericBorderStyle = null;
+    private Property.Maker genericBreak = null;
+    private Property.Maker genericSpace = null;
+    
+    /**
+     * Create the generic property maker templates. These templates
+     * are used be the actual makers as a parameter to .useGeneric(...).
+     */
+    public void createGenerics() {
+        Property.Maker sub;
+        
+        genericColor = new ColorTypeProperty.Maker(0);
+        genericColor.addKeyword("aliceblue", "#f0f8ff");
+        genericColor.addKeyword("antiquewhite", "#faebd7");
+        genericColor.addKeyword("aqua", "#00ffff");
+        genericColor.addKeyword("aquamarine", "#7fffd4");
+        genericColor.addKeyword("azure", "#f0ffff");
+        genericColor.addKeyword("beige", "#f5f5dc");
+        genericColor.addKeyword("bisque", "#ffe4c4");
+        genericColor.addKeyword("black", "#000000");
+        genericColor.addKeyword("blanchedalmond", "#ffebcd");
+        genericColor.addKeyword("blue", "#0000ff");
+        genericColor.addKeyword("blueviolet", "#8a2be2");
+        genericColor.addKeyword("brown", "#a52a2a");
+        genericColor.addKeyword("burlywood", "#deb887");
+        genericColor.addKeyword("cadetblue", "#5f9ea0");
+        genericColor.addKeyword("chartreuse", "#7fff00");
+        genericColor.addKeyword("chocolate", "#d2691e");
+        genericColor.addKeyword("coral", "#ff7f50");
+        genericColor.addKeyword("cornflowerblue", "#6495ed");
+        genericColor.addKeyword("cornsilk", "#fff8dc");
+        genericColor.addKeyword("crimson", "#dc143c");
+        genericColor.addKeyword("cyan", "#00ffff");
+        genericColor.addKeyword("darkblue", "#00008b");
+        genericColor.addKeyword("darkcyan", "#008b8b");
+        genericColor.addKeyword("darkgoldenrod", "#b8860b");
+        genericColor.addKeyword("darkgray", "#a9a9a9");
+        genericColor.addKeyword("darkgreen", "#006400");
+        genericColor.addKeyword("darkgrey", "#a9a9a9");
+        genericColor.addKeyword("darkkhaki", "#bdb76b");
+        genericColor.addKeyword("darkmagenta", "#8b008b");
+        genericColor.addKeyword("darkolivegreen", "#556b2f");
+        genericColor.addKeyword("darkorange", "#ff8c00");
+        genericColor.addKeyword("darkorchid", "#9932cc");
+        genericColor.addKeyword("darkred", "#8b0000");
+        genericColor.addKeyword("darksalmon", "#e9967a");
+        genericColor.addKeyword("darkseagreen", "#8fbc8f");
+        genericColor.addKeyword("darkslateblue", "#483d8b");
+        genericColor.addKeyword("darkslategray", "#2f4f4f");
+        genericColor.addKeyword("darkslategrey", "#2f4f4f");
+        genericColor.addKeyword("darkturquoise", "#00ced1");
+        genericColor.addKeyword("darkviolet", "#9400d3");
+        genericColor.addKeyword("deeppink", "#ff1493");
+        genericColor.addKeyword("deepskyblue", "#00bfff");
+        genericColor.addKeyword("dimgray", "#696969");
+        genericColor.addKeyword("dimgrey", "#696969");
+        genericColor.addKeyword("dodgerblue", "#1e90ff");
+        genericColor.addKeyword("firebrick", "#b22222");
+        genericColor.addKeyword("floralwhite", "#fffaf0");
+        genericColor.addKeyword("forestgreen", "#228b22");
+        genericColor.addKeyword("fuchsia", "#ff00ff");
+        genericColor.addKeyword("gainsboro", "#dcdcdc");
+        genericColor.addKeyword("lightpink", "#ffb6c1");
+        genericColor.addKeyword("lightsalmon", "#ffa07a");
+        genericColor.addKeyword("lightseagreen", "#20b2aa");
+        genericColor.addKeyword("lightskyblue", "#87cefa");
+        genericColor.addKeyword("lightslategray", "#778899");
+        genericColor.addKeyword("lightslategrey", "#778899");
+        genericColor.addKeyword("lightsteelblue", "#b0c4de");
+        genericColor.addKeyword("lightyellow", "#ffffe0");
+        genericColor.addKeyword("lime", "#00ff00");
+        genericColor.addKeyword("limegreen", "#32cd32");
+        genericColor.addKeyword("linen", "#faf0e6");
+        genericColor.addKeyword("magenta", "#ff00ff");
+        genericColor.addKeyword("maroon", "#800000");
+        genericColor.addKeyword("mediumaquamarine", "#66cdaa");
+        genericColor.addKeyword("mediumblue", "#0000cd");
+        genericColor.addKeyword("mediumorchid", "#ba55d3");
+        genericColor.addKeyword("mediumpurple", "#9370db");
+        genericColor.addKeyword("mediumseagreen", "#3cb371");
+        genericColor.addKeyword("mediumslateblue", "#7b68ee");
+        genericColor.addKeyword("mediumspringgreen", "#00fa9a");
+        genericColor.addKeyword("mediumturquoise", "#48d1cc");
+        genericColor.addKeyword("mediumvioletred", "#c71585");
+        genericColor.addKeyword("midnightblue", "#191970");
+        genericColor.addKeyword("mintcream", "#f5fffa");
+        genericColor.addKeyword("mistyrose", "#ffe4e1");
+        genericColor.addKeyword("moccasin", "#ffe4b5");
+        genericColor.addKeyword("navajowhite", "#ffdead");
+        genericColor.addKeyword("navy", "#000080");
+        genericColor.addKeyword("oldlace", "#fdf5e6");
+        genericColor.addKeyword("olive", "#808000");
+        genericColor.addKeyword("olivedrab", "#6b8e23");
+        genericColor.addKeyword("orange", "#ffa500");
+        genericColor.addKeyword("orangered", "#ff4500");
+        genericColor.addKeyword("orchid", "#da70d6");
+        genericColor.addKeyword("palegoldenrod", "#eee8aa");
+        genericColor.addKeyword("palegreen", "#98fb98");
+        genericColor.addKeyword("paleturquoise", "#afeeee");
+        genericColor.addKeyword("palevioletred", "#db7093");
+        genericColor.addKeyword("papayawhip", "#ffefd5");
+        genericColor.addKeyword("peachpuff", "#ffdab9");
+        genericColor.addKeyword("peru", "#cd853f");
+        genericColor.addKeyword("pink", "#ffc0cb");
+        genericColor.addKeyword("plum", "#dda0dd");
+        genericColor.addKeyword("powderblue", "#b0e0e6");
+        genericColor.addKeyword("purple", "#800080");
+        genericColor.addKeyword("red", "#ff0000");
+        genericColor.addKeyword("rosybrown", "#bc8f8f");
+        genericColor.addKeyword("royalblue", "#4169e1");
+        genericColor.addKeyword("saddlebrown", "#8b4513");
+        genericColor.addKeyword("salmon", "#fa8072");
+        genericColor.addKeyword("ghostwhite", "#f8f8ff");
+        genericColor.addKeyword("gold", "#ffd700");
+        genericColor.addKeyword("goldenrod", "#daa520");
+        genericColor.addKeyword("gray", "#808080");
+        genericColor.addKeyword("grey", "#808080");
+        genericColor.addKeyword("green", "#008000");
+        genericColor.addKeyword("greenyellow", "#adff2f");
+        genericColor.addKeyword("honeydew", "#f0fff0");
+        genericColor.addKeyword("hotpink", "#ff69b4");
+        genericColor.addKeyword("indianred", "#cd5c5c");
+        genericColor.addKeyword("indigo", "#4b0082");
+        genericColor.addKeyword("ivory", "#fffff0");
+        genericColor.addKeyword("khaki", "#f0e68c");
+        genericColor.addKeyword("lavender", "#e6e6fa");
+        genericColor.addKeyword("lavenderblush", "#fff0f5");
+        genericColor.addKeyword("lawngreen", "#7cfc00");
+        genericColor.addKeyword("lemonchiffon", "#fffacd");
+        genericColor.addKeyword("lightblue", "#add8e6");
+        genericColor.addKeyword("lightcoral", "#f08080");
+        genericColor.addKeyword("lightcyan", "#e0ffff");
+        genericColor.addKeyword("lightgoldenrodyellow", "#fafad2");
+        genericColor.addKeyword("lightgray", "#d3d3d3");
+        genericColor.addKeyword("lightgreen", "#90ee90");
+        genericColor.addKeyword("lightgrey", "#d3d3d3");
+        genericColor.addKeyword("sandybrown", "#f4a460");
+        genericColor.addKeyword("seagreen", "#2e8b57");
+        genericColor.addKeyword("seashell", "#fff5ee");
+        genericColor.addKeyword("sienna", "#a0522d");
+        genericColor.addKeyword("silver", "#c0c0c0");
+        genericColor.addKeyword("skyblue", "#87ceeb");
+        genericColor.addKeyword("slateblue", "#6a5acd");
+        genericColor.addKeyword("slategray", "#708090");
+        genericColor.addKeyword("slategrey", "#708090");
+        genericColor.addKeyword("snow", "#fffafa");
+        genericColor.addKeyword("springgreen", "#00ff7f");
+        genericColor.addKeyword("steelblue", "#4682b4");
+        genericColor.addKeyword("tan", "#d2b48c");
+        genericColor.addKeyword("teal", "#008080");
+        genericColor.addKeyword("thistle", "#d8bfd8");
+        genericColor.addKeyword("tomato", "#ff6347");
+        genericColor.addKeyword("turquoise", "#40e0d0");
+        genericColor.addKeyword("violet", "#ee82ee");
+        genericColor.addKeyword("wheat", "#f5deb3");
+        genericColor.addKeyword("white", "#ffffff");
+        genericColor.addKeyword("whitesmoke", "#f5f5f5");
+        genericColor.addKeyword("yellow", "#ffff00");
+        genericColor.addKeyword("yellowgreen", "#9acd32");
 
-  private static Property.Maker[] s_htGeneric = new Property.Maker[PROPERTY_COUNT+1];
-  /* s_htElementLists not currently used; apparently for specifying element-specific
-   * property makers (instead of the default maker for a particular property); see
-   * former org.apache.fop.fo.PropertyListBuilder 
-   */
-  private static HashMap s_htElementLists = new HashMap();
-  private static HashMap s_htSubPropNames = new HashMap();
-  private static HashMap s_htPropNames = new HashMap();
-  private static HashMap s_htPropIds = new HashMap();
-  
-  /* PROPCLASS = ColorTypeProperty */
+        // GenericBoolean        
+        genericBoolean = new EnumProperty.Maker(0);
+        genericBoolean.addEnum("true", makeEnumProperty(TRUE));
+        genericBoolean.addEnum("false", makeEnumProperty(FALSE));
+        
+        // GenericKeep
+        genericKeep = new KeepProperty.Maker(0);
+        sub = new NumberProperty.Maker(CP_WITHIN_PAGE);
+        sub.setByShorthand(true);
+        sub.setDefault("auto");
+        sub.addEnum("auto", makeEnumProperty(AUTO));
+        sub.addEnum("always", makeEnumProperty(ALWAYS));
+        genericKeep.addSubpropMaker(sub); 
+        sub = new NumberProperty.Maker(CP_WITHIN_LINE);
+        sub.setByShorthand(true);
+        sub.setDefault("auto");
+        sub.addEnum("auto", makeEnumProperty(AUTO));
+        sub.addEnum("always", makeEnumProperty(ALWAYS));
+        genericKeep.addSubpropMaker(sub); 
+        sub = new NumberProperty.Maker(CP_WITHIN_COLUMN);
+        sub.setByShorthand(true);
+        sub.setDefault("auto");
+        sub.addEnum("auto", makeEnumProperty(AUTO));
+        sub.addEnum("always", makeEnumProperty(ALWAYS));
+        genericKeep.addSubpropMaker(sub);
+        
+        // GenericCondLength
+        genericCondLength = new CondLengthProperty.Maker(0);
+        sub = new LengthProperty.Maker(CP_LENGTH);
+        sub.setByShorthand(true);
+        genericCondLength.addSubpropMaker(sub);
+        sub = new EnumProperty.Maker(CP_CONDITIONALITY);
+        sub.addEnum("discard", makeEnumProperty(DISCARD));
+        sub.addEnum("retain", makeEnumProperty(RETAIN));
+        genericCondLength.addSubpropMaker(sub);
 
-  /* PROPCLASS = EnumProperty */
+        // GenericCondPadding
+        genericCondPadding = new CondLengthProperty.Maker(0);
+        genericCondPadding.useGeneric(genericCondLength);
+        genericCondPadding.setInherited(false);
+        genericCondPadding.getSubpropMaker(CP_LENGTH).setDefault("0pt");
+        
+        // GenericPadding
+        genericPadding = new LengthProperty.Maker(0);
+        genericPadding.setInherited(false);
+        genericPadding.setDefault("0pt");
+        genericPadding.addShorthand(s_generics[PR_PADDING]);
+        
+        // GenericCondBorderWidth
+        genericCondBorderWidth = new CondLengthProperty.Maker(0);
+        genericCondBorderWidth.setInherited(false);
+        genericCondBorderWidth.addKeyword("thin", "0.5pt");
+        genericCondBorderWidth.addKeyword("medium", "1pt");
+        genericCondBorderWidth.addKeyword("thick", "2pt");
+        sub = new LengthProperty.Maker(CP_LENGTH);
+        sub.setByShorthand(true);
+        sub.addKeyword("thin", "0.5pt");
+        sub.addKeyword("medium", "1pt");
+        sub.addKeyword("thick", "2pt");
+        sub.setDefault("medium");
+        genericCondBorderWidth.addSubpropMaker(sub);
+        sub = new EnumProperty.Maker(CP_CONDITIONALITY);
+        sub.addEnum("discard", makeEnumProperty(DISCARD));
+        sub.addEnum("retain", makeEnumProperty(RETAIN));
+        genericCondBorderWidth.addSubpropMaker(sub);
+        
+        // GenericBorderWidth
+        genericBorderWidth = new LengthProperty.Maker(0);
+        genericBorderWidth.setInherited(false);
+        genericBorderWidth.addKeyword("thin", "0.5pt");
+        genericBorderWidth.addKeyword("medium", "1pt");
+        genericBorderWidth.addKeyword("thick", "2pt");
+        // TODO: bckfnn reenable
+        genericBorderWidth.setDefault("0pt");
+        genericBorderWidth.addShorthand(s_generics[PR_BORDER_WIDTH]);
 
-  /* PROPCLASS = KeepProperty */
-
-  /* PROPCLASS = CondLengthProperty */
-
-  /* PROPCLASS = CondLengthProperty */
-
-  /* PROPCLASS = LengthProperty */
-
-  /* PROPCLASS = CondLengthProperty */
-
-  /* PROPCLASS = LengthProperty */
-
-  /* PROPCLASS = EnumProperty */
-
-  /* PROPCLASS = EnumProperty */
-
-  /* PROPCLASS = SpaceProperty */
-
-  static {
-    // Generate the generic mapping
-
-  /* PROPCLASS = ColorTypeProperty */
-
-  /* PROPCLASS = EnumProperty */
-
-  /* PROPCLASS = KeepProperty */
-
-  /* PROPCLASS = CondLengthProperty */
-
-  /* PROPCLASS = CondLengthProperty */
-
-  /* PROPCLASS = LengthProperty */
-
-  /* PROPCLASS = CondLengthProperty */
-
-  /* PROPCLASS = LengthProperty */
-
-  /* PROPCLASS = EnumProperty */
-
-  /* PROPCLASS = EnumProperty */
-
-  /* PROPCLASS = SpaceProperty */
-    addPropertyName("source-document", PR_SOURCE_DOCUMENT);
-    s_htGeneric[PR_SOURCE_DOCUMENT] =SourceDocumentMaker.maker(PR_SOURCE_DOCUMENT);
-    addPropertyName("role", PR_ROLE);
-    s_htGeneric[PR_ROLE] =RoleMaker.maker(PR_ROLE);
-    addPropertyName("absolute-position", PR_ABSOLUTE_POSITION);
-    s_htGeneric[PR_ABSOLUTE_POSITION] =AbsolutePositionMaker.maker(PR_ABSOLUTE_POSITION);
-    addPropertyName("top", PR_TOP);
-    s_htGeneric[PR_TOP] =TopMaker.maker(PR_TOP);
-    addPropertyName("right", PR_RIGHT);
-    s_htGeneric[PR_RIGHT] =RightMaker.maker(PR_RIGHT);
-    addPropertyName("bottom", PR_BOTTOM);
-    s_htGeneric[PR_BOTTOM] =BottomMaker.maker(PR_BOTTOM);
-    addPropertyName("left", PR_LEFT);
-    s_htGeneric[PR_LEFT] =LeftMaker.maker(PR_LEFT);
-    addPropertyName("azimuth", PR_AZIMUTH);
-    s_htGeneric[PR_AZIMUTH] =AzimuthMaker.maker(PR_AZIMUTH);
-    addPropertyName("cue-after", PR_CUE_AFTER);
-    s_htGeneric[PR_CUE_AFTER] =CueAfterMaker.maker(PR_CUE_AFTER);
-    addPropertyName("cue-before", PR_CUE_BEFORE);
-    s_htGeneric[PR_CUE_BEFORE] =CueBeforeMaker.maker(PR_CUE_BEFORE);
-    addPropertyName("elevation", PR_ELEVATION);
-    s_htGeneric[PR_ELEVATION] =ElevationMaker.maker(PR_ELEVATION);
-    addPropertyName("pause-after", PR_PAUSE_AFTER);
-    s_htGeneric[PR_PAUSE_AFTER] =PauseAfterMaker.maker(PR_PAUSE_AFTER);
-    addPropertyName("pause-before", PR_PAUSE_BEFORE);
-    s_htGeneric[PR_PAUSE_BEFORE] =PauseBeforeMaker.maker(PR_PAUSE_BEFORE);
-    addPropertyName("pitch", PR_PITCH);
-    s_htGeneric[PR_PITCH] =PitchMaker.maker(PR_PITCH);
-    addPropertyName("pitch-range", PR_PITCH_RANGE);
-    s_htGeneric[PR_PITCH_RANGE] =PitchRangeMaker.maker(PR_PITCH_RANGE);
-    addPropertyName("play-during", PR_PLAY_DURING);
-    s_htGeneric[PR_PLAY_DURING] =PlayDuringMaker.maker(PR_PLAY_DURING);
-    addPropertyName("richness", PR_RICHNESS);
-    s_htGeneric[PR_RICHNESS] =RichnessMaker.maker(PR_RICHNESS);
-    addPropertyName("speak", PR_SPEAK);
-    s_htGeneric[PR_SPEAK] =SpeakMaker.maker(PR_SPEAK);
-    addPropertyName("speak-header", PR_SPEAK_HEADER);
-    s_htGeneric[PR_SPEAK_HEADER] =SpeakHeaderMaker.maker(PR_SPEAK_HEADER);
-    addPropertyName("speak-numeral", PR_SPEAK_NUMERAL);
-    s_htGeneric[PR_SPEAK_NUMERAL] =SpeakNumeralMaker.maker(PR_SPEAK_NUMERAL);
-    addPropertyName("speak-punctuation", PR_SPEAK_PUNCTUATION);
-    s_htGeneric[PR_SPEAK_PUNCTUATION] =SpeakPunctuationMaker.maker(PR_SPEAK_PUNCTUATION);
-    addPropertyName("speech-rate", PR_SPEECH_RATE);
-    s_htGeneric[PR_SPEECH_RATE] =SpeechRateMaker.maker(PR_SPEECH_RATE);
-    addPropertyName("stress", PR_STRESS);
-    s_htGeneric[PR_STRESS] =StressMaker.maker(PR_STRESS);
-    addPropertyName("voice-family", PR_VOICE_FAMILY);
-    s_htGeneric[PR_VOICE_FAMILY] =VoiceFamilyMaker.maker(PR_VOICE_FAMILY);
-    addPropertyName("volume", PR_VOLUME);
-    s_htGeneric[PR_VOLUME] =VolumeMaker.maker(PR_VOLUME);
-    addPropertyName("background-attachment", PR_BACKGROUND_ATTACHMENT);
-    s_htGeneric[PR_BACKGROUND_ATTACHMENT] =BackgroundAttachmentMaker.maker(PR_BACKGROUND_ATTACHMENT);
-    addPropertyName("background-color", PR_BACKGROUND_COLOR);
-    s_htGeneric[PR_BACKGROUND_COLOR] =BackgroundColorMaker.maker(PR_BACKGROUND_COLOR);
-    addPropertyName("background-image", PR_BACKGROUND_IMAGE);
-    s_htGeneric[PR_BACKGROUND_IMAGE] =BackgroundImageMaker.maker(PR_BACKGROUND_IMAGE);
-    addPropertyName("background-repeat", PR_BACKGROUND_REPEAT);
-    s_htGeneric[PR_BACKGROUND_REPEAT] =BackgroundRepeatMaker.maker(PR_BACKGROUND_REPEAT);
-    addPropertyName("background-position-horizontal", PR_BACKGROUND_POSITION_HORIZONTAL);
-    s_htGeneric[PR_BACKGROUND_POSITION_HORIZONTAL] =BackgroundPositionHorizontalMaker.maker(PR_BACKGROUND_POSITION_HORIZONTAL);
-    addPropertyName("background-position-vertical", PR_BACKGROUND_POSITION_VERTICAL);
-    s_htGeneric[PR_BACKGROUND_POSITION_VERTICAL] =BackgroundPositionVerticalMaker.maker(PR_BACKGROUND_POSITION_VERTICAL);
-    addPropertyName("border-before-color", PR_BORDER_BEFORE_COLOR);
-    s_htGeneric[PR_BORDER_BEFORE_COLOR] =BorderBeforeColorMaker.maker(PR_BORDER_BEFORE_COLOR);
-    addPropertyName("border-before-style", PR_BORDER_BEFORE_STYLE);
-    s_htGeneric[PR_BORDER_BEFORE_STYLE] =BorderBeforeStyleMaker.maker(PR_BORDER_BEFORE_STYLE);
-    addPropertyName("border-before-width", PR_BORDER_BEFORE_WIDTH);
-    s_htGeneric[PR_BORDER_BEFORE_WIDTH] =BorderBeforeWidthMaker.maker(PR_BORDER_BEFORE_WIDTH);
-    addPropertyName("border-after-color", PR_BORDER_AFTER_COLOR);
-    s_htGeneric[PR_BORDER_AFTER_COLOR] =BorderAfterColorMaker.maker(PR_BORDER_AFTER_COLOR);
-    addPropertyName("border-after-style", PR_BORDER_AFTER_STYLE);
-    s_htGeneric[PR_BORDER_AFTER_STYLE] =BorderAfterStyleMaker.maker(PR_BORDER_AFTER_STYLE);
-    addPropertyName("border-after-width", PR_BORDER_AFTER_WIDTH);
-    s_htGeneric[PR_BORDER_AFTER_WIDTH] =BorderAfterWidthMaker.maker(PR_BORDER_AFTER_WIDTH);
-    addPropertyName("border-start-color", PR_BORDER_START_COLOR);
-    s_htGeneric[PR_BORDER_START_COLOR] =BorderStartColorMaker.maker(PR_BORDER_START_COLOR);
-    addPropertyName("border-start-style", PR_BORDER_START_STYLE);
-    s_htGeneric[PR_BORDER_START_STYLE] =BorderStartStyleMaker.maker(PR_BORDER_START_STYLE);
-    addPropertyName("border-start-width", PR_BORDER_START_WIDTH);
-    s_htGeneric[PR_BORDER_START_WIDTH] =BorderStartWidthMaker.maker(PR_BORDER_START_WIDTH);
-    addPropertyName("border-end-color", PR_BORDER_END_COLOR);
-    s_htGeneric[PR_BORDER_END_COLOR] =BorderEndColorMaker.maker(PR_BORDER_END_COLOR);
-    addPropertyName("border-end-style", PR_BORDER_END_STYLE);
-    s_htGeneric[PR_BORDER_END_STYLE] =BorderEndStyleMaker.maker(PR_BORDER_END_STYLE);
-    addPropertyName("border-end-width", PR_BORDER_END_WIDTH);
-    s_htGeneric[PR_BORDER_END_WIDTH] =BorderEndWidthMaker.maker(PR_BORDER_END_WIDTH);
-    addPropertyName("border-top-color", PR_BORDER_TOP_COLOR);
-    s_htGeneric[PR_BORDER_TOP_COLOR] =BorderTopColorMaker.maker(PR_BORDER_TOP_COLOR);
-    addPropertyName("border-top-style", PR_BORDER_TOP_STYLE);
-    s_htGeneric[PR_BORDER_TOP_STYLE] =BorderTopStyleMaker.maker(PR_BORDER_TOP_STYLE);
-    addPropertyName("border-top-width", PR_BORDER_TOP_WIDTH);
-    s_htGeneric[PR_BORDER_TOP_WIDTH] =BorderTopWidthMaker.maker(PR_BORDER_TOP_WIDTH);
-    addPropertyName("border-bottom-color", PR_BORDER_BOTTOM_COLOR);
-    s_htGeneric[PR_BORDER_BOTTOM_COLOR] =BorderBottomColorMaker.maker(PR_BORDER_BOTTOM_COLOR);
-    addPropertyName("border-bottom-style", PR_BORDER_BOTTOM_STYLE);
-    s_htGeneric[PR_BORDER_BOTTOM_STYLE] =BorderBottomStyleMaker.maker(PR_BORDER_BOTTOM_STYLE);
-    addPropertyName("border-bottom-width", PR_BORDER_BOTTOM_WIDTH);
-    s_htGeneric[PR_BORDER_BOTTOM_WIDTH] =BorderBottomWidthMaker.maker(PR_BORDER_BOTTOM_WIDTH);
-    addPropertyName("border-left-color", PR_BORDER_LEFT_COLOR);
-    s_htGeneric[PR_BORDER_LEFT_COLOR] =BorderLeftColorMaker.maker(PR_BORDER_LEFT_COLOR);
-    addPropertyName("border-left-style", PR_BORDER_LEFT_STYLE);
-    s_htGeneric[PR_BORDER_LEFT_STYLE] =BorderLeftStyleMaker.maker(PR_BORDER_LEFT_STYLE);
-    addPropertyName("border-left-width", PR_BORDER_LEFT_WIDTH);
-    s_htGeneric[PR_BORDER_LEFT_WIDTH] =BorderLeftWidthMaker.maker(PR_BORDER_LEFT_WIDTH);
-    addPropertyName("border-right-color", PR_BORDER_RIGHT_COLOR);
-    s_htGeneric[PR_BORDER_RIGHT_COLOR] =BorderRightColorMaker.maker(PR_BORDER_RIGHT_COLOR);
-    addPropertyName("border-right-style", PR_BORDER_RIGHT_STYLE);
-    s_htGeneric[PR_BORDER_RIGHT_STYLE] =BorderRightStyleMaker.maker(PR_BORDER_RIGHT_STYLE);
-    addPropertyName("border-right-width", PR_BORDER_RIGHT_WIDTH);
-    s_htGeneric[PR_BORDER_RIGHT_WIDTH] =BorderRightWidthMaker.maker(PR_BORDER_RIGHT_WIDTH);
-    addPropertyName("padding-before", PR_PADDING_BEFORE);
-    s_htGeneric[PR_PADDING_BEFORE] =PaddingBeforeMaker.maker(PR_PADDING_BEFORE);
-    addPropertyName("padding-after", PR_PADDING_AFTER);
-    s_htGeneric[PR_PADDING_AFTER] =PaddingAfterMaker.maker(PR_PADDING_AFTER);
-    addPropertyName("padding-start", PR_PADDING_START);
-    s_htGeneric[PR_PADDING_START] =PaddingStartMaker.maker(PR_PADDING_START);
-    addPropertyName("padding-end", PR_PADDING_END);
-    s_htGeneric[PR_PADDING_END] =PaddingEndMaker.maker(PR_PADDING_END);
-    addPropertyName("padding-top", PR_PADDING_TOP);
-    s_htGeneric[PR_PADDING_TOP] =PaddingTopMaker.maker(PR_PADDING_TOP);
-    addPropertyName("padding-bottom", PR_PADDING_BOTTOM);
-    s_htGeneric[PR_PADDING_BOTTOM] =PaddingBottomMaker.maker(PR_PADDING_BOTTOM);
-    addPropertyName("padding-left", PR_PADDING_LEFT);
-    s_htGeneric[PR_PADDING_LEFT] =PaddingLeftMaker.maker(PR_PADDING_LEFT);
-    addPropertyName("padding-right", PR_PADDING_RIGHT);
-    s_htGeneric[PR_PADDING_RIGHT] =PaddingRightMaker.maker(PR_PADDING_RIGHT);
-    addPropertyName("font-family", PR_FONT_FAMILY);
-    s_htGeneric[PR_FONT_FAMILY] =FontFamilyMaker.maker(PR_FONT_FAMILY);
-    addPropertyName("font-selection-strategy", PR_FONT_SELECTION_STRATEGY);
-    s_htGeneric[PR_FONT_SELECTION_STRATEGY] =FontSelectionStrategyMaker.maker(PR_FONT_SELECTION_STRATEGY);
-    addPropertyName("font-size", PR_FONT_SIZE);
-    s_htGeneric[PR_FONT_SIZE] =FontSizeMaker.maker(PR_FONT_SIZE);
-    addPropertyName("font-stretch", PR_FONT_STRETCH);
-    s_htGeneric[PR_FONT_STRETCH] =FontStretchMaker.maker(PR_FONT_STRETCH);
-    addPropertyName("font-size-adjust", PR_FONT_SIZE_ADJUST);
-    s_htGeneric[PR_FONT_SIZE_ADJUST] =FontSizeAdjustMaker.maker(PR_FONT_SIZE_ADJUST);
-    addPropertyName("font-style", PR_FONT_STYLE);
-    s_htGeneric[PR_FONT_STYLE] =FontStyleMaker.maker(PR_FONT_STYLE);
-    addPropertyName("font-variant", PR_FONT_VARIANT);
-    s_htGeneric[PR_FONT_VARIANT] =FontVariantMaker.maker(PR_FONT_VARIANT);
-    addPropertyName("font-weight", PR_FONT_WEIGHT);
-    s_htGeneric[PR_FONT_WEIGHT] =FontWeightMaker.maker(PR_FONT_WEIGHT);
-    addPropertyName("country", PR_COUNTRY);
-    s_htGeneric[PR_COUNTRY] =CountryMaker.maker(PR_COUNTRY);
-    addPropertyName("language", PR_LANGUAGE);
-    s_htGeneric[PR_LANGUAGE] =LanguageMaker.maker(PR_LANGUAGE);
-    addPropertyName("script", PR_SCRIPT);
-    s_htGeneric[PR_SCRIPT] =ScriptMaker.maker(PR_SCRIPT);
-    addPropertyName("hyphenate", PR_HYPHENATE);
-    s_htGeneric[PR_HYPHENATE] =HyphenateMaker.maker(PR_HYPHENATE);
-    addPropertyName("hyphenation-character", PR_HYPHENATION_CHARACTER);
-    s_htGeneric[PR_HYPHENATION_CHARACTER] =HyphenationCharacterMaker.maker(PR_HYPHENATION_CHARACTER);
-    addPropertyName("hyphenation-push-character-count", PR_HYPHENATION_PUSH_CHARACTER_COUNT);
-    s_htGeneric[PR_HYPHENATION_PUSH_CHARACTER_COUNT] =HyphenationPushCharacterCountMaker.maker(PR_HYPHENATION_PUSH_CHARACTER_COUNT);
-    addPropertyName("hyphenation-remain-character-count", PR_HYPHENATION_REMAIN_CHARACTER_COUNT);
-    s_htGeneric[PR_HYPHENATION_REMAIN_CHARACTER_COUNT] =HyphenationRemainCharacterCountMaker.maker(PR_HYPHENATION_REMAIN_CHARACTER_COUNT);
-    addPropertyName("margin-top", PR_MARGIN_TOP);
-    s_htGeneric[PR_MARGIN_TOP] =MarginTopMaker.maker(PR_MARGIN_TOP);
-    addPropertyName("margin-bottom", PR_MARGIN_BOTTOM);
-    s_htGeneric[PR_MARGIN_BOTTOM] =MarginBottomMaker.maker(PR_MARGIN_BOTTOM);
-    addPropertyName("margin-left", PR_MARGIN_LEFT);
-    s_htGeneric[PR_MARGIN_LEFT] =MarginLeftMaker.maker(PR_MARGIN_LEFT);
-    addPropertyName("margin-right", PR_MARGIN_RIGHT);
-    s_htGeneric[PR_MARGIN_RIGHT] =MarginRightMaker.maker(PR_MARGIN_RIGHT);
-    addPropertyName("space-before", PR_SPACE_BEFORE);
-    s_htGeneric[PR_SPACE_BEFORE] =SpaceBeforeMaker.maker(PR_SPACE_BEFORE);
-    addPropertyName("space-after", PR_SPACE_AFTER);
-    s_htGeneric[PR_SPACE_AFTER] =SpaceAfterMaker.maker(PR_SPACE_AFTER);
-    addPropertyName("start-indent", PR_START_INDENT);
-    s_htGeneric[PR_START_INDENT] =StartIndentMaker.maker(PR_START_INDENT);
-    addPropertyName("end-indent", PR_END_INDENT);
-    s_htGeneric[PR_END_INDENT] =EndIndentMaker.maker(PR_END_INDENT);
-    addPropertyName("space-end", PR_SPACE_END);
-    s_htGeneric[PR_SPACE_END] =GenericSpace.maker(PR_SPACE_END);
-    addPropertyName("space-start", PR_SPACE_START);
-    s_htGeneric[PR_SPACE_START] =GenericSpace.maker(PR_SPACE_START);
-    addPropertyName("relative-position", PR_RELATIVE_POSITION);
-    s_htGeneric[PR_RELATIVE_POSITION] =RelativePositionMaker.maker(PR_RELATIVE_POSITION);
-    addPropertyName("alignment-adjust", PR_ALIGNMENT_ADJUST);
-    s_htGeneric[PR_ALIGNMENT_ADJUST] =AlignmentAdjustMaker.maker(PR_ALIGNMENT_ADJUST);
-    addPropertyName("alignment-baseline", PR_ALIGNMENT_BASELINE);
-    s_htGeneric[PR_ALIGNMENT_BASELINE] =AlignmentBaselineMaker.maker(PR_ALIGNMENT_BASELINE);
-    addPropertyName("baseline-shift", PR_BASELINE_SHIFT);
-    s_htGeneric[PR_BASELINE_SHIFT] =BaselineShiftMaker.maker(PR_BASELINE_SHIFT);
-    addPropertyName("display-align", PR_DISPLAY_ALIGN);
-    s_htGeneric[PR_DISPLAY_ALIGN] =DisplayAlignMaker.maker(PR_DISPLAY_ALIGN);
-    addPropertyName("dominant-baseline", PR_DOMINANT_BASELINE);
-    s_htGeneric[PR_DOMINANT_BASELINE] =DominantBaselineMaker.maker(PR_DOMINANT_BASELINE);
-    addPropertyName("relative-align", PR_RELATIVE_ALIGN);
-    s_htGeneric[PR_RELATIVE_ALIGN] =RelativeAlignMaker.maker(PR_RELATIVE_ALIGN);
-    addPropertyName("block-progression-dimension", PR_BLOCK_PROGRESSION_DIMENSION);
-    s_htGeneric[PR_BLOCK_PROGRESSION_DIMENSION] =BlockProgressionDimensionMaker.maker(PR_BLOCK_PROGRESSION_DIMENSION);
-    addPropertyName("content-height", PR_CONTENT_HEIGHT);
-    s_htGeneric[PR_CONTENT_HEIGHT] =ContentHeightMaker.maker(PR_CONTENT_HEIGHT);
-    addPropertyName("content-width", PR_CONTENT_WIDTH);
-    s_htGeneric[PR_CONTENT_WIDTH] =ContentWidthMaker.maker(PR_CONTENT_WIDTH);
-    addPropertyName("height", PR_HEIGHT);
-    s_htGeneric[PR_HEIGHT] =HeightMaker.maker(PR_HEIGHT);
-    addPropertyName("inline-progression-dimension", PR_INLINE_PROGRESSION_DIMENSION);
-    s_htGeneric[PR_INLINE_PROGRESSION_DIMENSION] =InlineProgressionDimensionMaker.maker(PR_INLINE_PROGRESSION_DIMENSION);
-    addPropertyName("max-height", PR_MAX_HEIGHT);
-    s_htGeneric[PR_MAX_HEIGHT] =MaxHeightMaker.maker(PR_MAX_HEIGHT);
-    addPropertyName("max-width", PR_MAX_WIDTH);
-    s_htGeneric[PR_MAX_WIDTH] =MaxWidthMaker.maker(PR_MAX_WIDTH);
-    addPropertyName("min-height", PR_MIN_HEIGHT);
-    s_htGeneric[PR_MIN_HEIGHT] =MinHeightMaker.maker(PR_MIN_HEIGHT);
-    addPropertyName("min-width", PR_MIN_WIDTH);
-    s_htGeneric[PR_MIN_WIDTH] =MinWidthMaker.maker(PR_MIN_WIDTH);
-    addPropertyName("scaling", PR_SCALING);
-    s_htGeneric[PR_SCALING] =ScalingMaker.maker(PR_SCALING);
-    addPropertyName("scaling-method", PR_SCALING_METHOD);
-    s_htGeneric[PR_SCALING_METHOD] =ScalingMethodMaker.maker(PR_SCALING_METHOD);
-    addPropertyName("width", PR_WIDTH);
-    s_htGeneric[PR_WIDTH] =WidthMaker.maker(PR_WIDTH);
-    addPropertyName("hyphenation-keep", PR_HYPHENATION_KEEP);
-    s_htGeneric[PR_HYPHENATION_KEEP] =HyphenationKeepMaker.maker(PR_HYPHENATION_KEEP);
-    addPropertyName("hyphenation-ladder-count", PR_HYPHENATION_LADDER_COUNT);
-    s_htGeneric[PR_HYPHENATION_LADDER_COUNT] =HyphenationLadderCountMaker.maker(PR_HYPHENATION_LADDER_COUNT);
-    addPropertyName("last-line-end-indent", PR_LAST_LINE_END_INDENT);
-    s_htGeneric[PR_LAST_LINE_END_INDENT] =LastLineEndIndentMaker.maker(PR_LAST_LINE_END_INDENT);
-    addPropertyName("line-height", PR_LINE_HEIGHT);
-    s_htGeneric[PR_LINE_HEIGHT] =LineHeightMaker.maker(PR_LINE_HEIGHT);
-    addPropertyName("line-height-shift-adjustment", PR_LINE_HEIGHT_SHIFT_ADJUSTMENT);
-    s_htGeneric[PR_LINE_HEIGHT_SHIFT_ADJUSTMENT] =LineHeightShiftAdjustmentMaker.maker(PR_LINE_HEIGHT_SHIFT_ADJUSTMENT);
-    addPropertyName("line-stacking-strategy", PR_LINE_STACKING_STRATEGY);
-    s_htGeneric[PR_LINE_STACKING_STRATEGY] =LineStackingStrategyMaker.maker(PR_LINE_STACKING_STRATEGY);
-    addPropertyName("linefeed-treatment", PR_LINEFEED_TREATMENT);
-    s_htGeneric[PR_LINEFEED_TREATMENT] =LinefeedTreatmentMaker.maker(PR_LINEFEED_TREATMENT);
-    addPropertyName("space-treatment", PR_SPACE_TREATMENT);
-    s_htGeneric[PR_SPACE_TREATMENT] =SpaceTreatmentMaker.maker(PR_SPACE_TREATMENT);
-    addPropertyName("text-align", PR_TEXT_ALIGN);
-    s_htGeneric[PR_TEXT_ALIGN] =TextAlignMaker.maker(PR_TEXT_ALIGN);
-    addPropertyName("text-align-last", PR_TEXT_ALIGN_LAST);
-    s_htGeneric[PR_TEXT_ALIGN_LAST] =TextAlignLastMaker.maker(PR_TEXT_ALIGN_LAST);
-    addPropertyName("text-indent", PR_TEXT_INDENT);
-    s_htGeneric[PR_TEXT_INDENT] =TextIndentMaker.maker(PR_TEXT_INDENT);
-    addPropertyName("white-space-collapse", PR_WHITE_SPACE_COLLAPSE);
-    s_htGeneric[PR_WHITE_SPACE_COLLAPSE] =WhiteSpaceCollapseMaker.maker(PR_WHITE_SPACE_COLLAPSE);
-    addPropertyName("wrap-option", PR_WRAP_OPTION);
-    s_htGeneric[PR_WRAP_OPTION] =WrapOptionMaker.maker(PR_WRAP_OPTION);
-    addPropertyName("character", PR_CHARACTER);
-    s_htGeneric[PR_CHARACTER] =CharacterMaker.maker(PR_CHARACTER);
-    addPropertyName("letter-spacing", PR_LETTER_SPACING);
-    s_htGeneric[PR_LETTER_SPACING] =LetterSpacingMaker.maker(PR_LETTER_SPACING);
-    addPropertyName("suppress-at-line-break", PR_SUPPRESS_AT_LINE_BREAK);
-    s_htGeneric[PR_SUPPRESS_AT_LINE_BREAK] =SuppressAtLineBreakMaker.maker(PR_SUPPRESS_AT_LINE_BREAK);
-    addPropertyName("text-decoration", PR_TEXT_DECORATION);
-    s_htGeneric[PR_TEXT_DECORATION] =TextDecorationMaker.maker(PR_TEXT_DECORATION);
-    addPropertyName("text-shadow", PR_TEXT_SHADOW);
-    s_htGeneric[PR_TEXT_SHADOW] =TextShadowMaker.maker(PR_TEXT_SHADOW);
-    addPropertyName("text-transform", PR_TEXT_TRANSFORM);
-    s_htGeneric[PR_TEXT_TRANSFORM] =TextTransformMaker.maker(PR_TEXT_TRANSFORM);
-    addPropertyName("treat-as-word-space", PR_TREAT_AS_WORD_SPACE);
-    s_htGeneric[PR_TREAT_AS_WORD_SPACE] =TreatAsWordSpaceMaker.maker(PR_TREAT_AS_WORD_SPACE);
-    addPropertyName("word-spacing", PR_WORD_SPACING);
-    s_htGeneric[PR_WORD_SPACING] =WordSpacingMaker.maker(PR_WORD_SPACING);
-    addPropertyName("color", PR_COLOR);
-    s_htGeneric[PR_COLOR] =ColorMaker.maker(PR_COLOR);
-    addPropertyName("color-profile-name", PR_COLOR_PROFILE_NAME);
-    s_htGeneric[PR_COLOR_PROFILE_NAME] =ColorProfileNameMaker.maker(PR_COLOR_PROFILE_NAME);
-    addPropertyName("rendering-intent", PR_RENDERING_INTENT);
-    s_htGeneric[PR_RENDERING_INTENT] =RenderingIntentMaker.maker(PR_RENDERING_INTENT);
-    addPropertyName("clear", PR_CLEAR);
-    s_htGeneric[PR_CLEAR] =ClearMaker.maker(PR_CLEAR);
-    addPropertyName("float", PR_FLOAT);
-    s_htGeneric[PR_FLOAT] =FloatMaker.maker(PR_FLOAT);
-    addPropertyName("break-after", PR_BREAK_AFTER);
-    s_htGeneric[PR_BREAK_AFTER] =GenericBreak.maker(PR_BREAK_AFTER);
-    addPropertyName("break-before", PR_BREAK_BEFORE);
-    s_htGeneric[PR_BREAK_BEFORE] =GenericBreak.maker(PR_BREAK_BEFORE);
-    addPropertyName("keep-together", PR_KEEP_TOGETHER);
-    s_htGeneric[PR_KEEP_TOGETHER] =KeepTogetherMaker.maker(PR_KEEP_TOGETHER);
-    addPropertyName("keep-with-next", PR_KEEP_WITH_NEXT);
-    s_htGeneric[PR_KEEP_WITH_NEXT] =KeepWithNextMaker.maker(PR_KEEP_WITH_NEXT);
-    addPropertyName("keep-with-previous", PR_KEEP_WITH_PREVIOUS);
-    s_htGeneric[PR_KEEP_WITH_PREVIOUS] =KeepWithPreviousMaker.maker(PR_KEEP_WITH_PREVIOUS);
-    addPropertyName("orphans", PR_ORPHANS);
-    s_htGeneric[PR_ORPHANS] =OrphansMaker.maker(PR_ORPHANS);
-    addPropertyName("widows", PR_WIDOWS);
-    s_htGeneric[PR_WIDOWS] =WidowsMaker.maker(PR_WIDOWS);
-    addPropertyName("clip", PR_CLIP);
-    s_htGeneric[PR_CLIP] =ClipMaker.maker(PR_CLIP);
-    addPropertyName("overflow", PR_OVERFLOW);
-    s_htGeneric[PR_OVERFLOW] =OverflowMaker.maker(PR_OVERFLOW);
-    addPropertyName("reference-orientation", PR_REFERENCE_ORIENTATION);
-    s_htGeneric[PR_REFERENCE_ORIENTATION] =ReferenceOrientationMaker.maker(PR_REFERENCE_ORIENTATION);
-    addPropertyName("span", PR_SPAN);
-    s_htGeneric[PR_SPAN] =SpanMaker.maker(PR_SPAN);
-    addPropertyName("leader-alignment", PR_LEADER_ALIGNMENT);
-    s_htGeneric[PR_LEADER_ALIGNMENT] =LeaderAlignmentMaker.maker(PR_LEADER_ALIGNMENT);
-    addPropertyName("leader-pattern", PR_LEADER_PATTERN);
-    s_htGeneric[PR_LEADER_PATTERN] =LeaderPatternMaker.maker(PR_LEADER_PATTERN);
-    addPropertyName("leader-pattern-width", PR_LEADER_PATTERN_WIDTH);
-    s_htGeneric[PR_LEADER_PATTERN_WIDTH] =LeaderPatternWidthMaker.maker(PR_LEADER_PATTERN_WIDTH);
-    addPropertyName("leader-length", PR_LEADER_LENGTH);
-    s_htGeneric[PR_LEADER_LENGTH] =LeaderLengthMaker.maker(PR_LEADER_LENGTH);
-    addPropertyName("rule-style", PR_RULE_STYLE);
-    s_htGeneric[PR_RULE_STYLE] =RuleStyleMaker.maker(PR_RULE_STYLE);
-    addPropertyName("rule-thickness", PR_RULE_THICKNESS);
-    s_htGeneric[PR_RULE_THICKNESS] =RuleThicknessMaker.maker(PR_RULE_THICKNESS);
-    addPropertyName("active-state", PR_ACTIVE_STATE);
-    s_htGeneric[PR_ACTIVE_STATE] =ActiveStateMaker.maker(PR_ACTIVE_STATE);
-    addPropertyName("auto-restore", PR_AUTO_RESTORE);
-    s_htGeneric[PR_AUTO_RESTORE] =AutoRestoreMaker.maker(PR_AUTO_RESTORE);
-    addPropertyName("case-name", PR_CASE_NAME);
-    s_htGeneric[PR_CASE_NAME] =CaseNameMaker.maker(PR_CASE_NAME);
-    addPropertyName("case-title", PR_CASE_TITLE);
-    s_htGeneric[PR_CASE_TITLE] =CaseTitleMaker.maker(PR_CASE_TITLE);
-    addPropertyName("destination-placement-offset", PR_DESTINATION_PLACEMENT_OFFSET);
-    s_htGeneric[PR_DESTINATION_PLACEMENT_OFFSET] =DestinationPlacementOffsetMaker.maker(PR_DESTINATION_PLACEMENT_OFFSET);
-    addPropertyName("external-destination", PR_EXTERNAL_DESTINATION);
-    s_htGeneric[PR_EXTERNAL_DESTINATION] =ExternalDestinationMaker.maker(PR_EXTERNAL_DESTINATION);
-    addPropertyName("indicate-destination", PR_INDICATE_DESTINATION);
-    s_htGeneric[PR_INDICATE_DESTINATION] =IndicateDestinationMaker.maker(PR_INDICATE_DESTINATION);
-    addPropertyName("internal-destination", PR_INTERNAL_DESTINATION);
-    s_htGeneric[PR_INTERNAL_DESTINATION] =InternalDestinationMaker.maker(PR_INTERNAL_DESTINATION);
-    addPropertyName("show-destination", PR_SHOW_DESTINATION);
-    s_htGeneric[PR_SHOW_DESTINATION] =ShowDestinationMaker.maker(PR_SHOW_DESTINATION);
-    addPropertyName("starting-state", PR_STARTING_STATE);
-    s_htGeneric[PR_STARTING_STATE] =StartingStateMaker.maker(PR_STARTING_STATE);
-    addPropertyName("switch-to", PR_SWITCH_TO);
-    s_htGeneric[PR_SWITCH_TO] =SwitchToMaker.maker(PR_SWITCH_TO);
-    addPropertyName("target-presentation-context", PR_TARGET_PRESENTATION_CONTEXT);
-    s_htGeneric[PR_TARGET_PRESENTATION_CONTEXT] =TargetPresentationContextMaker.maker(PR_TARGET_PRESENTATION_CONTEXT);
-    addPropertyName("target-processing-context", PR_TARGET_PROCESSING_CONTEXT);
-    s_htGeneric[PR_TARGET_PROCESSING_CONTEXT] =TargetProcessingContextMaker.maker(PR_TARGET_PROCESSING_CONTEXT);
-    addPropertyName("target-stylesheet", PR_TARGET_STYLESHEET);
-    s_htGeneric[PR_TARGET_STYLESHEET] =TargetStylesheetMaker.maker(PR_TARGET_STYLESHEET);
-    addPropertyName("marker-class-name", PR_MARKER_CLASS_NAME);
-    s_htGeneric[PR_MARKER_CLASS_NAME] =MarkerClassNameMaker.maker(PR_MARKER_CLASS_NAME);
-    addPropertyName("retrieve-class-name", PR_RETRIEVE_CLASS_NAME);
-    s_htGeneric[PR_RETRIEVE_CLASS_NAME] =RetrieveClassNameMaker.maker(PR_RETRIEVE_CLASS_NAME);
-    addPropertyName("retrieve-position", PR_RETRIEVE_POSITION);
-    s_htGeneric[PR_RETRIEVE_POSITION] =RetrievePositionMaker.maker(PR_RETRIEVE_POSITION);
-    addPropertyName("retrieve-boundary", PR_RETRIEVE_BOUNDARY);
-    s_htGeneric[PR_RETRIEVE_BOUNDARY] =RetrieveBoundaryMaker.maker(PR_RETRIEVE_BOUNDARY);
-    addPropertyName("format", PR_FORMAT);
-    s_htGeneric[PR_FORMAT] =FormatMaker.maker(PR_FORMAT);
-    addPropertyName("grouping-separator", PR_GROUPING_SEPARATOR);
-    s_htGeneric[PR_GROUPING_SEPARATOR] =GroupingSeparatorMaker.maker(PR_GROUPING_SEPARATOR);
-    addPropertyName("grouping-size", PR_GROUPING_SIZE);
-    s_htGeneric[PR_GROUPING_SIZE] =GroupingSizeMaker.maker(PR_GROUPING_SIZE);
-    addPropertyName("letter-value", PR_LETTER_VALUE);
-    s_htGeneric[PR_LETTER_VALUE] =LetterValueMaker.maker(PR_LETTER_VALUE);
-    addPropertyName("blank-or-not-blank", PR_BLANK_OR_NOT_BLANK);
-    s_htGeneric[PR_BLANK_OR_NOT_BLANK] =BlankOrNotBlankMaker.maker(PR_BLANK_OR_NOT_BLANK);
-    addPropertyName("column-count", PR_COLUMN_COUNT);
-    s_htGeneric[PR_COLUMN_COUNT] =ColumnCountMaker.maker(PR_COLUMN_COUNT);
-    addPropertyName("column-gap", PR_COLUMN_GAP);
-    s_htGeneric[PR_COLUMN_GAP] =ColumnGapMaker.maker(PR_COLUMN_GAP);
-    addPropertyName("extent", PR_EXTENT);
-    s_htGeneric[PR_EXTENT] =ExtentMaker.maker(PR_EXTENT);
-    addPropertyName("flow-name", PR_FLOW_NAME);
-    s_htGeneric[PR_FLOW_NAME] =FlowNameMaker.maker(PR_FLOW_NAME);
-    addPropertyName("force-page-count", PR_FORCE_PAGE_COUNT);
-    s_htGeneric[PR_FORCE_PAGE_COUNT] =ForcePageCountMaker.maker(PR_FORCE_PAGE_COUNT);
-    addPropertyName("initial-page-number", PR_INITIAL_PAGE_NUMBER);
-    s_htGeneric[PR_INITIAL_PAGE_NUMBER] =InitialPageNumberMaker.maker(PR_INITIAL_PAGE_NUMBER);
-    addPropertyName("master-name", PR_MASTER_NAME);
-    s_htGeneric[PR_MASTER_NAME] =MasterNameMaker.maker(PR_MASTER_NAME);
-    addPropertyName("master-reference", PR_MASTER_REFERENCE);
-    s_htGeneric[PR_MASTER_REFERENCE] =MasterReferenceMaker.maker(PR_MASTER_REFERENCE);
-    addPropertyName("maximum-repeats", PR_MAXIMUM_REPEATS);
-    s_htGeneric[PR_MAXIMUM_REPEATS] =MaximumRepeatsMaker.maker(PR_MAXIMUM_REPEATS);
-    addPropertyName("media-usage", PR_MEDIA_USAGE);
-    s_htGeneric[PR_MEDIA_USAGE] =MediaUsageMaker.maker(PR_MEDIA_USAGE);
-    addPropertyName("odd-or-even", PR_ODD_OR_EVEN);
-    s_htGeneric[PR_ODD_OR_EVEN] =OddOrEvenMaker.maker(PR_ODD_OR_EVEN);
-    addPropertyName("page-height", PR_PAGE_HEIGHT);
-    s_htGeneric[PR_PAGE_HEIGHT] =PageHeightMaker.maker(PR_PAGE_HEIGHT);
-    addPropertyName("page-position", PR_PAGE_POSITION);
-    s_htGeneric[PR_PAGE_POSITION] =PagePositionMaker.maker(PR_PAGE_POSITION);
-    addPropertyName("page-width", PR_PAGE_WIDTH);
-    s_htGeneric[PR_PAGE_WIDTH] =PageWidthMaker.maker(PR_PAGE_WIDTH);
-    addPropertyName("precedence", PR_PRECEDENCE);
-    s_htGeneric[PR_PRECEDENCE] =PrecedenceMaker.maker(PR_PRECEDENCE);
-    addPropertyName("region-name", PR_REGION_NAME);
-    s_htGeneric[PR_REGION_NAME] =RegionNameMaker.maker(PR_REGION_NAME);
-    addPropertyName("border-after-precedence", PR_BORDER_AFTER_PRECEDENCE);
-    s_htGeneric[PR_BORDER_AFTER_PRECEDENCE] =BorderAfterPrecedenceMaker.maker(PR_BORDER_AFTER_PRECEDENCE);
-    addPropertyName("border-before-precedence", PR_BORDER_BEFORE_PRECEDENCE);
-    s_htGeneric[PR_BORDER_BEFORE_PRECEDENCE] =BorderBeforePrecedenceMaker.maker(PR_BORDER_BEFORE_PRECEDENCE);
-    addPropertyName("border-collapse", PR_BORDER_COLLAPSE);
-    s_htGeneric[PR_BORDER_COLLAPSE] =BorderCollapseMaker.maker(PR_BORDER_COLLAPSE);
-    addPropertyName("border-end-precedence", PR_BORDER_END_PRECEDENCE);
-    s_htGeneric[PR_BORDER_END_PRECEDENCE] =BorderEndPrecedenceMaker.maker(PR_BORDER_END_PRECEDENCE);
-    addPropertyName("border-separation", PR_BORDER_SEPARATION);
-    s_htGeneric[PR_BORDER_SEPARATION] =BorderSeparationMaker.maker(PR_BORDER_SEPARATION);
-    addPropertyName("border-start-precedence", PR_BORDER_START_PRECEDENCE);
-    s_htGeneric[PR_BORDER_START_PRECEDENCE] =BorderStartPrecedenceMaker.maker(PR_BORDER_START_PRECEDENCE);
-    addPropertyName("caption-side", PR_CAPTION_SIDE);
-    s_htGeneric[PR_CAPTION_SIDE] =CaptionSideMaker.maker(PR_CAPTION_SIDE);
-    addPropertyName("column-number", PR_COLUMN_NUMBER);
-    s_htGeneric[PR_COLUMN_NUMBER] =ColumnNumberMaker.maker(PR_COLUMN_NUMBER);
-    addPropertyName("column-width", PR_COLUMN_WIDTH);
-    s_htGeneric[PR_COLUMN_WIDTH] =ColumnWidthMaker.maker(PR_COLUMN_WIDTH);
-    addPropertyName("empty-cells", PR_EMPTY_CELLS);
-    s_htGeneric[PR_EMPTY_CELLS] =EmptyCellsMaker.maker(PR_EMPTY_CELLS);
-    addPropertyName("ends-row", PR_ENDS_ROW);
-    s_htGeneric[PR_ENDS_ROW] =EndsRowMaker.maker(PR_ENDS_ROW);
-    addPropertyName("number-columns-repeated", PR_NUMBER_COLUMNS_REPEATED);
-    s_htGeneric[PR_NUMBER_COLUMNS_REPEATED] =NumberColumnsRepeatedMaker.maker(PR_NUMBER_COLUMNS_REPEATED);
-    addPropertyName("number-columns-spanned", PR_NUMBER_COLUMNS_SPANNED);
-    s_htGeneric[PR_NUMBER_COLUMNS_SPANNED] =NumberColumnsSpannedMaker.maker(PR_NUMBER_COLUMNS_SPANNED);
-    addPropertyName("number-rows-spanned", PR_NUMBER_ROWS_SPANNED);
-    s_htGeneric[PR_NUMBER_ROWS_SPANNED] =NumberRowsSpannedMaker.maker(PR_NUMBER_ROWS_SPANNED);
-    addPropertyName("starts-row", PR_STARTS_ROW);
-    s_htGeneric[PR_STARTS_ROW] =StartsRowMaker.maker(PR_STARTS_ROW);
-    addPropertyName("table-layout", PR_TABLE_LAYOUT);
-    s_htGeneric[PR_TABLE_LAYOUT] =TableLayoutMaker.maker(PR_TABLE_LAYOUT);
-    addPropertyName("table-omit-footer-at-break", PR_TABLE_OMIT_FOOTER_AT_BREAK);
-    s_htGeneric[PR_TABLE_OMIT_FOOTER_AT_BREAK] =TableOmitFooterAtBreakMaker.maker(PR_TABLE_OMIT_FOOTER_AT_BREAK);
-    addPropertyName("table-omit-header-at-break", PR_TABLE_OMIT_HEADER_AT_BREAK);
-    s_htGeneric[PR_TABLE_OMIT_HEADER_AT_BREAK] =TableOmitHeaderAtBreakMaker.maker(PR_TABLE_OMIT_HEADER_AT_BREAK);
-    addPropertyName("direction", PR_DIRECTION);
-    s_htGeneric[PR_DIRECTION] =DirectionMaker.maker(PR_DIRECTION);
-    addPropertyName("glyph-orientation-horizontal", PR_GLYPH_ORIENTATION_HORIZONTAL);
-    s_htGeneric[PR_GLYPH_ORIENTATION_HORIZONTAL] =GlyphOrientationHorizontalMaker.maker(PR_GLYPH_ORIENTATION_HORIZONTAL);
-    addPropertyName("glyph-orientation-vertical", PR_GLYPH_ORIENTATION_VERTICAL);
-    s_htGeneric[PR_GLYPH_ORIENTATION_VERTICAL] =GlyphOrientationVerticalMaker.maker(PR_GLYPH_ORIENTATION_VERTICAL);
-    addPropertyName("text-altitude", PR_TEXT_ALTITUDE);
-    s_htGeneric[PR_TEXT_ALTITUDE] =TextAltitudeMaker.maker(PR_TEXT_ALTITUDE);
-    addPropertyName("text-depth", PR_TEXT_DEPTH);
-    s_htGeneric[PR_TEXT_DEPTH] =TextDepthMaker.maker(PR_TEXT_DEPTH);
-    addPropertyName("unicode-bidi", PR_UNICODE_BIDI);
-    s_htGeneric[PR_UNICODE_BIDI] =UnicodeBidiMaker.maker(PR_UNICODE_BIDI);
-    addPropertyName("writing-mode", PR_WRITING_MODE);
-    s_htGeneric[PR_WRITING_MODE] =WritingModeMaker.maker(PR_WRITING_MODE);
-    addPropertyName("content-type", PR_CONTENT_TYPE);
-    s_htGeneric[PR_CONTENT_TYPE] =ContentTypeMaker.maker(PR_CONTENT_TYPE);
-    addPropertyName("id", PR_ID);
-    s_htGeneric[PR_ID] =IdMaker.maker(PR_ID);
-    addPropertyName("provisional-label-separation", PR_PROVISIONAL_LABEL_SEPARATION);
-    s_htGeneric[PR_PROVISIONAL_LABEL_SEPARATION] =ProvisionalLabelSeparationMaker.maker(PR_PROVISIONAL_LABEL_SEPARATION);
-    addPropertyName("provisional-distance-between-starts", PR_PROVISIONAL_DISTANCE_BETWEEN_STARTS);
-    s_htGeneric[PR_PROVISIONAL_DISTANCE_BETWEEN_STARTS] =ProvisionalDistanceBetweenStartsMaker.maker(PR_PROVISIONAL_DISTANCE_BETWEEN_STARTS);
-    addPropertyName("ref-id", PR_REF_ID);
-    s_htGeneric[PR_REF_ID] =RefIdMaker.maker(PR_REF_ID);
-    addPropertyName("score-spaces", PR_SCORE_SPACES);
-    s_htGeneric[PR_SCORE_SPACES] =ScoreSpacesMaker.maker(PR_SCORE_SPACES);
-    addPropertyName("src", PR_SRC);
-    s_htGeneric[PR_SRC] =SrcMaker.maker(PR_SRC);
-    addPropertyName("visibility", PR_VISIBILITY);
-    s_htGeneric[PR_VISIBILITY] =VisibilityMaker.maker(PR_VISIBILITY);
-    addPropertyName("z-index", PR_Z_INDEX);
-    s_htGeneric[PR_Z_INDEX] =ZIndexMaker.maker(PR_Z_INDEX);
-    addPropertyName("background", PR_BACKGROUND);
-    s_htGeneric[PR_BACKGROUND] =BackgroundMaker.maker(PR_BACKGROUND);
-    addPropertyName("background-position", PR_BACKGROUND_POSITION);
-    s_htGeneric[PR_BACKGROUND_POSITION] =BackgroundPositionMaker.maker(PR_BACKGROUND_POSITION);
-    addPropertyName("border", PR_BORDER);
-    s_htGeneric[PR_BORDER] =BorderMaker.maker(PR_BORDER);
-    addPropertyName("border-bottom", PR_BORDER_BOTTOM);
-    s_htGeneric[PR_BORDER_BOTTOM] =BorderBottomMaker.maker(PR_BORDER_BOTTOM);
-    addPropertyName("border-color", PR_BORDER_COLOR);
-    s_htGeneric[PR_BORDER_COLOR] =BorderColorMaker.maker(PR_BORDER_COLOR);
-    addPropertyName("border-left", PR_BORDER_LEFT);
-    s_htGeneric[PR_BORDER_LEFT] =BorderLeftMaker.maker(PR_BORDER_LEFT);
-    addPropertyName("border-right", PR_BORDER_RIGHT);
-    s_htGeneric[PR_BORDER_RIGHT] =BorderRightMaker.maker(PR_BORDER_RIGHT);
-    addPropertyName("border-style", PR_BORDER_STYLE);
-    s_htGeneric[PR_BORDER_STYLE] =BorderStyleMaker.maker(PR_BORDER_STYLE);
-    addPropertyName("border-spacing", PR_BORDER_SPACING);
-    s_htGeneric[PR_BORDER_SPACING] =BorderSpacingMaker.maker(PR_BORDER_SPACING);
-    addPropertyName("border-top", PR_BORDER_TOP);
-    s_htGeneric[PR_BORDER_TOP] =BorderTopMaker.maker(PR_BORDER_TOP);
-    addPropertyName("border-width", PR_BORDER_WIDTH);
-    s_htGeneric[PR_BORDER_WIDTH] =BorderWidthMaker.maker(PR_BORDER_WIDTH);
-    addPropertyName("cue", PR_CUE);
-    s_htGeneric[PR_CUE] =CueMaker.maker(PR_CUE);
-    addPropertyName("font", PR_FONT);
-    s_htGeneric[PR_FONT] =FontMaker.maker(PR_FONT);
-    addPropertyName("margin", PR_MARGIN);
-    s_htGeneric[PR_MARGIN] =MarginMaker.maker(PR_MARGIN);
-    addPropertyName("padding", PR_PADDING);
-    s_htGeneric[PR_PADDING] =PaddingMaker.maker(PR_PADDING);
-    addPropertyName("page-break-after", PR_PAGE_BREAK_AFTER);
-    s_htGeneric[PR_PAGE_BREAK_AFTER] =PageBreakAfterMaker.maker(PR_PAGE_BREAK_AFTER);
-    addPropertyName("page-break-before", PR_PAGE_BREAK_BEFORE);
-    s_htGeneric[PR_PAGE_BREAK_BEFORE] =PageBreakBeforeMaker.maker(PR_PAGE_BREAK_BEFORE);
-    addPropertyName("page-break-inside", PR_PAGE_BREAK_INSIDE);
-    s_htGeneric[PR_PAGE_BREAK_INSIDE] =PageBreakInsideMaker.maker(PR_PAGE_BREAK_INSIDE);
-    addPropertyName("pause", PR_PAUSE);
-    s_htGeneric[PR_PAUSE] =PauseMaker.maker(PR_PAUSE);
-    addPropertyName("position", PR_POSITION);
-    s_htGeneric[PR_POSITION] =PositionMaker.maker(PR_POSITION);
-    addPropertyName("size", PR_SIZE);
-    s_htGeneric[PR_SIZE] =SizeMaker.maker(PR_SIZE);
-    addPropertyName("vertical-align", PR_VERTICAL_ALIGN);
-    s_htGeneric[PR_VERTICAL_ALIGN] =VerticalAlignMaker.maker(PR_VERTICAL_ALIGN);
-    addPropertyName("white-space-treatment", PR_WHITE_SPACE_TREATMENT);
-    s_htGeneric[PR_WHITE_SPACE_TREATMENT] =WhiteSpaceTreatmentMaker.maker(PR_WHITE_SPACE_TREATMENT);
-    addPropertyName("xml:lang", PR_XML_LANG);
-    s_htGeneric[PR_XML_LANG] =XMLLangMaker.maker(PR_XML_LANG);
-
-  }
-
-
-  public static Property.Maker[] getGenericMappings() {
-    return s_htGeneric;
-  }
-
-  public static Set getElementMappings() {
-    return s_htElementLists.keySet();
-  }
-
-  public static Property.Maker[] getElementMapping(int elemName) {
-    return (Property.Maker[])s_htElementLists.get(new Integer(elemName));
-  }
-
-  public static int getPropertyId(String name) {
-    // check to see if base.compound or just base property
-    int sepchar = name.indexOf('.');
-
-    if (sepchar > -1) {
-        Integer baseId = (Integer) s_htPropNames.get(name.substring(0, sepchar));
-        if (baseId == null) {
-            return -1;
-        } else {
-            int cmpdId = getSubPropertyId(name.substring(sepchar + 1));
-            if (cmpdId == -1) {
-                return -1;
-            } else {
-                return baseId.intValue() + cmpdId;
-            }
+        // GenericBorderStyle
+        genericBorderStyle = new EnumProperty.Maker(0);
+        genericBorderStyle.setInherited(false);
+        genericBorderStyle.addEnum("none", makeEnumProperty(NONE));
+        genericBorderStyle.addEnum("hidden", makeEnumProperty(HIDDEN));
+        genericBorderStyle.addEnum("dotted", makeEnumProperty(DOTTED));
+        genericBorderStyle.addEnum("dashed", makeEnumProperty(DASHED));
+        genericBorderStyle.addEnum("solid", makeEnumProperty(SOLID));
+        genericBorderStyle.addEnum("double", makeEnumProperty(DOUBLE));
+        genericBorderStyle.addEnum("groove", makeEnumProperty(GROOVE));
+        genericBorderStyle.addEnum("ridge", makeEnumProperty(RIDGE));
+        genericBorderStyle.addEnum("inset", makeEnumProperty(INSET));
+        genericBorderStyle.addEnum("outset", makeEnumProperty(OUTSET));
+        genericBorderStyle.setDefault("none");
+        genericBorderWidth.addShorthand(s_generics[PR_BORDER_STYLE]);
+        
+        // GenericBreak
+        genericBreak = new EnumProperty.Maker(0);
+        genericBreak.setInherited(false);
+        genericBreak.addEnum("auto", makeEnumProperty(AUTO));
+        genericBreak.addEnum("column", makeEnumProperty(COLUMN));
+        genericBreak.addEnum("page", makeEnumProperty(PAGE));
+        genericBreak.addEnum("even-page", makeEnumProperty(EVEN_PAGE));
+        genericBreak.addEnum("odd-page", makeEnumProperty(ODD_PAGE));
+        genericBreak.setDefault("auto");
+        
+        // GenericSpace
+        genericSpace = new SpaceProperty.Maker(0);
+        genericSpace.setInherited(false);
+        sub = new LengthProperty.Maker(CP_MINIMUM);
+        sub.setDefault("0pt");
+        sub.setByShorthand(true);
+        genericSpace.addSubpropMaker(sub);
+        sub = new LengthProperty.Maker(CP_OPTIMUM);
+        sub.setDefault("0pt");
+        sub.setByShorthand(true);
+        genericSpace.addSubpropMaker(sub);
+        sub = new LengthProperty.Maker(CP_MAXIMUM);
+        sub.setDefault("0pt");
+        sub.setByShorthand(true);
+        genericSpace.addSubpropMaker(sub);
+        sub = new NumberProperty.Maker(CP_PRECEDENCE);
+        sub.addEnum("force", makeEnumProperty(FORCE));
+        sub.setDefault("0");
+        genericSpace.addSubpropMaker(sub);
+        sub = new EnumProperty.Maker(CP_CONDITIONALITY);
+        sub.addEnum("discard", makeEnumProperty(DISCARD));
+        sub.addEnum("retain", makeEnumProperty(RETAIN));
+        sub.setDefault("discard");
+        genericSpace.addSubpropMaker(sub);
+    }
+    
+    /**
+     * Add a property maker to the generics array. 
+     * Also creates the name <-> id mapping in s_htPropNames and s_htPropIds. 
+     * 
+     * @param name  the name of the property maker.
+     * @param maker the maker.
+     */
+    private static void addPropertyMaker(String name, Property.Maker maker) {
+        s_generics[maker.getPropId()] = maker;
+        s_htPropNames.put(name, new Integer(maker.getPropId()));
+        s_htPropIds.put(new Integer(maker.getPropId()), name);        
+    }
+    
+    /**
+     * Create the name<->id mapping for the subproperty names. 
+     * @param name name of the subproperty.
+     * @param id   Id for the subproperty from CP_* in Constants.java. 
+     */
+    public static void addSubpropMakerName(String name, int id) {
+        s_htSubPropNames.put(name, new Integer(id));
+        s_htPropIds.put(new Integer(id), name);
+    }
+    
+    /**
+     * Return a (possible cached) enum property based in the enum value.
+     * @param enum A enum value from Constants.java.
+     * @return An EnumProperty instance.
+     */
+    private Property makeEnumProperty(int enum) {
+        if (enums == null) {
+            enums = new Property[200];
         }
-    } else {
-        Integer baseId = (Integer) s_htPropNames.get(name);
-        if (baseId == null)
+        if (enums[enum] == null) {
+            enums[enum] = new EnumProperty(enum);
+        }
+        return enums[enum];
+    }
+
+    /**
+     * Return the array of Makers.
+     * @return the maker array.
+     */
+    public static Property.Maker[] getGenericMappings() {
+        FOPropertyMapping gp = new FOPropertyMapping();
+        gp.createGenerics();
+        // Create the shorthand first, they are referenced by the real properties. 
+        gp.createShorthandProperties();
+        gp.createAccessibilityProperties();
+        gp.createAbsolutePositionProperties();
+        gp.createAuralProperties();
+        gp.createBorderPaddingBackgroundProperties();
+        gp.createFontProperties();
+        gp.createHyphenationProperties();
+        gp.createMarginBlockProperties();
+        gp.createMarginInlineProperties();
+        gp.createRelativePosProperties();
+        gp.createAreaAlignmentProperties();
+        gp.createAreaDimensionProperties();
+        gp.createBlockAndLineProperties();
+        gp.createCharacterProperties();
+        gp.createColorProperties();
+        gp.createFloatProperties();
+        gp.createKeepsAndBreaksProperties();
+        gp.createLayoutProperties();
+        gp.createLeaderAndRuleProperties();
+        gp.createDynamicProperties();
+        gp.createMarkersProperties();
+        gp.createNumberToStringProperties();
+        gp.createPaginationAndLayoutProperties();
+        gp.createTableProperties();
+        gp.createWritingModeProperties();
+        gp.createMiscProperties();
+
+        // Hardcode the subproperties.
+        addSubpropMakerName("length", CP_LENGTH);
+        addSubpropMakerName("conditionality", CP_CONDITIONALITY);
+        addSubpropMakerName("block-progression-direction", CP_BLOCK_PROGRESSION_DIRECTION);
+        addSubpropMakerName("inline-progression-direction", CP_INLINE_PROGRESSION_DIRECTION);
+        addSubpropMakerName("within-line", CP_WITHIN_LINE);
+        addSubpropMakerName("within-column", CP_WITHIN_COLUMN);
+        addSubpropMakerName("within-page", CP_WITHIN_PAGE);
+        addSubpropMakerName("minimum", CP_MINIMUM);
+        addSubpropMakerName("maximum", CP_MAXIMUM);
+        addSubpropMakerName("optimum", CP_OPTIMUM);
+        addSubpropMakerName("precedence", CP_PRECEDENCE);
+        
+        return s_generics;
+    }
+
+    /**
+     * Return the propId for a property name.
+     * @param name the property name
+     * @return a propId that matches the property name.
+     */
+    public static int getPropertyId(String name) {
+        Integer i = (Integer) s_htPropNames.get(name);
+        if (i == null)
             return -1;
-        return baseId.intValue();
+        return i.intValue();
     }
-  }
 
-  public static int getSubPropertyId(String name) {
-  	Integer i = (Integer) s_htSubPropNames.get(name);
-  	if (i == null)
-  		return -1;
-    return i.intValue();
-  }
-  
-  // returns a property, compound, or property.compound name
-  public static String getPropertyName(int id) {
-    if (((id & Constants.COMPOUND_MASK) == 0) 
-        || ((id & Constants.PROPERTY_MASK) == 0)) {
-        return (String) s_htPropIds.get(new Integer(id));
-    } else {
-        return (String) s_htPropIds.get(new Integer(
-            id & Constants.PROPERTY_MASK)) + "." + s_htPropIds.get(
-            new Integer(id & Constants.COMPOUND_MASK));
+    /**
+     * Return the subpropId for a subproperty name.
+     * @param name the subproperty name.
+     * @return a subpropId that matches the subproperty name.
+     */
+    public static int getSubPropertyId(String name) {
+        Integer i = (Integer) s_htSubPropNames.get(name);
+        if (i == null)
+            return -1;
+        return i.intValue();
     }
-  }
+    
+    // returns a property, compound, or property.compound name
+    public static String getPropertyName(int id) {
+        if (((id & Constants.COMPOUND_MASK) == 0) 
+                || ((id & Constants.PROPERTY_MASK) == 0)) {
+            return (String) s_htPropIds.get(new Integer(id));
+        } else {
+            return (String) s_htPropIds.get(new Integer(
+                    id & Constants.PROPERTY_MASK)) + "." + s_htPropIds.get(
+                            new Integer(id & Constants.COMPOUND_MASK));
+        }
+    }
+    
+    private void createAccessibilityProperties() {
+        Property.Maker m;
 
-  static {
-    addSubPropertyName("length", CP_LENGTH);
-    addSubPropertyName("conditionality", CP_CONDITIONALITY);
-    addSubPropertyName("block-progression-direction", CP_BLOCK_PROGRESSION_DIRECTION);
-    addSubPropertyName("inline-progression-direction", CP_INLINE_PROGRESSION_DIRECTION);
-    addSubPropertyName("within-line", CP_WITHIN_LINE);
-    addSubPropertyName("within-column", CP_WITHIN_COLUMN);
-    addSubPropertyName("within-page", CP_WITHIN_PAGE);
-    addSubPropertyName("minimum", CP_MINIMUM);
-    addSubPropertyName("maximum", CP_MAXIMUM);
-    addSubPropertyName("optimum", CP_OPTIMUM);
-    addSubPropertyName("precedence", CP_PRECEDENCE);
-  
-  }
-  
-  public static void addPropertyName(String name, int id) {
-    s_htPropNames.put(name, new Integer(id));
-    s_htPropIds.put(new Integer(id), name);
-  }
+        // source-document
+        m  = new StringProperty.Maker(PR_SOURCE_DOCUMENT);
+        m.setInherited(false);
+        m.setDefault("none");
+        addPropertyMaker("source-document", m);
 
-  public static void addSubPropertyName(String name, int id) {
-    s_htSubPropNames.put(name, new Integer(id));
-    s_htPropIds.put(new Integer(id), name);
-  }
+        // role
+        m  = new StringProperty.Maker(PR_ROLE);
+        m.setInherited(false);
+        m.setDefault("none");
+        addPropertyMaker("role", m);
+    }
+    
+    private void createAbsolutePositionProperties() {
+        Property.Maker m;
+        LengthProperty.Maker l;
+        
+        // absolute-position
+        m  = new EnumProperty.Maker(PR_ABSOLUTE_POSITION);
+        m.setInherited(false);
+        m.addEnum("auto", makeEnumProperty(AUTO));
+        m.addEnum("fixed", makeEnumProperty(FIXED));
+        m.addEnum("absolute", makeEnumProperty(ABSOLUTE));
+        m.setDefault("auto");
+        addPropertyMaker("absolute-position", m);
+
+        // top
+        l  = new LengthProperty.Maker(PR_TOP);
+        l.setInherited(false);
+        l.setAutoOk(true);
+        l.setDefault("auto");
+        addPropertyMaker("top", l);
+
+        // right
+        l  = new LengthProperty.Maker(PR_RIGHT);
+        l.setInherited(false);
+        l.setAutoOk(true);
+        l.setDefault("auto");
+        addPropertyMaker("right", l);
+
+        // bottom
+        l  = new LengthProperty.Maker(PR_BOTTOM);
+        l.setInherited(false);
+        l.setAutoOk(true);
+        l.setDefault("auto");
+        addPropertyMaker("bottom", l);
+
+        // left
+        l  = new LengthProperty.Maker(PR_LEFT);
+        l.setInherited(false);
+        l.setAutoOk(true);
+        l.setDefault("auto");
+        addPropertyMaker("left", l);
+    }
+        
+    private void createAuralProperties() {
+        Property.Maker m;
+            
+        // azimuth
+        m  = new ToBeImplementedProperty.Maker(PR_AZIMUTH);
+        m.setInherited(true);
+        m.setDefault("center");
+        addPropertyMaker("azimuth", m);
+
+        // cue-after
+        m  = new ToBeImplementedProperty.Maker(PR_CUE_AFTER);
+        m.setInherited(false);
+        m.setDefault("none");
+        addPropertyMaker("cue-after", m);
+
+        // cue-before
+        m  = new ToBeImplementedProperty.Maker(PR_CUE_BEFORE);
+        m.setInherited(false);
+        m.setDefault("none");
+        addPropertyMaker("cue-before", m);
+
+        // elevation
+        m  = new ToBeImplementedProperty.Maker(PR_ELEVATION);
+        m.setInherited(true);
+        m.setDefault("level");
+        addPropertyMaker("elevation", m);
+
+        // pause-after
+        m  = new ToBeImplementedProperty.Maker(PR_PAUSE_AFTER);
+        m.setInherited(false);
+        m.setDefault("");
+        addPropertyMaker("pause-after", m);
+
+        // pause-before
+        m  = new ToBeImplementedProperty.Maker(PR_PAUSE_BEFORE);
+        m.setInherited(false);
+        m.setDefault("");
+        addPropertyMaker("pause-before", m);
+
+        // pitch
+        m  = new ToBeImplementedProperty.Maker(PR_PITCH);
+        m.setInherited(true);
+        m.setDefault("medium");
+        addPropertyMaker("pitch", m);
+
+        // pitch-range
+        m  = new ToBeImplementedProperty.Maker(PR_PITCH_RANGE);
+        m.setInherited(true);
+        m.setDefault("50");
+        addPropertyMaker("pitch-range", m);
+
+        // play-during
+        m  = new ToBeImplementedProperty.Maker(PR_PLAY_DURING);
+        m.setInherited(false);
+        m.setDefault("auto");
+        addPropertyMaker("play-during", m);
+
+        // richness
+        m  = new ToBeImplementedProperty.Maker(PR_RICHNESS);
+        m.setInherited(true);
+        m.setDefault("50");
+        addPropertyMaker("richness", m);
+
+        // speak
+        m  = new ToBeImplementedProperty.Maker(PR_SPEAK);
+        m.setInherited(true);
+        m.setDefault("normal");
+        addPropertyMaker("speak", m);
+
+        // speak-header
+        m  = new ToBeImplementedProperty.Maker(PR_SPEAK_HEADER);
+        m.setInherited(true);
+        m.setDefault("once");
+        addPropertyMaker("speak-header", m);
+
+        // speak-numeral
+        m  = new ToBeImplementedProperty.Maker(PR_SPEAK_NUMERAL);
+        m.setInherited(true);
+        m.setDefault("continuous");
+        addPropertyMaker("speak-numeral", m);
+
+        // speak-punctuation
+        m  = new ToBeImplementedProperty.Maker(PR_SPEAK_PUNCTUATION);
+        m.setInherited(true);
+        m.setDefault("none");
+        addPropertyMaker("speak-punctuation", m);
+
+        // speech-rate
+        m  = new ToBeImplementedProperty.Maker(PR_SPEECH_RATE);
+        m.setInherited(true);
+        m.setDefault("medium");
+        addPropertyMaker("speech-rate", m);
+
+        // stress
+        m  = new ToBeImplementedProperty.Maker(PR_STRESS);
+        m.setInherited(true);
+        m.setDefault("50");
+        addPropertyMaker("stress", m);
+
+        // voice-family
+        m  = new ToBeImplementedProperty.Maker(PR_VOICE_FAMILY);
+        m.setInherited(true);
+        m.setDefault("");
+        addPropertyMaker("voice-family", m);
+
+        // volume
+        m  = new ToBeImplementedProperty.Maker(PR_VOLUME);
+        m.setInherited(true);
+        m.setDefault("medium");
+        addPropertyMaker("volume", m);
+    }
+        
+    private void createBorderPaddingBackgroundProperties() {
+        Property.Maker m;
+        BorderWidthPropertyMaker bwm;
+        CorrespondingPropertyMaker corr;
+        
+        // background-attachment
+        m  = new ToBeImplementedProperty.Maker(PR_BACKGROUND_ATTACHMENT);
+        m.setInherited(false);
+        m.setDefault("scroll");
+        addPropertyMaker("background-attachment", m);
+
+        // background-color
+        m  = new ColorTypeProperty.Maker(PR_BACKGROUND_COLOR) {
+            protected Property convertPropertyDatatype(
+                    Property p, PropertyList propertyList, FObj fo) {
+                String nameval = p.getNCname();
+                if (nameval != null) {
+                    return new ColorTypeProperty(new ColorType(nameval));
+                }
+                return super.convertPropertyDatatype(p, propertyList, fo);
+            }
+        };
+        m.useGeneric(genericColor);
+        m.setInherited(false);
+        m.setDefault("transparent");
+        addPropertyMaker("background-color", m);
+
+        // background-image
+        m  = new StringProperty.Maker(PR_BACKGROUND_IMAGE);
+        m.setInherited(false);
+        m.setDefault("none");
+        addPropertyMaker("background-image", m);
+
+        // background-repeat
+        m  = new EnumProperty.Maker(PR_BACKGROUND_REPEAT);
+        m.setInherited(false);
+        m.addEnum("repeat", makeEnumProperty(REPEAT));
+        m.addEnum("repeat-x", makeEnumProperty(REPEATX));
+        m.addEnum("repeat-y", makeEnumProperty(REPEATY));
+        m.addEnum("no-repeat", makeEnumProperty(NOREPEAT));
+        m.setDefault("repeat");
+        addPropertyMaker("background-repeat", m);
+
+        // background-position-horizontal
+        m  = new LengthProperty.Maker(PR_BACKGROUND_POSITION_HORIZONTAL);
+        m.setInherited(false);
+        m.setDefault("0%");
+        addPropertyMaker("background-position-horizontal", m);
+
+        // background-position-vertical
+        m  = new LengthProperty.Maker(PR_BACKGROUND_POSITION_VERTICAL);
+        m.setInherited(false);
+        m.setDefault("0%");
+        addPropertyMaker("background-position-vertical", m);
+
+        // border-before-color
+        m  = new ColorTypeProperty.Maker(PR_BORDER_BEFORE_COLOR);
+        m.useGeneric(genericColor);
+        m.setInherited(false);
+        m.setDefault("black");
+        corr = new CorrespondingPropertyMaker(m);
+        corr.setCorresponding(PR_BORDER_TOP_COLOR, PR_BORDER_TOP_COLOR,
+                PR_BORDER_RIGHT_COLOR);
+        corr.setRelative(true);
+        addPropertyMaker("border-before-color", m);
+
+        // border-before-style
+        m  = new EnumProperty.Maker(PR_BORDER_BEFORE_STYLE);
+        m.useGeneric(genericBorderStyle);
+        corr = new CorrespondingPropertyMaker(m);
+        corr.setCorresponding(PR_BORDER_TOP_STYLE, PR_BORDER_TOP_STYLE,
+                PR_BORDER_RIGHT_STYLE);
+        corr.setRelative(true);
+        addPropertyMaker("border-before-style", m);
+
+        // border-before-width
+        m  = new CondLengthProperty.Maker(PR_BORDER_BEFORE_WIDTH);
+        m.useGeneric(genericCondBorderWidth);
+        m.getSubpropMaker(CP_CONDITIONALITY).setDefault("retain");
+        corr = new CorrespondingPropertyMaker(m);
+        corr.setCorresponding(PR_BORDER_TOP_WIDTH, PR_BORDER_TOP_WIDTH,
+                PR_BORDER_RIGHT_WIDTH);
+        corr.setRelative(true);
+        addPropertyMaker("border-before-width", m);
+
+        // border-after-color
+        m  = new ColorTypeProperty.Maker(PR_BORDER_AFTER_COLOR);
+        m.useGeneric(genericColor);
+        m.setInherited(false);
+        m.setDefault("black");
+        corr = new CorrespondingPropertyMaker(m);
+        corr.setCorresponding(PR_BORDER_BOTTOM_COLOR, PR_BORDER_BOTTOM_COLOR,
+                PR_BORDER_LEFT_COLOR);
+        corr.setRelative(true);
+        addPropertyMaker("border-after-color", m);
+
+        // border-after-style
+        m  = new EnumProperty.Maker(PR_BORDER_AFTER_STYLE);
+        m.useGeneric(genericBorderStyle);
+        corr = new CorrespondingPropertyMaker(m);
+        corr.setCorresponding(PR_BORDER_BOTTOM_STYLE, PR_BORDER_BOTTOM_STYLE,
+                PR_BORDER_LEFT_STYLE);
+        corr.setRelative(true);
+        addPropertyMaker("border-after-style", m);
+
+        // border-after-width
+        m  = new CondLengthProperty.Maker(PR_BORDER_AFTER_WIDTH);
+        m.useGeneric(genericCondBorderWidth);
+        m.getSubpropMaker(CP_CONDITIONALITY).setDefault("retain");
+        corr = new CorrespondingPropertyMaker(m);
+        corr.setCorresponding(PR_BORDER_BOTTOM_WIDTH, PR_BORDER_BOTTOM_WIDTH,
+                PR_BORDER_LEFT_WIDTH);
+        corr.setRelative(true);
+        addPropertyMaker("border-after-width", m);
+
+        // border-start-color
+        m  = new ColorTypeProperty.Maker(PR_BORDER_START_COLOR);
+        m.useGeneric(genericColor);
+        m.setInherited(false);
+        m.setDefault("black");
+        corr = new CorrespondingPropertyMaker(m);
+        corr.setCorresponding(PR_BORDER_LEFT_COLOR, PR_BORDER_RIGHT_COLOR,
+                PR_BORDER_TOP_COLOR);
+        corr.setRelative(true);
+        addPropertyMaker("border-start-color", m);
+
+        // border-start-style
+        m  = new EnumProperty.Maker(PR_BORDER_START_STYLE);
+        m.useGeneric(genericBorderStyle);
+        corr = new CorrespondingPropertyMaker(m);
+        corr.setCorresponding(PR_BORDER_LEFT_STYLE, PR_BORDER_RIGHT_STYLE,
+                PR_BORDER_TOP_STYLE);
+        corr.setRelative(true);
+        addPropertyMaker("border-start-style", m);
+
+        // border-start-width
+        m  = new CondLengthProperty.Maker(PR_BORDER_START_WIDTH);
+        m.useGeneric(genericCondBorderWidth);
+        m.getSubpropMaker(CP_CONDITIONALITY).setDefault("discard");
+        corr = new CorrespondingPropertyMaker(m);
+        corr.setCorresponding(PR_BORDER_LEFT_WIDTH, PR_BORDER_RIGHT_WIDTH,
+                PR_BORDER_TOP_WIDTH);
+        corr.setRelative(true);
+        addPropertyMaker("border-start-width", m);
+
+        // border-end-color
+        m  = new ColorTypeProperty.Maker(PR_BORDER_END_COLOR);
+        m.useGeneric(genericColor);
+        m.setInherited(false);
+        m.setDefault("black");
+        corr = new CorrespondingPropertyMaker(m);
+        corr.setCorresponding(PR_BORDER_RIGHT_COLOR, PR_BORDER_LEFT_COLOR,
+                PR_BORDER_BOTTOM_COLOR);
+        corr.setRelative(true);
+        addPropertyMaker("border-end-color", m);
+
+        // border-end-style
+        m  = new EnumProperty.Maker(PR_BORDER_END_STYLE);
+        m.useGeneric(genericBorderStyle);
+        corr = new CorrespondingPropertyMaker(m);
+        corr.setCorresponding(PR_BORDER_RIGHT_STYLE, PR_BORDER_LEFT_STYLE,
+                PR_BORDER_BOTTOM_STYLE);
+        corr.setRelative(true);
+        addPropertyMaker("border-end-style", m);
+
+        // border-end-width
+        m  = new CondLengthProperty.Maker(PR_BORDER_END_WIDTH);
+        m.useGeneric(genericCondBorderWidth);
+        m.getSubpropMaker(CP_CONDITIONALITY).setDefault("discard");
+        corr = new CorrespondingPropertyMaker(m);
+        corr.setCorresponding(PR_BORDER_RIGHT_WIDTH, PR_BORDER_LEFT_WIDTH,
+                PR_BORDER_BOTTOM_WIDTH);
+        corr.setRelative(true);
+        addPropertyMaker("border-end-width", m);
+
+        // border-top-color
+        m  = new ColorTypeProperty.Maker(PR_BORDER_TOP_COLOR);
+        m.useGeneric(genericColor);
+        m.setInherited(false);
+        m.setDefault("black");
+        m.addShorthand(s_generics[PR_BORDER_TOP]);
+        m.addShorthand(s_generics[PR_BORDER_COLOR]);
+        m.addShorthand(s_generics[PR_BORDER]);
+        corr = new CorrespondingPropertyMaker(m);
+        corr.setCorresponding(PR_BORDER_BEFORE_COLOR, PR_BORDER_BEFORE_COLOR,
+                PR_BORDER_START_COLOR);
+        addPropertyMaker("border-top-color", m);
+
+        // border-top-style
+        m  = new EnumProperty.Maker(PR_BORDER_TOP_STYLE);
+        m.useGeneric(genericBorderStyle);
+        m.addShorthand(s_generics[PR_BORDER_TOP]);
+        m.addShorthand(s_generics[PR_BORDER_STYLE]);
+        m.addShorthand(s_generics[PR_BORDER]);
+        corr = new CorrespondingPropertyMaker(m);
+        corr.setCorresponding(PR_BORDER_BEFORE_STYLE, PR_BORDER_BEFORE_STYLE,
+                PR_BORDER_START_STYLE);
+        addPropertyMaker("border-top-style", m);
+
+        // border-top-width
+        bwm  = new BorderWidthPropertyMaker(PR_BORDER_TOP_WIDTH);
+        bwm.useGeneric(genericBorderWidth);
+        bwm.setBorderStyleId(PR_BORDER_TOP_STYLE);
+        bwm.addShorthand(s_generics[PR_BORDER_TOP]);
+        bwm.addShorthand(s_generics[PR_BORDER_WIDTH]);
+        bwm.addShorthand(s_generics[PR_BORDER]);
+        corr = new CorrespondingPropertyMaker(bwm);
+        corr.setCorresponding(PR_BORDER_BEFORE_WIDTH, PR_BORDER_BEFORE_WIDTH,
+                PR_BORDER_START_WIDTH);
+        addPropertyMaker("border-top-width", bwm);
+
+        // border-bottom-color
+        m  = new ColorTypeProperty.Maker(PR_BORDER_BOTTOM_COLOR);
+        m.useGeneric(genericColor);
+        m.setInherited(false);
+        m.setDefault("black");
+        m.addShorthand(s_generics[PR_BORDER_BOTTOM]);
+        m.addShorthand(s_generics[PR_BORDER_COLOR]);
+        m.addShorthand(s_generics[PR_BORDER]);
+        corr = new CorrespondingPropertyMaker(m);
+        corr.setCorresponding(PR_BORDER_AFTER_COLOR, PR_BORDER_AFTER_COLOR,
+                PR_BORDER_END_COLOR);
+        addPropertyMaker("border-bottom-color", m);
+
+        // border-bottom-style
+        m  = new EnumProperty.Maker(PR_BORDER_BOTTOM_STYLE);
+        m.useGeneric(genericBorderStyle);
+        m.addShorthand(s_generics[PR_BORDER_BOTTOM]);
+        m.addShorthand(s_generics[PR_BORDER_STYLE]);
+        m.addShorthand(s_generics[PR_BORDER]);
+        corr = new CorrespondingPropertyMaker(m);
+        corr.setCorresponding(PR_BORDER_AFTER_STYLE, PR_BORDER_AFTER_STYLE,
+                PR_BORDER_END_STYLE);
+        addPropertyMaker("border-bottom-style", m);
+
+        // border-bottom-width
+        bwm  = new BorderWidthPropertyMaker(PR_BORDER_BOTTOM_WIDTH);
+        bwm.useGeneric(genericBorderWidth);
+        bwm.setBorderStyleId(PR_BORDER_BOTTOM_STYLE);
+        bwm.addShorthand(s_generics[PR_BORDER_BOTTOM]);
+        bwm.addShorthand(s_generics[PR_BORDER_WIDTH]);
+        bwm.addShorthand(s_generics[PR_BORDER]);
+        corr = new CorrespondingPropertyMaker(bwm);
+        corr.setCorresponding(PR_BORDER_AFTER_WIDTH, PR_BORDER_AFTER_WIDTH,
+                PR_BORDER_END_WIDTH);
+        addPropertyMaker("border-bottom-width", bwm);
+
+        // border-left-color
+        m  = new ColorTypeProperty.Maker(PR_BORDER_LEFT_COLOR);
+        m.useGeneric(genericColor);
+        m.setInherited(false);
+        m.setDefault("black");
+        m.addShorthand(s_generics[PR_BORDER_LEFT]);
+        m.addShorthand(s_generics[PR_BORDER_COLOR]);
+        m.addShorthand(s_generics[PR_BORDER]);
+        corr = new CorrespondingPropertyMaker(m);
+        corr.setCorresponding(PR_BORDER_START_COLOR, PR_BORDER_END_COLOR,
+                PR_BORDER_AFTER_COLOR);
+        addPropertyMaker("border-left-color", m);
+
+        // border-left-style
+        m  = new EnumProperty.Maker(PR_BORDER_LEFT_STYLE);
+        m.useGeneric(genericBorderStyle);
+        m.addShorthand(s_generics[PR_BORDER_LEFT]);
+        m.addShorthand(s_generics[PR_BORDER_STYLE]);
+        m.addShorthand(s_generics[PR_BORDER]);
+        corr = new CorrespondingPropertyMaker(m);
+        corr.setCorresponding(PR_BORDER_START_STYLE, PR_BORDER_END_STYLE,
+                PR_BORDER_AFTER_STYLE);
+        addPropertyMaker("border-left-style", m);
+
+        // border-left-width
+        bwm  = new BorderWidthPropertyMaker(PR_BORDER_LEFT_WIDTH);
+        bwm.useGeneric(genericBorderWidth);
+        bwm.setBorderStyleId(PR_BORDER_LEFT_STYLE);
+        bwm.addShorthand(s_generics[PR_BORDER_LEFT]);
+        bwm.addShorthand(s_generics[PR_BORDER_WIDTH]);
+        bwm.addShorthand(s_generics[PR_BORDER]);
+        corr = new CorrespondingPropertyMaker(bwm);
+        corr.setCorresponding(PR_BORDER_START_WIDTH, PR_BORDER_END_WIDTH,
+                PR_BORDER_AFTER_WIDTH);
+        addPropertyMaker("border-left-width", bwm);
+
+        // border-right-color
+        m  = new ColorTypeProperty.Maker(PR_BORDER_RIGHT_COLOR);
+        m.useGeneric(genericColor);
+        m.setInherited(false);
+        m.setDefault("black");
+        m.addShorthand(s_generics[PR_BORDER_RIGHT]);
+        m.addShorthand(s_generics[PR_BORDER_COLOR]);
+        m.addShorthand(s_generics[PR_BORDER]);
+        corr = new CorrespondingPropertyMaker(m);
+        corr.setCorresponding(PR_BORDER_END_COLOR, PR_BORDER_START_COLOR,
+                PR_BORDER_BEFORE_COLOR);
+        addPropertyMaker("border-right-color", m);
+
+        // border-right-style
+        m  = new EnumProperty.Maker(PR_BORDER_RIGHT_STYLE);
+        m.useGeneric(genericBorderStyle);
+        m.addShorthand(s_generics[PR_BORDER_RIGHT]);
+        m.addShorthand(s_generics[PR_BORDER_STYLE]);
+        m.addShorthand(s_generics[PR_BORDER]);
+        corr = new CorrespondingPropertyMaker(m);
+        corr.setCorresponding(PR_BORDER_END_STYLE, PR_BORDER_START_STYLE,
+                PR_BORDER_BEFORE_STYLE);
+        addPropertyMaker("border-right-style", m);
+
+        // border-right-width
+        bwm  = new BorderWidthPropertyMaker(PR_BORDER_RIGHT_WIDTH);
+        bwm.useGeneric(genericBorderWidth);
+        bwm.setBorderStyleId(PR_BORDER_RIGHT_STYLE);
+        bwm.addShorthand(s_generics[PR_BORDER_RIGHT]);
+        bwm.addShorthand(s_generics[PR_BORDER_WIDTH]);
+        bwm.addShorthand(s_generics[PR_BORDER]);
+        corr = new CorrespondingPropertyMaker(bwm);
+        corr.setCorresponding(PR_BORDER_END_WIDTH, PR_BORDER_START_WIDTH,
+                PR_BORDER_BEFORE_WIDTH);
+        addPropertyMaker("border-right-width", bwm);
+
+        // padding-before
+        m  = new CondLengthProperty.Maker(PR_PADDING_BEFORE);
+        m.useGeneric(genericCondPadding);
+        m.getSubpropMaker(CP_CONDITIONALITY).setDefault("retain");
+        corr = new CorrespondingPropertyMaker(m);
+        corr.setCorresponding(PR_PADDING_TOP, PR_PADDING_TOP,
+                PR_PADDING_RIGHT);
+        corr.setRelative(true);
+        addPropertyMaker("padding-before", m);
+
+        // padding-after
+        m  = new CondLengthProperty.Maker(PR_PADDING_AFTER);
+        m.useGeneric(genericCondPadding);
+        m.getSubpropMaker(CP_CONDITIONALITY).setDefault("retain");
+        corr = new CorrespondingPropertyMaker(m);
+        corr.setCorresponding(PR_PADDING_BOTTOM, PR_PADDING_BOTTOM,
+                PR_PADDING_LEFT);
+        corr.setRelative(true);
+        addPropertyMaker("padding-after", m);
+
+        // padding-start
+        m  = new CondLengthProperty.Maker(PR_PADDING_START);
+        m.useGeneric(genericCondPadding);
+        m.getSubpropMaker(CP_CONDITIONALITY).setDefault("discard");
+        corr = new CorrespondingPropertyMaker(m);
+        corr.setCorresponding(PR_PADDING_LEFT, PR_PADDING_RIGHT,
+                PR_PADDING_TOP);
+        corr.setRelative(true);
+        addPropertyMaker("padding-start", m);
+
+        // padding-end
+        m  = new CondLengthProperty.Maker(PR_PADDING_END);
+        m.useGeneric(genericCondPadding);
+        m.getSubpropMaker(CP_CONDITIONALITY).setDefault("discard");
+        corr = new CorrespondingPropertyMaker(m);
+        corr.setCorresponding(PR_PADDING_RIGHT, PR_PADDING_LEFT,
+                PR_PADDING_BOTTOM);
+        corr.setRelative(true);
+        addPropertyMaker("padding-end", m);
+
+        // padding-top
+        m  = new LengthProperty.Maker(PR_PADDING_TOP);
+        m.useGeneric(genericPadding);
+        corr = new CorrespondingPropertyMaker(m);
+        corr.setCorresponding(PR_PADDING_BEFORE, PR_PADDING_BEFORE,
+                PR_PADDING_START);
+        addPropertyMaker("padding-top", m);
+
+        // padding-bottom
+        m  = new LengthProperty.Maker(PR_PADDING_BOTTOM);
+        m.useGeneric(genericPadding);
+        corr = new CorrespondingPropertyMaker(m);
+        corr.setCorresponding(PR_PADDING_AFTER, PR_PADDING_AFTER,
+                PR_PADDING_END);
+        addPropertyMaker("padding-bottom", m);
+
+        // padding-left
+        m  = new LengthProperty.Maker(PR_PADDING_LEFT);
+        m.useGeneric(genericPadding);
+        corr = new CorrespondingPropertyMaker(m);
+        corr.setCorresponding(PR_PADDING_START, PR_PADDING_END,
+                PR_PADDING_AFTER);
+        addPropertyMaker("padding-left", m);
+
+        // padding-right
+        m  = new LengthProperty.Maker(PR_PADDING_RIGHT);
+        m.useGeneric(genericPadding);
+        corr = new CorrespondingPropertyMaker(m);
+        corr.setCorresponding(PR_PADDING_END, PR_PADDING_START,
+                PR_PADDING_BEFORE);
+        addPropertyMaker("padding-right", m);
+    }
+        
+    private void createFontProperties() {
+        Property.Maker m;
+
+        // font-family
+        m  = new StringProperty.Maker(PR_FONT_FAMILY);
+        m.setInherited(true);
+        m.setDefault("sans-serif");
+        addPropertyMaker("font-family", m);
+
+        // font-selection-strategy
+        m  = new ToBeImplementedProperty.Maker(PR_FONT_SELECTION_STRATEGY);
+        m.setInherited(true);
+        m.setDefault("auto");
+        addPropertyMaker("font-selection-strategy", m);
+
+        // font-size
+        m  = new LengthProperty.Maker(PR_FONT_SIZE);
+        m.setInherited(true);
+        m.setDefault("12pt");
+        m.setPercentBase(LengthBase.INH_FONTSIZE);
+        addPropertyMaker("font-size", m);
+
+        // font-stretch
+        m  = new ToBeImplementedProperty.Maker(PR_FONT_STRETCH);
+        m.setInherited(true);
+        m.setDefault("normal");
+        addPropertyMaker("font-stretch", m);
+
+        // font-size-adjust
+        m  = new ToBeImplementedProperty.Maker(PR_FONT_SIZE_ADJUST);
+        m.setInherited(true);
+        m.setDefault("none");
+        addPropertyMaker("font-size-adjust", m);
+
+        // font-style
+        m  = new StringProperty.Maker(PR_FONT_STYLE);
+        m.setInherited(true);
+        m.setDefault("normal");
+        addPropertyMaker("font-style", m);
+
+        // font-variant
+        m  = new EnumProperty.Maker(PR_FONT_VARIANT);
+        m.setInherited(true);
+        m.addEnum("normal", makeEnumProperty(NORMAL));
+        m.addEnum("small-caps", makeEnumProperty(SMALL_CAPS));
+        m.setDefault("normal");
+        addPropertyMaker("font-variant", m);
+
+        // font-weight
+        m  = new StringProperty.Maker(PR_FONT_WEIGHT);
+        m.setInherited(true);
+        m.addKeyword("normal", "400");
+        m.addKeyword("bold", "700");
+        m.setDefault("400");
+        addPropertyMaker("font-weight", m);
+    }
+        
+    private void createHyphenationProperties() {
+        Property.Maker m;
+        
+        // country
+        m  = new StringProperty.Maker(PR_COUNTRY);
+        m.setInherited(true);
+        m.setDefault("none");
+        addPropertyMaker("country", m);
+
+        // language
+        m  = new StringProperty.Maker(PR_LANGUAGE);
+        m.setInherited(true);
+        m.setDefault("none");
+        addPropertyMaker("language", m);
+
+        // script
+        m  = new ToBeImplementedProperty.Maker(PR_SCRIPT);
+        m.setInherited(true);
+        m.setDefault("auto");
+        addPropertyMaker("script", m);
+
+        // hyphenate
+        m  = new EnumProperty.Maker(PR_HYPHENATE);
+        m.setInherited(true);
+        m.addEnum("true", makeEnumProperty(TRUE));
+        m.addEnum("false", makeEnumProperty(FALSE));
+        m.setDefault("false");
+        addPropertyMaker("hyphenate", m);
+
+        // hyphenation-character
+        m  = new CharacterProperty.Maker(PR_HYPHENATION_CHARACTER);
+        m.setInherited(true);
+        m.setDefault("-");
+        addPropertyMaker("hyphenation-character", m);
+
+        // hyphenation-push-character-count
+        m  = new NumberProperty.Maker(PR_HYPHENATION_PUSH_CHARACTER_COUNT);
+        m.setInherited(true);
+        m.setDefault("2");
+        addPropertyMaker("hyphenation-push-character-count", m);
+
+        // hyphenation-remain-character-count
+        m  = new NumberProperty.Maker(PR_HYPHENATION_REMAIN_CHARACTER_COUNT);
+        m.setInherited(true);
+        m.setDefault("2");
+        addPropertyMaker("hyphenation-remain-character-count", m);
+    }
+    
+    private void createMarginBlockProperties() {
+        Property.Maker m;
+        CorrespondingPropertyMaker corr;
+            
+        // margin-top
+        m  = new LengthProperty.Maker(PR_MARGIN_TOP);
+        m.setInherited(false);
+        m.setDefault("0pt");
+        addPropertyMaker("margin-top", m);
+
+        // margin-bottom
+        m  = new LengthProperty.Maker(PR_MARGIN_BOTTOM);
+        m.setInherited(false);
+        m.setDefault("0pt");
+        addPropertyMaker("margin-bottom", m);
+
+        // margin-left
+        m  = new LengthProperty.Maker(PR_MARGIN_LEFT);
+        m.setInherited(false);
+        m.setDefault("0pt");
+        addPropertyMaker("margin-left", m);
+
+        // margin-right
+        m  = new LengthProperty.Maker(PR_MARGIN_RIGHT);
+        m.setInherited(false);
+        m.setDefault("0pt");
+        addPropertyMaker("margin-right", m);
+
+        // space-before
+        m  = new SpaceProperty.Maker(PR_SPACE_BEFORE);
+        m.useGeneric(genericSpace);
+        corr = new CorrespondingPropertyMaker(m);
+        corr.setCorresponding(PR_MARGIN_TOP, PR_MARGIN_TOP, PR_MARGIN_RIGHT);
+        corr.setUseParent(true);
+        corr.setRelative(true);
+        addPropertyMaker("space-before", m);
+
+        // space-after
+        m  = new SpaceProperty.Maker(PR_SPACE_AFTER);
+        m.useGeneric(genericSpace);
+        corr = new CorrespondingPropertyMaker(m);
+        corr.setCorresponding(PR_MARGIN_BOTTOM, PR_MARGIN_BOTTOM, PR_MARGIN_LEFT);
+        corr.setUseParent(true);
+        corr.setRelative(true);
+        addPropertyMaker("space-after", m);
+
+        // start-indent
+        m = new LengthProperty.Maker(PR_START_INDENT);
+        m.setInherited(true);
+        m.setDefault("0pt");
+        IndentPropertyMaker sCorr = new IndentPropertyMaker(m);
+        sCorr.setCorresponding(PR_MARGIN_LEFT, PR_MARGIN_RIGHT, PR_MARGIN_TOP);
+        sCorr.setRelative(true);
+        sCorr.setPaddingCorresponding(new int[] {
+             PR_PADDING_LEFT, PR_PADDING_RIGHT, PR_PADDING_TOP 
+        });
+        sCorr.setBorderWidthCorresponding(new int[] {
+            PR_BORDER_LEFT_WIDTH, PR_BORDER_RIGHT_WIDTH, PR_BORDER_TOP_WIDTH
+        });
+        addPropertyMaker("start-indent", m);
+
+        // end-indent
+        m = new LengthProperty.Maker(PR_END_INDENT);
+        m.setInherited(true);
+        m.setDefault("0pt");
+        IndentPropertyMaker eCorr = new IndentPropertyMaker(m);
+        eCorr.setCorresponding(PR_MARGIN_RIGHT, PR_MARGIN_LEFT, PR_MARGIN_BOTTOM);
+        eCorr.setRelative(true);
+        eCorr.setPaddingCorresponding(new int[] {
+            PR_PADDING_RIGHT, PR_PADDING_LEFT, PR_PADDING_BOTTOM 
+        });
+        eCorr.setBorderWidthCorresponding(new int[] {
+            PR_BORDER_RIGHT_WIDTH, PR_BORDER_LEFT_WIDTH, PR_BORDER_BOTTOM_WIDTH
+        });
+        addPropertyMaker("end-indent", m);
+    }
+    
+    private void createMarginInlineProperties() {
+        Property.Maker m;
+            
+        // space-end
+        m  = new SpaceProperty.Maker(PR_SPACE_END);
+        m.useGeneric(genericSpace);
+        addPropertyMaker("space-end", m);
+
+        // space-start
+        m  = new SpaceProperty.Maker(PR_SPACE_START);
+        m.useGeneric(genericSpace);
+        addPropertyMaker("space-start", m);
+    }
+    
+    private void createRelativePosProperties() {
+        Property.Maker m;
+            
+        // relative-position
+        m  = new ToBeImplementedProperty.Maker(PR_RELATIVE_POSITION);
+        m.setInherited(false);
+        m.setDefault("static");
+        addPropertyMaker("relative-position", m);
+    }
+        
+    private void createAreaAlignmentProperties() {
+        Property.Maker m;
+            
+        // alignment-adjust
+        m  = new ToBeImplementedProperty.Maker(PR_ALIGNMENT_ADJUST);
+        m.setInherited(false);
+        m.setDefault("auto");
+        addPropertyMaker("alignment-adjust", m);
+
+        // alignment-baseline
+        m  = new ToBeImplementedProperty.Maker(PR_ALIGNMENT_BASELINE);
+        m.setInherited(false);
+        m.setDefault("auto");
+        addPropertyMaker("alignment-baseline", m);
+
+        // baseline-shift
+        m  = new LengthProperty.Maker(PR_BASELINE_SHIFT);
+        m.setInherited(false);
+        m.addEnum("baseline", makeEnumProperty(BASELINE));
+        m.addEnum("sub", makeEnumProperty(SUB));
+        m.addEnum("super", makeEnumProperty(SUPER));
+        m.setDefault("baseline");
+        addPropertyMaker("baseline-shift", m);
+
+        // display-align
+        m  = new EnumProperty.Maker(PR_DISPLAY_ALIGN);
+        m.setInherited(true);
+        m.addEnum("before", makeEnumProperty(BEFORE));
+        m.addEnum("after", makeEnumProperty(AFTER));
+        m.addEnum("center", makeEnumProperty(CENTER));
+        m.addEnum("auto", makeEnumProperty(AUTO));
+        m.setDefault("auto");
+        addPropertyMaker("display-align", m);
+
+        // dominant-baseline
+        m  = new ToBeImplementedProperty.Maker(PR_DOMINANT_BASELINE);
+        m.setInherited(false);
+        m.setDefault("auto");
+        addPropertyMaker("dominant-baseline", m);
+
+        // relative-align
+        m  = new EnumProperty.Maker(PR_RELATIVE_ALIGN);
+        m.setInherited(true);
+        m.addEnum("before", makeEnumProperty(BEFORE));
+        m.addEnum("after", makeEnumProperty(BASELINE));
+        m.setDefault("before");
+        addPropertyMaker("relative-align", m);
+    }
+    
+    private void createAreaDimensionProperties() {
+        Property.Maker m;
+        LengthProperty.Maker l;
+        DimensionPropertyMaker pdim;
+        CorrespondingPropertyMaker corr;
+            
+        // block-progression-dimension
+        m = new LengthRangeProperty.Maker(PR_BLOCK_PROGRESSION_DIMENSION);
+        m.setInherited(false);
+        
+        l = new LengthProperty.Maker(CP_MINIMUM);
+        l.setDefault("auto");
+        l.setAutoOk(true);
+        l.setPercentBase(LengthBase.CONTAINING_BOX);
+        l.setByShorthand(true);
+        m.addSubpropMaker(l);
+
+        l = new LengthProperty.Maker(CP_OPTIMUM);
+        l.setDefault("auto");
+        l.setAutoOk(true);
+        l.setPercentBase(LengthBase.CONTAINING_BOX);
+        l.setByShorthand(true);
+        m.addSubpropMaker(l);
+
+        l = new LengthProperty.Maker(CP_MAXIMUM);
+        l.setAutoOk(true);
+        l.setDefault("auto");
+        l.setPercentBase(LengthBase.CONTAINING_BOX);
+        l.setByShorthand(true);
+        m.addSubpropMaker(l);
+        
+        pdim = new DimensionPropertyMaker(m);
+        pdim.setCorresponding(PR_HEIGHT, PR_HEIGHT, PR_WIDTH);
+        pdim.setExtraCorresponding(new int[][] {
+             { PR_MIN_HEIGHT, PR_MIN_HEIGHT, PR_MIN_WIDTH, },
+             { PR_MAX_HEIGHT, PR_MAX_HEIGHT, PR_MAX_WIDTH, }
+        });
+        pdim.setRelative(true);
+        addPropertyMaker("block-progression-dimension", m);
+
+        // content-height
+        l  = new LengthProperty.Maker(PR_CONTENT_HEIGHT);
+        l.setInherited(false);
+        l.setAutoOk(true);
+        l.setDefault("auto");
+        addPropertyMaker("content-height", l);
+
+        // content-width
+        l  = new LengthProperty.Maker(PR_CONTENT_WIDTH);
+        l.setInherited(false);
+        l.setAutoOk(true);
+        l.setDefault("auto");
+        addPropertyMaker("content-width", l);
+
+        // height
+        l  = new LengthProperty.Maker(PR_HEIGHT);
+        l.setInherited(false);
+        l.setAutoOk(true);
+        l.setDefault("auto");
+        addPropertyMaker("height", l);
+
+        // inline-progression-dimension
+        m = new LengthRangeProperty.Maker(PR_INLINE_PROGRESSION_DIMENSION);
+        m.setInherited(false);
+        
+        l = new LengthProperty.Maker(CP_MINIMUM);
+        l.setDefault("auto");
+        l.setAutoOk(true);
+        l.setPercentBase(LengthBase.CONTAINING_BOX);
+        l.setByShorthand(true);
+        m.addSubpropMaker(l);
+
+        l= new LengthProperty.Maker(CP_OPTIMUM);
+        l.setDefault("auto");
+        l.setAutoOk(true);
+        l.setPercentBase(LengthBase.CONTAINING_BOX);
+        l.setByShorthand(true);
+        m.addSubpropMaker(l);
+
+        l = new LengthProperty.Maker(CP_MAXIMUM);
+        l.setAutoOk(true);
+        l.setDefault("auto");
+        l.setPercentBase(LengthBase.CONTAINING_BOX);
+        l.setByShorthand(true);
+        m.addSubpropMaker(l);
+
+        pdim = new DimensionPropertyMaker(m);
+        pdim.setRelative(true);
+        pdim.setCorresponding(PR_WIDTH, PR_WIDTH, PR_HEIGHT);
+        pdim.setExtraCorresponding(new int[][] {
+			{ PR_MIN_WIDTH, PR_MIN_WIDTH, PR_MIN_HEIGHT, },
+            { PR_MAX_WIDTH, PR_MAX_WIDTH, PR_MAX_HEIGHT, }
+        });
+        addPropertyMaker("inline-progression-dimension", m);
+
+        // max-height
+        m  = new ToBeImplementedProperty.Maker(PR_MAX_HEIGHT);
+        m.setInherited(false);
+        m.setDefault("0pt");
+        addPropertyMaker("max-height", m);
+
+        // max-width
+        m  = new ToBeImplementedProperty.Maker(PR_MAX_WIDTH);
+        m.setInherited(false);
+        m.setDefault("none");
+        addPropertyMaker("max-width", m);
+
+        // min-height
+        m  = new ToBeImplementedProperty.Maker(PR_MIN_HEIGHT);
+        m.setInherited(false);
+        m.setDefault("0pt");
+        addPropertyMaker("min-height", m);
+
+        // min-width
+        m  = new ToBeImplementedProperty.Maker(PR_MIN_WIDTH);
+        m.setInherited(false);
+        m.setDefault("");
+        addPropertyMaker("min-width", m);
+
+        // scaling
+        m  = new EnumProperty.Maker(PR_SCALING);
+        m.setInherited(true);
+        m.addEnum("uniform", makeEnumProperty(UNIFORM));
+        m.addEnum("non-uniform", makeEnumProperty(NON_UNIFORM));
+        m.setDefault("uniform");
+        addPropertyMaker("scaling", m);
+
+        // scaling-method
+        m  = new ToBeImplementedProperty.Maker(PR_SCALING_METHOD);
+        m.setInherited(false);
+        m.setDefault("auto");
+        addPropertyMaker("scaling-method", m);
+
+        // width
+        l  = new LengthProperty.Maker(PR_WIDTH);
+        l.setInherited(false);
+        l.setAutoOk(true);
+        l.setPercentBase(LengthBase.CONTAINING_BOX);
+        l.setDefault("auto");
+        addPropertyMaker("width", l);
+    }
+    
+    private void createBlockAndLineProperties() {
+        Property.Maker m;
+            
+        // hyphenation-keep
+        m  = new ToBeImplementedProperty.Maker(PR_HYPHENATION_KEEP);
+        m.setInherited(true);
+        m.setDefault("auto");
+        addPropertyMaker("hyphenation-keep", m);
+
+        // hyphenation-ladder-count
+        m  = new ToBeImplementedProperty.Maker(PR_HYPHENATION_LADDER_COUNT);
+        m.setInherited(true);
+        m.setDefault("no-limit");
+        addPropertyMaker("hyphenation-ladder-count", m);
+
+        // last-line-end-indent
+        m  = new ToBeImplementedProperty.Maker(PR_LAST_LINE_END_INDENT);
+        m.setInherited(true);
+        m.setDefault("0pt");
+        addPropertyMaker("last-line-end-indent", m);
+
+        // line-height
+        m  = new LineHeightPropertyMaker(PR_LINE_HEIGHT);
+        m.setInherited(true);
+        m.setDefault("normal", true);
+        m.addKeyword("normal", "1.2em");
+        m.setPercentBase(LengthBase.FONTSIZE);
+        addPropertyMaker("line-height", m);
+
+        // line-height-shift-adjustment
+        m  = new ToBeImplementedProperty.Maker(PR_LINE_HEIGHT_SHIFT_ADJUSTMENT);
+        m.setInherited(true);
+        m.setDefault("consider-shifts");
+        addPropertyMaker("line-height-shift-adjustment", m);
+
+        // line-stacking-strategy
+        m  = new ToBeImplementedProperty.Maker(PR_LINE_STACKING_STRATEGY);
+        m.setInherited(true);
+        m.setDefault("line-height");
+        addPropertyMaker("line-stacking-strategy", m);
+
+        // linefeed-treatment
+        m  = new EnumProperty.Maker(PR_LINEFEED_TREATMENT);
+        m.setInherited(true);
+        m.addEnum("ignore", makeEnumProperty(IGNORE));
+        m.addEnum("preserve", makeEnumProperty(PRESERVE));
+        m.addEnum("treat-as-space", makeEnumProperty(TREAT_AS_SPACE));
+        m.addEnum("treat-as-zero-width-space", makeEnumProperty(TREAT_AS_ZERO_WIDTH_SPACE));
+        m.setDefault("treat-as-space");
+        addPropertyMaker("linefeed-treatment", m);
+
+        // space-treatment
+        m  = new ToBeImplementedProperty.Maker(PR_SPACE_TREATMENT);
+        m.setInherited(true);
+        m.setDefault("preserve");
+        addPropertyMaker("space-treatment", m);
+
+        // text-align
+        m  = new EnumProperty.Maker(PR_TEXT_ALIGN);
+        m.setInherited(true);
+        // Note: both 'end' and 'right' are mapped to END
+        //       both 'start' and 'left' are mapped to START
+        m.addEnum("center", makeEnumProperty(CENTER));
+        m.addEnum("end", makeEnumProperty(END));
+        m.addEnum("right", makeEnumProperty(END));
+        m.addEnum("start", makeEnumProperty(START));
+        m.addEnum("left", makeEnumProperty(START));
+        m.addEnum("justify", makeEnumProperty(JUSTIFY));
+        m.setDefault("start");
+        addPropertyMaker("text-align", m);
+
+        // text-align-last
+        m  = new EnumProperty.Maker(PR_TEXT_ALIGN_LAST) {
+            public Property compute(PropertyList propertyList) {
+                Property corresponding = propertyList.get(PR_TEXT_ALIGN);
+                if (corresponding == null) {
+                    return null;
+                }
+                int correspondingValue = corresponding.getEnum();
+                if (correspondingValue == JUSTIFY)
+                    return new EnumProperty(START);
+                else if (correspondingValue == END)
+                    return new EnumProperty(END);
+                else if (correspondingValue == START)
+                    return new EnumProperty(START);
+                else if (correspondingValue == CENTER)
+                    return new EnumProperty(CENTER);
+                return null;
+            }
+        };
+        m.setInherited(true);
+        m.addEnum("center", makeEnumProperty(CENTER));
+        m.addEnum("end", makeEnumProperty(END));
+        m.addEnum("start", makeEnumProperty(START));
+        m.addEnum("justify", makeEnumProperty(JUSTIFY));
+        m.setDefault("start");
+        addPropertyMaker("text-align-last", m);
+
+        // text-indent
+        m  = new LengthProperty.Maker(PR_TEXT_INDENT);
+        m.setInherited(false);
+        m.setDefault("0pt");
+        addPropertyMaker("text-indent", m);
+
+        // white-space-collapse
+        m  = new EnumProperty.Maker(PR_WHITE_SPACE_COLLAPSE);
+        m.useGeneric(genericBoolean);
+        m.setInherited(true);
+        m.setDefault("true");
+        addPropertyMaker("white-space-collapse", m);
+
+        // wrap-option
+        m  = new EnumProperty.Maker(PR_WRAP_OPTION);
+        m.setInherited(true);
+        m.addEnum("wrap", makeEnumProperty(WRAP));
+        m.addEnum("no-wrap", makeEnumProperty(NO_WRAP));
+        m.setDefault("wrap");
+        addPropertyMaker("wrap-option", m);
+    }
+    
+    private void createCharacterProperties() {
+        Property.Maker m;
+            
+        // character
+        m  = new CharacterProperty.Maker(PR_CHARACTER);
+        m.setInherited(false);
+        m.setDefault("none");
+        addPropertyMaker("character", m);
+
+        // letter-spacing
+        m  = new ToBeImplementedProperty.Maker(PR_LETTER_SPACING);
+        m.setInherited(true);
+        m.setDefault("normal");
+        addPropertyMaker("letter-spacing", m);
+
+        // suppress-at-line-break
+        m  = new ToBeImplementedProperty.Maker(PR_SUPPRESS_AT_LINE_BREAK);
+        m.setInherited(false);
+        m.setDefault("auto");
+        addPropertyMaker("suppress-at-line-break", m);
+
+        // text-decoration
+        m  = new EnumProperty.Maker(PR_TEXT_DECORATION);
+        m.setInherited(false);
+        m.addEnum("none", makeEnumProperty(NONE));
+        m.addEnum("underline", makeEnumProperty(UNDERLINE));
+        m.addEnum("overline", makeEnumProperty(OVERLINE));
+        m.addEnum("line-through", makeEnumProperty(LINE_THROUGH));
+        m.addEnum("blink", makeEnumProperty(BLINK));
+        m.addEnum("no-underline", makeEnumProperty(NO_UNDERLINE));
+        m.addEnum("no-overline", makeEnumProperty(NO_OVERLINE));
+        m.addEnum("no-line-through", makeEnumProperty(NO_LINE_THROUGH));
+        m.addEnum("no-blink", makeEnumProperty(NO_BLINK));
+        m.setDefault("none");
+        addPropertyMaker("text-decoration", m);
+
+        // text-shadow
+        m  = new ToBeImplementedProperty.Maker(PR_TEXT_SHADOW);
+        m.setInherited(false);
+        m.setDefault("none");
+        addPropertyMaker("text-shadow", m);
+
+        // text-transform
+        m  = new EnumProperty.Maker(PR_TEXT_TRANSFORM);
+        m.setInherited(true);
+        m.addEnum("none", makeEnumProperty(NONE));
+        m.addEnum("capitalize", makeEnumProperty(CAPITALIZE));
+        m.addEnum("uppercase", makeEnumProperty(UPPERCASE));
+        m.addEnum("lowercase", makeEnumProperty(LOWERCASE));
+        m.setDefault("none");
+        addPropertyMaker("text-transform", m);
+
+        // treat-as-word-space
+        m  = new ToBeImplementedProperty.Maker(PR_TREAT_AS_WORD_SPACE);
+        m.setInherited(false);
+        m.setDefault("auto");
+        addPropertyMaker("treat-as-word-space", m);
+
+        // word-spacing
+        m  = new SpaceProperty.Maker(PR_WORD_SPACING);
+        m.useGeneric(genericSpace);
+        m.setInherited(true);
+        m.getSubpropMaker(CP_PRECEDENCE).setDefault("force");
+        m.getSubpropMaker(CP_CONDITIONALITY).setDefault("discard");
+        m.setDefault("0pt");
+        addPropertyMaker("word-spacing", m);
+    }
+    
+    private void createColorProperties() {
+        Property.Maker m;
+            
+        // color
+        m  = new ColorTypeProperty.Maker(PR_COLOR);
+        m.useGeneric(genericColor);
+        m.setInherited(true);
+        m.setDefault("black");
+        addPropertyMaker("color", m);
+
+        // color-profile-name
+        m  = new StringProperty.Maker(PR_COLOR_PROFILE_NAME);
+        m.setInherited(false);
+        m.setDefault("");
+        addPropertyMaker("color-profile-name", m);
+
+        // rendering-intent
+        m  = new EnumProperty.Maker(PR_RENDERING_INTENT);
+        m.setInherited(false);
+        m.addEnum("auto", makeEnumProperty(AUTO));
+        m.addEnum("perceptual", makeEnumProperty(PERCEPTUAL));
+        m.addEnum("relative-colorimetric", makeEnumProperty(RELATIVE_COLOMETRIC));
+        m.addEnum("saturation", makeEnumProperty(SATURATION));
+        m.addEnum("absolute-colorimetric", makeEnumProperty(ABSOLUTE_COLORMETRIC));
+        m.setDefault("auto");
+        addPropertyMaker("rendering-intent", m);
+    }
+    
+    private void createFloatProperties() {
+        Property.Maker m;
+            
+        // clear
+        m  = new ToBeImplementedProperty.Maker(PR_CLEAR);
+        m.setInherited(false);
+        m.setDefault("none");
+        addPropertyMaker("clear", m);
+
+        // float
+        m  = new ToBeImplementedProperty.Maker(PR_FLOAT);
+        m.setInherited(false);
+        m.setDefault("none");
+        addPropertyMaker("float", m);
+    }
+    
+    private void createKeepsAndBreaksProperties() {
+        Property.Maker m;
+           
+        // break-after
+        m  = new EnumProperty.Maker(PR_BREAK_AFTER);
+        m.useGeneric(genericBreak);
+        addPropertyMaker("break-after", m);
+
+        // break-before
+        m  = new EnumProperty.Maker(PR_BREAK_BEFORE);
+        m.useGeneric(genericBreak);
+        addPropertyMaker("break-before", m);
+
+        // keep-together
+        m  = new KeepProperty.Maker(PR_KEEP_TOGETHER);
+        m.useGeneric(genericKeep);
+        m.setInherited(false);
+        m.setDefault("auto");
+        addPropertyMaker("keep-together", m);
+
+        // keep-with-next
+        m  = new KeepProperty.Maker(PR_KEEP_WITH_NEXT);
+        m.useGeneric(genericKeep);
+        m.setInherited(false);
+        m.setDefault("auto");
+        addPropertyMaker("keep-with-next", m);
+
+        // keep-with-previous
+        m  = new KeepProperty.Maker(PR_KEEP_WITH_PREVIOUS);
+        m.useGeneric(genericKeep);
+        m.setInherited(false);
+        m.setDefault("auto");
+        addPropertyMaker("keep-with-previous", m);
+
+        // orphans
+        m  = new NumberProperty.Maker(PR_ORPHANS);
+        m.setInherited(true);
+        m.setDefault("2");
+        addPropertyMaker("orphans", m);
+
+        // widows
+        m  = new NumberProperty.Maker(PR_WIDOWS);
+        m.setInherited(true);
+        m.setDefault("2");
+        addPropertyMaker("widows", m);
+    }
+    
+    private void createLayoutProperties() {
+        Property.Maker m;
+            
+        // clip
+        m  = new ToBeImplementedProperty.Maker(PR_CLIP);
+        m.setInherited(false);
+        m.setDefault("auto");
+        addPropertyMaker("clip", m);
+
+        // overflow
+        m  = new EnumProperty.Maker(PR_OVERFLOW);
+        m.setInherited(false);
+        m.addEnum("visible", makeEnumProperty(VISIBLE));
+        m.addEnum("hidden", makeEnumProperty(HIDDEN));
+        m.addEnum("scroll", makeEnumProperty(SCROLL));
+        m.addEnum("error-if-overflow", makeEnumProperty(ERROR_IF_OVERFLOW));
+        m.addEnum("auto", makeEnumProperty(AUTO));
+        m.setDefault("auto");
+        addPropertyMaker("overflow", m);
+
+        // reference-orientation
+        m  = new NumberProperty.Maker(PR_REFERENCE_ORIENTATION);
+        m.setInherited(true);
+        m.setDefault("0");
+        addPropertyMaker("reference-orientation", m);
+
+        // span
+        m  = new EnumProperty.Maker(PR_SPAN);
+        m.setInherited(false);
+        m.addEnum("none", makeEnumProperty(NONE));
+        m.addEnum("all", makeEnumProperty(ALL));
+        m.setDefault("none");
+        addPropertyMaker("span", m);
+    }
+    
+    private void createLeaderAndRuleProperties() {
+        Property.Maker m;
+        Property.Maker sub;
+            
+        // leader-alignment
+        m  = new EnumProperty.Maker(PR_LEADER_ALIGNMENT);
+        m.setInherited(true);
+        m.addEnum("none", makeEnumProperty(NONE));
+        m.addEnum("reference-area", makeEnumProperty(REFERENCE_AREA));
+        m.addEnum("page", makeEnumProperty(PAGE));
+        m.setDefault("none");
+        addPropertyMaker("leader-alignment", m);
+
+        // leader-pattern
+        m  = new EnumProperty.Maker(PR_LEADER_PATTERN);
+        m.setInherited(true);
+        m.addEnum("space", makeEnumProperty(SPACE));
+        m.addEnum("rule", makeEnumProperty(RULE));
+        m.addEnum("dots", makeEnumProperty(DOTS));
+        m.addEnum("use-content", makeEnumProperty(USECONTENT));
+        m.setDefault("space");
+        addPropertyMaker("leader-pattern", m);
+
+        // leader-pattern-width
+        m  = new LengthProperty.Maker(PR_LEADER_PATTERN_WIDTH);
+        m.setInherited(true);
+        m.setDefault("use-font-metrics", true);
+        m.addKeyword("use-font-metrics", "0pt");
+        m.setPercentBase(LengthBase.CONTAINING_BOX);
+        addPropertyMaker("leader-pattern-width", m);
+
+        // leader-length
+        m  = new LengthRangeProperty.Maker(PR_LEADER_LENGTH);
+        m.setInherited(true);
+        m.setPercentBase(LengthBase.CONTAINING_BOX);
+
+        sub = new LengthProperty.Maker(CP_MINIMUM);
+        sub.setDefault("0pt");
+        sub.setPercentBase(LengthBase.CONTAINING_BOX);
+        sub.setByShorthand(true);
+        m.addSubpropMaker(sub);
+
+        sub = new LengthProperty.Maker(CP_OPTIMUM);
+        sub.setDefault("12.0pt");
+        sub.setPercentBase(LengthBase.CONTAINING_BOX);
+        sub.setByShorthand(true);
+        m.addSubpropMaker(sub);
+
+        sub = new LengthProperty.Maker(CP_MAXIMUM);
+        sub.setDefault("100%", true);
+        sub.setPercentBase(LengthBase.CONTAINING_BOX);
+        sub.setByShorthand(true);
+        m.addSubpropMaker(sub);
+        addPropertyMaker("leader-length", m);
+
+        // rule-style
+        m  = new EnumProperty.Maker(PR_RULE_STYLE);
+        m.setInherited(true);
+        m.addEnum("none", makeEnumProperty(NONE));
+        m.addEnum("dotted", makeEnumProperty(DOTTED));
+        m.addEnum("dashed", makeEnumProperty(DASHED));
+        m.addEnum("solid", makeEnumProperty(SOLID));
+        m.addEnum("double", makeEnumProperty(DOUBLE));
+        m.addEnum("groove", makeEnumProperty(GROOVE));
+        m.addEnum("ridge", makeEnumProperty(RIDGE));
+        m.setDefault("solid");
+        addPropertyMaker("rule-style", m);
+
+        // rule-thickness
+        m  = new LengthProperty.Maker(PR_RULE_THICKNESS);
+        m.setInherited(true);
+        m.setDefault("1.0pt");
+        addPropertyMaker("rule-thickness", m);
+    }
+    
+    private void createDynamicProperties() {
+        Property.Maker m;
+            
+        // active-state
+        m  = new ToBeImplementedProperty.Maker(PR_ACTIVE_STATE);
+        m.setInherited(false);
+        m.setDefault("");
+        addPropertyMaker("active-state", m);
+
+        // auto-restore
+        m  = new ToBeImplementedProperty.Maker(PR_AUTO_RESTORE);
+        m.setInherited(true);
+        m.setDefault("false");
+        addPropertyMaker("auto-restore", m);
+
+        // case-name
+        m  = new ToBeImplementedProperty.Maker(PR_CASE_NAME);
+        m.setInherited(false);
+        m.setDefault("");
+        addPropertyMaker("case-name", m);
+
+        // case-title
+        m  = new ToBeImplementedProperty.Maker(PR_CASE_TITLE);
+        m.setInherited(false);
+        m.setDefault("");
+        addPropertyMaker("case-title", m);
+
+        // destination-placement-offset
+        m  = new ToBeImplementedProperty.Maker(PR_DESTINATION_PLACEMENT_OFFSET);
+        m.setInherited(false);
+        m.setDefault("0pt");
+        addPropertyMaker("destination-placement-offset", m);
+
+        // external-destination
+        m  = new StringProperty.Maker(PR_EXTERNAL_DESTINATION);
+        m.setInherited(false);
+        m.setDefault("");
+        addPropertyMaker("external-destination", m);
+
+        // indicate-destination
+        m  = new ToBeImplementedProperty.Maker(PR_INDICATE_DESTINATION);
+        m.setInherited(false);
+        m.setDefault("false");
+        addPropertyMaker("indicate-destination", m);
+
+        // internal-destination
+        m  = new StringProperty.Maker(PR_INTERNAL_DESTINATION);
+        m.setInherited(false);
+        m.setDefault("");
+        addPropertyMaker("internal-destination", m);
+
+        // show-destination
+        m  = new ToBeImplementedProperty.Maker(PR_SHOW_DESTINATION);
+        m.setInherited(false);
+        m.setDefault("replace");
+        addPropertyMaker("show-destination", m);
+
+        // starting-state
+        m  = new ToBeImplementedProperty.Maker(PR_STARTING_STATE);
+        m.setInherited(false);
+        m.setDefault("show");
+        addPropertyMaker("starting-state", m);
+
+        // switch-to
+        m  = new ToBeImplementedProperty.Maker(PR_SWITCH_TO);
+        m.setInherited(false);
+        m.setDefault("xsl-any");
+        addPropertyMaker("switch-to", m);
+
+        // target-presentation-context
+        m  = new ToBeImplementedProperty.Maker(PR_TARGET_PRESENTATION_CONTEXT);
+        m.setInherited(false);
+        m.setDefault("use-target-processing-context");
+        addPropertyMaker("target-presentation-context", m);
+
+        // target-processing-context
+        m  = new ToBeImplementedProperty.Maker(PR_TARGET_PROCESSING_CONTEXT);
+        m.setInherited(false);
+        m.setDefault("document-root");
+        addPropertyMaker("target-processing-context", m);
+
+        // target-stylesheet
+        m  = new ToBeImplementedProperty.Maker(PR_TARGET_STYLESHEET);
+        m.setInherited(false);
+        m.setDefault("use-normal-stylesheet");
+        addPropertyMaker("target-stylesheet", m);
+    }
+    
+    private void createMarkersProperties() {
+        Property.Maker m;
+            
+        // marker-class-name
+        m  = new StringProperty.Maker(PR_MARKER_CLASS_NAME);
+        m.setInherited(false);
+        m.setDefault("");
+        addPropertyMaker("marker-class-name", m);
+
+        // retrieve-class-name
+        m  = new StringProperty.Maker(PR_RETRIEVE_CLASS_NAME);
+        m.setInherited(false);
+        m.setDefault("");
+        addPropertyMaker("retrieve-class-name", m);
+
+        // retrieve-position
+        m  = new EnumProperty.Maker(PR_RETRIEVE_POSITION);
+        m.setInherited(false);
+        m.addEnum("first-starting-within-page", makeEnumProperty(FSWP));
+        m.addEnum("first-including-carryover", makeEnumProperty(FIC));
+        m.addEnum("last-starting-within-page", makeEnumProperty(LSWP));
+        m.addEnum("last-ending-within-page", makeEnumProperty(LEWP));
+        m.setDefault("first-starting-within-page");
+        addPropertyMaker("retrieve-position", m);
+
+        // retrieve-boundary
+        m  = new EnumProperty.Maker(PR_RETRIEVE_BOUNDARY);
+        m.setInherited(false);
+        m.addEnum("page", makeEnumProperty(PAGE));
+        m.addEnum("page-sequence", makeEnumProperty(PAGE_SEQUENCE));
+        m.addEnum("document", makeEnumProperty(DOCUMENT));
+        m.setDefault("page-sequence");
+        addPropertyMaker("retrieve-boundary", m);
+    }
+    
+    private void createNumberToStringProperties() {
+        Property.Maker m;
+            
+        // format
+        m  = new StringProperty.Maker(PR_FORMAT);
+        m.setInherited(false);
+        m.setDefault("1");
+        addPropertyMaker("format", m);
+
+        // grouping-separator
+        m  = new CharacterProperty.Maker(PR_GROUPING_SEPARATOR);
+        m.setInherited(false);
+        m.setDefault("none");
+        addPropertyMaker("grouping-separator", m);
+
+        // grouping-size
+        m  = new NumberProperty.Maker(PR_GROUPING_SIZE);
+        m.setInherited(false);
+        m.setDefault("0");
+        addPropertyMaker("grouping-size", m);
+
+        // letter-value
+        m  = new EnumProperty.Maker(PR_LETTER_VALUE);
+        m.setInherited(false);
+        m.addEnum("alphabetic", makeEnumProperty(ALPHABETIC));
+        m.addEnum("traditional", makeEnumProperty(TRADITIONAL));
+        m.addEnum("auto", makeEnumProperty(AUTO));
+        m.setDefault("auto");
+        addPropertyMaker("letter-value", m);
+    }
+    
+    private void createPaginationAndLayoutProperties() {
+        Property.Maker m;
+        LengthProperty.Maker l;
+            
+        // blank-or-not-blank
+        m  = new EnumProperty.Maker(PR_BLANK_OR_NOT_BLANK);
+        m.setInherited(false);
+        m.addEnum("blank", makeEnumProperty(BLANK));
+        m.addEnum("not-blank", makeEnumProperty(NOT_BLANK));
+        m.addEnum("any", makeEnumProperty(ANY));
+        m.setDefault("any");
+        addPropertyMaker("blank-or-not-blank", m);
+
+        // column-count
+        m  = new NumberProperty.Maker(PR_COLUMN_COUNT);
+        m.setInherited(false);
+        m.setDefault("1");
+        addPropertyMaker("column-count", m);
+
+        // column-gap
+        l  = new LengthProperty.Maker(PR_COLUMN_GAP);
+        l.setInherited(false);
+        l.setAutoOk(true);
+        l.setDefault("0.25in");
+        addPropertyMaker("column-gap", l);
+
+        // extent
+        m  = new LengthProperty.Maker(PR_EXTENT);
+        m.setInherited(true);
+        m.setDefault("0pt");
+        addPropertyMaker("extent", m);
+
+        // flow-name
+        m  = new StringProperty.Maker(PR_FLOW_NAME);
+        m.setInherited(false);
+        m.setDefault("");
+        addPropertyMaker("flow-name", m);
+
+        // force-page-count
+        m  = new EnumProperty.Maker(PR_FORCE_PAGE_COUNT);
+        m.setInherited(false);
+        m.addEnum("even", makeEnumProperty(EVEN));
+        m.addEnum("odd", makeEnumProperty(ODD));
+        m.addEnum("end-on-even", makeEnumProperty(END_ON_EVEN));
+        m.addEnum("end-on-odd", makeEnumProperty(END_ON_ODD));
+        m.addEnum("no-force", makeEnumProperty(NO_FORCE));
+        m.addEnum("auto", makeEnumProperty(AUTO));
+        m.setDefault("auto");
+        addPropertyMaker("force-page-count", m);
+
+        // initial-page-number
+        m  = new StringProperty.Maker(PR_INITIAL_PAGE_NUMBER);
+        m.setInherited(false);
+        m.setDefault("auto");
+        addPropertyMaker("initial-page-number", m);
+
+        // master-name
+        m  = new StringProperty.Maker(PR_MASTER_NAME);
+        m.setInherited(false);
+        m.setDefault("");
+        addPropertyMaker("master-name", m);
+
+        // master-reference
+        m  = new StringProperty.Maker(PR_MASTER_REFERENCE);
+        m.setInherited(false);
+        m.setDefault("");
+        addPropertyMaker("master-reference", m);
+
+        // maximum-repeats
+        m  = new StringProperty.Maker(PR_MAXIMUM_REPEATS);
+        m.setInherited(false);
+        m.setDefault("no-limit");
+        addPropertyMaker("maximum-repeats", m);
+
+        // media-usage
+        m  = new ToBeImplementedProperty.Maker(PR_MEDIA_USAGE);
+        m.setInherited(false);
+        m.setDefault("auto");
+        addPropertyMaker("media-usage", m);
+
+        // odd-or-even
+        m  = new EnumProperty.Maker(PR_ODD_OR_EVEN);
+        m.setInherited(false);
+        m.addEnum("odd", makeEnumProperty(ODD));
+        m.addEnum("even", makeEnumProperty(EVEN));
+        m.addEnum("any", makeEnumProperty(ANY));
+        m.setDefault("any");
+        addPropertyMaker("odd-or-even", m);
+
+        // page-height
+        l  = new LengthProperty.Maker(PR_PAGE_HEIGHT);
+        l.setInherited(false);
+        l.setAutoOk(true);
+        l.setDefault("11in");
+        addPropertyMaker("page-height", l);
+
+        // page-position
+        m  = new EnumProperty.Maker(PR_PAGE_POSITION);
+        m.setInherited(false);
+        m.addEnum("first", makeEnumProperty(FIRST));
+        m.addEnum("last", makeEnumProperty(LAST));
+        m.addEnum("rest", makeEnumProperty(REST));
+        m.addEnum("any", makeEnumProperty(ANY));
+        m.setDefault("any");
+        addPropertyMaker("page-position", m);
+
+        // page-width
+        l  = new LengthProperty.Maker(PR_PAGE_WIDTH);
+        l.setInherited(false);
+        l.setAutoOk(true);
+        l.setDefault("8in");
+        addPropertyMaker("page-width", l);
+
+        // precedence
+        m  = new EnumProperty.Maker(PR_PRECEDENCE);
+        m.setInherited(false);
+        m.addEnum("true", makeEnumProperty(TRUE));
+        m.addEnum("false", makeEnumProperty(FALSE));
+        m.setDefault("false");
+        addPropertyMaker("precedence", m);
+
+        // region-name
+        m  = new StringProperty.Maker(PR_REGION_NAME);
+        m.setInherited(false);
+        m.setDefault("");
+        addPropertyMaker("region-name", m);
+    }
+    
+    private void createTableProperties() {
+        Property.Maker m;
+        Property.Maker sub;
+            
+        // border-after-precedence
+        m  = new ToBeImplementedProperty.Maker(PR_BORDER_AFTER_PRECEDENCE);
+        m.setInherited(false);
+        m.setDefault("none");
+        addPropertyMaker("border-after-precedence", m);
+
+        // border-before-precedence
+        m  = new ToBeImplementedProperty.Maker(PR_BORDER_BEFORE_PRECEDENCE);
+        m.setInherited(false);
+        m.setDefault("none");
+        addPropertyMaker("border-before-precedence", m);
+
+        // border-collapse
+        m  = new EnumProperty.Maker(PR_BORDER_COLLAPSE);
+        m.setInherited(true);
+        m.setDefault("collapse");
+        m.addEnum("separate", makeEnumProperty(SEPARATE));
+        m.addEnum("collapse", makeEnumProperty(COLLAPSE));
+        addPropertyMaker("border-collapse", m);
+
+        // border-end-precedence
+        m  = new ToBeImplementedProperty.Maker(PR_BORDER_END_PRECEDENCE);
+        m.setInherited(false);
+        m.setDefault("none");
+        addPropertyMaker("border-end-precedence", m);
+
+        // border-separation
+        m  = new LengthPairProperty.Maker(PR_BORDER_SEPARATION);
+        m.setInherited(true);
+
+        sub = new LengthProperty.Maker(CP_BLOCK_PROGRESSION_DIRECTION);
+        sub.setDefault("0pt");
+        m.addSubpropMaker(sub);
+
+        sub = new LengthProperty.Maker(CP_INLINE_PROGRESSION_DIRECTION);
+        sub.setDefault("0pt");
+        m.addSubpropMaker(sub);
+        addPropertyMaker("border-separation", m);
+
+        // border-start-precedence
+        m  = new ToBeImplementedProperty.Maker(PR_BORDER_START_PRECEDENCE);
+        m.setInherited(false);
+        m.setDefault("none");
+        addPropertyMaker("border-start-precedence", m);
+
+        // caption-side
+        m  = new EnumProperty.Maker(PR_CAPTION_SIDE);
+        m.setInherited(true);
+        m.addEnum("before", makeEnumProperty(BEFORE));
+        m.addEnum("after", makeEnumProperty(AFTER));
+        m.addEnum("start", makeEnumProperty(START));
+        m.addEnum("end", makeEnumProperty(END));
+        m.addEnum("top", makeEnumProperty(TOP));
+        m.addEnum("bottom", makeEnumProperty(BOTTOM));
+        m.addEnum("left", makeEnumProperty(LEFT));
+        m.addEnum("right", makeEnumProperty(RIGHT));
+        m.setDefault("before");
+        addPropertyMaker("caption-side", m);
+
+        // column-number
+        m  = new NumberProperty.Maker(PR_COLUMN_NUMBER);
+        m.setInherited(false);
+        m.setDefault("0");
+        addPropertyMaker("column-number", m);
+
+        // column-width
+        m  = new LengthProperty.Maker(PR_COLUMN_WIDTH);
+        m.setInherited(false);
+        m.setDefault("proportional-column-width(1)", true);
+        addPropertyMaker("column-width", m);
+
+        // empty-cells
+        m  = new ToBeImplementedProperty.Maker(PR_EMPTY_CELLS);
+        m.setInherited(true);
+        m.setDefault("show");
+        addPropertyMaker("empty-cells", m);
+
+        // ends-row
+        m  = new ToBeImplementedProperty.Maker(PR_ENDS_ROW);
+        m.setInherited(false);
+        m.setDefault("false");
+        addPropertyMaker("ends-row", m);
+
+        // number-columns-repeated
+        m  = new NumberProperty.Maker(PR_NUMBER_COLUMNS_REPEATED);
+        m.setInherited(false);
+        m.setDefault("1");
+        addPropertyMaker("number-columns-repeated", m);
+
+        // number-columns-spanned
+        m  = new NumberProperty.Maker(PR_NUMBER_COLUMNS_SPANNED);
+        m.setInherited(false);
+        m.setDefault("1");
+        addPropertyMaker("number-columns-spanned", m);
+
+        // number-rows-spanned
+        m  = new NumberProperty.Maker(PR_NUMBER_ROWS_SPANNED);
+        m.setInherited(false);
+        m.setDefault("1");
+        addPropertyMaker("number-rows-spanned", m);
+
+        // starts-row
+        m  = new ToBeImplementedProperty.Maker(PR_STARTS_ROW);
+        m.setInherited(false);
+        m.setDefault("false");
+        addPropertyMaker("starts-row", m);
+
+        // table-layout
+        m  = new EnumProperty.Maker(PR_TABLE_LAYOUT);
+        m.setInherited(false);
+        m.setDefault("auto");
+        m.addEnum("auto", makeEnumProperty(AUTO));
+        m.addEnum("fixed", makeEnumProperty(FIXED));
+        addPropertyMaker("table-layout", m);
+
+        // table-omit-footer-at-break
+        m  = new EnumProperty.Maker(PR_TABLE_OMIT_FOOTER_AT_BREAK);
+        m.useGeneric(genericBoolean);
+        m.setInherited(false);
+        m.setDefault("false");
+        addPropertyMaker("table-omit-footer-at-break", m);
+
+        // table-omit-header-at-break
+        m  = new EnumProperty.Maker(PR_TABLE_OMIT_HEADER_AT_BREAK);
+        m.useGeneric(genericBoolean);
+        m.setInherited(false);
+        m.setDefault("false");
+        addPropertyMaker("table-omit-header-at-break", m);
+    }
+    
+    private void createWritingModeProperties() {
+        Property.Maker m;
+            
+        // direction
+        m  = new ToBeImplementedProperty.Maker(PR_DIRECTION);
+        m.setInherited(true);
+        m.setDefault("ltr");
+        addPropertyMaker("direction", m);
+
+        // glyph-orientation-horizontal
+        m  = new ToBeImplementedProperty.Maker(PR_GLYPH_ORIENTATION_HORIZONTAL);
+        m.setInherited(true);
+        m.setDefault("0deg");
+        addPropertyMaker("glyph-orientation-horizontal", m);
+
+        // glyph-orientation-vertical
+        m  = new ToBeImplementedProperty.Maker(PR_GLYPH_ORIENTATION_VERTICAL);
+        m.setInherited(true);
+        m.setDefault("auto");
+        addPropertyMaker("glyph-orientation-vertical", m);
+
+        // text-altitude
+        m  = new ToBeImplementedProperty.Maker(PR_TEXT_ALTITUDE);
+        m.setInherited(false);
+        m.setDefault("use-font-metrics");
+        addPropertyMaker("text-altitude", m);
+
+        // text-depth
+        m  = new ToBeImplementedProperty.Maker(PR_TEXT_DEPTH);
+        m.setInherited(false);
+        m.setDefault("use-font-metrics");
+        addPropertyMaker("text-depth", m);
+
+        // unicode-bidi
+        m  = new ToBeImplementedProperty.Maker(PR_UNICODE_BIDI);
+        m.setInherited(false);
+        m.setDefault("normal");
+        addPropertyMaker("unicode-bidi", m);
+
+        // writing-mode
+        m  = new EnumProperty.Maker(PR_WRITING_MODE);
+        m.setInherited(true);
+        m.setDefault("lr-tb");
+        m.addEnum("lr-tb", makeEnumProperty(LR_TB));
+        m.addEnum("rl-tb", makeEnumProperty(RL_TB));
+        m.addEnum("tb-rl", makeEnumProperty(TB_RL));
+        addPropertyMaker("writing-mode", m);
+    }
+    
+    private void createMiscProperties() {
+        Property.Maker m;
+            
+        // content-type
+        m  = new ToBeImplementedProperty.Maker(PR_CONTENT_TYPE);
+        m.setInherited(false);
+        m.setDefault("auto");
+        addPropertyMaker("content-type", m);
+
+        // id
+        m  = new StringProperty.Maker(PR_ID);
+        m.setInherited(false);
+        m.setDefault("");
+        addPropertyMaker("id", m);
+
+        // provisional-label-separation
+        m  = new LengthProperty.Maker(PR_PROVISIONAL_LABEL_SEPARATION);
+        m.setInherited(true);
+        m.setDefault("6pt");
+        addPropertyMaker("provisional-label-separation", m);
+
+        // provisional-distance-between-starts
+        m  = new LengthProperty.Maker(PR_PROVISIONAL_DISTANCE_BETWEEN_STARTS);
+        m.setInherited(true);
+        m.setDefault("24pt");
+        addPropertyMaker("provisional-distance-between-starts", m);
+
+        // ref-id
+        m  = new StringProperty.Maker(PR_REF_ID);
+        m.setInherited(false);
+        m.setDefault("");
+        addPropertyMaker("ref-id", m);
+
+        // score-spaces
+        m  = new ToBeImplementedProperty.Maker(PR_SCORE_SPACES);
+        m.setInherited(true);
+        m.setDefault("true");
+        addPropertyMaker("score-spaces", m);
+
+        // src
+        m  = new StringProperty.Maker(PR_SRC);
+        m.setInherited(false);
+        m.setDefault("");
+        addPropertyMaker("src", m);
+
+        // visibility
+        m  = new ToBeImplementedProperty.Maker(PR_VISIBILITY);
+        m.setInherited(false);
+        m.setDefault("visible");
+        addPropertyMaker("visibility", m);
+
+        // z-index
+        m  = new ToBeImplementedProperty.Maker(PR_Z_INDEX);
+        m.setInherited(false);
+        m.setDefault("auto");
+        addPropertyMaker("z-index", m);
+    }
+    
+    private void createShorthandProperties() {
+        Property.Maker m;
+            
+        // background
+        m  = new ToBeImplementedProperty.Maker(PR_BACKGROUND);
+        m.setInherited(false);
+        m.setDefault("none");
+        addPropertyMaker("background", m);
+
+        // background-position
+        m  = new ToBeImplementedProperty.Maker(PR_BACKGROUND_POSITION);
+        m.setInherited(false);
+        m.setDefault("0%");
+        addPropertyMaker("background-position", m);
+
+        // border
+        m  = new ListProperty.Maker(PR_BORDER);
+        m.setInherited(false);
+        m.setDatatypeParser(new GenericShorthandParser());
+        addPropertyMaker("border", m);
+
+        // border-bottom
+        m  = new ListProperty.Maker(PR_BORDER_BOTTOM);
+        m.setInherited(false);
+        m.setDatatypeParser(new GenericShorthandParser());
+        addPropertyMaker("border-bottom", m);
+
+        // border-color
+        m  = new ListProperty.Maker(PR_BORDER_COLOR);
+        m.setInherited(false);
+        m.setDatatypeParser(new BoxPropShorthandParser());
+        addPropertyMaker("border-color", m);
+
+        // border-left
+        m  = new ListProperty.Maker(PR_BORDER_LEFT);
+        m.setInherited(false);
+        m.setDatatypeParser(new GenericShorthandParser());
+        addPropertyMaker("border-left", m);
+
+        // border-right
+        m  = new ListProperty.Maker(PR_BORDER_RIGHT);
+        m.setInherited(false);
+        m.setDatatypeParser(new GenericShorthandParser());
+        addPropertyMaker("border-right", m);
+
+        // border-style
+        m  = new ListProperty.Maker(PR_BORDER_STYLE);
+        m.setInherited(false);
+        m.setDatatypeParser(new BoxPropShorthandParser());
+        addPropertyMaker("border-style", m);
+
+        // border-spacing
+        m  = new ToBeImplementedProperty.Maker(PR_BORDER_SPACING);
+        m.setInherited(true);
+        m.setDefault("0pt");
+        addPropertyMaker("border-spacing", m);
+
+        // border-top
+        m  = new ListProperty.Maker(PR_BORDER_TOP);
+        m.setInherited(false);
+        m.setDatatypeParser(new GenericShorthandParser());
+        addPropertyMaker("border-top", m);
+
+        // border-width
+        m  = new ListProperty.Maker(PR_BORDER_WIDTH);
+        m.setInherited(false);
+        m.setDatatypeParser(new BoxPropShorthandParser());
+        addPropertyMaker("border-width", m);
+
+        // cue
+        m  = new ToBeImplementedProperty.Maker(PR_CUE);
+        m.setInherited(false);
+        m.setDefault("");
+        addPropertyMaker("cue", m);
+
+        // font
+        m  = new ToBeImplementedProperty.Maker(PR_FONT);
+        m.setInherited(true);
+        m.setDefault("");
+        addPropertyMaker("font", m);
+
+        // margin
+        m  = new ToBeImplementedProperty.Maker(PR_MARGIN);
+        m.setInherited(false);
+        m.setDefault("");
+        addPropertyMaker("margin", m);
+
+        // padding
+        m  = new ListProperty.Maker(PR_PADDING);
+        m.setInherited(false);
+        m.setDatatypeParser(new BoxPropShorthandParser());
+        addPropertyMaker("padding", m);
+
+        // page-break-after
+        m  = new ToBeImplementedProperty.Maker(PR_PAGE_BREAK_AFTER);
+        m.setInherited(false);
+        m.setDefault("auto");
+        addPropertyMaker("page-break-after", m);
+
+        // page-break-before
+        m  = new ToBeImplementedProperty.Maker(PR_PAGE_BREAK_BEFORE);
+        m.setInherited(false);
+        m.setDefault("auto");
+        addPropertyMaker("page-break-before", m);
+
+        // page-break-inside
+        m  = new ToBeImplementedProperty.Maker(PR_PAGE_BREAK_INSIDE);
+        m.setInherited(true);
+        m.setDefault("auto");
+        addPropertyMaker("page-break-inside", m);
+
+        // pause
+        m  = new ToBeImplementedProperty.Maker(PR_PAUSE);
+        m.setInherited(false);
+        m.setDefault("");
+        addPropertyMaker("pause", m);
+
+        // position
+        m  = new EnumProperty.Maker(PR_POSITION);
+        m.setInherited(false);
+        m.addEnum("static", makeEnumProperty(STATIC));
+        m.addEnum("relative", makeEnumProperty(RELATIVE));
+        m.addEnum("absolute", makeEnumProperty(ABSOLUTE));
+        m.addEnum("fixed", makeEnumProperty(FIXED));
+        m.setDefault("static");
+        addPropertyMaker("position", m);
+
+        // size
+        m  = new ToBeImplementedProperty.Maker(PR_SIZE);
+        m.setInherited(false);
+        m.setDefault("auto");
+        addPropertyMaker("size", m);
+
+        // vertical-align
+        m  = new EnumProperty.Maker(PR_VERTICAL_ALIGN);
+        m.setInherited(false);
+        m.addEnum("baseline", makeEnumProperty(BASELINE));
+        m.addEnum("middle", makeEnumProperty(MIDDLE));
+        m.addEnum("sub", makeEnumProperty(SUB));
+        m.addEnum("super", makeEnumProperty(SUPER));
+        m.addEnum("text-top", makeEnumProperty(TEXT_TOP));
+        m.addEnum("text-bottom", makeEnumProperty(TEXT_BOTTOM));
+        m.addEnum("top", makeEnumProperty(TOP));
+        m.addEnum("bottom", makeEnumProperty(BOTTOM));
+        m.setDefault("baseline");
+        addPropertyMaker("vertical-align", m);
+
+        // white-space-treatment
+        m  = new EnumProperty.Maker(PR_WHITE_SPACE_TREATMENT);
+        m.setInherited(true);
+        m.addEnum("ignore", makeEnumProperty(IGNORE));
+        m.addEnum("preserve", makeEnumProperty(PRESERVE));
+        m.addEnum("ignore-if-before-linefeed", makeEnumProperty(IGNORE_IF_BEFORE_LINEFEED));
+        m.addEnum("ignore-if-after-linefeed", makeEnumProperty(IGNORE_IF_AFTER_LINEFEED));
+        m.addEnum("ignore-if-surrounding-linefeed", makeEnumProperty(IGNORE_IF_SURROUNDING_LINEFEED));
+        m.setDefault("ignore-if-surrounding-linefeed");
+        addPropertyMaker("white-space-treatment", m);
+
+        // xml:lang
+        m  = new ToBeImplementedProperty.Maker(PR_XML_LANG);
+        m.setInherited(true);
+        m.setDefault("");
+        addPropertyMaker("xml:lang", m);
+
+       }
+        
 }

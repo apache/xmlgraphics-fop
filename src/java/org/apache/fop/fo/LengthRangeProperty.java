@@ -51,6 +51,7 @@
 package org.apache.fop.fo;
 
 import org.apache.fop.datatypes.LengthRange;
+import org.apache.fop.apps.FOPException;
 
 /**
  * Superclass for properties that contain LengthRange values
@@ -60,7 +61,7 @@ public class LengthRangeProperty extends Property {
     /**
      * Inner class for a Maker for LengthProperty objects
      */
-    public static class Maker extends LengthProperty.Maker {
+    public static class Maker extends CompoundPropertyMaker {
 
         /**
          * @param name name of property for which to create Maker
@@ -69,6 +70,25 @@ public class LengthRangeProperty extends Property {
             super(propId);
         }
 
+        /**
+         * Create a new empty instance of LengthRangeProperty.
+         * @return the new instance. 
+         */
+        public Property makeNewProperty() {
+            return new LengthRangeProperty(new LengthRange());
+        }
+
+        /**
+         * @see CompoundPropertyMaker#convertProperty
+         */        
+        public Property convertProperty(Property p, PropertyList propertyList, FObj fo)
+            throws FOPException
+        {
+            if (p instanceof LengthRangeProperty) {
+                return p;
+            }
+            return super.convertProperty(p, propertyList, fo);
+        }
     }
 
     private LengthRange lengthRange;

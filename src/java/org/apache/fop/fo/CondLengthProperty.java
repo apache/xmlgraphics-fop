@@ -50,8 +50,9 @@
  */
 package org.apache.fop.fo;
 
-import org.apache.fop.datatypes.Length;
+import org.apache.fop.apps.FOPException;
 import org.apache.fop.datatypes.CondLength;
+import org.apache.fop.datatypes.Length;
 
 /**
  * Superclass for properties that have conditional lengths
@@ -61,7 +62,7 @@ public class CondLengthProperty extends Property {
     /**
      * Inner class for creating instances of CondLengthProperty
      */
-    public static class Maker extends Property.Maker {
+    public static class Maker extends CompoundPropertyMaker {
 
         /**
          * @param name of property for which a Maker should be created
@@ -70,6 +71,25 @@ public class CondLengthProperty extends Property {
             super(propId);
         }
 
+        /**
+         * Create a new empty instance of CondLengthProperty.
+         * @return the new instance. 
+         */
+        public Property makeNewProperty() {
+            return new CondLengthProperty(new CondLength());
+        }
+
+        /**
+         * @see CompoundPropertyMaker#convertProperty
+         */        
+        public Property convertProperty(Property p, PropertyList propertyList, FObj fo)
+            throws FOPException
+        {
+            if (p instanceof KeepProperty) {
+                return p;
+            }
+            return super.convertProperty(p, propertyList, fo);
+        }
     }
 
     private CondLength condLength = null;

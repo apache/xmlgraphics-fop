@@ -205,10 +205,7 @@ list of possible build targets.
     <property name="xslt" value="org.apache.xalan.xslt.Process"/>
     <property name="src.properties.xsl" value="${src.codegen}/properties.xsl"/>
     <property name="src.propmaker.xsl" value="${src.codegen}/propmaker.xsl"/>
-    <property name="foproperties.xml" value="${build.codegen}/foproperties.xml"/>
-    <property name="colorkw.xml" value="${build.codegen}/colorkw.xml"/>
 
-    <property name="properties.xsl" value="${build.codegen}/properties.xsl"/>
     <property name="propinc.xsl" value="${build.codegen}/propinc.xsl"/>
     <property name="src.charlist.xsl" value="${src.codegen}/code-point-mapping.xsl"/>
     <property name="encodings.xml" value="${build.codegen}/encodings.xml"/>
@@ -341,22 +338,7 @@ list of possible build targets.
 
     <!-- generate the java files from xml resources -->
     <echo message="Generating the java files from xml resources"/>
-    <dependset>
-      <srcfilelist dir="${basedir}" files="${foproperties.xml},${colorkw.xml}"/>
-      <targetfilelist dir="${basedir}" files="${build.gensrc}/${replacestring}/fo/properties/Constants.java,${build.gensrc}/${replacestring}/fo/properties/fo_${ignore_this}"/>
-    </dependset>
-    <dependset>
-      <srcfilelist dir="${basedir}" files="${propinc.xsl}"/>
-      <targetfilelist dir="${basedir}" files="${build.gensrc}/${replacestring}/fo/properties/fo_${ignore_this},${build.gensrc}/${replacestring}/fo/properties/FOPropertyMapping.java,${build.gensrc}/${replacestring}/fo/properties/foenums_${ignore_this}"/>
-    </dependset>
 
-
-    <!-- ${ignore_this} used for out attribute because XSL stylesheet has commands to 
-        write out to (many) files other than the one specified -->
-    <style in="${foproperties.xml}" style="${properties.xsl}"
-        out="${build.gensrc}/${replacestring}/fo/properties/fo_${ignore_this}"/>
-    <!--style in="${foproperties.xml}" style="${build.codegen}/fo-property-mapping.xsl"
-        out="${build.gensrc}/${replacestring}/fo/properties/FOPropertyMapping.java"/-->
     <style in="${encodings.xml}" style="${charlist.xsl}"
         out="${build.gensrc}/${replacestring}/fonts//CodePointMapping.java"/>
     <!--
