@@ -56,10 +56,9 @@ package org.apache.fop.fo;
 public class BoxPropShorthandParser extends GenericShorthandParser {
 
     /**
-     * @see org.apache.fop.fo.GenericShorthandParser#GenericShorthandParser(ListProperty)
+     * @see org.apache.fop.fo.GenericShorthandParser#GenericShorthandParser()
      */
-    public BoxPropShorthandParser(ListProperty listprop) {
-        super(listprop);
+    public BoxPropShorthandParser() {
     }
 
     /**
@@ -70,18 +69,20 @@ public class BoxPropShorthandParser extends GenericShorthandParser {
      * Property.Maker, PropertyList)
      */
     protected Property convertValueForProperty(int propId,
+                                               ListProperty listProperty,
                                                Property.Maker maker,
                                                PropertyList propertyList) {
         String name = FOPropertyMapping.getPropertyName(propId);
         Property p = null;
+        int count = listProperty.getList().size();
         if (name.indexOf("-top") >= 0) {
-            p = getElement(0);
+            p = getElement(listProperty, 0);
         } else if (name.indexOf("-right") >= 0) {
-            p = getElement(count() > 1 ? 1 : 0);
+            p = getElement(listProperty, count > 1 ? 1 : 0);
         } else if (name.indexOf("-bottom") >= 0) {
-            p = getElement(count() > 2 ? 2 : 0);
+            p = getElement(listProperty, count > 2 ? 2 : 0);
         } else if (name.indexOf("-left") >= 0) {
-            p = getElement(count() > 3 ? 3 : (count() > 1 ? 1 : 0));
+            p = getElement(listProperty, count > 3 ? 3 : (count > 1 ? 1 : 0));
         }
         // if p not null, try to convert it to a value of the correct type
         if (p != null) {

@@ -77,7 +77,7 @@ public class EnumProperty extends Property {
         public Property checkEnumValues(String value) {
             //log.error("Unknown enumerated value for property '"
             //                       + getPropName() + "': " + value);
-            return null;
+            return super.checkEnumValues(value);
         }
 
         protected Property findConstant(String value) {
@@ -90,7 +90,7 @@ public class EnumProperty extends Property {
             if (p instanceof EnumProperty) {
                 return p;
             } else {
-                return null;
+                return super.convertProperty(p, propertyList, fo);
             }
         }
     }

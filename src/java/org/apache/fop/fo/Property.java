@@ -52,17 +52,21 @@ package org.apache.fop.fo;
 
 import org.apache.fop.datatypes.ColorType;
 import org.apache.fop.datatypes.CondLength;
+import org.apache.fop.datatypes.CompoundDatatype;
 import org.apache.fop.datatypes.Keep;
 import org.apache.fop.datatypes.Length;
 import org.apache.fop.datatypes.LengthPair;
 import org.apache.fop.datatypes.LengthRange;
 import org.apache.fop.datatypes.PercentBase;
+import org.apache.fop.datatypes.LengthBase;
 import org.apache.fop.datatypes.Space;
 import org.apache.fop.fo.expr.Numeric;
 import org.apache.fop.fo.expr.PropertyParser;
 import org.apache.fop.fo.expr.PropertyInfo;
 import org.apache.fop.apps.FOPException;
 import java.util.Vector;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Base class for all property objects
@@ -74,8 +78,20 @@ public class Property {
      * Base class for all property makers
      * @author unascribed
      */
-    public static class Maker {
-        private int propId;
+    public static class Maker implements Cloneable {
+        protected int propId;
+        private boolean inherited = true;
+        private Map enums = null;
+        private Map keywords = null;
+        protected String defaultValue = null;
+        protected boolean contextDep = false;
+        protected boolean setByShorthand = false;
+        private int percentBase = -1;
+        private Property.Maker[] shorthands = null;
+        private ShorthandParser datatypeParser;
+
+        protected Property defaultProperty;
+        protected CorrespondingPropertyMaker corresponding;
 
         /**
          * @return the name of the property for this Maker
@@ -88,37 +104,231 @@ public class Property {
          * Construct an instance of a Property.Maker for the given property.
          * @param propId The Constant ID of the property to be made.
          */
-        protected Maker(int propId) {
+        public Maker(int propId) {
             this.propId = propId;
         }
 
         /**
-         * Construct an instance of a Property.Maker.
-         * Note: the property ID is set to zero
+         * Copy all the values from the generic maker to this maker.
+         * @param generic a generic property maker.
          */
-        protected Maker() {
-            this.propId = 0;
+        public void useGeneric(Property.Maker generic) {
+            contextDep = generic.contextDep;
+            inherited = generic.inherited;
+            defaultValue = generic.defaultValue;
+            percentBase = generic.percentBase;
+            if (shorthands != null) {
+                shorthands = new Property.Maker[generic.shorthands.length];
+                System.arraycopy(shorthands, 0, generic.shorthands, 0, shorthands.length);
+            }
+            if (generic.enums != null) {
+                enums = new HashMap(generic.enums);
+            }
+            if (generic.keywords != null) {
+                keywords = new HashMap(generic.keywords);
+            }
         }
 
+        /**
+         * Set the inherited flag.
+         * @param inherited
+         */
+        public void setInherited(boolean inherited) {
+            this.inherited = inherited;
+        }
+
+        /**
+         * Add a keyword-equiv to the maker.
+         * @param keyword
+         * @param value
+         */
+        public void addKeyword(String keyword, String value) {
+            if (keywords == null) {
+                keywords = new HashMap();
+            }
+            keywords.put(keyword, value);
+        }
+
+        /**
+         * Add a enum constant.
+         * @param constant
+         * @param value
+         */
+        public void addEnum(String constant, Property value) {
+            if (enums == null) {
+                enums = new HashMap();
+            }
+            enums.put(constant, value);
+        }
+
+        /**
+         * Add a subproperty to this maker.
+         * @param subproperty
+         */
+        public void addSubpropMaker(Property.Maker subproperty) {
+            throw new RuntimeException("Unable to add subproperties " + getClass()); 
+        }
+
+        /**
+         * Return a subproperty maker for the subpropId. 
+         * @param subpropId The subpropId of the maker. 
+         * @return The subproperty maker.
+         */
+        public Property.Maker getSubpropMaker(int subpropId) {
+            throw new RuntimeException("Unable to add subproperties"); 
+        }
+
+        /**
+         * Add a shorthand to this maker. Only an Integer is added to the
+         * shorthands list. Later the Integers are replaced with references
+         * to the actual shorthand property makers.
+         * @param shorthand a property maker thar is that is checked for
+         *        shorthand values. 
+         */
+        public void addShorthand(Property.Maker shorthand) {
+            if (shorthands == null) {
+                shorthands = new Property.Maker[3];
+            }
+            for (int i = 0; i < shorthands.length; i++) {
+                if (shorthands[i] == null) {
+                    shorthands[i] = shorthand;
+                    break;
+                }
+            }
+        }
+
+        /**
+         * Set the shorthand datatype parser.
+         * @param subproperty
+         */
+        public void setDatatypeParser(ShorthandParser parser) {
+            datatypeParser = parser;
+        }
+
+        /**
+         * Set the default value for this maker.
+         * @param defaultValue the default value.
+         */
+        public void setDefault(String defaultValue) {
+            this.defaultValue = defaultValue;
+        }
+
+        /**
+         * Set the default value for this maker.
+         * @param defaultValue
+         * @param contextDep true when the value context dependent and
+         *        must not be cached.
+         */
+        public void setDefault(String defaultValue, boolean contextDep) {
+            this.defaultValue = defaultValue;
+            this.contextDep = contextDep;
+        }
+
+        /**
+         * Set the percent base identifier for this maker. 
+         * @param percentBase
+         */
+        public void setPercentBase(int percentBase) {
+            this.percentBase = percentBase;
+        }
+
+        /**
+         * Set the byShorthand flag which only is applicable for subproperty 
+         * makers. It should be true for the subproperties which must be 
+         * assigned a value when the base property is assigned a attribute 
+         * value directly.
+         * @param defaultValue
+         */
+        public void setByShorthand(boolean setByShorthand) {
+            this.setByShorthand = setByShorthand;
+        }
+
+        /**
+         * Set the correspoding property information.
+         * @param corresponding a corresponding maker where the 
+         *        isForcedCorresponding and compute methods are delegated to.
+         */
+        public void setCorresponding(CorrespondingPropertyMaker corresponding) {
+            this.corresponding = corresponding;
+        }
+
+        /**
+         * Create a new empty property. Must be overriden in compound 
+         * subclasses.
+         * @return a new instance of the Property for which this is a maker.
+         */
+        public Property makeNewProperty() {
+            return null;
+        }
+
+        /*
+         * If the property is a relative property with a corresponding absolute
+         * value specified, the absolute value is used. This is also true of
+         * the inheritance priority (I think...)
+         * If the property is an "absolute" property and it isn't specified, then
+         * we try to compute it from the corresponding relative property: this
+         * happens in computeProperty.
+         */
+        protected Property findProperty(PropertyList propertyList, 
+                                     boolean bTryInherit)
+            throws FOPException
+        {
+            Property p = null;
+
+            if (corresponding != null && corresponding.isCorrespondingForced(propertyList)) {
+                p = corresponding.compute(propertyList);
+            } else {
+                p = propertyList.getExplicitBaseProp(propId);
+                if (p == null) {
+                    p = this.compute(propertyList);
+                }
+                if (p == null) {    // check for shorthand specification
+                    p = getShorthand(propertyList);
+                }
+                if (p == null && bTryInherit) {    
+                    // else inherit (if has parent and is inheritable)
+                    PropertyList parentPropertyList = propertyList.getParentPropertyList(); 
+                    if (parentPropertyList != null && isInherited()) {
+                        p = findProperty(parentPropertyList, true);
+                    }
+                }
+            }
+            return p;
+        }
+
+        /**
+         * Return the property on the current FlowObject. Depending on the passed flags,
+         * this will try to compute it based on other properties, or if it is
+         * inheritable, to return the inherited value. If all else fails, it returns
+         * the default value.
+         * @param subpropId  The subproperty id of the property being retrieved.
+         *        Is 0 when retriving a base property.
+         * @param propertylist The PropertyList object being built for this FO.
+         * @param bTryInherit true if inherited properties should be examined.
+         * @param bTryDefault true if the default value should be returned. 
+         */
+        public Property get(int subpropId, PropertyList propertyList,
+                            boolean bTryInherit, boolean bTryDefault)
+            throws FOPException
+        {
+            Property p = findProperty(propertyList, bTryInherit);
+            if (p == null && bTryDefault) {    // default value for this FO!
+                try {
+                    p = make(propertyList);
+                } catch (FOPException e) {
+                    // don't know what to do here
+                }
+            }
+            return p;
+        }
 
         /**
          * Default implementation of isInherited.
          * @return A boolean indicating whether this property is inherited.
          */
         public boolean isInherited() {
-            return false;
+            return inherited;
         }
-
-        /**
-         * Return a boolean indicating whether this property inherits the
-         * "specified" value rather than the "computed" value. The default is
-         * to inherit the "computed" value.
-         * @return true, if the property inherits the value specified.
-         */
-        public boolean inheritsSpecified() {
-            return false;
-        }
-
 
         /**
          * This is used to handle properties specified as a percentage of
@@ -132,21 +342,9 @@ public class Property {
          * @return an object implementing the PercentBase interface.
          */
         public PercentBase getPercentBase(FObj fo, PropertyList pl) {
-            return null;
-        }
-
-        /**
-         * Return a Maker object which is used to set the values on components
-         * of compound property types, such as "space".
-         * Overridden by property maker subclasses which handle
-         * compound properties.
-         * @param subprop The Constants ID of the component for which a Maker is to
-         * returned, for example CP_OPTIMUM, if the FO attribute is
-         * space.optimum='10pt'.
-         * @return the Maker object specified
-         */
-        protected Maker getSubpropMaker(int subpropId) {
-            return null;
+            if (percentBase == -1)
+                return null;
+            return new LengthBase(fo, pl, percentBase);
         }
 
         /**
@@ -164,43 +362,9 @@ public class Property {
          * compound properties.
          * @return the Property containing the subproperty
          */
-        public Property getSubpropValue(Property p, int subpropId) {
-            return null;
-        }
-
-        /**
-         * Return a property value for a compound property. If the property
-         * value is already partially initialized, this method will modify it.
-         * @param baseProp The Property object representing the compound property,
-         * for example: SpaceProperty.
-         * @param subpropId The Constants ID of the subproperty (component)
-         *        whose value is specified.
-         * @param propertyList The propertyList being built.
-         * @param fo The FO whose properties are being set.
-         * @param value the value of the
-         * @return baseProp (or if null, a new compound property object) with
-         * the new subproperty added
-         * @throws FOPException for invalid or inconsistent FO input
-         */
-        public Property make(Property baseProp, int subpropId,
-                             PropertyList propertyList, String value,
-                             FObj fo) throws FOPException {
-            if (baseProp == null) {
-                baseProp = makeCompound(propertyList, fo);
-            }
-
-            Maker spMaker = getSubpropMaker(subpropId);
-
-            if (spMaker != null) {
-                Property p = spMaker.make(propertyList, value, fo);
-                if (p != null) {
-                    return setSubprop(baseProp, subpropId, p);
-                }
-            } else {
-                //getLogger().error("compound property component "
-                //                       + partName + " unknown.");
-            }
-            return baseProp;
+        public Property getSubprop(Property p, int subpropId) {
+            CompoundDatatype val = (CompoundDatatype) p.getObject();
+            return val.getComponent(subpropId);
         }
 
         /**
@@ -219,7 +383,26 @@ public class Property {
          */
         protected Property setSubprop(Property baseProp, int partId,
                                       Property subProp) {
+            CompoundDatatype val = (CompoundDatatype) baseProp.getObject();
+            val.setComponent(partId, subProp, false);
             return baseProp;
+        }
+
+        /**
+         * Return the default value.   
+         * @param propertyList The PropertyList object being built for this FO.
+         * @return the Property object corresponding to the parameters
+         * @throws FOPException for invalid or inconsisten FO input
+         */
+        public Property make(PropertyList propertyList) throws FOPException {
+            if (defaultProperty != null) {
+                return defaultProperty;
+            }
+            Property p = make(propertyList, defaultValue, propertyList.getParentFObj());
+            if (!contextDep) {
+                defaultProperty = p;
+            }
+            return p;
         }
 
         /**
@@ -248,13 +431,9 @@ public class Property {
                                                       new PropertyInfo(this,
                                                       propertyList, fo));
                     newProp = convertProperty(p, propertyList, fo);
-                } else if (isCompoundMaker()) {
-                    newProp = convertProperty(newProp, propertyList, fo);
                 }
                 if (newProp == null) {
                     throw new org.apache.fop.fo.expr.PropertyException("No conversion defined");
-                } else if (inheritsSpecified()) {
-                    newProp.setSpecifiedValue(pvalue);
                 }
                 return newProp;
             } catch (org.apache.fop.fo.expr.PropertyException propEx) {
@@ -263,6 +442,28 @@ public class Property {
                                      + " property value '" + value + "': "
                                      + propEx);
             }
+        }
+
+        /**
+         * Make a property value for a compound property. If the property
+         * value is already partially initialized, this method will modify it.
+         * @param baseProp The Property object representing the compound property,
+         * for example: SpaceProperty.
+         * @param subpropId The Constants ID of the subproperty (component)
+         *        whose value is specified.
+         * @param propertyList The propertyList being built.
+         * @param fo The FO whose properties are being set.
+         * @param value the value of the
+         * @return baseProp (or if null, a new compound property object) with
+         * the new subproperty added
+         * @throws FOPException for invalid or inconsistent FO input
+         */
+        public Property make(Property baseProp, int subpropId,
+                             PropertyList propertyList, String value,
+                             FObj fo) throws FOPException {
+            //getLogger().error("compound property component "
+            //                       + partName + " unknown.");
+            return baseProp;
         }
 
         public Property convertShorthandProperty(PropertyList propertyList,
@@ -310,23 +511,16 @@ public class Property {
         }
 
         /**
-         * Each property is either compound or not, with the default being not.
-         * This method should be overridden by subclasses that are Makers of
-         * compound properties.
-         * @return true if this Maker makes instances of compound properties
-         */
-        protected boolean isCompoundMaker() {
-            return false;
-        }
-
-        /**
          * For properties that contain enumerated values.
          * This method should be overridden by subclasses.
          * @param value the string containing the property value
          * @return the Property encapsulating the enumerated equivalent of the
          * input value
          */
-        public Property checkEnumValues(String value) {
+        protected Property checkEnumValues(String value) {
+            if (enums != null) {
+                return (Property) enums.get(value);
+            }
             return null;
         }
 
@@ -334,25 +528,28 @@ public class Property {
          * Return a String to be parsed if the passed value corresponds to
          * a keyword which can be parsed and used to initialize the property.
          * For example, the border-width family of properties can have the
-         * initializers "thin", "medium", or "thick". The foproperties.xml
+         * initializers "thin", "medium", or "thick". The FOPropertyMapping
          * file specifies a length value equivalent for these keywords,
-         * such as "0.5pt" for "thin". These values are considered parseable,
-         * since the Length object is no longer responsible for parsing
-         * unit expresssions.
+         * such as "0.5pt" for "thin".
          * @param value The string value of property attribute.
          * @return A String containging a parseable equivalent or null if
          * the passed value isn't a keyword initializer for this Property.
          */
-        protected String checkValueKeywords(String value) {
-            return value;
+        protected String checkValueKeywords(String keyword) {
+            if (keywords != null) {
+                String value = (String)keywords.get(keyword);
+                if (value != null) {
+                    return value;
+                }
+            }
+            return keyword;            
         }
 
         /**
          * Return a Property object based on the passed Property object.
          * This method is called if the Property object built by the parser
          * isn't the right type for this property.
-         * It is overridden by subclasses when the property specification in
-         * foproperties.xml specifies conversion rules.
+         * It is overridden by subclasses.
          * @param p The Property object return by the expression parser
          * @param propertyList The PropertyList object being built for this FO.
          * @param fo The current FO whose properties are being set.
@@ -360,7 +557,7 @@ public class Property {
          * can't be converted to the correct type.
          * @throws FOPException for invalid or inconsistent FO input
          */
-        public Property convertProperty(Property p,
+        protected Property convertProperty(Property p,
                                         PropertyList propertyList,
                                         FObj fo) throws FOPException {
             return null;
@@ -385,83 +582,21 @@ public class Property {
         }
 
         /**
-         * This method expects to be overridden by its subclasses.
-         * @param propertyList The PropertyList object being built for this FO.
-         * @return the Property object corresponding to the parameters
-         * @throws FOPException for invalid or inconsisten FO input
-         */
-        public Property make(PropertyList propertyList) throws FOPException {
-            return null;
-        }
-
-        /**
-         * Return a Property object representing the parameters.
-         * This method expects to be overridden by its subclasses.
-         * @param propertyList The PropertyList object being built for this FO.
-         * @param parentFO The parent FO for the FO whose property is being made.
-         * @return a Property subclass object holding a "compound" property object
-         * initialized to the default values for each component.
-         * @throws FOPException for invalid or inconsistent FO input
-         */
-        protected Property makeCompound(PropertyList propertyList,
-                                        FObj parentFO) throws FOPException {
-            return null;
-        }
-
-        /**
          * Return a Property object representing the value of this property,
          * based on other property values for this FO.
          * A special case is properties which inherit the specified value,
          * rather than the computed value.
          * @param propertyList The PropertyList for the FO.
          * @return Property A computed Property value or null if no rules
-         * are specified (in foproperties.xml) to compute the value.
+         * are specified to compute the value.
          * @throws FOPException for invalid or inconsistent FO input
          */
-        public Property compute(PropertyList propertyList)
+        protected Property compute(PropertyList propertyList)
                 throws FOPException {
-            if (inheritsSpecified()) {
-                // recalculate based on last specified value
-                // Climb up propertylist and find last spec'd value
-                Property specProp =
-                    propertyList.getNearestSpecified(propId);
-                if (specProp != null) {
-                    // Only need to do this if the value is relative!!!
-                    String specVal = specProp.getSpecifiedValue();
-                    if (specVal != null) {
-                        try {
-                            return make(propertyList, specVal,
-                                        propertyList.getParentFObj());
-                        } catch (FOPException e) {
-                            //getLogger()error("Error computing property value for "
-                            //                       + propName + " from "
-                            //                       + specVal);
-                            return null;
-                        }
-                    }
-                }
+            if (corresponding != null) {
+                return corresponding.compute(propertyList);
             }
             return null;    // standard
-        }
-
-        /**
-         * For properties that operate on a relative direction (before, after,
-         * start, end) instead of an absolute direction (top, bottom, left,
-         * right), this method determines whether a corresponding property
-         * is specified on the corresponding absolute direction. For example,
-         * the border-start-color property in a lr-tb writing-mode specifies
-         * the same thing that the border-left-color property specifies. In this
-         * example, if the Maker for the border-start-color property is testing,
-         * and if the border-left-color is specified in the properties,
-         * this method should return true.
-         * @param propertyList collection of properties to be tested
-         * @return true iff 1) the property operates on a relative direction,
-         * AND 2) the property has a corresponding property on an absolute
-         * direction, AND 3) the corresponding property on that absolute
-         * direction has been specified in the input properties
-         */
-        public boolean isCorrespondingForced(PropertyList propertyList) {
-            return false;
         }
 
         /**
@@ -477,11 +612,39 @@ public class Property {
          * @param propertyList the collection of properties to be considered
          * @return the Property, if found, the correspons, otherwise, null
          */
-        public Property getShorthand(PropertyList propertyList) {
+        protected Property getShorthand(PropertyList propertyList) {
+            if (shorthands == null) {
+                return null;
+            }
+            ListProperty listprop;
+            int n = shorthands.length;
+            for (int i = 0; i < n; i++) {
+                Property.Maker shorthand = shorthands[i];
+                listprop = (ListProperty)propertyList.getExplicit(shorthand.propId);
+                if (listprop != null) {
+                    ShorthandParser parser = shorthand.datatypeParser;
+                    Property p = parser.getValueForProperty(getPropId(),
+                                            listprop, this, propertyList);
+                    if (p != null) {
+                        return p;
+                    }
+                }
+            }
             return null;
         }
 
-    }    // end of nested Maker class
+        /**
+         * Return a clone of the makers. Used by useGeneric() to clone the
+         * subproperty makers of the generic compound makers. 
+         */
+        public Object clone() {
+            try {
+                return super.clone();
+            } catch (CloneNotSupportedException exc) {
+                return null;
+            }
+        }
+    }   // end of nested Maker class
 
     /**
      * The original specified value for properties which inherit
@@ -631,4 +794,11 @@ public class Property {
         return (o == null) ? null : o.toString();
     }
 
+    /**
+     * Return a string representation of the property value. Only used
+     * for debugging.
+     */
+    public String toString() {
+        return getString();
+    }
 }

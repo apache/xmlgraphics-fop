@@ -50,55 +50,44 @@
  */
 package org.apache.fop.fo;
 
-import java.util.Vector;
 import java.util.Enumeration;
 
 public class GenericShorthandParser implements ShorthandParser {
 
-    /** Vector of Property objects */
-    protected Vector list;
-
     /**
-     * Constructor.
-     * @param listprop the ListProperty object that should be parsed
+     * Constructor. The listprop to operate on must b set with setList().
+     * @see #setList(ListProperty) 
      */
-    public GenericShorthandParser(ListProperty listprop) {
-        this.list = listprop.getList();
+    public GenericShorthandParser() {
     }
 
     /**
      * @param index the index into the List of properties
      * @return the property from the List of properties at the index parameter
      */
-    protected Property getElement(int index) {
-        if (list.size() > index) {
-            return (Property) list.elementAt(index);
+    protected Property getElement(ListProperty list, int index) {
+        if (list.getList().size() > index) {
+            return (Property) list.getList().elementAt(index);
         } else {
             return null;
         }
     }
 
-    /**
-     * @return the size of the list of properties
-     */
-    protected int count() {
-        return list.size();
-    }
-
     // Stores 1 to 3 values for border width, style, color
     // Used for: border, border-top, border-right etc
     public Property getValueForProperty(int propId,
+                                        ListProperty listProperty,
                                         Property.Maker maker,
                                         PropertyList propertyList) {
         Property prop = null;
         // Check for keyword "inherit"
-        if (count() == 1) {
-            String sval = ((Property)list.elementAt(0)).getString();
+        if (listProperty.getList().size() == 1) {
+            String sval = getElement(listProperty, 0).getString();
             if (sval != null && sval.equals("inherit")) {
                 return propertyList.getFromParent(propId);
             }
         }
-        return convertValueForProperty(propId, maker, propertyList);
+        return convertValueForProperty(propId, listProperty, maker, propertyList);
     }
 
 
@@ -111,11 +100,12 @@ public class GenericShorthandParser implements ShorthandParser {
      * @return the Property matching the parameters, or null if not found
      */
     protected Property convertValueForProperty(int propId,
+                                               ListProperty listProperty,
                                                Property.Maker maker,
                                                PropertyList propertyList) {
         Property prop = null;
         // Try each of the stored values in turn
-        Enumeration eprop = list.elements();
+        Enumeration eprop = listProperty.getList().elements();
         while (eprop.hasMoreElements() && prop == null) {
             Property p = (Property) eprop.nextElement();
             prop = maker.convertShorthandProperty(propertyList, p, null);

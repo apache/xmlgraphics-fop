@@ -50,6 +50,7 @@
  */
 package org.apache.fop.fo;
 
+import org.apache.fop.apps.FOPException;
 import org.apache.fop.datatypes.LengthPair;
 
 /**
@@ -60,7 +61,7 @@ public class LengthPairProperty extends Property {
     /**
      * Inner class for creating instances of LengthPairProperty
      */
-    public static class Maker extends LengthProperty.Maker {
+    public static class Maker extends CompoundPropertyMaker {
 
         /**
          * @param name name of property for which this Maker should be created
@@ -69,6 +70,25 @@ public class LengthPairProperty extends Property {
             super(propId);
         }
 
+        /**
+         * Create a new empty instance of LengthPairProperty.
+         * @return the new instance. 
+         */
+        public Property makeNewProperty() {
+            return new LengthPairProperty(new LengthPair());
+        }
+
+        /**
+         * @see CompoundPropertyMaker#convertProperty
+         */        
+        public Property convertProperty(Property p, PropertyList propertyList, FObj fo)
+            throws FOPException
+        {
+            if (p instanceof LengthPairProperty) {
+                return p;
+            }
+            return super.convertProperty(p, propertyList, fo);
+        }
     }
 
     private LengthPair lengthPair;

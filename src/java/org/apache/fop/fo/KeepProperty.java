@@ -50,6 +50,7 @@
  */
 package org.apache.fop.fo;
 
+import org.apache.fop.apps.FOPException;
 import org.apache.fop.datatypes.Keep;
 
 /**
@@ -60,7 +61,7 @@ public class KeepProperty extends Property {
     /**
      * Inner class for creating instances of KeepProperty
      */
-    public static class Maker extends Property.Maker {
+    public static class Maker extends CompoundPropertyMaker {
 
         /**
          * @param name name of property for which Maker should be created
@@ -69,6 +70,25 @@ public class KeepProperty extends Property {
             super(propId);
         }
 
+        /**
+         * Create a new empty instance of KeepProperty.
+         * @return the new instance. 
+         */
+        public Property makeNewProperty() {
+            return new KeepProperty(new Keep());
+        }
+
+        /**
+         * @see CompoundPropertyMaker#convertProperty
+         */        
+        public Property convertProperty(Property p, PropertyList propertyList, FObj fo)
+            throws FOPException
+        {
+            if (p instanceof KeepProperty) {
+                return p;
+            }
+            return super.convertProperty(p, propertyList, fo);
+        }
     }
 
     private Keep keep;

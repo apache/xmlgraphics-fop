@@ -65,6 +65,7 @@ public class PropertyList extends HashMap {
 
     // writing-mode values
     private byte[] wmtable = null;
+    // writing-mode index
     private int writingMode;
     private static boolean[] inheritableProperty;
 
@@ -157,6 +158,13 @@ public class PropertyList extends HashMap {
         } else {
             return null;
         }
+    }
+
+    /**
+     * @return the FObj object attached to the parentPropetyList
+     */
+    public PropertyList getParentPropertyList() {
+        return parentPropertyList;
     }
 
     /**
@@ -268,62 +276,17 @@ public class PropertyList extends HashMap {
     private Property get(int propId, boolean bTryInherit,
                          boolean bTryDefault) {
 
-        Property p = findProperty(propId & Constants.PROPERTY_MASK, 
-                                    bTryInherit);
-        if (p == null && bTryDefault) {    // default value for this FO!
-            try {
-                p = makeProperty(propId & Constants.PROPERTY_MASK);
-            } catch (FOPException e) {
-                // don't know what to do here
-            }
+        Property.Maker propertyMaker = findMaker(propId & Constants.PROPERTY_MASK);
+        try {
+            return propertyMaker.get(propId & Constants.COMPOUND_MASK, this,
+                                     bTryInherit, bTryDefault);
+        } catch (FOPException exc) {
+            fobj.getLogger().error("Error during property processing", exc);
         }
-
-        // if value is inherit then get computed value from
-        // parent
-        if (p != null && "inherit".equals(p.getSpecifiedValue())) {
-            if (this.parentPropertyList != null) {
-                p = parentPropertyList.get(propId, true, false);
-            }
-        }
-
-        if ((propId & Constants.COMPOUND_MASK) != 0 && p != null) {
-            return getSubpropValue(p, propId);
-        } else {
-            return p;
-        }
+        return null;
     }
 
-    /*
-     * If the property is a relative property with a corresponding absolute
-     * value specified, the absolute value is used. This is also true of
-     * the inheritance priority (I think...)
-     * If the property is an "absolute" property and it isn't specified, then
-     * we try to compute it from the corresponding relative property: this
-     * happens in computeProperty.
-     */
-    private Property findProperty(int propId, boolean bTryInherit) {
-        Property p = null;
 
-        if (isCorrespondingForced(propId)) {
-            p = computeProperty(propId);
-        } else {
-            p = getExplicitBaseProp(propId);
-            if (p == null) {
-                p = this.computeProperty(propId);
-            }
-            if (p == null) {    // check for shorthand specification
-                p = getShorthand(propId);
-            }
-            if (p == null && bTryInherit) {    
-                // else inherit (if has parent and is inheritable)
-                if (this.parentPropertyList != null
-                        && isInherited(propId)) {
-                    p = parentPropertyList.findProperty(propId, true);
-                }
-            }
-        }
-        return p;
-    }
 
     /**
      * Return the "nearest" specified value for the given property.
@@ -389,19 +352,6 @@ public class PropertyList extends HashMap {
         return -1;
     }
 
-    /**
-     * Uses the stored writingMode.
-     * @param absdir an absolute direction (top, bottom, left, right)
-     * @return the corresponding writing model relative direction name
-     * for the flow object.
-     */
-    public String wmAbsToRel(int absdir) {
-        if (wmtable != null) {
-            return REL_NAMES[wmtable[absdir]];
-        } else {
-            return "";
-        }
-    }
 
     /**
      * Uses the stored writingMode.
@@ -590,26 +540,10 @@ public class PropertyList extends HashMap {
         Property.Maker maker = findMaker(propId & Constants.PROPERTY_MASK);
 
         if (maker != null) {
-            return maker.getSubpropValue(p, propId & Constants.COMPOUND_MASK);
+            return maker.getSubprop(p, propId & Constants.COMPOUND_MASK);
         } else {
             return null;
         }
-    }
-
-    /**
-     * @param propId ID of property
-     * @return value from the appropriate Property.Maker
-     */
-    private boolean isCorrespondingForced(int propId) {
-                                             
-        Property.Maker propertyMaker = findMaker(propId);
-        
-        if (propertyMaker != null) {
-            return propertyMaker.isCorrespondingForced(this);
-        } else {
-            //log.error("no Maker for " + propertyName);
-        }
-        return false;
     }
 
     /**
@@ -639,31 +573,6 @@ public class PropertyList extends HashMap {
 
         if (propertyMaker != null) {
             p = propertyMaker.make(this);
-        } else {
-            //log.error("property " + propertyName
-            //                       + " ignored");
-        }
-        return p;
-    }
-
-    /**
-     * @param propID ID of property
-     * @return the requested Property object
-     */
-    private Property computeProperty(int propId) {
-
-        Property p = null;
-        Property.Maker propertyMaker = findMaker(propId);
-
-        if (propertyMaker != null) {
-            try {
-                p = propertyMaker.compute(this);
-            } catch (FOPException e) {
-                //log.error("exception occurred while computing"
-                //                       + " value of property '"
-                //                       + propertyName + "': "
-                //                       + e.getMessage());
-            }
         } else {
             //log.error("property " + propertyName
             //                       + " ignored");

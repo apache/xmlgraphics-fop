@@ -1,10 +1,10 @@
 /*
- * $Id: SpaceProperty.java,v 1.5 2003/03/05 21:48:01 jeremias Exp $
+ * $Id$
  * ============================================================================
  *                    The Apache Software License, Version 1.1
  * ============================================================================
  *
- * Copyright (C) 1999-2003 The Apache Software Foundation. All rights reserved.
+ * Copyright (C) 1999-2004 The Apache Software Foundation. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modifica-
  * tion, are permitted provided that the following conditions are met:
@@ -51,78 +51,71 @@
 package org.apache.fop.fo;
 
 import org.apache.fop.apps.FOPException;
-import org.apache.fop.datatypes.LengthRange;
-import org.apache.fop.datatypes.Space;
+import org.apache.fop.datatypes.PercentLength;
 
 /**
- * Base class used for handling properties of the fo:space-before and
- * fo:space-after variety. It is extended by org.apache.fop.fo.properties.GenericSpace,
- * which is extended by many other properties.
+ * A maker which calculates the line-height property.
+ * This property maker is special because line-heighe inherot the specified
+ * value, instead of the computed value.
+ * So when a line-height is create based on a attribute, the specified value
+ * is stored in the property and in compute() the stored specified value of
+ * the nearest specified is used to recalculate the line-height.  
  */
-public class SpaceProperty extends Property {
+
+public class LineHeightPropertyMaker extends LengthProperty.Maker {
+    /**
+     * Create a maker for line-height.
+     * @param propId the is for linehight.
+     */
+    public LineHeightPropertyMaker(int propId) {
+        super(propId);
+    }
 
     /**
-     * Inner class used to create new instances of SpaceProperty
+     * Make a property as normal, and save the specified value.
+     * @see Property.Maker.make(propertyList, String, FObj)
      */
-    public static class Maker extends CompoundPropertyMaker {
-
-        /**
-         * @param name name of the property whose Maker is to be created
-         */
-        protected Maker(int propId) {
-            super(propId);
-        }
-
-        /**
-         * Create a new empty instance of SpaceProperty.
-         * @return the new instance. 
-         */
-        public Property makeNewProperty() {
-            return new SpaceProperty(new Space());
-        }
-
-        /**
-         * @see CompoundPropertyMaker#convertProperty
-         */
-        public Property convertProperty(Property p,
-                                        PropertyList propertyList,
-                                        FObj fo) throws FOPException {
-            if (p instanceof SpaceProperty) {
-                return p;
+    public Property make(PropertyList propertyList, String value,
+                         FObj fo) throws FOPException {
+        Property p = super.make(propertyList, value, fo);
+        p.setSpecifiedValue(checkValueKeywords(value));
+        return p;
+    }
+    
+    /**
+     * Recalculate the line-height value based on the nearest specified
+     * value.
+     * @see Property.Maker.compute(propertyList)
+     */
+    protected Property compute(PropertyList propertyList) throws FOPException {
+        // recalculate based on last specified value
+        // Climb up propertylist and find last spec'd value
+        Property specProp = propertyList.getNearestSpecified(propId);
+        if (specProp != null) {
+            String specVal = specProp.getSpecifiedValue();
+            if (specVal != null) {
+                try {
+                    return make(propertyList, specVal,
+                            propertyList.getParentFObj());
+                } catch (FOPException e) {
+                    //getLogger()error("Error computing property value for "
+                    //                       + propName + " from "
+                    //                       + specVal);
+                    return null;
+                }
             }
-            return super.convertProperty(p, propertyList, fo);
         }
+        return null;
     }
-
-    private Space space;
-
-    /**
-     * @param space the Space object (datatype) to be stored here
-     */
-    public SpaceProperty(Space space) {
-        this.space = space;
+    
+    protected Property convertPropertyDatatype(Property p, 
+                                               PropertyList propertyList,
+                                               FObj fo) {
+        Number numval = p.getNumber();
+        if (numval != null) {
+            return new LengthProperty(
+                    new PercentLength(numval.doubleValue(), getPercentBase(fo,propertyList)));
+        }
+        return super.convertPropertyDatatype(p, propertyList, fo);
     }
-
-    /**
-     * @return the Space (datatype) object contained here
-     */
-    public Space getSpace() {
-        return this.space;
-    }
-
-    /**
-     * Space extends LengthRange.
-     * @return the Space (datatype) object contained here
-     */
-    public LengthRange getLengthRange() {
-        return this.space;
-    }
-
-    /**
-     * @return the Space (datatype) object contained here
-     */
-    public Object getObject() {
-        return this.space;
-    }
-
 }

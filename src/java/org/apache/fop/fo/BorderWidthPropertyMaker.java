@@ -1,10 +1,10 @@
 /*
- * $Id: SpaceProperty.java,v 1.5 2003/03/05 21:48:01 jeremias Exp $
+ * $Id$
  * ============================================================================
  *                    The Apache Software License, Version 1.1
  * ============================================================================
  *
- * Copyright (C) 1999-2003 The Apache Software Foundation. All rights reserved.
+ * Copyright (C) 1999-2004 The Apache Software Foundation. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modifica-
  * tion, are permitted provided that the following conditions are met:
@@ -51,78 +51,50 @@
 package org.apache.fop.fo;
 
 import org.apache.fop.apps.FOPException;
-import org.apache.fop.datatypes.LengthRange;
-import org.apache.fop.datatypes.Space;
 
 /**
- * Base class used for handling properties of the fo:space-before and
- * fo:space-after variety. It is extended by org.apache.fop.fo.properties.GenericSpace,
- * which is extended by many other properties.
+ * This subclass of LengthProperty.Maker handles the special treatment of 
+ * border width described in 7.7.20.
  */
-public class SpaceProperty extends Property {
+public class BorderWidthPropertyMaker extends LengthProperty.Maker {
+    int borderStyleId = 0;    
+    
+    /**
+     * Create a length property which check the value of the border-*-style
+     * property and return a length of 0 when the style is "none". 
+     * @param propId the border-*-width of the property.
+     */
+    public BorderWidthPropertyMaker(int propId) {
+        super(propId);
+    }
+    
+    /**
+     * Set the propId of the style property for the same side.
+     * @param borderStyleId
+     */
+    public void setBorderStyleId(int borderStyleId) {
+        this.borderStyleId = borderStyleId;
+    }
 
     /**
-     * Inner class used to create new instances of SpaceProperty
+     * Check the value of the style property and return a length of 0 when
+     * the style is NONE.
+     * @see org.apacge.fo.Property.Maker.get(int, PropertyList, boolean, boolean)
      */
-    public static class Maker extends CompoundPropertyMaker {
+   
+    public Property get(int subpropId, PropertyList propertyList,
+                        boolean bTryInherit, boolean bTryDefault)
+        throws FOPException
+    {
+        Property p = super.get(subpropId, propertyList,
+                               bTryInherit, bTryDefault);
 
-        /**
-         * @param name name of the property whose Maker is to be created
-         */
-        protected Maker(int propId) {
-            super(propId);
+        // Calculate the values as described in 7.7.20.
+        Property style = propertyList.get(borderStyleId);
+        if (style.getEnum() == Constants.NONE) {
+            // TODO: bckfnn reenable
+            return p; // new LengthProperty(new FixedLength(0));
         }
-
-        /**
-         * Create a new empty instance of SpaceProperty.
-         * @return the new instance. 
-         */
-        public Property makeNewProperty() {
-            return new SpaceProperty(new Space());
-        }
-
-        /**
-         * @see CompoundPropertyMaker#convertProperty
-         */
-        public Property convertProperty(Property p,
-                                        PropertyList propertyList,
-                                        FObj fo) throws FOPException {
-            if (p instanceof SpaceProperty) {
-                return p;
-            }
-            return super.convertProperty(p, propertyList, fo);
-        }
+        return p;
     }
-
-    private Space space;
-
-    /**
-     * @param space the Space object (datatype) to be stored here
-     */
-    public SpaceProperty(Space space) {
-        this.space = space;
-    }
-
-    /**
-     * @return the Space (datatype) object contained here
-     */
-    public Space getSpace() {
-        return this.space;
-    }
-
-    /**
-     * Space extends LengthRange.
-     * @return the Space (datatype) object contained here
-     */
-    public LengthRange getLengthRange() {
-        return this.space;
-    }
-
-    /**
-     * @return the Space (datatype) object contained here
-     */
-    public Object getObject() {
-        return this.space;
-    }
-
 }
