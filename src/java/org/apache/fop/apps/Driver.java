@@ -59,10 +59,10 @@ import org.apache.fop.fo.FOTreeBuilder;
 
 import org.apache.fop.fo.FOInputHandler;
 import org.apache.fop.fo.FOTreeHandler;
-import org.apache.fop.render.mif.MIFHandler;
 import org.apache.fop.render.Renderer;
 import org.apache.fop.render.awt.AWTRenderer;
-import org.apache.fop.rtf.renderer.RTFHandler;
+import org.apache.fop.render.mif.MIFHandler;
+import org.apache.fop.render.rtf.RTFHandler;
 import org.apache.fop.tools.DocumentInputSource;
 import org.apache.fop.tools.DocumentReader;
 import org.apache.fop.layoutmgr.LayoutManagerLS;
