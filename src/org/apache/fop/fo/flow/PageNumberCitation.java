@@ -206,7 +206,7 @@ public class PageNumberCitation extends FObj {
 						this.marker = FOText.addText((BlockArea) area, fs, red, green, blue,
 													wrapOption, null, whiteSpaceCollapse,
 													pageNumber.toCharArray(), 0, pageNumber.length(),
-													ts);
+													ts, VerticalAlign.BASELINE);
 				} else { // add pageNumberCitation to area to be resolved during rendering
             BlockArea blockArea = (BlockArea)area;
             LineArea la = blockArea.getCurrentLineArea();

@@ -76,6 +76,7 @@ public class FOText extends FONode {
 		float blue;
 		int wrapOption;
 		int whiteSpaceCollapse;
+		int verticalAlign;
 
 		// Textdecoration
 		protected boolean underlined = false;
@@ -152,21 +153,23 @@ public class FOText extends FONode {
 						this.green = c.green();
 						this.blue = c.blue();
 
+						this.verticalAlign = this.parent.properties.get("vertical-align").getEnum();
+
 						this.wrapOption =
 							this.parent.properties.get("wrap-option").getEnum();
 						this.whiteSpaceCollapse = this.parent.properties.get(
 																				"white-space-collapse").getEnum(); 
 						this.ts = new TextState();
-						ts.setUnderlined(underlined);            
-						ts.setOverlined(overlined);            
-						ts.setLineThrough(lineThrough);            
+						ts.setUnderlined(underlined);
+						ts.setOverlined(overlined);
+						ts.setLineThrough(lineThrough);
 
 						this.marker = this.start;
 				}
 				int orig_start = this.marker;
 				this.marker = addText((BlockArea)area, fs, red, green, blue,
 											wrapOption, this.getLinkSet(), whiteSpaceCollapse, ca,
-											this.marker, length, ts);
+											this.marker, length, ts, verticalAlign);
 				if (this.marker == -1) {
 
 
@@ -193,7 +196,7 @@ public class FOText extends FONode {
 		public static int addText(BlockArea ba, FontState fontState, float red, float green,
 											 float blue, int wrapOption, LinkSet ls,
 											 int whiteSpaceCollapse, char data[], int start, int end,
-											 TextState textState) {
+											 TextState textState, int vAlign) {
 			if (fontState.getFontVariant() == FontVariant.SMALL_CAPS) {
 				FontState smallCapsFontState;
 				try {
@@ -234,7 +237,7 @@ public class FOText extends FONode {
 						fontStateToUse = fontState;
 					}
 					int index = addRealText(ba, fontStateToUse, red, green, blue, wrapOption, ls,
-						whiteSpaceCollapse, data, caseStart, i, textState);
+						whiteSpaceCollapse, data, caseStart, i, textState, vAlign);
 					if (index != -1) {
 						return index;
 					}
@@ -245,13 +248,13 @@ public class FOText extends FONode {
 
 			// font-variant normal
 			return addRealText(ba, fontState, red, green, blue, wrapOption, ls,
-				whiteSpaceCollapse, data, start, end, textState);
+				whiteSpaceCollapse, data, start, end, textState, vAlign);
 		}
 
 		protected static int addRealText(BlockArea ba, FontState fontState, float red, float green,
 											 float blue, int wrapOption, LinkSet ls,
 											 int whiteSpaceCollapse, char data[], int start, int end,
-											 TextState textState) {
+											 TextState textState, int vAlign) {
 				int ts, te;
 				char[] ca;
 
@@ -268,6 +271,7 @@ public class FOText extends FONode {
 				la.changeColor(red, green, blue);
 				la.changeWrapOption(wrapOption);
 				la.changeWhiteSpaceCollapse(whiteSpaceCollapse);
+				la.changeVerticalAlign(vAlign);
 //				la.changeHyphenation(language, country, hyphenate,
 //																 hyphenationChar, hyphenationPushCharacterCount,
 //																 hyphenationRemainCharacterCount);
