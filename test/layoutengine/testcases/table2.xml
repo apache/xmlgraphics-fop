@@ -18,7 +18,7 @@
 <testcase>
   <info>
     <p>
-      This test checks basic tables. Tests spaces table spaces, borders and padding.
+      This test checks basic tables. Tests table spaces and margins.
     </p>
   </info>
   <fo>
@@ -31,7 +31,7 @@
       <fo:page-sequence master-reference="normal" white-space-collapse="true">
         <fo:flow flow-name="xsl-region-body">
           <fo:block background-color="orange">before table</fo:block>
-          <fo:table table-layout="fixed" space-before="5pt" space-after="10pt" margin-left="5pt" margin-right="10pt" border="solid 5pt" padding="5pt" width="4in + 15pt + 10pt + 10pt">
+          <fo:table table-layout="fixed" space-before="5pt" space-after="10pt" margin-left="5pt" margin-right="10pt" width="4in + 15pt" background-color="lightgray">
             <fo:table-column column-width="2in"/>
             <fo:table-column column-width="2in"/>
             <fo:table-body start-indent="0pt" end-indent="0pt">
@@ -54,9 +54,11 @@
             </fo:table-body>
           </fo:table>
           <fo:block background-color="orange">after table</fo:block>
-          <fo:block space-before="5pt" space-after="10pt" margin-left="5pt" margin-right="10pt" border="solid 5pt" padding="5pt" width="100%">
-            reference block
-          </fo:block>
+          <fo:block-container width="4in + 15pt">
+            <fo:block space-before="5pt" space-after="10pt" margin-left="5pt" margin-right="10pt" background-color="lightgray">
+              reference block
+            </fo:block>
+          </fo:block-container>
         </fo:flow>
       </fo:page-sequence>
     </fo:root>
@@ -67,14 +69,14 @@
     <eval expected="10000" xpath="//flow/block[4]/@bpd"/>
 
     <!-- table dimensions -->
-    <eval expected="308000" xpath="//flow/block[3]/@ipda"/>
+    <eval expected="288000" xpath="//flow/block[3]/@ipda"/>
     <eval expected="288000" xpath="//flow/block[3]/@ipd"/>
-    <eval expected="48800" xpath="//flow/block[3]/@bpda"/>
+    <eval expected="28800" xpath="//flow/block[3]/@bpda"/>
     <eval expected="28800" xpath="//flow/block[3]/@bpd"/>
     
     <!-- cell 1 -->
     <true xpath="//flow/block[3]/block[1]/@is-reference-area"/>
-    <eval expected="15000" xpath="//flow/block[3]/block[1]/@left-offset"/>
+    <eval expected="5000" xpath="//flow/block[3]/block[1]/@left-offset"/>
     <true xpath="not(boolean(//flow/block[3]/block[1]/@top-offset)) or (//flow/block[3]/block[1]/@top-offset = 0)"/>
     <eval expected="144000" xpath="//flow/block[3]/block[1]/@ipd"/>
     <eval expected="14400" xpath="//flow/block[3]/block[1]/@bpd"/>
@@ -84,7 +86,7 @@
 
     <!-- cell 2 -->
     <true xpath="//flow/block[3]/block[2]/@is-reference-area"/>
-    <eval expected="159000" xpath="//flow/block[3]/block[2]/@left-offset"/>
+    <eval expected="149000" xpath="//flow/block[3]/block[2]/@left-offset"/>
     <true xpath="not(boolean(//flow/block[3]/block[2]/@top-offset)) or (//flow/block[3]/block[2]/@top-offset = 0)"/>
     <eval expected="144000" xpath="//flow/block[3]/block[2]/@ipd"/>
     <eval expected="14400" xpath="//flow/block[3]/block[2]/@bpd"/>
@@ -95,7 +97,7 @@
 
     <!-- cell 3 -->
     <true xpath="//flow/block[3]/block[3]/@is-reference-area"/>
-    <eval expected="15000" xpath="//flow/block[3]/block[3]/@left-offset"/>
+    <eval expected="5000" xpath="//flow/block[3]/block[3]/@left-offset"/>
     <eval expected="14400" xpath="//flow/block[3]/block[3]/@top-offset"/>
     <eval expected="144000" xpath="//flow/block[3]/block[3]/@ipd"/>
     <eval expected="14400" xpath="//flow/block[3]/block[3]/@bpd"/>
@@ -106,7 +108,7 @@
 
     <!-- cell 4 -->
     <true xpath="//flow/block[3]/block[4]/@is-reference-area"/>
-    <eval expected="159000" xpath="//flow/block[3]/block[4]/@left-offset"/>
+    <eval expected="149000" xpath="//flow/block[3]/block[4]/@left-offset"/>
     <eval expected="14400" xpath="//flow/block[3]/block[4]/@top-offset"/>
     <eval expected="144000" xpath="//flow/block[3]/block[4]/@ipd"/>
     <eval expected="14400" xpath="//flow/block[3]/block[4]/@bpd"/>
