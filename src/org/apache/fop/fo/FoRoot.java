@@ -13,26 +13,26 @@ package org.apache.fop.fo;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.fo.FObjects;
 import org.apache.fop.fo.FObjectNames;
-import org.apache.fop.datastructs.SyncedCircularBuffer;
 import org.apache.fop.datastructs.Tree;
 import org.apache.fop.fo.FOTree;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.expr.PropertyException;
 import org.apache.fop.fo.pagination.FoLayoutMasterSet;
 import org.apache.fop.xml.XMLEvent;
+import org.apache.fop.xml.XMLNamespaces;
+import org.apache.fop.xml.SyncedXmlEventsBuffer;
 
 import org.xml.sax.Attributes;
 
 import java.util.NoSuchElementException;
 
-/** <p>
+/**
  * <tt>FoRoot</tt> is the class which processes the fo:root start element
  * XML event.
- * </p><p>
+ * <p>
  * The building of all of the fo tree, and the forwarding of FO tree events
  * on to further stages of processing, will all take place within the
  * <tt>buildFoTree()</tt> method of this class instance.
- * </p>
  */
 
 public class FoRoot extends FONode {
@@ -41,6 +41,7 @@ public class FoRoot extends FONode {
     private static final String revision = "$Revision$";
 
     private FoLayoutMasterSet layoutMasters;
+    private SyncedXmlEventsBuffer xmlevents;
 
     /**
      * @param foTree the FO tree being built
@@ -55,27 +56,26 @@ public class FoRoot extends FONode {
         super(foTree, FObjectNames.ROOT, null, event, FONode.ROOT);
     }
 
-    /** <p>
+    /**
      * Process the FO tree, starting with this fo:root element.
-     * N.B. the FO tree is not really a tree.
+     * N.B. the FO tree is a collection of trees.
      * Trees only occur with fo:flow and fo:static-content.  These will
      * be built at the appropriate places as part of the FO tree processing.
      * Terminates at the completion of FO tree processing.
-     * </p><p>
+     * <p>
      * <tt>fo:root</tt> contents are <br/>
      * (layout-master-set,declarations?,page-sequence+)
-     * </p><p>
+     * <p>
      * I.e. the <fo:root> element is the parent of a two-element sequence:
      * (layout-master-set-declarations),(page-sequence-sequence)
-     * </p><p>
+     * <p>
      * 'layout-master-set-declarations' is logically an unordered set of
      * (layout-master-set,declarations?), although this definition
      * determines an order of occurrence in the input tree.  It is 
-     * unordered in the sense that there is no logical precedence in the
-     * set.  However, there is a logical precedence of the set with respect
-     * to the page-sequences.
-     * </p><p>
-     * The contents of declarations must be available to all FO tree
+     * unordered in the sense that there is no necessary order in the
+     * set.  However, all of the elements of the page-sequence-sequence
+     * are ordered.
+     * <p>The contents of declarations must be available to all FO tree
      * processing; the contents of the layout-master-set must be available
      * during the page setup phase of the processing of each page-sequence
      * in the page-sequence-sequence.
@@ -85,9 +85,8 @@ public class FoRoot extends FONode {
         //System.out.println("buildFoTree: " + event);
         // Look for layout-master-set
         try {
-            ev = XMLEvent.expectStartElement
-                    (foTree.xmlevents, XMLEvent.XSLNSpaceIndex,
-                     "layout-master-set");
+            ev = xmlevents.expectStartElement
+                    (XMLNamespaces.XSLNSpaceIndex, "layout-master-set");
         } catch (NoSuchElementException e) {
             throw new FOPException(e.getMessage());
         }
@@ -101,18 +100,15 @@ public class FoRoot extends FONode {
         }
         layoutMasters.setupPageMasters();
         // Stub - flush the layout masters
-        ev = XMLEvent.getEndElement
-                (foTree.xmlevents, XMLEvent.XSLNSpaceIndex,
-                 "layout-master-set");
+        ev = xmlevents.getEndElement
+                        (XMLNamespaces.XSLNSpaceIndex, "layout-master-set");
         // Look for optional declarations
         try {
-            XMLEvent.expectStartElement
-                    (foTree.xmlevents, XMLEvent.XSLNSpaceIndex,
-                     "declarations");
+            xmlevents.expectStartElement
+                            (XMLNamespaces.XSLNSpaceIndex, "declarations");
             // process the declarations
-            XMLEvent.getEndElement
-                    (foTree.xmlevents, XMLEvent.XSLNSpaceIndex,
-                     "declarations");
+            xmlevents.getEndElement
+                            (XMLNamespaces.XSLNSpaceIndex, "declarations");
         } catch (NoSuchElementException e) {
             // Take no notice - declarations is optional
         }
