@@ -1,13 +1,16 @@
 /* $Id$
  * Copyright (C) 2001 The Apache Software Foundation. All rights reserved.
  * For details on use and redistribution please refer to the
- * LICENSE file included with these sources."
+ * LICENSE file included with these sources.
  */
 
 package org.apache.fop.svg;
 
 import org.apache.fop.pdf.*;
 import org.apache.fop.fonts.*;
+import org.apache.fop.render.pdf.FontSetup;
+import org.apache.fop.layout.*;
+import org.apache.fop.apps.FOPException;
 
 import java.awt.Graphics;
 import java.awt.Font;
@@ -49,6 +52,15 @@ public class PDFDocumentGraphics2D extends PDFGraphics2D {
     public PDFDocumentGraphics2D(boolean textAsShapes,
                                  OutputStream stream, int width, int height) {
         super(textAsShapes);
+
+        if(!textAsShapes) {
+            FontInfo fontInfo = new FontInfo();
+            FontSetup.setup(fontInfo);
+            try {
+                fontState = new FontState(fontInfo, "Helvetica", "normal", "normal", 12, 0);
+            } catch(FOPException e) {
+            }
+        }
         standalone = true;
         this.stream = stream;
         this.pdfDoc = new PDFDocument();
