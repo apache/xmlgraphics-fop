@@ -18,14 +18,36 @@ import org.apache.fop.layout.inline.*;
 import org.apache.fop.datatypes.*;
 import org.apache.fop.fo.properties.*;
 import org.apache.fop.render.pdf.Font;
+import org.apache.fop.image.*;
+
+import org.apache.batik.bridge.*;
+import org.apache.batik.swing.svg.*;
+import org.apache.batik.swing.gvt.*;
+import org.apache.batik.gvt.*;
+import org.apache.batik.gvt.renderer.*;
+import org.apache.batik.gvt.filter.*;
+import org.apache.batik.gvt.event.*;
 
 // SVG
 import org.w3c.dom.svg.SVGSVGElement;
 import org.w3c.dom.svg.SVGDocument;
+import org.w3c.dom.*;
+import org.w3c.dom.svg.*;
 
 // Java
 import java.io.*;
 import java.util.*;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.util.Enumeration;
+import java.util.Vector;
+import java.util.Hashtable;
+import java.awt.geom.AffineTransform;
+import java.awt.geom.Dimension2D;
+import java.awt.Point;
+import java.awt.RenderingHints;
+import java.awt.font.FontRenderContext;
+import java.awt.Dimension;
 
 /**
  * Renderer that renders to PostScript.
@@ -401,15 +423,92 @@ public class PSRenderer implements Renderer {
     public void renderSVGArea(SVGArea area) {
         int x = this.currentXPosition;
         int y = this.currentYPosition;
-        SVGSVGElement svg =
-          ((SVGDocument) area.getSVGDocument()).getRootElement();
+        Document doc = area.getSVGDocument();
+        SVGSVGElement svg = ((SVGDocument)doc).getRootElement();
         int w = (int)(svg.getWidth().getBaseVal().getValue() * 1000);
         int h = (int)(svg.getHeight().getBaseVal().getValue() * 1000);
+        float sx = 1, sy = -1;
+        int xOffset = x, yOffset = y;
 
+        /*
+         * Clip to the svg area.
+         * Note: To have the svg overlay (under) a text area then use
+         * an fo:block-container
+         */
         comment("% --- SVG Area");
-        /**@todo Implement SVG */
+        write("gsave");
+        if (w != 0 && h != 0) {
+/*            write("newpath");
+            write(x / 1000f + " " + y / 1000f + " M");
+            write((x + w) / 1000f + " " + y / 1000f + " rlineto");
+            write((x + w) / 1000f + " " + (y - h) / 1000f +
+                              " rlineto");
+            write(x / 1000f + " " + (y - h) / 1000f + " rlineto");
+            write("closepath");
+            write("clippath");
+*/        }
+        // transform so that the coordinates (0,0) is from the top left
+        // and positive is down and to the right. (0,0) is where the
+        // viewBox puts it.
+        write(xOffset +
+                          " " + yOffset + " translate");
+        write(sx + " " + sy + " " + " scale");
+
+
+        UserAgent userAgent = new MUserAgent(new AffineTransform());
+
+        GVTBuilder builder = new GVTBuilder();
+        GraphicsNodeRenderContext rc = getRenderContext();
+        BridgeContext ctx = new BridgeContext(userAgent, rc);
+        GraphicsNode root;
+        PSGraphics2D graphics =
+          new PSGraphics2D(false, area.getFontState(), this,
+                            currentFontName, currentFontSize, currentXPosition,
+                            currentYPosition);
+        graphics.setGraphicContext(
+          new org.apache.batik.ext.awt.g2d.GraphicContext());
+        graphics.setRenderingHints(rc.getRenderingHints());
+        try {
+            root = builder.build(ctx, doc);
+            root.paint(graphics, rc);
+        } catch (Exception e) {
+            MessageHandler.errorln("Error: svg graphic could not be rendered: " + e.getMessage());
+            //e.printStackTrace();
+        }
+
+        write("grestore");
+
         comment("% --- SVG Area end");
         movetoCurrPosition();
+    }
+
+    public GraphicsNodeRenderContext getRenderContext() {
+        GraphicsNodeRenderContext nodeRenderContext = null;
+        if (nodeRenderContext == null) {
+            RenderingHints hints = new RenderingHints(null);
+            hints.put(RenderingHints.KEY_ANTIALIASING,
+                      RenderingHints.VALUE_ANTIALIAS_ON);
+
+            hints.put(RenderingHints.KEY_INTERPOLATION,
+                      RenderingHints.VALUE_INTERPOLATION_BILINEAR);
+
+            FontRenderContext fontRenderContext =
+              new FontRenderContext(new AffineTransform(), true,
+                                    true);
+
+            TextPainter textPainter = new StrokingTextPainter();
+            //TextPainter textPainter = new PDFTextPainter();
+
+            GraphicsNodeRableFactory gnrFactory =
+              new ConcreteGraphicsNodeRableFactory();
+
+            nodeRenderContext = new GraphicsNodeRenderContext(
+                                  new AffineTransform(), null, hints,
+                                  fontRenderContext, textPainter, gnrFactory);
+            nodeRenderContext.setTextPainter(textPainter);
+        }
+
+        return nodeRenderContext;
     }
 
     public void renderBitmap(FopImage img, int x, int y, int w, int h) {
@@ -502,7 +601,10 @@ public class PSRenderer implements Renderer {
         //if (imagecount!=4) return;
 
         comment("% --- ImageArea");
-        renderBitmap(area.getImage(), x, y, w, h);
+        if(area.getImage() instanceof SVGImage) {
+        } else {
+            renderBitmap(area.getImage(), x, y, w, h);
+        }
         comment("% --- ImageArea end");
     }
 
@@ -853,4 +955,107 @@ public class PSRenderer implements Renderer {
         }
     }
 
+    protected class MUserAgent implements UserAgent {
+        AffineTransform currentTransform = null;
+        /**
+         * Creates a new SVGUserAgent.
+         */
+        protected MUserAgent(AffineTransform at) {
+            currentTransform = at;
+        }
+
+        /**
+         * Displays an error message.
+         */
+        public void displayError(String message) {
+            System.err.println(message);
+        }
+
+        /**
+         * Displays an error resulting from the specified Exception.
+         */
+        public void displayError(Exception ex) {
+            ex.printStackTrace(System.err);
+        }
+
+        /**
+         * Displays a message in the User Agent interface.
+         * The given message is typically displayed in a status bar.
+         */
+        public void displayMessage(String message) {
+            System.out.println(message);
+        }
+
+        /**
+         * Returns a customized the pixel to mm factor.
+         */
+        public float getPixelToMM() {
+            return 0.264583333333333333333f; // 72 dpi
+        }
+
+        /**
+         * Returns the language settings.
+         */
+        public String getLanguages() {
+            return "en";//userLanguages;
+        }
+
+        /**
+         * Returns the user stylesheet uri.
+         * @return null if no user style sheet was specified.
+         */
+        public String getUserStyleSheetURI() {
+            return null;//userStyleSheetURI;
+        }
+
+        /**
+         * Returns the class name of the XML parser.
+         */
+        public String getXMLParserClassName() {
+            String parserClassName = System.getProperty("org.xml.sax.parser");
+            if (parserClassName == null) {
+                parserClassName = "org.apache.xerces.parsers.SAXParser";
+            }
+            return parserClassName;//application.getXMLParserClassName();
+        }
+
+        /**
+         * Opens a link in a new component.
+         * @param doc The current document.
+         * @param uri The document URI.
+         */
+        public void openLink(SVGAElement elt) {
+            //application.openLink(uri);
+        }
+
+        public Point getClientAreaLocationOnScreen() {
+            return new Point(0, 0);
+        }
+
+        public void setSVGCursor(java.awt.Cursor cursor) {
+        }
+
+        public AffineTransform getTransform() {
+            return currentTransform;
+        }
+
+        public Dimension2D getViewportSize() {
+            return new Dimension(100, 100);
+        }
+
+        public EventDispatcher getEventDispatcher() {
+            return null;
+        }
+
+        public boolean supportExtension(String str) {
+            return false;
+        }
+
+        public boolean hasFeature(String str) {
+            return false;
+        }
+
+        public void registerExtension(BridgeExtension be) {
+        }
+    }
 }
