@@ -64,31 +64,31 @@ import org.apache.avalon.framework.logger.Logger;
 public class CommandLineOptions {
 
     /* input / output not set */
-    private static final int NOT_SET = 0;
+    public static final int NOT_SET = 0;
     /* input: fo file */
-    private static final int FO_INPUT = 1;
+    public static final int FO_INPUT = 1;
     /* input: xml+xsl file */
-    private static final int XSLT_INPUT = 2;
+    public static final int XSLT_INPUT = 2;
     /* output: pdf file */
-    private static final int PDF_OUTPUT = 1;
+    public static final int PDF_OUTPUT = 1;
     /* output: screen using swing */
-    private static final int AWT_OUTPUT = 2;
+    public static final int AWT_OUTPUT = 2;
     /* output: mif file */
-    private static final int MIF_OUTPUT = 3;
+    public static final int MIF_OUTPUT = 3;
     /* output: sent swing rendered file to printer */
-    private static final int PRINT_OUTPUT = 4;
+    public static final int PRINT_OUTPUT = 4;
     /* output: pcl file */
-    private static final int PCL_OUTPUT = 5;
+    public static final int PCL_OUTPUT = 5;
     /* output: postscript file */
-    private static final int PS_OUTPUT = 6;
+    public static final int PS_OUTPUT = 6;
     /* output: text file */
-    private static final int TXT_OUTPUT = 7;
+    public static final int TXT_OUTPUT = 7;
     /* output: svg file */
-    private static final int SVG_OUTPUT = 8;
+    public static final int SVG_OUTPUT = 8;
     /* output: XML area tree */
-    private static final int AREA_OUTPUT = 9;
+    public static final int AREA_OUTPUT = 9;
     /* output: RTF file */
-    private static final int RTF_OUTPUT = 10;
+    public static final int RTF_OUTPUT = 10;
 
     /* show configuration information */
     private Boolean dumpConfiguration = Boolean.FALSE;
@@ -506,30 +506,6 @@ public class CommandLineOptions {
      */
     public java.util.HashMap getRendererOptions() {
         return rendererOptions;
-    }
-
-    /**
-     * Get the starter for the process.
-     * @return the starter.
-     * @throws FOPException In case of failure while getting the starter
-     */
-    public Starter getStarter() throws FOPException {
-        Starter starter = null;
-        switch (outputmode) {
-        case AWT_OUTPUT:
-            try {
-                starter = new AWTStarter(this);
-            } catch (FOPException e) {
-                throw e;
-            } catch (Exception e) {
-                throw new FOPException("AWTStarter could not be loaded.", e);
-            }
-            break;
-        default:
-            starter = new CommandLineStarter(this);
-        }
-        starter.enableLogging(log);
-        return starter;
     }
 
     /**
