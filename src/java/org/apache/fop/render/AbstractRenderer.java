@@ -30,8 +30,8 @@ import org.w3c.dom.Document;
 import org.apache.fop.area.CoordTransformer;
 import org.apache.fop.area.PageViewport;
 import org.apache.fop.area.RegionViewport;
-import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.apps.Fop;
+import org.apache.fop.configuration.FOUserAgent;
 
 import org.apache.avalon.framework.configuration.Configurable;
 import org.apache.avalon.framework.configuration.Configuration;
