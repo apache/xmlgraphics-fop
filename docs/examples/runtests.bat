@@ -6,8 +6,9 @@ echo ----------------
 if "%JAVA_HOME%" == "" goto error
 
 
-set LOCALCLASSPATH=%JAVA_HOME%\lib\tools.jar;%JAVA_HOME%\lib\classes.zip;..\..\lib\ant.jar;..\..\lib\buildtools.jar;..\..\lib\w3c.jar;..\..\build\fop.jar
-set ANT_HOME=..\..\lib
+set LIBDIR=..\..\lib
+set LOCALCLASSPATH=%JAVA_HOME%\lib\tools.jar;%JAVA_HOME%\lib\classes.zip;%LIBDIR%\ant.jar;%LIBDIR%\w3c.jar;%LIBDIR%\buildtools.jar;%LIBDIR%\xerces-1.2.3.jar;%LIBDIR%\xalan-2.0.0.jar:%LIBDIR%\xalanj1compat.jar:%LIBDIR%\bsf.jar:%LIBDIR%\jimi-1.0.jar;%LIBDIR%\..\build\fop.jar
+set ANT_HOME=%LIBDIR%
 
 echo Starting Tests ...
 
