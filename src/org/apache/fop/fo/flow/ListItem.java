@@ -32,7 +32,7 @@ public class ListItem extends FObj {
     String id;
     BlockArea blockArea;
 
-    public ListItem(FObj parent) {
+    public ListItem(FONode parent) {
         super(parent);
         this.name = "fo:list-item";
     }

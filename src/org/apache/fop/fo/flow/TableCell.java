@@ -86,7 +86,7 @@ public class TableCell extends FObj {
 
     AreaContainer cellArea;
 
-    public TableCell(FObj parent) {
+    public TableCell(FONode parent) {
         super(parent);
         this.name = "fo:table-cell";
     }

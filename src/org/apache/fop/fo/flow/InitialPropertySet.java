@@ -19,9 +19,8 @@ import org.apache.fop.apps.FOPException;
  */
 public class InitialPropertySet extends ToBeImplementedElement {
 
-    public InitialPropertySet(FObj parent) {
+    public InitialPropertySet(FONode parent) {
         super(parent);
-        this.name = "fo:initial-property-set";
     }
 
     public Status layout(Area area) throws FOPException {

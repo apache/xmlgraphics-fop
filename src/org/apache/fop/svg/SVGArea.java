@@ -12,7 +12,7 @@ import org.apache.fop.render.Renderer;
 import org.apache.fop.layout.FontState;
 import org.apache.fop.layout.Area;
 
-import java.util.*;
+//import java.util.*;
 
 import org.w3c.dom.svg.*;
 import org.w3c.dom.*;

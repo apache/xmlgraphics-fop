@@ -27,9 +27,8 @@ public class PageNumber extends FObj {
     int whiteSpaceCollapse;
     TextState ts;
 
-    public PageNumber(FObj parent) {
+    public PageNumber(FONode parent) {
         super(parent);
-        this.name = "fo:page-number";
     }
 
     public Status layout(Area area) throws FOPException {

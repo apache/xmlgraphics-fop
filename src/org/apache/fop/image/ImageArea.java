@@ -88,8 +88,5 @@ public class ImageArea extends InlineArea {
         xOffset = startIndent;
     }
 
-
-
 }
-
 

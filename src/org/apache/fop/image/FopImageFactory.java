@@ -66,7 +66,7 @@ public class FopImageFactory {
             try {
                 absoluteURL = new URL(href);
             } catch (MalformedURLException mue) {
-                // if the href contains onl a path then file is assumed
+                // if the href contains only a path then file is assumed
                 absoluteURL = new URL("file:" + href);
             }
             imgIS = absoluteURL.openStream();

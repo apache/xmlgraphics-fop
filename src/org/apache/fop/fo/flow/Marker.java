@@ -21,9 +21,8 @@ public class Marker extends FObjMixed {
     private String markerClassName;
     private Area registryArea;
 
-    public Marker(FObj parent) {
+    public Marker(FONode parent) {
         super(parent);
-        this.name = "fo:marker";
     }
 
     public void handleAttrs(Attributes attlist) throws FOPException {
@@ -36,11 +35,10 @@ public class Marker extends FObjMixed {
         // check to ensure that no other marker with same parent
         // has this 'marker-class-name' is in addMarker() method
         try {
-            parent.addMarker(this);
+            ((FObj)parent).addMarker(this);
         } catch (FOPException fopex) {
-            // log is null in constructor
-            //log.error("marker cannot be added to '" + parent
-            //                     + "'");
+            log.error("marker cannot be added to '" + parent
+                                 + "'");
         }
     }
 

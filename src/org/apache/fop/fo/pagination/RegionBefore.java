@@ -23,7 +23,7 @@ public class RegionBefore extends Region {
 
     private int precedence;
 
-    public RegionBefore(FObj parent) {
+    public RegionBefore(FONode parent) {
         super(parent);
     }
 

@@ -15,14 +15,12 @@ import org.apache.fop.layout.AreaTree;
 import org.apache.fop.apps.FOPException;
 
 /**
- * The fo:root formatting object. Contains page masters, root extensions,
- * page-sequences.
+ * The fo:color-profile formatting object.
  */
 public class ColorProfile extends ToBeImplementedElement {
 
-    protected ColorProfile(FObj parent) {
+    protected ColorProfile(FONode parent) {
         super(parent);
-        this.name = "fo:color-profile";
 
         // this.properties.get("src");
         // this.properties.get("color-profile-name");

@@ -26,9 +26,8 @@ public class LayoutMasterSet extends FObj {
 
     private Root root;
 
-    public LayoutMasterSet(FObj parent) {
+    public LayoutMasterSet(FONode parent) {
         super(parent);
-        this.name = "fo:layout-master-set";
     }
 
     public void handleAttrs(Attributes attlist) throws FOPException {

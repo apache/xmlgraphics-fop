@@ -10,7 +10,7 @@ package org.apache.fop.pdf;
 // Java
 import java.io.PrintWriter;
 import org.apache.fop.messaging.MessageHandler;
-import java.util.Vector;
+import java.util.ArrayList;
 
 /**
  * class representing a /Pages object.
@@ -24,7 +24,7 @@ public class PDFPages extends PDFObject {
     /**
      * the /Page objects
      */
-    protected Vector kids = new Vector();
+    protected ArrayList kids = new ArrayList();
 
     /**
      * the number of /Page objects
@@ -53,7 +53,7 @@ public class PDFPages extends PDFObject {
      * @param page the PDFPage to add.
      */
     public void addPage(PDFPage page) {
-        this.kids.addElement(page.referencePDF());
+        this.kids.add(page.referencePDF());
         page.setParent(this);
         this.incrementCount();
     }
@@ -85,7 +85,7 @@ public class PDFPages extends PDFObject {
                                           + " obj\n<< /Type /Pages\n/Count "
                                           + this.getCount() + "\n/Kids [");
         for (int i = 0; i < kids.size(); i++) {
-            p = p.append(kids.elementAt(i) + " ");
+            p = p.append(kids.get(i) + " ");
         }
         p = p.append("] >>\nendobj\n");
         return p.toString().getBytes();

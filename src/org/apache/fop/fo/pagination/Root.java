@@ -33,7 +33,7 @@ public class Root extends FObj {
      */
     private int runningPageNumberCounter = 0;
 
-    public Root(FObj parent) {
+    public Root(FONode parent) {
         super(parent);
 
         // this.properties.get("media-usage");
@@ -51,13 +51,6 @@ public class Root extends FObj {
 
     protected void setRunningPageNumberCounter(int count) {
         this.runningPageNumberCounter = count;
-    }
-
-    /**
-     * @deprecated handled by addChild now
-     */
-    public void addPageSequence(PageSequence pageSequence) {
-        this.pageSequences.addElement(pageSequence);
     }
 
     public int getPageSequenceCount() {

@@ -12,10 +12,12 @@ package org.apache.fop.fo;
  * the given builder.
  */
 public interface ElementMapping {
+    public static final String DEFAULT = "<default>";
+
     public void addToBuilder(FOTreeBuilder builder);
 
     public static class Maker {
-        public FObj make(FObj parent) {
+        public FONode make(FONode parent) {
             return null;
         }
     }

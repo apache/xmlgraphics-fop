@@ -19,7 +19,7 @@ import org.xml.sax.Attributes;
 
 public class Outline extends ExtensionObj {
     private Label _label;
-    private Vector _outlines = new Vector();
+    private ArrayList _outlines = new ArrayList();
 
     private String _internalDestination;
     private String _externalDestination;
@@ -34,16 +34,15 @@ public class Outline extends ExtensionObj {
      */
     private Object _rendererObject;
 
-    public Outline(FObj parent) {
+    public Outline(FONode parent) {
         super(parent);
     }
 
     public void handleAttrs(Attributes attlist) throws FOPException {
-        super.handleAttrs(attlist);
         _internalDestination =
-            this.properties.get("internal-destination").getString();
+            attlist.getValue(null, "internal-destination");
         _externalDestination =
-            this.properties.get("external-destination").getString();
+            attlist.getValue(null, "external-destination");
         if (_externalDestination != null &&!_externalDestination.equals("")) {
             log.warn("fox:outline external-destination not supported currently.");
         }
@@ -66,11 +65,9 @@ public class Outline extends ExtensionObj {
         if (obj instanceof Label) {
             _label = (Label)obj;
         } else if (obj instanceof Outline) {
-            _outlines.addElement(obj);
+            _outlines.add(obj);
         }
-        super.addChild(obj);
     }
-
 
     public void setRendererObject(Object o) {
         _rendererObject = o;
@@ -88,15 +85,13 @@ public class Outline extends ExtensionObj {
         return _label == null ? new Label(this) : _label;
     }
 
-    public Vector getOutlines() {
+    public ArrayList getOutlines() {
         return _outlines;
     }
 
     public String getInternalDestination() {
         return _internalDestination;
     }
-
-
 
 }
 

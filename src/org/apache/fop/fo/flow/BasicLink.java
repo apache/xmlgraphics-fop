@@ -20,9 +20,8 @@ import java.awt.Rectangle;
 
 public class BasicLink extends Inline {
 
-    public BasicLink(FObj parent) {
+    public BasicLink(FONode parent) {
         super(parent);
-        this.name = "fo:basic-link";
     }
 
     public Status layout(Area area) throws FOPException {
@@ -94,7 +93,8 @@ public class BasicLink extends Inline {
         int numChildren = this.children.size();
         for (int i = this.marker; i < numChildren; i++) {
             FONode fo = (FONode)children.elementAt(i);
-            fo.setLinkSet(ls);
+            if(fo instanceof FObj)
+                ((FObj)fo).setLinkSet(ls);
 
             Status status;
             if ((status = fo.layout(area)).isIncomplete()) {

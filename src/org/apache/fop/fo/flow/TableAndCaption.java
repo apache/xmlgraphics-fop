@@ -18,9 +18,8 @@ import org.apache.fop.apps.FOPException;
  */
 public class TableAndCaption extends ToBeImplementedElement {
 
-    public TableAndCaption(FObj parent) {
+    public TableAndCaption(FONode parent) {
         super(parent);
-        this.name = "fo:table-and-caption";
     }
 
     public Status layout(Area area) throws FOPException {

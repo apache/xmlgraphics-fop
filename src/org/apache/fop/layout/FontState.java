@@ -7,7 +7,7 @@
 
 package org.apache.fop.layout;
 
-import java.util.Hashtable;
+import java.util.HashMap;
 
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.fo.properties.FontVariant;
@@ -24,7 +24,7 @@ public class FontState {
 
     private FontMetric _metric;
 
-    private static Hashtable EMPTY_HASHTABLE = new Hashtable();
+    private static HashMap EMPTY_HASHTABLE = new HashMap();
 
 
     public FontState(FontInfo fontInfo, String fontFamily, String fontStyle,
@@ -84,9 +84,9 @@ public class FontState {
         return _metric.getXHeight(_fontSize) / 1000;
     }
 
-    public Hashtable getKerning() {
+    public HashMap getKerning() {
         if (_metric instanceof FontDescriptor) {
-            Hashtable ret = ((FontDescriptor)_metric).getKerningInfo();
+            HashMap ret = ((FontDescriptor)_metric).getKerningInfo();
             if (ret != null)
                 return ret;
         }

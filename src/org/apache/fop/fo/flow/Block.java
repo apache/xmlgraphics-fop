@@ -56,9 +56,8 @@ public class Block extends FObjMixed {
     // this may be helpful on other FOs too
     boolean anythingLaidOut = false;
 
-    public Block(FObj parent) {
+    public Block(FONode parent) {
         super(parent);
-        this.name = "fo:block";
     }
 
     public void handleAttrs(Attributes attlist) throws FOPException {
@@ -153,8 +152,6 @@ public class Block extends FObjMixed {
             this.blockOrphans =
                 this.properties.get("orphans").getNumber().intValue();
 
-
-
             this.id = this.properties.get("id").getString();
 
             if (area instanceof BlockArea) {
@@ -178,7 +175,7 @@ public class Block extends FObjMixed {
                 FONode fo = (FONode)children.elementAt(i);
                 if (fo instanceof FOText) {
                     if (((FOText)fo).willCreateArea()) {
-                        fo.setWidows(blockWidows);
+                        //fo.setWidows(blockWidows);
                         break;
                     } else {
                         children.removeElementAt(i);
@@ -186,7 +183,7 @@ public class Block extends FObjMixed {
                         i--;
                     }
                 } else {
-                    fo.setWidows(blockWidows);
+                    //fo.setWidows(blockWidows);
                     break;
                 }
             }
@@ -195,11 +192,11 @@ public class Block extends FObjMixed {
                 FONode fo = (FONode)children.elementAt(i);
                 if (fo instanceof FOText) {
                     if (((FOText)fo).willCreateArea()) {
-                        fo.setOrphans(blockOrphans);
+                        //fo.setOrphans(blockOrphans);
                         break;
                     }
                 } else {
-                    fo.setOrphans(blockOrphans);
+                    //fo.setOrphans(blockOrphans);
                     break;
                 }
             }

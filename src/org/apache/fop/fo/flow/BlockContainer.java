@@ -39,9 +39,8 @@ public class BlockContainer extends FObj {
 
     PageSequence pageSequence;
 
-    public BlockContainer(FObj parent) {
+    public BlockContainer(FONode parent) {
         super(parent);
-        this.name = "fo:block-container";
     }
 
     public void handleAttrs(Attributes attlist) throws FOPException {

@@ -16,7 +16,7 @@ import org.apache.fop.apps.FOPException;
 
 public class TableHeader extends TableBody {
 
-    public TableHeader(FObj parent) {
+    public TableHeader(FONode parent) {
         super(parent);
         this.name = "fo:table-header";
     }

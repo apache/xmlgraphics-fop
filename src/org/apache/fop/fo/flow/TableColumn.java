@@ -28,7 +28,7 @@ public class TableColumn extends FObj {
 
     AreaContainer areaContainer;
 
-    public TableColumn(FObj parent) {
+    public TableColumn(FONode parent) {
         super(parent);
         this.name = "fo:table-column";
     }

@@ -28,6 +28,11 @@ public class PageViewport {
     // the information is kept for future reference
     ArrayList idReferences = null;
 
+    // this keeps a list of currently unresolved areas or extensions
+    // once the things is resolved it is removed
+    // when this is empty the page can be rendered
+    ArrayList unresolved = null;
+
     public void setClip(boolean c) {
         clip = c;
     }

@@ -18,7 +18,7 @@ import org.apache.fop.apps.FOPException;
  */
 public class MultiSwitch extends ToBeImplementedElement {
 
-    public MultiSwitch(FObj parent) {
+    public MultiSwitch(FONode parent) {
         super(parent);
         this.name = "fo:multi-switch";
     }

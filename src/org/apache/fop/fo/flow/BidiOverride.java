@@ -19,9 +19,8 @@ import org.apache.fop.apps.FOPException;
  */
 public class BidiOverride extends ToBeImplementedElement {
 
-    public BidiOverride(FObj parent) {
+    public BidiOverride(FONode parent) {
         super(parent);
-        this.name = "fo:bidi-override";
     }
 
     public Status layout(Area area) throws FOPException {

@@ -8,20 +8,58 @@
 package org.apache.fop.fo;
 
 import org.apache.fop.layout.Area;
+import org.apache.fop.layout.FontState;
 import org.apache.fop.apps.FOPException;
+import org.apache.fop.datatypes.ColorType;
 
 /**
  * base class for representation of mixed content formatting objects
  * and their processing
  */
 public class FObjMixed extends FObj {
+    FOText.TextInfo textInfo = null;
 
-    public FObjMixed(FObj parent) {
+    public FObjMixed(FONode parent) {
         super(parent);
     }
 
     protected void addCharacters(char data[], int start, int length) {
-        addChild(new FOText(data, start, length, this));
+        if(textInfo == null) {
+            String fontFamily =
+                getProperty("font-family").getString();
+            String fontStyle =
+                getProperty("font-style").getString();
+            String fontWeight =
+                getProperty("font-weight").getString();
+            int fontSize =
+                getProperty("font-size").getLength().mvalue();
+            // font-variant support
+            // added by Eric SCHAEFFER
+            int fontVariant =
+                getProperty("font-variant").getEnum();
+
+            //textInfo.fs = new FontState(area.getFontInfo(), fontFamily,
+            //                        fontStyle, fontWeight, fontSize,
+            //                        fontVariant);
+
+            ColorType c = getProperty("color").getColorType();
+            textInfo.red = c.red();
+            textInfo.green = c.green();
+            textInfo.blue = c.blue();
+
+            textInfo.verticalAlign =
+                getProperty("vertical-align").getEnum();
+
+            textInfo.wrapOption =
+                getProperty("wrap-option").getEnum();
+            textInfo.whiteSpaceCollapse =
+                getProperty("white-space-collapse").getEnum();
+
+        }
+
+        FOText ft = new FOText(data, start, length, textInfo);
+        ft.setLogger(log);
+        addChild(ft);
     }
 
     public Status layout(Area area) throws FOPException {

@@ -22,11 +22,11 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import java.util.*;
 
 /**
- * Since SVG objects are not layed out then this class checks
- * that this element is not being layed out inside some incorrect
- * element.
+ * Generic XML object.
+ * This is used by xml objects (other than fo) than will build a DOM
+ * with each element.
  */
-public abstract class XMLObj extends FObj {
+public abstract class XMLObj extends FONode {
 
     // temp reference for attributes
     Attributes attr = null;
@@ -39,7 +39,7 @@ public abstract class XMLObj extends FObj {
      * @param parent the parent formatting object
      * @param propertyList the explicit properties of this object
      */
-    public XMLObj(FObj parent) {
+    public XMLObj(FONode parent) {
         super(parent);
     }
 
@@ -52,9 +52,9 @@ public abstract class XMLObj extends FObj {
     }
     public abstract String getNameSpace();
 
-    protected static Hashtable ns = new Hashtable();
+    protected static HashMap ns = new HashMap();
 
-    public void addGraphic(Document doc, Element parent) {
+    public void addElement(Document doc, Element parent) {
         this.doc = doc;
         element = doc.createElementNS(getNameSpace(), name);
 
@@ -121,7 +121,12 @@ public abstract class XMLObj extends FObj {
 
     protected void addChild(FONode child) {
         if (child instanceof XMLObj) {
-            ((XMLObj)child).addGraphic(doc, element);
+            ((XMLObj)child).addElement(doc, element);
+        } else {
+            // in theory someone might want to embed some defined
+            // xml (eg. fo) inside the foreign xml
+            // they could use a different namespace
+            log.debug("Invalid element: " + child.getName() + " inside foreign xml markup");
         }
     }
 
@@ -139,33 +144,10 @@ public abstract class XMLObj extends FObj {
      */
     public Status layout(Area area) throws FOPException {
         /* generate a warning */
-        log.error("" + this.name + " outside foreign xml");
+        log.warn("" + this.name + " outside foreign xml");
 
         /* return status */
         return new Status(Status.OK);
     }
-
-    public void removeID(IDReferences idReferences) {}
-
-    /**
-     * These method overrides prevent problems with the different types.
-     */
-    public void setIsInTableCell() {}
-
-    public void forceStartOffset(int offset) {}
-
-    public void forceWidth(int width) {}
-
-    public void resetMarker() {}
-
-    public void setLinkSet(LinkSet linkSet) {}
-
-    public Vector getMarkerSnapshot(Vector snapshot) {
-        return snapshot;
-    }
-
-    public void rollback(Vector snapshot) {}
-
-    protected void setWritingMode() {}
 }
 

@@ -30,9 +30,8 @@ public class PageSequenceMaster extends FObj {
     // references to page-masters. So the methods use the former
     // terminology ('sub-sequence-specifiers', or SSS),
     // but the actual FO's are MasterReferences.
-    public PageSequenceMaster(FObj parent) {
+    public PageSequenceMaster(FONode parent) {
         super(parent);
-        this.name = "fo:page-sequence-master";
     }
 
     public void handleAttrs(Attributes attlist) throws FOPException {

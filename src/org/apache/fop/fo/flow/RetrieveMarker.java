@@ -25,7 +25,7 @@ public class RetrieveMarker extends FObjMixed {
     private int retrievePosition;
     private int retrieveBoundary;
 
-    public RetrieveMarker(FObj parent) {
+    public RetrieveMarker(FONode parent) {
         super(parent);
         this.name = "fo:retrieve-marker";
     }

@@ -20,9 +20,8 @@ import org.apache.fop.apps.FOPException;
  */
 public class Title extends ToBeImplementedElement {
 
-    public Title(FObj parent) {
+    public Title(FONode parent) {
         super(parent);
-        this.name = "fo:title";
     }
 
     public Status layout(Area area) throws FOPException {

@@ -26,67 +26,42 @@ import org.apache.fop.system.BufferManager;
  * longer than the lifetime of the object itself, causing
  * excessive memory consumption and OOM errors.
  */
-public class FOText extends FONode {
+public class FOText extends FObj {
 
     protected char[] ca;
     protected int start;
     protected int length;
+    TextInfo textInfo;
 
-    FontState fs;
-    float red;
-    float green;
-    float blue;
-    int wrapOption;
-    int whiteSpaceCollapse;
-    int verticalAlign;
+    public static class TextInfo {
+        FontState fs;
+        float red;
+        float green;
+        float blue;
+        int wrapOption;
+        int whiteSpaceCollapse;
+        int verticalAlign;
 
-    // Textdecoration
-    protected boolean underlined = false;
-    protected boolean overlined = false;
-    protected boolean lineThrough = false;
+        // Textdecoration
+        protected boolean underlined = false;
+        protected boolean overlined = false;
+        protected boolean lineThrough = false;
+    }
 
     TextState ts;
 
-
-    public FOText(char[] chars, int s, int e, FObj parent) {
-        super(parent);
+    public FOText(char[] chars, int s, int e, TextInfo ti) {
+        super(null);
         this.start = 0;
         this.ca = new char[e - s];
         for (int i = s; i < e; i++)
             ca[i - s] = chars[i];
         this.length = e - s;
-
-        /* ML - remove refs to BufferManager
-        this.bufferManager = parent.bufferManager;
-        if (this.bufferManager != null) {
-            bufferManager.writeBuffer((Object)this, ca);
-    } else {
-            System.out.println("abnormal exit");
-            System.exit(0);
+        textInfo = ti;
     }
-        */
-    }
-
-    public void setUnderlined(boolean ul) {
-        this.underlined = ul;
-    }
-
-    public void setOverlined(boolean ol) {
-        this.overlined = ol;
-    }
-
-    public void setLineThrough(boolean lt) {
-        this.lineThrough = lt;
-    }
-
 
     public boolean willCreateArea() {
-        // ML - remove refs to BufferManager
-        //char ca[] = this.bufferManager.readBuffer((Object)this);
-
-        this.whiteSpaceCollapse =
-            this.parent.properties.get("white-space-collapse").getEnum();
-        if (this.whiteSpaceCollapse == WhiteSpaceCollapse.FALSE
+        if (textInfo.whiteSpaceCollapse == WhiteSpaceCollapse.FALSE
                 && length > 0) {
             return true;
         }
@@ -102,55 +77,24 @@ public class FOText extends FONode {
     }
 
     public Status layout(Area area) throws FOPException {
-        // ML - remove refs to BufferManager
-        // char ca[] = this.bufferManager.readBuffer((Object)this);
         if (!(area instanceof BlockArea)) {
             log.error("text outside block area"
                                    + new String(ca, start, length));
             return new Status(Status.OK);
         }
         if (this.marker == START) {
-            String fontFamily =
-                this.parent.properties.get("font-family").getString();
-            String fontStyle =
-                this.parent.properties.get("font-style").getString();
-            String fontWeight =
-                this.parent.properties.get("font-weight").getString();
-            int fontSize =
-                this.parent.properties.get("font-size").getLength().mvalue();
-            // font-variant support
-            // added by Eric SCHAEFFER
-            int fontVariant =
-                this.parent.properties.get("font-variant").getEnum();
-
-            this.fs = new FontState(area.getFontInfo(), fontFamily,
-                                    fontStyle, fontWeight, fontSize,
-                                    fontVariant);
-
-            ColorType c = this.parent.properties.get("color").getColorType();
-            this.red = c.red();
-            this.green = c.green();
-            this.blue = c.blue();
-
-            this.verticalAlign =
-                this.parent.properties.get("vertical-align").getEnum();
-
-            this.wrapOption =
-                this.parent.properties.get("wrap-option").getEnum();
-            this.whiteSpaceCollapse =
-                this.parent.properties.get("white-space-collapse").getEnum();
             this.ts = new TextState();
-            ts.setUnderlined(underlined);
-            ts.setOverlined(overlined);
-            ts.setLineThrough(lineThrough);
+            ts.setUnderlined(textInfo.underlined);
+            ts.setOverlined(textInfo.overlined);
+            ts.setLineThrough(textInfo.lineThrough);
 
             this.marker = this.start;
         }
         int orig_start = this.marker;
-        this.marker = addText((BlockArea)area, fs, red, green, blue,
-                              wrapOption, this.getLinkSet(),
-                              whiteSpaceCollapse, ca, this.marker, length,
-                              ts, verticalAlign);
+        this.marker = addText((BlockArea)area, textInfo.fs, textInfo.red, textInfo.green, textInfo.blue,
+                              textInfo.wrapOption, this.getLinkSet(),
+                              textInfo.whiteSpaceCollapse, ca, this.marker, length,
+                              ts, textInfo.verticalAlign);
         if (this.marker == -1) {
 
 
@@ -290,5 +234,5 @@ public class FOText extends FONode {
         return -1;
     }
 
-
 }
+

@@ -25,7 +25,7 @@ public class UnknownXMLObj extends XMLObj {
             space = sp;
         }
 
-        public FObj make(FObj parent) {
+        public FONode make(FONode parent) {
             return new UnknownXMLObj(parent, space);
         }
     }
@@ -36,7 +36,7 @@ public class UnknownXMLObj extends XMLObj {
      * @param parent the parent formatting object
      * @param propertyList the explicit properties of this object
      */
-    protected UnknownXMLObj(FObj parent, String space) {
+    protected UnknownXMLObj(FONode parent, String space) {
         super(parent);
         this.namespace = space;
     }

@@ -8,6 +8,7 @@
 package org.apache.fop.datatypes;
 
 import org.apache.fop.fo.FObj;
+import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.PropertyList;
 import org.apache.fop.messaging.MessageHandler;
 
@@ -75,10 +76,11 @@ public class LengthBase implements PercentBase {
             return parentFO.getContentWidth();
         case CONTAINING_REFAREA:    // example: start-indent, end-indent
          {
-            FObj fo;
-            for (fo = parentFO; fo != null &&!fo.generatesReferenceAreas();
-                    fo = fo.getParent());
-            return (fo != null ? fo.getContentWidth() : 0);
+            //FONode fo;
+            //for (fo = parentFO; fo != null && !fo.generatesReferenceAreas();
+            //        fo = fo.getParent());
+            //return (((fo != null) && (fo instanceof FObj)) ? ((FObj)fo).getContentWidth() : 0);
+            return 0;
         }
         case CUSTOM_BASE:
             MessageHandler.errorln("!!! LengthBase.getBaseLength() called on CUSTOM_BASE type !!!");

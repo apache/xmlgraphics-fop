@@ -31,9 +31,8 @@ public class RepeatablePageMasterAlternatives extends FObj
 
     private Vector conditionalPageMasterRefs;
 
-    public RepeatablePageMasterAlternatives(FObj parent) {
+    public RepeatablePageMasterAlternatives(FONode parent) {
         super(parent);
-        this.name = "fo:repeatable-page-master-alternatives";
     }
 
     public void handleAttrs(Attributes attlist) throws FOPException {

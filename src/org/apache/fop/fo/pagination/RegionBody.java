@@ -9,6 +9,7 @@ package org.apache.fop.fo.pagination;
 
 // FOP
 import org.apache.fop.fo.FObj;
+import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.PropertyList;
 import org.apache.fop.fo.properties.Overflow;
 import org.apache.fop.datatypes.ColorType;
@@ -25,7 +26,7 @@ public class RegionBody extends Region {
 
     ColorType backgroundColor;
 
-    public RegionBody(FObj parent) {
+    public RegionBody(FONode parent) {
         super(parent);
     }
 

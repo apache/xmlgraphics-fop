@@ -24,7 +24,7 @@ import java.io.IOException;
 import java.io.FileInputStream;
 import java.io.File;
 import java.io.BufferedInputStream;
-import java.util.Hashtable;
+import java.util.HashMap;
 
 /**
  * Generic MultiByte (CID) font
@@ -53,7 +53,7 @@ public class MultiByteFont extends CIDFont implements FontDescriptor {
     public int defaultWidth = 0;
     public byte cidType = PDFCIDFont.CID_TYPE2;
 
-    public Hashtable kerning = new Hashtable();
+    public HashMap kerning = new HashMap();
     public boolean useKerning = true;
     private String namePrefix = null;    // Quasi unique prefix
     private static int uniqueCounter = 1;
@@ -66,12 +66,12 @@ public class MultiByteFont extends CIDFont implements FontDescriptor {
     /**
      * usedGlyphs contains orginal, new glyph index
      */
-    private Hashtable usedGlyphs = new Hashtable();
+    private HashMap usedGlyphs = new HashMap();
 
     /**
      * usedGlyphsIndex contains new glyph, original index
      */
-    private Hashtable usedGlyphsIndex = new Hashtable();
+    private HashMap usedGlyphsIndex = new HashMap();
     int usedGlyphsCount = 0;
 
     public MultiByteFont() {
@@ -99,11 +99,11 @@ public class MultiByteFont extends CIDFont implements FontDescriptor {
         return (useKerning & kerning.isEmpty());
     }
 
-    public final java.util.Hashtable getKerningInfo() {
+    public final java.util.HashMap getKerningInfo() {
         if (useKerning)
             return kerning;
         else
-            return new Hashtable();
+            return new HashMap();
     }
 
     public byte getSubType() {

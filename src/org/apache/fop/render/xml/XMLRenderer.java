@@ -77,6 +77,8 @@ public class XMLRenderer extends AbstractRenderer {
 
     public void setUserAgent(FOUserAgent agent) {
         super.setUserAgent(agent);
+
+        //
         //userAgent.addExtensionHandler();
         XMLHandler handler = new XMLXMLHandler();
         userAgent.setDefaultXMLHandler(mimeType, handler);

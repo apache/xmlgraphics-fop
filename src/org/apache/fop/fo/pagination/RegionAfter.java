@@ -23,7 +23,7 @@ public class RegionAfter extends Region {
 
     private int precedence;
 
-    public RegionAfter(FObj parent) {
+    public RegionAfter(FONode parent) {
         super(parent);
     }
 

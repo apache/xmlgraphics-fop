@@ -18,7 +18,7 @@ import org.apache.fop.apps.FOPException;
  */
 public class ToBeImplementedElement extends FObj {
 
-    protected ToBeImplementedElement(FObj parent) {
+    protected ToBeImplementedElement(FONode parent) {
         super(parent);
     }
 

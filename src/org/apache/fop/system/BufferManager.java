@@ -134,7 +134,6 @@ public class BufferManager {
 
             if (csize < values.length) {
                 System.out.println("Cache size too small");
-                System.exit(0);
             }
 
 

@@ -36,9 +36,8 @@ public class ExternalGraphic extends FObj {
 
     ImageArea imageArea;
 
-    public ExternalGraphic(FObj parent) {
+    public ExternalGraphic(FONode parent) {
         super(parent);
-        this.name = "fo:external-graphic";
     }
 
     public Status layout(Area area) throws FOPException {

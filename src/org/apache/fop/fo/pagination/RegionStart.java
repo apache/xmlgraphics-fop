@@ -20,7 +20,7 @@ public class RegionStart extends Region {
     public static final String REGION_CLASS = "start";
 
 
-    public RegionStart(FObj parent) {
+    public RegionStart(FONode parent) {
         super(parent);
     }
 

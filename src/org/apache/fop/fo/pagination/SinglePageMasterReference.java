@@ -17,7 +17,7 @@ public class SinglePageMasterReference extends PageMasterReference
 
     private int state;
 
-    public SinglePageMasterReference(FObj parent) {
+    public SinglePageMasterReference(FONode parent) {
         super(parent);
         this.state = FIRST;
     }

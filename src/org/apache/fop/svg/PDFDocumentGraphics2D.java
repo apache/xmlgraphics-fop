@@ -45,6 +45,49 @@ public class PDFDocumentGraphics2D extends PDFGraphics2D {
 
     /**
      * Create a new PDFDocumentGraphics2D.
+     * This is used to create a new pdf document, the height,
+     * width and output stream can be setup later.
+     * For use by the transcoder which needs font information
+     * for the bridge before the document size is known.
+     * The resulting document is written to the stream after rendering.
+     *
+     * @param textAsShapes set this to true so that text will be rendered
+     * using curves and not the font.
+     */
+    PDFDocumentGraphics2D(boolean textAsShapes) {
+        super(textAsShapes);
+    
+        if(!textAsShapes) {
+            fontInfo = new FontInfo();
+            FontSetup.setup(fontInfo);
+            try {
+                fontState = new FontState(fontInfo, "Helvetica", "normal",
+                                          "normal", 12, 0);
+            } catch (FOPException e) {}
+        }
+
+        standalone = true;
+        this.pdfDoc = new PDFDocument();
+        this.pdfDoc.setProducer("FOP SVG Renderer");
+        pdfStream = this.pdfDoc.makeStream();
+
+        graphicsState = new PDFState();
+
+        currentFontName = "";
+        currentFontSize = 0;
+        currentYPosition = 0;
+        currentXPosition = 0;
+    }
+
+    void setupDocument(OutputStream stream, int width, int height) {
+        this.width = width;
+        this.height = height;
+        this.stream = stream;
+        currentStream.write("1 0 0 -1 0 " + height + " cm\n");
+    }
+
+    /**
+     * Create a new PDFDocumentGraphics2D.
      * This is used to create a new pdf document of the given height
      * and width.
      * The resulting document is written to the stream after rendering.
@@ -57,31 +100,8 @@ public class PDFDocumentGraphics2D extends PDFGraphics2D {
      */
     public PDFDocumentGraphics2D(boolean textAsShapes, OutputStream stream,
                                  int width, int height) {
-        super(textAsShapes);
-
-        if (!textAsShapes) {
-            fontInfo = new FontInfo();
-            FontSetup.setup(fontInfo);
-            try {
-                fontState = new FontState(fontInfo, "Helvetica", "normal",
-                                          "normal", 12, 0);
-            } catch (FOPException e) {}
-        }
-        standalone = true;
-        this.stream = stream;
-        this.pdfDoc = new PDFDocument();
-        this.pdfDoc.setProducer("FOP SVG Renderer");
-        pdfStream = this.pdfDoc.makeStream();
-        this.width = width;
-        this.height = height;
-
-        currentFontName = "";
-        currentFontSize = 0;
-        currentYPosition = 0;
-        currentXPosition = 0;
-
-        currentStream.write("1 0 0 -1 0 " + height + " cm\n");
-
+        this(textAsShapes);
+        setupDocument(stream, width, height);
     }
 
     public FontState getFontState() {
@@ -110,7 +130,7 @@ public class PDFDocumentGraphics2D extends PDFGraphics2D {
      */
     public void setBackgroundColor(Color col) {
         Color c = col;
-        currentColour = new PDFColor(c.getRed(), c.getGreen(), c.getBlue());
+        PDFColor currentColour = new PDFColor(c.getRed(), c.getGreen(), c.getBlue());
         currentStream.write("q\n");
         currentStream.write(currentColour.getColorSpaceOut(true));
 

@@ -20,7 +20,7 @@ import java.util.Vector;
 
 public class Footnote extends FObj {
 
-    public Footnote(FObj parent) {
+    public Footnote(FONode parent) {
         super(parent);
         this.name = "fo:footnote";
     }

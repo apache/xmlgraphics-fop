@@ -26,9 +26,8 @@ public class Inline extends FObjMixed {
     protected boolean lineThrough = false;
 
 
-    public Inline(FObj parent) {
+    public Inline(FONode parent) {
         super(parent);
-        this.name = "fo:inline";
     }
 
     public void handleAttrs(Attributes attlist) throws FOPException {
@@ -86,15 +85,6 @@ public class Inline extends FObjMixed {
         if (textDecoration == TextDecoration.LINE_THROUGH) {
             this.lineThrough = true;
         }
-    }
-
-    protected void addCharacters(char data[], int start, int length) {
-        FOText ft = new FOText(data, start, length, this);
-        ft.setLogger(log);
-        ft.setUnderlined(underlined);
-        ft.setOverlined(overlined);
-        ft.setLineThrough(lineThrough);
-        children.addElement(ft);
     }
 
 }

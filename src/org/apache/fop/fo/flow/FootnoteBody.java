@@ -27,7 +27,7 @@ public class FootnoteBody extends FObj {
     int endIndent;
     int textIndent;
 
-    public FootnoteBody(FObj parent) {
+    public FootnoteBody(FONode parent) {
         super(parent);
         this.name = "fo:footnote-body";
     }
