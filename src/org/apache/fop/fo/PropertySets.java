@@ -1180,17 +1180,21 @@ public class PropertySets {
     };
 
     /**
-     * Expand the >tt>PropertyValue</tt> assigned to a compound property
+     * Expand the <tt>PropertyValue</tt> assigned to a compound property
      * into <tt>propertyValues</tt> for the individual property components.
      * N.B. This method assumes that the set of expansion properties is
      * comprised of a copy and a non-copy set.  For example, &lt;space&gt;
      * compounds have a copy set of .minimum, .optimum and .maximum, and a
      * non-copy set of .precedence and .conditionality. For each element of
      * the copy set, the given value is cloned.  For each member of the
-     * non-copy set, a reference to the initial value is taken.  Any
-     * properties for which the non-copy set takes other than the initial
-     * value will have to arrange to override this method of the method from
-     * which it is invoked.
+     * non-copy set, a reference to the initial value is taken.
+     * @param foTree - the <tt>FOTree</tt> for which properties are being
+     * developed.
+     * @param value - the <tt>PropertyValue</tt> to be cloned for the copy
+     * set members.
+     * @return a <tt>PropertyValueList</tt> containing the copy set
+     * expansions followed by the non-copy set expansions, in the order
+     * they are defined in appropriate <tt>ROIntArray</tt>s in this class.
      */
     public static PropertyValueList expandCompoundProperty
                                         (FOTree foTree, PropertyValue value)
