@@ -137,7 +137,6 @@ public interface FopImage {
     /**
      * For transparent images. Returns the transparent color.
      * @return the transparent color
-     * (todo) Remove the PDF dependency
      */
     Color getTransparentColor();
 
