@@ -326,6 +326,7 @@ public class TableRow extends FObj {
 				}
 
 				int spaceLeft = area.spaceLeft();
+				int origMaxHeight = area.getMaxHeight();
 				this.areaContainer =
 						new AreaContainer(propMgr.getFontState(area.getFontInfo()),
 															0,0,
@@ -418,6 +419,13 @@ public class TableRow extends FObj {
 						//--- offset of the cell.
 						//--- change by Hani Elabed 11/22/2000
 						cell.setStartOffset(cellState.getWidthOfCellSoFar());
+
+						// Each column in the row should start with the same height available
+						if ( i > 0 )
+						{
+							areaContainer.increaseHeight(areaContainer.spaceLeft() - areaContainer.getMaxHeight() - spaceLeft + origMaxHeight);
+							areaContainer.setMaxHeight(spaceLeft);
+						}
 
 						Status status;
 						if ((status = cell.layout(areaContainer)).isIncomplete()) {
