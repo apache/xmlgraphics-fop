@@ -248,7 +248,6 @@ public class Driver implements LogEnabled {
         if (userAgent == null) {
             userAgent = new FOUserAgent();
             userAgent.enableLogging(getLogger());
-            userAgent.setBaseURL("");
         }
         return userAgent;
     }
@@ -572,6 +571,7 @@ public class Driver implements LogEnabled {
     public synchronized void render(InputHandler inputHandler)
                 throws FOPException {
         XMLReader parser = inputHandler.getParser();
+        userAgent.setBaseURL(inputHandler.getBaseURL());
         render(parser, inputHandler.getInputSource());
     }
 

@@ -45,6 +45,12 @@ public class FOFileHandler extends InputHandler {
      */
     public FOFileHandler(File fofile) {
         this.fofile = fofile;
+        try {
+            baseURL =
+                new File(fofile.getAbsolutePath()).getParentFile().toURL().toExternalForm();
+        } catch (Exception e) {
+            baseURL = "";
+        }
     }
 
     /**
@@ -55,7 +61,6 @@ public class FOFileHandler extends InputHandler {
         this.foURL = url;
     }
 
-    
     /**
      * @see org.apache.fop.apps.InputHandler#getInputSource()
      */

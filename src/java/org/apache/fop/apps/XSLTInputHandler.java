@@ -57,6 +57,12 @@ public class XSLTInputHandler extends InputHandler {
     public XSLTInputHandler(File xmlfile, File xsltfile, Vector params) throws FOPException {
         this.xmlSource  = new StreamSource(xmlfile);
         this.xsltSource = new StreamSource(xsltfile);
+        try {
+            baseURL =
+                new File(xmlfile.getAbsolutePath()).getParentFile().toURL().toExternalForm();
+        } catch (Exception e) {
+            baseURL = "";
+        }
         xsltParams = params;
     }
 
@@ -70,6 +76,12 @@ public class XSLTInputHandler extends InputHandler {
     public XSLTInputHandler(File xmlfile, File xsltfile) throws FOPException {
         this.xmlSource  = new StreamSource(xmlfile);
         this.xsltSource = new StreamSource(xsltfile);
+        try {
+            baseURL =
+                new File(xmlfile.getAbsolutePath()).getParentFile().toURL().toExternalForm();
+        } catch (Exception e) {
+            baseURL = "";
+        }
     }
 
     /**
@@ -144,11 +156,10 @@ public class XSLTInputHandler extends InputHandler {
                     saxTFactory.newXMLFilter(xsltSource);
                     
 /*              if (inParams != null) { 
-                    Transformer transformer = ??? how to obtain from an XMLFilter?
-                    int nParams = inParams.size();
-            
+                    // parameters currently not settable with an XMLFilter
                     for (int i = 0; i < nParams; i += 2) {
-                        transformer.setParameter((String) inParams.elementAt(i),
+                        // setParameter() method doesn't exist
+                        xmlfilter.setParameter((String) inParams.elementAt(i),
                             (String) inParams.elementAt(i + 1));
                     }
                 }
