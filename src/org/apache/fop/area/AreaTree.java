@@ -10,6 +10,7 @@ package org.apache.fop.area;
 import org.apache.fop.render.Renderer;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 /**
  * Area tree for formatting objects.
@@ -33,6 +34,12 @@ public class AreaTree {
     // in different situations
     AreaTreeModel model;
 
+    // hashmap of arraylists containing pages with id area
+    HashMap idLocations = new HashMap();
+    // list of id's yet to be resolved and arraylists of pages
+    HashMap resolve = new HashMap();
+    ArrayList treeExtensions = new ArrayList();
+
     public RenderPagesModel createRenderPagesModel(Renderer rend) {
         return new RenderPagesModel(rend);
     }
@@ -51,6 +58,28 @@ public class AreaTree {
 
     public void addPage(PageViewport page) {
         model.addPage(page);
+    }
+
+    public void addTreeExtension(TreeExt ext) {
+        treeExtensions.add(ext);
+        if(ext.isResolveable()) {
+            Resolveable res = (Resolveable)ext;
+            String[] ids = res.getIDs();
+            for(int count = 0; count < ids.length; count++) {
+                if(idLocations.containsKey(ids[count])) {
+                    res.resolve(ids[count], (ArrayList)idLocations.get(ids[count]));
+                } else {
+                    ArrayList todo = (ArrayList)resolve.get(ids[count]);
+                    if(todo == null) {
+                        todo = new ArrayList();
+                        todo.add(ext);
+                        resolve.put(ids[count], todo);
+                    } else {
+                        todo.add(ext);
+                    }
+                }
+            }
+        }
     }
 
     // this is the model for the area tree object
@@ -119,7 +148,11 @@ public class AreaTree {
         public void addPage(PageViewport page) {
             super.addPage(page);
             // if page finished
-            //renderer.renderPage(page);
+            try {
+                renderer.renderPage(page);
+            } catch(Exception e) {
+                // use error handler to handle this FOP or IO Exception
+            }
             page.clear();
             // else prepare
             //renderer.preparePage(page);

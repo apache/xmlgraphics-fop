@@ -11,7 +11,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class RegionReference extends Area implements Serializable {
+public class RegionReference extends Area implements Serializable, Cloneable {
     public static final int BEFORE = 0;
     public static final int START = 1;
     public static final int BODY = 2;
@@ -55,4 +55,10 @@ public class RegionReference extends Area implements Serializable {
         blocks.add(block);
     }
 
+    public Object clone() {
+        RegionReference rr = new RegionReference(regionClass);
+        rr.ctm = ctm;
+        rr.setIPD(getIPD());
+        return rr;
+    }
 }

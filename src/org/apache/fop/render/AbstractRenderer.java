@@ -142,7 +142,7 @@ public abstract class AbstractRenderer implements Renderer {
 
             RegionReference region = port.getRegion();
 	    startVParea(region.getCTM());
-            if (region.getRegionClass() == Region.BODY) {
+            if (region.getRegionClass() == RegionReference.BODY) {
                 renderBodyRegion((BodyRegion) region);
             } else {
                 renderRegion(region);

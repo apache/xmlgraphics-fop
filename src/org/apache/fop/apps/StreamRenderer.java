@@ -99,6 +99,10 @@ public class StreamRenderer {
     public StreamRenderer(OutputStream outputStream, Renderer renderer) {
         this.outputStream = outputStream;
         this.renderer = renderer;
+
+        this.areaTree = new AreaTree();
+        this.atModel = AreaTree.createStorePagesModel();
+        areaTree.setTreeModel(atModel);
     }
 
     public void setLogger(Logger logger) {
@@ -183,9 +187,6 @@ public class StreamRenderer {
     */
     public void render(PageSequence pageSequence)
     throws FOPException {
-	this.areaTree = new AreaTree();
-	this.atModel = AreaTree.createStorePagesModel();
-	areaTree.setTreeModel(atModel);
         //areaTree.setFontInfo(fontInfo);
 
 //         for(Enumeration e = extensions.elements(); e.hasMoreElements(); ) {

@@ -7,14 +7,13 @@
 
 package org.apache.fop.area.inline;
 
-public class Unresolved extends InlineArea {
+import org.apache.fop.area.Resolveable;
+
+public abstract class Unresolved extends InlineArea implements Resolveable {
     boolean resolved = false;
 
-    // id ref
-    // resolve
-    // resolve without area
-
-    public void resolve() {
-
+    public boolean isResolved() {
+       return resolved;
     }
+
 }

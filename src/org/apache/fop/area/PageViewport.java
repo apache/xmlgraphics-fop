@@ -14,7 +14,7 @@ import java.util.ArrayList;
 
 // this is the level that creates the page
 // the page (reference area) is then rendered inside the page object
-public class PageViewport {
+public class PageViewport implements Cloneable {
     Page page;
     Rectangle2D viewArea;
     boolean clip = false;
@@ -29,7 +29,7 @@ public class PageViewport {
     ArrayList idReferences = null;
 
     // this keeps a list of currently unresolved areas or extensions
-    // once the things is resolved it is removed
+    // once the thing is resolved it is removed
     // when this is empty the page can be rendered
     ArrayList unresolved = null;
 
@@ -55,9 +55,15 @@ public class PageViewport {
         page = (Page) in.readObject();
     }
 
+    public Object clone() {
+        Page p = (Page)page.clone();
+        PageViewport ret = new PageViewport(p, (Rectangle2D)viewArea.clone());
+        return ret;
+    }
+
     /**
      * Clear the page contents to save memory.
-     * THis objects is kept for the life of the area tree since
+     * This object is kept for the life of the area tree since
      * it holds id information and is used as a key.
      */
     public void clear() {

@@ -7,10 +7,20 @@
 
 package org.apache.fop.area.inline;
 
+import java.util.ArrayList;
+
 public class UnresolvedPageNumber extends Unresolved {
+    String pageRefId;
 
-    // id ref
-    // resolve
-    // resolve without area
+    public UnresolvedPageNumber(String id) {
+        pageRefId = id;
+    }
 
+    public String[] getIDs() {
+        return new String[] {pageRefId};
+    }
+
+    public void resolve(String id, ArrayList pages) {
+        resolved = true;
+    }
 }

@@ -7,21 +7,21 @@
 
 package org.apache.fop.extensions;
 
-import org.apache.fop.fo.*;
+import org.apache.fop.fo.FONode;
 
 public class Label extends ExtensionObj {
-    private String _label = "";
+    private String label = "";
 
     public Label(FONode parent) {
         super(parent);
     }
 
     protected void addCharacters(char data[], int start, int end) {
-        _label += new String(data, start, end - start);
+        label += new String(data, start, end - start);
     }
 
     public String toString() {
-        return _label;
+        return label;
     }
 
 }
