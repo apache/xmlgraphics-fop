@@ -237,7 +237,7 @@ public class InstreamForeignObject extends FObj {
 
         Rectangle2D placement = new Rectangle2D.Float(xoffset, yoffset, cwidth, cheight);
 
-        Document doc = child.getDocument();
+        Document doc = child.getDOMDocument();
         String ns = child.getDocumentNamespace();
 
         children = null;

@@ -54,6 +54,8 @@ package org.apache.fop.fo;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
+import org.apache.fop.control.Document;
+import org.apache.fop.fo.pagination.Root;
 
 // SAX
 import org.apache.avalon.framework.logger.Logger;
@@ -110,7 +112,7 @@ public class FOTreeBuilder extends DefaultHandler {
     /**
      * The root of the formatting object tree
      */
-    protected FONode rootFObj = null;
+    protected Root rootFObj = null;
 
     /**
      * The class that handles formatting and rendering to a stream
@@ -119,6 +121,8 @@ public class FOTreeBuilder extends DefaultHandler {
     private FOInputHandler foInputHandler;
 
     private FOUserAgent userAgent;
+
+    public Document document;
 
     /**
      * Default constructor
@@ -290,7 +294,8 @@ public class FOTreeBuilder extends DefaultHandler {
                                                         + " be fo:root, not "
                                                         + fobj.getName()));
             }
-            rootFObj = fobj;
+            rootFObj = (Root)fobj;
+            rootFObj.setDocument(document);
         } else {
             currentFObj.addChild(fobj);
         }

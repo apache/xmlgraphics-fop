@@ -102,7 +102,7 @@ public abstract class XMLObj extends FONode {
     /**
      * @return DOM document representing this foreign XML
      */
-    public Document getDocument() {
+    public Document getDOMDocument() {
         return doc;
     }
 

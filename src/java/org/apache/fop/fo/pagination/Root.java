@@ -50,9 +50,11 @@
  */
 package org.apache.fop.fo.pagination;
 
-// FOP
+// java
 import java.util.List;
 
+// FOP
+import org.apache.fop.control.Document;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FObj;
 
@@ -67,6 +69,8 @@ public class Root extends FObj {
      * Keeps count of page number from over PageSequence instances
      */
     private int runningPageNumberCounter = 0;
+
+    private Document document = null;
 
     /**
      * @see org.apache.fop.fo.FONode#FONode(FONode)
@@ -137,4 +141,24 @@ public class Root extends FObj {
     public void setLayoutMasterSet(LayoutMasterSet layoutMasterSet) {
         this.layoutMasterSet = layoutMasterSet;
     }
+
+    /**
+     * Sets the Document that this Root is attached to
+     * @param document the Document that this Root is attached to
+     */
+    public void setDocument(Document document) {
+        this.document = document;
+    }
+
+    /**
+     * This method overrides the FONode version. The FONode version calls the
+     * method by the same name for the parent object. Since Root is at the top
+     * of the tree, it returns the actual Document object. Thus, any FONode can
+     * use this chain to find which Document it is being built for.
+     * @return the Document that this Root is attached to
+     */
+    public Document getDocument() {
+        return document;
+    }
+
 }
