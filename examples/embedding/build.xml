@@ -102,6 +102,15 @@
 		  </classpath>
 		</java>
 	</target>
+	<target name="example6" depends="compile" description="Runs the AWT Viewer example">
+		<echo message="Running the AWT Viewer example"/>
+		<java classname="${name}.ExampleAWTViewer" fork="yes">
+		  <classpath>
+		    <path refid="project.class.path"/>
+		    <pathelement location="${build.dest}"/>
+		  </classpath>
+		</java>
+	</target>
 	<!-- =================================================================== -->
 	<!-- Clean targets                                                       -->
 	<!-- =================================================================== -->
