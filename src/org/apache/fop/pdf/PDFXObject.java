@@ -108,7 +108,9 @@ public class PDFXObject extends PDFObject {
 	    PDFStream imgStream = new PDFStream(0);
 	    
 		imgStream.setData(fopimage.getBitmaps());
-		imgStream.addFilter(new FlateFilter());
+		//	imgStream.addFilter(new FlateFilter());
+		imgStream.addDefaultFilters();
+		
 		String dictEntries = imgStream.applyFilters();
 
 		String p = this.number + " " + this.generation + " obj\n";
