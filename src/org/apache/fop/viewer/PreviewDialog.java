@@ -1,6 +1,6 @@
 /*
  * $Id$
- * Copyright (C) 2001 The Apache Software Foundation. All rights reserved.
+ * Copyright (C) 2001-2002 The Apache Software Foundation. All rights reserved.
  * For details on use and redistribution please refer to the
  * LICENSE file included with these sources.
  */
@@ -12,13 +12,10 @@ package org.apache.fop.viewer;
  * Juergen Verwohlt: Juergen.Verwohlt@jCatalog.com,
  * Rainer Steinkuhle: Rainer.Steinkuhle@jCatalog.com,
  * Stanislav Gorkhover: Stanislav.Gorkhover@jCatalog.com
- * Doro Wiarda (wiarda@dwiarda.com:
- * added  MessageListener support and made
- * the showing of the progress and error
- * messages Swing thread safe.
- * This is needed as xml parse errors do not
- * necessarily occur in the
- * EventDispatchThread.
+ * Doro Wiarda (wiarda@dwiarda.com):
+ * added MessageListener support and made the showing of the progress and error
+ * messages Swing thread safe. This is needed as xml parse errors do not
+ * necessarily occur in the EventDispatchThread.
  */
 
 import java.awt.*;
@@ -62,11 +59,11 @@ public class PreviewDialog extends JFrame implements ProgressListener,
 
     protected JLabel zoomLabel =
         new JLabel();    // {public float getAlignmentY() { return 0.0f; }};
+
     protected JComboBox scale = new JComboBox() {
         public float getAlignmentY() {
             return 0.5f;
         }
-
     };
 
     protected JScrollPane previewArea = new JScrollPane();
@@ -105,8 +102,8 @@ public class PreviewDialog extends JFrame implements ProgressListener,
             public void doit() {
                 print();
             }
-
         };
+
         firstPageAction = new Command(res.getString("First page"),
                                       "firstpg") {
             public void doit() {
@@ -114,30 +111,30 @@ public class PreviewDialog extends JFrame implements ProgressListener,
             }
 
         };
+
         previousPageAction = new Command(res.getString("Previous page"),
                                          "prevpg") {
             public void doit() {
                 goToPreviousPage(null);
             }
-
         };
+
         nextPageAction = new Command(res.getString("Next page"), "nextpg") {
             public void doit() {
                 goToNextPage(null);
             }
-
         };
+
         lastPageAction = new Command(res.getString("Last page"), "lastpg") {
             public void doit() {
                 goToLastPage(null);
             }
-
         };
+
         reloadAction = new Command(res.getString("Reload"), "reload") {
             public void doit() {
                 reload(null);
             }
-
         };
 
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
@@ -160,7 +157,6 @@ public class PreviewDialog extends JFrame implements ProgressListener,
             public void actionPerformed(ActionEvent e) {
                 scale_actionPerformed(e);
             }
-
         });
 
         scale.setSelectedItem("100");
@@ -243,20 +239,17 @@ public class PreviewDialog extends JFrame implements ProgressListener,
             public void doit() {
                 print();
             }
-
         });
         menu.add(new Command(res.getString("Reload")) {
             public void doit() {
                 reload(null);
             }
-
         });
         menu.addSeparator();
         menu.add(new Command(res.getString("Exit")) {
             public void doit() {
                 dispose();
             }
-
         });
         menuBar.add(menu);
         menu = new JMenu(res.getString("View"));
@@ -264,31 +257,26 @@ public class PreviewDialog extends JFrame implements ProgressListener,
             public void doit() {
                 goToFirstPage(null);
             }
-
         });
         menu.add(new Command(res.getString("Previous page")) {
             public void doit() {
                 goToPreviousPage(null);
             }
-
         });
         menu.add(new Command(res.getString("Next page")) {
             public void doit() {
                 goToNextPage(null);
             }
-
         });
         menu.add(new Command(res.getString("Last page")) {
             public void doit() {
                 goToLastPage(null);
             }
-
         });
         menu.add(new Command(res.getString("Go to Page") + " ...") {
             public void doit() {
                 goToPage(null);
             }
-
         });
         menu.addSeparator();
         subMenu = new JMenu(res.getString("Zoom"));
@@ -296,37 +284,31 @@ public class PreviewDialog extends JFrame implements ProgressListener,
             public void doit() {
                 setScale(25.0);
             }
-
         });
         subMenu.add(new Command("50%") {
             public void doit() {
                 setScale(50.0);
             }
-
         });
         subMenu.add(new Command("75%") {
             public void doit() {
                 setScale(75.0);
             }
-
         });
         subMenu.add(new Command("100%") {
             public void doit() {
                 setScale(100.0);
             }
-
         });
         subMenu.add(new Command("150%") {
             public void doit() {
                 setScale(150.0);
             }
-
         });
         subMenu.add(new Command("200%") {
             public void doit() {
                 setScale(200.0);
             }
-
         });
         menu.add(subMenu);
         menu.addSeparator();
@@ -334,7 +316,6 @@ public class PreviewDialog extends JFrame implements ProgressListener,
             public void doit() {
                 setScale(100.0);
             }
-
         });
         menuBar.add(menu);
         menu = new JMenu(res.getString("Help"));
@@ -346,13 +327,10 @@ public class PreviewDialog extends JFrame implements ProgressListener,
             public void doit() {
                 startHelpAbout(null);
             }
-
         });
         menuBar.add(menu);
         return menuBar;
     }
-
-    // Aktion Hilfe | Info durchgeführt
 
     /**
      * Show the About box
@@ -391,7 +369,6 @@ public class PreviewDialog extends JFrame implements ProgressListener,
         goToPage(currentPage);
     }
 
-
     /**
      * Shows the next page.
      */
@@ -406,11 +383,9 @@ public class PreviewDialog extends JFrame implements ProgressListener,
      * Shows the last page.
      */
     private void goToLastPage(ActionEvent e) {
-
         if (currentPage == pageCount - 1)
             return;
         currentPage = pageCount - 1;
-
         goToPage(currentPage);
     }
 
@@ -447,10 +422,10 @@ public class PreviewDialog extends JFrame implements ProgressListener,
      * Shows a page by number.
      */
     private void goToPage(ActionEvent e) {
-
         GoToPageDialog d = new GoToPageDialog(this,
                                               res.getString("Go to Page"),
-                                              true);
+                                              true,
+                                              res);
         d.setLocation((int)getLocation().getX() + 50,
                       (int)getLocation().getY() + 50);
         d.show();
@@ -476,7 +451,7 @@ public class PreviewDialog extends JFrame implements ProgressListener,
 
     private void print() {
         PrinterJob pj = PrinterJob.getPrinterJob();
-        // Nicht nötig, Pageable get a Printable.
+        // Not necessary, Pageable gets a Printable.
         // pj.setPrintable(renderer);
         pj.setPageable(renderer);
 
@@ -490,7 +465,6 @@ public class PreviewDialog extends JFrame implements ProgressListener,
     }
 
     public void setScale(double scaleFactor) {
-
         if (scaleFactor == 25.0)
             scale.setSelectedIndex(0);
         else if (scaleFactor == 50.0)
@@ -520,7 +494,6 @@ public class PreviewDialog extends JFrame implements ProgressListener,
         progress(new String(message + " " + percentage + "%"));
     }
 
-
     /**
      * Setting the text  of a JLabel is not thread save, it
      * needs to be done in  the EventThread. Here we make sure
@@ -530,13 +503,11 @@ public class PreviewDialog extends JFrame implements ProgressListener,
         SwingUtilities.invokeLater(new showProgress(message, false));
     }
 
-
     /**
      * This class is used to show status and error messages in
      * a thread safe way.
      */
     class showProgress implements Runnable {
-
         /**
          * The message to display
          */
@@ -565,7 +536,6 @@ public class PreviewDialog extends JFrame implements ProgressListener,
             } else
                 processStatus.setText(message.toString());
         }
-
     }
 
     public void showPage() {
@@ -577,7 +547,6 @@ public class PreviewDialog extends JFrame implements ProgressListener,
             SwingUtilities.invokeLater(viewer);
     }
 
-
     /**
      * This class is used to update the page image
      * in a thread safe way.
@@ -587,6 +556,7 @@ public class PreviewDialog extends JFrame implements ProgressListener,
         /**
          * The run method that does the actuall updating
          */
+
         public void run() {
             BufferedImage pageImage = null;
             Graphics graphics = null;
@@ -608,9 +578,7 @@ public class PreviewDialog extends JFrame implements ProgressListener,
                                      + (currentPage + 1) + " "
                                      + res.getString("of") + " " + pageCount);
         }
-
     }
-
 
     /**
      * Called by MessageHandler if an error message or a
@@ -689,15 +657,11 @@ public class PreviewDialog extends JFrame implements ProgressListener,
         String msg = res.getString("An exception has occured");
         progress(msg);
         JOptionPane.showMessageDialog(
- 		    getContentPane(),
+            getContentPane(),
             "<html><b>" + msg + ":</b><br>"
- 		     + e.getClass().getName() + "<br>" + e.getMessage() + "</html>", res.getString("Fatal error"),
+             + e.getClass().getName() + "<br>" + e.getMessage() + "</html>", res.getString("Fatal error"),
              JOptionPane.ERROR_MESSAGE
- 		);
+        );
     }
 
 }    // class PreviewDialog
-
-
-
-
