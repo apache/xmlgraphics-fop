@@ -63,7 +63,9 @@ SVG_SPREADMETHOD_PAD;
 SVG_SPREADMETHOD_REFLECT;
 SVG_SPREADMETHOD_REPEAT;
 */
+	SVGAnimatedEnumeration spreadMethod = new SVGAnimatedEnumerationImpl(SVG_SPREADMETHOD_UNKNOWN);
 	SVGAnimatedEnumeration units = new SVGAnimatedEnumerationImpl(SVG_UNIT_TYPE_UNKNOWN);
+
 
 	public SVGGradientElementImpl()
 	{
@@ -90,11 +92,12 @@ SVG_SPREADMETHOD_REPEAT;
 
 	public SVGAnimatedEnumeration   getSpreadMethod( )
 	{
-		return null;
+		return spreadMethod;
 	}
 
 	public void setSpreadMethod( SVGAnimatedEnumeration spreadMethod )
 	{
+		this.spreadMethod = spreadMethod;
 	}
 
 	public SVGAnimatedBoolean getExternalResourcesRequired( )
@@ -102,7 +105,7 @@ SVG_SPREADMETHOD_REPEAT;
 		return null;
 	}
 
-	public void      setExternalResourcesRequired( SVGAnimatedBoolean externalResourcesRequired )
+	public void setExternalResourcesRequired( SVGAnimatedBoolean externalResourcesRequired )
 	{
 	}
 }

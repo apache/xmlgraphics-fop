@@ -63,7 +63,6 @@ public class SVGLinearGradientElementImpl extends SVGGradientElementImpl
 	SVGAnimatedLength x2;
 	SVGAnimatedLength y1;
 	SVGAnimatedLength y2;
-//	short spreadMethod;
 
 	public SVGLinearGradientElementImpl()
 	{
@@ -108,14 +107,4 @@ public class SVGLinearGradientElementImpl extends SVGGradientElementImpl
 	{
 		this.y2 = y2;
 	}
-
-/*	public short getSpreadMethod()
-	{
-		return spreadMethod;
-	}
-
-	public void setSpreadMethod(short spreadMethod)
-	{
-		this.spreadMethod = spreadMethod;
-	}*/
 }
