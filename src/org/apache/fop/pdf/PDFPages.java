@@ -1,6 +1,6 @@
 /*
  * $Id$
- * Copyright (C) 2001 The Apache Software Foundation. All rights reserved.
+ * Copyright (C) 2001-2003 The Apache Software Foundation. All rights reserved.
  * For details on use and redistribution please refer to the
  * LICENSE file included with these sources.
  */
@@ -8,7 +8,7 @@
 package org.apache.fop.pdf;
 
 // Java
-import java.io.PrintWriter;
+import java.util.List;
 import java.util.ArrayList;
 
 /**
@@ -23,7 +23,7 @@ public class PDFPages extends PDFObject {
     /**
      * the /Page objects
      */
-    protected ArrayList kids = new ArrayList();
+    protected List kids = new ArrayList();
 
     /**
      * the number of /Page objects

@@ -1,6 +1,6 @@
 /*
  * $Id$
- * Copyright (C) 2001-2002 The Apache Software Foundation. All rights reserved.
+ * Copyright (C) 2001-2003 The Apache Software Foundation. All rights reserved.
  * For details on use and redistribution please refer to the
  * LICENSE file included with these sources.
  */
@@ -28,8 +28,6 @@ public class PDFPattern extends PDFPathPaint {
     /**
      * The resources associated with this pattern
      */
-    // Guts common to all function types
-
     protected PDFResources resources = null;
 
     /**
@@ -170,6 +168,12 @@ public class PDFPattern extends PDFPathPaint {
         return (this.patternName);
     }
 
+    /**
+     * Get the PDF command for setting to this pattern.
+     *
+     * @param fillNotStroke if true fill otherwise stroke
+     * @return the PDF string for setting the pattern
+     */
     public String getColorSpaceOut(boolean fillNotStroke) {
         if (fillNotStroke) {    // fill but no stroke
             return ("/Pattern cs /" + this.getName() + " scn \n");
@@ -177,7 +181,6 @@ public class PDFPattern extends PDFPathPaint {
             return ("/Pattern CS /" + this.getName() + " SCN \n");
         }
     }
-
 
     /**
      * represent as PDF. Whatever the FunctionType is, the correct
@@ -188,6 +191,8 @@ public class PDFPattern extends PDFPathPaint {
      * by the construction is dutifully output.
      * This policy should be reviewed.
      *
+     * @param stream the stream to write to
+     * @throws IOException if there is an error writing to the stream
      * @return the PDF string.
      */
     protected int output(OutputStream stream) throws IOException {
@@ -254,8 +259,9 @@ public class PDFPattern extends PDFPathPaint {
                          + " \n");
             }
 
-        } else    // if (this.patternType ==2)
-         {        // Smooth Shading...
+        } else {
+            // if (this.patternType ==2)
+            // Smooth Shading...
             if (this.shading != null) {
                 p.append("/Shading " + this.shading.referencePDF() + " \n");
             }
@@ -300,13 +306,21 @@ public class PDFPattern extends PDFPathPaint {
         stream.write(end.getBytes());
         length += end.length();
 
-
         return length;
-
     }
 
+    /**
+     * Output PDF bytes, not used.
+     * @return returns null
+     */
     public byte[] toPDF() { return null; }
 
+    /**
+     * Check if this pattern is equal to another.
+     *
+     * @param obj the object to compare against
+     * @return true if the patterns are equal
+     */
     public boolean equals(Object obj) {
         if (obj == null) {
             return false;

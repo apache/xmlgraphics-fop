@@ -1,6 +1,6 @@
 /*
  * $Id$
- * Copyright (C) 2001 The Apache Software Foundation. All rights reserved.
+ * Copyright (C) 2001-2003 The Apache Software Foundation. All rights reserved.
  * For details on use and redistribution please refer to the
  * LICENSE file included with these sources.
  */
@@ -21,6 +21,8 @@ import java.awt.geom.AffineTransform;
 /**
  * This keeps information about the current state when writing to pdf.
  * It allows for creating new graphics states with the q operator.
+ * This class is only used to store the information about the state
+ * the caller needs to handle the actual pdf operators.
  *
  * When setting the state for pdf there are three possible ways of
  * handling the situation.
@@ -68,14 +70,20 @@ public class PDFState {
     private Shape clip = null;
     private PDFGState gstate = null;
 
-    ArrayList stateStack = new ArrayList();
+    private ArrayList stateStack = new ArrayList();
 
+    /**
+     * PDF State for storing graphics state.
+     */
     public PDFState() {
 
     }
 
-    // this call should be used when the q operator is used
-    // so that the state is known when popped
+    /**
+     * Push the current state onto the stack.
+     * This call should be used when the q operator is used
+     * so that the state is known when popped.
+     */
     public void push() {
         HashMap saveMap = new HashMap();
         saveMap.put(COLOR, color);
@@ -100,6 +108,11 @@ public class PDFState {
         transform = new AffineTransform();
     }
 
+    /**
+     * Pop the state from the stack and set current values to popped state.
+     * This should be called when a Q operator is used so
+     * the state is restored to the correct values.
+     */
     public void pop() {
         if (getStackLevel() > 0) {
             HashMap saveMap = (HashMap)stateStack.get(stateStack.size() - 1);
@@ -123,13 +136,25 @@ public class PDFState {
         }
     }
 
+    /**
+     * Get the current stack level.
+     *
+     * @return the current stack level
+     */
     public int getStackLevel() {
         return stateStack.size();
     }
 
+    /**
+     * Restore the state to a particular level.
+     * this can be used to restore to a known level without making
+     * multiple pop calls.
+     *
+     * @param stack the level to restore to
+     */
     public void restoreLevel(int stack) {
         int pos = stack;
-        while(stateStack.size() > pos + 1) {
+        while (stateStack.size() > pos + 1) {
             stateStack.remove(stateStack.size() - 1);
         }
         if (stateStack.size() > pos) {
@@ -137,10 +162,26 @@ public class PDFState {
         }
     }
 
+    /**
+     * Set the current line dash.
+     * Check if setting the line dash to the given values
+     * will make a change and then set the state to the new values.
+     *
+     * @param array the line dash array
+     * @param offset the line dash start offset
+     * @return true if the line dash has changed
+     */
     public boolean setLineDash(int[] array, int offset) {
         return false;
     }
 
+    /**
+     * Set the current color.
+     * Check if the new color is a change and then set the current color.
+     *
+     * @param col the color to set
+     * @return true if the color has changed
+     */
     public boolean setColor(Color col) {
         if (!col.equals(color)) {
             color = col;
@@ -149,6 +190,13 @@ public class PDFState {
         return false;
     }
 
+    /**
+     * Set the current background color.
+     * Check if the background color will change and then set the new color.
+     *
+     * @param col the new background color
+     * @return true if the background color has changed
+     */
     public boolean setBackColor(Color col) {
         if (!col.equals(backcolor)) {
             backcolor = col;
@@ -157,6 +205,13 @@ public class PDFState {
         return false;
     }
 
+    /**
+     * Set the current paint.
+     * This checks if the paint will change and then sets the current paint.
+     *
+     * @param p the new paint
+     * @return true if the new paint changes the current paint
+     */
     public boolean setPaint(Paint p) {
         if (paint == null) {
             if (p != null) {
@@ -171,7 +226,16 @@ public class PDFState {
     }
 
     /**
-     * For clips it can start a new state
+     * Check if the clip will change the current state.
+     * A clip is assumed to be used in a situation where it will add
+     * to any clip in the current or parent states.
+     * A clip cannot be cleared, this can only be achieved by going to
+     * a parent level with the correct clip.
+     * If the clip is different then it may start a new state so that
+     * it can return to the previous clip.
+     *
+     * @param cl the clip shape to check
+     * @return true if the clip will change the current clip.
      */
     public boolean checkClip(Shape cl) {
         if (clip == null) {
@@ -181,9 +245,17 @@ public class PDFState {
         } else if (!new Area(clip).equals(new Area(cl))) {
             return true;
         }
+        // todo check for clips that are larger than the current
         return false;
     }
 
+    /**
+     * Set the current clip.
+     * This either sets a new clip or sets the clip to the intersect of
+     * the old clip and the new clip.
+     *
+     * @param cl the new clip in the current state
+     */
     public void setClip(Shape cl) {
         if (clip != null) {
             Area newClip = new Area(clip);
@@ -194,6 +266,15 @@ public class PDFState {
         }
     }
 
+    /**
+     * Check the current transform.
+     * The transform for the current state is the combination of all
+     * transforms in the current state. The parameter is compared
+     * against this current transform.
+     *
+     * @param tf the transform the check against
+     * @return true if the new transform is different then the current transform
+     */
     public boolean checkTransform(AffineTransform tf) {
         return !tf.equals(transform);
     }
@@ -202,6 +283,8 @@ public class PDFState {
      * Set a new transform.
      * This transform is appended to the transform of
      * the current graphic state.
+     *
+     * @param tf the transform to concatonate to the current level transform
      */
     public void setTransform(AffineTransform tf) {
         transform.concatenate(tf);
@@ -211,6 +294,8 @@ public class PDFState {
      * Get the current transform.
      * This gets the combination of all transforms in the
      * current state.
+     *
+     * @return the calculate combined transform for the current state
      */
     public AffineTransform getTransform() {
         AffineTransform tf;
@@ -231,6 +316,8 @@ public class PDFState {
      * the current context.
      * This is the graphic state set with the gs operator not
      * the other graphic state changes.
+     *
+     * @return the calculated ExtGState in the current context
      */
     public PDFGState getGState() {
         PDFGState defaultState = PDFGState.DEFAULT;
@@ -238,7 +325,7 @@ public class PDFState {
         PDFGState state;
         PDFGState newstate = new PDFGState(0);
         newstate.addValues(defaultState);
-        for (Iterator iter = stateStack.iterator(); iter.hasNext(); ) {
+        for (Iterator iter = stateStack.iterator(); iter.hasNext();) {
             HashMap map = (HashMap)iter.next();
             state = (PDFGState)map.get(GSTATE);
             if (state != null) {

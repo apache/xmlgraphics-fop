@@ -1,6 +1,6 @@
 /*
  * $Id$
- * Copyright (C) 2001 The Apache Software Foundation. All rights reserved.
+ * Copyright (C) 2001-2003 The Apache Software Foundation. All rights reserved.
  * For details on use and redistribution please refer to the
  * LICENSE file included with these sources.
  */
@@ -8,9 +8,9 @@
 package org.apache.fop.pdf;
 
 // Java
-import java.io.PrintWriter;
 import java.util.Iterator;
-import java.util.ArrayList;
+import java.util.Map;
+import java.util.Set;
 import java.util.HashMap;
 import java.util.HashSet;
 
@@ -25,12 +25,27 @@ public class PDFResources extends PDFObject {
     /**
      * /Font objects keyed by their internal name
      */
-    protected HashMap fonts = new HashMap();
+    protected Map fonts = new HashMap();
 
-    protected HashSet xObjects = new HashSet();
-    protected HashSet patterns = new HashSet();
-    protected HashSet shadings = new HashSet();
-    protected HashSet gstates = new HashSet();
+    /**
+     * Set of XObjects
+     */
+    protected Set xObjects = new HashSet();
+
+    /**
+     * Set of patterns
+     */
+    protected Set patterns = new HashSet();
+
+    /**
+     * Set of shadings
+     */
+    protected Set shadings = new HashSet();
+
+    /**
+     * Set of ExtGStates
+     */
+    protected Set gstates = new HashSet();
 
     /**
      * create a /Resources object.
@@ -51,24 +66,46 @@ public class PDFResources extends PDFObject {
         this.fonts.put(font.getName(), font);
     }
 
+    /**
+     * Add a PDFGState to the resources.
+     *
+     * @param gs the PDFGState to add
+     */
     public void addGState(PDFGState gs) {
         this.gstates.add(gs);
     }
 
+    /**
+     * Add a Shading to the resources.
+     *
+     * @param theShading the shading to add
+     */
     public void addShading(PDFShading theShading) {
         this.shadings.add(theShading);
     }
 
+    /**
+     * Add the pattern to the resources.
+     *
+     * @param thePattern the pattern to add
+     */
     public void addPattern(PDFPattern thePattern) {
         this.patterns.add(thePattern);
     }
 
+    /**
+     * Add an XObject to the resources.
+     *
+     * @param xObject the XObject to add
+     */
     public void addXObject(PDFXObject xObject) {
         this.xObjects.add(xObject);
     }
 
     /**
      * represent the object in PDF
+     * This adds the references to all the objects in the current
+     * resource context.
      *
      * @return the PDF
      */
@@ -94,7 +131,7 @@ public class PDFResources extends PDFObject {
         if (!this.shadings.isEmpty()) {
             p.append("/Shading << ");
 
-            for (Iterator iter = shadings.iterator(); iter.hasNext(); ) {
+            for (Iterator iter = shadings.iterator(); iter.hasNext();) {
                 currentShading = (PDFShading)iter.next();
                 p.append("/" + currentShading.getName() + " "
                          + currentShading.referencePDF() + " ");    // \n ??????
@@ -109,7 +146,7 @@ public class PDFResources extends PDFObject {
         if (!this.patterns.isEmpty()) {
             p.append("/Pattern << ");
 
-            for (Iterator iter = patterns.iterator(); iter.hasNext(); ) {
+            for (Iterator iter = patterns.iterator(); iter.hasNext();) {
                 currentPattern = (PDFPattern)iter.next();
                 p.append("/" + currentPattern.getName() + " "
                          + currentPattern.referencePDF() + " ");
@@ -124,7 +161,7 @@ public class PDFResources extends PDFObject {
 
         if (this.xObjects != null && !this.xObjects.isEmpty()) {
             p = p.append("/XObject <<");
-            for (Iterator iter = xObjects.iterator(); iter.hasNext(); ) {
+            for (Iterator iter = xObjects.iterator(); iter.hasNext();) {
                 PDFXObject xobj = (PDFXObject)iter.next();
                 p = p.append("/Im" + xobj.getXNumber() + " "
                              + xobj.referencePDF()
@@ -135,7 +172,7 @@ public class PDFResources extends PDFObject {
 
         if (!this.gstates.isEmpty()) {
             p = p.append("/ExtGState <<");
-            for (Iterator iter = gstates.iterator(); iter.hasNext(); ) {
+            for (Iterator iter = gstates.iterator(); iter.hasNext();) {
                 PDFGState gs = (PDFGState)iter.next();
                 p = p.append("/" + gs.getName() + " "
                              + gs.referencePDF()

@@ -1,6 +1,6 @@
 /*
  * $Id$
- * Copyright (C) 2001 The Apache Software Foundation. All rights reserved.
+ * Copyright (C) 2001-2003 The Apache Software Foundation. All rights reserved.
  * For details on use and redistribution please refer to the
  * LICENSE file included with these sources.
  */
@@ -31,9 +31,12 @@ public class TransitionDictionary extends PDFObject {
     /**
      * Get the dictionary.
      * This returns the string containing the dictionary values.
+     *
+     * @return the string with the dictionary values
      */
     public String getDictionary() {
         StringBuffer sb = new StringBuffer();
+        sb.append("/Type /Trans\n");
         for (Iterator iter = dictionaryValues.keySet().iterator(); iter.hasNext();) {
             Object key = iter.next();
             sb.append(key + " " + dictionaryValues.get(key) + "\n");

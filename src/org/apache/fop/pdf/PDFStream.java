@@ -123,7 +123,7 @@ public class PDFStream extends PDFObject {
         }
         if (filterset == null || filterset.size() == 0) {
             // built-in default to flate
-            addFilter(new FlateFilter());
+            //addFilter(new FlateFilter());
         } else {
             for (int i = 0; i < filterset.size(); i++) {
                 String v = (String)filterset.get(i);

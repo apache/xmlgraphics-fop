@@ -1,6 +1,6 @@
 /*
  * $Id$
- * Copyright (C) 2001 The Apache Software Foundation. All rights reserved.
+ * Copyright (C) 2001-2003 The Apache Software Foundation. All rights reserved.
  * For details on use and redistribution please refer to the
  * LICENSE file included with these sources.
  */
@@ -8,7 +8,7 @@
 package org.apache.fop.pdf;
 
 /**
- * class representing a /Page object.
+ * The PDF resource context.
  *
  * There is one of these for every page in a PDF document. The object
  * specifies the dimensions of the page and references a /Resources
@@ -32,18 +32,19 @@ public class PDFResourceContext extends PDFObject {
      * the list of annotation objects for this page
      */
     protected PDFAnnotList annotList;
+
+    /**
+     * Reference to document used when creating annotation list
+     */
     protected PDFDocument document;
 
     /**
      *
      * @param number the object's number
+     * @param doc the PDF document this belongs to
      * @param resources the /Resources object
-     * @param contents the content stream
-     * @param pagewidth the page's width in points
-     * @param pageheight the page's height in points
      */
     public PDFResourceContext(int number, PDFDocument doc, PDFResources resources) {
-
         /* generic creation of object */
         super(number);
 
@@ -53,6 +54,11 @@ public class PDFResourceContext extends PDFObject {
         this.annotList = null;
     }
 
+    /**
+     * Get the resources for this resource context.
+     *
+     * @return the resources in this resource context
+     */
     public PDFResources getPDFResources() {
         return this.resources;
     }
@@ -60,27 +66,47 @@ public class PDFResourceContext extends PDFObject {
     /**
      * set this page's annotation list
      *
-     * @param annotList a PDFAnnotList list of annotations
+     * @param annot a PDFAnnotList list of annotations
      */
     public void addAnnotation(PDFObject annot) {
-        if(this.annotList == null) {
+        if (this.annotList == null) {
             this.annotList = document.makeAnnotList();
         }
         this.annotList.addAnnot(annot);
     }
 
+    /**
+     * Get the current annotations.
+     *
+     * @return the current annotation list
+     */
     public PDFAnnotList getAnnotations() {
         return this.annotList;
     }
 
+    /**
+     * A a GState to this resource context.
+     *
+     * @param gstate the GState to add
+     */
     public void addGState(PDFGState gstate) {
         this.resources.addGState(gstate);
     }
 
+    /**
+     * Add the shading tot he current resource context.
+     *
+     * @param shading the shading to add
+     */
     public void addShading(PDFShading shading) {
         this.resources.addShading(shading);
     }
 
+    /**
+     * Get the PDF, unused.
+     *
+     * @return null value
+     */
     public byte[] toPDF() {
         return null;
     }

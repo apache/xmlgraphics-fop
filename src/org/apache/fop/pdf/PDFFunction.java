@@ -1,6 +1,6 @@
 /*
  * $Id$
- * Copyright (C) 2001 The Apache Software Foundation. All rights reserved.
+ * Copyright (C) 2001-2003 The Apache Software Foundation. All rights reserved.
  * For details on use and redistribution please refer to the
  * LICENSE file included with these sources.
  */
@@ -13,7 +13,8 @@ import java.util.List;
 /**
  * class representing a PDF Function.
  *
- * PDF Functions represent parameterized mathematical formulas and sampled representations with
+ * PDF Functions represent parameterized mathematical formulas and
+ * sampled representations with
  * arbitrary resolution. Functions are used in two areas: device-dependent
  * rasterization information for halftoning and transfer
  * functions, and color specification for smooth shading (a PDF 1.3 feature).
@@ -49,25 +50,32 @@ public class PDFFunction extends PDFObject {
     protected List size = null;
 
     /**
-     * Required for Type 0: Number of Bits used to represent each sample value. Limited to 1,2,4,8,12,16,24, or 32
+     * Required for Type 0: Number of Bits used to represent each sample value.
+     * Limited to 1,2,4,8,12,16,24, or 32
      */
     protected int bitsPerSample = 1;
 
     /**
-     * Optional for Type 0: order of interpolation between samples. Limited to linear (1) or cubic (3). Default is 1
+     * Optional for Type 0: order of interpolation between samples.
+     * Limited to linear (1) or cubic (3). Default is 1
      */
     protected int order = 1;
 
     /**
-     * Optional for Type 0: A 2 * m array of Doubles which provides a linear mapping of input values to the domain.
+     * Optional for Type 0: A 2 * m array of Doubles which provides a
+     * linear mapping of input values to the domain.
      *
-     * Required for Type 3: A 2 * k array of Doubles that, taken in pairs, map each subset of the domain defined by Domain and the Bounds array to the domain of the corresponding function.
-     * Should be two values per function, usually (0,1), as in [0 1 0 1] for 2 functions.
+     * Required for Type 3: A 2 * k array of Doubles that, taken
+     * in pairs, map each subset of the domain defined by Domain
+     * and the Bounds array to the domain of the corresponding function.
+     * Should be two values per function, usually (0,1),
+     * as in [0 1 0 1] for 2 functions.
      */
     protected List encode = null;
 
     /**
-     * Optinoal for Type 0: A 2 * n array of Doubles which provides a linear mapping of sample values to the range. Defaults to Range.
+     * Optional for Type 0: A 2 * n array of Doubles which provides
+     * a linear mapping of sample values to the range. Defaults to Range.
      */
     protected List decode = null;
 
@@ -76,24 +84,28 @@ public class PDFFunction extends PDFObject {
      */
 
     /**
-     * Required For Type 4: Postscript Calculator function composed of arithmetic, boolean, and stack operators + boolean constants
+     * Required For Type 4: Postscript Calculator function
+     * composed of arithmetic, boolean, and stack operators + boolean constants
      */
     protected StringBuffer functionDataStream = null;
 
     /**
-     * Required (?) For Type 0: A vector of Strings for the various filters to be used to decode the stream.
+     * Required (?) For Type 0: A vector of Strings for the
+     * various filters to be used to decode the stream.
      * These are how the string is compressed. Flate, LZW, etc.
      */
     protected List filter = null;
     /* *************************TYPE 2************************** */
 
     /**
-     * Required For Type 2: An Array of n Doubles defining the function result when x=0. Default is [0].
+     * Required For Type 2: An Array of n Doubles defining
+     * the function result when x=0. Default is [0].
      */
     protected List cZero = null;
 
     /**
-     * Required For Type 2: An Array of n Doubles defining the function result when x=1. Default is [1].
+     * Required For Type 2: An Array of n Doubles defining
+     * the function result when x=1. Default is [1].
      */
     protected List cOne = null;
 
@@ -107,12 +119,18 @@ public class PDFFunction extends PDFObject {
     /* *************************TYPE 3************************** */
 
     /**
-     * Required for Type 3: An vector of PDFFunctions which form an array of k single input functions making up the stitching function.
+     * Required for Type 3: An vector of PDFFunctions which
+     * form an array of k single input functions making up
+     * the stitching function.
      */
     protected List functions = null;
 
     /**
-     * Optional for Type 3: An array of (k-1) Doubles that, in combination with Domain, define the intervals to which each function from the Functions array apply. Bounds elements must be in order of increasing magnitude, and each value must be within the value of Domain.
+     * Optional for Type 3: An array of (k-1) Doubles that,
+     * in combination with Domain, define the intervals to which
+     * each function from the Functions array apply. Bounds
+     * elements must be in order of increasing magnitude,
+     * and each value must be within the value of Domain.
      * k is the number of functions.
      * If you pass null, it will output (1/k) in an array of k-1 elements.
      * This makes each function responsible for an equal amount of the stitching function.
@@ -142,7 +160,8 @@ public class PDFFunction extends PDFObject {
      * so maybe this should be an array of length 2.
      *
      * See page 265 of the PDF 1.3 Spec.
-     * @param theBitsPerSample An int specifying the number of bits user to represent each sample value.
+     * @param theBitsPerSample An int specifying the number of bits
+                               used to represent each sample value.
      * Limited to 1,2,4,8,12,16,24 or 32.
      * See page 265 of the 1.3 PDF Spec.
      * @param theOrder The order of interpolation between samples. Default is 1 (one). Limited
@@ -164,7 +183,8 @@ public class PDFFunction extends PDFObject {
      *
      * This attribute is optional.
      * Read about it on page 265 of the PDF 1.3 spec.
-     * @param theFunctionDataStream The sample values that specify the function are provided in a stream.
+     * @param theFunctionDataStream The sample values that specify
+     *                     the function are provided in a stream.
      *
      * This is optional, but is almost always used.
      *
@@ -310,7 +330,8 @@ public class PDFFunction extends PDFObject {
      * @param theRange List object of Double objects.
      * This is the Range of the function.
      * See page 264 of the PDF 1.3 Spec.
-     * @param theFunctionDataStream This is a stream of arithmetic, boolean, and stack operators and boolean constants.
+     * @param theFunctionDataStream This is a stream of arithmetic,
+     *            boolean, and stack operators and boolean constants.
      * I end up enclosing it in the '{' and '}' braces for you, so don't do it
      * yourself.
      *
@@ -667,6 +688,14 @@ public class PDFFunction extends PDFObject {
 
     }
 
+    /**
+     * Check if this function is equal to another object.
+     * This is used to find if a particular function already exists
+     * in a document.
+     *
+     * @param obj the obj to compare
+     * @return true if the functions are equal
+     */
     public boolean equals(Object obj) {
         if (obj == null) {
             return false;

@@ -1,6 +1,6 @@
 /*
  * $Id$
- * Copyright (C) 2001 The Apache Software Foundation. All rights reserved.
+ * Copyright (C) 2001-2003 The Apache Software Foundation. All rights reserved.
  * For details on use and redistribution please refer to the
  * LICENSE file included with these sources.
  */
@@ -56,6 +56,7 @@ public class PDFPage extends PDFResourceContext {
     /**
      * create a /Page object
      *
+     * @param doc the PDF document holding this page
      * @param number the object's number
      * @param resources the /Resources object
      * @param contents the content stream
@@ -77,6 +78,7 @@ public class PDFPage extends PDFResourceContext {
     /**
      * create a /Page object
      *
+     * @param doc the PDF document holding this page
      * @param number the object's number
      * @param resources the /Resources object
      * @param pagewidth the page's width in points
@@ -111,6 +113,14 @@ public class PDFPage extends PDFResourceContext {
         this.parent = parent.referencePDF();
     }
 
+    /**
+     * Set the transition dictionary and duration.
+     * This sets the duration of the page and the transition
+     * dictionary used when going to the next page.
+     *
+     * @param dur the duration in seconds
+     * @param tr the transition dictionary
+     */
     public void setTransition(int dur, TransitionDictionary tr) {
         duration = dur;
         trDictionary = tr;

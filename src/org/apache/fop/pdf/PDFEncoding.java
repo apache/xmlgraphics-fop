@@ -1,6 +1,6 @@
 /*
  * $Id$
- * Copyright (C) 2001 The Apache Software Foundation. All rights reserved.
+ * Copyright (C) 2001-2003 The Apache Software Foundation. All rights reserved.
  * For details on use and redistribution please refer to the
  * LICENSE file included with these sources.
  */
@@ -8,9 +8,10 @@
 package org.apache.fop.pdf;
 
 // Java
+import java.util.List;
+import java.util.Map;
 import java.util.Iterator;
 import java.util.HashMap;
-import java.util.ArrayList;
 
 /**
  * class representing an /Encoding object.
@@ -20,7 +21,7 @@ import java.util.ArrayList;
  *
  * The three base encodings are given by their name.
  *
- * Encodings are specified on page 213 and onwards of the PDF 1.3 spec.
+ * Encodings are specified in section 5.5.5 of the PDF 1.4 spec.
  */
 public class PDFEncoding extends PDFObject {
 
@@ -49,7 +50,7 @@ public class PDFEncoding extends PDFObject {
     /**
      * the differences from the base encoding
      */
-    protected HashMap differences;
+    protected Map differences;
 
     /**
      * create the /Encoding object
@@ -73,7 +74,7 @@ public class PDFEncoding extends PDFObject {
      * @param code the first index of the sequence to be changed
      * @param sequence the sequence of glyph names (as String)
      */
-    public void addDifferences(int code, ArrayList sequence) {
+    public void addDifferences(int code, List sequence) {
         differences.put(new Integer(code), sequence);
     }
 
@@ -97,7 +98,7 @@ public class PDFEncoding extends PDFObject {
                 code = codes.next();
                 p.append(" ");
                 p.append(code);
-                ArrayList sequence = (ArrayList)differences.get(code);
+                List sequence = (List)differences.get(code);
                 for (int i = 0; i < sequence.size(); i++) {
                     p.append(" /");
                     p.append((String)sequence.get(i));
