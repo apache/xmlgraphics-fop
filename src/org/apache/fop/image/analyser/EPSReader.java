@@ -14,17 +14,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 
-
-// FOP
-import org.apache.fop.messaging.*;
-import org.apache.fop.image.SVGImage;
-
 import org.xml.sax.InputSource;
 import org.xml.sax.XMLReader;
 
-
 /**
- * ImageReader object for SVG document image type.
+ * ImageReader object for EPS document image type.
  */
 public class EPSReader extends AbstractImageReader {
     private long[] bbox;

@@ -27,7 +27,6 @@ import java.io.*;
 import java.util.*;
 
 // FOP
-import org.apache.fop.messaging.*;
 import org.apache.fop.apps.Options;
 import org.apache.fop.apps.Starter;
 import org.apache.fop.apps.InputHandler;
