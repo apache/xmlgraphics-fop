@@ -370,45 +370,31 @@
       </answer>
     </faq>
     <faq id="graphic-not-displayed">
-      <question>A graphic is not displayed.</question>
+      <question>Why is my graphic not rendered?</question>
       <answer>
-        <p>
-          The most common reason is that the file is not found because of an
-          empty or wrong baseDir setting, spelling errors in the file name, in
-          particular using the wrong case, or, if the image is retrieved over
-          HTTP, the image was not delivered because of security settings in the
-          server, missing cookies or other authorization information, or
-          because of server misconfigurations.  One way to check this is to
-          cut&amp;paste the source URL from the fo:external-graphic into the
-          Location field of a browser <strong>on the machine where the FOP
-          process will be running</strong>.
-        </p>
-        <p>
-          Several other possibilities:
-        </p>
+        <p>Most commonly, the external file is not being found by FOP.
+Check the following:</p>
         <ul>
-          <li>
-            The graphic is too large to fit into the intended space.
-          </li>
-          <li>
-            Some image format subclasses can't be handled, try to convert the
-            graphic to a format subclass known to work. (Sorry, no list of
-            formats known to work)
-          </li>
-          <li>
-            Something else obscures the graphic, for example stuff from a
-            static content (very rare, but has happened).
+          <li>Empty or wrong baseDir setting.</li>
+          <li>Spelling errors in the file name (including using the wrong case).</li>
+          <li>Security Problems (i.e. image was not delivered because FOP is not allowed to read the file).
+This is especially a problem if the external file is retrieved over HTTP.
+Possible issues include security settings on the server, server configuration, and missing cookies or other authorization information.
+Any easy way to check this is to cut&amp;paste the source URL from the fo:external-graphic into the Location field of a browser <strong>on the machine where the FOP process will be running</strong>.</li>
+        </ul>
+        <p>Other possibilities:</p>
+        <ul>
+          <li>The image format is not supported or not supported completely. See <link href="graphics.html">FOP Graphics Formats</link> for a list of supported formats and related issues.</li>
+          <li>The graphic may be too large to fit into the intended space.</li>
+          <li>There may be something (static content) that is obscuring the graphic. (This is very rare).
           </li>
         </ul>
-        <!-- p>
-          See also supported image formats.
-        </p -->
       </answer>
     </faq>
     <faq id="png-fails">
       <question>My graphical images do not work properly.</question>
       <answer>
-        <p>See <link href="graphics.html">Graphical Formats</link>.</p>
+        <p>See <link href="graphics.html">FOP Graphics Formats</link> for a list of supported formats and related issues.</p>
       </answer>
     </faq>
     <faq id="graphic-resolution">
