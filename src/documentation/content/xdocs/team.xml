@@ -44,7 +44,7 @@
     </section>
     <section id="founder">
       <title>Founder</title>
-      <p>FOP was originally created and donated to the Apache Software Foundation by <link href="jtauber@jtauber.com">James Tauber</link>. Information about him can be found at <jump href="http://www.jtauber.com">his website</jump>.</p>
+      <p>FOP was originally created and donated to the Apache Software Foundation by <link href="mailto:jtauber@jtauber.com">James Tauber</link>. Information about him can be found at <jump href="http://www.jtauber.com">his website</jump>.</p>
     </section>
     <section id="commit-former">
       <title>Former Committers</title>

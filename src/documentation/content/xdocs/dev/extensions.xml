@@ -38,7 +38,7 @@ They are loaded by FOP when parsing starts to validate input.</li>
 correct name space.
 The examples for SVG and pdfoutline.fo show how this can be done.
 The pdf documents on the FOP site use this extension.
-See also <link href="examples.html">Examples</link> for more examples.</li>
+See also <link href="../examples.html">Examples</link> for more examples.</li>
           <li>Put your jar file in the classpath</li>
           <li>Run FOP using your XSL-FO file as input.</li> 
         </ol>
