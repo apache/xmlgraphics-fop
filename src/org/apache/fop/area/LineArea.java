@@ -50,14 +50,14 @@ public class LineArea extends Area {
     // store properties in array list, need better solution
     ArrayList props = null;
 
-    public void addProperty(Property prop) {
+    public void addTrait(Trait prop) {
         if (props == null) {
             props = new ArrayList();
         }
         props.add(prop);
     }
 
-    public List getPropertyList() {
+    public List getTraitList() {
         return props;
     }
 }

@@ -7,7 +7,7 @@
 
 package org.apache.fop.area;
 
-public class LineProperty extends Property {
+public class LineTrait extends Trait {
     int[] range;
 }
 

@@ -12,7 +12,7 @@ import org.apache.fop.datatypes.ColorType;
 import java.io.Serializable;
 
 // properties should be serialized by the holder
-public class Property implements Serializable {
+public class Trait implements Serializable {
     public static final int ID_LINK = 0;
     public static final int INTERNAL_LINK = 1; //resolved
     public static final int EXTERNAL_LINK = 2;

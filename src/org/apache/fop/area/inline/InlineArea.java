@@ -9,7 +9,7 @@ package org.apache.fop.area.inline;
 
 import org.apache.fop.area.Area;
 import org.apache.fop.area.MinOptMax;
-import org.apache.fop.area.Property;
+import org.apache.fop.area.Trait;
 import org.apache.fop.render.Renderer;
 
 import java.util.List;
@@ -46,6 +46,14 @@ public class InlineArea extends Area {
         return width;
     }
 
+    public void setHeight(int h) {
+        height = h;
+    }
+
+    public int getHeight() {
+        return height;
+    }
+
     public MinOptMax getAllocationIPD() {
 	// Should also account for any borders and padding in the
 	// inline progression dimension
@@ -60,14 +68,14 @@ public class InlineArea extends Area {
         return verticalPosition;
     }
 
-    public void addProperty(Property prop) {
+    public void addTrait(Trait prop) {
         if (props == null) {
             props = new ArrayList();
         }
         props.add(prop);
     }
 
-    public List getPropertyList() {
+    public List getTraitList() {
         return props;
     }
 }

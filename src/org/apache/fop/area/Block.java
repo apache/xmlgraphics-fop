@@ -59,16 +59,17 @@ public class Block extends BlockParent implements Serializable {
     }
 
     // store properties in array list, need better solution
-    ArrayList props = null;
+    ArrayList traits = null;
 
-    public void addProperty(Property prop) {
-        if (props == null) {
-            props = new ArrayList();
+    public void addTrait(Trait prop) {
+        if (traits == null) {
+            traits = new ArrayList();
         }
-        props.add(prop);
+        traits.add(prop);
     }
 
-    public List getPropertyList() {
-        return props;
+    public List getTraitList() {
+        return traits;
     }
 }
+
