@@ -314,10 +314,8 @@ public class TableRow extends FObj {
             this.borderRightStyle =
               this.properties.get("border-right-style").getEnum();
         }
-        this.keepWithNext = this.properties.get(
-                              "keep-with-next").getNumber().intValue();
-        this.keepWithPrevious = this.properties.get(
-                                  "keep-with-previous").getNumber().intValue();
+        this.keepWithNext = getKeepValue("keep-with-next.within-column");
+        this.keepWithPrevious = getKeepValue("keep-with-previous.within-column");
         this.paddingTop =
           this.properties.get("padding").getLength().mvalue();
         this.paddingLeft = this.paddingTop;
@@ -335,6 +333,14 @@ public class TableRow extends FObj {
         }
         this.id = this.properties.get("id").getString();
         setup = true;
+    }
+
+    private int getKeepValue(String sPropName) {
+        Property p= this.properties.get(sPropName);
+        Number n = p.getNumber();
+        if (n != null)
+            return n.intValue();
+        else return p.getEnum();
     }
 
     public Status layout(Area area) throws FOPException {
