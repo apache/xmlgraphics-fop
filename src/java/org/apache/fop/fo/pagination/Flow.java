@@ -30,7 +30,6 @@ import org.xml.sax.SAXParseException;
 // FOP
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FObj;
-import org.apache.fop.fo.FOElementMapping;
 import org.apache.fop.layoutmgr.FlowLayoutManager;
 
 /**
@@ -74,7 +73,7 @@ public class Flow extends FObj {
      */
     protected void validateChildNode(Locator loc, String nsURI, String localName) 
         throws SAXParseException {
-        if (nsURI == FOElementMapping.URI && localName.equals("marker")) {
+        if (nsURI == FO_URI && localName.equals("marker")) {
             if (blockItemFound) {
                nodesOutOfOrderError(loc, "fo:marker", "(%block;)");
             }

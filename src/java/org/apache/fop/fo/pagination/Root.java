@@ -28,7 +28,6 @@ import org.xml.sax.SAXParseException;
 // FOP
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FObj;
-import org.apache.fop.fo.FOElementMapping;
 import org.apache.fop.fo.extensions.ExtensionElementMapping;
 import org.apache.fop.fo.extensions.Bookmarks;
 import org.apache.fop.fo.FOInputHandler;
@@ -75,7 +74,7 @@ public class Root extends FObj {
      */
     protected void validateChildNode(Locator loc, String nsURI, String localName) 
         throws SAXParseException {
-        if (nsURI == FOElementMapping.URI) {
+        if (nsURI == FO_URI) {
             if (localName.equals("layout-master-set")) {   
                 if (layoutMasterSet != null) {
                     tooManyNodesError(loc, "fo:layout-master-set");

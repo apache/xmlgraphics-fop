@@ -40,6 +40,8 @@ import org.apache.fop.fo.extensions.svg.SVGElementMapping;
  */
 public abstract class FONode {
 
+    protected static String FO_URI = FOElementMapping.URI;
+
     /** Parent FO node */
     protected FONode parent;
 
@@ -277,10 +279,25 @@ public abstract class FONode {
      */
     protected void invalidChildError(Locator loc, String nsURI, String lName) 
         throws SAXParseException {
-        throw new SAXParseException (errorText(loc) + getNodeString(nsURI, lName) + 
-            " is not a valid child element of " + getName() + ".", loc);
+        invalidChildError(loc, nsURI, lName, null);
     }
     
+    /**
+     * Helper function to return "invalid child" exceptions with more
+     * complex validation rules (i.e., needing more explanation of the problem)
+     * @param loc org.xml.sax.Locator object of the error (*not* parent node)
+     * @param nsURI namespace URI of incoming invalid node
+     * @param lName local name (i.e., no prefix) of incoming node
+     * @param ruleViolated text explanation of problem
+     */
+    protected void invalidChildError(Locator loc, String nsURI, String lName,
+        String ruleViolated)
+        throws SAXParseException {
+        throw new SAXParseException (errorText(loc) + getNodeString(nsURI, lName) + 
+            " is not a valid child element of " + getName() 
+            + ((ruleViolated != null) ? ": " + ruleViolated : "."), loc);
+    }
+
     /**
      * Helper function to return missing child element errors
      * (e.g., fo:layout-master-set not having any page-master child element)

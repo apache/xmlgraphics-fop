@@ -30,7 +30,6 @@ import org.xml.sax.SAXParseException;
 // FOP
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FObj;
-import org.apache.fop.fo.FOElementMapping;
 import org.apache.fop.apps.FOPException;
 
 /**
@@ -60,7 +59,7 @@ public class LayoutMasterSet extends FObj {
      */
     protected void validateChildNode(Locator loc, String nsURI, String localName) 
         throws SAXParseException {
-        if (nsURI == FOElementMapping.URI) {
+        if (nsURI == FO_URI) {
             if (!localName.equals("simple-page-master") 
                 && !localName.equals("page-sequence-master")) {   
                     invalidChildError(loc, nsURI, localName);

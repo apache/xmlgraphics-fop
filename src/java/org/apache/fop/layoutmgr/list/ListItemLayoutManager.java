@@ -19,6 +19,9 @@
 package org.apache.fop.layoutmgr.list;
 
 import org.apache.fop.fo.FObj;
+import org.apache.fop.fo.flow.ListItem;
+import org.apache.fop.fo.flow.ListItemBody;
+import org.apache.fop.fo.flow.ListItemLabel;
 import org.apache.fop.fo.PropertyManager;
 import org.apache.fop.layoutmgr.BlockStackingLayoutManager;
 import org.apache.fop.layoutmgr.LayoutManager;
@@ -65,8 +68,10 @@ public class ListItemLayoutManager extends BlockStackingLayoutManager {
      * Create a new list item layout manager.
      *
      */
-    public ListItemLayoutManager(FObj node) {
+    public ListItemLayoutManager(ListItem node) {
         super(node);
+        setLabel(node.getLabel());
+        setBody(node.getBody());
     }
 
     /**
@@ -79,20 +84,20 @@ public class ListItemLayoutManager extends BlockStackingLayoutManager {
     }
 
     /**
-     * Sets the label of the list item
-     * @param item the label item
+     * Create a LM for the fo:list-item-label object
+     * @param node the fo:list-item-label FO
      */
-    public void setLabel(Item item) {
-        label = item;
+    public void setLabel(ListItemLabel node) {
+        label = new Item(node);
         label.setParent(this);
     }
 
     /**
-     * Sets the body of the list item
-     * @param item the body item
+     * Create a LM for the fo:list-item-body object
+     * @param node the fo:list-item-body FO
      */
-    public void setBody(Item item) {
-        body = item;
+    public void setBody(ListItemBody node) {
+        body = new Item(node); 
         body.setParent(this);
     }
 

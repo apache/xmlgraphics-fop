@@ -27,33 +27,25 @@ import org.xml.sax.Locator;
 import org.xml.sax.SAXParseException;
 
 // FOP
-import org.apache.fop.area.inline.InlineArea;
-import org.apache.fop.area.inline.InlineParent;
-import org.apache.fop.area.LinkResolver;
-import org.apache.fop.area.PageViewport;
-import org.apache.fop.area.Trait;
-import org.apache.fop.fo.FOElementMapping;
 import org.apache.fop.fo.FONode;
-import org.apache.fop.layoutmgr.LayoutManager;
-import org.apache.fop.layoutmgr.LMiter;
-import org.apache.fop.layoutmgr.InlineStackingLayoutManager;
-import org.apache.fop.fo.properties.CommonAccessibility;
-import org.apache.fop.fo.properties.CommonAural;
-import org.apache.fop.fo.properties.CommonBorderAndPadding;
-import org.apache.fop.fo.properties.CommonBackground;
-import org.apache.fop.fo.properties.CommonMarginInline;
-import org.apache.fop.fo.properties.CommonRelativePosition;
+import org.apache.fop.layoutmgr.BasicLinkLayoutManager;
 
 /**
- * The basic link.
- * This sets the basic link trait on the inline parent areas
- * that are created by the fo element.
+ * The fo:basic-link formatting object.
+ *
+ * This class contains the logic to determine the link represented by this FO,
+ * and whether that link is external (uses a URI) or internal (an id 
+ * reference).
  */
 public class BasicLink extends Inline {
-    private String link = null;
-    private boolean external = false;
 
-    // used for FO validation
+    // link represented by this FO
+    private String link = null;
+    
+    // indicator of whether link is internal or external
+    private boolean isExternalLink = false;
+
+    // used only for FO validation
     private boolean blockOrInlineItemFound = false;
 
     /**
@@ -68,17 +60,18 @@ public class BasicLink extends Inline {
      */
     protected void addProperties(Attributes attlist) throws SAXParseException {
         super.addProperties(attlist);
-
         setupID();
+        
+        // This logic is for determining the link represented by this FO.
         String ext =  propertyList.get(PR_EXTERNAL_DESTINATION).getString();
         String internal = propertyList.get(PR_INTERNAL_DESTINATION).getString();
 
-        // per spec, internal takes precedence if both specified
-        if (internal.length() > 0) {
+        // per spec, internal takes precedence if both specified        
+        if (internal.length() > 0) { 
             link = internal;
         } else if (ext.length() > 0) {
             link = ext;
-            external = true;
+            isExternalLink = true;
         } else {
             // slightly stronger than spec "should be specified"
             attributeError("Missing attribute:  Either external-destination or " +
@@ -94,7 +87,7 @@ public class BasicLink extends Inline {
      */
     protected void validateChildNode(Locator loc, String nsURI, String localName) 
         throws SAXParseException {
-        if (nsURI == FOElementMapping.URI && localName.equals("marker")) {
+        if (nsURI == FO_URI && localName.equals("marker")) {
             if (blockOrInlineItemFound) {
                nodesOutOfOrderError(loc, "fo:marker", "(#PCDATA|%inline;|%block;)");
             }
@@ -114,49 +107,39 @@ public class BasicLink extends Inline {
     }
 
     /**
-     * @return true (BasicLink can contain Markers)
-    */
-    protected boolean containsMarkers() {
-        return true;
+     * @see org.apache.fop.fo.FObj#addLayoutManager(List)
+     */
+    public void addLayoutManager(List list) { 	 
+        BasicLinkLayoutManager lm = new BasicLinkLayoutManager(this);
+        list.add(lm);
     }
 
     /**
-     * @see org.apache.fop.fo.FObj#addLayoutManager(List)
-     * @todo create a subclass for InlineStackingLayoutManager, moving the formatting
-     *  logic to the layoutmgr package
-    */
-    public void addLayoutManager(List list) { 	 
-        InlineStackingLayoutManager lm;
-        lm = new InlineStackingLayoutManager(this) {
-            protected InlineParent createArea() {
-                InlineParent area = super.createArea();
-                setupBasicLinkArea(parentLM, area);
-                return area;
-            }
-        };
-        lm.setLMiter(new LMiter(lm, getChildNodes()));
-        list.add(lm);
+     * @return link represented by this fo:basic-link
+     */
+    public String getLink() {
+        return link;
     }
-     
-    protected void setupBasicLinkArea(LayoutManager parentLM,
-                                      InlineParent area) {
-         if (link == null) {
-             return;
-         }
-         if (external) {
-             area.addTrait(Trait.EXTERNAL_LINK, link);
-         } else {
-             PageViewport page = parentLM.resolveRefID(link);
-             if (page != null) {
-                 area.addTrait(Trait.INTERNAL_LINK, page.getKey());
-             } else {
-                 LinkResolver res = new LinkResolver(link, area);
-                 parentLM.addUnresolvedArea(link, res);
-             }
-         }
-     }
-     
+ 
+    /**
+     * @return true if link is external, false if internal
+     */
+    public boolean isExternalLink() {
+        return isExternalLink;
+    }
+
+    /**
+     * @see org.apache.fop.fo.FObj#getName()
+     */
     public String getName() {
         return "fo:basic-link";
+    }
+    
+    /**
+     * @return true (BasicLink can contain Markers)
+     * @todo see if can remove in favor of a BitSet for all FO's
+     */
+    protected boolean containsMarkers() {
+        return true;
     }
 }

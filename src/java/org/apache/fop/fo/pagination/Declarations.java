@@ -29,7 +29,6 @@ import org.xml.sax.Locator;
 import org.xml.sax.SAXParseException;
 
 // FOP
-import org.apache.fop.fo.FOElementMapping;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.XMLObj;
@@ -62,7 +61,7 @@ public class Declarations extends FObj {
      */
     protected void validateChildNode(Locator loc, String nsURI, String localName) 
         throws SAXParseException {
-        if (nsURI == FOElementMapping.URI) {
+        if (nsURI == FO_URI) {
             if (!localName.equals("color-profile")) {   
                 invalidChildError(loc, nsURI, localName);
             }

@@ -24,7 +24,6 @@ import org.xml.sax.Locator;
 import org.xml.sax.SAXParseException;
 
 // FOP
-import org.apache.fop.fo.FOElementMapping;
 import org.apache.fop.fo.FONode;
 
 /**

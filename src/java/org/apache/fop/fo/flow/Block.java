@@ -142,13 +142,6 @@ public class Block extends FObjMixed {
     }
 
     /**
-     * @return true (Block can contain Markers)
-     */
-    protected boolean containsMarkers() {
-        return true;
-    }
-
-    /**
      * @return span for this Block, in millipoints (??)
      */
     public int getSpan() {
@@ -347,8 +340,14 @@ public class Block extends FObjMixed {
         list.add(blm);
     }
      
-   public String getName() {
+    public String getName() {
         return "fo:block";
     }
 
+    /**
+     * @return true (Block can contain Markers)
+     */
+    protected boolean containsMarkers() {
+        return true;
+    }
 }
