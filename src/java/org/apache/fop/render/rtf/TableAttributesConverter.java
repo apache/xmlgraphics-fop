@@ -119,10 +119,11 @@ public class TableAttributesConverter {
 
         // Cell background color
         ColorType color = fobj.getCommonBorderPaddingBackground().backgroundColor;
-        if (color.getAlpha() != 0
-               || color.getRed() != 0
-               || color.getGreen() != 0
-               || color.getBlue() != 0) {
+        if ((color != null) 
+                && (color.getAlpha() != 0
+                        || color.getRed() != 0
+                        || color.getGreen() != 0
+                        || color.getBlue() != 0)) {
             attrib.set(ITableAttributes.CELL_COLOR_BACKGROUND, color);
         }
 

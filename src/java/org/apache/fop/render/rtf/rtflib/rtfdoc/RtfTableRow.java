@@ -264,7 +264,7 @@ public class RtfTableRow extends RtfContainer implements ITableAttributes {
                     }
                 }
 
-                if (parentTable.isHighestRow(id)) {
+                if ((parentTable != null) && (parentTable.isHighestRow(id))) {
                     if (!cell.getRtfAttributes().isSet(ITableAttributes.CELL_BORDER_BOTTOM)) {
                         cell.getRtfAttributes().set(ITableAttributes.CELL_BORDER_BOTTOM,
                             (String)attrib.getValue(ITableAttributes.ROW_BORDER_BOTTOM));
