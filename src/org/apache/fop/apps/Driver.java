@@ -173,6 +173,7 @@ public class Driver {
      * the system resources that FOP will use
      */
     private Logger log;
+    private FOUserAgent userAgent = null;
 
     public static final String getParserClassName() {
         String parserClassName = null;
@@ -192,6 +193,7 @@ public class Driver {
     public Driver() {
         _stream = null;
         _treeBuilder = new FOTreeBuilder();
+        _treeBuilder.setUserAgent(getUserAgent());
         setupDefaultMappings();
     }
 
@@ -202,12 +204,15 @@ public class Driver {
     }
 
     public void setUserAgent(FOUserAgent agent) {
+        userAgent = agent;
     }
 
     private FOUserAgent getUserAgent() {
-        FOUserAgent ua = new FOUserAgent();
-        ua.setLogger(log);
-        return ua;
+        if(userAgent == null) {
+            userAgent = new FOUserAgent();
+            userAgent.setLogger(log);
+        }
+        return userAgent;
     }
 
     public void setLogger(Logger logger) {
