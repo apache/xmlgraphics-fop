@@ -181,7 +181,7 @@ public class LineArea extends Area {
 		if (prev == WHITESPACE) {
 
 		    // if current & previous are WHITESPACE
-		    
+
 		    if (this.whiteSpaceTreatment ==
 			WhiteSpaceTreatment.PRESERVE) { 
 			if (c == ' ') {
@@ -197,7 +197,7 @@ public class LineArea extends Area {
 		} else if (prev == TEXT) {
 		    
 		    // if current is WHITESPACE and previous TEXT
-		
+
 		    // the current word made it, so
 
 		    // add the space before the current word (if there
@@ -221,7 +221,7 @@ public class LineArea extends Area {
 					      0,
 					      inlineArea.getContentWidth(),
 					      lineHeight);
-			    ls.addRect(lr);
+			    ls.addRect(lr, this);
 			}
 
 			addChild(inlineArea);
@@ -249,10 +249,10 @@ public class LineArea extends Area {
 					      0,
 					      ia.getContentWidth(),
 					      lineHeight);
-			    ls.addRect(lr);
+			    ls.addRect(lr, this);
 			}
 			finalWidth += wordWidth;
-
+			
 			// reset word width
 			wordWidth = 0;
 		    }
@@ -281,7 +281,7 @@ public class LineArea extends Area {
 		} else {
 		    
 		    // if current is WHITESPACE and no previous
-		    
+
 		    if (this.whiteSpaceTreatment ==
 			WhiteSpaceTreatment.PRESERVE) { 
 			prev = WHITESPACE;
@@ -293,7 +293,7 @@ public class LineArea extends Area {
 		}
 		
 	    } else { // current is TEXT
-		
+
 		if (prev == WHITESPACE) {
 		    
 		    // if current is TEXT and previous WHITESPACE
@@ -310,9 +310,11 @@ public class LineArea extends Area {
 		    wordStart = i;
 		    wordLength = 1;
 		} else if (prev == TEXT) {
+
 		    wordLength++;
 		    wordWidth += charWidth;
 		} else { // nothing previous
+
 		    prev = TEXT;
 		    wordStart = i;
 		    wordLength = 1;
@@ -340,18 +342,21 @@ public class LineArea extends Area {
 	} // end of iteration over text
 
 	if (prev == TEXT) {
+
 	    InlineArea pia = new InlineArea(currentFontState, this.red,
 				    this.green, this.blue, new
 				    String(data, wordStart,
 					   wordLength), wordWidth); 
+	    
 	    if (ls != null) {
 		Rectangle lr =
-		    new Rectangle(startIndent + finalWidth,
+		    new Rectangle(startIndent + finalWidth + spaceWidth,
 				  spaceWidth,
 				  pia.getContentWidth(),
 				  lineHeight);
-		ls.addRect(lr);
+		ls.addRect(lr, this);
 	    }
+	    
 	    pendingAreas.addElement(pia);
 	    pendingWidth += wordWidth;
 	    wordWidth = 0;
@@ -381,7 +386,7 @@ public class LineArea extends Area {
 	pendingAreas = new Vector();
     }
 
-    public int align(int type) {
+    public void align(int type) {
 	int padding = 0;
 	
 	switch (type) {
@@ -424,7 +429,6 @@ public class LineArea extends Area {
 		space2.setSize(i + padding);
 	    }
 	}
-        return padding;
     }
     
     public void changeColor(float red, float green, float blue) {
