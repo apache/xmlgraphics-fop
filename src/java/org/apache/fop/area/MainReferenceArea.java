@@ -35,7 +35,7 @@ public class MainReferenceArea
 extends AbstractReferenceArea
 implements ReferenceArea {
     private List spanAreas = new ArrayList();
-
+    private SpanReferenceArea currentSpan = null;
     /**
      * @param parent
      * @param sync
@@ -77,8 +77,12 @@ implements ReferenceArea {
      */
     public void addSpan(SpanReferenceArea span) {
         spanAreas.add(span);
+        currentSpan = span;
     }
 
+    public SpanReferenceArea getCurrSpanRefArea() {
+        return currentSpan;
+    }
     /**
      * Get the span areas from this area.
      *
