@@ -136,7 +136,7 @@ public class LayoutEngineTester {
      * @return The newly create check
      */
     protected LayoutEngineCheck createCheck(Element el) {
-        String name = el.getLocalName();
+        String name = el.getTagName();
         Class clazz = (Class)CHECK_CLASSES.get(name);
         if (clazz != null) {
             try {
