@@ -261,11 +261,17 @@ public class Driver implements LogEnabled {
         this.stream = stream;
     }
 
+    private boolean isInitialized() {
+        return (treeBuilder != null);
+    }
+
     /**
      * Initializes the Driver object.
      */
     public void initialize() {
-        stream = null;
+        if (isInitialized()) {
+            throw new IllegalStateException("Driver already initialized");
+        }
         treeBuilder = new FOTreeBuilder();
         treeBuilder.setUserAgent(getUserAgent());
         setupDefaultMappings();
@@ -303,6 +309,15 @@ public class Driver implements LogEnabled {
         } else {
             getLogger().warn("Logger is already set! Won't use the new logger.");
         }
+    }
+
+    /**
+     * Provide the Driver instance with a logger. 
+     * @param log the logger. Must not be <code>null</code>.
+     * @deprecated Use #enableLogging(Logger) instead.
+     */
+    public void setLogger(Logger log) {
+        enableLogging(log);
     }
 
 
@@ -347,6 +362,12 @@ public class Driver implements LogEnabled {
      */
     public void setOutputStream(OutputStream stream) {
         this.stream = stream;
+    }
+
+    private void validateOutputStream() {
+        if (this.stream == null) {
+            throw new IllegalStateException("OutputStream has not been set");
+        }
     }
 
     /**
@@ -553,10 +574,10 @@ public class Driver implements LogEnabled {
      * @return a content handler for handling the SAX events.
      */
     public ContentHandler getContentHandler() {
-        if (treeBuilder == null) {
-            throw new NullPointerException("Driver isn't initialized. "
-                + "You may have to call initialize() first.");
+        if (!isInitialized()) {
+            initialize();
         }
+        validateOutputStream();
         
         // TODO: - do this stuff in a better way
         // PIJ: I guess the structure handler should be created by the renderer.
@@ -588,6 +609,9 @@ public class Driver implements LogEnabled {
      */
     public synchronized void render(XMLReader parser, InputSource source)
                 throws FOPException {
+        if (!isInitialized()) {
+            initialize();
+        }
         parser.setContentHandler(getContentHandler());
         try {
             parser.parse(source);
@@ -610,6 +634,9 @@ public class Driver implements LogEnabled {
      */
     public synchronized void render(Document document)
                 throws FOPException {
+        if (!isInitialized()) {
+            initialize();
+        }
         try {
             DocumentInputSource source = new DocumentInputSource(document);
             DocumentReader reader = new DocumentReader();
@@ -638,6 +665,9 @@ public class Driver implements LogEnabled {
      * @throws FOPException if anything else goes wrong.
      */
     public synchronized void run() throws IOException, FOPException {
+        if (!isInitialized()) {
+            initialize();
+        }
         if (renderer == null) {
             setRenderer(RENDER_PDF);
         }
