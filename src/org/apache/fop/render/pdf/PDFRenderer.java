@@ -82,6 +82,12 @@ public class PDFRenderer implements Renderer {
     /** the current stream to add PDF commands to */
     PDFStream currentStream;
 
+    /** the current annotation list to add annotations to */
+    PDFAnnotList currentAnnotList;
+
+    /** the current page to add annotations to */
+    PDFPage currentPage;
+
     /** the current (internal) font name */
     protected String currentFontName;
 
@@ -505,11 +511,15 @@ public class PDFRenderer implements Renderer {
 	
 	currentStream.add("ET\n");
 
-	this.pdfDoc.makePage(this.pdfResources, currentStream,
+	currentPage = this.pdfDoc.makePage(this.pdfResources, currentStream,
 			     page.getWidth()/1000,
 			     page.getHeight()/1000);
 
-	/*if (page.hasLinks()) {
+	if (page.hasLinks()) {
+
+	    currentAnnotList = this.pdfDoc.makeAnnotList();
+	    currentPage.setAnnotList(currentAnnotList);
+
 	    Enumeration e = page.getLinkSets().elements();
 	    while (e.hasMoreElements()) {
 		LinkSet linkSet = (LinkSet) e.nextElement();
@@ -517,10 +527,13 @@ public class PDFRenderer implements Renderer {
 		Enumeration f = linkSet.getRects().elements();
 		while (f.hasMoreElements()) {
 		    Rectangle rect = (Rectangle) f.nextElement();
-		    this.pdfDoc.makeLink(rect, dest);
+		    currentAnnotList.addLink(this.pdfDoc.makeLink(rect, dest));
 		}
 	    }
-	} */
+	} else {
+	    // just to be on the safe side
+	    currentAnnotList = null;
+	}
     }
 
     /**
