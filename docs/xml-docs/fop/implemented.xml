@@ -28,10 +28,12 @@
         <li>region-body </li>
         <li>region-before </li>
         <li>region-after </li>
+        <li>region-start</li>
+        <li>region-end</li>
         <li>flow</li>
         <li>static-content </li>
       </ul>
-      <p>Not implemented: region-start, region-end, declarations, color-profile, title</p>
+      <p>Not implemented: declarations, color-profile, title</p>
     </s3>
 
     <s3 title="B.2 Block Formatting Objects">
@@ -100,6 +102,8 @@
     </s3>
   </s2>
 
+
+border and padding shorthand properties 
 
   <s2 title="2) Properties">
   <p>Property values can be computed. Compound properties are also understood by Fop.</p>
@@ -181,12 +185,12 @@
       <li>padding (only one value allowed) </li>
       <li>padding-after</li>
       <li>padding-before</li>
-      <li>padding-bottom (only in conjunction with background color) </li>
+      <li>padding-bottom </li>
       <li>padding-end</li>
-      <li>padding-left (only in conjunction with background color) </li>
-      <li>padding-right (only in conjunction with background color) </li>
+      <li>padding-left  </li>
+      <li>padding-right  </li>
       <li>padding-start</li>
-      <li>padding-top (only in conjunction with background color) </li>
+      <li>padding-top  </li>
       <li>page-height </li>
       <li>page-position</li>
       <li>page-width </li>
