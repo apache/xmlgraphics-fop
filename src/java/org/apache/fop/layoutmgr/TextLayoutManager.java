@@ -24,6 +24,7 @@ import java.util.LinkedList;
 import java.util.ListIterator;
 
 import org.apache.fop.fo.FOText;
+import org.apache.fop.fonts.Font;
 import org.apache.fop.traits.SpaceVal;
 import org.apache.fop.area.Trait;
 import org.apache.fop.area.inline.InlineArea;
@@ -108,6 +109,7 @@ public class TextLayoutManager extends AbstractLayoutManager {
     private SpaceVal halfWS;
     /** Number of space characters after previous possible break position. */
     private int iNbSpacesPending;
+    private Font fs;
 
     private boolean bChanged = false;
     private int iReturnedIndex = 0;
@@ -130,15 +132,17 @@ public class TextLayoutManager extends AbstractLayoutManager {
 
         vecAreaInfo = new java.util.ArrayList();
 
+        fs = foText.getCommonFont().getFontState(foText.getFOEventHandler().getFontInfo());
+        
         // With CID fonts, space isn't neccesary currentFontState.width(32)
-        spaceCharIPD = foText.textInfo.fs.getCharWidth(' ');
+        spaceCharIPD = fs.getCharWidth(' ');
         // Use hyphenationChar property
-        hyphIPD = foText.textInfo.fs.getCharWidth(foText.textInfo.hyphChar);
+        hyphIPD = fs.getCharWidth(foText.getCommonHyphenation().hyphenationChar);
         // Make half-space: <space> on either side of a word-space)
-        SpaceVal ws = foText.textInfo.wordSpacing;
+        SpaceVal ls = SpaceVal.makeLetterSpacing(foText.getLetterSpacing());
+        SpaceVal ws = SpaceVal.makeWordSpacing(foText.getWordSpacing(), ls, fs);
         halfWS = new SpaceVal(MinOptMax.multiply(ws.getSpace(), 0.5),
                 ws.isConditional(), ws.isForcing(), ws.getPrecedence());
-        SpaceVal ls = foText.textInfo.letterSpacing;
 
         // letter space applies only to consecutive non-space characters,
         // while word space applies to space characters;
@@ -149,12 +153,9 @@ public class TextLayoutManager extends AbstractLayoutManager {
 
         // set letter space and word space dimension;
         // the default value "normal" was converted into a MinOptMax value
-        // in the PropertyManager.getTextLayoutProps() method
-        letterSpaceIPD = new MinOptMax(ls.getSpace().min,
-                                       ls.getSpace().opt, ls.getSpace().max);
-        wordSpaceIPD = new MinOptMax(spaceCharIPD + ws.getSpace().min,
-                                     spaceCharIPD + ws.getSpace().opt,
-                                     spaceCharIPD + ws.getSpace().max);
+        // in the SpaceVal.makeWordSpacing() method
+        letterSpaceIPD = ls.getSpace();
+        wordSpaceIPD = MinOptMax.add(new MinOptMax(spaceCharIPD), ws.getSpace());
     }
 
     /**
@@ -201,8 +202,7 @@ public class TextLayoutManager extends AbstractLayoutManager {
      */
     public boolean canBreakBefore(LayoutContext context) {
         char c = textArray[iNextStart];
-        return ((c == NEWLINE)
-                || (foText.textInfo.bWrap
+        return ((c == NEWLINE) || (foText.getWrapOption() == WRAP 
                     && (CharUtilities.isBreakableSpace(c)
                         || (BREAK_CHARS.indexOf(c) >= 0
                             && (iNextStart == 0 
@@ -255,7 +255,7 @@ public class TextLayoutManager extends AbstractLayoutManager {
 
         for (; iNextStart < iStopIndex; iNextStart++) {
             char c = textArray[iNextStart];
-            hyphIPD.opt += foText.textInfo.fs.getCharWidth(c);
+            hyphIPD.opt += fs.getCharWidth(c);
             // letter-space?
         }
         // Need to include hyphen size too, but don't count it in the
@@ -362,7 +362,7 @@ public class TextLayoutManager extends AbstractLayoutManager {
                 bSawNonSuppressible = true;
                 spaceIPD.add(pendingSpace.resolve(false));
                 pendingSpace.clear();
-                wordIPD += foText.textInfo.fs.getCharWidth(c);
+                wordIPD += fs.getCharWidth(c);
             }
         }
 
@@ -392,7 +392,7 @@ public class TextLayoutManager extends AbstractLayoutManager {
             for (; iNextStart < textArray.length; iNextStart++) {
                 char c = textArray[iNextStart];
                 // Include any breakable white-space as break char
-                if ((c == NEWLINE) || (foText.textInfo.bWrap 
+                if ((c == NEWLINE) || (foText.getWrapOption() == WRAP  
                     && (CharUtilities.isBreakableSpace(c)
                     || (BREAK_CHARS.indexOf(c) >= 0 && (iNextStart == 0 
                         || Character.isLetterOrDigit(textArray[iNextStart-1])))))) {
@@ -400,8 +400,7 @@ public class TextLayoutManager extends AbstractLayoutManager {
                             if (c != SPACE) {
                                 iNextStart++;
                                 if (c != NEWLINE) {
-                                    wordIPD
-                                        += foText.textInfo.fs.getCharWidth(c);
+                                    wordIPD += fs.getCharWidth(c);
                                 } else {
                                     iFlags |= BreakPoss.FORCE;
                                 }
@@ -421,7 +420,7 @@ public class TextLayoutManager extends AbstractLayoutManager {
                                          context.getLeadingSpace(), null,
                                          iFlags, iWScount);
                 }
-                wordIPD += foText.textInfo.fs.getCharWidth(c);
+                wordIPD += fs.getCharWidth(c);
                 // Note, if a normal non-breaking space, is it stretchable???
                 // If so, keep a count of these embedded spaces.
             }
@@ -454,7 +453,7 @@ public class TextLayoutManager extends AbstractLayoutManager {
             bp.setStackingSize(ipd);
         }
         // TODO: make this correct (see Keiron's vertical alignment code)
-        bp.setNonStackingSize(new MinOptMax(foText.textInfo.lineHeight));
+        bp.setNonStackingSize(new SpaceVal(foText.getLineHeight()).getSpace());
 
         /* Set max ascender and descender (offset from baseline),
          * used for calculating the bpd of the line area containing
@@ -533,7 +532,7 @@ public class TextLayoutManager extends AbstractLayoutManager {
 
         // add hyphenation character if the last word is hyphenated
         if (context.isLastArea() && ai.bHyphenated) {
-            str += foText.textInfo.hyphChar;
+            str += foText.getCommonHyphenation().hyphenationChar;
             realWidth.add(new MinOptMax(hyphIPD));
         }
 
@@ -611,16 +610,14 @@ public class TextLayoutManager extends AbstractLayoutManager {
     protected TextArea createTextArea(String str, int width, int base) {
         TextArea textArea = new TextArea();
         textArea.setIPD(width);
-        textArea.setBPD(foText.textInfo.fs.getAscender()
-                           - foText.textInfo.fs.getDescender());
-        textArea.setOffset(foText.textInfo.fs.getAscender());
+        textArea.setBPD(fs.getAscender() - fs.getDescender());
+        textArea.setOffset(fs.getAscender());
         textArea.setOffset(base);
 
         textArea.setTextArea(str);
-        textArea.addTrait(Trait.FONT_NAME, foText.textInfo.fs.getFontName());
-        textArea.addTrait(Trait.FONT_SIZE,
-                          new Integer(foText.textInfo.fs.getFontSize()));
-        textArea.addTrait(Trait.COLOR, foText.textInfo.color);
+        textArea.addTrait(Trait.FONT_NAME, fs.getFontName());
+        textArea.addTrait(Trait.FONT_SIZE, new Integer(fs.getFontSize()));
+        textArea.addTrait(Trait.COLOR, foText.getColor());
         return textArea;
     }
 
@@ -739,7 +736,7 @@ public class TextLayoutManager extends AbstractLayoutManager {
                     // ignore newline characters
                     if (textArray[iTempStart] != NEWLINE) {
                         wordIPD.add
-                            (new MinOptMax(foText.textInfo.fs.getCharWidth(textArray[iTempStart])));
+                            (new MinOptMax(fs.getCharWidth(textArray[iTempStart])));
                     }
                 }
                 wordIPD.add(MinOptMax.multiply(letterSpaceIPD, (iTempStart - iThisStart - 1)));
@@ -830,7 +827,7 @@ public class TextLayoutManager extends AbstractLayoutManager {
 
             for (int i = iStartIndex; i < iStopIndex; i++) {
                 char c = textArray[i];
-                newIPD.add(new MinOptMax(foText.textInfo.fs.getCharWidth(c)));
+                newIPD.add(new MinOptMax(fs.getCharWidth(c)));
             }
             // add letter spaces
             boolean bIsWordEnd

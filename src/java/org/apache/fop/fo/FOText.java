@@ -109,7 +109,6 @@ public class FOText extends FONode {
      */
     private Block ancestorBlock = null;
 
-    public TextInfo textInfo;
     private static final int IS_WORD_CHAR_FALSE = 0;
     private static final int IS_WORD_CHAR_TRUE = 1;
     private static final int IS_WORD_CHAR_MAYBE = 2;
@@ -122,14 +121,12 @@ public class FOText extends FONode {
      * @param end ending index into char[] for the text in this object
      * @param parent FONode that is the parent of this object
      */
-    public FOText(char[] chars, int start, int end, FObj parent) {
+    public FOText(char[] chars, int start, int end, FONode parent) {
         super(parent);
         endIndex = end - start;
         this.ca = new char[endIndex];
         System.arraycopy(chars, start, ca, 0, endIndex);
 //      System.out.println("->" + new String(ca) + "<-");
-        textInfo = parent.propMgr.getTextLayoutProps(parent.getFOEventHandler().getFontInfo());
-
     }
 
     /**

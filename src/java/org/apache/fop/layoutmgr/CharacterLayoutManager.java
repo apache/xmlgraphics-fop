@@ -19,7 +19,7 @@
 package org.apache.fop.layoutmgr;
 
 import org.apache.fop.fo.flow.Character;
-import org.apache.fop.fo.TextInfo;
+import org.apache.fop.fonts.Font;
 import org.apache.fop.area.inline.InlineArea;
 import org.apache.fop.area.Trait;
 import org.apache.fop.traits.MinOptMax;
@@ -32,10 +32,10 @@ import java.util.LinkedList;
  * LayoutManager for the fo:character formatting object
  */
 public class CharacterLayoutManager extends LeafNodeLayoutManager {
-
+    private Character fobj;
     private MinOptMax letterSpaceIPD;
     private int hyphIPD;
-    private TextInfo textInfo;
+    private Font fs;
 
     /**
      * Constructor
@@ -45,16 +45,14 @@ public class CharacterLayoutManager extends LeafNodeLayoutManager {
      */
     public CharacterLayoutManager(Character node) {
         super(node);
+        fobj = node;
         InlineArea inline = getCharacterInlineArea(node);
         setCurrentArea(inline);
+        fs = fobj.getCommonFont().getFontState(fobj.getFOEventHandler().getFontInfo());
 
-        textInfo = node.getPropertyManager().getTextLayoutProps
-            (node.getFOEventHandler().getFontInfo());
-        SpaceVal ls = textInfo.letterSpacing;
-        letterSpaceIPD = new MinOptMax(ls.getSpace().min,
-                                       ls.getSpace().opt,
-                                       ls.getSpace().max);
-        hyphIPD = textInfo.fs.getCharWidth(textInfo.hyphChar);
+        SpaceVal ls = SpaceVal.makeLetterSpacing(fobj.getLetterSpacing());
+        letterSpaceIPD = ls.getSpace();
+        hyphIPD = fs.getCharWidth(fobj.getCommonHyphenation().hyphenationChar);
     }
 
     private InlineArea getCharacterInlineArea(Character node) {
@@ -102,20 +100,18 @@ public class CharacterLayoutManager extends LeafNodeLayoutManager {
             return null;
         }
 
-        ipd = new MinOptMax(textInfo.fs.getCharWidth(((org.apache.fop.area.inline.Character) curArea).getChar().charAt(0)));
+        ipd = new MinOptMax(fs.getCharWidth(((org.apache.fop.area.inline.Character) curArea).getChar().charAt(0)));
 
         curArea.setIPD(ipd.opt);
-        curArea.setBPD(textInfo.fs.getAscender()
-                          - textInfo.fs.getDescender());
+        curArea.setBPD(fs.getAscender() - fs.getDescender());
 
         // offset is set in the offsetArea() method
         //curArea.setOffset(textInfo.fs.getAscender());
         //curArea.setOffset(context.getBaseline()); 
 
-        curArea.addTrait(Trait.FONT_NAME, textInfo.fs.getFontName());
-        curArea.addTrait(Trait.FONT_SIZE,
-                         new Integer(textInfo.fs.getFontSize()));
-        curArea.addTrait(Trait.COLOR, textInfo.color);
+        curArea.addTrait(Trait.FONT_NAME, fs.getFontName());
+        curArea.addTrait(Trait.FONT_SIZE, new Integer(fs.getFontSize()));
+        curArea.addTrait(Trait.COLOR, fobj.getColor());
 
         int bpd = curArea.getBPD();
         int lead = 0;
