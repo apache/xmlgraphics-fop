@@ -567,15 +567,40 @@ public class PDFRenderer extends PrintRenderer {
                     float width, float height) {
         // draw background then border
 
+        BorderProps bpsBefore = (BorderProps)area.getTrait(Trait.BORDER_BEFORE);
+        BorderProps bpsAfter = (BorderProps)area.getTrait(Trait.BORDER_AFTER);
+        BorderProps bpsStart = (BorderProps)area.getTrait(Trait.BORDER_START);
+        BorderProps bpsEnd = (BorderProps)area.getTrait(Trait.BORDER_END);
+
         Trait.Background back;
         back = (Trait.Background)area.getTrait(Trait.BACKGROUND);
         if (back != null) {
             endTextObject();
 
+            //Calculate padding rectangle
+            float x = startx;
+            float y = starty;
+            float paddRectWidth = width;
+            float paddRectHeight = height;
+            if (bpsStart != null) {
+                x += bpsStart.width / 1000f;
+                paddRectWidth -= bpsStart.width / 1000f;
+            }
+            if (bpsBefore != null) {
+                y += bpsBefore.width / 1000f;
+                paddRectHeight -= bpsBefore.width / 1000f;
+            }
+            if (bpsEnd != null) {
+                paddRectWidth -= bpsEnd.width / 1000f;
+            }
+            if (bpsAfter != null) {
+                paddRectHeight -= bpsAfter.width / 1000f;
+            }
+
             if (back.getColor() != null) {
                 updateColor(back.getColor(), true, null);
-                currentStream.add(startx + " " + starty + " "
-                                  + width + " " + height + " re\n");
+                currentStream.add(x + " " + y + " "
+                                  + paddRectWidth + " " + paddRectHeight + " re\n");
                 currentStream.add("f\n");
             }
             if (back.getURL() != null) {
@@ -589,8 +614,8 @@ public class PDFRenderer extends PrintRenderer {
                     } else {
                         // place once
                         Rectangle2D pos;
-                        pos = new Rectangle2D.Float((startx + back.getHoriz()) * 1000,
-                                                    (starty + back.getVertical()) * 1000,
+                        pos = new Rectangle2D.Float((x * 1000) + back.getHoriz(),
+                                                    (y * 1000) + back.getVertical(),
                                                     fopimage.getIntrinsicWidth(),
                                                     fopimage.getIntrinsicHeight());
                         putImage(back.getURL(), pos);
@@ -602,46 +627,42 @@ public class PDFRenderer extends PrintRenderer {
             }
         }
 
-        BorderProps bps = (BorderProps)area.getTrait(Trait.BORDER_BEFORE);
-        if (bps != null) {
+        if (bpsBefore != null) {
             endTextObject();
 
-            float bwidth = bps.width / 1000f;
-            updateColor(bps.color, false, null);
-            updateLineStyle(bps.style);
+            float bwidth = bpsBefore.width / 1000f;
+            updateColor(bpsBefore.color, false, null);
+            updateLineStyle(bpsBefore.style);
             updateLineWidth(bwidth);
             float y1 = starty + bwidth / 2;
             drawLine(startx, y1, startx + width, y1);
         }
-        bps = (BorderProps)area.getTrait(Trait.BORDER_AFTER);
-        if (bps != null) {
+        if (bpsAfter != null) {
             endTextObject();
 
-            float bwidth = bps.width / 1000f;
-            updateColor(bps.color, false, null);
-            updateLineStyle(bps.style);
+            float bwidth = bpsAfter.width / 1000f;
+            updateColor(bpsAfter.color, false, null);
+            updateLineStyle(bpsAfter.style);
             updateLineWidth(bwidth);
             float y1 = starty - bwidth / 2;
             drawLine(startx, y1 + height, startx + width, y1 + height);
         }
-        bps = (BorderProps)area.getTrait(Trait.BORDER_START);
-        if (bps != null) {
+        if (bpsStart != null) {
             endTextObject();
 
-            float bwidth = bps.width / 1000f;
-            updateColor(bps.color, false, null);
-            updateLineStyle(bps.style);
+            float bwidth = bpsStart.width / 1000f;
+            updateColor(bpsStart.color, false, null);
+            updateLineStyle(bpsStart.style);
             updateLineWidth(bwidth);
             float x1 = startx + bwidth / 2;
             drawLine(x1, starty, x1, starty + height);
         }
-        bps = (BorderProps)area.getTrait(Trait.BORDER_END);
-        if (bps != null) {
+        if (bpsEnd != null) {
             endTextObject();
 
-            float bwidth = bps.width / 1000f;
-            updateColor(bps.color, false, null);
-            updateLineStyle(bps.style);
+            float bwidth = bpsEnd.width / 1000f;
+            updateColor(bpsEnd.color, false, null);
+            updateLineStyle(bpsEnd.style);
             updateLineWidth(bwidth);
             float x1 = startx - bwidth / 2;
             drawLine(x1 + width, starty, x1 + width, starty + height);
