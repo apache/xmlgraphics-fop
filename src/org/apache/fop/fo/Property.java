@@ -311,9 +311,6 @@ public class Property {
 
   } // end of nested Maker class
 
-  // put back for SVG for now: note XSL properties don't set it!!!
-  protected PropertyList propertyList;
-
   /** The original specified value for properties which inherit
    * specified values. */
   private String specVal;
