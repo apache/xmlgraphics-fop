@@ -398,6 +398,7 @@ public class Driver implements LogEnabled {
                 ((LogEnabled)_renderer).enableLogging(getLogger());
             }
             _renderer.setProducer(Version.getVersion());
+            _renderer.setUserAgent(getUserAgent());
         } catch (ClassNotFoundException e) {
             throw new IllegalArgumentException("Could not find "
                                                + rendererClassName);
