@@ -67,14 +67,23 @@ import org.apache.fop.area.RegionReference;
 import org.apache.fop.area.BodyRegion;
 import org.apache.fop.layout.MarginProps;
 
+/**
+ * The fo:region-body element.
+ */
 public class RegionBody extends Region {
 
     private ColorType backgroundColor;
 
+    /**
+     * @see org.apache.fop.fo.FONode#FONode(FONode)
+     */
     public RegionBody(FONode parent) {
         super(parent);
     }
 
+    /**
+     * @see org.apache.fop.fo.pagination.Region#getViewportRectangle(FODimension)
+     */
     protected Rectangle getViewportRectangle (FODimension reldims) {
         /*
         * Use space-before and space-after which will use corresponding
@@ -115,20 +124,30 @@ public class RegionBody extends Region {
         return ((prop != null) ? prop.getLength().getValue() : 0);
     }
 
+    /**
+     * @see org.apache.fop.fo.pagination.Region#getDefaultRegionName()
+     */
     protected String getDefaultRegionName() {
         return "xsl-region-body";
     }
 
+    /**
+     * @see org.apache.fop.fo.pagination.Region#getRegionClass()
+     */
     public String getRegionClass() {
         return Region.BODY;
     }
 
+    /**
+     * @see org.apache.fop.fo.pagination.Region#getRegionAreaClass()
+     */
     public int getRegionAreaClass() {
         return RegionReference.BODY;
     }
 
     /**
      * Override the inherited method.
+     * @see org.apache.fop.fo.pagination.Region#makeRegionReferenceArea(Rectangle2D)
      */
     public RegionReference makeRegionReferenceArea(Rectangle2D absRegVPRect) {
         // Should set some column stuff here I think, or put it elsewhere

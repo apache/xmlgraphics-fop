@@ -86,10 +86,16 @@ public class SimplePageMaster extends FObj {
     private PageMaster pageMaster;
     private String masterName;
 
+    /**
+     * @see org.apache.fop.fo.FONode#FONode(FONode)
+     */
     public SimplePageMaster(FONode parent) {
         super(parent);
     }
 
+    /**
+     * @see org.apache.fop.fo.FONode#handleAttrs(Attributes)
+     */
     public void handleAttrs(Attributes attlist) throws FOPException {
         super.handleAttrs(attlist);
 
@@ -171,22 +177,41 @@ public class SimplePageMaster extends FObj {
         properties = null;
     }
 
+    /**
+     * @see org.apache.fop.fo.FObj#generatesReferenceAreas()
+     */
     public boolean generatesReferenceAreas() {
         return true;
     }
 
+    /**
+     * Returns the page master.
+     * @return the page master
+     */
     public PageMaster getPageMaster() {
         return this.pageMaster;
     }
 
+    /**
+     * Returns the next page master. For simple-page-master this is always the
+     * same as the previous.
+     * @return the page master
+     */
     public PageMaster getNextPageMaster() {
         return this.pageMaster;
     }
 
+    /**
+     * Returns the name of the simple-page-master.
+     * @return the page master name
+     */
     public String getMasterName() {
         return masterName;
     }
 
+    /**
+     * @see org.apache.fop.fo.FONode#addChild(FONode)
+     */
     protected void addChild(FONode child) {
         if (child instanceof Region) {
             addRegion((Region)child);
@@ -196,28 +221,44 @@ public class SimplePageMaster extends FObj {
         }
     }
 
+    /**
+     * Adds a region to this simple-page-master.
+     * @param region region to add
+     */
     protected void addRegion(Region region) {
         String key = region.getRegionClass();
         if (regions.containsKey(key)) {
-            getLogger().error("Only one region of class "
-                    + key
-                    + " allowed within a simple-page-master.");
-            // throw new FOPException("Only one region of class "
-//                                    + key
-//                                    + " allowed within a simple-page-master.");
+            getLogger().error("Only one region of class " + key
+                    + " allowed within a simple-page-master. The duplicate"
+                    + " region (" + region.getName() + ") is ignored.");
         } else {
             regions.put(key, region);
         }
     }
 
+    /**
+     * Returns the region for a given region class.
+     * @param regionClass region class to lookup
+     * @return the region, null if it doesn't exist
+     */
     public Region getRegion(String regionClass) {
         return (Region)regions.get(regionClass);
     }
 
+    /**
+     * Returns a Map of regions associated with this simple-page-master
+     * @return the regions
+     */
     protected Map getRegions() {
         return regions;
     }
 
+    /**
+     * Indicates if a region with a given name exists in this 
+     * simple-page-master.
+     * @param regionName name of the region to lookup
+     * @return True if a region with this name exists
+     */
     protected boolean regionNameExists(String regionName) {
         for (Iterator regenum = regions.values().iterator();
                 regenum.hasNext();) {
