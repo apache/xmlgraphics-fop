@@ -714,11 +714,14 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
     }
 
     private void createBodyMainReferenceArea() {
-        curBody.setMainReference(new MainReference());
+        MainReference mainRef = new MainReference();
+        mainRef.addTrait(Trait.IS_REFERENCE_AREA, Boolean.TRUE);
+        curBody.setMainReference(mainRef);
     }
 
     private Flow createFlow() {
         curFlow = new Flow();
+        curFlow.addTrait(Trait.IS_REFERENCE_AREA, Boolean.TRUE);
         curFlow.setIPD(curSpan.getIPD()); // adjust for columns
         //curFlow.setBPD(100000);
         // Set IPD and max BPD on the curFlow from curBody
@@ -739,6 +742,7 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
         //}
         //else newpos = new MinOptMax();
         curSpan = new Span(numCols);
+        curSpan.addTrait(Trait.IS_REFERENCE_AREA, Boolean.TRUE);
         curSpanColumns = numCols;
         // get Width or Height as IPD for span
 
@@ -831,9 +835,9 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
        for (Iterator regenum = spm.getRegions().values().iterator();
             regenum.hasNext();) {
            Region r = (Region)regenum.next();
-           r.setLayoutDimension(PercentBase.BLOCK_IPD, pageWidth);
-           r.setLayoutDimension(PercentBase.BLOCK_BPD, pageHeight);
            RegionViewport rvp = makeRegionViewport(r, reldims, pageCTM);
+           r.setLayoutDimension(PercentBase.BLOCK_IPD, rvp.getIPD());
+           r.setLayoutDimension(PercentBase.BLOCK_BPD, rvp.getBPD());
            if (r.getNameId() == FO_REGION_BODY) {
                rvp.setRegion(makeRegionBodyReferenceArea((RegionBody) r, rvp.getViewArea()));
            } else {
@@ -857,6 +861,14 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
         // Get the region viewport rectangle in absolute coords by
         // transforming it using the page CTM
         RegionViewport rv = new RegionViewport(absRegionRect);
+        rv.addTrait(Trait.IS_VIEWPORT_AREA, Boolean.TRUE);
+        if (r.getCommonBorderPaddingBackground().getBPPaddingAndBorder(false) != 0
+                || r.getCommonBorderPaddingBackground().getBPPaddingAndBorder(false) != 0) {
+            log.error("Border and padding for a region must be '0'.");
+            //See 6.4.13 in XSL 1.0
+        }
+        rv.setBPD((int)relRegionRect.getHeight());
+        rv.setIPD((int)relRegionRect.getWidth());
         setRegionViewportTraits(r, rv);
         return rv;
     }
@@ -878,6 +890,7 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
             Rectangle2D absRegVPRect) {
         // Should set some column stuff here I think, or put it elsewhere
         BodyRegion body = new BodyRegion();
+        body.addTrait(Trait.IS_REFERENCE_AREA, Boolean.TRUE);
         setRegionPosition(r, body, absRegVPRect);
         int columnCount = r.getColumnCount();
         if ((columnCount > 1) && (r.getOverflow() == EN_SCROLL)) {
@@ -904,6 +917,7 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
     private RegionReference makeRegionReferenceArea(Region r,
             Rectangle2D absRegVPRect) {
         RegionReference rr = new RegionReference(r.getNameId());
+        rr.addTrait(Trait.IS_REFERENCE_AREA, Boolean.TRUE);
         setRegionPosition(r, rr, absRegVPRect);
         return rr;
     }
