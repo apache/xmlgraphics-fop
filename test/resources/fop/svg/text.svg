@@ -90,7 +90,7 @@
 <line x1="30" y1="80" x2="100" y2="80"/>
 <line x1="50" y1="100" x2="80" y2="100"/>
 </g>
-</g> 
+</g>
   </glyph>
 
  <glyph unicode="P" glyph-name="p" horiz-adv-x="210">
@@ -103,7 +103,7 @@
 <line x1="5" y1="85" x2="40" y2="85"/>
 <line x1="5" y1="110" x2="40" y2="110"/>
 </g>
-</g> 
+</g>
   </glyph>
 
     <hkern g1="F"  g2="O"  k="5"/>

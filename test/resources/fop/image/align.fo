@@ -21,9 +21,9 @@
 <fo:page-sequence id="N2528" master-reference="left">
 
 <fo:static-content flow-name="xsl-region-after">
-	<fo:block text-align-last="center" font-size="10pt">
-		<fo:page-number/>
-	</fo:block>
+  <fo:block text-align-last="center" font-size="10pt">
+    <fo:page-number/>
+  </fo:block>
 </fo:static-content>
 
 <fo:flow flow-name="xsl-region-body">

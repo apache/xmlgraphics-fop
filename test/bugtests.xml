@@ -2,7 +2,7 @@
 <!DOCTYPE testsuite  SYSTEM "testsuite.dtd">
 <testsuite profile="Basic Conformance Tests">
   <testcases profile="Characters">
-    <testcases profile="sizes" > 
+    <testcases profile="sizes" >
       <test id="1" interaction="none" fo="block" xml="xml/bugtests/charwidth.fo" xsl="xsl/copy.xsl" level="basic">
 Checks the width of all the defined characters
       </test>
@@ -50,22 +50,22 @@ Nested lists used to show that the indentation is correct for lists inside lists
       </testresult>
       <test id="bbo1b1" interaction="none" fo="list" xml="xml/bugtests/block.fo" xsl="xsl/copy.xsl" level="basic">
 
-      </test>  
-      <testresult id="bbo1b1" agreement="issues">  
+      </test>
+      <testresult id="bbo1b1" agreement="issues">
       </testresult>
       <test id="bbo1b1" interaction="none" fo="list" xml="xml/bugtests/border.fo" xsl="xsl/copy.xsl" level="basic">
 
-      </test>  
-      <testresult id="bbo1b1" agreement="issues">  
+      </test>
+      <testresult id="bbo1b1" agreement="issues">
       </testresult>
       <test id="bbo1b1" interaction="none" fo="list" xml="xml/bugtests/break-before.fo" xsl="xsl/copy.xsl" level="basic">
 
-      </test>      
-      <testresult id="bbo1b1" agreement="issues">      
+      </test>
+      <testresult id="bbo1b1" agreement="issues">
       </testresult>
       <test id="bbo1b1" interaction="none" fo="list" xml="xml/bugtests/color.fo" xsl="xsl/copy.xsl" level="basic">
 
-      </test>          
+      </test>
       <testresult id="bbo1b1" agreement="issues">
       </testresult>
       <test id="bbo1b1" interaction="none" fo="list" xml="xml/bugtests/external-graphic.fo" xsl="xsl/copy.xsl" level="basic">
