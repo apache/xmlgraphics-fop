@@ -1073,7 +1073,6 @@ public class SVGRenderer {
         SVGMatrix transform = null;
         if(an != null)
             transform = an.getBaseVal().consolidate().getMatrix();
-        System.out.println("gt: " + transform);
         Vector theCoords = null;
         if (gradUnits == SVGUnitTypes.SVG_UNIT_TYPE_UNKNOWN)
             gradUnits = linear.getGradientUnits().getBaseVal();
@@ -1088,15 +1087,17 @@ public class SVGRenderer {
                 x2 = ax2.getBaseVal().getValue();
                 y2 = -ay2.getBaseVal().getValue();
                 SVGMatrix matrix = tf.getScreenCTM();
+                if(transform != null)
+                    matrix = matrix.multiply(transform);
                 double oldx = x1;
-                x1 = matrix.getA() * x1 + matrix.getB() * y1 +
+                x1 = matrix.getA() * x1 + matrix.getC() * y1 +
                      matrix.getE();
-                y1 = matrix.getC() * oldx + matrix.getD() * y1 +
+                y1 = matrix.getB() * oldx + matrix.getD() * y1 -
                      matrix.getF();
                 oldx = x2;
-                x2 = matrix.getA() * x2 + matrix.getB() * y2 +
+                x2 = matrix.getA() * x2 + matrix.getC() * y2 +
                      matrix.getE();
-                y2 = matrix.getC() * oldx + matrix.getD() * y2 +
+                y2 = matrix.getB() * oldx + matrix.getD() * y2 -
                      matrix.getF();
                 theCoords = new Vector();
                 if (spread == SVGGradientElement.SVG_SPREADMETHOD_REFLECT) {
@@ -1106,11 +1107,11 @@ public class SVGRenderer {
                     theCoords.addElement(
                       new Double(currentXPosition / 1000f + x1));
                     theCoords.addElement(
-                      new Double(currentYPosition / 1000f - y1));
+                      new Double(currentYPosition / 1000f + y1));
                     theCoords.addElement(
                       new Double(currentXPosition / 1000f + x2));
                     theCoords.addElement(
-                      new Double(currentYPosition / 1000f - y2));
+                      new Double(currentYPosition / 1000f + y2));
                 }
             }
         } else if (area instanceof GraphicElement) {
@@ -2193,7 +2194,7 @@ public class SVGRenderer {
                         inbetween = true;
                         addedspace = false;
                         break;
-                    case '	':
+                    case '\t':
                     case ' ':
                         if (spacing) {
                             pdf = pdf.append(' ');
@@ -2494,7 +2495,7 @@ public class SVGRenderer {
                                     inbetween = true;
                                     addedspace = false;
                                     break;
-                                case '	':
+                                case '\t':
                                 case ' ':
                                     if (spacing) {
                                         currentX = xpos + fs.width(' ') /
