@@ -200,14 +200,15 @@ public class TTFFile {
                         lastChar = (short) j;
 
                     if (mtxPtr < mtx_tab.length) {
+                        int glyphIdx;
                         if (cmap_rangeOffsets[i] != 0) {
                             int glyphOffset = glyphIdArrayOffset +
                                               ((cmap_rangeOffsets[i] / 2) +
                                                (j - cmap_startCounts[i]) + (i) -
                                                cmap_segCountX2 / 2) * 2;
                             in.seek_set(glyphOffset);
-                            int glyphIdx = (in.readTTFUShort() +
-                                            cmap_deltas[i]) & 0xffff;
+                            glyphIdx = (in.readTTFUShort() +
+                                        cmap_deltas[i]) & 0xffff;
 
                             unicodeMapping.addElement(
                               new UnicodeMapping(glyphIdx, j));
@@ -254,7 +255,7 @@ public class TTFFile {
                         }
                         else {
 
-                            int glyphIdx = (j + cmap_deltas[i]) & 0xffff;
+                            glyphIdx = (j + cmap_deltas[i]) & 0xffff;
 
                             if (glyphIdx < mtx_tab.length)
                                 mtx_tab[glyphIdx] .unicodeIndex.addElement(
@@ -308,7 +309,11 @@ public class TTFFile {
                                 mtx_tab[(j+cmap_deltas[i]) & 0xffff].name);
                               */
                         }
-                        mtxPtr++;
+                        if (glyphIdx < mtx_tab.length) {
+                            if (mtx_tab[glyphIdx].unicodeIndex.size() < 2) {
+                                mtxPtr++;
+                            }
+                        }
                     }
                 }
             }
