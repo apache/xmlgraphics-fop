@@ -8,6 +8,16 @@
     </header>
 
     <body>
+    <section id="build">
+      <title>"Build" Testing</title>
+      <p>Apache projects use an automated build tool called "gump" to create nightly builds from the CVS repository. Gump sends "nag" messages if the build fails. This can be considered a sort of basic test of the build process. To view the most recent logs of the gump builds:</p>
+      <ul>
+        <li><link href="http://gump.cocoondev.org/xml-fop.html">Gump build for the Trunk</link></li>
+        <li><link href="http://gump.cocoondev.org/xml-fop-maintenance.html">Gump build for the Maintenance Branch</link></li>
+      </ul>
+    </section>
+<section id="functional">
+  <title>Functional Testing</title>
   <section>
     <title>Running and Using Tests</title>
     <p>
@@ -103,6 +113,7 @@ accuracy by using the transcoding mechanism via Batik. So that the only part tha
 testing is how the SVG image is embedded inside the flow of the fo document.
     </p>
   </section>
+</section>
 </body>
 </document>
 
