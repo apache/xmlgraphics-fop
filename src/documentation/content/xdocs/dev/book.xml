@@ -31,7 +31,6 @@
     </menu>
     <menu label="Resources">
       <menu-item label="FAQs" href="faq.html"/>
-      <menu-item label="Examples" href="examples.html"/>
       <menu-item label="Tools" href="tools.html"/>
       <external label="ViewCVS" href="http://cvs.apache.org/viewcvs.cgi/xml-fop"/>
     </menu>
