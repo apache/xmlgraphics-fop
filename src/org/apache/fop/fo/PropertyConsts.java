@@ -427,20 +427,20 @@ public class PropertyConsts {
     /**
      * An array of <tt>Method</tt> objects.  This array holds, for each
      * property, the <tt>method</tt> object corresponding to the
-     * <em>verifyParsing</em> method of the property's class.<br/>
-     * <em>verifyParsing</em> methods defined in individual properties
+     * <em>refineParsing</em> method of the property's class.<br/>
+     * <em>refineParsing</em> methods defined in individual properties
      * shadow the method in the <em>Properties</em> class.
      */
-    private static final Method[] verifyparsingmethods;
+    private static final Method[] refineparsingmethods;
 
     /**
-     * An unmodifiable List of the property <i>verifyParsing</i> methods.
-     * This random access list is derived from <i>verifyparsingmethods</i>,
+     * An unmodifiable List of the property <i>refineParsing</i> methods.
+     * This random access list is derived from <i>refineparsingmethods</i>,
      * above.
      * It can be indexed by the property name constants defined in
      * the PropNames class.
      */
-    public static final List verifyParsingMethods;
+    public static final List refineParsingMethods;
 
     /**
      * A <tt>HashMap</tt> of <tt>Method</tt> objects.  It contains the
@@ -469,7 +469,7 @@ public class PropertyConsts {
         traitMappings        = new int[PropNames.LAST_PROPERTY_INDEX + 1];
         datatypes            = new int[PropNames.LAST_PROPERTY_INDEX + 1];
         classes              = new Class[PropNames.LAST_PROPERTY_INDEX + 1];
-        verifyparsingmethods = new Method[PropNames.LAST_PROPERTY_INDEX + 1];
+        refineparsingmethods = new Method[PropNames.LAST_PROPERTY_INDEX + 1];
         mappednummethods     = new HashMap();
 
         for (int i = 0; i <= PropNames.LAST_PROPERTY_INDEX; i++) {
@@ -537,9 +537,9 @@ public class PropertyConsts {
                 traitMappings[i] =
                 classes[i].getField("traitMapping").getInt(null);
                 datatypes[i] = classes[i].getField("dataTypes").getInt(null);
-                verifyparsingmethods[i] =
+                refineparsingmethods[i] =
                             classes[i].getMethod
-                                        ("verifyParsing", new Class[]
+                                        ("refineParsing", new Class[]
                                             {org.apache.fop.fo.FOTree.class,
                                                      PropertyValue.class});
                 if ((datatypes[i] & Properties.MAPPED_NUMERIC) != 0)
@@ -571,8 +571,8 @@ public class PropertyConsts {
                                         (Arrays.asList(classes));
         inherited            = new ROIntArray(inherit);
         dataTypes            = new ROIntArray(datatypes);
-        verifyParsingMethods = Collections.unmodifiableList
-                                    (Arrays.asList(verifyparsingmethods));
+        refineParsingMethods = Collections.unmodifiableList
+                                    (Arrays.asList(refineparsingmethods));
         mappedNumMethods     = Collections.unmodifiableMap(mappednummethods);
 
     }
