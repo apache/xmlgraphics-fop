@@ -10,6 +10,7 @@ package org.apache.fop.layoutmgr;
 
 import org.apache.fop.area.Area;
 import org.apache.fop.area.MinOptMax;
+import org.apache.fop.area.Resolveable;
 
 import java.util.ArrayList;
 
@@ -77,10 +78,6 @@ public class ContentLayoutManager implements LayoutManager {
     public void setParentLM(LayoutManager lm) {
     }
 
-    public int getContentIPD() {
-        return 10000000;
-    }
-
     public boolean canBreakBefore(LayoutContext lc) {
         return false;
     }
@@ -107,6 +104,20 @@ public class ContentLayoutManager implements LayoutManager {
 
     public void getWordChars(StringBuffer sbChars, Position bp1,
                              Position bp2) {
+    }
+
+    public String getCurrentPageNumber() {
+        return "";
+    }
+
+    public String resolveRefID(String ref) {
+        return null;
+    }
+
+    public void addIDToPage(String id) {
+    }
+
+    public void addUnresolvedArea(String id, Resolveable res) {
     }
 }
 

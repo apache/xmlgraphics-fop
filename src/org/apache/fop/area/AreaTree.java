@@ -60,6 +60,32 @@ public class AreaTree {
         model.addPage(page);
     }
 
+    public void addIDRef(String id, PageViewport pv) {
+        ArrayList list = (ArrayList)idLocations.get(id);
+        if(list == null) {
+            list = new ArrayList();
+            idLocations.put(id, list);
+        }
+        list.add(pv);
+
+        ArrayList todo = (ArrayList)resolve.get(id);
+        if(todo != null) {
+            for(int count = 0; count < todo.size(); count++) {
+                Resolveable res = (Resolveable)todo.get(count);
+                res.resolve(id, list);
+            }
+        }
+    }
+
+    public void addUnresolvedID(String id, Resolveable res) {
+        ArrayList todo = (ArrayList)resolve.get(id);
+        if(todo == null) {
+            todo = new ArrayList();
+            resolve.put(id, todo);
+        }
+        todo.add(res);
+    }
+
     public void addTreeExtension(TreeExt ext) {
         treeExtensions.add(ext);
         if(ext.isResolveable()) {
@@ -72,11 +98,9 @@ public class AreaTree {
                     ArrayList todo = (ArrayList)resolve.get(ids[count]);
                     if(todo == null) {
                         todo = new ArrayList();
-                        todo.add(ext);
                         resolve.put(ids[count], todo);
-                    } else {
-                        todo.add(ext);
                     }
+                    todo.add(ext);
                 }
             }
         }

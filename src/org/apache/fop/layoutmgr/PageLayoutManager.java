@@ -60,6 +60,8 @@ public class PageLayoutManager extends AbstractLayoutManager implements Runnable
     private AreaTree areaTree;
     private PageSequence pageSequence;
 
+    private int pageCount = 0;
+
     /**
      * This is the top level layout manager.
      * It is created by the PageSequence FO.
@@ -96,6 +98,7 @@ public class PageLayoutManager extends AbstractLayoutManager implements Runnable
         BreakPoss bp;
         LayoutContext childLC = new LayoutContext(0);
         while (!isFinished()) {
+            pageCount++;
             if ((bp = getNextBreakPoss(childLC)) != null) {
                 addAreas((BlockBreakPosition)bp.getPosition());
                 // add static areas and resolve any new id areas
@@ -131,11 +134,28 @@ public class PageLayoutManager extends AbstractLayoutManager implements Runnable
         return null;
     }
 
+    public String getCurrentPageNumber() {
+        return "" + pageCount;
+    }
+
+    public String resolveRefID(String ref) {
+        return null;
+    }
+
     public void addAreas(BlockBreakPosition bbp) {
         List list = new ArrayList();
         list.add(bbp.breakps);
         bbp.getLM().addAreas( new BreakPossPosIter(list, 0,
                               1), null);
+    }
+
+    public void addIDToPage(String id) {
+        areaTree.addIDRef(id, curPage);
+    }
+
+    public void addUnresolvedArea(String id, Resolveable res) {
+        // add unresolved to tree
+        areaTree.addUnresolvedID(id, res);
     }
 
     /**
@@ -214,6 +234,8 @@ public class PageLayoutManager extends AbstractLayoutManager implements Runnable
         } catch (FOPException fopex) { /* ???? */
             fopex.printStackTrace();
         }
+
+        curPage.setPageNumber(getCurrentPageNumber());
         RegionViewport reg = curPage.getPage().getRegion(
                     RegionReference.BODY);
         curBody = (BodyRegion) reg.getRegion();

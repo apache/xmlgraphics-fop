@@ -20,6 +20,7 @@ import org.apache.fop.area.Area;
 import org.apache.fop.area.LineArea;
 import org.apache.fop.area.MinOptMax;
 import org.apache.fop.area.inline.InlineArea;
+import org.apache.fop.area.Resolveable;
 import org.apache.fop.fo.properties.TextAlign;
 
 import org.apache.fop.area.inline.Word;
@@ -567,6 +568,13 @@ if(lc.getTrailingSpace() != null) {
             parentLM.addChild(lineArea);
         }
         setCurrentArea(null); // ?? necessary
+    }
+
+    public void addUnresolvedArea(String id, Resolveable res) {
+        // create a resolveable class that handles ipd
+        // adjustment for the current line
+
+        parentLM.addUnresolvedArea(id, res);
     }
 
 }

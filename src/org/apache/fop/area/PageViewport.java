@@ -18,11 +18,7 @@ public class PageViewport implements Cloneable {
     Page page;
     Rectangle2D viewArea;
     boolean clip = false;
-
-    public PageViewport(Page p, Rectangle2D bounds) {
-        page = p;
-        viewArea = bounds;
-    }
+    String pageNumber = null;
 
     // this list is only used when the page is discarded
     // the information is kept for future reference
@@ -32,6 +28,11 @@ public class PageViewport implements Cloneable {
     // once the thing is resolved it is removed
     // when this is empty the page can be rendered
     ArrayList unresolved = null;
+
+    public PageViewport(Page p, Rectangle2D bounds) {
+        page = p;
+        viewArea = bounds;
+    }
 
     public void setClip(boolean c) {
         clip = c;
@@ -44,6 +45,14 @@ public class PageViewport implements Cloneable {
     // a viewport area for page and reference areas
     public Page getPage() {
         return page;
+    }
+
+    public void setPageNumber(String num) {
+        pageNumber = num;
+    }
+
+    public String getPageNumber() {
+        return pageNumber;
     }
 
     public void savePage(ObjectOutputStream out) throws Exception {

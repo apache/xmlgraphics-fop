@@ -19,7 +19,7 @@ public class TextState {
     protected boolean overlined;
     protected boolean linethrough;
 
-    public TextState() throws FOPException {}
+    public TextState() {}
 
     /**
      * @return true if text should be underlined
