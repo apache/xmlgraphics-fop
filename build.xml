@@ -675,7 +675,7 @@ list of possible build targets.
     <mkdir dir="${build.dir}/test-reports/fop-transcoder"/>
     <junit haltonerror="yes">
       <sysproperty key="basedir" value="${basedir}"/>
-      <formatter type="plain"/>
+      <formatter type="brief" usefile="false"/>
       <classpath>
         <pathelement location="${build.dir}/test-classes"/>
         <path refid="libs-basic-run-classpath"/>
@@ -693,7 +693,7 @@ list of possible build targets.
     <mkdir dir="${build.dir}/test-reports/fop-transcoder-allinone"/>
     <junit haltonerror="yes">
       <sysproperty key="basedir" value="${basedir}"/>
-      <formatter type="plain"/>
+      <formatter type="brief" usefile="false"/>
       <classpath>
         <pathelement location="${build.dir}/test-classes"/>
         <fileset dir="build">
@@ -713,7 +713,7 @@ list of possible build targets.
     <mkdir dir="${build.dir}/test-reports/fop"/>
     <junit haltonerror="yes">
       <sysproperty key="basedir" value="${basedir}"/>
-      <formatter type="plain"/>
+      <formatter type="brief" usefile="false"/>
       <classpath>
         <pathelement location="${build.dir}/test-classes"/>
         <path refid="libs-build-classpath"/>
