@@ -1,10 +1,10 @@
 ==============================================================================
 Done since 0.20.2 release
 *** General
-- Added correct metrics for euro sign i standard fonts
+- Added correct metrics for euro sign in standard fonts
   (bug 2105 and bug 4654)
   Submitted by: Rainer Garus <rainer.garus@nexgo.de>
-- Fix problem with computing remaining with i LineArea where start-indent <> 0
+- Fixed problem with computing remaining with in LineArea where start-indent <> 0
   (bug 4839)
   Submitted by: Rainer Garus <rainer.garus@nexgo.de>
 - Support for CMYK and embedded ICC profiles in jpeg images (Tore Engvig)
