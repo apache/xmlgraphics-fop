@@ -1,13 +1,61 @@
 /*
  * $Id$
- * Copyright (C) 2001 The Apache Software Foundation. All rights reserved.
- * For details on use and redistribution please refer to the
- * LICENSE file included with these sources.
- */
-
+ * ============================================================================
+ *                    The Apache Software License, Version 1.1
+ * ============================================================================
+ * 
+ * Copyright (C) 1999-2003 The Apache Software Foundation. All rights reserved.
+ * 
+ * Redistribution and use in source and binary forms, with or without modifica-
+ * tion, are permitted provided that the following conditions are met:
+ * 
+ * 1. Redistributions of source code must retain the above copyright notice,
+ *    this list of conditions and the following disclaimer.
+ * 
+ * 2. Redistributions in binary form must reproduce the above copyright notice,
+ *    this list of conditions and the following disclaimer in the documentation
+ *    and/or other materials provided with the distribution.
+ * 
+ * 3. The end-user documentation included with the redistribution, if any, must
+ *    include the following acknowledgment: "This product includes software
+ *    developed by the Apache Software Foundation (http://www.apache.org/)."
+ *    Alternately, this acknowledgment may appear in the software itself, if
+ *    and wherever such third-party acknowledgments normally appear.
+ * 
+ * 4. The names "FOP" and "Apache Software Foundation" must not be used to
+ *    endorse or promote products derived from this software without prior
+ *    written permission. For written permission, please contact
+ *    apache@apache.org.
+ * 
+ * 5. Products derived from this software may not be called "Apache", nor may
+ *    "Apache" appear in their name, without prior written permission of the
+ *    Apache Software Foundation.
+ * 
+ * THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESSED OR IMPLIED WARRANTIES,
+ * INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND
+ * FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
+ * APACHE SOFTWARE FOUNDATION OR ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
+ * INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLU-
+ * DING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS
+ * OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON
+ * ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
+ * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ * ============================================================================
+ * 
+ * This software consists of voluntary contributions made by many individuals
+ * on behalf of the Apache Software Foundation and was originally created by
+ * James Tauber <jtauber@jtauber.com>. For more information on the Apache
+ * Software Foundation, please see <http://www.apache.org/>.
+ */ 
 package org.apache.fop.layout.hyphenation;
 
-import java.io.*;
+import java.io.BufferedInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.ObjectInputStream;
 import java.util.Hashtable;
 
 /**
@@ -17,7 +65,9 @@ import java.util.Hashtable;
  * @author Carlos Villegas <cav@uniscope.co.jp>
  */
 public class Hyphenator {
-    static Hashtable hyphenTrees = new Hashtable();
+    
+    /**@todo Don't use statics */
+    private static Hashtable hyphenTrees = new Hashtable();
 
     private HyphenationTree hyphenTree = null;
     private int remainCharCount = 2;
@@ -35,13 +85,16 @@ public class Hyphenator {
             String country) {
         String key = lang;
         // check whether the country code has been used
-        if (country != null &&!country.equals("none"))
+        if (country != null && !country.equals("none")) {
             key += "_" + country;
-            // first try to find it in the cache
-        if (hyphenTrees.containsKey(key))
+        }
+        // first try to find it in the cache
+        if (hyphenTrees.containsKey(key)) {
             return (HyphenationTree)hyphenTrees.get(key);
-        if (hyphenTrees.containsKey(lang))
+        }
+        if (hyphenTrees.containsKey(lang)) {
             return (HyphenationTree)hyphenTrees.get(lang);
+        }
 
         HyphenationTree hTree = getFopHyphenationTree(key);
         if (hTree == null) {
@@ -54,6 +107,7 @@ public class Hyphenator {
         if (hTree != null) {
             hyphenTrees.put(key, hTree);
         } else {
+            /**@todo Proper logging please */
             //log.error("Couldn't find hyphenation pattern "
             //                       + key);
         }
@@ -73,7 +127,9 @@ public class Hyphenator {
                 is = contextClassLoader.getResourceAsStream("hyph/" + key
                                                             + ".hyp");
             }
-        } catch (Exception e) {}
+        } catch (Exception e) {
+            //ignore, fallback further down
+        }
 
         if (is == null) {
             is = Hyphenator.class.getResourceAsStream("/hyph/" + key
@@ -118,9 +174,9 @@ public class Hyphenator {
             ois = new ObjectInputStream(is);
             hTree = (HyphenationTree)ois.readObject();
         } catch (Exception e) {
+            /**@todo proper logging please */
             e.printStackTrace();
-        }
-        finally {
+        } finally {
             if (ois != null) {
                 try {
                     ois.close();
@@ -149,16 +205,19 @@ public class Hyphenator {
         if (hyphenFile.exists()) {
             ObjectInputStream ois = null;
             try {
-                ois = new ObjectInputStream(new BufferedInputStream(new FileInputStream(hyphenFile)));
+                ois = new ObjectInputStream(new BufferedInputStream(
+                            new FileInputStream(hyphenFile)));
                 hTree = (HyphenationTree)ois.readObject();
             } catch (Exception e) {
+                /**@todo Proper logging please */
                 e.printStackTrace();
-            }
-            finally {
+            } finally {
                 if (ois != null) {
                     try {
                         ois.close();
-                    } catch (IOException e) {}
+                    } catch (IOException e) {
+                        //ignore
+                    }
                 }
             }
             return hTree;
@@ -236,15 +295,17 @@ public class Hyphenator {
     }
 
     public Hyphenation hyphenate(char[] word, int offset, int len) {
-        if (hyphenTree == null)
+        if (hyphenTree == null) {
             return null;
+        }
         return hyphenTree.hyphenate(word, offset, len, remainCharCount,
                                     pushCharCount);
     }
 
     public Hyphenation hyphenate(String word) {
-        if (hyphenTree == null)
+        if (hyphenTree == null) {
             return null;
+        }
         return hyphenTree.hyphenate(word, remainCharCount, pushCharCount);
     }
 
