@@ -85,6 +85,8 @@ import org.apache.avalon.framework.logger.Logger;
  * <li>format -> MIME type of the format to generate ex. "application/pdf"</li>
  * <li>outfile -> output filename</li>
  * <li>baseDir -> directory to work from</li>
+ * <li>relativebase -> (true | false) control whether to use each FO's 
+ *      directory as base directory. false uses the baseDir parameter.</li>
  * <li>userconfig -> file with user configuration (same as the "-c" command
  *      line option)</li>
  * <li>messagelevel -> (error | warn | info | verbose | debug) level to output
@@ -105,6 +107,7 @@ public class Fop extends Task {
     private int messageType = Project.MSG_VERBOSE;
     private boolean logFiles = true;
     private boolean force = false;
+    private boolean relativebase = false;
 
     /**
      * Sets the filename for the userconfig.xml.
@@ -152,6 +155,25 @@ public class Fop extends Task {
      */
     public List getFilesets() {
         return this.filesets;
+    }
+
+    /**
+     * Set whether to include files (external-grpahics, instream-foreign-object)
+     * from a path relative to the .fo file (true) or the working directory (false, default)
+     * only useful for filesets
+     *
+     * @param relbase true if paths are relative to file.
+     */
+    public void setRelativebase(boolean relbase) {
+        this.relativebase = relbase;
+    }
+    
+    /**
+     * Gets the relative base attribute
+     * @return the relative base attribute
+     */
+    public boolean getRelativebase() {
+        return relativebase;
     }
 
     /**
@@ -429,7 +451,6 @@ class FOPTaskStarter extends AbstractLogEnabled {
                 if (task.getOutdir() != null) {
                     outf = new File(task.getOutdir(), outf.getName());
                 }
-                
                 // Render if "force" flag is set OR 
                 // OR output file doesn't exist OR
                 // output file is older than input file
@@ -437,7 +458,8 @@ class FOPTaskStarter extends AbstractLogEnabled {
                     || (task.getFofile().lastModified() > outf.lastModified() )) {
                     render(task.getFofile(), outf, rint);
                     actioncount++;
-                } else if (outf.exists() && (task.getFofile().lastModified() <= outf.lastModified() )) {
+                } else if (outf.exists() 
+                        && (task.getFofile().lastModified() <= outf.lastModified() )) {
                     skippedcount++;
                 }
             }
@@ -468,6 +490,10 @@ class FOPTaskStarter extends AbstractLogEnabled {
                 }
 
                 try {
+                    if (task.getRelativebase()) {
+                        this.baseURL = f.getParentFile().toURL().
+                                         toExternalForm();
+                    }
                     if (this.baseURL == null) {
                         this.baseURL = fs.getDir(task.getProject()).toURL().
                                           toExternalForm();
