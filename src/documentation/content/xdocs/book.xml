@@ -34,7 +34,7 @@
           <menu-item label="Compliance" href="compliance.html"/>
           <menu-item label="Output Targets" href="output.html"/>
           <menu-item label="PDF encryption" href="pdfencryption.html"/>
-          <menu-item label="Graphic Formats" href="svg.html"/>
+          <menu-item label="Graphics" href="graphics.html"/>
           <menu-item label="Fonts" href="fonts.html"/>
           <menu-item label="Extensions" href="extensions.html"/>
         </menu>
