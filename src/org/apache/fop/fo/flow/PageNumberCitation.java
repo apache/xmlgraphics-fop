@@ -1,15 +1,59 @@
 /*
  * $Id$
- * Copyright (C) 2001 The Apache Software Foundation. All rights reserved.
- * For details on use and redistribution please refer to the
- * LICENSE file included with these sources.
- */
-
+ * ============================================================================
+ *                    The Apache Software License, Version 1.1
+ * ============================================================================
+ * 
+ * Copyright (C) 1999-2003 The Apache Software Foundation. All rights reserved.
+ * 
+ * Redistribution and use in source and binary forms, with or without modifica-
+ * tion, are permitted provided that the following conditions are met:
+ * 
+ * 1. Redistributions of source code must retain the above copyright notice,
+ *    this list of conditions and the following disclaimer.
+ * 
+ * 2. Redistributions in binary form must reproduce the above copyright notice,
+ *    this list of conditions and the following disclaimer in the documentation
+ *    and/or other materials provided with the distribution.
+ * 
+ * 3. The end-user documentation included with the redistribution, if any, must
+ *    include the following acknowledgment: "This product includes software
+ *    developed by the Apache Software Foundation (http://www.apache.org/)."
+ *    Alternately, this acknowledgment may appear in the software itself, if
+ *    and wherever such third-party acknowledgments normally appear.
+ * 
+ * 4. The names "FOP" and "Apache Software Foundation" must not be used to
+ *    endorse or promote products derived from this software without prior
+ *    written permission. For written permission, please contact
+ *    apache@apache.org.
+ * 
+ * 5. Products derived from this software may not be called "Apache", nor may
+ *    "Apache" appear in their name, without prior written permission of the
+ *    Apache Software Foundation.
+ * 
+ * THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESSED OR IMPLIED WARRANTIES,
+ * INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND
+ * FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
+ * APACHE SOFTWARE FOUNDATION OR ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
+ * INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLU-
+ * DING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS
+ * OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON
+ * ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
+ * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ * ============================================================================
+ * 
+ * This software consists of voluntary contributions made by many individuals
+ * on behalf of the Apache Software Foundation and was originally created by
+ * James Tauber <jtauber@jtauber.com>. For more information on the Apache
+ * Software Foundation, please see <http://www.apache.org/>.
+ */ 
 package org.apache.fop.fo.flow;
 
-// FOP
+// Java
 import java.util.List;
 
+// FOP
 import org.apache.fop.apps.StructureHandler;
 import org.apache.fop.area.PageViewport;
 import org.apache.fop.area.Resolveable;
@@ -46,16 +90,16 @@ public class PageNumberCitation extends FObj {
     protected FontInfo fontInfo = null;
     protected FontState fontState;
 
-    float red;
-    float green;
-    float blue;
-    int wrapOption;
-    int whiteSpaceCollapse;
-    String pageNumber;
-    String refId;
-    TextState ts;
-    InlineArea inline = null;
-    boolean unresolved = false;
+    private float red;
+    private float green;
+    private float blue;
+    private int wrapOption;
+    private int whiteSpaceCollapse;
+    private String pageNumber;
+    private String refId;
+    private TextState ts;
+    private InlineArea inline = null;
+    private boolean unresolved = false;
 
     public PageNumberCitation(FONode parent) {
         super(parent);
@@ -108,8 +152,8 @@ public class PageNumberCitation extends FObj {
             int width = getStringWidth(str);
             word.setWord(str);
             inline.setIPD(width);
-            inline.setHeight(fontState.getAscender() -
-                             fontState.getDescender());
+            inline.setHeight(fontState.getAscender()
+                             - fontState.getDescender());
             inline.setOffset(fontState.getAscender());
 
             inline.addTrait(Trait.FONT_NAME, fontState.getFontName());
@@ -122,8 +166,8 @@ public class PageNumberCitation extends FObj {
             String str = "MMM"; // reserve three spaces for page number
             int width = getStringWidth(str);
             inline.setIPD(width);
-            inline.setHeight(fontState.getAscender() -
-                             fontState.getDescender());
+            inline.setHeight(fontState.getAscender()
+                             - fontState.getDescender());
             inline.setOffset(fontState.getAscender());
 
             inline.addTrait(Trait.FONT_NAME, fontState.getFontName());
@@ -182,9 +226,9 @@ public class PageNumberCitation extends FObj {
         // this.properties.get("word-spacing");
 
         ColorType c = this.properties.get("color").getColorType();
-        this.red = c.red();
-        this.green = c.green();
-        this.blue = c.blue();
+        this.red = c.getRed();
+        this.green = c.getGreen();
+        this.blue = c.getBlue();
 
         this.wrapOption = this.properties.get("wrap-option").getEnum();
         this.whiteSpaceCollapse =

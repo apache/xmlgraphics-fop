@@ -1066,7 +1066,7 @@ public class PDFRenderer extends PrintRenderer {
     }
 
     private void updateColor(ColorType col, boolean fill, StringBuffer pdf) {
-        Color newCol = new Color(col.red(), col.green(), col.blue());
+        Color newCol = new Color(col.getRed(), col.getGreen(), col.getBlue());
         boolean update = false;
         if (fill) {
             update = currentState.setBackColor(newCol);
@@ -1075,9 +1075,9 @@ public class PDFRenderer extends PrintRenderer {
         }
 
         if (update) {
-            PDFColor color = new PDFColor((double)col.red(),
-                                     (double)col.green(),
-                                     (double)col.blue());
+            PDFColor color = new PDFColor((double)col.getRed(),
+                                     (double)col.getGreen(),
+                                     (double)col.getBlue());
 
             closeText();
 

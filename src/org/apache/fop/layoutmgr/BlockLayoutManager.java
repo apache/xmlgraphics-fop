@@ -1,11 +1,58 @@
 /*
  * $Id$
- * Copyright (C) 2002 The Apache Software Foundation. All rights reserved.
- * For details on use and redistribution please refer to the
- * LICENSE file included with these sources.
- */
-
+ * ============================================================================
+ *                    The Apache Software License, Version 1.1
+ * ============================================================================
+ * 
+ * Copyright (C) 1999-2003 The Apache Software Foundation. All rights reserved.
+ * 
+ * Redistribution and use in source and binary forms, with or without modifica-
+ * tion, are permitted provided that the following conditions are met:
+ * 
+ * 1. Redistributions of source code must retain the above copyright notice,
+ *    this list of conditions and the following disclaimer.
+ * 
+ * 2. Redistributions in binary form must reproduce the above copyright notice,
+ *    this list of conditions and the following disclaimer in the documentation
+ *    and/or other materials provided with the distribution.
+ * 
+ * 3. The end-user documentation included with the redistribution, if any, must
+ *    include the following acknowledgment: "This product includes software
+ *    developed by the Apache Software Foundation (http://www.apache.org/)."
+ *    Alternately, this acknowledgment may appear in the software itself, if
+ *    and wherever such third-party acknowledgments normally appear.
+ * 
+ * 4. The names "FOP" and "Apache Software Foundation" must not be used to
+ *    endorse or promote products derived from this software without prior
+ *    written permission. For written permission, please contact
+ *    apache@apache.org.
+ * 
+ * 5. Products derived from this software may not be called "Apache", nor may
+ *    "Apache" appear in their name, without prior written permission of the
+ *    Apache Software Foundation.
+ * 
+ * THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESSED OR IMPLIED WARRANTIES,
+ * INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND
+ * FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
+ * APACHE SOFTWARE FOUNDATION OR ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
+ * INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLU-
+ * DING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS
+ * OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON
+ * ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
+ * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ * ============================================================================
+ * 
+ * This software consists of voluntary contributions made by many individuals
+ * on behalf of the Apache Software Foundation and was originally created by
+ * James Tauber <jtauber@jtauber.com>. For more information on the Apache
+ * Software Foundation, please see <http://www.apache.org/>.
+ */ 
 package org.apache.fop.layoutmgr;
+
+import java.util.ListIterator;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.TextInfo;
@@ -17,10 +64,6 @@ import org.apache.fop.traits.LayoutProps;
 import org.apache.fop.layout.BorderAndPadding;
 import org.apache.fop.layout.BackgroundProps;
 
-import java.util.ListIterator;
-import java.util.ArrayList;
-import java.util.List;
-
 /**
  * LayoutManager for a block FO.
  */
@@ -28,17 +71,17 @@ public class BlockLayoutManager extends BlockStackingLayoutManager {
 
     private Block curBlockArea;
 
-    LayoutProps layoutProps;
-    BorderAndPadding borderProps;
-    BackgroundProps backgroundProps;
+    private LayoutProps layoutProps;
+    private BorderAndPadding borderProps;
+    private BackgroundProps backgroundProps;
 
-    int lead = 12000;
-    int lineHeight = 14000;
-    int follow = 2000;
+    private int lead = 12000;
+    private int lineHeight = 14000;
+    private int follow = 2000;
 
-    int iStartPos = 0;
+    private int iStartPos = 0;
 
-    protected List childBreaks = new ArrayList();
+    protected List childBreaks = new java.util.ArrayList();
 
     /**
      * Iterator for Block layout.
@@ -59,7 +102,7 @@ public class BlockLayoutManager extends BlockStackingLayoutManager {
             while (proxy.hasNext()) {
                 LayoutProcessor lm = (LayoutProcessor) proxy.next();
                 lm.setParent(BlockLayoutManager.this);
-                if(lm.generatesInlineAreas()) {
+                if (lm.generatesInlineAreas()) {
                     LineLayoutManager lineLM = createLineManager(lm);
                     listLMs.add(lineLM);
                 } else {
@@ -134,7 +177,7 @@ public class BlockLayoutManager extends BlockStackingLayoutManager {
 
         MinOptMax stackSize = new MinOptMax();
         // if starting add space before
-        stackSize.add(layoutProps.spaceBefore.space);
+        stackSize.add(layoutProps.spaceBefore.getSpace());
 
         BreakPoss lastPos = null;
 
@@ -191,10 +234,10 @@ public class BlockLayoutManager extends BlockStackingLayoutManager {
                     }
                 }
             }
-            if(getChildLM() == null || over) {
-                if(getChildLM() == null) {
+            if (getChildLM() == null || over) {
+                if (getChildLM() == null) {
                     setFinished(true);
-                    stackSize.add(layoutProps.spaceAfter.space);
+                    stackSize.add(layoutProps.spaceAfter.getSpace());
                 }
                 BreakPoss breakPoss = new BreakPoss(
                                     new LeafPosition(this, childBreaks.size() - 1));
@@ -217,7 +260,7 @@ public class BlockLayoutManager extends BlockStackingLayoutManager {
 
         // if adjusted space before
         double adjust = layoutContext.getSpaceAdjust();
-        addBlockSpacing(adjust, layoutProps.spaceBefore.space);
+        addBlockSpacing(adjust, layoutProps.spaceBefore.getSpace());
 
         addID();
         addMarkers(true, true);
@@ -247,7 +290,7 @@ public class BlockLayoutManager extends BlockStackingLayoutManager {
         flush();
 
         // if adjusted space after
-        addBlockSpacing(adjust, layoutProps.spaceAfter.space);
+        addBlockSpacing(adjust, layoutProps.spaceAfter.getSpace());
 
         curBlockArea = null;
     }

@@ -173,10 +173,10 @@ public class TraitSetter {
             back.setURL(backProps.backImage);
             back.setRepeat(backProps.backRepeat);
             if (backProps.backPosHorizontal != null) {
-                back.setHoriz(backProps.backPosHorizontal.mvalue());
+                back.setHoriz(backProps.backPosHorizontal.getValue());
             }
             if (backProps.backPosVertical != null) {
-                back.setVertical(backProps.backPosVertical.mvalue());
+                back.setVertical(backProps.backPosVertical.getValue());
             }
         }
 

@@ -1,15 +1,59 @@
 /*
  * $Id$
- * Copyright (C) 2001 The Apache Software Foundation. All rights reserved.
- * For details on use and redistribution please refer to the
- * LICENSE file included with these sources.
- */
-
+ * ============================================================================
+ *                    The Apache Software License, Version 1.1
+ * ============================================================================
+ * 
+ * Copyright (C) 1999-2003 The Apache Software Foundation. All rights reserved.
+ * 
+ * Redistribution and use in source and binary forms, with or without modifica-
+ * tion, are permitted provided that the following conditions are met:
+ * 
+ * 1. Redistributions of source code must retain the above copyright notice,
+ *    this list of conditions and the following disclaimer.
+ * 
+ * 2. Redistributions in binary form must reproduce the above copyright notice,
+ *    this list of conditions and the following disclaimer in the documentation
+ *    and/or other materials provided with the distribution.
+ * 
+ * 3. The end-user documentation included with the redistribution, if any, must
+ *    include the following acknowledgment: "This product includes software
+ *    developed by the Apache Software Foundation (http://www.apache.org/)."
+ *    Alternately, this acknowledgment may appear in the software itself, if
+ *    and wherever such third-party acknowledgments normally appear.
+ * 
+ * 4. The names "FOP" and "Apache Software Foundation" must not be used to
+ *    endorse or promote products derived from this software without prior
+ *    written permission. For written permission, please contact
+ *    apache@apache.org.
+ * 
+ * 5. Products derived from this software may not be called "Apache", nor may
+ *    "Apache" appear in their name, without prior written permission of the
+ *    Apache Software Foundation.
+ * 
+ * THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESSED OR IMPLIED WARRANTIES,
+ * INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND
+ * FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
+ * APACHE SOFTWARE FOUNDATION OR ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
+ * INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLU-
+ * DING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS
+ * OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON
+ * ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
+ * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ * ============================================================================
+ * 
+ * This software consists of voluntary contributions made by many individuals
+ * on behalf of the Apache Software Foundation and was originally created by
+ * James Tauber <jtauber@jtauber.com>. For more information on the Apache
+ * Software Foundation, please see <http://www.apache.org/>.
+ */ 
 package org.apache.fop.fo.flow;
 
-// FOP
+// Java
 import java.util.List;
 
+// FOP
 import org.apache.fop.apps.StructureHandler;
 import org.apache.fop.area.Trait;
 import org.apache.fop.area.inline.FilledArea;
@@ -78,7 +122,7 @@ public class Leader extends FObjMixed {
     }
 
     protected InlineArea getInlineArea() {
-        if(leaderArea == null) {
+        if (leaderArea == null) {
             createLeaderArea();
         }
         return leaderArea;
@@ -87,7 +131,7 @@ public class Leader extends FObjMixed {
     protected void createLeaderArea() {
         setup();
 
-        if(leaderPattern == LeaderPattern.RULE) {
+        if (leaderPattern == LeaderPattern.RULE) {
             org.apache.fop.area.inline.Leader leader = new org.apache.fop.area.inline.Leader();
 
             leader.setRuleStyle(ruleStyle);
@@ -96,7 +140,7 @@ public class Leader extends FObjMixed {
             leaderArea = leader;
         } else if (leaderPattern == LeaderPattern.SPACE) {
             leaderArea = new Space();
-        } else if(leaderPattern == LeaderPattern.DOTS) {
+        } else if (leaderPattern == LeaderPattern.DOTS) {
             Word w = new Word();
             char dot = '.'; // userAgent.getLeaderDotCharacter();
 
@@ -108,7 +152,7 @@ public class Leader extends FObjMixed {
             w.setOffset(fontState.getAscender());
             int width = CharUtilities.getCharWidth(dot, fontState);
             Space spacer = null;
-            if(patternWidth > width) {
+            if (patternWidth > width) {
                 spacer = new Space();
                 spacer.setWidth(patternWidth - width);
                 width = patternWidth;
@@ -116,13 +160,13 @@ public class Leader extends FObjMixed {
             FilledArea fa = new FilledArea();
             fa.setUnitWidth(width);
             fa.addChild(w);
-            if(spacer != null) {
+            if (spacer != null) {
                 fa.addChild(spacer);
             }
             fa.setHeight(fontState.getAscender());
 
             leaderArea = fa;
-        } else if(leaderPattern == LeaderPattern.USECONTENT) {
+        } else if (leaderPattern == LeaderPattern.USECONTENT) {
             if (children == null) {
                 getLogger().error("Leader use-content with no content");
                 return;
@@ -144,13 +188,13 @@ public class Leader extends FObjMixed {
             clm.fillArea(lm);
             int width = clm.getStackingSize();
             Space spacer = null;
-            if(patternWidth > width) {
+            if (patternWidth > width) {
                 spacer = new Space();
                 spacer.setWidth(patternWidth - width);
                 width = patternWidth;
             }
             fa.setUnitWidth(width);
-            if(spacer != null) {
+            if (spacer != null) {
                 fa.addChild(spacer);
             }
             leaderArea = fa;
@@ -207,9 +251,9 @@ public class Leader extends FObjMixed {
 
         // color properties
         ColorType c = this.properties.get("color").getColorType();
-        float red = c.red();
-        float green = c.green();
-        float blue = c.blue();
+        float red = c.getRed();
+        float green = c.getGreen();
+        float blue = c.getBlue();
 
         // fo:leader specific properties
         // determines the pattern of leader; allowed values: space, rule,dots, use-content
@@ -222,7 +266,7 @@ public class Leader extends FObjMixed {
                 // the following properties only apply
                 // for leader-pattern = "rule"
                 ruleThickness =
-                         properties.get("rule-thickness").getLength().mvalue();
+                         properties.get("rule-thickness").getLength().getValue();
                 ruleStyle = properties.get("rule-style").getEnum();
             break;
             case LeaderPattern.DOTS:
@@ -235,7 +279,7 @@ public class Leader extends FObjMixed {
 
         // if leaderPatternWidth = 0 = default = use-font-metric
         patternWidth =
-            this.properties.get("leader-pattern-width").getLength().mvalue();
+            this.properties.get("leader-pattern-width").getLength().getValue();
 
     }
 
@@ -251,11 +295,11 @@ public class Leader extends FObjMixed {
     protected int getLength(String prop, int dim) {
         int length;
         Length maxlength = properties.get(prop).getLength();
-        if(maxlength instanceof PercentLength) {
+        if (maxlength instanceof PercentLength) {
             length = (int)(((PercentLength)maxlength).value()
                                       * dim);
         } else {
-            length = maxlength.mvalue();
+            length = maxlength.getValue();
         }
         return length;
     }

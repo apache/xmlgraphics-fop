@@ -1,11 +1,56 @@
 /*
  * $Id$
- * Copyright (C) 2001 The Apache Software Foundation. All rights reserved.
- * For details on use and redistribution please refer to the
- * LICENSE file included with these sources.
- */
-
+ * ============================================================================
+ *                    The Apache Software License, Version 1.1
+ * ============================================================================
+ * 
+ * Copyright (C) 1999-2003 The Apache Software Foundation. All rights reserved.
+ * 
+ * Redistribution and use in source and binary forms, with or without modifica-
+ * tion, are permitted provided that the following conditions are met:
+ * 
+ * 1. Redistributions of source code must retain the above copyright notice,
+ *    this list of conditions and the following disclaimer.
+ * 
+ * 2. Redistributions in binary form must reproduce the above copyright notice,
+ *    this list of conditions and the following disclaimer in the documentation
+ *    and/or other materials provided with the distribution.
+ * 
+ * 3. The end-user documentation included with the redistribution, if any, must
+ *    include the following acknowledgment: "This product includes software
+ *    developed by the Apache Software Foundation (http://www.apache.org/)."
+ *    Alternately, this acknowledgment may appear in the software itself, if
+ *    and wherever such third-party acknowledgments normally appear.
+ * 
+ * 4. The names "FOP" and "Apache Software Foundation" must not be used to
+ *    endorse or promote products derived from this software without prior
+ *    written permission. For written permission, please contact
+ *    apache@apache.org.
+ * 
+ * 5. Products derived from this software may not be called "Apache", nor may
+ *    "Apache" appear in their name, without prior written permission of the
+ *    Apache Software Foundation.
+ * 
+ * THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESSED OR IMPLIED WARRANTIES,
+ * INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND
+ * FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
+ * APACHE SOFTWARE FOUNDATION OR ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
+ * INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLU-
+ * DING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS
+ * OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON
+ * ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
+ * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ * ============================================================================
+ * 
+ * This software consists of voluntary contributions made by many individuals
+ * on behalf of the Apache Software Foundation and was originally created by
+ * James Tauber <jtauber@jtauber.com>. For more information on the Apache
+ * Software Foundation, please see <http://www.apache.org/>.
+ */ 
 package org.apache.fop.layoutmgr;
+
+import java.util.ArrayList;
 
 import org.apache.fop.fo.TextInfo;
 import org.apache.fop.traits.SpaceVal;
@@ -14,8 +59,6 @@ import org.apache.fop.area.inline.InlineArea;
 import org.apache.fop.area.inline.Word;
 import org.apache.fop.area.inline.Space;
 import org.apache.fop.util.CharUtilities;
-
-import java.util.ArrayList;
 
 /**
  * LayoutManager for text (a sequence of characters) which generates one
@@ -30,11 +73,11 @@ public class TextLayoutManager extends AbstractLayoutManager {
      * Number of word-spaces?
      */
     private class AreaInfo {
-        short iStartIndex;
-        short iBreakIndex;
-        short iWScount;
-        MinOptMax ipdArea;
-        AreaInfo(short iSIndex, short iBIndex, short iWS,
+        private short iStartIndex;
+        private short iBreakIndex;
+        private short iWScount;
+        private MinOptMax ipdArea;
+        public AreaInfo(short iSIndex, short iBIndex, short iWS,
                  MinOptMax ipd) {
             iStartIndex = iSIndex;
             iBreakIndex = iBIndex;
@@ -48,7 +91,7 @@ public class TextLayoutManager extends AbstractLayoutManager {
     private ArrayList vecAreaInfo;
 
     /** Non-space characters on which we can end a line. */
-    private static final String s_breakChars = "-/" ;
+    private static final String BREAK_CHARS = "-/" ;
 
     private char[] chars;
     private TextInfo textInfo;
@@ -81,14 +124,13 @@ public class TextLayoutManager extends AbstractLayoutManager {
     /**
      * Create a Text layout manager.
      *
-     * @param fobj the fo object that contains the text
      * @param chars the characters
      * @param textInfo the text information for doing layout
      */
     public TextLayoutManager(char[] chars, TextInfo textInfo) {
         this.chars = chars;
         this.textInfo = textInfo;
-        this.vecAreaInfo = new ArrayList();
+        this.vecAreaInfo = new java.util.ArrayList();
 
         // With CID fonts, space isn't neccesary currentFontState.width(32)
         spaceCharIPD = CharUtilities.getCharWidth(' ', textInfo.fs);
@@ -96,8 +138,8 @@ public class TextLayoutManager extends AbstractLayoutManager {
         hyphIPD = CharUtilities.getCharWidth('-', textInfo.fs);
         // Make half-space: <space> on either side of a word-space)
         SpaceVal ws = textInfo.wordSpacing;
-        halfWS = new SpaceVal(MinOptMax.multiply(ws.space, 0.5),
-                                ws.bConditional, ws.bForcing, ws.iPrecedence);
+        halfWS = new SpaceVal(MinOptMax.multiply(ws.getSpace(), 0.5),
+                ws.isConditional(), ws.isForcing(), ws.getPrecedence());
     }
 
     /**
@@ -124,9 +166,11 @@ public class TextLayoutManager extends AbstractLayoutManager {
           (AreaInfo) vecAreaInfo.get(endPos.getLeafPos());
         // Skip all leading spaces for hyphenation
         int i;
-        for (i = ai.iStartIndex; i < ai.iBreakIndex &&
-                CharUtilities.isAnySpace(chars[i]) == true ; i++)
-            ;
+        for (i = ai.iStartIndex; 
+                i < ai.iBreakIndex && CharUtilities.isAnySpace(chars[i]) == true;
+                i++) {
+            //nop
+        }
         sbChars.append(new String(chars, i, ai.iBreakIndex - i));
     }
 
@@ -141,9 +185,9 @@ public class TextLayoutManager extends AbstractLayoutManager {
      */
     public boolean canBreakBefore(LayoutContext context) {
         char c = chars[iNextStart];
-        return ((c == NEWLINE) || (textInfo.bWrap &&
-                                   (CharUtilities.isSpace(c) ||
-                                    s_breakChars.indexOf(c) >= 0)));
+        return ((c == NEWLINE) 
+                || (textInfo.bWrap && (CharUtilities.isSpace(c) 
+                || BREAK_CHARS.indexOf(c) >= 0)));
     }
 
     /**
@@ -267,20 +311,21 @@ public class TextLayoutManager extends AbstractLayoutManager {
 
         for (; iNextStart < chars.length; iNextStart++) {
             char c = chars[iNextStart];
-            if (CharUtilities.isAnySpace(c) == false)
+            if (CharUtilities.isAnySpace(c) == false) {
                 break;
+            }
             if (c == SPACE || c == NBSPACE) {
                 ++iWScount;
                 // Counted as word-space
-                if (iNextStart == iThisStart &&
-                        (iFlags & BreakPoss.ISFIRST) != 0) {
+                if (iNextStart == iThisStart
+                        && (iFlags & BreakPoss.ISFIRST) != 0) {
                     // If possible, treat as normal inter-word space
                     if (context.getLeadingSpace().hasSpaces()) {
                         context.getLeadingSpace().addSpace(halfWS);
                     } else {
                         // Doesn't combine with any other leading spaces
                         // from ancestors
-                        spaceIPD.add(halfWS.space);
+                        spaceIPD.add(halfWS.getSpace());
                     }
                 } else {
                     pendingSpace.addSpace(halfWS);
@@ -318,8 +363,7 @@ public class TextLayoutManager extends AbstractLayoutManager {
             // Get the size of the next syallable
             MinOptMax hyphIPD = new MinOptMax(0);
             if (getHyphenIPD(context.getHyphContext(), hyphIPD)) {
-                iFlags |= (BreakPoss.CAN_BREAK_AFTER |
-                           BreakPoss.HYPHENATED);
+                iFlags |= (BreakPoss.CAN_BREAK_AFTER | BreakPoss.HYPHENATED);
             }
             wordIPD += hyphIPD.opt;
         } else {
@@ -330,8 +374,8 @@ public class TextLayoutManager extends AbstractLayoutManager {
                 char c = chars[iNextStart];
                 if ((c == NEWLINE) || // Include any breakable white-space as break char
                         //  even if fixed width
-                        (textInfo.bWrap && (CharUtilities.isSpace(c) ||
-                                            s_breakChars.indexOf(c) >= 0))) {
+                        (textInfo.bWrap && (CharUtilities.isSpace(c) 
+                                            || BREAK_CHARS.indexOf(c) >= 0))) {
                     iFlags |= BreakPoss.CAN_BREAK_AFTER;
                     if (c != SPACE) {
                         iNextStart++;
@@ -346,9 +390,10 @@ public class TextLayoutManager extends AbstractLayoutManager {
                     // line-end, set a flag for parent LM.
                     int iLastChar;
                     for (iLastChar = iNextStart;
-                            iLastChar < chars.length &&
-                            chars[iLastChar] == SPACE; iLastChar++)
-                        ;
+                            iLastChar < chars.length 
+                            && chars[iLastChar] == SPACE; iLastChar++) {
+                        //nop
+                    }
                     if (iLastChar == chars.length) {
                         iFlags |= BreakPoss.REST_ARE_SUPPRESS_AT_LB;
                     }
@@ -423,10 +468,9 @@ public class TextLayoutManager extends AbstractLayoutManager {
      * an area containing all text with a parameter controlling the size of
      * the word space. The latter is most efficient for PDF generation.
      * Set size of each area.
-     * @param parentIter Iterator over Position information returned
+     * @param posIter Iterator over Position information returned
      * by this LayoutManager.
-     * @param dSpaceAdjust Factor controlling how much extra space to add
-     * in order to justify the line.
+     * @param context LayoutContext for adjustments
      */
     public void addAreas(PositionIterator posIter, LayoutContext context) {
         // Add word areas
@@ -445,7 +489,7 @@ public class TextLayoutManager extends AbstractLayoutManager {
             }
             iWScount += ai.iWScount;
         }
-        if(ai == null) {
+        if (ai == null) {
             return;
         }
         // Calculate total adjustment
@@ -455,14 +499,14 @@ public class TextLayoutManager extends AbstractLayoutManager {
             // Stretch by factor
             //     System.err.println("Potential stretch = " +
             //        (ai.ipdArea.max - ai.ipdArea.opt));
-            iAdjust = (int)((double)(ai.ipdArea.max -
-                                     ai.ipdArea.opt) * dSpaceAdjust);
+            iAdjust = (int)((double)(ai.ipdArea.max
+                                     - ai.ipdArea.opt) * dSpaceAdjust);
         } else if (dSpaceAdjust < 0.0) {
             // Shrink by factor
             //     System.err.println("Potential shrink = " +
             //        (ai.ipdArea.opt - ai.ipdArea.min));
-            iAdjust = (int)((double)(ai.ipdArea.opt -
-                                     ai.ipdArea.min) * dSpaceAdjust);
+            iAdjust = (int)((double)(ai.ipdArea.opt
+                                     - ai.ipdArea.min) * dSpaceAdjust);
         }
         // System.err.println("Text adjustment factor = " + dSpaceAdjust +
         //    " total=" + iAdjust);
@@ -471,11 +515,11 @@ public class TextLayoutManager extends AbstractLayoutManager {
         InlineArea word = null;
         int adjust = 0;
         // ingnore newline character
-        if(chars[ai.iBreakIndex - 1] == NEWLINE) {
+        if (chars[ai.iBreakIndex - 1] == NEWLINE) {
             adjust = 1;
         }
         String str = new String(chars, iStart, ai.iBreakIndex - iStart - adjust);
-        if(" ".equals(str)) {
+        if (" ".equals(str)) {
             word = new Space();
             word.setWidth(ai.ipdArea.opt + iAdjust);
         } else  {
@@ -489,26 +533,27 @@ public class TextLayoutManager extends AbstractLayoutManager {
             }
             word = w;
         }
-        if ((chars[iStart] == SPACE || chars[iStart] == NBSPACE) &&
-                context.getLeadingSpace().hasSpaces()) {
+        if ((chars[iStart] == SPACE || chars[iStart] == NBSPACE) 
+                && context.getLeadingSpace().hasSpaces()) {
             context.getLeadingSpace().addSpace(halfWS);
         }
         // Set LAST flag if done making characters
         int iLastChar;
         for (iLastChar = ai.iBreakIndex;
                 iLastChar < chars.length && chars[iLastChar] == SPACE;
-                iLastChar++)
-            ;
+                iLastChar++) {
+            //nop
+        }
         context.setFlags(LayoutContext.LAST_AREA,
                          iLastChar == chars.length);
 
         // Can we have any trailing space? Yes, if last char was a space!
         context.setTrailingSpace(new SpaceSpecifier(false));
-        if (chars[ai.iBreakIndex - 1] == SPACE ||
-                chars[ai.iBreakIndex - 1] == NBSPACE) {
+        if (chars[ai.iBreakIndex - 1] == SPACE 
+                || chars[ai.iBreakIndex - 1] == NBSPACE) {
             context.getTrailingSpace().addSpace(halfWS);
         }
-        if(word != null) {
+        if (word != null) {
             parentLM.addChild(word);
         }
     }
@@ -525,8 +570,8 @@ public class TextLayoutManager extends AbstractLayoutManager {
     protected Word createWord(String str, int width, int base) {
         Word curWordArea = new Word();
         curWordArea.setWidth(width);
-        curWordArea.setHeight(textInfo.fs.getAscender() -
-                              textInfo.fs.getDescender());
+        curWordArea.setHeight(textInfo.fs.getAscender()
+                              - textInfo.fs.getDescender());
         curWordArea.setOffset(textInfo.fs.getAscender());
         curWordArea.setOffset(base);
 
