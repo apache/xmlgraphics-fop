@@ -29,7 +29,7 @@ import org.apache.fop.image.analyser.ImageReader;
  * @see FopImage
  */
 public class JimiImage extends AbstractFopImage {
-    public JimiImage(URL href, ImageReader imgReader) {
+    public JimiImage(URL href, FopImage.ImageInfo imgReader) {
         super(href, imgReader);
         try {
             Class c = Class.forName("com.sun.jimi.core.Jimi");

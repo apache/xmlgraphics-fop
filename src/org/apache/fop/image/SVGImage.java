@@ -26,10 +26,10 @@ import org.apache.batik.dom.svg.SAXSVGDocumentFactory;
 public class SVGImage extends AbstractFopImage {
     SVGDocument doc;
 
-    public SVGImage(URL href, ImageReader imgReader) {
-        super(href, imgReader);
-        if(imgReader instanceof SVGReader) {
-            doc = (SVGDocument)((SVGReader)imgReader).getDocument();
+    public SVGImage(URL href, FopImage.ImageInfo imgInfo) {
+        super(href, imgInfo);
+        if(imgInfo.data instanceof SVGDocument) {
+            doc = (SVGDocument)imgInfo.data;
         }
     }
 

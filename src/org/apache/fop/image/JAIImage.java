@@ -38,7 +38,7 @@ public class JAIImage extends AbstractFopImage {
         super(href);
     }
 
-    public JAIImage(URL href, ImageReader imgReader) {
+    public JAIImage(URL href, FopImage.ImageInfo imgReader) {
         super(href, imgReader);
     }
 

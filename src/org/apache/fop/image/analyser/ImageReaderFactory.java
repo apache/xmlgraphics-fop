@@ -13,6 +13,7 @@ import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 
+import org.apache.fop.image.FopImage;
 import org.apache.fop.fo.FOUserAgent;
 
 /**
@@ -40,7 +41,7 @@ public class ImageReaderFactory {
      * @return ImageReader object
      * image type is not supported
      */
-    static public ImageReader make(String uri, InputStream in,
+    static public FopImage.ImageInfo make(String uri, InputStream in,
                                    FOUserAgent ua) {
 
         ImageReader reader;
@@ -48,8 +49,9 @@ public class ImageReaderFactory {
         try {
             for (int count = 0; count < formats.size(); count++) {
                 reader = (ImageReader) formats.get(count);
-                if (reader.verifySignature(uri, bis, ua)) {
-                    return reader;
+                FopImage.ImageInfo info = reader.verifySignature(uri, bis, ua);
+                if(info != null) {
+                    return info;
                 }
             }
         } catch (IOException ex) {

@@ -46,52 +46,46 @@ import java.awt.Point;
 import java.awt.geom.Dimension2D;
 import java.awt.Dimension;
 
+import org.apache.fop.image.FopImage;
 import org.apache.fop.fo.FOUserAgent;
 import org.apache.fop.svg.SVGUserAgent;
 
 /**
  * ImageReader object for SVG document image type.
  */
-public class SVGReader extends AbstractImageReader {
+public class SVGReader implements ImageReader {
     public static final String SVG_MIME_TYPE = "image/svg+xml";
-    FOUserAgent userAgent;
-    Document doc;
     boolean batik = true;
 
     public SVGReader() {
     }
 
-    public boolean verifySignature(String uri, BufferedInputStream fis,
+    public FopImage.ImageInfo verifySignature(String uri, BufferedInputStream fis,
                                    FOUserAgent ua) throws IOException {
-        this.imageStream = fis;
-        userAgent = ua;
-        return loadImage(uri);
+        return loadImage(uri, fis, ua);
     }
 
     public String getMimeType() {
         return SVG_MIME_TYPE;
     }
 
-    public Document getDocument() {
-        return doc;
-    }
-
     /**
      * This means the external svg document will be loaded twice.
      * Possibly need a slightly different design for the image stuff.
      */
-    protected boolean loadImage(String uri) {
+    protected FopImage.ImageInfo loadImage(String uri, BufferedInputStream fis,
+                                   FOUserAgent ua) {
         if(batik) {
             try {
                 Loader loader = new Loader();
-                return loader.getImage(uri);
+                return loader.getImage(uri, fis, ua);
             } catch (NoClassDefFoundError e) {
                 batik = false;
-                //userAgent.getLogger().error("Batik not in class path", e);
-                return false;
+                //ua.getLogger().error("Batik not in class path", e);
+                return null;
             }
         }
-        return false;
+        return null;
     }
 
     /**
@@ -100,21 +94,26 @@ public class SVGReader extends AbstractImageReader {
      * the SVGReader class.
      */
     class Loader {
-        private boolean getImage(String uri) {
+        private FopImage.ImageInfo getImage(String uri, BufferedInputStream fis,
+                                   FOUserAgent ua) {
             // parse document and get the size attributes of the svg element
 
             try {
-                int length = imageStream.available();
-                imageStream.mark(length);
+                FopImage.ImageInfo info = new FopImage.ImageInfo();
+                info.mimeType = getMimeType();
+
+                int length = fis.available();
+                fis.mark(length);
                 SAXSVGDocumentFactory factory = new SAXSVGDocumentFactory(
                                                   SVGImage.getParserName());
-                doc = factory.createDocument(uri, imageStream);
+                SVGDocument doc = factory.createDocument(uri, fis);
+                info.data = doc;
 
                 Element e = ((SVGDocument) doc).getRootElement();
                 String s;
                 SVGUserAgent userAg =
                   new SVGUserAgent(new AffineTransform());
-                userAg.setLogger(userAgent.getLogger());
+                userAg.setLogger(ua.getLogger());
                 BridgeContext ctx = new BridgeContext(userAg);
                 UnitProcessor.Context uctx =
                   UnitProcessor.createContext(ctx, e);
@@ -125,7 +124,7 @@ public class SVGReader extends AbstractImageReader {
                 if (s.length() == 0) {
                     s = SVGOMDocument.SVG_SVG_WIDTH_DEFAULT_VALUE;
                 }
-                width = (int) UnitProcessor.svgHorizontalLengthToUserSpace (
+                info.width = (int) UnitProcessor.svgHorizontalLengthToUserSpace (
                           s, SVGOMDocument.SVG_WIDTH_ATTRIBUTE, uctx);
 
                 // 'height' attribute - default is 100%
@@ -134,27 +133,27 @@ public class SVGReader extends AbstractImageReader {
                 if (s.length() == 0) {
                     s = SVGOMDocument.SVG_SVG_HEIGHT_DEFAULT_VALUE;
                 }
-                height = (int) UnitProcessor.svgVerticalLengthToUserSpace (
+                info.height = (int) UnitProcessor.svgVerticalLengthToUserSpace (
                            s, SVGOMDocument.SVG_HEIGHT_ATTRIBUTE, uctx);
 
-                return true;
+                return info;
             } catch (NoClassDefFoundError ncdfe) {
                 batik = false;
-                //userAgent.getLogger().error("Batik not in class path", ncdfe);
-                return false;
+                //ua.getLogger().error("Batik not in class path", ncdfe);
+                return null;
             }
             catch (Exception e) {
                 // If the svg is invalid then it throws an IOException
                 // so there is no way of knowing if it is an svg document
 
-                // userAgent.getLogger().error("Could not load external SVG: " +
+                // ua.getLogger().error("Could not load external SVG: " +
                 //                       e.getMessage(), e);
                 // assuming any exception means this document is not svg
                 // or could not be loaded for some reason
                 try {
-                    imageStream.reset();
+                    fis.reset();
                 } catch (IOException ioe) { }
-                return false;
+                return null;
             }
         }
     }

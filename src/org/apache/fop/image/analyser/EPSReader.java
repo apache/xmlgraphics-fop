@@ -17,28 +17,14 @@ import java.net.URL;
 import org.xml.sax.InputSource;
 import org.xml.sax.XMLReader;
 
+import org.apache.fop.image.FopImage;
+import org.apache.fop.image.EPSImage;
 import org.apache.fop.fo.FOUserAgent;
 
 /**
  * ImageReader object for EPS document image type.
  */
-public class EPSReader extends AbstractImageReader {
-    private long[] bbox;
-    private boolean isAscii; // True if plain ascii eps file
-
-    // offsets if not ascii
-    long psStart = 0;
-    long psLength = 0;
-    long wmfStart = 0;
-    long wmfLength = 0;
-    long tiffStart = 0;
-    long tiffLength = 0;
-
-    /** raw eps file */
-    private byte[] rawEps;
-    /** eps part */
-    private byte[] epsFile;
-    private byte[] preview = null;
+public class EPSReader implements ImageReader {
 
     private long getLong(byte[] buf, int idx) {
         int b1 = buf[idx] & 0xff;
@@ -49,55 +35,60 @@ public class EPSReader extends AbstractImageReader {
         return (long)((b4 << 24) | (b3 << 16) | (b2 << 8) | b1);
     }
 
-    public boolean verifySignature(String uri, BufferedInputStream fis,
+    public FopImage.ImageInfo verifySignature(String uri, BufferedInputStream fis,
                                    FOUserAgent ua) throws IOException {
         boolean isEPS = false;
-        this.imageStream = fis;
         fis.mark(32);
         byte[] header = new byte[30];
         fis.read(header, 0, 30);
         fis.reset();
 
+        EPSImage.EPSData data = new EPSImage.EPSData();
+
         // Check if binary header
         if (getLong(header, 0) == 0xC6D3D0C5) {
-            isAscii = false;
+            data.isAscii = false;
             isEPS = true;
 
-            psStart = getLong(header, 4);
-            psLength = getLong(header, 8);
-            wmfStart = getLong(header, 12);
-            wmfLength = getLong(header, 16);
-            tiffStart = getLong(header, 20);
-            tiffLength = getLong(header, 24);
+            data.psStart = getLong(header, 4);
+            data.psLength = getLong(header, 8);
+            data.wmfStart = getLong(header, 12);
+            data.wmfLength = getLong(header, 16);
+            data.tiffStart = getLong(header, 20);
+            data.tiffLength = getLong(header, 24);
 
         } else {
             // Check if plain ascii
             byte[] epsh = "%!PS".getBytes();
             if (epsh[0] == header[0] && epsh[1] == header[1] &&
                     epsh[2] == header[2] && epsh[3] == header[3]) {
-                isAscii = true;
+                data.isAscii = true;
                 isEPS = true;
             }
         }
 
         if (isEPS) {
-            readEPSImage(fis);
-            bbox = readBBox();
+            FopImage.ImageInfo info = new FopImage.ImageInfo();
+            info.mimeType = getMimeType();
+            info.data = data;
+            readEPSImage(fis, data);
+            data.bbox = readBBox(data);
 
-            if (bbox != null) {
-                width = (int)(bbox[2] - bbox[0]);
-                height = (int)(bbox[3] - bbox[1]);
+            if (data.bbox != null) {
+                info.width = (int)(data.bbox[2] - data.bbox[0]);
+                info.height = (int)(data.bbox[3] - data.bbox[1]);
+                return info;
             } else {
                 // Ain't eps if no BoundingBox
                 isEPS = false;
             }
         }
 
-        return isEPS;
+        return null;
     }
 
     /** read the eps file and extract eps part */
-    private void readEPSImage(BufferedInputStream fis) throws IOException {
+    private void readEPSImage(BufferedInputStream fis, EPSImage.EPSData data) throws IOException {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         byte[] file;
         byte[] readBuf = new byte[20480];
@@ -117,49 +108,44 @@ public class EPSReader extends AbstractImageReader {
 
         file = baos.toByteArray();
 
-        if (isAscii) {
-            rawEps = null;
-            epsFile = new byte[file.length];
-            System.arraycopy(file, 0, epsFile, 0, epsFile.length);
+        if (data.isAscii) {
+            data.rawEps = null;
+            data.epsFile = new byte[file.length];
+            System.arraycopy(file, 0, data.epsFile, 0, data.epsFile.length);
         } else {
-            rawEps = new byte[file.length];
-            epsFile = new byte[(int) psLength];
-            System.arraycopy(file, 0, rawEps, 0, rawEps.length);
-            System.arraycopy(rawEps, (int) psStart, epsFile, 0,
-                             (int) psLength);
+            data.rawEps = new byte[file.length];
+            data.epsFile = new byte[(int) data.psLength];
+            System.arraycopy(file, 0, data.rawEps, 0, data.rawEps.length);
+            System.arraycopy(data.rawEps, (int) data.psStart, data.epsFile, 0,
+                             (int) data.psLength);
         }
-    }
-
-    public byte[] getEpsFile() {
-        return epsFile;
     }
 
     /* Get embedded preview or null */
-    public byte[] getPreview() {
-        InputStream is = null;
-        if (preview == null) {
-            if (tiffLength > 0) {
-                preview = new byte[(int) tiffLength];
-                System.arraycopy(rawEps, (int) tiffStart, preview, 0,
-                                 (int) tiffLength);
+    public byte[] getPreview(EPSImage.EPSData data) {
+        if (data.preview == null) {
+            if (data.tiffLength > 0) {
+                data.preview = new byte[(int) data.tiffLength];
+                System.arraycopy(data.rawEps, (int) data.tiffStart, data.preview, 0,
+                                 (int) data.tiffLength);
             }
         }
-        return preview;
+        return data.preview;
     }
 
     /** Extract bounding box from eps part
      */
-    private long[] readBBox() {
+    private long[] readBBox(EPSImage.EPSData data) {
         long[] mbbox = null;
         int idx = 0;
         byte[] bbxName = "%%BoundingBox: ".getBytes();
         boolean found = false;
 
-        while (!found && (epsFile.length > (idx + bbxName.length))) {
+        while (!found && (data.epsFile.length > (idx + bbxName.length))) {
             boolean sfound = true;
             int i = idx;
             for (i = idx; sfound && (i - idx) < bbxName.length; i++) {
-                if (bbxName[i - idx] != epsFile[i])
+                if (bbxName[i - idx] != data.epsFile[i])
                     sfound = false;
             }
             if (sfound) {
@@ -175,26 +161,26 @@ public class EPSReader extends AbstractImageReader {
 
 
         mbbox = new long[4];
-        idx += readLongString(mbbox, 0, idx);
-        idx += readLongString(mbbox, 1, idx);
-        idx += readLongString(mbbox, 2, idx);
-        idx += readLongString(mbbox, 3, idx);
+        idx += readLongString(data, mbbox, 0, idx);
+        idx += readLongString(data, mbbox, 1, idx);
+        idx += readLongString(data, mbbox, 2, idx);
+        idx += readLongString(data, mbbox, 3, idx);
 
         return mbbox;
     }
 
-    private int readLongString(long[] mbbox, int i, int idx) {
-        while (idx < epsFile.length && (epsFile[idx] == 32))
+    private int readLongString(EPSImage.EPSData data, long[] mbbox, int i, int idx) {
+        while (idx < data.epsFile.length && (data.epsFile[idx] == 32))
             idx++;
 
         int nidx = idx;
 
-        while (nidx < epsFile.length &&
-                (epsFile[nidx] >= 48 && epsFile[nidx] <= 57))
+        while (nidx < data.epsFile.length &&
+                (data.epsFile[nidx] >= 48 && data.epsFile[nidx] <= 57))
             nidx++;
 
         byte[] num = new byte[nidx - idx];
-        System.arraycopy(epsFile, idx, num, 0, nidx - idx);
+        System.arraycopy(data.epsFile, idx, num, 0, nidx - idx);
         String ns = new String(num);
         mbbox[i] = Long.parseLong(ns);
 
@@ -205,16 +191,5 @@ public class EPSReader extends AbstractImageReader {
         return "image/eps";
     }
 
-    /**
-     * Return the BoundingBox
-     */
-    public int[] getBBox() {
-        int[] bbox = new int[4];
-        bbox[0] = (int) this.bbox[0];
-        bbox[1] = (int) this.bbox[1];
-        bbox[2] = (int) this.bbox[2];
-        bbox[3] = (int) this.bbox[3];
-        return bbox;
-    }
 }
 

@@ -11,6 +11,7 @@ package org.apache.fop.image.analyser;
 import java.io.BufferedInputStream;
 import java.io.IOException;
 
+import org.apache.fop.image.FopImage;
 import org.apache.fop.fo.FOUserAgent;
 
 /**
@@ -26,31 +27,8 @@ public interface ImageReader {
      * @return true if image type is the handled one
      * @exception IOException io error
      */
-    public boolean verifySignature(String uri, BufferedInputStream bis,
+    public FopImage.ImageInfo verifySignature(String uri, BufferedInputStream bis,
                                    FOUserAgent ua) throws IOException;
 
-    /**
-     * Return the used InputStream.
-     * @return BufferedInputStream used to verify image type
-     */
-    public BufferedInputStream getInputStream();
-
-    /**
-     * Return correspondig mime type.
-     * @return image mime type
-     */
-    public String getMimeType();
-
-    /**
-     * Return the image height.
-     * @return image height
-     */
-    public int getHeight();
-
-    /**
-     * Return the image width.
-     * @return image width
-     */
-    public int getWidth();
 }
 

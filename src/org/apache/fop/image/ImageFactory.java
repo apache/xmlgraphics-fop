@@ -119,7 +119,7 @@ public class ImageFactory {
             }
             imgIS = absoluteURL.openStream();
         } catch (MalformedURLException e_context) {
-            log.error("Error with image URL: " + e_context.getMessage());
+            log.error("Error with image URL: " + e_context.getMessage(), e_context);
             return null;
         }
         catch (Exception e) {
@@ -134,22 +134,22 @@ public class ImageFactory {
             } catch (MalformedURLException e_context) {
                 // pb context url
                 log.error( "Invalid Image URL - error on relative URL : " +
-                           e_context.getMessage());
+                           e_context.getMessage(), e_context);
                 return null;
             }
         }
 
         // If not, check image type
-        ImageReader imgReader = null;
+        FopImage.ImageInfo imgInfo = null;
         try {
             if (imgIS == null) {
                 imgIS = absoluteURL.openStream();
             }
-            imgReader = ImageReaderFactory.make(
+            imgInfo = ImageReaderFactory.make(
                           absoluteURL.toExternalForm(), imgIS, ua);
         } catch (Exception e) {
             log.error("Error while recovering Image Informations (" +
-                      absoluteURL.toString() + ") : " + e.getMessage());
+                      absoluteURL.toString() + ") : " + e.getMessage(), e);
             return null;
         }
         finally { if (imgIS != null) {
@@ -157,13 +157,13 @@ public class ImageFactory {
                           imgIS.close();
                   } catch (IOException e) {}
                   }
-            } if (imgReader == null) {
+            } if (imgInfo == null) {
             log.error("No ImageReader for this type of image (" +
                       absoluteURL.toString() + ")");
             return null;
         }
         // Associate mime-type to FopImage class
-        String imgMimeType = imgReader.getMimeType();
+        String imgMimeType = imgInfo.mimeType;
         String imgClassName = null;
         if ("image/gif".equals(imgMimeType)) {
             imgClassName = "org.apache.fop.image.GifImage";
@@ -201,14 +201,14 @@ public class ImageFactory {
         try {
             imageClass = Class.forName(imgClassName);
             Class[] imageConstructorParameters = new Class[2];
-            imageConstructorParameters[0] = Class.forName("java.net.URL");
-            imageConstructorParameters[1] = Class.forName("org.apache.fop.image.analyser.ImageReader");
+            imageConstructorParameters[0] = java.net.URL.class;
+            imageConstructorParameters[1] = org.apache.fop.image.FopImage.ImageInfo.class;
             Constructor imageConstructor =
               imageClass.getDeclaredConstructor(
                 imageConstructorParameters);
             Object[] initArgs = new Object[2];
             initArgs[0] = absoluteURL;
-            initArgs[1] = imgReader;
+            initArgs[1] = imgInfo;
             imageInstance = imageConstructor.newInstance(initArgs);
         } catch (java.lang.reflect.InvocationTargetException ex) {
             Throwable t = ex.getTargetException();
@@ -219,13 +219,13 @@ public class ImageFactory {
                 msg = ex.getMessage();
             }
             log.error("Error creating FopImage object (" +
-                      absoluteURL.toString() + ") : " + msg);
+                      absoluteURL.toString() + ") : " + msg, (t == null) ? ex:t);
             return null;
         }
         catch (Exception ex) {
             log.error("Error creating FopImage object (" +
                       "Error creating FopImage object (" +
-                      absoluteURL.toString() + ") : " + ex.getMessage());
+                      absoluteURL.toString() + ") : " + ex.getMessage(), ex);
             return null;
         }
         if (!(imageInstance instanceof org.apache.fop.image.FopImage)) {

@@ -10,6 +10,8 @@
 
 package org.apache.fop.image;
 
+import java.io.InputStream;
+
 import org.apache.fop.datatypes.ColorSpace;
 import org.apache.fop.pdf.PDFColor;
 import org.apache.fop.pdf.PDFFilter;
@@ -61,5 +63,14 @@ public interface FopImage {
     public int getRessourceBytesSize();
     // return null if no corresponding PDFFilter
     public PDFFilter getPDFFilter();
+
+    public static class ImageInfo {
+        public InputStream stream;
+        public int width;
+        public int height;
+        public Object data;
+        public String mimeType;
+    }
+
 }
 

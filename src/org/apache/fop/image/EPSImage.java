@@ -32,8 +32,7 @@ public class EPSImage extends AbstractFopImage {
     private String docName;
     private int[] bbox;
 
-    private byte[] epsImage = null;
-    private EPSReader epsReader = null;
+    private EPSData epsData = null;
 
     /**
      * Initialize docName and bounding box
@@ -62,23 +61,44 @@ public class EPSImage extends AbstractFopImage {
         return bbox;
     }
 
-    public EPSImage(URL href, ImageReader imgReader) {
-        super(href, imgReader);
+    public EPSImage(URL href, FopImage.ImageInfo imgInfo) {
+        super(href, imgInfo);
         init(href);
-        if (imgReader instanceof EPSReader) {
-            EPSReader eimgReader = (EPSReader) imgReader;
-            epsReader = eimgReader;
-            epsImage = eimgReader.getEpsFile();
-            m_bitmaps = epsImage;
-            bbox = eimgReader.getBBox();
+        if (imgInfo.data instanceof EPSData) {
+            epsData = (EPSData) imgInfo.data;
+            bbox = new int[4];
+            bbox[0] = (int) epsData.bbox[0];
+            bbox[1] = (int) epsData.bbox[1];
+            bbox[2] = (int) epsData.bbox[2];
+            bbox[3] = (int) epsData.bbox[3];
+
         }
     }
 
     public byte[] getEPSImage() {
-        if (epsImage == null) {
+        if (epsData.epsFile == null) {
             //log.error("ERROR LOADING EXTERNAL EPS");
         }
-        return epsImage;
+        return epsData.epsFile;
+    }
+
+    public static class EPSData {
+        public long[] bbox;
+        public boolean isAscii; // True if plain ascii eps file
+
+        // offsets if not ascii
+        public long psStart = 0;
+        public long psLength = 0;
+        public long wmfStart = 0;
+        public long wmfLength = 0;
+        public long tiffStart = 0;
+        public long tiffLength = 0;
+
+        /** raw eps file */
+        public byte[] rawEps;
+        /** eps part */
+        public byte[] epsFile;
+        public byte[] preview = null;
     }
 
 }

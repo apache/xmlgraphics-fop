@@ -11,6 +11,7 @@ package org.apache.fop.image.analyser;
 import java.io.BufferedInputStream;
 import java.io.IOException;
 
+import org.apache.fop.image.FopImage;
 import org.apache.fop.fo.FOUserAgent;
 
 /**
@@ -18,14 +19,12 @@ import org.apache.fop.fo.FOUserAgent;
  * @author Pankaj Narula, Michael Lee
  * @version 1.0
  */
-public class TIFFReader extends AbstractImageReader {
+public class TIFFReader implements ImageReader {
     static protected final int TIFF_SIG_LENGTH = 8;
-    protected byte[] header;
 
-    public boolean verifySignature(String uri, BufferedInputStream fis,
+    public FopImage.ImageInfo verifySignature(String uri, BufferedInputStream fis,
                                    FOUserAgent ua) throws IOException {
-        this.imageStream = fis;
-        this.setDefaultHeader();
+        byte[] header = getDefaultHeader(fis);
         boolean supported = false;
 
         if (header[0] == (byte) 0x49 && header[1] == (byte) 0x49)// first 2 bytes = II (little endian encoding)
@@ -43,17 +42,19 @@ public class TIFFReader extends AbstractImageReader {
         }
 
         if (supported) {
-            setDimension();
-            return true;
-        } else
-            return false;
+            FopImage.ImageInfo info = getDimension(header);
+            info.mimeType = getMimeType();
+            return info;
+        } else {
+            return null;
+        }
     }
 
     public String getMimeType() {
         return "image/tiff";
     }
 
-    protected void setDimension() {
+    protected FopImage.ImageInfo getDimension(byte[] header) {
         // currently not setting the width and height
         // these are set again by the Jimi image reader.
         // I suppose I'll do it one day to be complete.  Or
@@ -76,20 +77,22 @@ public class TIFFReader extends AbstractImageReader {
          * byte4 );
          * this.height = ( int ) ( l );
          */
+         return null;
     }
 
-    protected void setDefaultHeader() throws IOException {
-        this.header = new byte[TIFF_SIG_LENGTH];
+    protected byte[] getDefaultHeader(BufferedInputStream imageStream) throws IOException {
+        byte[] header = new byte[TIFF_SIG_LENGTH];
         try {
-            this.imageStream.mark(TIFF_SIG_LENGTH + 1);
-            this.imageStream.read(header);
-            this.imageStream.reset();
+            imageStream.mark(TIFF_SIG_LENGTH + 1);
+            imageStream.read(header);
+            imageStream.reset();
         } catch (IOException ex) {
             try {
-                this.imageStream.reset();
+                imageStream.reset();
             } catch (IOException exbis) {}
             throw ex;
         }
+        return header;
     }
 
 }
