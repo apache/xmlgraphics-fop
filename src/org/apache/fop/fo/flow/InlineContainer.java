@@ -14,27 +14,19 @@ import org.apache.fop.fo.properties.*;
 import org.apache.fop.layout.*;
 import org.apache.fop.apps.FOPException;
 
+import org.xml.sax.Attributes;
+
 /**
  */
 public class InlineContainer extends ToBeImplementedElement {
 
-    public static class Maker extends FObj.Maker {
-        public FObj make(FObj parent,
-                         PropertyList propertyList) throws FOPException {
-            return new InlineContainer(parent, propertyList);
-        }
-
-    }
-
-    public static FObj.Maker maker() {
-        return new InlineContainer.Maker();
-    }
-
-    protected InlineContainer(FObj parent,
-                              PropertyList propertyList) throws FOPException {
-        super(parent, propertyList);
+    public InlineContainer(FObj parent) {
+        super(parent);
         this.name = "fo:inline-container";
+    }
 
+    public void handleAttrs(Attributes attlist) throws FOPException {
+        super.handleAttrs(attlist);
         // Common Border, Padding, and Background Properties
         BorderAndPadding bap = propMgr.getBorderAndPadding();
         BackgroundProps bProps = propMgr.getBackgroundProps();

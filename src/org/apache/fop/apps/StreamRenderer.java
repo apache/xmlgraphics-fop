@@ -158,8 +158,8 @@ public class StreamRenderer {
         long timeUsed = System.currentTimeMillis() - startTime;
 
         log.debug("Total time used: " + timeUsed + "ms");
-        log.debug("Pages rendererd: " + pageCount);
-        log.debug("Avg render time: " + (timeUsed / pageCount) + "ms/page");
+        log.debug("Pages rendered: " + pageCount);
+        //log.debug("Avg render time: " + (timeUsed / pageCount) + "ms/page");
     }
 
     /**

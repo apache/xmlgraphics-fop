@@ -13,6 +13,8 @@ import org.apache.fop.fo.PropertyList;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.layout.RegionArea;
 
+import org.xml.sax.Attributes;
+
 /**
  * This is an abstract base class for pagination regions
  */
@@ -22,10 +24,13 @@ public abstract class Region extends FObj {
     private SimplePageMaster _layoutMaster;
     private String _regionName;
 
-    protected Region(FObj parent,
-                     PropertyList propertyList) throws FOPException {
-        super(parent, propertyList);
+    protected Region(FObj parent) {
+        super(parent);
         this.name = getElementName();
+    }
+
+    public void handleAttrs(Attributes attlist) throws FOPException {
+        super.handleAttrs(attlist);
 
         // regions may have name, or default
         if (null == this.properties.get(PROP_REGION_NAME)) {

@@ -14,19 +14,9 @@ import org.apache.fop.layout.*;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.datatypes.*;
 
+import org.xml.sax.Attributes;
+
 public class TableCell extends FObj {
-
-    public static class Maker extends FObj.Maker {
-        public FObj make(FObj parent,
-                         PropertyList propertyList) throws FOPException {
-            return new TableCell(parent, propertyList);
-        }
-
-    }
-
-    public static FObj.Maker maker() {
-        return new TableCell.Maker();
-    }
 
     // int spaceBefore;
     // int spaceAfter;
@@ -96,9 +86,13 @@ public class TableCell extends FObj {
 
     AreaContainer cellArea;
 
-    public TableCell(FObj parent, PropertyList propertyList) {
-        super(parent, propertyList);
+    public TableCell(FObj parent) {
+        super(parent);
         this.name = "fo:table-cell";
+    }
+
+    public void handleAttrs(Attributes attlist) throws FOPException {
+        super.handleAttrs(attlist);
         doSetup();    // init some basic property values
     }
 

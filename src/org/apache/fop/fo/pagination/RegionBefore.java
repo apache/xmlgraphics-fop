@@ -15,30 +15,22 @@ import org.apache.fop.layout.BorderAndPadding;
 import org.apache.fop.layout.BackgroundProps;
 import org.apache.fop.apps.FOPException;
 
+import org.xml.sax.Attributes;
+
 public class RegionBefore extends Region {
-
-    public static class Maker extends FObj.Maker {
-        public FObj make(FObj parent,
-                         PropertyList propertyList) throws FOPException {
-            return new RegionBefore(parent, propertyList);
-        }
-
-    }
-
-    public static FObj.Maker maker() {
-        return new RegionBefore.Maker();
-    }
 
     public static final String REGION_CLASS = "before";
 
     private int precedence;
 
-    protected RegionBefore(FObj parent,
-                           PropertyList propertyList) throws FOPException {
-        super(parent, propertyList);
-        precedence = this.properties.get("precedence").getEnum();
+    public RegionBefore(FObj parent) {
+        super(parent);
     }
 
+    public void handleAttrs(Attributes attlist) throws FOPException {
+        super.handleAttrs(attlist);
+        precedence = this.properties.get("precedence").getEnum();
+    }
 
     RegionArea makeRegionArea(int allocationRectangleXPosition,
                               int allocationRectangleYPosition,

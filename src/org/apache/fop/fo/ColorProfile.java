@@ -20,21 +20,8 @@ import org.apache.fop.apps.FOPException;
  */
 public class ColorProfile extends ToBeImplementedElement {
 
-    public static class Maker extends FObj.Maker {
-        public FObj make(FObj parent,
-                         PropertyList propertyList) throws FOPException {
-            return new ColorProfile(parent, propertyList);
-        }
-
-    }
-
-    public static FObj.Maker maker() {
-        return new ColorProfile.Maker();
-    }
-
-    protected ColorProfile(FObj parent,
-                           PropertyList propertyList) throws FOPException {
-        super(parent, propertyList);
+    protected ColorProfile(FObj parent) {
+        super(parent);
         this.name = "fo:color-profile";
 
         // this.properties.get("src");

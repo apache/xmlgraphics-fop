@@ -18,21 +18,8 @@ import org.apache.fop.apps.FOPException;
  */
 public class TableAndCaption extends ToBeImplementedElement {
 
-    public static class Maker extends FObj.Maker {
-        public FObj make(FObj parent,
-                         PropertyList propertyList) throws FOPException {
-            return new TableAndCaption(parent, propertyList);
-        }
-
-    }
-
-    public static FObj.Maker maker() {
-        return new TableAndCaption.Maker();
-    }
-
-    protected TableAndCaption(FObj parent,
-                              PropertyList propertyList) throws FOPException {
-        super(parent, propertyList);
+    public TableAndCaption(FObj parent) {
+        super(parent);
         this.name = "fo:table-and-caption";
     }
 

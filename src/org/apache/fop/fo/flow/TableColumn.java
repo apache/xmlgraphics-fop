@@ -28,20 +28,8 @@ public class TableColumn extends FObj {
 
     AreaContainer areaContainer;
 
-    public static class Maker extends FObj.Maker {
-        public FObj make(FObj parent,
-                         PropertyList propertyList) throws FOPException {
-            return new TableColumn(parent, propertyList);
-        }
-
-    }
-
-    public static FObj.Maker maker() {
-        return new TableColumn.Maker();
-    }
-
-    public TableColumn(FObj parent, PropertyList propertyList) {
-        super(parent, propertyList);
+    public TableColumn(FObj parent) {
+        super(parent);
         this.name = "fo:table-column";
     }
 

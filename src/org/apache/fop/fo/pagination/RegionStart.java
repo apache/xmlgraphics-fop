@@ -17,26 +17,12 @@ import org.apache.fop.apps.FOPException;
 
 public class RegionStart extends Region {
 
-    public static class Maker extends FObj.Maker {
-        public FObj make(FObj parent,
-                         PropertyList propertyList) throws FOPException {
-            return new RegionStart(parent, propertyList);
-        }
-
-    }
-
-    public static FObj.Maker maker() {
-        return new RegionStart.Maker();
-    }
-
     public static final String REGION_CLASS = "start";
 
 
-    protected RegionStart(FObj parent,
-                          PropertyList propertyList) throws FOPException {
-        super(parent, propertyList);
+    public RegionStart(FObj parent) {
+        super(parent);
     }
-
 
     RegionArea makeRegionArea(int allocationRectangleXPosition,
                               int allocationRectangleYPosition,

@@ -23,20 +23,8 @@ import org.apache.fop.layout.*;
  */
 public class Wrapper extends FObjMixed {
 
-    public static class Maker extends FObj.Maker {
-        public FObj make(FObj parent,
-                         PropertyList propertyList) throws FOPException {
-            return new Wrapper(parent, propertyList);
-        }
-
-    }
-
-    public static FObj.Maker maker() {
-        return new Wrapper.Maker();
-    }
-
-    public Wrapper(FObj parent, PropertyList propertyList) {
-        super(parent, propertyList);
+    public Wrapper(FObj parent) {
+        super(parent);
         // check that this occurs inside an fo:flow
     }
 

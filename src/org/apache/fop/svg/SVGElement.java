@@ -21,6 +21,7 @@ import org.apache.batik.dom.util.XMLSupport;
 import org.w3c.dom.*;
 import org.w3c.dom.svg.*;
 import org.w3c.dom.svg.SVGLength;
+import org.xml.sax.Attributes;
 import org.apache.batik.bridge.*;
 import org.apache.batik.swing.svg.*;
 import org.apache.batik.swing.gvt.*;
@@ -43,34 +44,6 @@ import java.awt.geom.AffineTransform;
  */
 public class SVGElement extends SVGObj {
 
-    /**
-     * inner class for making SVG objects.
-     */
-    public static class Maker extends FObj.Maker {
-
-        /**
-         * make an SVG object.
-         *
-         * @param parent the parent formatting object
-         * @param propertyList the explicit properties of this object
-         *
-         * @return the SVG object
-         */
-        public FObj make(FObj parent,
-                         PropertyList propertyList) throws FOPException {
-            return new SVGElement(parent, propertyList);
-        }
-    }
-
-    /**
-     * returns the maker for this object.
-     *
-     * @return the maker for SVG objects
-     */
-    public static FObj.Maker maker() {
-        return new SVGElement.Maker();
-    }
-
     FontState fs;
 
     /**
@@ -79,8 +52,12 @@ public class SVGElement extends SVGObj {
      * @param parent the parent formatting object
      * @param propertyList the explicit properties of this object
      */
-    public SVGElement(FObj parent, PropertyList propertyList) {
-        super(parent, propertyList, "svg");
+    public SVGElement(FObj parent) {
+        super(parent);
+    }
+
+    public void handleAttrs(Attributes attlist) throws FOPException {
+        super.handleAttrs(attlist);
         init();
     }
 

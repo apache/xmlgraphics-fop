@@ -11,40 +11,47 @@ package org.apache.fop.fo;
 import org.apache.fop.layout.Area;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.datatypes.IDReferences;
+import org.apache.fop.fo.properties.FOPropertyMapping;
 
-// Java
-import java.util.Hashtable;
-import java.util.Enumeration;
+import org.xml.sax.Attributes;
 
 /**
  * base class for representation of formatting objects and their processing
  */
 public class FObj extends FONode {
 
-    public static class Maker {
-        public FObj make(FObj parent,
-                         PropertyList propertyList) throws FOPException {
-            return new FObj(parent, propertyList);
-        }
-
-    }
-
-    public static Maker maker() {
-        return new Maker();
-    }
-
-    // protected PropertyList properties;
     public PropertyList properties;
     protected PropertyManager propMgr;
 
     protected String name;
 
-    protected FObj(FObj parent, PropertyList propertyList) {
+    public FObj(FObj parent) {
         super(parent);
-        this.properties = propertyList;    // TO BE REMOVED!!!
-        propertyList.setFObj(this);
-        this.propMgr = makePropertyManager(propertyList);
-        this.name = "default FO";
+    }
+
+    public void setName(String str) {
+        name = "fo:" + str;
+    }
+
+    protected PropertyListBuilder getListBuilder() {
+            PropertyListBuilder plb = new PropertyListBuilder();
+            plb.addList(FOPropertyMapping.getGenericMappings());
+        return plb;
+    }
+
+    /**
+     * Handle the attributes for this element.
+     * The attributes must be used immediately as the sax attributes
+     * will be altered for the next element.
+     */
+    public void handleAttrs(Attributes attlist) throws FOPException {
+        String uri = "http://www.w3.org/1999/XSL/Format";
+        properties =
+                    getListBuilder().makeList(uri, name, attlist,
+                                                (parent == null) ? null
+                                                : parent.properties, parent);
+        properties.setFObj(this);
+        this.propMgr = makePropertyManager(properties);
         setWritingMode();
     }
 

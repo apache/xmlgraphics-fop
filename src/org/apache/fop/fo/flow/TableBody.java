@@ -20,18 +20,6 @@ import java.util.Enumeration;
 
 public class TableBody extends FObj {
 
-    public static class Maker extends FObj.Maker {
-        public FObj make(FObj parent,
-                         PropertyList propertyList) throws FOPException {
-            return new TableBody(parent, propertyList);
-        }
-
-    }
-
-    public static FObj.Maker maker() {
-        return new TableBody.Maker();
-    }
-
     int spaceBefore;
     int spaceAfter;
     ColorType backgroundColor;
@@ -42,8 +30,8 @@ public class TableBody extends FObj {
 
     AreaContainer areaContainer;
 
-    public TableBody(FObj parent, PropertyList propertyList) {
-        super(parent, propertyList);
+    public TableBody(FObj parent) {
+        super(parent);
         this.name = "fo:table-body";
     }
 

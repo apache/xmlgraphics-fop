@@ -17,28 +17,21 @@ import org.apache.fop.apps.FOPException;
 // Java
 import java.util.Vector;
 
+import org.xml.sax.Attributes;
+
 public class RetrieveMarker extends FObjMixed {
 
     private String retrieveClassName;
     private int retrievePosition;
     private int retrieveBoundary;
 
-    public static class Maker extends FObj.Maker {
-        public FObj make(FObj parent,
-                         PropertyList propertyList) throws FOPException {
-            return new RetrieveMarker(parent, propertyList);
-        }
-
-    }
-
-    public static FObj.Maker maker() {
-        return new RetrieveMarker.Maker();
-    }
-
-    public RetrieveMarker(FObj parent, PropertyList propertyList) {
-        super(parent, propertyList);
+    public RetrieveMarker(FObj parent) {
+        super(parent);
         this.name = "fo:retrieve-marker";
+    }
 
+    public void handleAttrs(Attributes attlist) throws FOPException {
+        super.handleAttrs(attlist);
         this.retrieveClassName =
             this.properties.get("retrieve-class-name").getString();
         this.retrievePosition =

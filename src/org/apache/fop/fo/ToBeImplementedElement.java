@@ -18,9 +18,8 @@ import org.apache.fop.apps.FOPException;
  */
 public class ToBeImplementedElement extends FObj {
 
-    protected ToBeImplementedElement(FObj parent, PropertyList propertyList)
-            throws FOPException {
-        super(parent, propertyList);
+    protected ToBeImplementedElement(FObj parent) {
+        super(parent);
     }
 
     public Status layout(Area area) throws FOPException {

@@ -25,18 +25,6 @@ import java.util.Enumeration;
  */
 public class Root extends FObj {
 
-    public static class Maker extends FObj.Maker {
-        public FObj make(FObj parent,
-                         PropertyList propertyList) throws FOPException {
-            return new Root(parent, propertyList);
-        }
-
-    }
-
-    public static FObj.Maker maker() {
-        return new Root.Maker();
-    }
-
     LayoutMasterSet layoutMasterSet;
     Vector pageSequences;
 
@@ -45,17 +33,15 @@ public class Root extends FObj {
      */
     private int runningPageNumberCounter = 0;
 
-    protected Root(FObj parent,
-                   PropertyList propertyList) throws FOPException {
-        super(parent, propertyList);
-        this.name = "fo:root";
+    public Root(FObj parent) {
+        super(parent);
 
         // this.properties.get("media-usage");
 
         pageSequences = new Vector();
 
         if (parent != null) {
-            throw new FOPException("root must be root element");
+            //throw new FOPException("root must be root element");
         }
     }
 
@@ -101,22 +87,4 @@ public class Root extends FObj {
     public void setLayoutMasterSet(LayoutMasterSet layoutMasterSet) {
         this.layoutMasterSet = layoutMasterSet;
     }
-/*
-    public void format(AreaTree areaTree) throws FOPException {
-        // log.debug(" Root[" + marker + "] ");
-        if (layoutMasterSet == null) {
-            throw new FOPException("No layout master set.");
-        }
-
-        Enumeration e = children.elements();
-        while (e.hasMoreElements()) {
-            Object o = e.nextElement();
-            if (o instanceof PageSequence) {
-                ((PageSequence)o).format(areaTree);
-            } else if (o instanceof ExtensionObj) {
-                ((ExtensionObj)o).format(areaTree);
-            }
-        }
-    }
-*/
 }

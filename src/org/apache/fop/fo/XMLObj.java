@@ -28,7 +28,8 @@ import java.util.*;
  */
 public abstract class XMLObj extends FObj {
 
-    protected String tagName = "";
+    // temp reference for attributes
+    Attributes attr = null;
 
     protected Element element;
     protected Document doc;
@@ -38,21 +39,25 @@ public abstract class XMLObj extends FObj {
      * @param parent the parent formatting object
      * @param propertyList the explicit properties of this object
      */
-    public XMLObj(FObj parent, PropertyList propertyList, String tag) {
-        super(parent, propertyList);
-        tagName = tag;
+    public XMLObj(FObj parent) {
+        super(parent);
     }
 
+    public void setName(String str) {
+        name = str;
+    }
+
+    public void handleAttrs(Attributes attlist) throws FOPException {
+        attr = attlist;
+    }
     public abstract String getNameSpace();
 
     protected static Hashtable ns = new Hashtable();
 
     public void addGraphic(Document doc, Element parent) {
         this.doc = doc;
-        element = doc.createElementNS(getNameSpace(), tagName);
+        element = doc.createElementNS(getNameSpace(), name);
 
-        if(this.properties instanceof DirectPropertyListBuilder.AttrPropertyList) {
-            Attributes attr = ((DirectPropertyListBuilder.AttrPropertyList)this.properties).getAttributes();
             for (int count = 0; count < attr.getLength(); count++) {
                 String rf = attr.getValue(count);
                 String qname = attr.getQName(count);
@@ -70,16 +75,12 @@ public abstract class XMLObj extends FObj {
                                            qname, rf);
                 }
             }
-        } else {
-        }
-
+        attr = null;
         parent.appendChild(element);
     }
 
     public void buildTopLevel(Document doc, Element svgRoot) {
         // build up the info for the top level element
-        if(this.properties instanceof DirectPropertyListBuilder.AttrPropertyList) {
-            Attributes attr = ((DirectPropertyListBuilder.AttrPropertyList)this.properties).getAttributes();
             for (int count = 0; count < attr.getLength(); count++) {
                 String rf = attr.getValue(count);
                 String qname = attr.getQName(count);
@@ -97,8 +98,6 @@ public abstract class XMLObj extends FObj {
                                            qname, rf);
                 }
             }
-        } else {
-        }
     }
 
     public Document createBasicDocument() {
@@ -109,7 +108,7 @@ public abstract class XMLObj extends FObj {
             DocumentBuilderFactory fact = DocumentBuilderFactory.newInstance();
             fact.setNamespaceAware(true);
             doc = fact.newDocumentBuilder().newDocument();
-            Element el = doc.createElement(tagName);
+            Element el = doc.createElement(name);
             doc.appendChild(el);
 
             element = doc.getDocumentElement();

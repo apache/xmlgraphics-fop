@@ -18,21 +18,8 @@ import org.apache.fop.apps.FOPException;
  */
 public class Float extends ToBeImplementedElement {
 
-    public static class Maker extends FObj.Maker {
-        public FObj make(FObj parent,
-                         PropertyList propertyList) throws FOPException {
-            return new Float(parent, propertyList);
-        }
-
-    }
-
-    public static FObj.Maker maker() {
-        return new Float.Maker();
-    }
-
-    protected Float(FObj parent,
-                    PropertyList propertyList) throws FOPException {
-        super(parent, propertyList);
+    public Float(FObj parent) {
+        super(parent);
         this.name = "fo:float";
     }
 

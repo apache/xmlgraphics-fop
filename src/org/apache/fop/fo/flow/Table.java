@@ -20,18 +20,6 @@ import java.util.Enumeration;
 
 public class Table extends FObj {
 
-    public static class Maker extends FObj.Maker {
-        public FObj make(FObj parent,
-                         PropertyList propertyList) throws FOPException {
-            return new Table(parent, propertyList);
-        }
-
-    }
-
-    public static FObj.Maker maker() {
-        return new Table.Maker();
-    }
-
     private static final int MINCOLWIDTH = 10000; // 10pt
     int breakBefore;
     int breakAfter;
@@ -59,8 +47,8 @@ public class Table extends FObj {
 
     AreaContainer areaContainer;
 
-    public Table(FObj parent, PropertyList propertyList) {
-        super(parent, propertyList);
+    public Table(FObj parent) {
+        super(parent);
         this.name = "fo:table";
     }
 

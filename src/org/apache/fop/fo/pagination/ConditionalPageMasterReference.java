@@ -11,19 +11,9 @@ import org.apache.fop.fo.*;
 import org.apache.fop.fo.properties.*;
 import org.apache.fop.apps.FOPException;
 
+import org.xml.sax.Attributes;
+
 public class ConditionalPageMasterReference extends FObj {
-
-    public static class Maker extends FObj.Maker {
-        public FObj make(FObj parent,
-                         PropertyList propertyList) throws FOPException {
-            return new ConditionalPageMasterReference(parent, propertyList);
-        }
-
-    }
-
-    public static FObj.Maker maker() {
-        return new ConditionalPageMasterReference.Maker();
-    }
 
     private RepeatablePageMasterAlternatives repeatablePageMasterAlternatives;
 
@@ -33,11 +23,14 @@ public class ConditionalPageMasterReference extends FObj {
     private int oddOrEven;
     private int blankOrNotBlank;
 
-    public ConditionalPageMasterReference(FObj parent, PropertyList propertyList)
-            throws FOPException {
-        super(parent, propertyList);
+    public ConditionalPageMasterReference(FObj parent) {
+        super(parent);
 
         this.name = getElementName();
+    }
+
+    public void handleAttrs(Attributes attlist) throws FOPException {
+        super.handleAttrs(attlist);
         if (getProperty("master-name") != null) {
             setMasterName(getProperty("master-name").getString());
         }
@@ -47,8 +40,6 @@ public class ConditionalPageMasterReference extends FObj {
         setPagePosition(this.properties.get("page-position").getEnum());
         setOddOrEven(this.properties.get("odd-or-even").getEnum());
         setBlankOrNotBlank(this.properties.get("blank-or-not-blank").getEnum());
-
-
     }
 
     protected void setMasterName(String masterName) {

@@ -11,6 +11,8 @@ import org.apache.fop.area.Area;
 
 // cacheable object
 // image object, mime type, url
+// an image only needs to be loaded to get the size if not specified
+// and when rendering to the output
 public class Image extends Area {
     String url;
 

@@ -12,5 +12,11 @@ package org.apache.fop.fo;
  * the given builder.
  */
 public interface ElementMapping {
-    public void addToBuilder(TreeBuilder builder);
+    public void addToBuilder(FOTreeBuilder builder);
+
+    public static class Maker {
+        public FObj make(FObj parent) {
+            return null;
+        }
+    }
 }

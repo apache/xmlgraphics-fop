@@ -19,20 +19,8 @@ import java.util.Enumeration;
 
 public class ListItemLabel extends FObj {
 
-    public static class Maker extends FObj.Maker {
-        public FObj make(FObj parent,
-                         PropertyList propertyList) throws FOPException {
-            return new ListItemLabel(parent, propertyList);
-        }
-
-    }
-
-    public static FObj.Maker maker() {
-        return new ListItemLabel.Maker();
-    }
-
-    public ListItemLabel(FObj parent, PropertyList propertyList) {
-        super(parent, propertyList);
+    public ListItemLabel(FObj parent) {
+        super(parent);
         this.name = "fo:list-item-label";
     }
 

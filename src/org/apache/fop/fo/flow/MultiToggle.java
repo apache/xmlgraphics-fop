@@ -18,21 +18,8 @@ import org.apache.fop.apps.FOPException;
  */
 public class MultiToggle extends ToBeImplementedElement {
 
-    public static class Maker extends FObj.Maker {
-        public FObj make(FObj parent,
-                         PropertyList propertyList) throws FOPException {
-            return new MultiToggle(parent, propertyList);
-        }
-
-    }
-
-    public static FObj.Maker maker() {
-        return new MultiToggle.Maker();
-    }
-
-    protected MultiToggle(FObj parent,
-                          PropertyList propertyList) throws FOPException {
-        super(parent, propertyList);
+    public MultiToggle(FObj parent) {
+        super(parent);
         this.name = "fo:multi-toggle";
     }
 

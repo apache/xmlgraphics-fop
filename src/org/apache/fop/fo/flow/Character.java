@@ -37,24 +37,10 @@ public class Character extends FObj {
     public final static int OK = 0;
     public final static int DOESNOT_FIT = 1;
 
-    public Character(FObj parent, PropertyList propertyList) {
-        super(parent, propertyList);
+    public Character(FObj parent) {
+        super(parent);
         this.name = "fo:character";
     }
-
-    public static FObj.Maker maker() {
-        return new Character.Maker();
-    }
-
-
-    public static class Maker extends FObj.Maker {
-        public FObj make(FObj parent,
-                         PropertyList propertyList) throws FOPException {
-            return new Character(parent, propertyList);
-        }
-
-    }
-
 
     public Status layout(Area area) throws FOPException {
         BlockArea blockArea;

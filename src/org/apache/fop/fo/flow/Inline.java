@@ -16,19 +16,9 @@ import org.apache.fop.fo.properties.*;
 // Java
 import java.util.Enumeration;
 
+import org.xml.sax.Attributes;
+
 public class Inline extends FObjMixed {
-
-    public static class Maker extends FObj.Maker {
-        public FObj make(FObj parent,
-                         PropertyList propertyList) throws FOPException {
-            return new Inline(parent, propertyList);
-        }
-
-    }
-
-    public static FObj.Maker maker() {
-        return new Inline.Maker();
-    }
 
     // Textdecoration
     protected boolean underlined = false;
@@ -36,10 +26,14 @@ public class Inline extends FObjMixed {
     protected boolean lineThrough = false;
 
 
-    public Inline(FObj parent,
-                  PropertyList propertyList) throws FOPException {
-        super(parent, propertyList);
+    public Inline(FObj parent) {
+        super(parent);
         this.name = "fo:inline";
+    }
+
+    public void handleAttrs(Attributes attlist) throws FOPException {
+        super.handleAttrs(attlist);
+
         if (parent.getName().equals("fo:flow")) {
             throw new FOPException("inline formatting objects cannot"
                                    + " be directly under flow");

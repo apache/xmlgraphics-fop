@@ -12,28 +12,14 @@ import org.apache.fop.apps.FOPException;
 public class SinglePageMasterReference extends PageMasterReference
     implements SubSequenceSpecifier {
 
-    public static class Maker extends FObj.Maker {
-        public FObj make(FObj parent,
-                         PropertyList propertyList) throws FOPException {
-            return new SinglePageMasterReference(parent, propertyList);
-        }
-
-    }
-
-    public static FObj.Maker maker() {
-        return new SinglePageMasterReference.Maker();
-    }
-
     private static final int FIRST = 0;
     private static final int DONE = 1;
 
     private int state;
 
-    public SinglePageMasterReference(FObj parent, PropertyList propertyList)
-            throws FOPException {
-        super(parent, propertyList);
+    public SinglePageMasterReference(FObj parent) {
+        super(parent);
         this.state = FIRST;
-
     }
 
     public String getNextPageMaster(int currentPageNumber,

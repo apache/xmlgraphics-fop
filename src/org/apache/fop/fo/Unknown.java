@@ -23,22 +23,14 @@ import org.apache.fop.apps.FOPException;
  */
 public class Unknown extends FObj {
 
-    public static class Maker extends FObj.Maker {
-        public FObj make(FObj parent,
-                         PropertyList propertyList) throws FOPException {
-            return new Unknown(parent, propertyList);
+    public static class Maker extends ElementMapping.Maker {
+        public FObj make(FObj parent) {
+            return new Unknown(parent);
         }
-
     }
 
-    public static FObj.Maker maker() {
-        return new Unknown.Maker();
-    }
-
-    protected Unknown(FObj parent,
-                    PropertyList propertyList) throws FOPException {
-        super(parent, propertyList);
-        this.name = "unknown";
+    public Unknown(FObj parent) {
+        super(parent);
     }
 
     public Status layout(Area area) throws FOPException {

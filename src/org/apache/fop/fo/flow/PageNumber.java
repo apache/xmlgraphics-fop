@@ -20,18 +20,6 @@ import java.util.Enumeration;
 
 public class PageNumber extends FObj {
 
-    public static class Maker extends FObj.Maker {
-        public FObj make(FObj parent,
-                         PropertyList propertyList) throws FOPException {
-            return new PageNumber(parent, propertyList);
-        }
-
-    }
-
-    public static FObj.Maker maker() {
-        return new PageNumber.Maker();
-    }
-
     float red;
     float green;
     float blue;
@@ -39,8 +27,8 @@ public class PageNumber extends FObj {
     int whiteSpaceCollapse;
     TextState ts;
 
-    public PageNumber(FObj parent, PropertyList propertyList) {
-        super(parent, propertyList);
+    public PageNumber(FObj parent) {
+        super(parent);
         this.name = "fo:page-number";
     }
 

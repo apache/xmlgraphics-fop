@@ -16,19 +16,9 @@ import org.apache.fop.apps.FOPException;
 // Java
 import java.util.*;
 
+import org.xml.sax.Attributes;
+
 public class PageSequenceMaster extends FObj {
-
-    public static class Maker extends FObj.Maker {
-        public FObj make(FObj parent,
-                         PropertyList propertyList) throws FOPException {
-            return new PageSequenceMaster(parent, propertyList);
-        }
-
-    }
-
-    public static FObj.Maker maker() {
-        return new PageSequenceMaster.Maker();
-    }
 
     LayoutMasterSet layoutMasterSet;
     Vector subSequenceSpecifiers;
@@ -40,10 +30,13 @@ public class PageSequenceMaster extends FObj {
     // references to page-masters. So the methods use the former
     // terminology ('sub-sequence-specifiers', or SSS),
     // but the actual FO's are MasterReferences.
-    protected PageSequenceMaster(FObj parent, PropertyList propertyList)
-            throws FOPException {
-        super(parent, propertyList);
+    public PageSequenceMaster(FObj parent) {
+        super(parent);
         this.name = "fo:page-sequence-master";
+    }
+
+    public void handleAttrs(Attributes attlist) throws FOPException {
+        super.handleAttrs(attlist);
 
         subSequenceSpecifiers = new Vector();
 

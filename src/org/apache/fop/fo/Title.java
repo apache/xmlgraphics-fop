@@ -20,21 +20,8 @@ import org.apache.fop.apps.FOPException;
  */
 public class Title extends ToBeImplementedElement {
 
-    public static class Maker extends FObj.Maker {
-        public FObj make(FObj parent,
-                         PropertyList propertyList) throws FOPException {
-            return new Title(parent, propertyList);
-        }
-
-    }
-
-    public static FObj.Maker maker() {
-        return new Title.Maker();
-    }
-
-    protected Title(FObj parent,
-                    PropertyList propertyList) throws FOPException {
-        super(parent, propertyList);
+    public Title(FObj parent) {
+        super(parent);
         this.name = "fo:title";
     }
 

@@ -16,19 +16,9 @@ import org.apache.fop.layout.PageMaster;
 // Java
 import java.util.*;
 
+import org.xml.sax.Attributes;
+
 public class LayoutMasterSet extends FObj {
-
-    public static class Maker extends FObj.Maker {
-        public FObj make(FObj parent,
-                         PropertyList propertyList) throws FOPException {
-            return new LayoutMasterSet(parent, propertyList);
-        }
-
-    }
-
-    public static FObj.Maker maker() {
-        return new LayoutMasterSet.Maker();
-    }
 
     private Hashtable simplePageMasters;
     private Hashtable pageSequenceMasters;
@@ -36,11 +26,13 @@ public class LayoutMasterSet extends FObj {
 
     private Root root;
 
-    protected LayoutMasterSet(FObj parent,
-                              PropertyList propertyList) throws FOPException {
-        super(parent, propertyList);
+    public LayoutMasterSet(FObj parent) {
+        super(parent);
         this.name = "fo:layout-master-set";
+    }
 
+    public void handleAttrs(Attributes attlist) throws FOPException {
+        super.handleAttrs(attlist);
         this.simplePageMasters = new Hashtable();
         this.pageSequenceMasters = new Hashtable();
 

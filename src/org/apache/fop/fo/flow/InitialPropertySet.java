@@ -19,21 +19,8 @@ import org.apache.fop.apps.FOPException;
  */
 public class InitialPropertySet extends ToBeImplementedElement {
 
-    public static class Maker extends FObj.Maker {
-        public FObj make(FObj parent,
-                         PropertyList propertyList) throws FOPException {
-            return new InitialPropertySet(parent, propertyList);
-        }
-
-    }
-
-    public static FObj.Maker maker() {
-        return new InitialPropertySet.Maker();
-    }
-
-    protected InitialPropertySet(FObj parent, PropertyList propertyList)
-            throws FOPException {
-        super(parent, propertyList);
+    public InitialPropertySet(FObj parent) {
+        super(parent);
         this.name = "fo:initial-property-set";
     }
 

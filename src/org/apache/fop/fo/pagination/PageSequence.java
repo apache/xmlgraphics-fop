@@ -28,27 +28,14 @@ import org.apache.fop.apps.FOPException;
 // Java
 import java.util.*;
 
+import org.xml.sax.Attributes;
+
 /**
  * This provides pagination of flows onto pages. Much of the
  * logic for paginating flows is contained in this class.
  * The main entry point is the format method.
  */
 public class PageSequence extends FObj {
-    //
-    // Factory methods
-    //
-    public static class Maker extends FObj.Maker {
-        public FObj make(FObj parent,
-                         PropertyList propertyList) throws FOPException {
-            return new PageSequence(parent, propertyList);
-        }
-
-    }
-
-    public static FObj.Maker maker() {
-        return new PageSequence.Maker();
-    }
-
     //
     // intial-page-number types
     //
@@ -134,10 +121,13 @@ public class PageSequence extends FObj {
     private String currentPageMasterName;
 
 
-    protected PageSequence(FObj parent,
-                           PropertyList propertyList) throws FOPException {
-        super(parent, propertyList);
+    public PageSequence(FObj parent) {
+        super(parent);
         this.name = "fo:page-sequence";
+    }
+
+    public void handleAttrs(Attributes attlist) throws FOPException {
+        super.handleAttrs(attlist);
 
         if (parent.getName().equals("fo:root")) {
             this.root = (Root)parent;

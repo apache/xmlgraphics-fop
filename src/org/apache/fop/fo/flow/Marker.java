@@ -14,27 +14,20 @@ import org.apache.fop.layout.*;
 import org.apache.fop.datatypes.*;
 import org.apache.fop.apps.FOPException;
 
+import org.xml.sax.Attributes;
+
 public class Marker extends FObjMixed {
 
     private String markerClassName;
     private Area registryArea;
 
-    public static class Maker extends FObj.Maker {
-        public FObj make(FObj parent,
-                         PropertyList propertyList) throws FOPException {
-            return new Marker(parent, propertyList);
-        }
-
-    }
-
-    public static FObj.Maker maker() {
-        return new Marker.Maker();
-    }
-
-    public Marker(FObj parent, PropertyList propertyList) {
-        super(parent, propertyList);
+    public Marker(FObj parent) {
+        super(parent);
         this.name = "fo:marker";
+    }
 
+    public void handleAttrs(Attributes attlist) throws FOPException {
+        super.handleAttrs(attlist);
         // do check to see that 'this' is under fo:flow
 
         this.markerClassName =

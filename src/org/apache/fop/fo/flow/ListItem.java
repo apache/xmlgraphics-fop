@@ -20,18 +20,6 @@ import java.util.Enumeration;
 
 public class ListItem extends FObj {
 
-    public static class Maker extends FObj.Maker {
-        public FObj make(FObj parent,
-                         PropertyList propertyList) throws FOPException {
-            return new ListItem(parent, propertyList);
-        }
-
-    }
-
-    public static FObj.Maker maker() {
-        return new ListItem.Maker();
-    }
-
     int align;
     int alignLast;
     int breakBefore;
@@ -44,8 +32,8 @@ public class ListItem extends FObj {
     String id;
     BlockArea blockArea;
 
-    public ListItem(FObj parent, PropertyList propertyList) {
-        super(parent, propertyList);
+    public ListItem(FObj parent) {
+        super(parent);
         this.name = "fo:list-item";
     }
 

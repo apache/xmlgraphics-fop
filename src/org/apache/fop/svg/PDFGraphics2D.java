@@ -1250,6 +1250,12 @@ System.out.println("getting getNormalizingTransform");
             return new PDFGraphicsDevice(this);
         }
 
+/*
+// for jdk1.4
+public java.awt.image.VolatileImage createCompatibleVolatileImage(int width, int height) {
+return null;
+}
+*/
     }
 
     /**
