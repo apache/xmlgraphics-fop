@@ -72,13 +72,9 @@ public class CommandLineOptions implements Constants {
     private Vector xsltParams = null;
     
     /**
-     * Construct a command line option object from command line arguments
-     * @param args command line parameters
-     * @throws FOPException for general errors
-     * @throws FileNotFoundException if an input file wasn't found
-     * @throws IOException if the the configuration file could not be loaded
+     * Construct a command line option object.
      */
-    public CommandLineOptions(String[] args) throws FOPException, IOException {
+    public CommandLineOptions() {
         LogFactory logFactory = LogFactory.getFactory();
         
         // Enable the simple command line logging when no other logger is
@@ -90,11 +86,16 @@ public class CommandLineOptions implements Constants {
         }
 
         log = LogFactory.getLog("FOP");
-        
-        parse(args);
     }
     
-    private void parse(String[] args) 
+    /**
+     * Parse the command line arguments.
+     * @param args the command line arguments.
+     * @throws FOPException for general errors
+     * @throws FileNotFoundException if an input file wasn't found
+     * @throws IOException if the the configuration file could not be loaded
+     */
+    public void parse(String[] args) 
             throws FOPException, IOException {
         boolean optionsParsed = true;
         
