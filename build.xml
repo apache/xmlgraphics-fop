@@ -15,7 +15,7 @@ Introduction
 ============
 
 FOP is the world's first print formatter driven by XSL formatting objects. It 
-is a Java 1.1 application that reads a formatting object tree and then turns 
+is a Java 1.2 application that reads a formatting object tree and then turns 
 it into a PDF document. The formatting object tree, can be in the form of an 
 XML document (output by an XSLT engine like Xalan) or can be passed in 
 memory as a DOM Document or SAX events.
@@ -70,7 +70,6 @@ tremendously the performance of the whole build system, compared to other
 tools (i.e. make or shell scripts) where a new JVM is started for each task.
 
 
-
 Build targets
 =============
 
@@ -103,7 +102,6 @@ the built process is not stopped.
 
 2) I see a lot of warnings starting like this: "Warning: file modified in the future:"
 Sometimes ant gives out this warnings, but the build is finished without any problems
-
 
 ============================================================================ -->
 
@@ -273,7 +271,6 @@ Sometimes ant gives out this warnings, but the build is finished without any pro
     -->
 
     <taskdef name="serHyph" classname="org.apache.fop.tools.anttasks.SerializeHyphPattern"/> 
-    <taskdef name="xslt" classname="org.apache.fop.tools.anttasks.Xslt"/>
     <taskdef name="runTest" classname="org.apache.fop.tools.anttasks.RunTest"/>
 
     <property name="main.class" value="org.apache.fop.apps.Fop"/>
@@ -405,61 +402,41 @@ Sometimes ant gives out this warnings, but the build is finished without any pro
 
     <!-- generate the java files from xml resources -->
     <echo message="Generating the java files from xml resources"/>
-    <xslt infile="${allprops.xml}" xsltfile="${genconst.xsl}"
-        dependent="${foproperties.xml},${colorkw.xml}"
-        outfile="${build.src}/${replacestring}/fo/properties/Constants.java" smart="yes"/>
+    <dependset>
+        <srcfilelist dir="./" files="${foproperties.xml},${colorkw.xml}"/>
+        <targetfilelist dir="./" files="${build.src}/${replacestring}/fo/properties/Constants.java,${build.src}/${replacestring}/fo/properties/fo_${ignore_this}"/>
+    </dependset>
+    <dependset>
+        <srcfilelist dir="./" files="${propinc.xsl}"/>
+        <targetfilelist dir="./" files="${build.src}/${replacestring}/fo/properties/fo_${ignore_this},${build.src}/${replacestring}/fo/properties/FOPropertyMapping.java,${build.src}/${replacestring}/fo/properties/foenums_${ignore_this}"/>
+    </dependset>
 
-    <xslt infile="${foproperties.xml}" xsltfile="${properties.xsl}"
-        dependent="${propinc.xsl},${colorkw.xml}"
-        outfile="${build.src}/${replacestring}/fo/properties/fo_${ignore_this}" smart="yes"/>
-    <xslt infile="${foproperties.xml}" xsltfile="${propmap.xsl}"
-        dependent="${propinc.xsl}"
-        outfile="${build.src}/${replacestring}/fo/properties/FOPropertyMapping.java" smart="yes"/>
-    <xslt infile="${foproperties.xml}" xsltfile="${enumgen.xsl}"
-        dependent="${propinc.xsl}"
-        outfile="${build.src}/${replacestring}/fo/properties/foenums_${ignore_this}" smart="yes"/>
+    <style in="${allprops.xml}" style="${genconst.xsl}"
+        out="${build.src}/${replacestring}/fo/properties/Constants.java"/>
 
-    <xslt infile="${charlist.xml}" xsltfile="${charlist.xsl}" 
-        outfile="${build.src}/${replacestring}/render/pdf/CodePointMapping.java" smart="yes"/>
-    <xslt infile="${Courier.xml}" xsltfile="${fontfile.xsl}"
-        outfile="${build.src}/${replacestring}/render/pdf/fonts/Courier.java" smart="yes"/>
-    <xslt infile="${Courier-Oblique.xml}" xsltfile="${fontfile.xsl}"
-        outfile="${build.src}/${replacestring}/render/pdf/fonts/CourierOblique.java" smart="yes"/>
-    <xslt infile="${Courier-Bold.xml}" xsltfile="${fontfile.xsl}"
-        outfile="${build.src}/${replacestring}/render/pdf/fonts/CourierBold.java" smart="yes"/>
-    <xslt infile="${Courier-BoldOblique.xml}" xsltfile="${fontfile.xsl}"
-        outfile="${build.src}/${replacestring}/render/pdf/fonts/CourierBoldOblique.java" smart="yes"/>
-    <xslt infile="${Helvetica.xml}" xsltfile="${fontfile.xsl}"
-        outfile="${build.src}/${replacestring}/render/pdf/fonts/Helvetica.java" smart="yes"/>
-    <xslt infile="${Helvetica-Oblique.xml}" xsltfile="${fontfile.xsl}"
-        outfile="${build.src}/${replacestring}/render/pdf/fonts/HelveticaOblique.java" smart="yes"/>
-    <xslt infile="${Helvetica-Bold.xml}" xsltfile="${fontfile.xsl}"
-        outfile="${build.src}/${replacestring}/render/pdf/fonts/HelveticaBold.java" smart="yes"/>
-    <xslt infile="${Helvetica-BoldOblique.xml}" xsltfile="${fontfile.xsl}"
-        outfile="${build.src}/${replacestring}/render/pdf/fonts/HelveticaBoldOblique.java" smart="yes"/>
-    <xslt infile="${Times-Roman.xml}" xsltfile="${fontfile.xsl}"
-        outfile="${build.src}/${replacestring}/render/pdf/fonts/TimesRoman.java" smart="yes"/>
-    <xslt infile="${Times-Italic.xml}" xsltfile="${fontfile.xsl}"
-        outfile="${build.src}/${replacestring}/render/pdf/fonts/TimesItalic.java" smart="yes"/>
-    <xslt infile="${Times-Bold.xml}" xsltfile="${fontfile.xsl}"
-        outfile="${build.src}/${replacestring}/render/pdf/fonts/TimesBold.java" smart="yes"/>
-    <xslt infile="${Times-BoldItalic.xml}" xsltfile="${fontfile.xsl}"
-        outfile="${build.src}/${replacestring}/render/pdf/fonts/TimesBoldItalic.java" smart="yes"/>
-    <xslt infile="${ZapfDingbats.xml}" xsltfile="${fontfile.xsl}"
-        outfile="${build.src}/${replacestring}/render/pdf/fonts/ZapfDingbats.java" smart="yes"/>
-    <xslt infile="${Symbol.xml}" xsltfile="${fontfile.xsl}"
-        outfile="${build.src}/${replacestring}/render/pdf/fonts/Symbol.java" smart="yes"/>
+    <style in="${foproperties.xml}" style="${properties.xsl}"
+        out="${build.src}/${replacestring}/fo/properties/fo_${ignore_this}"/>
+    <style in="${foproperties.xml}" style="${propmap.xsl}"
+        out="${build.src}/${replacestring}/fo/properties/FOPropertyMapping.java"/>
+    <style in="${foproperties.xml}" style="${enumgen.xsl}"
+        out="${build.src}/${replacestring}/fo/properties/foenums_${ignore_this}"/>
+
+    <style in="${charlist.xml}" style="${charlist.xsl}" 
+        out="${build.src}/${replacestring}/render/pdf/CodePointMapping.java"/>
+
+    <style basedir="src/codegen" includes="*.xml"
+        excludes="allprops.xml,charlist.xml,colorkw.xml,*prop*" style="${fontfile.xsl}"
+        destdir="${build.src}/${replacestring}/render/pdf/fonts/" extension=".java"/>
 
     <!-- custom fonts (Use t1fontfile.xsl instead of fontfile.xsl for Type 1 fonts!) step 2/2 -->
     <!-- use this as a template for type 1 fonts: 
-    <xslt infile="${myfont.xml}" xsltfile="${t1fontfile.xsl}"
-        outfile="${build.src}/${replacestring}/render/pdf/fonts/myfont.java" smart="yes"/>
+    <style in="${myfont.xml}" style="${t1fontfile.xsl}"
+        out="${build.src}/${replacestring}/render/pdf/fonts/myfont.java"/>
     -->
     <!-- use this as a template for truetype fonts 
-    <xslt infile="${myfont.xml}" xsltfile="${ttffontfile.xsl}" 
-        outfile="${build.src}/${replacestring}/render/pdf/fonts/myfont.java" smart="yes"/>
+    <style in="${myfont.xml}" style="${ttffontfile.xsl}" 
+        out="${build.src}/${replacestring}/render/pdf/fonts/myfont.java"/>
     -->
-
 
   </target>
 
@@ -578,8 +555,8 @@ Sometimes ant gives out this warnings, but the build is finished without any pro
     <copy file="${xdocs}/fop.xml"
           tofile="${xdocs}/book.xml"
           filtering="on"/>
-    <xslt infile="${xdocs}/fop.xml" xsltfile="${xdocs}/xml2xml.xsl" outfile="${xdocs}/fop-doc.xml" smart="yes"/>
-    <xslt infile="${xdocs}/fop-doc.xml" xsltfile="${xdocs}/xml2pdf.xsl" outfile="${xdocs}/fop.fo" smart="yes"/>
+    <style in="${xdocs}/fop.xml" style="${xdocs}/xml2xml.xsl" out="${xdocs}/fop-doc.xml"/>
+    <style in="${xdocs}/fop-doc.xml" style="${xdocs}/xml2pdf.xsl" out="${xdocs}/fop.fo"/>
 
     <java classname="org.apache.fop.apps.Fop" fork="yes">
       <classpath refid="libs-run-classpath"/>
