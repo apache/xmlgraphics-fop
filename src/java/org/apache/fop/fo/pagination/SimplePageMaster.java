@@ -62,9 +62,6 @@ import org.xml.sax.Attributes;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.FOTreeVisitor;
-import org.apache.fop.area.PageViewport;
-import org.apache.fop.area.Page;
-import org.apache.fop.area.RegionReference;
 import org.apache.fop.layout.PageMaster;
 import org.apache.fop.apps.FOPException;
 
