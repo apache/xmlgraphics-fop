@@ -825,6 +825,15 @@ public class SyncedFoXmlEventsBuffer extends SyncedCircularBuffer {
                 ("Unexpected START element: " + ev.getQName());
     }
 
+    /**
+     * Expect that the next element will be a STARTELEMENT for one of the
+     * flow objects which are members of %block; from
+     * <b>6.2 Formatting Object Content</b>, including out-of-line flow
+     * objects which may occur except as descendents of out-of-line formatting
+     * objects.  White space is discarded.
+     * @return the <tt>FoXMLEvent found. If any other events are encountered
+     * return <tt>null</tt>.
+     */
     public FoXMLEvent expectBlock()
         throws FOPException, UnexpectedStartElementException
     {
@@ -832,7 +841,33 @@ public class SyncedFoXmlEventsBuffer extends SyncedCircularBuffer {
                 (FObjectSets.blockEntity, XMLEvent.DISCARD_W_SPACE);
     }
 
-    public FoXMLEvent expectNormalPcdataOrInline()
+    /**
+     * Expect that the next element will be a STARTELEMENT for one of the
+     * flow objects which are members of %block; from
+     * <b>6.2 Formatting Object Content</b>, excluding out-of-line flow
+     * objects which may not occur as descendents of out-of-line formatting
+     * objects.  White space is discarded.
+     * @return the <tt>FoXMLEvent found. If any other events are encountered
+     * return <tt>null</tt>.
+     */
+    public FoXMLEvent expectOutOfLineBlock()
+        throws FOPException, UnexpectedStartElementException
+    {
+        return expectStartElement
+                (FObjectSets.outOfLineBlockSet, XMLEvent.DISCARD_W_SPACE);
+    }
+
+    /**
+     * Expect that the next element will be a STARTELEMENT for one of the
+     * flow objects which are members of (#PCDATA|%inline;) from
+     * <b>6.2 Formatting Object Content</b>, including out-of-line flow
+     * objects which may occur except as descendents of out-of-line
+     * formatting objects.  White space is retained, and
+     * will appear as #PCDATA, i.e, as an instance of FoCharacters.
+     * @return the <tt>FoXMLEvent found. If any other events are encountered
+     * return <tt>null</tt>.
+     */
+    public FoXMLEvent expectPcdataOrInline()
         throws FOPException, UnexpectedStartElementException
     {
         FoXMLEvent ev = expectStartElement
@@ -842,6 +877,16 @@ public class SyncedFoXmlEventsBuffer extends SyncedCircularBuffer {
         return ev;
     }
 
+    /**
+     * Expect that the next element will be a STARTELEMENT for one of the
+     * flow objects which are members of (#PCDATA|%inline;) from
+     * <b>6.2 Formatting Object Content</b>, excluding out-of-line flow
+     * objects which may not occur as descendents of out-of-line formatting
+     * objects.  White space is retained, and
+     * will appear as #PCDATA, i.e, as an instance of FoCharacters.
+     * @return the <tt>FoXMLEvent found. If any other events are encountered
+     * return <tt>null</tt>.
+     */
     public FoXMLEvent expectOutOfLinePcdataOrInline()
         throws FOPException, UnexpectedStartElementException
     {
@@ -852,7 +897,17 @@ public class SyncedFoXmlEventsBuffer extends SyncedCircularBuffer {
         return ev;
     }
 
-    public FoXMLEvent expectNormalPcdataOrInlineOrBlock()
+    /**
+     * Expect that the next element will be a STARTELEMENT for one of the
+     * flow objects which are members of (#PCDATA|%inline;|%block;) from
+     * <b>6.2 Formatting Object Content</b>, including out-of-line flow
+     * objects which may occur except as descendents of out-of-line
+     * formatting objects.  White space is retained, and
+     * will appear as #PCDATA, i.e, as an instance of FoCharacters.
+     * @return the <tt>FoXMLEvent</tt> found. If any other events are
+     * encountered return <tt>null</tt>.
+     */
+    public FoXMLEvent expectPcdataOrInlineOrBlock()
         throws FOPException, UnexpectedStartElementException
     {
         FoXMLEvent ev = expectStartElement
@@ -862,11 +917,22 @@ public class SyncedFoXmlEventsBuffer extends SyncedCircularBuffer {
         return ev;
     }
 
+    /**
+     * Expect that the next element will be a STARTELEMENT for one of the
+     * flow objects which are members of (#PCDATA|%inline;|%block;) from
+     * <b>6.2 Formatting Object Content</b>, excluding out-of-line flow
+     * objects which may not occur as descendents of out-of-line formatting
+     * objects.  White space is retained, and
+     * will appear as #PCDATA, i.e, as an instance of FoCharacters.
+     * @return the <tt>FoXMLEvent</tt> found. If any other events are
+     * encountered return <tt>null</tt>.
+     */
     public FoXMLEvent expectOutOfLinePcdataOrInlineOrBlock()
         throws FOPException, UnexpectedStartElementException
     {
         FoXMLEvent ev = expectStartElement
-            (FObjectSets.pcdataBlockInlineSet, XMLEvent.RETAIN_W_SPACE);
+            (FObjectSets.outOfLinePcdataBlockInlineSet,
+                                                     XMLEvent.RETAIN_W_SPACE);
         if (ev == null)
             ev = expectCharacters();
         return ev;
