@@ -20,7 +20,7 @@ import org.apache.fop.xml.XMLNamespaces;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.fo.expr.PropertyException;
 import org.apache.fop.fo.Properties;
-import org.apache.fop.fo.FObjects;
+import org.apache.fop.fo.FOPropertySets;
 import org.apache.fop.fo.FObjectNames;
 import org.apache.fop.fo.FOTree;
 import org.apache.fop.fo.FONode;
@@ -47,7 +47,7 @@ public class FoPageSequenceMaster extends FONode {
         throws Tree.TreeException, FOPException, PropertyException
     {
         super(foTree, FObjectNames.PAGE_SEQUENCE_MASTER, parent, null,
-              FObjects.LAYOUT_SET);
+              FOPropertySets.LAYOUT_SET);
         this.masterName = masterName;
     }
 
@@ -55,7 +55,7 @@ public class FoPageSequenceMaster extends FONode {
         throws Tree.TreeException, FOPException, PropertyException
     {
         super(foTree, FObjectNames.PAGE_SEQUENCE_MASTER, parent, event,
-              FObjects.LAYOUT_SET);
+              FOPropertySets.LAYOUT_SET);
         if (event == null) {
             System.out.println("Null event; throwing FOPException");
             throw new FOPException

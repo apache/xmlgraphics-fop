@@ -14,7 +14,7 @@ import org.apache.fop.fo.FOAttributes;
 import org.apache.fop.fo.PropNames;
 import org.apache.fop.xml.XMLEvent;
 import org.apache.fop.apps.FOPException;
-import org.apache.fop.fo.FObjects;
+import org.apache.fop.fo.FOPropertySets;
 import org.apache.fop.fo.FObjectNames;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FOTree;
@@ -43,7 +43,7 @@ public class FoSimplePageMaster extends FONode {
         throws Tree.TreeException, FOPException, PropertyException
     {
         super(foTree, FObjectNames.SIMPLE_PAGE_MASTER, parent, event,
-              FObjects.LAYOUT_SET);
+              FOPropertySets.LAYOUT_SET);
         System.out.println("FOAttributes: " + event);
         // Check that the property has been set
         PropertyValue name = propertySet[PropNames.MASTER_NAME];
