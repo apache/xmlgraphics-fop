@@ -2,6 +2,7 @@ package org.apache.fop.datatypes;
 
 import org.apache.fop.fo.expr.PropertyException;
 import org.apache.fop.fo.FONode;
+import org.apache.fop.datastructs.ROStringArray;
 
 /*
  * PropertyValue.java
@@ -53,6 +54,39 @@ public interface PropertyValue {
 
             ,LAST_PROPERTY_TYPE = LIST;
 
+    public static final ROStringArray propertyTypes =
+        new ROStringArray(new String[] {
+        "NO_TYPE"
+        ,"ANGLE"
+        ,"AUTO"
+        ,"BOOL"
+        ,"COLOR_TYPE"
+        ,"COUNTRY"
+        ,"ENUM"
+        ,"FONT_FAMILY"
+        ,"FREQUENCY"
+        ,"FROM_NEAREST_SPECIFIED"
+        ,"FROM_PARENT"
+        ,"INHERIT"
+        ,"INHERITED_VALUE"
+        ,"INTEGER"
+        ,"LANGUAGE"
+        ,"LITERAL"
+        ,"MAPPED_NUMERIC"
+        ,"MIME_TYPE"
+        ,"NCNAME"
+        ,"NONE"
+        ,"NUMERIC"
+        ,"SCRIPT"
+        ,"SHADOW_EFFECT"
+        ,"SLASH"
+        ,"TEXT_DECORATIONS"
+        ,"TEXT_DECORATOR"
+        ,"TIME"
+        ,"URI_LIST"
+        ,"LIST"
+    });
+
     /**
      * @return <tt>int</tt> property index.
      */
@@ -64,18 +98,6 @@ public interface PropertyValue {
      * @return type field of the <tt>PropertyValue</tt>.
      */
     public int getType();
-
-    /**
-     * Set the reference to the <tt>FONode</tt> that stacked this value.
-     * @param node - the stacking <tt.FONode</tt>.
-     */
-    public void setStackedBy(FONode node);
-
-    /**
-     * Get a reference to the <tt>FONode</tt> that stacked this value.
-     * @return <tt>FONode</tt> that stacked this value.
-     */
-    public FONode getStackedBy();
 
     /**
      * In some circumstances, the property against which a type is to be
