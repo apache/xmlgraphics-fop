@@ -2,6 +2,7 @@ package org.apache.fop.fo.expr;
 
 import org.apache.fop.fo.PropertyConsts;
 import org.apache.fop.fo.PropNames;
+import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.expr.PropertyException;
 
 /**
@@ -33,6 +34,8 @@ public class PropertyTriplet {
     private PropertyValue actual;
     private String expression;
     private boolean wasSpecified;
+
+    private FONode stackedBy = null;
 
     public PropertyTriplet() {
         // PropertyValues and expression are null
@@ -191,6 +194,14 @@ public class PropertyTriplet {
         return actual.getProperty();
     }
 
+    public FONode getStackedBy() {
+        return stackedBy;
+    }
+
+    public void setStackedBy(FONode stackedBy) {
+        this.stackedBy = stackedBy;
+    }
+
     public String toString() {
         String tmpstr = "Specified: ";
         if (specified != null) tmpstr += specified.toString();
@@ -203,6 +214,9 @@ public class PropertyTriplet {
         else tmpstr += "null";
         tmpstr += "\nActual: ";
         if (actual != null) tmpstr += actual.toString();
+        else tmpstr += "null";
+        tmpstr += "\nStacked by: ";
+        if (stackedBy != null) tmpstr+= stackedBy.id;
         else tmpstr += "null";
         tmpstr += "\n";
         return tmpstr;
