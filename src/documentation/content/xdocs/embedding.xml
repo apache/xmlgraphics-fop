@@ -11,7 +11,7 @@
     </header>
 
     <body>
-  <section>
+  <section id="overview">
     <title>Overview</title>
   <p>Instantiate org.apache.fop.apps.Driver. Once this class is
      instantiated, methods are called to set the
@@ -24,7 +24,7 @@
      enables runtime determination of Renderer and ElementMapping(s).
   </p>
   </section>
-  <section>
+  <section id="basics">
     <title>Basics</title>
   <p>The simplest way to use Driver is to instantiate it with the
      InputSource and OutputStream, then set the renderer desired and
@@ -148,9 +148,9 @@ issues should be fixed in the upcoming JDK 1.4</note>
   and set it on the Driver object. See the existing implementations in Avalon Framework for examples.</p>
 
   </section>
-  <section>
+  <section id="hints">
     <title>Hints</title>
-    <section>
+    <section id="input">
      <title>XML/XSL/DOM Inputs</title>
      <p>
 You may want to supply you input to FOP from different data sources.
@@ -169,7 +169,7 @@ will in turn create the rendered output.
 Examples showing this can be found at the bott
      </p>
     </section>
-    <section>
+    <section id="object-reuse">
       <title>Object reuse</title>
      <p>
 If FOP is going to be used multiple times within your application
@@ -183,7 +183,7 @@ You will need to setup the driver again with a new OutputStream,
 IntputStream and renderer.
      </p>
     </section>
-    <section>
+    <section id="render-info">
       <title>Getting information on the rendering process</title>
       <p>
 To get the number of pages that were rendered by FOP you can call 
@@ -331,14 +331,14 @@ Press "OK", then apply the change and restart the application server.
       </p>
     </section>
   </section>
-<section>
+<section id="examples">
   <title>Examples</title>
   <p>
 The directory "xml-fop/examples/embedding" contains several working examples. 
 In contrast of the examples above the examples here primarily use JAXP for 
 XML access. This may be easier to understand for people familiar with JAXP.
   </p>
-  <section>
+  <section id="ExampleFO2PDF">
     <title>ExampleFO2PDF.java</title>
     <p>
 This example demonstrates the basic usage pattern to transform an XSL-FO
@@ -346,7 +346,7 @@ file to PDF using FOP.
     </p>
     <figure src="images/EmbeddingExampleFO2PDF.png" alt="Example XSL-FO to PDF"/>
   </section>
-  <section>
+  <section id="ExampleXML2FO">
     <title>ExampleXML2FO.java</title>
     <p>
 This example has nothing to do with FOP. It is there to show you how an XML 
@@ -356,7 +356,7 @@ classpath (ex. <fork href="http://xml.apache.org/xalan-j">Xalan</fork>).
     </p>
     <figure src="images/EmbeddingExampleXML2FO.png" alt="Example XML to XSL-FO"/>
   </section>
-  <section>
+  <section id="ExampleXML2PDF">
     <title>ExampleXML2PDF.java</title>
     <p>
 This example demonstrates how you can convert an arbitrary XML file to PDF 
@@ -374,7 +374,7 @@ strongly discourage you to do this if it isn't absolutely necessary. The
 performance is significantly higher with SAX.
     </p>
   </section>
-  <section>
+  <section id="ExampleObj2XML">
     <title>ExampleObj2XML.java</title>
     <p>
 This example is a preparatory example for the next one. It's an example that 
@@ -405,7 +405,7 @@ used. For more detailed information see other resources on JAXP (ex.
 <fork href="http://java.sun.com/xml/jaxp/dist/1.1/docs/tutorial/xslt/3_generate.html">An older JAXP tutorial</fork>).
     </p>
   </section>
-  <section>
+  <section id="ExampleObj2PDF">
     <title>ExampleObj2PDF.java</title>
     <p>
 The last example here combines the previous and the third to demonstrate 
@@ -416,7 +416,7 @@ using FOP as before.
     </p>
     <figure src="images/EmbeddingExampleObj2PDF.png" alt="Example Java object to PDF (via XML and XSL-FO)"/>
   </section>
-  <section>
+  <section id="example-notes">
     <title>Final notes</title>
     <p>
 These examples should give you an idea of what's possible. It should be easy 
