@@ -69,6 +69,9 @@ public class LayoutContext {
     /** Stretch or shrink value when making areas. */
     private double m_dSpaceAdjust = 0.0;
 
+    private int m_iLineHeight;
+    private int m_iBaseline;
+
     public LayoutContext(LayoutContext parentLC) {
         this.flags = parentLC.flags;
         this.refIPD = parentLC.refIPD;
@@ -77,6 +80,8 @@ public class LayoutContext {
         this.m_trailingSpace = parentLC.m_trailingSpace; //???
         this.m_hyphContext = parentLC.m_hyphContext;
         this.m_dSpaceAdjust = parentLC.m_dSpaceAdjust;
+        this.m_iLineHeight = parentLC.m_iLineHeight;
+        this.m_iBaseline = parentLC.m_iBaseline;
         // Copy other fields as necessary. Use clone???
     }
 
@@ -171,4 +176,21 @@ public class LayoutContext {
     public double getSpaceAdjust() {
         return m_dSpaceAdjust;
     }
+
+    public void setLineHeight(int lh) {
+        m_iLineHeight = lh;
+    }
+
+    public int getLineHeight() {
+        return m_iLineHeight;
+    }
+
+    public void setBaseline(int bl) {
+        m_iBaseline = bl;
+    }
+
+    public int getBaseline() {
+        return m_iBaseline;
+    }
 }
+
