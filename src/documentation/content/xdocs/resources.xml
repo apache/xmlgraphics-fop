@@ -171,6 +171,24 @@ PJ is an open source product that can be used to modify PDF documents:
 iText is a library that can edit PDF files, it is possible to do
 post processing of the generated PDF files: <link href="http://www.lowagie.com/iText/">http://www.lowagie.com/iText/</link>.
       </li>
+      <li>
+      html2fo is a converter from html to xsl:fo:
+      <link href="http://html2fo.sourceforge.net/">http://html2fo.sourceforge.net/</link>.
+      </li>
+      <li>
+      FOA is a XSL-FO Authoring tool:
+      <link href="http://foa.sourceforge.net/">http://foa.sourceforge.net/</link>.
+      </li>
+      <li>
+      TIFFRenderer is a renderer for outputting multi-page TIFF:
+      <link href="http://www.tkachenko.com/fop/tiffrenderer.html">
+      http://www.tkachenko.com/fop/tiffrenderer.html</link>.
+      </li>
+      <li>
+      AFP Renderer / Batch Assembler for FOP:
+      <link href="http://mypage.bluewin.ch/huanderegg/">
+      http://mypage.bluewin.ch/huanderegg/</link>.
+      </li>
     </ul>
   </section>
 </section>
