@@ -65,6 +65,7 @@ import org.apache.fop.fo.properties.Hyphenate;
 import org.apache.fop.fo.properties.CountryMaker;
 import org.apache.fop.fo.properties.LanguageMaker;
 import org.apache.fop.fo.properties.LeaderAlignment;
+import org.apache.fop.fo.properties.VerticalAlign;
 import org.apache.fop.layout.hyphenation.Hyphenation;
 import org.apache.fop.layout.hyphenation.Hyphenator;
 
@@ -92,6 +93,7 @@ public class LineArea extends Area {
     private float red, green, blue;
     private int wrapOption;
     private int whiteSpaceCollapse;
+    int vAlign;
 
     /*hyphenation*/
     protected int hyphenate;
@@ -109,7 +111,7 @@ public class LineArea extends Area {
     protected int embeddedLinkStart = 0;
 
     /* the width of the current word so far */
-    protected int wordWidth = 0;
+//    protected int wordWidth = 0;
 
     /* values that prev (below) may take */
     protected static final int NOTHING = 0;
@@ -120,10 +122,10 @@ public class LineArea extends Area {
     protected int prev = NOTHING;
 
     /* the position in data[] of the start of the current word */
-    protected int wordStart;
+//    protected int wordStart;
 
     /* the length (in characters) of the current word */
-    protected int wordLength = 0;
+//    protected int wordLength = 0;
 
     /* width of spaces before current word */
     protected int spaceWidth = 0;
@@ -191,7 +193,6 @@ public class LineArea extends Area {
         pia.setYOffset(placementOffset);
         pendingAreas.addElement(pia);
         pendingWidth += width;
-        wordWidth = 0;
         prev = TEXT;
 
         return -1;
@@ -210,9 +211,9 @@ public class LineArea extends Area {
         if(start == -1) return -1;
         boolean overrun = false;
 
-        wordStart = start;
-        wordLength = 0;
-        wordWidth = 0;
+        int wordStart = start;
+        int wordLength = 0;
+        int wordWidth = 0;
         char[] data = new char[odata.length];
         for (int count = 0; count < odata.length; count++) {
             data[count] = odata[count];
@@ -316,6 +317,7 @@ public class LineArea extends Area {
                         prevOlState = textState.getOverlined();
                         ia.setLineThrough(textState.getLineThrough());
                         prevLTState = textState.getLineThrough();
+                        ia.setVerticalAlign(vAlign);
 
                         addChild(ia);
                         if (ls != null) {
@@ -457,6 +459,7 @@ public class LineArea extends Area {
             prevOlState = textState.getOverlined();
             pia.setLineThrough(textState.getLineThrough());
             prevLTState = textState.getLineThrough();
+            pia.setVerticalAlign(vAlign);
 
             if (ls != null) {
                 Rectangle lr = new Rectangle(finalWidth + spaceWidth +
@@ -674,17 +677,25 @@ public class LineArea extends Area {
             Box b = (Box) e.nextElement();
             if(b instanceof InlineArea) {
                 InlineArea ia = (InlineArea)b;
+                if(ia instanceof WordArea) {
+                    ia.setYOffset(placementOffset);
+                }
                 if(ia.getHeight() > maxHeight) {
                     maxHeight = ia.getHeight();
                 }
                 int vert = ia.getVerticalAlign();
-/*                if(vert == VerticalAlign.SUPER) {
-                    int tbe = fontState.getAscender();
-                    ia.setYOffset(placementOffset - (tbe - h));
-                }*/
+                if(vert == VerticalAlign.SUPER) {
+                    int fh = fontState.getAscender();
+                    ia.setYOffset((int)(placementOffset - (fh / 3.0)));
+                } else if(vert == VerticalAlign.SUB) {
+                    int fh = fontState.getAscender();
+                    ia.setYOffset((int)(placementOffset + (fh / 3.0)));
+                }
             } else {
             }
         }
+        // adjust the height of this line to the
+        // resulting alignment height.
         this.allocationHeight = maxHeight;
     }
 
@@ -706,6 +717,10 @@ public class LineArea extends Area {
         this.wrapOption = wrapOption;
     }
 
+    public void changeVerticalAlign(int vAlign) {
+        this.vAlign = vAlign;
+    }
+
     public int getEndIndent() {
         return endIndent;
     }
@@ -724,7 +739,7 @@ public class LineArea extends Area {
 
     public boolean isEmpty() {
         return !(pendingAreas.size() > 0 || children.size() > 0);
-//        return (prev == 0);
+//        return (prev == NOTHING);
     }
 
     public Vector getPendingAreas() {
@@ -834,7 +849,7 @@ public class LineArea extends Area {
      *  handles cases of inword punctuation and quotation marks at the beginning
      *  of words, but not in a internationalized way 
      */
-    private int doHyphenation (char [] characters, int position, int wordStart, int remainingWidth) {
+    public int doHyphenation (char [] characters, int position, int wordStart, int remainingWidth) {
         //check whether the language property has been set
         if (this.language.equalsIgnoreCase("none")) {
           MessageHandler.errorln("if property 'hyphenate' is used, a language must be specified");
@@ -942,12 +957,23 @@ public class LineArea extends Area {
         return this.getContentWidth() - this.getCurrentXPosition();
     }
 
+    public void setLinkSet(LinkSet ls)
+    {
+    }
+
     public void addInlineArea(Area box)
     {
         addPending();
         addChild(box);
         prev = TEXT;
         finalWidth += box.getContentWidth();
+    }
+
+    public void addInlineSpace(InlineSpace is, int spaceWidth)
+    {
+        addChild(is);
+        finalWidth += spaceWidth;
+//        spaceWidth = 0;
     }
 
     /** adds a single character to the line area tree*/ 
