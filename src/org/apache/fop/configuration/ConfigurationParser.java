@@ -161,14 +161,19 @@ public class ConfigurationParser extends DefaultHandler {
             }
             status = OUT;
             role = "standard";
-        } else if (localName.equals("subentry")) {
+	    key = "";
+	    value = "";
+	} else if (localName.equals("subentry")) {
             map.put(subkey, value);
             status -= IN_SUBENTRY;
+	    key = "";
+	    value = "";
         } else if (localName.equals("key")) {
             status -= IN_KEY;
         } else if (localName.equals("list")) {
             status -= IN_LIST;
-        } else if (localName.equals("value")) {
+	    value = "";
+	} else if (localName.equals("value")) {
             status -= IN_VALUE;
         }
     }
