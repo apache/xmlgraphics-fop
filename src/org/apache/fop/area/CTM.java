@@ -19,21 +19,21 @@ import org.apache.fop.fo.properties.WritingMode;
  */
 
 public class CTM implements Serializable {
-    private double a,b,c,d,e,f;
+    private double a, b, c, d, e, f;
 
-    private static CTM s_CTM_lrtb = new CTM(1,0,0,1,0,0);
-    private static CTM s_CTM_rltb = new CTM(-1,0,0,1,0,0);
-    private static CTM s_CTM_tbrl = new CTM(0,1,-1,0,0,0);
-/**
- * Create the identity matrix
- */
+    private static CTM s_CTM_lrtb = new CTM(1, 0, 0, 1, 0, 0);
+    private static CTM s_CTM_rltb = new CTM(-1, 0, 0, 1, 0, 0);
+    private static CTM s_CTM_tbrl = new CTM(0, 1, -1, 0, 0, 0);
+    /**
+     * Create the identity matrix
+     */
     public CTM() {
-        a=1;
-        b=0;
-        c=0;
-        d=1;
-        e=0;
-        f=0;
+        a = 1;
+        b = 0;
+        c = 0;
+        d = 1;
+        e = 0;
+        f = 0;
     }
 
     /**
@@ -62,12 +62,12 @@ public class CTM implements Serializable {
     }
 
     protected CTM(CTM ctm) {
-	this.a = ctm.a;
-	this.b = ctm.b;
-	this.c = ctm.c;
-	this.d = ctm.d;
-	this.e = ctm.e;
-	this.f = ctm.f;
+        this.a = ctm.a;
+        this.b = ctm.b;
+        this.c = ctm.c;
+        this.d = ctm.d;
+        this.e = ctm.e;
+        this.f = ctm.f;
     }
 
     /**
@@ -81,26 +81,26 @@ public class CTM implements Serializable {
      * CTM is being set.
      */
     static public CTM getWMctm(int wm, int ipd, int bpd) {
-	CTM wmctm;
+        CTM wmctm;
         switch (wm) {
             case WritingMode.LR_TB:
                 return new CTM(s_CTM_lrtb);
             case WritingMode.RL_TB:
-		{
-		wmctm = new CTM(s_CTM_rltb);
-		wmctm.e = ipd;
-		return wmctm;
-		}
+                {
+                    wmctm = new CTM(s_CTM_rltb);
+                    wmctm.e = ipd;
+                    return wmctm;
+                }
                 //return  s_CTM_rltb.translate(ipd, 0);
             case WritingMode.TB_RL: // CJK
-		{
-		wmctm = new CTM(s_CTM_tbrl);
-		wmctm.e = bpd;
-		return wmctm;
-		}
+                {
+                    wmctm = new CTM(s_CTM_tbrl);
+                    wmctm.e = bpd;
+                    return wmctm;
+                }
                 //return s_CTM_tbrl.translate(0, ipd);
-	    default:
-		return null;
+            default:
+                return null;
         }
     }
 
@@ -111,14 +111,12 @@ public class CTM implements Serializable {
      * @return CTM The result of multiplying premult * this.
      */
     public CTM multiply(CTM premult) {
-        CTM rslt= new CTM (
-            (premult.a * a) + (premult.b * c),
-            (premult.a * b) + (premult.b * d),
-            (premult.c * a) + (premult.d * c),
-            (premult.c * b) + (premult.d * d),
-            (premult.e * a) + (premult.f * c) + e,
-            (premult.e * b) + (premult.f * d) + f
-        );
+        CTM rslt = new CTM ((premult.a * a) + (premult.b * c),
+                            (premult.a * b) + (premult.b * d),
+                            (premult.c * a) + (premult.d * c),
+                            (premult.c * b) + (premult.d * d),
+                            (premult.e * a) + (premult.f * c) + e,
+                            (premult.e * b) + (premult.f * d) + f);
         return rslt;
     }
 
@@ -130,25 +128,22 @@ public class CTM implements Serializable {
      * @return CTM The result of rotating this CTM.
      */
     public CTM rotate(double angle) {
-	double cos, sin;
-	if (angle == 90.0) {
-	    cos = 0.0;
-	    sin = 1.0;
-	}
-	else if (angle == 270.0) {
-	    cos = 0.0;
-	    sin = -1.0;
-	}
-	else if (angle == 180.0) {
-	    cos = -1.0;
-	    sin = 0.0;
-	}
-	else {
-	    double rad = Math.toRadians(angle);
-	    cos = Math.cos(rad);
-	    sin = Math.sin(rad);
-	}
-        CTM rotate= new CTM(cos,-sin, sin, cos, 0, 0);
+        double cos, sin;
+        if (angle == 90.0) {
+            cos = 0.0;
+            sin = 1.0;
+        } else if (angle == 270.0) {
+            cos = 0.0;
+            sin = -1.0;
+        } else if (angle == 180.0) {
+            cos = -1.0;
+            sin = 0.0;
+        } else {
+            double rad = Math.toRadians(angle);
+            cos = Math.cos(rad);
+            sin = Math.sin(rad);
+        }
+        CTM rotate = new CTM(cos, -sin, sin, cos, 0, 0);
         return multiply(rotate);
     }
 
@@ -159,7 +154,7 @@ public class CTM implements Serializable {
      * @return CTM The result of translating this CTM.
      */
     public CTM translate(double x, double y) {
-        CTM translate= new CTM(1,0,0,1,x,y);
+        CTM translate = new CTM(1, 0, 0, 1, x, y);
         return multiply(translate);
     }
 
@@ -170,7 +165,7 @@ public class CTM implements Serializable {
      * @return CTM The result of scaling this CTM.
      */
     public CTM scale(double x, double y) {
-        CTM scale= new CTM(x,0,0,y,0,0);
+        CTM scale = new CTM(x, 0, 0, y, 0, 0);
         return multiply(scale);
     }
 
@@ -183,12 +178,12 @@ public class CTM implements Serializable {
     public Rectangle2D transform(Rectangle2D inRect) {
         // Store as 2 sets of 2 points and transform those, then
         // recalculate the width and height
-        int x1t = (int)(inRect.getX()*a + inRect.getY()*c + e);
-        int y1t = (int)(inRect.getX()*b + inRect.getY()*d + f);
-        int x2t = (int)((inRect.getX()+inRect.getWidth())*a +
-            (inRect.getY()+inRect.getHeight())*c + e);
-        int y2t = (int)((inRect.getX()+inRect.getWidth())*b +
-            (inRect.getY()+inRect.getHeight())*d + f);
+        int x1t = (int)(inRect.getX() * a + inRect.getY() * c + e);
+        int y1t = (int)(inRect.getX() * b + inRect.getY() * d + f);
+        int x2t = (int)((inRect.getX() + inRect.getWidth()) * a +
+                        (inRect.getY() + inRect.getHeight()) * c + e);
+        int y2t = (int)((inRect.getX() + inRect.getWidth()) * b +
+                        (inRect.getY() + inRect.getHeight()) * d + f);
         // Normalize with x1 < x2
         if (x1t > x2t) {
             int tmp = x2t;
@@ -200,18 +195,15 @@ public class CTM implements Serializable {
             y2t = y1t;
             y1t = tmp;
         }
-        return new Rectangle(x1t, y1t, x2t-x1t, y2t-y1t);
+        return new Rectangle(x1t, y1t, x2t - x1t, y2t - y1t);
     }
 
     public String toString() {
-	return "[" + a + " " + b + " " + c + " " + d + " " + e + " " + f + "]";
-    }
-
-    public String toPDFctm() {
-	return a + " " + b + " " + c + " " + d + " " + e/1000f + " " + f/1000f;
+        return "[" + a + " " + b + " " + c + " " + d + " " + e + " " +
+               f + "]";
     }
 
     public double[] toArray() {
-        return new double[] {a, b, c, d, e / 1000.0, f / 1000.0};
+        return new double[]{a, b, c, d, e, f};
     }
 }
