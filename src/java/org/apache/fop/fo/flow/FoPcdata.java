@@ -31,6 +31,7 @@ import org.apache.fop.fo.FOTree;
 import org.apache.fop.fo.FObjectNames;
 import org.apache.fop.fo.PropNames;
 import org.apache.fop.fo.PropertySets;
+import org.apache.fop.render.FontData;
 import org.apache.fop.xml.XmlEvent;
 
 /**
@@ -111,6 +112,7 @@ public class FoPcdata extends FOPageSeqNode {
 
     /** The #PCDATA characters. */
     private String characters;
+    private FontData fontData;
 
     /**
      * Construct an FoPcdata object to contain the characters from a
@@ -132,6 +134,7 @@ public class FoPcdata extends FOPageSeqNode {
         super(foTree, FObjectNames.PCDATA, pageSequence, parent, event,
                           stateFlags, sparsePropsMap, sparseIndices);
         characters = event.getChars();
+        fontData = foTree.getFontData();
         makeSparsePropsSet();
     }
 
@@ -152,7 +155,7 @@ public class FoPcdata extends FOPageSeqNode {
      */
     private void processText() {
         // Get the font
-        // 
+        
     }
 
 }
