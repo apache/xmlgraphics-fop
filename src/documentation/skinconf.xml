@@ -14,6 +14,7 @@ jefft@apache.org
   <!ELEMENT skinconfig (disable-search?, searchsite-domain?, searchsite-name?, project-name, project-url, project-logo, group-name?, group-url?, group-logo?, host-logo?, year?, vendor?, trail?, credits?)*>
   <!ELEMENT credits (credit*)>
   <!ELEMENT credit (name, url, image, width?, height?)>
+  <!ATTLIST credit role CDATA #IMPLIED>
   <!ELEMENT disable-search (#PCDATA)>
   <!ELEMENT searchsite-domain (#PCDATA)>
   <!ELEMENT searchsite-name (#PCDATA)>
@@ -60,7 +61,7 @@ jefft@apache.org
   <host-logo></host-logo>
 
   <!-- The following used to construct a copyright statement -->
-  <year>1999-2002</year>
+  <year>1999-2003</year>
   <vendor>The Apache Software Foundation.</vendor>
 
   <!-- Some skins use this to form a 'breadcrumb trail' of links. If you don't
@@ -89,5 +90,12 @@ jefft@apache.org
       <width>138</width>
       <height>31</height>
     </credit>-->
+    <!--credit role="pdf">
+      <name>Created by: FOP 1.0dev</name>
+      <url>http://xml.apache.org/fop/dev</url>
+      <image>images/logo.jpg</image>
+      <width>138</width>
+      <height>31</height>
+    </credit-->
   </credits>
 </skinconfig>
