@@ -114,6 +114,32 @@ public class SVGRenderer {
 		/** the current colour for use in svg */
 		private PDFColor currentColour = new PDFColor(0, 0, 0);
 
+	// The toRadians() and toDegrees() methods of the Math class are not available in JDK 1.1, so reproduce here
+    /**
+     * Converts an angle measured in degrees to the equivalent angle
+     * measured in radians.
+     *
+     * @param   angdeg   an angle, in degrees
+     * @return  the measurement of the angle <code>angdeg</code>
+     *          in radians.
+     * @since   JDK1.2
+     */
+    public static double toRadians(double angdeg) {
+	return angdeg / 180.0 * Math.PI;
+    }
+    /**
+     * Converts an angle measured in radians to the equivalent angle
+     * measured in degrees.
+     *
+     * @param   angrad   an angle, in radians
+     * @return  the measurement of the angle <code>angrad</code>
+     *          in degrees.
+     * @since   JDK1.2
+     */
+    public static double toDegrees(double angrad) {
+	return angrad * 180.0 / Math.PI;
+    }
+
 		/**
 		 * create the SVG renderer
 		 */
@@ -672,7 +698,7 @@ public class SVGRenderer {
             if(ry < 0)
                 ry = -ry;
             // Convert angle from degrees to radians
-            angle = Math.toRadians(angle % 360.0);
+            angle = toRadians(angle % 360.0);
 
             double x0 = startx;
             double y0 = starty;
@@ -724,13 +750,13 @@ public class SVGRenderer {
             n = Math.sqrt((ux * ux) + (uy * uy));
             p = ux; // (1 * ux) + (0 * uy)
             sign = (uy < 0) ? -1d : 1d;
-            double angleStart = Math.toDegrees(sign * Math.acos(p / n));
+            double angleStart = toDegrees(sign * Math.acos(p / n));
 
             // Compute the angle extent
             n = Math.sqrt((ux * ux + uy * uy) * (vx * vx + vy * vy));
             p = ux * vx + uy * vy;
             sign = (ux * vy - uy * vx < 0) ? -1d : 1d;
-            double angleExtent = Math.toDegrees(sign * Math.acos(p / n));
+            double angleExtent = toDegrees(sign * Math.acos(p / n));
             if(!sweepFlag && angleExtent > 0) {
                 angleExtent -= 360f;
             } else if (sweepFlag && angleExtent < 0) {
@@ -747,16 +773,16 @@ public class SVGRenderer {
             boolean wrap = (sweepFlag ? angleStart > angleExtent : angleStart < angleExtent);
             boolean wrapped = false;
 
-/*            newx = Math.cos(Math.toRadians(angle)) * rx * Math.cos(Math.toRadians(currentAngle)) - Math.sin(Math.toRadians(angle)) * ry * Math.sin(Math.toRadians(currentAngle)) + cx;
-            newy = Math.sin(Math.toRadians(angle)) * rx * Math.cos(Math.toRadians(currentAngle)) + Math.cos(Math.toRadians(angle)) * ry * Math.sin(Math.toRadians(currentAngle)) + cy;
+/*            newx = Math.cos(toRadians(angle)) * rx * Math.cos(toRadians(currentAngle)) - Math.sin(toRadians(angle)) * ry * Math.sin(toRadians(currentAngle)) + cx;
+            newy = Math.sin(toRadians(angle)) * rx * Math.cos(toRadians(currentAngle)) + Math.cos(toRadians(angle)) * ry * Math.sin(toRadians(currentAngle)) + cy;
             System.out.println("ox:" + startx + " oy: " + starty + " nx:" + newx + " ny:" + newy);
-            newx = Math.cos(Math.toRadians(angle)) * rx * Math.cos(Math.toRadians(angleStart + angleExtent)) - Math.sin(Math.toRadians(angle)) * ry * Math.sin(Math.toRadians(angleStart + angleExtent)) + cx;
-            newy = Math.sin(Math.toRadians(angle)) * rx * Math.cos(Math.toRadians(angleStart + angleExtent)) + Math.cos(Math.toRadians(angle)) * ry * Math.sin(Math.toRadians(angleStart + angleExtent)) + cy;
+            newx = Math.cos(toRadians(angle)) * rx * Math.cos(toRadians(angleStart + angleExtent)) - Math.sin(toRadians(angle)) * ry * Math.sin(toRadians(angleStart + angleExtent)) + cx;
+            newy = Math.sin(toRadians(angle)) * rx * Math.cos(toRadians(angleStart + angleExtent)) + Math.cos(toRadians(angle)) * ry * Math.sin(toRadians(angleStart + angleExtent)) + cy;
             System.out.println("ox:" + x + " oy: " + y + " nx:" + newx + " ny:" + newy);*/
 
             while(true) {
-                newx = Math.cos(Math.toRadians(angle)) * rx * Math.cos(Math.toRadians(currentAngle)) - Math.sin(Math.toRadians(angle)) * ry * Math.sin(Math.toRadians(currentAngle)) + cx;
-                newy = Math.sin(Math.toRadians(angle)) * rx * Math.cos(Math.toRadians(currentAngle)) + Math.cos(Math.toRadians(angle)) * ry * Math.sin(Math.toRadians(currentAngle)) + cy;
+                newx = Math.cos(toRadians(angle)) * rx * Math.cos(toRadians(currentAngle)) - Math.sin(toRadians(angle)) * ry * Math.sin(toRadians(currentAngle)) + cx;
+                newy = Math.sin(toRadians(angle)) * rx * Math.cos(toRadians(currentAngle)) + Math.cos(toRadians(angle)) * ry * Math.sin(toRadians(currentAngle)) + cy;
                 currentStream.write(pdfNumber.doubleOut(newx) + " " + pdfNumber.doubleOut(newy) + " l\n");
                 currentAngle = (currentAngle + (sweepFlag ? 1 : -1) * 5.0);
                 if((sweepFlag && currentAngle > (angleStart + angleExtent)) || (!sweepFlag && currentAngle < (angleStart + angleExtent))) {
