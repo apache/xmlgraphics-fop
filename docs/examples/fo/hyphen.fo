@@ -1,0 +1,241 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+
+<!-- example for a simple fo file. At the beginning the page layout is set. 
+  Below fo:root there is always 
+- a single fo:layout-master-set which defines one or more page layouts
+- an optional fo:declarations 
+- and a sequence of one or more fo:page-sequences containing the text and formatting instructions 
+-->
+
+<fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format">
+
+  <fo:layout-master-set>
+  <!-- fo:layout-master-set defines in its children the page layout: 
+       the pagination and layout specifications
+      - page-masters: have the role of describing the intended subdivisions 
+                       of a page and the geometry of these subdivisions 
+                      In this case there is only a simple-page-master which defines the 
+                      layout for all pages of the text
+  -->
+    <!-- layout information -->
+    <fo:simple-page-master master-name="simple"
+                  page-height="29.7cm" 
+                  page-width="21cm"
+                  margin-top="1cm" 
+                  margin-bottom="2cm" 
+                  margin-left="2.5cm" 
+                  margin-right="2.5cm">
+      <fo:region-body margin-top="3cm"/>
+      <fo:region-before extent="3cm"/>
+      <fo:region-after extent="1.5cm"/>
+    </fo:simple-page-master>
+  </fo:layout-master-set>
+  <!-- end: defines page layout -->
+
+
+  <!-- start page-sequence
+       here comes the text (contained in flow objects)
+       the page-sequence can contain different fo:flows 
+       the attribute value of master-name refers to the page layout
+       which is to be used to layout the text contained in this
+       page-sequence-->
+  <fo:page-sequence master-name="simple">
+
+      <!-- start fo:flow
+           each flow is targeted 
+           at one (and only one) of the following:
+           xsl-region-body (usually: normal text)
+           xsl-region-before (usually: header)
+           xsl-region-after  (usually: footer)
+           xsl-region-start  (usually: left margin) 
+           xsl-region-end    (usually: right margin)
+           ['usually' applies here to languages with left-right and top-down 
+            writing direction like English]
+           in this case there is only one target: xsl-region-body
+        -->
+    <fo:flow flow-name="xsl-region-body" 
+                text-align="justify"
+                language="de"
+                hyphenate="true"
+                hyphenation-push-character-count="2"
+                hyphenation-remain-character-count="2">
+
+      <!-- each paragraph is encapsulated in a block element
+           the attributes of the block define
+           font-family and size, line-heigth etc. -->
+
+      <!-- this defines a title -->
+      <fo:block font-size="18pt" 
+            font-family="sans-serif" 
+            line-height="24pt"
+            space-after.optimum="15pt"
+            background-color="blue"
+            color="white"
+            text-align="center"
+            padding-top="3pt">
+        Der junge Goethe in TEI
+      </fo:block>
+
+      <!-- Normal text -->
+      <fo:block font-size="12pt" 
+                font-family="sans-serif" 
+                line-height="15pt"
+                space-after.optimum="3pt"
+                text-align="justify"
+                language="en"
+                country="US"
+                hyphenate="true"
+                hyphenation-push-character-count="2"
+                hyphenation-remain-character-count="2"                                >
+        This document has been reviewed by W3C Members and other interested parties and has been endorsed by the Director as a
+        W3C Recommendation. It is a stable document and may be used as reference material or cited as a normative reference from
+        another document. W3C's role in making the Recommendation is to draw attention to the specification and to promote its
+        widespread deployment. This enhances the functionality and interoperability of the Web.
+      </fo:block>
+
+      <!-- Normal text -->
+      <fo:block font-size="12pt" 
+                font-family="sans-serif" 
+                line-height="15pt"
+                space-after.optimum="3pt"
+                text-align="justify"
+                language="en"
+                country="US"
+                hyphenate="true"
+                hyphenation-push-character-count="2"
+                hyphenation-remain-character-count="2"                     >
+        This document specifies a syntax created by subsetting an existing, widely used international text processing standard
+        (Standard Generalized Markup Language, ISO 8879:1986(E) as amended and corrected) for use on the World Wide Web. It
+        is a product of the W3C XML Activity, details of which can be found at the w3c website. A list of current W3C
+        Recommendations and other technical documents can be found there too. 
+      </fo:block>
+
+
+      <!-- this defines normal text -->
+      <fo:block font-size="12pt" 
+                font-family="sans-serif" 
+                line-height="15pt"
+                space-after.optimum="3pt"
+                language="de"
+                hyphenate="true"
+                hyphenation-push-character-count="2"
+                hyphenation-remain-character-count="2"                >
+1. Warum TEI?
+Die Verwendungszeit elektronischer Editionen wird von mehreren 
+Faktoren verkürzt: der kurzen Lebensdauer der Programme, die zu 
+ihrer Darstellung verwendet werden, der etwas längeren der 
+Betriebssysteme, unter denen die Darstellungsprogramme laufen, 
+der logischen Einrichtung des Datenträgers, auf dem sich die 
+Edition befindet, und dessen physischer Dauer. Um die besonders 
+unangenehme Abhängigkeit elektronischer Texte von bestimmten 
+Programmen und Betriebssystemen zu vermeiden, haben 
+Wissenschaftler ein Textauszeichnungssystem für philologische 
+Belange entwickelt, das nach dem Entwicklerteam "Text Encoding 
+Initiative" (TEI) genannt wird (1). 
+      </fo:block>
+
+      <!-- this defines normal text -->
+      <fo:block font-size="12pt" 
+                font-family="sans-serif" 
+                line-height="15pt"
+                space-after.optimum="3pt">
+Das Auszeichnungssystem TEI ist eine Anwendung der Metasprache 
+zur Beschreibung programmunabhängiger Auszeichnungssysteme SGML 
+(Standard Generalized Markup Language), so wie auch HTML, mit 
+dem die meisten Texte des Internets zur Zeit ausgezeichnet 
+sind, eine Anwendung von SGML ist. Daten, die entsprechend den 
+TEI-Richtlinien ausgezeichnet worden sind, können also mit 
+jedem Programm, das SGML-Daten verarbeiten kann, dargestellt, 
+umgewandelt oder durchsucht werden. (2)
+      </fo:block>
+
+      <!-- this defines normal text -->
+      <fo:block font-size="12pt" 
+                font-family="sans-serif" 
+                line-height="15pt"
+                space-after.optimum="3pt">
+Verwendet wurde für die Auszeichnung 'teilite', das eine 
+Teilmenge des gesamten Auszeichnungssystems TEI bietet, aber 
+auf einige der komplexeren Merkmale verzichtet und deshalb auch 
+eine einfache Konvertierung der Daten zu neueren Metasprachen 
+für Auszeichnungssysteme wie XML, einer Teilmenge von SGML, 
+ermöglicht.
+SGML-Programme mit der Leistungsfähigkeit von Folio Views sind 
+z.Zt. noch relativ teuer, daher wurde für die vorliegende 
+Edition der Weg gewählt, den Text doppelt auf die CD zu legen: 
+Einmal für die sofortige Nutzung mit einer komfortablen 
+Oberfläche und einmal ohne Software in einem Format, das seine 
+langfristige Verwendbarkeit garantiert. 
+Das Nachstehende soll einige Hinweise zur Einrichtung der TEI-
+Dateien geben, um deren weitere Verwendung zu erleichtern. 
+      </fo:block>
+
+      <!-- this defines normal text -->
+      <fo:block font-size="12pt" 
+                font-family="sans-serif" 
+                line-height="15pt"
+                space-after.optimum="3pt">
+TEI stellt dem Textwissenschaftler mehrere hundert Auszeichner (tags) 
+zur Verfügung, um nahezu jeden gewünschten Aspekt eines Textes
+mit Zusatzinformationen zu versehen. Die exzellenten Handbücher,
+herausgegeben von den Lou Burnard und Michael Sperberg-
+McQueen, und auch die 'Grammatik'-Dateien (DTDs) selbst sind 
+im Internet verfügbar. (2)
+      </fo:block>
+
+      <!-- this defines normal text -->
+      <fo:block font-size="12pt" 
+                font-family="sans-serif" 
+                line-height="15pt"
+                space-after.optimum="3pt">
+Daten, die entsprechend den TEI-Richtlinien ausgezeichnet worden sind, 
+können mit jedem Programm, das SGML-Daten verarbeiten kann, 
+dargestellt, umgewandelt oder durchsucht werden. Vor allem können
+verschiedene Editionen, wenn sie TEI zur Auszeichnung verwendet
+haben, vom Anwender zur Recherche zu einem Korpus
+zusammengeschlossen werden. Wissenschaftler können also, wenn sie sich
+an diesen Richtlinien orientieren, die für ihre Belange geschaffen wurden 
+und auch neueren Anforderungen angepaßt werden können, ihre Daten 
+langfristig und unabhängig von einzelnen Firmen archivieren und dem
+Anwender zur Nutzung zugänglich machen. 
+      </fo:block>
+
+      <!-- this defines normal text -->
+      <fo:block font-size="12pt" 
+                font-family="sans-serif" 
+                line-height="15pt"
+                space-after.optimum="3pt">
+Es wurden nicht alle programmtechnischen Besonderheiten der 
+Folio-Edition in der TEI-Auszeichnung berücksichtigt. Folio 
+Views ermöglicht sogenannte Query-Links, also Hyperlinks, die 
+keine feste Zieladresse haben, sondern einen spezifizierten 
+Suchlauf starten. Diese Query-Links könnten zwar in die Syntax 
+von XREF-Verweisen übersetzt werden, da dort auch ein pattern 
+als Ziel angegeben werden kann; der Mangel an Software, die 
+diese Verweistechnik unterstützt, ließ aber den 
+Konvertierungsaufwand in diesem Punkt ungerechtfertigt 
+erscheinen. 
+      </fo:block>
+
+
+
+      <!-- this defines normal text -->
+      <fo:block font-size="12pt" 
+                font-family="sans-serif" 
+                line-height="15pt"
+                space-after.optimum="3pt">
+2. Inhalt des Unterverzeichnisses \tei
+Die TEI-Version dieser Ausgabe der Werke des jungen Goethe 
+liegt in einem Verzeichnis "auf der CD. In den Verzeichnissen 
+darunter liegen die notwendigen Grafiken. Das 
+Verzeichnis \tei ist selbständig, d.h. es werden keine weiteren 
+Grafik- oder Textdateien benötigt, außer denen, die in \tei 
+liegen, um den Text mit einem SGML-konformen Programm 
+verarbeiten zu können. 
+      </fo:block>
+
+
+
+    </fo:flow> <!-- closes the flow element-->
+  </fo:page-sequence> <!-- closes the page-sequence -->
+</fo:root>
