@@ -11,6 +11,7 @@ import java.net.URL;
 import org.w3c.dom.svg.SVGDocument;
 
 // FOP
+import org.apache.fop.apps.Driver;
 import org.apache.fop.messaging.*;
 import org.apache.fop.datatypes.ColorSpace;
 import org.apache.fop.pdf.PDFColor;
@@ -44,10 +45,7 @@ public class SVGImage extends AbstractFopImage {
      * @return the created SAX parser
      */
     public static String getParserName() {
-        String parserClassName = System.getProperty("org.xml.sax.parser");
-        if (parserClassName == null) {
-            parserClassName = "org.apache.xerces.parsers.SAXParser";
-        }
+        String parserClassName = Driver.getParserClassName();
         return parserClassName;
     }
 

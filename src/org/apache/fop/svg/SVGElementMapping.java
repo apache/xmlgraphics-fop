@@ -1,11 +1,14 @@
 /* $Id$
  * Copyright (C) 2001 The Apache Software Foundation. All rights reserved.
  * For details on use and redistribution please refer to the
- * LICENSE file included with these sources."
+ * LICENSE file included with these sources.
  */
 
 package org.apache.fop.svg;
 
+import java.util.Enumeration;
+
+import org.apache.fop.fo.properties.SVGPropertyMapping;
 import org.apache.fop.fo.TreeBuilder;
 import org.apache.fop.fo.FOTreeBuilder;
 import org.apache.fop.fo.ElementMapping;
@@ -67,5 +70,16 @@ public class SVGElementMapping implements ElementMapping {
         builder.addMapping(uri, "feOffset", FeOffset.maker());
         builder.addMapping(uri, "feMerge", FeMerge.maker());
         builder.addMapping(uri, "feMergeNode", FeMergeNode.maker());
+
+
+        builder.addPropertyList(uri,
+                                SVGPropertyMapping.getGenericMappings());
+        /* Add any element mappings */
+        for (Enumeration e = SVGPropertyMapping.getElementMappings();
+                e.hasMoreElements();) {
+            String elem = (String) e.nextElement();
+            builder.addElementPropertyList(uri, elem,
+                                           SVGPropertyMapping.getElementMapping(elem));
+        }
     }
 }

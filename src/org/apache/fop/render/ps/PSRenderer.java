@@ -438,7 +438,7 @@ public class PSRenderer implements Renderer {
         comment("% --- SVG Area");
         write("gsave");
         if (w != 0 && h != 0) {
-/*            write("newpath");
+            write("newpath");
             write(x / 1000f + " " + y / 1000f + " M");
             write((x + w) / 1000f + " " + y / 1000f + " rlineto");
             write((x + w) / 1000f + " " + (y - h) / 1000f +
@@ -446,7 +446,7 @@ public class PSRenderer implements Renderer {
             write(x / 1000f + " " + (y - h) / 1000f + " rlineto");
             write("closepath");
             write("clippath");
-*/        }
+        }
         // transform so that the coordinates (0,0) is from the top left
         // and positive is down and to the right. (0,0) is where the
         // viewBox puts it.
@@ -1012,11 +1012,7 @@ public class PSRenderer implements Renderer {
          * Returns the class name of the XML parser.
          */
         public String getXMLParserClassName() {
-            String parserClassName = System.getProperty("org.xml.sax.parser");
-            if (parserClassName == null) {
-                parserClassName = "org.apache.xerces.parsers.SAXParser";
-            }
-            return parserClassName;//application.getXMLParserClassName();
+            return org.apache.fop.apps.Driver.getParserClassName();
         }
 
         /**
