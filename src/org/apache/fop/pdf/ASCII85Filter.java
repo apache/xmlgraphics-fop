@@ -17,9 +17,9 @@ public class ASCII85Filter extends PDFFilter {
     private static final String ASCII85_EOD = "~>";
 
     private static final long base85_4 = 85;
-    private static final long base85_3 = base85_4 * base85_4;
-    private static final long base85_2 = base85_3 * base85_4;
-    private static final long base85_1 = base85_2 * base85_4;
+//      private static final long base85_3 = base85_4 * base85_4;
+//      private static final long base85_2 = base85_3 * base85_4;
+//      private static final long base85_1 = base85_2 * base85_4;
 
 
 
@@ -131,22 +131,34 @@ public class ASCII85Filter extends PDFFilter {
             };
             return result;
         } else {
-            byte c1 = (byte)((word / base85_1) & 0xFF);
-            byte c2 = (byte)(((word - (c1 * base85_1)) / base85_2) & 0xFF);
-            byte c3 =
-                (byte)(((word - (c1 * base85_1) - (c2 * base85_2)) / base85_3)
-                       & 0xFF);
-            byte c4 =
-                (byte)(((word - (c1 * base85_1) - (c2 * base85_2) - (c3 * base85_3)) / base85_4)
-                       & 0xFF);
-            byte c5 =
-                (byte)(((word - (c1 * base85_1) - (c2 * base85_2) - (c3 * base85_3) - (c4 * base85_4)))
-                       & 0xFF);
+//              byte c1 = (byte)((word / base85_1) & 0xFF);
+//              byte c2 = (byte)(((word - (c1 * base85_1)) / base85_2) & 0xFF);
+//              byte c3 =
+//                  (byte)(((word - (c1 * base85_1) - (c2 * base85_2)) / base85_3)
+//                         & 0xFF);
+//              byte c4 =
+//                  (byte)(((word - (c1 * base85_1) - (c2 * base85_2) - (c3 * base85_3)) / base85_4)
+//                         & 0xFF);
+//              byte c5 =
+//                  (byte)(((word - (c1 * base85_1) - (c2 * base85_2) - (c3 * base85_3) - (c4 * base85_4)))
+//                         & 0xFF);
+
+//              byte[] ret = {
+//                  (byte)(c1 + ASCII85_START), (byte)(c2 + ASCII85_START),
+//                  (byte)(c3 + ASCII85_START), (byte)(c4 + ASCII85_START),
+//                  (byte)(c5 + ASCII85_START)
+            byte c5 = (byte)((word % base85_4) + ASCII85_START);
+            word = word / base85_4;
+            byte c4 = (byte)((word % base85_4) + ASCII85_START);
+            word = word / base85_4;
+            byte c3 = (byte)((word % base85_4) + ASCII85_START);
+            word = word / base85_4;
+            byte c2 = (byte)((word % base85_4) + ASCII85_START);
+            word = word / base85_4;
+            byte c1 = (byte)((word % base85_4) + ASCII85_START);
 
             byte[] ret = {
-                (byte)(c1 + ASCII85_START), (byte)(c2 + ASCII85_START),
-                (byte)(c3 + ASCII85_START), (byte)(c4 + ASCII85_START),
-                (byte)(c5 + ASCII85_START)
+              c1 , c2, c3, c4, c5
             };
             for (int i = 0; i < ret.length; i++) {
                 if (ret[i] < 33 || ret[i] > 117) {
