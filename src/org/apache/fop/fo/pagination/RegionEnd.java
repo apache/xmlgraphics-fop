@@ -55,9 +55,12 @@ public class RegionEnd extends Region {
         }
         if (afterPrecedence)
             startH -= afterHeight;
-        return new RegionArea(allocationRectangleXPosition
-                              + allocationRectangleWidth - extent, startY,
-                              extent, startH);
+        RegionArea area = new RegionArea(allocationRectangleXPosition
+					 + allocationRectangleWidth - extent,
+					 startY, extent, startH);
+	area.setBackground(propMgr.getBackgroundProps());
+	return area;
+
     }
 
     RegionArea makeRegionArea(int allocationRectangleXPosition,

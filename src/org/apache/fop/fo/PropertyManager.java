@@ -7,27 +7,32 @@
 
 package org.apache.fop.fo;
 
-import org.apache.fop.layout.FontState;
-import org.apache.fop.layout.FontInfo;
-import org.apache.fop.layout.BorderAndPadding;
-import org.apache.fop.layout.MarginProps;
-import org.apache.fop.layout.BackgroundProps;
-import org.apache.fop.layout.MarginInlineProps;
-import org.apache.fop.layout.AccessibilityProps;
-import org.apache.fop.layout.AuralProps;
-import org.apache.fop.layout.RelativePositionProps;
-import org.apache.fop.layout.AbsolutePositionProps;
+import java.net.MalformedURLException;
+import java.text.FieldPosition;
+import java.text.MessageFormat;
+
+import org.apache.fop.apps.FOPException;
 import org.apache.fop.fo.properties.BreakAfter;
 import org.apache.fop.fo.properties.BreakBefore;
 import org.apache.fop.fo.properties.Constants;
-import org.apache.fop.layout.HyphenationProps;
-import org.apache.fop.apps.FOPException;
-import java.text.MessageFormat;
-import java.text.FieldPosition;
-import org.apache.fop.layout.Area;
-import org.apache.fop.layout.ColumnArea;
-import org.apache.fop.layout.TextState;
 import org.apache.fop.fo.properties.TextDecoration;
+import org.apache.fop.image.FopImage;
+import org.apache.fop.image.FopImageFactory;
+import org.apache.fop.image.FopImageException;
+import org.apache.fop.layout.AbsolutePositionProps;
+import org.apache.fop.layout.AccessibilityProps;
+import org.apache.fop.layout.Area;
+import org.apache.fop.layout.AuralProps;
+import org.apache.fop.layout.BackgroundProps;
+import org.apache.fop.layout.BorderAndPadding;
+import org.apache.fop.layout.ColumnArea;
+import org.apache.fop.layout.FontInfo;
+import org.apache.fop.layout.FontState;
+import org.apache.fop.layout.HyphenationProps;
+import org.apache.fop.layout.MarginInlineProps;
+import org.apache.fop.layout.MarginProps;
+import org.apache.fop.layout.RelativePositionProps;
+import org.apache.fop.layout.TextState;
 
 public class PropertyManager {
 
@@ -35,6 +40,7 @@ public class PropertyManager {
     private FontState fontState = null;
     private BorderAndPadding borderAndPadding = null;
     private HyphenationProps hyphProps = null;
+    private BackgroundProps bgProps = null;
 
     private String[] saLeft;
     private String[] saRight;
@@ -212,8 +218,45 @@ public class PropertyManager {
     }
 
     public BackgroundProps getBackgroundProps() {
-        BackgroundProps bp = new BackgroundProps();
-        return bp;
+        if (bgProps == null) {
+            this.bgProps = new BackgroundProps();
+	    // bgProps.backAttachment = this.properties.get("background-attachment").getEnum();
+	    bgProps.backColor =
+		this.properties.get("background-color").getColorType();
+
+	    String src = this.properties.get("background-image").getString();
+	    if (src.equalsIgnoreCase("none")) {
+		bgProps.backImage = null;
+	    }
+	    else if (src.equalsIgnoreCase("inherit")) {
+		// XXX: implement this
+		bgProps.backImage = null;
+	    }
+	    else {
+		try {
+		    bgProps.backImage = FopImageFactory.Make(src);
+		}
+		catch (MalformedURLException urlex) {
+		    bgProps.backImage = null;
+		    // XXX: use a logger instead
+		    System.out.println("Error creating background image: "
+			      + urlex.getMessage());
+		}
+		catch (FopImageException imgex) {
+		    bgProps.backImage = null;
+		    // XXX: use a logger instead
+		    System.out.println("Error creating background image: "
+				      + imgex.getMessage());
+		}
+	    }
+
+	    bgProps.backRepeat = this.properties.get("background-repeat").getEnum();
+
+
+	    // bgProps.backPosHorizontal = this.properties.get("background-position-horizontal").getLength();
+	    // bgProps.backPosVertical = this.properties.get("background-position-vertical").getLength();
+        }
+	return bgProps;
     }
 
     public MarginInlineProps getMarginInlineProps() {

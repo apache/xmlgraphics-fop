@@ -11,7 +11,6 @@ package org.apache.fop.fo.pagination;
 import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.PropertyList;
 import org.apache.fop.fo.properties.Overflow;
-import org.apache.fop.datatypes.ColorType;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.layout.RegionArea;
 import org.apache.fop.layout.BodyRegionArea;
@@ -36,8 +35,6 @@ public class RegionBody extends Region {
 
     public static final String REGION_CLASS = "body";
 
-    ColorType backgroundColor;
-
     protected RegionBody(FObj parent,
                          PropertyList propertyList) throws FOPException {
         super(parent, propertyList);
@@ -61,9 +58,6 @@ public class RegionBody extends Region {
         // this.properties.get("reference-orientation");
         // this.properties.get("writing-mode");
 
-        this.backgroundColor =
-            this.properties.get("background-color").getColorType();
-
         BodyRegionArea body = new BodyRegionArea(allocationRectangleXPosition
                                                  + mProps.marginLeft,
                                                  allocationRectangleYPosition
@@ -74,6 +68,8 @@ public class RegionBody extends Region {
                                                  allocationRectangleHeight
                                                  - mProps.marginTop
                                                  - mProps.marginBottom);
+
+        body.setBackground(propMgr.getBackgroundProps());
 
         int overflow = this.properties.get("overflow").getEnum();
         String columnCountAsString =
@@ -97,8 +93,6 @@ public class RegionBody extends Region {
         int columnGap =
             this.properties.get("column-gap").getLength().mvalue();
         body.setColumnGap(columnGap);
-
-        body.setBackgroundColor(backgroundColor);
 
         return body;
     }

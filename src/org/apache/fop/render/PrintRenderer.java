@@ -13,7 +13,6 @@ package org.apache.fop.render;
 // FOP
 import org.apache.fop.pdf.PDFPathPaint;
 import org.apache.fop.pdf.PDFColor;
-import org.apache.fop.image.ImageArea;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.fo.properties.*;
 import org.apache.fop.layout.*;
@@ -191,18 +190,13 @@ public abstract class PrintRenderer extends AbstractRenderer {
             rx += ((BlockArea)area).getStartIndent();
         h = area.getContentHeight();
         int ry = this.currentYPosition;
-        ColorType bg = area.getBackgroundColor();
 
         rx = rx - area.getPaddingLeft();
         ry = ry + area.getPaddingTop();
         w = w + area.getPaddingLeft() + area.getPaddingRight();
         h = h + area.getPaddingTop() + area.getPaddingBottom();
 
-        // I'm not sure I should have to check for bg being null
-        // but I do
-        if ((bg != null) && (bg.alpha() == 0)) {
-            this.addFilledRect(rx, ry, w, -h, new PDFColor(bg));
-        }
+	doBackground(area, rx, ry, w, h);
 
         // rx = rx - area.getBorderLeftWidth();
         // ry = ry + area.getBorderTopWidth();
@@ -258,13 +252,6 @@ public abstract class PrintRenderer extends AbstractRenderer {
         int d = space.getSize();
         this.currentYPosition -= d;
     }
-
-    /**
-     * render image area
-     * 
-     * @param area the image area to render
-     */
-    public abstract void renderImageArea(ImageArea area);
 
     /**
      * render a foreign object area

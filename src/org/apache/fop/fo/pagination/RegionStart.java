@@ -55,8 +55,10 @@ public class RegionStart extends Region {
         }
         if (afterPrecedence)
             startH -= afterHeight;
-        return new RegionArea(allocationRectangleXPosition, startY, extent,
-                              startH);
+        RegionArea area = new RegionArea(allocationRectangleXPosition,
+					 startY, extent, startH);
+	area.setBackground(propMgr.getBackgroundProps());
+	return area;
     }
 
     RegionArea makeRegionArea(int allocationRectangleXPosition,

@@ -16,8 +16,6 @@ import org.apache.fop.datatypes.*;
 
 public class TableColumn extends FObj {
 
-    ColorType backgroundColor;
-
     Length columnWidthPropVal;
     int columnWidth;
     int columnOffset;
@@ -88,9 +86,6 @@ public class TableColumn extends FObj {
         this.numColumnsRepeated =
             this.properties.get("number-columns-repeated").getNumber().intValue();
 
-        this.backgroundColor =
-            this.properties.get("background-color").getColorType();
-
         this.columnWidthPropVal =
             this.properties.get("column-width").getLength();
 	// This won't include resolved table-units or % values yet.
@@ -121,7 +116,7 @@ public class TableColumn extends FObj {
 	    areaContainer.foCreator = this;    // G Seshadri
 	    areaContainer.setPage(area.getPage());
 	    areaContainer.setBorderAndPadding(propMgr.getBorderAndPadding());
-	    areaContainer.setBackgroundColor(this.backgroundColor);
+	    areaContainer.setBackground(propMgr.getBackgroundProps());
 	    areaContainer.setHeight(area.getHeight());
 	    area.addChild(areaContainer);
 	}

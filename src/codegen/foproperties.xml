@@ -397,13 +397,20 @@
   <property>
     <name>background-image</name>
     <inherited>false</inherited>
-    <datatype>ToBeImplemented</datatype>
+    <datatype>String</datatype>
     <default>none</default>
   </property>
   <property>
     <name>background-repeat</name>
     <inherited>false</inherited>
-    <datatype>ToBeImplemented</datatype>
+    <datatype>Enum</datatype>
+      <enumeration>
+	<value const="REPEAT">repeat</value>
+	<value const="REPEAT_X">repeat-x</value>
+	<value const="REPEAT_Y">repeat-y</value>
+	<value const="NO_REPEAT">no-repeat</value>
+	<value const="INHERIT">inherit</value>
+      </enumeration>
     <default>repeat</default>
   </property>
   <property>

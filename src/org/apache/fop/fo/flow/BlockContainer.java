@@ -21,7 +21,6 @@ import java.util.Enumeration;
 
 public class BlockContainer extends FObj {
 
-    ColorType backgroundColor;
     int position;
 
     int top;
@@ -87,9 +86,6 @@ public class BlockContainer extends FObj {
 
             this.marker = 0;
 
-            this.backgroundColor =
-                this.properties.get("background-color").getColorType();
-
             this.position = this.properties.get("position").getEnum();
             this.top = this.properties.get("top").getLength().mvalue();
             this.bottom = this.properties.get("bottom").getLength().mvalue();
@@ -119,7 +115,7 @@ public class BlockContainer extends FObj {
                               position);
 
         areaContainer.setPage(area.getPage());
-        areaContainer.setBackgroundColor(backgroundColor);
+        areaContainer.setBackground(propMgr.getBackgroundProps());
         areaContainer.setBorderAndPadding(propMgr.getBorderAndPadding());
         areaContainer.start();
 

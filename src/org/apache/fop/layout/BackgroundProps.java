@@ -7,9 +7,9 @@
 
 package org.apache.fop.layout;
 
+import org.apache.fop.datatypes.ColorType;
 import org.apache.fop.datatypes.Length;
-
-import java.awt.Color;
+import org.apache.fop.image.FopImage;
 
 /**
  * Store all hyphenation related properties on an FO.
@@ -17,8 +17,8 @@ import java.awt.Color;
  */
 public class BackgroundProps {
     public int backAttachment;
-    public Color backColor;
-    public String backImage;
+    public ColorType backColor;
+    public FopImage backImage; // null if no image
     public int backRepeat;
     public Length backPosHorizontal;
     public Length backPosVertical;

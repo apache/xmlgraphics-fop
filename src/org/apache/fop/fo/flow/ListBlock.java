@@ -43,7 +43,6 @@ public class ListBlock extends FObj {
     int spaceBefore;
     int spaceAfter;
     int spaceBetweenListRows = 0;
-    ColorType backgroundColor;
 
     public ListBlock(FObj parent, PropertyList propertyList) {
         super(parent, propertyList);
@@ -91,8 +90,6 @@ public class ListBlock extends FObj {
             this.spaceAfter =
                 this.properties.get("space-after.optimum").getLength().mvalue();
             this.spaceBetweenListRows = 0;    // not used at present
-            this.backgroundColor =
-                this.properties.get("background-color").getColorType();
 
             this.marker = 0;
 
@@ -133,7 +130,7 @@ public class ListBlock extends FObj {
 
 
         blockArea.setPage(area.getPage());
-        blockArea.setBackgroundColor(backgroundColor);
+        blockArea.setBackground(propMgr.getBackgroundProps());
         blockArea.start();
 
         blockArea.setAbsoluteHeight(area.getAbsoluteHeight());
