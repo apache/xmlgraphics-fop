@@ -141,7 +141,20 @@ public final class PSProcSets {
         gen.writeln("  Tt setlinewidth stroke");
         gen.writeln("  grestore");
         gen.writeln("} bd");
-
+        
+        gen.writeln("/QUADTO {");
+        gen.writeln("/Y22 exch store");
+        gen.writeln("/X22 exch store");
+        gen.writeln("/Y21 exch store");
+        gen.writeln("/X21 exch store");
+        gen.writeln("currentpoint");
+        gen.writeln("/Y21 load 2 mul add 3 div exch");
+        gen.writeln("/X21 load 2 mul add 3 div exch");
+        gen.writeln("/X21 load 2 mul /X22 load add 3 div");
+        gen.writeln("/Y21 load 2 mul /Y22 load add 3 div");
+        gen.writeln("/X22 load /Y22 load curveto");
+        gen.writeln("} bd");
+        
         gen.writeln("%%EndResource");
     }
 

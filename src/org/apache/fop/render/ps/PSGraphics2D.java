@@ -114,7 +114,10 @@ public class PSGraphics2D extends AbstractGraphics2D {
 
     /** Currently valid FontState */
     protected FontState fontState;
-
+    
+    /** Overriding FontState */
+    protected FontState overrideFontState = null;
+    
     /**
      * the current (internal) font name
      */
@@ -501,8 +504,9 @@ public class PSGraphics2D extends AbstractGraphics2D {
             Shape imclip = getClip();
             writeClip(imclip);
             Color c = getColor();
-            gen.writeln(c.getRed() + " " + c.getGreen() + " " + c.getBlue()
-                             + " setrgbcolor");
+            gen.writeln(gen.formatDouble(c.getRed() / 255.0) + " " 
+                      + gen.formatDouble(c.getGreen() / 255.0) + " " 
+                      + gen.formatDouble(c.getBlue() / 255.0) + " setrgbcolor");
             
             applyPaint(getPaint(), false);
             applyStroke(getStroke());
@@ -533,10 +537,10 @@ public class PSGraphics2D extends AbstractGraphics2D {
                               + " M");
                     break;
                 case PathIterator.SEG_QUADTO:
-                    // psRenderer.write((1000 * PDFNumber.doubleOut(vals[0])) +
-                    // " " + (1000 * PDFNumber.doubleOut(vals[1])) + " " +
-                    // (1000 * PDFNumber.doubleOut(vals[2])) + " " +
-                    // (1000 * PDFNumber.doubleOut(vals[3])) + " y\n");
+                    gen.writeln(gen.formatDouble(1000 * vals[0]) + " " 
+                              + gen.formatDouble(1000 * vals[1]) + " " 
+                              + gen.formatDouble(1000 * vals[2]) + " " 
+                              + gen.formatDouble(1000 * vals[3]) + " QUADTO ");
                     break;
                 case PathIterator.SEG_CLOSE:
                     gen.writeln("closepath");
@@ -585,10 +589,10 @@ public class PSGraphics2D extends AbstractGraphics2D {
                               + " M");
                     break;
                 case PathIterator.SEG_QUADTO:
-                    // psRenderer.write(1000 * PDFNumber.doubleOut(vals[0]) +
-                    // " " + 1000 * PDFNumber.doubleOut(vals[1]) + " " +
-                    // 1000 * PDFNumber.doubleOut(vals[2]) + " " +
-                    // 1000 * PDFNumber.doubleOut(vals[3]) + " y\n");
+                    gen.writeln(gen.formatDouble(1000 * vals[0]) + " " 
+                              + gen.formatDouble(1000 * vals[1]) + " " 
+                              + gen.formatDouble(1000 * vals[2]) + " " 
+                              + gen.formatDouble(1000 * vals[3]) + " QUADTO ");
                     break;
                 case PathIterator.SEG_CLOSE:
                     gen.writeln("closepath");
@@ -803,32 +807,73 @@ public class PSGraphics2D extends AbstractGraphics2D {
      * @see #setClip
      */
     public void drawString(String s, float x, float y) {
-        try {
-            System.out.println("drawString(String)");
-            gen.writeln("BT");
-            Shape imclip = getClip();
-            writeClip(imclip);
-            Color c = getColor();
-            gen.writeln(c.getRed() + " " + c.getGreen() + " " + c.getBlue()
-                             + " setrgbcolor");
+      try {
+        if (overrideFontState == null) {
+            Font gFont = getFont();
+            String n = gFont.getFamily();
+            if (n.equals("sanserif")) {
+                n = "sans-serif";
+            }
+            int siz = gFont.getSize();
+            String style = gFont.isItalic() ? "italic" : "normal";
+            String weight = gFont.isBold() ? "bold" : "normal";
             
-            AffineTransform trans = getTransform();
-            trans.translate(x, y);
-            double[] vals = new double[6];
-            trans.getMatrix(vals);
-            
-            gen.writeln(gen.formatDouble(vals[0]) + " "
-                      + gen.formatDouble(vals[1]) + " "
-                      + gen.formatDouble(vals[2]) + " "
-                      + gen.formatDouble(vals[3]) + " "
-                      + gen.formatDouble(vals[4]) + " "
-                      + gen.formatDouble(vals[5]) + " "
-                      + gen.formatDouble(vals[6]) + " Tm [" + s + "]");
-            
-            gen.writeln("ET");
-        } catch (IOException ioe) {
-            handleIOException(ioe);
+            //try {
+                //fontState = new FontState(n, fontState.getFontMetrics(),siz);
+            //} catch (org.apache.fop.apps.FOPException fope) {
+                //fope.printStackTrace();
+            //}
+        } else {
+            fontState = overrideFontState;
+            overrideFontState = null;
         }
+        Shape imclip = getClip();
+        writeClip(imclip);
+        Color c = getColor();
+        gen.writeln(c.getRed() / 255.0 + " " 
+                  + c.getGreen() / 255.0 + " " 
+                  + c.getBlue() / 255.0 + " setrgbcolor");
+  
+        AffineTransform trans = getTransform();
+        trans.translate(x, y);
+        double[] vals = new double[6];
+        trans.getMatrix(vals);
+        gen.writeln(gen.formatDouble(1000 * vals[4]) + " "
+                  + gen.formatDouble(1000 * vals[5]) + " moveto ");
+        //String fontWeight = fontState.getFontWeight();
+        StringBuffer sb = new StringBuffer();
+  
+        int l = s.length();
+
+        if ((currentFontName != fontState.getFontName()) 
+                || (currentFontSize != fontState.getFontSize())) {
+            gen.writeln(fontState.getFontName() + " " + fontState.getFontSize() + " F");
+            currentFontName = fontState.getFontName();
+            currentFontSize = fontState.getFontSize();
+        }
+        for (int i = 0; i < l; i++) {
+            char ch = s.charAt(i);
+            char mch = fontState.mapChar(ch);
+            if (mch > 127) {
+                sb = sb.append("\\" + Integer.toOctalString(mch));
+            } else {
+                String escape = "\\()[]{}";
+                if (escape.indexOf(mch) >= 0) {
+                    sb.append("\\");
+                }
+                sb = sb.append(mch);
+            }
+        }
+
+        String psString = null;
+        psString = " (" + sb.toString() + ") " + " t ";
+
+        gen.writeln(" 1.0 -1.0 scale");
+        gen.writeln(psString);        
+        gen.writeln(" 1.0 -1.0 scale");
+      } catch (IOException ioe) {
+          handleIOException(ioe);
+      }
     }
 
     /**
@@ -917,8 +962,9 @@ public class PSGraphics2D extends AbstractGraphics2D {
             Shape imclip = getClip();
             writeClip(imclip);
             Color c = getColor();
-            gen.writeln(c.getRed() + " " + c.getGreen() + " " + c.getBlue()
-                             + " setrgbcolor");
+            gen.writeln(gen.formatDouble(c.getRed() / 255.0) + " "
+                      + gen.formatDouble(c.getGreen() / 255.0) + " "
+                      + gen.formatDouble(c.getBlue() / 255.0) + " setrgbcolor");
             
             applyPaint(getPaint(), true);
             
@@ -948,10 +994,10 @@ public class PSGraphics2D extends AbstractGraphics2D {
                               + " M");
                     break;
                 case PathIterator.SEG_QUADTO:
-                    // psRenderer.write(1000 * PDFNumber.doubleOut(vals[0]) +
-                    // " " + 1000 * PDFNumber.doubleOut(vals[1]) + " " +
-                    // 1000 * PDFNumber.doubleOut(vals[2]) + " " +
-                    // 1000 * PDFNumber.doubleOut(vals[3]) + " y\n");
+                    gen.writeln(gen.formatDouble(1000 * vals[0]) + " " 
+                              + gen.formatDouble(1000 * vals[1]) + " " 
+                              + gen.formatDouble(1000 * vals[2]) + " " 
+                              + gen.formatDouble(1000 * vals[3]) + " QUADTO ");
                     break;
                 case PathIterator.SEG_CLOSE:
                     gen.writeln("closepath");
@@ -1021,6 +1067,14 @@ public class PSGraphics2D extends AbstractGraphics2D {
         fmg = bi.createGraphics();
     }
 
+    /**
+     * Sets the overrideing font state.
+     * @param infont FontState to set
+     */
+    public void setOverrideFontState(FontState infont) {
+        overrideFontState = infont;
+    }
+    
     /**
      * Gets the font metrics for the specified font.
      * @return    the font metrics for the specified font.
