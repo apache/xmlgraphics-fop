@@ -206,9 +206,19 @@ public class PageNumberCitation extends FObj {
 													pageNumber.toCharArray(), 0, pageNumber.length(),
 													false);
 				} else { // add pageNumberCitation to area to be resolved during rendering
-						this.marker = ((BlockArea) area).addPageNumberCitation(fs, red,
-													green, blue, wrapOption, null, whiteSpaceCollapse,
-													refId);
+            BlockArea blockArea = (BlockArea)area;
+            LineArea la = blockArea.getCurrentLineArea();
+            la.changeFont(fs);
+            la.changeColor(red, green, blue);
+            la.changeWrapOption(wrapOption);
+            la.changeWhiteSpaceCollapse(whiteSpaceCollapse);
+/*            la.changeHyphenation(language, country, hyphenate,
+									 hyphenationChar, hyphenationPushCharacterCount,
+									 hyphenationRemainCharacterCount);*/
+
+//            blockArea.setupLinkSet(null);
+            la.addPageNumberCitation(refId, null);
+            this.marker = -1;
 				}
 
 
