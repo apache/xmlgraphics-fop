@@ -7,7 +7,7 @@
     <title>Downloading FOP</title>
   </header>
   <body>
-  <section>
+  <section id="dist-type">
     <title>Binary or Source?</title>
     <p>Most FOP users will want to download the latest binary distribution, which is ready to run "out of the box."
 However, a source distribution will be preferable if you fall into one of the following categories:</p>
@@ -16,12 +16,12 @@ However, a source distribution will be preferable if you fall into one of the fo
       <li>You wish to use a version more recent than the latest release. For example, if you have read on the user mailing list that a bug has been fixed or a feature added that you are eager to try, you might download a source distribution from the CVS repository so that you don't have to wait for the next release.</li>
     </ul>
   </section>
-  <section>
+  <section id="binary">
     <title>Binary Download</title>
     <p>Binary distributions include "-bin" in their names, and can be downloaded from the <link href="http://xml.apache.org/dist/fop/">FOP Distribution</link> directory.
 </p>
   </section>
-  <section>
+  <section id="source">
     <title>Source Download</title>
     <p>You must first determine which of the two main development branches you wish to download, "maintenance" or "redesign".
 See <link href="dev/index.html">Development Introduction</link> for more details on the choices, and for the CVS tags to use when downloading the "maintenance" branch.</p>
