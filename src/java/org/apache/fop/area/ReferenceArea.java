@@ -29,7 +29,7 @@ import java.awt.geom.AffineTransform;
  * @author pbw
  * @version $Revision$ $Name$
  */
-public interface ReferenceArea extends Cloneable {
+public interface ReferenceArea {
 
     /**
      * Java's text handling includes facilities for managing writing
@@ -60,10 +60,6 @@ public interface ReferenceArea extends Cloneable {
      */
     public AffineTransform getCoordTransformer();
 
-    public int getContentOrientation();
-    public int getFrameOrientation();
-
-    public Object clone();
     // TODO - methods to apply transformation to content-rectangle of the
     // reference area wrt the allocation-rectangle
 }
