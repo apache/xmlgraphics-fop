@@ -99,7 +99,7 @@ public class SyncedCircularBuffer {
         synchronized (this) {
             Object obj;
             if (Thread.interrupted()) {
-                throw new InterruptedException("Producer interrupted");
+                throw new InterruptedException("Consumer interrupted");
             }
             if (pushBackBuf != null) {
                 obj = pushBackBuf;
