@@ -79,6 +79,8 @@ import org.apache.fop.fo.properties.RetrieveBoundary;
 import org.apache.fop.fo.pagination.SimplePageMaster;
 import org.apache.fop.fo.pagination.StaticContent;
 
+import org.apache.fop.fo.properties.CommonBackground;
+import org.apache.fop.fo.properties.CommonBorderAndPadding;
 import org.apache.fop.fo.properties.CommonMarginBlock;
 import org.apache.fop.fo.properties.Constants;
 
@@ -87,6 +89,7 @@ import java.util.List;
 import java.util.Map;
 import java.awt.Rectangle;
 import java.util.Iterator;
+import java.awt.geom.Rectangle2D;
 
 /**
  * LayoutManager for a PageSequence and its flow.
@@ -781,7 +784,7 @@ public class PageLayoutManager extends AbstractLayoutManager implements Runnable
        for (Iterator regenum = spm.getRegions().values().iterator();
             regenum.hasNext();) {
            Region r = (Region)regenum.next();
-           RegionViewport rvp = r.makeRegionViewport(reldims, pageCTM);
+           RegionViewport rvp = makeRegionViewport(r, reldims, pageCTM);
            rvp.setRegion(r.makeRegionReferenceArea(rvp.getViewArea()));
            page.setRegion(r.getRegionAreaClass(), rvp);
            if (r.getRegionAreaClass() == RegionReference.BODY) {
@@ -795,6 +798,37 @@ public class PageLayoutManager extends AbstractLayoutManager implements Runnable
 
        return new PageViewport(page, new Rectangle(0, 0, pageWidth, pageHeight));
 
+    }
+
+    /**
+     * Creates a RegionViewport Area object for this pagination Region.
+     * @param reldims relative dimensions
+     * @param pageCTM page coordinate transformation matrix
+     * @return the new region viewport
+     */
+    public RegionViewport makeRegionViewport(Region r, FODimension reldims, CTM pageCTM) {
+        Rectangle2D relRegionRect = r. getViewportRectangle(reldims);
+        Rectangle2D absRegionRect = pageCTM.transform(relRegionRect);
+        // Get the region viewport rectangle in absolute coords by
+        // transforming it using the page CTM
+        RegionViewport rv = new RegionViewport(absRegionRect);
+        setRegionViewportTraits(r, rv);
+        return rv;
+    }
+
+    /**
+     * Set the region viewport traits.
+     * The viewport has the border, background and
+     * clipping overflow traits.
+     *
+     * @param r the region viewport
+     */
+    protected void setRegionViewportTraits(Region r, RegionViewport rv) {
+        // Common Border, Padding, and Background Properties
+        CommonBorderAndPadding bap = r.getPropertyManager().getBorderAndPadding();
+        CommonBackground bProps = r.getPropertyManager().getBackgroundProps();
+        TraitSetter.addBorders(rv, bap);
+        TraitSetter.addBackground(rv, bProps);
     }
 
 }
