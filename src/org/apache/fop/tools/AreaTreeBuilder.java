@@ -490,7 +490,7 @@ class TreeLoader {
                       new FontState(fontInfo, "sans-serif", "normal",
                                     "normal", 12000, 0);
                 } catch (FOPException e) {
-
+                    e.printStackTrace();
                 }
 
                 ch.setWidth(currentFontState.width(ch.getChar()));
@@ -513,7 +513,18 @@ class TreeLoader {
                     list.add(leader);
                 }
             } else if (obj.getNodeName().equals("word")) {
+                try {
+                    currentFontState =
+                      new FontState(fontInfo, "sans-serif", "normal",
+                                    "normal", 12000, 0);
+                } catch (FOPException e) {
+                    e.printStackTrace();
+                }
                 Word word = getWord((Element) obj);
+                Property prop = new Property();
+                prop.propType = Property.FONT_STATE;
+                prop.data = currentFontState;
+                word.addProperty(prop);
                 if (word != null) {
                     list.add(word);
                 }

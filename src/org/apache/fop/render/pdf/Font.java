@@ -48,7 +48,9 @@ public abstract class Font implements FontMetric {
         return c;
     }
 
+    public boolean isMultiByte() {
+        return false;
+    }
+
 }
-
-
 

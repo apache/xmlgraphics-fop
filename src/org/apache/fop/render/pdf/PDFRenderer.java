@@ -237,15 +237,9 @@ public class PDFRenderer extends PrintRenderer {
             int size = fs.getFontSize();
 
             // This assumes that *all* CIDFonts use a /ToUnicode mapping
-            boolean useMultiByte = false;
             Font f = (Font)fs.getFontInfo().getFonts().get(name);
-            if (f instanceof LazyFont){
-                if(((LazyFont) f).getRealFont() instanceof CIDFont){
-                    useMultiByte = true;
-                }
-            } else if (f instanceof CIDFont){
-                useMultiByte = true;
-            }
+            boolean useMultiByte = f.isMultiByte();
+
             // String startText = useMultiByte ? "<FEFF" : "(";
             String startText = useMultiByte ? "<" : "(";
             String endText = useMultiByte ? "> " : ") ";

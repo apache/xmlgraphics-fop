@@ -54,6 +54,10 @@ public class LazyFont extends Font implements FontDescriptor {
         return realFont;
     }
     
+    public boolean isMultiByte() {
+        return realFont.isMultiByte();
+    }
+
     // Font
     public String encoding(){
         load();
