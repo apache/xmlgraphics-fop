@@ -18,6 +18,7 @@ import org.apache.fop.layout.LinkSet;
 import org.apache.fop.datatypes.ColorSpace;
 
 import org.apache.fop.render.pdf.CIDFont;
+import org.apache.fop.render.pdf.fonts.LazyFont;
 
 import org.apache.fop.datatypes.IDReferences;
 import org.apache.fop.layout.Page;
@@ -813,7 +814,12 @@ public class PDFDocument {
             font.setDescriptor(pdfdesc);
 
             if (subtype == PDFFont.TYPE0) {
-                CIDFont cidMetrics = (CIDFont)metrics;
+                CIDFont cidMetrics;
+                if(metrics instanceof LazyFont){
+                    cidMetrics = (CIDFont) ((LazyFont) metrics).getRealFont();
+                }else{
+                    cidMetrics = (CIDFont)metrics;
+                }
                 PDFCIDSystemInfo sysInfo =
                     new PDFCIDSystemInfo(cidMetrics.getRegistry(),
                                          cidMetrics.getOrdering(),

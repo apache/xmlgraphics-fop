@@ -22,6 +22,7 @@ import org.apache.fop.layout.*;
 import org.apache.fop.image.*;
 import org.apache.fop.extensions.*;
 import org.apache.fop.datatypes.IDReferences;
+import org.apache.fop.render.pdf.fonts.LazyFont;
 
 import org.apache.batik.bridge.*;
 import org.apache.batik.swing.svg.*;
@@ -487,8 +488,13 @@ public class PDFRenderer extends PrintRenderer {
             boolean useMultiByte = false;
             Font f =
                 (Font)area.getFontState().getFontInfo().getFonts().get(name);
-            if (f instanceof CIDFont)
+            if (f instanceof LazyFont){
+                if(((LazyFont) f).getRealFont() instanceof CIDFont){
+                    useMultiByte = true;
+                }
+            }else if (f instanceof CIDFont){
                 useMultiByte = true;
+            }
             // String startText = useMultiByte ? "<FEFF" : "(";
             String startText = useMultiByte ? "<" : "(";
             String endText = useMultiByte ? "> " : ") ";
