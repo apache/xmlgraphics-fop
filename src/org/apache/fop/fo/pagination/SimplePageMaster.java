@@ -10,15 +10,19 @@ package org.apache.fop.fo.pagination;
 // FOP
 import org.apache.fop.fo.*;
 import org.apache.fop.fo.properties.*;
-import org.apache.fop.layout.PageMaster;
-import org.apache.fop.layout.RegionArea;
-import org.apache.fop.layout.BodyRegionArea;
+import org.apache.fop.area.PageViewport;
+import org.apache.fop.area.Page;
+import org.apache.fop.area.RegionViewport;
+import org.apache.fop.area.RegionReference;
 import org.apache.fop.layout.MarginProps;
+import org.apache.fop.layout.PageMaster;
 import org.apache.fop.apps.FOPException;
 
-import java.util.*;
-
+import java.awt.Rectangle;
+import java.util.Hashtable;
+import java.util.Enumeration;
 import org.xml.sax.Attributes;
+
 
 public class SimplePageMaster extends FObj {
 
@@ -30,12 +34,6 @@ public class SimplePageMaster extends FObj {
     LayoutMasterSet layoutMasterSet;
     PageMaster pageMaster;
     String masterName;
-
-    // before and after data as required by start and end
-    boolean beforePrecedence;
-    int beforeHeight;
-    boolean afterPrecedence;
-    int afterHeight;
 
     public SimplePageMaster(FONode parent) {
         super(parent);
@@ -73,69 +71,41 @@ public class SimplePageMaster extends FObj {
         // Common Margin Properties-Block
         MarginProps mProps = propMgr.getMarginProps();
 
-        int contentRectangleXPosition = mProps.marginLeft;
-        int contentRectangleYPosition = pageHeight - mProps.marginTop;
-        int contentRectangleWidth = pageWidth - mProps.marginLeft
-                                    - mProps.marginRight;
-        int contentRectangleHeight = pageHeight - mProps.marginTop
-                                     - mProps.marginBottom;
+	/* Create the page reference area rectangle in first quadrant coordinates
+	 * (ie, 0,0 is at bottom,left of the "page meida" and y increases
+	 * when moving towards the top of the page.
+	 * The media rectangle itself is (0,0,pageWidth,pageHeight).
+	 */
+	Rectangle pageRefRect =
+	    new Rectangle(mProps.marginLeft, pageHeight - mProps.marginTop,
+			  pageWidth - mProps.marginLeft - mProps.marginRight,
+			  pageHeight - mProps.marginTop - mProps.marginBottom);
 
-        this.pageMaster = new PageMaster(pageWidth, pageHeight);
-        if (getRegion(RegionBody.REGION_CLASS) != null) {
-            BodyRegionArea body =
-                (BodyRegionArea)getRegion(RegionBody.REGION_CLASS).makeRegionArea(contentRectangleXPosition,
-                                          contentRectangleYPosition,
-                                          contentRectangleWidth,
-                                          contentRectangleHeight);
-            this.pageMaster.addBody(body);
-        } else {
-            log.error("simple-page-master must have a region of class "
-                                   + RegionBody.REGION_CLASS);
+	// ??? KL shouldn't this take the viewport too???
+	Page page = new Page();  // page reference area
+
+	// Create a RegionViewport/ reference area pair for each page region
+
+	boolean bHasBody=false;
+
+        for (Enumeration regenum = _regions.elements();
+                regenum.hasMoreElements(); ) {
+            Region r = (Region)regenum.nextElement();
+	    RegionViewport rvp = r.makeRegionViewport(pageRefRect);
+	    rvp.setRegion(r.makeRegionReferenceArea());
+	    page.setRegion(r.getRegionAreaClass(), rvp);
+	    if (r.getRegionAreaClass() == RegionReference.BODY) {
+		bHasBody = true;
+	    }
         }
 
-        if (getRegion(RegionBefore.REGION_CLASS) != null) {
-            RegionArea before =
-                getRegion(RegionBefore.REGION_CLASS).makeRegionArea(contentRectangleXPosition,
-                          contentRectangleYPosition, contentRectangleWidth,
-                          contentRectangleHeight);
-            this.pageMaster.addBefore(before);
-            beforePrecedence =
-                ((RegionBefore)getRegion(RegionBefore.REGION_CLASS)).getPrecedence();
-            beforeHeight = before.getHeight();
-        } else {
-            beforePrecedence = false;
+	if (!bHasBody) {
+            log.error("simple-page-master has no region-body");
         }
 
-        if (getRegion(RegionAfter.REGION_CLASS) != null) {
-            RegionArea after =
-                getRegion(RegionAfter.REGION_CLASS).makeRegionArea(contentRectangleXPosition,
-                          contentRectangleYPosition, contentRectangleWidth,
-                          contentRectangleHeight);
-            this.pageMaster.addAfter(after);
-            afterPrecedence =
-                ((RegionAfter)getRegion(RegionAfter.REGION_CLASS)).getPrecedence();
-            afterHeight = after.getHeight();
-        } else {
-            afterPrecedence = false;
-        }
-
-        if (getRegion(RegionStart.REGION_CLASS) != null) {
-            RegionArea start =
-                ((RegionStart)getRegion(RegionStart.REGION_CLASS)).makeRegionArea(contentRectangleXPosition,
-                    contentRectangleYPosition, contentRectangleWidth,
-                    contentRectangleHeight, beforePrecedence,
-                    afterPrecedence, beforeHeight, afterHeight);
-            this.pageMaster.addStart(start);
-        }
-
-        if (getRegion(RegionEnd.REGION_CLASS) != null) {
-            RegionArea end =
-                ((RegionEnd)getRegion(RegionEnd.REGION_CLASS)).makeRegionArea(contentRectangleXPosition,
-                    contentRectangleYPosition, contentRectangleWidth,
-                    contentRectangleHeight, beforePrecedence,
-                    afterPrecedence, beforeHeight, afterHeight);
-            this.pageMaster.addEnd(end);
-        }
+	this.pageMaster = new PageMaster(new PageViewport(page,
+					   new Rectangle(0,0,
+							 pageWidth,pageHeight)));
     }
 
     public PageMaster getPageMaster() {
@@ -151,13 +121,27 @@ public class SimplePageMaster extends FObj {
     }
 
 
-    protected void addRegion(Region region) throws FOPException {
-        if (_regions.containsKey(region.getRegionClass())) {
-            throw new FOPException("Only one region of class "
-                                   + region.getRegionClass()
+    protected void addChild(FONode child) {
+	if (child instanceof Region) {
+	    addRegion((Region)child);
+	}
+	else {
+	    log.error("SimplePageMaster cannot have child of type " +
+		      child.getName());
+	}
+    }
+
+    protected void addRegion(Region region) {
+	String key = region.getRegionClass();
+        if (_regions.containsKey(key)) {
+            log.error("Only one region of class "
+                                   + key
                                    + " allowed within a simple-page-master.");
+            // throw new FOPException("Only one region of class "
+//                                    + key
+//                                    + " allowed within a simple-page-master.");
         } else {
-            _regions.put(region.getRegionClass(), region);
+            _regions.put(key, region);
         }
     }
 

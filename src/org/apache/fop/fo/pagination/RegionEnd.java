@@ -7,78 +7,46 @@
 
 package org.apache.fop.fo.pagination;
 
+import java.awt.Rectangle;
+
 // FOP
 import org.apache.fop.fo.*;
-import org.apache.fop.fo.properties.*;
-import org.apache.fop.layout.RegionArea;
-import org.apache.fop.layout.BorderAndPadding;
-import org.apache.fop.layout.BackgroundProps;
 import org.apache.fop.apps.FOPException;
+import org.apache.fop.area.RegionReference;
 
-public class RegionEnd extends Region {
 
-    public static final String REGION_CLASS = "end";
+public class RegionEnd extends RegionSE {
+
 
 
     public RegionEnd(FONode parent) {
         super(parent);
     }
 
-    RegionArea makeRegionArea(int allocationRectangleXPosition,
-                              int allocationRectangleYPosition,
-                              int allocationRectangleWidth,
-                              int allocationRectangleHeight,
-                              boolean beforePrecedence,
-                              boolean afterPrecedence, int beforeHeight,
-                              int afterHeight) {
-        int extent = this.properties.get("extent").getLength().mvalue();
 
-        int startY = allocationRectangleYPosition;
-        int startH = allocationRectangleHeight;
-        if (beforePrecedence) {
-            startY -= beforeHeight;
-            startH -= beforeHeight;
-        }
-        if (afterPrecedence)
-            startH -= afterHeight;
-        return new RegionArea(allocationRectangleXPosition
-                              + allocationRectangleWidth - extent, startY,
-                              extent, startH);
+    protected Rectangle getViewportRectangle (Rectangle pageRefRect) {
+	// Depends on extent and precedence
+	Rectangle vpRect =
+	    new Rectangle((int)pageRefRect.getX() + (int)pageRefRect.getWidth() -
+			  getExtent(),
+			  (int)pageRefRect.getY(),
+			  getExtent(), (int)pageRefRect.getHeight());
+	adjustIPD(vpRect);
+	return vpRect;
     }
 
-    RegionArea makeRegionArea(int allocationRectangleXPosition,
-                              int allocationRectangleYPosition,
-                              int allocationRectangleWidth,
-                              int allocationRectangleHeight) {
-
-        // Common Border, Padding, and Background Properties
-        BorderAndPadding bap = propMgr.getBorderAndPadding();
-        BackgroundProps bProps = propMgr.getBackgroundProps();
-
-        // this.properties.get("clip");
-        // this.properties.get("display-align");
-        int extent = this.properties.get("extent").getLength().mvalue();
-        // this.properties.get("overflow");
-        // this.properties.get("region-name");
-        // this.properties.get("reference-orientation");
-        // this.properties.get("writing-mode");
-
-        return makeRegionArea(allocationRectangleXPosition,
-                              allocationRectangleYPosition,
-                              allocationRectangleWidth, extent, false, false,
-                              0, 0);
-    }
 
     protected String getDefaultRegionName() {
         return "xsl-region-end";
     }
 
-    protected String getElementName() {
-        return "fo:region-end";
-    }
 
     public String getRegionClass() {
-        return REGION_CLASS;
+        return Region.END;
+    }
+
+    public int getRegionAreaClass() {
+        return RegionReference.END;
     }
 
 }

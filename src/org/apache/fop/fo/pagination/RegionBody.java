@@ -7,22 +7,19 @@
 
 package org.apache.fop.fo.pagination;
 
+import java.awt.Rectangle;
+
 // FOP
-import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.PropertyList;
 import org.apache.fop.fo.properties.Overflow;
 import org.apache.fop.datatypes.ColorType;
 import org.apache.fop.apps.FOPException;
-import org.apache.fop.layout.RegionArea;
-import org.apache.fop.layout.BodyRegionArea;
-import org.apache.fop.layout.BorderAndPadding;
-import org.apache.fop.layout.BackgroundProps;
+import org.apache.fop.area.RegionReference;
+import org.apache.fop.area.BodyRegion;
 import org.apache.fop.layout.MarginProps;
 
 public class RegionBody extends Region {
-
-    public static final String REGION_CLASS = "body";
 
     ColorType backgroundColor;
 
@@ -30,39 +27,22 @@ public class RegionBody extends Region {
         super(parent);
     }
 
-    RegionArea makeRegionArea(int allocationRectangleXPosition,
-                              int allocationRectangleYPosition,
-                              int allocationRectangleWidth,
-                              int allocationRectangleHeight) {
-
-        // Common Border, Padding, and Background Properties
-        BorderAndPadding bap = propMgr.getBorderAndPadding();
-        BackgroundProps bProps = propMgr.getBackgroundProps();
-
+    protected Rectangle getViewportRectangle (Rectangle pageRefRect)
+    {
         // Common Margin Properties-Block
         MarginProps mProps = propMgr.getMarginProps();
+        return
+	    new Rectangle((int)pageRefRect.getX() + mProps.marginLeft,
+			  (int)pageRefRect.getY() - mProps.marginTop,
+			  (int)pageRefRect.getWidth() - mProps.marginLeft -
+			  mProps.marginRight,
+			  (int)pageRefRect.getHeight() - mProps.marginTop -
+			  mProps.marginBottom);
+    }
 
-        // this.properties.get("clip");
-        // this.properties.get("display-align");
-        // this.properties.get("region-name");
-        // this.properties.get("reference-orientation");
-        // this.properties.get("writing-mode");
+    protected void setRegionTraits(RegionReference r) {
+	super.setRegionTraits(r);
 
-        this.backgroundColor =
-            this.properties.get("background-color").getColorType();
-
-        BodyRegionArea body = new BodyRegionArea(allocationRectangleXPosition
-                                                 + mProps.marginLeft,
-                                                 allocationRectangleYPosition
-                                                 - mProps.marginTop,
-                                                 allocationRectangleWidth
-                                                 - mProps.marginLeft
-                                                 - mProps.marginRight,
-                                                 allocationRectangleHeight
-                                                 - mProps.marginTop
-                                                 - mProps.marginBottom);
-
-        int overflow = this.properties.get("overflow").getEnum();
         String columnCountAsString =
             this.properties.get("column-count").getString();
         int columnCount = 1;
@@ -79,27 +59,34 @@ public class RegionBody extends Region {
                                    + "'overflow' is set to 'scroll'");
             columnCount = 1;
         }
-        body.setColumnCount(columnCount);
+//         r.setColumnCount(columnCount);
 
-        int columnGap =
-            this.properties.get("column-gap").getLength().mvalue();
-        body.setColumnGap(columnGap);
+//         int columnGap =
+//             this.properties.get("column-gap").getLength().mvalue();
+//         r.setColumnGap(columnGap);
 
-        body.setBackgroundColor(backgroundColor);
-
-        return body;
+//         r.setBackgroundColor(backgroundColor);
     }
 
     protected String getDefaultRegionName() {
         return "xsl-region-body";
     }
 
-    protected String getElementName() {
-        return "fo:region-body";
-    }
 
     public String getRegionClass() {
-        return REGION_CLASS;
+        return Region.BODY;
+    }
+
+    public int getRegionAreaClass() {
+        return RegionReference.BODY;
+    }
+
+    /**
+     * Override the inherited method.
+     */
+    public RegionReference makeRegionReferenceArea() {
+	// Should set some column stuff here I think, or put it elsewhere
+	return new BodyRegion();
     }
 
 }

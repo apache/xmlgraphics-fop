@@ -9,51 +9,31 @@ package org.apache.fop.fo.pagination;
 
 // FOP
 import org.apache.fop.fo.*;
-import org.apache.fop.fo.properties.*;
 import org.apache.fop.apps.FOPException;
-import org.apache.fop.layout.RegionArea;
-import org.apache.fop.layout.BorderAndPadding;
-import org.apache.fop.layout.BackgroundProps;
+import org.apache.fop.area.RegionReference;
 
+import java.awt.Rectangle;
 import org.xml.sax.Attributes;
 
-public class RegionAfter extends Region {
+public class RegionAfter extends RegionBA {
 
-    public static final String REGION_CLASS = "after";
-
-    private int precedence;
 
     public RegionAfter(FONode parent) {
         super(parent);
     }
 
-    public void handleAttrs(Attributes attlist) throws FOPException {
-        super.handleAttrs(attlist);
-        precedence = this.properties.get("precedence").getEnum();
-    }
 
-    RegionArea makeRegionArea(int allocationRectangleXPosition,
-                              int allocationRectangleYPosition,
-                              int allocationRectangleWidth,
-                              int allocationRectangleHeight) {
-
-        // Common Border, Padding, and Background Properties
-        BorderAndPadding bap = propMgr.getBorderAndPadding();
-        BackgroundProps bProps = propMgr.getBackgroundProps();
-
-        // this.properties.get("clip");
-        // this.properties.get("display-align");
-        int extent = this.properties.get("extent").getLength().mvalue();
-        // this.properties.get("overflow");
-        // this.properties.get("precedence");
-        // this.properties.get("region-name");
-        // this.properties.get("reference-orientation");
-        // this.properties.get("writing-mode");
-
-        return new RegionArea(allocationRectangleXPosition,
-                              allocationRectangleYPosition
-                              - allocationRectangleHeight + extent,
-                              allocationRectangleWidth, extent);
+    protected Rectangle getViewportRectangle (Rectangle pageRefRect) {
+	// Depends on extent and precedence
+	Rectangle vpRect =
+	    new Rectangle((int)pageRefRect.getX(),
+			  (int)pageRefRect.getY() - (int)pageRefRect.getHeight() + 
+			  getExtent(),
+			  (int)pageRefRect.getWidth(), getExtent());
+	if (getPrecedence() == false) {
+	    adjustIPD(vpRect);
+	}
+	return vpRect;
     }
 
 
@@ -61,16 +41,13 @@ public class RegionAfter extends Region {
         return "xsl-region-after";
     }
 
-    protected String getElementName() {
-        return "fo:region-after";
+    public int getRegionAreaClass() {
+        return RegionReference.AFTER;
     }
 
     public String getRegionClass() {
-        return REGION_CLASS;
+        return Region.AFTER;
     }
 
-    public boolean getPrecedence() {
-        return (precedence == Precedence.TRUE ? true : false);
-    }
 
 }

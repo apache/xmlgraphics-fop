@@ -7,12 +7,18 @@
 
 package org.apache.fop.fo.pagination;
 
+import java.awt.Rectangle;
+
 // FOP
 import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.PropertyList;
+import org.apache.fop.layout.BorderAndPadding;
+import org.apache.fop.layout.BackgroundProps;
 import org.apache.fop.apps.FOPException;
-import org.apache.fop.layout.RegionArea;
+import org.apache.fop.area.RegionViewport;
+import org.apache.fop.area.RegionReference;
+
 
 import org.xml.sax.Attributes;
 
@@ -22,12 +28,20 @@ import org.xml.sax.Attributes;
 public abstract class Region extends FObj {
     public static final String PROP_REGION_NAME = "region-name";
 
+    final static String BEFORE = "before";
+    final static String START =  "start";
+    final static String END =    "end";
+    final static String AFTER =  "after";
+    final static String BODY =   "body";
+
     private SimplePageMaster _layoutMaster;
     private String _regionName;
 
+    protected int overflow;
+
+
     protected Region(FONode parent) {
         super(parent);
-        this.name = getElementName();
     }
 
     public void handleAttrs(Attributes attlist) throws FOPException {
@@ -49,23 +63,58 @@ public abstract class Region extends FObj {
             }
         }
 
-        if (parent.getName().equals("fo:simple-page-master")) {
-            _layoutMaster = (SimplePageMaster)parent;
-            getPageMaster().addRegion(this);
-        } else {
-            throw new FOPException(getElementName() + " must be child "
+	if (parent instanceof SimplePageMaster) {
+	    _layoutMaster = (SimplePageMaster)parent;
+	}
+	else {
+            throw new FOPException(this.name + " must be child "
                                    + "of simple-page-master, not "
                                    + parent.getName());
         }
+
+    }
+
+
+    /**
+     * Creates a RegionViewport Area object for this pagination Region.
+     */
+    public RegionViewport makeRegionViewport(Rectangle pageRefRect) {
+	return new RegionViewport(getViewportRectangle(pageRefRect));
+    }
+
+
+    abstract protected Rectangle getViewportRectangle(Rectangle pageRefRect);
+
+
+    public RegionReference makeRegionReferenceArea() {
+	RegionReference r = new RegionReference(getRegionAreaClass());
+	setRegionTraits(r);
+	return r;
+    }
+
+    protected void setRegionTraits(RegionReference r) {
+        // Common Border, Padding, and Background Properties
+        BorderAndPadding bap = propMgr.getBorderAndPadding();
+        BackgroundProps bProps = propMgr.getBackgroundProps();
+	/*        this.backgroundColor =
+		  this.properties.get("background-color").getColorType();*/
+
+        // this.properties.get("clip");
+        // this.properties.get("display-align");
+        // this.properties.get("overflow");
+        this.overflow = this.properties.get("overflow").getEnum();
+        // this.properties.get("region-name");
+        // this.properties.get("reference-orientation");
+        // this.properties.get("writing-mode");
+                    
+	//r.setBackground(bProps);
     }
 
     /**
-     * Creates a Region layout object for this pagination Region.
+     * Return the enumerated value designating this type of region in the
+     * Area tree.
      */
-    abstract RegionArea makeRegionArea(int allocationRectangleXPosition,
-                                       int allocationRectangleYPosition,
-                                       int allocationRectangleWidth,
-                                       int allocationRectangleHeight);
+    abstract protected int getRegionAreaClass();
 
     /**
      * Returns the default region name (xsl-region-before, xsl-region-start,
@@ -73,11 +122,6 @@ public abstract class Region extends FObj {
      */
     protected abstract String getDefaultRegionName();
 
-    /**
-     * Returns the element name ("fo:region-body", "fo:region-start",
-     * etc.)
-     */
-    protected abstract String getElementName();
 
     public abstract String getRegionClass();
 
@@ -114,6 +158,19 @@ public abstract class Region extends FObj {
 
     public boolean generatesReferenceAreas() {
         return true;
+    }
+
+    protected Region getSiblingRegion(String regionClass) {
+	// Ask parent for region
+	return  _layoutMaster.getRegion(regionClass);
+    }
+
+    boolean getPrecedence() {
+        return false;
+    }
+
+    int getExtent() {
+        return 0;
     }
 
 }
