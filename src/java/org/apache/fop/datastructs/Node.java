@@ -108,8 +108,7 @@ public class Node implements Cloneable {
      *               node. 
      */
 
-    public Node(Node parent)
-        throws IndexOutOfBoundsException {
+    public Node(Node parent) {
         this.parent = parent;
         if (parent != null) {
             parent.addChild(this);
