@@ -12,6 +12,7 @@
   compliance-level-1-desc CDATA #REQUIRED
   compliance-level-2-desc CDATA #REQUIRED
   compliance-level-3-desc CDATA #REQUIRED
+  ref-name CDATA #IMPLIED
 >
 <!ELEMENT level-1 (explanatory?, level-2+)>
 <!ATTLIST level-1
