@@ -424,6 +424,11 @@ public abstract class Properties {
             if (pv == value) return value;  // unable to resolve
             // TODO: validate here
             return pv;
+        case PropertyValue.LIST:
+            System.out.println((PropertyValueList)value);
+            throw new PropertyException
+                ("PropertyValueList passed to Properties.refineParsing for "
+                + propName);
         default:
             if ( ! nested) {
                 if ((datatype & COMPOUND) != 0)
