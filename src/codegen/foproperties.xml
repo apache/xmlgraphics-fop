@@ -891,6 +891,61 @@
     <datatype>Number</datatype>
     <default>1</default>
   </property>
+
+
+  <property>
+    <name>region-name</name>
+    <class-name>RegionName</class-name>
+    <inherited>false</inherited>
+    <datatype>String</datatype>
+    <default></default>
+  </property>
+
+  
+  <property>
+    <name>hyphenate</name>
+    <class-name>Hyphenate</class-name>
+    <inherited>true</inherited>
+    <datatype>Enum</datatype>
+      <enumeration>
+        <value const="TRUE">true</value>
+        <value const="FALSE">false</value>
+      </enumeration>
+    <default>false</default>
+  </property>
+
+  <property>
+    <name>hyphenation-character</name>
+    <class-name>HyphenationCharacter</class-name>
+    <inherited>true</inherited>
+    <datatype>Character</datatype>
+    <default>-</default>
+  </property>
+
+  <property>
+    <name>hyphenation-push-character-count</name>
+    <class-name>HyphenationPushCharacterCount</class-name>
+    <inherited>true</inherited>
+    <datatype>Number</datatype>
+    <default>2</default>
+  </property>
+
+  <property>
+    <name>hyphenation-remain-character-count</name>
+    <class-name>HyphenationRemainCharacterCount</class-name>
+    <inherited>true</inherited>
+    <datatype>Number</datatype>
+    <default>2</default>
+  </property>
+  
+  <property>
+    <name>language</name>
+    <class-name>Language</class-name>
+    <inherited>true</inherited>
+    <datatype>String</datatype>
+    <default>none</default>
+  </property>
+
   <property>
     <name>widows</name>
     <inherited>true</inherited>
@@ -905,13 +960,13 @@
   </property>
 
   <property>
-    <name>region-name</name>
-    <class-name>RegionName</class-name>
-    <inherited>false</inherited>
+    <name>country</name>
+    <class-name>Country</class-name>
+    <inherited>true</inherited>
     <datatype>String</datatype>
-    <default></default>
+    <default>none</default>
   </property>
-  
+
  </generic-property-list>
 </property-list>
 

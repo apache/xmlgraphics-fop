@@ -59,6 +59,9 @@ import org.apache.fop.layout.AreaTree;
 import org.apache.fop.layout.FontInfo;
 import org.apache.fop.render.Renderer;
 import org.apache.fop.messaging.MessageHandler;
+import org.apache.fop.configuration.ConfigurationReader;
+import org.apache.fop.configuration.StandardConfiguration;
+
 
 // DOM
 import org.w3c.dom.Document;
@@ -76,6 +79,8 @@ import org.xml.sax.helpers.AttributesImpl;
 // Java
 import java.io.PrintWriter;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.File;
 
 /**
  * <P>Primary class that drives overall FOP process.
@@ -130,7 +135,7 @@ public class Driver {
     protected PrintWriter writer;
 
     /** If true, full error stacks are reported */
-    protected boolean errorDump;
+    protected boolean errorDump = false;
 
     /** create a new Driver */
     public Driver() {
@@ -138,8 +143,8 @@ public class Driver {
     }
 
     /** Set the error dump option
-      * @param dump if true, full stacks will be reported to the error log
-      */
+       * @param dump if true, full stacks will be reported to the error log
+       */
     public void setErrorDump(boolean dump) {
         errorDump = dump;
     }
@@ -150,18 +155,18 @@ public class Driver {
     }
 
     /**
-      * set the class name of the Renderer to use as well as the
-      * producer string for those renderers that can make use of it
-      */
+       * set the class name of the Renderer to use as well as the
+       * producer string for those renderers that can make use of it
+       */
     public void setRenderer(String rendererClassName, String producer) {
         this.renderer = createRenderer(rendererClassName);
         this.renderer.setProducer(producer);
     }
 
     /**
-      * protected method used by setRenderer(String, String) to
-      * instantiate the Renderer class
-      */
+       * protected method used by setRenderer(String, String) to
+       * instantiate the Renderer class
+       */
     protected Renderer createRenderer(String rendererClassName) {
         MessageHandler.logln("using renderer " + rendererClassName);
 
@@ -185,26 +190,26 @@ public class Driver {
     }
 
     /**
-      * add the given element mapping.
-      *
-      * an element mapping maps element names to Java classes
-      */
+       * add the given element mapping.
+       *
+       * an element mapping maps element names to Java classes
+       */
     public void addElementMapping(ElementMapping mapping) {
         mapping.addToBuilder(this.treeBuilder);
     }
 
     /**
-      * add the element mapping with the given class name
-      */
+       * add the element mapping with the given class name
+       */
     public void addElementMapping(String mappingClassName) {
         createElementMapping(mappingClassName).addToBuilder(
           this.treeBuilder);
     }
 
     /**
-      * protected method used by addElementMapping(String) to
-      * instantiate element mapping class
-      */
+       * protected method used by addElementMapping(String) to
+       * instantiate element mapping class
+       */
     protected ElementMapping createElementMapping(
       String mappingClassName) {
         MessageHandler.logln("using element mapping " + mappingClassName);
@@ -233,16 +238,16 @@ public class Driver {
     }
 
     /**
-      * add the element mapping with the given class name
-      */
+       * add the element mapping with the given class name
+       */
     public void addPropertyList(String listClassName) {
         createPropertyList(listClassName).addToBuilder(this.treeBuilder);
     }
 
     /**
-      * protected method used by addPropertyList(String) to
-      * instantiate list mapping class
-      */
+       * protected method used by addPropertyList(String) to
+       * instantiate list mapping class
+       */
     protected PropertyListMapping createPropertyList(
       String listClassName) {
         MessageHandler.logln("using property list mapping " +
@@ -272,20 +277,20 @@ public class Driver {
     }
 
     /**
-      * return the tree builder (a SAX DocumentHandler).
-      *
-      * used in situations where SAX is used but not via a FOP-invoked
-      * SAX parser. A good example is an XSLT engine that fires SAX
-      * events but isn't a SAX Parser itself.
-      */
+       * return the tree builder (a SAX DocumentHandler).
+       *
+       * used in situations where SAX is used but not via a FOP-invoked
+       * SAX parser. A good example is an XSLT engine that fires SAX
+       * events but isn't a SAX Parser itself.
+       */
     public ContentHandler getContentHandler() {
         return this.treeBuilder;
     }
 
     /**
-      * build the formatting object tree using the given SAX Parser and
-      * SAX InputSource
-      */
+       * build the formatting object tree using the given SAX Parser and
+       * SAX InputSource
+       */
     public void buildFOTree(XMLReader parser,
                             InputSource source) throws FOPException {
 
@@ -308,8 +313,8 @@ public class Driver {
     }
 
     /**
-      * build the formatting object tree using the given DOM Document
-      */
+       * build the formatting object tree using the given DOM Document
+       */
     public void buildFOTree(Document document) throws FOPException {
 
         /* most of this code is modified from John Cowan's */
@@ -337,7 +342,7 @@ public class Driver {
                         int datalen = data.length();
                         if (array == null || array.length < datalen) {
                             /* if the array isn't big enough, make a new
-                                one */
+                                 one */
                             array = new char[datalen];
                         }
                         data.getChars(0, datalen, array, 0);
@@ -399,8 +404,8 @@ public class Driver {
     }
 
     /**
-      * Dumps an error
-      */
+       * Dumps an error
+       */
     public void dumpError(Exception e) {
         if (errorDump) {
             if (e instanceof SAXException) {
@@ -417,16 +422,16 @@ public class Driver {
 
 
     /**
-      * set the PrintWriter to use to output the result of the Renderer
-      * (if applicable)
-      */
+       * set the PrintWriter to use to output the result of the Renderer
+       * (if applicable)
+       */
     public void setWriter(PrintWriter writer) {
         this.writer = writer;
     }
 
     /**
-      * format the formatting object tree into an area tree
-      */
+       * format the formatting object tree into an area tree
+       */
     public void format() throws FOPException {
         FontInfo fontInfo = new FontInfo();
         this.renderer.setupFontInfo(fontInfo);
@@ -438,9 +443,86 @@ public class Driver {
     }
 
     /**
-      * render the area tree to the output form
-      */
+       * render the area tree to the output form
+       */
     public void render() throws IOException, FOPException {
         this.renderer.render(areaTree, this.writer);
     }
+
+    /**
+      *  loads standard configuration file and a user file, if it has been specified
+      */
+    public void loadStandardConfiguration(String role) {
+        String file;
+        if (role.equals("standard")) {
+            file = "config.xml";
+        } else if (role.equals("pdf")) {
+            file = "pdf.xml";
+        } else  if (role.equals("awt")) {
+            file = "awt.xml";
+        } else {
+            MessageHandler.errorln("Error: unknown configuration role: " + role
+                                   + "\n using standard");
+            file = "config.xml";
+        }
+        // the entry /conf/config.xml refers to a directory conf which is a sibling of org
+        InputStream configfile =
+          ConfigurationReader.class.getResourceAsStream("/conf/"+file);
+        if (configfile == null) {
+            MessageHandler.errorln("Fatal error: can't find default configuration file");
+            System.exit(1);
+        }
+        MessageHandler.logln("reading default configuration file");
+        ConfigurationReader reader =
+          new ConfigurationReader (new InputSource(configfile),
+                                   "standard");
+        if (errorDump) {
+            reader.setDumpError(true);
+        }
+        try {
+            reader.start();
+        } catch (org.apache.fop.apps.FOPException error) {
+            MessageHandler.errorln("Fatal Error: Can't process default configuration file. \nProbably it is not well-formed.");
+            if (errorDump) {
+                reader.dumpError(error);
+            }
+            System.exit(1);
+        }
+    }
+
+    public void loadUserconfiguration(String userConfigFile, String role) {
+        //read user configuration file
+        if (userConfigFile != null) {
+            MessageHandler.logln("reading user configuration file");
+            ConfigurationReader reader = new ConfigurationReader (
+                                           CommandLine.fileInputSource(userConfigFile), role);
+            if (errorDump) {
+                reader.setDumpError(true);
+            }
+            try {
+                reader.start();
+            } catch (org.apache.fop.apps.FOPException error) {
+                MessageHandler.errorln(
+                  "Can't find user configuration file " +
+                  userConfigFile);
+                MessageHandler.errorln("using default values");
+                if (errorDump) {
+                    reader.dumpError(error);
+                }
+            }
+        }
+    }
+
+    public void setBaseDir(String fofile) {
+      String baseDir = StandardConfiguration.getStringValue("baseDir");
+      if (baseDir == null)  {
+        baseDir = new File(new File(fofile).getAbsolutePath()).getParent();
+        StandardConfiguration.put("baseDir",baseDir);
+      } 
+      if (errorDump) {
+        MessageHandler.logln("base directory: " + baseDir);
+      }
+    }
+
+
 }

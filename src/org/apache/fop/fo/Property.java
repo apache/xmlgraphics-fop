@@ -343,6 +343,7 @@ public class Property {
   public LengthRange getLengthRange() { return null; }
   public Space getSpace() { return null; }
   public int getEnum() { return 0; }
+  public char getCharacter() { return 0;}
 
   public Number getNumber() { return null; }
 

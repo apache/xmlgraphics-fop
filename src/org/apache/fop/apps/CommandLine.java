@@ -66,10 +66,11 @@ import java.io.PrintWriter;
 import java.io.IOException;
 import java.io.FileNotFoundException;
 import java.net.URL;
+import java.io.InputStream;
+
 
 // FOP
 import org.apache.fop.messaging.MessageHandler;
-
 
 /**
  * mainline class.
@@ -82,6 +83,8 @@ public class CommandLine {
 
     private String foFile = null;
     private String pdfFile = null;
+    private String userConfigFile = null;
+    private String baseDir = null;
 
     /** show a full dump on error */
     private static boolean errorDump = false;
@@ -90,6 +93,8 @@ public class CommandLine {
         for (int i = 0; i < args.length; i++) {
             if (args[i].equals("-d") || args[i].equals("--full-error-dump")) {
                 errorDump = true;
+            } else if ((args[i].charAt(0) == '-') && (args[i].charAt(1) == 'c')) {
+                userConfigFile = args[i].substring(2);
             } else if (args[i].charAt(0) == '-') {
                 printUsage(args[i]);
             } else if (foFile == null) {
@@ -108,16 +113,27 @@ public class CommandLine {
     public void printUsage(String arg) {
         if (arg != null) {
             MessageHandler.errorln("Unkown argument: '"+arg + "'");
-            MessageHandler.errorln("Usage: java [-d]" +
+            MessageHandler.errorln("Usage: java [-d] " +
+                                   "[-cMyConfigFile] " +
                                    "org.apache.fop.apps.CommandLine " + "formatting-object-file pdf-file");
             MessageHandler.errorln("Options:\n" + "  -d or --full-error-dump    Show stack traces upon error");
+            MessageHandler.errorln("-cMyConfigFile use values in configuration file MyConfigFile instead of default");
 
             System.exit(1);
         }
     }
 
-
     public void run() {
+        Driver driver  = new Driver();
+        driver.loadStandardConfiguration("standard");
+//        driver.loadStandardConfiguration("pdf");
+        if (userConfigFile != null)  {
+            driver.loadUserconfiguration(userConfigFile,"standard");
+        }
+        driver.setBaseDir(foFile);
+
+        String version = Version.getVersion();
+        MessageHandler.logln(version);
 
         XMLReader parser = createParser();
 
@@ -140,7 +156,6 @@ public class CommandLine {
         }
 
         try {
-            Driver driver = new Driver();
             driver.setErrorDump(errorDump);
             driver.setRenderer("org.apache.fop.render.pdf.PDFRenderer",
                                Version.getVersion());
@@ -216,7 +231,7 @@ public class CommandLine {
       * @param filename the name of the file
       * @return the InputSource created
       */
-    protected static InputSource fileInputSource(String filename) {
+    public static InputSource fileInputSource(String filename) {
 
         /* this code adapted from James Clark's in XT */
         File file = new File(filename);
@@ -242,9 +257,6 @@ public class CommandLine {
       * @param command line arguments
       */
     public static void main(String[] args) {
-        String version = Version.getVersion();
-        MessageHandler.errorln(version);
-
         CommandLine cmdLine = new CommandLine(args);
         cmdLine.run();
 

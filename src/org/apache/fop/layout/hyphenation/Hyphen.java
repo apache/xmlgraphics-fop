@@ -1,4 +1,4 @@
-/*-- $Id$ --
+/** -- $Id$ --
 
  ============================================================================
                    The Apache Software License, Version 1.1
@@ -48,62 +48,54 @@
  Software Foundation, please see <http://www.apache.org/>.
 
  */
-package org.apache.fop.layout;
 
-import org.apache.fop.render.Renderer;
+package org.apache.fop.layout.hyphenation;
+import java.io.Serializable;
 
-public class InlineArea extends Area {
+/**
+ * This class represents a hyphen. A 'full' hyphen is made of 3 parts:
+ * the pre-break text, post-break text and no-break. If no line-break
+ * is generated at this position, the no-break text is used, otherwise,
+ * pre-break and post-break are used. Typically, pre-break is equal to
+ * the hyphen character and the others are empty. However, this general
+ * scheme allows support for cases in some languages where words change
+ * spelling if they're split across lines, like german's 'backen' which
+ * hyphenates 'bak-ken'. BTW, this comes from TeX.
+ *
+ * @author Carlos Villegas <cav@uniscope.co.jp>
+ */
 
-    private String text;
-    protected String pageNumberId = null;
-    private float red, green, blue;
+public class Hyphen implements Serializable
+{
+      public String preBreak;
+      public String noBreak;
+      public String postBreak;
 
-    // Textdecoration
-    protected boolean underlined = false;
-    protected boolean overlined = false;
-    protected boolean lineThrough = false;
+      Hyphen(String pre, String no, String post)
+      {
+         preBreak = pre;
+         noBreak = no;
+         postBreak = post;
+      }
 
-
-    public InlineArea(FontState fontState, float red, float green,
-                      float blue, String text, int width) {
-        super(fontState);
-        this.red = red;
-        this.green = green;
-        this.blue = blue;
-        this.text = text;
-        this.contentRectangleWidth = width;
-    }
-
-    public void render(Renderer renderer) {
-        renderer.renderInlineArea(this);
-    }
-
-    public float getBlue() {
-        return this.blue;
-    }
-
-    public float getGreen() {
-        return this.green;
-    }
-
-    public float getRed() {
-        return this.red;
-    }
-
-    public String getText() {
-        return this.text;
-    }
-
-    public String getPageNumberID() {
-        return pageNumberId;
-    }
-
-    public void setUnderlined(boolean ul) {
-        this.underlined = ul;
-    }
-
-    public boolean getUnderlined() {
-        return this.underlined;
-    }
-
+      Hyphen(String pre)
+      {
+         preBreak = pre;
+         noBreak = null;
+         postBreak = null;
+      }
+      
+      public String toString()
+      {
+         if ( noBreak == null && postBreak == null && preBreak != null && preBreak.equals("-") )
+            return "-";
+         StringBuffer res = new StringBuffer("{");
+         res.append(preBreak);
+         res.append("}{");
+         res.append(postBreak);
+         res.append("}{");
+         res.append(noBreak);
+         res.append('}');
+         return res.toString();
+      }
 }

@@ -51,6 +51,7 @@
 
 package org.apache.fop.apps;
 
+import org.apache.fop.configuration.StandardConfiguration;
 /** 
  * class representing the version of FOP.
  */
@@ -62,6 +63,6 @@ public class Version {
      * @return the version string
      */
     public static String getVersion() {
-        return "FOP 0.15";
+        return StandardConfiguration.getStringValue("version");
     }
 }

@@ -1,4 +1,4 @@
-/*-- $Id$ --
+/** -- $Id$ --
 
  ============================================================================
                    The Apache Software License, Version 1.1
@@ -48,62 +48,111 @@
  Software Foundation, please see <http://www.apache.org/>.
 
  */
-package org.apache.fop.layout;
 
-import org.apache.fop.render.Renderer;
+package org.apache.fop.layout.hyphenation;
 
-public class InlineArea extends Area {
+import java.io.Serializable;
 
-    private String text;
-    protected String pageNumberId = null;
-    private float red, green, blue;
+/**
+ * This class implements a simple byte vector with access to the
+ * underlying array.
+ *
+ * @author Carlos Villegas <cav@uniscope.co.jp>
+ */
+public class ByteVector implements Serializable
+{
+      /** Capacity increment size */
+      private final static int DEFAULT_BLOCK_SIZE=2048;
+      private int BLOCK_SIZE;
+      
+      /** The encapsulated array */
+      private byte[] array;
 
-    // Textdecoration
-    protected boolean underlined = false;
-    protected boolean overlined = false;
-    protected boolean lineThrough = false;
+      /** Points to next free item */
+      private int n;
+      
+      public ByteVector()
+      {
+         this(DEFAULT_BLOCK_SIZE);
+      }
 
+      public ByteVector(int capacity)
+      {
+         if ( capacity > 0 )
+            BLOCK_SIZE = capacity;
+         else
+            BLOCK_SIZE = DEFAULT_BLOCK_SIZE;
+         array = new byte[BLOCK_SIZE];
+         n = 0;
+      }
 
-    public InlineArea(FontState fontState, float red, float green,
-                      float blue, String text, int width) {
-        super(fontState);
-        this.red = red;
-        this.green = green;
-        this.blue = blue;
-        this.text = text;
-        this.contentRectangleWidth = width;
-    }
+      public ByteVector(byte[] a)
+      {
+         BLOCK_SIZE = DEFAULT_BLOCK_SIZE;
+         array = a;
+         n = 0;
+      }
 
-    public void render(Renderer renderer) {
-        renderer.renderInlineArea(this);
-    }
+      public ByteVector(byte[] a, int capacity)
+      {
+         if ( capacity > 0 )
+            BLOCK_SIZE = capacity;
+         else
+            BLOCK_SIZE = DEFAULT_BLOCK_SIZE;
+         array = a;
+         n = 0;
+      }         
+      
+      public byte[] getArray()
+      {
+         return array;
+      }
 
-    public float getBlue() {
-        return this.blue;
-    }
+      /** return number of items in array */
+      public int length()
+      {
+         return n;
+      }
 
-    public float getGreen() {
-        return this.green;
-    }
+      /** returns current capacity of array */
+      public int capacity()
+      {
+         return array.length;
+      }
 
-    public float getRed() {
-        return this.red;
-    }
+      public void put(int index, byte val)
+      {
+         array[index] = val;
+      }
 
-    public String getText() {
-        return this.text;
-    }
+      public byte get(int index)
+      {
+         return array[index];
+      }
 
-    public String getPageNumberID() {
-        return pageNumberId;
-    }
+      /**
+       * This is to implement memory allocation in the array. Like malloc().
+       */
+      public int alloc(int size)
+      {
+         int index = n;
+         int len = array.length;         
+         if ( n+size >= len ) {
+            byte[] aux = new byte[len+BLOCK_SIZE];
+            System.arraycopy(array, 0, aux, 0, len);
+            array = aux;
+         }
+         n += size;
+         return index;
+      }
 
-    public void setUnderlined(boolean ul) {
-        this.underlined = ul;
-    }
-
-    public boolean getUnderlined() {
-        return this.underlined;
-    }
-
+      public void trimToSize()
+      {
+         if ( n < array.length ) {
+            byte[] aux = new byte[n];
+            System.arraycopy(array, 0, aux, 0, n);
+            array = aux;
+         }
+      }
+      
 }

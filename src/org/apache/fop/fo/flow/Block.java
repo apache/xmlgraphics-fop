@@ -107,6 +107,13 @@ public class Block extends FObjMixed {
     int borderRightWidth;
     int borderRightStyle;
 
+    int hyphenate;
+    char hyphenationChar;
+    int hyphenationPushCharacterCount;
+    int hyphenationRemainCharacterCount;
+    String language;
+    String country;
+
     BlockArea blockArea;
 
     // this may be helpful on other FOs too
@@ -223,6 +230,18 @@ public class Block extends FObjMixed {
             this.blockOrphans =
               this.properties.get("orphans").getNumber().intValue();
 
+            this.hyphenate = this.properties.get("hyphenate").getEnum();
+            this.hyphenationChar = this.properties.get("hyphenation-character").getCharacter();
+            this.hyphenationPushCharacterCount = this.properties.get(
+                                                   "hyphenation-push-character-count").getNumber().
+                                                 intValue();
+            this.hyphenationRemainCharacterCount = this.properties.get(
+                                                     "hyphenation-remain-character-count").getNumber().
+                                                   intValue();
+            this.language = this.properties.get("language").getString();
+            this.country = this.properties.get("country").getString();
+
+
             this.id = this.properties.get("id").getString();
 
             if (area instanceof BlockArea) {
@@ -306,6 +325,9 @@ public class Block extends FObjMixed {
                                  borderBottomWidth, borderRightWidth);
         blockArea.setBorderColor(borderTopColor, borderLeftColor,
                                  borderBottomColor, borderRightColor);
+        blockArea.setHyphenation(language, country, hyphenate,
+                                 hyphenationChar, hyphenationPushCharacterCount,
+                                 hyphenationRemainCharacterCount);
         blockArea.start();
 
         blockArea.setAbsoluteHeight(area.getAbsoluteHeight());

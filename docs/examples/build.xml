@@ -56,6 +56,7 @@
     <fop fofile="${foDir}/inhprop.fo" pdffile="${testDir}/inhprop.pdf"/>
     <fop fofile="${foDir}/normalex.fo" pdffile="${testDir}/normalex.pdf"/>
     <fop fofile="${foDir}/simple.fo" pdffile="${testDir}/simple.pdf"/>
+    <fop fofile="${foDir}/hyphen.fo" pdffile="${testDir}/hyphen.pdf"/>
   </target>
 
 
