@@ -2,9 +2,11 @@ This directory contains some libraries or class files necessary
 for compiling, running or testing Fop.
 
 ant.jar
-version 1.4.1
+version 1.5
 Ant is the scripting tool which is used to build Fop or to run 
 the test scripts. see build.xml in root for more information
+Also has the class org.apache.tools.ant.taskdefs.optional.TraXLiaison
+added which is needed for the style task.
 
 batik.jar
 version 1.5beta2
