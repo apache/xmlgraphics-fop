@@ -113,12 +113,12 @@
       <fo:block space-before.optimum="12pt">This is a rather long sentence that is going to keep on going and going, not really to demonstrate anything other that normal wrapping because the following paragraph will show what happens when wrap-option is set to no-wrap.</fo:block>
       <fo:block space-before.optimum="12pt" wrap-option="no-wrap">This is a rather long sentence that is going to keep on going and going to demonstrate what happens when wrap-option is set to no-wrap which is unlike the preceding sentence where it defaults to wrap.</fo:block>
       <fo:block space-before.optimum="12pt" wrap-option="wrap">This is a rather long sentence that is going to keep on going and going, not really to demonstrate anything other that normal wrapping but it differs from the first of these three sentences in that wrap is set explicitly.</fo:block>
-      <fo:block font-size="24pt" line-height="28pt" space-before.optimum="12pt" space-after.optimum="12pt">White Space Treatment</fo:block>
+<!--       <fo:block font-size="24pt" line-height="28pt" space-before.optimum="12pt" space-after.optimum="12pt">White Space Treatment</fo:block>
 <fo:block>This            is            default!</fo:block>
 <fo:block white-space-treatment="preserve">This            is            preserve!</fo:block>
 <fo:block white-space-treatment="collapse">This            is            collapse!</fo:block>
 <fo:block white-space-treatment="ignore">This            is            ignore!</fo:block>
-<fo:block font-family="monospace" white-space-treatment="preserve">
+<fo:block font-family="monospace" white-space-treatment="preserve"> 
 <![CDATA[
 <?xml version="1.0"?>
 <document>
@@ -129,16 +129,16 @@
     </list>
 </document>
 ]]>
-</fo:block>
+</fo:block>-->
       <fo:block break-before="page" font-size="24pt" line-height="28pt" space-before.optimum="12pt" space-after.optimum="12pt">Embedded SVG</fo:block>
-      <fo:instream-foreign-object>
+      <fo:block><fo:instream-foreign-object>
         <svg:svg width="400pt" height="200pt">
           <svg:rect x="20pt" y="20pt" width="100pt" height="100pt"/>
           <svg:line x1="20pt" y1="20pt" x2="120pt" y2="120pt"/>
           <svg:line x1="120pt" y1="20pt" x2="20pt" y2="120pt"/>
           <svg:text x="20pt" y="150pt">Hello SVG!</svg:text>
         </svg:svg>
-      </fo:instream-foreign-object>
+      </fo:instream-foreign-object></fo:block>
       <fo:block>The above is an example of an SVG graphic</fo:block>
     </fo:flow>
   </fo:page-sequence>
