@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <!--
-  * Copyright 2004 The Apache Software Foundation.
+  * Copyright 2004-2005 The Apache Software Foundation.
   * 
   * Licensed under the Apache License, Version 2.0 (the "License");
   * you may not use this file except in compliance with the License.
@@ -29,109 +29,78 @@
 	<section>
 	  <title>Initiating the layout process</title>
 
-<para>In the <literal>PageSequence.end()</literal> method the
-<literal>FOTreeHandler</literal> object
-<literal>foInputHandler</literal> notifies the
-<literal>FOTreeListeners</literal> of the PageSequence-end
-event. There is only one listener, the
-<literal>FOTreeControl</literal> object
-<literal>foTreeControl</literal>. This listener asks its
-<literal>LayoutManagerLS</literal> object to format the FO subtree of
-the <literal>PageSequence</literal> FO node. This object constructs a
-<literal>PageLayoutManager</literal> for the
-<literal>PageSequence</literal> FO node, which does the work.</para>
+<para>In the <literal>PageSequence.endOfNode()</literal> method, the
+<literal>AreaTreeHandler</literal> object
+<literal>foEventHandler</literal>'s method 
+<literal>endPageSequence</literal> is called. This method constructs a
+<literal>PageSequenceLayoutManager</literal> for the
+<literal>PageSequence</literal> FO node, which manages all page-related
+layout.</para>
 
 <screen>
-org.apache.fop.fo.pagination.PageSequence.end():
-this.getFOTreeControl().getFOInputHandler().endPageSequence(this):
--> foTreeControl.getFOInputHandler().endPageSequence(this)
--> foInputHandler.endPageSequence(this) (type FOTreeHandler):
+org.apache.fop.fo.pagination.PageSequence.endOfNode():
+this.getFOEventHandler().getFOEventHandler().endPageSequence(this):
+-> foTreeBuilder.getFOEventHandler().endPageSequence(this)
+-> foEventHandler.endPageSequence(this) (type AreaTreeHandler):
 </screen>
 
-<para>This method only calls
-<literal>FOTreeHandler.notifyPageSequenceComplete(pageSequence)</literal>,
-which notifies the <literal>FOTreeListeners</literal> of the
-PageSequence-end event. The <literal>PageSequence</literal> object
-attaches itself to the event, from which the listeners can retrieve it
-again.</para>
-
-<para>There is only one listener. It is an
-<literal>org.apache.fop.apps.Document</literal> object. It is the same
-object as <literal>pageSequence.root.foTreeControl</literal>.  Its
-method <literal>foPageSequenceComplete(event)</literal> is called,
-which is a method of the <literal>FOTreeListener</literal>
-interface. It handles an <literal>FOTreeEvent</literal> that is fired
-when a <literal>PageSequence</literal> object has been
-completed.</para>
-
-<para>The listener formats the FO subtree of the
-<literal>PageSequence</literal> FO node. It calls its layout
-strategy's method <literal>LayoutManagerLS.format(pageSeq,
-areaTree)</literal>.</para>
-
-<para>This method creates a new <literal>PageLayoutManager</literal>
-for the <literal>PageSequence</literal> FO node and calls its
-<literal>run</literal> method (could start another thread). The pages
-in this page sequence are completely layed out by the
-<literal>PageLayoutManager</literal>, in its
-<literal>doLayout</literal> method. The first step in the layout
-process is getting the page setup from the page masters. Then the FO
-tree is processed.</para>
+<para>This method creates a new
+<literal>PageSequenceLayoutManager</literal> for the
+<literal>PageSequence</literal> FO node. The pages in this page sequence
+are completely layed out by the
+<literal>PageSequenceLayoutManager</literal>, in its
+<literal>activateLayout</literal> method. The first step in the layout
+process is getting the page setup from the page masters. Then the FO tree
+is processed.</para>
 
 <screen>
-  [1] org.apache.fop.layoutmgr.PageLayoutManager.doLayout (PageLayoutManager.java:220)
-  [2] org.apache.fop.layoutmgr.PageLayoutManager.run (PageLayoutManager.java:208)
-  [3] org.apache.fop.layoutmgr.LayoutManagerLS.format (LayoutManagerLS.java:83)
-  [4] org.apache.fop.apps.Document.foPageSequenceComplete (Document.java:348)
-  [5] org.apache.fop.fo.FOTreeHandler.notifyPageSequenceComplete (FOTreeHandler.java:497)
-  [6] org.apache.fop.fo.FOTreeHandler.endPageSequence (FOTreeHandler.java:215)
-  [7] org.apache.fop.fo.pagination.PageSequence.end (PageSequence.java:350)
-  [8] org.apache.fop.fo.FOTreeBuilder.endElement (FOTreeBuilder.java:223)
+  [1] org.apache.fop.layoutmgr.PageSequenceLayoutManager.activateLayout (PageLayoutManager.java:211)
+  [2] org.apache.fop.fo.area.AreaTreeHandler.endPageSequence (AreaTreeHandler.java:242)
+  [3] org.apache.fop.fo.pagination.PageSequence.endOfNode (PageSequence.java:202)
+  [4] org.apache.fop.fo.FOTreeBuilder.endElement (FOTreeBuilder.java:292)
   ... parser stuff
-  [16] org.apache.xerces.parsers.AbstractSAXParser.parse (null)
-  [17] org.apache.fop.apps.Driver.render (Driver.java:622)
-  [18] org.apache.fop.apps.Driver.render (Driver.java:558)
-  [19] org.apache.fop.apps.Fop.main (Fop.java:102)
+  [13] org.apache.xerces.parsers.AbstractSAXParser.parse (null)
+  [14] org.apache.xalan.transformer.TransformerIdentityImpl.transform (null)
+  [15] org.apache.fop.apps.InputHandler.render (InputHandler.java:120)
+  [16] org.apache.fop.apps.Fop.main (Fop.java:102)
 </screen>
 
 <screen>
-main[1] dump pageLM
- pageLM = {
-    pageNumberGenerator: instance of org.apache.fop.fo.pagination.PageNumberGenerator(id=1005)
-    pageCount: 1
-    pageNumberString: "1"
-    isFirstPage: true
-    bFirstPage: false
-    curPage: null
-    curBody: null
-    curSpan: null
-    curSpanColumns: 0
-    curFlow: null
-    flowBPD: 0
-    flowIPD: 0
-    areaTree: instance of org.apache.fop.area.AreaTree(id=1025)
-    pageSequence: instance of org.apache.fop.fo.pagination.PageSequence(id=997)
-    currentSimplePageMaster: null
-    staticContentLMs: instance of java.util.HashMap(id=1033)
-    lmls: instance of org.apache.fop.layoutmgr.LayoutManagerLS(id=1034)
-    org.apache.fop.layoutmgr.AbstractLayoutManager.userAgent: instance of org.apache.fop.apps.FOUserAgent(id=1035)
-    org.apache.fop.layoutmgr.AbstractLayoutManager.parentLM: null
-    org.apache.fop.layoutmgr.AbstractLayoutManager.fobj: instance of org.apache.fop.fo.pagination.PageSequence(id=997)
-    org.apache.fop.layoutmgr.AbstractLayoutManager.foID: null
-    org.apache.fop.layoutmgr.AbstractLayoutManager.markers: null
-    org.apache.fop.layoutmgr.AbstractLayoutManager.bFinished: false
-    org.apache.fop.layoutmgr.AbstractLayoutManager.curChildLM: null
-    org.apache.fop.layoutmgr.AbstractLayoutManager.childLMiter: instance of org.apache.fop.layoutmgr.LMiter(id=1036)
-    org.apache.fop.layoutmgr.AbstractLayoutManager.bInited: false
+main[1] dump pageSLM
+ pageSLM = {
+    areaTreeHandler= org.apache.fop.area.AreaTreeHandler  (id=79)
+    areaTreeModel= org.apache.fop.area.RenderPagesModel  (id=81)
+    bFinished= false
+    bFirstPage= false
+    bInited= false
+    childLMiter= org.apache.fop.layoutmgr.LMiter  (id=85)
+    childLMs= java.util.ArrayList  (id=89)
+    curBody= null
+    curChildLM= null
+    curFlow= null
+    curPage= null
+    currentSimplePageMaster= null
+    curSpan= null
+    curSpanColumns= 0
+    flowBPD= 0
+    flowIPD= 0
+    fobj= org.apache.fop.fo.pagination.PageSequence  (id=12)
+    fobjIter= java.util.AbstractList$ListItr  (id=90)
+    isFirstPage= true
+    markers= null
+    pageCount= 1
+    pageNumberGenerator= null
+    pageNumberString= null
+    parentLM= null
+    staticContentLMs= java.util.HashMap  (id=93)
 }
 </screen>
-
-	<para>The above calling sequence contains two configuration
-points. FOP's area tree building process can be modified by
-registering other listeners with the FO tree handler. It can also be
-configured by giving the Document object a different layout strategy
-object. See also the <literal>AddLMVisitor</literal> class which
-controls the creation of Layout Managers.
+    
+<para>The above calling sequence contains one configuration
+ point. FOP's area tree building process can be modified by
+ registering a different LayoutManagerMaker with the Area tree
+ handler. The LayoutManagerMaker controls the creation of Layout
+ Managers.
 <warning>
 		<simpara>TO BE EXPANDED</simpara>
 	  </warning></para>
