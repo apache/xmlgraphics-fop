@@ -72,6 +72,9 @@ public class TTFFile extends AbstractLogEnabled {
     static final int MAX_CHAR_CODE = 255;
     static final int ENC_BUF_SIZE = 1024;
 
+    /** Set to true to get even more debug output than with level DEBUG */
+    public static final boolean TRACE_ENABLED = false;
+
     private String encoding = "WinAnsiEncoding";    // Default encoding
 
     private short firstChar = 0;
@@ -783,7 +786,9 @@ public class TTFFile extends AbstractLogEnabled {
         int mtxSize = Math.max(numberOfGlyphs, nhmtx);
         mtxTab = new TTFMtxEntry[mtxSize];
 
-        getLogger().debug("*** Widths array: \n");
+        if (TRACE_ENABLED) {
+            getLogger().debug("*** Widths array: \n");
+        }
         for (int i = 0; i < mtxSize; i++) {
             mtxTab[i] = new TTFMtxEntry();
         }
@@ -791,9 +796,11 @@ public class TTFFile extends AbstractLogEnabled {
             mtxTab[i].setWx(in.readTTFUShort());
             mtxTab[i].setLsb(in.readTTFUShort());
 
-            if (getLogger().isDebugEnabled()) {
-                getLogger().debug("   width[" + i + "] = "
-                    + convertTTFUnit2PDFUnit(mtxTab[i].getWx()) + ";");
+            if (TRACE_ENABLED) {
+                if (getLogger().isDebugEnabled()) {
+                    getLogger().debug("   width[" + i + "] = "
+                        + convertTTFUnit2PDFUnit(mtxTab[i].getWx()) + ";");
+                }
             }
         }
 
