@@ -205,16 +205,16 @@ public class PropertyConsts {
      * Get the <tt>Numeric</tt> value corresponding to an enumerated value.
      * @param foNode the <tt>FONode</tt> being built
      * @param propindex int index of the FO property
-     * @param enum - the integer equivalent of the enumeration keyword.
+     * @param enumval - the integer equivalent of the enumeration keyword.
      * @return the <tt>Numeric</tt> result.
      * @throws PropertyException
      */
-    public Numeric getMappedNumeric(FONode foNode, int propindex, int enum)
+    public Numeric getMappedNumeric(FONode foNode, int propindex, int enumval)
             throws PropertyException
     {
         Property property = setupProperty(propindex);
         if ((datatypes[propindex] & Property.MAPPED_LENGTH) != 0)
-            return property.getMappedLength(foNode, enum);
+            return property.getMappedLength(foNode, enumval);
         else
             throw new PropertyException
                 ("MAPPED_LENGTH not valid in "
@@ -250,7 +250,7 @@ public class PropertyConsts {
     }
 
     /**
-     * Map the integer value of an enum into its mapped value.
+     * Map the integer value of an enumval into its mapped value.
      * Only valid when the datatype of the property includes MAPPED_ENUM.
      * <p>Generally, the path will be enumText->enumIndex->mappedEnumText.
      * @param index <tt>int</tt> containing the enumeration index.
@@ -265,15 +265,15 @@ public class PropertyConsts {
 
     /**
      * @param propindex <tt>int</tt> property index.
-     * @param enum <tt>String</tt> containing the enumeration text.
+     * @param enumval <tt>String</tt> containing the enumeration text.
      * @return <tt>int</tt> constant representing the enumeration value.
      * @exception PropertyException
      */
-    public int getEnumIndex(int propindex, String enum)
+    public int getEnumIndex(int propindex, String enumval)
                     throws PropertyException
     {
         Property property = setupProperty(propindex);
-        return property.getEnumIndex(enum);
+        return property.getEnumIndex(enumval);
     }
 
     /**
