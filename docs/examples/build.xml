@@ -59,6 +59,8 @@
     <fop fofile="${foDir}/hyphen.fo" pdffile="${testDir}/hyphen.pdf"/>
     <fop fofile="${foDir}/character.fo" pdffile="${testDir}/character.pdf"/>
     <fop fofile="${foDir}/pdfoutline.fo" pdffile="${testDir}/pdfoutline.pdf"/>
+    <fop fofile="${foDir}/corresprop.fo" pdffile="${testDir}/corresprop.pdf"/>
+    <fop fofile="${foDir}/bordershorthand.fo" pdffile="${testDir}/bordershorthand.pdf"/>
   </target>
 
 
