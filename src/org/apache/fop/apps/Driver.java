@@ -9,9 +9,9 @@ package org.apache.fop.apps;
 
 // FOP
 import org.apache.fop.fo.FOTree;
-import org.apache.fop.datastructs.SyncedCircularBuffer;
 import org.apache.fop.layout.AreaTree;
 import org.apache.fop.xml.XMLSerialHandler;
+import org.apache.fop.xml.SyncedXmlEventsBuffer;
 import org.apache.fop.configuration.Configuration;
 import org.apache.fop.messaging.MessageHandler;
 import org.apache.fop.fo.PropertyConsts;
@@ -39,7 +39,7 @@ public class Driver {
     private InputSource source;
 
     private XMLSerialHandler xmlhandler;
-    private SyncedCircularBuffer xmlevents;
+    private SyncedXmlEventsBuffer xmlevents;
     private FOTree foTree;
     private AreaTree areaTree = new AreaTree();
 
@@ -69,7 +69,7 @@ public class Driver {
         source = inputHandler.getInputSource();
         setParserFeatures(parser);
 
-        xmlevents = new SyncedCircularBuffer();
+        xmlevents = new SyncedXmlEventsBuffer();
         xmlhandler = new XMLSerialHandler(xmlevents, parser, source);
         foTree = new FOTree(xmlevents);
 
