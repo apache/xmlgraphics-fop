@@ -564,9 +564,7 @@ public class Area extends AreaNode implements Cloneable  {
          * Sets the <code>block-progression-dimension</code> of the contents of
          * this area to the specified value in millipoints.
          * This value is applied to the appropriate dimension of the
-         * <code>Rectangle2D</code> representing this area.  If no
-         * <code>Rectangle2D</code> exists, a zero-dimensioned default is first
-         * created, then the value is applied.
+         * <code>Rectangle2D</code> representing this area. 
          * @param millipts <code>block-progression-dimension</code> to set, in
          * millipoints
          */
@@ -578,9 +576,7 @@ public class Area extends AreaNode implements Cloneable  {
          * Sets the <code>block-progression-dimension</code> of the contents of
          * this area to the specified value in points.
          * This value is applied to the appropriate dimension of the
-         * <code>Rectangle2D</code> representing this area.  If no
-         * <code>Rectangle2D</code> exists, a zero-dimensioned default is first
-         * created, then the value is applied.
+         * <code>Rectangle2D</code> representing this area.
          * N.B. The method is synchronized only on this object.
          * @param pts <code>block-progression-dimension</code> to set, in points
          */
@@ -627,9 +623,7 @@ public class Area extends AreaNode implements Cloneable  {
         /**
          * Sets the <code>inline-progression-dimension</code> of the contents of
          * this area, in points.  This value is applied to the appropriate
-         * dimension of the <code>Rectangle2D</code> representing this area.  If no
-         * <code>Rectangle2D</code> exists, a zero-dimensioned default is first
-         * created, then the value is applied.
+         * dimension of the <code>Rectangle2D</code> representing this area.
          * @param millipts <code>inline-progression-dimension</code> to set, in
          * millipoints
          */
