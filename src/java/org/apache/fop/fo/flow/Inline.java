@@ -59,12 +59,12 @@ public class Inline extends FObjMixed {
     /**
      * @see org.apache.fop.fo.FObj#addProperties
      */
-    protected void addProperties(Attributes attlist) throws FOPException {
+    protected void addProperties(Attributes attlist) throws SAXParseException {
         super.addProperties(attlist);
 
         if (parent.getName().equals("fo:flow")) {
-            throw new FOPException("inline formatting objects cannot"
-                                   + " be directly under flow");
+            throw new SAXParseException("inline formatting objects cannot"
+                                   + " be directly under flow", locator);
         }
 
         // Common Accessibility Properties

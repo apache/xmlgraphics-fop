@@ -92,7 +92,7 @@ public class PageSequenceMaster extends FObj {
     /**
      * @see org.apache.fop.fo.FObj#addProperties
      */
-    protected void addProperties(Attributes attlist) throws FOPException {
+    protected void addProperties(Attributes attlist) throws SAXParseException {
         super.addProperties(attlist);
         subSequenceSpecifiers = new java.util.ArrayList();
         if (parent.getName().equals("fo:layout-master-set")) {
@@ -102,12 +102,17 @@ public class PageSequenceMaster extends FObj {
                 getLogger().warn("page-sequence-master does not have "
                                        + "a master-name and so is being ignored");
             } else {
-                this.layoutMasterSet.addPageSequenceMaster(masterName, this);
+                try {
+                    this.layoutMasterSet.addPageSequenceMaster(masterName, this);
+                } catch (Exception e) {
+                    throw new SAXParseException("Error with adding Page Sequence Master: " 
+                        + e.getMessage(), locator);
+                }
             }
         } else {
-            throw new FOPException("fo:page-sequence-master must be child "
+            throw new SAXParseException("fo:page-sequence-master must be child "
                                    + "of fo:layout-master-set, not "
-                                   + parent.getName());
+                                   + parent.getName(), locator);
         }
     }
 

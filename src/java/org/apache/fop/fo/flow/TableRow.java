@@ -23,7 +23,6 @@ import org.xml.sax.Attributes;
 import org.xml.sax.SAXParseException;
 
 // FOP
-import org.apache.fop.apps.FOPException;
 import org.apache.fop.datatypes.ColorType;
 import org.apache.fop.datatypes.KeepValue;
 import org.apache.fop.fo.FONode;
@@ -66,7 +65,7 @@ public class TableRow extends FObj {
     /**
      * @see org.apache.fop.fo.FObj#addProperties
      */
-    protected void addProperties(Attributes attlist) throws FOPException {
+    protected void addProperties(Attributes attlist) throws SAXParseException {
         super.addProperties(attlist);
         setupID();
         getFOInputHandler().startRow(this);

@@ -31,7 +31,6 @@ import org.apache.fop.fo.FOElementMapping;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FObj;
 import org.apache.fop.layoutmgr.AddLMVisitor;
-import org.apache.fop.apps.FOPException;
 
 /**
  * A repeatable-page-master-alternatives formatting object.
@@ -84,7 +83,7 @@ public class RepeatablePageMasterAlternatives extends FObj
     /**
      * @see org.apache.fop.fo.FObj#addProperties
      */
-    protected void addProperties(Attributes attlist) throws FOPException {
+    protected void addProperties(Attributes attlist) throws SAXParseException {
         super.addProperties(attlist);
         conditionalPageMasterRefs = new ArrayList();
 
@@ -92,9 +91,9 @@ public class RepeatablePageMasterAlternatives extends FObj
             PageSequenceMaster pageSequenceMaster = (PageSequenceMaster)parent;
             pageSequenceMaster.addSubsequenceSpecifier(this);
         } else {
-            throw new FOPException("fo:repeatable-page-master-alternatives "
+            throw new SAXParseException("fo:repeatable-page-master-alternatives "
                                    + "must be child of fo:page-sequence-master, not "
-                                   + parent.getName());
+                                   + parent.getName(), locator);
         }
 
         String mr = getProperty(PR_MAXIMUM_REPEATS).getString();
@@ -109,8 +108,8 @@ public class RepeatablePageMasterAlternatives extends FObj
                     this.maximumRepeats = 0;
                 }
             } catch (NumberFormatException nfe) {
-                throw new FOPException("Invalid number for "
-                                       + "'maximum-repeats' property");
+                throw new SAXParseException("Invalid number for "
+                                       + "'maximum-repeats' property", locator);
             }
         }
     }

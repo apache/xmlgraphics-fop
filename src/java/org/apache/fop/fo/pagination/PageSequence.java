@@ -27,6 +27,7 @@ import org.xml.sax.Locator;
 import org.xml.sax.SAXParseException;
 
 // FOP
+import org.apache.fop.apps.FOPException;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.FOElementMapping;
@@ -230,7 +231,7 @@ public class PageSequence extends FObj {
     /**
      * @see org.apache.fop.fo.FObj#addProperties
      */
-    protected void addProperties(Attributes attlist) throws FOPException {
+    protected void addProperties(Attributes attlist) throws SAXParseException {
         super.addProperties(attlist);
 
         this.root = (Root) parent;
@@ -258,8 +259,8 @@ public class PageSequence extends FObj {
                 int pageStart = new Integer(ipnValue).intValue();
                 this.explicitFirstNumber = (pageStart > 0) ? pageStart : 1;
             } catch (NumberFormatException nfe) {
-                throw new FOPException("\"" + ipnValue
-                                       + "\" is not a valid value for initial-page-number");
+                throw new SAXParseException("\"" + ipnValue
+                                       + "\" is not a valid value for initial-page-number", locator);
             }
         }
 
@@ -270,9 +271,9 @@ public class PageSequence extends FObj {
             this.pageSequenceMaster =
                     this.layoutMasterSet.getPageSequenceMaster(masterName);
             if (this.pageSequenceMaster == null) {
-                throw new FOPException("master-reference '" + masterName
+                throw new SAXParseException("master-reference '" + masterName
                                        + "' for fo:page-sequence matches no"
-                                       + " simple-page-master or page-sequence-master");
+                                       + " simple-page-master or page-sequence-master", locator);
             }
         }
 

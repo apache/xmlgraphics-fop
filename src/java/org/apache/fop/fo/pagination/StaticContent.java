@@ -24,7 +24,6 @@ import org.xml.sax.Locator;
 import org.xml.sax.SAXParseException;
 
 // FOP
-import org.apache.fop.apps.FOPException;
 import org.apache.fop.fo.FOElementMapping;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.layoutmgr.AddLMVisitor;
@@ -73,10 +72,10 @@ public class StaticContent extends Flow {
      * @param name the flow-name to set
      * @throws FOPException for a missing flow name
      */
-    protected void setFlowName(String name) throws FOPException {
+    protected void setFlowName(String name) throws SAXParseException {
         if (name == null || name.equals("")) {
-            throw new FOPException("A 'flow-name' is required for "
-                                   + getName() + ".");
+            throw new SAXParseException("A 'flow-name' is required for "
+                                   + getName() + ".", locator);
         } else {
             super.setFlowName(name);
         }

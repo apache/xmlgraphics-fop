@@ -19,7 +19,6 @@
 package org.apache.fop.fo.flow;
 
 // FOP
-import org.apache.fop.apps.FOPException;
 import org.apache.fop.datatypes.ColorType;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FObj;
@@ -30,6 +29,7 @@ import org.apache.fop.fo.properties.CommonBorderAndPadding;
 import org.apache.fop.fo.properties.CommonMarginBlock;
 
 import org.xml.sax.Attributes;
+import org.xml.sax.SAXParseException;
 
 /**
  * Class modelling the fo:block-container object. See Sec. 6.5.3 of the XSL-FO
@@ -59,7 +59,7 @@ public class BlockContainer extends FObj {
     /**
      * @see org.apache.fop.fo.FObj#addProperties
      */
-    protected void addProperties(Attributes attlist) throws FOPException {
+    protected void addProperties(Attributes attlist) throws SAXParseException {
         super.addProperties(attlist);
         this.span = this.propertyList.get(PR_SPAN).getEnum();
         setupID();

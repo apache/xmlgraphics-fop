@@ -21,7 +21,6 @@ package org.apache.fop.fo.extensions.svg;
 // FOP
 import org.apache.fop.fo.FONode;
 import org.apache.fop.layoutmgr.AddLMVisitor;
-import org.apache.fop.apps.FOPException;
 
 import org.apache.batik.dom.svg.SVGOMDocument;
 import org.apache.batik.dom.svg.SVGOMElement;
@@ -31,6 +30,7 @@ import org.w3c.dom.Element;
 import org.w3c.dom.svg.SVGDocument;
 import org.xml.sax.Attributes;
 import org.xml.sax.Locator;
+import org.xml.sax.SAXParseException;
 import org.apache.batik.bridge.UnitProcessor;
 import org.apache.batik.util.SVGConstants;
 
@@ -62,7 +62,7 @@ public class SVGElement extends SVGObj {
      * @see org.apache.fop.fo.FONode#processNode
      */
     public void processNode(String elementName, Locator locator, 
-                            Attributes attlist) throws FOPException {
+                            Attributes attlist) throws SAXParseException {
         super.processNode(elementName, locator, attlist);
         init();
     }

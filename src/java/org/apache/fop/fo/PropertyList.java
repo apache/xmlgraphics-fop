@@ -422,8 +422,7 @@ public class PropertyList extends HashMap {
      * @param attributes Collection of attributes passed to us from the parser.
      * @throws FOPException If an error occurs while building the PropertyList
      */
-    public void addAttributesToList(Attributes attributes) 
-        throws FOPException {
+    public void addAttributesToList(Attributes attributes) {
             /*
              * If font-size is set on this FO, must set it first, since
              * other attributes specified in terms of "ems" depend on it.

@@ -21,9 +21,9 @@ package org.apache.fop.fo;
 // XML
 import org.xml.sax.Attributes;
 import org.xml.sax.Locator;
+import org.xml.sax.SAXParseException;
 
 // FOP
-import org.apache.fop.apps.FOPException;
 import org.apache.fop.layoutmgr.AddLMVisitor;
 
 /**
@@ -46,7 +46,7 @@ public class XMLElement extends XMLObj {
      * @see org.apache.fop.fo.FONode#processNode
      */
     public void processNode(String elementName, Locator locator, 
-                            Attributes attlist) throws FOPException {
+                            Attributes attlist) throws SAXParseException {
         super.processNode(elementName, locator, attlist);
         init();
     }

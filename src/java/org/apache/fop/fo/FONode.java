@@ -29,7 +29,6 @@ import org.xml.sax.Locator;
 import org.xml.sax.SAXParseException;
 
 // FOP
-import org.apache.fop.apps.FOPException;
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.util.CharUtilities;
 import org.apache.fop.fo.extensions.ExtensionElementMapping;
@@ -47,14 +46,12 @@ public abstract class FONode {
     /** Parent FO node */
     protected FONode parent;
 
-    /** Marks input file containing this object **/
-    public String systemId;
-
-    /** Marks line number of this object in the input file **/
-    public int line;
-
-    /** Marks column number of this object in the input file **/
-    public int column;
+    /**  Marks location of this object from the input FO
+     *   Call locator.getSystemId(), getLineNumber(),
+     *   getColumnNumber() for file, line, column
+     *   information
+     */
+    public Locator locator;
 
     /** Logger for fo-tree related messages **/
     private static Log log = LogFactory.getLog(FONode.class);
@@ -73,9 +70,7 @@ public abstract class FONode {
      */
     public void setLocation(Locator locator) {
         if (locator != null) {
-            line = locator.getLineNumber();
-            column = locator.getColumnNumber();
-            systemId = locator.getSystemId();
+            this.locator = locator;
         }
     }
 
@@ -111,9 +106,9 @@ public abstract class FONode {
      * @param elementName element name (e.g., "fo:block")
      * @param locator Locator object (ignored by default)
      * @param attlist Collection of attributes passed to us from the parser.
-     * @throws FOPException for errors or inconsistencies in the attributes
+     * @throws SAXParseException for errors or inconsistencies in the attributes
     */
-    public void processNode(String elementName, Locator locator, Attributes attlist) throws FOPException {
+    public void processNode(String elementName, Locator locator, Attributes attlist) throws SAXParseException {
         System.out.println("name = " + elementName);
     }
 
@@ -240,6 +235,18 @@ public abstract class FONode {
      * @param loc org.xml.sax.Locator object of the error (*not* parent node)
      * @param offendingNode incoming node that would cause a duplication.
      */
+    protected void attributeError(String problem) 
+        throws SAXParseException {
+        throw new SAXParseException (errorText(locator) + getName() + ", " + 
+            problem, locator);
+    }
+
+    /**
+     * Helper function to standardize "too many" error exceptions
+     * (e.g., two fo:declarations within fo:root)
+     * @param loc org.xml.sax.Locator object of the error (*not* parent node)
+     * @param offendingNode incoming node that would cause a duplication.
+     */
     protected void tooManyNodesError(Locator loc, String offendingNode) 
         throws SAXParseException {
         throw new SAXParseException (errorText(loc) + getName() + ", only one " 
@@ -280,9 +287,9 @@ public abstract class FONode {
      */
     protected void missingChildElementError(String contentModel)
         throws SAXParseException {
-        throw new SAXParseException(errorText(line, column) + getName() + 
+        throw new SAXParseException(errorText(locator) + getName() + 
             " is missing child elements. \nRequired Content Model: " 
-            + contentModel, null, null, line, column);
+            + contentModel, locator);
     }
 
     /**
@@ -297,17 +304,6 @@ public abstract class FONode {
         } else {
             return "Error(" + loc.getLineNumber() + "/" + loc.getColumnNumber() + "): ";
         }
-    }
-    
-    /**
-     * Helper function to return "Error (line#/column#)" string for
-     * above exception messages
-     * @param lineNumber - line number of node with error
-     * @param columnNumber - column number of node with error
-     * @return String opening error text
-     */
-    protected static String errorText(int lineNumber, int columnNumber) {
-        return "Error(" + lineNumber + "/" + columnNumber + "): ";
     }
 }
 

@@ -27,7 +27,6 @@ import org.xml.sax.SAXParseException;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FObj;
 import org.apache.fop.layoutmgr.AddLMVisitor;
-import org.apache.fop.apps.FOPException;
 
 /**
  * A conditional-page-master-reference formatting object.
@@ -66,7 +65,7 @@ public class ConditionalPageMasterReference extends FObj {
     /**
      * @see org.apache.fop.fo.FObj#addProperties
      */
-    protected void addProperties(Attributes attlist) throws FOPException {
+    protected void addProperties(Attributes attlist) throws SAXParseException {
         super.addProperties(attlist);
         if (getProperty(PR_MASTER_REFERENCE) != null) {
             setMasterName(getProperty(PR_MASTER_REFERENCE).getString());
@@ -156,7 +155,7 @@ public class ConditionalPageMasterReference extends FObj {
      * @param parent parent node
      * @throws FOPException If the parent is invalid
      */
-    protected void validateParent(FONode parent) throws FOPException {
+    protected void validateParent(FONode parent) throws SAXParseException {
         if (parent.getName().equals("fo:repeatable-page-master-alternatives")) {
             this.repeatablePageMasterAlternatives =
                 (RepeatablePageMasterAlternatives)parent;
@@ -168,9 +167,9 @@ public class ConditionalPageMasterReference extends FObj {
                 this.repeatablePageMasterAlternatives.addConditionalPageMasterReference(this);
             }
         } else {
-            throw new FOPException("fo:conditional-page-master-reference must be child "
+            throw new SAXParseException("fo:conditional-page-master-reference must be child "
                                    + "of fo:repeatable-page-master-alternatives, not "
-                                   + parent.getName());
+                                   + parent.getName(), locator);
         }
     }
 
