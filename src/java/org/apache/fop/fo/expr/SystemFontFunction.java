@@ -57,7 +57,7 @@ public class SystemFontFunction {
      * if any other errors occur in the processing of the property
      */
     public static PropertyValue systemFontCharacteristic
-        (int Property, String font, String propName)
+        (int property, String font, String propName)
         throws FunctionNotImplementedException, PropertyException
     {
         throw new FunctionNotImplementedException("system-font");
