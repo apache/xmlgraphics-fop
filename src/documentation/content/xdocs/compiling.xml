@@ -7,33 +7,33 @@
     <title>FOP: Building from Source Code</title>
   </header>
   <body>
-    <section>
+    <section id="build-needed">
       <title>Do You Need To Build?</title>
       <p>FOP distributions are either pre-compiled binary or source.
 If you are using a binary distribution, it is already built and there is no need to build it again. See the <link href="download.html">Download Instructions</link> for information about whether a binary or source distribution is best for your needs.
       </p>
     </section>
-    <section>
+    <section id="env">
       <title>Set Up Your Environment</title>
-      <section>
+      <section id="env-jdk">
         <title>JDK</title>
           <p>
             Building FOP requires a minimum Java Development Kit (JDK) of 1.3.
           </p>
       </section>
-      <section>
+      <section id="env-classpath">
         <title>CLASSPATH</title>
         <p>There is no generally no need to setup a classpath.
 All libraries needed to compile FOP are included in the source distribution and are referenced by the build script.
 You will only need to adjust the classpath if you build FOP in some other way. See the build scripts (build.bat for Windows, and build.sh for Unix) for details.</p>
       </section>
-      <section>
+      <section id="env-java-home">
         <title>JAVA_HOME</title>
         <p>Ant, which is used by the build script, requires that the environment variable JAVA_HOME point to your local JDK root directory.
 This is true even if you use JDK 1.2 or above, which normally don't need this setting.</p>
       </section>
   </section>
-  <section>
+  <section id="build-script">
     <title>Run the "build" Script</title>
     <p>Build FOP by executing the "build" script, which is located in the FOP root directory.
 The Windows batch file is build.bat, and the Unix shell script is build.sh.
@@ -59,8 +59,8 @@ To obtain a complete list of useful build targets:</p>
     <p>To clean the build directory first:</p>
     <source>build.sh clean package</source>
   </section>
-  <section>
-    <title>Troubleshooting</title>
+  <section id="problems">
+    <title id="Troubleshooting">Troubleshooting</title>
     <p>If you have problems building FOP, please try the following:</p>
     <ul>
       <li>Run the build with the target of "clean", then rerun the build.</li>
