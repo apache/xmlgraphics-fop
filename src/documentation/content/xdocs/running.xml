@@ -8,22 +8,31 @@
   </header>
 
   <body>
+    <section id="require">
+      <title>System Requirements</title>
+      <p>The following software must be installed:</p>
+      <ul>
+        <li>Java 1.2.x or later Runtime Environment.</li>
+        <li>FOP. The <link href="download.html">FOP distribution</link> includes all libraries that you will need to run a basic FOP installation. These can be found in the xml-fop/lib directory. These libraries include the following:
+          <ul>
+            <li><jump href="http://xml.apache.org/xerces-j/index.html">Apache Xerces-J</jump> for XML parsing. You can use other XML parsers which support SAX and DOM.</li>
+            <li><jump href="http://xml.apache.org/xalan-j/index.html">Apache Xalan-J</jump>, an XSLT processor.</li>
+            <li><jump href="http://xml.apache.org/batik/">Apache Batik</jump>, an SVG library.</li>
+          </ul>
+        </li>
+      </ul>
+      <p>The following sofware is optional, depending on your needs:</p>
+      <ul>
+        <li>Graphics libraries. Support for some graphics formats requires additional packages. See <link href="graphics.html">FOP: Graphics Formats</link> for details.</li>
+        <li>PDF encryption. See <link href="pdfencryption.html">FOP: PDF Encryption</link> for details.</li>
+      </ul>
+      <p>In addition, the following system requirements apply:</p>
+      <ul>
+        <li>If you will be using FOP to process SVG, you must do so in a graphical environment. See <link href="graphics.html#batik">FOP: Graphics (Batik)</link> for details.</li>
+      </ul>
+    </section>
     <section id="install">
       <title>Installation</title>
-      <section id="install-overview">
-        <title>Overview</title>
-        <p>The following software must be installed:</p>
-        <ul>
-          <li>Java 1.2.x or later.</li>
-          <li>FOP. The <jump href="http://xml.apache.org/fop/download.html">FOP distribution</jump> includes all libraries that you will need to run a basic FOP installation. These can be found in the xml-fop/lib directory. These libraries include the following:</li>
-          <ul>
-            <li>Apache <jump href="http://xml.apache.org/xerces-j/index.html">Xerces-J</jump> for XML parsing. You can use other XML parsers which support SAX and DOM.</li>
-            <li>Apache Xalan, an XSLT processor.</li>
-            <li>Apache <jump href="http://xml.apache.org/batik/">Batik</jump>, an SVG library.</li>
-          </ul>
-          <li>Optional Libraries</li>
-        </ul>
-      </section>
       <section id="install-instruct">
         <title>Instructions</title>
         <p>Basic FOP installation consists of first unzipping the <code>.gz</code> file that is the distribution medium, then unarchiving the resulting <code>.tar</code> file in a directory/folder that is convenient on your system. Please consult your operating system documentation or Zip application software documentation for instructions specific to your site.</p>
