@@ -68,35 +68,44 @@ import java.io.Writer;
  */
 
 public class RtfStringConverter {
-    private static final RtfStringConverter m_instance = new RtfStringConverter();
+    private static final RtfStringConverter INSTANCE = new RtfStringConverter();
 
-    private static final Map m_specialChars;
+    private static final Map SPECIAL_CHARS;
     private static final Character DBLQUOTE = new Character('\"');
     private static final Character QUOTE = new Character('\'');
     private static final Character SPACE = new Character(' ');
 
     /** List of characters to escape with corresponding replacement strings */
     static {
-        m_specialChars = new HashMap();
-        m_specialChars.put(new Character('\t'), "tab");
-        m_specialChars.put(new Character('\n'), "line");
-        m_specialChars.put(new Character('\''), "rquote");
-        m_specialChars.put(new Character('\"'), "rdblquote");
-        m_specialChars.put(new Character('\\'), "\\");
-        m_specialChars.put(new Character('{'), "{");
-        m_specialChars.put(new Character('}'), "}");
+        SPECIAL_CHARS = new HashMap();
+        SPECIAL_CHARS.put(new Character('\t'), "tab");
+        SPECIAL_CHARS.put(new Character('\n'), "line");
+        SPECIAL_CHARS.put(new Character('\''), "rquote");
+        SPECIAL_CHARS.put(new Character('\"'), "rdblquote");
+        SPECIAL_CHARS.put(new Character('\\'), "\\");
+        SPECIAL_CHARS.put(new Character('{'), "{");
+        SPECIAL_CHARS.put(new Character('}'), "}");
     }
 
     /** singleton pattern */
     private RtfStringConverter() {
     }
 
-    /** use this to get an object of this class */
+    /**
+     * use this to get an object of this class
+     * @return the singleton instance
+     */
     public static RtfStringConverter getInstance() {
-        return m_instance;
+        return INSTANCE;
     }
 
-    /** write given String to given Writer, converting characters as required by RTF spec */
+    /**
+     * Write given String to given Writer, converting characters as required by
+     * RTF spec
+     * @param w Writer
+     * @param str String to be written
+     * @throws IOException for I/O problems
+     */
     public void writeRtfString(Writer w, String str) throws IOException {
         if (str == null) {
             return;
@@ -120,7 +129,7 @@ public class RtfStringConverter {
             } else if (c.equals((Object)QUOTE) && d.equals((Object)SPACE)) {
                 replacement = "lquote";
             } else {
-                replacement = (String)m_specialChars.get(c);
+                replacement = (String)SPECIAL_CHARS.get(c);
             }
 
             if (replacement != null) {

@@ -69,8 +69,8 @@ import java.util.Iterator;
  */
 
 public class RtfTableRow extends RtfContainer implements ITableAttributes {
-    private RtfTableCell m_cell;
-    private RtfExtraRowSet m_extraRowSet;
+    private RtfTableCell cell;
+    private RtfExtraRowSet extraRowSet;
     private int id;
     private int highestCell = 0;
 
@@ -87,36 +87,55 @@ public class RtfTableRow extends RtfContainer implements ITableAttributes {
         id = idNum;
     }
 
-    /** close current cell if any and start a new one */
+    /**
+     * Close current cell if any and start a new one
+     * @param cellWidth width of new cell
+     * @return new RtfTableCell
+     * @throws IOException for I/O problems
+     */
     public RtfTableCell newTableCell(int cellWidth) throws IOException {
         highestCell++;
-        m_cell = new RtfTableCell(this, writer, cellWidth, highestCell);
-        return m_cell;
+        cell = new RtfTableCell(this, writer, cellWidth, highestCell);
+        return cell;
     }
 
-    /** close current cell if any and start a new one */
+    /**
+     * Close current cell if any and start a new one
+     * @param attrs attributes of new cell
+     * @param cellWidth width of new cell
+     * @return new RtfTableCell
+     * @throws IOException for I/O problems
+     */
     public RtfTableCell newTableCell(int cellWidth, RtfAttributes attrs) throws IOException {
         highestCell++;
-        m_cell = new RtfTableCell(this, writer, cellWidth, attrs, highestCell);
-        return m_cell;
+        cell = new RtfTableCell(this, writer, cellWidth, attrs, highestCell);
+        return cell;
     }
 
     /**
      * Added by Boris POUDEROUS on 07/02/2002
      * in order to add an empty cell that is merged with the cell above.
      * This cell is placed before or after the nested table.
+     * @param attrs attributes of new cell
+     * @param cellWidth width of new cell
+     * @return new RtfTableCell
+     * @throws IOException for I/O problems
      */
     public RtfTableCell newTableCellMergedVertically(int cellWidth,
            RtfAttributes attrs) throws IOException {
         highestCell++;
-        m_cell = new RtfTableCell (this, writer, cellWidth, attrs, highestCell);
-        m_cell.setVMerge(RtfTableCell.MERGE_WITH_PREVIOUS);
-        return m_cell;
+        cell = new RtfTableCell (this, writer, cellWidth, attrs, highestCell);
+        cell.setVMerge(RtfTableCell.MERGE_WITH_PREVIOUS);
+        return cell;
     }
 
     /**
      * Added by Boris POUDEROUS on 07/02/2002
      * in order to add an empty cell that is merged with the previous cell.
+     * @param attrs attributes of new cell
+     * @param cellWidth width of new cell
+     * @return new RtfTableCell
+     * @throws IOException for I/O problems
      */
     public RtfTableCell newTableCellMergedHorizontally (int cellWidth,
            RtfAttributes attrs) throws IOException {
@@ -126,21 +145,27 @@ public class RtfTableRow extends RtfContainer implements ITableAttributes {
         RtfAttributes wAttributes = (RtfAttributes)attrs.clone();
         wAttributes.unset("number-columns-spanned");
 
-        m_cell = new RtfTableCell(this, writer, cellWidth, wAttributes, highestCell);
-        m_cell.setHMerge(RtfTableCell.MERGE_WITH_PREVIOUS);
-        return m_cell;
+        cell = new RtfTableCell(this, writer, cellWidth, wAttributes, highestCell);
+        cell.setHMerge(RtfTableCell.MERGE_WITH_PREVIOUS);
+        return cell;
     }
 
+    /**
+     * @throws IOException for I/O problems
+     */
     protected void writeRtfPrefix() throws IOException {
         writeGroupMark(true);
     }
 
-    /** overridden to write trowd and cell definitions before writing our cells */
+    /**
+     * Overridden to write trowd and cell definitions before writing our cells
+     * @throws IOException for I/O problems
+     */
     protected void writeRtfContent() throws IOException {
 
         // create new extra row set to allow our cells to put nested tables
         // in rows that will be rendered after this one
-        m_extraRowSet = new RtfExtraRowSet(writer);
+        extraRowSet = new RtfExtraRowSet(writer);
 
         // render the row and cells definitions
         writeControlWord("trowd");
@@ -290,17 +315,20 @@ public class RtfTableRow extends RtfContainer implements ITableAttributes {
         super.writeRtfContent();
     }
 
-    /** overridden to write RTF suffix code, what comes after our children */
+    /**
+     * Overridden to write RTF suffix code, what comes after our children
+     * @throws IOException for I/O problems
+     */
     protected void writeRtfSuffix() throws IOException {
         writeControlWord("row");
 
         // write extra rows if any
-        m_extraRowSet.writeRtf();
+        extraRowSet.writeRtf();
         writeGroupMark(false);
     }
 
     RtfExtraRowSet getExtraRowSet() {
-        return m_extraRowSet;
+        return extraRowSet;
     }
 
     private void writePaddingAttributes()
@@ -334,6 +362,9 @@ public class RtfTableRow extends RtfContainer implements ITableAttributes {
         writeAttributes(attrib, ATTRIB_ROW_PADDING);
     }
 
+    /**
+     * @return true if the row is the first in the table
+     */
     public boolean isFirstRow() {
         if (id == 1) {
             return true;
@@ -342,6 +373,10 @@ public class RtfTableRow extends RtfContainer implements ITableAttributes {
         }
     }
 
+    /**
+     * @param id cell id to check
+     * @return true if the cell is the highest cell
+     */
     public boolean isHighestCell(int id) {
         return (highestCell == id) ? true : false;
     }
