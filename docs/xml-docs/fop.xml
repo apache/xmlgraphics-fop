@@ -22,6 +22,8 @@
   <page id="compiling"      label="Compiling" source="fop/compiling.xml"    />
   <page id="testing"        label="Testing" source="fop/testing.xml"    />
   <separator/>
+  <page id="relnotes"       label="Release Notes" source="fop/relnotes.xml"    />
+  <separator/>
   <faqs id="faq"            label="FAQ" source="fop/faq.xml"/>
   <page id="bugs"           label="Bugs" source="fop/bugs.xml"    />
   <page id="resources"      label="Resources" source="fop/resources.xml"    />
