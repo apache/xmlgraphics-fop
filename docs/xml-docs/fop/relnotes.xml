@@ -22,7 +22,7 @@
          on <code>fo:page-sequence</code>, <code>fo:single-page-master-reference</code>,
          <code>fo:repeatable-page-master-reference</code> and
          <code>fo:conditional-page-master-reference</code>.</p></li>
-       <li>JDK 1.2 (or better) is required</li>
+       <li>JDK 1.2 (or later) is required</li>
        <li>Jimi has been removed for licensing reasons
          <p>If you need PNG support you have to download 
            <jump href="http://java.sun.com/products/jimi/">Jimi</jump>,
@@ -32,6 +32,9 @@
          <code>src/org/apache/fop/svg/PDFGraphics2D.java</code>
          (search for jdk1.4 and remove the comments)
         </p> 
+       </li>
+       <li>
+       	<p>For a more detailed list of changes, see the CHANGES file in the root of the FOP distribution.</p>
        </li>
       </ul>
     </p>

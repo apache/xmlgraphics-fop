@@ -13,6 +13,38 @@
     <body>
 
 <s1 title="FOP Relevant Specifications and Links">
+  <s2 title="Mailing Lists (and archives)">
+  	<s3 title="FOP User Mailing List">
+  		<ul>
+  			<li>Send a mail to <jump href="mailto:fop-user-subscribe@xml.apache.org">fop-user-subscribe@xml.apache.org</jump>
+  			 to subscribe. This is where user specific topics are discussed. For detailed instructions on the subscription, see 
+  			 <jump href="http://xml.apache.org/mail.html">Apache XML Mailing Lists</jump>.</li>
+  			 <li>The Mailing list ARChives (MARC) at the AIMS group: 
+		      		<jump href="http://marc.theaimsgroup.com/?l=fop-user&amp;r=1&amp;w=2">fop-user</jump>
+		      	</li>(searchable)
+		      	<li><jump href="http://xml.apache.org/mail/fop-user/">Apache archive of fop-user@apache.org</jump></li>
+  		</ul>
+  	</s3>
+  	<s3 title="FOP Developer Mailing List">
+  		<ul>
+  			<li>Send a mail to <jump href="mailto:fop-dev-subscribe@xml.apache.org">fop-dev-subscribe@xml.apache.org</jump>
+  			 to subscribe. For detailed instructions on the subscription, see 
+  			 <jump href="http://xml.apache.org/mail.html">Apache XML Mailing Lists</jump>.</li>
+  			 <li>The Mailing list ARChives (MARC) at the AIMS group: 
+		      		<jump href="http://marc.theaimsgroup.com/?l=fop-dev&amp;r=1&amp;w=2">fop-dev</jump>
+		      	</li>(searchable)
+		      	<li><jump href="http://xml.apache.org/mail/fop-dev/">Apache archive of fop-dev@apache.org</jump></li>
+  		</ul>
+  	</s3>
+  	<s3 title="XSL:FO Mailing List (at W3C)">
+  		<ul>
+		      <li>There is an XSL:FO mailing list: www-xsl-fo@w3.org. Subscription info can be found here: <jump href="http://www.w3.org/Mail/Request">
+		          http://www.w3.org/Mail/Request</jump>.</li>
+		          <li>The archive can be found here: 
+		          <jump href="http://lists.w3.org/Archives/Public/www-xsl-fo/">http://lists.w3.org/Archives/Public/www-xsl-fo/</jump></li>
+  		</ul>
+  	</s3>
+  </s2>
   <s2 title="Specifications">
   <ul>
     <li><jump href="http://www.w3.org/TR/2001/REC-xsl-20011015/">XSL-FO Recommendation (15 October 2001)</jump></li>
@@ -36,14 +68,8 @@
       <li><jump href="http://www.dpawson.co.uk/xsl/sect3/bk/index.html">Dave Pawson: An introduction to XSL Formatting Objects</jump></li>
     </ul>
   </s2>
-  <s2 title="Other resources">
+  <s2 title="Related/Useful Products">
     <ul>
-      <li><jump href="http://xml.apache.org/mail/fop-dev/">Apache archive of fop-dev@apache.org</jump></li>
-      <li>The Mailing list ARChives (MARC) at the AIMS group: <jump href="http://marc.theaimsgroup.com/?l=fop-dev&amp;r=1&amp;w=2">fop-dev</jump>,
-      <jump href="http://marc.theaimsgroup.com/?l=fop-user&amp;r=1&amp;w=2">fop-user</jump></li>(searchable)
-      <li>There is an xsl:fo mailing list: www-xsl-fo@w3.org. Subscription info can be found here: <jump href="http://www.w3.org/Mail/Request">
-          http://www.w3.org/Mail/Request</jump>. And the archive can be found here: 
-          <jump href="http://lists.w3.org/Archives/Public/www-xsl-fo/">http://lists.w3.org/Archives/Public/www-xsl-fo/</jump></li>
       <li>
 PJ is an open source product that can be used to modify PDF documents:
 <jump href="http://www.etymon.com/pj/index.html">http://www.etymon.com/pj/index.html</jump>
