@@ -145,8 +145,6 @@ public class PDFRenderer extends PrintRenderer {
     // drawing state
     protected PDFState currentState = null;
 
-    protected PDFColor currentFillColor = new PDFColor(255, 255, 255);
-    protected PDFColor currentStrokeColor = new PDFColor(0, 0, 0);
     protected String currentFontName = "";
     protected int currentFontSize = 0;
     protected int pageHeight;
@@ -266,6 +264,18 @@ public class PDFRenderer extends PrintRenderer {
 
         this.pdfDoc = null;
         ostream = null;
+
+        pages = null;
+
+        pageReferences.clear();
+        pvReferences.clear();
+        pdfResources = null;
+        currentStream = null;
+        currentContext = null;
+        currentPage = null;
+        currentState = null;
+        currentFontName = "";
+        wordAreaPDF = new StringBuffer();
     }
 
     public boolean supportsOutOfOrder() {
