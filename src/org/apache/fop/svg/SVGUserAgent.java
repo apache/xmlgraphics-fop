@@ -106,6 +106,10 @@ public class SVGUserAgent implements UserAgent {
         return org.apache.fop.apps.Driver.getParserClassName();
     }
 
+    public boolean isXMLParserValidating() {
+        return false;
+    }
+
     /**
      * Opens a link in a new component.
      * @param doc The current document.

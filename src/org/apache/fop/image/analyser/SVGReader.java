@@ -160,7 +160,6 @@ public class SVGReader extends AbstractImageReader {
             return "";
         }
 
-
         /**
          * Returns the user stylesheet uri.
          * @return null if no user style sheet was specified.
@@ -174,6 +173,10 @@ public class SVGReader extends AbstractImageReader {
          */
         public String getXMLParserClassName() {
             return org.apache.fop.apps.Driver.getParserClassName();
+        }
+
+        public boolean isXMLParserValidating() {
+            return false;
         }
 
         /**
