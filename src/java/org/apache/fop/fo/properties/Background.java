@@ -239,7 +239,7 @@ public class Background extends Property  {
 		try {
 		    colorval = new ColorType
 				    (PropNames.BACKGROUND_COLOR, ncname);
-		} catch (PropertyException e) {};
+		} catch (PropertyException e) {}
 		if (colorval != null) {
 		    if (color != null) MessageHandler.log("background: " +
 			    "duplicate color overrides previous color");
@@ -252,7 +252,7 @@ public class Background extends Property  {
 		try {
 		    enum = new EnumType
 			    (PropNames.BACKGROUND_ATTACHMENT, ncname);
-		} catch (PropertyException e) {};
+		} catch (PropertyException e) {}
 		if (enum != null) {
 		    if (attachment != null)
 			    MessageHandler.log("background: duplicate" +
@@ -291,7 +291,7 @@ public class Background extends Property  {
 			    Object tmpo = elements.previous();
 			}
 		    }
-		} catch (PropertyException e) {};
+		} catch (PropertyException e) {}
 
 		if (pos1ok) {
 		    if (position != null)

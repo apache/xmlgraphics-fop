@@ -85,7 +85,7 @@ public class TextDecoration extends Property  {
       ,LINE_THROUGH = 4
              ,BLINK = 8
 
-   ,ALL_DECORATIONS = UNDERLINE | OVERLINE | LINE_THROUGH | BLINK;
+   ,ALL_DECORATIONS = UNDERLINE | OVERLINE | LINE_THROUGH | BLINK
                     ;
 
 

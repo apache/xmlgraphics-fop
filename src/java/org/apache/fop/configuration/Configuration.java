@@ -77,7 +77,6 @@ public class Configuration {
      * stores the configuration information
      */
     private static HashMap standardConfiguration = new HashMap(30);
-    ;
     private static HashMap pdfConfiguration = new HashMap(20);
     private static HashMap awtConfiguration = new HashMap(20);
 
