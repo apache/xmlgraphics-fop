@@ -180,11 +180,11 @@ public class InstreamForeignObject extends FObj {
 		/* if is embedded in a block area */
 		if (area instanceof BlockArea) {
 		/* temporarily end the block area */
-		area.end();
+//		area.end();
 		}
 		if(this.areaCurrent == null) {
 		this.areaCurrent =
-				new ForeignObjectArea(fs, area.getAllocationWidth(), area.spaceLeft());
+				new ForeignObjectArea(fs, area.getAllocationWidth());
 
 		this.areaCurrent.start();
 		areaCurrent.setWidth(this.width);
@@ -234,6 +234,22 @@ public class InstreamForeignObject extends FObj {
 		}
 	}
 
+		if (area instanceof BlockArea) {
+            BlockArea ba = (BlockArea)area;
+            LineArea la = ba.getCurrentLineArea();
+            la.addPending();
+            if(areaCurrent.getEffectiveWidth() > la.getRemainingWidth()) {
+                la = ba.createNextLineArea();
+                if(la == null) {
+                    return new Status(Status.AREA_FULL_NONE);
+                }
+            }
+            la.addInlineArea(areaCurrent);
+		} else {
+            area.addChild(areaCurrent);
+            area.increaseHeight(areaCurrent.getEffectiveHeight());
+		}
+
 		if (this.isInLabel) {
 	startIndent += bodyIndent;
 /*	endIndent += (areaCurrent.getEffectiveWidth()
@@ -257,27 +273,27 @@ public class InstreamForeignObject extends FObj {
 	/* if there is a space-before */
 	if (spaceBefore != 0) {
 		/* add a display space */
-		area.addDisplaySpace(spaceBefore);
+//		area.addDisplaySpace(spaceBefore);
 	}
 
 	/* add the SVG area to the containing area */
-	area.addChild(areaCurrent);
+//	area.addChild(areaCurrent);
 
 	areaCurrent.setPage(area.getPage());
 
 	/* increase the height of the containing area accordingly */
-	area.increaseHeight(areaCurrent.getEffectiveHeight());
+//	area.increaseHeight(areaCurrent.getEffectiveHeight());
 
 	/* if there is a space-after */
 	if (spaceAfter != 0) {
 		/* add a display space */
-		area.addDisplaySpace(spaceAfter);
+//		area.addDisplaySpace(spaceAfter);
 	}
 
 	/* if is embedded in a block area */
 	if (area instanceof BlockArea) {
 		/* re-start the block area */
-		area.start();
+//		area.start();
 	}
 
 	if (breakAfter == BreakAfter.PAGE) {

@@ -516,7 +516,7 @@ public class PDFRenderer implements Renderer {
         currentStream.add("Q\n");
         currentStream.add("BT\n");
         this.currentXPosition += area.getEffectiveWidth();
-        this.currentYPosition -= area.getEffectiveHeight();
+//        this.currentYPosition -= area.getEffectiveHeight();
     }
 
     /**
@@ -669,7 +669,12 @@ public class PDFRenderer implements Renderer {
         Enumeration e = area.getChildren().elements();
         while (e.hasMoreElements()) {
             Box b = (Box) e.nextElement();
-            this.currentYPosition = ry - area.getPlacementOffset();
+            if(b instanceof InlineArea) {
+                InlineArea ia = (InlineArea)b;
+                this.currentYPosition = ry - ia.getYOffset();
+            } else {
+                this.currentYPosition = ry - area.getPlacementOffset();
+            }
             b.render(this);
         }
 

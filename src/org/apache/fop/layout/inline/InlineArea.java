@@ -58,7 +58,7 @@ import org.apache.fop.layout.*;
 public abstract class InlineArea extends Area {
 
     private int yOffset = 0;
-    private int height = 0;
+    protected int height = 0;
     private int verticalAlign = 0;
     protected String pageNumberId = null;
     private float red, green, blue;
