@@ -72,18 +72,27 @@ public class SVGReader extends AbstractImageReader {
               new SAXSVGDocumentFactory(SVGImage.getParserName());
             SVGDocument doc = factory.createDocument(uri, imageStream);
 
-            // this is ugly preprocessing to get the width and height
+            Element e = ((SVGDocument)doc).getRootElement();
+            String s;
             UserAgent userAgent = new MUserAgent(new AffineTransform());
-            GVTBuilder builder = new GVTBuilder();
             BridgeContext ctx = new BridgeContext(userAgent);
-            GraphicsNode root;
-            root = builder.build(ctx, doc);
-            // get the 'width' and 'height' attributes of the SVG document
-            width = (int) ctx.getDocumentSize().getWidth();
-            height = (int) ctx.getDocumentSize().getHeight();
-            ctx = null;
-            builder = null;
-            ///////
+            UnitProcessor.Context uctx = UnitProcessor.createContext(ctx, e);
+
+            // 'width' attribute - default is 100%
+            s = e.getAttributeNS(null, SVGOMDocument.SVG_WIDTH_ATTRIBUTE);
+            if (s.length() == 0) {
+                s = SVGOMDocument.SVG_SVG_WIDTH_DEFAULT_VALUE;
+            }
+            width = (int)UnitProcessor.svgHorizontalLengthToUserSpace
+                         (s, SVGOMDocument.SVG_WIDTH_ATTRIBUTE, uctx);
+
+            // 'height' attribute - default is 100%
+            s = e.getAttributeNS(null, SVGOMDocument.SVG_HEIGHT_ATTRIBUTE);
+            if (s.length() == 0) {
+                s = SVGOMDocument.SVG_SVG_HEIGHT_DEFAULT_VALUE;
+            }
+            height = (int)UnitProcessor.svgVerticalLengthToUserSpace
+                         (s, SVGOMDocument.SVG_HEIGHT_ATTRIBUTE, uctx);
 
             return true;
         } catch (NoClassDefFoundError ncdfe) {
