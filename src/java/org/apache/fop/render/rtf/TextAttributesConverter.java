@@ -23,15 +23,12 @@ package org.apache.fop.render.rtf;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.impl.SimpleLog;
 import org.apache.fop.apps.FOPException;
+import org.apache.fop.datatypes.ColorType;
+import org.apache.fop.datatypes.Length;
 import org.apache.fop.fo.Constants;
 import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.properties.ColorTypeProperty;
 import org.apache.fop.fo.properties.EnumProperty;
-import org.apache.fop.fo.properties.LengthProperty;
-import org.apache.fop.fo.properties.SpaceProperty;
-import org.apache.fop.datatypes.ColorType;
-
-//RTF
 import org.apache.fop.render.rtf.rtflib.rtfdoc.RtfAttributes;
 import org.apache.fop.render.rtf.rtflib.rtfdoc.RtfColorTable;
 import org.apache.fop.render.rtf.rtflib.rtfdoc.RtfFontManager;
@@ -57,9 +54,7 @@ class TextAttributesConverter {
      */
     public static RtfAttributes convertAttributes(FObj fobj)
     throws FOPException {
-        RtfAttributes attrib = null;
-
-        attrib = new RtfAttributes();
+        FOPRtfAttributes attrib = new FOPRtfAttributes();
         attrBlockFontFamily(fobj, attrib);
         attrBlockFontWeight(fobj, attrib);
         attrBlockFontSize(fobj, attrib);
@@ -80,7 +75,7 @@ class TextAttributesConverter {
      */
     public static RtfAttributes convertBlockContainerAttributes(FObj fobj)
     throws FOPException {
-        RtfAttributes attrib = new RtfAttributes();
+        FOPRtfAttributes attrib = new FOPRtfAttributes();
         attrBlockFontFamily(fobj, attrib);
         attrBlockFontWeight(fobj, attrib);
         attrBlockFontSize(fobj, attrib);
@@ -178,77 +173,37 @@ class TextAttributesConverter {
         }
     }
 
-    private static void attrBlockSpaceBeforeAfter(FObj fobj, RtfAttributes rtfAttr) {
-        SpaceProperty spaceProp = null;
-
-        //space-before
-        spaceProp = (SpaceProperty)fobj.getProperty(Constants.PR_SPACE_BEFORE);
-        if (spaceProp != null) {
-            Float f = new Float(
-                spaceProp.getLengthRange().getOptimum().getLength().getValue() / 1000f);
-            String sValue = f.toString() + "pt";
-
-            try {
-                rtfAttr.set(
-                        RtfText.SPACE_BEFORE,
-                        (int)FoUnitsConverter.getInstance().convertToTwips(sValue));
-            } catch (FOPException fe) {
-                log.warn("attrBlockSpaceBeforeAfter: " + fe.getMessage());
-            }
+    private static void attrBlockSpaceBeforeAfter(FObj fobj, FOPRtfAttributes rtfAttr) {
+        Length space;
+        space = fobj.getProperty(Constants.PR_SPACE_BEFORE).getLengthRange().getOptimum().getLength();
+        if (space.getValue() >= 0) {
+            rtfAttr.set(RtfText.SPACE_BEFORE, space);
         }
-
-        //space-after
-        spaceProp = (SpaceProperty)fobj.getProperty(Constants.PR_SPACE_AFTER);
-        if (spaceProp != null) {
-            Float f = new Float(
-                spaceProp.getLengthRange().getOptimum().getLength().getValue() / 1000f);
-            String sValue = f.toString() + "pt";
-
-            try {
-                rtfAttr.set(
-                        RtfText.SPACE_AFTER,
-                        (int)FoUnitsConverter.getInstance().convertToTwips(sValue));
-            } catch (FOPException fe) {
-                log.warn("attrBlockSpaceBeforeAfter: " + fe.getMessage());
-            }
+        space = fobj.getProperty(Constants.PR_SPACE_AFTER).getLengthRange().getOptimum().getLength();
+        if (space.getValue() >= 0) {
+           rtfAttr.set(RtfText.SPACE_AFTER, space);
         }
     }
 
-    private static void attrBlockMargins(FObj fobj, RtfAttributes rtfAttr) {
-        try {
-            LengthProperty lengthProp = null;
-
-            // margin-left
-            lengthProp = (LengthProperty)fobj.getProperty(Constants.PR_MARGIN_LEFT);
-            if (lengthProp != null) {
-                Float f = new Float(lengthProp.getLength().getValue() / 1000f);
-                String sValue = f.toString() + "pt";
-
-                rtfAttr.set(
-                        RtfText.LEFT_INDENT_BODY,
-                        (int)FoUnitsConverter.getInstance().convertToTwips(sValue));
-            } else {
-                rtfAttr.set(RtfText.LEFT_INDENT_BODY, 0);
-            }
-
-            // margin-right
-            lengthProp = (LengthProperty)fobj.getProperty(Constants.PR_MARGIN_RIGHT);
-            if (lengthProp != null) {
-                Float f = new Float(lengthProp.getLength().getValue() / 1000f);
-                String sValue = f.toString() + "pt";
-
-                rtfAttr.set(
-                        RtfText.RIGHT_INDENT_BODY,
-                        (int)FoUnitsConverter.getInstance().convertToTwips(sValue));
-            } else {
-                rtfAttr.set(RtfText.RIGHT_INDENT_BODY, 0);
-            }
-        } catch (FOPException fe) {
-            log.warn("attrBlockSpaceBeforeAfter: " + fe.getMessage());
-        }
+    private static void attrBlockMargins(FObj fobj, FOPRtfAttributes rtfAttr) {
+        rtfAttr.set(RtfText.LEFT_INDENT_BODY,
+                fobj.getProperty(Constants.PR_MARGIN_LEFT).getLength());
+        rtfAttr.set(RtfText.RIGHT_INDENT_BODY, 
+                fobj.getProperty(Constants.PR_MARGIN_RIGHT).getLength());
     }
 
-
+    /*
+    private static void attrBlockDimension(FObj fobj, FOPRtfAttributes rtfAttr) {
+        Length ipd = fobj.getProperty(Constants.PR_INLINE_PROGRESSION_DIMENSION).getLengthRange().getOptimum().getLength();
+        if (!ipd.isAuto()) {
+            rtfAttr.set(RtfText.FRAME_WIDTH, ipd);
+        }
+        Length bpd = fobj.getProperty(Constants.PR_BLOCK_PROGRESSION_DIMENSION).getLengthRange().getOptimum().getLength();
+        if (!bpd.isAuto()) {
+            rtfAttr.set(RtfText.FRAME_HEIGHT, bpd);
+        }
+    }
+    */
 
     private static void attrBlockTextAlign(FObj fobj, RtfAttributes rtfAttr) {
         int fopValue = fobj.getPropEnum(Constants.PR_TEXT_ALIGN);
@@ -289,7 +244,7 @@ class TextAttributesConverter {
                 && (fopValue.getGreen() == 0)
                 && (fopValue.getBlue() == 0)
                 && (fopValue.getAlpha() == 0)) {
-            rtfColor = 0; //=auto
+            return;
         } else {
             rtfColor = convertFOPColorToRTF(fopValue);
         }
