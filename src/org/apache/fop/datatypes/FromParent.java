@@ -25,7 +25,7 @@ import org.apache.fop.fo.Properties;
  * from-parent() function call on each of the properties to
  * which the shorthand resolves.
  * <p>
- * The use of the pseudo-property should ensure that the function call is not
+ * The use of the pseudo-type should ensure that the function call is not
  * involved in any arithmetic components of a more complex expression.  I.e,
  * the function evaluator in the parser must check to see whether the
  * property for which the from-parent() function is being
@@ -42,8 +42,12 @@ import org.apache.fop.fo.Properties;
  * that the constraint on the from-parent() function, with
  * respect to shorthands, is met.
  * <p>
- * See also <tt>FromNearestSpecified</tt> pseudo-class.
- * </p>
+ * This pseudo-datatype is also used as the first stage of shorthand
+ * expansion.  After a shorthand's expression is parsed, the next stage of
+ * resolution will generate a FromNearestSpecified object for each property
+ * in the expansion of the shorthand.
+ *
+ * @see FromNearestSpecified
  * @author <a href="mailto:pbwest@powerup.com.au">Peter B. West</a>
  * @version $Revision$ $Name$
  */
