@@ -60,16 +60,6 @@ public class CondLengthProperty extends LengthProperty {
     public /* protected*/ Maker(String name) {
 	super(name);
     }
-
-    protected Property convertProperty(Property p, PropertyList propertyList,
-				       FObj fo) {
-      if (p instanceof CondLengthProperty)
-	return p;
-      Length val = p.getLength();
-      if (val != null)
-	return new CondLengthProperty(new CondLength(val));
-      return convertPropertyDatatype(p, propertyList, fo);
-    }
   }
 
   public CondLengthProperty(CondLength length) {
