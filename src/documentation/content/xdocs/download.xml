@@ -12,12 +12,17 @@
   <title>Downloading FOP</title>
     <p>You can download the latest release version from the <link
        href="http://xml.apache.org/dist/fop/">distribution directory</link>. </p>
-    <p>The file contains also the documentation (including some example fo files) and the source.  </p>
-    <p>If you want to work with the latest and nicest code, you can use the cvs version. See the section
-       on AnonCVS in the <link href="http://xml.apache.org/cvs.html">xml.apache.org documentation</link> for details.
-       Sometimes people have difficulties to access the cvs server; in this case you can download
-       a snapshot from the cvs files <link href="http://xml.apache.org/from-cvs/xml-fop/">here</link>.
-       In both cases you have to build FOP yourself - see <link href="compiling.html">Compiling FOP</link> for details.
+    <p>Each version exists as binary (bin) and source (src) distribution. The binary distribution contains the
+    	 compiled package along with the documentation (including some example XSL-FO files). The source distribution
+    	 additionally contains the whole source code.</p>
+    <p>If you want to work with the latest and nicest code, you can download it from CVS. See the section
+       on AnonCVS in the <link href="http://xml.apache.org/cvs.html">xml.apache.org documentation</link> for details.</p>
+    <p>Sometimes people have difficulties to access the CVS server; in this case you can download
+       a snapshot from the CVS files <link href="http://xml.apache.org/from-cvs/xml-fop/">here</link>.
+       Please be aware that the snapshots currently mirrors the development code for the upcoming FOP 1.0 and not the
+       code from the current releases. You need to download from CVS in this case. (See the note below)</p>
+    <p>If you don't download a binary distribution you have to build FOP yourself - 
+    	 see <link href="compiling.html">Compiling FOP</link> for details.
     </p>
     <note>
       Important: Currently, releases of FOP are coming out of the
