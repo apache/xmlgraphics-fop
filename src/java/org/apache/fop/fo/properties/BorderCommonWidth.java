@@ -72,10 +72,5 @@ public abstract class BorderCommonWidth extends AbstractCorrespondingProperty  {
         return rwEnums[index];
     }
 
-    public boolean overridesCorresponding(FONode foNode)
-    throws PropertyException {
-        throw new PropertyException("Called within superclass");
-    }
-
 }
 

@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Created on 22/04/2004
+ * Created on 29/04/2004
  * $Id$
  */
 package org.apache.fop.fo.properties;
@@ -27,35 +27,37 @@ import org.apache.fop.fo.expr.PropertyException;
  * @author pbw
  * @version $Revision$ $Name$
  */
-public abstract class BorderCommonWidthRelative extends BorderCommonWidth {
+public abstract class PaddingCorrespondingAbsolute
+extends AbstractCorrespondingProperty {
 
-    /** Array of absolute border width properties,
-     * indexed by absolute edge constants */
-    private static int[] absBorderWidthProps = {
+    /** Array of relative padding properties,
+     * indexed by relative edge constants */
+    private static int[] relPaddingProps = {
             PropNames.NO_PROPERTY
-            ,PropNames.BORDER_TOP_WIDTH
-            ,PropNames.BORDER_BOTTOM_WIDTH
-            ,PropNames.BORDER_LEFT_WIDTH
-            ,PropNames.BORDER_RIGHT_WIDTH
+            ,PropNames.PADDING_BEFORE
+            ,PropNames.PADDING_AFTER
+            ,PropNames.PADDING_START
+            ,PropNames.PADDING_END
     };
 
     /**
-     * Gets the absolute border width property corresponding to the given
-     * relative edge
+     * Gets the relative padding property corresponding to the given
+     * absolute edge
      * @param foNode the node on which the property is being defined
-     * @param relativeEdge
-     * @return the absolute border width property index
+     * @param absoluteEdge
+     * @return the relative padding property index
      * @throws PropertyException
      */
-    protected int getCorrespondingWidthProperty(
-            FONode foNode, int relativeEdge)
+    protected int getCorrespondingPaddingProperty(
+            FONode foNode, int absoluteEdge)
     throws PropertyException {
-        int absEdge = WritingMode.getCorrespondingAbsoluteEdge(
-                getWritingMode(foNode), relativeEdge);
-        return absBorderWidthProps[absEdge];
+        int relEdge = WritingMode.getCorrespondingRelativeEdge(
+                getWritingMode(foNode), absoluteEdge);
+        return relPaddingProps[relEdge];
     }
 
-    public boolean isCorrespondingRelative() {
+    public boolean isCorrespondingAbsolute() {
         return true;
     }
+
 }

@@ -21,10 +21,11 @@
 package org.apache.fop.fo.properties;
 
 import org.apache.fop.datatypes.PropertyValue;
+import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.PropNames;
 import org.apache.fop.fo.expr.PropertyException;
 
-public class BorderAfterWidthLength extends BorderCommonWidth  {
+public class BorderAfterWidthLength extends BorderCommonWidthRelative  {
     public static final int dataTypes = LENGTH;
 
     public int getDataTypes() {
@@ -54,6 +55,12 @@ public class BorderAfterWidthLength extends BorderCommonWidth  {
 
     public int getInherited() {
         return inherited;
+    }
+
+    public int getCorrespondingProperty(FONode foNode)
+    throws PropertyException {
+        return getCorrespondingWidthProperty(
+                foNode, WritingMode.AFTER);
     }
 
 

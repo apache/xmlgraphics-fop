@@ -47,11 +47,4 @@ public abstract class BorderColorCorresponding extends ColorTransparent
     throws PropertyException {
         throw new PropertyException("Called from superclass");
     }
-    /* (non-Javadoc)
-     * @see org.apache.fop.fo.properties.CorrespondingProperty#overridesCorresponding(org.apache.fop.fo.FONode)
-     */
-    public boolean overridesCorresponding(FONode foNode)
-            throws PropertyException {
-        throw new PropertyException("Called from superclass");
-    }
 }

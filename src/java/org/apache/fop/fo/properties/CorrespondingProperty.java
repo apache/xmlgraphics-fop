@@ -34,6 +34,4 @@ public interface CorrespondingProperty {
     throws PropertyException;
     public int getCorrespondingProperty(FONode foNode)
     throws PropertyException;
-    public boolean overridesCorresponding(FONode foNode)
-    throws PropertyException;
 }

@@ -69,9 +69,5 @@ public class BorderTopWidth extends BorderCommonWidthAbsolute {
                 foNode, WritingMode.TOP);
     }
 
-    public boolean overridesCorresponding(FONode foNode) {
-        return false;
-    }
-
 }
 

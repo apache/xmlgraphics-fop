@@ -63,9 +63,5 @@ public class BorderBottomColor extends BorderColorCorrespondingAbsolute {
                 foNode, WritingMode.BOTTOM);
     }
 
-    public boolean overridesCorresponding(FONode foNode) {
-        return false;
-    }
-
 }
 

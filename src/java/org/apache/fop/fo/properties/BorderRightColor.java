@@ -63,9 +63,5 @@ public class BorderRightColor extends BorderColorCorrespondingAbsolute {
                 foNode, WritingMode.RIGHT);
     }
 
-    public boolean overridesCorresponding(FONode foNode) {
-        return false;
-    }
-
 }
 
