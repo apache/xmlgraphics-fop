@@ -1,5 +1,5 @@
 /*
- * Copyright 1999-2004 The Apache Software Foundation.
+ * Copyright 1999-2005 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,8 +17,6 @@
 /* $Id$ */
 
 package org.apache.fop.fo;
-
-import java.util.List;
 
 import org.xml.sax.Locator;
 
@@ -38,15 +36,19 @@ public abstract class FObjMixed extends FObj {
     }
 
     /**
+     * Adds characters
      * @param data array of characters containing text to be added
      * @param start starting array element to add
-     * @param length number of characters to add
-     * @param locator location in fo source file. 
+     * @param end ending array element to add
+     * @param pList currently applicable PropertyList 
+     * @param locator location in fo source file.
+     * @throws FOPException if there's a problem during processing
+     * @see org.apache.fop.fo.FONode#addCharacters(char[], int, int, org.apache.fop.fo.PropertyList, org.xml.sax.Locator)
      */
-    protected void addCharacters(char data[], int start, int length,
+    protected void addCharacters(char[] data, int start, int end,
                                  PropertyList pList,
                                  Locator locator) throws FOPException {
-        FOText ft = new FOText(data, start, length, this);
+        FOText ft = new FOText(data, start, end, this);
         ft.setLocator(locator);
         ft.bind(pList);
         ft.startOfNode();
