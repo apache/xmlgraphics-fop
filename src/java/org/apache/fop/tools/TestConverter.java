@@ -52,6 +52,7 @@ package org.apache.fop.tools;
 
 import java.io.File;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.Map;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -106,7 +107,6 @@ public class TestConverter extends AbstractLogEnabled {
             System.out.println("test suite file name required");
         }
         TestConverter tc = new TestConverter();
-        tc.enableLogging(new ConsoleLogger(ConsoleLogger.LEVEL_ERROR));
 
         String testFile = null;
         for (int count = 0; count < args.length; count++) {
@@ -114,8 +114,10 @@ public class TestConverter extends AbstractLogEnabled {
                 tc.setFailOnly(true);
             } else if (args[count].equals("-pdf")) {
                 tc.setOutputPDF(true);
+            } else if (args[count].equals("-d")) {
+                tc.setDebug(true);
             } else if (args[count].equals("-b")) {
-                tc.setBaseDir(args[count + 1]);
+                tc.setBaseDir(args[++count]);
             } else {
                 testFile = args[count];
             }
@@ -125,6 +127,13 @@ public class TestConverter extends AbstractLogEnabled {
         }
 
         tc.runTests(testFile, "results", null);
+    }
+
+    /**
+     * Construct a new TestConverter
+     */
+    public TestConverter() {
+        enableLogging(new ConsoleLogger(ConsoleLogger.LEVEL_ERROR));
     }
 
     /**
@@ -150,6 +159,16 @@ public class TestConverter extends AbstractLogEnabled {
      */
     public void setBaseDir(String str) {
         baseDir = str;
+    }
+
+    /**
+     * Controls whether to generate PDF or XML.
+     * @param pdf If True, PDF is generated, Area Tree XML otherwise.
+     */
+    public void setDebug(boolean debug) {
+        if (debug) {
+            enableLogging(new ConsoleLogger(ConsoleLogger.LEVEL_DEBUG));
+        }
     }
 
     /**
@@ -264,6 +283,11 @@ public class TestConverter extends AbstractLogEnabled {
         getLogger().debug("converting xml:" + xml + " and xsl:" 
                   + xsl + " to area tree");
 
+        String res = xml;
+        Node resNode =  test.getAttributes().getNamedItem("results");
+        if (resNode != null) {
+            res = resNode.getNodeValue();
+        }
         try {
             File xmlFile = new File(baseDir + "/" + xml);
             String baseURL = null;
@@ -283,8 +307,8 @@ public class TestConverter extends AbstractLogEnabled {
             }
 
             Driver driver = new Driver();
-            setupLogger(driver, "fop");
             FOUserAgent userAgent = new FOUserAgent();
+            setupLogger(userAgent, "fop");
             userAgent.setBaseURL(baseURL);
             driver.setUserAgent(userAgent);
             if (outputPDF) {
@@ -299,15 +323,21 @@ public class TestConverter extends AbstractLogEnabled {
             driver.getRenderer().setOptions(rendererOptions);
             driver.getRenderer().setProducer("Testsuite Converter");
 
-            String outname = xmlFile.getName();
-            if (outname.endsWith(".xml")) {
+            String outname = res;
+            if (outname.endsWith(".xml") || outname.endsWith(".pdf")) {
                 outname = outname.substring(0, outname.length() - 4);
             }
-            driver.setOutputStream(new java.io.BufferedOutputStream(
-                                       new java.io.FileOutputStream(new File(destdir,
-                                       outname + (outputPDF ? ".pdf" : ".at.xml")))));
-            getLogger().debug("ddir:" + destdir + " on:" + outname + ".pdf");
+            File outputFile = new File(destdir,
+                                 outname + (outputPDF ? ".pdf" : ".at.xml"));
+
+            outputFile.getParentFile().mkdirs();
+            OutputStream outStream = new java.io.BufferedOutputStream(
+                                 new java.io.FileOutputStream(outputFile));
+            driver.setOutputStream(outStream);
+            getLogger().debug("ddir:" + destdir + " on:" + 
+                              outputFile.getName());
             driver.render(inputHandler);
+            outStream.close();
 
             // check difference
             if (compare != null) {
