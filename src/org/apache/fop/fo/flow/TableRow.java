@@ -265,10 +265,10 @@ public class TableRow extends FObj {
 				if (n != null)
 						return new KeepValue(KeepValue.KEEP_WITH_VALUE, n.intValue());
 				switch(p.getEnum()) {
-						case 2:
+						case Constants.ALWAYS:
 								return new KeepValue(KeepValue.KEEP_WITH_ALWAYS, 0);
 						//break;
-						case 1:
+						case Constants.AUTO:
 						default:
 								return new KeepValue(KeepValue.KEEP_WITH_AUTO, 0);
 						//break;
