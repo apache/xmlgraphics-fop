@@ -41,9 +41,9 @@ To make things easier for you, the Fop distribution contains a
 precompiled version of Ant and the build scripts take care of all the
 classpath issues except the following:
 
-You need to have xerces.jar, xalan.jar and bsf.jar (comes with xalan) in 
-your classpath. You can get those from http://xml.apache.org/xerces and 
-http://xml.apache.org/xalan respectively.
+You need to have xerces.jar and xalan.jar in your classpath. You can get
+those from http://xml.apache.org/xerces and http://xml.apache.org/xalan
+respectively.
 
 Additionaly you have to make sure, that the "JAVA_HOME" environment
 property should be set to match the JVM you want to use. That's it.
@@ -152,6 +152,23 @@ Sometimes ant gives out this warnings, but the build is finished without any pro
        <include name="fop.sh"/>
     </fileset>
 
+  <path id="libs-run-classpath">
+    <fileset dir="lib">
+      <include name="*.jar"/>
+    </fileset>
+    <fileset dir="build">
+      <include name="fop.jar"/>
+    </fileset>
+  </path>
+
+  <path id="libs-build-classpath">
+    <fileset dir="lib">
+      <include name="stylebook*.jar"/>
+      <include name="xalan*.jar"/>
+      <include name="xerces*.jar"/>
+    </fileset>
+  </path>
+
   <!-- =================================================================== -->
   <!-- Initialization target                                               -->
   <!-- =================================================================== -->
@@ -178,6 +195,9 @@ Sometimes ant gives out this warnings, but the build is finished without any pro
     <property name="conf.dir" value="./conf"/>
     <property name="packages" value="org.apache.fop.*"/>
 
+    <property name="docs"           value="docs/html-docs"/>
+    <property name="xdocs"           value="docs/xml-docs"/>
+    <property name="skins"           value="docs/xml-docs/skins/xml.apache.org/"/>
     <property name="doc.generator" value="org.apache.stylebook.StyleBook"/>
     <property name="doc.generator.package" value="${lib.dir}/stylebook-1.0-b2.jar"/>
 
@@ -542,6 +562,30 @@ Sometimes ant gives out this warnings, but the build is finished without any pro
              doctitle="${Name}"
              bottom="Copyright &#169; ${year} Apache Software Foundation. All Rights Reserved."
     />
+  </target>
+
+  <target name="html" depends="javadocs, htmldoc"/>
+  <target name="htmldoc" depends="prepare-src">
+    <copy file="${xdocs}/fop.xml"
+          tofile="${xdocs}/book.xml"
+          filtering="on"/>
+    <java classname="${doc.generator}" fork="yes">
+      <classpath refid="libs-build-classpath"/>
+      <arg line="targetDirectory=${docs} ${xdocs}/book.xml ${skins}"/>
+    </java>
+  </target>
+
+  <target name="pdfdoc" depends="package">
+    <copy file="${xdocs}/fop.xml"
+          tofile="${xdocs}/book.xml"
+          filtering="on"/>
+    <xslt infile="${xdocs}/fop.xml" xsltfile="${xdocs}/xml2xml.xsl" outfile="${xdocs}/fop-doc.xml" smart="yes"/>
+    <xslt infile="${xdocs}/fop-doc.xml" xsltfile="${xdocs}/xml2pdf.xsl" outfile="${xdocs}/fop.fo" smart="yes"/>
+
+    <java classname="org.apache.fop.apps.Fop" fork="yes">
+      <classpath refid="libs-run-classpath"/>
+      <arg line="-fo ${xdocs}/fop.fo -pdf ${xdocs}/fop.pdf"/>
+    </java>
   </target>
 
   <!-- =================================================================== -->
