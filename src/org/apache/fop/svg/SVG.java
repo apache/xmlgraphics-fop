@@ -236,7 +236,7 @@ public class SVG extends SVGObj implements GraphicsCreator {
 
                 DefaultSVGContext dc = new DefaultSVGContext() {
                         public float getPixelToMM() {
-                            return 12;
+                            return 0.264583333333333333333f; // 72 dpi
                         }
                         public float getViewportWidth() {
                             return 100;
@@ -247,7 +247,7 @@ public class SVG extends SVGObj implements GraphicsCreator {
                     };
                 doc.setSVGContext(dc);
 
-                System.out.println("tag:" + tagName);
+                //System.out.println("tag:" + tagName);
                 Element topLevel = doc.createElementNS("http://www.w3.org/2000/svg", tagName);
                 for(int count = 0; count < props.length; count++) {
                     String rf = this.properties.get(props[count]).getString();

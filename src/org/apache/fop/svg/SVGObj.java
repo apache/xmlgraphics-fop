@@ -84,8 +84,10 @@ public abstract class SVGObj extends FObj implements GraphicsCreator {
         Element element = doc.createElementNS("http://www.w3.org/2000/svg", tagName);
 //        Element element = doc.createElement(tagName);
         for(int count = 0; count < props.length; count++) {
-            String rf = this.properties.get(props[count]).getString();
-            element.setAttribute(props[count], rf);
+            if(this.properties.get(props[count]) != null) {
+                String rf = this.properties.get(props[count]).getString();
+                element.setAttribute(props[count], rf);
+            }
         }
         parent.appendChild(element);
         int numChildren = this.children.size();

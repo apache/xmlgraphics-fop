@@ -33,6 +33,23 @@
   </xsl:choose>
 </xsl:template>
 
+<xsl:template match="attributes"><xsl:apply-templates/></xsl:template>
+
+<xsl:template match="includeAttributes">
+<xsl:variable name="attr-ref">
+  <xsl:value-of select="@ref"/>
+</xsl:variable>
+<xsl:for-each select="/elements/commonAttributes">
+  <xsl:choose>
+    <xsl:when test="@ref = $attr-ref">
+    <xsl:apply-templates/>
+    </xsl:when>
+  </xsl:choose>
+</xsl:for-each>
+</xsl:template>
+
+<xsl:template match="attribute">"<xsl:apply-templates/>"<xsl:if test="not(position()=last())">, </xsl:if></xsl:template>
+
 <xsl:template match="elements">
     <xsl:apply-templates select="element"/>
 </xsl:template>
@@ -77,17 +94,17 @@ import org.w3c.dom.Element;
 public class <xsl:value-of select="$classname"/> extends SVGObj {
 
     /**
-     * inner class for making A objects.
+     * inner class for making <xsl:apply-templates select="tagname"/> objects.
      */
     public static class Maker extends FObj.Maker {
 
         /**
-         * make a A object.
+         * make a <xsl:apply-templates select="tagname"/> object.
          *
          * @param parent the parent formatting object
          * @param propertyList the explicit properties of this object
          *
-         * @return the A object
+         * @return the <xsl:apply-templates select="tagname"/> object
          */
         public FObj make(FObj parent,
                          PropertyList propertyList) throws FOPException {
@@ -98,14 +115,14 @@ public class <xsl:value-of select="$classname"/> extends SVGObj {
     /**
      * returns the maker for this object.
      *
-     * @return the maker for A objects
+     * @return the maker for <xsl:apply-templates select="tagname"/> objects
      */
     public static FObj.Maker maker() {
         return new <xsl:value-of select="$classname"/>.Maker();
     }
 
     /**
-     * constructs a A object (called by Maker).
+     * constructs a <xsl:apply-templates select="tagname"/> object (called by Maker).
      *
      * @param parent the parent formatting object
      * @param propertyList the explicit properties of this object
@@ -114,11 +131,7 @@ public class <xsl:value-of select="$classname"/> extends SVGObj {
         super(parent, propertyList);
         this.name = "<xsl:value-of select="//@prefix"/>:<xsl:value-of select="$name"/>";
         tagName = "<xsl:value-of select="$name"/>";
-        props = new String[] {
-            <xsl:for-each select="attributes/attribute">
-                "<xsl:apply-templates/>"<xsl:if test="not(position()=last())">, </xsl:if>
-            </xsl:for-each>
-        };
+        props = new String[] {<xsl:apply-templates select="attributes"/>};
     }
 
 <xsl:if test="@addText">
