@@ -28,3 +28,14 @@ pattern which isn't included in the distribution, do the following:
 4. If the license of your hyphenation pattern file does allow it, please send 
    it to the list fop-dev, so it can be made part of the Fop distribution. 
 
+the following hyphenation patterns are part of the Fop distribution
+
+de      German (traditional)
+de_DR   German (new - no 'DR' doesn't mean anything)
+en      American English
+en_GB   British English
+en_US   American English
+es      Spanish
+fi      Finnish
+fr      French
+
