@@ -93,6 +93,8 @@ public class BlockContainer extends FObj {
     int borderRightWidth;
     int borderRightStyle;
     
+	int span;
+	
     AreaContainer areaContainer;
 
     public static class Maker extends FObj.Maker {
@@ -112,6 +114,7 @@ public class BlockContainer extends FObj {
 	throws FOPException {
 	super(parent, propertyList);
         this.name =  "fo:block-container";
+        this.span = this.properties.get("span").getEnum();
     }
 	
     public Status layout(Area area) throws FOPException {
@@ -208,6 +211,8 @@ public class BlockContainer extends FObj {
 		    this.properties.get("border-right-style").getEnum();
 	    }
 
+            span = this.properties.get("span").getEnum();            
+
             // initialize id                       
             String id = this.properties.get("id").getString();            
             area.getIDReferences().initializeID(id,area);  
@@ -287,4 +292,7 @@ public class BlockContainer extends FObj {
 	return true;
   }
 
+  public int getSpan() {
+	  return this.span;
+  }
 }

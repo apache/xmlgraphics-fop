@@ -113,7 +113,8 @@ public class Block extends FObjMixed {
     int hyphenationRemainCharacterCount;
     String language;
     String country;
-
+	int span;
+	
     BlockArea blockArea;
 
     // this may be helpful on other FOs too
@@ -122,6 +123,7 @@ public class Block extends FObjMixed {
     public Block(FObj parent, PropertyList propertyList) {
         super(parent, propertyList);
         this.name = "fo:block";
+        this.span = this.properties.get("span").getEnum();
     }
 
     public Status layout(Area area) throws FOPException {
@@ -242,7 +244,6 @@ public class Block extends FObjMixed {
                                                    intValue();
             this.language = this.properties.get("language").getString();
             this.country = this.properties.get("country").getString();
-
 
             this.id = this.properties.get("id").getString();
 
@@ -436,5 +437,9 @@ public class Block extends FObjMixed {
     if (blockArea != null)
       return blockArea.getContentWidth(); //getAllocationWidth()??
     else return 0;  // not laid out yet
+  }
+  
+  public int getSpan() {
+	  return this.span;
   }
 }
