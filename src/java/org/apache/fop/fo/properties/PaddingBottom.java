@@ -22,10 +22,11 @@ package org.apache.fop.fo.properties;
 
 import org.apache.fop.datatypes.Length;
 import org.apache.fop.datatypes.PropertyValue;
+import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.PropNames;
 import org.apache.fop.fo.expr.PropertyException;
 
-public class PaddingBottom extends Property  {
+public class PaddingBottom extends PaddingCorrespondingAbsolute  {
     public static final int dataTypes = PERCENTAGE | LENGTH | INHERIT;
 
     public int getDataTypes() {
@@ -54,6 +55,12 @@ public class PaddingBottom extends Property  {
 
     public int getInherited() {
         return inherited;
+    }
+
+    public int getCorrespondingProperty(FONode foNode)
+    throws PropertyException {
+        return getCorrespondingPaddingProperty(
+                foNode, WritingMode.BOTTOM);
     }
 
 }
