@@ -12,6 +12,7 @@ package org.apache.fop.fo;
 
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.fo.FObjects;
+import org.apache.fop.fo.FObjectNames;
 import org.apache.fop.datastructs.SyncedCircularBuffer;
 import org.apache.fop.datastructs.Tree;
 import org.apache.fop.fo.FOTree;
@@ -51,7 +52,7 @@ public class FoRoot extends FONode {
         throws Tree.TreeException, FOPException, PropertyException
     {
         // This is the root node of the tree; hence the null argument
-        super(foTree, null, event, FONode.ROOT);
+        super(foTree, FObjectNames.ROOT, null, event, FONode.ROOT);
     }
 
     /** <p>
