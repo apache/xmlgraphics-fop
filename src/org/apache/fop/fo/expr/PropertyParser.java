@@ -59,8 +59,6 @@ public class PropertyParser extends PropertyTokenizer {
     private FOTree foTree;
     /** The FONode which has initiated this parser */
     private FONode node;
-    public final PropertyConsts propertyConsts =
-                                        PropertyConsts.getPropertyConsts();
 
     public PropertyParser(FOTree foTree) {
         super();
@@ -698,12 +696,12 @@ public class PropertyParser extends PropertyTokenizer {
                                 ((StringType)args[0]).getString());
 
                     // If it's a compound, return an InheritedValue object
-                    if (propertyConsts.isCompound(propindex)) {
+                    if (PropertyConsts.pconsts.isCompound(propindex)) {
                         prop = new InheritedValue(property, propindex);
                         break;
                     }
                     // Is it an inherited property?
-                    if (propertyConsts.inheritance(propindex)
+                    if (PropertyConsts.pconsts.inheritance(propindex)
                                                             == Property.NO)
                         throw new PropertyException
                                 ("inherited-property-value: "
@@ -732,8 +730,8 @@ public class PropertyParser extends PropertyTokenizer {
 
                     PropertyValue[] args = parseArgs(0, 1);
                     if (args.length == 0) {
-                        if (! (propertyConsts.isShorthand(property)
-                               || propertyConsts.isCompound(property))) {
+                        if (! (PropertyConsts.pconsts.isShorthand(property)
+                           || PropertyConsts.pconsts.isCompound(property))) {
                             // develop the function value and return it as
                             // a property.
                             switch (funcType) {
@@ -756,8 +754,8 @@ public class PropertyParser extends PropertyTokenizer {
                         String propname = ncname.getNCName();
                         int nameindex =
                                 PropNames.getPropertyIndex(propname);
-                        if (propertyConsts.isShorthand(nameindex)
-                            || propertyConsts.isCompound(nameindex)) {
+                        if (PropertyConsts.pconsts.isShorthand(nameindex)
+                            || PropertyConsts.pconsts.isCompound(nameindex)) {
                             // the argument is a shorthand/compound property -
                             // it must be the same as the property being
                             // assigned to.
