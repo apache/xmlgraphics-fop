@@ -1,5 +1,5 @@
 /*
- * $Id: SVGUserAgent.java,v 1.14 2003/03/07 09:51:25 jeremias Exp $
+ * $Id$
  * ============================================================================
  *                    The Apache Software License, Version 1.1
  * ============================================================================
@@ -48,7 +48,7 @@
  * James Tauber <jtauber@jtauber.com>. For more information on the Apache
  * Software Foundation, please see <http://www.apache.org/>.
  */ 
-package org.apache.fop.svg;
+package org.apache.fop.fo.extensions.svg;
 
 import org.apache.fop.apps.FOUserAgent;
 

@@ -61,7 +61,7 @@ import org.apache.fop.pdf.PDFResourceContext;
 import org.apache.fop.svg.PDFTextElementBridge;
 import org.apache.fop.svg.PDFAElementBridge;
 import org.apache.fop.svg.PDFGraphics2D;
-import org.apache.fop.svg.SVGUserAgent;
+import org.apache.fop.fo.extensions.svg.SVGUserAgent;
 import org.apache.fop.apps.Document;
 
 /* org.w3c.dom.Document is not imported to avoid conflict with
