@@ -130,6 +130,21 @@ issues should be fixed in the upcoming JDK1.4</note>
 
   </s2>
   <s2 title="Hints">
+    <s3 title="XML/XSL/DOM Inputs">
+     <p>
+You may want to supply you input to FOP from different data sources.
+For example you may have a DOM and XSL stylesheet or you may want to
+set variables in the stylesheet. The page here:
+<jump href="http://xml.apache.org/xalan-j/usagepatterns.html">
+http://xml.apache.org/xalan-j/usagepatterns.html</jump> describes
+how you can do these things.
+     </p>
+     <p>
+You can use the content handler from the driver to create a SAXResult.
+The transformer then can fire SAX events on the content handler which
+will in turn create the rendered output.
+     </p>
+    </s3>
   	<s3 title="Object reuse">
      <p>
 If FOP is going to be used multiple times within your application
