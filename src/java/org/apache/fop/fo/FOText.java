@@ -74,7 +74,6 @@ public class FOText extends FObj {
      * the character array containing the text
      */
     public char[] ca;
-    public int start;
 
     /**
      * the length of the character array containing the text
@@ -121,17 +120,16 @@ public class FOText extends FObj {
      *
      * @param chars array of chars which contains the text in this object (may
      * be a superset of the text in this object
-     * @param s starting index into char[] for the text in this object
-     * @param e ending index into char[] for the text in this object
+     * @param start starting index into char[] for the text in this object
+     * @param end ending index into char[] for the text in this object
      * @param ti TextInfo object for the text in this object
      * @param parent FONode that is the parent of this object
      */
-    public FOText(char[] chars, int s, int e, TextInfo ti, FONode parent) {
+    public FOText(char[] chars, int start, int end, TextInfo ti, FONode parent) {
         super(parent);
-        this.start = 0;
-        this.ca = new char[e - s];
-        System.arraycopy(chars, s, ca, 0, e - s);
-        this.length = e - s;
+        length = end - start;
+        this.ca = new char[length];
+        System.arraycopy(chars, start, ca, 0, length);
         textInfo = ti;
         createBlockPointers();
         textTransform();
@@ -152,7 +150,7 @@ public class FOText extends FObj {
             return true;
         }
 
-        for (int i = start; i < start + length; i++) {
+        for (int i = 0; i < length; i++) {
             char ch = ca[i];
             if (!((ch == ' ')
                     || (ch == '\n')
