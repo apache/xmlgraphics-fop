@@ -1,15 +1,14 @@
 <?xml version="1.0" standalone="no"?>
 
 
-
 <!-- Embedding FOP -->
 
 <s1 title="Embedding FOP ">
   <s2 title="Overview">
   <p>Instantiate org.apache.fop.apps.Driver. Once this class is 
      instantiated, methods are called to set the
-     Renderer to use, the (possibly multiple) ElementMapping(s) to
-     use and the OutputStream to use to output the results of the
+     Renderer to use
+     and the OutputStream to use to output the results of the
      rendering (where applicable). In the case of the Renderer and
      ElementMapping(s), the Driver may be supplied either with the
      object itself, or the name of the class, in which case Driver will
@@ -30,10 +29,10 @@
 ]]></source>
 
 
-  <p>Once the Driver is set up, the buildFOTree method
+  <p>Once the Driver is set up, the render method
      is called. Depending on whether DOM or SAX is being used, the
-     invocation of the method is either buildFOTree(Document) or
-     buildFOTree(Parser, InputSource) respectively.
+     invocation of the method is either render(Document) or
+     render(Parser, InputSource) respectively.
   </p>
   <p>A third possibility may be used to build the FO Tree, namely
      calling getContentHandler() and firing the SAX events yourself.
@@ -45,10 +44,9 @@
   <source><![CDATA[
   Driver driver = new Driver();
   driver.setRenderer(Driver.RENDER_PDF);
-  driver.buildFOTree(parser, fileInputSource(args[0]));
-  driver.format();
+  driver.setInputSource(new FileInputSource(args[0]));
   driver.setOutputStream(new FileOutputStream(args[1]));
-  driver.render();
+  driver.run();
 ]]></source>
   <p>You can also specify an xml and xsl file for the input.
   </p>
@@ -58,10 +56,8 @@
   driver.setRenderer(Driver.RENDER_PDF);
   InputHandler inputHandler = new XSLTInputHandler(xmlFile, xslFile);
   XMLReader parser = inputHandler.getParser();
-  driver.buildFOTree(parser, inputHandler);
-  driver.format();
   driver.setOutputStream(new FileOutputStream(outFile));
-  driver.render();
+  driver.render(parser, inputHandler.getInputSource());
 ]]></source>
   <p>Have a look at the classes CommandLineStarter or FopServlet for complete examples.</p>
   </s2>

@@ -2,8 +2,78 @@
 
 
 <s1 title="Frequently Asked Questions">
-      <p>The Fop faq has an own site. Please look here: 
+  <s2 title="Introduction">
+      <p>
+       Here we have some answers to common questions about FOP. This only covers
+       general information about getting started with FOP and pointers to more
+       information. 
+      </p>
+      <p>
+        For up to date information or more details please visit the Fop FAQ site.
+        The site uses Jyve to provide an interactive FAQ: 
          <jump href="http://www.owal.co.uk:8090/asf/servlet/asf/screen/DisplayTopics/action/SetAll/project_id/18/faq_id/276">http://www.OWAL.co.uk:8090/</jump>
       </p>
+  </s2>
+  <s2 title="Questions">
+    <ul>
+      <li><jump href="#q1">What is FOP?</jump></li>
+      <li><jump href="#q2">How does FOP interact with other Apache Projects?</jump></li>
+      <li><jump href="#q3">What is XSL (FO)?</jump></li>
+      <li><jump href="#q4">What can I do with FOP?</jump></li>
+      <li><jump href="#q5">How can I contribute?</jump></li>
+      <li><jump href="#q6">How do I author XSL documents?</jump></li>
+      <li><jump href="#q7">How can I see a demo?</jump></li>
+    </ul>   
+  </s2>
+  <s2 title="Answers">
+    <s3 title="What is FOP">
+<anchor name="q1"></anchor>
+      <p>
+        FOP is a print formatter for XSL formatting objects.
+      </p>
+      <p>
+        It can be used to render an XML file containing XSL formatting objects
+        into a page layout. The main target is PDF but other rendering targets
+        are supported, such as AWT, PCL, text and direct printing.
+      </p>
+    </s3>
+    <s3 title="How does FOP interact with other Apache Projects?">
+<anchor name="q2"></anchor>
+      <p>
+        FOP is distributed with <jump href="http://xml.apache.org/cocoon">Cocoon</jump> as a PDF serializer for XSL (FO) documents.
+      </p>
+      <p>
+        <jump href="http://xml.apache.org/batik">Batik</jump> can be used with FOP to <jump href="http://xml.apache.org/batik/svgrasterizer.html">transcode an SVG image</jump> into a PDF document.
+        The mime type for PDF is "application/pdf".
+      </p>
+    </s3>
+    <s3 title="What is XSL (FO)">
+<anchor name="q3"></anchor>
+      <p>
+      </p>
+    </s3>
+    <s3 title="What can I do with FOP">
+<anchor name="q4"></anchor>
+      <p>
+      </p>
+    </s3>
+    <s3 title="How can I contribute">
+<anchor name="q5"></anchor>
+      <p>
+      </p>
+    </s3>
+    <s3 title="How do I author XSL documents">
+<anchor name="q6"></anchor>
+      <p>
+      </p>
+    </s3>
+    <s3 title="How can I see a demo">
+<anchor name="q7"></anchor>
+      <p>
+        There will be a Java Webstart demo sometime in the future.
+      </p>
+    </s3>
+  </s2>
+
 </s1>
 

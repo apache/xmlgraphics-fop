@@ -12,14 +12,8 @@ this class, a typical sequence is:</p>
 
 <source>Driver driver = new Driver();<br/>
 driver.setRenderer("org.apache.fop.render.pdf.PDFRenderer", version);<br/>
-driver.addElementMapping("org.apache.fop.fo.StandardElementMapping");<br/>
-driver.addElementMapping("org.apache.fop.svg.SVGElementMapping");<br/>
-driver.addPropertyList("org.apache.fop.fo.StandardPropertyListMapping");<br/>
-driver.addPropertyList("org.apache.fop.svg.SVGPropertyListMapping");<br/>
 driver.setOutputStream(new FileOutputStream(args[1]));<br/>
-driver.buildFOTree(parser, fileInputSource(args[0]));<br/>
-driver.format();<br/>
-driver.render();</source>
+driver.render(parser, inputHandler.getInputSource());</source>
 </s2>
 
 <s2 title="Formatting Object Tree">
