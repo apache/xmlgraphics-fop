@@ -327,6 +327,102 @@
         tidspunkter.
         </fo:block>
 
+
+      <!-- this defines a title -->
+      <fo:block font-size="12pt" 
+            font-family="Palatino" 
+            line-height="12pt"
+            background-color="blue"
+            color="white"
+            text-align="start">
+        Norwegian
+      </fo:block>
+
+      <!-- this defines normal text -->
+      <fo:block font-size="12pt" 
+                font-family="sans-serif" 
+                line-height="15pt"
+                space-after.optimum="3pt"
+                language="no"
+                hyphenate="true">
+       
+       <fo:block>
+Av forståelige grunner har året 1814 vært av de mest omdiskuterte i norsk historieforskning.
+Med denne bibliografien vil man for første gang få en samlet oversikt over den viktigste
+historiske litteraturen omkring dette året og dets mangslungne begivenheter. Likevel har det
+vært en tilnærmet umulig oppgave å få med absolutt alt som er skrevet om Riksforsamlingen og
+Grunnloven i monografier, erindringsverker, bygdebøker, brevsamlinger, tidsskrifter og
+aviser helt fra 1814 og til i dag. Bibliografien er et forsøk på å samle de viktigste
+arbeider om 1814 som kan være av interesse både for forskere og for et bredt
+historieinteressert publikum. I denne korte historiografien vil det bli gjort rede for
+hvordan dette spennende året er blitt forstått og fortolket av norske og nordiske
+historikere gjennom fem ulike tidsepoker.
+       </fo:block>
+	<fo:block>
+Litteraturen om 1814 kan klassifiseres på flere måter. Grovt sett går det et skille mellom
+tre genrer: historiske oversiktsverker, historiske spesialstudier, erindringer og dagbøker
+og kilde- og dokumentutgivelser. Av oversiktsverker peker de store Norgeshistoriene seg ut
+med sin relativt omfattende behandling av 1814: Nevnes kan 
+<fo:inline font-style="italic">Norges historie fremstillet for
+det norske folk</fo:inline>, bd. VI.1 (1913), 
+<fo:inline font-style="italic">Det norske folks liv og historie</fo:inline> bd. VII (1933), 
+<fo:inline font-style="italic">Vårt folks historie</fo:inline> bd. 6 (1964), 
+<fo:inline font-style="italic">Cappelens Norges historie</fo:inline> bd. 9 (1978) og 
+<fo:inline font-style="italic">Aschehougs Norgeshistorie</fo:inline> bd. 7 (1996). Disse oversiktene er i vesentlig grad bygd på den omfattende
+spesiallitteraturen i bok- eller artikkelform som har et meget vidt spenn, fra biografier
+over lokale Eidsvollsmenn til krigshistoriske analyser av felttoget. Mye tidligere skjult
+kunnskap er dessuten blitt hentet ut fra dagbøkene til sentrale aktører. Endelig har den
+lange rekken av kildeutgivelser hatt stor betydning for forskningen omkring 1814 og bidratt
+til å endre forskningsbildet flere ganger.
+       </fo:block>
+	<fo:block font-weight="bold">
+1814-1864 
+       </fo:block>
+	<fo:block>
+Det norske samfunnet etter 1814 ble rekonstruert på den nye Grunnlovens grunn, og vernet om
+den stod sentralt i den politiske kampen de neste 25 årene. Til tross for dette må man kunne
+si at dokumentasjonen av hva som egentlig hadde skjedd i 1814 i mange år forble temmelig
+beskjeden. Historiene levde, men da helst muntlig eller gjennom private brev og dagbøker.
+Dette var kanskje en uunngåelig konsekvens av omstendighetene. Landet var fattig på kultur,
+forleggere og historikere, og de politiske og økonomiske realiteter kalte mer på praktisk
+fornuft enn på idealistisk pasjon. Det forekom å være en lang vei fra den nasjonale raptus
+under de lyse vårukene på et grønnende Eidsvoll til den mer prosaiske og realpolitiske
+aksept av union og svenskekonge i et høstlig og tåketungt Christiania. Det var den nye
+Grunnloven av 4. november 1814 som gjaldt og regulerte det norske samfunnet, supplert av
+Riksakten av 1815.
+       </fo:block>
+	<fo:block>
+Riksforsamlingens forhandlinger i 1814 ble utgitt i 6 hefter allerede samme år av de valgte
+redaktører, professor Georg Sverdrup, professor Ludvig Stoud Platou og tollprokurør
+Christopher Omsen. At de ikke ble reprodusert i de følgende år, hadde sammenheng med den
+svenske holdningen. Forhandlingene på det ekstraordinære Storting ble utgitt både i 1815 og
+igjen i 1835, men Carl Johan oppfattet lenge interessen for Riksforsamlingen og 17. mai-
+Grunnloven som en indirekte underkjenning av unionsverket og kongens politiske autoritet.
+Etter påtrykk fra ham prøvde norske myndigheter å sette en stopper for offentlig feiring av
+17. mai helt frem til midten av 1830-årene.
+       </fo:block>
+	<fo:block>
+Rimeligvis ble da forholdet til Danmark snarere enn forholdet til Sverige ett av de første
+alvorlige stridsspørsmål i perioden. Presten og Eidsvollsmannen Nicolai Wergeland ble
+beryktet for den danskfiendtlige og unionsvennlige posisjon han inntok i boken 
+<fo:inline font-style="italic">En sandfærdig Beretning om Danmarks politiske Forbrydelser imod Kongeriget Norge
+</fo:inline> (anonymt, 1816) som
+fulgte nasjonalhistorien helt opp til Kielfreden. Skriftet vakte debatt og kraftige
+reaksjoner ikke minst blant det gamle selvstendighetsparti. Blant annet publiserte Christian
+Magnus Falsen to motskrifter i 1817. Falsen prøvde også å popularisere Grunnlovens innhold
+for den mindre "oplyste" borgerklasse og allmue gjennom skriftet 
+<fo:inline font-style="italic">Norges Grundlov gjennemgaaet i Spørgs-maal og Svar
+</fo:inline> (1818, forkortet versjon 1825). Men det må kunne påstås
+at den mer detaljerte historien om grunnlovsverkets tilblivelse og første fase lenge ble
+stående i noe av et halvmørke både for det alminnelige folk og for de nye generasjoner, og
+at dette skyldtes den politiske situasjonen. Det var Nicolai Wergeland som leverte selve
+pionerarbeidet blant de personlige kildesamlingene, 
+<fo:inline font-style="italic">Fortrolige Breve til en Ven, Skrevne fra
+Eidsvold i Aaret 1814</fo:inline> (anonymt, 1830). Men det var først da det unionspolitiske klimaet
+mildnet etter 1837 at det ble åpnet for en grundigere historisk analyse av Grunnlovens
+forhistorie og tilblivelse.
+       </fo:block>
+      </fo:block>
     </fo:flow> <!-- closes the flow element-->
   </fo:page-sequence> <!-- closes the page-sequence -->
 </fo:root>
