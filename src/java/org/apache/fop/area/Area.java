@@ -1,12 +1,12 @@
 /*
  * Copyright 1999-2004 The Apache Software Foundation.
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -14,14 +14,17 @@
  * limitations under the License.
  */
 
-/* $Id$ */
- 
+/* $Id: Area.java,v 1.2 2004/02/27 17:41:26 jeremias Exp $ */
+
 package org.apache.fop.area;
 
 import java.io.Serializable;
 
 import java.util.Map;
 import java.util.HashMap;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 // If the area appears more than once in the output
 // or if the area has external data it is cached
@@ -124,6 +127,12 @@ public class Area implements Serializable {
     protected HashMap props = null;
 
     /**
+     * logging instance
+     */
+    protected static Log log = LogFactory.getLog(Area.class);
+
+
+    /**
      * Get the area class of this area.
      *
      * @return the area class
@@ -212,7 +221,7 @@ public class Area implements Serializable {
     public Object getTrait(Object oTraitCode) {
         return (props != null ? props.get(oTraitCode) : null);
     }
-    
+
     /**
      * Get a trait from this area as an integer.
      *
@@ -224,8 +233,8 @@ public class Area implements Serializable {
         if (obj instanceof Integer) {
             return ((Integer)obj).intValue();
         } else {
-            throw new IllegalArgumentException("Trait " 
-                    + oTraitCode.getClass().getName() 
+            throw new IllegalArgumentException("Trait "
+                    + oTraitCode.getClass().getName()
                     + " could not be converted to an integer");
         }
     }
