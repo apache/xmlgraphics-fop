@@ -34,7 +34,6 @@ public class TableBody extends FObj {
 
     int spaceBefore;
     int spaceAfter;
-    ColorType backgroundColor;
     String id;
 
     Vector columns;
@@ -89,8 +88,6 @@ public class TableBody extends FObj {
                 this.properties.get("space-before.optimum").getLength().mvalue();
             this.spaceAfter =
                 this.properties.get("space-after.optimum").getLength().mvalue();
-            this.backgroundColor =
-                this.properties.get("background-color").getColorType();
             this.id = this.properties.get("id").getString();
 
             area.getIDReferences().createID(id);
@@ -136,7 +133,7 @@ public class TableBody extends FObj {
         area.spaceLeft(), Position.RELATIVE);
         areaContainer.foCreator = this;                  // G Seshadri
         areaContainer.setPage(area.getPage());
-        areaContainer.setBackgroundColor(backgroundColor);
+        areaContainer.setBackground(propMgr.getBackgroundProps());
         areaContainer.setBorderAndPadding(propMgr.getBorderAndPadding());
         areaContainer.start();
 
@@ -186,8 +183,9 @@ public class TableBody extends FObj {
                     }
                     return status;
                 }
-                if (keepWith.size()
-                        > 0) {    // && status.getCode() == Status.AREA_FULL_NONE
+                if ((keepWith.size() > 0)
+                    && (!rowSpanMgr.ignoreKeeps())) {
+                    // && status.getCode() == Status.AREA_FULL_NONE
                     // FIXME!!! Handle rows spans!!!
                     row.removeLayout(areaContainer);
                     for (Enumeration e = keepWith.elements();
@@ -198,6 +196,10 @@ public class TableBody extends FObj {
                     }
                     if (i == 0) {
                         resetMarker();
+
+                        // Fix for infinite loop bug if keeps are too big for page
+                        rowSpanMgr.setIgnoreKeeps(true);
+
                         return new Status(Status.AREA_FULL_NONE);
                     }
                 }
@@ -212,6 +214,10 @@ public class TableBody extends FObj {
                     area.increaseHeight(areaContainer.getHeight());
                     area.setAbsoluteHeight(areaContainer.getAbsoluteHeight());
                 }
+
+                // Fix for infinite loop bug if spanned rows are too big for page
+                rowSpanMgr.setIgnoreKeeps(true);
+
                 return status;
             } else if (status.getCode() == Status.KEEP_WITH_NEXT
                        || rowSpanMgr.hasUnfinishedSpans()) {

@@ -27,7 +27,7 @@ public class LinearCombinationLength extends Length {
     /**
      * Return the computed value in millipoints.
      */
-    protected void computeValue() {
+    public void computeValue() {
         int result = 0;
         int numFactors = factors.size();
         for (int i = 0; i < numFactors; ++i) {

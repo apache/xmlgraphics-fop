@@ -1,5 +1,93 @@
 ==============================================================================
+Done since 0.20.3 release
+
+- Moved from org.apache.log.Logger to org.apache.avalon.framework.logger.Logger
+  (this removes dependency from logkit)
+  Submitted by: Michael Gratton <mjg@recalldesign.com>
+- Made FOP running with any JAXP1.1 compliant parser/transformer
+  Submitted by: Joerg Pietschmann <joerg.pietschmann@zkb.ch>
+- Updated old servlet code, moved to contrib
+  Submitted By: Jeremias Maerki <jeremias.maerki@outline.ch>
+- Added russian messages for AWTViewer
+  fallback to english messages if resources are not found
+  Submitted by: Alex V. Alishevskikh <alex@openmechanics.net>
+- AWT renderer exit for closing window is only called when started from
+  command line and not on the window (Keiron Liddle)
+- Updated ant to version 1.4.1 (Christian Geisert)
+  (ant-optional.jar is no longer needed)
+- Changed build.sh to work under cygwin
+  Submitted by: Andriy Palamarchuk <APalamar@wyeth.com>
+- Added turkish hyphenation patterns
+  Submitted by: Togan Muftuoglu <toganm@users.sourceforge.net>
+- Added portuguese hyphenation patterns
+  Submitted by: Paulo Soares <psoares@consiste.pt>
+- Added czech translation for AWT viewer
+  Submitted by: Michal Buchtik <BuchtikM@dlsystem.cz>
+- removed xalan1 support (Christian Geisert)
+- Added czech hyphenation patterns
+  Submitted by: Michal Buchtik <BuchtikM@dlsystem.cz>
+- Added support for background-image
+  Submitted by: Michael Gratton <mjg@recalldesign.com>
+- Updated Batik to 1.5beta2 and improved the useragent usage
+  (Keiron Liddle)
+- Fixed a problem when EPS files have Bounding Boxes containing
+  negative integers.
+  Submitted by:	Claes Bergsten <claes.bergsten@tjgroup.com>
+- Workaround for a bug in JDK 1.3.0.* and 1.4 to improve text output.
+  Submitted by: Ralph LaChance <Ralph_LaChance@compuserve.com>
+- Added support for overline, line-through and text-decoration on
+  inline spaces for AWT renderer (Jeremias Maerki)
+- Added patch to prevent the same image being inserted multiple times
+  into pdf graphics
+  Submitted by:	Paul Reavis <preavis@partnersoft.com>
+- Fixed PDF-Renderer to work on EBCDIC systems
+  (Actually on systems where file.encoding != ASCII/ISO-8859)
+  Submitted by: Jason West <Jason.West@mail.state.ky.us>
+- Updated xerces to version 2.0.1 and xalan to version 2.3.1
+  (Christian Geisert)
+- Fixed svg links to external url (Keiron)
+- Fixed problem with Win98/ME commandline (Christian Geisert)
+- Removed Tc that were inserted in [...] TJ commands. (Bug 9054)
+- Fixed letter-spacing (Jeremias Maerki)
+- BaseDir property is now used for loading custom fonts (Bug #7608)
+  (thanks to Arnd Beissner and Brian O'Kelley)
+- Added support for comma-separated values for the font-family property
+  Submitted by: Oleg Tkachenko <olegt@multiconn.com>
+- Fixed support for fractional font sizes
+  Submitted by: Björn Lütkemeier
+- Added exit codes/file deletion in case of an error (Joerg Pietschmann)
+- Implemented margin shorthand
+  Submitted by: Peter Kullmann <p.kullmann@arenae.ch>
+- Added reload functionality in AWT preview window
+  Submitted by: Oleg Tkachenko <olegt@multiconn.com>
+
+==============================================================================
 Done since 0.20.2 release
+*** General
+- Added correct metrics for euro sign in standard fonts
+  (bug 2105 and bug 4654)
+  Submitted by: Rainer Garus <rainer.garus@nexgo.de>
+- Fixed problem with computing remaining with in LineArea where start-indent <> 0
+  (bug 4839)
+  Submitted by: Rainer Garus <rainer.garus@nexgo.de>
+- Support for CMYK and embedded ICC profiles in jpeg images (Tore Engvig)
+- Support for jpeg images in PS Renderer (Tore Engvig)
+- Add support for EPS images in PostScript renderer and limited EPS support in 
+  PDF Renderer (Tore Engvig)
+- fixed bug in TTFReader (unsigned lsb changed to signed) 
+  Submitted by: Cristi Ruja, c_ruja@yahoo.com
+- fixed threading problem (Keiron Liddle)
+- Formatting results patch to enable embedders to obtain info from render doc
+  Submitted by:	Jeremias Maerki <jeremias.maerki@outline.ch>
+- Better handling of missing markers (Keiron Liddle)
+- jimi.jar removed for removed for license reasons
+- Added "Printing from a servlet" example
+  Submitted by:	Ralph LaChance <Ralph_LaChance@compuserve.com>
+- Proper use of font encodings for "native" fonts
+  Submitted by: Peter S. Housel (housel@acm.org) and Rainer Garus (rainer.garus@arcor.de)
+- fixed Marker (Christian Geisert)
+- updated logkit from 1.0b4 to to 1.0 (Christian Geisert)
+
 *** Tables
 - Implement the proportional-column-width() function in table-column and
 make it possible to specify table width (or inline-progression-dimension)
@@ -7,14 +95,74 @@ using percentage values. (Karen Lease)
 - Fix a bug causing strange layout when a cell containing a nested table
 was laid out again because another cell in the same row was split (David
 Dixon's example). (Karen Lease)
+- Fix for infinite loops with table keeps (Christian Geisert)
+
 *** Datatypes
 - Rearrange the Length class hierarchy as part of the table-column proportional
 width work. (Karen Lease)
+
+*** Functions
+- make sure label-end() value gets calculated
+  (fix for bug #6094, endless loop while processing list-item-label))
+
 *** Areas
 - Fix BlockArea to account for padding and border when calculating space
 remaining for content. (Karen Lease)
+- Improved line breaking for japanese
+  Submitted by:	Satoshi Ishigami <ishigami@victokai.co.jp>
+
 *** Properties
+- Changed "master-name" to "master-reference" on fo:page-sequence, 
+  fo:single-page-master-reference, fo:repeatable-page-master-reference and 
+  fo:conditional-page-master-reference to comply with the latest XSL recommendation.
+  Also changed the unimplemented property space-treatment to white-space-treatment and 
+  updated examples and tests to use the new syntax.
+  Submitted by: Christian Geisert [Christian.Geisert@isu-gmbh.de]
 - Add support for inline-progression-dimension and table-layout. (Karen)
+- Add support for letter-spacing.
+  Submitted by: Raymond Penners <raymond@duologix.nl>
+- text-decoration support for blocks (Christian Geisert)
+- Added inheritance for the text-decoration property from parent inline or
+  block elements (Christian Geisert)
+
+*** SVG
+- updated to cvs batik 3/12/2001 for api changes
+- fixed problem where width of scaled lines was not correct
+
+*** Images
+- fixed problem where streams where opened for cached images
+
+*** Messages
+- Improved for some common errors
+
+*** FOTreeBuilder
+- fixed npe problem when text outside root element
+- handles document errors and unknown namespace better
+
+*** AWTRenderer
+- Fixed small border problem
+  Submitted by:	Ralph LaChance <Ralph_LaChance@compuserve.com>
+- Improved i18n support for AWT viewer (Japanese dialogs)
+  Submitted by: Satoshi Ishigami (ishigami@victokai.co.jp)
+
+*** TXTRenderer
+- Generated text is written in UTF-8 encoding instead of ISO-8859-1
+
+*** MIFRenderer
+- MIF output strings escaping (see bug #1332)
+  Submitted by: Vicente Salvador (vicentesalvador@netscape.net)
+- Fixed NoSuchElementException in MIF renderer (Christian Geisert)
+
+*** Hyphenation
+- Added Polish Hyphenation based on TeX hypenation
+  Submitted by: Marcin Kuthan [M.Kuthan@elka.pw.edu.pl]
+- Fixed infinite loop with hyphenation
+  Submitted by:	Enrico Schnepel <enrico.schnepel@gmx.de>
+- Added greek Hyphenation
+  Submitted by:	Dimitris Kamenopoulos <el97146@mail.ntua.gr>
+- Added hungarian Hyphenation
+  Submitted by:	Simon Geza <simon@mail.drotposta.hu>
+
 ==============================================================================
 Done since 0.20 release
 
@@ -100,7 +248,7 @@ user config (KLiddle)
 Submitted by:  Jeremias Maerki <jeremias.maerki@outline.ch>
 - (Options.java) fixed error where configfile was not being set (KLiddle)
 - (Options.java) Added patch for loading config via Thread ContextClassLoader
-Submitted by:	Davanum Srinivas
+Submitted by:   Davanum Srinivas
 - (StreamRenderer.java) This just moves the marker supporting code from before
 Mark's patch into StreamRenderer. Not tested. (SCoffman)
 
@@ -577,7 +725,7 @@ Done since 0.16 release
 - fixed: leader didn't fill rest of line in table of contents [Fotis Jannidis]
 - fixed: throws a more useful error if non-row inside table body [Keiron Liddle]
 - fixed: duplicate ID bug for tables that flow over a page [Keiron Liddle]
-- fixed: empty flow bug	[Kai Strackbein]
+- fixed: empty flow bug [Kai Strackbein]
 - fixed: broken support of jdk 1.1 [Peter Housel]
 
 Done since 0.15 release

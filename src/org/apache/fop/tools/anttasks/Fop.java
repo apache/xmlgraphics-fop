@@ -11,11 +11,6 @@ package org.apache.fop.tools.anttasks;
 import org.apache.tools.ant.*;
 import org.apache.tools.ant.types.FileSet;
 
-import org.apache.log.*;
-import org.apache.log.format.*;
-import org.apache.log.output.io.*;
-import org.apache.log.output.*;
-
 // SAX
 import org.xml.sax.XMLReader;
 import org.xml.sax.InputSource;
@@ -35,6 +30,10 @@ import org.apache.fop.apps.FOInputHandler;
 import org.apache.fop.apps.Driver;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.configuration.Configuration;
+
+// Avalon
+import org.apache.avalon.framework.logger.ConsoleLogger;
+import org.apache.avalon.framework.logger.Logger;
 
 /**
  * Wrapper for Fop which allows it to be accessed from within an Ant task.
@@ -195,25 +194,8 @@ class FOPTaskStarter extends Starter {
     FOPTaskStarter(Fop task) throws FOPException {
         this.task = task;
 
-        Hierarchy hierarchy = new Hierarchy();
-        // PatternFormatter formatter = new PatternFormatter(
-        //   "[%{priority}] %{category}: %{message}\n%{throwable}" );
-        PatternFormatter formatter = new PatternFormatter("%{message}\n%{throwable}");
-
-        LogTarget target = null;
-        boolean doConsoleLogging = true;
-        if (doConsoleLogging) {
-            target = new StreamTarget(System.out, formatter);
-        } else {
-            try {
-                File f = new File("fop.log");
-                target = new FileTarget(f, false, formatter);
-            } catch (IOException e) {}
-        }
-
-        hierarchy.setDefaultLogTarget(target);
-        log = hierarchy.getLoggerFor("fop");
-        log.setPriority(Priority.INFO);
+	log = new ConsoleLogger(ConsoleLogger.LEVEL_INFO);
+	MessageHandler.setScreenLogger(log);
     }
 
     private int determineRenderer(String format) {
@@ -287,7 +269,7 @@ class FOPTaskStarter extends Starter {
                                   toExternalForm());
             }
         } catch (Exception e) {
-            task.log("Error setting base directory", Project.MSG_DEBUG);
+            log.error("Error setting base directory",e);
         }
 
         task.log("Using base directory: " +
@@ -351,7 +333,6 @@ class FOPTaskStarter extends Starter {
                         int renderer) throws FOPException {
         InputHandler inputHandler = new FOInputHandler(foFile);
         XMLReader parser = inputHandler.getParser();
-        setParserFeatures(parser);
 
         FileOutputStream out = null;
         try {
@@ -367,6 +348,11 @@ class FOPTaskStarter extends Starter {
             Driver driver = new Driver(inputHandler.getInputSource(), out);
             driver.setLogger(log);
             driver.setRenderer(renderer);
+	    if (renderer == Driver.RENDER_XML) {
+		Hashtable rendererOptions = new Hashtable();
+		rendererOptions.put("fineDetail", new Boolean(true));
+		driver.getRenderer().setOptions(rendererOptions);
+	    }
             driver.setXMLReader(parser);
             driver.run();
             out.close();

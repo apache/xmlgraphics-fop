@@ -8,9 +8,9 @@
 package org.apache.fop.render;
 
 // FOP
-import org.apache.fop.pdf.PDFPathPaint;
-import org.apache.fop.pdf.PDFColor;
 import org.apache.fop.image.ImageArea;
+import org.apache.fop.image.FopImage;
+import org.apache.fop.image.FopImageException;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.fo.properties.*;
 import org.apache.fop.layout.*;
@@ -18,7 +18,8 @@ import org.apache.fop.layout.inline.*;
 import org.apache.fop.datatypes.*;
 import org.apache.fop.render.pdf.FontSetup;
 
-import org.apache.log.Logger;
+// Avalon
+import org.apache.avalon.framework.logger.Logger;
 
 // Java
 import java.io.IOException;
@@ -63,6 +64,129 @@ public abstract class AbstractRenderer implements Renderer {
     protected abstract void doFrame(Area area);
 
     /**
+     * Renders an area's background.
+     * @param x the x position of the left edge in millipoints
+     * @param y the y position of top edge in millipoints
+     * @param w the width in millipoints
+     * @param h the height in millipoints
+     */
+    protected void doBackground(Area area, int x, int y, int w, int h) {
+	if (h == 0 || w == 0)
+	    return;
+
+	BackgroundProps props = area.getBackground();
+	if (props == null)
+	    return;
+
+	if (props.backColor.alpha() == 0) {
+	    this.addFilledRect(x, y, w, -h, props.backColor);
+	}
+	
+	// XXX: I'm ignoring area rotation here 8(
+	//      is this taken care of for me elsewhere in the codebase?
+	if (props.backImage != null) {
+	    int imgW;
+	    int imgH;	
+	    try {
+		// XXX: do correct unit conversion here
+		imgW = props.backImage.getWidth() * 1000;
+		imgH = props.backImage.getHeight() * 1000;
+	    }
+	    catch (FopImageException fie) {
+		log.error("Error obtaining bg image width and height", fie);
+		return;
+	    }
+
+	    int dx = x;
+	    int dy = y;
+	    int endX = x + w;
+	    int endY = y - h;
+	    int clipW = w % imgW;
+	    int clipH = h % imgH;
+
+	    boolean repeatX = true;
+	    boolean repeatY = true;
+	    switch (props.backRepeat) {
+	    case BackgroundRepeat.REPEAT:
+		break;
+
+	    case BackgroundRepeat.REPEAT_X:
+		repeatY = false;
+		break;
+
+	    case BackgroundRepeat.REPEAT_Y:
+		repeatX = false;
+		break;
+
+	    case BackgroundRepeat.NO_REPEAT:
+		repeatX = false;
+		repeatY = false;
+		break;
+
+	    case BackgroundRepeat.INHERIT:
+		// XXX: what to do here?
+		break;
+
+	    default:
+		log.error("Ignoring invalid background-repeat property");
+	    }
+
+	    FontState fs = area.getFontState();
+
+	    while (dy > endY) { // looping through rows
+		while (dx < endX) { // looping through cols
+		    if (dx + imgW <= endX) {
+			// no x clipping
+			if (dy - imgH >= endY) {
+			    // no x clipping, no y clipping
+			    drawImageScaled(dx, dy, imgW, imgH,
+					    props.backImage, fs);
+			}
+			else {
+			    // no x clipping, y clipping
+			    drawImageClipped(dx, dy,
+					     0, 0, imgW, clipH,
+					     props.backImage, fs);
+			}
+		    }
+		    else {
+			// x clipping
+			if (dy - imgH >= endY) {
+			    // x clipping, no y clipping
+			    drawImageClipped(dx, dy,
+					     0, 0, clipW, imgH,
+					     props.backImage, fs);
+			}
+
+			else {
+			    // x clipping, y clipping
+			    drawImageClipped(dx, dy,
+					     0, 0, clipW, clipH,
+					     props.backImage, fs);
+			}
+		    }
+
+		    if (repeatX) {
+			dx += imgW;
+		    }
+		    else {
+			break;
+		    }
+		} // end looping through cols
+
+		dx = x;
+
+		if (repeatY) {
+		    dy -= imgH;
+		}
+		else {
+		    break;
+		}
+	    } // end looping through rows
+	}
+    }
+
+    /**
      * Add a filled rectangle to the current stream
      * This default implementation calls addRect
      * using the same color for fill and border.
@@ -75,6 +199,95 @@ public abstract class AbstractRenderer implements Renderer {
      */
     protected abstract void addFilledRect(int x, int y, int w, int h,
                                  ColorType col);
+
+    /**
+     * Renders an image, rendered at the image's intrinsic size.
+     * This by default calls drawImageScaled() with the image's
+     * intrinsic width and height, but implementations may
+     * override this method if it can provide a more efficient solution.
+     * 
+     * @param x the x position of left edge in millipoints
+     * @param y the y position of top edge in millipoints
+     * @param image the image to be rendered
+     * @param fs the font state to use when rendering text
+     *           in non-bitmapped images.
+     */
+    protected void drawImage(int x, int y, FopImage image, FontState fs) {
+	int w;
+	int h;
+	try {
+	    // XXX: convert these units correctly
+	    w = image.getWidth() * 1000;
+	    h = image.getHeight() * 1000;
+	}
+	catch (FopImageException e) {
+	    log.error("Failed to obtain the image width and height", e);
+	    return;
+	}
+	drawImageScaled(x, y, w, h, image, fs);
+    }
+
+    /**
+     * Renders an image, scaling it to the given width and height.
+     * If the scaled width and height is the same intrinsic size
+     * of the image, the image is not scaled.
+     * 
+     * @param x the x position of left edge in millipoints
+     * @param y the y position of top edge in millipoints
+     * @param w the width in millipoints
+     * @param h the height in millipoints
+     * @param image the image to be rendered
+     * @param fs the font state to use when rendering text
+     *           in non-bitmapped images.
+     */
+    protected abstract void drawImageScaled(int x, int y, int w, int h,
+					    FopImage image,
+					    FontState fs);
+
+    /**
+     * Renders an image, clipping it as specified. 
+     * 
+     * @param x the x position of left edge in millipoints.
+     * @param y the y position of top edge in millipoints.
+     * @param clipX the left edge of the clip in millipoints
+     * @param clipY the top edge of the clip in millipoints
+     * @param clipW the clip width in millipoints
+     * @param clipH the clip height in millipoints
+     * @param fill the image to be rendered
+     * @param fs the font state to use when rendering text
+     *           in non-bitmapped images.
+     */
+    protected abstract void drawImageClipped(int x, int y,
+					     int clipX, int clipY,
+					     int clipW, int clipH,
+					     FopImage image,
+					     FontState fs);
+
+    /**
+     * Render an image area.
+     *
+     * @param area the image area to render
+     */
+    public void renderImageArea(ImageArea area) {
+        // adapted from contribution by BoBoGi
+        int x = this.currentXPosition + area.getXOffset();
+        int y = this.currentYPosition;
+        int w = area.getContentWidth();
+        int h = area.getHeight();
+
+        this.currentYPosition -= h;
+
+        FopImage img = area.getImage();
+
+        if (img == null) {
+            log.error("Error while loading image : area.getImage() is null");
+	}
+	else {
+	    drawImageScaled(x, y, w, h, img, area.getFontState());
+	}
+
+        this.currentXPosition += w;
+    }
 
     public void renderBodyAreaContainer(BodyAreaContainer area) {
         int saveY = this.currentYPosition;
@@ -90,18 +303,19 @@ public abstract class AbstractRenderer implements Renderer {
         }
 
         this.currentXPosition = this.currentAreaContainerXPosition;
-        int w, h;
         int rx = this.currentAreaContainerXPosition;
-        w = area.getContentWidth();
-        h = area.getContentHeight();
         int ry = this.currentYPosition;
-        ColorType bg = area.getBackgroundColor();
+	// XXX: (mjg@recaldesign.com) I had to use getAllocationWidth()
+	// and getMaxHeight() as the content width and height are
+	// always 0. Is this supposed to be the case?
+	// IMHO, the bg should cover the entire area anyway, not
+	// just the parts with content, which makes this correct.
+	// Probably want to check this for the other region
+	// areas as well.
+	int w = area.getAllocationWidth();
+        int h = area.getMaxHeight();
 
-        // I'm not sure I should have to check for bg being null
-        // but I do
-        if ((bg != null) && (bg.alpha() == 0)) {
-            addFilledRect(rx, ry, w, -h, bg);
-        }
+	doBackground(area, rx, ry, w, h);
 
         // floats & footnotes stuff
         renderAreaContainer(area.getBeforeFloatReferenceArea());

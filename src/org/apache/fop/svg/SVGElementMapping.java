@@ -22,7 +22,7 @@ public class SVGElementMapping implements ElementMapping {
 
     private static HashMap foObjs = null;    
     
-    public synchronized void addToBuilder(TreeBuilder builder) {
+    private static synchronized void setupSVG() {
 
         if(foObjs == null) {
             // this sets the parser that will be used
@@ -84,11 +84,14 @@ public class SVGElementMapping implements ElementMapping {
             foObjs.put("feMerge", SVGObj.maker("feMerge"));
             foObjs.put("feMergeNode", SVGObj.maker("feMergeNode"));
         }
+    }
 
+    public void addToBuilder(TreeBuilder builder) {
+        setupSVG();
         String uri = "http://www.w3.org/2000/svg";
         builder.addMapping(uri, foObjs);
 
         builder.addPropertyListBuilder(uri, new DirectPropertyListBuilder());
     }
-
 }
+

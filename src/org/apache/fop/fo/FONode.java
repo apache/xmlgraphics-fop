@@ -16,7 +16,8 @@ import org.apache.fop.layout.LinkSet;
 import org.apache.fop.system.BufferManager;
 import org.apache.fop.fo.flow.Marker;
 
-import org.apache.log.Logger;
+// Avalon
+import org.apache.avalon.framework.logger.Logger;
 
 // Java
 import java.util.Vector;

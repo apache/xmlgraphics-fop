@@ -1,3 +1,9 @@
+/*
+ * $Id$
+ * Copyright (C) 2001 The Apache Software Foundation. All rights reserved.
+ * For details on use and redistribution please refer to the
+ * LICENSE file included with these sources.
+ */
 package org.apache.fop.apps;
 
 import java.io.OutputStream;
@@ -15,7 +21,7 @@ import org.apache.fop.datatypes.IDReferences;
 import org.apache.fop.extensions.ExtensionObj;
 import org.apache.fop.fo.pagination.PageSequence;
 
-import org.apache.log.Logger;
+import org.apache.avalon.framework.logger.Logger;
 
 /**
   This class acts as a bridge between the XML:FO parser
@@ -23,7 +29,7 @@ import org.apache.log.Logger;
   PageSequences up until all the IDs required by them
   are satisfied, at which time it will render the
   pages.<P>
- 
+
   StreamRenderer is created by Driver and called from
   FOTreeBuilder when a PageSequence is created,
   and AreaTree when a Page is formatted.<P>
@@ -66,6 +72,11 @@ public class StreamRenderer {
     private Renderer renderer;
 
     /**
+     * The formatting results to be handed back to the caller.
+     */
+    private FormattingResults results = new FormattingResults();
+
+    /**
       The FontInfo for this renderer.
     */
     private FontInfo fontInfo = new FontInfo();
@@ -102,6 +113,10 @@ public class StreamRenderer {
         return idReferences;
     }
 
+    public FormattingResults getResults() {
+        return this.results;
+    }
+
     public void addExtension(ExtensionObj ext) {
         extensions.addElement(ext);
     }
@@ -119,6 +134,8 @@ public class StreamRenderer {
         try {
             renderer.setupFontInfo(fontInfo);
             renderer.startRenderer(outputStream);
+        } catch (FOPException fe) {
+            throw new SAXException(fe);
         } catch (IOException e) {
             throw new SAXException(e);
         }
@@ -158,8 +175,10 @@ public class StreamRenderer {
         long timeUsed = System.currentTimeMillis() - startTime;
 
         log.debug("Total time used: " + timeUsed + "ms");
-        log.debug("Pages rendererd: " + pageCount);
-        log.debug("Avg render time: " + (timeUsed / pageCount) + "ms/page");
+        log.debug("Pages rendered: " + pageCount);
+        if (pageCount != 0) {
+            log.debug("Avg render time: " + (timeUsed / pageCount) + "ms/page");
+        }
     }
 
     /**
@@ -192,6 +211,8 @@ public class StreamRenderer {
         } catch (FOPException e) {
             throw new SAXException(e);
         }
+        this.results.haveFormattedPageSequence(pageSequence);
+        log.debug("Last page-sequence produced "+pageSequence.getPageCount()+" pages.");
     }
 
     public synchronized void queuePage(Page page)
@@ -296,7 +317,7 @@ public class StreamRenderer {
             return true;
         }
     }
-    
+
        public Page getNextPage(Page current, boolean isWithinPageSequence,
                             boolean isFirstCall) {
         Page nextPage = null;

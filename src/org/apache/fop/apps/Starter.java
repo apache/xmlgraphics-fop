@@ -7,7 +7,8 @@
 
 package org.apache.fop.apps;
 
-import org.apache.log.*;
+// Avalon
+import org.apache.avalon.framework.logger.Logger;
 
 // SAX
 import org.xml.sax.XMLReader;
@@ -32,8 +33,8 @@ public abstract class Starter {
         options = new Options();
     }
 
-    public void setLogger(Logger logger) {
-        log = logger;
+    public void setLogger(Logger handler) {
+        log = handler;
     }
 
     public void setInputHandler(InputHandler inputHandler) {
@@ -41,16 +42,5 @@ public abstract class Starter {
     }
 
     abstract public void run() throws FOPException;
-
-    // setting the parser features
-    public void setParserFeatures(XMLReader parser) throws FOPException {
-        try {
-            parser.setFeature("http://xml.org/sax/features/namespace-prefixes",
-                              true);
-        } catch (SAXException e) {
-            throw new FOPException("Error in setting up parser feature namespace-prefixes\n"
-                                   + "You need a parser which supports SAX version 2", e);
-        }
-    }
 
 }

@@ -37,7 +37,6 @@ public class Table extends FObj {
     int breakAfter;
     int spaceBefore;
     int spaceAfter;
-    ColorType backgroundColor;
     LengthRange ipd;
     int height;
     String id;
@@ -113,8 +112,6 @@ public class Table extends FObj {
                 this.properties.get("space-before.optimum").getLength().mvalue();
             this.spaceAfter =
                 this.properties.get("space-after.optimum").getLength().mvalue();
-            this.backgroundColor =
-                this.properties.get("background-color").getColorType();
             this.ipd =
 		this.properties.get("inline-progression-dimension").
 		getLengthRange();
@@ -173,7 +170,7 @@ public class Table extends FObj {
 
         areaContainer.foCreator = this;    // G Seshadri
         areaContainer.setPage(area.getPage());
-        areaContainer.setBackgroundColor(backgroundColor);
+        areaContainer.setBackground(propMgr.getBackgroundProps());
         areaContainer.setBorderAndPadding(propMgr.getBorderAndPadding());
         areaContainer.start();
 

@@ -9,6 +9,7 @@ package org.apache.fop.pdf;
 
 // Java
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.io.PrintWriter;
 
 /**
@@ -96,7 +97,12 @@ public class PDFRoot extends PDFObject {
 
         }
         p.append(" >>\nendobj\n");
-        return p.toString().getBytes();
+
+        try {
+            return p.toString().getBytes(PDFDocument.ENCODING);
+        } catch (UnsupportedEncodingException ue) {
+            return p.toString().getBytes();
+        }       
     }
 
 }

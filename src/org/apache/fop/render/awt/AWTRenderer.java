@@ -79,7 +79,7 @@ public class AWTRenderer extends AbstractRenderer implements Printable, Pageable
      * object that is contained withing the Image Object.
      */
     private BufferedImage pageImage = null;
-    private Graphics2D graphics = null;
+    protected Graphics2D graphics = null;
 
     /**
      * The current (internal) font name
@@ -97,6 +97,13 @@ public class AWTRenderer extends AbstractRenderer implements Printable, Pageable
     protected float currentRed = 0;
     protected float currentGreen = 0;
     protected float currentBlue = 0;
+
+    /**
+     * Used to make the last font and color available to
+     * renderInlineSpace() to render text decorations.
+     */
+    protected java.awt.Font lastFont = null;
+    protected Color lastColor = null;
 
     /**
      * The parent component, used to set up the font.
@@ -271,10 +278,14 @@ public class AWTRenderer extends AbstractRenderer implements Printable, Pageable
         int starty = pageHeight - ((y + 500) / 1000);
         int endx = (x + w + 500) / 1000;
         int endy = pageHeight - ((y + h + 500) / 1000);
-        if (drawAsOutline)
+        if (drawAsOutline) {
             graphics.drawRect(startx, starty, endx - startx, endy - starty);
-        else
+        } else {
+            //don't round down to zero
+            if (w != 0 && endx == startx) endx++;
+            if (h != 0 && endy == starty) endy++;
             graphics.fillRect(startx, starty, endx - startx, endy - starty);
+        }
     }
 
     protected void addFilledRect(int x, int y, int w, int h,
@@ -408,19 +419,13 @@ public class AWTRenderer extends AbstractRenderer implements Printable, Pageable
 
         h = area.getContentHeight();
         int ry = this.currentYPosition;
-        ColorType bg = area.getBackgroundColor();
 
         rx = rx - area.getPaddingLeft();
         ry = ry + area.getPaddingTop();
         w = w + area.getPaddingLeft() + area.getPaddingRight();
         h = h + area.getPaddingTop() + area.getPaddingBottom();
 
-        // I'm not sure I should have to check for bg being null
-        // but I do
-        if ((bg != null) && (bg.alpha() == 0)) {
-            this.addRect(rx, ry, w, -h, bg.red(), bg.green(), bg.blue(),
-                         bg.red(), bg.green(), bg.blue());
-        }
+	doBackground(area, rx, ry, w, h);
 
         rx = rx - area.getBorderLeftWidth();
         ry = ry + area.getBorderTopWidth();
@@ -470,7 +475,8 @@ public class AWTRenderer extends AbstractRenderer implements Printable, Pageable
                                       a.getAllocationWidth(), a.getHeight());
     }
 
-    public void setupFontInfo(FontInfo fontInfo) {
+    public void setupFontInfo(FontInfo fontInfo)
+        throws FOPException {
         // create a temp Image to test font metrics on
         BufferedImage fontImage =
             new BufferedImage(100, 100, BufferedImage.TYPE_INT_RGB);
@@ -482,6 +488,45 @@ public class AWTRenderer extends AbstractRenderer implements Printable, Pageable
         this.currentYPosition -= d;
     }
 
+    /**
+     * Renders an image, scaling it to the given width and height.
+     * If the scaled width and height is the same intrinsic size
+     * of the image, the image is not scaled.
+     *
+     * @param x the x position of left edge in millipoints
+     * @param y the y position of top edge in millipoints
+     * @param w the width in millipoints
+     * @param h the height in millipoints
+     * @param image the image to be rendered
+     * @param fs the font state to use when rendering text
+     *           in non-bitmapped images.
+     */
+    protected void drawImageScaled(int x, int y, int w, int h,
+				   FopImage image,
+				   FontState fs) {
+	// XXX: implement this
+    }
+
+    /**
+     * Renders an image, clipping it as specified.
+     *
+     * @param x the x position of left edge in millipoints.
+     * @param y the y position of top edge in millipoints.
+     * @param clipX the left edge of the clip in millipoints
+     * @param clipY the top edge of the clip in millipoints
+     * @param clipW the clip width in millipoints
+     * @param clipH the clip height in millipoints
+     * @param fill the image to be rendered
+     * @param fs the font state to use when rendering text
+     *           in non-bitmapped images.
+     */
+    protected void drawImageClipped(int x, int y,
+				    int clipX, int clipY,
+				    int clipW, int clipH,
+				    FopImage image,
+				    FontState fs) {
+	// XXX: implement this
+    }
 
     // correct integer roundoff    (aml/rlc)
 
@@ -560,13 +605,13 @@ public class AWTRenderer extends AbstractRenderer implements Printable, Pageable
         this.currentXPosition += area.getContentWidth();
     }
 
+
     public void renderWordArea(WordArea area) {
         char ch;
         StringBuffer pdf = new StringBuffer();
 
-        String name = area.getFontState().getFontName();
+        String fontname = area.getFontState().getFontName();
         int size = area.getFontState().getFontSize();
-        boolean underlined = area.getUnderlined();
 
         float red = area.getRed();
         float green = area.getGreen();
@@ -575,15 +620,15 @@ public class AWTRenderer extends AbstractRenderer implements Printable, Pageable
         FontMetricsMapper mapper;
         try {
             mapper =
-                (FontMetricsMapper)area.getFontState().getFontInfo().getMetricsFor(name);
+                (FontMetricsMapper)area.getFontState().getFontInfo().getMetricsFor(fontname);
         } catch (FOPException iox) {
             mapper = new FontMetricsMapper("MonoSpaced", java.awt.Font.PLAIN,
                                            graphics);
         }
 
-        if ((!name.equals(this.currentFontName))
+        if ((!fontname.equals(this.currentFontName))
                 || (size != this.currentFontSize)) {
-            this.currentFontName = name;
+            this.currentFontName = fontname;
             this.currentFontSize = size;
         }
 
@@ -598,7 +643,7 @@ public class AWTRenderer extends AbstractRenderer implements Printable, Pageable
         int bl = this.currentYPosition;
 
 
-        String s;    // = area.getText();
+        String s;
         if (area.getPageNumberID()
                 != null) {    // this text is a page number, so resolve it
             s = idReferences.getPageNumber(area.getPageNumberID());
@@ -623,28 +668,105 @@ public class AWTRenderer extends AbstractRenderer implements Printable, Pageable
         }
         graphics.setColor(saveColor);
 
-        AttributedString ats = new AttributedString(s);
-        ats.addAttribute(TextAttribute.FONT, f);
-        if (underlined) {
-            ats.addAttribute(TextAttribute.UNDERLINE,
-                             TextAttribute.UNDERLINE_ON);
-        }
-        AttributedCharacterIterator iter = ats.getIterator();
+        // Ralph LaChance (May 16, 2002)
+        // AttributedString mechanism removed because of
+        // rendering bug in both jdk 1.3.0_x and 1.4.
+        // see bug parade 4650042 and others
+        //
+        graphics.setFont(f);
 
-        // correct integer roundoff
-        // graphics.drawString(iter, rx / 1000f,
-        // (int)(pageHeight - bl / 1000f));
+        // correct starting location for integer roundoff
+        int newx = (int)(rx + 500) / 1000;
+        int newy = (int)(pageHeight - (bl + 500) / 1000);
 
-        graphics.drawString(iter, (rx + 500) / 1000,
-                            (int)(pageHeight - (bl + 500) / 1000));
+        // draw text, corrected for integer roundoff
+        graphics.drawString(s, newx, newy);
 
+        FontMetrics fm = graphics.getFontMetrics(f);
+        int tdwidth = (int)fm.getStringBounds(s, graphics).getWidth();
+
+        // text decorations
+        renderTextDecoration(rx, bl, tdwidth, f, " ",
+                area.getUnderlined(),
+                area.getOverlined(),
+                area.getLineThrough());
+
+        // remember last font and color for possible inline spaces
+        // (especially for text decorations)
+        this.lastFont = graphics.getFont();
+        this.lastColor = graphics.getColor();
+
+        graphics.setFont(oldFont);
         graphics.setColor(oldColor);
+
         this.currentXPosition += area.getContentWidth();
     }
 
+
     public void renderInlineSpace(InlineSpace space) {
+        if (space.getUnderlined() || space.getOverlined() || space.getLineThrough()) {
+            int rx = this.currentXPosition;
+            int bl = this.currentYPosition;
+
+            java.awt.Font oldFont = graphics.getFont();
+            if (this.lastFont != null) {
+                graphics.setFont(this.lastFont);
+            }
+            Color oldColor = graphics.getColor();
+            if (this.lastColor != null) {
+                graphics.setColor(this.lastColor);
+            }
+
+            int width = (int)(space.getSize() + 500) / 1000;
+            renderTextDecoration(rx, bl, width, graphics.getFont(), " ",
+                    space.getUnderlined(),
+                    space.getOverlined(),
+                    space.getLineThrough());
+
+            graphics.setFont(oldFont);
+            graphics.setColor(oldColor);
+        }
+
         this.currentXPosition += space.getSize();
     }
+
+
+    protected void renderTextDecoration(int x, int bl, int width,
+                    java.awt.Font font, String text,
+                    boolean underline,
+                    boolean overline,
+                    boolean linethrough) {
+        if (!(underline || overline || linethrough)) return;
+        int newx = (int)(x + 500) / 1000;
+        int newy = (int)(pageHeight - (bl + 500) / 1000);
+
+        // text decorations
+        FontMetrics fm = graphics.getFontMetrics(font);
+        LineMetrics lm = fm.getLineMetrics(text, graphics);
+
+        int ulthick = (int)lm.getUnderlineThickness();
+        if (ulthick < 1)
+            ulthick = 1;   // don't allow it to disappear
+        if (underline) {
+            // nothing in awt specifies underline location,
+            // descent/2 seems to match my word processor
+            int deltay = fm.getDescent() / 2;
+            graphics.fillRect(newx, newy + deltay, width, ulthick);
+        }
+        if (overline) {
+            // todo: maybe improve positioning of overline
+            int deltay = -(int)(lm.getAscent() * 0.8);
+            graphics.fillRect(newx, newy + deltay, width, ulthick);
+        }
+        if (linethrough) {
+            int ltthick = (int)lm.getStrikethroughThickness();
+            if (ltthick < 1)
+                ltthick = 1;   // don't allow it to disappear
+            int deltay = (int)lm.getStrikethroughOffset();
+            graphics.fillRect(newx, newy + deltay, width, ltthick);
+        }
+    }
+
 
     /**
      * render leader area into AWT

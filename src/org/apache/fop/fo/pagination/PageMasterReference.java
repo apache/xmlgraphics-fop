@@ -13,7 +13,7 @@ import org.apache.fop.apps.FOPException;
 
 /**
  * Base PageMasterReference class. Provides implementation for handling the
- * master-name attribute and containment within a PageSequenceMaster
+ * master-reference attribute and containment within a PageSequenceMaster
  */
 public abstract class PageMasterReference extends FObj
     implements SubSequenceSpecifier {
@@ -25,8 +25,8 @@ public abstract class PageMasterReference extends FObj
             throws FOPException {
         super(parent, propertyList);
         this.name = getElementName();
-        if (getProperty("master-name") != null) {
-            setMasterName(getProperty("master-name").getString());
+        if (getProperty("master-reference") != null) {
+            setMasterName(getProperty("master-reference").getString());
         }
         validateParent(parent);
 
@@ -37,7 +37,7 @@ public abstract class PageMasterReference extends FObj
     }
 
     /**
-     * Returns the "master-name" attribute of this page master reference
+     * Returns the "master-reference" attribute of this page master reference
      */
     public String getMasterName() {
         return _masterName;
@@ -72,7 +72,7 @@ public abstract class PageMasterReference extends FObj
 
             if (getMasterName() == null) {
                 log.warn("" + getElementName()
-                                       + " does not have a master-name and so is being ignored");
+                                       + " does not have a master-reference and so is being ignored");
             } else {
                 _pageSequenceMaster.addSubsequenceSpecifier(this);
             }

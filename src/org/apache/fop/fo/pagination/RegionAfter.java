@@ -57,10 +57,12 @@ public class RegionAfter extends Region {
         // this.properties.get("reference-orientation");
         // this.properties.get("writing-mode");
 
-        return new RegionArea(allocationRectangleXPosition,
-                              allocationRectangleYPosition
-                              - allocationRectangleHeight + extent,
-                              allocationRectangleWidth, extent);
+        RegionArea area = new RegionArea(allocationRectangleXPosition,
+					 allocationRectangleYPosition
+					 - allocationRectangleHeight + extent,
+					 allocationRectangleWidth, extent);
+	area.setBackground(bProps);
+	return area;
     }
 
 

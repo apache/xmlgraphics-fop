@@ -2,7 +2,7 @@
 <font-metrics>
    <font-name>Courier-Bold</font-name>
    <class-name>CourierBold</class-name>
-   <encoding>WinAnsiEncoding</encoding>
+   <encoding>StandardEncoding</encoding>
    <cap-height>562</cap-height>
    <x-height>439</x-height>
    <ascender>626</ascender>
@@ -28,6 +28,7 @@
       <char name="Edieresis" width="600"/>
       <char name="Egrave" width="600"/>
       <char name="Eth" width="600"/>
+      <char name="Euro" width="600"/>
       <char name="F" width="600"/>
       <char name="G" width="600"/>
       <char name="Gcaron" width="600"/>

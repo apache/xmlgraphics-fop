@@ -7,6 +7,9 @@
 
 package org.apache.fop.pdf;
 
+// Java
+import java.io.UnsupportedEncodingException;
+
 public class PDFTTFStream extends PDFStream {
     private int origLength;
 
@@ -27,12 +30,22 @@ public class PDFTTFStream extends PDFStream {
                                     + " " + "/Length1 " + origLength
                                     + " >>\n");
 
-        byte[] p = preData.getBytes();
+        byte[] p;
+        try {
+            p = preData.getBytes(PDFDocument.ENCODING);
+        } catch (UnsupportedEncodingException ue) {
+            p = preData.getBytes();
+        }       
+        
         stream.write(p);
         length += p.length;
 
         length += outputStreamData(stream);
-        p = "endobj\n".getBytes();
+        try {
+            p = "endobj\n".getBytes(PDFDocument.ENCODING);
+        } catch (UnsupportedEncodingException ue) {
+            p = "endobj\n".getBytes();
+        }       
         stream.write(p);
         length += p.length;
         return length;
@@ -40,7 +53,7 @@ public class PDFTTFStream extends PDFStream {
 
     public void setData(byte[] data, int size) throws java.io.IOException {
         _data.reset();
-        System.out.println("Writing " + size + " bytes of font data");
+        //System.out.println("Writing " + size + " bytes of font data");
         _data.write(data, 0, size);
     }
 

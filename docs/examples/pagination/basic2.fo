@@ -19,13 +19,13 @@
     </fo:simple-page-master>
 
 	<fo:page-sequence-master master-name="single">
-		<fo:single-page-master-reference master-name="only"/>
+		<fo:single-page-master-reference master-reference="only"/>
 	</fo:page-sequence-master>
   </fo:layout-master-set>
   <!-- end: defines page layout -->
 
   <!-- actual layout -->
-  <fo:page-sequence master-name="single" initial-page-number="1">
+  <fo:page-sequence master-reference="single" initial-page-number="1">
 
     <!-- usage of page layout -->
     <!-- header -->

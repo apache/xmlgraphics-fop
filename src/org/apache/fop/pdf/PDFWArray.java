@@ -7,6 +7,8 @@
 
 package org.apache.fop.pdf;
 
+// Java
+import java.io.UnsupportedEncodingException;
 import java.util.Vector;
 
 /**
@@ -63,7 +65,11 @@ public class PDFWArray {
     }
 
     public byte[] toPDF() {
-        return toPDFString().getBytes();
+        try {
+            return toPDFString().getBytes(PDFDocument.ENCODING);
+        } catch (UnsupportedEncodingException ue) {
+            return toPDFString().getBytes();
+        }       
     }
 
     public String toPDFString() {

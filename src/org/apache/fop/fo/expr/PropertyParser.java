@@ -53,7 +53,7 @@ public class PropertyParser extends PropertyTokenizer {
 
         /**
          * * NOT YET IMPLEMENTED!!!
-         * functionTable.put("icc-color", new ICCcolorFunction());
+         * functionTable.put("rgb-icc", new RgbICCFunction());
          * functionTable.put("system-color", new SystemColorFunction());
          * functionTable.put("system-font", new SystemFontFunction());
          *

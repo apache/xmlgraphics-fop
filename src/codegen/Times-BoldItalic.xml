@@ -2,7 +2,7 @@
 <font-metrics>
    <font-name>Times-BoldItalic</font-name>
    <class-name>TimesBoldItalic</class-name>
-   <encoding>WinAnsiEncoding</encoding>
+   <encoding>StandardEncoding</encoding>
    <cap-height>669</cap-height>
    <x-height>462</x-height>
    <ascender>699</ascender>
@@ -28,6 +28,7 @@
       <char name="Edieresis" width="667"/>
       <char name="Egrave" width="667"/>
       <char name="Eth" width="722"/>
+      <char name="Euro" width="500"/>
       <char name="F" width="667"/>
       <char name="G" width="722"/>
       <char name="H" width="778"/>

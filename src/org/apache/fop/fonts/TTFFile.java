@@ -224,31 +224,23 @@ public class TTFFile {
 
 
                             // Also add winAnsiWidth
-                            if (false) {
-                                int d = j;
-                                if (j > 127)
-                                    d = (int)org.apache.fop.render.pdf.CodePointMapping.map[j];
-                                if (d < ansiWidth.length)
-                                    ansiWidth[d] = mtx_tab[glyphIdx].wx;
-                            } else {
-                                Vector v =
-                                    (Vector)ansiIndex.get(new Integer(j));
-                                if (v != null) {
-                                    for (Enumeration e = v.elements();
-                                            e.hasMoreElements(); ) {
-                                        Integer aIdx =
-                                            (Integer)e.nextElement();
-                                        ansiWidth[aIdx.intValue()] =
-                                            mtx_tab[glyphIdx].wx;
-                                        /*
-                                         * System.out.println("Added width "+
-                                         * mtx_tab[glyphIdx].wx +
-                                         * " uni: " + j +
-                                         * " ansi: " + aIdx.intValue());
-                                         */
-                                    }
-                                }
-                            }
+			    Vector v =
+				(Vector)ansiIndex.get(new Integer(j));
+			    if (v != null) {
+				for (Enumeration e = v.elements();
+				     e.hasMoreElements(); ) {
+				    Integer aIdx =
+					(Integer)e.nextElement();
+				    ansiWidth[aIdx.intValue()] =
+					mtx_tab[glyphIdx].wx;
+				    /*
+				     * System.out.println("Added width "+
+				     * mtx_tab[glyphIdx].wx +
+				     * " uni: " + j +
+				     * " ansi: " + aIdx.intValue());
+				     */
+				}
+			    }
                             /*
                              * System.out.println("Idx: "+
                              * glyphIdx +
@@ -281,26 +273,17 @@ public class TTFFile {
 
 
                             // Also add winAnsiWidth
-                            if (false) {
-                                int d = j;
-                                if (j > 127)
-                                    d = (int)org.apache.fop.render.pdf.CodePointMapping.map[j];
-
-                                if (d < ansiWidth.length)
-                                    ansiWidth[d] = mtx_tab[glyphIdx].wx;
-                            } else {
-                                Vector v =
-                                    (Vector)ansiIndex.get(new Integer(j));
-                                if (v != null) {
-                                    for (Enumeration e = v.elements();
-                                            e.hasMoreElements(); ) {
-                                        Integer aIdx =
-                                            (Integer)e.nextElement();
-                                        ansiWidth[aIdx.intValue()] =
-                                            mtx_tab[glyphIdx].wx;
-                                    }
-                                }
-                            }
+			    Vector v =
+				(Vector)ansiIndex.get(new Integer(j));
+			    if (v != null) {
+				for (Enumeration e = v.elements();
+				     e.hasMoreElements(); ) {
+				    Integer aIdx =
+					(Integer)e.nextElement();
+				    ansiWidth[aIdx.intValue()] =
+					mtx_tab[glyphIdx].wx;
+				}
+			    }
 
                             /*
                              * System.out.println("IIdx: "+
@@ -669,7 +652,7 @@ public class TTFFile {
             mtx_tab[i] = new TTFMtxEntry();
         for (int i = 0; i < nhmtx; i++) {
             mtx_tab[i].wx = in.readTTFUShort();
-            mtx_tab[i].lsb = in.readTTFUShort();
+            mtx_tab[i].lsb = in.readTTFShort();
             /*
              * System.out.println("   width["+i+"] = "+
              * get_ttf_funit(mtx_tab[i].wx)+";");
@@ -681,7 +664,7 @@ public class TTFFile {
             int lastWidth = mtx_tab[nhmtx - 1].wx;
             for (int i = nhmtx; i < mtx_size; i++) {
                 mtx_tab[i].wx = lastWidth;
-                mtx_tab[i].lsb = in.readTTFUShort();
+                mtx_tab[i].lsb = in.readTTFShort();
             }
         }
     }

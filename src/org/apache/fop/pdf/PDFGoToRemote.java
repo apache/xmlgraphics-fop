@@ -7,6 +7,9 @@
 
 package org.apache.fop.pdf;
 
+// Java
+import java.io.UnsupportedEncodingException;
+
 /**
  * class representing a /GoToR object.
  */
@@ -51,7 +54,12 @@ public class PDFGoToRemote extends PDFAction {
                               + pdfFileSpec.referencePDF() + "\n"
                               + "/D [ 0 /XYZ null null null ]"
                               + " \n>>\nendobj\n");
-        return p.getBytes();
+
+        try {
+            return p.getBytes(PDFDocument.ENCODING);
+        } catch (UnsupportedEncodingException ue) {
+            return p.getBytes();
+        }       
     }
 
 

@@ -16,7 +16,8 @@ import org.apache.fop.system.BufferManager;
 import org.apache.fop.fo.pagination.PageSequence;
 import org.apache.fop.extensions.ExtensionObj;
 
-import org.apache.log.Logger;
+// Avalon
+import org.apache.avalon.framework.logger.Logger;
 
 // SAX
 import org.xml.sax.helpers.DefaultHandler;
@@ -90,6 +91,10 @@ public class FOTreeBuilder extends DefaultHandler implements TreeBuilder {
 
     public void setStreamRenderer(StreamRenderer streamRenderer) {
         this.streamRenderer = streamRenderer;
+    }
+
+    public StreamRenderer getStreamRenderer() {
+        return this.streamRenderer;
     }
 
     /**

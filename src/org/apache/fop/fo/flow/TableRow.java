@@ -35,7 +35,6 @@ public class TableRow extends FObj {
     boolean setup = false;
 
     int breakAfter;
-    ColorType backgroundColor;
     String id;
 
     KeepValue keepWithNext;
@@ -214,8 +213,6 @@ public class TableRow extends FObj {
 
 
         this.breakAfter = this.properties.get("break-after").getEnum();
-        this.backgroundColor =
-            this.properties.get("background-color").getColorType();
 
         this.keepTogether = getKeepValue("keep-together.within-column");
         this.keepWithNext = getKeepValue("keep-with-next.within-column");
@@ -286,7 +283,7 @@ public class TableRow extends FObj {
         areaContainer.foCreator = this;    // G Seshadri
         areaContainer.setPage(area.getPage());
 
-        areaContainer.setBackgroundColor(backgroundColor);
+        areaContainer.setBackground(propMgr.getBackgroundProps());
         areaContainer.start();
 
         areaContainer.setAbsoluteHeight(area.getAbsoluteHeight());

@@ -33,6 +33,8 @@ import javax.swing.*;
 import org.apache.fop.layout.*;
 import org.apache.fop.render.awt.*;
 import org.apache.fop.messaging.*;
+import org.apache.fop.apps.AWTStarter;
+import org.apache.fop.apps.FOPException;
 
 /**
  * Frame and User Interface for Preview
@@ -46,6 +48,7 @@ public class PreviewDialog extends JFrame implements ProgressListener,
     protected int pageCount = 0;
 
     protected AWTRenderer renderer;
+    protected AWTStarter starter;
 
     protected IconToolBar toolBar = new IconToolBar();
 
@@ -54,6 +57,8 @@ public class PreviewDialog extends JFrame implements ProgressListener,
     protected Command previousPageAction;
     protected Command nextPageAction;
     protected Command lastPageAction;
+    protected Command reloadAction;
+    protected Reloader reloader;
 
     protected JLabel zoomLabel =
         new JLabel();    // {public float getAlignmentY() { return 0.0f; }};
@@ -73,6 +78,18 @@ public class PreviewDialog extends JFrame implements ProgressListener,
     protected JLabel processStatus = new JLabel();
     protected JLabel infoStatus = new JLabel();
     protected JLabel previewImageLabel = new JLabel();
+
+     /**
+     * Create a new PreviewDialog that uses the given starter, renderer and translator.
+     *
+     *  @param aStarter the to use starter
+     *  @param aRenderer the to use renderer
+     *  @param aRes the to use translator
+     */
+    public PreviewDialog(AWTStarter aStarter, AWTRenderer aRenderer, Translator aRes) {
+        this(aRenderer, aRes);
+        starter = aStarter;
+    }
 
     /**
      * Create a new PreviewDialog that uses the given renderer and translator.
@@ -116,6 +133,12 @@ public class PreviewDialog extends JFrame implements ProgressListener,
             }
 
         };
+        reloadAction = new Command(res.getString("Reload"), "reload") {
+            public void doit() {
+                reload(null);
+            }
+
+        };
 
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
         this.setSize(new Dimension(379, 476));
@@ -150,6 +173,7 @@ public class PreviewDialog extends JFrame implements ProgressListener,
         this.getContentPane().add(toolBar, BorderLayout.NORTH);
 
         toolBar.add(printAction);
+        toolBar.add(reloadAction);
         toolBar.addSeparator();
         toolBar.add(firstPageAction);
         toolBar.add(previousPageAction);
@@ -218,6 +242,12 @@ public class PreviewDialog extends JFrame implements ProgressListener,
         menu.add(new Command(res.getString("Print")) {
             public void doit() {
                 print();
+            }
+
+        });
+        menu.add(new Command(res.getString("Reload")) {
+            public void doit() {
+                reload(null);
             }
 
         });
@@ -382,6 +412,35 @@ public class PreviewDialog extends JFrame implements ProgressListener,
         currentPage = pageCount - 1;
 
         goToPage(currentPage);
+    }
+
+    /**
+     * Reloads and reformats document.
+     */
+    private synchronized void reload(ActionEvent e) {
+        if (reloader == null || !reloader.isAlive()) {
+            reloader = new Reloader();
+            reloader.start();
+        }
+    }
+
+    /**
+     * This class is used to reload document  in
+     * a thread safe way.
+     */
+    private class Reloader extends Thread {
+        public void run() {
+            previewImageLabel.setIcon(null);
+            statisticsStatus.setText("");
+            //Cleans up renderer
+            while (renderer.getPageCount() != 0)
+                renderer.removePage(0);
+            try {
+                starter.run();
+            } catch (FOPException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     /**
@@ -626,9 +685,15 @@ public class PreviewDialog extends JFrame implements ProgressListener,
         }
     }
 
-
-    public void dispose() {
-        System.exit(0);
+    public void reportException(Exception e) {
+        String msg = res.getString("An exception has occured");
+        progress(msg);
+        JOptionPane.showMessageDialog(
+ 		    getContentPane(),
+            "<html><b>" + msg + ":</b><br>"
+ 		     + e.getClass().getName() + "<br>" + e.getMessage() + "</html>", res.getString("Fatal error"),
+             JOptionPane.ERROR_MESSAGE
+ 		);
     }
 
 }    // class PreviewDialog

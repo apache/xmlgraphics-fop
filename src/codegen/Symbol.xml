@@ -1,7 +1,7 @@
 <font-metrics>
   <font-name>Symbol</font-name>
   <class-name>Symbol</class-name>
-  <encoding>StandardEncoding</encoding>
+  <encoding>SymbolEncoding</encoding>
   <cap-height>1010</cap-height> 
   <x-height>520</x-height>
   <ascender>1010</ascender>

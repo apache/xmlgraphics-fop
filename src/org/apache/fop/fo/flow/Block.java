@@ -53,7 +53,6 @@ public class Block extends FObjMixed {
     int spaceAfter;
     int textIndent;
     int keepWithNext;
-    ColorType backgroundColor;
     int blockWidows;
     int blockOrphans;
 
@@ -66,10 +65,13 @@ public class Block extends FObjMixed {
     // this may be helpful on other FOs too
     boolean anythingLaidOut = false;
 
-    public Block(FObj parent, PropertyList propertyList) {
+    public Block(FObj parent, PropertyList propertyList)
+        throws FOPException {
+
         super(parent, propertyList);
         this.name = "fo:block";
         this.span = this.properties.get("span").getEnum();
+        ts = propMgr.getTextDecoration(parent);
     }
 
     public Status layout(Area area) throws FOPException {
@@ -123,7 +125,7 @@ public class Block extends FObjMixed {
             // this.properties.get("line-height-shift-adjustment");
             // this.properties.get("line-stacking-strategy");
             // this.properties.get("orphans");
-            // this.properties.get("space-treatment");
+            // this.properties.get("white-space-treatment");
             // this.properties.get("span");
             // this.properties.get("text-align");
             // this.properties.get("text-align-last");
@@ -151,8 +153,6 @@ public class Block extends FObjMixed {
                 this.properties.get("text-indent").getLength().mvalue();
             this.keepWithNext =
                 this.properties.get("keep-with-next").getEnum();
-            this.backgroundColor =
-                this.properties.get("background-color").getColorType();
 
             this.blockWidows =
                 this.properties.get("widows").getNumber().intValue();
@@ -242,7 +242,7 @@ public class Block extends FObjMixed {
 
         blockArea.setParent(area);    // BasicLink needs it
         blockArea.setPage(area.getPage());
-        blockArea.setBackgroundColor(backgroundColor);
+        blockArea.setBackground(propMgr.getBackgroundProps());
         blockArea.setBorderAndPadding(propMgr.getBorderAndPadding());
         blockArea.setHyphenation(propMgr.getHyphenationProps());
         blockArea.start();

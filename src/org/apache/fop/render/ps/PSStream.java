@@ -22,4 +22,8 @@ public class PSStream extends FilterOutputStream {
         write('\n');
     }
 
+    public void writeByteArr(byte[] cmd) throws IOException {
+        write(cmd);
+        write('\n');
+    }
 }

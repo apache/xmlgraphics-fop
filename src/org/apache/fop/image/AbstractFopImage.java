@@ -27,6 +27,11 @@ import org.apache.fop.image.analyser.ImageReader;
 public abstract class AbstractFopImage implements FopImage {
 
     /**
+    * Photoshop generated cmykl jpeg's are inverted.
+    */
+    protected boolean m_invertImage = false;
+
+    /**
      * Image width (in pixel).
      */
     protected int m_width = 0;
@@ -134,6 +139,13 @@ public abstract class AbstractFopImage implements FopImage {
      * @exception FopImageException an error occured during loading
      */
     abstract protected void loadImage() throws FopImageException;
+
+    /**
+    * If true, image data are inverted
+    */
+    public boolean invertImage() {
+        return m_invertImage;
+    }
 
     /**
      * Return the image URL.

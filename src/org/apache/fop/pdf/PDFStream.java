@@ -7,11 +7,14 @@
 
 package org.apache.fop.pdf;
 
+// Java
 import java.io.ByteArrayOutputStream;
 import java.io.OutputStream;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.util.Vector;
 import java.util.Enumeration;
+// Fop
 import org.apache.fop.configuration.Configuration;
 import org.apache.fop.messaging.MessageHandler;
 
@@ -53,7 +56,11 @@ public class PDFStream extends PDFObject {
      */
     public void add(String s) {
         try {
-            _data.write(s.getBytes());
+            try {
+                _data.write(s.getBytes(PDFDocument.ENCODING));
+            } catch (UnsupportedEncodingException ue) {
+                _data.write(s.getBytes());
+            }
         } catch (IOException ex) {
             ex.printStackTrace();
         }
@@ -133,19 +140,35 @@ public class PDFStream extends PDFObject {
                     if (r < 16) {
                         _data.write('0');
                     }
-                    _data.write(Integer.toHexString(r).getBytes());
+                    try {
+                        _data.write(Integer.toHexString(r).getBytes(PDFDocument.ENCODING));
+                    } catch (UnsupportedEncodingException ue) {
+                        _data.write(Integer.toHexString(r).getBytes());
+                    }
                     if (g < 16) {
                         _data.write('0');
                     }
-                    _data.write(Integer.toHexString(g).getBytes());
+                    try {
+                        _data.write(Integer.toHexString(g).getBytes(PDFDocument.ENCODING));
+                    } catch (UnsupportedEncodingException ue) {
+                        _data.write(Integer.toHexString(g).getBytes());
+                    }
                     if (b < 16) {
                         _data.write('0');
                     }
-                    _data.write(Integer.toHexString(b).getBytes());
+                    try {
+                        _data.write(Integer.toHexString(b).getBytes(PDFDocument.ENCODING));
+                    } catch (UnsupportedEncodingException ue) {
+                        _data.write(Integer.toHexString(b).getBytes());
+                    }
                     _data.write(' ');
                 }
             }
-            _data.write(">\n".getBytes());
+            try {
+                _data.write(">\n".getBytes(PDFDocument.ENCODING));
+            } catch (UnsupportedEncodingException ue) {
+                _data.write(">\n".getBytes());
+            }
         } catch (IOException ex) {
             ex.printStackTrace();
         }
@@ -195,14 +218,23 @@ public class PDFStream extends PDFObject {
     protected int output(OutputStream stream) throws IOException {
         int length = 0;
         String filterEntry = applyFilters();
-        byte[] p = (this.number + " " + this.generation + " obj\n<< /Length "
+        String s = this.number + " " + this.generation + " obj\n<< /Length "
                     + (_data.size() + 1) + " " + filterEntry
-                    + " >>\n").getBytes();
-
+                    + " >>\n";
+        byte[] p;
+        try {
+            p = s.getBytes(PDFDocument.ENCODING);
+        } catch (UnsupportedEncodingException ue) {
+            p = s.getBytes();
+        }
         stream.write(p);
         length += p.length;
         length += outputStreamData(stream);
-        p = "endobj\n".getBytes();
+        try {
+            p = "endobj\n".getBytes(PDFDocument.ENCODING);
+        } catch (UnsupportedEncodingException ue) {
+            p = "endobj\n".getBytes();
+        }
         stream.write(p);
         length += p.length;
         return length;
@@ -214,12 +246,21 @@ public class PDFStream extends PDFObject {
      */
     protected int outputStreamData(OutputStream stream) throws IOException {
         int length = 0;
-        byte[] p = "stream\n".getBytes();
+        byte[] p;
+        try {
+            p = "stream\n".getBytes(PDFDocument.ENCODING);
+        } catch (UnsupportedEncodingException ue) {
+            p = "stream\n".getBytes();
+        }
         stream.write(p);
         length += p.length;
         _data.writeTo(stream);
         length += _data.size();
-        p = "\nendstream\n".getBytes();
+        try {
+            p = "\nendstream\n".getBytes(PDFDocument.ENCODING);
+        } catch (UnsupportedEncodingException ue) {
+            p = "\nendstream\n".getBytes();
+        }
         stream.write(p);
         length += p.length;
         return length;

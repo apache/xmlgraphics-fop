@@ -19,14 +19,26 @@ public class Fop {
             starter.run();
         } catch (FOPException e) {
             MessageHandler.errorln("" + e.getMessage());
-            if (options != null && options.isDebugMode().booleanValue()) {
+            if (options != null) {
+              if (options.isDebugMode().booleanValue()) {
                 e.printStackTrace();
+              }
+              if (options.outfile != null) {
+                options.outfile.delete();
+              }
             }
+            System.exit(2);
         } catch (java.io.FileNotFoundException e) {
             MessageHandler.errorln("" + e.getMessage());
-            if (options != null && options.isDebugMode().booleanValue()) {
+            if (options != null) {
+              if (options.isDebugMode().booleanValue()) {
                 e.printStackTrace();
+              }
+              if (options.outfile != null) {
+                options.outfile.delete();
+              }
             }
+            System.exit(1);
         }
     }
 

@@ -4,7 +4,7 @@
 <fo:region-body margin-top="50pt" margin-bottom="50pt" margin-left="100pt" margin-right="100pt"/>
 </fo:simple-page-master>
 </fo:layout-master-set>
-<fo:page-sequence master-name="one">
+<fo:page-sequence master-reference="one">
 <fo:flow flow-name="xsl-region-body">
 <fo:block>A Block</fo:block>
 <fo:block text-align="end">An End Aligned Block</fo:block>

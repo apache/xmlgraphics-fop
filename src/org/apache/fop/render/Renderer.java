@@ -13,7 +13,8 @@ import org.apache.fop.apps.FOPException;
 import org.apache.fop.layout.*;
 import org.apache.fop.layout.inline.*;
 
-import org.apache.log.Logger;
+// Avalon
+import org.apache.avalon.framework.logger.Logger;
 
 // Java
 import java.io.OutputStream;
@@ -35,7 +36,7 @@ public interface Renderer {
     /**
      * set up the given FontInfo
      */
-    public void setupFontInfo(FontInfo fontInfo);
+    public void setupFontInfo(FontInfo fontInfo) throws FOPException;
 
     /**
      * set up renderer options

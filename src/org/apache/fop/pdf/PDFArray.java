@@ -7,6 +7,9 @@
 
 package org.apache.fop.pdf;
 
+//Java
+import java.io.UnsupportedEncodingException;
+
 /**
  * class representing an array object
  */
@@ -42,7 +45,12 @@ public class PDFArray extends PDFObject {
             p.append(values[i]);
         }
         p.append("]\nendobj\n");
-        return p.toString().getBytes();
+        
+        try {
+            return p.toString().getBytes(PDFDocument.ENCODING);
+        } catch (UnsupportedEncodingException ue) {
+            return p.toString().getBytes();
+        }       
     }
 
 }

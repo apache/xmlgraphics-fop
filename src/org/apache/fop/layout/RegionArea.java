@@ -17,7 +17,7 @@ public class RegionArea {
     protected int width;
     protected int height;
 
-    protected ColorType backgroundColor;
+    protected BackgroundProps background;
 
     public RegionArea(int xPosition, int yPosition, int width, int height) {
         this.xPosition = xPosition;
@@ -27,16 +27,19 @@ public class RegionArea {
     }
 
     public AreaContainer makeAreaContainer() {
-        return new AreaContainer(null, xPosition, yPosition, width, height,
-                                 Position.ABSOLUTE);
+	AreaContainer area =
+	    new AreaContainer(null, xPosition, yPosition, width, height,
+			      Position.ABSOLUTE);
+	area.setBackground(getBackground());
+	return area;
     }
 
-    public ColorType getBackgroundColor() {
-        return this.backgroundColor;
+    public BackgroundProps getBackground() {
+        return this.background;
     }
 
-    public void setBackgroundColor(ColorType bgColor) {
-        this.backgroundColor = bgColor;
+    public void setBackground(BackgroundProps bg) {
+        this.background = bg;
     }
 
     public int getHeight() {

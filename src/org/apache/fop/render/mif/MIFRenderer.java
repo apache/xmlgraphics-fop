@@ -12,8 +12,6 @@ package org.apache.fop.render.mif;
 // FOP
 import org.apache.fop.render.Renderer;
 import org.apache.fop.render.AbstractRenderer;
-import org.apache.fop.image.ImageArea;
-import org.apache.fop.image.FopImage;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.fo.properties.*;
 import org.apache.fop.fo.*;
@@ -166,22 +164,13 @@ public class MIFRenderer extends AbstractRenderer {
 
         h = area.getContentHeight();
         int ry = this.currentYPosition;
-        ColorType bg = area.getBackgroundColor();
 
         rx = rx - area.getPaddingLeft();
         ry = ry + area.getPaddingTop();
         w = w + area.getPaddingLeft() + area.getPaddingRight();
         h = h + area.getPaddingTop() + area.getPaddingBottom();
 
-        /*
-         * // I'm not sure I should have to check for bg being null
-         * // but I do
-         * if ((bg != null) && (bg.alpha() == 0)) {
-         * this.addRect(rx, ry, w, -h,
-         * new PDFColor(bg),
-         * new PDFColor(bg));
-         * }
-         */
+	doBackground(area, rx, ry, w, h);
 
         rx = rx - area.getBorderLeftWidth();
         ry = ry + area.getBorderTopWidth();
@@ -248,6 +237,46 @@ public class MIFRenderer extends AbstractRenderer {
         this.mifDoc.addToStream(s);
 
         this.currentXPosition += area.getContentWidth();
+    }
+
+    /**
+     * Renders an image, scaling it to the given width and height.
+     * If the scaled width and height is the same intrinsic size
+     * of the image, the image is not scaled.
+     * 
+     * @param x the x position of left edge in millipoints
+     * @param y the y position of top edge in millipoints
+     * @param w the width in millipoints
+     * @param h the height in millipoints
+     * @param image the image to be rendered
+     * @param fs the font state to use when rendering text
+     *           in non-bitmapped images.
+     */
+    protected void drawImageScaled(int x, int y, int w, int h,
+				   FopImage image,
+				   FontState fs) {
+	// XXX: implement this
+    }
+    
+    /**
+     * Renders an image, clipping it as specified. 
+     * 
+     * @param x the x position of left edge in millipoints.
+     * @param y the y position of top edge in millipoints.
+     * @param clipX the left edge of the clip in millipoints
+     * @param clipY the top edge of the clip in millipoints
+     * @param clipW the clip width in millipoints
+     * @param clipH the clip height in millipoints
+     * @param fill the image to be rendered
+     * @param fs the font state to use when rendering text
+     *           in non-bitmapped images.
+     */
+    protected void drawImageClipped(int x, int y,
+				    int clipX, int clipY,
+				    int clipW, int clipH,
+				    FopImage image,
+				    FontState fs) {
+	// XXX: implement this
     }
 
     /**

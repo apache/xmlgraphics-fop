@@ -25,12 +25,6 @@
     <key>dumpConfiguration</key>
     <value>false</value>
   </entry>
-  <!--  -->
-  <entry>
-    <key>debugMode</key>
-    <value>false</value>
-  </entry>
-
 
   <!-- stream-filter-list provides the default filters that are applied to all
        stream objects within the PDF file. These are normally used for 

@@ -21,11 +21,9 @@ import org.apache.fop.render.pdf.PDFRenderer;
 
 import org.apache.fop.system.BufferManager;
 
-import org.apache.log.*;
-import org.apache.log.format.*;
-import org.apache.log.output.io.*;
-import org.apache.log.output.*;
-import org.apache.avalon.framework.logger.Loggable;
+// Avalon
+import org.apache.avalon.framework.logger.ConsoleLogger;
+import org.apache.avalon.framework.logger.Logger;
 
 // DOM
 import org.w3c.dom.Document;
@@ -89,7 +87,7 @@ import java.util.*;
  * driver.render(parser, fileInputSource(args[0]));
  * </PRE>
  */
-public class Driver implements Loggable {
+public class Driver {
 
     /**
      * Render to PDF. OutputStream must be set
@@ -179,15 +177,13 @@ public class Driver implements Loggable {
     private Logger log;
 
     public static final String getParserClassName() {
-        String parserClassName = null;
         try {
-            parserClassName = System.getProperty("org.xml.sax.parser");
-        } catch (SecurityException se) {}
-
-        if (parserClassName == null) {
-            parserClassName = "org.apache.xerces.parsers.SAXParser";
+            return javax.xml.parsers.SAXParserFactory.newInstance().newSAXParser().getXMLReader().getClass().getName();
+        } catch (javax.xml.parsers.ParserConfigurationException e) {
+            return null;
+        } catch (org.xml.sax.SAXException e) {
+            return null;
         }
-        return parserClassName;
     }
 
     /**
@@ -213,18 +209,10 @@ public class Driver implements Loggable {
 
     private Logger getLogger() {
         if(log == null) {
-            Hierarchy hierarchy = Hierarchy.getDefaultHierarchy();
-            PatternFormatter formatter = new PatternFormatter(
-               "[%{priority}]: %{message}\n%{throwable}" );
+	    log = new ConsoleLogger(ConsoleLogger.LEVEL_INFO);
+	    log.error("Logger not set");
+	}
 
-            LogTarget target = null;
-            target = new StreamTarget(System.out, formatter);
-
-            hierarchy.setDefaultLogTarget(target);
-            log = hierarchy.getLoggerFor("fop");
-            log.setPriority(Priority.INFO);
-            log.error("Logger not set");
-        }
         return log;
     }
 
@@ -239,6 +227,19 @@ public class Driver implements Loggable {
         _stream = null;
         _reader = null;
         _treeBuilder.reset();
+    }
+
+    /**
+     * Returns the results of the last rendering process. Information includes
+     * the total number of pages generated and the number of pages per
+     * page-sequence.
+     */
+    public FormattingResults getResults() {
+        try {
+            return _treeBuilder.getStreamRenderer().getResults();
+        } catch (NullPointerException e) {
+            return null;
+        }
     }
 
     public boolean hasData() {
@@ -483,19 +484,9 @@ public class Driver implements Loggable {
      */
     public synchronized void render(Document document)
     throws FOPException {
-
-        try {
-            DocumentInputSource source = new DocumentInputSource(document);
-            DocumentReader reader = new DocumentReader();
-            reader.setContentHandler(getContentHandler());
-            reader.parse(source);
-        } catch (SAXException e) {
-            throw new FOPException(e);
-        }
-        catch (IOException e) {
-            throw new FOPException(e);
-        }
-
+         DocumentInputSource source = new DocumentInputSource(document);
+         DocumentReader reader = new DocumentReader();
+         render(reader, source);
     }
 
     /**

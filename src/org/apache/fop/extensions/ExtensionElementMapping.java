@@ -21,12 +21,16 @@ public class ExtensionElementMapping implements ElementMapping {
 
     private static HashMap foObjs = null;
 
-    public synchronized void addToBuilder(TreeBuilder builder) {
+    private static synchronized void setupExt() {
         if(foObjs == null) {
             foObjs = new HashMap();    
             foObjs.put("outline", Outline.maker());
             foObjs.put("label", Label.maker());
         }
+    }
+
+    public void addToBuilder(TreeBuilder builder) {
+        setupExt();
         builder.addMapping(URI, foObjs);
 
 

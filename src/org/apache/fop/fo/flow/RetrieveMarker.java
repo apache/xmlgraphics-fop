@@ -72,7 +72,7 @@ public class RetrieveMarker extends FObjMixed {
             }
         }
 
-        Status status = new Status(Status.AREA_FULL_NONE);
+        Status status = new Status(Status.OK);
         if (null != bestMarker) {
             // System.out.println("Laying out marker '" + bestMarker + "' in area '" + area + "'");
             // the 'markers' referred to in this method are internal; they have

@@ -19,15 +19,15 @@
 		</fo:simple-page-master>
 
 		<fo:page-sequence-master master-name="repeating_pm">
-			<fo:repeatable-page-master-reference master-name="repeating"
+			<fo:repeatable-page-master-reference master-reference="repeating"
 				maximum-repeats="no-limit"/>
-			<fo:single-page-master-reference master-name="repeating"/>
+			<fo:single-page-master-reference master-reference="repeating"/>
 		</fo:page-sequence-master>
 	</fo:layout-master-set>
 	<!-- end: defines page layout -->
 
 	<!-- actual layout -->
-	<fo:page-sequence master-name="repeating_pm" initial-page-number="1">
+	<fo:page-sequence master-reference="repeating_pm" initial-page-number="1">
 
     <!-- header -->
 	<fo:static-content flow-name="xsl-region-before">

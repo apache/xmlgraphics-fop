@@ -7,8 +7,6 @@
 
 package org.apache.fop.svg;
 
-import org.apache.log.Logger;
-
 import org.apache.batik.bridge.*;
 import org.apache.batik.swing.svg.*;
 import org.apache.batik.swing.gvt.*;
@@ -16,6 +14,8 @@ import org.apache.batik.gvt.*;
 import org.apache.batik.gvt.renderer.*;
 import org.apache.batik.gvt.filter.*;
 import org.apache.batik.gvt.event.*;
+
+import org.apache.avalon.framework.logger.Logger;
 
 import org.w3c.dom.*;
 import org.w3c.dom.svg.*;
@@ -34,7 +34,7 @@ import java.awt.Point;
 import java.awt.RenderingHints;
 import java.awt.Dimension;
 
-public class SVGUserAgent implements UserAgent {
+public class SVGUserAgent extends UserAgentAdapter {
     AffineTransform currentTransform = null;
     Logger log;
 
@@ -80,6 +80,12 @@ public class SVGUserAgent implements UserAgent {
         // return 0.26458333333333333333333333333333f;    // 96dpi
     }
 
+    public float getPixelUnitToMillimeter() {
+        // this is set to 72dpi as the values in fo are 72dpi
+        return 0.35277777777777777778f; // 72 dpi
+        // return 0.26458333333333333333333333333333f;    // 96dpi
+    }
+
     /**
      * Returns the language settings.
      */
@@ -88,7 +94,7 @@ public class SVGUserAgent implements UserAgent {
     }
 
     public String getMedia() {
-        return "";
+        return "print";
     }
 
     /**
@@ -106,21 +112,6 @@ public class SVGUserAgent implements UserAgent {
         return org.apache.fop.apps.Driver.getParserClassName();
     }
 
-    /**
-     * Opens a link in a new component.
-     * @param doc The current document.
-     * @param uri The document URI.
-     */
-    public void openLink(SVGAElement elt) {
-    }
-
-
-    public Point getClientAreaLocationOnScreen() {
-        return new Point(0, 0);
-    }
-
-    public void setSVGCursor(java.awt.Cursor cursor) {}
-
     public AffineTransform getTransform() {
         return currentTransform;
     }
@@ -129,22 +120,9 @@ public class SVGUserAgent implements UserAgent {
         return new Dimension(100, 100);
     }
 
-    public EventDispatcher getEventDispatcher() {
-        return null;
+    public boolean isXMLParserValidating() {
+        return true;
     }
-
-    public boolean supportExtension(String str) {
-        return false;
-    }
-
-    public boolean hasFeature(String str) {
-        return false;
-    }
-
-    public void registerExtension(BridgeExtension be) {}
-
-    public void handleElement(Element elt, Object data) {}
-
 
 }
 

@@ -15,6 +15,8 @@ package org.apache.fop.apps;
  */
 import org.apache.fop.viewer.*;
 import org.apache.fop.render.awt.*;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 
 
 import javax.swing.UIManager;
@@ -49,6 +51,8 @@ public class AWTStarter extends CommandLineStarter {
 
     PreviewDialog frame;
     AWTRenderer renderer;
+    protected Driver driver;
+    protected XMLReader parser;
     public static String TRANSLATION_PATH =
         "/org/apache/fop/viewer/resources/";
 
@@ -60,7 +64,7 @@ public class AWTStarter extends CommandLineStarter {
         init();
     }
 
-    private void init() {
+    private void init() throws FOPException {
         try {
             UIManager.setLookAndFeel(new javax.swing.plaf.metal.MetalLookAndFeel());
         } catch (Exception e) {
@@ -88,29 +92,24 @@ public class AWTStarter extends CommandLineStarter {
         frame = createPreviewDialog(renderer, resource);
         renderer.setProgressListener(frame);
         renderer.setComponent(frame);
-    }
-
-
-    public void run() throws FOPException {
-        Driver driver = new Driver();
+        driver = new Driver();
         driver.setLogger(log);
         if (errorDump) {
             driver.setErrorDump(true);
         }
-
+        driver.setRenderer(renderer);
         // init parser
         frame.progress(resource.getString("Init parser") + " ...");
-        XMLReader parser = inputHandler.getParser();
-
+        parser = inputHandler.getParser();
         if (parser == null) {
             throw new FOPException("Unable to create SAX parser");
         }
+    }
 
-        setParserFeatures(parser);
 
+    public void run() throws FOPException {
+        driver.reset();
         try {
-            driver.setRenderer(renderer);
-
             // build FO tree: time
             frame.progress(resource.getString("Build FO tree") + " ...");
             driver.render(parser, inputHandler.getInputSource());
@@ -119,6 +118,7 @@ public class AWTStarter extends CommandLineStarter {
             frame.showPage();
 
         } catch (Exception e) {
+            frame.reportException(e);
             if (e instanceof FOPException) {
                 throw (FOPException)e;
             }
@@ -129,8 +129,13 @@ public class AWTStarter extends CommandLineStarter {
 
     protected PreviewDialog createPreviewDialog(AWTRenderer renderer,
             Translator res) {
-        PreviewDialog frame = new PreviewDialog(renderer, res);
+        PreviewDialog frame = new PreviewDialog(this, renderer, res);
         frame.validate();
+        frame.addWindowListener(new WindowAdapter() {
+                public void windowClosed(WindowEvent we) {
+                    System.exit(0);
+                }
+            });
 
         // center window
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
@@ -152,6 +157,15 @@ public class AWTStarter extends CommandLineStarter {
 
         try {
             URL url = getClass().getResource(path);
+
+            /* The following code was added by Alex Alishevskikh [alex@openmechanics.net]
+               to fix for crashes on machines with unsupported user languages */
+	    if (url == null) {
+                // if the given resource file not found, the english resource uses as default
+                path = path.substring(0, path.lastIndexOf(".")) + ".en";
+                url = getClass().getResource(path);
+	    }
+
             in = url.openStream();
         } catch (Exception ex) {
             log.error("Can't find URL to: <" + path + "> "

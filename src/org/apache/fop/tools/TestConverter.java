@@ -9,11 +9,10 @@ package org.apache.fop.tools;
 
 import org.apache.fop.apps.*;
 import org.apache.fop.configuration.*;
+import org.apache.fop.messaging.MessageHandler;
 
-import org.apache.log.*;
-import org.apache.log.format.*;
-import org.apache.log.output.io.*;
-import org.apache.log.output.*;
+import org.apache.avalon.framework.logger.ConsoleLogger;
+import org.apache.avalon.framework.logger.Logger;
 
 import java.io.*;
 import java.util.*;
@@ -88,16 +87,8 @@ public class TestConverter {
     }
 
     private void setupLogging() {
-        Hierarchy hierarchy = Hierarchy.getDefaultHierarchy();
-        PatternFormatter formatter = new PatternFormatter(
-           "[%{priority}]: %{message}\n%{throwable}" );
-
-        LogTarget target = null;
-        target = new StreamTarget(System.out, formatter);
-
-        hierarchy.setDefaultLogTarget(target);
-        log = hierarchy.getLoggerFor("test");
-        log.setPriority(Priority.ERROR);
+	log = new ConsoleLogger(ConsoleLogger.LEVEL_ERROR);
+	MessageHandler.setScreenLogger(log);	
     }
 
     public void setOutputPDF(boolean pdf) {

@@ -9,28 +9,21 @@ package org.apache.fop.render.svg;
 
 import org.apache.fop.layout.*;
 import org.apache.fop.layout.inline.*;
-import org.apache.fop.datatypes.*;
+import org.apache.fop.datatypes.IDReferences;
+import org.apache.fop.datatypes.ColorType;
 import org.apache.fop.image.*;
-import org.apache.fop.svg.*;
-import org.apache.fop.render.pdf.*;
-import org.apache.fop.render.awt.*;
-import org.apache.fop.viewer.*;
-import org.apache.fop.apps.*;
+import org.apache.fop.svg.SVGArea;
 import org.apache.fop.svg.SVGUtilities;
+import org.apache.fop.apps.FOPException;
 
-import org.w3c.dom.*;
-import org.w3c.dom.svg.*;
+import org.w3c.dom.Node;
+import org.w3c.dom.ProcessingInstruction;
+import org.w3c.dom.svg.SVGSVGElement;
+import org.w3c.dom.svg.SVGDocument;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.DOMImplementation;
 
-import org.apache.batik.bridge.*;
-import org.apache.batik.swing.svg.*;
-import org.apache.batik.swing.gvt.*;
-import org.apache.batik.gvt.*;
-import org.apache.batik.gvt.renderer.*;
-import org.apache.batik.gvt.filter.*;
-import org.apache.batik.gvt.event.*;
 import org.apache.batik.dom.svg.SVGDOMImplementation;
 import org.apache.batik.dom.svg.SVGOMElement;
 import org.apache.batik.dom.util.XMLSupport;
@@ -39,26 +32,19 @@ import org.apache.batik.transcoder.TranscoderInput;
 import org.apache.batik.transcoder.TranscoderOutput;
 import org.apache.batik.transcoder.TranscoderException;
 
-import java.awt.*;
+import java.awt.Color;
 import java.awt.Image;
-import java.awt.image.*;
-import java.awt.geom.*;
-import java.awt.font.*;
-import java.util.*;
+import java.awt.image.BufferedImage;
+import java.awt.geom.Rectangle2D;
+import java.util.Hashtable;
 import java.net.URL;
 import java.net.MalformedURLException;
-import java.io.*;
-import java.beans.*;
-import javax.swing.*;
-import java.awt.print.*;
-import java.awt.image.BufferedImage;
-import java.text.*;
+import java.io.OutputStream;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
+import javax.swing.ImageIcon;
 
 import org.apache.fop.render.AbstractRenderer;
-
-import org.apache.batik.util.SVGConstants;
-import org.apache.batik.svggen.SVGGraphics2D;
-import org.apache.batik.dom.svg.ExtensibleSVGDOMImplementation;
 
 public class SVGRenderer extends AbstractRenderer {
     static final String svgNS = SVGDOMImplementation.SVG_NAMESPACE_URI;
@@ -307,19 +293,13 @@ public class SVGRenderer extends AbstractRenderer {
 
         h = area.getContentHeight();
         int ry = this.currentYPosition;
-        ColorType bg = area.getBackgroundColor();
 
         rx = rx - area.getPaddingLeft();
         ry = ry + area.getPaddingTop();
         w = w + area.getPaddingLeft() + area.getPaddingRight();
         h = h + area.getPaddingTop() + area.getPaddingBottom();
 
-        // I'm not sure I should have to check for bg being null
-        // but I do
-        if ((bg != null) && (bg.alpha() == 0)) {
-            this.addRect(rx, ry, w, h, bg.red(), bg.green(), bg.blue(),
-                         bg.red(), bg.green(), bg.blue());
-        }
+	doBackground(area, rx, ry, w, h);
 
         rx = rx - area.getBorderLeftWidth();
         ry = ry + area.getBorderTopWidth();
@@ -365,7 +345,7 @@ public class SVGRenderer extends AbstractRenderer {
                                       a.getAllocationWidth(), a.getHeight());
     }
 
-    public void setupFontInfo(FontInfo fontInfo) {
+    public void setupFontInfo(FontInfo fontInfo) throws FOPException {
         // create a temp Image to test font metrics on
         BufferedImage fontImage =
             new BufferedImage(100, 100, BufferedImage.TYPE_INT_RGB);
@@ -375,6 +355,46 @@ public class SVGRenderer extends AbstractRenderer {
     public void renderDisplaySpace(DisplaySpace space) {
         int d = space.getSize();
         this.currentYPosition -= d;
+    }
+
+    /**
+     * Renders an image, scaling it to the given width and height.
+     * If the scaled width and height is the same intrinsic size
+     * of the image, the image is not scaled.
+     * 
+     * @param x the x position of left edge in millipoints
+     * @param y the y position of top edge in millipoints
+     * @param w the width in millipoints
+     * @param h the height in millipoints
+     * @param image the image to be rendered
+     * @param fs the font state to use when rendering text
+     *           in non-bitmapped images.
+     */
+    protected void drawImageScaled(int x, int y, int w, int h,
+				   FopImage image,
+				   FontState fs) {
+	// XXX: implement this
+    }
+    
+    /**
+     * Renders an image, clipping it as specified. 
+     * 
+     * @param x the x position of left edge in millipoints.
+     * @param y the y position of top edge in millipoints.
+     * @param clipX the left edge of the clip in millipoints
+     * @param clipY the top edge of the clip in millipoints
+     * @param clipW the clip width in millipoints
+     * @param clipH the clip height in millipoints
+     * @param fill the image to be rendered
+     * @param fs the font state to use when rendering text
+     *           in non-bitmapped images.
+     */
+    protected void drawImageClipped(int x, int y,
+				    int clipX, int clipY,
+				    int clipW, int clipH,
+				    FopImage image,
+				    FontState fs) {
+	// XXX: implement this
     }
 
     public void renderImageArea(ImageArea area) {

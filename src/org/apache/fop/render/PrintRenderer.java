@@ -13,13 +13,13 @@ package org.apache.fop.render;
 // FOP
 import org.apache.fop.pdf.PDFPathPaint;
 import org.apache.fop.pdf.PDFColor;
-import org.apache.fop.image.ImageArea;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.fo.properties.*;
 import org.apache.fop.layout.*;
 import org.apache.fop.layout.inline.*;
 import org.apache.fop.datatypes.*;
 import org.apache.fop.render.pdf.FontSetup;
+import org.apache.fop.apps.FOPException;
 
 import org.apache.fop.svg.SVGArea;
 
@@ -191,18 +191,13 @@ public abstract class PrintRenderer extends AbstractRenderer {
             rx += ((BlockArea)area).getStartIndent();
         h = area.getContentHeight();
         int ry = this.currentYPosition;
-        ColorType bg = area.getBackgroundColor();
 
         rx = rx - area.getPaddingLeft();
         ry = ry + area.getPaddingTop();
         w = w + area.getPaddingLeft() + area.getPaddingRight();
         h = h + area.getPaddingTop() + area.getPaddingBottom();
 
-        // I'm not sure I should have to check for bg being null
-        // but I do
-        if ((bg != null) && (bg.alpha() == 0)) {
-            this.addFilledRect(rx, ry, w, -h, new PDFColor(bg));
-        }
+	doBackground(area, rx, ry, w, h);
 
         // rx = rx - area.getBorderLeftWidth();
         // ry = ry + area.getBorderTopWidth();
@@ -258,13 +253,6 @@ public abstract class PrintRenderer extends AbstractRenderer {
         int d = space.getSize();
         this.currentYPosition -= d;
     }
-
-    /**
-     * render image area
-     * 
-     * @param area the image area to render
-     */
-    public abstract void renderImageArea(ImageArea area);
 
     /**
      * render a foreign object area
@@ -332,6 +320,8 @@ public abstract class PrintRenderer extends AbstractRenderer {
                         prevUnderlineXEndPos + space.getSize(),
                         prevUnderlineYEndPos, prevUnderlineSize,
                         prevUnderlineColor);
+                // save position for a following InlineSpace
+                prevUnderlineXEndPos = prevUnderlineXEndPos + space.getSize();
             }
         }
         if (space.getOverlined()) {
@@ -340,6 +330,7 @@ public abstract class PrintRenderer extends AbstractRenderer {
                         prevOverlineXEndPos + space.getSize(),
                         prevOverlineYEndPos, prevOverlineSize,
                         prevOverlineColor);
+                prevOverlineXEndPos = prevOverlineXEndPos + space.getSize();
             }
         }
         if (space.getLineThrough()) {
@@ -348,6 +339,7 @@ public abstract class PrintRenderer extends AbstractRenderer {
                         prevLineThroughXEndPos + space.getSize(),
                         prevLineThroughYEndPos, prevLineThroughSize,
                         prevLineThroughColor);
+                prevLineThroughXEndPos = prevLineThroughXEndPos + space.getSize();
             }
         }
     }
@@ -414,7 +406,7 @@ public abstract class PrintRenderer extends AbstractRenderer {
      * 
      * @param fontInfo font info to set up
      */
-    public void setupFontInfo(FontInfo fontInfo) {
+    public void setupFontInfo(FontInfo fontInfo) throws FOPException {
         this.fontInfo = fontInfo;
         FontSetup.setup(fontInfo);
     }

@@ -7,6 +7,9 @@
 
 package org.apache.fop.pdf;
 
+// Java
+import java.io.UnsupportedEncodingException;
+
 /**
  * class representing a /FileSpec object.
  *
@@ -41,7 +44,12 @@ public class PDFFileSpec extends PDFObject {
         String p = new String(this.number + " " + this.generation
                               + " obj\n<<\n/Type /FileSpec\n" + "/F ("
                               + this.filename + ")\n" + ">>\nendobj\n");
-        return p.getBytes();
+
+        try {
+            return p.getBytes(PDFDocument.ENCODING);
+        } catch (UnsupportedEncodingException ue) {
+            return p.getBytes();
+        }       
     }
 
     /*

@@ -8,6 +8,7 @@ package org.apache.fop.pdf;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 
 public class ASCIIHexFilter extends PDFFilter {
     private static final String ASCIIHEX_EOD = ">";
@@ -32,8 +33,11 @@ public class ASCIIHexFilter extends PDFFilter {
         }
         buffer.append(ASCIIHEX_EOD);
 
-        return buffer.toString().getBytes();
-
+        try {
+            return buffer.toString().getBytes(PDFDocument.ENCODING);
+        } catch (UnsupportedEncodingException ue) {
+            return buffer.toString().getBytes();
+        }       
     }
 
 }

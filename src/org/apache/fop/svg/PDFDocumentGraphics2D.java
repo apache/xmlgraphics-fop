@@ -56,7 +56,7 @@ public class PDFDocumentGraphics2D extends PDFGraphics2D {
      * @param height the height of the document
      */
     public PDFDocumentGraphics2D(boolean textAsShapes, OutputStream stream,
-                                 int width, int height) {
+                                 int width, int height) throws FOPException {
         super(textAsShapes);
 
         if (!textAsShapes) {

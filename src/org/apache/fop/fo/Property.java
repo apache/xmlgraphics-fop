@@ -7,15 +7,19 @@
 
 package org.apache.fop.fo;
 
+// FOP
 import org.apache.fop.datatypes.*;
 import org.apache.fop.fo.expr.Numeric;
 import org.apache.fop.fo.expr.PropertyParser;
 import org.apache.fop.fo.expr.PropertyInfo;
 import org.apache.fop.fo.expr.PropertyException;
 import org.apache.fop.apps.FOPException;
-import java.util.Vector;
 
-import org.apache.log.Logger;
+// Avalon
+import org.apache.avalon.framework.logger.Logger;
+
+// Java
+import java.util.Vector;
 
 public class Property {
 

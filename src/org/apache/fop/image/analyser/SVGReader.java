@@ -108,7 +108,7 @@ public class SVGReader extends AbstractImageReader {
         }
     }
 
-    protected class MUserAgent implements UserAgent {
+    protected class MUserAgent extends UserAgentAdapter {
         AffineTransform currentTransform = null;
 
         /**
@@ -148,6 +148,11 @@ public class SVGReader extends AbstractImageReader {
             return 0.35277777777777777778f; // 72 dpi
             // return 0.26458333333333333333333333333333f;    // 96dpi
         }
+        public float getPixelUnitToMillimeter() {
+            // this is set to 72dpi as the values in fo are 72dpi
+            return 0.35277777777777777778f; // 72 dpi
+            // return 0.26458333333333333333333333333333f;    // 96dpi
+        }
 
         /**
          * Returns the language settings.
@@ -157,9 +162,12 @@ public class SVGReader extends AbstractImageReader {
         }
 
         public String getMedia() {
-            return "";
+            return "print";
         }
 
+public boolean isXMLParserValidating() {
+return true;
+}
 
         /**
          * Returns the user stylesheet uri.
@@ -176,21 +184,6 @@ public class SVGReader extends AbstractImageReader {
             return org.apache.fop.apps.Driver.getParserClassName();
         }
 
-        /**
-         * Opens a link in a new component.
-         * @param doc The current document.
-         * @param uri The document URI.
-         */
-        public void openLink(SVGAElement elt) {
-        }
-
-        public Point getClientAreaLocationOnScreen() {
-            return new Point(0, 0);
-        }
-
-        public void setSVGCursor(java.awt.Cursor cursor) {}
-
-
         public AffineTransform getTransform() {
             return currentTransform;
         }
@@ -198,22 +191,6 @@ public class SVGReader extends AbstractImageReader {
         public Dimension2D getViewportSize() {
             return new Dimension(100, 100);
         }
-
-        public EventDispatcher getEventDispatcher() {
-            return null;
-        }
-
-        public boolean supportExtension(String str) {
-            return false;
-        }
-
-        public boolean hasFeature(String str) {
-            return false;
-        }
-
-        public void registerExtension(BridgeExtension be) {}
-
-        public void handleElement(Element elt, Object data) {}
 
     }
 

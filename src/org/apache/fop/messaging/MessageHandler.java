@@ -7,10 +7,11 @@
 
 package org.apache.fop.messaging;
 
+import org.apache.avalon.framework.logger.ConsoleLogger;
+import org.apache.avalon.framework.logger.Logger;
+
 import java.io.*;
 import java.util.*;
-
-import org.apache.log.*;
 
 /**
  * The class MessageHandler contains the static methods log and error which
@@ -47,6 +48,7 @@ public class MessageHandler {
     public static final int EVENT = 2;
     public static final int NONE = 3;    // this should always be the last method
 
+    private static Logger logger = null;
     private static String logfileName = "fop.log";
     private static PrintWriter writer;
     private static int outputMethod = SCREEN;
@@ -80,47 +82,47 @@ public class MessageHandler {
         }
     }
 
-    // temp workaround
-    private static Logger logger = null;
-
     /**
      * informs the user of the message
      * @param message the message for the user
      */
     public static void log(String message) {
-        if (!quiet) {
-            if(logger == null) {
-                logger = Hierarchy.getDefaultHierarchy().getLoggerFor("fop");
-            }
-            setMessage(message);
-            switch (outputMethod) {
-            case SCREEN:
-                logger.debug(getMessage());
-                break;
-            case FILE:
-                if (fileOpened) {
-                    writer.print(getMessage());
-                    writer.flush();
-                } else {
-                    openFile();
-                    writer.print(getMessage());
-                    writer.flush();
-                }
-                break;
-            case EVENT:
-                setMessage(message);
-                Enumeration enum = listeners.elements();
-                while (enum.hasMoreElements()) {
-                    ((MessageListener)enum.nextElement()).processMessage(new MessageEvent(getMessage()));
-                }
-                break;
-            case NONE:
-                // do nothing
-                break;
-            default:
-                logger.debug(message);
-            }
-        }
+        if (quiet)
+	    return;
+
+	if (logger == null) {
+	    logger = new ConsoleLogger(ConsoleLogger.LEVEL_INFO);
+	    logger.warn("Screen logger not set.");
+	}
+	
+	setMessage(message);
+	switch (outputMethod) {
+	case SCREEN:
+	    logger.debug(getMessage());
+	    break;
+	case FILE:
+	    if (fileOpened) {
+		writer.print(getMessage());
+		writer.flush();
+	    } else {
+		openFile();
+		writer.print(getMessage());
+		writer.flush();
+	    }
+	    break;
+	case EVENT:
+	    setMessage(message);
+	    Enumeration enum = listeners.elements();
+	    while (enum.hasMoreElements()) {
+		((MessageListener)enum.nextElement()).processMessage(new MessageEvent(getMessage()));
+	    }
+	    break;
+	case NONE:
+	    // do nothing
+	    break;
+	default:
+	    logger.debug(message);
+	}
     }
 
     /**
@@ -137,9 +139,11 @@ public class MessageHandler {
      */
 
     public static void error(String errorMessage) {
-        if(logger == null) {
-            logger = Hierarchy.getDefaultHierarchy().getLoggerFor("fop");
-        }
+	if (logger == null) {
+	    logger = new ConsoleLogger(ConsoleLogger.LEVEL_INFO);
+	    logger.warn("Screen logger not set.");
+	}
+
         setMessage(errorMessage);
         switch (outputMethod) {
         case SCREEN:
@@ -194,6 +198,16 @@ public class MessageHandler {
      */
     public static void removeListener(MessageListener listener) {
         listeners.removeElement(listener);
+    }
+
+    /**
+     * Sets the Logger used for the screen output method.
+     * @param newLogger a logger for screen output. This may not be null.
+     */
+    public static void setScreenLogger(Logger newLogger) {
+	if (newLogger == null)
+	    throw new NullPointerException();
+	logger = newLogger;
     }
 
     /**

@@ -12,7 +12,6 @@ import java.awt.geom.AffineTransform;
 
 import org.apache.batik.bridge.*;
 
-import org.apache.batik.css.HiddenChildElementSupport;
 import org.apache.batik.gvt.CompositeGraphicsNode;
 import org.apache.batik.gvt.GraphicsNode;
 

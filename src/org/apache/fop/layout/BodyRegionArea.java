@@ -25,9 +25,12 @@ public class BodyRegionArea extends RegionArea {
     }
 
     public BodyAreaContainer makeBodyAreaContainer() {
-        return new BodyAreaContainer(null, xPosition, yPosition, width,
-                                     height, Position.ABSOLUTE, columnCount,
-                                     columnGap);
+        BodyAreaContainer area =
+	    new BodyAreaContainer(null, xPosition, yPosition, width,
+				  height, Position.ABSOLUTE, columnCount,
+				  columnGap);
+	area.setBackground(getBackground());
+	return area;
     }
 
     public void setColumnCount(int columnCount) {

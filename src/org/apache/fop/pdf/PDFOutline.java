@@ -7,6 +7,8 @@
 
 package org.apache.fop.pdf;
 
+// Java
+import java.io.UnsupportedEncodingException;
 import java.util.Vector;
 
 
@@ -142,8 +144,12 @@ public class PDFOutline extends PDFObject {
 
         }
         result.append(">> endobj\n");
-        return result.toString().getBytes();
 
+        try {
+            return result.toString().getBytes(PDFDocument.ENCODING);
+        } catch (UnsupportedEncodingException ue) {
+            return result.toString().getBytes();
+        }       
     }
 
     /**

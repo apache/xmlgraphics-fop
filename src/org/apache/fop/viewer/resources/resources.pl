@@ -1,16 +1,16 @@
 File=Plik
 Print=Drukuj
-Exit=Zakoñcz
+Exit=ZakoÃ±cz
 View=Widok
 First page=Pierwsza strona
 Previous page=Poprzednia strona
-Next page=Nastêpna strona
+Next page=NastÃªpna strona
 Last page=Ostatnia strona
-Zoom=Powiêkszenie
-Default zoom=Domy¶lne powiekszenie
+Zoom=PowiÃªkszenie
+Default zoom=DomyÂ¶lne powiekszenie
 Help=Pomoc
 Index=Indeks
-Introduction=Wstêp
+Introduction=WstÃªp
 About=O programie
 Page=Strona
 

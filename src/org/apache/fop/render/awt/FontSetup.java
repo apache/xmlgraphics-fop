@@ -11,12 +11,17 @@ package org.apache.fop.render.awt;
 import org.apache.fop.messaging.MessageHandler;
 import org.apache.fop.layout.FontInfo;
 import org.apache.fop.layout.FontDescriptor;
+import org.apache.fop.configuration.Configuration;
+import org.apache.fop.configuration.FontTriplet;
+import org.apache.fop.apps.FOPException;
+
 
 // Java
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.awt.Font;
 import java.awt.Graphics2D;
+import java.util.Vector;
 
 /**
  * sets up the AWT fonts. It is similar to
@@ -26,6 +31,14 @@ import java.awt.Graphics2D;
  */
 public class FontSetup {
 
+    /** Regular */
+    private static int normal = java.awt.Font.PLAIN;
+    /** Bold */
+    private static int bold = java.awt.Font.BOLD;
+    /** Italic */
+    private static int italic = java.awt.Font.ITALIC;
+    /** BoldItalic */
+    private static int bolditalic = java.awt.Font.BOLD + java.awt.Font.ITALIC;
 
     /**
      * sets up the font info object.
@@ -37,9 +50,10 @@ public class FontSetup {
      * @param parent needed, since a live AWT component is needed
      * to get a valid java.awt.FontMetrics object
      */
-    public static void setup(FontInfo fontInfo, Graphics2D graphics) {
+    public static void setup(FontInfo fontInfo, Graphics2D graphics)
+        throws FOPException {
+
         FontMetricsMapper metric;
-        int normal, bold, bolditalic, italic;
 
         MessageHandler.logln("setting up fonts");
 
@@ -49,10 +63,6 @@ public class FontSetup {
          * SansSerif - bold, normal, italic, bold-italic
          * MonoSpaced - bold, normal, italic, bold-italic
          */
-        normal = java.awt.Font.PLAIN;
-        bold = java.awt.Font.BOLD;
-        italic = java.awt.Font.ITALIC;
-        bolditalic = java.awt.Font.BOLD + java.awt.Font.ITALIC;
 
         metric = new FontMetricsMapper("SansSerif", normal, graphics);
         // --> goes to  F1
@@ -172,8 +182,78 @@ public class FontSetup {
         fontInfo.addFontProperties("F8", "Times Roman", "italic", "bold");
         fontInfo.addFontProperties("F9", "Computer-Modern-Typewriter",
                                    "normal", "normal");
+
+        /* Add configured fonts */
+        addConfiguredFonts(fontInfo, 15, graphics);
     }
 
+    /**
+     * Add fonts from configuration file starting with
+     * internalnames F<num>
+     */
+    public static void addConfiguredFonts(
+                             FontInfo fontInfo, int num, Graphics2D graphics)
+                             throws FOPException {
+        FontMetricsMapper metric;
+        String internalName = null;
+
+        Vector fontInfos = Configuration.getFonts();
+        if (fontInfos == null)
+            return;
+
+        for (Enumeration e = fontInfos.elements(); e.hasMoreElements(); ) {
+            org.apache.fop.configuration.FontInfo configFontInfo =
+                (org.apache.fop.configuration.FontInfo)e.nextElement();
+
+            try {
+                String metricsFile = configFontInfo.getMetricsFile();
+                if (metricsFile != null) {
+                    internalName = "F" + num;
+                    num++;
+                    
+                    Vector triplets = configFontInfo.getFontTriplets();
+                    for (Enumeration t = triplets.elements();
+                            t.hasMoreElements(); ) {
+                        FontTriplet triplet = (FontTriplet)t.nextElement();
+                        boolean embed = configFontInfo.getEmbedFile() != null;
+                        // if embed font is not specified, use system "Dialog"
+                        // logical font name for each Locale.
+                        String family = embed ? triplet.getName() : "Dialog";
+                        metric = new FontMetricsMapper(family,
+                                                       getFontMetrics(triplet),
+                                                       graphics);
+                        if (embed)
+                            metric.setEmbedFont(configFontInfo.getEmbedFile());
+                        fontInfo.addMetrics(internalName, metric);
+                        fontInfo.addFontProperties(internalName,
+                                                   triplet.getName(),
+                                                   triplet.getStyle(),
+                                                   triplet.getWeight());
+                    }
+                }
+            } catch (Exception ex) {
+                MessageHandler.error("Failed to read font metrics file "
+                                     + configFontInfo.getMetricsFile()
+                                     + " : " + ex.getMessage());
+            }
+        }
+    }
+
+    /**
+     * Return configured font metrics value.
+     */
+    private static int getFontMetrics(FontTriplet triplet) {
+        boolean isBold = ("bold".equalsIgnoreCase(triplet.getWeight()));
+        boolean isItalic = ("italic".equalsIgnoreCase(triplet.getStyle()));
+        if (isBold && isItalic) {
+            return bolditalic;
+        } else if (isBold) {
+            return bold;
+        } else if (isItalic) {
+            return italic;
+        }
+        return normal;
+    }
 }
 
 

@@ -32,6 +32,8 @@ import java.net.URL;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.apache.fop.apps.FOPException;
+
 import org.apache.batik.transcoder.*;
 
 import org.apache.batik.bridge.BridgeContext;
@@ -40,7 +42,6 @@ import org.apache.batik.bridge.GVTBuilder;
 import org.apache.batik.bridge.UserAgent;
 import org.apache.batik.bridge.ViewBox;
 
-import org.apache.batik.dom.svg.DefaultSVGContext;
 import org.apache.batik.dom.svg.SAXSVGDocumentFactory;
 import org.apache.batik.dom.svg.SVGDOMImplementation;
 import org.apache.batik.dom.svg.SVGOMDocument;
@@ -94,9 +95,6 @@ import org.w3c.dom.Document;
 import org.w3c.dom.svg.SVGAElement;
 import org.w3c.dom.svg.SVGDocument;
 import org.w3c.dom.svg.SVGSVGElement;
-
-// <!> FIXME : Those import clauses will change with new design
-import org.apache.batik.gvt.renderer.StaticRendererFactory;
 
 /**
  * This class enables to transcode an input to a pdf document.
@@ -155,7 +153,8 @@ public class PDFTranscoder extends XMLAbstractTranscoder {
      * @exception TranscoderException if an error occured while transcoding
      */
     protected void transcode(Document document, String uri,
-                             TranscoderOutput output) throws TranscoderException {
+                             TranscoderOutput output) 
+                             throws TranscoderException {
 
         if (!(document instanceof SVGOMDocument)) {
             throw new TranscoderException(Messages.formatMessage("notsvg",
@@ -165,9 +164,6 @@ public class PDFTranscoder extends XMLAbstractTranscoder {
         SVGSVGElement root = svgDoc.getRootElement();
         // initialize the SVG document with the appropriate context
         String parserClassname = (String)hints.get(KEY_XML_PARSER_CLASSNAME);
-        DefaultSVGContext svgCtx = new DefaultSVGContext();
-        svgCtx.setPixelToMM(userAgent.getPixelToMM());
-        ((SVGOMDocument)document).setSVGContext(svgCtx);
 
         boolean stroke = true;
         if (hints.containsKey(KEY_STROKE_TEXT)) {
@@ -176,7 +172,6 @@ public class PDFTranscoder extends XMLAbstractTranscoder {
 
         // build the GVT tree
         GVTBuilder builder = new GVTBuilder();
-        ImageRendererFactory rendFactory = new StaticRendererFactory();
         BridgeContext ctx = new BridgeContext(userAgent);
         TextPainter textPainter = null;
         textPainter = new StrokingTextPainter();
@@ -267,8 +262,13 @@ public class PDFTranscoder extends XMLAbstractTranscoder {
         int w = (int)width;
         int h = (int)height;
 
-        PDFDocumentGraphics2D graphics = new PDFDocumentGraphics2D(stroke,
+        PDFDocumentGraphics2D graphics;
+        try {
+            graphics = new PDFDocumentGraphics2D(stroke,
                 output.getOutputStream(), w, h);
+        } catch (FOPException ex) {
+            throw new TranscoderException(ex);
+        }
         graphics.setSVGDimension(docWidth, docHeight);
         currentTransform.setTransform(1, 0, 0, -1, 0, height);
         if (!stroke) {
@@ -311,7 +311,11 @@ public class PDFTranscoder extends XMLAbstractTranscoder {
     /**
      * A user agent implementation for <tt>ImageTranscoder</tt>.
      */
-    protected class ImageTranscoderUserAgent implements UserAgent {
+    protected class ImageTranscoderUserAgent extends UserAgentAdapter {
+
+    public boolean isXMLParserValidating() {
+        return true;
+    }
 
         /**
          * Returns the default size of this user agent (400x400).
@@ -379,9 +383,8 @@ public class PDFTranscoder extends XMLAbstractTranscoder {
         }
 
         public String getMedia() {
-            return "";
+            return "print";
         }
-
 
         /**
          * Returns the user stylesheet specified in the
@@ -402,68 +405,6 @@ public class PDFTranscoder extends XMLAbstractTranscoder {
             }
         }
 
-        /**
-         * Unsupported operation.
-         */
-        public EventDispatcher getEventDispatcher() {
-            return null;
-        }
-
-        /**
-         * Unsupported operation.
-         */
-        public void openLink(SVGAElement elt) {}
-
-        /**
-         * Unsupported operation.
-         */
-        public void setSVGCursor(Cursor cursor) {}
-
-        /**
-         * Unsupported operation.
-         */
-        public void runThread(Thread t) {}
-
-        /**
-         * Unsupported operation.
-         */
-        public AffineTransform getTransform() {
-            return null;
-        }
-
-        /**
-         * Unsupported operation.
-         */
-        public Point getClientAreaLocationOnScreen() {
-            return new Point();
-        }
-
-        /**
-         * Tells whether the given feature is supported by this
-         * user agent.
-         */
-        public boolean hasFeature(String s) {
-            return FEATURES.contains(s);
-        }
-
-        /**
-         * Tells whether the given extension is supported by this
-         * user agent.
-         */
-        public boolean supportExtension(String s) {
-            return false;
-        }
-
-        public void registerExtension(BridgeExtension be) {}
-
-        public void handleElement(Element elt, Object data) {}
-
     }
 
-    protected final static Set FEATURES = new HashSet();
-    static {
-        FEATURES.add(SVGConstants.SVG_ORG_W3C_SVG_FEATURE);
-        FEATURES.add(SVGConstants.SVG_ORG_W3C_SVG_LANG_FEATURE);
-        FEATURES.add(SVGConstants.SVG_ORG_W3C_SVG_STATIC_FEATURE);
-    }
 }
