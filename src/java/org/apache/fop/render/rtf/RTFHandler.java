@@ -216,7 +216,7 @@ public class RTFHandler extends FOInputHandler {
                 if (pagemaster != null) {
                     sect.getRtfAttributes().set(
                         PageAttributesConverter.convertPageAttributes(
-                            pagemaster.propertyList, null));
+                                pagemaster));
                 }
             }
 

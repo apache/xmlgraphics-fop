@@ -84,11 +84,16 @@ extends RtfContainer {
     public static final String MARGIN_LEFT = "margl";
     /** constant for right margin */
     public static final String MARGIN_RIGHT = "margr";
+    
+    /** constant for header position */
+    public static final String HEADERY = "headery";
+    /** constant for footer position */
+    public static final String FOOTERY = "footery";
 
     /** String array of RtfPage attributes */
     public static final String[] PAGE_ATTR = new String[]{
         PAGE_WIDTH, PAGE_HEIGHT, MARGIN_TOP, MARGIN_BOTTOM,
-        MARGIN_LEFT, MARGIN_RIGHT
+        MARGIN_LEFT, MARGIN_RIGHT, HEADERY, FOOTERY
     };
 
     /**    RtfPage creates new page attributes with the parent container, the writer
