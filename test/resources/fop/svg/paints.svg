@@ -8,7 +8,7 @@
 <text x="20" y="20" style="font-size:18">Paints - Patterns &amp; Gradients</text>
 
 <text x="10" y="35" style="font-size:12">Gradient</text>
-<g>
+
 <defs>
         <linearGradient id="grad1" x1="0" y1="0" x2="1" y2="0">
                 <stop offset="0" style="stop-color:crimson" />
@@ -33,10 +33,9 @@
     <rect x="15" y="195" width="100" height="75" style="fill:url(#grad3)" />
     <rect x="15" y="275" width="100" height="75" style="fill:url(#rad)" />
 
-</g>
 
 <text x="120" y="35" style="font-size:12">Pattern</text>
-<g> 
+
 <defs>
         <pattern id="pat1" x="0" y="0" width=".75" height="50%">
             <circle cx="10" cy="10" r="10" style="fill:red" />
@@ -49,6 +48,7 @@
         <pattern id="pat3" x="0" y="0" width=".3" height="50%" patternTransform="matrix(1, 0.3, -0.5, 1, 5, 10)">
             <circle cx="10" cy="10" r="10" style="fill:red" />
             <rect x="10" y="10" width="15" height="15" style="fill:green"/>
+            <text x="5" y="10" style="font-size:10">Patt</text>
         </pattern>
         <pattern id="see" x="0" y="0" width="25" height="25" patternUnits="userSpaceOnUse">
             <circle cx="10" cy="10" r="10" style="fill:red" />
@@ -60,7 +60,23 @@
     <rect x="125" y="195" width="100" height="75" style="fill:url(#pat3)" />
     <rect x="125" y="275" width="100" height="75" style="fill:url(#see)" />
 
-</g>
+<defs>
+        <pattern id="patgrad1" x="0" y="0" width="20" height="20" patternUnits="userSpaceOnUse">
+            <circle cx="10" cy="10" r="10" style="fill:url(#grad1)" />
+        </pattern>
+        <pattern id="patpat2" x="0" y="0" width="20" height="20" patternUnits="userSpaceOnUse">
+            <circle cx="10" cy="10" r="10" style="fill:url(#pat2)" />
+        </pattern>
+        <pattern id="patimage3" x="0" y="0" width="20" height="20" patternUnits="userSpaceOnUse">
+            <image x="0" y="0" width="10" height="10" xlink:href="logo.jpg"/>
+        </pattern>
+</defs>
+
+<text x="230" y="35" style="font-size:12">Pattern in Pattern</text>
+
+    <rect x="235" y="40" width="100" height="75" style="fill:url(#patgrad1)" />
+    <rect x="235" y="117.5" width="100" height="75" style="fill:url(#patpat2)" />
+    <rect x="235" y="195" width="100" height="75" style="fill:url(#patimage3)" />
 
 </g>
 
