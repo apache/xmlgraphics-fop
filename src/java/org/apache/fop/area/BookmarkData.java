@@ -179,7 +179,6 @@ public class BookmarkData extends OffDocumentItem implements Resolvable {
                 pageRef = (PageViewport)pages.get(0);
             }
             // TODO get rect area of id on page
-
             idRefs.remove(idRef);
             checkFinish();
         }

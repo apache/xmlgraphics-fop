@@ -48,8 +48,10 @@ public class PageViewport implements Resolvable, Cloneable {
     private Map idReferences = null;
 
     // this keeps a list of currently unresolved areas or extensions
-    // once the thing is resolved it is removed
+    // once an idref is resolved it is removed
     // when this is empty the page can be rendered
+    private Map unresolvedIDRefs = new HashMap();
+    
     private Map unresolved = null;
 
     private Map pendingResolved = null;
@@ -131,14 +133,14 @@ public class PageViewport implements Resolvable, Cloneable {
      * @param id the id of the reference
      * @param res the resolver of the reference
      */
-    public void addUnresolvedIDRef(String id, Resolvable res) {
-        if (unresolved == null) {
-            unresolved = new HashMap();
+    public void addUnresolvedIDRef(String idref, Resolvable res) {
+        if (unresolvedIDRefs == null) {
+            unresolvedIDRefs = new HashMap();
         }
-        List list = (List)unresolved.get(id);
+        List list = (List)unresolvedIDRefs.get(idref);
         if (list == null) {
             list = new ArrayList();
-            unresolved.put(id, list);
+            unresolvedIDRefs.put(idref, list);
         }
         list.add(res);
     }
@@ -148,7 +150,7 @@ public class PageViewport implements Resolvable, Cloneable {
      * @return true if the page is resolved and can be rendered
      */
     public boolean isResolved() {
-        return unresolved == null;
+        return unresolvedIDRefs == null;
     }
 
     /**
@@ -169,8 +171,8 @@ public class PageViewport implements Resolvable, Cloneable {
             }
             pendingResolved.put(id, pages);
         } else {
-            if (unresolved != null) {
-                List todo = (List)unresolved.get(id);
+            if (unresolvedIDRefs != null) {
+                List todo = (List)unresolvedIDRefs.get(id);
                 if (todo != null) {
                     for (int count = 0; count < todo.size(); count++) {
                         Resolvable res = (Resolvable)todo.get(count);
@@ -179,10 +181,10 @@ public class PageViewport implements Resolvable, Cloneable {
                 }
             }
         }
-        if (unresolved != null) {
-            unresolved.remove(id);
-            if (unresolved.isEmpty()) {
-                unresolved = null;
+        if (unresolvedIDRefs != null) {
+            unresolvedIDRefs.remove(id);
+            if (unresolvedIDRefs.isEmpty()) {
+                unresolvedIDRefs = null;
             }
         }
     }
