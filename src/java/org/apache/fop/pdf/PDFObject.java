@@ -37,7 +37,7 @@ import org.apache.commons.logging.LogFactory;
 public abstract class PDFObject {
 
     /** logger for all PDFObjects (and descendants) */
-    protected static Log log = LogFactory.getLog(PDFObject.class.getPackage().getName());
+    protected static Log log = LogFactory.getLog(PDFObject.class.getName());
 
     /**
      * the object's number
@@ -53,13 +53,6 @@ public abstract class PDFObject {
      * the parent PDFDocument
      */
     private PDFDocument document;
-
-    /**
-     * Create a PDFObject
-     */
-    public PDFObject() {
-        // do nothing
-    }
 
     /**
      * Returns the object's number.

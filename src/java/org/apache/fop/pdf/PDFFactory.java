@@ -92,7 +92,7 @@ public class PDFFactory {
      * @return a new PDF Pages object for adding pages to
      */
     public PDFPages makePages() {
-        PDFPages pdfPages = new PDFPages(++this.document.objectcount);
+        PDFPages pdfPages = new PDFPages(++(this.document.objectcount));
         getDocument().addTrailerObject(pdfPages);
         return pdfPages;
     }
