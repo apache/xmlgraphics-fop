@@ -28,8 +28,8 @@ import org.apache.fop.datastructs.Node;
 public class BlockArea extends Area {
 
     /**
-     * @param parent
-     * @param index
+     * @param parent of this node
+     * @param index of this in children of parent
      * @throws IndexOutOfBoundsException
      */
     public BlockArea(Node parent, int index, Object areaSync)
@@ -39,7 +39,7 @@ public class BlockArea extends Area {
     }
 
     /**
-     * @param parent
+     * @param parent of this node
      * @throws IndexOutOfBoundsException
      */
     public BlockArea(Node parent, Object areaSync)

@@ -40,8 +40,8 @@ public class SyncedNode extends Node {
     }
 
     /**
-     * @param parent
-     * @param index
+     * @param parent <code>Node</code> of this
+     * @param index of this in children of parent
      * @param sync the object on which synchronization for this
      * node will occur
      * @throws IndexOutOfBoundsException

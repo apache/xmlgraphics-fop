@@ -37,8 +37,8 @@ public class Area extends SyncedNode {
     protected Integer bPDimMin = null;
     
     /**
-     * @param parent
-     * @param index
+     * @param parent <code>Node</code> of this
+     * @param index of this in children of parent
      * @throws IndexOutOfBoundsException
      */
     public Area(Node parent, int index, Object areaSync)
@@ -48,7 +48,7 @@ public class Area extends SyncedNode {
     }
 
     /**
-     * @param parent
+     * @param parent <code>Node</code> of this
      * @throws IndexOutOfBoundsException
      */
     public Area(Node parent, Object areaSync)
