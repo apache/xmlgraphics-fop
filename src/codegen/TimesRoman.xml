@@ -2,7 +2,7 @@
 <font-metrics>
    <font-name>Times-Roman</font-name>
    <class-name>TimesRoman</class-name>
-   <encoding>WinAnsiEncoding</encoding>
+   <encoding>StandardEncoding</encoding>
    <cap-height>662</cap-height>
    <x-height>450</x-height>
    <ascender>683</ascender>

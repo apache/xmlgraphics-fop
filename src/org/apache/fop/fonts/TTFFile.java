@@ -224,29 +224,21 @@ public class TTFFile {
 
 
                             // Also add winAnsiWidth
-                            if (false) {
-                                int d = j;
-                                if (j > 127)
-                                    d = (int)org.apache.fop.render.pdf.CodePointMapping.map[j];
-                                if (d < ansiWidth.length)
-                                    ansiWidth[d] = mtx_tab[glyphIdx].wx;
-                            } else {
-                                ArrayList v =
-                                    (ArrayList)ansiIndex.get(new Integer(j));
-                                if (v != null) {
-                                    for (Iterator e = v.listIterator();
-                                            e.hasNext(); ) {
-                                        Integer aIdx =
-                                            (Integer)e.next();
-                                        ansiWidth[aIdx.intValue()] =
-                                            mtx_tab[glyphIdx].wx;
-                                        /*
-                                         * System.out.println("Added width "+
-                                         * mtx_tab[glyphIdx].wx +
-                                         * " uni: " + j +
-                                         * " ansi: " + aIdx.intValue());
-                                         */
-                                    }
+                            ArrayList v =
+                                (ArrayList)ansiIndex.get(new Integer(j));
+                            if (v != null) {
+                                for (Iterator e = v.listIterator();
+                                        e.hasNext(); ) {
+                                    Integer aIdx =
+                                        (Integer)e.next();
+                                    ansiWidth[aIdx.intValue()] =
+                                        mtx_tab[glyphIdx].wx;
+                                    /*
+                                     * System.out.println("Added width "+
+                                     * mtx_tab[glyphIdx].wx +
+                                     * " uni: " + j +
+                                     * " ansi: " + aIdx.intValue());
+                                     */
                                 }
                             }
                             /*
@@ -281,24 +273,15 @@ public class TTFFile {
 
 
                             // Also add winAnsiWidth
-                            if (false) {
-                                int d = j;
-                                if (j > 127)
-                                    d = (int)org.apache.fop.render.pdf.CodePointMapping.map[j];
-
-                                if (d < ansiWidth.length)
-                                    ansiWidth[d] = mtx_tab[glyphIdx].wx;
-                            } else {
-                                ArrayList v =
-                                    (ArrayList)ansiIndex.get(new Integer(j));
-                                if (v != null) {
-                                    for (Iterator e = v.listIterator();
-                                            e.hasNext(); ) {
-                                        Integer aIdx =
-                                            (Integer)e.next();
-                                        ansiWidth[aIdx.intValue()] =
-                                            mtx_tab[glyphIdx].wx;
-                                    }
+                            ArrayList v =
+                                (ArrayList)ansiIndex.get(new Integer(j));
+                            if (v != null) {
+                                for (Iterator e = v.listIterator();
+                                        e.hasNext(); ) {
+                                    Integer aIdx =
+                                        (Integer)e.next();
+                                    ansiWidth[aIdx.intValue()] =
+                                        mtx_tab[glyphIdx].wx;
                                 }
                             }
 

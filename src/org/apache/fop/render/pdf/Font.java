@@ -33,20 +33,9 @@ public abstract class Font implements FontMetric {
     }
 
     /**
-     * Provide a default mapping
+     * map a Unicode character to a code point in the font
      */
-    public char mapChar(char c) {
-        // Use default CodePointMapping
-        if (c > 127) {
-            char d = org.apache.fop.render.pdf.CodePointMapping.map[c];
-            if (d != 0) {
-                c = d;
-            } else {
-                c = '#';
-            }
-        }
-        return c;
-    }
+    public abstract char mapChar(char c);
 
     public boolean isMultiByte() {
         return false;

@@ -8,6 +8,7 @@
 package org.apache.fop.render.pdf.fonts;
 
 import org.apache.fop.render.pdf.Font;
+import org.apache.fop.render.pdf.CodePointMapping;
 import org.apache.fop.layout.FontDescriptor;
 import org.apache.fop.fonts.Glyphs;
 import org.apache.fop.pdf.PDFStream;
@@ -24,6 +25,8 @@ import java.util.HashMap;
 public class SingleByteFont extends Font implements FontDescriptor {
     public String fontName = null;
     public String encoding = "WinAnsiEncoding";
+    private final CodePointMapping mapping
+        = CodePointMapping.getMapping("WinAnsiEncoding");
 
     public int capHeight = 0;
     public int xHeight = 0;
@@ -235,6 +238,14 @@ public class SingleByteFont extends Font implements FontDescriptor {
         for (int i = 0; i < arr.length; i++)
             arr[i] *= size;
         return arr;
+    }
+
+    public char mapChar(char c) {
+        char d = mapping.mapChar(c);
+	if(d != 0)
+            return d;
+        else
+	    return '#';
     }
 
 }

@@ -2,7 +2,7 @@
 <font-metrics>
    <font-name>Helvetica</font-name>
    <class-name>Helvetica</class-name>
-   <encoding>WinAnsiEncoding</encoding>
+   <encoding>StandardEncoding</encoding>
    <cap-height>718</cap-height>
    <x-height>523</x-height>
    <ascender>718</ascender>

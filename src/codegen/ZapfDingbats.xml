@@ -1,7 +1,7 @@
 <font-metrics>
   <font-name>ZapfDingbats</font-name>
   <class-name>ZapfDingbats</class-name>
-  <encoding>StandardEncoding</encoding>
+  <encoding>ZapfDingbatsEncoding</encoding>
   <cap-height>820</cap-height> 
   <x-height>426</x-height>
   <ascender>820</ascender>

@@ -2,7 +2,7 @@
 <font-metrics>
    <font-name>Helvetica-Oblique</font-name>
    <class-name>HelveticaOblique</class-name>
-   <encoding>WinAnsiEncoding</encoding>
+   <encoding>StandardEncoding</encoding>
    <cap-height>718</cap-height>
    <x-height>523</x-height>
    <ascender>718</ascender>

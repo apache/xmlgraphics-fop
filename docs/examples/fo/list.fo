@@ -89,7 +89,7 @@
         <fo:list-item>
           <!-- insert a bullet -->
           <fo:list-item-label end-indent="label-end()">
-            <fo:block><fo:inline font-family="Symbol">&#183;</fo:inline></fo:block>
+            <fo:block><fo:inline font-family="Symbol">&#x2022;</fo:inline></fo:block>
           </fo:list-item-label>
           <!-- list text --> 
           <fo:list-item-body start-indent="body-start()">
@@ -103,7 +103,7 @@
         <fo:list-item>
           <!-- insert a bullet -->
           <fo:list-item-label end-indent="label-end()">
-            <fo:block><fo:inline font-family="Symbol">&#183;</fo:inline></fo:block>
+            <fo:block><fo:inline font-family="Symbol">&#x2022;</fo:inline></fo:block>
           </fo:list-item-label>
           <!-- list text --> 
           <fo:list-item-body start-indent="body-start()">
@@ -117,7 +117,7 @@
         <fo:list-item>
           <!-- insert a bullet -->
           <fo:list-item-label end-indent="label-end()">
-            <fo:block><fo:inline font-family="Symbol">&#183;</fo:inline></fo:block>
+            <fo:block><fo:inline font-family="Symbol">&#x2022;</fo:inline></fo:block>
           </fo:list-item-label>
           <!-- list text --> 
           <fo:list-item-body start-indent="body-start()">
@@ -131,7 +131,7 @@
         <fo:list-item>
           <!-- insert a bullet -->
           <fo:list-item-label end-indent="label-end()">
-            <fo:block><fo:inline font-family="Symbol">&#183;</fo:inline></fo:block>
+            <fo:block><fo:inline font-family="Symbol">&#x2022;</fo:inline></fo:block>
           </fo:list-item-label>
           <!-- list text --> 
           <fo:list-item-body start-indent="body-start()">
@@ -145,7 +145,7 @@
         <fo:list-item>
           <!-- insert a bullet -->
           <fo:list-item-label end-indent="label-end()">
-            <fo:block><fo:inline font-family="Symbol">&#183;</fo:inline></fo:block>
+            <fo:block><fo:inline font-family="Symbol">&#x2022;</fo:inline></fo:block>
           </fo:list-item-label>
           <!-- list text --> 
           <fo:list-item-body start-indent="body-start()">
@@ -255,7 +255,7 @@
         <fo:list-item>
           <!-- insert a bullet -->
           <fo:list-item-label end-indent="label-end()">
-            <fo:block><fo:inline font-size="10pt" font-family="Symbol">&#183;</fo:inline></fo:block>
+            <fo:block><fo:inline font-size="10pt" font-family="Symbol">&#x2022;</fo:inline></fo:block>
           </fo:list-item-label>
           <!-- list text --> 
           <fo:list-item-body start-indent="body-start()">
@@ -269,7 +269,7 @@
         <fo:list-item>
           <!-- insert a bullet -->
           <fo:list-item-label end-indent="label-end()">
-            <fo:block><fo:inline font-size="10pt" font-family="Symbol">&#183;</fo:inline></fo:block>
+            <fo:block><fo:inline font-size="10pt" font-family="Symbol">&#x2022;</fo:inline></fo:block>
           </fo:list-item-label>
           <!-- list text --> 
           <fo:list-item-body start-indent="body-start()">
@@ -283,7 +283,7 @@
         <fo:list-item>
           <!-- insert a bullet -->
           <fo:list-item-label end-indent="label-end()">
-            <fo:block><fo:inline font-size="10pt" font-family="Symbol">&#183;</fo:inline></fo:block>
+            <fo:block><fo:inline font-size="10pt" font-family="Symbol">&#x2022;</fo:inline></fo:block>
           </fo:list-item-label>
           <!-- list text --> 
           <fo:list-item-body start-indent="body-start()">
@@ -362,7 +362,7 @@
         <fo:list-item>
           <!-- insert a bullet -->
           <fo:list-item-label end-indent="label-end()">
-            <fo:block><fo:inline font-family="Symbol">&#183;</fo:inline></fo:block>
+            <fo:block><fo:inline font-family="Symbol">&#x2022;</fo:inline></fo:block>
           </fo:list-item-label>
           <!-- list text --> 
           <fo:list-item-body start-indent="body-start()">
@@ -376,7 +376,7 @@
         <fo:list-item>
           <!-- insert a bullet -->
           <fo:list-item-label end-indent="label-end()">
-            <fo:block><fo:inline font-family="Symbol">&#183;</fo:inline></fo:block>
+            <fo:block><fo:inline font-family="Symbol">&#x2022;</fo:inline></fo:block>
           </fo:list-item-label>
           <!-- list text --> 
           <fo:list-item-body start-indent="body-start()">
@@ -390,7 +390,7 @@
         <fo:list-item>
           <!-- insert a bullet -->
           <fo:list-item-label end-indent="label-end()">
-            <fo:block><fo:inline font-family="Symbol">&#183;</fo:inline></fo:block>
+            <fo:block><fo:inline font-family="Symbol">&#x2022;</fo:inline></fo:block>
           </fo:list-item-label>
           <!-- list text --> 
           <fo:list-item-body start-indent="body-start()">
@@ -404,7 +404,7 @@
         <fo:list-item>
           <!-- insert a bullet -->
           <fo:list-item-label end-indent="label-end()">
-            <fo:block><fo:inline font-family="Symbol">&#183;</fo:inline></fo:block>
+            <fo:block><fo:inline font-family="Symbol">&#x2022;</fo:inline></fo:block>
           </fo:list-item-label>
           <!-- list text --> 
           <fo:list-item-body start-indent="body-start()">
@@ -418,7 +418,7 @@
         <fo:list-item>
           <!-- insert a bullet -->
           <fo:list-item-label end-indent="label-end()">
-            <fo:block><fo:inline font-family="Symbol">&#183;</fo:inline></fo:block>
+            <fo:block><fo:inline font-family="Symbol">&#x2022;</fo:inline></fo:block>
           </fo:list-item-label>
           <!-- list text --> 
           <fo:list-item-body start-indent="body-start()">
@@ -462,7 +462,7 @@
         <fo:list-item>
           <!-- insert a bullet -->
           <fo:list-item-label end-indent="label-end()">
-            <fo:block><fo:inline font-family="Symbol">&#183;</fo:inline></fo:block>
+            <fo:block><fo:inline font-family="Symbol">&#x2022;</fo:inline></fo:block>
           </fo:list-item-label>
           <!-- list text --> 
           <fo:list-item-body start-indent="body-start()">
@@ -479,7 +479,7 @@
         <fo:list-item>
           <!-- insert a bullet -->
           <fo:list-item-label end-indent="label-end()">
-            <fo:block><fo:inline font-family="Symbol">&#183;</fo:inline></fo:block>
+            <fo:block><fo:inline font-family="Symbol">&#x2022;</fo:inline></fo:block>
           </fo:list-item-label>
           <!-- list text --> 
           <fo:list-item-body start-indent="body-start()">
@@ -496,7 +496,7 @@
         <fo:list-item>
           <!-- insert a bullet -->
           <fo:list-item-label end-indent="label-end()">
-            <fo:block><fo:inline font-family="Symbol">&#183;</fo:inline></fo:block>
+            <fo:block><fo:inline font-family="Symbol">&#x2022;</fo:inline></fo:block>
           </fo:list-item-label>
           <!-- list text --> 
           <fo:list-item-body start-indent="body-start()">
@@ -513,7 +513,7 @@
         <fo:list-item>
           <!-- insert a bullet -->
           <fo:list-item-label end-indent="label-end()">
-            <fo:block><fo:inline font-family="Symbol">&#183;</fo:inline></fo:block>
+            <fo:block><fo:inline font-family="Symbol">&#x2022;</fo:inline></fo:block>
           </fo:list-item-label>
           <!-- list text --> 
           <fo:list-item-body start-indent="body-start()">
@@ -530,7 +530,7 @@
         <fo:list-item>
           <!-- insert a bullet -->
           <fo:list-item-label end-indent="label-end()">
-            <fo:block><fo:inline font-family="Symbol">&#183;</fo:inline></fo:block>
+            <fo:block><fo:inline font-family="Symbol">&#x2022;</fo:inline></fo:block>
           </fo:list-item-label>
           <!-- list text --> 
           <fo:list-item-body start-indent="body-start()">
@@ -678,7 +678,7 @@
         <fo:list-item>
           <!-- insert a bullet -->
           <fo:list-item-label end-indent="label-end()">
-            <fo:block><fo:inline font-family="Symbol">&#183;</fo:inline></fo:block>
+            <fo:block><fo:inline font-family="Symbol">&#x2022;</fo:inline></fo:block>
           </fo:list-item-label>
           <!-- list text --> 
           <fo:list-item-body start-indent="body-start()">
@@ -692,7 +692,7 @@
         <fo:list-item>
           <!-- insert a bullet -->
           <fo:list-item-label end-indent="label-end()">
-            <fo:block><fo:inline font-family="Symbol">&#183;</fo:inline></fo:block>
+            <fo:block><fo:inline font-family="Symbol">&#x2022;</fo:inline></fo:block>
           </fo:list-item-label>
           <!-- list text --> 
           <fo:list-item-body start-indent="body-start()">
@@ -706,7 +706,7 @@
         <fo:list-item>
           <!-- insert a bullet -->
           <fo:list-item-label end-indent="label-end()">
-            <fo:block><fo:inline font-family="Symbol">&#183;</fo:inline></fo:block>
+            <fo:block><fo:inline font-family="Symbol">&#x2022;</fo:inline></fo:block>
           </fo:list-item-label>
           <!-- list text --> 
           <fo:list-item-body start-indent="body-start()">
@@ -720,7 +720,7 @@
         <fo:list-item>
           <!-- insert a bullet -->
           <fo:list-item-label end-indent="label-end()">
-            <fo:block><fo:inline font-family="Symbol">&#183;</fo:inline></fo:block>
+            <fo:block><fo:inline font-family="Symbol">&#x2022;</fo:inline></fo:block>
           </fo:list-item-label>
           <!-- list text --> 
           <fo:list-item-body start-indent="body-start()">
@@ -734,7 +734,7 @@
         <fo:list-item>
           <!-- insert a bullet -->
           <fo:list-item-label end-indent="label-end()">
-            <fo:block><fo:inline font-family="Symbol">&#183;</fo:inline></fo:block>
+            <fo:block><fo:inline font-family="Symbol">&#x2022;</fo:inline></fo:block>
           </fo:list-item-label>
           <!-- list text --> 
           <fo:list-item-body start-indent="body-start()">
@@ -748,7 +748,7 @@
         <fo:list-item>
           <!-- insert a bullet -->
           <fo:list-item-label end-indent="label-end()">
-            <fo:block><fo:inline font-family="Symbol">&#183;</fo:inline></fo:block>
+            <fo:block><fo:inline font-family="Symbol">&#x2022;</fo:inline></fo:block>
           </fo:list-item-label>
           <!-- list text --> 
           <fo:list-item-body start-indent="body-start()">
@@ -762,7 +762,7 @@
         <fo:list-item>
           <!-- insert a bullet -->
           <fo:list-item-label end-indent="label-end()">
-            <fo:block><fo:inline font-family="Symbol">&#183;</fo:inline></fo:block>
+            <fo:block><fo:inline font-family="Symbol">&#x2022;</fo:inline></fo:block>
           </fo:list-item-label>
           <!-- list text --> 
           <fo:list-item-body start-indent="body-start()">
@@ -776,7 +776,7 @@
         <fo:list-item>
           <!-- insert a bullet -->
           <fo:list-item-label end-indent="label-end()">
-            <fo:block><fo:inline font-family="Symbol">&#183;</fo:inline></fo:block>
+            <fo:block><fo:inline font-family="Symbol">&#x2022;</fo:inline></fo:block>
           </fo:list-item-label>
           <!-- list text --> 
           <fo:list-item-body start-indent="body-start()">
@@ -790,7 +790,7 @@
         <fo:list-item>
           <!-- insert a bullet -->
           <fo:list-item-label end-indent="label-end()">
-            <fo:block><fo:inline font-family="Symbol">&#183;</fo:inline></fo:block>
+            <fo:block><fo:inline font-family="Symbol">&#x2022;</fo:inline></fo:block>
           </fo:list-item-label>
           <!-- list text --> 
           <fo:list-item-body start-indent="body-start()">
@@ -804,7 +804,7 @@
         <fo:list-item>
           <!-- insert a bullet -->
           <fo:list-item-label end-indent="label-end()">
-            <fo:block><fo:inline font-family="Symbol">&#183;</fo:inline></fo:block>
+            <fo:block><fo:inline font-family="Symbol">&#x2022;</fo:inline></fo:block>
           </fo:list-item-label>
           <!-- list text --> 
           <fo:list-item-body start-indent="body-start()">
@@ -818,7 +818,7 @@
         <fo:list-item>
           <!-- insert a bullet -->
           <fo:list-item-label end-indent="label-end()">
-            <fo:block><fo:inline font-family="Symbol">&#183;</fo:inline></fo:block>
+            <fo:block><fo:inline font-family="Symbol">&#x2022;</fo:inline></fo:block>
           </fo:list-item-label>
           <!-- list text --> 
           <fo:list-item-body start-indent="body-start()">
@@ -832,7 +832,7 @@
         <fo:list-item>
           <!-- insert a bullet -->
           <fo:list-item-label end-indent="label-end()">
-            <fo:block><fo:inline font-family="Symbol">&#183;</fo:inline></fo:block>
+            <fo:block><fo:inline font-family="Symbol">&#x2022;</fo:inline></fo:block>
           </fo:list-item-label>
           <!-- list text --> 
           <fo:list-item-body start-indent="body-start()">
@@ -846,7 +846,7 @@
         <fo:list-item>
           <!-- insert a bullet -->
           <fo:list-item-label end-indent="label-end()">
-            <fo:block><fo:inline font-family="Symbol">&#183;</fo:inline></fo:block>
+            <fo:block><fo:inline font-family="Symbol">&#x2022;</fo:inline></fo:block>
           </fo:list-item-label>
           <!-- list text --> 
           <fo:list-item-body start-indent="body-start()">
@@ -860,7 +860,7 @@
         <fo:list-item>
           <!-- insert a bullet -->
           <fo:list-item-label end-indent="label-end()">
-            <fo:block><fo:inline font-family="Symbol">&#183;</fo:inline></fo:block>
+            <fo:block><fo:inline font-family="Symbol">&#x2022;</fo:inline></fo:block>
           </fo:list-item-label>
           <!-- list text --> 
           <fo:list-item-body start-indent="body-start()">
@@ -874,7 +874,7 @@
         <fo:list-item>
           <!-- insert a bullet -->
           <fo:list-item-label end-indent="label-end()">
-            <fo:block><fo:inline font-family="Symbol">&#183;</fo:inline></fo:block>
+            <fo:block><fo:inline font-family="Symbol">&#x2022;</fo:inline></fo:block>
           </fo:list-item-label>
           <!-- list text --> 
           <fo:list-item-body start-indent="body-start()">
@@ -888,7 +888,7 @@
         <fo:list-item>
           <!-- insert a bullet -->
           <fo:list-item-label end-indent="label-end()">
-            <fo:block><fo:inline font-family="Symbol">&#183;</fo:inline></fo:block>
+            <fo:block><fo:inline font-family="Symbol">&#x2022;</fo:inline></fo:block>
           </fo:list-item-label>
           <!-- list text --> 
           <fo:list-item-body start-indent="body-start()">
@@ -902,7 +902,7 @@
         <fo:list-item>
           <!-- insert a bullet -->
           <fo:list-item-label end-indent="label-end()">
-            <fo:block><fo:inline font-family="Symbol">&#183;</fo:inline></fo:block>
+            <fo:block><fo:inline font-family="Symbol">&#x2022;</fo:inline></fo:block>
           </fo:list-item-label>
           <!-- list text --> 
           <fo:list-item-body start-indent="body-start()">
@@ -916,7 +916,7 @@
         <fo:list-item>
           <!-- insert a bullet -->
           <fo:list-item-label end-indent="label-end()">
-            <fo:block><fo:inline font-family="Symbol">&#183;</fo:inline></fo:block>
+            <fo:block><fo:inline font-family="Symbol">&#x2022;</fo:inline></fo:block>
           </fo:list-item-label>
           <!-- list text --> 
           <fo:list-item-body start-indent="body-start()">
@@ -930,7 +930,7 @@
         <fo:list-item>
           <!-- insert a bullet -->
           <fo:list-item-label end-indent="label-end()">
-            <fo:block><fo:inline font-family="Symbol">&#183;</fo:inline></fo:block>
+            <fo:block><fo:inline font-family="Symbol">&#x2022;</fo:inline></fo:block>
           </fo:list-item-label>
           <!-- list text --> 
           <fo:list-item-body start-indent="body-start()">
@@ -944,7 +944,7 @@
         <fo:list-item>
           <!-- insert a bullet -->
           <fo:list-item-label end-indent="label-end()">
-            <fo:block><fo:inline font-family="Symbol">&#183;</fo:inline></fo:block>
+            <fo:block><fo:inline font-family="Symbol">&#x2022;</fo:inline></fo:block>
           </fo:list-item-label>
           <!-- list text --> 
           <fo:list-item-body start-indent="body-start()">
@@ -958,7 +958,7 @@
         <fo:list-item>
           <!-- insert a bullet -->
           <fo:list-item-label end-indent="label-end()">
-            <fo:block><fo:inline font-family="Symbol">&#183;</fo:inline></fo:block>
+            <fo:block><fo:inline font-family="Symbol">&#x2022;</fo:inline></fo:block>
           </fo:list-item-label>
           <!-- list text --> 
           <fo:list-item-body start-indent="body-start()">
@@ -972,7 +972,7 @@
         <fo:list-item>
           <!-- insert a bullet -->
           <fo:list-item-label end-indent="label-end()">
-            <fo:block><fo:inline font-family="Symbol">&#183;</fo:inline></fo:block>
+            <fo:block><fo:inline font-family="Symbol">&#x2022;</fo:inline></fo:block>
           </fo:list-item-label>
           <!-- list text --> 
           <fo:list-item-body start-indent="body-start()">
@@ -986,7 +986,7 @@
         <fo:list-item>
           <!-- insert a bullet -->
           <fo:list-item-label end-indent="label-end()">
-            <fo:block><fo:inline font-family="Symbol">&#183;</fo:inline></fo:block>
+            <fo:block><fo:inline font-family="Symbol">&#x2022;</fo:inline></fo:block>
           </fo:list-item-label>
           <!-- list text --> 
           <fo:list-item-body start-indent="body-start()">
@@ -1000,7 +1000,7 @@
         <fo:list-item>
           <!-- insert a bullet -->
           <fo:list-item-label end-indent="label-end()">
-            <fo:block><fo:inline font-family="Symbol">&#183;</fo:inline></fo:block>
+            <fo:block><fo:inline font-family="Symbol">&#x2022;</fo:inline></fo:block>
           </fo:list-item-label>
           <!-- list text --> 
           <fo:list-item-body start-indent="body-start()">
@@ -1014,7 +1014,7 @@
         <fo:list-item>
           <!-- insert a bullet -->
           <fo:list-item-label end-indent="label-end()">
-            <fo:block><fo:inline font-family="Symbol">&#183;</fo:inline></fo:block>
+            <fo:block><fo:inline font-family="Symbol">&#x2022;</fo:inline></fo:block>
           </fo:list-item-label>
           <!-- list text --> 
           <fo:list-item-body start-indent="body-start()">
@@ -1028,21 +1028,7 @@
         <fo:list-item>
           <!-- insert a bullet -->
           <fo:list-item-label end-indent="label-end()">
-            <fo:block><fo:inline font-family="Symbol">&#183;</fo:inline></fo:block>
-          </fo:list-item-label>
-          <!-- list text --> 
-          <fo:list-item-body start-indent="body-start()">
-            <fo:block>
-              here is text in the list item body
-            </fo:block>
-          </fo:list-item-body>
-        </fo:list-item>
-
-        <!-- list item -->
-        <fo:list-item>
-          <!-- insert a bullet -->
-          <fo:list-item-label end-indent="label-end()">
-            <fo:block><fo:inline font-family="Symbol">&#183;</fo:inline></fo:block>
+            <fo:block><fo:inline font-family="Symbol">&#x2022;</fo:inline></fo:block>
           </fo:list-item-label>
           <!-- list text --> 
           <fo:list-item-body start-indent="body-start()">
@@ -1056,356 +1042,7 @@
         <fo:list-item>
           <!-- insert a bullet -->
           <fo:list-item-label end-indent="label-end()">
-            <fo:block><fo:inline font-family="Symbol">&#183;</fo:inline></fo:block>
-          </fo:list-item-label>
-          <!-- list text --> 
-          <fo:list-item-body start-indent="body-start()">
-            <fo:block>
-              here is text in the list item body
-            </fo:block>
-          </fo:list-item-body>
-        </fo:list-item>
-
-        <!-- list entry -->
-        <fo:list-item>
-          <!-- insert a bullet -->
-          <fo:list-item-label end-indent="label-end()">
-            <fo:block><fo:inline font-family="Symbol">&#183;</fo:inline></fo:block>
-          </fo:list-item-label>
-          <!-- list text --> 
-          <fo:list-item-body start-indent="body-start()">
-            <fo:block>
-              here is text in the list item body
-            </fo:block>
-          </fo:list-item-body>
-        </fo:list-item>
-
-        <!-- list entry -->
-        <fo:list-item>
-          <!-- insert a bullet -->
-          <fo:list-item-label end-indent="label-end()">
-            <fo:block><fo:inline font-family="Symbol">&#183;</fo:inline></fo:block>
-          </fo:list-item-label>
-          <!-- list text --> 
-          <fo:list-item-body start-indent="body-start()">
-            <fo:block>
-              here is text in the list item body
-            </fo:block>
-          </fo:list-item-body>
-        </fo:list-item>
-
-        <!-- list entry -->
-        <fo:list-item>
-          <!-- insert a bullet -->
-          <fo:list-item-label end-indent="label-end()">
-            <fo:block><fo:inline font-family="Symbol">&#183;</fo:inline></fo:block>
-          </fo:list-item-label>
-          <!-- list text --> 
-          <fo:list-item-body start-indent="body-start()">
-            <fo:block>
-              here is text in the list item body
-            </fo:block>
-          </fo:list-item-body>
-        </fo:list-item>
-
-        <!-- list entry -->
-        <fo:list-item>
-          <!-- insert a bullet -->
-          <fo:list-item-label end-indent="label-end()">
-            <fo:block><fo:inline font-family="Symbol">&#183;</fo:inline></fo:block>
-          </fo:list-item-label>
-          <!-- list text --> 
-          <fo:list-item-body start-indent="body-start()">
-            <fo:block>
-              here is text in the list item body
-            </fo:block>
-          </fo:list-item-body>
-        </fo:list-item>
-
-        <!-- list entry -->
-        <fo:list-item>
-          <!-- insert a bullet -->
-          <fo:list-item-label end-indent="label-end()">
-            <fo:block><fo:inline font-family="Symbol">&#183;</fo:inline></fo:block>
-          </fo:list-item-label>
-          <!-- list text --> 
-          <fo:list-item-body start-indent="body-start()">
-            <fo:block>
-              here is text in the list item body
-            </fo:block>
-          </fo:list-item-body>
-        </fo:list-item>
-
-        <!-- list entry -->
-        <fo:list-item>
-          <!-- insert a bullet -->
-          <fo:list-item-label end-indent="label-end()">
-            <fo:block><fo:inline font-family="Symbol">&#183;</fo:inline></fo:block>
-          </fo:list-item-label>
-          <!-- list text --> 
-          <fo:list-item-body start-indent="body-start()">
-            <fo:block>
-              here is text in the list item body
-            </fo:block>
-          </fo:list-item-body>
-        </fo:list-item>
-
-        <!-- list entry -->
-        <fo:list-item>
-          <!-- insert a bullet -->
-          <fo:list-item-label end-indent="label-end()">
-            <fo:block><fo:inline font-family="Symbol">&#183;</fo:inline></fo:block>
-          </fo:list-item-label>
-          <!-- list text --> 
-          <fo:list-item-body start-indent="body-start()">
-            <fo:block>
-              here is text in the list item body
-            </fo:block>
-          </fo:list-item-body>
-        </fo:list-item>
-
-        <!-- list entry -->
-        <fo:list-item>
-          <!-- insert a bullet -->
-          <fo:list-item-label end-indent="label-end()">
-            <fo:block><fo:inline font-family="Symbol">&#183;</fo:inline></fo:block>
-          </fo:list-item-label>
-          <!-- list text --> 
-          <fo:list-item-body start-indent="body-start()">
-            <fo:block>
-              here is text in the list item body
-            </fo:block>
-          </fo:list-item-body>
-        </fo:list-item>
-
-        <!-- list entry -->
-        <fo:list-item>
-          <!-- insert a bullet -->
-          <fo:list-item-label end-indent="label-end()">
-            <fo:block><fo:inline font-family="Symbol">&#183;</fo:inline></fo:block>
-          </fo:list-item-label>
-          <!-- list text --> 
-          <fo:list-item-body start-indent="body-start()">
-            <fo:block>
-              here is text in the list item body
-            </fo:block>
-          </fo:list-item-body>
-        </fo:list-item>
-
-        <!-- list entry -->
-        <fo:list-item>
-          <!-- insert a bullet -->
-          <fo:list-item-label end-indent="label-end()">
-            <fo:block><fo:inline font-family="Symbol">&#183;</fo:inline></fo:block>
-          </fo:list-item-label>
-          <!-- list text --> 
-          <fo:list-item-body start-indent="body-start()">
-            <fo:block>
-              here is text in the list item body
-            </fo:block>
-          </fo:list-item-body>
-        </fo:list-item>
-
-        <!-- list entry -->
-        <fo:list-item>
-          <!-- insert a bullet -->
-          <fo:list-item-label end-indent="label-end()">
-            <fo:block><fo:inline font-family="Symbol">&#183;</fo:inline></fo:block>
-          </fo:list-item-label>
-          <!-- list text --> 
-          <fo:list-item-body start-indent="body-start()">
-            <fo:block>
-              here is text in the list item body
-            </fo:block>
-          </fo:list-item-body>
-        </fo:list-item>
-
-        <!-- list entry -->
-        <fo:list-item>
-          <!-- insert a bullet -->
-          <fo:list-item-label end-indent="label-end()">
-            <fo:block><fo:inline font-family="Symbol">&#183;</fo:inline></fo:block>
-          </fo:list-item-label>
-          <!-- list text --> 
-          <fo:list-item-body start-indent="body-start()">
-            <fo:block>
-              here is text in the list item body
-            </fo:block>
-          </fo:list-item-body>
-        </fo:list-item>
-
-        <!-- list entry -->
-        <fo:list-item>
-          <!-- insert a bullet -->
-          <fo:list-item-label end-indent="label-end()">
-            <fo:block><fo:inline font-family="Symbol">&#183;</fo:inline></fo:block>
-          </fo:list-item-label>
-          <!-- list text --> 
-          <fo:list-item-body start-indent="body-start()">
-            <fo:block>
-              here is text in the list item body
-            </fo:block>
-          </fo:list-item-body>
-        </fo:list-item>
-
-        <!-- list entry -->
-        <fo:list-item>
-          <!-- insert a bullet -->
-          <fo:list-item-label end-indent="label-end()">
-            <fo:block><fo:inline font-family="Symbol">&#183;</fo:inline></fo:block>
-          </fo:list-item-label>
-          <!-- list text --> 
-          <fo:list-item-body start-indent="body-start()">
-            <fo:block>
-              here is text in the list item body
-            </fo:block>
-          </fo:list-item-body>
-        </fo:list-item>
-
-        <!-- list entry -->
-        <fo:list-item>
-          <!-- insert a bullet -->
-          <fo:list-item-label end-indent="label-end()">
-            <fo:block><fo:inline font-family="Symbol">&#183;</fo:inline></fo:block>
-          </fo:list-item-label>
-          <!-- list text --> 
-          <fo:list-item-body start-indent="body-start()">
-            <fo:block>
-              here is text in the list item body
-            </fo:block>
-          </fo:list-item-body>
-        </fo:list-item>
-
-        <!-- list entry -->
-        <fo:list-item>
-          <!-- insert a bullet -->
-          <fo:list-item-label end-indent="label-end()">
-            <fo:block><fo:inline font-family="Symbol">&#183;</fo:inline></fo:block>
-          </fo:list-item-label>
-          <!-- list text --> 
-          <fo:list-item-body start-indent="body-start()">
-            <fo:block>
-              here is text in the list item body
-            </fo:block>
-          </fo:list-item-body>
-        </fo:list-item>
-
-        <!-- list entry -->
-        <fo:list-item>
-          <!-- insert a bullet -->
-          <fo:list-item-label end-indent="label-end()">
-            <fo:block><fo:inline font-family="Symbol">&#183;</fo:inline></fo:block>
-          </fo:list-item-label>
-          <!-- list text --> 
-          <fo:list-item-body start-indent="body-start()">
-            <fo:block>
-              here is text in the list item body
-            </fo:block>
-          </fo:list-item-body>
-        </fo:list-item>
-
-        <!-- list entry -->
-        <fo:list-item>
-          <!-- insert a bullet -->
-          <fo:list-item-label end-indent="label-end()">
-            <fo:block><fo:inline font-family="Symbol">&#183;</fo:inline></fo:block>
-          </fo:list-item-label>
-          <!-- list text --> 
-          <fo:list-item-body start-indent="body-start()">
-            <fo:block>
-              here is text in the list item body
-            </fo:block>
-          </fo:list-item-body>
-        </fo:list-item>
-
-        <!-- list entry -->
-        <fo:list-item>
-          <!-- insert a bullet -->
-          <fo:list-item-label end-indent="label-end()">
-            <fo:block><fo:inline font-family="Symbol">&#183;</fo:inline></fo:block>
-          </fo:list-item-label>
-          <!-- list text --> 
-          <fo:list-item-body start-indent="body-start()">
-            <fo:block>
-              here is text in the list item body
-            </fo:block>
-          </fo:list-item-body>
-        </fo:list-item>
-
-        <!-- list entry -->
-        <fo:list-item>
-          <!-- insert a bullet -->
-          <fo:list-item-label end-indent="label-end()">
-            <fo:block><fo:inline font-family="Symbol">&#183;</fo:inline></fo:block>
-          </fo:list-item-label>
-          <!-- list text --> 
-          <fo:list-item-body start-indent="body-start()">
-            <fo:block>
-              here is text in the list item body
-            </fo:block>
-          </fo:list-item-body>
-        </fo:list-item>
-
-        <!-- list entry -->
-        <fo:list-item>
-          <!-- insert a bullet -->
-          <fo:list-item-label end-indent="label-end()">
-            <fo:block><fo:inline font-family="Symbol">&#183;</fo:inline></fo:block>
-          </fo:list-item-label>
-          <!-- list text --> 
-          <fo:list-item-body start-indent="body-start()">
-            <fo:block>
-              here is text in the list item body
-            </fo:block>
-          </fo:list-item-body>
-        </fo:list-item>
-
-        <!-- list entry -->
-        <fo:list-item>
-          <!-- insert a bullet -->
-          <fo:list-item-label end-indent="label-end()">
-            <fo:block><fo:inline font-family="Symbol">&#183;</fo:inline></fo:block>
-          </fo:list-item-label>
-          <!-- list text --> 
-          <fo:list-item-body start-indent="body-start()">
-            <fo:block>
-              here is text in the list item body
-            </fo:block>
-          </fo:list-item-body>
-        </fo:list-item>
-
-        <!-- list entry -->
-        <fo:list-item>
-          <!-- insert a bullet -->
-          <fo:list-item-label end-indent="label-end()">
-            <fo:block><fo:inline font-family="Symbol">&#183;</fo:inline></fo:block>
-          </fo:list-item-label>
-          <!-- list text --> 
-          <fo:list-item-body start-indent="body-start()">
-            <fo:block>
-              here is text in the list item body
-            </fo:block>
-          </fo:list-item-body>
-        </fo:list-item>
-
-        <!-- list entry -->
-        <fo:list-item>
-          <!-- insert a bullet -->
-          <fo:list-item-label end-indent="label-end()">
-            <fo:block><fo:inline font-family="Symbol">&#183;</fo:inline></fo:block>
-          </fo:list-item-label>
-          <!-- list text --> 
-          <fo:list-item-body start-indent="body-start()">
-            <fo:block>
-              here is text in the list item body
-            </fo:block>
-          </fo:list-item-body>
-        </fo:list-item>
-        <!-- list item -->
-        <fo:list-item>
-          <!-- insert a bullet -->
-          <fo:list-item-label end-indent="label-end()">
-            <fo:block><fo:inline font-family="Symbol">&#183;</fo:inline></fo:block>
+            <fo:block><fo:inline font-family="Symbol">&#x2022;</fo:inline></fo:block>
           </fo:list-item-label>
           <!-- list text --> 
           <fo:list-item-body start-indent="body-start()">
@@ -1419,7 +1056,7 @@
         <fo:list-item>
           <!-- insert a bullet -->
           <fo:list-item-label end-indent="label-end()">
-            <fo:block><fo:inline font-family="Symbol">&#183;</fo:inline></fo:block>
+            <fo:block><fo:inline font-family="Symbol">&#x2022;</fo:inline></fo:block>
           </fo:list-item-label>
           <!-- list text --> 
           <fo:list-item-body start-indent="body-start()">
@@ -1433,7 +1070,7 @@
         <fo:list-item>
           <!-- insert a bullet -->
           <fo:list-item-label end-indent="label-end()">
-            <fo:block><fo:inline font-family="Symbol">&#183;</fo:inline></fo:block>
+            <fo:block><fo:inline font-family="Symbol">&#x2022;</fo:inline></fo:block>
           </fo:list-item-label>
           <!-- list text --> 
           <fo:list-item-body start-indent="body-start()">
@@ -1447,7 +1084,7 @@
         <fo:list-item>
           <!-- insert a bullet -->
           <fo:list-item-label end-indent="label-end()">
-            <fo:block><fo:inline font-family="Symbol">&#183;</fo:inline></fo:block>
+            <fo:block><fo:inline font-family="Symbol">&#x2022;</fo:inline></fo:block>
           </fo:list-item-label>
           <!-- list text --> 
           <fo:list-item-body start-indent="body-start()">
@@ -1461,7 +1098,7 @@
         <fo:list-item>
           <!-- insert a bullet -->
           <fo:list-item-label end-indent="label-end()">
-            <fo:block><fo:inline font-family="Symbol">&#183;</fo:inline></fo:block>
+            <fo:block><fo:inline font-family="Symbol">&#x2022;</fo:inline></fo:block>
           </fo:list-item-label>
           <!-- list text --> 
           <fo:list-item-body start-indent="body-start()">
@@ -1475,7 +1112,7 @@
         <fo:list-item>
           <!-- insert a bullet -->
           <fo:list-item-label end-indent="label-end()">
-            <fo:block><fo:inline font-family="Symbol">&#183;</fo:inline></fo:block>
+            <fo:block><fo:inline font-family="Symbol">&#x2022;</fo:inline></fo:block>
           </fo:list-item-label>
           <!-- list text --> 
           <fo:list-item-body start-indent="body-start()">
@@ -1489,7 +1126,7 @@
         <fo:list-item>
           <!-- insert a bullet -->
           <fo:list-item-label end-indent="label-end()">
-            <fo:block><fo:inline font-family="Symbol">&#183;</fo:inline></fo:block>
+            <fo:block><fo:inline font-family="Symbol">&#x2022;</fo:inline></fo:block>
           </fo:list-item-label>
           <!-- list text --> 
           <fo:list-item-body start-indent="body-start()">
@@ -1503,7 +1140,7 @@
         <fo:list-item>
           <!-- insert a bullet -->
           <fo:list-item-label end-indent="label-end()">
-            <fo:block><fo:inline font-family="Symbol">&#183;</fo:inline></fo:block>
+            <fo:block><fo:inline font-family="Symbol">&#x2022;</fo:inline></fo:block>
           </fo:list-item-label>
           <!-- list text --> 
           <fo:list-item-body start-indent="body-start()">
@@ -1517,7 +1154,7 @@
         <fo:list-item>
           <!-- insert a bullet -->
           <fo:list-item-label end-indent="label-end()">
-            <fo:block><fo:inline font-family="Symbol">&#183;</fo:inline></fo:block>
+            <fo:block><fo:inline font-family="Symbol">&#x2022;</fo:inline></fo:block>
           </fo:list-item-label>
           <!-- list text --> 
           <fo:list-item-body start-indent="body-start()">
@@ -1531,7 +1168,7 @@
         <fo:list-item>
           <!-- insert a bullet -->
           <fo:list-item-label end-indent="label-end()">
-            <fo:block><fo:inline font-family="Symbol">&#183;</fo:inline></fo:block>
+            <fo:block><fo:inline font-family="Symbol">&#x2022;</fo:inline></fo:block>
           </fo:list-item-label>
           <!-- list text --> 
           <fo:list-item-body start-indent="body-start()">
@@ -1545,7 +1182,7 @@
         <fo:list-item>
           <!-- insert a bullet -->
           <fo:list-item-label end-indent="label-end()">
-            <fo:block><fo:inline font-family="Symbol">&#183;</fo:inline></fo:block>
+            <fo:block><fo:inline font-family="Symbol">&#x2022;</fo:inline></fo:block>
           </fo:list-item-label>
           <!-- list text --> 
           <fo:list-item-body start-indent="body-start()">
@@ -1559,7 +1196,7 @@
         <fo:list-item>
           <!-- insert a bullet -->
           <fo:list-item-label end-indent="label-end()">
-            <fo:block><fo:inline font-family="Symbol">&#183;</fo:inline></fo:block>
+            <fo:block><fo:inline font-family="Symbol">&#x2022;</fo:inline></fo:block>
           </fo:list-item-label>
           <!-- list text --> 
           <fo:list-item-body start-indent="body-start()">
@@ -1573,7 +1210,7 @@
         <fo:list-item>
           <!-- insert a bullet -->
           <fo:list-item-label end-indent="label-end()">
-            <fo:block><fo:inline font-family="Symbol">&#183;</fo:inline></fo:block>
+            <fo:block><fo:inline font-family="Symbol">&#x2022;</fo:inline></fo:block>
           </fo:list-item-label>
           <!-- list text --> 
           <fo:list-item-body start-indent="body-start()">
@@ -1587,7 +1224,7 @@
         <fo:list-item>
           <!-- insert a bullet -->
           <fo:list-item-label end-indent="label-end()">
-            <fo:block><fo:inline font-family="Symbol">&#183;</fo:inline></fo:block>
+            <fo:block><fo:inline font-family="Symbol">&#x2022;</fo:inline></fo:block>
           </fo:list-item-label>
           <!-- list text --> 
           <fo:list-item-body start-indent="body-start()">
@@ -1601,7 +1238,7 @@
         <fo:list-item>
           <!-- insert a bullet -->
           <fo:list-item-label end-indent="label-end()">
-            <fo:block><fo:inline font-family="Symbol">&#183;</fo:inline></fo:block>
+            <fo:block><fo:inline font-family="Symbol">&#x2022;</fo:inline></fo:block>
           </fo:list-item-label>
           <!-- list text --> 
           <fo:list-item-body start-indent="body-start()">
@@ -1615,7 +1252,7 @@
         <fo:list-item>
           <!-- insert a bullet -->
           <fo:list-item-label end-indent="label-end()">
-            <fo:block><fo:inline font-family="Symbol">&#183;</fo:inline></fo:block>
+            <fo:block><fo:inline font-family="Symbol">&#x2022;</fo:inline></fo:block>
           </fo:list-item-label>
           <!-- list text --> 
           <fo:list-item-body start-indent="body-start()">
@@ -1629,7 +1266,7 @@
         <fo:list-item>
           <!-- insert a bullet -->
           <fo:list-item-label end-indent="label-end()">
-            <fo:block><fo:inline font-family="Symbol">&#183;</fo:inline></fo:block>
+            <fo:block><fo:inline font-family="Symbol">&#x2022;</fo:inline></fo:block>
           </fo:list-item-label>
           <!-- list text --> 
           <fo:list-item-body start-indent="body-start()">
@@ -1643,7 +1280,7 @@
         <fo:list-item>
           <!-- insert a bullet -->
           <fo:list-item-label end-indent="label-end()">
-            <fo:block><fo:inline font-family="Symbol">&#183;</fo:inline></fo:block>
+            <fo:block><fo:inline font-family="Symbol">&#x2022;</fo:inline></fo:block>
           </fo:list-item-label>
           <!-- list text --> 
           <fo:list-item-body start-indent="body-start()">
@@ -1657,7 +1294,7 @@
         <fo:list-item>
           <!-- insert a bullet -->
           <fo:list-item-label end-indent="label-end()">
-            <fo:block><fo:inline font-family="Symbol">&#183;</fo:inline></fo:block>
+            <fo:block><fo:inline font-family="Symbol">&#x2022;</fo:inline></fo:block>
           </fo:list-item-label>
           <!-- list text --> 
           <fo:list-item-body start-indent="body-start()">
@@ -1671,7 +1308,7 @@
         <fo:list-item>
           <!-- insert a bullet -->
           <fo:list-item-label end-indent="label-end()">
-            <fo:block><fo:inline font-family="Symbol">&#183;</fo:inline></fo:block>
+            <fo:block><fo:inline font-family="Symbol">&#x2022;</fo:inline></fo:block>
           </fo:list-item-label>
           <!-- list text --> 
           <fo:list-item-body start-indent="body-start()">
@@ -1685,7 +1322,7 @@
         <fo:list-item>
           <!-- insert a bullet -->
           <fo:list-item-label end-indent="label-end()">
-            <fo:block><fo:inline font-family="Symbol">&#183;</fo:inline></fo:block>
+            <fo:block><fo:inline font-family="Symbol">&#x2022;</fo:inline></fo:block>
           </fo:list-item-label>
           <!-- list text --> 
           <fo:list-item-body start-indent="body-start()">
@@ -1699,7 +1336,7 @@
         <fo:list-item>
           <!-- insert a bullet -->
           <fo:list-item-label end-indent="label-end()">
-            <fo:block><fo:inline font-family="Symbol">&#183;</fo:inline></fo:block>
+            <fo:block><fo:inline font-family="Symbol">&#x2022;</fo:inline></fo:block>
           </fo:list-item-label>
           <!-- list text --> 
           <fo:list-item-body start-indent="body-start()">
@@ -1713,7 +1350,7 @@
         <fo:list-item>
           <!-- insert a bullet -->
           <fo:list-item-label end-indent="label-end()">
-            <fo:block><fo:inline font-family="Symbol">&#183;</fo:inline></fo:block>
+            <fo:block><fo:inline font-family="Symbol">&#x2022;</fo:inline></fo:block>
           </fo:list-item-label>
           <!-- list text --> 
           <fo:list-item-body start-indent="body-start()">
@@ -1727,7 +1364,7 @@
         <fo:list-item>
           <!-- insert a bullet -->
           <fo:list-item-label end-indent="label-end()">
-            <fo:block><fo:inline font-family="Symbol">&#183;</fo:inline></fo:block>
+            <fo:block><fo:inline font-family="Symbol">&#x2022;</fo:inline></fo:block>
           </fo:list-item-label>
           <!-- list text --> 
           <fo:list-item-body start-indent="body-start()">
@@ -1741,7 +1378,7 @@
         <fo:list-item>
           <!-- insert a bullet -->
           <fo:list-item-label end-indent="label-end()">
-            <fo:block><fo:inline font-family="Symbol">&#183;</fo:inline></fo:block>
+            <fo:block><fo:inline font-family="Symbol">&#x2022;</fo:inline></fo:block>
           </fo:list-item-label>
           <!-- list text --> 
           <fo:list-item-body start-indent="body-start()">
@@ -1755,7 +1392,7 @@
         <fo:list-item>
           <!-- insert a bullet -->
           <fo:list-item-label end-indent="label-end()">
-            <fo:block><fo:inline font-family="Symbol">&#183;</fo:inline></fo:block>
+            <fo:block><fo:inline font-family="Symbol">&#x2022;</fo:inline></fo:block>
           </fo:list-item-label>
           <!-- list text --> 
           <fo:list-item-body start-indent="body-start()">
@@ -1768,7 +1405,7 @@
         <fo:list-item>
           <!-- insert a bullet -->
           <fo:list-item-label end-indent="label-end()">
-            <fo:block><fo:inline font-family="Symbol">&#183;</fo:inline></fo:block>
+            <fo:block><fo:inline font-family="Symbol">&#x2022;</fo:inline></fo:block>
           </fo:list-item-label>
           <!-- list text --> 
           <fo:list-item-body start-indent="body-start()">
@@ -1782,7 +1419,7 @@
         <fo:list-item>
           <!-- insert a bullet -->
           <fo:list-item-label end-indent="label-end()">
-            <fo:block><fo:inline font-family="Symbol">&#183;</fo:inline></fo:block>
+            <fo:block><fo:inline font-family="Symbol">&#x2022;</fo:inline></fo:block>
           </fo:list-item-label>
           <!-- list text --> 
           <fo:list-item-body start-indent="body-start()">
@@ -1796,7 +1433,7 @@
         <fo:list-item>
           <!-- insert a bullet -->
           <fo:list-item-label end-indent="label-end()">
-            <fo:block><fo:inline font-family="Symbol">&#183;</fo:inline></fo:block>
+            <fo:block><fo:inline font-family="Symbol">&#x2022;</fo:inline></fo:block>
           </fo:list-item-label>
           <!-- list text --> 
           <fo:list-item-body start-indent="body-start()">
@@ -1810,7 +1447,7 @@
         <fo:list-item>
           <!-- insert a bullet -->
           <fo:list-item-label end-indent="label-end()">
-            <fo:block><fo:inline font-family="Symbol">&#183;</fo:inline></fo:block>
+            <fo:block><fo:inline font-family="Symbol">&#x2022;</fo:inline></fo:block>
           </fo:list-item-label>
           <!-- list text --> 
           <fo:list-item-body start-indent="body-start()">
@@ -1824,7 +1461,7 @@
         <fo:list-item>
           <!-- insert a bullet -->
           <fo:list-item-label end-indent="label-end()">
-            <fo:block><fo:inline font-family="Symbol">&#183;</fo:inline></fo:block>
+            <fo:block><fo:inline font-family="Symbol">&#x2022;</fo:inline></fo:block>
           </fo:list-item-label>
           <!-- list text --> 
           <fo:list-item-body start-indent="body-start()">
@@ -1838,7 +1475,7 @@
         <fo:list-item>
           <!-- insert a bullet -->
           <fo:list-item-label end-indent="label-end()">
-            <fo:block><fo:inline font-family="Symbol">&#183;</fo:inline></fo:block>
+            <fo:block><fo:inline font-family="Symbol">&#x2022;</fo:inline></fo:block>
           </fo:list-item-label>
           <!-- list text --> 
           <fo:list-item-body start-indent="body-start()">
@@ -1852,7 +1489,7 @@
         <fo:list-item>
           <!-- insert a bullet -->
           <fo:list-item-label end-indent="label-end()">
-            <fo:block><fo:inline font-family="Symbol">&#183;</fo:inline></fo:block>
+            <fo:block><fo:inline font-family="Symbol">&#x2022;</fo:inline></fo:block>
           </fo:list-item-label>
           <!-- list text --> 
           <fo:list-item-body start-indent="body-start()">
@@ -1866,7 +1503,7 @@
         <fo:list-item>
           <!-- insert a bullet -->
           <fo:list-item-label end-indent="label-end()">
-            <fo:block><fo:inline font-family="Symbol">&#183;</fo:inline></fo:block>
+            <fo:block><fo:inline font-family="Symbol">&#x2022;</fo:inline></fo:block>
           </fo:list-item-label>
           <!-- list text --> 
           <fo:list-item-body start-indent="body-start()">
@@ -1880,7 +1517,7 @@
         <fo:list-item>
           <!-- insert a bullet -->
           <fo:list-item-label end-indent="label-end()">
-            <fo:block><fo:inline font-family="Symbol">&#183;</fo:inline></fo:block>
+            <fo:block><fo:inline font-family="Symbol">&#x2022;</fo:inline></fo:block>
           </fo:list-item-label>
           <!-- list text --> 
           <fo:list-item-body start-indent="body-start()">
@@ -1894,7 +1531,7 @@
         <fo:list-item>
           <!-- insert a bullet -->
           <fo:list-item-label end-indent="label-end()">
-            <fo:block><fo:inline font-family="Symbol">&#183;</fo:inline></fo:block>
+            <fo:block><fo:inline font-family="Symbol">&#x2022;</fo:inline></fo:block>
           </fo:list-item-label>
           <!-- list text --> 
           <fo:list-item-body start-indent="body-start()">
@@ -1908,7 +1545,7 @@
         <fo:list-item>
           <!-- insert a bullet -->
           <fo:list-item-label end-indent="label-end()">
-            <fo:block><fo:inline font-family="Symbol">&#183;</fo:inline></fo:block>
+            <fo:block><fo:inline font-family="Symbol">&#x2022;</fo:inline></fo:block>
           </fo:list-item-label>
           <!-- list text --> 
           <fo:list-item-body start-indent="body-start()">
@@ -1922,7 +1559,7 @@
         <fo:list-item>
           <!-- insert a bullet -->
           <fo:list-item-label end-indent="label-end()">
-            <fo:block><fo:inline font-family="Symbol">&#183;</fo:inline></fo:block>
+            <fo:block><fo:inline font-family="Symbol">&#x2022;</fo:inline></fo:block>
           </fo:list-item-label>
           <!-- list text --> 
           <fo:list-item-body start-indent="body-start()">
@@ -1936,7 +1573,370 @@
         <fo:list-item>
           <!-- insert a bullet -->
           <fo:list-item-label end-indent="label-end()">
-            <fo:block><fo:inline font-family="Symbol">&#183;</fo:inline></fo:block>
+            <fo:block><fo:inline font-family="Symbol">&#x2022;</fo:inline></fo:block>
+          </fo:list-item-label>
+          <!-- list text --> 
+          <fo:list-item-body start-indent="body-start()">
+            <fo:block>
+              here is text in the list item body
+            </fo:block>
+          </fo:list-item-body>
+        </fo:list-item>
+
+        <!-- list entry -->
+        <fo:list-item>
+          <!-- insert a bullet -->
+          <fo:list-item-label end-indent="label-end()">
+            <fo:block><fo:inline font-family="Symbol">&#x2022;</fo:inline></fo:block>
+          </fo:list-item-label>
+          <!-- list text --> 
+          <fo:list-item-body start-indent="body-start()">
+            <fo:block>
+              here is text in the list item body
+            </fo:block>
+          </fo:list-item-body>
+        </fo:list-item>
+
+        <!-- list entry -->
+        <fo:list-item>
+          <!-- insert a bullet -->
+          <fo:list-item-label end-indent="label-end()">
+            <fo:block><fo:inline font-family="Symbol">&#x2022;</fo:inline></fo:block>
+          </fo:list-item-label>
+          <!-- list text --> 
+          <fo:list-item-body start-indent="body-start()">
+            <fo:block>
+              here is text in the list item body
+            </fo:block>
+          </fo:list-item-body>
+        </fo:list-item>
+
+        <!-- list entry -->
+        <fo:list-item>
+          <!-- insert a bullet -->
+          <fo:list-item-label end-indent="label-end()">
+            <fo:block><fo:inline font-family="Symbol">&#x2022;</fo:inline></fo:block>
+          </fo:list-item-label>
+          <!-- list text --> 
+          <fo:list-item-body start-indent="body-start()">
+            <fo:block>
+              here is text in the list item body
+            </fo:block>
+          </fo:list-item-body>
+        </fo:list-item>
+
+        <!-- list entry -->
+        <fo:list-item>
+          <!-- insert a bullet -->
+          <fo:list-item-label end-indent="label-end()">
+            <fo:block><fo:inline font-family="Symbol">&#x2022;</fo:inline></fo:block>
+          </fo:list-item-label>
+          <!-- list text --> 
+          <fo:list-item-body start-indent="body-start()">
+            <fo:block>
+              here is text in the list item body
+            </fo:block>
+          </fo:list-item-body>
+        </fo:list-item>
+
+        <!-- list entry -->
+        <fo:list-item>
+          <!-- insert a bullet -->
+          <fo:list-item-label end-indent="label-end()">
+            <fo:block><fo:inline font-family="Symbol">&#x2022;</fo:inline></fo:block>
+          </fo:list-item-label>
+          <!-- list text --> 
+          <fo:list-item-body start-indent="body-start()">
+            <fo:block>
+              here is text in the list item body
+            </fo:block>
+          </fo:list-item-body>
+        </fo:list-item>
+
+        <!-- list entry -->
+        <fo:list-item>
+          <!-- insert a bullet -->
+          <fo:list-item-label end-indent="label-end()">
+            <fo:block><fo:inline font-family="Symbol">&#x2022;</fo:inline></fo:block>
+          </fo:list-item-label>
+          <!-- list text --> 
+          <fo:list-item-body start-indent="body-start()">
+            <fo:block>
+              here is text in the list item body
+            </fo:block>
+          </fo:list-item-body>
+        </fo:list-item>
+
+        <!-- list entry -->
+        <fo:list-item>
+          <!-- insert a bullet -->
+          <fo:list-item-label end-indent="label-end()">
+            <fo:block><fo:inline font-family="Symbol">&#x2022;</fo:inline></fo:block>
+          </fo:list-item-label>
+          <!-- list text --> 
+          <fo:list-item-body start-indent="body-start()">
+            <fo:block>
+              here is text in the list item body
+            </fo:block>
+          </fo:list-item-body>
+        </fo:list-item>
+
+        <!-- list entry -->
+        <fo:list-item>
+          <!-- insert a bullet -->
+          <fo:list-item-label end-indent="label-end()">
+            <fo:block><fo:inline font-family="Symbol">&#x2022;</fo:inline></fo:block>
+          </fo:list-item-label>
+          <!-- list text --> 
+          <fo:list-item-body start-indent="body-start()">
+            <fo:block>
+              here is text in the list item body
+            </fo:block>
+          </fo:list-item-body>
+        </fo:list-item>
+
+        <!-- list entry -->
+        <fo:list-item>
+          <!-- insert a bullet -->
+          <fo:list-item-label end-indent="label-end()">
+            <fo:block><fo:inline font-family="Symbol">&#x2022;</fo:inline></fo:block>
+          </fo:list-item-label>
+          <!-- list text --> 
+          <fo:list-item-body start-indent="body-start()">
+            <fo:block>
+              here is text in the list item body
+            </fo:block>
+          </fo:list-item-body>
+        </fo:list-item>
+
+        <!-- list entry -->
+        <fo:list-item>
+          <!-- insert a bullet -->
+          <fo:list-item-label end-indent="label-end()">
+            <fo:block><fo:inline font-family="Symbol">&#x2022;</fo:inline></fo:block>
+          </fo:list-item-label>
+          <!-- list text --> 
+          <fo:list-item-body start-indent="body-start()">
+            <fo:block>
+              here is text in the list item body
+            </fo:block>
+          </fo:list-item-body>
+        </fo:list-item>
+
+        <!-- list entry -->
+        <fo:list-item>
+          <!-- insert a bullet -->
+          <fo:list-item-label end-indent="label-end()">
+            <fo:block><fo:inline font-family="Symbol">&#x2022;</fo:inline></fo:block>
+          </fo:list-item-label>
+          <!-- list text --> 
+          <fo:list-item-body start-indent="body-start()">
+            <fo:block>
+              here is text in the list item body
+            </fo:block>
+          </fo:list-item-body>
+        </fo:list-item>
+
+        <!-- list entry -->
+        <fo:list-item>
+          <!-- insert a bullet -->
+          <fo:list-item-label end-indent="label-end()">
+            <fo:block><fo:inline font-family="Symbol">&#x2022;</fo:inline></fo:block>
+          </fo:list-item-label>
+          <!-- list text --> 
+          <fo:list-item-body start-indent="body-start()">
+            <fo:block>
+              here is text in the list item body
+            </fo:block>
+          </fo:list-item-body>
+        </fo:list-item>
+
+        <!-- list entry -->
+        <fo:list-item>
+          <!-- insert a bullet -->
+          <fo:list-item-label end-indent="label-end()">
+            <fo:block><fo:inline font-family="Symbol">&#x2022;</fo:inline></fo:block>
+          </fo:list-item-label>
+          <!-- list text --> 
+          <fo:list-item-body start-indent="body-start()">
+            <fo:block>
+              here is text in the list item body
+            </fo:block>
+          </fo:list-item-body>
+        </fo:list-item>
+        <!-- list item -->
+        <fo:list-item>
+          <!-- insert a bullet -->
+          <fo:list-item-label end-indent="label-end()">
+            <fo:block><fo:inline font-family="Symbol">&#x2022;</fo:inline></fo:block>
+          </fo:list-item-label>
+          <!-- list text --> 
+          <fo:list-item-body start-indent="body-start()">
+            <fo:block>
+              here is text in the list item body
+            </fo:block>
+          </fo:list-item-body>
+        </fo:list-item>
+
+        <!-- list item -->
+        <fo:list-item>
+          <!-- insert a bullet -->
+          <fo:list-item-label end-indent="label-end()">
+            <fo:block><fo:inline font-family="Symbol">&#x2022;</fo:inline></fo:block>
+          </fo:list-item-label>
+          <!-- list text --> 
+          <fo:list-item-body start-indent="body-start()">
+            <fo:block>
+              here is text in the list item body
+            </fo:block>
+          </fo:list-item-body>
+        </fo:list-item>
+
+        <!-- list entry -->
+        <fo:list-item>
+          <!-- insert a bullet -->
+          <fo:list-item-label end-indent="label-end()">
+            <fo:block><fo:inline font-family="Symbol">&#x2022;</fo:inline></fo:block>
+          </fo:list-item-label>
+          <!-- list text --> 
+          <fo:list-item-body start-indent="body-start()">
+            <fo:block>
+              here is text in the list item body
+            </fo:block>
+          </fo:list-item-body>
+        </fo:list-item>
+
+        <!-- list entry -->
+        <fo:list-item>
+          <!-- insert a bullet -->
+          <fo:list-item-label end-indent="label-end()">
+            <fo:block><fo:inline font-family="Symbol">&#x2022;</fo:inline></fo:block>
+          </fo:list-item-label>
+          <!-- list text --> 
+          <fo:list-item-body start-indent="body-start()">
+            <fo:block>
+              here is text in the list item body
+            </fo:block>
+          </fo:list-item-body>
+        </fo:list-item>
+
+        <!-- list entry -->
+        <fo:list-item>
+          <!-- insert a bullet -->
+          <fo:list-item-label end-indent="label-end()">
+            <fo:block><fo:inline font-family="Symbol">&#x2022;</fo:inline></fo:block>
+          </fo:list-item-label>
+          <!-- list text --> 
+          <fo:list-item-body start-indent="body-start()">
+            <fo:block>
+              here is text in the list item body
+            </fo:block>
+          </fo:list-item-body>
+        </fo:list-item>
+
+        <!-- list entry -->
+        <fo:list-item>
+          <!-- insert a bullet -->
+          <fo:list-item-label end-indent="label-end()">
+            <fo:block><fo:inline font-family="Symbol">&#x2022;</fo:inline></fo:block>
+          </fo:list-item-label>
+          <!-- list text --> 
+          <fo:list-item-body start-indent="body-start()">
+            <fo:block>
+              here is text in the list item body
+            </fo:block>
+          </fo:list-item-body>
+        </fo:list-item>
+
+        <!-- list entry -->
+        <fo:list-item>
+          <!-- insert a bullet -->
+          <fo:list-item-label end-indent="label-end()">
+            <fo:block><fo:inline font-family="Symbol">&#x2022;</fo:inline></fo:block>
+          </fo:list-item-label>
+          <!-- list text --> 
+          <fo:list-item-body start-indent="body-start()">
+            <fo:block>
+              here is text in the list item body
+            </fo:block>
+          </fo:list-item-body>
+        </fo:list-item>
+
+        <!-- list entry -->
+        <fo:list-item>
+          <!-- insert a bullet -->
+          <fo:list-item-label end-indent="label-end()">
+            <fo:block><fo:inline font-family="Symbol">&#x2022;</fo:inline></fo:block>
+          </fo:list-item-label>
+          <!-- list text --> 
+          <fo:list-item-body start-indent="body-start()">
+            <fo:block>
+              here is text in the list item body
+            </fo:block>
+          </fo:list-item-body>
+        </fo:list-item>
+
+        <!-- list entry -->
+        <fo:list-item>
+          <!-- insert a bullet -->
+          <fo:list-item-label end-indent="label-end()">
+            <fo:block><fo:inline font-family="Symbol">&#x2022;</fo:inline></fo:block>
+          </fo:list-item-label>
+          <!-- list text --> 
+          <fo:list-item-body start-indent="body-start()">
+            <fo:block>
+              here is text in the list item body
+            </fo:block>
+          </fo:list-item-body>
+        </fo:list-item>
+
+        <!-- list entry -->
+        <fo:list-item>
+          <!-- insert a bullet -->
+          <fo:list-item-label end-indent="label-end()">
+            <fo:block><fo:inline font-family="Symbol">&#x2022;</fo:inline></fo:block>
+          </fo:list-item-label>
+          <!-- list text --> 
+          <fo:list-item-body start-indent="body-start()">
+            <fo:block>
+              here is text in the list item body
+            </fo:block>
+          </fo:list-item-body>
+        </fo:list-item>
+
+        <!-- list entry -->
+        <fo:list-item>
+          <!-- insert a bullet -->
+          <fo:list-item-label end-indent="label-end()">
+            <fo:block><fo:inline font-family="Symbol">&#x2022;</fo:inline></fo:block>
+          </fo:list-item-label>
+          <!-- list text --> 
+          <fo:list-item-body start-indent="body-start()">
+            <fo:block>
+              here is text in the list item body
+            </fo:block>
+          </fo:list-item-body>
+        </fo:list-item>
+
+        <!-- list entry -->
+        <fo:list-item>
+          <!-- insert a bullet -->
+          <fo:list-item-label end-indent="label-end()">
+            <fo:block><fo:inline font-family="Symbol">&#x2022;</fo:inline></fo:block>
+          </fo:list-item-label>
+          <!-- list text --> 
+          <fo:list-item-body start-indent="body-start()">
+            <fo:block>
+              here is text in the list item body
+            </fo:block>
+          </fo:list-item-body>
+        </fo:list-item>
+
+        <!-- list entry -->
+        <fo:list-item>
+          <!-- insert a bullet -->
+          <fo:list-item-label end-indent="label-end()">
+            <fo:block><fo:inline font-family="Symbol">&#x2022;</fo:inline></fo:block>
           </fo:list-item-label>
           <!-- list text --> 
           <fo:list-item-body start-indent="body-start()">
@@ -1979,7 +1979,7 @@
         <fo:list-item start-indent="0.5cm">
           <!-- insert a bullet -->
           <fo:list-item-label end-indent="label-end()">
-            <fo:block><fo:inline font-family="Symbol">&#183;</fo:inline></fo:block>
+            <fo:block><fo:inline font-family="Symbol">&#x2022;</fo:inline></fo:block>
           </fo:list-item-label>
           <!-- list text --> 
           <fo:list-item-body start-indent="body-start()">
@@ -1994,7 +1994,7 @@
         <fo:list-item start-indent="0.5cm">
           <!-- insert a bullet -->
           <fo:list-item-label end-indent="label-end()">
-            <fo:block><fo:inline font-family="Symbol">&#183;</fo:inline></fo:block>
+            <fo:block><fo:inline font-family="Symbol">&#x2022;</fo:inline></fo:block>
           </fo:list-item-label>
           <!-- list text --> 
           <fo:list-item-body start-indent="body-start()">
@@ -2088,7 +2088,7 @@
         <fo:list-item start-indent="0.5cm">
           <!-- insert a bullet -->
           <fo:list-item-label end-indent="label-end()">
-            <fo:block><fo:inline font-family="Symbol">&#183;</fo:inline></fo:block>
+            <fo:block><fo:inline font-family="Symbol">&#x2022;</fo:inline></fo:block>
           </fo:list-item-label>
           <!-- list text --> 
           <fo:list-item-body start-indent="body-start()">
@@ -2103,7 +2103,7 @@
         <fo:list-item start-indent="0.5cm">
           <!-- insert a bullet -->
           <fo:list-item-label end-indent="label-end()">
-            <fo:block><fo:inline font-family="Symbol">&#183;</fo:inline></fo:block>
+            <fo:block><fo:inline font-family="Symbol">&#x2022;</fo:inline></fo:block>
           </fo:list-item-label>
           <!-- list text --> 
           <fo:list-item-body start-indent="body-start()">
@@ -2117,7 +2117,7 @@
         <fo:list-item start-indent="0.5cm">
           <!-- insert a bullet -->
           <fo:list-item-label end-indent="label-end()">
-            <fo:block><fo:inline font-family="Symbol">&#183;</fo:inline></fo:block>
+            <fo:block><fo:inline font-family="Symbol">&#x2022;</fo:inline></fo:block>
           </fo:list-item-label>
           <!-- list text --> 
           <fo:list-item-body start-indent="body-start()">
@@ -2164,7 +2164,7 @@
   <fo:list-item start-indent="0.5cm">
     <!-- insert a bullet -->
     <fo:list-item-label end-indent="label-end()">
-      <fo:block><fo:inline font-family="Symbol">&#183;</fo:inline></fo:block>
+      <fo:block><fo:inline font-family="Symbol">&#x2022;</fo:inline></fo:block>
     </fo:list-item-label>
     <!-- list text --> 
     <fo:list-item-body start-indent="body-start()">
@@ -2179,7 +2179,7 @@
   <fo:list-item start-indent="0.5cm">
     <!-- insert a bullet -->
     <fo:list-item-label end-indent="label-end()">
-      <fo:block><fo:inline font-family="Symbol">&#183;</fo:inline></fo:block>
+      <fo:block><fo:inline font-family="Symbol">&#x2022;</fo:inline></fo:block>
     </fo:list-item-label>
     <!-- list text --> 
     <fo:list-item-body start-indent="body-start()">
@@ -2250,7 +2250,7 @@
         <fo:list-item start-indent="0.5cm">
           <!-- insert a bullet -->
           <fo:list-item-label end-indent="label-end()">
-            <fo:block><fo:inline font-family="Symbol">&#183;</fo:inline></fo:block>
+            <fo:block><fo:inline font-family="Symbol">&#x2022;</fo:inline></fo:block>
           </fo:list-item-label>
           <!-- list text --> 
           <fo:list-item-body start-indent="body-start()">
@@ -2265,7 +2265,7 @@
         <fo:list-item start-indent="0.5cm">
           <!-- insert a bullet -->
           <fo:list-item-label end-indent="label-end()">
-            <fo:block><fo:inline font-family="Symbol">&#183;</fo:inline></fo:block>
+            <fo:block><fo:inline font-family="Symbol">&#x2022;</fo:inline></fo:block>
           </fo:list-item-label>
           <!-- list text --> 
           <fo:list-item-body start-indent="body-start()">
@@ -2280,7 +2280,7 @@
         <fo:list-item start-indent="0.5cm">
           <!-- insert a bullet -->
           <fo:list-item-label end-indent="label-end()">
-            <fo:block><fo:inline font-family="Symbol">&#183;</fo:inline></fo:block>
+            <fo:block><fo:inline font-family="Symbol">&#x2022;</fo:inline></fo:block>
           </fo:list-item-label>
           <!-- list text --> 
           <fo:list-item-body start-indent="body-start()">
@@ -2295,7 +2295,7 @@
         <fo:list-item start-indent="0.5cm">
           <!-- insert a bullet -->
           <fo:list-item-label end-indent="label-end()">
-            <fo:block><fo:inline font-family="Symbol">&#183;</fo:inline></fo:block>
+            <fo:block><fo:inline font-family="Symbol">&#x2022;</fo:inline></fo:block>
           </fo:list-item-label>
           <!-- list text --> 
           <fo:list-item-body start-indent="body-start()">
@@ -2310,7 +2310,7 @@
         <fo:list-item start-indent="0.5cm">
           <!-- insert a bullet -->
           <fo:list-item-label end-indent="label-end()">
-            <fo:block><fo:inline font-family="Symbol">&#183;</fo:inline></fo:block>
+            <fo:block><fo:inline font-family="Symbol">&#x2022;</fo:inline></fo:block>
           </fo:list-item-label>
           <!-- list text --> 
           <fo:list-item-body start-indent="body-start()">
@@ -2325,7 +2325,7 @@
         <fo:list-item start-indent="0.5cm">
           <!-- insert a bullet -->
           <fo:list-item-label end-indent="label-end()">
-            <fo:block><fo:inline font-family="Symbol">&#183;</fo:inline></fo:block>
+            <fo:block><fo:inline font-family="Symbol">&#x2022;</fo:inline></fo:block>
           </fo:list-item-label>
           <!-- list text --> 
           <fo:list-item-body start-indent="body-start()">
@@ -2340,7 +2340,7 @@
         <fo:list-item start-indent="0.5cm">
           <!-- insert a bullet -->
           <fo:list-item-label end-indent="label-end()">
-            <fo:block><fo:inline font-family="Symbol">&#183;</fo:inline></fo:block>
+            <fo:block><fo:inline font-family="Symbol">&#x2022;</fo:inline></fo:block>
           </fo:list-item-label>
           <!-- list text --> 
           <fo:list-item-body start-indent="body-start()">
@@ -2625,7 +2625,7 @@
         <fo:list-item start-indent="0.5cm">
           <!-- insert a bullet -->
           <fo:list-item-label end-indent="label-end()">
-            <fo:block><fo:inline font-family="Symbol">&#183;</fo:inline></fo:block>
+            <fo:block><fo:inline font-family="Symbol">&#x2022;</fo:inline></fo:block>
           </fo:list-item-label>
           <!-- list text --> 
           <fo:list-item-body start-indent="body-start()">
@@ -2640,7 +2640,7 @@
         <fo:list-item start-indent="0.5cm">
           <!-- insert a bullet -->
           <fo:list-item-label end-indent="label-end()">
-            <fo:block><fo:inline font-family="Symbol">&#183;</fo:inline></fo:block>
+            <fo:block><fo:inline font-family="Symbol">&#x2022;</fo:inline></fo:block>
           </fo:list-item-label>
           <!-- list text --> 
           <fo:list-item-body start-indent="body-start()">
@@ -2654,7 +2654,7 @@
         <fo:list-item start-indent="0.5cm">
           <!-- insert a bullet -->
           <fo:list-item-label end-indent="label-end()">
-            <fo:block><fo:inline font-family="Symbol">&#183;</fo:inline></fo:block>
+            <fo:block><fo:inline font-family="Symbol">&#x2022;</fo:inline></fo:block>
           </fo:list-item-label>
           <!-- list text --> 
           <fo:list-item-body start-indent="body-start()">
