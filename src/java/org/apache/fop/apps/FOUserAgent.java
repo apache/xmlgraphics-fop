@@ -25,6 +25,14 @@ import java.util.Map;
 import java.io.IOException;
 import java.io.InputStream;
 
+// avalon configuration
+import org.apache.avalon.framework.configuration.Configuration;
+import org.apache.avalon.framework.configuration.ConfigurationException;
+
+// commons logging
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 // FOP
 import org.apache.fop.pdf.PDFEncryptionParams;
 import org.apache.fop.render.Renderer;
@@ -61,7 +69,10 @@ public class FOUserAgent {
     private HashMap rendererOptions = new java.util.HashMap();
     private InputHandler inputHandler = null;
     private Renderer rendererOverride = null;
-    
+    /* user configuration */
+    private Configuration userConfig = null;
+    private Log log = LogFactory.getLog("FOP");
+
     /** Producer:  Metadata element for the system/software that produces
      * the document. (Some renderers can store this in the document.)
      */
@@ -164,6 +175,48 @@ public class FOUserAgent {
      */
     public HashMap getRendererOptions() {
         return rendererOptions;
+    }
+
+    /**
+     * Set the user configuration.
+     * @return the user configuration
+     */
+    public void setUserConfig(Configuration userConfig) {
+        this.userConfig = userConfig;
+    }
+
+    /**
+     * Get the user configuration.
+     * @return the user configuration
+     */
+    public Configuration getUserConfig() {
+        return userConfig;
+    }
+
+    public Configuration getUserRendererConfig (String mimeType) {
+
+        if (userConfig == null || mimeType == null) {
+            return null;
+        }
+
+        Configuration userRendererConfig = null;
+
+        Configuration[] cfgs
+            = userConfig.getChild("renderers").getChildren("renderer");
+        for (int i = 0; i < cfgs.length; ++i) {
+            Configuration cfg = cfgs[i];
+            try {
+                if (cfg.getAttribute("mime").equals(mimeType)) {
+                    userRendererConfig = cfg;
+                    break;
+                }
+            } catch (ConfigurationException e) {
+                // silently pass over configurations without mime type
+            }
+        }
+        log.debug((userRendererConfig==null ? "No u" : "U")
+                  + "ser configuration found for MIME type " + mimeType);
+        return userRendererConfig;
     }
 
     /**

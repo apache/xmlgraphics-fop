@@ -23,6 +23,11 @@ import java.io.OutputStream;
 import java.util.List;
 import java.util.Map;
 
+// commons logging
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
+// Avalon
 import org.apache.avalon.framework.configuration.Configuration;
 import org.apache.avalon.framework.configuration.ConfigurationException;
 
@@ -46,6 +51,11 @@ public class PDFFilterList {
     private List filters = new java.util.ArrayList();
 
     private boolean ignoreASCIIFilters = false;
+    
+    /**
+     * logging instance
+     */
+    protected static Log logger = LogFactory.getLog("org.apache.fop.render");
     
     /**
      * Default constructor.
@@ -276,6 +286,22 @@ public class PDFFilterList {
             if (type == null) {
                 type = PDFFilterList.DEFAULT_FILTER;
             }
+
+            if (!filterList.isEmpty() && logger.isDebugEnabled()) {
+                StringBuffer debug = new StringBuffer("Adding PDF filter");
+                if (filterList.size() != 1) {
+                    debug.append("s");
+                }
+                debug.append(" for type ").append(type).append(": ");
+                for (int j = 0; j < filterList.size(); j++) {
+                    if (j != 0) {
+                        debug.append(", ");
+                    }
+                    debug.append(filterList.get(j));
+                }
+                logger.debug(debug.toString());
+            }
+            
             if (filterMap.get(type) != null) {
                 throw new ConfigurationException("A filterList of type '" 
                     + type + "' has already been defined");

@@ -27,12 +27,17 @@ import java.util.Iterator;
 // XML
 import org.xml.sax.SAXException;
 
+// avalon configuration
+import org.apache.avalon.framework.configuration.Configuration;
+import org.apache.avalon.framework.configuration.ConfigurationException;
+
 // FOP
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.fo.Constants;
 import org.apache.fop.fonts.FontInfo;
 import org.apache.fop.render.Renderer;
+import org.apache.fop.render.AbstractRenderer;
 
 /**
  * This uses the store pages model to store the pages
@@ -69,8 +74,22 @@ public class RenderPagesModel extends StorePagesModel {
         if (userAgent.getRendererOverride() != null) {
             renderer = userAgent.getRendererOverride();
         } else {
-            renderer = createRenderer(renderType);
-            renderer.setUserAgent(userAgent);
+            AbstractRenderer rend = createRenderer(renderType);
+            rend.setUserAgent(userAgent);
+            String mimeType = rend.getMimeType();
+            Configuration userRendererConfig = null;
+            if (mimeType != null) {
+                userRendererConfig
+                    = userAgent.getUserRendererConfig(mimeType);
+            }
+            if (userRendererConfig != null) {
+                try {
+                    rend.configure(userRendererConfig);
+                } catch (ConfigurationException e) {
+                    throw new FOPException(e);
+                }
+            }
+            renderer = rend;
         }
 
         try {
@@ -87,12 +106,12 @@ public class RenderPagesModel extends StorePagesModel {
     }
 
     /**
-     * Creates a Renderer object based on render-type desired
+     * Creates an AbstractRenderer object based on render-type desired
      * @param renderType the type of renderer to use
-     * @return Renderer the new Renderer instance
+     * @return AbstractRenderer the new Renderer instance
      * @throws IllegalArgumentException if an unsupported renderer type was requested
      */
-    private Renderer createRenderer(int renderType) throws IllegalArgumentException {
+    private AbstractRenderer createRenderer(int renderType) throws IllegalArgumentException {
 
         switch (renderType) {
         case Constants.RENDER_PDF:

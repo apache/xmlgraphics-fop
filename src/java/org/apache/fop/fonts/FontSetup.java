@@ -34,6 +34,11 @@ import org.apache.fop.fonts.base14.CourierBoldOblique;
 import org.apache.fop.fonts.base14.Symbol;
 import org.apache.fop.fonts.base14.ZapfDingbats;
 
+// commons logging
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
+// Avalon
 import org.apache.avalon.framework.configuration.Configuration;
 import org.apache.avalon.framework.configuration.ConfigurationException;
 
@@ -49,6 +54,11 @@ import java.util.List;
  */
 public class FontSetup {
 
+    /**
+     * logging instance
+     */
+    protected static Log log = LogFactory.getLog("org.apache.fop.fonts");
+    
     /**
      * Sets up the font info object.
      *
@@ -210,7 +220,7 @@ public class FontSetup {
     public static List buildFontListFromConfiguration(Configuration cfg)
             throws ConfigurationException {
         List fontList = new java.util.ArrayList();
-        Configuration[] font = cfg.getChildren("font");
+        Configuration[] font = cfg.getChild("fonts").getChildren("font");
         for (int i = 0; i < font.length; i++) {
             Configuration[] triple = font[i].getChildren("font-triplet");
             List tripleList = new java.util.ArrayList();
@@ -224,6 +234,18 @@ public class FontSetup {
             efi = new EmbedFontInfo(font[i].getAttribute("metrics-url"),
                                     font[i].getAttributeAsBoolean("kerning", false),
                                     tripleList, font[i].getAttribute("embed-url", null));
+
+            if (log.isDebugEnabled()) {
+                log.debug("Adding font " + efi.getEmbedFile()
+                          + ", metric file " + efi.getMetricsFile());
+                for (int j = 0; j < tripleList.size(); ++j) {
+                    FontTriplet triplet = (FontTriplet) tripleList.get(j);
+                    log.debug("Font triplet "
+                              + triplet.getName() + ", "
+                              + triplet.getWeight() + ", "
+                              + triplet.getStyle());
+                }
+            }
 
             fontList.add(efi);
         }

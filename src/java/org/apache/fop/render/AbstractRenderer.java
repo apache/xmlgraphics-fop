@@ -87,7 +87,7 @@ public abstract class AbstractRenderer
     /**
      * logging instance
      */
-    protected static Log logger = LogFactory.getLog("FOP");
+    protected static Log logger = LogFactory.getLog("org.apache.fop.render");
     
     /**
      * block progression position
@@ -723,6 +723,15 @@ public abstract class AbstractRenderer
             getLogger().warn("Some XML content will be ignored. "
                     + "No handler defined for XML: " + namespace);
         }
+    }
+
+    /**
+     * Get the MIME type of the renderer.
+     * 
+     * @return   The MIME type of the renderer
+     */
+    public String getMimeType() {
+        return null;
     }
 }
 

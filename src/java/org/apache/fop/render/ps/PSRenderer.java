@@ -838,4 +838,9 @@ public class PSRenderer extends AbstractRenderer {
         renderXML(userAgent, context, doc, ns);
     }
 
+    /** @see org.apache.fop.render.AbstractRenderer */
+    public String getMimeType() {
+        return MIME_TYPE;
+    }
+
 }
