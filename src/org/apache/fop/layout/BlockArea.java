@@ -279,6 +279,45 @@ public class BlockArea extends Area {
         return 1;
     }
 
+    public void addCharacter(FontState fontState, float red, float green,
+                       float blue, int wrapOption, LinkSet ls,
+                       int whiteSpaceCollapse, char data, boolean ul) {
+
+        this.currentLineArea.changeFont(fontState);
+        this.currentLineArea.changeColor(red, green, blue);
+        this.currentLineArea.changeWrapOption(wrapOption);
+        this.currentLineArea.changeWhiteSpaceCollapse(whiteSpaceCollapse);
+
+        if (ls != null) {
+            this.currentLinkSet = ls;
+            ls.setYOffset(currentHeight);
+        }
+
+        int marker = this.currentLineArea.addCharacter(data, ls, ul);
+        //if character didn't fit into line, open a new one
+        if (marker == org.apache.fop.fo.flow.Character.DOESNOT_FIT) {
+            this.currentLineArea.align(this.align);
+            this.addLineArea(this.currentLineArea);
+
+            this.currentLineArea =
+              new LineArea(fontState, lineHeight, halfLeading,
+                           allocationWidth, startIndent, endIndent,
+                           currentLineArea);
+            this.currentLineArea.changeFont(fontState);
+            this.currentLineArea.changeColor(red, green, blue);
+            this.currentLineArea.changeWrapOption(wrapOption);
+            this.currentLineArea.changeWhiteSpaceCollapse(
+              whiteSpaceCollapse);
+            if (ls != null) {
+                this.currentLinkSet = ls;
+                ls.setYOffset(currentHeight);
+            }
+
+            this.currentLineArea.addCharacter(data, ls, ul);
+        }
+        this.hasLines = true;
+    }
+
 
     public void end() {
         if (this.hasLines) {

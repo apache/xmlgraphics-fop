@@ -57,6 +57,7 @@
     <fop fofile="${foDir}/normalex.fo" pdffile="${testDir}/normalex.pdf"/>
     <fop fofile="${foDir}/simple.fo" pdffile="${testDir}/simple.pdf"/>
     <fop fofile="${foDir}/hyphen.fo" pdffile="${testDir}/hyphen.pdf"/>
+    <fop fofile="${foDir}/character.fo" pdffile="${testDir}/character.pdf"/>
   </target>
 
 
@@ -91,6 +92,9 @@
     <fop fofile="${foDir}/inhprop.fo"   pdffile="${referenceDir}/inhprop.pdf"/> 
     <fop fofile="${foDir}/normalex.fo"   pdffile="${referenceDir}/normalex.pdf"/> 
     <fop fofile="${foDir}/simple.fo"   pdffile="${referenceDir}/simple.pdf"/> 
+    <fop fofile="${foDir}/hyphen.fo" pdffile="${referenceDir}/hyphen.pdf"/>
+    <fop fofile="${foDir}/character.fo" pdffile="${referenceDir}/character.pdf"/>
+
   </target>
 
 

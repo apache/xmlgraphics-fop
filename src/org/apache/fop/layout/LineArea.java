@@ -250,9 +250,7 @@ public class LineArea extends Area {
                 } else if (prev == TEXT) {
 
                     // if current is WHITESPACE and previous TEXT
-
                     // the current word made it, so
-
                     // add the space before the current word (if there
                     // was some)
 
@@ -539,7 +537,7 @@ public class LineArea extends Area {
 
     /**
        * adds pending inline areas to the line area
-       * normally done,if the line area is filled and
+       * normally done, when the line area is filled and
        * added as child to the parent block area
        */
     public void addPending() {
@@ -803,5 +801,35 @@ public class LineArea extends Area {
         width += this.currentFontState.width(characters[i]);
       }
       return width;
+    }
+
+    public int addCharacter (char data, LinkSet ls, boolean ul) {
+        InlineArea ia = null;
+        int remainingWidth =
+          this.getContentWidth() - this.getCurrentXPosition();
+        int width = this.currentFontState.width(data);
+        //if it doesn't fit, return
+        if (width > remainingWidth) {
+          return org.apache.fop.fo.flow.Character.DOESNOT_FIT;
+        } else {
+          //if whitespace-collapse == true, discard character
+          if (Character.isSpaceChar(data) && whiteSpaceCollapse == WhiteSpaceCollapse.TRUE) {
+            return org.apache.fop.fo.flow.Character.OK;
+          }
+          //create new InlineArea
+          ia = new InlineArea(currentFontState,
+                                         this.red, this.green, this.blue,
+                                         new Character(data).toString(),width);
+          ia.setUnderlined(ul);
+          pendingAreas.addElement(ia);
+          if (Character.isSpaceChar(data)) {
+            this.spaceWidth =+ width;
+            prev = LineArea.WHITESPACE;
+          } else {
+            pendingWidth += width;
+            prev = LineArea.TEXT;
+          }
+          return org.apache.fop.fo.flow.Character.OK;
+        }
     }
 }
