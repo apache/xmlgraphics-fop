@@ -516,7 +516,7 @@ public class PDFRenderer extends PrintRenderer {
             FopPDFImage pdfimage = new FopPDFImage(fopimage, url);
             int xobj = pdfDoc.addImage(null, pdfimage).getXNumber();
             fact.releaseImage(url, userAgent);
-        } else if ("image/jpg".equals(mime)) {
+        } else if ("image/jpeg".equals(mime)) {
             if (!fopimage.load(FopImage.ORIGINAL_DATA, userAgent)) {
                 return;
             }

@@ -39,7 +39,7 @@ public class JpegImage extends AbstractFopImage {
         super(href, imgReader);
     }
 
-    protected boolean loadBitmap(FOUserAgent ua) {
+    protected boolean loadOriginalData(FOUserAgent ua) {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         ByteArrayOutputStream iccStream = new ByteArrayOutputStream();
         InputStream inStream;
