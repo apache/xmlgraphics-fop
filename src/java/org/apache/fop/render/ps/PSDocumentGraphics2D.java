@@ -25,6 +25,7 @@ import java.io.IOException;
 
 //FOP
 import org.apache.fop.apps.Document;
+import org.apache.fop.apps.Version;
 import org.apache.fop.fonts.FontSetup;
 
 /**
@@ -91,7 +92,8 @@ public class PSDocumentGraphics2D extends AbstractPSDocumentGraphics2D {
         //PostScript Header
         gen.writeln(DSCConstants.PS_ADOBE_30);
         gen.writeDSCComment(DSCConstants.CREATOR,
-                    new String[] {"FOP PostScript Transcoder for SVG"});
+                    new String[] {"Apache FOP " + Version.getVersion() 
+                        + ": PostScript Transcoder for SVG"});
         gen.writeDSCComment(DSCConstants.CREATION_DATE,
                     new Object[] {new java.util.Date()});
         gen.writeDSCComment(DSCConstants.PAGES, PSGenerator.ATEND);

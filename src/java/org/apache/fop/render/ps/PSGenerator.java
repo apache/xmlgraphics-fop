@@ -69,6 +69,15 @@ public class PSGenerator {
     }
 
     /**
+     * Returns the selected PostScript level. 
+     * (Hardcoded to level 3 for the moment.)
+     * @return the PostScript level
+     */
+    public int getPSLevel() {
+        return 3; 
+    }
+
+    /**
      * Writes a newline character to the OutputStream.
      * 
      * @throws IOException In case of an I/O problem
