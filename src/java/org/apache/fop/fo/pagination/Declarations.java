@@ -32,7 +32,6 @@ import org.xml.sax.SAXParseException;
 import org.apache.fop.fo.FOElementMapping;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FObj;
-import org.apache.fop.layoutmgr.AddLMVisitor;
 import org.apache.fop.fo.XMLObj;
 
 
@@ -104,10 +103,6 @@ public class Declarations extends FObj {
             }
         }
         childNodes = null;
-    }
-
-    public void acceptVisitor(AddLMVisitor aLMV) {
-        aLMV.serveDeclarations(this);
     }
 
     public String getName() {

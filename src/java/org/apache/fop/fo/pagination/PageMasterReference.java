@@ -25,7 +25,6 @@ import org.xml.sax.SAXParseException;
 // FOP
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FObj;
-import org.apache.fop.layoutmgr.AddLMVisitor;
 
 /**
  * Base PageMasterReference class. Provides implementation for handling the
@@ -84,10 +83,6 @@ public abstract class PageMasterReference extends FObj
                                    + "child of fo:page-sequence-master, not "
                                    + parent.getName(), locator);
         }
-    }
-
-    public void acceptVisitor(AddLMVisitor aLMV) {
-        aLMV.servePageMasterReference(this);
     }
 
     public String getName() {

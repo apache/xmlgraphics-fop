@@ -33,7 +33,6 @@ import org.xml.sax.SAXParseException;
 import org.apache.fop.datatypes.ColorType;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FObj;
-import org.apache.fop.layoutmgr.AddLMVisitor;
 
 /**
  * The fo:color-profile formatting object.
@@ -110,10 +109,6 @@ public class ColorProfile extends FObj {
         } catch (IllegalArgumentException iae) {
             getLogger().error("Color Profile src not an ICC Profile", iae);
         }
-    }
-
-    public void acceptVisitor(AddLMVisitor aLMV) {
-        aLMV.serveColorProfile(this);
     }
 
     public String getName() {

@@ -21,8 +21,6 @@ package org.apache.fop.fo.extensions;
 import org.xml.sax.Locator;
 
 import org.apache.fop.fo.FONode;
-import org.apache.fop.layoutmgr.AddLMVisitor;
-
 
 /**
  * Labal for PDF bookmark extension.
@@ -61,10 +59,6 @@ public class Label extends ExtensionObj {
      */
     public String toString() {
         return label;
-    }
-
-    public void acceptVisitor(AddLMVisitor aLMV) {
-        aLMV.serveLabel(this);
     }
     
     public String getName() {

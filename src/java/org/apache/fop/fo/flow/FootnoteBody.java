@@ -26,7 +26,6 @@ import org.xml.sax.SAXParseException;
 // FOP
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FObj;
-import org.apache.fop.layoutmgr.AddLMVisitor;
 
 /**
  * Class modelling the fo:footnote-body object. See Sec. 6.10.4 of the XSL-FO
@@ -54,10 +53,6 @@ public class FootnoteBody extends FObj {
     protected void addProperties(Attributes attlist) throws SAXParseException {
         super.addProperties(attlist);
         getFOInputHandler().startFootnoteBody(this);
-    }
-
-    public void acceptVisitor(AddLMVisitor aLMV) {
-        aLMV.serveFootnoteBody(this);
     }
 
     protected void endOfNode() throws SAXParseException {

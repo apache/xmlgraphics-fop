@@ -19,7 +19,6 @@
 package org.apache.fop.fo.extensions;
 
 import org.apache.fop.fo.FONode;
-import org.apache.fop.layoutmgr.AddLMVisitor;
 
 import java.util.ArrayList;
 
@@ -87,10 +86,6 @@ public class Outline extends ExtensionObj {
      */
     public String getLabel() {
         return label == null ? "" : label.toString();
-    }
-
-    public void acceptVisitor(AddLMVisitor aLMV) {
-        aLMV.serveOutline(this);
     }
 
     public String getInternalDestination() {

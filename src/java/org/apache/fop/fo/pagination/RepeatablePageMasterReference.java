@@ -25,7 +25,6 @@ import org.xml.sax.SAXParseException;
 
 // FOP
 import org.apache.fop.fo.FONode;
-import org.apache.fop.layoutmgr.AddLMVisitor;
 
 /**
  * A repeatable-page-master-reference formatting object.
@@ -102,10 +101,6 @@ public class RepeatablePageMasterReference extends PageMasterReference
      */
     public void reset() {
         this.numberConsumed = 0;
-    }
-
-    public void acceptVisitor(AddLMVisitor aLMV) {
-        aLMV.serveRepeatablePageMasterReference(this);
     }
 
     public String getName() {
