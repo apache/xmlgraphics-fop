@@ -347,12 +347,12 @@ public abstract class AbstractLayoutManager implements LayoutManager, Constants 
     }
 
     /**
-     * Delegate getting the current page number to the parent layout manager.
+     * Delegate getting the current page viewport to the parent layout manager.
      *
      * @see org.apache.fop.layoutmgr.LayoutManager
      */
-    public String getCurrentPageNumberString() {
-        return parentLM.getCurrentPageNumberString();
+    public PageViewport getCurrentPageViewport() {
+        return parentLM.getCurrentPageViewport();
     }
 
     /**
