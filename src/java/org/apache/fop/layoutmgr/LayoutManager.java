@@ -172,7 +172,7 @@ public interface LayoutManager {
      *
      * @return the string for the current page number
      */
-    String getCurrentPageNumber();
+    String getCurrentPageNumberString();
 
     /**
      * Resolve the id reference.

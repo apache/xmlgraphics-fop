@@ -264,7 +264,7 @@ public class AreaTreeHandler extends FOEventHandler {
             long memoryNow = runtime.totalMemory() - runtime.freeMemory();
             long memoryUsed = (memoryNow - initialMemory) / 1024L;
             long timeUsed = System.currentTimeMillis() - startTime;
-            int pageCount = rootFObj.getRunningPageNumberCounter();
+            int pageCount = rootFObj.getTotalPagesGenerated();
             log.debug("Initial heap size: " + (initialMemory / 1024L) + "Kb");
             log.debug("Current heap size: " + (memoryNow / 1024L) + "Kb");
             log.debug("Total memory used: " + memoryUsed + "Kb");

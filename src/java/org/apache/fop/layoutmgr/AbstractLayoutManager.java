@@ -314,8 +314,8 @@ public abstract class AbstractLayoutManager implements LayoutManager, Constants 
      *
      * @see org.apache.fop.layoutmgr.LayoutManager
      */
-    public String getCurrentPageNumber() {
-        return parentLM.getCurrentPageNumber();
+    public String getCurrentPageNumberString() {
+        return parentLM.getCurrentPageNumberString();
     }
 
     /**
