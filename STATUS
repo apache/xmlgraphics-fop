@@ -4,11 +4,13 @@ STATUS
 
 Things worked on:
 
-rewrite of the org.apache.fop.layout (implements xsl 2000) [James Tauber]
+rewrite of the org.apache.fop.layout in a new package (implements xsl 2000) [James Tauber]
 image support [Eric Schaeffer, Pankaj Narula]
 simple-links [Arved Sandstrom]
 SVG support [Keiron Liddle][Torsten Friebe]
-borders and absolute positioning [Jon Smirl]
+more borders, padding and absolute positioning [Jon Smirl]
+smooth shading in PDF [Steve Coffman]
+
 
 Things to do:
 
@@ -18,16 +20,12 @@ Get images working
 [PARTIAL] Implement basic keeps
 [PARTIAL] Incorporate Eric Schaeffer's further table fixes
 Implement MessageHandler (or similar)
+Support XSL Working Draft 12 January 2000
 
 Other Bugs to fix:
 
 colour not continued onto subsequent pages if coloured block goes over page
 simple-link doesn't seem to work (I think I, JKT, broke it)
-
-Todo's 
-
-- Support XSL Working Draft 12 January 2000
-- Makefile: Avoid recompilation of all files, fix some smaller problems
 
 with AWT Previewer:
 
@@ -43,11 +41,12 @@ with AWT Previewer:
 
 History
 
+Done since 0.12.1 release
+- using Ant to build Fop instead of make [Giacomo Pati]
+- borders, padding and absolute positioning [Jon Smirl]
+
 0.12.1 release
 to make the bug fix on XTCommandLine available to non developers
-
-Done since 0.12.0 release:
-
 basic support for padding-{top,left,bottom,right} on blocks.
 implemented simple-link (don't think it works, though)
 XTCommandLine now works again
