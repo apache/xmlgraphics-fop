@@ -412,7 +412,9 @@ want it to.</comment>
           <level-3 name="border-start-precedence" citation="§7.26.6" extURL="slice7.html#border-start-precedence" compliance-level="1" comply="no"/>
           <level-3 name="caption-side" citation="§7.26.7" extURL="slice7.html#caption-side" compliance-level="3" comply="no"/>
           <level-3 name="column-number" citation="§7.26.8" extURL="slice7.html#column-number" compliance-level="1" comply="no"/>
-          <level-3 name="column-width" citation="§7.26.9" extURL="slice7.html#column-width" compliance-level="1" comply="yes"/>
+          <level-3 name="column-width" citation="§7.26.9" extURL="slice7.html#column-width" compliance-level="1" comply="partial">
+          <comment>"percentage" not implemented. Workaround is to use the XSL-FO "proportional-column-width" function.</comment>
+          </level-3>
           <level-3 name="empty-cells" citation="§7.26.10" extURL="slice7.html#empty-cells" compliance-level="2" comply="no"/>
           <level-3 name="ends-row" citation="§7.26.11" extURL="slice7.html#ends-row" compliance-level="2" comply="no"/>
           <level-3 name="number-columns-repeated" citation="§7.26.12" extURL="slice7.html#number-columns-repeated" compliance-level="1" comply="no"/>
