@@ -49,7 +49,10 @@ public class PDFOutline extends PDFObject {
     private PDFOutline last;
 
     private int count;
-
+    
+    // whether to show this outline item's child outline items
+    private boolean openItem = false;
+    
     /**
      * title to display for the bookmark entry
      */
@@ -62,8 +65,9 @@ public class PDFOutline extends PDFObject {
      *
      * @param title the title of the outline entry (can only be null for root Outlines obj)
      * @param action the action for this outline
+     * @param openItem indicator of whether child items are visible or not
      */
-    public PDFOutline(String title, String action) {
+    public PDFOutline(String title, String action, boolean openItem) {
         super();
         subentries = new java.util.ArrayList();
         count = 0;
@@ -74,6 +78,7 @@ public class PDFOutline extends PDFObject {
         last = null;
         this.title = title;
         actionRef = action;
+        this.openItem = openItem;
     }
 
     /**
@@ -136,30 +141,28 @@ public class PDFOutline extends PDFObject {
                     // no count... we start with the outline completely closed for now
                 }
             } else {
-                // subentry Outline object
+                // subentry Outline item object
                 bout.write(encode(" /Title "));
                 bout.write(encodeText(this.title));
                 bout.write(encode("\n"));
                 bout.write(encode(" /Parent " + parent.referencePDF() + "\n"));
-                if (first != null && last != null) {
-                    bout.write(encode(" /First " + first.referencePDF() + "\n"));
-                    bout.write(encode(" /Last " + last.referencePDF() + "\n"));
-                }
                 if (prev != null) {
                     bout.write(encode(" /Prev " + prev.referencePDF() + "\n"));
                 }
                 if (next != null) {
                     bout.write(encode(" /Next " + next.referencePDF() + "\n"));
                 }
-                if (count > 0) {
-                    bout.write(encode(" /Count -" + count + "\n"));
+                if (first != null && last != null) {
+                    bout.write(encode(" /First " + first.referencePDF() + "\n"));
+                    bout.write(encode(" /Last " + last.referencePDF() + "\n"));
                 }
-    
+                if (count > 0) {
+                    bout.write(encode(" /Count " + (openItem ? "" : "-") 
+                        + count + "\n"));
+                }
                 if (actionRef != null) {
                     bout.write(encode(" /A " + actionRef + "\n"));
                 }
-    
-    
             }
             bout.write(encode(">> endobj\n"));
         } catch (IOException ioe) {

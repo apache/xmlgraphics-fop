@@ -33,8 +33,11 @@ import org.apache.fop.fo.pagination.bookmarks.Bookmark;
 public class BookmarkData extends OffDocumentItem implements Resolvable {
     private ArrayList subData = new ArrayList();
 
-    // bookmark-title for this bookmark
+    // bookmark-title for this fo:bookmark
     private String bookmarkTitle = null;
+
+    // indicator of whether to initially display/hide child bookmarks of this object
+    private boolean bShow = true;
 
     // ID Reference for this bookmark
     private String idRef;
@@ -55,6 +58,8 @@ public class BookmarkData extends OffDocumentItem implements Resolvable {
     public BookmarkData(BookmarkTree bookmarkTree) {
         idRef = null;
         whenToProcess = END_OF_DOC;
+        // top level defined in Rec to show all child bookmarks
+        bShow = true;
         
         for (int count = 0; count < bookmarkTree.getBookmarks().size(); count++) {
             Bookmark bkmk = (Bookmark)(bookmarkTree.getBookmarks()).get(count);
@@ -68,10 +73,12 @@ public class BookmarkData extends OffDocumentItem implements Resolvable {
      * with a idref.  During processing, this idref will be
      * subsequently resolved to a particular PageViewport.
      *
-     * @param idref the id reference
+     * @param bookmark the fo:bookmark object
      */
-    public BookmarkData(String idref) {
-        this.idRef = idref;
+    public BookmarkData(Bookmark bookmark) {
+        bookmarkTitle = bookmark.getBookmarkTitle();
+        bShow = bookmark.showChildItems();
+        this.idRef = bookmark.getInternalDestination();
         unresolvedIDRefs.put(idRef, this);
     }
 
@@ -100,21 +107,21 @@ public class BookmarkData extends OffDocumentItem implements Resolvable {
     }
 
     /**
-     * Set the title for this bookmark.
-     *
-     * @param title the bookmark title
-     */
-    public void setBookmarkTitle(String title) {
-        bookmarkTitle = title;
-    }
-
-    /**
      * Get the title for this bookmark object.
      *
      * @return the bookmark title
      */
     public String getBookmarkTitle() {
         return bookmarkTitle;
+    }
+
+    /**
+     * Indicator of whether to initially display child bookmarks.
+     *
+     * @return true to initially display child bookmarks, false otherwise
+     */
+    public boolean showChildItems() {
+        return bShow;
     }
 
     /**
@@ -204,8 +211,7 @@ public class BookmarkData extends OffDocumentItem implements Resolvable {
      * @return the new bookmark data
      */
     private BookmarkData createBookmarkData(Bookmark bookmark) {
-        BookmarkData data = new BookmarkData(bookmark.getInternalDestination());
-        data.setBookmarkTitle(bookmark.getBookmarkTitle());
+        BookmarkData data = new BookmarkData(bookmark);
         for (int count = 0; count < bookmark.getChildBookmarks().size(); count++) {
             Bookmark bkmk = (Bookmark)(bookmark.getChildBookmarks()).get(count);
             data.addSubData(createBookmarkData(bkmk));

@@ -741,7 +741,7 @@ public class PDFDocument {
             return outlineRoot;
         }
 
-        outlineRoot = new PDFOutline(null, null);
+        outlineRoot = new PDFOutline(null, null, true);
         assignObjectNumber(outlineRoot);
         addTrailerObject(outlineRoot);
         root.setRootOutline(outlineRoot);

@@ -897,13 +897,15 @@ public class PDFFactory {
      * @param label the title for the new outline object
      * @param destination the reference string for the action to go to
      * @param yoffset the yoffset on the destination page
+     * @param showSubItems whether to initially display child outline items
      * @return the new PDF outline object
      */
     public PDFOutline makeOutline(PDFOutline parent, String label,
-                                  String destination, float yoffset) {
-        String goToRef = getGoToReference(destination, yoffset);
+                                  String destination, float yoffset, 
+                                  boolean showSubItems) {
 
-        PDFOutline obj = new PDFOutline(label, goToRef);
+        String goToRef = getGoToReference(destination, yoffset);
+        PDFOutline obj = new PDFOutline(label, goToRef, showSubItems);
 
         if (parent != null) {
             parent.addOutline(obj);
