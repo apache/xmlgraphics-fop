@@ -1,20 +1,17 @@
 /*
  * $Id$
- * Copyright (C) 2001 The Apache Software Foundation. All rights reserved.
+ * Copyright (C) 2001-2002 The Apache Software Foundation. All rights reserved.
  * For details on use and redistribution please refer to the
  * LICENSE file included with these sources.
  */
 
 package org.apache.fop.svg;
 
-import org.apache.batik.gvt.*;
+import org.apache.batik.gvt.CompositeGraphicsNode;
 
 import java.awt.Graphics2D;
 import java.awt.Shape;
-import java.awt.Rectangle;
 import java.awt.geom.Rectangle2D;
-import java.awt.geom.Point2D;
-import java.awt.geom.Dimension2D;
 import java.awt.geom.AffineTransform;
 
 import java.util.StringTokenizer;
@@ -25,21 +22,27 @@ import java.util.StringTokenizer;
  * @author <a href="mailto:keiron@aftexsw.com">Keiron Liddle</a>
  */
 public class PDFANode extends CompositeGraphicsNode {
-    String destination;
-    AffineTransform transform;
+    private String destination;
+    private AffineTransform transform;
 
     /**
      * Constructs a new empty <tt>PDFANode</tt>.
      */
-    public PDFANode() {}
+    public PDFANode() {
+    }
 
     /**
      * Set the destination String.
+     * @param dest the target destination
      */
     public void setDestination(String dest) {
         destination = dest;
     }
 
+    /**
+     * Set the current transform of this node.
+     * @param tf the transform
+     */
     public void setTransform(AffineTransform tf) {
         transform = tf;
     }
@@ -48,16 +51,15 @@ public class PDFANode extends CompositeGraphicsNode {
      * Paints this node if visible.
      *
      * @param g2d the Graphics2D to use
-     * @param rc the GraphicsNodeRenderContext to use
      */
     public void paint(Graphics2D g2d) {
         if (isVisible) {
             super.paint(g2d);
-            if(g2d instanceof PDFGraphics2D) {
+            if (g2d instanceof PDFGraphics2D) {
                 PDFGraphics2D pdfg = (PDFGraphics2D)g2d;
                 int type = org.apache.fop.pdf.PDFLink.EXTERNAL;
                 Shape outline = getOutline();
-                if(destination.startsWith("#svgView(viewBox(")) {
+                if (destination.startsWith("#svgView(viewBox(")) {
                     type = org.apache.fop.pdf.PDFLink.INTERNAL;
                     String nums = destination.substring(17, destination.length() - 2);
                     float x = 0;
@@ -67,7 +69,7 @@ public class PDFANode extends CompositeGraphicsNode {
                     int count = 0;
                     try {
                         StringTokenizer st = new StringTokenizer(nums, ",");
-                        while(st.hasMoreTokens()) {
+                        while (st.hasMoreTokens()) {
                             String tok = st.nextToken();
                             count++;
                             switch(count) {
@@ -87,7 +89,7 @@ public class PDFANode extends CompositeGraphicsNode {
                             break;
                             }
                         }
-                    } catch(Exception e) {
+                    } catch (Exception e) {
                         e.printStackTrace();
                     }
                     Rectangle2D destRect = new Rectangle2D.Float(x, y, width, height);

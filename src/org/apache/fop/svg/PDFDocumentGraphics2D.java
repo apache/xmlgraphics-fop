@@ -1,20 +1,24 @@
 /*
  * $Id$
- * Copyright (C) 2001 The Apache Software Foundation. All rights reserved.
+ * Copyright (C) 2001-2002 The Apache Software Foundation. All rights reserved.
  * For details on use and redistribution please refer to the
  * LICENSE file included with these sources.
  */
 
 package org.apache.fop.svg;
 
-import org.apache.fop.pdf.*;
-import org.apache.fop.fonts.*;
+import org.apache.fop.pdf.PDFDocument;
+import org.apache.fop.pdf.PDFPage;
+import org.apache.fop.pdf.PDFStream;
+import org.apache.fop.pdf.PDFState;
+import org.apache.fop.pdf.PDFNumber;
+import org.apache.fop.pdf.PDFResources;
+import org.apache.fop.pdf.PDFColor;
 import org.apache.fop.render.pdf.FontSetup;
-import org.apache.fop.layout.*;
+import org.apache.fop.layout.FontInfo;
 
 import java.awt.Graphics;
 import java.awt.Font;
-import java.awt.Image;
 import java.awt.Color;
 import java.awt.Shape;
 import java.awt.font.FontRenderContext;
@@ -22,11 +26,6 @@ import java.awt.font.GlyphVector;
 import java.awt.geom.AffineTransform;
 import java.io.OutputStream;
 import java.io.IOException;
-
-import org.apache.batik.ext.awt.g2d.GraphicContext;
-
-import org.apache.fop.image.JpegImage;
-import java.awt.image.ImageObserver;
 
 /**
  * This class is a wrapper for the <tt>PDFGraphics2D</tt> that
@@ -38,10 +37,10 @@ import java.awt.image.ImageObserver;
  * @see org.apache.fop.svg.PDFGraphics2D
  */
 public class PDFDocumentGraphics2D extends PDFGraphics2D {
-    PDFPage currentPage;
-    PDFStream pdfStream;
-    int width;
-    int height;
+    private PDFPage currentPage;
+    private PDFStream pdfStream;
+    private int width;
+    private int height;
 
     /**
      * Create a new PDFDocumentGraphics2D.
@@ -57,7 +56,7 @@ public class PDFDocumentGraphics2D extends PDFGraphics2D {
     PDFDocumentGraphics2D(boolean textAsShapes) {
         super(textAsShapes);
     
-        if(!textAsShapes) {
+        if (!textAsShapes) {
             fontInfo = new FontInfo();
             FontSetup.setup(fontInfo, null);
             //FontState fontState = new FontState("Helvetica", "normal",
@@ -77,7 +76,15 @@ public class PDFDocumentGraphics2D extends PDFGraphics2D {
         pdfStream = this.pdfDoc.makeStream(PDFStream.CONTENT_FILTER, false);
     }
 
-    void setupDocument(OutputStream stream, int width, int height) throws IOException {
+    /**
+     * Setup the document.
+     * @param stream the output stream to write the document
+     * @param width the width of the page
+     * @param height the height of the page
+     * @throws IOException an io exception if there is a problem
+     *         writing to the output stream
+     */
+    public void setupDocument(OutputStream stream, int width, int height) throws IOException {
         this.width = width;
         this.height = height;
 
@@ -104,6 +111,8 @@ public class PDFDocumentGraphics2D extends PDFGraphics2D {
      * @param stream the stream that the final document should be written to.
      * @param width the width of the document
      * @param height the height of the document
+     * @throws IOException an io exception if there is a problem 
+     *         writing to the output stream
      */
     public PDFDocumentGraphics2D(boolean textAsShapes, OutputStream stream,
                                  int width, int height) throws IOException {
@@ -111,10 +120,18 @@ public class PDFDocumentGraphics2D extends PDFGraphics2D {
         setupDocument(stream, width, height);
     }
 
+    /**
+     * Get the font info for this pdf document.
+     * @return the font information
+     */
     public FontInfo getFontInfo() {
         return fontInfo;
     }
 
+    /**
+     * Get the pdf document created by this class.
+     * @return the pdf document
+     */
     public PDFDocument getPDFDocument() {
         return this.pdfDoc;
     }
@@ -123,7 +140,10 @@ public class PDFDocumentGraphics2D extends PDFGraphics2D {
      * Set the dimensions of the svg document that will be drawn.
      * This is useful if the dimensions of the svg document are different
      * from the pdf document that is to be created.
-     * The result is scaled so that the svg fits correctly inside the pdf document.
+     * The result is scaled so that the svg fits correctly inside the
+     * pdf document.
+     * @param w the width of the page
+     * @param h the height of the page
      */
     public void setSVGDimension(float w, float h) {
         currentStream.write("" + PDFNumber.doubleOut(width / w) + " 0 0 "
@@ -134,6 +154,7 @@ public class PDFDocumentGraphics2D extends PDFGraphics2D {
      * Set the background of the pdf document.
      * This is used to set the background for the pdf document
      * Rather than leaving it as the default white.
+     * @param col the background colour to fill
      */
     public void setBackgroundColor(Color col) {
         Color c = col;
@@ -152,6 +173,8 @@ public class PDFDocumentGraphics2D extends PDFGraphics2D {
      * This should be called after the rendering has completed as there is
      * no other indication it is complete.
      * This will then write the results to the output stream.
+     * @throws IOException an io exception if there is a problem
+     *         writing to the output stream
      */
     public void finish() throws IOException {
         // restorePDFState();
@@ -169,6 +192,7 @@ public class PDFDocumentGraphics2D extends PDFGraphics2D {
 
     /**
      * This constructor supports the create method
+     * @param g the pdf document graphics to make a copy of
      */
     public PDFDocumentGraphics2D(PDFDocumentGraphics2D g) {
         super(g);
@@ -184,6 +208,14 @@ public class PDFDocumentGraphics2D extends PDFGraphics2D {
         return new PDFDocumentGraphics2D(this);
     }
 
+    /**
+     * Draw a string to the pdf document.
+     * This either draws the string directly or if drawing text as
+     * shapes it converts the string into shapes and draws that.
+     * @param s the string to draw
+     * @param x the x position
+     * @param y the y position
+     */
     public void drawString(String s, float x, float y) {
         if (super.textAsShapes) {
             Font font = super.getFont();
