@@ -461,15 +461,27 @@ list of possible build targets.
   <!-- =================================================================== -->
   <!-- compiles hyphenation patterns                                       -->
   <!-- =================================================================== -->
-  <target name="hyphenation" depends="prepare">
+  <target name="hyphenation" depends="fop-hyphenation,user-hyphenation"/>
+
+  <target name="prepare-hyphenation" depends="prepare">
     <path id="hyph-classpath">
       <path refid="libs-build-classpath"/>
       <pathelement location="${build.dir}/classes"/>
     </path>
     <taskdef name="serHyph" classname="org.apache.fop.tools.anttasks.SerializeHyphPattern" classpathref="hyph-classpath"/>
+  </target>
+
+  <target name="fop-hyphenation" depends="prepare-hyphenation">
     <serHyph includes="*.xml"
              sourceDir="${hyph.dir}"
              targetDir="${build.dest}/hyph"/>
+  </target>
+
+  <target name="user-hyphenation" depends="prepare-hyphenation" if="user.hyph.dir">
+    <property name="user.hyphdest.dir" value="${build.dest}/hyph"/>
+    <serHyph includes="*.xml"
+             sourceDir="${user.hyph.dir}"
+             targetDir="${user.hyphdest.dir}"/>
   </target>
 
   <!-- =================================================================== -->
@@ -724,7 +736,20 @@ list of possible build targets.
   <!-- Creates the API documentation                                       -->
   <!-- =================================================================== -->
   <target name="javadocs" depends="prepare" description="Generates javadocs">
-    <echo message="Producing the javadoc files "/>
+    <property name="javadoc.public"  value="false"/>
+    <property name="javadoc.package" value="false"/>
+    <property name="javadoc.private" value="false"/>
+    <condition property="javadoc.level" value=" (level: private)">
+      <equals arg1="${javadoc.private}" arg2="true"/>
+    </condition>
+    <condition property="javadoc.level" value=" (level: package)">
+      <equals arg1="${javadoc.package}" arg2="true"/>
+    </condition>
+    <condition property="javadoc.level" value=" (level: public)">
+      <equals arg1="${javadoc.public}" arg2="true"/>
+    </condition>
+    <property name="javadoc.level" value=""/>
+    <echo message="Producing the javadoc files${javadoc.level}"/>
     <mkdir dir="${build.javadocs}"/>
 
     <javadoc
@@ -738,7 +763,10 @@ list of possible build targets.
         bottom="Copyright ${year} The Apache Software Foundation. All Rights Reserved."
         overview="${src.dir}/java/org/apache/fop/overview.html"
         use="true"
-        failonerror="true">
+        failonerror="true"
+        public="${javadoc.public}"
+        package="${javadoc.package}"
+        private="${javadoc.private}">
       <sourcepath>
         <pathelement path="${src.java}"/>
         <pathelement path="${build.gensrc}"/>
