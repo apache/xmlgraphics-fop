@@ -534,7 +534,7 @@ public class TernaryTree implements Cloneable, Serializable {
 
             public void rewind()
             {
-               ns.clear();
+               ns.removeAllElements();
                ks.setLength(0);
                cur = root;
                run();
