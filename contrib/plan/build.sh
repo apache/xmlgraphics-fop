@@ -12,7 +12,7 @@ if [ "$JAVA_HOME" = "" ] ; then
   exit 1
 fi
 LIBDIR=../../lib
-LOCALCLASSPATH=$JAVA_HOME/lib/tools.jar:$JAVA_HOME/lib/classes.zip:$LIBDIR/ant.jar:$LIBDIR/batik.jar:$LIBDIR/buildtools.jar:$LIBDIR/xerces-1.4.3.jar:$LIBDIR/xalan-2.2D11.jar:../../build/fop.jar:$LIBDIR/avalon-framework-cvs-20020806.jar
+LOCALCLASSPATH=$JAVA_HOME/lib/tools.jar:$JAVA_HOME/lib/classes.zip:$LIBDIR/ant.jar:$LIBDIR/batik.jar:$LIBDIR/buildtools.jar:$LIBDIR/xercesImpl-2.0.1.jar:$LIBDIR/xalan-2.2D11.jar:$LIBDIR/xml-apis.jar:../../build/fop.jar:$LIBDIR/avalon-framework-cvs-20020806.jar
 ANT_HOME=$LIBDIR
 
 echo
