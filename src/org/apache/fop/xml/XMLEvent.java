@@ -216,40 +216,4 @@ public class XMLEvent {
         return tstr;
     }
 
-    /**
-     * A nested class for holding an passing a URI index and local name
-     * pair, as used in the containing <tt>XMLEvent</tt> class.
-     */
-    public static class UriLocalName {
-        public int uriIndex;
-        public String localName;
-
-        /**
-         * @param uriIndex - the index of the namespace URI maintained in
-         * the associated <tt>XMLNamespaces</tt> object.
-         * @param localName - the local name of the event.
-         */
-        public UriLocalName(int uriIndex, String localName) {
-            this.uriIndex = uriIndex;
-            this.localName = localName;
-        }
-
-        /**
-         * Get the index of the namespace URI associated with this event.
-         * @return the index of the URI in the associated
-         * <tt>XMLNamespaces</tt> object.
-         */
-        public int getUriIndex() {
-            return uriIndex;
-        }
-
-        /**
-         * Get the local name associated with this event.
-         * @return the local name.
-         */
-        public String getLocalName() {
-            return localName;
-        }
-    }
-
 }
