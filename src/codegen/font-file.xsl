@@ -47,7 +47,7 @@ This software consists of voluntary contributions made by many individuals
 on behalf of the Apache Software Foundation and was originally created by
 James Tauber <jtauber@jtauber.com>. For more information on the Apache
 Software Foundation, please see <http://www.apache.org/>.
---> 
+-->
 <!-- This file writes the class files for the fonts (Courier.java,
      Helvetica.java etc.).  It uses the information in the font
      description files (Courier.xml, Helvetica.xml) to do this.  In these
@@ -70,10 +70,10 @@ Software Foundation, please see <http://www.apache.org/>.
 package org.apache.fop.fonts.base14;
 
 import org.apache.fop.fonts.FontType;
-import org.apache.fop.fonts.Font;
+import org.apache.fop.fonts.Typeface;
 import org.apache.fop.fonts.CodePointMapping;
 
-public class <xsl:value-of select="class-name"/> extends Font {
+public class <xsl:value-of select="class-name"/> extends Typeface {
     private final static String fontName = "<xsl:value-of select="font-name"/>";
     private final static String encoding = <xsl:choose><xsl:when test="$encoding != $native-encoding">"<xsl:value-of select="$encoding"/>"</xsl:when><xsl:otherwise>null</xsl:otherwise></xsl:choose>;
     private final static int capHeight = <xsl:value-of select="cap-height"/>;
@@ -96,9 +96,9 @@ public class <xsl:value-of select="class-name"/> extends Font {
     }
 
     public String getFontName() {
-        return fontName;        
+        return fontName;
     }
-    
+
     public FontType getFontType() {
         return FontType.TYPE1;
     }
@@ -137,15 +137,15 @@ public class <xsl:value-of select="class-name"/> extends Font {
         //for( int i = 0; i &lt; arr.length; i++) arr[i] *= size;
         return arr;
     }
-    
+
     public boolean hasKerningInfo() {
         return false;
     }
-        
+
     public java.util.Map getKerningInfo() {
         return java.util.Collections.EMPTY_MAP;
     }
-    
+
     public char mapChar(char c) {
         char d = mapping.mapChar(c);
         if(d != 0) {
