@@ -39,8 +39,8 @@ The developers do not currently intend to create more releases from the maintena
       <table>
         <tr>
           <th>&#x00A0;</th>
-          <th>Development (aka trunk, redesign)</th>
           <th>0.20.5</th>
+          <th>Development (aka trunk, redesign)</th>
         </tr>
         <tr>
           <td colspan="3">&#x00A0;</td>
@@ -50,114 +50,124 @@ The developers do not currently intend to create more releases from the maintena
         </tr>
         <tr>
           <td>fop jar</td>
-          <td>1,962 kb</td>
+          <td>1,485 kb</td>
           <td>1,992 kb</td>
         </tr>
         <tr>
           <td>hyphenation (in fop.jar)</td>
-          <td>717 kb</td>
+          <td>348 kb</td>
           <td>746 kb</td>
         </tr>
         <tr>
+          <td>avalon-framework jar</td>
+          <td>62 kb</td>
+          <td></td>
+        </tr>
+        <tr>
           <td>batik jar</td>
-          <td>2,164 kb</td>
+          <td>2,063 kb</td>
           <td>2,119 kb</td>
         </tr>
         <tr>
-          <td>bsf jar</td>
-          <td>106 kb</td>
-          <td>106 kb</td>
-        </tr>
-        <tr>
           <td>xalan jar</td>
-          <td>883 kb</td>
+          <td>1,007 kb</td>
           <td>1,007 kb</td>
         </tr>
         <tr>
           <td>xerces jar</td>
-          <td>1,809 kb</td>
+          <td>816 kb</td>
           <td>813 kb</td>
         </tr>
         <tr>
           <td>xml-apis jar</td>
-          <td>&#x00A0;</td>
+          <td>112 kb</td>
           <td>112 kb</td>
         </tr>
         <tr>
           <th colspan="3">Lines of Source Code, using "find . -iname "*.java" | xargs cat | wc -l"</th>
         </tr>
         <tr>
-          <td>org.apache.fop.*</td>
-          <td>67479</td>
-          <td>69610</td>
-        </tr>
-        <tr>
           <td>org.apache.fop.fo.*</td>
-          <td>13186 (20%)</td>
-          <td>14660 (21%)</td>
+          <td>20,297</td>
+          <td>14,660 (21%)</td>
         </tr>
         <tr>
           <td>org.apache.fop.layout.*</td>
-          <td>&#x00A0;</td>
-          <td>7154 (10%)</td>
+          <td>9,444</td>
+          <td>7,154 (10%)</td>
         </tr>
         <tr>
           <td>org.apache.fop.layoutmgr.*</td>
-          <td>7913 (12%)</td>
+          <td>&#x00A0;</td>
           <td>&#x00A0;</td>
         </tr>
         <tr>
           <td>org.apache.fop.area.*</td>
-          <td>3722 (5.5%)</td>
+          <td>&#x00A0;</td>
           <td>&#x00A0;</td>
         </tr>
         <tr>
           <td>org.apache.fop.render.*</td>
-          <td>8210 (12%)</td>
-          <td>16260 (23%)</td>
+          <td>18,387</td>
+          <td>16,260 (23%)</td>
         </tr>
         <tr>
           <td>org.apache.fop.pdf.*</td>
-          <td>9481 (14%)</td>
-          <td>7938 (11%)</td>
+          <td>10,203</td>
+          <td>7,938 (11%)</td>
+        </tr>
+        <tr>
+          <td>Other</td>
+          <td>29,821</td>
+          <td>&#x00A0;</td>
+        </tr>
+        <tr>
+          <td>Total</td>
+          <td>88,152</td>
+          <td>69,610</td>
         </tr>
         <tr>
           <th colspan="3">Files, using "find . -iname "*.java" | wc -l"</th>
         </tr>
         <tr>
-          <td>org.apache.fop.*</td>
-          <td>442</td>
-          <td>394</td>
-        </tr>
-        <tr>
           <td>org.apache.fop.fo.*</td>
-          <td>125 (28%)</td>
+          <td>122</td>
           <td>122 (31%)</td>
         </tr>
         <tr>
           <td>org.apache.fop.layout.*</td>
+          <td>49</td>
           <td>&#x00A0;</td>
-          <td>49 (12%)</td>
         </tr>
         <tr>
           <td>org.apache.fop.layoutmgr.*</td>
-          <td>35 (8%)</td>
+          <td>&#x00A0;</td>
           <td>&#x00A0;</td>
         </tr>
         <tr>
           <td>org.apache.fop.area.*</td>
-          <td>37 (8%)</td>
+          <td>&#x00A0;</td>
           <td>&#x00A0;</td>
         </tr>
         <tr>
           <td>org.apache.fop.render.*</td>
-          <td>39 (9%)</td>
-          <td>48 (12%)</td>
+          <td>48</td>
+          <td>48</td>
         </tr>
         <tr>
           <td>org.apache.fop.pdf.*</td>
-          <td>&#x00A0;</td>
+          <td>51</td>
           <td>50 (13%)</td>
+        </tr>
+        <tr>
+          <td>Other</td>
+          <td>129</td>
+          <td>394</td>
+        </tr>
+        <tr>
+          <td>Total</td>
+          <td>399</td>
+          <td>394</td>
         </tr>
       </table>
     </section>
