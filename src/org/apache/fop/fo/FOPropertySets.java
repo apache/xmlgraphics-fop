@@ -40,54 +40,50 @@ public class FOPropertySets {
 
     public static final String packageNamePrefix = "org.apache.fop";
 
-    public static String getAttrSetName(int attrSet) throws FOPException {
-        switch (attrSet) {
-        case FONode.ROOT_SET:
-            return "ROOT";
-        case FONode.DECLARATIONS_SET:
-            return "DECLARATIONS";
-        case FONode.LAYOUT_SET:
-            return "LAYOUT";
-        case FONode.SEQ_MASTER_SET:
-            return "SEQ_MASTER";
-        case FONode.PAGESEQ_SET:
-            return "PAGESEQ";
-        case FONode.FLOW_SET:
-            return "FLOW";
-        case FONode.STATIC_SET:
-            return "STATIC";
-        case FONode.TITLE_SET:
-            return "TITLE";
-        case FONode.MARKER_SET:
+    public static String getAttrSetName(int ancestry) throws FOPException {
+        if ((ancestry & FONode.MC_MARKER) != 0)
             return "MARKER";
-        }
-        throw new FOPException("Invalid attribute set: " + attrSet);
+        if ((ancestry & FONode.FLOW) != 0)
+            return "FLOW";
+        if ((ancestry & FONode.STATIC) != 0)
+            return "STATIC";
+        if ((ancestry & FONode.TITLE) != 0)
+            return "TITLE";
+        if ((ancestry & FONode.PAGESEQ) != 0)
+            return "PAGESEQ";
+        if ((ancestry & FONode.SEQ_MASTER) != 0)
+            return "SEQ_MASTER";
+        if ((ancestry & FONode.LAYOUT) != 0)
+            return "LAYOUT_MASTER";
+        if ((ancestry & FONode.DECLARATIONS) != 0)
+            return "DECLARATIONS";
+        if ((ancestry & FONode.ROOT) != 0)
+            return "ROOT";
+        throw new FOPException("Invalid attribute set: " + ancestry);
     }
 
-    public static ROBitSet getAttrROBitSet(int attrSet)
+    public static ROBitSet getAttrROBitSet(int ancestry)
             throws FOPException
     {
-        switch (attrSet) {
-        case FONode.ROOT_SET:
-            return allProps;
-        case FONode.DECLARATIONS_SET:
-            return declarationsAll;
-        case FONode.LAYOUT_SET:
-            return layoutMasterSet;
-        case FONode.SEQ_MASTER_SET:
-            return seqMasterSet;
-        case FONode.PAGESEQ_SET:
-            return pageSeqSet;
-        case FONode.FLOW_SET:
-            return flowAllSet;
-        case FONode.STATIC_SET:
-            return staticAllSet;
-        case FONode.TITLE_SET:
-            return titleAllSet;
-        case FONode.MARKER_SET:
+        if ((ancestry & FONode.MC_MARKER) != 0)
             return markerAllSet;
-        }
-        throw new FOPException("Invalid attribute set: " + attrSet);
+        if ((ancestry & FONode.FLOW) != 0)
+            return flowAllSet;
+        if ((ancestry & FONode.STATIC) != 0)
+            return staticAllSet;
+        if ((ancestry & FONode.TITLE) != 0)
+            return titleAllSet;
+        if ((ancestry & FONode.PAGESEQ) != 0)
+            return pageSeqSet;
+        if ((ancestry & FONode.SEQ_MASTER) != 0)
+            return seqMasterSet;
+        if ((ancestry & FONode.LAYOUT) != 0)
+            return layoutMasterSet;
+        if ((ancestry & FONode.DECLARATIONS) != 0)
+            return declarationsAll;
+        if ((ancestry & FONode.ROOT) != 0)
+            return allProps;
+        throw new FOPException("Invalid attribute set: " + ancestry);
     }
 
     /**
