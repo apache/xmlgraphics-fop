@@ -183,9 +183,9 @@ Sometimes ant gives out this warnings, but the build is finished without any pro
     <echo message="------------------- ${Name} ${version} [${year}] ----------------"/>
 
     <property name="build.compiler" value="classic"/>
-    <property name="debug" value="off"/>
+    <property name="debug" value="on"/>
     <property name="optimize" value="on"/>
-    <property name="deprecation" value="off"/>
+    <property name="deprecation" value="on"/>
 
     <property name="src.dir" value="./src"/>
     <property name="src.codegen" value="./src/codegen"/>
@@ -233,7 +233,6 @@ Sometimes ant gives out this warnings, but the build is finished without any pro
     <property name="src.propmaker.xsl" value="${src.codegen}/propmaker.xsl"/>
     <property name="foproperties.xml" value="${build.codegen}/foproperties.xml"/>
     <property name="colorkw.xml" value="${build.codegen}/colorkw.xml"/>
-    <property name="extproperties.xml" value="${build.codegen}/extproperties.xml"/>
     <property name="allprops.xml" value="${build.codegen}/allprops.xml"/>
 
     <property name="properties.xsl" value="${build.codegen}/properties.xsl"/>
@@ -408,7 +407,7 @@ Sometimes ant gives out this warnings, but the build is finished without any pro
     <!-- generate the java files from xml resources -->
     <echo message="Generating the java files from xml resources"/>
     <xslt infile="${allprops.xml}" xsltfile="${genconst.xsl}"
-        dependent="${foproperties.xml},${extproperties.xml},${colorkw.xml}"
+        dependent="${foproperties.xml},${colorkw.xml}"
         outfile="${build.src}/${replacestring}/fo/properties/Constants.java" smart="yes"/>
 
     <xslt infile="${foproperties.xml}" xsltfile="${properties.xsl}"
@@ -420,16 +419,6 @@ Sometimes ant gives out this warnings, but the build is finished without any pro
     <xslt infile="${foproperties.xml}" xsltfile="${enumgen.xsl}"
         dependent="${propinc.xsl}"
         outfile="${build.src}/${replacestring}/fo/properties/foenums_${ignore_this}" smart="yes"/>
-
-    <xslt infile="${extproperties.xml}" xsltfile="${properties.xsl}"
-        dependent="${propinc.xsl}"
-        outfile="${build.src}/${replacestring}/fo/properties/ext_${ignore_this}" smart="yes"/>
-    <xslt infile="${extproperties.xml}" xsltfile="${propmap.xsl}"
-        dependent="${propinc.xsl}"
-        outfile="${build.src}/${replacestring}/fo/properties/ExtensionPropertyMapping.java" smart="yes"/>
-    <xslt infile="${extproperties.xml}" xsltfile="${enumgen.xsl}"
-        dependent="${propinc.xsl}"
-        outfile="${build.src}/${replacestring}/fo/properties/extenums_${ignore_this}" smart="yes"/>
 
     <xslt infile="${charlist.xml}" xsltfile="${charlist.xsl}" 
         outfile="${build.src}/${replacestring}/render/pdf/CodePointMapping.java" smart="yes"/>

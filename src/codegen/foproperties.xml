@@ -1288,13 +1288,20 @@
   <property>
     <name>color-profile-name</name>
     <inherited>false</inherited>
-    <datatype>ToBeImplemented</datatype>
+    <datatype>String</datatype>
     <default></default>
   </property>
   <property>
     <name>rendering-intent</name>
     <inherited>false</inherited>
-    <datatype>ToBeImplemented</datatype>
+    <datatype>Enum</datatype>
+      <enumeration>
+        <value const="AUTO">auto</value>
+        <value const="PERCEPTUAL">perceptual</value>
+        <value const="RELATIVE_COLOMETRIC">relative-colorimetric</value>
+        <value const="SATURATION">saturation</value>
+        <value const="ABSOLUTE_COLORMETRIC">absolute-colorimetric</value>
+      </enumeration>
     <default>auto</default>
   </property>
 

@@ -211,7 +211,6 @@ import java.util.Hashtable;
 import org.apache.fop.datatypes.*;
 import org.apache.fop.fo.*;
 import org.apache.fop.apps.FOPException;
-import org.apache.fop.messaging.MessageHandler;
 
 public class <xsl:value-of select="$classname"/> extends  <xsl:value-of select="$superclass"/><xsl:value-of select="$enumconst"/> {
 
