@@ -157,7 +157,7 @@ public class SVGReader extends AbstractImageReader {
         }
 
         public String getMedia() {
-            return "";
+            return "print";
         }
 
         /**

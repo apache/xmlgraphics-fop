@@ -161,7 +161,7 @@ public class SVGUtilities {
     public static final Element createImage(Document doc, String ref,
                                             float width, float height) {
         Element border = doc.createElementNS(svgNS, "image");
-        border.setAttributeNS("http://www.w3.org/1999/xlink", "xlink:href",
+        border.setAttributeNS("http://www.w3.org/1999/xlink", "href",
                               ref);
         border.setAttributeNS(null, "width", "" + width);
         border.setAttributeNS(null, "height", "" + height);
