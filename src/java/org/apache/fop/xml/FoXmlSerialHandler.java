@@ -129,7 +129,7 @@ public class FoXmlSerialHandler extends DefaultHandler implements Runnable {
      * <tt>InterruptedException</tt> that is possible from the <i>put</i>
      * method of a <tt>SyncedXmlEventsBuffer</tt>.
      */
-    public void putEvent(XMLEvent event) throws NoSuchElementException {
+    public void putEvent(XmlEvent event) throws NoSuchElementException {
         synchronized (events) {
             try {
                 events.put(event);
@@ -145,10 +145,10 @@ public class FoXmlSerialHandler extends DefaultHandler implements Runnable {
      */
     public void startDocument() throws NoSuchElementException {
         synchronized (events) {
-            XMLEvent event = acquireXMLEvent(Namespaces.DefAttrNSIndex);
+            XmlEvent event = acquireXMLEvent(Namespaces.DefAttrNSIndex);
             //System.out.println("StartDocument thread "
             //                   + Thread.currentThread().getName());
-            event.type = XMLEvent.STARTDOCUMENT;
+            event.type = XmlEvent.STARTDOCUMENT;
             //System.out.println("SerialHandler: " + event);
             putEvent(event);
         }
@@ -159,10 +159,10 @@ public class FoXmlSerialHandler extends DefaultHandler implements Runnable {
      */
     public void endDocument() throws NoSuchElementException {
         synchronized (events) {
-            XMLEvent event = acquireXMLEvent(Namespaces.DefAttrNSIndex);
+            XmlEvent event = acquireXMLEvent(Namespaces.DefAttrNSIndex);
             //System.out.println("EndDocument thread "
                                //+ Thread.currentThread().getName());
-            event.type = XMLEvent.ENDDOCUMENT;
+            event.type = XmlEvent.ENDDOCUMENT;
             //System.out.println("SerialHandler: " + event);
             putEvent(event);
             events.producerExhausted();
@@ -174,7 +174,7 @@ public class FoXmlSerialHandler extends DefaultHandler implements Runnable {
      * @param nsIndex the namespace index
      * @return the acquired event
      */
-    private XMLEvent acquireXMLEvent(int nsIndex) {
+    private XmlEvent acquireXMLEvent(int nsIndex) {
         try {
             return
                 namespaces.acquireXMLEvent(nsIndex);
@@ -199,14 +199,14 @@ public class FoXmlSerialHandler extends DefaultHandler implements Runnable {
         synchronized (events) {
             try {
                 int uriIndex = namespaces.getURIIndex(uri);
-                XMLEvent event = acquireXMLEvent(uriIndex);
+                XmlEvent event = acquireXMLEvent(uriIndex);
                 if (uriIndex == Namespaces.XSLNSpaceIndex) {
                         event.setFoType(FObjectNames.getFOIndex(localName));
                 }
                 //System.out.println("startElement: acquired " + event.id);
                 //System.out.println("StartElement thread "
                 //                   + Thread.currentThread().getName());
-                event.type = XMLEvent.STARTELEMENT;
+                event.type = XmlEvent.STARTELEMENT;
                 // Is this from the fo: namespace?
                 event.uriIndex = uriIndex;
                 event.localName = localName;
@@ -234,11 +234,11 @@ public class FoXmlSerialHandler extends DefaultHandler implements Runnable {
         synchronized (events) {
             try {
                 int uriIndex = namespaces.getURIIndex(uri);
-                XMLEvent event = namespaces.acquireXMLEvent(uriIndex);
+                XmlEvent event = namespaces.acquireXMLEvent(uriIndex);
                 //System.out.println("endElement: acquired " + event.id);
                 //System.out.println("EndElement thread "
                                    //+ Thread.currentThread().getName());
-                event.type = XMLEvent.ENDELEMENT;
+                event.type = XmlEvent.ENDELEMENT;
                 event.uriIndex = uriIndex;
                 if (uriIndex == Namespaces.XSLNSpaceIndex) {
                     event.setFoType(FObjectNames.getFOIndex(localName));
@@ -270,13 +270,13 @@ public class FoXmlSerialHandler extends DefaultHandler implements Runnable {
                 // attribute namespace (the empty string), and rely on
                 // downstream processing to determine the environment in
                 // which the characters belong.
-                XMLEvent event
+                XmlEvent event
                     = namespaces.acquireXMLEvent(Namespaces.DefAttrNSIndex);
                 //System.out.println("characters thread "
                 //                   + Thread.currentThread().getName());
-                event.type = XMLEvent.CHARACTERS;
+                event.type = XmlEvent.CHARACTERS;
                 event.chars = new String(ch, start, length);
-                // Can't setFoType, because this event is now an XMLEvent,
+                // Can't setFoType, because this event is now an XmlEvent,
                 // not an FoXMLEvent
                 //event.setFoType(FObjectNames.PCDATA);
                 //System.out.println("SerialHandler: " + event);

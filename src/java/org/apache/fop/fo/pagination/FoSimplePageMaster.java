@@ -68,7 +68,7 @@ import org.apache.fop.fo.PropNames;
 import org.apache.fop.fo.PropertySets;
 import org.apache.fop.fo.expr.PropertyException;
 import org.apache.fop.xml.SyncedXmlEventsBuffer;
-import org.apache.fop.xml.XMLEvent;
+import org.apache.fop.xml.XmlEvent;
 
 /**
  * Implements the fo:simple-page-master flow object
@@ -128,18 +128,18 @@ public class FoSimplePageMaster extends FONode {
     /**
      * @param foTree the FO tree being built
      * @param parent the parent FONode of this node
-     * @param event the <tt>XMLEvent</tt> that triggered the creation of
+     * @param event the <tt>XmlEvent</tt> that triggered the creation of
      * this node
      */
-    public FoSimplePageMaster(FOTree foTree, FONode parent, XMLEvent event)
+    public FoSimplePageMaster(FOTree foTree, FONode parent, XmlEvent event)
         throws TreeException, FOPException
     {
         super(foTree, FObjectNames.SIMPLE_PAGE_MASTER, parent, event,
               FONode.LAYOUT_SET, sparsePropsMap, sparseIndices);
         // Process regions here
-        XMLEvent regionEv;
+        XmlEvent regionEv;
         if ((regionEv = xmlevents.expectStartElement
-                (FObjectNames.REGION_BODY, XMLEvent.DISCARD_W_SPACE)) == null)
+                (FObjectNames.REGION_BODY, XmlEvent.DISCARD_W_SPACE)) == null)
             throw new FOPException
                 ("No fo:region-body in simple-page-master: "
                     + getMasterName());
@@ -151,7 +151,7 @@ public class FoSimplePageMaster extends FONode {
 
         // Remaining regions are optional
         if ((regionEv = xmlevents.expectStartElement
-                    (FObjectNames.REGION_BEFORE, XMLEvent.DISCARD_W_SPACE))
+                    (FObjectNames.REGION_BEFORE, XmlEvent.DISCARD_W_SPACE))
                 != null)
         {
             regionBefore = new FoRegionBefore(foTree, this, regionEv);
@@ -161,7 +161,7 @@ public class FoSimplePageMaster extends FONode {
         }
 
         if ((regionEv = xmlevents.expectStartElement
-                    (FObjectNames.REGION_AFTER, XMLEvent.DISCARD_W_SPACE))
+                    (FObjectNames.REGION_AFTER, XmlEvent.DISCARD_W_SPACE))
                 != null)
         {
             regionAfter = new FoRegionAfter(foTree, this, regionEv);
@@ -171,7 +171,7 @@ public class FoSimplePageMaster extends FONode {
         }
 
         if ((regionEv = xmlevents.expectStartElement
-                    (FObjectNames.REGION_START, XMLEvent.DISCARD_W_SPACE))
+                    (FObjectNames.REGION_START, XmlEvent.DISCARD_W_SPACE))
                 != null)
         {
             regionStart = new FoRegionStart(foTree, this, regionEv);
@@ -181,7 +181,7 @@ public class FoSimplePageMaster extends FONode {
         }
 
         if ((regionEv = xmlevents.expectStartElement
-                    (FObjectNames.REGION_END, XMLEvent.DISCARD_W_SPACE))
+                    (FObjectNames.REGION_END, XmlEvent.DISCARD_W_SPACE))
                 != null)
         {
             regionEnd = new FoRegionEnd(foTree, this, regionEv);

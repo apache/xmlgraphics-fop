@@ -68,7 +68,7 @@ import org.apache.fop.fo.PropNames;
 import org.apache.fop.fo.PropertySets;
 import org.apache.fop.messaging.MessageHandler;
 import org.apache.fop.xml.FoXMLEvent;
-import org.apache.fop.xml.XMLEvent;
+import org.apache.fop.xml.XmlEvent;
 import org.apache.fop.xml.SyncedXmlEventsBuffer;
 import org.apache.fop.xml.UnexpectedStartElementException;
 
@@ -137,7 +137,7 @@ public class FoMultiToggle extends FONode {
     {
         super(foTree, FObjectNames.MULTI_TOGGLE, parent, event,
                           stateFlags, sparsePropsMap, sparseIndices);
-        XMLEvent ev = null;
+        XmlEvent ev = null;
         if ((stateFlags & FONode.MC_MULTI_CASE) != 0)
         do {
             try {
@@ -150,7 +150,7 @@ public class FoMultiToggle extends FONode {
                     //System.out.println("Generating flow object for " + ev);
                     FObjects.fobjects.makeFlowObject
                                 (foTree, this, ev, stateFlags);
-                    if (ev.getType() != XMLEvent.CHARACTERS) {
+                    if (ev.getType() != XmlEvent.CHARACTERS) {
                         ev = xmlevents.getEndElement(
                                 SyncedXmlEventsBuffer.DISCARD_EV, ev);
                     }

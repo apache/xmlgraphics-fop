@@ -64,7 +64,7 @@ import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FOTree;
 import org.apache.fop.fo.PropNames;
 import org.apache.fop.fo.PropertySets;
-import org.apache.fop.xml.XMLEvent;
+import org.apache.fop.xml.XmlEvent;
 
 /**
  * Implements the fo:simple-page-master flow object
@@ -123,11 +123,11 @@ public class FoRegionBeforeAfter extends FONode {
     /**
      * @param foTree the FO tree being built
      * @param parent the parent FONode of this node
-     * @param event the <tt>XMLEvent</tt> that triggered the creation of
+     * @param event the <tt>XmlEvent</tt> that triggered the creation of
      * this node
      */
     public FoRegionBeforeAfter
-                (FOTree foTree, int foType, FONode parent, XMLEvent event)
+                (FOTree foTree, int foType, FONode parent, XmlEvent event)
         throws TreeException, FOPException
     {
         super(foTree, foType, parent, event, FONode.LAYOUT_SET,

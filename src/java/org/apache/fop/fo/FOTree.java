@@ -64,7 +64,7 @@ import org.apache.fop.datatypes.PropertyValue;
 import org.apache.fop.fo.expr.PropertyException;
 import org.apache.fop.fo.expr.PropertyParser;
 import org.apache.fop.xml.SyncedXmlEventsBuffer;
-import org.apache.fop.xml.XMLEvent;
+import org.apache.fop.xml.XmlEvent;
 
 /**
  * <tt>FOTree</tt> is the class that generates and maintains the FO Tree.
@@ -77,7 +77,7 @@ public class FOTree extends Tree implements Runnable {
     private static final String revision = "$Revision$";
 
     /**
-     * The buffer from which the <tt>XMLEvent</tt>s from the parser will
+     * The buffer from which the <tt>XmlEvent</tt>s from the parser will
      * be read.  <tt>protected</tt> so that FONode can access it.
      */
     protected SyncedXmlEventsBuffer xmlevents;
@@ -91,7 +91,7 @@ public class FOTree extends Tree implements Runnable {
     protected PropertyParser exprParser;
 
     /**
-     * @param xmlevents the buffer from which <tt>XMLEvent</tt>s from the
+     * @param xmlevents the buffer from which <tt>XmlEvent</tt>s from the
      * parser are read.
      */
     public FOTree(SyncedXmlEventsBuffer xmlevents)
@@ -149,7 +149,7 @@ public class FOTree extends Tree implements Runnable {
      */
     public void run() {
         FoRoot foRoot;
-        XMLEvent event;
+        XmlEvent event;
         try {
             // Let the parser look after STARTDOCUMENT and the correct
             // positioning of the root element

@@ -67,7 +67,7 @@ import org.apache.fop.fo.PropNames;
 import org.apache.fop.fo.PropertySets;
 import org.apache.fop.fo.expr.PropertyException;
 import org.apache.fop.xml.FoXMLEvent;
-import org.apache.fop.xml.XMLEvent;
+import org.apache.fop.xml.XmlEvent;
 import org.apache.fop.xml.SyncedXmlEventsBuffer;
 
 /**
@@ -143,7 +143,7 @@ public class FoTableRow extends FONode {
      * <p>Content model for fo:table-row: (table-cell+)
      * @param foTree the FO tree being built
      * @param parent the parent FONode of this node
-     * @param event the <tt>XMLEvent</tt> that triggered the creation of
+     * @param event the <tt>XmlEvent</tt> that triggered the creation of
      * this node
      * @param stateFlags - passed down from the parent.  Includes the
      * attribute set information.
@@ -154,13 +154,13 @@ public class FoTableRow extends FONode {
     {
         super(foTree, FObjectNames.TABLE_ROW, parent, event,
                           stateFlags, sparsePropsMap, sparseIndices);
-        XMLEvent ev;
+        XmlEvent ev;
         // Look for zero or more markers
         String nowProcessing = "table-cell";
         try {
             nowProcessing = "table-cell";
             if ((ev = xmlevents.expectStartElement
-                    (FObjectNames.TABLE_CELL, XMLEvent.DISCARD_W_SPACE))
+                    (FObjectNames.TABLE_CELL, XmlEvent.DISCARD_W_SPACE))
                    != null) {
                 new FoTableCell(
                         getFOTree(), this, (FoXMLEvent)ev, stateFlags);

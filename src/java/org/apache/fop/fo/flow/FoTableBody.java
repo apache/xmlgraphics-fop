@@ -67,7 +67,7 @@ import org.apache.fop.fo.PropNames;
 import org.apache.fop.fo.PropertySets;
 import org.apache.fop.fo.expr.PropertyException;
 import org.apache.fop.xml.FoXMLEvent;
-import org.apache.fop.xml.XMLEvent;
+import org.apache.fop.xml.XmlEvent;
 import org.apache.fop.xml.SyncedXmlEventsBuffer;
 
 /**
@@ -147,7 +147,7 @@ public class FoTableBody extends FONode {
      * (marker*, (table-row+|table-cell+))
      * @param foTree the FO tree being built
      * @param parent the parent FONode of this node
-     * @param event the <tt>XMLEvent</tt> that triggered the creation of
+     * @param event the <tt>XmlEvent</tt> that triggered the creation of
      * this node
      * @param stateFlags - passed down from the parent.  Includes the
      * attribute set information.
@@ -158,12 +158,12 @@ public class FoTableBody extends FONode {
     {
         super(foTree, FObjectNames.TABLE_BODY, parent, event,
                           stateFlags, sparsePropsMap, sparseIndices);
-        XMLEvent ev;
+        XmlEvent ev;
         // Look for zero or more markers
         String nowProcessing = "marker";
         try {
             while ((ev = xmlevents.expectStartElement
-                    (FObjectNames.MARKER, XMLEvent.DISCARD_W_SPACE))
+                    (FObjectNames.MARKER, XmlEvent.DISCARD_W_SPACE))
                    != null) {
                 new FoMarker(getFOTree(), this, (FoXMLEvent)ev, stateFlags);
                 numMarkers++;
@@ -174,7 +174,7 @@ public class FoTableBody extends FONode {
             // Look for one or more table-rows
             nowProcessing = "table-row";
             while ((ev = xmlevents.expectStartElement
-                    (FObjectNames.TABLE_ROW, XMLEvent.DISCARD_W_SPACE))
+                    (FObjectNames.TABLE_ROW, XmlEvent.DISCARD_W_SPACE))
                    != null) {
                 new FoTableRow(getFOTree(), this, (FoXMLEvent)ev, stateFlags);
                 numRows++;
@@ -189,7 +189,7 @@ public class FoTableBody extends FONode {
                 // No rows - look for one or more table-cells
                 nowProcessing = "table-cell";
                 if ((ev = xmlevents.expectStartElement
-                        (FObjectNames.TABLE_CELL, XMLEvent.DISCARD_W_SPACE))
+                        (FObjectNames.TABLE_CELL, XmlEvent.DISCARD_W_SPACE))
                        != null) {
                     new FoTableCell(
                             getFOTree(), this, (FoXMLEvent)ev, stateFlags);

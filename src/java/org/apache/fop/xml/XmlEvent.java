@@ -64,7 +64,7 @@ import org.xml.sax.helpers.AttributesImpl;
  * <tt>XMLSerialHandler</tt> methods set the values directly.
  */
 
-public class XMLEvent extends Poolable {
+public class XmlEvent extends Poolable {
 
     private static final String tag = "$Name$";
     private static final String revision = "$Revision$";
@@ -102,7 +102,7 @@ public class XMLEvent extends Poolable {
     }
 
     // These are made protected specifically so the the values of individual
-    // XMLEvent instances can be changed directly, on the assumption that
+    // XmlEvent instances can be changed directly, on the assumption that
     // the basic XML events are unlikely to change.
     protected int type = NOEVENT;
     protected String chars;
@@ -121,7 +121,7 @@ public class XMLEvent extends Poolable {
      * namespace
      * @param uriIndex the namespace index
      */
-    public XMLEvent (Namespaces namespaces, int sequence, int uriIndex ) {
+    public XmlEvent (Namespaces namespaces, int sequence, int uriIndex ) {
         super(sequence);
         this.namespaces = namespaces;
         this.uriIndex = uriIndex;
@@ -140,7 +140,7 @@ public class XMLEvent extends Poolable {
      * @param attributes the AttributesImpl containing the element
      *         attributes, if any
      */
-    public XMLEvent(Namespaces namespaces, int sequence,
+    public XmlEvent(Namespaces namespaces, int sequence,
             int type, String chars, int uriIndex,
                     String localName, String qName,
                     AttributesImpl attributes)
@@ -157,12 +157,12 @@ public class XMLEvent extends Poolable {
 
     /**
      * The cloning constructor takes a reference to an existing
-     * <tt>XMLEvent</tt> object.  Only the <code>id</code> field is not
+     * <tt>XmlEvent</tt> object.  Only the <code>id</code> field is not
      * cloned, but set from the <code>sequence</code> parameter.
      * @param ev the event to clone
      * @param sequence the sequence number of the clone
      */
-    public XMLEvent(XMLEvent ev, int sequence) {
+    public XmlEvent(XmlEvent ev, int sequence) {
         super(sequence);
         namespaces = ev.namespaces;
         type = ev.type;
@@ -179,7 +179,7 @@ public class XMLEvent extends Poolable {
      * @param chars in this event, if any
      * @param namespaces the object maintaing URIs and their indices
      */
-    public XMLEvent(Namespaces namespaces, int sequence,
+    public XmlEvent(Namespaces namespaces, int sequence,
             int uriIndex, int type, String chars) {
         super(sequence);
         this.namespaces = namespaces;
@@ -212,7 +212,7 @@ public class XMLEvent extends Poolable {
      * @param ev the event to copy.
      * @return this (copied) event.
      */
-    public XMLEvent copyEvent(XMLEvent ev) {
+    public XmlEvent copyEvent(XmlEvent ev) {
         type = ev.type;
         chars = ev.chars;
         uriIndex = ev.uriIndex;
@@ -360,7 +360,7 @@ public class XMLEvent extends Poolable {
      */
     public int getFoType() {
         throw new UnsupportedOperationException
-                                    ("getFoType not supported in XMLEvent");
+                                    ("getFoType not supported in XmlEvent");
     }
 
     /**
@@ -369,7 +369,7 @@ public class XMLEvent extends Poolable {
      */
     public void setFoType(int type) {
         throw new UnsupportedOperationException
-        ("setFoType not supported in XMLEvent");
+        ("setFoType not supported in XmlEvent");
     }
     
     /**
@@ -378,7 +378,7 @@ public class XMLEvent extends Poolable {
      */
     public int getFoxType() {
         throw new UnsupportedOperationException
-        ("getFoxType not supported in XMLEvent");
+        ("getFoxType not supported in XmlEvent");
     }
 
     /**
@@ -387,7 +387,7 @@ public class XMLEvent extends Poolable {
      */
     public void setFoxType(int type) {
         throw new UnsupportedOperationException
-        ("setFoxType not supported in XMLEvent");
+        ("setFoxType not supported in XmlEvent");
     }
     
     /**
@@ -396,7 +396,7 @@ public class XMLEvent extends Poolable {
      */
     public int getSvgType() {
         throw new UnsupportedOperationException
-        ("getSvgType not supported in XMLEvent");
+        ("getSvgType not supported in XmlEvent");
     }
 
     /**
@@ -405,7 +405,7 @@ public class XMLEvent extends Poolable {
      */
     public void setSvgType(int type) {
         throw new UnsupportedOperationException
-        ("setSvgType not supported in XMLEvent");
+        ("setSvgType not supported in XmlEvent");
     }
     
     public String toString() {

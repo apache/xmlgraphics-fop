@@ -68,7 +68,7 @@ import org.apache.fop.fo.FObjectNames;
 import org.apache.fop.fo.PropNames;
 import org.apache.fop.fo.expr.PropertyException;
 import org.apache.fop.xml.SyncedXmlEventsBuffer;
-import org.apache.fop.xml.XMLEvent;
+import org.apache.fop.xml.XmlEvent;
 
 /**
  * Implements the fo:page-sequence-master flow object.  These Fos are
@@ -223,7 +223,7 @@ public class FoPageSequenceMaster extends FONode {
         FObjectNames.REPEATABLE_PAGE_MASTER_ALTERNATIVES
     };
 
-    public FoPageSequenceMaster(FOTree foTree, FONode parent, XMLEvent event)
+    public FoPageSequenceMaster(FOTree foTree, FONode parent, XmlEvent event)
         throws TreeException, FOPException, PropertyException
     {
         super(foTree, FObjectNames.PAGE_SEQUENCE_MASTER, parent, event,
@@ -231,8 +231,8 @@ public class FoPageSequenceMaster extends FONode {
         // Process sequence members here
         try {
             do {
-                XMLEvent ev = xmlevents.expectStartElement
-                    (singleOrRepeatableMasterRefs, XMLEvent.DISCARD_W_SPACE);
+                XmlEvent ev = xmlevents.expectStartElement
+                    (singleOrRepeatableMasterRefs, XmlEvent.DISCARD_W_SPACE);
                 if (ev == null) break;  // page-sequence-masters exhausted
                 int foType = ev.getFoType();
                 if (foType == FObjectNames.SINGLE_PAGE_MASTER_REFERENCE) {
@@ -277,7 +277,7 @@ public class FoPageSequenceMaster extends FONode {
     public class FoSinglePageMasterReference extends FONode {
 
         public FoSinglePageMasterReference
-                            (FOTree foTree, FONode parent, XMLEvent event)
+                            (FOTree foTree, FONode parent, XmlEvent event)
             throws TreeException, FOPException, PropertyException
         {
             super(foTree, FObjectNames.SINGLE_PAGE_MASTER_REFERENCE, parent,
@@ -299,7 +299,7 @@ public class FoPageSequenceMaster extends FONode {
     public class FoRepeatablePageMasterReference extends FONode {
 
         public FoRepeatablePageMasterReference
-                            (FOTree foTree, FONode parent, XMLEvent event)
+                            (FOTree foTree, FONode parent, XmlEvent event)
             throws TreeException, FOPException, PropertyException
         {
             super(foTree, FObjectNames.REPEATABLE_PAGE_MASTER_REFERENCE,
@@ -325,7 +325,7 @@ public class FoPageSequenceMaster extends FONode {
     public class FoRepeatablePageMasterAlternatives extends FONode {
 
         public FoRepeatablePageMasterAlternatives
-                            (FOTree foTree, FONode parent, XMLEvent event)
+                            (FOTree foTree, FONode parent, XmlEvent event)
             throws TreeException, FOPException, PropertyException
         {
             super(foTree, FObjectNames.REPEATABLE_PAGE_MASTER_ALTERNATIVES,
@@ -335,9 +335,9 @@ public class FoPageSequenceMaster extends FONode {
             // Process conditional-page-master-references here
             try {
                 do {
-                    XMLEvent ev = this.xmlevents.expectStartElement
+                    XmlEvent ev = this.xmlevents.expectStartElement
                             (FObjectNames.CONDITIONAL_PAGE_MASTER_REFERENCE,
-                                                    XMLEvent.DISCARD_W_SPACE);
+                                                    XmlEvent.DISCARD_W_SPACE);
                     if (ev == null) break; // Sub-sequences exhausted
                     //System.out.println
                     //    ("Found conditional-page-master-reference");
@@ -360,7 +360,7 @@ public class FoPageSequenceMaster extends FONode {
         public class FoConditionalPageMasterReference extends FONode {
 
             public FoConditionalPageMasterReference
-                            (FOTree foTree, FONode parent, XMLEvent event)
+                            (FOTree foTree, FONode parent, XmlEvent event)
             throws TreeException, FOPException, PropertyException
             {
                 super(foTree, FObjectNames.CONDITIONAL_PAGE_MASTER_REFERENCE,

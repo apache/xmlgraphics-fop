@@ -73,7 +73,7 @@ import org.apache.fop.fo.expr.PropertyException;
 import org.apache.fop.fo.expr.PropertyParser;
 import org.apache.fop.fo.properties.Property;
 import org.apache.fop.messaging.MessageHandler;
-import org.apache.fop.xml.XMLEvent;
+import org.apache.fop.xml.XmlEvent;
 import org.apache.fop.xml.SyncedXmlEventsBuffer;
 import org.apache.fop.xml.Namespaces;
 
@@ -212,7 +212,7 @@ public class FONode extends Node{
      * @param type the fo type of this FONode.
      * @param parent an <tt>FONode</tt>, the parent node of this node in
      * <i>foTree</i>
-     * @param event the <tt>XMLEvent</tt> that triggered the creation of this
+     * @param event the <tt>XmlEvent</tt> that triggered the creation of this
      * node.
      * @param stateFlags - the set of states relevant at this point in the
      * tree.  Includes the state information necessaryto select an attribute
@@ -226,7 +226,7 @@ public class FONode extends Node{
      * properties.
      */
     public FONode
-        (FOTree foTree, int type, FONode parent, XMLEvent event,
+        (FOTree foTree, int type, FONode parent, XmlEvent event,
              int stateFlags, int[] sparsePropsMap, int[] sparseIndices)
         throws TreeException, FOPException, PropertyException
     {

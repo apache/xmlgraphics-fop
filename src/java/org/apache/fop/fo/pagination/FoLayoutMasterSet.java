@@ -68,7 +68,7 @@ import org.apache.fop.fo.FObjectNames;
 import org.apache.fop.fo.PropNames;
 import org.apache.fop.fo.expr.PropertyException;
 import org.apache.fop.xml.SyncedXmlEventsBuffer;
-import org.apache.fop.xml.XMLEvent;
+import org.apache.fop.xml.XmlEvent;
 
 /**
  * <tt>FoLayoutMasterSet</tt> is the class which processes the
@@ -138,11 +138,11 @@ public class FoLayoutMasterSet extends FONode {
     /**
      * @param foTree the FO tree being built
      * @param parent the parent FONode of this node
-     * @param event the <tt>XMLEvent</tt> that triggered the creation of
+     * @param event the <tt>XmlEvent</tt> that triggered the creation of
      * this node
      */
     public FoLayoutMasterSet
-        (FOTree foTree, FONode parent, XMLEvent event)
+        (FOTree foTree, FONode parent, XmlEvent event)
         throws TreeException, FOPException, PropertyException
     {
         super(foTree, FObjectNames.LAYOUT_MASTER_SET, parent, event,
@@ -160,7 +160,7 @@ public class FoLayoutMasterSet extends FONode {
      * @param event - the layout page-master-set STARTELEMENT event.
      * @throws FOPException
      */
-    public void setupPageMasters(XMLEvent event)
+    public void setupPageMasters(XmlEvent event)
             throws FOPException, PropertyException
     {
         FoSimplePageMaster simple;
@@ -169,9 +169,9 @@ public class FoLayoutMasterSet extends FONode {
         FoPageSequenceMaster foPageSeq;
         try {
             do {
-                XMLEvent ev =
+                XmlEvent ev =
                     xmlevents.expectStartElement
-                        (simpleOrSequenceMaster, XMLEvent.DISCARD_W_SPACE);
+                        (simpleOrSequenceMaster, XmlEvent.DISCARD_W_SPACE);
                 if (ev == null) break; // No instance of these elements found
                 foType = ev.getFoType();
                 if (foType == FObjectNames.SIMPLE_PAGE_MASTER) {

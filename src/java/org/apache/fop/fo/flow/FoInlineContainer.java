@@ -67,7 +67,7 @@ import org.apache.fop.fo.FObjects;
 import org.apache.fop.fo.PropNames;
 import org.apache.fop.fo.PropertySets;
 import org.apache.fop.xml.FoXMLEvent;
-import org.apache.fop.xml.XMLEvent;
+import org.apache.fop.xml.XmlEvent;
 import org.apache.fop.xml.SyncedXmlEventsBuffer;
 import org.apache.fop.xml.UnexpectedStartElementException;
 
@@ -144,7 +144,7 @@ public class FoInlineContainer extends FONode {
      * <p>Content model for fo:inline-container (%block;)+
      * @param foTree the FO tree being built
      * @param parent the parent FONode of this node
-     * @param event the <tt>XMLEvent</tt> that triggered the creation of
+     * @param event the <tt>XmlEvent</tt> that triggered the creation of
      * this node
      * @param stateFlags - passed down from the parent.  Includes the
      * attribute set information.
@@ -155,7 +155,7 @@ public class FoInlineContainer extends FONode {
     {
         super(foTree, FObjectNames.INLINE_CONTAINER, parent, event,
                           stateFlags, sparsePropsMap, sparseIndices);
-        XMLEvent ev = null;
+        XmlEvent ev = null;
         try {
             // Get at least one %block;
             if ((stateFlags & FONode.MC_OUT_OF_LINE) == 0)

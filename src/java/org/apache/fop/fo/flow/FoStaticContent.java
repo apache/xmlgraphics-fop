@@ -66,7 +66,7 @@ import org.apache.fop.fo.FObjectNames;
 import org.apache.fop.fo.FObjects;
 import org.apache.fop.fo.PropNames;
 import org.apache.fop.xml.FoXMLEvent;
-import org.apache.fop.xml.XMLEvent;
+import org.apache.fop.xml.XmlEvent;
 import org.apache.fop.xml.SyncedXmlEventsBuffer;
 import org.apache.fop.xml.UnexpectedStartElementException;
 
@@ -115,7 +115,7 @@ public class FoStaticContent extends FONode {
      * <p>Content model for fo:static-content: (%block;)+
      * @param foTree the FO tree being built
      * @param parent the parent FONode of this node
-     * @param event the <tt>XMLEvent</tt> that triggered the creation of
+     * @param event the <tt>XmlEvent</tt> that triggered the creation of
      * this node
      */
     public FoStaticContent(FOTree foTree, FONode parent, FoXMLEvent event)
@@ -123,7 +123,7 @@ public class FoStaticContent extends FONode {
     {
         super(foTree, FObjectNames.STATIC_CONTENT, parent, event,
               FONode.STATIC_SET, sparsePropsMap, sparseIndices);
-        XMLEvent ev;
+        XmlEvent ev;
         try {
             // Get at least one %block;
             if ((ev = xmlevents.expectBlock()) == null)
