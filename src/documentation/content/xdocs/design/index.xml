@@ -9,23 +9,24 @@
     </authors>
   </header>
   <body>
-    <section id="intro">
-      <title>Introduction</title>
-      <p>The articles in this section describe the design and architecture details for FOP.</p>
-      <note>The articles in this section pertain to the <em>redesign</em> or <em>trunk</em> line of development.
+    <note>The articles in this section pertain to the <em>redesign</em> or <em>trunk</em> line of development.
 The redesign is mainly focusing on parts of the layout process (converting the FO tree into the Area Tree).</note>
-    </section>
-    <section id="primary_goals">
+    <section id="primary-goals">
       <title>Primary Design Goals</title>
-      <p>The primary design goals for FOP are:</p>
-      <ul>
-        <li>Comply with the spec.</li>
-        <li>Process files of arbitrary size (limited only by storage).</li>
-      </ul>
+      <p>A discussion of project design properly begins with a list of the goals of the project. Out of these goals will flow the design issues and details, and eventually, the implementation.</p>
+      <section id="pri-goal-conformance">
+        <title>Conformance to the XSL-FO Specification</title>
+        <p>The current design goal is to reach the "basic" level of conformance, and to have enough flexibility in the design to reach "complete" conformance without major rewriting.
+After "basic" conformance is achieved, it is probably that higher levels of conformance will be sought.</p>
+      </section>
+      <section id="pri-goal-unlimited-size">
+        <title>Process Files of Arbitrary Size</title>
+        <p>Except for user storage limitations, the design goal is to be able to process files of any size.</p>
+      </section>
     </section>
-    <section id="secondary_goals">
+    <section id="secondary-goals">
       <title>Secondary Design Goals</title>
-      <section id="memory">
+      <section id="sec-goal-memory">
         <title>Keep Memory Minimal</title>
         <p>Many FOP design decisions revolve around trying to minimize the use of memory.
 The primary purpose here is to reduce the amount of data that must be serialized to storage during processing.
@@ -41,7 +42,7 @@ To the extent that it can be done so without jeopardizing the primary design goa
 To achieve our design goals, we have identified and attempted to resolve some design issues.
 Since they are in support of the primary and secondary goals, they are not necessarily written in stone.
 However, most of them have been discussed at length among the developers, and are reasonably well settled.</p>
-      <section id="input">
+      <section id="issue-input">
         <title>Use SAX as Input</title>
         <p>The two standard ways of dealing with XML input are SAX and DOM. SAX basically creates events as it parses an XML document in a serial fashion; a program using SAX (and not storing anything internally) will only see a small window of the document at any point in time, and can never look forward in the document. DOM creates and stores a tree representation of the document, allowing a view of the entire document as an integrated whole. One issue that may seem counter-intuitive to some new FOP developers, and which has from time to time been contentious, is that FOP uses SAX for input. (DOM can be used as input as well, but it is converted into SAX events before entering FOP, effectively negating its advantages).</p>
         <p>Since FOP essentially needs a tree representation of the FO input, at first glance it seems to make sense to use DOM. Instead, FOP takes SAX events and builds its own tree-like structure. Why?</p>
@@ -50,35 +51,39 @@ However, most of them have been discussed at length among the developers, and ar
           <li>DOM contains an entire document. FOP is able to process individual fo:page-sequence objects discretely, without the need to have the entire document in memory. For documents that have only one fo:page-sequence object, FOP's approach is no advantage, but in other cases it is a huge advantage. A 500-page book that is broken into 100 5-page chapters, each in its own fo:page-sequence, essentially needs only 1% of the document memory that would be required if using DOM as input.</li>
         </ul>
       </section>
-      <section>
+      <section id="issue-fo-recycle">
         <title>Process FO Elements ASAP</title>
         <p>The issue here is that we wish to recycle FO Tree memory as much as possible. There are at least three possible places that FO Tree fragments can be passed to the Layout process, and their memory recycled:</p>
         <ul>
-          <li><strong>fo:block</strong> It might be tempting to start laying out pages as soon as the first fo:block object is finished. However, there are many downstream things that can affect the placement of that block on a page, such as graphics and footnotes. So, in order to maintain conformance to the XSL-FO specification, and create high-quality output, we must see more of the document.</li>
-          <li><strong>fo:root</strong> The other extreme is to wait until the entire document is read in before processing any of it. This essentially means that there is no memory recycling. Processing the document correctly is more important than saving memory, so this option would be used if there were no better alternative.</li>
-          <li><strong>fo:page-sequence</strong> The page-sequence object provides a nice clean break in the document. Content from one page-sequence will never interfere with nor affect the placement of the content of another. FOP uses this option as the optimum way to maintain compliance with the standard and to minimize memory consumption.</li>
+          <li>
+            <strong>fo:block</strong> It might be tempting to start laying out pages as soon as the first fo:block object is finished. However, there are many downstream things that can affect the placement of that block on a page, such as graphics and footnotes. So, in order to maintain conformance to the XSL-FO specification, and create high-quality output, we must see more of the document.</li>
+          <li>
+            <strong>fo:root</strong> The other extreme is to wait until the entire document is read in before processing any of it. This essentially means that there is no memory recycling. Processing the document correctly is more important than saving memory, so this option would be used if there were no better alternative.</li>
+          <li>
+            <strong>fo:page-sequence</strong> The page-sequence object provides a nice clean break in the document. Content from one page-sequence will never interfere with nor affect the placement of the content of another. FOP uses this option as the optimum way to maintain compliance with the standard and to minimize memory consumption.</li>
         </ul>
       </section>
-      <section>
+      <section id="issue-fo-serialize">
         <title>Serialize FO Tree as Necessary</title>
         <p>This issue is implied by the requirement to process documents of arbitrary size. Unless some arbitrary limit is placed on the size of page-sequence objects, FOP must be able to serialize FO tree fragments as necessary.</p>
       </section>
-      <section>
+      <section id="issue-simple-layout">
         <title>Keep Layouts Simple</title>
         <p>Layout should handle floats, footnotes and keeps in a simple, straightforward way.</p>
       </section>
-      <section>
+      <section id="issue-simple-id-refs">
         <title>Keep ID References Simple</title>
       </section>
-      <section>
+      <section id="issue-area-recycle">
         <title>Render Pages ASAP</title>
         <p>The issue here is that we wish to recycle the Area Tree memory as much as possible. The problem is that forward references prevent pages from being resolved until the forward references are resolved. If memory is insufficient to store unresolved pages, Area Tree fragments must be serialized until resolved.</p>
+        <p>FOP developers have discussed adding the capability of using an Area Tree to render to more than one output target in the same run, which would be a complicating factor in disposal of pages as they are rendered.</p>
       </section>
-      <section>
+      <section id="issue-renderers-responsible">
         <title>Renderers are Responsible</title>
         <p>Each renderer is totally responsible for its output format.</p>
       </section>
-      <section>
+      <section id="issue-output-stream">
         <title>Send Output to a Stream</title>
       </section>
     </section>
