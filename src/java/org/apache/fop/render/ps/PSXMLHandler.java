@@ -68,7 +68,6 @@ import org.apache.batik.gvt.GraphicsNode;
 import org.apache.batik.gvt.TextPainter;
 
 // FOP
-import org.apache.fop.apps.Document;
 import org.apache.fop.render.XMLHandler;
 import org.apache.fop.render.RendererContext;
 import org.apache.fop.fo.extensions.svg.SVGUserAgent;
