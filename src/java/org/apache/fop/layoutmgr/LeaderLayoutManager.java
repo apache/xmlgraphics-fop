@@ -91,7 +91,7 @@ public class LeaderLayoutManager extends LeafNodeLayoutManager {
             Space spacer = null;
             if (ldrNode.getPatternWidth() > width) {
                 spacer = new Space();
-                spacer.setWidth(ldrNode.getPatternWidth() - width);
+                spacer.setIPD(ldrNode.getPatternWidth() - width);
                 width = ldrNode.getPatternWidth();
             }
             FilledArea fa = new FilledArea();
@@ -100,7 +100,7 @@ public class LeaderLayoutManager extends LeafNodeLayoutManager {
             if (spacer != null) {
                 fa.addChild(spacer);
             }
-            fa.setHeight(font.getAscender());
+            fa.setBPD(font.getAscender());
 
             leaderArea = fa;
         } else if (ldrNode.getLeaderPattern() == LeaderPattern.USECONTENT) {
@@ -128,7 +128,7 @@ public class LeaderLayoutManager extends LeafNodeLayoutManager {
             Space spacer = null;
             if (ldrNode.getPatternWidth() > width) {
                 spacer = new Space();
-                spacer.setWidth(ldrNode.getPatternWidth() - width);
+                spacer.setIPD(ldrNode.getPatternWidth() - width);
                 width = ldrNode.getPatternWidth();
             }
             fa.setUnitWidth(width);
@@ -153,7 +153,7 @@ public class LeaderLayoutManager extends LeafNodeLayoutManager {
 
         ipd = getAllocationIPD(context.getRefIPD());
 
-        int bpd = curArea.getHeight();
+        int bpd = curArea.getBPD();
         int lead = 0;
         int total = 0;
         int middle = 0;

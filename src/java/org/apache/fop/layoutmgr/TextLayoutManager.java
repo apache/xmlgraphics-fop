@@ -609,8 +609,8 @@ public class TextLayoutManager extends AbstractLayoutManager {
      */
     protected TextArea createTextArea(String str, int width, int base) {
         TextArea textArea = new TextArea();
-        textArea.setWidth(width);
-        textArea.setHeight(foText.textInfo.fs.getAscender()
+        textArea.setIPD(width);
+        textArea.setBPD(foText.textInfo.fs.getAscender()
                            - foText.textInfo.fs.getDescender());
         textArea.setOffset(foText.textInfo.fs.getAscender());
         textArea.setOffset(base);

@@ -73,7 +73,7 @@ public class CharacterLayoutManager extends LeafNodeLayoutManager {
      * @param context the layout context used for adding the area
      */
     protected void offsetArea(LayoutContext context) {
-        int bpd = curArea.getHeight();
+        int bpd = curArea.getBPD();
         switch (alignment) {
             case VerticalAlign.MIDDLE:
                 curArea.setOffset(context.getBaseline() - bpd / 2 /* - fontLead/2 */);
@@ -105,8 +105,7 @@ public class CharacterLayoutManager extends LeafNodeLayoutManager {
         ipd = new MinOptMax(textInfo.fs.getCharWidth(((org.apache.fop.area.inline.Character) curArea).getChar().charAt(0)));
 
         curArea.setIPD(ipd.opt);
-        curArea.setWidth(ipd.opt);
-        curArea.setHeight(textInfo.fs.getAscender()
+        curArea.setBPD(textInfo.fs.getAscender()
                           - textInfo.fs.getDescender());
 
         // offset is set in the offsetArea() method
@@ -118,7 +117,7 @@ public class CharacterLayoutManager extends LeafNodeLayoutManager {
                          new Integer(textInfo.fs.getFontSize()));
         curArea.addTrait(Trait.COLOR, textInfo.color);
 
-        int bpd = curArea.getHeight();
+        int bpd = curArea.getBPD();
         int lead = 0;
         int total = 0;
         int middle = 0;

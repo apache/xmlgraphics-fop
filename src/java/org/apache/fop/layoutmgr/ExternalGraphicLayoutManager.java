@@ -217,8 +217,8 @@ public class ExternalGraphicLayoutManager extends LeafNodeLayoutManager {
      public InlineArea getExternalGraphicInlineArea() {
          Image imArea = new Image(graphic.getPropString(PR_SRC));
          Viewport vp = new Viewport(imArea);
-         vp.setWidth(viewWidth);
-         vp.setHeight(viewHeight);
+         vp.setIPD(viewWidth);
+         vp.setBPD(viewHeight);
          vp.setClip(clip);
          vp.setContentPosition(placement);
          vp.setOffset(0);

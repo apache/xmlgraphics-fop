@@ -52,7 +52,7 @@ public class PageNumberLayoutManager extends LeafNodeLayoutManager {
         }
         inline.setTextArea(str);
         inline.setIPD(width);
-        inline.setHeight(font.getAscender() - font.getDescender());
+        inline.setBPD(font.getAscender() - font.getDescender());
         inline.setOffset(font.getAscender());
         inline.addTrait(Trait.FONT_NAME, font.getFontName());
         inline.addTrait(Trait.FONT_SIZE,

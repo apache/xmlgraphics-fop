@@ -330,7 +330,7 @@ public class TableLayoutManager extends BlockStackingLayoutManager {
             }
         }
 
-        curBlockArea.setHeight(tableHeight);
+        curBlockArea.setBPD(tableHeight);
 
         if (borderProps != null) {
             TraitSetter.addBorders(curBlockArea, borderProps);

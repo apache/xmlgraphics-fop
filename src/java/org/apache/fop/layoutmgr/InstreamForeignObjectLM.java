@@ -46,7 +46,7 @@ public class InstreamForeignObjectLM extends LeafNodeLayoutManager {
         Viewport areaCurrent = getInlineArea();
         setCurrentArea(areaCurrent);
         setAlignment(node.getPropEnum(PR_VERTICAL_ALIGN));
-        setLead(areaCurrent.getHeight());
+        setLead(areaCurrent.getBPD());
     }
 
     /**
@@ -177,8 +177,8 @@ public class InstreamForeignObjectLM extends LeafNodeLayoutManager {
         ForeignObject foreign = new ForeignObject(doc, ns);
 
         Viewport areaCurrent = new Viewport(foreign);
-        areaCurrent.setWidth(ipd);
-        areaCurrent.setHeight(bpd);
+        areaCurrent.setIPD(ipd);
+        areaCurrent.setBPD(bpd);
         areaCurrent.setContentPosition(placement);
         areaCurrent.setClip(clip);
         areaCurrent.setOffset(0);

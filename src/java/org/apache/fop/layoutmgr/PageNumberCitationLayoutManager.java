@@ -82,7 +82,7 @@ public class PageNumberCitationLayoutManager extends LeafNodeLayoutManager {
             int width = getStringWidth(str);
             text.setTextArea(str);
             inline.setIPD(width);
-            inline.setHeight(font.getAscender() - font.getDescender());
+            inline.setBPD(font.getAscender() - font.getDescender());
             inline.setOffset(font.getAscender());
             
             inline.addTrait(Trait.FONT_NAME, font.getFontName());
@@ -95,7 +95,7 @@ public class PageNumberCitationLayoutManager extends LeafNodeLayoutManager {
             String str = "MMM"; // reserve three spaces for page number
             int width = getStringWidth(str);
             inline.setIPD(width);
-            inline.setHeight(font.getAscender() - font.getDescender());
+            inline.setBPD(font.getAscender() - font.getDescender());
             inline.setOffset(font.getAscender());
             
             inline.addTrait(Trait.FONT_NAME, font.getFontName());
