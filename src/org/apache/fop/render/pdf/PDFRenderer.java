@@ -211,17 +211,17 @@ public class PDFRenderer implements Renderer {
      * @param g the green component
      * @param b the blue component
      */
-    protected void addLine(float x1, float y1, float x2, float y2, boolean fill)
+    protected void addLine(float x1, float y1, float x2, float y2, DrawingInstruction di)
 	{
     	String str;
     	str = "" + x1 + " " + y1 + " m "
 			  + x2 + " " + y2 + " l";
-		if(fill)
-			currentStream.add(str + " f\n");
+		if(di != null && di.fill)
+			currentStream.add(str + " f\n"); // ??
 		currentStream.add(str + " S\n");
     }
 
-    protected void addCircle(float cx, float cy, float r, boolean fill)
+    protected void addCircle(float cx, float cy, float r, DrawingInstruction di)
     {
     	String str;
     	str = "" + cx + " " + (cy - r) + " m\n"
@@ -230,12 +230,29 @@ public class PDFRenderer implements Renderer {
 			+ "" + (cx - 21 * r / 40f) + " " + (cy + r) + " " + (cx - r) + " " + (cy + 21 * r / 40f) + " " + (cx - r) + " " + cy + " c\n"
 			+ "" + (cx - r) + " " + (cy - 21 * r / 40f) + " " + (cx - 21 * r / 40f) + " " + (cy - r) + " " + cx + " " + (cy - r) + " c\n";
 
-		if(fill)
-			currentStream.add(str + "f\n");
-		currentStream.add(str + "S\n");
+		if(di == null) {
+			currentStream.add(str + "S\n");
+		} else {
+			if(di.fill) {
+				if(di.stroke) {
+					if(!di.nonzero)
+						currentStream.add(str + "B*\n");
+					else
+						currentStream.add(str + "B\n");
+				} else {
+					if(!di.nonzero)
+						currentStream.add(str + "f*\n");
+					else
+						currentStream.add(str + "f\n");
+				}
+			} else {
+//				if(di.stroke)
+					currentStream.add(str + "S\n");
+			}
+		}
     }
 
-    protected void addEllipse(float cx, float cy, float rx, float ry, boolean fill)
+    protected void addEllipse(float cx, float cy, float rx, float ry, DrawingInstruction di)
     {
     	String str;
     	str = "" + cx + " " + (cy - ry) + " m\n"
@@ -243,9 +260,26 @@ public class PDFRenderer implements Renderer {
 			+ "" + (cx + rx) + " " + (cy + 21 * ry / 40f) + " " + (cx + 21 * rx / 40f) + " " + (cy + ry) + " " + cx + " " + (cy + ry) + " c\n"
 			+ "" + (cx - 21 * rx / 40f) + " " + (cy + ry) + " " + (cx - rx) + " " + (cy + 21 * ry / 40f) + " " + (cx - rx) + " " + cy + " c\n"
 			+ "" + (cx - rx) + " " + (cy - 21 * ry / 40f) + " " + (cx - 21 * rx / 40f) + " " + (cy - ry) + " " + cx + " " + (cy - ry) + " c\n";
-		if(fill)
-			currentStream.add(str + "f\n");
-		currentStream.add(str + "S\n");
+		if(di == null) {
+			currentStream.add(str + "S\n");
+		} else {
+			if(di.fill) {
+				if(di.stroke) {
+					if(!di.nonzero)
+						currentStream.add(str + "B*\n");
+					else
+						currentStream.add(str + "B\n");
+				} else {
+					if(!di.nonzero)
+						currentStream.add(str + "f*\n");
+					else
+						currentStream.add(str + "f\n");
+				}
+			} else {
+//				if(di.stroke)
+					currentStream.add(str + "S\n");
+			}
+		}
     }
 
     /**
@@ -262,13 +296,30 @@ public class PDFRenderer implements Renderer {
      * @param fg the green component of the fill
      * @param fb the blue component of the fill
      */
-    protected void addRect(float x, float y, float w, float h, boolean fill)
+    protected void addRect(float x, float y, float w, float h, DrawingInstruction di)
     {
     	String str = "" + x + " " + y + " "
-				  + w + " " + h + " re";
-		if(fill)
-			currentStream.add(str + " f\n");
-		currentStream.add(str + " S\n");
+				  + w + " " + h + " re\n";
+		if(di == null) {
+			currentStream.add(str + "S\n");
+		} else {
+			if(di.fill) {
+				if(di.stroke) {
+					if(!di.nonzero)
+						currentStream.add(str + "B*\n");
+					else
+						currentStream.add(str + "B\n");
+				} else {
+					if(!di.nonzero)
+						currentStream.add(str + "f*\n");
+					else
+						currentStream.add(str + "f\n");
+				}
+			} else {
+//				if(di.stroke)
+					currentStream.add(str + "S\n");
+			}
+		}
     }
 
 	/**
@@ -310,7 +361,7 @@ public class PDFRenderer implements Renderer {
 			  + "Q\nBT\n");
     }
 
-    protected void addPath(Vector points, int posx, int posy, boolean fill)
+    protected void addPath(Vector points, int posx, int posy, DrawingInstruction di)
     {
     	SVGPathSegImpl pathmoveto = null;
     	float lastx = 0;
@@ -443,17 +494,74 @@ public class PDFRenderer implements Renderer {
 	    			lastx += vals[0];
 	    			lasty += vals[1];
     			break;
+    			// these arcs are wrongs, I can't figure out the
+    			// equations at the moment
+    			case SVGPathSeg.SVG_PATHSEG_ARC_ABS:
+    				{
+	    				double rx = vals[0];
+	    				double ry = vals[1];
+	    				double theta = vals[2];
+	    				boolean largearcflag = (vals[3] == 1.0);
+	    				boolean sweepflag = (vals[4] == 1.0);
+
+						double cx = lastx;
+						double cy = lasty;
+						currentStream.add(lastx + " " + lasty + " " +
+											(vals[0]) + " " + (vals[1]) + " " +
+											vals[5] + " " + vals[6] +
+											" c\n");
+		    			lastcx = 0; //??
+		    			lastcy = 0; //??
+		    			lastx = vals[5];
+		    			lasty = vals[6];
+					}
+    			break;
+    			case SVGPathSeg.SVG_PATHSEG_ARC_REL:
+    				{
+	    				double rx = vals[0];
+	    				double ry = vals[1];
+	    				double theta = vals[2];
+	    				boolean largearcflag = (vals[3] == 1.0);
+	    				boolean sweepflag = (vals[4] == 1.0);
+
+						currentStream.add(lastx + " " + lasty + " " +
+											(vals[0] + lastx) + " " + (vals[1] + lasty) + " " +
+											(vals[5] + lastx) + " " + (vals[6] + lasty) +
+											" c\n");
+		    			lastcx = 0; //??
+		    			lastcy = 0; //??
+		    			lastx += vals[5];
+		    			lasty += vals[6];
+		    		}
+    			break;
     			case SVGPathSeg.SVG_PATHSEG_CLOSEPATH:
 					currentStream.add("h\n");
     			break;
     		}
     	}
-		if(fill)
-			currentStream.add("B\n");
-		currentStream.add("S\n");
+		if(di == null) {
+			currentStream.add("S\n");
+		} else {
+			if(di.fill) {
+				if(di.stroke) {
+					if(!di.nonzero)
+						currentStream.add("B*\n");
+					else
+						currentStream.add("B\n");
+				} else {
+					if(!di.nonzero)
+						currentStream.add("f*\n");
+					else
+						currentStream.add("f\n");
+				}
+			} else {
+//				if(di.stroke)
+					currentStream.add("S\n");
+			}
+		}
     }
 
-    protected void addPolyline(Vector points, int posx, int posy, boolean fill, boolean close)
+    protected void addPolyline(Vector points, int posx, int posy, DrawingInstruction di, boolean close)
     {
 		PathPoint pc;
     	float lastx = 0;
@@ -473,9 +581,26 @@ public class PDFRenderer implements Renderer {
     	}
     	if(close)
 			currentStream.add("h\n");
-		if(fill)
-			currentStream.add("b\n");
-		currentStream.add("S\n");
+		if(di == null) {
+			currentStream.add("S\n");
+		} else {
+			if(di.fill) {
+				if(di.stroke) {
+					if(!di.nonzero)
+						currentStream.add("B*\n");
+					else
+						currentStream.add("B\n");
+				} else {
+					if(!di.nonzero)
+						currentStream.add("f*\n");
+					else
+						currentStream.add("f\n");
+				}
+			} else {
+//				if(di.stroke)
+					currentStream.add("S\n");
+			}
+		}
     }
 
     /**
@@ -842,31 +967,86 @@ public class PDFRenderer implements Renderer {
 	 * Should only set style for elements that have changes.
 	 *
 	 */
-	protected boolean applyStyle(GraphicImpl area, Hashtable style)
-	{
+	class DrawingInstruction {
+		boolean stroke = false;
+		boolean nonzero = false; // non-zero fill rule "f*", "B*" operator
 		boolean fill = false;
+		int linecap = 0; // butt
+		int linejoin = 0; // miter
+		int miterwidth = 8;
+	}
+	protected DrawingInstruction applyStyle(GraphicImpl area, Hashtable style)
+	{
+		DrawingInstruction di = new DrawingInstruction();
 		Object sp;
 		sp = style.get("fill");
 		if(sp != null) {
+			di.fill = true;
 			if(sp instanceof ColorType) {
 				ColorType ct = (ColorType)sp;
 				PDFColor fillColour = new PDFColor(ct.red(), ct.green(), ct.blue());
 				currentStream.add(fillColour.getColorSpaceOut(true));
 			} else if (sp instanceof String) {
-				handleGradient((String)sp, true, area);
+				if(sp.equals("none")) {
+					di.fill = false;
+				} else {
+					handleGradient((String)sp, true, area);
+				}
 			}
-			fill = true;
+		} else {
+		}
+		sp = style.get("fill-rule");
+		if(sp != null) {
+			if(sp.equals("nonzero")) {
+				di.nonzero = true;
+			}
 		} else {
 		}
 		sp = style.get("stroke");
 		if(sp != null) {
+			di.stroke = true;
 			if(sp instanceof ColorType) {
 				ColorType ct = (ColorType)sp;
 				PDFColor fillColour = new PDFColor(ct.red(), ct.green(), ct.blue());
 				currentStream.add(fillColour.getColorSpaceOut(false));
 			} else if(sp instanceof String) {
-				handleGradient((String)sp, false, area);
+				if(sp.equals("none")) {
+					di.stroke = false;
+				} else {
+					handleGradient((String)sp, false, area);
+				}
 			}
+		} else {
+		}
+		sp = style.get("stroke-linecap");
+		if(sp != null) {
+			// butt, round ,square
+			if(sp.equals("butt")) {
+				currentStream.add(0 + " J\n");
+			} else if(sp.equals("round")) {
+				currentStream.add(1 + " J\n");
+			} else if(sp.equals("square")) {
+				currentStream.add(2 + " J\n");
+			}
+		} else {
+		}
+		sp = style.get("stroke-linejoin");
+		if(sp != null) {
+			if(sp.equals("miter")) {
+				currentStream.add(0 + " j\n");
+			} else if(sp.equals("round")) {
+				currentStream.add(1 + " j\n");
+			} else if(sp.equals("bevel")) {
+				currentStream.add(2 + " j\n");
+			}
+		} else {
+		}
+		sp = style.get("stroke-miterlimit");
+		if(sp != null) {
+			float width;
+			width = ((SVGLengthImpl)sp).getValue();
+			PDFNumber pdfNumber = new PDFNumber();
+			currentStream.add(pdfNumber.doubleOut(width) + " M\n");
 		} else {
 		}
 		sp = style.get("stroke-width");
@@ -900,22 +1080,20 @@ public class PDFRenderer implements Renderer {
 		if(sp != null) {
 			String maskurl;
 			maskurl = (String)sp;
+//			System.out.println("mask: " + maskurl);
 			maskurl = maskurl.substring(1, maskurl.length());
 			// get def of mask and set mask
-//			Hashtable defs;
 			GraphicImpl graph = null;
 			graph = area.locateDef(maskurl);
-//			defs = area.getDefs();
-//			if(defs != null)
-//				graph = (GraphicImpl)defs.get(maskurl);
 			if(graph != null) {
+//				System.out.println("mask: " + graph);
 				GraphicImpl parent = graph.getGraphicParent();
 				graph.setParent(area);
 //				renderElement(svgarea, graph, posx, posy);
 				graph.setParent(parent);
 			}
 		}
-		return fill;
+		return di;
 	}
 
 	protected void applyTransform(Vector trans)
@@ -934,7 +1112,7 @@ public class PDFRenderer implements Renderer {
 		int x = posx;
 		int y = posy;
 		Hashtable style = area.getStyle();
-		boolean fill = false;
+		DrawingInstruction di = null;
 
 		currentStream.add("q\n");
 		Vector trans = area.oldgetTransform();
@@ -943,7 +1121,7 @@ public class PDFRenderer implements Renderer {
 		}
 
 		if(style != null) {
-			fill = applyStyle(area, style);
+			di = applyStyle(area, style);
 		}
 
 		if (area instanceof SVGRectElement) {
@@ -952,19 +1130,19 @@ public class PDFRenderer implements Renderer {
 			float ry = rg.getY().getValue();
 			float rw = rg.getWidth().getValue();
 			float rh = rg.getHeight().getValue();
-			addRect(rx, ry, rw, rh, fill);
+			addRect(rx, ry, rw, rh, di);
 		} else if (area instanceof SVGLineElement) {
 			SVGLineElement lg = (SVGLineElement)area;
 			float x1 = lg.getX1().getValue();
 			float y1 = lg.getY1().getValue();
 			float x2 = lg.getX2().getValue();
 			float y2 = lg.getY2().getValue();
-			addLine(x1,y1,x2,y2, fill);
+			addLine(x1,y1,x2,y2, di);
 		} else if (area instanceof SVGTextElementImpl) {
 //			currentStream.add("q\n");
 //			currentStream.add(1 + " " + 0 + " " + 0 + " " + 1 + " " + 0 + " " + 0 + " cm\n");
 			currentStream.add("BT\n");
-			renderText(svgarea, (SVGTextElementImpl)area, 0, 0);
+			renderText(svgarea, (SVGTextElementImpl)area, 0, 0/*, di*/);
 			currentStream.add("ET\n");
 //			currentStream.add("Q\n");
 		} else if (area instanceof SVGCircleElement) {
@@ -972,35 +1150,28 @@ public class PDFRenderer implements Renderer {
 			float cx = cg.getCx().getValue();
 			float cy = cg.getCy().getValue();
 			float r = cg.getR().getValue();
-			addCircle(cx,cy,r, fill);
+			addCircle(cx,cy,r, di);
 		} else if (area instanceof SVGEllipseElement) {
 			SVGEllipseElement cg = (SVGEllipseElement)area;
 			float cx = cg.getCx().getValue();
 			float cy = cg.getCy().getValue();
 			float rx = cg.getRx().getValue();
 			float ry = cg.getRy().getValue();
-			addEllipse(cx,cy,rx,ry, fill);
+			addEllipse(cx,cy,rx,ry, di);
 		} else if (area instanceof SVGPathElementImpl) {
-			addPath(((SVGPathElementImpl)area).pathElements, posx, posy, fill);
+			addPath(((SVGPathElementImpl)area).pathElements, posx, posy, di);
 		} else if (area instanceof SVGPolylineElementImpl) {
-			addPolyline(((SVGPolylineElementImpl)area).points, posx, posy, fill, false);
+			addPolyline(((SVGPolylineElementImpl)area).points, posx, posy, di, false);
 		} else if (area instanceof SVGPolygonElementImpl) {
-			addPolyline(((SVGPolygonElementImpl)area).points, posx, posy, fill, true);
+			addPolyline(((SVGPolygonElementImpl)area).points, posx, posy, di, true);
 		} else if (area instanceof SVGGElementImpl) {
 			renderGArea(svgarea, (SVGGElementImpl)area, x, y);
 		} else if(area instanceof SVGUseElementImpl) {
 			SVGUseElementImpl ug = (SVGUseElementImpl)area;
 			String ref = ug.link;
 			ref = ref.substring(1, ref.length());
-//			Hashtable defs;
 			GraphicImpl graph = null;
 			graph = area.locateDef(ref);
-//			defs = ug.getDefs();
-//			if(defs != null)
-//				graph = (GraphicImpl)defs.get(ref);
-//			if(graph == null) {
-				// find element inside parent.
-//			}
 			if(graph != null) {
 				// probably not the best way to do this, should be able
 				// to render without the style being set.
@@ -1097,12 +1268,8 @@ public class PDFRenderer implements Renderer {
 			} else if(o instanceof SVGTextPathElementImpl) {
 				SVGTextPathElementImpl tpg = (SVGTextPathElementImpl)o;
 				String ref = tpg.str;
-//				Hashtable defs;
 				GraphicImpl graph = null;
 				graph = tpg.locateDef(ref);
-//				defs = tpg.getDefs();
-//				if(defs != null)
-//					graph = (GraphicImpl)defs.get(ref);
 				if(graph != null && graph instanceof SVGPathElementImpl) {
 					// probably not the best way to do this, should be able
 					// to render without the style being set.
@@ -1116,12 +1283,8 @@ public class PDFRenderer implements Renderer {
 				SVGTRefElementImpl trg = (SVGTRefElementImpl)o;
 				String ref = trg.ref;
 				ref = ref.substring(1, ref.length());
-//				Hashtable defs;
 				GraphicImpl graph = null;
 				graph = trg.locateDef(ref);
-//				defs = trg.getDefs();
-//				if(defs != null)
-//					graph = (GraphicImpl)defs.get(ref);
 				if(graph != null && graph instanceof SVGTextElementImpl) {
 					GraphicImpl parent = graph.getGraphicParent();
 					graph.setParent(trg);
