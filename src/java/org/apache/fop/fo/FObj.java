@@ -180,11 +180,11 @@ public class FObj extends FONode {
      * @return FObj of the nearest ancestor that generates Reference Areas
      */
     private FObj findNearestAncestorGeneratingRAs() {
-        FObj p;
-        FONode parent;
-        for (p = this; !p.generatesReferenceAreas()
-                && (parent = p.getParent()) != null
-                && (parent instanceof FObj); p = (FObj) parent) {
+        FObj p = this;
+        FObj parent = p.findNearestAncestorFObj();
+        while (parent != null && !p.generatesReferenceAreas()) {
+            p = (FObj) parent;
+            parent = p.findNearestAncestorFObj();
         }
         return p;
     }
