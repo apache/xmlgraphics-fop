@@ -141,7 +141,7 @@ public class LineLayoutManager extends InlineStackingLayoutManager {
     private int iEndElement = 0;
     private int iCurrParIndex = 0;
 
-    private KnuthNode lastDeactivatedNode = null;
+    private KnuthNode bestDeactivatedNode = null;
 
     //     parameters of Knuth's algorithm:
     // penalty value for flagged penalties
@@ -159,6 +159,10 @@ public class LineLayoutManager extends InlineStackingLayoutManager {
     // break point
     public static final int DEFAULT_SPACE_WIDTH = 3336;
     private static final int INFINITE_RATIO = 1000;
+    private static final int MAX_DEMERITS_INCREASE = 1000;
+    // constants identifying the line breaking algorithm used
+    private static final int KNUTH_ALGORITHM = 0;
+    private static final int FIRST_FIT_ALGORITHM = 1;
 
     // this class represent a feasible breaking point
     private class KnuthNode {
@@ -491,40 +495,7 @@ public class LineLayoutManager extends InlineStackingLayoutManager {
             Paragraph currPar = null;
             while (paragraphsIterator.hasPrevious()) {
                 currPar = (Paragraph) paragraphsIterator.previous();
-                double maxAdjustment = 1;
-                int iBPcount = 0;
-
-                // first try
-                if ((iBPcount
-                     = findBreakingPoints(currPar,
-                                          context.getStackLimit().opt,
-                                          maxAdjustment, false)) == 0) {
-                    // the first try failed, now try something different
-                    log.debug("No set of breaking points found with maxAdjustment = " + maxAdjustment);
-                    if (hyphProps.hyphenate == Constants.EN_TRUE) {
-                        // consider every hyphenation point as a legal break
-                        findHyphenationPoints(currPar);
-                    } else {
-                        // try with a higher threshold
-                        maxAdjustment = 5;
-                    }
-
-                    if ((iBPcount
-                         = findBreakingPoints(currPar,
-                                              context.getStackLimit().opt,
-                                              maxAdjustment, false)) == 0) {
-                        // the second try failed too, try with a huge threshold
-                        // and force the algorithm to find
-                        // a set of breaking points
-                        log.debug("No set of breaking points found with maxAdjustment = " + maxAdjustment
-                                         + (hyphProps.hyphenate == Constants.EN_TRUE ? " and hyphenation" : ""));
-                        maxAdjustment = 20;
-                        iBPcount
-                            = findBreakingPoints(currPar,
-                                                 context.getStackLimit().opt,
-                                                 maxAdjustment, true);
-                    }
-                }
+                findBreakingPoints(currPar, context.getStackLimit().opt);
             }
         } else {
             // this method has been called before
@@ -543,72 +514,65 @@ public class LineLayoutManager extends InlineStackingLayoutManager {
         return curLineBP;
     }
 
-    private int findBreakingPoints(Paragraph par, int lineWidth,
-                                   double threshold, boolean force) {
-        int totalWidth = 0;
-        int totalStretch = 0;
-        int totalShrink = 0;
-        boolean bForced = false;
+    /**
+     * Find a set of breaking points.
+     * This method is called only once by getNextBreakPoss, and it 
+     * subsequently calls the other findBreakingPoints() method with 
+     * different parameters, until a set of breaking points is found.
+     *
+     * @param par       the list of elements that must be parted
+     *                  into lines
+     * @param lineWidth the desired length ot the lines
+     */
+    private void findBreakingPoints(Paragraph par, int lineWidth) {
+        // maximum adjustment ratio permitted
+        float maxAdjustment = 1;
 
-        // current element in the paragraph
-        KnuthElement thisElement = null;
-        // previous element in the paragraph is a KnuthBox
-        boolean previousIsBox = false;
-
-        // create an active node representing the starting point
-        activeList = new LinkedList();
-        activeList.add(new KnuthNode(0, 0, 1, 0, 0, 0, 0, 0, 0, null));
-
-        // main loop
-        ListIterator paragraphIterator = par.listIterator();
-        while (paragraphIterator.hasNext()) {
-            thisElement = (KnuthElement) paragraphIterator.next();
-            if (thisElement.isBox()) {
-                // a KnuthBox object is not a legal line break
-                totalWidth += thisElement.getW();
-                previousIsBox = true;
-            } else if (thisElement.isGlue()) {
-                // a KnuthGlue object is a legal line break
-                // only if the previous object is a KnuthBox
-                if (previousIsBox) {
-                    considerLegalBreak(par, lineWidth, thisElement,
-                                       totalWidth, totalStretch, totalShrink,
-                                       threshold);
-                }
-                totalWidth += thisElement.getW();
-                totalStretch += ((KnuthGlue) thisElement).getY();
-                totalShrink += ((KnuthGlue) thisElement).getZ();
-                previousIsBox = false;
+        // first try
+        if (!findBreakingPoints(par, lineWidth,
+                                maxAdjustment, KNUTH_ALGORITHM)) {
+            // the first try failed, now try something different
+            log.debug("No set of breaking points found with maxAdjustment = " + maxAdjustment);
+            if (hyphProps.hyphenate == Constants.EN_TRUE) {
+                // consider every hyphenation point as a legal break
+                findHyphenationPoints(par);
             } else {
-                // a KnuthPenalty is a legal line break
-                // only if its penalty is not infinite
-                if (((KnuthPenalty) thisElement).getP()
-                    < KnuthElement.INFINITE) {
-                    considerLegalBreak(par, lineWidth, thisElement,
-                                       totalWidth, totalStretch, totalShrink,
-                                       threshold);
+                // try with a higher threshold
+                maxAdjustment = 5;
+            }
+
+            if (!findBreakingPoints(par, lineWidth,
+                                    maxAdjustment, KNUTH_ALGORITHM)) {
+                // the second try failed too, try with a huge threshold;
+                // if this fails too, use a different algorithm
+                log.debug("No set of breaking points found with maxAdjustment = " + maxAdjustment
+                          + (hyphProps.hyphenate == Constants.EN_TRUE ? " and hyphenation" : ""));
+                maxAdjustment = 20;
+                if (!findBreakingPoints(par, lineWidth,
+                                        maxAdjustment, KNUTH_ALGORITHM)) {
+                    log.debug("No set of breaking points found, using first-fit algorithm");
+                    findBreakingPoints(par, lineWidth,
+                                       maxAdjustment, FIRST_FIT_ALGORITHM);
                 }
-                previousIsBox = false;
             }
         }
 
-        if (activeList.size() == 0) {
-            if (force) {
-                activeList.add(lastDeactivatedNode);
-                bForced = true;
-                log.error("Could not find a set of breaking points");
-            } else {
-                return 0;
-            }
-        }
+        // now:
+        // * if the Knuth's algorithm found at least a set of breaking point,
+        //   activeList.size() >= 1 and bestDeactivatedNode == null
+        // * if the Knuth's algorithm failed, and the first-fit algorithm was 
+        //   called, activeList.size() == 1 and bestDeactivatedNode != null
 
-        // there is at least one set of breaking points
+        // number of lines that will be created
+        int line = 0;
+        // node representing the chosen last breakpoint
+        KnuthNode bestActiveNode = null;
+
+        // if there are different sets of breaking points
         // choose the active node with fewest total demerits
         ListIterator activeListIterator = activeList.listIterator();
         KnuthNode tempNode = null;
-        KnuthNode bestActiveNode = null;
         double bestDemerits = BestRecords.INFINITE_DEMERITS;
-        int line = 0;
         while (activeListIterator.hasNext()) {
             tempNode = (KnuthNode) activeListIterator.next();
             if (tempNode.totalDemerits < bestDemerits) {
@@ -644,10 +608,10 @@ public class LineLayoutManager extends InlineStackingLayoutManager {
             // compute indent and adjustment ratio, according to
             // the value of text-align and text-align-last
             int indent = 0;
-            int difference = (bestActiveNode.line < line || bForced)
+            int difference = (bestActiveNode.line < line)
                 ? bestActiveNode.difference
                 : bestActiveNode.difference + par.lineFillerWidth;
-            int textAlign = (bestActiveNode.line < line || bForced)
+            int textAlign = (bestActiveNode.line < line)
                 ? bTextAlignment : bTextAlignmentLast;
             indent += (textAlign == EN_CENTER)
                 ? difference / 2
@@ -660,23 +624,99 @@ public class LineLayoutManager extends InlineStackingLayoutManager {
 
             makeLineBreakPosition(par,
                                   (i > 1 ? bestActiveNode.previous.position + 1: 0),
-                                                  bestActiveNode.position,
+                                  bestActiveNode.position,
                                   0, ratio, indent);
 
             bestActiveNode = bestActiveNode.previous;
         }
-        if (bForced) {
-            fallback(par, line);
-        }
         activeList.clear();
-        return line;
     }
 
-    private void fallback(Paragraph par, int line) {
-        makeLineBreakPosition(par,
-                              lastDeactivatedNode.position,
-                              par.size() - 1,
-                              line, 0, 0);
+    /**
+     * Perform a line-breaking algorithm.
+     * 
+     * @param par       the list of elements that must be parted
+     *                  into lines
+     * @param lineWidth the desired length ot the lines
+     * @param threshold the maximum adjustment ratio permitted
+     * @param algorithm a constant identifying the algorithm to perform
+     * @return          true if the algorithm succeeded, false if it failed
+     */
+    private boolean findBreakingPoints(Paragraph par, int lineWidth,
+                                       double threshold, int algorithm) {
+        int totalWidth = 0;
+        int totalStretch = 0;
+        int totalShrink = 0;
+
+        // current element in the paragraph
+        KnuthElement thisElement = null;
+        // previous element in the paragraph is a KnuthBox
+        boolean previousIsBox = false;
+
+        // create an active node representing the starting point
+        activeList = new LinkedList();
+        if (algorithm == KNUTH_ALGORITHM) {
+            bestDeactivatedNode = null;
+            activeList.add(new KnuthNode(0, 0, 1, 0, 0, 0, 0, 0, 0, null));
+        } else {
+            activeList.add(new KnuthNode(bestDeactivatedNode.position,
+                                         bestDeactivatedNode.line,
+                                         1, 0, 0, 0, 
+                                         bestDeactivatedNode.adjustRatio,
+                                         bestDeactivatedNode.difference, 0,
+                                         bestDeactivatedNode.previous));
+        }
+
+        // main loop
+        ListIterator paragraphIterator = par.listIterator();
+        while (paragraphIterator.hasNext()) {
+            thisElement = (KnuthElement) paragraphIterator.next();
+            if (thisElement.isBox()) {
+                // a KnuthBox object is not a legal line break
+                totalWidth += thisElement.getW();
+                previousIsBox = true;
+            } else if (thisElement.isGlue()) {
+                // a KnuthGlue object is a legal line break
+                // only if the previous object is a KnuthBox
+                if (previousIsBox) {
+                    if (algorithm == KNUTH_ALGORITHM) {
+                        considerLegalBreakKnuth(par, lineWidth, thisElement,
+                                                totalWidth, totalStretch, totalShrink,
+                                                threshold);
+                    } else {
+                        considerLegalBreakFirstFit(par, lineWidth, thisElement,
+                                                   totalWidth, totalStretch, totalShrink,
+                                                   threshold);
+                    }
+                }
+                totalWidth += thisElement.getW();
+                totalStretch += ((KnuthGlue) thisElement).getY();
+                totalShrink += ((KnuthGlue) thisElement).getZ();
+                previousIsBox = false;
+            } else {
+                // a KnuthPenalty is a legal line break
+                // only if its penalty is not infinite
+                if (((KnuthPenalty) thisElement).getP()
+                    < KnuthElement.INFINITE) {
+                    if (algorithm == KNUTH_ALGORITHM) {
+                        considerLegalBreakKnuth(par, lineWidth, thisElement,
+                                                totalWidth, totalStretch, totalShrink,
+                                                threshold);
+                    } else {
+                        considerLegalBreakFirstFit(par, lineWidth, thisElement,
+                                                   totalWidth, totalStretch, totalShrink,
+                                                   threshold);
+                    }
+                }
+                previousIsBox = false;
+            }
+        }
+
+        if (algorithm == KNUTH_ALGORITHM && activeList.size() > 0) {
+            // bestDeactivatedNode is useless, as the algorithm did not fail
+            bestDeactivatedNode = null;
+        }
+        return (activeList.size() > 0);
     }
 
     private void makeLineBreakPosition(Paragraph par,
@@ -728,10 +768,10 @@ public class LineLayoutManager extends InlineStackingLayoutManager {
                                               lineLead));
     }
 
-    private void considerLegalBreak(LinkedList par, int lineWidth,
-                                    KnuthElement element,
-                                    int totalWidth, int totalStretch,
-                                    int totalShrink, double threshold) {
+    private void considerLegalBreakKnuth(LinkedList par, int lineWidth,
+                                         KnuthElement element,
+                                         int totalWidth, int totalStretch,
+                                         int totalShrink, double threshold) {
         KnuthNode activeNode = null;
 
         ListIterator activeListIterator = activeList.listIterator();
@@ -801,7 +841,15 @@ public class LineLayoutManager extends InlineStackingLayoutManager {
                         tempNode = (KnuthNode) activeListIterator.previous();
                         iCallNext ++;
                     }
-                    lastDeactivatedNode = tempNode;
+                    // use bestDeactivatedNode to keep a pointer to a "good"
+                    // node that could be used if the algorithm fails
+                    if (bestDeactivatedNode == null
+                        || tempNode.line == bestDeactivatedNode.line
+                           && tempNode.totalDemerits < bestDeactivatedNode.totalDemerits
+                        || tempNode.line > bestDeactivatedNode.line
+                           && tempNode.totalDemerits < bestDeactivatedNode.totalDemerits + MAX_DEMERITS_INCREASE) {
+                        bestDeactivatedNode = tempNode;
+                    }
                     activeListIterator.remove();
                     for (int i = 0; i < iCallNext; i++) {
                         activeListIterator.next();
@@ -936,6 +984,90 @@ public class LineLayoutManager extends InlineStackingLayoutManager {
                 break;
             }
         } // end of the outer while
+    }
+
+    private void considerLegalBreakFirstFit(LinkedList par, int lineWidth,
+                                            KnuthElement element,
+                                            int totalWidth, int totalStretch,
+                                            int totalShrink, double threshold) {
+        KnuthNode startNode;
+        KnuthNode endNode;
+        endNode = (KnuthNode) activeList.getFirst();
+        if (endNode.previous != null) {
+            startNode = endNode.previous;
+        } else {
+            startNode = endNode;
+            endNode = null;
+        }
+
+        // these are the new values that must be computed
+        // in order to define a new active node
+        int newWidth;
+        int newStretch;
+        int newShrink;
+        int newDifference;
+        double newRatio;
+
+        // compute width, stretch and shrink of the new node
+        newWidth = totalWidth;
+        newStretch = totalStretch;
+        newShrink = totalShrink;
+        ListIterator tempIterator = par.listIterator(par.indexOf(element));
+        while (tempIterator.hasNext()) {
+            KnuthElement tempElement = (KnuthElement)tempIterator.next();
+            if (tempElement.isBox()) {
+                break;
+            } else if (tempElement.isGlue()) {
+                newWidth += ((KnuthGlue) tempElement).getW();
+                newStretch += ((KnuthGlue) tempElement).getY();
+                newShrink += ((KnuthGlue) tempElement).getZ();
+            } else if (((KnuthPenalty) tempElement).getP()
+                       == -KnuthElement.INFINITE
+                       && tempElement != element) {
+                break;
+            }
+        }
+
+        if (endNode == null
+            || totalWidth + (element.isPenalty() ? element.getW() : 0) - startNode.totalWidth <= lineWidth
+            || bTextAlignment == EN_JUSTIFY
+               && totalWidth  + (element.isPenalty() ? element.getW() : 0)- startNode.totalWidth - (totalShrink - startNode.totalShrink) <= lineWidth) {
+            // add content to the same line
+            // compute difference and ratio
+            int actualWidth = totalWidth - startNode.totalWidth;
+            if (element.isPenalty()) {
+                actualWidth += element.getW();
+            }
+            newDifference = lineWidth - actualWidth;
+            int available = newDifference >= 0 ? totalStretch - startNode.totalStretch
+                                               : totalShrink - startNode.totalShrink;
+            newRatio = available != 0 ? (float) newDifference / available
+                                      : 0;
+
+            activeList.removeFirst();
+            activeList.add(new KnuthNode(par.indexOf(element), startNode.line + 1, 0,
+                                         newWidth, newStretch, newShrink,
+                                         newRatio, newDifference, 0.0,
+                                         startNode));
+        } else {
+            // start a new line
+            // compute difference and ratio
+            int actualWidth = totalWidth - endNode.totalWidth;
+            if (element.isPenalty()) {
+                actualWidth += element.getW();
+            }
+            newDifference = lineWidth - actualWidth;
+            int available = newDifference >= 0 ? totalStretch - endNode.totalStretch
+                                               : totalShrink - endNode.totalShrink;
+            newRatio = available != 0 ? (float) newDifference / available
+                                      : 0;
+
+            activeList.removeFirst();
+            activeList.add(new KnuthNode(par.indexOf(element), endNode.line + 1, 0,
+                                         newWidth, newStretch, newShrink,
+                                         newRatio, newDifference, 0.0,
+                                         endNode));
+        }
     }
 
     /**
