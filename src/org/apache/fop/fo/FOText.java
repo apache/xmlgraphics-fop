@@ -19,6 +19,7 @@ import org.apache.fop.layoutmgr.LayoutManager;
 import org.apache.fop.layoutmgr.TextLayoutManager;
 
 import java.util.NoSuchElementException;
+import java.util.List;
 
 /**
  * a text node in the formatting object tree
@@ -41,21 +42,21 @@ public class FOText extends FObj {
         super(null);
         this.start = 0;
         this.ca = new char[e - s];
-	System.arraycopy(chars, s, ca, 0, e-s);
+        System.arraycopy(chars, s, ca, 0, e - s);
         this.length = e - s;
         textInfo = ti;
     }
 
     public boolean willCreateArea() {
-        if (textInfo.whiteSpaceCollapse == WhiteSpaceCollapse.FALSE
-                && length > 0) {
+        if (textInfo.whiteSpaceCollapse == WhiteSpaceCollapse.FALSE &&
+                length > 0) {
             return true;
         }
 
         for (int i = start; i < start + length; i++) {
             char ch = ca[i];
-            if (!((ch == ' ') || (ch == '\n') || (ch == '\r')
-                    || (ch == '\t'))) {    // whitespace
+            if (!((ch == ' ') || (ch == '\n') || (ch == '\r') ||
+                    (ch == '\t'))) { // whitespace
                 return true;
             }
         }
@@ -65,61 +66,59 @@ public class FOText extends FObj {
     // Just to keep PageNumber and PageNumber citation happy for now.
     // The real code is moved to TextLayoutManager!
 
-    public static int addText(BlockArea ba, FontState fontState, float red,
-                              float green, float blue, int wrapOption,
-                              LinkSet ls, int whiteSpaceCollapse,
-                              char data[], int start, int end,
-                              TextState textState, int vAlign) {
-	return 0;
+    public static int addText(BlockArea ba, FontState fontState,
+                              float red, float green, float blue, int wrapOption,
+                              LinkSet ls, int whiteSpaceCollapse, char data[],
+                              int start, int end, TextState textState, int vAlign) {
+        return 0;
     }
 
-    public LayoutManager getLayoutManager() {
-	// What if nothing left (length=0)?
-	if (length < ca.length) {
-	    char[] tmp = ca;
-	    ca  = new char[length];
-	    System.arraycopy(tmp, 0, ca, 0, length);
-	}
-	return new TextLayoutManager(this, ca, textInfo);
+    public void addLayoutManager(List list) {
+        // What if nothing left (length=0)?
+        if (length < ca.length) {
+            char[] tmp = ca;
+            ca = new char[length];
+            System.arraycopy(tmp, 0, ca, 0, length);
+        }
+        list.add(new TextLayoutManager(this, ca, textInfo));
     }
 
     public CharIterator charIterator() {
-	return new TextCharIterator();
+        return new TextCharIterator();
     }
 
     private class TextCharIterator extends AbstractCharIterator {
-	int curIndex = 0;
-	public boolean hasNext() {
-	    return (curIndex < length);
-	}
+        int curIndex = 0;
+        public boolean hasNext() {
+            return (curIndex < length);
+        }
 
-	public char nextChar() {
-	    if (curIndex < length) {
-		// Just a char class? Don't actually care about the value!
-		return ca[curIndex++];
-	    }
-	    else throw new NoSuchElementException();
-	}
+        public char nextChar() {
+            if (curIndex < length) {
+                // Just a char class? Don't actually care about the value!
+                return ca[curIndex++];
+            } else
+                throw new NoSuchElementException();
+        }
 
-	public void remove() {
-	    if (curIndex>0 && curIndex < length) {
-		// copy from curIndex to end to curIndex-1
-		System.arraycopy(ca, curIndex, ca, curIndex-1,
-				 length-curIndex);
-		length--;
-		curIndex--;
-	    }
-	    else if (curIndex == length) {
-		curIndex = --length;
-	    }
-	}
+        public void remove() {
+            if (curIndex > 0 && curIndex < length) {
+                // copy from curIndex to end to curIndex-1
+                System.arraycopy(ca, curIndex, ca, curIndex - 1,
+                                 length - curIndex);
+                length--;
+                curIndex--;
+            } else if (curIndex == length) {
+                curIndex = --length;
+            }
+        }
 
 
-	public void replaceChar(char c) {
-	    if (curIndex>0 && curIndex <= length) {
-		ca[curIndex-1]=c;
-	    }
-	}
+        public void replaceChar(char c) {
+            if (curIndex > 0 && curIndex <= length) {
+                ca[curIndex - 1] = c;
+            }
+        }
 
 
     }

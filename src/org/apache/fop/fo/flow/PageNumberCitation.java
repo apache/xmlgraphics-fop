@@ -14,7 +14,11 @@ import org.apache.fop.datatypes.*;
 import org.apache.fop.fo.properties.*;
 import org.apache.fop.layout.*;
 import org.apache.fop.apps.FOPException;
+import org.apache.fop.layoutmgr.LeafNodeLayoutManager;
+import org.apache.fop.area.inline.InlineArea;
 
+import java.util.List;
+import java.util.ArrayList;
 
 /**
  * 6.6.11 fo:page-number-citation
@@ -88,6 +92,18 @@ public class PageNumberCitation extends FObj {
         super(parent);
     }
 
+    public void addLayoutManager(List lms) {
+        LeafNodeLayoutManager lnlm = new LeafNodeLayoutManager(this);
+        lnlm.setCurrentArea(getInlineArea());
+        lms.add(lnlm);
+    }
+
+    // is id can be resolved then simply return a word, otherwise
+    // return a resolveable area
+    private InlineArea getInlineArea() {
+        return null;
+    }
+
     public Status layout(Area area) throws FOPException {
         if (!(area instanceof BlockArea)) {
             log.warn("page-number-citation outside block area");
@@ -98,37 +114,38 @@ public class PageNumberCitation extends FObj {
         this.area = area;
         if (this.marker == START) {
 
-            // Common Accessibility Properties            
+            // Common Accessibility Properties
             AccessibilityProps mAccProps = propMgr.getAccessibilityProps();
 
-            // Common Aural Properties            
-            AuralProps mAurProps = propMgr.getAuralProps();            
+            // Common Aural Properties
+            AuralProps mAurProps = propMgr.getAuralProps();
 
-            // Common Border, Padding, and Background Properties            
-            BorderAndPadding bap = propMgr.getBorderAndPadding();            
-            BackgroundProps bProps = propMgr.getBackgroundProps();            
+            // Common Border, Padding, and Background Properties
+            BorderAndPadding bap = propMgr.getBorderAndPadding();
+            BackgroundProps bProps = propMgr.getBackgroundProps();
 
-            // Common Font Properties            
-            //this.fontState = propMgr.getFontState(area.getFontInfo());  
+            // Common Font Properties
+            //this.fontState = propMgr.getFontState(area.getFontInfo());
 
-            // Common Margin Properties-Inline            
-            MarginInlineProps mProps = propMgr.getMarginInlineProps();    
+            // Common Margin Properties-Inline
+            MarginInlineProps mProps = propMgr.getMarginInlineProps();
 
-            // Common Relative Position Properties            
-            RelativePositionProps mRelProps = propMgr.getRelativePositionProps();
+            // Common Relative Position Properties
+            RelativePositionProps mRelProps =
+              propMgr.getRelativePositionProps();
 
-            // this.properties.get("alignment-adjust");            
-            // this.properties.get("alignment-baseline");            
-            // this.properties.get("baseline-shift");            
-            // this.properties.get("dominant-baseline");            
-            // this.properties.get("id");            
-            // this.properties.get("keep-with-next");            
+            // this.properties.get("alignment-adjust");
+            // this.properties.get("alignment-baseline");
+            // this.properties.get("baseline-shift");
+            // this.properties.get("dominant-baseline");
+            // this.properties.get("id");
+            // this.properties.get("keep-with-next");
             // this.properties.get("keep-with-previous");
             // this.properties.get("letter-spacing");
             // this.properties.get("line-height");
-            // this.properties.get("line-height-shift-adjustment");            
-            // this.properties.get("ref-id");                        
-            // this.properties.get("score-spaces");           
+            // this.properties.get("line-height-shift-adjustment");
+            // this.properties.get("ref-id");
+            // this.properties.get("score-spaces");
             // this.properties.get("text-decoration");
             // this.properties.get("text-shadow");
             // this.properties.get("text-transform");
@@ -141,7 +158,7 @@ public class PageNumberCitation extends FObj {
 
             this.wrapOption = this.properties.get("wrap-option").getEnum();
             this.whiteSpaceCollapse =
-                this.properties.get("white-space-collapse").getEnum();
+              this.properties.get("white-space-collapse").getEnum();
 
             this.refId = this.properties.get("ref-id").getString();
 
@@ -164,16 +181,14 @@ public class PageNumberCitation extends FObj {
 
         pageNumber = idReferences.getPageNumber(refId);
 
-        if (pageNumber != null) {    // if we already know the page number
-            this.marker =
-                FOText.addText((BlockArea)area,
-                               propMgr.getFontState(area.getFontInfo()), red,
-                               green, blue, wrapOption, null,
-                               whiteSpaceCollapse, pageNumber.toCharArray(),
-                               0, pageNumber.length(), ts,
-                               VerticalAlign.BASELINE);
-        } else {    // add pageNumberCitation to area to be resolved during rendering
-            BlockArea blockArea = (BlockArea)area;
+        if (pageNumber != null) { // if we already know the page number
+            this.marker = FOText.addText((BlockArea) area,
+                                         propMgr.getFontState(area.getFontInfo()), red,
+                                         green, blue, wrapOption, null, whiteSpaceCollapse,
+                                         pageNumber.toCharArray(), 0, pageNumber.length(),
+                                         ts, VerticalAlign.BASELINE);
+        } else { // add pageNumberCitation to area to be resolved during rendering
+            BlockArea blockArea = (BlockArea) area;
             LineArea la = blockArea.getCurrentLineArea();
             if (la == null) {
                 return new Status(Status.AREA_FULL_NONE);

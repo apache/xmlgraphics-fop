@@ -20,6 +20,9 @@ import org.apache.fop.layout.FontState;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.layoutmgr.LayoutManager;
 import org.apache.fop.layoutmgr.LeafNodeLayoutManager;
+import org.apache.fop.area.MinOptMax;
+
+import java.util.List;
 
 /**
  * Implements fo:leader; main property of leader leader-pattern.
@@ -32,14 +35,22 @@ public class Leader extends FObjMixed {
         super(parent);
     }
 
-    public LayoutManager getLayoutManager() {
-        LeafNodeLayoutManager lm = new LeafNodeLayoutManager(this);
-        lm.setCurrentArea(getInlineArea());
-        return lm;
+    public void addLayoutManager(List list) {
+        list.add(new LeafNodeLayoutManager(this) {
+            public InlineArea get(int index) {
+                if(index > 0)
+                    return null;
+                int contentIPD = parentLM.getContentIPD();
+                return getInlineArea(contentIPD);
+            }
+        });
     }
 
-    protected InlineArea getInlineArea() {
-        return null;
+    protected InlineArea getInlineArea(int maxIPD) {
+        org.apache.fop.area.inline.Leader leader = new org.apache.fop.area.inline.Leader();
+        leader.setWidth(maxIPD / 2);
+        leader.setAllocationIPD(new MinOptMax(0, maxIPD / 2, maxIPD));
+        return leader;
     }
 
     public Status layout(Area area) throws FOPException {

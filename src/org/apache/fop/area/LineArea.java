@@ -39,6 +39,10 @@ public class LineArea extends Area {
         return lineHeight;
     }
 
+    public MinOptMax getContentBPD() {
+        return new MinOptMax(lineHeight);
+    }
+
     public void addInlineArea(InlineArea area) {
         inlineAreas.add(area);
     }

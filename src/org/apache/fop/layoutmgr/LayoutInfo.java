@@ -14,6 +14,11 @@ public class LayoutInfo {
     public int alignment;
     public int lead;
     public boolean blOffset = false;    
+    public boolean breakAfter = false;
+
+    public boolean keepNext = false;
+    public boolean keepPrev = false;
+    public boolean isText = false;
 
     public LayoutInfo() {
     }

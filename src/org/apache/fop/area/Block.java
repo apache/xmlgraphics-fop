@@ -10,6 +10,7 @@ package org.apache.fop.area;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Iterator;
 import java.awt.geom.Rectangle2D;
 
 // block areas hold either more block areas or line
@@ -52,6 +53,18 @@ public class Block extends BlockParent implements Serializable {
             children = new ArrayList();
         }
         children.add(line);
+    }
+
+    public MinOptMax getContentBPD() {
+        MinOptMax bpd = new MinOptMax();
+        if(children != null) {
+        for(Iterator iter = children.iterator(); iter.hasNext(); ) {
+            Area area = (Area)iter.next();
+            MinOptMax mom = area.getContentBPD();
+            bpd.add(mom);
+        }
+        }
+        return bpd;
     }
 
     public int getPositioning() {

@@ -26,7 +26,6 @@ import org.apache.fop.configuration.Configuration;
  *
  * Modified to use new streaming API by Mark Lillywhite, mark-fop@inomial.com
  */
-
 public class CommandLineStarter extends Starter {
 
     CommandLineOptions commandLineOptions;

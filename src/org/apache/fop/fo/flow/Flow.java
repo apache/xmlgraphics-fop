@@ -19,6 +19,7 @@ import org.apache.fop.layoutmgr.FlowLayoutManager;
 
 // Java
 import java.util.ArrayList;
+import java.util.List;
 
 import org.xml.sax.Attributes;
 
@@ -59,36 +60,35 @@ public class Flow extends FObj {
     public void handleAttrs(Attributes attlist) throws FOPException {
         super.handleAttrs(attlist);
         if (parent.getName().equals("fo:page-sequence")) {
-            this.pageSequence = (PageSequence)parent;
+            this.pageSequence = (PageSequence) parent;
         } else {
-            throw new FOPException("flow must be child of "
-                                   + "page-sequence, not "
-                                   + parent.getName());
+            throw new FOPException("flow must be child of " +
+                                   "page-sequence, not " + parent.getName());
         }
         // according to communication from Paul Grosso (XSL-List,
         // 001228, Number 406), confusion in spec section 6.4.5 about
         // multiplicity of fo:flow in XSL 1.0 is cleared up - one (1)
         // fo:flow per fo:page-sequence only.
 
-/*        if (pageSequence.isFlowSet()) {
-            if (this.name.equals("fo:flow")) {
-                throw new FOPException("Only a single fo:flow permitted"
-                                       + " per fo:page-sequence");
-            } else {
-                throw new FOPException(this.name
-                                       + " not allowed after fo:flow");
-            }
-        }
-*/
+        /*        if (pageSequence.isFlowSet()) {
+                    if (this.name.equals("fo:flow")) {
+                        throw new FOPException("Only a single fo:flow permitted"
+                                               + " per fo:page-sequence");
+                    } else {
+                        throw new FOPException(this.name
+                                               + " not allowed after fo:flow");
+                    }
+                }
+         */
         setFlowName(getProperty("flow-name").getString());
-	// Now done in addChild of page-sequence
+        // Now done in addChild of page-sequence
         //pageSequence.addFlow(this);
     }
 
     protected void setFlowName(String name) throws FOPException {
         if (name == null || name.equals("")) {
-            throw new FOPException("A 'flow-name' is required for "
-                                   + getName());
+            throw new FOPException("A 'flow-name' is required for " +
+                                   getName());
         } else {
             _flowName = name;
         }
@@ -109,7 +109,7 @@ public class Flow extends FObj {
         }
 
         // flow is *always* laid out into a BodyAreaContainer
-        BodyAreaContainer bac = (BodyAreaContainer)area;
+        BodyAreaContainer bac = (BodyAreaContainer) area;
 
         boolean prevChildMustKeepWithNext = false;
         ArrayList pageMarker = this.getMarkerSnapshot(new ArrayList());
@@ -119,7 +119,7 @@ public class Flow extends FObj {
             throw new FOPException("fo:flow must contain block-level children");
         }
         for (int i = this.marker; i < numChildren; i++) {
-            FObj fo = (FObj)children.get(i);
+            FObj fo = (FObj) children.get(i);
 
             if (bac.isBalancingRequired(fo)) {
                 // reset the the just-done span area in preparation
@@ -139,8 +139,8 @@ public class Flow extends FObj {
                 this.marker = i;
                 markerSnapshot = this.getMarkerSnapshot(new ArrayList());
             }
-	    // Set current content width for percent-based lengths in children
-	    setContentWidth(currentArea.getContentWidth());
+            // Set current content width for percent-based lengths in children
+            setContentWidth(currentArea.getContentWidth());
 
             _status = fo.layout(currentArea);
 
@@ -155,9 +155,10 @@ public class Flow extends FObj {
              * }
              */
             if (_status.isIncomplete()) {
-                if ((prevChildMustKeepWithNext) && (_status.laidOutNone())) {
+                if ((prevChildMustKeepWithNext) &&
+                        (_status.laidOutNone())) {
                     this.marker = i - 1;
-                    FObj prevChild = (FObj)children.get(this.marker);
+                    FObj prevChild = (FObj) children.get(this.marker);
                     prevChild.removeAreas();
                     prevChild.resetMarker();
                     prevChild.removeID(area.getIDReferences());
@@ -169,8 +170,8 @@ public class Flow extends FObj {
                 if (bac.isLastColumn())
                     if (_status.getCode() == Status.FORCE_COLUMN_BREAK) {
                         this.marker = i;
-                        _status =
-                            new Status(Status.FORCE_PAGE_BREAK);    // same thing
+                        _status = new Status(Status.FORCE_PAGE_BREAK);
+                        // same thing
                         return _status;
                     } else {
                         this.marker = i;
@@ -183,7 +184,8 @@ public class Flow extends FObj {
                         return _status;
                     }
                     // I don't much like exposing this. (AHS 001217)
-                    ((org.apache.fop.layout.ColumnArea)currentArea).incrementSpanIndex();
+                    ((org.apache.fop.layout.ColumnArea) currentArea).
+                    incrementSpanIndex();
                     i--;
                 }
             }
@@ -197,14 +199,14 @@ public class Flow extends FObj {
     }
 
     protected void setContentWidth(int contentWidth) {
-	this.contentWidth = contentWidth;
+        this.contentWidth = contentWidth;
     }
     /**
      * Return the content width of this flow (really of the region
      * in which it is flowing).
      */
     public int getContentWidth() {
-	return this.contentWidth;
+        return this.contentWidth;
     }
 
     public Status getStatus() {
@@ -215,8 +217,8 @@ public class Flow extends FObj {
         return true;
     }
 
-    public LayoutManager getLayoutManager() {
-	return new FlowLayoutManager(this);
+    public void addLayoutManager(List list) {
+        list.add(new FlowLayoutManager(this));
     }
 
 }

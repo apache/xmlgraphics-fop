@@ -13,8 +13,10 @@ import org.apache.fop.area.Area;
 import org.apache.fop.area.BlockParent;
 import org.apache.fop.area.Block;
 import org.apache.fop.area.LineArea;
+import org.apache.fop.area.MinOptMax;
 
 import java.util.ListIterator;
+import java.util.ArrayList;
 
 /**
  * LayoutManager for a block FO.
@@ -45,7 +47,7 @@ public class BlockLayoutManager extends BlockStackingLayoutManager {
      */
     public int getContentIPD() {
         // adjust for side floats and indents
-        //getParentArea(null); // make if not existing
+        getParentArea(null); // make if not existing
         return curBlockArea.getIPD();
     }
 
@@ -53,23 +55,46 @@ public class BlockLayoutManager extends BlockStackingLayoutManager {
      * Generate areas by tellings all layout managers for its FO's
      * children to generate areas.
      */
-    public void generateAreas() {
-        ListIterator children = fobj.getChildren();
+    public boolean generateAreas() {
+        ArrayList lms = new ArrayList();
         LayoutManager lm = null;
-        while (children.hasNext()) {
-            FObj childFO = (FObj) children.next();
-            if (childFO.generatesInlineAreas()) {
-                children.previous();
-                lm = new LineLayoutManager(children, lineHeight, lead, follow);
-            } else {
-                lm = childFO.getLayoutManager();
+
+        if (fobj != null) {
+            ListIterator children = fobj.getChildren();
+            while (children.hasNext()) {
+                FObj childFO = (FObj) children.next();
+                childFO.addLayoutManager(lms);
             }
-            if (lm != null) {
-                lm.setParentLM(this);
-                lm.generateAreas();
+            fobj = null;
+        }
+
+        for (int count = 0; count < lms.size(); count++) {
+            lm = (LayoutManager) lms.get(count);
+            if (lm.generatesInlineAreas()) {
+                ArrayList inlines = new ArrayList();
+                inlines.add(lm);
+                //lms.remove(count);
+                while (count + 1 < lms.size()) {
+                    lm = (LayoutManager) lms.get(count + 1);
+                    if (lm.generatesInlineAreas()) {
+                        inlines.add(lm);
+                        lms.remove(count + 1);
+                    } else {
+                        break;
+                    }
+                }
+                lm = new LineLayoutManager(inlines, lineHeight, lead,
+                                           follow);
+                lms.set(count, lm);
+            }
+            lm.setParentLM(this);
+            if (lm.generateAreas()) {
+                if (flush()) {
+                    return true;
+                }
             }
         }
-        flush(); // Add last area to parent
+        return flush(); // Add last area to parent
     }
 
 
@@ -98,16 +123,28 @@ public class BlockLayoutManager extends BlockStackingLayoutManager {
     }
 
 
-    public void addChild(Area childArea) {
+    public boolean addChild(Area childArea) {
         if (curBlockArea != null) {
             if (childArea instanceof LineArea) {
                 // Something about widows and orphans
                 // Position the line area and calculate size...
                 curBlockArea.addLineArea((LineArea) childArea);
+
+                MinOptMax targetDim = parentArea.getAvailBPD();
+                MinOptMax currentDim = curBlockArea.getContentBPD();
+                //if(currentDim.min > targetDim.max) {
+                //    return true;
+                //}
+
+                return false;
             } else {
-                super.addChild(childArea);
+                curBlockArea.addBlock((Block) childArea);
+                //return super.addChild(childArea);
+
+                return false;
             }
         }
+        return false;
     }
 
 

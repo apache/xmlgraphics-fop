@@ -569,5 +569,15 @@ public class PDFRenderer extends PrintRenderer {
         }*/
         super.renderViewport(viewport);
     }
+
+    public void renderLeader(Leader area) {
+        currentStream.add("ET\n");
+        currentStream.add((((float)currentBlockIPPosition) / 1000f) + " "
+                          + ((currentBPPosition + area.getOffset()) / 1000f) + " m\n");
+        currentStream.add(((currentBlockIPPosition + area.getWidth()) / 1000f) + " " + ((currentBPPosition + area.getOffset()) / 1000f) + " l\n");
+        currentStream.add("S\n");
+        currentStream.add("BT\n");
+        super.renderLeader(area);
+    }
 }
 

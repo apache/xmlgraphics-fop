@@ -29,6 +29,7 @@ import org.apache.fop.layoutmgr.LayoutInfo;
 import org.w3c.dom.Document;
 
 import java.awt.geom.Point2D;
+import java.util.List;
 
 public class InstreamForeignObject extends FObj {
 
@@ -60,10 +61,10 @@ public class InstreamForeignObject extends FObj {
         super(parent);
     }
 
-    public LayoutManager getLayoutManager() {
+    public void addLayoutManager(List list) {
         LeafNodeLayoutManager lm = new LeafNodeLayoutManager(this);
         lm.setCurrentArea(getInlineArea());
-        return lm;
+        list.add(lm);
     }
 
     /**
@@ -142,6 +143,10 @@ public class InstreamForeignObject extends FObj {
         areaCurrent.info.lead = areaCurrent.getHeight();
 
         return areaCurrent;
+    }
+
+    public boolean generatesInlineAreas() {
+        return true;
     }
 
     /**

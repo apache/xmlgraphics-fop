@@ -19,29 +19,46 @@ import org.apache.fop.area.inline.InlineArea;
  */
 public class LeafNodeLayoutManager extends AbstractLayoutManager {
 
-    private InlineArea curArea;
+    private InlineArea curArea = null;
 
     public LeafNodeLayoutManager(FObj fobj) {
         super(fobj);
     }
 
+    public int size() {
+        return 1;
+    }
+
+    public InlineArea get(int index) {
+        if(index > 0)
+            return null;
+        return curArea;
+    }
+
+    public boolean generatesInlineAreas() {
+        return true;
+    }
+
+    public boolean resolved() {
+        return false;
+    }
 
     public void setCurrentArea(InlineArea ia) {
         curArea = ia;
     }
 
-    public void generateAreas() {
-        flush();
+    public boolean generateAreas() {
+        return flush();
     }
 
-    protected void flush() {
-        parentLM.addChild(curArea);
+    protected boolean flush() {
+        return false;
     }
 
     /**
      * This is a leaf-node, so this method is never called.
      */
-    public void addChild(Area childArea) {}
+    public boolean addChild(Area childArea) {return false;}
 
 
     /**

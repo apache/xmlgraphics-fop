@@ -41,6 +41,7 @@ public class PageLayoutManager extends AbstractLayoutManager implements Runnable
      * references?
      */
     private AreaTree areaTree;
+    private PageSequence pageSequence;
 
     /**
      * This is the top level layout manager.
@@ -49,6 +50,7 @@ public class PageLayoutManager extends AbstractLayoutManager implements Runnable
     public PageLayoutManager(AreaTree areaTree, PageSequence pageseq) {
         super(pageseq);
         this.areaTree = areaTree;
+        pageSequence = pageseq;
     }
 
 
@@ -69,13 +71,14 @@ public class PageLayoutManager extends AbstractLayoutManager implements Runnable
     /**
      * For now, only handle normal flow areas.
      */
-    public void addChild(Area childArea) {
+    public boolean addChild(Area childArea) {
         if (childArea == null)
-            return;
+            return false;
         if (childArea.getAreaClass() == Area.CLASS_NORMAL) {
-            placeFlowRefArea(childArea);
+            return placeFlowRefArea(childArea);
         } else
             ; // TODO: all the others!
+        return false;
     }
 
     /**
@@ -85,7 +88,7 @@ public class PageLayoutManager extends AbstractLayoutManager implements Runnable
      * current span, so we are just checking to see if the span is "full",
      * possibly moving to the next column or to the next page.
      */
-    protected void placeFlowRefArea(Area area) {
+    protected boolean placeFlowRefArea(Area area) {
         // assert (curSpan != null);
         // assert (area == curFlow);
         // assert (curFlow == curSpan.getFlow(curSpan.getColumnCount()-1));
@@ -100,13 +103,16 @@ public class PageLayoutManager extends AbstractLayoutManager implements Runnable
         // end the page.
 
         // Alternatively the child LM indicates to parent that it's full?
+System.out.println("size: " + area.getAllocationBPD().max + ":" + curSpan.getMaxBPD().min);
         if (area.getAllocationBPD().max >= curSpan.getMaxBPD().min) {
             // Consider it filled
             if (curSpan.getColumnCount() == curSpanColumns) {
                 finishPage();
+                return true;
             } else
                 curFlow = null; // Create new flow on next getParentArea()
         }
+        return false;
     }
 
 
@@ -133,7 +139,7 @@ public class PageLayoutManager extends AbstractLayoutManager implements Runnable
     private PageViewport makeNewPage(boolean bIsBlank, boolean bIsLast) {
         finishPage();
         try {
-            curPage = ((PageSequence) fobj).createPage(bIsBlank, bIsLast);
+            curPage = pageSequence.createPage(bIsBlank, bIsLast);
         } catch (FOPException fopex) { /* ???? */
             fopex.printStackTrace();
         }
@@ -308,6 +314,7 @@ public class PageLayoutManager extends AbstractLayoutManager implements Runnable
     private Flow createFlow() {
         curFlow = new Flow();
         curFlow.setIPD(curSpan.getIPD()); // adjust for columns
+        //curFlow.setBPD(100000);
         // Set IPD and max BPD on the curFlow from curBody
         curSpan.addFlow(curFlow);
         return curFlow;
@@ -336,8 +343,9 @@ public class PageLayoutManager extends AbstractLayoutManager implements Runnable
     }
 
     // See finishPage...
-    protected void flush() {
+    protected boolean flush() {
         finishPage();
+        return false;
     }
 
 }

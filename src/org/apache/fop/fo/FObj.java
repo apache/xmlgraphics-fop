@@ -26,6 +26,7 @@ import org.xml.sax.Attributes;
 import java.util.Iterator;
 import java.util.ListIterator;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.HashMap;
 
 /**
@@ -53,7 +54,7 @@ public class FObj extends FONode {
      */
     protected int marker = START;
 
-    protected ArrayList children = new ArrayList();    // made public for searching for id's
+    protected ArrayList children = new ArrayList(); // made public for searching for id's
 
     protected boolean isInTableCell = false;
 
@@ -75,7 +76,7 @@ public class FObj extends FONode {
         super(parent);
         markers = new HashMap();
         if (parent instanceof FObj)
-            this.areaClass = ((FObj)parent).areaClass;
+            this.areaClass = ((FObj) parent).areaClass;
     }
 
     public void setName(String str) {
@@ -85,14 +86,16 @@ public class FObj extends FONode {
     protected static PropertyListBuilder plb = null;
 
     protected PropertyListBuilder getListBuilder() {
-        if(plb == null) {
+        if (plb == null) {
             plb = new PropertyListBuilder();
             plb.addList(FOPropertyMapping.getGenericMappings());
 
-            for (Iterator iter = FOPropertyMapping.getElementMappings().iterator();
-                    iter.hasNext(); ) {
-                String elem = (String)iter.next();
-                plb.addElementList(elem, FOPropertyMapping.getElementMapping(elem));
+            for (Iterator iter =
+                      FOPropertyMapping.getElementMappings().iterator();
+                    iter.hasNext();) {
+                String elem = (String) iter.next();
+                plb.addElementList(elem,
+                                   FOPropertyMapping.getElementMapping(elem));
             }
         }
         return plb;
@@ -106,22 +109,22 @@ public class FObj extends FONode {
     public void handleAttrs(Attributes attlist) throws FOPException {
         String uri = "http://www.w3.org/1999/XSL/Format";
         FONode par = parent;
-        while(par != null && !(par instanceof FObj)) {
+        while (par != null && !(par instanceof FObj)) {
             par = par.parent;
         }
         PropertyList props = null;
-        if(par != null) {
-            props = ((FObj)par).properties;
+        if (par != null) {
+            props = ((FObj) par).properties;
         }
-        properties =
-                    getListBuilder().makeList(uri, name, attlist,
-                                                props, (FObj)par);
+        properties = getListBuilder().makeList(uri, name, attlist, props,
+                                               (FObj) par);
         properties.setFObj(this);
         this.propMgr = makePropertyManager(properties);
         setWritingMode();
     }
 
-    protected PropertyManager makePropertyManager(PropertyList propertyList) {
+    protected PropertyManager makePropertyManager(
+      PropertyList propertyList) {
         return new PropertyManager(propertyList);
     }
 
@@ -158,15 +161,16 @@ public class FObj extends FONode {
      * @param idReferences the id to remove
      */
     public void removeID(IDReferences idReferences) {
-        if (((FObj)this).properties.get("id") == null
-                || ((FObj)this).properties.get("id").getString() == null)
+        if (((FObj) this).properties.get("id") == null ||
+                ((FObj) this).properties.get("id").getString() == null)
             return;
-        idReferences.removeID(((FObj)this).properties.get("id").getString());
+        idReferences.removeID(
+          ((FObj) this).properties.get("id").getString());
         int numChildren = this.children.size();
         for (int i = 0; i < numChildren; i++) {
-            FONode child = (FONode)children.get(i);
+            FONode child = (FONode) children.get(i);
             if ((child instanceof FObj)) {
-                ((FObj)child).removeID(idReferences);
+                ((FObj) child).removeID(idReferences);
             }
         }
     }
@@ -189,18 +193,19 @@ public class FObj extends FONode {
     protected void setWritingMode() {
         FObj p;
         FONode parent;
-        for (p = this;
-                !p.generatesReferenceAreas() && (parent = p.getParent()) != null && (parent instanceof FObj);
-                p = (FObj)parent);
-        this.properties.setWritingMode(p.getProperty("writing-mode").getEnum());
+        for (p = this; !p.generatesReferenceAreas() &&
+                (parent = p.getParent()) != null &&
+                (parent instanceof FObj); p = (FObj) parent)
+            ;
+        this.properties.setWritingMode(
+          p.getProperty("writing-mode").getEnum());
     }
 
     /**
      * Return a LayoutManager responsible for laying out this FObj's content.
      * Must override in subclasses if their content can be laid out.
      */
-    public LayoutManager getLayoutManager() {
-	return null;
+    public void addLayoutManager(List list) {
     }
 
     /**
@@ -208,7 +213,7 @@ public class FObj extends FONode {
      * @return A ListIterator.
      */
     public ListIterator getChildren() {
-	return children.listIterator();
+        return children.listIterator();
     }
 
     /**
@@ -219,11 +224,11 @@ public class FObj extends FONode {
      * this FObj.
      */
     public ListIterator getChildren(FONode childNode) {
-	int i = children.indexOf(childNode);
-	if (i >= 0) {
-	    return children.listIterator(i);
-	}
-	else return null;
+        int i = children.indexOf(childNode);
+        if (i >= 0) {
+            return children.listIterator(i);
+        } else
+            return null;
     }
 
     public void setIsInTableCell() {
@@ -231,20 +236,20 @@ public class FObj extends FONode {
         // made recursive by Eric Schaeffer
         for (int i = 0; i < this.children.size(); i++) {
             Object obj = this.children.get(i);
-            if(obj instanceof FObj) {
-                FObj child = (FObj)obj;
+            if (obj instanceof FObj) {
+                FObj child = (FObj) obj;
                 child.setIsInTableCell();
             }
         }
     }
-    
+
     public void forceStartOffset(int offset) {
-        this.forcedStartOffset = offset; 
+        this.forcedStartOffset = offset;
         // made recursive by Eric Schaeffer
         for (int i = 0; i < this.children.size(); i++) {
             Object obj = this.children.get(i);
-            if(obj instanceof FObj) {
-                FObj child = (FObj)obj;
+            if (obj instanceof FObj) {
+                FObj child = (FObj) obj;
                 child.forceStartOffset(offset);
             }
         }
@@ -255,8 +260,8 @@ public class FObj extends FONode {
         // made recursive by Eric Schaeffer
         for (int i = 0; i < this.children.size(); i++) {
             Object obj = this.children.get(i);
-            if(obj instanceof FObj) {
-                FObj child = (FObj)obj;
+            if (obj instanceof FObj) {
+                FObj child = (FObj) obj;
                 child.forceWidth(width);
             }
         }
@@ -267,8 +272,8 @@ public class FObj extends FONode {
         int numChildren = this.children.size();
         for (int i = 0; i < numChildren; i++) {
             Object obj = this.children.get(i);
-            if(obj instanceof FObj) {
-                FObj child = (FObj)obj;
+            if (obj instanceof FObj) {
+                FObj child = (FObj) obj;
                 child.resetMarker();
             }
         }
@@ -277,7 +282,7 @@ public class FObj extends FONode {
     public void setWidows(int wid) {
         widows = wid;
     }
-    
+
     public void setOrphans(int orph) {
         orphans = orph;
     }
@@ -290,8 +295,8 @@ public class FObj extends FONode {
         this.linkSet = linkSet;
         for (int i = 0; i < this.children.size(); i++) {
             Object obj = this.children.get(i);
-            if(obj instanceof FObj) {
-                FObj child = (FObj)obj;
+            if (obj instanceof FObj) {
+                FObj child = (FObj) obj;
                 child.setLinkSet(linkSet);
             }
         }
@@ -317,7 +322,8 @@ public class FObj extends FONode {
         else if (children.isEmpty())
             return snapshot;
         else
-            return ((FObj)children.get(this.marker)).getMarkerSnapshot(snapshot);
+            return ( (FObj) children.get(this.marker)).getMarkerSnapshot(
+                     snapshot);
     }
 
     /**
@@ -327,7 +333,7 @@ public class FObj extends FONode {
      * @param snapshot the ArrayList of saved markers (Integers)
      */
     public void rollback(ArrayList snapshot) {
-        this.marker = ((Integer)snapshot.get(0)).intValue();
+        this.marker = ((Integer) snapshot.get(0)).intValue();
         snapshot.remove(0);
 
         if (this.marker == START) {
@@ -345,12 +351,12 @@ public class FObj extends FONode {
 
         for (int i = this.marker + 1; i < numChildren; i++) {
             Object obj = this.children.get(i);
-            if(obj instanceof FObj) {
-                FObj child = (FObj)obj;
+            if (obj instanceof FObj) {
+                FObj child = (FObj) obj;
                 child.resetMarker();
             }
         }
-        ((FObj)children.get(this.marker)).rollback(snapshot);
+        ((FObj) children.get(this.marker)).rollback(snapshot);
     }
 
 
@@ -359,10 +365,9 @@ public class FObj extends FONode {
         if (!markers.containsKey(mcname) && children.isEmpty()) {
             markers.put(mcname, marker);
         } else {
-            log.error("fo:marker must be an initial child,"
-                                   + "and 'marker-class-name' must be unique for same parent");
-            throw new FOPException("fo:marker must be an initial child,"
-                                   + "and 'marker-class-name' must be unique for same parent");
+            log.error("fo:marker must be an initial child," + "and 'marker-class-name' must be unique for same parent");
+            throw new FOPException(
+              "fo:marker must be an initial child," + "and 'marker-class-name' must be unique for same parent");
         }
     }
 
