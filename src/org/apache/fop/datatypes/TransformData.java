@@ -82,48 +82,53 @@ public class TransformData {
 				value = st.nextToken().trim();
 				SVGTransformImpl transform = new SVGTransformImpl();
 				if(type.equals("translate")) {
-					SVGLengthImpl xlen;
-					SVGLengthImpl ylen;
+					float xlen = 0;
+					float ylen = 0;
 					int pos = value.indexOf(",");
 					if(pos != -1) {
-						xlen = new SVGLengthImpl(value.substring(0, pos).trim());
-						ylen = new SVGLengthImpl(value.substring(pos + 1, value.length()).trim());
-					} else {
-						xlen = new SVGLengthImpl("0");
-						ylen = new SVGLengthImpl("0");
+						SVGLengthImpl length;
+						length = new SVGLengthImpl();
+						length.setValueAsString(value.substring(0, pos).trim());
+						xlen = length.getValue();
+						length = new SVGLengthImpl();
+						length.setValueAsString(value.substring(pos + 1, value.length()).trim());
+						ylen = length.getValue();
 					}
 					transform.setTranslate(xlen, ylen);
 					list.addElement(transform);
 				} else if(type.equals("skewX")) {
-					SVGAngleImpl angle = new SVGAngleImpl();
-					angle.setValueAsString(value);
+//					SVGAngleImpl angle = new SVGAngleImpl();
+//					angle.setValueAsString(value);
+					float angle = Float.valueOf(value).floatValue();
 					transform.setSkewX(angle);
 					list.addElement(transform);
 				} else if(type.equals("skewY")) {
-					SVGAngleImpl angle = new SVGAngleImpl();
-					angle.setValueAsString(value);
+	//				SVGAngleImpl angle = new SVGAngleImpl();
+//					angle.setValueAsString(value);
+					float angle = Float.valueOf(value).floatValue();
 					transform.setSkewY(angle);
 					list.addElement(transform);
 				} else if(type.equals("scale")) {
-					SVGNumberImpl xlen = new SVGNumberImpl();
-					SVGNumberImpl ylen = new SVGNumberImpl();
+					float xlen = 0;
+					float ylen = 0;
 					int pos = value.indexOf(",");
 					if(pos != -1) {
-						try {
-							xlen.setValue((new Float(value.substring(0, pos).trim())).floatValue());
-						} catch(Exception e) {
-						}
-						try {
-							ylen.setValue((new Float(value.substring(pos + 1, value.length()).trim()).floatValue()));
-						} catch(Exception e) {
-						}
+//						try {
+							xlen = Float.valueOf(value.substring(0, pos).trim()).floatValue();
+//						} catch(Exception e) {
+//						}
+//						try {
+							ylen = Float.valueOf(value.substring(pos + 1, value.length()).trim()).floatValue();
+//						} catch(Exception e) {
+//						}
 					}
 					transform.setScale(xlen, ylen);
 					list.addElement(transform);
 				} else if(type.equals("rotate")) {
-					SVGAngleImpl angle = new SVGAngleImpl();
-					angle.setValueAsString(value);
-					transform.setRotate(angle);
+	//				SVGAngleImpl angle = new SVGAngleImpl();
+//					angle.setValueAsString(value);
+					float angle = Float.valueOf(value).floatValue();
+					transform.setRotate(angle, 0, 0);
 					list.addElement(transform);
 				} else if(type.equals("matrix")) {
 					SVGMatrixImpl matrix = new SVGMatrixImpl();
@@ -202,11 +207,14 @@ public class TransformData {
 								break;
 							tok = mt.nextToken();
 						}
+						float floatVal = Float.valueOf(tok).floatValue();
 						if(neg)
-							tok = "-" + tok;
-						length = new SVGLengthImpl();
-						length.setValueAsString(tok);
-						matrix.setE(length);
+							floatVal = -floatVal;
+//						if(neg)
+//							tok = "-" + tok;
+//						length = new SVGLengthImpl();
+//						length.setValueAsString(tok);
+						matrix.setE(floatVal);
 					}
 					if(mt.hasMoreTokens()) {
 						tok = mt.nextToken();
@@ -218,11 +226,14 @@ public class TransformData {
 								break;
 							tok = mt.nextToken();
 						}
+						float floatVal = Float.valueOf(tok).floatValue();
 						if(neg)
-							tok = "-" + tok;
-						length = new SVGLengthImpl();
-						length.setValueAsString(tok);
-						matrix.setF(length);
+							floatVal = -floatVal;
+//						if(neg)
+//							tok = "-" + tok;
+//						length = new SVGLengthImpl();
+//						length.setValueAsString(tok);
+						matrix.setF(floatVal);
 					}
 					transform.setMatrix(matrix);
 					list.addElement(transform);
