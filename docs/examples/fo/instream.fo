@@ -47,7 +47,7 @@
      <svg:rect x="0" y="0" width="15" height="15"/>
      <svg:rect x="5" y="5" width="15" height="15"/>
   </svg:g>
-     <svg:rect x="0" y="0" width="49" height="49"/>
+     <svg:rect style="fill:none;stroke:black" x="0" y="0" width="49" height="49"/>
 </svg:svg>
 </fo:instream-foreign-object>
 With some text on the next line. With a bit more text to go over the to the next line.
@@ -61,7 +61,7 @@ With some text on the next line. With a bit
      <svg:rect x="0" y="0" width="15" height="15"/>
      <svg:rect x="5" y="5" width="15" height="15"/>
   </svg:g>
-     <svg:rect x="0" y="0" width="49" height="49"/>
+     <svg:rect style="fill:none;stroke:black" x="0" y="0" width="49" height="49"/>
 </svg:svg>
 </fo:instream-foreign-object>
 more text to go over the to the next line.
@@ -75,7 +75,7 @@ With some text
      <svg:rect x="0" y="0" width="15" height="15"/>
      <svg:rect x="5" y="5" width="15" height="15"/>
   </svg:g>
-     <svg:rect x="0" y="0" width="49" height="49"/>
+     <svg:rect style="fill:none;stroke:black" x="0" y="0" width="49" height="49"/>
 </svg:svg>
 </fo:instream-foreign-object>
 on the next line. With a bit more text to go over the to the next line to
@@ -91,7 +91,7 @@ see it handles it properly.
      <svg:rect x="0" y="0" width="15" height="15"/>
      <svg:rect x="5" y="5" width="15" height="15"/>
   </svg:g>
-     <svg:rect x="0" y="0" width="549" height="49"/>
+     <svg:rect style="fill:none;stroke:black" x="0" y="0" width="549" height="49"/>
     <svg:text x="10" y="30">SVG placed in a really wide block</svg:text>
 </svg:svg>
 </fo:instream-foreign-object>
@@ -104,7 +104,7 @@ see it handles it properly.
      <svg:rect x="0" y="0" width="15" height="15"/>
      <svg:rect x="5" y="5" width="15" height="15"/>
   </svg:g>
-     <svg:rect x="0" y="0" width="549" height="49"/>
+     <svg:rect style="fill:none;stroke:black" x="0" y="0" width="549" height="49"/>
     <svg:text x="10" y="30">SVG placed in a really wide block</svg:text>
 </svg:svg>
 </fo:instream-foreign-object>
