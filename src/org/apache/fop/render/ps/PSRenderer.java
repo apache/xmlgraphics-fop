@@ -61,6 +61,7 @@ import org.apache.fop.layout.*;
 import org.apache.fop.layout.inline.*;
 import org.apache.fop.datatypes.*;
 import org.apache.fop.fo.properties.*;
+import org.apache.fop.fonts.Glyphs;
 import org.apache.fop.render.pdf.Font;
 import org.apache.fop.image.*;
 import org.apache.fop.apps.FOPException;
@@ -310,21 +311,57 @@ public class PSRenderer extends AbstractRenderer {
         }
         write("end def");
         write("%%EndResource");
+        defineWinAnsiEncoding();
 
         //Rewrite font encodings
         enum = fonts.keySet().iterator();
         while (enum.hasNext()) {
             String key = (String)enum.next();
             Font fm = (Font)fonts.get(key);
-            write("/" + fm.fontName() + " findfont");
-            write("dup length dict begin");
-            write("  {1 index /FID ne {def} {pop pop} ifelse} forall");
-            write("  /Encoding ISOLatin1Encoding def");
-            write("  currentdict");
-            write("end");
-            write("/" + fm.fontName() + " exch definefont pop");
+            if (null == fm.encoding()) {
+                //ignore (ZapfDingbats and Symbol run through here
+                //TODO: ZapfDingbats and Symbol should get getEncoding() fixed!
+            } else if ("WinAnsiEncoding".equals(fm.encoding())) {
+                write("/" + fm.fontName() + " findfont");
+                write("dup length dict begin");
+                write("  {1 index /FID ne {def} {pop pop} ifelse} forall");
+                write("  /Encoding " + fm.encoding() + " def");
+                write("  currentdict");
+                write("end");
+                write("/" + fm.fontName() + " exch definefont pop");
+            } else {
+                log.warn("Only WinAnsiEncoding is supported. Font '"
+                    + fm.fontName() + "' asks for: " + fm.encoding());
+            }
         }
     }
+
+    private void defineWinAnsiEncoding() {
+        write("/WinAnsiEncoding [");
+        StringBuffer sb = new StringBuffer();
+        for (int i = 0; i < Glyphs.winAnsiEncoding.length; i++) {
+            if (i > 0) {
+                if ((i % 5) == 0) {
+                    write(sb.toString());
+                    sb.setLength(0);
+                } else {
+                    sb.append(" ");
+                }
+            }
+            final char ch = Glyphs.winAnsiEncoding[i];
+            final String glyphname = Glyphs.charToGlyphName(ch);
+            if ("".equals(glyphname)) {
+                sb.append("/" + Glyphs.notdef);
+            } else {
+                sb.append("/");
+                sb.append(glyphname);
+            }
+        }
+        write(sb.toString());
+        write("] def");
+    }
+
+
 
     protected void movetoCurrPosition() {
         write(this.currentXPosition + " " + this.currentYPosition + " M");
@@ -457,7 +494,7 @@ public class PSRenderer extends AbstractRenderer {
         // and positive is down and to the right. (0,0) is where the
         // viewBox puts it.
         write(xOffset + " " + yOffset + " translate");
-        write((at.getTranslateX() * 1000) + " " 
+        write((at.getTranslateX() * 1000) + " "
             + (-at.getTranslateY() * 1000) + " translate");
         write(sx * at.getScaleX() + " " + sy * at.getScaleY() + " scale");
 
@@ -740,11 +777,7 @@ public class PSRenderer extends AbstractRenderer {
             char ch = s.charAt(i);
             char mch = fs.mapChar(ch);
 
-            /**@todo Do this in a clean way */
-            // temp fix abe: map ascii '-' to ISO latin 1 hyphen char
-            if (mch == '-') {
-              sb = sb.append("\\" + Integer.toOctalString(173));
-            } else /* fix ends */ if (mch > 127) {
+            if (mch > 127) {
                 sb = sb.append("\\" + Integer.toOctalString(mch));
             } else {
                 final String escape = "\\()[]{}";
