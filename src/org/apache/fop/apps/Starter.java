@@ -27,35 +27,31 @@ import org.apache.fop.messaging.MessageHandler;
  */
 public abstract class Starter {
 
-	Options options;
-	InputHandler inputHandler;
+    Options options;
+    InputHandler inputHandler;
 	
-	public Starter() {
-		options = new Options ();		
-	}
-
-	public void setInputHandler(InputHandler inputHandler) {
-		this.inputHandler = inputHandler;
-	}
-
-	abstract public void run();
-
-	// setting the parser features	
-	public void setParserFeatures (XMLReader parser) {
-		setParserFeatures (parser,true);
-	}
-	
-
-    public void setParserFeatures (XMLReader parser,boolean errorDump) {
+    public Starter() 
+	throws FOPException
+    {
+	options = new Options ();		
+    }
+    
+    public void setInputHandler(InputHandler inputHandler) {
+	this.inputHandler = inputHandler;
+    }
+    
+    abstract public void run()
+	throws FOPException;
+    
+    // setting the parser features	
+    public void setParserFeatures (XMLReader parser) 
+	throws FOPException
+    {
         try {
             parser.setFeature("http://xml.org/sax/features/namespace-prefixes",true);
         } catch (SAXException e) {
-            MessageHandler.errorln("Error in setting up parser feature namespace-prefixes");
-            MessageHandler.errorln("You need a parser which supports SAX version 2");
-            if (errorDump) {
-                e.printStackTrace();
-            }
-            System.exit(1);
+	    throw new FOPException("Error in setting up parser feature namespace-prefixes\n" +
+				   "You need a parser which supports SAX version 2",e);
         }
     }
 }

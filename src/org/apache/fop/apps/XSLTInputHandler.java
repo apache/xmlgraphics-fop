@@ -86,7 +86,9 @@ public class XSLTInputHandler extends InputHandler {
       * get an XMLFilter. Otherwise, it falls back to using DOM documents 
       *
       */
-    public XMLReader getParser() {
+    public XMLReader getParser() 
+	throws FOPException
+    {
 	XMLReader result = null;
 	try {
 	    // try trax first
@@ -101,15 +103,16 @@ public class XSLTInputHandler extends InputHandler {
 	    }
 	}
 	catch (ClassNotFoundException ex){
+	    throw new FOPException(ex);
 	}
 	catch (InvocationTargetException ex) {
-	    ex.printStackTrace();
+	    throw new FOPException(ex);
 	}
 	catch (IllegalAccessException ex) {
-	    ex.printStackTrace();
+	    throw new FOPException(ex);
 	}
 	catch (NoSuchMethodException ex) {
-	    ex.printStackTrace();
+	    throw new FOPException(ex);
 	}
 	// otherwise, use DOM documents via our XSLTransform tool class old style
 	if (result == null) {

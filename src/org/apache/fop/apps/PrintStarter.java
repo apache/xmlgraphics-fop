@@ -44,11 +44,15 @@ import org.apache.fop.messaging.MessageHandler;
  */
 public class PrintStarter extends CommandLineStarter {
 
-    public PrintStarter (CommandLineOptions options) {
+    public PrintStarter (CommandLineOptions options) 
+	throws FOPException
+    {
         super(options);
     }
 
-    public void run () {
+    public void run () 
+	throws FOPException
+    {
         Driver driver = new Driver();
         if (errorDump) {
             driver.setErrorDump(true);
@@ -59,7 +63,7 @@ public class PrintStarter extends CommandLineStarter {
 
         XMLReader parser = inputHandler.getParser();
         
-        setParserFeatures(parser,errorDump);
+        setParserFeatures(parser);
 
         PrintRenderer renderer = new PrintRenderer();
 
@@ -69,13 +73,11 @@ public class PrintStarter extends CommandLineStarter {
             driver.format();
             driver.render();
         } catch (Exception e) {
-            MessageHandler.errorln("FATAL ERROR: " + e.getMessage());
-            if (errorDump) {
-                e.printStackTrace();
-            }
-
-            System.exit(1);
-        }
+	    if (e instanceof FOPException) {
+		throw (FOPException)e;
+	    }
+	    throw new FOPException(e);
+	}
 
         int copies = PrintRenderer.getIntProperty("copies", 1);
         renderer.setCopies(copies);

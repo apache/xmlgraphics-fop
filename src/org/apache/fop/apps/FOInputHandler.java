@@ -32,13 +32,10 @@ public class FOInputHandler extends InputHandler {
         return super.fileInputSource(fofile);
     }
 
-    public XMLReader getParser() {
-        XMLReader parser = super.createParser();
-        if (parser == null) {
-            MessageHandler.errorln("ERROR: Unable to create SAX parser");
-            System.exit(1);
-        }
-        return parser;
+    public XMLReader getParser() 
+	throws FOPException
+    {
+        return super.createParser();
     }
 }
 

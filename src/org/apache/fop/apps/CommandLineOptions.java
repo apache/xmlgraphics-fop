@@ -10,6 +10,7 @@ package org.apache.fop.apps;
 //java
 import java.util.Vector;
 import java.io.File;
+import java.io.FileNotFoundException;
 
 // FOP
 import org.apache.fop.messaging.MessageHandler;
@@ -42,11 +43,11 @@ public class CommandLineOptions {
     private static final int TXT_OUTPUT = 6;
 
     /* use debug mode*/
-    Boolean errorDump = null;
+    Boolean errorDump = new Boolean(false);
     /* show configuration information */
-    Boolean dumpConfiguration = null;
+    Boolean dumpConfiguration = new Boolean(false);
     /*suppress any progress information */
-    Boolean quiet = null;
+    Boolean quiet = new Boolean(false);
     /* name of user configuration file*/
     File userConfigFile = null;
     /* name of input fo file  */
@@ -64,18 +65,40 @@ public class CommandLineOptions {
     /* language for user information */
     String language = null;
 
-    public CommandLineOptions (String [] args) {
-        parseOptions(args);
-        checkSettings ();
-        if (errorDump != null && errorDump.booleanValue()) {
-            debug();
-        }
+
+    public CommandLineOptions (String [] args) 
+	throws FOPException, FileNotFoundException
+    {
+	boolean optionsParsed = true;
+	try {
+	    optionsParsed = parseOptions(args);
+	    if (optionsParsed) {
+		checkSettings ();
+		if (errorDump != null && errorDump.booleanValue()) {
+		    debug();
+		}
+	    }
+	}
+	catch (FOPException e) {
+	    printUsage();
+	    throw e;
+	}
+	catch (java.io.FileNotFoundException e) {
+	    printUsage();
+	    throw e;
+	}
+       
     }
+    
 
     /**
-       *  parses the commandline arguments
-       */
-    private void parseOptions (String args[]) {
+     *  parses the commandline arguments
+     * @return true if parse was successful and procesing can continue, false if processing should stop
+     * @exception FOPException if there was an error in the format of the options
+     */
+    private boolean parseOptions (String args[]) 
+	throws FOPException
+    {
         for (int i = 0; i < args.length; i++) {
             if (args[i].equals("-d") || args[i].equals("--full-error-dump")) {
                 errorDump = new Boolean(true);
@@ -86,8 +109,7 @@ public class CommandLineOptions {
             } else if (args[i].equals("-c")) {
                 if ((i + 1 == args.length) ||
                         (args[i + 1].charAt(0) == '-')) {
-                    MessageHandler.errorln("ERROR: if you use '-c', you must specify the name of the configuration file");
-                    printUsage();
+		    throw new FOPException("if you use '-c', you must specify the name of the configuration file");
                 } else {
                     userConfigFile = new File (args[i + 1]);
                     i++;
@@ -95,8 +117,7 @@ public class CommandLineOptions {
             } else if (args[i].equals("-l")) {
                 if ((i + 1 == args.length) ||
                         (args[i + 1].charAt(0) == '-')) {
-                    MessageHandler.errorln("ERROR: if you use '-l', you must specify a language");
-                    printUsage();
+                    throw new FOPException("if you use '-l', you must specify a language");
                 } else {
                     language = args[i + 1];
                     i++;
@@ -105,8 +126,7 @@ public class CommandLineOptions {
                 inputmode = FO_INPUT;
                 if ((i + 1 == args.length) ||
                         (args[i + 1].charAt(0) == '-')) {
-                    MessageHandler.errorln("ERROR: you must specify the fo file");
-                    printUsage();
+                    throw new FOPException("you must specify the fo file for the '-fo' option");
                 } else {
                     fofile = new File (args[i + 1]);
                     i++;
@@ -115,8 +135,7 @@ public class CommandLineOptions {
                 inputmode = XSLT_INPUT;
                 if ((i + 1 == args.length) ||
                         (args[i + 1].charAt(0) == '-')) {
-                    MessageHandler.errorln("ERROR: you must specify the stylesheet file");
-                    printUsage();
+                    throw new FOPException("you must specify the stylesheet file for the '-xsl' option");
                 } else {
                     xsltfile = new File(args[i + 1]);
                     i++;
@@ -125,88 +144,54 @@ public class CommandLineOptions {
                 inputmode = XSLT_INPUT;
                 if ((i + 1 == args.length) ||
                         (args[i + 1].charAt(0) == '-')) {
-                    MessageHandler.errorln("ERROR: you must specify the input file");
-                    printUsage();
+                    throw new FOPException("you must specify the input file for the '-xml' option");
                 } else {
                     xmlfile = new File(args[i + 1]);
                     i++;
                 }
             } else if (args[i].equals("-awt")) {
-                if (outputmode == NOT_SET) {
-                    outputmode = AWT_OUTPUT;
-                } else {
-                    MessageHandler.errorln("ERROR: you can only set one output method");
-                    printUsage();
-                }
-            } else if (args[i].equals("-pdf")) {
-                if (outputmode == NOT_SET) {
-                    outputmode = PDF_OUTPUT;
-                } else {
-                    MessageHandler.errorln("ERROR: you can only set one output method");
-                    printUsage();
-                }
-                if ((i + 1 == args.length) ||
-                        (args[i + 1].charAt(0) == '-')) {
-                    MessageHandler.errorln("ERROR: you must specify the pdf output file");
-                    printUsage();
+		setOutputMode(AWT_OUTPUT);
+	    } else if (args[i].equals("-pdf")) {
+		setOutputMode(PDF_OUTPUT);
+		if ((i + 1 == args.length) ||
+		    (args[i + 1].charAt(0) == '-')) {
+                    throw new FOPException("you must specify the pdf output file");
                 } else {
                     outfile = new File (args[i + 1]);
                     i++;
                 }
             } else if (args[i].equals("-mif")) {
-                if (outputmode == NOT_SET) {
-                    outputmode = MIF_OUTPUT;
-                } else {
-                    MessageHandler.errorln("ERROR: you can only set one output method");
-                    printUsage();
-                }
+		setOutputMode(MIF_OUTPUT);
                 if ((i + 1 == args.length) ||
                         (args[i + 1].charAt(0) == '-')) {
-                    MessageHandler.errorln("ERROR: you must specify the mif output file");
-                    printUsage();
+                     throw new FOPException("you must specify the mif output file");
                 } else {
                     outfile = new File(args[i + 1]);
                     i++;
                 }
             } else if (args[i].equals("-print")) {
-                if (outputmode == NOT_SET) {
-                    outputmode = PRINT_OUTPUT;
-                } else {
-                    MessageHandler.errorln("ERROR: you can only set one output method");
-                    printUsage();
-                }
+		setOutputMode(PRINT_OUTPUT);
                 //show print help
                 if (i + 1 < args.length) {
                     if (args[i + 1].equals("help")) {
                         printUsagePrintOutput();
-                    }
+			return false;
+		    }
                 }
             } else if (args[i].equals("-pcl")) {
-                if (outputmode == NOT_SET) {
-                    outputmode = PCL_OUTPUT;
-                } else {
-                    MessageHandler.errorln("ERROR: you can only set one output method");
-                    printUsage();
-                }
+		setOutputMode(PCL_OUTPUT);
                 if ((i + 1 == args.length) ||
                         (args[i + 1].charAt(0) == '-')) {
-                    MessageHandler.errorln("ERROR: you must specify the pdf output file");
-                    printUsage();
+                    throw new FOPException("you must specify the pdf output file");
                 } else {
                     outfile = new File (args[i + 1]);
                     i++;
                 }
             } else if (args[i].equals("-txt")) {
-                if (outputmode == NOT_SET) {
-                    outputmode = TXT_OUTPUT;
-                } else {
-                    MessageHandler.errorln("ERROR: you can only set one output method");
-                    printUsage();
-                }
+		setOutputMode(TXT_OUTPUT);
                 if ((i + 1 == args.length) ||
                         (args[i + 1].charAt(0) == '-')) {
-                    MessageHandler.errorln("ERROR: you must specify the pdf output file");
-                    printUsage();
+                    throw new FOPException("you must specify the text output file");
                 } else {
                     outfile = new File (args[i + 1]);
                     i++;
@@ -219,71 +204,77 @@ public class CommandLineOptions {
                     outputmode = PDF_OUTPUT;
                     outfile = new File(args[i]);
                 } else {
-                    MessageHandler.errorln(
-                      "ERROR: Don't know what to do with " + args[i]);
-                    printUsage();
+                    throw new FOPException("Don't know what to do with " + args[i]);
                 }
             } else {
                 printUsage();
-            }
+		return false;
+	    }
         }
+	return true;
     } //end parseOptions
+
+    private void setOutputMode(int mode) 
+	throws FOPException
+    {
+	if (outputmode == NOT_SET) {
+	    outputmode = mode;
+	} else {
+	    throw new FOPException("you can only set one output method");
+	}
+    }
+    
 
     /**
      * checks whether all necessary information has been given in a consistent way
      */
-    private void checkSettings () {
+    private void checkSettings ()
+	throws FOPException, FileNotFoundException
+    {
         if (inputmode == NOT_SET) {
-            MessageHandler.errorln("ERROR: you have to specify an input file");
-            printUsage();
-        }
+	    throw new FOPException("No input file specified");
+	}
 
         if (outputmode == NOT_SET) {
-            MessageHandler.errorln("ERROR: you have to specify an output mode");
-            printUsage();
-        }
+	    throw new FOPException("No output file specified");
+	}
 
         if (inputmode == XSLT_INPUT) {
             //check whether xml *and* xslt file have been set
-            if (xmlfile == null || xsltfile == null) {
-                MessageHandler.errorln(
-                  "ERROR: if you want to use an xml file transformed with an xslt file as input\n" +
-                  "       you must specify both files. \n" +
-                  "       Your input is \nxmlfile: " +
-                  xmlfile.getAbsolutePath() + "\nxsltfile: " +
-                  xsltfile.getAbsolutePath());
-                printUsage();
-            }
+	    if (xmlfile == null) {
+		throw new FOPException("XML file must be specified for the tranform mode");
+	    }
+	    if (xsltfile == null) {
+		throw new FOPException("XSLT file must be specified for the tranform mode");
+	    }
+
             //warning if fofile has been set in xslt mode
             if (fofile != null) {
                 MessageHandler.errorln(
-                  "ERROR: Can't use fo file in transformation!" +
-                  "       Your input is \nxmlfile: " +
-                  xmlfile.getAbsolutePath() + "\nxsltfile: " +
-                  xsltfile.getAbsolutePath() + "\nfofile: " +
-                  fofile.getAbsolutePath());
+                  "WARNING: Can't use fo file with transform mode! Ignoring.\n" +
+                  "Your input is "+
+		  "\n xmlfile: " + xmlfile.getAbsolutePath() + 
+		  "\nxsltfile: " + xsltfile.getAbsolutePath() + 
+		  "\n  fofile: " + fofile.getAbsolutePath());
             }
             if (!xmlfile.exists()) {
-                MessageHandler.errorln("ERROR: xml file " +
-                                       xmlfile.getAbsolutePath() + " not found ");
-                System.exit(1);
+		throw new FileNotFoundException("xml file " +
+						xmlfile.getAbsolutePath() + " not found ");
             }
             if (!xsltfile.exists()) {
-                MessageHandler.errorln("ERROR: xsl file " +
+                throw new FileNotFoundException("xsl file " +
                                        xsltfile.getAbsolutePath() + " not found ");
-                System.exit(1);
             }
 
         } else if (inputmode == FO_INPUT) {
             if (xmlfile != null || xsltfile != null) {
-                MessageHandler.logln("ERROR: fo input mode, but xmlfile or xslt file are set:");
-                MessageHandler.logln("xml file: " + xmlfile.toString());
-                MessageHandler.logln("xslt file: " + xsltfile.toString());
+                MessageHandler.errorln("WARNING: fo input mode, but xmlfile or xslt file are set:");
+                MessageHandler.errorln("xml file: " + xmlfile.toString());
+                MessageHandler.errorln("xslt file: " + xsltfile.toString());
             }
             if (!fofile.exists()) {
-                MessageHandler.errorln("ERROR: fo file " +
+                 throw new FileNotFoundException("fo file " +
                                        fofile.getAbsolutePath() + " not found ");
-                System.exit(1);
             }
 
         }
@@ -329,7 +320,9 @@ public class CommandLineOptions {
     }
 
 
-    public Starter getStarter() {
+    public Starter getStarter() 
+	throws FOPException
+    {
         switch (outputmode) {
             case PDF_OUTPUT:
                 return new CommandLineStarter(this);
@@ -341,10 +334,10 @@ public class CommandLineOptions {
                              new Class[]{CommandLineOptions.class}).
                            newInstance(new Object[]{this}));
                 } catch (Exception e) {
-                    MessageHandler.errorln(
-                      "ERROR: AWTStarter could not be loaded. " +
-                      e.toString());
-                    return(null);
+		    if (e instanceof FOPException) {
+			throw (FOPException)e;
+		    }
+		    throw new FOPException("AWTStarter could not be loaded.",e);
                 }
             case MIF_OUTPUT:
                 return new CommandLineStarter(this);
@@ -356,10 +349,10 @@ public class CommandLineOptions {
                              new Class[]{CommandLineOptions.class}).
                            newInstance(new Object[]{this}));
                 } catch (Exception e) {
-                    MessageHandler.errorln(
-                      "ERROR: PrintStarter could not be loaded. " +
-                      e.toString());
-                    return(null);
+		    if (e instanceof FOPException) {
+			throw (FOPException)e;
+		    }
+		    throw new FOPException("PrintStarter could not be loaded.",e);
                 }
 
             default:
@@ -431,7 +424,7 @@ public class CommandLineOptions {
        *	 shows the commandline syntax including a summary of all available options and some examples
        */
     public static void printUsage() {
-        MessageHandler.logln(
+        MessageHandler.errorln(
           "\nUSAGE\nFop [options] [-fo|-xml] infile [-xsl file] [-awt|-pdf|-mif|-pcl|-txt|-print] <outfile>\n" +
           " [OPTIONS]  \n" + "  -d          debug mode   \n" +
           "  -x          dump configuration settings  \n" +
@@ -456,8 +449,7 @@ public class CommandLineOptions {
           "  Fop -fo foo.fo -pdf foo.pdf (does the same as the previous line)\n" +
           "  Fop -xsl foo.xsl -xml foo.xml -pdf foo.pdf\n" +
           "  Fop foo.fo -mif foo.mif\n" +
-          "  Fop foo.fo -print or Fop -print foo.fo \n" + "  Fop foo.fo -awt ");
-        System.exit(1);
+          "  Fop foo.fo -print or Fop -print foo.fo \n" + "  Fop foo.fo -awt \n");
     }
 
     /**
@@ -468,7 +460,6 @@ public class CommandLineOptions {
           "USAGE: -print [-Dstart=i] [-Dend=i] [-Dcopies=i] [-Deven=true|false] " +
           " org.apache.fop.apps.Fop (..) -print \n" +
           "Example:\n" + "java -Dstart=1 -Dend=2 org.apache.Fop.apps.Fop infile.fo -print ");
-        System.exit(1);
     }
 
 
@@ -566,8 +557,13 @@ public class CommandLineOptions {
           for (int i = 0; i < args.length; i++) {
           	MessageHandler.logln(">"+args[i]+"<");
           }*/
-
-        CommandLineOptions options = new CommandLineOptions (args);
+	try {
+	    CommandLineOptions options = new CommandLineOptions (args);
+	}
+	catch (Exception e) {
+	    e.printStackTrace();
+	}
+	
         //options.debug();
     }
 }

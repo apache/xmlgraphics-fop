@@ -20,6 +20,7 @@ import java.util.Hashtable;
 import org.apache.fop.pdf.PDFWArray;
 import org.apache.fop.pdf.PDFCIDFont;
 import org.apache.fop.configuration.ConfigurationReader;
+import org.apache.fop.apps.FOPException;
 
 /**
  * Class for reading a metric.xml file and creating a font object.
@@ -47,17 +48,17 @@ public class FontReader extends DefaultHandler {
 
     private Vector bfranges = null;
 
-    private void createFont(String path) throws IOException {
+    private void createFont(String path) throws FOPException {
         XMLReader parser = ConfigurationReader.createParser();
         if (parser == null)
-            throw new IOException("Unable to create SAX parser");
+            throw new FOPException("Unable to create SAX parser");
 
         try {
             parser.setFeature("http://xml.org/sax/features/namespace-prefixes",
                               false);
         } catch (SAXException e) {
-            throw new IOException (
-              "You need a SAX parser which supports " + "SAX version 2");
+            throw new FOPException (
+              "You need a SAX parser which supports SAX version 2",e);
         }
 
         parser.setContentHandler(this);
@@ -65,8 +66,12 @@ public class FontReader extends DefaultHandler {
         try {
             parser.parse(path);
         } catch (SAXException e) {
-            throw new IOException(e.getMessage());
+            throw new FOPException(e);
         }
+	catch (IOException e) {
+	    throw new FOPException(e);
+	}
+	
     }
 
     /**
@@ -101,7 +106,7 @@ public class FontReader extends DefaultHandler {
       * Construct a FontReader object from a path to a metric.xml file
       * and read metric data
       */
-    public FontReader(String path) throws IOException {
+    public FontReader(String path) throws FOPException {
         createFont(path);
     }
 

@@ -71,6 +71,7 @@ import org.apache.fop.apps.Starter;
 import org.apache.fop.apps.InputHandler;
 import org.apache.fop.apps.FOInputHandler;
 import org.apache.fop.apps.Driver;
+import org.apache.fop.apps.FOPException;
 import org.apache.fop.configuration.Configuration;
 
 
@@ -173,8 +174,14 @@ public class Fop extends Task {
      * Starts execution of this task
      */
     public void execute () throws BuildException {
-	Starter starter = new FOPTaskStarter(this);
-	starter.run();
+	try {
+	    Starter starter = new FOPTaskStarter(this);
+	    starter.run();
+	}
+	catch (FOPException ex) {
+	    throw new BuildException(ex);
+	}
+	
     }
 }
 
@@ -182,14 +189,18 @@ class FOPTaskStarter extends Starter {
     Fop task;
     MessageLogger logger;
 
-    FOPTaskStarter(Fop task) {
+    FOPTaskStarter(Fop task) 
+	throws FOPException
+    {
 	this.task = task;
 	MessageHandler.setOutputMethod(MessageHandler.EVENT);
 	logger = new MessageLogger(new MessageHandler(), task);
 	logger.setMessageLevel(task.getMessageType());
     }
 
-    public void run () {
+    public void run () 
+	throws FOPException
+    {
 	Configuration.put("basedir", task.getBasedir());
 
 	InputHandler inputHandler = new FOInputHandler(task.getFofile());

@@ -24,19 +24,27 @@ public class CommandLineStarter extends Starter {
     CommandLineOptions commandLineOptions;
 	boolean errorDump;
     	
-    public CommandLineStarter (CommandLineOptions commandLineOptions) {
+    public CommandLineStarter (CommandLineOptions commandLineOptions) 
+	throws FOPException
+    {
         this.commandLineOptions = commandLineOptions;
-		options.setCommandLineOptions(commandLineOptions);
-		errorDump = Configuration.getBooleanValue("debugMode").booleanValue();
-		super.setInputHandler(commandLineOptions.getInputHandler());		
+	options.setCommandLineOptions(commandLineOptions);
+	errorDump = Configuration.getBooleanValue("debugMode").booleanValue();
+	super.setInputHandler(commandLineOptions.getInputHandler());		
     }
 	
-    public void run() {
+    /**
+     * Run the format.
+     * @exception FOPException if there is an error during processing
+     */
+    public void run() 
+	throws FOPException
+    {
         String version = Version.getVersion();
         MessageHandler.logln(version);
 
         XMLReader parser = inputHandler.getParser();
-        setParserFeatures(parser,errorDump);
+        setParserFeatures(parser);
 
 	Driver driver = new Driver();
         if (errorDump) {
@@ -51,12 +59,11 @@ public class CommandLineStarter extends Starter {
             driver.setOutputStream(new FileOutputStream(commandLineOptions.getOutputFile()));
             driver.render();
         } catch (Exception e) {
-            MessageHandler.errorln("FATAL ERROR: " + e.getMessage());
-            if (errorDump) {
-                e.printStackTrace();
-            }
-            System.exit(1);
-        }
+	    if (e instanceof FOPException) {
+		throw (FOPException) e;
+	    }
+	    throw new FOPException(e);
+	}
     }
 	
 }
