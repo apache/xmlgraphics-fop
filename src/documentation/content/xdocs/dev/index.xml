@@ -30,13 +30,12 @@ This certainly includes programmers, but may also include those contributing to 
       <p>For basic and user information on FOP, please visit the <link href="http://xml.apache.org/fop">FOP homepage</link>.</p>
     </section>
     <section id="lines">
-      <title>Development Lines</title>
-      <p>There are currently two lines of development on the FOP product:</p>
+      <title>Development</title>
+      <p>There are currently two branches of FOP :</p>
       <ul>
-        <li>The oldest is the one that releases are currently generated from, and is also called the "maintenance branch". Because of limitations in its design, the FOP committers decided to freeze new development on this branch, and are providing only bug fixes. This branch is tagged as "fop-0_20_2-maintain" in the CVS repository.</li>
-        <li>The main development line is the future of FOP. It was spawned from the "maintenance" branch, but had to quickly be "broken" so that the needed redesign could be dropped into place. It is currently not as mature as the "maintenance" branch, but has far greater long-term prospects. It is also known as the "root" or "trunk" or "redesign".</li>
+        <li>The "maintenance branch" is the one that releases are currently generated from, and is also called the "maintenance branch". Because of limitations in its design, the FOP committers decided to freeze new development on this branch, and are providing only bug fixes. This branch is tagged as "fop-0_20_2-maintain" in the CVS repository. Please note that patches for enhancements to the maintenance branch will generally not be considered. Bug fixes are welcome there, but new developers are strongly encouraged to apply their efforts to the trunk development line.</li>
+        <li>The main development line is the future of FOP. It is currently not as mature as the "maintenance" branch, but has far greater long-term prospects. It is also known as the "root" or "trunk" or "redesign".</li>
       </ul>
-      <p>Please note that patches for enhancements to the maintenance branch will generally not be considered. Bug fixes are welcome there, but new developers are strongly encouraged to apply their efforts to the trunk development line.</p>
       <p>Because there is a fair amount of common information between the maintenance and trunk development lines, we attempt to document them together, highlighting differences only where needed.</p>
     </section>
     <section id="involved">

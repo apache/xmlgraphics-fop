@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <!--
-  Copyright 1999-2004 The Apache Software Foundation
+  Copyright 1999-2005 The Apache Software Foundation
 
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -130,6 +130,27 @@
       <question>When will feature X be implemented?</question>
       <answer>
         <p>The short answer is "Don't ask." For more details, see <link href="gethelp.html#limitations">Understand FOP's Limitations</link>.</p>
+      </answer>
+    </faq>
+    <faq id="next-release">
+      <question>When is the next released planned?</question>
+      <answer>
+        <p> This depends on progress made so it is not possible to predict any dates. However, we think that at the
+        current rate of progress we can start releasing again in the second half of 2005. If you want to speed up
+        the process, consider to <link href="dev/index.html#involved">contribute</link> to FOP</p>
+      </answer>
+    </faq>
+    <faq id="redesign">
+      <question>Why did you redesign FOP?</question>
+      <answer>
+        <p>The core redesign of FOP was necessary in order to be able to adress following issues:</p>
+        <ul>
+          <li>Keeps and Breaks</li>
+          <li>XSL-FO Compliance in general</li>
+          <li>Process Files of Arbitrary Size</li>
+          <li>Minimize Memory Use</li>
+          <li>Table Layout</li>
+        </ul>
       </answer>
     </faq>
     <faq id="contribute">
