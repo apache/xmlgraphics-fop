@@ -1,5 +1,5 @@
 /*
- * Copyright 1999-2004 The Apache Software Foundation.
+ * Copyright 1999-2005 The Apache Software Foundation.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -169,6 +169,17 @@ public class Trait implements Serializable {
      */
     public static final Integer END_INDENT  = new Integer(28);
 
+    /** The space-before trait. */
+    public static final Integer SPACE_BEFORE  = new Integer(29);
+    
+    /** The space-after trait. */
+    public static final Integer SPACE_AFTER  = new Integer(30);
+    
+    /** The is-reference-area trait. */
+    public static final Integer IS_REFERENCE_AREA = new Integer(31);
+    
+    /** The is-viewport-area trait. */
+    public static final Integer IS_VIEWPORT_AREA = new Integer(32);
     
     
     private static final Map TRAIT_INFO = new HashMap();
@@ -242,6 +253,14 @@ public class Trait implements Serializable {
                 new TraitInfo("start-indent", Integer.class));
         TRAIT_INFO.put(END_INDENT,
                 new TraitInfo("end-indent", Integer.class));
+        TRAIT_INFO.put(SPACE_BEFORE,
+                new TraitInfo("space-before", Integer.class));
+        TRAIT_INFO.put(SPACE_AFTER,
+                new TraitInfo("space-after", Integer.class));
+        TRAIT_INFO.put(IS_REFERENCE_AREA,
+                new TraitInfo("is-reference-area", Boolean.class));
+        TRAIT_INFO.put(IS_VIEWPORT_AREA,
+                new TraitInfo("is-viewport-area", Boolean.class));
     }
 
     /**
