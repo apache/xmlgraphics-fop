@@ -4,94 +4,43 @@
 
 <document>
   <header>
-    <title>Extensions to FOP</title>
+    <title>Adding an Extension to FOP</title>
   </header>
   <body>
-    <section>
+    <section id="overview">
       <title>Overview</title>
+      <p>For documentation of standard FOP extenstions, see the <link href="../extensions.html">User FOP Extensions</link> document.</p>
       <p>
 If the default funtionality of FOP needs to be extended for
-some reason then you can write an extensions.
+some reason then you can write an extension.
             </p>
-            <p>
-There are three types of extensions possible. An output document
-extensions such as the PDF bookmarks, an instream-foreign-object
-extensions such as SVG and an fo extension that creates an
-area in the area tree where normal xsl:fo is not possible.
-            </p>
+            <p>There are three types of extensions possible:</p>
+            <ul>
+              <li>An output document extension such as the PDF bookmarks</li>
+              <li>an instream-foreign-object extensions such as SVG</li>
+              <li>an fo extension that creates an area in the area tree where normal xsl:fo is not possible</li>
+            </ul>
           </section>
-          <section>
-            <title>Default Extensions</title>
-            <p>
-These extension are available by default. They are automatically loaded
-and you only need to provide the correct namespace for your embedded
-xml markup.
-            </p>
-          <section>
-            <title>SVG</title>
-            <p>
-Please see the <link href="svg.html">SVG page</link> for more details.
-            </p>
-            <p>
-The SVG extensions gets all the xml elements in the SVG namespace
-and builds an SVG DOM with batik. The SVG DOM is then rendered
-to the output format using a handler for the XML content of
-the instream-foreign-object.
-            </p>
-          </section>
-          <section>
-            <title>PDF Bookmarks</title>
-            <p>
-To use this standard FOP extension, you need to add a namespace entry for
-     http://xml.apache.org/fop/extensions on the root element. </p>
-
-    <p>You can provide outlines inside the root object (but outside
-       any page-sequences or
-       other formatting objects). Here's an example of an outline entry:</p>
-    <source>
-<![CDATA[<fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format"
-               xmlns:fox="http://xml.apache.org/fop/extensions">
-  <fox:bookmarks>
-    <fox:outline internal-destination="sec3">
-      <fox:label>Running FOP</fox:label>
-
-      <fox:outline internal-destination="sec3-1">
-        <fox:label>Prerequisites</fox:label>
-      </fox:outline>
-    <fox:outline>
-  </fox:bookmarks>
-</fo:root>]]></source>
-    <p>It works similarly to a basic-link. There is also an external-destination
-       property, but it isn't supported currently. The documents
-       on the fop-site use this extension so you can see it in action.
-            </p>
-          </section>
-          </section>
-          <section>
+          <section id="adding">
             <title>Adding Your Own</title>
             <p>
 To add your own extension you need to do the following things.
 </p>
-<p>
-Write code that implements your extension functionality.
-There are some examples in the contrib/ directory.
-</p>
-<p>
-Create a jar file with your classes, it must also include the
-following file "/META-INF/services/org.apache.fop.fo.ElementMapping".
-In this file you need to put the fully qualified classname of
-your element mappings class. This class must implement the
-"org.apache.fop.fo.ElementMapping" interface.
-</p>
-<p>
-Create your fo file with the extra xml data embedded in the file
-with the correct name space. The pdf documents on the fob site
-use this extension, see <link href="examples.html">Examples</link>
-for more examples.
-</p>
-<p>
-Put your jar file in the classpath and then run fop over the fo file.
-      </p>
+        <ol>
+          <li>Write code that implements your extension functionality. The easiest place to
+start is by looking at the code in org.apache.fop.extension, and by looking at the examples in the <code>contrib</code> directory.</li>
+          <li>Create a jar file with your classes, it must also include the following file
+"/META-INF/services/org.apache.fop.fo.ElementMapping". In this file you need
+to put the fully qualified classname of your element mappings class. This
+class must implement the "org.apache.fop.fo.ElementMapping" interface.</li>
+          <li>Create your XSL-FO file with the extra XML data embedded in the file with the
+correct name space.
+The examples for SVG and pdfoutline.fo show how this can be done.
+The pdf documents on the FOP site use this extension.
+See also <link href="examples.html">Examples</link> for more examples.</li>
+          <li>Put your jar file in the classpath</li>
+          <li>Run FOP using your XSL-FO file as input.</li> 
+        </ol>
     </section>
   </body>
 </document>

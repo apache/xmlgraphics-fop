@@ -4,29 +4,21 @@
 
 <document>
   <header>
-    <title>Extensions</title>
+    <title>Standard FOP Extensions</title>
   </header>
   <body>
-    <p>
-Sometimes it is desirable to have extensions to XSL-FO in order to support
-some feature of the output format which isn't covered by the XSL-FO
-specification.
-    </p>
-    <section>
-      <title>Default Extensions</title>
-      <p>
-These extension are available by default. They are automatically loaded
-and you only need to provide the correct namespace for your embedded
-XML markup.
-      </p>
-      <section>
+    <p>By "extension", we mean any data that can be placed in the input XML document that is not addressed by the XSL-FO standard.
+By having a mechanism for supporting extensions, FOP is able to add features that are not covered in the specification.</p>
+      <p>The extensions documented here are included with FOP, and are automatically available to you. If you wish to add an extension of your own to FOP, please see the <link href="dev/extensions.html">Developers' Extension Page</link>.</p>
+    <note>All extensions required the correct use of an appropriate namespace in your input document.</note>
+      <section id="svg">
         <title>SVG</title>
         <p>
 Please see the <link href="svg.html#svg">SVG documentation</link> for more details.
         </p>
       </section>
-      <section>
-        <title>Bookmarks</title>
+      <section id="bookmarks">
+        <title>PDF Bookmarks</title>
         <p>
 To use this standard FOP extension, you need to add a namespace entry for
 http://xml.apache.org/fop/extensions on the root element.
@@ -53,39 +45,12 @@ property, but it isn't supported currently. See the pdfoutline.fo file in
 examples/fo/basic for a more complete example.
         </p>
       </section>
-      <section>
+      <section id="table-continue-label">
         <title>Continued-label (for table-header/-footer</title>
         <p>
 Please see examples/fo/basic/contlabel.fo
         </p>
       </section>
-    </section>
-    <section>
-      <title>Adding Your Own</title>
-        <p>
-To add your own extension you need to do the following things.
-        </p>
-        <ol>
-          <li>
-Write code that implements your extension functionality. The easiest place to
-start is by looking at the code in org.apache.fop.extension.
-          </li>
-          <li>
-Create a jar file with your classes, it must also include the following file
-"/META-INF/services/org.apache.fop.fo.ElementMapping". In this file you need
-to put the fully qualified classname of your element mappings class. This
-class must implement the "org.apache.fop.fo.ElementMapping" interface.
-          </li>
-          <li>
-Create your XSL-FO file with the extra XML data embedded in the file with the
-correct name space. The examples for SVG and pdfoutline.fo show how this can
-be done.
-          </li>
-          <li>
-Put your jar file in the classpath and then run fop over the XSL-FO file.
-          </li>
-        </ol>
-    </section>
   </body>
 </document>
 
