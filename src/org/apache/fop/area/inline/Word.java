@@ -1,6 +1,6 @@
 /*
  * $Id$
- * Copyright (C) 2001 The Apache Software Foundation. All rights reserved.
+ * Copyright (C) 2001-2002 The Apache Software Foundation. All rights reserved.
  * For details on use and redistribution please refer to the
  * LICENSE file included with these sources.
  */
@@ -12,8 +12,8 @@ import org.apache.fop.render.Renderer;
 public class Word extends InlineArea {
 
     // character info: font, char spacing, colour, baseline
-    String word;
-    int iWSadjust = 0;
+    private String word;
+    private int iWSadjust = 0;
 
     public void render(Renderer renderer) {
         renderer.renderWord(this);
@@ -35,3 +35,4 @@ public class Word extends InlineArea {
         this.iWSadjust = iWSadjust;
     }
 }
+

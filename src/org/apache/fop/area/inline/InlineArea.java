@@ -8,11 +8,9 @@
 package org.apache.fop.area.inline;
 
 import org.apache.fop.area.Area;
-import org.apache.fop.area.MinOptMax;
 import org.apache.fop.area.Trait;
 import org.apache.fop.render.Renderer;
 import org.apache.fop.traits.BorderProps;
-import org.apache.fop.fo.properties.VerticalAlign;
 
 import java.util.ArrayList;
 
@@ -25,19 +23,24 @@ import java.util.ArrayList;
  */
 public class InlineArea extends Area {
     // int width;
-    int height;
+    private int height;
     protected int contentIPD = 0;
 
     // offset position from top of parent area
     int verticalPosition = 0;
 
     // store properties in array list, need better solution
-    ArrayList props = null;
+    private ArrayList props = null;
 
-    // inline areas are expected to implement this method
-    // to render themselves
+    /**
+     * Render this inline area.
+     * Inline areas that extend this class are expected
+     * to implement this method to render themselves in
+     * the renderer.
+     *
+     * @param renderer the renderer to render this inline area
+     */
     public void render(Renderer renderer) {
-
     }
 
     public void setWidth(int w) {
@@ -85,10 +88,6 @@ public class InlineArea extends Area {
             iBP += ((BorderProps) t).width;
         }
         return iBP;
-    }
-
-    public MinOptMax getAllocationIPD() {
-        return new MinOptMax(getAllocIPD());
     }
 
     public void setOffset(int v) {

@@ -17,20 +17,81 @@ import java.util.HashMap;
 import java.util.Iterator;
 
 // properties should be serialized by the holder
+/**
+ * Area traits used for rendering.
+ * This class represents an area trait that specifies a value for rendering.
+ */
 public class Trait implements Serializable {
+    /**
+     * Id reference line, not resolved.
+     * not sure if this is needed.
+     */
     public static final Integer ID_LINK = new Integer(0);
+
+    /**
+     * Internal link trait.
+     * This is resolved and provides a link to an internal area.
+     */
     public static final Integer INTERNAL_LINK = new Integer(1); //resolved
+
+    /**
+     * External link. A URL link to an external resource.
+     */
     public static final Integer EXTERNAL_LINK = new Integer(2);
+
+    /**
+     * The font name from the font setup.
+     */
     public static final Integer FONT_NAME = new Integer(3);
+
+    /**
+     * Font size for the current font.
+     */
     public static final Integer FONT_SIZE = new Integer(4);
+
+    /**
+     * The current colour.
+     */
     public static final Integer COLOR = new Integer(7);
+
+    /**
+     * Don't think this is necessary.
+     */
     public static final Integer ID_AREA = new Integer(8);
+
+    /**
+     * Background trait for an area.
+     */
     public static final Integer BACKGROUND = new Integer(9);
+
+    /**
+     * Underline trait used when rendering inline parent.
+     */
     public static final Integer UNDERLINE = new Integer(10);
+
+    /**
+     * Overline trait used when rendering inline parent.
+     */
     public static final Integer OVERLINE = new Integer(11);
+
+    /**
+     * Linethrough trait used when rendering inline parent.
+     */
     public static final Integer LINETHROUGH = new Integer(12);
+
+    /**
+     *
+     */
     public static final Integer OFFSET = new Integer(13);
+
+    /**
+     * The shadow for text.
+     */
     public static final Integer SHADOW = new Integer(14);
+
+    /**
+     * The border start.
+     */
     public static final Integer BORDER_START = new Integer(15);
     public static final Integer BORDER_END = new Integer(16);
     public static final Integer BORDER_BEFORE = new Integer(17);

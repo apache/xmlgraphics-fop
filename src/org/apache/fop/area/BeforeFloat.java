@@ -1,64 +1,54 @@
 /*
  * $Id$
- * Copyright (C) 2001 The Apache Software Foundation. All rights reserved.
+ * Copyright (C) 2001-2002 The Apache Software Foundation. All rights reserved.
  * For details on use and redistribution please refer to the
  * LICENSE file included with these sources.
  */
 
 package org.apache.fop.area;
 
-import java.util.List;
-import java.util.ArrayList;
-
+/**
+ * The before float area.
+ * This is used to place the before float areas.
+ * It has an optional separator and before float block children.
+ */
 public class BeforeFloat extends BlockParent {
     // this is an optional block area that will be rendered
     // as the separator only if there are float areas
-    Block separator = null;
+    private Block separator = null;
 
-    // before float area
-    // has an optional separator
-    // and a list of sub block areas
-
-    ArrayList blocks = null;
-
-    public void addBlock(Block block) {
-        if (blocks == null) {
-            blocks = new ArrayList();
-        }
-        blocks.add(block);
-    }
-
+    /**
+     * Set the separator area for this before float.
+     *
+     * @param sep the before float separator area
+     */
     public void setSeparator(Block sep) {
         separator = sep;
     }
 
-    public List getBlocks() {
-        return blocks;
-    }
-
+    /**
+     * Get the separator area for this before float.
+     *
+     * @return the before float separator area
+     */
     public Block getSeparator() {
         return separator;
     }
 
+    /**
+     * Get the height of this before float.
+     * It gets the height of the children and if there is a
+     * separator its height is also added.
+     *
+     * @return the height of the before float including separator
+     */
     public int getHeight() {
-        if (blocks == null) {
-            return 0;
+        int h = super.getHeight();
+        if (separator != null) {
+            h += separator.getHeight();
         }
-        int h = 0;
         return h;
     }
 
-    public MinOptMax getMaxBPD() {
-	MinOptMax maxbpd = parent.getMaxBPD();
-	BodyRegion body = (BodyRegion)parent;
-	Area a =  body.getMainReference();
-	if (a != null) {
-	    maxbpd = MinOptMax.subtract(maxbpd, a.getContentBPD());
-	}
-	if ((a=body.getFootnote()) != null) {
-	    maxbpd = MinOptMax.subtract(maxbpd, a.getContentBPD());
-	}
-	return maxbpd;
-    }
-
 }
+
