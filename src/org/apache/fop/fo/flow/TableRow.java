@@ -22,7 +22,7 @@
     Alternately, this  acknowledgment may  appear in the software itself,  if
     and wherever such third-party acknowledgments normally appear.
  
- 4. The names "Fop" and  "Apache Software Foundation"  must not be used to
+ 4. The names "FOP" and  "Apache Software Foundation"  must not be used to
     endorse  or promote  products derived  from this  software without  prior
     written permission. For written permission, please contact
     apache@apache.org.
@@ -147,6 +147,10 @@ public class TableRow extends FObj {
 	    System.err.println("WARNING: Number of children under table-row not equal to number of table-columns");
 	    return OK;
 	}
+
+	// added by Eric Schaeffer
+	widthOfCellsSoFar = 0;
+	largestCellHeight = 0;
 
 	for (int i = this.marker; i < numChildren; i++) {
 	    TableCell cell = (TableCell) children.elementAt(i);
