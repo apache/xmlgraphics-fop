@@ -21,6 +21,10 @@
 package org.apache.fop.fo.flow;
 
 // FOP
+import java.awt.Graphics2D;
+import java.awt.GraphicsEnvironment;
+import java.awt.font.FontRenderContext;
+import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.BitSet;
@@ -195,6 +199,12 @@ public class FoPageSequence extends FONode {
     {
         super(foTree, FObjectNames.PAGE_SEQUENCE, parent, event,
               FONode.PAGESEQ_SET, sparsePropsMap, sparseIndices);
+        // Set up the graphics environment
+        pageSpread =
+            new BufferedImage(20*72, 12*72, BufferedImage.TYPE_INT_RGB);
+        g2D = pageSpread.createGraphics();
+        frcontext = g2D.getFontRenderContext();
+
         XmlEvent ev;
         // Look for optional title
         log.finer("page-sequence title");
@@ -291,6 +301,23 @@ public class FoPageSequence extends FONode {
         }
 
         makeSparsePropsSet();
+    }
+
+    private GraphicsEnvironment gEnv = null;
+    public GraphicsEnvironment getGraphicsEnvironment() {
+        return gEnv;
+    }
+    private BufferedImage pageSpread = null;
+    public BufferedImage getPageSpread() {
+        return pageSpread;
+    }
+    private Graphics2D g2D = null;
+    public Graphics2D getGraphics2D() {
+        return g2D;
+    }
+    private FontRenderContext frcontext = null;
+    public FontRenderContext getFontRenderContext() {
+        return frcontext;
     }
 
     public Area getReferenceRectangle() throws FOPException {

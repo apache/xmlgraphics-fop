@@ -21,7 +21,6 @@ package org.apache.fop.fo;
 
 import java.util.Arrays;
 import java.util.NoSuchElementException;
-
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.area.Area;
 import org.apache.fop.datastructs.TreeException;

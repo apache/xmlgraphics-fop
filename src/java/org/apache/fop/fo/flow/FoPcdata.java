@@ -143,4 +143,14 @@ public class FoPcdata extends FOPageSeqNode {
         return characters;
     }
 
+    // PCDATA provides sequences of inline-areas to fill line-areas in the
+    // parent block area.
+    // Generate a text-layout for the PCDATA.
+    /**
+     * Generate a  
+     */
+    private void processText() {
+        
+    }
+
 }
