@@ -1,6 +1,7 @@
 package org.apache.fop.datatypes;
 
 import org.apache.fop.fo.expr.PropertyException;
+import org.apache.fop.fo.FONode;
 
 /*
  * PropertyValue.java
@@ -59,9 +60,22 @@ public interface PropertyValue {
     public void setProperty(int index) throws PropertyException;
 
     /**
+     * Get the <tt>int</tt> type of property value.
      * @return type field of the <tt>PropertyValue</tt>.
      */
     public int getType();
+
+    /**
+     * Set the reference to the <tt>FONode</tt> that stacked this value.
+     * @param node - the stacking <tt.FONode</tt>.
+     */
+    public void setStackedBy(FONode node);
+
+    /**
+     * Get a reference to the <tt>FONode</tt> that stacked this value.
+     * @return <tt>FONode</tt> that stacked this value.
+     */
+    public FONode getStackedBy();
 
     /**
      * In some circumstances, the property against which a type is to be
