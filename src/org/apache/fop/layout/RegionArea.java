@@ -50,6 +50,7 @@
  */
 package org.apache.fop.layout;
 import org.apache.fop.fo.properties.*;
+import org.apache.fop.datatypes.ColorType;
 
 public class RegionArea {
 
@@ -58,6 +59,8 @@ public class RegionArea {
     protected int width;
     protected int height;
     
+    protected ColorType backgroundColor;
+
     public RegionArea(int xPosition, int yPosition, int width, int height) {
 	this.xPosition = xPosition;
 	this.yPosition = yPosition;
@@ -68,4 +71,13 @@ public class RegionArea {
     public AreaContainer makeAreaContainer() {
 	return new AreaContainer(null, xPosition, yPosition, width, height, Position.ABSOLUTE);
     }
+
+    public ColorType getBackgroundColor() {
+	return this.backgroundColor;
+    }
+
+    public void setBackgroundColor(ColorType bgColor) {
+	this.backgroundColor = bgColor;
+    }
+
 }
