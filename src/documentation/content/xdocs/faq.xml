@@ -110,6 +110,12 @@
         </p>
       </answer>
     </faq>
+    <faq id="when">
+      <question>When will feature X be implemented?</question>
+      <answer>
+        <p>The short answer is "Don't ask." For more details, see <link href="gethelp.html#limitations">Understand FOP's Limitations</link>.</p>
+      </answer>
+    </faq>
     <faq id="contribute">
       <question>How can I contribute?</question>
       <answer>

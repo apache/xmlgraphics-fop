@@ -18,14 +18,18 @@ FOP is an implementation of these technologies, and when you use FOP, there is a
 We have included several useful links on our <link href="resources.html">Resources</link> page that may help you get started.
         </p>
     </section>
-    <section id="compliance">
-      <title>Review FOP's Standards Compliance</title>
-      <p>FOP is a work in progress, and does not yet fully comply with the W3C XSL-FO standard.
+    <section id="limitations">
+      <title>Understand FOP's Limitations</title>
+      <p>FOP is a work in progress, and has some limitations.</p>
+      <p>FOP does not yet fully comply with the W3C XSL-FO standard.
 The developers track which standard requirements have been implemented, and have documented these capabilities on the <link href="compliance.html">Compliance</link> page.
-If this document appears to be in error, continue down this checklist so that either the document or the software can be corrected.
-Otherwise, please do not submit mailing list questions or bug reports regarding features documented in the standard.
-Please especially do not submit questions asking when a particular feature will be implemented.
+FOP has other limitations regarding specific output formats, graphic formats, etc.
+These limitations are noted in appropriate places in the documentation.
+If these documents appear to be in error, continue down this checklist so that either the document or the software can be corrected.
+Otherwise, please do not submit mailing list questions or bug reports regarding features documented in the standard, or documented as limitations in other parts of the documentation.</p>
+      <p>Please especially do not submit questions asking when a particular feature will be implemented.
 There are too many unknowns to make even a reasonable estimate.
+Every time a developer stops to answer such a question, the answer will inevitably be "I don't know", but the time taken to respond is time spent away from development.
 The only sure way to get a feature implemented is to <link href="#how-to-help">pitch in and help</link>.</p>
     </section>
     <section id="doc">
