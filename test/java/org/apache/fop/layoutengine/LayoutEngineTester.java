@@ -44,6 +44,7 @@ import org.apache.fop.apps.Fop;
 import org.apache.fop.fo.Constants;
 import org.apache.fop.render.xml.XMLRenderer;
 import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
@@ -130,17 +131,17 @@ public class LayoutEngineTester {
     }
     
     /**
-     * Factory method to create checks from DOM nodes.
-     * @param node DOM node to create the check from
+     * Factory method to create checks from DOM elements.
+     * @param el DOM element to create the check from
      * @return The newly create check
      */
-    protected LayoutEngineCheck createCheck(Node node) {
-        String name = node.getLocalName();
+    protected LayoutEngineCheck createCheck(Element el) {
+        String name = el.getLocalName();
         Class clazz = (Class)CHECK_CLASSES.get(name);
         if (clazz != null) {
             try {
                 Constructor c = clazz.getDeclaredConstructor(new Class[] {Node.class});
-                LayoutEngineCheck instance = (LayoutEngineCheck)c.newInstance(new Object[] {node});
+                LayoutEngineCheck instance = (LayoutEngineCheck)c.newInstance(new Object[] {el});
                 return instance;
             } catch (Exception e) {
                 throw new RuntimeException("Error while instantiating check '" 
@@ -168,7 +169,9 @@ public class LayoutEngineTester {
         NodeList nodes = doc.getDocumentElement().getChildNodes();
         for (int i = 0; i < nodes.getLength(); i++) {
             Node node = nodes.item(i);
-            checks.add(createCheck(node));
+            if (node instanceof Element) {
+                checks.add(createCheck((Element)node));
+            }
         }
         
         Iterator i = checks.iterator();
