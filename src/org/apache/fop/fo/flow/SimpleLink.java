@@ -90,16 +90,28 @@ public class SimpleLink extends FObjMixed {
     }
 
     public Status layout(Area area) throws FOPException {
-	
-	String externalDest =
-	    this.properties.get("external-destination").getString();
-	
+        String destination;
+        int linkType;
+        
+        if ( !(destination = this.properties.get("internal-destination").getString()).equals(""))
+        {             
+            linkType=LinkSet.INTERNAL;
+        }
+        else if ( !(destination = this.properties.get("external-destination").getString()).equals("") )	
+        { 
+            linkType=LinkSet.EXTERNAL;
+        }
+        else
+        {
+            throw new FOPException("internal-destination or external-destination must be specified in simple-link");
+        }
+
 	if (this.marker == START) {
 	    this.marker = 0;
 	}
 	
 	// new LinkedArea to gather up inlines
-	LinkSet ls = new LinkSet(externalDest, area);
+        LinkSet ls = new LinkSet(destination, area, linkType);
 		
 	Page p = area.getPage();
 
