@@ -12,6 +12,7 @@ import org.apache.fop.fo.PropNames;
 import org.apache.fop.fo.PropertySets;
 import org.apache.fop.fo.expr.PropertyException;
 import org.apache.fop.fo.expr.FunctionNotImplementedException;
+import org.apache.fop.datastructs.ROIntArray;
 
 /**
  * Implement the system font function.
