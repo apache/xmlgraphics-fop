@@ -555,7 +555,7 @@ public class PDFRenderer implements Renderer {
 			    				contry2 = contry1;
 		    				}
 	    				}
-	    				System.out.println(contrx1 + ":" + contry1 + ":" + contrx2 + ":" + contry2);
+	    				//System.out.println(contrx1 + ":" + contry1 + ":" + contrx2 + ":" + contry2);
 
 						double cx = lastx;
 						double cy = lasty;
@@ -762,6 +762,9 @@ public class PDFRenderer implements Renderer {
 	public void renderImage(String href, float x, float y, float width, float height)
 	{
 		try {
+		    if(href.indexOf(":") == -1) {
+		        href = "file:" + href;
+		    }
 			FopImage img = FopImageFactory.Make(href);
 			if(img != null) {
 				int xObjectNum = this.pdfDoc.addImage(img);
@@ -782,7 +785,59 @@ public class PDFRenderer implements Renderer {
     public void renderForeignObjectArea(ForeignObjectArea area)
     {
         // if necessary need to scale and align the content
+		int x = this.currentAreaContainerXPosition;
+		switch(area.getAlign()) {
+		    case TextAlign.START:
+		    break;
+		    case TextAlign.END:
+		    break;
+		    case TextAlign.CENTER:
+		    case TextAlign.JUSTIFY:
+		    break;
+		}
+		switch(area.getVerticalAlign()) {
+		    case VerticalAlign.BASELINE:
+		    break;
+		    case VerticalAlign.MIDDLE:
+		    break;
+		    case VerticalAlign.SUB:
+		    break;
+		    case VerticalAlign.SUPER:
+		    break;
+		    case VerticalAlign.TEXT_TOP:
+		    break;
+		    case VerticalAlign.TEXT_BOTTOM:
+		    break;
+		    case VerticalAlign.TOP:
+		    break;
+		    case VerticalAlign.BOTTOM:
+		    break;
+		}
+		// in general the content will not be text
+		currentStream.add("ET\n");
+		// align and scale
+		currentStream.add("q\n");
+		switch(area.scalingMethod()) {
+		    case Scaling.UNIFORM:
+		    break;
+		    case Scaling.NON_UNIFORM:
+		    break;
+		}
+		// if the overflow is auto (default), scroll or visible
+		// then the contents should not be clipped, since this
+		// is considered a printing medium.
+		switch(area.getOverflow()) {
+		    case Overflow.VISIBLE:
+		    case Overflow.SCROLL:
+		    case Overflow.AUTO:
+		    break;
+		    case Overflow.HIDDEN:
+		    break;
+		}
         area.getObject().render(this);
+		currentStream.add("Q\n");
+		currentStream.add("BT\n");
+		this.currentYPosition -= area.getEffectiveHeight();
     }
 
     /**
@@ -796,7 +851,6 @@ public class PDFRenderer implements Renderer {
 		int w = area.getContentWidth();
 		int h = area.getHeight();
 
-		currentStream.add("ET\n");
 		/*
 		 * Clip to the svg area.
 		 * Note: To have the svg overlay (under) a text area then use
@@ -825,8 +879,6 @@ public class PDFRenderer implements Renderer {
 		}
 
 		currentStream.add("Q\n");
-		currentStream.add("BT\n");
-		this.currentYPosition -= h;
 	}
 
 	void handleGradient(String sp, boolean fill, GraphicImpl area)
@@ -1252,6 +1304,29 @@ public class PDFRenderer implements Renderer {
 				}
 			}
 			currentStream.add("Q\n");
+		} else if (area instanceof SVGAElement) {
+			SVGAElement ael = (SVGAElement)area;
+			org.w3c.dom.NodeList nl = ael.getChildNodes();
+			for(int count = 0; count < nl.getLength(); count++) {
+				org.w3c.dom.Node n = nl.item(count);
+				if(n instanceof GraphicImpl) {
+					if(n instanceof GraphicElement) {
+						SVGRect rect = ((GraphicElement)n).getBBox();
+						if(rect != null) {
+/*							currentAnnotList = this.pdfDoc.makeAnnotList();
+							currentPage.setAnnotList(currentAnnotList);
+							String dest = linkSet.getDest();
+							int linkType = linkSet.getLinkType();
+							currentAnnotList.addLink(
+								this.pdfDoc.makeLink(lrect.getRectangle(), dest, linkType));
+							currentAnnotList = null;
+*/						}
+					}
+					renderElement(svgarea, (GraphicImpl)n, posx, posy);
+				}
+			}
+		} else if (area instanceof SVGSwitchElement) {
+			handleSwitchElement(svgarea, posx, posy, (SVGSwitchElement)area);
 		}
 		// should be done with some cleanup code, so only
 		// required values are reset.
@@ -1262,6 +1337,9 @@ public class PDFRenderer implements Renderer {
 	public void renderText(SVGArea svgarea, SVGTextElementImpl tg, float x, float y)
 	{
 		FontState fontState = svgarea.getFontState();
+		if(fontState == null) {
+		    return; // for now
+		}
 		PDFNumber pdfNumber = new PDFNumber();
 
 		Hashtable styles;
@@ -1455,6 +1533,85 @@ public class PDFRenderer implements Renderer {
 			Object o = e.nextElement();
 			if(o instanceof GraphicImpl) {
 				renderElement(svgarea, (GraphicImpl)o, posx, posy);
+			}
+		}
+	}
+
+	void handleSwitchElement(SVGArea svgarea, int posx, int posy, SVGSwitchElement ael)
+	{
+		SVGList relist = ael.getRequiredExtensions();
+		SVGList rflist = ael.getRequiredFeatures();
+		SVGList sllist = ael.getSystemLanguage();
+		org.w3c.dom.NodeList nl = ael.getChildNodes();
+		for(int count = 0; count < nl.getLength(); count++) {
+			org.w3c.dom.Node n = nl.item(count);
+			// only render the first child that has a valid
+			// test data
+			if(n instanceof GraphicElement) {
+				GraphicElement graphic = (GraphicElement)n;
+				SVGList grelist = graphic.getRequiredExtensions();
+				// if null it evaluates to true
+				if(grelist != null) {
+					for(int i = 0; i < grelist.getNumberOfItems(); i++) {
+						String str = (String)grelist.getItem(i);
+						if(relist == null) {
+							// use default extension set
+							// currently no extensions are supported
+//							if(!(str.equals("http:// ??"))) {
+								continue;
+//							}
+						} else {
+						}
+					}
+				}
+				SVGList grflist = graphic.getRequiredFeatures();
+				if(grflist != null) {
+					for(int i = 0; i < grflist.getNumberOfItems(); i++) {
+						String str = (String)grflist.getItem(i);
+						if(rflist == null) {
+							// use default feature set
+							if(!(str.equals("org.w3c.svg.static")
+								|| str.equals("org.w3c.dom.svg.all"))) {
+								continue;
+							}
+						} else {
+							boolean found = false;
+							for(int j = 0; j < rflist.getNumberOfItems(); j++) {
+								if(rflist.getItem(j).equals(str)) {
+									found = true;
+									break;
+								}
+							}
+							if(!found)
+								continue;
+						}
+					}
+				}
+				SVGList gsllist = graphic.getSystemLanguage();
+				if(gsllist != null) {
+					for(int i = 0; i < gsllist.getNumberOfItems(); i++) {
+						String str = (String)gsllist.getItem(i);
+						if(sllist == null) {
+							// use default feature set
+							if(!(str.equals("en"))) {
+								continue;
+							}
+						} else {
+							boolean found = false;
+							for(int j = 0; j < sllist.getNumberOfItems(); j++) {
+								if(sllist.getItem(j).equals(str)) {
+									found = true;
+									break;
+								}
+							}
+							if(!found)
+								continue;
+						}
+					}
+				}
+				renderElement(svgarea, (GraphicImpl)n, posx, posy);
+				// only render the first valid one
+				break;
 			}
 		}
 	}
