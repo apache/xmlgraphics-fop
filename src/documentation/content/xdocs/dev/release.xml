@@ -26,15 +26,18 @@ The purpose of documenting it here is to facilitate consistency, ensure that the
           <code>cvs -d :pserver:anoncvs@cvs.apache.org:/home/cvspublic co -r 
 fop-0_20_5rc3 xml-fop</code></li>
         <li>Copy jimi and jai to lib/ (jimi-1.0.jar, jai_core.jar, jai_codec.jar)</li>
+        <li>Copy jce-jdk13-119.jar from <link href="http://www.bouncycastle.org/latest_releases.html">
+          from http://www.bouncycastle.org/latest_releases.html</link> to lib/</li>
         <li>Run build[.sh] dist. Use jdk1.3. A Forrest installation is needed.</li>
         <li>Create signatures. Don't forget to upload your KEY:
           <code>gpg -a -b --force-v3-sigs fop-0.20.5rc3-bin.tar.gz etc.</code></li>
-        <li>[md5?]</li>
         <li>Upload to www.apache.org. (An account on daedalus is needed):
           <code>scp fop-0.20.5rc3*.tar.gz* 
 chrisg@www.apache.org:/www/www.apache.org/dist/xml/fop/</code></li>
         <li>Check permissions:
           <code>chmod 664 ... ; chgrp xml ...</code></li>
+        <li>Add MD5 sums: <code>md5 fop-0.20.5rc3-bin.tar.gz &gt;
+          fop-0.20.5rc3-bin.tar.gz.md5</code></li>
         <li>Make a test download.</li>
         <li>Wait 24 hours (for the mirrors to catch up).</li>
         <li>Post announcements on fop-dev and fop-user mailing lists.</li>
