@@ -24,8 +24,10 @@
       <ul>
         <li>Why are we using our own font metric parsing and registration system, instead of the AWT system provided as part of Java?
           <ul>
-            <li>Answer 1: Many of our customers use FOP in a so-called "headless" server environment -- that is, the operating system is operating in character mode, with no concept of a graphical environment. We need some mechanism of allowing these environments to get font information.</li>
+            <li>Answer 1: Many of our customers use FOP in a so-called "headless" server environment -- that is, the operating system is operating in character mode, with no concept of a graphical environment. We need some mechanism of allowing these environments to get font information. Java 1.4 has a mechanism for dealing with headless environments, and this issue may be resolved when we require that as a minimum platform. However, there may be an issue then of how to get fonts registered at the operating system in these environments. That will probably at least require some documentation for users.</li>
             <li>Answer 2: At some level, we don't yet fully trust AWT to handle fonts correctly. There are still unresolved discrepancies between the two systems.</li>
+            <li>Answer 3: In the AWT mechanism, there does not appear to be a way to find the physical font file associated with an AWT font, or to otherwise get access to its contents so that it can be embedded in FOP output.</li>
+            <li>Answer 4: The Java 1.4 javadocs state (in java.awt.Font): "All implementations of the Java 2 platform must support TrueType fonts; support for other font technologies is implementation dependent." We wish to provide a greater base of font technologies for our users.</li>
           </ul>
         </li>
       </ul>
