@@ -16,526 +16,497 @@ import org.apache.fop.apps.FOPException;
 
 // Java
 import java.util.Vector;
+import java.util.Enumeration;
 
 public class TableRow extends FObj {
 
-		public static class Maker extends FObj.Maker {
-				public FObj make(FObj parent,
-												 PropertyList propertyList) throws FOPException {
-						return new TableRow(parent, propertyList);
-				}
+    public static class Maker extends FObj.Maker {
+	public FObj make(FObj parent,
+			 PropertyList propertyList) throws FOPException {
+	    return new TableRow(parent, propertyList);
+	}
+    }
+
+    public static FObj.Maker maker() {
+	return new TableRow.Maker();
+    }
+
+    boolean setup = false;
+
+    int breakAfter;
+    ColorType backgroundColor;
+    String id;
+
+    KeepValue keepWithNext;
+    KeepValue keepWithPrevious;
+    KeepValue keepTogether;
+
+    int widthOfCellsSoFar = 0;
+    int largestCellHeight = 0;
+
+    Vector columns;
+
+    AreaContainer areaContainer;
+
+    boolean areaAdded = false;
+
+    private RowSpanMgr rowSpanMgr = null;
+    private CellArray cellArray = null;
+
+    private static class CellArray {
+        public static final byte EMPTY=0;
+        public static final byte CELLSTART=1;
+        public static final byte CELLSPAN=2;
+
+        private TableCell[] cells;
+        private byte[] states;
+
+        public CellArray(RowSpanMgr rsi, int numColumns) {
+            // Initialize the cell array by marking any cell positions
+            // occupied by spans from previous rows
+            cells = new TableCell[numColumns];
+            states = new byte[numColumns];
+            for (int i=0; i <numColumns; i++) {
+		if (rsi.isSpanned(i+1)) {
+		    cells[i] = rsi.getSpanningCell(i+1);
+		    states[i]=CELLSPAN;
 		}
+                else states[i]=EMPTY;
+            }
+        }
 
-		public static FObj.Maker maker() {
-				return new TableRow.Maker();
-		}
-
-		boolean setup = false;
-
-		int spaceBefore;
-		int spaceAfter;
-		int breakBefore;
-		int breakAfter;
-		ColorType backgroundColor;
-		String id;
-
-		KeepValue keepWithNext;
-		KeepValue keepWithPrevious;
-
-		int widthOfCellsSoFar = 0;
-		int largestCellHeight = 0;
-
-		Vector columns;
-
-		AreaContainer areaContainer;
-
-		// added by Dresdner Bank, Germany
-		DisplaySpace spacer = null;
-		boolean hasAddedSpacer = false;
-		DisplaySpace spacerAfter = null;
-		boolean areaAdded = false;
-
-		/**
-		 * The list of cell states for this row. This is the location of
-		 * where I will be storing the state of each cell so that I can
-		 * spread a cell over multiple pages if I have to. This is part
-		 * of fixing the TableRow larger than a single page bug.
-		 * Hani Elabed, 11/22/2000.
-		 */
-		public Vector cells = null;
-
-		/**
-		 * CellState<BR>
-		 *
-		 * <B>Copyright @ 2000 Circuit Court Automation Program.
-		 * state of Wisconsin.
-		 * All Rights Reserved.</B>
-		 * <p>
-		 * This class is a container class for encapsulating a the
-		 * state of a cell
-		 * <TABLE>
-		 * <TR><TD><B>Name:</B></TD>        <TD>CellState</TD></TR>
-		 *
-		 * <TR><TD><B>Purpose:</B></TD>     <TD>a helpful container class</TD></TR>
-		 *
-		 * <TR><TD><B>Description:</B></TD> <TD>This class is a container class for
-		 *                                      encapsulating the state of a
-		 *									   cell belonging to a TableRow class
-		 *                                  </TD></TR>
-		 *
-		 * </TABLE>
-		 *
-		 * @author      Hani Elabed
-		 * @version     0.14.0, 11/22/2000
-		 * @since       JDK1.1
-		 */
-		public final class CellState {
-				/** the cell location or index starting at 0.*/
-				private int location;
-
-				/** true if the layout of the cell was complete, false otherwise.*/
-				private boolean layoutCompleted;
-
-				/** the width of the cell so far.*/
-				private int widthOfCellSoFar;
-
-				private int column = 0;
-
-				/**
-				 * simple no args constructor.
-				 */
-				public CellState() {
-						this(0, false, 0);
-				}
-
-				/**
-				 * three argument fill everything constructor.
-				 * @param int the location(index) of the cell.
-				 * @param boolean flag of wether the cell was completely laid out or not.
-				 * @param int the horizontal offset(width so far) of the cell.
-				 */
-				public CellState(int aLocation, boolean completed, int aWidth) {
-
-						location = aLocation;
-						layoutCompleted = completed;
-						widthOfCellSoFar = aWidth;
-				}
-
-				/**
-				 * returns the index of the cell starting at 0.
-				 * @return int the location of the cell.
-				 */
-				public final int getLocation() {
-						return location;
-				}
-
-				/**
-				 * sets the location of the cell.
-				 * @param int, the location of the cell.
-				 */
-				public final void setLocation(int aLocation) {
-						location = aLocation;
-				}
+       /**
+        * Return column which doesn't already contain a span or a cell
+        * If past the end or no free cells after colNum, return -1
+        * Otherwise return value >= input value.
+        */
+        int getNextFreeCell(int colNum) {
+            for (int i=colNum-1; i<cells.length; i++) {
+                if (cells[i] == null) return i+1;
+            }
+            return -1;
+        }
 
 
-				/**
-				 * returns true if the cell was completely laid out.
-				 * @return false if cell was partially laid out.
-				 */
-				public final boolean isLayoutComplete() {
-						return layoutCompleted;
-				}
+       /**
+        * Return type of cell in colNum (1 based)
+        */
+        int getCellType(int colNum) {
+            if (colNum > 0 && colNum<=cells.length) {
+		return states[colNum-1];
+            }
+	    else return -1;  // probably should throw exception
+        }
 
-				/**
-				 * sets the layoutCompleted flag.
-				 * @param boolean, the layout Complete state of the cell.
-				 */
-				public final void setLayoutComplete(boolean completed) {
-						layoutCompleted = completed;
-				}
+       /**
+        * Return cell in colNum (1 based)
+        */
+        TableCell getCell(int colNum) {
+            if (colNum > 0 && colNum<=cells.length) {
+		return cells[colNum-1];
+            }
+	    else return null;  // probably should throw exception
+        }
+
+        /**
+         * Store cell starting at cellColNum (1 based) and spanning numCols
+         * If any of the columns is already occupied, return false, else true
+         */
+        boolean storeCell(TableCell cell, int colNum, int numCols) {
+            boolean rslt=true;
+            int index=colNum-1;
+            for (int count=0; index<cells.length && count<numCols; count++, index++) {
+                if (cells[index] == null) {
+                    cells[index] = cell;
+                    states[index] = (count==0)? CELLSTART : CELLSPAN;
+                }
+                else {
+                    rslt=false;
+                    // print a message but continue!!!
+                }
+            }
+            return rslt;
+        }
+
+// 	private class EnumCells implements Enumeration {
+// 	    private int iNextIndex=0;
+// 	    private Object nextCell = null;
+// 	    EnumCells() {
+// 		findNextCell();
+// 	    }
+
+// 	    private void findNextCell() {
+// 		for (; iNextIndex < cells.length; iNextIndex++) {
+// 		    if (states[iNextIndex] == CELLSTART) {
+// 			nextCell = cells[iNextIndex];
+// 			return;
+// 		    }
+// 		}
+// 		nextCell = null;
+// 	    }
+
+// 	    public boolean hasMoreElements() {
+// 		return (nextCell != null);
+// 	    }
+
+// 	    public Object nextElement() {
+// 		if (nextCell != null) {
+// 		    Object cell = nextCell;
+// 		    findNextCell();
+// 		    return cell;
+// 		}
+// 		else throw new java.util.NoSuchElementException("No more cells");
+// 	    }
+// 	}
+
+//         /**
+//          * Return an enumeration over all cells in this row
+// 	 * Return each element in cells whose state is CELLSTART or EMPTY?
+// 	 * Skip spanning elements.
+//          */
+//          Enumeration getCells() {
+// 	     return new EnumCells();
+//          }
+    }
 
 
-				/**
-				 * returns the horizontal offset of the cell.
-				 * @return int the horizontal offset of the cell, also known as width
-				 * of the cell so far.
-				 */
-				public final int getWidthOfCellSoFar() {
-						return widthOfCellSoFar;
-				}
+    public TableRow(FObj parent, PropertyList propertyList) {
+	super(parent, propertyList);
+	this.name = "fo:table-row";
+    }
 
-				/**
-				 * sets the width of the Cell So Far, i.e the cell's offset.
-				 * @param int, the horizontal offset of the cell.
-				 */
-				public final void setWidthOfCellSoFar(int aWidth) {
-						widthOfCellSoFar = aWidth;
-				}
+    public void setColumns(Vector columns) {
+	this.columns = columns;
+    }
 
-				public int getColumn() {
-						return column;
-				}
+    public KeepValue getKeepWithPrevious() {
+	return keepWithPrevious;
+    }
 
-				public void setColumn(int col) {
-						column = col;
-				}
-		}
+    public void doSetup(Area area) throws FOPException {
 
+	this.breakAfter = this.properties.get("break-after").getEnum();
+	this.backgroundColor =
+	    this.properties.get("background-color").getColorType();
 
-		public TableRow(FObj parent, PropertyList propertyList) {
-				super(parent, propertyList);
-				this.name = "fo:table-row";
-		}
+	this.keepTogether = getKeepValue("keep-together.within-column");
+	this.keepWithNext = getKeepValue("keep-with-next.within-column");
+	this.keepWithPrevious = getKeepValue("keep-with-previous.within-column");
 
-		public void setColumns(Vector columns) {
-				this.columns = columns;
-		}
+	this.id = this.properties.get("id").getString();
+	setup = true;
+    }
 
-		public KeepValue getKeepWithPrevious() {
-				return keepWithPrevious;
-		}
+    private KeepValue getKeepValue(String sPropName) {
+	Property p= this.properties.get(sPropName);
+	Number n = p.getNumber();
+	if (n != null)
+	    return new KeepValue(KeepValue.KEEP_WITH_VALUE, n.intValue());
+	switch(p.getEnum()) {
+	case Constants.ALWAYS:
+	    return new KeepValue(KeepValue.KEEP_WITH_ALWAYS, 0);
+	    //break;
+	case Constants.AUTO:
+	default:
+	    return new KeepValue(KeepValue.KEEP_WITH_AUTO, 0);
+	    //break;
+	}
+    }
 
-		public void doSetup(Area area) throws FOPException {
+    public Status layout(Area area) throws FOPException {
+	boolean configID = false;
 
-				this.spaceBefore = this.properties.get(
-														 "space-before.optimum").getLength().mvalue();
-				this.spaceAfter = this.properties.get(
-														"space-after.optimum").getLength().mvalue();
-				this.breakBefore = this.properties.get("break-before").getEnum();
-				this.breakAfter = this.properties.get("break-after").getEnum();
-				this.backgroundColor =
-					this.properties.get("background-color").getColorType();
+	if (this.marker == BREAK_AFTER) {
+	    return new Status(Status.OK);
+	}
 
-				this.keepWithNext = getKeepValue("keep-with-next.within-column");
-				this.keepWithPrevious = getKeepValue("keep-with-previous.within-column");
+	// Layout the first area for this FO
+	if (this.marker == START) {
+	    if (!setup)
+		doSetup(area);
 
-				this.id = this.properties.get("id").getString();
-				setup = true;
-		}
-
-		private KeepValue getKeepValue(String sPropName) {
-				Property p= this.properties.get(sPropName);
-				Number n = p.getNumber();
-				if (n != null)
-						return new KeepValue(KeepValue.KEEP_WITH_VALUE, n.intValue());
-				switch(p.getEnum()) {
-						case Constants.ALWAYS:
-								return new KeepValue(KeepValue.KEEP_WITH_ALWAYS, 0);
-						//break;
-						case Constants.AUTO:
-						default:
-								return new KeepValue(KeepValue.KEEP_WITH_AUTO, 0);
-						//break;
-				}
-		}
-
-		public Status layout(Area area) throws FOPException {
-				boolean configID = false;
-
-				if (this.marker == BREAK_AFTER) {
-						return new Status(Status.OK);
-				}
-
-				if (this.marker == START) {
-						if (!setup)
-								doSetup(area);
-
-						if (area instanceof BlockArea) {
-								area.end();
-						}
-			if (cells == null) { // check to make sure this row hasn't been partially
-										 // laid out yet (with an id created already)
+	    // Only do this once. If the row is "thrown" and we start
+	    // layout over again, we can skip this.
+	    if (cellArray == null) {
+		initCellArray();
+		// check to make sure this row hasn't been partially
+		// laid out yet (with an id created already)
 		area.getIDReferences().createID(id);
 		configID = true;
-			}
+	    }
 
+	    this.marker = 0;
+	    int breakStatus = propMgr.checkBreakBefore();
+	    if (breakStatus != Status.OK)
+		return new Status(breakStatus);
+	}
 
-						this.marker = 0;
-						if (breakBefore == BreakBefore.PAGE) {
-								return new Status(Status.FORCE_PAGE_BREAK);
-						}
+	// if (marker == 0 && configID) {
+	if (marker == 0) { // KDL: need to do this if thrown or if split?
+	    // configure id
+	    area.getIDReferences().configureID(id, area);
+	}
 
-						if (breakBefore == BreakBefore.ODD_PAGE) {
-								return new Status(Status.FORCE_PAGE_BREAK_ODD);
-						}
+	int spaceLeft = area.spaceLeft();
 
-						if (breakBefore == BreakBefore.EVEN_PAGE) {
-								return new Status(Status.FORCE_PAGE_BREAK_EVEN);
-						}
+	this.areaContainer =
+	    new AreaContainer(propMgr.getFontState(area.getFontInfo()),
+			      0,0,
+			      area.getContentWidth(),
+			      spaceLeft,
+			      Position.RELATIVE);
+	areaContainer.foCreator=this;	// G Seshadri
+	areaContainer.setPage(area.getPage());
 
-						if (breakBefore == BreakBefore.COLUMN) {
-								return new Status(Status.FORCE_COLUMN_BREAK);
-						}
-				}
+	areaContainer.setBackgroundColor(backgroundColor);
+	areaContainer.start();
 
-				if ((spaceBefore != 0) && (this.marker == 0)) {
-						spacer = new DisplaySpace(spaceBefore);
-						area.increaseHeight(spaceBefore);
-				}
-				else spacer=null; // Not first area created by the row!
+	areaContainer.setAbsoluteHeight(area.getAbsoluteHeight());
+	areaContainer.setIDReferences(area.getIDReferences());
 
-				if (marker == 0 && configID) {
-						// configure id
-						area.getIDReferences().configureID(id, area);
-				}
+	largestCellHeight = 0;
 
-				int spaceLeft = area.spaceLeft();
-				// int origMaxHeight = area.getMaxHeight();
-				this.areaContainer =
-						new AreaContainer(propMgr.getFontState(area.getFontInfo()),
-															0,0,
-															area.getContentWidth(),
-															spaceLeft, 
-															Position.RELATIVE);
-				areaContainer.foCreator=this;	// G Seshadri
-				areaContainer.setPage(area.getPage());
+	// Flag indicaing whether any cell didn't fit in available space
+	boolean someCellDidNotLayoutCompletely = false;
 
-				areaContainer.setBackgroundColor(backgroundColor);
-				// areaContainer.setBorderAndPadding(propMgr.getBorderAndPadding());
-				areaContainer.start();
+	/* If it takes multiple calls to completely layout the row,
+	 * we need to process all of the children (cells)
+	 * not just those from the marker so that the borders
+	 * will be drawn properly.
+	 */
+        int offset=0;   // Offset of each cell from table start edge
+	int iColIndex = 0;  // 1-based column index
+	Enumeration eCols = columns.elements();
+	/* Ideas: set offset on each column when they are initialized
+	 * no need to calculate for each row.
+	 * Pass column object to cell to get offset and width and border
+	 * info if borders are "collapsed".
+	 */
 
-				areaContainer.setAbsoluteHeight(area.getAbsoluteHeight());
-				areaContainer.setIDReferences(area.getIDReferences());
-
-				// cells is The list of cell states for this row. This is the location of
-				// where I will be storing the state of each cell so that I can
-				// spread a cell over multiple pages if I have to. This is part
-				// of fixing the TableRow larger than a single page bug.
-				// Hani Elabed, 11/22/2000.
-				if (cells == null)// do it once..
-				{
-						widthOfCellsSoFar = 0;
-						cells = new Vector();
-						int colCount = 0;
-						int numChildren = this.children.size();
-						for (int i = 0; i < numChildren; i++) {
-								TableCell cell = (TableCell) children.elementAt(i);
-								cell.doSetup(areaContainer);
-								int numCols = cell.getNumColumnsSpanned();
-								int numRows = cell.getNumRowsSpanned();
-								int width = 0;
-								CellState state =
-									new CellState(i, false, widthOfCellsSoFar);
-								state.setColumn(colCount);
-								// add the state of a cell.
-								cells.insertElementAt(state, i);
-								if(colCount + numCols > columns.size()) {
-									MessageHandler.errorln("WARNING: Number of cell columns under table-row not equal to number of table-columns");
-									return new Status(Status.OK);
-								}
-								for (int count = 0;
-												count < numCols && count < columns.size();
-												count++) {
-										width += ((TableColumn) columns.elementAt(colCount)).
-														 getColumnWidth();
-										colCount++;
-								}
-
-								cell.setWidth(width);
-								widthOfCellsSoFar += width;
-
-						}
-						if(colCount < columns.size()) {
-							MessageHandler.errorln("WARNING: Number of cell columns under table-row not equal to number of table-columns");
-							return new Status(Status.OK);
-						}
-				}
-
-				int numChildren = this.children.size();
-				//	if (numChildren != columns.size()) {
-				//	    MessageHandler.errorln("WARNING: Number of children under table-row not equal to number of table-columns");
-				//	    return new Status(Status.OK);
-				//	}
-
-				// added by Eric Schaeffer
-				largestCellHeight = 0;
-
-				// added by Hani Elabed 11/27/2000
-				boolean someCellDidNotLayoutCompletely = false;
-
-				// If it takes multiple calls to completely layout the row, we need to process
-				// all of the children (cells) not just those from the marker so that the borders
-				// will be drawn properly.
-				for (int i = 0; i < numChildren; i++) {
-						TableCell cell = (TableCell) children.elementAt(i);
-
-						// added by Hani Elabed 11/22/2000
-						CellState cellState = (CellState) cells.elementAt(i);
-
-						//--- this is modified to preserve the state of start
-						//--- offset of the cell.
-						//--- change by Hani Elabed 11/22/2000
-						cell.setStartOffset(cellState.getWidthOfCellSoFar());
-
-						// Each column in the row should start with the same height available
-						// True: we now don't set the row height until all cells in it are
-						// (at least partially) composed, so this is not necssary.
-						// -Karen Lease, 01 may 2001
-// 						if ( i > 0 )
-// 						{
-// 							areaContainer.increaseHeight(areaContainer.spaceLeft() - areaContainer.getMaxHeight() - spaceLeft + origMaxHeight);
-// 							areaContainer.setMaxHeight(spaceLeft);
-// 						}
-
-						Status status;
-						if ((status = cell.layout(areaContainer)).isIncomplete()) {
-								this.marker = i;
-								if (status.getCode() == Status.AREA_FULL_SOME) {
-										// this whole block added by
-										// Hani Elabed 11/27/2000
-
-										cellState.setLayoutComplete(false);
-										someCellDidNotLayoutCompletely = true;
-								} else {
-										/* None of the cell content was laid out.
-										 * In this case, we stop doing this row and
-										 * reset the marker to start it in the next
-										 * column or page. Note that the row height hasn't been
-										 * set and the row area hasn't yet
-										 * been added to its parent at this point!
-										 */
-
-										// added on 11/28/2000, by Dresdner Bank, Germany
-										if (spacer != null) {
-												area.increaseHeight(-spaceBefore);
-												// area.removeChild(spacer);
-												// spacer = null;
-										}
-//										hasAddedSpacer = false;
-// 										if(spacerAfter != null)
-// 												area.removeChild(spacerAfter);
-// 										spacerAfter = null;
-
-										// removing something that was added by succession
-										// of cell.layout()
-										// just to keep my sanity here, Hani
-										// area.increaseHeight(areaContainer.getHeight());
-										// area.removeChild(areaContainer);
-										this.resetMarker();
-										this.removeID(area.getIDReferences());
-
-										// hani elabed 11/27/2000
-										// cellState.setLayoutComplete(false);
-
-										return status;
-								}
-						} else // layout was complete for a particular cell
-						{ // Hani Elabed
-								cellState.setLayoutComplete(true);
-						}
-
-						int h = cell.getHeight();
-						if (h > largestCellHeight) {
-								largestCellHeight = h;
-						}
-				}
-
-				// This is in case a float was composed in the cells
-				area.setMaxHeight(area.getMaxHeight() - spaceLeft +
-													this.areaContainer.getMaxHeight());
-
-				for (int i = 0; i < numChildren; i++) {
-						TableCell cell = (TableCell) children.elementAt(i);
-						cell.setRowHeight(largestCellHeight);
-				}
-
-				// added by Dresdner Bank, Germany
-				if (!hasAddedSpacer && spacer != null) {
-						area.addChild(spacer);
-						hasAddedSpacer = true;
-				}
-
-				area.addChild(areaContainer);
-				areaContainer.setHeight(largestCellHeight);
-				areaAdded = true;
-				areaContainer.end();
-
-				/* The method addDisplaySpace increases both the content
-				 * height of the parent area (table body, head or footer) and
-				 * also its "absolute height". So we don't need to do this
-				 * explicitly.
-				 *
-				 * Note: it doesn't look from the CR as though we should take
-				 * into account borders and padding on rows, only background.
-				 * The exception is perhaps if the borders are "collapsed", but
-				 * they should still be rendered only on cells and not on the
-				 * rows themselves. (Karen Lease - 01may2001)
-				 */
-				area.addDisplaySpace(largestCellHeight +
-														 areaContainer.getPaddingTop() +
-														 areaContainer.getBorderTopWidth() +
-														 areaContainer.getPaddingBottom() +
-														 areaContainer.getBorderBottomWidth());
-
-
-				if (!someCellDidNotLayoutCompletely && spaceAfter != 0) {
-						spacerAfter = new DisplaySpace(spaceAfter);
-						area.addChild(spacerAfter);
-						area.increaseHeight(spaceAfter);
-				}
-
-
-				// replaced by Hani Elabed 11/27/2000
-				//return new Status(Status.OK);
-
-				if (someCellDidNotLayoutCompletely) {
-						return new Status(Status.AREA_FULL_SOME);
-				} else {
-				if (breakAfter == BreakAfter.PAGE) {
-						this.marker = BREAK_AFTER;
-						return new Status(Status.FORCE_PAGE_BREAK);
-				}
-
-				if (breakAfter == BreakAfter.ODD_PAGE) {
-						this.marker = BREAK_AFTER;
-						return new Status(Status.FORCE_PAGE_BREAK_ODD);
-				}
-
-				if (breakAfter == BreakAfter.EVEN_PAGE) {
-						this.marker = BREAK_AFTER;
-						return new Status(Status.FORCE_PAGE_BREAK_EVEN);
-				}
-
-				if (breakAfter == BreakAfter.COLUMN) {
-						this.marker = BREAK_AFTER;
-						return new Status(Status.FORCE_COLUMN_BREAK);
-				}
-						if (keepWithNext.getType() != KeepValue.KEEP_WITH_AUTO) {
-								return new Status(Status.KEEP_WITH_NEXT);
-						}
-						return new Status(Status.OK);
-				}
-
+	while (eCols.hasMoreElements()) {
+	    TableCell cell;
+	    ++iColIndex;
+	    TableColumn tcol = (TableColumn)eCols.nextElement();
+	    int colWidth = tcol.getColumnWidth();
+	    if (cellArray.getCellType(iColIndex) == CellArray.CELLSTART) {
+                cell = cellArray.getCell(iColIndex);
+            } else {
+		/* If this cell is spanned from a previous row,
+		 * and this is the last row, get the remaining height
+		 * and use it to increase maxCellHeight if necessary
+		 */
+		if (rowSpanMgr.isInLastRow(iColIndex)) {
+		    int h = rowSpanMgr.getRemainingHeight(iColIndex);
+		    if (h > largestCellHeight)
+			largestCellHeight = h;
 		}
+                offset += colWidth;
+                continue;
+            }
+	    // cell.setTableColumn(tcol);
+	    cell.setStartOffset(offset);
+	    offset += colWidth;
 
-		public int getAreaHeight() {
-				return areaContainer.getHeight();
-		}
 
-		public void removeLayout(Area area) {
-				if (spacer != null) {
-						if(hasAddedSpacer) {
-								area.removeChild(spacer);
-						} else {
-								area.increaseHeight(-spaceBefore);
-						}
-				}
-				if(spacerAfter != null)
-						area.removeChild(spacerAfter);
-				//area.increaseHeight(areaContainer.getHeight());
-				if(areaAdded)
-						area.removeChild(areaContainer);
-				areaAdded = false;
-				this.resetMarker();
-				this.removeID(area.getIDReferences());
+	    int rowSpan = cell.getNumRowsSpanned();
+	    Status status;
+	    if ((status = cell.layout(areaContainer)).isIncomplete()) {
+		if ((keepTogether.getType() == KeepValue.KEEP_WITH_ALWAYS) ||
+		    (status.getCode() == Status.AREA_FULL_NONE) ||
+		    rowSpan > 1) {
+		    // We will put this row into the next column/page
+		    // Note: the only time this shouldn't be honored is
+		    // if this row is at the top of the column area.
+		    // Remove spanning cells from RowSpanMgr?
+		    this.resetMarker();
+		    this.removeID(area.getIDReferences());
+		    return new Status(Status.AREA_FULL_NONE);
 		}
+		else if (status.getCode() == Status.AREA_FULL_SOME) {
+                    /* Row is not keep-together, cell isn't spanning
+		     * and part of it fits. We can break the cell and
+		     * the row.
+		     */
+		    someCellDidNotLayoutCompletely = true;
+		}
+	    } //else {
+		// layout was complete for a particular cell
+		int h = cell.getHeight(); // allocation height of cell
+		if (rowSpan > 1) { // pass cell fo or area???
+		    rowSpanMgr.addRowSpan(cell, iColIndex,
+					  cell.getNumColumnsSpanned(), h, rowSpan);
+		}
+		else if (h > largestCellHeight) {
+		    largestCellHeight = h;
+		}
+		//  }
+	} // end of loop over all columns/cells
 
-		public void resetMarker()
-		{
-				super.resetMarker();
-				spacer = null;
-				spacerAfter = null;
-				hasAddedSpacer = false;
-        cells = null;
-		}
+	// This is in case a float was composed in the cells
+	area.setMaxHeight(area.getMaxHeight() - spaceLeft +
+			  this.areaContainer.getMaxHeight());
+
+	// Only do this for "STARTCELL", ending spans are handled separately
+	// What about empty cells? Yes, we should set their height too!
+	for (int iCol = 1; iCol <= columns.size(); iCol++) {
+	    if (cellArray.getCellType(iCol) == CellArray.CELLSTART) {
+                cellArray.getCell(iCol).setRowHeight(largestCellHeight);
+            }
+	}
+
+	// Adjust spanning row information
+	// ??? what if some cells are broken???
+	rowSpanMgr.finishRow(largestCellHeight);
+
+	area.addChild(areaContainer);
+	areaContainer.setHeight(largestCellHeight);
+	areaAdded = true;
+	areaContainer.end();
+
+	/* The method addDisplaySpace increases both the content
+	 * height of the parent area (table body, head or footer) and
+	 * also its "absolute height". So we don't need to do this
+	 * explicitly.
+	 *
+	 * Note: it doesn't look from the CR as though we should take
+	 * into account borders and padding on rows, only background.
+	 * The exception is perhaps if the borders are "collapsed", but
+	 * they should still be rendered only on cells and not on the
+	 * rows themselves. (Karen Lease - 01may2001)
+	 */
+	area.addDisplaySpace(largestCellHeight +
+			     areaContainer.getPaddingTop() +
+			     areaContainer.getBorderTopWidth() +
+			     areaContainer.getPaddingBottom() +
+			     areaContainer.getBorderBottomWidth());
+
+
+	// replaced by Hani Elabed 11/27/2000
+        //return new Status(Status.OK);
+
+	if (someCellDidNotLayoutCompletely) {
+	    return new Status(Status.AREA_FULL_SOME);
+	} else {
+	    if (rowSpanMgr.hasUnfinishedSpans()) {
+		// Ignore break after if row span!
+		return new Status(Status.KEEP_WITH_NEXT);
+	    }
+	    if (breakAfter == BreakAfter.PAGE) {
+		this.marker = BREAK_AFTER;
+		return new Status(Status.FORCE_PAGE_BREAK);
+	    }
+
+	    if (breakAfter == BreakAfter.ODD_PAGE) {
+		this.marker = BREAK_AFTER;
+		return new Status(Status.FORCE_PAGE_BREAK_ODD);
+	    }
+
+	    if (breakAfter == BreakAfter.EVEN_PAGE) {
+		this.marker = BREAK_AFTER;
+		return new Status(Status.FORCE_PAGE_BREAK_EVEN);
+	    }
+
+	    if (breakAfter == BreakAfter.COLUMN) {
+		this.marker = BREAK_AFTER;
+		return new Status(Status.FORCE_COLUMN_BREAK);
+	    }
+	    if (keepWithNext.getType() != KeepValue.KEEP_WITH_AUTO) {
+		return new Status(Status.KEEP_WITH_NEXT);
+	    }
+	    return new Status(Status.OK);
+	}
+
+    }
+
+    public int getAreaHeight() {
+	return areaContainer.getHeight();
+    }
+
+    public void removeLayout(Area area) {
+	if(areaAdded)
+	    area.removeChild(areaContainer);
+	areaAdded = false;
+	this.resetMarker();
+	this.removeID(area.getIDReferences());
+    }
+
+    public void resetMarker()
+    {
+	super.resetMarker();
+        // Just reset all the states to not laid out and fix up row spans
+    }
+
+    /**
+     * Called by parent FO to initialize information about
+     *  cells started in previous rows which span into this row.
+     *  The layout operation modifies rowSpanMgr
+     */
+    public void setRowSpanMgr(RowSpanMgr rowSpanMgr) {
+        this.rowSpanMgr = rowSpanMgr;
+    }
+
+    /**
+     * Before starting layout for the first time, initialize information
+     * about spanning rows, empty cells and spanning columns.
+     */
+    private void initCellArray() {
+        cellArray = new CellArray(rowSpanMgr, columns.size());
+        int colNum = 1;
+        Enumeration eCells = children.elements();
+        while (eCells.hasMoreElements()) {
+            colNum = cellArray.getNextFreeCell(colNum);
+            // If off the end, the rest of the cells had better be
+            // explicitly positioned!!! (returns -1)
+
+            TableCell cell = (TableCell) eCells.nextElement();
+            int numCols = cell.getNumColumnsSpanned();
+            int numRows = cell.getNumRowsSpanned();
+            int cellColNum = cell.getColumnNumber();
+
+            if (cellColNum == 0) {
+                // Not explicitly specified, so put in next available colummn
+                // cell.setColumnNumber(colNum);
+                // If cellColNum "off the end", this cell is in limbo!
+                if (colNum < 1) {
+                    // ERROR!!!
+                    continue;
+                }
+                else cellColNum = colNum;
+            }
+            else if (cellColNum > columns.size()) {
+                // Explicit specification out of range!
+                // Skip it and print an ERROR MESSAGE
+                continue;
+            }
+            // see if it fits and doesn't overwrite anything
+            if (cellColNum + numCols - 1 > columns.size()) {
+                // MESSAGE: TOO MANY COLUMNS SPANNED!
+                numCols = columns.size() - cellColNum + 1;
+            }
+            // Check for overwriting other cells (returns false)
+            if (cellArray.storeCell(cell, cellColNum, numCols) == false) {
+                // Print out some kind of warning message.
+            }
+            if (cellColNum > colNum) {
+                // Cells are initialized as empty already
+                colNum = cellColNum;
+            }
+            else if (cellColNum < colNum) {
+                // MESSAGE ? cells out of order?
+                colNum = cellColNum; // CR "to the letter"!
+            }
+            int cellWidth = getCellWidth(cellColNum, numCols);
+	    cell.setWidth(cellWidth);
+            colNum += numCols; // next cell in this column
+        }
+    }
+    
+    // ATTENTION if startCol + numCols > number of columns in table!
+    private int getCellWidth(int startCol, int numCols) {
+        int width = 0;
+        for (int count = 0; count < numCols; count++) {
+            width += ((TableColumn) columns.elementAt(startCol+count-1)).getColumnWidth();
+        }
+        return width;
+    }
 }

@@ -33,6 +33,7 @@ public class TableCell extends FObj {
 		String id;
 		int numColumnsSpanned;
 		int numRowsSpanned;
+    int iColNumber = -1; // uninitialized
 
 		/** Offset of content rectangle in inline-progression-direction,
 		 * relative to table.
@@ -49,13 +50,14 @@ public class TableCell extends FObj {
 
 		/* ivan demakov */
 		protected int borderHeight = 0;
+		protected int cellHeight = 0;
 
 		protected int height = 0;
 		protected int top; // Ypos of cell ???
 		protected int verticalAlign ;
 		protected boolean bRelativeAlign = false;
 
-		boolean setup = false;
+		//	boolean setup = false;
 		boolean bSepBorders = true;
 
 		/** Border separation value in the block-progression dimension.
@@ -68,6 +70,7 @@ public class TableCell extends FObj {
 		public TableCell(FObj parent, PropertyList propertyList) {
 				super(parent, propertyList);
 				this.name = "fo:table-cell";
+				doSetup(); // init some basic property values
 		}
 
 		// Set position relative to table (set by body?)
@@ -81,6 +84,11 @@ public class TableCell extends FObj {
 				this.width = width;
 		}
 
+		public int getColumnNumber()
+		{
+		    return iColNumber;
+		}
+
 		public int getNumColumnsSpanned()
 		{
 				return numColumnsSpanned;
@@ -91,22 +99,22 @@ public class TableCell extends FObj {
 				return numRowsSpanned;
 		}
 
-		public void doSetup(Area area) throws FOPException
+		public void doSetup()// throws FOPException
 		{
+			this.iColNumber = properties.get("column-number").getNumber().intValue();
+			if (iColNumber < 0) { iColNumber = 0; }
 			this.numColumnsSpanned =
 					this.properties.get("number-columns-spanned").getNumber().intValue();
+			if (numColumnsSpanned < 1) { numColumnsSpanned = 1; }
 			this.numRowsSpanned =
 					this.properties.get("number-rows-spanned").getNumber().intValue();
+			if (numRowsSpanned < 1) { numRowsSpanned = 1; }
 
-			/**
-			this.spaceBefore =
-		this.properties.get("space-before.optimum").getLength().mvalue();
-			this.spaceAfter =
-		this.properties.get("space-after.optimum").getLength().mvalue();
-			**/
 			this.backgroundColor =
 					this.properties.get("background-color").getColorType();
+
 			this.id =	this.properties.get("id").getString();
+
 			bSepBorders = (this.properties.get("border-collapse").getEnum() ==
 													BorderCollapse.SEPARATE);
 			// Vertical cell alignment
@@ -118,6 +126,7 @@ public class TableCell extends FObj {
 			}
 			else bRelativeAlign = false; // Align on a per-cell basis
 
+			this.cellHeight = this.properties.get("height").getLength().mvalue();
 		}
 
 
@@ -128,9 +137,9 @@ public class TableCell extends FObj {
 				}
 
 				if (this.marker == START) {
-						if (!setup) {
-								doSetup(area);
-						}
+// 						if (!setup) {
+// 								doSetup(area);
+// 						}
 
 						// Calculate cell borders
 						calcBorders(propMgr.getBorderAndPadding());
@@ -151,14 +160,14 @@ public class TableCell extends FObj {
 						area.getIDReferences().configureID(id,area);
 				}
 
-				int spaceLeft = area.spaceLeft();
+				int spaceLeft = area.spaceLeft() - m_borderSeparation/2 + borderHeight/2 ;
 
 				// The Area position defines the content rectangle! Borders
 				// and padding are outside of this rectangle.
 				this.cellArea =
 						new AreaContainer(propMgr.getFontState(area.getFontInfo()),
 															startOffset, beforeOffset,
-															width, area.spaceLeft()- m_borderSeparation/2 + borderHeight/2,
+															width, spaceLeft,
 															Position.RELATIVE);
 
 				cellArea.foCreator=this;	// G Seshadri
@@ -194,6 +203,7 @@ public class TableCell extends FObj {
 										return new Status(Status.AREA_FULL_SOME);
 								}
 						}
+
 						area.setMaxHeight(area.getMaxHeight() - spaceLeft +
 															this.cellArea.getMaxHeight());
 				}
@@ -218,7 +228,8 @@ public class TableCell extends FObj {
 		// TableRow calls this. Anyone else?
 		public int getHeight() {
 				// return cellArea.getHeight() + spaceBefore + spaceAfter;
-				return cellArea.getHeight() + m_borderSeparation - borderHeight / 2;
+				if (cellHeight > 0) return cellHeight;
+				return cellArea.getHeight() + m_borderSeparation - borderHeight/2;
 		}
 
 		/** Called by TableRow to set final size of cell content rectangles and
@@ -290,6 +301,10 @@ public class TableCell extends FObj {
 						this.beforeOffset = m_borderSeparation/2 +
 								bp.getBorderTopWidth(false) +	bp.getPaddingTop(false);
 						// bp.getBorderBeforeWidth(false) +	bp.getPaddingBefore(false);
+						if (this.cellHeight > 0) {
+								this.cellHeight += this.beforeOffset + m_borderSeparation/2 +
+										bp.getBorderBottomWidth(false) + bp.getPaddingBottom(false);
+						}
 				}
 				else {
 						//System.err.println("Collapse borders");
@@ -332,6 +347,9 @@ public class TableCell extends FObj {
 
 						this.beforeOffset = borderBefore/2 + bp.getPaddingTop(false);
 						this.borderHeight = borderBefore + borderAfter;
+						if (this.cellHeight > 0) {
+								this.cellHeight += this.beforeOffset + borderAfter/2 + bp.getPaddingBottom(false);
+						}
 				}
 		}
 }
