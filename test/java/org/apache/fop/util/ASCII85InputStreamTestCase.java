@@ -54,7 +54,7 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
-import org.apache.commons.io.IOUtil;
+import org.apache.commons.io.CopyUtils;
 import org.apache.commons.io.output.ByteArrayOutputStream;
 import org.apache.fop.pdf.PDFText;
 
@@ -85,7 +85,7 @@ public class ASCII85InputStreamTestCase extends TestCase {
         InputStream in = new ByteArrayInputStream(ascii85);
         InputStream decoder = new ASCII85InputStream(in);
         ByteArrayOutputStream baout = new ByteArrayOutputStream();
-        IOUtil.copy(decoder, baout);
+        CopyUtils.copy(decoder, baout);
         baout.close();
         return baout.toByteArray();
     }

@@ -4,7 +4,7 @@
  *                    The Apache Software License, Version 1.1
  * ============================================================================
  * 
- * Copyright (C) 1999-2003 The Apache Software Foundation. All rights reserved.
+ * Copyright (C) 1999-2004 The Apache Software Foundation. All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without modifica-
  * tion, are permitted provided that the following conditions are met:
@@ -57,7 +57,7 @@ import java.io.IOException;
 import java.io.File;
 
 //Commons
-import org.apache.commons.io.IOUtil;
+import org.apache.commons.io.CopyUtils;
 
 /**
  * StreamCache implementation that uses temporary files rather than heap.
@@ -124,7 +124,7 @@ public class TempFileStreamCache implements StreamCache {
 
         // don't need a buffer because streamCopy is buffered
         InputStream input = new java.io.FileInputStream(tempFile);
-        final long bytesCopied = IOUtil.copy(input, out);
+        final long bytesCopied = CopyUtils.copy(input, out);
         input.close();
         return (int)bytesCopied;
     }

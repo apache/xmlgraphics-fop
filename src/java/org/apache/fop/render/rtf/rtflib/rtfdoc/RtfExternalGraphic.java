@@ -4,7 +4,7 @@
  *                    The Apache Software License, Version 1.1
  * ============================================================================
  *
- * Copyright (C) 1999-2003 The Apache Software Foundation. All rights reserved.
+ * Copyright (C) 1999-2004 The Apache Software Foundation. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modifica-
  * tion, are permitted provided that the following conditions are met:
@@ -58,7 +58,7 @@
 
 package org.apache.fop.render.rtf.rtflib.rtfdoc;
 
-import org.apache.commons.io.IOUtil;
+import org.apache.commons.io.IOUtils;
 import org.apache.fop.render.rtf.rtflib.tools.ImageConstants;
 import org.apache.fop.render.rtf.rtflib.tools.ImageUtil;
 //import org.apache.fop.render.rtf.rtflib.tools.jpeg.Encoder;
@@ -248,9 +248,9 @@ public class RtfExternalGraphic extends RtfElement {
         try {
             final InputStream in = url.openStream();
             try {
-                imagedata = IOUtil.toByteArray(url.openStream());
+                imagedata = IOUtils.toByteArray(url.openStream());
             } finally {
-                IOUtil.shutdownStream(in);
+                IOUtils.closeQuietly(in);
             }
         } catch (Exception e) {
             throw new ExternalGraphicException("The attribute 'src' of "
