@@ -98,7 +98,11 @@ public class TableCell extends FObj {
     
     protected int startOffset;
     protected int width;
+
     protected int height = 0;
+    protected int top;
+    protected int verticalAlign = 0;
+
     boolean setup = false;
 
     AreaContainer areaContainer;
@@ -270,6 +274,7 @@ public class TableCell extends FObj {
 	    FObj fo = (FObj) children.elementAt(i);
 	    fo.setIsInTableCell();
 	    fo.forceWidth(width);
+	    verticalAlign = fo.properties.get("vertical-align").getEnum();
 	    Status status;
 	    if ((status = fo.layout(areaContainer)).isIncomplete()) {
 		this.marker = i;
@@ -288,6 +293,8 @@ public class TableCell extends FObj {
 	areaContainer.end();
 	area.addChild(areaContainer);
 
+ 	height = getHeight();
+ 	top = areaContainer.getCurrentYPosition();
  	area.setHeight(getHeight());
  	// reset absoluteHeight to beginning of row
  	area.setAbsoluteHeight(areaContainer.getAbsoluteHeight());
@@ -299,8 +306,17 @@ public class TableCell extends FObj {
 	return areaContainer.getHeight();
     }
     
-    public void setHeight(int height) {
+    public void setRowHeight(int h) {
 	areaContainer.setMaxHeight(height);
-	areaContainer.setHeight(height);
+	    switch(verticalAlign) {
+	        case VerticalAlign.MIDDLE:
+	            areaContainer.setHeight(height);
+	            areaContainer.setYPosition(top + h / 2 - height / 2);
+	    	break;
+    		case VerticalAlign.BASELINE:
+		    default:
+	            areaContainer.setHeight(h);
+	    	break;
+	    }
     }
 }
