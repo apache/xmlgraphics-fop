@@ -244,6 +244,8 @@ public class XMLRenderer extends AbstractRenderer {
     protected void addAreaAttributes(Area area) {
         addAttribute("ipd", area.getIPD());
         addAttribute("bpd", area.getBPD());
+        addAttribute("ipda", area.getAllocIPD());
+        addAttribute("bpda", area.getAllocBPD());
         addAttribute("bap", area.getBorderAndPaddingWidthStart() + " "
                 + area.getBorderAndPaddingWidthEnd() + " "
                 + area.getBorderAndPaddingWidthBefore() + " "
