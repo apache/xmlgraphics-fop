@@ -177,7 +177,7 @@ list of possible build targets.
     <property name="dist.src.result.dir" value="${dist.src.dir}/${Name}-${version}"/>
 
     <property name="properties.dir" value="org/apache/fop/fo/properties"/>
-    <property name="fonts.dir" value="org/apache/fop/render/pdf/fonts"/>
+    <property name="fonts.dir" value="org/apache/fop/fonts/base14"/>
     <property name="replacestring" value="org/apache/fop"/>
     <property name="ignore_this" value="ignore_this.dummy"/>
     <property name="jimi" value="JimiImage.java"/>
@@ -296,87 +296,76 @@ list of possible build targets.
     <style in="${foproperties.xml}" style="${enumgen.xsl}"
         out="${build.gensrc}/${replacestring}/fo/properties/foenums_${ignore_this}"/>
     <style in="${encodings.xml}" style="${charlist.xsl}"
-        out="${build.gensrc}/${replacestring}/render/pdf/CodePointMapping.java"/>
+        out="${build.gensrc}/${replacestring}/fonts//CodePointMapping.java"/>
     <!--
     <style basedir="src/codegen" includes="Helvetica*.xml,Times*.xml,Courier*.xml"
         style="${fontfile.xsl}"
-        destdir="${build.gensrc}/${replacestring}/render/pdf/fonts" extension=".java">
+        destdir="${build.gensrc}/${replacestring}/fonts/base14" extension=".java">
         <param name="encoding" expression="${textfontencoding}"/>
     </style>
     -->
     <style in="${Courier.xml}" style="${fontfile.xsl}"
-        destdir="${build.gensrc}/${replacestring}/render/pdf/fonts"
-        out="${build.gensrc}/${replacestring}/render/pdf/fonts/Courier.java">
+        destdir="${build.gensrc}/${replacestring}/fonts/base14"
+        out="${build.gensrc}/${replacestring}/fonts/base14/Courier.java">
       <param name="encoding" expression="${textfontencoding}"/>
     </style>
     <style in="${Courier-Oblique.xml}" style="${fontfile.xsl}"
-        destdir="${build.gensrc}/${replacestring}/render/pdf/fonts"
-        out="${build.gensrc}/${replacestring}/render/pdf/fonts/CourierOblique.java">
+        destdir="${build.gensrc}/${replacestring}/fonts/base14"
+        out="${build.gensrc}/${replacestring}/fonts/base14/CourierOblique.java">
       <param name="encoding" expression="${textfontencoding}"/>
     </style>
     <style in="${Courier-Bold.xml}" style="${fontfile.xsl}"
-        destdir="${build.gensrc}/${replacestring}/render/pdf/fonts"
-        out="${build.gensrc}/${replacestring}/render/pdf/fonts/CourierBold.java">
+        destdir="${build.gensrc}/${replacestring}/fonts/base14"
+        out="${build.gensrc}/${replacestring}/fonts/base14/CourierBold.java">
       <param name="encoding" expression="${textfontencoding}"/>
     </style>
     <style in="${Courier-BoldOblique.xml}" style="${fontfile.xsl}"
-        destdir="${build.gensrc}/${replacestring}/render/pdf/fonts"
-        out="${build.gensrc}/${replacestring}/render/pdf/fonts/CourierBoldOblique.java">
+        destdir="${build.gensrc}/${replacestring}/fonts/base14"
+        out="${build.gensrc}/${replacestring}/fonts/base14/CourierBoldOblique.java">
       <param name="encoding" expression="${textfontencoding}"/>
     </style>
     <style in="${Helvetica.xml}" style="${fontfile.xsl}"
-        destdir="${build.gensrc}/${replacestring}/render/pdf/fonts"
-        out="${build.gensrc}/${replacestring}/render/pdf/fonts/Helvetica.java">
+        destdir="${build.gensrc}/${replacestring}/fonts/base14"
+        out="${build.gensrc}/${replacestring}/fonts/base14/Helvetica.java">
       <param name="encoding" expression="${textfontencoding}"/>
     </style>
     <style in="${Helvetica-Bold.xml}" style="${fontfile.xsl}"
-        destdir="${build.gensrc}/${replacestring}/render/pdf/fonts"
-        out="${build.gensrc}/${replacestring}/render/pdf/fonts/HelveticaBold.java">
+        destdir="${build.gensrc}/${replacestring}/fonts/base14"
+        out="${build.gensrc}/${replacestring}/fonts/base14/HelveticaBold.java">
       <param name="encoding" expression="${textfontencoding}"/>
     </style>
     <style in="${Helvetica-Oblique.xml}" style="${fontfile.xsl}"
-        destdir="${build.gensrc}/${replacestring}/render/pdf/fonts"
-        out="${build.gensrc}/${replacestring}/render/pdf/fonts/HelveticaOblique.java">
+        destdir="${build.gensrc}/${replacestring}/fonts/base14"
+        out="${build.gensrc}/${replacestring}/fonts/base14/HelveticaOblique.java">
       <param name="encoding" expression="${textfontencoding}"/>
     </style>
     <style in="${Helvetica-BoldOblique.xml}" style="${fontfile.xsl}"
-        destdir="${build.gensrc}/${replacestring}/render/pdf/fonts"
-        out="${build.gensrc}/${replacestring}/render/pdf/fonts/HelveticaBoldOblique.java">
+        destdir="${build.gensrc}/${replacestring}/fonts/base14"
+        out="${build.gensrc}/${replacestring}/fonts/base14/HelveticaBoldOblique.java">
       <param name="encoding" expression="${textfontencoding}"/>
     </style>
     <style in="${Times-Roman.xml}" style="${fontfile.xsl}"
-        destdir="${build.gensrc}/${replacestring}/render/pdf/fonts"
-        out="${build.gensrc}/${replacestring}/render/pdf/fonts/TimesRoman.java">
+        destdir="${build.gensrc}/${replacestring}/fonts/base14"
+        out="${build.gensrc}/${replacestring}/fonts/base14/TimesRoman.java">
       <param name="encoding" expression="${textfontencoding}"/>
     </style>
     <style in="${Times-Italic.xml}" style="${fontfile.xsl}"
-        destdir="${build.gensrc}/${replacestring}/render/pdf/fonts"
-        out="${build.gensrc}/${replacestring}/render/pdf/fonts/TimesItalic.java">
+        destdir="${build.gensrc}/${replacestring}/fonts/base14"
+        out="${build.gensrc}/${replacestring}/fonts/base14/TimesItalic.java">
       <param name="encoding" expression="${textfontencoding}"/>
     </style>
     <style in="${Times-Bold.xml}" style="${fontfile.xsl}"
-        destdir="${build.gensrc}/${replacestring}/render/pdf/fonts"
-        out="${build.gensrc}/${replacestring}/render/pdf/fonts/TimesBold.java">
+        out="${build.gensrc}/${replacestring}/fonts/base14/TimesBold.java">
       <param name="encoding" expression="${textfontencoding}"/>
     </style>
     <style in="${Times-BoldItalic.xml}" style="${fontfile.xsl}"
-        destdir="${build.gensrc}/${replacestring}/render/pdf/fonts"
-        out="${build.gensrc}/${replacestring}/render/pdf/fonts/TimesBoldItalic.java">
+        out="${build.gensrc}/${replacestring}/fonts/base14/TimesBoldItalic.java">
       <param name="encoding" expression="${textfontencoding}"/>
     </style>
     <style in="${Symbol.xml}" style="${fontfile.xsl}"
-        destdir="${build.gensrc}/${replacestring}/render/pdf/fonts"
-        out="${build.gensrc}/${replacestring}/render/pdf/fonts/Symbol.java"/>
+        out="${build.gensrc}/${replacestring}/fonts/base14/Symbol.java"/>
     <style in="${ZapfDingbats.xml}" style="${fontfile.xsl}"
-        destdir="${build.gensrc}/${replacestring}/render/pdf/fonts"
-        out="${build.gensrc}/${replacestring}/render/pdf/fonts/ZapfDingbats.java"/>
-
-    <style
-        in="${Symbol.xml}" style="${fontfile.xsl}"
-        out="${build.gensrc}/${replacestring}/render/pdf/fonts/Symbol.java"/>
-    <style
-        in="${ZapfDingbats.xml}" style="${fontfile.xsl}"
-        out="${build.gensrc}/${replacestring}/render/pdf/fonts/ZapfDingbats.java"/>
+        out="${build.gensrc}/${replacestring}/fonts/base14/ZapfDingbats.java"/>
 
     <!-- prepare JDK dependant files -->
     <copy todir="${build.gensrc}" filtering="on">
