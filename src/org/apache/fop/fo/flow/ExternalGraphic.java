@@ -45,11 +45,14 @@ public class ExternalGraphic extends FObj {
     }
 
     public void addLayoutManager(List list) {
-        LeafNodeLayoutManager lm = new LeafNodeLayoutManager(this);
-        lm.setCurrentArea(getInlineArea());
-        lm.setAlignment(properties.get("vertical-align").getEnum());
-        lm.setLead(viewHeight);
-        list.add(lm);
+        InlineArea area = getInlineArea();
+        if(area != null) {
+            LeafNodeLayoutManager lm = new LeafNodeLayoutManager(this);
+            lm.setCurrentArea(area);
+            lm.setAlignment(properties.get("vertical-align").getEnum());
+            lm.setLead(viewHeight);
+            list.add(lm);
+        }
     }
 
     protected InlineArea getInlineArea() {

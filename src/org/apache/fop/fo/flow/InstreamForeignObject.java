@@ -54,17 +54,20 @@ public class InstreamForeignObject extends FObj {
     }
 
     public void addLayoutManager(List list) {
-        LeafNodeLayoutManager lm = new LeafNodeLayoutManager(this);
-        lm.setCurrentArea(getInlineArea());
-        lm.setAlignment(properties.get("vertical-align").getEnum());
-        lm.setLead(areaCurrent.getHeight());
-        list.add(lm);
+        areaCurrent = getInlineArea();
+        if(areaCurrent != null) {
+            LeafNodeLayoutManager lm = new LeafNodeLayoutManager(this);
+            lm.setCurrentArea(areaCurrent);
+            lm.setAlignment(properties.get("vertical-align").getEnum());
+            lm.setLead(areaCurrent.getHeight());
+            list.add(lm);
+        }
     }
 
     /**
      * Get the inline area created by this element.
      */
-    protected InlineArea getInlineArea() {
+    protected Viewport getInlineArea() {
         if (children == null) {
             return areaCurrent;
         }
