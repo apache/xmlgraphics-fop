@@ -51,7 +51,7 @@ public class FOTree extends Tree implements Runnable {
      * The buffer from which the <tt>XMLEvent</tt>s from the parser will
      * be read.  <tt>protected</tt> so that FONode can access it.
      */
-    SyncedFoXmlEventsBuffer xmlevents;
+    protected SyncedFoXmlEventsBuffer xmlevents;
     private Thread parserThread;
     private boolean errorDump;
 
@@ -60,7 +60,6 @@ public class FOTree extends Tree implements Runnable {
      * builder.
      */
     protected PropertyParser exprParser;
-
 
     /**
      * @param xmlevents the buffer from which <tt>XMLEvent</tt>s from the
@@ -105,6 +104,15 @@ public class FOTree extends Tree implements Runnable {
      */
     public void setParserThread(Thread parserThread) {
         this.parserThread = parserThread;
+    }
+
+    /**
+     * Get the <i>xmlevents</i> buffer through which descendents can access
+     * parser events.
+     * @return <i>xmlevents</i>.
+     */
+    public SyncedFoXmlEventsBuffer getXmlevents() {
+        return xmlevents;
     }
 
     /**
