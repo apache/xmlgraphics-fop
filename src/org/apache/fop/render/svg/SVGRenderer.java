@@ -10,7 +10,6 @@ package org.apache.fop.render.svg;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.area.*;
 import org.apache.fop.area.inline.*;
-import org.apache.fop.datatypes.IDReferences;
 import org.apache.fop.datatypes.ColorType;
 import org.apache.fop.image.*;
 import org.apache.fop.svg.SVGUtilities;
@@ -83,8 +82,6 @@ public class SVGRenderer extends AbstractRenderer implements XMLHandler {
     protected HashMap fontNames = new HashMap();
     protected HashMap fontStyles = new HashMap();
     protected Color saveColor = null;
-
-    protected IDReferences idReferences = null;
 
     /**
      * The current (internal) font name

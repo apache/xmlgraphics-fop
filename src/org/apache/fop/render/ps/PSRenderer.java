@@ -97,8 +97,6 @@ public class PSRenderer extends AbstractRenderer {
 
     private FontInfo fontInfo;
 
-    protected IDReferences idReferences;
-
     /**
      * set the document's producer
      *
