@@ -1,0 +1,58 @@
+<?xml version="1.0" standalone="no"?>
+
+<document>
+    <header>
+        <title>Architecture</title>
+        <subtitle>Architecture information for FOP</subtitle>
+        <authors>
+            <person name="Arved Sandstrom"/>
+        </authors>
+    </header>
+
+    <body>
+
+<s1 title="FOP Mechanics">
+
+<s2 title="Introduction">
+<p>
+The overall process is controlled by <em>org.apache.fop.apps.Driver</em>.
+This class handles the FO Tree building, renderers, output and logging.
+</p>
+<p>
+The process in general is that the FO document is sent to the tree
+builder via SAX events. This creates an FO Tree. The FO Tree is then
+handled by the layout processor which converts the FO Tree into an area
+tree. This area tree is then given to the renderer and the renderer converts
+the area tree into a stream of data containing the output document.
+</p>
+</s2>
+
+<s2 title="Formatting Object Tree">
+<p>
+The class <em>org.apache.fop.fo.FOTreeBuilder</em> is responsible for
+actually constructing the FO tree. The key SAX events used are </p>
+<p><code>startElement()</code>,</p>
+<p><code>endElement()</code> and <code>characters()</code>.</p>
+
+<p>All formatting objects derive from abstract class
+<em>org.apache.fop.fo.FONode</em>. The other FO classes inherit from 
+<em>FONode</em> as follows:</p>
+
+</s2>
+
+<s2 title="Rendering">
+<p>
+This is a separate process. The <code>render()</code> method in 
+<em>Driver</em> is invoked (say,
+by <em>CommandLine</em>) with the laid-out <em>AreaTree</em> and a 
+<em>PrintWriter</em> as arguments.
+This actually calls the <code>render()</code> method in a specific implementation of
+the <em>Renderer</em> interface, typically <em>PDFRenderer</em> or 
+<em>AWTRenderer</em>.
+</p>
+</s2>
+
+</s1>
+    </body>
+</document>
+
