@@ -145,7 +145,7 @@ public class FoRoot extends FONode {
                 // process the declarations
                 declarations = numChildren();
                 new FoDeclarations(getFOTree(), this, ev);
-                xmlevents.getEndElement(FObjectNames.DECLARATIONS);
+                xmlevents.getEndElement(ev);
             }
 
             // Process page-sequences here
@@ -157,13 +157,13 @@ public class FoRoot extends FONode {
                 throw new FOPException("No page-sequence found.");
             firstPageSeq = numChildren();
             new FoPageSequence(getFOTree(), this, ev);
-            xmlevents.getEndElement(FObjectNames.PAGE_SEQUENCE);
+            xmlevents.getEndElement(ev);
             while ((ev = xmlevents.expectStartElement
                     (FObjectNames.PAGE_SEQUENCE, XMLEvent.DISCARD_W_SPACE))
                    != null) {
                 // Loop over remaining fo:page-sequences
                 new FoPageSequence(getFOTree(), this, ev);
-                xmlevents.getEndElement(FObjectNames.PAGE_SEQUENCE);
+                xmlevents.getEndElement(ev);
             }
         } catch (NoSuchElementException e) {
             throw new FOPException

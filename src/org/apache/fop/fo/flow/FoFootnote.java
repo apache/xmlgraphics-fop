@@ -111,7 +111,7 @@ public class FoFootnote extends FONode {
                 throw new FOPException("No inline in footnote.");
             new FoInline
                     (getFOTree(), this, ev, stateFlags | FONode.MC_FOOTNOTE);
-            xmlevents.getEndElement(FObjectNames.INLINE);
+            xmlevents.getEndElement(ev);
 
             // Look for the footnote-body
             if ((ev = xmlevents.expectStartElement
@@ -120,7 +120,7 @@ public class FoFootnote extends FONode {
                 throw new FOPException("No footnote-body in footnote.");
             new FoFootnoteBody
                     (getFOTree(), this, ev, stateFlags | FONode.MC_FOOTNOTE);
-            xmlevents.getEndElement(FObjectNames.FOOTNOTE_BODY);
+            xmlevents.getEndElement(ev);
 
             /*
         } catch (NoSuchElementException e) {

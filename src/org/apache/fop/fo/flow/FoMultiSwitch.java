@@ -102,7 +102,7 @@ public class FoMultiSwitch extends FONode {
                    != null) {
                 new FoMultiCase(getFOTree(), this, ev, stateFlags);
                 numCases++;
-                xmlevents.getEndElement(FObjectNames.MULTI_CASE);
+                xmlevents.getEndElement(ev);
             }
 
             if (numCases == 0)
