@@ -29,8 +29,8 @@ import org.apache.fop.area.PageViewport;
  */
 public class BasicLinkLayoutManager extends InlineStackingLayoutManager {
 
-    private String link;
-    private boolean isExternalLink = false;
+    private String externalLink;
+    private String internalLink;
     
     /**
      * Create an fo:basic-link layout manager.
@@ -39,8 +39,8 @@ public class BasicLinkLayoutManager extends InlineStackingLayoutManager {
      */
     public BasicLinkLayoutManager(BasicLink node) {
         super(node);
-        link = node.getLink();
-        isExternalLink = node.isExternalLink();
+        externalLink = node.getExternalDestination();
+        internalLink = node.getInternalDestination();
     }
 
     protected InlineParent createArea() {
@@ -51,9 +51,10 @@ public class BasicLinkLayoutManager extends InlineStackingLayoutManager {
     
     private void setupBasicLinkArea(LayoutManager parentLM,
                                       InlineParent area) {
-         if (isExternalLink) {
-             area.addTrait(Trait.EXTERNAL_LINK, link);
+         if (externalLink != null) {
+             area.addTrait(Trait.EXTERNAL_LINK, externalLink);
          } else {
+             String link = internalLink;
              PageViewport page = parentLM.resolveRefID(link);
              if (page != null) {
                  area.addTrait(Trait.INTERNAL_LINK, page.getKey());
