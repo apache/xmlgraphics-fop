@@ -32,6 +32,7 @@ import org.apache.fop.fo.FOEventHandler;
 import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.flow.BasicLink;
 import org.apache.fop.fo.flow.Block;
+import org.apache.fop.fo.flow.Character;
 import org.apache.fop.fo.flow.ExternalGraphic;
 import org.apache.fop.fo.flow.Footnote;
 import org.apache.fop.fo.flow.FootnoteBody;
@@ -1067,6 +1068,37 @@ public class RTFHandler extends FOEventHandler {
     }
 
     /**
+     * @see org.apache.fop.fo.FOEventHandler#character(Character)
+     */
+    public void character(Character c) {
+        if (bDefer) {
+            return;
+        }
+        
+        try {
+            RtfAttributes rtfAttr= 
+                    TextAttributesConverter.convertCharacterAttributes(c);
+
+            IRtfTextrunContainer container
+                = (IRtfTextrunContainer)builderContext.getContainer(
+                    IRtfTextrunContainer.class, true, this);
+                    
+            RtfTextrun textrun = container.getTextrun();
+            
+            textrun.pushAttributes(rtfAttr);            
+            textrun.addString(c.getPropString(Constants.PR_CHARACTER));
+            textrun.popAttributes();
+         } catch (IOException ioe) {
+            // FIXME could we throw Exception in all FOEventHandler events?
+            log.error("character: " + ioe.getMessage());
+            throw new RuntimeException(ioe.getMessage());
+        } catch (Exception e) {
+            log.error("character:" + e.getMessage());
+            throw new RuntimeException(e.getMessage());
+        }
+    }
+
+    /**
      * @see org.apache.fop.fo.FOEventHandler#characters(char[], int, int)
      */
     public void characters(char[] data, int start, int length) {
@@ -1153,6 +1185,11 @@ public class RTFHandler extends FOEventHandler {
             if (bStart) {
                 FOText text = (FOText) fobj;
                 characters(text.ca, text.startIndex, text.endIndex);
+            }
+        } else if (fobj instanceof Character) {
+            if (bStart) {
+                Character c = (Character) fobj;
+                character(c);
             }
         } else if (fobj instanceof BasicLink) {
             if (bStart) {
