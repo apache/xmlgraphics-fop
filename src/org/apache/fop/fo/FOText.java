@@ -123,6 +123,7 @@ public class FOText extends FONode {
 						 whiteSpaceTreatment,
 						 ca, this.marker, length);
 	if (this.marker == -1) {
+	    this.marker = 0;
 	    return new Status(Status.OK);
 	} else if (this.marker != orig_start) {
 	    return new Status(Status.AREA_FULL_SOME);
