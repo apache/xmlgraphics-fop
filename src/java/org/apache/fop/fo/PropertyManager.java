@@ -50,9 +50,6 @@
  */
 package org.apache.fop.fo;
 
-// Java
-import java.text.MessageFormat;
-
 // FOP
 import org.apache.fop.fonts.Font;
 import org.apache.fop.fo.properties.CommonBorderAndPadding;
@@ -83,16 +80,15 @@ public class PropertyManager implements Constants {
     private CommonHyphenation hyphProps = null;
     private TextInfo textInfo = null;
 
-    private static final String[] SA_BEFORE = new String[]{"before"};
-    private static final String[] SA_AFTER = new String[]{"after"};
-    private static final String[] SA_START = new String[]{"start"};
-    private static final String[] SA_END = new String[]{"end"};
-
-    private static final MessageFormat MSGFMT_COLOR = new MessageFormat("border-{0}-color");
-    private static final MessageFormat MSGFMT_STYLE = new MessageFormat("border-{0}-style");
-    private static final MessageFormat MSGFMT_WIDTH = new MessageFormat("border-{0}-width");
-    private static final MessageFormat MSGFMT_PADDING = new MessageFormat("padding-{0}");
-
+    private static final int[] SA_BEFORE = new int[] {
+        PR_BORDER_BEFORE_COLOR, PR_BORDER_BEFORE_STYLE, PR_BORDER_BEFORE_WIDTH, PR_PADDING_BEFORE};
+    private static final int[] SA_AFTER = new int[]{
+        PR_BORDER_AFTER_COLOR, PR_BORDER_AFTER_STYLE, PR_BORDER_AFTER_WIDTH, PR_PADDING_AFTER};
+    private static final int[] SA_START = new int[]{
+        PR_BORDER_START_COLOR, PR_BORDER_START_STYLE, PR_BORDER_START_WIDTH, PR_PADDING_START};
+    private static final int[] SA_END = new int[]{
+        PR_BORDER_END_COLOR, PR_BORDER_END_STYLE, PR_BORDER_END_WIDTH, PR_PADDING_END};
+    
     private static final String NONE = "none";
 
     /**
@@ -189,18 +185,15 @@ public class PropertyManager implements Constants {
         return borderAndPadding;
     }
 
-    private void initBorderInfo(int whichSide, String[] saSide) {
+    private void initBorderInfo(int whichSide, int[] saSide) {
         borderAndPadding.setPadding(whichSide,
-                                    propertyList.get(
-                                      MSGFMT_PADDING.format(saSide)).getCondLength());
+                                    propertyList.get(saSide[3]).getCondLength());
         // If style = none, force width to 0, don't get Color (spec 7.7.20)
-        int style = propertyList.get(MSGFMT_STYLE.format(saSide)).getEnum();
+        int style = propertyList.get(saSide[1]).getEnum();
         if (style != Constants.NONE) {
             borderAndPadding.setBorder(whichSide, style,
-                                       propertyList.get(
-                                         MSGFMT_WIDTH.format(saSide)).getCondLength(),
-                                       propertyList.get(
-                                         MSGFMT_COLOR.format(saSide)).getColorType());
+                                       propertyList.get(saSide[2]).getCondLength(),
+                                       propertyList.get(saSide[0]).getColorType());
         }
     }
 
