@@ -83,16 +83,24 @@ public class LinkSet {
     private int xoffset = 0;
     private int yoffset = 0;
     
+    protected int startIndent;
+    protected int endIndent;
+
+    private Area area;
+
     // property required for alignment adjustments
     int contentRectangleWidth = 0;
 
-    public LinkSet(String externalDest) {
+    public LinkSet(String externalDest, Area area) {
 	this.externalDestination = externalDest;
+	this.area = area;
     }
     
-    public void addRect(Rectangle r) {
-	r.y = this.yoffset;
-	rects.addElement(r);
+    public void addRect(Rectangle r, LineArea lineArea) {
+	LinkedRectangle linkedRectangle =
+	    new LinkedRectangle(r, lineArea);
+	linkedRectangle.setY(this.yoffset);
+	rects.addElement(linkedRectangle);
     }
 	
     public void setYOffset(int y) {
@@ -110,9 +118,9 @@ public class LinkSet {
     public void applyAreaContainerOffsets(AreaContainer ac) {
 	Enumeration re = rects.elements();
 	while (re.hasMoreElements()) {
-	    Rectangle r = (Rectangle)re.nextElement();
-	    r.x += ac.getXPosition();
-	    r.y = ac.getYPosition() - ac.getHeight() - r.y;
+	    LinkedRectangle r = (LinkedRectangle)re.nextElement();
+	    r.setX( r.getX() + ac.getXPosition() );
+	    r.setY( ac.getYPosition() - ac.getHeight() - r.getY() );
 	}
     }
 	
@@ -122,18 +130,21 @@ public class LinkSet {
 	if (numRects == 1)
 	    return;
 	
-	Rectangle curRect = new Rectangle((Rectangle)rects.elementAt(0));
+	LinkedRectangle curRect =
+	    new LinkedRectangle((LinkedRectangle)rects.elementAt(0));
 	Vector nv = new Vector();
 		
 	for (int ri=1; ri < numRects; ri++) {
-	    Rectangle r = (Rectangle)rects.elementAt(ri);
+	    LinkedRectangle r = (LinkedRectangle)rects.elementAt(ri);
 	    
-	    if ((r.y != curRect.y) || (curRect.height != r.height)) {
-		nv.addElement(curRect);
-		curRect = new Rectangle(r);
+	    // yes, I'm really happy with comparing refs...
+	    if (r.getLineArea() == curRect.getLineArea()) {
+		curRect.setWidth( r.getX() + r.getWidth() - curRect.getX() );
 	    } else {
-		curRect.width = r.x + r.width - curRect.x;
+		nv.addElement(curRect);
+		curRect = new LinkedRectangle(r);
 	    }
+
 	    if (ri == numRects-1)
 		nv.addElement(curRect);
 	}
@@ -141,29 +152,12 @@ public class LinkSet {
 	rects = nv;
     }
 	
-    public void align(int type, int padding) {
-        int offset = 0;
-
-	switch (type) {
-	case TextAlign.START: // left
-	    offset = 0;
-	    break;
-	case TextAlign.END: // right
-	    offset = padding / 2;
-	    break;
-	case TextAlign.CENTERED: // center
-	    offset = padding;
-	    break;
-	case TextAlign.JUSTIFIED: // justify
-            // not yet implemented
-            break;
-        }
-
+    public void align() {
 	Enumeration re = rects.elements();
 	while (re.hasMoreElements()) {
-	    Rectangle r = (Rectangle)re.nextElement();
-	    r.x += offset;
-	}
+	    LinkedRectangle r = (LinkedRectangle)re.nextElement();
+	    r.setX( r.getX() + r.getLineArea().getStartIndent() );
+	}	
     }
 
     public String getDest() {
@@ -172,5 +166,17 @@ public class LinkSet {
 
     public Vector getRects() {
 	return this.rects;
+    }
+
+    public int getEndIndent() {
+	return endIndent;
+    }
+    
+    public int getStartIndent() {
+	return startIndent;
+    }
+    
+    public Area getArea() {
+	return area;
     }
 }
