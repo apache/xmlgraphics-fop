@@ -1296,5 +1296,9 @@ public class PDFRenderer implements Renderer {
 	{
             return false;
 	}
+
+        public void registerExtension(BridgeExtension be)
+        {
+        }
     }
 }

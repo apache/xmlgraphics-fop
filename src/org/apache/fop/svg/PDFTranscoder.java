@@ -474,6 +474,10 @@ public class PDFTranscoder extends XMLAbstractTranscoder {
         public boolean supportExtension(String s) {
             return false;
         }
+
+        public void registerExtension(BridgeExtension be)
+        {    
+        }    
     }
 
     protected final static Set FEATURES = new HashSet();
