@@ -88,11 +88,7 @@ public class PropertyConsts {
 
     public static final PropertyConsts pconsts;
     static {
-        try {
             pconsts = new PropertyConsts();
-        } catch (PropertyException e) {
-            throw new RuntimeException(e.getMessage());
-        }
     }
 
     public static final PropertyConsts getPropertyConsts() {
@@ -231,10 +227,10 @@ public class PropertyConsts {
      * Get the initial value <tt>PropertyValue</tt> for a given property.
      * Note that this is a <b>raw</b> value; if it is
      * an unresolved percentage that value will be returned.
-     * @param index - the property index.
+     * @param propindex - the property index.
      * @return a <tt>PropertyValue</tt> containing the initial property
      * value element for the indexed property.
-     * @exception <tt>PropertyException</tt>
+     * @exception PropertyException
      */
     public PropertyValue getInitialValue(int propindex)
             throws PropertyException
@@ -254,7 +250,7 @@ public class PropertyConsts {
      * @param value the <tt>PropertyValue</tt> being refined.
      * @return <tt>PropertyValue</tt> constructed by the property's
      * <i>refineParsing</i> method
-     * @exception <tt>PropertyException</tt>
+     * @exception PropertyException
      */
     public PropertyValue refineParsing
                         (int propindex, FONode foNode, PropertyValue value)
@@ -268,13 +264,12 @@ public class PropertyConsts {
      * @param propindex <tt>int</tt> index of the property
      * @param foNode the node whose properties are being constructed.
      * @param value the <tt>PropertyValue</tt> being refined.
-     * @param nested - <tt>boolean</tt> indicating whether this method is
+     * @param isNested  indicates whether this method is
      * called normally (false), or as part of another <i>refineParsing</i>
-     * method.
-     * @see #refineParsing(FOTree,PropertyValue)
+     * method
      * @return <tt>PropertyValue</tt> constructed by the property's
      * <i>refineParsing</i> method
-     * @exception <tt>PropertyException</tt>
+     * @exception PropertyException
      */
     public PropertyValue refineParsing
         (int propindex, FONode foNode, PropertyValue value, boolean isNested)
@@ -290,7 +285,7 @@ public class PropertyConsts {
      * @param propindex int index of the FO property
      * @param enum - the integer equivalent of the enumeration keyword.
      * @return the <tt>Numeric</tt> result.
-     * @throws PropertyException.
+     * @throws PropertyException
      */
     public Numeric getMappedNumeric(FONode foNode, int propindex, int enum)
             throws PropertyException
@@ -305,10 +300,10 @@ public class PropertyConsts {
     }
 
     /**
-     * @param propindex int index of the FO property
+     * @param property  name of the FO property
      * @return int type of inheritance for this property
      * (See constants defined in Properties.)
-     * @throws PropertyException.
+     * @throws PropertyException
      */
     public int inheritance(String property) throws PropertyException {
         return inheritance(PropNames.getPropertyIndex(property));
@@ -318,7 +313,7 @@ public class PropertyConsts {
      * @param propindex int index of the FO property
      * @return int type of inheritance for this property
      * (See constants defined in Property.)
-     * @throws PropertyException.
+     * @throws PropertyException
      */
     public int inheritance(int propindex) throws PropertyException {
         setupProperty(propindex);
@@ -328,7 +323,7 @@ public class PropertyConsts {
     /**
      * @param propindex int index of the FO property
      * @return <tt>boolean</tt> is property inherited?
-     * @throws PropertyException.
+     * @throws PropertyException
      */
     public boolean isInherited(int propindex) throws PropertyException {
         Property property = setupProperty(propindex);
@@ -338,7 +333,7 @@ public class PropertyConsts {
     /**
      * @param property String name of the FO property
      * @return <tt>boolean</tt> is property inherited?
-     * @throws PropertyException.
+     * @throws PropertyException
      */
     public boolean isInherited(String property) throws PropertyException {
         return isInherited(PropNames.getPropertyIndex(property));
@@ -347,7 +342,7 @@ public class PropertyConsts {
     /**
      * @param propindex int index of the FO property
      * @return <tt>boolean</tt> is property a shorthand?
-     * @throws PropertyException.
+     * @throws PropertyException
      */
     public boolean isShorthand(int propindex) throws PropertyException {
         Property property = setupProperty(propindex);
@@ -357,7 +352,7 @@ public class PropertyConsts {
     /**
      * @param property String name of the FO property
      * @return <tt>boolean</tt> is property a shorthand?
-     * @throws PropertyException.
+     * @throws PropertyException
      */
     public boolean isShorthand(String property) throws PropertyException {
         return isShorthand(PropNames.getPropertyIndex(property));
@@ -366,7 +361,7 @@ public class PropertyConsts {
     /**
      * @param propertyIndex int index of the FO property
      * @return <tt>boolean</tt> is property a compound?
-     * @throws PropertyException.
+     * @throws PropertyException
      */
     public boolean isCompound(int propertyIndex) throws PropertyException {
         Property property = setupProperty(propertyIndex);
@@ -376,7 +371,7 @@ public class PropertyConsts {
     /**
      * @param property String name of the FO property
      * @return <tt>boolean</tt> is property a compound?
-     * @throws PropertyException.
+     * @throws PropertyException
      */
     public boolean isCompound(String property) throws PropertyException {
         return isCompound(PropNames.getPropertyIndex(property));
@@ -385,7 +380,7 @@ public class PropertyConsts {
     /**
      * @param propertyIndex int index of the FO property
      * @return <tt>int</tt> dataTypes value.
-     * @throws PropertyException.
+     * @throws PropertyException
      */
     public int getDataTypes(int propertyIndex) throws PropertyException {
         Property property = setupProperty(propertyIndex);
@@ -395,7 +390,7 @@ public class PropertyConsts {
     /**
      * @param property String name of the FO property
      * @return <tt>int</tt> dataTypes value.
-     * @throws PropertyException.
+     * @throws PropertyException
      */
     public int getDataTypes(String property) throws PropertyException {
         return getDataTypes(PropNames.getPropertyIndex(property));
@@ -449,7 +444,7 @@ public class PropertyConsts {
      * values from the Property.
      * @param propindex - the <tt>int</tt> index.
      * @return - the <tt>Property</tt> corresponding to the index.
-     * @throws <tt>PropertyException.
+     * @throws PropertyException
      */
     public Property setupProperty(int propindex)
             throws PropertyException
@@ -517,6 +512,6 @@ public class PropertyConsts {
     }
 
 
-    private PropertyConsts () throws PropertyException {}
+    private PropertyConsts () {}
 
 }
