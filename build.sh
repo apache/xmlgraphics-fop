@@ -26,16 +26,16 @@ if $cygwin ; then
 fi
 
 LIBDIR=lib
-LOCALCLASSPATH=$JAVA_HOME/lib/tools.jar:$JAVA_HOME/lib/classes.zip
-LOCALCLASSPATH=$LOCALCLASSPATH:$LIBDIR/ant.jar
-LOCALCLASSPATH=$LOCALCLASSPATH:$LIBDIR/xml-apis.jar
-LOCALCLASSPATH=$LOCALCLASSPATH:$LIBDIR/xercesImpl-2.2.1.jar
-LOCALCLASSPATH=$LOCALCLASSPATH:$LIBDIR/xalan-2.4.1.jar
+LOCALCLASSPATH="$JAVA_HOME/lib/tools.jar:$JAVA_HOME/lib/classes.zip"
+LOCALCLASSPATH="$LOCALCLASSPATH:$LIBDIR/ant.jar"
+LOCALCLASSPATH="$LOCALCLASSPATH:$LIBDIR/xml-apis.jar"
+LOCALCLASSPATH="$LOCALCLASSPATH:$LIBDIR/xercesImpl-2.2.1.jar"
+LOCALCLASSPATH="$LOCALCLASSPATH:$LIBDIR/xalan-2.4.1.jar"
 
-ANT_HOME=$LIBDIR
+ANT_HOME="$LIBDIR"
 # antRun must be executable (can't do this in build.xml because Ant uses antRun
 # to do the chmod)
-chmod +rx $LIBDIR/bin/antRun
+chmod +rx "$LIBDIR/bin/antRun"
 
 
 # For Cygwin, switch paths to Windows format before running java
@@ -49,5 +49,5 @@ echo Building with classpath $LOCALCLASSPATH
 echo Starting Ant...
 echo
 
-$JAVA_HOME/bin/java -Dant.home=$ANT_HOME -classpath "$LOCALCLASSPATH" org.apache.tools.ant.Main $*
+"$JAVA_HOME"/bin/java -Dant.home="$ANT_HOME" -classpath "$LOCALCLASSPATH" org.apache.tools.ant.Main "$@"
 
