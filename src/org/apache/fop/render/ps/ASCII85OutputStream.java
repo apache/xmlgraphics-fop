@@ -25,10 +25,10 @@ public class ASCII85OutputStream extends FilterOutputStream
     private static final int EOL           = 0x0A; //"\n"
     private static final byte[] EOD        = {0x7E, 0x3E}; //"~>"
 
-    private static final long base85_4 = 85;
-    private static final long base85_3 = base85_4 * base85_4;
-    private static final long base85_2 = base85_3 * base85_4;
-    private static final long base85_1 = base85_2 * base85_4;
+    private static final long BASE85_4 = 85;
+    private static final long BASE85_3 = BASE85_4 * BASE85_4;
+    private static final long BASE85_2 = BASE85_3 * BASE85_4;
+    private static final long BASE85_1 = BASE85_2 * BASE85_4;
 
     private static final boolean DEBUG = false;
 
@@ -38,11 +38,13 @@ public class ASCII85OutputStream extends FilterOutputStream
     private int bw = 0;
 
 
+    /** @see java.io.FilterOutputStream **/
     public ASCII85OutputStream(OutputStream out) {
         super(out);
     }
 
 
+    /** @see java.io.FilterOutputStream **/
     public void write(int b) throws IOException {
         if (pos == 0) {
             buffer += (b << 24) & 0xff000000L;
@@ -82,10 +84,14 @@ public class ASCII85OutputStream extends FilterOutputStream
     private void checkedWrite(byte[] buf , int len) throws IOException {
         if (posinline + len > 80) {
             int firstpart = len - (posinline + len - 80);
-            if (firstpart > 0) out.write(buf, 0, firstpart);
+            if (firstpart > 0) {
+                out.write(buf, 0, firstpart);
+            }
             out.write(EOL); bw++;
             int rest = len - firstpart;
-            if (rest > 0) out.write(buf, firstpart, rest);
+            if (rest > 0) {
+                out.write(buf, firstpart, rest);
+            }
             posinline = rest;
         } else {
             out.write(buf, 0, len);
@@ -113,17 +119,18 @@ public class ASCII85OutputStream extends FilterOutputStream
             if (word < 0) {
                 word = -word;
             }
-            byte c1 = (byte)((word / base85_1) & 0xFF);
-            byte c2 = (byte)(((word - (c1 * base85_1)) / base85_2) & 0xFF);
+            byte c1 = (byte)((word / BASE85_1) & 0xFF);
+            byte c2 = (byte)(((word - (c1 * BASE85_1)) / BASE85_2) & 0xFF);
             byte c3 =
-                (byte)(((word - (c1 * base85_1) - (c2 * base85_2)) / base85_3)
-                       & 0xFF);
+                (byte)(((word - (c1 * BASE85_1) - (c2 * BASE85_2))
+                        / BASE85_3) & 0xFF);
             byte c4 =
-                (byte)(((word - (c1 * base85_1) - (c2 * base85_2) - (c3 * base85_3)) / base85_4)
-                       & 0xFF);
+                (byte)(((word - (c1 * BASE85_1) - (c2 * BASE85_2) - (c3 * BASE85_3))
+                        / BASE85_4) & 0xFF);
             byte c5 =
-                (byte)(((word - (c1 * base85_1) - (c2 * base85_2) - (c3 * base85_3) - (c4 * base85_4)))
-                       & 0xFF);
+                (byte)(((word - (c1 * BASE85_1) - (c2 * BASE85_2) - (c3 * BASE85_3)
+                        - (c4 * BASE85_4)))
+                        & 0xFF);
 
             byte[] ret = {
                 (byte)(c1 + START), (byte)(c2 + START),
@@ -144,6 +151,7 @@ public class ASCII85OutputStream extends FilterOutputStream
     }
 
 
+    /** @see org.apache.fop.render.ps.Finalizable **/
     public void finalizeStream() throws IOException {
         // now take care of the trailing few bytes.
         // with n leftover bytes, we append 0 bytes to make a full group of 4
@@ -191,6 +199,7 @@ public class ASCII85OutputStream extends FilterOutputStream
     }
 
 
+    /** @see java.io.FilterOutputStream **/
     public void close() throws IOException {
         finalizeStream();
         super.close();

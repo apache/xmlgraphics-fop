@@ -24,7 +24,7 @@ public interface Finalizable {
      *
      * @exception java.io.IOException  In case of an IO problem
      */
-    public void finalizeStream()
+    void finalizeStream()
         throws java.io.IOException;
 
 }

@@ -16,32 +16,39 @@ import java.io.IOException;
  * @author <a href="mailto:jeremias.maerki@outline.ch">Jeremias Maerki</a>
  * @version $Id$
  */
-public class ASCIIHexOutputStream extends FilterOutputStream {
+public class ASCIIHexOutputStream extends FilterOutputStream
+        implements Finalizable {
 
     private static final int EOL   = 0x0A; //"\n"
     private static final int EOD   = 0x3E; //">"
     private static final int ZERO  = 0x30; //"0"
     private static final int NINE  = 0x39; //"9"
     private static final int A     = 0x41; //"A"
-    private static final int ADIFF = A - NINE -1;
+    private static final int ADIFF = A - NINE - 1;
 
     private int posinline = 0;
 
 
+    /** @see java.io.FilterOutputStream **/
     public ASCIIHexOutputStream(OutputStream out) {
         super(out);
     }
 
 
+    /** @see java.io.FilterOutputStream **/
     public void write(int b) throws IOException {
         b &= 0xFF;
 
         int digit1 = ((b & 0xF0) >> 4) + ZERO;
-        if (digit1 > NINE) digit1 += ADIFF;
+        if (digit1 > NINE) {
+            digit1 += ADIFF;
+        }
         out.write(digit1);
 
         int digit2 = (b & 0x0F) + ZERO;
-        if (digit2 > NINE) digit2 += ADIFF;
+        if (digit2 > NINE) {
+            digit2 += ADIFF;
+        }
         out.write(digit2);
 
         posinline++;
@@ -58,6 +65,7 @@ public class ASCIIHexOutputStream extends FilterOutputStream {
     }
 
 
+    /** @see org.apache.fop.render.ps.Finalizable **/
     public void finalizeStream() throws IOException {
         checkLineWrap();
         //Write closing character ">"
@@ -65,11 +73,12 @@ public class ASCIIHexOutputStream extends FilterOutputStream {
 
         flush();
         if (out instanceof Finalizable) {
-            ((Finalizable)out).finalizeStream();
+            ((Finalizable) out).finalizeStream();
         }
     }
 
 
+    /** @see java.io.FilterOutputStream **/
     public void close() throws IOException {
         finalizeStream();
         super.close();
