@@ -82,8 +82,6 @@ public class FOTreeBuilder extends DefaultHandler {
      * class that builds a property list for each formatting object
      */
     protected Hashtable propertylistTable = new Hashtable();
-//    protected PropertyListBuilder propertyListBuilder = new
-//	PropertyListBuilder(); 
 	
     /**
      * current formatting object being handled
@@ -226,7 +224,6 @@ public class FOTreeBuilder extends DefaultHandler {
     public void startElement(String uri,
     	String localName, String rawName, Attributes attlist)
 	throws SAXException { 
-
 	/* the formatting object started */
 	FObj fobj;
 
@@ -251,7 +248,7 @@ public class FOTreeBuilder extends DefaultHandler {
 	String fullName = mapName(rawName);
 
 	fobjMaker = (FObj.Maker) fobjTable.get(fullName);
-	PropertyListBuilder plBuilder = (PropertyListBuilder)this.propertylistTable.get(uri);
+    PropertyListBuilder currentListBuilder = (PropertyListBuilder)this.propertylistTable.get(uri);
 
 	if (fobjMaker == null) {
 	    if (!this.unknownFOs.containsKey(fullName)) {
@@ -263,8 +260,11 @@ public class FOTreeBuilder extends DefaultHandler {
 	}
 	
 	try {
-		PropertyList list = plBuilder.makeList(fullName, attlist,  
-		     (currentFObj == null) ? null : currentFObj.properties);
+		PropertyList list = null;
+		if(currentListBuilder != null) {
+			list = currentListBuilder.makeList(fullName, attlist,  
+			     (currentFObj == null) ? null : currentFObj.properties);
+		}
 	    fobj = fobjMaker.make(currentFObj, list);
 	} catch (FOPException e) {
 		throw new SAXException(e);
