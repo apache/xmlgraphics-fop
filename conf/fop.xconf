@@ -1,5 +1,16 @@
 <?xml version="1.0"?>
 
+<!--
+
+This is an example configuration file for FOP.
+This file contains the same settings as the default values
+and will have no effect if used unchanged.
+
+Relative config url's will be resolved relative to
+the location of this file.
+
+-->
+
 <!-- NOTE: This is the version of the configuration -->
 <fop version="1.0">
 
@@ -38,6 +49,16 @@
 
       for the font triplet specified by:
       <font-triplet name="Arial" style="normal" weight="bold"/>
+
+      If you do not want to embed the font in the pdf document
+      then do not include the "embed-url" attribute.
+      The font will be needed where the document is viewed
+      for it to be displayed properly.
+
+      possible styles: normal | italic | oblique | backslant
+      possible weights: normal | bold | 100 | 200 | 300 | 400
+                        | 500 | 600 | 700 | 800 | 900
+      (normal = 400, bold = 700)
      -->
 
 <!--
