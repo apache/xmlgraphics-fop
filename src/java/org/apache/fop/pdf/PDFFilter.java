@@ -111,6 +111,15 @@ public abstract class PDFFilter {
     public abstract String getName();
 
     /**
+     * Returns true if the filter is an ASCII filter that isn't necessary
+     * when encryption is active.
+     * @return boolean True if this filter is an ASCII filter
+     */
+    public boolean isASCIIFilter() {
+        return false;
+    }
+
+    /**
      * return a parameter dictionary for this filter, or null
      *
      * @return the decode params for the filter
@@ -126,5 +135,13 @@ public abstract class PDFFilter {
      * @throws IOException if there is an error reading or writing the data
      */
     public abstract void encode(InputStream in, OutputStream out, int length) throws IOException;
+
+    /**
+     * Applies a filter to an OutputStream.
+     * @param out contents to be filtered
+     * @return OutputStream filtered contents
+     * @throws IOException In case of an I/O problem
+     */
+    public abstract OutputStream applyFilter(OutputStream out) throws IOException;
 
 }

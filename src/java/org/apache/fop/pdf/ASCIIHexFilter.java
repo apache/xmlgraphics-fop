@@ -56,6 +56,8 @@ import java.io.Writer;
 import java.io.OutputStreamWriter;
 import java.io.IOException;
 
+import org.apache.fop.render.ps.ASCIIHexOutputStream;
+
 /**
  * ASCII Hex filter for PDF streams.
  * This filter converts a pdf stream to ASCII hex data.
@@ -72,6 +74,13 @@ public class ASCIIHexFilter extends PDFFilter {
         return "/ASCIIHexDecode";
     }
 
+    /**
+     * @see org.apache.fop.pdf.PDFFilter#isASCIIFilter()
+     */
+    public boolean isASCIIFilter() {
+        return true;
+    }
+    
     /**
      * Get the decode params.
      *
@@ -101,6 +110,13 @@ public class ASCIIHexFilter extends PDFFilter {
         }
         writer.write(ASCIIHEX_EOD);
         writer.close();
+    }
+
+    /**
+     * @see org.apache.fop.pdf.PDFFilter#applyFilter(OutputStream)
+     */
+    public OutputStream applyFilter(OutputStream out) throws IOException {
+        return new ASCIIHexOutputStream(out);
     }
 
 }
