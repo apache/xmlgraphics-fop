@@ -126,7 +126,7 @@ public class Fop extends Task {
     }
 
     /**
-     * Set whether to include files (external-grpahics, instream-foreign-object)
+     * Set whether to include files (external-graphics, instream-foreign-object)
      * from a path relative to the .fo file (true) or the working directory (false, default)
      * only useful for filesets
      *
@@ -243,7 +243,7 @@ public class Fop extends Task {
     }
 
     /**
-     * Sets the base directory; currently ignored.
+     * Sets the base directory for single FO file (non-fileset) usage
      * @param baseDir File to use as a working directory
      */
     public void setBasedir(File baseDir) {
