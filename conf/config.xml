@@ -27,12 +27,15 @@
     <key>dumpConfiguration</key>
     <value>false</value>
   </entry>
-  <!--  -->
+  <!-- N.B. User config file cannot be specified here, because
+  all user configuration is done before the system configuration is attempted.
+  Any values already set by user configuration pre-empt system configuration
+  values.
   <entry>
     <key>userConfigFileName</key>
     <value>userconfig.xml</value>
   </entry>
-
+-->
   <!-- stream-filter-list provides the default filters that are applied to all
   stream objects within the PDF file. These are normally used for 
   compression -->
