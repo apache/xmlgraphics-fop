@@ -127,7 +127,7 @@ public class FObjects {
      * the FlowObjects defined in this file.
      */
     private final Constructor[] foConstructors
-                        = new Constructor[FObjectNames.foLocalNames.length];
+                        = new Constructor[FObjectNames.foLocalNamesLength];
 
     /**
      * A HashMap whose elements are an integer index value keyed by an
@@ -151,16 +151,25 @@ public class FObjects {
         int namei = 0;	// Index of localName in FObjectNames.foLocalNames
         int pkgi = 1;	// Index of package suffix in foLocalNames
 
-        foClassNames    = new String[FObjectNames.foLocalNames.length];
-        foPkgClassNames = new String[FObjectNames.foLocalNames.length];
-        foToIndex       = new HashMap(FObjectNames.foLocalNames.length);
-        foClassToIndex  = new HashMap(FObjectNames.foLocalNames.length);
+        foClassNames    = new String[FObjectNames.foLocalNamesLength];
+        foPkgClassNames = new String[FObjectNames.foLocalNamesLength];
+        foToIndex       = new HashMap(
+                (int)(FObjectNames.foLocalNamesLength / 0.75) + 1);
+        foClassToIndex  = new HashMap(
+                (int)(FObjectNames.foLocalNamesLength / 0.75) + 1);
 
-        for (int i = 1;i < FObjectNames.foLocalNames.length; i++) {
+        for (int i = 1; i < FObjectNames.foLocalNamesLength; i++) {
             String cname = foPrefix;
+            String foName;
+            String pkgname;
+            try {
+                foName = FObjectNames.getFOName(i);
+                pkgname = FObjectNames.getFOPkg(i);
+            } catch (FOPException fex) {
+                throw new RuntimeException(fex.getMessage());
+            }
             StringTokenizer stoke =
-                    new StringTokenizer(FObjectNames.foLocalNames[i][namei],
-                                        "-");
+                    new StringTokenizer(foName, "-");
             while (stoke.hasMoreTokens()) {
                 String token = stoke.nextToken();
                 String pname = new Character(
@@ -171,20 +180,18 @@ public class FObjects {
             foClassNames[i] = cname;
 
             // Set up the array of class package names
-            String pkgname = prefix + FObjectNames.foLocalNames[i][pkgi];
-
             // Set up the array of Class objects, indexed by the fo
             // constants.
-            String name = pkgname + "." + cname;
+            String name = prefix + pkgname + "." + cname;
             foPkgClassNames[i] = name;
 
             // Set up the foToIndex Hashmap with the name of the
             // flow object as a key, and the integer index as a value
-            if (foToIndex.put((Object) FObjectNames.foLocalNames[i][namei],
+            if (foToIndex.put((Object) foName,
                                         Ints.consts.get(i)) != null) {
                 throw new RuntimeException(
                     "Duplicate values in propertyToIndex for key " +
-                    FObjectNames.foLocalNames[i][namei]);
+                    foName);
             }
 
             // Set up the foClassToIndex Hashmap with the name of the
@@ -210,7 +217,7 @@ public class FObjects {
         };
         int foType = event.getFoType();
 
-        if (foType <= 0 || foType > FObjectNames.foLocalNames.length)
+        if (foType <= 0 || foType > FObjectNames.foLocalNamesLength)
             throw new FOPException
                     ("Illegal FO type value: " + foType);
         try {
