@@ -77,6 +77,9 @@ public class PageSequence extends FObj {
     // fo:flow per fo:page-sequence only.
     private boolean isFlowSet = false;
 
+    // for structure handler
+    private boolean sequenceStarted = false;
+
     //
     // state attributes used during layout
     //
@@ -128,7 +131,7 @@ public class PageSequence extends FObj {
     /**
      * The fo:title object for this page-sequence.
      */
-    private FObj titleFO;
+    private Title titleFO;
 
 
     public PageSequence(FONode parent) {
@@ -194,8 +197,6 @@ public class PageSequence extends FObj {
         // this.properties.get("country");
         // this.properties.get("language");
         setupID();
-
-        structHandler.startPageSequence(this, layoutMasterSet);
     }
 
 
@@ -232,8 +233,11 @@ public class PageSequence extends FObj {
 	    if (childName.equals("fo:title")) {
 		if (this._flowMap.size()>0) {
 		    log.warn("fo:title should be first in page-sequence");
+		} else {
+		    this.titleFO = (Title)child;
+		    structHandler.startPageSequence(this, titleFO, layoutMasterSet);
+		    sequenceStarted = true;
 		}
-		this.titleFO = (FObj)child;
 	    }
 	    else if (childName.equals("fo:flow")) {
 		if (this.mainFlow != null) {
@@ -241,6 +245,10 @@ public class PageSequence extends FObj {
 			      + " per fo:page-sequence");
 		}
 		else {
+		    if(!sequenceStarted) {
+                        structHandler.startPageSequence(this, titleFO, layoutMasterSet);
+                        sequenceStarted = true;
+                    }
 		    this.mainFlow = (Flow)child;
 		    addFlow(mainFlow);
 		    super.addChild(child); // For getChildren
@@ -252,6 +260,10 @@ public class PageSequence extends FObj {
 					   " must precede fo:flow; ignoring");
 		}
 		else {
+                    if(!sequenceStarted) {
+                        structHandler.startPageSequence(this, titleFO, layoutMasterSet);
+                        sequenceStarted = true;
+                    }
 		    addFlow((Flow)child);
 		}
 	    }
@@ -309,8 +321,6 @@ public class PageSequence extends FObj {
 	
 	// If no main flow, nothing to layout!
 	if (this.mainFlow == null) return;
-
-	areaTree.startPageSequence(null);
 
 	// Initialize if already used?
         this.layoutMasterSet.resetPageMasters();

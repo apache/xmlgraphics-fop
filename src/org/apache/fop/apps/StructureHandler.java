@@ -54,7 +54,7 @@ public class StructureHandler {
 
     }
 
-    public void startPageSequence(PageSequence pageSeq, LayoutMasterSet lms) {
+    public void startPageSequence(PageSequence pageSeq, Title seqTitle, LayoutMasterSet lms) {
 
     }
 
