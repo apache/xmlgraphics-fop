@@ -26,8 +26,7 @@ import org.xml.sax.Attributes;
 
 // Java
 import java.util.HashMap;
-import java.util.Stack;
-import java.util.Vector;
+import java.util.ArrayList;
 import java.io.IOException;
 
 /**
@@ -49,7 +48,7 @@ public class FOTreeBuilder extends DefaultHandler implements TreeBuilder {
      */
     protected HashMap fobjTable = new HashMap();
 
-    protected Vector namespaces = new Vector();
+    protected ArrayList namespaces = new ArrayList();
 
     /**
      * class that builds a property list for each formatting object
@@ -102,7 +101,7 @@ public class FOTreeBuilder extends DefaultHandler implements TreeBuilder {
      */
     public void addMapping(String namespaceURI, HashMap table) {
         this.fobjTable.put(namespaceURI, table);
-        this.namespaces.addElement(namespaceURI.intern());
+        this.namespaces.add(namespaceURI.intern());
     }
 
     /**

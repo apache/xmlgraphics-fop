@@ -7,22 +7,19 @@
 
 package org.apache.fop.apps;
 
-// java
-import java.util.Vector;
-import java.io.File;
-import java.io.FileNotFoundException;
-
 // FOP
-import org.apache.fop.configuration.Configuration;
+
 import org.apache.fop.apps.FOPException;
+import org.apache.fop.configuration.Configuration;
 import org.apache.fop.messaging.MessageHandler;
 import org.apache.fop.render.txt.TXTRenderer;
-
 // Avalon
 import org.apache.avalon.framework.logger.ConsoleLogger;
 import org.apache.avalon.framework.logger.Logger;
 
-import java.io.*;
+// java
+import java.io.File;
+import java.io.FileNotFoundException;
 
 /**
  * Options parses the commandline arguments

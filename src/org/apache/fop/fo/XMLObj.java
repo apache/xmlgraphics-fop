@@ -18,7 +18,8 @@ import org.apache.fop.datatypes.IDReferences;
 import org.w3c.dom.*;
 import org.xml.sax.Attributes;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
 
 /**
  * Since SVG objects are not layed out then this class checks
@@ -44,7 +45,7 @@ public abstract class XMLObj extends FObj {
 
     public abstract String getNameSpace();
 
-    protected static Hashtable ns = new Hashtable();
+    protected static HashMap ns = new HashMap();
 
     public void addGraphic(Document doc, Element parent) {
         this.doc = doc;
@@ -162,11 +163,11 @@ public abstract class XMLObj extends FObj {
 
     public void setLinkSet(LinkSet linkSet) {}
 
-    public Vector getMarkerSnapshot(Vector snapshot) {
+    public ArrayList getMarkerSnapshot(ArrayList snapshot) {
         return snapshot;
     }
 
-    public void rollback(Vector snapshot) {}
+    public void rollback(ArrayList snapshot) {}
 
     protected void setWritingMode() {}
 }

@@ -261,7 +261,7 @@ public class TableCell extends FObj {
 
         int numChildren = this.children.size();
         for (int i = this.marker; bDone==false && i < numChildren; i++) {
-            FObj fo = (FObj)children.elementAt(i);
+            FObj fo = (FObj)children.get(i);
             fo.setIsInTableCell();
             fo.forceWidth(width);    // ???
 

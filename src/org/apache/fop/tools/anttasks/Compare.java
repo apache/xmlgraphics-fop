@@ -7,12 +7,14 @@
 
 package org.apache.fop.tools.anttasks;
 
-
-import java.util.*;
-import java.io.*;
 import org.apache.tools.ant.Task;
 import org.apache.tools.ant.BuildException;
+
+import java.io.*;
 import java.text.DateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.StringTokenizer;
 
 /**
  * This class is an extension of Ant, a script utility from
@@ -48,12 +50,12 @@ public class Compare {
 
     public void setFilenames(String filenames) {
         StringTokenizer tokens = new StringTokenizer(filenames, ",");
-        Vector filenameListTmp = new Vector(20);
+        ArrayList filenameListTmp = new ArrayList(20);
         while (tokens.hasMoreTokens()) {
-            filenameListTmp.addElement(tokens.nextToken());
+            filenameListTmp.add(tokens.nextToken());
         }
         filenameList = new String[filenameListTmp.size()];
-        filenameListTmp.copyInto((String[])filenameList);
+        filenameList = (String[])filenameListTmp.toArray(filenameList);
     }
 
     private boolean compareBytes(File oldFile, File newFile) {

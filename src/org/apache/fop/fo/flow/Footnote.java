@@ -15,8 +15,7 @@ import org.apache.fop.fo.properties.*;
 import org.apache.fop.messaging.*;
 
 // Java
-import java.util.Enumeration;
-import java.util.Vector;
+import java.util.ArrayList;
 
 public class Footnote extends FObj {
 
@@ -49,7 +48,7 @@ public class Footnote extends FObj {
         }
         int numChildren = this.children.size();
         for (int i = this.marker; i < numChildren; i++) {
-            FONode fo = (FONode)children.elementAt(i);
+            FONode fo = (FONode)children.get(i);
             if (fo instanceof Inline) {
                 inline = fo;
                 Status status = fo.layout(area);
@@ -113,9 +112,9 @@ public class Footnote extends FObj {
 
     protected static void decreaseMaxHeight(Area ar, int change) {
         ar.setMaxHeight(ar.getMaxHeight() - change);
-        Vector childs = ar.getChildren();
-        for (Enumeration en = childs.elements(); en.hasMoreElements(); ) {
-            Object obj = en.nextElement();
+        ArrayList children = ar.getChildren();
+        for (int i = 0; i < children.size(); i++) {
+            Object obj = children.get(i);
             if (obj instanceof Area) {
                 Area childArea = (Area)obj;
                 decreaseMaxHeight(childArea, change);

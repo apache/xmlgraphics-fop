@@ -15,9 +15,6 @@ import org.apache.fop.layout.BlockArea;
 import org.apache.fop.layout.FontState;
 import org.apache.fop.apps.FOPException;
 
-// Java
-import java.util.Enumeration;
-
 public class ListItem extends FObj {
 
     public static class Maker extends FObj.Maker {
@@ -128,8 +125,8 @@ public class ListItem extends FObj {
         if (numChildren != 2) {
             throw new FOPException("list-item must have exactly two children");
         }
-        ListItemLabel label = (ListItemLabel)children.elementAt(0);
-        ListItemBody body = (ListItemBody)children.elementAt(1);
+        ListItemLabel label = (ListItemLabel)children.get(0);
+        ListItemBody body = (ListItemBody)children.get(1);
 
         Status status;
 

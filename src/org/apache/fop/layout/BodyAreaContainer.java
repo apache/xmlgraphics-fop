@@ -17,8 +17,7 @@ import org.apache.fop.fo.flow.Block;
 import org.apache.fop.fo.flow.BlockContainer;
 
 // Java
-import java.util.Vector;
-import java.util.Enumeration;
+import java.util.ArrayList;
 
 public class BodyAreaContainer extends Area {
 
@@ -165,8 +164,8 @@ public class BodyAreaContainer extends Area {
                 return addSpanArea(columnCount);
         }
 
-        Vector spanAreas = this.mainReferenceArea.getChildren();
-        SpanArea spanArea = (SpanArea)spanAreas.elementAt(spanAreas.size()
+        ArrayList spanAreas = this.mainReferenceArea.getChildren();
+        SpanArea spanArea = (SpanArea)spanAreas.get(spanAreas.size()
                 - 1);
 
         if ((span == Span.ALL) && (spanArea.getColumnCount() == 1)) {
@@ -220,8 +219,8 @@ public class BodyAreaContainer extends Area {
         if (this.mainReferenceArea.getChildren().isEmpty())
             return false;
 
-        Vector spanAreas = this.mainReferenceArea.getChildren();
-        SpanArea spanArea = (SpanArea)spanAreas.elementAt(spanAreas.size()
+        ArrayList spanAreas = this.mainReferenceArea.getChildren();
+        SpanArea spanArea = (SpanArea)spanAreas.get(spanAreas.size()
                 - 1);
 
         if (spanArea.isBalanced())
@@ -255,9 +254,8 @@ public class BodyAreaContainer extends Area {
      * one added with the computed max height.
      */
     public void resetSpanArea() {
-        Vector spanAreas = this.mainReferenceArea.getChildren();
-        SpanArea spanArea = (SpanArea)spanAreas.elementAt(spanAreas.size()
-                - 1);
+        ArrayList spanAreas = this.mainReferenceArea.getChildren();
+        SpanArea spanArea = (SpanArea)spanAreas.get(spanAreas.size() - 1);
 
         if (!spanArea.isBalanced()) {
             // span area maintains a record of the total height of
@@ -299,9 +297,9 @@ public class BodyAreaContainer extends Area {
      */
     private void resetHeights() {
         int totalHeight = 0;
-        for (Enumeration e = this.mainReferenceArea.getChildren().elements();
-                e.hasMoreElements(); ) {
-            SpanArea spanArea = (SpanArea)e.nextElement();
+        ArrayList children = this.mainReferenceArea.getChildren();
+        for (int i = 0; i < children.size(); i++) {
+            SpanArea spanArea = (SpanArea)children.get(i);
             int spanContentHeight = spanArea.getMaxContentHeight();
             int spanMaxHeight = spanArea.getMaxHeight();
 
@@ -316,9 +314,8 @@ public class BodyAreaContainer extends Area {
      * @returns boolean Is this the last column in this span?
      */
     public boolean isLastColumn() {
-        Vector spanAreas = this.mainReferenceArea.getChildren();
-        SpanArea spanArea = (SpanArea)spanAreas.elementAt(spanAreas.size()
-                - 1);
+        ArrayList spanAreas = this.mainReferenceArea.getChildren();
+        SpanArea spanArea = (SpanArea)spanAreas.get(spanAreas.size() - 1);
         return spanArea.isLastColumn();
     }
 
@@ -332,9 +329,8 @@ public class BodyAreaContainer extends Area {
     }
 
     public AreaContainer getCurrentColumnArea() {
-        Vector spanAreas = this.mainReferenceArea.getChildren();
-        SpanArea spanArea = (SpanArea)spanAreas.elementAt(spanAreas.size()
-                - 1);
+        ArrayList spanAreas = this.mainReferenceArea.getChildren();
+        SpanArea spanArea = (SpanArea)spanAreas.get(spanAreas.size() - 1);
         return spanArea.getCurrentColumnArea();
     }
 
@@ -366,9 +362,9 @@ public class BodyAreaContainer extends Area {
             footnoteYPosition = footnoteReferenceArea.getYPosition();
             footnoteReferenceArea.setMaxHeight(footnoteReferenceArea.getHeight());
 
-            Vector childs = footnoteReferenceArea.getChildren();
-            for (Enumeration en = childs.elements(); en.hasMoreElements(); ) {
-                Object obj = en.nextElement();
+            ArrayList children = footnoteReferenceArea.getChildren();
+            for (int i = 0; i < children.size(); i++) {
+                Object obj = children.get(i);
                 if (obj instanceof Area) {
                     Area childArea = (Area)obj;
                     footnoteReferenceArea.removeChild(childArea);
@@ -381,9 +377,9 @@ public class BodyAreaContainer extends Area {
 
     protected static void resetMaxHeight(Area ar, int change) {
         ar.setMaxHeight(change);
-        Vector childs = ar.getChildren();
-        for (Enumeration en = childs.elements(); en.hasMoreElements(); ) {
-            Object obj = en.nextElement();
+        ArrayList childs = ar.getChildren();
+        for (int i = 0; i < childs.size(); i++) {
+            Object obj = childs.get(i);
             if (obj instanceof Area) {
                 Area childArea = (Area)obj;
                 resetMaxHeight(childArea, change);

@@ -7,7 +7,6 @@
 
 package org.apache.fop.fo;
 
-import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Iterator;
 

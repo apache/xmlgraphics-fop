@@ -7,12 +7,13 @@
 
 package org.apache.fop.fo;
 
-import java.util.Hashtable;
 import org.apache.fop.messaging.MessageHandler;
 import org.apache.fop.fo.properties.WritingMode;
 import org.apache.fop.apps.FOPException;
 
-public class PropertyList extends Hashtable {
+import java.util.HashMap;
+
+public class PropertyList extends HashMap {
 
     private byte[] wmtable = null;    // writing-mode values
     public static final int LEFT = 0;
@@ -38,7 +39,7 @@ public class PropertyList extends Hashtable {
         "inline-progression-dimension"
     };
 
-    static private final Hashtable wmtables = new Hashtable(4);
+    static private final HashMap wmtables = new HashMap(4);
     {
         wmtables.put(new Integer(WritingMode.LR_TB),    /* lr-tb */
         new byte[] {

@@ -10,13 +10,13 @@
 
 package org.apache.fop.image;
 
-// Java
-import java.util.Hashtable;
 import org.apache.fop.messaging.MessageHandler;
-import java.awt.image.*;
-import java.awt.*;
 
+// Java
+import java.awt.*;
+import java.awt.image.*;
 import java.lang.reflect.Array;
+import java.util.Hashtable;
 
 // CONSUMER CLASS
 public class FopImageConsumer implements ImageConsumer {

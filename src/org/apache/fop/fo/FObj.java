@@ -14,9 +14,8 @@ import org.apache.fop.datatypes.IDReferences;
 import org.apache.fop.fo.flow.Marker;
 
 // Java
-import java.util.Hashtable;
-import java.util.Enumeration;
-import java.util.Vector;
+import java.util.HashMap;
+import java.util.ArrayList;
 
 /**
  * base class for representation of formatting objects and their processing
@@ -37,7 +36,7 @@ public abstract class FObj extends FONode {
     protected PropertyManager propMgr;
 
     // markers
-    private Hashtable markers;
+    private HashMap markers;
 
 //    protected String name;
 
@@ -131,7 +130,7 @@ public abstract class FObj extends FONode {
         idReferences.removeID(((FObj)this).properties.get("id").getString());
         int numChildren = this.children.size();
         for (int i = 0; i < numChildren; i++) {
-            FONode child = (FONode)children.elementAt(i);
+            FONode child = (FONode)children.get(i);
             if ((child instanceof FObj)) {
                 ((FObj)child).removeID(idReferences);
             }
@@ -165,7 +164,7 @@ public abstract class FObj extends FONode {
                                    + getName());
         }
         if (markers==null) {
-            markers = new Hashtable();
+            markers = new HashMap();
             markers.put(mcname, marker);
         } else if (!markers.containsKey(mcname) ) {
             markers.put(mcname, marker);
@@ -180,12 +179,12 @@ public abstract class FObj extends FONode {
         return markers!=null;
     }
 
-    public Vector getMarkers() {
+    public ArrayList getMarkers() {
         if (markers==null) {
             log.debug("GetMarkers failed (no markers). Should not happen.");
             return null;
         } else {
-            return new Vector(markers.values());
+            return new ArrayList(markers.values());
         }
     }
 }

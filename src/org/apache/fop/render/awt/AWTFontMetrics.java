@@ -14,8 +14,6 @@ import org.apache.fop.layout.FontDescriptor;
 import org.apache.fop.layout.FontState;
 
 // Java
-import java.util.Enumeration;
-import java.util.Hashtable;
 import java.io.FileInputStream;
 import java.awt.Component;
 import java.awt.Font;
@@ -25,6 +23,7 @@ import java.awt.geom.Rectangle2D;
 import java.awt.FontMetrics;
 import java.awt.font.FontRenderContext;
 import java.awt.font.TextLayout;
+import java.util.HashMap;
 
 /**
  * This is a FontMetrics to be used  for AWT  rendering.
@@ -97,12 +96,12 @@ public class AWTFontMetrics {
     /**
      * Embed Font List.
      */
-    private Hashtable embedFontList = null;
+    private HashMap embedFontList = null;
 
     /**
      * Physical Font Cash.
      */
-    private Hashtable fontCash = null;
+    private HashMap fontCash = null;
 
     /**
      * Constructs a new Font-metrics.
@@ -256,7 +255,7 @@ public class AWTFontMetrics {
      */
     public void setEmbedFont(String family,int style,String fontPath) {
         if (embedFontList == null)
-            embedFontList = new Hashtable();
+            embedFontList = new HashMap();
         embedFontList.put(family+style,fontPath);
     }
 
@@ -274,7 +273,7 @@ public class AWTFontMetrics {
             return new Font(family, style, size);
         // lazy instanciation for fontCash.
         if (fontCash == null)
-            fontCash = new Hashtable();
+            fontCash = new HashMap();
         Font cashedFont = (Font)fontCash.get(fontPath);
         if (cashedFont == null) {
             // Create specified TrueType Font.

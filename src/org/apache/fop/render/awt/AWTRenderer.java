@@ -14,14 +14,15 @@ package org.apache.fop.render.awt;
  * Stanislav Gorkhover: Stanislav.Gorkhover@jCatalog.com
  */
 
-import org.apache.fop.layout.*;
-import org.apache.fop.layout.inline.*;
+import org.apache.fop.apps.*;
 import org.apache.fop.datatypes.*;
 import org.apache.fop.image.*;
-import org.apache.fop.svg.*;
+import org.apache.fop.layout.*;
+import org.apache.fop.layout.inline.*;
+import org.apache.fop.render.AbstractRenderer;
 import org.apache.fop.render.pdf.*;
+import org.apache.fop.svg.*;
 import org.apache.fop.viewer.*;
-import org.apache.fop.apps.*;
 
 import org.w3c.dom.svg.*;
 import org.w3c.dom.Document;
@@ -37,20 +38,18 @@ import org.apache.batik.gvt.event.*;
 
 import java.awt.*;
 import java.awt.Image;
-import java.awt.image.*;
-import java.awt.geom.*;
 import java.awt.font.*;
-import java.util.*;
-import java.net.URL;
-import java.net.MalformedURLException;
-import java.io.*;
-import java.beans.*;
-import javax.swing.*;
-import java.awt.print.*;
+import java.awt.geom.*;
+import java.awt.image.*;
 import java.awt.image.BufferedImage;
+import java.awt.print.*;
+import java.beans.*;
+import java.io.*;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.text.*;
-
-import org.apache.fop.render.AbstractRenderer;
+import java.util.*;
+import javax.swing.*;
 
 /**
   Modified by Mark Lillywhite mark-fop@inomial.com. Did lots of
@@ -68,8 +67,8 @@ public class AWTRenderer extends AbstractRenderer implements Printable, Pageable
     protected ProgressListener progressListener = null;
     protected Translator res = null;
 
-    protected Hashtable fontNames = new Hashtable();
-    protected Hashtable fontStyles = new Hashtable();
+    protected HashMap fontNames = new HashMap();
+    protected HashMap fontStyles = new HashMap();
     protected Color saveColor = null;
 
     protected IDReferences idReferences = null;
@@ -344,7 +343,7 @@ public class AWTRenderer extends AbstractRenderer implements Printable, Pageable
             return;
 
         try {
-            render((Page) pageList.elementAt(aPageNumber));
+            render((Page) pageList.get(aPageNumber));
         } catch(IOException e) {
             e.printStackTrace();
             // This exception can't occur because we are not dealing with
@@ -355,7 +354,7 @@ public class AWTRenderer extends AbstractRenderer implements Printable, Pageable
 
     public void render(Page page, OutputStream stream)
     throws IOException {
-        pageList.addElement(page);
+        pageList.add(page);
     }
 
     public void render(Page page)
@@ -859,7 +858,7 @@ public class AWTRenderer extends AbstractRenderer implements Printable, Pageable
         int oldPageNumber = pageNumber;
 
         graphics = (Graphics2D)g;
-        Page aPage = (Page)pageList.elementAt(pageIndex);
+        Page aPage = (Page)pageList.get(pageIndex);
         renderPage(aPage);
         graphics = oldGraphics;
 
@@ -875,7 +874,7 @@ public class AWTRenderer extends AbstractRenderer implements Printable, Pageable
         if (pageIndex >= pageList.size())
             return null;
 
-        Page page = (Page)pageList.elementAt(pageIndex);
+        Page page = (Page)pageList.get(pageIndex);
         PageFormat pageFormat = new PageFormat();
         Paper paper = new Paper();
 
@@ -932,7 +931,7 @@ public class AWTRenderer extends AbstractRenderer implements Printable, Pageable
      * for (int i = 0; i < transform.size(); i++) {
      * org.w3c.dom.svg.SVGTransform t =
      * (org.w3c.dom.svg.SVGTransform)
-     * transform.elementAt(i);
+     * transform.get(i);
      * SVGMatrix matrix = t.getMatrix();
      * aTransform = new AffineTransform(matrix.getA(),
      * matrix.getB(), matrix.getC(), matrix.getD(),

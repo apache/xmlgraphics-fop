@@ -190,7 +190,7 @@ public class Block extends FObjMixed {
 
         int numChildren = this.children.size();
         for (int i = this.marker; i < numChildren; i++) {
-            FONode fo = (FONode)children.elementAt(i);
+            FONode fo = (FONode)children.get(i);
             Status status;
             if ((status = fo.layout(blockArea)).isIncomplete()) {
                 this.marker = i;

@@ -7,8 +7,6 @@
 
 package org.apache.fop.fo.expr;
 
-import java.util.Vector;
-
 import org.apache.fop.fo.Property;
 import org.apache.fop.datatypes.Length;
 import org.apache.fop.datatypes.FixedLength;
@@ -17,6 +15,8 @@ import org.apache.fop.datatypes.LinearCombinationLength;
 import org.apache.fop.datatypes.MixedLength;
 import org.apache.fop.datatypes.TableColLength;
 import org.apache.fop.datatypes.PercentBase;
+
+import java.util.ArrayList;
 
 /**
  * Represents a "numeric" value as defined by the XSL FO Specification.
@@ -123,7 +123,7 @@ public class Numeric {
      */
     public Length asLength() {
         if (dim == 1) {
-	    Vector len = new Vector(3);
+	    ArrayList len = new ArrayList(3);
             if ((valType & ABS_LENGTH) != 0) {
                 len.add(new FixedLength((int)absValue));
             }
@@ -134,7 +134,7 @@ public class Numeric {
                 len.add(new TableColLength(tcolValue));
             }
 	    if (len.size() == 1) {
-		return (Length)len.elementAt(0);
+		return (Length)len.get(0);
 	    }
 	    else {
 		return new MixedLength(len);

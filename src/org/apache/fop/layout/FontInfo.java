@@ -7,21 +7,20 @@
 
 package org.apache.fop.layout;
 
-import java.util.Hashtable;
-import org.apache.fop.messaging.MessageHandler;
-import java.util.Enumeration;
-
 import org.apache.fop.apps.FOPException;
+import org.apache.fop.messaging.MessageHandler;
+
+import java.util.HashMap;
 
 public class FontInfo {
-    Hashtable usedFonts;
-    Hashtable triplets;    // look up a font-triplet to find a font-name
-    Hashtable fonts;    // look up a font-name to get a font (that implements FontMetric at least)
+    HashMap usedFonts;
+    HashMap triplets;    // look up a font-triplet to find a font-name
+    HashMap fonts;    // look up a font-name to get a font (that implements FontMetric at least)
 
     public FontInfo() {
-        this.triplets = new Hashtable();
-        this.fonts = new Hashtable();
-        this.usedFonts = new Hashtable();
+        this.triplets = new HashMap();
+        this.fonts = new HashMap();
+        this.usedFonts = new HashMap();
     }
 
     public void addFontProperties(String name, String family, String style,
@@ -98,11 +97,11 @@ public class FontInfo {
         return family + "," + style + "," + weight;
     }
 
-    public Hashtable getFonts() {
+    public HashMap getFonts() {
         return this.fonts;
     }
 
-    public Hashtable getUsedFonts() {
+    public HashMap getUsedFonts() {
         return this.usedFonts;
     }
 

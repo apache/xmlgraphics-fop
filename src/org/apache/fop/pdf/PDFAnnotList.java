@@ -9,7 +9,7 @@ package org.apache.fop.pdf;
 
 // Java
 import java.io.UnsupportedEncodingException;
-import java.util.Vector;
+import java.util.ArrayList;
 
 /**
  * class representing an object which is a list of annotations.
@@ -22,7 +22,7 @@ public class PDFAnnotList extends PDFObject {
     /**
      * the /Annot objects
      */
-    protected Vector links = new Vector();
+    protected ArrayList links = new ArrayList();
 
     /**
      * the number of /Annot objects
@@ -46,7 +46,7 @@ public class PDFAnnotList extends PDFObject {
      * @param link the PDFLink to add.
      */
     public void addLink(PDFLink link) {
-        this.links.addElement(link);
+        this.links.add(link);
         this.count++;
     }
 
@@ -68,7 +68,7 @@ public class PDFAnnotList extends PDFObject {
         StringBuffer p = new StringBuffer(this.number + " " + this.generation
                                           + " obj\n[\n");
         for (int i = 0; i < this.count; i++) {
-            p = p.append(((PDFObject)links.elementAt(i)).referencePDF()
+            p = p.append(((PDFObject)links.get(i)).referencePDF()
                          + "\n");
         }
         p = p.append("]\nendobj\n");

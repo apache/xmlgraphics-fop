@@ -16,7 +16,8 @@ import org.apache.fop.layout.BodyRegionArea;
 import org.apache.fop.layout.MarginProps;
 import org.apache.fop.apps.FOPException;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.Iterator;
 
 public class SimplePageMaster extends FObj {
 
@@ -35,7 +36,7 @@ public class SimplePageMaster extends FObj {
     /**
      * Page regions (regionClass, Region)
      */
-    private Hashtable _regions;
+    private HashMap _regions;
 
 
     LayoutMasterSet layoutMasterSet;
@@ -65,7 +66,7 @@ public class SimplePageMaster extends FObj {
                                    + "of fo:layout-master-set, not "
                                    + parent.getName());
         }
-        _regions = new Hashtable();
+        _regions = new HashMap();
 
     }
 
@@ -169,20 +170,18 @@ public class SimplePageMaster extends FObj {
         return (Region)_regions.get(regionClass);
     }
 
-    protected Hashtable getRegions() {
+    protected HashMap getRegions() {
         return _regions;
     }
 
     protected boolean regionNameExists(String regionName) {
-        for (Enumeration regenum = _regions.elements();
-                regenum.hasMoreElements(); ) {
-            Region r = (Region)regenum.nextElement();
+        for (Iterator i = _regions.values().iterator(); i.hasNext(); ) {
+            Region r = (Region)i.next();
             if (r.getRegionName().equals(regionName)) {
                 return true;
             }
         }
         return false;
-
     }
 
 }

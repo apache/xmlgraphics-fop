@@ -11,12 +11,7 @@ package org.apache.fop.fo.flow;
 import org.apache.fop.fo.*;
 import org.apache.fop.fo.properties.*;
 import org.apache.fop.datatypes.*;
-import org.apache.fop.layout.*;
 import org.apache.fop.apps.FOPException;
-
-// Java
-import java.util.Vector;
-import java.util.Enumeration;
 
 public class TableBody extends AbstractTableBody {
 

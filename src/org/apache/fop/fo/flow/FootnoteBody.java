@@ -15,9 +15,6 @@ import org.apache.fop.apps.FOPException;
 import org.apache.fop.fo.properties.*;
 import org.apache.fop.layout.*;
 
-// Java
-import java.util.Enumeration;
-
 public class FootnoteBody extends FObj {
 
     int align;
@@ -70,7 +67,7 @@ public class FootnoteBody extends FObj {
 
         int numChildren = this.children.size();
         for (int i = this.marker; i < numChildren; i++) {
-            FONode fo = (FONode)children.elementAt(i);
+            FONode fo = (FONode)children.get(i);
             Status status;
             if ((status = fo.layout(blockArea)).isIncomplete()) {
                 this.resetMarker();

@@ -26,8 +26,7 @@ import org.apache.avalon.framework.logger.Logger;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.OutputStream;
-import java.util.Enumeration;
-import java.util.Hashtable;
+import java.util.ArrayList;
 
 /**
  * Renderer that renders areas to XML for debugging purposes.
@@ -203,9 +202,9 @@ public class XMLRenderer implements Renderer {
      */
     public void renderAreaContainer(AreaContainer area) {
         writeStartTag("<AreaContainer name=\"" + area.getAreaName() + "\">");
-        Enumeration e = area.getChildren().elements();
-        while (e.hasMoreElements()) {
-            Box b = (Box)e.nextElement();
+        ArrayList children = area.getChildren();
+        for (int i = 0; i < children.size(); i++) {
+            Box b = (Box)children.get(i);
             b.render(this);
         }
         writeEndTag("</AreaContainer>");
@@ -218,9 +217,9 @@ public class XMLRenderer implements Renderer {
      */
     public void renderBodyAreaContainer(BodyAreaContainer area) {
         writeStartTag("<BodyAreaContainer>");
-        Enumeration e = area.getChildren().elements();
-        while (e.hasMoreElements()) {
-            Box b = (Box)e.nextElement();
+        ArrayList children = area.getChildren();
+        for (int i = 0; i < children.size(); i++) {
+            Box b = (Box)children.get(i);
             b.render(this);
         }
         writeEndTag("</BodyAreaContainer>");
@@ -242,9 +241,9 @@ public class XMLRenderer implements Renderer {
      */
     public void renderSpanArea(SpanArea area) {
         writeStartTag("<SpanArea>");
-        Enumeration e = area.getChildren().elements();
-        while (e.hasMoreElements()) {
-            Box b = (Box)e.nextElement();
+        ArrayList children = area.getChildren();
+        for (int i = 0; i < children.size(); i++) {
+            Box b = (Box)children.get(i);
             b.render(this);
         }
         writeEndTag("</SpanArea>");
@@ -274,12 +273,12 @@ public class XMLRenderer implements Renderer {
         writeStartTag(baText.toString());
 
         // write out marker info
-        java.util.Vector markers = area.getMarkers();
+        ArrayList markers = area.getMarkers();
         if (!markers.isEmpty()) {
             writeStartTag("<Markers>");
-            for (int m = 0; m < markers.size(); m++) {
+            for (int i = 0; i < markers.size(); i++) {
                 org.apache.fop.fo.flow.Marker marker =
-                    (org.apache.fop.fo.flow.Marker)markers.elementAt(m);
+                    (org.apache.fop.fo.flow.Marker)markers.get(i);
                 StringBuffer maText = new StringBuffer();
                 maText.append("<Marker marker-class-name=\""
                               + marker.getMarkerClassName() + "\"");
@@ -291,9 +290,9 @@ public class XMLRenderer implements Renderer {
             writeEndTag("</Markers>");
         }
 
-        Enumeration e = area.getChildren().elements();
-        while (e.hasMoreElements()) {
-            Box b = (Box)e.nextElement();
+        ArrayList children = area.getChildren();
+        for (int i = 0; i < children.size(); i++) {
+            Box b = (Box)children.get(i);
             b.render(this);
         }
         writeEndTag("</BlockArea>");
@@ -312,12 +311,12 @@ public class XMLRenderer implements Renderer {
         writeStartTag(iaText.toString());
 
         // write out marker info
-        java.util.Vector markers = area.getMarkers();
+        ArrayList markers = area.getMarkers();
         if (!markers.isEmpty()) {
             writeStartTag("<Markers>");
-            for (int m = 0; m < markers.size(); m++) {
+            for (int i = 0; i < markers.size(); i++) {
                 org.apache.fop.fo.flow.Marker marker =
-                    (org.apache.fop.fo.flow.Marker)markers.elementAt(m);
+                    (org.apache.fop.fo.flow.Marker)markers.get(i);
                 StringBuffer maText = new StringBuffer();
                 maText.append("<Marker marker-class-name=\""
                               + marker.getMarkerClassName() + "\"");
@@ -329,9 +328,9 @@ public class XMLRenderer implements Renderer {
             writeEndTag("</Markers>");
         }
 
-        Enumeration e = area.getChildren().elements();
-        while (e.hasMoreElements()) {
-            Box b = (Box)e.nextElement();
+        ArrayList children = area.getChildren();
+        for (int i = 0; i < children.size(); i++) {
+            Box b = (Box)children.get(i);
             b.render(this);
         }
         writeEndTag("</InlineArea>");
@@ -425,9 +424,9 @@ public class XMLRenderer implements Renderer {
             String fontWeight = area.getFontState().getFontWeight();
             writeStartTag("<LineArea font-weight=\"" + fontWeight + "\">");
         }
-        Enumeration e = area.getChildren().elements();
-        while (e.hasMoreElements()) {
-            Box b = (Box)e.nextElement();
+        ArrayList children = area.getChildren();
+        for (int i = 0; i < children.size(); i++) {
+            Box b = (Box)children.get(i);
             b.render(this);
         }
         if (!isCoarseXml())

@@ -10,9 +10,9 @@ package org.apache.fop.pdf;
 // Java
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
-import java.util.Enumeration;
-import java.util.Vector;
-import java.util.Hashtable;
+import java.util.Iterator;
+import java.util.ArrayList;
+import java.util.HashMap;
 
 /**
  * class representing a /Resources object.
@@ -25,11 +25,11 @@ public class PDFResources extends PDFObject {
     /**
      * /Font objects keyed by their internal name
      */
-    protected Hashtable fonts = new Hashtable();
+    protected HashMap fonts = new HashMap();
 
-    protected Vector xObjects = null;
-    protected Vector patterns = new Vector();
-    protected Vector shadings = new Vector();
+    protected ArrayList xObjects = null;
+    protected ArrayList patterns = new ArrayList();
+    protected ArrayList shadings = new ArrayList();
 
     /**
      * create a /Resources object.
@@ -53,14 +53,14 @@ public class PDFResources extends PDFObject {
     }
 
     public void addShading(PDFShading theShading) {
-        this.shadings.addElement(theShading);
+        this.shadings.add(theShading);
     }
 
     public void addPattern(PDFPattern thePattern) {
-        this.patterns.addElement(thePattern);
+        this.patterns.add(thePattern);
     }
 
-    public void setXObjects(Vector xObjects) {
+    public void setXObjects(ArrayList xObjects) {
         this.xObjects = xObjects;
     }
 
@@ -76,9 +76,9 @@ public class PDFResources extends PDFObject {
             p.append("/Font << ");
 
             /* construct PDF dictionary of font object references */
-            Enumeration fontEnumeration = this.fonts.keys();
-            while (fontEnumeration.hasMoreElements()) {
-                String fontName = (String)fontEnumeration.nextElement();
+            Iterator fontIterator = this.fonts.keySet().iterator();
+            while (fontIterator.hasNext()) {
+                String fontName = (String)fontIterator.next();
                 p.append("/" + fontName + " "
                          + ((PDFFont)this.fonts.get(fontName)).referencePDF()
                          + " ");
@@ -95,7 +95,7 @@ public class PDFResources extends PDFObject {
                     currentShadingNumber < this.shadings.size();
                     currentShadingNumber++) {
                 currentShading =
-                    ((PDFShading)this.shadings.elementAt(currentShadingNumber));
+                    ((PDFShading)this.shadings.get(currentShadingNumber));
 
                 p.append("/" + currentShading.getName() + " "
                          + currentShading.referencePDF() + " ");    // \n ??????
@@ -114,7 +114,7 @@ public class PDFResources extends PDFObject {
                     currentPatternNumber < this.patterns.size();
                     currentPatternNumber++) {
                 currentPattern =
-                    ((PDFPattern)this.patterns.elementAt(currentPatternNumber));
+                    ((PDFPattern)this.patterns.get(currentPatternNumber));
 
                 p.append("/" + currentPattern.getName() + " "
                          + currentPattern.referencePDF() + " ");
@@ -131,7 +131,7 @@ public class PDFResources extends PDFObject {
             p = p.append("/XObject <<");
             for (int i = 1; i <= this.xObjects.size(); i++) {
                 p = p.append("/Im" + i + " "
-                             + ((PDFXObject)this.xObjects.elementAt(i - 1)).referencePDF()
+                             + ((PDFXObject)this.xObjects.get(i - 1)).referencePDF()
                              + " \n");
             }
             p = p.append(" >>\n");

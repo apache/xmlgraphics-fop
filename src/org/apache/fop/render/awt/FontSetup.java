@@ -17,11 +17,9 @@ import org.apache.fop.apps.FOPException;
 
 
 // Java
-import java.util.Enumeration;
-import java.util.Hashtable;
 import java.awt.Font;
 import java.awt.Graphics2D;
-import java.util.Vector;
+import java.util.ArrayList;
 
 /**
  * sets up the AWT fonts. It is similar to
@@ -197,13 +195,13 @@ public class FontSetup {
         FontMetricsMapper metric;
         String internalName = null;
 
-        Vector fontInfos = Configuration.getFonts();
+        ArrayList fontInfos = Configuration.getFonts();
         if (fontInfos == null)
             return;
 
-        for (Enumeration e = fontInfos.elements(); e.hasMoreElements(); ) {
+        for (int i = 0; i < fontInfos.size(); i++) {
             org.apache.fop.configuration.FontInfo configFontInfo =
-                (org.apache.fop.configuration.FontInfo)e.nextElement();
+                (org.apache.fop.configuration.FontInfo)fontInfos.get(i);
 
             try {
                 String metricsFile = configFontInfo.getMetricsFile();
@@ -211,10 +209,9 @@ public class FontSetup {
                     internalName = "F" + num;
                     num++;
                     
-                    Vector triplets = configFontInfo.getFontTriplets();
-                    for (Enumeration t = triplets.elements();
-                            t.hasMoreElements(); ) {
-                        FontTriplet triplet = (FontTriplet)t.nextElement();
+                    ArrayList triplets = configFontInfo.getFontTriplets();
+                    for (int j = 0; j < triplets.size(); j++) {
+                        FontTriplet triplet = (FontTriplet)triplets.get(j);
                         boolean embed = configFontInfo.getEmbedFile() != null;
                         // if embed font is not specified, use system "Dialog"
                         // logical font name for each Locale.

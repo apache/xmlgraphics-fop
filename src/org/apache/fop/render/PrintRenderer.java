@@ -26,7 +26,6 @@ import org.apache.fop.svg.SVGArea;
 // Java
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.Enumeration;
 
 /**
  * Abstract base class of "Print" type renderers.

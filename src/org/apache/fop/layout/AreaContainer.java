@@ -11,9 +11,6 @@ package org.apache.fop.layout;
 import org.apache.fop.render.Renderer;
 import org.apache.fop.fo.properties.*;
 
-// Java
-import java.util.Vector;
-import java.util.Enumeration;
 
 public class AreaContainer extends Area {
 

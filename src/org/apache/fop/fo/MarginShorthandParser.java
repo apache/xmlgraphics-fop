@@ -7,12 +7,11 @@
 
 package org.apache.fop.fo;
 
-import java.util.Vector;
-import java.util.Enumeration;
+import java.util.ArrayList;
 
 public class MarginShorthandParser implements ShorthandParser {
 
-    protected Vector list;    // Vector of Property objects
+    protected ArrayList list;    // ArrayList of Property objects
 
     public MarginShorthandParser(ListProperty listprop) {
         this.list = listprop.getList();
@@ -20,7 +19,7 @@ public class MarginShorthandParser implements ShorthandParser {
 
     protected Property getElement(int index) {
         if (list.size() > index)
-            return (Property)list.elementAt(index);
+            return (Property)list.get(index);
         else
             return null;
     }
@@ -35,11 +34,9 @@ public class MarginShorthandParser implements ShorthandParser {
                                         PropertyList propertyList) {
         Property prop = null;
         // Check for keyword "inherit"
-        if (count() == 1)
-        {
-            String sval = ((Property)list.elementAt(0)).getString();
-            if (sval != null && sval.equals("inherit"))
-            {
+        if (count() == 1) {
+            String sval = ((Property)list.get(0)).getString();
+            if (sval != null && sval.equals("inherit")) {
                 return propertyList.getFromParent(propName);
             }
         }

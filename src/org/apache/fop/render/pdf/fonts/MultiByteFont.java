@@ -7,24 +7,25 @@
 
 package org.apache.fop.render.pdf.fonts;
 
-import org.apache.fop.render.pdf.Font;
-import org.apache.fop.layout.FontDescriptor;
+import org.apache.fop.fonts.FontFileReader;
 import org.apache.fop.fonts.Glyphs;
 import org.apache.fop.fonts.TTFSubSetFile;
-import org.apache.fop.fonts.FontFileReader;
-import org.apache.fop.pdf.PDFStream;
-import org.apache.fop.pdf.PDFWArray;
+import org.apache.fop.layout.FontDescriptor;
+import org.apache.fop.messaging.MessageHandler;
 import org.apache.fop.pdf.PDFCIDFont;
+import org.apache.fop.pdf.PDFStream;
+import org.apache.fop.pdf.PDFTTFStream;
+import org.apache.fop.pdf.PDFWArray;
 import org.apache.fop.render.pdf.CIDFont;
 import org.apache.fop.render.pdf.CMap;
-import org.apache.fop.pdf.PDFTTFStream;
-import org.apache.fop.messaging.MessageHandler;
+import org.apache.fop.render.pdf.Font;
+
 import java.io.InputStream;
 import java.io.IOException;
 import java.io.FileInputStream;
 import java.io.File;
 import java.io.BufferedInputStream;
-import java.util.Hashtable;
+import java.util.HashMap;
 
 /**
  * Generic MultiByte (CID) font
@@ -53,7 +54,7 @@ public class MultiByteFont extends CIDFont implements FontDescriptor {
     public int defaultWidth = 0;
     public byte cidType = PDFCIDFont.CID_TYPE2;
 
-    public Hashtable kerning = new Hashtable();
+    public HashMap kerning = new HashMap();
     public boolean useKerning = true;
     private String namePrefix = null;    // Quasi unique prefix
     private static int uniqueCounter = 1;
@@ -66,12 +67,12 @@ public class MultiByteFont extends CIDFont implements FontDescriptor {
     /**
      * usedGlyphs contains orginal, new glyph index
      */
-    private Hashtable usedGlyphs = new Hashtable();
+    private HashMap usedGlyphs = new HashMap();
 
     /**
      * usedGlyphsIndex contains new glyph, original index
      */
-    private Hashtable usedGlyphsIndex = new Hashtable();
+    private HashMap usedGlyphsIndex = new HashMap();
     int usedGlyphsCount = 0;
 
     public MultiByteFont() {
@@ -99,11 +100,11 @@ public class MultiByteFont extends CIDFont implements FontDescriptor {
         return (useKerning & kerning.isEmpty());
     }
 
-    public final java.util.Hashtable getKerningInfo() {
+    public final java.util.HashMap getKerningInfo() {
         if (useKerning)
             return kerning;
         else
-            return new Hashtable();
+            return new HashMap();
     }
 
     public byte getSubType() {

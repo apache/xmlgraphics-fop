@@ -201,7 +201,7 @@ public class MIFDocument {
 
         private int ID;
         private int x, y, w, h;
-        Vector content = new Vector();
+        ArrayList content = new ArrayList();
         public Frame(int x, int y, int w, int h) {
 
             this.ID = curIDCounter.getnewID();
@@ -214,7 +214,7 @@ public class MIFDocument {
 
         public void addContent(ImportObject obj) {
 
-            content.addElement(obj);
+            content.add(obj);
 
         }
 
@@ -233,10 +233,8 @@ public class MIFDocument {
 
             stream.write(mif.getBytes());
 
-            Enumeration e = content.elements();
-            while (e.hasMoreElements()) {
-
-                ((ImportObject)e.nextElement()).output(stream);
+            for (int i = 0; i < content.size(); i++) {
+                ((ImportObject)content.get(i)).output(stream);
             }
             mif = "\n> #End Frame";
             stream.write(mif.getBytes());
@@ -322,20 +320,20 @@ public class MIFDocument {
         private String pageType;
         private String pageTag;
         private String pageBackground;
-        private Vector textRects;
+        private ArrayList textRects;
         public Page(String pageType, String pageTag, String pageBackground) {
 
             this.pageType = pageType;
             this.pageTag = pageTag;
             this.pageBackground = pageBackground;
-            this.textRects = new Vector();
+            this.textRects = new ArrayList();
         }
 
         public Page() {
 
             this.pageType = "BodyPage";
             this.pageBackground = "Default";
-            this.textRects = new Vector();
+            this.textRects = new ArrayList();
 
         }
 
@@ -343,7 +341,7 @@ public class MIFDocument {
         public void addTextRect(int numCols) {
 
             TextRect textRect = new TextRect(numCols);
-            this.textRects.addElement(textRect);
+            this.textRects.add(textRect);
         }
 
         public TextRect curTextRect() {
@@ -351,39 +349,25 @@ public class MIFDocument {
             //temporary fix for NoSuchElementException
             if (textRects.isEmpty()) {
                 TextRect textRect = new TextRect(1);
-                this.textRects.addElement(textRect);
+                this.textRects.add(textRect);
             }
-
-            return (TextRect)textRects.lastElement();
-
+            return (TextRect)textRects.get(textRects.size() - 1);
         }
 
 
 
         public void output(OutputStream stream) throws IOException {
-
-
             String mif = "\n<Page" + "\n\t<PageType " + pageType + ">"
                          + "\n\t<PageBackground " + "`" + pageBackground
                          + "'" + ">";
-
             byte buf[] = mif.getBytes();
-
             stream.write(buf);
-
-            Enumeration e = textRects.elements();
-
-            while (e.hasMoreElements()) {
-
-                ((TextRect)e.nextElement()).output(stream);
-
+            for (int i = 0; i < textRects.size(); i++) {
+                ((TextRect)textRects.get(i)).output(stream);
             }
             mif = "\n>  #End Page\n";
             stream.write(mif.getBytes());
-
         }
-
-
     }
 
     abstract class Flow {
@@ -397,7 +381,7 @@ public class MIFDocument {
 
     class TextFlow extends Flow {
 
-        Vector paras;
+        ArrayList paras;
         private int ID;    // This ID is used within ParaLine, however it is
         // logical to keep it unique	to a textflow
 
@@ -409,7 +393,7 @@ public class MIFDocument {
 
             this.ID =
                 ((bookComponent.curPage()).curTextRect()).getTextRectID();
-            this.paras = new Vector();
+            this.paras = new ArrayList();
 
         }
 
@@ -421,47 +405,42 @@ public class MIFDocument {
         }
 
         public Para curPara() {
-
-            return (Para)paras.lastElement();
+            return (Para)paras.get(paras.size() - 1);
         }
 
         public void startPara() {
-
-            this.paras.addElement(new Para(ID));
+            this.paras.add(new Para(ID));
         }
 
         public void output(OutputStream stream) throws IOException {
             String mif = "\n<TextFlow";
             stream.write(mif.getBytes());
-            Enumeration e = paras.elements();
-            while (e.hasMoreElements()) {
-
-                ((Para)e.nextElement()).output(stream);
+            for (int i = 0; i < paras.size(); i++) {
+                ((Para)paras.get(i)).output(stream);
             }
             mif = "\n> #End TextFlow";
             stream.write(mif.getBytes());
         }
-
     }
 
 
     class Para {
 
-        Vector paraLines;
+        ArrayList paraLines;
         int ID;      // Same as TextRectID
         ParagraphFormat pgf =
             null;    // This corresponds to to the block properties
         public Para() {
 
             this.ID = 0;
-            this.paraLines = new Vector();
+            this.paraLines = new ArrayList();
         }
 
 
         public Para(int ID) {
 
             this.ID = ID;
-            this.paraLines = new Vector();
+            this.paraLines = new ArrayList();
 
         }
 
@@ -469,13 +448,13 @@ public class MIFDocument {
             if (paraLines.isEmpty()) {
                 return null;
             } else {
-                return (ParaLine)paraLines.lastElement();
+                return (ParaLine)paraLines.get(paraLines.size() - 1);
             }
         }
 
         void startParaLine() {
 
-            this.paraLines.addElement(new ParaLine(ID));
+            this.paraLines.add(new ParaLine(ID));
 
         }
 
@@ -503,39 +482,36 @@ public class MIFDocument {
                 mif += "\n>";
             }
             stream.write(mif.getBytes());
-            Enumeration e = paraLines.elements();
-            while (e.hasMoreElements()) {
-
-                ((ParaLine)e.nextElement()).output(stream);
+            for (int i = 0; i < paraLines.size(); i++) {
+                ((ParaLine)paraLines.get(i)).output(stream);
             }
             mif = "\n> #End ParaLine";
             stream.write(mif.getBytes());
-
         }
 
     }
 
     class ParaLine {
-        Vector content;
+        ArrayList content;
         int textRectID;
         String tableID;
         String aFrameID;
         public ParaLine(int textRectID) {
 
             this.textRectID = textRectID;
-            this.content = new Vector();
+            this.content = new ArrayList();
 
         }
 
         public ParaLine() {
 
             this.textRectID = 0;    // There is no ID used, in tables
-            this.content = new Vector();
+            this.content = new ArrayList();
         }
 
         public void addContent(Object obj) {
 
-            this.content.addElement(obj);
+            this.content.add(obj);
 
         }
 
@@ -544,28 +520,21 @@ public class MIFDocument {
             String mif = "\n<ParaLine";
 
             // tables dont need the textrectid
-            if (textRectID != 0)
+            if (textRectID != 0) {
                 mif += "\n\t<TextRectID " + textRectID + ">";
-
+            }
             stream.write(mif.getBytes());
-            Enumeration e = this.content.elements();
-            while (e.hasMoreElements()) {
-
-                Object elem = (Object)e.nextElement();
+            for (int i = 0; i < content.size(); i++) {
+                Object elem = content.get(i);
                 if (elem instanceof String) {
-
                     // Output newlines as char hard return
-
                     if (elem == "\n") {
-
                         mif = "\n<Char HardReturn>";
                     } else {
                         mif = "\n\t<String `" + MIFEncode((String)elem) + "'>";
                     }
                     stream.write(mif.getBytes());
-
                 } else if (elem instanceof Frame) {
-
                     mif = "\n\t<AFrame " + ((Frame)elem).getID() + " >";
                     stream.write(mif.getBytes());
                 } else if (elem instanceof Tbl) {
@@ -582,7 +551,7 @@ public class MIFDocument {
 
     class PgfCatalog {
 
-        Vector pgfs;    // Paragraph formats
+        ArrayList pgfs;    // Paragraph formats
         public PgfCatalog() {}
 
         public void output(OutputStream stream) throws IOException {
@@ -634,12 +603,12 @@ public class MIFDocument {
     class RulingCatalog {
         // Contains multiple rulings
 
-        Vector ruling = new Vector();
+        ArrayList ruling = new ArrayList();
         public RulingCatalog() {
 
             // Add the defualt ruling to the catalog
 
-            ruling.addElement(new Ruling());
+            ruling.add(new Ruling());
 
         }
 
@@ -647,9 +616,8 @@ public class MIFDocument {
 
             String mif = "\n<RulingCatalog";
             stream.write(mif.getBytes());
-            Enumeration e = ruling.elements();
-            while (e.hasMoreElements()) {
-                ((Ruling)e.nextElement()).output(stream);
+            for (int i = 0; i < ruling.size(); i++) {
+                ((Ruling)ruling.get(i)).output(stream);
             }
             mif = "\n> #End RulingCatalog";
             stream.write(mif.getBytes());
@@ -693,75 +661,63 @@ public class MIFDocument {
             class Cell {
 
                 private int rowSpan, colSpan;
-                private Vector paras;    // Paras
+                private ArrayList paras;    // Paras
                 public Cell(int rowSpan, int colSpan) {
 
                     this.rowSpan = rowSpan;
                     this.colSpan = colSpan;
-                    paras = new Vector();
-
+                    paras = new ArrayList();
                 }
 
                 public void startPara() {
-
-                    this.paras.addElement(new Para());
+                    this.paras.add(new Para());
                 }
 
                 public void output(OutputStream stream) throws IOException {
 
                     String mif = "\n\t\t<Cell" + "\n\t\t<CellContent";
                     stream.write(mif.getBytes());
-                    Enumeration e = paras.elements();
-                    while (e.hasMoreElements()) {
-                        ((Para)e.nextElement()).output(stream);
+                    for (int i = 0; i < paras.size(); i++) {
+                        ((Para)paras.get(i)).output(stream);
                     }
                     mif = "\n\t\t> #End CellContent";
                     mif += "\n\t> #End Cell";
                     stream.write(mif.getBytes());
                 }
-
             }
-            private Vector cells;
+
+            private ArrayList cells;
 
             public void addCell(int rowSpan, int colSpan) {
-
-                cells.addElement(new Cell(rowSpan, colSpan));
+                cells.add(new Cell(rowSpan, colSpan));
             }
 
             public Row() {
-
-                cells = new Vector();
-
+                cells = new ArrayList();
             }
 
             public Cell curCell() {
-
-                return (Cell)this.cells.lastElement();
+                return (Cell)this.cells.get(cells.size() - 1);
             }
 
             public void output(OutputStream stream) throws IOException {
-
                 String mif = "\n\t<Row";
                 stream.write(mif.getBytes());
-                Enumeration e = cells.elements();
-                while (e.hasMoreElements()) {
-                    ((Cell)e.nextElement()).output(stream);
+                for (int i = 0; i < cells.size(); i++) {
+                    ((Cell)cells.get(i)).output(stream);
                 }
                 mif = "\n\t> #End Row";
                 stream.write(mif.getBytes());
-
             }
-
-
         }
 
         private int ID;
-        private Vector tblColumns = new Vector();
-        private Vector tblBody, tblHead, tblFoot;
-        private Vector current;    // is a reference to one of tblHead,tblBody or tblFoot
+        private ArrayList tblColumns = new ArrayList();
+        private ArrayList tblBody, tblHead, tblFoot;
+        private ArrayList current;    // is a reference to one of tblHead,tblBody or tblFoot
         public void addColumn(int colWidth) {
 
-            tblColumns.addElement(new TblColumn(colWidth));
+            tblColumns.add(new TblColumn(colWidth));
 
         }
 
@@ -778,23 +734,22 @@ public class MIFDocument {
 
         public void startRow() {
 
-            this.current.addElement(new Row());
+            this.current.add(new Row());
         }
 
         public void startCell(int rowSpan, int colSpan) {
 
             // Add a cell into the current row
-
-            ((Row)this.current.lastElement()).addCell(rowSpan, colSpan);
+            ((Row)this.current.get(current.size() - 1)).addCell(rowSpan, colSpan);
 
         }
 
         public Tbl() {
 
             this.ID = curIDCounter.getnewID();
-            tblBody = new Vector();
-            tblHead = new Vector();
-            tblFoot = new Vector();
+            tblBody = new ArrayList();
+            tblHead = new ArrayList();
+            tblFoot = new ArrayList();
 
         }
 
@@ -806,19 +761,16 @@ public class MIFDocument {
         public Para curPara() {
 
             // Return the last para of the current cell
-
-            Row curRow;
-            curRow = (Row)this.current.lastElement();
-            return (Para)curRow.curCell().paras.lastElement();
-
-
+            Row curRow = (Row)this.current.get(current.size() - 1);
+            ArrayList paras = curRow.curCell().paras;
+            return (Para)paras.get(paras.size() - 1);
         }
 
         public void startPara() {
 
             // start a new para in the current cell
             Row curRow;
-            curRow = (Row)this.current.lastElement();
+            curRow = (Row)this.current.get(current.size() - 1);
             curRow.curCell().startPara();
 
         }
@@ -842,23 +794,20 @@ public class MIFDocument {
             stream.write(mif.getBytes());
 
             if (!tblHead.isEmpty()) {
-                Enumeration e = tblHead.elements();
-                while (e.hasMoreElements()) {
-                    ((Row)e.nextElement()).output(stream);
+                for (int i = 0; i < tblHead.size(); i++) {
+                    ((Row)tblHead.get(i)).output(stream);
                 }
             }
             if (!tblFoot.isEmpty()) {
-                Enumeration e = tblFoot.elements();
-                while (e.hasMoreElements()) {
-                    ((Row)e.nextElement()).output(stream);
+                for (int i = 0; i < tblFoot.size(); i++) {
+                    ((Row)tblFoot.get(i)).output(stream);
                 }
             }
             if (!tblBody.isEmpty()) {
                 mif = "\n\t<TblBody";
                 stream.write(mif.getBytes());
-                Enumeration e = tblBody.elements();
-                while (e.hasMoreElements()) {
-                    ((Row)e.nextElement()).output(stream);
+                for (int i = 0; i < tblBody.size(); i++) {
+                    ((Row)tblBody.get(i)).output(stream);
                 }
                 mif = "\n\t> #End tblBody";
             }
@@ -899,10 +848,10 @@ public class MIFDocument {
         RulingCatalog rulingCatalog;
         PgfCatalog pgfCatalog;
         TblCatalog tblCatalog;
-        Vector aFrames = new Vector();
-        Vector tables = new Vector();
-        Vector pages = new Vector();
-        Vector textFlows = new Vector();
+        ArrayList aFrames = new ArrayList();
+        ArrayList tables = new ArrayList();
+        ArrayList pages = new ArrayList();
+        ArrayList textFlows = new ArrayList();
 
 
         public BookComponent() {
@@ -914,35 +863,29 @@ public class MIFDocument {
 
 
         public Frame createFrame(int x, int y, int w, int h) {
-
             Frame frame = new Frame(x, y, w, h);
-            aFrames.addElement(frame);
+            aFrames.add(frame);
             return frame;
-
         }
 
         public Frame curFrame() {
-
-            return (Frame)aFrames.lastElement();
-
+            return (Frame)aFrames.get(aFrames.size() - 1);
         }
 
         public TextFlow curTextFlow() {
-
-            return (TextFlow)textFlows.lastElement();
-
+            return (TextFlow)textFlows.get(textFlows.size() - 1);
         }
 
         public Tbl createTable() {
 
             Tbl table = new Tbl();
-            tables.addElement(table);
+            tables.add(table);
             return table;
         }
 
         public Tbl curTable() {
 
-            return (Tbl)tables.lastElement();
+            return (Tbl)tables.get(tables.size() - 1);
         }
 
         public void output(OutputStream stream) throws IOException {
@@ -953,50 +896,36 @@ public class MIFDocument {
             document.output(stream);
 
             if (!aFrames.isEmpty()) {
-
                 mif = "\n<AFrames";
                 stream.write(mif.getBytes());
-                Enumeration e = aFrames.elements();
-                while (e.hasMoreElements()) {
-
-                    ((Frame)e.nextElement()).output(stream);
+                for (int i = 0; i < aFrames.size(); i++) {
+                    ((Frame)aFrames.get(i)).output(stream);
                 }
-
                 mif = "\n>";
                 stream.write(mif.getBytes());
             }
 
             if (!tables.isEmpty()) {
-
                 mif = "\n<Tbls";
                 stream.write(mif.getBytes());
-                Enumeration e = tables.elements();
-                while (e.hasMoreElements()) {
-
-                    ((Tbl)e.nextElement()).output(stream);
+                for (int i = 0; i < tables.size(); i++) {
+                    ((Tbl)tables.get(i)).output(stream);
                 }
-
                 mif = "\n>";
                 stream.write(mif.getBytes());
             }
 
-
-            Enumeration e = pages.elements();
-            while (e.hasMoreElements()) {
-
-                ((Page)e.nextElement()).output(stream);
+            for (int i = 0; i < pages.size(); i++) {
+                ((Page)pages.get(i)).output(stream);
             }
 
-            e = textFlows.elements();
-            while (e.hasMoreElements()) {
-
-                ((TextFlow)e.nextElement()).output(stream);
-
+            for (int i = 0; i < textFlows.size(); i++) {
+                ((TextFlow)textFlows.get(i)).output(stream);
             }
         }
 
         private Page curPage() {
-            return (Page)pages.lastElement();
+            return (Page)pages.get(pages.size() - 1);
         }
 
     }
@@ -1017,7 +946,7 @@ public class MIFDocument {
 
     public void createPage() {
 
-        bookComponent.pages.addElement(new Page());
+        bookComponent.pages.add(new Page());
 
     }
 
@@ -1066,7 +995,7 @@ public class MIFDocument {
         // Then create a textflow corresponding to this textrect
 
         curFlow = new TextFlow();
-        bookComponent.textFlows.addElement(curFlow);
+        bookComponent.textFlows.add(curFlow);
     }
 
     public void setTextRectProp(int left, int top, int width, int height) {

@@ -7,12 +7,11 @@
 
 package org.apache.fop.fo;
 
-import java.util.Vector;
-import java.util.Enumeration;
+import java.util.ArrayList;
 
 public class GenericShorthandParser implements ShorthandParser {
 
-    protected Vector list;    // Vector of Property objects
+    protected ArrayList list;    // ArrayList of Property objects
 
     public GenericShorthandParser(ListProperty listprop) {
         this.list = listprop.getList();
@@ -20,7 +19,7 @@ public class GenericShorthandParser implements ShorthandParser {
 
     protected Property getElement(int index) {
         if (list.size() > index)
-            return (Property)list.elementAt(index);
+            return (Property)list.get(index);
         else
             return null;
     }
@@ -37,7 +36,7 @@ public class GenericShorthandParser implements ShorthandParser {
         Property prop = null;
         // Check for keyword "inherit"
         if (count() == 1) {
-            String sval = ((Property)list.elementAt(0)).getString();
+            String sval = ((Property)list.get(0)).getString();
             if (sval != null && sval.equals("inherit")) {
                 return propertyList.getFromParent(propName);
             }
@@ -49,14 +48,15 @@ public class GenericShorthandParser implements ShorthandParser {
     protected Property convertValueForProperty(String propName,
                                                Property.Maker maker,
                                                PropertyList propertyList) {
-        Property prop = null;
         // Try each of the stored values in turn
-        Enumeration eprop = list.elements();
-        while (eprop.hasMoreElements() && prop == null) {
-            Property p = (Property)eprop.nextElement();
-            prop = maker.convertShorthandProperty(propertyList, p, null);
+        for (int i = 0; i <  list.size(); i++) {
+            Property p = (Property)list.get(i);
+            Property prop = maker.convertShorthandProperty(propertyList, p, null);
+            if (prop!=null) {
+                return prop;
+            }
         }
-        return prop;
+        return null;
     }
 
 }

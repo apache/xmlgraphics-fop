@@ -19,9 +19,9 @@ import org.apache.fop.configuration.FontTriplet;
 import org.apache.fop.apps.FOPException;
 
 // Java
-import java.util.Enumeration;
-import java.util.Hashtable;
-import java.util.Vector;
+import java.util.Iterator;
+import java.util.HashMap;
+import java.util.ArrayList;
 
 /**
  * sets up the PDF fonts.
@@ -145,13 +145,13 @@ public class FontSetup {
         String internalName = null;
         FontReader reader = null;
 
-        Vector fontInfos = Configuration.getFonts();
+        ArrayList fontInfos = Configuration.getFonts();
         if (fontInfos == null)
             return;
 
-        for (Enumeration e = fontInfos.elements(); e.hasMoreElements(); ) {
+        for (int i = 0; i < fontInfos.size(); i++) {
             org.apache.fop.configuration.FontInfo configFontInfo =
-                (org.apache.fop.configuration.FontInfo)e.nextElement();
+                (org.apache.fop.configuration.FontInfo)fontInfos.get(i);
 
             try {
                 String metricsFile = configFontInfo.getMetricsFile();
@@ -169,10 +169,9 @@ public class FontSetup {
                                                  configFontInfo.getKerning());
                     fontInfo.addMetrics(internalName, font);
                     
-                    Vector triplets = configFontInfo.getFontTriplets();
-                    for (Enumeration t = triplets.elements();
-                            t.hasMoreElements(); ) {
-                        FontTriplet triplet = (FontTriplet)t.nextElement();
+                    ArrayList triplets = configFontInfo.getFontTriplets();
+                    for (int j = 0; j < triplets.size(); j++) {
+                        FontTriplet triplet = (FontTriplet)triplets.get(j);
 
                         fontInfo.addFontProperties(internalName,
                                                    triplet.getName(),
@@ -195,11 +194,11 @@ public class FontSetup {
      * @param fontInfo font info object to get font information from
      */
     public static void addToResources(PDFDocument doc, FontInfo fontInfo) {
-        Hashtable fonts = fontInfo.getUsedFonts();
-        Enumeration e = fonts.keys();
+        HashMap fonts = fontInfo.getUsedFonts();
+        Iterator e = fonts.keySet().iterator();
         PDFResources resources = doc.getResources();
-        while (e.hasMoreElements()) {
-            String f = (String)e.nextElement();
+        while (e.hasNext()) {
+            String f = (String)e.next();
             Font font = (Font)fonts.get(f);
             FontDescriptor desc = null;
             if (font instanceof FontDescriptor) {

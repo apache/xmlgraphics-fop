@@ -18,16 +18,15 @@ import org.apache.fop.layout.LinkSet;
 import org.apache.avalon.framework.logger.Logger;
 
 // Java
-import java.util.Vector;
-import java.util.Hashtable;
+import java.util.ArrayList;
 
 /**
  * base class for nodes in the formatting object tree
  *
  * Modified by Mark Lillywhite mark-fop@inomial.com. Made
- * Vector a protected member. (/me things this should be
+ * ArrayList a protected member. (/me things this should be
  * a private member with an API for adding children;
- * this woudl save a lot of memory because the Vector
+ * this woudl save a lot of memory because the ArrayList
  * would not have to be instantiated unless the node had
  * children).
  */
@@ -37,7 +36,7 @@ abstract public class FONode {
 
     protected String areaClass = AreaClass.UNASSIGNED;
 
-    protected Vector children = new Vector();    // made public for searching for id's
+    protected ArrayList children = new ArrayList();    // made public for searching for id's
 
     /**
      * value of marker before layout begins
@@ -85,7 +84,7 @@ abstract public class FONode {
         this.isInTableCell = true;
         // made recursive by Eric Schaeffer
         for (int i = 0; i < this.children.size(); i++) {
-            FONode child = (FONode)this.children.elementAt(i);
+            FONode child = (FONode)this.children.get(i);
             child.setIsInTableCell();
         }
     }
@@ -94,7 +93,7 @@ abstract public class FONode {
         this.forcedStartOffset = offset;
         // made recursive by Eric Schaeffer
         for (int i = 0; i < this.children.size(); i++) {
-            FONode child = (FONode)this.children.elementAt(i);
+            FONode child = (FONode)this.children.get(i);
             child.forceStartOffset(offset);
         }
     }
@@ -103,7 +102,7 @@ abstract public class FONode {
         this.forcedWidth = width;
         // made recursive by Eric Schaeffer
         for (int i = 0; i < this.children.size(); i++) {
-            FONode child = (FONode)this.children.elementAt(i);
+            FONode child = (FONode)this.children.get(i);
             child.forceWidth(width);
         }
     }
@@ -112,7 +111,7 @@ abstract public class FONode {
         this.marker = START;
         int numChildren = this.children.size();
         for (int i = 0; i < numChildren; i++) {
-            ((FONode)children.elementAt(i)).resetMarker();
+            ((FONode)children.get(i)).resetMarker();
         }
     }
 
@@ -122,7 +121,7 @@ abstract public class FONode {
 
 
     protected void addChild(FONode child) {
-        children.addElement(child);
+        children.add(child);
     }
 
     public FObj getParent() {
@@ -132,7 +131,7 @@ abstract public class FONode {
     public void setLinkSet(LinkSet linkSet) {
         this.linkSet = linkSet;
         for (int i = 0; i < this.children.size(); i++) {
-            FONode child = (FONode)this.children.elementAt(i);
+            FONode child = (FONode)this.children.get(i);
             child.setLinkSet(linkSet);
         }
     }
@@ -158,11 +157,11 @@ abstract public class FONode {
      * At the start of a new span area layout may be partway through a
      * nested FO, and balancing requires rollback to this known point.
      * The snapshot records exactly where layout is at.
-     * @param snapshot a Vector of markers (Integer)
-     * @returns the updated Vector of markers (Integers)
+     * @param snapshot a ArrayList of markers (Integer)
+     * @returns the updated ArrayList of markers (Integers)
      */
-    public Vector getMarkerSnapshot(Vector snapshot) {
-        snapshot.addElement(new Integer(this.marker));
+    public ArrayList getMarkerSnapshot(ArrayList snapshot) {
+        snapshot.add(new Integer(this.marker));
 
         // terminate if no kids or child not yet accessed
         if (this.marker < 0)
@@ -170,18 +169,18 @@ abstract public class FONode {
         else if (children.isEmpty())
             return snapshot;
         else
-            return ((FONode)children.elementAt(this.marker)).getMarkerSnapshot(snapshot);
+            return ((FONode)children.get(this.marker)).getMarkerSnapshot(snapshot);
     }
 
     /**
      * When balancing occurs, the flow layout() method restarts at the
      * point specified by the current marker snapshot, which is retrieved
      * and restored using this method.
-     * @param snapshot the Vector of saved markers (Integers)
+     * @param snapshot the ArrayList of saved markers (Integers)
      */
-    public void rollback(Vector snapshot) {
-        this.marker = ((Integer)snapshot.elementAt(0)).intValue();
-        snapshot.removeElementAt(0);
+    public void rollback(ArrayList snapshot) {
+        this.marker = ((Integer)snapshot.get(0)).intValue();
+        snapshot.remove(0);
 
         if (this.marker == START) {
             // make sure all the children of this FO are also reset
@@ -197,10 +196,10 @@ abstract public class FONode {
         }
 
         for (int i = this.marker + 1; i < numChildren; i++) {
-            FONode fo = (FONode)children.elementAt(i);
+            FONode fo = (FONode)children.get(i);
             fo.resetMarker();
         }
-        ((FONode)children.elementAt(this.marker)).rollback(snapshot);
+        ((FONode)children.get(this.marker)).rollback(snapshot);
     }
 
 }

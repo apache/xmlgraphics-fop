@@ -15,8 +15,6 @@ import org.apache.fop.apps.FOPException;
 import org.apache.fop.image.*;
 
 // Java
-import java.util.Enumeration;
-import java.util.Hashtable;
 import java.net.URL;
 import java.net.MalformedURLException;
 

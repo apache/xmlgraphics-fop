@@ -8,8 +8,8 @@
 package org.apache.fop.layout.hyphenation;
 
 import java.io.*;
-import java.util.Vector;
-import java.util.Hashtable;
+import java.util.ArrayList;
+import java.util.HashMap;
 
 /**
  * This tree structure stores the hyphenation patterns in an efficient
@@ -29,7 +29,7 @@ public class HyphenationTree extends TernaryTree implements PatternConsumer,
     /**
      * This map stores hyphenation exceptions
      */
-    protected Hashtable stoplist;
+    protected HashMap stoplist;
 
     /**
      * This map stores the character classes
@@ -42,7 +42,7 @@ public class HyphenationTree extends TernaryTree implements PatternConsumer,
     private transient TernaryTree ivalues;
 
     public HyphenationTree() {
-        stoplist = new Hashtable(23);    // usually a small table
+        stoplist = new HashMap(23);    // usually a small table
         classmap = new TernaryTree();
         vspace = new ByteVector();
         vspace.alloc(1);    // this reserves index 0, which we don't use
@@ -282,10 +282,10 @@ public class HyphenationTree extends TernaryTree implements PatternConsumer,
         String sw = new String(word, 1, len);
         if (stoplist.containsKey(sw)) {
             // assume only simple hyphens (Hyphen.pre="-", Hyphen.post = Hyphen.no = null)
-            Vector hw = (Vector)stoplist.get(sw);
+            ArrayList hw = (ArrayList)stoplist.get(sw);
             int j = 0;
             for (i = 0; i < hw.size(); i++) {
-                Object o = hw.elementAt(i);
+                Object o = hw.get(i);
                 if (o instanceof String) {
                     j += ((String)o).length();
                     if (j >= remainCharCount && j < (len - pushCharCount))
@@ -351,10 +351,10 @@ public class HyphenationTree extends TernaryTree implements PatternConsumer,
      * {@link PatternParser PatternParser} class as callback to
      * store the hyphenation exceptions.
      * @param word normalized word
-     * @param hyphenatedword a vector of alternating strings and
+     * @param hyphenatedword a ArrayList of alternating strings and
      * {@link Hyphen hyphen} objects.
      */
-    public void addException(String word, Vector hyphenatedword) {
+    public void addException(String word, ArrayList hyphenatedword) {
         stoplist.put(word, hyphenatedword);
     }
 

@@ -36,7 +36,7 @@ import java.awt.Color;
 import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.awt.geom.Rectangle2D;
-import java.util.Hashtable;
+import java.util.HashMap;
 import java.net.URL;
 import java.net.MalformedURLException;
 import java.io.OutputStream;
@@ -60,8 +60,8 @@ public class SVGRenderer extends AbstractRenderer {
     protected int pageHeight = 0;
     protected int pageNumber = 0;
 
-    protected Hashtable fontNames = new Hashtable();
-    protected Hashtable fontStyles = new Hashtable();
+    protected HashMap fontNames = new HashMap();
+    protected HashMap fontStyles = new HashMap();
     protected Color saveColor = null;
 
     protected IDReferences idReferences = null;

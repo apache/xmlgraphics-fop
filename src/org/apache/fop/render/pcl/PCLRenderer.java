@@ -26,7 +26,6 @@ import org.w3c.dom.svg.SVGDocument;
 // Java
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.Enumeration;
 
 /**
  * Renderer that renders areas to PCL

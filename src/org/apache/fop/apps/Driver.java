@@ -8,15 +8,14 @@
 package org.apache.fop.apps;
 
 // FOP
-import org.apache.fop.fo.FOTreeBuilder;
-import org.apache.fop.fo.ElementMapping;
-import org.apache.fop.render.Renderer;
-import org.apache.fop.configuration.ConfigurationReader;
 import org.apache.fop.configuration.Configuration;
+import org.apache.fop.configuration.ConfigurationReader;
+import org.apache.fop.fo.ElementMapping;
+import org.apache.fop.fo.FOTreeBuilder;
+import org.apache.fop.render.Renderer;
+import org.apache.fop.render.pdf.PDFRenderer;
 import org.apache.fop.tools.DocumentInputSource;
 import org.apache.fop.tools.DocumentReader;
-
-import org.apache.fop.render.pdf.PDFRenderer;
 
 // Avalon
 import org.apache.avalon.framework.logger.ConsoleLogger;
@@ -28,12 +27,18 @@ import org.w3c.dom.Document;
 // SAX
 import org.xml.sax.ContentHandler;
 import org.xml.sax.InputSource;
-import org.xml.sax.XMLReader;
 import org.xml.sax.SAXException;
+import org.xml.sax.XMLReader;
 
 // Java
-import java.io.*;
-import java.util.*;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.io.InputStream;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.Vector;
 
 /**
  * Primary class that drives overall FOP process.
@@ -526,7 +531,7 @@ public class Driver {
  */
 class Service {
 
-    static Hashtable providerMap = new Hashtable();
+    static HashMap providerMap = new HashMap();
 
     public static synchronized Enumeration providers(Class cls) {
         ClassLoader cl = cls.getClassLoader();
@@ -554,7 +559,7 @@ class Service {
                 // System.out.println("URL: " + u);
 
                 InputStream is = u.openStream();
-                Reader r = new InputStreamReader(is, "UTF-8");
+                InputStreamReader r = new InputStreamReader(is, "UTF-8");
                 BufferedReader br = new BufferedReader(r);
 
                 String line = br.readLine();

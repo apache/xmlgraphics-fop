@@ -15,8 +15,7 @@ import org.apache.fop.datatypes.*;
 import org.apache.fop.apps.FOPException;
 
 // Java
-import java.util.Vector;
-import java.util.Enumeration;
+import java.util.ArrayList;
 
 public class Table extends FObj {
 
@@ -45,7 +44,7 @@ public class Table extends FObj {
     boolean omitHeaderAtBreak = false;
     boolean omitFooterAtBreak = false;
 
-    Vector columns = new Vector();
+    ArrayList columns = new ArrayList();
     int bodyCount = 0;
     private boolean bAutoLayout=false;
     private int contentWidth = 0; // Sum of column widths
@@ -184,7 +183,7 @@ public class Table extends FObj {
         boolean addedFooter = false;
         int numChildren = this.children.size();
 
-	// Set up the column vector;
+	// Set up the column ArrayList;
 	// calculate width of all columns and get total width
 	if (columns.size()==0) {
 	    findColumns(areaContainer);
@@ -199,7 +198,7 @@ public class Table extends FObj {
         layoutColumns(areaContainer);
 	
         for (int i = this.marker; i < numChildren; i++) {
-            FONode fo = (FONode)children.elementAt(i);
+            FONode fo = (FONode)children.get(i);
             if (fo instanceof TableHeader) {
                 if (columns.size() == 0) {
                     log.warn("current implementation of tables requires a table-column for each column, indicating column-width");
@@ -347,9 +346,8 @@ public class Table extends FObj {
     }
 
     protected void setupColumnHeights() {
-	Enumeration eCol = columns.elements();
-	while (eCol.hasMoreElements()) {
-	    TableColumn c = (TableColumn)eCol.nextElement();
+	for (int i = 0; i < columns.size(); i++) {
+	    TableColumn c = (TableColumn)columns.get(i);
             if ( c != null) {
                 c.setHeight(areaContainer.getContentHeight());
             }
@@ -358,9 +356,8 @@ public class Table extends FObj {
 
     private void findColumns(Area areaContainer) throws FOPException {
 	int nextColumnNumber = 1;
-	Enumeration e = children.elements();
-	while (e.hasMoreElements()) {
-            FONode fo = (FONode)e.nextElement();
+	for (int i = 0; i < children.size(); i++) {
+            FONode fo = (FONode)children.get(i);
             if (fo instanceof TableColumn) {
                 TableColumn c = (TableColumn)fo;
                 c.doSetup(areaContainer);
@@ -369,17 +366,20 @@ public class Table extends FObj {
 		if (currentColumnNumber == 0) {
 		    currentColumnNumber = nextColumnNumber;
 		}
-
+                if (currentColumnNumber + numColumnsRepeated > columns.size()) {
+                    columns.ensureCapacity(currentColumnNumber + numColumnsRepeated);
+                }
                 for (int j = 0; j < numColumnsRepeated; j++) {
-                    if (currentColumnNumber > columns.size()) {
-                        columns.setSize(currentColumnNumber);
+                    if (currentColumnNumber <= columns.size()) {
+                        if (columns.get(currentColumnNumber - 1) != null) {
+                            log.warn("More than one column object assigned " +
+                                     "to column " +
+                                     currentColumnNumber);
+                        }
+                        columns.set(currentColumnNumber - 1, c);
+                    } else {
+                      columns.add(currentColumnNumber - 1, c);
                     }
-		    if (columns.elementAt(currentColumnNumber - 1) != null) {
-			log.warn("More than one column object assigned " +
-				 "to column " +
-				 currentColumnNumber);
-		    }
-                    columns.setElementAt(c, currentColumnNumber - 1);
                     currentColumnNumber++;
                 }
 		nextColumnNumber = currentColumnNumber;
@@ -397,9 +397,8 @@ public class Table extends FObj {
 	double dWidthFactor = 0.0;
 	double dUnitLength = 0.0;
 	double tuMin = 100000.0 ; // Minimum number of proportional units
-	Enumeration eCol = columns.elements();
-	while (eCol.hasMoreElements()) {
-	    TableColumn c = (TableColumn)eCol.nextElement();
+	for (int i = 0; i < columns.size(); i++) {
+	    TableColumn c = (TableColumn)columns.get(i);
 	    if (c == null) {
 		log.warn("No table-column specification for column " +
 			 nextColumnNumber);
@@ -471,9 +470,8 @@ public class Table extends FObj {
 	}
 	// Now distribute the extra units onto each column and set offsets
 	int offset = 0;
-	eCol = columns.elements();
-	while (eCol.hasMoreElements()) {
-	    TableColumn c = (TableColumn)eCol.nextElement();
+        for (int i = 0; i < columns.size(); i++) {
+	    TableColumn c = (TableColumn)columns.get(i);
 	    if (c != null) {
 		c.setColumnOffset(offset);
 		Length l = c.getColumnWidthAsLength();
@@ -497,9 +495,8 @@ public class Table extends FObj {
     }
 
     private void layoutColumns(Area tableArea) throws FOPException  {
-	Enumeration eCol = columns.elements();
-	while (eCol.hasMoreElements()) {
-	    TableColumn c = (TableColumn)eCol.nextElement();
+	for (int i = 0; i < columns.size(); i++) {
+	    TableColumn c = (TableColumn)columns.get(i);
 	    if (c != null) {
 		c.layout(tableArea);
 	    }
@@ -604,7 +601,7 @@ public class Table extends FObj {
     // * ATTENTION: for now we assume columns are in order in the array!
     // */
     // BorderInfo getColumnBorder(BorderInfo.Side side, int iColNumber) {
-    // TableColumn col = (TableColumn)columns.elementAt(iColNumber);
+    // TableColumn col = (TableColumn)columns.get(iColNumber);
     // return col.getBorderInfo(side);
     // }
 }

@@ -16,8 +16,7 @@ import org.apache.fop.datatypes.IDReferences;
 import org.apache.fop.fo.pagination.PageSequence;
 
 // Java
-import java.util.Vector;
-import java.util.Enumeration;
+import java.util.ArrayList;
 
 /*Modified by Mark Lillywhite mark-fop@inomial.com. Added getIDReferences.
   This is just a convenience method for renderers who no longer have access
@@ -37,26 +36,26 @@ public class Page {
 
     private AreaTree areaTree;
 
-    private Vector rootExtensions;
+    private ArrayList rootExtensions;
 
     private PageSequence pageSequence;
 
     protected int pageNumber = 0;
     protected String formattedPageNumber;
 
-    protected Vector linkSets = new Vector();
+    protected ArrayList linkSets = new ArrayList();
 
-    private Vector idList = new Vector();
+    private ArrayList idList = new ArrayList();
 
-    private Vector footnotes = null;
+    private ArrayList footnotes = null;
 
-    private Vector markers = null;
+    private ArrayList markers = null;
 
     Page(AreaTree areaTree, int height, int width) {
         this.areaTree = areaTree;
         this.height = height;
         this.width = width;
-        markers = new Vector();
+        markers = new ArrayList();
     }
 
     public IDReferences getIDReferences() {
@@ -161,10 +160,10 @@ public class Page {
     }
 
     public void addLinkSet(LinkSet linkSet) {
-        this.linkSets.addElement(linkSet);
+        this.linkSets.add(linkSet);
     }
 
-    public Vector getLinkSets() {
+    public ArrayList getLinkSets() {
         return this.linkSets;
     }
 
@@ -173,31 +172,30 @@ public class Page {
     }
 
     public void addToIDList(String id) {
-        idList.addElement(id);
+        idList.add(id);
     }
 
-    public Vector getIDList() {
+    public ArrayList getIDList() {
         return idList;
     }
 
-    public Vector getPendingFootnotes() {
+    public ArrayList getPendingFootnotes() {
         return footnotes;
     }
 
-    public Vector getExtensions() {
+    public ArrayList getExtensions() {
         return rootExtensions;
     }
 
-    public void setExtensions(Vector extensions) {
+    public void setExtensions(ArrayList extensions) {
         this.rootExtensions = extensions;
     }
 
-    public void setPendingFootnotes(Vector v) {
+    public void setPendingFootnotes(ArrayList v) {
         footnotes = v;
         if (footnotes != null) {
-            for (Enumeration e = footnotes.elements();
-                    e.hasMoreElements(); ) {
-                FootnoteBody fb = (FootnoteBody)e.nextElement();
+          for (int i = 0; i < footnotes.size(); i++ ) {
+                FootnoteBody fb = (FootnoteBody)footnotes.get(i);
                 if (!Footnote.layoutFootnote(this, fb, null)) {
                     // footnotes are too large to fit on empty page
                 }
@@ -209,16 +207,16 @@ public class Page {
 
     public void addPendingFootnote(FootnoteBody fb) {
         if (footnotes == null) {
-            footnotes = new Vector();
+            footnotes = new ArrayList();
         }
-        footnotes.addElement(fb);
+        footnotes.add(fb);
     }
 
     public void registerMarker(Marker marker) {
-        markers.addElement(marker);
+        markers.add(marker);
     }
 
-    public Vector getMarkers() {
+    public ArrayList getMarkers() {
         return this.markers;
     }
 

@@ -12,10 +12,6 @@ import org.apache.fop.render.Renderer;
 import org.apache.fop.fo.properties.Position;
 import org.apache.fop.datatypes.IDReferences;
 
-// Java
-import java.util.Vector;
-import java.util.Enumeration;
-
 public class ColumnArea extends AreaContainer {
 
     private int columnIndex;

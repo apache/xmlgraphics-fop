@@ -8,7 +8,7 @@
 package org.apache.fop.pdf;
 
 // Java...
-import java.util.Vector;
+import java.util.ArrayList;
 import java.io.UnsupportedEncodingException;
 
 /**
@@ -32,12 +32,12 @@ public class PDFFunction extends PDFObject {
     /**
      * Required: 2 * m Array of Double numbers which are possible inputs to the function
      */
-    protected Vector domain = null;
+    protected ArrayList domain = null;
 
     /**
      * Required: 2 * n Array of Double numbers which are possible outputs to the function
      */
-    protected Vector range = null;
+    protected ArrayList range = null;
 
     /* ********************TYPE 0***************************** */
     // FunctionType 0 specific function guts
@@ -47,7 +47,7 @@ public class PDFFunction extends PDFObject {
      * Note: This is really more like two seperate integers, sizeDomain, and sizeRange,
      * but since they're expressed as an array in PDF, my implementation reflects that.
      */
-    protected Vector size = null;
+    protected ArrayList size = null;
 
     /**
      * Required for Type 0: Number of Bits used to represent each sample value. Limited to 1,2,4,8,12,16,24, or 32
@@ -65,12 +65,12 @@ public class PDFFunction extends PDFObject {
      * Required for Type 3: A 2 * k array of Doubles that, taken in pairs, map each subset of the domain defined by Domain and the Bounds array to the domain of the corresponding function.
      * Should be two values per function, usually (0,1), as in [0 1 0 1] for 2 functions.
      */
-    protected Vector encode = null;
+    protected ArrayList encode = null;
 
     /**
      * Optinoal for Type 0: A 2 * n array of Doubles which provides a linear mapping of sample values to the range. Defaults to Range.
      */
-    protected Vector decode = null;
+    protected ArrayList decode = null;
 
     /**
      * Optional For Type 0: A stream of sample values
@@ -82,21 +82,21 @@ public class PDFFunction extends PDFObject {
     protected StringBuffer functionDataStream = null;
 
     /**
-     * Required (?) For Type 0: A vector of Strings for the various filters to be used to decode the stream.
+     * Required (?) For Type 0: A ArrayList of Strings for the various filters to be used to decode the stream.
      * These are how the string is compressed. Flate, LZW, etc.
      */
-    protected Vector filter = null;
+    protected ArrayList filter = null;
     /* *************************TYPE 2************************** */
 
     /**
      * Required For Type 2: An Array of n Doubles defining the function result when x=0. Default is [0].
      */
-    protected Vector cZero = null;
+    protected ArrayList cZero = null;
 
     /**
      * Required For Type 2: An Array of n Doubles defining the function result when x=1. Default is [1].
      */
-    protected Vector cOne = null;
+    protected ArrayList cOne = null;
 
     /**
      * Required for Type 2: The interpolation exponent.
@@ -108,9 +108,9 @@ public class PDFFunction extends PDFObject {
     /* *************************TYPE 3************************** */
 
     /**
-     * Required for Type 3: An vector of PDFFunctions which form an array of k single input functions making up the stitching function.
+     * Required for Type 3: An ArrayList of PDFFunctions which form an array of k single input functions making up the stitching function.
      */
-    protected Vector functions = null;
+    protected ArrayList functions = null;
 
     /**
      * Optional for Type 3: An array of (k-1) Doubles that, in combination with Domain, define the intervals to which each function from the Functions array apply. Bounds elements must be in order of increasing magnitude, and each value must be within the value of Domain.
@@ -119,7 +119,7 @@ public class PDFFunction extends PDFObject {
      * This makes each function responsible for an equal amount of the stitching function.
      * It makes the gradient even.
      */
-    protected Vector bounds = null;
+    protected ArrayList bounds = null;
     // See encode above, as it's also part of Type 3 Functions.
 
     /* *************************TYPE 4************************** */
@@ -131,13 +131,13 @@ public class PDFFunction extends PDFObject {
      * Use null for an optional object parameter if you choose not to use it.
      * For optional int parameters, pass the default.
      *
-     * @param theDomain Vector objects of Double objects.
+     * @param theDomain ArrayList objects of Double objects.
      * This is the domain of the function.
      * See page 264 of the PDF 1.3 Spec.
-     * @param theRange Vector objects of Double objects.
+     * @param theRange ArrayList objects of Double objects.
      * This is the Range of the function.
      * See page 264 of the PDF 1.3 Spec.
-     * @param theSize A Vector object of Integer objects.
+     * @param theSize A ArrayList object of Integer objects.
      * This is the number of samples in each input dimension.
      * I can't imagine there being more or less than two input dimensions,
      * so maybe this should be an array of length 2.
@@ -152,14 +152,14 @@ public class PDFFunction extends PDFObject {
      * This attribute is optional.
      *
      * See page 265 in the PDF 1.3 spec.
-     * @param theEncode Vector objects of Double objects.
+     * @param theEncode ArrayList objects of Double objects.
      * This is the linear mapping of input values intop the domain
      * of the function's sample table. Default is hard to represent in
      * ascii, but basically [0 (Size0 1) 0 (Size1 1)...].
      * This attribute is optional.
      *
      * See page 265 in the PDF 1.3 spec.
-     * @param theDecode Vector objects of Double objects.
+     * @param theDecode ArrayList objects of Double objects.
      * This is a linear mapping of sample values into the range.
      * The default is just the range.
      *
@@ -170,7 +170,7 @@ public class PDFFunction extends PDFObject {
      * This is optional, but is almost always used.
      *
      * Page 265 of the PDF 1.3 spec has more.
-     * @param theFilter This is a vector of String objects which are the various filters that
+     * @param theFilter This is a ArrayList of String objects which are the various filters that
      * have are to be applied to the stream to make sense of it. Order matters,
      * so watch out.
      *
@@ -181,20 +181,20 @@ public class PDFFunction extends PDFObject {
      * @param theFunctionType This is the type of function (0,2,3, or 4).
      * It should be 0 as this is the constructor for sampled functions.
      */
-    public PDFFunction(int theNumber, int theFunctionType, Vector theDomain,
-                       Vector theRange, Vector theSize, int theBitsPerSample,
-                       int theOrder, Vector theEncode, Vector theDecode,
-                       StringBuffer theFunctionDataStream, Vector theFilter) {
+    public PDFFunction(int theNumber, int theFunctionType, ArrayList theDomain,
+                       ArrayList theRange, ArrayList theSize, int theBitsPerSample,
+                       int theOrder, ArrayList theEncode, ArrayList theDecode,
+                       StringBuffer theFunctionDataStream, ArrayList theFilter) {
         super(theNumber);
 
         this.functionType = 0;      // dang well better be 0;
         this.size = theSize;
         this.bitsPerSample = theBitsPerSample;
         this.order = theOrder;      // int
-        this.encode = theEncode;    // vector of int
-        this.decode = theDecode;    // vector of int
+        this.encode = theEncode;    // ArrayList of int
+        this.decode = theDecode;    // ArrayList of int
         this.functionDataStream = theFunctionDataStream;
-        this.filter = theFilter;    // vector of Strings
+        this.filter = theFilter;    // ArrayList of Strings
 
         // the domain and range are actually two dimensional arrays.
         // so if there's not an even number of items, bad stuff
@@ -210,17 +210,17 @@ public class PDFFunction extends PDFObject {
      * For optional int parameters, pass the default.
      *
      * @param theNumber the object's number
-     * @param theDomain Vector objects of Double objects.
+     * @param theDomain ArrayList objects of Double objects.
      * This is the domain of the function.
      * See page 264 of the PDF 1.3 Spec.
-     * @param theRange Vector of Doubles that is the Range of the function.
+     * @param theRange ArrayList of Doubles that is the Range of the function.
      * See page 264 of the PDF 1.3 Spec.
-     * @param theCZero This is a vector of Double objects which defines the function result
+     * @param theCZero This is a ArrayList of Double objects which defines the function result
      * when x=0.
      *
      * This attribute is optional.
      * It's described on page 268 of the PDF 1.3 spec.
-     * @param theCOne This is a vector of Double objects which defines the function result
+     * @param theCOne This is a ArrayList of Double objects which defines the function result
      * when x=1.
      *
      * This attribute is optional.
@@ -231,8 +231,8 @@ public class PDFFunction extends PDFObject {
      * PDF Spec page 268
      * @param theFunctionType The type of the function, which should be 2.
      */
-    public PDFFunction(int theNumber, int theFunctionType, Vector theDomain,
-                       Vector theRange, Vector theCZero, Vector theCOne,
+    public PDFFunction(int theNumber, int theFunctionType, ArrayList theDomain,
+                       ArrayList theRange, ArrayList theCZero, ArrayList theCOne,
                        double theInterpolationExponentN) {
         super(theNumber);
 
@@ -255,17 +255,17 @@ public class PDFFunction extends PDFObject {
      * For optional int parameters, pass the default.
      *
      * @param theNumber the object's number
-     * @param theDomain Vector objects of Double objects.
+     * @param theDomain ArrayList objects of Double objects.
      * This is the domain of the function.
      * See page 264 of the PDF 1.3 Spec.
-     * @param theRange Vector objects of Double objects.
+     * @param theRange ArrayList objects of Double objects.
      * This is the Range of the function.
      * See page 264 of the PDF 1.3 Spec.
-     * @param theFunctions A Vector of the PDFFunction objects that the stitching function stitches.
+     * @param theFunctions A ArrayList of the PDFFunction objects that the stitching function stitches.
      *
      * This attributed is required.
      * It is described on page 269 of the PDF spec.
-     * @param theBounds This is a vector of Doubles representing the numbers that,
+     * @param theBounds This is a ArrayList of Doubles representing the numbers that,
      * in conjunction with Domain define the intervals to which each function from
      * the 'functions' object applies. It must be in order of increasing magnitude,
      * and each must be within Domain.
@@ -274,7 +274,7 @@ public class PDFFunction extends PDFObject {
      *
      * This attributed is required.
      * It's described on page 269 of the PDF 1.3 spec.
-     * @param theEncode Vector objects of Double objects.
+     * @param theEncode ArrayList objects of Double objects.
      * This is the linear mapping of input values intop the domain
      * of the function's sample table. Default is hard to represent in
      * ascii, but basically [0 (Size0 1) 0 (Size1 1)...].
@@ -284,9 +284,9 @@ public class PDFFunction extends PDFObject {
      * @param theFunctionType This is the function type. It should be 3,
      * for a stitching function.
      */
-    public PDFFunction(int theNumber, int theFunctionType, Vector theDomain,
-                       Vector theRange, Vector theFunctions,
-                       Vector theBounds, Vector theEncode) {
+    public PDFFunction(int theNumber, int theFunctionType, ArrayList theDomain,
+                       ArrayList theRange, ArrayList theFunctions,
+                       ArrayList theBounds, ArrayList theEncode) {
         super(theNumber);
 
         this.functionType = 3;    // dang well better be 3;
@@ -305,10 +305,10 @@ public class PDFFunction extends PDFObject {
      * Use null for an optional object parameter if you choose not to use it.
      * For optional int parameters, pass the default.
      *
-     * @param theDomain Vector object of Double objects.
+     * @param theDomain ArrayList object of Double objects.
      * This is the domain of the function.
      * See page 264 of the PDF 1.3 Spec.
-     * @param theRange Vector object of Double objects.
+     * @param theRange ArrayList object of Double objects.
      * This is the Range of the function.
      * See page 264 of the PDF 1.3 Spec.
      * @param theFunctionDataStream This is a stream of arithmetic, boolean, and stack operators and boolean constants.
@@ -321,8 +321,8 @@ public class PDFFunction extends PDFObject {
      * @param theFunctionType The type of function which should be 4, as this is
      * a Postscript calculator function
      */
-    public PDFFunction(int theNumber, int theFunctionType, Vector theDomain,
-                       Vector theRange, StringBuffer theFunctionDataStream) {
+    public PDFFunction(int theNumber, int theFunctionType, ArrayList theDomain,
+                       ArrayList theRange, StringBuffer theFunctionDataStream) {
         super(theNumber);
 
         this.functionType = 4;    // dang well better be 4;
@@ -361,7 +361,7 @@ public class PDFFunction extends PDFObject {
                 p.append("/Domain [ ");
                 vectorSize = this.domain.size();
                 for (tempInt = 0; tempInt < vectorSize; tempInt++) {
-                    p.append(PDFNumber.doubleOut((Double)this.domain.elementAt(tempInt))
+                    p.append(PDFNumber.doubleOut((Double)this.domain.get(tempInt))
                              + " ");
                 }
 
@@ -375,7 +375,7 @@ public class PDFFunction extends PDFObject {
                 p.append("/Size [ ");
                 vectorSize = this.size.size();
                 for (tempInt = 0; tempInt < vectorSize; tempInt++) {
-                    p.append(PDFNumber.doubleOut((Double)this.size.elementAt(tempInt))
+                    p.append(PDFNumber.doubleOut((Double)this.size.get(tempInt))
                              + " ");
                 }
                 p.append("] \n");
@@ -385,7 +385,7 @@ public class PDFFunction extends PDFObject {
                 p.append("/Encode [ ");
                 vectorSize = this.encode.size();
                 for (tempInt = 0; tempInt < vectorSize; tempInt++) {
-                    p.append(PDFNumber.doubleOut((Double)this.encode.elementAt(tempInt))
+                    p.append(PDFNumber.doubleOut((Double)this.encode.get(tempInt))
                              + " ");
                 }
                 p.append("] \n");
@@ -412,7 +412,7 @@ public class PDFFunction extends PDFObject {
                 p.append("/Range [ ");
                 vectorSize = this.range.size();
                 for (tempInt = 0; tempInt < vectorSize; tempInt++) {
-                    p.append(PDFNumber.doubleOut((Double)this.range.elementAt(tempInt))
+                    p.append(PDFNumber.doubleOut((Double)this.range.get(tempInt))
                              + " ");
                 }
 
@@ -424,7 +424,7 @@ public class PDFFunction extends PDFObject {
                 p.append("/Decode [ ");
                 vectorSize = this.decode.size();
                 for (tempInt = 0; tempInt < vectorSize; tempInt++) {
-                    p.append(PDFNumber.doubleOut((Double)this.decode.elementAt(tempInt))
+                    p.append(PDFNumber.doubleOut((Double)this.decode.get(tempInt))
                              + " ");
                 }
 
@@ -442,12 +442,12 @@ public class PDFFunction extends PDFObject {
                 vectorSize = this.filter.size();
                 p.append("/Filter ");
                 if (vectorSize == 1) {
-                    p.append("/" + ((String)this.filter.elementAt(0))
+                    p.append("/" + ((String)this.filter.get(0))
                              + " \n");
                 } else {
                     p.append("[ ");
                     for (tempInt = 0; tempInt < vectorSize; tempInt++) {
-                        p.append("/" + ((String)this.filter.elementAt(0))
+                        p.append("/" + ((String)this.filter.get(0))
                                  + " ");
                     }
                     p.append("] \n");
@@ -470,7 +470,7 @@ public class PDFFunction extends PDFObject {
                 p.append("/Domain [ ");
                 vectorSize = this.domain.size();
                 for (tempInt = 0; tempInt < vectorSize; tempInt++) {
-                    p.append(PDFNumber.doubleOut((Double)this.domain.elementAt(tempInt))
+                    p.append(PDFNumber.doubleOut((Double)this.domain.get(tempInt))
                              + " ");
                 }
 
@@ -485,7 +485,7 @@ public class PDFFunction extends PDFObject {
                 p.append("/Range [ ");
                 vectorSize = this.range.size();
                 for (tempInt = 0; tempInt < vectorSize; tempInt++) {
-                    p.append(PDFNumber.doubleOut((Double)this.range.elementAt(tempInt))
+                    p.append(PDFNumber.doubleOut((Double)this.range.get(tempInt))
                              + " ");
                 }
 
@@ -499,7 +499,7 @@ public class PDFFunction extends PDFObject {
                 p.append("/C0 [ ");
                 vectorSize = this.cZero.size();
                 for (tempInt = 0; tempInt < vectorSize; tempInt++) {
-                    p.append(PDFNumber.doubleOut((Double)this.cZero.elementAt(tempInt))
+                    p.append(PDFNumber.doubleOut((Double)this.cZero.get(tempInt))
                              + " ");
                 }
                 p.append("] \n");
@@ -510,7 +510,7 @@ public class PDFFunction extends PDFObject {
                 p.append("/C1 [ ");
                 vectorSize = this.cOne.size();
                 for (tempInt = 0; tempInt < vectorSize; tempInt++) {
-                    p.append(PDFNumber.doubleOut((Double)this.cOne.elementAt(tempInt))
+                    p.append(PDFNumber.doubleOut((Double)this.cOne.get(tempInt))
                              + " ");
                 }
                 p.append("] \n");
@@ -530,7 +530,7 @@ public class PDFFunction extends PDFObject {
                 p.append("/Domain [ ");
                 vectorSize = this.domain.size();
                 for (tempInt = 0; tempInt < vectorSize; tempInt++) {
-                    p.append(PDFNumber.doubleOut((Double)this.domain.elementAt(tempInt))
+                    p.append(PDFNumber.doubleOut((Double)this.domain.get(tempInt))
                              + " ");
                 }
                 p.append("] \n");
@@ -543,7 +543,7 @@ public class PDFFunction extends PDFObject {
                 p.append("/Range [ ");
                 vectorSize = this.range.size();
                 for (tempInt = 0; tempInt < vectorSize; tempInt++) {
-                    p.append(PDFNumber.doubleOut((Double)this.range.elementAt(tempInt))
+                    p.append(PDFNumber.doubleOut((Double)this.range.get(tempInt))
                              + " ");
                 }
 
@@ -555,7 +555,7 @@ public class PDFFunction extends PDFObject {
                 p.append("/Functions [ ");
                 numberOfFunctions = this.functions.size();
                 for (tempInt = 0; tempInt < numberOfFunctions; tempInt++) {
-                    p.append(((PDFFunction)this.functions.elementAt(tempInt)).referencePDF()
+                    p.append(((PDFFunction)this.functions.get(tempInt)).referencePDF()
                              + " ");
 
                 }
@@ -568,7 +568,7 @@ public class PDFFunction extends PDFObject {
                 p.append("/Encode [ ");
                 vectorSize = this.encode.size();
                 for (tempInt = 0; tempInt < vectorSize; tempInt++) {
-                    p.append(PDFNumber.doubleOut((Double)this.encode.elementAt(tempInt))
+                    p.append(PDFNumber.doubleOut((Double)this.encode.get(tempInt))
                              + " ");
                 }
 
@@ -590,7 +590,7 @@ public class PDFFunction extends PDFObject {
 
                 vectorSize = this.bounds.size();
                 for (tempInt = 0; tempInt < vectorSize; tempInt++) {
-                    p.append(PDFNumber.doubleOut((Double)this.bounds.elementAt(tempInt))
+                    p.append(PDFNumber.doubleOut((Double)this.bounds.get(tempInt))
                              + " ");
                 }
 
@@ -625,7 +625,7 @@ public class PDFFunction extends PDFObject {
                 p.append("/Domain [ ");
                 vectorSize = this.domain.size();
                 for (tempInt = 0; tempInt < vectorSize; tempInt++) {
-                    p.append(PDFNumber.doubleOut((Double)this.domain.elementAt(tempInt))
+                    p.append(PDFNumber.doubleOut((Double)this.domain.get(tempInt))
                              + " ");
                 }
 
@@ -639,7 +639,7 @@ public class PDFFunction extends PDFObject {
                 p.append("/Range [ ");
                 vectorSize = this.range.size();
                 for (tempInt = 0; tempInt < vectorSize; tempInt++) {
-                    p.append(PDFNumber.doubleOut((Double)this.range.elementAt(tempInt))
+                    p.append(PDFNumber.doubleOut((Double)this.range.get(tempInt))
                              + " ");
                 }
 

@@ -22,7 +22,7 @@ import java.io.FileWriter;
 import java.io.PrintWriter;
 import java.io.IOException;
 import java.io.FileNotFoundException;
-import java.util.Vector;
+import java.util.ArrayList;
 import java.net.URL;
 
 /**
@@ -37,7 +37,7 @@ public class PatternParser extends DefaultHandler implements PatternConsumer {
     int currElement;
     PatternConsumer consumer;
     StringBuffer token;
-    Vector exception;
+    ArrayList exception;
     char hyphenChar;
     String errMsg;
 
@@ -183,10 +183,10 @@ public class PatternParser extends DefaultHandler implements PatternConsumer {
         return pat.toString();
     }
 
-    protected Vector normalizeException(Vector ex) {
-        Vector res = new Vector();
+    protected ArrayList normalizeException(ArrayList ex) {
+        ArrayList res = new ArrayList();
         for (int i = 0; i < ex.size(); i++) {
-            Object item = ex.elementAt(i);
+            Object item = ex.get(i);
             if (item instanceof String) {
                 String str = (String)item;
                 StringBuffer buf = new StringBuffer();
@@ -195,27 +195,27 @@ public class PatternParser extends DefaultHandler implements PatternConsumer {
                     if (c != hyphenChar)
                         buf.append(c);
                     else {
-                        res.addElement(buf.toString());
+                        res.add(buf.toString());
                         buf.setLength(0);
                         char[] h = new char[1];
                         h[0] = hyphenChar;
                         // we use here hyphenChar which is not necessarily
                         // the one to be printed
-                        res.addElement(new Hyphen(new String(h), null, null));
+                        res.add(new Hyphen(new String(h), null, null));
                     }
                 }
                 if (buf.length() > 0)
-                    res.addElement(buf.toString());
+                    res.add(buf.toString());
             } else
-                res.addElement(item);
+                res.add(item);
         }
         return res;
     }
 
-    protected String getExceptionWord(Vector ex) {
+    protected String getExceptionWord(ArrayList ex) {
         StringBuffer res = new StringBuffer();
         for (int i = 0; i < ex.size(); i++) {
-            Object item = ex.elementAt(i);
+            Object item = ex.get(i);
             if (item instanceof String)
                 res.append((String)item);
             else {
@@ -260,14 +260,14 @@ public class PatternParser extends DefaultHandler implements PatternConsumer {
             currElement = ELEM_PATTERNS;
         else if (local.equals("exceptions")) {
             currElement = ELEM_EXCEPTIONS;
-            exception = new Vector();
+            exception = new ArrayList();
         } else if (local.equals("hyphen")) {
             if (token.length() > 0) {
-                exception.addElement(token.toString());
+                exception.add(token.toString());
             }
-            exception.addElement(new Hyphen(attrs.getValue("pre"),
-                                            attrs.getValue("no"),
-                                            attrs.getValue("post")));
+            exception.add(new Hyphen(attrs.getValue("pre"),
+                                     attrs.getValue("no"),
+                                     attrs.getValue("post")));
             currElement = ELEM_HYPHEN;
         }
         token.setLength(0);
@@ -282,10 +282,10 @@ public class PatternParser extends DefaultHandler implements PatternConsumer {
                 consumer.addClass(word);
                 break;
             case ELEM_EXCEPTIONS:
-                exception.addElement(word);
+                exception.add(word);
                 exception = normalizeException(exception);
                 consumer.addException(getExceptionWord(exception),
-                                      (Vector)exception.clone());
+                                      (ArrayList)exception.clone());
                 break;
             case ELEM_PATTERNS:
                 consumer.addPattern(getPattern(word),
@@ -319,11 +319,11 @@ public class PatternParser extends DefaultHandler implements PatternConsumer {
                 consumer.addClass(word);
                 break;
             case ELEM_EXCEPTIONS:
-                exception.addElement(word);
+                exception.add(word);
                 exception = normalizeException(exception);
                 consumer.addException(getExceptionWord(exception),
-                                      (Vector)exception.clone());
-                exception.removeAllElements();
+                                      (ArrayList)exception.clone());
+                exception.clear();
                 break;
             case ELEM_PATTERNS:
                 consumer.addPattern(getPattern(word),
@@ -391,7 +391,7 @@ public class PatternParser extends DefaultHandler implements PatternConsumer {
         System.out.println("class: " + c);
     }
 
-    public void addException(String w, Vector e) {
+    public void addException(String w, ArrayList e) {
         System.out.println("exception: " + w + " : " + e.toString());
     }
 

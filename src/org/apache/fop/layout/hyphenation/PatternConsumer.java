@@ -7,7 +7,7 @@
 
 package org.apache.fop.layout.hyphenation;
 
-import java.util.Vector;
+import java.util.ArrayList;
 
 /**
  * This interface is used to connect the XML pattern file parser to
@@ -29,10 +29,10 @@ public interface PatternConsumer {
      * Add a hyphenation exception. An exception replaces the
      * result obtained by the algorithm for cases for which this
      * fails or the user wants to provide his own hyphenation.
-     * A hyphenatedword is a vector of alternating String's and
+     * A hyphenatedword is a ArrayList of alternating String's and
      * {@link Hyphen Hyphen} instances
      */
-    public void addException(String word, Vector hyphenatedword);
+    public void addException(String word, ArrayList hyphenatedword);
 
     /**
      * Add hyphenation patterns.

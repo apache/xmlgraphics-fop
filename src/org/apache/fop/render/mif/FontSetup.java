@@ -16,8 +16,8 @@ import org.apache.fop.mif.MIFDocument;
 // import org.apache.fop.pdf.PDFResources;
 
 // Java
-import java.util.Enumeration;
-import java.util.Hashtable;
+import java.util.Iterator;
+import java.util.HashMap;
 
 /**
  * sets up the PDF fonts.
@@ -137,10 +137,10 @@ public class FontSetup {
     public static void addToFontFormat(MIFDocument mifDoc,
                                        FontInfo fontInfo) {
 
-        Hashtable fonts = fontInfo.getFonts();
-        Enumeration e = fonts.keys();
-        while (e.hasMoreElements()) {
-            String f = (String)e.nextElement();
+        HashMap fonts = fontInfo.getFonts();
+        Iterator e = fonts.keySet().iterator();
+        while (e.hasNext()) {
+            String f = (String)e.next();
             Font font = (Font)fonts.get(f);
             FontDescriptor desc = null;
             if (font instanceof FontDescriptor) {

@@ -15,10 +15,6 @@ import org.apache.fop.layout.AreaTree;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.extensions.ExtensionObj;
 
-// Java
-import java.util.Vector;
-import java.util.Enumeration;
-
 /**
  * The fo:root formatting object. Contains page masters, root extensions,
  * page-sequences.

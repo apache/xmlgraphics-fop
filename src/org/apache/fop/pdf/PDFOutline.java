@@ -9,7 +9,7 @@ package org.apache.fop.pdf;
 
 // Java
 import java.io.UnsupportedEncodingException;
-import java.util.Vector;
+import java.util.ArrayList;
 
 
 /**
@@ -26,7 +26,7 @@ public class PDFOutline extends PDFObject {
     /**
      * list of sub-entries (outline objects)
      */
-    private Vector _subentries;
+    private ArrayList _subentries;
 
     /**
      * parent outline object. Root Outlines parent is null
@@ -58,7 +58,7 @@ public class PDFOutline extends PDFObject {
      */
     public PDFOutline(int number, String title, String action) {
         super(number);
-        _subentries = new Vector();
+        _subentries = new ArrayList();
         _count = 0;
         _parent = null;
         _prev = null;
@@ -81,13 +81,13 @@ public class PDFOutline extends PDFObject {
     public void addOutline(PDFOutline outline) {
         if (_subentries.size() > 0) {
             outline._prev =
-                (PDFOutline)_subentries.elementAt(_subentries.size() - 1);
+                (PDFOutline)_subentries.get(_subentries.size() - 1);
             outline._prev._next = outline;
         } else {
             _first = outline;
         }
 
-        _subentries.addElement(outline);
+        _subentries.add(outline);
         outline._parent = this;
 
         incrementCount();    // note: count is not just the immediate children
