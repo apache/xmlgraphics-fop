@@ -19,6 +19,7 @@
 package org.apache.fop.render;
 
 // Java
+import java.awt.GraphicsEnvironment;
 import java.io.OutputStream;
 import java.io.IOException;
 // FOP
@@ -41,6 +42,9 @@ import org.apache.fop.configuration.FOUserAgent;
 public interface Renderer extends Runnable {
 
     void setOutputStream(OutputStream outputStream);
+
+    /** @return the <code>GraphicsEnvironment</code> of this renderer.  */
+    GraphicsEnvironment getGraphicsEnvironment();
 
     /**
      * Set the User Agent.
