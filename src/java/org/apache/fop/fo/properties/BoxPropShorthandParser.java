@@ -1,5 +1,5 @@
 /*
- * Copyright 1999-2004 The Apache Software Foundation.
+ * Copyright 1999-2005 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -41,11 +41,11 @@ public class BoxPropShorthandParser extends GenericShorthandParser {
      * int, ListProperty, PropertyMaker, PropertyList)
      */
     protected Property convertValueForProperty(int propId,
-                                               ListProperty listProperty,
+                                               Property property,
                                                PropertyMaker maker,
                                                PropertyList propertyList)
-        throws PropertyException
-    {
+                throws PropertyException {
+        ListProperty listProperty = (ListProperty)property;
         String name = FOPropertyMapping.getPropertyName(propId);
         Property p = null;
         int count = listProperty.getList().size();
