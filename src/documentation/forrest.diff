@@ -1,10 +1,10 @@
-Index: src/resources/skins/forrest-site/xslt/fo/document2fo.xsl
+Index: src/resources/skins/common/xslt/fo/document2fo.xsl
 ===================================================================
-RCS file: /home/cvspublic/xml-forrest/src/resources/skins/forrest-site/xslt/fo/document2fo.xsl,v
-retrieving revision 1.3
-diff -u -r1.3 document2fo.xsl
---- src/resources/skins/forrest-site/xslt/fo/document2fo.xsl	1 Nov 2002 02:49:58 -0000	1.3
-+++ src/resources/skins/forrest-site/xslt/fo/document2fo.xsl	8 Nov 2002 12:05:50 -0000
+RCS file: /home/cvspublic/xml-forrest/src/resources/skins/common/xslt/fo/document2fo.xsl,v
+retrieving revision 1.2
+diff -u -r1.2 document2fo.xsl
+--- src/resources/skins/common/xslt/fo/document2fo.xsl	16 Nov 2002 22:58:50 -0000	1.2
++++ src/resources/skins/common/xslt/fo/document2fo.xsl	18 Nov 2002 14:09:29 -0000
 @@ -2,6 +2,7 @@
  
  <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
@@ -92,17 +92,15 @@ diff -u -r1.3 document2fo.xsl
      </fo:static-content>
      
      <fo:static-content flow-name="odd-footer">
-@@ -191,7 +233,12 @@
-       NOTICE: <xsl:apply-templates/>
+@@ -192,6 +234,11 @@
      </fo:block>
    </xsl:template>
--
-+<!--
+ 
 +  <xsl:template match="anchor">
 +    <fo:block id="{@id}"/>
 +    <xsl:apply-templates/>
 +  </xsl:template>
-+-->
++
    <xsl:template match="section">
      
      <xsl:param name="level">0</xsl:param>
@@ -133,13 +131,15 @@ diff -u -r1.3 document2fo.xsl
        text-align="start">
        <xsl:apply-templates/>
      </fo:block>
-@@ -456,7 +512,14 @@
+@@ -456,7 +512,16 @@
    </xsl:template>
  
    <xsl:template match="link">
 +    <xsl:choose>
 +      <xsl:when test="starts-with(@href, '#')">
-+    <fo:basic-link color="blue" text-decoration="underline" internal-destination="substring(@href,2)"><xsl:apply-templates/></fo:basic-link>
++    <fo:basic-link color="blue" text-decoration="underline" internal-destination="{substring(@href,2)}">
++      <xsl:apply-templates/>
++    </fo:basic-link>
 +      </xsl:when>
 +      <xsl:otherwise>
      <fo:basic-link color="blue" text-decoration="underline" external-destination="{@href}"><xsl:apply-templates/></fo:basic-link>
@@ -148,3 +148,11 @@ diff -u -r1.3 document2fo.xsl
    </xsl:template>
  
    <xsl:template match="figure">
+@@ -587,7 +652,6 @@
+      [<xsl:value-of select="@def"/>]
+    </fo:inline>
+  </xsl:template>
+-
+ 
+ 
+ </xsl:stylesheet>
