@@ -671,6 +671,7 @@ public class TableLayoutManager extends BlockStackingLayoutManager
             }
         }
 
+        contentLM.setStartXOffset(startXOffset);
         contentLM.addAreas(parentIter, layoutContext);
         tableHeight += contentLM.getUsedBPD();
 
