@@ -22,6 +22,7 @@ package org.apache.fop.configuration;
 
 // java
 import java.io.File;
+import java.io.FileNotFoundException;
 // fop
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.apps.InputHandler;
@@ -41,6 +42,17 @@ public class UserOptions extends SystemOptions {
     public UserOptions(Configuration configuration) {
         super(configuration);
     }
+
+    /**
+     * Configure the system according to the system configuration file
+     * config.xml and the user configuration file if it is specified in the
+     * system configuration file.
+     */
+    public void configure()
+    throws FOPException, FileNotFoundException {
+        loadUserConfiguration(getUserConfigFileName());
+        super.configure();
+    }
     
     /**
      * Load a user-defined configuration file.
@@ -50,10 +62,14 @@ public class UserOptions extends SystemOptions {
      * <code>loadConfiguration</code>.
      * @param userConfigFileName the name of the user configuration file.
      */
-    public void loadConfiguration(String userConfigFileName) {
+    public void loadUserConfiguration(String userConfigFileName) {
         // read user configuration file
         boolean readOk = true;
-        userConfigFile = new File(userConfigFileName);
+        if (userConfigFileName == null) {
+            log.config("No user config file name");
+            return;
+        }
+        File userConfigFile = new File(userConfigFileName);
         if (userConfigFile == null) {
             return;
         }

@@ -76,27 +76,12 @@ public class SystemOptions {
 
     protected Configuration configuration = null;
 
-    /* show configuration information */
-    protected boolean dumpConfig = false;
-    /* name of user configuration file */
-    protected File userConfigFile = null;
-    /* name of input fo file */
-    protected File foFile = null;
-    /* name of xsltFile (xslt transformation as input) */
-    protected File xsltFile = null;
-    /* name of xml file (xslt transformation as input) */
-    protected File xmlFile = null;
-    /* name of output file */
-    protected File outputFile = null;
-    /* name of buffer file */
-    protected File bufferFile = null;
+//    /* show configuration information */
+//    protected boolean dumpConfig = false;
     /* input mode */
     protected int inputmode = NOT_SET;
     /* output mode */
     protected int outputmode = NOT_SET;
-    /* buffer mode */
-    protected int buffermode = NOT_SET;
-    /* language for user information */
     // baseDir (set from the config files
     protected String baseDir = null;
 
@@ -130,13 +115,6 @@ public class SystemOptions {
     public SystemOptions(Configuration configuration) {
         setup();
         this.configuration = configuration;
-        try {
-            configure();
-        } catch (FileNotFoundException e) {
-            throw new RuntimeException(e);
-        } catch (FOPException e) {
-            throw new RuntimeException(e);
-        }
     }
 
     private void setup() {
@@ -214,7 +192,7 @@ public class SystemOptions {
      * @return the index of that name in the array of input mode names,
      * or -1 if not found
      */
-    public int inputModeNameToIndex(String name) {
+    protected int inputModeNameToIndex(String name) {
         for (int i = 0; i <= LAST_INPUT_MODE; i++) {
             if (name.equals(inputModes[i])) return i;
         }
@@ -227,7 +205,7 @@ public class SystemOptions {
      * @return the index of that name in the array of output mode names,
      * or -1 if not found
      */
-    public int outputModeNameToIndex(String name) {
+    protected int outputModeNameToIndex(String name) {
         for (int i = 0; i <= LAST_INPUT_MODE; i++) {
             if (name.equals(outputModes[i])) return i;
         }
@@ -250,25 +228,8 @@ public class SystemOptions {
      *
      * @exception FOPException
      */
-    void initOptions() throws FOPException {
+    protected void initOptions() throws FOPException {
         String str = null;
-        
-        // show configuration settings
-        dumpConfig = configuration.isTrue("dumpConfiguration");
-        
-        if ((str = getFoFileName()) != null)
-            foFile = new File(str);
-        if ((str = getXmlFileName()) != null)
-            xmlFile = new File(str);
-        if ((str = getXsltFileName()) != null)
-            xsltFile = new File(str);
-        if ((str = getOutputFileName()) != null)
-            outputFile = new File(str);
-        if ((str = getBufferFileName()) != null)
-            bufferFile = new File(str);
-        // userConfigFile may be set in the process of loading said file
-        if (userConfigFile == null && (str = getUserConfigFileName()) != null)
-            userConfigFile = new File(str);
         
         if ((str = getInputMode()) != null)
             inputmode = inputModeIndex(str);
@@ -291,7 +252,7 @@ public class SystemOptions {
             log.config("base directory: " + baseDir);
         }
         
-        if (dumpConfig) {
+        if (dumpConfig()) {
             configuration.dumpConfiguration();
             System.exit(0);
         }
@@ -313,7 +274,7 @@ public class SystemOptions {
      * @exception FOPException if the configuration file
      * cannot be discovered.
      */
-    public void loadConfiguration(String fname)
+    protected void loadConfiguration(String fname)
     throws FOPException {
         InputStream configfile = ConfigurationResource.getResourceFile(
                 "conf/" + fname, ConfigurationReader.class);
@@ -331,7 +292,7 @@ public class SystemOptions {
      * Get the log.
      * @return the log
      */
-    public Logger getLogger() {
+    protected Logger getLogger() {
         return log;
     }
     
@@ -388,7 +349,7 @@ public class SystemOptions {
     /**
      * checks whether all necessary information has been given in a consistent way
      */
-    private void checkSettings() throws FOPException, FileNotFoundException {
+    protected void checkSettings() throws FOPException, FileNotFoundException {
         if (inputmode == NOT_SET) {
             throw new FOPException("No input file specified");
         }
@@ -398,31 +359,31 @@ public class SystemOptions {
         }
         
         if (inputmode == XSLT_INPUT) {
-            if (xmlFile == null) {
+            if (getXmlFile() == null) {
                 throw new FOPException("No xml input file specified");
             }
-            if (!xmlFile.exists()) {
+            if (!getXmlFile().exists()) {
                 throw new FileNotFoundException("Error: xml file "
-                        + xmlFile.getAbsolutePath()
+                        + getXmlFile().getAbsolutePath()
                         + " not found ");
             }
-            if (xsltFile == null ) {
+            if (getXsltFile() == null ) {
                 throw new FOPException(
                         "No xslt transformation file specified");
             }
-            if (!xsltFile.exists()) {
+            if (!getXsltFile().exists()) {
                 throw new FileNotFoundException("Error: xsl file "
-                        + xsltFile.getAbsolutePath()
+                        + getXsltFile().getAbsolutePath()
                         + " not found ");
             }
             
         } else if (inputmode == FO_INPUT) {
-            if (foFile == null) {
+            if (getFoFile() == null) {
                 throw new FOPException("No fo input file specified");
             }
-            if (!foFile.exists()) {
+            if (!getFoFile().exists()) {
                 throw new FileNotFoundException("Error: fo file "
-                        + foFile.getAbsolutePath()
+                        + getFoFile().getAbsolutePath()
                         + " not found ");
             }
         }
@@ -470,9 +431,10 @@ public class SystemOptions {
     public InputHandler getInputHandler() throws FOPException {
         switch (inputmode) {
             case FO_INPUT:
-                return new FOFileHandler(foFile);
+                return new FOFileHandler(getFoFile());
             case XSLT_INPUT:
-                return new XSLTInputHandler(xmlFile, xsltFile, xsltParams);
+                return new XSLTInputHandler(
+                        getXmlFile(), getXsltFile(), xsltParams);
             default:
                 throw new FOPException("Invalid inputmode setting!");
         }
@@ -495,7 +457,7 @@ public class SystemOptions {
      * Returns the input mode (type of input data, ex. NOT_SET or FO_INPUT)
      * @return the input mode
      */
-    public int getInputModeIndex() throws FOPException {
+    protected int getInputModeIndex() throws FOPException {
         String mode;
         if ((mode = getInputMode()) == null) return NOT_SET;
         return inputModeIndex(mode);
@@ -509,7 +471,7 @@ public class SystemOptions {
      * Returns the output mode (output format, ex. NOT_SET or PDF_OUTPUT)
      * @return the output mode
      */
-    public int getOutputModeIndex() throws FOPException {
+    protected int getOutputModeIndex() throws FOPException {
         String mode;
         if ((mode = getOutputMode()) == null) return NOT_SET;
         return outputModeIndex(mode);
@@ -521,7 +483,11 @@ public class SystemOptions {
     }
 
     public File getFoFile() {
-        return foFile;
+        String fname;
+        if ((fname = getFoFileName()) == null) {
+            return null;
+        }
+        return new File(fname);
     }
 
     public String getXmlFileName() {
@@ -529,7 +495,11 @@ public class SystemOptions {
     }
 
     public File getXmlFile() {
-        return xmlFile;
+        String fname;
+        if ((fname = getXmlFileName()) == null) {
+            return null;
+        }
+        return new File(fname);
     }
 
     public String getXsltFileName() {
@@ -537,7 +507,11 @@ public class SystemOptions {
     }
 
     public File getXsltFile() {
-        return xsltFile;
+        String fname;
+        if ((fname = getXsltFileName()) == null) {
+            return null;
+        }
+        return new File(fname);
     }
 
     public String getOutputFileName() {
@@ -545,7 +519,11 @@ public class SystemOptions {
     }
 
     public File getOutputFile() {
-        return outputFile;
+        String fname;
+        if ((fname = getOutputFileName()) == null) {
+            return null;
+        }
+        return new File(fname);
     }
 
     public String getSystemConfigFileName() {
@@ -557,20 +535,24 @@ public class SystemOptions {
         return defaultConfigFile;
     }
 
+    public File getSystemConfigFile() {
+        String fname;
+        if ((fname = getSystemConfigFileName()) == null) {
+            return null;
+        }
+        return new File(fname);
+    }
+
     public String getUserConfigFileName() {
         return configuration.getStringValue("userConfigFileName");
     }
 
     public File getUserConfigFile() {
-        return userConfigFile;
-    }
-
-    public String getBufferFileName() {
-        return configuration.getStringValue("bufferFileName");
-    }
-
-    public File getBufferFile() {
-        return bufferFile;
+        String fname;
+        if ((fname = getUserConfigFileName()) == null) {
+            return null;
+        }
+        return new File(fname);
     }
 
     public String getLanguage() {
@@ -583,6 +565,10 @@ public class SystemOptions {
 
     public Boolean doDumpConfiguration() {
         return configuration.getBooleanObject("dumpConfiguration");
+    }
+
+    public boolean dumpConfig() {
+        return doDumpConfiguration().booleanValue();
     }
 
     public boolean isDebugMode() {
@@ -603,18 +589,18 @@ public class SystemOptions {
     public File getInputFile() {
         switch (inputmode) {
         case FO_INPUT:
-            return foFile;
+            return getFoFile();
         case XSLT_INPUT:
-            return xmlFile;
+            return getXmlFile();
         default:
-            return foFile;
+            return getFoFile();
         }
     }
 
     /**
      * shows the commandline syntax including a summary of all available options and some examples
      */
-    public void printUsage() {
+    protected void printUsage() {
         HelpFormatter help = new HelpFormatter();
         help.printHelp("FOP", options, true);
     }
@@ -622,7 +608,7 @@ public class SystemOptions {
     /**
      * shows the options for print output
      */
-    public void printUsagePrintOutput() {
+    protected void printUsagePrintOutput() {
         System.err.println("USAGE: -print [-Dstart=i] [-Dend=i] [-Dcopies=i] [-Deven=true|false] "
                 + " org.apache.fop.apps.Fop (..) -print \n"
                 + "Example:\n"
@@ -633,7 +619,7 @@ public class SystemOptions {
     /**
      * debug mode. outputs all commandline settings
      */
-    private void debug() {
+    protected void debug() {
         StringBuffer fine = new StringBuffer();
         StringBuffer severe = new StringBuffer();
         fine.append("Input mode: ");
@@ -643,12 +629,12 @@ public class SystemOptions {
                 break;
             case FO_INPUT:
                 fine.append("FO ");
-                fine.append("fo input file: " + foFile.toString());
+                fine.append("fo input file: " + getFoFileName());
                 break;
             case XSLT_INPUT:
                 fine.append("xslt transformation");
-                fine.append("xml input file: " + xmlFile.toString());
-                fine.append("xslt stylesheet: " + xsltFile.toString());
+                fine.append("xml input file: " + getXmlFileName());
+                fine.append("xslt stylesheet: " + getXsltFileName());
                 break;
             default:
                 fine.append("unknown input type");
@@ -660,45 +646,45 @@ public class SystemOptions {
                 break;
             case PDF_OUTPUT:
                 fine.append("pdf");
-                fine.append("output file: " + outputFile.toString());
+                fine.append("output file: " + getOutputFileName());
                 break;
             case AWT_OUTPUT:
                 fine.append("awt on screen");
-                if (outputFile != null) {
+                if (getOutputFile() != null) {
                     severe.append("awt mode, but outfile is set:\n");
-                    fine.append("out file: " + outputFile.toString());
+                    severe.append("output file: " + getOutputFileName() + "\n");
                 }
                 break;
             case MIF_OUTPUT:
                 fine.append("mif");
-                fine.append("output file: " + outputFile.toString());
+                fine.append("output file: " + getOutputFileName());
                 break;
             case RTF_OUTPUT:
                 fine.append("rtf");
-                fine.append("output file: " + outputFile.toString());
+                fine.append("output file: " + getOutputFileName());
                 break;
             case PRINT_OUTPUT:
                 fine.append("print directly");
-                if (outputFile != null) {
+                if (getOutputFile() != null) {
                     severe.append("print mode, but outfile is set:\n");
-                    severe.append("out file: " + outputFile.toString() + "\n");
+                    severe.append("output file: " + getOutputFileName() + "\n");
                 }
                 break;
             case PCL_OUTPUT:
                 fine.append("pcl");
-                fine.append("output file: " + outputFile.toString());
+                fine.append("output file: " + getOutputFileName());
                 break;
             case PS_OUTPUT:
                 fine.append("PostScript");
-                fine.append("output file: " + outputFile.toString());
+                fine.append("output file: " + getOutputFileName());
                 break;
             case TXT_OUTPUT:
                 fine.append("txt");
-                fine.append("output file: " + outputFile.toString());
+                fine.append("output file: " + getOutputFileName());
                 break;
             case SVG_OUTPUT:
                 fine.append("svg");
-                fine.append("output file: " + outputFile.toString());
+                fine.append("output file: " + getOutputFileName());
                 break;
             default:
                 fine.append("unknown input type");
@@ -706,14 +692,14 @@ public class SystemOptions {
         
         
         fine.append("\nOPTIONS\n");
-        if (userConfigFile != null) {
+        if (getUserConfigFileName() != null) {
             fine.append("user configuration file: "
-                    + userConfigFile.toString());
+                    + getUserConfigFileName());
         } else {
             fine.append("no user configuration file is used [default]");
         }
         fine.append("\n");
-        if (dumpConfig == true) {
+        if (dumpConfig()) {
             fine.append("dump configuration");
         } else {
             fine.append("don't dump configuration [default]");
