@@ -36,6 +36,7 @@ import org.apache.fop.fo.properties.CommonHyphenation;
 import org.apache.fop.fo.properties.CommonMarginInline;
 import org.apache.fop.fo.properties.CommonRelativePosition;
 import org.apache.fop.apps.FOPException;
+import org.apache.fop.fo.LMVisited;
 
 /**
  * This class represents the flow object 'fo:character'. Its use is defined by
@@ -50,7 +51,7 @@ import org.apache.fop.apps.FOPException;
  * Overrides may be specified in an implementation-specific manner." (6.6.3)
  *
  */
-public class Character extends FObj {
+public class Character extends FObj implements LMVisited {
 
     /** constant indicating that the character is OK */
     public static final int OK = 0;

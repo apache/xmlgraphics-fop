@@ -18,6 +18,9 @@
 
 package org.apache.fop.fo.flow;
 
+// Java
+import java.util.List;
+
 // XML
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
@@ -25,7 +28,6 @@ import org.xml.sax.SAXParseException;
 
 // FOP
 import org.apache.fop.fo.FONode;
-import org.apache.fop.layoutmgr.AddLMVisitor;
 import org.apache.fop.fo.FObj;
 
 /**
@@ -74,15 +76,22 @@ public class Footnote extends FObj {
         return inlineFO;
     }
 
-    public void acceptVisitor(AddLMVisitor aLMV) {
-        aLMV.serveFootnote(this);
-    }
-    
     protected void endOfNode() throws SAXParseException {
         super.endOfNode();
         getFOInputHandler().endFootnote(this);
     }
     
+    /**
+     * @param list the list to which the layout manager(s) should be added
+     */
+    public void addLayoutManager(List list) { 	 
+        if (getInlineFO() == null) {
+            getLogger().error("inline required in footnote");
+            return;
+        }
+        getInlineFO().addLayoutManager(list);
+    }
+
     public String getName() {
         return "fo:footnote";
     }

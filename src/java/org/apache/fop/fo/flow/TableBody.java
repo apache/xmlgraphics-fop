@@ -34,12 +34,14 @@ import org.apache.fop.fo.properties.CommonAural;
 import org.apache.fop.fo.properties.CommonBackground;
 import org.apache.fop.fo.properties.CommonBorderAndPadding;
 import org.apache.fop.fo.properties.CommonRelativePosition;
+import org.apache.fop.fo.LMVisited;
+
 
 /**
  * Class modelling the fo:table-body object. See Sec. 6.7.8 of the XSL-FO
  * Standard.
  */
-public class TableBody extends FObj {
+public class TableBody extends FObj implements LMVisited {
 
     private int spaceBefore;
     private int spaceAfter;

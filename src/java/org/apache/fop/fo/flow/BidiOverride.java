@@ -18,6 +18,10 @@
 
 package org.apache.fop.fo.flow;
 
+// Java
+import java.util.ArrayList;
+import java.util.List;
+
 // XML
 import org.xml.sax.Attributes;
 import org.xml.sax.Locator;
@@ -27,9 +31,12 @@ import org.xml.sax.SAXParseException;
 import org.apache.fop.fo.FOElementMapping;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FObjMixed;
-import org.apache.fop.layoutmgr.AddLMVisitor;
+import org.apache.fop.layoutmgr.BidiLayoutManager;
+import org.apache.fop.layoutmgr.InlineStackingLayoutManager;
+import org.apache.fop.layoutmgr.LayoutManager;
 import org.apache.fop.fo.properties.CommonAural;
 import org.apache.fop.fo.properties.CommonRelativePosition;
+
 
 /**
  * fo:bidi-override element.
@@ -116,7 +123,24 @@ public class BidiOverride extends FObjMixed {
      * this object.
      * @param aLMV the AddLMVisitor object that can access this object.
      */
-    public void acceptVisitor(AddLMVisitor aLMV) {
-        aLMV.serveBidiOverride(this);
+    public void addLayoutManager(List list) { 	 
+        if (false) {
+            super.addLayoutManager(list);
+        } else {
+            ArrayList childList = new ArrayList();
+            super.addLayoutManager(list);
+            for (int count = childList.size() - 1; count >= 0; count--) {
+                LayoutManager lm = (LayoutManager) childList.get(count);
+                if (lm.generatesInlineAreas()) {
+                    LayoutManager blm = new BidiLayoutManager((InlineStackingLayoutManager) lm);
+                    blm.setFObj(this);
+                    list.add(blm);
+                } else {
+                    list.add(lm);
+                }
+            }
+        }
     }
+
+    
 }

@@ -28,7 +28,6 @@ import org.apache.fop.datatypes.ColorType;
 import org.apache.fop.datatypes.Length;
 import org.apache.fop.fo.FObjMixed;
 import org.apache.fop.fo.FONode;
-import org.apache.fop.layoutmgr.AddLMVisitor;
 import org.apache.fop.fo.properties.CommonAccessibility;
 import org.apache.fop.fo.properties.CommonAural;
 import org.apache.fop.fo.properties.CommonBackground;
@@ -94,15 +93,6 @@ public class Title extends FObjMixed {
         int vis = this.propertyList.get(PR_VISIBILITY).getEnum();
         Length zIndex = this.propertyList.get(PR_Z_INDEX).getLength();
 
-    }
-
-    /**
-     * This is a hook for the AddLMVisitor class to be able to access
-     * this object.
-     * @param aLMV the AddLMVisitor object that can access this object.
-     */
-    public void acceptVisitor(AddLMVisitor aLMV) {
-        aLMV.serveTitle(this);
     }
 
     public String getName() {

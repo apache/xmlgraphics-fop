@@ -31,13 +31,14 @@ import org.apache.fop.fo.properties.CommonMarginInline;
 import org.apache.fop.fo.properties.CommonRelativePosition;
 import org.apache.fop.fo.properties.PercentLength;
 import org.apache.fop.fonts.Font;
+import org.apache.fop.fo.LMVisited;
 
 /**
  * Class modelling fo:leader object. See Sec. 6.6.9 of the XSL-FO Standard.
  * The main property of fo:leader is leader-pattern.
  * The following patterns are treated: rule, space, dots and use-content.
  */
-public class Leader extends FObjMixed {
+public class Leader extends FObjMixed implements LMVisited {
 
     private int ruleStyle;
     private int ruleThickness;

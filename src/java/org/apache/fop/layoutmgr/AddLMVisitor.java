@@ -41,24 +41,15 @@ import org.apache.fop.area.inline.TextArea;
 import org.apache.fop.datatypes.Length;
 import org.apache.fop.fo.Constants;
 import org.apache.fop.fo.FONode;
-import org.apache.fop.fo.FOText;
 import org.apache.fop.fo.FObj;
-import org.apache.fop.fo.FObjMixed;
-import org.apache.fop.fo.TextInfo;
-import org.apache.fop.fo.ToBeImplementedElement;
 import org.apache.fop.fo.XMLObj;
 import org.apache.fop.fo.flow.BasicLink;
-import org.apache.fop.fo.flow.BidiOverride;
 import org.apache.fop.fo.flow.Block;
-import org.apache.fop.fo.flow.BlockContainer;
 import org.apache.fop.fo.flow.Character;
 import org.apache.fop.fo.flow.ExternalGraphic;
-import org.apache.fop.fo.flow.Footnote;
 import org.apache.fop.fo.flow.Inline;
-import org.apache.fop.fo.flow.InlineContainer;
 import org.apache.fop.fo.flow.InstreamForeignObject;
 import org.apache.fop.fo.flow.Leader;
-import org.apache.fop.fo.flow.ListBlock;
 import org.apache.fop.fo.flow.ListItem;
 import org.apache.fop.fo.flow.ListItemBody;
 import org.apache.fop.fo.flow.ListItemLabel;
@@ -74,20 +65,16 @@ import org.apache.fop.fo.flow.TableFooter;
 import org.apache.fop.fo.flow.TableHeader;
 import org.apache.fop.fo.flow.TableRow;
 import org.apache.fop.fo.flow.Wrapper;
-import org.apache.fop.fo.pagination.Flow;
-import org.apache.fop.fo.pagination.StaticContent;
 import org.apache.fop.fo.pagination.Title;
 import org.apache.fop.fo.properties.CommonBackground;
 import org.apache.fop.fo.properties.CommonBorderAndPadding;
 import org.apache.fop.layoutmgr.list.Item;
-import org.apache.fop.layoutmgr.list.ListBlockLayoutManager;
 import org.apache.fop.layoutmgr.list.ListItemLayoutManager;
 import org.apache.fop.layoutmgr.table.Body;
-import org.apache.fop.layoutmgr.table.Cell;
 import org.apache.fop.layoutmgr.table.Column;
-import org.apache.fop.layoutmgr.table.Row;
 import org.apache.fop.layoutmgr.table.TableLayoutManager;
 import org.apache.fop.traits.MinOptMax;
+import org.apache.fop.fo.LMVisited;
 
 /**
  * Visitor pattern for the purpose of adding
@@ -115,7 +102,11 @@ public class AddLMVisitor {
         /* Store the List in a global variable so that it can be accessed by the
            Visitor methods */
         currentLMList = lmList;
-        fobj.acceptVisitor(this);
+        if (fobj instanceof LMVisited) {
+            ((LMVisited) fobj).acceptVisitor(this);
+        } else {
+            fobj.addLayoutManager(currentLMList);
+        }
     }
 
     /**
@@ -132,81 +123,6 @@ public class AddLMVisitor {
      */
     public List getSaveLMList() {
         return saveLMList;
-    }
-
-    /**
-     * @param node FONode object to process
-     */
-    public void serveFONode(FONode node) {
-    }
-
-    /**
-     * @param node FObj object to process
-     */
-    public void serveFObj(FObj node) {
-        serveFONode((FONode)node);
-    }
-
-    public void serveFOText(FOText foText) {
-        if (foText.endIndex - foText.startIndex > 0) {
-            currentLMList.add(new TextLayoutManager(foText));
-        }
-    }
-
-    public void serveFObjMixed(FObjMixed node) {
-        if (node.getChildNodes() != null) {
-            InlineStackingLayoutManager lm;
-            lm = new InlineStackingLayoutManager(node);
-            lm.setLMiter(new LMiter(lm, node.getChildNodes()));
-            currentLMList.add(lm);
-        }
-    }
-
-    public void serveBidiOverride(BidiOverride node) {
-        if (false) {
-            serveFObjMixed((FObjMixed)node);
-        } else {
-            ArrayList childList = new ArrayList();
-            saveLMList = currentLMList;
-            currentLMList = childList;
-            serveFObjMixed((FObjMixed)node);
-            currentLMList = saveLMList;
-            for (int count = childList.size() - 1; count >= 0; count--) {
-                LayoutManager lm = (LayoutManager) childList.get(count);
-                if (lm.generatesInlineAreas()) {
-                    LayoutManager blm = new BidiLayoutManager((InlineStackingLayoutManager) lm);
-                    blm.setFObj(node);
-                    currentLMList.add(blm);
-                } else {
-                    currentLMList.add(lm);
-                }
-            }
-        }
-    }
-
-    /**
-     * @param node Inline object to process
-     */
-    public void serveInline(Inline node) {
-        serveFObjMixed((FObjMixed)node);
-    }
-
-    public void serveFootnote(Footnote node) {
-        if (node.getInlineFO() == null) {
-            node.getLogger().error("inline required in footnote");
-            return;
-        }
-        serveInline(node.getInlineFO());
-    }
-
-    public void serveInlineContainer(InlineContainer node) {
-        ArrayList childList = new ArrayList();
-        saveLMList = currentLMList;
-        currentLMList = childList;
-        serveFObj((FObj)node);
-        currentLMList = saveLMList;
-        LayoutManager lm = new ICLayoutManager(node, childList);
-        currentLMList.add(lm);
     }
 
     /**
@@ -241,11 +157,6 @@ public class AddLMVisitor {
                  parentLM.addUnresolvedArea(node.getLink(), res);
              }
          }
-     }
-
-     public void serveBlock(Block node) {
-         BlockLayoutManager blm = new BlockLayoutManager(node);
-         currentLMList.add(blm);
      }
 
      public void serveLeader(final Leader node) {
@@ -417,17 +328,6 @@ public class AddLMVisitor {
          return vp;
      }
 
-     public void serveBlockContainer(BlockContainer node) {
-         BlockContainerLayoutManager blm = new BlockContainerLayoutManager(node);
-         blm.setOverflow(node.getProperty(Constants.PR_OVERFLOW).getEnum());
-         currentLMList.add(blm);
-     }
-
-     public void serveListBlock(ListBlock node) {
-         ListBlockLayoutManager blm = new ListBlockLayoutManager(node);
-         currentLMList.add(blm);
-     }
-
      public void serveInstreamForeignObject(InstreamForeignObject node) {
          Viewport areaCurrent = getInstreamForeignObjectInlineArea(node);
          if (areaCurrent != null) {
@@ -438,7 +338,6 @@ public class AddLMVisitor {
              currentLMList.add(lm);
          }
      }
-
      /**
       * Get the inline area created by this element.
       *
@@ -755,48 +654,6 @@ public class AddLMVisitor {
          return blm;
      }
 
-     public void serveTableCell(TableCell node) {
-         Cell clm = new Cell(node);
-         currentLMList.add(clm);
-     }
-
-     public void serveTableRow(TableRow node) {
-         Row rlm = new Row(node);
-         currentLMList.add(rlm);
-     }
-
-     public void serveFlow(Flow node) {
-         FlowLayoutManager lm = new FlowLayoutManager(node);
-         currentLMList.add(lm);
-     }
-
-    /**
-     * @param node Wrapper object to process
-     */
-    public void serveWrapper(Wrapper node) {
-        ListIterator baseIter;
-        baseIter = node.getChildNodes();
-        if (baseIter == null) return;
-        while (baseIter.hasNext()) {
-            FObj child = (FObj) baseIter.next();
-            child.acceptVisitor(this);
-        }
-    }
-    
-    /**
-     * @param node StaticContent object to process
-     */
-    public void serveStaticContent(StaticContent node) {
-        serveFlow((Flow)node);
-    }
-
-    /**
-     * @param node Title object to process
-     */
-    public void serveTitle(Title node) {
-        serveFObjMixed((FObjMixed)node);
-    }
-
     /**
      * @param node TableFooter object to process
      */
@@ -809,5 +666,22 @@ public class AddLMVisitor {
      */
     public void serveTableHeader(TableHeader node) {
         serveTableBody((TableBody)node);
+    }
+
+    /**
+     * @param node Wrapper object to process
+     */
+    public void serveWrapper(Wrapper node) {
+        ListIterator baseIter;
+        baseIter = node.getChildNodes();
+        if (baseIter == null) return;
+        while (baseIter.hasNext()) {
+            FObj child = (FObj) baseIter.next();
+            if (child instanceof LMVisited) {
+                ((LMVisited) child).acceptVisitor(this);
+            } else {
+                child.addLayoutManager(currentLMList);
+            }
+        }
     }
 }

@@ -25,6 +25,7 @@ import org.xml.sax.SAXParseException;
 
 // FOP
 import org.apache.fop.fo.FONode;
+import org.apache.fop.fo.LMVisited;
 import org.apache.fop.fo.FOElementMapping;
 import org.apache.fop.layoutmgr.AddLMVisitor;
 import org.apache.fop.fo.FObj;
@@ -34,7 +35,7 @@ import org.apache.fop.fo.FObj;
  * This is an atomic inline object that contains
  * xml data.
  */
-public class InstreamForeignObject extends FObj {
+public class InstreamForeignObject extends FObj implements LMVisited {
 
     boolean hasNonXSLNamespaceElement = false;
 

@@ -33,13 +33,14 @@ import org.apache.fop.fo.properties.CommonBorderAndPadding;
 import org.apache.fop.fo.properties.CommonBackground;
 import org.apache.fop.fo.properties.CommonMarginInline;
 import org.apache.fop.fo.properties.CommonRelativePosition;
+import org.apache.fop.fo.LMVisited;
 
 /**
  * The basic link.
  * This sets the basic link trait on the inline parent areas
  * that are created by the fo element.
  */
-public class BasicLink extends Inline {
+public class BasicLink extends Inline implements LMVisited {
     private String link = null;
     private boolean external = false;
 

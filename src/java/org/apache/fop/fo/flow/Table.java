@@ -37,11 +37,12 @@ import org.apache.fop.fo.properties.CommonBorderAndPadding;
 import org.apache.fop.fo.properties.CommonMarginBlock;
 import org.apache.fop.fo.properties.CommonRelativePosition;
 import org.apache.fop.fo.properties.LengthRangeProperty;
+import org.apache.fop.fo.LMVisited;
 
 /**
  * Class modelling the fo:table object. See Sec. 6.7.3 of the XSL-FO Standard.
  */
-public class Table extends FObj {
+public class Table extends FObj implements LMVisited {
     private static final int MINCOLWIDTH = 10000; // 10pt
 
     /** collection of columns in this table */

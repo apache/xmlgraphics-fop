@@ -27,13 +27,15 @@ import org.xml.sax.SAXParseException;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FObjMixed;
 import org.apache.fop.layoutmgr.AddLMVisitor;
+import org.apache.fop.fo.LMVisited;
+
 
 /**
  * The retrieve-marker formatting object.
  * This will create a layout manager that will retrieve
  * a marker based on the information.
  */
-public class RetrieveMarker extends FObjMixed {
+public class RetrieveMarker extends FObjMixed implements LMVisited {
 
     private String retrieveClassName;
     private int retrievePosition;

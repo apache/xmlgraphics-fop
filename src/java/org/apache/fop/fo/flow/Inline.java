@@ -107,10 +107,6 @@ public class Inline extends FObjMixed {
         return new InlineCharIterator(this, propMgr.getBorderAndPadding());
     }
 
-    public void acceptVisitor(AddLMVisitor aLMV) {
-        aLMV.serveInline(this);
-    }
-
     public String getName() {
         return "fo:inline";
     }

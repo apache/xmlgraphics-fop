@@ -18,6 +18,9 @@
 
 package org.apache.fop.fo.flow;
 
+// Java
+import java.util.List;
+
 // XML
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXParseException;
@@ -26,7 +29,7 @@ import org.xml.sax.SAXParseException;
 import org.apache.fop.datatypes.ColorType;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FObj;
-import org.apache.fop.layoutmgr.AddLMVisitor;
+import org.apache.fop.layoutmgr.list.ListBlockLayoutManager;
 import org.apache.fop.fo.properties.CommonAccessibility;
 import org.apache.fop.fo.properties.CommonAural;
 import org.apache.fop.fo.properties.CommonBackground;
@@ -99,19 +102,18 @@ public class ListBlock extends FObj {
     }
 
     /**
-     * This is a hook for the AddLMVisitor class to be able to access
-     * this object.
-     * @param aLMV the AddLMVisitor object that can access this object.
+     * @param list the list to which the layout manager(s) should be added
      */
-    public void acceptVisitor(AddLMVisitor aLMV) {
-        aLMV.serveListBlock(this);
+    public void addLayoutManager(List list) { 	 
+        ListBlockLayoutManager lm = new ListBlockLayoutManager(this);
+        list.add(lm); 	 
     }
 
     protected void endOfNode() throws SAXParseException {
         super.endOfNode();
         getFOInputHandler().endList(this);
     }
-    
+
     public String getName() {
         return "fo:list-block";
     }

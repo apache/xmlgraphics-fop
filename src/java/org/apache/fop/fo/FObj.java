@@ -442,15 +442,6 @@ public class FObj extends FONode implements Constants {
     public void addLayoutManager(List list) {
     }
 
-    /**
-     * This is a hook for the AddLMVisitor class to be able to access
-     * this object.
-     * @param aLMV the AddLMVisitor object that can access this object.
-     */
-    public void acceptVisitor(AddLMVisitor aLMV) {
-        aLMV.serveFObj(this);
-    }
-    
     /*
      * Return a string representation of the fo element.
      * Deactivated in order to see precise ID of each fo element created

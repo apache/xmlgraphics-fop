@@ -19,12 +19,13 @@
 package org.apache.fop.fo;
 
 // Java
+import java.util.List;
 import java.util.NoSuchElementException;
 
 // FOP
 import org.apache.fop.fo.flow.Block;
 import org.apache.fop.fo.pagination.Root;
-import org.apache.fop.layoutmgr.AddLMVisitor;
+import org.apache.fop.layoutmgr.TextLayoutManager;
 
 /**
  * A text node in the formatting object tree.
@@ -492,11 +493,11 @@ public class FOText extends FObj {
     }
 
     /**
-     * This is a hook for the AddLMVisitor class to be able to access
-     * this object.
-     * @param aLMV the AddLMVisitor object that can access this object.
+     * @param list the list to which the layout manager(s) should be added
      */
-    public void acceptVisitor(AddLMVisitor aLMV) {
-        aLMV.serveFOText(this);
+    public void addLayoutManager(List list) { 	 
+        if (endIndex - startIndex > 0) {
+            list.add(new TextLayoutManager(this));
+        }
     }
 }
