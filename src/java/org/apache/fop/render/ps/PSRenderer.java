@@ -452,7 +452,7 @@ public class PSRenderer extends AbstractRenderer {
         Typeface f = (Typeface) fontInfo.getFonts().get(fontname);
 
         //Determine position
-        int rx = currentBlockIPPosition;
+        int rx = currentIPPosition;
         int bl = currentBPPosition + area.getOffset();
 
         useFont(fontname, fontsize);
@@ -830,7 +830,7 @@ public class PSRenderer extends AbstractRenderer {
         context.setProperty(PSXMLHandler.PS_HEIGHT,
                             new Integer((int) pos.getHeight()));
         context.setProperty(PSXMLHandler.PS_XPOS,
-                            new Integer(currentBlockIPPosition + (int) pos.getX()));
+                            new Integer(currentIPPosition + (int) pos.getX()));
         context.setProperty(PSXMLHandler.PS_YPOS,
                             new Integer(currentBPPosition + (int) pos.getY()));
         //context.setProperty("strokeSVGText", options.get("strokeSVGText"));

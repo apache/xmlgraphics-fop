@@ -98,11 +98,6 @@ public abstract class AbstractRenderer
     protected int currentIPPosition = 0;
 
     /**
-     * current inline progression position in block
-     */
-    protected int currentBlockIPPosition = 0;
-
-    /**
      * the block progression position of the containing block used for
      * absolutely positioned blocks
      */
@@ -264,7 +259,6 @@ public abstract class AbstractRenderer
             // set origin for the region to 0,0.
             currentBPPosition = 0;
             currentIPPosition = 0;
-            currentBlockIPPosition = currentIPPosition;
 
             RegionReference region = port.getRegion();
             handleRegionTraits(port);
@@ -469,6 +463,8 @@ public abstract class AbstractRenderer
      * @param blocks  The block areas
      */
     protected void renderBlocks(Block parent, List blocks) {
+        int saveIP = currentIPPosition;
+        
         // the position of the containing block is used for
         // absolutely positioned areas
         int contBP = currentBPPosition;
@@ -479,6 +475,7 @@ public abstract class AbstractRenderer
         for (int count = 0; count < blocks.size(); count++) {
             Object obj = blocks.get(count);
             if (obj instanceof Block) {
+                currentIPPosition = saveIP;
                 containingBPPosition = contBP;
                 containingIPPosition = contIP;
                 renderBlock((Block) obj);
@@ -488,11 +485,11 @@ public abstract class AbstractRenderer
                 // a line area is rendered from the top left position
                 // of the line, each inline object is offset from there
                 LineArea line = (LineArea) obj;
-                currentBlockIPPosition =
-                        currentIPPosition + line.getStartIndent();
+                currentIPPosition = saveIP + line.getStartIndent();
                 renderLineArea(line);
                 currentBPPosition += line.getAllocBPD();
             }
+            currentIPPosition = saveIP;
         }
     }
 
@@ -534,9 +531,9 @@ public abstract class AbstractRenderer
                 renderBlocks(block, children);
 
                 // stacked and relative blocks effect stacking
+                currentIPPosition = saveIP;
                 currentBPPosition = saveBP + block.getAllocBPD();
             }
-            currentIPPosition = saveIP;
         }
     }
 
@@ -576,7 +573,7 @@ public abstract class AbstractRenderer
 
     /** @see org.apache.fop.render.Renderer */
     protected void renderCharacter(Character ch) {
-        currentBlockIPPosition += ch.getAllocIPD();
+        currentIPPosition += ch.getAllocIPD();
     }
 
     /** @see org.apache.fop.render.Renderer */
@@ -585,27 +582,27 @@ public abstract class AbstractRenderer
         // for the current block by the width or height of the space
         // it may also have styling (only on this object) that needs
         // handling
-        currentBlockIPPosition += space.getAllocIPD();
+        currentIPPosition += space.getAllocIPD();
     }
 
     /** @see org.apache.fop.render.Renderer */
     protected void renderLeader(Leader area) {
-        currentBlockIPPosition += area.getAllocIPD();
+        currentIPPosition += area.getAllocIPD();
     }
 
     /** @see org.apache.fop.render.Renderer */
     protected void renderText(TextArea text) {
-        currentBlockIPPosition += text.getAllocIPD();
+        currentIPPosition += text.getAllocIPD();
     }
 
     /** @see org.apache.fop.render.Renderer */
     protected void renderInlineParent(InlineParent ip) {
-        int saveIP = currentBlockIPPosition;
+        int saveIP = currentIPPosition;
         Iterator iter = ip.getChildAreas().iterator();
         while (iter.hasNext()) {
             renderInlineArea((InlineArea) iter.next()); 
         }
-        currentBlockIPPosition = saveIP + ip.getAllocIPD();
+        currentIPPosition = saveIP + ip.getAllocIPD();
     }
 
     /** @see org.apache.fop.render.Renderer */
@@ -621,7 +618,7 @@ public abstract class AbstractRenderer
         } else if (content instanceof ForeignObject) {
             renderForeignObject((ForeignObject) content, contpos);
         }
-        currentBlockIPPosition += viewport.getAllocIPD();
+        currentIPPosition += viewport.getAllocIPD();
         currentBPPosition = saveBP;
     }
 
@@ -640,14 +637,11 @@ public abstract class AbstractRenderer
     /** @see org.apache.fop.render.Renderer */
     public void renderContainer(Container cont) {
         int saveIP = currentIPPosition;
-        currentIPPosition = currentBlockIPPosition;
-        int saveBlockIP = currentBlockIPPosition;
         int saveBP = currentBPPosition;
 
         List blocks = cont.getBlocks();
         renderBlocks(null, blocks);
         currentIPPosition = saveIP;
-        currentBlockIPPosition = saveBlockIP;
         currentBPPosition = saveBP;
     }
 

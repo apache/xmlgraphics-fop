@@ -889,7 +889,7 @@ public class PDFRenderer extends PrintRenderer {
      * @param ip the inline parent area
      */
     public void renderInlineParent(InlineParent ip) {
-        float start = (currentBlockIPPosition + ipMarginOffset) / 1000f;
+        float start = (currentIPPosition + ipMarginOffset) / 1000f;
         float top = (ip.getOffset() + currentBPPosition + bpMarginOffset) / 1000f;
         float width = ip.getIPD() / 1000f;
         float height = ip.getBPD() / 1000f;
@@ -956,7 +956,7 @@ public class PDFRenderer extends PrintRenderer {
         // word.getOffset() = only height of text itself
         // currentBlockIPPosition: 0 for beginning of line; nonzero
         //  where previous line area failed to take up entire allocated space
-        int rx = currentBlockIPPosition + ipMarginOffset;
+        int rx = currentIPPosition + ipMarginOffset;
         int bl = currentBPPosition + bpMarginOffset + ch.getOffset();
 
 /*        System.out.println("Text = " + ch.getTextArea() +
@@ -1027,7 +1027,7 @@ public class PDFRenderer extends PrintRenderer {
         // word.getOffset() = only height of text itself
         // currentBlockIPPosition: 0 for beginning of line; nonzero
         //  where previous line area failed to take up entire allocated space
-        int rx = currentBlockIPPosition + ipMarginOffset;
+        int rx = currentIPPosition + ipMarginOffset;
         int bl = currentBPPosition + bpMarginOffset + text.getOffset();
 
 /*        System.out.println("Text = " + text.getTextArea() +
@@ -1283,7 +1283,7 @@ public class PDFRenderer extends PrintRenderer {
         saveGraphicsState();
         currentStream.add(((float) w) + " 0 0 "
                           + ((float) -h) + " "
-                          + (((float) currentBlockIPPosition + ipMarginOffset) / 1000f + x) + " "
+                          + (((float) currentIPPosition + ipMarginOffset) / 1000f + x) + " "
                           + (((float)(currentBPPosition + bpMarginOffset + 1000 * h)) / 1000f
                           + y) + " cm\n" + "/Im" + xobj + " Do\n");
         restoreGraphicsState();
@@ -1318,7 +1318,7 @@ public class PDFRenderer extends PrintRenderer {
         context.setProperty(PDFXMLHandler.PDF_CONTEXT, currentContext);
         context.setProperty(PDFXMLHandler.PDF_STREAM, currentStream);
         context.setProperty(PDFXMLHandler.PDF_XPOS,
-                            new Integer(currentBlockIPPosition + (int) pos.getX()));
+                            new Integer(currentIPPosition + (int) pos.getX()));
         context.setProperty(PDFXMLHandler.PDF_YPOS,
                             new Integer(currentBPPosition + (int) pos.getY()));
         context.setProperty(PDFXMLHandler.PDF_FONT_INFO, fontInfo);
@@ -1341,7 +1341,7 @@ public class PDFRenderer extends PrintRenderer {
     public void renderViewport(Viewport viewport) {
         closeText();
 
-        float x = currentBlockIPPosition / 1000f;
+        float x = currentIPPosition / 1000f;
         float y = (currentBPPosition + viewport.getOffset()) / 1000f;
         float width = viewport.getIPD() / 1000f;
         float height = viewport.getBPD() / 1000f;
@@ -1389,9 +1389,9 @@ public class PDFRenderer extends PrintRenderer {
                 alt = true;
             break;
         }
-        float startx = ((float) currentBlockIPPosition) / 1000f;
+        float startx = ((float) currentIPPosition) / 1000f;
         float starty = ((currentBPPosition + area.getOffset()) / 1000f);
-        float endx = (currentBlockIPPosition + area.getIPD()) / 1000f;
+        float endx = (currentIPPosition + area.getIPD()) / 1000f;
         if (!alt) {
             currentStream.add(area.getRuleThickness() / 1000f + " w\n");
             drawLine(startx, starty, endx, starty);
