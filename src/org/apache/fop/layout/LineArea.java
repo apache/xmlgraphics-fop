@@ -989,35 +989,20 @@ public class LineArea extends Area {
         return wordStart;
     }
 
-    /**
-     * Calculates the wordwidth of a string by first mapping the
-     * characteers in the string to glyphs in the current fontstate.
-     */
-    private int getWordWidth(String word) {
-        return getWordWidth(word, true);
-    }
 
     /**
-     * calculates the wordWidth using the actual fontstate
-     * @param doMap if true, map the charaters in the string to glyphs in
-     * the current fontstate before calculating width. If false,
-     * assume that it's already done.
+     * Calculates the wordWidth using the actual fontstate
      */
-    private int getWordWidth(String word, boolean doMap) {
+    private int getWordWidth(String word) {
         if (word == null)
             return 0;
         int wordLength = word.length();
         int width = 0;
         char[] characters = new char[wordLength];
         word.getChars(0, wordLength, characters, 0);
-        char currentChar;
-        for (int i = 0; i < wordLength; i++) {
-            if (doMap)
-                currentChar = currentFontState.mapChar(characters[i]);
-            else
-                currentChar = characters[i];
 
-            width += getCharWidth(currentChar);
+        for (int i = 0; i < wordLength; i++) {
+            width += getCharWidth(characters[i]);
         }
         return width;
     }
