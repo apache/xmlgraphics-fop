@@ -66,7 +66,7 @@ public class FOUserAgent {
     public Map handlers = new java.util.HashMap();
     private String baseURL;
     private PDFEncryptionParams pdfEncryptionParams;
-    private float px2mm = 0.35277777777777777778f; //72dpi (=25.4/dpi)
+    private float px2mm = (25.4f / 72); //dpi (=25.4/dpi)
     private HashMap rendererOptions = new java.util.HashMap();
     private InputHandler inputHandler = null;
     private Renderer rendererOverride = null;
