@@ -305,7 +305,7 @@ public class HyphenationTree extends TernaryTree implements PatternConsumer,
             // hyphenation points are located where interletter value is odd
             for (i = 0; i < len; i++) {
                 if (((il[i + 1] & 1) == 1) && i >= remainCharCount
-                        && i < (len - pushCharCount)) {
+                        && i <= (len - pushCharCount)) {
                     result[k++] = i;
                 }
             }
