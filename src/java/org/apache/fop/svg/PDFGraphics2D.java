@@ -437,17 +437,14 @@ public class PDFGraphics2D extends AbstractGraphics2D {
         if (imageInfo == null) {
             // OK, have to build and add a PDF image
 
-            // scale factor
-            final int scaleFactor = 3;
-
-            Dimension size = new Dimension(width * scaleFactor, height * scaleFactor);
+            Dimension size = new Dimension(width, height);
             BufferedImage buf = buildBufferedImage(size);
 
             java.awt.Graphics2D g = buf.createGraphics();
             g.setComposite(AlphaComposite.SrcOver);
             g.setBackground(new Color(1, 1, 1, 0));
             g.setPaint(new Color(1, 1, 1, 0));
-            g.fillRect(0, 0, width * scaleFactor, height * scaleFactor);
+            g.fillRect(0, 0, width, height);
             g.clip(new Rectangle(0, 0, buf.getWidth(), buf.getHeight()));
             g.setComposite(gc.getComposite());
 
@@ -456,7 +453,7 @@ public class PDFGraphics2D extends AbstractGraphics2D {
             }
             g.dispose();
 
-            final byte[] result = new byte[buf.getWidth() * buf.getHeight() * 3];
+            final byte[] result = new byte[buf.getWidth() * buf.getHeight() * 3 /*for RGB*/];
             byte[] mask = new byte[buf.getWidth() * buf.getHeight()];
             boolean hasMask = false;
             //boolean binaryMask = true;
@@ -467,7 +464,7 @@ public class PDFGraphics2D extends AbstractGraphics2D {
             int count = 0;
             int maskpos = 0;
             int[] iarray;
-            int i, j, val, alpha, add, mult;
+            int i, j, val, alpha;
             switch (bd.getDataType()) {
                 case DataBuffer.TYPE_INT:
                 int[][] idata = ((DataBufferInt)bd).getBankData();
