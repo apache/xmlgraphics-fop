@@ -23,6 +23,7 @@ import java.util.ArrayList;
 
 // XML
 import org.xml.sax.Attributes;
+import org.xml.sax.Locator;
 
 // FOP
 import org.apache.fop.fo.FONode;
@@ -63,6 +64,28 @@ public class Flow extends FObj {
     }
 
     /**
+     * @see org.apache.fop.fo.FONode#validateChildNode(Locator, String, String)
+     * XSL/FOP Content Model: (%block;)+
+     */
+    protected void validateChildNode(Locator loc, String nsURI, String localName) {
+        if (!isBlockItem(nsURI, localName)) {
+            invalidChildError(loc, nsURI, localName);
+        }
+    }
+
+    /**
+     * Make sure content model satisfied, if so then tell the
+     * StructureRenderer that we are at the end of the flow.
+     * @see org.apache.fop.fo.FONode#end
+     */
+    protected void end() {
+        if (children == null) {
+            missingChildElementError("(%block;)+");
+        }
+        getFOInputHandler().endFlow(this);
+    }
+
+    /**
      * @see org.apache.fop.fo.FObj#addProperties
      */
     protected void addProperties(Attributes attlist) throws FOPException {
@@ -93,13 +116,6 @@ public class Flow extends FObj {
         //pageSequence.addFlow(this);
 
         getFOInputHandler().startFlow(this);
-    }
-
-    /**
-     * Tell the StructureRenderer that we are at the end of the flow.
-     */
-    protected void end() {
-        getFOInputHandler().endFlow(this);
     }
 
     /**

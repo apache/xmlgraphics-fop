@@ -21,8 +21,38 @@ package org.apache.fop.fo;
 
 public interface Constants {
 
+    /* These constants are used by apps.CommandLineOptions and
+       apps.Driver to describe the input (either .FO or .XML/.XSL)
+       and desired output (PDF, PS, AWT, etc.) of the document */
+       
+    /** input / output not set */
+    int NOT_SET = 0;
+    /** input: fo file */
+    int FO_INPUT = 1;
+    /** input: xml+xsl file */
+    int XSLT_INPUT = 2;
+    /** output: pdf file */
+    int RENDER_PDF = 1;
+    /** output: screen using swing */
+    int RENDER_AWT = 2;
+    /** output: mif file */
+    int RENDER_MIF = 3;
+    /** output: sent swing rendered file to printer */
+    int RENDER_PRINT = 4;
+    /** output: pcl file */
+    int RENDER_PCL = 5;
+    /** output: postscript file */
+    int RENDER_PS = 6;
+    /** output: text file */
+    int RENDER_TXT = 7;
+    /** output: svg file */
+    int RENDER_SVG = 8;
+    /** output: XML area tree */
+    int RENDER_XML = 9;
+    /** output: RTF file */
+    int RENDER_RTF = 10;
+    
     // element constants
-
     int FO_BASIC_LINK = 1;
     int FO_BIDI_OVERRIDE = 2;
     int FO_BLOCK = 3;

@@ -305,14 +305,6 @@ public class FOTreeBuilder extends DefaultHandler {
         foInputHandler = null;
     }
 
-    /**
-     * Indicates if data has been processed.
-     * @return True if data has been processed
-     */
-    public boolean hasData() {
-        return (rootFObj != null);
-    }
-
 }
 
 // code stolen from org.apache.batik.util and modified slightly

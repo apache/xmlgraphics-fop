@@ -384,8 +384,7 @@ public class PreviewDialog extends JFrame {
     private class Reloader extends Thread {
         public void run() {
             if (driver == null) {
-                driver = new Driver();
-                driver.setRenderer(renderer);
+                driver = new Driver(renderer);
             } else {
                 driver.reset();
             }
