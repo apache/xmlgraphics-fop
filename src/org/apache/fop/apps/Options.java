@@ -116,10 +116,23 @@ public class Options {
 	throws FOPException
     {
         String file = "config.xml";
+        InputStream configfile = null;
+
+        // Try to use Context Class Loader to load the properties file.
+        try {
+          java.lang.reflect.Method getCCL = 
+                Thread.class.getMethod("getContextClassLoader", new Class[0]);
+          if (getCCL != null) {
+            ClassLoader contextClassLoader = 
+                (ClassLoader) getCCL.invoke(Thread.currentThread(), new Object[0]);
+            configfile = contextClassLoader.getResourceAsStream("conf/" + file);
+          }
+        }
+        catch (Exception e) {}
 
         // the entry /conf/config.xml refers to a directory conf which is a sibling of org
-        InputStream configfile =
-	    ConfigurationReader.class.getResourceAsStream("/conf/"+
+        if(configfile == null)
+	        ConfigurationReader.class.getResourceAsStream("/conf/"+
 							  file);
         if (configfile == null) {
             throw new FOPException("can't find default configuration file");

@@ -60,16 +60,36 @@ public class Hyphenator {
         return hTree;
     }
 
+    private static InputStream getResourceStream (String key) {
+        InputStream is = null;
+        // Try to use Context Class Loader to load the properties file.
+        try {
+          java.lang.reflect.Method getCCL = 
+                Thread.class.getMethod("getContextClassLoader", new Class[0]);
+          if (getCCL != null) {
+            ClassLoader contextClassLoader = 
+                (ClassLoader) getCCL.invoke(Thread.currentThread(), new Object[0]);
+            is = contextClassLoader.getResourceAsStream("hyph/" + key + ".hyp");
+          }
+        }
+        catch (Exception e) {}
+
+        if(is==null) {
+            is = Hyphenator.class.getResourceAsStream("/hyph/" + key + ".hyp");
+        }
+
+        return is;
+    }
+
     public static HyphenationTree getFopHyphenationTree (String key) {
         HyphenationTree hTree = null;
         ObjectInputStream ois = null;
         InputStream is = null;
         try {
-            is = Hyphenator.class.getResourceAsStream("/hyph/" + key + ".hyp");
+            is = getResourceStream(key); 
             if (is == null) {
                 if (key.length() == 5) {
-                    is = Hyphenator.class.getResourceAsStream("/hyph/" +
-                        key.substring(0,2) + ".hyp"); 
+                    is = getResourceStream(key.substring(0,2));
                     if (is != null) {
                         MessageHandler.errorln(
                           "Couldn't find hyphenation pattern  " + key
