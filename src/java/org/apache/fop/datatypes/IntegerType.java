@@ -79,6 +79,21 @@ public class IntegerType extends AbstractPropertyValue {
     }
 
     /**
+     * Return the int value from a PropertyValue. 
+     * @param pv
+     * @return the int value
+     * @exception PropertyException if the <code>PropertyValue</code> is not
+     * an <code>IntegerType</code>
+     */
+    public static int getIntValue(PropertyValue pv)
+    throws PropertyException {
+        if (pv.getType() == PropertyValue.INTEGER) {
+            return ((IntegerType)pv).getInt();
+        }
+        throw new PropertyException("PropertyValue not an INTEGER type");
+    }
+
+    /**
      * validate the <i>IntegerType</i> against the associated property.
      */
     public void validate() throws PropertyException {
