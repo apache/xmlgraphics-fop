@@ -126,9 +126,6 @@ public class AWTRenderer extends AbstractRenderer implements Printable, Pageable
         res = aRes;
     }
 
-    public void setProducer(String producer) {
-    }
-
     public int getPageCount() {
         return 0;
     }
