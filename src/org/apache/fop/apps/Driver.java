@@ -129,11 +129,22 @@ public class Driver {
     /** the PrintWriter to use to output the results of the renderer */
     protected PrintWriter writer;
 
+    /** If true, full error stacks are reported */
+    protected boolean errorDump;
+    
     /** create a new Driver */
     public Driver() {
 	this.treeBuilder = new FOTreeBuilder();
     }
    
+    /** Set the error dump option
+     * @param dump if true, full stacks will be reported to the error log 
+     */
+    public void setErrorDump(boolean dump) 
+    {
+	errorDump = dump;
+    }
+    
     /** set the Renderer to use */
     public void setRenderer(Renderer renderer) {
 	this.renderer = renderer;
@@ -199,13 +210,17 @@ public class Driver {
 		Class.forName(mappingClassName).newInstance();
 	} catch (ClassNotFoundException e) {
 	    MessageHandler.errorln("Could not find " + mappingClassName);
+	    dumpError(e);
 	} catch (InstantiationException e) {
 	    MessageHandler.errorln("Could not instantiate "
 			       + mappingClassName);
+	    dumpError(e);
 	} catch (IllegalAccessException e) {
 	    MessageHandler.errorln("Could not access " + mappingClassName);
+	    dumpError(e);
 	} catch (ClassCastException e) {
 	    MessageHandler.errorln(mappingClassName + " is not an element mapping"); 
+	    dumpError(e);
 	}
 	return null;
     }
@@ -229,13 +244,17 @@ public class Driver {
 		Class.forName(listClassName).newInstance();
 	} catch (ClassNotFoundException e) {
 	    MessageHandler.errorln("Could not find " + listClassName);
+	    dumpError(e);
 	} catch (InstantiationException e) {
 	    MessageHandler.errorln("Could not instantiate "
 			       + listClassName);
+	    dumpError(e);
 	} catch (IllegalAccessException e) {
 	    MessageHandler.errorln("Could not access " + listClassName);
+	    dumpError(e);
 	} catch (ClassCastException e) {
 	    MessageHandler.errorln(listClassName + " is not an property list"); 
+	    dumpError(e);
 	}
 	return null;
     }
@@ -262,11 +281,16 @@ public class Driver {
 	try {
 	    parser.parse(source);
 	} catch (SAXException e) {
-	    if (e.getException() instanceof FOPException)
+	    if (e.getException() instanceof FOPException) {
+		dumpError(e.getException());
 		throw (FOPException) e.getException();
-	    else
+	    }
+	    else {
+		dumpError(e);
 		throw new FOPException(e.getMessage());
+	    }
 	} catch (IOException e) {
+	    dumpError(e);
 	    throw new FOPException(e.getMessage());
 	}
     }
@@ -356,9 +380,30 @@ public class Driver {
 		}
 	    }
 	} catch (SAXException e) {
+	    dumpError(e);
 	    throw new FOPException(e.getMessage());
 	}
     }
+
+    /**
+     * Dumps an error
+     */
+    public void dumpError(Exception e) 
+    {
+	if (errorDump) {
+	    if (e instanceof SAXException) {
+		e.printStackTrace();
+		if (((SAXException)e).getException() != null) {
+		    ((SAXException)e).getException().printStackTrace();
+		}
+	    }
+	    else {
+		e.printStackTrace();
+	    }
+	}
+		
+    }
+    
 
     /**
      * set the PrintWriter to use to output the result of the Renderer

@@ -80,6 +80,94 @@ import org.apache.fop.messaging.MessageHandler;
  */
 public class CommandLine {
 
+    private String foFile = null;
+    private String pdfFile = null;
+    
+    /** show a full dump on error */
+    private static boolean errorDump = false;
+    
+    public CommandLine(String[] args) 
+    {
+	for (int i=0; i<args.length; i++) {
+	    if (args[i].equals("-d") || args[i].equals("--full-error-dump")) {
+		errorDump = true;
+	    }
+	    else if (args[i].charAt(0) == '-') {
+		printUsage(args[i]);
+	    }
+	    else if (foFile == null) {
+		foFile = args[i];
+	    }
+	    else if (pdfFile == null) {
+		pdfFile = args[i];
+	    }
+	    else {
+		printUsage(args[i]);
+	    }
+	}
+	if (foFile == null || pdfFile == null) {
+	    printUsage(null);
+	}
+    }
+    
+    public void printUsage(String arg) 
+    {
+	if (arg != null) {
+	    MessageHandler.errorln("Unkown argument: '"+arg+"'");
+	    MessageHandler.errorln("Usage: java [-d]"
+				   + "org.apache.fop.apps.CommandLine "
+				   + "formatting-object-file pdf-file");
+	    MessageHandler.errorln("Options:\n"
+				   + "  -d or --full-error-dump    Show stack traces upon error");
+	    
+	    System.exit(1);
+	}
+    }
+    
+	    
+    public void run()  {
+	
+	XMLReader parser = createParser();
+  
+	if (parser == null) {
+	    MessageHandler.errorln("ERROR: Unable to create SAX parser");
+	    System.exit(1);
+	}
+	
+	// setting the parser features
+	try {
+	    parser.setFeature("http://xml.org/sax/features/namespace-prefixes", true);
+	} catch (SAXException e) {
+	    MessageHandler.errorln("Error in setting up parser feature namespace-prefixes");
+	    MessageHandler.errorln("You need a parser which supports SAX version 2");  
+	    if (errorDump) {
+		e.printStackTrace();
+	    }
+	    System.exit(1);  
+	}
+
+	try {
+	    Driver driver = new Driver();
+	    driver.setErrorDump(errorDump);
+	    driver.setRenderer("org.apache.fop.render.pdf.PDFRenderer", Version.getVersion());
+	    driver.addElementMapping("org.apache.fop.fo.StandardElementMapping");
+	    driver.addElementMapping("org.apache.fop.svg.SVGElementMapping");
+	    driver.addPropertyList("org.apache.fop.fo.StandardPropertyListMapping");
+	    driver.addPropertyList("org.apache.fop.svg.SVGPropertyListMapping");
+	    driver.buildFOTree(parser, fileInputSource(foFile));
+	    driver.format();
+	    driver.setWriter(new PrintWriter(new FileWriter(pdfFile)));
+	    driver.render();
+	} catch (Exception e) {
+	    MessageHandler.errorln("FATAL ERROR: " + e.getMessage());
+	    if (errorDump){
+		e.printStackTrace();
+	    }
+	    System.exit(1);
+	}
+    }
+	
+   
     /**
      * creates a SAX parser, using the value of org.xml.sax.parser
      * defaulting to org.apache.xerces.parsers.SAXParser
@@ -99,13 +187,25 @@ public class CommandLine {
 		Class.forName(parserClassName).newInstance();
 	} catch (ClassNotFoundException e) {
 	    org.apache.fop.messaging.MessageHandler.errorln("Could not find " + parserClassName);
+	    if (errorDump){
+		e.printStackTrace();
+	    }
 	} catch (InstantiationException e) {
 	    org.apache.fop.messaging.MessageHandler.errorln("Could not instantiate "
 			       + parserClassName);
+	    if (errorDump){
+		e.printStackTrace();
+	    }
 	} catch (IllegalAccessException e) {
 	    org.apache.fop.messaging.MessageHandler.errorln("Could not access " + parserClassName);
+	    if (errorDump){
+		e.printStackTrace();
+	    }
 	} catch (ClassCastException e) {
 	    org.apache.fop.messaging.MessageHandler.errorln(parserClassName + " is not a SAX driver"); 
+	    if (errorDump){
+		e.printStackTrace();
+	    }
 	}
 	return null;
     }
@@ -145,47 +245,11 @@ public class CommandLine {
      */
     public static void main(String[] args) {
 	String version = Version.getVersion();
-   MessageHandler.errorln(version);
-
-
-		
-	if (args.length != 2) {
-	    MessageHandler.errorln("usage: java "
-			       + "org.apache.fop.apps.CommandLine "
-			       + "formatting-object-file pdf-file");
-	    System.exit(1);
-	}
-		
-	XMLReader parser = createParser();
-  
-	if (parser == null) {
-	    MessageHandler.errorln("ERROR: Unable to create SAX parser");
-	    System.exit(1);
-	}
+	MessageHandler.errorln(version);
 	
-  // setting the parser features
-  try {
-    parser.setFeature("http://xml.org/sax/features/namespace-prefixes", true);
-  } catch (SAXException e) {
-    MessageHandler.errorln("Error in setting up parser feature namespace-prefixes");
-    MessageHandler.errorln("You need a parser which supports SAX version 2");  
-    System.exit(1);  
-  }
-
-  try {
-	    Driver driver = new Driver();
-	    driver.setRenderer("org.apache.fop.render.pdf.PDFRenderer", version);
-	    driver.addElementMapping("org.apache.fop.fo.StandardElementMapping");
-	    driver.addElementMapping("org.apache.fop.svg.SVGElementMapping");
-	    driver.addPropertyList("org.apache.fop.fo.StandardPropertyListMapping");
-	    driver.addPropertyList("org.apache.fop.svg.SVGPropertyListMapping");
-	    driver.setWriter(new PrintWriter(new FileWriter(args[1])));
-	    driver.buildFOTree(parser, fileInputSource(args[0]));
-	    driver.format();
-	    driver.render();
-	} catch (Exception e) {
-	    MessageHandler.errorln("FATAL ERROR: " + e.getMessage());
-	    System.exit(1);
-	}
+	CommandLine cmdLine = new CommandLine(args);
+	cmdLine.run();
+	
     }
+    
 }

@@ -51,14 +51,14 @@
 package org.apache.fop.layout;
 import org.apache.fop.fo.properties.*;
 
-public class Region {
+public class RegionArea {
 
     private int xPosition;
     private int yPosition;
     private int width;
     private int height;
     
-    public Region(int xPosition, int yPosition, int width, int height) {
+    public RegionArea(int xPosition, int yPosition, int width, int height) {
 	this.xPosition = xPosition;
 	this.yPosition = yPosition;
 	this.width = width;

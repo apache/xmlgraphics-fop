@@ -54,9 +54,10 @@ package org.apache.fop.fo.flow;
 // FOP
 import org.apache.fop.fo.*;
 import org.apache.fop.fo.properties.*;
-import org.apache.fop.fo.pagination.PageSequence;
+import org.apache.fop.fo.pagination.*;
 import org.apache.fop.layout.Area;
 import org.apache.fop.apps.FOPException;
+import org.apache.fop.messaging.MessageHandler;
 
 // Java
 import java.util.Hashtable;
@@ -75,13 +76,22 @@ public class Flow extends FObj {
 	return new Flow.Maker();
     }
 
-    PageSequence pageSequence;
-    private Area area;  // Area in which we lay out our kids
+    /** PageSequence container */
+    private PageSequence pageSequence;
+
+    /**  Area in which we lay out our kids */
+    private Area area; 
+
+    /** flow-name attribute */
+    private String _flowName;
+    
+    private Status _status = new Status(Status.AREA_FULL_NONE);
+    
 
     protected Flow(FObj parent, PropertyList propertyList)
 	throws FOPException {
 	super(parent, propertyList);
-	this.name =  "fo:flow";
+	this.name =  getElementName();
 
 	if (parent.getName().equals("fo:page-sequence")) {
 	    this.pageSequence = (PageSequence) parent;
@@ -89,11 +99,35 @@ public class Flow extends FObj {
 	    throw new FOPException("flow must be child of "
 				   + "page-sequence, not "
 				   + parent.getName());
-	}
-	pageSequence.setFlow(this);
+	} 
+	setFlowName(getProperty("flow-name").getString());
+	pageSequence.addFlow(this);
     }
+
+    protected void setFlowName(String name)
+	throws FOPException
+    {
+	if (name == null || name.equals("")) {
+	    MessageHandler.errorln("WARNING: A 'flow-name' is required for "+getElementName()+". This constraint will be enforced in future versions of FOP");
+	    _flowName = "xsl-region-body";
+ 	}
+	else {
+	    _flowName = name;
+	}
 	
+    }
+    
+    public String getFlowName() 
+    {
+	return _flowName;
+    }
+    
     public Status layout(Area area) throws FOPException {
+	return layout(area, null);
+	
+    }
+    
+    public Status layout(Area area, Region region) throws FOPException {
 	if (this.marker == START) {
 	    this.marker = 0;
 	}
@@ -103,23 +137,23 @@ public class Flow extends FObj {
 	int numChildren = this.children.size();
 	for (int i = this.marker; i < numChildren; i++) {
 	    FObj fo = (FObj) children.elementAt(i);
-	    Status status;
-	    if ((status = fo.layout(area)).isIncomplete()) {
-		if ((prevChildMustKeepWithNext) && (status.laidOutNone())) {
+	    if ((_status = fo.layout(area)).isIncomplete()) {
+		if ((prevChildMustKeepWithNext) && (_status.laidOutNone())) {
 		    this.marker = i - 1;
 		    FObj prevChild = (FObj) children.elementAt(this.marker);
 		    prevChild.removeAreas();
 		    prevChild.resetMarker();
 		    prevChild.removeID(area.getIDReferences());
-		    return new Status(Status.AREA_FULL_SOME);
+		    _status = new Status(Status.AREA_FULL_SOME);
+		    return _status;
 		    // should probably return AREA_FULL_NONE if first
 		    // or perhaps an entirely new status code
 		} else {
 		    this.marker = i;
-		    return status;
+		    return _status;
 		}
 	    }
-	    if (status.getCode() == Status.KEEP_WITH_NEXT) {
+	    if (_status.getCode() == Status.KEEP_WITH_NEXT) {
 		prevChildMustKeepWithNext = true;
 	    }
 	    else {
@@ -127,7 +161,8 @@ public class Flow extends FObj {
 	    }
 	    
 	}
-	return new Status(Status.OK);
+	_status = new Status(Status.OK);
+	return _status;
     }
 
   /**
@@ -139,4 +174,17 @@ public class Flow extends FObj {
       return area.getContentWidth(); //getAllocationWidth()??
     else return 0;  // not laid out yet
   }
+    
+    protected String getElementName() 
+    {
+	return "fo:flow";
+    }
+    
+    public Status getStatus() 
+    {
+	return _status;
+    }
+    
+
+
 }

@@ -55,10 +55,9 @@ import org.apache.fop.fo.*;
 import org.apache.fop.fo.properties.*;
 import org.apache.fop.apps.FOPException;				   
 import org.apache.fop.layout.PageMaster;
-import org.apache.fop.apps.FOPException;                   
 
 // Java
-import java.util.Hashtable;
+import java.util.*;
 
 public class LayoutMasterSet extends FObj {
 
@@ -74,8 +73,10 @@ public class LayoutMasterSet extends FObj {
     }
 
     private Hashtable simplePageMasters;
-	private Hashtable pageSequenceMasters;
-	private Root root;
+    private Hashtable pageSequenceMasters;
+    private Hashtable allRegions;
+    
+    private Root root;
 	
     protected LayoutMasterSet(FObj parent, PropertyList propertyList)
 	throws FOPException {
@@ -93,48 +94,27 @@ public class LayoutMasterSet extends FObj {
 		new FOPException("fo:layout-master-set must be child of fo:root, not "
 				 + parent.getName());
 	}
+	allRegions = new Hashtable();
+	
     }
 
-	public PageMaster getNextPageMaster( String pageSequenceName,
-		int currentPageNumber, boolean thisIsFirstPage )
-		throws FOPException
-	{
-		PageMaster pm = null;
-		
-		PageSequenceMaster psm = getPageSequenceMaster( pageSequenceName );
-		if (null != psm)
-		{
-			pm = psm.getNextPageMaster( currentPageNumber, thisIsFirstPage );
-		} else {
-			SimplePageMaster spm = getSimplePageMaster( pageSequenceName );
-			if (null == spm)
-			{
-				throw new FOPException( "'master-name' for 'fo:page-sequence'" +
-					"matches no 'simple-page-master' or 'page-sequence-master'" );
-			}
-			pm = spm.getNextPageMaster();
-		}
-		return pm;
-	}
-	
-    protected void addSimplePageMaster(
-		String masterName, SimplePageMaster simplePageMaster)
+    protected void addSimplePageMaster(SimplePageMaster simplePageMaster)
 		throws FOPException {
 	// check against duplication of master-name
-	if (existsName(masterName))
+	if (existsName(simplePageMaster.getMasterName()))
 		throw new FOPException( "'master-name' must be unique" +
 			"across page-masters and page-sequence-masters" );
-	this.simplePageMasters.put(masterName, simplePageMaster);
+	this.simplePageMasters.put(simplePageMaster.getMasterName(), simplePageMaster);
     }
 
     protected SimplePageMaster getSimplePageMaster(String masterName) {
-		return (SimplePageMaster)this.simplePageMasters.get(masterName);
+	return (SimplePageMaster)this.simplePageMasters.get(masterName);
     }
 
     protected void addPageSequenceMaster(
 		String masterName, PageSequenceMaster pageSequenceMaster)
 		throws FOPException {
-	// check against duplication of master-name
+	// check against duplication of master-name	
 	if (existsName(masterName))
 		throw new FOPException( "'master-name' must be unique " +
 			"across page-masters and page-sequence-masters" );
@@ -153,4 +133,38 @@ public class LayoutMasterSet extends FObj {
 		else
 			return false;
 	}
+
+    protected void resetPageMasters()
+    {
+        for (Enumeration e = pageSequenceMasters.elements(); e.hasMoreElements(); )
+	    {
+		((PageSequenceMaster)e.nextElement()).reset();
+	    }
+	
+    }
+
+    protected void checkRegionNames() throws FOPException
+    {
+	// Section 7.33.15 check to see that if a region-name is a
+	// duplicate, that it maps to the same region-class.
+	for (Enumeration spm = simplePageMasters.elements(); spm.hasMoreElements(); ) {
+	    SimplePageMaster simplePageMaster = (SimplePageMaster)spm.nextElement();
+	    Hashtable spmRegions = simplePageMaster.getRegions();
+	    for (Enumeration e = spmRegions.elements(); e.hasMoreElements(); ) {
+		Region region = (Region)e.nextElement();
+		if (allRegions.containsKey(region.getRegionName())) {
+		    String localClass = (String)allRegions.get(region.getRegionName());
+		    if (!localClass.equals(region.getRegionClass())) {
+			throw new FOPException("Duplicate region-names must map "
+					       + "to the same region-class");
+		    }
+		}
+		allRegions.put(region.getRegionName(),region.getRegionClass());
+	    }
+	}
+    }
+	
+
+
+
 }

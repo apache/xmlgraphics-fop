@@ -55,8 +55,8 @@ import org.apache.fop.fo.properties.*;
 import org.apache.fop.apps.FOPException;                   
 import org.apache.fop.messaging.MessageHandler;
 
-public class ConditionalPageMasterReference
-	extends PageMasterReference implements SubSequenceSpecifier {
+public class ConditionalPageMasterReference extends FObj
+{
 	
     public static class Maker extends FObj.Maker {
 	public FObj make(FObj parent, PropertyList propertyList)
@@ -69,41 +69,48 @@ public class ConditionalPageMasterReference
 	return new ConditionalPageMasterReference.Maker();
     }
 
-	private String masterName;
-	private RepeatablePageMasterAlternatives repeatablePageMasterAlternatives;
-	
-	private int pagePosition;
-	private int oddOrEven;
-	private int blankOrNotBlank;
-	
+    private RepeatablePageMasterAlternatives repeatablePageMasterAlternatives;
+    
+    private String masterName;
+    
+    private int pagePosition;
+    private int oddOrEven;
+    private int blankOrNotBlank;
+    
     public ConditionalPageMasterReference(FObj parent, PropertyList propertyList)
 		throws FOPException {
 	super(parent, propertyList);
-	this.name = "fo:conditional-page-master-reference";
 
-	if (parent.getName().equals("fo:repeatable-page-master-alternatives")) {
-	    this.repeatablePageMasterAlternatives =
-			(RepeatablePageMasterAlternatives) parent;
-	    setMasterName( this.properties.get("master-name").getString() );
-	    if (getMasterName() == null) {
-		System.err.println("WARNING: single-page-master-reference" +
-		    "does not have a master-name and so is being ignored");
-	    } else {
-		this.repeatablePageMasterAlternatives.addConditionalPageMasterReference(this);
-	    }
-		
-	    setPagePosition( this.properties.get("page-position").getEnum() );
-	    setOddOrEven( this.properties.get("odd-or-even").getEnum() );
-	    setBlankOrNotBlank( this.properties.get("blank-or-not-blank").getEnum() );
-		
-	} else {
-	    throw new FOPException("fo:conditional-page-master-reference must be child "
-				   + "of fo:repeatable-page-master-alternatives, not " 
-				   + parent.getName());
+	this.name = getElementName();
+	if (getProperty("master-name") != null) {
+	    setMasterName(getProperty("master-name").getString() );
 	}
+
+	validateParent(parent);
+	
+	setPagePosition( this.properties.get("page-position").getEnum() );
+	setOddOrEven( this.properties.get("odd-or-even").getEnum() );
+	setBlankOrNotBlank( this.properties.get("blank-or-not-blank").getEnum() );
+		
+
     }
 	
-	protected boolean isValid( int currentPageNumber, boolean thisIsFirstPage )
+    protected void setMasterName( String masterName )
+    {
+	this.masterName = masterName;
+    }
+    
+    /**
+     * Returns the "master-name" attribute of this page master reference
+     */
+    public String getMasterName()
+    {
+	return masterName;
+    }
+
+
+	protected boolean isValid( int currentPageNumber, boolean thisIsFirstPage,
+				   boolean isEmptyPage)
 	{
 		// page-position
 		boolean okOnPagePosition = true;	// default is 'any'
@@ -137,9 +144,22 @@ public class ConditionalPageMasterReference
 			okOnOddOrEven = false;
 		} 
 		
-		// no check for blankness at the moment
+		// experimental check for blank-or-not-blank
 		
-		return (okOnOddOrEven && okOnPagePosition);
+		boolean okOnBlankOrNotBlank = true;             // default is 'any'
+		
+		int bnb = getBlankOrNotBlank();
+		
+		if ((BlankOrNotBlank.BLANK == bnb) && !isEmptyPage) {
+		    okOnBlankOrNotBlank = false;
+		}
+		else if ((BlankOrNotBlank.NOT_BLANK == bnb) && isEmptyPage) {
+		    okOnBlankOrNotBlank = false;
+		}
+	
+		return (okOnOddOrEven && okOnPagePosition &&
+			okOnBlankOrNotBlank);
+		
 	}
 	
     protected void setPagePosition( int pagePosition )
@@ -171,4 +191,32 @@ public class ConditionalPageMasterReference
 	{
 		return this.blankOrNotBlank;
 	}
+
+    protected String getElementName() 
+    {
+	return "fo:conditional-page-master-reference";
+    }
+    
+    
+    protected void validateParent(FObj parent)
+	throws FOPException
+    {
+	if (parent.getName().equals("fo:repeatable-page-master-alternatives")) {
+	    this.repeatablePageMasterAlternatives =
+			(RepeatablePageMasterAlternatives) parent;
+	   	    
+	    if (getMasterName() == null) {
+		MessageHandler.errorln("WARNING: single-page-master-reference" +
+		    "does not have a master-name and so is being ignored");
+	    } else {
+		this.repeatablePageMasterAlternatives.addConditionalPageMasterReference(this);
+	    }
+	} else {
+	    throw new FOPException("fo:conditional-page-master-reference must be child "
+				   + "of fo:repeatable-page-master-alternatives, not " 
+				   + parent.getName());
+	}
+    }
+    
+
 }

@@ -60,6 +60,9 @@ import java.util.Vector;
 public class RepeatablePageMasterAlternatives extends FObj
 	implements SubSequenceSpecifier {
 	
+    private static final int INFINITE = -1;
+    
+
     public static class Maker extends FObj.Maker {
 	public FObj make(FObj parent, PropertyList propertyList)
 	    throws FOPException {
@@ -73,13 +76,12 @@ public class RepeatablePageMasterAlternatives extends FObj
 
 	private PageSequenceMaster pageSequenceMaster;
 	
+    /**
+     * Max times this page master can be repeated.
+     * INFINITE is used for the unbounded case */
     private int maximumRepeats;
     private int numberConsumed = 0;
-
-    private int BOUNDED = 1;
-    private int UNBOUNDED = 0;
-
-    private int state;
+   
     private Vector conditionalPageMasterRefs;
 
     public RepeatablePageMasterAlternatives(FObj parent, PropertyList propertyList)
@@ -98,32 +100,32 @@ public class RepeatablePageMasterAlternatives extends FObj
 		parent.getName());
 	}
 
-	String mr = this.properties.get("maximum-repeats").getString();
-	if (!mr.equals("no-limit"))
-	{
+	String mr = getProperty("maximum-repeats").getString();
+	if (mr.equals("no-limit")) {
+	    setMaximumRepeats(INFINITE);
+	}
+	else {
 	    try {
-			setMaximumRepeats( Integer.parseInt( mr ) );
-			this.state = BOUNDED;
+		setMaximumRepeats( Integer.parseInt( mr ) );
 	    } catch (NumberFormatException nfe) {
-			throw new FOPException( "Invalid number for " +
-				"'maximum-repeats' property" );
+		throw new FOPException( "Invalid number for " +
+					"'maximum-repeats' property" );
 	    }
-
-	} else {
-	    this.state = UNBOUNDED;   // unbounded
 	}
 
     }
 	
-    public String getNextPageMaster( int currentPageNumber, boolean thisIsFirstPage ) {
+    public String getNextPageMaster( int currentPageNumber, 
+				     boolean thisIsFirstPage,
+				     boolean isEmptyPage ) {
 		String pm = null;
 		
-		if (this.state == BOUNDED ) {
-			if (numberConsumed < getMaximumRepeats()) {
-				numberConsumed++;
-			} else {
-				return null;
-			}
+		if (getMaximumRepeats() != INFINITE ) {
+		    if (numberConsumed < getMaximumRepeats()) {
+			numberConsumed++;
+		    } else {
+			return null;
+		    }
 		}
 
 		for (int i = 0; i < conditionalPageMasterRefs.size(); i++)
@@ -132,20 +134,25 @@ public class RepeatablePageMasterAlternatives extends FObj
 			(ConditionalPageMasterReference)conditionalPageMasterRefs.elementAt(i);
 
 			// 0-indexed page number
-			if (cpmr.isValid(currentPageNumber + 1, thisIsFirstPage))
+			if (cpmr.isValid(currentPageNumber + 1, thisIsFirstPage,false))
 			{
 				pm = cpmr.getMasterName();
 				break;
 			}
 		}
-
 		return pm;
     }
 
 	private void setMaximumRepeats( int maximumRepeats)
 	{
+	    if (maximumRepeats == INFINITE) {
+		this.maximumRepeats = maximumRepeats;
+	    }
+	    else {
 		this.maximumRepeats =
-			(maximumRepeats < 0) ? 0 : maximumRepeats;
+		    (maximumRepeats < 0) ? 0 : maximumRepeats;
+	    }
+	    
 	}
 	
 	private int getMaximumRepeats()
@@ -159,4 +166,14 @@ public class RepeatablePageMasterAlternatives extends FObj
 		this.conditionalPageMasterRefs.addElement( cpmr );
 	}
 	
+    public void reset() 
+    {
+	this.numberConsumed = 0;
+    }
+    
+
+    protected PageSequenceMaster getPageSequenceMaster() 
+    {
+	return pageSequenceMaster;
+    }
 }

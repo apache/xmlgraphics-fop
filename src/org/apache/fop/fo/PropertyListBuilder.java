@@ -183,7 +183,11 @@ public class PropertyListBuilder {
 		else {
 		    propVal = propertyMaker.make(p,attributes.getValue(i),fo);
 		}
-		p.put(propName,propVal);
+		
+		if (propVal != null) {
+		    p.put(propName,propVal);
+		}
+		
 	    } else {
 		//MessageHandler.errorln("WARNING: property " + attributeName + " ignored");
 	    }

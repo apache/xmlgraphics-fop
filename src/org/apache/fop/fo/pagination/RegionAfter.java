@@ -51,12 +51,12 @@
 package org.apache.fop.fo.pagination;
 
 // FOP
-import org.apache.fop.fo.*;
-import org.apache.fop.fo.properties.*;
-import org.apache.fop.layout.Region;
-import org.apache.fop.apps.FOPException;				   
+import org.apache.fop.fo.FObj;
+import org.apache.fop.fo.PropertyList;
+import org.apache.fop.apps.FOPException;
+import org.apache.fop.layout.RegionArea;
 
-public class RegionAfter extends FObj {
+public class RegionAfter extends Region {
 	
     public static class Maker extends FObj.Maker {
 	public FObj make(FObj parent, PropertyList propertyList) throws FOPException {
@@ -68,24 +68,16 @@ public class RegionAfter extends FObj {
 	return new RegionAfter.Maker();
     }
 
-    SimplePageMaster layoutMaster;
+    public static final String REGION_CLASS = "after";
+    
 
     protected RegionAfter(FObj parent, PropertyList propertyList)
-	throws FOPException {
+	throws FOPException 
+    {
 	super(parent, propertyList);
-	this.name = "fo:region-after";
-
-	if (parent.getName().equals("fo:simple-page-master")) {
-	    this.layoutMaster = (SimplePageMaster) parent;
-	    this.layoutMaster.setRegionAfter(this);
-	} else {
-	    throw new FOPException("region-after must be child "
-				   + "of simple-page-master, not "
-				   + parent.getName()); 
-	}
     }
 
-    Region makeRegion(int allocationRectangleXPosition,
+    RegionArea makeRegionArea(int allocationRectangleXPosition,
 		      int allocationRectangleYPosition,
 		      int allocationRectangleWidth,
 		      int allocationRectangleHeight) {
@@ -95,10 +87,27 @@ public class RegionAfter extends FObj {
 	int marginRight = this.properties.get("margin-right").getLength().mvalue();
 	int extent = this.properties.get("extent").getLength().mvalue();
 
-	return new Region(allocationRectangleXPosition + marginLeft,
+	return new RegionArea(allocationRectangleXPosition + marginLeft,
 			  allocationRectangleYPosition -
 			  allocationRectangleHeight + extent,
 			  allocationRectangleWidth - marginLeft -
 			  marginRight,extent);
     }
+
+
+    protected String getDefaultRegionName() 
+    {
+	return "xsl-region-after";
+    }
+    
+    protected String getElementName() 
+    {
+	return "fo:region-after";
+    }
+    
+    public String getRegionClass() 
+    {
+	return REGION_CLASS;
+    }
+
 }

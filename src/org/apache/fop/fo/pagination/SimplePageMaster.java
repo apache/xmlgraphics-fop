@@ -55,8 +55,10 @@ import org.apache.fop.fo.*;
 import org.apache.fop.messaging.MessageHandler;
 import org.apache.fop.fo.properties.*;
 import org.apache.fop.layout.PageMaster;
-import org.apache.fop.layout.Region;
 import org.apache.fop.apps.FOPException;				   
+
+import java.util.Hashtable;
+
 
 public class SimplePageMaster extends FObj {
 	
@@ -71,13 +73,14 @@ public class SimplePageMaster extends FObj {
 	return new SimplePageMaster.Maker();
     }
 
-    RegionBody regionBody;
-    RegionBefore regionBefore;
-    RegionAfter regionAfter;
-	
+    /** Page regions (regionClass, Region) */
+    private Hashtable _regions;
+    
+
     LayoutMasterSet layoutMasterSet;
     PageMaster pageMaster;
-		
+    String masterName;
+    
     protected SimplePageMaster(FObj parent, PropertyList propertyList)
 	throws FOPException {
 	super(parent, propertyList);
@@ -85,18 +88,20 @@ public class SimplePageMaster extends FObj {
 
 	if (parent.getName().equals("fo:layout-master-set")) {
 	    this.layoutMasterSet = (LayoutMasterSet) parent;
-	    String pm = this.properties.get("master-name").getString();
-	    if (pm == null) {
+	    masterName = this.properties.get("master-name").getString();
+	    if (masterName == null) {
 		MessageHandler.errorln("WARNING: simple-page-master does not have "
 				   + "a master-name and so is being ignored");
 	    } else {
-		this.layoutMasterSet.addSimplePageMaster(pm, this);
+		this.layoutMasterSet.addSimplePageMaster(this);
 	    }
 	} else {
 	    throw new FOPException("fo:simple-page-master must be child "
 				   + "of fo:layout-master-set, not " 
 				   + parent.getName());
 	}
+	_regions = new Hashtable();
+	
     }
 	
     protected void end() {
@@ -114,12 +119,21 @@ public class SimplePageMaster extends FObj {
 	int contentRectangleHeight = pageHeight - marginTop - marginBottom;
 		
 	this.pageMaster = new PageMaster(pageWidth, pageHeight);
-	this.pageMaster.addBody(this.regionBody.makeRegion(contentRectangleXPosition,contentRectangleYPosition,contentRectangleWidth,contentRectangleHeight));
-		
-	if (this.regionBefore != null)
-	    this.pageMaster.addBefore(this.regionBefore.makeRegion(contentRectangleXPosition,contentRectangleYPosition,contentRectangleWidth,contentRectangleHeight));
-	if (this.regionAfter != null)
-	    this.pageMaster.addAfter(this.regionAfter.makeRegion(contentRectangleXPosition,contentRectangleYPosition,contentRectangleWidth,contentRectangleHeight));
+	if (getRegion(RegionBody.REGION_CLASS) != null) {
+	    this.pageMaster.addBody(getRegion(RegionBody.REGION_CLASS).makeRegionArea(contentRectangleXPosition,contentRectangleYPosition,contentRectangleWidth,contentRectangleHeight));
+	}
+	else {
+	    MessageHandler.errorln("ERROR: simple-page-master must have a region of class "+RegionBody.REGION_CLASS);
+	}
+	
+	if (getRegion(RegionBefore.REGION_CLASS) != null) {
+	    this.pageMaster.addBefore(getRegion(RegionBefore.REGION_CLASS).makeRegionArea(contentRectangleXPosition,contentRectangleYPosition,contentRectangleWidth,contentRectangleHeight));
+	}
+	
+	if (getRegion(RegionAfter.REGION_CLASS) != null) {
+	    this.pageMaster.addAfter(getRegion(RegionAfter.REGION_CLASS).makeRegionArea(contentRectangleXPosition,contentRectangleYPosition,contentRectangleWidth,contentRectangleHeight));
+	}
+	
     }
 
     public PageMaster getPageMaster() {
@@ -130,15 +144,33 @@ public class SimplePageMaster extends FObj {
 	return this.pageMaster;
     }
 
-    protected void setRegionAfter(RegionAfter region) {
-	this.regionAfter = region;
+    public String getMasterName() 
+    {
+	return masterName;
+    }
+    
+
+    protected void addRegion(Region region) 
+	throws FOPException
+    {
+	if (_regions.containsKey(region.getRegionClass())) {
+	    throw new FOPException("Only one region of class "+region.getRegionClass()+" allowed within a simple-page-master.");
+	}
+	else {
+	    _regions.put(region.getRegionClass(), region);
+	}
+    }
+    
+    protected Region getRegion(String regionClass) 
+    {
+	return (Region)_regions.get(regionClass);
     }
 
-    protected void setRegionBefore(RegionBefore region) {
-	this.regionBefore = region;
+    protected Hashtable getRegions() 
+    {
+	return _regions;
     }
+    
 
-    protected void setRegionBody(RegionBody region) {
-	this.regionBody = region;
-    }
+    
 }
