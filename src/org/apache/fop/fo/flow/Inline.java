@@ -87,4 +87,9 @@ public class Inline extends FObjMixed {
         }
     }
 
+
+    public CharIterator charIterator() {
+	return new InlineCharIterator(this, propMgr.getBorderAndPadding());
+    }
+
 }

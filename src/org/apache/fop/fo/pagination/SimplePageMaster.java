@@ -112,7 +112,7 @@ public class SimplePageMaster extends FObj {
 					   new Rectangle(0,0,
 							 pageWidth,pageHeight)));
 
-        _regions = null;
+	//  _regions = null; // PageSequence access SimplePageMaster....
         children = null;
         properties = null;
     }

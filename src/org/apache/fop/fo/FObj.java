@@ -204,9 +204,27 @@ public class FObj extends FONode {
 	return null;
     }
 
-    
+    /**
+     * Return an iterator over all the children of this FObj.
+     * @return A ListIterator.
+     */
     public ListIterator getChildren() {
 	return children.listIterator();
+    }
+
+    /**
+     * Return an iterator over the object's children starting
+     * at the pased node.
+     * @param childNode First node in the iterator
+     * @return A ListIterator or null if childNode isn't a child of
+     * this FObj.
+     */
+    public ListIterator getChildren(FONode childNode) {
+	int i = children.indexOf(childNode);
+	if (i >= 0) {
+	    return children.listIterator(i);
+	}
+	else return null;
     }
 
     public void setIsInTableCell() {

@@ -16,6 +16,9 @@ import org.apache.log.Logger;
 
 import org.xml.sax.Attributes;
 
+import java.util.ListIterator;
+import java.util.NoSuchElementException;
+
 /**
  * base class for nodes in the XML tree
  *
@@ -96,6 +99,29 @@ abstract public class FONode {
 
     public FONode getParent() {
         return this.parent;
+    }
+
+    /**
+     * Return an iterator over all the children of this FObj.
+     * @return A ListIterator.
+     */
+    public ListIterator getChildren() {
+	return null;
+    }
+
+    /**
+     * Return an iterator over the object's children starting
+     * at the pased node.
+     * @param childNode First node in the iterator
+     * @return A ListIterator or null if childNode isn't a child of
+     * this FObj.
+     */
+    public ListIterator getChildren(FONode childNode) {
+	return null;
+    }
+
+    public CharIterator charIterator() {
+	return new OneCharIterator(CharClass.CODE_EOT);
     }
 
 }

@@ -14,6 +14,7 @@ import org.apache.fop.apps.FOPException;
 import org.apache.fop.apps.StreamRenderer;
 import org.apache.fop.datatypes.ColorType;
 
+
 /**
  * base class for representation of mixed content formatting objects
  * and their processing
@@ -92,6 +93,12 @@ public class FObjMixed extends FObj {
         }
         return new Status(Status.OK);
     }
+
+    public CharIterator charIterator() {
+	return new RecursiveCharIterator(this);
+    }
+
+
 
 }
 

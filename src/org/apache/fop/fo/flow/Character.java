@@ -37,6 +37,8 @@ public class Character extends FObj {
     public final static int OK = 0;
     public final static int DOESNOT_FIT = 1;
 
+    private char characterValue;
+
     public Character(FONode parent) {
         super(parent);
         this.name = "fo:character";
@@ -112,7 +114,7 @@ public class Character extends FObj {
         }
 
         // Character specific properties
-        char characterValue = this.properties.get("character").getCharacter();
+        characterValue = this.properties.get("character").getCharacter();
 
 
         // initialize id
@@ -146,5 +148,11 @@ public class Character extends FObj {
         return new Status(Status.OK);
 
     }
+
+    public CharIterator charIterator() {
+	return new OneCharIterator(characterValue);
+	// But what it the character is ignored due to white space handling?
+    }
+
 
 }
