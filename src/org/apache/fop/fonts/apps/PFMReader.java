@@ -1,28 +1,31 @@
 /*
  * $Id$
- * Copyright (C) 2001 The Apache Software Foundation. All rights reserved.
+ * Copyright (C) 2001-2002 The Apache Software Foundation. All rights reserved.
  * For details on use and redistribution please refer to the
  * LICENSE file included with these sources.
  */
 package org.apache.fop.fonts.apps;
 
-import java.io.*;
-import org.w3c.dom.*;
-import org.apache.fop.fonts.*;
-import java.util.HashMap;
-import java.util.ArrayList;
+import java.io.File;
+import java.io.InputStream;
+import java.util.Map;
+import java.util.List;
 import java.util.Iterator;
+
+import org.w3c.dom.*;
+
+import org.apache.fop.fonts.type1.PFMFile;
+import org.apache.avalon.framework.logger.AbstractLogEnabled;
+import org.apache.avalon.framework.logger.ConsoleLogger;
+import org.apache.avalon.framework.logger.Logger;
 
 /**
  * A tool which reads PFM files from Adobe Type 1 fonts and creates
  * XML font metrics file for use in FOP.
- *
- * @author  jeremias.maerki@outline.ch
  */
-public class PFMReader {
-    private boolean invokedStandalone = false;
-
-    public PFMReader() {}
+public class PFMReader extends AbstractLogEnabled {
+    
+    //private boolean invokedStandalone = false;
 
 
     /**
@@ -32,8 +35,8 @@ public class PFMReader {
      * returns a String[] with the per.ttf and Perpetua.xml. The hash
      * will have the (key, value) pairs: (-fn, Perpetua) and (-cn, PerpetuaBold)
      */
-    private static String[] parseArguments(HashMap options, String[] args) {
-        ArrayList arguments = new ArrayList();
+    private static String[] parseArguments(Map options, String[] args) {
+        List arguments = new java.util.ArrayList();
         for (int i = 0; i < args.length; i++) {
             if (args[i].startsWith("-")) {
                 if ((i + 1) < args.length &&!args[i + 1].startsWith("-")) {
@@ -52,14 +55,14 @@ public class PFMReader {
         return argStrings;
     }
 
-    private final static void displayUsage() {
-        System.out.println(" java org.apache.fop.fonts.apps.PFMReader [options] metricfile.pfm xmlfile.xml\n");
-        System.out.println(" where options can be:\n");
-        System.out.println(" -fn <fontname>\n");
-        System.out.println("     default is to use the fontname in the .ttf file, but\n"
-                           + "     you can override that name to make sure that the\n");
-        System.out.println("     embedded font is used (if you're embedding fonts)\n");
-        System.out.println("     instead of installed fonts when viewing documents with Acrobat Reader.\n");
+    private void displayUsage() {
+        getLogger().info(" java org.apache.fop.fonts.apps.PFMReader [options] metricfile.pfm xmlfile.xml");
+        getLogger().info(" where options can be:");
+        getLogger().info(" -fn <fontname>");
+        getLogger().info("     default is to use the fontname in the .pfm file, but");
+        getLogger().info("     you can override that name to make sure that the");
+        getLogger().info("     embedded font is used (if you're embedding fonts)");
+        getLogger().info("     instead of installed fonts when viewing documents with Acrobat Reader.");
     }
 
 
@@ -88,31 +91,43 @@ public class PFMReader {
         String className = null;
         String fontName = null;
 
-        HashMap options = new HashMap();
+        Map options = new java.util.HashMap();
         String[] arguments = parseArguments(options, args);
 
         PFMReader app = new PFMReader();
-        app.invokedStandalone = true;
+        Logger log;
+        if (options.get("-d") != null) {
+            log = new ConsoleLogger(ConsoleLogger.LEVEL_DEBUG);
+        } else {
+            log = new ConsoleLogger(ConsoleLogger.LEVEL_INFO);
+        }
+        app.enableLogging(log);
+        
+        //app.invokedStandalone = true;
 
-        System.out.println("PFM Reader v1.1");
-        System.out.println();
+        log.info("PFM Reader v1.1");
+        log.info("");
 
-        if (options.get("-ef") != null)
+        if (options.get("-ef") != null) {
             embFile = (String)options.get("-ef");
+        }
 
-        if (options.get("-er") != null)
+        if (options.get("-er") != null) {
             embResource = (String)options.get("-er");
+        }
 
-        if (options.get("-fn") != null)
+        if (options.get("-fn") != null) {
             fontName = (String)options.get("-fn");
+        }
 
-        if (options.get("-cn") != null)
+        if (options.get("-cn") != null) {
             className = (String)options.get("-cn");
+        }
 
         if (arguments.length != 2 || options.get("-h") != null
-            || options.get("-help") != null || options.get("--help") != null)
-            displayUsage();
-        else {
+            || options.get("-help") != null || options.get("--help") != null) {
+            app.displayUsage();
+        } else {
             PFMFile pfm = app.loadPFM(arguments[0]);
             if (pfm != null) {
                 app.preview(pfm);
@@ -134,12 +149,17 @@ public class PFMReader {
      */
     public PFMFile loadPFM(String filename) {
         try {
-            System.out.println("Reading " + filename + "...");
-            System.out.println();
-            FileInputStream in = new FileInputStream(filename);
-            PFMFile pfm = new PFMFile();
-            pfm.load(in);
-            return pfm;
+            getLogger().info("Reading " + filename + "...");
+            getLogger().info("");
+            InputStream in = new java.io.FileInputStream(filename);
+            try {
+                PFMFile pfm = new PFMFile();
+                setupLogger(pfm);
+                pfm.load(in);
+                return pfm;
+            } finally {
+                in.close();
+            }
         } catch (Exception e) {
             e.printStackTrace();
             return null;
@@ -152,34 +172,19 @@ public class PFMReader {
      * @param   pfm The PFM file to preview.
      */
     public void preview(PFMFile pfm) {
-        PrintStream out = System.out;
-
-        out.print("Font: ");
-        out.println(pfm.getWindowsName());
-        out.print("Name: ");
-        out.println(pfm.getPostscriptName());
-        out.print("CharSet: ");
-        out.println(pfm.getCharSetName());
-        out.print("CapHeight: ");
-        out.println(pfm.getCapHeight());
-        out.print("XHeight: ");
-        out.println(pfm.getXHeight());
-        out.print("LowerCaseAscent: ");
-        out.println(pfm.getLowerCaseAscent());
-        out.print("LowerCaseDescent: ");
-        out.println(pfm.getLowerCaseDescent());
-        out.print("Having widths for ");
-        out.print(pfm.getLastChar() - pfm.getFirstChar());
-        out.print(" characters (");
-        out.print(pfm.getFirstChar());
-        out.print("-");
-        out.print(pfm.getLastChar());
-        out.println(").");
-        out.print("for example: Char ");
-        out.print(pfm.getFirstChar());
-        out.print(" has a width of ");
-        out.println(pfm.getCharWidth(pfm.getFirstChar()));
-        out.println();
+        getLogger().info("Font: " + pfm.getWindowsName());
+        getLogger().info("Name: " + pfm.getPostscriptName());
+        getLogger().info("CharSet: " + pfm.getCharSetName());
+        getLogger().info("CapHeight: " + pfm.getCapHeight());
+        getLogger().info("XHeight: " + pfm.getXHeight());
+        getLogger().info("LowerCaseAscent: " + pfm.getLowerCaseAscent());
+        getLogger().info("LowerCaseDescent: " + pfm.getLowerCaseDescent());
+        getLogger().info("Having widths for " + (pfm.getLastChar() - pfm.getFirstChar()) 
+                    +" characters (" + pfm.getFirstChar()
+                    + "-" + pfm.getLastChar() + ").");
+        getLogger().info("for example: Char " + pfm.getFirstChar()
+                    + " has a width of " + pfm.getCharWidth(pfm.getFirstChar()));
+        getLogger().info("");
     }
 
     /**
@@ -189,23 +194,14 @@ public class PFMReader {
      * @param   target The target filename for the XML file.
      */
     public void writeFontXML(org.w3c.dom.Document doc, String target) {
-        System.out.println("Writing xml font file " + target + "...");
-        System.out.println();
+        getLogger().info("Writing xml font file " + target + "...");
+        getLogger().info("");
 
         try {
-          javax.xml.transform.TransformerFactory.newInstance()
-            .newTransformer().transform(
-              new javax.xml.transform.dom.DOMSource(doc),
-              new javax.xml.transform.stream.StreamResult(new File(target)));
-/*
-          OutputFormat format = new OutputFormat(doc);    // Serialize DOM
-          FileWriter out = new FileWriter(target);    // Writer will be a String
-            XMLSerializer serial = new XMLSerializer(out, format);
-            serial.asDOMSerializer();                       // As a DOM Serializer
-
-            serial.serialize(doc.getDocumentElement());
-            out.close();
-*/
+            javax.xml.transform.TransformerFactory.newInstance()
+                .newTransformer().transform(
+                    new javax.xml.transform.dom.DOMSource(doc),
+                    new javax.xml.transform.stream.StreamResult(new File(target)));
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -219,17 +215,17 @@ public class PFMReader {
      */
     public org.w3c.dom.Document constructFontXML(PFMFile pfm,
             String fontName, String className, String resource, String file) {
-        System.out.println("Creating xml font file...");
-        System.out.println();
+        getLogger().info("Creating xml font file...");
+        getLogger().info("");
 
 //        Document doc = new DocumentImpl();
         Document doc;
         try {
-          doc = javax.xml.parsers.DocumentBuilderFactory.newInstance().newDocumentBuilder().newDocument();
+            doc = javax.xml.parsers.DocumentBuilderFactory.newInstance().newDocumentBuilder().newDocument();
         }
         catch (javax.xml.parsers.ParserConfigurationException e) {
-          System.out.println("Can't create DOM implementation "+e.getMessage());
-          return null;
+            System.out.println("Can't create DOM implementation "+e.getMessage());
+            return null;
         }
         Element root = doc.createElement("font-metrics");
         doc.appendChild(root);
@@ -250,10 +246,12 @@ public class PFMReader {
 
         el = doc.createElement("embed");
         root.appendChild(el);
-        if (file != null)
+        if (file != null) {
             el.setAttribute("file", file);
-        if (resource != null)
+        }
+        if (resource != null) {
             el.setAttribute("class", resource);
+        }
 
         el = doc.createElement("encoding");
         root.appendChild(el);
@@ -282,10 +280,8 @@ public class PFMReader {
         Element bbox = doc.createElement("bbox");
         root.appendChild(bbox);
         int[] bb = pfm.getFontBBox();
-        String[] names = {
-            "left", "bottom", "right", "top"
-        };
-        for (int i = 0; i < 4; i++) {
+        final String[] names = {"left", "bottom", "right", "top"};
+        for (int i = 0; i < names.length; i++) {
             el = doc.createElement(names[i]);
             bbox.appendChild(el);
             value = new Integer(bb[i]);
@@ -337,7 +333,7 @@ public class PFMReader {
             root.appendChild(el);
             Element el2 = null;
 
-            HashMap h2 = (HashMap)pfm.getKerning().get(kpx1);
+            Map h2 = (Map)pfm.getKerning().get(kpx1);
             for (Iterator enum2 = h2.keySet().iterator(); enum2.hasNext(); ) {
                 Integer kpx2 = (Integer)enum2.next();
                 el2 = doc.createElement("pair");
@@ -355,10 +351,11 @@ public class PFMReader {
         StringBuffer esc = new StringBuffer();
 
         for (int i = 0; i < str.length(); i++) {
-            if (str.charAt(i) == '\\')
+            if (str.charAt(i) == '\\') {
                 esc.append("\\\\");
-            else
+            } else {
                 esc.append(str.charAt(i));
+            }
         }
 
         return esc.toString();
