@@ -80,7 +80,7 @@ public class TextProperty extends Property {
 	 * @param propertyList the property list this is a member of
 	 * @param value the explicit string value of the property
 	 */
-	public Property make(PropertyList propertyList, String value)
+	public Property make(PropertyList propertyList, String value, FObj fo)
 		throws FOPException {
 		return new TextProperty(propertyList, value);
 	}
@@ -91,7 +91,7 @@ public class TextProperty extends Property {
 	 * @param propertyList the property list the property is a member of
 	 */
 	public Property make(PropertyList propertyList) throws FOPException {
-		return make(propertyList, "");
+		return make(propertyList, "", null);
 	}
 	}
 
