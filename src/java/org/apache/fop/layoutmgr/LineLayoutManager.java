@@ -322,7 +322,7 @@ public class LineLayoutManager extends InlineStackingLayoutManager {
             prevBP = getBestBP(vecPossEnd);
         }
         // Backup child LM if necessary
-        if (bp != prevBP && !prevBP.couldEndLine()) {
+        if (bp != prevBP && !prevCouldEndLine(prevBP)) {
             reset();
         }
 
@@ -394,6 +394,20 @@ public class LineLayoutManager extends InlineStackingLayoutManager {
     /** Line area is always considered to act as a fence. */
     protected boolean hasTrailingFence(boolean bNotLast) {
         return true;
+    }
+
+    /** Test whether all breakposs in vecInlineBreaks
+        back to and including prev could end line */
+    private boolean prevCouldEndLine(BreakPoss prev) {
+        ListIterator bpIter =
+            vecInlineBreaks.listIterator(vecInlineBreaks.size());
+        boolean couldEndLine = true;
+        while (bpIter.hasPrevious()) {
+            BreakPoss bp = (BreakPoss) bpIter.previous();
+            couldEndLine = bp.couldEndLine();
+            if (!couldEndLine || bp == prev) break;
+        }
+        return couldEndLine;
     }
 
     private HyphContext getHyphenContext(BreakPoss prev,
