@@ -18,8 +18,8 @@
  
 package org.apache.fop.layoutmgr.list;
 
-import org.apache.fop.fo.FObj;
-import org.apache.fop.fo.PropertyManager;
+import org.apache.fop.fo.flow.ListItemBody;
+import org.apache.fop.fo.flow.ListItemLabel;
 import org.apache.fop.layoutmgr.BlockStackingLayoutManager;
 import org.apache.fop.layoutmgr.LayoutManager;
 import org.apache.fop.layoutmgr.LeafPosition;
@@ -28,12 +28,9 @@ import org.apache.fop.layoutmgr.LayoutContext;
 import org.apache.fop.layoutmgr.PositionIterator;
 import org.apache.fop.layoutmgr.BreakPossPosIter;
 import org.apache.fop.layoutmgr.Position;
-import org.apache.fop.layoutmgr.TraitSetter;
 import org.apache.fop.area.Area;
 import org.apache.fop.area.Block;
 import org.apache.fop.traits.MinOptMax;
-import org.apache.fop.fo.properties.CommonBorderAndPadding;
-import org.apache.fop.fo.properties.CommonBackground;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -43,9 +40,6 @@ import java.util.List;
  * A cell contains blocks. These blocks fill the cell.
  */
 public class Item extends BlockStackingLayoutManager {
-
-    private CommonBorderAndPadding borderProps = null;
-    private CommonBackground backgroundProps;
 
     private Block curBlockArea;
 
@@ -57,17 +51,23 @@ public class Item extends BlockStackingLayoutManager {
     /**
      * Create a new Cell layout manager.
      */
-    public Item(FObj node) {
+    public Item(ListItemLabel node) {
         super(node);
+        fobj = node;
+    }
+
+    /**
+     * Create a new Cell layout manager.
+     */
+    public Item(ListItemBody node) {
+        super(node);
+        fobj = node;
     }
 
     /**
      * @see org.apache.fop.layoutmgr.AbstractLayoutManager#initProperties()
      */
     protected void initProperties() {
-        PropertyManager pm = fobj.getPropertyManager();
-        borderProps = pm.getBorderAndPadding();
-        backgroundProps = pm.getBackgroundProps();
     }
 
     /**
@@ -167,7 +167,13 @@ public class Item extends BlockStackingLayoutManager {
     public void addAreas(PositionIterator parentIter,
                          LayoutContext layoutContext) {
         getParentArea(null);
-        addID();
+        
+        int nameId = fobj.getNameId();
+        if (nameId == FO_LIST_ITEM_LABEL) {
+            addID(((ListItemLabel) fobj).getId());
+        } else if (nameId == FO_LIST_ITEM_BODY) {
+            addID(((ListItemBody) fobj).getId());
+        }
 
         LayoutManager childLM;
         int iStartPos = 0;
@@ -184,12 +190,14 @@ public class Item extends BlockStackingLayoutManager {
             }
         }
 
+        /*
         if (borderProps != null) {
             TraitSetter.addBorders(curBlockArea, borderProps);
         }
         if (backgroundProps != null) {
             TraitSetter.addBackground(curBlockArea, backgroundProps);
         }
+        */
 
         flush();
 

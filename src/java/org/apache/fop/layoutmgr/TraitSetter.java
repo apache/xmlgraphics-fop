@@ -18,13 +18,12 @@
 
 package org.apache.fop.layoutmgr;
 
-import org.apache.fop.fo.properties.CommonBorderAndPadding;
 import org.apache.fop.traits.BorderProps;
 import org.apache.fop.traits.LayoutProps;
 import org.apache.fop.area.Area;
 import org.apache.fop.area.Trait;
-import org.apache.fop.fo.properties.CommonBackground;
 import org.apache.fop.fo.properties.CommonMarginBlock;
+import org.apache.fop.fo.properties.CommonBorderPaddingBackground;
 
 /**
  * This is a helper class used for setting common traits on areas.
@@ -37,39 +36,39 @@ public class TraitSetter {
      * @param bpProps border and padding properties
      */
     public static void setBorderPaddingTraits(Area area,
-            CommonBorderAndPadding bpProps, boolean bNotFirst, boolean bNotLast) {
+            CommonBorderPaddingBackground bpProps, boolean bNotFirst, boolean bNotLast) {
         int iBP;
-        iBP = bpProps.getPadding(CommonBorderAndPadding.START, bNotFirst);
+        iBP = bpProps.getPadding(CommonBorderPaddingBackground.START, bNotFirst);
         if (iBP > 0) {
             //area.addTrait(new Trait(Trait.PADDING_START, new Integer(iBP)));
             area.addTrait(Trait.PADDING_START, new Integer(iBP));
         }
-        iBP = bpProps.getPadding(CommonBorderAndPadding.END, bNotLast);
+        iBP = bpProps.getPadding(CommonBorderPaddingBackground.END, bNotLast);
         if (iBP > 0) {
             //area.addTrait(new Trait(Trait.PADDING_END, new Integer(iBP)));
             area.addTrait(Trait.PADDING_END, new Integer(iBP));
         }
-        iBP = bpProps.getPadding(CommonBorderAndPadding.BEFORE, false);
+        iBP = bpProps.getPadding(CommonBorderPaddingBackground.BEFORE, false);
         if (iBP > 0) {
             // area.addTrait(new Trait(Trait.PADDING_BEFORE, new Integer(iBP)));
             area.addTrait(Trait.PADDING_BEFORE, new Integer(iBP));
         }
-        iBP = bpProps.getPadding(CommonBorderAndPadding.AFTER, false);
+        iBP = bpProps.getPadding(CommonBorderPaddingBackground.AFTER, false);
         if (iBP > 0) {
             //area.addTrait(new Trait(Trait.PADDING_AFTER, new Integer(iBP)));
             area.addTrait(Trait.PADDING_AFTER, new Integer(iBP));
         }
 
         addBorderTrait(area, bpProps, bNotFirst,
-                       CommonBorderAndPadding.START, Trait.BORDER_START);
+                       CommonBorderPaddingBackground.START, Trait.BORDER_START);
 
-        addBorderTrait(area, bpProps, bNotLast, CommonBorderAndPadding.END,
+        addBorderTrait(area, bpProps, bNotLast, CommonBorderPaddingBackground.END,
                        Trait.BORDER_END);
 
-        addBorderTrait(area, bpProps, false, CommonBorderAndPadding.BEFORE,
+        addBorderTrait(area, bpProps, false, CommonBorderPaddingBackground.BEFORE,
                        Trait.BORDER_BEFORE);
 
-        addBorderTrait(area, bpProps, false, CommonBorderAndPadding.AFTER,
+        addBorderTrait(area, bpProps, false, CommonBorderPaddingBackground.AFTER,
                        Trait.BORDER_AFTER);
     }
 
@@ -79,7 +78,7 @@ public class TraitSetter {
      * @param bpProps border and padding properties
      */
     private static void addBorderTrait(Area area,
-                                       CommonBorderAndPadding bpProps,
+                                       CommonBorderPaddingBackground bpProps,
                                        boolean bDiscard, int iSide,
                                        Object oTrait) {
         int iBP = bpProps.getBorderWidth(iSide, bDiscard);
@@ -101,46 +100,46 @@ public class TraitSetter {
      * @param curBlock area to set the traits on
      * @param bordProps border properties
      */
-    public static void addBorders(Area curBlock, CommonBorderAndPadding bordProps) {
-        BorderProps bps = getBorderProps(bordProps, CommonBorderAndPadding.BEFORE);
+    public static void addBorders(Area curBlock, CommonBorderPaddingBackground bordProps) {
+        BorderProps bps = getBorderProps(bordProps, CommonBorderPaddingBackground.BEFORE);
         if (bps.width != 0) {
             curBlock.addTrait(Trait.BORDER_BEFORE, bps);
         }
-        bps = getBorderProps(bordProps, CommonBorderAndPadding.AFTER);
+        bps = getBorderProps(bordProps, CommonBorderPaddingBackground.AFTER);
         if (bps.width != 0) {
             curBlock.addTrait(Trait.BORDER_AFTER, bps);
         }
-        bps = getBorderProps(bordProps, CommonBorderAndPadding.START);
+        bps = getBorderProps(bordProps, CommonBorderPaddingBackground.START);
         if (bps.width != 0) {
             curBlock.addTrait(Trait.BORDER_START, bps);
         }
-        bps = getBorderProps(bordProps, CommonBorderAndPadding.END);
+        bps = getBorderProps(bordProps, CommonBorderPaddingBackground.END);
         if (bps.width != 0) {
             curBlock.addTrait(Trait.BORDER_END, bps);
         }
 
-        int padding = bordProps.getPadding(CommonBorderAndPadding.START, false);
+        int padding = bordProps.getPadding(CommonBorderPaddingBackground.START, false);
         if (padding != 0) {
             curBlock.addTrait(Trait.PADDING_START, new java.lang.Integer(padding));
         }
 
-        padding = bordProps.getPadding(CommonBorderAndPadding.END, false);
+        padding = bordProps.getPadding(CommonBorderPaddingBackground.END, false);
         if (padding != 0) {
             curBlock.addTrait(Trait.PADDING_END, new java.lang.Integer(padding));
         }
 
-        padding = bordProps.getPadding(CommonBorderAndPadding.BEFORE, false);
+        padding = bordProps.getPadding(CommonBorderPaddingBackground.BEFORE, false);
         if (padding != 0) {
             curBlock.addTrait(Trait.PADDING_BEFORE, new java.lang.Integer(padding));
         }
 
-        padding = bordProps.getPadding(CommonBorderAndPadding.AFTER, false);
+        padding = bordProps.getPadding(CommonBorderPaddingBackground.AFTER, false);
         if (padding != 0) {
             curBlock.addTrait(Trait.PADDING_AFTER, new java.lang.Integer(padding));
         }
     }
 
-    private static BorderProps getBorderProps(CommonBorderAndPadding bordProps, int side) {
+    private static BorderProps getBorderProps(CommonBorderPaddingBackground bordProps, int side) {
         BorderProps bps;
         bps = new BorderProps(bordProps.getBorderStyle(side),
                               bordProps.getBorderWidth(side, false),
@@ -155,18 +154,18 @@ public class TraitSetter {
      * @param curBlock the current block
      * @param backProps the background properties
      */
-    public static void addBackground(Area curBlock, CommonBackground backProps) {
+    public static void addBackground(Area curBlock, CommonBorderPaddingBackground backProps) {
         Trait.Background back = new Trait.Background();
-        back.setColor(backProps.backColor);
+        back.setColor(backProps.backgroundColor);
 
-        if (backProps.backImage != null) {
-            back.setURL(backProps.backImage);
-            back.setRepeat(backProps.backRepeat);
-            if (backProps.backPosHorizontal != null) {
-                back.setHoriz(backProps.backPosHorizontal.getValue());
+        if (backProps.backgroundImage != null) {
+            back.setURL(backProps.backgroundImage);
+            back.setRepeat(backProps.backgroundRepeat);
+            if (backProps.backgroundPositionHorizontal != null) {
+                back.setHoriz(backProps.backgroundPositionHorizontal.getValue());
             }
-            if (backProps.backPosVertical != null) {
-                back.setVertical(backProps.backPosVertical.getValue());
+            if (backProps.backgroundPositionVertical != null) {
+                back.setVertical(backProps.backgroundPositionVertical.getValue());
             }
         }
 
@@ -183,7 +182,7 @@ public class TraitSetter {
      * @param marginProps the margin properties.
      */
     public static void addMargins(Area curBlock,
-                                  CommonBorderAndPadding bpProps,
+                                  CommonBorderPaddingBackground bpProps,
                                   CommonMarginBlock marginProps) {
         int spaceStart = marginProps.startIndent 
                             - bpProps.getBorderStartWidth(false)

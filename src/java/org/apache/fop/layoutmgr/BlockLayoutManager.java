@@ -30,8 +30,6 @@ import org.apache.fop.area.Block;
 import org.apache.fop.area.BlockParent;
 import org.apache.fop.area.LineArea;
 import org.apache.fop.traits.LayoutProps;
-import org.apache.fop.fo.properties.CommonBorderAndPadding;
-import org.apache.fop.fo.properties.CommonBackground;
 import org.apache.fop.fo.properties.CommonMarginBlock;
 import org.apache.fop.traits.MinOptMax;
 
@@ -46,8 +44,6 @@ public class BlockLayoutManager extends BlockStackingLayoutManager {
     protected ListIterator proxyLMiter;
 
     private LayoutProps layoutProps;
-    private CommonBorderAndPadding borderProps;
-    private CommonBackground backgroundProps;
     private CommonMarginBlock marginProps;
 
     /* holds the (one-time use) fo:block space-before
@@ -91,8 +87,6 @@ public class BlockLayoutManager extends BlockStackingLayoutManager {
     protected void initProperties() {
         PropertyManager pm = fobj.getPropertyManager();
         layoutProps = pm.getLayoutProps();
-        borderProps = pm.getBorderAndPadding();
-        backgroundProps = pm.getBackgroundProps();
         marginProps = pm.getMarginProps();
         foBlockSpaceBefore = layoutProps.spaceBefore.getSpace();
         prevFoBlockSpaceAfter = foBlockSpaceAfter;
@@ -177,7 +171,7 @@ public class BlockLayoutManager extends BlockStackingLayoutManager {
 
         int ipd = context.getRefIPD();
         int iIndents = marginProps.startIndent + marginProps.endIndent;
-        int bIndents = borderProps.getBPPaddingAndBorder(false);
+        int bIndents = fobj.getCommonBorderPaddingBackground().getBPPaddingAndBorder(false);
         ipd -= iIndents;
 
         MinOptMax stackSize = new MinOptMax();
@@ -303,7 +297,7 @@ public class BlockLayoutManager extends BlockStackingLayoutManager {
             }
         }
 
-        int bIndents = borderProps.getBPPaddingAndBorder(false);
+        int bIndents = fobj.getCommonBorderPaddingBackground().getBPPaddingAndBorder(false);
 
         addMarkers(false, true);
 
@@ -331,9 +325,9 @@ public class BlockLayoutManager extends BlockStackingLayoutManager {
             curBlockArea = new Block();
 
             // set traits
-            TraitSetter.addBorders(curBlockArea, borderProps);
-            TraitSetter.addBackground(curBlockArea, backgroundProps);
-            TraitSetter.addMargins(curBlockArea, borderProps, marginProps);
+            TraitSetter.addBorders(curBlockArea, fobj.getCommonBorderPaddingBackground());
+            TraitSetter.addBackground(curBlockArea, fobj.getCommonBorderPaddingBackground());
+            TraitSetter.addMargins(curBlockArea, fobj.getCommonBorderPaddingBackground(), marginProps);
             TraitSetter.addBreaks(curBlockArea, layoutProps);
 
             // Set up dimensions

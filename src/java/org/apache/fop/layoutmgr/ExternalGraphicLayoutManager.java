@@ -27,8 +27,6 @@ import org.apache.fop.area.inline.InlineArea;
 import org.apache.fop.area.inline.Viewport;
 import org.apache.fop.datatypes.Length;
 import org.apache.fop.fo.flow.ExternalGraphic;
-import org.apache.fop.fo.properties.CommonBorderAndPadding;
-import org.apache.fop.fo.properties.CommonBackground;
 import org.apache.fop.image.FopImage;
 import org.apache.fop.image.ImageFactory;
 
@@ -224,10 +222,8 @@ public class ExternalGraphicLayoutManager extends LeafNodeLayoutManager {
          vp.setOffset(0);
 
          // Common Border, Padding, and Background Properties
-         CommonBorderAndPadding bap = graphic.getPropertyManager().getBorderAndPadding();
-         CommonBackground bProps = graphic.getPropertyManager().getBackgroundProps();
-         TraitSetter.addBorders(vp, bap);
-         TraitSetter.addBackground(vp, bProps);
+         TraitSetter.addBorders(vp, graphic.getCommonBorderPaddingBackground());
+         TraitSetter.addBackground(vp, graphic.getCommonBorderPaddingBackground());
 
          return vp;
      }
