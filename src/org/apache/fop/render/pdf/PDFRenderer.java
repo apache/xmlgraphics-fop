@@ -371,7 +371,7 @@ public class PDFRenderer extends PrintRenderer {
         UserAgent userAgent = new MUserAgent(new AffineTransform());
 
         GVTBuilder builder = new GVTBuilder();
-        GraphicsNodeRenderContext rc = getRenderContext();
+        GraphicsNodeRenderContext rc = getRenderContext(fs);
         BridgeContext ctx = new BridgeContext(userAgent, rc);
         GraphicsNode root;
         PDFGraphics2D graphics =
@@ -392,7 +392,7 @@ public class PDFRenderer extends PrintRenderer {
         currentStream.add("Q\n");
     }
 
-    public GraphicsNodeRenderContext getRenderContext() {
+    public GraphicsNodeRenderContext getRenderContext(FontState fs) {
         GraphicsNodeRenderContext nodeRenderContext = null;
         if (nodeRenderContext == null) {
             RenderingHints hints = new RenderingHints(null);
@@ -406,9 +406,13 @@ public class PDFRenderer extends PrintRenderer {
               new FontRenderContext(new AffineTransform(), true,
                                     true);
 
-            TextPainter textPainter = new StrokingTextPainter();
-            //TextPainter textPainter = new PDFTextPainter();
-
+            TextPainter textPainter = null;
+            Boolean bl = org.apache.fop.configuration.Configuration.getBooleanValue("strokeSVGText");
+            if(bl == null || bl.booleanValue()) {
+                textPainter = new StrokingTextPainter();
+            } else {
+                textPainter = new PDFTextPainter(fs);
+            }
             GraphicsNodeRableFactory gnrFactory =
               new ConcreteGraphicsNodeRableFactory();
 
