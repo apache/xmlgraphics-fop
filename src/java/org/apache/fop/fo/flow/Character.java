@@ -140,7 +140,17 @@ public class Character extends FObj implements LMVisited {
         aLMV.serveCharacter(this);
     }
 
+    /**
+     * @see org.apache.fop.fo.FObj#getName()
+     */
     public String getName() {
         return "fo:character";
+    }
+    
+    /**
+     * @see org.apache.fop.fo.FObj#getNameId()
+     */
+    public int getNameId() {
+        return FO_CHARACTER;
     }
 }

@@ -356,5 +356,11 @@ public class TableCell extends FObj {
     public String getName() {
         return "fo:table-cell";
     }
-    
+
+    /**
+     * @see org.apache.fop.fo.FObj#getNameId()
+     */
+    public int getNameId() {
+        return FO_TABLE_CELL;
+    }
 }

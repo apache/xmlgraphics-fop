@@ -181,4 +181,11 @@ public class Flow extends FObj {
     public String getName() {
         return "fo:flow";
     }
+    
+    /**
+     * @see org.apache.fop.fo.FObj#getNameId()
+     */
+    public int getNameId() {
+        return FO_FLOW;
+    }
 }

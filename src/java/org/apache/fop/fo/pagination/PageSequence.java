@@ -746,4 +746,11 @@ public class PageSequence extends FObj {
     public String getName() {
         return "fo:page-sequence";
     }
+
+    /**
+     * @see org.apache.fop.fo.FObj#getNameId()
+     */
+    public int getNameId() {
+        return FO_PAGE_SEQUENCE;
+    }
 }

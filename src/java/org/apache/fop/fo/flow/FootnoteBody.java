@@ -63,4 +63,11 @@ public class FootnoteBody extends FObj {
     public String getName() {
         return "fo:footnote-body";
     }
+    
+    /**
+     * @see org.apache.fop.fo.FObj#getNameId()
+     */
+    public int getNameId() {
+        return FO_FOOTNOTE_BODY;
+    }
 }

@@ -44,4 +44,11 @@ public class Float extends ToBeImplementedElement {
     public String getName() {
         return "fo:float";
     }
+    
+    /**
+     * @see org.apache.fop.fo.FObj#getNameId()
+     */
+    public int getNameId() {
+        return FO_FLOAT;
+    }
 }

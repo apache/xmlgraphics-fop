@@ -80,5 +80,12 @@ public class SinglePageMasterReference extends PageMasterReference
     public String getName() {
         return "fo:single-page-master-reference";
     }
+
+    /**
+     * @see org.apache.fop.fo.FObj#getNameId()
+     */
+    public int getNameId() {
+        return FO_SINGLE_PAGE_MASTER_REFERENCE;
+    }
 }
 

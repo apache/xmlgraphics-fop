@@ -109,4 +109,11 @@ public class RegionBody extends Region {
     public String getName() {
         return "fo:region-body";
     }
+    
+    /**
+     * @see org.apache.fop.fo.FObj#getNameId()
+     */
+    public int getNameId() {
+        return FO_REGION_BODY;
+    }
 }

@@ -96,4 +96,12 @@ public class RetrieveMarker extends FObjMixed implements LMVisited {
     public String getName() {
         return "fo:retrieve-marker";
     }
+
+    /**
+     * @see org.apache.fop.fo.FObj#getNameId()
+     */
+    public int getNameId() {
+        return FO_RETRIEVE_MARKER;
+    }
+
 }

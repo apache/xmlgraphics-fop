@@ -107,4 +107,8 @@ public class PageNumber extends FObj {
     public String getName() {
         return "fo:page-number";
     }
+    
+    public int getNameId() {
+        return FO_PAGE_NUMBER;
+    }
 }

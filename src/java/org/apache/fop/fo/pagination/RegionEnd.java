@@ -72,5 +72,12 @@ public class RegionEnd extends RegionSE {
     public String getName() {
         return "fo:region-end";
     }
+    
+    /**
+     * @see org.apache.fop.fo.FObj#getNameId()
+     */
+    public int getNameId() {
+        return FO_REGION_END;
+    }
 }
 

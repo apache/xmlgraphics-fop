@@ -98,5 +98,12 @@ public class Title extends FObjMixed {
     public String getName() {
         return "fo:title";
     }
+
+    /**
+     * @see org.apache.fop.fo.FObj#getNameId()
+     */
+    public int getNameId() {
+        return FO_TITLE;
+    }
 }
 

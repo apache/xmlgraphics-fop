@@ -104,7 +104,17 @@ public class Declarations extends FObj {
         childNodes = null;
     }
 
+    /**
+     * @see org.apache.fop.fo.FObj#getName()
+     */
     public String getName() {
         return "fo:declarations";
+    }
+    
+    /**
+     * @see org.apache.fop.fo.FObj#getNameId()
+     */
+    public int getNameId() {
+        return FO_DECLARATIONS;
     }
 }

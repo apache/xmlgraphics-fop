@@ -159,4 +159,11 @@ public class SimplePageMaster extends FObj {
     public String getName() {
         return "fo:simple-page-master";
     }
+
+    /**
+     * @see org.apache.fop.fo.FObj#getNameId()
+     */
+    public int getNameId() {
+        return FO_SIMPLE_PAGE_MASTER;
+    }
 }

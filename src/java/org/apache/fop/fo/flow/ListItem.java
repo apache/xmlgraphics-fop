@@ -134,5 +134,12 @@ public class ListItem extends FObj {
     public String getName() {
         return "fo:list-item";
     }
+    
+    /**
+     * @see org.apache.fop.fo.FObj#getNameId()
+     */
+    public int getNameId() {
+        return FO_LIST_ITEM;
+    }
 }
 

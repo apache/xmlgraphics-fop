@@ -95,5 +95,12 @@ public class Footnote extends FObj {
     public String getName() {
         return "fo:footnote";
     }
+    
+    /**
+     * @see org.apache.fop.fo.FObj#getNameId()
+     */
+    public int getNameId() {
+        return FO_FOOTNOTE;
+    }
 }
 

@@ -132,4 +132,11 @@ public class InstreamForeignObject extends FObj implements LMVisited {
     public String getName() {
         return "fo:instream-foreign-object";
     }
+    
+    /**
+     * @see org.apache.fop.fo.FObj#getNameId()
+     */
+    public int getNameId() {
+        return FO_INSTREAM_FOREIGN_OBJECT;
+    }
 }

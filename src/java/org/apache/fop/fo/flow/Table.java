@@ -208,4 +208,11 @@ public class Table extends FObj implements LMVisited {
     public String getName() {
         return "fo:table";
     }
+
+    /**
+     * @see org.apache.fop.fo.FObj#getNameId()
+     */
+    public int getNameId() {
+        return FO_TABLE;
+    }
 }

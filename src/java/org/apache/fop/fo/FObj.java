@@ -548,5 +548,13 @@ public class FObj extends FONode implements Constants {
         }
         return -1;
     }
+
+    /**
+     * Returns the Constants class integer value of this formatting object
+     * @return the integer enumeration of this FO
+     */
+    public int getNameId() {
+        return FO_UNKNOWN;
+    }
 }
 

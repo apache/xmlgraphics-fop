@@ -71,5 +71,12 @@ public class RegionStart extends RegionSE {
     public String getName() {
         return "fo:region-start";
     }
+
+    /**
+     * @see org.apache.fop.fo.FObj#getNameId()
+     */
+    public int getNameId() {
+        return FO_REGION_START;
+    }
 }
 

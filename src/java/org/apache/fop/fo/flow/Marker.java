@@ -65,4 +65,11 @@ public class Marker extends FObjMixed {
     public String getName() {
         return "fo:marker";
     }
+    
+    /**
+     * @see org.apache.fop.fo.FObj#getNameId()
+     */
+    public int getNameId() {
+        return FO_MARKER;
+    }
 }

@@ -43,4 +43,11 @@ public class TableHeader extends TableBody implements LMVisited {
     public String getName() {
         return "fo:table-header";
     }
+
+    /**
+     * @see org.apache.fop.fo.FObj#getNameId()
+     */
+    public int getNameId() {
+        return FO_TABLE_HEADER;
+    }
 }

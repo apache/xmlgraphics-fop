@@ -84,5 +84,12 @@ public class TableAndCaption extends ToBeImplementedElement {
     public String getName() {
         return "fo:table-and-caption";
     }
+
+    /**
+     * @see org.apache.fop.fo.FObj#getNameId()
+     */
+    public int getNameId() {
+        return FO_TABLE_AND_CAPTION;
+    }
 }
 

@@ -63,5 +63,12 @@ public class ListItemBody extends FObj {
     public String getName() {
         return "fo:list-item-body";
     }
+    
+    /**
+     * @see org.apache.fop.fo.FObj#getNameId()
+     */
+    public int getNameId() {
+        return FO_LIST_ITEM_BODY;
+    }
 }
 

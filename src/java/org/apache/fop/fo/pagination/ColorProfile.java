@@ -111,7 +111,17 @@ public class ColorProfile extends FObj {
         }
     }
 
+    /**
+     * @see org.apache.fop.fo.FObj#getName()
+     */
     public String getName() {
         return "fo:color-profile";
+    }
+    
+    /**
+     * @see org.apache.fop.fo.FObj#getNameId()
+     */
+    public int getNameId() {
+        return FO_COLOR_PROFILE;
     }
 }
