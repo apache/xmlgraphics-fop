@@ -30,7 +30,7 @@ class ImageLoader {
         if (!valid || image != null) {
             return image;
         }
-        String base = userAgent.getBaseDirectory();
+        String base = userAgent.getBaseURL();
         image = ImageFactory.loadImage(url, base, userAgent);
         if (image == null) {
             cache.invalidateImage(url, userAgent);

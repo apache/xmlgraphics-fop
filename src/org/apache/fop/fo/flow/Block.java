@@ -367,14 +367,29 @@ public class Block extends FObjMixed {
     }
 
     public LayoutManager getLayoutManager() {
-	return new BlockLayoutManager(this);
-    }
+BlockLayoutManager blm = new BlockLayoutManager(this);
+TextInfo ti = new TextInfo();
 
+/*      try {
+    ti.fs = propMgr.getFontState(fontInfo);
+      } catch (FOPException fopex) {
+    log.error("Error setting FontState for characters: " +
+        fopex.getMessage());
+      }*/
+
+            ColorType c = getProperty("color").getColorType();
+            ti.color = c;
+
+            ti.verticalAlign =
+                getProperty("vertical-align").getEnum();
+
+blm.setBlockTextInfo(ti);
+	return blm;
+    }
 
     public boolean generatesInlineAreas() {
         return false;
     }
-
 
     public void addChild(FONode child) {
 	// Handle whitespace based on values of properties

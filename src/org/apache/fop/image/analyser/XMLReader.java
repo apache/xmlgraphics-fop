@@ -82,7 +82,7 @@ public class XMLReader implements ImageReader {
                 }
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            //e.printStackTrace();
             try {
                 is.reset();
             } catch (IOException ioe) { }

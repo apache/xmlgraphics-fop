@@ -30,6 +30,9 @@ public abstract class AbstractLayoutManager implements LayoutManager {
         this.parentLM = lm;
     }
 
+    public int getContentIPD() {
+        return 0;
+    }
 
     /**
      * Propagates to lower level layout managers. It iterates over the

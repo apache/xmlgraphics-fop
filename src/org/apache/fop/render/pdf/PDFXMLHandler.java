@@ -12,6 +12,7 @@ import org.apache.fop.render.XMLHandler;
 import org.apache.fop.render.RendererContext;
 import org.apache.fop.pdf.*;
 import org.apache.fop.svg.*;
+import org.apache.fop.svg.SVGUserAgent;
 import org.apache.fop.layout.FontState;
 
 import org.apache.log.Logger;
@@ -104,9 +105,8 @@ public static final String PDF_YPOS = "ypos";
             float sx = 1, sy = 1;
             int xOffset = pdfInfo.x, yOffset = pdfInfo.y;
 
-            org.apache.fop.svg.SVGUserAgent ua
-                 = new org.apache.fop.svg.SVGUserAgent(new AffineTransform());
-            ua.setLogger(context.getLogger());
+            SVGUserAgent ua
+                 = new SVGUserAgent(context.getUserAgent(), new AffineTransform());
 
             GVTBuilder builder = new GVTBuilder();
             BridgeContext ctx = new BridgeContext(ua);
@@ -122,7 +122,7 @@ public static final String PDF_YPOS = "ypos";
             try {
                 root = builder.build(ctx, doc);
             } catch (Exception e) {
-                context.getLogger().error("svg graphic could not be built: "
+                context.getUserAgent().getLogger().error("svg graphic could not be built: "
                                        + e.getMessage(), e);
                 return;
             }
@@ -168,7 +168,7 @@ public static final String PDF_YPOS = "ypos";
                 root.paint(graphics);
                 pdfInfo.currentStream.add(graphics.getString());
             } catch (Exception e) {
-                context.getLogger().error("svg graphic could not be rendered: "
+                context.getUserAgent().getLogger().error("svg graphic could not be rendered: "
                                        + e.getMessage(), e);
             }
 
