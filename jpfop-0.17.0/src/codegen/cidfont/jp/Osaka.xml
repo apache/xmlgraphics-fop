@@ -1,0 +1,71 @@
+<font-metrics>
+    <class-name>Osaka</class-name>
+    <implements-name>OptionalFontDescriptor</implements-name>
+
+    <font-name>Osaka</font-name>
+    <encoding>90pv-RKSJ-H</encoding>
+    <char-encoding>SJIS</char-encoding>
+
+    <cid-basefont>Osaka</cid-basefont>
+    <cidtype>CIDFontType2</cidtype>
+    <registry>Adobe</registry>
+    <ordering>Japan1</ordering>
+    <supplement>2</supplement>
+    <dw>1000</dw>
+    <widths>
+        <cid-widths>
+            <range>
+            <start>0</start>
+            <end>255</end>
+            <width>500</width>
+            </range>
+        </cid-widths>
+        <cid-range>
+        <start>1</start>
+        <end>107</end>
+        <width>500</width>
+        </cid-range>
+        <cid-range>
+        <start>97</start>
+        <end>97</end>
+        <width>500</width>
+        </cid-range>
+        <cid-range>
+        <start>326</start>
+        <end>389</end>
+        <width>500</width>
+        </cid-range>
+        <cid-range>
+        <start>152</start>
+        <end>152</end>
+        <width>500</width>
+        </cid-range>
+        <cid-range>
+        <start>228</start>
+        <end>228</end>
+        <width>500</width>
+        </cid-range>
+        <cid-range>
+        <start>124</start>
+        <end>124</end>
+        <width>500</width>
+        </cid-range>
+    </widths>
+    <first-char>32</first-char>
+    <last-char>255</last-char>
+
+    <flags>4</flags>
+    <font-bbox>
+        <llx>-165</llx>
+        <lly>-221</lly>
+        <urx>1066</urx>
+        <ury>952</ury>
+    </font-bbox>
+    <stemv>114</stemv>
+    <italicangle>0</italicangle>
+    <cap-height>737</cap-height>
+    <ascender>952</ascender>
+    <descender>-221</descender>
+
+    <x-height>553</x-height>
+</font-metrics>

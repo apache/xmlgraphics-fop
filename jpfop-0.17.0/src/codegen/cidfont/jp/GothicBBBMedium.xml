@@ -1,0 +1,53 @@
+<font-metrics>
+    <class-name>GothicBBBMedium</class-name>
+    <implements-name>OptionalFontDescriptor</implements-name>
+
+    <font-name>GothicBBB-Medium-Identity-H</font-name>
+    <encoding>Identity-H</encoding>
+    <char-encoding>MS932</char-encoding>
+    <cmap>org.apache.fop.render.pdf.cmap._90ms_RKSJ_H</cmap>
+
+    <cid-basefont>GothicBBB-Medium</cid-basefont>
+    <cidtype>CIDFontType0</cidtype>
+    <registry>Adobe</registry>
+    <ordering>Japan1</ordering>
+    <supplement>2</supplement>
+    <dw>1000</dw>
+    <widths>
+        <cid-widths>
+            <range>
+            <start>32</start>
+            <end>255</end>
+            <width>500</width>
+            </range>
+        </cid-widths>
+        <cid-range>
+        <start>231</start>
+        <end>389</end>
+        <width>500</width>
+        </cid-range>
+        <cid-range>
+        <start>631</start>
+        <end>631</end>
+        <width>500</width>
+        </cid-range>
+    </widths>
+    <first-char>32</first-char>
+    <last-char>255</last-char>
+
+    <flags>4</flags>
+    <font-bbox>
+        <llx>-174</llx>
+        <lly>-268</lly>
+        <urx>1001</urx>
+        <ury>944</ury>
+    </font-bbox>
+    <stemv>99</stemv>
+    <italicangle>0</italicangle>
+    <cap-height>737</cap-height>
+    <ascender>752</ascender>
+    <descender>-271</descender>
+
+    <x-height>453</x-height>
+    <panose>0801020b0500000000000000</panose>
+</font-metrics>
