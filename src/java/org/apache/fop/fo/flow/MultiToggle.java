@@ -21,13 +21,19 @@ package org.apache.fop.fo.flow;
 // FOP
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FObj;
+import org.apache.fop.fo.PropertyList;
+import org.apache.fop.fo.properties.CommonAccessibility;
 
 /**
  * Class modelling the fo:multi-toggle property.
  * @todo implement validateChildNode()
  */
 public class MultiToggle extends FObj {
-
+    // The value of properties relevant for fo:multi-toggle.
+    private CommonAccessibility commonAccessibility;
+    // public ToBeImplementedProperty prSwitchTo;
+    // End of property values
+    
     static boolean notImplementedWarningGiven = false;
 
     /**
@@ -35,6 +41,19 @@ public class MultiToggle extends FObj {
      */
     public MultiToggle(FONode parent) {
         super(parent);
+
+        if (!notImplementedWarningGiven) {
+            getLogger().warn("fo:multi-toggle is not yet implemented.");
+            notImplementedWarningGiven = true;
+        }
+    }
+
+    /**
+     * @see org.apache.fop.fo.FObj#bind(PropertyList)
+     */
+    public void bind(PropertyList pList) {
+        commonAccessibility = pList.getAccessibilityProps();
+        // prSwitchTo = pList.get(PR_SWITCH_TO);
 
         if (!notImplementedWarningGiven) {
             getLogger().warn("fo:multi-toggle is not yet implemented.");

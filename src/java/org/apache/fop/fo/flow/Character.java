@@ -27,9 +27,20 @@ import org.xml.sax.Locator;
 import org.xml.sax.SAXParseException;
 
 // FOP
+import org.apache.fop.datatypes.ColorType;
+import org.apache.fop.datatypes.Length;
 import org.apache.fop.fo.CharIterator;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FObj;
+import org.apache.fop.fo.PropertyList;
+import org.apache.fop.fo.properties.CommonAural;
+import org.apache.fop.fo.properties.CommonBorderPaddingBackground;
+import org.apache.fop.fo.properties.CommonFont;
+import org.apache.fop.fo.properties.CommonHyphenation;
+import org.apache.fop.fo.properties.CommonMarginInline;
+import org.apache.fop.fo.properties.CommonRelativePosition;
+import org.apache.fop.fo.properties.KeepProperty;
+import org.apache.fop.fo.properties.Property;
 import org.apache.fop.fo.OneCharIterator;
 import org.apache.fop.layoutmgr.CharacterLayoutManager;
 
@@ -47,6 +58,37 @@ import org.apache.fop.layoutmgr.CharacterLayoutManager;
  *
  */
 public class Character extends FObj {
+    // The value of properties relevant for fo:character.
+    private CommonAural commonAural;
+    private CommonBorderPaddingBackground commonBorderPaddingBackground;
+    private CommonFont commonFont;
+    private CommonHyphenation commonHyphenation;
+    private CommonMarginInline commonMarginInline;
+    private CommonRelativePosition commonRelativePosition;
+    // private ToBeImplementedProperty alignmentAdjust;
+    // private ToBeImplementedProperty treatAsWordSpace;
+    // private ToBeImplementedProperty alignmentBaseline;
+    private Length baselineShift;
+    private char character;
+    private ColorType color;
+    // private ToBeImplementedProperty dominantBaseline;
+    // private ToBeImplementedProperty textDepth;
+    // private ToBeImplementedProperty textAltitude;
+    // private ToBeImplementedProperty glyphOrientationHorizontal;
+    // private ToBeImplementedProperty glyphOrientationVertical;
+    private String id;
+    private KeepProperty keepWithNext;
+    private KeepProperty keepWithPrevious;
+    private Property letterSpacing;
+    private Length lineHeight;
+    // private ToBeImplementedProperty scoreSpaces;
+    // private ToBeImplementedProperty suppressAtLineBreak;
+    private int textDecoration;
+    // private ToBeImplementedProperty textShadow;
+    private int textTransform;
+    // private ToBeImplementedProperty visibility;
+    private Property wordSpacing;
+    // End of property values
 
     /** constant indicating that the character is OK */
     public static final int OK = 0;
@@ -63,6 +105,50 @@ public class Character extends FObj {
     }
 
     /**
+     * @see org.apache.fop.fo.FObj#bind(PropertyList)
+     */
+    public void bind(PropertyList pList) {
+        commonAural = pList.getAuralProps();
+        commonBorderPaddingBackground = pList.getBorderPaddingBackgroundProps();
+        commonFont = pList.getFontProps();
+        commonHyphenation = pList.getHyphenationProps();
+        commonMarginInline = pList.getMarginInlineProps();
+        commonRelativePosition = pList.getRelativePositionProps();
+
+        // alignmentAdjust = pList.get(PR_ALIGNMENT_ADJUST);
+        // treatAsWordSpace = pList.get(PR_TREAT_AS_WORD_SPACE);
+        // alignmentBaseline = pList.get(PR_ALIGNMENT_BASELINE);
+        baselineShift = pList.get(PR_BASELINE_SHIFT).getLength();
+        character = pList.get(PR_CHARACTER).getCharacter();
+        color = pList.get(PR_COLOR).getColorType();
+        // dominantBaseline = pList.get(PR_DOMINANT_BASELINE);
+        // textDepth = pList.get(PR_TEXT_DEPTH);
+        // textAltitude = pList.get(PR_TEXT_ALTITUDE);
+        // glyphOrientationHorizontal = pList.get(PR_GLYPH_ORIENTATION_HORIZONTAL);
+        // glyphOrientationVertical = pList.get(PR_GLYPH_ORIENTATION_VERTICAL);
+        id = pList.get(PR_ID).getString();
+        keepWithNext = pList.get(PR_KEEP_WITH_NEXT).getKeep();
+        keepWithPrevious = pList.get(PR_KEEP_WITH_PREVIOUS).getKeep();
+        letterSpacing = pList.get(PR_LETTER_SPACING);
+        lineHeight = pList.get(PR_LINE_HEIGHT).getLength();
+        // scoreSpaces = pList.get(PR_SCORE_SPACES);
+        // suppressAtLineBreak = pList.get(PR_SUPPRESS_AT_LINE_BREAK);
+        textDecoration = pList.get(PR_TEXT_DECORATION).getEnum();
+        // textShadow = pList.get(PR_TEXT_SHADOW);
+        textTransform = pList.get(PR_TEXT_TRANSFORM).getEnum();
+        // visibility = pList.get(PR_VISIBILITY);
+        wordSpacing = pList.get(PR_WORD_SPACING);
+    }
+
+    /**
+     * @see org.apache.fop.fo.FONode#startOfNode
+     */
+    protected void startOfNode() throws SAXParseException {
+        checkId(id);
+        getFOEventHandler().character(this);
+    }
+
+    /**
      * @see org.apache.fop.fo.FONode#validateChildNode(Locator, String, String)
      * XSL Content Model: empty
      */
@@ -70,6 +156,7 @@ public class Character extends FObj {
         throws SAXParseException {
             invalidChildError(loc, nsURI, localName);
     }
+
 
     /**
      * @see org.apache.fop.fo.FObj#addProperties
@@ -86,6 +173,69 @@ public class Character extends FObj {
     public CharIterator charIterator() {
         return new OneCharIterator(characterValue);
         // But what if the character is ignored due to white space handling?
+    }
+
+    /**
+     * Return the Common Border, Padding, and Background Properties.
+     */
+    public CommonBorderPaddingBackground getCommonBorderPaddingBackground() {
+        return commonBorderPaddingBackground;
+    }
+
+    /**
+     * Return the Common Font Properties.
+     */
+    public CommonFont getCommonFont() {
+        return commonFont;
+    }
+
+    /**
+     * Return the Common Hyphenation Properties.
+     */
+    public CommonHyphenation getCommonHyphenation() {
+        return commonHyphenation;
+    }
+
+    /**
+     * Return the "character" property.
+     */
+    public char getCharacter() {
+        return character;
+    }
+
+    /**
+     * Return the "color" property.
+     */
+    public ColorType getColor() {
+        return color;
+    }
+
+    /**
+     * Return the "id" property.
+     */
+    public String getId() {
+        return id;
+    }
+
+    /**
+     * Return the "letter-spacing" property.
+     */
+    public Property getLetterSpacing() {
+        return letterSpacing; 
+    }
+
+    /**
+     * Return the "text-decoration" property.
+     */
+    public int getTextDecoration() {
+        return textDecoration; 
+    }
+
+    /**
+     * Return the "word-spacing" property.
+     */
+    public Property getWordSpacing() {
+        return wordSpacing; 
     }
 
     /**

@@ -28,8 +28,17 @@ import org.xml.sax.SAXParseException;
 
 // FOP
 import org.apache.fop.datatypes.ColorType;
+import org.apache.fop.datatypes.Length;
+import org.apache.fop.datatypes.Numeric;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FObj;
+import org.apache.fop.fo.PropertyList;
+import org.apache.fop.fo.properties.CommonAccessibility;
+import org.apache.fop.fo.properties.CommonAural;
+import org.apache.fop.fo.properties.CommonBorderPaddingBackground;
+import org.apache.fop.fo.properties.CommonRelativePosition;
+import org.apache.fop.fo.properties.LengthPairProperty;
+import org.apache.fop.fo.properties.LengthRangeProperty;
 import org.apache.fop.layoutmgr.table.Cell;
 import org.apache.fop.fo.properties.CommonBorderAndPadding;
 
@@ -38,6 +47,31 @@ import org.apache.fop.fo.properties.CommonBorderAndPadding;
  * @todo check need for all instance variables stored here
  */
 public class TableCell extends FObj {
+    // The value of properties relevant for fo:table-cell.
+    private CommonAccessibility commonAccessibility;
+    private CommonAural commonAural;
+    private CommonBorderPaddingBackground commonBorderPaddingBackground;
+    private CommonRelativePosition commonRelativePosition;
+    // private ToBeImplementedProperty borderAfterPrecedence;
+    // private ToBeImplementedProperty borderBeforePrecedence;
+    // private ToBeImplementedProperty borderEndPrecedence;
+    // private ToBeImplementedProperty borderStartPrecedence;
+    private LengthRangeProperty blockProgressionDimension;
+    private int borderCollapse;
+    private LengthPairProperty borderSeparation;
+    private Numeric columnNumber;
+    private int displayAlign;
+    private int relativeAlign;
+    // private ToBeImplementedProperty emptyCells;
+    // private ToBeImplementedProperty endsRow;
+    private Length height;
+    private String id;
+    private LengthRangeProperty inlineProgressionDimension;
+    private Numeric numberColumnsSpanned;
+    private Numeric numberRowsSpanned;
+    // private ToBeImplementedProperty startsRow;
+    private Length width;
+    // End of property values
 
     // private int spaceBefore;
     // private int spaceAfter;
@@ -60,7 +94,7 @@ public class TableCell extends FObj {
      * Dimension of allocation rectangle in inline-progression-direction,
      * determined by the width of the column(s) occupied by the cell
      */
-    protected int width;
+    protected int _width;
 
     /**
      * Offset of content rectangle, in block-progression-direction,
@@ -87,7 +121,7 @@ public class TableCell extends FObj {
     protected int minCellHeight = 0;
 
     /** Height of cell */
-    protected int height = 0;
+    protected int _height = 0;
 
     /** Ypos of cell ??? */
     protected int top;
@@ -110,13 +144,62 @@ public class TableCell extends FObj {
      * Border separation value in the block-progression dimension.
      * Used in calculating cells height.
      */
-    private int borderSeparation = 0;
+    private int _borderSeparation = 0;
 
     /**
      * @param parent FONode that is the parent of this object
      */
     public TableCell(FONode parent) {
         super(parent);
+    }
+
+    /**
+     * @see org.apache.fop.fo.FObj#bind(PropertyList)
+     */
+    public void bind(PropertyList pList) {
+        commonAccessibility = pList.getAccessibilityProps();
+        commonAural = pList.getAuralProps();
+        commonBorderPaddingBackground = pList.getBorderPaddingBackgroundProps();
+        commonRelativePosition = pList.getRelativePositionProps();
+        // borderAfterPrecedence = pList.get(PR_BORDER_AFTER_PRECEDENCE);
+        // borderBeforePrecedence = pList.get(PR_BORDER_BEFORE_PRECEDENCE);
+        // borderEndPrecedence = pList.get(PR_BORDER_END_PRECEDENCE);
+        // borderStartPrecedence = pList.get(PR_BORDER_START_PRECEDENCE);
+        blockProgressionDimension = pList.get(PR_BLOCK_PROGRESSION_DIMENSION).getLengthRange();
+        borderCollapse = pList.get(PR_BORDER_COLLAPSE).getEnum();
+        borderSeparation = pList.get(PR_BORDER_SEPARATION).getLengthPair();
+        columnNumber = pList.get(PR_COLUMN_NUMBER).getNumeric();
+        displayAlign = pList.get(PR_DISPLAY_ALIGN).getEnum();
+        relativeAlign = pList.get(PR_RELATIVE_ALIGN).getEnum();
+        // emptyCells = pList.get(PR_EMPTY_CELLS);
+        // endsRow = pList.get(PR_ENDS_ROW);
+        height = pList.get(PR_HEIGHT).getLength();
+        id = pList.get(PR_ID).getString();
+        inlineProgressionDimension = pList.get(PR_INLINE_PROGRESSION_DIMENSION).getLengthRange();
+        numberColumnsSpanned = pList.get(PR_NUMBER_COLUMNS_SPANNED).getNumeric();
+        numberRowsSpanned = pList.get(PR_NUMBER_ROWS_SPANNED).getNumeric();
+        // startsRow = pList.get(PR_STARTS_ROW);
+        width = pList.get(PR_WIDTH).getLength();
+    }
+
+    /**
+     * @see org.apache.fop.fo.FONode#startOfNode
+     */
+    protected void startOfNode() throws SAXParseException {
+        checkId(id);
+        getFOEventHandler().startCell(this);
+    }
+
+    /**
+     * Make sure content model satisfied, if so then tell the
+     * FOEventHandler that we are at the end of the flow.
+     * @see org.apache.fop.fo.FONode#endOfNode
+     */
+    protected void endOfNode() throws SAXParseException {
+        if (!blockItemFound) {
+            missingChildElementError("marker* (%block;)+");
+        }
+        getFOEventHandler().endCell(this);
     }
 
     /**
@@ -179,18 +262,6 @@ public class TableCell extends FObj {
     }
 
     /**
-     * Make sure content model satisfied, if so then tell the
-     * FOEventHandler that we are at the end of the flow.
-     * @see org.apache.fop.fo.FONode#endOfNode
-     */
-    protected void endOfNode() throws SAXParseException {
-        if (!blockItemFound) {
-            missingChildElementError("marker* (%block;)+");
-        }
-        getFOEventHandler().endCell(this);
-    }
-
-    /**
      * Set position relative to table (set by body?)
      */
     public void setStartOffset(int offset) {
@@ -204,7 +275,7 @@ public class TableCell extends FObj {
      * @param width the width of the cell (in millipoints ??)
      */
     public void setWidth(int width) {
-        this.width = width;
+        this._width = width;
     }
 
     /**
@@ -252,9 +323,9 @@ public class TableCell extends FObj {
                                + bp.getPaddingEnd(false);
 
             // Offset of content rectangle in the block-progression direction
-            borderSeparation = getPropLength(PR_BORDER_SEPARATION | 
+            _borderSeparation = getPropLength(PR_BORDER_SEPARATION | 
                 CP_BLOCK_PROGRESSION_DIRECTION);
-            this.beforeOffset = borderSeparation / 2
+            this.beforeOffset = _borderSeparation / 2
                                 + bp.getBorderBeforeWidth(false)
                                 + bp.getPaddingBefore(false);
 
@@ -322,6 +393,42 @@ public class TableCell extends FObj {
             // Half border height to fix overestimate of area size!
             this.borderHeight = (borderBefore + borderAfter) / 2;
         }
+    }
+
+    /**
+     * Return the Common Border, Padding, and Background Properties.
+     */
+    public CommonBorderPaddingBackground getCommonBorderPaddingBackground() {
+        return commonBorderPaddingBackground;
+    }
+
+    /**
+     * @return number of the column containing this cell
+     * TODO 31699
+     */
+    public int ___getColumnNumber() {
+        return columnNumber.getValue();
+    }
+
+    /**
+     * Return the "id" property.
+     */
+    public String getId() {
+        return id;
+    }
+
+    /**
+     * @return the number of columns spanned by this cell
+     */
+    public int getNumberColumnsSpanned() {
+        return numberColumnsSpanned.getValue();
+    }
+
+    /**
+     * @return the number of rows spanned by this cell
+     */
+    public int getNumberRowsSpanned() {
+        return numberRowsSpanned.getValue();
     }
 
     /**

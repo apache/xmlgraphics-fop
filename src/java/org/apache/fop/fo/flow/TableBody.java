@@ -29,6 +29,11 @@ import org.xml.sax.SAXParseException;
 import org.apache.fop.datatypes.ColorType;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FObj;
+import org.apache.fop.fo.PropertyList;
+import org.apache.fop.fo.properties.CommonAccessibility;
+import org.apache.fop.fo.properties.CommonAural;
+import org.apache.fop.fo.properties.CommonBorderPaddingBackground;
+import org.apache.fop.fo.properties.CommonRelativePosition;
 import org.apache.fop.layoutmgr.table.Body;
 
 /**
@@ -36,7 +41,18 @@ import org.apache.fop.layoutmgr.table.Body;
  * @todo implement validateChildNode()
  */
 public class TableBody extends FObj {
-
+    // The value of properties relevant for fo:table-body.
+    private CommonAccessibility commonAccessibility;
+    private CommonAural commonAural;
+    private CommonBorderPaddingBackground commonBorderPaddingBackground;
+    private CommonRelativePosition commonRelativePosition;
+    // private ToBeImplementedProperty borderAfterPrecedence;
+    // private ToBeImplementedProperty borderBeforePrecedence;
+    // private ToBeImplementedProperty borderEndPrecedence;
+    // private ToBeImplementedProperty borderStartPrecedence;
+    // private ToBeImplementedProperty visibility;
+    // End of property values
+    
     private int spaceBefore;
     private int spaceAfter;
     private ColorType backgroundColor;
@@ -46,6 +62,35 @@ public class TableBody extends FObj {
      */
     public TableBody(FONode parent) {
         super(parent);
+    }
+
+    /**
+     * @see FObj#bind(PropertyList)
+     */
+    public void bind(PropertyList pList) {
+        commonAccessibility = pList.getAccessibilityProps();
+        commonAural = pList.getAuralProps();
+        commonBorderPaddingBackground = pList.getBorderPaddingBackgroundProps();
+        commonRelativePosition = pList.getRelativePositionProps();
+        // borderAfterPrecedence = pList.get(PR_BORDER_AFTER_PRECEDENCE);
+        // borderBeforePrecedence = pList.get(PR_BORDER_BEFORE_PRECEDENCE);
+        // borderEndPrecedence = pList.get(PR_BORDER_END_PRECEDENCE);
+        // borderStartPrecedence = pList.get(PR_BORDER_START_PRECEDENCE);
+        // visibility = pList.get(PR_VISIBILITY);
+    }
+    
+    /**
+     * @see org.apache.fop.fo.FONode#startOfNode
+     */
+    protected void startOfNode() throws SAXParseException {
+        getFOEventHandler().startBody(this);
+    }
+
+    /**
+     * @see org.apache.fop.fo.FONode#endOfNode
+     */
+    protected void endOfNode() throws SAXParseException {
+        getFOEventHandler().endBody(this);
     }
 
     /**
@@ -60,8 +105,11 @@ public class TableBody extends FObj {
         getFOEventHandler().startBody(this);
     }
 
-    protected void endOfNode() throws SAXParseException {
-        getFOEventHandler().endBody(this);
+    /**
+     * Return the Common Border, Padding, and Background Properties.
+     */
+    public CommonBorderPaddingBackground getCommonBorderPaddingBackground() {
+        return commonBorderPaddingBackground;
     }
 
     /**

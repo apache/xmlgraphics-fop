@@ -25,11 +25,17 @@ import org.xml.sax.SAXParseException;
 // FOP
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FObj;
+import org.apache.fop.fo.PropertyList;
+import org.apache.fop.fo.properties.CommonAccessibility;
 
 /**
  * Class modelling the fo:multi-properties object.
  */
 public class MultiProperties extends FObj {
+    // The value of properties relevant for fo:multi-properties.
+    private CommonAccessibility commonAccessibility;
+    private String id;
+    // End of property values
 
     static boolean notImplementedWarningGiven = false;
 
@@ -46,6 +52,32 @@ public class MultiProperties extends FObj {
         if (!notImplementedWarningGiven) {
             getLogger().warn("fo:multi-properties is not yet implemented.");
             notImplementedWarningGiven = true;
+        }
+    }
+
+    /**
+     * @see org.apache.fop.fo.FObj#bind(PropertyList)
+     */
+    public void bind(PropertyList pList) {
+        commonAccessibility = pList.getAccessibilityProps();
+        id = pList.get(PR_ID).getString();
+    }
+
+    /**
+     * @see org.apache.fop.fo.FONode#startOfNode
+     */
+    protected void startOfNode() throws SAXParseException {
+        checkId(id);
+    }
+
+    /**
+     * Make sure content model satisfied, if so then tell the
+     * FOEventHandler that we are at the end of the flow.
+     * @see org.apache.fop.fo.FONode#endOfNode
+     */
+    protected void endOfNode() throws SAXParseException {
+        if (!hasMultiPropertySet || !hasWrapper) {
+            missingChildElementError("(multi-property-set+, wrapper)");
         }
     }
 
@@ -73,16 +105,12 @@ public class MultiProperties extends FObj {
     }
 
     /**
-     * Make sure content model satisfied, if so then tell the
-     * FOEventHandler that we are at the end of the flow.
-     * @see org.apache.fop.fo.FONode#endOfNode
+     * Return the "id" property.
      */
-    protected void endOfNode() throws SAXParseException {
-        if (!hasMultiPropertySet || !hasWrapper) {
-            missingChildElementError("(multi-property-set+, wrapper)");
-        }
+    public String getId() {
+        return id;
     }
-
+    
     /**
      * @see org.apache.fop.fo.FObj#getName()
      */

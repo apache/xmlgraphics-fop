@@ -28,6 +28,7 @@ import org.xml.sax.SAXParseException;
 
 // FOP
 import org.apache.fop.fo.FONode;
+import org.apache.fop.fo.PropertyList;
 import org.apache.fop.layoutmgr.BasicLinkLayoutManager;
 
 /**
@@ -38,6 +39,17 @@ import org.apache.fop.layoutmgr.BasicLinkLayoutManager;
  * reference).
  */
 public class BasicLink extends Inline {
+    // The value of properties relevant for fo:basic-link.
+    // private ToBeImplementedProperty destinationPlacementOffset;
+    // private ToBeImplementedProperty dominantBaseline;
+    private String externalDestination;
+    // private ToBeImplementedProperty indicateDestination;
+    private String internalDestination;
+    // private ToBeImplementedProperty showDestination;
+    // private ToBeImplementedProperty targetProcessingContext;
+    // private ToBeImplementedProperty targetPresentationContext;
+    // private ToBeImplementedProperty targetStylesheet;
+    // End of property values
 
     // link represented by this FO
     private String link = null;
@@ -53,6 +65,47 @@ public class BasicLink extends Inline {
      */
     public BasicLink(FONode parent) {
         super(parent);
+    }
+
+    /**
+     * @see org.apache.fop.fo.FObj#bind(PropertyList)
+     */
+    public void bind(PropertyList pList) throws SAXParseException {
+        super.bind(pList);
+        // destinationPlacementOffset = pList.get(PR_DESTINATION_PLACEMENT_OFFSET);
+        // dominantBaseline = pList.get(PR_DOMINANT_BASELINE);
+        externalDestination = pList.get(PR_EXTERNAL_DESTINATION).getString();
+        // indicateDestination = pList.get(PR_INDICATE_DESTINATION);
+        internalDestination = pList.get(PR_INTERNAL_DESTINATION).getString();
+        // showDestination = pList.get(PR_SHOW_DESTINATION);
+        // targetProcessingContext = pList.get(PR_TARGET_PROCESSING_CONTEXT);
+        // targetPresentationContext = pList.get(PR_TARGET_PRESENTATION_CONTEXT);
+        // targetStylesheet = pList.get(PR_TARGET_STYLESHEET);
+
+        // per spec, internal takes precedence if both specified        
+        if (internalDestination.length() > 0) { 
+            externalDestination = null;
+        } else if (externalDestination.length() == 0) {
+            // slightly stronger than spec "should be specified"
+            attributeError("Missing attribute:  Either external-destination or " +
+                "internal-destination must be specified.");
+        }
+    }
+
+    /**
+     * @see org.apache.fop.fo.FONode#startOfNode
+     */
+    protected void startOfNode() throws SAXParseException {
+        super.startOfNode();
+        getFOEventHandler().startLink(this);
+    }
+
+    /**
+     * @see org.apache.fop.fo.FONode#endOfNode
+     */
+    protected void endOfNode() throws SAXParseException {
+        super.endOfNode();
+        getFOEventHandler().endLink();
     }
 
     /**
@@ -98,14 +151,6 @@ public class BasicLink extends Inline {
     }
 
     /**
-     * @see org.apache.fop.fo.FONode#endOfNode
-     */
-    protected void endOfNode() throws SAXParseException {
-        super.endOfNode();
-        getFOEventHandler().endLink();
-    }
-
-    /**
      * @see org.apache.fop.fo.FONode#addLayoutManager(List)
      */
     public void addLayoutManager(List list) {    
@@ -125,6 +170,20 @@ public class BasicLink extends Inline {
      */
     public boolean isExternalLink() {
         return isExternalLink;
+    }
+
+    /**
+     * Return the "internal-destination" property.
+     */
+    public String getInternalDestination() {
+        return internalDestination;
+    }
+
+    /**
+     * Return the "external-destination" property.
+     */
+    public String getExternalDestination() {
+        return externalDestination;
     }
 
     /**

@@ -26,12 +26,17 @@ import org.xml.sax.Attributes;
 import org.xml.sax.SAXParseException;
 
 // FOP
+import org.apache.fop.datatypes.Length;
 import org.apache.fop.fo.FONode;
+import org.apache.fop.fo.PropertyList;
 
 /**
  * Abstract base class for fo:region-start and fo:region-end.
  */
 public abstract class RegionSE extends Region {
+    // The value of properties relevant for fo:region-[start|end].
+    private Length extent;
+    // End of property values
 
     /**
      * @see org.apache.fop.fo.FONode#FONode(FONode)
@@ -41,12 +46,27 @@ public abstract class RegionSE extends Region {
     }
 
     /**
+     * @see org.apache.fop.fo.FObj#bind(PropertyList)
+     */
+    public void bind(PropertyList pList) throws SAXParseException {
+        super.bind(pList);
+        extent = pList.get(PR_EXTENT).getLength();
+    }
+
+    /**
      * @see org.apache.fop.fo.FObj#addProperties
      */
     protected void addProperties(Attributes attlist) throws SAXParseException {
         super.addProperties(attlist);
     }
 
+    /**
+     * Return the "extent" property.
+     */
+    public Length getExtent() {
+        return extent;
+    }
+    
     /**
      * Adjust the viewport reference rectangle for a region as a function
      * of precedence.

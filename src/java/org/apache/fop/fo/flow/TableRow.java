@@ -29,8 +29,16 @@ import org.xml.sax.SAXParseException;
 // FOP
 import org.apache.fop.datatypes.ColorType;
 import org.apache.fop.datatypes.KeepValue;
+import org.apache.fop.datatypes.Length;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FObj;
+import org.apache.fop.fo.PropertyList;
+import org.apache.fop.fo.properties.CommonAccessibility;
+import org.apache.fop.fo.properties.CommonAural;
+import org.apache.fop.fo.properties.CommonBorderPaddingBackground;
+import org.apache.fop.fo.properties.CommonRelativePosition;
+import org.apache.fop.fo.properties.KeepProperty;
+import org.apache.fop.fo.properties.LengthRangeProperty;
 import org.apache.fop.layoutmgr.table.Row;
 import org.apache.fop.fo.Constants;
 import org.apache.fop.fo.properties.Property;
@@ -40,15 +48,33 @@ import org.apache.fop.fo.properties.Property;
  * Class modelling the fo:table-row object.
  */
 public class TableRow extends FObj {
-
+    // The value of properties relevant for fo:table-row.
+    private CommonAccessibility commonAccessibility;
+    private LengthRangeProperty blockProgressionDimension;
+    private CommonAural commonAural;
+    private CommonBorderPaddingBackground commonBorderPaddingBackground;
+    private CommonRelativePosition commonRelativePosition;
+    // private ToBeImplementedProperty borderAfterPrecedence;
+    // private ToBeImplementedProperty borderBeforePrecedence;
+    // private ToBeImplementedProperty borderEndPrecedence;
+    // private ToBeImplementedProperty borderStartPrecedence;
+    private int breakAfter;
+    private int breakBefore;
+    private Length height;
+    private String id;
+    private KeepProperty keepTogether;
+    private KeepProperty keepWithNext;
+    private KeepProperty keepWithPrevious;
+    // private ToBeImplementedProperty visibility;
+    // End of property values
+    
     private boolean setup = false;
 
-    private int breakAfter;
     private ColorType backgroundColor;
 
-    private KeepValue keepWithNext;
-    private KeepValue keepWithPrevious;
-    private KeepValue keepTogether;
+    private KeepValue _keepWithNext;
+    private KeepValue _keepWithPrevious;
+    private KeepValue _keepTogether;
 
     private int minHeight = 0;    // force row height
 
@@ -57,6 +83,47 @@ public class TableRow extends FObj {
      */
     public TableRow(FONode parent) {
         super(parent);
+    }
+
+    /**
+     * @see org.apache.fop.fo.FObj#bind(PropertyList)
+     */
+    public void bind(PropertyList pList) {
+        commonAccessibility = pList.getAccessibilityProps();
+        blockProgressionDimension = pList.get(PR_BLOCK_PROGRESSION_DIMENSION).getLengthRange();
+        commonAural = pList.getAuralProps();
+        commonBorderPaddingBackground = pList.getBorderPaddingBackgroundProps();
+        commonRelativePosition = pList.getRelativePositionProps();
+        // borderAfterPrecedence = pList.get(PR_BORDER_AFTER_PRECEDENCE);
+        // borderBeforePrecedence = pList.get(PR_BORDER_BEFORE_PRECEDENCE);
+        // borderEndPrecedence = pList.get(PR_BORDER_END_PRECEDENCE);
+        // borderStartPrecedence = pList.get(PR_BORDER_START_PRECEDENCE);
+        breakAfter = pList.get(PR_BREAK_AFTER).getEnum();
+        breakBefore = pList.get(PR_BREAK_BEFORE).getEnum();
+        id = pList.get(PR_ID).getString();
+        height = pList.get(PR_HEIGHT).getLength();
+        keepTogether = pList.get(PR_KEEP_TOGETHER).getKeep();
+        keepWithNext = pList.get(PR_KEEP_WITH_NEXT).getKeep();
+        keepWithPrevious = pList.get(PR_KEEP_WITH_PREVIOUS).getKeep();
+        // visibility = pList.get(PR_VISIBILITY);
+    }
+
+    /**
+     * @see org.apache.fop.fo.FONode#startOfNode
+     */
+    protected void startOfNode() throws SAXParseException {
+        checkId(id);
+        getFOEventHandler().startRow(this);
+    }
+
+    /**
+     * @see org.apache.fop.fo.FONode#endOfNode
+     */
+    protected void endOfNode() throws SAXParseException {
+        if (childNodes == null) {
+            missingChildElementError("(table-cell+)");
+        }
+        getFOEventHandler().endRow(this);
     }
 
     /**
@@ -79,20 +146,10 @@ public class TableRow extends FObj {
     }
 
     /**
-     * @see org.apache.fop.fo.FONode#endOfNode
-     */
-    protected void endOfNode() throws SAXParseException {
-        if (childNodes == null) {
-            missingChildElementError("(table-cell+)");
-        }
-        getFOEventHandler().endRow(this);
-    }
-
-    /**
      * @return keepWithPrevious
      */
     public KeepValue getKeepWithPrevious() {
-        return keepWithPrevious;
+        return _keepWithPrevious;
     }
 
     /**
@@ -103,9 +160,9 @@ public class TableRow extends FObj {
         this.backgroundColor =
             this.propertyList.get(PR_BACKGROUND_COLOR).getColorType();
 
-        this.keepTogether = getKeepValue(PR_KEEP_TOGETHER | CP_WITHIN_COLUMN);
-        this.keepWithNext = getKeepValue(PR_KEEP_WITH_NEXT | CP_WITHIN_COLUMN);
-        this.keepWithPrevious =
+        this._keepTogether = getKeepValue(PR_KEEP_TOGETHER | CP_WITHIN_COLUMN);
+        this._keepWithNext = getKeepValue(PR_KEEP_WITH_NEXT | CP_WITHIN_COLUMN);
+        this._keepWithPrevious =
             getKeepValue(PR_KEEP_WITH_PREVIOUS | CP_WITHIN_COLUMN);
 
         this.minHeight = getPropLength(PR_HEIGHT);
@@ -125,6 +182,49 @@ public class TableRow extends FObj {
         default:
             return new KeepValue(KeepValue.KEEP_WITH_AUTO, 0);
         }
+    }
+
+    /**
+     * Return the "id" property.
+     */
+    public String getId() {
+        return id;
+    }
+
+    /**
+     * Return the "keep-with-previous" property.
+     * TODO: 31699
+     */
+    public KeepProperty ___getKeepWithPrevious() {
+        return keepWithPrevious;
+    }
+
+    /**
+     * Return the "keep-with-next" property.
+     */
+    public KeepProperty getKeepWithNext() {
+        return keepWithNext;
+    }
+
+    /**
+     * Return the "keep-together" property.
+     */
+    public KeepProperty getKeepTogether() {
+        return keepTogether;
+    }
+
+    /**
+     * Return the "height" property.
+     */
+    public Length getHeight() {
+        return height;
+    }
+
+    /**
+     * Return the Common Border, Padding, and Background Properties.
+     */
+    public CommonBorderPaddingBackground getCommonBorderPaddingBackground() {
+        return commonBorderPaddingBackground;
     }
 
     /**

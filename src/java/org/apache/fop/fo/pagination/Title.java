@@ -23,19 +23,47 @@ import org.xml.sax.Locator;
 import org.xml.sax.SAXParseException;
 
 // FOP
+import org.apache.fop.datatypes.ColorType;
+import org.apache.fop.datatypes.Length;
 import org.apache.fop.fo.FObjMixed;
 import org.apache.fop.fo.FONode;
+import org.apache.fop.fo.PropertyList;
+import org.apache.fop.fo.properties.CommonAccessibility;
+import org.apache.fop.fo.properties.CommonAural;
+import org.apache.fop.fo.properties.CommonBorderPaddingBackground;
+import org.apache.fop.fo.properties.CommonFont;
+import org.apache.fop.fo.properties.CommonMarginInline;
 
 /**
  * Class modelling the fo:title object.
  */
 public class Title extends FObjMixed {
+    // The value of properties relevant for fo:title.
+    private CommonAccessibility commonAccessibility;
+    private CommonAural commonAural;
+    private CommonBorderPaddingBackground commonBorderPaddingBackground;
+    private CommonFont commonFont;
+    private CommonMarginInline commonMarginInline;
+    private ColorType color;
+    private Length lineHeight;
+    // private ToBeImplementedProperty visibility;
 
     /**
      * @param parent FONode that is the parent of this object
      */
     public Title(FONode parent) {
         super(parent);
+    }
+
+    public void bind(PropertyList pList) {
+        commonAccessibility = pList.getAccessibilityProps();
+        commonAural = pList.getAuralProps();
+        commonBorderPaddingBackground = pList.getBorderPaddingBackgroundProps();
+        commonFont = pList.getFontProps();
+        commonMarginInline = pList.getMarginInlineProps();
+        color = pList.get(PR_COLOR).getColorType();
+        lineHeight = pList.get(PR_LINE_HEIGHT).getLength();
+        // visibility = pList.get(PR_VISIBILITY);
     }
 
     /**

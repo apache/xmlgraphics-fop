@@ -29,6 +29,7 @@ import org.xml.sax.SAXParseException;
 // FOP
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FObj;
+import org.apache.fop.fo.PropertyList;
 import org.apache.fop.fo.properties.Property;
 
 /**
@@ -37,6 +38,19 @@ import org.apache.fop.fo.properties.Property;
  * The main entry point is the format method.
  */
 public class PageSequence extends FObj {
+    // The value of properties relevant for fo:page-sequence.
+    private String country;
+    private String format;
+    private String language;
+    private int letterValue;
+    private char groupingSeparator;
+    private int groupingSize;
+    private String id;
+    private Property initialPageNumber;
+    private int forcePageCount;
+    private String masterReference;
+    // End of property values
+
     //
     // initial-page-number types
     //
@@ -77,7 +91,6 @@ public class PageSequence extends FObj {
     public int firstPageNumber = 0; // actual
     public PageNumberGenerator pageNumberGenerator;
 
-    public int forcePageCount = 0;
     private int pageCount = 0;
     private boolean isForcing = false;
 
@@ -118,6 +131,77 @@ public class PageSequence extends FObj {
      */
     public PageSequence(FONode parent) {
         super(parent);
+    }
+
+    /**
+     * @see org.apache.fop.fo.FObj#bind(PropertyList)
+     */
+    public void bind(PropertyList pList) {
+        country = pList.get(PR_COUNTRY).getString();
+        format = pList.get(PR_FORMAT).getString();
+        language = pList.get(PR_LANGUAGE).getString();
+        letterValue = pList.get(PR_LETTER_VALUE).getEnum();
+        groupingSeparator = pList.get(PR_GROUPING_SEPARATOR).getCharacter();
+        groupingSize = pList.get(PR_GROUPING_SIZE).getNumber().intValue();
+        id = pList.get(PR_ID).getString();
+        initialPageNumber = pList.get(PR_INITIAL_PAGE_NUMBER);
+        forcePageCount = pList.get(PR_FORCE_PAGE_COUNT).getEnum();
+        masterReference = pList.get(PR_MASTER_REFERENCE).getString();
+    }
+
+    /**
+     * @see org.apache.fop.fo.FONode#startOfNode()
+     */
+    protected void startOfNode() throws SAXParseException {
+        this.root = (Root) parent;
+        layoutMasterSet = root.getLayoutMasterSet();
+        flowMap = new HashMap();
+
+        // we are now on the first page of the page sequence
+        thisIsFirstPage = true;
+
+        if (initialPageNumber.getEnum() != 0) {
+            // auto | auto-odd | auto-even.
+            pageNumberType = initialPageNumber.getEnum();
+        } else {
+            pageNumberType = EXPLICIT;
+            int pageStart = initialPageNumber.getNumber().intValue();
+            this.explicitFirstNumber = (pageStart > 0) ? pageStart : 1;
+        }
+
+        this.simplePageMaster =
+                this.layoutMasterSet.getSimplePageMaster(masterReference);
+        if (this.simplePageMaster == null) {
+            this.pageSequenceMaster =
+                    this.layoutMasterSet.getPageSequenceMaster(masterReference);
+            if (this.pageSequenceMaster == null) {
+                throw new SAXParseException("master-reference '" + masterReference
+                                       + "' for fo:page-sequence matches no"
+                                       + " simple-page-master or page-sequence-master", locator);
+            }
+        }
+
+        // get the 'format' properties
+        this.pageNumberGenerator =
+            new PageNumberGenerator(format, groupingSeparator, groupingSize, letterValue);
+
+        checkId(id);
+        //call startStructuredPageSequence to ensure, that startPageSequence is called
+        //before startFlow.
+        startStructuredPageSequence();
+    }
+
+    /**
+     * Signal end of this xml element.
+     * This passes the end page sequence to the structure handler
+     * so it can act upon that.
+     */
+    protected void endOfNode() throws SAXParseException {
+        if (mainFlow == null) {
+           missingChildElementError("(title?,static-content*,flow)");
+        }
+
+        getFOEventHandler().endPageSequence(this);
     }
 
     /**
@@ -224,19 +308,6 @@ public class PageSequence extends FObj {
             flowMap.put(flowName, child);
             startStructuredPageSequence();
         }
-    }
-
-    /**
-     * Signal end of this xml element.
-     * This passes the end page sequence to the structure handler
-     * so it can act upon that.
-     */
-    protected void endOfNode() throws SAXParseException {
-        if (mainFlow == null) {
-           missingChildElementError("(title?,static-content*,flow)");
-        }
-
-        getFOEventHandler().endPageSequence(this);
     }
 
     /**
@@ -686,6 +757,13 @@ public class PageSequence extends FObj {
      */
     public Root getRoot() {
         return root;
+    }
+
+    /**
+     * Return the "master-reference" property.
+     */
+    public String getMasterReference() {
+        return masterReference;
     }
 
     /**

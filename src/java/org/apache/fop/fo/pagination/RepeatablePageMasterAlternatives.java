@@ -29,6 +29,7 @@ import org.xml.sax.SAXParseException;
 // FOP
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FObj;
+import org.apache.fop.fo.PropertyList;
 import org.apache.fop.fo.properties.Property;
 
 /**
@@ -39,14 +40,17 @@ import org.apache.fop.fo.properties.Property;
  */
 public class RepeatablePageMasterAlternatives extends FObj
     implements SubSequenceSpecifier {
-
+    // The value of properties relevant for fo:repeatable-page-master-alternatives.
+    private Property maximumRepeats;
+    // End of property values
+    
     private static final int INFINITE = -1;
 
     /**
      * Max times this page master can be repeated.
      * INFINITE is used for the unbounded case
      */
-    private int maximumRepeats;
+    private int _maximumRepeats;
     private int numberConsumed = 0;
 
     private ArrayList conditionalPageMasterRefs;
@@ -56,6 +60,38 @@ public class RepeatablePageMasterAlternatives extends FObj
      */
     public RepeatablePageMasterAlternatives(FONode parent) {
         super(parent);
+    }
+
+    /**
+     * @see org.apache.fop.fo.FObj#bind(PropertyList)
+     */
+    public void bind(PropertyList pList) {
+        maximumRepeats = pList.get(PR_MAXIMUM_REPEATS);
+    }
+
+    /**
+     * @see org.apache.fop.fo.FONode#startOfNode
+     */
+    protected void startOfNode() throws SAXParseException {
+        conditionalPageMasterRefs = new ArrayList();
+
+        if (parent.getName().equals("fo:page-sequence-master")) {
+            PageSequenceMaster pageSequenceMaster = (PageSequenceMaster)parent;
+            pageSequenceMaster.addSubsequenceSpecifier(this);
+        } else {
+            throw new SAXParseException("fo:repeatable-page-master-alternatives "
+                                   + "must be child of fo:page-sequence-master, not "
+                                   + parent.getName(), locator);
+        }
+    }
+
+    /**
+     * @see org.apache.fop.fo.FONode#endOfNode
+     */
+    protected void endOfNode() throws SAXParseException {
+        if (childNodes == null) {
+           missingChildElementError("(conditional-page-master-reference+)");
+        }
     }
 
     /**
@@ -71,11 +107,19 @@ public class RepeatablePageMasterAlternatives extends FObj
     }
 
     /**
-     * @see org.apache.fop.fo.FONode#endOfNode
+     * Return the "maximum-repeats" property.
      */
-    protected void endOfNode() throws SAXParseException {
-        if (childNodes == null) {
-           missingChildElementError("(conditional-page-master-reference+)");
+    public int getMaximumRepeats() {
+        if (maximumRepeats.getEnum() == NO_LIMIT) {
+            return INFINITE;
+        } else {
+            int mr = maximumRepeats.getNumeric().getValue();
+            if (mr < 0) {
+                getLogger().debug("negative maximum-repeats: "
+                        + this.maximumRepeats);
+                mr = 0;
+            }
+            return mr;
         }
     }
 
@@ -98,13 +142,13 @@ public class RepeatablePageMasterAlternatives extends FObj
         Property mr = getProperty(PR_MAXIMUM_REPEATS);
 
         if (mr.getEnum() == NO_LIMIT) {
-            this.maximumRepeats = INFINITE;
+            this._maximumRepeats = INFINITE;
         } else {
-            this.maximumRepeats = mr.getNumber().intValue();
-            if (this.maximumRepeats < 0) {
+            this._maximumRepeats = mr.getNumber().intValue();
+            if (this._maximumRepeats < 0) {
                 getLogger().debug("negative maximum-repeats: "
                                   + this.maximumRepeats);
-                this.maximumRepeats = 0;
+                this._maximumRepeats = 0;
             }
         }
     }
@@ -117,8 +161,8 @@ public class RepeatablePageMasterAlternatives extends FObj
     public String getNextPageMasterName(boolean isOddPage,
                                         boolean isFirstPage,
                                         boolean isBlankPage) {
-        if (maximumRepeats != INFINITE) {
-            if (numberConsumed < maximumRepeats) {
+        if (_maximumRepeats != INFINITE) {
+            if (numberConsumed < _maximumRepeats) {
                 numberConsumed++;
             } else {
                 return null;

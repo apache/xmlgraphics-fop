@@ -23,14 +23,36 @@ import org.xml.sax.Locator;
 import org.xml.sax.SAXParseException;
 
 // FOP
+import org.apache.fop.datatypes.Length;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FObj;
+import org.apache.fop.fo.PropertyList;
+import org.apache.fop.fo.properties.CommonAccessibility;
+import org.apache.fop.fo.properties.CommonAural;
+import org.apache.fop.fo.properties.CommonBorderPaddingBackground;
+import org.apache.fop.fo.properties.CommonRelativePosition;
+import org.apache.fop.fo.properties.KeepProperty;
+import org.apache.fop.fo.properties.LengthRangeProperty;
+
 
 /**
  * Class modelling the fo:table-caption object.
  * @todo needs implementation
  */
 public class TableCaption extends FObj {
+    // The value of properties relevant for fo:table-caption.
+    private CommonAccessibility commonAccessibility;
+    private CommonAural commonAural;
+    private CommonBorderPaddingBackground commonBorderPaddingBackground;
+    private CommonRelativePosition commonRelativePosition;
+    private LengthRangeProperty blockProgressionDimension;
+    private Length height;
+    private String id;
+    private LengthRangeProperty inlineProgressionDimension;
+    // private ToBeImplementedProperty intrusionDisplace;
+    private KeepProperty keepTogether;
+    private Length width;
+    // End of property values
 
     /** used for FO validation */
     private boolean blockItemFound = false;
@@ -46,6 +68,41 @@ public class TableCaption extends FObj {
         if (!notImplementedWarningGiven) {
             getLogger().warn("fo:table-caption is not yet implemented.");
             notImplementedWarningGiven = true;
+        }
+    }
+
+    /**
+     * @see org.apache.fop.fo.FObj#bind(PropertyList)
+     */
+    public void bind(PropertyList pList) {
+        commonAccessibility = pList.getAccessibilityProps();
+        commonAural = pList.getAuralProps();
+        commonBorderPaddingBackground = pList.getBorderPaddingBackgroundProps();
+        commonRelativePosition = pList.getRelativePositionProps();
+        blockProgressionDimension = pList.get(PR_BLOCK_PROGRESSION_DIMENSION).getLengthRange();
+        height = pList.get(PR_HEIGHT).getLength();
+        id = pList.get(PR_ID).getString();
+        inlineProgressionDimension = pList.get(PR_INLINE_PROGRESSION_DIMENSION).getLengthRange();
+        // intrusionDisplace = pList.get(PR_INTRUSION_DISPLACE);
+        keepTogether = pList.get(PR_KEEP_TOGETHER).getKeep();
+        width = pList.get(PR_WIDTH).getLength();
+    }
+
+    /**
+     * @see org.apache.fop.fo.FONode#startOfNode
+     */
+    protected void startOfNode() throws SAXParseException {
+        checkId(id);
+    }
+
+    /**
+     * Make sure content model satisfied, if so then tell the
+     * FOEventHandler that we are at the end of the flow.
+     * @see org.apache.fop.fo.FONode#endOfNode
+     */
+    protected void endOfNode() throws SAXParseException {
+        if (childNodes == null) {
+            missingChildElementError("marker* (%block;)");
         }
     }
 
@@ -67,14 +124,10 @@ public class TableCaption extends FObj {
     }
 
     /**
-     * Make sure content model satisfied, if so then tell the
-     * FOEventHandler that we are at the end of the flow.
-     * @see org.apache.fop.fo.FONode#endOfNode
+     * Return the "id" property.
      */
-    protected void endOfNode() throws SAXParseException {
-        if (childNodes == null) {
-            missingChildElementError("marker* (%block;)");
-        }
+    public String getId() {
+        return id;
     }
 
     /**

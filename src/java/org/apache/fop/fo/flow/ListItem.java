@@ -29,12 +29,34 @@ import org.xml.sax.SAXParseException;
 // FOP
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FObj;
+import org.apache.fop.fo.PropertyList;
+import org.apache.fop.fo.properties.CommonAccessibility;
+import org.apache.fop.fo.properties.CommonAural;
+import org.apache.fop.fo.properties.CommonBorderPaddingBackground;
+import org.apache.fop.fo.properties.CommonMarginBlock;
+import org.apache.fop.fo.properties.CommonRelativePosition;
+import org.apache.fop.fo.properties.KeepProperty;
 import org.apache.fop.layoutmgr.list.ListItemLayoutManager;
 
 /**
  * Class modelling the fo:list-item object.
  */
 public class ListItem extends FObj {
+    // The value of properties relevant for fo:list-item.
+    private CommonAccessibility commonAccessibility;
+    private CommonAural commonAural;
+    private CommonBorderPaddingBackground commonBorderPaddingBackground;
+    private CommonMarginBlock commonMarginBlock;
+    private CommonRelativePosition commonRelativePosition;
+    private int breakAfter;
+    private int breakBefore;
+    private String id;
+    // private ToBeImplementedProperty intrusionDisplace;
+    private KeepProperty keepTogether;
+    private KeepProperty keepWithNext;
+    private KeepProperty keepWithPrevious;
+    private int relativeAlign;
+    // End of property values
 
     private ListItemLabel label = null;
     private ListItemBody body = null;
@@ -44,6 +66,45 @@ public class ListItem extends FObj {
      */
     public ListItem(FONode parent) {
         super(parent);
+    }
+
+    /**
+     * @see org.apache.fop.fo.FObj#bind(PropertyList)
+     */
+    public void bind(PropertyList pList) {
+        commonAccessibility = pList.getAccessibilityProps();
+        commonAural = pList.getAuralProps();
+        commonBorderPaddingBackground = pList.getBorderPaddingBackgroundProps();
+        commonMarginBlock = pList.getMarginBlockProps();
+        commonRelativePosition = pList.getRelativePositionProps();
+        breakAfter = pList.get(PR_BREAK_AFTER).getEnum();
+        breakBefore = pList.get(PR_BREAK_BEFORE).getEnum();
+        id = pList.get(PR_ID).getString();
+        // intrusionDisplace = pList.get(PR_INTRUSION_DISPLACE);
+        keepTogether = pList.get(PR_KEEP_TOGETHER).getKeep();
+        keepWithNext = pList.get(PR_KEEP_WITH_NEXT).getKeep();
+        keepWithPrevious = pList.get(PR_KEEP_WITH_PREVIOUS).getKeep();
+        relativeAlign = pList.get(PR_RELATIVE_ALIGN).getEnum();
+    }
+
+    /**
+     * @see org.apache.fop.fo.FONode#startOfNode
+     */
+    protected void startOfNode() throws SAXParseException {
+        checkId(id);
+        getFOEventHandler().startListItem(this);
+    }
+
+    /**
+     * Make sure content model satisfied, if so then tell the
+     * FOEventHandler that we are at the end of the flow.
+     * @see org.apache.fop.fo.FONode#endOfNode
+     */
+    protected void endOfNode() throws SAXParseException {
+        if (label == null || body == null) {
+            missingChildElementError("marker* (list-item-label,list-item-body)");
+        }
+        getFOEventHandler().endListItem(this);
     }
 
     /**
@@ -60,23 +121,23 @@ public class ListItem extends FObj {
      */
     protected void validateChildNode(Locator loc, String nsURI, String localName) 
         throws SAXParseException {
-            if (nsURI == FO_URI && localName.equals("marker")) {
-                if (label != null) {
-                    nodesOutOfOrderError(loc, "fo:marker", "fo:list-item-label");
-                }
-            } else if (nsURI == FO_URI && localName.equals("list-item-label")) {
-                if (label != null) {
-                    tooManyNodesError(loc, "fo:list-item-label");
-                }
-            } else if (nsURI == FO_URI && localName.equals("list-item-body")) {
-                if (label == null) {
-                    nodesOutOfOrderError(loc, "fo:list-item-label", "fo:list-item-body");
-                } else if (body != null) {
-                    tooManyNodesError(loc, "fo:list-item-body");
-                }
-            } else {
-                invalidChildError(loc, nsURI, localName);
+        if (nsURI == FO_URI && localName.equals("marker")) {
+            if (label != null) {
+                nodesOutOfOrderError(loc, "fo:marker", "fo:list-item-label");
             }
+        } else if (nsURI == FO_URI && localName.equals("list-item-label")) {
+            if (label != null) {
+                tooManyNodesError(loc, "fo:list-item-label");
+            }
+        } else if (nsURI == FO_URI && localName.equals("list-item-body")) {
+            if (label == null) {
+                nodesOutOfOrderError(loc, "fo:list-item-label", "fo:list-item-body");
+            } else if (body != null) {
+                tooManyNodesError(loc, "fo:list-item-body");
+            }
+        } else {
+            invalidChildError(loc, nsURI, localName);
+        }
     }
 
     /**
@@ -97,15 +158,10 @@ public class ListItem extends FObj {
     }
 
     /**
-     * Make sure content model satisfied, if so then tell the
-     * FOEventHandler that we are at the end of the flow.
-     * @see org.apache.fop.fo.FONode#endOfNode
+     * Return the "id" property.
      */
-    protected void endOfNode() throws SAXParseException {
-        if (label == null || body == null) {
-            missingChildElementError("marker* (list-item-label,list-item-body)");
-        }
-        getFOEventHandler().endListItem(this);
+    public String getId() {
+        return id;
     }
 
     /**

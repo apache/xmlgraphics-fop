@@ -26,11 +26,15 @@ import org.xml.sax.SAXParseException;
 // FOP
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FObjMixed;
+import org.apache.fop.fo.PropertyList;
 
 /**
  * Marker formatting object.
  */
 public class Marker extends FObjMixed {
+    // The value of properties relevant for fo:marker.
+    private String markerClassName;
+    // End of property values
 
     /**
      * Create a marker fo.
@@ -38,6 +42,13 @@ public class Marker extends FObjMixed {
      */
     public Marker(FONode parent) {
         super(parent);
+    }
+
+    /**
+     * @see org.apache.fop.fo.FObj#bind(PropertyList)
+     */
+    public void bind(PropertyList pList) throws SAXParseException {
+        markerClassName = pList.get(PR_MARKER_CLASS_NAME).getString();
     }
 
     /**
@@ -60,6 +71,13 @@ public class Marker extends FObjMixed {
         if (!isBlockOrInlineItem(nsURI, localName)) {
             invalidChildError(loc, nsURI, localName);
         }
+    }
+
+    /**
+     * Return the "marker-class-name" property.
+     */
+    public String getMarkerClassName() {
+        return markerClassName;
     }
 
     /**

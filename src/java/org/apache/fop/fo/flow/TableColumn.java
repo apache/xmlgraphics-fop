@@ -26,16 +26,30 @@ import org.xml.sax.SAXParseException;
 // FOP
 import org.apache.fop.datatypes.ColorType;
 import org.apache.fop.datatypes.Length;
+import org.apache.fop.datatypes.Numeric;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FObj;
+import org.apache.fop.fo.PropertyList;
+import org.apache.fop.fo.properties.CommonBorderPaddingBackground;
 
 /**
  * Class modelling the fo:table-column object.
  */
 public class TableColumn extends FObj {
-
-    private ColorType backgroundColor;
+    // The value of properties relevant for fo:table-column.
+    private CommonBorderPaddingBackground commonBorderPaddingBackground;
+    // private ToBeImplementedProperty borderAfterPrecedence;
+    // private ToBeImplementedProperty borderBeforePrecedence;
+    // private ToBeImplementedProperty borderEndPrecedence;
+    // private ToBeImplementedProperty borderStartPrecedence;
+    private Numeric columnNumber;
     private Length columnWidth;
+    private Numeric numberColumnsRepeated;
+    private Numeric numberColumnsSpanned;
+    // private ToBeImplementedProperty visibility;
+    // End of property values
+    
+    private ColorType backgroundColor;
     private int columnOffset;
     private int numColumnsRepeated;
     private int iColumnNumber;
@@ -45,6 +59,36 @@ public class TableColumn extends FObj {
      */
     public TableColumn(FONode parent) {
         super(parent);
+    }
+
+    /**
+     * @see org.apache.fop.fo.FObj#bind(PropertyList)
+     */
+    public void bind(PropertyList pList) {
+        commonBorderPaddingBackground = pList.getBorderPaddingBackgroundProps();
+        // borderAfterPrecedence = pList.get(PR_BORDER_AFTER_PRECEDENCE);
+        // borderBeforePrecedence = pList.get(PR_BORDER_BEFORE_PRECEDENCE);
+        // borderEndPrecedence = pList.get(PR_BORDER_END_PRECEDENCE);
+        // borderStartPrecedence = pList.get(PR_BORDER_START_PRECEDENCE);
+        columnNumber = pList.get(PR_COLUMN_NUMBER).getNumeric();
+        columnWidth = pList.get(PR_COLUMN_WIDTH).getLength();
+        numberColumnsRepeated = pList.get(PR_NUMBER_COLUMNS_REPEATED).getNumeric();
+        numberColumnsSpanned = pList.get(PR_NUMBER_COLUMNS_SPANNED).getNumeric();
+        // visibility = pList.get(PR_VISIBILITY);
+    }
+
+    /**
+     * @see org.apache.fop.fo.FONode#startOfNode()
+     */
+    protected void startOfNode() throws SAXParseException {
+        getFOEventHandler().startColumn(this);
+    }
+
+    /**
+     * @see org.apache.fop.fo.FONode#endOfNode
+     */
+    protected void endOfNode() throws SAXParseException {
+        getFOEventHandler().endColumn(this);
     }
 
     /**
@@ -73,33 +117,40 @@ public class TableColumn extends FObj {
     }
 
     /**
-     * @see org.apache.fop.fo.FONode#endOfNode
-     */
-    protected void endOfNode() throws SAXParseException {
-        getFOEventHandler().endColumn(this);
-    }
-
-    /**
-     * @return Length object containing column width
-     */
-    public Length getColumnWidth() {
-        return columnWidth;
-    }
-
-    /**
-     * @return column number
-     */
-    public int getColumnNumber() {
-        return iColumnNumber;
-    }
-
-    /**
      * @return value for number of columns repeated
      */
     public int getNumColumnsRepeated() {
         return numColumnsRepeated;
     }
 
+    /**
+     * Return the Common Border, Padding, and Background Properties.
+     */
+    public CommonBorderPaddingBackground getCommonBorderPaddingBackground() {
+        return commonBorderPaddingBackground;
+    }
+
+    /**
+     * Return the "column-width" property.
+     */
+    public Length getColumnWidth() {
+        return columnWidth;
+    }
+
+    /**
+     * Return the "column-number" property.
+     */
+    public int getColumnNumber() {
+        return columnNumber.getValue();
+    }
+
+    /**
+     * @return value for number of columns repeated
+     */
+    public int getNumberColumnsRepeated() {
+        return numberColumnsRepeated.getValue();
+    }
+    
     public String getName() {
         return "fo:table-column";
     }

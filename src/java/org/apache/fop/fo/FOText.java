@@ -23,8 +23,13 @@ import java.util.List;
 import java.util.NoSuchElementException;
 
 // FOP
+import org.apache.fop.datatypes.ColorType;
 import org.apache.fop.fo.flow.Block;
 import org.apache.fop.fo.pagination.Root;
+import org.apache.fop.fo.properties.CommonFont;
+import org.apache.fop.fo.properties.CommonHyphenation;
+import org.apache.fop.fo.properties.Property;
+import org.apache.fop.fo.properties.SpaceProperty;
 import org.apache.fop.layoutmgr.TextLayoutManager;
 
 /**
@@ -64,6 +69,18 @@ public class FOText extends FONode {
      * via the TextCharIterator.remove() method below.
      */
     public int endIndex = 0;
+
+    // The value of properties relevant for character.
+    private CommonFont commonFont;
+    private CommonHyphenation commonHyphenation;
+    private ColorType color;
+    private Property letterSpacing;
+    private SpaceProperty lineHeight;
+    private int whiteSpaceCollapse;
+    private int textTransform;
+    private Property wordSpacing;
+    private int wrapOption;
+    // End of property values
 
     /**
      * The TextInfo object attached to the text
@@ -119,6 +136,22 @@ public class FOText extends FONode {
         textInfo = ti;
         createBlockPointers();
         textTransform();
+    }
+
+    /**
+     * @see org.apache.fop.fo.FObj#bind(PropertyList)
+     */
+    public void bind(PropertyList pList) {
+        commonFont = pList.getFontProps();
+        commonHyphenation = pList.getHyphenationProps();
+        
+        color = pList.get(Constants.PR_COLOR).getColorType();
+        lineHeight = pList.get(Constants.PR_LINE_HEIGHT).getSpace();
+        letterSpacing = pList.get(Constants.PR_LETTER_SPACING);
+        whiteSpaceCollapse = pList.get(Constants.PR_WHITE_SPACE_COLLAPSE).getEnum();
+        textTransform = pList.get(Constants.PR_TEXT_TRANSFORM).getEnum();
+        wordSpacing = pList.get(Constants.PR_WORD_SPACING);
+        wrapOption = pList.get(Constants.PR_WRAP_OPTION).getEnum();
     }
 
     /**
@@ -486,6 +519,55 @@ public class FOText extends FONode {
             }
         }
 
+    }
+
+    /**
+     * Return the Common Font Properties.
+     */
+    public CommonFont getCommonFont() {
+        return commonFont;
+    }
+
+    /**
+     * Return the Common Hyphenation Properties.
+     */
+    public CommonHyphenation getCommonHyphenation() {
+        return commonHyphenation;
+    }
+
+    /**
+     * Return the "color" property.
+     */
+    public ColorType getColor() {
+        return color;
+    }
+
+    /**
+     * Return the "letter-spacing" property.
+     */
+    public Property getLetterSpacing() {
+        return letterSpacing; 
+    }
+    
+    /**
+     * Return the "line-height" property.
+     */
+    public SpaceProperty getLineHeight() {
+        return lineHeight;
+    }
+    
+    /**
+     * Return the "word-spacing" property.
+     */
+    public Property getWordSpacing() {
+        return wordSpacing; 
+    }
+    
+    /**
+     * Return the "wrap-option" property.
+     */
+    public int getWrapOption() {
+        return wrapOption; 
     }
 
     /**

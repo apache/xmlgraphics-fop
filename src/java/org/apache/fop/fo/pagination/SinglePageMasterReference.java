@@ -26,6 +26,7 @@ import org.xml.sax.SAXParseException;
 // FOP
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FObj;
+import org.apache.fop.fo.PropertyList;
 
 /**
  * A single-page-master-reference formatting object.
@@ -35,6 +36,10 @@ import org.apache.fop.fo.FObj;
 public class SinglePageMasterReference extends FObj 
     implements SubSequenceSpecifier {
 
+    // The value of properties relevant for fo:single-page-master-reference.
+    private String masterReference;
+    // End of property values
+    
     private static final int FIRST = 0;
     private static final int DONE = 1;
 
@@ -48,6 +53,25 @@ public class SinglePageMasterReference extends FObj
         this.state = FIRST;
     }
 
+    /**
+     * @see org.apache.fop.fo.FObj#bind(PropertyList)
+     */
+    public void bind(PropertyList pList) {
+        masterReference = pList.get(PR_MASTER_REFERENCE).getString();
+    }
+
+    /**
+     * @see org.apache.fop.fo.FONode#startOfNode
+     */
+    protected void startOfNode() throws SAXParseException {
+        PageSequenceMaster pageSequenceMaster = (PageSequenceMaster) parent;
+        if (masterReference == null) {
+            missingPropertyError("master-reference");
+        } else {
+            pageSequenceMaster.addSubsequenceSpecifier(this);
+        }
+    }
+    
     /**
      * @see org.apache.fop.fo.FObj#addProperties
      */

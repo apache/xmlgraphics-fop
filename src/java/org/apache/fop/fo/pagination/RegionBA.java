@@ -26,13 +26,19 @@ import org.xml.sax.Attributes;
 import org.xml.sax.SAXParseException;
 
 // FOP
+import org.apache.fop.datatypes.Length;
 import org.apache.fop.fo.FONode;
+import org.apache.fop.fo.PropertyList;
 
 /**
  * Abstract base class for fo:region-before and fo:region-after.
  */
 public abstract class RegionBA extends Region {
-
+    // The value of properties relevant for fo:region-[before|after].
+    private Length extent;
+    private int precedence;
+    // End of property values
+    
     /**
      * @see org.apache.fop.fo.FONode#FONode(FONode)
      */
@@ -41,10 +47,34 @@ public abstract class RegionBA extends Region {
     }
 
     /**
+     * @see org.apache.fop.fo.FObj#bind(PropertyList)
+     */
+    public void bind(PropertyList pList) throws SAXParseException {
+        super.bind(pList);
+        extent = pList.get(PR_EXTENT).getLength();
+        precedence = pList.get(PR_PRECEDENCE).getEnum();
+    }
+
+    /**
      * @see org.apache.fop.fo.FObj#addProperties
      */
     protected void addProperties(Attributes attlist) throws SAXParseException {
         super.addProperties(attlist);
+    }
+
+    /**
+     * Return the "extent" property.
+     */
+    public Length getExtent() {
+        return extent;
+    }
+
+    /**
+     * Return the "precedence" property.
+     * TODO: 31699
+     */
+    public int ___getPrecedence() {
+        return precedence;
     }
 
     /**

@@ -29,17 +29,55 @@ import org.xml.sax.SAXParseException;
 
 // FOP
 import org.apache.fop.datatypes.ColorType;
+import org.apache.fop.datatypes.Length;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FObj;
+import org.apache.fop.fo.PropertyList;
+import org.apache.fop.fo.properties.CommonAccessibility;
+import org.apache.fop.fo.properties.CommonAural;
+import org.apache.fop.fo.properties.CommonBorderPaddingBackground;
+import org.apache.fop.fo.properties.CommonMarginBlock;
+import org.apache.fop.fo.properties.CommonRelativePosition;
+import org.apache.fop.fo.properties.KeepProperty;
+import org.apache.fop.fo.properties.LengthPairProperty;
+import org.apache.fop.fo.properties.LengthRangeProperty;
 import org.apache.fop.layoutmgr.table.TableLayoutManager;
 import org.apache.fop.layoutmgr.table.Body;
 import org.apache.fop.layoutmgr.table.Column;
-import org.apache.fop.fo.properties.LengthRangeProperty;
 
 /**
  * Class modelling the fo:table object.
  */
 public class Table extends FObj {
+    // The value of properties relevant for fo:table.
+    private CommonAccessibility commonAccessibility;
+    private CommonAural commonAural;
+    private CommonBorderPaddingBackground commonBorderPaddingBackground;
+    private CommonMarginBlock commonMarginBlock;
+    private CommonRelativePosition commonRelativePosition;
+    private LengthRangeProperty blockProgressionDimension;
+    // private ToBeImplementedProperty borderAfterPrecedence;
+    // private ToBeImplementedProperty borderBeforePrecedence;
+    private int borderCollapse;
+    // private ToBeImplementedProperty borderEndPrecedence;
+    private LengthPairProperty borderSeparation;
+    // private ToBeImplementedProperty borderStartPrecedence;
+    private int breakAfter;
+    private int breakBefore;
+    private String id;
+    private LengthRangeProperty inlineProgressionDimension;
+    // private ToBeImplementedProperty intrusionDisplace;
+    private Length height;
+    private KeepProperty keepTogether;
+    private KeepProperty keepWithNext;
+    private KeepProperty keepWithPrevious;
+    private int tableLayout;
+    private int tableOmitFooterAtBreak;
+    private int tableOmitHeaderAtBreak;
+    private Length width;
+    private int writingMode;
+    // End of property values
+
     private static final int MINCOLWIDTH = 10000; // 10pt
 
     /** collection of columns in this table */
@@ -49,13 +87,11 @@ public class Table extends FObj {
     private boolean omitHeaderAtBreak = false;
     private boolean omitFooterAtBreak = false;
 
-    private int breakBefore;
-    private int breakAfter;
     private int spaceBefore;
     private int spaceAfter;
     private ColorType backgroundColor;
     private LengthRangeProperty ipd;
-    private int height;
+    private int _height;
 
     private boolean bAutoLayout = false;
     private int contentWidth = 0; // Sum of column widths
@@ -74,6 +110,53 @@ public class Table extends FObj {
     }
 
     /**
+     * @see org.apache.fop.fo.FObj#bind(PropertyList)
+     */
+    public void bind(PropertyList pList) {
+        commonAccessibility = pList.getAccessibilityProps();
+        commonAural = pList.getAuralProps();
+        commonBorderPaddingBackground = pList.getBorderPaddingBackgroundProps();
+        commonMarginBlock = pList.getMarginBlockProps();
+        commonRelativePosition = pList.getRelativePositionProps();
+        blockProgressionDimension = pList.get(PR_BLOCK_PROGRESSION_DIMENSION).getLengthRange();
+        // borderAfterPrecedence = pList.get(PR_BORDER_AFTER_PRECEDENCE);
+        // borderBeforePrecedence = pList.get(PR_BORDER_BEFORE_PRECEDENCE);
+        borderCollapse = pList.get(PR_BORDER_COLLAPSE).getEnum();
+        // borderEndPrecedence = pList.get(PR_BORDER_END_PRECEDENCE);
+        borderSeparation = pList.get(PR_BORDER_SEPARATION).getLengthPair();
+        // borderStartPrecedence = pList.get(PR_BORDER_START_PRECEDENCE);
+        breakAfter = pList.get(PR_BREAK_AFTER).getEnum();
+        breakBefore = pList.get(PR_BREAK_BEFORE).getEnum();
+        id = pList.get(PR_ID).getString();
+        inlineProgressionDimension = pList.get(PR_INLINE_PROGRESSION_DIMENSION).getLengthRange();
+        // intrusionDisplace = pList.get(PR_INTRUSION_DISPLACE);
+        height = pList.get(PR_HEIGHT).getLength();
+        keepTogether = pList.get(PR_KEEP_TOGETHER).getKeep();
+        keepWithNext = pList.get(PR_KEEP_WITH_NEXT).getKeep();
+        keepWithPrevious = pList.get(PR_KEEP_WITH_PREVIOUS).getKeep();
+        tableLayout = pList.get(PR_TABLE_LAYOUT).getEnum();
+        tableOmitFooterAtBreak = pList.get(PR_TABLE_OMIT_FOOTER_AT_BREAK).getEnum();
+        tableOmitHeaderAtBreak = pList.get(PR_TABLE_OMIT_HEADER_AT_BREAK).getEnum();
+        width = pList.get(PR_WIDTH).getLength();
+        writingMode = pList.get(PR_WRITING_MODE).getEnum();
+    }
+
+    /**
+     * @see org.apache.fop.fo.FONode#startOfNode
+     */
+    protected void startOfNode() throws SAXParseException {
+        checkId(id);
+        getFOEventHandler().startTable(this);
+    }
+
+    /**
+     * @see org.apache.fop.fo.FONode#endOfNode
+     */
+    protected void endOfNode() throws SAXParseException {
+        getFOEventHandler().endTable(this);
+    }
+
+    /**
      * @see org.apache.fop.fo.FObj#addProperties
      */
     protected void addProperties(Attributes attlist) throws SAXParseException {
@@ -86,7 +169,7 @@ public class Table extends FObj {
           this.propertyList.get(PR_BACKGROUND_COLOR).getColorType();
         this.ipd = this.propertyList.get(
                      PR_INLINE_PROGRESSION_DIMENSION).getLengthRange();
-        this.height = getPropLength(PR_HEIGHT);
+        this._height = getPropLength(PR_HEIGHT);
         this.bAutoLayout = (getPropEnum(PR_TABLE_LAYOUT) == TableLayout.AUTO);
 
         this.omitHeaderAtBreak = getPropEnum(PR_TABLE_OMIT_HEADER_AT_BREAK)
@@ -94,10 +177,6 @@ public class Table extends FObj {
         this.omitFooterAtBreak = getPropEnum(PR_TABLE_OMIT_FOOTER_AT_BREAK)
             == TableOmitFooterAtBreak.TRUE;
         getFOEventHandler().startTable(this);
-    }
-
-    protected void endOfNode() throws SAXParseException {
-        getFOEventHandler().endTable(this);
     }
 
     /**
@@ -129,6 +208,27 @@ public class Table extends FObj {
 
     private TableBody getTableFooter() {
         return tableFooter;
+    }
+
+    /**
+     * Return the Common Margin Properties-Block.
+     */
+    public CommonMarginBlock getCommonMarginBlock() {
+        return commonMarginBlock;
+    }
+
+    /**
+     * Return the Common Border, Padding, and Background Properties.
+     */
+    public CommonBorderPaddingBackground getCommonBorderPaddingBackground() {
+        return commonBorderPaddingBackground;
+    }
+
+    /**
+     * Return the "id" property.
+     */
+    public String getId() {
+        return id;
     }
 
     /**
