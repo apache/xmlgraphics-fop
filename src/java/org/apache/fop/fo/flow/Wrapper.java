@@ -70,21 +70,6 @@ public class Wrapper extends FObjMixed {
     }
 
     /**
-     * @see org.apache.fop.fo.FONode#addLayoutManager(List)
-     * @todo remove null check when vCN() & endOfNode() implemented
-     */
-    public void addLayoutManager(List list) {
-        ListIterator baseIter = getChildNodes();
-        if (baseIter == null) {
-            return;
-        }
-        while (baseIter.hasNext()) {
-            FONode child = (FONode) baseIter.next();
-            child.addLayoutManager(list);
-        }
-    }
-
-    /**
      * @see org.apache.fop.fo.FObj#getName()
      */
     public String getName() {

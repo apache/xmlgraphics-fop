@@ -40,6 +40,8 @@ import org.apache.fop.fo.extensions.Bookmarks;
 import org.apache.fop.fo.pagination.PageSequence;
 import org.apache.fop.fo.pagination.Root;
 import org.apache.fop.layoutmgr.PageSequenceLayoutManager;
+import org.apache.fop.layoutmgr.LayoutManagerMaker;
+import org.apache.fop.layoutmgr.LayoutManagerMapping;
 
 /**
  * Area tree handler for formatting objects.
@@ -71,6 +73,9 @@ public class AreaTreeHandler extends FOEventHandler {
 
     // time used in rendering (for statistics)
     private long startTime;
+
+    // the LayoutManager maker
+    private LayoutManagerMaker lmMaker;
 
     // count of number of pages rendered
     private int pageCount;
@@ -106,6 +111,11 @@ public class AreaTreeHandler extends FOEventHandler {
         model = new RenderPagesModel(userAgent, renderType, fontInfo,
             stream);
             
+        lmMaker = userAgent.getLayoutManagerMakerOverride();
+        if (lmMaker == null) {
+            lmMaker = new LayoutManagerMapping();
+        }
+
         outputStatistics = log.isDebugEnabled();
 
         if (outputStatistics) {
@@ -120,6 +130,15 @@ public class AreaTreeHandler extends FOEventHandler {
      */
     public AreaTreeModel getAreaTreeModel() {
         return model;
+    }
+
+    /**
+     * Get the LayoutManager maker for this area tree.
+     *
+     * @return LayoutManagerMaker the LayoutManager maker being used for this area tree
+     */
+    public LayoutManagerMaker getLayoutManagerMaker() {
+        return lmMaker;
     }
 
     /**
@@ -210,8 +229,10 @@ public class AreaTreeHandler extends FOEventHandler {
 
         // If no main flow, nothing to layout!
         if (pageSequence.getMainFlow() != null) {
-            PageSequenceLayoutManager pageSLM 
-                = new PageSequenceLayoutManager(this, pageSequence);
+            PageSequenceLayoutManager pageSLM =
+                (PageSequenceLayoutManager)
+                getLayoutManagerMaker().makeLayoutManager(pageSequence);
+            pageSLM.setAreaTreeHandler(this);
             pageSLM.activateLayout();
         }
     }

@@ -182,16 +182,6 @@ public class Inline extends InlineLevel {
     }
 
     /**
-     * @see org.apache.fop.fo.FObj#addLayoutManager(List)
-     */
-    public void addLayoutManager(List list) {    
-        if (getChildNodes() != null) {
-            InlineLayoutManager lm = new InlineLayoutManager(this);
-            list.add(lm);
-        }
-    }
-
-    /**
      * @see org.apache.fop.fo.FObj#getName()
      */
     public String getName() {

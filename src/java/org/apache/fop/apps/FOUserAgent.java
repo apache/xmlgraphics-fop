@@ -37,6 +37,7 @@ import org.apache.commons.logging.LogFactory;
 // FOP
 import org.apache.fop.fo.ElementMapping;
 import org.apache.fop.fo.FOEventHandler;
+import org.apache.fop.layoutmgr.LayoutManagerMaker;
 import org.apache.fop.pdf.PDFEncryptionParams;
 import org.apache.fop.render.Renderer;
 
@@ -74,6 +75,7 @@ public class FOUserAgent {
     private InputHandler inputHandler = null;
     private Renderer rendererOverride = null;
     private FOEventHandler foEventHandlerOverride = null;
+    private LayoutManagerMaker lmMakerOverride = null;
     /* user configuration */
     private Configuration userConfig = null;
     private Log log = LogFactory.getLog("FOP");
@@ -164,6 +166,23 @@ public class FOUserAgent {
      */
     public FOEventHandler getFOEventHandlerOverride() {
         return this.foEventHandlerOverride;
+    }
+
+    /**
+     * Sets an explicit LayoutManagerMaker instance which overrides the one
+     * defined by the AreaTreeHandler.
+     * @param lmMaker the LayoutManagerMaker instance
+     */
+    public void setLayoutManagerMakerOverride(LayoutManagerMaker lmMaker) {
+        this.lmMakerOverride = lmMaker;
+    }
+
+    /**
+     * Returns the overriding LayoutManagerMaker instance, if any.
+     * @return the overriding LayoutManagerMaker or null
+     */
+    public LayoutManagerMaker getLayoutManagerMakerOverride() {
+        return this.lmMakerOverride;
     }
 
     /**

@@ -153,15 +153,15 @@ public class Table extends FObj {
         }
     }
 
-    private ArrayList getColumns() {
+    public ArrayList getColumns() {
         return columns;
     }
 
-    private TableBody getTableHeader() {
+    public TableBody getTableHeader() {
         return tableHeader;
     }
 
-    private TableBody getTableFooter() {
+    public TableBody getTableFooter() {
         return tableFooter;
     }
 
@@ -184,41 +184,6 @@ public class Table extends FObj {
      */
     public String getId() {
         return id;
-    }
-
-    /**
-     * @see org.apache.fop.fo.FONode#addLayoutManager(List)
-     * @todo see if can/should move much of this logic into TableLayoutManager
-     *      and/or TableBody and TableColumn FO subclasses.
-     */
-    public void addLayoutManager(List list) {
-        TableLayoutManager tlm = new TableLayoutManager(this);
-        ArrayList columns = getColumns();
-        if (columns != null) {
-            ArrayList columnLMs = new ArrayList();
-            ListIterator iter = columns.listIterator();
-            while (iter.hasNext()) {
-                columnLMs.add(getTableColumnLayoutManager((TableColumn)iter.next()));
-            }
-            tlm.setColumns(columnLMs);
-        }
-        if (getTableHeader() != null) {
-            tlm.setTableHeader(getTableBodyLayoutManager(getTableHeader()));
-        }
-        if (getTableFooter() != null) {
-            tlm.setTableFooter(getTableBodyLayoutManager(getTableFooter()));
-        }
-        list.add(tlm);
-    }
-
-    public Column getTableColumnLayoutManager(TableColumn node) {
-         Column clm = new Column(node);
-         return clm;
-    }
-    
-    public Body getTableBodyLayoutManager(TableBody node) {
-         Body blm = new Body(node);
-         return blm;
     }
 
     /**

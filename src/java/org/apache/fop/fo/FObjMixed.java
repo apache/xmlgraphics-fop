@@ -61,13 +61,6 @@ public class FObjMixed extends FObj {
     public CharIterator charIterator() {
         return new RecursiveCharIterator(this);
     }
-
-    /**
-     * @see org.apache.fop.fo.FONode#addLayoutManager(List)
-     */
-    public void addLayoutManager(List list) {    
-        // no layout manager
-    }
     
 }
 

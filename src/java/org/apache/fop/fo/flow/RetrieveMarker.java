@@ -80,21 +80,6 @@ public class RetrieveMarker extends FObjMixed {
             invalidChildError(loc, nsURI, localName);
     }
 
-    /**
-     * @see org.apache.fop.fo.FONode#addLayoutManager(List)
-     * @todo remove null check when vCN() & endOfNode() implemented
-     */
-    public void addLayoutManager(List list) {
-        Iterator baseIter = getChildNodes();
-        if (baseIter == null) {
-            return;
-        }
-        while (baseIter.hasNext()) {
-            FONode child = (FONode) baseIter.next();
-            child.addLayoutManager(list);
-        }
-    }
-
     protected PropertyList createPropertyList(PropertyList parent, 
             FOEventHandler foEventHandler) throws FOPException {
         // TODO: A special RetrieveMarkerPropertyList would be more memory

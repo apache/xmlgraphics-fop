@@ -23,6 +23,7 @@ import org.apache.fop.fo.FONode;
 import org.apache.fop.area.Area;
 import org.apache.fop.area.Resolvable;
 import org.apache.fop.area.PageViewport;
+import org.apache.fop.area.AreaTreeHandler;
 import org.apache.fop.fo.Constants;
 import org.apache.fop.fo.flow.RetrieveMarker;
 import org.apache.fop.fo.flow.Marker;
@@ -360,6 +361,16 @@ public abstract class AbstractLayoutManager implements LayoutManager, Constants 
     }
 
     /**
+     * Delegate getAreaTreeHandler to the parent layout manager.
+     *
+     * @see org.apache.fop.layoutmgr.LayoutManager
+     * @return the AreaTreeHandler object.
+     */
+    public AreaTreeHandler getAreaTreeHandler() {
+        return parentLM.getAreaTreeHandler();
+    }
+
+    /**
      * Convenience method: preload a number of child LMs
      * @param size the requested number of child LMs
      * @return the list with the preloaded child LMs
@@ -384,7 +395,8 @@ public abstract class AbstractLayoutManager implements LayoutManager, Constants 
                     rm.bindMarker(marker);
                     foNode = rm;
                 }
-                foNode.addLayoutManager(newLMs);
+                getAreaTreeHandler().getLayoutManagerMaker().
+                    makeLayoutManagers(foNode, newLMs);
             }
         }
         return newLMs;

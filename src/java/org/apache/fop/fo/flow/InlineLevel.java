@@ -96,17 +96,5 @@ public class InlineLevel extends FObjMixed {
     public ColorType getColor() {
         return color;
     }
-
-    /**
-     * @see org.apache.fop.fo.FONode#addLayoutManager(List)
-     */
-    public void addLayoutManager(List list) {    
-        if (getChildNodes() != null) {
-            InlineLayoutManager lm;
-            lm = new InlineLayoutManager(this);
-            list.add(lm);
-        }
-    }
-
 }
 

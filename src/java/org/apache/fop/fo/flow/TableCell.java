@@ -315,14 +315,6 @@ public class TableCell extends FObj {
     public int getNumberRowsSpanned() {
         return Math.max(numberRowsSpanned.getValue(), 1);
     }
-
-    /**
-     * @see org.apache.fop.fo.FONode#addLayoutManager(List)
-     */
-    public void addLayoutManager(List list) {
-        Cell clm = new Cell(this);
-        list.add(clm);
-    }
     
     /**
      * @see org.apache.fop.fo.FObj#getName()

@@ -118,14 +118,6 @@ public class BasicLink extends Inline {
     }
 
     /**
-     * @see org.apache.fop.fo.FONode#addLayoutManager(List)
-     */
-    public void addLayoutManager(List list) {    
-        BasicLinkLayoutManager lm = new BasicLinkLayoutManager(this);
-        list.add(lm);
-    }
-
-    /**
      * Return the "internal-destination" property.
      */
     public String getInternalDestination() {
