@@ -77,6 +77,10 @@ inactive??
   <changes>
    <release version="?" date="2002">
     <action dev="JM" type="update" context="build">
+      Improve build process for more flexibility when external jars change.
+      Changed to use -projecthelp option from Ant 1.5 instead of "usage" target.
+    </action>
+    <action dev="JM" type="update" context="build">
       Updated Avalon Framework JAR (with Log4J support, Bug 11274)
     </action>
     <action dev="KLL" type="update" context="docs"
