@@ -66,6 +66,14 @@ public class BlockContainer extends FObj {
 
         this.width = getPropLength(PR_WIDTH);
         this.height = getPropLength(PR_HEIGHT);
+        getFOEventHandler().startBlockContainer(this);
+    }
+    
+    /**
+     * @see org.apache.fop.fo.FONode#end
+     */
+    protected void endOfNode() throws SAXParseException {
+        getFOEventHandler().endBlockContainer(this);
     }
 
     /**
