@@ -15,6 +15,7 @@ import org.apache.fop.image.*;
 import org.apache.fop.datatypes.ColorSpace;
 import org.apache.fop.render.pdf.CIDFont;
 import org.apache.fop.render.pdf.fonts.LazyFont;
+import org.apache.fop.apps.FOPException;
 
 import org.apache.batik.ext.awt.g2d.*;
 import org.apache.batik.ext.awt.image.GraphicsUtil;

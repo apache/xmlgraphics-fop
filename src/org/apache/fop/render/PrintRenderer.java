@@ -19,6 +19,7 @@ import org.apache.fop.layout.*;
 import org.apache.fop.layout.inline.*;
 import org.apache.fop.datatypes.*;
 import org.apache.fop.render.pdf.FontSetup;
+import org.apache.fop.apps.FOPException;
 
 import org.apache.fop.svg.SVGArea;
 
@@ -405,7 +406,7 @@ public abstract class PrintRenderer extends AbstractRenderer {
      * 
      * @param fontInfo font info to set up
      */
-    public void setupFontInfo(FontInfo fontInfo) {
+    public void setupFontInfo(FontInfo fontInfo) throws FOPException {
         this.fontInfo = fontInfo;
         FontSetup.setup(fontInfo);
     }

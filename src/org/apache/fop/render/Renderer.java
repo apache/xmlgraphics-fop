@@ -36,7 +36,7 @@ public interface Renderer {
     /**
      * set up the given FontInfo
      */
-    public void setupFontInfo(FontInfo fontInfo);
+    public void setupFontInfo(FontInfo fontInfo) throws FOPException;
 
     /**
      * set up renderer options

@@ -17,6 +17,7 @@ import org.apache.fop.layout.*;
 import org.apache.fop.layout.inline.*;
 import org.apache.fop.pdf.*;
 import org.apache.fop.fo.properties.LeaderPattern;
+import org.apache.fop.apps.FOPException;
 
 // Avalon
 import org.apache.avalon.framework.logger.Logger;
@@ -149,7 +150,7 @@ public class XMLRenderer implements Renderer {
      *
      * @param fontInfo the font info object to set up
      */
-    public void setupFontInfo(FontInfo fontInfo) {
+    public void setupFontInfo(FontInfo fontInfo) throws FOPException {
 
         /* use PDF's font setup to get PDF metrics */
         org.apache.fop.render.pdf.FontSetup.setup(fontInfo);

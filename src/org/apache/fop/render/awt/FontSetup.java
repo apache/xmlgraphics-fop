@@ -13,6 +13,8 @@ import org.apache.fop.layout.FontInfo;
 import org.apache.fop.layout.FontDescriptor;
 import org.apache.fop.configuration.Configuration;
 import org.apache.fop.configuration.FontTriplet;
+import org.apache.fop.apps.FOPException;
+
 
 // Java
 import java.util.Enumeration;
@@ -48,7 +50,9 @@ public class FontSetup {
      * @param parent needed, since a live AWT component is needed
      * to get a valid java.awt.FontMetrics object
      */
-    public static void setup(FontInfo fontInfo, Graphics2D graphics) {
+    public static void setup(FontInfo fontInfo, Graphics2D graphics)
+        throws FOPException {
+
         FontMetricsMapper metric;
 
         MessageHandler.logln("setting up fonts");
@@ -188,7 +192,8 @@ public class FontSetup {
      * internalnames F<num>
      */
     public static void addConfiguredFonts(
-                             FontInfo fontInfo, int num, Graphics2D graphics) {
+                             FontInfo fontInfo, int num, Graphics2D graphics)
+                             throws FOPException {
         FontMetricsMapper metric;
         String internalName = null;
 
