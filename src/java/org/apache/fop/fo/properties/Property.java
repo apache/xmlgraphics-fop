@@ -488,7 +488,7 @@ public /*abstract*/ class Property {
             // TODO: validate here
             return pv;
         case PropertyValue.LIST:
-            System.out.println((PropertyValueList)value);
+            System.out.println(value);
             throw new PropertyException
                 ("PropertyValueList passed to Property.refineParsing for "
                 + propName);
@@ -557,7 +557,7 @@ public /*abstract*/ class Property {
      * <tt>PropertyValueList</tt>.
      * @param list - the containing list.
      * @return the contained space-separated list.
-     * @throws <tt>PropertyException</tt> if <i>list</i> contains more than
+     * @throws PropertyException if <i>list</i> contains more than
      * one element or if the contained element is not a list.
      */
     protected PropertyValueList spaceSeparatedList
@@ -585,7 +585,7 @@ public /*abstract*/ class Property {
      * @param type <tt>String</tt> type of expected enum - for
      * exception messages only
      * @return <tt>EnumValue</tt> equivalent of the argument
-     * @exception <tt>PropertyException</tt>
+     * @exception PropertyException
      */
     protected EnumType getEnum(PropertyValue value,
                                             int property, String type)
@@ -656,9 +656,9 @@ public /*abstract*/ class Property {
      * fallback implementation of this function for properties which do not
      * support a MAPPED_LENGTH type.  Those which do must override this
      * method.
-     * @param enum - the <tt>int</tt> enumeration index.
+     * @param enum - the enumeration index.
      * @return a <tt>Numeric</tt>.  This implementation never returns.
-     * @throws <tt>PropertyException</tt>.
+     * @throws PropertyException
      */
     public Numeric getMappedLength(FONode node, int enum)
             throws PropertyException
@@ -674,8 +674,8 @@ public /*abstract*/ class Property {
      * that set.
      * @param property <tt>int</tt> property index
      * @return <tt>PropertyValue</tt>
-     * @exception <tt>PropertyException</tt>
-     * @exception <tt>PropertyNotImplementedException</tt>
+     * @exception PropertyException
+     * @exception PropertyNotImplementedException
      */
     public PropertyValue getInitialValue(int property)
             throws PropertyException
@@ -799,7 +799,7 @@ public /*abstract*/ class Property {
         if (value.size() == 0)
             throw new PropertyException
                             ("Empty list for " + propName);
-        Iterator elements = ((PropertyValueList)value).iterator();
+        Iterator elements = (value).iterator();
 
         scanning_elements: while (elements.hasNext()) {
             PropertyValue pval = (PropertyValue)(elements.next());
