@@ -263,7 +263,7 @@ want it to.</comment>
           <level-3 name="scaling-method" citation="§7.14.11" extURL="slice7.html#scaling-method" compliance-level="2" comply="no"/>
           <level-3 name="width" citation="§7.14.12" extURL="slice7.html#width" compliance-level="1" comply="yes"/>
         </level-2>
-        <level-2 name="Block and Line-related Properties" citation="§7.15 " extURL="slice7.html#section-N38191-Block-and-Line-related-Properties">
+        <level-2 name="Block and Line-related Properties" citation="§7.15" extURL="slice7.html#section-N38191-Block-and-Line-related-Properties">
           <level-3 name="hyphenation-keep" citation="§7.15.1" extURL="slice7.html#hyphenation-keep" compliance-level="2" comply="no"/>
           <level-3 name="hyphenation-ladder-count" citation="§7.15.2" extURL="slice7.html#hyphenation-ladder-count" compliance-level="2" comply="no"/>
           <level-3 name="last-line-end-indent" citation="§7.15.3" extURL="slice7.html#last-line-end-indent" compliance-level="2" comply="no"/>
