@@ -16,41 +16,30 @@ import java.io.IOException;
  * @author   <a href="mailto:smwolke@geistig.com">Stephen Wolke</a>
  * @version  $Id$
  */
-
 public class RunLengthEncodeOutputStream extends FilterOutputStream
             implements Finalizable {
 
-    private final static int MAX_SEQUENCE_COUNT = 127;
-    private final static int END_OF_DATA = 128;
-    private final static int BYTE_MAX = 256;
+    private static final int MAX_SEQUENCE_COUNT    = 127;
+    private static final int END_OF_DATA           = 128;
+    private static final int BYTE_MAX              = 256;
 
-    private final static int NOT_IDENTIFY_SEQUENCE = 0;
-    private final static int START_SEQUENCE = 1;
-    private final static int IN_SEQUENCE = 2;
-    private final static int NOT_IN_SEQUENCE = 3;
+    private static final int NOT_IDENTIFY_SEQUENCE = 0;
+    private static final int START_SEQUENCE        = 1;
+    private static final int IN_SEQUENCE           = 2;
+    private static final int NOT_IN_SEQUENCE       = 3;
 
     private int runCount = 0;
     private int isSequence = NOT_IDENTIFY_SEQUENCE;
     private byte[] runBuffer = new byte[MAX_SEQUENCE_COUNT + 1];
 
 
-    /**
-     * Constructor for the RunLengthEncode Filter.
-     *
-     * @param out  The OutputStream to write to
-     */
+    /** @see java.io.FilterOutputStream **/
     public RunLengthEncodeOutputStream(OutputStream out) {
         super(out);
     }
 
 
-    /**
-     * @see        java.io.OutputStream#write(int)
-     * @param      b   the <code>byte</code>.
-     * @exception  IOException  if an I/O error occurs. In particular,
-     *             an <code>IOException</code> may be thrown if the
-     *             output stream has been closed.
-     */
+    /** @see java.io.FilterOutputStream **/
     public void write(byte b)
         throws java.io.IOException {
         runBuffer[runCount] = b;
@@ -131,11 +120,7 @@ public class RunLengthEncodeOutputStream extends FilterOutputStream
     }
 
 
-    /**
-     * @see        java.io.OutputStream#write(byte[])
-     * @param      b   the data.
-     * @exception  IOException  if an I/O error occurs.
-     */
+    /** @see java.io.FilterOutputStream **/
     public void write(byte[] b)
         throws IOException {
 
@@ -145,15 +130,7 @@ public class RunLengthEncodeOutputStream extends FilterOutputStream
     }
 
 
-    /**
-     * @see        java.io.OutputStream#write(byte[], int, int)
-     * @param      b     the data.
-     * @param      off   the start offset in the data.
-     * @param      len   the number of bytes to write.
-     * @exception  IOException  if an I/O error occurs. In particular,
-     *             an <code>IOException</code> is thrown if the output
-     *             stream is closed.
-     */
+    /** @see java.io.FilterOutputStream **/
     public void write(byte[] b, int off, int len)
         throws IOException {
 
@@ -163,12 +140,7 @@ public class RunLengthEncodeOutputStream extends FilterOutputStream
     }
 
 
-    /**
-     * Flushes the the stream and writes out the trailer, but, unlike close(),
-     * without closing the stream.
-     *
-     * @exception  IOException  if an I/O error occurs.
-     */
+    /** @see org.apache.fop.render.ps.Finalizable **/
     public void finalizeStream()
         throws IOException {
         switch (isSequence) {
@@ -190,11 +162,7 @@ public class RunLengthEncodeOutputStream extends FilterOutputStream
     }
 
 
-    /**
-     * Closes the stream.
-     *
-     * @exception  IOException  if an I/O error occurs.
-     */
+    /** @see java.io.FilterOutputStream **/
     public void close()
         throws IOException {
         finalizeStream();
