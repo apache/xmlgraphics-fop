@@ -19,7 +19,7 @@
 package org.apache.fop.layoutmgr;
 
 import org.apache.fop.fo.FObj;
-import org.apache.fop.apps.Document;
+import org.apache.fop.fo.FOTreeHandler;
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.fo.flow.Marker;
 import org.apache.fop.area.Area;
@@ -171,8 +171,8 @@ public class ContentLayoutManager implements LayoutManager {
         return this.parentLM;
     }
 
-    public Document getDocument() {
-        return getParent().getDocument();
+    public FOTreeHandler getFOTreeHandler() {
+        return getParent().getFOTreeHandler();
     }
 
     /** @see org.apache.fop.layoutmgr.LayoutManager */

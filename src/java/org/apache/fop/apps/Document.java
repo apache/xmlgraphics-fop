@@ -32,8 +32,6 @@ import org.apache.fop.fo.FOInputHandler;
 import org.apache.fop.fo.FOTreeControl;
 import org.apache.fop.fo.extensions.Bookmarks;
 import org.apache.fop.fonts.FontInfo;
-import org.apache.fop.layoutmgr.AddLMVisitor;
-
 
 import org.apache.commons.logging.Log;
 
@@ -59,10 +57,6 @@ public class Document implements FOTreeControl, AreaTreeControl {
     public AreaTreeModel atModel;
 
     private Bookmarks bookmarks = null;
-
-    /** Useful only for allowing subclasses of AddLMVisitor to be set by those
-     extending FOP **/
-     private AddLMVisitor addLMVisitor = null;
 
     /**
      * The current set of id's in the FO tree.
@@ -142,25 +136,4 @@ public class Document implements FOTreeControl, AreaTreeControl {
         return foInputHandler;
     }
 
-    /**
-     * Public accessor to set the AddLMVisitor object that should be used.
-     * This allows subclasses of AddLMVisitor to be used, which can be useful
-     * for extensions to the FO Tree.
-     * @param addLMVisitor the AddLMVisitor object that should be used.
-     */
-    public void setAddLMVisitor(AddLMVisitor addLMVisitor) {
-        this.addLMVisitor = addLMVisitor;
-    }
-
-    /**
-     * Public accessor to get the AddLMVisitor object that should be used.
-     * @return the AddLMVisitor object that should be used.
-     */
-    public AddLMVisitor getAddLMVisitor() {
-        if (this.addLMVisitor == null) {
-            this.addLMVisitor = new AddLMVisitor();
-        }
-        return this.addLMVisitor;
-    }
-    
 }
