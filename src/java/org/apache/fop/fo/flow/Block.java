@@ -23,7 +23,7 @@ import java.util.List;
 
 // XML
 import org.xml.sax.Attributes;
-import org.xml.sax.SAXException;
+import org.xml.sax.Locator;
 import org.xml.sax.SAXParseException;
 
 // FOP
@@ -35,13 +35,6 @@ import org.apache.fop.fo.FObjMixed;
 import org.apache.fop.fo.RecursiveCharIterator;
 import org.apache.fop.layoutmgr.BlockLayoutManager;
 import org.apache.fop.fo.Constants;
-import org.apache.fop.fo.properties.CommonAccessibility;
-import org.apache.fop.fo.properties.CommonAural;
-import org.apache.fop.fo.properties.CommonBackground;
-import org.apache.fop.fo.properties.CommonBorderAndPadding;
-import org.apache.fop.fo.properties.CommonHyphenation;
-import org.apache.fop.fo.properties.CommonMarginBlock;
-import org.apache.fop.fo.properties.CommonRelativePosition;
 import org.apache.fop.util.CharUtilities;
 
 /*
@@ -62,6 +55,10 @@ import org.apache.fop.util.CharUtilities;
   * Class modelling the fo:block object. See Sec. 6.5.2 of the XSL-FO Standard.
   */
 public class Block extends FObjMixed {
+
+    // used for FO validation
+    private boolean blockOrInlineItemFound = false;
+    private boolean initialPropertySetFound = false;
 
     private int align;
     private int alignLast;
@@ -139,6 +136,37 @@ public class Block extends FObjMixed {
           this.propertyList.get(PR_ORPHANS).getNumber().intValue();
 
         getFOInputHandler().startBlock(this);
+    }
+
+    /**
+     * @see org.apache.fop.fo.FONode#validateChildNode(Locator, String, String)
+     * XSL Content Model: marker* initial-property-set? (#PCDATA|%inline;|%block;)*
+     * Additionally: "An fo:bidi-override that is a descendant of an fo:leader
+     *  or of the fo:inline child of an fo:footnote may not have block-level
+     *  children, unless it has a nearer ancestor that is an 
+     *  fo:inline-container."
+     */
+    protected void validateChildNode(Locator loc, String nsURI, String localName) 
+        throws SAXParseException {
+        if (nsURI == FO_URI && localName.equals("marker")) {
+            if (blockOrInlineItemFound || initialPropertySetFound) {
+               nodesOutOfOrderError(loc, "fo:marker", 
+                    "initial-property-set? (#PCDATA|%inline;|%block;)");
+            }
+        } else if (nsURI == FO_URI && localName.equals("initial-property-set")) {
+            if (initialPropertySetFound) {
+                tooManyNodesError(loc, "fo:initial-property-set");
+            } else if (blockOrInlineItemFound) {
+                nodesOutOfOrderError(loc, "fo:initial-property-set", 
+                    "(#PCDATA|%inline;|%block;)");
+            } else {
+                initialPropertySetFound = true;
+            }
+        } else if (isBlockOrInlineItem(nsURI, localName)) {
+            blockOrInlineItemFound = true;
+        } else {
+            invalidChildError(loc, nsURI, localName);
+        }
     }
 
     /**

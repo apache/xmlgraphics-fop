@@ -44,7 +44,6 @@ import org.apache.fop.fo.flow.Character;
 import org.apache.fop.fo.flow.Inline;
 import org.apache.fop.fo.flow.InstreamForeignObject;
 import org.apache.fop.fo.flow.Leader;
-import org.apache.fop.fo.flow.RetrieveMarker;
 import org.apache.fop.fo.flow.Table;
 import org.apache.fop.fo.flow.TableAndCaption;
 import org.apache.fop.fo.flow.TableBody;
@@ -227,12 +226,6 @@ public class AddLMVisitor {
              leaderArea = fa;
          }
          return leaderArea;
-     }
-
-     public void serveRetrieveMarker(RetrieveMarker node) {
-         RetrieveMarkerLayoutManager rmlm;
-         rmlm = new RetrieveMarkerLayoutManager(node);
-         currentLMList.add(rmlm);
      }
 
      public void serveCharacter(Character node) {

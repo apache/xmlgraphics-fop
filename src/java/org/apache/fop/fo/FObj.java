@@ -443,10 +443,6 @@ public class FObj extends FONode implements Constants {
     }
 */    
 
-    public String getName() {
-        return null;
-    }
-
     /**
      * Convenience method for validity checking.  Checks if the
      * incoming node is a member of the "%block;" parameter entity
@@ -541,8 +537,16 @@ public class FObj extends FONode implements Constants {
     }
 
     /**
+     * Returns the name of this FO (e.g., "fo:root");
+     * @return the name of the FO
+     */
+    public String getName() {
+        return null;
+    }
+
+    /**
      * Returns the Constants class integer value of this formatting object
-     * @return the integer enumeration of this FO
+     * @return the integer enumeration of this FO (e.g., FO_ROOT)
      */
     public int getNameId() {
         return FO_UNKNOWN;
