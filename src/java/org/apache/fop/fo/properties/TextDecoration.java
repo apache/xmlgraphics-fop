@@ -28,14 +28,13 @@ import org.apache.fop.datatypes.NCName;
 import org.apache.fop.datatypes.None;
 import org.apache.fop.datatypes.PropertyValue;
 import org.apache.fop.datatypes.PropertyValueList;
-import org.apache.fop.datatypes.TextDecorations;
 import org.apache.fop.datatypes.TextDecorator;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.PropNames;
 import org.apache.fop.fo.expr.PropertyException;
 
 public class TextDecoration extends Property  {
-    public static final int dataTypes = COMPLEX | NONE | INHERIT;
+    public static final int dataTypes = COMPLEX | NONE;
 
     public int getDataTypes() {
         return dataTypes;
@@ -53,11 +52,17 @@ public class TextDecoration extends Property  {
         return initialValueType;
     }
 
+    /**
+     * text-decoration cannot be inherited, even though the current value
+     * is passed down to all text-bearing chikdren of a block on which it is
+     * defined.  Just return a NoProperty.
+     * 
+     */
     public PropertyValue getInitialValue(int property)
         throws PropertyException
     {
-        return new TextDecorations
-                            (PropNames.TEXT_DECORATION, NO_DECORATION);
+        return new TextDecorator(
+                PropNames.TEXT_DECORATION, NULL_DECORATION, NULL_DECORATION);
     }
     public static final int inherited = NO;
 
@@ -68,13 +73,14 @@ public class TextDecoration extends Property  {
 
     /** Text decoration constant. */
     public static final byte
-      NO_DECORATION = 0
-         ,UNDERLINE = 1
-          ,OVERLINE = 2
-      ,LINE_THROUGH = 4
-             ,BLINK = 8
+      NULL_DECORATION = -1
+       ,NO_DECORATION = 0
+           ,UNDERLINE = 1
+            ,OVERLINE = 2
+        ,LINE_THROUGH = 4
+               ,BLINK = 8
 
-   ,ALL_DECORATIONS = UNDERLINE | OVERLINE | LINE_THROUGH | BLINK
+     ,ALL_DECORATIONS = UNDERLINE | OVERLINE | LINE_THROUGH | BLINK
                     ;
 
 
