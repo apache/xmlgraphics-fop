@@ -21,6 +21,7 @@ package org.apache.fop.area;
 
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
+import org.apache.fop.area.Area.AreaGeometry;
 
 /**
  * @author pbw
@@ -79,6 +80,11 @@ public class PaddingRectangle extends AreaFrame {
 
     public BorderRectangle getBorders() {
         return borders;
+    }
+
+    public void setContents(AreaGeometry contents) {
+        super.setContents(contents);
+        borders.setContents(this);
     }
 
     /**
