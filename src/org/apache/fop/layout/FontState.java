@@ -73,15 +73,15 @@ public class FontState {
     }
 
     public int getAscender() {
-	return fontSize * metric.getAscender() / 1000;
+	return  metric.getAscender(fontSize) / 1000;
     }
 
     public int getCapHeight() {
-	return fontSize * metric.getCapHeight() / 1000;
+	return metric.getCapHeight(fontSize) / 1000;
     }
 
     public int getDescender() {
-	return fontSize * metric.getDescender() / 1000;
+	return metric.getDescender(fontSize) / 1000;
     }
 
     public String getFontName() {
@@ -109,11 +109,11 @@ public class FontState {
     }
 
     public int getXHeight() {
-	return fontSize * metric.getXHeight() / 1000;
+	return metric.getXHeight(fontSize) / 1000;
     }
 
     public int width(int charnum) {
 	// returns width of given character number in millipoints
-	return (fontSize * metric.width(charnum) / 1000);
+	return (metric.width(charnum, fontSize) / 1000);
     }
 }

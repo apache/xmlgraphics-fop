@@ -763,7 +763,7 @@ public class PDFDocument {
             PDFFontDescriptor pdfdesc = makeFontDescriptor(descriptor);
             font.setDescriptor(pdfdesc);
             font.setWidthMetrics(metrics.getFirstChar(), metrics.getLastChar(),
-                    makeArray(metrics.getWidths()));
+                    makeArray(metrics.getWidths(1)));
             return font;
         }
     }
