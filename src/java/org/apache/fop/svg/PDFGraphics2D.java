@@ -312,14 +312,16 @@ public class PDFGraphics2D extends AbstractGraphics2D {
         AffineTransform at = getTransform();
         Shape b = at.createTransformedShape(bounds);
         b = trans.createTransformedShape(b);
-        Rectangle rect = b.getBounds();
-
-        if (linkType != PDFLink.EXTERNAL) {
-            String pdfdest = "/FitR " + dest;
-            resourceContext.addAnnotation(pdfDoc.makeLink(rect, pageRef, pdfdest));
-        } else {
-            resourceContext.addAnnotation(pdfDoc.makeLink(rect,
-                                                 dest, linkType, 0));
+        if (b != null) {
+            Rectangle rect = b.getBounds();
+    
+            if (linkType != PDFLink.EXTERNAL) {
+                String pdfdest = "/FitR " + dest;
+                resourceContext.addAnnotation(pdfDoc.makeLink(rect, pageRef, pdfdest));
+            } else {
+                resourceContext.addAnnotation(pdfDoc.makeLink(rect,
+                                                     dest, linkType, 0));
+            }
         }
     }
 
