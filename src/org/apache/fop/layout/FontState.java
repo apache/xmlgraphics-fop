@@ -96,6 +96,14 @@ public class FontState {
 	return this.fontWeight;
     }
 
+    public String getFontFamily() {
+	return this.fontFamily;
+    }
+
+    public String getFontStyle() {
+	return this.fontStyle;
+    }
+
     public FontInfo getFontInfo() {
 	return this.fontInfo;
     }
