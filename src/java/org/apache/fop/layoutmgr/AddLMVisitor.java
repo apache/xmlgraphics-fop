@@ -26,7 +26,6 @@ import java.util.List;
 import java.util.ListIterator;
 
 
-import org.apache.fop.apps.Document;
 import org.apache.fop.area.LinkResolver;
 import org.apache.fop.area.PageViewport;
 import org.apache.fop.area.Resolveable;
