@@ -35,7 +35,7 @@ public class DirectPropertyListBuilder extends PropertyListBuilder {
         return ret;
     }
 
-    public class AttrPropertyList extends PropertyList {
+    public static class AttrPropertyList extends PropertyList {
         Attributes attributes;
         AttrPropertyList(Attributes attr) {
             super(null, null, null);

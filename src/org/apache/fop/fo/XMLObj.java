@@ -5,7 +5,7 @@
  * LICENSE file included with these sources.
  */
 
-package org.apache.fop.svg;
+package org.apache.fop.fo;
 
 // FOP
 import org.apache.fop.fo.*;
@@ -13,6 +13,7 @@ import org.apache.fop.layout.Area;
 import org.apache.fop.layout.FontState;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.layout.LinkSet;
+import org.apache.fop.datatypes.IDReferences;
 
 import org.w3c.dom.*;
 import org.xml.sax.Attributes;
@@ -145,6 +146,8 @@ public abstract class XMLObj extends FObj {
         /* return status */
         return new Status(Status.OK);
     }
+
+    public void removeID(IDReferences idReferences) {}
 
     /**
      * These method overrides prevent problems with the different types.

@@ -96,6 +96,7 @@ public class SVGElement extends SVGObj {
             this.marker = 0;
         }
 
+        final Element svgRoot = element;
         /* create an SVG area */
         /* if width and height are zero, get the bounds of the content. */
         DefaultSVGContext dc = new DefaultSVGContext() {
@@ -105,7 +106,7 @@ public class SVGElement extends SVGObj {
             }
 
             public float getViewportWidth(Element e) throws IllegalStateException {
-                if(e == element) {
+                if(e == svgRoot) {
                     ForeignObjectArea foa = (ForeignObjectArea)area;
                     if(!foa.isContentWidthAuto()) {
                         return foa.getContentWidth();
@@ -115,7 +116,7 @@ public class SVGElement extends SVGObj {
             }
 
             public float getViewportHeight(Element e) throws IllegalStateException {
-                if(e == element) {
+                if(e == svgRoot) {
                     ForeignObjectArea foa = (ForeignObjectArea)area;
                     if(!foa.isContentHeightAuto()) {
                         return foa.getContentHeight();
