@@ -21,6 +21,7 @@ package org.apache.fop.traits;
 import org.apache.fop.fo.Constants;
 import org.apache.fop.fo.properties.Property;
 import org.apache.fop.fo.properties.SpaceProperty;
+import org.apache.fop.fonts.Font;
 
 /**
  * Store a single Space property value in simplified form, with all
@@ -66,6 +67,30 @@ public class SpaceVal {
         this.bConditional = bConditional;
         this.bForcing = bForcing;
         this.iPrecedence = iPrecedence;
+    }
+
+    static public SpaceVal makeWordSpacing(Property wordSpacing, SpaceVal letterSpacing, Font fs) {
+        if (wordSpacing.getEnum() == Constants.NORMAL) {
+            // give word spaces the possibility to shrink by a third,
+            // and stretch by a half;
+            int spaceCharIPD = fs.getCharWidth(' ');
+            MinOptMax space = new MinOptMax(-spaceCharIPD / 3, 0, spaceCharIPD / 2);
+            return new SpaceVal(
+                    MinOptMax.add
+                     (space, MinOptMax.multiply(letterSpacing.getSpace(), 2)),
+                     true, true, 0);
+        } else {
+            return new SpaceVal(wordSpacing.getSpace());
+        }        
+    }
+
+    static public SpaceVal makeLetterSpacing(Property letterSpacing) {
+        if (letterSpacing.getEnum() == Constants.NORMAL) {
+            // letter spaces are set to zero (or use different values?)
+            return new SpaceVal(new MinOptMax(0), true, true, 0);
+        } else {
+            return new SpaceVal(letterSpacing.getSpace());
+        }
     }
 
     /**
