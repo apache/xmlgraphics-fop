@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 
-<!-- ======================================================================= 
+<!-- =======================================================================
 
     Instructions for building the buildtools.jar:
 
@@ -12,7 +12,7 @@
   Run "ant -f buildtools.xml" to build a new version of the buildtools jar
 
 ======================================================================= -->
-   
+
 
 <project default="buildtools" basedir=".">
   <target name="init">
@@ -32,22 +32,22 @@
    <target name="compile" depends="init,prepare.src">
      <mkdir dir="${build.dest}"/>
      <javac srcdir="${build.src}"
-	    destdir="${build.dest}"/>
-     
+      destdir="${build.dest}"/>
+
    </target>
 
    <target name="buildtools" depends="clean,init,compile">
      <echo message="Creating the jar file ${buildtools.jar}"/>
      <jar jarfile="${buildtools.jar}"
-	  basedir="${build.dest}"
-	  includes="${tools}/**,${hyph}/**"/>
+    basedir="${build.dest}"
+    includes="${tools}/**,${hyph}/**"/>
    </target>
 
    <target name="prepare.src" depends="prepare.trax">
      <copy todir="${build.src}">
        <fileset dir="${src.dir}"
-	        includes="${tools}/**,${hyph}/**"
-	        excludes="${tools}/anttasks/Fop.java,${tools}/TestConverter.java,${tools}/AreaTreeBuilder.java,${hyph}/Hyphenator.java,**/${trax}"/>
+          includes="${tools}/**,${hyph}/**"
+          excludes="${tools}/anttasks/Fop.java,${tools}/TestConverter.java,${tools}/AreaTreeBuilder.java,${hyph}/Hyphenator.java,**/${trax}"/>
      </copy>
    </target>
 
@@ -55,7 +55,7 @@
      <echo message="JAXP1.1 transforms is present. Installing TRaX support"/>
      <copy todir="${build.src}">
        <fileset dir="${src.dir}"
-	        includes="**/${trax}"/>
+          includes="**/${trax}"/>
      </copy>
    </target>
 

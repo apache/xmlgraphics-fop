@@ -14,7 +14,7 @@
       <include name="fop.jar"/>
     </fileset>
   </path>
-  
+
   <!-- =================================================================== -->
   <!-- Initialization target                                               -->
   <!-- =================================================================== -->
@@ -46,7 +46,7 @@
 
     <property name="main.class" value="org.apache.fop.plan.Main"/>
     <property name="runtime.classpath" value="fop.jar xml-apis.jar xercesImpl-2.2.1.jar xalan-2.4.1.jar batik.jar"/>
-   
+
   </target>
 
   <!-- =================================================================== -->
@@ -73,7 +73,7 @@
   <target name="prepare-src" depends="prepare">
     <!-- copy src files -->
     <copy todir="${build.src}">
-      <fileset dir="${src.dir}" 
+      <fileset dir="${src.dir}"
          excludes="**/Makefile*, **/package.html"/>
     </copy>
     <copy todir="${build.dest}/">
@@ -111,7 +111,7 @@
     <jar jarfile="${build.dir}/${name}.jar"
          basedir="${build.dest}"
          includes="**">
-    <manifest> 
+    <manifest>
         <attribute name="Main-Class" value="${main.class}"/>
         <attribute name="Class-Path" value="${runtime.classpath}"/>
         <attribute name="Implementation-Title" value="${Name}"/>

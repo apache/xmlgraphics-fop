@@ -8,7 +8,7 @@ xml-docs      Fop documentation in xml files and a script to create pdf document
 
 design        UML diagrams showing the Fop design
 graphics      some graphics used by the examples and test files
-examples      a lot of xs:fo example files 
+examples      a lot of xs:fo example files
 examples/fo   some simple examples to get you started
 examples/
   pagination  some simple and some not so simple examples how to use the
