@@ -221,39 +221,6 @@ area tree in the spec) so that this information can be passed to the
 renderer. This is useful for setting the title and organising the groups
 of page sequences.</p>
 </section>
-
-<section>
-  <title>Rendering Area Tree</title>
-<p>
-The rendering of an area tree is done by rendering each page
-to a suitable output. The regions are rendered in order and each
-region is contained by a viewport.
-  </p>
-  <p>
-The relevent structures that will need to be rendered are:
-Page
-Viewport
-Region
-Span
-Block
-Line
-Inline
-  </p>
-  <p>
-A renderer implementation does the following:
-  </p>
-       <ul>
-       <li>render each individual page</li>
-       <li>clip and align child areas to a viewport</li>
-       <li>handle all types of inline area, text, image etc.</li>
-       <li>draw various lines and rectangles</li>
-       </ul>
-  <p>
-An abstract renderer will be able to handle the generic positioning
-of child areas, iterating through areas that have child areas.
-  </p>
-  </section>
-
   </body>
 </document>
 
