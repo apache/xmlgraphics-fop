@@ -53,10 +53,11 @@ package org.apache.fop.datatypes;
 import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.Property;
 import org.apache.fop.fo.PropertyList;
+import org.apache.fop.fo.properties.PropertyMaker;
 
 public class ToBeImplementedProperty extends Property {
 
-    public static class Maker extends Property.Maker {
+    public static class Maker extends PropertyMaker {
 
         public Maker(int propId) {
             super(propId);

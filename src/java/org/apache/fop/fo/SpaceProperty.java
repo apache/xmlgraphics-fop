@@ -53,6 +53,7 @@ package org.apache.fop.fo;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.datatypes.LengthRange;
 import org.apache.fop.datatypes.Space;
+import org.apache.fop.fo.properties.CompoundPropertyMaker;
 
 /**
  * Base class used for handling properties of the fo:space-before and

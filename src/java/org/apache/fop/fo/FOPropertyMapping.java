@@ -56,6 +56,11 @@ import java.util.Map;
 import org.apache.fop.datatypes.ColorType;
 import org.apache.fop.datatypes.LengthBase;
 import org.apache.fop.datatypes.ToBeImplementedProperty;
+import org.apache.fop.fo.properties.CorrespondingPropertyMaker;
+import org.apache.fop.fo.properties.DimensionPropertyMaker;
+import org.apache.fop.fo.properties.IndentPropertyMaker;
+import org.apache.fop.fo.properties.LineHeightPropertyMaker;
+import org.apache.fop.fo.properties.PropertyMaker;
 
 /**
  * This class creates and returns an array of Property.Maker instances
@@ -66,30 +71,30 @@ public class FOPropertyMapping implements Constants {
     private static Map s_htSubPropNames = new HashMap();
     private static Map s_htPropIds = new HashMap();
     
-    private static Property.Maker[] s_generics = 
-                new Property.Maker[PROPERTY_COUNT + 1];
+    private static PropertyMaker[] s_generics = 
+                new PropertyMaker[PROPERTY_COUNT + 1];
     
     // The rest is only used during the building of the s_generics array.
     private Property[] enums = null;
     
-    private Property.Maker genericColor = null;
-    private Property.Maker genericBoolean = null;
-    private Property.Maker genericKeep = null;
-    private Property.Maker genericCondLength = null;    
-    private Property.Maker genericCondPadding = null;
-    private Property.Maker genericPadding = null;
-    private Property.Maker genericCondBorderWidth = null;
-    private Property.Maker genericBorderWidth = null;
-    private Property.Maker genericBorderStyle = null;
-    private Property.Maker genericBreak = null;
-    private Property.Maker genericSpace = null;
+    private PropertyMaker genericColor = null;
+    private PropertyMaker genericBoolean = null;
+    private PropertyMaker genericKeep = null;
+    private PropertyMaker genericCondLength = null;    
+    private PropertyMaker genericCondPadding = null;
+    private PropertyMaker genericPadding = null;
+    private PropertyMaker genericCondBorderWidth = null;
+    private PropertyMaker genericBorderWidth = null;
+    private PropertyMaker genericBorderStyle = null;
+    private PropertyMaker genericBreak = null;
+    private PropertyMaker genericSpace = null;
     
     /**
      * Create the generic property maker templates. These templates
      * are used be the actual makers as a parameter to .useGeneric(...).
      */
     public void createGenerics() {
-        Property.Maker sub;
+        PropertyMaker sub;
         
         genericColor = new ColorTypeProperty.Maker(0);
         genericColor.addKeyword("aliceblue", "#f0f8ff");
@@ -375,7 +380,7 @@ public class FOPropertyMapping implements Constants {
      * @param name  the name of the property maker.
      * @param maker the maker.
      */
-    private static void addPropertyMaker(String name, Property.Maker maker) {
+    private static void addPropertyMaker(String name, PropertyMaker maker) {
         s_generics[maker.getPropId()] = maker;
         s_htPropNames.put(name, new Integer(maker.getPropId()));
         s_htPropIds.put(new Integer(maker.getPropId()), name);        
@@ -410,7 +415,7 @@ public class FOPropertyMapping implements Constants {
      * Return the array of Makers.
      * @return the maker array.
      */
-    public static Property.Maker[] getGenericMappings() {
+    public static PropertyMaker[] getGenericMappings() {
         FOPropertyMapping gp = new FOPropertyMapping();
         // Create the shorthand first, they are referenced by the real properties. 
         gp.createShorthandProperties();
@@ -494,7 +499,7 @@ public class FOPropertyMapping implements Constants {
     }
     
     private void createAccessibilityProperties() {
-        Property.Maker m;
+        PropertyMaker m;
 
         // source-document
         m  = new StringProperty.Maker(PR_SOURCE_DOCUMENT);
@@ -510,7 +515,7 @@ public class FOPropertyMapping implements Constants {
     }
     
     private void createAbsolutePositionProperties() {
-        Property.Maker m;
+        PropertyMaker m;
         LengthProperty.Maker l;
         
         // absolute-position
@@ -552,7 +557,7 @@ public class FOPropertyMapping implements Constants {
     }
         
     private void createAuralProperties() {
-        Property.Maker m;
+        PropertyMaker m;
             
         // azimuth
         m  = new ToBeImplementedProperty.Maker(PR_AZIMUTH);
@@ -664,7 +669,7 @@ public class FOPropertyMapping implements Constants {
     }
         
     private void createBorderPaddingBackgroundProperties() {
-        Property.Maker m;
+        PropertyMaker m;
         BorderWidthPropertyMaker bwm;
         CorrespondingPropertyMaker corr;
         
@@ -1056,7 +1061,7 @@ public class FOPropertyMapping implements Constants {
     }
         
     private void createFontProperties() {
-        Property.Maker m;
+        PropertyMaker m;
 
         // font-family
         m  = new StringProperty.Maker(PR_FONT_FAMILY);
@@ -1113,7 +1118,7 @@ public class FOPropertyMapping implements Constants {
     }
         
     private void createHyphenationProperties() {
-        Property.Maker m;
+        PropertyMaker m;
         
         // country
         m  = new StringProperty.Maker(PR_COUNTRY);
@@ -1161,7 +1166,7 @@ public class FOPropertyMapping implements Constants {
     }
     
     private void createMarginBlockProperties() {
-        Property.Maker m;
+        PropertyMaker m;
         CorrespondingPropertyMaker corr;
             
         // margin-top
@@ -1238,7 +1243,7 @@ public class FOPropertyMapping implements Constants {
     }
     
     private void createMarginInlineProperties() {
-        Property.Maker m;
+        PropertyMaker m;
             
         // space-end
         m  = new SpaceProperty.Maker(PR_SPACE_END);
@@ -1252,7 +1257,7 @@ public class FOPropertyMapping implements Constants {
     }
     
     private void createRelativePosProperties() {
-        Property.Maker m;
+        PropertyMaker m;
             
         // relative-position
         m  = new ToBeImplementedProperty.Maker(PR_RELATIVE_POSITION);
@@ -1262,7 +1267,7 @@ public class FOPropertyMapping implements Constants {
     }
         
     private void createAreaAlignmentProperties() {
-        Property.Maker m;
+        PropertyMaker m;
             
         // alignment-adjust
         m  = new ToBeImplementedProperty.Maker(PR_ALIGNMENT_ADJUST);
@@ -1311,7 +1316,7 @@ public class FOPropertyMapping implements Constants {
     }
     
     private void createAreaDimensionProperties() {
-        Property.Maker m;
+        PropertyMaker m;
         LengthProperty.Maker l;
         DimensionPropertyMaker pdim;
         CorrespondingPropertyMaker corr;
@@ -1453,7 +1458,7 @@ public class FOPropertyMapping implements Constants {
     }
     
     private void createBlockAndLineProperties() {
-        Property.Maker m;
+        PropertyMaker m;
             
         // hyphenation-keep
         m  = new ToBeImplementedProperty.Maker(PR_HYPHENATION_KEEP);
@@ -1573,7 +1578,7 @@ public class FOPropertyMapping implements Constants {
     }
     
     private void createCharacterProperties() {
-        Property.Maker m;
+        PropertyMaker m;
             
         // character
         m  = new CharacterProperty.Maker(PR_CHARACTER);
@@ -1641,7 +1646,7 @@ public class FOPropertyMapping implements Constants {
     }
     
     private void createColorProperties() {
-        Property.Maker m;
+        PropertyMaker m;
             
         // color
         m  = new ColorTypeProperty.Maker(PR_COLOR);
@@ -1669,7 +1674,7 @@ public class FOPropertyMapping implements Constants {
     }
     
     private void createFloatProperties() {
-        Property.Maker m;
+        PropertyMaker m;
             
         // clear
         m  = new ToBeImplementedProperty.Maker(PR_CLEAR);
@@ -1685,7 +1690,7 @@ public class FOPropertyMapping implements Constants {
     }
     
     private void createKeepsAndBreaksProperties() {
-        Property.Maker m;
+        PropertyMaker m;
            
         // break-after
         m  = new EnumProperty.Maker(PR_BREAK_AFTER);
@@ -1732,7 +1737,7 @@ public class FOPropertyMapping implements Constants {
     }
     
     private void createLayoutProperties() {
-        Property.Maker m;
+        PropertyMaker m;
             
         // clip
         m  = new ToBeImplementedProperty.Maker(PR_CLIP);
@@ -1767,8 +1772,8 @@ public class FOPropertyMapping implements Constants {
     }
     
     private void createLeaderAndRuleProperties() {
-        Property.Maker m;
-        Property.Maker sub;
+        PropertyMaker m;
+        PropertyMaker sub;
             
         // leader-alignment
         m  = new EnumProperty.Maker(PR_LEADER_ALIGNMENT);
@@ -1842,7 +1847,7 @@ public class FOPropertyMapping implements Constants {
     }
     
     private void createDynamicProperties() {
-        Property.Maker m;
+        PropertyMaker m;
             
         // active-state
         m  = new ToBeImplementedProperty.Maker(PR_ACTIVE_STATE);
@@ -1930,7 +1935,7 @@ public class FOPropertyMapping implements Constants {
     }
     
     private void createMarkersProperties() {
-        Property.Maker m;
+        PropertyMaker m;
             
         // marker-class-name
         m  = new StringProperty.Maker(PR_MARKER_CLASS_NAME);
@@ -1965,7 +1970,7 @@ public class FOPropertyMapping implements Constants {
     }
     
     private void createNumberToStringProperties() {
-        Property.Maker m;
+        PropertyMaker m;
             
         // format
         m  = new StringProperty.Maker(PR_FORMAT);
@@ -1996,7 +2001,7 @@ public class FOPropertyMapping implements Constants {
     }
     
     private void createPaginationAndLayoutProperties() {
-        Property.Maker m;
+        PropertyMaker m;
         LengthProperty.Maker l;
             
         // blank-or-not-blank
@@ -2124,8 +2129,8 @@ public class FOPropertyMapping implements Constants {
     }
     
     private void createTableProperties() {
-        Property.Maker m;
-        Property.Maker sub;
+        PropertyMaker m;
+        PropertyMaker sub;
             
         // border-after-precedence
         m  = new ToBeImplementedProperty.Maker(PR_BORDER_AFTER_PRECEDENCE);
@@ -2258,7 +2263,7 @@ public class FOPropertyMapping implements Constants {
     }
     
     private void createWritingModeProperties() {
-        Property.Maker m;
+        PropertyMaker m;
             
         // direction
         m  = new ToBeImplementedProperty.Maker(PR_DIRECTION);
@@ -2307,7 +2312,7 @@ public class FOPropertyMapping implements Constants {
     }
     
     private void createMiscProperties() {
-        Property.Maker m;
+        PropertyMaker m;
             
         // content-type
         m  = new ToBeImplementedProperty.Maker(PR_CONTENT_TYPE);
@@ -2365,7 +2370,7 @@ public class FOPropertyMapping implements Constants {
     }
     
     private void createShorthandProperties() {
-        Property.Maker m;
+        PropertyMaker m;
             
         // background
         m  = new ToBeImplementedProperty.Maker(PR_BACKGROUND);

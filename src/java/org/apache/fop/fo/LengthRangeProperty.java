@@ -51,6 +51,7 @@
 package org.apache.fop.fo;
 
 import org.apache.fop.datatypes.LengthRange;
+import org.apache.fop.fo.properties.CompoundPropertyMaker;
 import org.apache.fop.apps.FOPException;
 
 /**

@@ -52,6 +52,7 @@ package org.apache.fop.fo;
 
 import org.apache.fop.datatypes.ColorType;
 import org.apache.fop.fo.expr.Numeric;
+import org.apache.fop.fo.properties.PropertyMaker;
 
 /**
  * Class for handling numeric properties
@@ -61,7 +62,7 @@ public class NumberProperty extends Property {
     /**
      * Inner class for making NumberProperty objects
      */
-    public static class Maker extends Property.Maker {
+    public static class Maker extends PropertyMaker {
 
         /**
          * Constructor for NumberProperty.Maker

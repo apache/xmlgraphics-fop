@@ -53,9 +53,9 @@ package org.apache.fop.fo.expr;
 import java.util.Stack;
 
 import org.apache.fop.fo.Constants;
-import org.apache.fop.fo.Property;
 import org.apache.fop.fo.PropertyList;
 import org.apache.fop.fo.FObj;
+import org.apache.fop.fo.properties.PropertyMaker;
 import org.apache.fop.datatypes.PercentBase;
 
 
@@ -66,7 +66,7 @@ import org.apache.fop.datatypes.PercentBase;
  * built, and the FObj parent of the FObj for which the property is being set.
  */
 public class PropertyInfo {
-    private Property.Maker maker;
+    private PropertyMaker maker;
     private PropertyList plist;
     private FObj fo;
     private Stack stkFunction;    // Stack of functions being evaluated
@@ -77,7 +77,7 @@ public class PropertyInfo {
      * @param plist PropertyList object
      * @param fo FObj
      */
-    public PropertyInfo(Property.Maker maker, PropertyList plist, FObj fo) {
+    public PropertyInfo(PropertyMaker maker, PropertyList plist, FObj fo) {
         this.maker = maker;
         this.plist = plist;
         this.fo = fo;

@@ -52,6 +52,8 @@ package org.apache.fop.fo;
 
 import java.util.Enumeration;
 
+import org.apache.fop.fo.properties.PropertyMaker;
+
 public class GenericShorthandParser implements ShorthandParser {
 
     /**
@@ -76,7 +78,7 @@ public class GenericShorthandParser implements ShorthandParser {
     // Used for: border, border-top, border-right etc
     public Property getValueForProperty(int propId,
                                         ListProperty listProperty,
-                                        Property.Maker maker,
+                                        PropertyMaker maker,
                                         PropertyList propertyList) {
         Property prop = null;
         // Check for keyword "inherit"
@@ -100,7 +102,7 @@ public class GenericShorthandParser implements ShorthandParser {
      */
     protected Property convertValueForProperty(int propId,
                                                ListProperty listProperty,
-                                               Property.Maker maker,
+                                               PropertyMaker maker,
                                                PropertyList propertyList) {
         Property prop = null;
         // Try each of the stored values in turn

@@ -52,6 +52,8 @@ package org.apache.fop.fo;
 
 import java.util.Vector;
 
+import org.apache.fop.fo.properties.PropertyMaker;
+
 /**
  * Superclass for properties that are lists of other properties
  */
@@ -60,7 +62,7 @@ public class ListProperty extends Property {
     /**
      * Inner class for creating instances of ListProperty
      */
-    public static class Maker extends Property.Maker {
+    public static class Maker extends PropertyMaker {
 
         /**
          * @param name name of property for which Maker should be created

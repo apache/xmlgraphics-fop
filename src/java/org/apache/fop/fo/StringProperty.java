@@ -50,6 +50,8 @@
  */
 package org.apache.fop.fo;
 
+import org.apache.fop.fo.properties.PropertyMaker;
+
 /**
  * Exists primarily as a container for its Maker inner class, which is
  * extended by many string-based FO property classes.
@@ -59,7 +61,7 @@ public class StringProperty extends Property {
     /**
      * Inner class for making instances of StringProperty
      */
-    public static class Maker extends Property.Maker {
+    public static class Maker extends PropertyMaker {
 
         /**
          * @param propName name of property for which to create a Maker

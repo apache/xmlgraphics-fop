@@ -48,10 +48,14 @@
  * James Tauber <jtauber@jtauber.com>. For more information on the Apache
  * Software Foundation, please see <http://www.apache.org/>.
  */
-package org.apache.fop.fo;
+package org.apache.fop.fo.properties;
 
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.datatypes.PercentLength;
+import org.apache.fop.fo.FObj;
+import org.apache.fop.fo.LengthProperty;
+import org.apache.fop.fo.Property;
+import org.apache.fop.fo.PropertyList;
 
 /**
  * A maker which calculates the line-height property.

@@ -4,7 +4,7 @@
  *                    The Apache Software License, Version 1.1
  * ============================================================================
  *
- * Copyright (C) 1999-2003 The Apache Software Foundation. All rights reserved.
+ * Copyright (C) 1999-2004 The Apache Software Foundation. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modifica-
  * tion, are permitted provided that the following conditions are met:
@@ -48,10 +48,15 @@
  * James Tauber <jtauber@jtauber.com>. For more information on the Apache
  * Software Foundation, please see <http://www.apache.org/>.
  */
-package org.apache.fop.fo;
+package org.apache.fop.fo.properties;
 
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.datatypes.CompoundDatatype;
+import org.apache.fop.fo.Constants;
+import org.apache.fop.fo.EnumProperty;
+import org.apache.fop.fo.FObj;
+import org.apache.fop.fo.Property;
+import org.apache.fop.fo.PropertyList;
 
 /**
  * @author me
@@ -62,17 +67,17 @@ import org.apache.fop.datatypes.CompoundDatatype;
 /**
  * This class extends Property.Maker with support for sub-properties.  
  */
-public class CompoundPropertyMaker extends Property.Maker {
+public class CompoundPropertyMaker extends PropertyMaker {
     /**
      *  The list of subproperty makers supported by this compound maker.
      */ 
-    private Property.Maker[] subproperties = 
-                    new Property.Maker[Constants.COMPOUND_COUNT];
+    private PropertyMaker[] subproperties = 
+                    new PropertyMaker[Constants.COMPOUND_COUNT];
 
     /**
      *  The first subproperty maker which has a setByShorthand of true.
      */
-    private Property.Maker shorthandMaker = null;
+    private PropertyMaker shorthandMaker = null;
 
     /**
      * Construct an instance of a CompoundPropertyMaker for the given property.
@@ -85,14 +90,14 @@ public class CompoundPropertyMaker extends Property.Maker {
     /**
      * @see org.apache.fop.fo.Property.Maker#useGeneric(Property.Maker)
      */
-    public void useGeneric(Property.Maker generic) {
+    public void useGeneric(PropertyMaker generic) {
         super.useGeneric(generic);
         if (generic instanceof CompoundPropertyMaker) {
             CompoundPropertyMaker compoundGeneric = (CompoundPropertyMaker) generic;
             for (int i = 0; i < Constants.COMPOUND_COUNT; i++) {
-                Property.Maker submaker = compoundGeneric.subproperties[i];
+                PropertyMaker submaker = compoundGeneric.subproperties[i];
                 if (submaker != null) {
-                    addSubpropMaker((Property.Maker) submaker.clone());
+                    addSubpropMaker((PropertyMaker) submaker.clone());
                 }
             }
         }
@@ -102,7 +107,7 @@ public class CompoundPropertyMaker extends Property.Maker {
      * Add a subproperty to this maker.
      * @param subproperty
      */
-    public void addSubpropMaker(Property.Maker subproperty) {
+    public void addSubpropMaker(PropertyMaker subproperty) {
         // Place the base propId in the propId of the subproperty.
         subproperty.propId &= Constants.COMPOUND_MASK;
         subproperty.propId |= this.propId;
@@ -127,7 +132,7 @@ public class CompoundPropertyMaker extends Property.Maker {
      * space.optimum='10pt'.
      * @return the Maker object specified
      */
-    public Property.Maker getSubpropMaker(int subpropId) {
+    public PropertyMaker getSubpropMaker(int subpropId) {
         return subproperties[getSubpropIndex(subpropId)];
     }
     
@@ -202,7 +207,7 @@ public class CompoundPropertyMaker extends Property.Maker {
             Property prop = makeCompound(propertyList, fo);
             CompoundDatatype pval = (CompoundDatatype) prop.getObject();
             for (int i = 0; i < Constants.COMPOUND_COUNT; i++) {
-                Property.Maker submaker = subproperties[i];
+                PropertyMaker submaker = subproperties[i];
                 if (submaker != null && submaker.setByShorthand) {
                     pval.setComponent(submaker.getPropId() & Constants.COMPOUND_MASK, p, false);
                 }
@@ -258,7 +263,7 @@ public class CompoundPropertyMaker extends Property.Maker {
             baseProp = makeCompound(propertyList, fo);
         }
 
-        Property.Maker spMaker = getSubpropMaker(subpropId);
+        PropertyMaker spMaker = getSubpropMaker(subpropId);
 
         if (spMaker != null) {
             Property p = spMaker.make(propertyList, value, fo);
@@ -287,7 +292,7 @@ public class CompoundPropertyMaker extends Property.Maker {
         Property p = makeNewProperty();
         CompoundDatatype data = (CompoundDatatype) p.getObject();
         for (int i = 0; i < Constants.COMPOUND_COUNT; i++) {
-            Property.Maker submaker = subproperties[i];
+            PropertyMaker submaker = subproperties[i];
             if (submaker != null) {
                 Property subprop = submaker.make(propertyList, submaker.defaultValue, parentFO);
                 data.setComponent(submaker.getPropId() & Constants.COMPOUND_MASK, subprop, true);
