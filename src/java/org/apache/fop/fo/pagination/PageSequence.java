@@ -24,11 +24,11 @@ import java.util.HashMap;
 import org.xml.sax.Locator;
 
 import org.apache.fop.apps.FOPException;
+import org.apache.fop.datatypes.Numeric;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.PropertyList;
 import org.apache.fop.fo.ValidationException;
-import org.apache.fop.fo.properties.Property;
 
 /**
  * This provides pagination of flows onto pages. Much of the
@@ -44,7 +44,7 @@ public class PageSequence extends FObj {
     private char groupingSeparator;
     private int groupingSize;
     private String id;
-    private Property initialPageNumber;
+    private Numeric initialPageNumber;
     private int forcePageCount;
     private String masterReference;
     // End of property values
@@ -142,7 +142,7 @@ public class PageSequence extends FObj {
         groupingSeparator = pList.get(PR_GROUPING_SEPARATOR).getCharacter();
         groupingSize = pList.get(PR_GROUPING_SIZE).getNumber().intValue();
         id = pList.get(PR_ID).getString();
-        initialPageNumber = pList.get(PR_INITIAL_PAGE_NUMBER);
+        initialPageNumber = pList.get(PR_INITIAL_PAGE_NUMBER).getNumeric();
         forcePageCount = pList.get(PR_FORCE_PAGE_COUNT).getEnum();
         masterReference = pList.get(PR_MASTER_REFERENCE).getString();
     }
@@ -163,7 +163,7 @@ public class PageSequence extends FObj {
             pageNumberType = initialPageNumber.getEnum();
         } else {
             pageNumberType = EXPLICIT;
-            int pageStart = initialPageNumber.getNumber().intValue();
+            int pageStart = initialPageNumber.getValue();
             this.explicitFirstNumber = (pageStart > 0) ? pageStart : 1;
         }
 

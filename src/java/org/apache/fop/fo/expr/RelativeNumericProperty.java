@@ -175,13 +175,6 @@ public class RelativeNumericProperty extends Property implements Numeric, Length
     }
 
     /**
-     * Return false, since a numeric is never the "auto" enum.
-     */
-    public boolean isAuto() {
-        return false;
-    }
-
-    /**
      * Return a string represention of the expression. Only used for debugging. 
      */
     public String toString() {

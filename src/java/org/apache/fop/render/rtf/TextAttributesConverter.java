@@ -186,11 +186,11 @@ class TextAttributesConverter {
     /*
     private static void attrBlockDimension(FObj fobj, FOPRtfAttributes rtfAttr) {
         Length ipd = fobj.getProperty(Constants.PR_INLINE_PROGRESSION_DIMENSION).getLengthRange().getOptimum().getLength();
-        if (!ipd.isAuto()) {
+        if (ipd.getEnum() != Constants.AUTO) {
             rtfAttr.set(RtfText.FRAME_WIDTH, ipd);
         }
         Length bpd = fobj.getProperty(Constants.PR_BLOCK_PROGRESSION_DIMENSION).getLengthRange().getOptimum().getLength();
-        if (!bpd.isAuto()) {
+        if (bpd.getEnum() != Constants.AUTO) {
             rtfAttr.set(RtfText.FRAME_HEIGHT, bpd);
         }
     }

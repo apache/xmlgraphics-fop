@@ -77,22 +77,22 @@ public class InstreamForeignObjectLM extends LeafNodeLayoutManager {
             // isn't the block-progression-dimension always in the same
             // direction as the line height?
             len = fobj.getBlockProgressionDimension().getOptimum().getLength();
-            if (!len.isAuto()) {
+            if (len.getEnum() != AUTO) {
                 bpd = len.getValue();
             } else {
                 len = fobj.getHeight();
-                if (!len.isAuto()) {
+                if (len.getEnum() != AUTO) {
                     bpd = len.getValue();
                 }
             }
         }
 
         len = fobj.getInlineProgressionDimension().getOptimum().getLength();
-        if (!len.isAuto()) {
+        if (len.getEnum() != AUTO) {
             ipd = len.getValue();
         } else {
             len = fobj.getWidth();
-            if (!len.isAuto()) {
+            if (len.getEnum() != AUTO) {
                 ipd = len.getValue();
             }
         }
@@ -102,7 +102,7 @@ public class InstreamForeignObjectLM extends LeafNodeLayoutManager {
         int cwidth = -1;
         int cheight = -1;
         len = fobj.getContentWidth();
-        if (!len.isAuto()) {
+        if (len.getEnum() != AUTO) {
             /*if(len.scaleToFit()) {
                 if(ipd != -1) {
                     cwidth = ipd;
@@ -111,7 +111,7 @@ public class InstreamForeignObjectLM extends LeafNodeLayoutManager {
             cwidth = len.getValue();
         }
         len = fobj.getContentHeight();
-        if (!len.isAuto()) {
+        if (len.getEnum() != AUTO) {
             /*if(len.scaleToFit()) {
                 if(bpd != -1) {
                     cwidth = bpd;

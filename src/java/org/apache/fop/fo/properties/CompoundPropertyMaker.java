@@ -168,10 +168,8 @@ public class CompoundPropertyMaker extends PropertyMaker {
     protected Property convertProperty(Property p,
                                     PropertyList propertyList,
                                     FObj fo) throws PropertyException {
-        if (!EnumProperty.class.isAssignableFrom(p.getClass())) {
-            // delegate to the subprop maker to do conversions
-            p = shorthandMaker.convertProperty(p, propertyList, fo);
-        }
+        // delegate to the subprop maker to do conversions
+        p = shorthandMaker.convertProperty(p, propertyList, fo);
         
         if (p != null) {
             Property prop = makeCompound(propertyList, fo);

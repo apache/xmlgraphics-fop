@@ -406,10 +406,12 @@ public class PropertyMaker implements Cloneable {
                 // Check for keyword shorthand values to be substituted. 
                 pvalue = checkValueKeywords(value);
                 // Override parsePropertyValue in each subclass of Property.Maker
-                Property p = PropertyParser.parse(pvalue,
+                newProp = PropertyParser.parse(pvalue,
                                                   new PropertyInfo(this,
                                                   propertyList, fo));
-                newProp = convertProperty(p, propertyList, fo);
+            } 
+            if (newProp != null) {
+                newProp = convertProperty(newProp, propertyList, fo);
             }
             if (newProp == null) {
                 throw new org.apache.fop.fo.expr.PropertyException("No conversion defined " + pvalue);

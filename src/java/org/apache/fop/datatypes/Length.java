@@ -27,10 +27,4 @@ public interface Length extends Numeric {
      * @return the length in millipoints
      */
     public int getValue();
-
-    /**
-     * Return true if the length has the "auto" value.
-     * @return true when length is auto.
-     */
-    public boolean isAuto();
 }

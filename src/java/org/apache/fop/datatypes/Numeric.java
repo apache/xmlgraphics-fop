@@ -70,4 +70,9 @@ public interface Numeric {
      * @throws PropertyException
      */
     //Numeric getResolved() throws PropertyException;
+
+    /**
+     * Return the enum value that is stored in this numeric.
+     */
+    public int getEnum();
 }
