@@ -84,7 +84,7 @@ public class BorderAndPadding implements Cloneable {
     /**
      * Return a full copy of the BorderAndPadding information. This clones all
      * padding and border information.
-     * @return The copy.
+     * @see java.lang.Object#clone()
      */
     public Object clone() throws CloneNotSupportedException {
         BorderAndPadding bp = (BorderAndPadding) super.clone();
@@ -122,9 +122,6 @@ public class BorderAndPadding implements Cloneable {
 
     private BorderInfo[] borderInfo = new BorderInfo[4];
     private ResolvedCondLength[] padding = new ResolvedCondLength[4];
-
-    public BorderAndPadding() {
-    }
 
     public void setBorder(int side, int style, CondLength width,
                           ColorType color) {
