@@ -27,6 +27,7 @@ package org.apache.fop.fo.flow;
 import java.util.Arrays;
 import java.util.BitSet;
 import org.apache.fop.apps.FOPException;
+import org.apache.fop.area.Area;
 import org.apache.fop.datastructs.TreeException;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FOPageSeqNode;
@@ -167,6 +168,11 @@ public class FoBlock extends FOPageSeqNode {
         } while (ev != null);
 
         makeSparsePropsSet();
+    }
+
+    public Area getReferenceRectangle() {
+        // TODO
+        return null;
     }
 
 }
