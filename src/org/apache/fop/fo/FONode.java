@@ -2,6 +2,7 @@ package org.apache.fop.fo;
 
 import org.apache.fop.fo.FOTree;
 import org.apache.fop.fo.FOAttributes;
+import org.apache.fop.fo.FObjectNames;
 import org.apache.fop.fo.FOPropertySets;
 import org.apache.fop.fo.expr.PropertyException;
 import org.apache.fop.fo.expr.PropertyParser;
@@ -76,7 +77,13 @@ public class FONode extends FOTree.Node{
     /** The <i>attrSet</i> argument. */
     public final int attrSet;
     /** The <tt>ROBitSet</tt> of the <i>attrSet</i> argument. */
-    protected ROBitSet nodeAttrBitSet;
+    protected ROBitSet attrBitSet;
+    /** The <tt>ROBitSet</tt> of inherited properties for the
+        <i>attrSet</i> argument. */
+    protected ROBitSet inheritedBitSet;
+    /** The <tt>ROBitSet</tt> of non-inherited prperties for the
+        <i>attrSet</i> argument. */
+    protected ROBitSet nonInheritedBitSet;
     /** Ancestor reference area of this FONode. */
     protected FONode ancestorRefArea = null;
 
@@ -100,7 +107,9 @@ public class FONode extends FOTree.Node{
         this.parent = parent;
         this.event = event;
         this.attrSet = attrSet;
-        nodeAttrBitSet = FOPropertySets.getAttrROBitSet(attrSet);
+        attrBitSet = FOPropertySets.getAttrROBitSet(attrSet);
+        inheritedBitSet = FOPropertySets.getInheritedROBitSet(attrSet);
+        nonInheritedBitSet = FOPropertySets.getNonInheritedROBitSet(attrSet);
         xmlevents = foTree.xmlevents;
         namespaces = xmlevents.getNamespaces();
         exprParser = foTree.exprParser;
@@ -110,6 +119,23 @@ public class FONode extends FOTree.Node{
             processAttributes();
         }
         // Set up the remaining properties.
+        for (int prop = inheritedBitSet.nextSetBit(0);
+             prop >= 0;
+             prop = inheritedBitSet.nextSetBit(++prop))
+        {
+            if (parent != null)
+                propertySet[prop] = parent.propertySet[prop];
+            else
+                propertySet[prop] = foTree.getInitialValue(prop);
+        }
+
+        for (int prop = nonInheritedBitSet.nextSetBit(0);
+             prop >= 0;
+             prop = inheritedBitSet.nextSetBit(++prop))
+        {
+            propertySet[prop] = foTree.getInitialValue(prop);
+        }
+        
     }
 
     private void processAttributes() throws FOPException, PropertyException {
@@ -122,43 +148,37 @@ public class FONode extends FOTree.Node{
         }
         for (int propx = 0; propx < numAttrs; propx++) {
             PropertyValue props;
-            int type;
+            int ptype;
             int property;
             int prop = foKeys[propx].intValue();
+            if ( ! attrBitSet.get(prop)) {
+                MessageHandler.log("Ignoring "
+                                   + PropNames.getPropertyName(prop)
+                                   + " on "
+                                   + FObjectNames.getFOName(type)
+                                   + " for attribute set "
+                                   + FOPropertySets.getAttrSetName(attrSet)
+                                   + ".");
+                continue;
+            }
             String attrValue = foAttributes.getFoAttrValue(prop);
             props = handleAttrValue(prop, attrValue);
-            type = props.getType();
-            if (type != PropertyValue.LIST) { 
+            ptype = props.getType();
+            if (ptype != PropertyValue.LIST) { 
                 property = props.getProperty();
-                if ( ! nodeAttrBitSet.get(property)) {
-                    MessageHandler.log("Ignoring property "
-                                       + PropNames.getPropertyName(property)
-                                       + " for attribute set "
-                                       + FOPropertySets.getAttrSetName(attrSet)
-                                       + ".");
-                } else {
-                    stackValue(props);
-                    // Handle corresponding properties here
-                    // Update the propertySet
-                    propertySet[props.getProperty()] = props;
-                }
+                stackValue(props);
+                // Handle corresponding properties here
+                // Update the propertySet
+                propertySet[props.getProperty()] = props;
             } else { // a list
                 PropertyValue value;
                 Iterator propvals = ((PropertyValueList)props).iterator();
                 while (propvals.hasNext()) {
                     value = (PropertyValue)(propvals.next());
                     property = value.getProperty();
-                    if ( ! nodeAttrBitSet.get(property)) {
-                        MessageHandler.log("Ignoring property "
-                                       + PropNames.getPropertyName(property)
-                                       + " for attribute set "
-                                       + FOPropertySets.getAttrSetName(attrSet)
-                                           + ".");
-                    } else {
-                        stackValue(value);
-                        // Handle corresponding properties here
-                        propertySet[value.getProperty()] = value;
-                    }
+                    stackValue(value);
+                    // Handle corresponding properties here
+                    propertySet[value.getProperty()] = value;
                 }
             }
         }
