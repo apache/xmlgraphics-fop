@@ -48,7 +48,6 @@ import org.apache.fop.fo.pagination.Region;
 import org.apache.fop.fo.pagination.RegionBody;
 import org.apache.fop.fo.pagination.SimplePageMaster;
 import org.apache.fop.fo.pagination.StaticContent;
-import org.apache.fop.fo.pagination.Title;
 import org.apache.fop.fo.properties.CommonMarginBlock;
 
 import java.util.List;
@@ -143,29 +142,6 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
     }
 
     /**
-     * Each fo:page-sequence may have an fo:title object.
-     * @return the Title area
-     */
-    private LineArea getTitleArea(Title foTitle) {
-        // get breaks then add areas to title
-        LineArea title = new LineArea();
-
-        ContentLayoutManager clm = new ContentLayoutManager(title);
-        clm.setUserAgent(foTitle.getUserAgent());
-        clm.setAreaTreeHandler(areaTreeHandler);
-
-        // use special layout manager to add the inline areas
-        // to the Title.
-        InlineLayoutManager lm;
-        lm = new InlineLayoutManager(foTitle);
-        clm.addChildLM(lm);
-
-        clm.fillArea(lm);
-
-        return title;
-    }
-
-    /**
      * Start the layout of this page sequence.
      * This completes the layout of the page sequence
      * which creates and adds all the pages to the area tree.
@@ -176,8 +152,12 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
         pageNumberString = pageSeq.makeFormattedPageNumber(currentPageNum);
 
         LineArea title = null;
+
         if (pageSeq.getTitleFO() != null) {
-            title = getTitleArea(pageSeq.getTitleFO());
+            ContentLayoutManager clm = 
+            	new ContentLayoutManager(pageSeq.getTitleFO());
+            clm.setAreaTreeHandler(areaTreeHandler);
+            title = (LineArea) clm.getParentArea(null); // can improve
         }
 
         areaTreeModel.startPageSequence(title);
@@ -201,9 +181,9 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
         }
         // TODO: Don't decrement currentPageNum when no pages are generated
         currentPageNum--;
-        log.debug("Ending layout");
         finishPage();
         pageSeq.getRoot().notifyPageSequenceFinished(currentPageNum, (currentPageNum - startPageNum) + 1);
+        log.debug("Ending layout");
     }
 
     /** @see org.apache.fop.layoutmgr.LayoutManager#isBogus() */
@@ -316,9 +296,9 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
      * @param res the resolvable object that needs resolving
      */
     public void addUnresolvedArea(String id, Resolvable res) {
-        // add unresolved to tree
-        // adds to the page viewport so it can serialize
+        // add to the page viewport so it can serialize
         curPage.addUnresolvedIDRef(id, res);
+        // add unresolved to tree
         areaTreeHandler.addUnresolvedIDRef(id, curPage);
     }
 
@@ -512,19 +492,20 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
         if (region == null) {
             return;
         }
-        StaticContent flow = pageSeq.getStaticContent(region.getRegionName());
-        if (flow == null) {
+        StaticContent sc = pageSeq.getStaticContent(region.getRegionName());
+        if (sc == null) {
             return;
         }
         
         RegionViewport reg = curPage.getPage().getRegionViewport(region.getNameId());
         StaticContentLayoutManager lm;
         try {
-            lm = getStaticContentLayoutManager(flow);
+            lm = (StaticContentLayoutManager)
+            	areaTreeHandler.getLayoutManagerMaker().makeLayoutManager(sc);
         } catch (FOPException e) {
             log.error
                 ("Failed to create a StaticContentLayoutManager for flow "
-                 + flow.getFlowName()
+                 + sc.getFlowName()
                  + "; no static content will be laid out:");
             log.error(e.getMessage());
             return;
@@ -841,20 +822,5 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
                 r.getWritingMode(), absRegVPRect, reldims));
         rr.setIPD(reldims.ipd);
         rr.setBPD(reldims.bpd);
-    }
-
-    /**
-     * @return a StaticContent layout manager
-     */
-    private StaticContentLayoutManager getStaticContentLayoutManager(StaticContent sc)
-        throws FOPException {
-        StaticContentLayoutManager lm;
-        //lm = (StaticContentLayoutManager) staticContentLMs.get(sc.getFlowName());
-        //if (lm == null) {
-            lm = (StaticContentLayoutManager)
-                getAreaTreeHandler().getLayoutManagerMaker().makeLayoutManager(sc);
-            //staticContentLMs.put(sc.getFlowName(), lm);
-        //}
-        return lm;
     }
 }

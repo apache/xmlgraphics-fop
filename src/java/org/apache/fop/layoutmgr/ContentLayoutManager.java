@@ -21,9 +21,11 @@ package org.apache.fop.layoutmgr;
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.Constants;
+import org.apache.fop.fo.pagination.Title;
 import org.apache.fop.fo.flow.Marker;
 import org.apache.fop.area.Area;
 import org.apache.fop.area.AreaTreeHandler;
+import org.apache.fop.area.LineArea;
 import org.apache.fop.area.inline.InlineArea;
 import org.apache.fop.area.Resolvable;
 import org.apache.fop.area.PageViewport;
@@ -63,6 +65,23 @@ public class ContentLayoutManager implements InlineLevelLayoutManager {
      */
     public ContentLayoutManager(Area area) {
         holder = area;
+    }
+
+    /**
+     * Constructor using a fo:title formatting object
+     */
+    public ContentLayoutManager(Title foTitle) {
+        // get breaks then add areas to title
+        holder = new LineArea();
+
+        setUserAgent(foTitle.getUserAgent());
+
+        // use special layout manager to add the inline areas
+        // to the Title.
+        InlineLayoutManager lm;
+        lm = new InlineLayoutManager(foTitle);
+        addChildLM(lm);
+        fillArea(lm);
     }
 
     /**
