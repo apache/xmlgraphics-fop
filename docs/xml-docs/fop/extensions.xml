@@ -12,7 +12,9 @@ and you only need to provide the correct namespace for your embedded
 xml markup.
 </p>
   <s3 title="SVG">
+<p>
 Please see the <jump href="svg.html">SVG page</jump> for more details.
+</p>
   </s3>
   <s3 title="Bookmarks">
      <p>To use this standard Fop extension, you need to add a namespace entry for

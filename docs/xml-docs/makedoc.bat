@@ -8,7 +8,7 @@ echo ----------------
 if "%JAVA_HOME%" == "" goto error
 
 set LIBDIR=..\..\lib
-set LOCALCLASSPATH=%JAVA_HOME%\lib\tools.jar;%JAVA_HOME%\lib\classes.zip;%LIBDIR%\ant.jar;%LIBDIR%\batik.jar;%LIBDIR%\buildtools.jar;%LIBDIR%\xerces-1.2.3.jar;%LIBDIR%\xalan-1.2.2.jar;%LIBDIR%\bsf.jar;%LIBDIR%\jimi-1.0.jar;%LIBDIR%\stylebook.jar;%LIBDIR%\..\build\fop.jar
+set LOCALCLASSPATH=%JAVA_HOME%\lib\tools.jar;%JAVA_HOME%\lib\classes.zip;%LIBDIR%\ant.jar;%LIBDIR%\batik.jar;%LIBDIR%\buildtools.jar;%LIBDIR%\xerces-1.2.3.jar;%LIBDIR%\xalan-1.2.2.jar;%LIBDIR%\bsf.jar;%LIBDIR%\avalon-framework-4.0.jar;%LIBDIR%\logkit-1.0b4.jar;%LIBDIR%\jimi-1.0.jar;%LIBDIR%\stylebook.jar;%LIBDIR%\..\build\fop.jar
 set ANT_HOME=%LIBDIR%
 
 
