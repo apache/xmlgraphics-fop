@@ -481,6 +481,12 @@ implements IRtfParagraphContainer, IRtfListContainer, IRtfTableContainer,
         RtfAttributes attrs = new RtfAttributes();
         attrs.set("intbl");
         
-        return RtfTextrun.getTextrun(this, writer, attrs);
+        RtfTextrun textrun=RtfTextrun.getTextrun(this, writer, attrs);
+
+        //Suppress the very last \par, because the closing \cell applies the
+        //paragraph attributes. 
+        textrun.setSuppressLastPar(true);  
+        
+        return textrun;
     }
 }

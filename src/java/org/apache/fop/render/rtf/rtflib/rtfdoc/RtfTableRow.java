@@ -184,6 +184,12 @@ public class RtfTableRow extends RtfContainer implements ITableAttributes {
         writeAttributes(attrib, ITableAttributes.CELL_BORDER);
         writeAttributes(attrib, BorderAttributesConverter.BORDERS);
 
+        if(attrib.isSet(ITableAttributes.ROW_HEIGHT)) {
+            writeOneAttribute(
+                    ITableAttributes.ROW_HEIGHT,
+                    attrib.getValue(ITableAttributes.ROW_HEIGHT));
+        }
+
         /**
          * Added by Boris POUDEROUS on 07/02/2002
          * in order to get the indexes of the cells preceding a cell that
@@ -227,6 +233,12 @@ public class RtfTableRow extends RtfContainer implements ITableAttributes {
 
         // write X positions of our cells
         int xPos = 0;
+        
+        final Object leftIndent = attrib.getValue(ITableAttributes.ATTR_ROW_LEFT_INDENT);
+        if (leftIndent != null) {
+            xPos = ((Integer)leftIndent).intValue();
+        }
+        
         index = 0;            // Line added by Boris POUDEROUS on 07/02/2002
         for (Iterator it = getChildren().iterator(); it.hasNext();) {
             final RtfElement e = (RtfElement)it.next();

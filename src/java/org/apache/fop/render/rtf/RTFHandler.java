@@ -372,9 +372,11 @@ public class RTFHandler extends FOInputHandler {
     public void startTable(Table tbl) {
         // create an RtfTable in the current table container
         TableContext tableContext = new TableContext(builderContext);
-        RtfAttributes atts = new RtfAttributes();
 
         try {
+            RtfAttributes atts = 
+                    TableAttributesConverter.convertTableAttributes(tbl.properties);
+            
             final IRtfTableContainer tc =
                    (IRtfTableContainer)builderContext.getContainer(IRtfTableContainer.class,
                    true, null);
@@ -499,7 +501,7 @@ public class RTFHandler extends FOInputHandler {
     public void startBody(TableBody tb) {
         try {
             RtfAttributes atts = TableAttributesConverter.convertRowAttributes (tb.properties,
-                   null, null);
+                   null);
 
             RtfTable tbl = (RtfTable)builderContext.getContainer(RtfTable.class, true, this);
             tbl.setHeaderAttribs(atts);
@@ -534,7 +536,7 @@ public class RTFHandler extends FOInputHandler {
             RtfAttributes tblAttribs = tbl.getRtfAttributes();
             RtfAttributes tblRowAttribs = new RtfAttributes();
             RtfAttributes atts = TableAttributesConverter.convertRowAttributes(tr.properties,
-                    null, tbl.getHeaderAttribs());
+                    tbl.getHeaderAttribs());
 
             builderContext.pushContainer(tbl.newTableRow(atts));
 
@@ -577,13 +579,12 @@ public class RTFHandler extends FOInputHandler {
             float width = tctx.getColumnWidth();
 
             // create an RtfTableCell in the current RtfTableRow
-            RtfAttributes atts = TableAttributesConverter.convertCellAttributes(tc.properties,
-                    null);
+            RtfAttributes atts = TableAttributesConverter.convertCellAttributes(tc.properties);
             RtfTableCell cell = row.newTableCell((int)width, atts);
 
             //process number-rows-spanned attribute
             Property p = null;
-            if ((p = tc.properties.get("number-rows-spanned")) != null && false) {
+            if ((p = tc.properties.get("number-rows-spanned")) != null) {
                 // Start vertical merge
                 cell.setVMerge(RtfTableCell.MERGE_START);
 

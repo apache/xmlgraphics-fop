@@ -266,7 +266,7 @@ class TextAttributesConverter {
                 String sValue = f.toString() + "pt";
             
                 rtfAttr.set(
-                        RtfText.LEFT_INDENT_BODY,
+                        RtfText.RIGHT_INDENT_BODY,
                         (int)FoUnitsConverter.getInstance().convertToTwips(sValue));
             } else {
                 rtfAttr.set(RtfText.RIGHT_INDENT_BODY, 0);

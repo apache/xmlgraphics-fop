@@ -70,6 +70,7 @@ import org.apache.fop.render.rtf.rtflib.rtfdoc.RtfExternalGraphic;
  */
 
 public class RtfTextrun extends RtfContainer {
+    private boolean bSuppressLastPar=false;
     
     /**  Class which represents the opening of a RTF group mark.*/
     private class RtfOpenGroupMark extends RtfElement
@@ -204,6 +205,15 @@ public class RtfTextrun extends RtfContainer {
     }
    
     /**
+     * specify, if the last paragraph control word (\par) should be suppressed.
+     * @param bSuppress true, if the last \par should be suppressed
+     * @throws IOException for I/O problems
+     */    
+    public void setSuppressLastPar(boolean bSuppress) {
+        bSuppressLastPar=bSuppress;
+    }
+   
+    /**
      * write RTF code of all our children
      * @throws IOException for I/O problems
      */
@@ -269,7 +279,9 @@ public class RtfTextrun extends RtfContainer {
             boolean bHide=false;
             bHide=bRtfParagraphBreak;
             bHide=bHide &&
-                    (bPrevPar || bFirst || (bLast && lastParagraphBreak!=null && e==lastParagraphBreak) );
+                    (bPrevPar || bFirst || 
+                        (bSuppressLastPar && bLast && lastParagraphBreak!=null && e==lastParagraphBreak)
+                    );
                 
             if( !bHide) {
                 e.writeRtf(); 
