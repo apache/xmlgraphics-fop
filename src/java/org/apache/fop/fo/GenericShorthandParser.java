@@ -52,6 +52,7 @@ package org.apache.fop.fo;
 
 import java.util.Vector;
 import java.util.Enumeration;
+import org.apache.fop.fo.properties.FOPropertyMapping;
 
 public class GenericShorthandParser implements ShorthandParser {
 
@@ -72,7 +73,7 @@ public class GenericShorthandParser implements ShorthandParser {
      */
     protected Property getElement(int index) {
         if (list.size() > index) {
-            return (Property)list.elementAt(index);
+            return (Property) list.elementAt(index);
         } else {
             return null;
         }
@@ -87,7 +88,7 @@ public class GenericShorthandParser implements ShorthandParser {
 
     // Stores 1 to 3 values for border width, style, color
     // Used for: border, border-top, border-right etc
-    public Property getValueForProperty(String propName,
+    public Property getValueForProperty(int propId,
                                         Property.Maker maker,
                                         PropertyList propertyList) {
         Property prop = null;
@@ -95,29 +96,30 @@ public class GenericShorthandParser implements ShorthandParser {
         if (count() == 1) {
             String sval = ((Property)list.elementAt(0)).getString();
             if (sval != null && sval.equals("inherit")) {
-                return propertyList.getFromParent(propName);
+                String name = FOPropertyMapping.getPropertyName(propId);
+                return propertyList.getFromParent(name);
             }
         }
-        return convertValueForProperty(propName, maker, propertyList);
+        return convertValueForProperty(propId, maker, propertyList);
     }
 
 
     /**
      * Converts a property name into a Property
-     * @param propName the String containing the property name
+     * @param propId the property ID in the Constants interface
      * @param maker the Property.Maker to be used in the conversion
      * @param propertyList the PropertyList from which the Property should be
      * extracted
      * @return the Property matching the parameters, or null if not found
      */
-    protected Property convertValueForProperty(String propName,
+    protected Property convertValueForProperty(int propId,
                                                Property.Maker maker,
                                                PropertyList propertyList) {
         Property prop = null;
         // Try each of the stored values in turn
         Enumeration eprop = list.elements();
         while (eprop.hasMoreElements() && prop == null) {
-            Property p = (Property)eprop.nextElement();
+            Property p = (Property) eprop.nextElement();
             prop = maker.convertShorthandProperty(propertyList, p, null);
         }
         return prop;
