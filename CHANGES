@@ -52,6 +52,25 @@ Done since 0.20.4 release
   Submitted by: Stephen Wolke <smwolke@geistig.com>
 - Added a property on the PostScript renderer for switching between PostScript
   Level 2 and 3. Default is Level 3. (Jeremias Maerki)
+- Improved standard conformance for forced page counts (J.Pietschmann)
+- Better error reporting for common problems (invalid page master references,
+  missing table-body elements) (J.Pietschmann)
+- Improved handling of text containing entity references. (J.Pietschmann)
+- Made marker references work for markers not from the current page,
+  with some caveats (J.Pietschmann)
+- Simplification of ASCII85 computation, work around for a JVM bug on Linux
+  (J.Pietschmann)
+- Fixed width calculation for spaces (J.Pietschmann)
+- Fixed problems with setting text decorations on fo:wrapper. (J.Pietschmann)
+- Automatic compilation on Java1.4 (J.Pietschmann)
+- More possiblities to pass data to FOP (J.Pietschmann)
+- Fixed missing Ids for table rows (#12876) (J.Pietschmann)
+- Page number citations are now correctly formatted (#13691) (J.Pietschmann)
+- Text decoration and links now work with hyphenated words. (#4511)
+  (J.Pietschmann)
+- Fixed problems with scrambled and lost related to hyphenation (#6042
+  and a few others). (J.Pietschmann)
+- Fixed wrong space generation related to hyphenation. (J.Pietschmann)
 
 ==============================================================================
 Done since 0.20.3 release
