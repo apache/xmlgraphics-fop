@@ -3,34 +3,34 @@
  * ============================================================================
  *                    The Apache Software License, Version 1.1
  * ============================================================================
- * 
+ *
  * Copyright (C) 1999-2003 The Apache Software Foundation. All rights reserved.
- * 
+ *
  * Redistribution and use in source and binary forms, with or without modifica-
  * tion, are permitted provided that the following conditions are met:
- * 
+ *
  * 1. Redistributions of source code must retain the above copyright notice,
  *    this list of conditions and the following disclaimer.
- * 
+ *
  * 2. Redistributions in binary form must reproduce the above copyright notice,
  *    this list of conditions and the following disclaimer in the documentation
  *    and/or other materials provided with the distribution.
- * 
+ *
  * 3. The end-user documentation included with the redistribution, if any, must
  *    include the following acknowledgment: "This product includes software
  *    developed by the Apache Software Foundation (http://www.apache.org/)."
  *    Alternately, this acknowledgment may appear in the software itself, if
  *    and wherever such third-party acknowledgments normally appear.
- * 
+ *
  * 4. The names "FOP" and "Apache Software Foundation" must not be used to
  *    endorse or promote products derived from this software without prior
  *    written permission. For written permission, please contact
  *    apache@apache.org.
- * 
+ *
  * 5. Products derived from this software may not be called "Apache", nor may
  *    "Apache" appear in their name, without prior written permission of the
  *    Apache Software Foundation.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESSED OR IMPLIED WARRANTIES,
  * INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND
  * FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
@@ -42,12 +42,12 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ============================================================================
- * 
+ *
  * This software consists of voluntary contributions made by many individuals
  * on behalf of the Apache Software Foundation and was originally created by
  * James Tauber <jtauber@jtauber.com>. For more information on the Apache
  * Software Foundation, please see <http://www.apache.org/>.
- */ 
+ */
 package org.apache.fop.pdf;
 
 // Java
@@ -81,7 +81,7 @@ import org.apache.fop.fonts.type1.PFBParser;
 public class PDFFactory {
 
     private PDFDocument document;
-    
+
     /**
      * Creates a new PDFFactory.
      * @param document the parent PDFDocument needed to register the generated
@@ -100,7 +100,7 @@ public class PDFFactory {
     }
 
     /* ========================= structure objects ========================= */
-    
+
     /**
      * Make a /Catalog (Root) object. This object is written in
      * the trailer.
@@ -158,7 +158,7 @@ public class PDFFactory {
 
     /**
      * Make a /Page object. The page is assigned an object number immediately
-     * so references can already be made. The page must be added to the 
+     * so references can already be made. The page must be added to the
      * PDFDocument later using addObject().
      *
      * @param resources resources object to use
@@ -183,7 +183,7 @@ public class PDFFactory {
     }
 
     /* ========================= functions ================================= */
-    
+
     /**
      * Make a Type 0 sampled function
      *
@@ -661,7 +661,7 @@ public class PDFFactory {
      * @param theXUID optional:the extended unique Identifier if used.
      * @param theExtGState optional: the extended graphics state, if used.
      * @param theMatrix Optional:List of Doubles that specify the matrix.
-     * @return the PDF pattern that was created       
+     * @return the PDF pattern that was created
      */
     public PDFPattern makePattern(PDFResourceContext res,
                                   int thePatternType, PDFShading theShading,
@@ -688,7 +688,7 @@ public class PDFFactory {
 
     /**
      * Make a gradient
-     *  
+     *
      * @param res the PDF resource context to add the shading, may be null
      * @param radial if true a radial gradient will be created
      * @param theColorspace the colorspace of the gradient
@@ -732,7 +732,7 @@ public class PDFFactory {
                     getDocument().getColorSpace());
             }
 
-            if (getDocument().getColorSpace() 
+            if (getDocument().getColorSpace()
                     != nextColor.getColorSpace()) {
                 nextColor.setColorSpace(
                     getDocument().getColorSpace());
@@ -753,7 +753,7 @@ public class PDFFactory {
 
         if (radial) {
             if (theCoords.size() == 6) {
-                myShad = makeShading(res, 3, getDocument().getPDFColorSpace(), 
+                myShad = makeShading(res, 3, getDocument().getPDFColorSpace(),
                                      null, null,
                                      false, theCoords, null, myfunky,
                                      null);
@@ -768,16 +768,16 @@ public class PDFFactory {
                 newCoords.add(theCoords.get(1));
                 newCoords.add(new Double(0.0));
 
-                myShad = makeShading(res, 3, getDocument().getPDFColorSpace(), 
+                myShad = makeShading(res, 3, getDocument().getPDFColorSpace(),
                                      null, null,
                                      false, newCoords, null, myfunky,
                                      null);
 
             }
         } else {
-            myShad = makeShading(res, 2, getDocument().getPDFColorSpace(), 
-                                 null, null, 
-                                 false, theCoords, null, myfunky, 
+            myShad = makeShading(res, 2, getDocument().getPDFColorSpace(),
+                                 null, null,
+                                 false, theCoords, null, myfunky,
                                  null);
 
         }
@@ -881,7 +881,7 @@ public class PDFFactory {
         goToReference = gt.referencePDF();
         return goToReference;
     }
-    
+
     /**
      * Create and return a goto pdf document action.
      * This creates a pdf files spec and pdf goto remote action.
@@ -941,7 +941,7 @@ public class PDFFactory {
         return obj;
     }
 
-    
+
 
     /* ========================= fonts ===================================== */
 
@@ -953,7 +953,7 @@ public class PDFFactory {
      */
     public PDFEncoding makeEncoding(String encodingName) {
         PDFEncoding encoding = new PDFEncoding(encodingName);
-        
+
         getDocument().registerObject(encoding);
         return encoding;
     }
@@ -1027,7 +1027,7 @@ public class PDFFactory {
                     new PDFCIDFont(basefont,
                                    cidMetrics.getCIDType(),
                                    cidMetrics.getDefaultWidth(),
-                                   cidMetrics.getSubsetWidths(), sysInfo,
+                                   getSubsetWidths(cidMetrics), sysInfo,
                                    (PDFCIDFontDescriptor)pdfdesc);
                 getDocument().registerObject(cidFont);
 
@@ -1049,6 +1049,19 @@ public class PDFFactory {
         }
     }
 
+    public PDFWArray getSubsetWidths(CIDFont cidFont) {
+        // Create widths for reencoded chars
+        PDFWArray warray = new PDFWArray();
+        int[] tmpWidth = new int[cidFont.usedGlyphsCount];
+
+        for (int i = 0; i < cidFont.usedGlyphsCount; i++) {
+            Integer nw = (Integer)cidFont.usedGlyphsIndex.get(new Integer(i));
+            int nwx = (nw == null) ? 0 : nw.intValue();
+            tmpWidth[i] = cidFont.width[nwx];
+        }
+        warray.addEntry(0, tmpWidth);
+        return warray;
+    }
 
     /**
      * make a /FontDescriptor object
@@ -1100,8 +1113,8 @@ public class PDFFactory {
         if (desc.getFontType() == FontType.OTHER) {
             throw new IllegalArgumentException("Trying to embed unsupported font type: "
                                                 + desc.getFontType());
-        } 
-        
+        }
+
         Typeface tempFont;
         if (desc instanceof LazyFont) {
             tempFont = ((LazyFont)desc).getRealFont();
@@ -1114,7 +1127,7 @@ public class PDFFactory {
                        + desc.getClass().getName());
         }
         CustomFont font = (CustomFont)tempFont;
-        
+
         InputStream in = null;
         try {
             // Get file first
@@ -1123,11 +1136,11 @@ public class PDFFactory {
                     in = getDocument().resolveURI(font.getEmbedFileName());
                 } catch (Exception e) {
                     getDocument().getLogger().error("Failed to embed fontfile: "
-                                       + font.getEmbedFileName() 
+                                       + font.getEmbedFileName()
                                        + "(" + e.getMessage() + ")");
                 }
             }
-    
+
             // Get resource
             if (in == null && font.getEmbedResourceName() != null) {
                 try {
@@ -1141,7 +1154,7 @@ public class PDFFactory {
                                        + "(" + e.getMessage() + ")");
                 }
             }
-    
+
             if (in == null) {
                 return null;
             } else {
@@ -1154,7 +1167,7 @@ public class PDFFactory {
                         TTFSubSetFile subset = new TTFSubSetFile();
                         ContainerUtil.enableLogging(subset,
                             getDocument().getLogger().getChildLogger("fonts"));
-        
+
                         byte[] subsetFont = subset.readFont(reader,
                                              mbfont.getTTCName(), mbfont.getUsedGlyphs());
                         // Only TrueType CID fonts are supported now
@@ -1171,7 +1184,7 @@ public class PDFFactory {
                         embeddedFont = new PDFTTFStream(file.length);
                         ((PDFTTFStream)embeddedFont).setData(file, file.length);
                     }
-                    
+
                     /*
                     embeddedFont.getFilterList().addFilter("flate");
                     if (getDocument().isEncryptionActive()) {
@@ -1179,7 +1192,7 @@ public class PDFFactory {
                     } else {
                         embeddedFont.getFilterList().addFilter("ascii-85");
                     }*/
-                    
+
                     return embeddedFont;
                 } finally {
                     in.close();
@@ -1205,12 +1218,12 @@ public class PDFFactory {
      */
     public PDFStream makeStream(String type, boolean add) {
 
-        // create a PDFStream with the next object number 
+        // create a PDFStream with the next object number
         // and add it to the list of objects
         PDFStream obj = new PDFStream();
         obj.setDocument(getDocument());
         obj.getFilterList().addDefaultFilters(
-                getDocument().getFilterMap(), 
+                getDocument().getFilterMap(),
                 type);
 
         if (add) {
@@ -1230,9 +1243,9 @@ public class PDFFactory {
     public PDFICCStream makePDFICCStream() {
         PDFICCStream iccStream = new PDFICCStream();
         iccStream.getFilterList().addDefaultFilters(
-                getDocument().getFilterMap(), 
+                getDocument().getFilterMap(),
                 PDFFilterList.CONTENT_FILTER);
-        
+
         getDocument().registerObject(iccStream);
         //getDocument().applyEncryption(iccStream);
         return iccStream;
@@ -1248,7 +1261,7 @@ public class PDFFactory {
      */
     public PDFArray makeArray(int[] values) {
         PDFArray array = new PDFArray(values);
-        
+
         getDocument().registerObject(array);
         return array;
     }
@@ -1273,7 +1286,7 @@ public class PDFFactory {
         wanted.addValues(PDFGState.DEFAULT);
         wanted.addValues(settings);
 
-    
+
         PDFGState existing = getDocument().findGState(wanted, current);
         if (existing != null) {
             return existing;
