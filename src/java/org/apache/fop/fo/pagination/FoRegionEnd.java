@@ -60,7 +60,7 @@ import org.apache.fop.datastructs.TreeException;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FOTree;
 import org.apache.fop.fo.FObjectNames;
-import org.apache.fop.xml.FoXMLEvent;
+import org.apache.fop.xml.XMLEvent;
 
 
 /**
@@ -77,7 +77,7 @@ public class FoRegionEnd extends FoRegionStartEnd {
      * @param event the <tt>XMLEvent</tt> that triggered the creation of
      * this node
      */
-    public FoRegionEnd(FOTree foTree, FONode parent, FoXMLEvent event)
+    public FoRegionEnd(FOTree foTree, FONode parent, XMLEvent event)
         throws TreeException, FOPException
     {
         super(foTree, FObjectNames.REGION_END, parent, event);

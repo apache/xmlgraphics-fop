@@ -67,8 +67,7 @@ import org.apache.fop.fo.FOTree;
 import org.apache.fop.fo.FObjectNames;
 import org.apache.fop.fo.PropNames;
 import org.apache.fop.fo.expr.PropertyException;
-import org.apache.fop.xml.FoXMLEvent;
-import org.apache.fop.xml.SyncedFoXmlEventsBuffer;
+import org.apache.fop.xml.SyncedXmlEventsBuffer;
 import org.apache.fop.xml.XMLEvent;
 
 /**
@@ -143,7 +142,7 @@ public class FoLayoutMasterSet extends FONode {
      * this node
      */
     public FoLayoutMasterSet
-        (FOTree foTree, FONode parent, FoXMLEvent event)
+        (FOTree foTree, FONode parent, XMLEvent event)
         throws TreeException, FOPException, PropertyException
     {
         super(foTree, FObjectNames.LAYOUT_MASTER_SET, parent, event,
@@ -161,7 +160,7 @@ public class FoLayoutMasterSet extends FONode {
      * @param event - the layout page-master-set STARTELEMENT event.
      * @throws FOPException
      */
-    public void setupPageMasters(FoXMLEvent event)
+    public void setupPageMasters(XMLEvent event)
             throws FOPException, PropertyException
     {
         FoSimplePageMaster simple;
@@ -170,7 +169,7 @@ public class FoLayoutMasterSet extends FONode {
         FoPageSequenceMaster foPageSeq;
         try {
             do {
-                FoXMLEvent ev =
+                XMLEvent ev =
                     xmlevents.expectStartElement
                         (simpleOrSequenceMaster, XMLEvent.DISCARD_W_SPACE);
                 if (ev == null) break; // No instance of these elements found
@@ -213,9 +212,9 @@ public class FoLayoutMasterSet extends FONode {
                     System.out.println("page-sequence-master ok");
                 } else
                     throw new FOPException
-                            ("Aargh! expectStartElement(events, list)");
+                            ("Error seeking page-masters");
                 // Flush the master event
-                ev = xmlevents.getEndElement(SyncedFoXmlEventsBuffer.DISCARD_EV, ev);
+                ev = xmlevents.getEndElement(SyncedXmlEventsBuffer.DISCARD_EV, ev);
                 namespaces.surrenderEvent(ev);
             } while (true);
         } catch (NoSuchElementException e) {
