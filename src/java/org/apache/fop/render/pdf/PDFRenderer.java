@@ -1073,6 +1073,7 @@ public class PDFRenderer extends PrintRenderer {
      * @see org.apache.fop.render.AbstractRenderer#renderImage(Image, Rectangle2D)
      */
     public void renderImage(Image image, Rectangle2D pos) {
+        endTextObject();
         String url = image.getURL();
         putImage(url, pos);
     }
