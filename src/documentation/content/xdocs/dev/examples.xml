@@ -40,5 +40,25 @@ Embedding images in FO:
   </table>
             </p>
           </section>
+          <section>
+            <title>Instream Foreign Object Examples</title>
+            <p>
+Instream Foreign Object images in FO, there are more on the
+<link href="svg.html">SVG Page</link>:
+  <table>
+    <caption>Images in FO</caption>
+    <tr>
+      <th>description</th>
+      <th>fo file</th>
+      <th>pdf result</th>
+    </tr>
+    <tr>
+      <td>embedding svg in viewport</td>
+      <td><link href="../fo/embed.fo">embed.fo</link></td>
+      <td><link href="../fo/embed.fo.pdf">embed.fo.pdf</link></td>
+    </tr>
+  </table>
+            </p>
+          </section>
   </body>
 </document>
