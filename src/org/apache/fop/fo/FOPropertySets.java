@@ -24,6 +24,7 @@ import org.apache.fop.apps.FOPException;
 import org.apache.fop.fo.FObjectNames;
 import org.apache.fop.fo.PropertySets;
 import org.apache.fop.fo.PropNames;
+import org.apache.fop.fo.FONode;
 import org.apache.fop.datatypes.Ints;
 import org.apache.fop.datastructs.ROIntArray;
 import org.apache.fop.datastructs.ROBitSet;
@@ -39,43 +40,25 @@ public class FOPropertySets {
 
     public static final String packageNamePrefix = "org.apache.fop";
 
-    /**
-     * Constants for the set of attributes of interest with FONodes
-     */
-    public static final int
-              NO_SET = 0
-           ,ROOT_SET = 1
-   ,DECLARATIONS_SET = 2
-         ,LAYOUT_SET = 3
-     ,SEQ_MASTER_SET = 4
-        ,PAGESEQ_SET = 5
-           ,FLOW_SET = 6
-         ,STATIC_SET = 7
-          ,TITLE_SET = 8
-         ,MARKER_SET = 9
-
-           ,LAST_SET = MARKER_SET
-                     ;
-
     public static String getAttrSetName(int attrSet) throws FOPException {
         switch (attrSet) {
-        case ROOT_SET:
+        case FONode.ROOT_SET:
             return "ROOT";
-        case DECLARATIONS_SET:
+        case FONode.DECLARATIONS_SET:
             return "DECLARATIONS";
-        case LAYOUT_SET:
+        case FONode.LAYOUT_SET:
             return "LAYOUT";
-        case SEQ_MASTER_SET:
+        case FONode.SEQ_MASTER_SET:
             return "SEQ_MASTER";
-        case PAGESEQ_SET:
+        case FONode.PAGESEQ_SET:
             return "PAGESEQ";
-        case FLOW_SET:
+        case FONode.FLOW_SET:
             return "FLOW";
-        case STATIC_SET:
+        case FONode.STATIC_SET:
             return "STATIC";
-        case TITLE_SET:
+        case FONode.TITLE_SET:
             return "TITLE";
-        case MARKER_SET:
+        case FONode.MARKER_SET:
             return "MARKER";
         }
         throw new FOPException("Invalid attribute set: " + attrSet);
@@ -85,23 +68,23 @@ public class FOPropertySets {
             throws FOPException
     {
         switch (attrSet) {
-        case ROOT_SET:
+        case FONode.ROOT_SET:
             return allProps;
-        case DECLARATIONS_SET:
+        case FONode.DECLARATIONS_SET:
             return declarationsAll;
-        case LAYOUT_SET:
+        case FONode.LAYOUT_SET:
             return layoutMasterSet;
-        case SEQ_MASTER_SET:
+        case FONode.SEQ_MASTER_SET:
             return seqMasterSet;
-        case PAGESEQ_SET:
+        case FONode.PAGESEQ_SET:
             return pageSeqSet;
-        case FLOW_SET:
+        case FONode.FLOW_SET:
             return flowAllSet;
-        case STATIC_SET:
+        case FONode.STATIC_SET:
             return staticAllSet;
-        case TITLE_SET:
+        case FONode.TITLE_SET:
             return titleAllSet;
-        case MARKER_SET:
+        case FONode.MARKER_SET:
             return markerAllSet;
         }
         throw new FOPException("Invalid attribute set: " + attrSet);
