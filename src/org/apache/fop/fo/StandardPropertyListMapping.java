@@ -159,7 +159,9 @@ public class StandardPropertyListMapping implements PropertyListMapping {
 	propertyTable.put("blank-or-not-blank",BlankOrNotBlank.maker());
 	propertyTable.put("content-width",ContentWidth.maker());
 	propertyTable.put("content-height",ContentHeight.maker());
-
+	propertyTable.put("leader-pattern",LeaderPattern.maker());
+	propertyTable.put("leader-length",LeaderLength.maker());
+  propertyTable.put("rule-style",RuleStyle.maker());
 	builder.addPropertyList(uri, propertyTable); 
     }
 }
