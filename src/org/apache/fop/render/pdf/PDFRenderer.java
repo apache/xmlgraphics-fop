@@ -64,6 +64,7 @@ import org.w3c.dom.Document;
 // Java
 import java.io.IOException;
 import java.io.OutputStream;
+import java.awt.Color;
 import java.awt.geom.Rectangle2D;
 import java.awt.geom.AffineTransform;
 import java.util.HashMap;
@@ -144,7 +145,8 @@ public class PDFRenderer extends PrintRenderer {
     // drawing state
     protected PDFState currentState = null;
 
-    protected PDFColor currentColor;
+    protected PDFColor currentFillColor = new PDFColor(255, 255, 255);
+    protected PDFColor currentStrokeColor = new PDFColor(0, 0, 0);
     protected String currentFontName = "";
     protected int currentFontSize = 0;
     protected int pageHeight;
@@ -464,15 +466,14 @@ public class PDFRenderer extends PrintRenderer {
     protected void drawBackAndBorders(Area block, float startx, float starty, float width, float height) {
         // draw background then border
 
-        closeText();
-
         boolean started = false;
         Trait.Background back;
         back = (Trait.Background)block.getTrait(Trait.BACKGROUND);
         if(back != null) {
             started = true;
+            closeText();
             currentStream.add("ET\n");
-            currentStream.add("q\n");
+            //currentStream.add("q\n");
 
             if (back.color != null) {
                 updateColor(back.color, true, null);
@@ -505,14 +506,16 @@ public class PDFRenderer extends PrintRenderer {
 
             if(!started) {
                 started = true;
+                closeText();
                 currentStream.add("ET\n");
-                currentStream.add("q\n");
+                //currentStream.add("q\n");
             }
 
+            float bwidth = bps.width / 1000f;
             updateColor(bps.color, false, null);
-            currentStream.add(bps.width / 1000f + " w\n");
+            currentStream.add(bwidth + " w\n");
 
-            drawLine(startx, starty, endx, starty);
+            drawLine(startx, starty + bwidth / 2, endx, starty + bwidth / 2);
         }
         bps = (BorderProps)block.getTrait(Trait.BORDER_START);
         if(bps != null) {
@@ -520,14 +523,16 @@ public class PDFRenderer extends PrintRenderer {
 
             if(!started) {
                 started = true;
+                closeText();
                 currentStream.add("ET\n");
-                currentStream.add("q\n");
+                //currentStream.add("q\n");
             }
 
+            float bwidth = bps.width / 1000f;
             updateColor(bps.color, false, null);
-            currentStream.add(bps.width / 1000f + " w\n");
+            currentStream.add(bwidth + " w\n");
 
-            drawLine(startx, starty, startx, endy);
+            drawLine(startx + bwidth / 2, starty, startx + bwidth / 2, endy);
         }
         bps = (BorderProps)block.getTrait(Trait.BORDER_AFTER);
         if(bps != null) {
@@ -536,14 +541,16 @@ public class PDFRenderer extends PrintRenderer {
 
             if(!started) {
                 started = true;
+                closeText();
                 currentStream.add("ET\n");
-                currentStream.add("q\n");
+                //currentStream.add("q\n");
             }
 
+            float bwidth = bps.width / 1000f;
             updateColor(bps.color, false, null);
-            currentStream.add(bps.width / 1000f + " w\n");
+            currentStream.add(bwidth + " w\n");
 
-            drawLine(startx, sy, endx, sy);
+            drawLine(startx, sy - bwidth / 2, endx, sy - bwidth / 2);
         }
         bps = (BorderProps)block.getTrait(Trait.BORDER_END);
         if(bps != null) {
@@ -552,16 +559,18 @@ public class PDFRenderer extends PrintRenderer {
 
             if(!started) {
                 started = true;
+                closeText();
                 currentStream.add("ET\n");
-                currentStream.add("q\n");
+                //currentStream.add("q\n");
             }
 
+            float bwidth = bps.width / 1000f;
             updateColor(bps.color, false, null);
-            currentStream.add(bps.width / 1000f + " w\n");
-            drawLine(sx, starty, sx, endy);
+            currentStream.add(bwidth + " w\n");
+            drawLine(sx - bwidth / 2, starty, sx - bwidth / 2, endy);
         }
         if(started) {
-            currentStream.add("Q\n");
+            //currentStream.add("Q\n");
             currentStream.add("BT\n");
             // font last set out of scope in text section
             currentFontName = "";
@@ -592,13 +601,12 @@ public class PDFRenderer extends PrintRenderer {
 
         CTM ctm = bv.getCTM();
 
-        closeText();
-
         if (bv.getPositioning() == Block.ABSOLUTE) {
 
             currentIPPosition = 0;
             currentBPPosition = 0;
 
+            closeText();
             currentStream.add("ET\n");
 
             if (bv.getClip()) {
@@ -633,6 +641,7 @@ public class PDFRenderer extends PrintRenderer {
                 currentIPPosition = 0;
                 currentBPPosition = 0;
 
+                closeText();
                 currentStream.add("ET\n");
 
                 double[] vals = ctm.toArray();
@@ -646,7 +655,12 @@ public class PDFRenderer extends PrintRenderer {
                 }
             }
 
+            // clip if necessary
             if (bv.getClip()) {
+                if (ctm == null) {
+                    closeText();
+                    currentStream.add("ET\n");
+                }
                 currentStream.add("q\n"); 
                 float x = (float)bv.getXOffset() / 1000f;
                 float y = (float)bv.getYOffset() / 1000f;
@@ -666,12 +680,13 @@ public class PDFRenderer extends PrintRenderer {
         
             if (bv.getClip()) {
                 currentStream.add("Q\n");
+                if (ctm == null) {
+                    currentStream.add("BT\n");
+                }
             }
             if (ctm != null) {
                 currentStream.add("BT\n");
             }
-
-            // clip if necessary
 
             currentIPPosition = saveIP;
             currentBPPosition = saveBP;
@@ -923,25 +938,25 @@ public class PDFRenderer extends PrintRenderer {
     }
 
     private void updateColor(ColorType col, boolean fill, StringBuffer pdf) {
-        PDFColor areaColor = null;
-        //if (this.currentFill instanceof PDFColor) {
-        //    areaColor = (PDFColor)this.currentFill;
-        //}
+        Color newCol = new Color(col.red(), col.green(), col.blue());
+        boolean update = false;
+        if (fill) {
+            update = currentState.setBackColor(newCol);
+        } else {
+            update = currentState.setColor(newCol);
+        }
 
-        if (areaColor == null || areaColor.red() != (double)col.red()
-                || areaColor.green() != (double)col.green()
-                || areaColor.blue() != (double)col.blue()) {
-
-            areaColor = new PDFColor((double)col.red(),
+        if (update) {
+            PDFColor color = new PDFColor((double)col.red(),
                                      (double)col.green(),
                                      (double)col.blue());
 
             closeText();
-            //this.currentFill = areaColor;
+
             if(pdf != null) {
-                pdf.append(areaColor.getColorSpaceOut(fill));
+                pdf.append(color.getColorSpaceOut(fill));
             } else {
-                currentStream.add(areaColor.getColorSpaceOut(fill));
+                currentStream.add(color.getColorSpaceOut(fill));
             }
         }
     }
