@@ -128,7 +128,7 @@ public class FOTree extends Tree implements Runnable {
             foRoot.buildFoTree();
             System.out.println("Back from buildFoTree");
             // Clean up the fo:root event
-            xmlevents.getEndElement(event);
+            event = xmlevents.getEndElement(xmlevents.DISCARD_EV, event);
             // Get the end of document
             xmlevents.getEndDocument();
         } catch (Exception e) {
