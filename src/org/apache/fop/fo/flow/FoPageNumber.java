@@ -27,7 +27,7 @@ import java.util.HashMap;
 import java.util.BitSet;
 
 /**
- * Implements the fo:simple-page-master flow object
+ * Implements the fo:page-number flow object.
  */
 public class FoPageNumber extends FONode {
 

@@ -27,7 +27,7 @@ import java.util.HashMap;
 import java.util.BitSet;
 
 /**
- * Implements the fo:simple-page-master flow object
+ * Implements the fo:table-cell flow object.
  */
 public class FoTableCell extends FONode {
 

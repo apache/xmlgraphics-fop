@@ -27,7 +27,7 @@ import java.util.HashMap;
 import java.util.BitSet;
 
 /**
- * Implements the fo:simple-page-master flow object
+ * Implements the fo:inline-container flow object.
  */
 public class FoInlineContainer extends FONode {
 
