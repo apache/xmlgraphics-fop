@@ -34,6 +34,7 @@ import org.apache.fop.datatypes.FODimension;
 import org.apache.fop.datatypes.Length;
 import org.apache.fop.datatypes.PercentBase;
 import org.apache.fop.traits.MinOptMax;
+import org.apache.fop.traits.SpaceVal;
 
 /**
  * LayoutManager for a block-container FO.
@@ -42,7 +43,7 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager {
     private BlockContainer fobj;
     
     private BlockViewport viewportBlockArea;
-    private Block curBlockArea;
+    private Block referenceArea;
 
     private List childBreaks = new java.util.ArrayList();
 
@@ -54,11 +55,24 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager {
     private Length height;
     private int vpContentIPD;
     private int vpContentBPD;
+    private int usedBPD;
 
     // When viewport should grow with the content.
     private boolean autoHeight = true; 
 
     private int referenceIPD;
+    
+    /* holds the (one-time use) fo:block space-before
+    and -after properties.  Large fo:blocks are split
+    into multiple Area.Blocks to accomodate the subsequent
+    regions (pages) they are placed on.  space-before
+    is applied at the beginning of the first
+    Block and space-after at the end of the last Block
+    used in rendering the fo:block.
+    */
+    //TODO space-before|after: handle space-resolution rules
+    private MinOptMax foBlockSpaceBefore;
+    private MinOptMax foBlockSpaceAfter;
     
     /**
      * Create a new block container layout manager.
@@ -89,7 +103,9 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager {
      */
     protected void initProperties() {
         abProps = fobj.getCommonAbsolutePosition();
- 
+        foBlockSpaceBefore = new SpaceVal(fobj.getCommonMarginBlock().spaceBefore).getSpace();
+        foBlockSpaceAfter = new SpaceVal(fobj.getCommonMarginBlock().spaceAfter).getSpace();
+
         boolean rotated = (fobj.getReferenceOrientation() % 180 != 0);
         if (rotated) {
             height = fobj.getInlineProgressionDimension().getOptimum().getLength();
@@ -100,13 +116,13 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager {
         }
     }
 
+    /** @return the content IPD */
     protected int getRotatedIPD() {
         return fobj.getInlineProgressionDimension().getOptimum().getLength().getValue();
     }
 
     private int getSpaceBefore() {
-        return fobj.getCommonMarginBlock().spaceBefore
-                .getOptimum().getLength().getValue();
+        return foBlockSpaceBefore.opt;
     }
     
     private int getBPIndents() {
@@ -168,7 +184,7 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager {
         contentRectOffsetX += fobj.getCommonMarginBlock().startIndent.getValue();
         double contentRectOffsetY = 0;
         //contentRectOffsetY += fobj.getCommonMarginBlock().startIndent.getValue();
-        contentRectOffsetY += getSpaceBefore();
+        //contentRectOffsetY += getSpaceBefore();
         contentRectOffsetY += fobj.getCommonBorderPaddingBackground().getBorderBeforeWidth(false);
         contentRectOffsetY += fobj.getCommonBorderPaddingBackground().getPaddingBefore(false);
         
@@ -178,7 +194,7 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager {
         relDims = new FODimension(0, 0);
         absoluteCTM = CTM.getCTMandRelDims(fobj.getReferenceOrientation(),
                 fobj.getWritingMode(), rect, relDims);
-        double[] vals = absoluteCTM.toArray();
+        //double[] vals = absoluteCTM.toArray();
 
         MinOptMax stackLimit;
         if (rotated) {
@@ -297,7 +313,7 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager {
      */
     public BreakPoss getAbsoluteBreakPoss(LayoutContext context) {
 
-        LayoutManager curLM ; // currently active LM
+        LayoutManager curLM; // currently active LM
 
         MinOptMax stackSize = new MinOptMax();
         autoHeight = false;
@@ -381,9 +397,10 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager {
         // absolutely positioned areas do not contribute
         // to the normal stacking
         breakPoss.setStackingSize(new MinOptMax(0));
+        usedBPD = stackSize.opt;
 
         //TODO Maybe check for page overflow when autoHeight=true
-        if (!autoHeight & (stackSize.opt > relDims.bpd)) {
+        if (!autoHeight & (usedBPD > relDims.bpd)) {
             log.warn("Contents overflow block-container viewport: clipping");
             if (fobj.getOverflow() == EN_HIDDEN) {
                 clip = true;
@@ -396,9 +413,20 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager {
         return breakPoss;
     }
 
+    /**
+     * @see org.apache.fop.layoutmgr.LayoutManager#addAreas(org.apache.fop.layoutmgr.PositionIterator, org.apache.fop.layoutmgr.LayoutContext)
+     */
     public void addAreas(PositionIterator parentIter,
                          LayoutContext layoutContext) {
         getParentArea(null);
+
+        /* taken from BlockLM, check first if we should use space-before|after traits
+        double adjust = layoutContext.getSpaceAdjust();
+        if (!isAbsoluteOrFixed()) {
+            // if adjusted space before
+            addBlockSpacing(adjust, foBlockSpaceBefore);
+            foBlockSpaceBefore = null;
+        }*/
 
         addID(fobj.getId());
         addMarkers(true, true);
@@ -409,8 +437,8 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager {
         while (parentIter.hasNext()) {
             LeafPosition lfp = (LeafPosition) parentIter.next();
             // Add the block areas to Area
-            PositionIterator breakPosIter =
-              new BreakPossPosIter(childBreaks, iStartPos,
+            PositionIterator breakPosIter 
+                    = new BreakPossPosIter(childBreaks, iStartPos,
                                    lfp.getLeafPos() + 1);
             iStartPos = lfp.getLeafPos() + 1;
             while ((childLM = breakPosIter.getNextChildLM()) != null) {
@@ -421,9 +449,16 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager {
         flush();
         addMarkers(true, true);
 
+        /*
+        if (!isAbsoluteOrFixed()) {
+            // if adjusted space after
+            foBlockSpaceAfter = new SpaceVal(fobj.getCommonMarginBlock().spaceAfter).getSpace();
+            addBlockSpacing(adjust, foBlockSpaceAfter);
+        }*/
+        
         childBreaks.clear();
         viewportBlockArea = null;
-        curBlockArea = null;
+        referenceArea = null;
     }
 
     /**
@@ -434,7 +469,7 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager {
      * @see org.apache.fop.layoutmgr.LayoutManager#getParentArea(Area)
      */
     public Area getParentArea(Area childArea) {
-        if (curBlockArea == null) {
+        if (referenceArea == null) {
             viewportBlockArea = new BlockViewport();
             viewportBlockArea.addTrait(Trait.IS_VIEWPORT_AREA, Boolean.TRUE);
             TraitSetter.addBorders(viewportBlockArea, fobj.getCommonBorderPaddingBackground());
@@ -443,15 +478,20 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager {
                     fobj.getCommonBorderPaddingBackground(),
                     fobj.getCommonMarginBlock());
             
-            viewportBlockArea.setCTM(absoluteCTM);
             viewportBlockArea.setIPD(vpContentIPD);
             if (autoHeight) {
                 viewportBlockArea.setBPD(0);
             } else {
                 viewportBlockArea.setBPD(vpContentBPD);
             }
+            viewportBlockArea.setCTM(absoluteCTM);
             viewportBlockArea.setClip(clip);
-            viewportBlockArea.addTrait(Trait.SPACE_BEFORE, new Integer(getSpaceBefore()));
+            if (getSpaceBefore() != 0) {
+                viewportBlockArea.addTrait(Trait.SPACE_BEFORE, new Integer(getSpaceBefore()));
+            }
+            if (foBlockSpaceAfter.opt != 0) {
+                viewportBlockArea.addTrait(Trait.SPACE_AFTER, new Integer(foBlockSpaceAfter.opt));
+            }
 
             if (abProps.absolutePosition == EN_ABSOLUTE 
                     || abProps.absolutePosition == EN_FIXED) {
@@ -462,8 +502,8 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager {
                 //nop
             }
 
-            curBlockArea = new Block();
-            curBlockArea.addTrait(Trait.IS_REFERENCE_AREA, Boolean.TRUE);
+            referenceArea = new Block();
+            referenceArea.addTrait(Trait.IS_REFERENCE_AREA, Boolean.TRUE);
 
             if (abProps.absolutePosition == EN_ABSOLUTE) {
                 viewportBlockArea.setPositioning(Block.ABSOLUTE);
@@ -473,13 +513,13 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager {
 
             // Set up dimensions
             // Must get dimensions from parent area
-            Area parentArea = parentLM.getParentArea(curBlockArea);
+            /*Area parentArea =*/ parentLM.getParentArea(referenceArea);
             //int referenceIPD = parentArea.getIPD();
-            curBlockArea.setIPD(relDims.ipd);
+            referenceArea.setIPD(relDims.ipd);
             // Get reference IPD from parentArea
             setCurrentArea(viewportBlockArea); // ??? for generic operations
         }
-        return curBlockArea;
+        return referenceArea;
     }
 
     /**
@@ -488,32 +528,48 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager {
      * @see org.apache.fop.layoutmgr.LayoutManager#addChild(Area)
      */
     public void addChild(Area childArea) {
-        if (curBlockArea != null) {
-            curBlockArea.addBlock((Block) childArea);
+        if (referenceArea != null) {
+            referenceArea.addBlock((Block) childArea);
         }
     }
 
+    /**
+     * @see org.apache.fop.layoutmgr.LayoutManager#resetPosition(org.apache.fop.layoutmgr.Position)
+     */
     public void resetPosition(Position resetPos) {
         if (resetPos == null) {
             reset(null);
         }
     }
 
-    /*
+    /** 
      * Force current area to be added to parent area.
+     * @see org.apache.fop.layoutmgr.AbstractLayoutManager#flush()
      */
     protected void flush() {
-        viewportBlockArea.addBlock(curBlockArea, autoHeight);
+        viewportBlockArea.addBlock(referenceArea, autoHeight);
+
+        //Handle display-align now that the used BPD can be determined
+        usedBPD = referenceArea.getAllocBPD();
+        if (!autoHeight & (usedBPD > 0)) {
+            if (fobj.getDisplayAlign() == EN_CENTER) {
+                viewportBlockArea.setCTM(viewportBlockArea.getCTM().multiply(
+                        new CTM().translate(0, (relDims.bpd - usedBPD) / 2)));
+            } else if (fobj.getDisplayAlign() == EN_AFTER) {
+                viewportBlockArea.setCTM(viewportBlockArea.getCTM().multiply(
+                        new CTM().translate(0, (relDims.bpd - usedBPD))));
+            }
+        }
         
         // Fake a 0 height for absolute positioned blocks.
-        int height = viewportBlockArea.getBPD();
+        int saveBPD = viewportBlockArea.getBPD();
         if (viewportBlockArea.getPositioning() == Block.ABSOLUTE) {
             viewportBlockArea.setBPD(0);
         }
         super.flush();
         // Restore the right height.
         if (viewportBlockArea.getPositioning() == Block.ABSOLUTE) {
-            viewportBlockArea.setBPD(height);
+            viewportBlockArea.setBPD(saveBPD);
         }
     }
     

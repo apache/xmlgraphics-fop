@@ -790,7 +790,14 @@ public class PDFRenderer extends PrintRenderer {
 
             currentIPPosition = saveIP;
             currentBPPosition = saveBP;
+            if (spaceBefore != null) {
+                currentBPPosition += spaceBefore.intValue();
+            }
             currentBPPosition += (int)(bv.getAllocBPD());
+            Integer spaceAfter = (Integer)bv.getTrait(Trait.SPACE_AFTER);
+            if (spaceAfter != null) {
+                currentBPPosition += spaceAfter.intValue();
+            }
         }
         currentFontName = saveFontName;
     }
