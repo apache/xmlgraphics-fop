@@ -530,15 +530,12 @@ public class PDFRenderer extends PrintRenderer {
         Rectangle2D viewArea = region.getViewArea();
         float width = (float)(viewArea.getWidth() / 1000f);
         float height = (float)(viewArea.getHeight() / 1000f);
-        /*
-        Trait.Background back;
-        back = (Trait.Background)region.getTrait(Trait.BACKGROUND);
-        */
 
-        if (region.getRegion().getRegionClass() == org.apache.fop.fo.pagination.Region.BODY_CODE)
+        if (region.getRegion().getRegionClass() 
+            == org.apache.fop.fo.pagination.Region.BODY_CODE)
         {   
-            BPMarginOffset = region.getMarginBeforeWidth();
-            IPMarginOffset = region.getMarginStartWidth();
+            BPMarginOffset = region.getBorderAndPaddingWidthBefore();
+            IPMarginOffset = region.getBorderAndPaddingWidthStart();
         }
 
         drawBackAndBorders(region, startx, starty, width, height);
