@@ -19,10 +19,42 @@
  */
 package org.apache.fop.area;
 
+import java.awt.geom.Rectangle2D;
+
 /**
  * @author pbw
  * @version $Revision$ $Name$
  */
-public interface Viewport {
+public interface Viewport extends Cloneable {
+    
+    /**
+     * @return the view area rectangle for this viewport
+     */
+    public abstract Rectangle2D getViewArea();
 
+    /**
+     * @param viewArea to set
+     */
+    public abstract void setViewArea(Rectangle2D viewArea);
+    
+    /**
+     * Sets the reference-area of this viewport/reference pair
+     * @param ref
+     */
+    public abstract void setReferenceArea(ReferenceArea ref);
+    
+    /**
+     * @return the reference-area of this viewport/reference pair
+     */
+    public abstract ReferenceArea getReferenceArea();
+
+    /**
+     * @param clip does this viewport clip its reference area?
+     */
+    public abstract void setClip(boolean clip);
+    
+    /**
+     * @return whether this viewport clips its reference area
+     */
+    public abstract boolean getClip();
 }

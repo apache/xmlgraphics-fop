@@ -20,6 +20,8 @@
 package org.apache.fop.area;
 
 import org.apache.fop.datastructs.Node;
+import org.apache.fop.fo.FONode;
+import org.apache.fop.fo.flow.FoPageSequence;
 
 /**
  * @author pbw
@@ -31,25 +33,16 @@ public class FootnoteRefArea
 
     /**
      * @param parent
-     * @param index
      * @param areaSync
      * @throws IndexOutOfBoundsException
      */
-    public FootnoteRefArea(Node parent, int index, Object areaSync)
+    public FootnoteRefArea(
+            FoPageSequence pageSeq,
+            FONode generatedBy,
+            Node parent,
+            Object areaSync)
         throws IndexOutOfBoundsException {
-        super(parent, index, areaSync);
-        // TODO Auto-generated constructor stub
-    }
-
-    /**
-     * @param parent
-     * @param areaSync
-     * @throws IndexOutOfBoundsException
-     */
-    public FootnoteRefArea(Node parent, Object areaSync)
-        throws IndexOutOfBoundsException {
-        super(parent, areaSync);
-        // TODO Auto-generated constructor stub
+        super(pageSeq, generatedBy, parent, areaSync);
     }
 
 }

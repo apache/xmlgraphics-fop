@@ -20,6 +20,8 @@
 package org.apache.fop.area;
 
 import org.apache.fop.datastructs.Node;
+import org.apache.fop.fo.FONode;
+import org.apache.fop.fo.flow.FoPageSequence;
 
 /**
  * @author pbw
@@ -29,22 +31,13 @@ public class BlockArea extends Area {
 
     /**
      * @param parent of this node
-     * @param index of this in children of parent
-     * @throws IndexOutOfBoundsException
      */
-    public BlockArea(Node parent, int index, Object areaSync)
-    throws IndexOutOfBoundsException {
-        super(parent, index, areaSync);
-        // TODO Auto-generated constructor stub
-    }
-
-    /**
-     * @param parent of this node
-     * @throws IndexOutOfBoundsException
-     */
-    public BlockArea(Node parent, Object areaSync)
-    throws IndexOutOfBoundsException {
-        super(parent, areaSync);
+    public BlockArea(
+            FoPageSequence pageSeq,
+            FONode generatedBy,
+            Node parent,
+            Object sync) {
+        super(pageSeq, generatedBy, parent, sync);
         // TODO Auto-generated constructor stub
     }
 

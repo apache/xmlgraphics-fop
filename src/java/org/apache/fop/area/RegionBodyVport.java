@@ -22,6 +22,8 @@ package org.apache.fop.area;
 import java.awt.geom.Rectangle2D;
 
 import org.apache.fop.datastructs.Node;
+import org.apache.fop.fo.FONode;
+import org.apache.fop.fo.flow.FoPageSequence;
 
 /**
  * @author pbw
@@ -34,9 +36,13 @@ public class RegionBodyVport extends RegionViewport {
      * @param sync
      * @param viewArea
      */
-    public RegionBodyVport(Node parent, Object sync, Rectangle2D viewArea) {
-        super(parent, sync, viewArea);
-        // TODO Auto-generated constructor stub
+    public RegionBodyVport(
+            Rectangle2D viewArea,
+            FoPageSequence pageSeq,
+            FONode generatedBy,
+            Node parent,
+            Object sync) {
+        super(viewArea, pageSeq, generatedBy, parent, sync);
     }
 
 }

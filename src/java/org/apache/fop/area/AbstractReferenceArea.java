@@ -19,6 +19,8 @@
 package org.apache.fop.area;
 
 import org.apache.fop.datastructs.Node;
+import org.apache.fop.fo.FONode;
+import org.apache.fop.fo.flow.FoPageSequence;
 
 /**
  * @author pbw
@@ -32,25 +34,17 @@ public abstract class AbstractReferenceArea
     protected CoordTransformer transformer = new CoordTransformer();
 
     /**
-     * @param parent
-     * @param index
-     * @param areaSync
-     * @throws IndexOutOfBoundsException
+     * @param pageSeq through which this area was generated
+     * @param generatedBy the given <code>FONode</code> generated this
+     * @param parent area of this
+     * @param sync object on which operations in this are synchronized
      */
-    public AbstractReferenceArea(Node parent, int index, Object areaSync)
-        throws IndexOutOfBoundsException {
-        super(parent, index, areaSync);
-        // TODO Auto-generated constructor stub
-    }
-
-    /**
-     * @param parent
-     * @param areaSync
-     * @throws IndexOutOfBoundsException
-     */
-    public AbstractReferenceArea(Node parent, Object areaSync)
-        throws IndexOutOfBoundsException {
-        super(parent, areaSync);
+    public AbstractReferenceArea(
+            FoPageSequence pageSeq,
+            FONode generatedBy,
+            Node parent,
+            Object sync) {
+        super(pageSeq, generatedBy, parent, sync);
         // TODO Auto-generated constructor stub
     }
 
@@ -64,7 +58,9 @@ public abstract class AbstractReferenceArea
      * @param transformer to position this reference area
      */
     public void setCoordTransformer(CoordTransformer transformer) {
-        this.transformer = transformer;
+        synchronized (sync) {
+            this.transformer = transformer;
+        }
     }
 
     /**
@@ -73,7 +69,9 @@ public abstract class AbstractReferenceArea
      * @return the current transformer to position this reference area
      */
     public CoordTransformer getCoordTransformer() {
-        return this.transformer;
+        synchronized (sync) {
+            return this.transformer;
+        }
     }
 
     /**

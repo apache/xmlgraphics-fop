@@ -20,6 +20,8 @@
 package org.apache.fop.area;
 
 import org.apache.fop.datastructs.Node;
+import org.apache.fop.fo.FONode;
+import org.apache.fop.fo.flow.FoPageSequence;
 
 /**
  * @author pbw
@@ -31,22 +33,13 @@ implements ReferenceArea {
 
     /**
      * @param parent
-     * @param index
-     * @throws IndexOutOfBoundsException
      */
-    public BlockContainer(Node parent, int index, Object areaSync)
-        throws IndexOutOfBoundsException {
-        super(parent, index, areaSync);
-        // TODO Auto-generated constructor stub
-    }
-
-    /**
-     * @param parent
-     * @throws IndexOutOfBoundsException
-     */
-    public BlockContainer(Node parent, Object areaSync)
-    throws IndexOutOfBoundsException {
-        super(parent, areaSync);
+    public BlockContainer(
+            FoPageSequence pageSeq,
+            FONode generatedBy,
+            Node parent,
+            Object areaSync) {
+        super(pageSeq, generatedBy, parent, areaSync);
         // TODO Auto-generated constructor stub
     }
 

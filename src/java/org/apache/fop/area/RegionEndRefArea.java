@@ -20,20 +20,27 @@
 package org.apache.fop.area;
 
 import org.apache.fop.datastructs.Node;
+import org.apache.fop.fo.FONode;
+import org.apache.fop.fo.flow.FoPageSequence;
 
 /**
  * @author pbw
  * @version $Revision$ $Name$
  */
-public class RegionEndRefArea extends RegionRefArea implements ReferenceArea {
+public class RegionEndRefArea
+extends RegionRefArea
+implements ReferenceArea {
 
     /**
      * @param parent
      * @param sync
      */
-    public RegionEndRefArea(Node parent, Object sync) {
-        super(parent, sync);
-        // TODO Auto-generated constructor stub
+    public RegionEndRefArea(
+            FoPageSequence pageSeq,
+            FONode generatedBy,
+            Node parent,
+            Object sync) {
+        super(pageSeq, generatedBy, parent, sync);
     }
 
 }
