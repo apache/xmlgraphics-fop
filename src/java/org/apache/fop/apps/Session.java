@@ -94,14 +94,14 @@ import java.util.Map;
  * InputSource and OutputStream, then set the renderer desired, and
  * calling run();
  * <P>
- * Here is an example use of Driver which outputs PDF:
+ * Here is an example use of Session which outputs PDF:
  *
  * <PRE>
- * Driver driver = new Driver(new InputSource (args[0]),
+ * Session session = new Session(new InputSource (args[0]),
  * new FileOutputStream(args[1]));
- * driver.enableLogging(myLogger); //optional
- * driver.setRenderer(RENDER_PDF);
- * driver.run();
+ * session.enableLogging(myLogger); //optional
+ * session.setRenderer(RENDER_PDF);
+ * session.run();
  * </PRE>
  * If neccessary, calling classes can call into the lower level
  * methods to setup and
@@ -109,12 +109,12 @@ import java.util.Map;
  * Renderer to use, the (possibly multiple) ElementMapping(s) to
  * use and the OutputStream to use to output the results of the
  * rendering (where applicable). In the case of the Renderer and
- * ElementMapping(s), the Driver may be supplied either with the
- * object itself, or the name of the class, in which case Driver will
+ * ElementMapping(s), the Session may be supplied either with the
+ * object itself, or the name of the class, in which case Session will
  * instantiate the class itself. The advantage of the latter is it
  * enables runtime determination of Renderer and ElementMapping(s).
  * <P>
- * Once the Driver is set up, the render method
+ * Once the Session is set up, the render method
  * is called. Depending on whether DOM or SAX is being used, the
  * invocation of the method is either render(Document) or
  * buildFOTree(Parser, InputSource) respectively.
@@ -125,19 +125,16 @@ import java.util.Map;
  * Once the FO Tree is built, the format() and render() methods may be
  * called in that order.
  * <P>
- * Here is an example use of Driver which outputs to AWT:
+ * Here is an example use of Session which outputs to AWT:
  *
  * <PRE>
- * Driver driver = new Driver();
- * driver.enableLogging(myLogger); //optional
- * driver.setRenderer(new org.apache.fop.render.awt.AWTRenderer(translator));
- * driver.render(parser, fileInputSource(args[0]));
+ * Session session = new Session();
+ * session.enableLogging(myLogger); //optional
+ * session.setRenderer(new org.apache.fop.render.awt.AWTRenderer(translator));
+ * session.render(parser, fileInputSource(args[0]));
  * </PRE>
- *
- * @deprecated This class is replaced by {@link Session}. See {@link
- * CommandLineStarter#run for a usage example.
  */
-public class Driver implements LogEnabled {
+public class Session implements LogEnabled {
 
     /**
      * Render to PDF. OutputStream must be set
@@ -247,9 +244,9 @@ public class Driver implements LogEnabled {
     }
 
     /**
-     * Main constructor for the Driver class.
+     * Main constructor for the Session class.
      */
-    public Driver() {
+    public Session() {
         stream = null;
     }
 
@@ -258,7 +255,7 @@ public class Driver implements LogEnabled {
      * @param source InputSource to take the XSL-FO input from
      * @param stream Target output stream
      */
-    public Driver(InputSource source, OutputStream stream) {
+    public Session(InputSource source, OutputStream stream) {
         this();
         this.source = source;
         this.stream = stream;
@@ -269,11 +266,11 @@ public class Driver implements LogEnabled {
     }
 
     /**
-     * Initializes the Driver object.
+     * Initializes the Session object.
      */
     public void initialize() {
         if (isInitialized()) {
-            throw new IllegalStateException("Driver already initialized");
+            throw new IllegalStateException("Session already initialized");
         }
         treeBuilder = new FOTreeBuilder();
         treeBuilder.setUserAgent(getUserAgent());
@@ -281,7 +278,7 @@ public class Driver implements LogEnabled {
     }
 
     /**
-     * Optionally sets the FOUserAgent instance for FOP to use. The Driver
+     * Optionally sets the FOUserAgent instance for FOP to use. The Session
      * class sets up its own FOUserAgent if none is set through this method.
      * @param agent FOUserAgent to use
      */
@@ -299,7 +296,7 @@ public class Driver implements LogEnabled {
     }
 
     /**
-     * Provide the Driver instance with a logger. More information on Avalon
+     * Provide the Session instance with a logger. More information on Avalon
      * logging can be found at the
      * <a href="http://avalon.apache.org">Avalon site</a>.
      *
@@ -315,7 +312,7 @@ public class Driver implements LogEnabled {
     }
 
     /**
-     * Provide the Driver instance with a logger.
+     * Provide the Session instance with a logger.
      * @param log the logger. Must not be <code>null</code>.
      * @deprecated Use #enableLogging(Logger) instead.
      */
@@ -339,7 +336,7 @@ public class Driver implements LogEnabled {
     }
 
     /**
-     * Resets the Driver so it can be reused. Property and element
+     * Resets the Session so it can be reused. Property and element
      * mappings are reset to defaults.
      * The output stream is cleared. The renderer is cleared.
      */
@@ -402,7 +399,7 @@ public class Driver implements LogEnabled {
 
         // add mappings from available services
         Iterator providers =
-            Session.providers(org.apache.fop.fo.ElementMapping.class);
+            providers(org.apache.fop.fo.ElementMapping.class);
         if (providers != null) {
             while (providers.hasNext()) {
                 String str = (String)providers.next();
@@ -698,6 +695,93 @@ public class Driver implements LogEnabled {
         } else {
             render(reader, source);
         }
+    }
+
+/*  Following code was stolen from org.apache.batik.util and modified slightly.
+    It does what sun.misc.Service probably does, but it cannot be relied on.
+    Hopefully, it will be part of standard jdk sometime.
+    This code was formerly part of a "Service" class, the contents of which have
+    been extracted here so that they can be used by both Session and the now-
+    deprecated Driver class.
+*/
+
+    /**
+     * Map of services in the classpath
+     */
+    private static Map providerMap = new java.util.Hashtable();
+
+    /**
+     * Loads services present in the class path.
+     */
+    public static synchronized Iterator providers(Class cls) {
+        ClassLoader cl = cls.getClassLoader();
+        // null if loaded by bootstrap class loader
+        if (cl == null) {
+            cl = ClassLoader.getSystemClassLoader();
+        }
+        String serviceFile = "META-INF/services/" + cls.getName();
+
+        // getLogger().debug("File: " + serviceFile);
+
+        List lst = (List)providerMap.get(serviceFile);
+        if (lst != null) {
+            return lst.iterator();
+        }
+
+        lst = new java.util.Vector();
+        providerMap.put(serviceFile, lst);
+
+        Enumeration e;
+        try {
+            e = cl.getResources(serviceFile);
+        } catch (IOException ioe) {
+            return lst.iterator();
+        }
+
+        while (e.hasMoreElements()) {
+            try {
+                java.net.URL u = (java.net.URL)e.nextElement();
+                //getLogger().debug("URL: " + u);
+
+                InputStream is = u.openStream();
+                Reader r = new InputStreamReader(is, "UTF-8");
+                BufferedReader br = new BufferedReader(r);
+
+                String line = br.readLine();
+                while (line != null) {
+                    try {
+                        // First strip any comment...
+                        int idx = line.indexOf('#');
+                        if (idx != -1) {
+                            line = line.substring(0, idx);
+                        }
+
+                        // Trim whitespace.
+                        line = line.trim();
+
+                        // If nothing left then loop around...
+                        if (line.length() == 0) {
+                            line = br.readLine();
+                            continue;
+                        }
+                        // getLogger().debug("Line: " + line);
+
+                        // Try and load the class
+                        // Object obj = cl.loadClass(line).newInstance();
+                        // stick it into our vector...
+                        lst.add(line);
+                    } catch (Exception ex) {
+                        // Just try the next line
+                    }
+
+                    line = br.readLine();
+                }
+            } catch (Exception ex) {
+                // Just try the next file...
+            }
+
+        }
+        return lst.iterator();
     }
 
 }

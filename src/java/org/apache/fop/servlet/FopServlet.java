@@ -71,7 +71,7 @@ import org.apache.avalon.framework.logger.ConsoleLogger;
 import org.apache.avalon.framework.logger.Logger;
 
 //FOP
-import org.apache.fop.apps.Driver;
+import org.apache.fop.apps.Session;
 import org.apache.fop.apps.FOPException;
 
 /**
@@ -233,17 +233,17 @@ public class FopServlet extends HttpServlet {
                 throws FOPException, TransformerException {
 
         //Setup FOP
-        Driver driver = new Driver();
-        driver.enableLogging(this.log);
-        driver.setRenderer(Driver.RENDER_PDF);
-        driver.initialize();
+        Session session = new Session();
+        session.enableLogging(this.log);
+        session.setRenderer(Session.RENDER_PDF);
+        session.initialize();
 
         //Setup output
         ByteArrayOutputStream out = new ByteArrayOutputStream();
-        driver.setOutputStream(out);
+        session.setOutputStream(out);
 
         //Make sure the XSL transformation's result is piped through to FOP
-        Result res = new SAXResult(driver.getContentHandler());
+        Result res = new SAXResult(session.getContentHandler());
 
         //Start the transformation and rendering process
         transformer.transform(src, res);
