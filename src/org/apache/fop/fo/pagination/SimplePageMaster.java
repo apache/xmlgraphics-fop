@@ -9,7 +9,6 @@ package org.apache.fop.fo.pagination;
 
 // FOP
 import org.apache.fop.fo.*;
-import org.apache.fop.messaging.MessageHandler;
 import org.apache.fop.fo.properties.*;
 import org.apache.fop.layout.PageMaster;
 import org.apache.fop.layout.RegionArea;
@@ -58,7 +57,7 @@ public class SimplePageMaster extends FObj {
             this.layoutMasterSet = (LayoutMasterSet)parent;
             masterName = this.properties.get("master-name").getString();
             if (masterName == null) {
-                MessageHandler.errorln("WARNING: simple-page-master does not have "
+                log.error("WARNING: simple-page-master does not have "
                                        + "a master-name and so is being ignored");
             } else {
                 this.layoutMasterSet.addSimplePageMaster(this);
@@ -99,7 +98,7 @@ public class SimplePageMaster extends FObj {
                                           contentRectangleHeight);
             this.pageMaster.addBody(body);
         } else {
-            MessageHandler.errorln("ERROR: simple-page-master must have a region of class "
+            log.error("ERROR: simple-page-master must have a region of class "
                                    + RegionBody.REGION_CLASS);
         }
 

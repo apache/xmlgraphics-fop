@@ -10,7 +10,6 @@ package org.apache.fop.fo.pagination;
 import org.apache.fop.fo.*;
 import org.apache.fop.fo.properties.*;
 import org.apache.fop.apps.FOPException;
-import org.apache.fop.messaging.MessageHandler;
 
 /**
  * Base PageMasterReference class. Provides implementation for handling the
@@ -72,7 +71,7 @@ public abstract class PageMasterReference extends FObj
             _pageSequenceMaster = (PageSequenceMaster)parent;
 
             if (getMasterName() == null) {
-                MessageHandler.errorln("WARNING: " + getElementName()
+                log.error("WARNING: " + getElementName()
                                        + " does not have a master-name and so is being ignored");
             } else {
                 _pageSequenceMaster.addSubsequenceSpecifier(this);

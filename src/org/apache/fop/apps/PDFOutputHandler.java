@@ -125,7 +125,7 @@ public class PDFOutputHandler extends XTFOTreeBuilder
         FontInfo fontInfo = new FontInfo();
         this.renderer.setupFontInfo(fontInfo);
 
-        this.areaTree = new AreaTree();
+//        this.areaTree = new AreaTree();
         this.areaTree.setFontInfo(fontInfo);
 
         format(areaTree);
@@ -137,7 +137,7 @@ public class PDFOutputHandler extends XTFOTreeBuilder
      * render the area tree to the output form
      */
     public void doRender() throws IOException, FOPException {
-        this.renderer.render(areaTree, this.stream);
+        //this.renderer.render(areaTree, this.stream);
     }
 
     // ////////////////////////////////////////////////////////////////////////////////////

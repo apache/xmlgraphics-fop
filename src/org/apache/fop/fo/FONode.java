@@ -16,6 +16,8 @@ import org.apache.fop.layout.LinkSet;
 import org.apache.fop.system.BufferManager;
 import org.apache.fop.fo.flow.Marker;
 
+import org.apache.log.Logger;
+
 // Java
 import java.util.Vector;
 import java.util.Hashtable;
@@ -73,6 +75,8 @@ abstract public class FONode {
     // markers
     protected Hashtable markers;
 
+    protected Logger log;
+
     protected FONode(FObj parent) {
         this.parent = parent;
         if (parent != null) {
@@ -83,6 +87,10 @@ abstract public class FONode {
 
         if (null != parent)
             this.areaClass = parent.areaClass;
+    }
+
+    public void setLogger(Logger logger) {
+        log = logger;
     }
 
     public void setIsInTableCell() {

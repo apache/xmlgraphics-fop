@@ -9,7 +9,6 @@ package org.apache.fop.fo;
 
 // FOP
 import org.apache.fop.fo.*;
-import org.apache.fop.messaging.MessageHandler;
 import org.apache.fop.fo.flow.*;
 import org.apache.fop.fo.properties.*;
 import org.apache.fop.layout.Area;
@@ -25,7 +24,7 @@ public class ToBeImplementedElement extends FObj {
     }
 
     public Status layout(Area area) throws FOPException {
-        MessageHandler.logln("This element \"" + this.name
+        log.debug("This element \"" + this.name
                              + "\" is not yet implemented.");
         return new Status(Status.OK);
     }

@@ -12,7 +12,6 @@ import org.apache.fop.fo.FOTreeBuilder;
 import org.apache.fop.fo.ElementMapping;
 import org.apache.fop.layout.AreaTree;
 import org.apache.fop.render.Renderer;
-import org.apache.fop.messaging.MessageHandler;
 import org.apache.fop.configuration.ConfigurationReader;
 import org.apache.fop.configuration.Configuration;
 import org.apache.fop.tools.DocumentInputSource;
@@ -21,6 +20,12 @@ import org.apache.fop.tools.DocumentReader;
 import org.apache.fop.render.pdf.PDFRenderer;
 
 import org.apache.fop.system.BufferManager;
+
+import org.apache.log.*;
+import org.apache.log.format.*;
+import org.apache.log.output.io.*;
+import org.apache.log.output.*;
+import org.apache.avalon.framework.logger.Loggable;
 
 // DOM
 import org.w3c.dom.Document;
@@ -84,7 +89,7 @@ import java.util.*;
  * driver.render(parser, fileInputSource(args[0]));
  * </PRE>
  */
-public class Driver {
+public class Driver implements Loggable {
 
     /**
      * Render to PDF. OutputStream must be set
@@ -166,6 +171,8 @@ public class Driver {
      */
     private BufferManager _bufferManager;
 
+    private Logger log;
+
     public static final String getParserClassName() {
         String parserClassName = null;
         try {
@@ -193,6 +200,11 @@ public class Driver {
         this();
         _source = source;
         _stream = stream;
+    }
+
+    public void setLogger(Logger logger) {
+        log = logger;
+        _treeBuilder.setLogger(log);
     }
 
     /**
@@ -408,6 +420,24 @@ public class Driver {
      * events but isn't a SAX Parser itself.
      */
     public ContentHandler getContentHandler() {
+        if(log == null) {
+            Hierarchy hierarchy = Hierarchy.getDefaultHierarchy();
+            PatternFormatter formatter = new PatternFormatter(
+               "[%{priority}]: %{message}\n%{throwable}" );
+
+            LogTarget target = null;
+            target = new StreamTarget(System.out, formatter);
+
+            hierarchy.setDefaultLogTarget(target);
+            log = hierarchy.getLoggerFor("fop");
+            log.setPriority(Priority.INFO);
+            log.error("Logger not set");
+        }
+
+        StreamRenderer streamRenderer = new StreamRenderer(_stream, _renderer);
+        streamRenderer.setLogger(log);
+        _treeBuilder.setStreamRenderer(streamRenderer);
+
         return _treeBuilder;
     }
 
@@ -417,9 +447,7 @@ public class Driver {
      */
     public synchronized void render(XMLReader parser, InputSource source)
     throws FOPException {
-        StreamRenderer streamRenderer = new StreamRenderer(_stream, _renderer);
-        _treeBuilder.setStreamRenderer(streamRenderer);
-        parser.setContentHandler(_treeBuilder);
+        parser.setContentHandler(getContentHandler());
         try {
             parser.parse(source);
         } catch (SAXException e) {
@@ -439,13 +467,11 @@ public class Driver {
      */
     public synchronized void render(Document document)
     throws FOPException {
-        StreamRenderer streamRenderer = new StreamRenderer(_stream, _renderer);
-        _treeBuilder.setStreamRenderer(streamRenderer);
 
         try {
             DocumentInputSource source = new DocumentInputSource(document);
             DocumentReader reader = new DocumentReader();
-            reader.setContentHandler(_treeBuilder);
+            reader.setContentHandler(getContentHandler());
             reader.parse(source);
         } catch (SAXException e) {
             throw new FOPException(e);
@@ -462,17 +488,17 @@ public class Driver {
     public void dumpError(Exception e) {
         if (_errorDump) {
             if (e instanceof SAXException) {
-                e.printStackTrace();
+                log.error("", e);
                 if (((SAXException)e).getException() != null) {
-                    ((SAXException)e).getException().printStackTrace();
+                    log.error("", ((SAXException)e).getException());
                 }
             } else if (e instanceof FOPException) {
                 e.printStackTrace();
                 if (((FOPException)e).getException() != null) {
-                    ((FOPException)e).getException().printStackTrace();
+                    log.error("", ((FOPException)e).getException());
                 }
             } else {
-                e.printStackTrace();
+                log.error("", e);
             }
         }
     }

@@ -14,7 +14,8 @@ import org.apache.fop.layout.AreaTree;
 import org.apache.fop.datatypes.IDReferences;
 import org.apache.fop.extensions.ExtensionObj;
 import org.apache.fop.fo.pagination.PageSequence;
-import org.apache.fop.messaging.MessageHandler;
+
+import org.apache.log.Logger;
 
 /**
   This class acts as a bridge between the XML:FO parser
@@ -27,7 +28,7 @@ import org.apache.fop.messaging.MessageHandler;
   FOTreeBuilder when a PageSequence is created,
   and AreaTree when a Page is formatted.<P>
 */
-public class StreamRenderer extends Object {
+public class StreamRenderer {
     private static final boolean MEM_PROFILE_WITH_GC = false;
 
     /**
@@ -81,9 +82,15 @@ public class StreamRenderer extends Object {
     */
     private IDReferences idReferences = new IDReferences();
 
+    private Logger log;
+
     public StreamRenderer(OutputStream outputStream, Renderer renderer) {
         this.outputStream = outputStream;
         this.renderer = renderer;
+    }
+
+    public void setLogger(Logger logger) {
+        log = logger;
     }
 
     public IDReferences getIDReferences() {
@@ -130,20 +137,20 @@ public class StreamRenderer extends Object {
         long memoryNow = runtime.totalMemory() - runtime.freeMemory();
         long memoryUsed = (memoryNow - initialMemory) / 1024L;
 
-        MessageHandler.logln("Initial heap size: " + (initialMemory/1024L) + "Kb");
-        MessageHandler.logln("Current heap size: " + (memoryNow/1024L) + "Kb");
-        MessageHandler.logln("Total memory used: " + memoryUsed + "Kb");
+        log.info("Initial heap size: " + (initialMemory/1024L) + "Kb");
+        log.info("Current heap size: " + (memoryNow/1024L) + "Kb");
+        log.info("Total memory used: " + memoryUsed + "Kb");
 
         if (!MEM_PROFILE_WITH_GC) {
-            MessageHandler.logln("  Memory use is indicative; no GC was performed");
-            MessageHandler.logln("  These figures should not be used comparatively");
+            log.info("  Memory use is indicative; no GC was performed");
+            log.info("  These figures should not be used comparatively");
         }
 
         long timeUsed = System.currentTimeMillis() - startTime;
 
-        MessageHandler.logln("Total time used: " + timeUsed + "ms");
-        MessageHandler.logln("Pages rendererd: " + pageCount);
-        MessageHandler.logln("Avg render time: " + (timeUsed / pageCount) + "ms/page");
+        log.info("Total time used: " + timeUsed + "ms");
+        log.info("Pages rendererd: " + pageCount);
+        log.info("Avg render time: " + (timeUsed / pageCount) + "ms/page");
     }
 
     /**

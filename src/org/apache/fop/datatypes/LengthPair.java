@@ -7,7 +7,6 @@
 
 package org.apache.fop.datatypes;
 
-import org.apache.fop.messaging.MessageHandler;
 import org.apache.fop.fo.Property;
 
 /**

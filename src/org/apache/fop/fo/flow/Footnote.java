@@ -65,7 +65,7 @@ public class Footnote extends FObj {
             }
         }
         if (fbody == null) {
-            MessageHandler.errorln("WARNING: no footnote-body in footnote");
+            log.error("WARNING: no footnote-body in footnote");
         }
         if (area instanceof BlockArea) {}
         return new Status(Status.OK);

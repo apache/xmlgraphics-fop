@@ -13,7 +13,6 @@ import org.apache.fop.fo.properties.*;
 import org.apache.fop.fo.pagination.*;
 import org.apache.fop.layout.Area;
 import org.apache.fop.apps.FOPException;
-import org.apache.fop.messaging.MessageHandler;
 
 // Java
 import java.util.Enumeration;
@@ -78,7 +77,7 @@ public class StaticContent extends Flow {
             Status status;
             if ((status = fo.layout(area)).isIncomplete()) {
                 // in fact all should be laid out and clip, error etc depending on 'overflow'
-                MessageHandler.logln("Warning: Some static content could not fit in the area.");
+                log.debug("Warning: Some static content could not fit in the area.");
                 this.marker = i;
                 if ((i != 0) && (status.getCode() == Status.AREA_FULL_NONE)) {
                     status = new Status(Status.AREA_FULL_SOME);

@@ -18,7 +18,6 @@ import org.apache.fop.fo.FObj;
 import org.apache.fop.layout.FontState;
 import org.apache.fop.layout.LineArea;
 import org.apache.fop.apps.FOPException;
-import org.apache.fop.messaging.MessageHandler;
 
 
 /**
@@ -60,7 +59,7 @@ public class Character extends FObj {
     public Status layout(Area area) throws FOPException {
         BlockArea blockArea;
         if (!(area instanceof BlockArea)) {
-            MessageHandler.errorln("WARNING: currently Character can only be in a BlockArea");
+            log.error("WARNING: currently Character can only be in a BlockArea");
             return new Status(Status.OK);
         }
         blockArea = (BlockArea)area;

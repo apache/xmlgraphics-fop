@@ -8,7 +8,8 @@
 package org.apache.fop.datatypes;
 
 import org.apache.fop.fo.*;
-import org.apache.fop.messaging.MessageHandler;
+
+import org.apache.log.*;
 
 public class ToBeImplementedProperty extends Property {
 
@@ -30,7 +31,8 @@ public class ToBeImplementedProperty extends Property {
     }
 
     public ToBeImplementedProperty(String propName) {
-        MessageHandler.errorln("Warning: property - \"" + propName
+        Logger log = Hierarchy.getDefaultHierarchy().getLoggerFor("fop");
+        log.warn("property - \"" + propName
                                + "\" is not implemented yet.");
     }
 

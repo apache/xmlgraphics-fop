@@ -10,6 +10,8 @@ package org.apache.fop.tools;
 import org.apache.fop.apps.*;
 import org.apache.fop.configuration.*;
 
+import org.apache.log.*;
+
 import java.io.*;
 import java.util.*;
 
@@ -41,6 +43,7 @@ public class TestConverter {
     File compare = null;
     String baseDir = "./";
     Hashtable differ = new Hashtable();
+    private Logger log;
 
     /**
      * This main method can be used to run the test converter from
@@ -77,8 +80,13 @@ public class TestConverter {
         tc.runTests(testFile, "results", null);
     }
 
-    public TestConverter() {}
+    public TestConverter() {
+        setupLogging();
+    }
 
+    private void setupLogging() {
+        log = Hierarchy.getDefaultHierarchy().getLoggerFor("testing");
+    }
 
     public void setOutputPDF(boolean pdf) {
         outputPDF = pdf;
@@ -98,7 +106,7 @@ public class TestConverter {
      * The document is read as a dom and each testcase is covered.
      */
     public Hashtable runTests(String fname, String dest, String compDir) {
-        // System.out.println("running tests in file:" + fname);
+        log.debug("running tests in file:" + fname);
         try {
             if (compDir != null) {
                 compare = new File(baseDir + "/" + compDir);
@@ -122,7 +130,7 @@ public class TestConverter {
             if (testsuite.hasAttributes()) {
                 String profile =
                     testsuite.getAttributes().getNamedItem("profile").getNodeValue();
-                // System.out.println("testing test suite:" + profile);
+                log.debug("testing test suite:" + profile);
             }
 
             NodeList testcases = testsuite.getChildNodes();
@@ -148,7 +156,7 @@ public class TestConverter {
         if (tcase.hasAttributes()) {
             String profile =
                 tcase.getAttributes().getNamedItem("profile").getNodeValue();
-            // System.out.println("testing profile:" + profile);
+            log.debug("testing profile:" + profile);
         }
 
         NodeList cases = tcase.getChildNodes();
@@ -192,8 +200,8 @@ public class TestConverter {
         if (xslNode != null) {
             xsl = xslNode.getNodeValue();
         }
-        // System.out.println("converting xml:" + xml + " and xsl:" +
-        // xsl + " to area tree");
+        log.debug("converting xml:" + xml + " and xsl:" +
+                  xsl + " to area tree");
 
         try {
             File xmlFile = new File(baseDir + "/" + xml);
@@ -202,7 +210,7 @@ public class TestConverter {
                 Configuration.put("baseDir",
                                   xmlFile.getParentFile().toURL().toExternalForm());
             } catch (Exception e) {
-                System.err.println("Error setting base directory");
+                log.error("Error setting base directory");
             }
 
             InputHandler inputHandler = null;
@@ -217,7 +225,9 @@ public class TestConverter {
             XMLReader parser = inputHandler.getParser();
             setParserFeatures(parser);
 
+            Logger logger = log.getChildLogger("fop");
             Driver driver = new Driver();
+            driver.setLogger(logger);
             if (outputPDF) {
                 driver.setRenderer(Driver.RENDER_PDF);
             } else {
@@ -236,7 +246,7 @@ public class TestConverter {
             }
             driver.setOutputStream(new FileOutputStream(new File(destdir,
                                    outname + (outputPDF ? ".pdf" : ".at.xml"))));
-            // System.out.println("ddir:" + destdir + " on:" + outname + ".pdf");
+            log.debug("ddir:" + destdir + " on:" + outname + ".pdf");
             driver.render(parser, inputHandler.getInputSource());
 
             // check difference

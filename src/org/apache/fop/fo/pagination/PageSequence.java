@@ -14,7 +14,6 @@ package org.apache.fop.fo.pagination;
 
 // FOP
 import org.apache.fop.fo.*;
-import org.apache.fop.messaging.MessageHandler;
 import org.apache.fop.fo.properties.*;
 import org.apache.fop.fo.flow.Flow;
 import org.apache.fop.fo.flow.StaticContent;
@@ -200,7 +199,7 @@ public class PageSequence extends FObj {
             throw new FOPException("flow-names must be unique within an fo:page-sequence");
         }
         if (!this.layoutMasterSet.regionNameExists(flow.getFlowName())) {
-            MessageHandler.errorln("WARNING: region-name '"
+            log.error("WARNING: region-name '"
                                    + flow.getFlowName()
                                    + "' doesn't exist in the layout-master-set.");
         }
@@ -273,7 +272,7 @@ public class PageSequence extends FObj {
             currentPage.setFormattedNumber(formattedPageNumber);
             this.root.setRunningPageNumberCounter(this.currentPageNumber);
 
-            MessageHandler.log(" [" + currentPageNumber);
+            log.info(" [" + currentPageNumber);
 
             if ((status.getCode() == Status.FORCE_PAGE_BREAK_EVEN)
                 && ((currentPageNumber % 2) == 1)) {}
@@ -286,7 +285,7 @@ public class PageSequence extends FObj {
                 Flow flow = getCurrentFlow(RegionBody.REGION_CLASS);
 
                 if (null == flow) {
-                    MessageHandler.errorln("No flow found for region-body "
+                    log.error("No flow found for region-body "
                                            + "in page-master '"
                                            + currentPageMasterName + "'");
                     break;
@@ -302,7 +301,7 @@ public class PageSequence extends FObj {
             currentPage.setPageSequence(this);
             formatStaticContent(areaTree);
 
-            MessageHandler.log("]");
+            log.info("]");
             areaTree.addPage(currentPage);
             this.pageCount++;    // used for 'force-page-count' calculations
         }
@@ -311,8 +310,6 @@ public class PageSequence extends FObj {
         forcePage(areaTree, firstAvailPageNumber);
 
         currentPage = null;
-
-        MessageHandler.logln("");
     }
 
     /**
@@ -415,7 +412,7 @@ public class PageSequence extends FObj {
             AreaContainer beforeArea = currentPage.getBefore();
             ((StaticContent)flow).layout(area, region);
         } else {
-            MessageHandler.errorln("WARNING: " + region.getName()
+            log.error("WARNING: " + region.getName()
                                    + " only supports static-content flows currently. Cannot use flow named '"
                                    + flow.getFlowName() + "'");
         }
@@ -479,7 +476,7 @@ public class PageSequence extends FObj {
             SubSequenceSpecifier nextSubsequence =
                 getNextSubsequence(sequenceMaster);
             if (nextSubsequence == null) {
-                MessageHandler.errorln("\nWARNING: Page subsequences exhausted. Using previous subsequence.");
+                log.error("\nWARNING: Page subsequences exhausted. Using previous subsequence.");
                 thisIsFirstPage =
                     true;    // this becomes the first page in the new (old really) page master
                 currentSubsequence.reset();
@@ -674,12 +671,12 @@ public class PageSequence extends FObj {
                 currentPage.setFormattedNumber(formattedPageNumber);
                 currentPage.setPageSequence(this);
                 formatStaticContent(areaTree);
-                MessageHandler.log("[forced-" + firstAvailPageNumber + "]");
+                log.debug("[forced-" + firstAvailPageNumber + "]");
                 areaTree.addPage(currentPage);
                 this.root.setRunningPageNumberCounter(this.currentPageNumber);
                 this.isForcing = false;
             } catch (FOPException fopex) {
-                MessageHandler.log("'force-page-count' failure");
+                log.debug("'force-page-count' failure");
             }
         }
     }

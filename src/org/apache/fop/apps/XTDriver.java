@@ -10,7 +10,6 @@ package org.apache.fop.apps;
 // FOP
 import org.apache.fop.fo.XTFOTreeBuilder;
 import org.apache.fop.fo.ElementMapping;
-import org.apache.fop.fo.PropertyListMapping;
 import org.apache.fop.layout.AreaTree;
 import org.apache.fop.layout.FontInfo;
 import org.apache.fop.render.Renderer;
@@ -321,7 +320,7 @@ public class XTDriver {
         FontInfo fontInfo = new FontInfo();
         this.renderer.setupFontInfo(fontInfo);
 
-        this.areaTree = new AreaTree();
+        //this.areaTree = new AreaTree();
         this.areaTree.setFontInfo(fontInfo);
 
         this.treeBuilder.format(areaTree);
@@ -331,7 +330,7 @@ public class XTDriver {
      * render the area tree to the output form
      */
     public void render() throws IOException, FOPException {
-        this.renderer.render(areaTree, this.stream);
+        //this.renderer.render(areaTree, this.stream);
     }
 
 }

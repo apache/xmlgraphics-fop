@@ -10,7 +10,6 @@ package org.apache.fop.fo.pagination;
 import org.apache.fop.fo.*;
 import org.apache.fop.fo.properties.*;
 import org.apache.fop.apps.FOPException;
-import org.apache.fop.messaging.MessageHandler;
 
 public class ConditionalPageMasterReference extends FObj {
 
@@ -75,7 +74,7 @@ public class ConditionalPageMasterReference extends FObj {
             break;
         case PagePosition.LAST:
             // how the hell do you know at this point?
-            MessageHandler.log("LAST PagePosition NYI");
+            log.debug("LAST PagePosition NYI");
             okOnPagePosition = true;
             break;
         case PagePosition.REST:
@@ -148,7 +147,7 @@ public class ConditionalPageMasterReference extends FObj {
                 (RepeatablePageMasterAlternatives)parent;
 
             if (getMasterName() == null) {
-                MessageHandler.errorln("WARNING: single-page-master-reference"
+                log.error("WARNING: single-page-master-reference"
                                        + "does not have a master-name and so is being ignored");
             } else {
                 this.repeatablePageMasterAlternatives.addConditionalPageMasterReference(this);

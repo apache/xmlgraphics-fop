@@ -9,7 +9,6 @@ package org.apache.fop.fo.flow;
 
 // FOP
 import org.apache.fop.fo.*;
-import org.apache.fop.messaging.MessageHandler;
 import org.apache.fop.fo.pagination.*;
 import org.apache.fop.datatypes.*;
 import org.apache.fop.fo.properties.*;
@@ -105,7 +104,7 @@ public class PageNumberCitation extends FObj {
 
     public Status layout(Area area) throws FOPException {
         if (!(area instanceof BlockArea)) {
-            MessageHandler.errorln("WARNING: page-number-citation outside block area");
+            log.error("WARNING: page-number-citation outside block area");
             return new Status(Status.OK);
         }
 

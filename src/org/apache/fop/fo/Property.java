@@ -7,7 +7,6 @@
 
 package org.apache.fop.fo;
 
-import org.apache.fop.messaging.MessageHandler;
 import org.apache.fop.datatypes.*;
 import org.apache.fop.fo.expr.Numeric;
 import org.apache.fop.fo.expr.PropertyParser;
@@ -15,6 +14,8 @@ import org.apache.fop.fo.expr.PropertyInfo;
 import org.apache.fop.fo.expr.PropertyException;
 import org.apache.fop.apps.FOPException;
 import java.util.Vector;
+
+import org.apache.log.Logger;
 
 public class Property {
 
@@ -131,8 +132,8 @@ public class Property {
                     return setSubprop(baseProp, partName, p);
                 }
             } else {
-                MessageHandler.errorln("WARNING: compound property component "
-                                       + partName + " unknown.");
+                //MessageHandler.errorln("WARNING: compound property component "
+                //                       + partName + " unknown.");
             }
             return baseProp;
         }
@@ -187,9 +188,9 @@ public class Property {
                 }
                 return pret;
             } catch (org.apache.fop.fo.expr.PropertyException propEx) {
-                MessageHandler.errorln("Error in " + propName
-                                       + " property value '" + value + "': "
-                                       + propEx);
+                //MessageHandler.errorln("Error in " + propName
+                //                       + " property value '" + value + "': "
+                //                       + propEx);
                 throw new FOPException("Property error");
             }
         }
@@ -223,11 +224,11 @@ public class Property {
                 }
             } catch (FOPException e) {
 
-                MessageHandler.errorln("convertShorthandProperty caught FOPException "
-                                       + e);
+                //MessageHandler.errorln("convertShorthandProperty caught FOPException "
+                //                       + e);
             } catch (org.apache.fop.fo.expr.PropertyException propEx) {
-                MessageHandler.errorln("convertShorthandProperty caught PropertyException "
-                                       + propEx);
+                //MessageHandler.errorln("convertShorthandProperty caught PropertyException "
+                //                       + propEx);
             }
             if (pret != null) {
                 /*
@@ -332,9 +333,9 @@ public class Property {
                             return make(propertyList, specVal,
                                         propertyList.getParentFObj());
                         } catch (FOPException e) {
-                            MessageHandler.errorln("Error computing property value for "
-                                                   + propName + " from "
-                                                   + specVal);
+                            //MessageHandler.errorln("Error computing property value for "
+                            //                       + propName + " from "
+                            //                       + specVal);
                             return null;
                         }
                     }
@@ -358,6 +359,12 @@ public class Property {
      * specified values.
      */
     private String specVal;
+
+    protected Logger log;
+
+    public void setLogger(Logger logger) {
+        log = logger;
+    }
 
     /**
      * Set the original value specified for the property attribute.

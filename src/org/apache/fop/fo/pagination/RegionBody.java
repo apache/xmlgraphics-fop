@@ -18,7 +18,6 @@ import org.apache.fop.layout.BodyRegionArea;
 import org.apache.fop.layout.BorderAndPadding;
 import org.apache.fop.layout.BackgroundProps;
 import org.apache.fop.layout.MarginProps;
-import org.apache.fop.messaging.MessageHandler;
 
 public class RegionBody extends Region {
 
@@ -83,13 +82,13 @@ public class RegionBody extends Region {
         try {
             columnCount = Integer.parseInt(columnCountAsString);
         } catch (NumberFormatException nfe) {
-            MessageHandler.errorln("Bad value on region body 'column-count'");
+            log.error("Bad value on region body 'column-count'");
             columnCount = 1;
         }
         if ((columnCount > 1) && (overflow == Overflow.SCROLL)) {
             // recover by setting 'column-count' to 1. This is allowed but
             // not required by the spec.
-            MessageHandler.errorln("Setting 'column-count' to 1 because "
+            log.error("Setting 'column-count' to 1 because "
                                    + "'overflow' is set to 'scroll'");
             columnCount = 1;
         }

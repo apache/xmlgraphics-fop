@@ -9,12 +9,13 @@ package org.apache.fop.fo;
 
 // FOP
 import org.apache.fop.layout.AreaTree;
-import org.apache.fop.messaging.MessageHandler;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.apps.StreamRenderer;
 import org.apache.fop.fo.pagination.Root;
 import org.apache.fop.system.BufferManager;
 import org.apache.fop.fo.pagination.PageSequence;
+
+import org.apache.log.Logger;
 
 // SAX
 import org.xml.sax.helpers.DefaultHandler;
@@ -75,8 +76,13 @@ public class FOTreeBuilder extends DefaultHandler implements TreeBuilder {
      */
     private StreamRenderer streamRenderer;
 
+    private Logger log;
+
     public FOTreeBuilder() {}
 
+    public void setLogger(Logger logger) {
+        log = logger;
+    }
 
     public void setStreamRenderer(StreamRenderer streamRenderer) {
         this.streamRenderer = streamRenderer;
@@ -165,13 +171,13 @@ public class FOTreeBuilder extends DefaultHandler implements TreeBuilder {
     public void startDocument()
     throws SAXException {
         rootFObj = null;    // allows FOTreeBuilder to be reused
-        MessageHandler.logln("building formatting object tree");
+        log.info("building formatting object tree");
         streamRenderer.startRenderer();
     }
 
     public void endDocument()
     throws SAXException {
-        MessageHandler.logln("Parsing of document complete, stopping renderer");
+        log.info("Parsing of document complete, stopping renderer");
         streamRenderer.stopRenderer();
     }
 
@@ -195,7 +201,7 @@ public class FOTreeBuilder extends DefaultHandler implements TreeBuilder {
         if (fobjMaker == null) {
             if (!this.unknownFOs.containsKey(fullName)) {
                 this.unknownFOs.put(fullName, "");
-                MessageHandler.errorln("WARNING: Unknown formatting object "
+                log.error("Unknown formatting object "
                                        + fullName);
             }
             fobjMaker = new Unknown.Maker();    // fall back
@@ -215,6 +221,7 @@ public class FOTreeBuilder extends DefaultHandler implements TreeBuilder {
                 list = currentFObj.properties;
             }
             fobj = fobjMaker.make(currentFObj, list);
+            fobj.setLogger(log);
         } catch (FOPException e) {
             throw new SAXException(e);
         }
@@ -240,7 +247,7 @@ public class FOTreeBuilder extends DefaultHandler implements TreeBuilder {
      * @param areaTree the area tree to format into
      */
     public void format(AreaTree areaTree) throws FOPException {
-        MessageHandler.logln("formatting FOs into areas");
+        log.info("formatting FOs into areas");
         this.bufferManager.readComplete();
         ((Root)this.rootFObj).format(areaTree);
     }

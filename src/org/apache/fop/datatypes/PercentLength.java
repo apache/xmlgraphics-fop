@@ -7,8 +7,6 @@
 
 package org.apache.fop.datatypes;
 
-import org.apache.fop.messaging.MessageHandler;
-
 /**
  * a percent specified length quantity in XSL
  */

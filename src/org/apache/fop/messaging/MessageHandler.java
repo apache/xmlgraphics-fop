@@ -10,6 +10,7 @@ package org.apache.fop.messaging;
 import java.io.*;
 import java.util.*;
 
+import org.apache.log.*;
 
 /**
  * The class MessageHandler contains the static methods log and error which
@@ -79,16 +80,22 @@ public class MessageHandler {
         }
     }
 
+    // temp workaround
+    private static Logger logger = null;
+
     /**
      * informs the user of the message
      * @param message the message for the user
      */
     public static void log(String message) {
         if (!quiet) {
+            if(logger == null) {
+                logger = Hierarchy.getDefaultHierarchy().getLoggerFor("fop");
+            }
             setMessage(message);
             switch (outputMethod) {
             case SCREEN:
-                System.out.print(getMessage());
+                logger.debug(getMessage());
                 break;
             case FILE:
                 if (fileOpened) {
@@ -111,7 +118,7 @@ public class MessageHandler {
                 // do nothing
                 break;
             default:
-                System.out.print(message);
+                logger.debug(message);
             }
         }
     }
@@ -121,7 +128,7 @@ public class MessageHandler {
      * @param message the message for the user
      */
     public static void logln(String message) {
-        log(message + "\n");
+        log(message);
     }
 
     /**
@@ -130,10 +137,13 @@ public class MessageHandler {
      */
 
     public static void error(String errorMessage) {
+        if(logger == null) {
+            logger = Hierarchy.getDefaultHierarchy().getLoggerFor("fop");
+        }
         setMessage(errorMessage);
         switch (outputMethod) {
         case SCREEN:
-            System.err.print(getMessage());
+            logger.error(getMessage());
             break;
         case FILE:
             if (fileOpened) {
@@ -158,7 +168,7 @@ public class MessageHandler {
             // do nothing
             break;
         default:
-            System.err.print(errorMessage);
+            logger.error(errorMessage);
         }
     }
 
@@ -167,7 +177,7 @@ public class MessageHandler {
      * @param errorMessage the message for the user
      */
     public static void errorln(String errorMessage) {
-        error(errorMessage + "\n");
+        error(errorMessage);
     }
 
     /**

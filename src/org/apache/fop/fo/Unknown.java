@@ -10,7 +10,6 @@ package org.apache.fop.fo;
 // FOP
 import org.apache.fop.fo.*;
 import org.apache.fop.layout.*;
-import org.apache.fop.messaging.MessageHandler;
 import org.apache.fop.fo.flow.*;
 import org.apache.fop.fo.properties.*;
 import org.apache.fop.layout.AreaTree;
@@ -43,7 +42,7 @@ public class Unknown extends FObj {
     }
 
     public Status layout(Area area) throws FOPException {
-        MessageHandler.logln("Layout Unknown element");
+        log.debug("Layout Unknown element");
         return new Status(Status.OK);
     }
 }
