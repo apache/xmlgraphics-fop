@@ -3,34 +3,34 @@
  * ============================================================================
  *                    The Apache Software License, Version 1.1
  * ============================================================================
- * 
+ *
  * Copyright (C) 1999-2003 The Apache Software Foundation. All rights reserved.
- * 
+ *
  * Redistribution and use in source and binary forms, with or without modifica-
  * tion, are permitted provided that the following conditions are met:
- * 
+ *
  * 1. Redistributions of source code must retain the above copyright notice,
  *    this list of conditions and the following disclaimer.
- * 
+ *
  * 2. Redistributions in binary form must reproduce the above copyright notice,
  *    this list of conditions and the following disclaimer in the documentation
  *    and/or other materials provided with the distribution.
- * 
+ *
  * 3. The end-user documentation included with the redistribution, if any, must
  *    include the following acknowledgment: "This product includes software
  *    developed by the Apache Software Foundation (http://www.apache.org/)."
  *    Alternately, this acknowledgment may appear in the software itself, if
  *    and wherever such third-party acknowledgments normally appear.
- * 
+ *
  * 4. The names "FOP" and "Apache Software Foundation" must not be used to
  *    endorse or promote products derived from this software without prior
  *    written permission. For written permission, please contact
  *    apache@apache.org.
- * 
+ *
  * 5. Products derived from this software may not be called "Apache", nor may
  *    "Apache" appear in their name, without prior written permission of the
  *    Apache Software Foundation.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESSED OR IMPLIED WARRANTIES,
  * INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND
  * FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
@@ -42,12 +42,12 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ============================================================================
- * 
+ *
  * This software consists of voluntary contributions made by many individuals
  * on behalf of the Apache Software Foundation and was originally created by
  * James Tauber <jtauber@jtauber.com>. For more information on the Apache
  * Software Foundation, please see <http://www.apache.org/>.
- */ 
+ */
 package org.apache.fop.apps;
 
 // java
@@ -154,7 +154,7 @@ public class CommandLineOptions {
 
     /**
      * parses the commandline arguments
-     * @return true if parse was successful and processing can continue, false 
+     * @return true if parse was successful and processing can continue, false
      * if processing should stop
      * @exception FOPException if there was an error in the format of the options
      */
@@ -169,84 +169,27 @@ public class CommandLineOptions {
                 quiet = Boolean.TRUE;
                 log = new ConsoleLogger(ConsoleLogger.LEVEL_ERROR);
             } else if (args[i].equals("-c")) {
-                if ((i + 1 == args.length)
-                        || (args[i + 1].charAt(0) == '-')) {
-                    throw new FOPException("if you use '-c', you must specify "
-                            + "the name of the configuration file");
-                } else {
-                    userConfigFile = new File(args[i + 1]);
-                    i++;
-                }
+                i = i + parseConfigurationOption(args, i);
             } else if (args[i].equals("-l")) {
-                if ((i + 1 == args.length)
-                        || (args[i + 1].charAt(0) == '-')) {
-                    throw new FOPException("if you use '-l', you must specify a language");
-                } else {
-                    language = args[i + 1];
-                    i++;
-                }
+                i = i + parseLanguageOption(args, i);
             } else if (args[i].equals("-s")) {
                 suppressLowLevelAreas = Boolean.TRUE;
             } else if (args[i].equals("-fo")) {
-                inputmode = FO_INPUT;
-                if ((i + 1 == args.length)
-                        || (args[i + 1].charAt(0) == '-')) {
-                    throw new FOPException("you must specify the fo file for the '-fo' option");
-                } else {
-                    fofile = new File(args[i + 1]);
-                    i++;
-                }
+                i = i + parseFOInputOption(args, i);
             } else if (args[i].equals("-xsl")) {
-                inputmode = XSLT_INPUT;
-                if ((i + 1 == args.length)
-                        || (args[i + 1].charAt(0) == '-')) {
-                    throw new FOPException("you must specify the stylesheet "
-                            + "file for the '-xsl' option");
-                } else {
-                    xsltfile = new File(args[i + 1]);
-                    i++;
-                }
+                i = i + parseXSLInputOption(args, i);
             } else if (args[i].equals("-xml")) {
-                inputmode = XSLT_INPUT;
-                if ((i + 1 == args.length)
-                        || (args[i + 1].charAt(0) == '-')) {
-                    throw new FOPException("you must specify the input file "
-                            + "for the '-xml' option");
-                } else {
-                    xmlfile = new File(args[i + 1]);
-                    i++;
-                }
+                i = i + parseXMLInputOption(args, i);
             } else if (args[i].equals("-awt")) {
-                setOutputMode(AWT_OUTPUT);
+                i = i + parseAWTOutputOption(args, i);
             } else if (args[i].equals("-pdf")) {
-                setOutputMode(PDF_OUTPUT);
-                if ((i + 1 == args.length)
-                        || (args[i + 1].charAt(0) == '-')) {
-                    throw new FOPException("you must specify the pdf output file");
-                } else {
-                    outfile = new File(args[i + 1]);
-                    i++;
-                }
+                i = i + parsePDFOutputOption(args, i);
             } else if (args[i].equals("-mif")) {
-                setOutputMode(MIF_OUTPUT);
-                if ((i + 1 == args.length)
-                        || (args[i + 1].charAt(0) == '-')) {
-                    throw new FOPException("you must specify the mif output file");
-                } else {
-                    outfile = new File(args[i + 1]);
-                    i++;
-                }
+                i = i + parseMIFOutputOption(args, i);
             } else if (args[i].equals("-rtf")) {
-                setOutputMode(RTF_OUTPUT);
-                if ((i + 1 == args.length)
-                        || (args[i + 1].charAt(0) == '-')) {
-                    throw new FOPException("you must specify the rtf output file");
-                } else {
-                    outfile = new File(args[i + 1]);
-                    i++;
-                }
+                i = i + parseRTFOutputOption(args, i);
             } else if (args[i].equals("-print")) {
-                setOutputMode(PRINT_OUTPUT);
+                i = i + parsePrintOutputOption(args, i);
                 // show print help
                 if (i + 1 < args.length) {
                     if (args[i + 1].equals("help")) {
@@ -255,61 +198,17 @@ public class CommandLineOptions {
                     }
                 }
             } else if (args[i].equals("-pcl")) {
-                setOutputMode(PCL_OUTPUT);
-                if ((i + 1 == args.length)
-                        || (args[i + 1].charAt(0) == '-')) {
-                    throw new FOPException("you must specify the pdf output file");
-                } else {
-                    outfile = new File(args[i + 1]);
-                    i++;
-                }
+                i = i + parsePCLOutputOption(args, i);
             } else if (args[i].equals("-ps")) {
-                setOutputMode(PS_OUTPUT);
-                if ((i + 1 == args.length)
-                        || (args[i + 1].charAt(0) == '-')) {
-                    throw new FOPException("you must specify the PostScript output file");
-                } else {
-                    outfile = new File(args[i + 1]);
-                    i++;
-                }
+                i = i + parsePostscriptOutputOption(args, i);
             } else if (args[i].equals("-txt")) {
-                setOutputMode(TXT_OUTPUT);
-                if ((i + 1 == args.length)
-                        || (args[i + 1].charAt(0) == '-')) {
-                    throw new FOPException("you must specify the text output file");
-                } else {
-                    outfile = new File(args[i + 1]);
-                    i++;
-                }
+                i = i + parseTextOutputOption(args, i);
             } else if (args[i].equals("-svg")) {
-                setOutputMode(SVG_OUTPUT);
-                if ((i + 1 == args.length)
-                        || (args[i + 1].charAt(0) == '-')) {
-                    throw new FOPException("you must specify the svg output file");
-                } else {
-                    outfile = new File(args[i + 1]);
-                    i++;
-                }
+                i = i + parseSVGOutputOption(args, i);
             } else if (args[i].charAt(0) != '-') {
-                if (inputmode == NOT_SET) {
-                    inputmode = FO_INPUT;
-                    fofile = new File(args[i]);
-                } else if (outputmode == NOT_SET) {
-                    outputmode = PDF_OUTPUT;
-                    outfile = new File(args[i]);
-                } else {
-                    throw new FOPException("Don't know what to do with "
-                                           + args[i]);
-                }
+                i = i + parseUnknownOption(args, i);
             } else if (args[i].equals("-at")) {
-                setOutputMode(AREA_OUTPUT);
-                if ((i + 1 == args.length)
-                        || (args[i + 1].charAt(0) == '-')) {
-                    throw new FOPException("you must specify the area-tree output file");
-                } else {
-                    outfile = new File(args[i + 1]);
-                    i++;
-                }
+                i = i + parseAreaTreeOption(args, i);
             } else {
                 printUsage();
                 return false;
@@ -317,6 +216,174 @@ public class CommandLineOptions {
         }
         return true;
     }    // end parseOptions
+
+    private int parseConfigurationOption(String[] args, int i) throws FOPException {
+        if ((i + 1 == args.length)
+                || (args[i + 1].charAt(0) == '-')) {
+            throw new FOPException("if you use '-c', you must specify "
+              + "the name of the configuration file");
+        } else {
+            userConfigFile = new File(args[i + 1]);
+            return 1;
+        }
+    }
+
+    private int parseLanguageOption(String[] args, int i) throws FOPException {
+        if ((i + 1 == args.length)
+                || (args[i + 1].charAt(0) == '-')) {
+            throw new FOPException("if you use '-l', you must specify a language");
+        } else {
+            language = args[i + 1];
+            return 1;
+        }
+    }
+
+    private int parseFOInputOption(String[] args, int i) throws FOPException {
+        inputmode = FO_INPUT;
+        if ((i + 1 == args.length)
+                || (args[i + 1].charAt(0) == '-')) {
+            throw new FOPException("you must specify the fo file for the '-fo' option");
+        } else {
+            fofile = new File(args[i + 1]);
+            return 1;
+        }
+    }
+
+    private int parseXSLInputOption(String[] args, int i) throws FOPException {
+        inputmode = XSLT_INPUT;
+        if ((i + 1 == args.length)
+                || (args[i + 1].charAt(0) == '-')) {
+            throw new FOPException("you must specify the stylesheet "
+                            + "file for the '-xsl' option");
+        } else {
+            xsltfile = new File(args[i + 1]);
+            return 1;
+        }
+    }
+
+    private int parseXMLInputOption(String[] args, int i) throws FOPException {
+        inputmode = XSLT_INPUT;
+        if ((i + 1 == args.length)
+                || (args[i + 1].charAt(0) == '-')) {
+            throw new FOPException("you must specify the input file "
+                            + "for the '-xml' option");
+        } else {
+            xmlfile = new File(args[i + 1]);
+            return 1;
+        }
+    }
+
+    private int parseAWTOutputOption(String[] args, int i) throws FOPException {
+        setOutputMode(AWT_OUTPUT);
+        return 0;
+    }
+
+    private int parsePDFOutputOption(String[] args, int i) throws FOPException {
+        setOutputMode(PDF_OUTPUT);
+        if ((i + 1 == args.length)
+                || (args[i + 1].charAt(0) == '-')) {
+            throw new FOPException("you must specify the pdf output file");
+        } else {
+            outfile = new File(args[i + 1]);
+            return 1;
+        }
+    }
+
+    private int parseMIFOutputOption(String[] args, int i) throws FOPException {
+        setOutputMode(MIF_OUTPUT);
+        if ((i + 1 == args.length)
+                || (args[i + 1].charAt(0) == '-')) {
+            throw new FOPException("you must specify the mif output file");
+        } else {
+            outfile = new File(args[i + 1]);
+            return 1;
+        }
+    }
+
+    private int parseRTFOutputOption(String[] args, int i) throws FOPException {
+        setOutputMode(RTF_OUTPUT);
+        if ((i + 1 == args.length)
+                || (args[i + 1].charAt(0) == '-')) {
+            throw new FOPException("you must specify the rtf output file");
+        } else {
+            outfile = new File(args[i + 1]);
+            return 1;
+        }
+    }
+
+    private int parsePrintOutputOption(String[] args, int i) throws FOPException {
+        setOutputMode(PRINT_OUTPUT);
+        return 0;
+    }
+
+    private int parsePCLOutputOption(String[] args, int i) throws FOPException {
+        setOutputMode(PCL_OUTPUT);
+        if ((i + 1 == args.length)
+                || (args[i + 1].charAt(0) == '-')) {
+            throw new FOPException("you must specify the pdf output file");
+        } else {
+            outfile = new File(args[i + 1]);
+            return 1;
+        }
+    }
+
+    private int parsePostscriptOutputOption(String[] args, int i) throws FOPException {
+        setOutputMode(PS_OUTPUT);
+        if ((i + 1 == args.length)
+                || (args[i + 1].charAt(0) == '-')) {
+            throw new FOPException("you must specify the PostScript output file");
+        } else {
+            outfile = new File(args[i + 1]);
+            return 1;
+        }
+    }
+
+    private int parseTextOutputOption(String[] args, int i) throws FOPException {
+        setOutputMode(TXT_OUTPUT);
+        if ((i + 1 == args.length)
+                || (args[i + 1].charAt(0) == '-')) {
+            throw new FOPException("you must specify the text output file");
+        } else {
+            outfile = new File(args[i + 1]);
+            return 1;
+        }
+    }
+
+    private int parseSVGOutputOption(String[] args, int i) throws FOPException {
+        setOutputMode(SVG_OUTPUT);
+        if ((i + 1 == args.length)
+                || (args[i + 1].charAt(0) == '-')) {
+            throw new FOPException("you must specify the svg output file");
+        } else {
+            outfile = new File(args[i + 1]);
+            return 1;
+        }
+    }
+
+    private int parseUnknownOption(String[] args, int i) throws FOPException {
+        if (inputmode == NOT_SET) {
+            inputmode = FO_INPUT;
+            fofile = new File(args[i]);
+        } else if (outputmode == NOT_SET) {
+            outputmode = PDF_OUTPUT;
+            outfile = new File(args[i]);
+        } else {
+            throw new FOPException("Don't know what to do with "
+                           + args[i]);
+        }
+        return 0;
+    }
+
+    private int parseAreaTreeOption(String[] args, int i) throws FOPException {
+        setOutputMode(AREA_OUTPUT);
+        if ((i + 1 == args.length)
+                || (args[i + 1].charAt(0) == '-')) {
+            throw new FOPException("you must specify the area-tree output file");
+        } else {
+            outfile = new File(args[i + 1]);
+            return 1;
+        }
+    }
 
     private void setOutputMode(int mode) throws FOPException {
         if (outputmode == NOT_SET) {
@@ -617,7 +684,7 @@ public class CommandLineOptions {
             + "  Fop foo.fo -print or Fop -print foo.fo \n"
             + "  Fop foo.fo -awt \n");
     }
-    
+
     /**
      * shows the options for print output
      */
