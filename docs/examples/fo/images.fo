@@ -31,13 +31,13 @@
 
 <fo:page-sequence id="N2528" master-name="psmOddEven">
 
-<fo:static-content flow-name="xsl-after">
+<fo:static-content flow-name="xsl-region-after">
 	<fo:block text-align-last="center" font-size="10pt">
 		<fo:page-number/>
 	</fo:block>
 </fo:static-content>
 
-<fo:flow>
+<fo:flow flow-name="xsl-region-body">
 <fo:block font-size="18pt" font-weight="bold">1. FOP test for images</fo:block><fo:block id="N2531">
 <fo:block font-size="16pt" font-weight="bold" space-before.minimum="1em" space-before.optimum="1.5em" space-before.maximum="2em">A GIF image in FOP</fo:block><fo:block><fo:external-graphic src="file:../graphics/xml_feather.gif"/>
 </fo:block></fo:block><fo:block id="N2545"><fo:block font-size="16pt" font-weight="bold" space-before.minimum="1em" space-before.optimum="1.5em" space-before.maximum="2em">A JPEG image in FOP</fo:block><fo:block><fo:external-graphic src="file:../graphics/fop.jpg"/></fo:block></fo:block><fo:block id="N2559"><fo:block font-size="16pt" font-weight="bold" space-before.minimum="1em" space-before.optimum="1.5em" space-before.maximum="2em"/>
@@ -47,6 +47,12 @@
 </fo:page-sequence>
 
 <fo:page-sequence id="N2561" master-name="psmOddEven">
-<fo:static-content flow-name="xsl-after">
-<fo:block text-align-last="center" font-size="10pt"><fo:page-number/></fo:block></fo:static-content><fo:flow><fo:block font-size="18pt" font-weight="bold">A. Appendix</fo:block></fo:flow></fo:page-sequence></fo:root>
+<fo:static-content flow-name="xsl-region-after">
+<fo:block text-align-last="center" font-size="10pt">
+<fo:page-number/></fo:block>
+</fo:static-content>
+<fo:flow flow-name="xsl-region-body">
+<fo:block font-size="18pt" font-weight="bold">A. Appendix</fo:block></fo:flow>
+</fo:page-sequence>
+</fo:root>
 	  

@@ -2,7 +2,7 @@
 
 <!-- =========================================================================== -->
 
-<project default="runtest" basedir=".">
+<project default="creating new test pdf files" basedir=".">
 
   <!-- =================================================================== -->
   <!-- Initialization target                                               -->

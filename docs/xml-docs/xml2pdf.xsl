@@ -55,7 +55,7 @@ TBD: - The faq doesn't show in the content
 		</fo:layout-master-set>
 
 		<fo:page-sequence master-name="all">
-			<fo:static-content flow-name="xsl-before">
+			<fo:static-content flow-name="xsl-region-before">
 				<fo:block text-align="end" 
 							font-size="10pt" 
 							font-family="serif" 
@@ -64,7 +64,7 @@ TBD: - The faq doesn't show in the content
 				</fo:block>
 			</fo:static-content> 
 
-			<fo:flow flow-name="xsl-body">
+			<fo:flow flow-name="xsl-region-body">
 
 
        <fo:block font-size="18pt" 

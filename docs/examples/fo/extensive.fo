@@ -5,7 +5,7 @@
 </fo:simple-page-master>
 </fo:layout-master-set>
 <fo:page-sequence master-name="one">
-<fo:flow>
+<fo:flow flow-name="xsl-region-body">
 <fo:block>A Block</fo:block>
 <fo:block text-align="end">An End Aligned Block</fo:block>
 <fo:block text-align="center">A Centered Block</fo:block>

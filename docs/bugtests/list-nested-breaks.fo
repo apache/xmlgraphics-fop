@@ -19,13 +19,13 @@
   <fo:page-sequence master-name="first">
 
   <!-- Inserts a header with the page number -->
-  <fo:static-content flow-name="xsl-before">
+  <fo:static-content flow-name="xsl-region-before">
     <fo:block text-align="end" font-size="10pt" font-family="serif" line-height="14pt">
           XSL-FO Example: simple list - p. <fo:page-number/>
     </fo:block>
   </fo:static-content>
 
-  <fo:flow flow-name="xsl-body">
+  <fo:flow flow-name="xsl-region-body">
 
       <!-- title -->
       <fo:block font-size="14pt" 
