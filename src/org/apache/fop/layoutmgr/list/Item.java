@@ -102,6 +102,7 @@ public class Item extends BlockStackingLayoutManager {
                         } else {
                             curLM.resetPosition(null);
                         }
+                        over = true;
                         break;
                     }
                     stackSize.add(bp.getStackingSize());
@@ -234,6 +235,7 @@ public class Item extends BlockStackingLayoutManager {
         if (resetPos == null) {
             reset(null);
         } else {
+            setFinished(false);
             //reset(resetPos);
         }
     }
