@@ -1,23 +1,65 @@
 /*
  * $Id$
- * Copyright (C) 2001-2002 The Apache Software Foundation. All rights reserved.
- * For details on use and redistribution please refer to the
- * LICENSE file included with these sources.
- */
-
-
+ * ============================================================================
+ *                    The Apache Software License, Version 1.1
+ * ============================================================================
+ * 
+ * Copyright (C) 1999-2003 The Apache Software Foundation. All rights reserved.
+ * 
+ * Redistribution and use in source and binary forms, with or without modifica-
+ * tion, are permitted provided that the following conditions are met:
+ * 
+ * 1. Redistributions of source code must retain the above copyright notice,
+ *    this list of conditions and the following disclaimer.
+ * 
+ * 2. Redistributions in binary form must reproduce the above copyright notice,
+ *    this list of conditions and the following disclaimer in the documentation
+ *    and/or other materials provided with the distribution.
+ * 
+ * 3. The end-user documentation included with the redistribution, if any, must
+ *    include the following acknowledgment: "This product includes software
+ *    developed by the Apache Software Foundation (http://www.apache.org/)."
+ *    Alternately, this acknowledgment may appear in the software itself, if
+ *    and wherever such third-party acknowledgments normally appear.
+ * 
+ * 4. The names "FOP" and "Apache Software Foundation" must not be used to
+ *    endorse or promote products derived from this software without prior
+ *    written permission. For written permission, please contact
+ *    apache@apache.org.
+ * 
+ * 5. Products derived from this software may not be called "Apache", nor may
+ *    "Apache" appear in their name, without prior written permission of the
+ *    Apache Software Foundation.
+ * 
+ * THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESSED OR IMPLIED WARRANTIES,
+ * INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND
+ * FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
+ * APACHE SOFTWARE FOUNDATION OR ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
+ * INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLU-
+ * DING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS
+ * OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON
+ * ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
+ * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ * ============================================================================
+ * 
+ * This software consists of voluntary contributions made by many individuals
+ * on behalf of the Apache Software Foundation and was originally created by
+ * James Tauber <jtauber@jtauber.com>. For more information on the Apache
+ * Software Foundation, please see <http://www.apache.org/>.
+ */ 
 package org.apache.fop.configuration;
 
-// sax
+// SAX
 import org.xml.sax.helpers.DefaultHandler;
 import org.xml.sax.Attributes;
 import org.xml.sax.Locator;
 
-// java
+// Java
 import java.util.Map;
 import java.util.List;
 
-// fop
+// FOP
 import org.apache.fop.messaging.MessageHandler;
 
 
@@ -26,19 +68,19 @@ import org.apache.fop.messaging.MessageHandler;
  * Normally this class doesn't need to be accessed directly.
  */
 public class ConfigurationParser extends DefaultHandler {
-    private final int OUT = 0;
-    private final int IN_ENTRY = 1;
-    private final int IN_KEY = 2;
-    private final int IN_VALUE = 4;
-    private final int IN_LIST = 8;
-    private final int IN_SUBENTRY = 16;
-    private final int IN_SUBKEY = 32;
-    private final int IN_FONTS = 64;
-    private final int IN_FONT = 128;
+    private static final int OUT = 0;
+    private static final int IN_ENTRY = 1;
+    private static final int IN_KEY = 2;
+    private static final int IN_VALUE = 4;
+    private static final int IN_LIST = 8;
+    private static final int IN_SUBENTRY = 16;
+    private static final int IN_SUBKEY = 32;
+    private static final int IN_FONTS = 64;
+    private static final int IN_FONT = 128;
 
-    private final int STRING = 0;
-    private final int LIST = 1;
-    private final int MAP = 2;
+    private static final int STRING = 0;
+    private static final int LIST = 1;
+    private static final int MAP = 2;
 
     // state of parser
     private int status = OUT;
