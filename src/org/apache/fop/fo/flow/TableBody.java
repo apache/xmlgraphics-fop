@@ -270,6 +270,7 @@ public class TableBody extends FObj {
 						}
 						lastRow = row;
 						area.setMaxHeight(area.getMaxHeight() - spaceLeft + this.areaContainer.getMaxHeight());
+						spaceLeft = area.spaceLeft();
 				}
 				area.addChild(areaContainer);
 				areaContainer.end();
@@ -298,5 +299,6 @@ public class TableBody extends FObj {
 						area.increaseHeight(-spaceAfter);
 				}
 				this.resetMarker();
+				this.removeID(area.getIDReferences());
 		}
 }
