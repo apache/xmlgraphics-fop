@@ -48,6 +48,8 @@ public class CommandLineOptions {
     private static final int PS_OUTPUT = 6;
     /* output: text file */
     private static final int TXT_OUTPUT = 7;
+    /* output: svg file */
+    private static final int SVG_OUTPUT = 8;
 
     /* System buffers */
     private static final int BUFFER_FILE = 8;
@@ -247,6 +249,14 @@ public class CommandLineOptions {
                     outfile = new File(args[i + 1]);
                     i++;
                 }
+            } else if (args[i].equals("-svg")) {
+                setOutputMode(SVG_OUTPUT);
+                if ((i + 1 == args.length)
+                        || (args[i + 1].charAt(0) == '-')) {
+                    throw new FOPException("you must specify the svg output file");                } else {
+                    outfile = new File(args[i + 1]);
+                    i++;
+                }
             } else if (args[i].charAt(0) != '-') {
                 if (inputmode == NOT_SET) {
                     inputmode = FO_INPUT;
@@ -376,6 +386,8 @@ public class CommandLineOptions {
             return Driver.RENDER_PS;
         case TXT_OUTPUT:
             return Driver.RENDER_TXT;
+        case SVG_OUTPUT:
+            return Driver.RENDER_SVG;
         case AREA_OUTPUT:
             rendererOptions.put("fineDetail", isCoarseAreaXml());
             return Driver.RENDER_XML;
@@ -532,6 +544,7 @@ public class CommandLineOptions {
                                + "  -pcl outfile      input will be rendered as pcl file (outfile req'd) \n"
                                + "  -ps outfile       input will be rendered as PostScript file (outfile req'd) \n"
                                + "  -txt outfile      input will be rendered as text file (outfile req'd) \n"
+                               + "  -svg outfile      input will be rendered as an svg slides file (outfile req'd) \n"
                                + "  -at outfile       representation of area tree as XML (outfile req'd) \n"
                                + "  -print            input file will be rendered and sent to the printer \n"
                                + "                    see options with \"-print help\" \n\n"
@@ -612,6 +625,10 @@ public class CommandLineOptions {
             break;
         case TXT_OUTPUT:
             log.debug("txt");
+            log.debug("output file: " + outfile.toString());
+            break;
+        case SVG_OUTPUT:
+            log.debug("svg");
             log.debug("output file: " + outfile.toString());
             break;
         default:
