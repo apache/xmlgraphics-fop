@@ -67,7 +67,8 @@ import org.apache.fop.fo.FObjects;
 import org.apache.fop.fo.PropNames;
 import org.apache.fop.fo.PropertySets;
 import org.apache.fop.xml.FoXMLEvent;
-import org.apache.fop.xml.SyncedFoXmlEventsBuffer;
+import org.apache.fop.xml.XMLEvent;
+import org.apache.fop.xml.SyncedXmlEventsBuffer;
 import org.apache.fop.xml.UnexpectedStartElementException;
 
 /**
@@ -123,7 +124,7 @@ public class FoListItemBody extends FONode {
      * <p>Content model for fo:list-item-body: (marker*, %block;+)
      * @param foTree the FO tree being built
      * @param parent the parent FONode of this node
-     * @param event the <tt>FoXMLEvent</tt> that triggered the creation of
+     * @param event the <tt>XMLEvent</tt> that triggered the creation of
      * this node
      * @param stateFlags - passed down from the parent.  Includes the
      * attribute set information.
@@ -134,7 +135,7 @@ public class FoListItemBody extends FONode {
     {
         super(foTree, FObjectNames.LIST_ITEM_BODY, parent, event,
                           stateFlags, sparsePropsMap, sparseIndices);
-        FoXMLEvent ev = null;
+        XMLEvent ev = null;
         try {
             // Get at least one %block;
             if ((stateFlags & FONode.MC_OUT_OF_LINE) == 0)
@@ -145,9 +146,10 @@ public class FoListItemBody extends FONode {
                 throw new FOPException
                         ("%block; not found in fo:list-item-body");
             // Generate the flow object
-            FObjects.fobjects.makeFlowObject(foTree, this, ev, stateFlags);
+            FObjects.fobjects.makeFlowObject(
+                    foTree, this, (FoXMLEvent)ev, stateFlags);
             // Clear the blockage
-            ev = xmlevents.getEndElement(SyncedFoXmlEventsBuffer.DISCARD_EV, ev);
+            ev = xmlevents.getEndElement(SyncedXmlEventsBuffer.DISCARD_EV, ev);
             namespaces.surrenderEvent(ev);
             // Get the rest of the %block;s
             do {
@@ -157,9 +159,9 @@ public class FoListItemBody extends FONode {
                     ev = xmlevents.expectOutOfLineBlock();
                 if (ev != null) {
                     // Generate the flow object
-                    FObjects.fobjects.makeFlowObject
-                                            (foTree, this, ev, stateFlags);
-                    ev = xmlevents.getEndElement(SyncedFoXmlEventsBuffer.DISCARD_EV, ev);
+                    FObjects.fobjects.makeFlowObject(
+                            foTree, this, (FoXMLEvent)ev, stateFlags);
+                    ev = xmlevents.getEndElement(SyncedXmlEventsBuffer.DISCARD_EV, ev);
                     namespaces.surrenderEvent(ev);
                 }
             } while (ev != null);

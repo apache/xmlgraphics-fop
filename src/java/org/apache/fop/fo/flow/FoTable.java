@@ -67,8 +67,8 @@ import org.apache.fop.fo.PropNames;
 import org.apache.fop.fo.PropertySets;
 import org.apache.fop.fo.expr.PropertyException;
 import org.apache.fop.xml.FoXMLEvent;
-import org.apache.fop.xml.SyncedFoXmlEventsBuffer;
 import org.apache.fop.xml.XMLEvent;
+import org.apache.fop.xml.SyncedXmlEventsBuffer;
 
 /**
  * Implements the fo:table flow object.
@@ -166,7 +166,7 @@ public class FoTable extends FONode {
      * (marker*, table-column*, table-header?, table-footer?, table-body+)
      * @param foTree the FO tree being built
      * @param parent the parent FONode of this node
-     * @param event the <tt>FoXMLEvent</tt> that triggered the creation of
+     * @param event the <tt>XMLEvent</tt> that triggered the creation of
      * this node
      * @param stateFlags - passed down from the parent.  Includes the
      * attribute set information.
@@ -177,16 +177,16 @@ public class FoTable extends FONode {
     {
         super(foTree, FObjectNames.TABLE, parent, event,
                                   stateFlags, sparsePropsMap, sparseIndices);
-        FoXMLEvent ev;
+        XMLEvent ev;
         // Look for zero or more markers
         String nowProcessing = "marker";
         try {
             while ((ev = xmlevents.expectStartElement
                     (FObjectNames.MARKER, XMLEvent.DISCARD_W_SPACE))
                    != null) {
-                new FoMarker(getFOTree(), this, ev, stateFlags);
+                new FoMarker(getFOTree(), this, (FoXMLEvent)ev, stateFlags);
                 numMarkers++;
-                ev = xmlevents.getEndElement(SyncedFoXmlEventsBuffer.DISCARD_EV, ev);
+                ev = xmlevents.getEndElement(SyncedXmlEventsBuffer.DISCARD_EV, ev);
                 namespaces.surrenderEvent(ev);
             }
 
@@ -195,9 +195,11 @@ public class FoTable extends FONode {
             while ((ev = xmlevents.expectStartElement
                     (FObjectNames.TABLE_COLUMN, XMLEvent.DISCARD_W_SPACE))
                    != null) {
-                new FoTableColumn(getFOTree(), this, ev, stateFlags);
+                new FoTableColumn(
+                        getFOTree(), this, (FoXMLEvent)ev, stateFlags);
                 numColumns++;
-                ev = xmlevents.getEndElement(SyncedFoXmlEventsBuffer.DISCARD_EV, ev);
+                ev = xmlevents.getEndElement(
+                        SyncedXmlEventsBuffer.DISCARD_EV, ev);
                 namespaces.surrenderEvent(ev);
             }
 
@@ -207,8 +209,10 @@ public class FoTable extends FONode {
                     (FObjectNames.TABLE_HEADER, XMLEvent.DISCARD_W_SPACE))
                    != null) {
                 headerOffset = numChildren();
-                new FoTableHeader(getFOTree(), this, ev, stateFlags);
-                ev = xmlevents.getEndElement(SyncedFoXmlEventsBuffer.DISCARD_EV, ev);
+                new FoTableHeader(
+                        getFOTree(), this, (FoXMLEvent)ev, stateFlags);
+                ev = xmlevents.getEndElement(
+                        SyncedXmlEventsBuffer.DISCARD_EV, ev);
                 namespaces.surrenderEvent(ev);
             }
 
@@ -218,8 +222,10 @@ public class FoTable extends FONode {
                     (FObjectNames.TABLE_FOOTER, XMLEvent.DISCARD_W_SPACE))
                    != null) {
                 footerOffset = numChildren();
-                new FoTableFooter(getFOTree(), this, ev, stateFlags);
-                ev = xmlevents.getEndElement(SyncedFoXmlEventsBuffer.DISCARD_EV, ev);
+                new FoTableFooter(
+                        getFOTree(), this, (FoXMLEvent)ev, stateFlags);
+                ev = xmlevents.getEndElement(
+                        SyncedXmlEventsBuffer.DISCARD_EV, ev);
                 namespaces.surrenderEvent(ev);
             }
 
@@ -231,17 +237,19 @@ public class FoTable extends FONode {
             if (ev == null)
                 throw new FOPException("No table-body found.");
             firstBodyOffset = numChildren();
-            new FoTableBody(getFOTree(), this, ev, stateFlags);
+            new FoTableBody(getFOTree(), this, (FoXMLEvent)ev, stateFlags);
             numBodies++;
-            ev = xmlevents.getEndElement(SyncedFoXmlEventsBuffer.DISCARD_EV, ev);
+            ev = xmlevents.getEndElement(SyncedXmlEventsBuffer.DISCARD_EV, ev);
             namespaces.surrenderEvent(ev);
             while ((ev = xmlevents.expectStartElement
                         (FObjectNames.TABLE_BODY, XMLEvent.DISCARD_W_SPACE))
                    != null) {
                 // Loop over remaining fo:table-body's
-                new FoTableBody(getFOTree(), this, ev, stateFlags);
+                new FoTableBody(
+                        getFOTree(), this, (FoXMLEvent)ev, stateFlags);
                 numBodies++;
-                ev = xmlevents.getEndElement(SyncedFoXmlEventsBuffer.DISCARD_EV, ev);
+                ev = xmlevents.getEndElement(
+                        SyncedXmlEventsBuffer.DISCARD_EV, ev);
                 namespaces.surrenderEvent(ev);
             }
 

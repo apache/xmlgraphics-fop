@@ -68,7 +68,8 @@ import org.apache.fop.fo.PropNames;
 import org.apache.fop.fo.PropertySets;
 import org.apache.fop.messaging.MessageHandler;
 import org.apache.fop.xml.FoXMLEvent;
-import org.apache.fop.xml.SyncedFoXmlEventsBuffer;
+import org.apache.fop.xml.XMLEvent;
+import org.apache.fop.xml.SyncedXmlEventsBuffer;
 import org.apache.fop.xml.UnexpectedStartElementException;
 
 /**
@@ -125,15 +126,15 @@ public class FoTitle extends FONode {
         }
     }
 
-    /** The <tt>SyncedFoXmlEventsBuffer</tt> from which events are drawn. */
-    private SyncedFoXmlEventsBuffer xmlevents;
+    /** The <tt>SyncedXmlEventsBuffer</tt> from which events are drawn. */
+    private SyncedXmlEventsBuffer xmlevents;
 
     /**
      * Construct an fo:title node, and build the fo:title subtree.
      * <p>Content model for fo:title: (#PCDATA|%inline;)*
      * @param foTree the FO tree being built
      * @param parent the parent FONode of this node
-     * @param event the <tt>FoXMLEvent</tt> that triggered the creation of
+     * @param event the <tt>XMLEvent</tt> that triggered the creation of
      * this node
      */
     public FoTitle(FOTree foTree, FONode parent, FoXMLEvent event)
@@ -141,16 +142,17 @@ public class FoTitle extends FONode {
     {
         super(foTree, FObjectNames.TITLE, parent, event,
               FONode.TITLE_SET, sparsePropsMap, sparseIndices);
-        FoXMLEvent ev = null;
+        XMLEvent ev = null;
         do {
             try {
                 ev = xmlevents.expectOutOfLinePcdataOrInline();
                 if (ev != null) {
                     // Generate the flow object
-                    FObjects.fobjects.makeFlowObject
-                                (foTree, this, ev, FONode.TITLE_SET);
-                    if (ev.getFoType() != FObjectNames.PCDATA)
-                        ev = xmlevents.getEndElement(SyncedFoXmlEventsBuffer.DISCARD_EV, ev);
+                    FObjects.fobjects.makeFlowObject(
+                            foTree, this, ev, FONode.TITLE_SET);
+                    if (ev.getType() != XMLEvent.CHARACTERS)
+                        ev = xmlevents.getEndElement(
+                                SyncedXmlEventsBuffer.DISCARD_EV, ev);
                         namespaces.surrenderEvent(ev);
                 }
             } catch(UnexpectedStartElementException e) {
@@ -158,7 +160,8 @@ public class FoTitle extends FONode {
                 MessageHandler.logln
                         ("Ignoring unexpected Start Element: "
                                                          + ev.getQName());
-                ev = xmlevents.getEndElement(SyncedFoXmlEventsBuffer.DISCARD_EV, ev);
+                ev = xmlevents.getEndElement(
+                        SyncedXmlEventsBuffer.DISCARD_EV, ev);
                 namespaces.surrenderEvent(ev);
             }
         } while (ev != null);

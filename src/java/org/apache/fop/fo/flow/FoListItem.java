@@ -67,8 +67,8 @@ import org.apache.fop.fo.PropNames;
 import org.apache.fop.fo.PropertySets;
 import org.apache.fop.fo.expr.PropertyException;
 import org.apache.fop.xml.FoXMLEvent;
-import org.apache.fop.xml.SyncedFoXmlEventsBuffer;
 import org.apache.fop.xml.XMLEvent;
+import org.apache.fop.xml.SyncedXmlEventsBuffer;
 
 /**
  * Implements the fo:list-item flow object.
@@ -138,7 +138,7 @@ public class FoListItem extends FONode {
      * (marker*, list-item-label,list-item-body)
      * @param foTree the FO tree being built
      * @param parent the parent FONode of this node
-     * @param event the <tt>FoXMLEvent</tt> that triggered the creation of
+     * @param event the <tt>XMLEvent</tt> that triggered the creation of
      * this node
      * @param stateFlags - passed down from the parent.  Includes the
      * attribute set information.
@@ -149,16 +149,16 @@ public class FoListItem extends FONode {
     {
         super(foTree, FObjectNames.LIST_ITEM, parent, event,
                           stateFlags, sparsePropsMap, sparseIndices);
-        FoXMLEvent ev;
+        XMLEvent ev;
         // Look for zero or more markers
         String nowProcessing = "marker";
         try {
             while ((ev = xmlevents.expectStartElement
                     (FObjectNames.MARKER, XMLEvent.DISCARD_W_SPACE))
                    != null) {
-                new FoMarker(getFOTree(), this, ev, stateFlags);
+                new FoMarker(getFOTree(), this, (FoXMLEvent)ev, stateFlags);
                 numMarkers++;
-                ev = xmlevents.getEndElement(SyncedFoXmlEventsBuffer.DISCARD_EV, ev);
+                ev = xmlevents.getEndElement(SyncedXmlEventsBuffer.DISCARD_EV, ev);
                 namespaces.surrenderEvent(ev);
             }
 
@@ -169,8 +169,9 @@ public class FoListItem extends FONode {
                    == null)
                 throw new FOPException
                         ("No list-item-label in list-item.");
-            new FoListItemLabel(getFOTree(), this, ev, stateFlags);
-            ev = xmlevents.getEndElement(SyncedFoXmlEventsBuffer.DISCARD_EV, ev);
+            new FoListItemLabel(
+                    getFOTree(), this, (FoXMLEvent)ev, stateFlags);
+            ev = xmlevents.getEndElement(SyncedXmlEventsBuffer.DISCARD_EV, ev);
             namespaces.surrenderEvent(ev);
 
             // Look for one list-item-body
@@ -180,8 +181,8 @@ public class FoListItem extends FONode {
                    == null)
                 throw new FOPException
                         ("No list-item-body in list-item.");
-            new FoListItemBody(getFOTree(), this, ev, stateFlags);
-            ev = xmlevents.getEndElement(SyncedFoXmlEventsBuffer.DISCARD_EV, ev);
+            new FoListItemBody(getFOTree(), this, (FoXMLEvent)ev, stateFlags);
+            ev = xmlevents.getEndElement(SyncedXmlEventsBuffer.DISCARD_EV, ev);
             namespaces.surrenderEvent(ev);
 
             /*

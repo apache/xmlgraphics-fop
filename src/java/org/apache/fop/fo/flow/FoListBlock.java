@@ -67,8 +67,8 @@ import org.apache.fop.fo.PropNames;
 import org.apache.fop.fo.PropertySets;
 import org.apache.fop.fo.expr.PropertyException;
 import org.apache.fop.xml.FoXMLEvent;
-import org.apache.fop.xml.SyncedFoXmlEventsBuffer;
 import org.apache.fop.xml.XMLEvent;
+import org.apache.fop.xml.SyncedXmlEventsBuffer;
 
 /**
  * Implements the fo:list-block flow object.
@@ -144,7 +144,7 @@ public class FoListBlock extends FONode {
      * <p>Content model for fo:list-block: (marker*, list-item+)
      * @param foTree the FO tree being built
      * @param parent the parent FONode of this node
-     * @param event the <tt>FoXMLEvent</tt> that triggered the creation of
+     * @param event the <tt>XMLEvent</tt> that triggered the creation of
      * this node
      * @param stateFlags - passed down from the parent.  Includes the
      * attribute set information.
@@ -155,16 +155,17 @@ public class FoListBlock extends FONode {
     {
         super(foTree, FObjectNames.LIST_BLOCK, parent, event,
                           stateFlags, sparsePropsMap, sparseIndices);
-        FoXMLEvent ev;
+        XMLEvent ev;
         // Look for zero or more markers
         String nowProcessing = "marker";
         try {
             while ((ev = xmlevents.expectStartElement
                     (FObjectNames.MARKER, XMLEvent.DISCARD_W_SPACE))
                    != null) {
-                new FoMarker(getFOTree(), this, ev, stateFlags);
+                new FoMarker(getFOTree(), this, (FoXMLEvent)ev, stateFlags);
                 numMarkers++;
-                ev = xmlevents.getEndElement(SyncedFoXmlEventsBuffer.DISCARD_EV, ev);
+                ev = xmlevents.getEndElement(
+                        SyncedXmlEventsBuffer.DISCARD_EV, ev);
                 namespaces.surrenderEvent(ev);
             }
 
@@ -173,9 +174,10 @@ public class FoListBlock extends FONode {
             while ((ev = xmlevents.expectStartElement
                     (FObjectNames.LIST_ITEM, XMLEvent.DISCARD_W_SPACE))
                    != null) {
-                new FoListItem(getFOTree(), this, ev, stateFlags);
+                new FoListItem(getFOTree(), this, (FoXMLEvent)ev, stateFlags);
                 numItems++;
-                ev = xmlevents.getEndElement(SyncedFoXmlEventsBuffer.DISCARD_EV, ev);
+                ev = xmlevents.getEndElement(
+                        SyncedXmlEventsBuffer.DISCARD_EV, ev);
                 namespaces.surrenderEvent(ev);
             }
 
