@@ -123,7 +123,9 @@
     <xsl:value-of select="@name"/>
   </fo:block>
   <xsl:apply-templates select="explanatory"/>
+<!-- Comment out temporarily - FOP failing on build
   <xsl:apply-templates select="level-1"/>
+-->
 </xsl:template>
 
 <xsl:template match="level-1">
