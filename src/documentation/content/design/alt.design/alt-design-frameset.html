@@ -3,8 +3,9 @@
   <head>
     <title>Alt Design Frameset</title>
     <META http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
-    <script type="application/x-javascript">
+    <script type="text/javascript">
       <!--
+      browserName = navigator.appName;
       var isHigh = true;
       
       function lengthenCol() {
@@ -12,6 +13,11 @@
         fset = document.getElementById("altDesignFramesetRows");
         fset.setAttribute("rows", "95%,*");
         logowin = top.frames[0];
+        if (logowin == null) {
+          alert(
+            "Requires Navigator >= 7, Mozilla >= 1.2.1 or IE >= 6");
+          return;
+        }
         logodoc = logowin.document;
         lbutton = logodoc.getElementById("lengthenButton");
         lbutton.setAttribute("value", "^");
@@ -23,6 +29,11 @@
         fset = document.getElementById("altDesignFramesetRows");
         fset.setAttribute("rows", "20%,*");
         logowin = top.frames[0];
+        if (logowin == null) {
+          alert(
+            "Requires Navigator >= 7, Mozilla >= 1.2.1 or IE >= 6");
+          return;
+        }
         logodoc = logowin.document;
         lbutton = logodoc.getElementById("lengthenButton");
         lbutton.setAttribute("value", "v");
@@ -45,6 +56,10 @@
       function displayHtml(src) {
           top.frames[1].location = src;
           lengthenCol();
+      }
+
+      function displayAlert(msg) {
+        alert(msg);
       }
       -->
     </script>
