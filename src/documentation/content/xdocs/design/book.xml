@@ -7,11 +7,8 @@
     copyright="@year@ The Apache Software Foundation"
     xmlns:xlink="http://www.w3.org/1999/xlink">
 
-    <menu label="Index">
-      <menu-item label="FOP Home" href="../index.html"/>
-    </menu>
     <menu label="About">
-      <menu-item label="Index" href="index.html"/>
+      <menu-item label="Introduction" href="index.html"/>
       <menu-item label="Understanding" href="understanding/index.html"/>
     </menu>
     <menu label="Sections">
@@ -27,9 +24,6 @@
       <menu-item label="Break Possibility" href="breakpos.html"/>
       <menu-item label="Optimisations" href="optimise.html"/>
       <menu-item label="User Agent" href="useragent.html"/>
-    </menu>
-    <menu label="Alternate">
-      <menu-item label="ALT DESIGN" href="alt.design/index.html"/>
     </menu>
 </book>
 
