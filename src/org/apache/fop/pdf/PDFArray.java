@@ -1,6 +1,6 @@
 /*
  * $Id$
- * Copyright (C) 2001 The Apache Software Foundation. All rights reserved.
+ * Copyright (C) 2001-2002 The Apache Software Foundation. All rights reserved.
  * For details on use and redistribution please refer to the
  * LICENSE file included with these sources.
  */
@@ -11,7 +11,9 @@ package org.apache.fop.pdf;
  * class representing an array object
  */
 public class PDFArray extends PDFObject {
-
+    /**
+     * Array of calues for this pdf object.
+     */
     protected int[] values;
 
     /**

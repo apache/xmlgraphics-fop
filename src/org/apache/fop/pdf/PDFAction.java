@@ -1,6 +1,6 @@
 /*
  * $Id$
- * Copyright (C) 2001 The Apache Software Foundation. All rights reserved.
+ * Copyright (C) 2001-2002 The Apache Software Foundation. All rights reserved.
  * For details on use and redistribution please refer to the
  * LICENSE file included with these sources.
  */
@@ -30,7 +30,7 @@ public abstract class PDFAction extends PDFObject {
      * this constructor is used when there is no additional object being created
      *
      */
-    public PDFAction() {}
+    public PDFAction() { }
 
     /**
      * represent the action to call
@@ -40,7 +40,7 @@ public abstract class PDFAction extends PDFObject {
      *
      * @return the action to place next to /A within a Link
      */
-    abstract public String getAction();
+    public abstract String getAction();
 
 
     /**
@@ -50,6 +50,6 @@ public abstract class PDFAction extends PDFObject {
      *
      * @return the PDF string
      */
-    abstract public byte[] toPDF();
+    public abstract byte[] toPDF();
 
 }
