@@ -172,9 +172,9 @@ public class LineArea extends Area {
             currentFontState.width(currentFontState.mapChar(' '));
         
         char[] data = new char[odata.length];
-        for (int count = 0; count < odata.length; count++) {
-            data[count] = odata[count];
-        }
+        char[] dataCopy = new char[odata.length];
+        System.arraycopy(odata, 0, data, 0, odata.length);
+        System.arraycopy(odata, 0, dataCopy, 0, odata.length);
 
         boolean isText = false;
 
@@ -374,7 +374,7 @@ public class LineArea extends Area {
                         }
                     } else if (this.wrapOption == WrapOption.WRAP) {
                       if (this.hyphProps.hyphenate == Hyphenate.TRUE) {
-                        return this.doHyphenation(data,i,wordStart,this.getContentWidth() - (finalWidth + spaceWidth + pendingWidth));
+                        return this.doHyphenation(dataCopy,i,wordStart,this.getContentWidth() - (finalWidth + spaceWidth + pendingWidth));
                       } else {
                         return wordStart;
                       }
@@ -888,7 +888,7 @@ public class LineArea extends Area {
         //no hyphenation points, but a inword non-letter character
         } else if (hyph == null && preString != null){
             remainingString.append(preString);
-            this.addWord(startChar,remainingString);
+            this.addMapWord(startChar,remainingString);
             return wordStart + remainingString.length();
         //hyphenation points and no inword non-letter character
         } else if (hyph != null && preString == null)  {
@@ -896,7 +896,7 @@ public class LineArea extends Area {
             if (index != -1) {
                 remainingString.append(hyph.getPreHyphenText(index));
                 remainingString.append(this.hyphProps.hyphenationChar);
-                this.addWord(startChar,remainingString);
+                this.addMapWord(startChar,remainingString);
                 return wordStart + remainingString.length()-1;
             }
         //hyphenation points and a inword non letter character
@@ -905,26 +905,43 @@ public class LineArea extends Area {
             if (index != -1) {
               remainingString.append(preString.append(hyph.getPreHyphenText(index)));
               remainingString.append(this.hyphProps.hyphenationChar);
-              this.addWord(startChar,remainingString);
+              this.addMapWord(startChar,remainingString);
               return wordStart + remainingString.length()-1;
             } else {
               remainingString.append(preString) ;
-              this.addWord(startChar,remainingString);
+              this.addMapWord(startChar,remainingString);
               return wordStart + remainingString.length();
             }
         }
         return wordStart;
     }
 
-
-    /** calculates the wordWidth using the actual fontstate*/
-    private int getWordWidth (String word) {
+        /**
+         * Calculates the wordwidth of a string by first mapping the
+         * characteers in the string to glyphs in the current fontstate.
+         */
+    private int getWordWidth(String word) {
+        return getWordWidth(word, true);
+    }
+    
+    /** calculates the wordWidth using the actual fontstate
+     @param doMap if true, map the charaters in the string to glyphs in
+                  the current fontstate before calculating width. If false,
+                  assume that it's already done.
+    */
+    private int getWordWidth (String word, boolean doMap) {
       int wordLength = word.length();
       int width = 0;
       char [] characters = new char [wordLength];
       word.getChars(0,wordLength,characters,0);
+      char currentChar;
       for (int i = 0; i < wordLength; i++) {
-        width += this.currentFontState.width(currentFontState.mapChar(characters[i]));
+          if (doMap)
+              currentChar = currentFontState.mapChar(characters[i]);
+          else
+              currentChar=characters[i];
+          
+          width += this.currentFontState.width(currentChar);
       }
       return width;
     }
@@ -986,6 +1003,19 @@ public class LineArea extends Area {
     }
 
 
+        /**
+         * Same as addWord except that characters in wordBuf is mapped
+         * to the current fontstate's encoding
+         */
+    private void addMapWord (char startChar, StringBuffer wordBuf) {
+        StringBuffer mapBuf = new StringBuffer (wordBuf.length());
+        for (int i = 0; i < wordBuf.length(); i++) {
+            mapBuf.append(currentFontState.mapChar(wordBuf.charAt(i)));
+        }
+
+        addWord(startChar, mapBuf);
+    }
+
     /** adds a InlineArea containing the String startChar+wordBuf to the line area children.  */
     private void addWord (char startChar, StringBuffer wordBuf) {
         String word = wordBuf.toString();
@@ -1000,7 +1030,7 @@ public class LineArea extends Area {
             hia.setYOffset(placementOffset);
             this.addChild(hia);
         }
-        int wordWidth = this.getWordWidth(word);
+        int wordWidth = this.getWordWidth(word, false);
         hia = new WordArea(currentFontState,
                                  this.red, this.green, this.blue,
                                  word,word.length());
