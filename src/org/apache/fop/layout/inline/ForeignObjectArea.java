@@ -92,6 +92,14 @@ public class ForeignObjectArea extends InlineArea {
         chauto = ha;
     }
 
+    public boolean isContentWidthAuto() {
+        return cwauto;
+    }
+
+    public boolean isContentHeightAuto() {
+        return chauto;
+    }
+
     public void setAlign(int align) {
         this.align = align;
     }
