@@ -1,4 +1,4 @@
-<?xml version="1.0"?>
+<?xml version="1.0" encoding="UTF-8" ?>
 <status>
 
   <developers>
@@ -55,7 +55,7 @@ inactive??
      Design FOP API interfaces.
     </action>
     <action context="design" dev="open">
-     Integrate with avalon logging, URI reslover,
+     Integrate with Jakarta Avalon: logging, configuration, URI resolver,
      component management, image caching etc.
     </action>
    </actions>
@@ -76,6 +76,9 @@ inactive??
 
   <changes>
    <release version="?" date="2002">
+    <action dev="JM" type="update" context="build">
+      Updated Avalon Framework JAR (with Log4J support, Bug 11274)
+    </action>
     <action dev="KLL" type="update" context="docs"
             due-to="Victor Mote" due-to-email="vic@outfitr.com">
       Copies across overview for javadocs build.
