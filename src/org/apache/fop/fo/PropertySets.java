@@ -35,6 +35,9 @@ public class PropertySets {
      */
     private static final BitSet accessibilityProps = new BitSet();
     public static final ROBitSet accessibilitySet;
+    public static BitSet accessibilitySetClone() {
+        return (BitSet)(accessibilityProps.clone());
+    }
 
     static {
          accessibilityProps.set(PropNames.ROLE);       
@@ -48,6 +51,9 @@ public class PropertySets {
      */
     private static final BitSet absolutePositionProps = new BitSet();
     public static final ROBitSet absolutePositionSet;
+    public static BitSet absolutePositionSetClone() {
+        return (BitSet)(absolutePositionProps.clone());
+    }
 
     static {
         absolutePositionProps.set(PropNames.ABSOLUTE_POSITION);
@@ -64,6 +70,9 @@ public class PropertySets {
      */
     private static final BitSet auralProps = new BitSet();
     public static final ROBitSet auralSet;
+    public static BitSet auralSetClone() {
+        return (BitSet)(auralProps.clone());
+    }
 
     static {
         auralProps.set(PropNames.AZIMUTH);
@@ -93,6 +102,9 @@ public class PropertySets {
      */
     private static final BitSet backgroundProps = new BitSet();
     public static final ROBitSet backgroundSet;
+    public static BitSet backgroundSetClone() {
+        return (BitSet)(backgroundProps.clone());
+    }
 
     static {
         backgroundProps.set(PropNames.BACKGROUND);
@@ -112,6 +124,9 @@ public class PropertySets {
      */
     private static final BitSet borderProps = new BitSet();
     public static final ROBitSet borderSet;
+    public static BitSet borderSetClone() {
+        return (BitSet)(borderProps.clone());
+    }
 
     static {
         borderProps.set(PropNames.BORDER);
@@ -163,6 +178,9 @@ public class PropertySets {
      */
     private static final BitSet fontProps = new BitSet();
     public static final ROBitSet fontSet;
+    public static BitSet fontSetClone() {
+        return (BitSet)(fontProps.clone());
+    }
 
     static {
         fontProps.set(PropNames.FONT);
@@ -183,6 +201,9 @@ public class PropertySets {
      */
     private static final BitSet hyphenationProps = new BitSet();
     public static final ROBitSet hyphenationSet;
+    public static BitSet hyphenationSetClone() {
+        return (BitSet)(hyphenationProps.clone());
+    }
 
     static {
         hyphenationProps.set(PropNames.COUNTRY);
@@ -201,6 +222,9 @@ public class PropertySets {
      */
     private static final BitSet marginBlockProps = new BitSet();
     public static final ROBitSet marginBlockSet;
+    public static BitSet marginBlockSetClone() {
+        return (BitSet)(marginBlockProps.clone());
+    }
 
     static {
         marginBlockProps.set(PropNames.MARGIN);
@@ -217,6 +241,9 @@ public class PropertySets {
      */
     private static final BitSet marginInlineProps = new BitSet();
     public static final ROBitSet marginInlineSet;
+    public static BitSet marginInlineSetClone() {
+        return (BitSet)(marginInlineProps.clone());
+    }
 
     static {
         marginInlineProps.set(PropNames.SPACE_END);
@@ -230,6 +257,9 @@ public class PropertySets {
      */
     private static final BitSet paddingProps = new BitSet();
     public static final ROBitSet paddingSet;
+    public static BitSet paddingSetClone() {
+        return (BitSet)(paddingProps.clone());
+    }
 
     static {
         paddingProps.set(PropNames.PADDING);
@@ -258,6 +288,9 @@ public class PropertySets {
      */
     private static final BitSet relativePositionProps = new BitSet();
     public static final ROBitSet relativePositionSet;
+    public static BitSet relativePositionSetClone() {
+        return (BitSet)(relativePositionProps.clone());
+    }
 
     static {
         relativePositionProps.set(PropNames.RELATIVE_POSITION);
@@ -275,6 +308,9 @@ public class PropertySets {
      */
     private static final BitSet tableProps = new BitSet();
     public static final ROBitSet tableSet;
+    public static BitSet tableSetClone() {
+        return (BitSet)(tableProps.clone());
+    }
 
     static {
         tableProps.set(PropNames.BORDER_AFTER_PRECEDENCE);
