@@ -1,25 +1,41 @@
-<?xml version = "1.0" encoding = "UTF-8"?>
-<section id="useragent-use">
- <title>Usage</title>
-	<para>
+<?xml version="1.0" standalone="no"?>
+
+<document>
+    <header>
+        <title>FO User Agent</title>
+        <subtitle>Design of FO User Agent</subtitle>
+        <authors>
+            <person name="Keiron Liddle" email="keiron@aftexsw.com"/>
+        </authors>
+    </header>
+
+    <body>
+<s1 title="Purpose">
+<p>
+Technically the user agent is FOP in the role of determining the
+output format and when resolving various attributes. The user
+agent is represented by a class that is available to others to
+specify how FOP should behave.
+  </p>
+  <p>
 The user agent is used by the formatting process to determine
 certain user definable values.
-  </para>
-  <para>
+  </p>
+  <p>
 It will enable the customisation of values for generating and
 rendering the document.
-  </para>
-  <para>
+  </p>
+  <p>
 The user agent must be available to the layout processor and
 the renderer. Users can supply their own user agent or use
 the default one for a particular renderer.
-  </para>
-  <para>
+  </p>
+  <p>
 The user agent needs to be made available to the property
 resolution layout process and the renderer.
-	</para>
+   </p>
 
-  <para>
+  <p>
 Standard Features:
        <itemizedlist>
        <listitem><para>
@@ -130,9 +146,9 @@ glyph orientation vertical of auto
 rendering processor of content-type (mime type)
        </para></listitem>
        </itemizedlist>
-  </para>
+  </p>
 
-  <para>
+  <p>
 Interactive Features:
        <itemizedlist>
        <listitem><para>
@@ -151,6 +167,10 @@ treating fixed as scroll on background attachement
 media usage of auto
        </para></listitem>
        </itemizedlist>
-  </para>
+  </p>
 
-</section>
+  </s1>
+
+    </body>
+</document>
+

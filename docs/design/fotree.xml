@@ -1,0 +1,30 @@
+<?xml version="1.0" standalone="no"?>
+
+<!-- Overview -->
+
+<document>
+    <header>
+        <title>FO Tree</title>
+        <subtitle>Design of FO Tree Structure</subtitle>
+        <authors>
+            <person name="Keiron Liddle" email="keiron@aftexsw.com"/>
+        </authors>
+    </header>
+
+    <body>
+<s1 title="Introduction">
+<p>
+The FO Tree is an internal representation of the input FO document.
+The tree is created by building the elements and attributes from
+the SAX events.
+  </p>
+  <p>
+The FO Tree is used as an intermediatory structure which is converted
+into the area tree. The complete FO tree should not be held in memory
+since FOP should be able to handle FO documents of any size.
+   </p>
+  </s1>
+
+    </body>
+</document>
+
