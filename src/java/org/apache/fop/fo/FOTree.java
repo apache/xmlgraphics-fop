@@ -18,9 +18,9 @@
  */
 package org.apache.fop.fo;
 
-import java.awt.Graphics2D;
-import java.awt.GraphicsEnvironment;
-import java.awt.font.FontRenderContext;
+//import java.awt.Graphics2D;
+//import java.awt.GraphicsEnvironment;
+//import java.awt.font.FontRenderContext;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -30,6 +30,7 @@ import org.apache.fop.datatypes.Numeric;
 import org.apache.fop.datatypes.PropertyValue;
 import org.apache.fop.fo.expr.PropertyException;
 import org.apache.fop.fo.expr.PropertyParser;
+import org.apache.fop.render.FontData;
 import org.apache.fop.xml.XmlEvent;
 import org.apache.fop.xml.XmlEventReader;
 
@@ -71,12 +72,23 @@ public class FOTree extends Tree implements Runnable {
      */
     protected PropertyParser exprParser;
 
+    /** The FOP logger */
     protected Logger log = Logger.getLogger(Fop.fopPackage);
+    /** The font database from the renderer */
+    protected FontData fontData;
+    /**
+     * Gets the renderer's font database
+     * @return the renderer's font database
+     */
+    public FontData getFontData() {
+        return fontData;
+    }
     /**
      * @param xmlevents the buffer from which <tt>XmlEvent</tt>s from the
      * parser are read.
+     * @param fontData the font database from the renderer
      */
-    public FOTree(XmlEventReader xmlevents)
+    public FOTree(XmlEventReader xmlevents, FontData fontData)
         throws PropertyException
     {
         super();
@@ -85,6 +97,7 @@ public class FOTree extends Tree implements Runnable {
             errorDump = true;
         }
         this.xmlevents = xmlevents;
+        this.fontData = fontData;
         exprParser = new PropertyParser(this);
 
         // Initialize the FontSize first.  Any lengths defined in ems must
@@ -96,39 +109,6 @@ public class FOTree extends Tree implements Runnable {
         if ( ! (prop instanceof Numeric) || ! ((Numeric)prop).isLength())
             throw new PropertyException("Initial font-size is not a Length");
         // Set up the rendering context
-    }
-
-    /** The graphics environment in which FOP is operating */
-    private GraphicsEnvironment gEnv = null;
-    /**
-     * Gets the FOP <code>GraphicsEnvironment</code>
-     * @return the environment
-     */
-    protected GraphicsEnvironment getGraphicsEnvironment() {
-        return gEnv;
-    }
-    /** The object which controls drawing and text rendering in the page spread
-     */
-    private Graphics2D g2D = null;
-    /**
-     * Gets the <code>Graphics2D</code> rendering and drawing control object
-     * for area layout
-     * @return
-     */
-    public Graphics2D getGraphics2D() {
-        return g2D;
-    }
-    /** The <code>FontRenderContext</code> object garnered from the
-     * <code>Graphics2D</code> control object for area layout
-     */
-    private FontRenderContext frcontext = null;
-    /**
-     * Gets the <code>FontRenderContext</code> derived from the graphics
-     * control object
-     * @return
-     */
-    public FontRenderContext getFontRenderContext() {
-        return frcontext;
     }
 
     /**
