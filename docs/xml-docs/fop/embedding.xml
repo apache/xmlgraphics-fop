@@ -22,7 +22,7 @@
      buildFOTree(Parser, InputSource) respectively.
   </p>
   <p>A third possibility may be used to build the FO Tree, namely
-     calling getDocumentHandler() and firing the SAX events yourself.
+     calling getContentHandler() and firing the SAX events yourself.
   </p>
   <p>Once the FO Tree is built, the format() and render() methods may be
      called in that order.

@@ -24,7 +24,7 @@
     </p>
   </s2>
   <s2 title="Starting FOP as an standalone application">
-    <p>There are two ways to run FOP from the command line.</p>
+    <p>There are three ways to run FOP from the command line.</p>
     <p>a) Batch processing formatting objects (fo) files: </p>
     <p><code>java org.apache.fop.apps.CommandLine fo-file pdf-file</code></p>
     <p>b) Batch processing xml files (includes production of the fo-files):</p>
@@ -32,7 +32,7 @@
     <p>c) Previewing the fo-file:</p>
     <p><code>java org.apache.fop.apps.AWTCommandLine fo-file</code></p>
     <p>Each method uses next to the fop classes other packages. The following describes 
-       each method in detail.</p>
+       each method in detail. </p>
     <s3 title="Method One">
       <p>One is to first use an XSLT engine to produce the formatting object tree as an 
          XML document and then running the class org.apache.fop.apps.CommandLine with the
@@ -75,6 +75,17 @@
       <p><code>org.apache.fop.apps.AWTCommandLine fo-file </code></p>
       <p>The viewer uses the swing classes.</p> 
     </s3>
+  </s2>
+  <s2 title="Commandline switches">
+      <p>Fop supports at the moment following commandline switches: </p>
+      <s3 title="-d">
+      <p>This switch informs you in case of an error of the method stack</p>
+      </s3>
+      <s3 title="-cUserconfig.xml">
+      <p>The switch '-c' immediately followed by a file name, p.e. Userconfig.xml, tells Fop to use this 
+         user configuration file. 
+      </p>
+      </s3>
   </s2>
   <s2 title="Running FOP on MacOS">  
     <!-- Contributed by Arved Sandstrom -->

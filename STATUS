@@ -29,6 +29,8 @@ Jon Smirl
 
 
 Done since 0.15 release
+
+- added vertical alignment for table cell contents [Marcus Crafter]
 - added: Finnish hyphenation patterns [Jarno Elovirta]
 - added: hyphenation package (Carlos Villegas), integration into Fop [Fotis Jannidis]
 - added: interim configuration package [Fotis Jannidis]
@@ -49,6 +51,9 @@ Done since 0.15 release
 - fix to allow JDK 1.1 users to compile and use FOP [Mikko Honkala] 
 - fix: removing duplicate character mappings [Dharamveer Salecha]
 - fix: NullPointerException in FopImageFactory [Kelly Campbell] 
+- fixed: space after's where not being removed if table row was being removed [Marcus Crafter]
+- fixed problem with keep-with not storing the correct rows [Marcus Crafter]
+
 
 Done since 0.14 release
 - added region-name support, refactoring of region, PageSequence, 

@@ -100,7 +100,7 @@ import java.io.File;
  * buildFOTree(Parser, InputSource) respectively.
  *
  * <P>A third possibility may be used to build the FO Tree, namely
- * calling getDocumentHandler() and firing the SAX events yourself.
+ * calling getContentHandler() and firing the SAX events yourself.
  *
  * <P>Once the FO Tree is built, the format() and render() methods may be
  * called in that order.
@@ -277,7 +277,7 @@ public class Driver {
     }
 
     /**
-       * return the tree builder (a SAX DocumentHandler).
+       * return the tree builder (a SAX ContentHandler).
        *
        * used in situations where SAX is used but not via a FOP-invoked
        * SAX parser. A good example is an XSLT engine that fires SAX
