@@ -409,7 +409,13 @@ public class PDFRenderer extends PrintRenderer {
 
 
         GraphicsNode root;
-        root = builder.build(ctx, doc);
+        try {
+            root = builder.build(ctx, doc);
+        } catch (Exception e) {
+            log.error("svg graphic could not be built: "
+                                   + e.getMessage(), e);
+            return;
+        }
         // get the 'width' and 'height' attributes of the SVG document
         float w = (float)ctx.getDocumentSize().getWidth() * 1000f;
         float h = (float)ctx.getDocumentSize().getHeight() * 1000f;

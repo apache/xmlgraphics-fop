@@ -138,6 +138,13 @@ public class SVGElement extends SVGObj {
         };
         ((SVGOMDocument)doc).setSVGContext(dc);
 
+        try {
+            String baseDir = Configuration.getStringValue("baseDir");
+            ((SVGOMDocument)doc).setURLObject(new URL(baseDir));
+        } catch (Exception e) {
+            log.error("Could not set base URL for svg", e);
+        }
+
         Element e = ((SVGDocument)doc).getRootElement();
         String s;
         SVGUserAgent userAgent = new SVGUserAgent(new AffineTransform());
@@ -185,13 +192,6 @@ public class SVGElement extends SVGObj {
 
         element = doc.getDocumentElement();
 
-        try {
-            String baseDir = Configuration.getStringValue("baseDir");
-            ((SVGOMDocument)doc).setURLObject(new URL(baseDir));
-        } catch (Exception e) {
-            // cannot use log yet
-            //log.error("Could not set base URL for svg", e);
-        }
         buildTopLevel(doc, element);
     }
 
