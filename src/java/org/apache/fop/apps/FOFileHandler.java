@@ -21,12 +21,6 @@ package org.apache.fop.apps;
 // Imported SAX classes
 import org.xml.sax.InputSource;
 import org.xml.sax.XMLReader;
-import org.xml.sax.SAXException;
-import org.xml.sax.SAXNotSupportedException;
-
-// java
-import javax.xml.parsers.SAXParserFactory;
-import javax.xml.parsers.ParserConfigurationException;
 import java.io.File;
 import java.net.URL;
 
@@ -74,26 +68,30 @@ public class FOFileHandler extends InputHandler {
     }
 
     /**
-     * Creates <code>XMLReader</code> object using default
-     * <code>SAXParserFactory</code>
-     * @return the created <code>XMLReader</code>
-     * @throws FOPException if the parser couldn't be created or configured for proper operation.
+     * creates a SAX parser, using the value of org.xml.sax.parser
+     * defaulting to org.apache.xerces.parsers.SAXParser
+     *
+     * @return the created SAX parser
      */
     protected static XMLReader createParser() throws FOPException {
+        String parserClassName = System.getProperty("org.xml.sax.parser");
+        if (parserClassName == null) {
+            parserClassName = "org.apache.xerces.parsers.SAXParser";
+        }
+        Fop.logger.config("using SAX parser " + parserClassName);
+
         try {
-            SAXParserFactory factory = SAXParserFactory.newInstance();
-            factory.setNamespaceAware(true);
-            factory.setFeature(
-                "http://xml.org/sax/features/namespace-prefixes", true);
-            return factory.newSAXParser().getXMLReader();
-        } catch (SAXNotSupportedException se) {
-            throw new FOPException("Error: You need a parser which allows the"
-                   + " http://xml.org/sax/features/namespace-prefixes"
-                   + " feature to be set to true to support namespaces", se);
-        } catch (SAXException se) {
-            throw new FOPException("Couldn't create XMLReader", se);
-        } catch (ParserConfigurationException pce) {
-            throw new FOPException("Couldn't create XMLReader", pce);
+            return (XMLReader)Class.forName(parserClassName).newInstance();
+        } catch (ClassNotFoundException e) {
+            throw new FOPException(e);
+        } catch (InstantiationException e) {
+            throw new FOPException("Could not instantiate "
+                                   + parserClassName, e);
+        } catch (IllegalAccessException e) {
+            throw new FOPException("Could not access " + parserClassName, e);
+        } catch (ClassCastException e) {
+            throw new FOPException(parserClassName + " is not a SAX driver",
+                                   e);
         }
     }
 
