@@ -35,7 +35,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 //FOP
-import org.apache.fop.apps.Version;
+import org.apache.fop.apps.Fop;
 import org.apache.fop.fonts.truetype.FontFileReader;
 import org.apache.fop.fonts.truetype.TTFCmapEntry;
 import org.apache.fop.fonts.truetype.TTFFile;
@@ -160,7 +160,7 @@ public class TTFReader {
 
         TTFReader app = new TTFReader();
 
-        System.out.println("TTF Reader for Apache FOP " + Version.getVersion() + "\n");
+        System.out.println("TTF Reader for Apache FOP " + Fop.getVersion() + "\n");
 
         if (options.get("-enc") != null) {
             String enc = (String)options.get("-enc");

@@ -90,21 +90,6 @@ public abstract class AbstractRenderer
     protected static Log logger = LogFactory.getLog("FOP");
     
     /**
-     * producer (usually "FOP")
-     */
-    protected String producer = "FOP";
-
-    /**
-     * creator of document
-     */
-    protected String creator = null;
-
-    /**
-     * creation time
-     */
-    protected Date creationDate = null;
-
-    /**
      * block progression position
      */
     protected int currentBPPosition = 0;
@@ -145,16 +130,6 @@ public abstract class AbstractRenderer
         return logger;
     }
 
-    /** @see org.apache.fop.render.Renderer */
-    public void setProducer(String inProducer) {
-        producer = inProducer;
-    }
-
-    /** @see org.apache.fop.render.Renderer */
-    public void setCreator(String inCreator) {
-        creator = inCreator;
-    }
-
     /**
      *  @see org.apache.fop.render.Renderer
      */
@@ -165,13 +140,6 @@ public abstract class AbstractRenderer
      */
     public void setUserAgent(FOUserAgent agent) {
         userAgent = agent;
-    }
-
-    /**
-     * @param date
-     */
-    public void setCreationDate(Date date) {
-        creationDate = date;
     }
 
     /** @see org.apache.fop.render.Renderer */
@@ -344,9 +312,7 @@ public abstract class AbstractRenderer
      */
     protected void renderRegion(RegionReference region) {
         List blocks = region.getBlocks();
-
         renderBlocks(null, blocks);
-
     }
 
     /**

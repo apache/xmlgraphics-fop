@@ -37,7 +37,6 @@ import org.apache.avalon.framework.configuration.ConfigurationException;
 // FOP
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.apps.FOUserAgent;
-import org.apache.fop.apps.Version;
 import org.apache.fop.area.Area;
 import org.apache.fop.area.Block;
 import org.apache.fop.area.BlockViewport;
@@ -247,10 +246,9 @@ public class PDFRenderer extends PrintRenderer {
      */
     public void startRenderer(OutputStream stream) throws IOException {
         ostream = stream;
-        producer = "FOP " + Version.getVersion();
-        this.pdfDoc = new PDFDocument(producer);
-        this.pdfDoc.setCreator(creator);
-        this.pdfDoc.setCreationDate(creationDate);
+        this.pdfDoc = new PDFDocument(userAgent.getProducer());
+        this.pdfDoc.setCreator(userAgent.getCreator());
+        this.pdfDoc.setCreationDate(userAgent.getCreationDate());
         this.pdfDoc.setFilterMap(filterMap);
         this.pdfDoc.outputHeader(stream);
 

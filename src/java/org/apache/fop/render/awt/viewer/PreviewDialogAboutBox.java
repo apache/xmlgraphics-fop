@@ -36,7 +36,7 @@ import java.awt.event.WindowEvent;
 import java.awt.event.ActionEvent;
 
 //FOP
-import org.apache.fop.apps.Version;
+import org.apache.fop.apps.Fop;
 
 /**
  * AWT Viewer's "About" dialog.
@@ -68,7 +68,7 @@ public class PreviewDialogAboutBox extends Dialog implements ActionListener {
         imageControl1.setIcon(new ImageIcon(getClass().getResource("images/fop.gif")));
         JLabel label1 = new JLabel(translator.getString("About.Product"));
         JLabel label2 = new JLabel(translator.getString("About.Version") 
-                                            + " " + Version.getVersion());
+                                            + " " + Fop.getVersion());
         JLabel label3 = new JLabel(translator.getString("About.Copyright"));
         panel1.setLayout(new BorderLayout());
         panel2.setLayout(new BorderLayout());
