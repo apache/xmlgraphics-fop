@@ -19,7 +19,7 @@ public class BorderAndPadding implements Cloneable {
     //ResolvedCondLength is long, mask wiht 0x100000000 != 0 is bDiscard
     //	mask wiht 0xFFFFFFFF is iLength
     static final long bDiscard_MASK = 0x100000000L;
-    static final long iLength_MASK = 0xFFFFFFFFL;
+    static final long iLength_MASK =  0x0FFFFFFFFL;
     private static final long new_ResolvedCondLength(CondLength length) {
         return (length.isDiscard()?bDiscard_MASK:0) + length.mvalue();
     }
@@ -75,11 +75,11 @@ public class BorderAndPadding implements Cloneable {
     }
 
     public void setPaddingLength(int side, int iLength) {
-        padding[side] = iLength + padding[side]&bDiscard_MASK;
+        padding[side] = iLength + (padding[side] & bDiscard_MASK);
     }
 
     public void setBorderLength(int side, int iLength) {
-        borderInfo[side].mWidth = iLength + borderInfo[side].mWidth&bDiscard_MASK;
+        borderInfo[side].mWidth = iLength + (borderInfo[side].mWidth & bDiscard_MASK);
     }
 
     public int getBorderLeftWidth(boolean bDiscard) {
@@ -141,7 +141,7 @@ public class BorderAndPadding implements Cloneable {
     }
 
     private int getPadding(int side, boolean bDiscard) {
-        return (int)( padding[side]&iLength_MASK);
+        return (int)(padding[side]&iLength_MASK);
     }
 
 }
