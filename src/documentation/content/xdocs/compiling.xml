@@ -18,7 +18,8 @@ If you are using a binary distribution, it is already built and there is no need
       <section id="env-jdk">
         <title>JDK</title>
           <p>
-            Building FOP requires a minimum Java Development Kit (JDK) of 1.3.
+            Building FOP requires a minimum Java Development Kit (JDK/SDK) of 1.3
+            (A Java Runtime Environment ist not sufficient)
           </p>
       </section>
       <section id="env-classpath">
