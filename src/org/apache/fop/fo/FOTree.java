@@ -101,7 +101,7 @@ public class FOTree extends Tree implements Runnable {
         // Initialise the propertyStacks
         propertyStacks = new LinkedList[PropNames.LAST_PROPERTY_INDEX + 1];
         PropertyValue prop;
-        for (int i = 0; i <= PropNames.LAST_PROPERTY_INDEX; i++)
+        for (int i = 1; i <= PropNames.LAST_PROPERTY_INDEX; i++)
             propertyStacks[i] = new LinkedList();
         // Initialize the FontSize first.  Any lengths defined in ems must
         // be resolved relative to the current font size.  This may happen
@@ -114,8 +114,8 @@ public class FOTree extends Tree implements Runnable {
                 (new PropertyTriplet(PropNames.FONT_SIZE, prop, prop));
 
 
-        for (int i = 0; i <= PropNames.LAST_PROPERTY_INDEX; i++) {
-            String cname = "";
+        for (int i = 1; i <= PropNames.LAST_PROPERTY_INDEX; i++) {
+            System.out.println("Set initial value: " + i);
             if (i == PropNames.FONT_SIZE) continue;
             // Set up the initial values for each property
             prop = PropertyConsts.getInitialValue(i);
