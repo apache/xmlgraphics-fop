@@ -22,6 +22,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.io.Reader;
 import java.util.Enumeration;
 import java.util.Iterator;
@@ -32,6 +33,10 @@ import java.util.Set;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.fop.apps.FOPException;
+import org.apache.fop.apps.FOUserAgent;
+import org.apache.fop.area.AreaTreeHandler;
+import org.apache.fop.render.mif.MIFHandler;
+import org.apache.fop.render.rtf.RTFHandler;
 import org.apache.fop.fo.ElementMapping.Maker;
 import org.apache.fop.fo.pagination.Root;
 import org.xml.sax.Attributes;
@@ -90,11 +95,24 @@ public class FOTreeBuilder extends DefaultHandler {
     }
 
     /**
-     * Sets the structure handler to receive events.
-     * @param foih FOInputHandler instance
+     * Creates the FOInputHandler object based on passed-in render type
+     * @param render type
      */
-    public void setFOInputHandler(FOInputHandler foih) {
-        this.foInputHandler = foih;
+    public void initialize(int renderType, FOUserAgent foUserAgent, 
+        OutputStream stream) throws FOPException {
+        if (renderType == Constants.RENDER_MIF) {
+            foInputHandler = new MIFHandler(foUserAgent, stream);
+        } else if (renderType == Constants.RENDER_RTF) {
+            foInputHandler = new RTFHandler(foUserAgent, stream);
+        } else {
+            if (renderType == Constants.NOT_SET) {
+                throw new IllegalStateException(
+                        "Render must be set using setRender(int renderType)");
+            }
+
+            foInputHandler = new AreaTreeHandler(foUserAgent, renderType, 
+                stream);
+        }
     }
 
     /**
