@@ -1280,7 +1280,7 @@
 		<datatype>LengthRange</datatype>
 		<corresponding use-if-specified="true">
 			<propval><wmrel2abs dir="BLOCKPROGDIM"/></propval>
-		</corresponding>>
+		</corresponding>
 		<compound>
 			<subproperty set-by-shorthand="true">
 				<name>minimum</name>
@@ -1311,7 +1311,58 @@
 			</subproperty>
 		</compound>
 	</property>
+	
+	<property>
+		<name>border-separation</name>
+		<inherited>true</inherited>
+		<datatype>LengthPair</datatype>
+		<compound>
+			<subproperty set-by-shorthand="true">
+				<name>block-progression-direction</name>
+				<datatype>Length</datatype>
+				<default>0pt</default>
+			</subproperty>
+			<subproperty set-by-shorthand="true">
+				<name>inline-progression-direction</name>
+				<datatype>Length</datatype>
+				<default>0pt</default>
+			</subproperty>
+		</compound>
+	</property>
 
+	<property>
+		<name>border-collapse</name>
+		<inherited>true</inherited>
+		<datatype>Enum</datatype>
+		<default>collapse</default>
+		<enumeration>
+			<value const="SEPARATE">separate</value>
+			<value const="COLLAPSE">collapse</value>
+		</enumeration>
+	</property>
+
+	<property>
+		<name>display-align</name>
+		<inherited>true</inherited>
+		<datatype>Enum</datatype>
+			<enumeration>
+				<value const="BEFORE">before</value>
+				<value const="AFTER">after</value>
+				<value const="CENTER">center</value>
+				<value const="AUTO">auto</value>
+			</enumeration>
+		<default>auto</default>
+	</property>
+	<property>
+		<name>relative-align</name>
+		<inherited>true</inherited>
+		<datatype>Enum</datatype>
+			<enumeration>
+				<value const="BEFORE">before</value>
+				<value const="BASELINE">after</value>
+			</enumeration>
+		<default>before</default>
+	</property>
  </generic-property-list>
 </property-list>
 
