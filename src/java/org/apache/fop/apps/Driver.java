@@ -65,10 +65,15 @@ import org.apache.fop.version.Version;
 import org.apache.fop.xml.FoXMLSerialHandler;
 import org.apache.fop.xml.SyncedFoXmlEventsBuffer;
 
+/**
+ * Sets up and runs serialized component threads.
+ * XMLEventSource <=> FOTree <=> AreaTree ...
+ * 
+ * @author pbw
+ */
+
 public class Driver {
-    /**
-     * If true, full error stacks are reported
-     */
+    /** If true, full error stacks are reported */
     private static boolean _errorDump = false;
 
     private InputHandler inputHandler;
@@ -88,10 +93,7 @@ public class Driver {
 
 
     /**
-     * What does the Driver do?
-     * When it has all of the ancillary requirements, it sets up the
-     * serialized components:
-     * XMLEventSource <=> FOTree <=> AreaTree ...
+     * Error handling, version and logging initialization.
      */
     public Driver() throws FOPException {
         _errorDump =
@@ -100,6 +102,35 @@ public class Driver {
         MessageHandler.logln(version);
     }
 
+    /**
+     * Sets up the environment and start processing threads.
+     * The primary elements of the environment include:<br>
+     * the input source, the parser, the
+     * {@link org.apache.fop.xml.SyncedFoXmlEventsBuffer SyncedFoXmlEventsBuffer}
+     * (<code>xmlevents</code>), the
+     * {@link org.apache.fop.xml.FoXMLSerialHandler FoXMLSerialHandler}
+     * (<code>xmlhandler</code>) and the
+     * {@link org.apache.fop.fo.FOTree FOTree} (<code>foTree</code>).
+     * 
+     * <p>The <code>xmlhandler</code> uses the source and the parser to
+     * generate XML events which it stores in <code>xmlevents</code>.
+     * <code>FoXMLSerialHandler</code> implements <code>Runnable</code>.
+     * 
+     * <p>The <code>foTree</code> reads events from the <code>xmlevents</code>
+     * buffer, which it interprets to build the FO tree.  <code>FOTree</code>
+     * implements <code>Runnable</code>.
+     * 
+     * <p>The parser thread is passed the runnable <code>xmlhandler</code>.
+     * When started, it scans the input, constructs and buffers events.  It
+     * blocks when the buffer is full, and continues when notified that the
+     * buffer has emptied.
+     * <p>
+     * The FO Tree builder thread is passed the runnable <code>foTree</code>,
+     * which blocks on an empty <code>xmlevents</code> buffer, and continues
+     * when notified that events are available in the buffer.
+     * 
+     * @throws FOPException
+     */
     public void run () throws FOPException {
         setInputHandler(Options.getInputHandler());
         parser = inputHandler.getParser();
@@ -134,6 +165,13 @@ public class Driver {
 
     }
 
+    /**
+     * Gets the parser Class name.
+     * 
+     * @return a String with the value of the property
+     * <code>org.xml.sax.parser</code> or the default value
+     * <code>org.apache.xerces.parsers.SAXParser</code>.
+     */
     public static final String getParserClassName() {
         String parserClassName = null;
         try {
@@ -146,11 +184,19 @@ public class Driver {
         return parserClassName;
     }
 
+    /**
+     * Sets the InputHandler for XML imput as specified in Options.
+     * @param inputHandler the InputHandler
+     */
     public void setInputHandler(InputHandler inputHandler) {
         this.inputHandler = inputHandler;
     }
 
-     // setting the parser features
+    /**
+     * Sets the parser features.
+     * @param parser the XMLReader used to parse the input
+     * @throws FOPException
+     */
     public void setParserFeatures(XMLReader parser) throws FOPException {
         try {
             parser.setFeature("http://xml.org/sax/features/namespace-prefixes",
@@ -163,7 +209,8 @@ public class Driver {
     }
 
     /**
-     * Dumps an error
+     * Prints stack trace of an exception
+     * @param e the exception to trace
      */
     public static void dumpError(Exception e) {
         if (_errorDump) {
