@@ -226,6 +226,12 @@ abstract public class Area extends Box {
 	this.children.removeElement(area);
     }
 	
+    public void removeChild(DisplaySpace spacer) {
+	this.currentHeight -= spacer.getSize();
+        this.absoluteHeight -= spacer.getSize();
+	this.children.removeElement(spacer);
+    }
+
     public void remove() {
 	this.parent.removeChild(this);
     }

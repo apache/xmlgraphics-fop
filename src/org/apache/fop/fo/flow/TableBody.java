@@ -164,11 +164,13 @@ public class TableBody extends FObj {
 		if ((i != 0) && (status.getCode() == Status.AREA_FULL_NONE)) {
 		    status = new Status(Status.AREA_FULL_SOME);
 		}
+		if(!((i == 0) && (areaContainer.getContentHeight() <= 0))) {
     	        area.addChild(areaContainer);
 		//areaContainer.end();
 
-		area.increaseHeight(areaContainer.getHeight());
+		        area.increaseHeight(areaContainer.getHeight());
                 area.setAbsoluteHeight(areaContainer.getAbsoluteHeight());
+            }
 		return status;
 	    }
 	}
