@@ -181,8 +181,8 @@ implements
      * @throws IOException for I/O problems
      */
     protected void writeRtfPrefix() throws IOException {
-        writeControlWord("sectd");
         writeAttributes(attrib, RtfPage.PAGE_ATTR);
+        writeControlWord("sectd");
     }
 
     /**
