@@ -73,7 +73,7 @@ public class PDFT1Stream extends PDFStream {
         int length = 0;
         String filterEntry = applyFilters();
         String preData = this.number + " " + this.generation
-                + " obj\n<< /Length " + pfb.getLength() + " " 
+                + " obj\n<< /Length " + getDataLength() + " " 
                 + filterEntry  
                 + " /Length1 " + pfb.getLength1()
                 + " /Length2 " + pfb.getLength2()
