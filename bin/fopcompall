@@ -21,3 +21,5 @@ do
 done
 
 $compiler $debug -verbose -d `prefix`build/classes -sourcepath `prefix`src "$@"
+$compiler $debug -verbose -d `prefix`build/classes -sourcepath `prefix`src `prefix`src/org/apache/fop/fo/flow/Dummy.java
+$compiler $debug -verbose -d `prefix`build/classes -sourcepath `prefix`src `prefix`src/org/apache/fop/fo/properties/Dummy.java
