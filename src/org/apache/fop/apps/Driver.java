@@ -1,10 +1,53 @@
 /*
  * $Id$
- * Copyright (C) 2001-2003 The Apache Software Foundation. All rights reserved.
- * For details on use and redistribution please refer to the
- * LICENSE file included with these sources.
- */
-
+ * ============================================================================
+ *                    The Apache Software License, Version 1.1
+ * ============================================================================
+ * 
+ * Copyright (C) 1999-2003 The Apache Software Foundation. All rights reserved.
+ * 
+ * Redistribution and use in source and binary forms, with or without modifica-
+ * tion, are permitted provided that the following conditions are met:
+ * 
+ * 1. Redistributions of source code must retain the above copyright notice,
+ *    this list of conditions and the following disclaimer.
+ * 
+ * 2. Redistributions in binary form must reproduce the above copyright notice,
+ *    this list of conditions and the following disclaimer in the documentation
+ *    and/or other materials provided with the distribution.
+ * 
+ * 3. The end-user documentation included with the redistribution, if any, must
+ *    include the following acknowledgment: "This product includes software
+ *    developed by the Apache Software Foundation (http://www.apache.org/)."
+ *    Alternately, this acknowledgment may appear in the software itself, if
+ *    and wherever such third-party acknowledgments normally appear.
+ * 
+ * 4. The names "FOP" and "Apache Software Foundation" must not be used to
+ *    endorse or promote products derived from this software without prior
+ *    written permission. For written permission, please contact
+ *    apache@apache.org.
+ * 
+ * 5. Products derived from this software may not be called "Apache", nor may
+ *    "Apache" appear in their name, without prior written permission of the
+ *    Apache Software Foundation.
+ * 
+ * THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESSED OR IMPLIED WARRANTIES,
+ * INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND
+ * FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
+ * APACHE SOFTWARE FOUNDATION OR ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
+ * INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLU-
+ * DING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS
+ * OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON
+ * ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
+ * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ * ============================================================================
+ * 
+ * This software consists of voluntary contributions made by many individuals
+ * on behalf of the Apache Software Foundation and was originally created by
+ * James Tauber <jtauber@jtauber.com>. For more information on the Apache
+ * Software Foundation, please see <http://www.apache.org/>.
+ */ 
 package org.apache.fop.apps;
 
 // FOP
@@ -39,8 +82,9 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.Reader;
 import java.util.Enumeration;
-import java.util.Hashtable;
-import java.util.Vector;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Primary class that drives overall FOP process.
@@ -182,6 +226,11 @@ public class Driver implements LogEnabled {
     private Logger log = null;
     private FOUserAgent userAgent = null;
 
+    /**
+     * Returns the fully qualified classname of the standard XML parser for FOP
+     * to use.
+     * @return the XML parser classname
+     */
     public static final String getParserClassName() {
         try {
             return javax.xml.parsers.SAXParserFactory.newInstance()
@@ -194,18 +243,26 @@ public class Driver implements LogEnabled {
     }
 
     /**
-     * create a new Driver
+     * Main constructor for the Driver class.
      */
     public Driver() {
         stream = null;
     }
 
+    /**
+     * Convenience constructor for directly setting input and output.
+     * @param source InputSource to take the XSL-FO input from
+     * @param stream Target output stream
+     */
     public Driver(InputSource source, OutputStream stream) {
         this();
         this.source = source;
         this.stream = stream;
     }
 
+    /**
+     * Initializes the Driver object.
+     */
     public void initialize() {
         stream = null;
         treeBuilder = new FOTreeBuilder();
@@ -213,6 +270,11 @@ public class Driver implements LogEnabled {
         setupDefaultMappings();
     }
 
+    /**
+     * Optionally sets the FOUserAgent instance for FOP to use. The Driver
+     * class sets up its own FOUserAgent if none is set through this method.
+     * @param agent FOUserAgent to use
+     */
     public void setUserAgent(FOUserAgent agent) {
         userAgent = agent;
     }
@@ -226,6 +288,14 @@ public class Driver implements LogEnabled {
         return userAgent;
     }
 
+    /**
+     * Provide the Driver instance with a logger. More information on Avalon 
+     * logging can be found at the 
+     * <a href="http://avalon.apache.org">Avalon site</a>.
+     *
+     * @param log the logger. Must not be <code>null</code>.
+     * @see org.apache.avalon.framework.logger.LogEnabled#enableLogging(Logger)
+     */
     public void enableLogging(Logger log) {
         if (this.log == null) {
             this.log = log;
@@ -235,6 +305,11 @@ public class Driver implements LogEnabled {
     }
 
 
+    /**
+     * Returns the logger for use by FOP.
+     * @return the logger
+     * @see #enableLogging(Logger)
+     */
     protected Logger getLogger() {
         if (this.log == null) {
             this.log = new ConsoleLogger(ConsoleLogger.LEVEL_INFO);
@@ -256,6 +331,10 @@ public class Driver implements LogEnabled {
         treeBuilder.reset();
     }
 
+    /**
+     * Indicates whether FOP has already received input data.
+     * @return true, if input data was received
+     */
     public boolean hasData() {
         return (treeBuilder.hasData());
     }
@@ -264,7 +343,6 @@ public class Driver implements LogEnabled {
      * Set the OutputStream to use to output the result of the Renderer
      * (if applicable)
      * @param stream the stream to output the result of rendering to
-     *
      */
     public void setOutputStream(OutputStream stream) {
         this.stream = stream;
@@ -298,14 +376,15 @@ public class Driver implements LogEnabled {
         addElementMapping("org.apache.fop.extensions.ExtensionElementMapping");
 
         // add mappings from available services
-        Enumeration providers =
+        Iterator providers =
             Service.providers(org.apache.fop.fo.ElementMapping.class);
         if (providers != null) {
-            while (providers.hasMoreElements()) {
-                String str = (String)providers.nextElement();
+            while (providers.hasNext()) {
+                String str = (String)providers.next();
                 try {
                     addElementMapping(str);
                 } catch (IllegalArgumentException e) {
+                    getLogger().warn("Error while adding element mapping", e);
                 }
 
             }
@@ -373,12 +452,21 @@ public class Driver implements LogEnabled {
         this.renderer = renderer;
     }
 
+    /**
+     * Returns the currently active renderer.
+     * @return the renderer
+     */
     public Renderer getRenderer() {
         return renderer;
     }
 
     /**
-     * @deprecated use renderer.setProducer(version) + setRenderer(renderer) or just setRenderer(rendererType) which will use the default producer string.
+     * Sets the renderer.
+     * @param rendererClassName the fully qualified classname of the renderer
+     * class to use.
+     * @param version version number
+     * @deprecated use renderer.setProducer(version) + setRenderer(renderer) or 
+     * just setRenderer(rendererType) which will use the default producer string.
      * @see #setRenderer(int)
      * @see #setRenderer(Renderer)
      */
@@ -395,7 +483,7 @@ public class Driver implements LogEnabled {
      * @see #setRenderer(int)
      */
     public void setRenderer(String rendererClassName)
-    throws IllegalArgumentException {
+                throws IllegalArgumentException {
         try {
             renderer =
                 (Renderer)Class.forName(rendererClassName).newInstance();
@@ -431,11 +519,11 @@ public class Driver implements LogEnabled {
 
     /**
      * Add the element mapping with the given class name.
-     * @param the class name representing the element mapping.
+     * @param mappingClassName the class name representing the element mapping.
      * @throws IllegalArgumentException if there was not such element mapping.
      */
     public void addElementMapping(String mappingClassName)
-        throws IllegalArgumentException {
+                throws IllegalArgumentException {
         try {
             ElementMapping mapping =
                 (ElementMapping)Class.forName(mappingClassName).newInstance();
@@ -464,7 +552,7 @@ public class Driver implements LogEnabled {
      * @return a content handler for handling the SAX events.
      */
     public ContentHandler getContentHandler() {
-        // TODO - do this stuff in a better way
+        // TODO: - do this stuff in a better way
         // PIJ: I guess the structure handler should be created by the renderer.
         if (rendererType == RENDER_MIF) {
             structHandler = new org.apache.fop.mif.MIFHandler(stream);
@@ -472,7 +560,8 @@ public class Driver implements LogEnabled {
             structHandler = new org.apache.fop.rtf.renderer.RTFHandler(stream);
         } else {
             if (renderer == null) {
-                throw new Error("Renderer not set when using standard structHandler");
+                throw new IllegalStateException(
+                        "Renderer not set when using standard structHandler");
             }
             structHandler = new LayoutHandler(stream, renderer, true);
         }
@@ -492,7 +581,7 @@ public class Driver implements LogEnabled {
      * @throws FOPException if anything goes wrong.
      */
     public synchronized void render(XMLReader parser, InputSource source)
-        throws FOPException {
+                throws FOPException {
         parser.setContentHandler(getContentHandler());
         try {
             parser.parse(source);
@@ -514,7 +603,7 @@ public class Driver implements LogEnabled {
      * @throws FOPException if anything goes wrong.
      */
     public synchronized void render(Document document)
-        throws FOPException {
+                throws FOPException {
         try {
             DocumentInputSource source = new DocumentInputSource(document);
             DocumentReader reader = new DocumentReader();
@@ -542,8 +631,7 @@ public class Driver implements LogEnabled {
      * @throws IOException in case of IO errors.
      * @throws FOPException if anything else goes wrong.
      */
-    public synchronized void run()
-        throws IOException, FOPException {
+    public synchronized void run() throws IOException, FOPException {
         if (renderer == null) {
             setRenderer(RENDER_PDF);
         }
@@ -583,9 +671,9 @@ public class Driver implements LogEnabled {
  */
 class Service {
 
-    static private Hashtable providerMap = new Hashtable();
+    private static Map providerMap = new java.util.Hashtable();
 
-    public static synchronized Enumeration providers(Class cls) {
+    public static synchronized Iterator providers(Class cls) {
         ClassLoader cl = cls.getClassLoader();
         // null if loaded by bootstrap class loader
         if (cl == null) {
@@ -595,19 +683,19 @@ class Service {
 
         // getLogger().debug("File: " + serviceFile);
 
-        Vector v = (Vector)providerMap.get(serviceFile);
-        if (v != null) {
-            return v.elements();
+        List lst = (List)providerMap.get(serviceFile);
+        if (lst != null) {
+            return lst.iterator();
         }
 
-        v = new Vector();
-        providerMap.put(serviceFile, v);
+        lst = new java.util.Vector();
+        providerMap.put(serviceFile, lst);
 
         Enumeration e;
         try {
             e = cl.getResources(serviceFile);
         } catch (IOException ioe) {
-            return v.elements();
+            return lst.iterator();
         }
 
         while (e.hasMoreElements()) {
@@ -641,7 +729,7 @@ class Service {
                         // Try and load the class
                         // Object obj = cl.loadClass(line).newInstance();
                         // stick it into our vector...
-                        v.add(line);
+                        lst.add(line);
                     } catch (Exception ex) {
                         // Just try the next line
                     }
@@ -653,7 +741,7 @@ class Service {
             }
 
         }
-        return v.elements();
+        return lst.iterator();
     }
 
 }

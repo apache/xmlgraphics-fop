@@ -1,10 +1,53 @@
 /*
  * $Id$
- * Copyright (C) 2001-2002 The Apache Software Foundation. All rights reserved.
- * For details on use and redistribution please refer to the
- * LICENSE file included with these sources.
- */
-
+ * ============================================================================
+ *                    The Apache Software License, Version 1.1
+ * ============================================================================
+ * 
+ * Copyright (C) 1999-2003 The Apache Software Foundation. All rights reserved.
+ * 
+ * Redistribution and use in source and binary forms, with or without modifica-
+ * tion, are permitted provided that the following conditions are met:
+ * 
+ * 1. Redistributions of source code must retain the above copyright notice,
+ *    this list of conditions and the following disclaimer.
+ * 
+ * 2. Redistributions in binary form must reproduce the above copyright notice,
+ *    this list of conditions and the following disclaimer in the documentation
+ *    and/or other materials provided with the distribution.
+ * 
+ * 3. The end-user documentation included with the redistribution, if any, must
+ *    include the following acknowledgment: "This product includes software
+ *    developed by the Apache Software Foundation (http://www.apache.org/)."
+ *    Alternately, this acknowledgment may appear in the software itself, if
+ *    and wherever such third-party acknowledgments normally appear.
+ * 
+ * 4. The names "FOP" and "Apache Software Foundation" must not be used to
+ *    endorse or promote products derived from this software without prior
+ *    written permission. For written permission, please contact
+ *    apache@apache.org.
+ * 
+ * 5. Products derived from this software may not be called "Apache", nor may
+ *    "Apache" appear in their name, without prior written permission of the
+ *    Apache Software Foundation.
+ * 
+ * THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESSED OR IMPLIED WARRANTIES,
+ * INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND
+ * FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
+ * APACHE SOFTWARE FOUNDATION OR ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
+ * INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLU-
+ * DING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS
+ * OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON
+ * ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
+ * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ * ============================================================================
+ * 
+ * This software consists of voluntary contributions made by many individuals
+ * on behalf of the Apache Software Foundation and was originally created by
+ * James Tauber <jtauber@jtauber.com>. For more information on the Apache
+ * Software Foundation, please see <http://www.apache.org/>.
+ */ 
 package org.apache.fop.apps;
 
 /*
@@ -20,12 +63,9 @@ package org.apache.fop.apps;
 
 
 import org.xml.sax.XMLReader;
-import org.xml.sax.InputSource;
-import org.xml.sax.SAXException;
-import org.xml.sax.SAXParseException;
 
-import java.awt.Graphics;
-import java.awt.print.*;
+import java.awt.print.PrinterException;
+import java.awt.print.PrinterJob;
 import java.io.OutputStream;
 import java.io.IOException;
 import java.util.Vector;
@@ -33,7 +73,7 @@ import java.util.Vector;
 import org.apache.fop.render.awt.AWTRenderer;
 
 /**
- * This class prints a xsl-fo dokument without interaction.
+ * This class prints a XSL-FO dokument without interaction.
  * At the moment java has not the possibility to configure the printer and it's
  * options without interaction (30.03.2000).
  * This class allows to print a set of pages (from-to), even/odd pages and many copies.
@@ -41,14 +81,19 @@ import org.apache.fop.render.awt.AWTRenderer;
  * - Print to page xxx: property name - end, value int
  * - Print even/odd pages: property name - even, value boolean
  * - Print xxx copies: property name - copies, value int
- *
  */
 public class PrintStarter extends CommandLineStarter {
 
+    /**
+     * @see org.apache.fop.apps.CommandLineStarter#CommandLineStarter(CommandLineOptions)
+     */
     public PrintStarter(CommandLineOptions options) throws FOPException {
         super(options);
     }
 
+    /**
+     * @see org.apache.fop.apps.Starter#run()
+     */
     public void run() throws FOPException {
         Driver driver = new Driver();
 
@@ -121,10 +166,7 @@ public class PrintStarter extends CommandLineStarter {
             mode = EVEN_AND_ALL;
             String str = System.getProperty("even");
             if (str != null) {
-                try {
-                    mode = Boolean.valueOf(str).booleanValue() ? EVEN : ODD;
-                } catch (Exception e) {}
-
+                mode = Boolean.valueOf(str).booleanValue() ? EVEN : ODD;
             }
 
         }
@@ -146,9 +188,9 @@ public class PrintStarter extends CommandLineStarter {
                 printerJob.print();
             } catch (PrinterException e) {
                 e.printStackTrace();
-                throw new IOException(
-                    "Unable to print: " + e.getClass().getName() +
-                    ": " + e.getMessage());
+                throw new IOException("Unable to print: " 
+                    + e.getClass().getName()
+                    + ": " + e.getMessage());
             }
         }
 

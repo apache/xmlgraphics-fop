@@ -1,10 +1,53 @@
 /*
  * $Id$
- * Copyright (C) 2001-2003 The Apache Software Foundation. All rights reserved.
- * For details on use and redistribution please refer to the
- * LICENSE file included with these sources.
- */
-
+ * ============================================================================
+ *                    The Apache Software License, Version 1.1
+ * ============================================================================
+ * 
+ * Copyright (C) 1999-2003 The Apache Software Foundation. All rights reserved.
+ * 
+ * Redistribution and use in source and binary forms, with or without modifica-
+ * tion, are permitted provided that the following conditions are met:
+ * 
+ * 1. Redistributions of source code must retain the above copyright notice,
+ *    this list of conditions and the following disclaimer.
+ * 
+ * 2. Redistributions in binary form must reproduce the above copyright notice,
+ *    this list of conditions and the following disclaimer in the documentation
+ *    and/or other materials provided with the distribution.
+ * 
+ * 3. The end-user documentation included with the redistribution, if any, must
+ *    include the following acknowledgment: "This product includes software
+ *    developed by the Apache Software Foundation (http://www.apache.org/)."
+ *    Alternately, this acknowledgment may appear in the software itself, if
+ *    and wherever such third-party acknowledgments normally appear.
+ * 
+ * 4. The names "FOP" and "Apache Software Foundation" must not be used to
+ *    endorse or promote products derived from this software without prior
+ *    written permission. For written permission, please contact
+ *    apache@apache.org.
+ * 
+ * 5. Products derived from this software may not be called "Apache", nor may
+ *    "Apache" appear in their name, without prior written permission of the
+ *    Apache Software Foundation.
+ * 
+ * THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESSED OR IMPLIED WARRANTIES,
+ * INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND
+ * FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
+ * APACHE SOFTWARE FOUNDATION OR ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
+ * INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLU-
+ * DING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS
+ * OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON
+ * ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
+ * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ * ============================================================================
+ * 
+ * This software consists of voluntary contributions made by many individuals
+ * on behalf of the Apache Software Foundation and was originally created by
+ * James Tauber <jtauber@jtauber.com>. For more information on the Apache
+ * Software Foundation, please see <http://www.apache.org/>.
+ */ 
 package org.apache.fop.apps;
 
 // java
@@ -111,7 +154,8 @@ public class CommandLineOptions {
 
     /**
      * parses the commandline arguments
-     * @return true if parse was successful and processing can continue, false if processing should stop
+     * @return true if parse was successful and processing can continue, false 
+     * if processing should stop
      * @exception FOPException if there was an error in the format of the options
      */
     private boolean parseOptions(String args[]) throws FOPException {
@@ -127,7 +171,8 @@ public class CommandLineOptions {
             } else if (args[i].equals("-c")) {
                 if ((i + 1 == args.length)
                         || (args[i + 1].charAt(0) == '-')) {
-                    throw new FOPException("if you use '-c', you must specify the name of the configuration file");
+                    throw new FOPException("if you use '-c', you must specify "
+                            + "the name of the configuration file");
                 } else {
                     userConfigFile = new File(args[i + 1]);
                     i++;
@@ -155,7 +200,8 @@ public class CommandLineOptions {
                 inputmode = XSLT_INPUT;
                 if ((i + 1 == args.length)
                         || (args[i + 1].charAt(0) == '-')) {
-                    throw new FOPException("you must specify the stylesheet file for the '-xsl' option");
+                    throw new FOPException("you must specify the stylesheet "
+                            + "file for the '-xsl' option");
                 } else {
                     xsltfile = new File(args[i + 1]);
                     i++;
@@ -164,7 +210,8 @@ public class CommandLineOptions {
                 inputmode = XSLT_INPUT;
                 if ((i + 1 == args.length)
                         || (args[i + 1].charAt(0) == '-')) {
-                    throw new FOPException("you must specify the input file for the '-xml' option");
+                    throw new FOPException("you must specify the input file "
+                            + "for the '-xml' option");
                 } else {
                     xmlfile = new File(args[i + 1]);
                     i++;
@@ -238,7 +285,8 @@ public class CommandLineOptions {
                 setOutputMode(SVG_OUTPUT);
                 if ((i + 1 == args.length)
                         || (args[i + 1].charAt(0) == '-')) {
-                    throw new FOPException("you must specify the svg output file");                } else {
+                    throw new FOPException("you must specify the svg output file");
+                } else {
                     outfile = new File(args[i + 1]);
                     i++;
                 }
@@ -395,6 +443,7 @@ public class CommandLineOptions {
     /**
      * Get the starter for the process.
      * @return the starter.
+     * @throws FOPException In case of failure while getting the starter
      */
     public Starter getStarter() throws FOPException {
         Starter starter = null;
@@ -424,51 +473,96 @@ public class CommandLineOptions {
         return starter;
     }
 
+    /**
+     * Returns the input mode (type of input data, ex. NOT_SET or FO_INPUT)
+     * @return the input mode
+     */
     public int getInputMode() {
         return inputmode;
     }
 
+    /**
+     * Returns the output mode (output format, ex. NOT_SET or PDF_OUTPUT)
+     * @return the output mode
+     */
     public int getOutputMode() {
         return outputmode;
     }
 
+    /**
+     * Returns the XSL-FO file if set.
+     * @return the XSL-FO file, null if not set
+     */
     public File getFOFile() {
         return fofile;
     }
 
+    /**
+     * Returns the input XML file if set.
+     * @return the input XML file, null if not set
+     */
     public File getXMLFile() {
         return xmlfile;
     }
 
+    /**
+     * Returns the stylesheet to be used for transformation to XSL-FO.
+     * @return stylesheet
+     */
     public File getXSLFile() {
         return xsltfile;
     }
 
+    /**
+     * Returns the output file
+     * @return the output file
+     */
     public File getOutputFile() {
         return outfile;
     }
 
+    /**
+     * Returns the user configuration file to be used.
+     * @return the userconfig.xml file
+     */
     public File getUserConfigFile() {
         return userConfigFile;
     }
 
+    /**
+     * Returns the default language
+     * @return the default language
+     */
     public String getLanguage() {
         return language;
     }
 
+    /**
+     * Indicates if FOP should be silent.
+     * @return true if should be silent
+     */
     public Boolean isQuiet() {
         return quiet;
     }
 
+    /**
+     * Indicates if FOP should dump its configuration during runtime.
+     * @return true if config dump is enabled
+     */
     public Boolean dumpConfiguration() {
         return dumpConfiguration;
     }
 
+    /**
+     * Indicates whether the XML renderer should generate course area XML
+     * @return true if coarse area XML is desired
+     */
     public Boolean isCoarseAreaXml() {
         return suppressLowLevelAreas;
     }
 
     /**
+     * Returns the input file.
      * @return either the fofile or the xmlfile
      */
     public File getInputFile() {
@@ -486,39 +580,41 @@ public class CommandLineOptions {
      * shows the commandline syntax including a summary of all available options and some examples
      */
     public static void printUsage() {
-        System.err.println("\nUSAGE\nFop [options] [-fo|-xml] infile [-xsl file] [-awt|-pdf|-mif|-rtf|-pcl|-ps|-txt|-at|-print] <outfile>\n"
-                           + " [OPTIONS]  \n"
-                           + "  -d          debug mode   \n"
-                           + "  -x          dump configuration settings  \n"
-                           + "  -q          quiet mode  \n"
-                           + "  -c cfg.xml  use additional configuration file cfg.xml\n"
-                           + "  -l lang     the language to use for user information \n"
-                           + "  -s          for area tree XML, down to block areas only\n\n"
-                           + " [INPUT]  \n"
-                           + "  infile            xsl:fo input file (the same as the next) \n"
-                           + "  -fo  infile       xsl:fo input file  \n"
-                           + "  -xml infile       xml input file, must be used together with -xsl \n"
-                           + "  -xsl stylesheet   xslt stylesheet \n \n"
-                           + " [OUTPUT] \n"
-                           + "  outfile           input will be rendered as pdf file into outfile \n"
-                           + "  -pdf outfile      input will be rendered as pdf file (outfile req'd) \n"
-                           + "  -awt              input will be displayed on screen \n"
-                           + "  -mif outfile      input will be rendered as mif file (outfile req'd)\n"
-                           + "  -rtf outfile      input will be rendered as rtf file (outfile req'd)\n"
-                           + "  -pcl outfile      input will be rendered as pcl file (outfile req'd) \n"
-                           + "  -ps outfile       input will be rendered as PostScript file (outfile req'd) \n"
-                           + "  -txt outfile      input will be rendered as text file (outfile req'd) \n"
-                           + "  -svg outfile      input will be rendered as an svg slides file (outfile req'd) \n"
-                           + "  -at outfile       representation of area tree as XML (outfile req'd) \n"
-                           + "  -print            input file will be rendered and sent to the printer \n"
-                           + "                    see options with \"-print help\" \n\n"
-                           + " [Examples]\n" + "  Fop foo.fo foo.pdf \n"
-                           + "  Fop -fo foo.fo -pdf foo.pdf (does the same as the previous line)\n"
-                           + "  Fop -xsl foo.xsl -xml foo.xml -pdf foo.pdf\n"
-                           + "  Fop foo.fo -mif foo.mif\n"
-                           + "  Fop foo.fo -rtf foo.rtf\n"
-                           + "  Fop foo.fo -print or Fop -print foo.fo \n"
-                           + "  Fop foo.fo -awt \n");
+        System.err.println(
+              "\nUSAGE\nFop [options] [-fo|-xml] infile [-xsl file] "
+                    + "[-awt|-pdf|-mif|-rtf|-pcl|-ps|-txt|-at|-print] <outfile>\n"
+            + " [OPTIONS]  \n"
+            + "  -d          debug mode   \n"
+            + "  -x          dump configuration settings  \n"
+            + "  -q          quiet mode  \n"
+            + "  -c cfg.xml  use additional configuration file cfg.xml\n"
+            + "  -l lang     the language to use for user information \n"
+            + "  -s          for area tree XML, down to block areas only\n\n"
+            + " [INPUT]  \n"
+            + "  infile            xsl:fo input file (the same as the next) \n"
+            + "  -fo  infile       xsl:fo input file  \n"
+            + "  -xml infile       xml input file, must be used together with -xsl \n"
+            + "  -xsl stylesheet   xslt stylesheet \n \n"
+            + " [OUTPUT] \n"
+            + "  outfile           input will be rendered as pdf file into outfile \n"
+            + "  -pdf outfile      input will be rendered as pdf file (outfile req'd) \n"
+            + "  -awt              input will be displayed on screen \n"
+            + "  -mif outfile      input will be rendered as mif file (outfile req'd)\n"
+            + "  -rtf outfile      input will be rendered as rtf file (outfile req'd)\n"
+            + "  -pcl outfile      input will be rendered as pcl file (outfile req'd) \n"
+            + "  -ps outfile       input will be rendered as PostScript file (outfile req'd) \n"
+            + "  -txt outfile      input will be rendered as text file (outfile req'd) \n"
+            + "  -svg outfile      input will be rendered as an svg slides file (outfile req'd) \n"
+            + "  -at outfile       representation of area tree as XML (outfile req'd) \n"
+            + "  -print            input file will be rendered and sent to the printer \n"
+            + "                    see options with \"-print help\" \n\n"
+            + " [Examples]\n" + "  Fop foo.fo foo.pdf \n"
+            + "  Fop -fo foo.fo -pdf foo.pdf (does the same as the previous line)\n"
+            + "  Fop -xsl foo.xsl -xml foo.xml -pdf foo.pdf\n"
+            + "  Fop foo.fo -mif foo.mif\n"
+            + "  Fop foo.fo -rtf foo.rtf\n"
+            + "  Fop foo.fo -print or Fop -print foo.fo \n"
+            + "  Fop foo.fo -awt \n");
     }
     
     /**
