@@ -712,7 +712,6 @@ public class PropertyParser extends PropertyTokenizer {
                 // Color functions
                 if (function.equals("rgb")) {
                     // Currently arguments must all be integers.
-                    System.out.println("rgb: " + getExpr());
                     PropertyValue[] args = parseArgs(3);
                     switch (args[0].getType()) {
                     case PropertyValue.INTEGER:
