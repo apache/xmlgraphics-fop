@@ -20,6 +20,7 @@ package org.apache.fop.layoutmgr;
 
 import java.util.ArrayList;
 
+import org.apache.fop.fo.FOText;
 import org.apache.fop.fo.TextInfo;
 import org.apache.fop.traits.SpaceVal;
 import org.apache.fop.area.Trait;
@@ -98,10 +99,13 @@ public class TextLayoutManager extends AbstractLayoutManager {
      * @param length length of the above array to be processed
      * @param textInfo the text information for doing layout
      */
-    public TextLayoutManager(char[] chars, int length, TextInfo textInfo) {
-        this.textArray = chars;
-        this.textArrayLength = length;
-        this.textInfo = textInfo;
+    public TextLayoutManager(FOText node) {
+        super(node);
+        this.textArray = new char[node.ca.length - node.start];
+        System.arraycopy(node.ca, node.start, this.textArray, 0,
+            node.ca.length - node.start);
+        this.textArrayLength = node.ca.length - node.start;
+        this.textInfo = node.textInfo;
         this.vecAreaInfo = new java.util.ArrayList();
 
         // With CID fonts, space isn't neccesary currentFontState.width(32)

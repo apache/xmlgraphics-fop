@@ -55,9 +55,18 @@ public abstract class AbstractLayoutManager implements LayoutProcessor, Constant
     }
 
     /**
+     * Abstract layout manager.
+     *
+     * @param fo the formatting object for this layout manager
+     */
+    public AbstractLayoutManager(FObj fo) {
+        setFObj(fo);
+    }
+
+    /**
      * Set the FO object for this layout manager
      *
-     * @param fo the fo for this layout manager
+     * @param fo the formatting object for this layout manager
      */
     public void setFObj(FObj fo) {
         this.fobj = fo;
