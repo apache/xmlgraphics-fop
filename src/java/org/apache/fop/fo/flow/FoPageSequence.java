@@ -21,9 +21,16 @@
 package org.apache.fop.fo.flow;
 
 // FOP
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.BitSet;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 import java.util.NoSuchElementException;
+import java.util.Set;
 
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.datastructs.TreeException;
@@ -97,6 +104,20 @@ public class FoPageSequence extends FONode {
     private int title = -1;
     /** Child index of first fo:static-content child. */
     private int firstStaticContent = -1;
+    /**
+     * Private map of <code>List</code>s of static-content subtrees hashed on
+     * flow-name.  Note that there is no restriction on multiple
+     * <code>fo:static-content</code> elements being assigned to a single
+     * <code>flow-name</code>, so the objects keyed by <code>flow-name</code>
+     * must be able to hold more than one element; hence <code>List</code>s.
+     * 
+     * Each element of the <code>HashMap</code>, keyed on the
+     * <code>flow-name</code> is an <code>ArrayList</code> containing one or
+     * more instances of <code>FoStaticContent</code>.
+     */
+    private HashMap staticSubtrees = null;
+    /** Unmodifiable version of <code>staticSubtrees</code> */
+    public Map staticContents = null;
     /** Child index of fo:flow child. */
     private int flowChild = -1;
 
@@ -127,18 +148,48 @@ public class FoPageSequence extends FONode {
                 namespaces.relinquishEvent(ev);
             } // else ignore
 
-            // Look for zero or more static-content
+            // Look for zero or more static-content subtrees
             nowProcessing = "static-content";
             while ((ev = xmlevents.expectStartElement
                     (FObjectNames.STATIC_CONTENT, XmlEvent.DISCARD_W_SPACE))
                    != null) {
                 // Loop over remaining fo:static-content
-                if (firstStaticContent == -1)
+                if (firstStaticContent == -1) {
                     firstStaticContent = numChildren();
-                new FoStaticContent(getFOTree(), this, (FoXmlEvent)ev);
+                    staticSubtrees = new HashMap();
+                }
+                FoStaticContent statContent  =
+                    new FoStaticContent(getFOTree(), this, (FoXmlEvent)ev);
                 namespaces.relinquishEvent(ev);
+                // Collect the static-content subtrees for this page-sequence
+                String flowname = statContent.getFlowName();
+                if (! staticSubtrees.containsKey(flowname)) {
+                    // Create a new list for this key
+                    staticSubtrees.put(flowname, new ArrayList(1));
+                }
+                // Add an entry to an existing List
+                ArrayList statconsList =
+                    (ArrayList)(staticSubtrees.get(flowname));
+                statconsList.add(statContent);
             }
-            
+            // Create the unmodifiable map of unmodifiable lists
+            // TODO make the contents of the events buffer unmodifiable
+            // Each value in the Map is an ArrayList.  Iterate over all of the
+            // entries, replacing the ArrayList value in each Map.Entry with an
+            // unmodifiableList constructed from the ArrayList
+            if (staticSubtrees != null) {
+                Set entries = staticSubtrees.entrySet();
+                Iterator iter = entries.iterator();
+                while (iter.hasNext()) {
+                    Map.Entry entry = (Map.Entry)(iter.next());
+                    entry.setValue(
+                            Collections.unmodifiableList(
+                                    (List)(entry.getValue())));
+                }
+                // Now make an unmodifiableMap from the overall HashMap
+                // of flow-name indexed ArrayLists
+                staticContents = Collections.unmodifiableMap(staticSubtrees);
+            }
             // Generate a null page for the flow(s)
             
 
