@@ -23,6 +23,7 @@ import java.util.Arrays;
 import java.util.NoSuchElementException;
 
 import org.apache.fop.apps.FOPException;
+import org.apache.fop.area.Area;
 import org.apache.fop.datastructs.TreeException;
 import org.apache.fop.fo.declarations.FoDeclarations;
 import org.apache.fop.fo.expr.PropertyException;
@@ -122,7 +123,8 @@ public class FoRoot extends FONode {
     public void buildFoTree() throws FOPException{
         XmlEvent ev;
         String nowProcessing;
-        //System.out.println("buildFoTree: " + event);
+        log.fine("buildFoTree");
+        log.finer("layout-master-set");
         nowProcessing = "layout-master-set";
         try {
             // Look for layout-master-set.  Must be one.
@@ -137,6 +139,7 @@ public class FoRoot extends FONode {
             layoutMasters.deleteSubTree();
 
             // Look for optional declarations
+            log.finer("declarations");
             nowProcessing = "declarations";
             ev = xmlevents.expectStartElement
                         (FObjectNames.DECLARATIONS, XmlEvent.DISCARD_W_SPACE);
@@ -150,6 +153,7 @@ public class FoRoot extends FONode {
 
             // Process page-sequences here
             // must have at least one
+            log.finer("page-sequence");
             nowProcessing = "page-sequence";
             ev = xmlevents.expectStartElement
                         (FObjectNames.PAGE_SEQUENCE, XmlEvent.DISCARD_W_SPACE);
@@ -181,11 +185,21 @@ public class FoRoot extends FONode {
         makeSparsePropsSet();
         // Provide some stats
         for (int i = 0; i <= Namespaces.LAST_NS_INDEX; i++) {
-            System.out.println("Namespace " + namespaces.getIndexURI(i));
-            System.out.println("Size of event pool: " + 
-                    namespaces.getNSPoolSize(i));
-            System.out.println("Next event id     : " + 
-                    namespaces.getSequenceValue(i));
+            log.info("Namespace " + namespaces.getIndexURI(i));
+            log.info("Size of event pool: " + namespaces.getNSPoolSize(i));
+            log.info("Next event id     : " + namespaces.getSequenceValue(i));
         }
     }
+
+    public Area getReferenceRectangle() throws FOPException {
+        // TODO Reference rectangle is assumed to be equivalent to the
+        // "auto" value on "page-height" and "page-width".  The
+        // inline-progression-dimension and block-progression-dimension are
+        // calculated according to the computed values of the
+        // reference-orientation and writing-mode of the FO for which the
+        // percentage is calculated.  See
+        // 7.3 Reference Rectangle for Percentage Computations
+        throw new FOPException("Called from FoRoot");
+    }
+
 }
