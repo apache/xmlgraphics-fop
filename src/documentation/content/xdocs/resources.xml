@@ -15,7 +15,7 @@
   limitations under the License.
 -->
 <!-- $Id$ -->
-<!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V1.1//EN"
+<!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V1.3//EN"
     "document-v13.dtd">
 <!-- FOP Relevant Specifications and links -->
 <document>
@@ -131,6 +131,52 @@
         <ul>
           <li>[online resource] A list of PostScript-related technical resources can be found at Adobe Solutions Network, <jump href="http://partners.adobe.com/asn/tech/ps/technotes.jsp">PostScript Language Technical Notes</jump></li>
           <li>[online resource] Additional PostScript-related developer resources can be found at Adobe Solutions Network, <jump href="http://partners.adobe.com/asn/tech/ps/index.jsp">PostScript SDK Archive</jump>.</li>
+        </ul>
+      </section>
+    </section>
+    <section id="mailing-lists">
+      <title>Mailing Lists</title>
+      <p>Before posting questions to any list:</p>
+      <ul>
+        <li>Review the <link href="http://jakarta.apache.org/site/mail.html">Jakarta Mailing Lists</link> - Guidelines for general principles about mailing lists.</li>
+        <li>Review "<link href="http://www.catb.org/~esr/faqs/smart-questions.html">How To Ask Questions The Smart Way</link>".</li>
+        <li>Send only <em>plain text</em> email messages to any mailing lists. Please do not send html or rtf email, as they do not work well with the archive engines. If you are using Microsoft Outlook, this setting can be found at the "Mail Format" tab of the Tools/Options menu.</li>
+        <li>Use a mail client that respects the <em>References</em> and/or <em>In-Reply-To</em> mail header entries. This is important for mail clients that can display threads as trees. <strong>Compliant mail clients</strong> include Microsoft Outlook, Becky!, KMail, Apple Mail, Ximian Evolution, Mozilla (version 1.2 or greater). Non-compliant mail clients include Microsoft Exchange, Lotus Notes, Internet Mail Service (MUA or MTA), and dtmail.</li>
+      </ul>
+      <p>For help in understanding email acronyms, see the <link href="http://www.lingo2word.com/lists/acronym_listA.html">Lingo2Word Acronym List</link>, or the <link href="http://www.keno.org/web_design/acronyms.htm">Keno Internet Services Internet Glossary</link>.</p>
+      <section id="Apache-FOP">
+        <title>Apache FOP Mailing List</title>
+        <ul>
+          <li>[mailing list info] <jump href="http://xml.apache.org/fop/maillist.html">http://xml.apache.org/fop/maillist.html</jump></li>
+          <ul>
+            <li>[fop-user archives] <jump href="http://marc.theaimsgroup.com/?l=fop-user">http://marc.theaimsgroup.com/?l=fop-user</jump></li>
+            <li>[fop-user-subscribe] <jump href="mailto:fop-user-subscribe@xml.apache.org">fop-user-subscribe@xml.apache.org</jump></li>
+            <li>[fop-user-digest-subscribe] <jump href="mailto:fop-user-digest-subscribe@xml.apache.org">fop-user-digest-subscribe@xml.apache.org</jump></li>
+          </ul>
+          <ul>
+            <li>[fop-dev archives] <jump href="http://marc.theaimsgroup.com/?l=fop-dev">http://marc.theaimsgroup.com/?l=fop-dev</jump></li>
+            <li>[fop-dev-subscribe] <jump href="mailto:fop-dev-subscribe@xml.apache.org">fop-dev-subscribe@xml.apache.org</jump></li>
+            <li>[fop-dev-digest-subscribe] <jump href="mailto:fop-dev-digest-subscribe@xml.apache.org">fop-dev-digest-subscribe@xml.apache.org</jump></li>
+          </ul>
+        </ul>
+      </section>
+      <section id="XSL-FO-at-W3C">
+        <title>XSL-FO Mailing List (at W3C)</title>
+        <ul>
+          <li>[mailing list info] <jump href="http://www.w3.org/Mail/Request">http://www.w3.org/Mail/Request</jump></li>
+          <li>[mailing list archives] <jump href="http://lists.w3.org/Archives/Public/www-xsl-fo/">http://lists.w3.org/Archives/Public/www-xsl-fo/</jump></li>
+        </ul>
+      </section>
+      <section id="XSL-FO-at-YahooGroups">
+        <title>XSL-FO Mailing List (at YahooGroups)</title>
+        <ul>
+          <li>[mailing list info &amp; archives] <jump href="http://groups.yahoo.com/group/XSL-FO">http://groups.yahoo.com/group/XSL-FO</jump></li>
+        </ul>
+      </section>
+      <section id="XSLT-at-Mulberry-Tech">
+        <title>XSLT List (Mulberry Tech)</title>
+        <ul>
+          <li>[mailing list info &amp; archives] <jump href="http://www.mulberrytech.com/xsl/xsl-list">http://www.mulberrytech.com/xsl/xsl-list</jump></li>
         </ul>
       </section>
     </section>
