@@ -357,7 +357,7 @@ public class PSRenderer extends PrintRenderer {
 
         this.currentPageNumber++;
         gen.writeDSCComment(DSCConstants.PAGE, new Object[]
-                {page.getPageNumber(),
+                {page.getPageNumberString(),
                  new Integer(this.currentPageNumber)});
         final Integer zero = new Integer(0);
         final long pagewidth = Math.round(page.getViewArea().getWidth());

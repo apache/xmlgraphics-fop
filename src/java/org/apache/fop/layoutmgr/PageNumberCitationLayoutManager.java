@@ -74,7 +74,7 @@ public class PageNumberCitationLayoutManager extends LeafNodeLayoutManager {
         PageViewport page = parentLM.resolveRefID(fobj.getRefId());
         InlineArea inline = null;
         if (page != null) {
-            String str = page.getPageNumber();
+            String str = page.getPageNumberString();
             // get page string from parent, build area
             TextArea text = new TextArea();
             inline = text;

@@ -87,7 +87,7 @@ public class PageSequence extends FObj {
     public int currentPageNumber = 0;
     private int explicitFirstNumber = 0; // explicitly specified
     public int firstPageNumber = 0; // actual
-    public PageNumberGenerator pageNumberGenerator;
+    private PageNumberGenerator pageNumberGenerator;
 
     private int pageCount = 0;
     private boolean isForcing = false;
@@ -678,11 +678,12 @@ public class PageSequence extends FObj {
     }
 
     /**
-     * Public accessor for getting the PageNumberGenerator.
-     * @return the PageNumberGenerator
+     * Retrieves the string representation of a page number applicable
+     * for this page sequence
+     * @return string representation of the page number
      */
-    public PageNumberGenerator getPageNumberGenerator() {
-        return pageNumberGenerator;
+    public String makeFormattedPageNumber(int pageNumber) {
+        return pageNumberGenerator.makeFormattedPageNumber(pageNumber);
     }
 
     /**

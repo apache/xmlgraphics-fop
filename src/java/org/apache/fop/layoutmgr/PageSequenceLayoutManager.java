@@ -44,7 +44,6 @@ import org.apache.fop.datatypes.FODimension;
 import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.Constants;
 import org.apache.fop.fo.flow.Marker;
-import org.apache.fop.fo.pagination.PageNumberGenerator;
 import org.apache.fop.fo.pagination.PageSequence;
 import org.apache.fop.fo.pagination.Region;
 import org.apache.fop.fo.pagination.RegionBody;
@@ -76,7 +75,6 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
         }
     }
 
-    private PageNumberGenerator pageNumberGenerator;
     private int pageCount = 1;
     private String pageNumberString;
     private boolean isFirstPage = true;
@@ -194,8 +192,7 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
     public void activateLayout() {
         pageSeq.initPageNumber();
         pageCount = pageSeq.getCurrentPageNumber();
-        pageNumberGenerator = pageSeq.getPageNumberGenerator();
-        pageNumberString = pageNumberGenerator.makeFormattedPageNumber(pageCount);
+        pageNumberString = pageSeq.makeFormattedPageNumber(pageCount);
 
         LineArea title = null;
         if (pageSeq.getTitleFO() != null) {
@@ -221,7 +218,7 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
                 // finish page and add to area tree
                 finishPage();
                 pageCount++;
-                pageNumberString = pageNumberGenerator.makeFormattedPageNumber(pageCount);
+                pageNumberString = pageSeq.makeFormattedPageNumber(pageCount);
             }
         }
         pageCount--;
@@ -480,9 +477,9 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
             log.error("Cannot create page", fopex);
         }
 
-        curPage.setPageNumber(getCurrentPageNumber());
+        curPage.setPageNumberString(getCurrentPageNumber());
         if (log.isDebugEnabled()) {
-            log.debug("[" + curPage.getPageNumber() + "]");
+            log.debug("[" + curPage.getPageNumberString() + "]");
         }
         RegionViewport rv = curPage.getPage().getRegionViewport(
                     FO_REGION_BODY);
