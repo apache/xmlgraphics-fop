@@ -59,6 +59,15 @@ public class StringType extends AbstractPropertyValue {
     }
 
     /**
+     * Set the string value.
+     * @param string - the <tt>String</tt> value.
+     */
+    protected void setString(String string) {
+        this.string = string;
+    }
+
+    /**
+     * Get the string value.
      * @return the String.
      */
     public String getString() {
