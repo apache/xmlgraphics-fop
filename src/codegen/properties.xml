@@ -1,0 +1,315 @@
+<property-list>
+  <property>
+    <name>font-size</name>
+    <class-name>FontSize</class-name>
+    <inherited>true</inherited>
+    <datatype>Length</datatype>
+    <default>12pt</default>
+  </property>
+  <property>
+    <name>start-indent</name>
+    <class-name>StartIndent</class-name>
+    <inherited>true</inherited>
+    <datatype>Length</datatype>
+    <default>0pt</default>
+  </property>
+  <property>
+    <name>font-style</name>
+    <class-name>FontStyle</class-name>
+    <inherited>true</inherited>
+    <datatype>String</datatype>
+    <default>normal</default>
+  </property>
+  <property>
+    <name>flow-name</name>
+    <class-name>FlowName</class-name>
+    <inherited>false</inherited>
+    <datatype>String</datatype>
+    <default></default>
+  </property>
+  <property>
+    <name>page-master-first</name>
+    <class-name>PageMasterFirst</class-name>
+    <inherited>false</inherited>
+    <datatype>String</datatype>
+    <default></default>
+  </property>
+  <property>
+    <name>page-master-odd</name>
+    <class-name>PageMasterOdd</class-name>
+    <inherited>false</inherited>
+    <datatype>String</datatype>
+    <default></default>
+  </property>
+  <property>
+    <name>extent</name>
+    <class-name>Extent</class-name>
+    <inherited>true</inherited>
+    <datatype>Length</datatype>
+    <default>0pt</default>
+  </property>
+  <property>
+    <name>font-weight</name>
+    <class-name>FontWeight</class-name>
+    <inherited>true</inherited>
+    <datatype>String</datatype>
+    <default>normal</default>
+  </property>
+  <property>
+    <name>margin-left</name>
+    <class-name>MarginLeft</class-name>
+    <inherited>false</inherited>
+    <datatype>Length</datatype>
+    <default>0pt</default>
+  </property>
+  <property>
+    <name>font-family</name>
+    <class-name>FontFamily</class-name>
+    <inherited>true</inherited>
+    <datatype>String</datatype>
+    <default>sans-serif</default>
+  </property>
+  <property>
+    <name>page-master-even</name>
+    <class-name>PageMasterEven</class-name>
+    <inherited>false</inherited>
+    <datatype>String</datatype>
+    <default></default>
+  </property>
+  <property>
+    <name>margin-top</name>
+    <class-name>MarginTop</class-name>
+    <inherited>false</inherited>
+    <datatype>Length</datatype>
+    <default>0pt</default>
+  </property>
+  <property>
+    <name>page-master-name</name>
+    <class-name>PageMasterName</class-name>
+    <inherited>false</inherited>
+    <datatype>String</datatype>
+    <default></default>
+  </property>
+  <property>
+    <name>end-indent</name>
+    <class-name>EndIndent</class-name>
+    <inherited>true</inherited>
+    <datatype>Length</datatype>
+    <default>0pt</default>
+  </property>
+  <property>
+    <name>color</name>
+    <class-name>Color</class-name>
+    <inherited>true</inherited>
+    <datatype>ColorType</datatype>
+    <default>black</default>
+  </property>
+  <property>
+    <name>margin-bottom</name>
+    <class-name>MarginBottom</class-name>
+    <inherited>false</inherited>
+    <datatype>Length</datatype>
+    <default>0pt</default>
+  </property>
+  <property>
+    <name>page-height</name>
+    <class-name>PageHeight</class-name>
+    <inherited>false</inherited>
+    <datatype>Length</datatype>
+    <default>11in</default>
+  </property>
+  <property>
+    <name>space-before.optimum</name>
+    <class-name>SpaceBeforeOptimum</class-name>
+    <inherited>false</inherited>
+    <datatype>Length</datatype>
+    <default>0pt</default>
+  </property>
+  <property>
+    <name>provisional-label-separation</name>
+    <class-name>ProvisionalLabelSeparation</class-name>
+    <inherited>true</inherited>
+    <datatype>Length</datatype>
+    <default>6pt</default>
+  </property>
+  <property>
+    <name>id</name>
+    <class-name>ID</class-name>
+    <inherited>false</inherited>
+    <datatype>String</datatype>
+    <default></default>
+  </property>
+  <property>
+    <name>margin-right</name>
+    <class-name>MarginRight</class-name>
+    <inherited>false</inherited>
+    <datatype>Length</datatype>
+    <default>0pt</default>
+  </property>
+  <property>
+    <name>rule-thickness</name>
+    <class-name>RuleThickness</class-name>
+    <inherited>false</inherited>
+    <datatype>Length</datatype>
+    <default>1pt</default>
+  </property>
+  <property>
+    <name>page-width</name>
+    <class-name>PageWidth</class-name>
+    <inherited>false</inherited>
+    <datatype>Length</datatype>
+    <default>8in</default>
+  </property>
+  <property>
+    <name>page-master-repeating</name>
+    <class-name>PageMasterRepeating</class-name>
+    <inherited>false</inherited>
+    <datatype>String</datatype>
+    <default></default>
+  </property>
+  <property>
+    <name>provisional-distance-between-starts</name>
+    <class-name>ProvisionalDistanceBetweenStarts</class-name>
+    <inherited>true</inherited>
+    <datatype>Length</datatype>
+    <default>24pt</default>
+  </property>
+  <property>
+    <name>line-height</name>
+    <class-name>LineHeight</class-name>
+    <inherited>true</inherited>
+    <datatype>Length</datatype>
+    <default>12pt</default>
+  </property>
+  <property>
+    <name>space-after.optimum</name>
+    <class-name>SpaceAfterOptimum</class-name>
+    <inherited>false</inherited>
+    <datatype>Length</datatype>
+    <default>0pt</default>
+  </property>
+  <property>
+    <name>text-align</name>
+    <class-name>TextAlign</class-name>
+    <inherited>true</inherited>
+    <datatype>
+      <enumeration>
+        <value const="CENTERED">centered</value>
+        <value const="END">end</value>
+        <value const="START">start</value>
+        <value const="JUSTIFIED">justified</value>
+      </enumeration>
+    </datatype>
+    <default>start</default>
+  </property>
+  <property>
+    <name>white-space-treatment</name>
+    <class-name>WhiteSpaceTreatment</class-name>
+    <inherited>true</inherited>
+    <datatype>
+      <enumeration>
+        <value const="PRESERVE">preserve</value>
+        <value const="COLLAPSE">collapse</value>
+        <value const="IGNORE">ignore</value>
+      </enumeration>
+    </datatype>
+    <default>collapse</default>
+  </property>
+  <property>
+    <name>break-after</name>
+    <class-name>BreakAfter</class-name>
+    <inherited>false</inherited>
+    <datatype>
+      <enumeration>
+        <value const="AUTO">auto</value>
+        <value const="COLUMN">column</value>
+        <value const="PAGE">page</value>
+        <value const="EVEN_PAGE">even-page</value>
+        <value const="ODD_PAGE">odd-page</value>
+      </enumeration>
+    </datatype>
+    <default>auto</default>
+  </property>
+  <property>
+    <name>break-before</name>
+    <class-name>BreakBefore</class-name>
+    <inherited>false</inherited>
+    <datatype>
+      <enumeration>
+        <value const="AUTO">auto</value>
+        <value const="COLUMN">column</value>
+        <value const="PAGE">page</value>
+        <value const="EVEN_PAGE">even-page</value>
+        <value const="ODD_PAGE">odd-page</value>
+      </enumeration>
+    </datatype>
+    <default>auto</default>
+  </property>
+  <property>
+    <name>wrap-option</name>
+    <class-name>WrapOption</class-name>
+    <inherited>true</inherited>
+    <datatype>
+      <enumeration>
+        <value const="WRAP">wrap</value>
+        <value const="NO_WRAP">no-wrap</value>
+      </enumeration>
+    </datatype>
+    <default>wrap</default>
+  </property>
+  <property>
+    <name>text-align-last</name>
+    <class-name>TextAlignLast</class-name>
+    <inherited>true</inherited>
+    <datatype>
+      <enumeration>
+        <value const="CENTERED">centered</value>
+        <value const="END">end</value>
+        <value const="START">start</value>
+        <value const="JUSTIFIED">justified</value>
+      </enumeration>
+    </datatype>
+    <default>start</default>
+    <derive from="text-align">
+      <if match="TextAlign.JUSTIFIED">START</if>
+      <if match="TextAlign.END">END</if>
+      <if match="TextAlign.START">START</if>
+      <if match="TextAlign.CENTERED">CENTERED</if>
+    </derive>
+  </property>
+  <property>
+    <name>line-height</name>
+    <class-name>LineHeight</class-name>
+    <inherited>true</inherited>
+    <datatype>Length</datatype>
+    <default>normal</default>
+    <make>
+      <to-double/> 
+      <if match="normal">1.2,propertyList.get("font-size")</if>
+      <else-if-number>d,propertyList.get("font-size")</else-if-number>
+      <else>value</else>
+    </make>
+  </property>
+  <property>
+    <name>text-indent</name>
+    <class-name>TextIndent</class-name>
+    <inherited>false</inherited>
+    <datatype>Length</datatype>
+    <default>0pt</default>
+  </property>
+  <property>
+    <name>href</name>
+    <class-name>HRef</class-name>
+    <inherited>false</inherited>
+    <datatype>String</datatype>
+    <default></default>
+  </property>
+  <property>
+    <name>column-width</name>
+    <class-name>ColumnWidth</class-name>
+    <inherited>false</inherited>
+    <datatype>Length</datatype>
+    <default>0pt</default>
+  </property>
+</property-list>
+
