@@ -237,6 +237,7 @@ public class PropertyParser extends PropertyTokenizer {
      */
     private PropertyValue parseAdditiveExpr() throws PropertyException {
         // Evaluate and put result on the operand stack
+        System.out.println("parseAdd");
         PropertyValue prop = parseMultiplicativeExpr();
         loop:
         for (; ; ) {
@@ -261,24 +262,109 @@ public class PropertyParser extends PropertyTokenizer {
      * the resulting PropertyValue.
      */
     private PropertyValue parseMultiplicativeExpr() throws PropertyException {
+        System.out.println("parseMult");
         PropertyValue prop = parseUnaryExpr();
-        loop:
+        PropertyValue pv;
+        outer:
+        // Outer loop exists to handle a sequence of multiplicative operations
+        // e.g. 5 * 4 / 2
+        // break outer; will terminate the multiplicative expression parsing
+        // break inner; will look for another trailing multiplicative
+        // operator.
         for (; ; ) {
-            switch (currentToken) {
-            case DIV:
-                next();
-                ((Numeric)prop).divide((Numeric)parseUnaryExpr());
-                break;
-            case MOD:
-                next();
-                ((Numeric)prop).mod((Numeric)parseUnaryExpr());
-                break;
-            case MULTIPLY:
-                next();
-                ((Numeric)prop).multiply((Numeric)parseUnaryExpr());
-                break;
+            inner:
+            switch (prop.getType()) {
+            case PropertyValue.NUMERIC:
+                switch (currentToken) {
+                case DIV:
+                    next();
+                    System.out.println("Dividing......");
+                    pv = parseUnaryExpr();
+                    if (pv.getType() == PropertyValue.INTEGER) {
+                        ((Numeric)prop).divide
+                                        ((double)(((IntegerType)pv).getInt()));
+                        break inner;
+                    }  // else must be Numeric
+                    ((Numeric)prop).divide((Numeric)pv);
+                    break inner;
+                case MOD:
+                    next();
+                    pv = parseUnaryExpr();
+                    if (pv.getType() == PropertyValue.INTEGER) {
+                        ((Numeric)prop).mod
+                                        ((double)(((IntegerType)pv).getInt()));
+                        break inner;
+                    }  // else must be Numeric
+                    ((Numeric)prop).mod((Numeric)parseUnaryExpr());
+                    break inner;
+                case MULTIPLY:
+                    next();
+                    System.out.println("Multiplying......");
+                    pv = parseUnaryExpr();
+                    System.out.println("...by " + pv);
+                    if (pv.getType() == PropertyValue.INTEGER) {
+                        ((Numeric)prop).multiply
+                                        ((double)(((IntegerType)pv).getInt()));
+                        break inner;
+                    }  // else must be Numeric
+                    ((Numeric)prop).multiply((Numeric)pv);
+                    break inner;
+                default:
+                    break outer;
+                }
+                // N.B. The above case cannot fall through to here
+            case PropertyValue.INTEGER:
+                // This code treats all multiplicative operations as implicit
+                // operations on doubles.  It might be reasonable to allow
+                // an integer multiply.
+                switch (currentToken) {
+                case DIV:
+                    next();
+                    System.out.println("Dividing......");
+                    pv = parseUnaryExpr();
+                    if (pv.getType() == PropertyValue.INTEGER) {
+                        prop = new Numeric(property,
+                                (double)(((IntegerType)prop).getInt()) /
+                                                 ((IntegerType)pv).getInt());
+                        break inner;
+                    }  // else must be Numeric
+                    prop = (new Numeric(property,
+                                    (double)(((IntegerType)prop).getInt())))
+                            .divide((Numeric)pv);
+                    break inner;
+                case MOD:
+                    next();
+                    pv = parseUnaryExpr();
+                    if (pv.getType() == PropertyValue.INTEGER) {
+                        prop = new Numeric(property,
+                                (double)(((IntegerType)prop).getInt()) %
+                                                 ((IntegerType)pv).getInt());
+                        break inner;
+                    }  // else must be Numeric
+                    prop = (new Numeric(property,
+                                    (double)(((IntegerType)prop).getInt())))
+                            .mod((Numeric)pv);
+                    break inner;
+                case MULTIPLY:
+                    next();
+                    System.out.println("Multiplying......");
+                    pv = parseUnaryExpr();
+                    System.out.println("...by " + pv);
+                    if (pv.getType() == PropertyValue.INTEGER) {
+                        prop = new Numeric(property,
+                                (double)(((IntegerType)prop).getInt()) *
+                                                 ((IntegerType)pv).getInt());
+                        break inner;
+                    }  // else must be Numeric
+                    prop = (new Numeric(property,
+                                    (double)(((IntegerType)prop).getInt())))
+                            .multiply((Numeric)pv);
+                    break inner;
+                default:
+                    break outer;
+                }
             default:
-                break loop;
+                break outer;
             }
         }
         return prop;
@@ -289,8 +375,10 @@ public class PropertyParser extends PropertyTokenizer {
      * resulting PropertyValue.
      */
     private PropertyValue parseUnaryExpr() throws PropertyException {
+        System.out.println("Unary entry");
         if (currentToken == MINUS) {
             next();
+            System.out.println("Unary");
             return ((Numeric)parseUnaryExpr()).negate();
         }
         return parsePrimaryExpr();
@@ -317,6 +405,8 @@ public class PropertyParser extends PropertyTokenizer {
      */
     private PropertyValue parsePrimaryExpr() throws PropertyException {
         PropertyValue prop;
+        System.out.println("Primary currentToken:" + currentToken + " "
+                           + currentTokenValue);
         switch (currentToken) {
         case LPAR:
             next();
@@ -417,47 +507,46 @@ public class PropertyParser extends PropertyTokenizer {
             // and the return from this method must be premature
             prop = null;
             int funcType = PropertyValue.NO_TYPE;
+            String function = currentTokenValue;
+            next();
             do {
                 // Numeric functions
-                if (currentTokenValue.equals("floor")) {
+                if (function.equals("floor")) {
                     PropertyValue[] args = parseArgs(1);
                     prop = new Numeric
                             (property, ((Numeric)args[0]).floor());
                     break;
                 }
-                if (currentTokenValue.equals("ceiling")) {
+                if (function.equals("ceiling")) {
                     PropertyValue[] args = parseArgs(1);
                     prop = new Numeric
                             (property, ((Numeric)args[0]).ceiling());
                     break;
                 }
-                if (currentTokenValue.equals("round")) {
+                if (function.equals("round")) {
                     PropertyValue[] args = parseArgs(1);
                     prop = new Numeric
                             (property, ((Numeric)args[0]).round());
                     break;
                 }
-                if (currentTokenValue.equals("min")) {
+                if (function.equals("min")) {
                     PropertyValue[] args = parseArgs(2);
-                    prop = new Numeric
-                        (property, ((Numeric)args[0]).min((Numeric)args[1]));
+                    prop = ((Numeric)args[0]).min((Numeric)args[1]);
                     break;
                 }
-                if (currentTokenValue.equals("max")) {
+                if (function.equals("max")) {
                     PropertyValue[] args = parseArgs(2);
-                    prop = new Numeric
-                        (property, ((Numeric)args[0]).max((Numeric)args[1]));
+                    prop = ((Numeric)args[0]).max((Numeric)args[1]);
                     break;
                 }
-                if (currentTokenValue.equals("abs")) {
+                if (function.equals("abs")) {
                     PropertyValue[] args = parseArgs(1);
-                    prop = new Numeric
-                            (property, ((Numeric)args[0]).abs());
+                    prop = ((Numeric)args[0]).abs();
                     break;
                 }
 
                 // Color functions
-                if (currentTokenValue.equals("rgb")) {
+                if (function.equals("rgb")) {
                     PropertyValue[] args = parseArgs(3);
                     prop = new ColorType
                             (property, ((Numeric)args[0]).asInt(),
@@ -465,12 +554,12 @@ public class PropertyParser extends PropertyTokenizer {
                              ((Numeric)args[2]).asInt());
                     break;
                 }
-                if (currentTokenValue.equals("rgb-icc")) {
+                if (function.equals("rgb-icc")) {
                     PropertyValue[] args = parseArgs(6);
                     throw new FunctionNotImplementedException("rgb-icc");
                     //break;
                 }
-                if (currentTokenValue.equals("system-color")) {
+                if (function.equals("system-color")) {
                     PropertyValue[] args = parseArgs(1);
                     prop = new ColorType
                             (property, ((StringType)args[0]).getString());
@@ -478,7 +567,7 @@ public class PropertyParser extends PropertyTokenizer {
                 }
 
                 // Font function
-                if (currentTokenValue.equals("system-font")) {
+                if (function.equals("system-font")) {
                     PropertyValue[] args = parseArgs(1, 2);
                     if (args.length == 1) {
                         prop = SystemFontFunction.systemFontCharacteristic
@@ -495,17 +584,17 @@ public class PropertyParser extends PropertyTokenizer {
                 }
 
                 // Property value functions
-                if (currentTokenValue.equals("label-end")) {
+                if (function.equals("label-end")) {
                     PropertyValue[] args = parseArgs(0);
                     throw new FunctionNotImplementedException("label-end");
                     //break;
                 }
-                if (currentTokenValue.equals("body-start")) {
+                if (function.equals("body-start")) {
                     PropertyValue[] args = parseArgs(0);
                     throw new FunctionNotImplementedException("body-start");
                     //break;
                 }
-                if (currentTokenValue.equals("inherited-property-value")) {
+                if (function.equals("inherited-property-value")) {
                     int propindex = property;
                     PropertyValue[] args = parseArgs(0, 1);
                     if (args.length != 0)
@@ -530,9 +619,9 @@ public class PropertyParser extends PropertyTokenizer {
                 }
                 // N.B. see comments on classes FromNearestSpecified and
                 // FromParent for explanation of this section
-                if (currentTokenValue.equals("from-parent"))
+                if (function.equals("from-parent"))
                     funcType = PropertyValue.FROM_PARENT;
-                if (currentTokenValue.equals("from-nearest-specified-value"))
+                if (function.equals("from-nearest-specified-value"))
                     funcType = PropertyValue.FROM_NEAREST_SPECIFIED;
                 if (funcType == PropertyValue.FROM_PARENT
                     || funcType == PropertyValue.FROM_NEAREST_SPECIFIED)
@@ -564,7 +653,7 @@ public class PropertyParser extends PropertyTokenizer {
                     } else { // one argument - it must be a property name
                         if ( ! (args[0] instanceof NCName))
                             throw new PropertyException
-                                    (currentTokenValue + " function requires"
+                                    (function + " function requires"
                                      + " property name arg.");
                         // else arg[0] is an NCName
                         NCName ncname = (NCName)args[0];
@@ -579,7 +668,7 @@ public class PropertyParser extends PropertyTokenizer {
                             // see 5.10.4 Property Value Functions
                             if ( ! (nameindex == property))
                                 throw new PropertyException
-                                        (currentTokenValue +
+                                        (function +
                                          " argument " + propname +
                                          " does not match property " +
                                          PropNames.getPropertyName(property));
@@ -601,26 +690,26 @@ public class PropertyParser extends PropertyTokenizer {
                     }
                     break;
                 }
-                if (currentTokenValue.equals("from-table-column")) {
+                if (function.equals("from-table-column")) {
                     PropertyValue[] args = parseArgs(0, 1);
                     throw new FunctionNotImplementedException
                             ("from-table-column");
                     //break;
                 }
-                if (currentTokenValue.equals("proportional-column-width")) {
+                if (function.equals("proportional-column-width")) {
                     PropertyValue[] args = parseArgs(1);
                     throw new FunctionNotImplementedException
                             ("proportional-column-width");
                     //break;
                 }
-                if (currentTokenValue.equals("merge-property-values")) {
+                if (function.equals("merge-property-values")) {
                     PropertyValue[] args = parseArgs(0, 1);
                     throw new FunctionNotImplementedException
                             ("merge-property-values");
                     //break;
                 }
                 throw new PropertyException("no such function: "
-                                                        + currentTokenValue);
+                                                        + function);
             } while (false);
             return prop;
         }

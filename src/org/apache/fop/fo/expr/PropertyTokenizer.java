@@ -132,6 +132,7 @@ class PropertyTokenizer {
      * @throws PropertyException If un unrecognized token is encountered.
      */
     void next() throws PropertyException {
+        System.out.println("expr:" + expr + ":  exprIndex: " + exprIndex);
         currentTokenValue = null;
         currentTokenStartIndex = exprIndex;
         boolean bSawDecimal;
@@ -154,6 +155,7 @@ class PropertyTokenizer {
                 //currentTokenValue = expr.substring(currentTokenStartIndex,
                 //                                   exprIndex);
                 //return;
+                currentTokenStartIndex = exprIndex;
                 break;
             case ',':
                 currentToken = COMMA;
@@ -225,6 +227,7 @@ class PropertyTokenizer {
                         && isDigit(expr.charAt(exprIndex))) {
                     ++exprIndex;
                     scanDigits();
+                    currentUnitIndex = exprIndex;
                     if (exprIndex < exprLength
                             && expr.charAt(exprIndex) == '%') {
                         exprIndex++;
@@ -236,7 +239,7 @@ class PropertyTokenizer {
                             currentToken = FLOAT;
                     }
                     currentTokenValue = expr.substring(currentTokenStartIndex,
-                                                       exprIndex);
+                                                       currentUnitIndex);
                     return;
                 }
                 throw new PropertyException("illegal character '.'");
@@ -274,10 +277,11 @@ class PropertyTokenizer {
                                                    exprIndex);
                 if (currentTokenValue.equals("mod")) {
                     currentToken = MOD;
-                    return;
+                   return;
                 }
                 if (currentTokenValue.equals("div")) {
                     currentToken = DIV;
+                    System.out.println("Returning DIV......");
                     return;
                 }
                 if (currentTokenValue.equals("inherit")) {
@@ -338,6 +342,7 @@ class PropertyTokenizer {
                 }
                 if (followingParen()) {
                     currentToken = FUNCTION_LPAR;
+                    System.out.println("FUNCTION_LPAR exprIndex:" + exprIndex);
                 } else {
                     currentToken = NCNAME;
                 }
