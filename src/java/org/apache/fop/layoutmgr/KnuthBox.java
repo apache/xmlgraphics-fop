@@ -44,8 +44,21 @@ public class KnuthBox extends KnuthElement {
         super(w, pos, bAux);
     }
 
+    /** @see org.apache.fop.layoutmgr.KnuthElement#isBox() */
     public boolean isBox() {
         return true;
     }
 
+    /** @see java.lang.Object#toString() */
+    public String toString() {
+        StringBuffer sb = new StringBuffer(64);
+        if (isAuxiliary()) {
+            sb.append("aux. ");
+        }
+        sb.append("box");
+        sb.append(" w=");
+        sb.append(getW());
+        return sb.toString();
+    }
+    
 }

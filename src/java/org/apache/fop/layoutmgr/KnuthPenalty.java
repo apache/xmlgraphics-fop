@@ -91,4 +91,31 @@ public class KnuthPenalty extends KnuthElement {
         return breakClass;
     }
     
+    /** @see java.lang.Object#toString() */
+    public String toString() {
+        StringBuffer sb = new StringBuffer(64);
+        if (isAuxiliary()) {
+            sb.append("aux. ");
+        }
+        sb.append("penalty");
+        sb.append(" p=");
+        if (getP() < 0) {
+            sb.append("-");
+        }
+        if (Math.abs(getP()) == INFINITE) {
+            sb.append("INFINITE");
+        } else {
+            sb.append(getP());
+        }
+        if (isFlagged()) {
+            sb.append(" [flagged]");
+        }
+        sb.append(" w=");
+        sb.append(getW());
+        if (isForcedBreak()) {
+            sb.append(" (forced break)");
+        }
+        return sb.toString();
+    }
+    
 }
