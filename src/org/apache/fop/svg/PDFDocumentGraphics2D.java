@@ -7,101 +7,123 @@
 package org.apache.fop.svg;
 
 import org.apache.fop.pdf.*;
-import org.apache.fop.layout.*;
 import org.apache.fop.fonts.*;
-import org.apache.fop.render.pdf.*;
-import org.apache.fop.image.*;
-import org.apache.fop.datatypes.ColorSpace;
 
-import org.apache.batik.ext.awt.g2d.*;
-
-import java.text.AttributedCharacterIterator;
-import java.awt.*;
+import java.awt.Graphics;
 import java.awt.Font;
 import java.awt.Image;
-import java.awt.image.*;
-import java.awt.font.*;
-import java.awt.geom.*;
-import java.awt.image.renderable.*;
-import java.io.*;
+import java.awt.Color;
+import java.io.OutputStream;
+import java.io.IOException;
 
-import java.util.Map;
+import org.apache.batik.ext.awt.g2d.GraphicContext;
 
 /**
- * This concrete implementation of <tt>AbstractGraphics2D</tt> is a 
- * simple help to programmers to get started with their own 
- * implementation of <tt>Graphics2D</tt>. 
- * <tt>DefaultGraphics2D</tt> implements all the abstract methods
- * is <tt>AbstractGraphics2D</tt> and makes it easy to start 
- * implementing a <tt>Graphic2D</tt> piece-meal.
+ * This class is a wrapper for the <tt>PDFGraphics2D</tt> that
+ * is used to create a full document around the pdf rendering from
+ * <tt>PDFGraphics2D</tt>.
  *
- * @author <a href="mailto:vincent.hardy@eng.sun.com">Vincent Hardy</a>
+ * @author <a href="mailto:keiron@aftexsw.com">Keiron Liddle</a>
  * @version $Id$
- * @see org.apache.batik.ext.awt.g2d.AbstractGraphics2D
+ * @see org.apache.fop.svg.PDFGraphics2D
  */
 public class PDFDocumentGraphics2D extends PDFGraphics2D {
-	OutputStream stream;
+    OutputStream stream;
 
-	PDFStream pdfStream;
-	int width;
-	int height;
+    PDFStream pdfStream;
+    int width;
+    int height;
 
     /**
-     * Create a new PDFGraphics2D with the given pdf document info.
-     * This is used to create a Graphics object for use inside an already
-     * existing document.
-     * Maybe this could be handled as a subclass (PDFDocumentGraphics2d)
+     * Create a new PDFDocumentGraphics2D.
+     * This is used to create a new pdf document of the given height
+     * and width.
+     * The resulting document is written to the stream after rendering.
+     *
+     * @param textAsShapes set this to true so that text will be rendered
+     * using curves and not the font.
+     * @param stream the stream that the final document should be written to.
+     * @param width the width of the document
+     * @param height the height of the document
      */
-    public PDFDocumentGraphics2D(boolean textAsShapes, OutputStream stream, int width, int height)
-	{
+    public PDFDocumentGraphics2D(boolean textAsShapes,
+                                 OutputStream stream, int width, int height) {
         super(textAsShapes);
         standalone = true;
-		this.stream = stream;
+        this.stream = stream;
         this.pdfDoc = new PDFDocument();
         this.pdfDoc.setProducer("FOP SVG Renderer");
         pdfStream = this.pdfDoc.makeStream();
-		this.width = width;
-		this.height = height;
+        this.width = width;
+        this.height = height;
 
-				currentFontName = "";
-				currentFontSize = 0;
-				currentYPosition = 0;
-				currentXPosition = 0;
-//				fontState = fs;
+        currentFontName = "";
+        currentFontSize = 0;
+        currentYPosition = 0;
+        currentXPosition = 0;
+        //				fontState = fs;
 
         currentStream.write("1 0 0 -1 0 " + height + " cm\n");
 
         // end part
         /*
         FontSetup.addToResources(this.pdfDoc, fontInfo);
-		*/
+         */
 
     }
 
-    public void finish() throws IOException
-	{
+    /**
+     * Set the dimensions of the svg document that will be drawn.
+     * This is useful if the dimensions of the svg document are different
+     * from the pdf document that is to be created.
+     * The result is scaled so that the svg fits correctly inside the pdf document.
+     */
+    public void setSVGDimension(float w, float h) {
+        PDFNumber pdfNumber = new PDFNumber();
+        currentStream.write("" + pdfNumber.doubleOut(width / w) + " 0 0 " + pdfNumber.doubleOut(height / h) + " 0 0 cm\n");
+    }
+
+    /**
+     * Set the background of the pdf document.
+     * This is used to set the background for the pdf document
+     * Rather than leaving it as the default white.
+     */
+    public void setBackgroundColor(Color col) {
+        Color c = col;
+        currentColour = new PDFColor(c.getRed(), c.getGreen(), c.getBlue());
+        currentStream.write("q\n");
+        currentStream.write(currentColour.getColorSpaceOut(true));
+
+        currentStream.write("0 0 " + width + " " + height + " re\n");
+
+        currentStream.write("f\n");
+        currentStream.write("Q\n");
+    }
+
+    /**
+     * The rendering process has finished.
+     * This should be called after the rendering has completed as there is
+     * no other indication it is complete.
+     * This will then write the results to the output stream.
+     */
+    public void finish() throws IOException {
         pdfStream.add(getString());
         PDFResources pdfResources = this.pdfDoc.getResources();
-        PDFPage currentPage = this.pdfDoc.makePage(pdfResources, pdfStream,
-                                           width,
-					   height, null);
+        PDFPage currentPage =
+          this.pdfDoc.makePage(pdfResources, pdfStream, width,
+                               height, null);
         this.pdfDoc.output(stream);
 
-	}
+    }
 
-		public String getString() {
-				return currentStream.toString();
-		}
-
-    public void setGraphicContext(GraphicContext c)
-    {
+    public void setGraphicContext(GraphicContext c) {
         gc = c;
     }
 
     /**
      * This constructor supports the create method
      */
-    public PDFDocumentGraphics2D(PDFDocumentGraphics2D g){
+    public PDFDocumentGraphics2D(PDFDocumentGraphics2D g) {
         super(g);
     }
 
@@ -111,7 +133,7 @@ public class PDFDocumentGraphics2D extends PDFGraphics2D {
      * @return     a new graphics context that is a copy of
      *             this graphics context.
      */
-    public Graphics create(){
+    public Graphics create() {
         return new PDFDocumentGraphics2D(this);
     }
 
