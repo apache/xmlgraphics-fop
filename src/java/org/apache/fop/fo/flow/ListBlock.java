@@ -21,15 +21,14 @@ package org.apache.fop.fo.flow;
 // Java
 import java.util.List;
 
-// XML
 import org.xml.sax.Locator;
-import org.xml.sax.SAXParseException;
 
-// FOP
+import org.apache.fop.apps.FOPException;
 import org.apache.fop.datatypes.Length;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.PropertyList;
+import org.apache.fop.fo.ValidationException;
 import org.apache.fop.fo.properties.CommonAccessibility;
 import org.apache.fop.fo.properties.CommonAural;
 import org.apache.fop.fo.properties.CommonBorderPaddingBackground;
@@ -72,7 +71,7 @@ public class ListBlock extends FObj {
     /**
      * @see org.apache.fop.fo.FObj#bind(PropertyList)
      */
-    public void bind(PropertyList pList) {
+    public void bind(PropertyList pList) throws FOPException {
         commonAccessibility = pList.getAccessibilityProps();
         commonAural = pList.getAuralProps();
         commonBorderPaddingBackground = pList.getBorderPaddingBackgroundProps();
@@ -92,7 +91,7 @@ public class ListBlock extends FObj {
     /**
      * @see org.apache.fop.fo.FONode#startOfNode
      */
-    protected void startOfNode() throws SAXParseException {
+    protected void startOfNode() throws FOPException {
         checkId(id);
         getFOEventHandler().startList(this);
     }
@@ -102,7 +101,7 @@ public class ListBlock extends FObj {
      * FOEventHandler that we are at the end of the flow.
      * @see org.apache.fop.fo.FONode#endOfNode
      */
-    protected void endOfNode() throws SAXParseException {
+    protected void endOfNode() throws FOPException {
         if (!hasListItem) {
             missingChildElementError("marker* (list-item)+");
         }
@@ -114,7 +113,7 @@ public class ListBlock extends FObj {
      * XSL Content Model: marker* (list-item)+
      */
     protected void validateChildNode(Locator loc, String nsURI, String localName) 
-        throws SAXParseException {
+        throws ValidationException {
         if (nsURI == FO_URI && localName.equals("marker")) {
             if (hasListItem) {
                 nodesOutOfOrderError(loc, "fo:marker", "fo:list-item");

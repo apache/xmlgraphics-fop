@@ -20,6 +20,7 @@ package org.apache.fop.fo.properties;
 
 import org.apache.fop.fo.Constants;
 import org.apache.fop.fo.PropertyList;
+import org.apache.fop.fo.expr.PropertyException;
 
 /**
  * Store all common accessibility properties.
@@ -41,7 +42,7 @@ public class CommonAccessibility {
      * Create a CommonAbsolutePosition object.
      * @param pList The PropertyList with propery values.
      */
-    public CommonAccessibility(PropertyList pList) {
+    public CommonAccessibility(PropertyList pList) throws PropertyException {
         sourceDoc = pList.get(Constants.PR_SOURCE_DOCUMENT).getString();
         if ("none".equals(sourceDoc)) {
             sourceDoc = null;

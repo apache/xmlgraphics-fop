@@ -20,16 +20,15 @@ package org.apache.fop.fo.pagination;
 
 import java.awt.Rectangle;
 
-// XML
 import org.xml.sax.Locator;
-import org.xml.sax.SAXParseException;
 
-// FOP
+import org.apache.fop.apps.FOPException;
 import org.apache.fop.datatypes.FODimension;
 import org.apache.fop.datatypes.Numeric;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.PropertyList;
+import org.apache.fop.fo.ValidationException;
 import org.apache.fop.fo.properties.CommonBorderPaddingBackground;
 
 /**
@@ -59,7 +58,7 @@ public abstract class Region extends FObj {
     /**
      * @see org.apache.fop.fo.FObj#bind(PropertyList)
      */
-    public void bind(PropertyList pList) throws SAXParseException {
+    public void bind(PropertyList pList) throws FOPException {
         commonBorderPaddingBackground = pList.getBorderPaddingBackgroundProps();
         // clip = pList.get(PR_CLIP);
         displayAlign = pList.get(PR_DISPLAY_ALIGN).getEnum();
@@ -75,7 +74,7 @@ public abstract class Region extends FObj {
             // check that name is OK. Not very pretty.
             if (isReserved(getRegionName())
                     && !getRegionName().equals(getDefaultRegionName())) {
-                throw new SAXParseException("region-name '" + regionName
+                throw new ValidationException("region-name '" + regionName
                         + "' for " + this.getName()
                         + " is not permitted.", locator);
             }
@@ -87,7 +86,7 @@ public abstract class Region extends FObj {
      * XSL Content Model: empty
      */
     protected void validateChildNode(Locator loc, String nsURI, String localName) 
-        throws SAXParseException {
+        throws ValidationException {
             invalidChildError(loc, nsURI, localName);
     }
 

@@ -21,16 +21,15 @@ package org.apache.fop.fo.flow;
 // Java
 import java.util.List;
 
-// XML
 import org.xml.sax.Locator;
-import org.xml.sax.SAXParseException;
 
-// FOP
+import org.apache.fop.apps.FOPException;
+import org.apache.fop.fo.FOEventHandler;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FObjMixed;
-import org.apache.fop.fo.FOEventHandler;
 import org.apache.fop.fo.PropertyList;
 import org.apache.fop.fo.StaticPropertyList;
+import org.apache.fop.fo.ValidationException;
 import org.apache.fop.layoutmgr.RetrieveMarkerLayoutManager;
 
 
@@ -60,7 +59,7 @@ public class RetrieveMarker extends FObjMixed {
     /**
      * @see org.apache.fop.fo.FObj#bind(PropertyList)
      */
-    public void bind(PropertyList pList) {
+    public void bind(PropertyList pList) throws FOPException {
         retrieveClassName = pList.get(PR_RETRIEVE_CLASS_NAME).getString();
         retrievePosition = pList.get(PR_RETRIEVE_POSITION).getEnum();
         retrieveBoundary = pList.get(PR_RETRIEVE_BOUNDARY).getEnum();
@@ -71,12 +70,12 @@ public class RetrieveMarker extends FObjMixed {
      * XSL Content Model: empty
      */
     protected void validateChildNode(Locator loc, String nsURI, String localName) 
-        throws SAXParseException {
+        throws ValidationException {
             invalidChildError(loc, nsURI, localName);
     }
 
     protected PropertyList createPropertyList(PropertyList parent, 
-            FOEventHandler foEventHandler) throws SAXParseException {
+            FOEventHandler foEventHandler) throws FOPException {
         // TODO: A special RetrieveMarkerPropertyList would be more memory
         // efficient. Storing a StaticPropertyList like this will keep all
         // the parent PropertyLists alive.

@@ -20,12 +20,12 @@ package org.apache.fop.fo.flow;
 
 // XML
 import org.xml.sax.Locator;
-import org.xml.sax.SAXParseException;
 
-// FOP
+import org.apache.fop.apps.FOPException;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.PropertyList;
+import org.apache.fop.fo.ValidationException;
 import org.apache.fop.fo.properties.CommonAccessibility;
 
 /**
@@ -58,7 +58,7 @@ public class MultiProperties extends FObj {
     /**
      * @see org.apache.fop.fo.FObj#bind(PropertyList)
      */
-    public void bind(PropertyList pList) {
+    public void bind(PropertyList pList) throws FOPException {
         commonAccessibility = pList.getAccessibilityProps();
         id = pList.get(PR_ID).getString();
     }
@@ -66,7 +66,7 @@ public class MultiProperties extends FObj {
     /**
      * @see org.apache.fop.fo.FONode#startOfNode
      */
-    protected void startOfNode() throws SAXParseException {
+    protected void startOfNode() throws FOPException {
         checkId(id);
     }
 
@@ -75,7 +75,7 @@ public class MultiProperties extends FObj {
      * FOEventHandler that we are at the end of the flow.
      * @see org.apache.fop.fo.FONode#endOfNode
      */
-    protected void endOfNode() throws SAXParseException {
+    protected void endOfNode() throws FOPException {
         if (!hasMultiPropertySet || !hasWrapper) {
             missingChildElementError("(multi-property-set+, wrapper)");
         }
@@ -86,7 +86,7 @@ public class MultiProperties extends FObj {
      * XSL Content Model: (multi-property-set+, wrapper)
      */
     protected void validateChildNode(Locator loc, String nsURI, String localName) 
-        throws SAXParseException {
+        throws ValidationException {
             if (nsURI == FO_URI && localName.equals("multi-property-set")) {
                 if (hasWrapper) {
                     nodesOutOfOrderError(loc, "fo:multi-property-set", "fo:wrapper");

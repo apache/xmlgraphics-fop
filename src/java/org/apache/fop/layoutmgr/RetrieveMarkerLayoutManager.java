@@ -19,11 +19,10 @@
 package org.apache.fop.layoutmgr;
 
 import java.util.ArrayList;
-import java.util.List;
 import java.util.LinkedList;
+import java.util.List;
 
-import org.xml.sax.SAXParseException;
-
+import org.apache.fop.apps.FOPException;
 import org.apache.fop.area.Area;
 import org.apache.fop.fo.flow.Marker;
 import org.apache.fop.fo.flow.RetrieveMarker;
@@ -112,7 +111,7 @@ public class RetrieveMarkerLayoutManager extends AbstractLayoutManager {
             if (marker != null) {
                 try {
                     marker.rebind(fobj.getPropertyList());
-                } catch (SAXParseException exc) {
+                } catch (FOPException exc) {
                     log.error("fo:retrieve-marker unable to rebind property values", exc);
                 }
                 marker.addLayoutManager(list);

@@ -18,11 +18,11 @@
 
 package org.apache.fop.fo.properties;
 
-import org.apache.fop.apps.FOPException;
 import org.apache.fop.datatypes.CompoundDatatype;
 import org.apache.fop.fo.Constants;
 import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.PropertyList;
+import org.apache.fop.fo.expr.PropertyException;
 
 /**
  * @author me
@@ -145,7 +145,7 @@ public class CompoundPropertyMaker extends PropertyMaker {
      */
     public Property get(int subpropId, PropertyList propertyList,
                         boolean bTryInherit, boolean bTryDefault)
-        throws FOPException
+        throws PropertyException
     {
         Property p = super.get(subpropId, propertyList, bTryInherit, bTryDefault);
         if (subpropId != 0 && p != null) {
@@ -163,11 +163,11 @@ public class CompoundPropertyMaker extends PropertyMaker {
      * @param fo The parent FO for the FO whose property is being made.
      * @return A Property of the correct type or null if the parsed value
      * can't be converted to the correct type.
-     * @throws FOPException for invalid or inconsistent FO input
+     * @throws PropertyException for invalid or inconsistent FO input
      */
     protected Property convertProperty(Property p,
                                     PropertyList propertyList,
-                                    FObj fo) throws FOPException {
+                                    FObj fo) throws PropertyException {
         if (!EnumProperty.class.isAssignableFrom(p.getClass())) {
             // delegate to the subprop maker to do conversions
             p = shorthandMaker.convertProperty(p, propertyList, fo);
@@ -191,9 +191,9 @@ public class CompoundPropertyMaker extends PropertyMaker {
      * Make a compound property with default values. 
      * @param propertyList The PropertyList object being built for this FO.
      * @return the Property object corresponding to the parameters
-     * @throws FOPException for invalid or inconsisten FO input
+     * @throws PropertyException for invalid or inconsisten FO input
      */
-    public Property make(PropertyList propertyList) throws FOPException {
+    public Property make(PropertyList propertyList) throws PropertyException {
         if (defaultValue != null) {
             return make(propertyList, defaultValue, propertyList.getParentFObj());
         } else {
@@ -207,10 +207,10 @@ public class CompoundPropertyMaker extends PropertyMaker {
      * @param value The attribute value.
      * @param fo The parent FO for the FO whose property is being made.
      * @return The initialized Property object.
-     * @throws FOPException for invalid or inconsistent FO input
+     * @throws PropertyException for invalid or inconsistent FO input
      */    
     public Property make(PropertyList propertyList, String value,
-                         FObj fo) throws FOPException {
+                         FObj fo) throws PropertyException {
         Property p = super.make(propertyList, value, fo);
         p = convertProperty(p, propertyList, fo);
         return p; 
@@ -228,11 +228,11 @@ public class CompoundPropertyMaker extends PropertyMaker {
      * @param value the value of the
      * @return baseProp (or if null, a new compound property object) with
      * the new subproperty added
-     * @throws FOPException for invalid or inconsistent FO input
+     * @throws PropertyException for invalid or inconsistent FO input
      */
     public Property make(Property baseProp, int subpropId,
                          PropertyList propertyList, String value,
-                         FObj fo) throws FOPException {
+                         FObj fo) throws PropertyException {
         if (baseProp == null) {
             baseProp = makeCompound(propertyList, fo);
         }
@@ -258,10 +258,10 @@ public class CompoundPropertyMaker extends PropertyMaker {
      * @param parentFO The parent FO for the FO whose property is being made.
      * @return a Property subclass object holding a "compound" property object
      *         initialized to the default values for each component.
-     * @throws FOPException
+     * @throws PropertyException
      */
     protected Property makeCompound(PropertyList propertyList, FObj parentFO)
-        throws FOPException
+        throws PropertyException
     {
         Property p = makeNewProperty();
         CompoundDatatype data = (CompoundDatatype) p.getObject();

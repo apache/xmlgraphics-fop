@@ -21,18 +21,17 @@ package org.apache.fop.fo.flow;
 import java.util.HashMap;
 import java.util.Iterator;
 
-// XML
 import org.xml.sax.Locator;
-import org.xml.sax.SAXParseException;
 
-// FOP
+import org.apache.fop.apps.FOPException;
+import org.apache.fop.fo.FOEventHandler;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.FObjMixed;
-import org.apache.fop.fo.FOEventHandler;
-import org.apache.fop.fo.properties.Property;
 import org.apache.fop.fo.PropertyList;
 import org.apache.fop.fo.PropertyListMaker;
+import org.apache.fop.fo.ValidationException;
+import org.apache.fop.fo.properties.Property;
 
 /**
  * Marker formatting object.
@@ -57,7 +56,7 @@ public class Marker extends FObjMixed {
     /**
      * @see org.apache.fop.fo.FObj#bind(PropertyList)
      */
-    public void bind(PropertyList pList) throws SAXParseException {
+    public void bind(PropertyList pList) throws FOPException {
         markerClassName = pList.get(PR_MARKER_CLASS_NAME).getString();
     }
     
@@ -66,7 +65,7 @@ public class Marker extends FObjMixed {
      * parentPropertyList which comes from the fo:retrieve-marker element.
      * @param parentPropertyList The property list from fo:retrieve-marker.
      */
-    public void rebind(PropertyList parentPropertyList) throws SAXParseException {
+    public void rebind(PropertyList parentPropertyList) throws FOPException {
         // Set a new parent property list and bind all the children again.
         propertyList.setParentPropertyList(parentPropertyList);
         for (Iterator i = children.keySet().iterator(); i.hasNext(); ) {
@@ -76,7 +75,7 @@ public class Marker extends FObjMixed {
         }
     }
 
-    protected PropertyList createPropertyList(PropertyList parent, FOEventHandler foEventHandler) throws SAXParseException {
+    protected PropertyList createPropertyList(PropertyList parent, FOEventHandler foEventHandler) throws FOPException {
         propertyList = new MarkerPropertyList(this, parent);
         return propertyList;
     }
@@ -94,7 +93,7 @@ public class Marker extends FObjMixed {
         });
     }
 
-    protected void addChildNode(FONode child) throws SAXParseException {
+    protected void addChildNode(FONode child) throws FOPException {
         if (!children.containsKey(child)) {
             children.put(child, propertyList);
         }
@@ -116,7 +115,7 @@ public class Marker extends FObjMixed {
      * @todo implement "additional" constraint, possibly within fo:retrieve-marker
      */
     protected void validateChildNode(Locator loc, String nsURI, String localName) 
-        throws SAXParseException {
+        throws ValidationException {
         if (!isBlockOrInlineItem(nsURI, localName)) {
             invalidChildError(loc, nsURI, localName);
         }

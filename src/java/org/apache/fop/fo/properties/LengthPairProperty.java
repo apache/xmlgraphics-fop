@@ -18,10 +18,10 @@
 
 package org.apache.fop.fo.properties;
 
-import org.apache.fop.apps.FOPException;
 import org.apache.fop.datatypes.CompoundDatatype;
 import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.PropertyList;
+import org.apache.fop.fo.expr.PropertyException;
 
 /**
  * Superclass for properties wrapping a LengthPair value
@@ -54,7 +54,7 @@ public class LengthPairProperty extends Property implements CompoundDatatype {
          * @see CompoundPropertyMaker#convertProperty
          */        
         public Property convertProperty(Property p, PropertyList propertyList, FObj fo)
-            throws FOPException
+            throws PropertyException
         {
             if (p instanceof LengthPairProperty) {
                 return p;

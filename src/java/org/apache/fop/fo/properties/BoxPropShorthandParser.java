@@ -20,6 +20,7 @@ package org.apache.fop.fo.properties;
 
 import org.apache.fop.fo.FOPropertyMapping;
 import org.apache.fop.fo.PropertyList;
+import org.apache.fop.fo.expr.PropertyException;
 
 /**
  * Shorthand property parser for Box properties
@@ -42,7 +43,9 @@ public class BoxPropShorthandParser extends GenericShorthandParser {
     protected Property convertValueForProperty(int propId,
                                                ListProperty listProperty,
                                                PropertyMaker maker,
-                                               PropertyList propertyList) {
+                                               PropertyList propertyList)
+        throws PropertyException
+    {
         String name = FOPropertyMapping.getPropertyName(propId);
         Property p = null;
         int count = listProperty.getList().size();

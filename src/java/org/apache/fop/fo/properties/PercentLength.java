@@ -19,12 +19,13 @@
 package org.apache.fop.fo.properties;
 
 import org.apache.fop.datatypes.PercentBase;
+import org.apache.fop.fo.expr.PropertyException;
 
 /**
  * a percent specified length quantity in XSL
  */
 public class PercentLength extends LengthProperty {
-
+    
     /**
      * The percentage itself, expressed as a decimal value, e.g. for 95%, set
      * the value to .95
@@ -79,7 +80,12 @@ public class PercentLength extends LengthProperty {
      * @see org.apache.fop.datatypes.Numeric#getNumericValue()
      */
     public double getNumericValue() {
-        return factor * lbase.getBaseLength();
+        try {
+            return factor * lbase.getBaseLength();
+        } catch (PropertyException exc) {
+            log.error(exc);
+            return 0;
+        }
     }
 
     /**
@@ -87,7 +93,7 @@ public class PercentLength extends LengthProperty {
      * @see org.apache.fop.datatypes.Length#getValue() 
      */
     public int getValue() {
-        return (int) (factor * lbase.getBaseLength());
+        return (int) getNumericValue();
     }
 
     /**

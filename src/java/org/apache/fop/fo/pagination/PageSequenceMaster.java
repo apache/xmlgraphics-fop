@@ -21,15 +21,13 @@ package org.apache.fop.fo.pagination;
 // Java
 import java.util.List;
 
-// XML
 import org.xml.sax.Locator;
-import org.xml.sax.SAXParseException;
 
-// FOP
-import org.apache.fop.fo.FObj;
-import org.apache.fop.fo.FONode;
-import org.apache.fop.fo.PropertyList;
 import org.apache.fop.apps.FOPException;
+import org.apache.fop.fo.FONode;
+import org.apache.fop.fo.FObj;
+import org.apache.fop.fo.PropertyList;
+import org.apache.fop.fo.ValidationException;
 
 /**
  * The page-sequence-master formatting object.
@@ -63,14 +61,14 @@ public class PageSequenceMaster extends FObj {
     /**
      * @see org.apache.fop.fo.FObj#bind(PropertyList)
      */
-    public void bind(PropertyList pList) {
+    public void bind(PropertyList pList) throws FOPException {
         masterName = pList.get(PR_MASTER_NAME).getString();
     }
 
     /**
      * @see org.apache.fop.fo.FONode#startOfNode()
      */
-    protected void startOfNode() throws SAXParseException {
+    protected void startOfNode() throws FOPException {
         subSequenceSpecifiers = new java.util.ArrayList();
         if (parent.getName().equals("fo:layout-master-set")) {
             this.layoutMasterSet = (LayoutMasterSet)parent;
@@ -81,7 +79,7 @@ public class PageSequenceMaster extends FObj {
                 this.layoutMasterSet.addPageSequenceMaster(masterName, this);
             }
         } else {
-            throw new SAXParseException("fo:page-sequence-master must be child "
+            throw new ValidationException("fo:page-sequence-master must be child "
                                    + "of fo:layout-master-set, not "
                                    + parent.getName(), locator);
         }
@@ -90,7 +88,7 @@ public class PageSequenceMaster extends FObj {
     /**
      * @see org.apache.fop.fo.FONode#endOfNode()
      */
-    protected void endOfNode() throws SAXParseException {
+    protected void endOfNode() throws FOPException {
         if (childNodes == null) {
            missingChildElementError("(single-page-master-reference|" +
             "repeatable-page-master-reference|repeatable-page-master-alternatives)+");
@@ -103,7 +101,7 @@ public class PageSequenceMaster extends FObj {
      *     repeatable-page-master-alternatives)+
      */
     protected void validateChildNode(Locator loc, String nsURI, String localName) 
-        throws SAXParseException {
+        throws ValidationException {
         if (nsURI == FO_URI) {
             if (!localName.equals("single-page-master-reference") 
                 && !localName.equals("repeatable-page-master-reference")

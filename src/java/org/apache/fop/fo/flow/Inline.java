@@ -20,11 +20,9 @@ package org.apache.fop.fo.flow;
 
 import java.util.List;
 
-// XML
 import org.xml.sax.Locator;
-import org.xml.sax.SAXParseException;
 
-// FOP
+import org.apache.fop.apps.FOPException;
 import org.apache.fop.datatypes.ColorType;
 import org.apache.fop.datatypes.Length;
 import org.apache.fop.fo.CharIterator;
@@ -32,6 +30,7 @@ import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FObjMixed;
 import org.apache.fop.fo.InlineCharIterator;
 import org.apache.fop.fo.PropertyList;
+import org.apache.fop.fo.ValidationException;
 import org.apache.fop.fo.properties.CommonAccessibility;
 import org.apache.fop.fo.properties.CommonAural;
 import org.apache.fop.fo.properties.CommonBorderPaddingBackground;
@@ -86,7 +85,7 @@ public class Inline extends FObjMixed {
     /**
      * @see org.apache.fop.fo.FObj#bind(PropertyList)
      */
-    public void bind(PropertyList pList) throws SAXParseException {
+    public void bind(PropertyList pList) throws FOPException {
         commonAccessibility = pList.getAccessibilityProps();
         commonAural = pList.getAuralProps();
         commonBorderPaddingBackground = pList.getBorderPaddingBackgroundProps();
@@ -115,7 +114,7 @@ public class Inline extends FObjMixed {
     /**
      * @see org.apache.fop.fo.FONode#startOfNode
      */
-    protected void startOfNode() throws SAXParseException {
+    protected void startOfNode() throws FOPException {
        /* Check to see if this node can have block-level children.
         * See validateChildNode() below.
         */
@@ -141,7 +140,7 @@ public class Inline extends FObjMixed {
     /**
      * @see org.apache.fop.fo.FONode#endOfNode
      */
-    protected void endOfNode() throws SAXParseException {
+    protected void endOfNode() throws FOPException {
         getFOEventHandler().endInline(this);
     }
 
@@ -153,7 +152,7 @@ public class Inline extends FObjMixed {
      *  nearer ancestor that is an fo:inline-container." (paraphrased)
      */
     protected void validateChildNode(Locator loc, String nsURI, String localName) 
-        throws SAXParseException {
+        throws ValidationException {
         if (nsURI == FO_URI && localName.equals("marker")) {
             if (blockOrInlineItemFound) {
                nodesOutOfOrderError(loc, "fo:marker", 

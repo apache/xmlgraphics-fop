@@ -18,10 +18,10 @@
 
 package org.apache.fop.fo.properties;
 
-import org.apache.fop.apps.FOPException;
 import org.apache.fop.fo.Constants;
 import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.PropertyList;
+import org.apache.fop.fo.expr.PropertyException;
 
 /**
  * A maker which creates 'letter-spacing' and 'word-spacing' properties.
@@ -43,7 +43,7 @@ public class SpacingPropertyMaker extends SpaceProperty.Maker {
      */
     public Property convertProperty(Property p, 
                                        PropertyList propertyList,
-                                       FObj fo) throws FOPException {
+                                       FObj fo) throws PropertyException {
         if (p.getEnum() == Constants.NORMAL) {
             return p;
         }

@@ -21,6 +21,7 @@ package org.apache.fop.fo.properties;
 import org.apache.fop.datatypes.Length;
 import org.apache.fop.fo.Constants;
 import org.apache.fop.fo.PropertyList;
+import org.apache.fop.fo.expr.PropertyException;
 
 /**
  * Store all common margin properties for blocks.
@@ -72,7 +73,7 @@ public class CommonMarginBlock {
      * Create a CommonMarginBlock object.
      * @param pList The PropertyList with propery values.
      */
-    public CommonMarginBlock(PropertyList pList) {
+    public CommonMarginBlock(PropertyList pList) throws PropertyException {
         marginTop = pList.get(Constants.PR_MARGIN_TOP).getLength();
         marginBottom = pList.get(Constants.PR_MARGIN_BOTTOM).getLength();
         marginLeft = pList.get(Constants.PR_MARGIN_LEFT).getLength();

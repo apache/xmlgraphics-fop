@@ -20,14 +20,14 @@ package org.apache.fop.fo.flow;
 
 // XML
 import org.xml.sax.Locator;
-import org.xml.sax.SAXParseException;
 
-// FOP
+import org.apache.fop.apps.FOPException;
 import org.apache.fop.datatypes.Length;
 import org.apache.fop.datatypes.Numeric;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.PropertyList;
+import org.apache.fop.fo.ValidationException;
 import org.apache.fop.fo.properties.CommonBorderPaddingBackground;
 
 /**
@@ -57,7 +57,7 @@ public class TableColumn extends FObj {
     /**
      * @see org.apache.fop.fo.FObj#bind(PropertyList)
      */
-    public void bind(PropertyList pList) {
+    public void bind(PropertyList pList) throws FOPException {
         commonBorderPaddingBackground = pList.getBorderPaddingBackgroundProps();
         // borderAfterPrecedence = pList.get(PR_BORDER_AFTER_PRECEDENCE);
         // borderBeforePrecedence = pList.get(PR_BORDER_BEFORE_PRECEDENCE);
@@ -73,14 +73,14 @@ public class TableColumn extends FObj {
     /**
      * @see org.apache.fop.fo.FONode#startOfNode()
      */
-    protected void startOfNode() throws SAXParseException {
+    protected void startOfNode() throws FOPException {
         getFOEventHandler().startColumn(this);
     }
 
     /**
      * @see org.apache.fop.fo.FONode#endOfNode
      */
-    protected void endOfNode() throws SAXParseException {
+    protected void endOfNode() throws FOPException {
         getFOEventHandler().endColumn(this);
     }
 
@@ -89,7 +89,7 @@ public class TableColumn extends FObj {
      * XSL Content Model: empty
      */
     protected void validateChildNode(Locator loc, String nsURI, String localName) 
-        throws SAXParseException {
+        throws ValidationException {
             invalidChildError(loc, nsURI, localName);
     }
 

@@ -19,7 +19,9 @@
 package org.apache.fop.fo.properties;
 
 import java.util.Enumeration;
+
 import org.apache.fop.fo.PropertyList;
+import org.apache.fop.fo.expr.PropertyException;
 
 public class GenericShorthandParser implements ShorthandParser {
 
@@ -46,7 +48,9 @@ public class GenericShorthandParser implements ShorthandParser {
     public Property getValueForProperty(int propId,
                                         Property property,
                                         PropertyMaker maker,
-                                        PropertyList propertyList) {
+                                        PropertyList propertyList)
+        throws PropertyException
+    {
         Property prop = null;
         // Check for keyword "inherit"
         if (property.getList().size() == 1) {
@@ -70,7 +74,9 @@ public class GenericShorthandParser implements ShorthandParser {
     protected Property convertValueForProperty(int propId,
                                                Property property,
                                                PropertyMaker maker,
-                                               PropertyList propertyList) {
+                                               PropertyList propertyList)
+        throws PropertyException
+    {
         Property prop = null;
         // Try each of the stored values in turn
         Enumeration eprop = property.getList().elements();

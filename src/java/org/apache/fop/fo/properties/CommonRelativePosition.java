@@ -21,6 +21,7 @@ package org.apache.fop.fo.properties;
 import org.apache.fop.datatypes.Length;
 import org.apache.fop.fo.Constants;
 import org.apache.fop.fo.PropertyList;
+import org.apache.fop.fo.expr.PropertyException;
 
 /**
  * Store all common relative position properties.
@@ -57,7 +58,7 @@ public class CommonRelativePosition {
      * Create a CommonRelativePosition object.
      * @param pList The PropertyList with propery values.
      */
-    public CommonRelativePosition(PropertyList pList) {
+    public CommonRelativePosition(PropertyList pList) throws PropertyException {
         relativePosition = pList.get(Constants.PR_RELATIVE_POSITION).getEnum();
         top = pList.get(Constants.PR_TOP).getLength();
         bottom = pList.get(Constants.PR_BOTTOM).getLength();

@@ -23,16 +23,15 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
-// XML
 import org.xml.sax.Locator;
-import org.xml.sax.SAXParseException;
 
-// FOP
+import org.apache.fop.apps.FOPException;
 import org.apache.fop.datatypes.Length;
 import org.apache.fop.datatypes.Numeric;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.PropertyList;
+import org.apache.fop.fo.ValidationException;
 import org.apache.fop.fo.properties.CommonMarginBlock;
 
 /**
@@ -72,7 +71,7 @@ public class SimplePageMaster extends FObj {
     /**
      * @see org.apache.fop.fo.FObj#resolve
      */
-    public void bind(PropertyList pList) {
+    public void bind(PropertyList pList) throws FOPException {
         commonMarginBlock = pList.getMarginBlockProps();
         masterName = pList.get(PR_MASTER_NAME).getString();
         pageHeight = pList.get(PR_PAGE_HEIGHT).getLength();
@@ -84,7 +83,7 @@ public class SimplePageMaster extends FObj {
     /**
      * @see org.apache.fop.fo.FONode#startOfNode
      */
-    protected void startOfNode() throws SAXParseException {
+    protected void startOfNode() throws FOPException {
         LayoutMasterSet layoutMasterSet = (LayoutMasterSet) parent;
 
         if (masterName == null) {
@@ -101,7 +100,7 @@ public class SimplePageMaster extends FObj {
      * Make sure content model satisfied.
      * @see org.apache.fop.fo.FONode#endOfNode
      */
-    protected void endOfNode() throws SAXParseException {
+    protected void endOfNode() throws FOPException {
         if (!hasRegionBody) {
             missingChildElementError("(region-body, region-before?," +
                 " region-after?, region-start?, region-end?)");
@@ -113,7 +112,7 @@ public class SimplePageMaster extends FObj {
      * XSL Content Model: (region-body,region-before?,region-after?,region-start?,region-end?)
      */
     protected void validateChildNode(Locator loc, String nsURI, String localName) 
-        throws SAXParseException {
+        throws ValidationException {
         if (nsURI == FO_URI && localName.equals("region-body")) {
             if (hasRegionBody) {
                 tooManyNodesError(loc, "fo:region-body");

@@ -18,10 +18,7 @@
 
 package org.apache.fop.fo.flow;
 
-// XML
-import org.xml.sax.SAXParseException;
-
-// FOP
+import org.apache.fop.apps.FOPException;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.PropertyList;
@@ -49,7 +46,7 @@ public class ListItemLabel extends FObj {
     /**
      * @see org.apache.fop.fo.FObj#bind(PropertyList)
      */
-    public void bind(PropertyList pList) {
+    public void bind(PropertyList pList) throws FOPException {
         commonAccessibility = pList.getAccessibilityProps();
         id = pList.get(PR_ID).getString();
         keepTogether = pList.get(PR_KEEP_TOGETHER).getKeep();
@@ -58,7 +55,7 @@ public class ListItemLabel extends FObj {
     /**
      * @see org.apache.fop.fo.FONode#startOfNode
      */
-    protected void startOfNode() throws SAXParseException {
+    protected void startOfNode() throws FOPException {
         checkId(id);
         getFOEventHandler().startListLabel();
     }
@@ -66,7 +63,7 @@ public class ListItemLabel extends FObj {
     /**
      * @see org.apache.fop.fo.FONode#endOfNode
      */
-    protected void endOfNode() throws SAXParseException {
+    protected void endOfNode() throws FOPException {
         getFOEventHandler().endListLabel();
     }
 

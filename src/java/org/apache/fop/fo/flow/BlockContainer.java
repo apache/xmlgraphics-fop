@@ -21,7 +21,7 @@ package org.apache.fop.fo.flow;
 // Java
 import java.util.List;
 
-// FOP
+import org.apache.fop.apps.FOPException;
 import org.apache.fop.datatypes.Length;
 import org.apache.fop.datatypes.Numeric;
 import org.apache.fop.fo.FONode;
@@ -33,8 +33,6 @@ import org.apache.fop.fo.properties.CommonMarginBlock;
 import org.apache.fop.fo.properties.KeepProperty;
 import org.apache.fop.fo.properties.LengthRangeProperty;
 import org.apache.fop.layoutmgr.BlockContainerLayoutManager;
-
-import org.xml.sax.SAXParseException;
 
 /**
  * Class modelling the fo:block-container object.
@@ -75,7 +73,7 @@ public class BlockContainer extends FObj {
     /**
      * @see org.apache.fop.fo.FObj#bind(PropertyList)
      */
-    public void bind(PropertyList pList) {
+    public void bind(PropertyList pList) throws FOPException {
         commonAbsolutePosition = pList.getAbsolutePositionProps();
         commonBorderPaddingBackground = pList.getBorderPaddingBackgroundProps();
         commonMarginBlock = pList.getMarginBlockProps();
@@ -102,7 +100,7 @@ public class BlockContainer extends FObj {
     /**
      * @see org.apache.fop.fo.FONode#startOfNode
      */
-    protected void startOfNode() throws SAXParseException {
+    protected void startOfNode() throws FOPException {
         checkId(id);
         getFOEventHandler().startBlockContainer(this);
     }
@@ -110,7 +108,7 @@ public class BlockContainer extends FObj {
     /**
      * @see org.apache.fop.fo.FONode#endOfNode
      */
-    protected void endOfNode() throws SAXParseException {
+    protected void endOfNode() throws FOPException {
         getFOEventHandler().endBlockContainer(this);
     }
 

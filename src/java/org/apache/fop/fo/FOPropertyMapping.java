@@ -22,6 +22,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.fop.datatypes.LengthBase;
+import org.apache.fop.fo.expr.PropertyException;
 import org.apache.fop.fo.properties.BorderWidthPropertyMaker;
 import org.apache.fop.fo.properties.BoxPropShorthandParser;
 import org.apache.fop.fo.properties.CharacterProperty;
@@ -1535,7 +1536,7 @@ public class FOPropertyMapping implements Constants {
 
         // text-align-last
         m  = new EnumProperty.Maker(PR_TEXT_ALIGN_LAST) {
-            public Property compute(PropertyList propertyList) {
+            public Property compute(PropertyList propertyList) throws PropertyException {
                 Property corresponding = propertyList.get(PR_TEXT_ALIGN);
                 if (corresponding == null) {
                     return null;

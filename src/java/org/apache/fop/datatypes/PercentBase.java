@@ -18,6 +18,8 @@
 
 package org.apache.fop.datatypes;
 
+import org.apache.fop.fo.expr.PropertyException;
+
 /**
  * Interface for objects that can be used as base objects for percentage
  * computations
@@ -37,5 +39,5 @@ public interface PercentBase {
      * which a percentage will be applied to compute the length of the
      * referencing item)
      */
-    int getBaseLength();
+    int getBaseLength() throws PropertyException;
 }

@@ -19,14 +19,11 @@
 package org.apache.fop.fo.flow;
 
 // Java
+import java.util.ArrayList;
 import java.util.List;
 import java.util.ListIterator;
-import java.util.ArrayList;
 
-// XML
-import org.xml.sax.SAXParseException;
-
-// FOP
+import org.apache.fop.apps.FOPException;
 import org.apache.fop.datatypes.Length;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FObj;
@@ -39,9 +36,9 @@ import org.apache.fop.fo.properties.CommonRelativePosition;
 import org.apache.fop.fo.properties.KeepProperty;
 import org.apache.fop.fo.properties.LengthPairProperty;
 import org.apache.fop.fo.properties.LengthRangeProperty;
-import org.apache.fop.layoutmgr.table.TableLayoutManager;
 import org.apache.fop.layoutmgr.table.Body;
 import org.apache.fop.layoutmgr.table.Column;
+import org.apache.fop.layoutmgr.table.TableLayoutManager;
 
 /**
  * Class modelling the fo:table object.
@@ -93,7 +90,7 @@ public class Table extends FObj {
     /**
      * @see org.apache.fop.fo.FObj#bind(PropertyList)
      */
-    public void bind(PropertyList pList) {
+    public void bind(PropertyList pList) throws FOPException {
         commonAccessibility = pList.getAccessibilityProps();
         commonAural = pList.getAuralProps();
         commonBorderPaddingBackground = pList.getBorderPaddingBackgroundProps();
@@ -125,7 +122,7 @@ public class Table extends FObj {
     /**
      * @see org.apache.fop.fo.FONode#startOfNode
      */
-    protected void startOfNode() throws SAXParseException {
+    protected void startOfNode() throws FOPException {
         checkId(id);
         getFOEventHandler().startTable(this);
     }
@@ -133,14 +130,14 @@ public class Table extends FObj {
     /**
      * @see org.apache.fop.fo.FONode#endOfNode
      */
-    protected void endOfNode() throws SAXParseException {
+    protected void endOfNode() throws FOPException {
         getFOEventHandler().endTable(this);
     }
 
     /**
      * @see org.apache.fop.fo.FONode#addChildNode(FONode)
      */
-    protected void addChildNode(FONode child) throws SAXParseException {
+    protected void addChildNode(FONode child) throws FOPException {
         if (child.getName().equals("fo:table-column")) {
             if (columns == null) {
                 columns = new ArrayList();

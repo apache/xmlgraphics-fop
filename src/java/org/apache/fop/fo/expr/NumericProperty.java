@@ -104,7 +104,7 @@ public class NumericProperty extends Property implements Numeric, Length {
         if (dim == 1) {
             return this;
         }
-        System.err.print("Can't create length with dimension " + dim);
+        log.error("Can't create length with dimension " + dim);
         return null;
     }
 

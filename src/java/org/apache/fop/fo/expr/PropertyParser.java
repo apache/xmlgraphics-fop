@@ -85,7 +85,12 @@ public class PropertyParser extends PropertyTokenizer {
      */
     public static Property parse(String expr, PropertyInfo propInfo)
             throws PropertyException {
-        return new PropertyParser(expr, propInfo).parseProperty();
+        try {
+            return new PropertyParser(expr, propInfo).parseProperty();
+        } catch (PropertyException exc) {
+            exc.setPropertyInfo(propInfo);
+            throw exc;
+        }
     }
 
 
@@ -314,6 +319,7 @@ public class PropertyParser extends PropertyTokenizer {
             return prop;
         }
         default:
+            // TODO: add the token or the expr to the error message.
             throw new PropertyException("syntax error");
         }
         next();

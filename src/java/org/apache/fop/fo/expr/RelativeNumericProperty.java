@@ -154,7 +154,7 @@ public class RelativeNumericProperty extends Property implements Numeric, Length
         if (dimension == 1) {
             return this;
         }
-        System.err.print("Can't create length with dimension " + dimension);
+        log.error("Can't create length with dimension " + dimension);
         return null;
     }
 
@@ -169,7 +169,7 @@ public class RelativeNumericProperty extends Property implements Numeric, Length
         try {
             return (int) getNumericValue();
         } catch (PropertyException exc) {
-            exc.printStackTrace();
+            log.error(exc);
         }
         return 0;
     }

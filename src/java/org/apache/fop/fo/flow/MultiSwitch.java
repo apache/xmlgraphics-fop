@@ -20,12 +20,12 @@ package org.apache.fop.fo.flow;
 
 // XML
 import org.xml.sax.Locator;
-import org.xml.sax.SAXParseException;
 
-// FOP
+import org.apache.fop.apps.FOPException;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.PropertyList;
+import org.apache.fop.fo.ValidationException;
 import org.apache.fop.fo.properties.CommonAccessibility;
 
 /**
@@ -56,7 +56,7 @@ public class MultiSwitch extends FObj {
     /**
      * @see org.apache.fop.fo.FObj#bind(PropertyList)
      */
-    public void bind(PropertyList pList) {
+    public void bind(PropertyList pList) throws FOPException {
         commonAccessibility = pList.getAccessibilityProps();
         // autoRestore = pList.get(PR_AUTO_RESTORE);
         id = pList.get(PR_ID).getString();
@@ -65,7 +65,7 @@ public class MultiSwitch extends FObj {
     /**
      * @see org.apache.fop.fo.FONode#startOfNode
      */
-    protected void startOfNode() throws SAXParseException {
+    protected void startOfNode() throws FOPException {
         checkId(id);
     }
 
@@ -73,7 +73,7 @@ public class MultiSwitch extends FObj {
      * Make sure content model satisfied.
      * @see org.apache.fop.fo.FONode#endOfNode
      */
-    protected void endOfNode() throws SAXParseException {
+    protected void endOfNode() throws FOPException {
         if (childNodes == null) {
             missingChildElementError("(multi-case+)");
         }
@@ -84,7 +84,7 @@ public class MultiSwitch extends FObj {
      * XSL Content Model: (multi-case+)
      */
     protected void validateChildNode(Locator loc, String nsURI, String localName) 
-        throws SAXParseException {
+        throws ValidationException {
         if (!(nsURI == FO_URI && localName.equals("multi-case"))) {
             invalidChildError(loc, nsURI, localName);
         }

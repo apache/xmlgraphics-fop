@@ -19,17 +19,12 @@
 package org.apache.fop.fo.flow;
 
 // Java
-import java.util.List;
 import java.util.ArrayList;
+import java.util.List;
 
-// XML
-import org.xml.sax.SAXParseException;
-
-// FOP
+import org.apache.fop.apps.FOPException;
 import org.apache.fop.datatypes.Length;
 import org.apache.fop.datatypes.Numeric;
-import org.apache.fop.layoutmgr.LayoutManager;
-import org.apache.fop.layoutmgr.ICLayoutManager;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.PropertyList;
@@ -38,6 +33,8 @@ import org.apache.fop.fo.properties.CommonMarginInline;
 import org.apache.fop.fo.properties.CommonRelativePosition;
 import org.apache.fop.fo.properties.KeepProperty;
 import org.apache.fop.fo.properties.LengthRangeProperty;
+import org.apache.fop.layoutmgr.ICLayoutManager;
+import org.apache.fop.layoutmgr.LayoutManager;
 
 /**
  * Class modelling the fo:inline-container object.
@@ -78,7 +75,7 @@ public class InlineContainer extends FObj {
     /**
      * @see org.apache.fop.fo.FObj#bind(PropertyList)
      */
-    public void bind(PropertyList pList) {
+    public void bind(PropertyList pList) throws FOPException {
         commonBorderPaddingBackground = pList.getBorderPaddingBackgroundProps();
         commonMarginInline = pList.getMarginInlineProps();
         commonRelativePosition = pList.getRelativePositionProps();
@@ -105,7 +102,7 @@ public class InlineContainer extends FObj {
     /**
      * @see org.apache.fop.fo.FONode#startOfNode
      */
-    protected void startOfNode() throws SAXParseException {
+    protected void startOfNode() throws FOPException {
         checkId(id);
     }
 

@@ -20,14 +20,14 @@ package org.apache.fop.fo.pagination;
 
 // XML
 import org.xml.sax.Locator;
-import org.xml.sax.SAXParseException;
 
-// FOP
+import org.apache.fop.apps.FOPException;
 import org.apache.fop.datatypes.ColorType;
 import org.apache.fop.datatypes.Length;
-import org.apache.fop.fo.FObjMixed;
 import org.apache.fop.fo.FONode;
+import org.apache.fop.fo.FObjMixed;
 import org.apache.fop.fo.PropertyList;
+import org.apache.fop.fo.ValidationException;
 import org.apache.fop.fo.properties.CommonAccessibility;
 import org.apache.fop.fo.properties.CommonAural;
 import org.apache.fop.fo.properties.CommonBorderPaddingBackground;
@@ -55,7 +55,7 @@ public class Title extends FObjMixed {
         super(parent);
     }
 
-    public void bind(PropertyList pList) {
+    public void bind(PropertyList pList) throws FOPException {
         commonAccessibility = pList.getAccessibilityProps();
         commonAural = pList.getAuralProps();
         commonBorderPaddingBackground = pList.getBorderPaddingBackgroundProps();
@@ -71,7 +71,7 @@ public class Title extends FObjMixed {
         XSL/FOP: (#PCDATA|%inline;)*
      */
     protected void validateChildNode(Locator loc, String nsURI, String localName) 
-        throws SAXParseException {
+        throws ValidationException {
         if (!isInlineItem(nsURI, localName)) {
             invalidChildError(loc, nsURI, localName);
         }

@@ -22,12 +22,13 @@ package org.apache.fop.fo;
 import java.awt.geom.Point2D;
 import java.util.HashMap;
 
+import javax.xml.parsers.DocumentBuilderFactory;
+
+import org.apache.fop.apps.FOPException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.xml.sax.Attributes;
 import org.xml.sax.Locator;
-import org.xml.sax.SAXParseException;
-import javax.xml.parsers.DocumentBuilderFactory;
 
 /**
  * Abstract class modelling generic, non-XSL-FO XML objects. Such objects are
@@ -59,7 +60,7 @@ public abstract class XMLObj extends FONode {
      * here, blocks XSL FO's from having non-FO parents.
      */
     protected void validateChildNode(Locator loc, String nsURI, String localName) 
-        throws SAXParseException {
+        throws ValidationException {
         if (nsURI == FO_URI) {
             invalidChildError(loc, nsURI, localName);
         }
@@ -69,7 +70,7 @@ public abstract class XMLObj extends FONode {
      * @see org.apache.fop.fo.FONode#processNode
      */
     public void processNode(String elementName, Locator locator, 
-        Attributes attlist, PropertyList propertyList) throws SAXParseException {
+        Attributes attlist, PropertyList propertyList) throws FOPException {
             setLocator(locator);
             name = elementName;
             attr = attlist;

@@ -19,6 +19,7 @@
 package org.apache.fop.fo.flow;
 
 // FOP
+import org.apache.fop.apps.FOPException;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.PropertyList;
@@ -51,7 +52,7 @@ public class MultiToggle extends FObj {
     /**
      * @see org.apache.fop.fo.FObj#bind(PropertyList)
      */
-    public void bind(PropertyList pList) {
+    public void bind(PropertyList pList) throws FOPException {
         commonAccessibility = pList.getAccessibilityProps();
         // prSwitchTo = pList.get(PR_SWITCH_TO);
 

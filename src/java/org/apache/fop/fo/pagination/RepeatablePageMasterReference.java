@@ -20,12 +20,12 @@ package org.apache.fop.fo.pagination;
 
 // XML
 import org.xml.sax.Locator;
-import org.xml.sax.SAXParseException;
 
-// FOP
+import org.apache.fop.apps.FOPException;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.PropertyList;
+import org.apache.fop.fo.ValidationException;
 import org.apache.fop.fo.properties.Property;
 
 /**
@@ -56,7 +56,7 @@ public class RepeatablePageMasterReference extends FObj
     /**
      * @see org.apache.fop.fo.FObj#bind(PropertyList)
      */
-    public void bind(PropertyList pList) {
+    public void bind(PropertyList pList) throws FOPException {
         masterReference = pList.get(PR_MASTER_REFERENCE).getString();
         maximumRepeats = pList.get(PR_MAXIMUM_REPEATS);
     }
@@ -64,7 +64,7 @@ public class RepeatablePageMasterReference extends FObj
     /**
      * @see org.apache.fop.fo.FONode#startOfNode
      */
-    protected void startOfNode() throws SAXParseException {
+    protected void startOfNode() throws FOPException {
         PageSequenceMaster pageSequenceMaster = (PageSequenceMaster) parent;
 
         if (masterReference == null) {
@@ -79,7 +79,7 @@ public class RepeatablePageMasterReference extends FObj
      * XSL Content Model: empty
      */
     protected void validateChildNode(Locator loc, String nsURI, String localName) 
-        throws SAXParseException {
+        throws ValidationException {
         invalidChildError(loc, nsURI, localName);
     }
 

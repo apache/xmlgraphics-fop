@@ -18,14 +18,14 @@
 
 package org.apache.fop.fo.extensions;
 
-import org.apache.fop.fo.FONode;
-import org.apache.fop.fo.PropertyList;
-
 import java.util.ArrayList;
 
 import org.xml.sax.Attributes;
-import org.xml.sax.SAXParseException;
 import org.xml.sax.Locator;
+
+import org.apache.fop.apps.FOPException;
+import org.apache.fop.fo.FONode;
+import org.apache.fop.fo.PropertyList;
 
 
 /**
@@ -55,7 +55,7 @@ public class Outline extends ExtensionObj {
      * @see org.apache.fop.fo.FObj#processNode
      */
     public void processNode(String elementName, Locator locator, 
-            Attributes attlist, PropertyList propertyList) throws SAXParseException 
+            Attributes attlist, PropertyList propertyList) throws FOPException 
     {
         internalDestination =
             attlist.getValue("internal-destination");

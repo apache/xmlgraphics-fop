@@ -22,14 +22,13 @@ package org.apache.fop.fo.pagination;
 import java.util.Iterator;
 import java.util.Map;
 
-// XML
 import org.xml.sax.Locator;
-import org.xml.sax.SAXParseException;
 
-// FOP
+import org.apache.fop.apps.FOPException;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.PropertyList;
+import org.apache.fop.fo.ValidationException;
 
 /**
  * The layout-master-set formatting object.
@@ -55,19 +54,19 @@ public class LayoutMasterSet extends FObj {
     /**
      * @see org.apache.fop.fo.FObj#bind(PropertyList)
      */
-    public void bind(PropertyList pList) {
+    public void bind(PropertyList pList) throws FOPException {
         // No properties in layout-master-set.
     }
 
     /**
      * @see org.apache.fop.fo.FONode#startOfNode
      */
-    protected void startOfNode() throws SAXParseException {
+    protected void startOfNode() throws FOPException {
         if (parent.getName().equals("fo:root")) {
             Root root = (Root)parent;
             root.setLayoutMasterSet(this);
         } else {
-            throw new SAXParseException("fo:layout-master-set must be child of fo:root, not "
+            throw new ValidationException("fo:layout-master-set must be child of fo:root, not "
                                    + parent.getName(), locator);
         }
         simplePageMasters = new java.util.HashMap();
@@ -77,7 +76,7 @@ public class LayoutMasterSet extends FObj {
     /**
      * @see org.apache.fop.fo.FONode#endOfNode
      */
-    protected void endOfNode() throws SAXParseException {
+    protected void endOfNode() throws FOPException {
         if (childNodes == null) {
             missingChildElementError("(simple-page-master|page-sequence-master)+");
         }
@@ -89,7 +88,7 @@ public class LayoutMasterSet extends FObj {
         XSL/FOP: (simple-page-master|page-sequence-master)+
      */
     protected void validateChildNode(Locator loc, String nsURI, String localName) 
-        throws SAXParseException {
+        throws ValidationException {
         if (nsURI == FO_URI) {
             if (!localName.equals("simple-page-master") 
                 && !localName.equals("page-sequence-master")) {   
@@ -103,9 +102,9 @@ public class LayoutMasterSet extends FObj {
     /**
      * Section 7.25.7: check to see that if a region-name is a
      * duplicate, that it maps to the same fo region-class.
-     * @throws SAXParseException if there's a name duplication
+     * @throws ValidationException if there's a name duplication
      */
-    private void checkRegionNames() throws SAXParseException {
+    private void checkRegionNames() throws ValidationException {
         // (user-entered) region-name to default region map.
         Map allRegions = new java.util.HashMap();
         for (Iterator spm = simplePageMasters.values().iterator();
@@ -120,7 +119,7 @@ public class LayoutMasterSet extends FObj {
                     String defaultRegionName =
                         (String) allRegions.get(region.getRegionName());
                     if (!defaultRegionName.equals(region.getDefaultRegionName())) {
-                        throw new SAXParseException("Region-name ("
+                        throw new ValidationException("Region-name ("
                                                + region.getRegionName()
                                                + ") is being mapped to multiple "
                                                + "region-classes ("
@@ -139,15 +138,15 @@ public class LayoutMasterSet extends FObj {
      * Add a simple page master.
      * The name is checked to throw an error if already added.
      * @param sPM simple-page-master to add
-     * @throws SAXParseException if there's a problem with name uniqueness
+     * @throws ValidationException if there's a problem with name uniqueness
      */
     protected void addSimplePageMaster(SimplePageMaster sPM)
-                throws SAXParseException {
+                throws ValidationException {
 
         // check for duplication of master-name
         String masterName = sPM.getMasterName();
         if (existsName(masterName)) {
-            throw new SAXParseException("'master-name' ("
+            throw new ValidationException("'master-name' ("
                + masterName
                + ") must be unique "
                + "across page-masters and page-sequence-masters", sPM.locator);
@@ -180,14 +179,14 @@ public class LayoutMasterSet extends FObj {
      * The name is checked to throw an error if already added.
      * @param masterName name for the master
      * @param pSM PageSequenceMaster instance
-     * @throws SAXParseException if there's a problem with name uniqueness
+     * @throws ValidationException if there's a problem with name uniqueness
      */
     protected void addPageSequenceMaster(String masterName,
                                         PageSequenceMaster pSM)
-                throws SAXParseException {
+                throws ValidationException {
         // check against duplication of master-name
         if (existsName(masterName)) {
-            throw new SAXParseException("'master-name' ("
+            throw new ValidationException("'master-name' ("
                + masterName
                + ") must be unique "
                + "across page-masters and page-sequence-masters", pSM.locator);

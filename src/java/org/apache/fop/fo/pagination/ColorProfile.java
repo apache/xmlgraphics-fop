@@ -19,21 +19,20 @@
 package org.apache.fop.fo.pagination;
 
 // Java
-import java.awt.color.ICC_Profile;
 import java.awt.color.ICC_ColorSpace;
-import java.net.URL;
+import java.awt.color.ICC_Profile;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URL;
 
-// XML
 import org.xml.sax.Locator;
-import org.xml.sax.SAXParseException;
 
-// FOP
+import org.apache.fop.apps.FOPException;
 import org.apache.fop.datatypes.ColorType;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.PropertyList;
+import org.apache.fop.fo.ValidationException;
 
 /**
  * The fo:color-profile formatting object.
@@ -58,7 +57,7 @@ public class ColorProfile extends FObj {
     /**
      * @see org.apache.fop.fo.FObj#bind(PropertyList)
      */
-    public void bind(PropertyList pList) {
+    public void bind(PropertyList pList) throws FOPException {
         src = pList.get(PR_SRC).getString();
         colorProfileName = pList.get(PR_COLOR_PROFILE_NAME).getString();
         renderingIntent = pList.get(PR_RENDERING_INTENT).getEnum();
@@ -69,7 +68,7 @@ public class ColorProfile extends FObj {
         XSL 1.0/FOP: EMPTY (no child nodes permitted)
      */
     protected void validateChildNode(Locator loc, String nsURI, String localName) 
-        throws SAXParseException {
+        throws ValidationException {
         invalidChildError(loc, nsURI, localName);
     }
 

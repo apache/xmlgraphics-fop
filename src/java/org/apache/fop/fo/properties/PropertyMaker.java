@@ -21,7 +21,9 @@ package org.apache.fop.fo.properties;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.fop.apps.FOPException;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 import org.apache.fop.datatypes.CompoundDatatype;
 import org.apache.fop.datatypes.LengthBase;
 import org.apache.fop.datatypes.PercentBase;
@@ -29,11 +31,9 @@ import org.apache.fop.fo.Constants;
 import org.apache.fop.fo.FOPropertyMapping;
 import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.PropertyList;
+import org.apache.fop.fo.expr.PropertyException;
 import org.apache.fop.fo.expr.PropertyInfo;
 import org.apache.fop.fo.expr.PropertyParser;
-
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 
 
 /**
@@ -55,7 +55,7 @@ public class PropertyMaker implements Cloneable {
     protected Property defaultProperty;
     protected CorrespondingPropertyMaker corresponding;
 
-    private Log log = LogFactory.getLog(PropertyMaker.class);
+    private static Log log = LogFactory.getLog(PropertyMaker.class);
 
     /**
      * @return the name of the property for this Maker
@@ -235,7 +235,7 @@ public class PropertyMaker implements Cloneable {
      */
     public Property findProperty(PropertyList propertyList, 
                                  boolean bTryInherit)
-        throws FOPException
+        throws PropertyException
     {
         Property p = null;
         
@@ -279,16 +279,12 @@ public class PropertyMaker implements Cloneable {
      */
     public Property get(int subpropId, PropertyList propertyList,
                         boolean bTryInherit, boolean bTryDefault)
-        throws FOPException
+        throws PropertyException
     {
         Property p = findProperty(propertyList, bTryInherit);
 
         if (p == null && bTryDefault) {    // default value for this FO!
-            try {
-                p = make(propertyList);
-            } catch (FOPException e) {
-                // don't know what to do here
-            }
+            p = make(propertyList);
         }
         return p;
     }
@@ -363,9 +359,9 @@ public class PropertyMaker implements Cloneable {
      * Return the default value.   
      * @param propertyList The PropertyList object being built for this FO.
      * @return the Property object corresponding to the parameters
-     * @throws FOPException for invalid or inconsisten FO input
+     * @throws PropertyException for invalid or inconsisten FO input
      */
-    public Property make(PropertyList propertyList) throws FOPException {
+    public Property make(PropertyList propertyList) throws PropertyException {
         if (defaultProperty != null) {
             if (log.isTraceEnabled()) {
                 log.trace("PropertyMaker.make: reusing defaultProperty, "
@@ -391,10 +387,10 @@ public class PropertyMaker implements Cloneable {
      * @param value The attribute value.
      * @param fo The parent FO for the FO whose property is being made.
      * @return The initialized Property object.
-     * @throws FOPException for invalid or inconsistent FO input
+     * @throws PropertyException for invalid or inconsistent FO input
      */
      public Property make(PropertyList propertyList, String value,
-                         FObj fo) throws FOPException {
+                         FObj fo) throws PropertyException {
         try {
             Property newProp = null;
             String pvalue = value;
@@ -416,14 +412,13 @@ public class PropertyMaker implements Cloneable {
                 newProp = convertProperty(p, propertyList, fo);
             }
             if (newProp == null) {
-                throw new org.apache.fop.fo.expr.PropertyException("No conversion defined");
+                throw new org.apache.fop.fo.expr.PropertyException("No conversion defined " + pvalue);
             }
             return newProp;
-        } catch (org.apache.fop.fo.expr.PropertyException propEx) {
-            String propName = FOPropertyMapping.getPropertyName(this.propId);
-            throw new FOPException("Error in " + propName 
-                                 + " property value '" + value + "': "
-                                 + propEx);
+        } catch (PropertyException propEx) {
+            propEx.setLocator(fo.locator);
+            propEx.setPropertyName(getName());
+            throw propEx;
         }
     }
 
@@ -439,50 +434,42 @@ public class PropertyMaker implements Cloneable {
      * @param value the value of the
      * @return baseProp (or if null, a new compound property object) with
      * the new subproperty added
-     * @throws FOPException for invalid or inconsistent FO input
+     * @throws PropertyException for invalid or inconsistent FO input
      */
     public Property make(Property baseProp, int subpropId,
                          PropertyList propertyList, String value,
-                         FObj fo) throws FOPException {
+                         FObj fo) throws PropertyException {
         //getLogger().error("compound property component "
         //                       + partName + " unknown.");
         return baseProp;
     }
 
     public Property convertShorthandProperty(PropertyList propertyList,
-                                             Property prop, FObj fo) {
-        Property pret = null;
-        try {
-            pret = convertProperty(prop, propertyList, fo);
-            if (pret == null) {
-                // If value is a name token, may be keyword or Enum
-                String sval = prop.getNCname();
-                if (sval != null) {
-                    // System.err.println("Convert shorthand ncname " + sval);
-                    pret = checkEnumValues(sval);
-                    if (pret == null) {
-                        /* Check for keyword shorthand values to be substituted. */
-                        String pvalue = checkValueKeywords(sval);
-                        if (!pvalue.equals(sval)) {
-                            // System.err.println("Convert shorthand keyword" + pvalue);
-                            // Substituted a value: must parse it
-                            Property p =
-                                PropertyParser.parse(pvalue,
-                                                     new PropertyInfo(this,
-                                                                      propertyList,
-                                                                      fo));
-                            pret = convertProperty(p, propertyList, fo);
-                        }
+                                             Property prop, FObj fo)
+        throws PropertyException
+    {
+        Property pret = convertProperty(prop, propertyList, fo);
+        if (pret == null) {
+            // If value is a name token, may be keyword or Enum
+            String sval = prop.getNCname();
+            if (sval != null) {
+                // System.err.println("Convert shorthand ncname " + sval);
+                pret = checkEnumValues(sval);
+                if (pret == null) {
+                    /* Check for keyword shorthand values to be substituted. */
+                    String pvalue = checkValueKeywords(sval);
+                    if (!pvalue.equals(sval)) {
+                        // System.err.println("Convert shorthand keyword" + pvalue);
+                        // Substituted a value: must parse it
+                        Property p =
+                            PropertyParser.parse(pvalue,
+                                                 new PropertyInfo(this,
+                                                                  propertyList,
+                                                                  fo));
+                        pret = convertProperty(p, propertyList, fo);
                     }
                 }
             }
-        } catch (FOPException e) {
-
-            //getLogger().error("convertShorthandProperty caught FOPException "
-            //                       + e);
-        } catch (org.apache.fop.fo.expr.PropertyException propEx) {
-            //getLogger().error("convertShorthandProperty caught PropertyException "
-            //                       + propEx);
         }
         if (pret != null) {
             /*
@@ -538,11 +525,11 @@ public class PropertyMaker implements Cloneable {
      * @param fo The parent FO for the FO whose property is being made.
      * @return A Property of the correct type or null if the parsed value
      * can't be converted to the correct type.
-     * @throws FOPException for invalid or inconsistent FO input
+     * @throws PropertyException for invalid or inconsistent FO input
      */
     protected Property convertProperty(Property p,
                                     PropertyList propertyList,
-                                    FObj fo) throws FOPException {
+                                    FObj fo) throws PropertyException {
         return null;
     }
 
@@ -572,10 +559,10 @@ public class PropertyMaker implements Cloneable {
      * @param propertyList The PropertyList for the FO.
      * @return Property A computed Property value or null if no rules
      * are specified to compute the value.
-     * @throws FOPException for invalid or inconsistent FO input
+     * @throws PropertyException for invalid or inconsistent FO input
      */
     protected Property compute(PropertyList propertyList)
-            throws FOPException {
+            throws PropertyException {
         if (corresponding != null) {
             return corresponding.compute(propertyList);
         }
@@ -595,7 +582,9 @@ public class PropertyMaker implements Cloneable {
      * @param propertyList the collection of properties to be considered
      * @return the Property, if found, the correspons, otherwise, null
      */
-    public Property getShorthand(PropertyList propertyList) {
+    public Property getShorthand(PropertyList propertyList)
+        throws PropertyException
+    {
         if (shorthands == null) {
             return null;
         }
@@ -614,6 +603,10 @@ public class PropertyMaker implements Cloneable {
             }
         }
         return null;
+    }
+    
+    public String getName() {
+        return FOPropertyMapping.getPropertyName(propId);
     }
 
     /**

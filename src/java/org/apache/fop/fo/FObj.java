@@ -25,12 +25,11 @@ import java.util.ListIterator;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.fop.apps.FOPException;
 import org.apache.fop.fo.flow.Marker;
 import org.apache.fop.fo.properties.PropertyMaker;
-
 import org.xml.sax.Attributes;
 import org.xml.sax.Locator;
-import org.xml.sax.SAXParseException;
 
 /**
  * Base class for representation of formatting objects and their processing.
@@ -90,7 +89,7 @@ public class FObj extends FONode implements Constants {
      * @see org.apache.fop.fo.FONode#processNode
      */
     public void processNode(String elementName, Locator locator, 
-                            Attributes attlist, PropertyList pList) throws SAXParseException {
+                            Attributes attlist, PropertyList pList) throws FOPException {
         setLocator(locator);
         pList.addAttributesToList(attlist);
         pList.setWritingMode();
@@ -100,7 +99,7 @@ public class FObj extends FONode implements Constants {
     /**
      * Create a default property list for this element. 
      */
-    protected PropertyList createPropertyList(PropertyList parent, FOEventHandler foEventHandler) throws SAXParseException {
+    protected PropertyList createPropertyList(PropertyList parent, FOEventHandler foEventHandler) throws FOPException {
         return foEventHandler.getPropertyListMaker().make(this, parent);
     }
 
@@ -108,10 +107,10 @@ public class FObj extends FONode implements Constants {
      * Bind property values from the property list to the FO node.
      * Must be overriden in all FObj subclasses. 
      * @param pList the PropertyList where the properties can be found.
-     * @throws SAXParseException
+     * @throws FOPException
      */
-    public void bind(PropertyList pList) throws SAXParseException {
-//        throw new SAXParseException("Unconverted element " + this, locator);
+    public void bind(PropertyList pList) throws FOPException {
+//        throw new ValidationException("Unconverted element " + this, locator);
     }
 
     /**
@@ -120,13 +119,13 @@ public class FObj extends FONode implements Constants {
      * This methods checks that the id isn't already used by another
      * fo and sets the id attribute of this object.
      */
-     protected void checkId(String id) throws SAXParseException {
+     protected void checkId(String id) throws ValidationException {
         if (!id.equals("")) {
             Set idrefs = getFOEventHandler().getIDReferences();
             if (!idrefs.contains(id)) {
                 idrefs.add(id);
             } else {
-                throw new SAXParseException("Property id \"" + id + 
+                throw new ValidationException("Property id \"" + id + 
                         "\" previously used; id values must be unique" +
                         " in document.", locator);
             }
@@ -144,7 +143,7 @@ public class FObj extends FONode implements Constants {
     /**
      * @see org.apache.fop.fo.FONode#addChildNode(FONode)
      */
-    protected void addChildNode(FONode child) throws SAXParseException {
+    protected void addChildNode(FONode child) throws FOPException {
         if (PropertySets.canHaveMarkers(getNameId()) && 
             child.getNameId() == FO_MARKER) {
                 addMarker((Marker) child);

@@ -18,10 +18,13 @@
 
 package org.apache.fop.fo.expr;
 
+import org.apache.fop.apps.FOPException;
+
 /**
  * Class for managing exceptions that are raised in Property processing.
  */
-public class PropertyException extends Exception {
+public class PropertyException extends FOPException {
+    private String propertyName;
 
     /**
      * Constructor
@@ -31,4 +34,24 @@ public class PropertyException extends Exception {
         super(detail);
     }
 
+    /**
+     */
+    public void setPropertyInfo(PropertyInfo propInfo) {
+        setLocator(propInfo.getFO().locator);
+        propertyName = propInfo.getPropertyMaker().getName();
+    }
+
+    /**
+     */
+    public void setPropertyName(String propertyName) {
+        this.propertyName = propertyName;
+    }
+
+    public String getMessage() {
+        if (propertyName != null) {
+            return super.getMessage() + "; property:'" + propertyName + "'";
+        } else {
+            return super.getMessage();
+        }
+    }
 }

@@ -22,10 +22,7 @@ package org.apache.fop.fo.flow;
 import java.util.List;
 import java.util.ListIterator;
 
-// XML
-import org.xml.sax.SAXParseException;
- 
-// FOP
+import org.apache.fop.apps.FOPException;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FObjMixed;
 import org.apache.fop.fo.PropertyList;
@@ -54,14 +51,14 @@ public class Wrapper extends FObjMixed {
     /**
      * @see org.apache.fop.fo.FObj#bind(PropertyList)
      */
-    public void bind(PropertyList pList) {
+    public void bind(PropertyList pList) throws FOPException {
         id = pList.get(PR_ID).getString();
     }
 
     /**
      * @see org.apache.fop.fo.FONode#startOfNode
      */
-    protected void startOfNode() throws SAXParseException {
+    protected void startOfNode() throws FOPException {
         checkId(id);
     }
 

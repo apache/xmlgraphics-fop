@@ -21,10 +21,7 @@ package org.apache.fop.fo.pagination;
 // Java
 import java.awt.Rectangle;
 
-// XML
-import org.xml.sax.SAXParseException;
-
-// FOP
+import org.apache.fop.apps.FOPException;
 import org.apache.fop.datatypes.Length;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.PropertyList;
@@ -48,7 +45,7 @@ public abstract class RegionBA extends Region {
     /**
      * @see org.apache.fop.fo.FObj#bind(PropertyList)
      */
-    public void bind(PropertyList pList) throws SAXParseException {
+    public void bind(PropertyList pList) throws FOPException {
         super.bind(pList);
         extent = pList.get(PR_EXTENT).getLength();
         precedence = pList.get(PR_PRECEDENCE).getEnum();
