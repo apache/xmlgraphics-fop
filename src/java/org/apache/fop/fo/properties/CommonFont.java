@@ -36,42 +36,42 @@ public class CommonFont {
     /**
      * The "font-family" property.
      */
-	public String fontFamily;
+    public String fontFamily;
 
     /**
      * The "font-selection-strategy" property.
      */
-	public int fontSelectionStrategy;
+    public int fontSelectionStrategy;
 
     /**
      * The "font-size" property.
      */
-	public Length fontSize;
+    public Length fontSize;
 
     /**
      * The "font-stretch" property.
      */
-	public int fontStretch;
+    public int fontStretch;
 
     /**
      * The "font-size-adjust" property.
      */
-	public Numeric fontSizeAdjust;
+    public Numeric fontSizeAdjust;
 
     /**
      * The "font-style" property.
      */
-	public String fontStyle;
+    public String fontStyle;
 
     /**
      * The "font-variant" property.
      */
-	public int fontVariant;
+    public int fontVariant;
 
     /**
      * The "font-weight" property.
      */
-	public String fontWeight;
+    public String fontWeight;
 
     private Font fontState;
 
@@ -79,24 +79,24 @@ public class CommonFont {
      * Create a CommonFont object.
      * @param pList The PropertyList to get properties from.
      */
-	public CommonFont(PropertyList pList) throws PropertyException {
-    	fontFamily = pList.get(Constants.PR_FONT_FAMILY).getString();
-    	fontSelectionStrategy = pList.get(Constants.PR_FONT_SELECTION_STRATEGY).getEnum();
-    	fontSize = pList.get(Constants.PR_FONT_SIZE).getLength();
-    	fontStretch = pList.get(Constants.PR_FONT_STRETCH).getEnum();
-    	fontSizeAdjust = pList.get(Constants.PR_FONT_SIZE_ADJUST).getNumeric();
-    	fontStyle = pList.get(Constants.PR_FONT_STYLE).getString();
-    	fontVariant = pList.get(Constants.PR_FONT_VARIANT).getEnum();
-    	fontWeight = pList.get(Constants.PR_FONT_WEIGHT).getString();
-	}
-	
+    public CommonFont(PropertyList pList) throws PropertyException {
+        fontFamily = pList.get(Constants.PR_FONT_FAMILY).getString();
+        fontSelectionStrategy = pList.get(Constants.PR_FONT_SELECTION_STRATEGY).getEnum();
+        fontSize = pList.get(Constants.PR_FONT_SIZE).getLength();
+        fontStretch = pList.get(Constants.PR_FONT_STRETCH).getEnum();
+        fontSizeAdjust = pList.get(Constants.PR_FONT_SIZE_ADJUST).getNumeric();
+        fontStyle = pList.get(Constants.PR_FONT_STYLE).getString();
+        fontVariant = pList.get(Constants.PR_FONT_VARIANT).getEnum();
+        fontWeight = pList.get(Constants.PR_FONT_WEIGHT).getString();
+    }
+
     /**
      * Create and return a Font object based on the properties. 
      * 
      * @param fontInfo
      * @return a Font object.
      */
-	public Font getFontState(FontInfo fontInfo) {
+    public Font getFontState(FontInfo fontInfo) {
         if (fontState == null) {
             /**@todo this is ugly. need to improve. */
 
@@ -126,6 +126,6 @@ public class CommonFont {
             FontMetrics metrics = fontInfo.getMetricsFor(fname);
             fontState = new Font(fname, metrics, fontSize.getValue());
         }
-		return fontState;
-	}
+        return fontState;
+    }
 }

@@ -105,7 +105,7 @@ public class NumberProperty extends Property implements Numeric {
     }
 
     public int getValue() {
-    	return number.intValue();
+        return number.intValue();
     }
 
     /**

@@ -23,27 +23,27 @@ import org.apache.fop.fo.properties.Property;
  * the explit set properties and another array to store cached values.
  */
 public class StaticPropertyList extends PropertyList {
-	private Property[] explicit;
-	private Property[] values;
+    private Property[] explicit;
+    private Property[] values;
     
     /**
      * Construct a StaticPropertyList. 
      * @param fObjToAttach The FObj object.
      * @param parentPropertyList The parent property list.
      */
-	public StaticPropertyList(FObj fObjToAttach, PropertyList parentPropertyList) {
-		super(fObjToAttach, parentPropertyList);
-		explicit = new Property[Constants.PROPERTY_COUNT + 1];
+    public StaticPropertyList(FObj fObjToAttach, PropertyList parentPropertyList) {
+        super(fObjToAttach, parentPropertyList);
+        explicit = new Property[Constants.PROPERTY_COUNT + 1];
         values = new Property[Constants.PROPERTY_COUNT + 1];
-	}
-	
+    }
+
     /**
      * Return the value explicitly specified on this FO.
      * @param propId The ID of the property whose value is desired.
      * @return The value if the property is explicitly set, otherwise null.
      */
     public Property getExplicit(int propId) {
-    	return explicit[propId];
+        return explicit[propId];
     }
 
     /**
@@ -52,7 +52,7 @@ public class StaticPropertyList extends PropertyList {
      * @param value The value of the property to set.
      */
     public void putExplicit(int propId, Property value) {
-    	explicit[propId] = value;
+        explicit[propId] = value;
     }
 
     /**
