@@ -18,7 +18,6 @@
 
 package org.apache.fop.layoutmgr;
 
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.ListIterator;
 import java.util.List;
@@ -1060,22 +1059,26 @@ public class BlockLayoutManager extends BlockStackingLayoutManager
      * @see org.apache.fop.layoutmgr.BlockLevelLayoutManager#mustKeepTogether()
      */
     public boolean mustKeepTogether() {
+        //TODO Keeps will have to be more sophisticated sooner or later
         return ((BlockLevelLayoutManager)getParent()).mustKeepTogether() 
-                || !fobj.getKeepTogether().getWithinPage().isAuto();
+                || !fobj.getKeepTogether().getWithinPage().isAuto()
+                || !fobj.getKeepTogether().getWithinColumn().isAuto();
     }
 
     /**
      * @see org.apache.fop.layoutmgr.BlockLevelLayoutManager#mustKeepWithPrevious()
      */
     public boolean mustKeepWithPrevious() {
-        return !fobj.getKeepWithPrevious().getWithinPage().isAuto();
+        return !fobj.getKeepWithPrevious().getWithinPage().isAuto()
+            || !fobj.getKeepWithPrevious().getWithinColumn().isAuto();
     }
 
     /**
      * @see org.apache.fop.layoutmgr.BlockLevelLayoutManager#mustKeepWithNext()
      */
     public boolean mustKeepWithNext() {
-        return !fobj.getKeepWithNext().getWithinPage().isAuto();
+        return !fobj.getKeepWithNext().getWithinPage().isAuto()
+                || !fobj.getKeepWithNext().getWithinColumn().isAuto();
     }
 
     //TODO this method is no longer used
