@@ -136,7 +136,6 @@ public class BlockArea extends Area {
 
     }
 
-Imaginary Buffer Line
     public int addText(FontState fontState, float red, float green,
 		       float blue, int wrapOption, LinkSet ls,
 		       int whiteSpaceTreatment, char data[],
