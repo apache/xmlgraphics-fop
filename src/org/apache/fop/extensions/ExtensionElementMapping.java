@@ -25,6 +25,7 @@ public class ExtensionElementMapping implements ElementMapping {
             foObjs = new HashMap();    
             foObjs.put("outline", Outline.maker());
             foObjs.put("label", Label.maker());
+            foObjs.put("continued-label", ContinuedLabel.maker());
         }
     }
 
@@ -45,3 +46,4 @@ public class ExtensionElementMapping implements ElementMapping {
     }
 
 }
+
