@@ -85,7 +85,8 @@ public class FoRoot extends FONode {
         // Look for layout-master-set
         try {
             ev = xmlevents.expectStartElement
-                    (XMLNamespaces.XSLNSpaceIndex, "layout-master-set");
+                    (XMLNamespaces.XSLNSpaceIndex, "layout-master-set",
+                                                    XMLEvent.DISCARD_W_SPACE);
         } catch (NoSuchElementException e) {
             throw new FOPException(e);
         }
@@ -99,15 +100,15 @@ public class FoRoot extends FONode {
         }
         layoutMasters.setupPageMasters();
         // Stub - flush the layout masters
-        ev = xmlevents.getEndElement
-                        (XMLNamespaces.XSLNSpaceIndex, "layout-master-set");
+        ev = xmlevents.getEndElement(ev);
         // Look for optional declarations
         try {
             xmlevents.expectStartElement
-                            (XMLNamespaces.XSLNSpaceIndex, "declarations");
+                        (XMLNamespaces.XSLNSpaceIndex, "declarations",
+                                                    XMLEvent.DISCARD_W_SPACE);
             // process the declarations
             xmlevents.getEndElement
-                            (XMLNamespaces.XSLNSpaceIndex, "declarations");
+                    (XMLNamespaces.XSLNSpaceIndex, "declarations");
         } catch (NoSuchElementException e) {
             // Take no notice - declarations is optional
         }
