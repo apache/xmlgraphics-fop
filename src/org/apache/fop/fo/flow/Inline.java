@@ -59,28 +59,27 @@ import org.apache.fop.apps.FOPException;
 // Java
 import java.util.Enumeration;
 
-public class InlineSequence extends FObjMixed {
+public class Inline extends FObjMixed {
 
-    public static class Maker extends FObj.Maker {
-	public FObj make(FObj parent, PropertyList propertyList)
-	    throws FOPException { 
-	    return new InlineSequence(parent, propertyList);
-	}
+  public static class Maker extends FObj.Maker {
+    public FObj make(FObj parent, PropertyList propertyList)
+        throws FOPException { 
+      return new Inline(parent, propertyList);
     }
+  }
 
-    public static FObj.Maker maker() {
-	return new InlineSequence.Maker();
-    }
+  public static FObj.Maker maker() {
+      return new Inline.Maker();
+  }
     
-    public InlineSequence(FObj parent, PropertyList propertyList)
-	throws FOPException {
-	super(parent, propertyList);
-	this.name = "fo:inline-sequence";
-	
-	if (parent.getName().equals("fo:flow")) {
-	    throw new FOPException("inline-sequence can't be directly"
-				   + " under flow"); 
-	}
+  public Inline(FObj parent, PropertyList propertyList)
+      throws FOPException {
+    super(parent, propertyList);
+    this.name = "fo:inline";
+    
+    if (parent.getName().equals("fo:flow")) {
+      throw new FOPException("fo:inline can't be directly"
+                   + " under flow"); 
     }
-
+  }
 }
