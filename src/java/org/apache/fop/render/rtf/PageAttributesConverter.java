@@ -55,9 +55,9 @@ class PageAttributesConverter {
             Property p = null;
             Float f = null;
             
-            Region before = pagemaster.getRegion("before");
-            Region body   = pagemaster.getRegion("body");
-            Region after  = pagemaster.getRegion("after");
+            Region before = pagemaster.getRegion(Region.BEFORE_CODE);
+            Region body   = pagemaster.getRegion(Region.BODY_CODE);
+            Region after  = pagemaster.getRegion(Region.AFTER_CODE);
             
             //page attributes
             props = pagemaster.propertyList;

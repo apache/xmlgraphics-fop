@@ -32,8 +32,8 @@ public abstract class RegionBASE extends Region {
     /**
      * @see org.apache.fop.fo.FONode#FONode(FONode)
      */
-    protected RegionBASE(FONode parent) {
-        super(parent);
+    protected RegionBASE(FONode parent, int regionId) {
+        super(parent, regionId);
     }
 
     /**

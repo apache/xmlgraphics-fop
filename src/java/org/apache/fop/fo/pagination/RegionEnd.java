@@ -36,7 +36,7 @@ public class RegionEnd extends RegionSE {
      * @see org.apache.fop.fo.FONode#FONode(FONode)
      */
     public RegionEnd(FONode parent) {
-        super(parent);
+        super(parent, Region.END_CODE);
     }
 
     /**
@@ -61,13 +61,6 @@ public class RegionEnd extends RegionSE {
      */
     protected String getDefaultRegionName() {
         return "xsl-region-end";
-    }
-
-    /**
-     * @see org.apache.fop.fo.pagination.Region#getRegionClass()
-     */
-    public String getRegionClass() {
-        return Region.END;
     }
 
     /**

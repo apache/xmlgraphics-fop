@@ -489,13 +489,13 @@ public class PageLayoutManager extends AbstractLayoutManager implements Runnable
         }
         // Layout static content into the regions
         // Need help from pageseq for this
-        layoutStaticContent(currentSimplePageMaster.getRegion(Region.BEFORE),
+        layoutStaticContent(currentSimplePageMaster.getRegion(Region.BEFORE_CODE),
                             Region.BEFORE_CODE);
-        layoutStaticContent(currentSimplePageMaster.getRegion(Region.AFTER),
+        layoutStaticContent(currentSimplePageMaster.getRegion(Region.AFTER_CODE),
                             Region.AFTER_CODE);
-        layoutStaticContent(currentSimplePageMaster.getRegion(Region.START),
+        layoutStaticContent(currentSimplePageMaster.getRegion(Region.START_CODE),
                             Region.START_CODE);
-        layoutStaticContent(currentSimplePageMaster.getRegion(Region.END),
+        layoutStaticContent(currentSimplePageMaster.getRegion(Region.END_CODE),
                             Region.END_CODE);
         // Queue for ID resolution and rendering
         areaTree.addPage(curPage);
@@ -706,7 +706,7 @@ public class PageLayoutManager extends AbstractLayoutManager implements Runnable
     private PageViewport createPage(boolean bIsBlank, boolean bIsLast)
                                    throws FOPException {
         currentSimplePageMaster = getSimplePageMasterToUse(bIsBlank);
-        Region body = currentSimplePageMaster.getRegion(Region.BODY);
+        Region body = currentSimplePageMaster.getRegion(Region.BODY_CODE);
         if (!pageSequence.getMainFlow().getFlowName().equals(body.getRegionName())) {
           throw new FOPException("Flow '" + pageSequence.getMainFlow().getFlowName()
                                  + "' does not map to the region-body in page-master '"
