@@ -45,6 +45,7 @@ import org.apache.fop.fo.properties.PositionShorthandParser;
 import org.apache.fop.fo.properties.Property;
 import org.apache.fop.fo.properties.PropertyMaker;
 import org.apache.fop.fo.properties.SpaceProperty;
+import org.apache.fop.fo.properties.SpacePropertyMaker;
 import org.apache.fop.fo.properties.SpacingPropertyMaker;
 import org.apache.fop.fo.properties.StringProperty;
 import org.apache.fop.fo.properties.TextDecorationProperty;
@@ -52,7 +53,9 @@ import org.apache.fop.fo.properties.ToBeImplementedProperty;
 
 /**
  * This class creates and returns an array of Property.Maker instances
- * indexed by the PR_* propId from Constants.java. 
+ * indexed by the PR_* propId from Constants.java.
+ * 
+ * @todo Check multi-threading safety of the statics below 
  */
 public class FOPropertyMapping implements Constants {
     private static Map s_htPropNames = new HashMap();
@@ -383,8 +386,9 @@ public class FOPropertyMapping implements Constants {
     }
     
     /**
-     * Return a (possible cached) enum property based in the enum value.
+     * Return a (possibly cached) enum property based in the enum value.
      * @param enum A enum value from Constants.java.
+     * @param text the text value by which this enum property is known
      * @return An EnumProperty instance.
      */
     private Property getEnumProperty(int enumValue, String text) {
@@ -1216,7 +1220,7 @@ public class FOPropertyMapping implements Constants {
         // space-before
         m  = new SpaceProperty.Maker(PR_SPACE_BEFORE);
         m.useGeneric(genericSpace);
-        corr = new CorrespondingPropertyMaker(m);
+        corr = new SpacePropertyMaker(m);
         corr.setCorresponding(PR_MARGIN_TOP, PR_MARGIN_TOP, PR_MARGIN_RIGHT);
         corr.setUseParent(true);
         corr.setRelative(true);
@@ -1225,7 +1229,7 @@ public class FOPropertyMapping implements Constants {
         // space-after
         m  = new SpaceProperty.Maker(PR_SPACE_AFTER);
         m.useGeneric(genericSpace);
-        corr = new CorrespondingPropertyMaker(m);
+        corr = new SpacePropertyMaker(m);
         corr.setCorresponding(PR_MARGIN_BOTTOM, PR_MARGIN_BOTTOM, PR_MARGIN_LEFT);
         corr.setUseParent(true);
         corr.setRelative(true);
