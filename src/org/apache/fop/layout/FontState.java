@@ -24,7 +24,7 @@ public class FontState {
 
     private FontMetric _metric;
 
-    private static HashMap EMPTY_HASHTABLE = new HashMap();
+    private static HashMap EMPTY_HASHMAP = new HashMap();
 
 
     public FontState(FontInfo fontInfo, String fontFamily, String fontStyle,
@@ -90,7 +90,7 @@ public class FontState {
             if (ret != null)
                 return ret;
         }
-        return EMPTY_HASHTABLE;
+        return EMPTY_HASHMAP;
     }
 
     public int width(int charnum) {

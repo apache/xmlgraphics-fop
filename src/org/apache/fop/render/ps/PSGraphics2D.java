@@ -12,7 +12,6 @@ import org.apache.fop.layout.*;
 import org.apache.fop.fonts.*;
 import org.apache.fop.render.pdf.*;
 import org.apache.fop.image.*;
-import org.apache.fop.datatypes.ColorSpace;
 import org.apache.fop.fo.FOUserAgent;
 
 import org.apache.batik.ext.awt.g2d.*;
@@ -201,7 +200,7 @@ public class PSGraphics2D extends AbstractGraphics2D {
             break;
         }
 
-        try {
+        /*try {
             FopImage fopimg = new TempImage(width, height, result, mask);
             AffineTransform at = getTransform();
             double[] matrix = new double[6];
@@ -216,7 +215,7 @@ public class PSGraphics2D extends AbstractGraphics2D {
             psRenderer.write("grestore");
         } catch (Exception e) {
             e.printStackTrace();
-        }
+        }*/
         return true;
     }
 
@@ -225,11 +224,11 @@ public class PSGraphics2D extends AbstractGraphics2D {
                                  BufferedImage.TYPE_INT_ARGB);
     }
 
-    class TempImage implements FopImage {
+    /*class TempImage implements FopImage {
         int m_height;
         int m_width;
         int m_bitsPerPixel;
-        ColorSpace m_colorSpace;
+        PDFColorSpace m_colorSpace;
         int m_bitmapSiye;
         byte[] m_bitmaps;
         byte[] m_mask;
@@ -240,7 +239,7 @@ public class PSGraphics2D extends AbstractGraphics2D {
             this.m_height = height;
             this.m_width = width;
             this.m_bitsPerPixel = 8;
-            this.m_colorSpace = new ColorSpace(ColorSpace.DEVICE_RGB);
+            this.m_colorSpace = new PDFColorSpace(PDFColorSpace.DEVICE_RGB);
             // this.m_isTransparent = false;
             // this.m_bitmapsSize = this.m_width * this.m_height * 3;
             this.m_bitmaps = result;
@@ -269,7 +268,7 @@ public class PSGraphics2D extends AbstractGraphics2D {
         }
 
         // DeviceGray, DeviceRGB, or DeviceCMYK
-        public ColorSpace getColorSpace() {
+        public PDFColorSpace getColorSpace() {
             return m_colorSpace;
         }
 
@@ -287,7 +286,11 @@ public class PSGraphics2D extends AbstractGraphics2D {
             return transparent;
         }
 
-        public byte[] getMask() {
+        public boolean hasSoftMask() {
+            return m_mask != null;
+        }
+
+        public byte[] getSoftMask() {
             return m_mask;
         }
 
@@ -322,7 +325,7 @@ public class PSGraphics2D extends AbstractGraphics2D {
         // release memory
         public void close() {}
 
-    }
+    }*/
 
 
     /**
@@ -559,7 +562,7 @@ public class PSGraphics2D extends AbstractGraphics2D {
                                            c2.getBlue());
             someColors.add(color2);
 
-            ColorSpace aColorSpace = new ColorSpace(ColorSpace.DEVICE_RGB);
+            PDFColorSpace aColorSpace = new PDFColorSpace(PDFColorSpace.DEVICE_RGB);
         } else if (paint instanceof TexturePaint) {}
     }
 

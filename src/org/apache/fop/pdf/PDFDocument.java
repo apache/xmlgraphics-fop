@@ -10,16 +10,9 @@
 
 package org.apache.fop.pdf;
 
-// images are the one place that FOP classes outside this package get
-// referenced and I'd rather not do it
-import org.apache.fop.image.FopImage;
-
-import org.apache.fop.datatypes.ColorSpace;
-
 import org.apache.fop.render.pdf.CIDFont;
 import org.apache.fop.render.pdf.fonts.LazyFont;
 
-import org.apache.fop.datatypes.IDReferences;
 import org.apache.fop.layout.FontMetric;
 import org.apache.fop.layout.FontDescriptor;
 // Java
@@ -111,15 +104,10 @@ public class PDFDocument {
     protected PDFResources resources;
 
     /**
-     * the documents idReferences
-     */
-    protected IDReferences idReferences;
-
-    /**
      * the colorspace (0=RGB, 1=CMYK)
      */
     // protected int colorspace = 0;
-    protected ColorSpace colorspace = new ColorSpace(ColorSpace.DEVICE_RGB);
+    protected PDFColorSpace colorspace = new PDFColorSpace(PDFColorSpace.DEVICE_RGB);
 
     /**
      * the counter for Pattern name numbering (e.g. 'Pattern1')
@@ -439,7 +427,7 @@ public class PDFDocument {
      * @param theFunction The PDF Function that maps an (x,y) location to a color
      */
     public PDFShading makeShading(int theShadingType,
-                                  ColorSpace theColorSpace,
+                                  PDFColorSpace theColorSpace,
                                   ArrayList theBackground, ArrayList theBBox,
                                   boolean theAntiAlias, ArrayList theDomain,
                                   ArrayList theMatrix,
@@ -479,7 +467,7 @@ public class PDFDocument {
      * The default is [false, false]
      */
     public PDFShading makeShading(int theShadingType,
-                                  ColorSpace theColorSpace,
+                                  PDFColorSpace theColorSpace,
                                   ArrayList theBackground, ArrayList theBBox,
                                   boolean theAntiAlias, ArrayList theCoords,
                                   ArrayList theDomain, PDFFunction theFunction,
@@ -522,7 +510,7 @@ public class PDFDocument {
      * @param theFunction the PDFFunction
      */
     public PDFShading makeShading(int theShadingType,
-                                  ColorSpace theColorSpace,
+                                  PDFColorSpace theColorSpace,
                                   ArrayList theBackground, ArrayList theBBox,
                                   boolean theAntiAlias,
                                   int theBitsPerCoordinate,
@@ -567,7 +555,7 @@ public class PDFDocument {
      * @param theFunction The PDFFunction that's mapped on to this shape
      */
     public PDFShading makeShading(int theShadingType,
-                                  ColorSpace theColorSpace,
+                                  PDFColorSpace theColorSpace,
                                   ArrayList theBackground, ArrayList theBBox,
                                   boolean theAntiAlias,
                                   int theBitsPerCoordinate,
@@ -659,7 +647,7 @@ public class PDFDocument {
     }
 
     public PDFPattern createGradient(boolean radial,
-                                     ColorSpace theColorspace,
+                                     PDFColorSpace theColorspace,
                                      ArrayList theColors, ArrayList theBounds,
                                      ArrayList theCoords) {
         PDFShading myShad;
@@ -668,7 +656,7 @@ public class PDFDocument {
         ArrayList theCzero;
         ArrayList theCone;
         PDFPattern myPattern;
-        ColorSpace theColorSpace;
+        PDFColorSpace theColorSpace;
         double interpolation = (double)1.000;
         ArrayList theFunctions = new ArrayList();
 
@@ -930,19 +918,22 @@ public class PDFDocument {
         return gstate;
     }
 
-    public int addImage(FopImage img) {
+    public PDFXObject addImage(PDFImage img) {
         // check if already created
-        String url = img.getURL();
-        PDFXObject xObject = (PDFXObject)this.xObjectsMap.get(url);
+        String key = img.getKey();
+        PDFXObject xObject = (PDFXObject)xObjectsMap.get(key);
         if (xObject != null)
-            return xObject.getXNumber();
-        // else, create a new one
+            return xObject;
+
+        // setup image
+        img.setup(this);
+        // create a new XObject
         xObject = new PDFXObject(++this.objectcount, ++this.xObjectCount,
-                                 img, this);
+                                 img);
         this.objects.add(xObject);
         this.xObjects.add(xObject);
-        this.xObjectsMap.put(url, xObject);
-        return xObjectCount;
+        this.xObjectsMap.put(key, xObject);
+        return xObject;
     }
 
     /**
@@ -1029,8 +1020,8 @@ public class PDFDocument {
     }
 
     private String getGoToReference(String destination) {
-        String goToReference;
-        if (idReferences.doesIDExist(destination)) {
+        String goToReference = null;
+        /*if (idReferences.doesIDExist(destination)) {
             if (idReferences.doesGoToReferenceExist(destination)) {
                 goToReference =
                     idReferences.getInternalLinkGoToReference(destination);
@@ -1042,16 +1033,12 @@ public class PDFDocument {
             }
         } else {        // id was not found, so create it
 
-            //next line by lmckenzi@ca.ibm.com
-            //solves when IDNode made before IDReferences.createID called
-            //idReferences.createNewId(destination);
- 
             idReferences.createUnvalidatedID(destination); 
             idReferences.addToIdValidationList(destination);
             goToReference = idReferences.createInternalLinkGoTo(destination,
                             ++this.objectcount);
             addTrailerObject(idReferences.getPDFGoTo(destination));
-        }
+        }*/
         return goToReference;
     }
 
@@ -1304,10 +1291,6 @@ public class PDFDocument {
         byte[] pdfBytes = pdf.toString().getBytes();
         stream.write(pdfBytes);
         return pdfBytes.length;
-    }
-
-    public void setIDReferences(IDReferences idReferences) {
-        this.idReferences = idReferences;
     }
 
 }

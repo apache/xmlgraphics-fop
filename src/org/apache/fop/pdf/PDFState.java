@@ -47,6 +47,7 @@ public class PDFState {
     private final static String FONTSIZE = "fontSize";
     private final static String FONTNAME = "fontName";
     private final static String CLIP = "clip";
+    private final static String GSTATE = "gstate";
 
     Color color = Color.black;
     Color backcolor = Color.white;
@@ -63,6 +64,7 @@ public class PDFState {
     float fontSize = 0;
     String fontName = "";
     Shape clip = null;
+    PDFGState gstate = null;
 
     ArrayList stateStack = new ArrayList();
 
@@ -89,6 +91,7 @@ public class PDFState {
         saveMap.put(FONTSIZE, new Float(fontSize));
         saveMap.put(FONTNAME, fontName);
         saveMap.put(CLIP, clip);
+        saveMap.put(GSTATE, gstate);
 
         stateStack.add(saveMap);
 
@@ -114,6 +117,7 @@ public class PDFState {
             fontSize = ((Float)saveMap.get(FONTSIZE)).floatValue();
             fontName = (String)saveMap.get(FONTNAME);
             clip = (Shape)saveMap.get(CLIP);
+            gstate = (PDFGState)saveMap.get(GSTATE);
         }
     }
 

@@ -16,14 +16,15 @@ import java.io.BufferedInputStream;
 import java.awt.image.ColorModel;
 import java.awt.image.IndexColorModel;
 import java.awt.image.BufferedImage;
+import java.awt.color.ColorSpace;
 
 // JAI
 import javax.media.jai.JAI;
 import javax.media.jai.RenderedOp;
 // Sun codec
 import com.sun.media.jai.codec.FileCacheSeekableStream;
+
 // FOP
-import org.apache.fop.datatypes.ColorSpace;
 import org.apache.fop.pdf.PDFColor;
 import org.apache.fop.image.analyser.ImageReader;
 
@@ -59,7 +60,7 @@ public class JAIImage extends AbstractFopImage {
             ColorModel cm = imageOp.getColorModel();
             this.m_bitsPerPixel = 8;
             // this.m_bitsPerPixel = cm.getPixelSize();
-            this.m_colorSpace = new ColorSpace(ColorSpace.DEVICE_RGB);
+            this.m_colorSpace = ColorSpace.getInstance(ColorSpace.CS_LINEAR_RGB);
 
             BufferedImage imageData = imageOp.getAsBufferedImage();
             int[] tmpMap = imageData.getRGB(0, 0, this.m_width,

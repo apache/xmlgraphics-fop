@@ -12,12 +12,12 @@ import java.net.URL;
 import java.awt.image.ImageProducer;
 import java.awt.image.ColorModel;
 import java.awt.image.IndexColorModel;
+import java.awt.color.ColorSpace;
 
 // Jimi
 import com.sun.jimi.core.*;
 
 // FOP
-import org.apache.fop.datatypes.ColorSpace;
 import org.apache.fop.pdf.PDFColor;
 import org.apache.fop.image.analyser.ImageReader;
 
@@ -63,7 +63,7 @@ public class JimiImage extends AbstractFopImage {
             ColorModel cm = consumer.getColorModel();
             this.m_bitsPerPixel = 8;
             // this.m_bitsPerPixel = cm.getPixelSize();
-            this.m_colorSpace = new ColorSpace(ColorSpace.DEVICE_RGB);
+            this.m_colorSpace = ColorSpace.getInstance(ColorSpace.CS_LINEAR_RGB);
             if (cm.hasAlpha()) {
                 int transparencyType = cm.getTransparency(); // java.awt.Transparency. BITMASK or OPAQUE or TRANSLUCENT
                 if (transparencyType == java.awt.Transparency.OPAQUE) {

@@ -12,6 +12,33 @@ package org.apache.fop.pdf;
  *
  */
 public class PDFGState extends PDFObject {
+    public static final String LW = "lw";
+    public static final String LC = "lc";
+    public static final String LJ = "lj";
+    public static final String ML = "ml";
+    public static final String D = "d";
+    public static final String RI = "ri";
+    public static final String OP = "OP";
+    public static final String op = "op";
+    public static final String OPM = "opm";
+    public static final String Font = "font";
+    public static final String BG = "bg";
+    public static final String BG2 = "bg2";
+    public static final String UCR = "ucr";
+    public static final String UCR2 = "ucr2";
+    public static final String TR = "tr";
+    public static final String TR2 = "tr2";
+    public static final String HT = "ht";
+    public static final String FL = "fl";
+    public static final String SM = "sm";
+    public static final String SA = "sa";
+    public static final String BM = "bm";
+    public static final String SMask = "smask";
+    public static final String CA = "CA";
+    public static final String ca = "ca";
+    public static final String AIS = "ais";
+    public static final String TK = "tk";
+
     float alphaFill = 1;
     float alphaStroke = 1;
 

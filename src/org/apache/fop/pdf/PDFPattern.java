@@ -10,9 +10,6 @@ package org.apache.fop.pdf;
 // Java...
 import java.util.ArrayList;
 
-// FOP...
-import org.apache.fop.datatypes.ColorSpace;
-
 /**
  * class representing a PDF Function.
  *
@@ -131,6 +128,7 @@ public class PDFPattern extends PDFPathPaint {
         this.yStep = theYStep;
         this.matrix = theMatrix;
         this.xUID = theXUID;
+        // TODO filter this stream
         this.patternDataStream = thePatternDataStream;
     }
 

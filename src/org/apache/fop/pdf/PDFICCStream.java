@@ -6,41 +6,41 @@
  */
 
 package org.apache.fop.pdf;
-import org.apache.fop.datatypes.ColorSpace;
+
+import java.awt.color.ICC_Profile;
 
 public class PDFICCStream extends PDFStream {
     private int origLength;
     private int len1, len3;
     
-    private ColorSpace cs;
-    
-    public void setColorSpace(ColorSpace cs) throws java.io.IOException {
-        this.cs = cs;
-        setData(cs.getICCProfile());
+    private ICC_Profile cp;
+    private PDFColorSpace pdfColorSpace;
+
+    public void setColorSpace(ICC_Profile cp, PDFColorSpace alt) {
+        this.cp = cp;
+        pdfColorSpace = alt;
     }
     
     public PDFICCStream(int num) {
         super(num);
-        cs = null;
-    }
-    
-    public PDFICCStream(int num, ColorSpace cs) throws java.io.IOException {
-        super(num);
-        setColorSpace(cs);
+        cp = null;
     }
     
         // overload the base object method so we don't have to copy
         // byte arrays around so much
     protected int output(java.io.OutputStream stream)
         throws java.io.IOException {
+
+        setData(cp.getData());
+
         int length = 0;
         String filterEntry = applyFilters();
         StringBuffer pb = new StringBuffer();
         pb.append(this.number).append(" ").append(this.generation).append(" obj\n<< ");
-        pb.append("/N ").append(cs.getNumComponents()).append(" ");
+        pb.append("/N ").append(cp.getNumComponents()).append(" ");
         
-        if (cs.getColorSpace() > 0)
-            pb.append("/Alternate /").append(cs.getColorSpacePDFString()).append(" ");
+        if (pdfColorSpace != null)
+            pb.append("/Alternate /").append(pdfColorSpace.getColorSpacePDFString()).append(" ");
         
         pb.append("/Length ").append((_data.getSize() + 1)).append(" ").append(filterEntry);
         pb.append(" >>\n");

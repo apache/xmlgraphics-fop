@@ -96,7 +96,7 @@ public class PDFStream extends PDFObject {
     }
 
 
-    protected void addDefaultFilters() {
+    public void addDefaultFilters() {
         ArrayList filters = Configuration.getListValue("stream-filter-list",
                                                     Configuration.PDF);
         if (filters == null) {

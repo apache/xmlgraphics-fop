@@ -12,13 +12,19 @@ import org.apache.fop.layout.*;
 import org.apache.fop.fonts.*;
 import org.apache.fop.render.pdf.*;
 import org.apache.fop.image.*;
-import org.apache.fop.datatypes.ColorSpace;
 import org.apache.fop.render.pdf.CIDFont;
 import org.apache.fop.render.pdf.fonts.LazyFont;
+import org.apache.fop.render.pdf.FopPDFImage;
 import org.apache.fop.fo.FOUserAgent;
 
 import org.apache.batik.ext.awt.g2d.*;
 import org.apache.batik.ext.awt.image.GraphicsUtil;
+
+import org.apache.batik.ext.awt.MultipleGradientPaint;
+import org.apache.batik.ext.awt.RadialGradientPaint;
+import org.apache.batik.ext.awt.LinearGradientPaint;
+import org.apache.batik.gvt.PatternPaint;
+import org.apache.batik.gvt.GraphicsNode;
 
 import java.text.AttributedCharacterIterator;
 import java.text.CharacterIterator;
@@ -28,6 +34,7 @@ import java.awt.Image;
 import java.awt.image.*;
 import java.awt.font.*;
 import java.awt.geom.*;
+import java.awt.color.ColorSpace;
 import java.awt.image.renderable.*;
 import java.io.*;
 
@@ -74,7 +81,7 @@ public class PDFGraphics2D extends AbstractGraphics2D {
     /**
      * the current font size in millipoints
      */
-    protected int currentFontSize;
+    protected float currentFontSize;
 
     /**
      * the current vertical position in millipoints from bottom
@@ -106,7 +113,7 @@ public class PDFGraphics2D extends AbstractGraphics2D {
      * existing document.
      */
     public PDFGraphics2D(boolean textAsShapes, FontState fs, PDFDocument doc,
-                         PDFPage page, String font, int size, int xpos, int ypos) {
+                         PDFPage page, String font, float size, int xpos, int ypos) {
         super(textAsShapes);
         pdfDoc = doc;
         currentPage = page;
@@ -176,7 +183,8 @@ public class PDFGraphics2D extends AbstractGraphics2D {
     }
 
     public void addJpegImage(JpegImage jpeg, float x, float y, float width, float height) {
-        int xObjectNum = this.pdfDoc.addImage(jpeg);
+        FopPDFImage fopimage = new FopPDFImage(jpeg);
+        int xObjectNum = this.pdfDoc.addImage(fopimage).getXNumber();
 
         AffineTransform at = getTransform();
         double[] matrix = new double[6];
@@ -254,8 +262,10 @@ public class PDFGraphics2D extends AbstractGraphics2D {
             g.dispose();
             
             final byte[] result = new byte[buf.getWidth() * buf.getHeight() * 3];
-            final byte[] mask = new byte[buf.getWidth() * buf.getHeight()];
-            
+            byte[] mask = new byte[buf.getWidth() * buf.getHeight()];
+            boolean hasMask = false;
+            boolean binaryMask = true;
+
             Raster raster = buf.getData();
             DataBuffer bd = raster.getDataBuffer();
                 
@@ -271,8 +281,11 @@ public class PDFGraphics2D extends AbstractGraphics2D {
                     for (j = 0; j < iarray.length; j++) {
                         val = iarray[j];
                         alpha = val >>> 24;
-                        // mask[maskpos++] = (byte)((idata[i][j] >> 24) & 0xFF);
+                        mask[maskpos++] = (byte)(alpha & 0xFF);
                         if (alpha != 255) {
+                            hasMask = true;
+                            if(alpha != 0) binaryMask = false;
+
                             // System.out.println("Alpha: " + alpha);
                             // Composite with opaque white...
                             add = (255 - alpha);
@@ -298,14 +311,21 @@ public class PDFGraphics2D extends AbstractGraphics2D {
                 // error
                 break;
                 }
-            
-            try {
-                FopImage fopimg = new TempImage("TempImage:" + img.toString(), buf.getWidth(), buf.getHeight(), result, mask);
-                imageInfo.xObjectNum = this.pdfDoc.addImage(fopimg);
-                imageInfos.put(img, imageInfo);
-            } catch (Exception e) {
-                e.printStackTrace();
+            String ref = null;
+            if(hasMask) {
+                // if the mask is binary then we could convert it into a bitmask
+                BitmapImage fopimg = new BitmapImage("TempImageMask:" + img.toString(), buf.getWidth(), buf.getHeight(), mask, null);
+                fopimg.setColorSpace(new PDFColorSpace(PDFColorSpace.DEVICE_GRAY));
+                PDFXObject xobj = pdfDoc.addImage(fopimg);
+                ref = xobj.referencePDF();
+            } else {
+                mask = null;
             }
+
+            BitmapImage fopimg = new BitmapImage("TempImage:" + img.toString(), buf.getWidth(), buf.getHeight(), result, ref);
+            fopimg.setTransparent(new PDFColor(255, 255, 255));
+            imageInfo.xObjectNum = pdfDoc.addImage(fopimg).getXNumber();
+            imageInfos.put(img, imageInfo);
         }
 
         // now do any transformation required and add the actual image
@@ -329,108 +349,6 @@ public class PDFGraphics2D extends AbstractGraphics2D {
         return new BufferedImage(size.width, size.height,
                                  BufferedImage.TYPE_INT_ARGB);
     }
-
-    class TempImage implements FopImage {
-        int m_height;
-        int m_width;
-        int m_bitsPerPixel;
-        ColorSpace m_colorSpace;
-        int m_bitmapSiye;
-        byte[] m_bitmaps;
-        byte[] m_mask;
-        PDFColor transparent = new PDFColor(255, 255, 255);
-        String url;
-
-        TempImage(String url, int width, int height, byte[] result,
-                  byte[] mask) {
-            this.url = url;
-            this.m_height = height;
-            this.m_width = width;
-            this.m_bitsPerPixel = 8;
-            this.m_colorSpace = new ColorSpace(ColorSpace.DEVICE_RGB);
-            // this.m_isTransparent = false;
-            // this.m_bitmapsSize = this.m_width * this.m_height * 3;
-            this.m_bitmaps = result;
-            this.m_mask = mask;
-        }
-
-        public boolean load(int type, FOUserAgent ua) {
-            return true;
-        }
-
-        public String getMimeType() {
-            return "";
-        }
-
-        public String getURL() {
-            return url;
-        }
-
-        // image size
-        public int getWidth() {
-            return m_width;
-        }
-
-        public int getHeight() {
-            return m_height;
-        }
-
-        // DeviceGray, DeviceRGB, or DeviceCMYK
-        public ColorSpace getColorSpace() {
-            return m_colorSpace;
-        }
-
-        // bits per pixel
-        public int getBitsPerPixel() {
-            return m_bitsPerPixel;
-        }
-
-        // For transparent images
-        public boolean isTransparent() {
-            return transparent != null;
-        }
-
-        public PDFColor getTransparentColor() {
-            return transparent;
-        }
-
-        public byte[] getMask() {
-            return m_mask;
-        }
-
-        // get the image bytes, and bytes properties
-
-        // get uncompressed image bytes
-        public byte[] getBitmaps() {
-            return m_bitmaps;
-        }
-
-        // width * (bitsPerPixel / 8) * height, no ?
-        public int getBitmapsSize() {
-            return m_width * m_height * 3;
-        }
-
-        // get compressed image bytes
-        // I don't know if we really need it, nor if it
-        // should be changed...
-        public byte[] getRessourceBytes() {
-            return null;
-        }
-
-        public int getRessourceBytesSize() {
-            return 0;
-        }
-
-        // return null if no corresponding PDFFilter
-        public PDFFilter getPDFFilter() {
-            return null;
-        }
-
-        // release memory
-        public void close() {}
-
-    }
-
 
     /**
      * Draws as much of the specified image as has already been scaled
@@ -656,12 +574,12 @@ public class PDFGraphics2D extends AbstractGraphics2D {
     protected void applyColor(Color col, boolean fill) {
         Color c = col;
         if (c.getColorSpace().getType()
-                == java.awt.color.ColorSpace.TYPE_RGB) {
+                == ColorSpace.TYPE_RGB) {
             PDFColor currentColour = new PDFColor(c.getRed(), c.getGreen(),
                                          c.getBlue());
             currentStream.write(currentColour.getColorSpaceOut(fill));
         } else if (c.getColorSpace().getType()
-                   == java.awt.color.ColorSpace.TYPE_CMYK) {
+                   == ColorSpace.TYPE_CMYK) {
             float[] cComps = c.getColorComponents(new float[3]);
             double[] cmyk = new double[3];
             for (int i = 0; i < 3; i++) {
@@ -671,7 +589,7 @@ public class PDFGraphics2D extends AbstractGraphics2D {
             PDFColor currentColour = new PDFColor(cmyk[0], cmyk[1], cmyk[2], cmyk[3]);
             currentStream.write(currentColour.getColorSpaceOut(fill));
         } else if (c.getColorSpace().getType()
-                   == java.awt.color.ColorSpace.TYPE_2CLR) {
+                   == ColorSpace.TYPE_2CLR) {
             // used for black/magenta
             float[] cComps = c.getColorComponents(new float[1]);
             double[] blackMagenta = new double[1];
@@ -686,13 +604,14 @@ public class PDFGraphics2D extends AbstractGraphics2D {
     }
 
     protected void applyPaint(Paint paint, boolean fill) {
-        if (paint instanceof GradientPaint) {
-            GradientPaint gp = (GradientPaint)paint;
-            Color c1 = gp.getColor1();
-            Color c2 = gp.getColor2();
-            Point2D p1 = gp.getPoint1();
-            Point2D p2 = gp.getPoint2();
-            boolean cyclic = gp.isCyclic();
+
+        if (paint instanceof LinearGradientPaint) {
+            LinearGradientPaint gp = (LinearGradientPaint)paint;
+            Color[] cols = gp.getColors();
+            Point2D p1 = gp.getStartPoint();
+            Point2D p2 = gp.getEndPoint();
+            MultipleGradientPaint.CycleMethodEnum cycenum = gp.getCycleMethod();
+            boolean cyclic = cycenum == MultipleGradientPaint.REPEAT;
 
             ArrayList theCoords = new ArrayList();
             theCoords.add(new Double(p1.getX()));
@@ -722,6 +641,9 @@ public class PDFGraphics2D extends AbstractGraphics2D {
 
             ArrayList someColors = new ArrayList();
 
+            Color c1 = cols[0];
+            Color c2 = cols[1];
+
             PDFColor color1 = new PDFColor(c1.getRed(), c1.getGreen(),
                                            c1.getBlue());
             someColors.add(color1);
@@ -732,12 +654,84 @@ public class PDFGraphics2D extends AbstractGraphics2D {
             PDFFunction myfunc = this.pdfDoc.makeFunction(2, theDomain, null,
                     color1.getVector(), color2.getVector(), 1.0);
 
-            ColorSpace aColorSpace = new ColorSpace(ColorSpace.DEVICE_RGB);
+            PDFColorSpace aColorSpace = new PDFColorSpace(PDFColorSpace.DEVICE_RGB);
             PDFPattern myPat = this.pdfDoc.createGradient(false, aColorSpace,
                     someColors, null, theCoords);
             currentStream.write(myPat.getColorSpaceOut(fill));
 
-        } else if (paint instanceof TexturePaint) {}
+        } else if (paint instanceof RadialGradientPaint) {
+            System.err.println("Radial gradient paint not supported");
+
+            RadialGradientPaint rgp = (RadialGradientPaint)paint;
+/*
+            ArrayList theCoords = new ArrayList();
+            theCoords.add( new Double(currentXPosition / 1000f + acx));
+            theCoords.add( new Double(currentYPosition / 1000f - acy));
+            theCoords.add(new Double(0));
+            theCoords.add( new Double(currentXPosition / 1000f + afx)); // Fx
+            theCoords.add(new Double(currentYPosition / 1000f - afy)); // Fy
+            theCoords.add(new Double(ar));
+
+            float lastoffset = 0;
+            PDFColor color = new PDFColor(0, 0, 0);
+            color = new PDFColor(red, green, blue);
+
+            float offset = stop.getOffset().getBaseVal();
+// create bounds from last to offset
+                lastoffset = offset;
+                someColors.add(color);
+            }
+            PDFPattern myPat = pdfDoc.createGradient(true, aColorSpace,
+                                    someColors, theBounds, theCoords);
+
+            currentStream.write(myPat.getColorSpaceOut(fill));
+*/
+        } else if (paint instanceof PatternPaint) {
+            PatternPaint pp = (PatternPaint)paint;
+            Rectangle2D rect = pp.getPatternRect();
+
+            PDFGraphics2D pattGraphic = new PDFGraphics2D(textAsShapes, fontState,
+                                            pdfDoc, currentPage,
+                                            currentFontName, currentFontSize,
+                                            currentYPosition, currentXPosition);
+            pattGraphic.gc = (GraphicContext)this.gc.clone();
+            pattGraphic.gc.validateTransformStack();
+
+            GraphicsNode gn = pp.getGraphicsNode();
+            gn.paint(pattGraphic);
+
+            StringWriter pattStream = new StringWriter();
+            pattStream.write("q\n");
+
+            // this makes the pattern the right way up, since
+            // it is outside the original transform around the
+            // whole svg document
+            pattStream.write("1 0 0 -1 0 " + rect.getHeight() + " cm\n");
+
+            pattStream.write(pattGraphic.getString());
+            pattStream.write("Q");
+
+            ArrayList bbox = new ArrayList();
+            bbox.add(new Double(0));
+            bbox.add(new Double(0));
+            bbox.add(new Double(rect.getWidth()));
+            bbox.add(new Double(rect.getHeight()));
+            ArrayList translate = new ArrayList();
+            // TODO combine with pattern transform
+            translate.add(new Double(1));
+            translate.add(new Double(0));
+            translate.add(new Double(0));
+            translate.add(new Double(1));
+            translate.add(new Double(rect.getX()));
+            translate.add(new Double(rect.getY()));
+            // TODO handle PDFResources
+            PDFPattern myPat = pdfDoc.makePattern(1, null, 1, 1, bbox,
+                                    rect.getWidth(), rect.getHeight(),
+                                    translate, null, pattStream.getBuffer());
+
+            currentStream.write(myPat.getColorSpaceOut(fill));
+
+        }
     }
 
     protected void applyStroke(Stroke stroke) {
@@ -900,9 +894,9 @@ public class PDFGraphics2D extends AbstractGraphics2D {
             ovFontState = null;
         }       
         String name;
-        int size;
+        float size;
         name = fontState.getFontName();
-        size = fontState.getFontSize() / 1000;
+        size = (float)fontState.getFontSize() / 1000f;
     
         if ((!name.equals(this.currentFontName))
                 || (size != this.currentFontSize)) {
@@ -918,8 +912,17 @@ public class PDFGraphics2D extends AbstractGraphics2D {
         writeClip(imclip);
         Color c = getColor();
         applyColor(c, true);
+        int salpha = c.getAlpha();
+
         c = getBackground();
         applyColor(c, false);
+        if(salpha != 255 || c.getAlpha() != 255) {
+            PDFGState gstate = pdfDoc.makeGState();
+            gstate.setAlpha(salpha / 255f, true);
+            //gstate.setAlpha(c.getAlpha() / 255f, false);
+            currentPage.addGState(gstate); 
+            currentStream.write("/" + gstate.getName() + " gs\n");
+        }
 
         currentStream.write("BT\n");
 
