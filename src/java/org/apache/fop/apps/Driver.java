@@ -30,20 +30,16 @@ import org.apache.fop.render.mif.MIFHandler;
 import org.apache.fop.render.rtf.RTFHandler;
 import org.apache.fop.tools.DocumentInputSource;
 import org.apache.fop.tools.DocumentReader;
-import org.apache.fop.tools.ProxyContentHandler;
 
 import org.apache.commons.logging.impl.SimpleLog;
 import org.apache.commons.logging.Log;
 
-// DOM
-/* org.w3c.dom.Document is not imported to reduce confusion with
-   org.apache.fop.control.Document */
-
-// SAX
+// XML
 import org.xml.sax.ContentHandler;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
+import org.w3c.dom.Document;
 
 // Java
 import java.io.IOException;
@@ -483,24 +479,7 @@ public class Driver {
         }
 
         treeBuilder.setFOInputHandler(foInputHandler);
-
-        return new ProxyContentHandler(treeBuilder) {
-            
-            public void startDocument() throws SAXException {
-                if (foInputHandler instanceof FOTreeHandler) {
-                    FOTreeHandler foTreeHandler = (FOTreeHandler)foInputHandler;
-                }
-                super.startDocument();
-            }
-                
-            public void endDocument() throws SAXException {
-                super.endDocument();
-                if (foInputHandler instanceof FOTreeHandler) {
-                    FOTreeHandler foTreeHandler = (FOTreeHandler)foInputHandler;
-                }
-            }
-                
-        };
+        return treeBuilder;
     }
 
     /**
@@ -564,7 +543,7 @@ public class Driver {
      * @param document the DOM document to read from
      * @throws FOPException if anything goes wrong.
      */
-    public synchronized void render(org.w3c.dom.Document document)
+    public synchronized void render(Document document)
                 throws FOPException {
         DocumentInputSource source = new DocumentInputSource(document);
         DocumentReader reader = new DocumentReader();
