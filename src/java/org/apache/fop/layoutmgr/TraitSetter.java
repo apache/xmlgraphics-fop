@@ -55,6 +55,7 @@ import org.apache.fop.traits.BorderProps;
 import org.apache.fop.area.Area;
 import org.apache.fop.area.Trait;
 import org.apache.fop.fo.properties.CommonBackground;
+import org.apache.fop.fo.properties.CommonMarginBlock;
 
 /**
  * This is a helper class used for setting common traits on areas.
@@ -202,6 +203,31 @@ public class TraitSetter {
 
         if (back.getColor() != null || back.getURL() != null) {
             curBlock.addTrait(Trait.BACKGROUND, back);
+        }
+    }
+
+    /**
+     * Add space to a block area.
+     * Layout managers that create block areas can use this to add space
+     * outside of the border rectangle to the area.
+     * @param curBlock the current block.
+     * @param marginProps the margin properties.
+     */
+    public static void addMargins(Area curBlock,
+                                  CommonBorderAndPadding bpProps, 
+                                  CommonMarginBlock marginProps) {
+        int spaceStart = marginProps.startIndent - 
+                            bpProps.getBorderStartWidth(false) -
+                            bpProps.getPaddingStart(false);
+        if (spaceStart != 0) {
+            curBlock.addTrait(Trait.SPACE_START, new Integer(spaceStart));
+        }
+
+        int spaceEnd = marginProps.endIndent -
+                           bpProps.getBorderEndWidth(false) -
+                           bpProps.getPaddingEnd(false);
+        if (spaceEnd != 0) {
+            curBlock.addTrait(Trait.SPACE_END, new Integer(spaceEnd));
         }
     }
 }
