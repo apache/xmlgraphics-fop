@@ -324,9 +324,9 @@ public class PFMReader {
         // Get kerning
         for (Enumeration enum = pfm.getKerning().keys();
                 enum.hasMoreElements();) {
-            String kpx1 = (String) enum.nextElement();
+            Integer kpx1 = (Integer) enum.nextElement();
             el = doc.createElement("kerning");
-            el.setAttribute("kpx1", kpx1);
+            el.setAttribute("kpx1", kpx1.toString());
             root.appendChild(el);
             Element el2 = null;
 
