@@ -25,6 +25,7 @@ import java.util.NoSuchElementException;
  *
  */
 abstract public class FONode {
+    protected FOUserAgent userAgent;
     protected FONode parent;
     protected String name;
 
@@ -43,6 +44,7 @@ abstract public class FONode {
     }
 
     public void setUserAgent(FOUserAgent ua) {
+        userAgent = ua;
     }
 
     public void setStreamRenderer(StreamRenderer st) {

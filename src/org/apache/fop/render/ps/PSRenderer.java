@@ -8,10 +8,8 @@
 package org.apache.fop.render.ps;
 
 // FOP
-import org.apache.fop.svg.SVGArea;
 import org.apache.fop.render.AbstractRenderer;
 import org.apache.fop.render.Renderer;
-import org.apache.fop.image.ImageArea;
 import org.apache.fop.image.FopImage;
 import org.apache.fop.layout.*;
 import org.apache.fop.layout.inline.*;

@@ -37,8 +37,6 @@ public class ExternalGraphic extends FObj {
     int width;
     String id;
 
-    ImageArea imageArea;
-
     public ExternalGraphic(FONode parent) {
         super(parent);
     }
@@ -50,6 +48,9 @@ public class ExternalGraphic extends FObj {
     }
 
     protected InlineArea getInlineArea() {
+        if(url == null) {
+            return null;
+        }
         url = ImageFactory.getURL(url);
         // if we need to load this image to get its size
         // FopImage fopimage = ImageFactory.getImage(url, userAgent);

@@ -20,8 +20,6 @@ import org.apache.fop.pdf.PDFPathPaint;
 import org.apache.fop.pdf.PDFColor;
 import org.apache.fop.image.*;
 
-import org.apache.fop.svg.SVGArea;
-
 import org.w3c.dom.svg.SVGSVGElement;
 import org.w3c.dom.svg.SVGDocument;
 

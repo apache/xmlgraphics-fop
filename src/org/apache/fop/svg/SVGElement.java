@@ -45,13 +45,12 @@ import java.util.List;
 import java.util.ArrayList;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
+import java.awt.Dimension;
 
 /**
  * class representing svg:svg pseudo flow object.
  */
 public class SVGElement extends SVGObj {
-
-    FontState fs;
 
     /**
      * constructs an SVG object (called by Maker).
@@ -68,21 +67,7 @@ public class SVGElement extends SVGObj {
         init();
     }
 
-    /**
-     * layout this formatting object.
-     *
-     * @param area the area to layout the object into
-     *
-     * @return the status of the layout
-     */
-    public Status layout(final Area area) throws FOPException {
-
-        if (!(area instanceof ForeignObjectArea)) {
-            // this is an error
-            throw new FOPException("SVG not in fo:instream-foreign-object");
-        }
-
-            this.fs = area.getFontState();
+    public Point2D getDimension(Point2D view) {
 
         // TODO - change so doesn't hold onto fo,area tree
         Element svgRoot = element;
@@ -90,15 +75,14 @@ public class SVGElement extends SVGObj {
         /* if width and height are zero, get the bounds of the content. */
         FOPSVGContext dc = new FOPSVGContext();
         dc.svgRoot = element;
-        ForeignObjectArea foa = (ForeignObjectArea)area;
-        dc.cwauto = foa.isContentWidthAuto();
-        dc.chauto = foa.isContentHeightAuto();
-        dc.cwidth = foa.getContentWidth();
-        dc.cheight = foa.getContentHeight();
+        dc.cwauto = (view.getX() == -1);
+        dc.chauto = (view.getY() == -1);
+        dc.cwidth = (float)view.getX();
+        dc.cheight = (float)view.getY();
         ((SVGOMDocument)doc).setSVGContext(dc);
 
         try {
-            String baseDir = Configuration.getStringValue("baseDir");
+            String baseDir = userAgent.getBaseDirectory();
             if(baseDir != null) {
                 ((SVGOMDocument)doc).setURLObject(new URL(baseDir));
             }
@@ -112,23 +96,9 @@ public class SVGElement extends SVGObj {
             e.setAttributeNS(XMLSupport.XMLNS_NAMESPACE_URI, "xmlns", SVGDOMImplementation.SVG_NAMESPACE_URI);
         //}
 
-        Point2D p2d = getSize(this.fs, svgRoot);
+        Point2D p2d = getSize(12 /* font size */, svgRoot);
 
-        SVGArea svg = new SVGArea(fs, (float)p2d.getX(),
-                                  (float)p2d.getY());
-        svg.setSVGDocument(doc);
-        svg.start();
-
-        /* finish off the SVG area */
-        svg.end();
-
-        /* add the SVG area to the containing area */
-        foa.setObject(svg);
-        foa.setIntrinsicWidth(svg.getWidth());
-        foa.setIntrinsicHeight(svg.getHeight());
-
-        /* return status */
-        return new Status(Status.OK);
+        return p2d;
     }
 
     private void init() {
@@ -141,10 +111,10 @@ public class SVGElement extends SVGObj {
         buildTopLevel(doc, element);
     }
 
-    public static Point2D getSize(FontState fs, Element svgRoot) {
+    public static Point2D getSize(int size, Element svgRoot) {
         String str;
         UnitProcessor.Context ctx;
-        ctx = new PDFUnitContext(fs, svgRoot);
+        ctx = new PDFUnitContext(size, svgRoot);
         str = svgRoot.getAttributeNS(null, SVGConstants.SVG_WIDTH_ATTRIBUTE);
         if (str.length() == 0) str = "100%";
         float width = UnitProcessor.svgHorizontalLengthToUserSpace
@@ -166,10 +136,10 @@ public class SVGElement extends SVGObj {
 
         /** The element. */
         protected Element e;
-        protected FontState fs;
-        public PDFUnitContext(FontState fs, Element e) { 
+        protected int fontSize;
+        public PDFUnitContext(int size, Element e) { 
             this.e  = e;
-            this.fs = fs;
+            this.fontSize = size;
         }
 
         /**
@@ -209,7 +179,7 @@ public class SVGElement extends SVGObj {
         public CSSPrimitiveValue getFontSize() {
             return new CSSOMReadOnlyValue
                 (new ImmutableFloat(CSSPrimitiveValue.CSS_PT,
-                                    fs.getFontSize()));
+                                    fontSize));
         }
 
         /**

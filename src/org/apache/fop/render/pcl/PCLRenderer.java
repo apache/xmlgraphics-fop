@@ -9,7 +9,6 @@ package org.apache.fop.render.pcl;
 
 // FOP
 import org.apache.fop.render.PrintRenderer;
-import org.apache.fop.image.ImageArea;
 import org.apache.fop.image.FopImage;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.fo.properties.*;
@@ -20,7 +19,6 @@ import org.apache.fop.layout.*;
 import org.apache.fop.layout.inline.*;
 import org.apache.fop.image.*;
 
-import org.apache.fop.svg.SVGArea;
 import org.w3c.dom.svg.SVGSVGElement;
 import org.w3c.dom.svg.SVGDocument;
 

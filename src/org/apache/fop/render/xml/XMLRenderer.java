@@ -13,7 +13,6 @@ import org.apache.fop.render.Renderer;
 import org.apache.fop.render.AbstractRenderer;
 import org.apache.fop.render.RendererContext;
 import org.apache.fop.render.XMLHandler;
-import org.apache.fop.image.ImageArea;
 import org.apache.fop.area.*;
 import org.apache.fop.area.inline.*;
 import org.apache.fop.pdf.*;
