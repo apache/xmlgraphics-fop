@@ -115,15 +115,13 @@ public class ImageFactory {
     /**
      * Create an FopImage objects.
      * @param href the url for the image
-     * @param baseURL the base url
      * @param ua the user agent context
      * @return the fop image instance
      */
-    protected static FopImage loadImage(String href, String baseURL,
-                                        FOUserAgent ua) {
+    protected static FopImage loadImage(String href, FOUserAgent ua) {
         Logger log = ua.getLogger();
 
-        InputStream in = openStream(href, baseURL, ua);
+        InputStream in = openStream(href, ua);
 
         if (in == null) {
             return null;
@@ -202,12 +200,10 @@ public class ImageFactory {
     /**
      * Create an FopImage objects.
      * @param href image URL as a String
-     * @param baseURL base URL for relative URLs
      * @param ua user agent
      * @return a new FopImage object
      */
-    protected static InputStream openStream(String href, String baseURL,
-                                        FOUserAgent ua) {
+    protected static InputStream openStream(String href, FOUserAgent ua) {
         Logger log = ua.getLogger();
         // Get the absolute URL
         URL absoluteURL = null;
@@ -237,13 +233,13 @@ public class ImageFactory {
                 return null;
             } catch (Exception e) {
                 // maybe relative
-                if (baseURL == null) {
+                if (ua.getBaseURL() == null) {
                     log.error("Error with image URL: " + e.getMessage() 
-                            + " and no base directory is specified", e);
+                            + " and no base URL is specified", e);
                     return null;
                 }
                 try {
-                    absoluteURL = new URL(baseURL + absoluteURL.getFile());
+                    absoluteURL = new URL(ua.getBaseURL() + absoluteURL.getFile());
                 } catch (MalformedURLException e_context) {
                     // pb context url
                     log.error("Invalid Image URL - error on relative URL: " 
