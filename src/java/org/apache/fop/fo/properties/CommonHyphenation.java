@@ -18,18 +18,64 @@
 
 package org.apache.fop.fo.properties;
 
+import org.apache.fop.fo.Constants;
+import org.apache.fop.fo.PropertyList;
+
 /**
  * Store all common hyphenation properties.
  * See Sec. 7.9 of the XSL-FO Standard.
  * Public "structure" allows direct member access.
  */
 public class CommonHyphenation {
+    /**
+     * The "language" property.
+     */
+    public String language;
 
-    public int hyphenate;      // Enum true or false: store as boolean!
-    public char hyphenationChar;
+    /**
+     * The "country" property.
+     */
+    public String country;
+
+    /**
+     * The "script" property.
+     */
+    public String script;
+
+    /**
+     * The "hyphenate" property.
+     */
+    public int hyphenate;
+
+    /**
+     * The "hyphenation-character" property.
+     */
+    public char hyphenationCharacter;
+
+    /**
+     * The "hyphenation-push-character" property.
+     */
     public int hyphenationPushCharacterCount;
+
+    /**
+     * The "hyphenation-remain-character-count" property.
+     */
     public int hyphenationRemainCharacterCount;
-    public String language;    // Language code or enum "NONE"
-    public String country;     // Country code or enum "NONE"
+
+    /**
+     * Create a CommonHyphenation object.
+     * @param pList The PropertyList with propery values.
+     */
+    public CommonHyphenation(PropertyList pList) {
+        language = pList.get(Constants.PR_LANGUAGE).getString();
+        country = pList.get(Constants.PR_COUNTRY).getString();
+        hyphenate = pList.get(Constants.PR_HYPHENATE).getEnum();
+        hyphenationCharacter = pList.get(Constants.PR_HYPHENATION_CHARACTER).getCharacter();
+        hyphenationPushCharacterCount = 
+            pList.get(Constants.PR_HYPHENATION_PUSH_CHARACTER_COUNT).getNumber().intValue();
+        hyphenationRemainCharacterCount = 
+            pList.get(Constants.PR_HYPHENATION_REMAIN_CHARACTER_COUNT).getNumber().intValue();
+
+    }
 
 }

@@ -18,20 +18,51 @@
 
 package org.apache.fop.fo.properties;
 
+import org.apache.fop.datatypes.Length;
+import org.apache.fop.fo.Constants;
+import org.apache.fop.fo.PropertyList;
+
 /**
  * Store all common relative position properties.
  * See Sec 7.12 of the XSL-FO Standard.
  * Public "structure" allows direct member access.
  */
 public class CommonRelativePosition {
+    /**
+     * The "relative-position" property.
+     */
+    public int relativePosition;
+    
+    /**
+     * The "top" property.
+     */
+    public Length top;
 
-    public int marginTop;
-    public int marginBottom;
-    public int marginLeft;
-    public int marginRight;
-    public int spaceBefore;
-    public int spaceAfter;
-    public int startIndent;
-    public int endIndent;
+    /**
+     * The "right" property.
+     */
+    public Length right;
+    
+    /**
+     * The "bottom" property.
+     */
+    public Length bottom;
+    
+    /**
+     * The "left" property.
+     */
+    public Length left;
+
+    /**
+     * Create a CommonRelativePosition object.
+     * @param pList The PropertyList with propery values.
+     */
+    public CommonRelativePosition(PropertyList pList) {
+        relativePosition = pList.get(Constants.PR_RELATIVE_POSITION).getEnum();
+        top = pList.get(Constants.PR_TOP).getLength();
+        bottom = pList.get(Constants.PR_BOTTOM).getLength();
+        left = pList.get(Constants.PR_LEFT).getLength();
+        right = pList.get(Constants.PR_RIGHT).getLength();      
+    }
 
 }

@@ -18,16 +18,40 @@
 
 package org.apache.fop.fo.properties;
 
+import org.apache.fop.fo.Constants;
+import org.apache.fop.fo.PropertyList;
+
 /**
  * Store all common accessibility properties.
  * See Sec 7.4 of the XSL-FO Standard.
  * Public "structure" allows direct member access.
  */
 public class CommonAccessibility {
+    /**
+     * The "source-doc" property.
+     */
     public String sourceDoc = null;
+
+    /**
+     * The "role" property.
+     */
     public String role = null;
 
-    public CommonAccessibility() {
+    /**
+     * Create a CommonAbsolutePosition object.
+     * @param pList The PropertyList with propery values.
+     */
+    public CommonAccessibility(PropertyList pList) {
+        sourceDoc = pList.get(Constants.PR_SOURCE_DOCUMENT).getString();
+        if ("none".equals(sourceDoc)) {
+            sourceDoc = null;
+        }
+        role = pList.get(Constants.PR_ROLE).getString();
+        if ("none".equals(role)) {
+            role = null;
+        }
+        
     }
+
 
 }

@@ -18,20 +18,70 @@
 
 package org.apache.fop.fo.properties;
 
+import org.apache.fop.datatypes.Length;
+import org.apache.fop.fo.Constants;
+import org.apache.fop.fo.PropertyList;
+
 /**
  * Store all common margin properties for blocks.
  * See Sec. 7.10 of the XSL-FO Standard.
  * Public "structure" allows direct member access.
  */
 public class CommonMarginBlock {
+    /**
+     * The "margin-top" property.
+     */
+    public Length marginTop;
 
-    public int marginTop;
-    public int marginBottom;
-    public int marginLeft;
-    public int marginRight;
-    public int spaceBefore;
-    public int spaceAfter;
-    public int startIndent;
-    public int endIndent;
+    /**
+     * The "margin-bottom" property.
+     */
+    public Length marginBottom;
 
+    /**
+     * The "margin-left" property.
+     */
+    public Length marginLeft;
+
+    /**
+     * The "margin-right" property.
+     */
+    public Length marginRight;
+
+    /**
+     * The "space-before" property.
+     */
+    public SpaceProperty spaceBefore;
+
+    /**
+     * The "space-after" property.
+     */
+    public SpaceProperty spaceAfter;
+
+    /**
+     * The "start-indent" property.
+     */
+    public Length startIndent;
+
+    /**
+     * The "end-indent" property.
+     */
+    public Length endIndent;
+
+    /**
+     * Create a CommonMarginBlock object.
+     * @param pList The PropertyList with propery values.
+     */
+    public CommonMarginBlock(PropertyList pList) {
+        marginTop = pList.get(Constants.PR_MARGIN_TOP).getLength();
+        marginBottom = pList.get(Constants.PR_MARGIN_BOTTOM).getLength();
+        marginLeft = pList.get(Constants.PR_MARGIN_LEFT).getLength();
+        marginRight = pList.get(Constants.PR_MARGIN_RIGHT).getLength();
+
+        spaceBefore = pList.get(Constants.PR_SPACE_BEFORE).getSpace();
+        spaceAfter = pList.get(Constants.PR_SPACE_AFTER).getSpace();
+
+        startIndent = pList.get(Constants.PR_START_INDENT).getLength();
+        endIndent = pList.get(Constants.PR_END_INDENT).getLength();
+    }
 }
