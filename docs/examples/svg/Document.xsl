@@ -201,7 +201,7 @@
 	</xsl:template>
 
 	<xsl:template match="p">
-		<fo:block start-indent="5pt" font-size="10pt" line-height="11pt"  text-align="justified" space-before.optimum="4pt">
+		<fo:block start-indent="5pt" font-size="10pt" line-height="11pt"  text-align="justify" space-before.optimum="4pt">
 			<xsl:apply-templates/>
 		</fo:block>
 	</xsl:template>
