@@ -302,6 +302,8 @@ public class CSSStyleDeclarationImpl implements CSSStyleDeclaration {
             super.setCssText(str);
 			if(str.startsWith("url(")) {
 			    primType = CSS_URI;
+			} else if(str.equals("currentColor")) {
+                primType = CSS_STRING;
 			} else if(!str.equals("none")) {
                 float red;
                 float green;
