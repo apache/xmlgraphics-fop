@@ -364,6 +364,19 @@ public class WritingMode extends Property  {
         return leftToRight[writingMode];
     }
 
+    /**
+     * Returns a <code>Rectangle2D</code> constructed from the normailized
+     * values of offset and dimensions expressed in terms of 
+     * <i>inline-progression-direction</i> and
+     * <i>block-progression-direction</i>
+     * @param ipOffset
+     * @param bpOffset
+     * @param ipDim the <i>inline-progression-dimension</i>
+     * @param bpDim the <i>block-progression-dimension</i>
+     * @param wMode
+     * @return
+     * @throws PropertyException
+     */
     public static Rectangle2D.Double rectRelToAbs(
             double ipOffset, double bpOffset, double ipDim, double bpDim,
             int wMode) throws PropertyException {
@@ -375,12 +388,12 @@ public class WritingMode extends Property  {
 
     /**
      * Normalizes a pair of values representing an
-     * <code>inline-progression-dimension</code> and a
-     * <code>block-progression-dimension</code> by converting them to a
-     * <code>Point2D</code> representing the corresponding X and Y values in
+     * <i>inline-progression-dimension</i> and a
+     * <i>block-progression-dimension</i> by converting them to a
+     * <i>Point2D</i> representing the corresponding X and Y values in
      * Java 2D user co-ordinates.
-     * @param ipDim the <code>inline-progression-dimension</code>
-     * @param bpDim the <code>block-progression-dimension</code>
+     * @param ipDim the <i>inline-progression-dimension</i>
+     * @param bpDim the <i>block-progression-dimension</i>
      * @param writingMode
      * @return the corresponding x, y values
      * @throws PropertyException
@@ -396,12 +409,12 @@ public class WritingMode extends Property  {
 
     /**
      * Normalizes a pair of values representing an
-     * <code>inline-progression-dimension</code> and a
-     * <code>block-progression-dimension</code> by converting them to a
+     * <i>inline-progression-dimension</i> and a
+     * <i>block-progression-dimension</i> by converting them to a
      * <code>Point2D</code> representing the corresponding X and Y values in
      * Java 2D user co-ordinates.
-     * @param ipDim the <code>inline-progression-dimension</code>
-     * @param bpDim the <code>block-progression-dimension</code>
+     * @param ipDim the <i>inline-progression-dimension</i>
+     * @param bpDim the <i>block-progression-dimension</i>
      * @param writingMode
      * @return the corresponding x, y values
      * @throws PropertyException
@@ -420,12 +433,12 @@ public class WritingMode extends Property  {
 
     /**
      * Normalizes a pair of values representing an
-     * <code>inline-progression-dimension</code> and a
-     * <code>block-progression-dimension</code> by converting them to a
+     * <i>inline-progression-dimension</i> and a
+     * <i>block-progression-dimension</i> by converting them to a
      * <code>Point2D</code> representing the corresponding X and Y values in
      * Java 2D user co-ordinates.
-     * @param ipDim the <code>inline-progression-dimension</code>
-     * @param bpDim the <code>block-progression-dimension</code>
+     * @param ipDim the <i>inline-progression-dimension</i>
+     * @param bpDim the <i>block-progression-dimension</i>
      * @param writingMode
      * @return the corresponding x, y values
      * @throws PropertyException
