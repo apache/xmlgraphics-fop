@@ -11,6 +11,52 @@
   <body>
     <note>The articles in this section pertain to the <em>redesign</em> or <em>trunk</em> line of development.
 The redesign is mainly focusing on parts of the layout process (converting the FO tree into the Area Tree).</note>
+
+
+<section>
+  <title>Introduction</title>
+    <section>
+      <title>Overview</title>
+      <p>FOP takes an xml file does its magic and then writes a document to a
+       stream.</p>
+      <p>xml -&gt; [FOP] -&gt; document</p>
+      <p>The document could be pdf, ps etc. or directed to a printer or the
+       screen. The principle remains the same. The xml document must be in the XSL:FO
+       format.</p>
+      <p>For convenience we provide a mechanism to handle XML+XSL as
+       input.</p>
+      <p>The xml document is always handled internally as SAX. The SAX events
+       are used to read the elements, attributes and text data of the FO document.
+       After the manipulation of the data the renderer writes out the pages in the
+       appropriate format. It may write as it goes, a page at a time or the whole
+       document at once. Once finished the document should contain all the data in the
+       chosen format ready for whatever use.</p>
+    </section>
+    <section>
+      <title>Stages</title>
+      <p>The fo data goes through a few stages. Each piece
+       of data will generally go through the process in the same way but some
+       information may be used a number of times or in a different order. To reduce
+       memory one stage will start before the previous is completed.</p>
+      <p>SAX Handler -&gt; FO Tree -&gt; Layout Managers -&gt; Area Tree
+       -&gt; Render -&gt; document</p>
+      <p>In the case of rtf, mif etc. <br/>SAX Handler -&gt; FO Tree -&gt;
+       Structure Renderer -&gt; document</p>
+      <p>The FO Tree is constructed from the xml document. It is an internal
+       representation of the xml document and it is like a DOM with some differences.
+       The Layout Managers use the FO Tree do their layout stuff and create an Area
+       Tree. The Area Tree is a representation of the final result. It is a
+       representation of a set of pages containing the text and other graphics. The
+       Area Tree is then given to a Renderer. The Renderer can read the Area Tree and
+       convert the information into the render format. For example the PDF Renderer
+       creates a PDF Document. For each page in the Area Tree the renderer creates a
+       PDF Page and places the contents of the page into the PDF Page. Once a PDF Page
+       is complete then it can be written to the output stream.</p>
+      <p>For the structure documents the Structure listener will read
+       directly from the FO Tree and create the document. These documents do not need
+       the layout process or the Area Tree.</p>
+    </section>
+  </section>
     <section id="primary-goals">
       <title>Primary Design Goals</title>
       <p>A discussion of project design properly begins with a list of the goals of the project. Out of these goals will flow the design issues and details, and eventually, the implementation.</p>

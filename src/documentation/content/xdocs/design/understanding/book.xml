@@ -27,9 +27,6 @@ PARENT DIRECTORY!
       <menu-item label="Area Tree" href="../areas.html"/>
       <menu-item label="Renderers" href="../renderers.html"/>
     </menu>
-    <menu label="Understanding">
-      <menu-item label="Introduction" href="index.html"/>
-    </menu>
     <menu label="Extras">
       <menu-item label="Images" href="images.html"/>
       <menu-item label="PDF Library" href="pdf_library.html"/>

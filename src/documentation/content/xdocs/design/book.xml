@@ -23,9 +23,6 @@ understanding/book.xml, WHICH SEE FOR AN EXPLANATION.
       <menu-item label="Area Tree" href="areas.html"/>
       <menu-item label="Renderers" href="renderers.html"/>
     </menu>
-    <menu label="Understanding">
-      <menu-item label="Introduction" href="understanding/index.html"/>
-    </menu>
     <menu label="Extras">
       <menu-item label="Images" href="understanding/images.html"/>
       <menu-item label="PDF Library" href="understanding/pdf_library.html"/>
