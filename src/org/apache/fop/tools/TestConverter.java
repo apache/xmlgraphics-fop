@@ -110,13 +110,9 @@ public class TestConverter {
             if (suitelist.getLength() == 0) {
                 return differ;
             }
+
             Node testsuite = null;
-            for (int count = 0; count < suitelist.getLength(); count++) {
-                Node node = suitelist.item(count);
-                if (node.getNodeName().equals("testsuite")) {
-                    testsuite = node;
-                }
-            }
+            testsuite = doc.getDocumentElement();
 
             if (testsuite.hasAttributes()) {
                 String profile = testsuite.getAttributes().getNamedItem(
