@@ -56,6 +56,7 @@ import org.apache.fop.layout.Area;
 import org.apache.fop.messaging.MessageHandler;
 import org.apache.fop.layout.BlockArea;
 import org.apache.fop.layout.FontState;
+import org.apache.fop.layout.TextState;
 import org.apache.fop.datatypes.*;
 import org.apache.fop.fo.properties.*;
 import org.apache.fop.apps.FOPException;
@@ -81,6 +82,8 @@ public class FOText extends FONode {
 		protected boolean overlined = false;
 		protected boolean lineThrough = false;
 
+                TextState ts;
+
 
 		public FOText(char[] chars, int s, int e, FObj parent) {
 				super(parent);
@@ -94,6 +97,15 @@ public class FOText extends FONode {
 		public void setUnderlined(boolean ul) {
 				this.underlined = ul;
 		}
+
+    public void setOverlined(boolean ol) {
+        this.overlined = ol;
+    }
+
+    public void setLineThrough(boolean lt) {
+        this.lineThrough = lt;
+    }
+
 
 		public boolean willCreateArea()
 		{
@@ -143,14 +155,18 @@ public class FOText extends FONode {
 						this.wrapOption =
 							this.parent.properties.get("wrap-option").getEnum();
 						this.whiteSpaceCollapse = this.parent.properties.get(
-																				"white-space-collapse").getEnum();
+																				"white-space-collapse").getEnum(); 
+						this.ts = new TextState();
+						ts.setUnderlined(underlined);            
+						ts.setOverlined(overlined);            
+						ts.setLineThrough(lineThrough);            
 
 						this.marker = this.start;
 				}
 				int orig_start = this.marker;
 				this.marker = ((BlockArea) area).addText(fs, red, green, blue,
 											wrapOption, this.getLinkSet(), whiteSpaceCollapse, ca,
-											this.marker, length, underlined);
+											this.marker, length, ts);
 				if (this.marker == -1) {
 
 

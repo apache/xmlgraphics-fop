@@ -140,6 +140,20 @@ public class PDFRenderer implements Renderer {
 
     /** the current colour for use in svg */
     private PDFColor currentColour = new PDFColor(0, 0, 0);
+ 
+    // previous values used for text-decoration drawing
+    int prevUnderlineXEndPos;
+    int prevUnderlineYEndPos;
+    int prevUnderlineSize;
+    PDFColor prevUnderlineColor;
+    int prevOverlineXEndPos;
+    int prevOverlineYEndPos;
+    int prevOverlineSize;
+    PDFColor prevOverlineColor;
+    int prevLineThroughXEndPos;
+    int prevLineThroughYEndPos;
+    int prevLineThroughSize;
+    PDFColor prevLineThroughColor;
 
     /**
      * create the PDF renderer
@@ -403,12 +417,16 @@ public class PDFRenderer implements Renderer {
        * @param area the block area to render
        */
     public void renderBlockArea(BlockArea area) {
+      // KLease: Temporary test to fix block positioning
+      // Offset ypos by padding and border widths
+      // this.currentYPosition -= (area.getPaddingTop() + area.borderWidthTop);
         doFrame(area);
         Enumeration e = area.getChildren().elements();
         while (e.hasMoreElements()) {
             Box b = (Box) e.nextElement();
             b.render(this);
         }
+	//  this.currentYPosition -= (area.getPaddingBottom() + area.borderWidthBottom);
     }
 
     /**
@@ -632,8 +650,34 @@ public class PDFRenderer implements Renderer {
         pdf = pdf.append(") Tj\n");
 
         if (area.getUnderlined()) {
-            addLine(rx, bl - size / 10, rx + area.getContentWidth(),
-                    bl - size / 10, size / 14, theAreaColor);
+            int yPos = bl - size/10;
+            addLine(rx, yPos, rx + area.getContentWidth(),
+                    yPos, size/14, theAreaColor);
+            // save position for underlining a following InlineSpace
+            prevUnderlineXEndPos = rx + area.getContentWidth();
+            prevUnderlineYEndPos = yPos;
+            prevUnderlineSize = size/14;
+            prevUnderlineColor = theAreaColor;
+        }
+
+        if (area.getOverlined()) {
+            int yPos = bl + area.getFontState().getAscender() + size/10;
+            addLine(rx, yPos, rx + area.getContentWidth(),
+                    yPos, size/14, theAreaColor);
+            prevOverlineXEndPos = rx + area.getContentWidth();
+            prevOverlineYEndPos = yPos;
+            prevOverlineSize = size/14;
+            prevOverlineColor = theAreaColor;
+        }
+
+        if (area.getLineThrough()) {
+            int yPos = bl + area.getFontState().getAscender() * 3/8;
+		    addLine(rx, yPos, rx + area.getContentWidth(),
+		            yPos, size/14, theAreaColor);
+            prevLineThroughXEndPos = rx + area.getContentWidth();
+            prevLineThroughYEndPos = yPos;
+            prevLineThroughSize = size/14;
+            prevLineThroughColor = theAreaColor;
         }
 
         currentStream.add(pdf.toString());
@@ -648,6 +692,28 @@ public class PDFRenderer implements Renderer {
        */
     public void renderInlineSpace(InlineSpace space) {
         this.currentXPosition += space.getSize();
+        if (space.getUnderlined()) {
+            if (prevUnderlineColor != null) {
+               addLine(prevUnderlineXEndPos, prevUnderlineYEndPos,
+                       prevUnderlineXEndPos + space.getSize(),
+                       prevUnderlineYEndPos, prevUnderlineSize, prevUnderlineColor);
+            }
+        }
+        if (space.getOverlined()) {
+            if (prevOverlineColor != null) {
+                addLine(prevOverlineXEndPos, prevOverlineYEndPos,
+                        prevOverlineXEndPos + space.getSize(),
+                        prevOverlineYEndPos, prevOverlineSize, prevOverlineColor);
+            }
+        }
+        if (space.getLineThrough()) {
+            if (prevLineThroughColor != null) {
+                addLine(prevLineThroughXEndPos, prevLineThroughYEndPos,
+                        prevLineThroughXEndPos + space.getSize(),
+                        prevLineThroughYEndPos, prevLineThroughSize, prevLineThroughColor);
+            }
+         }
+
     }
 
     /**

@@ -91,6 +91,14 @@ public class Inline extends FObjMixed {
         this.underlined = true;
     }
 
+    if (textDecoration == TextDecoration.OVERLINE) {
+        this.overlined = true;
+    }
+
+    if (textDecoration == TextDecoration.LINE_THROUGH) {
+        this.lineThrough = true;
+    }
+
     if (parent.getName().equals("fo:flow")) {
       throw new FOPException("fo:inline can't be directly"
                    + " under flow"); 
@@ -101,6 +109,8 @@ public class Inline extends FObjMixed {
   protected void addCharacters(char data[], int start, int length) { 
       FOText ft = new FOText(data,start,length, this);
       ft.setUnderlined(underlined);
+      ft.setOverlined(overlined);
+      ft.setLineThrough(lineThrough);
       children.addElement(ft);
   }
 

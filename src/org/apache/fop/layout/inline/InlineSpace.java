@@ -56,6 +56,12 @@ import org.apache.fop.layout.*;
 public class InlineSpace extends Space {
     private int size; // in millipoints
     private boolean resizeable = true; //to disallow size changes during justification of a line
+
+    // Textdecoration
+    protected boolean underlined = false;
+    protected boolean overlined = false;
+    protected boolean lineThrough = false;
+     
     
     public InlineSpace(int amount) {
 	this.size = amount;
@@ -66,6 +72,33 @@ public class InlineSpace extends Space {
 	this.size = amount;
     }
 
+    /**
+     * @param ul true if text should be underlined
+     */
+    public void setUnderlined(boolean ul) {
+        this.underlined = ul;
+    }
+
+    public boolean getUnderlined() {
+        return this.underlined;
+    }
+
+    public void setOverlined(boolean ol) {
+       this.overlined = ol;
+    }
+
+    public boolean getOverlined() {
+        return this.overlined;
+    }
+
+    public void setLineThrough(boolean lt) {
+        this.lineThrough = lt;
+    }
+
+    public boolean getLineThrough() {
+        return this.lineThrough;
+     }
+ 
     public int getSize() {
 	return size;
     }

@@ -81,6 +81,7 @@ public class PageNumber extends FObj {
 		float blue;
 		int wrapOption;
 		int whiteSpaceCollapse;
+  TextState ts;
 
 		public PageNumber(FObj parent, PropertyList propertyList) {
 				super(parent, propertyList);
@@ -117,7 +118,7 @@ public class PageNumber extends FObj {
 						this.wrapOption = this.properties.get("wrap-option").getEnum();
 						this.whiteSpaceCollapse =
 							this.properties.get("white-space-collapse").getEnum();
-
+						ts = new TextState();
 						this.marker = 0;
 
 						// initialize id
@@ -128,7 +129,7 @@ public class PageNumber extends FObj {
 				String p = Integer.toString(area.getPage().getNumber());
 				this.marker = ((BlockArea) area).addText(fs, red, green, blue,
 											wrapOption, null, whiteSpaceCollapse, p.toCharArray(),
-											0, p.length(), false);
+											0, p.length(), ts);
 				return new Status(Status.OK);
 		}
 }

@@ -138,6 +138,7 @@ public class PageNumberCitation extends FObj {
 		String pageNumber;
 		String refId;
 		String id;
+  TextState ts;
 
 
 		public PageNumberCitation(FObj parent, PropertyList propertyList) {
@@ -189,6 +190,7 @@ public class PageNumberCitation extends FObj {
 						// create id
 						this.id = this.properties.get("id").getString();
 						idReferences.createID(id);
+						ts = new TextState();
 
 						this.marker = 0;
 				}
@@ -204,7 +206,7 @@ public class PageNumberCitation extends FObj {
 						this.marker = ((BlockArea) area).addText(fs, red, green, blue,
 													wrapOption, null, whiteSpaceCollapse,
 													pageNumber.toCharArray(), 0, pageNumber.length(),
-													false);
+													ts);
 				} else { // add pageNumberCitation to area to be resolved during rendering
             BlockArea blockArea = (BlockArea)area;
             LineArea la = blockArea.getCurrentLineArea();

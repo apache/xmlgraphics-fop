@@ -1069,6 +1069,11 @@
 				<value const="UNDERLINE">underline</value>
 				<value const="OVERLINE">overline</value>
 				<value const="LINE_THROUGH">line-through</value>
+				<value const="BLINK">blink</value>
+				<value const="NO_UNDERLINE">no-underline</value>
+				<value const="NO_OVERLINE">no-overline</value>
+				<value const="NO_LINE_THROUGH">no-line-through</value>
+				<value const="NO_BLINK">no-blink</value>
 			</enumeration>
 		<default>none</default>
 	</property>
