@@ -5,22 +5,34 @@ package org.apache.fop.viewer;
   Juergen Verwohlt: Juergen.Verwohlt@jCatalog.com,
   Rainer Steinkuhle: Rainer.Steinkuhle@jCatalog.com,
   Stanislav Gorkhover: Stanislav.Gorkhover@jCatalog.com
+
+    Doro Wiarda (wiarda@dwiarda.com: 
+                 added  MessageListener support and made
+                 the showing of the progress and error 
+                 messages Swing thread safe. 
+                 This is needed as xml parse errors do not
+                 necessarily occur in the 
+                 EventDispatchThread.
  */
 
 import java.awt.*;
 import java.awt.print.*;
 import java.awt.event.*;
 import java.awt.image.BufferedImage;
+import java.util.StringTokenizer;
+import java.util.Vector;
 
 import javax.swing.*;
 
 import org.apache.fop.layout.*;
 import org.apache.fop.render.awt.*;
+import org.apache.fop.messaging.*;
 
 /**
  * Frame and User Interface for Preview
  */
-public class PreviewDialog extends JFrame implements ProgressListener {
+public class PreviewDialog extends JFrame implements ProgressListener,
+                                                     MessageListener {
 
     protected Translator res;
 
@@ -346,43 +358,186 @@ public class PreviewDialog extends JFrame implements ProgressListener {
     }
 
     public void progress(int percentage) {
-	processStatus.setText(percentage + "%");
+         progress(new String(percentage + "%"));
     }
 
     public void progress(int percentage, String message) {
-	processStatus.setText(message + " " + percentage + "%");
+        progress(new String(message + " " + percentage + "%"));
     }
 
+
+    /**
+     *  Setting the text  of a JLabel is not thread save, it 
+     * needs to be done in  the EventThread. Here we make sure
+     * it is done.
+     */
     public void progress(String message) {
-	processStatus.setText(message);
+	SwingUtilities.invokeLater( new showProgress( message, false ) );
     }
 
-    public void showPage() {
-	BufferedImage pageImage = null;
-	Graphics graphics = null;
+
+     /**
+     *  This class is used to show status and error messages in 
+     * a thread safe way.
+     */
+     class showProgress implements Runnable{
+        /**
+        *  The message to display
+        */
+ 	Object message;
+ 
+        /**
+        *  Is this an errorMessage, i.e. should it be shown in
+        * an JOptionPane or in the status bar.
+        */
+         boolean isErrorMessage = false;
+  
+        /**
+        * Constructs  showProgress thread
+        * @param message message to display
+        * @param isErrorMessage show in status bar or in JOptionPane
+        */
+ 	public showProgress(Object message, boolean isErrorMessage){
+             this.message = message;
+             this.isErrorMessage = isErrorMessage;
+ 	}
+
+         public void run(){
+ 	    if( isErrorMessage ){
+                 JOptionPane.showMessageDialog(null, message, "Error",
+ 					      JOptionPane.ERROR_MESSAGE);
+ 	    }
+             else processStatus.setText(message.toString()); 
+ 	}
+     }
+
+     public void showPage(){
+         showPageImage viewer = new showPageImage();
+          
+         if( SwingUtilities.isEventDispatchThread() ){
+                 viewer.run();  
+ 	}
+         else SwingUtilities.invokeLater(viewer);
+     }
 
 
-	renderer.render(currentPage);
-	pageImage = renderer.getLastRenderedPage();
-        if (pageImage == null)
-          return;
-	graphics = pageImage.getGraphics();
-	graphics.setColor(Color.black);
-	graphics.drawRect(0, 0, pageImage.getWidth() - 1,
-			  pageImage.getHeight() -1 );
+    /**
+     *  This class is used to update the page image
+     *  in a thread safe way.
+     */
+     class showPageImage implements Runnable{
+     
+         /**
+         *  The run method that does the actuall updating
+         */
+         public void run() {
+ 	   BufferedImage pageImage = null;
+   	   Graphics graphics = null;
+ 
+    	   renderer.render(currentPage);
+ 	   pageImage = renderer.getLastRenderedPage();
+            if (pageImage == null)
+                return;
+ 	   graphics = pageImage.getGraphics();
+ 	   graphics.setColor(Color.black);
+ 	   graphics.drawRect(0, 0, pageImage.getWidth() - 1,
+ 		   	   pageImage.getHeight() -1 );
+ 
+ 	   previewImageLabel.setIcon(new ImageIcon(pageImage));
+ 
+ 	   pageCount = renderer.getPageCount();
+ 
+ 	   statisticsStatus.setText(res.getString("Page") + " " +
+ 		  		   (currentPage + 1) + " " +
+ 				    res.getString("of") + " " +
+ 				    pageCount);
+ 	}
+     }
 
-	previewImageLabel.setIcon(new ImageIcon(pageImage));
+    
+     /**
+     * Called by MessageHandler if an error message or a
+     * log message is received.
+     */    
+     public  void  processMessage ( MessageEvent event ){
+         String error = event.getMessage();
+         String text = processStatus.getText();
+         FontMetrics fmt = processStatus.getFontMetrics(
+ 				  processStatus.getFont());
+         int width =  processStatus.getWidth()-fmt.stringWidth("...");
+         showProgress showIt;
 
-	pageCount = renderer.getPageCount();
+         if( event.getMessageType() == event.LOG){
+             if( !text.endsWith("\n") ) {
+                 text = text +  error;
+                 while ( fmt.stringWidth(text) > width){
+                     text = text.substring(1);
+                     width =  processStatus.getWidth()-fmt.stringWidth("...");
+ 		}                
+ 	    }
+            else text = error;
+ 	    progress( text );  	
+	 }
+         else{
+ 	     error = error.trim();
+             if( error.equals(">") ){
+                 text = text +  error;
+                 while ( fmt.stringWidth(text) > width){
+                     text = text.substring(1);
+                     width =  processStatus.getWidth()-fmt.stringWidth("...");
+ 		 }                
+                 progress( processStatus.getText() + error );
+                 return; 
+	     }
+             if( error.equals("") ) return;
+             if( error.length() < 60) {
+                 showIt = new showProgress( error, true );
+	     }
+             else{
+		StringTokenizer tok = new StringTokenizer(error," ");
+                Vector labels = new Vector();
+                StringBuffer buffer =  new StringBuffer();
+                String tmp,list[];
+                
+                while(tok.hasMoreTokens()){
+		    tmp = tok.nextToken();
+                    if( (buffer.length()+tmp.length() +1) < 60 ){
+                        buffer.append(" ").append(tmp);
+		    }  
+                    else{
+                        labels.add(buffer.toString());
+                        buffer = new StringBuffer();
+                        buffer.append(tmp);
+		    }
+		}
+                labels.add(buffer.toString());
+                list = new String[ labels.size() ];
+                for( int i = 0 ; i  < labels.size() ; i++) {
+                     list[i] = labels.elementAt(i).toString();
+		}
+                showIt = new showProgress( list, true );
+	     }
+             if( SwingUtilities.isEventDispatchThread() ){
+                 showIt.run();  
+	     }
+             else {
+                 try{
+ 		   SwingUtilities.invokeAndWait( showIt );
+ 		 }
+                 catch( Exception e){
+                     e.printStackTrace();
+                     progress( event.getMessage() );
+ 		}
+ 	    }
+ 	}
+     }
 
-	statisticsStatus.setText(res.getString("Page") + " " +
-				 (currentPage + 1) + " " +
-				 res.getString("of") + " " +
-				 pageCount);
-    }
 
     public void dispose() {
       System.exit(0);
     }
 }  // class PreviewDialog
+
+
+
 

@@ -90,164 +90,172 @@ import org.apache.fop.messaging.MessageHandler;
  */
 public class XalanCommandLine {
 
-  /**
-   * creates a SAX parser, using the value of org.xml.sax.parser
-   * defaulting to org.apache.xerces.parsers.SAXParser
-   *
-   * @return the created SAX parser
-   */
-  static XMLReader createParser() {
-    String parserClassName =
-        System.getProperty("org.xml.sax.parser");
-    if (parserClassName == null) {
-        parserClassName = "org.apache.xerces.parsers.SAXParser";
-    }
-    org.apache.fop.messaging.MessageHandler.logln("using SAX parser " + parserClassName);
+    /**
+     * creates a SAX parser, using the value of org.xml.sax.parser
+     * defaulting to org.apache.xerces.parsers.SAXParser
+     *
+     * @return the created SAX parser
+     */
+    static XMLReader createParser() {
+        String parserClassName = System.getProperty("org.xml.sax.parser");
+        if (parserClassName == null) {
+            parserClassName = "org.apache.xerces.parsers.SAXParser";
+        }
+        org.apache.fop.messaging.MessageHandler.logln(
+          "using SAX parser " + parserClassName);
 
-    try {
-        return (XMLReader)
-      Class.forName(parserClassName).newInstance();
-    } catch (ClassNotFoundException e) {
-        org.apache.fop.messaging.MessageHandler.errorln("Could not find " + parserClassName);
-    } catch (InstantiationException e) {
-        org.apache.fop.messaging.MessageHandler.errorln("Could not instantiate "
-               + parserClassName);
-    } catch (IllegalAccessException e) {
-        org.apache.fop.messaging.MessageHandler.errorln("Could not access " + parserClassName);
-    } catch (ClassCastException e) {
-        org.apache.fop.messaging.MessageHandler.errorln(parserClassName + " is not a SAX driver");
-    }
-    return null;
-  }
-
-  /**
-   * create an InputSource from a file name
-   *
-   * @param filename the name of the file
-   * @return the InputSource created
-   */
-  protected static InputSource fileInputSource(String filename) {
-
-    /* this code adapted from James Clark's in XT */
-    File file = new File(filename);
-    String path = file.getAbsolutePath();
-    String fSep = System.getProperty("file.separator");
-    if (fSep != null && fSep.length() == 1)
-        path = path.replace(fSep.charAt(0), '/');
-    if (path.length() > 0 && path.charAt(0) != '/')
-        path = '/' + path;
-    try {
-        return new InputSource(new URL("file", null,
-               path).toString());
-    }
-    catch (java.net.MalformedURLException e) {
-        throw new Error("unexpected MalformedURLException");
-    }
-  }
-
-  /**
-   * mainline method
-   *
-   * first command line argument is xml input file
-   * second command line argument is xslt file which commands the conversion from xml to xsl:fo
-   * third command line argument is the output file
-   * 
-   * @param command line arguments
-   */
-  public static void main(String[] args) {
-    String version = Version.getVersion();
-    MessageHandler.logln(version);
-
-
-    if (args.length != 3) {
-        MessageHandler.errorln("usage: java "
-               + "org.apache.fop.apps.XalanCommandLine "
-               + "xml-file xslt-file pdf-file");
-        System.exit(1);
+        try {
+            return (XMLReader) Class.forName(
+                     parserClassName).newInstance();
+        } catch (ClassNotFoundException e) {
+            org.apache.fop.messaging.MessageHandler.errorln(
+              "Could not find " + parserClassName);
+        }
+        catch (InstantiationException e) {
+            org.apache.fop.messaging.MessageHandler.errorln(
+              "Could not instantiate " + parserClassName);
+        }
+        catch (IllegalAccessException e) {
+            org.apache.fop.messaging.MessageHandler.errorln(
+              "Could not access " + parserClassName);
+        }
+        catch (ClassCastException e) {
+            org.apache.fop.messaging.MessageHandler.errorln(
+              parserClassName + " is not a SAX driver");
+        }
+        return null;
     }
 
-    XMLReader parser = createParser();
+    /**
+      * create an InputSource from a file name
+      *
+      * @param filename the name of the file
+      * @return the InputSource created
+      */
+    protected static InputSource fileInputSource(String filename) {
 
-    if (parser == null) {
-        MessageHandler.errorln("ERROR: Unable to create SAX parser");
-        System.exit(1);
+        /* this code adapted from James Clark's in XT */
+        File file = new File(filename);
+        String path = file.getAbsolutePath();
+        String fSep = System.getProperty("file.separator");
+        if (fSep != null && fSep.length() == 1)
+            path = path.replace(fSep.charAt(0), '/');
+        if (path.length() > 0 && path.charAt(0) != '/')
+            path = '/' + path;
+        try {
+            return new InputSource(new URL("file", null, path).toString());
+        } catch (java.net.MalformedURLException e) {
+            throw new Error("unexpected MalformedURLException");
+        }
     }
 
-    // setting the parser features
-    try {
-      parser.setFeature("http://xml.org/sax/features/namespace-prefixes", true);
-    } catch (SAXException e) {
-      MessageHandler.errorln("Error in setting up parser feature namespace-prefixes");
-      MessageHandler.errorln("You need a parser which supports SAX version 2");
-      System.exit(1);
+    /**
+      * mainline method
+      *
+      * first command line argument is xml input file
+      * second command line argument is xslt file which commands the conversion from xml to xsl:fo
+      * third command line argument is the output file
+      *
+      * @param command line arguments
+      */
+    public static void main(String[] args) {
+        String version = Version.getVersion();
+        MessageHandler.logln(version);
+
+
+        if (args.length != 3) {
+            MessageHandler.errorln("usage: java " +
+                                   "org.apache.fop.apps.XalanCommandLine " + "xml-file xslt-file pdf-file");
+            System.exit(1);
+        }
+
+        XMLReader parser = createParser();
+
+        if (parser == null) {
+            MessageHandler.errorln("ERROR: Unable to create SAX parser");
+            System.exit(1);
+        }
+
+        // setting the parser features
+        try {
+            parser.setFeature("http://xml.org/sax/features/namespace-prefixes",
+                              true);
+        } catch (SAXException e) {
+            MessageHandler.errorln("Error in setting up parser feature namespace-prefixes");
+            MessageHandler.errorln("You need a parser which supports SAX version 2");
+            System.exit(1);
+        }
+
+
+        try {
+            java.io.Writer writer;
+            java.io.Reader reader;
+            boolean usefile = false;
+
+            MessageHandler.logln("transforming to xsl:fo markup");
+
+
+            // create a Writer
+            // the following is an ugly hack to allow processing of larger files
+            // if xml file size is larger than 700 kb write the fo:file to disk
+            if ((new File(args[0]).length()) > 500000) {
+                writer = new FileWriter(args[2] + ".tmp");
+                usefile = true;
+            } else {
+                writer = new StringWriter();
+            }
+
+            // Use XSLTProcessorFactory to instantiate an XSLTProcessor.
+            XSLTProcessor processor = XSLTProcessorFactory.getProcessor();
+
+            // Create the 3 objects the XSLTProcessor needs to perform the transformation.
+            // Fix up the args...
+            XMLParserLiaison xmlPL = processor.getXMLProcessorLiaison();
+            URL urlTmp = xmlPL.getURLFromString(args[0], null);
+            System.err.println("XML File: " + args[0]);
+            System.err.println("URL: " + urlTmp);
+            XSLTInputSource xmlSource =
+              new XSLTInputSource (urlTmp.toString());
+            urlTmp = xmlPL.getURLFromString(args[1], null);
+            System.err.println("XSL File: " + args[1]);
+            System.err.println("URL: " + urlTmp);
+            XSLTInputSource xslSheet =
+              new XSLTInputSource (urlTmp.toString());
+
+            XSLTResultTarget xmlResult = new XSLTResultTarget (writer);
+
+            // Perform the transformation.
+            processor.process(xmlSource, xslSheet, xmlResult);
+
+            if (usefile) {
+                reader = new FileReader(args[2] + ".tmp");
+            } else {
+                // create a input source containing the xsl:fo file which can be fed to Fop
+                reader = new StringReader(writer.toString());
+            }
+            writer.flush();
+            writer.close();
+
+            //set Driver methods to start Fop processing
+            Driver driver = new Driver();
+            driver.setRenderer("org.apache.fop.render.pdf.PDFRenderer",
+                               version);
+            driver.addElementMapping("org.apache.fop.fo.StandardElementMapping");
+            driver.addElementMapping("org.apache.fop.svg.SVGElementMapping");
+            driver.addPropertyList("org.apache.fop.fo.StandardPropertyListMapping");
+            driver.addPropertyList("org.apache.fop.svg.SVGPropertyListMapping");
+            driver.setWriter(new PrintWriter(new FileWriter(args[2])));
+            driver.buildFOTree(parser, new InputSource(reader));
+            reader.close();
+            driver.format();
+            driver.render();
+            if (usefile) {
+                new File (args[2] + ".tmp").delete();
+            }
+        }
+        catch (Exception e) {
+            MessageHandler.errorln("FATAL ERROR: " + e.getMessage());
+            System.exit(1);
+        }
     }
-
-
-    try {
-      java.io.Writer writer;
-      java.io.Reader reader;
-      boolean usefile = false;
-
-      MessageHandler.logln("transforming to xsl:fo markup");
-
-
-      // create a Writer      
-      // the following is an ugly hack to allow processing of larger files
-      // if xml file size is larger than 700 kb write the fo:file to disk
-      if ((new File(args[0]).length()) > 500000) {
-        writer = new FileWriter(args[2]+".tmp");
-        usefile = true;
-      } else {
-        writer = new StringWriter();
-      }
-
-      // Use XSLTProcessorFactory to instantiate an XSLTProcessor.
-      XSLTProcessor processor = XSLTProcessorFactory.getProcessor();
-
-      // Create the 3 objects the XSLTProcessor needs to perform the transformation.
-      // Fix up the args...
-      XMLParserLiaison xmlPL = processor.getXMLProcessorLiaison();
-      URL urlTmp = xmlPL.getURLFromString(args[0], null);
-      System.err.println("XML File: " + args[0]);
-      System.err.println("URL: " + urlTmp);
-      XSLTInputSource xmlSource  = new XSLTInputSource (urlTmp.toString());
-      urlTmp = xmlPL.getURLFromString(args[1], null);
-      System.err.println("XSL File: " + args[1]);
-      System.err.println("URL: " + urlTmp);
-      XSLTInputSource xslSheet   = new XSLTInputSource (urlTmp.toString());
-
-      XSLTResultTarget xmlResult = new XSLTResultTarget (writer);
-
-      // Perform the transformation.
-      processor.process(xmlSource, xslSheet, xmlResult);
-      
-      if (usefile) {
-        reader = new FileReader(args[2]+".tmp");
-      } else {
-        // create a input source containing the xsl:fo file which can be fed to Fop  
-        reader = new StringReader(writer.toString());   
-      }
-      writer.flush();
-      writer.close();
-
-      //set Driver methods to start Fop processing
-      Driver driver = new Driver();
-      driver.setRenderer("org.apache.fop.render.pdf.PDFRenderer", version);
-      driver.addElementMapping("org.apache.fop.fo.StandardElementMapping");
-      driver.addElementMapping("org.apache.fop.svg.SVGElementMapping");
-	    driver.addPropertyList("org.apache.fop.fo.StandardPropertyListMapping");
-	    driver.addPropertyList("org.apache.fop.svg.SVGPropertyListMapping");
-      driver.setWriter(new PrintWriter(new FileWriter(args[2])));
-      driver.buildFOTree(parser, new InputSource(reader));
-      reader.close();
-      driver.format();
-      driver.render();
-      if (usefile) {
-        new File (args[2]+".tmp").delete();
-      }
-    } catch (Exception e) {
-      MessageHandler.errorln("FATAL ERROR: " + e.getMessage());
-      System.exit(1);
-    }
-  }
 }

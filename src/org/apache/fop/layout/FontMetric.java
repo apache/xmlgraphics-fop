@@ -55,10 +55,10 @@ package org.apache.fop.layout;
  */
 public interface FontMetric {
 
-    public int getAscender();
-    public int getCapHeight();
-    public int getDescender();
-    public int getXHeight();
+    public int getAscender(int size);
+    public int getCapHeight(int size);
+    public int getDescender(int size);
+    public int getXHeight(int size);
 
     public int getFirstChar();
     public int getLastChar();
@@ -67,6 +67,6 @@ public interface FontMetric {
      * return width (in 1/1000ths of point size) of character at
      * code point i
      */
-    public int width(int i);
-    public int[] getWidths();
+    public int width(int i, int size);
+    public int[] getWidths(int size);
 }
