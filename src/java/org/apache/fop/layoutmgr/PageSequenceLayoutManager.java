@@ -488,16 +488,17 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
         curFlow = curSpan.addNewNormalFlow();
     }
 
-    private void layoutStaticContent(Region region) {
-        if (region == null) {
+    private void layoutStaticContent(int regionID) {
+        Region reg = currentSimplePageMaster.getRegion(regionID);
+        if (reg == null) {
             return;
         }
-        StaticContent sc = pageSeq.getStaticContent(region.getRegionName());
+        StaticContent sc = pageSeq.getStaticContent(reg.getRegionName());
         if (sc == null) {
             return;
         }
         
-        RegionViewport reg = curPage.getPage().getRegionViewport(region.getNameId());
+        RegionViewport rv = curPage.getPage().getRegionViewport(regionID);
         StaticContentLayoutManager lm;
         try {
             lm = (StaticContentLayoutManager)
@@ -511,11 +512,11 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
             return;
         }
         lm.initialize();
-        lm.setRegionReference(reg.getRegion());
+        lm.setRegionReference(rv.getRegion());
         lm.setParent(this);
         LayoutContext childLC = new LayoutContext(0);
         childLC.setStackLimit(new MinOptMax((int)curPage.getViewArea().getHeight()));
-        childLC.setRefIPD(reg.getRegion().getIPD());
+        childLC.setRefIPD(rv.getRegion().getIPD());
         while (!lm.isFinished()) {
             BreakPoss bp = lm.getNextBreakPoss(childLC);
             if (bp != null) {
@@ -524,7 +525,7 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
                 lm.addAreas(new BreakPossPosIter(vecBreakPoss, 0,
                                                  vecBreakPoss.size()), null);
             } else {
-                log.error("bp==null  cls=" + region.getRegionName());
+                log.error("bp==null  cls=" + reg.getRegionName());
             }
         }
         //lm.flush();
@@ -538,11 +539,10 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
             return;
         }
         // Layout static content into the regions
-        // Need help from pageseq for this
-        layoutStaticContent(currentSimplePageMaster.getRegion(FO_REGION_BEFORE));
-        layoutStaticContent(currentSimplePageMaster.getRegion(FO_REGION_AFTER));
-        layoutStaticContent(currentSimplePageMaster.getRegion(FO_REGION_START));
-        layoutStaticContent(currentSimplePageMaster.getRegion(FO_REGION_END));
+        layoutStaticContent(FO_REGION_BEFORE); 
+        layoutStaticContent(FO_REGION_AFTER);
+        layoutStaticContent(FO_REGION_START);
+        layoutStaticContent(FO_REGION_END);
         // Queue for ID resolution and rendering
         areaTreeModel.addPage(curPage);
         curPage = null;
@@ -759,20 +759,8 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager {
         RegionViewport rv = new RegionViewport(absRegionRect);
         rv.setBPD((int)relRegionRect.getHeight());
         rv.setIPD((int)relRegionRect.getWidth());
-        setRegionViewportTraits(r, rv);
-        return rv;
-    }
-
-    /**
-     * Set the region viewport traits.
-     * The viewport has the border, background and
-     * clipping overflow traits.
-     *
-     * @param r the region viewport
-     */
-    private void setRegionViewportTraits(Region r, RegionViewport rv) {
-        // Apply Background Properties, no border and padding on region viewports
         TraitSetter.addBackground(rv, r.getCommonBorderPaddingBackground());
+        return rv;
     }
 
     private BodyRegion makeRegionBodyReferenceArea(RegionBody r,
