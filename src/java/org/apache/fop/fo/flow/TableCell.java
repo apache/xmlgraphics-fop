@@ -23,7 +23,7 @@ import java.util.List;
 
 // XML
 import org.xml.sax.Attributes;
-import org.xml.sax.SAXException;
+import org.xml.sax.Locator;
 import org.xml.sax.SAXParseException;
 
 // FOP
@@ -35,7 +35,7 @@ import org.apache.fop.fo.properties.CommonBorderAndPadding;
 
 /**
  * Class modelling the fo:table-cell object.
- * @todo implement validateChildNode()
+ * @todo check need for all instance variables stored here
  */
 public class TableCell extends FObj {
 
@@ -46,6 +46,9 @@ public class TableCell extends FObj {
     private int numColumnsSpanned;
     private int numRowsSpanned;
     private int iColNumber = -1;    // uninitialized
+
+    /** used for FO validation */
+    private boolean blockItemFound = false;
 
     /**
      * Offset of content rectangle in inline-progression-direction,
@@ -121,8 +124,70 @@ public class TableCell extends FObj {
      */
     protected void addProperties(Attributes attlist) throws SAXParseException {
         super.addProperties(attlist);
-        doSetup();    // init some basic property values
+        this.iColNumber =
+            propertyList.get(PR_COLUMN_NUMBER).getNumber().intValue();
+        if (iColNumber < 0) {
+            iColNumber = 0;
+        }
+        this.numColumnsSpanned =
+            this.propertyList.get(PR_NUMBER_COLUMNS_SPANNED).getNumber().intValue();
+        if (numColumnsSpanned < 1) {
+            numColumnsSpanned = 1;
+        }
+        this.numRowsSpanned =
+            this.propertyList.get(PR_NUMBER_ROWS_SPANNED).getNumber().intValue();
+        if (numRowsSpanned < 1) {
+            numRowsSpanned = 1;
+        }
+
+        this.backgroundColor =
+            this.propertyList.get(PR_BACKGROUND_COLOR).getColorType();
+
+        bSepBorders = (getPropEnum(PR_BORDER_COLLAPSE) == BorderCollapse.SEPARATE);
+
+        calcBorders(propMgr.getBorderAndPadding());
+
+        // Vertical cell alignment
+        verticalAlign = getPropEnum(PR_DISPLAY_ALIGN);
+        if (verticalAlign == DisplayAlign.AUTO) {
+            // Depends on all cells starting in row
+            bRelativeAlign = true;
+            verticalAlign = getPropEnum(PR_RELATIVE_ALIGN);
+        } else {
+            bRelativeAlign = false;    // Align on a per-cell basis
+        }
+
+        this.minCellHeight = getPropLength(PR_HEIGHT);
         getFOInputHandler().startCell(this);
+    }
+
+    /**
+     * @see org.apache.fop.fo.FONode#validateChildNode(Locator, String, String)
+     * XSL Content Model: marker* (%block;)+
+     */
+    protected void validateChildNode(Locator loc, String nsURI, String localName) 
+        throws SAXParseException {
+        if (nsURI == FO_URI && localName.equals("marker")) {
+            if (blockItemFound) {
+               nodesOutOfOrderError(loc, "fo:marker", "(%block;)");
+            }
+        } else if (!isBlockItem(nsURI, localName)) {
+            invalidChildError(loc, nsURI, localName);
+        } else {
+            blockItemFound = true;
+        }
+    }
+
+    /**
+     * Make sure content model satisfied, if so then tell the
+     * FOInputHandler that we are at the end of the flow.
+     * @see org.apache.fop.fo.FONode#end
+     */
+    protected void endOfNode() throws SAXParseException {
+        if (!blockItemFound) {
+            missingChildElementError("marker* (%block;)+");
+        }
+        getFOInputHandler().endCell(this);
     }
 
     /**
@@ -161,47 +226,6 @@ public class TableCell extends FObj {
      */
     public int getNumRowsSpanned() {
         return numRowsSpanned;
-    }
-
-    /**
-     * @todo convert to addProperties()
-     */
-    private void doSetup() {
-
-        this.iColNumber =
-            propertyList.get(PR_COLUMN_NUMBER).getNumber().intValue();
-        if (iColNumber < 0) {
-            iColNumber = 0;
-        }
-        this.numColumnsSpanned =
-            this.propertyList.get(PR_NUMBER_COLUMNS_SPANNED).getNumber().intValue();
-        if (numColumnsSpanned < 1) {
-            numColumnsSpanned = 1;
-        }
-        this.numRowsSpanned =
-            this.propertyList.get(PR_NUMBER_ROWS_SPANNED).getNumber().intValue();
-        if (numRowsSpanned < 1) {
-            numRowsSpanned = 1;
-        }
-
-        this.backgroundColor =
-            this.propertyList.get(PR_BACKGROUND_COLOR).getColorType();
-
-        bSepBorders = (getPropEnum(PR_BORDER_COLLAPSE) == BorderCollapse.SEPARATE);
-
-        calcBorders(propMgr.getBorderAndPadding());
-
-        // Vertical cell alignment
-        verticalAlign = getPropEnum(PR_DISPLAY_ALIGN);
-        if (verticalAlign == DisplayAlign.AUTO) {
-            // Depends on all cells starting in row
-            bRelativeAlign = true;
-            verticalAlign = getPropEnum(PR_RELATIVE_ALIGN);
-        } else {
-            bRelativeAlign = false;    // Align on a per-cell basis
-        }
-
-        this.minCellHeight = getPropLength(PR_HEIGHT);
     }
 
     /**
@@ -307,11 +331,10 @@ public class TableCell extends FObj {
         Cell clm = new Cell(this);
         list.add(clm); 	 
     }
-     
-     protected void endOfNode() throws SAXParseException {
-        getFOInputHandler().endCell(this);
-    }
     
+    /**
+     * @see org.apache.fop.fo.FObj#getName()
+     */
     public String getName() {
         return "fo:table-cell";
     }

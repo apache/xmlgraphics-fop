@@ -48,9 +48,10 @@ public class Flow extends FObj {
     private ArrayList markerSnapshot;
 
     /**
-     * flow-name attribute
+     * flow-name attribute: indicates the region the content of this
+     * flow should go to.
      */
-    private String flowName;
+    protected String flowName;
 
     /**
      * Content-width of current column area during layout
@@ -65,6 +66,25 @@ public class Flow extends FObj {
      */
     public Flow(FONode parent) {
         super(parent);
+    }
+
+    /**
+     * @see org.apache.fop.fo.FObj#addProperties
+     */
+    protected void addProperties(Attributes attlist) throws SAXParseException {
+        super.addProperties(attlist);
+
+        this.pageSequence = (PageSequence) parent;
+
+        flowName = getPropString(PR_FLOW_NAME);
+
+        if (flowName == null || flowName.equals("")) {
+            missingPropertyError("flow-name");
+        }
+        
+        // Now done in addChild of page-sequence
+        //pageSequence.addFlow(this);
+        getFOInputHandler().startFlow(this);
     }
 
     /**
@@ -97,64 +117,12 @@ public class Flow extends FObj {
     }
 
     /**
-     * @see org.apache.fop.fo.FObj#addProperties
-     */
-    protected void addProperties(Attributes attlist) throws SAXParseException {
-        super.addProperties(attlist);
-        if (parent.getName().equals("fo:page-sequence")) {
-            this.pageSequence = (PageSequence) parent;
-        } else {
-            throw new SAXParseException("flow must be child of "
-                                 + "page-sequence, not " + parent.getName(), locator);
-        }
-        // according to communication from Paul Grosso (XSL-List,
-        // 001228, Number 406), confusion in spec section 6.4.5 about
-        // multiplicity of fo:flow in XSL 1.0 is cleared up - one (1)
-        // fo:flow per fo:page-sequence only.
-
-        /*        if (pageSequence.isFlowSet()) {
-                    if (this.name.equals("fo:flow")) {
-                        throw new FOPException("Only a single fo:flow permitted"
-                                               + " per fo:page-sequence");
-                    } else {
-                        throw new FOPException(this.name
-                                               + " not allowed after fo:flow");
-                    }
-                }
-         */
-        setFlowName(getProperty(PR_FLOW_NAME).getString());
-        // Now done in addChild of page-sequence
-        //pageSequence.addFlow(this);
-
-        getFOInputHandler().startFlow(this);
-    }
-
-    /**
-     * @param name the name of the flow to set
-     * @throws FOPException for an empty name
-     */
-    protected void setFlowName(String name) throws SAXParseException {
-        if (name == null || name.equals("")) {
-            throw new SAXParseException("A 'flow-name' is required for "
-                         + getName(), locator);
-        } else {
-            flowName = name;
-        }
-    }
-
-    /**
-     * @return the name of this flow
-     */
-    public String getFlowName() {
-        return flowName;
-    }
-
-    /**
      * @param contentWidth content width of this flow, in millipoints (??)
      */
     protected void setContentWidth(int contentWidth) {
         this.contentWidth = contentWidth;
     }
+
     /**
      * @return the content width of this flow (really of the region
      * in which it is flowing), in millipoints (??).
@@ -178,6 +146,9 @@ public class Flow extends FObj {
         list.add(lm);
     }
 
+    /**
+     * @see org.apache.fop.fo.FObj#getName()
+     */
     public String getName() {
         return "fo:flow";
     }

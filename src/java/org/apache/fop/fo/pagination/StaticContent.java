@@ -38,9 +38,6 @@ public class StaticContent extends Flow {
         super(parent);
     }
 
-    private void setup() {
-    }
-
     /**
      * @see org.apache.fop.fo.FONode#validateChildNode(Locator, String, String)
      * XSL Content Model: (%block;)+
@@ -65,20 +62,8 @@ public class StaticContent extends Flow {
     }
 
     /**
-     * flowname checking is more stringient for static content currently
-     * @param name the flow-name to set
-     * @throws SAXParseException for a missing flow name
+     * @see org.apache.fop.fo.FObj#getName()
      */
-    protected void setFlowName(String name) throws SAXParseException {
-        if (name == null || name.equals("")) {
-            throw new SAXParseException("A 'flow-name' is required for "
-                                   + getName() + ".", locator);
-        } else {
-            super.setFlowName(name);
-        }
-
-    }
-
     public String getName() {
         return "fo:static-content";
     }

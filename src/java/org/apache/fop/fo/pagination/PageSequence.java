@@ -189,7 +189,7 @@ public class PageSequence extends FObj {
                this.titleFO = (Title)child;
             } else if (childName.equals("fo:flow")) {
                 this.mainFlow = (Flow)child;
-                String flowName = this.mainFlow.getFlowName();
+                String flowName = this.mainFlow.getPropString(PR_FLOW_NAME);
                 if (flowMap.containsKey(flowName)) {
                     throw new FOPException("flow-name "
                         + flowName
@@ -205,7 +205,7 @@ public class PageSequence extends FObj {
                 startStructuredPageSequence();
                 super.addChildNode(child); // For getChildren
             } else if (childName.equals("fo:static-content")) {
-                String flowName = ((StaticContent)child).getFlowName();
+                String flowName = ((StaticContent)child).getPropString(PR_FLOW_NAME);
                 if (flowMap.containsKey(flowName)) {
                     throw new FOPException("flow-name " + flowName
                               + " is not unique within an fo:page-sequence");

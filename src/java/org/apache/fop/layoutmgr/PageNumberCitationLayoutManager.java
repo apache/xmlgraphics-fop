@@ -35,15 +35,18 @@ public class PageNumberCitationLayoutManager extends LeafNodeLayoutManager {
     PageNumberCitation pncNode;
     Font font = null;
     
+    // whether the page referred to by the citation has been resolved yet
+    private boolean resolved = false;
+    
     /**
      * Constructor
      *
      * @param node the formatting object that creates this area
-     * @todo better null checking of font object
+     * @todo better retrieval of font info
      */
     public PageNumberCitationLayoutManager(PageNumberCitation node) {
         super(node);
-        font = node.getFontState();
+        font = node.getPropertyManager().getFontState(node.getFOInputHandler().getFontInfo());
         pncNode = node;
     }
 
@@ -54,8 +57,8 @@ public class PageNumberCitationLayoutManager extends LeafNodeLayoutManager {
     
     public void addAreas(PositionIterator posIter, LayoutContext context) {
         super.addAreas(posIter, context);
-        if (pncNode.getUnresolved()) {
-            parentLM.addUnresolvedArea(pncNode.getRefId(),
+        if (!resolved) {
+            parentLM.addUnresolvedArea(pncNode.getPropString(PR_REF_ID),
                 (Resolveable) curArea);
         }
     }
@@ -67,14 +70,9 @@ public class PageNumberCitationLayoutManager extends LeafNodeLayoutManager {
     /**
      * if id can be resolved then simply return a word, otherwise
      * return a resolveable area
-     * @todo move ref-id validation check to the FO class' addProperties().
      */
     private InlineArea getPageNumberCitationInlineArea(LayoutManager parentLM) {
-        if (pncNode.getRefId().equals("")) {
-            fobj.getLogger().error("page-number-citation must contain \"ref-id\"");
-            return null;
-        }
-        PageViewport page = parentLM.resolveRefID(pncNode.getRefId());
+        PageViewport page = parentLM.resolveRefID(pncNode.getPropString(PR_REF_ID));
         InlineArea inline = null;
         if (page != null) {
             String str = page.getPageNumber();
@@ -90,10 +88,10 @@ public class PageNumberCitationLayoutManager extends LeafNodeLayoutManager {
             inline.addTrait(Trait.FONT_NAME, font.getFontName());
             inline.addTrait(Trait.FONT_SIZE,
                          new Integer(font.getFontSize()));
-            pncNode.setUnresolved(false);
+            resolved = true;
         } else {
-            pncNode.setUnresolved(true);
-            inline = new UnresolvedPageNumber(pncNode.getRefId());
+            resolved = false;
+            inline = new UnresolvedPageNumber(pncNode.getPropString(PR_REF_ID));
             String str = "MMM"; // reserve three spaces for page number
             int width = getStringWidth(str);
             inline.setIPD(width);

@@ -222,6 +222,9 @@ public class Root extends FObj {
         return foInputHandler;
     }
 
+    /**
+     * @see org.apache.fop.fo.FObj#getName()
+     */
     public String getName() {
         return "fo:root";
     }

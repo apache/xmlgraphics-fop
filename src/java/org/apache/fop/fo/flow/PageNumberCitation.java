@@ -27,10 +27,8 @@ import org.xml.sax.Locator;
 import org.xml.sax.SAXParseException;
 
 // FOP
-import org.apache.fop.datatypes.ColorType;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FObj;
-import org.apache.fop.fonts.Font;
 import org.apache.fop.layoutmgr.PageNumberCitationLayoutManager;
 
 /**
@@ -40,22 +38,23 @@ import org.apache.fop.layoutmgr.PageNumberCitationLayoutManager;
  * block referenced with the ref-id attribute.
  */
 public class PageNumberCitation extends FObj {
-    /** Fontstate for this object **/
-    protected Font fontState;
-
-    private float red;
-    private float green;
-    private float blue;
-    private int wrapOption;
-    private String pageNumber;
-    private String refId;
-    private boolean unresolved = false;
 
     /**
      * @param parent FONode that is the parent of this object
      */
     public PageNumberCitation(FONode parent) {
         super(parent);
+    }
+
+    /**
+     * @see org.apache.fop.fo.FObj#addProperties
+     */
+    protected void addProperties(Attributes attlist) throws SAXParseException {
+        super.addProperties(attlist);
+
+        if (getPropString(PR_REF_ID) == null || getPropString(PR_REF_ID).equals("")) {
+            missingPropertyError("ref-id");
+        }
     }
 
     /**
@@ -68,47 +67,9 @@ public class PageNumberCitation extends FObj {
     }
 
     /**
-     * @todo switch this method to addProperties()
-     */
-    private void setup() {
-        // Common Font Properties
-        this.fontState = propMgr.getFontState(getFOInputHandler().getFontInfo());
-
-        ColorType c = this.propertyList.get(PR_COLOR).getColorType();
-        this.red = c.getRed();
-        this.green = c.getGreen();
-        this.blue = c.getBlue();
-
-        this.wrapOption = getPropEnum(PR_WRAP_OPTION);
-        this.refId = getPropString(PR_REF_ID);
-
-        if (this.refId.equals("")) {
-            //throw new FOPException("page-number-citation must contain \"ref-id\"");
-        }
-
-    }
-
-    public String getRefId() {
-        return refId;
-    }
-
-    public boolean getUnresolved() {
-        return unresolved;
-    }
-
-    public void setUnresolved(boolean isUnresolved) {
-        unresolved = isUnresolved;
-    }
-
-    public Font getFontState() {
-        return fontState;
-    }
-
-    /**
      * @see org.apache.fop.fo.FObj#addLayoutManager(List)
      */
     public void addLayoutManager(List list) { 	 
-        setup();
         PageNumberCitationLayoutManager lm = 
             new PageNumberCitationLayoutManager(this);
         list.add(lm); 	 

@@ -202,6 +202,8 @@ public class FObj extends FONode implements Constants {
      * Convenience method to quickly obtain the length value of a property
      * for this FO, without querying for the propertyList first.
      * Meaningful only for properties having a length representation
+     * Note: getValue() only correct after resolution completed, therefore
+     * should be called only in layout manager code.
      * @param propId - the Constants ID of the desired property to obtain
      * @return the length value of the property value
      */
@@ -358,8 +360,8 @@ public class FObj extends FONode implements Constants {
 
     /**
      * Check if this formatting object generates reference areas.
-     *
      * @return true if generates reference areas
+     * @todo see if needed
      */
     public boolean generatesReferenceAreas() {
         return false;
