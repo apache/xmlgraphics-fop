@@ -14,6 +14,10 @@ import org.apache.fop.layout.*;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.datatypes.*;
 
+import org.apache.fop.layoutmgr.LayoutManager;
+import org.apache.fop.layoutmgr.table.Column;
+
+
 public class TableColumn extends FObj {
 
     ColorType backgroundColor;
@@ -28,6 +32,11 @@ public class TableColumn extends FObj {
 
     public TableColumn(FONode parent) {
         super(parent);
+    }
+
+    public LayoutManager getLayoutManager() {
+        doSetup();
+        return new Column(this);
     }
 
     public Length getColumnWidthAsLength() {
@@ -54,7 +63,7 @@ public class TableColumn extends FObj {
         return numColumnsRepeated;
     }
 
-    public void doSetup() throws FOPException {
+    public void doSetup() {
 
         // Common Border, Padding, and Background Properties
         // only background apply, border apply if border-collapse
@@ -88,3 +97,4 @@ public class TableColumn extends FObj {
     }
 
 }
+

@@ -14,7 +14,11 @@ import org.apache.fop.layout.*;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.datatypes.*;
 
+import org.apache.fop.layoutmgr.table.Cell;
+
 import org.xml.sax.Attributes;
+
+import java.util.List;
 
 public class TableCell extends FObj {
 
@@ -90,6 +94,13 @@ public class TableCell extends FObj {
     public void handleAttrs(Attributes attlist) throws FOPException {
         super.handleAttrs(attlist);
         doSetup();    // init some basic property values
+    }
+
+    /**
+     */
+    public void addLayoutManager(List list) {
+        Cell clm = new Cell(this);
+        list.add(clm);
     }
 
     // Set position relative to table (set by body?)

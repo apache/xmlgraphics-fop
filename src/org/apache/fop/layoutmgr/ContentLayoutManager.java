@@ -178,5 +178,15 @@ public class ContentLayoutManager implements LayoutManager {
     public void addUnresolvedArea(String id, Resolveable res) {
         parentLM.addUnresolvedArea(id, res);
     }
+
+    /** @see org.apache.fop.layoutmgr.LayoutManager */
+    public void addMarker(String name, LayoutManager lm, boolean start) {
+        parentLM.addMarker(name, lm, start);
+    }
+
+    /** @see org.apache.fop.layoutmgr.LayoutManager */
+    public LayoutManager retrieveMarker(String name, int pos, int boundary) {
+        return parentLM.retrieveMarker(name, pos, boundary);
+    }
 }
 

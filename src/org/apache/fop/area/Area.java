@@ -1,6 +1,6 @@
 /*
  * $Id$
- * Copyright (C) 2001 The Apache Software Foundation. All rights reserved.
+ * Copyright (C) 2001-2002 The Apache Software Foundation. All rights reserved.
  * For details on use and redistribution please refer to the
  * LICENSE file included with these sources.
  */
@@ -24,38 +24,96 @@ import java.util.HashMap;
  */
 public class Area implements Serializable {
     // stacking directions
+    /**
+     * Stacking left to right
+     */
     public static final int LR = 0;
+
+    /**
+     * Stacking right to left
+     */
     public static final int RL = 1;
+
+    /**
+     * Stacking top to bottom
+     */
     public static final int TB = 2;
+
+    /**
+     * Stacking bottom to top
+     */
     public static final int BT = 3;
 
     // orientations for reference areas
+    /**
+     * Normal orientation
+     */
     public static final int ORIENT_0 = 0;
+
+    /**
+     * Rotated 90 degrees clockwise
+     */
     public static final int ORIENT_90 = 1;
+    
+    /**
+     * Rotate 180 degrees
+     */
     public static final int ORIENT_180 = 2;
+    
+    /**
+     * Rotated 270 degrees clockwise
+     */
     public static final int ORIENT_270 = 3;
 
     // area class values
+    
+    /**
+     * Normal class
+     */
     public static final int CLASS_NORMAL = 0;
+
+    /**
+     * Fixed position class
+     */
     public static final int CLASS_FIXED = 1;
+
+    /**
+     * Absolute position class
+     */
     public static final int CLASS_ABSOLUTE = 2;
+
+    /**
+     * Before float class
+     */
     public static final int CLASS_BEFORE_FLOAT = 3;
+
+    /**
+     * Footnote class
+     */
     public static final int CLASS_FOOTNOTE = 4;
+
+    /**
+     * Side float class
+     */
     public static final int CLASS_SIDE_FLOAT = 5;
+
     // IMPORTANT: make sure this is the maximum + 1
-    public static final int CLASS_MAX = CLASS_SIDE_FLOAT+1;
+    /**
+     * Maximum class count
+     */
+    public static final int CLASS_MAX = CLASS_SIDE_FLOAT + 1;
 
     private int areaClass = CLASS_NORMAL;
     private int ipd;
 
-    protected Area parent =null; // Doesn't need to be saved in serialization
+    protected Area parent = null; // Doesn't need to be saved in serialization
 
     public int getAreaClass() {
-	return areaClass;
+        return areaClass;
     }
 
     public void setAreaClass(int areaClass) {
-	this.areaClass = areaClass;
+        this.areaClass = areaClass;
     }
 
     public void setIPD(int i) {
@@ -73,7 +131,7 @@ public class Area implements Serializable {
      * and its current content.
      */
     public MinOptMax getAvailBPD() {
-	return MinOptMax.subtract(getMaxBPD(), getContentBPD());
+        return MinOptMax.subtract(getMaxBPD(), getContentBPD());
     }
 
     /**
@@ -85,10 +143,11 @@ public class Area implements Serializable {
      * for the sizes of the conditional areas.
      */
     public MinOptMax getMaxBPD() {
-	if (parent != null) {
-	    return parent.getMaxBPD();
-	}
-	else return new MinOptMax();
+        if (parent != null) {
+            return parent.getMaxBPD();
+        } else {
+            return new MinOptMax();
+        }
     }
 
     /**
@@ -98,7 +157,7 @@ public class Area implements Serializable {
      * the area.
      */
     public MinOptMax getContentBPD() {
-	return new MinOptMax();
+        return new MinOptMax();
     }
 
     /**
@@ -112,11 +171,11 @@ public class Area implements Serializable {
      * to the allocation BPD, depending on conditionality.
      */
     public MinOptMax getAllocationBPD() {
-	return getContentBPD();
+        return getContentBPD();
     }
 
     public void setParent(Area parent) {
-	this.parent = parent;
+        this.parent = parent;
     }
 
     // Do nothing! Let subclasses do something if they can have child areas.
@@ -141,10 +200,11 @@ public class Area implements Serializable {
     }
 
     public HashMap getTraits() {
-	return this.props;
+        return this.props;
     }
 
     public Object getTrait(Object oTraitCode) {
-	return (props != null? props.get(oTraitCode) : null);
+        return (props != null ? props.get(oTraitCode) : null);
     }
 }
+

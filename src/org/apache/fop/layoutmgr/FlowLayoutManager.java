@@ -138,5 +138,16 @@ public class FlowLayoutManager extends BlockStackingLayoutManager {
             reset(null);
         }
     }
+
+    /**
+     * Retrieve marker is not allowed in the flow so this reports an
+     * error and returns null.
+     *
+     * @see org.apache.fop.layoutmgr.LayoutManager
+     */
+    public LayoutManager retrieveMarker(String name, int pos, int boundary) {
+        // error cannot retrieve markers in flow
+        return null;
+    }
 }
 

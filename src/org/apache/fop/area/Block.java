@@ -24,10 +24,14 @@ public class Block extends BlockParent implements Serializable {
     public static final int STACK = 0;
     // placed relative to the parent area
     public static final int RELATIVE = 1;
-    // placed relative to the page or viewport
+
+    /**
+     * Relative to the block parent but not effecting the stacking
+     * Used for block-container, tables and lists.
+     */
     public static final int ABSOLUTE = 2;
 
-    int stacking = TB;
+    private int stacking = TB;
 
     // list of marker fo objects that are associated with this area
     // if a retrieve marker resolves this area it will format the
@@ -45,6 +49,7 @@ public class Block extends BlockParent implements Serializable {
         if (children == null) {
             children = new ArrayList();
         }
+        height += block.getHeight();
         children.add(block);
     }
 
@@ -52,6 +57,7 @@ public class Block extends BlockParent implements Serializable {
         if (children == null) {
             children = new ArrayList();
         }
+        height += line.getHeight();
         children.add(line);
     }
 

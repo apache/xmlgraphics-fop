@@ -1,6 +1,6 @@
 /*
  * $Id$
- * Copyright (C) 2001 The Apache Software Foundation. All rights reserved.
+ * Copyright (C) 2002 The Apache Software Foundation. All rights reserved.
  * For details on use and redistribution please refer to the
  * LICENSE file included with these sources.
  */
@@ -47,8 +47,6 @@ public abstract class BlockStackingLayoutManager extends AbstractLayoutManager {
     protected void setCurrentArea(BlockParent parentArea) {
         this.parentArea = parentArea;
     }
-
-
 
     protected MinOptMax resolveSpaceSpecifier(Area nextArea) {
         SpaceSpecifier spaceSpec = new SpaceSpecifier(false);
@@ -126,8 +124,9 @@ public abstract class BlockStackingLayoutManager extends AbstractLayoutManager {
      * Force current area to be added to parent area.
      */
     protected boolean flush() {
-        if (getCurrentArea() != null)
+        if (getCurrentArea() != null) {
             return parentLM.addChild(getCurrentArea());
+        }
         return false;
     }
 

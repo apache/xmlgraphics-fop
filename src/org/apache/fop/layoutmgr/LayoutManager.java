@@ -64,11 +64,60 @@ public interface LayoutManager {
     public void getWordChars(StringBuffer sbChars, Position bp1,
                              Position bp2);
 
+    /**
+     * Get the string of the current page number.
+     *
+     * @return the string for the current page number
+     */
     public String getCurrentPageNumber();
 
+    /**
+     * Resolve the id reference.
+     * This is called by an area looking for an id reference.
+     * If the id reference is not found then it should add a resolveable object.
+     *
+     * @param ref the id reference
+     * @return the page containing the id reference or null if not found
+     */
     public PageViewport resolveRefID(String ref);
 
+    /**
+     * Add an id to the page.
+     * @todo add the location of the area on the page
+     *
+     * @param id the id reference to add.
+     */
     public void addIDToPage(String id);
 
+    /**
+     * Add an unresolved area.
+     * The is used to add a resolveable object to the page for a given id.
+     *
+     * @param id the id reference this object needs for resolving
+     * @param res the resolveable object
+     */
     public void addUnresolvedArea(String id, Resolveable res);
+
+    /**
+     * Add the marker.
+     * A number of formatting objects may contain markers. This
+     * method is used to add those markers to the page.
+     *
+     * @param name the marker class name
+     * @param lm the layout manager of the marker child
+     * @param start true if the formatting object is starting false is finishing
+     */
+    public void addMarker(String name, LayoutManager lm, boolean start);
+
+    /**
+     * Retrieve a marker.
+     * This method is used when retrieve a marker.
+     *
+     * @param name the class name of the marker
+     * @param pos the retrieve position
+     * @param boundary the boundary for retrieving the marker
+     * @return the layout manaager of the retrieved marker if any
+     */
+    public LayoutManager retrieveMarker(String name, int pos, int boundary);
+
 }

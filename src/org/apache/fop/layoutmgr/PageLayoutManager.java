@@ -164,6 +164,19 @@ public class PageLayoutManager extends AbstractLayoutManager implements Runnable
         areaTree.addUnresolvedID(id, curPage);
     }
 
+    public void addMarker(String name, LayoutManager lm, boolean start) {
+        if(start) {
+            // add marker to page on area tree
+        } else {
+            // add end marker to page on area tree
+        }
+    }
+
+    public LayoutManager retrieveMarker(String name, int pos, int boundary) {
+        // get marker from the current markers on area tree
+        return null;
+    }
+
     /**
      * For now, only handle normal flow areas.
      */

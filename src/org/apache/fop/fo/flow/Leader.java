@@ -36,8 +36,7 @@ import java.util.ArrayList;
 
 /**
  * Implements fo:leader; main property of leader leader-pattern.
- * The following patterns are treated: rule, space, dots.
- * The pattern use-content is ignored, i.e. it still must be implemented.
+ * The following patterns are treated: rule, space, dots and use-content.
  */
 public class Leader extends FObjMixed {
     int ruleStyle;
@@ -61,6 +60,12 @@ public class Leader extends FObjMixed {
                 protected MinOptMax getAllocationIPD(int refIPD) {
                    return getAllocIPD(refIPD);
                 }
+
+                /*protected void offsetArea(LayoutContext context) {
+                    if(leaderPattern == LeaderPattern.DOTS) {
+                        curArea.setOffset(context.getBaseline());
+                    }
+                }*/
             };
         lm.setAlignment(properties.get("leader-alignment").getEnum());
         list.add(lm);
@@ -87,7 +92,7 @@ public class Leader extends FObjMixed {
             leaderArea = new Space();
         } else if(leaderPattern == LeaderPattern.DOTS) {
             Word w = new Word();
-            char dot = '.'; // userAgent.getLeaderDotChar();
+            char dot = '.'; // userAgent.getLeaderDotCharacter();
 
             w.setWord("" + dot);
             w.addTrait(Trait.FONT_NAME, fontState.getFontName());
@@ -108,6 +113,7 @@ public class Leader extends FObjMixed {
             if(spacer != null) {
                 fa.addChild(spacer);
             }
+            fa.setHeight(fontState.getAscender());
 
             leaderArea = fa;
         } else if(leaderPattern == LeaderPattern.USECONTENT) {

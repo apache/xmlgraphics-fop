@@ -8,14 +8,12 @@
 package org.apache.fop.layoutmgr;
 
 import org.apache.fop.fo.FObj;
-import org.apache.fop.fo.FONode;
 import org.apache.fop.area.Area;
 import org.apache.fop.area.Resolveable;
 import org.apache.fop.area.PageViewport;
 import org.apache.fop.fo.PropertyManager;
 
 import java.util.ListIterator;
-import java.util.ArrayList;
 
 /**
  * The base class for all LayoutManagers.
@@ -106,18 +104,10 @@ public abstract class AbstractLayoutManager implements LayoutManager {
             return m_curChildLM;
         }
         while (m_childLMiter.hasNext()) {
-            Object obj = m_childLMiter.next();
-            if (obj instanceof LayoutManager) {
-                m_curChildLM = (LayoutManager) obj;
-                m_curChildLM.setParentLM(this);
-                m_curChildLM.init();
-                return m_curChildLM;
-            } else {
-                m_childLMiter.remove();
-                //log.warn(
-                //  "child LM not a LayoutManager: " +
-                //  obj.getClass().getName());
-            }
+            m_curChildLM = (LayoutManager) m_childLMiter.next();
+            m_curChildLM.setParentLM(this);
+            m_curChildLM.init();
+            return m_curChildLM;
         }
         return null;
     }
@@ -257,26 +247,69 @@ public abstract class AbstractLayoutManager implements LayoutManager {
         return false;
     }
 
+    /**
+     * Delegate getting the current page number to the parent layout manager.
+     *
+     * @see org.apache.fop.layoutmgr.LayoutManager
+     */
     public String getCurrentPageNumber() {
         return parentLM.getCurrentPageNumber();
     }
 
+    /**
+     * Delegate resolving the id reference to the parent layout manager.
+     *
+     * @see org.apache.fop.layoutmgr.LayoutManager
+     */
     public PageViewport resolveRefID(String ref) {
         return parentLM.resolveRefID(ref);
     }
 
+    /**
+     * Add the id to the page.
+     * If the id string is not null then add the id to the current page.
+     */
     protected void addID() {
         if(foID != null) {
             addIDToPage(foID);
         }
     }
 
+    /**
+     * Delegate adding id reference to the parent layout manager.
+     *
+     * @see org.apache.fop.layoutmgr.LayoutManager
+     */
     public void addIDToPage(String id) {
         parentLM.addIDToPage(id);
     }
 
+    /**
+     * Delegate adding unresolved area to the parent layout manager.
+     *
+     * @see org.apache.fop.layoutmgr.LayoutManager
+     */
     public void addUnresolvedArea(String id, Resolveable res) {
         parentLM.addUnresolvedArea(id, res);
     }
+
+    /**
+     * Delegate adding marker to the parent layout manager.
+     *
+     * @see org.apache.fop.layoutmgr.LayoutManager
+     */
+    public void addMarker(String name, LayoutManager lm, boolean start) {
+        parentLM.addMarker(name, lm, start);
+    }
+
+    /**
+     * Delegate retrieve marker to the parent layout manager.
+     *
+     * @see org.apache.fop.layoutmgr.LayoutManager
+     */
+    public LayoutManager retrieveMarker(String name, int pos, int boundary) {
+        return parentLM.retrieveMarker(name, pos, boundary);
+    }
+
 }
 

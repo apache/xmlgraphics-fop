@@ -15,7 +15,7 @@ import org.apache.fop.datatypes.Length;
  */
 public class BlockProps {
     public int firstIndent; // text-indent
-    public int lastIndent;  // last-line-indent
+    public int lastIndent; // last-line-indent
     public int textAlign;
     public int textAlignLast;
     public int lineStackType; // line-stacking-strategy (enum)

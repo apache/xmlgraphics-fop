@@ -72,8 +72,8 @@ public class FOElementMapping implements ElementMapping {
             foObjs.put("table", new Ta());
             foObjs.put("table-column", new TC());
             foObjs.put("table-caption", new TCaption());
-            foObjs.put("table-header", new TH());
-            foObjs.put("table-footer", new TF());
+            foObjs.put("table-header", new TB());
+            foObjs.put("table-footer", new TB());
             foObjs.put("table-body", new TB());
             foObjs.put("table-row", new TR());
             foObjs.put("table-cell", new TCell());
@@ -320,18 +320,6 @@ public class FOElementMapping implements ElementMapping {
     static class TCaption extends ElementMapping.Maker {
         public FONode make(FONode parent) {
             return new TableCaption(parent);
-        }
-    }
-
-    static class TH extends ElementMapping.Maker {
-        public FONode make(FONode parent) {
-            return new TableHeader(parent);
-        }
-    }
-
-    static class TF extends ElementMapping.Maker {
-        public FONode make(FONode parent) {
-            return new TableFooter(parent);
         }
     }
 

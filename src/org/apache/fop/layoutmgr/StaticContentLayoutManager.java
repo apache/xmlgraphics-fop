@@ -1,19 +1,18 @@
 /*
  * $Id$
- * Copyright (C) 2001 The Apache Software Foundation. All rights reserved.
+ * Copyright (C) 2002 The Apache Software Foundation. All rights reserved.
  * For details on use and redistribution please refer to the
  * LICENSE file included with these sources.
  */
 
 package org.apache.fop.layoutmgr;
 
-import org.apache.fop.apps.FOPException;
 import org.apache.fop.fo.FObj;
-import org.apache.fop.fo.properties.Constants;
-import org.apache.fop.area.*;
+import org.apache.fop.area.RegionReference;
+import org.apache.fop.area.Area;
+import org.apache.fop.area.Block;
 
 import java.util.ArrayList;
-import java.util.List;
 
 /**
  * LayoutManager for an fo:flow object.
@@ -24,7 +23,7 @@ import java.util.List;
 public class StaticContentLayoutManager extends BlockStackingLayoutManager {
 
     private RegionReference region;
-    ArrayList blockBreaks = new ArrayList();      
+    private ArrayList blockBreaks = new ArrayList();      
   
     public StaticContentLayoutManager(FObj fobj) {
         super(fobj);
@@ -46,7 +45,7 @@ public class StaticContentLayoutManager extends BlockStackingLayoutManager {
             if (!curLM.isFinished()) {
                 if ((bp = curLM.getNextBreakPoss(childLC)) != null) {
                     blockBreaks.add(bp);
-                    if(bp.isForcedBreak()) {
+                    if (bp.isForcedBreak()) {
                         System.out.println("Forced breaks are not allowed in static content");
                         return null;
                     }
@@ -98,5 +97,14 @@ public class StaticContentLayoutManager extends BlockStackingLayoutManager {
         return region;
     }
 
+    /**
+     * Markers are not allowed in static areas so this reports an
+     * error and does nothing.
+     *
+     * @see org.apache.fop.layoutmgr.LayoutManager
+     */
+    public void addMarker(String name, LayoutManager lm, boolean start) {
+        // error markers not allowed in static
+    }
 }
 
