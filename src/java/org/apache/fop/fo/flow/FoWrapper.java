@@ -86,7 +86,7 @@ public class FoWrapper extends FOPageSeqNode {
      * attribute set information.
      */
     public FoWrapper
-            (FOTree foTree, FONode pageSequence, FOPageSeqNode parent,
+            (FOTree foTree, FoPageSequence pageSequence, FOPageSeqNode parent,
                     FoXmlEvent event, int stateFlags)
         throws TreeException, FOPException
     {

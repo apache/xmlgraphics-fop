@@ -91,7 +91,7 @@ public class FoRetrieveMarker extends FOPageSeqNode {
      * attribute set information.
      */
     public FoRetrieveMarker
-            (FOTree foTree, FONode pageSequence, FOPageSeqNode parent,
+            (FOTree foTree, FoPageSequence pageSequence, FOPageSeqNode parent,
                     FoXmlEvent event, int stateFlags)
         throws TreeException, FOPException
     {

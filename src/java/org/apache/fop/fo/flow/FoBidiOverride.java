@@ -107,7 +107,7 @@ public class FoBidiOverride extends FOPageSeqNode {
      * attribute set information.
      */
     public FoBidiOverride
-            (FOTree foTree, FONode pageSequence, FOPageSeqNode parent,
+            (FOTree foTree, FoPageSequence pageSequence, FOPageSeqNode parent,
                     FoXmlEvent event, int stateFlags)
         throws TreeException, FOPException
     {
