@@ -1,6 +1,6 @@
 /*
  * $Id$
- * Copyright (C) 2001 The Apache Software Foundation. All rights reserved.
+ * Copyright (C) 2001-2002 The Apache Software Foundation. All rights reserved.
  * For details on use and redistribution please refer to the
  * LICENSE file included with these sources.
  */
@@ -19,7 +19,7 @@ import java.io.File;
 import java.net.URL;
 import java.net.MalformedURLException;
 import java.lang.reflect.Constructor;
-import java.util.HashMap;
+import java.util.Map;
 
 /**
  * create FopImage objects (with a configuration file - not yet implemented).
@@ -27,7 +27,7 @@ import java.util.HashMap;
  */
 public class FopImageFactory {
 
-    private static HashMap m_urlMap = new HashMap();
+    private static Map m_urlMap = new java.util.HashMap();
 
     /**
      * create an FopImage objects.
@@ -81,18 +81,16 @@ public class FopImageFactory {
                                         + e_context.getMessage());
         } catch (Exception e) {
             // maybe relative
-            URL context_url = null;
-            String base = Configuration.getStringValue("baseDir");
+            URL baseURL = Configuration.getBaseURL();
 
-            if (base == null) {
+            if (baseURL == null) {
                 throw new FopImageException("Error with image URL: "
                                              + e.getMessage()
-                                             + " and no base directory is specified");
+                                             + " and no base URL is specified");
             }
 
             try {
-                absoluteURL = new URL(Configuration.getStringValue("baseDir")
-                                      + absoluteURL.getFile());
+                absoluteURL = new URL(baseURL, absoluteURL.getFile());
             } catch (MalformedURLException e_context) {
                 // pb context url
                 throw new FopImageException("Invalid Image URL - error on relative URL : "

@@ -36,6 +36,7 @@ public class GifImage extends AbstractFopImage {
     }
 
     protected void loadImage() throws FopImageException {
+        //org.apache.fop.messaging.MessageHandler.debug(getClass().getName()+".loadImage(): "+this.m_href);
         int[] tmpMap = null;
         try {
             ImageProducer ip = (ImageProducer)this.m_href.getContent();
