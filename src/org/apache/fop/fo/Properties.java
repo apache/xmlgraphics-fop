@@ -644,6 +644,40 @@ public abstract class Properties {
     }
 
     /**
+     * @param value <tt>PropertyValue</tt> the value being tested
+     * @param property <tt>int</tt> property index of returned value
+     * @return <tt>PropertyValue</t> the same value, with its property set
+     *  to the <i>property</i> argument, if it is an Auto or a
+     * <tt>Numeric</tt> distance
+     * @exception <tt>PropertyException</tt> if the conditions are not met
+     */
+    protected static PropertyValue autoOrDistance
+                                        (PropertyValue value, int property)
+        throws PropertyException
+    {
+        if (value instanceof Auto ||
+                value instanceof Numeric && ((Numeric)value).isDistance()) {
+            value.setProperty(property);
+            return value;
+        }
+        else throw new PropertyException
+            ("Value not 'Auto' or a distance for "
+                + PropNames.getPropertyName(value.getProperty()));
+    }
+
+    /**
+     * @param value <tt>PropertyValue</tt> the value being tested
+     * @return <tt>PropertyValue</t> the same value if it is an Auto or a
+     * <tt>Numeric</tt> distance
+     * @exception <tt>PropertyException</tt> if the conditions are not met
+     */
+    protected static PropertyValue autoOrDistance(PropertyValue value)
+        throws PropertyException
+    {
+        return autoOrDistance(value, value.getProperty());
+    }
+
+    /**
      * Pseudo-property class for common border style values occurring in a
      * number of classes.
      */
@@ -2346,9 +2380,9 @@ public abstract class Properties {
 
                 list = new PropertyValueList(PropNames.BORDER_COLOR);
                 list.add(top);
-                list.add(left);
-                list.add(bottom);
                 list.add(right);
+                list.add(bottom);
+                list.add(left);
                 // Question: if less than four colors have been specified in
                 // the shorthand, what border-?-color properties, if any,
                 // have been specified?
@@ -2754,7 +2788,8 @@ public abstract class Properties {
         public static PropertyValue getInitialValue(int property)
             throws PropertyException
         {
-            return new ColorType (PropNames.BACKGROUND_COLOR, ColorCommon.BLACK);
+            return
+                new ColorType(PropNames.BACKGROUND_COLOR, ColorCommon.BLACK);
         }
 
         public static final ROStringArray enums = ColorCommon.enums;
@@ -2949,9 +2984,9 @@ public abstract class Properties {
 
                 list = new PropertyValueList(PropNames.BORDER_STYLE);
                 list.add(top);
-                list.add(left);
-                list.add(bottom);
                 list.add(right);
+                list.add(bottom);
+                list.add(left);
                 // Question: if less than four styles have been specified in
                 // the shorthand, what border-?-style properties, if any,
                 // have been specified?
@@ -3177,9 +3212,9 @@ public abstract class Properties {
 
                 list = new PropertyValueList(PropNames.BORDER_WIDTH);
                 list.add(top);
-                list.add(left);
-                list.add(bottom);
                 list.add(right);
+                list.add(bottom);
+                list.add(left);
                 // Question: if less than four widths have been specified in
                 // the shorthand, what border-?-width properties, if any,
                 // have been specified?
@@ -5300,6 +5335,88 @@ public abstract class Properties {
         public static final int traitMapping = SHORTHAND_MAP;
         public static final int initialValueType = NOTYPE_IT;
         public static final int inherited = NO;
+
+        /**
+         * 'value' is a PropertyValueList or an individual PropertyValue.
+         *
+         * <p>If 'value' is an individual PropertyValue, it must contain
+         * either
+         *   a FromParent value,
+         *   a FromNearestSpecified value,
+         *   an Inherit value,
+         *   an Auto value,
+         *   a Numeric value which is a distance, rather than a number.
+         *
+         * <p>If 'value' is a PropertyValueList, it contains a list of
+         * 2 to 4 length, percentage or auto values representing margin
+         * dimensions.
+         *
+         * <p>The value(s) provided, if valid, are converted into a list
+         * containing the expansion of the shorthand.
+         * The first element is a value for margin-top,
+         * the second element is a value for margin-right,
+         * the third element is a value for margin-bottom,
+         * the fourth element is a value for margin-left.
+         *
+         * @param foTree the <tt>FOTree</tt> being built
+         * @param value <tt>PropertyValue</tt> returned by the parser
+         * @return <tt>PropertyValue</tt> the verified value
+         */
+        public static PropertyValue verifyParsing
+                                        (FOTree foTree, PropertyValue value)
+                    throws PropertyException
+        {
+            if ( ! (value instanceof PropertyValueList)) {
+                if (value instanceof Inherit
+                    || value instanceof FromParent
+                    || value instanceof FromNearestSpecified
+                    )
+                    return PropertySets.expandAndCopySHand(value);
+                return PropertySets.expandAndCopySHand
+                                        (Properties.autoOrDistance(value));
+            } else {
+                PropertyValueList list =
+                                spaceSeparatedList((PropertyValueList)value);
+                PropertyValue top, left, bottom, right;
+                int count = list.size();
+                if (count < 2 || count > 4)
+                    throw new PropertyException
+                        ("margin list contains " + count + " items");
+
+                Iterator margins = list.iterator();
+
+                // There must be at least two
+                top = Properties.autoOrDistance
+                    ((PropertyValue)(margins.next()), PropNames.MARGIN_TOP);
+                left = Properties.autoOrDistance
+                    ((PropertyValue)(margins.next()), PropNames.MARGIN_LEFT);
+                try {
+                    bottom = (PropertyValue)(top.clone());
+                    bottom.setProperty(PropNames.MARGIN_BOTTOM);
+                    right = (PropertyValue)(left.clone());
+                    right.setProperty(PropNames.MARGIN_RIGHT);
+                } catch (CloneNotSupportedException cnse) {
+                    throw new PropertyException
+                                (cnse.getMessage());
+                }
+
+                if (margins.hasNext())
+                    bottom = Properties.autoOrDistance(
+                                            (PropertyValue)(margins.next()),
+                                                    PropNames.MARGIN_BOTTOM);
+                if (margins.hasNext())
+                    right = Properties.autoOrDistance(
+                                            (PropertyValue)(margins.next()),
+                                                    PropNames.MARGIN_RIGHT);
+
+                list = new PropertyValueList(PropNames.MARGIN);
+                list.add(top);
+                list.add(right);
+                list.add(bottom);
+                list.add(left);
+                return list;
+            }
+        }
     }
 
     public static class MarginBottom extends Properties {
@@ -5310,7 +5427,7 @@ public abstract class Properties {
         public static PropertyValue getInitialValue(int property)
             throws PropertyException
         {
-            return Length.makeLength (PropNames.MARGIN_BOTTOM, 0.0d, Length.PT);
+            return Length.makeLength(PropNames.MARGIN_BOTTOM, 0.0d, Length.PT);
         }
         public static final int inherited = NO;
     }
