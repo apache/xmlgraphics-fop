@@ -757,7 +757,9 @@
     <name>font-weight</name>
     <inherited>true</inherited>
     <datatype>String</datatype>
-    <default>normal</default>
+    <keyword-equiv match="normal">400</keyword-equiv>
+    <keyword-equiv match="bold">700</keyword-equiv>
+    <default>400</default>
   </property>
 
 <!-- Common Hyphenation Properties -->
