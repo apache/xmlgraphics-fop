@@ -26,7 +26,7 @@ import org.apache.fop.fo.FOTreeVisitor;
 /**
  * Implementation for fo:wrapper formatting object.
  * The wrapper object serves as
- * a property holder for it's children objects.
+ * a property holder for its child node objects.
  *
  * Content: (#PCDATA|%inline;|%block;)*
  * Properties: id

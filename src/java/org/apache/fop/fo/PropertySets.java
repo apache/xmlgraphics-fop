@@ -969,7 +969,7 @@ public class PropertySets {
 
 
 
-        // Merge the attributes from the children into the parent.
+        // Merge the attributes from the child nodes into the parent.
         for (boolean dirty = true; dirty; ) {
             dirty = false;
             for (int i = 1; i < elements.length; i++) {
@@ -1017,7 +1017,7 @@ public class PropertySets {
         BitSet relevant = new BitSet();
         BitSet valid = new BitSet();
         int elementId;
-        ArrayList children;
+        ArrayList childNodes;
 
         Element(int elementId) {
             this.elementId = elementId;
@@ -1043,14 +1043,14 @@ public class PropertySets {
          * Add a single fo element as a content child.
          */
         public void addContent(int elementId) {
-            if (children == null) {
-                children = new ArrayList();
+            if (childNodes == null) {
+                childNodes = new ArrayList();
             }
-            children.add(elements[elementId]);
+            childNodes.add(elements[elementId]);
         }
 
         /**
-         * Add a set of fo elements as content children.
+         * Add a set of fo elements as content child nodes.
          */
         public void addContent(BitSet elements) {
             for (int i = 0; i < elements.size(); i++) {
@@ -1061,16 +1061,16 @@ public class PropertySets {
         }
 
         /**
-         * Merge the properties from the children into the set of valid
+         * Merge the properties from the child nodes into the set of valid
          * properties. Return true if at least one property could be added.
          */
         public boolean merge() {
-            if (children == null) {
+            if (childNodes == null) {
                 return false;
             }
             boolean dirty = false;
-            for (int i = 0; i < children.size(); i++) {
-                Element child = (Element) children.get(i);
+            for (int i = 0; i < childNodes.size(); i++) {
+                Element child = (Element) childNodes.get(i);
                 BitSet childValid = child.valid;
                 int n = childValid.length();
                 for (int j = 0; j < n; j++) {

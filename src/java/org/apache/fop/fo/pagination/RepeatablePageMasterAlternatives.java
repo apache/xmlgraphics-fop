@@ -74,7 +74,7 @@ public class RepeatablePageMasterAlternatives extends FObj
      * @see org.apache.fop.fo.FONode#end
      */
     protected void end() {
-        if (children == null) {
+        if (childNodes == null) {
            missingChildElementError("(conditional-page-master-reference+)");
         }
     }

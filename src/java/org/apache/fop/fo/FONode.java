@@ -165,7 +165,7 @@ public abstract class FONode {
     }
 
     /**
-     * @param child child node to be added to the children of this node
+     * @param child child node to be added to the childNodes of this node
      */
     protected void addChildNode(FONode child) {
     }
@@ -178,21 +178,21 @@ public abstract class FONode {
     }
 
     /**
-     * Return an iterator over all the children of this FObj.
+     * Return an iterator over all the child nodes of this FObj.
      * @return A ListIterator.
      */
-    public ListIterator getChildren() {
+    public ListIterator getChildNodes() {
         return null;
     }
 
     /**
-     * Return an iterator over the object's children starting
+     * Return an iterator over the object's child nodes starting
      * at the pased node.
      * @param childNode First node in the iterator
-     * @return A ListIterator or null if childNode isn't a child of
+     * @return A ListIterator or null if child node isn't a child of
      * this FObj.
      */
-    public ListIterator getChildren(FONode childNode) {
+    public ListIterator getChildNodes(FONode childNode) {
         return null;
     }
 

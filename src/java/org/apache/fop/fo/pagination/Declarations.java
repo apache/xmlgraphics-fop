@@ -73,8 +73,8 @@ public class Declarations extends FObj {
      * a hashmap of color profiles and a list of external xml.
      */
     protected void end() {
-        if (children != null) {
-            for (Iterator iter = children.iterator(); iter.hasNext();) {
+        if (childNodes != null) {
+            for (Iterator iter = childNodes.iterator(); iter.hasNext();) {
                 FONode node = (FONode)iter.next();
                 if (node.getName().equals("fo:color-profile")) {
                     ColorProfile cp = (ColorProfile)node;
@@ -101,7 +101,7 @@ public class Declarations extends FObj {
                 }
             }
         }
-        children = null;
+        childNodes = null;
     }
 
     public void acceptVisitor(FOTreeVisitor fotv) {
