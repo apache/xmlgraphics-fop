@@ -79,7 +79,6 @@ public class FObjMixed extends FObj {
         }
 
         FOText ft = new FOText(data, start, length, textInfo, this);
-        ft.setUserAgent(userAgent);
         getFOTreeControl().getFOInputHandler().characters(ft.ca, ft.start, ft.length);
         addChild(ft);
     }

@@ -114,7 +114,7 @@ public class SVGElement extends SVGObj {
         /* if width and height are zero, get the bounds of the content. */
 
         try {
-            String baseDir = userAgent.getBaseURL();
+            String baseDir = getUserAgent().getBaseURL();
             if (baseDir != null) {
                 ((SVGOMDocument)doc).setURLObject(new URL(baseDir));
             }
@@ -123,7 +123,7 @@ public class SVGElement extends SVGObj {
         }
 
         Element e = ((SVGDocument)doc).getRootElement();
-        final float ptmm = userAgent.getPixelUnitToMillimeter();
+        final float ptmm = getUserAgent().getPixelUnitToMillimeter();
         // temporary svg context
         SVGContext dc = new SVGContext() {
             public float getPixelToMM() {
@@ -179,7 +179,7 @@ public class SVGElement extends SVGObj {
                                 SVGDOMImplementation.SVG_NAMESPACE_URI);
         //}
         int fontSize = 12;
-        Point2D p2d = getSize(fontSize, svgRoot, userAgent.getPixelUnitToMillimeter());
+        Point2D p2d = getSize(fontSize, svgRoot, getUserAgent().getPixelUnitToMillimeter());
        ((SVGOMElement)e).setSVGContext(null);
 
         return p2d;

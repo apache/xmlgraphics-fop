@@ -58,6 +58,8 @@ import java.util.HashSet;
 
 
 // FOP
+import org.apache.fop.apps.FOUserAgent;
+
 import org.apache.fop.area.AreaTree;
 import org.apache.fop.area.AreaTreeModel;
 
@@ -73,6 +75,9 @@ import org.apache.fop.layout.LayoutStrategy;
 
 // SAX
 import org.xml.sax.SAXException;
+
+// Avalon
+import org.apache.avalon.framework.logger.Logger;
 
 /**
  * Class storing information for the FOP Document being processed, and managing
@@ -395,6 +400,20 @@ public class Document implements FOTreeControl, FOTreeListener {
      */
     public FOInputHandler getFOInputHandler() {
         return foInputHandler;
+    }
+
+    /**
+     * @return the Logger to be used for processing this Document
+     */
+    public Logger getLogger() {
+        return getDriver().getLogger();
+    }
+
+    /**
+     * @return the FOUserAgent used for processing this document
+     */
+    public FOUserAgent getUserAgent() {
+        return getDriver().getUserAgent();
     }
 
 }
