@@ -44,16 +44,16 @@ public class LineLayoutManager extends AbstractLayoutManager {
     public void generateAreas() {
 	this.bFirstLine = true;
 	while (fobjIter.hasNext()) {
-	    FObj fobj = (FObj)fobjIter.next();
-	    curLM = fobj.getLayoutManager();
- 	    if (curLM != null) {
-		if (curLM.generatesInlineAreas()==false) {
-		    // It generates blocks, pass back to parent
-		    // Back up one
-		    fobjIter.previous();
-		    break;
-		}
-		else { // generates inline area
+	    FObj childFO = (FObj)fobjIter.next();
+	    if (childFO.generatesInlineAreas()==false) {
+		// It generates blocks, pass back to parent
+		// Back up one
+		fobjIter.previous();
+		break;
+	    }
+	    else { // generates inline area
+		curLM = childFO.getLayoutManager();
+		if (curLM != null) {
 		    curLM.setParentLM(this);
 		    curLM.generateAreas();
 		}

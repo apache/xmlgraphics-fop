@@ -87,9 +87,9 @@ public abstract class AbstractLayoutManager implements LayoutManager {
 	
 
 
-    public boolean generatesInlineAreas() {
-	return false;
-    }
+//     public boolean generatesInlineAreas() {
+// 	return false;
+//     }
 
 
     /**
