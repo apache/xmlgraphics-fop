@@ -8,10 +8,15 @@
   <body>
     <section id="general">
       <title>General Information</title>
-      <p>Before posting questions to any list, review "<jump href="http://www.catb.org/~esr/faqs/smart-questions.html">How To Ask Questions The Smart Way</jump>".</p>
-      <p>Be sure to set your email client to send plain text email messages to any mailing lists.
+      <p>Before posting questions to any list:</p>
+      <ul>
+        <li>Review the <jump href="http://jakarta.apache.org/site/mail.html">Jakarta Mailing Lists - Guidelines</jump> for general principles about mailing lists.</li>
+        <li>Review "<jump href="http://www.catb.org/~esr/faqs/smart-questions.html">How To Ask Questions The Smart Way</jump>".</li>
+        <li>Send only <em>plain text</em> email messages to any mailing lists.
 Please do <em>not</em> send html or rtf email, as they do not work well with the archive engines.
-If you are using Microsoft Outlook, this setting can be found at the "Mail Format" tab of the Tools/Options menu.</p>
+If you are using Microsoft Outlook, this setting can be found at the "Mail Format" tab of the Tools/Options menu.</li>
+        <li>Use a mail client that respects the <em>References</em> and/or <em>In-Reply-To</em> mail header entries. This is important for mail clients that can display threads as trees. <strong>Compliant mail clients</strong> include Microsoft Outlook, Becky!, KMail, Apple Mail, Ximian Evolution, Mozilla (version 1.2 or greater). Non-compliant mail clients include Microsoft Exchange, Lotus Notes, Internet Mail Service (MUA or MTA), and dtmail.</li>
+      </ul>
       <p>For help in understanding email acronyms, see the <jump href="http://www.lingo2word.com/lists/acronym_listA.html">Lingo2Word Acronym List</jump>, or the <jump href="http://www.keno.org/web_design/acronyms.htm">Keno Internet Services Internet Glossary</jump>.</p>
     </section>
     <section id="fop-user">
