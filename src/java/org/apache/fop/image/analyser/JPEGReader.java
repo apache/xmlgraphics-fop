@@ -1,5 +1,5 @@
 /*
- * Copyright 1999-2004 The Apache Software Foundation.
+ * Copyright 1999-2005 The Apache Software Foundation.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -111,8 +111,8 @@ outer:
                         imageStream.mark(avail);
                         pos = (int)this.skip(imageStream, pos);
                         avail -= pos;
-                }
-
+                    }
+                    //Marker first byte (FF)
                     marker = imageStream.read();
                     pos++; avail--;
                 } while (marker != MARK);
@@ -125,6 +125,7 @@ outer:
                         pos = (int)this.skip(imageStream, pos);
                         avail -= pos;
                     }
+                    //Marker second byte
                     marker = imageStream.read();
                     pos++; avail--;
                 } while (marker == MARK);
@@ -133,6 +134,52 @@ outer:
                     case SOI:
                         break;
                     case NULL:
+                        break;
+                    case APP0:
+                        if (avail < 14) {
+                            imageStream.reset();
+                            avail = 2 * pos;
+                            imageStream.mark(avail);
+                            pos = (int)this.skip(imageStream, pos);
+                            avail -= pos;
+                        }
+                        int reclen = this.read2bytes(imageStream);
+                        pos += 2; avail -= 2;
+                        this.skip(imageStream, 7);
+                        pos += 7; avail -= 7;
+                        int densityUnits = imageStream.read();
+                        pos++; avail--;
+                        int xdensity = this.read2bytes(imageStream);
+                        pos += 2; avail -= 2;
+                        int ydensity = this.read2bytes(imageStream);
+                        pos += 2; avail -= 2;
+                        
+                        if (densityUnits == 2) {
+                            info.dpiHorizontal = xdensity * 28.3464567 / 72; //dpi
+                            info.dpiVertical = ydensity * 28.3464567 / 72; //dpi
+                        } else if (densityUnits == 1) {
+                            info.dpiHorizontal = xdensity;
+                            info.dpiVertical = ydensity;
+                        } else {
+                            //nop, nyi --> 72dpi
+                        }
+                        
+                        int restlen = reclen - 12;
+                        if (avail < restlen) {
+                            imageStream.reset();
+                            avail = 2 * pos;
+                            if (avail < pos + restlen + 10) {
+                                avail = (int)(pos + restlen + 10);
+                            }
+                            imageStream.mark(avail);
+                            pos = (int)this.skip(imageStream, pos);
+                            avail -= pos;
+                        }
+                        skipped = this.skip(imageStream, restlen - 2);
+                        pos += skipped; avail -= skipped;
+                        if (skipped != restlen - 2) {
+                            throw new IOException("Skipping Error");
+                        }
                         break;
                     case SOF1:
                     case SOF2:

@@ -582,6 +582,8 @@ public class PDFRenderer extends PrintRenderer {
                 ImageFactory fact = ImageFactory.getInstance();
                 FopImage fopimage = fact.getImage(back.getURL(), userAgent);
                 if (fopimage != null && fopimage.load(FopImage.DIMENSIONS)) {
+                    saveGraphicsState();
+                    clip(startx, starty, width, height);
                     if (back.getRepeat() == EN_REPEAT) {
                         // create a pattern for the image
                     } else {
@@ -589,10 +591,13 @@ public class PDFRenderer extends PrintRenderer {
                         Rectangle2D pos;
                         pos = new Rectangle2D.Float((startx + back.getHoriz()) * 1000,
                                                     (starty + back.getVertical()) * 1000,
-                                                    fopimage.getWidth() * 1000,
-                                                    fopimage.getHeight() * 1000);
+                                                    fopimage.getIntrinsicWidth(),
+                                                    fopimage.getIntrinsicHeight());
                         putImage(back.getURL(), pos);
                     }
+                    restoreGraphicsState();
+                } else {
+                    getLogger().warn("Can't find background image: " + back.getURL());
                 }
             }
         }
