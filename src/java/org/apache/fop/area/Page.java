@@ -38,7 +38,40 @@ import org.apache.fop.fo.properties.RetrievePosition;
  * @author pbw
  * @version $Revision$ $Name$
  */
-public class Page extends AreaNode implements Cloneable {
+public class Page extends AreaNode
+implements PageListElement, PageSetElement, Cloneable {
+
+    // Implementation of PageList interface.
+    // N.B. getId is required for both interfaces.
+
+    /* (non-Javadoc)
+     * @see org.apache.fop.area.PageSetElement#isPageList()
+     */
+    public boolean isPageList() {
+        return false;
+    }
+
+    // Implementation of PageSet interface
+    // N.B. getId is required for both interfaces.
+
+    /* (non-Javadoc)
+     * @see org.apache.fop.area.PageListElement#isPageSet()
+     */
+    public boolean isPageSet() {
+        return false;
+    }
+
+    /** Unique ID for this page.  0 is an invalid ID.  */
+    private long pageId = 0;
+
+    /**
+     * @return the pageId
+     */
+    public long getId() {
+        synchronized (sync) {
+            return pageId;
+        }
+    }
     
     /**
      * Create a page at the root of a tree, synchronized on itself,
@@ -69,22 +102,10 @@ public class Page extends AreaNode implements Cloneable {
         this.pageId = pageId;
     }
 
-    /** Unique ID for this page.  0 is an invalid ID.  */
-    private long pageId = 0;
-
-    /**
-     * @return the pageId
-     */
-    public long getPageId() {
-        synchronized (sync) {
-            return pageId;
-        }
-    }
-
     /**
      * @param pageId to set
      */
-    public void setPageId(long pageId) {
+    public void setId(long pageId) {
         synchronized (sync) {
             this.pageId = pageId;
         }
@@ -129,6 +150,7 @@ public class Page extends AreaNode implements Cloneable {
     protected FoSimplePageMaster pageMaster = null;
     /** The single <code>page-viewport</code> child of this page */
     protected PageViewport vport = null;
+    /** The single <code>page-reference-area</code> child of the viewport */
     protected PageRefArea pageRefArea = null;
 
     /**
@@ -150,15 +172,19 @@ public class Page extends AreaNode implements Cloneable {
         this.pageRefArea = pageRefArea;
     }
     public PageRefArea getPageRefArea() {
-        return vport.getPageRefArea();
+        return pageRefArea;
     }
     /** The formatted page number */
     private String pageNumber = null;
 
-    public Area getRegionBodyRefArea() {
-        // TODO - make the real version of this
-        Area regionBodyRef = null;
-        return regionBodyRef;
+    /**
+     * Gets the <code>region-body-reference-area</code> associated with this
+     * page
+     * @return the <code>region-body-reference-area</code>
+     */
+    public RegionBodyRefArea getRegionBodyRefArea() {
+        return (RegionBodyRefArea)(
+                pageRefArea.getRegionBodyVport().getRegionRefArea());
     }
     /**
      * Set the page number for this page.
