@@ -72,16 +72,16 @@ public class ImageArea extends Area {
 	this.image = img;
 
 	switch (align) {
-	case 1:
+	case 1: // should be TextAlign.START
 	    xOffset = startIndent;
 	    break;
-	case 2:
+	case 2: //should be TextAlign.END
 	    if (endIndent == 0)
 		endIndent = AllocationWidth;
 	    xOffset = (endIndent - width);
 	    break;
-	case 3:
-	case 4:
+	case 3: //should be TextAlign.CENTER
+	case 4: //should be TextAlign.JUSTIFY
 	    if (endIndent == 0)
 		endIndent = AllocationWidth;
 	    xOffset = startIndent + ((endIndent - startIndent) - width)/2;

@@ -133,7 +133,7 @@ public class UserMessage {
       try {
         composedMess += rawText.substring(0, index) + par[tagCount];
       } catch(ArrayIndexOutOfBoundsException ex) {
-        MessageHandler.logln("Anzahl der übergebenen Parameter zu der Meldung " + actMessId + " ist weniger als erwartet.");
+        MessageHandler.logln("Anzahl der \u00FCbergebenen Parameter zu der Meldung " + actMessId + " ist weniger als erwartet.");
         ex.printStackTrace();
         return composedMess + rawText;
       }
@@ -142,7 +142,7 @@ public class UserMessage {
     }
     composedMess += rawText;
     if (tagCount != par.length)
-      MessageHandler.logln("Die zu der Meldung " + actMessId + "  übergebenen Parameter sind mehr als die Meldung vorsieht.");
+      MessageHandler.logln("Die zu der Meldung " + actMessId + "  \u00FCbergebenen Parameter sind mehr als die Meldung vorsieht.");
     return composedMess;
   }
 
@@ -159,7 +159,7 @@ public class UserMessage {
       case WARNING   : title = "Warning"; currentIconName = "warn.gif"; break;
       case QUESTION  : title = "Question"; currentIconName = "quest.gif"; break;
       case ERROR     : title = "Error"; currentIconName = "error.gif"; break;
-      default : title =  "Ungültiger IonType für diese Meldung. Prüfen in Übersetzungsdatei.";
+      default : title =  "Ung\uFFFCltiger IonType f\uFFFCr diese Meldung. Pr\uFFFCfen in \uFFDCbersetzungsdatei.";
     }
     return title;
   }
@@ -261,7 +261,7 @@ public class UserMessage {
     else {
       if (optionTypeIndex == STYLE_NOBUTTON) {
         // Wird nicht mehr unterstützt
-        MessageHandler.logln("UserMessage: STYLE_NOBUTTON wird nicht unterstützt");
+        MessageHandler.logln("UserMessage: STYLE_NOBUTTON wird nicht unterst\uFFFCtzt");
         return result;
       }
       else {
