@@ -4,7 +4,7 @@
  *                    The Apache Software License, Version 1.1
  * ============================================================================
  *
- * Copyright (C) 1999-2003 The Apache Software Foundation. All rights reserved.
+ * Copyright (C) 1999-2004 The Apache Software Foundation. All rights reserved
  *
  * Redistribution and use in source and binary forms, with or without modifica-
  * tion, are permitted provided that the following conditions are met:
@@ -57,7 +57,7 @@ import java.io.Serializable;
 import org.apache.fop.fo.properties.WritingMode;
 
 /**
- * Describe a PDF or PostScript style coordinate transformation matrix (TransformMatrix).
+ * Describe a PDF or PostScript style coordinate transformation matrix.
  * The matrix encodes translations, scaling and rotations of the coordinate
  * system used to render pages.
  */
@@ -65,11 +65,11 @@ public class TransformMatrix implements Serializable {
 
     private double a, b, c, d, e, f;
 
-    private static final TransformMatrix CTM_LRTB =
+    private static final TransformMatrix TM_LRTB =
         new TransformMatrix(1, 0, 0, 1, 0, 0);
-    private static final TransformMatrix CTM_RLTB =
+    private static final TransformMatrix TM_RLTB =
         new TransformMatrix(-1, 0, 0, 1, 0, 0);
-    private static final TransformMatrix CTM_TBRL =
+    private static final TransformMatrix TM_TBRL =
         new TransformMatrix(0, 1, -1, 0, 0, 0);
 
     /**
@@ -123,15 +123,15 @@ public class TransformMatrix implements Serializable {
     /**
      * Initialize a TransformMatrix with the values of another TransformMatrix.
      *
-     * @param ctm another TransformMatrix
+     * @param tm another TransformMatrix
      */
-    protected TransformMatrix(TransformMatrix ctm) {
-        this.a = ctm.a;
-        this.b = ctm.b;
-        this.c = ctm.c;
-        this.d = ctm.d;
-        this.e = ctm.e;
-        this.f = ctm.f;
+    protected TransformMatrix(TransformMatrix tm) {
+        this.a = tm.a;
+        this.b = tm.b;
+        this.c = tm.c;
+        this.d = tm.d;
+        this.e = tm.e;
+        this.f = tm.f;
     }
 
     /**
@@ -145,23 +145,23 @@ public class TransformMatrix implements Serializable {
      * TransformMatrix is being set.
      * @return a new TransformMatrix with the required transform
      */
-    public static TransformMatrix getWMctm(int wm, int ipd, int bpd) {
-        TransformMatrix wmctm;
+    public static TransformMatrix getWMtm(int wm, int ipd, int bpd) {
+        TransformMatrix wmtm;
         switch (wm) {
             case WritingMode.LR_TB:
-                return new TransformMatrix(CTM_LRTB);
+                return new TransformMatrix(TM_LRTB);
             case WritingMode.RL_TB: {
-                    wmctm = new TransformMatrix(CTM_RLTB);
-                    wmctm.e = ipd;
-                    return wmctm;
+                    wmtm = new TransformMatrix(TM_RLTB);
+                    wmtm.e = ipd;
+                    return wmtm;
                 }
-                //return  CTM_RLTB.translate(ipd, 0);
+                //return  TM_RLTB.translate(ipd, 0);
             case WritingMode.TB_RL: { // CJK
-                    wmctm = new TransformMatrix(CTM_TBRL);
-                    wmctm.e = bpd;
-                    return wmctm;
+                    wmtm = new TransformMatrix(TM_TBRL);
+                    wmtm.e = bpd;
+                    return wmtm;
                 }
-                //return CTM_TBRL.translate(0, ipd);
+                //return TM_TBRL.translate(0, ipd);
             default:
                 return null;
         }
@@ -323,7 +323,7 @@ public class TransformMatrix implements Serializable {
          * (Note: scrolling between region vp and ref area when
          * doing online content!)
          */
-        TransformMatrix ctm = 
+        TransformMatrix tm = 
             new TransformMatrix(absVPrect.getX(), absVPrect.getY());
 
         // First transform for rotation
@@ -332,16 +332,16 @@ public class TransformMatrix implements Serializable {
             // first quadrant. Note: rotation is counter-clockwise
             switch (absRefOrient) {
                 case 90:
-                    ctm = ctm.translate(0, width); // width = absVPrect.height
+                    tm = tm.translate(0, width); // width = absVPrect.height
                     break;
                 case 180:
-                    ctm = ctm.translate(width, height);
+                    tm = tm.translate(width, height);
                     break;
                 case 270:
-                    ctm = ctm.translate(height, 0); // height = absVPrect.width
+                    tm = tm.translate(height, 0); // height = absVPrect.width
                     break;
             }
-            ctm = ctm.rotate(absRefOrient);
+            tm = tm.rotate(absRefOrient);
         }
         /* Since we've already put adjusted width and height values for the
          * top and left positions implied by the reference-orientation, we
@@ -358,8 +358,8 @@ public class TransformMatrix implements Serializable {
         }
         // Set a rectangle to be the writing-mode relative version???
         // Now transform for writing mode
-        return ctm.multiply(
-                TransformMatrix.getWMctm(writingMode, relIPDim, relBPDim));
+        return tm.multiply(
+                TransformMatrix.getWMtm(writingMode, relIPDim, relBPDim));
     }
 
 }
