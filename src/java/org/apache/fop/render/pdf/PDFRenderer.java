@@ -1067,9 +1067,7 @@ public class PDFRenderer extends PrintRenderer {
 
         updateFont(name, size, pdf);
         ColorType ct = (ColorType) text.getTrait(Trait.COLOR);
-        if (ct != null) {
-            updateColor(ct, true, pdf);
-        }
+        updateColor(ct, true, pdf);
 
         // word.getOffset() = only height of text itself
         // currentBlockIPPosition: 0 for beginning of line; nonzero
@@ -1138,14 +1136,20 @@ public class PDFRenderer extends PrintRenderer {
             updateLineWidth(fs.getDescender() / -8 / 1000f);
             float endx = (startx + inline.getIPD()) / 1000f;
             if (inline.hasUnderline()) {
+                ColorType ct = (ColorType) inline.getTrait(Trait.UNDERLINE_COLOR);
+                updateColor(ct, false, null);
                 float y = baseline - fs.getDescender() / 2;
                 drawLine(startx / 1000f, y / 1000f, endx, y / 1000f);
             }
             if (inline.hasOverline()) {
+                ColorType ct = (ColorType) inline.getTrait(Trait.OVERLINE_COLOR);
+                updateColor(ct, false, null);
                 float y = (float)(baseline - (1.1 * fs.getCapHeight()));
                 drawLine(startx / 1000f, y / 1000f, endx, y / 1000f);
             }
             if (inline.hasLineThrough()) {
+                ColorType ct = (ColorType) inline.getTrait(Trait.LINETHROUGH_COLOR);
+                updateColor(ct, false, null);
                 float y = (float)(baseline - (0.45 * fs.getCapHeight()));
                 drawLine(startx / 1000f, y / 1000f, endx, y / 1000f);
             }
@@ -1228,7 +1232,17 @@ public class PDFRenderer extends PrintRenderer {
         }
     }
 
+    /**
+     * Establishes a new foreground or fill color.
+     * @param col the color to apply (null skips this operation)
+     * @param fill true to set the fill color, false for the foreground color
+     * @param pdf StringBuffer to write the PDF code to, if null, the code is
+     *     written to the current stream.
+     */
     private void updateColor(ColorType col, boolean fill, StringBuffer pdf) {
+        if (col == null) {
+            return;
+        }
         Color newCol = new Color(col.getRed(), col.getGreen(), col.getBlue());
         boolean update = false;
         if (fill) {

@@ -67,6 +67,7 @@ public class CommonTextDecoration {
             //Parent is checked first
             deco = calcTextDecoration(parentList);
         }
+        //For rules, see XSL 1.0, chapters 5.5.6 and 7.16.4
         List list = pList.get(Constants.PR_TEXT_DECORATION).getList();
         Iterator i = list.iterator();
         while (i.hasNext()) {
@@ -82,27 +83,33 @@ public class CommonTextDecoration {
                     deco = new CommonTextDecoration();
                 }
                 deco.decoration |= UNDERLINE;
+                deco.underColor = pList.get(Constants.PR_COLOR).getColorType();
             } else if (enum == Constants.EN_NO_UNDERLINE) {
                 if (deco != null) {
                     deco.decoration &= OVERLINE | LINE_THROUGH | BLINK;
+                    deco.underColor = pList.get(Constants.PR_COLOR).getColorType();
                 }
             } else if (enum == Constants.EN_OVERLINE) {
                 if (deco == null) {
                     deco = new CommonTextDecoration();
                 }
                 deco.decoration |= OVERLINE;
+                deco.overColor = pList.get(Constants.PR_COLOR).getColorType();
             } else if (enum == Constants.EN_NO_OVERLINE) {
                 if (deco != null) {
                     deco.decoration &= UNDERLINE | LINE_THROUGH | BLINK;
+                    deco.overColor = pList.get(Constants.PR_COLOR).getColorType();
                 }
             } else if (enum == Constants.EN_LINE_THROUGH) {
                 if (deco == null) {
                     deco = new CommonTextDecoration();
                 }
                 deco.decoration |= LINE_THROUGH;
+                deco.throughColor = pList.get(Constants.PR_COLOR).getColorType();
             } else if (enum == Constants.EN_NO_LINE_THROUGH) {
                 if (deco != null) {
                     deco.decoration &= UNDERLINE | OVERLINE | BLINK;
+                    deco.throughColor = pList.get(Constants.PR_COLOR).getColorType();
                 }
             } else if (enum == Constants.EN_BLINK) {
                 if (deco == null) {
@@ -139,4 +146,20 @@ public class CommonTextDecoration {
     public boolean isBlinking() {
         return (this.decoration & BLINK) != 0;
     }
+    
+    /** @return the color of the underline mark */
+    public ColorType getUnderlineColor() {
+        return this.underColor;
+    }
+    
+    /** @return the color of the overline mark */
+    public ColorType getOverlineColor() {
+        return this.overColor;
+    }
+
+    /** @return the color of the line-through mark */
+    public ColorType getLineThroughColor() {
+        return this.throughColor;
+    }
+
 }
