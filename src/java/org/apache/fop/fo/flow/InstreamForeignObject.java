@@ -18,6 +18,9 @@
 
 package org.apache.fop.fo.flow;
 
+// Java
+import java.util.List;
+
 // XML
 import org.xml.sax.Attributes;
 import org.xml.sax.Locator;
@@ -25,8 +28,7 @@ import org.xml.sax.SAXParseException;
 
 // FOP
 import org.apache.fop.fo.FONode;
-import org.apache.fop.fo.LMVisited;
-import org.apache.fop.layoutmgr.AddLMVisitor;
+import org.apache.fop.layoutmgr.InstreamForeignObjectLM;
 import org.apache.fop.fo.FObj;
 
 /**
@@ -34,7 +36,7 @@ import org.apache.fop.fo.FObj;
  * This is an atomic inline object that contains
  * xml data.
  */
-public class InstreamForeignObject extends FObj implements LMVisited {
+public class InstreamForeignObject extends FObj {
 
     boolean hasNonXSLNamespaceElement = false;
 
@@ -121,14 +123,16 @@ public class InstreamForeignObject extends FObj implements LMVisited {
     }
 
     /**
-     * This is a hook for the AddLMVisitor class to be able to access
-     * this object.
-     * @param aLMV the AddLMVisitor object that can access this object.
+     * @see org.apache.fop.fo.FObj#addLayoutManager(List)
      */
-    public void acceptVisitor(AddLMVisitor aLMV) {
-        aLMV.serveInstreamForeignObject(this);
+    public void addLayoutManager(List list) {
+        InstreamForeignObjectLM lm = new InstreamForeignObjectLM(this);
+        list.add(lm);
     }
 
+    /**
+     * @see org.apache.fop.fo.FObj#getName()
+     */
     public String getName() {
         return "fo:instream-foreign-object";
     }

@@ -16,29 +16,20 @@
 
 /* $Id$ */
 
-
 package org.apache.fop.layoutmgr;
 
-import java.awt.geom.Point2D;
-import java.awt.geom.Rectangle2D;
 import java.util.List;
 import java.util.ListIterator;
 
 import org.apache.fop.area.Trait;
 import org.apache.fop.area.inline.FilledArea;
-import org.apache.fop.area.inline.ForeignObject;
 import org.apache.fop.area.inline.InlineArea;
 import org.apache.fop.area.inline.Space;
-import org.apache.fop.area.inline.Viewport;
 import org.apache.fop.area.inline.TextArea;
 import org.apache.fop.datatypes.Length;
 import org.apache.fop.fo.Constants;
-import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FObj;
-import org.apache.fop.fo.XMLObj;
-import org.apache.fop.fo.flow.Block;
 import org.apache.fop.fo.flow.Inline;
-import org.apache.fop.fo.flow.InstreamForeignObject;
 import org.apache.fop.fo.flow.Leader;
 import org.apache.fop.fo.flow.Wrapper;
 import org.apache.fop.traits.MinOptMax;
@@ -208,165 +199,5 @@ public class AddLMVisitor {
              leaderArea = fa;
          }
          return leaderArea;
-     }
-
-     public void serveInstreamForeignObject(InstreamForeignObject node) {
-         Viewport areaCurrent = getInstreamForeignObjectInlineArea(node);
-         if (areaCurrent != null) {
-             LeafNodeLayoutManager lm = new LeafNodeLayoutManager(node);
-             lm.setCurrentArea(areaCurrent);
-             lm.setAlignment(node.getProperty(Constants.PR_VERTICAL_ALIGN).getEnum());
-             lm.setLead(areaCurrent.getHeight());
-             currentLMList.add(lm);
-         }
-     }
-     /**
-      * Get the inline area created by this element.
-      *
-      * @return the viewport inline area
-      */
-     public Viewport getInstreamForeignObjectInlineArea(InstreamForeignObject node) {
-         if (node.getChildNodes() == null) {
-             return null;
-         }
-
-         if (node.childNodes.size() != 1) {
-             // error
-             return null;
-         }
-         FONode fo = (FONode) node.childNodes.get(0);
-         if (!(fo instanceof XMLObj)) {
-             // error
-             return null;
-         }
-         XMLObj child = (XMLObj)fo;
-
-         // viewport size is determined by block-progression-dimension
-         // and inline-progression-dimension
-
-         // if replaced then use height then ignore block-progression-dimension
-         //int h = this.propertyList.get("height").getLength().mvalue();
-
-         // use specified line-height then ignore dimension in height direction
-         boolean hasLH = false;//propertyList.get("line-height").getSpecifiedValue() != null;
-
-         Length len;
-
-         int bpd = -1;
-         int ipd = -1;
-         boolean bpdauto = false;
-         if (hasLH) {
-             bpd = node.getProperty(Constants.PR_LINE_HEIGHT).getLength().getValue();
-         } else {
-             // this property does not apply when the line-height applies
-             // isn't the block-progression-dimension always in the same
-             // direction as the line height?
-             len = node.getProperty(Constants.PR_BLOCK_PROGRESSION_DIMENSION | Constants.CP_OPTIMUM).getLength();
-             if (!len.isAuto()) {
-                 bpd = len.getValue();
-             } else {
-                 len = node.getProperty(Constants.PR_HEIGHT).getLength();
-                 if (!len.isAuto()) {
-                     bpd = len.getValue();
-                 }
-             }
-         }
-
-         len = node.getProperty(Constants.PR_INLINE_PROGRESSION_DIMENSION | Constants.CP_OPTIMUM).getLength();
-         if (!len.isAuto()) {
-             ipd = len.getValue();
-         } else {
-             len = node.getProperty(Constants.PR_WIDTH).getLength();
-             if (!len.isAuto()) {
-                 ipd = len.getValue();
-             }
-         }
-
-         // if auto then use the intrinsic size of the content scaled
-         // to the content-height and content-width
-         int cwidth = -1;
-         int cheight = -1;
-         len = node.getProperty(Constants.PR_CONTENT_WIDTH).getLength();
-         if (!len.isAuto()) {
-             /*if(len.scaleToFit()) {
-                 if(ipd != -1) {
-                     cwidth = ipd;
-                 }
-             } else {*/
-             cwidth = len.getValue();
-         }
-         len = node.getProperty(Constants.PR_CONTENT_HEIGHT).getLength();
-         if (!len.isAuto()) {
-             /*if(len.scaleToFit()) {
-                 if(bpd != -1) {
-                     cwidth = bpd;
-                 }
-             } else {*/
-             cheight = len.getValue();
-         }
-
-         Point2D csize = new Point2D.Float(cwidth == -1 ? -1 : cwidth / 1000f,
-                                           cheight == -1 ? -1 : cheight / 1000f);
-         Point2D size = child.getDimension(csize);
-         if (size == null) {
-             // error
-             return null;
-         }
-         if (cwidth == -1) {
-             cwidth = (int)size.getX() * 1000;
-         }
-         if (cheight == -1) {
-             cheight = (int)size.getY() * 1000;
-         }
-         int scaling = node.getProperty(Constants.PR_SCALING).getEnum();
-         if (scaling == Constants.Scaling.UNIFORM) {
-             // adjust the larger
-             double rat1 = cwidth / (size.getX() * 1000f);
-             double rat2 = cheight / (size.getY() * 1000f);
-             if (rat1 < rat2) {
-                 // reduce cheight
-                 cheight = (int)(rat1 * size.getY() * 1000);
-             } else {
-                 cwidth = (int)(rat2 * size.getX() * 1000);
-             }
-         }
-
-         if (ipd == -1) {
-             ipd = cwidth;
-         }
-         if (bpd == -1) {
-             bpd = cheight;
-         }
-
-         boolean clip = false;
-         if (cwidth > ipd || cheight > bpd) {
-             int overflow = node.getProperty(Constants.PR_OVERFLOW).getEnum();
-             if (overflow == Constants.Overflow.HIDDEN) {
-                 clip = true;
-             } else if (overflow == Constants.Overflow.ERROR_IF_OVERFLOW) {
-                 node.getLogger().error("Instream foreign object overflows the viewport: clipping");
-                 clip = true;
-             }
-         }
-
-         int xoffset = node.computeXOffset(ipd, cwidth);
-         int yoffset = node.computeYOffset(bpd, cheight);
-
-         Rectangle2D placement = new Rectangle2D.Float(xoffset, yoffset, cwidth, cheight);
-
-         org.w3c.dom.Document doc = child.getDOMDocument();
-         String ns = child.getDocumentNamespace();
-
-         node.childNodes = null;
-         ForeignObject foreign = new ForeignObject(doc, ns);
-
-         Viewport areaCurrent = new Viewport(foreign);
-         areaCurrent.setWidth(ipd);
-         areaCurrent.setHeight(bpd);
-         areaCurrent.setContentPosition(placement);
-         areaCurrent.setClip(clip);
-         areaCurrent.setOffset(0);
-
-         return areaCurrent;
      }
 }
