@@ -324,6 +324,7 @@ public class TableRow extends FObj {
 						area.getIDReferences().configureID(id, area);
 				}
 
+				int spaceLeft = area.spaceLeft();
 				this.areaContainer = new AreaContainer(propMgr.getFontState(area.getFontInfo()),
 																							 -area.getBorderLeftWidth(),
 																							 -area.getBorderTopWidth(), area.getAllocationWidth(),
@@ -472,6 +473,8 @@ public class TableRow extends FObj {
 								largestCellHeight = h;
 						}
 				}
+
+				area.setMaxHeight(area.getMaxHeight() - spaceLeft + this.areaContainer.getMaxHeight());
 
 				for (int i = 0; i < numChildren; i++) {
 						TableCell cell = (TableCell) children.elementAt(i);
