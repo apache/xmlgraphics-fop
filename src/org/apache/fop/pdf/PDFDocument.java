@@ -79,7 +79,7 @@ import java.awt.Rectangle;
 public class PDFDocument {
 
     /** the version of PDF supported */
-    protected static final String pdfVersion = "1.2";
+    protected static final String pdfVersion = "1.3";
 
     /** the current character position */
     protected int position = 0;
@@ -220,13 +220,15 @@ public class PDFDocument {
      * @return the created /Page object
      */
     public PDFPage makePage(PDFResources resources,
-			    PDFStream contents, int pagewidth,
+			    PDFStream contents,
+                            int pagewidth,
 			    int pageheight)  {
 
 	/* create a PDFPage with the next object number, the given
 	   resources, contents and dimensions */
 	PDFPage page = new PDFPage(++this.objectcount, resources,
-				   contents, pagewidth, pageheight);
+				   contents,
+                                   pagewidth, pageheight);
 
 	/* add it to the list of objects */
 	this.objects.addElement(page);
@@ -246,11 +248,12 @@ public class PDFDocument {
      * @return the PDFLink object created
      */
     public PDFLink makeLink(Rectangle rect, String destination) {
-	PDFLink link = new PDFLink(++this.objectcount, destination, rect);
+
+	PDFLink link = new PDFLink(++this.objectcount, rect);
 	this.objects.addElement(link);
 
 	PDFFileSpec fileSpec = new PDFFileSpec(++this.objectcount,
-					       link.destination);
+					       destination);
 	this.objects.addElement(fileSpec);
 
 	PDFAction action = new PDFAction(++this.objectcount,
@@ -260,7 +263,7 @@ public class PDFDocument {
 
 	return link;
     }
-
+    
     /**
      * make a stream object
      *
@@ -271,6 +274,20 @@ public class PDFDocument {
 	/* create a PDFStream with the next object number and add it
 	   to the list of objects */
 	PDFStream obj = new PDFStream(++this.objectcount);
+	this.objects.addElement(obj);
+	return obj;
+    }
+    
+    /**
+     * make an annotation list object
+     *
+     * @return the annotation list object created
+     */
+    public PDFAnnotList makeAnnotList() {
+    
+	/* create a PDFAnnotList with the next object number and add it
+	   to the list of objects */
+	PDFAnnotList obj = new PDFAnnotList(++this.objectcount);
 	this.objects.addElement(obj);
 	return obj;
     }
