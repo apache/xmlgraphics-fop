@@ -128,7 +128,7 @@ Then, copy the file "JimiProClasses.zip" from the archive to {fop-install-dir}/l
         <title>JAI</title>
         <p>
           FOP has been compiled with JAI support, but JAI is not included in the FOP distribution.
-To use it, install <link href="http://java.sun.com/products/java-media/jai">JAI</link>, then copy the jai_core.jar file to {fop-install-dir}/lib.
+To use it, install <link href="http://java.sun.com/products/java-media/jai">JAI</link>, then copy the jai_core.jar and the jai_codec.jar files to {fop-install-dir}/lib.
 JAI is much faster than JIMI, but is not available for all platforms. See <link href="http://java.sun.com/products/java-media/jai/forDevelopers/jaifaq.html#platforms">What platforms are supported?</link> on the JAI FAQ page for more details.
         </p>
       </section>
