@@ -137,4 +137,46 @@ public class BlockArea extends Area {
         return 0.0;
     }
 
+    /**
+     * @author pbw
+     * @version $Revision$ $Name$
+     */
+    public class BlockAllocationRectangle extends AreaFrame implements
+            AllocationRectangle {
+
+        private PaddingRectangle padding;
+        private BorderRectangle borders;
+        private SpacesRectangle spaces;
+
+        /**
+         * @param area
+         * @param contents
+         */
+        public BlockAllocationRectangle() {
+            // For block-areas, the allocation-area is bounded in the
+            // block-progression-direction by the border-rectangle, and in the
+            // inline-progression-direction by the spaces-rectangle.
+            // See 4.2.3 Geometric Definitions
+            // The contents of the BlockAllocationRectangle is the ContentRectangle.
+            // Initally, set up the AreaFrame representing the allocation
+            // rectangle to co-incide with the content-rectangle.
+            super(BlockArea.this, BlockArea.this.getContent());
+            // Now extend the AreaFrame to co-incide with the
+            // edges of the border rectangle in the BPDir, and with the edges of
+            // the spaces rectangle in the IPDir.
+            padding = BlockArea.this.getPadding();
+            borders = BlockArea.this.getBorders();
+            spaces = BlockArea.this.getSpaces();
+            setAllocationFrame();
+        }
+
+        public void setAllocationFrame() {
+            setStart(spaces.getStart() + borders.getStart() + padding.getStart());
+            setEnd(spaces.getEnd() + borders.getEnd() + padding.getEnd());
+            setBefore(borders.getBefore() + padding.getBefore());
+            setAfter(borders.getAfter() + padding.getAfter());
+        }
+
+    }
+
 }
