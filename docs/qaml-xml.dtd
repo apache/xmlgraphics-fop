@@ -1,0 +1,303 @@
+<!--
+  This is an XML DTD for writing Frequently Asked Questions FAQs.
+  QAML Version 2.4 last modified Oct 6 1999 
+        by Justin Higgins (jhiggins@dn.net)
+                www.faq.org
+        and Rick Jelliffe (ricko@gate.sinica.edu.tw)  
+                www.ascc.net/xml/
+         
+  It is based on the QAML 1.0 DTD, with minimal alterations
+  for XML, I18N (internationalization), XLL hypertext linking,
+  style, accessability and tracking. Multi-part answers are 
+  supported a little better. Corporate and "look-and-feel"
+  needs are supported better: rights, PICS, logos, advertising
+  sections, corporate addresses.      
+    
+  * XML: Documents written using the QAML 1.0 DTD
+    are structurally compatible with this DTD; however, such
+    documents need to be converted into "well-formed" XML:
+    make sure they are fully tagged with start-end tags for
+    every element. If you are not using 7-bit ACSCII or
+    UTF-8, specify the appropriate XML encoding header. If you are
+    not using English, specify the appropriate xml:lang language 
+    attributes. Use lower-case element type names.
+   
+  * I18N: All elements with data content, and the top element,
+    may have a language attribute. People may have alternative names
+    in different scripts: e.g., a Chinese name and an English
+    name.  
+  
+  * XLink: All elements may have an ID attribute. A fixed xml:link
+   attribute has been added to link and archive, for housekeeping. 
+   (Link is used like HTML's <a> and <img> and <link> element types.
+   Archive points to the official location of the current and 
+   precious version of the FAQ, and to translations.)
+   Note that the xml:show attribute is available in this DTD, but 
+   may not be available at the user's system. The following
+   link roles are defined by this DTD, but you can add your own:   
+        "Text", "Image", "Sound", "Software", "Data", "Interactive"
+        are the base Dublin Core categories for the resource types. 
+   A logo is a special XLink: it just points to some icon or logo
+   or picture. (The logo does not represent a clickable hypertext
+   link: it is just for graphical purposes.)  The link elements at
+   the start of the head element are intended for similar uses as
+   the HTML link element type: a role "bgimage" is defined by this DTD.
+
+   * Style: An element "span" is introduced with the same use as in HTML. 
+    All elements have a class attribute, which may help better
+    processing in CSS. The following classes are defined by this DTD,
+    but you can add your own:
+        For section elements: "intro" (a preamble), "rights" (copyright),
+        "advert" (for advertising), "info" (for corporate info about the
+        siteowner, subject, product, or sponsor) and "links" (related sites);
+        For p elements: "li" and "pre", with the HTML meanings: there
+                is no provision for nested lists or tables;
+        For span elements: "tt", "em", "i", "b" & "strong", with the HTML meanings;
+                Also: "definition" and "keyword", for indexing
+        For p and span elements: "sent", with the JSML meaning 
+                (a sentence); 
+        For the span element type: "literal" with the JSML meaning
+                (to be spelled out as letters)-this helps WAI too;
+        For the span element type: "abbr" and "acronym" are also available,
+                (an acronym is pronouncable: NASA), roughly from HTML
+        For the div element type: "ul" and "ol" with the HTML meanings. 
+                The div element type is new with QAML 2.1; we found we could
+                not create good HTML lists without it. However, we have not
+                allowed nested lists with it, at this stage.
+                
+    Note: if you use class="pre", also specify xml:space="preserve" 
+    to inhibit the stripping of white space by the XML processor.
+    If you are attempting "ASCII art", use
+        <p class="pre" xml:space="preserve" alt="explanatory text">...
+    where the alt attribute holds some explanatory text.
+    
+    Please note that you should not rely on format effects 
+    (font, boldness) to convey meaning in these FAQs. The output
+    system of the user may not support them.
+    
+    If you do not put your own numbers in titles, you can signify this
+    by specifying the autonum attribute on a body or section to "yes". 
+    
+  * Accessability: QAML has been checked against the W3C WAI guidelines;
+    the link, p & span elements can have an "title" attribute.
+    The span element can have a class="literal", for contractions to be
+    spoken out in individual letters, "abbr" for an abbreviations,
+    and "acronym" for acronyms. The latter two may be marked up with
+    title attribute for better pronunciation. Multiple logos are possible,
+    to allow sound as well as visual logos. 
+    Refer /www.w3.org/TR/WD-WAI-PAGEAUTH/
+   
+  * Dublin Core: The mappings to Dublin Core metadata are noted.
+    The Dublin Core type for FAQs is "faq". (The althdr element
+    can be used similar to the HTML meta element, to add arbitrary
+    kinds of metadata.)
+ 
+  * Tracking: A data attribute has been added to various elements. 
+    Use an ISO 8601 format date: yyyy-mm-dd or yyyymmdd.  
+    The archive element can link to previous versions and translations.
+    The maintainer can advise the preferred subject line to be used
+    in emails about the FAQ, using the element type "subject".
+    A version element has been added to element type head
+    
+  * PICS and rights: PICS labels can be added to the header using the
+    label element type. Refer http://www.w3.org/PICS/ 
+    A text version concerning rights can be given in a section
+    with a class="rights" attribute.
+    
+  * PDA and Wireless Systems: to allow better interaction with PDA and
+    wireless systems, which have very small screen real-estate, the 
+    <a> answer element type can take a "gist" attribute: this can have
+    a 1 to 5 word summary of the answer. The PDA would use that for example:
+    Q: What is a dog?
+    A: Barking animal >more>
+    Q: Are dogs cats?
+    A: No! >more>
+    where the ">more>" links to the full answer.
+   
+  QAML Version 1.0 last modified 16 July 1997 
+        by Justin Higgins (jhiggins@dn.net)
+        
+  Public identifier for SGML version of QAML Version 1,0:
+  +//ISBN 82-7640-023//DTD Frequently Asked Questions//EN//19940603  
+  
+  Public identifier for this XML version:
+  +//IDN faq.org//DTD Frequently Asked Questions 2.3//EN//XML
+  
+  Rights: This DTD is copyright 1994-1999 Justin Higgins and Rick
+  Jelliffe. You can use it freely for any purpose under the terms 
+  of the MPL or GPL. Documents created using this DTD are copyright
+  their (human or corporate) authors and maintainers, subject to 
+  local law, unless explicitly noted in the FAQ text or markup.  
+  
+  Thanks: Eric Luhrs, C.T.Chang, Andy Leighton, David Pawson
+  
+  Notice: ID attributes will soon be made #REQUIRED on section and on
+  qna. Please always use them.
+  
+-->
+<!-- New in version 2.4
+	email not mandatory for authors and contributors
+	block of links allowed at start of head
+-->
+<!-- New in version 2.3
+        Version element added
+        Allow someone to have more than one email address (deprecated)
+        Namespace declaration added
+-->
+<!ELEMENT faq           (head, body)                              > 
+                                                                       
+                                                                   
+<!ELEMENT a             (p | div)+                                        >   
+<!ELEMENT address       (#PCDATA)                                         >
+<!ELEMENT althdr        (type, content) ><!-- DC:DESCRIPTION -->
+<!ELEMENT archive       (#PCDATA)                  ><!-- DC:IDENTIFIER? -->
+<!ELEMENT author        (logo*, name+, email?)      ><!-- DC:CREATOR     --> 
+<!ELEMENT body          (section+ | qna+)                                 >
+<!ELEMENT content       (#PCDATA)                                         >
+<!ELEMENT contributor   (logo*, name, email?)       ><!-- DC:CONTRIBUTOR -->
+<!ELEMENT div           (p)+                                              >
+<!ELEMENT email         (#PCDATA)                                         >               
+<!ELEMENT head          (title, version?, maintain+, hdr*, althdr*, archive*,label*, link*)> 
+<!ELEMENT hdr           (type, content)            ><!-- DC:DESCRIPTION -->
+<!ELEMENT label         (#PCDATA)                                         >
+<!ELEMENT link          (#PCDATA)                                         >
+<!ELEMENT logo          (#PCDATA)                                         >  
+<!ELEMENT maintain      (logo*, name+, email+, subject?, address?)        >
+                                         <!-- DC:AUTHOR or DC:PUBLISHER -->
+<!ELEMENT name          (#PCDATA)                                         >               
+<!ELEMENT p             (#PCDATA | link | span)*                          >
+<!ELEMENT q             (#PCDATA | link | span)*                          >
+<!ELEMENT qna           (logo*, q, (logo?,topic?,author?,contributor*,a)+)>         
+<!ELEMENT section       (logo*, title, (qna+ | q+ | ( p | div | section)+)) >
+<!ELEMENT span          (#PCDATA)                                         >
+<!ELEMENT subject       (#PCDATA)                                         >
+<!ELEMENT title         (#PCDATA)                  ><!-- DC:TITLE       -->
+<!ELEMENT topic         (#PCDATA)                  ><!-- DC:TITLE       -->
+<!ELEMENT type          (#PCDATA)                  ><!-- DC:SUBJECT     -->
+<!ELEMENT version       (#PCDATA)                                         >
+    <!-- Type categories include:                            
+                Animals
+                Art
+                Audio
+                Business & Finance
+                Computers
+                Programming
+                Software
+                Countries
+                Food
+                Games
+                Health
+                History
+                Hobbies
+                Internet
+                Learning
+                Misc.
+                Movies
+                Music
+                People
+                Politics & Law
+                Books & Magazines
+                Religion
+                Science
+                Sports
+                Technology
+                Television & Radio                              -->                                       
+                                        
+                                     
+<!ATTLIST a             id       ID      #IMPLIED
+                        class    CDATA   #IMPLIED
+                        gist     CDATA   #IMPLIED
+                        xml:lang CDATA   #IMPLIED                  >                        
+<!ATTLIST archive       href     CDATA   #REQUIRED
+                        type     CDATA   #IMPLIED 
+                        class    CDATA   #IMPLIED                 
+                        xml:link CDATA   #FIXED "simple"           >
+<!ATTLIST author        id       ID      #IMPLIED
+                        class    CDATA   #IMPLIED                  >
+<!ATTLIST althdr        id       ID      #IMPLIED
+                        class    CDATA   #IMPLIED                  
+                        schema   CDATA   #IMPLIED                  >
+<!ATTLIST div           id       ID      #IMPLIED
+                        class    CDATA   #IMPLIED                  
+                        xml:lang NMTOKEN #IMPLIED                  >
+<!ATTLIST body          id       ID      #IMPLIED
+                        class    CDATA   #IMPLIED                  
+                        xml:lang NMTOKEN #IMPLIED
+                        autonum  ( yes | no ) "no"                 >
+<!ATTLIST content       id       ID      #IMPLIED
+                        class    CDATA   #IMPLIED                  >
+<!ATTLIST contributor   id       ID      #IMPLIED
+                        class    CDATA   #IMPLIED                  >
+<!ATTLIST email         id       ID      #IMPLIED
+                        class    CDATA   #IMPLIED                  >                                                                            
+<!ATTLIST faq           id       ID      #IMPLIED
+                        xmlns:html CDATA #FIXED "http://www.w3.org/TR/REC-html40"
+                        class    CDATA   #IMPLIED
+                        xml:lang NMTOKEN #IMPLIED                 
+                        date     CDATA   #IMPLIED  ><!-- DC:DATE -->
+<!ATTLIST head          id       ID      #IMPLIED
+                        class    CDATA   #IMPLIED                  >
+<!ATTLIST hdr           id       ID      #IMPLIED
+                        class    CDATA   #IMPLIED                  
+                        schema   CDATA   #IMPLIED                  >  
+<!ATTLIST label         PICSversion CDATA #IMPLIED                 >       
+<!ATTLIST link          id       ID      #IMPLIED
+                        class    CDATA   #IMPLIED                 
+                        xml:link CDATA   #FIXED "simple"        
+                        href     CDATA   #REQUIRED    
+                        alt      CDATA   #IMPLIED    
+                        role     CDATA   #IMPLIED
+                        title    CDATA   #IMPLIED
+                        show     (embed|replace|new) "new"
+                        actuate  (auto|user) "user"
+                        behavior CDATA   #IMPLIED                  >
+<!ATTLIST logo   
+                        id       ID      #IMPLIED
+                        class    CDATA   #IMPLIED
+                        alt      CDATA   #IMPLIED
+                        href     CDATA   #REQUIRED
+                        xml:lang NMTOKEN   #IMPLIED                  
+                        xml:link CDATA  "simple"                   
+                        show     (embed) "embed"
+                        actuate  (auto|user) "auto"                >
+<!ATTLIST maintain      id       ID      #IMPLIED
+                        class    CDATA   #IMPLIED                  >
+<!ATTLIST name          id       ID      #IMPLIED
+                        class    CDATA   #IMPLIED                  >
+<!ATTLIST p             id       ID      #IMPLIED
+                        class    CDATA   #IMPLIED
+                        title    CDATA   #IMPLIED
+                        xml:lang NMTOKEN #IMPLIED  
+                        alt      CDATA   #IMPLIED                
+                        date     CDATA   #IMPLIED 
+                        xml:space ( default | preserve )  #IMPLIED >                        
+<!ATTLIST q             id       ID      #IMPLIED
+                        class    CDATA   #IMPLIED
+                        xml:lang NMTOKEN #IMPLIED                  >
+<!ATTLIST qna           id       ID      #IMPLIED
+                        class    CDATA   #IMPLIED
+                        xml:lang NMTOKEN #IMPLIED                  
+                        date     CDATA   #IMPLIED                  >   
+<!ATTLIST section       id       ID      #IMPLIED
+                        class    CDATA   #IMPLIED
+                        gist     CDATA   #IMPLIED
+                        xml:lang NMTOKEN #IMPLIED                  
+                        autonum  ( yes | no ) "no"                 >
+<!ATTLIST span          id       ID      #IMPLIED
+                        class    CDATA   #IMPLIED
+                        title    CDATA   #IMPLIED
+                        xml:lang NMTOKEN #IMPLIED                  >
+<!ATTLIST title         id       ID      #IMPLIED
+                        class    CDATA   #IMPLIED        
+                        xml:lang NMTOKEN #IMPLIED                  > 
+<!ATTLIST topic         id       ID      #IMPLIED
+                        class    CDATA   #IMPLIED        
+                        xml:lang NMTOKEN #IMPLIED
+                        alt      CDATA   #IMPLIED                  >               
+<!ATTLIST type          id       ID      #IMPLIED
+                        class    CDATA   #IMPLIED                  >   
+                        
+<!-- Why use QAML instead of HTML?
+         Because unconstrained HTML is too powerful and loose!  -->     
+
+

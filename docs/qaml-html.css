@@ -1,0 +1,43 @@
+/* Use Times New Roman for default font */
+
+
+body {
+    background-color:#FFFF99;
+    font-family: serif,Times,"Times New Roman";
+    font-size: 12pt;
+    margin-left: 20%;
+    margin-right: 20%;
+}
+
+h1 {
+    font-size: 16pt;
+    margin-top: 5pt;
+    margin-bottom: 5pt;
+
+}
+
+h1.title {
+    font-size: 18pt;
+    margin-top: 10pt;
+    margin-bottom: 10pt;
+}
+
+h2 {
+    font-size: 14pt;
+}
+
+h3 {
+    font-size: 12pt;
+    font-weight: bold;
+}
+
+
+p.pre {
+  font-family: monospace,Courier,"Courier New";
+  font-size: 10pt;
+}
+
+p.contact {
+  font-size: 9pt;
+  text-align= right;
+}
