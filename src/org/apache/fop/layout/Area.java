@@ -15,6 +15,7 @@ import org.apache.fop.layout.inline.InlineSpace;
 // Java
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 
 abstract public class Area extends Box {
 
@@ -158,6 +159,23 @@ abstract public class Area extends Box {
 
     public boolean hasChildren() {
         return (this.children.size() != 0);
+    }
+
+    /**
+     * Tell whether this area contains any children which are not
+     * DisplaySpace. This is used in determining whether to honor
+     * keeps.
+     */
+    public boolean hasNonSpaceChildren() {
+        if (this.children.size() > 0) {
+            Iterator childIter = children.iterator();
+            while (childIter.hasNext()) {
+                if (! (childIter.next() instanceof DisplaySpace)) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     public int getContentWidth() {
