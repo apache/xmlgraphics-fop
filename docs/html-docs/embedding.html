@@ -33,6 +33,20 @@
      instantiate the class itself. The advantage of the latter is it
      enables runtime determination of Renderer and ElementMapping(s).
   </P>
+  <P>The simplest way to use Driver is to instantiate it with the 
+     InputSource and OutputStream, then set the renderer desired and 
+     call the run method.
+  </P>
+  <P>Here is an example use of Driver which outputs PDF:
+  </P>
+    <DIV align="right"><TABLE border="0" cellpadding="0" cellspacing="4" width="464"><TR><TD bgcolor="#0086b2" height="1" width="1"><IMG border="0" height="1" hspace="0" src="resources/void.gif" vspace="0" width="1"></TD><TD bgcolor="#0086b2" height="1" width="462"><IMG border="0" height="1" hspace="0" src="resources/void.gif" vspace="0" width="462"></TD><TD bgcolor="#0086b2" height="1" width="1"><IMG border="0" height="1" hspace="0" src="resources/void.gif" vspace="0" width="1"></TD></TR><TR><TD bgcolor="#0086b2" width="1"><IMG border="0" height="1" hspace="0" src="resources/void.gif" vspace="0" width="1"></TD><TD bgcolor="#ffffff" width="462"><FONT size="-1"><PRE>
+   Driver driver = new Driver(new InputSource (args[0]), 
+                              new FileOutputStream(args[1]));
+   driver.setRenderer(RENDER_PDF);
+   driver.run();
+</PRE></FONT></TD><TD bgcolor="#0086b2" width="1"><IMG border="0" height="1" hspace="0" src="resources/void.gif" vspace="0" width="1"></TD></TR><TR><TD bgcolor="#0086b2" height="1" width="1"><IMG border="0" height="1" hspace="0" src="resources/void.gif" vspace="0" width="1"></TD><TD bgcolor="#0086b2" height="1" width="462"><IMG border="0" height="1" hspace="0" src="resources/void.gif" vspace="0" width="462"></TD><TD bgcolor="#0086b2" height="1" width="1"><IMG border="0" height="1" hspace="0" src="resources/void.gif" vspace="0" width="1"></TD></TR></TABLE></DIV>
+
+
   <P>Once the Driver is set up, the buildFOTree method
      is called. Depending on whether DOM or SAX is being used, the
      invocation of the method is either buildFOTree(Document) or
@@ -45,17 +59,15 @@
      called in that order.
   </P>
   <P>Here is an example use of Driver:</P>
-  <P><CODE><FONT face="courier, monospaced">Driver driver = new Driver();</FONT></CODE></P>
-  <P><CODE><FONT face="courier, monospaced">driver.setRenderer(&quot;org.apache.fop.render.pdf.PDFRenderer&quot;, version);</FONT></CODE></P>
-  <P><CODE><FONT face="courier, monospaced">driver.addElementMapping(&quot;org.apache.fop.fo.StandardElementMapping&quot;);</FONT></CODE></P>
-  <P><CODE><FONT face="courier, monospaced">driver.addElementMapping(&quot;org.apache.fop.svg.SVGElementMapping&quot;);</FONT></CODE></P>
-  <P><CODE><FONT face="courier, monospaced">driver.addPropertyList(&quot;org.apache.fop.fo.StandardPropertyListMapping&quot;);</FONT></CODE></P>
-  <P><CODE><FONT face="courier, monospaced">driver.addPropertyList(&quot;org.apache.fop.svg.SVGPropertyListMapping&quot;);</FONT></CODE></P>
-  <P><CODE><FONT face="courier, monospaced">driver.setOutputStream(new FileOutputStream(args[1]));</FONT></CODE></P>
-  <P><CODE><FONT face="courier, monospaced">driver.buildFOTree(parser, fileInputSource(args[0]));</FONT></CODE></P>
-  <P><CODE><FONT face="courier, monospaced">driver.format();</FONT></CODE></P>
-  <P><CODE><FONT face="courier, monospaced">driver.render();</FONT></CODE></P>
-  <P>Have a look at the classes CommandLine or XalanCommandLine for complete examples.</P>
+  <DIV align="right"><TABLE border="0" cellpadding="0" cellspacing="4" width="464"><TR><TD bgcolor="#0086b2" height="1" width="1"><IMG border="0" height="1" hspace="0" src="resources/void.gif" vspace="0" width="1"></TD><TD bgcolor="#0086b2" height="1" width="462"><IMG border="0" height="1" hspace="0" src="resources/void.gif" vspace="0" width="462"></TD><TD bgcolor="#0086b2" height="1" width="1"><IMG border="0" height="1" hspace="0" src="resources/void.gif" vspace="0" width="1"></TD></TR><TR><TD bgcolor="#0086b2" width="1"><IMG border="0" height="1" hspace="0" src="resources/void.gif" vspace="0" width="1"></TD><TD bgcolor="#ffffff" width="462"><FONT size="-1"><PRE>
+  Driver driver = new Driver();
+  driver.setRenderer(Driver.RENDER_PDF);
+  driver.buildFOTree(parser, fileInputSource(args[0]));
+  driver.format();
+  driver.setOutputStream(new FileOutputStream(args[1]));
+  driver.render();
+</PRE></FONT></TD><TD bgcolor="#0086b2" width="1"><IMG border="0" height="1" hspace="0" src="resources/void.gif" vspace="0" width="1"></TD></TR><TR><TD bgcolor="#0086b2" height="1" width="1"><IMG border="0" height="1" hspace="0" src="resources/void.gif" vspace="0" width="1"></TD><TD bgcolor="#0086b2" height="1" width="462"><IMG border="0" height="1" hspace="0" src="resources/void.gif" vspace="0" width="462"></TD><TD bgcolor="#0086b2" height="1" width="1"><IMG border="0" height="1" hspace="0" src="resources/void.gif" vspace="0" width="1"></TD></TR></TABLE></DIV>
+  <P>Have a look at the classes CommandLineStarter or FopServlet for complete examples.</P>
   </FONT></TD></TR></TABLE><BR>
   <TABLE border="0" cellpadding="0" cellspacing="0" width="494"><TR><TD bgcolor="666699" colspan="2" width="494"><TABLE border="0" cellpadding="0" cellspacing="0" width="494"><TR><TD bgcolor="#039acc" height="1" width="1"><IMG border="0" height="1" hspace="0" src="resources/void.gif" vspace="0" width="1"></TD><TD bgcolor="#039acc" height="1" width="492"><IMG border="0" height="1" hspace="0" src="resources/void.gif" vspace="0" width="492"></TD><TD bgcolor="#0086b2" height="1" width="1"><IMG border="0" height="1" hspace="0" src="resources/void.gif" vspace="0" width="1"></TD></TR><TR><TD bgcolor="#039acc" width="1"><IMG border="0" height="1" hspace="0" src="resources/void.gif" vspace="0" width="1"></TD><TD bgcolor="#0086b2" width="492"><FONT color="#ffffff" face="arial,helvetica,sanserif" size="+1"><IMG border="0" height="2" hspace="0" src="resources/void.gif" vspace="0" width="2"><B>Using Fop in a servlet</B></FONT></TD><TD bgcolor="#017299" width="1"><IMG border="0" height="1" hspace="0" src="resources/void.gif" vspace="0" width="1"></TD></TR><TR><TD bgcolor="#0086b2" height="1" width="1"><IMG border="0" height="1" hspace="0" src="resources/void.gif" vspace="0" width="1"></TD><TD bgcolor="#017299" height="1" width="492"><IMG border="0" height="1" hspace="0" src="resources/void.gif" vspace="0" width="492"></TD><TD bgcolor="#017299" height="1" width="1"><IMG border="0" height="1" hspace="0" src="resources/void.gif" vspace="0" width="1"></TD></TR></TABLE></TD></TR><TR><TD width="10">&nbsp;</TD><TD width="484"><FONT color="#000000" face="arial,helvetica,sanserif">  
      <P>In the directory xml-fop/docs/examples/embedding you can find a working example how to use

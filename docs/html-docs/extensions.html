@@ -29,19 +29,21 @@
   <TABLE border="0" cellpadding="0" cellspacing="0" width="494"><TR><TD bgcolor="666699" colspan="2" width="494"><TABLE border="0" cellpadding="0" cellspacing="0" width="494"><TR><TD bgcolor="#039acc" height="1" width="1"><IMG border="0" height="1" hspace="0" src="resources/void.gif" vspace="0" width="1"></TD><TD bgcolor="#039acc" height="1" width="492"><IMG border="0" height="1" hspace="0" src="resources/void.gif" vspace="0" width="492"></TD><TD bgcolor="#0086b2" height="1" width="1"><IMG border="0" height="1" hspace="0" src="resources/void.gif" vspace="0" width="1"></TD></TR><TR><TD bgcolor="#039acc" width="1"><IMG border="0" height="1" hspace="0" src="resources/void.gif" vspace="0" width="1"></TD><TD bgcolor="#0086b2" width="492"><FONT color="#ffffff" face="arial,helvetica,sanserif" size="+1"><IMG border="0" height="2" hspace="0" src="resources/void.gif" vspace="0" width="2"><B>Bookmarks</B></FONT></TD><TD bgcolor="#017299" width="1"><IMG border="0" height="1" hspace="0" src="resources/void.gif" vspace="0" width="1"></TD></TR><TR><TD bgcolor="#0086b2" height="1" width="1"><IMG border="0" height="1" hspace="0" src="resources/void.gif" vspace="0" width="1"></TD><TD bgcolor="#017299" height="1" width="492"><IMG border="0" height="1" hspace="0" src="resources/void.gif" vspace="0" width="492"></TD><TD bgcolor="#017299" height="1" width="1"><IMG border="0" height="1" hspace="0" src="resources/void.gif" vspace="0" width="1"></TD></TR></TABLE></TD></TR><TR><TD width="10">&nbsp;</TD><TD width="484"><FONT color="#000000" face="arial,helvetica,sanserif">
     <P>You can provide outlines inside the root object (but outside any page-sequences or
        other formatting objects). Here's an example of an outline entry:</P>
+    <DIV align="right"><TABLE border="0" cellpadding="0" cellspacing="4" width="464"><TR><TD bgcolor="#0086b2" height="1" width="1"><IMG border="0" height="1" hspace="0" src="resources/void.gif" vspace="0" width="1"></TD><TD bgcolor="#0086b2" height="1" width="462"><IMG border="0" height="1" hspace="0" src="resources/void.gif" vspace="0" width="462"></TD><TD bgcolor="#0086b2" height="1" width="1"><IMG border="0" height="1" hspace="0" src="resources/void.gif" vspace="0" width="1"></TD></TR><TR><TD bgcolor="#0086b2" width="1"><IMG border="0" height="1" hspace="0" src="resources/void.gif" vspace="0" width="1"></TD><TD bgcolor="#ffffff" width="462"><FONT size="-1"><PRE>
+    &lt;fo:root xmlns:fo=&quot;http://www.w3.org/1999/XSL/Format&quot;
+             &amp;#160;&amp;#160; xmlns:fox=&quot;http://xml.apache.org/fop/extensions&quot;&gt;
+    &lt;fox:outline internal-destination=&quot;sec3&quot;&gt;
+    &amp;#160;&amp;#160;  &lt;fox:label&gt;Running FOP&lt;/fox:label&gt;
 
-    <P><CODE><FONT face="courier, monospaced">&lt;fo:root xmlns:fo=&quot;http://www.w3.org/1999/XSL/Format&quot;
-             &nbsp;&nbsp; xmlns:fox=&quot;http://xml.apache.org/fop/extensions&quot;&gt;</FONT></CODE></P> 
-    <P><CODE><FONT face="courier, monospaced">&lt;fox:outline internal-destination=&quot;sec3&quot;&gt;</FONT></CODE></P>
-    <P><CODE><FONT face="courier, monospaced">&nbsp;&nbsp;  &lt;fox:label&gt;Running FOP&lt;/fox:label&gt;</FONT></CODE></P>
-
-    <P><CODE><FONT face="courier, monospaced">&nbsp;&nbsp;&lt;fox:outline internal-destination=&quot;sec3-1&quot;&gt;</FONT></CODE></P>
-    <P><CODE><FONT face="courier, monospaced">&nbsp;&nbsp;&nbsp;&nbsp;&lt;fox:label&gt;Prerequisites&lt;/fox:label&gt;</FONT></CODE></P>
-    <P><CODE><FONT face="courier, monospaced">&nbsp;&nbsp;&lt;/fox:outline&gt;</FONT></CODE></P>
-    <P><CODE><FONT face="courier, monospaced">&lt;fox:outline&gt;</FONT></CODE></P>
-    <P><CODE><FONT face="courier, monospaced">&lt;/fo:root&gt;</FONT></CODE></P>
+    &amp;#160;&amp;#160;&lt;fox:outline internal-destination=&quot;sec3-1&quot;&gt;
+    &amp;#160;&amp;#160;&amp;#160;&amp;#160;&lt;fox:label&gt;Prerequisites&lt;/fox:label&gt;
+    &amp;#160;&amp;#160;&lt;/fox:outline&gt;
+    &lt;fox:outline&gt;
+    &lt;/fo:root&gt;
+</PRE></FONT></TD><TD bgcolor="#0086b2" width="1"><IMG border="0" height="1" hspace="0" src="resources/void.gif" vspace="0" width="1"></TD></TR><TR><TD bgcolor="#0086b2" height="1" width="1"><IMG border="0" height="1" hspace="0" src="resources/void.gif" vspace="0" width="1"></TD><TD bgcolor="#0086b2" height="1" width="462"><IMG border="0" height="1" hspace="0" src="resources/void.gif" vspace="0" width="462"></TD><TD bgcolor="#0086b2" height="1" width="1"><IMG border="0" height="1" hspace="0" src="resources/void.gif" vspace="0" width="1"></TD></TR></TABLE></DIV>
     <P>It works similarly to a basic-link. There is also an external-destination 
-       property, but it isn't supported currently.</P>
+       property, but it isn't supported currently. See the pdfoutline.fo file in 
+      docs/examples/fo for a more complete example.</P>
   </FONT></TD></TR></TABLE><BR>
 </TD></TR></TABLE></TD></TR></TABLE><BR><TABLE border="0" cellpadding="0" cellspacing="0" width="620"><TR><TD bgcolor="#0086b2"><IMG height="1" src="images/dot.gif" width="1"></TD></TR><TR><TD align="center"><FONT color="#0086b2" size="-1"><I>
               Copyright &copy; 1999 The Apache Software Foundation.
