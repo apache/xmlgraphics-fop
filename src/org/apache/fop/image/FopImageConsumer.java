@@ -56,6 +56,7 @@ package org.apache.fop.image;
 
 // Java
 import java.util.Hashtable;
+import org.apache.fop.messaging.MessageHandler;
 import java.awt.image.*;
 import java.awt.*;
 
@@ -77,25 +78,25 @@ public class FopImageConsumer implements ImageConsumer {
 
 	public void imageComplete(int status) {
 /*
-System.err.print("Status ");
+MessageHandler.error("Status ");
 if (status == ImageConsumer.COMPLETESCANLINES) {
-	System.err.println("CompleteScanLines");
+	MessageHandler.errorln("CompleteScanLines");
 } else if (status == ImageConsumer.IMAGEABORTED) {
-	System.err.println("ImageAborted");
+	MessageHandler.errorln("ImageAborted");
 } else if (status == ImageConsumer.IMAGEERROR) {
-	System.err.println("ImageError");
+	MessageHandler.errorln("ImageError");
 } else if (status == ImageConsumer.RANDOMPIXELORDER) {
-	System.err.println("RandomPixelOrder");
+	MessageHandler.errorln("RandomPixelOrder");
 } else if (status == ImageConsumer.SINGLEFRAME) {
-	System.err.println("SingleFrame");
+	MessageHandler.errorln("SingleFrame");
 } else if (status == ImageConsumer.SINGLEFRAMEDONE) {
-	System.err.println("SingleFrameDone");
+	MessageHandler.errorln("SingleFrameDone");
 } else if (status == ImageConsumer.SINGLEPASS) {
-	System.err.println("SinglePass");
+	MessageHandler.errorln("SinglePass");
 } else if (status == ImageConsumer.STATICIMAGEDONE) {
-	System.err.println("StaticImageDone");
+	MessageHandler.errorln("StaticImageDone");
 } else if (status == ImageConsumer.TOPDOWNLEFTRIGHT) {
-	System.err.println("TopDownLeftRight");
+	MessageHandler.errorln("TopDownLeftRight");
 }
 */
 		synchronized(this.imageStatus) {
@@ -106,23 +107,23 @@ if (status == ImageConsumer.COMPLETESCANLINES) {
 	}
 
 	public void setColorModel(ColorModel model) {
-//System.err.println("setColorModel: " + model);
+//MessageHandler.errorln("setColorModel: " + model);
 		this.cm = model;
 	}
 
 	public void setDimensions(int width, int height) {
-//System.err.println("setDimension: w=" + width + " h=" + height);
+//MessageHandler.errorln("setDimension: w=" + width + " h=" + height);
 		this.width = width;
 		this.height = height;
 	}
 
 	public void setHints(int hintflags) {
-//System.err.println("setHints: " + hintflags);
+//MessageHandler.errorln("setHints: " + hintflags);
 		this.hints = hintflags;
 	}
 
 	public void setProperties(Hashtable props) {
-//System.err.println("setProperties: " + props);
+//MessageHandler.errorln("setProperties: " + props);
 		this.properties = props;
 	}
 

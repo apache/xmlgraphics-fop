@@ -53,6 +53,7 @@ package org.apache.fop.fo.flow;
 
 // FOP
 import org.apache.fop.fo.*;
+import org.apache.fop.messaging.MessageHandler;
 import org.apache.fop.fo.properties.*;
 import org.apache.fop.datatypes.*;
 import org.apache.fop.layout.Area;
@@ -171,7 +172,7 @@ public class ListBlock extends FObj {
 	int numChildren = this.children.size();
 	for (int i = this.marker; i < numChildren; i++) {
 	    if (!(children.elementAt(i) instanceof ListItem)) {
-		System.err.println("WARNING: This version of FOP requires list-items inside list-blocks");
+		MessageHandler.errorln("WARNING: This version of FOP requires list-items inside list-blocks");
 		return new Status(Status.OK);
 	    }
 	    ListItem listItem = (ListItem) children.elementAt(i);

@@ -53,6 +53,7 @@ package org.apache.fop.render.pdf;
 
 // FOP
 import org.apache.fop.render.Renderer;
+import org.apache.fop.messaging.MessageHandler;
 import org.apache.fop.image.ImageArea;
 import org.apache.fop.image.FopImage;
 import org.apache.fop.apps.FOPException;
@@ -143,7 +144,7 @@ public class PDFRenderer implements Renderer {
 	 */	
         public void render(AreaTree areaTree, PrintWriter writer)
         throws IOException, FOPException {      
-            System.err.println("rendering areas to PDF");
+            MessageHandler.logln("rendering areas to PDF");
             IDReferences idReferences=areaTree.getIDReferences();           
             this.pdfResources = this.pdfDoc.getResources();            
             this.pdfDoc.setIDReferences(idReferences);
@@ -156,7 +157,7 @@ public class PDFRenderer implements Renderer {
                 throw new FOPException("The id \""+idReferences.getNextInvalidId()+"\" was referenced but does not exist\n");            
             }
     
-            System.err.println("writing out PDF");
+            MessageHandler.logln("writing out PDF");
             this.pdfDoc.output(writer);
         }
 

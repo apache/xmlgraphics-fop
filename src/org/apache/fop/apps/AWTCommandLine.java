@@ -6,10 +6,10 @@ package org.apache.fop.apps;
   Rainer Steinkuhle: Rainer.Steinkuhle@jcatalog.com,
   Stanislav Gorkhover: Stanislav.Gorkhover@jcatalog.com
  */
-
-
+import org.apache.fop.messaging.MessageHandler;
 import org.apache.fop.viewer.*;
 import org.apache.fop.render.awt.*;
+
 
 import javax.swing.UIManager;
 import java.awt.*;
@@ -72,7 +72,7 @@ public class AWTCommandLine {
 
 
 	if (parser == null) {
-	    System.err.println("ERROR: Unable to create SAX parser");
+	    MessageHandler.errorln("ERROR: Unable to create SAX parser");
 	    System.exit(1);
 	}
 
@@ -102,8 +102,8 @@ public class AWTCommandLine {
         frame.progress(resource.getString("Show"));
 
 	} catch (Exception e) {
-	    System.err.println("FATAL ERROR: " + e.getMessage());
-        e.printStackTrace();
+	    MessageHandler.errorln("FATAL ERROR: " + e.getMessage());
+      e.printStackTrace();
 	    System.exit(1);
 	}
   }
@@ -115,20 +115,20 @@ public class AWTCommandLine {
 	if (parserClassName == null) {
 	    parserClassName = "com.jclark.xml.sax.Driver";
 	}
-	System.err.println("using SAX parser " + parserClassName);
+	MessageHandler.errorln("using SAX parser " + parserClassName);
 
 	try {
 	    return (Parser)
 		Class.forName(parserClassName).newInstance();
 	} catch (ClassNotFoundException e) {
-	    System.err.println("Could not find " + parserClassName);
+	    MessageHandler.errorln("Could not find " + parserClassName);
 	} catch (InstantiationException e) {
-	    System.err.println("Could not instantiate "
+	    MessageHandler.errorln("Could not instantiate "
 			       + parserClassName);
 	} catch (IllegalAccessException e) {
-	    System.err.println("Could not access " + parserClassName);
+	    MessageHandler.errorln("Could not access " + parserClassName);
 	} catch (ClassCastException e) {
-	    System.err.println(parserClassName + " is not a SAX driver");
+	    MessageHandler.errorln(parserClassName + " is not a SAX driver");
 	}
 	return null;
     }
@@ -186,7 +186,7 @@ public class AWTCommandLine {
     URL url = getClass().getResource(path);
     in = url.openStream();
     } catch(Exception ex) {
-      System.out.println("Can't find URL to: <" + path + "> " + ex.getMessage());
+      MessageHandler.logln("Can't find URL to: <" + path + "> " + ex.getMessage());
     }
     return new SecureResourceBundle(in);
   }
@@ -205,9 +205,9 @@ public class AWTCommandLine {
     String language = null;
     String imageDir = null;
 
-    System.err.println(Version.getVersion());
+    MessageHandler.errorln(Version.getVersion());
     if (args.length < 1 || args.length > 3) {
-      System.err.println("usage: java AWTCommandLine " +
+      MessageHandler.errorln("usage: java AWTCommandLine " +
                          "formatting-object-file [language] ");
       System.exit(1);
     }

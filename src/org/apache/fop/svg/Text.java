@@ -53,6 +53,7 @@ package org.apache.fop.svg;
 
 // FOP
 import org.apache.fop.fo.*;
+import org.apache.fop.messaging.MessageHandler;
 import org.apache.fop.fo.properties.*;
 import org.apache.fop.layout.Area;
 import org.apache.fop.layout.FontState;
@@ -137,7 +138,7 @@ public class Text extends FObjMixed {
 	    ((SVGArea) area).addGraphic(new TextGraphic(x, y, text));
 	} else {
 	    /* otherwise generate a warning */
-	    System.err.println("WARNING: svg:text outside svg:svg");
+	    MessageHandler.errorln("WARNING: svg:text outside svg:svg");
 	}
 
 	/* return status */

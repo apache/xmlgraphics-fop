@@ -52,6 +52,7 @@ package org.apache.fop.fo.pagination;
 
 // FOP
 import org.apache.fop.fo.*;
+import org.apache.fop.messaging.MessageHandler;
 import org.apache.fop.fo.properties.*;
 import org.apache.fop.layout.PageMaster;
 import org.apache.fop.layout.Region;
@@ -86,7 +87,7 @@ public class SimplePageMaster extends FObj {
 	    this.layoutMasterSet = (LayoutMasterSet) parent;
 	    String pm = this.properties.get("page-master-name").getString();
 	    if (pm == null) {
-		System.err.println("WARNING: simple-page-master does not have "
+		MessageHandler.errorln("WARNING: simple-page-master does not have "
 				   + "a page-master-name and so is being ignored");
 	    } else {
 		this.layoutMasterSet.addLayoutMaster(pm, this);

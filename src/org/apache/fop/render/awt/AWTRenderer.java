@@ -10,6 +10,7 @@ package org.apache.fop.render.awt;
  */
 
 import org.apache.fop.layout.*;
+import org.apache.fop.messaging.MessageHandler;
 import org.apache.fop.datatypes.*;
 import org.apache.fop.image.*;
 import org.apache.fop.svg.*;
@@ -450,7 +451,7 @@ public class AWTRenderer implements Renderer, Printable, Pageable {
 	FopImage img = area.getImage();
 	
 	if (img == null) {
-	    System.out.println("area.getImage() is null");
+	    MessageHandler.logln("area.getImage() is null");
 	}
 	
 	try {
@@ -470,7 +471,7 @@ public class AWTRenderer implements Renderer, Printable, Pageable {
 		currentYPosition -= h;
 	} catch (FopImageException imgex) {
 		// ?
-		System.out.println("Error while loading image : " + imgex.getMessage());
+		MessageHandler.logln("Error while loading image : " + imgex.getMessage());
 	}
     }
 

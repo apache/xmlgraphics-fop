@@ -52,6 +52,7 @@
 package org.apache.fop.fo;
 
 import org.apache.fop.fo.properties.*;
+import org.apache.fop.messaging.MessageHandler;
 import org.apache.fop.svg.*;
 
 import org.apache.fop.apps.FOPException;
@@ -177,7 +178,7 @@ public class PropertyListBuilder {
 	if (propertyMaker != null) {
 	    p = propertyMaker.compute(propertyList);
 	} else {
-	    System.err.println("WARNING: property " + propertyName + " ignored");
+	    MessageHandler.errorln("WARNING: property " + propertyName + " ignored");
 	}
 	return p;
     }
@@ -189,7 +190,7 @@ public class PropertyListBuilder {
 	if (propertyMaker != null) {
 	    b = propertyMaker.isInherited();
 	} else {
-	    //System.err.println("WARNING: Unknown property " + propertyName);
+	    //MessageHandler.errorln("WARNING: Unknown property " + propertyName);
 	    b = true;
 	}
 	return b;
@@ -206,7 +207,7 @@ public class PropertyListBuilder {
 	    if (propertyMaker != null) {
 		p.put(attributeName,propertyMaker.make(p,attributes.getValue(i)));
 	    } else {
-		//System.err.println("WARNING: property " + attributeName + " ignored");
+		//MessageHandler.errorln("WARNING: property " + attributeName + " ignored");
 	    }
 	}
 	
@@ -221,7 +222,7 @@ public class PropertyListBuilder {
 	if (propertyMaker != null) {
 	    p = propertyMaker.make(propertyList);
 	} else {
-	    System.err.println("WARNING: property " + propertyName + " ignored");
+	    MessageHandler.errorln("WARNING: property " + propertyName + " ignored");
 	}
 	return p;
     }

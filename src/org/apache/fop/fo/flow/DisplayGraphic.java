@@ -54,6 +54,7 @@ package org.apache.fop.fo.flow;
 
 // FOP
 import org.apache.fop.fo.*;
+import org.apache.fop.messaging.MessageHandler;
 import org.apache.fop.fo.properties.*;
 import org.apache.fop.layout.Area;
 import org.apache.fop.layout.BlockArea;
@@ -169,7 +170,7 @@ public class DisplayGraphic extends FObj {
 			} else if (width == 0) {
 				width = (int) ((imgWidth * ((double) height)) / imgHeight);
 			}
-//System.err.println("DisplayGraphic: imgW=" + imgWidth + " imgH=" + imgHeight + " w=" + width + " h=" + height);
+//MessageHandler.errorln("DisplayGraphic: imgW=" + imgWidth + " imgH=" + imgHeight + " w=" + width + " h=" + height);
 		}
 
 		if (area.spaceLeft() < (height + spaceBefore)) {
@@ -208,10 +209,10 @@ public class DisplayGraphic extends FObj {
 
 	} catch (MalformedURLException urlex) {
 		// bad URL
-System.err.println("Error while creating area : " + urlex.getMessage());
+MessageHandler.errorln("Error while creating area : " + urlex.getMessage());
 	} catch (FopImageException imgex) {
 		// image error
-System.err.println("Error while creating area : " + imgex.getMessage());
+MessageHandler.errorln("Error while creating area : " + imgex.getMessage());
 	}
 
 	if (area instanceof BlockArea) {

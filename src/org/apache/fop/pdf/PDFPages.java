@@ -52,6 +52,7 @@ package org.apache.fop.pdf;
 
 // Java
 import java.io.PrintWriter;
+import org.apache.fop.messaging.MessageHandler;
 import java.util.Vector;
 
 /**
@@ -107,7 +108,7 @@ public class PDFPages extends PDFObject {
      */
     public void incrementCount() {
 	this.count++;
-        // System.out.println("Incrementing count to " + this.getCount());
+        // MessageHandler.logln("Incrementing count to " + this.getCount());
     }
 
     /**

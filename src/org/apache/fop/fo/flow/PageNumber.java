@@ -53,6 +53,7 @@ package org.apache.fop.fo.flow;
 
 // FOP
 import org.apache.fop.fo.*;
+import org.apache.fop.messaging.MessageHandler;
 import org.apache.fop.datatypes.*;
 import org.apache.fop.fo.properties.*;
 import org.apache.fop.layout.*;
@@ -88,7 +89,7 @@ public class PageNumber extends FObj {
 
     public Status layout(Area area) throws FOPException {
 	if (!(area instanceof BlockArea)) {
-	    System.err.println("WARNING: page-number outside block area");
+	    MessageHandler.errorln("WARNING: page-number outside block area");
 	    return new Status(Status.OK);
 	}
 	if (this.marker == START) {

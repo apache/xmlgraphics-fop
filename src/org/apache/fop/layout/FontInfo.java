@@ -51,6 +51,7 @@
 package org.apache.fop.layout;
 
 import java.util.Hashtable;
+import org.apache.fop.messaging.MessageHandler;
 import java.util.Enumeration;
 
 import org.apache.fop.apps.FOPException;
@@ -104,9 +105,9 @@ public class FontInfo {
         if (f == null) {
           throw new FOPException("no default font defined by OutputConverter");
         }
-        System.err.println("WARNING: defaulted font to any,normal,normal");
+        MessageHandler.errorln("WARNING: defaulted font to any,normal,normal");
       }
-      System.err.println("WARNING: unknown font "+family+" so defaulted font to any");
+      MessageHandler.errorln("WARNING: unknown font "+family+" so defaulted font to any");
     }
     return f;
   }

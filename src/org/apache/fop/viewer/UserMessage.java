@@ -1,6 +1,7 @@
 package org.apache.fop.viewer;
 
 import java.awt.*;
+import org.apache.fop.messaging.MessageHandler;
 import java.io.*;
 import java.awt.event.*;
 import java.util.*;
@@ -33,7 +34,7 @@ public class UserMessage {
   public static void setTranslator(Translator aRes) {
     res = aRes;
     if (res == null) {
-      System.out.println("UserMessage: setTranslator(null) !");
+      MessageHandler.logln("UserMessage: setTranslator(null) !");
       res = new SecureResourceBundle(null);
     }
 
@@ -112,18 +113,18 @@ public class UserMessage {
   * Ersetzt die eventuellen Platzhalter durch die übergebenen Parameter
   */
   static String prepareMessage(String rawText, String[] par) {
-    System.out.println("prepareMessage(): " + rawText + ", parameter: " + par);
+    MessageHandler.logln("prepareMessage(): " + rawText + ", parameter: " + par);
     int index = rawText.indexOf(PARAMETER_TAG);
     String composedMess = "";
     if ((index == -1) && (par == null)) return rawText;
     if ((index != -1) && (par == null)) {
-      System.out.println("Message " + actMessId+ " erwartet Parameter. Aufgerufen ohne Parameter");
+      MessageHandler.logln("Message " + actMessId+ " erwartet Parameter. Aufgerufen ohne Parameter");
       return rawText;
     }
     if ((index == -1) && (par != null)) {
-      System.out.println("Message " + actMessId + " erwartet keine Parameter. Aufgerufen mit folgenden Parametern:");
+      MessageHandler.logln("Message " + actMessId + " erwartet keine Parameter. Aufgerufen mit folgenden Parametern:");
       for(int i = 0; i < par.length; ++i)
-        System.out.println(par[i].toString());
+        MessageHandler.logln(par[i].toString());
       return rawText;
     }
     int tagCount = 0;
@@ -132,7 +133,7 @@ public class UserMessage {
       try {
         composedMess += rawText.substring(0, index) + par[tagCount];
       } catch(ArrayIndexOutOfBoundsException ex) {
-        System.out.println("Anzahl der übergebenen Parameter zu der Meldung " + actMessId + " ist weniger als erwartet.");
+        MessageHandler.logln("Anzahl der übergebenen Parameter zu der Meldung " + actMessId + " ist weniger als erwartet.");
         ex.printStackTrace();
         return composedMess + rawText;
       }
@@ -141,7 +142,7 @@ public class UserMessage {
     }
     composedMess += rawText;
     if (tagCount != par.length)
-      System.out.println("Die zu der Meldung " + actMessId + "  übergebenen Parameter sind mehr als die Meldung vorsieht.");
+      MessageHandler.logln("Die zu der Meldung " + actMessId + "  übergebenen Parameter sind mehr als die Meldung vorsieht.");
     return composedMess;
   }
 
@@ -218,11 +219,11 @@ public class UserMessage {
         translatedMes = translatedMes.substring(translatedMes.indexOf(':')+1);
 
       } catch(Exception ex) {
-          System.out.println("FALSCHES FORMAT: MESSAGE: " + textID);
+          MessageHandler.logln("FALSCHES FORMAT: MESSAGE: " + textID);
       }
     }
     else { // Message not found
-      System.out.println("UserMessage: textID '" + textID + "' not found. Return " +
+      MessageHandler.logln("UserMessage: textID '" + textID + "' not found. Return " +
                    "value 'CANCEL' = " + CANCEL);
 
       //return CANCEL;
@@ -260,7 +261,7 @@ public class UserMessage {
     else {
       if (optionTypeIndex == STYLE_NOBUTTON) {
         // Wird nicht mehr unterstützt
-        System.out.println("UserMessage: STYLE_NOBUTTON wird nicht unterstützt");
+        MessageHandler.logln("UserMessage: STYLE_NOBUTTON wird nicht unterstützt");
         return result;
       }
       else {

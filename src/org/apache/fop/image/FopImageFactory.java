@@ -56,6 +56,7 @@ package org.apache.fop.image;
 
 // Java
 import java.io.IOException;
+import org.apache.fop.messaging.MessageHandler;
 import java.net.*;
 import java.lang.reflect.*;
 import java.util.Hashtable;
@@ -82,13 +83,13 @@ public class FopImageFactory {
 				}
 				catch (MalformedURLException e_abs) {
 					// not found
-					System.err.println("Invalid Image URL : " + e_abs.getMessage() + "(base URL " + context_url.toString() + ")");
+					MessageHandler.errorln("Invalid Image URL : " + e_abs.getMessage() + "(base URL " + context_url.toString() + ")");
 					return null;
 				}
 			}
 			catch (MalformedURLException e_context) {
 				// pb context url
-				System.err.println("Invalid Image URL - error on relative URL : " + e_context.getMessage());
+				MessageHandler.errorln("Invalid Image URL - error on relative URL : " + e_context.getMessage());
 				return null;
 			}
 		}

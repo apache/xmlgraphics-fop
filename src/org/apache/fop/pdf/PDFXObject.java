@@ -55,6 +55,7 @@ package org.apache.fop.pdf;
 
 // Java
 import java.io.IOException;
+import org.apache.fop.messaging.MessageHandler;
 import java.io.PrintWriter;
 
 // FOP
@@ -83,7 +84,7 @@ public class PDFXObject extends PDFObject {
 	super(number);
 	this.Xnum=Xnumber;
 	if (img == null)
-	    System.err.println("FISH");
+	    MessageHandler.errorln("FISH");
 	fopimage=img;
     }
 
@@ -137,9 +138,9 @@ public class PDFXObject extends PDFObject {
 		writer.write(p);
 		length += p.length();
 	} catch (FopImageException imgex) {
-System.err.println("Error in XObject : " + imgex.getMessage());
+MessageHandler.errorln("Error in XObject : " + imgex.getMessage());
 	} catch (PDFFilterException filterex) {
-System.err.println("Error in XObject : " + filterex.getMessage());
+MessageHandler.errorln("Error in XObject : " + filterex.getMessage());
 	}
 	return length;
     }
