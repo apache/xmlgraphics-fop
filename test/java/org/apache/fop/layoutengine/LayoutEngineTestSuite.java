@@ -28,7 +28,6 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.filefilter.AndFileFilter;
 import org.apache.commons.io.filefilter.IOFileFilter;
 import org.apache.commons.io.filefilter.NameFileFilter;
@@ -58,6 +57,7 @@ public class LayoutEngineTestSuite {
     
     /**
      * @return the test suite with all the tests (one for each XML file)
+     * @throws IOException in case of an I/O problem
      */
     public static Test suite() throws IOException {
         TestSuite suite = new TestSuite();
