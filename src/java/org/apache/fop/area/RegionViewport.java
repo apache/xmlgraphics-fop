@@ -69,6 +69,11 @@ public class RegionViewport extends Area implements Cloneable {
         clip = c;
     }
 
+    /** @return true if the viewport should be clipped. */
+    public boolean isClip() {
+        return this.clip;
+    }
+    
     /**
      * Get the view area of this viewport.
      *
