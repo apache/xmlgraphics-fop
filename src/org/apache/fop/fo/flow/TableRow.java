@@ -111,8 +111,7 @@ public class TableRow extends FObj {
 
     // added by Dresdner Bank, Germany
     DisplaySpace spacer = null;
-
-
+    DisplaySpace spacerAfter = null;
 
     /**
      * The list of cell states for this row. This is the location of
@@ -482,6 +481,8 @@ public class TableRow extends FObj {
                     // added on 11/28/2000, by Dresdner Bank, Germany
                     if (spacer != null)
                         area.removeChild(spacer);
+                    if(spacerAfter != null)
+                        area.removeChild(spacerAfter);
 
                     // removing something that was added by succession
                     // of cell.layout()
@@ -501,8 +502,6 @@ public class TableRow extends FObj {
                 cellState.setLayoutComplete(true);
             }
 
-
-
             int h = cell.getHeight();
             if (h > largestCellHeight) {
                 largestCellHeight = h;
@@ -511,7 +510,7 @@ public class TableRow extends FObj {
 
         for (int i = 0; i < numChildren; i++) {
             TableCell cell = (TableCell) children.elementAt(i);
-            cell.setHeight(largestCellHeight);
+            cell.setRowHeight(largestCellHeight);
         }
 
         // added by Dresdner Bank, Germany
@@ -532,7 +531,9 @@ public class TableRow extends FObj {
         //area.increaseHeight(largestCellHeight);
 
         if (spaceAfter != 0) {
-            area.addDisplaySpace(spaceAfter);
+            spacerAfter = new DisplaySpace(spaceAfter);
+            area.increaseHeight(spaceAfter);
+            area.addChild(spacerAfter);
         }
 
         if (area instanceof BlockArea) {
@@ -572,7 +573,8 @@ public class TableRow extends FObj {
     public void removeLayout(Area area) {
         if (spacer != null)
             area.removeChild(spacer);
-
+        if(spacerAfter != null)
+            area.removeChild(spacerAfter);
         // removing something that was added by succession
         // of cell.layout()
         // just to keep my sanity here, Hani
