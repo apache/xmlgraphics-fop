@@ -110,13 +110,13 @@ public class FoPageSequenceMaster extends FONode {
 
     /** Constant values for FoSinglePageMasterReference.
         See {@link #sparsePropsMap sparsePropsMap}. */
-    private static final int[] s_p_m_r_PropsMap;
+    protected static final int[] s_p_m_r_PropsMap;
 
     /** See {@link #sparseIndices sparseIndices}. */
-    private static final int[] s_p_m_r_Indices;
+    protected static final int[] s_p_m_r_Indices;
 
     /** See {@link #numProps numProps}. */
-    private static final int s_p_m_r_numProps;
+    public static final int s_p_m_r_numProps;
 
     static {
         // applicableProps is a HashMap containing the indicies of the
@@ -130,13 +130,13 @@ public class FoPageSequenceMaster extends FONode {
     }
 
     /** See {@link #sparsePropsMap sparsePropsMap}. */
-    private static final int[] r_p_m_r_PropsMap;
+    protected static final int[] r_p_m_r_PropsMap;
 
     /** See {@link #sparseIndices sparseIndices}. */
-    private static final int[] r_p_m_r_Indices;
+    protected static final int[] r_p_m_r_Indices;
 
     /** See {@link #numProps numProps}. */
-    private static final int r_p_m_r_numProps;
+    public static final int r_p_m_r_numProps;
 
     static {
         // Collect the sets of properties that apply
@@ -162,13 +162,13 @@ public class FoPageSequenceMaster extends FONode {
     }
 
     /** See {@link #sparsePropsMap sparsePropsMap}.  */
-    private static final int[] r_p_m_a_PropsMap;
+    protected static final int[] r_p_m_a_PropsMap;
 
     /** See {@link #sparseIndices sparseIndices}.  */
-    private static final int[] r_p_m_a_Indices;
+    protected static final int[] r_p_m_a_Indices;
 
     /** See {@link #numProps numProps}.  */
-    private static final int r_p_m_a_numProps;
+    protected static final int r_p_m_a_numProps;
 
     static {
         r_p_m_a_PropsMap = new int[PropNames.LAST_PROPERTY_INDEX + 1];
@@ -179,13 +179,13 @@ public class FoPageSequenceMaster extends FONode {
     }
 
     /** See {@link #sparsePropsMap sparsePropsMap}. */
-    private static final int[] c_p_m_r_PropsMap;
+    protected static final int[] c_p_m_r_PropsMap;
 
     /** See {@link #sparseIndices sparseIndices}. */
-    private static final int[] c_p_m_r_Indices;
+    protected static final int[] c_p_m_r_Indices;
 
     /** See {@link #numProps numProps}. */
-    private static final int c_p_m_r_numProps;
+    public static final int c_p_m_r_numProps;
 
     static {
         // Collect the sets of properties that apply
