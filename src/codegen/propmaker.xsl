@@ -6,8 +6,13 @@
 
 <xsl:output method="xml" />
 
+<xsl:import href="elements.xsl"/>
+
 <xsl:template match="elements">
-<property-list family="SVG">
+<property-list>
+<xsl:attribute name="family">
+<xsl:call-template name="capall"><xsl:with-param name="str" select="$prefixVal"/></xsl:call-template>
+</xsl:attribute>
   <generic-property-list>
     <xsl:apply-templates select="*//attribute"/>
  </generic-property-list>
