@@ -71,7 +71,6 @@ public class Block extends FObjMixed {
 	return new Block.Maker();
     }
 
-    final static int ID_PADDING = 5000; // space to add before id y position
     FontState fs;
     int align;
     int alignLast;
@@ -206,20 +205,9 @@ public class Block extends FObjMixed {
 	}        
         
         if ( marker==0 ) {
-            // set up IDReferences            
-            IDReferences idReferences = area.getIDReferences();            
+            // initialize id                       
             String id = this.properties.get("id").getString(); 
-            if ( id!=null && !id.equals("") ) {
-                if ( idReferences.doesIDExist(id) ) {
-                    throw new FOPException("The id \""+id+"\" already exists in this document");
-                }
-                else {                    
-                    idReferences.createNewId(id);
-                    idReferences.removeFromIdValidationList(id);                                                           
-                    idReferences.setYPosition(id,area.getPage().getBody().getYPosition() - area.getAbsoluteHeight()+ID_PADDING);                    
-                    area.getPage().addToIDList(id);                                    
-                }
-            }
+            area.getIDReferences().initializeID(id,area);                        
         }
         
         this.blockArea =
