@@ -20,11 +20,9 @@ package org.apache.fop.configuration;
 
 // Java
 import java.util.Map;
+import java.util.logging.Logger;
 import java.io.InputStream;
 
-// Avalon
-import org.apache.avalon.framework.logger.LogEnabled;
-import org.apache.avalon.framework.logger.Logger;
 
 /**
  * The User Agent for fo.
@@ -46,7 +44,7 @@ import org.apache.avalon.framework.logger.Logger;
  * These areas may contain resolveable areas that will be processed
  * with other resolveable areas
  */
-public class FOUserAgent implements LogEnabled {
+public class FOUserAgent {
 
     private Logger log;
     /** Map containing various default values */
@@ -59,7 +57,6 @@ public class FOUserAgent implements LogEnabled {
     /**
      * Sets the logger.
      * @param log Logger to use
-     * @see org.apache.avalon.framework.logger.LogEnabled#enableLogging(Logger)
      */
     public void enableLogging(Logger log) {
         this.log = log;

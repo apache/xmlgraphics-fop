@@ -41,6 +41,31 @@ public abstract class InputHandler {
      */
     public abstract InputSource getInputSource();
 
+    protected String baseURL = null;
+    
+    /**
+     * Get the base URL associated with this input source
+     * @return the input source
+     */
+    public String getBaseURL() {
+        return baseURL;
+    }
+
+    /**
+     * Attempts to set a default base URL from the parent of the file passed
+     * as an argument. Sets <code>baseURL</code> to the URL derived, or to an
+     * empty string if that fails.
+     * @param file
+     */
+    protected void setBaseURL(File file) {
+        try {
+            baseURL =
+                new File(file.getAbsolutePath()).getParentFile().toURL().toExternalForm();
+        } catch (Exception e) {
+            baseURL = "";
+        }
+    }
+
     /**
      * Get the SAX parser associated with this input handler.
      * @return the SAX parser

@@ -39,6 +39,7 @@ public class FOFileHandler extends InputHandler {
      */
     public FOFileHandler(File fofile) {
         this.fofile = fofile;
+        setBaseURL(fofile);
     }
 
     /**
