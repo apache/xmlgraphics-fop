@@ -200,7 +200,7 @@ public class MultiByteFont extends CIDFont {
      * @see org.apache.fop.fonts.Font#mapChar(char)
      */
     public char mapChar(char c) {
-        int idx = (int)c;
+        int idx = c;
         int retIdx = 0;
 
         for (int i = 0; (i < bfentries.length) && retIdx == 0; i++) {
