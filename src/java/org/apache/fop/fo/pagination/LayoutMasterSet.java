@@ -62,11 +62,7 @@ public class LayoutMasterSet extends FObj {
      * @see org.apache.fop.fo.FONode#startOfNode
      */
     protected void startOfNode() throws FOPException {
-        if (parent.getName().equals("fo:root")) {
-            Root root = (Root)parent;
-            root.setLayoutMasterSet(this);
-        }
-
+        getRoot().setLayoutMasterSet(this);
         simplePageMasters = new java.util.HashMap();
         pageSequenceMasters = new java.util.HashMap();
     }
