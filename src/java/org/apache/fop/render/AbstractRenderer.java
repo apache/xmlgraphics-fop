@@ -639,12 +639,12 @@ public abstract class AbstractRenderer extends AbstractLogEnabled
 
 
     /** @see org.apache.fop.render.Renderer */
-    public void renderCharacter(Character ch) {
+    protected void renderCharacter(Character ch) {
         currentBlockIPPosition += ch.getWidth();
     }
 
     /** @see org.apache.fop.render.Renderer */
-    public void renderInlineSpace(Space space) {
+    protected void renderInlineSpace(Space space) {
         // an inline space moves the inline progression position
         // for the current block by the width or height of the space
         // it may also have styling (only on this object) that needs
@@ -653,17 +653,17 @@ public abstract class AbstractRenderer extends AbstractLogEnabled
     }
 
     /** @see org.apache.fop.render.Renderer */
-    public void renderLeader(Leader area) {
+    protected void renderLeader(Leader area) {
         currentBlockIPPosition += area.getWidth();
     }
 
     /** @see org.apache.fop.render.Renderer */
-    public void renderText(TextArea text) {
+    protected void renderText(TextArea text) {
         currentBlockIPPosition += text.getWidth();
     }
 
     /** @see org.apache.fop.render.Renderer */
-    public void renderInlineParent(InlineParent ip) {
+    protected void renderInlineParent(InlineParent ip) {
         int saveIP = currentBlockIPPosition;
         Iterator iter = ip.getChildAreas().iterator();
         while (iter.hasNext()) {
@@ -673,7 +673,7 @@ public abstract class AbstractRenderer extends AbstractLogEnabled
     }
 
     /** @see org.apache.fop.render.Renderer */
-    public void renderViewport(Viewport viewport) {
+    protected void renderViewport(Viewport viewport) {
         Area content = viewport.getContent();
         int saveBP = currentBPPosition;
         currentBPPosition += viewport.getOffset();

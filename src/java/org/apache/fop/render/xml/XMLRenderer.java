@@ -395,7 +395,7 @@ public class XMLRenderer extends AbstractRenderer {
     /**
      * @see org.apache.fop.render.Renderer#renderViewport(Viewport)
      */
-    public void renderViewport(Viewport viewport) {
+    protected void renderViewport(Viewport viewport) {
         writeStartTag("<viewport>");
         super.renderViewport(viewport);
         writeEndTag("</viewport>");
@@ -435,7 +435,7 @@ public class XMLRenderer extends AbstractRenderer {
     /**
      * @see org.apache.fop.render.Renderer#renderCharacter(Character)
      */
-    public void renderCharacter(org.apache.fop.area.inline.Character ch) {
+    protected void renderCharacter(org.apache.fop.area.inline.Character ch) {
         String prop = "";
         Map map = ch.getTraits();
         if (map != null) {
@@ -447,14 +447,14 @@ public class XMLRenderer extends AbstractRenderer {
     /**
      * @see org.apache.fop.render.Renderer#renderInlineSpace(Space)
      */
-    public void renderInlineSpace(Space space) {
+    protected void renderInlineSpace(Space space) {
         writeElement("<space width=\"" + space.getWidth() + "\"/>");
     }
 
     /**
      * @see org.apache.fop.render.Renderer#renderText(TextArea)
      */
-    public void renderText(TextArea text) {
+    protected void renderText(TextArea text) {
         String prop = "";
         Map map = text.getTraits();
         if (map != null) {
@@ -468,7 +468,7 @@ public class XMLRenderer extends AbstractRenderer {
     /**
      * @see org.apache.fop.render.Renderer#renderInlineParent(InlineParent)
      */
-    public void renderInlineParent(InlineParent ip) {
+    protected void renderInlineParent(InlineParent ip) {
         String prop = "";
         Map map = ip.getTraits();
         if (map != null) {
@@ -482,7 +482,7 @@ public class XMLRenderer extends AbstractRenderer {
     /**
      * @see org.apache.fop.render.Renderer#renderLeader(Leader)
      */
-    public void renderLeader(Leader area) {
+    protected void renderLeader(Leader area) {
         String style = "solid";
         switch (area.getRuleStyle()) {
             case RuleStyle.DOTTED:

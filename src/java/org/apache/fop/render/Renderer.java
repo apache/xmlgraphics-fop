@@ -212,55 +212,11 @@ public interface Renderer {
         throws IOException, FOPException;
 
     /**
-     * Tells the renderer to render an inline viewport. It sets up clipping as
-     * necessary.
-     *
-     * @param viewport  The viewport area
-     */
-    void renderViewport(Viewport viewport);
-
-    /**
      * Tells the renderer to render an inline container.
      *
      * @param cont  The inline container area
      */
     void renderContainer(Container cont);
-
-    /**
-     * Tells the renderer to render an inline text area
-     *
-     * @param area  The text area
-     */
-    void renderText(TextArea area);
-
-    /**
-     * Tells the renderer to render an inline parent area.
-     *
-     * @param ip  The inline parent area
-     */
-    void renderInlineParent(InlineParent ip);
-
-    /**
-     * Tells the renderer to render an inline character.
-     *
-     * @param ch  The inline character
-     */
-    void renderCharacter(
-            org.apache.fop.area.inline.Character ch);
-
-    /**
-     * Tells the renderer to render an inline space.
-     *
-     * @param space  The inline space
-     */
-    void renderInlineSpace(Space space);
-
-    /**
-     * Tells the renderer to render an inline leader area.
-     *
-     * @param area  The inline leader area.
-     */
-    void renderLeader(Leader area);
 
 }
 
