@@ -193,6 +193,8 @@ public class Fop {
         driver.setRenderer("org.apache.fop.render.pdf.PDFRenderer", version);
         driver.addElementMapping("org.apache.fop.fo.StandardElementMapping");
         driver.addElementMapping("org.apache.fop.svg.SVGElementMapping");
+	    driver.addPropertyList("org.apache.fop.fo.StandardPropertyListMapping");
+	    driver.addPropertyList("org.apache.fop.svg.SVGPropertyListMapping");
         driver.setWriter(new PrintWriter(new FileWriter(pdffile)));
         driver.buildFOTree(parser, fileInputSource(fofile));
         driver.format();
