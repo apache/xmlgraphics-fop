@@ -64,6 +64,7 @@ import java.util.ListIterator;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ArrayList;
+import org.apache.fop.traits.*;
 
 /**
  * LayoutManager for lines. It builds one or more lines containing

@@ -91,6 +91,7 @@ import java.util.Map;
 import java.awt.Rectangle;
 import java.util.Iterator;
 import java.awt.geom.Rectangle2D;
+import org.apache.fop.traits.*;
 
 /**
  * LayoutManager for a PageSequence and its flow.

@@ -53,6 +53,7 @@ package org.apache.fop.layoutmgr;
 import org.apache.fop.traits.SpaceVal;
 import java.util.ArrayList;
 import java.util.List;
+import org.apache.fop.traits.*;
 
 /**
  * Accumulate a sequence of space-specifiers (XSL space type) on

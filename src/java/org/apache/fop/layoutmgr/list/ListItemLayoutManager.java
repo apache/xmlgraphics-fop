@@ -61,7 +61,7 @@ import org.apache.fop.layoutmgr.BreakPossPosIter;
 import org.apache.fop.layoutmgr.Position;
 import org.apache.fop.area.Area;
 import org.apache.fop.area.Block;
-import org.apache.fop.layoutmgr.MinOptMax;
+import org.apache.fop.traits.MinOptMax;
 import org.apache.fop.fo.properties.CommonBorderAndPadding;
 import org.apache.fop.fo.properties.CommonBackground;
 

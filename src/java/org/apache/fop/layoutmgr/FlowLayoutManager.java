@@ -56,6 +56,7 @@ import org.apache.fop.area.BlockParent;
 
 import java.util.ArrayList;
 import java.util.List;
+import org.apache.fop.traits.*;
 
 /**
  * LayoutManager for an fo:flow object.
