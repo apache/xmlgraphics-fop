@@ -1,5 +1,5 @@
 /*
- * $Id: Word.java,v 1.10 2003/03/05 16:45:42 jeremias Exp $
+ * $Id$
  * ============================================================================
  *                    The Apache Software License, Version 1.1
  * ============================================================================
@@ -51,21 +51,20 @@
 package org.apache.fop.area.inline;
 
 /**
- * A word inline area.
- * This is really a collection character inline areas collected together
- * into a single word.
+ * A text inline area.
  */
-public class Word extends InlineArea {
-    /**
-     * The word for this word area.
-     */
-    protected String word;
-    private int iWSadjust = 0;
+public class TextArea extends InlineArea {
 
     /**
-     * Create a word area.
+     * The text for this inline area
      */
-    public Word() {
+    protected String text;
+    private int iTSadjust = 0;
+
+    /**
+     * Create a text inline area
+     */
+    public TextArea() {
     }
 
     /**
@@ -79,39 +78,39 @@ public class Word extends InlineArea {
     }
 
     /**
-     * Set the word.
+     * Set the text string
      *
-     * @param w the word string
+     * @param t the text string
      */
-    public void setWord(String w) {
-        word = w;
+    public void setTextArea(String t) {
+        text = t;
     }
 
     /**
-     * Get the word string.
+     * Get the text string.
      *
-     * @return the word string
+     * @return the text string
      */
-    public String getWord() {
-        return word;
+    public String getTextArea() {
+        return text;
     }
 
     /**
-     * Get word space adjust.
+     * Get text space adjust.
      *
-     * @return the word space adjustment
+     * @return the text space adjustment
      */
-    public int getWSadjust() {
-        return iWSadjust;
+    public int getTSadjust() {
+        return iTSadjust;
     }
 
     /**
-     * Set word space adjust.
+     * Set text space adjust.
      *
-     * @param iWSadjust the word space adjustment
+     * @param iTSadjust the text space adjustment
      */
-    public void setWSadjust(int iWSadjust) {
-        this.iWSadjust = iWSadjust;
+    public void setTSadjust(int iTSadjust) {
+        this.iTSadjust = iTSadjust;
     }
 }
 

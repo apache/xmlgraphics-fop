@@ -83,7 +83,7 @@ import org.apache.fop.area.Trait;
 import org.apache.fop.area.TreeExt;
 import org.apache.fop.area.extensions.BookmarkData;
 import org.apache.fop.area.inline.Character;
-import org.apache.fop.area.inline.Word;
+import org.apache.fop.area.inline.TextArea;
 import org.apache.fop.area.inline.Viewport;
 import org.apache.fop.area.inline.ForeignObject;
 import org.apache.fop.area.inline.Image;
@@ -889,13 +889,13 @@ public class PDFRenderer extends PrintRenderer {
     }
 
     /**
-     * @see org.apache.fop.render.Renderer#renderWord(Word)
+     * @see org.apache.fop.render.Renderer#renderText(Text)
      */
-    public void renderWord(Word word) {
+    public void renderText(TextArea text) {
         StringBuffer pdf = new StringBuffer();
 
-        String name = (String) word.getTrait(Trait.FONT_NAME);
-        int size = ((Integer) word.getTrait(Trait.FONT_SIZE)).intValue();
+        String name = (String) text.getTrait(Trait.FONT_NAME);
+        int size = ((Integer) text.getTrait(Trait.FONT_SIZE)).intValue();
 
         // This assumes that *all* CIDFonts use a /ToUnicode mapping
         Typeface f = (Typeface) fontInfo.getFonts().get(name);
@@ -906,7 +906,7 @@ public class PDFRenderer extends PrintRenderer {
         String endText = useMultiByte ? "> " : ") ";
 
         updateFont(name, size, pdf);
-        ColorType ct = (ColorType)word.getTrait(Trait.COLOR);
+        ColorType ct = (ColorType) text.getTrait(Trait.COLOR);
         if (ct != null) {
             updateColor(ct, true, pdf);
         }
@@ -915,12 +915,12 @@ public class PDFRenderer extends PrintRenderer {
         // currentBlockIPPosition: 0 for beginning of line; nonzero 
         //  where previous line area failed to take up entire allocated space
         int rx = currentBlockIPPosition + IPMarginOffset;
-        int bl = currentBPPosition + BPMarginOffset + word.getOffset();
+        int bl = currentBPPosition + BPMarginOffset + text.getOffset();
 
 /*      System.out.println("BlockIP Position: " + currentBlockIPPosition +
             "; currentBPPosition: " + currentBPPosition +
-            "; offset: " + word.getOffset() +
-            "; Word = " + word.getWord()); */
+            "; offset: " + text.getOffset() +
+            "; Text = " + text.getTextArea()); */
 
         // Set letterSpacing
         //float ls = fs.getLetterSpacing() / this.currentFontSize;
@@ -952,10 +952,10 @@ public class PDFRenderer extends PrintRenderer {
                 pdf.append(startText);
             }
         }
-        prevWordWidth = word.getWidth();
+        prevWordWidth = text.getWidth();
         prevWordX = rx;
 
-        String s = word.getWord();
+        String s = text.getTextArea();
 
         FontMetrics metrics = fontInfo.getMetricsFor(name);
         Font fs = new Font(name, metrics, size);
@@ -964,7 +964,7 @@ public class PDFRenderer extends PrintRenderer {
 
         currentStream.add(pdf.toString());
 
-        super.renderWord(word);
+        super.renderText(text);
     }
 
     /**

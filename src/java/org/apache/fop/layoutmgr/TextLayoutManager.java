@@ -56,7 +56,7 @@ import org.apache.fop.fo.TextInfo;
 import org.apache.fop.traits.SpaceVal;
 import org.apache.fop.area.Trait;
 import org.apache.fop.area.inline.InlineArea;
-import org.apache.fop.area.inline.Word;
+import org.apache.fop.area.inline.TextArea;
 import org.apache.fop.area.inline.Space;
 import org.apache.fop.util.CharUtilities;
 import org.apache.fop.traits.MinOptMax;
@@ -68,7 +68,7 @@ import org.apache.fop.traits.MinOptMax;
 public class TextLayoutManager extends AbstractLayoutManager {
 
     /**
-     * Store information about each potential word area.
+     * Store information about each potential text area.
      * Index of character which ends the area, IPD of area, including
      * any word-space and letter-space.
      * Number of word-spaces?
@@ -523,15 +523,15 @@ public class TextLayoutManager extends AbstractLayoutManager {
             word = new Space();
             word.setWidth(ai.ipdArea.opt + iAdjust);
         } else  {
-            Word w = createWord(
+            TextArea t = createText(
                       str,
                       ai.ipdArea.opt + iAdjust, context.getBaseline());
             if (iWScount > 0) {
                 //getLogger().error("Adjustment per word-space= " +
                 //                   iAdjust / iWScount);
-                w.setWSadjust(iAdjust / iWScount);
+                t.setTSadjust(iAdjust / iWScount);
             }
-            word = w;
+            word = t;
         }
         if ((chars[iStart] == SPACE || chars[iStart] == NBSPACE)
                 && context.getLeadingSpace().hasSpaces()) {
@@ -567,15 +567,15 @@ public class TextLayoutManager extends AbstractLayoutManager {
      * @param base the baseline position
      * @return the new word area
      */
-    protected Word createWord(String str, int width, int base) {
-        Word curWordArea = new Word();
+    protected TextArea createText(String str, int width, int base) {
+        TextArea curWordArea = new TextArea();
         curWordArea.setWidth(width);
         curWordArea.setHeight(textInfo.fs.getAscender()
                               - textInfo.fs.getDescender());
         curWordArea.setOffset(textInfo.fs.getAscender());
         curWordArea.setOffset(base);
 
-        curWordArea.setWord(str);
+        curWordArea.setTextArea(str);
         curWordArea.addTrait(Trait.FONT_NAME, textInfo.fs.getFontName());
         curWordArea.addTrait(Trait.FONT_SIZE,
                              new Integer(textInfo.fs.getFontSize()));

@@ -90,7 +90,7 @@ import org.apache.fop.area.inline.InlineParent;
 import org.apache.fop.area.inline.Leader;
 import org.apache.fop.area.inline.Space;
 import org.apache.fop.area.inline.Viewport;
-import org.apache.fop.area.inline.Word;
+import org.apache.fop.area.inline.TextArea;
 import org.apache.fop.area.inline.Character;
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.fo.FOTreeControl;
@@ -260,8 +260,8 @@ public abstract class AbstractRenderer extends AbstractLogEnabled
             InlineArea inline = (InlineArea) children.get(count);
             if (inline instanceof Character) {
                 sb.append(((Character) inline).getChar());
-            } else if (inline instanceof Word) {
-                sb.append(((Word) inline).getWord());
+            } else if (inline instanceof TextArea) {
+                sb.append(((TextArea) inline).getTextArea());
             } else if (inline instanceof InlineParent) {
                 sb.append(convertToString(
                         ((InlineParent) inline).getChildAreas()));
@@ -653,8 +653,8 @@ public abstract class AbstractRenderer extends AbstractLogEnabled
     }
 
     /** @see org.apache.fop.render.Renderer */
-    public void renderWord(Word word) {
-        currentBlockIPPosition += word.getWidth();
+    public void renderText(TextArea text) {
+        currentBlockIPPosition += text.getWidth();
     }
 
     /** @see org.apache.fop.render.Renderer */
@@ -773,15 +773,15 @@ public abstract class AbstractRenderer extends AbstractLogEnabled
     }
 
     /**
-     * Render the specified Word.
+     * Render the specified Text.
      * Required by InlineAreaVisitor interface, which is used to determine which
      * InlineArea subclass should be rendered.
      *
-     * @param area  The Word area to be rendered
+     * @param area  The Text area to be rendered
      * @see org.apache.fop.area.inline.InlineAreaVisitor
      */
-    public void serveVisitor(Word area) {
-        renderWord(area);
+    public void serveVisitor(TextArea area) {
+        renderText(area);
     }
 
     /**

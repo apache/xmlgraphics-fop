@@ -60,7 +60,7 @@ import java.util.List;
  * This is a word area that resolves itself to a page number
  * from an id reference.
  */
-public class UnresolvedPageNumber extends Word implements Resolveable {
+public class UnresolvedPageNumber extends TextArea implements Resolveable {
     private boolean resolved = false;
     private String pageRefId;
 
@@ -71,7 +71,7 @@ public class UnresolvedPageNumber extends Word implements Resolveable {
      */
     public UnresolvedPageNumber(String id) {
         pageRefId = id;
-        word = "?";
+        text = "?";
     }
 
     /**
@@ -98,7 +98,7 @@ public class UnresolvedPageNumber extends Word implements Resolveable {
         if (pages != null) {
             PageViewport page = (PageViewport)pages.get(0);
             String str = page.getPageNumber();
-            word = str;
+            text = str;
 
             /**@todo Update IPD ??? */
         }

@@ -69,7 +69,7 @@ import org.apache.fop.area.CTM;
 import org.apache.fop.area.PageViewport;
 import org.apache.fop.area.Trait;
 import org.apache.fop.area.inline.ForeignObject;
-import org.apache.fop.area.inline.Word;
+import org.apache.fop.area.inline.TextArea;
 import org.apache.fop.datatypes.ColorType;
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.fonts.Typeface;
@@ -466,9 +466,9 @@ public class PSRenderer extends AbstractRenderer {
     }
 
     /**
-     * @see org.apache.fop.render.Renderer#renderWord(Word)
+     * @see org.apache.fop.render.Renderer#renderText(Text)
      */
-    public void renderWord(Word area) {
+    public void renderText(TextArea area) {
         String fontname = (String)area.getTrait(Trait.FONT_NAME);
         int fontsize = area.getTraitAsInteger(Trait.FONT_SIZE);
 
@@ -481,7 +481,7 @@ public class PSRenderer extends AbstractRenderer {
 
         useFont(fontname, fontsize);
 
-        paintText(rx, bl, area.getWord(), f);
+        paintText(rx, bl, area.getTextArea(), f);
 
 /*
         String psString = null;
@@ -514,7 +514,7 @@ public class PSRenderer extends AbstractRenderer {
             write("OLE");
         this.currentXPosition += area.getContentWidth();
         */
-        super.renderWord(area); //Updates IPD
+        super.renderText(area); //Updates IPD
     }
 
 

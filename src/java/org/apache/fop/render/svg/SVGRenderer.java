@@ -55,7 +55,7 @@ import org.apache.fop.area.PageViewport;
 import org.apache.fop.area.Title;
 import org.apache.fop.area.inline.ForeignObject;
 import org.apache.fop.area.inline.Leader;
-import org.apache.fop.area.inline.Word;
+import org.apache.fop.area.inline.TextArea;
 import org.apache.fop.svg.SVGUtilities;
 import org.apache.fop.apps.Document;
 import org.apache.fop.apps.FOUserAgent;
@@ -67,10 +67,9 @@ import org.w3c.dom.svg.SVGSVGElement;
 import org.w3c.dom.svg.SVGDocument;
 /* org.w3c.dom.Document is not imported to avoid conflict with
    org.apache.fop.control.Document */
-import org.w3c.dom.Element;
 import org.w3c.dom.DOMImplementation;
+import org.w3c.dom.Element;
 import org.w3c.dom.Text;
-
 import org.apache.batik.dom.svg.SVGDOMImplementation;
 import org.apache.batik.dom.util.XMLSupport;
 import org.apache.batik.transcoder.svg2svg.SVGTranscoder;
@@ -425,16 +424,16 @@ public class SVGRenderer extends AbstractRenderer implements XMLHandler {
     }
 
     /**
-     * @see org.apache.fop.render.Renderer#renderWord(Word)
+     * @see org.apache.fop.render.Renderer#renderText(Text)
      */
-    public void renderWord(Word word) {
-        Element text = SVGUtilities.createText(svgDocument,
+    public void renderText(TextArea text) {
+        Element textElement = SVGUtilities.createText(svgDocument,
                                                currentBlockIPPosition / 1000,
-                                               (currentBPPosition + word.getOffset()) / 1000,
-                                               word.getWord());
-        currentPageG.appendChild(text);
+                                               (currentBPPosition + text.getOffset()) / 1000,
+                                               text.getTextArea());
+        currentPageG.appendChild(textElement);
 
-        super.renderWord(word);
+        super.renderText(text);
     }
 
     /**
