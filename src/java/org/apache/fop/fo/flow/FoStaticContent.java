@@ -5,7 +5,7 @@
  *                   The Apache Software License, Version 1.1
  * ============================================================================
  * 
- * Copyright (C) 1999-2003 The Apache Software Foundation. All rights reserved.
+ * Copyright (C) 1999-2004 The Apache Software Foundation. All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without modifica-
  * tion, are permitted provided that the following conditions are met:
@@ -134,7 +134,7 @@ public class FoStaticContent extends FONode {
                                     (foTree, this, ev, FONode.STATIC_SET);
             // Clear the blockage
             ev = xmlevents.getEndElement(SyncedFoXmlEventsBuffer.DISCARD_EV, ev);
-            pool.surrenderEvent(ev);
+            namespaces.surrenderEvent(ev);
             // Get the rest of the %block;s
             while ((ev = xmlevents.expectBlock()) != null) {
                 // Generate the flow object
@@ -143,7 +143,7 @@ public class FoStaticContent extends FONode {
                 FObjects.fobjects.makeFlowObject
                                     (foTree, this, ev, FONode.STATIC_SET);
                 ev = xmlevents.getEndElement(SyncedFoXmlEventsBuffer.DISCARD_EV, ev);
-                pool.surrenderEvent(ev);
+                namespaces.surrenderEvent(ev);
             }
         } catch(UnexpectedStartElementException e) {
             throw new FOPException

@@ -5,7 +5,7 @@
  *                   The Apache Software License, Version 1.1
  * ============================================================================
  * 
- * Copyright (C) 1999-2003 The Apache Software Foundation. All rights reserved.
+ * Copyright (C) 1999-2004 The Apache Software Foundation. All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without modifica-
  * tion, are permitted provided that the following conditions are met:
@@ -155,7 +155,7 @@ public class FoFootnote extends FONode {
             new FoInline
                     (getFOTree(), this, ev, stateFlags | FONode.MC_FOOTNOTE);
             ev =  xmlevents.getEndElement(SyncedFoXmlEventsBuffer.DISCARD_EV, ev);
-            pool.surrenderEvent(ev);
+            namespaces.surrenderEvent(ev);
 
             // Look for the footnote-body
             if ((ev = xmlevents.expectStartElement
@@ -165,7 +165,7 @@ public class FoFootnote extends FONode {
             new FoFootnoteBody
                     (getFOTree(), this, ev, stateFlags | FONode.MC_FOOTNOTE);
             ev = xmlevents.getEndElement(SyncedFoXmlEventsBuffer.DISCARD_EV, ev);
-            pool.surrenderEvent(ev);
+            namespaces.surrenderEvent(ev);
 
             /*
         } catch (NoSuchElementException e) {

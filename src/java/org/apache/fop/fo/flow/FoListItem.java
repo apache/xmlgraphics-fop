@@ -5,7 +5,7 @@
  *                   The Apache Software License, Version 1.1
  * ============================================================================
  * 
- * Copyright (C) 1999-2003 The Apache Software Foundation. All rights reserved.
+ * Copyright (C) 1999-2004 The Apache Software Foundation. All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without modifica-
  * tion, are permitted provided that the following conditions are met:
@@ -159,7 +159,7 @@ public class FoListItem extends FONode {
                 new FoMarker(getFOTree(), this, ev, stateFlags);
                 numMarkers++;
                 ev = xmlevents.getEndElement(SyncedFoXmlEventsBuffer.DISCARD_EV, ev);
-                pool.surrenderEvent(ev);
+                namespaces.surrenderEvent(ev);
             }
 
             // Look for one list-item-label
@@ -171,7 +171,7 @@ public class FoListItem extends FONode {
                         ("No list-item-label in list-item.");
             new FoListItemLabel(getFOTree(), this, ev, stateFlags);
             ev = xmlevents.getEndElement(SyncedFoXmlEventsBuffer.DISCARD_EV, ev);
-            pool.surrenderEvent(ev);
+            namespaces.surrenderEvent(ev);
 
             // Look for one list-item-body
             nowProcessing = "list-item-body";
@@ -182,7 +182,7 @@ public class FoListItem extends FONode {
                         ("No list-item-body in list-item.");
             new FoListItemBody(getFOTree(), this, ev, stateFlags);
             ev = xmlevents.getEndElement(SyncedFoXmlEventsBuffer.DISCARD_EV, ev);
-            pool.surrenderEvent(ev);
+            namespaces.surrenderEvent(ev);
 
             /*
         } catch (NoSuchElementException e) {

@@ -5,7 +5,7 @@
  *                   The Apache Software License, Version 1.1
  * ============================================================================
  * 
- * Copyright (C) 1999-2003 The Apache Software Foundation. All rights reserved.
+ * Copyright (C) 1999-2004 The Apache Software Foundation. All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without modifica-
  * tion, are permitted provided that the following conditions are met:
@@ -187,7 +187,7 @@ public class FoTable extends FONode {
                 new FoMarker(getFOTree(), this, ev, stateFlags);
                 numMarkers++;
                 ev = xmlevents.getEndElement(SyncedFoXmlEventsBuffer.DISCARD_EV, ev);
-                pool.surrenderEvent(ev);
+                namespaces.surrenderEvent(ev);
             }
 
             // Look for zero or more table-columns
@@ -198,7 +198,7 @@ public class FoTable extends FONode {
                 new FoTableColumn(getFOTree(), this, ev, stateFlags);
                 numColumns++;
                 ev = xmlevents.getEndElement(SyncedFoXmlEventsBuffer.DISCARD_EV, ev);
-                pool.surrenderEvent(ev);
+                namespaces.surrenderEvent(ev);
             }
 
             // Look for optional table-header
@@ -209,7 +209,7 @@ public class FoTable extends FONode {
                 headerOffset = numChildren();
                 new FoTableHeader(getFOTree(), this, ev, stateFlags);
                 ev = xmlevents.getEndElement(SyncedFoXmlEventsBuffer.DISCARD_EV, ev);
-                pool.surrenderEvent(ev);
+                namespaces.surrenderEvent(ev);
             }
 
             // Look for optional table-footer
@@ -220,7 +220,7 @@ public class FoTable extends FONode {
                 footerOffset = numChildren();
                 new FoTableFooter(getFOTree(), this, ev, stateFlags);
                 ev = xmlevents.getEndElement(SyncedFoXmlEventsBuffer.DISCARD_EV, ev);
-                pool.surrenderEvent(ev);
+                namespaces.surrenderEvent(ev);
             }
 
             // Look for one or more table-body
@@ -234,7 +234,7 @@ public class FoTable extends FONode {
             new FoTableBody(getFOTree(), this, ev, stateFlags);
             numBodies++;
             ev = xmlevents.getEndElement(SyncedFoXmlEventsBuffer.DISCARD_EV, ev);
-            pool.surrenderEvent(ev);
+            namespaces.surrenderEvent(ev);
             while ((ev = xmlevents.expectStartElement
                         (FObjectNames.TABLE_BODY, XMLEvent.DISCARD_W_SPACE))
                    != null) {
@@ -242,7 +242,7 @@ public class FoTable extends FONode {
                 new FoTableBody(getFOTree(), this, ev, stateFlags);
                 numBodies++;
                 ev = xmlevents.getEndElement(SyncedFoXmlEventsBuffer.DISCARD_EV, ev);
-                pool.surrenderEvent(ev);
+                namespaces.surrenderEvent(ev);
             }
 
             /*

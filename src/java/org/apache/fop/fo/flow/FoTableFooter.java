@@ -5,7 +5,7 @@
  *                   The Apache Software License, Version 1.1
  * ============================================================================
  * 
- * Copyright (C) 1999-2003 The Apache Software Foundation. All rights reserved.
+ * Copyright (C) 1999-2004 The Apache Software Foundation. All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without modifica-
  * tion, are permitted provided that the following conditions are met:
@@ -168,7 +168,7 @@ public class FoTableFooter extends FONode {
                 new FoMarker(getFOTree(), this, ev, stateFlags);
                 numMarkers++;
                 ev = xmlevents.getEndElement(SyncedFoXmlEventsBuffer.DISCARD_EV, ev);
-                pool.surrenderEvent(ev);
+                namespaces.surrenderEvent(ev);
             }
 
             // Look for one or more table-rows
@@ -179,7 +179,7 @@ public class FoTableFooter extends FONode {
                 new FoTableRow(getFOTree(), this, ev, stateFlags);
                 numRows++;
                 ev = xmlevents.getEndElement(SyncedFoXmlEventsBuffer.DISCARD_EV, ev);
-                pool.surrenderEvent(ev);
+                namespaces.surrenderEvent(ev);
             }
 
             if (numRows > 0) {
@@ -193,7 +193,7 @@ public class FoTableFooter extends FONode {
                     new FoTableCell(getFOTree(), this, ev, stateFlags);
                     numCells++;
                     ev = xmlevents.getEndElement(SyncedFoXmlEventsBuffer.DISCARD_EV, ev);
-                    pool.surrenderEvent(ev);
+                    namespaces.surrenderEvent(ev);
                 }
                 if (numCells == 0)
                     throw new FOPException

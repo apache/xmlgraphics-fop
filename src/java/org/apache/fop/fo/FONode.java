@@ -1,13 +1,9 @@
 /*
- * FONode.java
- * Created: Sat Nov 10 01:39:37 2001
- * $Id: FONode.java,v 1.19.2.33 2003/06/12 18:19:33 pbwest Exp $
- * 
  * ============================================================================
  *                   The Apache Software License, Version 1.1
  * ============================================================================
  * 
- * Copyright (C) 1999-2003 The Apache Software Foundation. All rights reserved.
+ * Copyright (C) 1999-2004 The Apache Software Foundation. All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without modifica-
  * tion, are permitted provided that the following conditions are met:
@@ -50,7 +46,10 @@
  * James Tauber <jtauber@jtauber.com>. For more  information on the Apache 
  * Software Foundation, please see <http://www.apache.org/>.
  *  
- *
+ * FONode.java
+ * Created: Sat Nov 10 01:39:37 2001
+ * $Id: FONode.java,v 1.19.2.33 2003/06/12 18:19:33 pbwest Exp $
+ * 
  * @author <a href="mailto:pbwest@powerup.com.au">Peter B. West</a>
  * @version $Revision: 1.19.2.33 $ $Name:  $
  */
@@ -75,7 +74,6 @@ import org.apache.fop.fo.expr.PropertyParser;
 import org.apache.fop.fo.properties.Property;
 import org.apache.fop.messaging.MessageHandler;
 import org.apache.fop.xml.FoXMLEvent;
-import org.apache.fop.xml.FoXMLEventPool;
 import org.apache.fop.xml.SyncedFoXmlEventsBuffer;
 import org.apache.fop.xml.XMLNamespaces;
 
@@ -142,9 +140,6 @@ public class FONode extends Node{
 
     /** The buffer from which parser events are drawn. */
     protected final SyncedFoXmlEventsBuffer xmlevents;
-
-    /** The pool of <tt>FoXMLEvent</tt>s associated with <i>xmlevents</i>. */
-    protected final FoXMLEventPool pool;
 
     /** The namespaces object associated with <i>xmlevents</i>. */
     protected XMLNamespaces namespaces;
@@ -261,7 +256,6 @@ public class FONode extends Node{
         this.numProps = sparseIndices.length;
         attrBitSet = FOPropertySets.getAttrROBitSet(stateFlags);
         xmlevents = foTree.xmlevents;
-        pool = xmlevents.getPool();
         namespaces = xmlevents.getNamespaces();
         exprParser = foTree.exprParser;
         propertySet = new PropertyValue[PropNames.LAST_PROPERTY_INDEX + 1];

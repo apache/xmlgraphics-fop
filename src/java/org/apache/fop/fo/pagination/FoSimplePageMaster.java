@@ -5,7 +5,7 @@
  *                   The Apache Software License, Version 1.1
  * ============================================================================
  * 
- * Copyright (C) 1999-2003 The Apache Software Foundation. All rights reserved.
+ * Copyright (C) 1999-2004 The Apache Software Foundation. All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without modifica-
  * tion, are permitted provided that the following conditions are met:
@@ -146,8 +146,9 @@ public class FoSimplePageMaster extends FONode {
                     + getMasterName());
         // Process region-body
         regionBody = new FoRegionBody(foTree, this, regionEv);
-        regionEv = xmlevents.getEndElement(SyncedFoXmlEventsBuffer.DISCARD_EV, regionEv);
-        pool.surrenderEvent(regionEv);
+        regionEv = xmlevents.getEndElement
+                                (SyncedFoXmlEventsBuffer.DISCARD_EV, regionEv);
+        namespaces.surrenderEvent(regionEv);
 
         // Remaining regions are optional
         if ((regionEv = xmlevents.expectStartElement
@@ -155,9 +156,9 @@ public class FoSimplePageMaster extends FONode {
                 != null)
         {
             regionBefore = new FoRegionBefore(foTree, this, regionEv);
-            regionEv =
-                xmlevents.getEndElement(SyncedFoXmlEventsBuffer.DISCARD_EV, regionEv);
-            pool.surrenderEvent(regionEv);
+            regionEv = xmlevents.getEndElement
+                                (SyncedFoXmlEventsBuffer.DISCARD_EV, regionEv);
+            namespaces.surrenderEvent(regionEv);
         }
 
         if ((regionEv = xmlevents.expectStartElement
@@ -165,9 +166,9 @@ public class FoSimplePageMaster extends FONode {
                 != null)
         {
             regionAfter = new FoRegionAfter(foTree, this, regionEv);
-            regionEv =
-                xmlevents.getEndElement(SyncedFoXmlEventsBuffer.DISCARD_EV, regionEv);
-            pool.surrenderEvent(regionEv);
+            regionEv = xmlevents.getEndElement
+                            (SyncedFoXmlEventsBuffer.DISCARD_EV, regionEv);
+            namespaces.surrenderEvent(regionEv);
         }
 
         if ((regionEv = xmlevents.expectStartElement
@@ -175,9 +176,9 @@ public class FoSimplePageMaster extends FONode {
                 != null)
         {
             regionStart = new FoRegionStart(foTree, this, regionEv);
-            regionEv =
-                xmlevents.getEndElement(SyncedFoXmlEventsBuffer.DISCARD_EV, regionEv);
-            pool.surrenderEvent(regionEv);
+            regionEv = xmlevents.getEndElement
+                            (SyncedFoXmlEventsBuffer.DISCARD_EV, regionEv);
+            namespaces.surrenderEvent(regionEv);
         }
 
         if ((regionEv = xmlevents.expectStartElement
@@ -185,9 +186,9 @@ public class FoSimplePageMaster extends FONode {
                 != null)
         {
             regionEnd = new FoRegionEnd(foTree, this, regionEv);
-            regionEv =
-                xmlevents.getEndElement(SyncedFoXmlEventsBuffer.DISCARD_EV, regionEv);
-            pool.surrenderEvent(regionEv);
+            regionEv = xmlevents.getEndElement
+                            (SyncedFoXmlEventsBuffer.DISCARD_EV, regionEv);
+            namespaces.surrenderEvent(regionEv);
         }
 
         // Clean up the build environment
