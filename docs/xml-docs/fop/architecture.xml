@@ -14,6 +14,8 @@ this class, a typical sequence is:</p>
 <p><code>driver.setRenderer("org.apache.fop.render.pdf.PDFRenderer", version);</code></p>
 <p><code>driver.addElementMapping("org.apache.fop.fo.StandardElementMapping");</code></p>
 <p><code>driver.addElementMapping("org.apache.fop.svg.SVGElementMapping");</code></p>
+<p><code>driver.addPropertyList("org.apache.fop.fo.StandardPropertyListMapping");</code></p>
+<p><code>driver.addPropertyList("org.apache.fop.svg.SVGPropertyListMapping");</code></p>
 <p><code>driver.setWriter(new PrintWriter(new FileWriter(args[1])));</code></p>
 <p></p>
 <p><code>driver.buildFOTree(parser, fileInputSource(args[0]));</code></p>
@@ -254,4 +256,29 @@ discusses some issues applicable to rendering.
 </p>
 </s2>
 
+<s2 title="SVG">
+
+<p>
+FOP supports some svg rendering. SVG is supported as an instream-foreign-object
+embedded in an FO document. FOP also supports rendering of an external SVG image.
+</p>
+
+<p>
+Since the intream object that contains the SVG returns a single fo area then
+the construction of the SVG document is handled differently. The SVG is created
+by calling the <code>createGraphic()</code> on each SVG element. The element is then
+responsible for loading the necessary information and child elements and creating
+the corresponding SVG DOM element. When the FO tree is being layed out the
+SVG tree is turned into the SVG DOM document which is stored for later rendering.
+</p>
+
+<p>
+The SVG document is then held as a DOM tree which is then rendered by going through
+the elements of the tree and rendering then in turn.
+</p>
+
+<p>
+For more information see the SVG documentation.
+</p>
+</s2>
 </s1>
