@@ -16,6 +16,9 @@ import java.awt.Graphics;
 import java.awt.Font;
 import java.awt.Image;
 import java.awt.Color;
+import java.awt.Shape;
+import java.awt.font.FontRenderContext;
+import java.awt.font.GlyphVector;
 import java.io.OutputStream;
 import java.io.IOException;
 
@@ -55,12 +58,13 @@ public class PDFDocumentGraphics2D extends PDFGraphics2D {
                                  OutputStream stream, int width, int height) {
         super(textAsShapes);
 
-        if(!textAsShapes) {
+        if (!textAsShapes) {
             fontInfo = new FontInfo();
             FontSetup.setup(fontInfo);
             try {
-                fontState = new FontState(fontInfo, "Helvetica", "normal", "normal", 12, 0);
-            } catch(FOPException e) {
+                fontState = new FontState(fontInfo, "Helvetica", "normal",
+                                          "normal", 12, 0);
+            } catch (FOPException e) {
             }
         }
         standalone = true;
@@ -80,6 +84,14 @@ public class PDFDocumentGraphics2D extends PDFGraphics2D {
 
     }
 
+    public FontState getFontState() {
+        return fontState;
+    }
+
+    public PDFDocument getPDFDocument() {
+        return this.pdfDoc;
+    }
+
     /**
      * Set the dimensions of the svg document that will be drawn.
      * This is useful if the dimensions of the svg document are different
@@ -87,7 +99,8 @@ public class PDFDocumentGraphics2D extends PDFGraphics2D {
      * The result is scaled so that the svg fits correctly inside the pdf document.
      */
     public void setSVGDimension(float w, float h) {
-        currentStream.write("" + PDFNumber.doubleOut(width / w) + " 0 0 " + PDFNumber.doubleOut(height / h) + " 0 0 cm\n");
+        currentStream.write("" + PDFNumber.doubleOut(width / w) +
+                            " 0 0 " + PDFNumber.doubleOut(height / h) + " 0 0 cm\n");
     }
 
     /**
@@ -119,7 +132,7 @@ public class PDFDocumentGraphics2D extends PDFGraphics2D {
         PDFPage currentPage =
           this.pdfDoc.makePage(pdfResources, pdfStream, width,
                                height, null);
-        if(fontInfo != null) {
+        if (fontInfo != null) {
             FontSetup.addToResources(this.pdfDoc, fontInfo);
         }
         this.pdfDoc.output(stream);
@@ -147,4 +160,16 @@ public class PDFDocumentGraphics2D extends PDFGraphics2D {
         return new PDFDocumentGraphics2D(this);
     }
 
+    public void drawString(String s, float x, float y) {
+        if (super.textAsShapes) {
+            Font font = super.getFont();
+            FontRenderContext frc = super.getFontRenderContext();
+            GlyphVector gv = font.createGlyphVector(frc, s);
+            Shape glyphOutline = gv.getOutline(x, y);
+            super.fill(glyphOutline);
+        } else {
+            super.drawString(s, x, y);
+        }
+    }
 }
+
