@@ -115,13 +115,16 @@ Sometimes ant gives out this warnings, but the build is finished without any pro
 <project default="package" basedir=".">
 
   <fileset dir="${basedir}" id="dist.bin">
+    <include name="build/site/**"/>
     <include name="conf/**"/>
+    <include name="contrib/servlet/**"/>
     <include name="docs/xslfoRef.pdf"/>
     <include name="docs/examples/**"/>
     <exclude name="docs/examples/build.xml"/>
     <exclude name="docs/examples/runtests.*"/>
     <exclude name="docs/examples/results.html"/>
     <include name="docs/graphics/**"/>
+    <include name="docs/foschema/**"/>
     <include name="CHANGES"/>
     <include name="LICENSE"/>
     <include name="README"/>
@@ -131,7 +134,6 @@ Sometimes ant gives out this warnings, but the build is finished without any pro
     <include name="fop.sh"/>
     <exclude name="src/**"/>
     <exclude name="dist/**"/>
-    <exclude name="build/**"/>
     <exclude name="lib/**"/>
   </fileset>
   
@@ -151,9 +153,12 @@ Sometimes ant gives out this warnings, but the build is finished without any pro
 
   <fileset dir="${basedir}" id="dist.src">
     <exclude name="lib/jimi*"/>
-    <exclude name="build/**"/>
+    <exclude name="lib/jai*"/>
     <include name="src/**"/>
+    <include name="build/site/**"/>
     <include name="conf/**"/>
+    <include name="contrib/servlet/**"/>
+    <include name="build/site/**"/>
     <include name="docs/**"/>
     <include name="hyph/**"/>
     <include name="lib/**"/>
@@ -169,7 +174,6 @@ Sometimes ant gives out this warnings, but the build is finished without any pro
 
   <path id="libs-build-classpath">
     <fileset dir="lib">
-      <!--include name="stylebook*.jar"/-->
       <include name="xalan*.jar"/>
       <include name="xerces*.jar"/>
       <include name="xml-apis.jar"/>
@@ -202,17 +206,10 @@ Sometimes ant gives out this warnings, but the build is finished without any pro
 
     <property name="src.dir" value="./src"/>
     <property name="src.codegen" value="./src/codegen"/>
-    <property name="docs.dir" value="./docs"/>
     <property name="lib.dir" value="./lib"/>
     <property name="hyph.dir" value="./hyph"/>
     <property name="conf.dir" value="./conf"/>
     <property name="packages" value="org.apache.fop.*"/>
-
-    <property name="docs" value="docs/html-docs"/>
-    <property name="xdocs" value="docs/xml-docs"/>
-    <property name="skins" value="docs/xml-docs/skins/xml.apache.org/"/>
-    <!--property name="doc.generator" value="org.apache.stylebook.StyleBook"/>
-    <property name="doc.generator.package" value="${lib.dir}/stylebook-1.0-b2.jar"/-->
 
     <property name="viewer.resources.src.dir" value="./src/org/apache/fop/viewer/resources"/>
     <property name="viewer.images.src.dir" value="./src/org/apache/fop/viewer/Images"/>
@@ -227,7 +224,6 @@ Sometimes ant gives out this warnings, but the build is finished without any pro
     <property name="viewer.resources.dest.dir" value="${build.dest}/org/apache/fop/viewer/resources"/>
     <property name="viewer.images.dest.dir" value="${build.dest}/org/apache/fop/viewer/Images"/>
 
-        <!-- <property name="dist.dir" value="./dist"/> -->
     <property name="dist.bin.dir" value="./dist-bin"/>
     <property name="dist.src.dir" value="./dist-src"/>
     <property name="dist.bin.result.dir" value="${dist.bin.dir}/${name}-${version}"/>
@@ -236,13 +232,11 @@ Sometimes ant gives out this warnings, but the build is finished without any pro
     <property name="properties.dir" value="org/apache/fop/fo/properties"/>
     <property name="fonts.dir" value="org/apache/fop/render/pdf/fonts"/>
     <property name="svg.dir" value="org/apache/fop/svg"/>
-    <!--property name="replacestring" value="org/apache/fop"/-->
     <property name="ignore_this" value="ignore_this.java"/>
     <property name="jimi" value="JimiImage.java"/>
     <property name="jai" value="JAIImage.java"/>
     <property name="tiff" value="TiffImage.java"/>
 
-    <!--property name="xslt" value="org.apache.xalan.xslt.Process"/-->
     <property name="src.properties.xsl" value="${src.codegen}/properties.xsl"/>
     <property name="src.propmaker.xsl" value="${src.codegen}/propmaker.xsl"/>
     <property name="foproperties.xml" value="${build.codegen}/foproperties.xml"/>
@@ -596,9 +590,9 @@ Sometimes ant gives out this warnings, but the build is finished without any pro
     </path>
     <taskdef name="runTest" classname="org.apache.fop.tools.anttasks.RunTest" classpathref="testtask-classpath"/>
     <runTest testSuite="basictests.xml" basedir="test/" reference="test/reference/fop.jar"
-         refVersion="FOP 0.20.3"/>
+         refVersion="FOP 0.20.4"/>
     <runTest testSuite="bugtests.xml" basedir="test/" reference="test/reference/fop.jar"
-         refVersion="FOP 0.20.3"/>
+         refVersion="FOP 0.20.4"/>
 <!--
     <runTest testSuite="testsuite.xml" basedir="TestSuite/NIST/" reference="test/reference/fop.jar"
          refVersion="FOP 0.19.0-CVS"/>
@@ -679,27 +673,22 @@ Sometimes ant gives out this warnings, but the build is finished without any pro
     </javadoc>
   </target>
 
-  <target name="htmldoc" depends="prepare-src" description="Generates documentation in html format">
-    <copy file="${xdocs}/fop.xml"
-          tofile="${xdocs}/book.xml"
-          filtering="yes"/>
-    <java classname="${doc.generator}" fork="yes">
-      <classpath refid="libs-build-classpath"/>
-      <arg line="targetDirectory=${docs} ${xdocs}/book.xml ${skins}"/>
-    </java>
-    <java classname="${doc.generator}" fork="yes">
-      <classpath refid="libs-build-classpath"/>
-      <arg line="targetDirectory=${docs}/design/ docs/design/book.xml ${skins}"/>
-    </java>
+  <!-- =================================================================== -->
+  <!-- Creates the documentation                                           -->
+  <!-- =================================================================== -->
+  <target name="docs" depends="prepare" description="Generates documentation">
+    <echo message="Building documentation with Forrest..."/>
+    <echo message="Make sure you have a propper Forrest installation (see http://xml.apache.org/forrest)"/>
+    <exec executable="forrest">
+    </exec>
   </target>
-
 
   <!-- =================================================================== -->
   <!-- Creates the distribution                                            -->
   <!-- =================================================================== -->
   <target name="dist" depends="dist-src,dist-bin" description="Generates the distribution package"/>
 
-  <target name="dist-bin" depends="package">
+  <target name="dist-bin" depends="package, docs">
     <echo message="Building the binary distribution files (zip,tar)"/>
     <mkdir dir="${dist.bin.result.dir}"/>
     <copy todir="${dist.bin.result.dir}">
@@ -718,17 +707,13 @@ Sometimes ant gives out this warnings, but the build is finished without any pro
   </target>
 
 
-  <target name="dist-src" depends="package">
+  <target name="dist-src" depends="package, docs">
     <echo message="Building the source distribution files (zip,tar)"/>
     <mkdir dir="${dist.src.result.dir}"/>
     <copy todir="${dist.src.result.dir}">
       <fileset refid="dist.src"/>
     </copy>
-    <!--
-    <copy todir="${dist.src.result.dir}/javadocs">
-      <fileset dir="${build.javadocs}"/>
-    </copy>
-    -->
+
     <mkdir dir="${dist.src.result.dir}/build"/>
     <copy todir="${dist.src.result.dir}/build" file="build/fop.jar"/>
     <chmod file="${dist.src.result.dir}/build.sh" perm="ugo+rx" />
