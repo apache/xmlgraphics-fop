@@ -24,8 +24,8 @@ import java.util.*;
  */
 public abstract class XMLObj extends FObj {
 
-    String tagName = "";
-    String[] props = {};
+    protected String tagName = "";
+    protected String[] props = {};
     /**
      *
      * @param parent the parent formatting object
@@ -40,8 +40,7 @@ public abstract class XMLObj extends FObj {
     protected static Hashtable ns = new Hashtable();
 
     public void addGraphic(Document doc, Element parent) {
-        Element element = doc.createElementNS(getNameSpace(),
-                                              tagName);
+        Element element = doc.createElementNS(getNameSpace(), tagName);
         //        Element element = doc.createElement(tagName);
         for (int count = 0; count < props.length; count++) {
             if (this.properties.get(props[count]) != null) {
@@ -76,6 +75,49 @@ public abstract class XMLObj extends FObj {
         }
     }
 
+    public void buildTopLevel(Document doc, Element svgRoot) {
+        // build up the info for the top level element
+        for (int count = 0; count < props.length; count++) {
+            if (this.properties.get(props[count]) != null) {
+                String rf = this.properties.get(props[count]).getString();
+                if (rf != null)
+                    svgRoot.setAttributeNS(null, props[count], rf);
+            }
+        }
+        //doc.appendChild(topLevel);
+        int numChildren = this.children.size();
+        for (int i = 0; i < numChildren; i++) {
+            Object child = children.elementAt(i);
+            if (child instanceof XMLObj) {
+                ((XMLObj) child).addGraphic(doc, svgRoot);
+            } else if (child instanceof String) {
+                org.w3c.dom.Text text = doc.createTextNode((String) child);
+                svgRoot.appendChild(text);
+            }
+        }
+    }
+
+    public Document createBasicDocument() {
+        Document doc = null;
+
+        Element svgRoot = null;
+        try {
+            //        DOMImplementation impl = javax.xml.parsers.DocumentBuilderFactory.newInstance().newDocumentBuilder().getDOMImplementation();
+            //        String ns = GraphElementMapping.URI;
+            //        doc = impl.createDocument(ns, "graph", null);
+            doc = javax.xml.parsers.DocumentBuilderFactory.newInstance().
+                  newDocumentBuilder().newDocument();
+            Element el = doc.createElement("graph");
+            doc.appendChild(el);
+
+            svgRoot = doc.getDocumentElement();
+            buildTopLevel(doc, svgRoot);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return doc;
+    }
     /**
      * layout this formatting object.
      *
