@@ -18,6 +18,7 @@ public class TableColumn extends FObj {
 
     ColorType backgroundColor;
 
+    Length columnWidthPropVal;
     int columnWidth;
     int columnOffset;
     int numColumnsRepeated;
@@ -44,8 +45,20 @@ public class TableColumn extends FObj {
         this.name = "fo:table-column";
     }
 
+    public Length getColumnWidthAsLength() {
+        return columnWidthPropVal;
+    }
+
     public int getColumnWidth() {
         return columnWidth;
+    }
+
+    /**
+     * Set the column width value in base units which overrides the
+     * value from the column-width Property.
+     */
+    public void setColumnWidth(int columnWidth) {
+        this.columnWidth = columnWidth;
     }
 
     public int getColumnNumber() {
@@ -78,8 +91,10 @@ public class TableColumn extends FObj {
         this.backgroundColor =
             this.properties.get("background-color").getColorType();
 
-        this.columnWidth =
-            this.properties.get("column-width").getLength().mvalue();
+        this.columnWidthPropVal =
+            this.properties.get("column-width").getLength();
+	// This won't include resolved table-units or % values yet.
+	this.columnWidth = columnWidthPropVal.mvalue();
 
         // initialize id
         String id = this.properties.get("id").getString();
@@ -98,21 +113,18 @@ public class TableColumn extends FObj {
                 doSetup(area);
             }
         }
-
-        // KL: don't take table borders into account!
-        this.areaContainer =
-            new AreaContainer(propMgr.getFontState(area.getFontInfo()),
-                              columnOffset /* - area.getBorderLeftWidth() */,
-                              /* -area.getBorderTopWidth() */
-        0, columnWidth, area.getContentHeight(), Position.RELATIVE);
-        // area.getHeight(), Position.RELATIVE);
-        areaContainer.foCreator = this;    // G Seshadri
-        areaContainer.setPage(area.getPage());
-        areaContainer.setBorderAndPadding(propMgr.getBorderAndPadding());
-        areaContainer.setBackgroundColor(this.backgroundColor);
-        areaContainer.setHeight(area.getHeight());
-        area.addChild(areaContainer);
-
+	if (columnWidth > 0) {
+	    this.areaContainer =
+		new AreaContainer(propMgr.getFontState(area.getFontInfo()),
+				  columnOffset, 0, columnWidth,
+				  area.getContentHeight(), Position.RELATIVE);
+	    areaContainer.foCreator = this;    // G Seshadri
+	    areaContainer.setPage(area.getPage());
+	    areaContainer.setBorderAndPadding(propMgr.getBorderAndPadding());
+	    areaContainer.setBackgroundColor(this.backgroundColor);
+	    areaContainer.setHeight(area.getHeight());
+	    area.addChild(areaContainer);
+	}
         return new Status(Status.OK);
     }
 
@@ -121,8 +133,10 @@ public class TableColumn extends FObj {
     }
 
     public void setHeight(int height) {
-        areaContainer.setMaxHeight(height);
-        areaContainer.setHeight(height);
+	if (areaContainer != null) {
+	    areaContainer.setMaxHeight(height);
+	    areaContainer.setHeight(height);
+	}
     }
 
 }
