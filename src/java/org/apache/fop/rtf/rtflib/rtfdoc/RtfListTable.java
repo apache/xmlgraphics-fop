@@ -55,7 +55,7 @@ package org.apache.fop.rtf.rtflib.rtfdoc;
 import java.util.*;
 import java.io.Writer;
 import java.io.IOException;
-import org.jfor.jfor.main.JForVersionInfo;
+import org.apache.fop.rtf.rtflib.jfor.main.JForVersionInfo;
 
 /**RtfListTable: used to make the list table in the header section of the RtfFile.
  * This is the method that Word uses to make lists in RTF and the way most RTF readers,

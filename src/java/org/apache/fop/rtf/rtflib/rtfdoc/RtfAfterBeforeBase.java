@@ -56,7 +56,7 @@ import java.io.Writer;
 import java.io.*;
 import java.util.*;
 import java.io.IOException;
-import org.jfor.jfor.interfaces.ITableColumnsInfo;
+import org.apache.fop.rtf.rtflib.interfaces.ITableColumnsInfo;
 
 /** Common code for RtfAfter and RtfBefore
 *  @author Andreas Lambert <andreas.lambert@cronidesoft.com>

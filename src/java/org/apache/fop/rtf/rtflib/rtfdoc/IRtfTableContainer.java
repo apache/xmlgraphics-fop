@@ -53,7 +53,7 @@
 package org.apache.fop.rtf.rtflib.rtfdoc;
 
 import java.io.IOException;
-import org.jfor.jfor.interfaces.ITableColumnsInfo;
+import org.apache.fop.rtf.rtflib.interfaces.ITableColumnsInfo;
 
 /**  Interface for RtfElements that can contain RtfTables
  *  @author Bertrand Delacretaz bdelacretaz@codeconsult.ch

@@ -54,7 +54,7 @@ package org.apache.fop.rtf.rtflib.rtfdoc;
 
 import java.io.*;
 import java.util.*;
-import org.jfor.jfor.interfaces.ITableColumnsInfo;
+import org.apache.fop.rtf.rtflib.interfaces.ITableColumnsInfo;
 
 
 /**  Used to add extra table rows after a row that contains a nested table:

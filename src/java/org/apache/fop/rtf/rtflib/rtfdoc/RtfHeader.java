@@ -55,7 +55,7 @@ package org.apache.fop.rtf.rtflib.rtfdoc;
 import java.util.*;
 import java.io.Writer;
 import java.io.IOException;
-import org.jfor.jfor.main.JForVersionInfo;
+import org.apache.fop.rtf.rtflib.jfor.main.JForVersionInfo;
 
 /**  RTF file header, contains style, font and other document-level information.
  *  @author Bertrand Delacretaz bdelacretaz@codeconsult.ch

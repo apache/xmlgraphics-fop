@@ -52,7 +52,7 @@
  */
 package org.apache.fop.rtf.rtflib.testdocs;
 
-import org.jfor.jfor.interfaces.ITableColumnsInfo;
+import org.apache.fop.rtf.rtflib.interfaces.ITableColumnsInfo;
 
 /** ITableColumnsInfo that does nothing, used in testodcs package
  *  to create documents without worrying about nested tables handling.

@@ -55,7 +55,7 @@ package org.apache.fop.rtf.rtflib.testdocs;
 import java.util.Date;
 import java.io.*;
 import org.apache.fop.rtf.rtflib.rtfdoc.*;
-import org.jfor.jfor.main.JForVersionInfo;
+import org.apache.fop.rtf.rtflib.jfor.main.JForVersionInfo;
 
 /**  Base class for generating RTF documents used to test the jfor rtflib package.
  *  @author Bertrand Delacretaz bdelacretaz@codeconsult.ch

@@ -55,7 +55,7 @@ package org.apache.fop.rtf.rtflib.rtfdoc;
 
 import java.io.*;
 import java.util.Iterator;
-import org.jfor.jfor.interfaces.ITableColumnsInfo;
+import org.apache.fop.rtf.rtflib.interfaces.ITableColumnsInfo;
 
 /**  Container for RtfRow elements
  *  @author Bertrand Delacretaz bdelacretaz@codeconsult.ch
