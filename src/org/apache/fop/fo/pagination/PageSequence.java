@@ -225,7 +225,7 @@ public class PageSequence extends FObj
     public void format(AreaTree areaTree) throws FOPException {
         Status status = new Status(Status.OK);
 
-	this.layoutMasterSet.resetPageMasters();
+		this.layoutMasterSet.resetPageMasters();
 
         do
         {
@@ -237,7 +237,7 @@ public class PageSequence extends FObj
          
             if ( thisIsFirstPage )
             {
-		tempIsFirstPage = thisIsFirstPage;
+				tempIsFirstPage = thisIsFirstPage;
                 if ( pageNumberType==AUTO )
                 {
                     this.currentPageNumber=this.runningPageNumberCounter;
