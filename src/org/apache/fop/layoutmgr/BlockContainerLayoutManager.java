@@ -20,7 +20,6 @@ import org.apache.fop.datatypes.FODimension;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import java.awt.geom.Rectangle2D;
 
@@ -203,7 +202,7 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager {
         getParentArea(null);
 
         addID();
-        addMarkers(true);
+        addMarkers(true, true);
 
         LayoutManager childLM ;
         int iStartPos = 0;
@@ -221,6 +220,7 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager {
         }
 
         flush();
+        addMarkers(true, true);
 
         childBreaks.clear();
         viewportBlockArea = null;
@@ -296,10 +296,6 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager {
         if (resetPos == null) {
             reset(null);
         }
-    }
-
-    public void addMarkerMap(Map marks, boolean start) {
-        parentLM.addMarkerMap(marks, start);
     }
 
 }
