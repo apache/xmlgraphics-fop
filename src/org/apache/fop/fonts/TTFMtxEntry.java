@@ -8,14 +8,14 @@
 package org.apache.fop.fonts;
 
 import java.io.*;
-import java.util.Vector;
+import java.util.ArrayList;
 
 class TTFMtxEntry {
     int wx;
     int lsb;
     String name;
     int index;
-    Vector unicodeIndex;
+    ArrayList unicodeIndex;
     int[] bbox;
     long offset;
     byte found;
@@ -23,7 +23,7 @@ class TTFMtxEntry {
     TTFMtxEntry() {
         name = "";
         found = 0;
-        unicodeIndex = new Vector();
+        unicodeIndex = new ArrayList();
         bbox = new int[4];
     }
 

@@ -15,9 +15,6 @@ import org.apache.fop.layout.*;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.datatypes.*;
 
-// Java
-import java.util.Hashtable;
-import java.util.Enumeration;
 
 import org.xml.sax.Attributes;
 
@@ -120,7 +117,7 @@ public class BlockContainer extends FObj {
 
         int numChildren = this.children.size();
         for (int i = this.marker; i < numChildren; i++) {
-            FObj fo = (FObj)children.elementAt(i);
+            FObj fo = (FObj)children.get(i);
             Status status;
             if ((status = fo.layout(areaContainer)).isIncomplete()) {
                 /*

@@ -15,8 +15,8 @@ import org.apache.fop.layout.*;
 import org.apache.fop.apps.FOPException;
 
 // Java
-import java.util.Vector;
-import java.util.Enumeration;
+import java.util.ArrayList;
+import java.util.Iterator;
 
 public class TableBody extends FObj {
 
@@ -25,7 +25,7 @@ public class TableBody extends FObj {
     ColorType backgroundColor;
     String id;
 
-    Vector columns;
+    ArrayList columns;
     RowSpanMgr rowSpanMgr;    // manage information about spanning rows
 
     AreaContainer areaContainer;
@@ -35,7 +35,7 @@ public class TableBody extends FObj {
         this.name = "fo:table-body";
     }
 
-    public void setColumns(Vector columns) {
+    public void setColumns(ArrayList columns) {
         this.columns = columns;
     }
 
@@ -131,12 +131,12 @@ public class TableBody extends FObj {
         areaContainer.setAbsoluteHeight(area.getAbsoluteHeight());
         areaContainer.setIDReferences(area.getIDReferences());
 
-        Vector keepWith = new Vector();
+        ArrayList keepWith = new ArrayList();
         int numChildren = this.children.size();
         TableRow lastRow = null;
         boolean endKeepGroup = true;
         for (int i = this.marker; i < numChildren; i++) {
-            Object child = children.elementAt(i);
+            Object child = children.get(i);
             if (!(child instanceof TableRow)) {
                 throw new FOPException("Currently only Table Rows are supported in table body, header and footer");
             }
@@ -149,10 +149,10 @@ public class TableBody extends FObj {
                     != KeepValue.KEEP_WITH_AUTO && lastRow != null
                                                 && keepWith.indexOf(lastRow)
                                                    == -1) {
-                keepWith.addElement(lastRow);
+                keepWith.add(lastRow);
             } else {
                 if (endKeepGroup && keepWith.size() > 0) {
-                    keepWith = new Vector();
+                    keepWith = new ArrayList();
                 }
             }
 
@@ -178,9 +178,9 @@ public class TableBody extends FObj {
                         > 0) {    // && status.getCode() == Status.AREA_FULL_NONE
                     // FIXME!!! Handle rows spans!!!
                     row.removeLayout(areaContainer);
-                    for (Enumeration e = keepWith.elements();
-                            e.hasMoreElements(); ) {
-                        TableRow tr = (TableRow)e.nextElement();
+                    for (Iterator e = keepWith.iterator();
+                            e.hasNext(); ) {
+                        TableRow tr = (TableRow)e.next();
                         tr.removeLayout(areaContainer);
                         i--;
                     }
@@ -203,7 +203,7 @@ public class TableBody extends FObj {
                 return status;
             } else if (status.getCode() == Status.KEEP_WITH_NEXT
                        || rowSpanMgr.hasUnfinishedSpans()) {
-                keepWith.addElement(row);
+                keepWith.add(row);
                 endKeepGroup = false;
             } else {
                 endKeepGroup = true;

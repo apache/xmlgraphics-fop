@@ -92,7 +92,7 @@ public class BasicLink extends Inline {
 
         int numChildren = this.children.size();
         for (int i = this.marker; i < numChildren; i++) {
-            FONode fo = (FONode)children.elementAt(i);
+            FONode fo = (FONode)children.get(i);
             if(fo instanceof FObj)
                 ((FObj)fo).setLinkSet(ls);
 

@@ -19,8 +19,8 @@ import org.apache.fop.layout.PageMaster;
 import org.apache.fop.apps.FOPException;
 
 import java.awt.Rectangle;
-import java.util.Hashtable;
-import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.Iterator;
 import org.xml.sax.Attributes;
 
 
@@ -29,7 +29,7 @@ public class SimplePageMaster extends FObj {
     /**
      * Page regions (regionClass, Region)
      */
-    private Hashtable _regions;
+    private HashMap _regions;
 
     LayoutMasterSet layoutMasterSet;
     PageMaster pageMaster;
@@ -56,7 +56,7 @@ public class SimplePageMaster extends FObj {
                                    + "of fo:layout-master-set, not "
                                    + parent.getName());
         }
-        _regions = new Hashtable();
+        _regions = new HashMap();
 
     }
 
@@ -88,9 +88,9 @@ public class SimplePageMaster extends FObj {
 
 	boolean bHasBody=false;
 
-        for (Enumeration regenum = _regions.elements();
-                regenum.hasMoreElements(); ) {
-            Region r = (Region)regenum.nextElement();
+        for (Iterator regenum = _regions.values().iterator();
+                regenum.hasNext(); ) {
+            Region r = (Region)regenum.next();
 	    RegionViewport rvp = r.makeRegionViewport(pageRefRect);
 	    rvp.setRegion(r.makeRegionReferenceArea());
 	    page.setRegion(r.getRegionAreaClass(), rvp);
@@ -149,14 +149,14 @@ public class SimplePageMaster extends FObj {
         return (Region)_regions.get(regionClass);
     }
 
-    protected Hashtable getRegions() {
+    protected HashMap getRegions() {
         return _regions;
     }
 
     protected boolean regionNameExists(String regionName) {
-        for (Enumeration regenum = _regions.elements();
-                regenum.hasMoreElements(); ) {
-            Region r = (Region)regenum.nextElement();
+        for (Iterator regenum = _regions.values().iterator();
+                regenum.hasNext(); ) {
+            Region r = (Region)regenum.next();
             if (r.getRegionName().equals(regionName)) {
                 return true;
             }

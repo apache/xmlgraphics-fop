@@ -13,9 +13,9 @@ import org.apache.xerces.dom.*;
 import org.apache.xml.serialize.*;
 import org.apache.xalan.xslt.*;
 import org.apache.fop.fonts.*;
-import java.util.Hashtable;
-import java.util.Vector;
-import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.ArrayList;
+import java.util.Iterator;
 
 /**
  * A tool which reads PFM files from Adobe Type 1 fonts and creates
@@ -30,14 +30,14 @@ public class PFMReader {
 
 
     /**
-     * Parse commandline arguments. put options in the Hashtable and return
+     * Parse commandline arguments. put options in the HashMap and return
      * arguments in the String array
      * the arguments: -fn Perpetua,Bold -cn PerpetuaBold per.ttf Perpetua.xml
      * returns a String[] with the per.ttf and Perpetua.xml. The hash
      * will have the (key, value) pairs: (-fn, Perpetua) and (-cn, PerpetuaBold)
      */
-    private static String[] parseArguments(Hashtable options, String[] args) {
-        Vector arguments = new Vector();
+    private static String[] parseArguments(HashMap options, String[] args) {
+        ArrayList arguments = new ArrayList();
         for (int i = 0; i < args.length; i++) {
             if (args[i].startsWith("-")) {
                 if ((i + 1) < args.length &&!args[i + 1].startsWith("-")) {
@@ -47,13 +47,11 @@ public class PFMReader {
                     options.put(args[i], "");
                 }
             } else {
-                arguments.addElement(args[i]);
+                arguments.add(args[i]);
             }
         }
 
-        String[] argStrings = new String[arguments.size()];
-        arguments.copyInto(argStrings);
-        return argStrings;
+        return (String[])arguments.toArray(new String[0]);
     }
 
     private final static void displayUsage() {
@@ -92,7 +90,7 @@ public class PFMReader {
         String className = null;
         String fontName = null;
 
-        Hashtable options = new Hashtable();
+        HashMap options = new HashMap();
         String[] arguments = parseArguments(options, args);
 
         PFMReader app = new PFMReader();
@@ -320,17 +318,17 @@ public class PFMReader {
 
 
         // Get kerning
-        for (Enumeration enum = pfm.getKerning().keys();
-                enum.hasMoreElements(); ) {
-            Integer kpx1 = (Integer)enum.nextElement();
+        for (Iterator enum = pfm.getKerning().keySet().iterator();
+                enum.hasNext(); ) {
+            Integer kpx1 = (Integer)enum.next();
             el = doc.createElement("kerning");
             el.setAttribute("kpx1", kpx1.toString());
             root.appendChild(el);
             Element el2 = null;
 
-            Hashtable h2 = (Hashtable)pfm.getKerning().get(kpx1);
-            for (Enumeration enum2 = h2.keys(); enum2.hasMoreElements(); ) {
-                Integer kpx2 = (Integer)enum2.nextElement();
+            HashMap h2 = (HashMap)pfm.getKerning().get(kpx1);
+            for (Iterator enum2 = h2.keySet().iterator(); enum2.hasNext(); ) {
+                Integer kpx2 = (Integer)enum2.next();
                 el2 = doc.createElement("pair");
                 el2.setAttribute("kpx2", kpx2.toString());
                 Integer val = (Integer)h2.get(kpx2);

@@ -16,8 +16,7 @@ import org.apache.fop.apps.FOPException;
 import org.apache.fop.extensions.ExtensionObj;
 
 // Java
-import java.util.Vector;
-import java.util.Enumeration;
+import java.util.ArrayList;
 
 /**
  * The fo:root formatting object. Contains page masters, root extensions,
@@ -26,7 +25,7 @@ import java.util.Enumeration;
 public class Root extends FObj {
 
     LayoutMasterSet layoutMasterSet;
-    Vector pageSequences;
+    ArrayList pageSequences;
 
     /**
      * keeps count of page number from over PageSequence instances
@@ -38,7 +37,7 @@ public class Root extends FObj {
 
         // this.properties.get("media-usage");
 
-        pageSequences = new Vector();
+        pageSequences = new ArrayList();
 
         if (parent != null) {
             //throw new FOPException("root must be root element");
@@ -67,7 +66,7 @@ public class Root extends FObj {
         if (currentIndex == -1)
             return null;
         if (currentIndex < (pageSequences.size() - 1)) {
-            return (PageSequence)pageSequences.elementAt(currentIndex + 1);
+            return (PageSequence)pageSequences.get(currentIndex + 1);
         } else {
             return null;
         }

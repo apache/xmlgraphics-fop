@@ -17,7 +17,7 @@ import org.apache.fop.layout.FontState;
 import org.apache.fop.apps.FOPException;
 
 // Java
-import java.util.Enumeration;
+import java.util.Iterator;
 
 public class ListBlock extends FObj {
 
@@ -115,8 +115,8 @@ public class ListBlock extends FObj {
         blockArea.addLineagePair(this, this.areasGenerated);
 
         // markers
-        if (this.hasMarkers())
-            blockArea.addMarkers(this.getMarkers());
+        //if (this.hasMarkers())
+            //blockArea.addMarkers(this.getMarkers());
 
 
         blockArea.setPage(area.getPage());
@@ -128,11 +128,11 @@ public class ListBlock extends FObj {
 
         int numChildren = this.children.size();
         for (int i = this.marker; i < numChildren; i++) {
-            if (!(children.elementAt(i) instanceof ListItem)) {
+            if (!(children.get(i) instanceof ListItem)) {
                 log.error("children of list-blocks must be list-items");
                 return new Status(Status.OK);
             }
-            ListItem listItem = (ListItem)children.elementAt(i);
+            ListItem listItem = (ListItem)children.get(i);
             Status status;
             if ((status = listItem.layout(blockArea)).isIncomplete()) {
                 if (status.getCode() == Status.AREA_FULL_NONE && i > 0) {

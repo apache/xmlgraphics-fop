@@ -161,7 +161,7 @@ public class InstreamForeignObject extends FObj {
                 }
                 /* layout foreign object */
                 if (this.children.size() > 0) {
-                    FONode fo = (FONode)children.elementAt(0);
+                    FONode fo = (FONode)children.get(0);
                     Status status;
                     if ((status =
                             fo.layout(this.areaCurrent)).isIncomplete()) {

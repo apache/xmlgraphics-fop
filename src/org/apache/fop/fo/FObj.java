@@ -26,8 +26,8 @@ import org.xml.sax.Attributes;
 
 import java.util.Iterator;
 import java.util.ListIterator;
-import java.util.Vector;
-import java.util.Hashtable;
+import java.util.ArrayList;
+import java.util.HashMap;
 
 /**
  * base class for representation of formatting objects and their processing
@@ -54,7 +54,7 @@ public class FObj extends FONode {
      */
     protected int marker = START;
 
-    protected Vector children = new Vector();    // made public for searching for id's
+    protected ArrayList children = new ArrayList();    // made public for searching for id's
 
     protected boolean isInTableCell = false;
 
@@ -70,11 +70,11 @@ public class FObj extends FONode {
     public int areasGenerated = 0;
 
     // markers
-    protected Hashtable markers;
+    protected HashMap markers;
 
     public FObj(FONode parent) {
         super(parent);
-        markers = new Hashtable();
+        markers = new HashMap();
         if (parent instanceof FObj)
             this.areaClass = ((FObj)parent).areaClass;
     }
@@ -127,7 +127,7 @@ public class FObj extends FONode {
     }
 
     protected void addChild(FONode child) {
-        children.addElement(child);
+        children.add(child);
     }
 
     /**
@@ -165,7 +165,7 @@ public class FObj extends FONode {
         idReferences.removeID(((FObj)this).properties.get("id").getString());
         int numChildren = this.children.size();
         for (int i = 0; i < numChildren; i++) {
-            FONode child = (FONode)children.elementAt(i);
+            FONode child = (FONode)children.get(i);
             if ((child instanceof FObj)) {
                 ((FObj)child).removeID(idReferences);
             }
@@ -213,7 +213,7 @@ public class FObj extends FONode {
         this.isInTableCell = true;
         // made recursive by Eric Schaeffer
         for (int i = 0; i < this.children.size(); i++) {
-            Object obj = this.children.elementAt(i);
+            Object obj = this.children.get(i);
             if(obj instanceof FObj) {
                 FObj child = (FObj)obj;
                 child.setIsInTableCell();
@@ -225,7 +225,7 @@ public class FObj extends FONode {
         this.forcedStartOffset = offset; 
         // made recursive by Eric Schaeffer
         for (int i = 0; i < this.children.size(); i++) {
-            Object obj = this.children.elementAt(i);
+            Object obj = this.children.get(i);
             if(obj instanceof FObj) {
                 FObj child = (FObj)obj;
                 child.forceStartOffset(offset);
@@ -237,7 +237,7 @@ public class FObj extends FONode {
         this.forcedWidth = width;
         // made recursive by Eric Schaeffer
         for (int i = 0; i < this.children.size(); i++) {
-            Object obj = this.children.elementAt(i);
+            Object obj = this.children.get(i);
             if(obj instanceof FObj) {
                 FObj child = (FObj)obj;
                 child.forceWidth(width);
@@ -249,7 +249,7 @@ public class FObj extends FONode {
         this.marker = START;
         int numChildren = this.children.size();
         for (int i = 0; i < numChildren; i++) {
-            Object obj = this.children.elementAt(i);
+            Object obj = this.children.get(i);
             if(obj instanceof FObj) {
                 FObj child = (FObj)obj;
                 child.resetMarker();
@@ -272,7 +272,7 @@ public class FObj extends FONode {
     public void setLinkSet(LinkSet linkSet) {
         this.linkSet = linkSet;
         for (int i = 0; i < this.children.size(); i++) {
-            Object obj = this.children.elementAt(i);
+            Object obj = this.children.get(i);
             if(obj instanceof FObj) {
                 FObj child = (FObj)obj;
                 child.setLinkSet(linkSet);
@@ -288,11 +288,11 @@ public class FObj extends FONode {
      * At the start of a new span area layout may be partway through a
      * nested FO, and balancing requires rollback to this known point.
      * The snapshot records exactly where layout is at.
-     * @param snapshot a Vector of markers (Integer)
-     * @returns the updated Vector of markers (Integers)
+     * @param snapshot a ArrayList of markers (Integer)
+     * @returns the updated ArrayList of markers (Integers)
      */
-    public Vector getMarkerSnapshot(Vector snapshot) {
-        snapshot.addElement(new Integer(this.marker));
+    public ArrayList getMarkerSnapshot(ArrayList snapshot) {
+        snapshot.add(new Integer(this.marker));
 
         // terminate if no kids or child not yet accessed
         if (this.marker < 0)
@@ -300,18 +300,18 @@ public class FObj extends FONode {
         else if (children.isEmpty())
             return snapshot;
         else
-            return ((FObj)children.elementAt(this.marker)).getMarkerSnapshot(snapshot);
+            return ((FObj)children.get(this.marker)).getMarkerSnapshot(snapshot);
     }
 
     /**
      * When balancing occurs, the flow layout() method restarts at the
      * point specified by the current marker snapshot, which is retrieved
      * and restored using this method.
-     * @param snapshot the Vector of saved markers (Integers)
+     * @param snapshot the ArrayList of saved markers (Integers)
      */
-    public void rollback(Vector snapshot) {
-        this.marker = ((Integer)snapshot.elementAt(0)).intValue();
-        snapshot.removeElementAt(0);
+    public void rollback(ArrayList snapshot) {
+        this.marker = ((Integer)snapshot.get(0)).intValue();
+        snapshot.remove(0);
 
         if (this.marker == START) {
             // make sure all the children of this FO are also reset
@@ -327,13 +327,13 @@ public class FObj extends FONode {
         }
 
         for (int i = this.marker + 1; i < numChildren; i++) {
-            Object obj = this.children.elementAt(i);
+            Object obj = this.children.get(i);
             if(obj instanceof FObj) {
                 FObj child = (FObj)obj;
                 child.resetMarker();
             }
         }
-        ((FObj)children.elementAt(this.marker)).rollback(snapshot);
+        ((FObj)children.get(this.marker)).rollback(snapshot);
     }
 
 
@@ -353,8 +353,8 @@ public class FObj extends FONode {
         return !markers.isEmpty();
     }
 
-    public Vector getMarkers() {
-        return new Vector(markers.values());
+    public ArrayList getMarkers() {
+        return new ArrayList(markers.values());
     }
 }
 

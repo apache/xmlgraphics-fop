@@ -15,7 +15,7 @@ import org.apache.fop.fo.StringProperty;
 import org.apache.fop.fo.ColorTypeProperty;
 import org.apache.fop.datatypes.*;
 
-import java.util.Hashtable;
+import java.util.HashMap;
 
 /**
  * Class to parse XSL FO property expression.
@@ -27,10 +27,10 @@ public class PropertyParser extends PropertyTokenizer {
 
     static private final String RELUNIT = "em";
     static private final Numeric negOne = new Numeric(new Double(-1.0));
-    static final private Hashtable functionTable = new Hashtable();
+    static final private HashMap functionTable = new HashMap();
 
     static {
-        // Initialize the Hashtable of XSL-defined functions
+        // Initialize the HashMap of XSL-defined functions
         functionTable.put("ceiling", new CeilingFunction());
         functionTable.put("floor", new FloorFunction());
         functionTable.put("round", new RoundFunction());
