@@ -109,7 +109,7 @@ public class Bookmarks extends ExtensionObj {
         }
         // add data to area tree for resolving and handling
         if (foInputHandler instanceof FOTreeHandler) {
-            AreaTree at = ((FOTreeHandler)foInputHandler).driver.getAreaTree();
+            AreaTree at = ((FOTreeHandler)foInputHandler).doc.getDriver().getAreaTree();
             at.addTreeExtension(data);
             data.setAreaTree(at);
         }

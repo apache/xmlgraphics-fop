@@ -94,13 +94,15 @@ public abstract class FOInputHandler extends AbstractLogEnabled {
      */
     private Set idReferences = new HashSet();
 
-    public Driver driver = null;
+//    public Driver driver = null;
+
+    public Document doc = null;
 
     /**
      * Main constructor
      */
-    public FOInputHandler(Driver driver) {
-        this.driver = driver;
+    public FOInputHandler(Document document) {
+        this.doc = document;
     }
 
     /**

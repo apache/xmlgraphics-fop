@@ -983,7 +983,7 @@ public class PDFGraphics2D extends AbstractGraphics2D {
     private void createPattern(PatternPaint pp, boolean fill) {
         Rectangle2D rect = pp.getPatternRect();
 
-        Document fi = new Document();
+        Document fi = new Document(null);
         FontSetup.setup(fi, null);
 
         PDFResources res = pdfDoc.getFactory().makeResources();

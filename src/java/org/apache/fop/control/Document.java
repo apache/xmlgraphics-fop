@@ -54,19 +54,19 @@ package org.apache.fop.control;
 import java.util.Map;
 
 // FOP
+import org.apache.fop.apps.Driver;
 import org.apache.fop.fonts.Font;
 import org.apache.fop.fonts.FontMetrics;
+import org.apache.fop.layout.LayoutStrategy;
 
 /**
- * The FontInfo for the layout and rendering of a fo document.
- * This stores the list of available fonts that are setup by
- * the renderer. The font name can be retrieved for the
- * family style and weight.
- * <br>
- * Currently font supported font-variant small-caps is not
- * implemented.
+ * Class storing information for the FOP Document being processed, and managing
+ * the processing of it.
  */
 public class Document {
+
+    /** The parent Driver object */
+    private Driver driver;
 
     /** Map containing fonts that have been used */
     private Map usedFonts;
@@ -78,9 +78,17 @@ public class Document {
     private Map fonts;
 
     /**
+     * the LayoutStrategy to be used to process this document
+     * TODO: this actually belongs in the RenderContext class, when it is
+     * created
+     */
+    private LayoutStrategy ls = null;
+
+    /**
      * Main constructor
      */
-    public Document() {
+    public Document(Driver driver) {
+        this.driver = driver;
         this.triplets = new java.util.HashMap();
         this.fonts = new java.util.HashMap();
         this.usedFonts = new java.util.HashMap();
@@ -261,6 +269,25 @@ public class Document {
     public FontMetrics getMetricsFor(String fontName) {
         usedFonts.put(fontName, fonts.get(fontName));
         return (FontMetrics)fonts.get(fontName);
+    }
+
+    /**
+     * Set the LayoutStrategy to be used to process this Document
+     * @param ls the LayoutStrategy object to be used to process this Document
+     */
+    public void setLayoutStrategy(LayoutStrategy ls) {
+        this.ls = ls;
+    }
+
+    /**
+     * @return this Document's LayoutStrategy object
+     */
+    public LayoutStrategy getLayoutStrategy () {
+        return ls;
+    }
+
+    public Driver getDriver() {
+        return driver;
     }
 }
 

@@ -169,7 +169,7 @@ public class AreaTreeBuilder extends AbstractLogEnabled {
             rend = new SVGRenderer();
         }
         setupLogger(rend);
-        Document fi = new Document();
+        Document fi = new Document(null);
         rend.setupFontInfo(fi);
         FOUserAgent ua = new FOUserAgent();
         setupLogger(ua);

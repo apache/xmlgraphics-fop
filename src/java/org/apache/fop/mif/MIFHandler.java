@@ -91,7 +91,6 @@ public class MIFHandler extends FOInputHandler {
     protected MIFFile mifFile;
     /** the OutputStream to write to */
     protected OutputStream outStream;
-    private Document fontInfo = new Document();
 
     // current state elements
     private MIFElement textFlow;
@@ -101,18 +100,11 @@ public class MIFHandler extends FOInputHandler {
      * Creates a new MIF handler on a given OutputStream.
      * @param os OutputStream to write to
      */
-    public MIFHandler(Driver driver, OutputStream os) {
-        super(driver);
+    public MIFHandler(Document doc, OutputStream os) {
+        super(doc);
         outStream = os;
         // use pdf fonts for now, this is only for resolving names
-        org.apache.fop.render.pdf.FontSetup.setup(fontInfo, null);
-    }
-
-    /**
-     * @see org.apache.fop.fo.FOInputHandler#getFontInfo()
-     */
-    public Document getFontInfo() {
-        return fontInfo;
+        org.apache.fop.render.pdf.FontSetup.setup(doc, null);
     }
 
     /**

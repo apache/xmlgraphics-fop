@@ -53,6 +53,7 @@ package org.apache.fop.apps;
 // FOP
 import org.apache.fop.area.AreaTree;
 import org.apache.fop.area.AreaTreeModel;
+import org.apache.fop.control.Document;
 import org.apache.fop.fo.ElementMapping;
 import org.apache.fop.fo.FOTreeBuilder;
 import org.apache.fop.fo.FOUserAgent;
@@ -68,6 +69,8 @@ import org.apache.fop.render.awt.AWTRenderer;
 import org.apache.fop.rtf.renderer.RTFHandler;
 import org.apache.fop.tools.DocumentInputSource;
 import org.apache.fop.tools.DocumentReader;
+import org.apache.fop.layout.LayoutStrategy;
+import org.apache.fop.layoutmgr.LayoutManagerLS;
 
 // Avalon
 import org.apache.avalon.framework.logger.ConsoleLogger;
@@ -75,7 +78,8 @@ import org.apache.avalon.framework.logger.LogEnabled;
 import org.apache.avalon.framework.logger.Logger;
 
 // DOM
-import org.w3c.dom.Document;
+/* org.w3c.dom.Document is not imported to reduce confusion with
+   org.apache.fop.control.Document */
 
 // SAX
 import org.xml.sax.ContentHandler;
@@ -232,6 +236,8 @@ public class Driver implements LogEnabled, FOTreeListener {
      */
     private AreaTree areaTree;
     private AreaTreeModel atModel;
+
+    private Document currentDocument = null;
 
     /**
      * Main constructor for the Driver class.
@@ -540,15 +546,15 @@ public class Driver implements LogEnabled, FOTreeListener {
         // TODO: - do this stuff in a better way
         // PIJ: I guess the structure handler should be created by the renderer.
         if (rendererType == RENDER_MIF) {
-            foInputHandler = new MIFHandler(this, stream);
+            foInputHandler = new MIFHandler(currentDocument, stream);
         } else if (rendererType == RENDER_RTF) {
-            foInputHandler = new RTFHandler(this, stream);
+            foInputHandler = new RTFHandler(currentDocument, stream);
         } else {
             if (renderer == null) {
                 throw new IllegalStateException(
                         "Renderer not set when using standard foInputHandler");
             }
-            foInputHandler = new FOTreeHandler(this, stream, renderer, true);
+            foInputHandler = new FOTreeHandler(currentDocument, stream, renderer, true);
         }
 
         foInputHandler.enableLogging(getLogger());
@@ -584,7 +590,17 @@ public class Driver implements LogEnabled, FOTreeListener {
         if (!isInitialized()) {
             initialize();
         }
+        /** Document creation is hard-wired for now, but needs to be made
+         accessible through the API and/or configuration */
+        if (currentDocument == null) {
+            currentDocument = new Document(this);
+        }
         parser.setContentHandler(getContentHandler());
+        /** LayoutStrategy is hard-wired for now, but needs to be made
+        accessible through the API and/or configuration */
+        if (foInputHandler instanceof FOTreeHandler) {
+            currentDocument.setLayoutStrategy(new LayoutManagerLS());
+        }
         try {
             if (foInputHandler instanceof FOTreeHandler) {
                 FOTreeHandler foTreeHandler = (FOTreeHandler)foInputHandler;
@@ -631,7 +647,7 @@ public class Driver implements LogEnabled, FOTreeListener {
      * @param document the DOM document to read from
      * @throws FOPException if anything goes wrong.
      */
-    public synchronized void render(Document document)
+    public synchronized void render(org.w3c.dom.Document document)
                 throws FOPException {
         DocumentInputSource source = new DocumentInputSource(document);
         DocumentReader reader = new DocumentReader();
