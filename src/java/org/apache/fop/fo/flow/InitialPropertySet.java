@@ -76,4 +76,7 @@ public class InitialPropertySet extends ToBeImplementedElement {
         fotv.serveInitialPropertySet(this);
     }
 
+    public String getName() {
+        return "fo:initial-property-set";
+    }
 }

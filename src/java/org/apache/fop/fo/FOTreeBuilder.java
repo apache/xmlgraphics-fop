@@ -227,18 +227,25 @@ public class FOTreeBuilder extends DefaultHandler {
         // Check to ensure first node encountered is an fo:root
         if (rootFObj == null) {
             if (!namespaceURI.equals(FObj.FO_URI) || !localName.equals("root")) {
-                throw new SAXException(new FOPException("Error:  Root element" +
-                    " must be fo:root formatting object"));
+                throw new SAXException(new IllegalArgumentException(
+                    "Error:  First element must be fo:root formatting object"));
+            }
+        } else { // check that incoming node is valid for currentFObj
+            try {
+                currentFObj.validateChildNode(namespaceURI, localName);
+            } catch (IllegalArgumentException e) {
+                throw new SAXException(e);
             }
         }
         
         ElementMapping.Maker fobjMaker = findFOMaker(namespaceURI, localName);
-
 //      System.out.println("found a " + fobjMaker.toString());
 
         try {
             foNode = fobjMaker.make(currentFObj);
             foNode.processNode(localName, locator, attlist);
+        } catch (IllegalArgumentException e) {
+            throw new SAXException(e);
         } catch (FOPException e) {
             throw new SAXException(e);
         }
@@ -269,7 +276,7 @@ public class FOTreeBuilder extends DefaultHandler {
      * @param localName name of the Element
      * @return the ElementMapping.Maker that can create an FO object for this element
      */
-    public Maker findFOMaker(String namespaceURI, String localName) {
+    private Maker findFOMaker(String namespaceURI, String localName) {
       Map table = (Map)fobjTable.get(namespaceURI);
       Maker fobjMaker = null;
       if (table != null) {

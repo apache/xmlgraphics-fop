@@ -88,5 +88,9 @@ public class ListItemLabel extends FObj {
         
         getFOTreeControl().getFOInputHandler().endListLabel();
     }
+    
+    public String getName() {
+        return "fo:list-item-label";
+    }
 }
 

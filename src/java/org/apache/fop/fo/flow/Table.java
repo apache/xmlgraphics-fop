@@ -206,4 +206,7 @@ public class Table extends FObj {
         getFOTreeControl().getFOInputHandler().endTable(this);
     }
 
+    public String getName() {
+        return "fo:table";
+    }
 }

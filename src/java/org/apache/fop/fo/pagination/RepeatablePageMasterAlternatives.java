@@ -137,4 +137,7 @@ public class RepeatablePageMasterAlternatives extends FObj
         fotv.serveRepeatablePageMasterAlternatives(this);
     }
 
+    public String getName() {
+        return "fo:repeatable-page-master-alternatives";
+    }
 }

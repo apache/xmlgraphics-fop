@@ -80,4 +80,7 @@ public class RetrieveMarker extends FObjMixed {
         fotv.serveRetrieveMarker(this);
     }
 
+    public String getName() {
+        return "fo:retrieve-marker";
+    }
 }

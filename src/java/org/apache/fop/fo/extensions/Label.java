@@ -66,5 +66,9 @@ public class Label extends ExtensionObj {
     public void acceptVisitor(FOTreeVisitor fotv) {
         fotv.serveLabel(this);
     }
+    
+    public String getName() {
+        return "(http://xml.apache.org/fop/extensions) label";
+    }
 
 }

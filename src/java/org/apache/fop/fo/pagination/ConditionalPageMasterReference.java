@@ -167,4 +167,7 @@ public class ConditionalPageMasterReference extends FObj {
         fotv.serveConditionalPageMasterReference(this);
     }
 
+    public String getName() {
+        return "fo:conditional-page-master-reference";
+    }
 }

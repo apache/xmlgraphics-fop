@@ -32,6 +32,7 @@ import org.apache.fop.fo.FOTreeVisitor;
  */
 public class Root extends FObj {
     private LayoutMasterSet layoutMasterSet;
+    private Declarations declarations;
     private List pageSequences;
 
     /**
@@ -50,6 +51,42 @@ public class Root extends FObj {
         pageSequences = new java.util.ArrayList();
         if (parent != null) {
             //throw new FOPException("root must be root element");
+        }
+    }
+
+    /**
+     * @see org.apache.fop.fo.FONode#validateChildNode(String, String)
+     */
+    protected void validateChildNode(String namespaceURI, String localName) {
+        if (namespaceURI == FObj.FO_URI) {
+            if (localName.equals("layout-master-set")) {   
+                if (layoutMasterSet != null) { // only one fo:declarations
+                    throw new IllegalArgumentException("Error: Only one" +
+                        " fo:layout-master-set may be defined per fo:root");
+                }
+            } else if (localName.equals("declarations")) { 
+                if (layoutMasterSet == null) { // must already have a l-m-s
+                    throw new IllegalArgumentException("Error:" +
+                        " fo:layout-master-set must be first child of" +
+                        " fo:root");
+                } else if (declarations != null) { // only one fo:declarations
+                    throw new IllegalArgumentException("Error: Only one" +
+                        " fo:declarations may be defined per fo:root");
+                } else if (!pageSequences.isEmpty()) { // no page-seqs yet
+                    throw new IllegalArgumentException("Error: fo:declarations" +
+                        " must be defined before fo:page-sequence declarations");
+                }
+            } else if (localName.equals("page-sequence")) { 
+                if (layoutMasterSet == null) { // must already have a l-m-s
+                    throw new IllegalArgumentException("Error:" +
+                    " fo:layout-master-set must be first child of fo:root");
+                }
+            } else
+                throw new IllegalArgumentException("Error: Invalid child" +
+                    " node \"fo:" + localName + "\" of fo:root");
+        } else {
+            throw new IllegalArgumentException("Error: Invalid child node (" 
+                + namespaceURI + ") \"" + localName + "\" of fo:root");
         }
     }
 
@@ -139,4 +176,7 @@ public class Root extends FObj {
         fotv.serveRoot(this);
     }
 
+    public String getName() {
+        return "fo:root";
+    }
 }

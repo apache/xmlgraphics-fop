@@ -51,4 +51,7 @@ public class MultiToggle extends ToBeImplementedElement {
         fotv.serveMultiToggle(this);
     }
 
+    public String getName() {
+        return "fo:multi-toggle";
+    }
 }

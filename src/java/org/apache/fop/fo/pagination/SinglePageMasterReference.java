@@ -67,5 +67,8 @@ public class SinglePageMasterReference extends PageMasterReference
         fotv.serveSinglePageMasterReference(this);
     }
 
+    public String getName() {
+        return "fo:single-page-master-reference";
+    }
 }
 

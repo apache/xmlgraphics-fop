@@ -87,4 +87,7 @@ public class Declarations extends FObj {
         fotv.serveDeclarations(this);
     }
 
+    public String getName() {
+        return "fo:declarations";
+    }
 }

@@ -107,5 +107,8 @@ public class TableBody extends FObj {
         getFOTreeControl().getFOInputHandler().endBody(this);
     }
 
+    public String getName() {
+        return "fo:table-body";
+    }
 }
 

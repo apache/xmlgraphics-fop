@@ -147,5 +147,9 @@ public class TableRow extends FObj {
     protected void end() {
         getFOTreeControl().getFOInputHandler().endRow(this);
     }
+    
+    public String getName() {
+        return "fo:table-row";
+    }
 
 }

@@ -74,4 +74,7 @@ public class Marker extends FObjMixed {
         fotv.serveMarker(this);
     }
 
+    public String getName() {
+        return "fo:marker";
+    }
 }

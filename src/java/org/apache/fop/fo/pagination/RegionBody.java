@@ -112,4 +112,7 @@ public class RegionBody extends Region {
         fotv.serveRegionBody(this);
     }
 
+    public String getName() {
+        return "fo:region-body";
+    }
 }

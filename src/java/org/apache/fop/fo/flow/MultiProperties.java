@@ -50,4 +50,7 @@ public class MultiProperties extends ToBeImplementedElement {
         fotv.serveMultiProperties(this);
     }
 
+    public String getName() {
+        return "fo:multi-properties";
+    }
 }

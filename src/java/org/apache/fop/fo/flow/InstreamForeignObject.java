@@ -168,4 +168,7 @@ public class InstreamForeignObject extends FObj {
         fotv.serveInstreamForeignObject(this);
     }
 
+    public String getName() {
+        return "fo:instream-foreign-object";
+    }
 }

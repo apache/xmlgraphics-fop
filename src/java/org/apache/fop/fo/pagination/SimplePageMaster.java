@@ -162,4 +162,7 @@ public class SimplePageMaster extends FObj {
         fotv.serveSimplePageMaster(this);
     }
 
+    public String getName() {
+        return "fo:simple-page-master";
+    }
 }

@@ -152,4 +152,8 @@ public class Flow extends FObj {
     public void acceptVisitor(FOTreeVisitor fotv) {
         fotv.serveFlow(this);
     }
+    
+    public String getName() {
+        return "fo:flow";
+    }
 }

@@ -142,4 +142,7 @@ public class PageNumberCitation extends FObj {
         return fontState;
     }
 
+    public String getName() {
+        return "fo:page-number-citation";
+    }
 }

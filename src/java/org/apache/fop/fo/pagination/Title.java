@@ -90,5 +90,8 @@ public class Title extends FObjMixed {
         fotv.serveTitle(this);
     }
 
+    public String getName() {
+        return "fo:title";
+    }
 }
 

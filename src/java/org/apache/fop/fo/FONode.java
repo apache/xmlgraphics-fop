@@ -90,6 +90,17 @@ public abstract class FONode {
     }
 
     /**
+     * Checks to make sure, during SAX processing of input document, that the
+     * incoming node is valid for the this (parent) node (e.g., checking to
+     * see that fo:table is not an immediate child of fo:root)
+     * called within FObj constructor
+     * @param namespaceURI namespace of incoming node
+     * @param localName (e.g. "table" for "fo:table")
+     * @throws IllegalArgumentException if incoming node not valid for parent
+     */
+    protected void validateChildNode(String namespaceURI, String localName) {}
+
+    /**
      * Adds characters (does nothing here)
      * @param data text
      * @param start start position

@@ -91,7 +91,6 @@ public class FObj extends FONode implements Constants {
      */
     public void processNode(String elementName, Locator locator, 
                             Attributes attlist) throws FOPException {
-        setName(elementName);
         setLocation(locator);
         addProperties(attlist);
     }

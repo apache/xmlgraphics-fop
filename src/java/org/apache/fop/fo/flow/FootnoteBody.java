@@ -64,4 +64,8 @@ public class FootnoteBody extends FObj {
         
         getFOTreeControl().getFOInputHandler().endFootnoteBody(this);
     }
+    
+    public String getName() {
+        return "fo:footnote-body";
+    }
 }

@@ -141,5 +141,9 @@ public class ListBlock extends FObj {
         
         getFOTreeControl().getFOInputHandler().endList(this);
     }
+    
+    public String getName() {
+        return "fo:list-block";
+    }
 }
 

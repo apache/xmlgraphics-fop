@@ -79,5 +79,8 @@ public class RegionStart extends RegionSE {
         fotv.serveRegionStart(this);
     }
 
+    public String getName() {
+        return "fo:region-start";
+    }
 }
 

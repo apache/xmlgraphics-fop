@@ -47,4 +47,7 @@ public class MultiPropertySet extends ToBeImplementedElement {
         fotv.serveMultiPropertySet(this);
     }
 
+    public String getName() {
+        return "fo:multi-property-set";
+    }
 }

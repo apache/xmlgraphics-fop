@@ -193,5 +193,9 @@ public class PageNumberGenerator {
         return alphaNumber.reverse().toString();
     }
 
+    public String getName() {
+        return "fo:page-number-generator";
+    }
+
 }
 

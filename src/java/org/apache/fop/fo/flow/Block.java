@@ -401,4 +401,8 @@ public class Block extends FObjMixed {
         fotv.serveBlock(this);
     }
 
+    public String getName() {
+        return "fo:block";
+    }
+
 }
