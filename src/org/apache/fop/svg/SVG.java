@@ -59,18 +59,17 @@ import org.apache.fop.layout.FontState;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.layout.inline.*;
 
-import org.apache.fop.dom.svg.*;
+import org.apache.batik.dom.svg.*;
+import org.w3c.dom.*;
 import org.w3c.dom.svg.*;
 import org.w3c.dom.svg.SVGLength;
 
-import org.apache.fop.dom.svg.SVGArea;
-
-import java.util.StringTokenizer;
+import java.io.File;
 
 /**
  * class representing svg:svg pseudo flow object.
  */
-public class SVG extends FObj implements GraphicsCreator {
+public class SVG extends SVGObj implements GraphicsCreator {
 
 		/**
 		 * inner class for making SVG objects.
@@ -101,8 +100,6 @@ public class SVG extends FObj implements GraphicsCreator {
 		}
 
 		FontState fs;
-		float width;
-		float height;
 
 		/**
 		 * constructs an SVG object (called by Maker).
@@ -113,49 +110,128 @@ public class SVG extends FObj implements GraphicsCreator {
 		public SVG(FObj parent, PropertyList propertyList) {
 				super(parent, propertyList);
 				this.name = "svg:svg";
+	tagName = "svg";
+	props = new String[] {"width", "height", "x", "y", "id", "style", "class", "visibility",
+        "id", 
+        "class", 
+    
+            
+        
+        "enable-background", 
+    
+        
+        "flood-color", 
+        "flood-opacity", 
+    
+        
+        "fill", 
+        "fill-opacity", 
+        "fill-rule", 
+        "stroke", 
+        "stroke-dasharray", 
+        "stroke-dashoffset", 
+        "stroke-linecap", 
+        "stroke-linejoin", 
+        "stroke-miterlimit", 
+        "stroke-opacity", 
+        "stroke-width", 
+    
+        
+        "font-family", 
+        "font-size", 
+        "font-size-adjust", 
+        "font-stretch", 
+        "font-style", 
+        "font-variant", 
+        "font-weight", 
+    
+        
+        "stop-color", 
+        "stop-opacity", 
+    
+        
+        "clip-path", 
+        "clip-rule", 
+        "color", 
+        "color-interpolation", 
+        "color-rendering", 
+        "cursor", 
+        "display", 
+        "filter", 
+        "image-rendering", 
+        "mask", 
+        "opacity", 
+        "pointer-events", 
+        "space-rendering", 
+        "text-rendering", 
+        "visibility", 
+    
+        
+        "color-profile", 
+    
+        
+        "lighting-color", 
+    
+        
+        "marker-start", 
+        "marker-mid", 
+        "marker-end", 
+    
+        
+        "alignment-baseline", 
+        "baseline-shift", 
+        "direction", 
+        "glyph-orientation-horizontal", 
+        "glyph-orientation-vertical", 
+        "kerning", 
+        "letter-spacing", 
+        "text-decoration", 
+        "unicode-bidi", 
+        "word-spacing", 
+    
+        
+        "writing-mode", 
+        "text-anchor", 
+        "dominant-baseline", 
+    
+        
+        "clip", 
+        "overflow", 
+    
+    
+            "id", 
+            "style", 
+            "transform", 
+            "class", 
+	};
 		}
 
-		public SVGElement createGraphic() {
+/*    public void addGraphic(Document doc, Element parent) {
+        Element element = doc.createElement(tagName);
+        for(int count = 0; count < props.length; count++) {
+            String rf = this.properties.get(props[count]).getString();
+            element.setAttribute(props[count], rf);
+        }
+        parent.appendChild(element);
+        int numChildren = this.children.size();
+        for (int i = 0; i < numChildren; i++) {
+            Object child = children.elementAt(i);
+            if (child instanceof GraphicsCreator) {
+                ((GraphicsCreator)child).addGraphic(doc, element);
+            } else if (child instanceof String) {
+                org.w3c.dom.Text text = doc.createTextNode((String)child);
+                element.appendChild(text);
+            }
+        }
+    }*/
+
+/*		public SVGElement createGraphic() {
 				SVGSVGElementImpl svgArea = null;
 				SVGLength w = ((SVGLengthProperty) this.properties.get("width")).
 											getSVGLength();
 				SVGLength h = ((SVGLengthProperty) this.properties.get("height")).
 											getSVGLength();
 				svgArea = new SVGSVGElementImpl();
-				{
-						String box = this.properties.get("viewBox").getString();
-						if (box != "") {
-								StringTokenizer st = new StringTokenizer(box, " ");
-								float x = 0;
-								float y = 0;
-								float width = 0;
-								float height = 0;
-								try {
-									 if(st.hasMoreTokens()) {
-											 x = Double.valueOf(st.nextToken()).floatValue();
-									 }
-									 if(st.hasMoreTokens()) {
-											 y = Double.valueOf(st.nextToken()).floatValue();
-									 }
-									 if(st.hasMoreTokens()) {
-											 width = Double.valueOf(st.nextToken()).floatValue();
-									 }
-									 if(st.hasMoreTokens()) {
-											 height = Double.valueOf(st.nextToken()).floatValue();
-									 }
-								} catch(Exception e) {
-                }
-                SVGRect rect = new SVGRectImpl();
-                rect.setX(x);
-                rect.setY(y);
-                rect.setWidth(width);
-                rect.setHeight(height);
-                svgArea.setViewBox (new SVGAnimatedRectImpl (rect));
-						} else {
-								svgArea.setViewBox (null);
-						}
-				}
-
 				SVGAnimatedLengthImpl sal;
 				if (w == null)
 						w = new SVGLengthImpl();
@@ -206,7 +282,7 @@ public class SVG extends FObj implements GraphicsCreator {
 						Status status;
 				}
 				return svgArea;
-		}
+		}*/
 
 		/**
 		 * layout this formatting object.
@@ -235,44 +311,78 @@ public class SVG extends FObj implements GraphicsCreator {
 							this.properties.get("font-style").getString();
 						String fontWeight =
 							this.properties.get("font-weight").getString();
-						int fontSize =
-							this.properties.get("font-size").getLength().mvalue();
+						String fontSz = this.properties.get("font-size").getString();
+						int fontSize = area.getFontState().getFontSize();
+						try {
+						    fontSize = Integer.parseInt(fontSz);
+						} catch(Exception e) {
+						}
 
 						// FIX-ME: should get the font-variant property
 						this.fs = new FontState(area.getFontInfo(), fontFamily,
 																		fontStyle, fontWeight, fontSize, FontVariant.NORMAL);
 
-						SVGLength length;
-						length = ((SVGLengthProperty) this.properties.get("width")).getSVGLength();
-						if (length == null)
-								length = new SVGLengthImpl();
-						this.width = length.getValue();
-						length = ((SVGLengthProperty) this.properties.get("height")).
-										 getSVGLength();
-						if (length == null)
-								length = new SVGLengthImpl();
-						this.height = length.getValue();
+//						this.width = this.properties.get("width").getString();
+//						this.height = this.properties.get("height").getString();
 
 						this.marker = 0;
 				}
 
 				/* create an SVG area */
 				/* if width and height are zero, may want to get the bounds of the content. */
+				SVGOMDocument doc = new SVGOMDocument(null, SVGDOMImplementation.getDOMImplementation());
+                                try {
+                                    doc.setURLObject(new File(".").toURL());
+                                } catch(Exception e) {
+                                }
+
+                DefaultSVGContext dc = new DefaultSVGContext() {
+                        public float getPixelToMM() {
+                            return 0.264583333333333333333f; // 72 dpi
+                        }
+                        public float getViewportWidth() {
+                            return 100;
+                        }
+                        public float getViewportHeight() {
+                            return 100;
+                        }
+                    };
+                doc.setSVGContext(dc);
+
+                Element topLevel = doc.createElementNS("http://www.w3.org/2000/svg", tagName);
+                for(int count = 0; count < props.length; count++) {
+                    if(this.properties.get(props[count]) != null) {
+                        String rf = this.properties.get(props[count]).getString();
+                        if(rf != null)
+                            topLevel.setAttribute(props[count], rf);
+                    }
+                }
+				doc.appendChild(topLevel);
+                int numChildren = this.children.size();
+                for (int i = 0; i < numChildren; i++) {
+                    Object child = children.elementAt(i);
+                    if (child instanceof GraphicsCreator) {
+                        ((GraphicsCreator)child).addGraphic(doc, topLevel);
+                    } else if (child instanceof String) {
+                        org.w3c.dom.Text text = doc.createTextNode((String)child);
+                        topLevel.appendChild(text);
+                    }
+                }
+
+		        float width = ((SVGSVGElement)topLevel).getWidth().getBaseVal().getValue();
+        		float height = ((SVGSVGElement)topLevel).getHeight().getBaseVal().getValue();
 				SVGArea svg = new SVGArea(fs, width, height);
-				SVGDocument doc = new SVGDocumentImpl();
 				svg.setSVGDocument(doc);
 				svg.start();
+
+				/* finish off the SVG area */
+				svg.end();
 
 				/* add the SVG area to the containing area */
 				ForeignObjectArea foa = (ForeignObjectArea) area;
 				foa.setObject(svg);
 				foa.setIntrinsicWidth(svg.getWidth());
 				foa.setIntrinsicHeight(svg.getHeight());
-
-				doc.appendChild((SVGSVGElement) createGraphic());
-
-				/* finish off the SVG area */
-				svg.end();
 
 				/* return status */
 				return new Status(Status.OK);

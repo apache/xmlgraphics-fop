@@ -22,7 +22,7 @@
     Alternately, this  acknowledgment may  appear in the software itself,  if
     and wherever such third-party acknowledgments normally appear.
  
- 4. The names "FOP" and  "Apache Software Foundation"  must not be used to
+ 4. The names "Fop" and  "Apache Software Foundation"  must not be used to
     endorse  or promote  products derived  from this  software without  prior
     written permission. For written permission, please contact
     apache@apache.org.
@@ -48,15 +48,60 @@
  Software Foundation, please see <http://www.apache.org/>.
  
  */
-
 package org.apache.fop.svg;
 
-import org.w3c.dom.svg.SVGElement;
+// FOP
+import org.apache.fop.render.Renderer;
+import org.apache.fop.layout.FontState;
+import org.apache.fop.layout.Area;
+
+import java.util.*;
+
+import org.w3c.dom.svg.*;
 import org.w3c.dom.*;
 
+
 /**
- *
+ * class representing an SVG area in which the SVG graphics sit
  */
-public interface GraphicsCreator {
-	public void addGraphic(Document doc, Element parent);
+public class SVGArea extends Area implements GetSVGDocument {
+	SVGDocument doc;
+
+	/**
+	 * construct an SVG area
+	 *
+	 * @param fontState the font state
+	 * @param width the width of the area
+	 * @param height the height of the area
+	 */
+	public SVGArea(FontState fontState, float width, float height)  {
+		super(fontState, (int)width * 1000, (int)height * 1000);
+		currentHeight = (int)height * 1000;
+		contentRectangleWidth = (int)width * 1000;
+	}
+
+	public void setSVGDocument(SVGDocument doc)
+	{
+		this.doc = doc;
+	}
+
+	public SVGDocument getSVGDocument() throws DOMException
+	{
+		return doc;
+	}
+
+    public int getWidth()
+    {
+//        return getSVGDocument().getRootElement().getWidth().getBaseVal().getValue();
+        return contentRectangleWidth;
+    }
+
+	/**
+	 * render the SVG.
+	 *
+	 * @param renderer the Renderer to use
+	 */
+	public void render(Renderer renderer) {
+		renderer.renderSVGArea(this);
+	}
 }

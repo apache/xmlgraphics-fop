@@ -26,7 +26,7 @@ import org.apache.fop.datatypes.*;
 //import org.apache.fop.datatypes.IDReferences;
 import org.apache.fop.render.pdf.FontSetup;
 
-import org.apache.fop.dom.svg.*;
+import org.apache.fop.svg.SVGArea;
 
 // Java
 import java.io.IOException;

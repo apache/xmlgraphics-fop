@@ -53,7 +53,6 @@ package org.apache.fop.svg;
 
 import org.apache.fop.fo.*;
 import org.apache.fop.fo.properties.SVGPropertyMapping;
-import org.apache.fop.dom.svg.SVGDocumentImpl;
 
 import java.util.Enumeration;
 
@@ -61,7 +60,7 @@ public class SVGPropertyListMapping implements PropertyListMapping {
 
     public void addToBuilder(TreeBuilder builder) {
 
-	String uri = SVGDocumentImpl.namespaceURI;
+		String uri = "http://www.w3.org/2000/svg";
         builder.addPropertyList(uri, SVGPropertyMapping.getGenericMappings());
 	/* Add any element mappings */
 	for (Enumeration e = SVGPropertyMapping.getElementMappings();
