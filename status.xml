@@ -1,0 +1,182 @@
+<?xml version="1.0"?>
+<status>
+
+  <developers>
+  <!-- in strict alphabetical order -->
+  <person name="Bertrand Delacretaz" email="bdelacretaz@apache.org" id="BD"/>
+  <person name="Christian Geisert" email="chrisg@apache.org" id="CG"/>
+  <person name="Karen Lease" email="klease@apache.org" id="KL"/>
+  <person name="Keiron Liddle" email="keiron@apache.org" id="KLL"/>
+  <person name="Jeremias Maerki" email="jeremias@apache.org" id="JM"/>
+  <person name="Joerg Pietschmann" email="pietsch@apache.org" id="JP"/>
+  <person name="Arved Sandstrom" email="arved@apache.org" id="AS"/>
+  <person name="Peter B. West" email="pbwest@apache.org" id="PBW"/>
+
+<!--
+inactive??
+  <person name="Kelly Campbell" email="kellyc@apache.org" id="KC"/>
+  <person name="Steven Coffman" email="gears@apache.org" id="SC"/>
+  <person name="Tore Engvig" email="tore@apache.org" id=""/>
+  <person name="Stanislav Gorkhover" email="stanislav@apache.org" id=""/>
+  <person name="Fotis Jannidis" email="fotis@apache.org" id=""/>
+  <person name="Jordan Naftolin" email="jordan@apache.org" id=""/>
+  <person name="Eric Schaeffer" email="eschaeffer@apache.org" id=""/>
+  <person name="Art Welch" email="artw@apache.org" id=""/>
+-->
+    <person name="Volunteer needed"   email="fop-dev@xml.apache.org" id="open"/>
+  </developers>
+
+  <todo>
+   <actions priority="high">
+    <action context="code" dev="KL">
+      get simple pagination working
+    </action>
+    <action context="code" dev="open">
+      sort out page sequence details
+    </action>
+    <action context="code" dev="open">
+      complete resolving id areas
+    </action>
+    <action context="code" dev="open">
+      add the pdf side part of bookmark extension
+    </action>
+
+    <action context="code" dev="open">
+      implement the caching mechanism to store pages
+      when a page contains a forward reference that has not been
+      resolved then we need to be able to save the page contents to
+      disk to save memory
+    </action>
+
+   </actions>
+
+   <actions priority="medium">
+    <action context="design" dev="open">
+     Design FOP API interfaces.
+    </action>
+    <action context="design" dev="open">
+     Integrate with avalon logging, URI reslover,
+     component management, image caching etc.
+    </action>
+   </actions>
+
+   <actions priority="low">
+    <action context="design" dev="open">
+      Investigate using form XObject for repeated areas
+      such as static and table header/footer only when the
+      area does not change.
+    </action>
+    <action context="code" dev="open">
+      Investigate using form XObject for svg images
+      this can make the svg cacheable in the pdf doc
+    </action>
+   </actions>
+
+  </todo>
+
+  <changes>
+   <release version="?" date="2002">
+    <action dev="KLL" type="update" context="code"> 
+      FontState only used for calculations,
+      stores font name and size on area tree
+    </action>
+    <action dev="KLL" type="update" context="code"> 
+      Improved PDFTextPainter to handle different text better
+    </action>
+    <action dev="KLL" type="update" context="code"> 
+      Applied root element viewBox transform for svg to pdf transcoder
+    </action>
+    <action dev="KLL" type="update" context="code"> 
+      image test for formats, viewport and scaling
+    </action>
+    <action dev="KLL" type="add" context="code"> 
+      added various SVG to PDF tests for trancoder
+      and including in fo
+    </action>
+    <action dev="KLL" type="update" context="code"> 
+      Implemented viewport and scaling for images
+    </action>
+    <action dev="KLL" type="update" context="code"> 
+      Implemented viewport and scaling for instream svg
+    </action>
+    <action dev="KLL" type="update" context="code">
+      Removed old area tree
+    </action>
+    <action dev="KLL" type="update" context="code">
+      Optimised gstate usage in pdf files to minimize file size
+    </action>
+    <action dev="KLL" type="update" context="code">
+      Optimised function usage, reuses old functions in pdf files
+      to minimize file size
+    </action>
+    <action dev="KLL" type="add" context="code">
+      Added transparancy to pdf
+    </action>
+    <action dev="KLL" type="update" context="code">
+      Outputs images immediately to the stream, also drops
+      reference to image data
+    </action>
+    <action dev="KLL" type="add" context="code">
+      Added resource context for pattern resources
+    </action>
+    <action dev="KLL" type="update" context="build">
+      Added pdf transcoder build target
+    </action>
+    <action dev="KLL" type="update" context="code">
+      Made PDF streams externally configured
+    </action>
+    <action dev="KLL" type="update" context="code">
+      Fixed svg linking in pdf, works with viewbox and url
+    </action>
+    <action dev="KLL" type="add" context="code">
+      Start to mif implementation with new structure handlers
+    </action>
+    <action dev="KLL" type="add" context="code">
+      New structure handler for structure type documents, rtf, mif
+      and for better layout processing.
+    </action>
+    <action dev="KLL" type="update" context="code">
+      Changed extensions to allow for external xml
+    </action>
+    <action dev="KLL" type="add" context="code">
+      Can have a default element mapping for extensions
+    </action>
+    <action dev="KLL" type="add" context="code">
+      New area tree model
+    </action>
+    <action dev="KLL" type="add" context="code">
+      New renderer model
+    </action>
+    <action dev="KLL" type="update" context="code">
+      Added handlers for xml in renderer
+    </action> 
+    <action dev="KLL" type="update" context="code">
+      svg now in an xml handler, FOP can be used without batik
+    </action>
+    <action dev="KLL" type="update" context="build">
+      Removed old xerces and xalan
+    </action>
+    <action dev="" type="update" context="code">
+      Updated to use Jaxp
+    </action>
+    <action dev="" type="update" context="code">
+        Updated to use new avalon framework logger
+    </action>
+    <action dev="KLL" type="update" context="code">
+      Redid image handling so it can use a cache and synchronizes properly
+      only on the current image while loading
+    </action>
+    <action dev="KLL" type="update" context="code">
+      Changed bookmark extension, now requires a wrapping element bookmark
+    </action>
+    <action dev="KL" type="add" context="code">
+      New layout system using layout managers
+    </action>
+    <action dev="KLL" type="update" context="code">
+     Changed area tree xml format to match the area tree hierarchy
+    </action>
+
+   </release>
+  </changes>
+
+</status>
