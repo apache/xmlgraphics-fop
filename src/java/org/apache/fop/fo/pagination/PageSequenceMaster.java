@@ -480,6 +480,20 @@ public class PageSequenceMaster {
          * Returns a new iterator across <code>masters</code>
          */
         public PageMasterIterator() {}
+        
+        /**
+         * Clone the iterator.  The purpose of this operation is to allow
+         * interested methods to attempt layouts of the same flow data using
+         * different masters, e.g., laying out a 'last' page and 'rest' page
+         * from the same flow data.
+         * 
+         * @see java.lang.Object#clone()
+         */
+        protected Object clone() throws CloneNotSupportedException {
+            synchronized (this) {
+                return super.clone();
+            }
+        }
 
         /**
          * @return true if any repetitions on any masters remain in the
