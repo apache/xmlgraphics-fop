@@ -20,15 +20,25 @@
 package org.apache.fop.render.awt;
 
 import java.awt.Font;
-import java.awt.Graphics2D;
+//import java.awt.Graphics2D;
 import java.awt.GraphicsEnvironment;
-import java.awt.font.FontRenderContext;
-import java.awt.image.BufferedImage;
+import java.awt.font.TextAttribute;
+//import java.awt.font.FontRenderContext;
+//import java.awt.image.BufferedImage;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
+
+import org.apache.fop.fo.PropNames;
+import org.apache.fop.fo.PropertyConsts;
+import org.apache.fop.fo.expr.PropertyException;
+import org.apache.fop.fo.properties.FontStretch;
+import org.apache.fop.fo.properties.FontStyle;
+import org.apache.fop.fo.properties.FontVariant;
+import org.apache.fop.fo.properties.FontWeight;
+import org.apache.fop.fonts.FontException;
 
 /**
  * Java font selection is based on family names.  It seems that Java
@@ -104,7 +114,8 @@ import java.util.Set;
  *     logical:serif
  *     family:serif
  *     PSName:serif
- *     PLAIN              
+ *     Style:
+ *         PLAIN              
  *     FAMILY
  *     WEIGHT
  *     POSTURE
@@ -114,7 +125,8 @@ import java.util.Set;
  *     logical:serif.bold
  *     family:serif
  *     PSName:serif.bold
- *     PLAIN              
+ *     Style:
+ *         PLAIN              
  *     FAMILY
  *     WEIGHT
  *     POSTURE
@@ -124,7 +136,8 @@ import java.util.Set;
  *     logical:serif.bolditalic
  *     family:serif
  *     PSName:serif.bolditalic
- *     PLAIN              
+ *     Style:
+ *         PLAIN              
  *     FAMILY
  *     WEIGHT
  *     POSTURE
@@ -134,7 +147,8 @@ import java.util.Set;
  *     logical:serif.italic
  *     family:serif
  *     PSName:serif.italic
- *     PLAIN              
+ *     Style:
+ *         PLAIN              
  *     FAMILY
  *     WEIGHT
  *     POSTURE
@@ -226,6 +240,9 @@ import java.util.Set;
  * @version $Revision$ $Name$
  */
 public class Fonts {
+    private static final String tag = "$Name$";
+    private static final String revision = "$Revision$";
+
 
 //    public static final int
 //                   NO_ATTR = 0
@@ -260,15 +277,20 @@ public class Fonts {
     private HashSet cursive = new HashSet();
     private HashSet fantasy = new HashSet();
     private HashSet symbols = new HashSet();
+    
+    public Fonts() {
+        setupFonts();
+    }
 
     /**
+     * Sets up the font family maps applying to the fonts available to the JVM
      */
     private void setupFonts() {
-        // Set up the graphics environment
-        BufferedImage fontImage =
-            new BufferedImage(100, 100, BufferedImage.TYPE_INT_RGB);
-        Graphics2D g2D = fontImage.createGraphics();
-        FontRenderContext frcontext = g2D.getFontRenderContext();
+//        // Set up the graphics environment
+//        BufferedImage fontImage =
+//            new BufferedImage(100, 100, BufferedImage.TYPE_INT_RGB);
+//        Graphics2D g2D = fontImage.createGraphics();
+//        FontRenderContext frcontext = g2D.getFontRenderContext();
         // Set up the fonts environment
         // TODO Check whether this is needed to provide better mapping between
         // requested fonts and those available on the system
@@ -333,6 +355,12 @@ public class Fonts {
         }
     }
 
+    /**
+     * Adds mappings for the CSS2/XSL-FO generic font families (serif,
+     * sans-serif, monospace, cursive and fantasy) to the <code>Map</code> of
+     * font families.
+     * @param fontFamilies the map of font families
+     */
     public void setupCSSGenericMapping(Map fontFamilies) {
         // Add mappings for some of the CSS2 generic font families
         // TODO set up mappings for "cursive" and "fantasy"
@@ -347,10 +375,22 @@ public class Fonts {
         }
     }
 
+    /**
+     * Adds a mapping of the CSS2/XSL-FO system fonts (caption, icon, menu,
+     * message-box, small-caption, status-bar) to the <code>Map</code> of font
+     * families.
+     * @param fontFamilies the map of font families
+     */
     public void setupCSSSystemFontMapping(Map fontFamilies) {
         // TODO
     }
 
+    /**
+     * Adds a font to the <code>Set</code> of monspace fonts, if it qualifies.
+     * @param monospace the set of monospace fonts
+     * @param family the font family to check
+     * @param lcfamily the lowercase version of the font family to check
+     */
     private void checkMonospace(Set monospace, String family, String lcfamily) {
         int mono = lcfamily.lastIndexOf("mono");
         if (mono >= 0) {
@@ -370,6 +410,12 @@ public class Fonts {
         }
     }
 
+    /**
+     * Adds a font to the <code>Set</code> of serif fonts, if it qualifies.
+     * @param serif the set of serif fonts
+     * @param family the font family to check
+     * @param lcfamily the lowercase version of the font family to check
+     */
     private void checkSerif(Set serif, String family, String lcfamily) {
         int ser = lcfamily.indexOf("serif");
         if (ser >= 0) {
@@ -416,11 +462,18 @@ public class Fonts {
         }
     }
 
+    /**
+     * Adds a font to the <code>Set</code> of sans-serif fonts, if it qualifies.
+     * @param sansserif the set of sans-serif fonts
+     * @param family the font family to check
+     * @param lcfamily the lowercase version of the font family to check
+     */
     private void checkSansSerif(Set sansserif, String family, String lcfamily) {
-        if (lcfamily.indexOf("sans") >= 0) {
-            if (lcfamily.indexOf("comic") < 0) {
-                sansserif.add(family);
-            }
+        if (lcfamily.indexOf("sansserif") >= 0) {
+            sansserif.add(family);
+        }
+        if (lcfamily.indexOf("sans-serif") >= 0) {
+            sansserif.add(family);
         }
         if (lcfamily.indexOf("helvetica") >= 0) {
             sansserif.add(family);
@@ -446,8 +499,19 @@ public class Fonts {
         if (lcfamily.indexOf("verdana") >= 0) {
             sansserif.add(family);
         }
+        if (lcfamily.indexOf("sans") >= 0) {
+            if (lcfamily.indexOf("comic") < 0) {
+                sansserif.add(family);
+            }
+        }
     }
 
+    /**
+     * Adds a font to the <code>Set</code> of cursive fonts, if it qualifies.
+     * @param cursive the set of cursive fonts
+     * @param family the font family to check
+     * @param lcfamily the lowercase version of the font family to check
+     */
     private void checkCursive(Set cursive, String family, String lcfamily) {
         if (lcfamily.indexOf("chancery") >= 0) {
             cursive.add(family);
@@ -466,6 +530,12 @@ public class Fonts {
         }
     }
 
+    /**
+     * Adds a font to the <code>Set</code> of fantasy fonts, if it qualifies.
+     * @param fantasy the set of fantasy fonts
+     * @param family the font family to check
+     * @param lcfamily the lowercase version of the font family to check
+     */
     private void checkFantasy(Set fantasy, String family, String lcfamily) {
         if (lcfamily.indexOf("algerian") >= 0) {
             fantasy.add(family);
@@ -493,6 +563,12 @@ public class Fonts {
         }
     }
 
+    /**
+     * Adds a font to the <code>Set</code> of symbol fonts, if it qualifies.
+     * @param symbols the set of symbol fonts
+     * @param family the font family to check
+     * @param lcfamily the lowercase version of the font family to check
+     */
     private void checkSymbols(Set symbols, String family, String lcfamily) {
         if (lcfamily.indexOf("symbol") >= 0) {
             symbols.add(family);
@@ -511,4 +587,143 @@ public class Fonts {
         }
     }
 
+    /**
+     * Gets a java.awt.Font matching the given criteria.
+     * @param family the font family
+     * @param style only NORMAL, ITALIC and OBLIQUE are supported
+     * @param variant only NORMAL is supported
+     * @param weight only NORMAL and BOLD are supported
+     * @param stretch only NORMAL is supported
+     * @param size the size of the font in fractional points
+     * @param strategy currently ignored
+     * @return
+     */
+    public Font getFont(
+            String family, int style, int variant, int weight,
+            int stretch, float size, int strategy)
+    throws FontException {
+        HashMap attributes = new HashMap();
+        attributes.put(TextAttribute.FAMILY, family);
+        switch (style) {
+            case FontStyle.NORMAL:
+                attributes.put(
+                        TextAttribute.POSTURE, TextAttribute.POSTURE_REGULAR);
+                break;
+            case FontStyle.ITALIC:
+            case FontStyle.OBLIQUE:
+                attributes.put(
+                        TextAttribute.POSTURE, TextAttribute.POSTURE_OBLIQUE);
+                break;
+            default:
+                throw new FontException(
+                "Only NORMAL, OBLIQUE and ITALIC supported for style");
+        }
+        switch (variant) {
+            case FontVariant.NORMAL:
+                break;
+            default:
+                throw new FontException("Only NORMAL supported for variant");
+        }
+        switch (weight) {
+            case FontWeight.NORMAL:
+                attributes.put(
+                        TextAttribute.WEIGHT, TextAttribute.WEIGHT_REGULAR);
+                break;
+            case FontWeight.BOLD:
+                attributes.put(
+                        TextAttribute.WEIGHT, TextAttribute.WEIGHT_BOLD);
+            break;
+            default:
+                throw new FontException(
+                        "Only NORMAL and BOLD supported for weight");
+        }
+        switch (stretch) {
+            case FontStretch.NORMAL:
+                break;
+            default:
+                throw new FontException("Only NORMAL supported for stretch");
+        }
+        attributes.put(TextAttribute.SIZE, new Float(size));
+        return new Font(attributes);
+    }
+
+    /**
+     * Gets a font corresponding to one of the CSS2/XSL-FO generic fonts:
+     * serif, sans-serif, monospace, cursive, fantasy.
+     * @param type the generic font type
+     * @param style only NORMAL, ITALIC and OBLIQUE are supported
+     * @param variant only NORMAL is supported
+     * @param weight only NORMAL and BOLD are supported
+     * @param stretch only NORMAL is supported
+     * @param size the size of the font in fractional points
+     * @return
+     */
+    public Font getGenericFont(
+            String type, int style, int variant, int weight,
+            int stretch, float size)
+        throws FontException {
+            HashMap attributes = new HashMap();
+            attributes.put(TextAttribute.FAMILY, type);
+            switch (style) {
+                case FontStyle.NORMAL:
+                    attributes.put(
+                            TextAttribute.POSTURE, TextAttribute.POSTURE_REGULAR);
+                    break;
+                case FontStyle.ITALIC:
+                case FontStyle.OBLIQUE:
+                    attributes.put(
+                            TextAttribute.POSTURE, TextAttribute.POSTURE_OBLIQUE);
+                    break;
+                default:
+                    throw new FontException(
+                    "Only NORMAL, OBLIQUE and ITALIC supported for style");
+            }
+            switch (variant) {
+                case FontVariant.NORMAL:
+                    break;
+                default:
+                    throw new FontException("Only NORMAL supported for variant");
+            }
+            switch (weight) {
+                case FontWeight.NORMAL:
+                    attributes.put(
+                            TextAttribute.WEIGHT, TextAttribute.WEIGHT_REGULAR);
+                    break;
+                case FontWeight.BOLD:
+                    attributes.put(
+                            TextAttribute.WEIGHT, TextAttribute.WEIGHT_BOLD);
+                break;
+                default:
+                    throw new FontException(
+                            "Only NORMAL and BOLD supported for weight");
+            }
+            switch (stretch) {
+                case FontStretch.NORMAL:
+                    break;
+                default:
+                    throw new FontException("Only NORMAL supported for stretch");
+            }
+            attributes.put(TextAttribute.SIZE, new Float(size));
+            return new Font(attributes);
+        
+    }
+
+    /**
+     * Gets a font corresponding to one of the CSS2/XSL-FO system fonts:
+     * caption, icon. menu. message-box, small-caption, status-bar.
+     * @param type one of the system fonts
+     * @return the font
+     * @throws FontException
+     */
+    public Font getSystemFont(int type) throws FontException {
+        PropertyConsts pconsts = PropertyConsts.getPropertyConsts();
+        try {
+            // Validate the type
+            String sysfont = pconsts.getEnumText(PropNames.FONT, type);
+        } catch (PropertyException e) {
+            throw new FontException(e);
+        }
+        // TODO implement this
+        throw new FontException("getSystemFont not supported");
+    }
 }
