@@ -27,17 +27,12 @@ import org.xml.sax.ContentHandler;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
-import org.w3c.dom.Document;
 
 // FOP
 import org.apache.fop.fo.Constants;
 import org.apache.fop.fo.ElementMapping;
 import org.apache.fop.fo.FOTreeBuilder;
-import org.apache.fop.fo.FOInputHandler;
-import org.apache.fop.area.AreaTreeHandler;
 import org.apache.fop.render.awt.AWTRenderer;
-import org.apache.fop.render.mif.MIFHandler;
-import org.apache.fop.render.rtf.RTFHandler;
 
 /**
  * Primary class that drives overall FOP process.
@@ -94,14 +89,9 @@ public class Driver implements Constants {
     private FOTreeBuilder treeBuilder;
 
     /**
-     * the renderer type code given by setRenderer
+     * the render type code given by setRender
      */
-    private int rendererType = NOT_SET;
-
-    /**
-     * the SAX ContentHandler
-     */
-    private FOInputHandler foInputHandler;
+    private int renderType = NOT_SET;
 
     /**
      * the source of the FO file
@@ -112,11 +102,6 @@ public class Driver implements Constants {
      * the stream to use to output the results of the renderer
      */
     private OutputStream stream;
-
-    /**
-     * The XML parser to use when building the FO tree
-     */
-    private XMLReader reader;
 
     /**
      * The system resources that FOP will use
@@ -134,10 +119,10 @@ public class Driver implements Constants {
      * Constructor for AWTRenderer, which reuses the
      * same renderer instance for document reloading
      */
-    public Driver(AWTRenderer renderer) {
+    public Driver(AWTRenderer render) {
         this();
-        rendererType = RENDER_AWT;
-        foUserAgent = renderer.getUserAgent();
+        renderType = RENDER_AWT;
+        foUserAgent = render.getUserAgent();
     }
 
     /**
@@ -176,7 +161,6 @@ public class Driver implements Constants {
     public synchronized void reset() {
         source = null;
         stream = null;
-        reader = null;
         if (treeBuilder != null) {
             treeBuilder.reset();
         }
@@ -207,7 +191,7 @@ public class Driver implements Constants {
     }
 
     /**
-     * Set the OutputStream to use to output the result of the Renderer
+     * Set the OutputStream to use to output the result of the Render
      * (if applicable)
      * @param stream the stream to output the result of rendering to
      */
@@ -231,15 +215,6 @@ public class Driver implements Constants {
     }
 
     /**
-     * Sets the reader used when reading in the source. If not set,
-     * this defaults to a basic SAX parser.
-     * @param reader the reader to use.
-     */
-    public void setXMLReader(XMLReader reader) {
-        this.reader = reader;
-    }
-
-    /**
      * Method to set the rendering type desired. Must be one of
      * <ul>
      * <li>Driver.RENDER_PDF</li>
@@ -258,12 +233,12 @@ public class Driver implements Constants {
      */
     public void setRenderer(int renderType) throws IllegalArgumentException {
         if (renderType < RENDER_MIN_CONST || renderType > RENDER_MAX_CONST) {
-            rendererType = NOT_SET;
+            renderType = NOT_SET;
             throw new IllegalArgumentException(
-                "Invalid renderer ID#" + renderType);
+                "Invalid render ID#" + renderType);
         }
 
-        this.rendererType = renderType;
+        this.renderType = renderType;
     }
 
     /**
@@ -285,7 +260,7 @@ public class Driver implements Constants {
     }
 
     /**
-     * Determines which SAX ContentHandler is appropriate for the rendererType.
+     * Determines which SAX ContentHandler is appropriate for the renderType.
      * Structure renderers (e.g. MIF & RTF) each have a specialized
      * ContentHandler that directly place data into the output stream. Layout
      * renderers (e.g. PDF & PostScript) use a ContentHandler that builds an FO
@@ -298,27 +273,11 @@ public class Driver implements Constants {
             initialize();
         }
 
-        if (rendererType != RENDER_PRINT && rendererType != RENDER_AWT) {
+        if (renderType != RENDER_PRINT && renderType != RENDER_AWT) {
            validateOutputStream();
         }
 
-        // TODO: - do this stuff in a better way
-        // PIJ: I guess the structure handler should be created by the renderer.
-        if (rendererType == RENDER_MIF) {
-            foInputHandler = new MIFHandler(foUserAgent, stream);
-        } else if (rendererType == RENDER_RTF) {
-            foInputHandler = new RTFHandler(foUserAgent, stream);
-        } else {
-            if (rendererType == NOT_SET) {
-                throw new IllegalStateException(
-                        "Renderer must be set using setRenderer(int renderType)");
-            }
-
-            foInputHandler = new AreaTreeHandler(foUserAgent, rendererType, 
-                stream);
-        }
-
-        treeBuilder.setFOInputHandler(foInputHandler);
+        treeBuilder.initialize(renderType, foUserAgent, stream);
         return treeBuilder;
     }
 
@@ -357,11 +316,7 @@ public class Driver implements Constants {
              to look in those objects to see where FOP picks up control of
              processing again. For Structure Renderers (e.g. MIF & RTF), the SAX
              events are handled directly. For Layout Renderers (e.g. PDF &
-             PostScript), an FO Tree is built by the FOTreeHandler, which in
-             turn fires events when a PageSequence object is complete. This
-             allows higher-level control objects (such as this class) to work
-             directly with PageSequence objects. See foPageSequenceComplete()
-             where this level of control is implemented.
+             PostScript), an Area Tree is managed by the AreaTreeHandler.
              */
             parser.parse(source);
         } catch (SAXException e) {
@@ -377,7 +332,7 @@ public class Driver implements Constants {
     }
 
     /**
-     * Runs the formatting and renderering process using the previously set
+     * Runs the formatting and rendering process using the previously set
      * parser, input source, renderer and output stream.
      * If no parser was set, get a default SAX parser.
      * @throws IOException in case of IO errors.
@@ -388,18 +343,14 @@ public class Driver implements Constants {
             initialize();
         }
 
-        if (rendererType == NOT_SET) {
-            rendererType = RENDER_PDF;
+        if (renderType == NOT_SET) {
+            renderType = RENDER_PDF;
         }
 
         if (source == null) {
             throw new FOPException("InputSource is not set.");
         }
 
-        if (reader == null) {
-            reader = FOFileHandler.createParser();
-        }
-
-        render(reader, source);
+        render(FOFileHandler.createParser(), source);
     }
 }
