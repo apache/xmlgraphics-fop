@@ -56,6 +56,7 @@ import org.apache.fop.fo.*;
 import org.apache.fop.layout.Area;
 import org.apache.fop.layout.FontState;
 import org.apache.fop.apps.FOPException;
+import org.apache.fop.fo.properties.*;
 
 import org.apache.fop.dom.svg.*;
 import org.apache.fop.dom.svg.SVGArea;
@@ -148,6 +149,20 @@ public class RadialGradient extends SVGObj {
                  getSVGLength();
         radial.setFy(length == null ? null :
                      new SVGAnimatedLengthImpl(length));
+        switch ((this.properties.get("gradientUnits")).getEnum()) {
+            case GradientUnits.USER_SPACE:
+                radial.setGradientUnits( new SVGAnimatedEnumerationImpl(
+                                           SVGUnitTypes.SVG_UNIT_TYPE_USERSPACE));
+                break;
+            case GradientUnits.USER_SPACE_ON_USE:
+                radial.setGradientUnits( new SVGAnimatedEnumerationImpl(
+                                           SVGUnitTypes.SVG_UNIT_TYPE_USERSPACEONUSE));
+                break;
+            case GradientUnits.OBJECT_BOUNDING_BOX:
+                radial.setGradientUnits( new SVGAnimatedEnumerationImpl(
+                                           SVGUnitTypes.SVG_UNIT_TYPE_OBJECTBOUNDINGBOX));
+                break;
+        }
         return radial;
     }
 }
