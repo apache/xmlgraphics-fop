@@ -3,34 +3,34 @@
  * ============================================================================
  *                    The Apache Software License, Version 1.1
  * ============================================================================
- * 
+ *
  * Copyright (C) 1999-2003 The Apache Software Foundation. All rights reserved.
- * 
+ *
  * Redistribution and use in source and binary forms, with or without modifica-
  * tion, are permitted provided that the following conditions are met:
- * 
+ *
  * 1. Redistributions of source code must retain the above copyright notice,
  *    this list of conditions and the following disclaimer.
- * 
+ *
  * 2. Redistributions in binary form must reproduce the above copyright notice,
  *    this list of conditions and the following disclaimer in the documentation
  *    and/or other materials provided with the distribution.
- * 
+ *
  * 3. The end-user documentation included with the redistribution, if any, must
  *    include the following acknowledgment: "This product includes software
  *    developed by the Apache Software Foundation (http://www.apache.org/)."
  *    Alternately, this acknowledgment may appear in the software itself, if
  *    and wherever such third-party acknowledgments normally appear.
- * 
+ *
  * 4. The names "FOP" and "Apache Software Foundation" must not be used to
  *    endorse or promote products derived from this software without prior
  *    written permission. For written permission, please contact
  *    apache@apache.org.
- * 
+ *
  * 5. Products derived from this software may not be called "Apache", nor may
  *    "Apache" appear in their name, without prior written permission of the
  *    Apache Software Foundation.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESSED OR IMPLIED WARRANTIES,
  * INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND
  * FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
@@ -42,12 +42,12 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ============================================================================
- * 
+ *
  * This software consists of voluntary contributions made by many individuals
  * on behalf of the Apache Software Foundation and was originally created by
  * James Tauber <jtauber@jtauber.com>. For more information on the Apache
  * Software Foundation, please see <http://www.apache.org/>.
- */ 
+ */
 package org.apache.fop.fo.flow;
 
 // Java
@@ -70,9 +70,13 @@ import org.apache.fop.layout.MarginProps;
 import org.apache.fop.layout.RelativePositionProps;
 import org.apache.fop.layoutmgr.table.TableLayoutManager;
 
+/**
+ * Class modelling the fo:table object. See Sec. 6.7.3 of the XSL-FO Standard.
+ */
 public class Table extends FObj {
     private static final int MINCOLWIDTH = 10000; // 10pt
 
+    /** collection of columns in this table */
     protected ArrayList columns = null;
     private TableBody tableHeader = null;
     private TableBody tableFooter = null;
@@ -96,10 +100,17 @@ public class Table extends FObj {
     /** Maximum inline-progression-dimension */
     private int maxIPD;
 
+    /**
+     * @param parent FONode that is the parent of this object
+     */
     public Table(FONode parent) {
         super(parent);
     }
 
+    /**
+     * Overrides FObj.
+     * @param child FONode child object to be added
+     */
     protected void addChild(FONode child) {
         if (child.getName().equals("fo:table-column")) {
             if (columns == null) {
@@ -119,6 +130,7 @@ public class Table extends FObj {
     /**
      * Return a LayoutManager responsible for laying out this FObj's content.
      * Must override in subclasses if their content can be laid out.
+     * @param list the list to which the layout manager(s) should be added
      */
     public void addLayoutManager(List list) {
         TableLayoutManager tlm = new TableLayoutManager();
@@ -134,7 +146,7 @@ public class Table extends FObj {
         list.add(tlm);
     }
 
-    public void setup() {
+    private void setup() {
         // Common Accessibility Properties
         AccessibilityProps mAccProps = propMgr.getAccessibilityProps();
 
@@ -188,18 +200,24 @@ public class Table extends FObj {
                 "table-layout").getEnum() == TableLayout.AUTO);
 
         this.omitHeaderAtBreak = this.properties.get(
-                "table-omit-header-at-break").getEnum() 
+                "table-omit-header-at-break").getEnum()
                                             == TableOmitHeaderAtBreak.TRUE;
         this.omitFooterAtBreak = this.properties.get(
-                "table-omit-footer-at-break").getEnum() 
+                "table-omit-footer-at-break").getEnum()
                                             == TableOmitFooterAtBreak.TRUE;
 
     }
 
+    /**
+     * @return false (Table does not generate inline areas)
+     */
     public boolean generatesInlineAreas() {
         return false;
     }
 
+    /**
+     * @return true (Table contains Markers)
+     */
     protected boolean containsMarkers() {
         return true;
     }
