@@ -11,7 +11,6 @@
 package org.apache.fop.fo;
 
 import org.apache.fop.apps.FOPException;
-import org.apache.fop.fo.FOPropertySets;
 import org.apache.fop.fo.FObjectNames;
 import org.apache.fop.datastructs.TreeException;
 import org.apache.fop.datatypes.Ints;
@@ -93,8 +92,8 @@ public class FoRoot extends FONode {
         throws TreeException, FOPException, PropertyException
     {
         // This is the root node of the tree; hence the null argument
-        super(foTree, FObjectNames.ROOT, null, event, FOPropertySets.ROOT_SET,
-                sparsePropsMap, sparseIndices, numProps);
+        super(foTree, FObjectNames.ROOT, null, event, FONode.ROOT_SET,
+                sparsePropsMap, sparseIndices);
     }
 
     /**
