@@ -69,6 +69,7 @@ import org.apache.batik.gvt.text.Mark;
 import org.apache.batik.gvt.TextPainter;
 import org.apache.batik.gvt.TextNode;
 import org.apache.batik.gvt.text.GVTAttributedCharacterIterator;
+import org.apache.batik.gvt.text.TextPaintInfo;
 import org.apache.batik.gvt.font.GVTFontFamily;
 import org.apache.batik.bridge.SVGFontFamily;
 import org.apache.batik.gvt.renderer.StrokingTextPainter;
@@ -130,6 +131,14 @@ public class PSTextPainter implements TextPainter {
         if (ch == AttributedCharacterIterator.DONE) {
             return;
         }
+
+        TextPaintInfo tpi = (TextPaintInfo) aci.getAttribute(
+            GVTAttributedCharacterIterator.TextAttribute.PAINT_INFO);
+        
+        if (tpi == null) {
+            return;
+        }        
+
         TextNode.Anchor anchor;
         anchor = (TextNode.Anchor) aci.getAttribute(
                       GVTAttributedCharacterIterator.TextAttribute.ANCHOR_TYPE);
@@ -138,15 +147,12 @@ public class PSTextPainter implements TextPainter {
         gvtFonts = (List) aci.getAttribute(
                       GVTAttributedCharacterIterator.TextAttribute.GVT_FONT_FAMILIES);
         Paint forg = (Paint) aci.getAttribute(TextAttribute.FOREGROUND);
-        Paint strokePaint;
-        strokePaint = (Paint) aci.getAttribute(
-                     GVTAttributedCharacterIterator.TextAttribute.STROKE_PAINT);
+        Paint strokePaint = tpi.strokePaint;
         Float size = (Float) aci.getAttribute(TextAttribute.SIZE);
         if (size == null) {
             return;
         }
-        Stroke stroke = (Stroke) aci.getAttribute(
-                          GVTAttributedCharacterIterator.TextAttribute.STROKE);
+        Stroke stroke = tpi.strokeStroke;
         /*
         Float xpos = (Float) aci.getAttribute(
                        GVTAttributedCharacterIterator.TextAttribute.X);
