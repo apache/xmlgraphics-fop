@@ -4,12 +4,6 @@
     <META http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
     <title>Enumerated Data Values</title>
     <link type="text/css" href="../../../page.css" rel="stylesheet">
-    <script type="text/javascript">
-      <!--
-      topdoc=window.top.document;
-      topwin=window.top;
-      // -->
-    </script>
   </head>
   <body marginheight="0" marginwidth="0" topmargin="0" leftmargin="0" text="#000000" bgcolor="#FFFFFF">
     <div class="content">
@@ -61,24 +55,24 @@
       <h4>Array representation</h4>
       <p>
         
-        <a href= "javascript:topwin.displayCode(
+        <a href= "javascript:window.top.displayCode(
         'Direction.html#DirectionClass' )" ><span
         class="codefrag">org.apache.fop.fo.properties.Direction</span></a>
         is an example of a class which supports an enumerated value
         with a small set of tokens.  The <a href=
-        "javascript:topwin.displayCode( 'Direction.html#dataTypes' )"
+        "javascript:window.top.displayCode( 'Direction.html#dataTypes' )"
         ><span class="codefrag">dataTypes</span></a> field contains
-        the <a href= "javascript:topwin.displayCode(
+        the <a href= "javascript:window.top.displayCode(
         'Property.html#NOTYPE' )" ><span class="codefrag">ENUM</span>
         data type constant, defined in <span
         class="codefrag">Property</span></a>.  The enumeration integer
         constants are defined as <span class="codefrag">public static
         final int</span> values, <a href=
-        "javascript:topwin.displayCode( 'Direction.html#LTR') "><span
+        "javascript:window.top.displayCode( 'Direction.html#LTR') "><span
         class="codefrag' )" >LTR</span> and <span
         class="codefrag">RTL</span></a>.  Associating enumeration
         tokens with these integer constants occurs in the array <a
-        href= "javascript:topwin.displayCode( 'Direction.html#rwEnums'
+        href= "javascript:window.top.displayCode( 'Direction.html#rwEnums'
         )" ><span class="codefrag">String[] rwEnums</span></a>, which
         is initialized with the token strings.  By convention, zero is
         never used to represent a valid enumeration constant, anywhere
@@ -89,11 +83,11 @@
       <p>
         The publicly accessible mapping from enumeration token to
         enumeration constant is achieved through the method <a href=
-        "javascript:topwin.displayCode( 'Direction.html#getEnumIndex'
+        "javascript:window.top.displayCode( 'Direction.html#getEnumIndex'
         )" ><span class="codefrag">int
         getEnumIndex(String)</span></a>.  The corresponding mapping
         from enumeration constant to enumeration token is achieved
-        through the method <a href= "javascript:topwin.displayCode(
+        through the method <a href= "javascript:window.top.displayCode(
         'Direction.html#getEnumText' )" ><span class="codefrag">String
         getEnumText(int)</span></a>.
       </p>
@@ -101,30 +95,30 @@
       <h4>HashMap representation</h4>
       <p>
         
-        <a href= "javascript:topwin.displayCode(
+        <a href= "javascript:window.top.displayCode(
         'RenderingIntent.html#RenderingIntentClass' )" ><span
         class="codefrag"
         >org.apache.fop.fo.properties.RenderingIntent</span ></a> is
         an example of a class which supports an enumerated value with
         a larger set of tokens.  The <a href=
-        "javascript:topwin.displayCode(
+        "javascript:window.top.displayCode(
         'RenderingIntent.html#dataTypes' )" ><span
         class="codefrag">dataTypes</span></a> field contains the <a
-        href= "javascript:topwin.displayCode( 'Property.html#NOTYPE'
+        href= "javascript:window.top.displayCode( 'Property.html#NOTYPE'
         )" ><span class="codefrag">ENUM</span> data type constant,
         defined in <span class="codefrag">Property</span></a>.
         Enumeration integer constants are defined as <a href=
-        "javascript:topwin.displayCode(
+        "javascript:window.top.displayCode(
         'RenderingIntent.html#PERCEPTUAL' )" ><span
         class="codefrag">public static final int</span></a> values.
         Zero is never used to represent a valid enumeration constant.
         The enumeration tokens are stored in the array <a href=
-        "javascript:topwin.displayCode( 'RenderingIntent.html#rwEnums'
+        "javascript:window.top.displayCode( 'RenderingIntent.html#rwEnums'
         )" ><span class="codefrag">String[] rwEnums</span></a>, which
         is initialized with the token strings.  Association of
         enumeration tokens with the integer constants occurs in the
         <span class="codefrag">HashMap</span> <a href=
-        "javascript:topwin.displayCode(
+        "javascript:window.top.displayCode(
         'RenderingIntent.html#rwEnumHash"><span class="codefrag' )" >
         rwEnumHash</span></a>, which is initialized from the token
         array in a <span class="codefrag">static {}</span>
@@ -135,12 +129,12 @@
       <p>
         The publicly accessible mapping from enumeration token to
         enumeration constant is achieved through the method <a href=
-        "javascript:topwin.displayCode(
+        "javascript:window.top.displayCode(
         'RenderingIntent.html#getEnumIndex' )" ><span
         class="codefrag">int getEnumIndex(String)</span></a>.  The
         corresponding mapping from enumeration constant to enumeration
         token is achieved through the method <a href=
-        "javascript:topwin.displayCode(
+        "javascript:window.top.displayCode(
         'RenderingIntent.html#getEnumText' )" ><span
         class="codefrag">String getEnumText(int)</span></a>.
       </p>
@@ -153,29 +147,29 @@
         that value and its associated access methods may be factored
         out to a new class, which each of the properties then extends.
         An example of such a common super-class is <a href=
-        "javascript:topwin.displayCode(
+        "javascript:window.top.displayCode(
         'BorderCommonStyle.html#BorderCommonStyleClass' )" ><span
         class="codefrag">BorderCommonStyle</span></a>.  Like a
         property with a normal HashMap representation of an enumerated
         value, BorderCommonStyle defines <a href=
-        "javascript:topwin.displayCode(
+        "javascript:window.top.displayCode(
         'BorderCommonStyle.html#HIDDEN' )" ><span
         class="codefrag">public static final int</span></a>
         enumeration integer constants.  Similarly, the enumeration
         tokens are stored in the array <a href=
-        "javascript:topwin.displayCode(
+        "javascript:window.top.displayCode(
         'BorderCommonStyle.html#rwEnums' )" ><span
         class="codefrag">String[] rwEnums</span></a>, and the
         association of enumeration tokens with the integer constants
         occurs in the <span class="codefrag">HashMap</span> <a href=
-        "javascript:topwin.displayCode(
+        "javascript:window.top.displayCode(
         'BorderCommonStyle.html#rwEnumHash' )" ><span
         class="codefrag"> rwEnumHash</span></a>, initialized in a
         <span class="codefrag">static {}</span> initializer.  The
-        mapping methods <a href= "javascript:topwin.displayCode(
+        mapping methods <a href= "javascript:window.top.displayCode(
         'BorderCommonStyle.html#getEnumIndex' )" ><span
         class="codefrag">int getEnumIndex(String)</span></a> and <a
-        href= "javascript:topwin.displayCode(
+        href= "javascript:window.top.displayCode(
         'BorderCommonStyle.html#getEnumText' )" ><span
         class="codefrag">String getEnumText(int)</span></a> are also
         present.
@@ -185,7 +179,7 @@
         constants described in the discussion of <a
         href="simple-properties.html">simple properties</a>.  These
         values are defined in the individual sub-classes of this
-        class, e.g. <a href= "javascript:topwin.displayCode(
+        class, e.g. <a href= "javascript:window.top.displayCode(
         'BorderLeftStyle.html#BorderLeftStyleClass' )" ><span
         class="codefrag">BorderLeftStyle</span></a>.  None of the
         above fields or methods occur, and <span
@@ -205,7 +199,7 @@
         indicated <span class="codefrag">Numeric</span> value.
       </p>
       <p>
-        An example is the <a href= "javascript:topwin.displayCode(
+        An example is the <a href= "javascript:window.top.displayCode(
         'BorderCommonWidth.html#BorderCommonWidthClass' )" ><span
         class="codefrag">BorderCommonWidth</span></a> property.  This,
         like the example of <a href="#common-enum-values"><span
@@ -213,47 +207,47 @@
         represents common enumerated values which have been factored
         out to form a super-class for particular properties.  <span
         class="codefrag">BorderCommonWidth</span>, therefore, also
-        defines <a href= "javascript:topwin.displayCode(
+        defines <a href= "javascript:window.top.displayCode(
         'BorderCommonWidth.html#THIN' )" ><span
         class="codefrag">enumeration constant values</span></a> and an
         array of tokens.  In this case, there is no <span
         class="codefrag">HashMap</span>, because of the limited number
         of tokens, but the mapping methods <a href=
-        "javascript:topwin.displayCode(
+        "javascript:window.top.displayCode(
         'BorderCommonWidth.html#getEnumIndex' )" ><span
         class="codefrag">int getEnumIndex(String)</span></a> and <a
-        href= "javascript:topwin.displayCode(
+        href= "javascript:window.top.displayCode(
         'BorderCommonWidth.html#getEnumText' )" ><span
         class="codefrag">String getEnumText(int)</span></a> are
         present.
       </p>
       <p>
         The added element in this property is the array <a href=
-        "javascript:topwin.displayCode(
+        "javascript:window.top.displayCode(
         'BorderCommonWidth.html#mappedPoints' )" ><span
         class="codefrag">double[] mappedPoints</span></a>.  The
         entries in this array must by maintained in syncronization
-        with the <a href= "javascript:topwin.displayCode(
+        with the <a href= "javascript:window.top.displayCode(
         'BorderCommonWidth.html#rwEnums' )" ><span
         class="codefrag">String[] rwEnums</span></a> array of tokens
-        and the set of <a href= "javascript:topwin.displayCode(
+        and the set of <a href= "javascript:window.top.displayCode(
         'BorderCommonWidth.html#THIN' )" >enumeration constants</a>.
         The mapping from token to Numeric value is achieved by the <a
-        href= "javascript:topwin.displayCode(
+        href= "javascript:window.top.displayCode(
         'BorderCommonWidth.html#getMappedLength' )" ><span
         class="codefrag">Numeric getMappedLength(FONode, int,
         int)</span></a> method.
       </p>
       <p>
         
-        <a href= "javascript:topwin.displayCode(
+        <a href= "javascript:window.top.displayCode(
         'BorderLeftWidth.html#BorderLeftWidthClass' )" ><span
         class="codefrag">BorderLeftWidth</span></a> extends <a href=
-        "javascript:topwin.displayCode( 'BorderCommonWidth.html' )"
+        "javascript:window.top.displayCode( 'BorderCommonWidth.html' )"
         ><span class="codefrag">BorderCommonWidth</span></a>.  It
         includes the basic static data, like <a
         href="simple-properties.html">simple properties</a>, and, in
-        this case, the <a href= "javascript:topwin.displayCode(
+        this case, the <a href= "javascript:window.top.displayCode(
         'BorderLeftWidth.html#getInitialValue' )" ><span
         class="codefrag">PropertyValue getInitialValue(int)</span></a>
         method to derive the initial value.
@@ -263,17 +257,17 @@
       <p>
         As usual with property values, the usual method of deriving a
         mapped numeric value is by calling the <a href=
-        "javascript:topwin.displayCode(
+        "javascript:window.top.displayCode(
         '../PropertyConsts.html#getMappedNumeric' )" ><span
         class="codefrag">Numeric getMappedNumeric(FONode, int,
         int)</span></a> method in <a href=
-        "javascript:topwin.displayCode(
+        "javascript:window.top.displayCode(
         '../PropertyConsts.html#pconsts' )" ><span
         class="codefrag">pconsts</span></a>.  All properties which
         support a mapped numeric value must have a <span
         class="codefrag">Numeric getMappedNumeric(FONode, int)</span>
         method, which will be called through its singleton instance,
-        stored in the <a href= "javascript:topwin.displayCode(
+        stored in the <a href= "javascript:window.top.displayCode(
         'PropertyConsts.html#properties' )" ><span class= "codefrag"
         >properties</span ></a> array, by the <span
         class="codefrag">PropertyConsts</span> method.
