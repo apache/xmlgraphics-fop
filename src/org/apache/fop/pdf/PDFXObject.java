@@ -125,13 +125,13 @@ public class PDFXObject extends PDFObject {
                     preBytes = preamble.toString().getBytes(PDFDocument.ENCODING);
                 } catch (UnsupportedEncodingException ue) {
                     preBytes = preamble.toString().getBytes();
-                }       
+                }
                 byte[] postBytes;
                 try {
                     postBytes = post.toString().getBytes(PDFDocument.ENCODING);
                 } catch (UnsupportedEncodingException ue) {
                     postBytes = post.toString().getBytes();
-                }       
+                }
                 byte[] imgData = new byte[preBytes.length + postBytes.length + fopimage.getBitmaps().length];
 
                 System.arraycopy (preBytes, 0, imgData, 0, preBytes.length);
@@ -151,7 +151,8 @@ public class PDFXObject extends PDFObject {
                 p = p + "/Length " + imgStream.getDataLength();
 
                 // don't know if it's the good place (other objects can have references to it)
-                fopimage.close();
+                //fopimage.close(); //Not really necessary, is it? Only leads to image reloading.
+
                 p = p + dictEntries;
                 p = p + ">>\n";
 
@@ -161,7 +162,7 @@ public class PDFXObject extends PDFObject {
                     pdfBytes = p.getBytes(PDFDocument.ENCODING);
                 } catch (UnsupportedEncodingException ue) {
                     pdfBytes = p.getBytes();
-                }       
+                }
                 stream.write(pdfBytes);
                 length += pdfBytes.length;
                 // push all the image data on  the writer and takes care of length for trailer
@@ -171,7 +172,7 @@ public class PDFXObject extends PDFObject {
                     pdfBytes = ("endobj\n").getBytes(PDFDocument.ENCODING);
                 } catch (UnsupportedEncodingException ue) {
                     pdfBytes = ("endobj\n").getBytes();
-                }       
+                }
                 stream.write(pdfBytes);
                 length += pdfBytes.length;
 
@@ -227,7 +228,7 @@ public class PDFXObject extends PDFObject {
                 p = p + ">>\n";
 
                 // don't know if it's the good place (other objects can have references to it)
-                fopimage.close();
+                //fopimage.close(); //Not really necessary, is it? Only leads to image reloading.
 
                 // push the pdf dictionary on the writer
                 byte[] pdfBytes;
@@ -235,7 +236,7 @@ public class PDFXObject extends PDFObject {
                     pdfBytes = p.getBytes(PDFDocument.ENCODING);
                 } catch (UnsupportedEncodingException ue) {
                     pdfBytes = p.getBytes();
-                }       
+                }
                 stream.write(pdfBytes);
                 length += pdfBytes.length;
                 // push all the image data on  the writer and takes care of length for trailer
@@ -245,7 +246,7 @@ public class PDFXObject extends PDFObject {
                     pdfBytes = ("endobj\n").getBytes(PDFDocument.ENCODING);
                 } catch (UnsupportedEncodingException ue) {
                     pdfBytes = ("endobj\n").getBytes();
-                }       
+                }
                 stream.write(pdfBytes);
                 length += pdfBytes.length;
             }

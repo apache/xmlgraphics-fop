@@ -1,6 +1,6 @@
 /*
  * $Id$
- * Copyright (C) 2001 The Apache Software Foundation. All rights reserved.
+ * Copyright (C) 2001-2002 The Apache Software Foundation. All rights reserved.
  * For details on use and redistribution please refer to the
  * LICENSE file included with these sources.
  */
@@ -28,8 +28,8 @@ import org.apache.fop.layout.FontDescriptor;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
-import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.awt.Rectangle;
 
 /**
@@ -71,10 +71,10 @@ public class PDFDocument {
     /**
      * the character position of each object
      */
-    protected ArrayList location = new ArrayList();
+    protected List location = new java.util.ArrayList();
 
     /** List of objects to write in the trailer */
-    private ArrayList trailerObjects = new ArrayList();
+    private List trailerObjects = new java.util.ArrayList();
 
     /**
      * the counter for object numbering
@@ -84,7 +84,7 @@ public class PDFDocument {
     /**
      * the objects themselves
      */
-    protected ArrayList objects = new ArrayList();
+    protected List objects = new java.util.ArrayList();
 
     /**
      * character position of xref table
@@ -141,18 +141,18 @@ public class PDFDocument {
     /**
      * the XObjects
      */
-    protected ArrayList xObjects = new ArrayList();
+    protected List xObjects = new java.util.ArrayList();
 
     /**
      * the XObjects Map.
      * Should be modified (works only for image subtype)
      */
-    protected HashMap xObjectsMap = new HashMap();
+    protected Map xObjectsMap = new java.util.HashMap();
 
     /**
      * the objects themselves
      */
-    protected ArrayList pendingLinks = null;
+    protected List pendingLinks = null;
 
     /**
      * Encoding of the PDF
@@ -250,13 +250,13 @@ public class PDFDocument {
     /**
      * Make a Type 0 sampled function
      *
-     * @param theDomain ArrayList objects of Double objects.
+     * @param theDomain List objects of Double objects.
      * This is the domain of the function.
      * See page 264 of the PDF 1.3 Spec.
-     * @param theRange ArrayList objects of Double objects.
+     * @param theRange List objects of Double objects.
      * This is the Range of the function.
      * See page 264 of the PDF 1.3 Spec.
-     * @param theSize A ArrayList object of Integer objects.
+     * @param theSize A List object of Integer objects.
      * This is the number of samples in each input dimension.
      * I can't imagine there being more or less than two input dimensions,
      * so maybe this should be an array of length 2.
@@ -271,14 +271,14 @@ public class PDFDocument {
      * This attribute is optional.
      *
      * See page 265 in the PDF 1.3 spec.
-     * @param theEncode ArrayList objects of Double objects.
+     * @param theEncode List objects of Double objects.
      * This is the linear mapping of input values intop the domain
      * of the function's sample table. Default is hard to represent in
      * ascii, but basically [0 (Size0 1) 0 (Size1 1)...].
      * This attribute is optional.
      *
      * See page 265 in the PDF 1.3 spec.
-     * @param theDecode ArrayList objects of Double objects.
+     * @param theDecode List objects of Double objects.
      * This is a linear mapping of sample values into the range.
      * The default is just the range.
      *
@@ -289,7 +289,7 @@ public class PDFDocument {
      * This is optional, but is almost always used.
      *
      * Page 265 of the PDF 1.3 spec has more.
-     * @param theFilter This is a ArrayList of String objects which are the various filters that
+     * @param theFilter This is a List of String objects which are the various filters that
      * have are to be applied to the stream to make sense of it. Order matters,
      * so watch out.
      *
@@ -300,12 +300,12 @@ public class PDFDocument {
      * @param theFunctionType This is the type of function (0,2,3, or 4).
      * It should be 0 as this is the constructor for sampled functions.
      */
-    public PDFFunction makeFunction(int theFunctionType, ArrayList theDomain,
-                                    ArrayList theRange, ArrayList theSize,
+    public PDFFunction makeFunction(int theFunctionType, List theDomain,
+                                    List theRange, List theSize,
                                     int theBitsPerSample, int theOrder,
-                                    ArrayList theEncode, ArrayList theDecode,
+                                    List theEncode, List theDecode,
                                     StringBuffer theFunctionDataStream,
-                                    ArrayList theFilter) {    // Type 0 function
+                                    List theFilter) {    // Type 0 function
         PDFFunction function = new PDFFunction(++this.objectcount,
                                                theFunctionType, theDomain,
                                                theRange, theSize,
@@ -322,17 +322,17 @@ public class PDFDocument {
      * make a type Exponential interpolation function
      * (for shading usually)
      *
-     * @param theDomain ArrayList objects of Double objects.
+     * @param theDomain List objects of Double objects.
      * This is the domain of the function.
      * See page 264 of the PDF 1.3 Spec.
-     * @param theRange ArrayList of Doubles that is the Range of the function.
+     * @param theRange List of Doubles that is the Range of the function.
      * See page 264 of the PDF 1.3 Spec.
-     * @param theCZero This is a ArrayList of Double objects which defines the function result
+     * @param theCZero This is a List of Double objects which defines the function result
      * when x=0.
      *
      * This attribute is optional.
      * It's described on page 268 of the PDF 1.3 spec.
-     * @param theCOne This is a ArrayList of Double objects which defines the function result
+     * @param theCOne This is a List of Double objects which defines the function result
      * when x=1.
      *
      * This attribute is optional.
@@ -343,9 +343,9 @@ public class PDFDocument {
      * PDF Spec page 268
      * @param theFunctionType The type of the function, which should be 2.
      */
-    public PDFFunction makeFunction(int theFunctionType, ArrayList theDomain,
-                                    ArrayList theRange, ArrayList theCZero,
-                                    ArrayList theCOne,
+    public PDFFunction makeFunction(int theFunctionType, List theDomain,
+                                    List theRange, List theCZero,
+                                    List theCOne,
                                     double theInterpolationExponentN) {    // type 2
         PDFFunction function = new PDFFunction(++this.objectcount,
                                                theFunctionType, theDomain,
@@ -359,17 +359,17 @@ public class PDFDocument {
     /**
      * Make a Type 3 Stitching function
      *
-     * @param theDomain ArrayList objects of Double objects.
+     * @param theDomain List objects of Double objects.
      * This is the domain of the function.
      * See page 264 of the PDF 1.3 Spec.
-     * @param theRange ArrayList objects of Double objects.
+     * @param theRange List objects of Double objects.
      * This is the Range of the function.
      * See page 264 of the PDF 1.3 Spec.
-     * @param theFunctions A ArrayList of the PDFFunction objects that the stitching function stitches.
+     * @param theFunctions A List of the PDFFunction objects that the stitching function stitches.
      *
      * This attributed is required.
      * It is described on page 269 of the PDF spec.
-     * @param theBounds This is a ArrayList of Doubles representing the numbers that,
+     * @param theBounds This is a List of Doubles representing the numbers that,
      * in conjunction with Domain define the intervals to which each function from
      * the 'functions' object applies. It must be in order of increasing magnitude,
      * and each must be within Domain.
@@ -378,7 +378,7 @@ public class PDFDocument {
      *
      * This attributed is required.
      * It's described on page 269 of the PDF 1.3 spec.
-     * @param theEncode ArrayList objects of Double objects.
+     * @param theEncode List objects of Double objects.
      * This is the linear mapping of input values intop the domain
      * of the function's sample table. Default is hard to represent in
      * ascii, but basically [0 (Size0 1) 0 (Size1 1)...].
@@ -388,10 +388,10 @@ public class PDFDocument {
      * @param theFunctionType This is the function type. It should be 3,
      * for a stitching function.
      */
-    public PDFFunction makeFunction(int theFunctionType, ArrayList theDomain,
-                                    ArrayList theRange, ArrayList theFunctions,
-                                    ArrayList theBounds,
-                                    ArrayList theEncode) {    // Type 3
+    public PDFFunction makeFunction(int theFunctionType, List theDomain,
+                                    List theRange, List theFunctions,
+                                    List theBounds,
+                                    List theEncode) {    // Type 3
 
         PDFFunction function = new PDFFunction(++this.objectcount,
                                                theFunctionType, theDomain,
@@ -412,7 +412,7 @@ public class PDFDocument {
      * @param theFunctionDataStream
      */
     public PDFFunction makeFunction(int theNumber, int theFunctionType,
-                                    ArrayList theDomain, ArrayList theRange,
+                                    List theDomain, List theRange,
                                     StringBuffer theFunctionDataStream) {    // Type 4
         PDFFunction function = new PDFFunction(++this.objectcount,
                                                theFunctionType, theDomain,
@@ -433,13 +433,13 @@ public class PDFDocument {
      * @param theBackground An array of color components appropriate to the
      * colorspace key specifying a single color value.
      * This key is used by the f operator buy ignored by the sh operator.
-     * @param theBBox ArrayList of double's representing a rectangle
+     * @param theBBox List of double's representing a rectangle
      * in the coordinate space that is current at the
      * time of shading is imaged. Temporary clipping
      * boundary.
      * @param theAntiAlias Whether or not to anti-alias.
-     * @param theDomain Optional ArrayList of Doubles specifying the domain.
-     * @param theMatrix ArrayList of Doubles specifying the matrix.
+     * @param theDomain Optional List of Doubles specifying the domain.
+     * @param theMatrix List of Doubles specifying the matrix.
      * If it's a pattern, then the matrix maps it to pattern space.
      * If it's a shading, then it maps it to current user space.
      * It's optional, the default is the identity matrix
@@ -447,9 +447,9 @@ public class PDFDocument {
      */
     public PDFShading makeShading(int theShadingType,
                                   ColorSpace theColorSpace,
-                                  ArrayList theBackground, ArrayList theBBox,
-                                  boolean theAntiAlias, ArrayList theDomain,
-                                  ArrayList theMatrix,
+                                  List theBackground, List theBBox,
+                                  boolean theAntiAlias, List theDomain,
+                                  List theMatrix,
                                   PDFFunction theFunction) {    // make Shading of Type 1
         String theShadingName = new String("Sh" + (++this.shadingCount));
 
@@ -474,23 +474,23 @@ public class PDFDocument {
      * @param theBackground theBackground An array of color components appropriate to the
      * colorspace key specifying a single color value.
      * This key is used by the f operator buy ignored by the sh operator.
-     * @param theBBox ArrayList of double's representing a rectangle
+     * @param theBBox List of double's representing a rectangle
      * in the coordinate space that is current at the
      * time of shading is imaged. Temporary clipping
      * boundary.
      * @param theAntiAlias Default is false
-     * @param theCoords ArrayList of four (type 2) or 6 (type 3) Double
-     * @param theDomain ArrayList of Doubles specifying the domain
+     * @param theCoords List of four (type 2) or 6 (type 3) Double
+     * @param theDomain List of Doubles specifying the domain
      * @param theFunction the Stitching (PDFfunction type 3) function, even if it's stitching a single function
-     * @param theExtend ArrayList of Booleans of whether to extend teh start and end colors past the start and end points
+     * @param theExtend List of Booleans of whether to extend teh start and end colors past the start and end points
      * The default is [false, false]
      */
     public PDFShading makeShading(int theShadingType,
                                   ColorSpace theColorSpace,
-                                  ArrayList theBackground, ArrayList theBBox,
-                                  boolean theAntiAlias, ArrayList theCoords,
-                                  ArrayList theDomain, PDFFunction theFunction,
-                                  ArrayList theExtend) {    // make Shading of Type 2 or 3
+                                  List theBackground, List theBBox,
+                                  boolean theAntiAlias, List theCoords,
+                                  List theDomain, PDFFunction theFunction,
+                                  List theExtend) {    // make Shading of Type 2 or 3
         String theShadingName = new String("Sh" + (++this.shadingCount));
 
         PDFShading shading = new PDFShading(++this.objectcount,
@@ -517,7 +517,7 @@ public class PDFDocument {
      * @param theBackground theBackground An array of color components appropriate to the
      * colorspace key specifying a single color value.
      * This key is used by the f operator buy ignored by the sh operator.
-     * @param theBBox ArrayList of double's representing a rectangle
+     * @param theBBox List of double's representing a rectangle
      * in the coordinate space that is current at the
      * time of shading is imaged. Temporary clipping
      * boundary.
@@ -525,16 +525,16 @@ public class PDFDocument {
      * @param theBitsPerCoordinate 1,2,4,8,12,16,24 or 32.
      * @param theBitsPerComponent 1,2,4,8,12, and 16
      * @param theBitsPerFlag 2,4,8.
-     * @param theDecode ArrayList of Doubles see PDF 1.3 spec pages 303 to 312.
+     * @param theDecode List of Doubles see PDF 1.3 spec pages 303 to 312.
      * @param theFunction the PDFFunction
      */
     public PDFShading makeShading(int theShadingType,
                                   ColorSpace theColorSpace,
-                                  ArrayList theBackground, ArrayList theBBox,
+                                  List theBackground, List theBBox,
                                   boolean theAntiAlias,
                                   int theBitsPerCoordinate,
                                   int theBitsPerComponent,
-                                  int theBitsPerFlag, ArrayList theDecode,
+                                  int theBitsPerFlag, List theDecode,
                                   PDFFunction theFunction) {    // make Shading of type 4,6 or 7
         String theShadingName = new String("Sh" + (++this.shadingCount));
 
@@ -562,23 +562,23 @@ public class PDFDocument {
      * @param theBackground theBackground An array of color components appropriate to the
      * colorspace key specifying a single color value.
      * This key is used by the f operator buy ignored by the sh operator.
-     * @param theBBox ArrayList of double's representing a rectangle
+     * @param theBBox List of double's representing a rectangle
      * in the coordinate space that is current at the
      * time of shading is imaged. Temporary clipping
      * boundary.
      * @param theAntiAlias Default is false
      * @param theBitsPerCoordinate 1,2,4,8,12,16, 24, or 32
      * @param theBitsPerComponent 1,2,4,8,12,24,32
-     * @param theDecode ArrayList of Doubles. See page 305 in PDF 1.3 spec.
+     * @param theDecode List of Doubles. See page 305 in PDF 1.3 spec.
      * @param theVerticesPerRow number of vertices in each "row" of the lattice.
      * @param theFunction The PDFFunction that's mapped on to this shape
      */
     public PDFShading makeShading(int theShadingType,
                                   ColorSpace theColorSpace,
-                                  ArrayList theBackground, ArrayList theBBox,
+                                  List theBackground, List theBBox,
                                   boolean theAntiAlias,
                                   int theBitsPerCoordinate,
-                                  int theBitsPerComponent, ArrayList theDecode,
+                                  int theBitsPerComponent, List theDecode,
                                   int theVerticesPerRow,
                                   PDFFunction theFunction) {    // make shading of Type 5
         String theShadingName = new String("Sh" + (++this.shadingCount));
@@ -605,17 +605,17 @@ public class PDFDocument {
      * @param theResources the resources associated with this pattern
      * @param thePaintType 1 or 2, colored or uncolored.
      * @param theTilingType 1, 2, or 3, constant spacing, no distortion, or faster tiling
-     * @param theBBox ArrayList of Doubles: The pattern cell bounding box
+     * @param theBBox List of Doubles: The pattern cell bounding box
      * @param theXStep horizontal spacing
      * @param theYStep vertical spacing
-     * @param theMatrix Optional ArrayList of Doubles transformation matrix
-     * @param theXUID Optional ArrayList of Integers that uniquely identify the pattern
+     * @param theMatrix Optional List of Doubles transformation matrix
+     * @param theXUID Optional List of Integers that uniquely identify the pattern
      * @param thePatternDataStream The stream of pattern data to be tiled.
      */
     public PDFPattern makePattern(int thePatternType,    // 1
                                   PDFResources theResources, int thePaintType, int theTilingType,
-                                  ArrayList theBBox, double theXStep, double theYStep, ArrayList theMatrix,
-                                  ArrayList theXUID, StringBuffer thePatternDataStream) {
+                                  List theBBox, double theXStep, double theYStep, List theMatrix,
+                                  List theXUID, StringBuffer thePatternDataStream) {
         String thePatternName = new String("Pa" + (++this.patternCount));
         // int theNumber, String thePatternName,
         // PDFResources theResources
@@ -639,11 +639,11 @@ public class PDFDocument {
      * @param theShading the PDF Shading object that comprises this pattern
      * @param theXUID optional:the extended unique Identifier if used.
      * @param theExtGState optional: the extended graphics state, if used.
-     * @param theMatrix Optional:ArrayList of Doubles that specify the matrix.
+     * @param theMatrix Optional:List of Doubles that specify the matrix.
      */
     public PDFPattern makePattern(int thePatternType, PDFShading theShading,
-                                  ArrayList theXUID, StringBuffer theExtGState,
-                                  ArrayList theMatrix) {
+                                  List theXUID, StringBuffer theExtGState,
+                                  List theMatrix) {
         String thePatternName = new String("Pa" + (++this.patternCount));
 
         PDFPattern pattern = new PDFPattern(++this.objectcount,
@@ -667,17 +667,17 @@ public class PDFDocument {
 
     public PDFPattern createGradient(boolean radial,
                                      ColorSpace theColorspace,
-                                     ArrayList theColors, ArrayList theBounds,
-                                     ArrayList theCoords) {
+                                     List theColors, List theBounds,
+                                     List theCoords) {
         PDFShading myShad;
         PDFFunction myfunky;
         PDFFunction myfunc;
-        ArrayList theCzero;
-        ArrayList theCone;
+        List theCzero;
+        List theCone;
         PDFPattern myPattern;
         ColorSpace theColorSpace;
         double interpolation = (double)1.000;
-        ArrayList theFunctions = new ArrayList();
+        List theFunctions = new java.util.ArrayList();
 
         int currentPosition;
         int lastPosition = theColors.size() - 1;
@@ -722,7 +722,7 @@ public class PDFDocument {
             } else {    // if the center x, center y, and radius specifiy
                 // the gradient, then assume the same center x, center y,
                 // and radius of zero for the other necessary component
-                ArrayList newCoords = new ArrayList();
+                List newCoords = new java.util.ArrayList();
                 newCoords.add(theCoords.get(0));
                 newCoords.add(theCoords.get(1));
                 newCoords.add(theCoords.get(2));
@@ -1068,7 +1068,7 @@ public class PDFDocument {
         pl.link = link;
         pl.dest = dest;
         if(pendingLinks == null) {
-            pendingLinks = new ArrayList();
+            pendingLinks = new java.util.ArrayList();
         }
         pendingLinks.add(pl);
 
@@ -1226,7 +1226,7 @@ public class PDFDocument {
             pdf = ("%PDF-" + this.pdfVersion + "\n").getBytes(PDFDocument.ENCODING);
         } catch (UnsupportedEncodingException ue) {
             pdf = ("%PDF-" + this.pdfVersion + "\n").getBytes();
-        }       
+        }
         stream.write(pdf);
         this.position += pdf.length;
 
@@ -1276,7 +1276,7 @@ public class PDFDocument {
             trailer = pdf.getBytes(PDFDocument.ENCODING);
         } catch (UnsupportedEncodingException ue) {
             trailer = pdf.getBytes();
-        }       
+        }
         stream.write(trailer);
     }
 
@@ -1313,7 +1313,7 @@ public class PDFDocument {
             pdfBytes = pdf.toString().getBytes(PDFDocument.ENCODING);
         } catch (UnsupportedEncodingException ue) {
             pdfBytes = pdf.toString().getBytes();
-        }       
+        }
         stream.write(pdfBytes);
         return pdfBytes.length;
     }

@@ -1,6 +1,6 @@
 /*
  * $Id$
- * Copyright (C) 2001 The Apache Software Foundation. All rights reserved.
+ * Copyright (C) 2001-2002 The Apache Software Foundation. All rights reserved.
  * For details on use and redistribution please refer to the
  * LICENSE file included with these sources.
  */
@@ -38,8 +38,8 @@ import org.w3c.dom.svg.SVGLength;
 // Java
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Dimension2D;
 import java.awt.Point;
@@ -120,9 +120,9 @@ public class PDFRenderer extends PrintRenderer {
     /**
      * options
      */
-    protected java.util.HashMap options;
+    protected java.util.Map options;
 
-    protected ArrayList extensions = null;
+    protected List extensions = null;
 
     /**
      * create the PDF renderer
@@ -136,7 +136,7 @@ public class PDFRenderer extends PrintRenderer {
      *
      * @param options  Options for the renderer
      */
-    public void setOptions(java.util.HashMap options) {
+    public void setOptions(java.util.Map options) {
         this.options = options;
     }
 
@@ -589,7 +589,7 @@ public class PDFRenderer extends PrintRenderer {
             StringBuffer pdf = _wordAreaPDF;
             pdf.setLength(0);
 
-            HashMap kerning = null;
+            Map kerning = null;
             boolean kerningAvailable = false;
 
             kerning = area.getFontState().getKerning();
@@ -782,9 +782,9 @@ public class PDFRenderer extends PrintRenderer {
     }
 
     private void addKerning(StringBuffer buf, Integer ch1, Integer ch2,
-            HashMap kerning, String startText,
+            Map kerning, String startText,
             String endText) {
-        HashMap kernPair = (HashMap) kerning.get(ch1);
+        Map kernPair = (Map) kerning.get(ch1);
 
         if (kernPair != null) {
             Integer width = (Integer) kernPair.get(ch2);
@@ -812,7 +812,7 @@ public class PDFRenderer extends PrintRenderer {
         this.pdfDoc.setIDReferences(idReferences);
         this.renderPage(page);
 
-        ArrayList exts = page.getExtensions();
+        List exts = page.getExtensions();
         if (exts != null) {
             extensions = exts;
         }
@@ -852,14 +852,14 @@ public class PDFRenderer extends PrintRenderer {
             }
             currentPage.setAnnotList(currentAnnotList);
 
-            ArrayList linkSets = page.getLinkSets();
+            List linkSets = page.getLinkSets();
             for (int i = 0; i < linkSets.size(); i++) {
                 LinkSet linkSet = (LinkSet)linkSets.get(i);
 
                 linkSet.align();
                 String dest = linkSet.getDest();
                 int linkType = linkSet.getLinkType();
-                ArrayList linkRects = linkSet.getRects();
+                List linkRects = linkSet.getRects();
                 for (int j = 0; j < linkRects.size(); j++) {
                     LinkedRectangle lrect = (LinkedRectangle)linkRects.get(j);
                     currentAnnotList.addLink(
@@ -909,7 +909,7 @@ public class PDFRenderer extends PrintRenderer {
      *
      * @param exts  the list of root extensions to process
      */
-    protected void renderRootExtensions(ArrayList extensions) {
+    protected void renderRootExtensions(List extensions) {
         if (extensions != null) {
             for (int i = 0; i < extensions.size(); i++) {
                 ExtensionObj ext = (ExtensionObj) extensions.get(i);
@@ -945,7 +945,7 @@ public class PDFRenderer extends PrintRenderer {
         outline.setRendererObject(pdfOutline);
 
         // handle sub outlines
-        ArrayList v = outline.getOutlines();
+        List v = outline.getOutlines();
         for (int i = 0; i < v.size(); i++) {
             renderOutline((Outline) v.get(i));
         }

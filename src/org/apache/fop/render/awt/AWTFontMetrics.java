@@ -14,7 +14,8 @@ import org.apache.fop.layout.FontDescriptor;
 import org.apache.fop.layout.FontState;
 
 // Java
-import java.io.FileInputStream;
+import java.io.InputStream;
+import java.net.URL;
 import java.awt.Component;
 import java.awt.Font;
 import java.awt.Graphics;
@@ -23,7 +24,7 @@ import java.awt.geom.Rectangle2D;
 import java.awt.FontMetrics;
 import java.awt.font.FontRenderContext;
 import java.awt.font.TextLayout;
-import java.util.HashMap;
+import java.util.Map;
 
 /**
  * This is a FontMetrics to be used  for AWT  rendering.
@@ -96,12 +97,12 @@ public class AWTFontMetrics {
     /**
      * Embed Font List.
      */
-    private HashMap embedFontList = null;
+    private Map embedFontList = null;
 
     /**
-     * Physical Font Cash.
+     * Physical Font Cache.
      */
-    private HashMap fontCash = null;
+    private Map fontCache = null;
 
     /**
      * Constructs a new Font-metrics.
@@ -251,12 +252,12 @@ public class AWTFontMetrics {
      * set embed font.
      * @param family font-family name
      * @param style font style
-     * @param fontPath path to phsical font
+     * @param fontURL URL to physical font
      */
-    public void setEmbedFont(String family,int style,String fontPath) {
+    public void setEmbedFont(String family, int style, URL fontURL) {
         if (embedFontList == null)
-            embedFontList = new HashMap();
-        embedFontList.put(family+style,fontPath);
+            embedFontList = new java.util.HashMap();
+        embedFontList.put(family+style, fontURL);
     }
 
     /**
@@ -266,37 +267,37 @@ public class AWTFontMetrics {
      * @param size font size
      */
     public java.awt.Font createFont(String family, int style, int size) {
-        String fontPath = null;
+        URL fontURL = null;
         if (embedFontList != null)
-            fontPath = (String)embedFontList.get(family+style);
-        if (fontPath == null)
+            fontURL = (URL)embedFontList.get(family+style);
+        if (fontURL == null)
             return new Font(family, style, size);
-        // lazy instanciation for fontCash.
-        if (fontCash == null)
-            fontCash = new HashMap();
-        Font cashedFont = (Font)fontCash.get(fontPath);
-        if (cashedFont == null) {
+        // lazy instanciation for fontCache.
+        if (fontCache == null)
+            fontCache = new java.util.HashMap();
+        Font cachedFont = (Font)fontCache.get(fontURL.toExternalForm());
+        if (cachedFont == null) {
             // Create specified TrueType Font.
-            FileInputStream fontStream = null;
+            InputStream fontStream = null;
             try {
-                MessageHandler.logln("create embedFont "+fontPath);
-                fontStream = new FileInputStream(fontPath);
+                MessageHandler.logln("Create embedded AWT font from stream "+fontURL.toExternalForm());
+                fontStream = fontURL.openStream();
                 // createFont methods supports higer than JDK1.3
                 // Currently supports only TrueType font.
-                cashedFont = Font.createFont(Font.TRUETYPE_FONT,fontStream);
+                cachedFont = Font.createFont(Font.TRUETYPE_FONT, fontStream);
             } catch(Throwable th) {
-                MessageHandler.error("Failed to create embedFont "+
-                                     fontPath + " : " + th.toString());
+                MessageHandler.error("Failed to create embedded AWT font "+
+                                     fontURL.toExternalForm() + ": " + th.toString());
                 // if failed create font, use system "Dialog" logical font
                 // name for each Locale.
-                cashedFont = new Font("Dialog", style, size);
+                cachedFont = new Font("Dialog", style, size);
             } finally {
                 if (fontStream != null)
                     try { fontStream.close(); } catch(Exception ex) {}
             }
-            fontCash.put(fontPath,cashedFont);
+            fontCache.put(fontURL.toExternalForm(), cachedFont);
         }
-        Font font = cashedFont.deriveFont(style, (float)size);
+        Font font = cachedFont.deriveFont(style, (float)size);
         return font;
     }
 

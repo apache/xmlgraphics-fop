@@ -1,15 +1,17 @@
 /*
  * $Id$
- * Copyright (C) 2001 The Apache Software Foundation. All rights reserved.
+ * Copyright (C) 2001-2002 The Apache Software Foundation. All rights reserved.
  * For details on use and redistribution please refer to the
  * LICENSE file included with these sources.
  */
 
 package org.apache.fop.configuration;
 
-import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Iterator;
+import java.io.File;
+import java.net.URL;
 import org.apache.fop.messaging.MessageHandler;
 
 /**
@@ -31,17 +33,21 @@ public class Configuration {
     /**
      * stores the configuration information
      */
-    private static HashMap standardConfiguration = new HashMap(30);
-    private static HashMap pdfConfiguration = new HashMap(20);
-    private static HashMap awtConfiguration = new HashMap(20);
+    private static Map standardConfiguration = new java.util.HashMap(30);
+    private static Map pdfConfiguration = new java.util.HashMap(20);
+    private static Map awtConfiguration = new java.util.HashMap(20);
 
     /**
-     * contains a HashMap of existing HashMaps
+     * contains a Map of existing Maps
      */
-    private static HashMap configuration = new HashMap(3);
+    private static Map configuration = new java.util.HashMap(3);
+
+    //URL cache
+    private static URL cachedBaseURL = null;
+    private static URL cachedFontBaseURL = null;
 
     /**
-     * loads the configuration types into the configuration HashMap
+     * loads the configuration types into the configuration Map
      */
     static {
         configuration.put("standard", standardConfiguration);
@@ -49,7 +55,7 @@ public class Configuration {
         configuration.put("awt", awtConfiguration);
     }
 
-    public static HashMap getConfiguration() {
+    public static Map getConfiguration() {
         return configuration;
     }
 
@@ -57,9 +63,9 @@ public class Configuration {
      * general access method
      *
      * @param key a string containing the key value for the configuration value
-     * role detemines the configuration target
+     * @param role detemines the configuration target
      * @return Object containing the value; normally you would use one of the
-     * convenience methods, which return the correct form.
+     * convenience methods, which return the correct form,
      * null   if the key is not defined.
      */
     public static Object getValue(String key, int role) {
@@ -75,13 +81,12 @@ public class Configuration {
         }
     }
 
-    ;
 
     /**
      * convenience methods to access strings values in the configuration
      * @param key a string containing the key value for the configuration value
-     * role detemines the configuration target
-     * @return String a string containing the value
+     * @param role detemines the configuration target
+     * @return String a string containing the value,
      * null   if the key is not defined.
      */
     public static String getStringValue(String key, int role) {
@@ -93,13 +98,12 @@ public class Configuration {
         }
     }
 
-    ;
 
     /**
      * convenience methods to access int values in the configuration
      * @param key a string containing the key value for the configuration value
-     * role detemines the configuration target
-     * @return int a int containing the value
+     * @param role detemines the configuration target
+     * @return int a int containing the value,
      * -1   if the key is not defined.
      */
     public static int getIntValue(String key, int role) {
@@ -111,13 +115,12 @@ public class Configuration {
         }
     }
 
-    ;
 
     /**
      * convenience methods to access boolean values in the configuration
      * @param key a string containing the key value for the configuration value
-     * role detemines the configuration target
-     * @return Boolean true or false as value
+     * @param role detemines the configuration target
+     * @return Boolean true or false as value,
      * null   if the key is not defined.
      */
     public static Boolean getBooleanValue(String key, int role) {
@@ -131,43 +134,39 @@ public class Configuration {
         }
     }
 
-    ;
 
     /**
      * convenience methods to access list values in the configuration
      * @param key a string containing the key value for the configuration value
-     * role detemines the configuration target
-     * @return ArrayList a ArrayList containing the values
+     * @param role detemines the configuration target
+     * @return List a List containing the values,
      * null   if the key is not defined.
      */
-    public static ArrayList getListValue(String key, int role) {
+    public static List getListValue(String key, int role) {
         Object obj = Configuration.getValue(key, role);
-        if (obj instanceof ArrayList) {
-            return (ArrayList)obj;
+        if (obj instanceof List) {
+            return (List)obj;
         } else {
             return null;
         }
     }
 
-    ;
 
     /**
-     * convenience methods to access map/HashMap values in the configuration
+     * convenience methods to access Map values in the configuration
      * @param key a string containing the key value for the configuration value
-     * role detemines the configuration target
-     * @return HashMap a HashMap containing the values
+     * @param role detemines the configuration target
+     * @return Map a Map containing the values
      * null   if the key is not defined.
      */
-    public static HashMap getHashMapValue(String key, int role) {
+    public static Map getMapValue(String key, int role) {
         Object obj = Configuration.getValue(key, role);
-        if (obj instanceof HashMap) {
-            return (HashMap)obj;
+        if (obj instanceof Map) {
+            return (Map)obj;
         } else {
             return null;
         }
     }
-
-    ;
 
 
     /**
@@ -198,7 +197,7 @@ public class Configuration {
      * convenience methods to access int values in the standard configuration
      *
      * @param key a string containing the key value for the configuration value
-     * @return int a int containing the value
+     * @return int a int containing the value,
      * -1   if the key is not defined.
      */
     public static int getIntValue(String key) {
@@ -209,7 +208,7 @@ public class Configuration {
      * convenience methods to access boolean values in the configuration
      *
      * @param key a string containing the key value for the configuration value
-     * @return boolean true or false as value
+     * @return boolean true or false as value,
      * null   if the key is not defined.
      */
     public static Boolean getBooleanValue(String key) {
@@ -220,42 +219,90 @@ public class Configuration {
      * convenience methods to access list values in the standard configuration
      *
      * @param key a string containing the key value for the configuration value
-     * @return ArrayList a ArrayList containing the values
+     * @return List a List containing the values,
      * null   if the key is not defined.
      */
-    public static ArrayList getListValue(String key) {
+    public static List getListValue(String key) {
         return Configuration.getListValue(key, Configuration.STANDARD);
     }
 
     /**
-     * convenience methods to access map/HashMap values in the standard configuration
+     * convenience methods to access Map values in the standard configuration
      *
      * @param key a string containing the key value for the configuration value
-     * @return HashMap a HashMap containing the values
+     * @return Map a Map containing the values,
      * null   if the key is not defined.
      */
-    public static HashMap getHashMapValue(String key) {
-        return Configuration.getHashMapValue(key, Configuration.STANDARD);
+    public static Map getMapValue(String key) {
+        return Configuration.getMapValue(key, Configuration.STANDARD);
     }
 
 
     /**
-     * method to access fonts values in the standard configuration
+     * Method to access fonts values in the standard configuration
      *
-     * @param key a string containing the key value for the configuration value
-     * @return HashMap a HashMap containing the values
+     * @return List a List containing the values,
      * null   if the key is not defined.
      */
-    public static ArrayList getFonts() {
-        return (ArrayList)Configuration.getValue("fonts",
+    public static List getFonts() {
+        return (List)Configuration.getValue("fonts",
                                               Configuration.STANDARD);
     }
 
+
+    private static URL buildBaseURL(String directory) throws java.net.MalformedURLException {
+        if (directory == null) return null;
+        File dir = new File(directory);
+        if (dir.isDirectory()) {
+            return dir.toURL();
+        } else {
+            URL baseURL = new URL(directory);
+            return baseURL;
+        }
+    }
+
+    public static URL getBaseURL() {
+        if (cachedBaseURL != null) {
+            return cachedBaseURL;
+        } else {
+            String baseDir = getStringValue("baseDir");
+            try {
+                URL url = buildBaseURL(baseDir);;
+                cachedBaseURL = url;
+                return url;
+            } catch (java.net.MalformedURLException mfue) {
+                throw new RuntimeException("Invalid baseDir specified: "+baseDir+" ("+mfue.getMessage()+")");
+            }
+        }
+    }
+
+
+    public static URL getFontBaseURL() {
+        if (cachedFontBaseURL != null) {
+            return cachedFontBaseURL;
+        } else {
+            URL url = null;
+            String baseDir = getStringValue("fontBaseDir");
+            if (baseDir == null) {
+                url = getBaseURL();
+            } else {
+                try {
+                    url = buildBaseURL(baseDir);
+                } catch (java.net.MalformedURLException mfue) {
+                    throw new RuntimeException("Invalid fontBaseDir specified: "+baseDir+" ("+mfue.getMessage()+")");
+                }
+            }
+            cachedFontBaseURL = url;
+            return url;
+        }
+    }
+
     /**
-     * initializes this configuration
+     * Initializes this configuration
+     * @param role detemines the configuration target
      * @param config contains the configuration information
      */
-    public static void setup(int role, HashMap config) {
+    public static void setup(int role, Map config) {
         switch (role) {
         case Configuration.STANDARD:
             standardConfiguration = config;
@@ -269,14 +316,14 @@ public class Configuration {
         default:
             MessageHandler.errorln("Can't setup configuration. Unknown configuration role/target");
         }
+        invalidateURLCache();
     }
 
     /**
-     * adds information to the configuration map/HashMap in key,value form
+     * adds information to the configuration Map in key,value form
      * @param key a string containing the key value for the configuration value
-     * value the configuration information
-     * role detemines the configuration target
-     * @param value an Object containing the value; can be a String, a ArrayList or a HashMap
+     * @param value the configuration information; can be a String, a List or a Map
+     * @param role detemines the configuration target
      */
     public static void put(String key, Object value, int role) {
         switch (role) {
@@ -295,20 +342,24 @@ public class Configuration {
                                    + "Putting key:" + key + " - value:"
                                    + value + " into standard configuration.");
         }
+        invalidateURLCache();
     }
 
-    ;
-
     /**
-     * adds information to the standard configuration map/HashMap in key,value form
+     * adds information to the standard configuration Map in key,value form
      * @param key a string containing the key value for the configuration value
      * value the configuration information
      * role detemines the configuration target
-     * @param value an Object containing the value; can be a String, a ArrayList or a HashMap
+     * @param value an Object containing the value; can be a String, a List or a Map
      */
 
     public static void put(String key, Object value) {
         Configuration.put(key, value, Configuration.STANDARD);
+    }
+
+    private static void invalidateURLCache() {
+        cachedBaseURL = null;
+        cachedFontBaseURL = null;
     }
 
     /**
@@ -317,11 +368,11 @@ public class Configuration {
     public static void dumpConfiguration() {
         String key;
         Object value;
-        ArrayList list;
-        HashMap map, configuration;
+        List list;
+        Map map, configuration;
         String tmp;
         System.out.println("Dumping configuration: ");
-        HashMap[] configs = {
+        Map[] configs = {
             standardConfiguration, pdfConfiguration, awtConfiguration
         };
         for (int i = 0; i < configs.length; i++) {
@@ -334,15 +385,15 @@ public class Configuration {
                 value = configuration.get(key);
                 if (value instanceof String) {
                     MessageHandler.logln("   value: " + value);
-                } else if (value instanceof ArrayList) {
-                    list = (ArrayList)value;
+                } else if (value instanceof List) {
+                    list = (List)value;
                     MessageHandler.log("   values: ");
                     for (int j = 0; j < list.size(); j++) {
                         MessageHandler.log(list.get(j) + " - ");
                     }
                     MessageHandler.logln("");
-                } else if (value instanceof HashMap) {
-                    map = (HashMap)value;
+                } else if (value instanceof Map) {
+                    map = (Map)value;
                     MessageHandler.log("   values: ");
                     Iterator it2 = map.keySet().iterator();
                     while (it2.hasNext()) {

@@ -1,6 +1,6 @@
 /*
  * $Id$
- * Copyright (C) 2001 The Apache Software Foundation. All rights reserved.
+ * Copyright (C) 2001-2002 The Apache Software Foundation. All rights reserved.
  * For details on use and redistribution please refer to the
  * LICENSE file included with these sources.
  */
@@ -20,8 +20,9 @@ import org.apache.fop.apps.FOPException;
 
 // Java
 import java.util.Iterator;
-import java.util.HashMap;
-import java.util.ArrayList;
+import java.util.Map;
+import java.util.List;
+import java.net.URL;
 
 /**
  * sets up the PDF fonts.
@@ -145,7 +146,7 @@ public class FontSetup {
         String internalName = null;
         FontReader reader = null;
 
-        ArrayList fontInfos = Configuration.getFonts();
+        List fontInfos = Configuration.getFonts();
         if (fontInfos == null)
             return;
 
@@ -154,7 +155,7 @@ public class FontSetup {
                 (org.apache.fop.configuration.FontInfo)fontInfos.get(i);
 
             try {
-                String metricsFile = configFontInfo.getMetricsFile();
+                URL metricsFile = configFontInfo.getMetricsFile();
                 if (metricsFile != null) {
                     internalName = "F" + num;
                     num++;
@@ -168,8 +169,8 @@ public class FontSetup {
                                                  metricsFile,
                                                  configFontInfo.getKerning());
                     fontInfo.addMetrics(internalName, font);
-                    
-                    ArrayList triplets = configFontInfo.getFontTriplets();
+
+                    List triplets = configFontInfo.getFontTriplets();
                     for (int j = 0; j < triplets.size(); j++) {
                         FontTriplet triplet = (FontTriplet)triplets.get(j);
 
@@ -180,9 +181,8 @@ public class FontSetup {
                     }
                 }
             } catch (Exception ex) {
-                MessageHandler.error("Failed to read font metrics file "
-                                     + configFontInfo.getMetricsFile()
-                                     + " : " + ex.getMessage());
+                MessageHandler.error("Failed to read a font metrics file: "
+                                      + ex.getMessage());
             }
         }
     }
@@ -194,7 +194,7 @@ public class FontSetup {
      * @param fontInfo font info object to get font information from
      */
     public static void addToResources(PDFDocument doc, FontInfo fontInfo) {
-        HashMap fonts = fontInfo.getUsedFonts();
+        Map fonts = fontInfo.getUsedFonts();
         Iterator e = fonts.keySet().iterator();
         PDFResources resources = doc.getResources();
         while (e.hasNext()) {

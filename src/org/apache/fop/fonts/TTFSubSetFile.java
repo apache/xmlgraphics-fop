@@ -1,6 +1,6 @@
 /*
  * $Id$
- * Copyright (C) 2001 The Apache Software Foundation. All rights reserved.
+ * Copyright (C) 2001-2002 The Apache Software Foundation. All rights reserved.
  * For details on use and redistribution please refer to the
  * LICENSE file included with these sources.
  */
@@ -9,10 +9,10 @@ package org.apache.fop.fonts;
 
 import org.apache.fop.messaging.MessageHandler;
 
-import java.io.*;
+import java.io.IOException;
 import java.util.Iterator;
-import java.util.HashMap;
-import java.util.ArrayList;
+import java.util.Map;
+import java.util.List;
 
 /**
  * Reads a TrueType file and generates a subset
@@ -302,7 +302,7 @@ public class TTFSubSetFile extends TTFFile {
      * Create the glyf table and fill in loca table
      */
     private void createGlyf(FontFileReader in,
-                            HashMap glyphs) throws IOException {
+                            Map glyphs) throws IOException {
         TTFDirTabEntry entry = (TTFDirTabEntry)dirTabs.get("glyf");
         int size = 0;
         int start = 0;
@@ -364,12 +364,12 @@ public class TTFSubSetFile extends TTFFile {
 
     /**
      * Create the hmtx table by copying metrics from original
-     * font to subset font. The glyphs HashMap contains an
+     * font to subset font. The glyphs Map contains an
      * Integer key and Integer value that maps the original
      * metric (key) to the subset metric (value)
      */
     private void createHmtx(FontFileReader in,
-                            HashMap glyphs) throws IOException {
+                            Map glyphs) throws IOException {
         TTFDirTabEntry entry = (TTFDirTabEntry)dirTabs.get("hmtx");
 
         int longHorMetricSize = glyphs.size() * 2;
@@ -401,12 +401,12 @@ public class TTFSubSetFile extends TTFFile {
     }
 
     /**
-     * Returns a ArrayList containing the glyph itself plus all glyphs
+     * Returns a List containing the glyph itself plus all glyphs
      * that this composite glyph uses
      */
-    private ArrayList getIncludedGlyphs(FontFileReader in, int glyphOffset,
+    private List getIncludedGlyphs(FontFileReader in, int glyphOffset,
                                      Integer glyphIdx) throws IOException {
-        ArrayList ret = new ArrayList();
+        List ret = new java.util.ArrayList();
         ret.add(glyphIdx);
         int offset = glyphOffset + (int)mtx_tab[glyphIdx.intValue()].offset
                      + 10;
@@ -447,7 +447,7 @@ public class TTFSubSetFile extends TTFFile {
      * Rewrite all compositepointers in glyphindex glyphIdx
      *
      */
-    private void remapComposite(FontFileReader in, HashMap glyphs,
+    private void remapComposite(FontFileReader in, Map glyphs,
                                 int glyphOffset,
                                 Integer glyphIdx) throws IOException {
         int offset = glyphOffset + (int)mtx_tab[glyphIdx.intValue()].offset
@@ -505,17 +505,17 @@ public class TTFSubSetFile extends TTFFile {
      * mapping
      */
     private void scanGlyphs(FontFileReader in,
-                            HashMap glyphs) throws IOException {
+                            Map glyphs) throws IOException {
         TTFDirTabEntry entry = (TTFDirTabEntry)dirTabs.get("glyf");
-        HashMap newComposites = null;
-        HashMap allComposites = new HashMap();
+        Map newComposites = null;
+        Map allComposites = new java.util.HashMap();
 
         int newIndex = glyphs.size();
 
         if (entry != null) {
             while (newComposites == null || newComposites.size() > 0) {
                 // Inefficient to iterate through all glyphs
-                newComposites = new HashMap();
+                newComposites = new java.util.HashMap();
 
                 for (Iterator e = glyphs.keySet().iterator(); e.hasNext(); ) {
                     Integer origIndex = (Integer)e.next();
@@ -524,7 +524,7 @@ public class TTFSubSetFile extends TTFFile {
                                         + mtx_tab[origIndex.intValue()].offset) < 0) {
                         // origIndex is a composite glyph
                         allComposites.put(origIndex, glyphs.get(origIndex));
-                        ArrayList composites =
+                        List composites =
                             getIncludedGlyphs(in, (int)entry.offset,
                                               origIndex);
 
@@ -570,7 +570,7 @@ public class TTFSubSetFile extends TTFFile {
      */
 
     public byte[] readFont(FontFileReader in, String name,
-                           HashMap glyphs) throws IOException {
+                           Map glyphs) throws IOException {
 
         /*
          * Check if TrueType collection, and that the name

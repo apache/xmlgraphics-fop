@@ -16,7 +16,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.OutputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
-import java.util.ArrayList;
+import java.util.List;
 
 /**
  * class representing a PDF stream.
@@ -36,7 +36,7 @@ public class PDFStream extends PDFObject {
     /**
      * the filters that should be applied
      */
-    private ArrayList _filters;
+    private List _filters;
 
     /**
      * create an empty stream object
@@ -46,7 +46,7 @@ public class PDFStream extends PDFObject {
     public PDFStream(int number) {
         super(number);
         _data = new ByteArrayOutputStream();
-        _filters = new ArrayList();
+        _filters = new java.util.ArrayList();
     }
 
     /**
@@ -101,7 +101,7 @@ public class PDFStream extends PDFObject {
 
 
     protected void addDefaultFilters() {
-        ArrayList filters = Configuration.getListValue("stream-filter-list",
+        List filters = Configuration.getListValue("stream-filter-list",
                                                     Configuration.PDF);
         if (filters == null) {
             // try getting it as a String
@@ -277,8 +277,8 @@ public class PDFStream extends PDFObject {
      */
     protected String applyFilters() throws IOException {
         if (_filters.size() > 0) {
-            ArrayList names = new ArrayList();
-            ArrayList parms = new ArrayList();
+            List names = new java.util.ArrayList();
+            List parms = new java.util.ArrayList();
 
             // run the filters
             for (int i = 0; i < _filters.size(); i++) {
@@ -290,7 +290,7 @@ public class PDFStream extends PDFObject {
                     _data.write(tmp);
                     filter.setApplied(true);
                 }
-                // place the names in our local ArrayList in reverse order
+                // place the names in our local List in reverse order
                 names.add(0, filter.getName());
                 parms.add(0, filter.getDecodeParms());
             }
@@ -302,7 +302,7 @@ public class PDFStream extends PDFObject {
 
     }
 
-    private String buildFilterEntries(ArrayList names) {
+    private String buildFilterEntries(List names) {
         StringBuffer sb = new StringBuffer();
         sb.append("/Filter ");
         if (names.size() > 1) {
@@ -319,7 +319,7 @@ public class PDFStream extends PDFObject {
         return sb.toString();
     }
 
-    private String buildDecodeParms(ArrayList parms) {
+    private String buildDecodeParms(List parms) {
         StringBuffer sb = new StringBuffer();
         boolean needParmsEntry = false;
         sb.append("/DecodeParms ");

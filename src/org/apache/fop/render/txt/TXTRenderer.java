@@ -1,6 +1,6 @@
 /*
  * $Id$
- * Copyright (C) 2001 The Apache Software Foundation. All rights reserved.
+ * Copyright (C) 2001-2002 The Apache Software Foundation. All rights reserved.
  * For details on use and redistribution please refer to the
  * LICENSE file included with these sources.
  */
@@ -30,7 +30,7 @@ import org.w3c.dom.svg.SVGDocument;
 // Java
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Renderer that renders areas to plain text.
@@ -79,14 +79,14 @@ public class TXTRenderer extends PrintRenderer {
     /**
      * options
      */
-    protected java.util.HashMap options;
+    protected java.util.Map options;
 
     public TXTRenderer() {}
 
     /**
      * set up renderer options
      */
-    public void setOptions(java.util.HashMap options) {
+    public void setOptions(java.util.Map options) {
         this.options = options;
     }
 
@@ -295,7 +295,7 @@ public class TXTRenderer extends PrintRenderer {
          */
     }
 
-    private void xferLineBytes(int startpos, int bitcount, ArrayList save,
+    private void xferLineBytes(int startpos, int bitcount, List save,
                                int start2) {
         /*
          * Not yet implemented
@@ -661,7 +661,7 @@ public class TXTRenderer extends PrintRenderer {
          * long	dx = 0;
          * long	dy = TwoAsquared * b;
          * int		rectlen = iw - 2 * irx;
-         * ArrayList	bottomlines = new ArrayList();
+         * List	bottomlines = new java.util.ArrayList();
          * int x0 = tx;
          * // Set Transparency modes and select shading.
          * currentStream.add("\033*v0n1O\033*c" + (int)(100 - ((0.3f * thecolor.red() + 0.59f * thecolor.green() + 0.11f * thecolor.blue()) * 100f)) + "G\033*v2T");
@@ -732,7 +732,7 @@ public class TXTRenderer extends PrintRenderer {
     }
 
     // Add a polyline or polygon. Does not support fills yet!!!
-    protected void addPolyline(ArrayList points, int posx, int posy,
+    protected void addPolyline(List points, int posx, int posy,
                                PDFColor fc, PDFColor sc, float sw,
                                boolean close) {}
 
@@ -740,7 +740,7 @@ public class TXTRenderer extends PrintRenderer {
      * Renders an image, scaling it to the given width and height.
      * If the scaled width and height is the same intrinsic size
      * of the image, the image is not scaled.
-     * 
+     *
      * @param x the x position of left edge in millipoints
      * @param y the y position of top edge in millipoints
      * @param w the width in millipoints
@@ -750,14 +750,14 @@ public class TXTRenderer extends PrintRenderer {
      *           in non-bitmapped images.
      */
     protected void drawImageScaled(int x, int y, int w, int h,
-				   FopImage image,
-				   FontState fs) {
-	// XXX: implement this
+                   FopImage image,
+                   FontState fs) {
+    // XXX: implement this
     }
-    
+
     /**
-     * Renders an image, clipping it as specified. 
-     * 
+     * Renders an image, clipping it as specified.
+     *
      * @param x the x position of left edge in millipoints.
      * @param y the y position of top edge in millipoints.
      * @param clipX the left edge of the clip in millipoints
@@ -769,11 +769,11 @@ public class TXTRenderer extends PrintRenderer {
      *           in non-bitmapped images.
      */
     protected void drawImageClipped(int x, int y,
-				    int clipX, int clipY,
-				    int clipW, int clipH,
-				    FopImage image,
-				    FontState fs) {
-	// XXX: implement this
+                    int clipX, int clipY,
+                    int clipW, int clipH,
+                    FopImage image,
+                    FontState fs) {
+    // XXX: implement this
     }
 
     boolean printBMP(FopImage img, int x, int y, int w,
@@ -1264,7 +1264,7 @@ public class TXTRenderer extends PrintRenderer {
      * float ty = tg.y;
      * float currentX = x + tx;
      * float currentY = y + ty;
-     * ArrayList list = tg.textList;
+     * List list = tg.textList;
      * for ( Enumeration e = list.elements() ; e.hasMoreElements() ; )
      * {
      * Object o = e.nextElement();

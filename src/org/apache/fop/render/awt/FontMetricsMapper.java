@@ -1,6 +1,6 @@
 /*
  * $Id$
- * Copyright (C) 2001 The Apache Software Foundation. All rights reserved.
+ * Copyright (C) 2001-2002 The Apache Software Foundation. All rights reserved.
  * For details on use and redistribution please refer to the
  * LICENSE file included with these sources.
  */
@@ -14,6 +14,7 @@ import org.apache.fop.layout.FontDescriptor;
 import org.apache.fop.layout.FontState;
 
 // Java
+import java.net.URL;
 import java.awt.Graphics2D;
 import java.awt.Font;
 
@@ -69,10 +70,10 @@ public class FontMetricsMapper implements org.apache.fop.layout.FontMetric {
 
     /**
      * Create Original Font.
-     * @param fontPath path to truetype font
+     * @param fontURL URL to truetype font
      */
-    public void setEmbedFont(String fontPath) {
-        metric.setEmbedFont(family,style,fontPath);
+    public void setEmbedFont(URL fontURL) {
+        metric.setEmbedFont(family, style, fontURL);
     }
 
     /**

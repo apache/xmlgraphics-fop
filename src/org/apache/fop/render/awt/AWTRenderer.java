@@ -1,6 +1,6 @@
 /*
  * $Id$
- * Copyright (C) 2001 The Apache Software Foundation. All rights reserved.
+ * Copyright (C) 2001-2002 The Apache Software Foundation. All rights reserved.
  * For details on use and redistribution please refer to the
  * LICENSE file included with these sources.
  */
@@ -68,8 +68,8 @@ public class AWTRenderer extends AbstractRenderer implements Printable, Pageable
     protected ProgressListener progressListener = null;
     protected Translator res = null;
 
-    protected HashMap fontNames = new HashMap();
-    protected HashMap fontStyles = new HashMap();
+    protected Map fontNames = new java.util.HashMap();
+    protected Map fontStyles = new java.util.HashMap();
     protected Color saveColor = null;
 
     protected IDReferences idReferences = null;
@@ -115,12 +115,12 @@ public class AWTRenderer extends AbstractRenderer implements Printable, Pageable
     /**
      * options
      */
-    protected java.util.HashMap options;
+    protected java.util.Map options;
 
     /**
      * set up renderer options
      */
-    public void setOptions(java.util.HashMap options) {
+    public void setOptions(java.util.Map options) {
         this.options = options;
     }
 
@@ -410,7 +410,7 @@ public class AWTRenderer extends AbstractRenderer implements Printable, Pageable
         w = w + area.getPaddingLeft() + area.getPaddingRight();
         h = h + area.getPaddingTop() + area.getPaddingBottom();
 
-	doBackground(area, rx, ry, w, h);
+    doBackground(area, rx, ry, w, h);
 
         rx = rx - area.getBorderLeftWidth();
         ry = ry + area.getBorderTopWidth();
@@ -487,9 +487,9 @@ public class AWTRenderer extends AbstractRenderer implements Printable, Pageable
      *           in non-bitmapped images.
      */
     protected void drawImageScaled(int x, int y, int w, int h,
-				   FopImage image,
-				   FontState fs) {
-	// XXX: implement this
+                   FopImage image,
+                   FontState fs) {
+    // XXX: implement this
     }
 
     /**
@@ -506,11 +506,11 @@ public class AWTRenderer extends AbstractRenderer implements Printable, Pageable
      *           in non-bitmapped images.
      */
     protected void drawImageClipped(int x, int y,
-				    int clipX, int clipY,
-				    int clipW, int clipH,
-				    FopImage image,
-				    FontState fs) {
-	// XXX: implement this
+                    int clipX, int clipY,
+                    int clipW, int clipH,
+                    FopImage image,
+                    FontState fs) {
+    // XXX: implement this
     }
 
     // correct integer roundoff    (aml/rlc)

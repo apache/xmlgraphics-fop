@@ -1,6 +1,6 @@
 /*
  * $Id$
- * Copyright (C) 2001 The Apache Software Foundation. All rights reserved.
+ * Copyright (C) 2001-2002 The Apache Software Foundation. All rights reserved.
  * For details on use and redistribution please refer to the
  * LICENSE file included with these sources.
  */
@@ -14,8 +14,8 @@ import org.xml.sax.Attributes;
 import org.xml.sax.Locator;
 
 // java
-import java.util.HashMap;
-import java.util.ArrayList;
+import java.util.Map;
+import java.util.List;
 
 // fop
 import org.apache.fop.messaging.MessageHandler;
@@ -45,12 +45,12 @@ public class ConfigurationParser extends DefaultHandler {
     private int datatype = -1;
 
     // store the result configuration
-    private static HashMap configuration;
-    private static HashMap activeConfiguration;
+    private static Map configuration;
+    private static Map activeConfiguration;
 
     // stores key for new config entry
     private String key = "";
-    private ArrayList keyStack = new ArrayList();
+    private List keyStack = new java.util.ArrayList();
 
     // stores string value
     private String value = "";
@@ -59,10 +59,10 @@ public class ConfigurationParser extends DefaultHandler {
     private String subkey = "";
 
     // stores list value
-    private ArrayList list = new ArrayList(15);
+    private List list = new java.util.ArrayList(15);
 
-    // stores HashMap value
-    private HashMap map = new HashMap(15);
+    // stores Map value
+    private Map map = new java.util.HashMap(15);
 
     /**
      * locator for line number information
@@ -75,7 +75,7 @@ public class ConfigurationParser extends DefaultHandler {
     private String role = "standard";
 
     // stores fonts
-    private ArrayList fontList = null;
+    private List fontList = null;
 
     // stores information on one font
     private FontInfo fontInfo = null;
@@ -86,7 +86,7 @@ public class ConfigurationParser extends DefaultHandler {
     // information on a font
     private String fontName, metricsFile, embedFile, kerningAsString;
     private boolean kerning;
-    private ArrayList fontTriplets;
+    private List fontTriplets;
 
     // information on a font triplet
     private String fontTripletName, weight, style;
@@ -125,7 +125,7 @@ public class ConfigurationParser extends DefaultHandler {
             }
         } else if (localName.equals("configuration")) {}
         else if (localName.equals("fonts")) {    // list of fonts starts
-            fontList = new ArrayList(10);
+            fontList = new java.util.ArrayList(10);
         } else if (localName.equals("font")) {
             kerningAsString = attributes.getValue("kerning");
             if (kerningAsString.equalsIgnoreCase("yes")) {
@@ -136,7 +136,7 @@ public class ConfigurationParser extends DefaultHandler {
             metricsFile = attributes.getValue("metrics-file");
             embedFile = attributes.getValue("embed-file");
             fontName = attributes.getValue("name");
-            fontTriplets = new ArrayList(5);
+            fontTriplets = new java.util.ArrayList(5);
         } else if (localName.equals("font-triplet")) {
             fontTripletName = attributes.getValue("name");
             weight = attributes.getValue("weight");
@@ -241,14 +241,14 @@ public class ConfigurationParser extends DefaultHandler {
     }    // end characters
 
     /**
-     * stores configuration entry into configuration HashMap according to the role
+     * stores configuration entry into configuration Map according to the role
      *
      * @param role a string containing the role / target for this configuration information
      * @param key a string containing the key value for the configuration
      * @param value a string containing the value for the configuration
      */
     private void store(String role, String key, Object value) {
-        activeConfiguration = (HashMap)configuration.get(role);
+        activeConfiguration = (Map)configuration.get(role);
         if (activeConfiguration != null) {
             activeConfiguration.put(key, value);
         } else {
