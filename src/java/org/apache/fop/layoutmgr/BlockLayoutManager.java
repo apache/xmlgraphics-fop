@@ -1,12 +1,12 @@
 /*
  * Copyright 1999-2004 The Apache Software Foundation.
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-/* $Id$ */
+/* $Id: BlockLayoutManager.java,v 1.17 2004/05/15 21:51:59 gmazza Exp $ */
 
 package org.apache.fop.layoutmgr;
 
@@ -49,9 +49,9 @@ public class BlockLayoutManager extends BlockStackingLayoutManager {
     private CommonMarginBlock marginProps;
 
     /* holds the (one-time use) fo:block space-before
-       and -after properties.  Large fo:blocks are split 
+       and -after properties.  Large fo:blocks are split
        into multiple Area.Blocks to accomodate the subsequent
-       regions (pages) they are placed on.  space-before 
+       regions (pages) they are placed on.  space-before
        is applied at the beginning of the first
        Block and space-after at the end of the last Block
        used in rendering the fo:block.
@@ -156,7 +156,7 @@ public class BlockLayoutManager extends BlockStackingLayoutManager {
         LayoutManager curLM; // currently active LM
 
         int ipd = context.getRefIPD();
-        int iIndents = marginProps.startIndent + marginProps.endIndent; 
+        int iIndents = marginProps.startIndent + marginProps.endIndent;
         int bIndents = borderProps.getBPPaddingAndBorder(false);
         ipd -= iIndents;
 
@@ -178,7 +178,7 @@ public class BlockLayoutManager extends BlockStackingLayoutManager {
         // Set context for percentage property values.
         fobj.setLayoutDimension(PercentBase.BLOCK_IPD, ipd);
         fobj.setLayoutDimension(PercentBase.BLOCK_BPD, -1);
-        
+
         while ((curLM = getChildLM()) != null) {
             // Make break positions and return blocks!
             // Set up a LayoutContext
@@ -260,7 +260,7 @@ public class BlockLayoutManager extends BlockStackingLayoutManager {
         double adjust = layoutContext.getSpaceAdjust();
         addBlockSpacing(adjust, foBlockSpaceBefore);
         foBlockSpaceBefore = null;
-        
+
         addID();
         addMarkers(true, true);
 
@@ -323,13 +323,17 @@ public class BlockLayoutManager extends BlockStackingLayoutManager {
             // Get reference IPD from parentArea
             int referenceIPD = parentArea.getIPD();
             curBlockArea.setIPD(referenceIPD);
-            
+
             // Set the width of the block based on the parent block
+            // Need to be careful though, if parent is BC then width may not be set
+            int parentwidth = 0;
             if (parentArea instanceof BlockParent) {
-                curBlockArea.setWidth(((BlockParent) parentArea).getWidth());
-            } else {
-                curBlockArea.setWidth(referenceIPD);
+                parentwidth = ((BlockParent) parentArea).getWidth();
             }
+            if (parentwidth == 0) {
+                parentwidth = referenceIPD;
+            }
+            curBlockArea.setWidth(parentwidth);
             setCurrentArea(curBlockArea); // ??? for generic operations
         }
         return curBlockArea;
