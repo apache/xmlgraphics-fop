@@ -105,31 +105,31 @@ public abstract class Properties {
                     ,PERCENTAGE = 16
                    ,CHARACTER_T = 32
                        ,LITERAL = 64
-                          ,NAME = 128
+                        ,NCNAME = 128
                        ,COLOR_T = 256
                      ,COUNTRY_T = 512
                     ,LANGUAGE_T = 1024
                       ,SCRIPT_T = 2048
-                          ,ID_T = 4096
-                         ,IDREF = 8192
-             ,URI_SPECIFICATION = 16384
-                          ,TIME = 32768
-                     ,FREQUENCY = 65536
+             ,URI_SPECIFICATION = 4096
+                          ,TIME = 8192
+                     ,FREQUENCY = 16384
     // Pseudotypes
-                          ,BOOL = 131072
-                       ,INHERIT = 262144
-                          ,ENUM = 524288
-                 ,MAPPED_LENGTH = 1048576
-                     ,SHORTHAND = 2097152
-                       ,COMPLEX = 4194304
-                          ,AUTO = 8388608
-                          ,NONE = 16777216
-                         ,AURAL = 33554432
+                          ,BOOL = 32768
+                       ,INHERIT = 65536
+                          ,ENUM = 131072
+                 ,MAPPED_LENGTH = 262144
+                     ,SHORTHAND = 524288
+                       ,COMPLEX = 1048576
+                          ,AUTO = 2097152
+                          ,NONE = 4194304
+                         ,AURAL = 8388608
     // Color plus transparent
-                   ,COLOR_TRANS = 67108864
-                      ,MIMETYPE = 134217728
-                       ,FONTSET = 268435456
-                      ,COMPOUND = 536870912
+                   ,COLOR_TRANS = 16777216
+                      ,MIMETYPE = 33554432
+                       ,FONTSET = 67108864
+                      ,COMPOUND = 134217728
+    //                   ,SPARE = 268435456
+    //                   ,SPARE = 536870912
     //                   ,SPARE = 1073741824
     //                   ,SPARE = -2147483648
 
@@ -145,11 +145,10 @@ public abstract class Properties {
 
                         ,NUMBER = FLOAT | INTEGER
                      ,ENUM_TYPE = ENUM | MAPPED_LENGTH
-                        ,STRING = LITERAL | ENUM_TYPE
+                        ,STRING = LITERAL | NCNAME
                      ,HYPH_TYPE = COUNTRY_T | LANGUAGE_T | SCRIPT_T
-                       ,ID_TYPE = ID_T | IDREF
-                        ,NCNAME = NAME | ID_TYPE | HYPH_TYPE | ENUM_TYPE
-                   ,STRING_TYPE = STRING | NCNAME
+                     ,NAME_TYPE = NCNAME | HYPH_TYPE | ENUM_TYPE
+                   ,STRING_TYPE = STRING | NAME_TYPE
                       ,ANY_TYPE = ~0
                                 ;
 
@@ -172,13 +171,11 @@ public abstract class Properties {
         if ((datatypes & PERCENTAGE) != 0) typeNames += "<percentage>|";
         if ((datatypes & CHARACTER_T) != 0) typeNames += "<character>|";
         if ((datatypes & STRING) != 0) typeNames += "<string>|";
-        if ((datatypes & NAME) != 0) typeNames += "<name>|";
+        if ((datatypes & NCNAME) != 0) typeNames += "<ncname>|";
         if ((datatypes & COLOR_T) != 0) typeNames += "<color>|";
         if ((datatypes & COUNTRY_T) != 0) typeNames += "<country>|";
         if ((datatypes & LANGUAGE_T) != 0) typeNames += "<language>|";
         if ((datatypes & SCRIPT_T) != 0) typeNames += "<script>|";
-        if ((datatypes & ID_T) != 0) typeNames += "<id>|";
-        if ((datatypes & IDREF) != 0) typeNames += "<idref>|";
         if ((datatypes & URI_SPECIFICATION) != 0) typeNames
                                                     += "<uri-specification>|";
         if ((datatypes & TIME) != 0) typeNames += "<time>|";
@@ -212,7 +209,7 @@ public abstract class Properties {
                  ,PERCENTAGE_IT = 16
                   ,CHARACTER_IT = 32
                     ,LITERAL_IT = 64
-                       ,NAME_IT = 128
+                     ,NCNAME_IT = 128
                       ,COLOR_IT = 256
                     ,COUNTRY_IT = 512
           ,URI_SPECIFICATION_IT = 1024
@@ -238,7 +235,7 @@ public abstract class Properties {
                                   | PERCENTAGE_IT
                                   | CHARACTER_IT
                                   | LITERAL_IT
-                                  | NAME_IT
+                                  | NCNAME_IT
                                   | COLOR_IT
                                   | COUNTRY_IT
                                   | URI_SPECIFICATION_IT
@@ -267,12 +264,19 @@ public abstract class Properties {
                          ,MAGIC = 2048
                               ;
 
-    /** Constant specifying inheritance type. */
+    /*
+     * Constant specifying inheritance type.  Special cases (only line-height
+     * specified as a &lt;number&gt;, so far) must be handled close to the
+     * usage point of the property.  For line-height, the number is retained
+     * as the specified and as the computed property value.  Because the
+     * current font-size will always be present in the property set for any
+     * FONode which requires line-height, the actual length value of the
+     * line-height can always be calculated at the point of application.
+     */
+    /** Constant specifying inheritance type.  */
     public static final int
                              NO = 0
                       ,COMPUTED = 1
-                     ,SPECIFIED = 2
-                ,VALUE_SPECIFIC = 3
                               ;
 
     /**
@@ -352,9 +356,9 @@ public abstract class Properties {
         case PropertyValue.NCNAME:
             String ncname = ((NCName)value).getNCName();
             // Can by any of
-            // NAME, COUNTRY_T, LANGUAGE_T, SCRIPT_T, ID_T, IDREF, ENUM
+            // NCNAME, COUNTRY_T, LANGUAGE_T, SCRIPT_T, ENUM
             // MAPPED_LENGTH or CHARACTER_T
-            if ((datatype & (NAME | ID_T | IDREF | CHARACTER_T)) != 0)
+            if ((datatype & (NCNAME | CHARACTER_T)) != 0)
                 return value;
             if ((datatype & COUNTRY_T) != 0)
                 return new CountryType(property, ncname);
@@ -417,6 +421,9 @@ public abstract class Properties {
             return pv;
         default:
             if ( ! nested) {
+                if ((datatype & COMPOUND) != 0)
+                    return PropertySets.expandCompoundProperty
+                                                    (foNode.foTree, value);
                 if (proptype == PropertyValue.INHERIT) {
                     if ((datatype & INHERIT) != 0)
                         return ((Inherit)value).resolve(foNode);
@@ -537,8 +544,10 @@ public abstract class Properties {
     public static PropertyValue getInitialValue(int property)
             throws PropertyException
     {
+        System.out.println("Invoking default getInitialValue("+property+")");
         Method method = null;
         int initialValueType = PropertyConsts.getInitialValueType(property);
+        System.out.println("initialValueType:" + initialValueType);
         if ((initialValueType & Properties.USE_GET_IT_FUNCTION) != 0)
              throw new PropertyException
                  ("Properties.getInitialValue() called for property with "
@@ -552,7 +561,12 @@ public abstract class Properties {
         case NONE_IT:
             return new None(property);
         case AURAL_IT:
-            throw new PropertyNotImplementedException
+            System.out.println("In AURAL_IT");
+            System.out.println
+                ("Aural properties not implemented: "
+                + PropNames.getPropertyName(property));
+            //throw new PropertyNotImplementedException
+            throw new PropertyException
                 ("Aural properties not implemented: "
                 + PropNames.getPropertyName(property));
         default:
@@ -623,10 +637,9 @@ public abstract class Properties {
                     type == PropertyValue.FROM_PARENT ||
                         type == PropertyValue.FROM_NEAREST_SPECIFIED)
             {
-                // Construct a list of Inherit values
-                PropertyValueList list =
-                                    PropertySets.expandAndCopySHand(value);
-                return refineExpansionList(foNode, list);
+                // Copy the value to each member of the shorthand expansion
+                return refineExpansionList
+                            (foNode, PropertySets.expandAndCopySHand(value));
             }
         }
         // Make a list and pass to processList
@@ -1127,7 +1140,7 @@ public abstract class Properties {
                     type == PropertyValue.FROM_PARENT ||
                         type == PropertyValue.FROM_NEAREST_SPECIFIED)
             {
-                // Construct a list of Inherit values
+                // Copy the value to each member of the shorthand expansion
                 return refineExpansionList
                     (foNode, PropertySets.expandAndCopySHand(value));
             } else  {
@@ -1492,7 +1505,7 @@ public abstract class Properties {
                 if (type == PropertyValue.INHERIT ||
                         type == PropertyValue.FROM_PARENT ||
                             type == PropertyValue.FROM_NEAREST_SPECIFIED) {
-                    // Construct a list of Inherit values
+                    // Copy the value to each member of the shorthand
                     newlist = refineExpansionList
                         (foNode, PropertySets.expandAndCopySHand(value));
                 }
@@ -1803,7 +1816,8 @@ public abstract class Properties {
         public static PropertyValue getInitialValue(int property)
             throws PropertyException
         {
-            return Percentage.makePercentage (PropNames.BACKGROUND_POSITION_VERTICAL, 0.0d);
+            return Percentage.makePercentage
+                            (PropNames.BACKGROUND_POSITION_VERTICAL, 0.0d);
         }
         public static final int inherited = NO;
 
@@ -1939,7 +1953,7 @@ public abstract class Properties {
             if (type == PropertyValue.INHERIT ||
                     type == PropertyValue.FROM_PARENT ||
                         type == PropertyValue.FROM_NEAREST_SPECIFIED)
-                // Construct a list of Inherit values
+                // Copy the value to each member of the shorthand expansion
                 return refineExpansionList
                     (foNode, PropertySets.expandAndCopySHand(value));
 
@@ -1998,18 +2012,17 @@ public abstract class Properties {
                     + val.getClass().getName());
             }
             // Construct the shorthand expansion list
+            // Only those elements which are actually specified fint their
+            // way into this list.  Other elements will take their normally
+            // inherited or initial values.
             PropertyValueList borderexp =
-                PropertySets.initialValueSHandExpansion
-                                            (foNode.foTree, PropNames.BORDER);
+                                    new PropertyValueList(PropNames.BORDER);
             if (style != null)
-                borderexp = PropertySets.overrideSHandElements(borderexp,
-                                                    (PropertyValueList)style);
+                borderexp.addAll((PropertyValueList)style);
             if (color != null)
-                borderexp = PropertySets.overrideSHandElements(borderexp,
-                                                    (PropertyValueList)color);
+                borderexp.addAll((PropertyValueList)color);
             if (width != null)
-                borderexp = PropertySets.overrideSHandElements(borderexp,
-                                                    (PropertyValueList)width);
+                borderexp.addAll((PropertyValueList)width);
             return borderexp;
         }
     }
@@ -3442,7 +3455,7 @@ public abstract class Properties {
     }
 
     public static class CaseName extends Properties {
-        public static final int dataTypes = NAME;
+        public static final int dataTypes = NCNAME;
         public static final int traitMapping = ACTION;
         public static final int initialValueType = NOTYPE_IT;
         public static final int inherited = NO;
@@ -3546,7 +3559,8 @@ public abstract class Properties {
         public static PropertyValue getInitialValue(int property)
             throws PropertyException
         {
-            return new ColorType (PropNames.BACKGROUND_COLOR, ColorCommon.BLACK);
+            return new ColorType
+                            (PropNames.BACKGROUND_COLOR, ColorCommon.BLACK);
         }
 
         public static final ROStringArray enums = ColorCommon.enums;
@@ -3554,7 +3568,7 @@ public abstract class Properties {
     }
 
     public static class ColorProfileName extends Properties {
-        public static final int dataTypes = NAME | INHERIT;
+        public static final int dataTypes = NCNAME | INHERIT;
         public static final int traitMapping = FORMATTING;
         public static final int initialValueType = NOTYPE_IT;
         public static final int inherited = NO;
@@ -3624,7 +3638,7 @@ public abstract class Properties {
     }
 
     public static class ContentType extends Properties {
-        public static final int dataTypes = NAME | MIMETYPE | AUTO;
+        public static final int dataTypes = NCNAME | MIMETYPE | AUTO;
         public static final int traitMapping = FORMATTING;
         public static final int initialValueType = AUTO_IT;
         public static final int inherited = NO;
@@ -3942,9 +3956,9 @@ public abstract class Properties {
     }
 
     public static class FlowName extends Properties {
-        public static final int dataTypes = NAME;
+        public static final int dataTypes = NCNAME;
         public static final int traitMapping = REFERENCE;
-        public static final int initialValueType = NAME_IT;
+        public static final int initialValueType = NCNAME_IT;
         public static PropertyValue getInitialValue(int property)
             throws PropertyException
         {
@@ -4372,32 +4386,31 @@ public abstract class Properties {
             // Construct the shorthand expansion list from the discovered
             // values of individual components
 
-            newlist =
-                PropertySets.initialValueSHandExpansion
-                                            (foNode.foTree, PropNames.FONT);
-            // For each discovered property, override the value in the
-            // initial value expansion.
-            ListIterator expansions = newlist.listIterator();
-            while (expansions.hasNext()) {
-                PropertyValue prop = (PropertyValue)expansions.next();
-                switch (prop.getProperty()) {
+            newlist = new PropertyValueList(PropNames.FONT);
+            // Add each discovered property to the list.
+            // N.B. These properties should be added in the order given
+            // in the PropertySets.fontExpansion ROIntArray.
+            for (int i = 0; i < PropertySets.fontExpansion.length; i++) {
+                switch (PropertySets.fontExpansion.get(i)) {
                 case PropNames.FONT_STYLE:
-                    if (style != null) expansions.set(style);
+                    if (style != null) newlist.add(style);
                     break;
                 case PropNames.FONT_VARIANT:
-                    if (variant != null) expansions.set(variant);
+                    if (variant != null) newlist.add(variant);
                     break;
                 case PropNames.FONT_WEIGHT:
-                    if (weight != null) expansions.set(weight);
+                    if (weight != null) newlist.add(weight);
                     break;
                 case PropNames.FONT_SIZE:
-                    if (size != null) expansions.set(size);
+                    if (size != null) newlist.add(size);
                     break;
                 case PropNames.FONT_FAMILY:
-                    if (fontset != null) expansions.set(fontset);
+                    if (fontset != null) newlist.add(fontset);
                     break;
                 case PropNames.LINE_HEIGHT:
-                    if (height != null) expansions.set(height);
+                    if (height != null)
+                        newlist.addAll(PropertySets.expandCompoundProperty
+                                                    (foNode.foTree, height));
                     break;
                 }
             }
@@ -4953,7 +4966,7 @@ public abstract class Properties {
     }
 
     public static class Id extends Properties {
-        public static final int dataTypes = ID_T;
+        public static final int dataTypes = NCNAME;
         public static final int traitMapping = REFERENCE;
         public static final int initialValueType = NOTYPE_IT;
         public static final int inherited = NO;
@@ -5018,7 +5031,7 @@ public abstract class Properties {
     }
 
     public static class InternalDestination extends Properties {
-        public static final int dataTypes = STRING | IDREF;
+        public static final int dataTypes = LITERAL | NCNAME;
         public static final int traitMapping = ACTION;
         public static final int initialValueType = LITERAL_IT;
         public static PropertyValue getInitialValue(int property)
@@ -5053,7 +5066,7 @@ public abstract class Properties {
                                 COMPOUND | AUTO | ENUM | INTEGER | INHERIT;
         public static final int traitMapping = FORMATTING;
         public static final int initialValueType = AUTO_IT;
-        public static final int inherited = COMPUTED;
+        public static final int inherited = NO;
 
         private static final String[] rwEnums = {
             null
@@ -5218,7 +5231,7 @@ public abstract class Properties {
                                     COMPOUND | LENGTH | PERCENTAGE | INHERIT;
         public static final int traitMapping = FORMATTING;
         public static final int initialValueType = NOTYPE_IT;
-        public static final int inherited = COMPUTED;
+        public static final int inherited = NO;
     }
 
     public static class LeaderLengthMinimum extends Properties {
@@ -5463,7 +5476,7 @@ public abstract class Properties {
         public static final int traitMapping = FORMATTING;
         public static final int initialValueType = LENGTH_IT;
         public static final int NORMAL = 1;
-        public static final int inherited = VALUE_SPECIFIC;
+        public static final int inherited = NO;
 
         private static final String[] rwEnums = {
             null
@@ -5492,7 +5505,7 @@ public abstract class Properties {
         {
             return Ems.makeEms(PropNames.LINE_HEIGHT_MINIMUM, 1.2d);
         }
-        public static final int inherited = VALUE_SPECIFIC;
+        public static final int inherited = COMPUTED;
     }
 
     public static class LineHeightOptimum extends Properties {
@@ -5504,7 +5517,7 @@ public abstract class Properties {
         {
             return Ems.makeEms(PropNames.LINE_HEIGHT_OPTIMUM, 1.2d);
         }
-        public static final int inherited = VALUE_SPECIFIC;
+        public static final int inherited = COMPUTED;
     }
 
     public static class LineHeightMaximum extends Properties {
@@ -5516,7 +5529,7 @@ public abstract class Properties {
         {
             return Ems.makeEms(PropNames.LINE_HEIGHT_MAXIMUM, 1.2d);
         }
-        public static final int inherited = VALUE_SPECIFIC;
+        public static final int inherited = COMPUTED;
     }
 
     public static class LineHeightConditionality extends Properties {
@@ -5780,9 +5793,9 @@ public abstract class Properties {
     }
 
     public static class MarkerClassName extends Properties {
-        public static final int dataTypes = NAME;
+        public static final int dataTypes = NCNAME;
         public static final int traitMapping = FORMATTING;
-        public static final int initialValueType = NAME_IT;
+        public static final int initialValueType = NCNAME_IT;
         public static PropertyValue getInitialValue(int property)
             throws PropertyException
         {
@@ -5792,9 +5805,9 @@ public abstract class Properties {
     }
 
     public static class MasterName extends Properties {
-        public static final int dataTypes = NAME;
+        public static final int dataTypes = NCNAME;
         public static final int traitMapping = SPECIFICATION;
-        public static final int initialValueType = NAME_IT;
+        public static final int initialValueType = NCNAME_IT;
         public static PropertyValue getInitialValue(int property)
             throws PropertyException
         {
@@ -5804,9 +5817,9 @@ public abstract class Properties {
     }
 
     public static class MasterReference extends Properties {
-        public static final int dataTypes = NAME;
+        public static final int dataTypes = NCNAME;
         public static final int traitMapping = SPECIFICATION;
-        public static final int initialValueType = NAME_IT;
+        public static final int initialValueType = NCNAME_IT;
         public static PropertyValue getInitialValue(int property)
             throws PropertyException
         {
@@ -6753,14 +6766,14 @@ public abstract class Properties {
     }
 
     public static class RefId extends Properties {
-        public static final int dataTypes = IDREF | INHERIT;
+        public static final int dataTypes = NCNAME | INHERIT;
         public static final int traitMapping = REFERENCE;
         public static final int initialValueType = NOTYPE_IT;
         public static final int inherited = NO;
     }
 
     public static class RegionName extends Properties {
-        public static final int dataTypes = NAME | ENUM;
+        public static final int dataTypes = NCNAME | ENUM;
         public static final int traitMapping = SPECIFICATION;
         public static final int initialValueType = NOTYPE_IT;
         public static final int XSL_REGION_BODY = 1;
@@ -6896,7 +6909,7 @@ public abstract class Properties {
     }
 
     public static class RetrieveClassName extends Properties {
-        public static final int dataTypes = NAME;
+        public static final int dataTypes = NCNAME;
         public static final int traitMapping = FORMATTING;
         public static final int initialValueType = NOTYPE_IT;
         public static final String initialValue = "";
@@ -6947,7 +6960,7 @@ public abstract class Properties {
 
     public static class Role extends Properties {
         public static final int dataTypes =
-                                STRING | URI_SPECIFICATION | NONE | INHERIT;
+                                NCNAME | URI_SPECIFICATION | NONE | INHERIT;
         public static final int traitMapping = RENDERING;
         public static final int initialValueType = NONE_IT;
         public static final int inherited = NO;
@@ -7751,7 +7764,7 @@ public abstract class Properties {
     }
 
     public static class TextAlign extends Properties {
-        public static final int dataTypes = STRING | ENUM | INHERIT;
+        public static final int dataTypes = LITERAL | ENUM | INHERIT;
         public static final int traitMapping = VALUE_CHANGE;
         public static final int initialValueType = ENUM_IT;
         public static final int START = 1;
@@ -8276,7 +8289,7 @@ public abstract class Properties {
         {
             return getMappedLength(NORMAL); //normal
         }
-        public static final int inherited = COMPUTED;
+        public static final int inherited = NO;
 
         private static final String[] rwEnums = {
             null
