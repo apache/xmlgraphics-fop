@@ -105,7 +105,7 @@ public class PropertyListBuilder {
 	propertyTable.put("break-before",BreakBefore.maker());
 	propertyTable.put("break-after",BreakAfter.maker());
 	propertyTable.put("text-indent",TextIndent.maker());
-	propertyTable.put("href",HRef.maker());
+	propertyTable.put("src",Src.maker());
 	propertyTable.put("column-width",ColumnWidth.maker());
 	propertyTable.put("keep-with-next",KeepWithNext.maker());
 	propertyTable.put("background-color",BackgroundColor.maker());
@@ -114,7 +114,7 @@ public class PropertyListBuilder {
 	propertyTable.put("padding-left",PaddingLeft.maker());
 	propertyTable.put("padding-right",PaddingRight.maker());
 	propertyTable.put("external-destination",ExternalDestination.maker());
-        propertyTable.put("internal-destination",InternalDestination.maker());
+	propertyTable.put("internal-destination",InternalDestination.maker());
 	propertyTable.put("x",SVGLengthProperty.maker());
 	propertyTable.put("y",SVGLengthProperty.maker());
 	propertyTable.put("x1",SVGLengthProperty.maker());
