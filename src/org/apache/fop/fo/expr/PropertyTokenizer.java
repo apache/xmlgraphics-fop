@@ -72,8 +72,9 @@ class PropertyTokenizer {
      */
     int currentToken = EOF;
     String currentTokenValue = null;
-    protected int currentUnitLength = 0;
+    protected int currentUnitIndex = 0;
     protected int currentUnit;
+    protected String unitString;
     protected String uri;
 
     private int currentTokenStartIndex = 0;
@@ -96,6 +97,7 @@ class PropertyTokenizer {
         expr = s;
         exprLength = s.length();
         this.property = property;
+        //System.out.println("-----Tokenizer initialized: " + expr);
     }
 
     /**
@@ -109,6 +111,15 @@ class PropertyTokenizer {
         currentToken = EOF;
         currentTokenValue = null;
         property = 0;
+        //System.out.println("-----Tokenizer reset.");
+    }
+
+    /**
+     * Get the current expression
+     * @return - the expression.
+     */
+    public String getExpr() {
+        return expr;
     }
 
     /**
@@ -194,12 +205,11 @@ class PropertyTokenizer {
                     }
                 } else
                     bSawDecimal = false;
+                currentUnitIndex = exprIndex;
                 if (exprIndex < exprLength && expr.charAt(exprIndex) == '%') {
                     currentToken = PERCENT;
-                    currentTokenValue = expr.substring(currentTokenStartIndex,
-                                                       exprIndex);
+                    unitString = "%";
                     exprIndex++;
-                    return;
                 } else {
                     // Check for possible unit name following number
                     currentToken = scanUnitName();
@@ -207,7 +217,7 @@ class PropertyTokenizer {
                         currentToken = bSawDecimal ? FLOAT : INTEGER;
                 }
                 currentTokenValue = expr.substring(currentTokenStartIndex,
-                                                   exprIndex);
+                                                   currentUnitIndex);
                 return;
 
             case '.':
@@ -343,49 +353,48 @@ class PropertyTokenizer {
      * @exception PropertyException if an NCName not a UnitName recognized.
      */
     private int scanUnitName() throws PropertyException {
-        String unit;
-        currentUnitLength = exprIndex;
+        currentUnitIndex = exprIndex;
         scanName();
-        if ((currentUnitLength = exprIndex - currentUnitLength) > 0) {
-            unit = expr.substring(currentUnitLength, exprIndex);
-            if (unit.equals("em")) return RELATIVE_LENGTH;
-            if (unit.equals("cm")) {
+        if (currentUnitIndex < exprIndex) {
+            unitString = expr.substring(currentUnitIndex, exprIndex);
+            if (unitString.equals("em")) return RELATIVE_LENGTH;
+            if (unitString.equals("cm")) {
                 currentUnit = Length.CM;
                 return ABSOLUTE_LENGTH;
             }
-            if (unit.equals("mm")) {
+            if (unitString.equals("mm")) {
                 currentUnit = Length.MM;
                 return ABSOLUTE_LENGTH;
             }
-            if (unit.equals("in")) {
+            if (unitString.equals("in")) {
                 currentUnit = Length.IN;
                 return ABSOLUTE_LENGTH;
             }
-            if (unit.equals("pt")) {
+            if (unitString.equals("pt")) {
                 currentUnit = Length.PT;
                 return ABSOLUTE_LENGTH;
             }
-            if (unit.equals("pc")) {
+            if (unitString.equals("pc")) {
                 currentUnit = Length.PC;
                 return ABSOLUTE_LENGTH;
             }
-            if (unit.equals("px")) {
+            if (unitString.equals("px")) {
                 currentUnit = Length.PX;
                 return ABSOLUTE_LENGTH;
             }
-            if (unit.equals("s")) {
+            if (unitString.equals("s")) {
                 currentUnit = Time.SEC;
                 return TIME;
             }
-            if (unit.equals("ms")) {
+            if (unitString.equals("ms")) {
                 currentUnit = Time.MSEC;
                 return TIME;
             }
-            if (unit.equals("Hz")) {
+            if (unitString.equals("Hz")) {
                 currentUnit = Frequency.HZ;
                 return FREQ;
             }
-            if (unit.equals("kHz")) {
+            if (unitString.equals("kHz")) {
                 currentUnit = Frequency.KHZ;
                 return FREQ;
             }
