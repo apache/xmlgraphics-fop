@@ -284,6 +284,7 @@ public class PDFTranscoder extends XMLAbstractTranscoder {
             graphics.setBackgroundColor((Color)hints.get(ImageTranscoder.KEY_BACKGROUND_COLOR));
         }
         graphics.setGraphicContext(new org.apache.batik.ext.awt.g2d.GraphicContext());
+        graphics.setTransform(Px);
 
         gvtRoot.paint(graphics);
 
