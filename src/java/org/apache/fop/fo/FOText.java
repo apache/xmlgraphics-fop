@@ -161,7 +161,7 @@ public class FOText extends FONode {
      * @return true if this will create an area in the output
      */
     public boolean willCreateArea() {
-        if (whiteSpaceCollapse == Constants.WhiteSpaceCollapse.FALSE
+        if (whiteSpaceCollapse == Constants.EN_FALSE
                 && endIndex - startIndex > 0) {
             return true;
         }
@@ -224,7 +224,7 @@ public class FOText extends FONode {
      * text-transform property.
      */
     private void textTransform() {
-        if (textTransform == Constants.TextTransform.NONE) {
+        if (textTransform == Constants.EN_NONE) {
             return;
         }
         for (int i = 0; i < endIndex; i++) {
@@ -353,13 +353,13 @@ public class FOText extends FONode {
     private char charTransform(int i) {
         switch (textTransform) {
         /* put NONE first, as this is probably the common case */
-        case Constants.TextTransform.NONE:
+        case Constants.EN_NONE:
             return ca[i];
-        case Constants.TextTransform.UPPERCASE:
+        case Constants.EN_UPPERCASE:
             return Character.toUpperCase(ca[i]);
-        case Constants.TextTransform.LOWERCASE:
+        case Constants.EN_LOWERCASE:
             return Character.toLowerCase(ca[i]);
-        case Constants.TextTransform.CAPITALIZE:
+        case Constants.EN_CAPITALIZE:
             if (isStartOfWord(i)) {
                 /*
                  Use toTitleCase here. Apparently, some languages use

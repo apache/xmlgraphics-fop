@@ -693,7 +693,7 @@ public class PSRenderer extends PrintRenderer {
                 ImageFactory fact = ImageFactory.getInstance();
                 FopImage fopimage = fact.getImage(back.getURL(), userAgent);
                 if (fopimage != null && fopimage.load(FopImage.DIMENSIONS)) {
-                    if (back.getRepeat() == BackgroundRepeat.REPEAT) {
+                    if (back.getRepeat() == EN_REPEAT) {
                         // create a pattern for the image
                     } else {
                         // place once

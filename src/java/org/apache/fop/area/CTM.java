@@ -113,15 +113,15 @@ public class CTM implements Serializable {
     public static CTM getWMctm(int wm, int ipd, int bpd) {
         CTM wmctm;
         switch (wm) {
-            case Constants.WritingMode.LR_TB:
+            case Constants.EN_LR_TB:
                 return new CTM(CTM_LRTB);
-            case Constants.WritingMode.RL_TB: {
+            case Constants.EN_RL_TB: {
                     wmctm = new CTM(CTM_RLTB);
                     wmctm.e = ipd;
                     return wmctm;
                 }
                 //return  CTM_RLTB.translate(ipd, 0);
-            case Constants.WritingMode.TB_RL: { // CJK
+            case Constants.EN_TB_RL: { // CJK
                     wmctm = new CTM(CTM_TBRL);
                     wmctm.e = bpd;
                     return wmctm;
@@ -299,7 +299,7 @@ public class CTM implements Serializable {
          * can set ipd and bpd appropriately based on the writing mode.
          */
 
-        if (writingMode == Constants.WritingMode.LR_TB || writingMode == Constants.WritingMode.RL_TB) {
+        if (writingMode == Constants.EN_LR_TB || writingMode == Constants.EN_RL_TB) {
             reldims.ipd = width;
             reldims.bpd = height;
         } else {

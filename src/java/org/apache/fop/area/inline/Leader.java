@@ -31,7 +31,7 @@ public class Leader extends InlineArea {
     // if space replaced with a space
     // otherwise this is a holder for a line
 
-    private int ruleStyle = Constants.RuleStyle.SOLID;
+    private int ruleStyle = Constants.EN_SOLID;
     private int ruleThickness = 1000;
 
     /**

@@ -960,7 +960,7 @@ public class RTFHandler extends FOEventHandler {
             newGraphic.setURL(eg.getSrc());
             
             //get scaling
-            if (eg.getScaling() == Constants.UNIFORM) {
+            if (eg.getScaling() == Constants.EN_UNIFORM) {
                 newGraphic.setScaling ("uniform");
             }
             

@@ -192,7 +192,7 @@ public class TableCell extends FObj {
      * rectangle from the theoretical grid position.
      */
     private void calcBorders(CommonBorderPaddingBackground bp) {
-        if (this.borderCollapse == BorderCollapse.SEPARATE) {
+        if (this.borderCollapse == EN_SEPARATE) {
             /*
              * Easy case.
              * Cell border is the property specified directly on cell.

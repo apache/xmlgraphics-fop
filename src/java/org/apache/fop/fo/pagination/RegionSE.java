@@ -69,16 +69,16 @@ public abstract class RegionSE extends Region {
     protected void adjustIPD(Rectangle vpRefRect, int wm) {
         int offset = 0;
         RegionBefore before = (RegionBefore) getSiblingRegion(FO_REGION_BEFORE);
-        if (before != null && before.getPrecedence() == TRUE) {
+        if (before != null && before.getPrecedence() == EN_TRUE) {
             offset = before.getExtent().getValue();
             vpRefRect.translate(0, offset);
         }
         RegionAfter after = (RegionAfter) getSiblingRegion(FO_REGION_AFTER);
-        if (after != null && after.getPrecedence() == TRUE) {
+        if (after != null && after.getPrecedence() == EN_TRUE) {
             offset += after.getExtent().getValue();
         }
         if (offset > 0) {
-            if (wm == WritingMode.LR_TB || wm == WritingMode.RL_TB) {
+            if (wm == EN_LR_TB || wm == EN_RL_TB) {
                 vpRefRect.height -= offset;
             } else {
                 vpRefRect.width -= offset;

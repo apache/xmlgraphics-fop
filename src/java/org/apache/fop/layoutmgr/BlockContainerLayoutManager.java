@@ -66,7 +66,7 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager {
      */
     protected void initProperties() {
         abProps = fobj.getCommonAbsolutePosition();
-        if (abProps.absolutePosition == AbsolutePosition.ABSOLUTE) {
+        if (abProps.absolutePosition == EN_ABSOLUTE) {
             Rectangle2D rect = new Rectangle2D.Double(abProps.left.getValue(),
                                 abProps.top.getValue(), abProps.right.getValue() - abProps.left.getValue(),
                                 abProps.bottom.getValue() - abProps.top.getValue());
@@ -85,16 +85,16 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager {
 
     public BreakPoss getNextBreakPoss(LayoutContext context) {
 
-        if (abProps.absolutePosition == AbsolutePosition.ABSOLUTE) {
+        if (abProps.absolutePosition == EN_ABSOLUTE) {
             return getAbsoluteBreakPoss(context);
         }
 
         int ipd = context.getRefIPD();
         int bpd = context.getStackLimit().opt;
-        if (width.getEnum() != AUTO) {
+        if (width.getEnum() != EN_AUTO) {
             ipd = width.getValue();
         }
-        if (height.getEnum() != AUTO) {
+        if (height.getEnum() != EN_AUTO) {
             bpd = height.getValue();
         }
         Rectangle2D rect = new Rectangle2D.Double(0, 0, ipd, bpd);
@@ -111,7 +111,7 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager {
                 relDims.ipd = context.getRefIPD();
             }
             stackLimit = new MinOptMax(relDims.ipd);
-            if (width.getEnum() == AUTO) {
+            if (width.getEnum() == EN_AUTO) {
                 relDims.bpd = context.getStackLimit().opt;
             }
             absoluteCTM = new CTM(vals[0], vals[1], vals[2], vals[3], 0, 0);
@@ -225,9 +225,9 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager {
         breakPoss.setStackingSize(new MinOptMax(0));
 
         if (stackSize.opt > relDims.bpd) {
-            if (fobj.getOverflow() == Overflow.HIDDEN) {
+            if (fobj.getOverflow() == EN_HIDDEN) {
                 clip = true;
-            } else if (fobj.getOverflow() == Overflow.ERROR_IF_OVERFLOW) {
+            } else if (fobj.getOverflow() == EN_ERROR_IF_OVERFLOW) {
                 log.error("contents overflows block-container viewport: clipping");
                 clip = true;
             }
@@ -279,7 +279,7 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager {
             TraitSetter.addBorders(viewportBlockArea, fobj.getCommonBorderPaddingBackground());
             TraitSetter.addBackground(viewportBlockArea, fobj.getCommonBorderPaddingBackground());
             
-            if (abProps.absolutePosition == AbsolutePosition.ABSOLUTE) {
+            if (abProps.absolutePosition == EN_ABSOLUTE) {
                 viewportBlockArea.setXOffset(abProps.left.getValue());
                 viewportBlockArea.setYOffset(abProps.top.getValue());
                 viewportBlockArea.setIPD(abProps.right.getValue() - abProps.left.getValue());
@@ -301,7 +301,7 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager {
                     // need to set bpd to actual size for rotation
                     // and stacking
                     viewportBlockArea.setIPD(relDims.ipd);
-                    if (height.getEnum() != AUTO) {
+                    if (height.getEnum() != EN_AUTO) {
                         viewportBlockArea.setBPD(relDims.bpd);
                         autoHeight = false;
                     }
@@ -309,7 +309,7 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager {
                     viewportBlockArea.setClip(clip);
                 } else {
                     viewportBlockArea.setIPD(relDims.ipd);
-                    if (height.getEnum() != AUTO) {
+                    if (height.getEnum() != EN_AUTO) {
                         viewportBlockArea.setBPD(relDims.bpd);
                         autoHeight = false;
                     }
@@ -318,7 +318,7 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager {
 
             curBlockArea = new Block();
 
-            if (abProps.absolutePosition == AbsolutePosition.ABSOLUTE) {
+            if (abProps.absolutePosition == EN_ABSOLUTE) {
                 viewportBlockArea.setPositioning(Block.ABSOLUTE);
             }
 

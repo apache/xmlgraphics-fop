@@ -103,7 +103,7 @@ public class RepeatablePageMasterAlternatives extends FObj
      * Return the "maximum-repeats" property.
      */
     public int getMaximumRepeats() {
-        if (maximumRepeats.getEnum() == NO_LIMIT) {
+        if (maximumRepeats.getEnum() == EN_NO_LIMIT) {
             return INFINITE;
         } else {
             int mr = maximumRepeats.getNumeric().getValue();

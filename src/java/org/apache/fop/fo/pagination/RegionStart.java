@@ -44,7 +44,7 @@ public class RegionStart extends RegionSE {
         // This is the rectangle relative to the page-reference area in
         // writing-mode relative coordinates
         Rectangle vpRect;
-        if (getWritingMode() == WritingMode.LR_TB || getWritingMode() == WritingMode.RL_TB) {
+        if (getWritingMode() == EN_LR_TB || getWritingMode() == EN_RL_TB) {
             vpRect = new Rectangle(0, 0, getExtent().getValue(), reldims.bpd);
         } else {
             vpRect = new Rectangle(0, 0, reldims.bpd, getExtent().getValue());

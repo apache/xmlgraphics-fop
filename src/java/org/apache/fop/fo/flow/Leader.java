@@ -109,18 +109,18 @@ public class Leader extends FObjMixed {
         leaderPattern = pList.get(PR_LEADER_PATTERN).getEnum();
         leaderPatternWidth = pList.get(PR_LEADER_PATTERN_WIDTH).getLength();
         switch(leaderPattern) {
-        case LeaderPattern.SPACE:
+        case EN_SPACE:
             // use Space
             break;
-        case LeaderPattern.RULE:
+        case EN_RULE:
             // the following properties only apply
             // for leader-pattern = "rule"
             ruleStyle = pList.get(PR_RULE_STYLE).getEnum();
             ruleThickness = pList.get(PR_RULE_THICKNESS).getLength();
             break;
-        case LeaderPattern.DOTS:
+        case EN_DOTS:
             break;
-        case LeaderPattern.USECONTENT:
+        case EN_USECONTENT:
             // use inline layout manager to create inline areas
             // add the inline parent multiple times until leader full
             break;

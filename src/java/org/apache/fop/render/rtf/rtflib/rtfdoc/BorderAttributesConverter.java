@@ -119,7 +119,7 @@ public class BorderAttributesConverter {
     public static void makeBorder(CommonBorderPaddingBackground border, int side,
             RtfAttributes attributes, String controlWord) {
         int styleEnum = border.getBorderStyle(side);
-        if (styleEnum != Constants.NONE) {
+        if (styleEnum != Constants.EN_NONE) {
             FOPRtfAttributes attrs = new FOPRtfAttributes();
             attrs.set(BORDER_COLOR, border.getBorderColor(side));
             attrs.set(convertAttributetoRtf(styleEnum));
@@ -136,21 +136,21 @@ public class BorderAttributesConverter {
    public static String convertAttributetoRtf(int iBorderStyle) {
        // Added by Normand Masse
        // "solid" is interpreted like "thin"
-       if (iBorderStyle == Constants.NONE) {
+       if (iBorderStyle == Constants.EN_NONE) {
            return BorderAttributesConverter.BORDER_NIL;
-       } else if (iBorderStyle == Constants.SOLID) {
+       } else if (iBorderStyle == Constants.EN_SOLID) {
            return BorderAttributesConverter.BORDER_SINGLE_THICKNESS;
-/*        } else if (iBorderStyle==Constants.THIN) {
+/*        } else if (iBorderStyle==Constants.EN_THIN) {
                        return BorderAttributesConverter.BORDER_SINGLE_THICKNESS;
-       } else if (iBorderStyle==Constants.THICK) {
+       } else if (iBorderStyle==Constants.EN_THICK) {
            return BorderAttributesConverter.BORDER_DOUBLE_THICKNESS;
-       } else if (iBorderStyle==Constants. value.equals("shadowed")) {
+       } else if (iBorderStyle==Constants.EN_ value.equals("shadowed")) {
            return BorderAttributesConverter.BORDER_SHADOWED;*/
-       } else if (iBorderStyle == Constants.DOUBLE) {
+       } else if (iBorderStyle == Constants.EN_DOUBLE) {
            return BorderAttributesConverter.BORDER_DOUBLE;
-       } else if (iBorderStyle == Constants.DOTTED) {
+       } else if (iBorderStyle == Constants.EN_DOTTED) {
            return BorderAttributesConverter.BORDER_DOTTED;
-       } else if (iBorderStyle == Constants.DASHED) {
+       } else if (iBorderStyle == Constants.EN_DASHED) {
            return BorderAttributesConverter.BORDER_DASH;
 /*        } else if (iBorderStyle==Constants value.equals("hairline")) {
            return BorderAttributesConverter.BORDER_HAIRLINE;*/

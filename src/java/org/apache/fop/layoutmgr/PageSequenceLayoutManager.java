@@ -372,10 +372,10 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager implements 
     public Marker retrieveMarker(String name, int pos, int boundary) {
         // get marker from the current markers on area tree
         Marker mark = (Marker)curPage.getMarker(name, pos);
-        if (mark == null && boundary != RetrieveBoundary.PAGE) {
+        if (mark == null && boundary != EN_PAGE) {
             // go back over pages until mark found
             // if document boundary then keep going
-            boolean doc = boundary == RetrieveBoundary.DOCUMENT;
+            boolean doc = boundary == EN_DOCUMENT;
             int seq = areaTreeModel.getPageSequenceCount();
             int page = areaTreeModel.getPageCount(seq) - 1;
             while (page >= 0) {
@@ -548,12 +548,12 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager implements 
         if (aclass == Area.CLASS_NORMAL) {
             // todo: how to get properties from the Area???
             // Need span, break
-            int breakVal = Constants.AUTO;
+            int breakVal = Constants.EN_AUTO;
             Integer breakBefore = (Integer)childArea.getTrait(Trait.BREAK_BEFORE);
             if (breakBefore != null) {
                 breakVal = breakBefore.intValue();
             }
-            if (breakVal != Constants.AUTO) {
+            if (breakVal != Constants.EN_AUTO) {
                 // We may be forced to make new page
                 handleBreak(breakVal);
             } else if (curPage == null) {
@@ -561,9 +561,9 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager implements 
             }
             // Now we should be on the right kind of page
             boolean bNeedSpan = false;
-            int span = Constants.NONE; // childArea.getSpan()
+            int span = Constants.EN_NONE; // childArea.getSpan()
             int numCols = 1;
-            if (span == Constants.ALL) {
+            if (span == Constants.EN_ALL) {
                 // Assume the number of columns is stored on the curBody object.
                 //numCols = curBody.getProperty(NUMBER_OF_COLUMNS);
             }
@@ -617,7 +617,7 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager implements 
      * @param breakVal the break value to handle
      */
     private void handleBreak(int breakVal) {
-        if (breakVal == Constants.COLUMN) {
+        if (breakVal == Constants.EN_COLUMN) {
             if (curSpan != null
                     && curSpan.getColumnCount() != curSpanColumns) {
                 // Move to next column
@@ -625,7 +625,7 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager implements 
                 return;
             }
             // else need new page
-            breakVal = Constants.PAGE;
+            breakVal = Constants.EN_PAGE;
         }
         if (needEmptyPage(breakVal)) {
             curPage = makeNewPage(true, false);
@@ -645,7 +645,7 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager implements 
      */
     private boolean needEmptyPage(int breakValue) {
 
-        if (breakValue == Constants.PAGE || curPage.getPage().isEmpty()) {
+        if (breakValue == Constants.EN_PAGE || curPage.getPage().isEmpty()) {
             // any page is OK or we already have an empty page
             return false;
         }
@@ -653,10 +653,10 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager implements 
             /* IF we are on the kind of page we need, we'll need a new page. */
             if (pageCount%2 != 0) {
                 // Current page is odd
-                return (breakValue == Constants.ODD_PAGE);
+                return (breakValue == Constants.EN_ODD_PAGE);
             }
             else {
-                return (breakValue == Constants.EVEN_PAGE);
+                return (breakValue == Constants.EN_EVEN_PAGE);
             }
         }
     }
@@ -666,15 +666,15 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager implements 
      */
     private boolean needNewPage(int breakValue) {
         if (curPage != null && curPage.getPage().isEmpty()) {
-            if (breakValue == Constants.PAGE) {
+            if (breakValue == Constants.EN_PAGE) {
                 return false;
             }
             else if (pageCount%2 != 0) {
                 // Current page is odd
-                return (breakValue == Constants.EVEN_PAGE);
+                return (breakValue == Constants.EN_EVEN_PAGE);
             }
             else {
-                return (breakValue == Constants.ODD_PAGE);
+                return (breakValue == Constants.EN_ODD_PAGE);
             }
         }
         else {
@@ -849,7 +849,7 @@ public class PageSequenceLayoutManager extends AbstractLayoutManager implements 
         BodyRegion body = new BodyRegion();
         setRegionPosition(r, body, absRegVPRect);
         int columnCount = r.getColumnCount();
-        if ((columnCount > 1) && (r.getOverflow() == Overflow.SCROLL)) {
+        if ((columnCount > 1) && (r.getOverflow() == EN_SCROLL)) {
             // recover by setting 'column-count' to 1. This is allowed but
             // not required by the spec.
             log.error("Setting 'column-count' to 1 because "

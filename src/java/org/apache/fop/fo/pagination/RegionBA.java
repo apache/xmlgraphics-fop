@@ -86,7 +86,7 @@ public abstract class RegionBA extends Region {
             offset += end.getExtent().getValue();
         }
         if (offset > 0) {
-            if (wm == WritingMode.LR_TB || wm == WritingMode.RL_TB) {
+            if (wm == EN_LR_TB || wm == EN_RL_TB) {
                 vpRefRect.width -= offset;
             } else {
                 vpRefRect.height -= offset;

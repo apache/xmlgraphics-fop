@@ -44,7 +44,7 @@ public class SpacingPropertyMaker extends SpaceProperty.Maker {
     public Property convertProperty(Property p, 
                                        PropertyList propertyList,
                                        FObj fo) throws PropertyException {
-        if (p.getEnum() == Constants.NORMAL) {
+        if (p.getEnum() == Constants.EN_NORMAL) {
             return p;
         }
         return super.convertProperty(p, propertyList, fo);

@@ -54,12 +54,12 @@ public class RegionBefore extends RegionBA {
         // Before is always 0, start depends on extent
         // ipd depends on precedence, bpd=extent
         Rectangle vpRect;
-        if (getWritingMode() == WritingMode.LR_TB || getWritingMode() == WritingMode.RL_TB) {
+        if (getWritingMode() == EN_LR_TB || getWritingMode() == EN_RL_TB) {
             vpRect = new Rectangle(0, 0, reldims.ipd, getExtent().getValue());
         } else {
             vpRect = new Rectangle(0, 0, getExtent().getValue(), reldims.ipd);
         }
-        if (getPrecedence() == FALSE) {
+        if (getPrecedence() == EN_FALSE) {
             adjustIPD(vpRect, getWritingMode());
         }
         return vpRect;

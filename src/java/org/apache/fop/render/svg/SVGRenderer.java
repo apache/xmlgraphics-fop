@@ -360,19 +360,19 @@ public class SVGRenderer extends AbstractRenderer implements XMLHandler {
         String style = "stroke:black;stroke-width:"
                        + (area.getRuleThickness() / 1000) + ";";
         switch (area.getRuleStyle()) {
-            case RuleStyle.DOTTED:
+            case EN_DOTTED:
                 style += "stroke-dasharray:1,1";
                 break;
-            case RuleStyle.DASHED:
+            case EN_DASHED:
                 style += "stroke-dasharray:5,1";
                 break;
-            case RuleStyle.SOLID:
+            case EN_SOLID:
                 break;
-            case RuleStyle.DOUBLE:
+            case EN_DOUBLE:
                 break;
-            case RuleStyle.GROOVE:
+            case EN_GROOVE:
                 break;
-            case RuleStyle.RIDGE:
+            case EN_RIDGE:
                 break;
         }
         Element line = SVGUtilities.createLine(svgDocument,

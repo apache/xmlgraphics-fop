@@ -231,9 +231,9 @@ abstract public class PropertyList {
      */
     public int getWritingMode(int lrtb, int rltb, int tbrl) {
         switch (writingMode) {
-            case Constants.WritingMode.LR_TB: return lrtb;
-            case Constants.WritingMode.RL_TB: return rltb;
-            case Constants.WritingMode.TB_RL: return tbrl;
+            case Constants.EN_LR_TB: return lrtb;
+            case Constants.EN_RL_TB: return rltb;
+            case Constants.EN_TB_RL: return tbrl;
         }
         return -1;
     }

@@ -346,28 +346,28 @@ public class Block extends FObjMixed {
                         boolean bIgnore = false;
 
                         switch (whiteSpaceTreatment) {
-                            case Constants.IGNORE:
+                            case Constants.EN_IGNORE:
                                 bIgnore = true;
                                 break;
-                            case Constants.IGNORE_IF_BEFORE_LINEFEED:
+                            case Constants.EN_IGNORE_IF_BEFORE_LINEFEED:
                                 bIgnore = lfCheck.nextIsLF();
                                 break;
-                            case Constants.IGNORE_IF_SURROUNDING_LINEFEED:
+                            case Constants.EN_IGNORE_IF_SURROUNDING_LINEFEED:
                                 bIgnore = (bPrevWasLF
                                            || lfCheck.nextIsLF());
                                 break;
-                            case Constants.IGNORE_IF_AFTER_LINEFEED:
+                            case Constants.EN_IGNORE_IF_AFTER_LINEFEED:
                                 bIgnore = bPrevWasLF;
                                 break;
-                            case Constants.PRESERVE:
+                            case Constants.EN_PRESERVE:
                                 // nothing to do now, replacement takes place later
                                 break;
                         }
                         // Handle ignore and replacement
                         if (bIgnore) {
                             charIter.remove();
-                        } else if (whiteSpaceCollapse == TRUE) {
-                            if (bInWS || (linefeedTreatment == Constants.PRESERVE
+                        } else if (whiteSpaceCollapse == EN_TRUE) {
+                            if (bInWS || (linefeedTreatment == Constants.EN_PRESERVE
                                         && (bPrevWasLF || lfCheck.nextIsLF()))) {
                                 charIter.remove();
                             } else {
@@ -397,15 +397,15 @@ public class Block extends FObjMixed {
                         bPrevWasLF = true; // for following whitespace
 
                         switch (linefeedTreatment) {
-                            case Constants.IGNORE:
+                            case Constants.EN_IGNORE:
                                 charIter.remove();
                                 break;
-                            case Constants.TREAT_AS_SPACE:
+                            case Constants.EN_TREAT_AS_SPACE:
                                 if (bInWS) {
                                     // only if bWScollapse=true
                                     charIter.remove();
                                 } else {
-                                    if (whiteSpaceCollapse == TRUE) {
+                                    if (whiteSpaceCollapse == EN_TRUE) {
                                         bInWS = true;
                                         // remove the linefeed if no word in block 
                                         // encountered yet
@@ -416,10 +416,10 @@ public class Block extends FObjMixed {
                                     charIter.replaceChar('\u0020');
                                 }
                                 break;
-                            case Constants.TREAT_AS_ZERO_WIDTH_SPACE:
+                            case Constants.EN_TREAT_AS_ZERO_WIDTH_SPACE:
                                 charIter.replaceChar('\u200b');
                                 // Fall through: this isn't XML whitespace
-                            case Constants.PRESERVE:
+                            case Constants.EN_PRESERVE:
                                 bInWS = false;
                                 break;
                         }

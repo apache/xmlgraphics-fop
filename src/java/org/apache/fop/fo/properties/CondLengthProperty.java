@@ -111,7 +111,7 @@ public class CondLengthProperty extends Property implements CompoundDatatype {
      * @return true if the length can be discarded.
      */
     public boolean isDiscard() {
-        return this.conditionality.getEnum() == Constants.DISCARD;
+        return this.conditionality.getEnum() == Constants.EN_DISCARD;
     }
 
     /**

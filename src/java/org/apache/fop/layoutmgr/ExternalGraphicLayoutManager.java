@@ -74,20 +74,20 @@ public class ExternalGraphicLayoutManager extends LeafNodeLayoutManager {
 
         // assume lr-tb for now and just use the .optimum value of the range
         Length ipd = fobj.getInlineProgressionDimension().getOptimum().getLength();
-        if (ipd.getEnum() != AUTO) {
+        if (ipd.getEnum() != EN_AUTO) {
             viewWidth = ipd.getValue();
         } else {
             ipd = fobj.getWidth();
-            if (ipd.getEnum() != AUTO) {
+            if (ipd.getEnum() != EN_AUTO) {
                 viewWidth = ipd.getValue();
             }
         }
         Length bpd = fobj.getBlockProgressionDimension().getOptimum().getLength();
-        if (bpd.getEnum() != AUTO) {
+        if (bpd.getEnum() != EN_AUTO) {
             viewHeight = bpd.getValue();
         } else {
             bpd = fobj.getHeight();
-            if (bpd.getEnum() != AUTO) {
+            if (bpd.getEnum() != EN_AUTO) {
                 viewHeight = bpd.getValue();
             }
         }
@@ -98,8 +98,8 @@ public class ExternalGraphicLayoutManager extends LeafNodeLayoutManager {
         int cwidth = -1;
         int cheight = -1;
         Length ch = fobj.getContentHeight();
-        if (ch.getEnum() != AUTO) {
-            if (ch.getEnum() == SCALE_TO_FIT) {
+        if (ch.getEnum() != EN_AUTO) {
+            if (ch.getEnum() == EN_SCALE_TO_FIT) {
                 if (viewHeight != -1) {
                     cheight = viewHeight;
                 }
@@ -108,8 +108,8 @@ public class ExternalGraphicLayoutManager extends LeafNodeLayoutManager {
             }
         }
         Length cw = fobj.getContentWidth();
-        if (cw.getEnum() != AUTO) {
-            if (cw.getEnum() == SCALE_TO_FIT) {
+        if (cw.getEnum() != EN_AUTO) {
+            if (cw.getEnum() == EN_SCALE_TO_FIT) {
                 if (viewWidth != -1) {
                     cwidth = viewWidth;
                 }
@@ -119,7 +119,7 @@ public class ExternalGraphicLayoutManager extends LeafNodeLayoutManager {
         }
 
         int scaling = fobj.getScaling();
-        if ((scaling == Scaling.UNIFORM) || (cwidth == -1) || cheight == -1) {
+        if ((scaling == EN_UNIFORM) || (cwidth == -1) || cheight == -1) {
             ImageFactory fact = ImageFactory.getInstance();
             fopimage = fact.getImage(url, fobj.getUserAgent());
             if (fopimage == null) {
@@ -162,9 +162,9 @@ public class ExternalGraphicLayoutManager extends LeafNodeLayoutManager {
 
         if (cwidth > viewWidth || cheight > viewHeight) {
             int overflow = fobj.getOverflow();
-            if (overflow == Overflow.HIDDEN) {
+            if (overflow == EN_HIDDEN) {
                 clip = true;
-            } else if (overflow == Overflow.ERROR_IF_OVERFLOW) {
+            } else if (overflow == EN_ERROR_IF_OVERFLOW) {
                 fobj.getLogger().error("Image: " + url
                                   + " overflows the viewport, clipping to viewport");
                 clip = true;
@@ -174,29 +174,29 @@ public class ExternalGraphicLayoutManager extends LeafNodeLayoutManager {
         int xoffset = 0;
         int yoffset = 0;
         switch(fobj.getDisplayAlign()) {
-            case DisplayAlign.BEFORE:
+            case EN_BEFORE:
             break;
-            case DisplayAlign.AFTER:
+            case EN_AFTER:
                 yoffset = viewHeight - cheight;
             break;
-            case DisplayAlign.CENTER:
+            case EN_CENTER:
                 yoffset = (viewHeight - cheight) / 2;
             break;
-            case DisplayAlign.AUTO:
+            case EN_AUTO:
             default:
             break;
         }
 
         switch(fobj.getTextAlign()) {
-            case TextAlign.CENTER:
+            case EN_CENTER:
                 xoffset = (viewWidth - cwidth) / 2;
             break;
-            case TextAlign.END:
+            case EN_END:
                 xoffset = viewWidth - cwidth;
             break;
-            case TextAlign.START:
+            case EN_START:
             break;
-            case TextAlign.JUSTIFY:
+            case EN_JUSTIFY:
             default:
             break;
         }

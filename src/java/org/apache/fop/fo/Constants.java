@@ -388,504 +388,166 @@ public interface Constants {
     int CP_WITHIN_PAGE = 11 << COMPOUND_SHIFT;
 
     // Enumeration constants
-
-    int ABSOLUTE = 1;
-    int ABSOLUTE_COLORMETRIC = 2;
-    int AFTER = 3;
-    int ALL = 4;
-    int ALPHABETIC = 5;
-    int ALWAYS = 6;
-    int ANY = 7;
-    int AUTO = 8;
-    int BASELINE = 9;
-    int BEFORE = 10;
-    int BLANK = 11;
-    int BLINK = 12;
-    int BOTTOM = 13;
-    int CAPITALIZE = 14;
-    int CENTER = 15;
-    int COLLAPSE = 16;
-    int COLUMN = 17;
-    int DASHED = 18;
-    int DISCARD = 19;
-    int DOCUMENT = 20;
-    int DOTS = 21;
-    int DOTTED = 22;
-    int DOUBLE = 23;
-    int END = 24;
-    int END_ON_EVEN = 25;
-    int END_ON_ODD = 26;
-    int ERROR_IF_OVERFLOW = 27;
-    int EVEN = 28;
-    int EVEN_PAGE = 29;
-    int FALSE = 30;
-    int FIC = 31;
-    int FIRST = 32;
-    int FIXED = 33;
-    int FORCE = 34;
-    int FSWP = 35;
-    int GROOVE = 36;
-    int HIDDEN = 37;
-    int IGNORE = 38;
-    int IGNORE_IF_AFTER_LINEFEED = 39;
-    int IGNORE_IF_BEFORE_LINEFEED = 40;
-    int IGNORE_IF_SURROUNDING_LINEFEED = 41;
-    int INSET = 42;
-    int JUSTIFY = 43;
-    int LAST = 44;
-    int LEFT = 45;
-    int LEWP = 46;
-    int LINE_THROUGH = 47;
-    int LOWERCASE = 48;
-    int LR_TB = 49;
-    int LSWP = 50;
-    int MIDDLE = 51;
-    int NO_BLINK = 52;
-    int NO_FORCE = 53;
-    int NO_LINE_THROUGH = 54;
-    int NO_OVERLINE = 55;
-    int NO_UNDERLINE = 56;
-    int NO_WRAP = 57;
-    int NON_UNIFORM = 58;
-    int NONE = 59;
-    int NOREPEAT = 60;
-    int NORMAL = 61;
-    int NOT_BLANK = 62;
-    int ODD = 63;
-    int ODD_PAGE = 64;
-    int OUTSET = 65;
-    int OVERLINE = 66;
-    int PAGE = 67;
-    int PAGE_SEQUENCE = 68;
-    int PERCEPTUAL = 69;
-    int PRESERVE = 70;
-    int REFERENCE_AREA = 71;
-    int RELATIVE = 72;
-    int RELATIVE_COLOMETRIC = 73;
-    int REPEAT = 74;
-    int REPEATX = 75;
-    int REPEATY = 76;
-    int REST = 77;
-    int RETAIN = 78;
-    int RIDGE = 79;
-    int RIGHT = 80;
-    int RL_TB = 81;
-    int RULE = 82;
-    int SATURATION = 83;
-    int SCROLL = 84;
-    int SEPARATE = 85;
-    int SMALL_CAPS = 86;
-    int SOLID = 87;
-    int SPACE = 88;
-    int START = 89;
-    int STATIC = 90;
-    int SUB = 91;
-    int SUPER = 92;
-    int TB_RL = 93;
-    int TEXT_BOTTOM = 94;
-    int TEXT_TOP = 95;
-    int TOP = 96;
-    int TRADITIONAL = 97;
-    int TREAT_AS_SPACE = 98;
-    int TREAT_AS_ZERO_WIDTH_SPACE = 99;
-    int TRUE = 100;
-    int UNDERLINE = 101;
-    int UNIFORM = 102;
-    int UPPERCASE = 103;
-    int USECONTENT = 104;
-    int VISIBLE = 105;
-    int WRAP = 106;
-    int FONT_HEIGHT = 107;
-    int LINE_HEIGHT = 108;
-    int MAX_HEIGHT = 109;
-    int NO_LIMIT = 110;
-    int AUTO_ODD = 111;
-    int AUTO_EVEN = 112;
-    int BEFORE_EDGE = 113;
-    int TEXT_BEFORE_EDGE = 114;
-    int CENTRAL = 115;
-    int AFTER_EDGE = 116;
-    int TEXT_AFTER_EDGE = 117;
-    int IDEOGRAPHIC = 118;
-    int HANGING = 119;
-    int MATHEMATICAL = 120;
-    int SCALE_TO_FIT = 121;
-    int USE_FONT_METRICS = 122;
-    int INDEFINITE = 123;
-    int LARGER = 124;
-    int SMALLER = 125;
-    int INSIDE = 126;
-    int OUTSIDE = 127;
-    int CONSIDER_SHIFTS = 128;
-    int DISREGARD_SHIFTS = 129;
-    int INTEGER_PIXELS = 130;
-    int RESAMPLE_ANY_METHOD = 131;
-    int USE_SCRIPT = 132;
-    int NO_CHANGE = 133;
-    int RESET_SIZE = 134;    
-    int WIDER = 135;
-    int NARROWER = 136;
-    int ULTRA_CONDENSED = 137;
-    int EXTRA_CONDENSED = 138;
-    int CONDENSED = 139;
-    int SEMI_CONDENSED = 140;
-    int SEMI_EXPANDED = 141;
-    int EXPANDED = 142;
-    int EXTRA_EXPANDED = 143;
-    int ULTRA_EXPANDED = 144;        
-    int LINE = 145;
-    int INDENT = 146;
-    int BLOCK = 147;
-    int BOTH = 148;
-    int COLLAPSE_WITH_PRECEDENCE = 149;
-    int SHOW = 150;
-    int HIDE = 151;
-    int EMBED = 152;
-    int BIDI_OVERRIDE = 153;
-    int LTR = 154;
-    int RTL = 155;
-    int CHARACTER_BY_CHARACTER = 156;
-    int SUPPRESS = 157;
-    int PAGINATE = 158;
-    int BOUNDED_IN_ONE_DIMENSION = 159;
-    int UNBOUNDED = 160;
-    int ENUM_COUNT = 160;
-
-   // Enumeration Interfaces
-   
-    public interface GenericBooleanInterface {
-        int TRUE =  Constants.TRUE;
-        int FALSE =  Constants.FALSE;
-    }
-     
-    public interface GenericBorderStyleInterface {
-        int NONE =  Constants.NONE;
-        int HIDDEN =  Constants.HIDDEN;
-        int DOTTED =  Constants.DOTTED;
-        int DASHED =  Constants.DASHED;
-        int SOLID =  Constants.SOLID;
-        int DOUBLE =  Constants.DOUBLE;
-        int GROOVE =  Constants.GROOVE;
-        int RIDGE =  Constants.RIDGE;
-        int INSET =  Constants.INSET;
-        int OUTSET =  Constants.OUTSET;
-    }
-    
-    public interface GenericBreakInterface {
-        int AUTO =  Constants.AUTO;
-        int COLUMN =  Constants.COLUMN;
-        int PAGE =  Constants.PAGE;
-        int EVEN_PAGE =  Constants.EVEN_PAGE;
-        int ODD_PAGE =  Constants.ODD_PAGE;
-    }
-    
-    public interface GenericCondBorderWidthInterface {
-        public interface Conditionality {
-            int DISCARD = Constants.DISCARD;
-            int RETAIN = Constants.RETAIN;
-        }
-    }
-    
-    public interface GenericCondPaddingInterface {
-        public interface Conditionality {
-            int DISCARD = Constants.DISCARD;
-            int RETAIN = Constants.RETAIN;
-        }
-    }
-        
-    public interface GenericKeepInterface {
-        public interface WithinPage {
-            int AUTO = Constants.AUTO;
-            int ALWAYS = Constants.ALWAYS;
-        }
-        public interface WithinLine {
-            int AUTO = Constants.AUTO;
-            int ALWAYS = Constants.ALWAYS;
-        }
-        public interface WithinColumn {
-            int AUTO = Constants.AUTO;
-            int ALWAYS = Constants.ALWAYS;
-        }
-    }
-    
-    public interface GenericSpaceInterface {
-        public interface Precedence {
-            int FORCE = Constants.FORCE;
-        }
-        public interface Conditionality {
-            int DISCARD = Constants.DISCARD;
-            int RETAIN = Constants.RETAIN;
-        }
-    }
-   
-
-    public interface AbsolutePosition {
-        int AUTO = Constants.AUTO;
-        int FIXED = Constants.FIXED;
-        int ABSOLUTE = Constants.ABSOLUTE; }
-
-    public interface BackgroundRepeat {
-        int REPEAT = Constants.REPEAT;
-        int REPEATX = Constants.REPEATX;
-        int REPEATY = Constants.REPEATY;
-        int NOREPEAT = Constants.NOREPEAT; }
-
-    public interface BaselineShift {
-        int BASELINE = Constants.BASELINE;
-        int SUB = Constants.SUB;
-        int SUPER = Constants.SUPER; }
-
-    public interface BlankOrNotBlank {
-        int BLANK = Constants.BLANK;
-        int NOT_BLANK = Constants.NOT_BLANK;
-        int ANY = Constants.ANY; }
-
-    public interface BorderAfterStyle extends GenericBorderStyleInterface { }
-
-    public interface BorderAfterWidth extends GenericCondBorderWidthInterface { }
-
-    public interface BorderBeforeStyle extends GenericBorderStyleInterface { }
-
-    public interface BorderBeforeWidth extends GenericCondBorderWidthInterface { }
-
-    public interface BorderBottomStyle extends GenericBorderStyleInterface { }
-
-    public interface BorderCollapse {
-        int SEPARATE = Constants.SEPARATE;
-        int COLLAPSE = Constants.COLLAPSE; }
-
-    public interface BorderEndStyle extends GenericBorderStyleInterface { }
-
-    public interface BorderEndWidth extends GenericCondBorderWidthInterface { }
-
-    public interface BorderLeftStyle extends GenericBorderStyleInterface { }
-
-    public interface BorderRightStyle extends GenericBorderStyleInterface { }
-
-    public interface BorderStartStyle extends GenericBorderStyleInterface { }
-
-    public interface BorderStartWidth extends GenericCondBorderWidthInterface { }
-
-    public interface BorderTopStyle extends GenericBorderStyleInterface { }
-
-    public interface BreakAfter extends GenericBreakInterface { }
-
-    public interface BreakBefore extends GenericBreakInterface { }
-
-    public interface CaptionSide {
-        int BEFORE = Constants.BEFORE;
-        int AFTER = Constants.AFTER;
-        int START = Constants.START;
-        int END = Constants.END;
-        int TOP = Constants.TOP;
-        int BOTTOM = Constants.BOTTOM;
-        int LEFT = Constants.LEFT;
-        int RIGHT = Constants.RIGHT; }
-
-    public interface DisplayAlign {
-        int BEFORE = Constants.BEFORE;
-        int AFTER = Constants.AFTER;
-        int CENTER = Constants.CENTER;
-        int AUTO = Constants.AUTO; }
-
-    public interface FontVariant {
-        int NORMAL = Constants.NORMAL;
-        int SMALL_CAPS = Constants.SMALL_CAPS; }
-
-    public interface ForcePageCount {
-        int EVEN = Constants.EVEN;
-        int ODD = Constants.ODD;
-        int END_ON_EVEN = Constants.END_ON_EVEN;
-        int END_ON_ODD = Constants.END_ON_ODD;
-        int NO_FORCE = Constants.NO_FORCE;
-        int AUTO = Constants.AUTO; }
-
-    public interface Hyphenate {
-        int TRUE = Constants.TRUE;
-        int FALSE = Constants.FALSE; }
-
-    public interface KeepTogether extends GenericKeepInterface { }
-
-    public interface KeepWithNext extends GenericKeepInterface { }
-
-    public interface KeepWithPrevious extends GenericKeepInterface { }
-
-    public interface LeaderAlignment {
-        int NONE = Constants.NONE;
-        int REFERENCE_AREA = Constants.REFERENCE_AREA;
-        int PAGE = Constants.PAGE; }
-
-    public interface LeaderPattern {
-        int SPACE = Constants.SPACE;
-        int RULE = Constants.RULE;
-        int DOTS = Constants.DOTS;
-        int USECONTENT = Constants.USECONTENT; }
-
-    public interface LetterValue {
-        int ALPHABETIC = Constants.ALPHABETIC;
-        int TRADITIONAL = Constants.TRADITIONAL;
-        int AUTO = Constants.AUTO; }
-
-    public interface LinefeedTreatment {
-        int IGNORE = Constants.IGNORE;
-        int PRESERVE = Constants.PRESERVE;
-        int TREAT_AS_SPACE = Constants.TREAT_AS_SPACE;
-        int TREAT_AS_ZERO_WIDTH_SPACE = Constants.TREAT_AS_ZERO_WIDTH_SPACE; }
-
-    public interface LineStackingStrategy {
-        int LINE_HEIGHT = Constants.LINE_HEIGHT;
-        int FONT_HEIGHT = Constants.FONT_HEIGHT;
-        int MAX_HEIGHT = Constants.MAX_HEIGHT;
-    }
-
-    public interface OddOrEven {
-        int ODD = Constants.ODD;
-        int EVEN = Constants.EVEN;
-        int ANY = Constants.ANY; }
-
-    public interface Overflow {
-        int VISIBLE = Constants.VISIBLE;
-        int HIDDEN = Constants.HIDDEN;
-        int SCROLL = Constants.SCROLL;
-        int ERROR_IF_OVERFLOW = Constants.ERROR_IF_OVERFLOW;
-        int AUTO = Constants.AUTO; }
-
-    public interface PaddingAfter extends GenericCondPaddingInterface { }
-
-    public interface PaddingBefore extends GenericCondPaddingInterface { }
-
-    public interface PaddingEnd extends GenericCondPaddingInterface { }
-
-    public interface PaddingStart extends GenericCondPaddingInterface { }
-
-    public interface PagePosition {
-        int FIRST = Constants.FIRST;
-        int LAST = Constants.LAST;
-        int REST = Constants.REST;
-        int ANY = Constants.ANY; }
-
-/*    public interface Position {   conflicts with layoutmgr.Position
-        int STATIC = Constants.STATIC;
-        int RELATIVE = Constants.RELATIVE;
-        int ABSOLUTE = Constants.ABSOLUTE;
-        int FIXED = Constants.FIXED; }  */
-
-    public interface Precedence {
-        int TRUE = Constants.TRUE;
-        int FALSE = Constants.FALSE; }
-
-    public interface RelativeAlign {
-        int BEFORE = Constants.BEFORE;
-        int BASELINE = Constants.BASELINE; }
-
-    public interface RenderingIntent {
-        int AUTO = Constants.AUTO;
-        int PERCEPTUAL = Constants.PERCEPTUAL;
-        int RELATIVE_COLOMETRIC = Constants.RELATIVE_COLOMETRIC;
-        int SATURATION = Constants.SATURATION;
-        int ABSOLUTE_COLORMETRIC = Constants.ABSOLUTE_COLORMETRIC; }
-
-    public interface RetrieveBoundary {
-        int PAGE = Constants.PAGE;
-        int PAGE_SEQUENCE = Constants.PAGE_SEQUENCE;
-        int DOCUMENT = Constants.DOCUMENT; }
-
-    public interface RetrievePosition {
-        int FSWP = Constants.FSWP;
-        int FIC = Constants.FIC;
-        int LSWP = Constants.LSWP;
-        int LEWP = Constants.LEWP; }
-
-    public interface RuleStyle {
-        int NONE = Constants.NONE;
-        int DOTTED = Constants.DOTTED;
-        int DASHED = Constants.DASHED;
-        int SOLID = Constants.SOLID;
-        int DOUBLE = Constants.DOUBLE;
-        int GROOVE = Constants.GROOVE;
-        int RIDGE = Constants.RIDGE; }
-
-    public interface Scaling {
-        int UNIFORM = Constants.UNIFORM;
-        int NON_UNIFORM = Constants.NON_UNIFORM; }
-
-    public interface SpaceAfter extends GenericSpaceInterface { }
-
-    public interface SpaceBefore extends GenericSpaceInterface { }
-
-    public interface SpaceEnd extends GenericSpaceInterface { }
-
-    public interface SpaceStart extends GenericSpaceInterface { }
-
-/*    public interface Span {   conflicts with Area.Span 
-        int NONE = Constants.NONE;
-        int ALL = Constants.ALL; }  */
-
-    public interface TableLayout {
-        int AUTO = Constants.AUTO;
-        int FIXED = Constants.FIXED; }
-
-    public interface TableOmitFooterAtBreak extends GenericBooleanInterface { }
-
-    public interface TableOmitHeaderAtBreak extends GenericBooleanInterface { }
-
-    public interface TextAlign {
-        int CENTER = Constants.CENTER;
-        int END = Constants.END;
-        int START = Constants.START;
-        int JUSTIFY = Constants.JUSTIFY; }
-
-    public interface TextAlignLast {
-        int CENTER = Constants.CENTER;
-        int END = Constants.END;
-        int START = Constants.START;
-        int JUSTIFY = Constants.JUSTIFY; }
-
-    public interface TextDecoration {
-        int NONE = Constants.NONE;
-        int UNDERLINE = Constants.UNDERLINE;
-        int OVERLINE = Constants.OVERLINE;
-        int LINE_THROUGH = Constants.LINE_THROUGH;
-        int BLINK = Constants.BLINK;
-        int NO_UNDERLINE = Constants.NO_UNDERLINE;
-        int NO_OVERLINE = Constants.NO_OVERLINE;
-        int NO_LINE_THROUGH = Constants.NO_LINE_THROUGH;
-        int NO_BLINK = Constants.NO_BLINK; }
-
-    public interface TextTransform {
-        int NONE = Constants.NONE;
-        int CAPITALIZE = Constants.CAPITALIZE;
-        int UPPERCASE = Constants.UPPERCASE;
-        int LOWERCASE = Constants.LOWERCASE; }
-
-    public interface VerticalAlign {
-        int BASELINE = Constants.BASELINE;
-        int MIDDLE = Constants.MIDDLE;
-        int SUB = Constants.SUB;
-        int SUPER = Constants.SUPER;
-        int TEXT_TOP = Constants.TEXT_TOP;
-        int TEXT_BOTTOM = Constants.TEXT_BOTTOM;
-        int TOP = Constants.TOP;
-        int BOTTOM = Constants.BOTTOM; }
-
-    public interface WhiteSpaceCollapse extends GenericBooleanInterface { }
-
-    public interface WhiteSpaceTreatment {
-        int IGNORE = Constants.IGNORE;
-        int PRESERVE = Constants.PRESERVE;
-        int IGNORE_IF_BEFORE_LINEFEED = Constants.IGNORE_IF_BEFORE_LINEFEED;
-        int IGNORE_IF_AFTER_LINEFEED = Constants.IGNORE_IF_AFTER_LINEFEED;
-        int IGNORE_IF_SURROUNDING_LINEFEED = Constants.IGNORE_IF_SURROUNDING_LINEFEED; }
-
-    public interface WordSpacing extends GenericSpaceInterface { }
-
-    public interface WrapOption {
-        int WRAP = Constants.WRAP;
-        int NO_WRAP = Constants.NO_WRAP; }
-
-    public interface WritingMode {
-        int LR_TB = Constants.LR_TB;
-        int RL_TB = Constants.RL_TB;
-        int TB_RL = Constants.TB_RL; }
-
+    int EN_ABSOLUTE = 1;
+    int EN_ABSOLUTE_COLORMETRIC = 2;
+    int EN_AFTER = 3;
+    int EN_ALL = 4;
+    int EN_ALPHABETIC = 5;
+    int EN_ALWAYS = 6;
+    int EN_ANY = 7;
+    int EN_AUTO = 8;
+    int EN_BASELINE = 9;
+    int EN_BEFORE = 10;
+    int EN_BLANK = 11;
+    int EN_BLINK = 12;
+    int EN_BOTTOM = 13;
+    int EN_CAPITALIZE = 14;
+    int EN_CENTER = 15;
+    int EN_COLLAPSE = 16;
+    int EN_COLUMN = 17;
+    int EN_DASHED = 18;
+    int EN_DISCARD = 19;
+    int EN_DOCUMENT = 20;
+    int EN_DOTS = 21;
+    int EN_DOTTED = 22;
+    int EN_DOUBLE = 23;
+    int EN_END = 24;
+    int EN_END_ON_EVEN = 25;
+    int EN_END_ON_ODD = 26;
+    int EN_ERROR_IF_OVERFLOW = 27;
+    int EN_EVEN = 28;
+    int EN_EVEN_PAGE = 29;
+    int EN_FALSE = 30;
+    int EN_FIC = 31;
+    int EN_FIRST = 32;
+    int EN_FIXED = 33;
+    int EN_FORCE = 34;
+    int EN_FSWP = 35;
+    int EN_GROOVE = 36;
+    int EN_HIDDEN = 37;
+    int EN_IGNORE = 38;
+    int EN_IGNORE_IF_AFTER_LINEFEED = 39;
+    int EN_IGNORE_IF_BEFORE_LINEFEED = 40;
+    int EN_IGNORE_IF_SURROUNDING_LINEFEED = 41;
+    int EN_INSET = 42;
+    int EN_JUSTIFY = 43;
+    int EN_LAST = 44;
+    int EN_LEFT = 45;
+    int EN_LEWP = 46;
+    int EN_LINE_THROUGH = 47;
+    int EN_LOWERCASE = 48;
+    int EN_LR_TB = 49;
+    int EN_LSWP = 50;
+    int EN_MIDDLE = 51;
+    int EN_NO_BLINK = 52;
+    int EN_NO_FORCE = 53;
+    int EN_NO_LINE_THROUGH = 54;
+    int EN_NO_OVERLINE = 55;
+    int EN_NO_UNDERLINE = 56;
+    int EN_NO_WRAP = 57;
+    int EN_NON_UNIFORM = 58;
+    int EN_NONE = 59;
+    int EN_NOREPEAT = 60;
+    int EN_NORMAL = 61;
+    int EN_NOT_BLANK = 62;
+    int EN_ODD = 63;
+    int EN_ODD_PAGE = 64;
+    int EN_OUTSET = 65;
+    int EN_OVERLINE = 66;
+    int EN_PAGE = 67;
+    int EN_PAGE_SEQUENCE = 68;
+    int EN_PERCEPTUAL = 69;
+    int EN_PRESERVE = 70;
+    int EN_REFERENCE_AREA = 71;
+    int EN_RELATIVE = 72;
+    int EN_RELATIVE_COLOMETRIC = 73;
+    int EN_REPEAT = 74;
+    int EN_REPEATX = 75;
+    int EN_REPEATY = 76;
+    int EN_REST = 77;
+    int EN_RETAIN = 78;
+    int EN_RIDGE = 79;
+    int EN_RIGHT = 80;
+    int EN_RL_TB = 81;
+    int EN_RULE = 82;
+    int EN_SATURATION = 83;
+    int EN_SCROLL = 84;
+    int EN_SEPARATE = 85;
+    int EN_SMALL_CAPS = 86;
+    int EN_SOLID = 87;
+    int EN_SPACE = 88;
+    int EN_START = 89;
+    int EN_STATIC = 90;
+    int EN_SUB = 91;
+    int EN_SUPER = 92;
+    int EN_TB_RL = 93;
+    int EN_TEXT_BOTTOM = 94;
+    int EN_TEXT_TOP = 95;
+    int EN_TOP = 96;
+    int EN_TRADITIONAL = 97;
+    int EN_TREAT_AS_SPACE = 98;
+    int EN_TREAT_AS_ZERO_WIDTH_SPACE = 99;
+    int EN_TRUE = 100;
+    int EN_UNDERLINE = 101;
+    int EN_UNIFORM = 102;
+    int EN_UPPERCASE = 103;
+    int EN_USECONTENT = 104;
+    int EN_VISIBLE = 105;
+    int EN_WRAP = 106;
+    int EN_FONT_HEIGHT = 107;
+    int EN_LINE_HEIGHT = 108;
+    int EN_MAX_HEIGHT = 109;
+    int EN_NO_LIMIT = 110;
+    int EN_AUTO_ODD = 111;
+    int EN_AUTO_EVEN = 112;
+    int EN_BEFORE_EDGE = 113;
+    int EN_TEXT_BEFORE_EDGE = 114;
+    int EN_CENTRAL = 115;
+    int EN_AFTER_EDGE = 116;
+    int EN_TEXT_AFTER_EDGE = 117;
+    int EN_IDEOGRAPHIC = 118;
+    int EN_HANGING = 119;
+    int EN_MATHEMATICAL = 120;
+    int EN_SCALE_TO_FIT = 121;
+    int EN_USE_FONT_METRICS = 122;
+    int EN_INDEFINITE = 123;
+    int EN_LARGER = 124;
+    int EN_SMALLER = 125;
+    int EN_INSIDE = 126;
+    int EN_OUTSIDE = 127;
+    int EN_CONSIDER_SHIFTS = 128;
+    int EN_DISREGARD_SHIFTS = 129;
+    int EN_INTEGER_PIXELS = 130;
+    int EN_RESAMPLE_ANY_METHOD = 131;
+    int EN_USE_SCRIPT = 132;
+    int EN_NO_CHANGE = 133;
+    int EN_RESET_SIZE = 134;    
+    int EN_WIDER = 135;
+    int EN_NARROWER = 136;
+    int EN_ULTRA_CONDENSED = 137;
+    int EN_EXTRA_CONDENSED = 138;
+    int EN_CONDENSED = 139;
+    int EN_SEMI_CONDENSED = 140;
+    int EN_SEMI_EXPANDED = 141;
+    int EN_EXPANDED = 142;
+    int EN_EXTRA_EXPANDED = 143;
+    int EN_ULTRA_EXPANDED = 144;        
+    int EN_LINE = 145;
+    int EN_INDENT = 146;
+    int EN_BLOCK = 147;
+    int EN_BOTH = 148;
+    int EN_COLLAPSE_WITH_PRECEDENCE = 149;
+    int EN_SHOW = 150;
+    int EN_HIDE = 151;
+    int EN_EMBED = 152;
+    int EN_BIDI_OVERRIDE = 153;
+    int EN_LTR = 154;
+    int EN_RTL = 155;
+    int EN_CHARACTER_BY_CHARACTER = 156;
+    int EN_SUPPRESS = 157;
+    int EN_PAGINATE = 158;
+    int EN_BOUNDED_IN_ONE_DIMENSION = 159;
+    int EN_UNBOUNDED = 160;
+    int EN_INHERIT = 161;
+    int ENUM_COUNT = 161;
 }

@@ -73,16 +73,16 @@ public class CharacterLayoutManager extends LeafNodeLayoutManager {
     protected void offsetArea(LayoutContext context) {
         int bpd = curArea.getBPD();
         switch (verticalAlignment) {
-            case VerticalAlign.MIDDLE:
+            case EN_MIDDLE:
                 curArea.setOffset(context.getMiddleBaseline() + fs.getXHeight() / 2);
             break;
-            case VerticalAlign.TOP:
+            case EN_TOP:
                 curArea.setOffset(fs.getAscender());
             break;
-            case VerticalAlign.BOTTOM:
+            case EN_BOTTOM:
                 curArea.setOffset(context.getLineHeight() - bpd + fs.getAscender());
             break;
-            case VerticalAlign.BASELINE:
+            case EN_BASELINE:
             default:
                 curArea.setOffset(context.getBaseline());
             break;
@@ -118,12 +118,12 @@ public class CharacterLayoutManager extends LeafNodeLayoutManager {
         int total = 0;
         int middle = 0;
         switch (verticalAlignment) {
-            case VerticalAlign.MIDDLE  : middle = bpd / 2 ;
+            case EN_MIDDLE  : middle = bpd / 2 ;
                                          break;
-            case VerticalAlign.TOP     : // fall through
-            case VerticalAlign.BOTTOM  : total = bpd;
+            case EN_TOP     : // fall through
+            case EN_BOTTOM  : total = bpd;
                                          break;
-            case VerticalAlign.BASELINE: // fall through
+            case EN_BASELINE: // fall through
             default                    : lead = fs.getAscender();
                                          total = bpd;
                                          break;

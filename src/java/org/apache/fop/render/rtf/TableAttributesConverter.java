@@ -177,22 +177,22 @@ public class TableAttributesConverter {
 
         //check for keep-together row attribute
 
-        if (fobj.getKeepTogether().getWithinPage().getEnum() == Constants.ALWAYS) {
+        if (fobj.getKeepTogether().getWithinPage().getEnum() == Constants.EN_ALWAYS) {
             attrib.set(ITableAttributes.ROW_KEEP_TOGETHER);
         }
 
         //Check for keep-with-next row attribute.
-        if (fobj.getKeepWithNext().getWithinPage().getEnum() == Constants.ALWAYS) {
+        if (fobj.getKeepWithNext().getWithinPage().getEnum() == Constants.EN_ALWAYS) {
             attrib.set(ITableAttributes.ROW_KEEP_WITH_NEXT);
         }
 
         //Check for keep-with-previous row attribute.
-        if (fobj.getKeepWithPrevious().getWithinPage().getEnum() == Constants.ALWAYS) {
+        if (fobj.getKeepWithPrevious().getWithinPage().getEnum() == Constants.EN_ALWAYS) {
             attrib.set(ITableAttributes.ROW_KEEP_WITH_PREVIOUS);
         }
 
         //Check for height row attribute.
-        if (fobj.getHeight().getEnum() != Constants.AUTO) {
+        if (fobj.getHeight().getEnum() != Constants.EN_AUTO) {
             attrib.set(ITableAttributes.ROW_HEIGHT, fobj.getHeight().getValue() / (1000 / 20));
         }
 
@@ -221,7 +221,7 @@ public class TableAttributesConverter {
 
 /*
         ep = (EnumProperty)fobj.getProperty(Constants.PR_BORDER_TOP_STYLE);
-        if (ep != null && ep.getEnum() != Constants.NONE) {
+        if (ep != null && ep.getEnum() != Constants.EN_NONE) {
             attrib.set(ITableAttributes.ROW_BORDER_TOP,       "\\"
                        + convertAttributetoRtf(ep.getEnum()));
             attrib.set(ITableAttributes.ROW_BORDER_HORIZONTAL, "\\"
@@ -229,7 +229,7 @@ public class TableAttributesConverter {
             isBorderPresent = true;
         }
         ep = (EnumProperty)fobj.getProperty(Constants.PR_BORDER_BOTTOM_STYLE);
-        if (ep != null && ep.getEnum() != Constants.NONE) {
+        if (ep != null && ep.getEnum() != Constants.EN_NONE) {
             attrib.set(ITableAttributes.ROW_BORDER_BOTTOM,    "\\"
                        + convertAttributetoRtf(ep.getEnum()));
             attrib.set(ITableAttributes.ROW_BORDER_HORIZONTAL, "\\"
@@ -237,7 +237,7 @@ public class TableAttributesConverter {
             isBorderPresent = true;
         }
         ep = (EnumProperty)fobj.getProperty(Constants.PR_BORDER_LEFT_STYLE);
-        if (ep != null && ep.getEnum() != Constants.NONE) {
+        if (ep != null && ep.getEnum() != Constants.EN_NONE) {
             attrib.set(ITableAttributes.ROW_BORDER_LEFT,     "\\"
                        + convertAttributetoRtf(ep.getEnum()));
             attrib.set(ITableAttributes.ROW_BORDER_VERTICAL, "\\"
@@ -245,7 +245,7 @@ public class TableAttributesConverter {
             isBorderPresent = true;
         }
         ep = (EnumProperty)fobj.getProperty(Constants.PR_BORDER_RIGHT_STYLE);
-        if (ep != null && ep.getEnum() != Constants.NONE) {
+        if (ep != null && ep.getEnum() != Constants.EN_NONE) {
             attrib.set(ITableAttributes.ROW_BORDER_RIGHT,    "\\"
                        + convertAttributetoRtf(ep.getEnum()));
             attrib.set(ITableAttributes.ROW_BORDER_VERTICAL, "\\"
@@ -291,19 +291,19 @@ public class TableAttributesConverter {
     public static String convertAttributetoRtf(int iBorderStyle) {
         // Added by Normand Masse
         // "solid" is interpreted like "thin"
-        if (iBorderStyle == Constants.SOLID) {
+        if (iBorderStyle == Constants.EN_SOLID) {
             return BorderAttributesConverter.BORDER_SINGLE_THICKNESS;
-/*        } else if (iBorderStyle==Constants.THIN) {
+/*        } else if (iBorderStyle==Constants.EN_THIN) {
                         return BorderAttributesConverter.BORDER_SINGLE_THICKNESS;
-        } else if (iBorderStyle==Constants.THICK) {
+        } else if (iBorderStyle==Constants.EN_THICK) {
             return BorderAttributesConverter.BORDER_DOUBLE_THICKNESS;
-        } else if (iBorderStyle==Constants. value.equals("shadowed")) {
+        } else if (iBorderStyle==Constants.EN_ value.equals("shadowed")) {
             return BorderAttributesConverter.BORDER_SHADOWED;*/
-        } else if (iBorderStyle == Constants.DOUBLE) {
+        } else if (iBorderStyle == Constants.EN_DOUBLE) {
             return BorderAttributesConverter.BORDER_DOUBLE;
-        } else if (iBorderStyle == Constants.DOTTED) {
+        } else if (iBorderStyle == Constants.EN_DOTTED) {
             return BorderAttributesConverter.BORDER_DOTTED;
-        } else if (iBorderStyle == Constants.DASHED) {
+        } else if (iBorderStyle == Constants.EN_DASHED) {
             return BorderAttributesConverter.BORDER_DASH;
 /*        } else if (iBorderStyle==Constants value.equals("hairline")) {
             return BorderAttributesConverter.BORDER_HAIRLINE;*/

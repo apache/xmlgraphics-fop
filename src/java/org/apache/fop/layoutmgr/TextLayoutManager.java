@@ -123,7 +123,7 @@ public class TextLayoutManager extends AbstractLayoutManager
     private int lead = 0;
     private int total = 0;
     private int middle = 0;
-    private int verticalAlignment = VerticalAlign.BASELINE;
+    private int verticalAlignment = EN_BASELINE;
 
     /**
      * Create a Text layout manager.
@@ -173,12 +173,12 @@ public class TextLayoutManager extends AbstractLayoutManager
             setAlignment(((Inline) foText.getParent()).getVerticalAlign());
         }
         switch (verticalAlignment) {
-            case VerticalAlign.MIDDLE  : middle = textHeight / 2 ;
+            case EN_MIDDLE  : middle = textHeight / 2 ;
                                          break;
-            case VerticalAlign.TOP     : // fall through
-            case VerticalAlign.BOTTOM  : total = textHeight;
+            case EN_TOP     : // fall through
+            case EN_BOTTOM  : total = textHeight;
                                          break;
-            case VerticalAlign.BASELINE: // fall through
+            case EN_BASELINE: // fall through
             default                    : lead = fs.getAscender();
                                          total = textHeight;
                                          break;
@@ -229,7 +229,7 @@ public class TextLayoutManager extends AbstractLayoutManager
      */
     public boolean canBreakBefore(LayoutContext context) {
         char c = textArray[iNextStart];
-        return ((c == NEWLINE) || (foText.getWrapOption() == WRAP 
+        return ((c == NEWLINE) || (foText.getWrapOption() == EN_WRAP 
                     && (CharUtilities.isBreakableSpace(c)
                         || (BREAK_CHARS.indexOf(c) >= 0
                             && (iNextStart == 0 
@@ -419,7 +419,7 @@ public class TextLayoutManager extends AbstractLayoutManager
             for (; iNextStart < textArray.length; iNextStart++) {
                 char c = textArray[iNextStart];
                 // Include any breakable white-space as break char
-                if ((c == NEWLINE) || (foText.getWrapOption() == WRAP  
+                if ((c == NEWLINE) || (foText.getWrapOption() == EN_WRAP  
                     && (CharUtilities.isBreakableSpace(c)
                     || (BREAK_CHARS.indexOf(c) >= 0 && (iNextStart == 0 
                         || Character.isLetterOrDigit(textArray[iNextStart-1])))))) {
@@ -640,16 +640,16 @@ public class TextLayoutManager extends AbstractLayoutManager
         textArea.setBPD(fs.getAscender() - fs.getDescender());
         int bpd = textArea.getBPD();
         switch (verticalAlignment) {
-            case VerticalAlign.MIDDLE:
+            case EN_MIDDLE:
                 textArea.setOffset(context.getMiddleBaseline() + fs.getXHeight() / 2);
             break;
-            case VerticalAlign.TOP:
+            case EN_TOP:
                 textArea.setOffset(fs.getAscender());
             break;
-            case VerticalAlign.BOTTOM:
+            case EN_BOTTOM:
                 textArea.setOffset(context.getLineHeight() - bpd + fs.getAscender());
             break;
-            case VerticalAlign.BASELINE:
+            case EN_BASELINE:
             default:
                 textArea.setOffset(context.getBaseline());
             break;
@@ -686,7 +686,7 @@ public class TextLayoutManager extends AbstractLayoutManager
                                           false));
                 }
                 switch (alignment) {
-                case CENTER :
+                case EN_CENTER :
                     vecAreaInfo.add
                         (new AreaInfo(iNextStart, (short) (iNextStart + 1),
                                       (short) 1, (short) 0,
@@ -713,8 +713,8 @@ public class TextLayoutManager extends AbstractLayoutManager
                     iNextStart ++;
                     break;
 
-                case START  : // fall through
-                case END    :
+                case EN_START  : // fall through
+                case EN_END    :
                     vecAreaInfo.add
                         (new AreaInfo(iNextStart, (short) (iNextStart + 1),
                                       (short) 1, (short) 0,
@@ -732,7 +732,7 @@ public class TextLayoutManager extends AbstractLayoutManager
                     iNextStart ++;
                     break;
 
-                case JUSTIFY:
+                case EN_JUSTIFY:
                     vecAreaInfo.add
                         (new AreaInfo(iNextStart, (short) (iNextStart + 1),
                                       (short) 1, (short) 0,
@@ -991,7 +991,7 @@ public class TextLayoutManager extends AbstractLayoutManager
             } else {
                 // ai refers to a space
                 switch (alignment) {
-                case CENTER :
+                case EN_CENTER :
                     returnList.add
                         (new KnuthGlue(0, 3 * LineLayoutManager.DEFAULT_SPACE_WIDTH, 0,
                                        new LeafPosition(this, iReturnedIndex), false));
@@ -1013,8 +1013,8 @@ public class TextLayoutManager extends AbstractLayoutManager
                                        new LeafPosition(this, -1), true));
                     iReturnedIndex ++;
                     break;
-                case START  : // fall through
-                case END    :
+                case EN_START  : // fall through
+                case EN_END    :
                     returnList.add
                         (new KnuthGlue(0, 3 * wordSpaceIPD.opt, 0,
                                        new LeafPosition(this, iReturnedIndex), false));
@@ -1027,7 +1027,7 @@ public class TextLayoutManager extends AbstractLayoutManager
                                        new LeafPosition(this, -1), true));
                     iReturnedIndex ++;
                     break;
-                case JUSTIFY:
+                case EN_JUSTIFY:
                     returnList.add
                         (new KnuthGlue(wordSpaceIPD.opt,
                                        wordSpaceIPD.max - wordSpaceIPD.opt,
