@@ -12,6 +12,7 @@ package org.apache.fop.fo.pagination;
 // FOP
 import org.apache.fop.fo.FOAttributes;
 import org.apache.fop.fo.PropNames;
+import org.apache.fop.xml.XMLEvent;
 import org.apache.fop.xml.FoXMLEvent;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.fo.FOPropertySets;
@@ -43,6 +44,13 @@ public class FoSimplePageMaster extends FONode {
         super(foTree, FObjectNames.SIMPLE_PAGE_MASTER, parent, event,
               FOPropertySets.LAYOUT_SET);
         // Process regions here
+        FoXMLEvent regionEv;
+        if ((regionEv = xmlevents.expectStartElement
+                (FObjectNames.REGION_BODY, XMLEvent.DISCARD_W_SPACE)) == null)
+            throw new FOPException
+                ("No fo:region-body in simple-page-master: "
+                    + getMasterName());
+
         FoXMLEvent ev = xmlevents.getEndElement(event);
     }
 

@@ -42,15 +42,13 @@ public class FoLayoutMasterSet extends FONode {
     private static final String revision = "$Revision$";
 
     /**
-     * An array with <tt>UriLocalName</tt> objects identifying
+     * An array with <tt>int</tt>s identifying
      * <tt>simple-page-master</tt> and <tt>page-sequence-master</tt>
      * XML events.
      */
-    private static final UriLocalName[] simpleOrSequenceMaster = {
-        new UriLocalName
-                      (XMLNamespaces.XSLNSpaceIndex, "simple-page-master"),
-        new UriLocalName
-                     (XMLNamespaces.XSLNSpaceIndex, "page-sequence-master")
+    private static final int[] simpleOrSequenceMaster = {
+        FObjectNames.SIMPLE_PAGE_MASTER,
+        FObjectNames.PAGE_SEQUENCE_MASTER
     };
 
     /**
@@ -99,7 +97,7 @@ public class FoLayoutMasterSet extends FONode {
     {
 	FoSimplePageMaster simple;
 	String masterName;
-	String localName;
+        int foType;
 	FoPageSequenceMaster foPageSeq;
         try {
             do {
@@ -107,8 +105,8 @@ public class FoLayoutMasterSet extends FONode {
                     xmlevents.expectStartElement
                         (simpleOrSequenceMaster, XMLEvent.DISCARD_W_SPACE);
                 if (ev == null) break; // No instance of these elements found
-                localName = ev.getLocalName();
-                if (localName.equals("simple-page-master")) {
+                foType = ev.getFoType();
+                if (foType == FObjectNames.SIMPLE_PAGE_MASTER) {
                     //System.out.println("Found simple-page-master");
                     simple = new FoSimplePageMaster(foTree, this, ev);
                     masterName = simple.getMasterName();
@@ -123,7 +121,7 @@ public class FoLayoutMasterSet extends FONode {
                                 ("simple-page-master master-name clash in "
                                  + "simplePageMasters: " + masterName);
                     simplePageMasters.put(masterName, simple);
-                } else if (localName.equals("page-sequence-master")) {
+                } else if (foType == FObjectNames.PAGE_SEQUENCE_MASTER) {
                     //System.out.println("Found page-sequence-master");
                     try {
                         foPageSeq =

@@ -43,27 +43,16 @@ public class FoPageSequenceMaster extends FONode {
     private static final String revision = "$Revision$";
 
     /**
-     * An array with <tt>UriLocalName</tt> objects identifying
+     * An array with <tt>int</tt>s identifying
      * <tt>single-page-master-reference</tt>,
      * <tt>repeatable-page-master-reference</tt> and
      * <tt>repeatable-page-master-alternatives</tt> XML events.
      */
-    private static final UriLocalName[] singleOrRepeatableMasterRefs = {
-        new UriLocalName
-              (XMLNamespaces.XSLNSpaceIndex, "single-page-master-reference"),
-        new UriLocalName
-         (XMLNamespaces.XSLNSpaceIndex, "repeatable-page-master-reference"),
-        new UriLocalName
-         (XMLNamespaces.XSLNSpaceIndex, "repeatable-page-master-alternatives")
+    private static final int[] singleOrRepeatableMasterRefs = {
+        FObjectNames.SINGLE_PAGE_MASTER_REFERENCE,
+        FObjectNames.REPEATABLE_PAGE_MASTER_REFERENCE,
+        FObjectNames.REPEATABLE_PAGE_MASTER_ALTERNATIVES
     };
-
-    /**
-     * A <tt>UriLocalName</tt> object identifying a
-     * <tt>conditional-page-master-reference</tt>,
-     */
-    private static final UriLocalName conditionalPageMasterRef =
-	new UriLocalName(XMLNamespaces.XSLNSpaceIndex,
-				    "conditional-page-master-reference");
 
     private String masterName;
 
@@ -80,21 +69,21 @@ public class FoPageSequenceMaster extends FONode {
                 FoXMLEvent ev = xmlevents.expectStartElement
                     (singleOrRepeatableMasterRefs, XMLEvent.DISCARD_W_SPACE);
                 if (ev == null) break;  // page-sequence-masters exhausted
-                String localName = ev.getLocalName();
-                if (localName.equals("single-page-master-reference")) {
+                int foType = ev.getFoType();
+                if (foType == FObjectNames.SINGLE_PAGE_MASTER_REFERENCE) {
                     //System.out.println("Found single-page-master-reference");
 		    //subSequenceList.add(new FoSinglePageMasterReference
 							//(foTree, this, ev));
 		    new FoSinglePageMasterReference(foTree, this, ev);
-                } else if (localName.equals
-                           ("repeatable-page-master-reference")) {
+                } else if (foType ==
+                            FObjectNames.REPEATABLE_PAGE_MASTER_REFERENCE) {
                     //System.out.println
                     //        ("Found repeatable-page-master-reference");
 		    //subSequenceList.add(new FoRepeatablePageMasterReference
 							//(foTree, this, ev));
 		    new FoRepeatablePageMasterReference(foTree, this, ev);
-                } else if (localName.equals
-                           ("repeatable-page-master-alternatives")) {
+                } else if (foType ==
+                        FObjectNames.REPEATABLE_PAGE_MASTER_ALTERNATIVES) {
                     //System.out.println
                     //        ("Found repeatable-page-master-alternatives");
 		    //subSequenceList.add(new FoRepeatablePageMasterAlternatives
@@ -191,17 +180,16 @@ public class FoPageSequenceMaster extends FONode {
 	    try {
 		do {
 		    FoXMLEvent ev = this.xmlevents.expectStartElement
-			(conditionalPageMasterRef.uriIndex,
-			    conditionalPageMasterRef.localName,
-						XMLEvent.DISCARD_W_SPACE);
-                    if (ev == null) break; // Sun-sequences exhausted
+                            (FObjectNames.CONDITIONAL_PAGE_MASTER_REFERENCE,
+                                                    XMLEvent.DISCARD_W_SPACE);
+                    if (ev == null) break; // Sub-sequences exhausted
                     //System.out.println
                     //    ("Found conditional-page-master-reference");
                     new FoConditionalPageMasterReference(foTree, this, ev);
                     this.xmlevents.getEndElement(ev);
 		} while (true);
 	    } catch (NoSuchElementException e) {
-		// Enf of file reached
+		// End of file reached
                 throw new FOPException("EOF in repeatable-page-masters.");
 	    }
 	    XMLEvent ev = this.xmlevents.getEndElement(event);
@@ -221,7 +209,6 @@ public class FoPageSequenceMaster extends FONode {
 				parent, event, FOPropertySets.SEQ_MASTER_SET);
 	    }
 
-	    /*
 	    public PropertyValue getMasterReference() throws PropertyException
 	    {
 		return this.getPropertyValue(PropNames.MASTER_REFERENCE);
@@ -239,7 +226,6 @@ public class FoPageSequenceMaster extends FONode {
 	    {
 		return this.getPropertyValue(PropNames.BLANK_OR_NOT_BLANK);
 	    }
-	    */
 
 	} // FoConditionalPageMasterReference
 
