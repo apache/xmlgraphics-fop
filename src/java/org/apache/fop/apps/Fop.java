@@ -20,9 +20,15 @@
 
 package org.apache.fop.apps;
 
+//import java.util.logging.Handler;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Enumeration;
+import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import org.apache.fop.configuration.ConfigurationResource;
 import org.apache.fop.configuration.Configuration;
 
 public class Fop {
@@ -39,16 +45,34 @@ public class Fop {
      */
     public static final String fopPackage = "org.apache.fop";
     
-    public static final Logger logger = Logger.getLogger(fopPackage);
-    static {
-        logger.setLevel(Level.INFO);
-    }
+    private static Logger logger;
     
     public Configuration configuration = new Configuration();
 
     public static void main(String[] args) {
 
         long endtotal, endfree, gctotal, gcfree;
+        Properties properties;
+        try {
+            // Get the initial system properties
+            InputStream propsfile =
+                ConfigurationResource.getResourceFile(
+                        "conf/fop.system.properties", Fop.class);
+            properties = new Properties();
+            properties.load(propsfile);
+        } catch (FOPException e1) {
+            throw new RuntimeException(e1);
+        } catch (IOException e1) {
+            throw new RuntimeException(e1);
+        }
+        Enumeration props = properties.keys();
+        while (props.hasMoreElements()) {
+            String key = (String)(props.nextElement());
+            System.setProperty(key, properties.getProperty(key));
+        }
+        // Now that the Fop system properties have been added, set up logger
+        logger = Logger.getLogger(fopPackage);
+        // Then restrict to WARNING
         Driver driver;
         Configuration configuration;
         FOPOptions options = null;
