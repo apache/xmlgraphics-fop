@@ -80,7 +80,7 @@ public class PDFLink extends PDFObject {
 	this.uly = r.y;
 	this.brx = r.x + r.width;
 	this.bry = r.y - r.height;
-	this.color = "0 0 0.7";	// just for now
+	this.color = "0 0 0";	// just for now
 		
     }
 
@@ -99,8 +99,8 @@ public class PDFLink extends PDFObject {
 	    "/Subtype /Link\n" +
 	    "/Rect [ " + (ulx/1000f) + " " + (uly/1000f) + " " +
 	    (brx/1000f) + " " + (bry/1000f) + " ]\n"
-	    + "/C [ " + color + " ]\n" + 
-	    "/Border [ 0 0 1 ]\n" +
+	    + "/C [ " + this.color + " ]\n" + 
+	    "/Border [ 0 0 0 ]\n" +
 	    "/A " + this.action.referencePDF() + "\n" +
 	    "/H /I\n>>\nendobj\n";
 	return p;
