@@ -30,7 +30,7 @@ import org.apache.fop.fo.flow.FoPageSequence;
  * It is cloneable through the ReferenceArea interface implementation.
  */
 public abstract class RegionRefArea
-extends AbstractReferenceArea
+extends BlockReferenceArea
 implements ReferenceArea {
     
     // the list of block areas from the static flow
@@ -58,20 +58,6 @@ implements ReferenceArea {
      */
     public List getBlocks() {
         return blocks;
-    }
-
-    /**
-     * Clone this region.
-     * This is used when cloning the page by the page master.
-     * The blocks are not copied since the master will have no blocks.
-     *
-     * @return a copy of this region reference area
-     */
-    public Object clone() {
-        RegionRefArea rr;
-        rr = (RegionRefArea)(super.clone());
-        rr.blocks = (ArrayList)(blocks.clone());
-        return rr;
     }
 
 }
