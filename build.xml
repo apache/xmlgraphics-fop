@@ -700,12 +700,16 @@ Sometimes ant gives out this warnings, but the build is finished without any pro
     <chmod file="${dist.bin.result.dir}/fop.sh" perm="ugo+rx" />
       
     <zip zipfile="${name}-${version}-bin.zip" basedir="${dist.bin.dir}" includes="**"/>
-    <tar tarfile="${name}-${version}-bin.tar" basedir="${dist.bin.dir}" includes="**"/>
-    <gzip zipfile="${name}-${version}-bin.tar.gz" src="${name}-${version}-bin.tar" />
-    <delete file="${name}-${version}-bin.tar"/>
 
+    <tar destfile="${name}-${version}-bin.tar.gz" compression="gzip">
+      <tarfileset dir="${dist.bin.dir}" mode="755">
+        <include name="**/*.sh"/>
+      </tarfileset>
+      <tarfileset dir="${dist.bin.dir}">
+        <exclude name="**/*.sh"/>
+      </tarfileset>
+    </tar>
   </target>
-
 
   <target name="dist-src" depends="package, docs">
     <echo message="Building the source distribution files (zip,tar)"/>
@@ -721,9 +725,15 @@ Sometimes ant gives out this warnings, but the build is finished without any pro
     <chmod file="${dist.src.result.dir}/docs/examples/runtests.sh" perm="ugo+rx" />
 
     <zip zipfile="${name}-${version}-src.zip" basedir="${dist.src.dir}" includes="**"/>
-    <tar tarfile="${name}-${version}-src.tar" basedir="${dist.src.dir}" includes="**"/>
-    <gzip zipfile="${name}-${version}-src.tar.gz" src="${name}-${version}-src.tar" />
-    <delete file="${name}-${version}-src.tar"/>
+
+    <tar destfile="${name}-${version}-src.tar.gz" compression="gzip">
+      <tarfileset dir="${dist.src.dir}" mode="755">
+        <include name="**/*.sh"/>
+      </tarfileset>
+      <tarfileset dir="${dist.src.dir}">
+        <exclude name="**/*.sh"/>
+      </tarfileset>
+    </tar>
 
   </target>
 
