@@ -355,8 +355,7 @@ public class FOPOptions {
         // quiet mode - this is the last setting, so there is no way to
         // supress the logging of messages during options processing
         if (configuration.isTrue("quiet")) {
-            Fop.setLoggingLevel(Level.OFF);
-            //log.setLevel(Level.OFF);
+            log.setLevel(Level.OFF);
         }
         
     }
