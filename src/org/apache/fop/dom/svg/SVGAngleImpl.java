@@ -60,129 +60,146 @@ import org.w3c.dom.svg.*;
 /**
  * SVG Angle.
  *
+ * @author Keiron Liddle <keiron@aftexsw.com>
+ * modified Nov 14,2000 Mike Crowe <crowe@psilongbeach.com>, Fop internal
+ * representation of angles is in degrees, added convert before doing any trig
+ * function
  */
 public class SVGAngleImpl implements SVGAngle {
-	float value = 0;
-	short unitType = SVG_ANGLETYPE_UNKNOWN;
+    float value = 0;
+    short unitType = SVG_ANGLETYPE_UNKNOWN;
 
-	public SVGAngleImpl()
-	{
-	}
+    public SVGAngleImpl() {
+    }
 
-	public short getUnitType( )
-	{
-		return unitType;
-	}
+    public short getUnitType() {
+        return unitType;
+    }
 
-	public float getValue( )
-	{
-		return value;
-	}
+    public float getValue() {
+        return value;
+    }
 
-	public void setValue( float value )
-	{
-		this.value = value;
-	}
+    public void setValue(float value) {
+        this.value = value;
+    }
 
-	public float getValueInSpecifiedUnits( )
-	{
-		switch(unitType) {
-			case SVG_ANGLETYPE_UNKNOWN:
-				throw new SVGExceptionImpl(SVGException.SVG_WRONG_TYPE_ERR, "unknown unit type");
-//			break;
-			case SVG_ANGLETYPE_UNSPECIFIED:
-				throw new SVGExceptionImpl(SVGException.SVG_WRONG_TYPE_ERR, "unknown unit type");
-//			break;
-			case SVG_ANGLETYPE_DEG:
-			break;
-			case SVG_ANGLETYPE_RAD:
-			break;
-			case SVG_ANGLETYPE_GRAD:
-			break;
-		}
-		return 0;
-	}
+    public float getValueInSpecifiedUnits() {
+        switch (unitType) {
+            case SVG_ANGLETYPE_UNKNOWN:
+                throw new SVGExceptionImpl(
+                  SVGException.SVG_WRONG_TYPE_ERR, "unknown unit type");
+                //			break;
+            case SVG_ANGLETYPE_UNSPECIFIED:
+                throw new SVGExceptionImpl(
+                  SVGException.SVG_WRONG_TYPE_ERR, "unknown unit type");
+                //			break;
+            case SVG_ANGLETYPE_DEG:
+                break;
+            case SVG_ANGLETYPE_RAD:
+                break;
+            case SVG_ANGLETYPE_GRAD:
+                break;
+        }
+        return 0;
+    }
 
-	public void setValueInSpecifiedUnits( float valueInSpecifiedUnits )
-	{
-		switch(unitType) {
-			case SVG_ANGLETYPE_UNKNOWN:
-				throw new SVGExceptionImpl(SVGException.SVG_WRONG_TYPE_ERR, "unknown unit type");
-//			break;
-			case SVG_ANGLETYPE_UNSPECIFIED:
-				throw new SVGExceptionImpl(SVGException.SVG_WRONG_TYPE_ERR, "unknown unit type");
-//			break;
-			case SVG_ANGLETYPE_DEG:
-			break;
-			case SVG_ANGLETYPE_RAD:
-			break;
-			case SVG_ANGLETYPE_GRAD:
-			break;
-		}
-	}
+    public void setValueInSpecifiedUnits(float valueInSpecifiedUnits) {
+        switch (unitType) {
+            case SVG_ANGLETYPE_UNKNOWN:
+                throw new SVGExceptionImpl(
+                  SVGException.SVG_WRONG_TYPE_ERR, "unknown unit type");
+                //			break;
+            case SVG_ANGLETYPE_UNSPECIFIED:
+                throw new SVGExceptionImpl(
+                  SVGException.SVG_WRONG_TYPE_ERR, "unknown unit type");
+                //			break;
+            case SVG_ANGLETYPE_DEG:
+                break;
+            case SVG_ANGLETYPE_RAD:
+                break;
+            case SVG_ANGLETYPE_GRAD:
+                break;
+        }
+    }
 
-	public String getValueAsString( )
-	{
-		NumberFormat nf = NumberFormat.getInstance();
-		return nf.format(value);
-	}
+    public String getValueAsString() {
+        NumberFormat nf = NumberFormat.getInstance();
+        return nf.format(value);
+    }
 
-	public void setValueAsString( String valueAsString )
-	{
-		NumberFormat nf = NumberFormat.getInstance();
-		try {
-			value = nf.parse(valueAsString).floatValue();
-			value = (float)(value * Math.PI / 90f);
-		} catch(ParseException pe) {
-			value = 0;
-		}
-	}
+    /**
+     *The following is from CR-SVG-20000802 4.1 Basic Data Types;
+     * <angle>: An angle value is a <number> optionally followed
+     * immediately with an angle unit identifier. Angle unit identifiers are:
+     * deg: degrees m
+     * grad: grads m
+     * rad: radians m
+     * For properties defined in [CSS2], an angle unit identifier must be
+     * provided. For SVG-specific attributes and properties, the angle unit
+     * identifier is optional. If not provided, the angle value is assumed to be
+     * in degrees.
+     */
+    public void setValueAsString(String valueAsString) {
+        NumberFormat nf = NumberFormat.getInstance();
+        try {
+            value = nf.parse(valueAsString).floatValue();
+            if (valueAsString.indexOf("grad") != -1) {
+                value = (float)(value * 360.0 / 400.0);
+            } else if (valueAsString.indexOf("rad") != -1) {
+                value = (float)(value * 180.0 / Math.PI);
+            }
+        } catch (ParseException pe) {
+            value = 0;
+        }
+    }
 
-	public float getAnimatedValue( )
-	{
-		return 0;
-	}
+    public float getAnimatedValue() {
+        return 0;
+    }
 
-	public void newValueSpecifiedUnits ( short unitType, float valueInSpecifiedUnits )
-	              throws SVGException
-	{
-		switch(unitType) {
-			case SVG_ANGLETYPE_UNKNOWN:
-				throw new SVGExceptionImpl(SVGException.SVG_WRONG_TYPE_ERR, "unknown unit type");
-//			break;
-			case SVG_ANGLETYPE_UNSPECIFIED:
-				throw new SVGExceptionImpl(SVGException.SVG_WRONG_TYPE_ERR, "unknown unit type");
-//			break;
-			case SVG_ANGLETYPE_DEG:
-				value = (float)(valueInSpecifiedUnits * Math.PI / 90.0);
-			break;
-			case SVG_ANGLETYPE_RAD:
-				value = valueInSpecifiedUnits;
-			break;
-			case SVG_ANGLETYPE_GRAD:
-				value = (float)(valueInSpecifiedUnits * Math.PI / 90.0);
-			break;
-		}
-		this.unitType = unitType;
-	}
+    public void newValueSpecifiedUnits (short unitType,
+                                        float valueInSpecifiedUnits) throws SVGException {
+        switch (unitType) {
+            case SVG_ANGLETYPE_UNKNOWN:
+                throw new SVGExceptionImpl(
+                  SVGException.SVG_WRONG_TYPE_ERR, "unknown unit type");
+                //			break;
+            case SVG_ANGLETYPE_UNSPECIFIED:
+                throw new SVGExceptionImpl(
+                  SVGException.SVG_WRONG_TYPE_ERR, "unknown unit type");
+                //			break;
+            case SVG_ANGLETYPE_DEG:
+                value = (float)(valueInSpecifiedUnits * Math.PI / 90.0);
+                break;
+            case SVG_ANGLETYPE_RAD:
+                value = valueInSpecifiedUnits;
+                break;
+            case SVG_ANGLETYPE_GRAD:
+                value = (float)(valueInSpecifiedUnits * Math.PI / 90.0);
+                break;
+        }
+        this.unitType = unitType;
+    }
 
-	public void convertToSpecifiedUnits ( short unitType )
-	              throws SVGException
-	{
-		switch(unitType) {
-			case SVG_ANGLETYPE_UNKNOWN:
-				throw new SVGExceptionImpl(SVGException.SVG_WRONG_TYPE_ERR, "unknown unit type");
-//			break;
-			case SVG_ANGLETYPE_UNSPECIFIED:
-				throw new SVGExceptionImpl(SVGException.SVG_WRONG_TYPE_ERR, "unknown unit type");
-//			break;
-			case SVG_ANGLETYPE_DEG:
-			break;
-			case SVG_ANGLETYPE_RAD:
-			break;
-			case SVG_ANGLETYPE_GRAD:
-			break;
-		}
-		this.unitType = unitType;
-	}
+    public void convertToSpecifiedUnits (short unitType)
+    throws SVGException {
+        switch (unitType) {
+            case SVG_ANGLETYPE_UNKNOWN:
+                throw new SVGExceptionImpl(
+                  SVGException.SVG_WRONG_TYPE_ERR, "unknown unit type");
+                //			break;
+            case SVG_ANGLETYPE_UNSPECIFIED:
+                throw new SVGExceptionImpl(
+                  SVGException.SVG_WRONG_TYPE_ERR, "unknown unit type");
+                //			break;
+            case SVG_ANGLETYPE_DEG:
+                break;
+            case SVG_ANGLETYPE_RAD:
+                break;
+            case SVG_ANGLETYPE_GRAD:
+                break;
+        }
+        this.unitType = unitType;
+    }
 }
