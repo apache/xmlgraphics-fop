@@ -1,5 +1,9 @@
 #!/bin/sh
 #This file should be executable
+
+echo makedoc doesn't work at the moment. please use the html documentation.
+exit 1
+
 echo
 echo "Converting Fop's xml documentation into a pdf file, creating html docs"
 echo "----------------"
