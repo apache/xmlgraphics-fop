@@ -1,0 +1,7 @@
+<font-metrics>
+    <class-name>MSMinchoItalicAlias</class-name>
+    <extends-name>MSMinchoItalic</extends-name>
+
+    <font-name>MS-Mincho,Italic</font-name>
+    <cid-basefont>MS-Mincho,Italic</cid-basefont>
+</font-metrics>

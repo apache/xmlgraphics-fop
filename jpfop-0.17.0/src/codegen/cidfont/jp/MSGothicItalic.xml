@@ -1,0 +1,9 @@
+<font-metrics>
+    <class-name>MSGothicItalic</class-name>
+    <extends-name>MSGothic</extends-name>
+
+    <font-name>#82l#82r#83S#83V#83b#83N,Italic</font-name>
+    <cid-basefont>#82l#82r#83S#83V#83b#83N,Italic</cid-basefont>
+    <flags>71</flags>
+    <italicangle>-11</italicangle>
+</font-metrics>
