@@ -40,8 +40,8 @@ list of possible build targets.
   <!-- build-local.properties is not stored in CVS and overrides values from build.properties -->
   <property file="${basedir}/build-local.properties"/>
   <property file="${basedir}/build.properties"/>
-  
-  <property name="optional.lib.dir" value="${basedir}/lib"/>  
+
+  <property name="optional.lib.dir" value="${basedir}/lib"/>
 
   <fileset dir="${basedir}" id="dist.bin">
     <include name="conf/**"/>
@@ -135,11 +135,11 @@ list of possible build targets.
     <include name="**/*.java"/>
     <exclude name="**/*${ignore_this}"/>
   </patternset>
-  
+
   <patternset id="graphics-configuration-source">
     <include name="org/apache/fop/svg/GraphicsConfiguration.java"/>
   </patternset>
-  
+
 
   <!-- =================================================================== -->
   <!-- Initialization target                                               -->
@@ -244,7 +244,7 @@ list of possible build targets.
 
   <target name="init-avail">
     <echo message="${ant.version}"/>
-    
+
     <available property="jimi.present" classname="com.sun.jimi.core.Jimi"
         classpathref="libs-build-classpath"/>
     <condition property="jimi.message" value="Jimi Support PRESENT">
@@ -256,7 +256,7 @@ list of possible build targets.
       </not>
     </condition>
     <echo message="${jimi.message}"/>
-    
+
     <available property="jai.present" classname="javax.media.jai.JAI"
         classpathref="libs-build-classpath"/>
     <condition property="jai.message" value="JAI Support PRESENT">
@@ -268,7 +268,7 @@ list of possible build targets.
       </not>
     </condition>
     <echo message="${jai.message}"/>
-    
+
     <available property="jce.present" classname="javax.crypto.Cipher"
         classpathref="libs-build-classpath"/>
     <condition property="jce.message" value="JCE Support PRESENT">
@@ -280,9 +280,9 @@ list of possible build targets.
       </not>
     </condition>
     <echo message="${jce.message}"/>
-    
+
     <available property="jdk14.present" classname="java.lang.CharSequence"/>
-    
+
     <available property="junit.present" classname="junit.framework.TestCase"
         classpathref="libs-build-classpath"/>
     <condition property="junit.message" value="JUnit Support PRESENT">
@@ -640,7 +640,7 @@ list of possible build targets.
 -->
   </target>
   <target name="junit" depends="package, transcoder-pkg" description="Runs FOP's JUnit tests" if="junit.present">
-    <mkdir dir="${build.dir}/test-classes"/> 
+    <mkdir dir="${build.dir}/test-classes"/>
     <javac destdir="${build.dir}/test-classes" debug="${debug}" deprecation="${deprecation}" optimize="${optimize}">
       <src path="${basedir}/test/java"/>
       <classpath>
@@ -651,7 +651,7 @@ list of possible build targets.
       </classpath>
     </javac>
     <echo message="Running basic functionality tests for fop-transcoder.jar"/>
-    <mkdir dir="${build.dir}/test-reports/fop-transcoder"/> 
+    <mkdir dir="${build.dir}/test-reports/fop-transcoder"/>
     <junit>
       <sysproperty key="basedir" value="${basedir}"/>
       <formatter type="plain"/>
@@ -669,7 +669,7 @@ list of possible build targets.
       </batchtest>
     </junit>
     <echo message="Running basic functionality tests for fop-transcoder-allinone.jar"/>
-    <mkdir dir="${build.dir}/test-reports/fop-transcoder-allinone"/> 
+    <mkdir dir="${build.dir}/test-reports/fop-transcoder-allinone"/>
     <junit>
       <sysproperty key="basedir" value="${basedir}"/>
       <formatter type="plain"/>
@@ -689,7 +689,7 @@ list of possible build targets.
       </batchtest>
     </junit>
     <echo message="Running basic functionality tests for fop.jar"/>
-    <mkdir dir="${build.dir}/test-reports/fop"/> 
+    <mkdir dir="${build.dir}/test-reports/fop"/>
     <junit>
       <sysproperty key="basedir" value="${basedir}"/>
       <formatter type="plain"/>
@@ -780,6 +780,10 @@ list of possible build targets.
         <package name="org.apache.fop.fonts"/>
         <package name="org.apache.fop.fonts.*"/>
         <package name="org.apache.fop.util"/>
+      </group>
+      <group title="RTFLib (formerly JFor) Subpackage Candidate">
+        <package name="org.apache.fop.rtf.rtflib"/>
+        <package name="org.apache.fop.rtf.rtflib.*"/>
       </group>
     </javadoc>
   </target>
