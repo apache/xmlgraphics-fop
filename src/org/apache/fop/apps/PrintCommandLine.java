@@ -51,12 +51,20 @@ public class PrintCommandLine extends CommandLine {
     }
 
     XMLReader parser = createParser();
-
+    
     if (parser == null) {
       MessageHandler.errorln("ERROR: Unable to create SAX parser");
       System.exit(1);
     }
 
+    // setting the necessary parser features
+    try {
+      parser.setFeature("http://xml.org/sax/features/namespace-prefixes", true);
+    } catch (SAXException e) {
+      MessageHandler.errorln("Error in setting up parser feature namespace-prefixes");
+      MessageHandler.errorln("You need a parser which supports SAX version 2");  
+    }
+    
     PrintRenderer renderer = new PrintRenderer();
     try {
       Driver driver = new Driver();
